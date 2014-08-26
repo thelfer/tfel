@@ -9,8 +9,9 @@
 #include<sstream>
 #include<stdexcept>
 
-#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/tmatrix.hxx"
 #include"MFront/UMAT/UMATFiniteStrain.hxx"
 
 namespace umat
@@ -64,10 +65,95 @@ namespace umat
 
 
   void
+  UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(UMATReal* const STRESS,
+  								      const UMATReal* const F,
+  								      const UMATInt NTENS,
+  								      const UMATInt NDI)
+  {
+    UMATCheckNDIValue(NDI);
+    // warning F is given in the fortran convention
+    // (F0 F3 F6
+    //  F1 F4 F7
+    //  F2 F5 F8) 
+    const UMATReal F0 = F[0];
+    const UMATReal F1 = F[1];
+    const UMATReal F2 = F[2];
+    const UMATReal F3 = F[3];
+    const UMATReal F4 = F[4];
+    const UMATReal F5 = F[5];
+    const UMATReal F6 = F[6];
+    const UMATReal F7 = F[7];
+    const UMATReal F8 = F[8];
+    // determinant
+    const UMATReal J  = F0*(F4*F8-F5*F7)-F3*(F1*F8-F2*F7)+(F1*F5-F2*F4)*F6;
+    // inverse of the determinant
+    const UMATReal iJ = 1/J;
+    // inverse of F
+    // maxima          :     F4*F8-F5*F7 
+    const UMATReal iF0 = iJ*(F4*F8-F5*F7);
+    // maxima          :     F2*F7-F1*F8 
+    const UMATReal iF1 = iJ*(F2*F7-F1*F8);
+    // maxima          :     F1*F5-F2*F4 
+    const UMATReal iF2 = iJ*(F1*F5-F2*F4);
+    // maxima          :     F5*F6-F3*F8 
+    const UMATReal iF3 = iJ*(F5*F6-F3*F8); 
+    // maxima          :     F0*F8-F2*F6 
+    const UMATReal iF4 = iJ*(F0*F8-F2*F6); 
+    // maxima          :     F2*F3-F0*F5 
+    const UMATReal iF5 = iJ*(F2*F3-F0*F5); 
+    // maxima          :     F3*F7-F4*F6 
+    const UMATReal iF6 = iJ*(F3*F7-F4*F6); 
+    // maxima          :     F1*F6-F0*F7 
+    const UMATReal iF7 = iJ*(F1*F6-F0*F7); 
+    // maxima          :     F0*F4-F1*F3 
+    const UMATReal iF8 = iJ*(F0*F4-F1*F3); 
+    // sk2
+    const UMATReal p0 = STRESS[0];
+    const UMATReal p1 = STRESS[1];
+    const UMATReal p2 = STRESS[2];
+    const UMATReal p3 = (NTENS>=4) ? STRESS[3] : UMATReal(0);
+    const UMATReal p4 = (NTENS==6) ? STRESS[4] : UMATReal(0);
+    const UMATReal p5 = (NTENS==6) ? STRESS[5] : UMATReal(0);
+    STRESS[0] = J    *(iF3*(p5*iF6+p1*iF3+p3*iF0)+iF0*(p4*iF6+p3*iF3+p0*iF0)+iF6*(p2*iF6+p5*iF3+p4*iF0));
+    STRESS[1] = J*(iF4*(p5*iF7+p1*iF4+p3*iF1)+iF1*(p4*iF7+p3*iF4+p0*iF1)+iF7*(p2*iF7+p5*iF4+p4*iF1));
+    STRESS[2] = J*(iF5*(p5*iF8+p1*iF5+p3*iF2)+iF2*(p4*iF8+p3*iF5+p0*iF2)+iF8*(p2*iF8+p5*iF5+p4*iF2));
+    if(NTENS==4){
+      if(NDI==-2){
+	STRESS[2] = 0;
+      }
+      STRESS[3] = J*(iF3*(p5*iF7+p1*iF4+p3*iF1)+iF0*(p4*iF7+p3*iF4+p0*iF1)+iF6*(p2*iF7+p5*iF4+p4*iF1));
+    } else if(NTENS==6){
+      STRESS[3] = J*(iF3*(p5*iF7+p1*iF4+p3*iF1)+iF0*(p4*iF7+p3*iF4+p0*iF1)+iF6*(p2*iF7+p5*iF4+p4*iF1));
+      STRESS[4] = J*(iF3*(p5*iF8+p1*iF5+p3*iF2)+iF0*(p4*iF8+p3*iF5+p0*iF2)+iF6*(p2*iF8+p5*iF5+p4*iF2));
+      STRESS[5] = J*(iF4*(p5*iF8+p1*iF5+p3*iF2)+iF1*(p4*iF8+p3*iF5+p0*iF2)+iF7*(p2*iF8+p5*iF5+p4*iF2));
+    }
+  } // end of UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress
+
+  void
+  UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(UMATReal* const sk2,
+								      const UMATReal* const STRESS,
+  								      const UMATReal* const F,
+  								      const UMATInt NTENS,
+  								      const UMATInt NDI)
+  {
+    sk2[0] = STRESS[0];
+    sk2[1] = STRESS[1];
+    sk2[2] = STRESS[2];
+    if(NTENS==4){
+      sk2[3] = STRESS[3];
+    } else if(NTENS==6){
+      sk2[3] = STRESS[3];
+      sk2[4] = STRESS[4];
+      sk2[5] = STRESS[5];
+    }
+    UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(sk2,F,NTENS,NDI);
+  } // end of UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress
+
+  void
   UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(UMATReal* const s,
 								      const UMATReal* const F,
 								      const UMATInt NTENS,
-								      const UMATInt NDI)
+  								      const UMATInt NDI)
   {
     UMATCheckNDIValue(NDI);
     // warning F is given in the fortran convention
@@ -273,7 +359,34 @@ namespace umat
 									  const UMATInt NTENS,
 									  const UMATInt NDI)
    {
-     
+     using namespace tfel::math;
+     using std::sqrt;
+     static const UMATReal cste  = sqrt(UMATReal(2));
+     static const UMATReal icste = UMATReal(1)/sqrt(UMATReal(2));
+     // now, we compute the second Piolay Kirchoff stress
+     UMATReal sk2[6u];
+     // first we compute the second Piola-Kirchhoff stress
+     UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(sk2,STRESS,F,NTENS,NDI);
+     // now the dual stress of the strain tensor
+     if(NTENS==3u){
+       s[0] = sk2[0] / P[0];
+       s[1] = sk2[1] / P[1];
+       s[2] = sk2[2] / P[2];
+     } else if(NTENS==4u){
+       sk2[3]    *= cste;
+       const st2tost2<2u,UMATReal> iP(invert(*(reinterpret_cast<const st2tost2<2u,UMATReal>* const>(P))));
+       *(reinterpret_cast<stensor<2u,UMATReal>*>(s)) = (*(reinterpret_cast<const stensor<2u,UMATReal>* const>(sk2)))|iP;
+       s[3] *= icste;
+     } else {
+       sk2[3]  *= cste;
+       sk2[4]  *= cste;
+       sk2[5]   *= cste;
+       const st2tost2<3u,UMATReal> iP(invert(*(reinterpret_cast<const st2tost2<3u,UMATReal>* const>(P))));
+       *(reinterpret_cast<stensor<3u,UMATReal>*>(s)) = (*(reinterpret_cast<const stensor<3u,UMATReal>* const>(sk2)))|iP;
+       s[3] *= icste;
+       s[4] *= icste;
+       s[5] *= icste;
+     }
    }
 
    void
@@ -285,6 +398,7 @@ namespace umat
 									  const UMATInt NDI)
    {
      using namespace tfel::math;
+     using std::sqrt;
      static const UMATReal cste = UMATReal(1)/sqrt(UMATReal(2));
      // first we compute the second Piola-Kirchhoff stress
      if(NTENS==3u){

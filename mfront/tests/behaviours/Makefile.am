@@ -3,6 +3,7 @@ SUBDIRS = aster castem castem2 cyrano
 MFRONTS= DDIF2.mfront                                                      \
          Elasticity.mfront                                                 \
          FiniteRotationSmallStrainElasticity.mfront                        \
+         FiniteRotationSmallStrainElasticity2.mfront                       \
 	 Plasticity.mfront                                                 \
 	 DruckerPrager.mfront                                              \
          Norton.mfront                                                     \
@@ -57,6 +58,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 Tvergaard.mfront                                                  \
 	 SaintVenantKirchhoffElasticity.mfront                             \
 	 LogarithmicStrainElasticity.mfront                                \
+	 LogarithmicStrainElasticity2.mfront                               \
 	 LogarithmicStrainPlasticity.mfront                                \
 	 LogarithmicStrainNortonCreep.mfront                               \
 	 CompressibleNeoHookeanBehaviour.mfront                            \

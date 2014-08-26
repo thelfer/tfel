@@ -203,6 +203,20 @@ namespace tfel{
       st2tost2(const ParticularSt2toSt2);
 
     }; // end of struct st2tost2
+
+    /*!
+     * \return the invert of a st2tost2
+     * \param[in] s : st2tost2 to be inverted
+     */
+    template<typename ST2toST2Type>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+	       typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type,
+					    typename ST2toST2Traits<ST2toST2Type>::NumType,OpDiv>::Result>
+    >::type
+    invert(const ST2toST2Type&);
         
   } // end of namespace math
 

@@ -1,0 +1,58 @@
+@Behaviour FiniteRotationSmallStrainElasticity2;
+@Author    Helfer Thomas;
+@Date      26/11/13;
+@Description{
+  "A test of the finite rotation small strain"
+  "of the umat interface"
+ "A very first test of the logarithmic finite strain"
+ "formulation proposed by Miehe et al."
+ "(the most simple one in fact)."
+ "We check that the stress at the beginning"
+ "of the time step (which is calculated using"
+ "the Cauchy stress) is equal to the stress "
+ "computed at the end of the previous time step "
+ "(before it was turned into the Cauchy stress "
+ "after the integration."
+}
+                           
+@UMATFiniteStrainStrategy FiniteRotationSmallStrain;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;
+rho.setGlossaryName("MassDensity");
+@MaterialProperty real alpha;
+alpha.setGlossaryName("ThermalExpansion");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@AuxiliaryStateVariable StressStensor ps;
+ps.setGlossaryName("PreviousStress");
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  if(sqrt((sig-ps)|(sig-ps))>10*young*numeric_limits<stress>::epsilon()){
+    cout << "ps  : " << ps << endl;
+    cout << "sig : " << sig << endl;
+    cout << "nr  : " << sqrt((sig-ps)|(sig-ps)) << endl;
+    string msg("invalid stress value at the beginning "
+	       "of the time step");
+    throw(runtime_error(msg));
+  }
+}
+
+@Integrator{
+  static_cast<void>(computeTangentOperator_);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  // saving the compute stress
+  ps=sig;
+}

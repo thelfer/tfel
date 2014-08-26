@@ -49,6 +49,34 @@ namespace umat
 						      const UMATInt,
 						      const UMATInt);
     /*!
+     * \brief compute the second Piola Kirchoff stress from the Cauchy stress.
+     * \param[out] sk2    : second Piola Kirchoff stress expressed using umat conventions
+     * \param[in]  STRESS : cauchy stress expressed using umat conventions
+     * \param[in]  F      : material deformation gradient tensor F expressed
+     * as a fortran matrix
+     * \param[in]  NTENS  : number of components of the strain tensor
+     * \param[in]  NDI    : modelling hypothesis
+     */    
+    static void
+    computeSecondPiolaKirchhoffStressFromCauchyStress(UMATReal* const,
+						      const UMATReal* const,
+						      const UMATReal* const,
+						      const UMATInt,
+						      const UMATInt);
+    /*!
+     * \brief compute the second Piola Kirchoff stress from the Cauchy stress.
+     * \param[out] STRESS : second Piola Kirchoff stress expressed using umat conventions
+     * \param[in]  F      : material deformation gradient tensor F expressed
+     * as a fortran matrix
+     * \param[in]  NTENS  : number of components of the strain tensor
+     * \param[in]  NDI    : modelling hypothesis
+     */    
+    static void
+    computeSecondPiolaKirchhoffStressFromCauchyStress(UMATReal* const,
+						      const UMATReal* const,
+						      const UMATInt,
+						      const UMATInt);
+    /*!
      * \brief compoute the logarithmic strain and its derivatives
      * \param[out] P     : derivative of the logarithmic strain with
      * respect to the right cauchy tensor, multiplied by two
@@ -64,7 +92,16 @@ namespace umat
 					  const UMATReal* const,
 					  const UMATInt,
 					  const UMATInt);
-
+    /*!
+     * \brief compute the stress dual to the logarithmic strain from the Cauchy stress.
+     * \param[out] s      : stress dual to the logarithmic strain using the umat conventions
+     * \param[in]  STRESS : second Piola Kirchoff stress expressed using umat conventions
+     * \param[in]  P      : derivative of the logarithmic strain with respect to the right Cauchy tensor
+     * \param[in]  F      : material deformation gradient tensor F expressed
+     * as a fortran matrix
+     * \param[in]  NTENS  : number of components of the strain tensor
+     * \param[in]  NDI    : modelling hypothesis
+     */    
     static void
     computeDualStressOfLogarithmicStrainFromCauchyStress(UMATReal* const,
 							 const UMATReal* const,
@@ -72,7 +109,16 @@ namespace umat
 							 const UMATReal* const,
 							 const UMATInt,
 							 const UMATInt);
-    
+    /*!
+     * \brief compute the Cauchy stress from the stress dual to the logarithmic strain.
+     * \param[out] STRESS : Cauchy stress expressed using the umat conventions
+     * \param[in]  s      : stress dual to the logarithmic strain using the umat conventions
+     * \param[in]  P      : derivative of the logarithmic strain with respect to the right Cauchy tensor
+     * \param[in]  F      : material deformation gradient tensor F expressed
+     * as a fortran matrix
+     * \param[in]  NTENS  : number of components of the strain tensor
+     * \param[in]  NDI    : modelling hypothesis
+     */    
     static void
     computeCauchyStressFromDualStressOfLogarithmicStrain(UMATReal* const,
 							 const UMATReal* const,

@@ -495,7 +495,7 @@ namespace mfront{
 	  if(flag==SupportedTypes::Scalar){
 	    if(useQt){
 	      f << dest << "[" 
-		<< currentOffset << "] = common_cast(this->"
+		<< currentOffset << "] = base_cast(this->"
 		<< p->name << ");\n"; 
 	    } else {
 	      f << dest << "[" 

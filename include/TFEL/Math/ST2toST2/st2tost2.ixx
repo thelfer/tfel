@@ -17,9 +17,10 @@
 #include"TFEL/Metaprogramming/EnableIf.hxx"
 
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-#include"TFEL/Math/General/StorageTraits.hxx"
+#include"TFEL/Math/General/BaseCast.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
+#include"TFEL/Math/TinyMatrixInvert.hxx"
 
 namespace tfel{
 
@@ -239,6 +240,38 @@ namespace tfel{
     {
       return RunTimeProperties();
     } // end of st2tost2<N,T>::getRunTimeProperties
+
+    template<typename ST2toST2Type>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+	       typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type,
+					    typename ST2toST2Traits<ST2toST2Type>::NumType,OpDiv>::Result>
+    >::type
+    invert(const ST2toST2Type& s)
+    {
+      using tfel::typetraits::BaseType;
+      static const unsigned short N           = ST2toST2Traits<ST2toST2Type>::dime;
+      static const unsigned short StensorSize = StensorDimeToSize<N>::value;
+      typedef typename ST2toST2Traits<ST2toST2Type>::NumType NumType;
+      typedef typename BaseType<NumType>::type real;
+      typedef typename ComputeBinaryResult<real,NumType,OpDiv>::Result iNumType;
+      st2tost2<N,iNumType> is;
+      tmatrix<StensorSize,StensorSize,real> m;
+      for(unsigned short i=0;i!=StensorSize;++i){
+	for(unsigned short j=0;j!=StensorSize;++j){
+	  m(i,j) = base_cast(s(i,j));
+	}
+      }
+      TinyMatrixInvert<StensorSize,real>::exe(m);
+      for(unsigned short i=0;i!=StensorSize;++i){
+	for(unsigned short j=0;j!=StensorSize;++j){
+	  is(i,j) = iNumType(m(i,j));
+	}
+      }
+      return is;
+    } // end of invert
 
   } //end of namespace math
 

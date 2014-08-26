@@ -17,7 +17,9 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCri
 set(mfront_tests_SOURCES
   Elasticity
   FiniteRotationSmallStrainElasticity
+  FiniteRotationSmallStrainElasticity2
   LogarithmicStrainElasticity
+  LogarithmicStrainElasticity2
   Plasticity
   LogarithmicStrainPlasticity
   DruckerPrager
@@ -226,6 +228,23 @@ test_castem(finiterotationsmallstrainelasticity-shear-3-3D)
 test_castem(finiterotationsmallstrainelasticity-shear-4-3D)
 test_castem(finiterotationsmallstrainelasticity-shear-5-3D)
 test_castem(finiterotationsmallstrainelasticity-shear-6-3D)
+test_castem(finiterotationsmallstrainelasticity2-uniaxialloading-1-1D)
+test_castem(finiterotationsmallstrainelasticity2-uniaxialloading-2-1D)
+test_castem(finiterotationsmallstrainelasticity2-uniaxialloading-3-1D)
+test_castem(finiterotationsmallstrainelasticity2-uniaxialloading-1-2D)
+test_castem(finiterotationsmallstrainelasticity2-uniaxialloading-2-2D)
+test_castem(finiterotationsmallstrainelasticity2-uniaxialloading-3-2D)
+test_castem(finiterotationsmallstrainelasticity2-shear-1-2D)
+test_castem(finiterotationsmallstrainelasticity2-shear-2-2D)
+test_castem(finiterotationsmallstrainelasticity2-uniaxialloading-1-3D)
+test_castem(finiterotationsmallstrainelasticity2-uniaxialloading-2-3D)
+test_castem(finiterotationsmallstrainelasticity2-uniaxialloading-3-3D)
+test_castem(finiterotationsmallstrainelasticity2-shear-1-3D)
+test_castem(finiterotationsmallstrainelasticity2-shear-2-3D)
+test_castem(finiterotationsmallstrainelasticity2-shear-3-3D)
+test_castem(finiterotationsmallstrainelasticity2-shear-4-3D)
+test_castem(finiterotationsmallstrainelasticity2-shear-5-3D)
+test_castem(finiterotationsmallstrainelasticity2-shear-6-3D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-1D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D)
@@ -235,6 +254,15 @@ test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-1D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-2D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-1D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-2D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-1D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-2D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D)
 test_castem(elasticity_malls-uniaxialloading-1-1D)
 test_castem(elasticity_malls-uniaxialloading-1-2D)
 test_castem(elasticity_malls-uniaxialloading-1-3D)

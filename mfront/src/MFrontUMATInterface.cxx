@@ -1286,6 +1286,7 @@ namespace mfront{
     out << "UMATInt  i;\n";
     out << "UMATFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS,*NDI);\n";
     out << "UMATFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS,*NDI);\n";
+    out << "UMATFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,F0,*NTENS,*NDI);\n";
     out << "for(i=0;i!=*NTENS;++i){\n";
     out << "deto[i] -= eto[i];\n";
     out << "}\n";

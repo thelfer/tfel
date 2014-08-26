@@ -373,10 +373,10 @@ namespace mfront
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
+    copy(s0.begin(),s0.end(),s1.begin());
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s1(i)  /= sqrt2;
     }
-    copy(s0.begin(),s0.end(),s1.begin());
     (this->fct)(&ntens,&dt,&drot(0,0),
 		&D(0,0),&uu0(0,0),&uu1(0,0),
 		&ev0(0),&dev(0),
