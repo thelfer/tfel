@@ -29,8 +29,4 @@ set(TFELSystem_SOURCES
 endif(UNIX)
 
 tfel_library(TFELSystem ${TFELSystem_SOURCES})
-if(UNIX)
-  target_link_libraries(TFELSystem TFELException dl)
-else(UNIX)
-  target_link_libraries(TFELSystem TFELException)
-endif(UNIX)
+target_link_libraries(TFELSystem TFELException @TFEL_DL_LIBRARY@)

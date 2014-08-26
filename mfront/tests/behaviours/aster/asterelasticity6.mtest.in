@@ -5,7 +5,7 @@
   keyword.
  };
 
-@Behaviour<aster> 'libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterorthotropicelastic';
+@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterorthotropicelastic';
 @MaterialProperty<constant> 'YoungModulus1'     100.e9;
 @MaterialProperty<constant> 'YoungModulus2'     300.e9;
 @MaterialProperty<constant> 'YoungModulus3'     100.e9;

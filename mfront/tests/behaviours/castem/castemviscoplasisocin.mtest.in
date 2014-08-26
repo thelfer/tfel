@@ -1,7 +1,7 @@
 @Author Jeremy Hure;
 @Date 08 Aout 2013;
 
-@Behaviour<umat> 'libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatviscoplasisocin';
+@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatviscoplasisocin';
 @UseCastemAccelerationAlgorithm true;
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;

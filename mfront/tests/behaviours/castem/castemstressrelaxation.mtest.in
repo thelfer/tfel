@@ -10,7 +10,7 @@
 
 @Real 'Y'  150.e9;
 @Real 'nu' 0.3;
-@Behaviour<umat> 'libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatnorton';
+@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatnorton';
 @MaterialProperty<constant> 'YoungModulus'      'Y';
 @MaterialProperty<constant> 'PoissonRatio'      'nu';
 @MaterialProperty<constant> 'MassDensity'        0.;

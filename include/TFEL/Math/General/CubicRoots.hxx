@@ -30,7 +30,8 @@ namespace tfel{
     {
 
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-#if _BSD_SOURCE || _SVID_SOURCE || _XOPEN_SOURCE >= 600 || _ISOC99_SOURCE || _POSIX_C_SOUCE >= 200112L
+#if defined _BSD_SOURCE || defined _SVID_SOURCE || defined _ISOC99_SOURCE || ((defined _XOPEN_SOURCE) && (_XOPEN_SOURCE >= 600))  || ((defined _POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200112L))
+
       static TFEL_MATH_INLINE float
       cbrt(const float x){
 	return ::cbrtf(x);

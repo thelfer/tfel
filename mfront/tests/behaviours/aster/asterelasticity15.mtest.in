@@ -5,7 +5,7 @@
  * \brief  25 avril 2013
  */
 
-@Behaviour<aster> 'libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterelasticity';
+@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterelasticity';
 @MaterialProperty<function> 'YoungModulus' '2.e5 - (1.e5*((TC - 100.)/960.)**2)';
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
 @MaterialProperty<constant> 'MassDensity'   0. ;   

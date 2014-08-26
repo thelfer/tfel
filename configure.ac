@@ -29,25 +29,51 @@ fi
 
 AC_PROG_CXX
 
-AC_CHECKING("castem unix type")
+AC_CHECKING("architecture type")
+
+TFEL_WIN32="no"
+TFEL_WIN64="no"
+TFEL_LINUX="no"
+
 case $host in
 # machine 386 -> 686, 32 bits
     i[[3456]]86*linux*)
 	AC_DEFINE(TFEL_ARCH32)
+	TFEL_LINUX="yes"
         ;;
 # machine amd opteron, 64 bits
     x86_64*linux*)
+	AC_DEFINE(TFEL_ARCH64)
+	TFEL_LINUX="yes"
+        ;;
+# machine 386 -> 686, 32 bits
+    i[[3456]]86*bsd*)
+	AC_DEFINE(TFEL_ARCH32)
+        ;;
+# machine amd opteron, 64 bits
+    x86_64*bsd*)
 	AC_DEFINE(TFEL_ARCH64)
         ;;
     x86_64*-mingw32*)
 # Pas sûr, mais c'est pour le test
 	AC_DEFINE(TFEL_ARCH32)
+	TFEL_WIN32="yes"
 	;;
     i*86-*-mingw32*)
 	AC_DEFINE(TFEL_ARCH32)
+	TFEL_WIN32="yes"
 	;;
-    i686-pc-cygwin)
+    x86_64*mingw*)
+	AC_DEFINE(TFEL_ARCH64)
+	TFEL_WIN64="yes"
+	;;
+    i[[3456]]86*cygwin*)
 	AC_DEFINE(TFEL_ARCH32)
+	TFEL_WIN32="yes"
+	;;
+    x86_64*cygwin*)
+	TFEL_WIN64="yes"
+	AC_DEFINE(TFEL_ARCH64)
 	;;
     # ben on ne sait pas :-(
     *)
@@ -91,30 +117,6 @@ AC_ARG_ENABLE([debug],
 
 #disable default flags
 CFLAGS="";
-
-case $host in
-    i[[3456]]86*mingw*)
-    WIN32="yes"
-    ;;
-    i[[3456]]86*cygwin*)
-    WIN32="yes"
-    ;;
-    *)
-	WIN32="no"
-	;;
-esac    
-
-case $host in
-    x86_64*mingw*)
-	WIN64="yes"
-	;;
-    x86_64*cygwin*)
-	WIN64="yes"
-	;;
-    *)
-	WIN64="no"
-	;;
-esac    
 
 #choose between intel icpc and g++ and ekopath
 INTEL="no"
@@ -305,9 +307,10 @@ AC_ARG_ENABLE([tests],
 esac],[enable_tests=false])
 AM_CONDITIONAL(WITH_TESTS, test x"$enable_tests" = "xtrue")
 
-AM_CONDITIONAL([TFEL_WIN],[test x"$WIN32" = "xyes" -o x"$WIN64" = "xyes"])
-AM_CONDITIONAL([TFEL_WIN32],[test x"$WIN32" = "xyes"])
-AM_CONDITIONAL([TFEL_WIN64],[test x"$WIN64" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN],[test x"$TFEL_WIN32" = "xyes" -o x"$TFEL_WIN64" = "xyes"])
+AM_CONDITIONAL([TFEL_LINUX],[test x"$TFEL_LINUX" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN32],[test x"$TFEL_WIN32" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN64],[test x"$TFEL_WIN64" = "xyes"])
 
 AC_OUTPUT([debug.sh
 	   Makefile

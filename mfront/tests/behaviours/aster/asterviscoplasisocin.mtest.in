@@ -1,7 +1,7 @@
 @Author Jeremy Hure;
 @Date 08 Aout 2013;
 
-@Behaviour<aster> 'libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterviscoplasisocin';
+@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterviscoplasisocin';
 @UseCastemAccelerationAlgorithm true;
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;

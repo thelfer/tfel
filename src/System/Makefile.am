@@ -34,7 +34,7 @@ endif
 
 libTFELSystem_la_LIBADD = -L$(top_builddir)/src/Exception/ -lTFELException
 
-if ! TFEL_WIN
+if TFEL_LINUX
 libTFELSystem_la_LIBADD += -ldl
 endif
 

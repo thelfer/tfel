@@ -131,13 +131,10 @@ endif(HAVE_ASTER)
 add_executable(mfront ${mfront_SOURCES})
 
 if(UNIX)
-target_link_libraries(mfront
-                      TFELMaterial
-                      TFELMathParser
-                      TFELSystem
-		      TFELUtilities
-		      TFELException
-		      -ldl -pthread)
+  target_link_libraries(mfront
+    TFELMaterial  TFELMathParser
+    TFELSystem    TFELUtilities
+    TFELException -pthread @TFEL_DL_LIBRARY@)
 else(UNIX)
 target_link_libraries(mfront
                       TFELMaterial

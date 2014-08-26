@@ -92,7 +92,10 @@ mfront_LDADD   = -L$(top_builddir)/src/Material  -lTFELMaterial   \
 		 -L$(top_builddir)/src/Exception -lTFELException
 
 if !TFEL_WIN
-mfront_LDADD   += -ldl -lpthread
+mfront_LDADD   +=  -lpthread
+if TFEL_LINUX
+mfront_LDADD   +=  -ldl
+endif
 mfront_LDFLAGS  = -export-dynamic
 endif # !TFEL_WIN
 

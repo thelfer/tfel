@@ -13,7 +13,7 @@
 @ModellingHypothesis 'Axisymmetrical';
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> 'libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatstrainhardeningcreep';
+@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatstrainhardeningcreep';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

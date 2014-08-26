@@ -8,6 +8,19 @@ include(cmake/modules/autotools.cmake)
 tfel_project(2 0 dev)
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
+if(UNIX)
+  # This is used in mtest tests files
+  set(TFEL_LOCAL_LIBRARY_PREFIX "./")
+  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(TFEL_DL_LIBRARY "dl")
+  else(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(TFEL_DL_LIBRARY "")
+  endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+else(UNIX)
+  set(TFEL_LOCAL_LIBRARY_PREFIX "")
+  set(TFEL_DL_LIBRARY "")
+endif(UNIX)
+
 # type of architecture
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   add_definitions("-DTFEL_ARCH64")
