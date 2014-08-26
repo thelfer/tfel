@@ -1106,30 +1106,31 @@ namespace mfront{
     } else {
       file << "typedef tfel::config::Types<N,Type,false> Types;\n";
     }
-    file << "typedef typename Types::real                      real;\n";
-    file << "typedef typename Types::time                      time;\n";
-    file << "typedef typename Types::frequency                 frequency;\n";
-    file << "typedef typename Types::stress                    stress;\n";
-    file << "typedef typename Types::strain                    strain;\n";
-    file << "typedef typename Types::strainrate                strainrate;\n";
-    file << "typedef typename Types::stressrate                stressrate;\n";
-    file << "typedef typename Types::temperature               temperature;\n";
-    file << "typedef typename Types::thermalexpansion          thermalexpansion;\n";
-    file << "typedef typename Types::density                   density;\n";
-    file << "typedef typename Types::TVector                   TVector;\n";
-    file << "typedef typename Types::Stensor                   Stensor;\n";
-    file << "typedef typename Types::Stensor4                  Stensor4;\n";
-    file << "typedef typename Types::FrequencyStensor          FrequencyStensor;\n";
-    file << "typedef typename Types::ForceTVector              ForceTVector;\n";
-    file << "typedef typename Types::StressStensor             StressStensor;\n";
-    file << "typedef typename Types::StrainRateStensor         StressRateStensor;\n";
-    file << "typedef typename Types::DisplacementTVector       DisplacementTVector;\n";
-    file << "typedef typename Types::StrainStensor             StrainStensor;\n";
-    file << "typedef typename Types::StrainRateStensor         StrainRateStensor;\n";
-    file << "typedef typename Types::StiffnessTensor           StiffnessTensor;\n";
-    file << "typedef typename Types::Tensor                    Tensor;\n";
-    file << "typedef typename Types::ThermalExpansionTensor    ThermalExpansionTensor;\n";
-    file << "typedef typename Types::DeformationGradientTensor DeformationGradientTensor;\n";
+    file << "typedef typename Types::real                        real;\n";
+    file << "typedef typename Types::time                        time;\n";
+    file << "typedef typename Types::frequency                   frequency;\n";
+    file << "typedef typename Types::stress                      stress;\n";
+    file << "typedef typename Types::strain                      strain;\n";
+    file << "typedef typename Types::strainrate                  strainrate;\n";
+    file << "typedef typename Types::stressrate                  stressrate;\n";
+    file << "typedef typename Types::temperature                 temperature;\n";
+    file << "typedef typename Types::thermalexpansion            thermalexpansion;\n";
+    file << "typedef typename Types::density                     density;\n";
+    file << "typedef typename Types::TVector                     TVector;\n";
+    file << "typedef typename Types::Stensor                     Stensor;\n";
+    file << "typedef typename Types::Stensor4                    Stensor4;\n";
+    file << "typedef typename Types::FrequencyStensor            FrequencyStensor;\n";
+    file << "typedef typename Types::ForceTVector                ForceTVector;\n";
+    file << "typedef typename Types::StressStensor               StressStensor;\n";
+    file << "typedef typename Types::StrainRateStensor           StressRateStensor;\n";
+    file << "typedef typename Types::DisplacementTVector         DisplacementTVector;\n";
+    file << "typedef typename Types::StrainStensor               StrainStensor;\n";
+    file << "typedef typename Types::StrainRateStensor           StrainRateStensor;\n";
+    file << "typedef typename Types::StiffnessTensor             StiffnessTensor;\n";
+    file << "typedef typename Types::Tensor                      Tensor;\n";
+    file << "typedef typename Types::ThermalExpansionTensor      ThermalExpansionTensor;\n";
+    file << "typedef typename Types::DeformationGradientTensor   DeformationGradientTensor;\n";
+    file << "typedef typename Types::FiniteStrainStiffnessTensor FiniteStrainStiffnessTensor;\n";
     // tangent operator
     file << "typedef " << this->mb.getStiffnessOperatorType() << " StiffnessOperator;\n";
   } // end of MFrontBehaviourParserCommon::writeStandardTFELTypedefs
@@ -1226,6 +1227,7 @@ namespace mfront{
     }
     if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"\n";
+      this->behaviourDataFile << "#include\"TFEL/Math/t2tost2.hxx\"\n";
     }
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
     this->behaviourDataFile << endl;
@@ -2860,6 +2862,7 @@ namespace mfront{
     }
     if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"\n";
+      this->behaviourDataFile << "#include\"TFEL/Math/t2tost2.hxx\"\n";
     }
   }
 

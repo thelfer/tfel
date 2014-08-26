@@ -34,6 +34,7 @@
 #include"MFront/MTestBehaviour.hxx"
 #ifdef HAVE_CASTEM
 #include"MFront/MTestUmatSmallStrainBehaviour.hxx"
+#include"MFront/MTestUmatFiniteStrainBehaviour.hxx"
 #include"MFront/MTestUmatCohesiveZoneModelBehaviour.hxx"
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
@@ -71,7 +72,7 @@ namespace mfront
   }
 
   static unsigned short
-  getSTensorSize(const unsigned short d)
+  getStensorSize(const unsigned short d)
   {
     using namespace std;
     if(d==1){
@@ -80,6 +81,23 @@ namespace mfront
       return 4;
     } else if(d==3){
       return 6;
+    }
+    string msg("mfront::getStensorSize : ");
+    msg += "";
+    throw(runtime_error(msg));
+    return 0;
+  }
+
+  static unsigned short
+  getTensorSize(const unsigned short d)
+  {
+    using namespace std;
+    if(d==1){
+      return 3;
+    } else if(d==2){
+      return 5;
+    } else if(d==3){
+      return 9;
     }
     string msg("mfront::getTensorSize : ");
     msg += "";
@@ -98,9 +116,9 @@ namespace mfront
       s0(src.s0),
       s1(src.s1),
       e0(src.e0),
+      e1(src.e1),
       e_th0(src.e_th0),
       e_th1(src.e_th1),
-      de(src.de),
       mprops0(src.mprops0),
       mprops1(src.mprops1),
       iv_1(src.iv_1),
@@ -720,7 +738,7 @@ namespace mfront
       msg += "the initial values of the strains have already been declared";
       throw(runtime_error(msg));
     }
-    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    const unsigned short N = this->b->getDrivingVariablesSize(this->hypothesis);
     if(v.size()!=N){
       string msg("MTest::setDrivingVariablesInitialValues : ");
       msg += "invalid initial values size";
@@ -739,7 +757,7 @@ namespace mfront
       msg += "the initial values of the strains have already been declared";
       throw(runtime_error(msg));
     }
-    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    const unsigned short N = this->b->getThermodynamicForcesSize(this->hypothesis);
     if(v.size()!=N){
       string msg("MTest::setThermodynamicForcesInitialValues : ");
       msg += "invalid initial values size";
@@ -803,7 +821,7 @@ namespace mfront
       msg += "internal state variable '"+n+"' is not defined";
       throw(runtime_error(msg));
     }
-    const unsigned short N = getSTensorSize(this->dimension);
+    const unsigned short N = getStensorSize(this->dimension);
     if(v.size()!=N){
       string msg("MTest::setStensorInternalStateVariableInitialValues : "
 		 "invalid values size");
@@ -860,6 +878,8 @@ namespace mfront
       const unsigned short type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
 	this->b = shared_ptr<MTestBehaviour>(new MTestUmatSmallStrainBehaviour(this->hypothesis,l,f));
+      } else if(type==2u){
+	this->b = shared_ptr<MTestBehaviour>(new MTestUmatFiniteStrainBehaviour(this->hypothesis,l,f));
       } else if(type==3u){
 	this->b = shared_ptr<MTestBehaviour>(new MTestUmatCohesiveZoneModelBehaviour(this->hypothesis,l,f));
       } else {
@@ -934,7 +954,8 @@ namespace mfront
       throw(runtime_error(msg));
     }
     // number of components of the driving variables and the thermodynamic forces
-    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
     // check if material properties and external state variables are declared
     vector<string> mpnames(this->b->getMaterialPropertiesNames());
     vector<string> esvnames(this->b->getExternalStateVariablesNames());
@@ -956,11 +977,11 @@ namespace mfront
     // post-processing
     unsigned short cnbr = 2;
     this->out << "# first column : time" << endl;
-    for(unsigned short i=0;i!=N;++i){
+    for(unsigned short i=0;i!=ndv;++i){
       this->out << "# " << cnbr << " column : " << i+1 << "th component of the driving variables" << endl;
       ++cnbr;
     }
-    for(unsigned short i=0;i!=N;++i){
+    for(unsigned short i=0;i!=nth;++i){
       this->out << "# " << cnbr << " column : " << i+1 << "th component of the thermodynamic forces" << endl;
       ++cnbr;
     }
@@ -1073,15 +1094,15 @@ namespace mfront
     // getting the names of the materials properties
     vector<string> mpnames(this->b->getMaterialPropertiesNames());
     vector<string> esvnames(this->b->getExternalStateVariablesNames());
-    unsigned short psz = this->getProblemSize();
+    unsigned short psz = this->getNumberOfUnknowns();
     // clear
     s.s_1.clear();
     s.s0.clear();
     s.s1.clear();
     s.e0.clear();
+    s.e1.clear();
     s.e_th0.clear();
     s.e_th1.clear();
-    s.de.clear();
     s.u_1.clear();
     s.u0.clear();
     s.u1.clear();
@@ -1093,14 +1114,15 @@ namespace mfront
     s.esv0.clear();
     s.desv.clear();
     // resizing
-    const unsigned short N = this->b->getProblemSize(this->hypothesis);
-    s.s_1.resize(N,0.);
-    s.s0.resize(N,0.);
-    s.s1.resize(N,0.);
-    s.e0.resize(N,0.);
-    s.e_th0.resize(N,0.);
-    s.e_th1.resize(N,0.);
-    s.de.resize(N,0.);
+    const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+    s.s_1.resize(nth,0.);
+    s.s0.resize(nth,0.);
+    s.s1.resize(nth,0.);
+    s.e0.resize(ndv,0.);
+    s.e1.resize(ndv,0.);
+    s.e_th0.resize(ndv,0.);
+    s.e_th1.resize(ndv,0.);
     s.u_1.resize(psz,0.);
     s.u0.resize(psz,0.);
     s.u1.resize(psz,0.);
@@ -1112,6 +1134,7 @@ namespace mfront
     s.esv0.resize(esvnames.size(),0.);
     s.desv.resize(esvnames.size(),0.);
     // setting the intial  values of strains
+    this->b->getDrivingVariablesDefaultInitialValues(s.u_1);
     copy(this->e_t0.begin(),this->e_t0.end(),s.u_1.begin());
     s.u0 = s.u_1;
     // setting the intial  values of stresses
@@ -1148,8 +1171,9 @@ namespace mfront
   void
   MTest::initializeWorkSpace(MTestWorkSpace& wk) const
   {
-    const unsigned short psz = this->getProblemSize();
-    const unsigned short N   = this->b->getProblemSize(this->hypothesis);
+    const unsigned short psz = this->getNumberOfUnknowns();
+    const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
     // clear
     wk.K.clear();
     wk.Kt.clear();
@@ -1170,8 +1194,8 @@ namespace mfront
     wk.ca_r.clear();
     //resizing
     wk.K.resize(psz,psz);
-    wk.Kt.resize(N,N);
-    wk.Kp.resize(N,N);
+    wk.Kt.resize(nth,ndv);
+    wk.Kp.resize(nth,ndv);
     wk.p_lu.resize(psz);
     wk.x.resize(psz);
     wk.r.resize(psz,0.);
@@ -1194,13 +1218,13 @@ namespace mfront
   } // end of MTest::initializeWorkSpace
   
   size_t
-  MTest::getProblemSize() const
+  MTest::getNumberOfUnknowns() const
   {
     using tfel::utilities::shared_ptr;
     using tfel::math::vector;
     vector<shared_ptr<MTestConstraint> >::const_iterator pc;
-    // number of components of the driving variables and the thermodynamic forces
-    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    // number of components of the driving variables
+    const unsigned short N = this->b->getDrivingVariablesSize(this->hypothesis);
     // getting the total number of unknowns
     size_t s = N;
     for(pc =this->constraints.begin();
@@ -1209,7 +1233,7 @@ namespace mfront
       s += c.getNumberOfLagrangeMultipliers();
     }
     return s;
-  } // end of MTest::getProblemSize
+  } // end of MTest::getNumberOfUnknowns
 
   tfel::tests::TestResult
   MTest::execute(void)
@@ -1284,12 +1308,14 @@ namespace mfront
     std::vector<string> esvnames(this->b->getExternalStateVariablesNames());
     unsigned short subStep = 0;
     // // number of components of the driving variables and the thermodynamic forces
-    const unsigned short N = this->b->getProblemSize(this->hypothesis);
+    const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
     real t  = ti;
     real dt = te-ti;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       ostream& log = getLogStream();
-      log << "number of driving variables : " << N << endl;
+      log << "number of driving variables : "    << ndv << endl;
+      log << "number of thermodynamic forces : " << nth << endl;
       log << "number of constraints       : " << this->constraints.size() << endl;
     }
     while((abs(te-t)>0.5*dt)&&
@@ -1372,16 +1398,16 @@ namespace mfront
 	    tmatrix<3u,3u,real> brm = transpose(this->rm);
 	    se_th0.changeBasis(brm);
 	    se_th1.changeBasis(brm);
-	    copy(se_th0.begin(),se_th0.begin()+getSTensorSize(this->dimension),state.e_th0.begin());
-	    copy(se_th1.begin(),se_th1.begin()+getSTensorSize(this->dimension),state.e_th1.begin());
+	    copy(se_th0.begin(),se_th0.begin()+getStensorSize(this->dimension),state.e_th0.begin());
+	    copy(se_th1.begin(),se_th1.begin()+getStensorSize(this->dimension),state.e_th1.begin());
 	  } else {
 	    string msg("MTest::execute : invalid dimension");
 	    throw(runtime_error(msg));
 	  }
 	}
       }
-      // strain at the beginning of the time step
-      for(i=0;i!=N;++i){
+      // driving variables at the beginning of the time step
+      for(i=0;i!=ndv;++i){
 	state.e0[i] = state.u0[i]-state.e_th0[i];
       }
       // resolution
@@ -1391,10 +1417,10 @@ namespace mfront
 	ostream& log = getLogStream();
 	log << "resolution from " << ti << " to " << t+dt << endl;
       }
-      real ne  = 0.;  // norm of the increment of the strains
-      real nep = 0.;  // norm of the increment of the strains at the
+      real ne  = 0.;  // norm of the increment of the driving variables
+      real nep = 0.;  // norm of the increment of the driving variables at the
       // previous iteration
-      real nep2 = 0.; // norm of the increment of the strains two
+      real nep2 = 0.; // norm of the increment of the driving variables two
       // iterations before...
       /* prediction */
       if(this->ppolicy==LINEARPREDICTION){
@@ -1442,9 +1468,9 @@ namespace mfront
 	  fill(wk.K.begin(),wk.K.end(),0.);
 	  fill(wk.r.begin(),wk.r.end(),0.);
 	  state.u1 = state.u0;
-	  for(i=0;i!=N;++i){
+	  for(i=0;i!=nth;++i){
 	    wk.r(i) += state.s0(i);
-	    for(j=0;j!=N;++j){
+	    for(j=0;j!=ndv;++j){
 	      wk.K(i,j)+=wk.Kp(i,j);
 	      // free dilatation treatment
 	      wk.r(i) -= wk.Kp(i,j)*(state.e_th1[j]-state.e_th0[j]);
@@ -1454,7 +1480,7 @@ namespace mfront
 	    wk.a = *(max_element(wk.K.begin(),wk.K.end()));
 	    wk.first = false;
 	  }
-	  unsigned short pos = N;
+	  unsigned short pos = ndv;
 	  for(pc =this->constraints.begin();
 	      pc!=this->constraints.end();++pc){
 	    const MTestConstraint& c = *(*pc);
@@ -1493,20 +1519,20 @@ namespace mfront
 	fill(wk.K.begin(), wk.K.end(),0.);
 	fill(wk.Kt.begin(),wk.Kt.end(),0.);
 	fill(wk.r.begin(), wk.r.end(),0.);
-	for(i=0;i!=N;++i){
-	  state.de[i] = state.u1[i]-state.e_th1[i]-state.u0[i]+state.e_th0[i];
+	for(i=0;i!=ndv;++i){
+	  state.e1[i] = state.u1[i]-state.e_th1[i];
 	}
 	const bool bi = this->b->integrate(wk.Kt,state.s1,state.iv1,this->rm,
-					   state.e0,state.de,state.s0,
+					   state.e0,state.e1,state.s0,
 					   state.mprops1,state.iv0,
 					   state.esv0,state.desv,
 					   this->hypothesis,dt,
 					   this->ktype);
 	if(bi){
 	  // behaviour integration is a success
-	  for(i=0;i!=N;++i){
+	  for(i=0;i!=nth;++i){
 	    wk.r(i) += state.s1(i);
-	    for(j=0;j!=N;++j){
+	    for(j=0;j!=ndv;++j){
 	      wk.K(i,j) += wk.Kt(i,j);
 	    }
 	  }
@@ -1514,7 +1540,7 @@ namespace mfront
 	    wk.a = *(max_element(wk.K.begin(),wk.K.end()));
 	    wk.first = false;
 	  }
-	  unsigned short pos = N;
+	  unsigned short pos = ndv;
 	  for(pc =this->constraints.begin();
 	      pc!=this->constraints.end();++pc){
 	    const MTestConstraint& c = *(*pc);
@@ -1536,22 +1562,22 @@ namespace mfront
 	    wk.ca_r = wk.r;
 	  }
 	  real nr = 0.;
-	  for(i=0;i!=N;++i){
+	  for(i=0;i!=nth;++i){
 	    nr += abs(wk.r(i));
 	  }
 	  LUSolve::exe(wk.K,wk.r,wk.x,wk.p_lu);
 	  state.u1 -= wk.r;
 	  ne = 0;
-	  for(i=0;i!=N;++i){
+	  for(i=0;i!=ndv;++i){
 	    ne += abs(wk.r(i));
 	  }
 	  if(getVerboseMode()>=VERBOSE_LEVEL2){
 	    ostream& log = getLogStream();
 	    log << "iteration " << iter << " : " << ne << " " 
 		<< nr << " (";
-	    for(i=0;i!=N;){
+	    for(i=0;i!=ndv;){
 	      log << state.u1(i);
-	      if(++i!=N){
+	      if(++i!=ndv){
 		log << " ";
 	      }
 	    }
@@ -1561,7 +1587,7 @@ namespace mfront
 	  for(pc =this->constraints.begin();
 	      (pc!=this->constraints.end())&&(converged);++pc){
 	    const MTestConstraint& c = *(*pc);
-	    converged = c.checkConvergence(N,state.u1,state.s1,
+	    converged = c.checkConvergence(state.u1,state.s1,
 					   this->eeps,this->seps,
 					   t,dt);
 	  }
@@ -1686,13 +1712,14 @@ namespace mfront
     using namespace std;
     if(this->out){
       // number of components of the driving variables and the thermodynamic forces
-      const unsigned short N = this->b->getProblemSize(this->hypothesis);
+      const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+      const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
       unsigned short i;
       this->out << t << " ";
-      for(i=0;i!=N;++i){
+      for(i=0;i!=ndv;++i){
 	this->out << s.u0[i] << " ";
       }
-      for(i=0;i!=N;++i){
+      for(i=0;i!=nth;++i){
 	this->out << s.s0[i] << " ";
       }
       copy(s.iv0.begin(),s.iv0.end(),

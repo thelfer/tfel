@@ -1,8 +1,8 @@
 /*! 
- * \file  MTest.cxx
+ * \file   MTestParser.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 12 avril 2013
+ * \brief  12 avril 2013
  */
 
 
@@ -233,7 +233,7 @@ namespace mfront
 
   void
   MTestParser::registerCallBack(const std::string& k,
-			  const MTestParser::CallBack& p)
+				const MTestParser::CallBack& p)
   {
     using namespace std;
     typedef map<string,CallBack>::value_type MVType;
@@ -907,10 +907,11 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
       string msg("MTestParser::handleImposedStress : "
 		 "the @ImposedStress keyword is only valid "
-		 "for small strain behaviours");
+		 "for standard behaviours");
       throw(runtime_error(msg));
     }
     this->handleImposedThermodynamicForce(t,p);
@@ -1120,7 +1121,7 @@ namespace mfront
   MTestParser::handleDrivingVariable(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
-    const unsigned short N = t.getBehaviour()->getProblemSize(t.getModellingHypothesis());
+    const unsigned short N = t.getBehaviour()->getDrivingVariablesSize(t.getModellingHypothesis());
     vector<real> e_t0;
     e_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(e_t0,t,p);
@@ -1161,7 +1162,7 @@ namespace mfront
   MTestParser::handleThermodynamicForce(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
-    const unsigned short N = t.getBehaviour()->getProblemSize(t.getModellingHypothesis());
+    const unsigned short N = t.getBehaviour()->getThermodynamicForcesSize(t.getModellingHypothesis());
     vector<real> s_t0;
     s_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(s_t0,t,p);

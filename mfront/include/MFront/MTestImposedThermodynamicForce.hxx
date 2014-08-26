@@ -79,7 +79,6 @@ namespace mfront
 	      const real,
 	      const real) const;
     /*!
-     * \param[in]  N    : number of components of tensors
      * \param[in]  e    : strains
      * \param[in]  s    : ThermodynamicForcees
      * \param[in]  eeps : criterium value for strains
@@ -88,8 +87,7 @@ namespace mfront
      * \param[in]  dt   : time increment
      */
     virtual bool
-    checkConvergence(const unsigned short,
-		     const tfel::math::vector<real>&,
+    checkConvergence(const tfel::math::vector<real>&,
 		     const tfel::math::vector<real>&,
 		     const real,
 		     const real,

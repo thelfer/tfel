@@ -49,8 +49,7 @@ namespace mfront
   } // end of MTestImposedThermodynamicForce::setValues
 
   bool
-  MTestImposedThermodynamicForce::checkConvergence(const unsigned short,
-						   const tfel::math::vector<real>&,
+  MTestImposedThermodynamicForce::checkConvergence(const tfel::math::vector<real>&,
 						   const tfel::math::vector<real>& s,
 						   const real,
 						   const real seps,

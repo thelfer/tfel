@@ -3,7 +3,7 @@
 
 @ModellingHypothesis Tridimensional;
 @Theta 1.0;
-@Epsilon 1.e-9 ;
+@Epsilon 1.e-11;
 @IterMax 100;
 
 @OrthotropicBehaviour;

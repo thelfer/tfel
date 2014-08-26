@@ -5,7 +5,6 @@
  * \brief 18 avril 2013
  */
 
-#include<iostream>
 #include<sstream>
 
 #include"MFront/MTestReferenceFileComparisonTest.hxx"

@@ -60,7 +60,7 @@ namespace mfront
   } // end of MTestUmatBehaviourBase::getBehaviourType
 
   unsigned short
-  MTestUmatBehaviourBase::getProblemSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
+  MTestUmatBehaviourBase::getDrivingVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
@@ -74,7 +74,7 @@ namespace mfront
       } else if(MH::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	string msg("MTestUmatBehaviourBase::getProblemSize : "
+	string msg("MTestUmatBehaviourBase::getDrivingVariablesSize : "
 		   "unsupported modelling hypothesis");
 	throw(runtime_error(msg));
       }
@@ -88,7 +88,7 @@ namespace mfront
       } else if(MH::TRIDIMENSIONAL){
 	return 9u;
       } else {
-	string msg("MTestUmatBehaviourBase::getProblemSize : "
+	string msg("MTestUmatBehaviourBase::getDrivingVariablesSize : "
 		   "unsupported modelling hypothesis");
 	throw(runtime_error(msg));
       }
@@ -100,17 +100,70 @@ namespace mfront
       } else if(MH::TRIDIMENSIONAL){
 	return 3u;
       } else {
-	string msg("MTestUmatBehaviourBase::getProblemSize : "
+	string msg("MTestUmatBehaviourBase::getDrivingVariablesSize : "
 		   "unsupported modelling hypothesis");
 	throw(runtime_error(msg));
       }      
     } else {
-      string msg("MTestUmatBehaviourBase::getProblemSize : "
+      string msg("MTestUmatBehaviourBase::getDrivingVariablesSize : "
 		 "unsupported behaviour type");
       throw(runtime_error(msg));
     }
     return 0u;
-  } // end of MTestUmatBehaviourBase::getProblemSize
+  } // end of MTestUmatBehaviourBase::getDrivingVariablesSize
+
+  unsigned short
+  MTestUmatBehaviourBase::getThermodynamicForcesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
+  {
+    using namespace std;
+    typedef tfel::material::ModellingHypothesis MH;
+    if(this->type==1){
+      // small strain behaviours
+      if (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	return 3u;
+      } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
+		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+	return 4u;
+      } else if(MH::TRIDIMENSIONAL){
+	return 6u;
+      } else {
+	string msg("MTestUmatBehaviourBase::getThermodynamicForcesSize : "
+		   "unsupported modelling hypothesis");
+	throw(runtime_error(msg));
+      }
+    } else if(this->type==2){
+      // finite strain behaviours
+      if (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	return 3u;
+      } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
+		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+	return 4u;
+      } else if(MH::TRIDIMENSIONAL){
+	return 6u;
+      } else {
+	string msg("MTestUmatBehaviourBase::getThermodynamicForcesSize : "
+		   "unsupported modelling hypothesis");
+	throw(runtime_error(msg));
+      }
+    } else if(this->type==3){
+      // cohesive zone models
+      if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
+	 (h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+	return 2u;
+      } else if(MH::TRIDIMENSIONAL){
+	return 3u;
+      } else {
+	string msg("MTestUmatBehaviourBase::getThermodynamicForcesSize : "
+		   "unsupported modelling hypothesis");
+	throw(runtime_error(msg));
+      }      
+    } else {
+      string msg("MTestUmatBehaviourBase::getThermodynamicForcesSize : "
+		 "unsupported behaviour type");
+      throw(runtime_error(msg));
+    }
+    return 0u;
+  } // end of MTestUmatBehaviourBase::getThermodynamicForcesSize
 
   void
   MTestUmatBehaviourBase::getStensorComponentsSuffixes(std::vector<std::string>& c,
@@ -147,6 +200,44 @@ namespace mfront
   } // end of MTestUmatBehaviourBase::getStensorComponentsSuffixes
 
   void
+  MTestUmatBehaviourBase::getTensorComponentsSuffixes(std::vector<std::string>& c,
+						       const tfel::material::ModellingHypothesis::Hypothesis h) const
+  {
+    using namespace std;
+    typedef tfel::material::ModellingHypothesis MH;
+    c.clear();
+    if((h==MH::TRIDIMENSIONAL)||
+       (h==MH::PLANESTRAIN)||
+       (h==MH::PLANESTRESS)||
+       (h==MH::GENERALISEDPLANESTRAIN)){
+      c.push_back("XX");
+      c.push_back("YY");
+      c.push_back("ZZ");
+      c.push_back("XY");
+      c.push_back("YX");
+      if(h==MH::TRIDIMENSIONAL){
+	c.push_back("XZ");
+	c.push_back("ZX");
+	c.push_back("YZ");
+	c.push_back("ZY");
+      }
+    } else if ((h==MH::AXISYMMETRICAL)||
+	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)){
+      c.push_back("RR");
+      c.push_back("ZZ");
+      c.push_back("TT");
+      if(h==MH::AXISYMMETRICAL){
+	c.push_back("RZ");
+	c.push_back("ZR");
+      }
+    } else {
+      string msg("MTestUmatBehaviourBase::getDrivingVariablesComponents : "
+		 "unsupported modelling hypothesis");
+      throw(runtime_error(msg));
+    }
+  } // end of MTestUmatBehaviourBase::getTensorComponentsSuffixes
+
+  void
   MTestUmatBehaviourBase::getDrivingVariablesComponents(std::vector<std::string>& c,
 							const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
@@ -159,6 +250,13 @@ namespace mfront
       this->getStensorComponentsSuffixes(exts,h);
       for(pe=exts.begin();pe!=exts.end();++pe){
 	c.push_back("E"+*pe);
+      }
+    } else if(this->type==2){
+      vector<string> exts;
+      vector<string>::const_iterator pe;
+      this->getTensorComponentsSuffixes(exts,h);
+      for(pe=exts.begin();pe!=exts.end();++pe){
+	c.push_back("F"+*pe);
       }
     } else if(this->type==3){
       if((h==MH::TRIDIMENSIONAL)||
@@ -191,7 +289,8 @@ namespace mfront
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
     c.clear();
-    if(this->type==1){
+    if((this->type==1)||
+       (this->type==2)){
       vector<string> exts;
       vector<string>::const_iterator pe;
       this->getStensorComponentsSuffixes(exts,h);

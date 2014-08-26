@@ -6,7 +6,7 @@
  */
 
 #include<cmath>
-#include<iostream>
+#include<algorithm>
 
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
@@ -52,14 +52,22 @@ namespace mfront
   void
   MTestUmatCohesiveZoneModelBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    const unsigned short ntens   = this->getProblemSize(h);
+    const unsigned short ndv     = this->getDrivingVariablesSize(h);
+    const unsigned short nth     = this->getThermodynamicForcesSize(h);
     const unsigned short nstatev = this->getInternalStateVariablesSize(h);
-    this->D.resize(ntens,ntens);
+    this->D.resize(nth,ndv);
     this->iv.resize(nstatev);
     if(iv.size()==0){
       iv.push_back(0.);
     }
   }
+
+  void
+  MTestUmatCohesiveZoneModelBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  {
+    using namespace std;
+    fill(v.begin(),v.end(),real(0));
+  } // end of MTestUmatCohesiveZoneModelBehaviour::setDrivingVariablesDefaultInitialValue  
 
   MTestStiffnessMatrixType::mtype
   MTestUmatCohesiveZoneModelBehaviour::getDefaultStiffnessMatrixType(void) const
@@ -106,7 +114,7 @@ namespace mfront
 						 tfel::math::vector<real>& iv1,
 						 const tfel::math::tmatrix<3u,3u,real>& r,
 						 const tfel::math::vector<real>& e0,
-						 const tfel::math::vector<real>& de,
+						 const tfel::math::vector<real>& e1,
 						 const tfel::math::vector<real>& s0,
 						 const tfel::math::vector<real>& mp,
 						 const tfel::math::vector<real>& iv0,
@@ -178,13 +186,13 @@ namespace mfront
     tvector<3u,real> ue0(real(0));
     tvector<3u,real> ude(real(0));
     if(ntens==2){
-      ue0[0] = e0[1]; ue0[1] = e0[0];
-      ude[0] = de[1]; ude[1] = de[0];
+      ue0[0] = e0[1]      ; ue0[1] = e0[0];
+      ude[0] = e1[1]-e0[1]; ude[1] = e1[0]-e0[0];
       s1[0]  = s0[1]; s1[1]  = s0[0];
     }
     if(ntens==3){
       ue0[0] = e0[1]; ue0[1] = e0[2]; ue0[2] = e0[0];
-      ude[0] = de[1]; ude[1] = de[2]; ude[2] = de[0];
+      ude[0] = e1[1]-e0[1]; ude[1] = e1[2]-e0[2]; ude[2] = e1[0]-e0[0];
       s1[0]  = s0[1]; s1[1]  = s0[2]; s1[2]  = s0[0];
     }
     (this->fct)(&ntens,&dt,&drot(0,0),

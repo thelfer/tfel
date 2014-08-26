@@ -33,10 +33,17 @@ namespace mfront
     virtual tfel::material::MechanicalBehaviourBase::BehaviourType
     getBehaviourType(void) const;
     /*!
+     * \return the size of a vector able to contain all the components of the driving variables
      * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getProblemSize(const tfel::material::ModellingHypothesis::Hypothesis) const;
+    getDrivingVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const;
+    /*!
+     * \return the size of a vector able to contain all the components of the thermodynamic forces
+     * \param[in] h : modelling hypothesis
+     */
+    virtual unsigned short
+    getThermodynamicForcesSize(const tfel::material::ModellingHypothesis::Hypothesis) const;
     /*!
      * \param[in] c : components
      * \param[in] h : modelling hypothesis
@@ -44,6 +51,13 @@ namespace mfront
     virtual void
     getStensorComponentsSuffixes(std::vector<std::string>&,
 				 const tfel::material::ModellingHypothesis::Hypothesis) const;
+    /*!
+     * \param[in] c : components
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    getTensorComponentsSuffixes(std::vector<std::string>&,
+				const tfel::material::ModellingHypothesis::Hypothesis) const;
     /*!
      * \param[in] c : components
      * \param[in] h : modelling hypothesis

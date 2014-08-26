@@ -41,6 +41,7 @@ alpha.setGlossaryName("ThermalExpansion");
 @MaterialProperty stress ET;
 
 @StateVariable strain p;
+p.setGlossaryName("EquivalentPlasticStrain");
 // Normalised Elastic Strain tensor
 // be = J^{-2/3} Fe.Fe^{T}
 @AuxiliaryStateVariable StrainStensor be;

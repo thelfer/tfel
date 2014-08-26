@@ -80,8 +80,8 @@ namespace tfel{
 	ModellingHypothesisToSpaceDimension<H>::value;
       /*!
        * \brief only compute a prediction stiffness matrix.
-       * The result shall be retrieved through the "
-       * "getTangeOperator method
+       * The result shall be retrieved through the
+       * "getTangeOperator" method
        * \param[in] smt : stiffness matrix type
        * \return SUCCESS if the integration is successfull.
        */

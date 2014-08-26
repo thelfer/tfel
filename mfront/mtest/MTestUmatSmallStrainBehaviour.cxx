@@ -6,7 +6,7 @@
  */
 
 #include<cmath>
-#include<iostream>
+#include<algorithm>
 
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -230,6 +230,13 @@ namespace mfront
     }
   }
   
+  void
+  MTestUmatSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  {
+    using namespace std;
+    fill(v.begin(),v.end(),real(0));
+  } // end of MTestUmatSmallStrainBehaviour::setDrivingVariablesDefaultInitialValue  
+
   bool
   MTestUmatSmallStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
 							   const tfel::math::tmatrix<3u,3u,real>& r,
@@ -269,7 +276,7 @@ namespace mfront
 					   tfel::math::vector<real>& iv1,
 					   const tfel::math::tmatrix<3u,3u,real>& r,
 					   const tfel::math::vector<real>& e0,
-					   const tfel::math::vector<real>& de,
+					   const tfel::math::vector<real>& e1,
 					   const tfel::math::vector<real>& s0,
 					   const tfel::math::vector<real>& mp,
 					   const tfel::math::vector<real>& iv0,
@@ -343,7 +350,9 @@ namespace mfront
     stensor<3u,real> ue0(real(0));
     stensor<3u,real> ude(real(0));
     copy(e0.begin(),e0.end(),ue0.begin());
-    copy(de.begin(),de.end(),ude.begin());
+    for(i=0;i!=e1.size();++i){
+      ude(i) = e1(i)-e0(i);
+    }
     copy(s0.begin(),s0.end(),s1.begin());
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s1(i)  /= sqrt2;

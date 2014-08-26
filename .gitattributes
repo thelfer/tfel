@@ -1189,6 +1189,7 @@ mfront/tests/behaviours/aster/asterelasticity8.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity9.mtest.in -text
 mfront/tests/behaviours/aster/asterellipticcreep.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicithayhurst.mtest.in -text
+mfront/tests/behaviours/aster/asterimplicitmonocristal.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton-generalisedplanestress.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton2.mtest.in -text
@@ -1241,6 +1242,7 @@ mfront/tests/behaviours/castem/castemimplicithayhurst.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-generalisedplanestress.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-planestress.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton-planestress2.mtest.in -text
+mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
 mfront/tests/behaviours/castem/castemmazars.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text
@@ -1285,6 +1287,7 @@ mfront/tests/behaviours/references/druckerprager.ref -text
 mfront/tests/behaviours/references/druckerprager2.ref -text
 mfront/tests/behaviours/references/elasticity15-aster.ref -text
 mfront/tests/behaviours/references/hayhurst.ref -text
+mfront/tests/behaviours/references/implicitsimomieheelastoplasticity.ref -text
 mfront/tests/behaviours/references/mazars-aster.ref -text
 mfront/tests/behaviours/references/monocristal.ref -text
 mfront/tests/behaviours/references/monocristal_dd_cfc.ref -text

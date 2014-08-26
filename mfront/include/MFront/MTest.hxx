@@ -39,7 +39,7 @@ namespace mfront
    * to test mfront behaviours
    *
    * The unknowns are made of
-   * the strain stensor followed 
+   * the driving variables stensor followed 
    * by a number of lagrange
    * multiplier
    */
@@ -66,28 +66,28 @@ namespace mfront
       // the beginning of the
       // previous time step.
       tfel::math::vector<real> u_1;
-      // vector of unknows at 
-      // the beginning of the
+      // vector of unknows at the beginning of the
       // time step.
       tfel::math::vector<real> u0;
-      // vector of unknows at 
-      // the end of the
+      // vector of unknows at the end of the
       // time step
       tfel::math::vector<real> u1;
-      // stresses at the beginning of the previous of the time step
+      // thermodynamic forces at the beginning of the previous of the time step
       tfel::math::vector<real> s_1;
-      // stresses at the beginning of the time step
+      // thermodynamic forces at the beginning of the time step
       tfel::math::vector<real> s0;
-      // stresses at the end of the time step
+      // thermodynamic forces at the end of the time step
       tfel::math::vector<real> s1;
-      // strain at the beginning of the time step
+      // driving variables at the beginning of the time step
       tfel::math::vector<real> e0;
-      // thermal expansion at the beginning of the time step
+      // driving variables at the end of the time step
+      tfel::math::vector<real> e1;
+      // thermal strain at the beginning of the time step
+      // (small strain behaviours)
       tfel::math::vector<real> e_th0;
-      // thermal expansion at the end of the time step
+      // thermal strain at the end of the time step
+      // (small strain behaviours)
       tfel::math::vector<real> e_th1;
-      // strain increment
-      tfel::math::vector<real> de;
       // material properties at
       // the beginning of the
       // time step
@@ -215,8 +215,8 @@ namespace mfront
 	THERMODYNAMICFORCE
       };
       /*!
-       * \param[in] e  : strains
-       * \param[in] s  : strains
+       * \param[in] e  : driving variabless
+       * \param[in] s  : thermodynamic forces
        * \param[in] iv : internal state variables
        * \param[in] t  : time
        * \param[in] dt : time increment
@@ -561,7 +561,7 @@ namespace mfront
      * \return the number of unknowns (size of driving variables plus
      * the number of lagrangian multipliers)
      */
-    size_t getProblemSize() const;
+    size_t getNumberOfUnknowns(void) const;
     //! output file precision
     int oprec;
     //! list of tests
@@ -591,23 +591,23 @@ namespace mfront
     tfel::material::ModellingHypothesis::Hypothesis hypothesis;
     //! list of internal variable names, including their suffixes
     std::vector<std::string> ivfullnames;
-    // inital values of the strains
+    // inital values of the driving variables
     std::vector<real> e_t0;
-    // inital values of the stresses
+    // inital values of the thermodynamic forces
     std::vector<real> s_t0;
     // inital values of the internal state variables
     std::vector<real> iv_t0;
     /*!
-     * criterium value on strains used to stop the
+     * criterium value on driving variables used to stop the
      * Newton-Raphson algorithm.
      * By default, a value of 1.e-12 is used.
      */
     real eeps;
     /*!
-     * criterium value on stresses used to stop the
+     * criterium value on thermodynamic forces used to stop the
      * Newton-Raphson algorithm.
      * By default, a value of 1.e-3 is used. This value is suitable
-     * for stresses expresses in Pa.
+     * for thermodynamic forces expresses in Pa (small strain behaviours).
      */
     real seps;
     //! maximum number of sub steps allowed

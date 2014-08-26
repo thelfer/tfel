@@ -31,6 +31,11 @@ namespace mfront
 				   const std::string&,
 				   const std::string&);
     /*!
+     * \param[out] v : initial values of the driving variables
+     */
+    virtual void
+    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const;
+    /*!
      * \return the size of the array of internal variables
      * \param[in] d : space dimension
      */

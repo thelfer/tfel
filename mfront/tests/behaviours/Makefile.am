@@ -55,23 +55,24 @@ MFRONTS= DDIF2.mfront                                            \
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)
 
-EXTRA_DIST=CMakeLists.txt                     \
-	   $(MFRONTS)                         \
-           references/plasticity.ref          \
-	   references/elasticity15-aster.ref  \
-	   references/mazars-aster.ref        \
-	   references/plasisocin.ref          \
-	   references/viscoplasisocin.ref     \
-	   references/chaboche2-aster.ref     \
-	   references/chaboche-aster.ref      \
-	   references/chaboche2-aster.ref     \
-	   references/monocristal.ref         \
-	   references/monocristal_dd_cfc.ref  \
-	   references/PolyCristalsAngles.txt  \
-	   references/polycristals.ref        \
-	   references/polycristals_dd_cfc.ref \
-	   references/hayhurst.ref            \
-	   references/burger.ref              \
-	   references/tvergaard.ref           \
-	   references/druckerprager.ref       \
-	   references/druckerprager2.ref
+EXTRA_DIST=CMakeLists.txt                                   \
+	   $(MFRONTS)                                       \
+           references/plasticity.ref                        \
+	   references/elasticity15-aster.ref                \
+	   references/mazars-aster.ref                      \
+	   references/plasisocin.ref                        \
+	   references/viscoplasisocin.ref                   \
+	   references/chaboche2-aster.ref                   \
+	   references/chaboche-aster.ref                    \
+	   references/chaboche2-aster.ref                   \
+	   references/monocristal.ref                       \
+	   references/monocristal_dd_cfc.ref                \
+	   references/PolyCristalsAngles.txt                \
+	   references/polycristals.ref                      \
+	   references/polycristals_dd_cfc.ref               \
+	   references/hayhurst.ref                          \
+	   references/burger.ref                            \
+	   references/tvergaard.ref                         \
+	   references/druckerprager.ref                     \
+	   references/druckerprager2.ref                    \
+	   references/implicitsimomieheelastoplasticity.ref

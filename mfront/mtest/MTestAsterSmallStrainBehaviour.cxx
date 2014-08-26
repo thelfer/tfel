@@ -5,8 +5,8 @@
  * \brief 07 avril 2013
  */
 
-#include<iostream>
 #include<cmath>
+#include<algorithm>
 
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -116,6 +116,13 @@ namespace mfront
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
 
+  void
+  MTestAsterSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  {
+    using namespace std;
+    fill(v.begin(),v.end(),real(0));
+  } // end of MTestAsterSmallStrainBehaviour::setDrivingVariablesDefaultInitialValue  
+
   size_t
   MTestAsterSmallStrainBehaviour::getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
@@ -173,9 +180,10 @@ namespace mfront
   void
   MTestAsterSmallStrainBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    const unsigned short ntens   = this->getProblemSize(h);
+    const unsigned short ndv   = this->getDrivingVariablesSize(h);
+    const unsigned short nth   = this->getThermodynamicForcesSize(h);
     const unsigned short nstatev = this->getInternalStateVariablesSize(h);
-    this->D.resize(ntens,ntens);
+    this->D.resize(nth,ndv);
     if(nstatev==0){
       this->iv.resize(1u,real(0));
     } else {
@@ -216,7 +224,7 @@ namespace mfront
 					    tfel::math::vector<real>& iv1,
 					    const tfel::math::tmatrix<3u,3u,real>& r,
 					    const tfel::math::vector<real>& e0,
-					    const tfel::math::vector<real>& de,
+					    const tfel::math::vector<real>& e1,
 					    const tfel::math::vector<real>& s0,
 					    const tfel::math::vector<real>& mp,
 					    const tfel::math::vector<real>& iv0,
@@ -226,7 +234,7 @@ namespace mfront
 					    const real dt,
 					    const MTestStiffnessMatrixType::mtype ktype) const
   {
-    return this->call_behaviour(Kt,s1,iv1,r,e0,de,s0,
+    return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
 				mp,iv0,ev0,dev,h,dt,
 				ktype,true);
   } // end of MTestAsterSmallStrainBehaviour::integrate
@@ -237,7 +245,7 @@ namespace mfront
 						 tfel::math::vector<real>& iv1,
 						 const tfel::math::tmatrix<3u,3u,real>& r,
 						 const tfel::math::vector<real>& e0,
-						 const tfel::math::vector<real>& de,
+						 const tfel::math::vector<real>& e1,
 						 const tfel::math::vector<real>& s0,
 						 const tfel::math::vector<real>& mp,
 						 const tfel::math::vector<real>& iv0,
@@ -330,7 +338,9 @@ namespace mfront
     stensor<3u,real> ue0(real(0));
     stensor<3u,real> ude(real(0));
     copy(e0.begin(),e0.end(),ue0.begin());
-    copy(de.begin(),de.end(),ude.begin());
+    for(i=0;i!=e1.size();++i){
+      ude(i) = e1(i)-e0(i);
+    }
     copy(s0.begin(),s0.end(),s1.begin());
     if(this->type==1u){
       for(i=3;i!=static_cast<unsigned short>(ntens);++i){

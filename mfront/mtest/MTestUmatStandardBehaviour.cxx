@@ -23,11 +23,6 @@ namespace mfront
     ELM& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getUMATFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b);
-    if(this->type!=1u){
-      string msg("MTestUmatStandardBehaviour::MTestUmatStandardBehaviour : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
-    }
     if(this->stype==0){
       this->mpnames.insert(this->mpnames.begin(),"ThermalExpansion");
       this->mpnames.insert(this->mpnames.begin(),"MassDensity");
@@ -108,9 +103,10 @@ namespace mfront
   void
   MTestUmatStandardBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    const unsigned short ntens   = this->getProblemSize(h);
+    const unsigned short ndv     = this->getDrivingVariablesSize(h);
+    const unsigned short nth     = this->getThermodynamicForcesSize(h);
     const unsigned short nstatev = this->getInternalStateVariablesSize(h);
-    this->D.resize(ntens,ntens);
+    this->D.resize(nth,ndv);
     this->iv.resize(nstatev);
     if(iv.size()==0){
       iv.push_back(0.);

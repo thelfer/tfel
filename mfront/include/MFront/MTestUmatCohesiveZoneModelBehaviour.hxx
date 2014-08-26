@@ -30,6 +30,11 @@ namespace mfront
 					const std::string&,
 					const std::string&);
     /*!
+     * \param[out] v : initial values of the driving variables
+     */
+    virtual void
+    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const;
+    /*!
      * \brief allocate internal workspace
      * \param[in] h : modelling hypothesis
      */

@@ -30,6 +30,11 @@ namespace mfront
 				  const std::string&,
 				  const std::string&);
     /*!
+     * \param[out] v : initial values of the driving variables
+     */
+    virtual void
+    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const;
+    /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
      * \param[out] Kt    : tangent operator

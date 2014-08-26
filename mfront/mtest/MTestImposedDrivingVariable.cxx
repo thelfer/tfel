@@ -53,8 +53,7 @@ namespace mfront
   } // end of MTestImposedDrivingVariable::setValues
 
   bool
-  MTestImposedDrivingVariable::checkConvergence(const unsigned short,
-						const tfel::math::vector<real>& u,
+  MTestImposedDrivingVariable::checkConvergence(const tfel::math::vector<real>& u,
 						const tfel::math::vector<real>&,
 						const real eeps,
 						const real,

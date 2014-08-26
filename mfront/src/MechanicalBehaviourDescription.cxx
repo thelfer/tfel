@@ -435,7 +435,7 @@ namespace mfront{
     } else if(this->type==SMALLSTRAINSTANDARDBEHAVIOUR){
       return "StiffnessTensor";
     } else if(this->type==FINITESTRAINSTANDARDBEHAVIOUR){
-      return "tfel::math::tmatrix<TensorSize,StensorSize,stress>";
+      return "FiniteStrainStiffnessTensor";
     } else if(this->type==COHESIVEZONEMODEL){
       return "tfel::math::tmatrix<N,N,stress>";
     }

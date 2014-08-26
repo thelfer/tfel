@@ -34,10 +34,23 @@ namespace mfront
     virtual tfel::material::MechanicalBehaviourBase::BehaviourType
     getBehaviourType(void) const = 0;
     /*!
+     * \return the size of a vector able to contain all the components of the driving variables
      * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getProblemSize(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    getDrivingVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    /*!
+     * \param[out] v : initial values of the driving variables
+     * \note : the vector shall have been correctly allocated
+     */
+    virtual void
+    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const = 0;
+    /*!
+     * \return the size of a vector able to contain all the components of the thermodynamic forces
+     * \param[in] h : modelling hypothesis
+     */
+    virtual unsigned short
+    getThermodynamicForcesSize(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
     /*!
      * \param[in] c : components
      * \param[in] h : modelling hypothesis
