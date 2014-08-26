@@ -59,6 +59,8 @@ namespace mfront{
     this->registerNewCallBack("@Theta",&MFrontIsotropicBehaviourParserBase::treatTheta);
     this->registerNewCallBack("@Epsilon",&MFrontIsotropicBehaviourParserBase::treatEpsilon);
     this->registerNewCallBack("@IterMax",&MFrontIsotropicBehaviourParserBase::treatIterMax);
+    this->registerNewCallBack("@ThermalExpansion",
+			      &MFrontIsotropicBehaviourParserBase::treatThermalExpansion);
     this->disableCallBack("@StateVar");
     this->disableCallBack("@StateVariable");
     this->disableCallBack("@Integrator");
@@ -153,7 +155,7 @@ namespace mfront{
 
   std::string
   MFrontIsotropicBehaviourParserBase::flowRuleVariableModifier(const std::string& var,
-							const bool addThisPtr)
+							       const bool addThisPtr)
   {
     if((var=="T")||(this->mb.isExternalStateVariableName(var))||
        (this->mb.isInternalStateVariableName(var))){

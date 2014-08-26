@@ -44,8 +44,33 @@ namespace mfront{
 
   //! a simple alias for backward compatibility
   typedef StaticVariableDescription StaticVarHandler;
-  //! a simple alias
-  typedef std::vector<StaticVariableDescription>  StaticVariableDescriptionContainer;
+
+  //! a simple wrapper around the std::vector class
+  struct StaticVariableDescriptionContainer
+    : private std::vector<StaticVariableDescription>
+  {
+    using std::vector<StaticVariableDescription>::value_type;
+    using std::vector<StaticVariableDescription>::reference;
+    using std::vector<StaticVariableDescription>::const_reference;
+    using std::vector<StaticVariableDescription>::size_type;
+    using std::vector<StaticVariableDescription>::iterator;
+    using std::vector<StaticVariableDescription>::const_iterator;
+    using std::vector<StaticVariableDescription>::push_back;
+    using std::vector<StaticVariableDescription>::begin;
+    using std::vector<StaticVariableDescription>::end;
+    using std::vector<StaticVariableDescription>::empty;
+    using std::vector<StaticVariableDescription>::front;
+    using std::vector<StaticVariableDescription>::back;
+    using std::vector<StaticVariableDescription>::size;
+    using std::vector<StaticVariableDescription>::operator[];
+    /*!
+     * \param[in] n : variable name
+     * \return true if a variable with the given name exists
+     */
+    bool
+    contains(const std::string&) const;
+  };
+
   //! a simple alias for backward compatibility
   typedef StaticVariableDescriptionContainer      StaticVarContainer;
 

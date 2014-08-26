@@ -47,6 +47,7 @@ bindings/python/tfel/tvector.cxx -text
 bindings/python/tfel/utilities.cxx -text
 bindings/python/tfel/vector.cxx -text
 /bootstrap.sh -text
+/check_all.sh -text
 /clean.sh -text
 cmake/Makefile.am -text
 cmake/ToolChain-i586-mingw32msvc.cmake -text
@@ -1045,6 +1046,7 @@ mfront/include/MFront/MTestUmatFiniteStrainBehaviour.hxx -text
 mfront/include/MFront/MTestUmatNormaliseTangentOperator.hxx -text
 mfront/include/MFront/MTestUmatSmallStrainBehaviour.hxx -text
 mfront/include/MFront/MTestUmatStandardBehaviour.hxx -text
+mfront/include/MFront/MaterialPropertyDescription.hxx -text
 mfront/include/MFront/MechanicalBehaviourDescription.hxx -text
 mfront/include/MFront/MechanicalVariableDescription.hxx -text
 mfront/include/MFront/ParserBase.hxx -text

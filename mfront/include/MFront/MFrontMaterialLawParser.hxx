@@ -15,19 +15,32 @@
 #include"MFront/ParserBase.hxx"
 #include"MFront/LawFunction.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
+#include"MFront/MFrontVirtualParser.hxx"
 
 namespace mfront{
 
-  struct MFrontMaterialLawParser
+  /*!
+   * Parser handling material properties
+   */
+  struct TFEL_VISIBILITY_EXPORT MFrontMaterialLawParser
     : public MFrontVirtualParser,
-      public ParserBase
+      public ParserBase,
+      protected MaterialPropertyDescription
   {
+    /*!
+     * return the name of the parser
+     */
     static std::string 
     getName(void);
-
+    /*!
+     * return a description of the parser
+     */
     static std::string
     getDescription(void);
-
+    /*!
+     * default constructor
+     */
     MFrontMaterialLawParser();
 
     virtual void
@@ -38,10 +51,6 @@ namespace mfront{
 
     virtual void
     setDebugMode(void);
-
-    virtual void
-    treatFile(const std::string&,
-	      const std::vector<std::string>&);
     
     virtual void
     getKeywordsList(std::vector<std::string>&) const;
@@ -68,21 +77,56 @@ namespace mfront{
 		     std::pair<std::vector<std::string>,
 			       std::vector<std::string> > >
     getSpecificTargets(void);
+    /*!
+     * \brief analyse a file and generates output files
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commandes (those commands are given through the
+     * --@?? option of the command line
+     * \note the method barely calls the analyseFile method and the
+     * generateOutputFiles
+     */
+    virtual void
+    treatFile(const std::string&,
+	      const std::vector<std::string>&);
+    /*!
+     * \brief analyse a file without generating any output
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     */
+    virtual void
+    analyseFile(const std::string&,
+		const std::vector<std::string>& = std::vector<std::string>());
+    
+    virtual const MaterialPropertyDescription&
+    getMaterialPropertyDescription(void) const;
 
   protected:
 
     typedef void (MFrontMaterialLawParser::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
 
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&);
-
+    /*!
+     * \brief write the output files.
+     * \note this shall be called after the analyseFile method.
+     */
     virtual void
     writeOutputFiles(void);
+    /*!
+     * \brief add a static variable description
+     * \param[in] v : variable description
+     */
+    virtual void
+    addStaticVariableDescription(const StaticVariableDescription&);
 
     void
     addInterface(const std::string&);
+
+    /*!
+     * treat the material keyword
+     */
+    virtual void
+    treatMaterial(void);
 
     void
     treatNamespace(void);
@@ -130,26 +174,33 @@ namespace mfront{
     void
     registerBounds(std::vector<VariableBoundsDescription>&);
     
-    LawFunction f;
-
     void
     registerNewCallBack(const std::string&,const MemberFuncPtr);
-
-    VariableDescriptionContainer inputs;
+    /*!
+     * registred interfaces for the material property being treated
+     */
     std::set<std::string> interfaces;
-    std::vector<VariableBoundsDescription> boundsDescriptions;
-    std::vector<VariableBoundsDescription> physicalBoundsDescriptions;
-    std::vector<std::string> namespaces;
+    /*!
+     * list of resgistred keywords
+     */
     std::set<std::string> registredKeyWords;
+    /*!
+     * list of dependencies
+     */
     std::map<std::string,std::vector<std::string> > sourcesLibrairiesDependencies;
-    std::map<std::string,std::string> glossaryNames;
-    std::map<std::string,std::string> entryNames;
-    std::vector<std::string> parameters;
-    std::map<std::string,double> parametersValues;
+    /*!
+     * map of callbacks used during the file interpretation
+     */
     CallBackContainer callBacks;
-    std::string currentVar;
-    std::string output;
+
+    std::vector<std::string> namespaces;
     bool useTemplate;
+    /*!
+     * a temporary object used to store the name of the variable on
+     * which a method is called
+     */
+    std::string currentVar;
+
   }; // end of class MFrontMaterialLawParser
 
 } // end of namespace mfront  

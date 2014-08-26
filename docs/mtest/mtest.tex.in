@@ -105,8 +105,7 @@
 \resumecea{
 
   Ce document présente un outil de test unitaire pour les lois de
-  comportements mécaniques générés par
-  mfront~\cite{helfer_generateur_2013-1}, nommé \mtest{}.
+  comportements mécaniques générés par \mfront{}, nommé \mtest{}.
 
   Cet outil permet de piloter le chargement mécanique d'un point
   matériel, en imposant certaines composantes des contraintes et/ou
@@ -144,29 +143,53 @@ l'application de conception \licos{}~: les fichiers d'entrée de
 informatiques et numériques étant gérés par
 \mfront{}~\cite{helfer_generateur_2013-1,helfer_generateur_2013}.
 
-Tant que l'utilisation de \mfront{} était limitée aux applications de
-la plate-forme \pleiades{}, chaque application proposait des cas tests
-unitaires permettant de vérifier que le code généré par \mfront{}
-donnaient des résultats conformes. En particulier, l'application
-\licos{}, développée par le même auteur que \mfront{}, contenait de
-nombreux tests couvrant de manière quasi exhaustive les
+Tant que l'utilisation de \mfront{} était limitée aux applications
+\cea{} de la plate-forme \pleiades{}, chaque application proposait des
+cas tests unitaires permettant de vérifier que le code généré par
+\mfront{} donnaient des résultats conformes. En particulier,
+l'application \licos{}, développée par le même auteur que \mfront{},
+contenait de nombreux tests couvrant de manière quasi exhaustive les
 fonctionnalités de \mfront{}~\cite{helfer_cas_2012}.
 
-Récemment, l'utilisation de \mfront{} en dehors de la plate-forme
-\pleiades{}, au sein du \cea{}, DER~\cite{darrigo_notice_2012} au
-DMN~\cite{helfer_presentation_2011}, puis l'intérêt des partenaires
-industriels du \cea{}, à \areva \cite{olagnon_analysis_2013} à \edf{}
-\cite{proix_integration_2013}, a ouvert des perspectives très intéressantes
-de qualification et de développement de \mfront{}. Il n'est cependant
-plus possible de se satisfaire du mode de fonctionnement décrit plus
-haut.
+Récemment, l'utilisation de \mfront{} s'est accrue~:
+\begin{itemize}
+\item au sein de la plate-forme \pleiades{}, l'application \cyrano{},
+  développée par \edf{} peut utiliser des lois générées par
+  \mfront{}~;
+\item au sein du \cea{}, DER~\cite{darrigo_notice_2012} au
+DMN~\cite{helfer_presentation_2011}~;
+\item puis l'intérêt des partenaires industriels du \cea{}, à \areva
+  \cite{olagnon_analysis_2013} à \edf{} \cite{proix_integration_2013}~;
+\end{itemize}
+  % a ouvert des perspectives très intéressantes de qualification et de
+  % développement de \mfront{}.  en
 
-En particulier, les lois de comportement mécanique, par leur
-complexité intrinsèque et la variété des fonctionnalités disponibles,
-posent le plus de difficultés car elles ne pouvaient être testées
-qu'avec l'aide d'un code tiers, typiquement
-\castem{}~\cite{verpeaux_castem2000_1998,cea_site_2013},
-\aster{}~\cite{edf_site_2013},
+
+Différentes interfaces ont été développées qui permettent d'utiliser
+les lois de comportement mécanique écrite en \mfront{} dans différents
+codes cibles. Elles sont aujourd'hui au nombre de \(3\)~:
+\begin{itemize}
+\item l'interface {\tt umat}, dédiée au code
+  \castem{}~\cite{verpeaux_castem2000_1998,cea_site_2013}~;
+\item l'interface {\tt aster}, dédiée au code
+  \aster{}~\cite{edf_site_2013}~;
+\item l'interface {\tt cyrano}, dédiée au code combustible
+  \cyrano{}~\cite{thouvenin_edf_2010}.
+\end{itemize}
+  
+Ces différents codes présentent des caractéristiques propres, portant
+à la fois sur les conventions qu'ils utilisent, sur leurs capacités de
+modélisation ainsi que sur les algorithmes numériques dont ils
+disposent. Les interfaces permettent de s'adapter à ces spécificités,
+ce qui permet d'avoir des performances numériques intéressantes et
+adaptées, tout en permettant une écriture unique de la loi de
+comportement. La maintenance de \mfront{} s'est de ce fait
+complexifiée.
+
+ Les lois de comportement mécanique, par leur complexité
+intrinsèque et la variété des fonctionnalités disponibles, posent le
+plus de difficultés car elles ne pouvaient être testées qu'avec l'aide
+des codes cibles tiers, typiquement \castem{}, \aster{},
 \tmfft{}~\cite{castelier_specifications_2009,jerome_tmfft_2010} ou
 \licos{}~\cite{helfer_licos_2011}. Ce document présente un outil de
 test unitaire pour les lois de comportements mécaniques générés par

@@ -83,6 +83,12 @@ namespace mfront{
     }
   }
 
+  void
+  MFrontMaterialLawParser::addStaticVariableDescription(const StaticVariableDescription& v)
+  {
+    this->staticVars.push_back(v);
+  } // end of MFrontMaterialLawParser::addStaticVariableDescription
+
   std::string
   MFrontMaterialLawParser::getDescription()
   {
@@ -110,6 +116,23 @@ namespace mfront{
   {
     return "MaterialLaw";
   } // end of MFrontMaterialLawParser::getName(void)
+
+  void
+  MFrontMaterialLawParser::treatMaterial(void)
+  {
+    using namespace std;
+    if(!this->material.empty()){
+      string msg("MFrontMaterialLawParser::treatMaterial : ");
+      msg += "material name alreay defined";
+      throw(runtime_error(msg));
+    }
+    this->material = this->readOnlyOneToken();
+    if(!CxxTokenizer::isValidIdentifier(this->material,true)){
+      string msg("MFrontMaterialLawParser::treatMaterial : ");
+      msg += "invalid material name '"+this->material+"'";
+      throw(runtime_error(msg));
+    }
+  } // end of MFrontMaterialLawParser::treatMaterial
 
   void
   MFrontMaterialLawParser::treatUseTemplate(void)
@@ -1161,6 +1184,12 @@ namespace mfront{
       this->current = p2;
     }
   } // end of MFrontMaterialLawParser::treatUnknownKeyword
+
+  const MaterialPropertyDescription&
+  MFrontMaterialLawParser::getMaterialPropertyDescription(void) const
+  {
+    return *this;
+  } // end of MFrontMaterialLawParser::getMaterialPropertyDescription
 
 } // end of namespace mfront  
 

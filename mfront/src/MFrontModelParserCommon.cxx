@@ -44,6 +44,32 @@ namespace mfront{
     return false;
   } // end of MFrontModelParserCommon::is(void)
 
+  void
+  MFrontModelParserCommon::addStaticVariableDescription(const StaticVariableDescription& v)
+  {
+    this->staticVars.push_back(v);
+  } // end of MFrontModelParserCommon::addStaticVariableDescription
+
+  void
+  MFrontModelParserCommon::treatMaterial(void)
+  {
+    using namespace std;
+    if(!this->material.empty()){
+      string msg("MFrontModelParserCommon::treatMaterial : ");
+      msg += "material name alreay defined";
+      throw(runtime_error(msg));
+    }
+    this->material = this->readOnlyOneToken();
+    if(!CxxTokenizer::isValidIdentifier(this->material,true)){
+      string msg("MFrontModelParserCommon::treatMaterial : ");
+      msg += "invalid material name '"+this->material+"'";
+      throw(runtime_error(msg));
+    }
+    if(!this->className.empty()){
+      this->className = this->material+"_"+this->className;
+    }
+  } // end of MFrontModelParserCommon::treatMaterial
+
   void MFrontModelParserCommon::treatModel(void)
   {
     using namespace std;
@@ -60,15 +86,6 @@ namespace mfront{
       this->className = this->material+"_"+this->className;
     }
   } // end of MFrontModelParserCommon::treatModel
-
-  void
-  MFrontModelParserCommon::treatMaterial(void)
-  {
-    ParserBase::treatMaterial();
-    if(!this->className.empty()){
-      this->className = this->material+"_"+this->className;
-    }
-  } // end of MFrontModelParserCommon::treatMaterial
 
   void
   MFrontModelParserCommon::setInterfaces(const std::set<std::string>& i)

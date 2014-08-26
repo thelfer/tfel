@@ -25,6 +25,37 @@ namespace mfront{
       estype(mfront::ISOTROPIC)
   {} // end of MechanicalBehaviourDescription::MechanicalBehaviourDescription()
 
+  void
+  MechanicalBehaviourDescription::setMaterialName(const std::string& m)
+  {
+    using namespace std;
+    if(!this->material.empty()){
+      string msg("MechanicalBehaviourDescription::setMaterialName : ");
+      msg += "material name alreay defined";
+      throw(runtime_error(msg));
+    }
+    this->material = m;
+  } // end of MechanicalBehaviourDescription::setMaterialName
+
+  const std::string&
+  MechanicalBehaviourDescription::getMaterialName(void) const
+  {
+    return this->material;
+  } // end of MechanicalBehaviourDescription::getMaterialName
+
+  void
+  MechanicalBehaviourDescription::addStaticVariable(const StaticVariableDescription& v)
+  {
+    this->staticVars.push_back(v);
+  } // end of MechanicalBehaviourDescription::addStaticVariable
+
+  const StaticVariableDescriptionContainer&
+  MechanicalBehaviourDescription::getStaticVariables(void) const
+  {
+    return this->staticVars;
+  } // end of MechanicalBehaviourDescription::getStaticVariables
+
+
   std::vector<BoundsDescription>&
   MechanicalBehaviourDescription::getBounds(void)
   {
@@ -111,25 +142,25 @@ namespace mfront{
   bool
   MechanicalBehaviourDescription::isMaterialPropertyName(const std::string& n) const
   {
-    return MechanicalBehaviourDescription::contains(this->getMaterialProperties(),n);
+    return this->getMaterialProperties().contains(n);
   } // end of MechanicalBehaviourDescription::isMaterialPropertyName
 
   bool
   MechanicalBehaviourDescription::isLocalVariableName(const std::string& n) const
   {
-    return MechanicalBehaviourDescription::contains(this->getLocalVariables(),n);
+    return this->getLocalVariables().contains(n);
   } // end of MechanicalBehaviourDescription::isLocalVariableName
 
   bool
   MechanicalBehaviourDescription::isParameterName(const std::string& n) const
   {
-    return MechanicalBehaviourDescription::contains(this->getParameters(),n);
+    return this->getParameters().contains(n);
   } // end of MechanicalBehaviourDescription::isParameterName
   
   bool
   MechanicalBehaviourDescription::isInternalStateVariableName(const std::string& n) const
   {
-    return MechanicalBehaviourDescription::contains(this->getStateVariables(),n);
+    return this->getStateVariables().contains(n);
   } // end of MechanicalBehaviourDescription::isInternalStateVariableName
 
   bool
@@ -141,19 +172,19 @@ namespace mfront{
     if(n[0]!='d'){
       return false;
     }
-    return MechanicalBehaviourDescription::contains(this->getStateVariables(),n.substr(1));
+    return this->getStateVariables().contains(n.substr(1));
   } // end of MechanicalBehaviourDescription::isInternalStateVariableName
 
   bool
   MechanicalBehaviourDescription::isAuxiliaryInternalStateVariableName(const std::string& n) const
   {
-    return MechanicalBehaviourDescription::contains(this->getAuxiliaryStateVariables(),n);
+    return this->getAuxiliaryStateVariables().contains(n);
   } // end of MechanicalBehaviourDescription::isInternalStateVariableName
   
   bool
   MechanicalBehaviourDescription::isExternalStateVariableName(const std::string& n) const
   {
-    return MechanicalBehaviourDescription::contains(this->getExternalStateVariables(),n);
+    return this->getExternalStateVariables().contains(n);
   } // end of MechanicalBehaviourDescription::isExternalStateVariableName
 
   bool
@@ -165,21 +196,8 @@ namespace mfront{
     if(n[0]!='d'){
       return false;
     }
-    return MechanicalBehaviourDescription::contains(this->getExternalStateVariables(),n.substr(1));
+    return this->getExternalStateVariables().contains(n.substr(1));
   } // end of MechanicalBehaviourDescription::isExternalStateVariableName
-
-  bool
-  MechanicalBehaviourDescription::contains(const VariableDescriptionContainer& v,
-					const std::string& n)
-  {
-    VariableDescriptionContainer::const_iterator p;
-    for(p=v.begin();p!=v.end();++p){
-      if(p->name==n){
-	return true;
-      }
-    }
-    return false;
-  } // end of MechanicalBehaviourDescription::contains
 
   VariableDescriptionContainer&
   MechanicalBehaviourDescription::getMaterialProperties(void)

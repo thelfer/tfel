@@ -29,4 +29,16 @@ namespace mfront{
     }
   } // end of MFrontParserBase<Child>::VariableDescription::VariableDescription
 
+  bool
+  VariableDescriptionContainer::contains(const std::string& n) const
+  {
+    VariableDescriptionContainer::const_iterator p;
+    for(p=this->begin();p!=this->end();++p){
+      if(p->name==n){
+	return true;
+      }
+    }
+    return false;
+  } // end of VariableDescriptionContainer::contains
+
 } // end of namespace mfront

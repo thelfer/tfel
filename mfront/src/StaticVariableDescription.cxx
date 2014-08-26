@@ -18,4 +18,16 @@ namespace mfront{
       value(value_)
   {}
 
+  bool
+  StaticVariableDescriptionContainer::contains(const std::string& n) const
+  {
+    StaticVariableDescriptionContainer::const_iterator p;
+    for(p=this->begin();p!=this->end();++p){
+      if(p->name==n){
+	return true;
+      }
+    }
+    return false;
+  } // end of StaticVariableDescriptionContainer::contains
+
 } // end of namespace mfront

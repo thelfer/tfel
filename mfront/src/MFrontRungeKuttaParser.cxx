@@ -366,11 +366,11 @@ namespace mfront{
       this->registerStaticVariable("rkcastem_rmax");
       this->registerStaticVariable("rkcastem_fac");
       this->registerStaticVariable("rkcastem_borne");
-      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_div",0u,7.));
-      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_rmin",0u,0.7));
-      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_rmax",0u,1.3));
-      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_fac",0u,3.));
-      this->staticVars.push_back(StaticVariableDescription("real","rkcastem_borne",0u,2.));
+      this->mb.addStaticVariable(StaticVariableDescription("real","rkcastem_div",0u,7.));
+      this->mb.addStaticVariable(StaticVariableDescription("real","rkcastem_rmin",0u,0.7));
+      this->mb.addStaticVariable(StaticVariableDescription("real","rkcastem_rmax",0u,1.3));
+      this->mb.addStaticVariable(StaticVariableDescription("real","rkcastem_fac",0u,3.));
+      this->mb.addStaticVariable(StaticVariableDescription("real","rkcastem_borne",0u,2.));
       this->nbrOfEvaluation = 5u;
       this->algorithm = "RungeKuttaCastem";
     } else {

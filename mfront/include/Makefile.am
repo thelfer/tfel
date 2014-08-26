@@ -30,6 +30,7 @@ nobase_include_HEADERS= MFront/MFrontConfig.hxx                       \
 			MFront/MFrontModelParserCommon.hxx            \
 			MFront/MFrontModelParserBase.hxx              \
 			MFront/MFrontModelParserBase.ixx              \
+			MFront/MaterialPropertyDescription.hxx        \
 			MFront/MechanicalBehaviourDescription.hxx     \
 			MFront/ParserBase.hxx                         \
 			MFront/InterfaceBase.hxx                      \

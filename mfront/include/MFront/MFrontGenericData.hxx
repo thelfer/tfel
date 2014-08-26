@@ -11,22 +11,25 @@
 #include<set>
 #include<string>
 
-#include"MFront/StaticVariableDescription.hxx"
-
 namespace mfront
 {
 
+  /*!
+   * this class gathers some information about the MFront file being
+   * treatd
+   */
   struct MFrontGenericData
   {
+    // const std::string&
+    // getLibrary(void) const;
+  protected:
     std::string className;
-    std::string material;
     std::string library;
     std::string description;
     std::string fileName;    
     std::string authorName;
     std::string date;
     std::string includes;
-    StaticVariableDescriptionContainer staticVars;
     std::set<std::string> varNames;
     std::set<std::string> staticVarNames;
     std::set<std::string> reservedNames;

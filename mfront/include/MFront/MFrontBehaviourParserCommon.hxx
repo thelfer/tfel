@@ -67,6 +67,13 @@ namespace mfront{
        
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
 
+    /*!
+     * \brief add a static variable description
+     * \param[in] v : variable description
+     */
+    virtual void
+    addStaticVariableDescription(const StaticVariableDescription&);
+
     static Hypothesis
     getModellingHypothesisFromString(const std::string&);
 
@@ -90,6 +97,11 @@ namespace mfront{
 
     virtual void
     registerDefaultVarNames(void);
+    /*!
+     * treat the material keyword
+     */
+    virtual void
+    treatMaterial(void);
 
     virtual void
     treatModellingHypothesis(void);
@@ -107,13 +119,13 @@ namespace mfront{
       treatUsableInPurelyImplicitResolution(void);
 
     virtual void
-      treatMaterial(void);
-
-    virtual void
       treatParameter(void);
 
     virtual void
       treatLocalVar(void);
+
+    virtual void
+      treatThermalExpansion(void);
 
     virtual void
       treatInitLocalVars(void);

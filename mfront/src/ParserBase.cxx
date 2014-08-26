@@ -21,6 +21,7 @@
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontSearchFile.hxx"
 #include"MFront/MFrontMFrontLawInterface.hxx"
+#include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront
 {
@@ -603,30 +604,30 @@ namespace mfront
   } // end of ParserBase::readVarList
 
   std::vector<std::string>
-  ParserBase::readArrayOfString(const std::string& method)
+  ParserBase::readArrayOfString(const std::string& m)
   {
     using namespace std;
     using namespace tfel::utilities;
     vector<string> res;
-    this->readSpecifiedToken(method,"{");
-    this->checkNotEndOfFile(method,"Expected '}'");
+    this->readSpecifiedToken(m,"{");
+    this->checkNotEndOfFile(m,"Expected '}'");
     while(this->current->value!="}"){
       if(this->current->flag!=Token::String){
-	this->throwRuntimeError(method,"Expected a string");
+	this->throwRuntimeError(m,"Expected a string");
       }
       res.push_back(this->current->value.substr(1,this->current->value.size()-2));
       ++(this->current);
-      this->checkNotEndOfFile(method,"Expected '}'");
+      this->checkNotEndOfFile(m,"Expected '}'");
       if(!((this->current->value=="}")||
 	   (this->current->value==","))){
-	this->throwRuntimeError(method,
-				"Expected ',' or '}', read '"+this->current->value+"'");
+	this->throwRuntimeError(m,"Expected ',' or '}',"
+				" read '"+this->current->value+"'");
       }
       if(this->current->value==","){
 	++(this->current);
-	this->checkNotEndOfFile(method,"Expected '}'");
+	this->checkNotEndOfFile(m,"Expected '}'");
 	if(this->current->value=="}"){
-	  this->throwRuntimeError(method,"Expected a string");
+	  this->throwRuntimeError(m,"Expected a string");
 	}
       }
     }
@@ -634,21 +635,31 @@ namespace mfront
     return res;
   } // end of ParserBase::readArrayOfString
 
+  std::string
+  ParserBase::readString(const std::string& m)
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    this->checkNotEndOfFile(m,"Expected a string or '{'");
+    if(this->current->flag!=Token::String){
+      this->throwRuntimeError(m,"Expected a string");
+    }
+    const string& r = this->current->value.substr(1,this->current->value.size()-2);
+    ++(this->current);
+    return r;
+  } // end of ParserBase::readString
+
   std::vector<std::string>
-  ParserBase::readStringOrArrayOfString(const std::string& method)
+  ParserBase::readStringOrArrayOfString(const std::string& m)
   {
     using namespace std;
     using namespace tfel::utilities;
     vector<string> res;
-    this->checkNotEndOfFile(method,"Expected a string or '{'");
+    this->checkNotEndOfFile(m,"Expected a string or '{'");
     if(this->current->value=="{"){
-      return this->readArrayOfString(method);
+      return this->readArrayOfString(m);
     }
-    if(this->current->flag!=Token::String){
-      this->throwRuntimeError(method,"Expected a string");
-    }
-    res.push_back(this->current->value.substr(1,this->current->value.size()-2));
-    ++(this->current);
+    res.push_back(this->readString(m));
     return res;
   } // end of ParserBase::readStringOrArrayOfString
 
@@ -1022,7 +1033,7 @@ namespace mfront
     ++(this->current);
     this->readSpecifiedToken("ParserBase::treatStaticVar",";");
     this->registerStaticVariable(name);
-    this->staticVars.push_back(StaticVariableDescription(type,name,line,value));
+    this-> addStaticVariableDescription(StaticVariableDescription(type,name,line,value));
   } // end of ParserBase::treatStaticVar
 
   void
@@ -1060,23 +1071,6 @@ namespace mfront
     }
     ++(this->current);
   } // end of ParserBase::ignoreKeyWord
-
-  void
-  ParserBase::treatMaterial(void)
-  {
-    using namespace std;
-    if(!this->material.empty()){
-      string msg("ParserBase::treatMaterial : ");
-      msg += "material name alreay defined";
-      throw(runtime_error(msg));
-    }
-    this->material = this->readOnlyOneToken();
-    if(!CxxTokenizer::isValidIdentifier(this->material,true)){
-      string msg("ParserBase::treatMaterial : ");
-      msg += "invalid material name '"+this->material+"'";
-      throw(runtime_error(msg));
-    }
-  } // end of ParserBase::treatMaterial
 
   void
   ParserBase::treatLibrary(void)

@@ -9,8 +9,9 @@
 #ifndef _LIB_MFRONT_PARSERBASE_HXX_
 #define _LIB_MFRONT_PARSERBASE_HXX_ 
 
-#include<string>
 #include<set>
+#include<map>
+#include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
@@ -18,13 +19,18 @@
 #include"MFront/MFrontGenericData.hxx"
 #include"MFront/VariableModifier.hxx"
 #include"MFront/WordAnalyser.hxx"
+#include"MFront/VariableDescription.hxx"
+#include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront
 {
 
+  /*!
+   * base structure for parsers
+   */
   struct TFEL_VISIBILITY_EXPORT ParserBase
     : public tfel::utilities::CxxTokenizer,
-      protected MFrontGenericData
+      public MFrontGenericData
   {
 
     /*!
@@ -39,12 +45,29 @@ namespace mfront
     
   protected:
 
+    /*!
+     * constructor
+     */
     ParserBase();
-
+    /*!
+     * \brief analyse a file
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commandes (those commands are given through the
+     * --@?? option of the command line
+     */
     virtual void
     analyseFile(const std::string&,
 		const std::vector<std::string>&) = 0;
-
+    /*!
+     * \brief add a static variable description
+     * \param[in] v : variable description
+     */
+    virtual void
+    addStaticVariableDescription(const StaticVariableDescription&) = 0;
+    /*!
+     * destructor
+     */
     virtual ~ParserBase();
 
     void
@@ -132,7 +155,6 @@ namespace mfront
 
     std::string
     readOnlyOneToken(void);
-
     /*!
      * \param[in] cont : variable container to wich variables are
      * added
@@ -146,7 +168,6 @@ namespace mfront
 		const std::string&,
 		const bool,
 		const bool);
-
     /*!
      * \param[in] cont : variable container to wich variables are
      * added
@@ -158,10 +179,28 @@ namespace mfront
     readVarList(VariableDescriptionContainer&,
 		const bool,
 		const bool);
-
+    /*!
+     * extract a string from the current token and go the next token
+     * \param[in] m : calling method name (used for error message)
+     * \return the extracted string
+     */
+    std::string
+    readString(const std::string&);
+    /*!
+     * extract an array of string starting from the current token and
+     * go the token following the end of the array
+     * \param[in] m : calling method name (used for error message)
+     * \return the extracted array of strings
+     */
     std::vector<std::string>
     readArrayOfString(const std::string&);
-
+    /*!
+     * extract an array of string starting from the current token and
+     * go the token following the end of the array
+     * \param[in] m : calling method name (used for error message)
+     * \return the extracted array of strings which contains only one
+     * element if a string was read
+     */
     std::vector<std::string>
     readStringOrArrayOfString(const std::string&);
 
@@ -207,8 +246,6 @@ namespace mfront
     treatIntegerConstant(void);
     virtual void
     treatDescription(void);
-    virtual void
-    treatMaterial(void);
     virtual void
     treatLibrary(void);
     virtual void

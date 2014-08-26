@@ -14,6 +14,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"MFront/VariableDescription.hxx"
+#include"MFront/StaticVariableDescription.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
 
 namespace mfront
@@ -44,7 +45,15 @@ namespace mfront
     VariableDescriptionContainer globalParameters;
     VariableDescriptionContainer localParameters;
     VariableDescriptionContainer constantMaterialProperties;
+    /*!
+     * static variables
+     */
+    StaticVariableDescriptionContainer staticVars;
 
+    /*!
+     * material name
+     */
+    std::string material;
     std::set<std::string> domains;
     std::set<std::string> fieldNames;
     std::set<std::string> functionNames;

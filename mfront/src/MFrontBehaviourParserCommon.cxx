@@ -6,7 +6,10 @@
  * \date   05 mai 2008
  */
 
+#include<iostream>
+
 #include<algorithm>
+#include<iterator>
 #include<vector>
 #include<sstream>
 #include<utility>
@@ -19,6 +22,8 @@
 
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontSearchFile.hxx"
+#include"MFront/MFrontMaterialLawParser.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
 #include"MFront/MFrontBehaviourInterfaceFactory.hxx"
 
@@ -118,6 +123,12 @@ namespace mfront{
       }
     }
   } // end of MFrontBehaviourParserCommon::requiresTVectorOrVectorIncludes
+
+  void
+  MFrontBehaviourParserCommon::addStaticVariableDescription(const StaticVariableDescription& v)
+  {
+    this->mb.addStaticVariable(v);
+  } // end of MFrontBehaviourParserCommon::addStaticVariableDescription
 
   void MFrontBehaviourParserCommon::setVerboseMode(void)
   {
@@ -255,7 +266,7 @@ namespace mfront{
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       interface->endTreatement(this->fileName,
 			       this->library,
-			       this->material,
+			       this->mb.getMaterialName(),
 			       this->className,
 			       this->authorName,
 			       this->date,
@@ -309,6 +320,41 @@ namespace mfront{
       }
     }
   }
+
+  void
+  MFrontBehaviourParserCommon::treatMaterial(void)
+  {
+    using namespace std;
+    const string& material = this->readOnlyOneToken();
+    if(!CxxTokenizer::isValidIdentifier(material,true)){
+      string msg("MFrontBehaviourParserCommon::treatMaterial : ");
+      msg += "invalid material name '"+material+"'";
+      throw(runtime_error(msg));
+    }
+    this->mb.setMaterialName(material);
+    this->updateClassName();
+  } // end of MFrontBehaviourParserCommon::treatMaterial
+
+  void
+  MFrontBehaviourParserCommon::treatThermalExpansion(void)
+  {
+    using namespace std;
+    const string m("MFrontBehaviourParserCommon::treatThermalExpansion");
+    const string& mf = MFrontSearchFile::search(this->readString(m));
+    this->readSpecifiedToken(m,";");
+    // parse the file
+    MFrontMaterialLawParser p;
+    p.analyseFile(mf);
+    MaterialPropertyDescription a(p.getMaterialPropertyDescription());
+    // if(a.staticVars
+    // cout << "output : " << a.output << endl;
+    // cout << "inputs : ";
+    // for(VariableDescriptionContainer::const_iterator pi=a.inputs.begin();
+    // 	pi!=a.inputs.end();++pi){
+    //   cout << pi->name << " ";
+    // }
+    // cout << endl;
+  } // end of MFrontBehaviourParserCommon::treatThermalExpansion
 
   void
   MFrontBehaviourParserCommon::treatModellingHypothesis(void)
@@ -667,21 +713,14 @@ namespace mfront{
   MFrontBehaviourParserCommon::updateClassName(void)
   {
     if((!this->behaviour.empty())||
-       (!this->material.empty())){
-      this->className = this->material+this->behaviour;
+       (!this->mb.getMaterialName().empty())){
+      this->className = this->mb.getMaterialName()+this->behaviour;
     }
     if(!isValidIdentifier(this->className)){
       this->throwRuntimeError("MFrontBehaviourParserCommon::updateClassName",
 			      "resulting class name is not valid (read '"+this->className+"')");
     }
   } // end of MFrontBehaviourParserCommon::updateClassName
-
-  void
-  MFrontBehaviourParserCommon::treatMaterial(void)
-  {
-    ParserBase::treatMaterial();
-    this->updateClassName();
-  } // end of MFrontBehaviourParserCommon::treatMaterial
 
   void MFrontBehaviourParserCommon::treatBehaviour(void)
   {
@@ -2192,7 +2231,7 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     StaticVariableDescriptionContainer::const_iterator p;
-    for(p=this->staticVars.begin();p!=this->staticVars.end();++p){
+    for(p=this->mb.getStaticVariables().begin();p!=this->mb.getStaticVariables().end();++p){
       if(!this->debugMode){
 	if(p->lineNumber!=0u){
 	  this->behaviourFile << "#line " << p->lineNumber << " \"" 
@@ -3298,7 +3337,8 @@ namespace mfront{
     m.push_back("tfel::material::ModellingHypothesis::PLANESTRAIN");
     m.push_back("tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN");
     m.push_back("tfel::material::ModellingHypothesis::TRIDIMENSIONAL");
-    for(p=this->staticVars.begin();p!=this->staticVars.end();++p){
+    for(p=this->mb.getStaticVariables().begin();
+	p!=this->mb.getStaticVariables().end();++p){
       for(pm=m.begin();pm!=m.end();++pm){
 	if(this->mb.useQt()){
 	  this->srcFile << "template<>\n";
@@ -3523,7 +3563,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const Map& iincs = interface->getGlobalIncludes(this->library,
-						      this->material,
+						      this->mb.getMaterialName(),
 						      this->className);
       for(p=iincs.begin();p!=iincs.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
@@ -3546,7 +3586,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const Map& ideps = interface->getGlobalDependencies(this->library,
-							  this->material,
+							  this->mb.getMaterialName(),
 							  this->className);
       for(p=ideps.begin();p!=ideps.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
@@ -3570,7 +3610,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const Map& isources = interface->getGeneratedSources(this->library,
-							   this->material,
+							   this->mb.getMaterialName(),
 							   this->className);
       for(p=isources.begin();p!=isources.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
@@ -3600,7 +3640,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const vector<string>& iincs = interface->getGeneratedIncludes(this->library,
-								    this->material,
+								    this->mb.getMaterialName(),
 								    this->className);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
     }
@@ -3624,7 +3664,7 @@ namespace mfront{
 	i != this->interfaces.end();++i){
       MFrontBehaviourVirtualInterface *interface = mbif.getInterfacePtr(*i);
       const Map& ideps = interface->getLibrariesDependencies(this->library,
-							     this->material,
+							     this->mb.getMaterialName(),
 							     this->className);
       for(p=ideps.begin();p!=ideps.end();++p){
 	for(p2=p->second.begin();p2!=p->second.end();++p2){

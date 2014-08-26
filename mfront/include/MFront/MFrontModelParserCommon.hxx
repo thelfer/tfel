@@ -70,11 +70,21 @@ namespace mfront{
 
   protected:
 
-    void
-    treatModel(void);
+    /*!
+     * \brief add a static variable description
+     * \param[in] v : variable description
+     */
+    virtual void
+    addStaticVariableDescription(const StaticVariableDescription&);
+
+    /*!
+     * treat the material keyword
+     */
+    virtual void
+    treatMaterial(void);
 
     void
-    treatMaterial(void);
+    treatModel(void);
 
     void
     treatDomain(void);

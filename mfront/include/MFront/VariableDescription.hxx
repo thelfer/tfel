@@ -51,10 +51,35 @@ namespace mfront
 
   //! a simple alias for backward compatibility
   typedef VariableDescription  VarHandler;
-  //! a simple alias
-  typedef std::vector<VariableDescription>  VariableDescriptionContainer;
+
+  //! a simple wrapper around the std::vector class
+  struct VariableDescriptionContainer
+    : private std::vector<VariableDescription>
+  {
+    using std::vector<VariableDescription>::size_type;
+    using std::vector<VariableDescription>::value_type;
+    using std::vector<VariableDescription>::reference;
+    using std::vector<VariableDescription>::const_reference;
+    using std::vector<VariableDescription>::iterator;
+    using std::vector<VariableDescription>::const_iterator;
+    using std::vector<VariableDescription>::push_back;
+    using std::vector<VariableDescription>::begin;
+    using std::vector<VariableDescription>::end;
+    using std::vector<VariableDescription>::empty;
+    using std::vector<VariableDescription>::front;
+    using std::vector<VariableDescription>::back;
+    using std::vector<VariableDescription>::size;
+    using std::vector<VariableDescription>::operator[];
+    /*!
+     * \param[in] n : variable name
+     * \return true if a variable with the given name exists
+     */
+    bool
+    contains(const std::string&) const;
+  };
+
   //! a simple alias for backward compatibility
-  typedef VariableDescriptionContainer      VarContainer;
+  typedef VariableDescriptionContainer      VarContainer;  
 
 } // end of namespace mfront
 

@@ -21,6 +21,7 @@
 #include"MFront/BoundsDescription.hxx"
 #include"MFront/ThermodynamicForce.hxx"
 #include"MFront/SupportedTypes.hxx"
+#include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront{
 
@@ -49,6 +50,16 @@ namespace mfront{
      * constructor
      */
     MechanicalBehaviourDescription();
+    /*!
+     * \brief set the material name
+     * \param[in] m : material name
+     */
+    void setMaterialName(const std::string&);
+    /*!
+     * \return the material name
+     */
+    const std::string&
+    getMaterialName(void) const;
     /*!
      * \return the size of the main variables
      */
@@ -269,14 +280,20 @@ namespace mfront{
 
     void
     addHypothesis(const Hypothesis);
+    /*!
+     * \return the static variables defined
+     */
+    const StaticVariableDescriptionContainer&
+    getStaticVariables(void) const;
+    /*!
+     * \brief add a static variable description
+     * \param[in] v : variable description
+     */
+    void
+    addStaticVariable(const StaticVariableDescription&);
 
   private:
-    /*!
-     * And helper method
-     */
-    static bool
-    contains(const VariableDescriptionContainer&,
-	     const std::string&);
+
     //! copy constructor (disabled)
     MechanicalBehaviourDescription(const MechanicalBehaviourDescription&);
     //! assignement operator constructor (disabled)
@@ -336,7 +353,15 @@ namespace mfront{
     VariableDescriptionContainer externalStateVariables;
     VariableDescriptionContainer localVariables;
     VariableDescriptionContainer parameters;
-
+    /*!
+     * static variables
+     */
+    StaticVariableDescriptionContainer staticVars;
+    /*!
+     * material name
+     */
+    std::string material;
+    
     std::map<std::string,double>         parametersDefaultValues;
     std::map<std::string,int>            iParametersDefaultValues;
     std::map<std::string,unsigned short> uParametersDefaultValues;
