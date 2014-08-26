@@ -341,16 +341,39 @@ namespace mfront
     UMATInt kinc(1);
     tmatrix<3u,3u,real> uu0(real(0));
     tmatrix<3u,3u,real> uu1(real(0));
-    // uu0 and uu1 must be built using Fortran notations
     uu0(0,0) = u0(0); uu1(0,0) = u1(0);
     uu0(1,1) = u0(1); uu1(1,1) = u1(1);
     uu0(2,2) = u0(2); uu1(2,2) = u1(2);
-    uu0(1,0) = u0(3); uu1(1,0) = u1(3);
-    uu0(0,1) = u0(4); uu1(0,1) = u1(4);
-    uu0(2,0) = u0(5); uu1(2,0) = u1(5);
-    uu0(0,2) = u0(6); uu1(0,2) = u1(6);
-    uu0(2,1) = u0(7); uu1(2,1) = u1(7);
-    uu0(1,2) = u0(8); uu1(1,2) = u1(8);
+    if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+      uu0(1,0) = 0.; uu1(1,0) = 0.;
+      uu0(0,1) = 0.; uu1(0,1) = 0.;
+      uu0(2,0) = 0.; uu1(2,0) = 0.;
+      uu0(0,2) = 0.; uu1(0,2) = 0.;
+      uu0(2,1) = 0.; uu1(2,1) = 0.;
+      uu0(1,2) = 0.; uu1(1,2) = 0.;
+    } else if ((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
+	       (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)||
+	       (h==MH::TRIDIMENSIONAL)){
+      // uu0 and uu1 must be built using Fortran notations
+      uu0(1,0) = u0(3); uu1(1,0) = u1(3);
+      uu0(0,1) = u0(4); uu1(0,1) = u1(4);
+      uu0(2,0) = 0.; uu1(2,0) = 0.;
+      uu0(0,2) = 0.; uu1(0,2) = 0.;
+      uu0(2,1) = 0.; uu1(2,1) = 0.;
+      uu0(1,2) = 0.; uu1(1,2) = 0.;
+    } else if (h==MH::TRIDIMENSIONAL){
+      // uu0 and uu1 must be built using Fortran notations
+      uu0(1,0) = u0(3); uu1(1,0) = u1(3);
+      uu0(0,1) = u0(4); uu1(0,1) = u1(4);
+      uu0(2,0) = u0(5); uu1(2,0) = u1(5);
+      uu0(0,2) = u0(6); uu1(0,2) = u1(6);
+      uu0(2,1) = u0(7); uu1(2,1) = u1(7);
+      uu0(1,2) = u0(8); uu1(1,2) = u1(8);
+    } else {
+      string msg("MTestUmatFiniteStrainBehaviour::integrate : ");
+      msg += "unsupported hypothesis";
+      throw(runtime_error(msg));
+    }
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s1(i)  /= sqrt2;
     }

@@ -115,9 +115,9 @@ namespace mfront{
     this->flags.insert(MVType("real",Scalar));
     this->flags.insert(MVType("frequency",Scalar));
     this->flags.insert(MVType("stress",Scalar));
-    this->flags.insert(MVType("stress_rate",Scalar));
+    //    this->flags.insert(MVType("stressrate",Scalar));
     this->flags.insert(MVType("strain",Scalar));
-    this->flags.insert(MVType("strain_rate",Scalar));
+    this->flags.insert(MVType("strainrate",Scalar));
     this->flags.insert(MVType("temperature",Scalar));
     this->flags.insert(MVType("energy_density",Scalar));
     this->flags.insert(MVType("thermalexpansion",Scalar));

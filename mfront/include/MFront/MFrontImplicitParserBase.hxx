@@ -85,6 +85,8 @@ namespace mfront{
 
     virtual void writeGetPartialJacobianInvert(void);
 
+    virtual void writeLimitsOnIncrementValues(const std::string&);
+
     virtual void treatTheta(void);
 
     virtual void treatIterMax(void);
@@ -124,6 +126,8 @@ namespace mfront{
     virtual void treatTangentOperator(void);
 
     virtual void treatIsTangentOperatorSymmetric(void);
+
+    virtual void treatMaximumIncrementValuePerIteration(void);
 
     virtual void
     treatUnknownKeyword(void);

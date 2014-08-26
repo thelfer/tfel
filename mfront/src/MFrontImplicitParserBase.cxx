@@ -37,6 +37,7 @@ namespace mfront{
     this->registerVariable("numerical_jacobian_epsilon");
     this->registerVariable("iterMax");
     this->mb.getParameters().push_back(VarHandler("ushort","iterMax",1u,0u));
+    this->registerVariable("maximum_increment_value_per_iteration");
     this->registerVariable("jacobianComparisonCriterium");
     this->registerVariable("relaxationTrigger");
     this->registerVariable("accelerationTrigger");
@@ -113,6 +114,8 @@ namespace mfront{
 			      &MFrontImplicitParserBase::treatJacobianComparisonCriterium);
     this->registerNewCallBack("@RequireStiffnessTensor",
 			      &MFrontImplicitParserBase::treatRequireStiffnessOperator);
+    this->registerNewCallBack("@MaximumIncrementValuePerIteration",
+			      &MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration);
     //    this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
@@ -173,6 +176,7 @@ namespace mfront{
   void MFrontImplicitParserBase::treatUnknownVariableMethod(const std::string& n)
   {
     using namespace std;
+    typedef map<string,double>::value_type MVType;
     if((this->mb.isInternalStateVariableName(n))||
        ((n[0]=='f')&&(this->mb.isInternalStateVariableName(n.substr(1))))){
       if(this->current->value=="setNormalisationFactor"){
@@ -200,7 +204,7 @@ namespace mfront{
 	    this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
 				    "Failed to read normalisation factor.");
 	  }
-	  if(value<0.){
+	  if(value<=0.){
 	    this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
 				    "invalid normalisation factor.");
 	  }
@@ -209,6 +213,36 @@ namespace mfront{
 	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
 				  "Normalisation factor already defined for variable '"+n+"'.");
 	}
+	++(this->current);
+	return;
+      } else if(this->current->value=="setMaximumIncrementValuePerIteration"){
+	string v;
+	if(this->mb.isInternalStateVariableName(n)){
+	  v = n;
+	} else {
+	  v = n.substr(1);
+	}
+	++(this->current);
+	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
+	this->readSpecifiedToken("MFrontImplicitParserBase::treatUnknowVariableMethod","(");
+	this->checkNotEndOfFile("MFrontImplicitParserBase::treatUnknowVariableMethod");
+	const string var =  this->current->value;
+	double value;
+	istringstream flux(var);
+	flux >> value;
+	if(flux.fail()){
+	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
+				  "Failed to read maximum increment value per iteration from '"+var+"'.");
+	}
+	if(value<=0.){
+	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
+				  "invalid maximum increment value per iteration.");
+	}
+	if(!this->mb.getParametersDefaultValues().insert(MVType(n+"_maximum_increment_value_per_iteration",value)).second){
+	  this->throwRuntimeError("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
+				  "default value already defined for parameter '"+n+"'_maximum_increment_value_per_iteration'");
+	}
+	this->mb.getParameters().push_back(VarHandler("real",n+"_maximum_increment_value_per_iteration",1u,0u));
 	++(this->current);
 	return;
       }
@@ -837,6 +871,33 @@ namespace mfront{
     this->computeFinalStress = this->readNextBlock(makeVariableModifier(*this,&MFrontImplicitParserBase::computeStressVariableModifier2),true);
     this->hasUserDefinedComputeFinalStress = true;
   } // end of MFrontImplicitParserBase::treatComputeFinalStress
+
+  void
+  MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration(void)
+  {
+    using namespace std;
+    typedef map<string,double>::value_type MVType;
+    double value;
+    this->checkNotEndOfFile("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
+			    "Cannot read value value.");
+    istringstream flux(current->value);
+    flux >> value;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
+			      "Failed to read value.");
+    }
+    if(value<=0){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
+			      "Value must be positive.");
+    }
+    if(!this->mb.getParametersDefaultValues().insert(MVType("maximum_increment_value_per_iteration",value)).second){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration",
+			      "default value already defined for parameter 'maximum_increment_value_per_iteration'");
+    }
+    this->mb.getParameters().push_back(VarHandler("real","maximum_increment_value_per_iteration",1u,0u));
+    ++(this->current);
+    this->readSpecifiedToken("MFrontImplicitParserBase::MaximumIncrementValuePerIteration",";");
+  } // end of MFrontImplicitParserBase::treatMaximumIncrementValuePerIteration
 
   void MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)
   {
@@ -1549,6 +1610,48 @@ namespace mfront{
     }
   } // end of MFrontImplicitParserBase::writeGetPartialJacobianInvert
   
+  void
+  MFrontImplicitParserBase::writeLimitsOnIncrementValues(const std::string& v)
+  {
+    using namespace std;
+    this->checkBehaviourFile();
+    VarContainer::const_iterator p;
+    SupportedTypes::TypeSize n;
+    for(p=this->mb.getStateVariables().begin();p!=this->mb.getStateVariables().end();++p){
+      SupportedTypes::TypeSize nv = this->getTypeSize(p->type,p->arraySize);
+      if(this->mb.getParametersDefaultValues().find(p->name+"_maximum_increment_value_per_iteration")!=
+	 this->mb.getParametersDefaultValues().end()){
+	this->behaviourFile << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
+	this->behaviourFile << "if(std::abs(" << v << "[" << n 
+			    << "+idx])>this->" << p->name << "_maximum_increment_value_per_iteration){\n";
+	this->behaviourFile << "if("<< v << "[" << n << "+idx]<0){\n";
+	this->behaviourFile << "" << v << "[" << n
+			    << "+idx] = -this->" << p->name << "_maximum_increment_value_per_iteration;\n";
+	this->behaviourFile << "} else {\n";
+	this->behaviourFile << "" << v << "["
+			    << n << "+idx] =  this->" << p->name << "_maximum_increment_value_per_iteration;\n";
+	this->behaviourFile << "}\n";
+	this->behaviourFile << "}\n";
+	this->behaviourFile << "}\n";
+      } else if(this->mb.getParametersDefaultValues().find("maximum_increment_value_per_iteration")!=
+		this->mb.getParametersDefaultValues().end()){
+	this->behaviourFile << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
+	this->behaviourFile << "if(std::abs(" << v << "[" << n 
+			    << "+idx])>this->maximum_increment_value_per_iteration){\n";
+	this->behaviourFile << "if("<< v << "[" << n << "+idx]<0){\n";
+	this->behaviourFile << "" << v << "[" << n
+			    << "+idx] = -this->maximum_increment_value_per_iteration;\n";
+	this->behaviourFile << "} else {\n";
+	this->behaviourFile << "" << v << "["
+			    << n << "+idx] =  this->maximum_increment_value_per_iteration;\n";
+	this->behaviourFile << "}\n";
+	this->behaviourFile << "}\n";
+	this->behaviourFile << "}\n";
+      }
+      n += nv;
+    }
+  }
+
   void MFrontImplicitParserBase::writeComputeNumericalJacobian(){
     using namespace std;
     VarContainer::const_iterator p;
@@ -1693,6 +1796,7 @@ namespace mfront{
       }
       this->behaviourFile << "}" << endl;
       this->behaviourFile << "jacobian2 = this->jacobian;\n";
+      this->writeLimitsOnIncrementValues("Dzeros");
       this->behaviourFile << "this->zeros  += Dzeros;\n";
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
       if(!this->computeStress.empty()){
@@ -1702,6 +1806,7 @@ namespace mfront{
     }
     if(this->algorithm==MFrontImplicitParserBase::BROYDEN2){
       this->behaviourFile << "Dzeros   = -(this->jacobian)*(this->fzeros);\n";
+      this->writeLimitsOnIncrementValues("Dzeros");
       this->behaviourFile << "this->zeros  += Dzeros;\n";
       this->behaviourFile << "fzeros2 = this->fzeros;\n";
       if(!this->computeStress.empty()){
@@ -1834,6 +1939,7 @@ namespace mfront{
 	this->behaviourFile << "return MechanicalBehaviour<hypothesis,Type,false>::FAILURE;\n";
       }
       this->behaviourFile << "}" << endl;
+      this->writeLimitsOnIncrementValues("fzeros");
       this->behaviourFile << "this->zeros -= this->fzeros;\n";
     }
     if(this->algorithm==MFrontImplicitParserBase::BROYDEN){
