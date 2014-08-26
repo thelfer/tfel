@@ -512,7 +512,7 @@ namespace mfront{
       if(this->mb.requiresStiffnessOperator()){
 	this->hasConsistantTangentOperator = true;
 	this->tangentOperator = "if(smt==ELASTIC){\n"
-	                        "this->Dt = this->D;"
+	                        "this->Dt = this->D;\n"
  	                        "} else {\n"
 	                        "return false;\n"
 	                        "}\n";

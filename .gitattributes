@@ -956,7 +956,6 @@ mfront/include/MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx -text
 mfront/include/MFront/Cyrano/CyranoOrthotropicBehaviour.hxx -text
 mfront/include/MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx -text
 mfront/include/MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx -text
-mfront/include/MFront/Cyrano/CyranoTangentOperator.hxx -text
 mfront/include/MFront/Cyrano/CyranoTraits.hxx -text
 mfront/include/MFront/DrivingVariable.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
@@ -1121,7 +1120,6 @@ mfront/src/CyranoException.cxx -text
 mfront/src/CyranoGetModellingHypothesis.cxx -text
 mfront/src/CyranoInterfaceBase.cxx -text
 mfront/src/CyranoOutOfBoundsPolicy.cxx -text
-mfront/src/CyranoTangentOperator.cxx -text
 mfront/src/DrivingVariable.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/MFront.cxx -text
@@ -1533,6 +1531,10 @@ mfront/tests/behaviours/cyrano/CMakeLists.txt -text
 mfront/tests/behaviours/cyrano/Makefile.am -text
 mfront/tests/behaviours/cyrano/cyranoelasticity.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoellipticcreep.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranonorton.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranonorton2.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/references/PolyCristalsAngles.txt -text
 mfront/tests/behaviours/references/burger.ref -text
 mfront/tests/behaviours/references/chaboche-aster.ref -text

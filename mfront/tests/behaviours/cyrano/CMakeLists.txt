@@ -10,7 +10,10 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 
 set(mfront_tests_SOURCES
   Elasticity
-  OrthotropicElastic)
+  Norton
+  OrthotropicElastic
+  OrthotropicCreep
+  EllipticCreep)
 
 mfront_behaviour_check_library(MFrontCyranoBehaviours cyrano  ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCyranoBehaviours
@@ -47,3 +50,7 @@ endmacro(test_cyrano)
 
 test_cyrano(elasticity)
 test_cyrano(elasticity10)
+test_cyrano(norton)
+test_cyrano(norton2)
+test_cyrano(orthotropiccreep)
+test_cyrano(ellipticcreep)

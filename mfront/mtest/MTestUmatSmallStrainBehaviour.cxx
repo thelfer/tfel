@@ -253,10 +253,10 @@ namespace mfront
     using namespace tfel::math;
     if(ktype!=MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       vector<real> s1(s0);
-      vector<real> de(real(0));
+      vector<real> e1(e0);
       vector<real> iv1(iv0);
       vector<real> desv(esv0.size(),real(0));
-      return this->call_behaviour(Kt,s1,iv1,r,e0,de,s0,
+      return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
 				  mp,iv0,esv0,desv,
 				  h,real(1),ktype,false);
     }

@@ -50,8 +50,9 @@ namespace cyrano{
       using namespace tfel::material;
       using namespace tfel::utilities;
       typedef ModellingHypothesis MH;
+      CyranoInterfaceBase::checkNTENSValue(*NTENS,3u);
       if(*NDI==14){
-	CyranoInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+	CyranoInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 											  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 											  STATEV,NSTATV,STRESS,KINC);
       } else {
@@ -62,7 +63,7 @@ namespace cyrano{
     
     template<tfel::material::ModellingHypothesis::Hypothesis H>
     TFEL_CYRANO_INLINE2 static void
-    callBehaviour(const CyranoInt  *const NTENS, const CyranoReal *const DTIME,
+    callBehaviour(const CyranoReal *const DTIME,
 		  const CyranoReal *const DROT,  CyranoReal *const DDSOE,
 		  const CyranoReal *const STRAN, const CyranoReal *const DSTRAN,
 		  const CyranoReal *const TEMP,  const CyranoReal *const DTEMP,
@@ -74,7 +75,7 @@ namespace cyrano{
       using namespace tfel::utilities;
       typedef Behaviour<H,CyranoReal,false> BV;
       try {
-	CyranoInterfaceDispatch<H,Behaviour>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+	CyranoInterfaceDispatch<H,Behaviour>::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 						  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 						  STATEV,NSTATV,STRESS);
       }

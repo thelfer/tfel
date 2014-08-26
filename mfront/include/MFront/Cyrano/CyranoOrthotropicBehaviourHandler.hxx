@@ -14,48 +14,14 @@
 
 namespace cyrano
 {
-
-  //! forward declaration
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
-  struct CyranoOrthotropicSmallStrainBehaviourHandler1D;
-  
-  /*!
-   * An helper structure to make an appropriate dispatch based on the
-   * spatial dimension
-   */
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL CyranoOrthotropicSmallStrainBehaviourDispatcher
-  {
-    //! a simple alias
-    typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
-    // spatial dimension
-    static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
-    // the dispatch
-    typedef CyranoOrthotropicSmallStrainBehaviourHandler1D<H,Behaviour> type;
-  }; // end of struct CyranoOrthotropicSmallStrainBehaviourDispatcher;
   
   /*!
    * The handler for orthotropic behaviours
-   * By default, this is unsupported (finite strain behaviour, cohesive zone models)
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CyranoOrthotropicBehaviourHandler
-    : public CyranoOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type
-  {
-    typedef typename CyranoOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type Handler;
-    using Handler::exe;
-  };
-
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL CyranoOrthotropicSmallStrainBehaviourHandler1D
-    : private CyranoBehaviourHandler<H,Behaviour>
   {
     TFEL_CYRANO_INLINE2 static 
       void exe(const CyranoReal *const DTIME,

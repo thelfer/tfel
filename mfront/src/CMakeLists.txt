@@ -141,7 +141,6 @@ if(HAVE_CYRANO)
         CyranoInterfaceBase.cxx
 	CyranoComputeStiffnessOperator.cxx
 	CyranoComputeThermalExpansionTensor.cxx
-	CyranoTangentOperator.cxx
 	CyranoOutOfBoundsPolicy.cxx
 	CyranoGetModellingHypothesis.cxx)
     tfel_library(CyranoInterface ${CyranoInterface_SOURCES})

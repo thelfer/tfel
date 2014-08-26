@@ -8,6 +8,8 @@
 #ifndef _LIB_MFRONT_MTESTCYRANOBEHAVIOUR_H_
 #define _LIB_MFRONT_MTESTCYRANOBEHAVIOUR_H_ 
 
+#include"TFEL/Math/tmatrix.hxx"
+
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MFront/MTestUmatBehaviourBase.hxx"
 
@@ -152,7 +154,7 @@ namespace mfront
     //! the umat fonction
     tfel::system::UMATFctPtr fct;
     //! local stifness matrix
-    mutable tfel::math::matrix<real> D;
+    mutable tfel::math::tmatrix<3u,3u,real> D;
     //! temporary vector
     mutable tfel::math::vector<real> iv;
   }; // end of struct MTestBehaviour

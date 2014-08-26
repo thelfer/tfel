@@ -630,6 +630,10 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/cyrano/Makefile
            mfront/tests/behaviours/cyrano/cyranoelasticity.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest
+           mfront/tests/behaviours/cyrano/cyranonorton.mtest
+           mfront/tests/behaviours/cyrano/cyranonorton2.mtest
+           mfront/tests/behaviours/cyrano/cyranoellipticcreep.mtest
+           mfront/tests/behaviours/cyrano/cyranoorthotropiccreep.mtest
 	   mfront/Examples/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile

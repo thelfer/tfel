@@ -12,8 +12,9 @@
 #error "This header shall not be called directly"
 #endif
 
+#include<algorithm>
+#include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Utilities/Name.hxx"
-#include"MFront/Cyrano/CyranoTangentOperator.hxx"
 
 namespace cyrano
 {
@@ -102,8 +103,7 @@ namespace cyrano
 	using namespace std;
 	using namespace tfel::material;
 	using namespace tfel::utilities;
-	throw(CyranoInvalidDimension(Name<Behaviour<H,CyranoReal,false> >::getName(),
-				   ModellingHypothesisToSpaceDimension<H>::value));
+	throw(CyranoInvalidDimension(Name<Behaviour<H,CyranoReal,false> >::getName(),1u));
 	return;
       } // end of Error::exe
       
@@ -259,25 +259,24 @@ namespace cyrano
 				      DoNothingInitializer>::type AInitializer;
 
       TFEL_CYRANO_INLINE Integrator(const CyranoReal *const DTIME ,
-				  const CyranoReal *const STRAN ,
-				  const CyranoReal *const DSTRAN,
-				  const CyranoReal *const TEMP,
-				  const CyranoReal *const DTEMP,
-				  const CyranoReal *const PROPS ,
-				  const CyranoReal *const PREDEF,
-				  const CyranoReal *const DPRED,
-				  const CyranoReal *const STATEV,
-				  const CyranoReal *const STRESS)
+				    const CyranoReal *const STRAN ,
+				    const CyranoReal *const DSTRAN,
+				    const CyranoReal *const TEMP,
+				    const CyranoReal *const DTEMP,
+				    const CyranoReal *const PROPS ,
+				    const CyranoReal *const PREDEF,
+				    const CyranoReal *const DPRED,
+				    const CyranoReal *const STATEV,
+				    const CyranoReal *const STRESS)
 	: behaviour(DTIME,STRESS,STRAN,DSTRAN,TEMP,DTEMP,
 		    PROPS+CyranoTraits<BV>::propertiesOffset,
 		    STATEV,PREDEF,DPRED),
-	dt(*DTIME)
-	  {
-	    SInitializer::exe(this->behaviour,PROPS);
-	    AInitializer::exe(this->behaviour,PROPS);
-	    const CyranoOutOfBoundsPolicy& up = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy();
-	    this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
-	  } // end of Integrator::Integrator
+	dt(*DTIME){
+	  SInitializer::exe(this->behaviour,PROPS);
+	  AInitializer::exe(this->behaviour,PROPS);
+	  const CyranoOutOfBoundsPolicy& up = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy();
+	  this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	} // end of Integrator::Integrator
 	
       TFEL_CYRANO_INLINE2
 	void exe(CyranoReal *const DDSOE,
@@ -373,8 +372,6 @@ namespace cyrano
     struct ConsistantTangentOperatorIsNotAvalaible
     {
       typedef Behaviour<H,CyranoReal,false> BV;
-      const static unsigned short N = 
-	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(BV&,CyranoReal *const)
       {
 	using namespace tfel::utilities;
@@ -382,42 +379,49 @@ namespace cyrano
       } // end of exe	  
     };
 
-    struct ConsistantTangentOperatorComputer
-    {
-      typedef Behaviour<H,CyranoReal,false> BV;
-      const static unsigned short N = 
-	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-      static void exe(const BV& bv,CyranoReal *const DDSOE)
-      {
-	using namespace tfel::math;
-	st2tost2<N,CyranoReal>& Dt = *(reinterpret_cast<st2tost2<N,CyranoReal>*>(DDSOE));
-	Dt = bv.getTangentOperator();
-      } // end of exe	  
-    };
-
     struct SymmetricConsistantTangentOperatorComputer
     {
       typedef Behaviour<H,CyranoReal,false> BV;
-      const static unsigned short N = 
-	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(const BV& bv,CyranoReal *const DDSOE)
       {
-	ConsistantTangentOperatorComputer::exe(bv,DDSOE);
+	using namespace tfel::math;
+	st2tost2<1u,CyranoReal>& Kt = *(reinterpret_cast<st2tost2<1u,CyranoReal>*>(DDSOE));
+	const st2tost2<1u,CyranoReal>& Dt = bv.getTangentOperator();
+	// conversion vers les conventions cyrano
+	Kt(0,0)=Dt(0,0);
+	Kt(1,0)=Dt(2,0);
+	Kt(2,0)=Dt(1,0);
+	Kt(0,1)=Dt(0,2);
+	Kt(1,1)=Dt(2,2);
+	Kt(2,1)=Dt(1,2);
+	Kt(0,2)=Dt(0,1);
+	Kt(1,2)=Dt(2,1);
+	Kt(2,2)=Dt(1,1);
       } // end of exe	  
     };
 
     struct GeneralConsistantTangentOperatorComputer
     {
       typedef Behaviour<H,CyranoReal,false> BV;
-      const static unsigned short N = 
-	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(const BV& bv,CyranoReal *const DDSOE)
       {
 	using namespace tfel::math;
-	ConsistantTangentOperatorComputer::exe(bv,DDSOE);
-	st2tost2<N,CyranoReal>& Dt = *(reinterpret_cast<st2tost2<N,CyranoReal>*>(DDSOE));
+	st2tost2<1u,CyranoReal>& Kt = *(reinterpret_cast<st2tost2<1u,CyranoReal>*>(DDSOE));
+	const st2tost2<1u,CyranoReal>& Dt = bv.getTangentOperator();
+	// conversion vers les conventions cyrano
+	Kt(0,0)=Dt(0,0);
+	Kt(1,0)=Dt(2,0);
+	Kt(2,0)=Dt(1,0);
+	Kt(0,1)=Dt(0,2);
+	Kt(1,1)=Dt(2,2);
+	Kt(2,1)=Dt(1,2);
+	Kt(0,2)=Dt(0,1);
+	Kt(1,2)=Dt(2,1);
+	Kt(2,2)=Dt(1,1);
 	// les conventions fortran....
-	CyranoTangentOperator::transpose(Dt);
+	std::swap(Kt(0,1),Kt(1,0));
+	std::swap(Kt(0,2),Kt(2,0));
+	std::swap(Kt(1,2),Kt(2,1));
       } // end of exe	  
     };
 

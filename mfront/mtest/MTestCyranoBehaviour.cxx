@@ -70,10 +70,7 @@ namespace mfront
   void
   MTestCyranoBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    const unsigned short ndv     = this->getDrivingVariablesSize(h);
-    const unsigned short nth     = this->getThermodynamicForcesSize(h);
     const unsigned short nstatev = this->getInternalStateVariablesSize(h);
-    this->D.resize(nth,ndv);
     this->iv.resize(nstatev);
     if(iv.size()==0){
       iv.push_back(0.);
@@ -107,10 +104,10 @@ namespace mfront
     using namespace tfel::math;
     if(ktype!=MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       vector<real> s1(s0);
-      vector<real> de(real(0));
+      vector<real> e1(e0);
       vector<real> iv1(iv0);
       vector<real> desv(esv0.size(),real(0));
-      return this->call_behaviour(Kt,s1,iv1,e0,de,s0,
+      return this->call_behaviour(Kt,s1,iv1,e0,e1,s0,
 				  mp,iv0,esv0,desv,
 				  h,real(1),ktype,false);
     }
@@ -161,45 +158,22 @@ namespace mfront
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     using cyrano::CyranoComputeStiffnessOperator;
-    static const real sqrt2 = sqrt(real(2));
     CyranoInt ntens;
     CyranoInt ndi;
     CyranoInt nprops = static_cast<CyranoInt>(mp.size());
     CyranoInt nstatv;
-    unsigned short dimension;
     if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       ndi   = 14;
       ntens = 3;
-      dimension = 1u;
-    } else if (h==MH::AXISYMMETRICAL){
-      ndi = 0;
-      ntens = 4;
-      dimension = 2u;
-    } else if (h==MH::PLANESTRESS){
-      ndi = -2;
-      ntens = 4;
-      dimension = 2u;
-    } else if (h==MH::PLANESTRAIN){
-      ndi = -1;
-      ntens = 4;
-      dimension = 2u;
-    } else if (h==MH::GENERALISEDPLANESTRAIN){
-      ndi = -3;
-      ntens = 4;
-      dimension = 2u;
-    } else if (h==MH::TRIDIMENSIONAL){
-      ndi = 2;
-      ntens = 6;
-      dimension = 3u;
     } else {
       string msg("MTestCyranoBehaviour::integrate : ");
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
-    if((this->D.getNbRows()!=Kt.getNbRows())||
-       (this->D.getNbCols()!=Kt.getNbCols())){
+    if((Kt.getNbRows()!=3u)||
+       (Kt.getNbCols()!=3u)){
       string msg("MTestCyranoBehaviour::integrate : ");
-      msg += "the memory has not been allocated correctly";
+      msg += "invalid tangent operator size";
       throw(runtime_error(msg));
     }
     if(((iv0.size()==0)&&(this->iv.size()!=1u))||
@@ -258,18 +232,18 @@ namespace mfront
       }
     }
     CyranoInt kinc(1);
-    stensor<3u,real> ue0(real(0));
-    stensor<3u,real> ude(real(0));
+    stensor<1u,real> ue0(real(0));
+    stensor<1u,real> ude(real(0));
     copy(e0.begin(),e0.end(),ue0.begin());
-    for(i=0;i!=e1.size();++i){
+    for(i=0;i!=3u;++i){
       ude(i) = e1(i)-e0(i);
     }
     copy(s0.begin(),s0.end(),s1.begin());
-    for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i)  /= sqrt2;
-      ue0(i) *= sqrt2;
-      ude(i) *= sqrt2;
-    }
+    // turning to cyrano convention
+    swap(s1(1),s1(2));
+    swap(ue0(1),ue0(2));
+    swap(ude(1),ude(2));
+    // integration
     (this->fct)(&ntens,&dt,&drot(0,0),
 		&D(0,0),&ue0(0),&ude(0),
 		&ev0(0),&dev(0),
@@ -283,17 +257,26 @@ namespace mfront
     if(!iv1.empty()){
       copy(iv.begin(),iv.end(),iv1.begin());
     }
+    // turning back to MFront conventions
+    swap(s1(1),s1(2));
     // tangent operator (...)
     if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 
       if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
 	this->computeElasticStiffness(Kt,mp,h);
       } else {
-	MTestUmatNormaliseTangentOperator::exe(Kt,D,dimension);
+	// transpose (fortran -> c++)
+	tmatrix<3u,3u,real> D2(transpose(D));
+	// change to MTest conventions
+	Kt(0,0)=D2(0,0);
+	Kt(1,0)=D2(2,0);
+	Kt(2,0)=D2(1,0);
+	Kt(0,1)=D2(0,2);
+	Kt(1,1)=D2(2,2);
+	Kt(2,1)=D2(1,2);
+	Kt(0,2)=D2(0,1);
+	Kt(1,2)=D2(2,1);
+	Kt(2,2)=D2(1,1);
       }
-    }
-    // turning things in standard conventions
-    for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i) *= sqrt2;
     }
     return true;
   } // end of MTestCyranoBehaviour::integrate

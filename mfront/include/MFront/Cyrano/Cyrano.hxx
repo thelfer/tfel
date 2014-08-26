@@ -27,7 +27,7 @@ namespace cyrano{
 #elif CYRANO_ARCH == 32
   typedef int    CyranoInt;
 #else
-  #error "aster : unsupported machine type"
+  #error "cyrano : unsupported machine type"
 #endif
 
   typedef double   CyranoReal;

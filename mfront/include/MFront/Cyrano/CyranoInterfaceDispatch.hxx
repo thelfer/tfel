@@ -40,7 +40,7 @@ namespace cyrano{
     : public CyranoInterfaceBase
   {
     TFEL_CYRANO_INLINE2 static
-    void exe(const CyranoInt  *const NTENS, const CyranoReal *const DTIME,
+    void exe(const CyranoReal *const DTIME,
 	     const CyranoReal *const DROT,  CyranoReal *const DDSOE,
 	     const CyranoReal *const STRAN, const CyranoReal *const DSTRAN,
 	     const CyranoReal *const TEMP,  const CyranoReal *const DTEMP,
@@ -58,7 +58,6 @@ namespace cyrano{
       typedef typename IF<Traits::stype==cyrano::ISOTROPIC,
 			  CyranoIsotropicBehaviourHandler<H,Behaviour>,
 			  CyranoOrthotropicBehaviourHandler<H,Behaviour> >::type Handler;
-      CyranoInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		   STRESS);
