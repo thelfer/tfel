@@ -135,37 +135,37 @@ namespace tfel
        * \return the key
        */
       const std::string&
-      getKey(void) const;
+	getKey(void) const;
       /*!
        * \return names asssociated with this key
        */
       const std::vector<std::string>&
-      getNames(void) const;
+	getNames(void) const;
       /*!
        * \return the unit
        */
       const std::string&
-      getUnit(void) const;
+	getUnit(void) const;
       /*!
        * \return the type
        */
       const std::string&
-      getType(void) const;
+	getType(void) const;
       /*!
        * \return the short description
        */
       const std::string&
-      getShortDescription(void) const;
+	getShortDescription(void) const;
       /*!
        * \return the description
        */
       const std::vector<std::string>&
-      getDescription(void) const;
+	getDescription(void) const;
       /*!
        * \return the notes
        */
       const std::vector<std::string>&
-      getNotes(void) const;
+	getNotes(void) const;
       /*!
        * cast operator to string. Equivalent to getKey()
        */
@@ -174,37 +174,37 @@ namespace tfel
        * comparison operator
        */
       TFELGLOSSARY_VISIBILITY_EXPORT
-      friend bool
-      operator<(const GlossaryEntry&,
-		const GlossaryEntry&);
+	friend bool
+	operator<(const GlossaryEntry&,
+		  const GlossaryEntry&);
       /*!
        * comparison operator
        */
       TFELGLOSSARY_VISIBILITY_EXPORT
-      friend bool
-      operator != (const std::string&,
-		   const GlossaryEntry&);
+	friend bool
+	operator != (const std::string&,
+		     const GlossaryEntry&);
       /*!
        * comparison operator
        */
       TFELGLOSSARY_VISIBILITY_EXPORT
-      friend bool
-      operator != (const GlossaryEntry&,
-		   const std::string&);
+	friend bool
+	operator != (const GlossaryEntry&,
+		     const std::string&);
       /*!
        * comparison operator
        */
       TFELGLOSSARY_VISIBILITY_EXPORT
-      friend bool
-      operator == (const std::string&,
-		   const GlossaryEntry&);
+	friend bool
+	operator == (const std::string&,
+		     const GlossaryEntry&);
       /*!
        * comparison operator
        */
       TFELGLOSSARY_VISIBILITY_EXPORT
-      friend bool
-      operator == (const GlossaryEntry&,
-		   const std::string&);
+	friend bool
+	operator == (const GlossaryEntry&,
+		     const std::string&);
     private:
       /*!
        * \brief check if this entry is valid.

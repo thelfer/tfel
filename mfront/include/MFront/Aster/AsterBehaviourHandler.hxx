@@ -368,7 +368,7 @@ namespace aster
 	  typedef typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type TangentOperatorType;
 	  TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
 	  Dt = bv.getTangentOperator();
-	  // l'opérateur tangent contient des sqrt(2)...
+	  // l'opérateur tangent contient des sqrt(2) en petites déformations...
 	  AsterTangentOperator::normalize(Dt);
 	} // end of exe	  
       };
@@ -389,8 +389,8 @@ namespace aster
 	{
 	  typedef typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type TangentOperatorType;
 	  ConsistentTangentOperatorComputer::exe(bv,DDSOE);
+	  // les conventions fortran.... (petites déformations et modèles de zones cohésives)
 	  TangentOperatorType&  Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
-	  // les conventions fortran....
 	  AsterTangentOperator::transpose(Dt);
 	} // end of exe	  
       };

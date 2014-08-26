@@ -113,7 +113,9 @@ nobase_include_HEADERS += MFront/MTestTypes.hxx	                          \
 			  MFront/MTestUmatFiniteStrainBehaviour.hxx       \
 			  MFront/MTestUmatCohesiveZoneModel.hxx           \
 			  MFront/MTestUmatNormaliseTangentOperator.hxx    \
+			  MFront/MTestAsterStandardBehaviour.hxx          \
 			  MFront/MTestAsterSmallStrainBehaviour.hxx       \
+			  MFront/MTestAsterFiniteStrainBehaviour.hxx      \
 			  MFront/MTestAsterCohesiveZoneModel.hxx          \
 			  MFront/MTestCyranoBehaviour.hxx                 \
 			  MFront/MTestEvolution.hxx                       \

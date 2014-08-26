@@ -1781,9 +1781,13 @@ namespace mfront{
     if(b2){
       this->behaviourDataFile << "#include\"TFEL/Math/vector.hxx\"" << endl;
     }
+    this->behaviourDataFile << "#include\"TFEL/Math/stensor.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Math/st2tost2.hxx\"" << endl;
     if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/t2tot2.hxx\"" << endl;
       this->behaviourDataFile << "#include\"TFEL/Math/t2tost2.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/st2tot2.hxx\"" << endl;
       this->behaviourDataFile << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"" << endl;
     }
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
@@ -3999,9 +4003,13 @@ namespace mfront{
     if(b2){
       this->integrationDataFile << "#include\"TFEL/Math/vector.hxx\"" << endl;
     }
+    this->integrationDataFile << "#include\"TFEL/Math/stensor.hxx\"" << endl;
+    this->integrationDataFile << "#include\"TFEL/Math/st2tost2.hxx\"" << endl;
     if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       this->integrationDataFile << "#include\"TFEL/Math/tensor.hxx\"" << endl;
+      this->integrationDataFile << "#include\"TFEL/Math/t2tot2.hxx\"" << endl;
       this->integrationDataFile << "#include\"TFEL/Math/t2tost2.hxx\"" << endl;
+      this->integrationDataFile << "#include\"TFEL/Math/st2tot2.hxx\"" << endl;
     }
   }
 

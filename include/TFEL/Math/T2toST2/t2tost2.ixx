@@ -20,8 +20,6 @@
 #include"TFEL/Math/General/StorageTraits.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
-#include"TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx"
-#include"TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx"
 #include"TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx"
 
 namespace tfel{
@@ -180,58 +178,6 @@ namespace tfel{
     {
       return RunTimeProperties();
     } // end of t2tost2<N,T>::getRunTimeProperties
-
-
-    template<typename T2toST2Type,
-	     typename T2toT2Type>
-    TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
-      ((tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond)&&
-       (tfel::meta::Implements<T2toT2Type, T2toT2Concept >::cond)&&
-       (T2toST2Traits<T2toST2Type>::dime==T2toT2Traits<T2toT2Type>::dime)&&
-       (!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<typename T2toST2Traits<T2toST2Type>::NumType,
-								  typename T2toT2Traits<T2toT2Type>::NumType,
-								  OpMult>::Result>::cond)),
-      T2toST2Expr<t2tost2<T2toST2Traits<T2toST2Type>::dime,
-			  typename ComputeBinaryResult<typename T2toST2Traits<T2toST2Type>::NumType,
-						       typename T2toT2Traits<T2toT2Type>::NumType,
-						       OpMult>::Result>,
-      		  T2toST2T2toT2ProductExpr>
-      >::type
-    operator * (const T2toST2Type& a,
-		const T2toT2Type&  b){
-      typedef typename ComputeBinaryResult<typename T2toST2Traits<T2toST2Type>::NumType,
-					   typename T2toT2Traits<T2toT2Type>::NumType,
-					   OpMult>::Result value_type;
-      return T2toST2Expr<t2tost2<T2toT2Traits<T2toT2Type>::dime,value_type>,
-			 T2toST2T2toT2ProductExpr>(a,b);
-    } // end of operator *
-
-    template<typename T2toST2Type,
-	     typename TensorType>
-    TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
-      ((tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond)&&
-       (tfel::meta::Implements<TensorType, TensorConcept >::cond)&&
-       (T2toST2Traits<T2toST2Type>::dime==TensorTraits<TensorType>::dime)&&
-       (!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<typename T2toST2Traits<T2toST2Type>::NumType,
-								  typename TensorTraits<TensorType>::NumType,
-								  OpMult>::Result>::cond)),
-      StensorExpr<stensor<T2toST2Traits<T2toST2Type>::dime,
-			  typename ComputeBinaryResult<typename T2toST2Traits<T2toST2Type>::NumType,
-						       typename TensorTraits<TensorType>::NumType,
-						       OpMult>::Result>,
-      		  T2toST2TensorProductExpr>
-      >::type
-    operator * (const T2toST2Type& a,
-		const TensorType&  b){
-      typedef typename ComputeBinaryResult<typename T2toST2Traits<T2toST2Type>::NumType,
-					   typename TensorTraits<TensorType>::NumType,
-					   OpMult>::Result value_type;
-      return StensorExpr<stensor<TensorTraits<TensorType>::dime,value_type>,
-			 T2toST2TensorProductExpr>(a,b);
-    } // end of operator *
-
 
   } //end of namespace math
 

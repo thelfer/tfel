@@ -8,6 +8,7 @@
 #ifndef _LIB_MFRONT_ASTER_ASTERTANGENTOPERATOR_H_
 #define _LIB_MFRONT_ASTER_ASTERTANGENTOPERATOR_H_ 
 
+#include"TFEL/Math/Forward/t2tost2.hxx"
 #include"TFEL/Math/Forward/st2tost2.hxx"
 
 #include"MFront/Aster/Aster.hxx"
@@ -22,6 +23,51 @@ namespace aster
    */
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterTangentOperator
   {
+    /*!
+     * \brief normalize the finite strain behaviour tangent operator
+     * in 1D
+     * \param[in] Dt : finite strain behaviour tangent operator
+     */
+    static void
+    normalize(tfel::math::t2tost2<1u,AsterReal>&);
+    /*!
+     * \brief normalize the finite strain behaviour tangent operator
+     * in 2D
+     * \param[in] Dt : finite strain behaviour tangent operator
+     */
+    static void
+    normalize(tfel::math::t2tost2<2u,AsterReal>&);
+    /*!
+     * \brief normalize the finite strain behaviour tangent operator
+     * in 3D
+     * \param[in] Dt : finite strain behaviour tangent operator
+     */
+    static void
+    normalize(tfel::math::t2tost2<3u,AsterReal>&);
+    /*!
+     * \brief transpose the finite strain behaviour tangent operator
+     * in 1D
+     * \param[in] Dt : finite strain behaviour tangent operator
+     * \note this method does nothing
+     */
+    static void
+    transpose(tfel::math::t2tost2<1u,AsterReal>&);
+    /*!
+     * \brief transpose the finite strain behaviour tangent operator
+     * in 2D
+     * \param[in] Dt : finite strain behaviour tangent operator
+     * \note this method does nothing
+     */
+    static void
+    transpose(tfel::math::t2tost2<2u,AsterReal>&);
+    /*!
+     * \brief transpose the finite strain behaviour tangent operator
+     * in 3D
+     * \param[in] Dt : finite strain behaviour tangent operator
+     * \note this method does nothing
+     */
+    static void
+    transpose(tfel::math::t2tost2<3u,AsterReal>&);
     /*!
      * \brief normalize the tangent operator in 1D
      * \param[in] Dt : tangent operator

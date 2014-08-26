@@ -128,3 +128,5 @@ tests_math3(parser8)
 tests_math3(parser9)
 
 tests_math4(CubicSplineTest)
+
+tests_math4(TensorProductCheck)

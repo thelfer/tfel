@@ -780,7 +780,7 @@ namespace tfel{
       typedef typename ComputeBinaryResult<T,T,OpMult>::Result   T2;
       typedef typename ComputeBinaryResult<T2,T,OpMult>::Result  T3;
       T (*sqrt_ptr)(const T2) = std::sqrt;
-      stensor<TensorTraits<TensorType>::dime,T> C = computeRightCauchyGreenTensor(F);
+      stensor<TensorTraits<TensorType>::dime,T> C   = computeRightCauchyGreenTensor(F);
       stensor<TensorTraits<TensorType>::dime,T2> C2 = C*C;
       tvector<3u,T2> vp_C;
       tvector<3u,T> vp_U;

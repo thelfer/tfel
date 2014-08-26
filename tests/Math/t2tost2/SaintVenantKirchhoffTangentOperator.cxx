@@ -14,10 +14,10 @@
 #include<cassert>
 
 #include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Utilities/ToString.hxx"
 #include"TFEL/Material/Lame.hxx"
-
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
@@ -59,16 +59,7 @@ struct SaintVenantKirchoffTangentOperator
     const stensor<N> S    = D*e_gl;
     stensor<N> sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,F);
     const t2tost2<N> dC = t2tost2<N>::dCdF(F);
-    //    const t2tost2<N> dS = 0.5*D*dC;
-    t2tost2<N> dS;
-    for(typename tensor<N>::size_type i=0;i!=sig.size();++i){
-      for(typename tensor<N>::size_type j=0;j!=F.size();++j){
-    	dS(i,j) = 0;
-    	for(typename tensor<N>::size_type k=0;k!=sig.size();++k){
-    	  dS(i,j) += 0.5*D(i,k)*dC(k,j);
-    	}
-      }
-    }
+    const t2tost2<N> dS = 0.5*D*dC;
     t2tost2<N> dtau;
     computePushForwardDerivative(dtau,dS,S,F); 
     tensor<N> dJ;

@@ -24,6 +24,9 @@
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
+#include"TFEL/Math/Tensor/TensorConcept.hxx"
+#include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
 #include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx"
 #include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx"
@@ -34,146 +37,19 @@
 
 #include"TFEL/Math/ST2toT2/ST2toT2Expr.hxx"
 #include"TFEL/Math/ST2toT2/TensorStensorDiadicProductExpr.hxx"
+#include"TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx"
+#include"TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx"
+
+#include"TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx"
+#include"TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx"
+#include"TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx"
+#include"TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx"
 
 namespace tfel
 {
 
   namespace math
   {
-
-    // namespace internals
-    // {
-
-    //   template<unsigned short N,
-    // 	       typename T1,
-    // 	       typename T2,
-    // 	       typename Result>
-    //   struct ST2toT2byST2toT2Multiplication
-    //   {
-    // 	static TFEL_MATH_INLINE void 
-    // 	exe(const T1& a,const T2& b,Result &r)
-    // 	{
-    // 	  typename T1::size_type i;
-    // 	  typename T1::size_type j;
-    // 	  typename T1::size_type k;
-    // 	  for(i=0;i!=StensorDimeToSize<N>::value;++i){
-    // 	    for(j=0;j!=StensorDimeToSize<N>::value;++j){
-    // 	      r(i,j)=0.;
-    // 	      for(k=0;k!=StensorDimeToSize<N>::value;++k){
-    // 		r(i,j)+=a(i,k)*b(k,j);
-    // 	      }
-    // 	    }
-    // 	  }
-    // 	} // end of exe
-    //   }; // end of struct ST2toT2byST2toT2Multiplication
-
-    //   template<unsigned short N,
-    // 	       typename T1,
-    // 	       typename T2,
-    // 	       typename Result>
-    //   struct ST2toT2byStensorMultiplication
-    //   {}; // end of struct ST2toT2byStensorMultiplication
-
-    //   template<typename T1,
-    // 	       typename T2,
-    // 	       typename Res>
-    //   struct ST2toT2byStensorMultiplication<1u,T1,T2,Res>
-    //   {
-    // 	static TFEL_MATH_INLINE void 
-    // 	exe(const T1& a,const T2& b,Res &r)
-    // 	{
-    // 	  r(0)=a(0,0)*b(0)+a(0,1)*b(1)+a(0,2)*b(2);
-    // 	  r(1)=a(1,0)*b(0)+a(1,1)*b(1)+a(1,2)*b(2);
-    // 	  r(2)=a(2,0)*b(0)+a(2,1)*b(1)+a(2,2)*b(2);
-    // 	}
-    //   }; // end of struct ST2toT2byStensorMultiplication
-
-    //   template<typename T1,
-    // 	       typename T2,
-    // 	       typename Res>
-    //   struct ST2toT2byStensorMultiplication<2u,T1,T2,Res>
-    //   {
-    // 	static TFEL_MATH_INLINE void 
-    // 	exe(const T1& a,const T2& b,Res &r)
-    // 	{
-    // 	  r(0)=a(0,0)*b(0)+a(0,1)*b(1)+a(0,2)*b(2)+a(0,3)*b(3);
-    // 	  r(1)=a(1,0)*b(0)+a(1,1)*b(1)+a(1,2)*b(2)+a(1,3)*b(3);
-    // 	  r(2)=a(2,0)*b(0)+a(2,1)*b(1)+a(2,2)*b(2)+a(2,3)*b(3);
-    // 	  r(3)=a(3,0)*b(0)+a(3,1)*b(1)+a(3,2)*b(2)+a(3,3)*b(3);
-    // 	}
-    //   }; // end of struct ST2toT2byStensorMultiplication
-
-    //   template<typename T1,
-    // 	       typename T2,
-    // 	       typename Res>
-    //   struct ST2toT2byStensorMultiplication<3u,T1,T2,Res>
-    //   {
-    // 	static TFEL_MATH_INLINE void 
-    // 	exe(const T1& a,const T2& b,Res &r)
-    // 	{
-    // 	  r(0)=a(0,0)*b(0)+a(0,1)*b(1)+a(0,2)*b(2)+a(0,3)*b(3)+a(0,4)*b(4)+a(0,5)*b(5);
-    // 	  r(1)=a(1,0)*b(0)+a(1,1)*b(1)+a(1,2)*b(2)+a(1,3)*b(3)+a(1,4)*b(4)+a(1,5)*b(5);
-    // 	  r(2)=a(2,0)*b(0)+a(2,1)*b(1)+a(2,2)*b(2)+a(2,3)*b(3)+a(2,4)*b(4)+a(2,5)*b(5);
-    // 	  r(3)=a(3,0)*b(0)+a(3,1)*b(1)+a(3,2)*b(2)+a(3,3)*b(3)+a(3,4)*b(4)+a(3,5)*b(5);
-    // 	  r(4)=a(4,0)*b(0)+a(4,1)*b(1)+a(4,2)*b(2)+a(4,3)*b(3)+a(4,4)*b(4)+a(4,5)*b(5);
-    // 	  r(5)=a(5,0)*b(0)+a(5,1)*b(1)+a(5,2)*b(2)+a(5,3)*b(3)+a(5,4)*b(4)+a(5,5)*b(5);
-    // 	}
-    //   }; // end of struct ST2toT2byStensorMultiplication
-
-    //   template<unsigned short N,
-    // 	       typename T1,
-    // 	       typename T2,
-    // 	       typename Result>
-    //   struct StensorbyST2toT2Multiplication
-    //   {}; // end of struct StensorbyST2toT2Multiplication
-
-    //   template<typename T1,
-    // 	       typename T2,
-    // 	       typename Res>
-    //   struct StensorbyST2toT2Multiplication<1u,T1,T2,Res>
-    //   {
-    // 	static TFEL_MATH_INLINE void 
-    // 	exe(const T1& b,const T2& a,Res &r)
-    // 	{
-    // 	  r(0)=a(0,0)*b(0)+a(1,0)*b(1)+a(2,0)*b(2);
-    // 	  r(1)=a(0,1)*b(0)+a(1,1)*b(1)+a(2,1)*b(2);
-    // 	  r(2)=a(0,2)*b(0)+a(1,2)*b(1)+a(2,2)*b(2);
-    // 	}
-    //   }; // end of struct StensorbyST2toT2Multiplication
-
-    //   template<typename T1,
-    // 	       typename T2,
-    // 	       typename Res>
-    //   struct StensorbyST2toT2Multiplication<2u,T1,T2,Res>
-    //   {
-    // 	static TFEL_MATH_INLINE void 
-    // 	exe(const T1& b,const T2& a,Res &r)
-    // 	{
-    // 	  r(0)=a(0,0)*b(0)+a(1,0)*b(1)+a(2,0)*b(2)+a(3,0)*b(3);
-    // 	  r(1)=a(0,1)*b(0)+a(1,1)*b(1)+a(2,1)*b(2)+a(3,1)*b(3);
-    // 	  r(2)=a(0,2)*b(0)+a(1,2)*b(1)+a(2,2)*b(2)+a(3,2)*b(3);
-    // 	  r(3)=a(0,3)*b(0)+a(1,3)*b(1)+a(2,3)*b(2)+a(3,3)*b(3);
-    // 	}
-    //   }; // end of struct StensorbyST2toT2Multiplication
-
-    //   template<typename T1,
-    // 	       typename T2,
-    // 	       typename Res>
-    //   struct StensorbyST2toT2Multiplication<3u,T1,T2,Res>
-    //   {
-    // 	static TFEL_MATH_INLINE void 
-    // 	exe(const T1& b,const T2& a,Res &r)
-    // 	{
-    // 	  r(0)=a(0,0)*b(0)+a(1,0)*b(1)+a(2,0)*b(2)+a(3,0)*b(3)+a(4,0)*b(4)+a(5,0)*b(5);
-    // 	  r(1)=a(0,1)*b(0)+a(1,1)*b(1)+a(2,1)*b(2)+a(3,1)*b(3)+a(4,1)*b(4)+a(5,1)*b(5);
-    // 	  r(2)=a(0,2)*b(0)+a(1,2)*b(1)+a(2,2)*b(2)+a(3,2)*b(3)+a(4,2)*b(4)+a(5,2)*b(5);
-    // 	  r(3)=a(0,3)*b(0)+a(1,3)*b(1)+a(2,3)*b(2)+a(3,3)*b(3)+a(4,3)*b(4)+a(5,3)*b(5);
-    // 	  r(4)=a(0,4)*b(0)+a(1,4)*b(1)+a(2,4)*b(2)+a(3,4)*b(3)+a(4,4)*b(4)+a(5,4)*b(5);
-    // 	  r(5)=a(0,5)*b(0)+a(1,5)*b(1)+a(2,5)*b(2)+a(3,5)*b(3)+a(4,5)*b(4)+a(5,5)*b(5);
-    // 	}
-    //   }; // end of struct StensorbyST2toT2Multiplication
-
-    // } // end of namespace internals
 
     /*
      * Partial Specialisation of ComputeBinaryResult_ for st2tot2's operation
@@ -257,49 +133,101 @@ namespace tfel
 				      ST2toT2Expr<Result,Expr> >::type Handle;
     };
 
-    // /*
-    //  * Partial Specialisation of ComputeBinaryResult_ for st2tot2-st2tot2 operations
-    //  */
-    // template<typename A, typename B>
-    // class ComputeBinaryResult_<T2toST2Tag,T2toT2Tag,A,B,OpMult>
-    // {
-    //   typedef typename ST2toT2Type<A>::type ST2toT2A;
-    //   typedef typename T2toT2Type<B>::type  T2toT2B;
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for T2toT2-ST2toT2 operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<T2toT2Tag,ST2toT2Tag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename T2toT2Type<A>::type  T2toT2A;
+      typedef typename ST2toT2Type<B>::type ST2toT2B;
+    public:
+      typedef typename ResultType<T2toT2A,ST2toT2B,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      ST2toT2Expr<Result,T2toT2ST2toT2ProductExpr<ST2toT2Traits<Result>::dime> > >::type Handle;
+    };
 
-    // public:
-    //   typedef typename ResultType<ST2toST2A,ST2toST2B,OpMult>::type Result;
-    //   typedef Result Handle;
-    // };
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for st2tot2-t2tost2 operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<ST2toT2Tag,T2toST2Tag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename ST2toT2Type<A>::type ST2toT2A;
+      typedef typename T2toST2Type<B>::type T2toST2B;
+    public:
+      typedef typename ResultType<ST2toT2A,B,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      T2toT2Expr<Result,ST2toT2T2toST2ProductExpr<T2toT2Traits<Result>::dime> > >::type Handle;
+    };
 
-    // /*
-    //  * Partial Specialisation of ComputeBinaryResult_ for st2tot2-stensor operations
-    //  */
-    // template<typename A, typename B>
-    // class ComputeBinaryResult_<ST2toT2Tag,StensorTag,A,B,OpMult>
-    // {
-    //   struct DummyHandle{};
-    //   typedef typename ST2toT2Type<A>::type StensA;
-    //   typedef typename StensorType<B>::type  StensB;
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for st2tot2-st2tost2 operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<ST2toT2Tag,ST2toST2Tag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename ST2toT2Type<A>::type  ST2toT2A;
+      typedef typename ST2toST2Type<B>::type ST2toST2B;
+    public:
+      typedef typename ResultType<ST2toT2A,ST2toST2B,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      ST2toT2Expr<Result,ST2toT2ST2toST2ProductExpr<ST2toT2Traits<Result>::dime> > >::type Handle;
+    };
 
-    // public:
-    //   typedef typename ResultType<StensA,StensB,OpMult>::type Result;
-    //   typedef Result Handle;
-    // };
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for t2tost2-st2tot2 operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<T2toST2Tag,ST2toT2Tag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename T2toST2Type<A>::type T2toST2A;
+      typedef typename ST2toT2Type<B>::type ST2toT2B;
+    public:
+      typedef typename ResultType<T2toST2A,ST2toT2B,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      ST2toST2Expr<Result,T2toST2ST2toT2ProductExpr<ST2toST2Traits<Result>::dime> > >::type Handle;
+    };
 
-    // /*
-    //  * Partial Specialisation of ComputeBinaryResult_ for stensor-st2tot2 operations
-    //  */
-    // template<typename A, typename B>
-    // class ComputeBinaryResult_<StensorTag,ST2toT2Tag,A,B,OpMult>
-    // {
-    //   struct DummyHandle{};
-    //   typedef typename StensorType<A>::type  StensA;
-    //   typedef typename ST2toT2Type<B>::type StensB;
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for st2tot2-stensor operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<ST2toT2Tag,StensorTag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename ST2toT2Type<A>::type ST2toT2A;
+      typedef typename StensorType<B>::type StensB;
+    public:
+      typedef typename ResultType<ST2toT2A,StensB,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      TensorExpr<Result,ST2toT2StensorProductExpr<TensorTraits<Result>::dime> > >::type Handle;
+    };
 
-    // public:
-    //   typedef typename ResultType<StensB,StensA,OpMult>::type Result;
-    //   typedef Result Handle;
-    // };
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for stensor-st2tot2 operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<TensorTag,ST2toT2Tag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename TensorType<A>::type  TensA;
+      typedef typename ST2toT2Type<B>::type ST2toT2B;
+    public:
+      typedef typename ResultType<TensA,ST2toT2B,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      StensorExpr<Result,TensorST2toT2ProductExpr<StensorTraits<Result>::dime> > >::type Handle;
+    };
 
     /*
      * Partial Specialisation of ComputeUnaryResult_ for st2tot2s
@@ -467,6 +395,90 @@ namespace tfel
       typedef typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Handle Handle;
       return  Handle(a,b);
     } // end of operator ^
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,T2toT2Concept>::cond&&
+      tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator * (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return  Handle(a,b);
+    } // end of operator *
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
+      tfel::meta::Implements<T2,T2toST2Concept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator * (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return  Handle(a,b);
+    } // end of operator *
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
+      tfel::meta::Implements<T2,ST2toST2Concept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator * (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return  Handle(a,b);
+    } // end of operator *
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,T2toST2Concept>::cond&&
+      tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator * (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return  Handle(a,b);
+    } // end of operator *
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
+      tfel::meta::Implements<T2,StensorConcept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+      >::type
+    operator * (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return Handle(a,b);
+    }
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator | (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return Handle(a,b);
+    }
     
   } // end of namespace math
 

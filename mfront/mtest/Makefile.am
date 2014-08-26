@@ -54,7 +54,9 @@ libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lUMATInterface
 endif
 
 if HAVE_ASTER
-libTFELMTest_la_SOURCES += MTestAsterSmallStrainBehaviour.cxx \
+libTFELMTest_la_SOURCES += MTestAsterStandardBehaviour.cxx    \
+			   MTestAsterSmallStrainBehaviour.cxx \
+			   MTestAsterFiniteStrainBehaviour.cxx \
 			   MTestAsterCohesiveZoneModel.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAsterInterface
 endif

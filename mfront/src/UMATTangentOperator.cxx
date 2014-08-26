@@ -8,12 +8,52 @@
 #include<cmath>
 #include<algorithm>
 
+#include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"MFront/UMAT/UMATTangentOperator.hxx"
 
 
 namespace umat
 {
+
+  void
+  UMATTangentOperator::normalize(tfel::math::t2tost2<1u,UMATReal>&)
+  {
+    using namespace std;
+    string msg("UMATTangentOperator::normalize : "
+	       "unsupported feature");
+    throw(runtime_error(msg));
+  } // end of UMATTangentOperator::normalize
+  
+  void
+  UMATTangentOperator::normalize(tfel::math::t2tost2<2u,UMATReal>&)
+  {
+    using namespace std;
+    string msg("UMATTangentOperator::normalize : "
+	       "unsupported feature");
+    throw(runtime_error(msg));
+  } // end of UMATTangentOperator::normalize
+  
+  void
+  UMATTangentOperator::normalize(tfel::math::t2tost2<3u,UMATReal>&)
+  {
+    using namespace std;
+    string msg("UMATTangentOperator::normalize : "
+	       "unsupported feature");
+    throw(runtime_error(msg));
+  } // end of struct UMATTangentOperator
+
+  void
+  UMATTangentOperator::transpose(tfel::math::t2tost2<1u,UMATReal>&)
+  {}
+
+  void
+  UMATTangentOperator::transpose(tfel::math::t2tost2<2u,UMATReal>&)
+  {}
+
+  void
+  UMATTangentOperator::transpose(tfel::math::t2tost2<3u,UMATReal>&)
+  {}
 
   void
   UMATTangentOperator::normalize(tfel::math::st2tost2<1u,UMATReal>&)

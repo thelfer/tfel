@@ -26,10 +26,10 @@ namespace tfel{
     };
 
     /*!
-     * \class St2toSt2Tag
+     * \class ST2toST2Tag
      * \brief Helper class to characterise st2tost2.
      */ 
-    struct St2toSt2Tag
+    struct ST2toST2Tag
     {
       /*!
        * \brief  Return the name of the class.
@@ -58,7 +58,7 @@ namespace tfel{
       
     public:
       
-      typedef St2toSt2Tag ConceptTag;
+      typedef ST2toST2Tag ConceptTag;
 
       ValueType
       operator()(const unsigned short,

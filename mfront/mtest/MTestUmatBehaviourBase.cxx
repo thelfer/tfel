@@ -651,6 +651,45 @@ namespace mfront
 								     const MTestEvolutionManager&) const
   {} // end of MTestUmatBehaviourBase::setOptionalMaterialPropertiesDefaultValues
 
+  
+
+  void
+  MTestUmatBehaviourBase::initializeTangentOperator(const MTestStiffnessMatrixType::mtype ktype,
+						    const bool b) const
+  {
+    using namespace std;
+    if(b){
+      if((ktype==MTestStiffnessMatrixType::NOSTIFFNESS)||
+	 (ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
+	// do nothing
+      } else if(ktype==MTestStiffnessMatrixType::ELASTIC){
+	this->D(0,0) = real(1);
+      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+	this->D(0,0) = real(2);
+      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+	this->D(0,0) = real(3);
+      } else if(ktype==MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
+	this->D(0,0) = real(4);
+      } else {
+	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
+		   "invalid or unspecified stiffness matrix type");
+	throw(runtime_error(msg));
+      }
+    } else {
+      if(ktype==MTestStiffnessMatrixType::ELASTIC){
+	this->D(0,0) = real(-1);
+      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+	this->D(0,0) = real(-2);
+      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+	this->D(0,0) = real(-3);
+      } else {
+	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
+		   "invalid or unspecified stiffness matrix type");
+	throw(runtime_error(msg));
+      }
+    }
+  } // end of MTestUmatBehaviourBase::initializeTangentOperator
+
   MTestUmatBehaviourBase::~MTestUmatBehaviourBase()
   {}
   

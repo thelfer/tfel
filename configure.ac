@@ -493,6 +493,23 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanviscoplasticflow.mtest
            mfront/tests/behaviours/aster/asteranistropiclemaitreviscoplasticbehaviour.mtest
            mfront/tests/behaviours/aster/astertvergaard.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-1-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-2-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-1-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-2-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-3-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-4-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-5-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-6-3D.mtest
            mfront/tests/behaviours/castem/Makefile
            mfront/tests/behaviours/castem/castemelasticity.mtest
            mfront/tests/behaviours/castem/castemelasticity2.mtest

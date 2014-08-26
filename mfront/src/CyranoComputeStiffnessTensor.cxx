@@ -7,7 +7,7 @@
 
 #include<algorithm>
 
-#include"TFEL/Math/t2tost2.hxx"
+#include"TFEL/Math/st2tost2.hxx"
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
 namespace cyrano

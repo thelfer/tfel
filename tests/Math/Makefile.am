@@ -90,7 +90,8 @@ test_PROGRAMS = hill                                     \
 		levenberg-marquardt2                     \
 		levenberg-marquardt3                     \
 		levenberg-marquardt4                     \
-		discretization1D
+		discretization1D                         \
+		TensorProductCheck
 
 LDADD = -L$(top_builddir)/src/Math      \
 	-L$(top_builddir)/src/Utilities \
@@ -164,6 +165,7 @@ TinyVectorOfStensorFromTinyVectorView_SOURCES    = TinyVectorOfStensorFromTinyVe
 levenberg_marquardt_SOURCES   = levenberg-marquardt.cxx
 levenberg_marquardt2_SOURCES  = levenberg-marquardt2.cxx
 levenberg_marquardt3_SOURCES  = levenberg-marquardt3.cxx
+TensorProductCheck_SOURCES    = TensorProductCheck.cxx
 
 discretization1D_SOURCES = discretization1D.cxx
 discretization1D_LDADD   = -L$(top_builddir)/src/Math      \

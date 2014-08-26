@@ -39,6 +39,7 @@
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
 #include"MFront/MTestAsterSmallStrainBehaviour.hxx"
+#include"MFront/MTestAsterFiniteStrainBehaviour.hxx"
 #include"MFront/MTestAsterCohesiveZoneModel.hxx"
 #endif /* HAVE_ASTER  */
 #ifdef HAVE_CYRANO
@@ -1039,6 +1040,8 @@ namespace mfront
       const unsigned short type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
       this->b = shared_ptr<MTestBehaviour>(new MTestAsterSmallStrainBehaviour(this->hypothesis,l,f));
+      } else if(type==2u){
+	this->b = shared_ptr<MTestBehaviour>(new MTestAsterFiniteStrainBehaviour(this->hypothesis,l,f));
       } else if(type==3u){
 	this->b = shared_ptr<MTestBehaviour>(new MTestAsterCohesiveZoneModel(this->hypothesis,l,f));
       } else {

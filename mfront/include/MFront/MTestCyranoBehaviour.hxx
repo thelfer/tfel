@@ -163,8 +163,6 @@ namespace mfront
   protected:
     //! the umat fonction
     tfel::system::UMATFctPtr fct;
-    //! local stifness matrix
-    mutable tfel::math::tmatrix<3u,3u,real> D;
     //! temporary vector
     mutable tfel::math::vector<real> iv;
   }; // end of struct MTestBehaviour

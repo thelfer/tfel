@@ -1,5 +1,5 @@
 /*!
- * \file   St2toSt2Tag.cxx
+ * \file   ST2toST2Tag.cxx
  * 
  * \brief    
  * \author Helfer Thomas
@@ -14,9 +14,9 @@ namespace tfel{
   namespace math{
 
     std::string 
-    St2toSt2Tag::getName(void)
+    ST2toST2Tag::getName(void)
     {
-      return std::string("St2toSt2Tag");
+      return std::string("ST2toST2Tag");
     } // end of getName()
     
   } // end of namespace math

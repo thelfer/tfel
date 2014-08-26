@@ -10,7 +10,7 @@
 #define _LIB_TFEL_ST2TOST2_RESULT_TYPE_HXX_ 
 
 #include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/Forward/stensor.hxx"
 
 namespace tfel{
   
@@ -35,7 +35,7 @@ namespace tfel{
      * \see   ResultType_
      */
     template<unsigned short N, typename T,typename Scal>
-    class ResultType_<St2toSt2Tag,ScalarTag,st2tost2<N,T>,Scal,OpMult>
+    class ResultType_<ST2toST2Tag,ScalarTag,st2tost2<N,T>,Scal,OpMult>
     {
       typedef typename ResultType<T,Scal,OpMult>::type ResBase_;
     public:
@@ -50,7 +50,7 @@ namespace tfel{
      * \see   ResultType_
      */
     template<unsigned short N, typename T,typename Scal>
-    class ResultType_<St2toSt2Tag,ScalarTag,st2tost2<N,T>,Scal,OpDiv>
+    class ResultType_<ST2toST2Tag,ScalarTag,st2tost2<N,T>,Scal,OpDiv>
     {
       typedef typename ResultType<T,Scal,OpDiv>::type ResBase_;
     public:
@@ -65,7 +65,7 @@ namespace tfel{
      * \see   ResultType_
      */
     template<typename Scal,unsigned short N,typename T>
-    class ResultType_<ScalarTag,St2toSt2Tag,Scal,st2tost2<N,T>,OpMult>
+    class ResultType_<ScalarTag,ST2toST2Tag,Scal,st2tost2<N,T>,OpMult>
     {
       typedef typename ResultType<Scal,T,OpMult>::type ResBase_;
     public:

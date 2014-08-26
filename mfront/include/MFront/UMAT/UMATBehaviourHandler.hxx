@@ -657,7 +657,7 @@ namespace umat
 	typedef typename UMATTangentOperatorType<UMATTraits<BV>::btype,N>::type TangentOperatorType;
 	TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
 	Dt = bv.getTangentOperator();
-	// l'opérateur tangent contient des sqrt(2)...
+	// l'opérateur tangent contient des sqrt(2) en petites et grandes transformations...
 	UMATTangentOperator::normalize(Dt);
       } // end of exe	  
     };

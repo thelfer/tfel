@@ -20,6 +20,7 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx"
 
 struct ST2toST2FromTinyMatrixView2Test

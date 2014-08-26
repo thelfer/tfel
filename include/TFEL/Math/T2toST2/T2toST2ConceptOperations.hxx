@@ -35,6 +35,10 @@
 #include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Expr.hxx"
 #include"TFEL/Math/T2toST2/StensorTensorDiadicProductExpr.hxx"
+#include"TFEL/Math/T2toST2/StensorT2toST2ProductExpr.hxx"
+#include"TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx"
+#include"TFEL/Math/T2toST2/ST2toST2T2toST2ProductExpr.hxx"
+#include"TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx"
 
 namespace tfel
 {
@@ -65,6 +69,38 @@ namespace tfel
 				      T2toST2Expr<Result,Expr> >::type Handle;
     };
 
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for st2tost2-t2tost2 operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<ST2toST2Tag,T2toST2Tag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename ST2toST2Type<A>::type ST2toST2A;
+      typedef typename T2toST2Type<B>::type  T2toST2B;
+    public:
+      typedef typename ResultType<ST2toST2A,T2toST2B,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      T2toST2Expr<Result,ST2toST2T2toST2ProductExpr<T2toST2Traits<Result>::dime> > >::type Handle;
+    };
+
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for t2tost2-t2tot2 operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<T2toST2Tag,T2toT2Tag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename T2toST2Type<A>::type T2toST2A;
+      typedef typename T2toT2Type<B>::type  T2toT2B;
+    public:
+      typedef typename ResultType<T2toST2A,T2toT2B,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      T2toST2Expr<Result,T2toST2T2toT2ProductExpr<T2toST2Traits<Result>::dime> > >::type Handle;
+    };
+
     /*!
      * Partial Specialisation of ComputeBinaryResult_ for stensor's operation
      */
@@ -80,6 +116,38 @@ namespace tfel
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      T2toST2Expr<Result,Expr> >::type Handle;
+    };
+
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for T2toST2-Tensor operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<T2toST2Tag,TensorTag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename T2toST2Type<A>::type T2toST2A;
+      typedef typename TensorType<B>::type  TensB;
+    public:
+      typedef typename ResultType<T2toST2A,TensB,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      StensorExpr<Result,T2toST2TensorProductExpr<StensorTraits<Result>::dime> > >::type Handle;
+    };
+
+    /*
+     * Partial Specialisation of ComputeBinaryResult_ for Tensor-T2toST2 operations
+     */
+    template<typename A, typename B>
+    class ComputeBinaryResult_<StensorTag,T2toST2Tag,A,B,OpMult>
+    {
+      struct DummyHandle{};
+      typedef typename TensorType<A>::type StensA;
+      typedef typename T2toST2Type<B>::type T2toST2B;
+    public:
+      typedef typename ResultType<StensA,T2toST2B,OpMult>::type Result;
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+				      DummyHandle,
+				      TensorExpr<Result,StensorT2toST2ProductExpr<TensorTraits<Result>::dime> > >:: type Handle;
     };
 
     /*
@@ -240,6 +308,62 @@ namespace tfel
       typedef typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Handle Handle;
       return  Handle(a,b);
     } // end of operator ^
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<T2,T2toST2Concept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+      >::type
+    operator * (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return Handle(a,b);
+    }
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,T2toST2Concept>::cond&&
+      tfel::meta::Implements<T2,T2toT2Concept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+      >::type
+    operator * (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return Handle(a,b);
+    }
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,T2toST2Concept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+      >::type
+    operator * (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return Handle(a,b);
+    }
+
+    template<typename T1,typename T2>
+    TFEL_MATH_INLINE 
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,StensorConcept>::cond&&
+      tfel::meta::Implements<T2,T2toST2Concept>::cond&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
+    >::type
+    operator | (const T1& a,const T2& b)
+    {
+      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
+      return Handle(a,b);
+    }
 
   } // end of namespace math
 

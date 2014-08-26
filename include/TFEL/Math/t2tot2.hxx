@@ -206,16 +206,6 @@ namespace tfel{
        */
       TFEL_MATH_INLINE
       explicit t2tot2(const T);
-
-      /*!
-       * \brief Default Constructor.
-       * \param const typename tfel::typetraits::BaseType<T>::type* const,
-       *  pointer to a tabular used to initialise the components of
-       *  the t2tot2. This tabular is left unchanged.
-       */
-      TFEL_MATH_INLINE
-      explicit t2tot2(const typename tfel::typetraits::BaseType<T>::type* const);
-
       /*!
        * \brief Copy Constructor
        */

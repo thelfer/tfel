@@ -9,6 +9,7 @@
 #include<algorithm>
 
 #include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Cyrano/Cyrano.hxx"
@@ -79,6 +80,7 @@ namespace mfront
   MTestCyranoBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
     const unsigned short nstatev = this->getInternalStateVariablesSize(h);
+    this->D.resize(3u,3u);
     this->iv.resize(nstatev);
     if(iv.size()==0){
       iv.push_back(0.);
@@ -202,36 +204,8 @@ namespace mfront
     }
     fill(this->D.begin(),this->D.end(),0.);
     // choosing the type of stiffness matrix
-    if(b){
-      if((ktype==MTestStiffnessMatrixType::NOSTIFFNESS)||
-	 (ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
-	// do nothing
-      } else if(ktype==MTestStiffnessMatrixType::ELASTIC){
-	D(0,0) = real(1);
-      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
-	D(0,0) = real(2);
-      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
-	D(0,0) = real(3);
-      } else if(ktype==MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
-	D(0,0) = real(4);
-      } else {
-	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
-		   "invalid or unspecified stiffness matrix type");
-	throw(runtime_error(msg));
-      }
-    } else {
-      if(ktype==MTestStiffnessMatrixType::ELASTIC){
-	D(0,0) = real(-1);
-      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
-	D(0,0) = real(-2);
-      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
-	D(0,0) = real(-3);
-      } else {
-	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
-		   "invalid or unspecified stiffness matrix type");
-	throw(runtime_error(msg));
-      }
-    }
+    MTestUmatBehaviourBase::initializeTangentOperator(ktype,b);
+    // state variable initial values
     if(iv0.size()!=0){
       copy(iv0.begin(),iv0.end(),
 	   this->iv.begin());
@@ -283,7 +257,12 @@ namespace mfront
 	this->computeElasticStiffness(Kt,mp,h);
       } else {
 	// transpose (fortran -> c++)
-	tmatrix<3u,3u,real> D2(transpose(D));
+	tmatrix<3u,3u,real> D2;
+	for(unsigned short mi=0;mi!=3u;++mi){
+	  for(unsigned short mj=0;mj!=3u;++mj){
+	    D2(mi,mj)=D(mj,mi);
+	  }
+	}
 	// change to MTest conventions
 	Kt(0,0)=D2(0,0);
 	Kt(1,0)=D2(2,0);

@@ -10,7 +10,10 @@
 #define _LIB_TFEL_MATH_ST2TOT2_RESULT_TYPE_HXX_ 
 
 #include"TFEL/Math/st2tot2.hxx"
-#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/Forward/stensor.hxx"
+#include"TFEL/Math/Forward/t2tot2.hxx"
+#include"TFEL/Math/Forward/t2tost2.hxx"
+#include"TFEL/Math/Forward/st2tost2.hxx"
 
 namespace tfel{
   
@@ -116,6 +119,76 @@ namespace tfel{
 				      tfel::meta::InvalidType,
 				      st2tot2<N,ResBase_> >::type type;
     };
+
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<t2tot2<N,T>,st2tot2<N,T2>,OpMult>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      st2tot2<N,ResBase_> >::type type;
+    };
+
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<st2tot2<N,T>,t2tost2<N,T2>,OpMult>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      t2tot2<N,ResBase_> >::type type;
+    };
+
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<st2tot2<N,T>,st2tost2<N,T2>,OpMult>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      st2tot2<N,ResBase_> >::type type;
+    };
+
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<t2tost2<N,T>,st2tot2<N,T2>,OpMult>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+				      tfel::meta::InvalidType,
+				      st2tost2<N,ResBase_> >::type type;
+    };
+
+    /*!
+     * \brief Partial specialisation for st2tot2 and stensor multiplication
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2,
+	     template<unsigned short,typename> class Storage>
+    class ResultType<st2tot2<N,T>,stensor<N,T2,Storage>,OpMult>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    				      tfel::meta::InvalidType,
+    				      tensor<N,ResBase_> >::type type;
+    };
+
+    /*!
+     * \brief Partial specialisation for tensor and st2tot2 multiplication
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<tensor<N,T2>,st2tot2<N,T>,OpMult>
+    {
+      typedef typename ResultType<T2,T,OpMult>::type ResBase_;
+    public:
+      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    				      tfel::meta::InvalidType,
+    				      stensor<N,ResBase_,StensorStatic> >::type type;
+    };
+
 
   } // end of namespace math
 

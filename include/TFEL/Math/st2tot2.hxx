@@ -136,27 +136,15 @@ namespace tfel{
        */
       TFEL_MATH_INLINE 
       explicit st2tot2(const T);
-
-      /*!
-       * \brief Default Constructor.
-       * \param const typename tfel::typetraits::BaseType<T>::type* const,
-       *  pointer to a tabular used to initialise the components of
-       *  the st2tot2. This tabular is left unchanged.
-       */
-      TFEL_MATH_INLINE 
-      explicit st2tot2(const typename tfel::typetraits::BaseType<T>::type* const);
-
       /*!
        * \brief Copy Constructor
        */
       TFEL_MATH_INLINE 
       st2tot2(const st2tot2<N,T>& src);
-
       // Copy Constructor
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE 
       st2tot2(const ST2toT2Expr<st2tot2<N,T2>,Expr>& src);
-
       /*!
        * Import values
        */
@@ -165,7 +153,6 @@ namespace tfel{
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
       import(const T2* const);
-
       /*!
        * Assignement operator
        */

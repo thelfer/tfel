@@ -15,6 +15,7 @@ nu.setGlossaryName("PoissonRatio");
 #include"TFEL/Material/Lame.hxx"
 }
 
+@ProvidesSymmetricTangentOperator;
 @Integrator{
   using namespace tfel::material::lame;
   // Lame coefficients
@@ -33,9 +34,37 @@ nu.setGlossaryName("PoissonRatio");
     } else if(smflag==DS_DC){
       Dt = 0.5*De;
     } else if(smflag==DS_DF){
-      //      Dt = De*t2tost2<N,strain>::dCdF(F1);
+      Dt = De*t2tost2<N,strain>::dCdF(F1);
     } else if (smflag==DS_DDF){
-      //      Dt = De*t2tost2<N,strain>::dCdF(F1);
+      Dt = De*t2tost2<N,strain>::dCdF(F1)*t2tot2<N,real>::tpld(F0);
+    } else if (smflag==DTAU_DF){
+      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1);
+      t2tost2<N,stress> dtau;
+      computePushForwardDerivative(dtau,dS,s,F1); 
+      Dt = dtau;
+    } else if (smflag==DTAU_DDF){
+      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1);
+      t2tost2<N,stress> dtau;
+      computePushForwardDerivative(dtau,dS,s,F1);
+      Dt = dtau*t2tot2<N,real>::tpld(F0); 
+    } else if (smflag==DTAU_DF){
+      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1);
+      t2tost2<N,stress> dtau;
+      t2tost2<N,stress> dsig;
+      computePushForwardDerivative(dtau,dS,s,F1); 
+      computeCauchyStressDerivativeFromKirchoffDerivative(dsig,dtau,sig,F1); 
+      Dt = dsig;
+    } else if (smflag==DTAU_DDF){
+      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1);
+      t2tost2<N,stress> dtau;
+      t2tost2<N,stress> dsig;
+      computePushForwardDerivative(dtau,dS,s,F1); 
+      computeCauchyStressDerivativeFromKirchoffDerivative(dsig,dtau,sig,F1); 
+      Dt = dsig*t2tot2<N,real>::tpld(F0); 
+    } else {
+      string msg("SaintVenantKirchhoffElasticity : "
+		 "unsupported tangent operator");
+      throw(runtime_error(msg));
     }
   }
 }

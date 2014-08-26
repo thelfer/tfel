@@ -18,7 +18,7 @@ set(TFELMath_SOURCES
     CompositeTag.cxx
     ArrayTag.cxx
     LambdaTag.cxx
-    St2toSt2Tag.cxx
+    ST2toST2Tag.cxx
     VectorTag.cxx
     FunctionTag.cxx
     MatrixTag.cxx

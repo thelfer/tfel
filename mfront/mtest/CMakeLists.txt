@@ -55,7 +55,9 @@ endif(HAVE_CASTEM)
 
 if(HAVE_ASTER)
 set(TFELMTest_SOURCES
+    MTestAsterStandardBehaviour.cxx
     MTestAsterSmallStrainBehaviour.cxx
+    MTestAsterFiniteStrainBehaviour.cxx
     MTestAsterCohesiveZoneModel.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD

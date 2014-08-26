@@ -142,8 +142,6 @@ namespace mfront
 			    const tfel::material::ModellingHypothesis::Hypothesis) const;
     //! the umat fonction
     tfel::system::UMATFctPtr fct;
-    //! local stifness matrix
-    mutable tfel::math::matrix<real> D;
     //! temporary vector
     mutable tfel::math::vector<real> iv;
   }; // end of struct MTest

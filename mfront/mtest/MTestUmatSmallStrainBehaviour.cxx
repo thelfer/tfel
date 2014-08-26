@@ -9,6 +9,7 @@
 #include<algorithm>
 
 #include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/UMAT/UMAT.hxx"
@@ -381,36 +382,8 @@ namespace mfront
     }
     fill(this->D.begin(),this->D.end(),0.);
     // choosing the type of stiffness matrix
-    if(b){
-      if((ktype==MTestStiffnessMatrixType::NOSTIFFNESS)||
-	 (ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
-	// do nothing
-      } else if(ktype==MTestStiffnessMatrixType::ELASTIC){
-	D(0,0) = real(1);
-      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
-	D(0,0) = real(2);
-      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
-	D(0,0) = real(3);
-      } else if(ktype==MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
-	D(0,0) = real(4);
-      } else {
-	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
-		   "invalid or unspecified stiffness matrix type");
-	throw(runtime_error(msg));
-      }
-    } else {
-      if(ktype==MTestStiffnessMatrixType::ELASTIC){
-	D(0,0) = real(-1);
-      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
-	D(0,0) = real(-2);
-      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
-	D(0,0) = real(-3);
-      } else {
-	string msg("MTestAsterSmallStrainBehaviour::call_behaviour : "
-		   "invalid or unspecified stiffness matrix type");
-	throw(runtime_error(msg));
-      }
-    }
+    MTestUmatBehaviourBase::initializeTangentOperator(ktype,b);
+    // state variable initial values
     if(iv0.size()!=0){
       copy(iv0.begin(),iv0.end(),
 	   this->iv.begin());
