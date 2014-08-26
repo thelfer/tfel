@@ -773,7 +773,7 @@ namespace mfront
       out << "static_cast<void>(StensorSize); // remove gcc warning\n";
       out << "static_cast<void>(TensorSize);  // remove gcc warning\n";
       if(mpoffset){
-	out << "unsigned short mg_mpoffset;" << endl;
+	out << "unsigned short mg_mpoffset = 0u;" << endl;
       }
       out << "mg.addTime(0.);\n";
       out << "mg.addTime(*DTIME);\n";

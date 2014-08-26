@@ -999,17 +999,23 @@ namespace mfront{
 	  if(hasMassDensityOffsetForThermalExpansion){
 	    out << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+2));\n"
 		<< "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+3));\n";
+	    out << "mg_mpoffset = 4u;\n";
 	  } else {
 	    out << "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+2));\n";
+	    out << "mg_mpoffset = 3u;\n";
 	  }
 	} else {
 	  if(hasMassDensityOffsetForThermalExpansion){
 	    out << "mg.addMaterialProperty(\"MassDensity\",*PROPS));\n"
 		<< "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+1));\n";
+	    out << "mg_mpoffset = 2u;\n";
 	  } else {
 	    out << "mg.addMaterialProperty(\"ThermalExpansion\",*PROPS);\n";
+	    out << "mg_mpoffset = 1u;\n";
 	  }
 	}
+      } else {
+	out << "mg_mpoffset = 0u;\n";
       }
     } else if(mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
       out << "if(*NTENS==3u){\n";
@@ -1026,10 +1032,18 @@ namespace mfront{
 	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+6));\n"
 	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+7));\n"
 	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+8));\n";
+	  out << "mg_mpoffset = 9u;\n";
 	} else {
 	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*PROPS);\n"
 	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+1));\n"
 	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+2));\n";
+	  out << "mg_mpoffset = 3u;\n";
+	}
+      } else {
+	if(hasElasticMaterialPropertiesOffset){
+	  out << "mg_mpoffset = 6u;\n";
+	} else {
+	  out << "mg_mpoffset = 0u;\n";
 	}
       }
       out << "} else if(*NTENS==4){\n";
@@ -1041,16 +1055,24 @@ namespace mfront{
 	     << "mg.addMaterialProperty(\"PoissonRatio23\",*(PROPS+4));\n"
 	     << "mg.addMaterialProperty(\"PoissonRatio13\",*(PROPS+5));\n"
 	     << "mg.addMaterialProperty(\"ShearModulus12\",*(PROPS+6));\n";
-	if(hasThermalExpansionMaterialPropertiesOffset){
-	  if(hasElasticMaterialPropertiesOffset){
-	    out << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+7));\n"
-		<< "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+8));\n"
-		<< "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+9));\n";
-	  } else {
-	    out << "mg.addMaterialProperty(\"ThermalExpansion1\",*PROPS);\n"
-		<< "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+1));\n"
-		<< "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+2));\n";
-	  }
+      }
+      if(hasThermalExpansionMaterialPropertiesOffset){
+	if(hasElasticMaterialPropertiesOffset){
+	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+7));\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+8));\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+9));\n";
+	  out << "mg_mpoffset = 10u;\n";
+	} else {
+	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*PROPS);\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+1));\n"
+	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+2));\n";
+	  out << "mg_mpoffset = 3u;\n";
+	}
+      } else {
+	if(hasElasticMaterialPropertiesOffset){
+	  out << "mg_mpoffset = 7u;\n";
+	} else {
+	  out << "mg_mpoffset = 0u;\n";
 	}
       }
       out << "} else if(*NTENS==6){\n";
@@ -1070,10 +1092,18 @@ namespace mfront{
 	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+9));\n"
 	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+10));\n"
 	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+11));\n";
+	  out << "mg_mpoffset = 12u;\n";
 	} else {
 	  out << "mg.addMaterialProperty(\"ThermalExpansion1\",*PROPS);\n"
 	      << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+1));\n"
 	      << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+2));\n";
+	  out << "mg_mpoffset = 3u;\n";
+	}
+      } else {
+	if(hasElasticMaterialPropertiesOffset){
+	  out << "mg_mpoffset = 9u;\n";
+	} else {
+	  out << "mg_mpoffset = 0u;\n";
 	}
       }
       out << "}\n";

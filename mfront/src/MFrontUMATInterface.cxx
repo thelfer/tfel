@@ -1379,6 +1379,7 @@ namespace mfront{
 	    << "mg.addMaterialProperty(\"PoissonRatio\",*(PROPS+1));\n"
 	    << "mg.addMaterialProperty(\"MassDensity\",*(PROPS+2));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion\",*(PROPS+3));\n";
+	out << "mg_mpoffset = 4u;\n";
       } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
 	out << "if(*NDI==-1){\n"
 	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
@@ -1391,6 +1392,7 @@ namespace mfront{
 	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+7));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+8));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+9));\n"
+	    << "mg_mpoffset = 10u;\n"
 	    << "} else if(*NDI==-2){\n"
 	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
 	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
@@ -1405,6 +1407,7 @@ namespace mfront{
 	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+10));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+11));\n"
 	    << "mg.addMaterialProperty(\"PlateWidth\",*(PROPS+12));\n"
+	    << "mg_mpoffset = 13u;\n"
 	    << "} else if((*NDI==0)||(*NDI==-1)||(*NDI==-3)){\n"
 	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
 	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
@@ -1419,6 +1422,7 @@ namespace mfront{
 	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+10));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+11));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+12));\n"
+	    << "mg_mpoffset = 13u;\n"
 	    << "} else if(*NDI==2){\n"
 	    << "mg.addMaterialProperty(\"YoungModulus1\",*PROPS);\n"
 	    << "mg.addMaterialProperty(\"YoungModulus2\",*(PROPS+1));\n"
@@ -1439,6 +1443,7 @@ namespace mfront{
 	    << "mg.addMaterialProperty(\"ThermalExpansion1\",*(PROPS+16));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion2\",*(PROPS+17));\n"
 	    << "mg.addMaterialProperty(\"ThermalExpansion3\",*(PROPS+18));\n"
+	    << "mg_mpoffset = 19u;\n"
 	    << "}\n";
       } else {
 	string msg("MFrontUMATInterface::writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation : ");
