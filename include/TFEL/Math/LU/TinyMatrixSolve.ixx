@@ -24,34 +24,62 @@ namespace tfel{
 					      tvector<N,T>& b,
 					      const T eps)
     {
-      typedef typename MatrixTraits<tmatrix<N,N,T> >::IndexType IndexType;
-      tvector<N,T> x;
-      IndexType i,j;
-      IndexType pi;
-      IndexType pi2;
-      x = b;
-      for(i=0;i!=N;++i){
-	pi = p(i);
-	for(j=0;j!=i;++j){
-	  x(pi) -= m(pi,j)*x(p(j));
+      if(p.isIdentity()){
+	typedef typename MatrixTraits<tmatrix<N,N,T> >::IndexType IndexType;
+	tvector<N,T> x(b);
+	const  T* const mb = m.begin();
+	for(IndexType i=0;i!=N;++i){
+	  const T* const mv = mb+i*N;
+	  T v = T(0);
+	  for(IndexType j=0;j!=i;++j){
+	    v += mv[j]*x(j);
+	  }
+	  if(std::abs(mv[i])<eps){
+	    throw(LUException("TinyMatrixSolve<N,T>::exe : null pivot"));
+	  }
+	  T& xv = x(i);
+	  xv -= v;
+	  xv /= mv[i];
 	}
-	if(std::abs(m(pi,i))<eps){
-	  throw(LUException("TinyMatrixSolve<N,T>::exe : null pivot"));
+	b(N-1) = x(N-1);
+	for(IndexType i=N-1,pi=N-2;i!=0;--i,--pi){
+	  const T* const mv = mb+pi*N;
+	  T v = T(0);
+	  for(IndexType j=i;j!=N;++j){
+	    v += mv[j]*b(j);
+	  }
+	  b(pi) = x(pi)-v;
 	}
-	x(pi) /= m(pi,i);
-      }
-      b(N-1) = x(p(N-1));
-      for(i=N-1;i!=0;--i){
-	pi2 = i;
-	--pi2;
-	pi  = p(pi2);
-	b(pi2) = x(pi);
-	for(j=i;j!=N;++j){
-	  b(pi2) -= m(pi,j)*b(j);
+      } else {
+	typedef typename MatrixTraits<tmatrix<N,N,T> >::IndexType IndexType;
+	tvector<N,T> x(b);
+	const  T* const mb = m.begin();
+	for(IndexType i=0;i!=N;++i){
+	  const IndexType pi = p(i);
+	  const T* const mv = mb+pi*N;
+	  T v = T(0);
+	  for(IndexType j=0;j!=i;++j){
+	    v += mv[j]*x(p(j));
+	  }
+	  if(std::abs(mv[i])<eps){
+	    throw(LUException("TinyMatrixSolve<N,T>::exe : null pivot"));
+	  }
+	  T& xv = x(pi);
+	  xv -= v;
+	  xv /= mv[i];
+	}
+	b(N-1) = x(p(N-1));
+	for(IndexType i=N-1,pi2 = N-2;i!=0;--i,--pi2){
+	  const IndexType pi = p(pi2);
+	  const T* const mv = mb+pi*N;
+	  T v = T(0);
+	  for(IndexType j=i;j!=N;++j){
+	    v += mv[j]*b(j);
+	  }
+	  b(pi2) = x(pi)-v;
 	}
       }
     } // end of TinyMatrixSolve<N,T>::exe
-
 
     template<unsigned short N,typename T>
     void

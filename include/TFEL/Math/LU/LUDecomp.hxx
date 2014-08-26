@@ -87,7 +87,7 @@ namespace tfel{
 	    if(!((abs(m(p(i),i))>0.1*cmax)&&
 		 (abs(m(p(i),i))>eps))){
 	      d *= -1;
-	      swap(p(k),p(i));
+	      p.swap(k,i);
 	    }
 	  }
 	  if(abs(m(p(i),i))<eps){

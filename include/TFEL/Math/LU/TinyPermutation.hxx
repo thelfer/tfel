@@ -16,19 +16,39 @@ namespace tfel{
   namespace math{
 
     template<unsigned short N>
-    class TinyPermutation
-      : public tvector<N,unsigned short>
+    struct TinyPermutation
+      : protected tvector<N,unsigned short>
     {
-      TinyPermutation(const TinyPermutation&);
-      TinyPermutation& operator=(const TinyPermutation&);
-
-    public:
       
       TFEL_MATH_INLINE TinyPermutation();
 
+      using tvector<N,unsigned short>::size;
+      
       template<typename T>
       TFEL_MATH_INLINE void exe(tvector<N,T>&) const;
+
+      TFEL_MATH_INLINE const unsigned short&
+      operator[](const unsigned short) const;
+
+      TFEL_MATH_INLINE const unsigned short&
+      operator()(const unsigned short) const;
       
+      TFEL_MATH_INLINE void
+      swap(const unsigned short,
+	   const unsigned short);
+
+      TFEL_MATH_INLINE bool
+      isIdentity() const;
+      
+    protected:
+
+      TFEL_MATH_INLINE TinyPermutation(const TinyPermutation&);
+      
+      TFEL_MATH_INLINE TinyPermutation&
+      operator=(const TinyPermutation&);
+
+      bool is_identity;
+
     };
 
   } // end of namespace math

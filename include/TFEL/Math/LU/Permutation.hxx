@@ -19,7 +19,7 @@ namespace tfel{
 
     template<typename T>
     struct Permutation
-      : public vector<T>
+      : protected vector<T>
     {
       
       /*!
@@ -41,9 +41,20 @@ namespace tfel{
       TFEL_MATH_INLINE
       void reset(void);
 
-      /*!
-       * free the memory associated with the permutation
-       */
+      TFEL_MATH_INLINE const T&
+      operator[](const typename vector<T>::size_type) const;
+
+      TFEL_MATH_INLINE const T&
+      operator()(const typename vector<T>::size_type) const;
+      
+      TFEL_MATH_INLINE void
+      swap(const typename vector<T>::size_type,
+	   const typename vector<T>::size_type);
+
+      TFEL_MATH_INLINE bool
+      isIdentity() const;
+
+      using vector<T>::size;
       using vector<T>::clear;
 
       /*!
@@ -59,6 +70,8 @@ namespace tfel{
 
       Permutation&
       operator=(const Permutation&);
+
+      bool is_identity;
 
     };
 

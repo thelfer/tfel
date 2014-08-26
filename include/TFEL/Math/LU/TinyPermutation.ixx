@@ -16,15 +16,46 @@ namespace tfel{
   namespace math{
 
     template<unsigned short N>
-    TFEL_MATH_INLINE TinyPermutation<N>::TinyPermutation()
+    TinyPermutation<N>::TinyPermutation()
+      : is_identity(true)
     {
-      static const unsigned short zero = 0u;
-      tfel::fsalgo::iota<N>::exe(this->begin(),zero);
+      tfel::fsalgo::iota<N>::exe(this->begin(),0u);
+    }
+
+    template<unsigned short N>
+    const unsigned short&
+    TinyPermutation<N>::operator[](const unsigned short i) const
+    {
+      return tvector<N,unsigned short>::operator[](i);
+    } // end of TinyPermutation<N>::operator[]
+
+    template<unsigned short N>
+    const unsigned short&
+    TinyPermutation<N>::operator()(const unsigned short i) const
+    {
+      return tvector<N,unsigned short>::operator[](i);
+    } // end of TinyPermutation<N>::operator[]
+      
+    template<unsigned short N>
+    void
+    TinyPermutation<N>::swap(const unsigned short i,
+			     const unsigned short j)
+    {
+      std::swap(tvector<N,unsigned short>::operator[](i),
+		tvector<N,unsigned short>::operator[](j));
+      this->is_identity = false;
+    }
+
+    template<unsigned short N>
+    bool
+    TinyPermutation<N>::isIdentity() const
+    {
+      return this->is_identity;
     }
 
     template<unsigned short N>
     template<typename T>
-    TFEL_MATH_INLINE void TinyPermutation<N>::exe(tvector<N,T>& vec) const
+    void TinyPermutation<N>::exe(tvector<N,T>& vec) const
     {
       tvector<N,T> tmp;
       unsigned short i;

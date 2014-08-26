@@ -9,6 +9,8 @@
 #ifndef _LIB_TFEL_PERMUTATION_I_
 #define _LIB_TFEL_PERMUTATION_I_ 
 
+#include<algorithm>
+
 #include"TFEL/Math/MathException.hxx"
 
 namespace tfel{
@@ -27,13 +29,45 @@ namespace tfel{
     }
 
     template<typename T>
+    bool
+    Permutation<T>::isIdentity(void) const
+    {
+      return this->is_identity;
+    } // end of Permutation<T>::isIdendity
+
+    template<typename T>
+    void
+    Permutation<T>::swap(const typename vector<T>::size_type i,
+			 const typename vector<T>::size_type j)
+    {
+      std::swap(vector<T>::operator[](i),
+		vector<T>::operator[](j));
+      this->is_identity = false;
+    }
+
+    template<typename T>
+    const T&
+    Permutation<T>::operator[](const typename vector<T>::size_type i) const
+    {
+      return vector<T>::operator[](i);
+    }
+
+    template<typename T>
+    const T&
+    Permutation<T>::operator()(const typename vector<T>::size_type i) const
+    {
+      return vector<T>::operator[](i);
+    }
+
+    template<typename T>
     void
     Permutation<T>::reset()
     {
       typename vector<T>::size_type i;
       for(i=0;i!=this->size();++i){
-	this->operator[](i) = i;
+	vector<T>::operator[](i) = i;
       }
+      this->is_identity = true;
     }
 
     template<typename T>
