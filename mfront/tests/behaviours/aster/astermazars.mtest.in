@@ -7,7 +7,7 @@
 
 @StiffnessMatrixType 'SecantOperator';
 
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'astermazars';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astermazars';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    
 @MaterialProperty<constant> 'ThermalExpansion' 0.;    

@@ -37,6 +37,13 @@ alpha.setGlossaryName("ThermalExpansion");
   mu = computeMu(young,nu);
 }
 
+@PredictionOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
 @Integrator{
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
   if(computeTangentOperator_){

@@ -9,7 +9,7 @@
 
 @Real 'Y'  150.e9;
 @Real 'nu' 0.3;
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asternorton';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asternorton';
 @MaterialProperty<constant> 'YoungModulus'      'Y';
 @MaterialProperty<constant> 'PoissonRatio'      'nu';
 @MaterialProperty<constant> 'MassDensity'        0.;

@@ -19,7 +19,8 @@ namespace mfront{
     : MFrontBehaviourParserBase<MFrontRungeKuttaParser>(),
       algorithm("RungeKutta5/4"),
       eev(DEFAULTERROREVALUATION),
-      nbrOfEvaluation(6)
+      nbrOfEvaluation(6),
+      isConsistantTangentOperatorSymmetricDefined(false)
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
@@ -63,10 +64,10 @@ namespace mfront{
 			      &MFrontRungeKuttaParser::treatUsableInPurelyImplicitResolution);
     this->registerNewCallBack("@MaterialLaw",&MFrontRungeKuttaParser::treatMaterialLaw);
     this->registerNewCallBack("@Algorithm",&MFrontRungeKuttaParser::treatAlgorithm);
-    // this->registerNewCallBack("@TangentOperator",
-    // 			      &MFrontRungeKuttaParser::treatTangentOperator);
-    // this->registerNewCallBack("@IsTangentOperatorSymmetric",
-    // 			      &MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric);
+    this->registerNewCallBack("@TangentOperator",
+    			      &MFrontRungeKuttaParser::treatTangentOperator);
+    this->registerNewCallBack("@IsTangentOperatorSymmetric",
+    			      &MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric);
     this->registerNewCallBack("@Derivative",&MFrontRungeKuttaParser::treatDerivative);
     this->registerNewCallBack("@ComputeStress",&MFrontRungeKuttaParser::treatComputeStress);
     this->registerNewCallBack("@Epsilon",&MFrontRungeKuttaParser::treatEpsilon);
@@ -78,40 +79,40 @@ namespace mfront{
     this->disableCallBack("@ComputedVar");
   }
 
-  // void MFrontRungeKuttaParser::treatTangentOperator(void)
-  // {
-  //   using namespace std;
-  //   if(!this->tangentOperator.empty()){
-  //     this->throwRuntimeError("MFrontRungeKuttaParser::treatTangentOperator",
-  // 			      "@TangentOperator already used.");
-  //   }
-  //   this->tangentOperator = this->readNextBlock(makeVariableModifier(*this,&MFrontRungeKuttaParser::tangentOperatorVariableModifier),
-  // 						true);
-  //   this->tangentOperator += "\n";
-  //   this->hasConsistantTangentOperator = true;
-  // } // end of MFrontRungeKuttaParser::treatTangentOperator
+  void MFrontRungeKuttaParser::treatTangentOperator(void)
+  {
+    using namespace std;
+    if(!this->tangentOperator.empty()){
+      this->throwRuntimeError("MFrontRungeKuttaParser::treatTangentOperator",
+  			      "@TangentOperator already used.");
+    }
+    // makeVariableModifier(*this,&MFrontRungeKuttaParser::tangentOperatorVariableModifier)
+    this->tangentOperator = this->readNextBlock(true);
+    this->tangentOperator += "\n";
+    this->hasConsistantTangentOperator = true;
+  } // end of MFrontRungeKuttaParser::treatTangentOperator
 
-  // void MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric(void)
-  // {
-  //   using namespace std;
-  //   if(this->isConsistantTangentOperatorSymmetricDefined){
-  //     this->throwRuntimeError("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",
-  // 			      "@IsTangentOperatorSymmetric already used.");
-  //   }
-  //   this->isConsistantTangentOperatorSymmetricDefined = true;
-  //   this->checkNotEndOfFile("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric : ",
-  // 			    "Expected 'true' or 'false'.");
-  //   if(this->current->value=="true"){
-  //     this->isConsistantTangentOperatorSymmetric = true;
-  //   } else if(this->current->value=="false"){
-  //     this->isConsistantTangentOperatorSymmetric = false;
-  //   } else {
-  //     this->throwRuntimeError("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",
-  // 			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
-  //   }
-  //   ++(this->current);
-  //   this->readSpecifiedToken("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",";");
-  // } // end of MFrontRungeKuttaParser::treatTangentOperator
+  void MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric(void)
+  {
+    using namespace std;
+    if(this->isConsistantTangentOperatorSymmetricDefined){
+      this->throwRuntimeError("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",
+  			      "@IsTangentOperatorSymmetric already used.");
+    }
+    this->isConsistantTangentOperatorSymmetricDefined = true;
+    this->checkNotEndOfFile("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric : ",
+  			    "Expected 'true' or 'false'.");
+    if(this->current->value=="true"){
+      this->isConsistantTangentOperatorSymmetric = true;
+    } else if(this->current->value=="false"){
+      this->isConsistantTangentOperatorSymmetric = false;
+    } else {
+      this->throwRuntimeError("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",
+  			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("MFrontRungeKuttaParser::treatIsTangentOperatorSymmetric",";");
+  } // end of MFrontRungeKuttaParser::treatTangentOperator
 
   void MFrontRungeKuttaParser::writeBehaviourParserSpecificIncludes(void)
   {
@@ -1096,7 +1097,7 @@ namespace mfront{
       msg += "internal error, unsupported error evaluation.";
       throw(runtime_error(msg));
     }
-    this->behaviourFile << "if(isnan(error)){" << endl;
+    this->behaviourFile << "if(::isnan(error)){" << endl;
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : nan decteted\");" << endl;
     if(this->debugMode){
       this->behaviourFile << "cout << msg << endl;" << endl;
@@ -1481,7 +1482,7 @@ namespace mfront{
     this->behaviourFile << "ra = sqrt(((sigf)-(this->sig))|((sigf)-(this->sig)))/errabs;" << endl;
     this->behaviourFile << "sqra = sqrt(ra);" << endl;
     this->behaviourFile << "// test for convergence" << endl;
-    this->behaviourFile << "if ((sqra>"  << this->className << "::rkcastem_div)||(isnan(ra))){" << endl;
+    this->behaviourFile << "if ((sqra>"  << this->className << "::rkcastem_div)||(::isnan(ra))){" << endl;
     this->behaviourFile << "dt_ /= "  << this->className << "::rkcastem_div;" << endl;
     if(this->debugMode){
       this->behaviourFile << "cout << \"" << this->className
@@ -1860,7 +1861,7 @@ namespace mfront{
       msg += "internal error, unsupported error evaluation.";
       throw(runtime_error(msg));
     }
-    this->behaviourFile << "if(isnan(error)){" << endl;
+    this->behaviourFile << "if(::isnan(error)){" << endl;
     this->behaviourFile << "string msg(\"" << this->className << "::integrate : nan decteted\");" << endl;
     if(this->debugMode){
       this->behaviourFile << "cout << msg << endl;" << endl;

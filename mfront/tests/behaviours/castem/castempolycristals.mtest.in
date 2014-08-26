@@ -9,7 +9,7 @@
 @Real 'nu'    0.3;
 @Real 'G'     'young/2.6';
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatpolycristals';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatpolycristals';
 
 @StiffnessMatrixType 'Elastic' ;
 

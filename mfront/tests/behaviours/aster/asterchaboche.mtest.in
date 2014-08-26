@@ -5,7 +5,7 @@
  * \brief 18 avril 2013
  */
 
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterchaboche';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterchaboche';
 @MaterialProperty<constant> 'YoungModulus' 145200. ; 
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
 @MaterialProperty<constant> 'MassDensity' 0. ;   

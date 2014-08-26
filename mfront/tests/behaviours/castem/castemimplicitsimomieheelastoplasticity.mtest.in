@@ -9,7 +9,7 @@
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatimplicitsimomieheelastoplasticity';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitsimomieheelastoplasticity';
 @MaterialProperty<constant> 'YoungModulus'     200.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

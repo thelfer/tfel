@@ -570,6 +570,49 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviourbiaxialtesting.mtest
            mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
+           mfront/tests/behaviours/castem2/castem2burger.mtest
+           mfront/tests/behaviours/castem2/castem2chaboche2.mtest
+           mfront/tests/behaviours/castem2/castem2chaboche.mtest
+           mfront/tests/behaviours/castem2/castem2druckerprager2.mtest
+           mfront/tests/behaviours/castem2/castem2druckerprager.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity10.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity11.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity12.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity13.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity14.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity15.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity16.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity2.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity3.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity4.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity5.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity6.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity7.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity8.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity9.mtest
+           mfront/tests/behaviours/castem2/castem2elasticity.mtest
+           mfront/tests/behaviours/castem2/castem2ellipticcreep.mtest
+           mfront/tests/behaviours/castem2/castem2gursontvergaardneedlemanplasticflow.mtest
+           mfront/tests/behaviours/castem2/castem2gursontvergaardneedlemanviscoplasticflow.mtest
+           mfront/tests/behaviours/castem2/castem2implicithayhurst.mtest
+           mfront/tests/behaviours/castem2/castem2implicitmonocristal-2.mtest
+           mfront/tests/behaviours/castem2/castem2implicitmonocristal.mtest
+           mfront/tests/behaviours/castem2/castem2monocristal-2.mtest
+           mfront/tests/behaviours/castem2/castem2monocristal_dd_cc_irradiation_numericaljacobian.mtest
+           mfront/tests/behaviours/castem2/castem2monocristal_dd_cc.mtest
+           mfront/tests/behaviours/castem2/castem2monocristal_dd_cc_numericaljacobian.mtest
+           mfront/tests/behaviours/castem2/castem2monocristal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/castem2/castem2monocristal_dd_cfc.mtest
+           mfront/tests/behaviours/castem2/castem2monocristal_dd_cfc_numericaljacobian.mtest
+           mfront/tests/behaviours/castem2/castem2monocristal.mtest
+           mfront/tests/behaviours/castem2/castem2norton2.mtest
+           mfront/tests/behaviours/castem2/castem2norton.mtest
+           mfront/tests/behaviours/castem2/castem2plasisocin.mtest
+           mfront/tests/behaviours/castem2/castem2plasticity.mtest
+           mfront/tests/behaviours/castem2/castem2strainhardeningcreep.mtest
+           mfront/tests/behaviours/castem2/castem2stressrelaxation.mtest
+           mfront/tests/behaviours/castem2/castem2viscoplasisocin.mtest   
+           mfront/tests/behaviours/castem2/Makefile   
 	   mfront/Examples/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile

@@ -10,7 +10,7 @@
 @PredictionPolicy 'ElasticPrediction';
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatnorton_rk2';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatnorton_rk2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

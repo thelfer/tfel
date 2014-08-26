@@ -7,7 +7,7 @@
 
 @ModellingHypothesis 'GeneralisedPlaneStrain';
 
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterorthotropicelastic';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterorthotropicelastic';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

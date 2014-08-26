@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatlogarithmicstrainelasticity';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

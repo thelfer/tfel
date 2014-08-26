@@ -6,14 +6,14 @@
   "avec écroussage)."
   "Vérification de la réponse fournie par "
   "une loi générée par l'analyseur "
-  "@CMAKE_SHARED_LIBRARY_SUFFIX@tropicStrainHardeningMisesCreep de mfront."
-  "Compara@CMAKE_SHARED_LIBRARY_SUFFIX@n à la@CMAKE_SHARED_LIBRARY_SUFFIX@lution analytique."
+  "IsotropicStrainHardeningMisesCreep de mfront."
+  "Comparaison à la solution analytique."
 };
 
 @ModellingHypothesis 'Axisymmetrical';
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatstrainhardeningcreep';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatstrainhardeningcreep';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

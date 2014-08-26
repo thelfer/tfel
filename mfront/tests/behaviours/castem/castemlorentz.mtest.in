@@ -8,7 +8,7 @@
 @UseCastemAccelerationAlgorithm true;
 @StiffnessMatrixType 'Elastic';
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatlorentz';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlorentz';
 
 @StrainEpsilon 1.e-11;
 @StressEpsilon 1.e-1;

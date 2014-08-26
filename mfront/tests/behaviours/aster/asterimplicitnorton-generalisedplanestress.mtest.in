@@ -8,7 +8,7 @@
 @MaximumNumberOfSubSteps   1;
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterimplicitnortongeneralisedplanestress';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterimplicitnortongeneralisedplanestress';
 @StressEpsilon 1.;
 
 @MaterialProperty<constant> 'YoungModulus'     150.e9;

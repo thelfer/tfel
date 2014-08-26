@@ -20,7 +20,6 @@
 
 int main(void)
 {
-  using namespace std;
   using namespace tfel::math;
   USING_TFEL_FUNCTIONS;
 

@@ -6,7 +6,7 @@
  */
 
 @UseCastemAccelerationAlgorithm true;
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatcompressibleneohookeanbehaviour';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatcompressibleneohookeanbehaviour';
 
 @Real 'C_C' '1.e6';
 @Real 'C_D' '1.e-10';

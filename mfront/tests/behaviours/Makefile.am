@@ -1,4 +1,4 @@
-SUBDIRS = aster castem
+SUBDIRS = aster castem castem2
 
 MFRONTS= DDIF2.mfront                                                      \
          Elasticity.mfront                                                 \

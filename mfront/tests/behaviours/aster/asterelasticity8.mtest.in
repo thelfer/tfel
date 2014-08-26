@@ -5,7 +5,7 @@
   "account for an orthotropic material."
 };
 
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterorthotropicelastic';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterorthotropicelastic';
 @Real 'E'  100.e9;
 @Real 'nu'   0.3;
 @Real 'a'    2.e-5;

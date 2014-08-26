@@ -1087,6 +1087,8 @@ namespace mfront
 	log << "mtest : using linear prediction" << endl;
       } else if(this->ppolicy==ELASTICPREDICTION){
 	log << "mtest : prediction using elastic stiffness" << endl;
+      } else if(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES){
+	log << "mtest : prediction using elastic stiffness computed from material properties" << endl;
       } else if(this->ppolicy==TANGENTOPERATORPREDICTION){
 	log << "mtest : prediction using tangent operator" << endl;
       } else {
@@ -1489,6 +1491,7 @@ namespace mfront
 	  state.iv1 = state.iv0;
 	}
       } else if((this->ppolicy==ELASTICPREDICTION)||
+		(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES)||
 		(this->ppolicy==SECANTOPERATORPREDICTION)||
 		(this->ppolicy==TANGENTOPERATORPREDICTION)){
 	// evaluations of the materials properties at the beginning
@@ -1510,6 +1513,12 @@ namespace mfront
 						  state.iv0,state.esv0,
 						  this->hypothesis,
 						  MTestStiffnessMatrixType::ELASTIC);
+	} else if(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES){
+	  sp = this->b->computePredictionOperator(wk.Kp,this->rm,state.e0,
+						  state.s0,state.mprops0,
+						  state.iv0,state.esv0,
+						  this->hypothesis,
+						  MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES);
 	} else if (this->ppolicy==SECANTOPERATORPREDICTION){
 	  sp = this->b->computePredictionOperator(wk.Kp,this->rm,state.e0,
 						  state.s0,state.mprops0,

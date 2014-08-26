@@ -8,7 +8,7 @@
 @MaximumNumberOfSubSteps 1;
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatddif2';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatddif2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

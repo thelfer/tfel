@@ -87,6 +87,9 @@ if(WIN32)
   endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif(WIN32)
 
+get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION)
+get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
+
 macro(test_castem test_arg)
   configure_file(castem${test_arg}.mtest.in
     castem${test_arg}.mtest @ONLY)

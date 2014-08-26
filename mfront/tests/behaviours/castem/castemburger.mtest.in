@@ -5,7 +5,7 @@
  * \brief  23 mai 2013
  */
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatburger';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatburger';
 @MaterialProperty<constant> 'YoungModulus' 31000. ; 
 @MaterialProperty<constant> 'PoissonRatio'     0.3 ;    
 @MaterialProperty<constant> 'MassDensity'      0.; 

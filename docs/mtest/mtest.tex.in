@@ -292,6 +292,18 @@ matrice de raideur sont envisageables~:
   début de pas de temps.
 \end{itemize}
 
+L'interface UMAT utilisée par le code aux éléments finis \castem{}
+présente une particularité qu'il peut être intéressant d'utiliser
+quand la loi ne fournit pas d'opérateur de prédiction~: le code
+\castem{} exige que des propriétés élastiques fassent systématiquement
+partie de la liste de propriétés matériau et \mtest{} peut s'en servir
+pour fournir un opérateur élastique par défaut\footnote{Notons que la
+  loi peut ne pas utiliser les propriétés matériau qu'exige
+  \castem{}. Dans ce cas, ces propriétés doivent être considérées
+  comme des paramètres numériques permettant de construire une matrice
+  de raideur effective.}\textsuperscript{\normalfont,}\footnote{Voir
+  le mot clé \mkey{PredictionPolicy}}.
+
 \subsection{Algorithmes de résolution}
 \label{sec:algor-de-resol}
 
@@ -368,6 +380,19 @@ La matrice de raideur raideur peut-être\footnote{Voir le mot clé
   \(\deriv{\finpas{\tsigma}}{\Delta\,\tepsilonto}\)~;
 \end{itemize}
 
+L'interface {\tt UMAT} présente une particularité déjà évoquée pour
+l'opérateur de prédiction permettant de proposer une matrice de
+raideur par défaut quand la loi n'en implante pas~: le code \castem{}
+exige que des propriétés élastiques fassent systématiquement partie de
+la liste de propriétés matériau \footnote{Notons que la loi peut ne
+  pas utiliser les propriétés matériau qu'exige \castem{}. Dans ce
+  cas, ces propriétés doivent être considérées comme des paramètres
+  numériques permettant de construire une matrice de raideur effective
+  utilisée pour la recherche de l'équilibre~: la convergence de
+  l'algorithme d'équilibre est garantie si cette matrice effective
+  conduit à une réponse plus raide que celle de la loi de
+  comportement.}
+
 \paragraph{Critère de convergence} L'algorithme de \nom{Newton} est
 répété jusqu'à ce que deux critères de convergence soient
 simultanément satisfaits~:
@@ -405,7 +430,7 @@ Cette estimation est cependant assez souvent imprécise.
 
 \paragraph{Accélération de convergence} Dans le cas d'une convergence
 linéaire, il est possible d'utiliser un algorithme d'accélération de
-convergence utilisé dans les opérateurs de résolution de
+convergence introduit par les opérateurs de résolution de
 \castem{}~\cite{pascal_notice_2005}\footnote{Voir le mot clé
   \mkeyb{UseCastemAccelerationAlgorithm}{Use\-Castem\-Acceleration\-Algorithm}.}.
 
@@ -418,7 +443,8 @@ convergence utilisé dans les opérateurs de résolution de
   \label{fig:mtest:acceleration}
 \end{figure}
 
-L'idée de cette algorithme est de~:
+Nous utilisons dans \mtest{} la première version de cet
+algorithme. L'idée de cette algorithme est de~:
 \begin{itemize}
 \item conserver les \(3\) derniers résidus, notés \(r_{n}\),
   \(r_{n-1}\), \(r_{n-2}\) et les \(3\) dernières estimations de la
@@ -476,6 +502,17 @@ L'idée de cette algorithme est de~:
   \end{itemize}
 \end{itemize}
 
+La nouvelle estimation des inconnues peut ne pas vérifier les
+conditions cinématiques imposées, que nous traitons au paragraphe
+suivant, une nouvelle itération après l'étape d'accélération sera
+toujours systématiquement effectué\footnote{Les dernières versions des
+  opérateurs de résolution de \castem{}~\cite{pascal_notice_2005}
+  contournent cette difficulté en utilisant une stratégie légèrement
+  différente~: ils calculent le résidu accéléré et calcule une
+  correction des inconnues en effectuant une itération supplémentaire
+  de l'algorithme~\eqref{eq:mtest:NR2}. L'estimation obtenue vérifie
+  alors nécessairement les conditions cinématiques imposées.}.
+
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mtest/images/acceleration.eps}
@@ -489,7 +526,8 @@ tangente cohérente n'est pas disponible. À titre d'exemple, la
 figure~\ref{fig:mtest:acceleration2} compare comment les estimations
 d'équilibre convergent en fonction des options choisies pour la
 résolution~: avec l'accélération de convergence, la vitesse ce
-convergence est super-linéaire.
+convergence est super-linéaire (approximativement \(1,7\) d'après nos
+essais).
 
 Cette méthode ne doit pas être utilisée avec une matrice tangente
 cohérente. En effet, dans ce cas, la vitesse de convergence serait
@@ -602,6 +640,7 @@ D'autres stratégies peuvent cependant être utilisée\footnote{Voir le
 \end{itemize}
 
 \subsection{Interface aux lois de comportement}
+\label{sec:interface-aux-lois}
 
 \mtest{} supporte les mêmes interfaces que \mfront{}\footnote{Voir le
   mot clé \mkey{Behaviour}.}~:
@@ -1158,8 +1197,16 @@ son admises~:
   fasse par une interpolation linéaire~;
 \item {\tt ElasticPrediction}, qui demande à ce que la prédiction se
   fasse par une résolution utilisant la matrice élastique non endommagée~;
+\item {\tt ElasticPredictionFromMaterialProperies}, qui demande à ce
+  que la prédiction se fasse à partir d'une matrice de raideur
+  élastique calculée non par la loi mais sur la base des propriétés
+  matériaux.  Cette option est uniquement supportée par l'interface
+  UMAT~: nous tirons partie du fait que le code \castem{} exige que
+  des propriétés élastiques fassent systématiquement partie de la
+  liste de propriétés matériau~;
 \item {\tt SecantPrediction}, qui demande à ce que la prédiction se
-  fasse par une résolution utilisant la matrice élastique endommagée~;
+  fasse par une résolution utilisant la matrice élastique
+  éventuellement endommagée~;
 \item {\tt TangentOperatorPrediction}, qui demande à ce que la
   prédiction se fasse par une résolution utilisant la matrice tangente
   en début de pas de temps.

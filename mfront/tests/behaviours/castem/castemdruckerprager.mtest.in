@@ -4,7 +4,7 @@
   Uniaxial testing of a Drucker-Prager behaviour.
 };
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@/libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatdruckerprager';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatdruckerprager';
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1;
 

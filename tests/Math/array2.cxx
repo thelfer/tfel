@@ -31,12 +31,9 @@ void function(const tfel::math::ArrayExpr<T,Expr> a,
 
 int main(void)
 {
-  using namespace std;
-  using namespace tfel::math;
-
+  using tfel::math::array;
   array<2>::RunTimeProperties RT(4,3);
   array<2> a(RT,2.);
   array<2> b(RT,4.);
-
   return EXIT_SUCCESS;
 }

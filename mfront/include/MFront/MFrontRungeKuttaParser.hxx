@@ -45,44 +45,49 @@ namespace mfront{
     virtual void
     treatUnknownVariableMethod(const std::string&);
 
-    void treatStateVariables(void);
+    virtual void treatStateVariables(void);
 
-    void treatEpsilon(void);
+    virtual void treatEpsilon(void);
 
-    void treatMinimalTimeStep(void);
+    virtual void treatMinimalTimeStep(void);
 
-    void treatAlgorithm(void);
+    virtual void treatAlgorithm(void);
 
-    void treatComputeStress(void);
+    virtual void treatComputeStress(void);
 
     void
     treatUpdateAuxiliaryStateVars(void);
 
-    void treatDerivative(void);
+    virtual void treatTangentOperator(void);
 
-    void writeBehaviourParserSpecificIncludes(void);
+    virtual void treatIsTangentOperatorSymmetric(void);
 
-    void writeBehaviourParserSpecificTypedefs(void);
 
-    void writeBehaviourParserSpecificMembers(void);
+    virtual void treatDerivative(void);
 
-    void writeBehaviourParserSpecificConstructorPart(void);
+    virtual void writeBehaviourParserSpecificIncludes(void);
 
-    void writeBehaviourEulerIntegrator(void);
+    virtual void writeBehaviourParserSpecificTypedefs(void);
 
-    void writeBehaviourRK2Integrator(void);
+    virtual void writeBehaviourParserSpecificMembers(void);
 
-    void writeBehaviourRK4Integrator(void);
+    virtual void writeBehaviourParserSpecificConstructorPart(void);
 
-    void writeBehaviourRK42Integrator(void);
+    virtual void writeBehaviourEulerIntegrator(void);
 
-    void writeBehaviourRK54Integrator(void);
+    virtual void writeBehaviourRK2Integrator(void);
 
-    void writeBehaviourRKCastemIntegrator(void);
+    virtual void writeBehaviourRK4Integrator(void);
 
-    void writeBehaviourUpdateStateVars(void);
+    virtual void writeBehaviourRK42Integrator(void);
 
-    void
+    virtual void writeBehaviourRK54Integrator(void);
+
+    virtual void writeBehaviourRKCastemIntegrator(void);
+
+    virtual void writeBehaviourUpdateStateVars(void);
+
+    virtual void
     writeBehaviourUpdateAuxiliaryStateVars(void);
 
     virtual void
@@ -112,6 +117,8 @@ namespace mfront{
     ErrorEvaluation eev;
     //! number of evaluations used by the algorithm
     unsigned short nbrOfEvaluation;
+    
+    bool isConsistantTangentOperatorSymmetricDefined;
   };
 
 } // end of namespace mfront  

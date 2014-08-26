@@ -7,6 +7,13 @@
 @RequireStiffnessTensor;
 @ProvidesSymmetricTangentOperator;
 
+@PredictionOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=D;
+}
+
 @Integrator{
   sig = D*(eto+deto);
   if(computeTangentOperator_){

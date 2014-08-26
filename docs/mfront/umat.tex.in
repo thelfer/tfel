@@ -213,6 +213,41 @@ Cette note suppose que le lecteur soit familier avec l'écriture de
 lois de comportement mécanique à l'aide de \mfront{}, écriture qui est
 décrite en détail par ailleurs~\cite{helfer_generateur_2013}.
 
+\section{Description de l'interface}
+
+\subsection{Choix du type de calcul}
+
+Le premier élément du tableau \varcpp{DDSOE} permet de préciser le
+type de calcul à effectuer et le type de matrice de raideur
+attendue.
+
+Une valeur strictement négative correspond à un calcul d'une matrice
+de prédiction. Dans ce cas, il n'y a pas d'intégration de la loi de
+comportement. Les valeurs supportées sont~:
+\begin{itemize}
+\item -1, qui correspond au calcul de la matrice d'élasticité initiale
+  (non endommagée)~;
+\item -2, qui correspond au calcul de la matrice sécante (matrice
+  d'élasticité endommagée)~;
+\item -3, qui correspond au calcul de la matrice tangente.
+\end{itemize}
+
+Une valeur positive ou nulle du premier élément du tableau
+\varcpp{DDSOE} conduit à l'intégration de la loi de comportement sur
+le pas de temps. Si cette intégration s'effectue avec succès, une
+matrice de raideur peut être calculée. Le type de matrice calculée
+dépend de la valeur du premier élément du tableau \varcpp{DDSOE}~:
+\begin{itemize}
+\item 1, correspond au calcul de la matrice d'élasticité initiale
+  (non endommagée)~;
+\item 2, correspond au calcul de la matrice sécante (matrice
+  d'élasticité endommagée)~;
+\item 3, correspond au calcul de la matrice tangente~;
+\item 4, correspond au calcul de la matrice tangente cohérente~;
+\end{itemize}
+
+\subsection{Méta-données}
+
 \clearpage
 \newpage
 \section{Utilisation des lois générées par \mfront{} dans \castem{}}

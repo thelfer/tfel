@@ -5,8 +5,8 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatelasticity';
-@MaterialProperty<castem>   'YoungModulus' '@top_builddir@/mfront/tests/properties/libMFrontMaterialProperties-castem@CMAKE_SHARED_LIBRARY_SUFFIX@' 'Inconel600_YoungModulus';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
+@MaterialProperty<castem>   'YoungModulus' '@MFrontMaterialPropertiesCastemBuildPath@' 'Inconel600_YoungModulus';
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;

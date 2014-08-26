@@ -21,7 +21,6 @@
 
 int main(void)
 {
-  using namespace std;
   using namespace tfel::math;
 
   assert(real(conj(12)-Complex<int>(12,0))==0);

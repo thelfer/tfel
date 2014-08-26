@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterelasticity';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterelasticity';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

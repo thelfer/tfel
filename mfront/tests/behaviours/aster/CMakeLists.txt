@@ -67,6 +67,9 @@ if(WIN32)
   endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif(WIN32)
 
+get_property(MFrontAsterBehavioursBuildPath TARGET MFrontAsterBehaviours PROPERTY LOCATION)
+get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
+
 macro(test_aster test_arg)
   configure_file(aster${test_arg}.mtest.in
     aster${test_arg}.mtest @ONLY)

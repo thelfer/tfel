@@ -75,3 +75,18 @@ p.setGlossaryName("EquivalentPlasticStrain");
     dfp_ddeel = (a*K*StrainStensor::Id()+2*mu*n_)*theta/young;
   }
 }
+
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTANTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

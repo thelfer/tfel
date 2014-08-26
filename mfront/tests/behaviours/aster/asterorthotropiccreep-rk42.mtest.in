@@ -11,7 +11,7 @@
 @Real 'young' 100e9;
 @Real 'nu'    0.3;
 
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterorthotropiccreep_rk42';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterorthotropiccreep_rk42';
 @MaterialProperty<constant> 'YoungModulus1'     'young';
 @MaterialProperty<constant> 'YoungModulus2'     'young';
 @MaterialProperty<constant> 'YoungModulus3'     'young';

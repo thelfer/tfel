@@ -6,8 +6,14 @@ allowed:
 - NoPrediction
 - LinearPrediction
 - ElasticPrediction
+- ElasticPredictionFromMaterialProperties
 - SecantPrediction
 - TangentPrediction
+
+Note:
+The ElasticPredictionFromMaterialProperties policy is only supported
+by the UMAT interface as the Cast3M finite element solver requires the
+stiffness matrix to be defined.
 
 Exemple:
 @PredictionPolicy 'ElasticPrediction';

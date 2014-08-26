@@ -9,7 +9,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'astermonocristal';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astermonocristal';
 @MaximumNumberOfSubSteps 1;
 
 // Material properties

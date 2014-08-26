@@ -33,9 +33,9 @@ int main(void)
   v2(2) = 5.;
   v2(3) = 6.;
 
-  function(1.25*v1);
-  function(cos(v2));
-  function(v2*v1);
+  ::function(1.25*v1);
+  ::function(cos(v2));
+  ::function(v2*v1);
 
   assert(abs((1.25*v1)(0)-1.25*12.12)<1.e-14);
   assert(abs((1.25*v1)(1)-1.25*12.234)<1.e-14);

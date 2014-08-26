@@ -1,11 +1,11 @@
 @Author Helfer Thomas;
 @Date   09 avril 2013;
 @Description{
-  "Modélisation d'un tube@CMAKE_SHARED_LIBRARY_SUFFIX@us pression"
+  "Modélisation d'un tube sous pression"
 };
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterelasticity';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterelasticity';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

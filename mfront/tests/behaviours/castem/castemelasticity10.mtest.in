@@ -5,7 +5,7 @@
   "account for an orthotropic material."
 };
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatorthotropicelastic';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

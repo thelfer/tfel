@@ -412,6 +412,8 @@ namespace mfront
       ppolicy = MTest::LINEARPREDICTION;
     } else if(s=="ElasticPrediction"){
       ppolicy = MTest::ELASTICPREDICTION;
+    } else if(s=="ElasticPredictionFromMaterialProperties"){
+      ppolicy = MTest::ELASTICPREDICTIONFROMMATERIALPROPERTIES;
     } else if(s=="SecantOperatorPrediction"){
       ppolicy = MTest::SECANTOPERATORPREDICTION;
     } else if(s=="TangentOperatorPrediction"){

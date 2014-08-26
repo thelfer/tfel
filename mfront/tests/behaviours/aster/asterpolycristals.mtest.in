@@ -9,7 +9,7 @@
 @Real 'nu'    0.3;
 @Real 'G'     'young/2.6';
 
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterpolycristals';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterpolycristals';
 
 @StiffnessMatrixType 'Elastic' ;
 

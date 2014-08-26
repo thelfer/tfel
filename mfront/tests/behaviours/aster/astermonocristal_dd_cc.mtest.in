@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'astermonocristal_dd_cc';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astermonocristal_dd_cc';
 
 // Material properties
 @MaterialProperty<constant> 'DeltaG_0' 0.84;

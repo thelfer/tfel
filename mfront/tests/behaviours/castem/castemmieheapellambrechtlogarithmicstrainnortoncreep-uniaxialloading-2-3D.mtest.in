@@ -8,7 +8,7 @@
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatlogarithmicstrainnortoncreep';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainnortoncreep';
 @DrivingVariableEpsilon 4.e-8;
 @StressEpsilon          2.e3;
 

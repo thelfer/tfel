@@ -29,7 +29,7 @@ struct RightCauchyGreenTensorTest
   {
     using namespace std;  
     using namespace tfel::math;  
-    tensor<2,double> F(real(0));
+    tensor<2,double> F(0.);
     F(0)=1.300;
     F(1)=0.650;
     F(2)=0.;
@@ -53,7 +53,7 @@ struct RightCauchyGreenTensorTest2
   {
     using namespace std;  
     using namespace tfel::math;  
-    tensor<3,double> F(real(0));
+    tensor<3,double> F(0.);
     F(0)=1;
     F(1)=1;
     F(2)=1.5;

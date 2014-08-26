@@ -9,7 +9,7 @@
 @UseCastemAccelerationAlgorithm true;
 
 @Real 'Hy'  '102e9'; // H is used internally for the Heavyside function
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatplasticity';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatplasticity';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

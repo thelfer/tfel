@@ -22,7 +22,6 @@
 
 int main(void)
 {
-  using namespace std;
   using namespace tfel::math;
 
   array<1u>::RunTimeProperties RT(4);

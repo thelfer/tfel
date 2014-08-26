@@ -8,7 +8,7 @@
 @UseCastemAccelerationAlgorithm true;
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<umat> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontCastemBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'umatmonocristal_dd_cc_irradiation_numericaljacobian';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatmonocristal_dd_cc_irradiation_numericaljacobian';
 
 @MaterialProperty<constant> 'PoissonRatio12' 0.35;
 @MaterialProperty<constant> 'PoissonRatio13' 0.35;
