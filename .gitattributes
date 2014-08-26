@@ -473,8 +473,16 @@ docs/texmacs/FiniteStrain2D-planestress.tm -text
 docs/texmacs/FiniteStrain2D.tm -text
 docs/texmacs/FiniteStrain3D.tm -text
 docs/texmacs/FiniteStrain_dC_dF-3D.tm -text
+docs/texmacs/MatrixProductDerivative1D.tm -text
+docs/texmacs/MatrixProductDerivative2D.tm -text
+docs/texmacs/MatrixProductDerivative3D.tm -text
+docs/texmacs/RightCauchyDerivative1D.tm -text
+docs/texmacs/RightCauchyDerivative2D.tm -text
+docs/texmacs/RightCauchyDerivative3D.tm -text
 docs/texmacs/Stensor2D.tm -text
 docs/texmacs/Stensor3D.tm -text
+docs/texmacs/SymmetricTensorProductDerivative2D.tm -text
+docs/texmacs/SymmetricTensorProductDerivative3D.tm -text
 docs/texmacs/Tensor2D.tm -text
 docs/texmacs/Tensor3D.tm -text
 docs/texmacs/UMATFiniteStrain.tm -text
