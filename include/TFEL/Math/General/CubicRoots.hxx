@@ -104,14 +104,14 @@ namespace tfel{
 		 const T a1,
 		 const T a0)
       {	
-      	static const T C_PI       = T(2)*std::atan(T(1));
-	static const T C_1_3      = T(1)/3;
+      	static const T C_PI       = T(4)*std::atan(T(1));
+	static const T C_1_3      = T(1)/T(3);
 	static const T C_2_3      = T(2)*C_1_3;
 	static const T C_m1_27    = T(-1)/T(27);
 	static const T C_2_27     = T(2)/T(27);
 	static const T C_27_2     = T(27)/T(2);
 	static const T C_3SQRT3_2 = std::sqrt(T(3))*T(3)/T(2);
-	static const T C_SQRT3_3  = std::sqrt(T(3))/T(3);
+	static const T C_SQRT3_3  = std::sqrt(T(3))*C_1_3;
       
 	const T prec = 100*std::numeric_limits<T>::min();
       
@@ -163,10 +163,10 @@ namespace tfel{
 
 	T theta;
 	if(rho<=prec){
-	  theta = 0.;
+	  theta = T(0);
 	} else {
-	  if(std::abs(tmp/rho+1.)<prec){
-	    theta = T(C_PI);
+	  if(std::abs(tmp+rho)<prec){
+	    theta = C_PI;
 	  } else {
 	    theta = T(2)*std::atan(tmp2/(tmp+rho));
 	  }
