@@ -2374,5 +2374,6 @@ tfel-doc/src/TestDocMain.cxx -text
 tfel-doc/src/TestDocParser.cxx -text
 tfel-doc/src/TestDocumentation.cxx -text
 tfel-doc/src/tfel-doc.cxx -text
+tools/FourthOrderTensorProduct/generate.cxx -text
 tools/glossary/generate_glossary.cxx -text
 tools/glossary/glossary.txt -text

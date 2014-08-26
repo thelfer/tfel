@@ -56,6 +56,7 @@
 \newcommand{\egl}[0]{\ensuremath{\tepsilonto_{GL}}}
 \newcommand{\degl}[0]{\ensuremath{\tdepsilonto_{GL}}}
 \newcommand{\tns}[1]{\ensuremath{\underset{\tilde{}}{\mathbf{#1}}}}
+\newcommand{\tnsq}[1]{\ensuremath{\underset{\tilde{}}{\underset{\tilde{}}{\mathbf{#1}}}}}
 \newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\,t}}}
@@ -1603,42 +1604,6 @@ qu'au paragraphe~\ref{sec:coeff-de-dilat-vol}~:
 
 \newpage
 \clearpage
-\section{Étude du glissement simple en déformations logarithmiques}
-
-Le glissement simple est une transformation telle que~:
-\[
-\left\{
-  \begin{aligned}
-    x_{1} &= X_{1}+\gamma\,X_{2}\\
-    x_{2} &= X_{2}\\
-    x_{3} &= X_{3}\\
-  \end{aligned}
-\right.
-\]
-où \(\gamma\) est un paramètre.
-
-Le gradient de cette transformation est donné par~:
-\[
-\tns{F}=
-\begin{pmatrix}
-  1 & \gamma & 0 \\
-  0 & 1      & 0 \\
-  0 & 0      & 1 \\
-\end{pmatrix}
-\]
-
-Le tenseur de \nom{Cauchy-Green} droit est alors~:
-\[
-\tenseur{C}=
-\begin{pmatrix}
-  1      & \gamma       & 0 \\
-  \gamma & 1+\gamma^{2}  & 0 \\
-  0      & 0            & 1 \\
-\end{pmatrix}
-\]
-
-\newpage
-\clearpage
 \section{La décomposition multiplicative $F_{e}F_{p}$}
 
 \begin{equation}
@@ -1718,6 +1683,155 @@ tion of corresponding expressions in infinitesimal plasticity, since (to the
 order of approximation) in the linear theory the expression (4.23)2 would be
 identical to the rate of strain = rate of (elastic part + plastic part).
 
+\section{Représentation vectorielle des tenseurs d'ordre $2$ non
+  symétriques}
+\label{sec:repr-vect-des}
 
+Les tenseurs d'ordre \(2\) non symétriques, généralement décrit par
+des matrices, sont représentés dans \TFEL{} par un vecteur dont les
+composantes sont, en \(3D\)~:
+\[
+\tns{F}=
+\begin{pmatrix}
+  F_{00} \\ F_{11} \\ F_{22} \\ F_{01} \\ F_{10} \\ F_{02} \\ F_{20} \\ F_{12} \\ F_{21}
+\end{pmatrix}
+\]
+
+Il est possible de vérifier que le produit scalaire des
+représentations vectorielles de deux tenseurs est égal au produit
+scalaire usuel sur les matrices~:
+\[
+\tns{F}.\tns{G}=\trace\paren{\transpose{\tns{F}}.\tns{G}}
+\]
+
+\section{Dérivation de la multiplication matricielle}
+
+Les lois en grandes transformations introduisent une nouvelle
+opération entre tenseurs~: la multiplication matricielle. Pour
+simplifier, nous la noterons \(\star\) dans le cadre de cette annexe.
+
+Soient deux tenseurs \(\tns{A}\paren{\tns{X}}\) et
+\(\tns{B}\paren{\tns{X}}\) dépendant d'un troisième tenseur
+\(\tns{X}\). L'objet de cet annexe est de calculer la dérivée
+suivante~:
+\begin{equation}
+  \label{eq:mfront:finitestrain:dAB}
+  \deriv{}{\tns{X}}\paren{\tns{A}\paren{\tns{X}}\,\star\,\tns{B}\paren{\tns{X}}}  
+\end{equation}
+
+\subsection{Définition des tenseurs d'ordre $4$}
+%% $\partial^{l}_{\star}\paren{\tns{B}}$ et $\partial^{l}_{\star}\paren{\tns{A}}$}
+
+La multiplication matricielle étant bilinéaire, il existe deux
+tenseurs d'ordre \(4\) linéaires tels que~:
+\[
+\begin{aligned}
+  \deriv{}{\tns{A}}\paren{\tns{A}\,\star\,\tns{B}}&=\partial^{l}_{\star}\paren{\tns{B}}\\
+  \deriv{}{\tns{B}}\paren{\tns{A}\,\star\,\tns{B}}&=\partial^{r}_{\star}\paren{\tns{A}}\\
+\end{aligned}
+\]
+
+Ces tenseurs d'ordre $4$ permettent de développer la
+dérivée~\eqref{eq:mfront:finitestrain:dAB} ainsi~:
+\begin{equation}
+  \label{eq:mfront:finitestrain:dAB-b}
+  \deriv{}{\tns{X}}\paren{\tns{A}\paren{\tns{X}}\,\star\,\tns{B}\paren{\tns{X}}}=
+  \partial^{l}_{\star}\paren{\tns{B}}\,\deriv{\tns{A}}{\tns{X}}+
+  \partial^{r}_{\star}\paren{\tns{A}}\,\deriv{\tns{B}}{\tns{X}}
+\end{equation}
+
+Cette expression est extrêmement utile en pratique, car elle simplifie
+les expressions de toutes les opérations de dérivation. 
+
+\subsection{Représentation matricielle des tenseurs d'ordre $4$}
+%% $\partial^{l}_{\star}(\tns{B})$ et $\partial^{l}_{\star}(\tns{A})$}
+
+L'expression des tenseurs d'ordre \(4\) \(\partial^{l}_{\star}\paren{\tns{B}}\) et
+\(\partial^{l}_{\star}\paren{\tns{A}}\) est assez complexe, d'autant plus que l'on
+utilise dans \mfront{} la représentation vectorielle des tenseurs
+décrite en annexe~\ref{sec:repr-vect-des}.
+
+En utilisant cette représentation vectorielle, il est possible de
+donner une représentation matricielle des tenseurs d'ordre $4$
+\(\partial^{l}_{\star}\paren{\tns{B}}\) et  \(\partial^{l}_{\star}\paren{\tns{A}}\).
+
+En \(3D\), \(\partial^{l}_{\star}\paren{\tns{B}}\)
+s'exprime ainsi~:
+\[
+\begin{pmatrix}
+  B_{ 0} & 0 & 0 & B_{ 4} & 0 & B_{ 6} & 0 & 0 & 0\\
+  0 & B_{ 1} & 0 & 0 & B_{ 3} & 0 & 0 & B_{ 8} & 0\\
+  0 & 0 & B_{ 2} & 0 & 0 & 0 & B_{ 5} & 0 & B_{ 7}\\
+  B_{ 3} & 0 & 0 & B_{ 1} & 0 & B_{ 8} & 0 & 0 & 0\\
+  0 & B_{ 4} & 0 & 0 & B_{ 0} & 0 & 0 & B_{ 6} & 0\\
+  B_{ 5} & 0 & 0 & B_{ 7} & 0 & B_{ 2} & 0 & 0 & 0\\
+  0 & 0 & B_{ 6} & 0 & 0 & 0 & B_{ 0} & 0 & B_{ 4}\\
+  0 & B_{ 7} & 0 & 0 & B_{ 5} & 0 & 0 & B_{ 2} & 0\\
+  0 & 0 & B_{ 8} & 0 & 0 & 0 & B_{ 3} & 0 & B_{ 1}
+\end{pmatrix}
+\]
+
+On constate que cette expression est~:
+\begin{enumerate}[-]
+\item non triviale. Un opérateur, noté \(\underline{\otimes}\) permet
+  d'en donner une écriture plus compacte~:
+  \[
+  \partial^{l}_{\star}\paren{\tns{B}}=\tns{I}\,\underline{\otimes}\,\transpose{\tenseur{B}}
+  \]
+  De manière similaire, l'opérateur
+  \(\partial^{l}_{\star}\paren{\tns{A}}\) s'écrit~:
+  \[
+  \partial^{l}_{\star}\paren{\tns{A}}=\tns{A}\,\underline{\otimes}\,\tns{I}
+  \]
+  De manière générale, cette opérateur transforme deux tenseurs
+  d'ordre \(2\) \(\tns{A}\) et \(\tns{B}\) en un tenseur d'ordre \(4\)
+  \(\tnsq{C}\) tel que~:
+  \[
+  \tnsq{C}_{ijkl}=\tns{A}_{ik}\,\tns{B}_{jl}
+  \]
+  L'introduction de cet opérateur ne nous a pas semblé opportun.
+\item creuse. Cette particularité sera utilisée pour optimiser le
+  calcul de la dérivée par la
+  formule~\eqref{eq:mfront:finitestrain:dAB-b} au
+  paragraphe~\ref{sec:optimisation}.
+\end{enumerate}
+
+\subsection{Calcul des tenseurs d'ordre $4$}
+
+La classe {\tt t2tot2}, qui représente les opérations linéaires entre
+tenseurs d'ordre \(2\) non symétriques (elle représente donc des
+tenseurs d'ordre \(4\)), fournit deux méthodes statiques nommées
+respectivement {\tt tpld} (tensor product left derivative) et {\tt
+  tprd} (tensor product right derivative) pour calculer les tenseurs
+d'ordre \(4\) $\partial^{l}_{\star}(\tns{B})$ et
+$\partial^{l}_{\star}(\tns{A})$.
+
+\subsection{Optimisation}
+\label{sec:optimisation}
+
+La formule~\eqref{eq:mfront:finitestrain:dAB-b} montre que les
+tenseurs $\partial^{l}_{\star}(\tns{B})$ et
+$\partial^{l}_{\star}(\tns{A})$ sont souvent amenés à être composés
+avec d'autres tenseurs d'ordre \(4\). En \(3D\), cette composition est
+équivalente au produit de deux matrices de taille \(9\,\times\,9\). Il
+est intéressant de l'optimiser en tenant compte de la nature creuse de
+$\partial^{l}_{\star}(\tns{B})$ et $\partial^{l}_{\star}(\tns{A})$.
+
+
+La classe {\tt t2tot2} fournit donc également deux méthodes statiques,
+également nomées {\tt tpld} et {\tt tprd}. La première prend en
+argument le tenseur \(\tns{B}\) et le tenseur d'ordre \(4\)
+\(\deriv{\tns{A}}{\tns{X}}\) et retourne un tenseur d'ordre \(4\) égal
+à \(\partial^{l}_{\star}(\tns{B})\,\deriv{\tns{A}}{\tns{X}}\). La
+seconde méthode réalise un travail symétrique.
+
+\subsection{Cas des tenseurs symétriques}
+
+La classe {\tt st2tost2}, qui représente les opérations linéaires
+entre tenseurs d'ordre \(2\) symétriques (qui représente donc aussi
+des tenseurs d'ordre \(4\)), fournit également quatre méthodes
+statiques nommées respectivement {\tt tpld} (tensor product left
+derivative) et {\tt tprd} (tensor product right derivative) dont le
+rôle est similaire à celui des leurs homologues du cas non symétrique.
 
 \end{document}
