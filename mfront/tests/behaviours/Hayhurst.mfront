@@ -82,11 +82,9 @@ alpha.setGlossaryName("ThermalExpansion");
      dH2=h2/seq * (H2star - delta2*H2) *dp;
      trsigplus=0;
      if (sequid<0.5){
-        real v1;
-        real v2;
-        real v3;
-        sig.computeEigenValues(v1,v2,v3);
-        trsigplus=max(0.,v1);
+      tvector<3u,stress> vp;
+      sig.computeEigenValues(vp);
+      trsigplus=max(0.,*(max_element(vp.begin(),vp.end())));
      } else {
        trsig=trace(sig);
        trsigplus=0.;

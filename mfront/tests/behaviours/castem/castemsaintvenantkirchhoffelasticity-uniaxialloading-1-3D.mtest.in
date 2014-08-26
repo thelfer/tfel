@@ -12,7 +12,7 @@
 @MaterialProperty<constant> 'ThermalExpansion'   0.;
 
 @ImposedDrivingVariable 'FXX' 1.;
-@ImposedDrivingVariable 'FYY' {0:1.,2000.:1.2};
+@ImposedDrivingVariable 'FYY' {0:1.,1.:1.2};
 @ImposedDrivingVariable 'FZZ' 1.;
 @ImposedDrivingVariable 'FXY' 0.;
 @ImposedDrivingVariable 'FYX' 0.;

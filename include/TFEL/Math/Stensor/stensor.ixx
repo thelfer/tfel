@@ -848,24 +848,6 @@ namespace tfel{
       tfel::math::internals::StensorComputeEigenValues_<N>::exe(reinterpret_cast<const typename tfel::typetraits::BaseType<T>::type* const>(this->v),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(0)),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(1)),reinterpret_cast<typename tfel::typetraits::BaseType<T>::type&>(vp(2)),b);
     }
 
-    template<unsigned short N,typename T, 
-	     template<unsigned short,typename> class Storage>
-    template<typename StensorType>
-    typename tfel::meta::EnableIf<
-      (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-      (StensorTraits<StensorType>::dime==N)&&
-      (tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
-					typename StensorTraits<StensorType>::NumType>::cond),
-      void>::type
-    stensor<N,T,Storage>::computeEigenValuesDerivatives(StensorType& n0,
-							StensorType& n1,
-							StensorType& n2,
-							const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m) const
-    {
-      return tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(n0,n1,n2,m);      
-    } // end of stensor<N,T,Storage>::computeEigenValuesDerivatives
-
-
     // computeEigenVectors
     template<unsigned short N,typename T, 
 	     template<unsigned short,typename> class Storage>
@@ -897,6 +879,40 @@ namespace tfel{
 
     template<unsigned short N,typename T, 
 	     template<unsigned short,typename> class Storage>
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+      (StensorTraits<StensorType>::dime==N)&&
+      (tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
+					typename StensorTraits<StensorType>::NumType>::cond),
+      void>::type
+    stensor<N,T,Storage>::computeEigenValuesDerivatives(StensorType& n0,
+							StensorType& n1,
+							StensorType& n2,
+							const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      return tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(n0,n1,n2,m);      
+    } // end of stensor<N,T,Storage>::computeEigenValuesDerivatives
+
+    template<unsigned short N,typename T, 
+	     template<unsigned short,typename> class Storage>
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+      (StensorTraits<StensorType>::dime==N)&&
+      (tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
+					typename StensorTraits<StensorType>::NumType>::cond),
+      void>::type
+    stensor<N,T,Storage>::computeEigenTensors(StensorType& n0,
+					      StensorType& n1,
+					      StensorType& n2,
+					      const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
+    {
+      return tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(n0,n1,n2,m);      
+    } // end of stensor<N,T,Storage>::computeEigenTensors
+
+    template<unsigned short N,typename T, 
+	     template<unsigned short,typename> class Storage>
     template<typename ST2toST2Type>
     typename tfel::meta::EnableIf<
       (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
@@ -910,7 +926,7 @@ namespace tfel{
 							 ST2toST2Type& dn2_ds,
 							 const tvector<3u,T>& vp,
 							 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m,
-							 const T eps) const
+							 const T eps)
     {
       return tfel::math::internals::StensorComputeEigenTensorsDerivatives<N>::exe(dn0_ds,dn1_ds,dn2_ds,
 										  vp,m,eps); 

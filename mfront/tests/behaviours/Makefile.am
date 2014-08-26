@@ -53,6 +53,9 @@ MFRONTS= DDIF2.mfront                                            \
 	 ImplicitHayhurst.mfront                                 \
 	 Tvergaard.mfront                                        \
 	 SaintVenantKirchhoffElasticity.mfront                   \
+	 LogarithmicStrainElasticity.mfront                      \
+	 LogarithmicStrainPlasticity.mfront                      \
+	 LogarithmicStrainNortonCreep.mfront                     \
 	 CompressibleNeoHookeanBehaviour.mfront                  \
 	 IncompressibleMooneyRivlinBehaviour.mfront              \
 	 IncompressiblePlaneStressMooneyRivlinBehaviour.mfront   \

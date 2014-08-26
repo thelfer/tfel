@@ -1521,7 +1521,9 @@ namespace mfront
       }
       /* resolution */
       bool cont = true;
+      vector<string> failed_criteria;
       while((!converged)&&(iter!=this->iterMax)&&(cont)){
+	failed_criteria.clear();
 	++iter;
 	nep2 = nep;
 	nep  = ne;
@@ -1600,6 +1602,32 @@ namespace mfront
 					   this->eeps,this->seps,
 					   t,dt);
 	  }
+	  if((!converged)&&(iter==this->iterMax)){
+	    if(ne>this->eeps){
+	      ostringstream msg;
+	      msg << "test on driving variables (error : " << ne
+		  << ", criteria : " << this->eeps << ")";
+	      failed_criteria.push_back(msg.str());
+	    }
+	    if(nr>this->seps){
+	      ostringstream msg;
+	      msg << "test on thermodynamic forces (error : " << nr
+		  << ", criteria : " << this->seps << ")";
+	      failed_criteria.push_back(msg.str());
+	    }
+	    for(pc =this->constraints.begin();
+		pc!=this->constraints.end();++pc){
+	      const MTestConstraint& c = *(*pc);
+	      bool bc = c.checkConvergence(state.u1,state.s1,
+					   this->eeps,this->seps,
+					   t,dt);
+	      if(!bc){
+		failed_criteria.push_back(c.getFailedCriteriaDiagnostic(state.u1,state.s1,
+									this->eeps,this->seps,
+									t,dt));
+	      }
+	    }
+	  }
 	  if(this->ppolicy == NOPREDICTION){
 	    converged = (converged) && (iter>1);
 	  }
@@ -1660,6 +1688,15 @@ namespace mfront
       }
       if((iter==this->iterMax)||(!cont)){
 	// no convergence
+	if(getVerboseMode()>=VERBOSE_LEVEL1){
+	  ostream& log = getLogStream();
+	  log << "No convergence, the following criteria were not met : " << endl;
+	  for(vector<string>::const_iterator pfc=failed_criteria.begin();
+	      pfc!=failed_criteria.end();++pfc){
+	    log << "- " << *pfc << endl;
+	  }
+	  log << endl;
+	}
 	++subStep;
 	if(subStep==this->mSubSteps){
 	  string msg("MTest::execute : behaviour "
@@ -1668,7 +1705,7 @@ namespace mfront
 	}
 	if(getVerboseMode()>=VERBOSE_LEVEL1){
 	  ostream& log = getLogStream();
-	  log << "non convergence, dividing time "
+	  log << "Dividing time "
 	      << "step by two" << endl << endl;
 	}
 	dt *= 0.5;

@@ -14,7 +14,7 @@
 
 @ImposedDrivingVariable 'FRR' 1.;
 @ImposedDrivingVariable 'FZZ' 1.;
-@ImposedDrivingVariable 'FTT' {0:1.,2000.:1.2};
+@ImposedDrivingVariable 'FTT' {0:1.,1.:1.2};
 
 @ExternalStateVariable 'Temperature' 293.15;
 

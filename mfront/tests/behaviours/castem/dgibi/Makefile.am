@@ -9,5 +9,6 @@ EXTRA_DIST=CMakeLists.txt               			                 \
 	   IncompressiblePlaneStressGornetDesmoratBehaviourShearTesting.dgibi    \
 	   IncompressiblePlaneStressGornetDesmoratBehaviourUniaxialTesting.dgibi \
 	   ImplicitSimoMieheElastoPlasticityUniaxialTesting.dgibi                \
-	   ImplicitSimoMieheElastoPlasticity-ssna303.dgibi
-
+	   ImplicitSimoMieheElastoPlasticity-ssna303.dgibi                       \
+	   LogarithmicStrainNortonCreepUniaxialTesting.dgibi                     \
+	   LogarithmicStrainPlasticity-ssna303.dgibi

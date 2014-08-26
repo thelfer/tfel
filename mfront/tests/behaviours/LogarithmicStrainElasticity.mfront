@@ -1,0 +1,41 @@
+@Behaviour LogarithmicStrainElasticity;
+@Author Helfer Thomas;
+@Date   4/12/13;
+@Description{
+ A very first test 
+ (the most simple one in fact).
+}
+
+@UMATFiniteStrainStrategy[umat] MieheApelLambrechtLogarithmicStrain;
+
+@UseQt true;
+@ProvidesSymmetricTangentOperator;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;
+rho.setGlossaryName("MassDensity");
+@MaterialProperty real alpha;
+alpha.setGlossaryName("ThermalExpansion");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

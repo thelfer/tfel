@@ -64,6 +64,23 @@ namespace mfront
     const MTestEvolution& e = *(this->eev);
     return abs(u(this->c)-e(t+dt))<eeps;
   }
+  
+  std::string
+  MTestImposedDrivingVariable::getFailedCriteriaDiagnostic(const tfel::math::vector<real>& e,
+							   const tfel::math::vector<real>&,
+							   const real eeps,
+							   const real ,
+							   const real t,
+							   const real dt) const
+  {
+    using namespace std;
+    const MTestEvolution& ev = *(this->eev);
+    ostringstream msg;
+    msg << "imposed driving variable not reached for component " << this->c 
+	<< "(imposed value : " << ev(t+dt) << ", computed value : " 
+	<< e(this->c) << ", criteria : " << eeps << ")";
+    return msg.str();
+  }
 
   MTestImposedDrivingVariable::~MTestImposedDrivingVariable()
   {} // end of MTestImposedDrivingVariable::~MTestImposedDrivingVariable

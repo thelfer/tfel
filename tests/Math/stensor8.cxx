@@ -86,8 +86,8 @@ struct STensorTest8_2D
     st2tost2<2u,double> dn0_ds,dn1_ds,dn2_ds;
     stensor<2u,double>  dvp0_ds,dvp1_ds,dvp2_ds;
     s.computeEigenVectors(vp,m);
-    s.computeEigenValuesDerivatives(dvp0_ds,dvp1_ds,dvp2_ds,m);
-    s.computeEigenTensorsDerivatives(dn0_ds,dn1_ds,dn2_ds,vp,m,1.e-7);
+    stensor<2u,double>::computeEigenValuesDerivatives(dvp0_ds,dvp1_ds,dvp2_ds,m);
+    stensor<2u,double>::computeEigenTensorsDerivatives(dn0_ds,dn1_ds,dn2_ds,vp,m,1.e-7);
     for(unsigned short i=0;i!=4u;++i){
       TFEL_TESTS_ASSERT(abs(dvp0_ds(i)-dvp0(i))<eps2);
       TFEL_TESTS_ASSERT(abs(dvp1_ds(i)-dvp1(i))<eps2);
@@ -167,8 +167,8 @@ struct STensorTest8_3D
     st2tost2<3u,double> dn0_ds,dn1_ds,dn2_ds;
     stensor<3u,double>  dvp0_ds,dvp1_ds,dvp2_ds;
     s.computeEigenVectors(vp,m);
-    s.computeEigenValuesDerivatives(dvp0_ds,dvp1_ds,dvp2_ds,m);
-    s.computeEigenTensorsDerivatives(dn0_ds,dn1_ds,dn2_ds,vp,m,1.e-7);
+    stensor<3u,double>::computeEigenValuesDerivatives(dvp0_ds,dvp1_ds,dvp2_ds,m);
+    stensor<3u,double>::computeEigenTensorsDerivatives(dn0_ds,dn1_ds,dn2_ds,vp,m,1.e-7);
     for(unsigned short i=0;i!=6u;++i){
       TFEL_TESTS_ASSERT(abs(dvp0_ds(i)-dvp0(i))<eps2);
       TFEL_TESTS_ASSERT(abs(dvp1_ds(i)-dvp1(i))<eps2);

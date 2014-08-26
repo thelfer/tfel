@@ -14,7 +14,7 @@
 
 @ImposedDrivingVariable 'FXX' 1.;
 @ImposedDrivingVariable 'FYY' 1.;
-@ImposedDrivingVariable 'FZZ' {0:1.,2000.:1.2};
+@ImposedDrivingVariable 'FZZ' {0:1.,1.:1.2};
 @ImposedDrivingVariable 'FXY' 0.;
 @ImposedDrivingVariable 'FYX' 0.;
 

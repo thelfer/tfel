@@ -12,7 +12,7 @@
 @MaterialProperty<constant> 'MassDensity'        0.;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;
 
-@ImposedDrivingVariable 'FRR' {0:1.,2000.:1.2};
+@ImposedDrivingVariable 'FRR' {0:1.,1.:1.2};
 @ImposedDrivingVariable 'FZZ' 1.;
 @ImposedDrivingVariable 'FTT' 1.;
 

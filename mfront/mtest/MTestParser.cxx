@@ -723,10 +723,11 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
       string msg("MTestParser::handleStressEpsilon : "
 		 "the @StressEpsilon keyword is only valid "
-		 "for cohesive zone model behaviours");
+		 "for small strain behaviours");
       throw(runtime_error(msg));
     }
     this->handleThermodynamicForceEpsilon(t,p);

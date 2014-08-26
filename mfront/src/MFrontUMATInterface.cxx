@@ -141,10 +141,13 @@ namespace mfront{
       const string& fss = current->value;
       if(fss=="FiniteRotationSmallStrain"){
 	this->finiteStrainStrategy = FINITEROTATIONSMALLSTRAIN;
+      } else if(fss=="MieheApelLambrechtLogarithmicStrain"){
+	this->finiteStrainStrategy = MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
       } else {
 	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
 	msg += "unsupported strategy '"+fss+"'\n";
-	msg += "The only supported strategy is 'FiniteRotationSmallStrain'";
+	msg += "The only supported strategies are "
+	  "'FiniteRotationSmallStrain' and 'MieheApelLambrechtLogarithmicStrain'";
 	throw(runtime_error(msg));
       }
       ++(current);
@@ -614,7 +617,8 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     }
-    if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+    if((this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN)||
+       (this->finiteStrainStrategy==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)){
       out << "#include\"MFront/UMAT/UMATFiniteStrain.hxx\"\n\n";
     }
     out << "#include\"MFront/UMAT/UMATInterface.hxx\"\n\n";
@@ -649,8 +653,8 @@ namespace mfront{
       out << "UMATReal eto[6];\n";
       out << "UMATReal deto[6];\n";
       out << "UMATInt  i;\n";
-      out << "UMATFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS);\n";
-      out << "UMATFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS);\n";
+      out << "UMATFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS,*NDI);\n";
+      out << "UMATFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS,*NDI);\n";
       out << "for(i=0;i!=*NTENS;++i){\n";
       out << "deto[i] -= eto[i];\n";
       out << "}\n";
@@ -658,10 +662,66 @@ namespace mfront{
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
       out << "if(*KINC==1){\n";
-      out << "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS);\n";
+      out << "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI);\n";
       out << "}\n";
       out << "}\n\n";
       
+      out << "MFRONT_SHAREDOBJ void\n" << umatFctName
+	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	  << "const umat::UMATReal *const F0, const umat::UMATReal *const F1,\n"
+	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	  << "umat::UMATInt    *const KINC)\n";
+      out << "{\n";
+      out << "umat" << makeLowerCase(name)
+	  << "(NTENS, DTIME,DROT,DDSOE,F0,F1,TEMP,DTEMP,\n"
+	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	  << "STRESS,NDI,KINC);\n";
+      out << "}\n\n";
+    } else if(this->finiteStrainStrategy==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+      if(this->generateMTestFile){
+	string msg("MFrontUMATInterface::endTreatement : "
+		   "generating mtest file is not supported "
+		   "upon large strains");
+	throw(runtime_error(msg));
+      }
+      out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+	  << makeLowerCase(name)
+	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
+	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	  << "const umat::UMATReal *const F0,    const umat::UMATReal *const F1,\n"
+	  << "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
+	  << "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
+	  << "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
+	  << "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
+	  << "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
+	  << "umat::UMATInt    *const KINC)\n";
+      out << "{\n";
+      out << "using namespace umat;\n";
+      out << "// computing the logarithmic strain\n";
+      out << "UMATReal eto[6];\n";
+      out << "UMATReal deto[6];\n";
+      out << "UMATReal P0[36];\n";
+      out << "UMATReal P1[36];\n";
+      out << "UMATReal s[6];\n";
+      out << "UMATInt  i;\n";
+      out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P0,eto,F0,*NTENS,*NDI);\n";
+      out << "UMATFiniteStrain::computeLogarithmicStrainAndDerivative(P1,deto,F1,*NTENS,*NDI);\n";
+      out << "UMATFiniteStrain::computeDualStressOfLogarithmicStrainFromCauchyStress(s,STRESS,P0,F0,*NTENS,*NDI);\n";
+      out << "for(i=0;i!=*NTENS;++i){\n";
+      out << "deto[i] -= eto[i];\n";
+      out << "}\n";
+      out << "umat::UMATInterface<tfel::material::" << className 
+	  << ">::exe(NTENS,DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
+	  << "PREDEF,DPRED,STATEV,NSTATV,s,NDI,KINC);\n";
+      out << "if(*KINC==1){\n";
+      out << "UMATFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI);\n";
+      out << "}\n";
+      out << "}\n\n";
       out << "MFRONT_SHAREDOBJ void\n" << umatFctName
 	  << "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
 	  << "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
@@ -1499,7 +1559,8 @@ namespace mfront{
   {
     using namespace std;
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+      if((this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN)||
+	 (this->finiteStrainStrategy==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)){
 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	    << "_BehaviourType = 2u;" ;
 	return;
@@ -1522,7 +1583,8 @@ namespace mfront{
   {
     typedef MechanicalBehaviourDescription::ModellingHypothesis MH;
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+      if((this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN)||
+	 (this->finiteStrainStrategy==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)){
 	out << "MFRONT_SHAREDOBJ unsigned short umat"
 	    << makeLowerCase(name) << "_Interface = 2u;\n\n";
       } else {

@@ -17,7 +17,9 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCri
 set(mfront_tests_SOURCES
   Elasticity
   FiniteRotationSmallStrainElasticity
+  LogarithmicStrainElasticity
   Plasticity
+  LogarithmicStrainPlasticity
   DruckerPrager
   Norton DDIF2
   Norton_Euler Norton_rk2
@@ -34,6 +36,7 @@ set(mfront_tests_SOURCES
   ImplicitNorton2
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
+  LogarithmicStrainNortonCreep
   EllipticCreep
   OrthotropicCreep
   OrthotropicCreep_rk42
@@ -192,6 +195,15 @@ test_castem(finiterotationsmallstrainelasticity-shear-3-3D)
 test_castem(finiterotationsmallstrainelasticity-shear-4-3D)
 test_castem(finiterotationsmallstrainelasticity-shear-5-3D)
 test_castem(finiterotationsmallstrainelasticity-shear-6-3D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-1D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-1D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-2D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
 test_castem(incompressiblemooneyrivlinbehaviour)
 test_castem(incompressibleplanestressgornetdesmoratbehavioursheartesting)
 test_castem(incompressibleplanestressgornetdesmoratbehaviouruniaxialtesting)

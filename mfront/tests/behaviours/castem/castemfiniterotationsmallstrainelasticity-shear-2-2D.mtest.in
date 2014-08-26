@@ -16,7 +16,7 @@
 @ImposedDrivingVariable 'FYY' 1.;
 @ImposedDrivingVariable 'FZZ' 1.;
 @ImposedDrivingVariable 'FXY' 0.;
-@ImposedDrivingVariable 'FYX' {0:0.,2000.:0.2};
+@ImposedDrivingVariable 'FYX' {0:0.,1.:0.2};
 
 @ExternalStateVariable 'Temperature' 293.15;
 

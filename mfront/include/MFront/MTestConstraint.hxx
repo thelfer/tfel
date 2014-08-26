@@ -56,10 +56,10 @@ namespace mfront
 	      const real,
 	      const real) const = 0;
     /*!
-     * \param[in]  e    : strains
-     * \param[in]  s    : stresses
-     * \param[in]  eeps : criterium value for strains
-     * \param[in]  seps : criterium value for stresses
+     * \param[in]  e    : driving variables
+     * \param[in]  s    : thermodynamic forces
+     * \param[in]  eeps : criterium value for driving variables
+     * \param[in]  seps : criterium value for thermodynamic forces
      * \param[in]  t    : beginning of the time step
      * \param[in]  dt   : time increment
      */
@@ -70,6 +70,21 @@ namespace mfront
 		     const real,
 		     const real,
 		     const real) const = 0;
+    /*!
+     * \param[in]  e    : driving variables
+     * \param[in]  s    : thermodynamic forces
+     * \param[in]  eeps : criterium value for driving variables
+     * \param[in]  seps : criterium value for thermodynamic forces
+     * \param[in]  t    : beginning of the time step
+     * \param[in]  dt   : time increment
+     */
+    virtual std::string
+    getFailedCriteriaDiagnostic(const tfel::math::vector<real>&,
+				const tfel::math::vector<real>&,
+				const real,
+				const real,
+				const real,
+				const real) const = 0;
     //! destructor
     virtual ~MTestConstraint();
   }; // end of struct MTestConstraint

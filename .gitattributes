@@ -1140,6 +1140,9 @@ mfront/tests/behaviours/ImplicitSimoMieheElastoPlasticity.mfront -text
 mfront/tests/behaviours/IncompressibleMooneyRivlinBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressGornetDesmoratBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressMooneyRivlinBehaviour.mfront -text
+mfront/tests/behaviours/LogarithmicStrainElasticity.mfront -text
+mfront/tests/behaviours/LogarithmicStrainNortonCreep.mfront -text
+mfront/tests/behaviours/LogarithmicStrainPlasticity.mfront -text
 mfront/tests/behaviours/Lorentz.mfront -text
 mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
@@ -1286,6 +1289,15 @@ mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbeha
 mfront/tests/behaviours/castem/castemincompressibleplanestressmooneyrivlinbehaviouruniaxialtesting.mtest.in -text
 mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
 mfront/tests/behaviours/castem/castemmazars.mtest.in -text
+mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-1D.mtest.in -text
+mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D.mtest.in -text
+mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest.in -text
+mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-1D.mtest.in -text
+mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-2D.mtest.in -text
+mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D.mtest.in -text
+mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D.mtest.in -text
+mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D.mtest.in -text
+mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal-2.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal.mtest.in -text
 mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation_numericaljacobian.mtest.in -text
@@ -1340,6 +1352,8 @@ mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressGornetDesmoratBeha
 mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressMooneyRivlinBiaxialTesting.dgibi -text
 mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressMooneyRivlinShear.dgibi -text
 mfront/tests/behaviours/castem/dgibi/IncompressiblePlaneStressMooneyRivlinUniaxialTesting.dgibi -text
+mfront/tests/behaviours/castem/dgibi/LogarithmicStrainNortonCreepUniaxialTesting.dgibi -text
+mfront/tests/behaviours/castem/dgibi/LogarithmicStrainPlasticity-ssna303.dgibi -text
 mfront/tests/behaviours/castem/dgibi/Makefile.am -text
 mfront/tests/behaviours/castem/dgibi/exec_ktests_CAST3M_XML.sh.in -text
 mfront/tests/behaviours/references/PolyCristalsAngles.txt -text

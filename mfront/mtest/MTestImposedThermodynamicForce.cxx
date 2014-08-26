@@ -62,6 +62,23 @@ namespace mfront
     return cb;
   }
 
+   std::string
+   MTestImposedThermodynamicForce::getFailedCriteriaDiagnostic(const tfel::math::vector<real>&,
+							       const tfel::math::vector<real>& s,
+							       const real,
+							       const real seps,
+							       const real t,
+							       const real dt) const
+   {
+     using namespace std;
+     const MTestEvolution& sv = *(this->sev);
+     ostringstream msg;
+     msg << "imposed thermodynmic force not reached for component " << this->c 
+	 << "(imposed value : " << sv(t+dt) << ", computed value : " 
+	 << s(this->c) << ", criteria : " << seps << ")";
+     return msg.str();
+   }
+
   MTestImposedThermodynamicForce::~MTestImposedThermodynamicForce()
   {} // end of MTestImposedThermodynamicForce::~MTestImposedThermodynamicForce
 
