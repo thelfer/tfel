@@ -1051,8 +1051,10 @@ namespace mfront
 	}
       }
       if(currentLine!=this->current->line){
-	this->description+="\n* ";
-	currentLine=this->current->line;
+	while(currentLine!=this->current->line){
+	  this->description+="\n* ";
+	  ++currentLine;
+	}
       }
       if(this->current->flag==Token::String){
 	this->description+=this->current->value.substr(1,this->current->value.size()-2u);
@@ -1068,7 +1070,7 @@ namespace mfront
 			      "File ended before the end of description.");
     }
     ++(this->current);
-  } // end of ParserBase::Description
+  } // end of ParserBase::treatDescription
 
   void ParserBase::treatAuthor(void)
   {

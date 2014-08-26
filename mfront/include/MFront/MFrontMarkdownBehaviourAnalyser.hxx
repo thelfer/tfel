@@ -34,6 +34,10 @@ namespace mfront{
     static std::string
     getName(void);
     /*!
+     * constructor
+     */
+    MFrontMarkdownBehaviourAnalyser();
+    /*!
      * \return a pair containing a boolean which is true if the
      * keyword was handled, and an iterator past the last token
      * treated.
@@ -44,8 +48,8 @@ namespace mfront{
 		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
     /*!
      * \brief write output files
-     * \param[in] mb        : mechanical behaviour description
-     * \param[in] fd        : mfront file description
+     * \param[in] mb : mechanical behaviour description
+     * \param[in] fd : mfront file description
      */
     virtual void
     endTreatement(const MechanicalBehaviourDescription&,
@@ -60,6 +64,30 @@ namespace mfront{
      */
     virtual ~MFrontMarkdownBehaviourAnalyser();
   protected:
+    /*!
+     * \brief treat the english output case
+     * \param[out] out : output file
+     * \param[in] mb   : mechanical behaviour description
+     * \param[in] fd   : mfront file description
+     */
+    virtual void
+    treatEnglishOutput(std::ostream&,
+		       const MechanicalBehaviourDescription&,
+		       const MFrontFileDescription&) const;
+    /*!
+     * \brief treat the french output case
+     * \param[out] out : output file
+     * \param[in]  mb  : mechanical behaviour description
+     * \param[in]  fd  : mfront file description
+     */
+    virtual void
+    treatFrenchOutput(std::ostream&,
+		      const MechanicalBehaviourDescription&,
+		      const MFrontFileDescription&) const;
+    /*!
+     * internal structure gathering data from mechanical behaviour
+     * description
+     */
     struct Data
     {
       std::string name;
@@ -72,10 +100,14 @@ namespace mfront{
     static std::vector<Data>
     getData(const MechanicalBehaviourDescription&,
 	    const VariableDescriptionContainer& (MechanicalBehaviourData::*)(void) const);
-    static void
+    void
     printData(std::ostream&,
 	      const MechanicalBehaviourDescription&,
-	      const std::vector<Data>&);
+	      const std::vector<Data>&) const;
+    /*!
+     * output file language
+     */
+    std::string language;
   }; // end of struct MFrontMarkdownBehaviourAnalyser
 
 } // end of namespace mfront  

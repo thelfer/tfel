@@ -5,7 +5,6 @@
  * \brief 19 mai 2014
  */
 
-#include<iostream>
 #include<fstream>
 
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -24,17 +23,44 @@ namespace mfront
     return "Markdown";
   }
 
+  MFrontMarkdownBehaviourAnalyser::MFrontMarkdownBehaviourAnalyser()
+    : language("default")
+  {} // end of MFrontMarkdownBehaviourAnalyser::MFrontMarkdownBehaviourAnalyser
+
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  MFrontMarkdownBehaviourAnalyser::treatKeyword(const std::string&,
+  MFrontMarkdownBehaviourAnalyser::treatKeyword(const std::string& key,
 						tfel::utilities::CxxTokenizer::TokensContainer::const_iterator p,
-						const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+						const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator pe)
   {
-    return std::make_pair(false,p);
+    using namespace std;
+    using namespace tfel::utilities;
+    if (key=="@MarkdownLanguage"){
+      if(this->language!="default"){
+	string msg("MFrontMarkdownBehaviourAnalyser::treatKeyword : "
+		   "language already defined");
+	throw(runtime_error(msg));
+      }
+      CxxTokenizer::checkNotEndOfLine("MFrontMarkdownBehaviourAnalyser::treatKeyword","",p,pe);
+      const string l = (p->flag==Token::String) ? p->value.substr(1,p->value.size()-2) : p->value;
+      ++p;
+      CxxTokenizer::readSpecifiedToken("MFrontMarkdownBehaviourAnalyser::treatKeyword",";",p,pe);
+      if((l=="default")||(l=="english")){
+	this->language="english";
+      } else if(l=="french"){
+	this->language=l;
+      } else if(l!="default"){
+	string msg("MFrontMarkdownBehaviourAnalyser::treatKeyword : "
+		   "unknown language '"+l+"'");
+	throw(runtime_error(msg));
+      }
+      return make_pair(true,p);
+    }
+    return make_pair(false,p);
   }
 
   void
   MFrontMarkdownBehaviourAnalyser::endTreatement(const MechanicalBehaviourDescription& mb,
-						 const MFrontFileDescription& mf) const
+						 const MFrontFileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::material;
@@ -55,24 +81,49 @@ namespace mfront
       msg += "'src/"+name+".txt'";
       throw(runtime_error(msg));
     }
+    if((this->language=="default")||
+       (this->language=="english")){
+      this->treatEnglishOutput(out,mb,fd);
+    } else if(this->language=="french"){
+      this->treatFrenchOutput(out,mb,fd);
+    } else {
+      string msg("MFrontMarkdownBehaviourAnalyser::endTreatement : ");
+      msg += "unsupported language '"+this->language+"'";
+      throw(runtime_error(msg));
+    }
+    out.close();
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      ostream& log = getLogStream();
+      log << "MFrontMarkdownBehaviourAnalyser::endTreatement : end" << endl;
+    }
+  } // end of MFrontMarkdownBehaviourAnalyser::endTreatement
+
+  void
+  MFrontMarkdownBehaviourAnalyser::treatEnglishOutput(std::ostream& out,
+						      const MechanicalBehaviourDescription& mb,
+						      const MFrontFileDescription& fd) const
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    using namespace tfel::material;
     out << "# " << mb.getClassName() << " behaviour description" << endl << endl;
     out << "## Source file" << endl << endl;
-    out << "* file   : " << mf.fileName   << endl;
+    out << "* file   : " << fd.fileName   << endl;
     out << "* author : ";
-    if(!mf.authorName.empty()){
-      out << mf.authorName << endl;
+    if(!fd.authorName.empty()){
+      out << fd.authorName << endl;
     } else {
       out << "(unspecified)" << endl;
     }
     out << "* date   : ";
-    if(!mf.date.empty()){
-      out << mf.date;
+    if(!fd.date.empty()){
+      out << fd.date;
     } else {
       out << "(unspecified)";
     }
     out << endl << endl;
-    if(!mf.description.empty()){
-      vector<string> d = tokenize(mf.description,'\n');
+    if(!fd.description.empty()){
+      vector<string> d = tokenize(fd.description,'\n');
       for(vector<string>::const_iterator pd=d.begin();pd!=d.end();++pd){
 	if((pd->size()>=2)&&((*pd)[0]=='*')&&((*pd)[1]==' ')){
 	  out << pd->substr(2) << endl;
@@ -124,11 +175,13 @@ namespace mfront
 	  out <<"### " << *pcn << " description" << endl;
 	  out << c.description << endl << endl;
 	}
-	out <<"### " << *pcn << " listing" << endl;
-	out << endl;
-	out << "~~~~~~~ {.cpp}" << endl;
-	out << c.code << endl;
-	out << "~~~~~~~ " << endl;
+	if(getVerboseMode()>=VERBOSE_DEBUG){
+	  out <<"### " << *pcn << " listing" << endl;
+	  out << endl;
+	  out << "~~~~~~~ {.cpp}" << endl;
+	  out << c.code << endl;
+	  out << "~~~~~~~ " << endl;
+	}
       }
     }
     for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
@@ -138,31 +191,148 @@ namespace mfront
 	const vector<string>& cn = d.getCodeBlockNames();
 	for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
 	  bool print = true;
-	  const string& c = d.getCode(*pcn).code;
+	  const CodeBlock& c = d.getCode(*pcn);
 	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
 	    const MechanicalBehaviourData& duh =
 	      mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
 	    if(duh.hasCode(*pcn)){
 	      const string& cuh = duh.getCode(*pcn).code;
-	      print = c!=cuh;
+	      print = c.code!=cuh;
 	    }
 	  }
 	  if(print){
+	    if(!c.description.empty()){
+	      out <<"### " << *pcn << " description(" << ModellingHypothesis::toString(*ph) << ")" << endl;
+	      out << c.description << endl << endl;
+	    }
 	    out <<"### " << *pcn << " listing (" << ModellingHypothesis::toString(*ph) << ")" << endl;
 	    out << endl;
 	    out << "~~~~~~~ {.cpp} "<< endl;
-	    out << c << endl;
+	    out << c.code << endl;
 	    out << "~~~~~~~ "<< endl;
 	  }
 	}
       }
-    }    
-    out.close();
-    if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
-      log << "MFrontMarkdownBehaviourAnalyser::endTreatement : end" << endl;
     }
-  } // end of MFrontMarkdownBehaviourAnalyser::endTreatement
+  } // end of MFrontMarkdownBehaviourAnalyser::treatEnglishOutput
+
+  void
+  MFrontMarkdownBehaviourAnalyser::treatFrenchOutput(std::ostream& out,
+						     const MechanicalBehaviourDescription& mb,
+						     const MFrontFileDescription& fd) const
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    using namespace tfel::material;
+    out << "# Desription de la loi de comportement mécanique " << mb.getClassName() << endl << endl;
+    if(!fd.description.empty()){
+      vector<string> d = tokenize(fd.description,'\n');
+      for(vector<string>::const_iterator pd=d.begin();pd!=d.end();++pd){
+	if((pd->size()>=2)&&((*pd)[0]=='*')&&((*pd)[1]==' ')){
+	  out << pd->substr(2) << endl;
+	} else {
+	  out << *pd << endl;
+	}
+      }
+    } else {
+      out << "Aucune description spécifiée";
+    }
+    out << endl << endl;
+    out << "## Informations générales relatives au fichier source" << endl << endl;
+    out << "* nom du fichier : " << fd.fileName   << endl;
+    out << "* auteur du fichier : ";
+    if(!fd.authorName.empty()){
+      out << fd.authorName << endl;
+    } else {
+      out << "(aucun auteur défini)" << endl;
+    }
+    out << "* date d'écriture du fichier   : ";
+    if(!fd.date.empty()){
+      out << fd.date;
+    } else {
+      out << "(date non définie)";
+    }
+    out << endl << endl;
+    out << "## Informations générales sur la loi de comportement" << endl << endl;
+    out << "### Liste des hypothèses modélisées" << endl << endl;
+    const set<ModellingHypothesis::Hypothesis>& h  = mb.getModellingHypotheses();
+    const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
+    for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
+      out << "* " <<  ModellingHypothesis::toString(*ph);
+      if(dh.find(*ph)!=dh.end()){
+	out << ", spécialisée";
+      }
+      out << endl;
+    }
+    out << endl;
+    out << "### Liste des propriétés matériaux" << endl << endl;
+    printData(out,mb,getData(mb,&MechanicalBehaviourData::getMaterialProperties));
+    out << endl;
+    out << "### Liste des variabes internes" << endl << endl;
+    printData(out,mb,getData(mb,&MechanicalBehaviourData::getPersistentVariables));
+    out << endl;
+    out << "### Liste des variables externes" << endl << endl;
+    printData(out,mb,getData(mb,&MechanicalBehaviourData::getExternalStateVariables));
+    out << endl;
+    out << "### Liste des variables locales " << endl << endl;
+    printData(out,mb,getData(mb,&MechanicalBehaviourData::getLocalVariables));
+    out << endl;
+    if(mb.hasParameters()){
+      out << "### Liste des paramètres" << endl << endl;
+      printData(out,mb,getData(mb,&MechanicalBehaviourData::getParameters));
+    }
+    out << endl;
+    out << "## Description des différentes portions de code" << endl << endl;
+    if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
+      const MechanicalBehaviourData& d =
+	mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      const vector<string>& cn = d.getCodeBlockNames();
+      for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
+	const CodeBlock& c = d.getCode(*pcn);
+	if(!c.description.empty()){
+	  out <<"### Description relative à la portion " << *pcn << endl;
+	  out << c.description << endl << endl;
+	}
+	if(getVerboseMode()>=VERBOSE_DEBUG){
+	  out <<"### Listing associée à la portion " << *pcn << endl;
+	  out << endl;
+	  out << "~~~~~~~ {.cpp}" << endl;
+	  out << c.code << endl;
+	  out << "~~~~~~~ " << endl;
+	}
+      }
+    }
+    for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
+      if(*ph!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	const MechanicalBehaviourData& d =
+	  mb.getMechanicalBehaviourData(*ph);
+	const vector<string>& cn = d.getCodeBlockNames();
+	for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
+	  bool print = true;
+	  const CodeBlock& c = d.getCode(*pcn);
+	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
+	    const MechanicalBehaviourData& duh =
+	      mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+	    if(duh.hasCode(*pcn)){
+	      const string& cuh = duh.getCode(*pcn).code;
+	      print = c.code!=cuh;
+	    }
+	  }
+	  if(print){
+	    if(!c.description.empty()){
+	      out <<"### Description relative à la portion " << *pcn << " (spécialisée pour l'hypothèse " << ModellingHypothesis::toString(*ph) << ")" << endl;
+	      out << c.description << endl << endl;
+	    }
+	    out <<"### Listing associé à la portion " << *pcn << " (spécialisée pour l'hypothèse " << ModellingHypothesis::toString(*ph) << ")" << endl;
+	    out << endl;
+	    out << "~~~~~~~ {.cpp} "<< endl;
+	    out << c.code << endl;
+	    out << "~~~~~~~ "<< endl;
+	  }
+	}
+      }
+    }
+  } // end of MFrontMarkdownBehaviourAnalyser::treatFrenchOutput
 
   void
   MFrontMarkdownBehaviourAnalyser::reset(void)
@@ -234,10 +404,28 @@ namespace mfront
   void
   MFrontMarkdownBehaviourAnalyser::printData(std::ostream& os,
 					     const MechanicalBehaviourDescription& mb,
-					     const std::vector<Data>& data)
+					     const std::vector<Data>& data) const
   {
     using namespace std;
     using namespace tfel::material;
+    map<string,map<string,string> > translations;
+    map<string,string>& en = translations["english"]; 
+    map<string,string>& fr = translations["french"]; 
+    en["variable name"] = "variable name";
+    en["variable type"] = "variable type";
+    en["array size"]    = "array size";
+    en["defined for"]   = "defined for";
+    en["description"]   = "description";
+    en["default value"] = "default value";
+    en["default value for"] = "default value for";
+    fr["variable name"] = "nom";
+    fr["variable type"] = "type";
+    fr["array size"]    = "taille";
+    fr["defined for"]   = "définie pour";
+    fr["description"]   = "description";
+    fr["default value"] = "valeur par défaut";
+    fr["default value for"] = "valeur par défaut pour l'hypothèse de modélsation ";
+    const map<string,string>& l = translations[this->language];
     if(getVerboseMode()>=VERBOSE_DEBUG){
       ostream& log = getLogStream();
       log << "MFrontMarkdownBehaviourAnalyser::printData : begin" << endl;
@@ -253,16 +441,15 @@ namespace mfront
     }
     for(pd=data.begin();pd!=data.end();++pd){
       os << "* " << pd->glossaryName << ":" << endl;
-      
       if(pd->glossaryName!=pd->name){
-	os << "\t+ variable name : " << pd->name << endl; 
+	os << "\t+ " << l.at("variable name") << ": " << pd->name << endl; 
       }
-      os << "\t+ variable type : " << pd->type << endl; 
+      os << "\t+ " << l.at("variable type") << ": " << pd->type << endl; 
       if(pd->arraySize!=1u){
-	os << "\t+ array size : " << pd->arraySize << endl;
+	os << "\t+ " << l.at("array size") << ": " << pd->arraySize << endl;
       }
       if(pd->hypotheses.size()!=dh.size()){
-	os << "\t+ defined for ";
+	os << "\t+ " << l.at("defined for") << " ";
 	for(pvh=pd->hypotheses.begin();pvh!=pd->hypotheses.end();){
 	  os << ModellingHypothesis::toString(*pvh);
 	  if(++pvh!=pd->hypotheses.end()){
@@ -272,14 +459,14 @@ namespace mfront
 	os << endl;
       }
       if(!pd->description.empty()){
-	os << "\t+ description : " << pd->description << endl;
+	os << "\t+ " << l.at("description") << " : " << pd->description << endl;
       }
       for(pvh=pd->hypotheses.begin();pvh!=pd->hypotheses.end();++pvh){
 	if(mb.isParameterName(*pvh,pd->name)){
 	  if(*pvh==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	    os << "\t+ default value: ";
+	    os << "\t+ " << l.at("default value") << ": ";
 	  } else {
-	    os << "\t+ default value for "+ModellingHypothesis::toString(*pvh)+": ";
+	    os << "\t+ " << l.at("default value for")+" "+ModellingHypothesis::toString(*pvh)+" : ";
 	  }
 	  if(pd->type=="real"){
 	    os << mb.getFloattingPointParameterDefaultValue(*pvh,pd->name);
@@ -311,49 +498,50 @@ namespace mfront
 	  }
 	}
       }
-      if(!vcb.empty()){
-	map<string,vector<ModellingHypothesis::Hypothesis> >::const_iterator pc;
-	os << "\t+ used in ";
-	for(pc=vcb.begin();pc!=vcb.end();){
-	  os << pc->first;
-	  if(pc->second.size()!=dh.size()){
-	    os << " (";
-	    for(pvh=pc->second.begin();pvh!=pc->second.end();){
-	      os << ModellingHypothesis::toString(*pvh);
-	      if(++pvh!=pc->second.end()){
-		os << ", ";
+      if(getVerboseMode()>=VERBOSE_DEBUG){
+	if(!vcb.empty()){
+	  map<string,vector<ModellingHypothesis::Hypothesis> >::const_iterator pc;
+	  os << "\t+ used in ";
+	  for(pc=vcb.begin();pc!=vcb.end();){
+	    os << pc->first;
+	    if(pc->second.size()!=dh.size()){
+	      os << " (";
+	      for(pvh=pc->second.begin();pvh!=pc->second.end();){
+		os << ModellingHypothesis::toString(*pvh);
+		if(++pvh!=pc->second.end()){
+		  os << ", ";
+		}
 	      }
+	      os << ")";
 	    }
-	    os << ")";
+	    if(++pc!=vcb.end()){
+	      os << ", ";
+	    }
 	  }
-	  if(++pc!=vcb.end()){
-	    os << ", ";
-	  }
+	  os << endl;
 	}
-	os << endl;
-      }
-      if(!dvcb.empty()){
-	map<string,vector<ModellingHypothesis::Hypothesis> >::const_iterator pc;
-	os << "\t+ increment (or rate) used in ";
-	for(pc=dvcb.begin();pc!=dvcb.end();){
-	  os << pc->first;
-	  if(pc->second.size()!=dh.size()){
-	    os << " (";
-	    for(pvh=pc->second.begin();pvh!=pc->second.end();){
-	      os << ModellingHypothesis::toString(*pvh);
-	      if(++pvh!=pc->second.end()){
-		os << ", ";
+	if(!dvcb.empty()){
+	  map<string,vector<ModellingHypothesis::Hypothesis> >::const_iterator pc;
+	  os << "\t+ increment (or rate) used in ";
+	  for(pc=dvcb.begin();pc!=dvcb.end();){
+	    os << pc->first;
+	    if(pc->second.size()!=dh.size()){
+	      os << " (";
+	      for(pvh=pc->second.begin();pvh!=pc->second.end();){
+		os << ModellingHypothesis::toString(*pvh);
+		if(++pvh!=pc->second.end()){
+		  os << ", ";
+		}
 	      }
+	      os << ")";
 	    }
-	    os << ")";
+	    if(++pc!=dvcb.end()){
+	      os << ", ";
+	    }
 	  }
-	  if(++pc!=dvcb.end()){
-	    os << ", ";
-	  }
+	  os << endl;
 	}
-	os << endl;
       }
-      //      os << endl;
     }
     // bounds
     if(getVerboseMode()>=VERBOSE_DEBUG){

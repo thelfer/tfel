@@ -211,9 +211,11 @@ namespace tfel{
 	      } else if((this->fileTokens.back().line!=lineNumber)||
 			((this->fileTokens.back().flag!=Token::Standard)||
 			 (*(this->fileTokens.back().value.rbegin())!=';'))){
-		this->fileTokens.push_back(Token(lineNumber,line.substr(3),Token::Comment));
+		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(3)),
+						 Token::Comment));
 	      } else {
-		this->fileTokens.push_back(Token(lineNumber,line.substr(4),Token::DoxygenBackwardComment));
+		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(4)),
+						 Token::DoxygenBackwardComment));
 	      }
 	    } else {
 	      // standard doxygen command
@@ -221,9 +223,10 @@ namespace tfel{
 		if(!this->fileTokens.back().value.empty()){
 		  this->fileTokens.back().value += '\n';
 		}
-		this->fileTokens.back().value += line.substr(3);
+		this->fileTokens.back().value += stripSpaceAndStarAtBeginningOfCommentLine(line.substr(3));
 	      } else {
-		this->fileTokens.push_back(Token(lineNumber,line.substr(3),Token::DoxygenComment));
+		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(3)),
+						 Token::DoxygenComment));
 	      }
 	    }
 	  } else {
@@ -255,24 +258,26 @@ namespace tfel{
 	    if((comment.size()>=2)&&((comment[1]=='<'))){
 	      // backward doxygen comment
 	      if(this->fileTokens.empty()){
-		this->fileTokens.push_back(Token(lineNumber,comment.substr(2),
+		this->fileTokens.push_back(Token(lineNumber,
+						 stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
 						 Token::Comment));
 	      } else if((this->fileTokens.back().line!=lineNumber)||
 			((this->fileTokens.back().flag!=Token::Standard)||
 			 (*(this->fileTokens.back().value.rbegin())!=';'))){
-		this->fileTokens.push_back(Token(lineNumber,comment.substr(2),
+		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
 						 Token::Comment));
 	      } else {
-		this->fileTokens.push_back(Token(lineNumber,comment.substr(2),
+		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
 						 Token::DoxygenBackwardComment));
 	      }
 	    } else {
-	      this->fileTokens.push_back(Token(lineNumber,comment.substr(1),
+	      this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(1)),
 					       Token::DoxygenComment));
 	    }
 	  } else {
 	    // standard C++ comment
-	    this->fileTokens.push_back(Token(lineNumber,comment,Token::Comment));
+	    this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(comment)
+					     ,Token::Comment));
 	  }
 	} else if(treatChar){
 	  if(this->charAsString){
