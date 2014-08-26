@@ -27,6 +27,7 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
 #include"TFEL/Math/Forward/t2tot2.hxx"
+#include"TFEL/Math/Tensor/TensorConcept.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include"TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx"
@@ -35,6 +36,14 @@
 namespace tfel{
   
   namespace math {
+
+    // forward declaration
+    template<unsigned short N>
+    struct TensorProductLeftDerivativeExpr;
+
+    // forward declaration
+    template<unsigned short N>
+    struct TensorProductRightDerivativeExpr;
 
     /*
      * Partial specialisation for t2tot2
@@ -119,6 +128,30 @@ namespace tfel{
 	public fsarray<TensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>,
 	public t2tot2_base<t2tot2<N,T> >
     {
+      /*!
+       * \param[in] B : second tensor of the product
+       * \return the left part of the derivative of a tensor product
+       */
+      template<typename TensorType>
+      static TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	TensorTraits<TensorType>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
+	TensorExpr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+      tplp(const TensorType&);
+      /*!
+       * \param[in] A : first tensor of the product
+       * \return the right part of the derivative of a tensor product
+       */
+      template<typename TensorType>
+      static TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	TensorTraits<TensorType>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
+	TensorExpr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
+      tprp(const TensorType&);
       /*!
        * This is a StensorConcept requirement.
        */

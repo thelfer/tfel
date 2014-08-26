@@ -863,6 +863,8 @@ include/TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx -text
 include/TFEL/Math/T2toT2/T2toT2Expr.hxx -text
 include/TFEL/Math/T2toT2/T2toT2FromTinyMatrixView.hxx -text
 include/TFEL/Math/T2toT2/T2toT2FromTinyMatrixView2.hxx -text
+include/TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx -text
+include/TFEL/Math/T2toT2/TensorProductRightDerivativeExpr.hxx -text
 include/TFEL/Math/T2toT2/t2tot2.ixx -text
 include/TFEL/Math/T2toT2/t2tot2ResultType.hxx -text
 include/TFEL/Math/Tensor/MatrixViewFromTensor.hxx -text

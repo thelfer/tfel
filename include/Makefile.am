@@ -383,6 +383,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toT2/t2tot2ResultType.hxx                                                        \
 			TFEL/Math/T2toT2/T2toT2FromTinyMatrixView.hxx                                                \
 			TFEL/Math/T2toT2/T2toT2FromTinyMatrixView2.hxx                                               \
+			TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx                                         \
+			TFEL/Math/T2toT2/TensorProductRightDerivativeExpr.hxx                                        \
 			TFEL/Math/st2tost2.hxx                                                                       \
 			TFEL/Math/ST2toST2/st2tost2.ixx                                                              \
 			TFEL/Math/ST2toST2/ST2toST2Concept.hxx                                                       \

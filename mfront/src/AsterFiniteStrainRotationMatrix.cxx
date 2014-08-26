@@ -12,14 +12,13 @@
 namespace aster
 {
 
-  AsterFiniteStrainRotationMatrix2D::AsterFiniteStrainRotationMatrix2D(const AsterReal *const V,
-								     const AsterReal *const drot)
+  AsterFiniteStrainRotationMatrix2D::AsterFiniteStrainRotationMatrix2D(const AsterReal *const drot)
   {
     // Premier vecteur
     // a[1,1]
-    a[0]=drot[0]*V[0]+drot[3]*V[1];
+    a[0]=drot[0];
     // a[2,1]
-    a[1]=drot[1]*V[0]+drot[4]*V[1];
+    a[1]=drot[1];
     // Deuxième vecteur :
     //   Produit vectoriel
     // a[1,2]
@@ -95,17 +94,16 @@ namespace aster
     throw(runtime_error(msg));
   } // end of AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward
 
-  AsterFiniteStrainRotationMatrix3D::AsterFiniteStrainRotationMatrix3D(const AsterReal *const V,
-								     const AsterReal *const drot)
+  AsterFiniteStrainRotationMatrix3D::AsterFiniteStrainRotationMatrix3D(const AsterReal *const drot)
   {
     // Premier vecteur
-    a[0]=drot[0]*V[0]+drot[3]*V[1]+drot[6]*V[2];
-    a[1]=drot[1]*V[0]+drot[4]*V[1]+drot[7]*V[2];
-    a[2]=drot[2]*V[0]+drot[5]*V[1]+drot[8]*V[2];
+    a[0]=drot[0];
+    a[1]=drot[1];
+    a[2]=drot[2];
     // Deuxième vecteur
-    a[3]=drot[0]*V[3]+drot[3]*V[4]+drot[6]*V[5];
-    a[4]=drot[1]*V[3]+drot[4]*V[4]+drot[7]*V[5];
-    a[5]=drot[2]*V[3]+drot[5]*V[4]+drot[8]*V[5];
+    a[3]=drot[3];
+    a[4]=drot[4];
+    a[5]=drot[5];
     // Troisième vecteur :
     //   produit vectoriel des deux premiers
     a[6]=a[1]*a[5]-a[4]*a[2];

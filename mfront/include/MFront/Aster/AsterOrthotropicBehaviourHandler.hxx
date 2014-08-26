@@ -264,7 +264,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<aster::SMALLSTRAIN
       AsterReal s[4];
       AsterReal F0m[9];
       AsterReal F1m[9];
-      AsterFiniteStrainRotationMatrix2D m(PROPS+7,DROT);
+      AsterFiniteStrainRotationMatrix2D m(DROT);
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       m.rotateStressesForward(STRESS,s);
@@ -321,7 +321,7 @@ struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<aster::SMALLSTRAIN
       AsterReal F0m[9];
       AsterReal F1m[9];
       // Passage au repère matériau
-      AsterFiniteStrainRotationMatrix3D m(PROPS+9,DROT);
+      AsterFiniteStrainRotationMatrix3D m(DROT);
       m.rotateStressesForward(STRESS,sm);
       m.rotateDeformationGradientForward(F0,F0m);
       m.rotateDeformationGradientForward(F1,F1m);

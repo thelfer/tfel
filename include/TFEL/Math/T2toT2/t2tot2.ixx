@@ -20,6 +20,9 @@
 #include"TFEL/Math/General/StorageTraits.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
+#include"TFEL/Math/Matrix/MatrixUtilities.hxx"
+#include"TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx"
+#include"TFEL/Math/T2toT2/TensorProductRightDerivativeExpr.hxx"
 
 namespace tfel{
 
