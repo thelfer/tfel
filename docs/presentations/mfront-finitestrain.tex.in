@@ -71,6 +71,33 @@
   \tableofcontents{}
 }
 
+\section{Quelques exemples}
+
+\titre{Essai de compression}
+\frame{
+  % \begin{tabular}[htbp]{cc}
+  %   \includegraphics[width=4cm]{@top_srcdir@/docs/mfront/Images/FuelPelletUniaxialCompressiveTest-sigzz-HPP-castem2012.eps} &
+  %   \includegraphics[width=4cm]{@top_srcdir@/docs/mfront/Images/FuelPelletUniaxialCompressiveTest-sigzz-FiniteRotationSmallStrain-castem2012.eps} \\
+  % \end{tabular}
+}
+
+\titre{Dans Alcyone}
+\frame{
+  \begin{center}
+  \begin{tabular}[htbp]{cc}
+    \includegraphics[width=0.3\linewidth]{@top_srcdir@/docs/mfront/Images/FueLPellet-DishingFilling1.eps} &
+    \includegraphics[width=0.3\linewidth]{@top_srcdir@/docs/mfront/Images/FueLPellet-DishingFilling2.eps} \\
+  \end{tabular}
+  \end{center}
+}
+
+\titre{Dans Licos}
+\frame{
+  \begin{center}
+    \includegraphics[width=0.3\linewidth]{@top_srcdir@/docs/mfront/Images/TH.eps} 
+  \end{center}
+}
+
 \section{Notions préliminaires}
 
 \titre{Les grandes transformations}

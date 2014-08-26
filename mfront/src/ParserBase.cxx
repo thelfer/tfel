@@ -844,8 +844,12 @@ namespace mfront
     ProcessManager m;
     vector<string> vfiles;
     vector<string>::const_iterator p;
+    vector<string>::iterator       p2;
     ostringstream cmd;
     vfiles = this->readStringOrArrayOfString("ParserBase::treatMfront");
+    for(p2=vfiles.begin();p2!=vfiles.end();++p2){
+      *p2=MFrontSearchFile::search(*p2);
+    }
     this->readSpecifiedToken("ParserBase::treatMfront",";");
     cmd << MFront::getCallingName() << " --interface=mfront ";
     copy(vfiles.begin(),vfiles.end(),ostream_iterator<string>(cmd," "));

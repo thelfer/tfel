@@ -83,6 +83,12 @@ docs/mfront/Images/Algo_temps.eps -text
 docs/mfront/Images/CompSeq.eps -text
 docs/mfront/Images/ConfigurationIsocline.eps -text
 docs/mfront/Images/FeFth.eps -text
+docs/mfront/Images/FueLPellet-DishingFilling1.eps -text
+docs/mfront/Images/FueLPellet-DishingFilling1.png -text
+docs/mfront/Images/FueLPellet-DishingFilling2.eps -text
+docs/mfront/Images/FueLPellet-DishingFilling2.png -text
+docs/mfront/Images/FuelPelletUniaxialCompressiveTest-sigzz-FiniteRotationSmallStrain-castem2012.eps -text
+docs/mfront/Images/FuelPelletUniaxialCompressiveTest-sigzz-HPP-castem2012.eps -text
 docs/mfront/Images/ImplicitSimoMieheElastoPlasticity-ssna303.eps -text
 docs/mfront/Images/Makefile.castem.linux -text
 docs/mfront/Images/Makefile.castem.linux.tex -text
@@ -92,6 +98,7 @@ docs/mfront/Images/Methode_Newton.pstricks -text
 docs/mfront/Images/NortonRK.eps -text
 docs/mfront/Images/Polar_decomposition_of_F.eps -text
 docs/mfront/Images/Polar_decomposition_of_F.png -text
+docs/mfront/Images/TH.eps -text
 docs/mfront/Images/hayhurst.eps -text
 docs/mfront/Images/hsnv125d.eps -text
 docs/mfront/Images/hsnv125d.png -text

@@ -517,6 +517,18 @@ dans un bloc commençant par la directive \mkey{InitLocalVariables}.
 cependant souhaitable et pratique de garder une certaine cohérence
 entre le nom du fichier et le nom des fonctions générées.
 
+\paragraph{Chemins de recherche} La directive \mkey{MaterialLaw}
+recherche le fichier à inclure~:
+\begin{itemize}
+\item dans le répertoire courant~;
+\item dans les répertoires précisés en ligne de commandes par l'option
+  \moption{search-path} (voir la section~\ref{sec:mfront:using})~;
+\item dans les répertoires pointés par la variable d'environnement
+  \envb{MFRONT\_INCLUDE\_PATH}{MFRONT\_\-INCLUDE\_\-PATH}. Cette
+  variable fournit une liste de chemins séparés par le caractère {\tt
+    ':'}.
+\end{itemize}
+
 \subsubsection{Inclusion d'autres fichiers {\tt mfront}}
 
 La directive \mkey{Import} permet d'inclure un fichier {\tt mfront}

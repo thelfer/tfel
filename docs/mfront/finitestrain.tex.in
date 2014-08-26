@@ -1037,6 +1037,9 @@ cités~\cite{xiao_choice_2000}~: la loi élasticité incrémentale est
 notamment intégrable permettant de retrouver une loi hyperélastique et
 la description de la plasticité était cohérente.
 
+L'intégration de ces lois est décrite par exemple
+dans~\cite{zhu_logarithmic_2014}.
+
 \subsection{Grandes rotations, petites déformations}
 \label{sec:grand-rotat-petit}
 
@@ -1597,5 +1600,43 @@ qu'au paragraphe~\ref{sec:coeff-de-dilat-vol}~:
 \[
 \alpha\paren{T} = \Frac{1}{T-T^{\alpha}}\left[\exp\paren{\int_{T^{\alpha}}^{T}\alpha_{l}\paren{u}\,\dtot\,u}-1\right]
 \]
+
+\newpage
+\clearpage
+\section{Étude du glissement simple en déformations logarithmiques}
+
+Le glissement simple est une transformation telle que~:
+\[
+\left\{
+  \begin{aligned}
+    x_{1} &= X_{1}+\gamma\,X_{2}\\
+    x_{2} &= X_{2}\\
+    x_{3} &= X_{3}\\
+  \end{aligned}
+\right.
+\]
+où \(\gamma\) est un paramètre.
+
+Le gradient de cette transformation est donné par~:
+\[
+\tns{F}=
+\begin{pmatrix}
+  1 & \gamma & 0 \\
+  0 & 1      & 0 \\
+  0 & 0      & 1 \\
+\end{pmatrix}
+\]
+
+Le tenseur de \nom{Cauchy-Green} droit est alors~:
+\[
+\tenseur{C}=
+\begin{pmatrix}
+  1      & \gamma       & 0 \\
+  \gamma & 1+\gamma^{2}  & 0 \\
+  0      & 0            & 1 \\
+\end{pmatrix}
+\]
+
+
 
 \end{document}

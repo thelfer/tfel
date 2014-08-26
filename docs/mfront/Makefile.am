@@ -28,6 +28,13 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   Images/Makefile.castem.win			            \
 	   Images/Makefile.castem.linux.tex		            \
 	   Images/Makefile.castem.linux			            \
+	   Images/FuelPelletUniaxialCompressiveTest-sigzz-FiniteRotationSmallStrain-castem2012.eps                                                  \
+	   Images/TH.eps                                            \
+	   Images/FuelPelletUniaxialCompressiveTest-sigzz-HPP-castem2012.eps \
+	   Images/FueLPellet-DishingFilling1.png                    \
+	   Images/FueLPellet-DishingFilling2.png		    \
+	   Images/FueLPellet-DishingFilling1.eps		    \
+	   Images/FueLPellet-DishingFilling2.eps		    \
 	   annexe-orthotropie.tex		                    \
 	   style.ist				                    \
 	   mfront/SaintVenantKirchhoffElasticity.tex                \
