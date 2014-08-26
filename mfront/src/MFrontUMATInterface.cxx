@@ -1489,11 +1489,27 @@ namespace mfront{
   MFrontUMATInterface::writeUMATxxAdditionalSymbols(std::ostream& out,
 						    const std::string& name,
 						    const std::string&,
-						    const MechanicalBehaviourDescription&,
+						    const MechanicalBehaviourDescription& mb,
 						    const std::map<std::string,std::string>&,
 						    const std::map<std::string,std::string>&) const
   {
-    if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+    typedef MechanicalBehaviourDescription::ModellingHypothesis MH;
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategy==FINITEROTATIONSMALLSTRAIN){
+	out << "MFRONT_SHAREDOBJ unsigned short umat"
+	    << makeLowerCase(name) << "_Interface = 2u;\n";
+      } else {
+	out << "MFRONT_SHAREDOBJ unsigned short umat"
+	    << makeLowerCase(name) << "_Interface = 1u;\n";
+      }
+      // check if plane stress hypothesis is supported through the generic plane stress algorithm
+      if(mb.getHypotheses().find(MH::PLANESTRESS)==mb.getHypotheses().end()){
+	if(mb.getHypotheses().find(MH::GENERALISEDPLANESTRAIN)!=mb.getHypotheses().end()){
+	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	      << "_UsesGenericPlaneStressAlgorithm = 1u;";
+	}
+      }
+    } else if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "MFRONT_SHAREDOBJ unsigned short umat"
 	  << makeLowerCase(name) << "_Interface = 2u;\n";
     } else {

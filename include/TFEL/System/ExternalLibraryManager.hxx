@@ -108,13 +108,6 @@ namespace tfel
       bool
       contains(const std::string&,
 	       const std::string&);
-
-      /*!
-       * \note the loadLibrary must have already been called with this name
-       */
-      bool
-      isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,
-						      const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
@@ -129,6 +122,12 @@ namespace tfel
       UMATFctPtr
       getUMATFunction(const std::string&,
 		      const std::string&);
+      /*!
+       * \note the loadLibrary must have already been called with this name
+       */
+      bool
+      isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,
+						      const std::string&);
       /*!
        * \return the type of the behaviour
        * \see MechanicalBehaviourBase::BehaviourType
@@ -165,6 +164,15 @@ namespace tfel
       unsigned short
       getUMATElasticSymmetryType(const std::string&,
 				 const std::string&);
+
+      /*!
+       * \return true if the umat behaviour uses the generic plane stress algorithm
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      bool
+      checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(const std::string&,
+							  const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name

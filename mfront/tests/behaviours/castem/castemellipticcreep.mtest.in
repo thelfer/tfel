@@ -1,5 +1,5 @@
 /*! 
- * \file   norton.mtest
+ * \file   ellipticcreep.mtest
  * \brief
  * \author Helfer Thomas
  * \brief  09 avril 2013
@@ -39,9 +39,9 @@
 // better.
 @Real 'A' 8.e-67; 
 @Real 'E' 8.2; 
-@Test<function> 'ERR' 'EELRR0+A*SRR**E*t'     1.e-9;
-@Test<function> 'EZZ' 'EELZZ0-0.5*A*SRR**E*t' 1.e-10;
-@Test<function> 'ETT' 'EELZZ0-0.5*A*SRR**E*t' 1.e-10;
+@Test<function> 'ERR' 'EELRR0-A*SRR**E*t'     1.e-9;
+@Test<function> 'EZZ' 'EELZZ0+0.5*A*SRR**E*t' 1.e-10;
+@Test<function> 'ETT' 'EELZZ0+0.5*A*SRR**E*t' 1.e-10;
 @Test<function> 'ERZ' '0.'                    1.e-10;
 // tests on internal state variables
 @Test<function> 'ElasticStrainRR' 'EELRR0'  1.e-12;

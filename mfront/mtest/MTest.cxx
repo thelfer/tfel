@@ -987,12 +987,15 @@ namespace mfront
     // additional constraints
     if(this->hypothesis==MH::PLANESTRAIN){
       shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
-      shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(3,eev));
+      shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(2,eev));
       this->constraints.push_back(ec);
     }
     if(this->hypothesis==MH::PLANESTRESS){
+      shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
+      shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(2,eev));
       shared_ptr<MTestEvolution>  sev(new MTestConstantEvolution(0.));
-      shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(3,sev));
+      shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(2,sev));
+      this->constraints.push_back(ec);
       this->constraints.push_back(sc);
     }
     if(!this->isRmDefined){
@@ -1284,6 +1287,11 @@ namespace mfront
     const unsigned short N = this->b->getProblemSize(this->hypothesis);
     real t  = ti;
     real dt = te-ti;
+    if(getVerboseMode()>=VERBOSE_LEVEL2){
+      ostream& log = getLogStream();
+      log << "number of driving variables : " << N << endl;
+      log << "number of constraints       : " << this->constraints.size() << endl;
+    }
     while((abs(te-t)>0.5*dt)&&
 	  (subStep!=this->mSubSteps)){
       unsigned short i,j;

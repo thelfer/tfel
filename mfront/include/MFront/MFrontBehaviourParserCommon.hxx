@@ -69,7 +69,7 @@ namespace mfront{
        
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
 
-    static tfel::material::ModellingHypothesis::Hypothesis
+    static Hypothesis
     getModellingHypothesisFromString(const std::string&);
 
     virtual void
@@ -77,9 +77,6 @@ namespace mfront{
 
     virtual void
     endsInputFileProcessing();
-
-    virtual void
-    setDefaultHypotheses();
 
     virtual std::string
     standardModifier(const std::string&,const bool);
@@ -519,12 +516,6 @@ namespace mfront{
     std::ofstream integrationDataFile;
     std::ofstream srcFile;
     
-    /*!
-     * list of modelling hypotheses for
-     * which the behaviour is defined
-     */
-    std::set<Hypothesis> hypotheses;
-
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
     bool hasConsistantTangentOperator;

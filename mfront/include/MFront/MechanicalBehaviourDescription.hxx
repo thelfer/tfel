@@ -13,6 +13,7 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
 #include"MFront/VarHandler.hxx"
@@ -40,6 +41,10 @@ namespace mfront{
     : private SupportedTypes,
       public tfel::material::MechanicalBehaviourBase
   {
+    //! a simple alias
+    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
+    //! a simple alias
+    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
     /*!
      * constructor
      */
@@ -251,6 +256,15 @@ namespace mfront{
     const std::vector<BoundsDescription>&
     getBounds(void) const;
 
+    void
+    setDefaultHypotheses(void);
+
+    const std::set<Hypothesis>&
+    getHypotheses(void) const;
+
+    void
+    addHypothesis(const Hypothesis);
+
   private:
     /*!
      * And helper method
@@ -305,6 +319,11 @@ namespace mfront{
      */
     std::map<DrivingVariable,
 	     ThermodynamicForce> mvariables;
+    /*!
+     * list of modelling hypotheses for
+     * which the behaviour is defined
+     */
+    std::set<Hypothesis> hypotheses;
 
     VarContainer materialProperties;
     VarContainer stateVariables;

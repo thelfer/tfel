@@ -6,7 +6,6 @@
  */
 
 @MaximumNumberOfSubSteps 1;
-@UseCastemAccelerationAlgorithm true;
 
 @ModellingHypothesis 'Axisymmetrical';
 

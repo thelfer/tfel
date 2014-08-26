@@ -5,7 +5,6 @@
  * \brief 05 avril 2013
  */
 
-#include<iostream>
 #include"MFront/MTestBehaviour.hxx"
 #include"MFront/MTestImposedThermodynamicForce.hxx"
 
@@ -60,7 +59,8 @@ namespace mfront
   {
     using namespace std;
     const MTestEvolution& sv = *(this->sev);
-    return abs(s(this->c)-sv(t+dt))<seps;
+    const bool cb = abs(s(this->c)-sv(t+dt))<seps;
+    return cb;
   }
 
   MTestImposedThermodynamicForce::~MTestImposedThermodynamicForce()

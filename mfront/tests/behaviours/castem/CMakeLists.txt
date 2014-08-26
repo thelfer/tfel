@@ -23,6 +23,8 @@ set(mfront_tests_SOURCES
   NortonRK3
   NortonRK4
   ImplicitNorton
+  ImplicitNortonPlaneStress
+  ImplicitNortonGeneralisedPlaneStress
   ImplicitNorton2
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
@@ -104,6 +106,9 @@ test_castem(norton2)
 test_castem(nortonrk2)
 test_castem(nortonrk3)
 test_castem(nortonrk4)
+test_castem(implicitnorton-planestress)
+test_castem(implicitnorton-planestress2)
+test_castem(implicitnorton-generalisedplanestress)
 test_castem(stressrelaxation)
 test_castem(norton-euler)
 test_castem(norton-rk2)

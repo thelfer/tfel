@@ -105,17 +105,32 @@ namespace umat
 
   void
   UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
-			     tfel::material::ModellingHypothesis::PLANESTRESS,
-			     ISOTROPIC>::exe(const UMATReal* const,
-					     tfel::config::Types<2u,UMATReal,false>::StiffnessTensor&)
+			       tfel::material::ModellingHypothesis::PLANESTRESS,
+			       ISOTROPIC>::exe(const UMATReal* const props,
+					       tfel::config::Types<2u,UMATReal,false>::StiffnessTensor& C)
   {
     using namespace std;
-#warning "something needs to be done HERE"
-    string msg("UMATComputeStiffnessOperator<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
-	       "tfel::material::ModellingHypothesis::PLANESTRESS"
-	       ",ISOTROPIC>::exe : ");
-    msg += "unimplemented feature";
-    throw(runtime_error(msg));
+    const UMATReal E   = props[0];
+    const UMATReal n   = props[1];
+    const UMATReal C1  = E/(1+n*n);
+    const UMATReal C2  = n*C1;
+    const UMATReal C3  = (1-n)*C1;
+    C(0,0)=C1;
+    C(0,1)=C2;
+    C(0,2)=0.;
+    C(0,3)=0.;
+    C(1,0)=C2;
+    C(1,1)=C1;
+    C(1,2)=0.;
+    C(1,3)=0.;
+    C(2,0)=0.;
+    C(2,1)=0.;
+    C(2,2)=0.;
+    C(2,3)=0.;
+    C(3,0)=0.;
+    C(3,1)=0.;
+    C(3,2)=0.;
+    C(3,3)=C3;    
   } // end of struct UMATComputeStiffnessOperator
 
   void

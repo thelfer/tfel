@@ -1,0 +1,87 @@
+/*!
+ * \file   ImplicitNortonPlaneStress.mfront
+ * \brief  
+ * 
+ * \author Helfer Thomas
+ * \date   14 oct 2013
+ */
+
+@Behaviour ImplicitNortonPlaneStress;
+@ModellingHypothesis PlaneStress;
+
+@Parser Implicit;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@MaterialProperty real young; /* mandatory for castem */
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;    /* mandatory for castem */
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real rho;   /* mandatory for castem */
+rho.setGlossaryName("MassDensity");
+@MaterialProperty real alpha; /* mandatory for castem */
+alpha.setGlossaryName("ThermalExpansion");
+
+@LocalVariable real     lambda;
+@LocalVariable real     mu;
+
+@StateVariable real    p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+@StateVariable real etozz;
+etozz.setGlossaryName("AxialStrain");
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} // end of @InitLocalVars
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  } else if(smt==CONSISTANTTANGENTOPERATOR){
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = (lambda*Stensor4::IxI()+2*mu*Stensor4::Id())*Je;
+  } else {
+    return false;
+  }
+}
+
+@ComputeStress{
+  sig    = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} // end of @ComputeStresss
+
+@Integrator{
+  const real A = 8.e-67;
+  const real E = 8.2;
+  const real seq = sigmaeq(sig);
+  const real tmp = A*pow(seq,E-1.);
+  const real df_dseq = E*tmp;
+  real inv_seq(0);
+  Stensor n(real(0));
+  if(seq > 1.e-8*young){
+    inv_seq = 1/seq;
+    n       = 1.5*deviator(sig)*inv_seq;
+  }
+  // elasticity
+  feel    -= deto-dp*n;
+  feel(2) -= detozz;
+  // viscoplasticity
+  fp      -= tmp*seq*dt;
+  // axial strain
+  fetozz   = ((lambda+2*mu)*(eel(2)+deel(2))+lambda*(eel(0)+deel(0)+eel(1)+deel(1)))/young;
+  // jacobian
+  dfeel_ddeel += 2.*mu*theta*dp*inv_seq*(Stensor4::M()-(n^n));
+  dfeel_ddetozz(2)=-1;
+  dfeel_ddp    = n;
+  dfp_ddeel    = -2*mu*theta*df_dseq*dt*n;
+  dfetozz_ddetozz  = real(0);
+  dfetozz_ddeel(2) = (lambda+2*mu)/young;
+  dfetozz_ddeel(0) = lambda/young;
+  dfetozz_ddeel(1) = lambda/young;
+} // end of @Integrator

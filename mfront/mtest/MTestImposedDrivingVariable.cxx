@@ -45,7 +45,6 @@ namespace mfront
 					 const real dt,
 					 const real a) const
   {
-    using namespace std;
     const MTestEvolution& e = *(this->eev);
     K(pos,this->c)+=a;
     K(this->c,pos)+=a;

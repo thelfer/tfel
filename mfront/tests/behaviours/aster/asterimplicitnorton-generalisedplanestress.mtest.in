@@ -1,0 +1,43 @@
+/*! 
+ * \file   elasticity.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@MaximumNumberOfSubSteps   1;
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<aster> '@TFEL_LOCAL_LIBRARY_PREFIX@libMFrontAsterBehaviours@CMAKE_SHARED_LIBRARY_SUFFIX@' 'asterimplicitnortongeneralisedplanestress';
+@StressEpsilon 1.;
+
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'MassDensity'        0.;
+@MaterialProperty<constant> 'ThermalExpansion'   0.;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@ExternalStateVariable 'AxialStress' {0:0.,3600.:20.e6};
+@ImposedStress         'SZZ'         {0:0.,3600.:20.e6};
+@ImposedStrain         'EZZ'         {0:0.,3600.:0.};
+
+@Times {0.,3600 in 100};
+
+@Real 'A' 8.e-67;
+@Real 'E' 8.2;
+@Real 'B' '20.e6/3600';
+
+// stresses
+@Test<function> 'SRR' '0.'          1.;
+@Test<function> 'STT' '0.'          1.;
+@Test<function> 'SZZ' 'AxialStress' 1.;
+// internal state variable
+@Test<function> 'ElasticStrainRR' '-PoissonRatio*SZZ/YoungModulus'  1.e-12;
+@Test<function> 'ElasticStrainTT' '-PoissonRatio*SZZ/YoungModulus'  1.e-12;
+@Test<function> 'ElasticStrainZZ' 'SZZ/YoungModulus'      1.e-12;
+@Test<function> 'EquivalentViscoplasticStrain' 'A*B**E/(E+1)*t**(E+1)' 1.e-7;
+@Test<function> 'ERR'         '-PoissonRatio*SZZ/YoungModulus-0.5*A*B**E/(E+1)*t**(E+1)' 1.e-7;
+@Test<function> 'ETT'         '-PoissonRatio*SZZ/YoungModulus-0.5*A*B**E/(E+1)*t**(E+1)' 1.e-7;
+@Test<function> 'AxialStrain' 'SZZ/YoungModulus+A*B**E/(E+1)*t**(E+1)' 1.e-7;
+

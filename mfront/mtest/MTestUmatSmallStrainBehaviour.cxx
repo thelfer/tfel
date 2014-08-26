@@ -306,6 +306,12 @@ namespace mfront
       }
       this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
     }
+    if(h==ModellingHypothesis::PLANESTRESS){
+      if(elm.checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(l,b)){
+	this->ivnames.push_back("AxialStrain");
+	this->ivtypes.push_back(0);
+      }
+    }
   }
 
   void

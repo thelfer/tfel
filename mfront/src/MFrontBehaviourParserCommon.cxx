@@ -168,10 +168,10 @@ namespace mfront{
     typedef MFrontBehaviourInterfaceFactory MBIF;
     MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
     vector<string>::const_iterator i;
-    if(this->hypotheses.empty()){
-      this->setDefaultHypotheses();
+    if(this->mb.getHypotheses().empty()){
+      this->mb.setDefaultHypotheses();
     }
-    if(this->hypotheses.empty()){
+    if(this->mb.getHypotheses().empty()){
       string msg("MFrontBehaviourParserCommon::endsInputFileProcessing : "
 		 "no modelling hypothesis defined by the user and "
 		 "no default modelling hypothesis");
@@ -183,20 +183,6 @@ namespace mfront{
       interface->allowDynamicallyAllocatedArrays(this->areDynamicallyAllocatedVectorsAllowed());
     }
   } // end of MFrontBehaviourParserCommon::endsInputFileProcessing
-
-  void
-  MFrontBehaviourParserCommon::setDefaultHypotheses(void)
-  {
-    using namespace tfel::material;
-    typedef ModellingHypothesis MH;
-    static const MH::Hypothesis h[6u] = {MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-					 MH::AXISYMMETRICAL,
-					 MH::PLANESTRAIN,
-					 MH::GENERALISEDPLANESTRAIN,
-					 MH::TRIDIMENSIONAL};
-    this->hypotheses.clear();
-    this->hypotheses.insert(h,h+6u);
-  } // end of MFrontBehaviourParserCommon::setDefaultHypotheses  
 
   void 
   MFrontBehaviourParserCommon::writeOutputFiles(){
@@ -328,7 +314,7 @@ namespace mfront{
   MFrontBehaviourParserCommon::treatModellingHypothesis(void)
   {
     using namespace std;
-    if(!this->hypotheses.empty()){
+    if(!this->mb.getHypotheses().empty()){
       string msg("MFrontBehaviourParserCommon::treatModellingHypothesis : "
 		 "one or more modelling hypotheses have already been declared");
       throw(runtime_error(msg));
@@ -338,14 +324,14 @@ namespace mfront{
     ++(this->current);
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypothesis");
     this->readSpecifiedToken("MFrontBehaviourParserCommon::treatModellingHypothesis",";");
-    this->hypotheses.insert(MFrontBehaviourParserCommon::getModellingHypothesisFromString(h));
+    this->mb.addHypothesis(MFrontBehaviourParserCommon::getModellingHypothesisFromString(h));
   } // end of MFrontBehaviourParserCommon::treatModellingHypothesis
 
   void
   MFrontBehaviourParserCommon::treatModellingHypotheses(void)
   {
     using namespace std;
-    if(!this->hypotheses.empty()){
+    if(!this->mb.getHypotheses().empty()){
       string msg("MFrontBehaviourParserCommon::treatModellingHypotheses : "
 		 "one or more modelling hypotheses have already been declared");
       throw(runtime_error(msg));
@@ -355,7 +341,7 @@ namespace mfront{
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypotheses");
     while(this->current->value!="}"){
       const string& h = this->current->value;
-      this->hypotheses.insert(MFrontBehaviourParserCommon::getModellingHypothesisFromString(h));
+      this->mb.addHypothesis(MFrontBehaviourParserCommon::getModellingHypothesisFromString(h));
       ++(this->current);
       this->checkNotEndOfFile("MFrontBehaviourParserCommon::treatModellingHypotheses");
       if(this->current->value!="}"){
@@ -2477,14 +2463,14 @@ namespace mfront{
       externalStateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
     // writing partial specialisations
-    if(this->hypotheses.size()>=4u){
+    if(this->mb.getHypotheses().size()>=4u){
       // on définit toutes les hypothèses par défaut
       this->writeBehaviourTraitsSpecialisation(MH::UNDEFINEDHYPOTHESIS,
 					       coefSize,stateVarsSize,
 					       externalStateVarsSize,true);
       // unsupported hypothesis
       for(ph=ah.begin();ph!=ah.end();++ph){
-	if(this->hypotheses.find(*ph)==this->hypotheses.end()){
+	if(this->mb.getHypotheses().find(*ph)==this->mb.getHypotheses().end()){
 	  this->writeBehaviourTraitsSpecialisation(*ph,coefSize,stateVarsSize,
 						   externalStateVarsSize,false);
 	}
@@ -2495,7 +2481,7 @@ namespace mfront{
 					       coefSize,stateVarsSize,
 					       externalStateVarsSize,false);
       // unsupported hypothesis
-      for(ph2=this->hypotheses.begin();ph2!=this->hypotheses.end();++ph2){
+      for(ph2=this->mb.getHypotheses().begin();ph2!=this->mb.getHypotheses().end();++ph2){
 	this->writeBehaviourTraitsSpecialisation(*ph2,coefSize,stateVarsSize,
 						 externalStateVarsSize,true);
       }

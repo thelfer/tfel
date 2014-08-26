@@ -24,6 +24,7 @@ set(mfront_tests_SOURCES
   Norton_rk4   Norton_rk42
   Norton_rkCastem
   ImplicitNorton
+  ImplicitNortonGeneralisedPlaneStress
   ImplicitNorton2
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
@@ -104,6 +105,7 @@ test_aster(orthotropiccreep)
 test_aster(orthotropiccreep-rk42)
 test_aster(orthotropiccreep-rkCastem)
 test_aster(implicitnorton)
+test_aster(implicitnorton-generalisedplanestress)
 test_aster(implicitnorton2)
 test_aster(implicitnorton_broyden)
 test_aster(implicitnorton_broyden2)

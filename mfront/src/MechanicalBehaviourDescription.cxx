@@ -472,4 +472,30 @@ namespace mfront{
   } // end of MechanicalBehaviourDescription::getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution
 
 
+  const std::set<MechanicalBehaviourDescription::Hypothesis>&
+  MechanicalBehaviourDescription::getHypotheses(void) const
+  {
+    return this->hypotheses;
+  } // end of MechanicalBehaviourDescription::getHypotheses
+
+  void
+  MechanicalBehaviourDescription::addHypothesis(const MechanicalBehaviourDescription::Hypothesis h)
+  {
+    this->hypotheses.insert(h);
+  }
+
+  void
+  MechanicalBehaviourDescription::setDefaultHypotheses(void)
+  {
+    using namespace tfel::material;
+    typedef ModellingHypothesis MH;
+    static const Hypothesis h[6u] = {MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+				     MH::AXISYMMETRICAL,
+				     MH::PLANESTRAIN,
+				     MH::GENERALISEDPLANESTRAIN,
+				     MH::TRIDIMENSIONAL};
+    this->hypotheses.clear();
+    this->hypotheses.insert(h,h+6u);
+  } // end of MechanicalBehaviourDescription::setDefaultHypotheses  
+
 } // end of namespace mfront

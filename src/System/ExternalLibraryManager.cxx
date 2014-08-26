@@ -494,6 +494,28 @@ namespace tfel
       return false;
     } // end of ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution
 
+
+    bool
+    ExternalLibraryManager::checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(const std::string& l,
+										const std::string& f)
+    {
+      using namespace std;
+      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+
+      int b = ::tfel_getBool(lib,(f+"_UsesGenericPlaneStressAlgorithm").c_str());
+      if(b==-1){
+	return false;
+      }
+      if(b==1){
+	return true;
+      }
+      return false;
+    } // end of ExternalLibraryManager::checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm
+
     unsigned short
     ExternalLibraryManager::getUMATBehaviourType(const std::string& l,
 						 const std::string& f)
