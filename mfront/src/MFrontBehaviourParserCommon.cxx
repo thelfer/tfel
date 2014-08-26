@@ -1668,6 +1668,7 @@ namespace mfront{
     this->reserveName("Stensor4",false);
     this->reserveName("FrequencyStensor",false);
     this->reserveName("ForceTVector",false);
+    this->reserveName("StressTensor",false);
     this->reserveName("StressStensor",false);
     this->reserveName("StressRateStensor",false);
     this->reserveName("DisplacementTVector",false);
@@ -1792,6 +1793,7 @@ namespace mfront{
     file << "typedef typename Types::StrainRateStensor                 StrainRateStensor;" << endl;
     file << "typedef typename Types::StiffnessTensor                   StiffnessTensor;" << endl;
     file << "typedef typename Types::Tensor                            Tensor;" << endl;
+    file << "typedef typename Types::StressTensor                      StressTensor;" << endl;
     file << "typedef typename Types::ThermalExpansionCoefficientTensor ThermalExpansionCoefficientTensor;" << endl;
     file << "typedef typename Types::DeformationGradientTensor         DeformationGradientTensor;" << endl;
     // tangent operator
@@ -5284,35 +5286,37 @@ namespace mfront{
   MFrontBehaviourParserCommon::setMinimalTangentOperator(void)
   {
     using namespace std;
-    const set<Hypothesis>& mh = this->mb.getDistinctModellingHypotheses();
-    for(set<Hypothesis>::const_iterator ph=mh.begin();ph!=mh.end();++ph){
-      // basic check
-      if(this->mb.hasAttribute(*ph,MechanicalBehaviourData::hasConsistentTangentOperator)){
-	if(!this->mb.hasCode(*ph,MechanicalBehaviourData::ComputeTangentOperator)){
+    if(this->mb.getBehaviourType()!=MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      const set<Hypothesis>& mh = this->mb.getDistinctModellingHypotheses();
+      for(set<Hypothesis>::const_iterator ph=mh.begin();ph!=mh.end();++ph){
+	// basic check
+	if(this->mb.hasAttribute(*ph,MechanicalBehaviourData::hasConsistentTangentOperator)){
+	  if(!this->mb.hasCode(*ph,MechanicalBehaviourData::ComputeTangentOperator)){
 	  this->throwRuntimeError("MFrontBehaviourParserCommon::setMinimalTangentOperator",
 				  "behaviour has attribute 'hasConsistentTangentOperator' but "
 				  "no associated code");
+	  }
 	}
       }
-    }
-    if(this->mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
-      if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-	// if the user provided a tangent operator, it won't be
-	// overriden
-	CodeBlock tangentOperator;
-	ostringstream code; 
-	code << "if(smt==ELASTIC){" << endl
-	     << "this->Dt = this->D;" << endl
-	     << "} else {" << endl
-	     << "return false;" << endl
-	     << "}" << endl;
-	tangentOperator.code = code.str();
-	this->mb.setCode(h,MechanicalBehaviourData::ComputeTangentOperator,
-			 tangentOperator,
-			 MechanicalBehaviourData::CREATEBUTDONTREPLACE,
-			 MechanicalBehaviourData::BODY);
-	this->mb.setAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator,true,true);
+      if(this->mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+	if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	  const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	  // if the user provided a tangent operator, it won't be
+	  // overriden
+	  CodeBlock tangentOperator;
+	  ostringstream code; 
+	  code << "if(smt==ELASTIC){" << endl
+	       << "this->Dt = this->D;" << endl
+	       << "} else {" << endl
+	       << "return false;" << endl
+	       << "}" << endl;
+	  tangentOperator.code = code.str();
+	  this->mb.setCode(h,MechanicalBehaviourData::ComputeTangentOperator,
+			   tangentOperator,
+			   MechanicalBehaviourData::CREATEBUTDONTREPLACE,
+			   MechanicalBehaviourData::BODY);
+	  this->mb.setAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator,true,true);
+	}
       }
     }
   } // end of MFrontBehaviourParserCommon::setMinimalTangentOperator

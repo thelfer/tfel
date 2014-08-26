@@ -544,6 +544,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-4-3D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-5-3D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-6-3D.mtest
+           mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal-001.mtest
+           mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal-012.mtest
+           mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal-012-2.mtest
+           mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal-159.mtest
+           mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-001.mtest
+           mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-012.mtest
+           mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
+           mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/castem/Makefile
            mfront/tests/behaviours/castem/castemelasticity.mtest
            mfront/tests/behaviours/castem/castemelasticity2.mtest
@@ -741,10 +749,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest
            mfront/tests/behaviours/castem/castemT91-satohtest.mtest
            mfront/tests/behaviours/castem/castemT91-viscositytest.mtest
-           mfront/tests/behaviours/castem/castemfinitestrainmonocristal-001.mtest
-           mfront/tests/behaviours/castem/castemfinitestrainmonocristal-012.mtest
-           mfront/tests/behaviours/castem/castemfinitestrainmonocristal-012-2.mtest
-           mfront/tests/behaviours/castem/castemfinitestrainmonocristal-159.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal-001.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal-012.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal-012-2.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal-159.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-001.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-012.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/castem/castemanistropiclemaitreviscoplasticbehaviour.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   

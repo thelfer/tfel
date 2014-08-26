@@ -15,7 +15,7 @@
 namespace aster
 {
 
-  static unsigned short
+  static inline unsigned short
   getRowIndex(const unsigned short i)
   {
     switch(i){
@@ -41,7 +41,7 @@ namespace aster
     return 0;
   }
   
-  static unsigned short
+  static inline unsigned short
   getColumnIndex(const unsigned short j)
   {
     switch(j){

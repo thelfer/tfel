@@ -169,6 +169,16 @@ namespace mfront{
 				 const MechanicalBehaviourDescription&,
 				 const MFrontZMATInterface::Hypothesis) const;
     /*!
+     * \brief write parameters initialisation for the given hypothesis
+     * \param[out] out : output file
+     * \param[in]  mb  : mechancial behaviour description
+     * \param[in]  h   : modelling hypothesis
+     */
+    void
+    writeParametersInitialisation(std::ostream&,
+				  const MechanicalBehaviourDescription&,
+				  const MFrontZMATInterface::Hypothesis) const;
+    /*!
      * \brief write material properties initialisation for the given hypothesis
      * \param[out] out : output file
      * \param[in]  mb  : mechancial behaviour description

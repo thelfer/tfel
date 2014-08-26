@@ -209,7 +209,42 @@ namespace zmat
       void>::type
     convert(ZSET::MATRIX&,
 	    const tfel::math::st2tost2<3u,T>&);
-  
+    /*!
+     * convert an 1D ZMAT stiffness tensor to a TFEL one
+     * \param[in] src  : source
+     * \param[in] dest : destination
+     */
+    template<typename T>
+    static inline 
+    typename tfel::meta::EnableIf<
+      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+      void>::type
+    convert(tfel::math::st2tost2<1u,T>&,
+	    const ZSET::MATRIX&);
+    /*!
+     * convert a 2D ZMAT stiffness tensor to a TFEL one
+     * \param[in] src  : source
+     * \param[in] dest : destination
+     */
+    template<typename T>
+    static inline 
+    typename tfel::meta::EnableIf<
+      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+      void>::type
+    convert(tfel::math::st2tost2<2u,T>&,
+	    const ZSET::MATRIX&);
+    /*!
+     * convert an ZSET stiffness tensor to a TFEL one
+     * \param[in] src  : source
+     * \param[in] dest : destination
+     */
+    template<typename T>
+    static inline 
+    typename tfel::meta::EnableIf<
+      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+      void>::type
+    convert(tfel::math::st2tost2<3u,T>&,
+	    const ZSET::MATRIX&);
   };
 
 } // end of namespace zmat

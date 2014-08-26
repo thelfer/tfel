@@ -73,7 +73,8 @@ MFRONTS= DDIF2.mfront                                                      \
 	 IncompressiblePlaneStressGornetDesmoratBehaviour.mfront           \
 	 ImplicitSimoMieheElastoPlasticity.mfront                          \
 	 T91ViscoplasticBehaviour.mfront                                   \
-	 FiniteStrainMonoCristal.mfront                                    \
+	 FiniteStrainSingleCrystal.mfront                                  \
+	 FiniteStrainSingleCrystal_NumericalJacobian.mfront                \
 	 AnistropicLemaitreViscoplasticBehaviour.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
@@ -107,8 +108,8 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/monocristal_dd_cc_irradiation_numericaljacobian.ref \
 	   references/logarithmicstrainnortoncreepuniaxialtesting.ref     \
 	   references/T91-satohtest.ref                                   \
-	   references/finitestrainmonocristal-001.ref			  \
-	   references/finitestrainmonocristal-012.ref			  \
-	   references/finitestrainmonocristal-159.ref                     \
+	   references/finitestrainsinglecrystal-001.ref			  \
+	   references/finitestrainsinglecrystal-012.ref			  \
+	   references/finitestrainsinglecrystal-159.ref                     \
 	   references/AnistropicLemaitreViscoplasticBehaviour.ref         \
 	   references/ViscoChaboche.ref

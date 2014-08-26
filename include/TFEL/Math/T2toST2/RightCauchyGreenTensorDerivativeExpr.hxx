@@ -10,7 +10,9 @@
 
 #include<cmath>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
+#include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Expr.hxx"
 
 namespace tfel{
@@ -35,11 +37,14 @@ namespace tfel{
       //! a simple check
       TFEL_STATIC_ASSERT(T2toST2Traits<T2toST2Type>::dime==1u);
       //! a simple alias
+      typedef EmptyRunTimeProperties RunTimeProperties;
+      //! a simple alias
       typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
       /*!
        * \param[in] B : second tensor of the product
        */
       template<typename TensorType>
+      TFEL_MATH_INLINE2
       T2toST2Expr(const TensorType& F)
       {
 	//! a simple check
@@ -61,12 +66,20 @@ namespace tfel{
        * \param[in] i : line   index
        * \param[in] j : column index
        */
-      const value_type&
+      TFEL_MATH_INLINE const value_type&
       operator()(const unsigned short i,
 		 const unsigned short j) const
       {
 	return this->v[i*3+j];
       } // end of operator()
+      /*!
+       * \return the runtime properties
+       */
+      TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties() const
+      {
+	return RunTimeProperties();
+      }
     }; // end of struct T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
     /*!
@@ -80,11 +93,14 @@ namespace tfel{
       //! a simple check
       TFEL_STATIC_ASSERT(T2toST2Traits<T2toST2Type>::dime==2u);
       //! a simple alias
+      typedef EmptyRunTimeProperties RunTimeProperties;
+      //! a simple alias
       typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
       /*!
        * \param[in] B : second tensor of the product
        */
       template<typename TensorType>
+      TFEL_MATH_INLINE2
       T2toST2Expr(const TensorType& F)
       {
 	//! a simple check
@@ -117,12 +133,20 @@ namespace tfel{
        * \param[in] i : line   index
        * \param[in] j : column index
        */
-      const value_type&
+      TFEL_MATH_INLINE const value_type&
       operator()(const unsigned short i,
 		 const unsigned short j) const
       {
 	return this->v[i*5+j];
       } // end of operator()
+      /*!
+       * \return the runtime properties
+       */
+      TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties() const
+      {
+	return RunTimeProperties();
+      }
     }; // end of struct T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
     /*!
@@ -136,11 +160,14 @@ namespace tfel{
       //! a simple check
       TFEL_STATIC_ASSERT(T2toST2Traits<T2toST2Type>::dime==3u);
       //! a simple alias
+      typedef EmptyRunTimeProperties RunTimeProperties;
+      //! a simple alias
       typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
       /*!
        * \param[in] B : second tensor of the product
        */
       template<typename TensorType>
+      TFEL_MATH_INLINE2
       T2toST2Expr(const TensorType& F)
       {
 	//! a simple check
@@ -203,12 +230,20 @@ namespace tfel{
        * \param[in] i : line   index
        * \param[in] j : column index
        */
-      const value_type&
+      TFEL_MATH_INLINE const value_type&
       operator()(const unsigned short i,
 		 const unsigned short j) const
       {
 	return this->v[i*9+j];
       } // end of operator()
+      /*!
+       * \return the runtime properties
+       */
+      TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties() const
+      {
+	return RunTimeProperties();
+      }
     }; // end of struct T2toST2Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
   } // end of namespace tfel

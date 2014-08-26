@@ -301,10 +301,15 @@ namespace mfront
   
   void 
   MFrontZMATInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
-						       const MechanicalBehaviourDescription&) const
+						       const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
     out << "#include\"MFront/ZMAT/ZMATInterface.hxx\"" << endl;
+    out << "#include\"Coefficient.h\"" << endl;
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      out << "#include\"Auto_ptr.h\"" << endl;
+      out << "#include\"Elasticity.h\"" << endl;
+    }
     out << "#include\"Coefficient.h\"" << endl;
     out << "#include\"Behavior.h\"" << endl;
     writeZMATUndefs(out);
@@ -724,19 +729,40 @@ namespace mfront
     out << " */" << endl;
     out << "INTEGRATION_RESULT*" << endl;
     out << "integrate(MAT_DATA&,const VECTOR&,MATRIX*&,int);" << endl;
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      out << "/*!" << endl;
+      out << " * \\brief return the elasticity matrix" << endl;
+      out << " * \\param[in] mdat : material data" << endl;
+      out << " */" << endl;
+      out << "SMATRIX" << endl
+	  << "get_elasticity_matrix(MAT_DATA&,double);" << endl;
+    }
     out << "//! destructor" << endl;
     out << "virtual ~ZMAT" << mb.getClassName() << "();" << endl;
     out << endl;
     out << "protected:" << endl;
     out << endl;
+    if(!all_mp_names.empty()){
+      for(const Hypothesis* ph = hypotheses;ph!=hypotheses+3u;++ph){
+	const Hypothesis h = *ph;
+	if(mb.isModellingHypothesisSupported(h)){
+	  out << "/*!" << endl;
+	  out << " * \\brief initialize material properties" << endl;
+	  out << " * \\param[in,out] file    : input file " << endl;
+	  out << " */" << endl;
+	  out << "virtual void initializeMaterialProperties" << getSpaceDimensionSuffix(*ph)
+	      << "(ASCII_FILE&);" << endl;
+	}
+      }
+    }
     for(const Hypothesis* ph = hypotheses;ph!=hypotheses+3u;++ph){
       const Hypothesis h = *ph;
       if(mb.isModellingHypothesisSupported(h)){
 	out << "/*!" << endl;
-	out << " * \\brief initialize material properties" << endl;
+	out << " * \\brief initialize parameters" << endl;
 	out << " * \\param[in,out] file    : input file " << endl;
 	out << " */" << endl;
-	out << "virtual void initializeMaterialProperties" << getSpaceDimensionSuffix(*ph)
+	out << "virtual void initializeParameters" << getSpaceDimensionSuffix(*ph)
 	    << "(ASCII_FILE&);" << endl;
       }
     }
@@ -769,6 +795,10 @@ namespace mfront
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       out << "//! tangent operator" << endl;
       out << "MATRIX tg_mat; " << endl;
+    }
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      out << "//! elasticity matrix" << endl;
+      out << "AUTO_PTR<ELASTICITY> elasticity; " << endl;
     }
     out << "//! material properties" << endl;
     out << "ARRAY<COEFF> mprops; " << endl;
@@ -806,6 +836,8 @@ namespace mfront
     out << "int temperature_position;" << endl;
     out << "//! local clock" << endl;
     out << "CLOCK  local_clock; " << endl;
+    out << "//! out of bounds policy" << endl;
+    out << "tfel::material::OutOfBoundsPolicy obp;" << endl;
     out << "};" << endl << endl;
     out << "Z_END_NAMESPACE;" << endl << endl;
     out << "#endif /* __MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX*/" << endl;
@@ -839,8 +871,9 @@ namespace mfront
     out << endl;
     out << "Z_START_NAMESPACE;" << endl;
     out << endl;
-    out << "ZMAT" << mb.getClassName() << "::ZMAT" << mb.getClassName() << "()" << endl;
-    out << "{" << endl
+    out << "ZMAT" << mb.getClassName() << "::ZMAT" << mb.getClassName() << "()" << endl
+	<< ": obp(tfel::material::None)" << endl
+	<< "{" << endl
 	<< "this->zbb_keep_ep = &this->local_ep_list;" << endl 
 	<< "#ifdef _WIN64" << endl
 	<< "ZMAT_GLOBAL_STORAGE::zmat_once();" << endl
@@ -892,6 +925,12 @@ namespace mfront
 	if(mb.isModellingHypothesisSupported(h)){
 	  this->writeMaterialPropertiesInitialisation(out,mb,*ph);
 	}
+      }
+    }
+    for(const Hypothesis* ph = hypotheses;ph!=hypotheses+3u;++ph){
+      const Hypothesis h = *ph;
+      if(mb.isModellingHypothesisSupported(h)){
+	this->writeParametersInitialisation(out,mb,*ph);
       }
     }
     out << "INTEGRATION_RESULT*" << endl;
@@ -962,6 +1001,14 @@ namespace mfront
 	<< "ZSET::stored_thread_zbase_globals->ptr()->active_clock = keep_clock;" << endl
 	<< "return NULL;" << endl;
     out << "} // end of ZMAT" << mb.getClassName() << "::integrate" << endl << endl;
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      out << "SMATRIX" << endl
+	  << "ZMAT" << mb.getClassName() << "::get_elasticity_matrix(MAT_DATA& mdat,double){" << endl
+	  << "elasticity->attach_all(mdat);" << endl
+	  << "elasticity->calc_coef();" << endl
+	  << "return SMATRIX(*elasticity());" << endl
+	  << "} // end of ZMAT" << mb.getClassName() << "::get_elasticity_matrix" << endl << endl;
+    }
     for(const Hypothesis* ph = hypotheses;ph!=hypotheses+3u;++ph){
       const Hypothesis h = *ph;
       if(mb.isModellingHypothesisSupported(h)){
@@ -1033,6 +1080,26 @@ namespace mfront
       out << "} else if((str==\"**model_coef\")||(str==\"**material_properties\")){" << endl;
       out << "this->initializeMaterialProperties" << getSpaceDimensionSuffix(h) << "(file);" << endl;
     }
+    out << "} else if(str==\"**parameters\"){" << endl;
+    out << "this->initializeParameters" << getSpaceDimensionSuffix(h) << "(file);" << endl;
+    out << "} else if(str==\"**out_of_bounds_policy\"){" << endl;
+    out << "STRING policy=file.getSTRING();" << endl;
+    out << "if(policy==\"None\"){" << endl;
+    out << "this->obp=tfel::material::None;" << endl;
+    out << "} else if(policy==\"Strict\"){" << endl;
+    out << "this->obp=tfel::material::Strict;" << endl;
+    out << "} else if(policy==\"Warning\"){" << endl;
+    out << "this->obp=tfel::material::Warning;" << endl;
+    out << "} else {" << endl;
+    out << "INPUT_ERROR(\"unknown policy '\"+policy+\"'\");" << endl
+	<< "}" << endl;
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      out << "} else if((str==\"**elasticity\")||(str==\"**ELASTICITY\")){" << endl;
+      out << "if(!this->elasticity.Null()){" << endl
+	  << "INPUT_ERROR(\"elasticity already defined\");" << endl
+	  << "}" << endl
+	  << "this->elasticity=ELASTICITY::read(file,this);" << endl;
+    }
     out << "} else if (str.start_with(\"***\")){" << endl
 	<< "file.back();" << endl
 	<< "break;" << endl
@@ -1067,6 +1134,50 @@ namespace mfront
       }
     }
   }
+
+  void
+  MFrontZMATInterface::writeParametersInitialisation(std::ostream& out,
+						     const MechanicalBehaviourDescription& mb,
+						     const MFrontZMATInterface::Hypothesis h) const
+  {
+    using namespace std;
+    const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
+    const VariableDescriptionContainer& params = d.getParameters();
+    const vector<string> pnames = d.getGlossaryNames(params);
+    VariableDescriptionContainer::const_iterator p;
+    vector<string>::const_iterator pn;
+    out << "void" << endl;
+    out << "ZMAT" << mb.getClassName()
+	<< "::initializeParameters" << getSpaceDimensionSuffix(h) << "(ASCII_FILE& file){" << endl;
+    out << "for(;;){" << endl
+	<< "STRING str=file.getSTRING();" << endl
+	<< "if(str[0]=='*'){" << endl
+	<< "file.back();" << endl
+	<< "break;" << endl;
+    for(p=params.begin(),pn=pnames.begin();p!=params.end();++p,++pn){
+      out << "} else if(str==\"" << *pn << "\"){" << endl;
+      if(p->type=="real"){
+	out << "const double value=file.getdouble();" << endl;
+      } else if(p->type=="int"){
+	out << "const int value=file.getint();" << endl;
+      } else if(p->type=="ushort"){
+	out << "const unsigned short value=static_cast<unsigned short>(file.getint());" << endl;
+      }
+      if(mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)){
+	out << "tfel::material::" << mb.getClassName() 
+	    << "ParametersInitializer::get()." << p->name << " = value;" << endl;  
+      } else {
+	out << "tfel::material::" << mb.getClassName() 
+	    << ModellingHypothesis::toString(h) 
+	    << "ParametersInitializer::get()." << p->name << " = value;" << endl;
+      }
+    }
+    out << "} else {" << endl
+	<< "INPUT_ERROR(\"invalid parameter name '\"+str+\"'\");" << endl
+	<< "}" << endl
+	<< "}" << endl
+	<< "}" << endl << endl;
+  } // end of MFrontZMATInterface::writeParametersInitialisation
 
   void
   MFrontZMATInterface::writeMaterialPropertiesInitialisation(std::ostream& out,
@@ -1194,6 +1305,9 @@ namespace mfront
       string msg("MFrontZMATInterface::writeCallMFrontBehaviour : "
 		 "unsupported behaviour type");
       throw(runtime_error(msg));
+    }
+    if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
+      out << "zmat::ZMATInterface::convert(*(this->elasticity),b.getStiffnessTensor());"<< endl;
     }
     out << "b.initialize();" << endl;
     out << "if(b.integrate(smflag,smtype)!=" << mb.getClassName() << "::SUCCESS){" << endl

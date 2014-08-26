@@ -63,7 +63,8 @@ set(mfront_tests_SOURCES
   MonoCristal_DD_CC_NumericalJacobian
   MonoCristal_DD_CC_Irradiation
   MonoCristal_DD_CC_Irradiation_NumericalJacobian
-  FiniteStrainMonoCristal
+  FiniteStrainSingleCrystal
+  FiniteStrainSingleCrystal_NumericalJacobian
   PolyCristals
   PolyCristals_DD_CFC
   GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian
@@ -349,8 +350,12 @@ test_castem(incompressibleplanestressgornetdesmoratbehaviourbiaxialtesting)
 test_castem(implicitsimomieheelastoplasticity)
 test_castem(T91-satohtest)
 test_castem(T91-viscositytest)
-test_castem(finitestrainmonocristal-001)
-test_castem(finitestrainmonocristal-012)
-test_castem(finitestrainmonocristal-012-2)
-test_castem(finitestrainmonocristal-159)
+test_castem(finitestrainsinglecrystal-001)
+test_castem(finitestrainsinglecrystal-012)
+test_castem(finitestrainsinglecrystal-012-2)
+test_castem(finitestrainsinglecrystal-159)
+test_castem(finitestrainsinglecrystal_numericaljacobian-001)
+test_castem(finitestrainsinglecrystal_numericaljacobian-012)
+test_castem(finitestrainsinglecrystal_numericaljacobian-012-2)
+test_castem(finitestrainsinglecrystal_numericaljacobian-159)
 test_castem(anistropiclemaitreviscoplasticbehaviour)

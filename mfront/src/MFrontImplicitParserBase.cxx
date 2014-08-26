@@ -1452,7 +1452,7 @@ namespace mfront{
 	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx)=vect_e(" << n2 << ");\n";
 	  } else {
 	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< p->arraySize << ";++idx2){" << endl;
+				<< p2->arraySize << ";++idx2){" << endl;
 	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2)(idx)=vect_e(" << n2 << "+idx2);\n";
 	    this->behaviourFile << "}\n";
 	  }
@@ -1467,7 +1467,7 @@ namespace mfront{
 	    this->behaviourFile << "}\n";
 	  } else {
 	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< p->arraySize << ";++idx2){" << endl;
+				<< p2->arraySize << ";++idx2){" << endl;
 	    this->behaviourFile << "for(unsigned short idx3=" << n2;
 	    this->behaviourFile << ";idx3!=TVectorSize;++idx3){" << endl;
 	    this->behaviourFile << "partial_jacobian_" << p2->name 
@@ -1486,7 +1486,7 @@ namespace mfront{
 	    this->behaviourFile << "}\n";
 	  } else {
 	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< p->arraySize << ";++idx2){" << endl;
+				<< p2->arraySize << ";++idx2){" << endl;
 	    this->behaviourFile << "for(unsigned short idx3=" << n2;
 	    this->behaviourFile << ";idx3!=TVectorSize;++idx3){" << endl;
 	    this->behaviourFile << "partial_jacobian_" << p2->name 
@@ -1505,7 +1505,7 @@ namespace mfront{
 	    this->behaviourFile << "}\n";
 	  } else {
 	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< p->arraySize << ";++idx2){" << endl;
+				<< p2->arraySize << ";++idx2){" << endl;
 	    this->behaviourFile << "for(unsigned short idx3=" << n2;
 	    this->behaviourFile << ";idx3!=StensorSize;++idx3){" << endl;
 	    this->behaviourFile << "partial_jacobian_" << p2->name 

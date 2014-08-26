@@ -742,6 +742,9 @@ namespace tfel{
 	      }
 	      p2->comment += p->value;
 	    }
+	    if(p2->flag==Token::DoxygenComment){
+	      p2->value = p->value+"\n"+p2->value;
+	    }
 	  }
 	  p = --(this->fileTokens.erase(p));
 	}
