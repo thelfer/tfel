@@ -76,7 +76,7 @@ namespace mfront{
     this->reserveName("accelerate_r1",false);
     this->reserveName("accelerate_r2",false);
     this->reserveName("iter",false);
-    this->reserveName("converge",false);
+    this->reserveName("converged",false);
     this->reserveName("broyden_inv",false);
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
@@ -1439,10 +1439,6 @@ namespace mfront{
       this->behaviourFile << "{\n";
       this->behaviourFile << "using namespace tfel::math;" << endl;
       this->behaviourFile << "TinyPermutation<" << n << "> permuation;" << endl;
-      if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
-	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
-	this->behaviourFile << "this->computeNumericalJacobian(this->jacobian);\n";
-      }
       this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);" << endl;
       this->behaviourFile << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n";
       this->behaviourFile << "tvector<" << n << ",real> vect_e(real(0));" << endl;
@@ -1721,13 +1717,13 @@ namespace mfront{
       this->behaviourFile << "real broyden_inv;\n";
     }
     this->behaviourFile << "real error;\n";
-    this->behaviourFile << "bool converge=false;\n";
+    this->behaviourFile << "bool converged=false;\n";
     this->behaviourFile << "this->iter=0;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
 			  << "::integrate() : beginning of resolution\" << endl;\n";
     }
-    this->behaviourFile << "while((converge==false)&&\n";
+    this->behaviourFile << "while((converged==false)&&\n";
     this->behaviourFile << "(this->iter<" << this->mb.getClassName() << "::iterMax)){\n";
     this->behaviourFile << "++(this->iter);\n";
     if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
@@ -1861,14 +1857,25 @@ namespace mfront{
       }
     }
     this->behaviourFile << "error=norm(this->fzeros);\n";
-    this->behaviourFile << "converge = ((error)/(real(" << n2 << "))<";
+    this->behaviourFile << "converged = ((error)/(real(" << n2 << "))<";
     this->behaviourFile << "(this->epsilon));\n";
+    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
+      // We compute the numerical jacobian even if we converged since
+      // most of the time, this tangent operator will be computed
+      // using the partial jacobian invert. We consider very unlikely
+      // that a user may use a numerical jacobian and provide an
+      // analytic definition of the tangent operator
+      this->behaviourFile << "if((!converged)||(smt!=NOSTIFFNESSREQUESTED)){" << endl
+			  << "this->computeNumericalJacobian(this->jacobian);" << endl
+			  << "}" << endl;
+    }
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : iteration \" "
 			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
     }
-    this->behaviourFile << "if(!converge){\n";
+    this->behaviourFile << "if(!converged){\n";
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
@@ -1879,10 +1886,6 @@ namespace mfront{
 	this->behaviourFile << "tvector<" << n2 << ",real> tfzeros(this->fzeros);\n";
       }
       this->behaviourFile << "try{" << endl;
-      if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
-	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
-	this->behaviourFile << "this->computeNumericalJacobian(this->jacobian);\n";
-      }
       this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						   "TinyMatrixSolve","lu");
       this->behaviourFile << "TinyMatrixSolve<" << n2
@@ -1987,6 +1990,23 @@ namespace mfront{
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
     this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+      if(this->nf.find(p->name)!=this->nf.end()){
+	this->behaviourFile << "this->d" << p->name << " *= " << this->nf.find(p->name)->second << ";\n";
+      }
+    }
+    this->behaviourFile << "this->updateIntegrationVariables();\n";
+    this->behaviourFile << "this->updateStateVariables();\n";
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
+      this->behaviourFile << "this->computeFinalStress();\n";
+    }
+    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
+    for(p3  = d.getBounds().begin();
+	p3 != d.getBounds().end();++p3){
+      if(p3->varCategory==BoundsDescription::StateVariable){
+	p3->writeBoundsChecks(this->behaviourFile);
+      }
+    }
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
       if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
@@ -2006,23 +2026,6 @@ namespace mfront{
       this->behaviourFile << "throw(runtime_error(msg));\n";
     }
     this->behaviourFile << "}\n";
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      if(this->nf.find(p->name)!=this->nf.end()){
-	this->behaviourFile << "this->d" << p->name << " *= " << this->nf.find(p->name)->second << ";\n";
-      }
-    }
-    this->behaviourFile << "this->updateIntegrationVariables();\n";
-    this->behaviourFile << "this->updateStateVariables();\n";
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
-      this->behaviourFile << "this->computeFinalStress();\n";
-    }
-    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
-    for(p3  = d.getBounds().begin();
-	p3 != d.getBounds().end();++p3){
-      if(p3->varCategory==BoundsDescription::StateVariable){
-	p3->writeBoundsChecks(this->behaviourFile);
-      }
-    }
     if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
