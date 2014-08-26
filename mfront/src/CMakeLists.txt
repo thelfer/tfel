@@ -88,7 +88,8 @@ endif(HAVE_FORTRAN)
 
 tfel_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
-  UMATSmallStrainMTestFileGenerator.cxx)
+  UMATSmallStrainMTestFileGenerator.cxx
+  UMATFiniteStrainMTestFileGenerator.cxx)
 target_link_libraries(MTestFileGenerator)
 
 if(HAVE_CASTEM)

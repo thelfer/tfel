@@ -154,11 +154,19 @@ namespace mfront{
 					       const std::string&,
 					       const MechanicalBehaviourDescription&) const;
 
+    /*!
+     * write the first part of the code used to generate a MTest file
+     */
     virtual void
-    generateMTestFile1(std::ostream& out) const;
+    generateMTestFile1(std::ostream&) const;
 
+    /*!
+     * write the second part of the code used to generate a MTest file
+     */
     virtual void
     generateMTestFile2(std::ostream&,
+		       const MechanicalBehaviourDescription::BehaviourType,
+		       const std::string&,
 		       const std::string&,
 		       const std::string&,
 		       const std::string&,

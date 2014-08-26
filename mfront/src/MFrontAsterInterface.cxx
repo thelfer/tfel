@@ -617,8 +617,8 @@ namespace mfront{
       out << "if(aster::AsterInterface<tfel::material::" << className 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS)!=0){\n";
-      this->generateMTestFile2(out,library,material,name,mb,
-			       glossaryNames,entryNames);
+      this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+			       library,material,name,"",mb,glossaryNames,entryNames);
       out << "*PNEWDT = -1.;\n";
       out << "return;\n";
       out << "}\n";
@@ -632,8 +632,8 @@ namespace mfront{
       out << "if(aster::AsterInterface<tfel::material::" << className 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS)!=0){\n";
-      this->generateMTestFile2(out,library,material,name,mb,
-			       glossaryNames,entryNames);
+      this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+			       library,material,name,"",mb,glossaryNames,entryNames);
       out << "*PNEWDT = -1.;\n";
       out << "return;\n";
       out << "}\n";

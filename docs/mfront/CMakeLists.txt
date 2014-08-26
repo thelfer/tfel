@@ -15,6 +15,8 @@ configure_file(behaviours.tex.in
                behaviours.tex @ONLY)
 configure_file(finitestrain.tex.in
                finitestrain.tex @ONLY)
+configure_file(planestress.tex.in
+               planestress.tex @ONLY)
 configure_file(umat.tex.in
                umat.tex @ONLY)
 configure_file(aster.tex.in
@@ -97,6 +99,25 @@ ADD_CUSTOM_COMMAND(
     COMMENT   "finitestrain.pdf")
 
 ADD_CUSTOM_COMMAND(
+    OUTPUT    planestress.pdf
+    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/planestress.tex.in
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images planestress.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images planestress.tex
+    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
+    ARGS      -terse planestress
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images planestress.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images planestress.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    ARGS      -R0 planestress.dvi
+    COMMAND   ${PS2PDF_CONVERTER}
+    ARGS      planestress.ps
+    COMMENT   "planestress.pdf")
+
+ADD_CUSTOM_COMMAND(
     OUTPUT    umat.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/umat.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
@@ -166,6 +187,11 @@ add_custom_target(finitestrain-doc-pdf-install
                   ${CMAKE_COMMAND} -E copy finitestrain.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/finitestrain.pdf)
 add_dependencies(finitestrain-doc-pdf-install finitestrain-doc-pdf)
 
+add_custom_target(planestress-doc-pdf echo DEPENDS planestress.pdf)
+add_custom_target(planestress-doc-pdf-install
+                  ${CMAKE_COMMAND} -E copy planestress.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/planestress.pdf)
+add_dependencies(planestress-doc-pdf-install planestress-doc-pdf)
+
 add_custom_target(umat-doc-pdf echo DEPENDS umat.pdf)
 add_custom_target(umat-doc-pdf-install
                   ${CMAKE_COMMAND} -E copy umat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/umat.pdf)
@@ -180,6 +206,7 @@ add_dependencies(doc-pdf
   mfront-doc-pdf
   behaviours-doc-pdf
   finitestrain-doc-pdf
+  planestress-doc-pdf
   umat-doc-pdf
   aster-doc-pdf)
 
@@ -187,6 +214,7 @@ add_dependencies(doc-pdf-install
   mfront-doc-pdf-install
   behaviours-doc-pdf-install
   finitestrain-doc-pdf-install
+  planestress-doc-pdf-install
   umat-doc-pdf-install
   aster-doc-pdf-install)
 

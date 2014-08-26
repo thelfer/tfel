@@ -54,6 +54,7 @@ install_header(MFront WordAnalyser.ixx)
 install_header(MFront MFrontUMATInterfaceBase.hxx)
 install_header(MFront MTestFileGeneratorBase.hxx)
 install_header(MFront UMATSmallStrainMTestFileGenerator.hxx)
+install_header(MFront UMATFiniteStrainMTestFileGenerator.hxx)
 
 install_header(MFront MTestTypes.hxx)
 install_header(MFront MTestLogStream.hxx)

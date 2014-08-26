@@ -308,6 +308,40 @@ namespace mfront{
   } // end of MTestFileGeneratorBase::writeExternalStateVariables
 
   std::vector<std::string>
+  MTestFileGeneratorBase::getDeformationGradientComponentsNames() const
+  {
+    using namespace std;
+    using namespace tfel::material;
+    static const string exts[9u]  = {"FXX","FYY","FZZ",
+				     "FXY","FYX","FXZ",
+				     "FZX","FYZ","FZY"};
+    static const string aexts[5u] = {"FRR","FZZ","FTT",
+				     "FRZ","FZR"};  
+    vector<string> n;
+    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      string msg("MTestFileGeneratorBase::getDeformationGradientsComponentsNames : ");
+      msg += "undefined modelling hypothesis";
+      throw(runtime_error(msg));
+    }
+    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+      copy(aexts,aexts+3u,back_inserter(n));
+    } else if(this->hypothesis==ModellingHypothesis::AXISYMMETRICAL){
+      copy(aexts,aexts+5u,back_inserter(n));
+    } else if((this->hypothesis==ModellingHypothesis::PLANESTRESS)||
+	      (this->hypothesis==ModellingHypothesis::PLANESTRAIN)||
+	      (this->hypothesis==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+      copy(exts,exts+5u,back_inserter(n));
+    } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
+      copy(exts,exts+9u,back_inserter(n));
+    } else {
+      string msg("MTestFileGeneratorBase::getDeformationGradientsComponentsNames : ");
+      msg += "unsupported hypothesis";
+      throw(runtime_error(msg));
+    }
+    return n;
+  }
+
+  std::vector<std::string>
   MTestFileGeneratorBase::getStrainComponentsNames() const
   {
     using namespace std;
@@ -322,19 +356,15 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      copy(aexts,aexts+3u,
-	   back_inserter(n));
+      copy(aexts,aexts+3u,back_inserter(n));
     } else if(this->hypothesis==ModellingHypothesis::AXISYMMETRICAL){
-      copy(aexts,aexts+4u,
-	   back_inserter(n));
+      copy(aexts,aexts+4u,back_inserter(n));
     } else if((this->hypothesis==ModellingHypothesis::PLANESTRESS)||
 	      (this->hypothesis==ModellingHypothesis::PLANESTRAIN)||
 	      (this->hypothesis==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-      copy(exts,exts+4u,
-	   back_inserter(n));
+      copy(exts,exts+4u,back_inserter(n));
     } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
-      copy(exts,exts+6u,
-	   back_inserter(n));
+      copy(exts,exts+6u,back_inserter(n));
     } else {
       string msg("MTestFileGeneratorBase::getStrainComponentsNames : ");
       msg += "unsupported hypothesis";

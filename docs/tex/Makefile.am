@@ -27,5 +27,5 @@ EXTRA_DIST = ./texmf/tex/images/CEAIntercalaire.eps					     \
 	     ./texmf/tex/latex/presentation.sty						     \
 	     ./texmf/tex/latex/mise_en_page_2010.tex					     \
 	     ./texmf/ls-R								     \
-	     ./texmf/bibtex/Bibliographie.bib			                             \
+	     ./texmf/bibtex/bibliographie.bib			                             \
 	     ./texmf/bibtex/fr-insa.bst

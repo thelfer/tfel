@@ -137,7 +137,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 % \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
 
 \stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
-\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/Bibliographie}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/bibliographie}
 
 %%% Local Variables: 
 %%% mode: latex

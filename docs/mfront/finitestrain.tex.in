@@ -250,7 +250,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 % \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
 
 \stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
-\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/Bibliographie}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/bibliographie}
 
 \resumecea{
   Nous décrivons dans cette note l'utilisation de \mfront{} pour
@@ -1636,6 +1636,87 @@ Le tenseur de \nom{Cauchy-Green} droit est alors~:
   0      & 0            & 1 \\
 \end{pmatrix}
 \]
+
+\newpage
+\clearpage
+\section{La décomposition multiplicative $F_{e}F_{p}$}
+
+\begin{equation}
+  \label{eq:finitestrain:FeFp}
+  \tns{F}=\tns{F}_{e}\tns{F}_{p}
+\end{equation}
+
+
+\paragraph{Critique}
+
+he most serious shortcoming of this scheme lies in the fact that the stress
+at a point in an elastic-plastic material can be reduced to zero without
+changing plastic strain only if the origin in stress space remains in the region
+enclosed by the yield surface. This implies a definite limitation on the
+usefulness of the above-mentioned definition: Indeed, except for special
+hardening rules (such as isotropic hardening), the yield surface may move
+about in stress space in a general manner as a consequence of deformation
+of the material.
+
+
+\cite{naghdi_critical_1990}
+\begin{quotation}
+  Before ending this subsection, it may be observed once more that the
+  notion of deformation gradient in the context of classical continuum
+  mechanics is a purely kinematical concept. It then seems that there
+  is no reason for expecting the same (or similar) structure as (2.2)
+  for plastic deformation (plastic strain), which is not entirely a
+  kinematical quantity; and, its identification, involves the notion
+  of unloading from an existing elastic-plastic state.  Indeed,
+  instead of introducing F, through~\eqref{eq:finitestrain:FeFp}, for
+  the present it appears to be preferable to introduce the notion of
+  plastic strain as a primitive variable represented by a symmetric
+  second order tensor such as \(\tenseur{\varepsilon}_{p}\). This will
+  avoid the restriction regarding~\eqref{eq:finitestrain:FeFp} noted
+  in the preceding paragraph and (at least for the present) allows a
+  more flexible setting for the identification of
+  \(\tenseur{\varepsilon}_{p}\), albeit a posteriori. In light of
+  these remarks and until further progress on the nature of its
+  identification, [...], we regard plastic strain as a primitive
+  variable represented by a second order tensor
+  \(\tenseur{\varepsilon}_{p}\) and defined by its rate through an
+  appropriate constitutive equation.
+\end{quotation}
+
+\newpage
+\clearpage
+\section{La décomposition  $D_{e}+D_{p}$}
+
+Recent and current literature representing efforts of the majority of the
+various schools of plasticity are directed toward an Eulerian formulation of
+the theory constructed in a stress-space setting. The preference for the
+Eulerian formulation is evidently based on one or both of the following
+presuppositions: (i) the belief, founded perhaps in analogy with viscous fluid
+flow, that such formulations are more relevant to large elastic-plastic
+deformations; and (ii) the view that the construction of the theory in terms
+of the Cauchy stress and its rate is more fundamental. Most workers who
+share the preference for the Eulerian version of the theory, begin by
+considering the decomposition of the velocity gradient L or rate of the
+deformation tensor D into additive "elastic" and "'plastic" parts L, and L.
+or D, and D., respectively, so that 7
+L = L, + LP,
+D = D, + Dp.
+(4.23)
+Subsequently, they prescribe a constitutive equation for D. in terms of a rate
+of Cauchy stress; the rate operator here is not the usual material derivative
+but an objective rate such as the corotational (or Jaumann) rate' which
+renders the stress rate properly invariant under s.r.b.m. Thus, the constitutive
+equation for D. will have the form
+Dp x an objective rate of T,
+
+
+....
+
+
+At best it seems that the decompositions (4.23)1,2 are a generaliza-
+tion of corresponding expressions in infinitesimal plasticity, since (to the
+order of approximation) in the linear theory the expression (4.23)2 would be
+identical to the rate of strain = rate of (elastic part + plastic part).
 
 
 

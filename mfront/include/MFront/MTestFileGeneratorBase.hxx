@@ -124,6 +124,11 @@ namespace mfront
     virtual std::vector<std::string>
     getStrainComponentsNames() const;
     /*!
+     * return the names of the components of the deformation gradient
+     */
+    virtual std::vector<std::string>
+    getDeformationGradientComponentsNames() const;
+    /*!
      * return the names of the components of the stress tensor
      */
     virtual std::vector<std::string>

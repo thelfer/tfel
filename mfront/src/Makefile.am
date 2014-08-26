@@ -102,8 +102,10 @@ mfront_LDFLAGS  = -export-dynamic
 endif # !TFEL_WIN
 
 lib_LTLIBRARIES = libMTestFileGenerator.la
-libMTestFileGenerator_la_SOURCES = MTestFileGeneratorBase.cxx            \
-				   UMATSmallStrainMTestFileGenerator.cxx
+libMTestFileGenerator_la_SOURCES = MTestFileGeneratorBase.cxx             \
+				   UMATSmallStrainMTestFileGenerator.cxx  \
+				   UMATFiniteStrainMTestFileGenerator.cxx
+
 libMTestFileGenerator_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
 				       -L$(top_builddir)/src/Exception -lTFELException
 libMTestFileGenerator_la_CPPFLAGS = -DMTestFileGenerator_EXPORTS

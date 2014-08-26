@@ -17,6 +17,7 @@ doc-install: doc
 	cp    docs/mfront/mfront.pdf                     @docdir@/mfront
 	cp    docs/mfront/behaviours.pdf                 @docdir@/mfront
 	cp    docs/mfront/finitestrain.pdf               @docdir@/mfront
+	cp    docs/mfront/planestress.pdf                @docdir@/mfront
 	cp    docs/mfront/umat.pdf                       @docdir@/mfront
 	cp    docs/mfront/aster.pdf                      @docdir@/mfront
 	cp    docs/mtest/mtest.pdf                       @docdir@/mtest
@@ -44,6 +45,7 @@ mfront-doc-pdf:
 	make -f Makefile.doc mfront ;				    \
 	make -f Makefile.doc behaviours ;			    \
 	make -f Makefile.doc finitestrain ;			    \
+	make -f Makefile.doc planestress ;			    \
 	make -f Makefile.doc aster ;				    \
 	make -f Makefile.doc umat
 

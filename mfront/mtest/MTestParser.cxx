@@ -1223,7 +1223,8 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if((t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
       string msg("MTestParser::handleStress : "
 		 "the @Stress keyword is only valid "
 		 "for small strain behaviours");

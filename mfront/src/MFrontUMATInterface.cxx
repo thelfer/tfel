@@ -751,20 +751,13 @@ namespace mfront{
 
     this->getExtraSrcIncludes(out,mb);
     if(this->generateMTestFile){
-      if(mb.getBehaviourType()!=
-	 MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if((mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	 (mb.getBehaviourType()!=MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
      	string msg("MFrontUMATInterface::treatKeyword : "
 		   "unsupported behaviour type");
 	throw(runtime_error(msg));
       }
-      if(this->finiteStrainStrategies.empty()){
-	out << "#include\"MFront/UMAT/UMATGetModellingHypothesis.hxx\"\n";
-      } else {
-	string msg("MFrontUMATInterface::endTreatement : "
-		   "generating mtest file is not supported "
-		   "upon large strains");
-	throw(runtime_error(msg));
-      }
+      out << "#include\"MFront/UMAT/UMATGetModellingHypothesis.hxx\"\n";
     }
     if((find(this->finiteStrainStrategies.begin(),this->finiteStrainStrategies.end(),
 	     FINITEROTATIONSMALLSTRAIN)!=this->finiteStrainStrategies.end())||
@@ -1255,11 +1248,11 @@ namespace mfront{
   void
   MFrontUMATInterface::writeFiniteRotationSmallStrainUmatFunction(std::ostream& out,
 								  const std::string& name,
-								  const std::string&,
-								  const std::string&,
+								  const std::string& library,
+								  const std::string& material,
 								  const std::string& suffix,
-								  const std::map<std::string,std::string>&,
-								  const std::map<std::string,std::string>&,
+								  const std::map<std::string,std::string>& glossaryNames,
+								  const std::map<std::string,std::string>& entryNames,
 								  const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
@@ -1271,12 +1264,6 @@ namespace mfront{
     if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       string msg("MFrontUMATInterface::writeFiniteRotationSmallStrainUmatFunction : "
 		 "finite strain strategies shall be used with small strain behaviours");
-      throw(runtime_error(msg));
-    }
-    if(this->generateMTestFile){
-      string msg("MFrontUMATInterface::endTreatement : "
-		 "generating mtest file is not supported "
-		 "upon large strains");
       throw(runtime_error(msg));
     }
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
@@ -1292,6 +1279,7 @@ namespace mfront{
 	<< "umat::UMATInt    *const KINC)\n";
     out << "{\n";
     out << "using namespace umat;\n";
+    this->generateMTestFile1(out);
     out << "// computing the Green Lagrange strains\n";
     out << "UMATReal eto[6];\n";
     out << "UMATReal deto[6];\n";
@@ -1308,6 +1296,12 @@ namespace mfront{
     out << "if(*KINC==1){\n";
     out << "UMATFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI);\n";
     out << "}\n";
+    if(this->generateMTestFile){
+      out << "if(*KINC!=1){\n";
+      this->generateMTestFile2(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
+			       library,material,name,suffix,mb,glossaryNames,entryNames);
+      out << "}\n";
+    }
     out << "}\n\n";
     
     out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
@@ -1331,11 +1325,11 @@ namespace mfront{
   void
   MFrontUMATInterface::writeMieheApelLambrechtLogarithmicStrainUmatFunction(std::ostream& out,
 									    const std::string& name,
-									    const std::string&,
-									    const std::string&,
+									    const std::string& library,
+									    const std::string& material,
 									    const std::string& suffix,
-									    const std::map<std::string,std::string>&,
-									    const std::map<std::string,std::string>&,
+									    const std::map<std::string,std::string>& glossaryNames,
+									    const std::map<std::string,std::string>& entryNames,
 									    const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
@@ -1347,12 +1341,6 @@ namespace mfront{
     if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       string msg("MFrontUMATInterface::writeMieheApelLambrechtLogarithmicStrainUmatFunction : "
 		 "finite strain strategies shall be used with small strain behaviours");
-      throw(runtime_error(msg));
-    }
-    if(this->generateMTestFile){
-      string msg("MFrontUMATInterface::endTreatement : "
-		 "generating mtest file is not supported "
-		 "upon large strains");
       throw(runtime_error(msg));
     }
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
@@ -1368,6 +1356,7 @@ namespace mfront{
 	<< "umat::UMATInt    *const KINC)\n";
     out << "{\n";
     out << "using namespace umat;\n";
+    this->generateMTestFile1(out);
     out << "// computing the logarithmic strain\n";
     out << "UMATReal eto[6];\n";
     out << "UMATReal deto[6];\n";
@@ -1388,6 +1377,12 @@ namespace mfront{
     out << "if(*KINC==1){\n";
     out << "UMATFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI);\n";
     out << "}\n";
+    if(this->generateMTestFile){
+      out << "if(*KINC!=1){\n";
+      this->generateMTestFile2(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
+			       library,material,name,suffix,mb,glossaryNames,entryNames);
+      out << "}\n";
+    }
     out << "}\n\n";
     out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
 	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
@@ -1442,8 +1437,8 @@ namespace mfront{
 	<< "STRESS,NDI,KINC);\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
-      this->generateMTestFile2(out,library,material,name,mb,
-			       glossaryNames,entryNames);
+      this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+			       library,material,name,suffix,mb,glossaryNames,entryNames);
       out << "}\n";
     }
     out << "}\n\n";

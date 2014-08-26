@@ -724,6 +724,7 @@ namespace mfront
       out << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n";
       out << "#include\"MFront/SupportedTypes.hxx\"\n";
       out << "#include\"MFront/UMATSmallStrainMTestFileGenerator.hxx\"\n";
+      out << "#include\"MFront/UMATFiniteStrainMTestFileGenerator.hxx\"\n";
     }
   } // end of MFrontUMATInterfaceBase::getExtraSrcIncludes
   
@@ -744,9 +745,11 @@ namespace mfront
 
   void
   MFrontUMATInterfaceBase::generateMTestFile2(std::ostream& out,
+					      const MechanicalBehaviourDescription::BehaviourType type,
 					      const std::string& library,
 					      const std::string& material,
 					      const std::string& name,
+					      const std::string& suffix,
 					      const MechanicalBehaviourDescription& mb,
 					      const std::map<std::string,std::string>& glossaryNames,
 					      const std::map<std::string,std::string>& entryNames) const
@@ -761,10 +764,25 @@ namespace mfront
       const bool mpoffset = this->hasMaterialPropertiesOffset(mb);
       unsigned short i;
       unsigned int offset;
-      out << "mfront::UMATSmallStrainMTestFileGenerator mg(\""
-	  << makeLowerCase(this->getInterfaceName()) << "\",\""
-	  << this->getLibraryName(library,material) <<"\",\"" << this->getFunctionName(name)
-	  <<  "\");\n";
+      string fname = name;
+      if(!suffix.empty()){
+	fname += "_"+suffix;
+      }
+      if(type==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	out << "mfront::UMATSmallStrainMTestFileGenerator mg(\""
+	    << makeLowerCase(this->getInterfaceName()) << "\",\""
+	    << this->getLibraryName(library,material) <<"\",\"" << this->getFunctionName(fname)
+	    <<  "\");\n";
+      } else if(type==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "mfront::UMATFiniteStrainMTestFileGenerator mg(\""
+	    << makeLowerCase(this->getInterfaceName()) << "\",\""
+	    << this->getLibraryName(library,material) <<"\",\"" << this->getFunctionName(fname)
+	    <<  "\");\n";
+      } else {
+	string msg("MFrontUMATInterfaceBase::generateMTestFile2 : ");
+	msg += "only small strain or finite strain behaviours are supported";
+	throw(runtime_error(msg));
+      }
       this->writeMTestFileGeneratorSetModellingHypothesis(out);
       out << "const unsigned short TVectorSize = mg.getTVectorSize();\n";
       out << "const unsigned short StensorSize = mg.getStensorSize();\n";
@@ -778,9 +796,19 @@ namespace mfront
       this->writeMTestFileGeneratorSetRotationMatrix(out,mb);
       out << "mg.addTime(0.);\n";
       out << "mg.addTime(*DTIME);\n";
-      out << "mg.setStrainTensor(STRAN);\n";
-      out << "mg.setStrainTensorIncrement(DSTRAN);\n";
-      out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+      if(type==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	out << "mg.setStrainTensor(STRAN);\n";
+	out << "mg.setStrainTensorIncrement(DSTRAN);\n";
+	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+      } else if(type==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n";
+	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n";
+	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+      } else {
+	string msg("MFrontUMATInterfaceBase::generateMTestFile2 : ");
+	msg += "only small strain or finite strain behaviours are supported";
+	throw(runtime_error(msg));
+      }
       this->writeMTestFileGeneratorAdditionalMaterialPropertiesInitialisation(out,mb);
       if(coefsHolder.empty()){
 	out << "static_cast<void>(mg_mpoffset);\n";

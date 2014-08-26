@@ -193,6 +193,7 @@ docs/mfront/mfront/test-T.cxx -text
 docs/mfront/mfront/test-T.ple -text
 docs/mfront/mfront/test-T.tex -text
 docs/mfront/mfront/vba.tex -text
+docs/mfront/planestress.tex.in -text
 docs/mfront/style.ist -text
 docs/mfront/umat.tex.in -text
 docs/mtest/Author.txt -text
@@ -303,7 +304,7 @@ docs/presentations/mfront-presentation.tex.in -text
 docs/presentations/mtest-presentation.tex.in -text
 docs/references/matrixcookbook.pdf -text svneol=unset#unset
 docs/tex/Makefile.am -text
-docs/tex/texmf/bibtex/Bibliographie.bib -text
+docs/tex/texmf/bibtex/bibliographie.bib -text
 docs/tex/texmf/bibtex/fr-insa.bst -text
 docs/tex/texmf/ls-R -text
 docs/tex/texmf/tex/images/CEABanner2012.eps -text
@@ -1046,6 +1047,7 @@ mfront/include/MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx -text
 mfront/include/MFront/UMAT/UMATOutOfBoundsPolicy.hxx -text
 mfront/include/MFront/UMAT/UMATRotationMatrix.hxx -text
 mfront/include/MFront/UMAT/UMATTraits.hxx -text
+mfront/include/MFront/UMATFiniteStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/UMATSmallStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/VarHandler.hxx -text
 mfront/include/MFront/VariableBoundsDescription.hxx -text
@@ -1147,6 +1149,7 @@ mfront/src/UMATComputeStiffnessOperator.cxx -text
 mfront/src/UMATComputeThermalExpansionTensor.cxx -text
 mfront/src/UMATException.cxx -text
 mfront/src/UMATFiniteStrain.cxx -text
+mfront/src/UMATFiniteStrainMTestFileGenerator.cxx -text
 mfront/src/UMATGetModellingHypothesis.cxx -text
 mfront/src/UMATInterfaceBase.cxx -text
 mfront/src/UMATOutOfBoundsPolicy.cxx -text

@@ -1,0 +1,229 @@
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+
+\usepackage[dvips]{graphicx}
+\usepackage[dvips,breaklinks]{hyperref}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
+
+\usepackage{multicol}
+
+\usepackage{pst-plot}
+\usepackage{array}
+\usepackage{subfigure}
+\usepackage{relsize}
+\usepackage{multind}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\alcyone}{\texttt{alcyone}}
+\newcommand{\germinal}{\texttt{germinal}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\celaeno}{\texttt{celaeno}}
+\newcommand{\mfm}{\texttt{MFront\-Materials}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
+\newcommand{\python}{\href{http://python.org}{\texttt{python}}}
+\newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
+\newcommand{\latex}{\href{http://www.latex-project.org}{\LaTeX2e{}}}
+\newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
+\newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+\newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
+
+\newcommand{\egl}[0]{\ensuremath{\tepsilonto_{GL}}}
+\newcommand{\degl}[0]{\ensuremath{\tdepsilonto_{GL}}}
+
+\newcommand{\eln}[0]{\ensuremath{\tepsilonto_{\ln{}}}}
+
+\newcommand{\tns}[1]{\ensuremath{\underset{\tilde{}}{\mathbf{#1}}}}
+\newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\,\Delta\,t}}}
+\newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\,t}}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+
+%c from texinfo.tex
+\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+
+%c C plus plus
+\def\cpp{%
+\ifmonospace%
+    C++%
+\else%
+    C\kern-.1667em\raise.30ex\hbox{\smaller{++}}%
+\fi%
+\spacefactor1000 }
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+\newcommand{\sigmaH}{\ensuremath{\sigma_{H}}}
+
+\newcommand{\nbzrc}{$NbZrC$}
+\newcommand{\upuc}{$\paren{U,Pu}C$}
+\newcommand{\sic}{$SiC$}
+
+\newcommand{\cea}{CEA}
+\newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
+\newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
+\newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+
+\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\uod}{\ensuremath{UO_{2}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,shadow=true,blur=true]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily\small#1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\input{LSC}
+
+\auteurs{T.~Helfer}
+\redacteur{T.~Helfer}
+\verificateur{J.-M.~Proix}
+\approbateur{R.~Masson}
+\emetteur{E.~Touron}
+
+\titre{Prise en compte des contraintes planes dans les lois générées
+  par le générateur de code \mfront{}}
+
+\date{2014}
+\numero{}
+\indice{0}
+\dateversion{}
+\numeroaffaire{A-SICOM-A1-01}
+\domaine{DEN/DISN/SIMU}
+\accords{tripartite}
+\clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \mfront{} - \pleiades{}
+}
+
+% \codebarre{images/code_barre}
+\diffusionexterne{
+}
+\CoupeListeDiffusion{}
+\diffusioninterne{
+}
+
+% \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
+
+\resumecea{
+toto
+}
+
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/bibliographie}
+
+\begin{document}
+
+\section{Introduction}
+
+\section{Modification du système d'intégration~: cas des lois
+  isotropes}
+
+Simo décrit une modification de la loi de comportement qui introduit
+un opérateur de projection sur l'espace des contraintes
+planes~\cite{simo_computational_1998}.
+
+\section{Ajout d'une variable supplémentaire~: la déformation axiale}
+
+Une manière relativement générique de procéder est d'introduire la
+déformation axiale comme une variable interne dont l'équation
+implicite associée est la nullité de la contrainte plane.
+
+\subsection{Un cas commun}
+
+L'équation associée à la déformation élastique se déduit de la
+partition des déformations~:
+\[
+f_{\epsilonel}=\Delta\,\tepsilonel-\Delta\,\tepsilonto-\Delta\,\epsilonto_{zz}\,\vec{e}_{z}\otimes\vec{e}_{z}+\ldots
+\]
+
+La dérivée de cet équation par rapport à la déformation axiale est
+donnée par~:
+\[
+\deriv{f_{\epsilonel}}{\epsilonto_{zz}}=\vec{e}_{z}\otimes\vec{e}_{z}=
+\begin{pmatrix}
+  0 \\
+  0 \\
+  1 \\
+  0 \\
+\end{pmatrix}
+\]
+
+Dans le cas où la contrainte axiale est donnée par la loi de
+\nom{Hooke}, nous avons~:
+\[
+f_{\epsilonto_{zz}}=\paren{1-\nu}\,\paren{\epsilonel_{zz}+\Delta\,\epsilonel_{zz}}+\nu\,\left[\epsilonel_{xx}+\Delta\,\epsilonel_{xx}+\epsilonel_{yy}+\Delta\,\epsilonel_{yy}\right]
+\]
+Cette équation est écrite de manière purement implicite.
+
+La seule dérivée non nulle de cette équation est~:
+\[
+\deriv{f_{\epsilonto_{zz}}}{\tepsilonel}=
+\begin{pmatrix}
+  \nu   \\
+  \nu   \\
+  1-\nu \\
+  0     \\
+\end{pmatrix}
+\]
+
+\section{Une autre méthode}
+
+
+
+\clearpage
+\newpage
+\referencecea
+\listetableaux
+\listefigures
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
