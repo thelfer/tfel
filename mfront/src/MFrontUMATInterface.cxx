@@ -22,6 +22,147 @@
 
 namespace mfront{
 
+  static void
+  writeUMATArguments(std::ostream& out,
+		     const MechanicalBehaviourDescription::BehaviourType& t,
+		     const bool f)
+  {
+    using namespace std;
+    if(f){
+      out << "(umat::UMATReal *const STRESS," << endl
+	  << " umat::UMATReal *const STATEV," << endl
+	  << " umat::UMATReal *const DDSDDE," << endl
+	  << " umat::UMATReal *const SSE," << endl
+	  << " umat::UMATReal *const SPD," << endl
+	  << " umat::UMATReal *const SCD," << endl
+	  << " umat::UMATReal *const RPL," << endl
+	  << " umat::UMATReal *const DDSDDT," << endl
+	  << " umat::UMATReal *const DRPLDE," << endl
+	  << " umat::UMATReal *const DRPLDT," << endl
+	  << " const umat::UMATReal *const STRAN," << endl
+	  << " const umat::UMATReal *const DSTRAN," << endl
+	  << " const umat::UMATReal *const TIME," << endl
+	  << " const umat::UMATReal *const DTIME," << endl
+	  << " const umat::UMATReal *const TEMP," << endl
+	  << " const umat::UMATReal *const DTEMP," << endl
+	  << " const umat::UMATReal *const PREDEF," << endl
+	  << " const umat::UMATReal *const DPRED," << endl
+	  << " const char           *const CMNAME," << endl
+	  << " const umat::UMATInt  *const NDI," << endl
+	  << " const umat::UMATInt  *const NSHR," << endl
+	  << " const umat::UMATInt  *const NTENS," << endl
+	  << " const umat::UMATInt  *const NSTATV," << endl
+	  << " const umat::UMATReal *const PROPS," << endl
+	  << " const umat::UMATInt  *const NPROPS," << endl
+	  << " const umat::UMATReal *const COORDS," << endl
+	  << " const umat::UMATReal *const DROT," << endl
+	  << " const umat::UMATReal *const PNEWDT," << endl
+	  << " const umat::UMATReal *const CELENT," << endl
+	  << " const umat::UMATReal *const DFGRD0," << endl
+	  << " const umat::UMATReal *const DFGRD1," << endl
+	  << " const umat::UMATInt  *const NOEL," << endl
+	  << " const umat::UMATInt  *const NPT," << endl
+	  << " const umat::UMATInt  *const LAYER," << endl
+	  << " const umat::UMATInt  *const KSPT," << endl
+	  << " const umat::UMATInt  *const KSTEP," << endl
+	  << "       umat::UMATInt  *const KINC," << endl
+	  << "const int size)";
+    } else {
+      out << "(umat::UMATReal *const STRESS," << endl
+	  << " umat::UMATReal *const STATEV," << endl
+	  << " umat::UMATReal *const DDSDDE," << endl
+	  << " umat::UMATReal *const," << endl
+	  << " umat::UMATReal *const," << endl
+	  << " umat::UMATReal *const," << endl
+	  << " umat::UMATReal *const," << endl
+	  << " umat::UMATReal *const," << endl
+	  << " umat::UMATReal *const," << endl
+	  << " umat::UMATReal *const," << endl;
+      if(t!=MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << " const umat::UMATReal *const STRAN," << endl
+	    << " const umat::UMATReal *const DSTRAN," << endl;
+      } else {
+	out << " const umat::UMATReal *const," << endl
+	    << " const umat::UMATReal *const," << endl;
+      }
+      out << " const umat::UMATReal *const," << endl
+	  << " const umat::UMATReal *const DTIME," << endl
+	  << " const umat::UMATReal *const TEMP," << endl
+	  << " const umat::UMATReal *const DTEMP," << endl
+	  << " const umat::UMATReal *const PREDEF," << endl
+	  << " const umat::UMATReal *const DPRED," << endl
+	  << " const char           *const," << endl
+	  << " const umat::UMATInt  *const NDI," << endl
+	  << " const umat::UMATInt  *const," << endl
+	  << " const umat::UMATInt  *const NTENS," << endl
+	  << " const umat::UMATInt  *const NSTATV," << endl
+	  << " const umat::UMATReal *const PROPS," << endl
+	  << " const umat::UMATInt  *const NPROPS," << endl
+	  << " const umat::UMATReal *const," << endl
+	  << " const umat::UMATReal *const DROT," << endl
+	  << " const umat::UMATReal *const," << endl
+	  << " const umat::UMATReal *const," << endl;
+      if(t==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << " const umat::UMATReal *const F0," << endl
+	    << " const umat::UMATReal *const F1," << endl;
+      } else {
+	out << " const umat::UMATReal *const," << endl
+	    << " const umat::UMATReal *const," << endl;
+      }
+      out << " const umat::UMATInt  *const," << endl
+	  << " const umat::UMATInt  *const," << endl
+	  << " const umat::UMATInt  *const," << endl
+	  << " const umat::UMATInt  *const," << endl
+	  << " const umat::UMATInt  *const," << endl
+	  << "       umat::UMATInt  *const KINC," << endl
+	  << "const int)";
+    }
+  } // end of writeUMATArguments
+
+  static void
+  writeUMATArguments(std::ostream& out)
+  {
+    using namespace std;
+    out << "(umat::UMATReal *const," << endl
+	<< " umat::UMATReal *const," << endl
+	<< " umat::UMATReal *const," << endl
+	<< " umat::UMATReal *const," << endl
+	<< " umat::UMATReal *const," << endl
+	<< " umat::UMATReal *const," << endl
+	<< " umat::UMATReal *const," << endl
+	<< " umat::UMATReal *const," << endl
+	<< " umat::UMATReal *const," << endl
+	<< " umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const char           *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+        << " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATReal *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< " const umat::UMATInt  *const," << endl
+	<< "       umat::UMATInt  *const,"
+	<< "const int)";
+  } // end of writeUMATArguments
+
   static int
   getUMATModellingHypothesisIndex(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
@@ -975,7 +1116,7 @@ namespace mfront{
     out << "static void \numat"
 	<< makeLowerCase(name) << "_base" 
 	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
+	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSDDE,\n"
 	<< "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
 	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
 	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
@@ -986,7 +1127,7 @@ namespace mfront{
 	<< "const umat::StressFreeExpansionHandler& sfeh)\n";
     out << "{\n";
     out << "umat::UMATInterface<tfel::material::" << mb.getClassName()
-	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
+	<< ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
 	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,sfeh);\n";
     out << "}\n\n";
 
@@ -1332,27 +1473,13 @@ namespace mfront{
   {
     using namespace std;
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-    	<< makeLowerCase(name)
-    	<< "(const umat::UMATInt *const,const umat::UMATReal *const,\n"
-    	<< "const umat::UMATReal *const,      umat::UMATReal *const,\n"
-    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-    	<< "const umat::UMATReal *const,const umat::UMATInt  *const,\n"
-    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-    	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
-    	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
-    	<< "      umat::UMATInt *const);\n\n";
+    	<< makeLowerCase(name);
+    writeUMATArguments(out);
+    out << ";" << endl << endl;
     out << "MFRONT_SHAREDOBJ void\n" 
-	<< "umat" << makeUpperCase(name) <<"_F77"
-    	<< "(const umat::UMATInt *const,const umat::UMATReal *const,\n"
-    	<< "const umat::UMATReal *const,      umat::UMATReal *const,\n"
-    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-    	<< "const umat::UMATReal *const,const umat::UMATInt  *const,\n"
-    	<< "const umat::UMATReal *const,const umat::UMATReal *const,\n"
-    	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
-    	<< "      umat::UMATReal *const,const umat::UMATInt  *const,\n"
-    	<< "      umat::UMATInt *const);\n\n";
+	<< "umat" << makeUpperCase(name) <<"_F77";
+    writeUMATArguments(out);
+    out << ";" << endl << endl;
   } // end of MFrontUMATInterface::writeUmatFunctionDeclaration
 
   std::pair<bool,SupportedTypes::TypeSize>
@@ -1436,16 +1563,9 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	<< makeLowerCase(fname)
-	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	<< "const umat::UMATReal *const F0,    const umat::UMATReal *const F1,\n"
-	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	<< "umat::UMATInt    *const KINC)\n";
+	<< makeLowerCase(fname);
+    writeUMATArguments(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,false);
+    out << endl;
     out << "{\n";
     out << "using namespace umat;\n";
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
@@ -1475,7 +1595,7 @@ namespace mfront{
       out << "}\n";
     }
     out << "umat" << makeLowerCase(name)
-	<< "_base(NTENS, DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,\n"
+	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
 	<< "STRESS,NDI,KINC,\n"
 	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
@@ -1494,22 +1614,17 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
-    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
-	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	<< "const umat::UMATReal *const F0, const umat::UMATReal *const F1,\n"
-	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	<< "umat::UMATInt    *const KINC)\n";
+    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName;
+    writeUMATArguments(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
+    out << endl;
     out << "{\n";
     out << "umat" << makeLowerCase(fname)
-	<< "(NTENS, DTIME,DROT,DDSOE,F0,F1,TEMP,DTEMP,\n"
-	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC);\n";
-    out << "}\n\n";
+	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,"
+	<< "DRPLDT,STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,"
+	<< "CMNAME,NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,"
+	<< "PNEWDT,CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,"
+	<< "KINC,size);" << endl;
+    out << "}" << endl << endl;
   }
   
   void
@@ -1530,16 +1645,9 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	<< makeLowerCase(fname)
-	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	<< "const umat::UMATReal *const F0,    const umat::UMATReal *const F1,\n"
-	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	<< "umat::UMATInt    *const KINC)\n";
+	<< makeLowerCase(fname);
+    writeUMATArguments(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,false);
+    out << endl;
     out << "{\n";
     out << "using namespace umat;\n";
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
@@ -1572,7 +1680,7 @@ namespace mfront{
       out << "}\n";
     }
     out << "umat" << makeLowerCase(name)
-	<< "_base(NTENS, DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,\n"
+	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
 	<< "s,NDI,KINC,\n"
 	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
@@ -1591,21 +1699,16 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
-    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
-	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	<< "const umat::UMATReal *const F0, const umat::UMATReal *const F1,\n"
-	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	<< "umat::UMATInt    *const KINC)\n";
+    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName;
+    writeUMATArguments(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
+    out << endl;
     out << "{\n";
     out << "umat" << makeLowerCase(fname)
-	<< "(NTENS, DTIME,DROT,DDSOE,F0,F1,TEMP,DTEMP,\n"
-	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC);\n";
+	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,"
+	<< "DRPLDT,STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,"
+	<< "CMNAME,NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,"
+	<< "PNEWDT,CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,"
+	<< "KINC,size);" << endl;
     out << "}\n\n";
   }
 
@@ -1622,16 +1725,9 @@ namespace mfront{
     }
     const string umatFortranFunctionName = "umat"+makeUpperCase(fname)+"_F77";
     out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
-	<< makeLowerCase(fname)
-	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	<< "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
-	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	<< "umat::UMATInt    *const KINC)\n";
+	<< makeLowerCase(fname);
+    writeUMATArguments(out,mb.getBehaviourType(),false);
+    out << endl;
     out << "{\n";
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
       out << "using namespace mfront::MFrontBehaviourProfiler;\n";
@@ -1640,11 +1736,19 @@ namespace mfront{
 	  << "MFrontBehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
-    out << "umat" << makeLowerCase(name)
-	<< "_base(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
-	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC,\n"
-	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
+    if(mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "umat" << makeLowerCase(name)
+	  << "_base(NTENS, DTIME,DROT,DDSDDE,F0,F1,TEMP,DTEMP,\n"
+	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	  << "STRESS,NDI,KINC,\n"
+	  << "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
+    } else {
+      out << "umat" << makeLowerCase(name)
+	  << "_base(NTENS, DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,\n"
+	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	  << "STRESS,NDI,KINC,\n"
+	  << "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
+    }
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
@@ -1652,21 +1756,16 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
-    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName
-	<< "(const umat::UMATInt *const NTENS, const umat::UMATReal *const DTIME,\n"
-	<< "const umat::UMATReal *const DROT,  umat::UMATReal *const DDSOE,\n"
-	<< "const umat::UMATReal *const STRAN, const umat::UMATReal *const DSTRAN,\n"
-	<< "const umat::UMATReal *const TEMP,  const umat::UMATReal *const DTEMP,\n"
-	<< "const umat::UMATReal *const PROPS, const umat::UMATInt    *const NPROPS,\n"
-	<< "const umat::UMATReal *const PREDEF,const umat::UMATReal *const DPRED,\n"
-	<< "umat::UMATReal *const STATEV,const umat::UMATInt    *const NSTATV,\n"
-	<< "umat::UMATReal *const STRESS,const umat::UMATInt    *const NDI,\n"
-	<< "umat::UMATInt    *const KINC)\n";
+    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName;
+    writeUMATArguments(out,mb.getBehaviourType(),true);
+    out << endl;
     out << "{\n";
     out << "umat" << makeLowerCase(fname)
-	<< "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
-	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC);\n";
+	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,"
+	<< "DRPLDT,STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,"
+	<< "CMNAME,NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,"
+	<< "PNEWDT,CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,"
+	<< "KINC,size);" << endl;
     out << "}\n\n";
   }
 

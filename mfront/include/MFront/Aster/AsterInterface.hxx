@@ -37,35 +37,11 @@
 namespace aster
 {
 
-  template<unsigned short N>
-  struct AsterModellingHypothesis;
-
-  template<>
-  struct AsterModellingHypothesis<1u>
-  {
-    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
-    static const ModellingHypothesis::Hypothesis value = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
-  };
-
-  template<>
-  struct AsterModellingHypothesis<2u>
-  {
-    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
-    static const ModellingHypothesis::Hypothesis value = ModellingHypothesis::GENERALISEDPLANESTRAIN;
-  };
-
-  template<>
-  struct AsterModellingHypothesis<3u>
-  {
-    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
-    static const ModellingHypothesis::Hypothesis value = ModellingHypothesis::TRIDIMENSIONAL;
-  };
-
   /*!
    * forward declaration
    */
   template<AsterBehaviourType,
-	   unsigned short,
+	   tfel::material::ModellingHypothesis::Hypothesis,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class>
   struct AsterIsotropicBehaviourHandler;
@@ -74,7 +50,7 @@ namespace aster
    * forward declaration
    */
   template<AsterBehaviourType,
-	   unsigned short,
+	   tfel::material::ModellingHypothesis::Hypothesis,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class>
   struct AsterOrthotropicBehaviourHandler;
@@ -109,51 +85,80 @@ namespace aster
 	     const AsterReal *const PROPS, const AsterInt  *const NPROPS,
 	     const AsterReal *const PREDEF,const AsterReal *const DPRED,
 	     AsterReal *const STATEV,const AsterInt  *const NSTATV,
-	     AsterReal *const STRESS,
+	     AsterReal *const STRESS, const AsterInt  *const NUMMOD,
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
       using namespace tfel::material;
-      if(*NTENS==3u){
-	typedef Behaviour<AsterModellingHypothesis<1u>::value,AsterReal,false> BV;
-	typedef MechanicalBehaviourTraits<BV> MTraits;
-	typedef AsterTraits<BV> Traits;
-	const bool is_defined_ = MTraits::is_defined;
-	typedef typename IF<is_defined_,
-			    DimensionDispatch<1u>,
-			    BehaviourWrapper<Traits::btype,1u> >::type Handler;
-	return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-			    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-			    STATEV,NSTATV,STRESS,sfeh);
-      } else if(*NTENS==4){
-	typedef Behaviour<AsterModellingHypothesis<2u>::value,AsterReal,false> BV;
-	typedef MechanicalBehaviourTraits<BV> MTraits;
-	typedef AsterTraits<BV> Traits;
-	const bool is_defined_ = MTraits::is_defined;
-	typedef typename IF<is_defined_,
-			    DimensionDispatch<2u>,
-			    BehaviourWrapper<Traits::btype,2u> >::type Handler;
-	return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-			    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-			    STATEV,NSTATV,STRESS,sfeh);
-      } else if(*NTENS==6){
-	return DimensionDispatch<3u>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-					  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					  STATEV,NSTATV,STRESS,sfeh);
+      typedef ModellingHypothesis ModellingHypothesis;
+      if( *NUMMOD == 2u ){
+	/*!
+	 * L'hypothèse de déformations planes généralisées n'est pas
+	 * supportée dans Aster (version 12.x) Cette hypothèse doit
+	 * être appelée quand les contraintes planes sont traitées par
+	 * l'algorithme de De Borst.
+	 */
+        typedef Behaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN,AsterReal,false> BV;
+        typedef MechanicalBehaviourTraits<BV> MTraits;
+        typedef AsterTraits<BV> Traits;
+        const bool is_defined_ = MTraits::is_defined;
+        typedef typename IF<is_defined_,
+                            CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>,
+                            Behaviour2DWrapper<Traits::btype,ModellingHypothesis::GENERALISEDPLANESTRAIN> >::type Handler;
+        return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+                            TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+                            STATEV,NSTATV,STRESS,sfeh);
+      } else if( *NUMMOD == 4u ){
+        typedef Behaviour<ModellingHypothesis::AXISYMMETRICAL,AsterReal,false> BV;
+        typedef MechanicalBehaviourTraits<BV> MTraits;
+        typedef AsterTraits<BV> Traits;
+        const bool is_defined_ = MTraits::is_defined;
+        typedef typename IF<is_defined_,
+                            CallBehaviour<ModellingHypothesis::AXISYMMETRICAL>,
+                            Behaviour2DWrapper<Traits::btype,ModellingHypothesis::AXISYMMETRICAL> >::type Handler;
+        return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+                            TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+                            STATEV,NSTATV,STRESS,sfeh);
+      } else if( *NUMMOD == 5u ){
+        typedef Behaviour<ModellingHypothesis::PLANESTRESS,AsterReal,false> BV;
+        typedef MechanicalBehaviourTraits<BV> MTraits;
+        typedef AsterTraits<BV> Traits;
+        const bool is_defined_ = MTraits::is_defined;
+        typedef typename IF<is_defined_,
+                            CallBehaviour<ModellingHypothesis::PLANESTRESS>,
+                            Behaviour2DWrapper<Traits::btype,ModellingHypothesis::PLANESTRESS> >::type Handler;
+        return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+                            TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+                            STATEV,NSTATV,STRESS,sfeh);
+      } else if( *NUMMOD == 6u ){
+        typedef Behaviour<ModellingHypothesis::PLANESTRAIN,AsterReal,false> BV;
+        typedef MechanicalBehaviourTraits<BV> MTraits;
+        typedef AsterTraits<BV> Traits;
+        const bool is_defined_ = MTraits::is_defined;
+        typedef typename IF<is_defined_,
+                            CallBehaviour<ModellingHypothesis::PLANESTRAIN>,
+                            Behaviour2DWrapper<Traits::btype,ModellingHypothesis::PLANESTRAIN> >::type Handler;
+        return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+                            TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+                            STATEV,NSTATV,STRESS,sfeh);
+      } else if( *NUMMOD == 3u ){
+        return CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+								       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+								       STATEV,NSTATV,STRESS,sfeh);
       } else {
-	AsterInterfaceBase::displayInvalidNTENSValueErrorMessage();
-	return -2;
+        AsterInterfaceBase::displayUnsupportedHypothesisMessage();
+        return -2;
       }
     }
 
   private:
 
-    template<AsterBehaviourType btype,
-	     unsigned short N>
-    struct BehaviourWrapper;
+    template<AsterBehaviourType,
+	     tfel::material::ModellingHypothesis::Hypothesis>
+    struct Behaviour2DWrapper;
 
-    template<unsigned short N>
-    struct BehaviourWrapper<aster::SMALLSTRAINSTANDARDBEHAVIOUR,N>
+    template<tfel::material::ModellingHypothesis::Hypothesis H>
+    struct Behaviour2DWrapper<aster::SMALLSTRAINSTANDARDBEHAVIOUR,H>
     {
       TFEL_ASTER_INLINE2 static
       int exe(const AsterInt  *const, const AsterReal *const DTIME,
@@ -168,8 +173,9 @@ namespace aster
       {
 	using namespace tfel::meta;
 	using namespace tfel::math;
-	using namespace tfel::utilities;
-	using namespace tfel::fsalgo;
+	using namespace tfel::material;
+	using tfel::fsalgo::copy;
+	const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
 	AsterInt NTENS   = 6u;
 	AsterReal s[6u]  = {0.,0.,0.,0.,0.,0.};
 	AsterReal e[6u]  = {0.,0.,0.,0.,0.,0.};
@@ -184,9 +190,9 @@ namespace aster
 	copy<StensorDimeToSize<N>::value>::exe(STRESS,s);
 	copy<StensorDimeToSize<N>::value>::exe(STRAN,e);
 	copy<StensorDimeToSize<N>::value>::exe(DSTRAN,de);
-	int r = DimensionDispatch<3u>::exe(&NTENS,DTIME,DROT,K,e,de,
-					   TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					   STATEV,NSTATV,s,sfeh);
+	int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(&NTENS,DTIME,DROT,K,e,de,
+									TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+									STATEV,NSTATV,s,sfeh);
 	if(r==0){
 	  AsterReduceTangentOperator<N>::exe(DDSOE,K);
 	  copy<StensorDimeToSize<N>::value>::exe(s,STRESS);
@@ -195,8 +201,8 @@ namespace aster
       }
     };
 
-    template<unsigned short N>
-    struct BehaviourWrapper<aster::FINITESTRAINSTANDARDBEHAVIOUR,N>
+    template<tfel::material::ModellingHypothesis::Hypothesis H>
+    struct Behaviour2DWrapper<aster::FINITESTRAINSTANDARDBEHAVIOUR,H>
     {
       TFEL_ASTER_INLINE2 static
       int exe(const AsterInt  *const, const AsterReal *const DTIME,
@@ -212,40 +218,31 @@ namespace aster
 	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::math;
-	using namespace tfel::utilities;
+	using namespace tfel::material;
 	using tfel::fsalgo::copy;
+	const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
 	AsterInt NTENS   = 6u;
 	AsterReal s[6u]  = {0.,0.,0.,0.,0.,0.};
 	AsterReal F0[9u] = {0.,0.,0.,0.,0.,0.,0.,0.,0.};
 	AsterReal F1[9u] = {0.,0.,0.,0.,0.,0.,0.,0.,0.};
-	AsterReal K[36u] = {0.,0.,0.,0.,0.,0.,
-			    0.,0.,0.,0.,0.,0.,
-			    0.,0.,0.,0.,0.,0.,
-			    0.,0.,0.,0.,0.,0.,
-			    0.,0.,0.,0.,0.,0.,
-			    0.,0.,0.,0.,0.,0.};
-	K[0u] = DDSOE[0];
 	copy<StensorDimeToSize<N>::value>::exe(STRESS,s);
-	copy<TensorDimeToSize<N>::value>::exe(STRAN,F0);
-	copy<TensorDimeToSize<N>::value>::exe(DSTRAN,F1);
-	int r = DimensionDispatch<3u>::exe(&NTENS,DTIME,DROT,K,F0,F1,
-					   TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					   STATEV,NSTATV,s,sfeh);
+	copy<9u>::exe(STRAN,F0);
+	copy<9u>::exe(DSTRAN,F1);
+	int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(&NTENS,DTIME,DROT,DDSOE,F0,F1,
+									TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+									STATEV,NSTATV,s,sfeh);
 	if(r==0){
-	  throw(runtime_error("BehaviourWrapper<aster::FINITESTRAINSTANDARDBEHAVIOUR,N> : "
-			      "unimplemented feature"));
-	  //	  AsterReduceTangentOperator<N>::exe(DDSOE,K);
 	  copy<StensorDimeToSize<N>::value>::exe(s,STRESS);
 	}
 	return r;
       }
     };
 
-    template<unsigned short N>
-    struct BehaviourWrapper<aster::COHESIVEZONEMODEL,N>
+    template<tfel::material::ModellingHypothesis::Hypothesis H>
+    struct Behaviour2DWrapper<aster::COHESIVEZONEMODEL,H>
     {
       TFEL_ASTER_INLINE2 static
-      int exe(const AsterInt  *const NTENS, const AsterReal *const DTIME,
+      int exe(const AsterInt  *const,       const AsterReal *const DTIME,
 	      const AsterReal *const DROT,  AsterReal *const DDSOE,
 	      const AsterReal *const STRAN, const AsterReal *const DSTRAN,
 	      const AsterReal *const TEMP,  const AsterReal *const DTEMP,
@@ -255,14 +252,35 @@ namespace aster
 	      AsterReal *const STRESS,
 	      const StressFreeExpansionHandler& sfeh)
       {
-	return DimensionDispatch<N>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-					 TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					 STATEV,NSTATV,STRESS,sfeh);
+	using tfel::material::ModellingHypothesis;
+	using tfel::fsalgo::copy;
+	AsterInt NTENS   = 6u;
+	AsterReal s[3u]  = {0.,0.,0.};
+	AsterReal u0[3u] = {0.,0.,0.};
+	AsterReal du[3u] = {0.,0.,0.};
+	AsterReal K[9u]  = {0.,0.,0.,
+			    0.,0.,0.,
+			    0.,0.,0.};
+	K[0u] = DDSOE[0];
+	copy<2u>::exe(STRESS,s);
+	copy<2u>::exe(STRAN,u0);
+	copy<2u>::exe(DSTRAN,du);
+	int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(&NTENS,DTIME,DROT,DDSOE,u0,du,
+									TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+									STATEV,NSTATV,s,sfeh);
+	if(r==0){
+	  copy<2u>::exe(s,STRESS);
+	  DDSOE[0]=K[0];
+	  DDSOE[1]=K[1];
+	  DDSOE[2]=K[4];
+	  DDSOE[3]=K[5];
+	}
+	return r;
       }
-    }; // end of BehaviourWrapper<aster::COHESIVEZONEMODEL,N>
+    }; // end of Behaviour2DWrapper<aster::COHESIVEZONEMODEL,N>
 
-    template<unsigned short N>
-    struct DimensionDispatch
+    template<tfel::material::ModellingHypothesis::Hypothesis H>
+    struct CallBehaviour
     {
       TFEL_ASTER_INLINE2 static
       int exe(const AsterInt  *const, const AsterReal *const DTIME,
@@ -278,12 +296,12 @@ namespace aster
 	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::utilities;
-	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	typedef Behaviour<H,AsterReal,false> BV;
 	typedef AsterTraits<BV> Traits;
 	try {
 	  typedef typename IF<Traits::type==aster::ISOTROPIC,
-	    AsterIsotropicBehaviourHandler<Traits::btype,N,Behaviour>,
-	    AsterOrthotropicBehaviourHandler<Traits::btype,N,Behaviour> >::type Handler;
+	    AsterIsotropicBehaviourHandler<Traits::btype,H,Behaviour>,
+	    AsterOrthotropicBehaviourHandler<Traits::btype,H,Behaviour> >::type Handler;
 	  Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		       PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		       STRESS,sfeh);
@@ -319,8 +337,8 @@ namespace aster
 	  return -6;
 	}
 	return 0;
-      } // end of DimensionDispatch::exe
-    }; // end of struct DimensionDispatch
+      } // end of CallBehaviour::exe
+    }; // end of struct CallBehaviour
   }; // end of struct AsterInterface
   
 } // end of namespace aster

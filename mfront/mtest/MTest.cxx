@@ -1975,7 +1975,7 @@ namespace mfront
 	  }
 	  if(!converged){
 	    if(this->aa.get()!=0){
-	      this->aa->execute(state.u1,wk.r,this->eeps,this->seps,iter);
+	      this->aa->execute(state.u1,state.u0,wk.r,this->eeps,this->seps,iter);
 	    }
 	  }
 	} else {

@@ -407,6 +407,18 @@ namespace mfront{
 							 const Hypothesis,
 							 const MechanicalBehaviourDescription&) const;
     /*!
+     * \brief write UMAT++ symbols associated with supported modelling hypothesis
+     * \param[in] out : output file
+     * \param[in] n   : name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                   and the behaviour name)
+     * \param[in] mb  : behaviour description
+     */
+    virtual void
+    writeUMATxxSupportedModellingHypothesis(std::ostream&,
+					    const std::string&,
+					    const MechanicalBehaviourDescription&) const;
+    /*!
      * \brief write UMAT++ symbols associated with material properties for the given hypothesis
      * \param[in] out : output file
      * \param[in] n   : name of the behaviour as defined by interface

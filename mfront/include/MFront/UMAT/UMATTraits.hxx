@@ -34,7 +34,9 @@ namespace umat{
     static const unsigned short maximumSubStepping   = 0u;
     static const bool requiresStiffnessTensor        = false;
     static const bool requiresThermalExpansionCoefficientTensor = false;
-    static const unsigned short propertiesOffset     = 0u;
+    static const unsigned short propertiesOffset       = 0u;
+    static const unsigned short material_properties_nb = 0u;
+    static const unsigned short internal_variables_nb  = 0u;
     static const UMATSymmetryType stype = umat::ISOTROPIC;
   }; // end of class UMATTraits
 

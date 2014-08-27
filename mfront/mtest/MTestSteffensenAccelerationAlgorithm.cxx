@@ -72,6 +72,7 @@ namespace mfront
   void
   MTestSteffensenAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
 						const tfel::math::vector<real>&,
+						const tfel::math::vector<real>&,
 						const real eeps,
 						const real,
 						const unsigned short iter)

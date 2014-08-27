@@ -212,9 +212,8 @@ namespace mfront
     }
     res += " ";
     ++(this->current);
-    while((!((this->current->value==delim2)&&(openedBlock==0)))&&
-	  (this->current!=this->fileTokens.end())){
-      
+    while((this->current!=this->fileTokens.end())&&
+	  (!((this->current->value==delim2)&&(openedBlock==0)))){
       if(currentLine!=this->current->line){
 	currentLine = this->current->line;
 	if((registerLine)&&(!getDebugMode())){
@@ -1031,9 +1030,9 @@ namespace mfront
     currentLine = this->current->line;
     this->description += "* ";
     openedBrackets = 1u;
-    while((!((this->current->value=="}")&&
-	     (openedBrackets==1u)))&&
-	  (this->current!=this->fileTokens.end())){
+    while((this->current!=this->fileTokens.end())&&
+	  (!((this->current->value=="}")&&
+	     (openedBrackets==1u)))){
       if(this->current->value=="{"){
 	TokensContainer::const_iterator previous = this->current;
 	--previous;

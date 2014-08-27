@@ -34,42 +34,6 @@ namespace cyrano
   {
     
     /*!
-     * structure in charge of checking the thermal expansion
-     * coefficient is zero
-     */
-    struct CheckThermalExpansionCoefficientIsNull
-      : public CyranoInterfaceBase
-    {
-      /*!
-       * \param[in] a : thermal expansion coefficient
-       */
-      TFEL_CYRANO_INLINE static
-      void exe(const CyranoReal a)
-      {
-	using std::abs;
-	using std::numeric_limits;
-	using tfel::utilities::Name;
-	typedef Behaviour<H,CyranoReal,false> BV;
-	if(abs(a)>numeric_limits<CyranoReal>::min()){
-	  CyranoInterfaceBase::throwThermalExpansionCoefficientShallBeNull(Name<BV>::getName());
-	}
-      }
-    };
-    /*!
-     * structure in charge of not checking the thermal expansion
-     * coefficient is zero
-     */
-    struct DontCheckThermalExpansionCoefficientIsNull
-      : public CyranoInterfaceBase
-    {
-      /*!
-       * \param[in] a : thermal expansion
-       */
-      TFEL_CYRANO_INLINE static
-      void exe(const CyranoReal)
-      {} // end of exe
-    };
-    /*!
      * An helper structure used to initialise the driving variables
      */
     struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
@@ -434,11 +398,11 @@ namespace cyrano
 	    } else if ((r==BV::UNRELIABLE_RESULTS)&&
 		       (CyranoTraits<BV>::doSubSteppingOnInvalidResults)){
 	      iterations = static_cast<unsigned short>(iterations*2u);
-	      this->iData *= 0.5;
+	      this->iData.scale(this->bData,0.5);
 	    } else {
 	      ++subSteps;
 	      iterations = static_cast<unsigned short>(iterations*2u);
-	      this->iData *= 0.5;
+	      this->iData.scale(this->bData,0.5);
 	    }
 	  }
 	  if((subSteps==CyranoTraits<BV>::maximumSubStepping)&&(iterations!=0)){

@@ -60,7 +60,7 @@ namespace mfront
 
   void
   MFrontMarkdownBehaviourAnalyser::endTreatement(const MechanicalBehaviourDescription& mb,
-						 const MFrontFileDescription& fd) const
+						 const MFrontFileDescription& fd)
   {
     using namespace std;
     using namespace tfel::material;
@@ -81,8 +81,10 @@ namespace mfront
       msg += "'src/"+name+".txt'";
       throw(runtime_error(msg));
     }
-    if((this->language=="default")||
-       (this->language=="english")){
+    if(this->language=="default"){
+      this->language="english";
+    }
+    if(this->language=="english"){
       this->treatEnglishOutput(out,mb,fd);
     } else if(this->language=="french"){
       this->treatFrenchOutput(out,mb,fd);
@@ -336,7 +338,9 @@ namespace mfront
 
   void
   MFrontMarkdownBehaviourAnalyser::reset(void)
-  {} // end of MFrontMarkdownBehaviourAnalyser::reset
+  {
+    this->language="default";
+  } // end of MFrontMarkdownBehaviourAnalyser::reset
   
   MFrontMarkdownBehaviourAnalyser::~MFrontMarkdownBehaviourAnalyser()
   {} // end of MFrontBehaviourMarkdownAnalyser::~MFrontBehaviourMarkdownAnalyser
@@ -412,18 +416,18 @@ namespace mfront
     map<string,string>& en = translations["english"]; 
     map<string,string>& fr = translations["french"]; 
     en["variable name"] = "variable name";
-    en["variable type"] = "variable type";
-    en["array size"]    = "array size";
-    en["defined for"]   = "defined for";
-    en["description"]   = "description";
-    en["default value"] = "default value";
-    en["default value for"] = "default value for";
     fr["variable name"] = "nom";
+    en["variable type"] = "variable type";
     fr["variable type"] = "type";
+    en["array size"]    = "array size";
     fr["array size"]    = "taille";
+    en["defined for"]   = "defined for";
     fr["defined for"]   = "définie pour";
+    en["description"]   = "description";
     fr["description"]   = "description";
+    en["default value"] = "default value";
     fr["default value"] = "valeur par défaut";
+    en["default value for"] = "default value for";
     fr["default value for"] = "valeur par défaut pour l'hypothèse de modélsation ";
     const map<string,string>& l = translations[this->language];
     if(getVerboseMode()>=VERBOSE_DEBUG){

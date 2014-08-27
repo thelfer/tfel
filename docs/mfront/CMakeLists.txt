@@ -19,6 +19,8 @@ configure_file(planestress.tex.in
                planestress.tex @ONLY)
 configure_file(umat.tex.in
                umat.tex @ONLY)
+configure_file(zmat.tex.in
+               zmat.tex @ONLY)
 configure_file(aster.tex.in
                aster.tex @ONLY)
 configure_file(glossary.tex.in
@@ -145,6 +147,33 @@ ADD_CUSTOM_COMMAND(
     COMMENT   "umat.pdf")
 
 ADD_CUSTOM_COMMAND(
+    OUTPUT    zmat.pdf
+    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/zmat.tex.in
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images zmat.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images zmat.tex
+    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
+    ARGS      -terse zmat
+    COMMAND   ${MAKEINDEX_COMPILER}
+    ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist env.idx
+    COMMAND   ${MAKEINDEX_COMPILER}
+    ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist headers.idx
+    COMMAND   ${MAKEINDEX_COMPILER}
+    ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
+    COMMAND   ${MAKEINDEX_COMPILER}
+    ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images zmat.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images zmat.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    ARGS      -R0 zmat.dvi
+    COMMAND   ${PS2PDF_CONVERTER}
+    ARGS      zmat.ps
+    COMMENT   "zmat.pdf")
+
+ADD_CUSTOM_COMMAND(
     OUTPUT    aster.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/aster.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
@@ -197,6 +226,11 @@ add_custom_target(umat-doc-pdf-install
                   ${CMAKE_COMMAND} -E copy umat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/umat.pdf)
 add_dependencies(umat-doc-pdf-install umat-doc-pdf)
 
+add_custom_target(zmat-doc-pdf echo DEPENDS zmat.pdf)
+add_custom_target(zmat-doc-pdf-install
+                  ${CMAKE_COMMAND} -E copy zmat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/zmat.pdf)
+add_dependencies(zmat-doc-pdf-install zmat-doc-pdf)
+
 add_custom_target(aster-doc-pdf echo DEPENDS aster.pdf)
 add_custom_target(aster-doc-pdf-install
                   ${CMAKE_COMMAND} -E copy aster.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/aster.pdf)
@@ -208,6 +242,7 @@ add_dependencies(doc-pdf
   finitestrain-doc-pdf
   planestress-doc-pdf
   umat-doc-pdf
+  zmat-doc-pdf
   aster-doc-pdf)
 
 add_dependencies(doc-pdf-install
@@ -216,6 +251,7 @@ add_dependencies(doc-pdf-install
   finitestrain-doc-pdf-install
   planestress-doc-pdf-install
   umat-doc-pdf-install
+  zmat-doc-pdf-install
   aster-doc-pdf-install)
 
 install_mfront_desc(Author.txt)

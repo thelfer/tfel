@@ -70,10 +70,11 @@ namespace mfront
 
   void
   MTestIronsTuckAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
-					    const tfel::math::vector<real>&,
-					    const real eeps,
-					    const real,
-					    const unsigned short iter)
+					       const tfel::math::vector<real>&,
+					       const tfel::math::vector<real>&,
+					       const real eeps,
+					       const real,
+					       const unsigned short iter)
   {
     using namespace std;
     const real it_eps = 100*(eeps*numeric_limits<real>::epsilon());

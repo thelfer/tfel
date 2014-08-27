@@ -138,6 +138,46 @@ namespace tfel
       return s;
     } // end of ExternalLibraryManager::getSource
 
+    std::vector<std::string>
+    ExternalLibraryManager::getSupportedModellingHypotheses(const std::string& l,
+							    const std::string& f)
+    {
+      using namespace std;
+      vector<string> h;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      const int nb = ::tfel_getUnsignedShort(lib,(f+"_nModellingHypotheses").c_str());
+      char ** res;
+      if(nb==-1){
+	string msg("ExternalLibraryManager::getSupportedModellingHypotheses : ");
+	msg += " number of modelling hypotheses could not be read (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      res = ::tfel_getArrayOfStrings(lib,(f+"_ModellingHypotheses").c_str());
+      if(res==0){
+	string msg("ExternalLibraryManager::getSupportedModellingHypotheses : ");
+	msg += "modelling hypotheses could not be read (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      copy(res,res+nb,back_inserter(h));
+      return h;
+    } // end of ExternalLibraryManager::getSupportedModellingHypotheses
+
     void
     ExternalLibraryManager::setParameter(const std::string& l,
 					 const std::string& f,
@@ -453,7 +493,7 @@ namespace tfel
     {
       using namespace std;
       int res;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
@@ -522,6 +562,31 @@ namespace tfel
       }
     } // end of ExternalLibraryManager::getCastemFunctionVariables
 
+    CyranoFctPtr
+    ExternalLibraryManager::getCyranoFunction(const std::string& l,
+					    const std::string& f)
+    {
+      using namespace std;
+      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      CyranoFctPtr fct = ::tfel_getCyranoFunction(lib,f.c_str());
+      if(fct==0){
+	string msg("ExternalLibraryManager::getCyranoFunction : ");
+	msg += " could not load Cyrano function '"+f+"' (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      return fct;
+    }
+
     UMATFctPtr
     ExternalLibraryManager::getUMATFunction(const std::string& l,
 					    const std::string& f)
@@ -552,7 +617,7 @@ namespace tfel
 					     const std::string& f)
     {
       using namespace std;
-      #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);

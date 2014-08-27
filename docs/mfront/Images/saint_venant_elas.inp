@@ -1,0 +1,52 @@
+****calcul
+***mesh  updated_lagrangian
+ **file testcube1.geof
+***resolution
+  **sequence 1
+    *time  120.
+    *increment 100
+    *iteration 10 
+    *ratio 0.01 
+    *algorithm p1p2p3 
+  **init_d_dof
+  **automatic_time global 3 epcum 0.01
+    *security 1.2
+    *divergence 2. 8
+    *first_dtime 0.0001
+***bc
+  **impose_nodal_dof
+     haut U3 1. tab
+     base U3 0.
+     gauche U1 0.
+     avant U2 0.
+***equation
+     **mpc1  droit U1
+     **mpc1 arriere U2
+***table
+  **name tab
+    *time  0.0  120.0
+    *value 0.0  0.7
+  **name temp_tab
+    *time  0.0  120.0
+    *value 340. 340.
+***output
+ **verbose
+ **save_parameter 
+ **curve
+  *gauss_var 1 1 F13 F11 F22 F33 F12 F21 F23 F32 F31 sig31 sig11 sig22 sig33 sig12 sig23
+***parameter
+ **table temperature
+     1.0 temp_tab
+***material
+    *file test1.inp
+    *rotation
+      x3 0. 0. 1.
+      x1 1. 0. 0.
+****return
+
+***behavior OrthotropicSaintVenantKirchhoffElasticity
+ **elasticity cubic
+       y1111 198600.0 
+       y1122 136200.0 
+       y1212 104700.0
+***return

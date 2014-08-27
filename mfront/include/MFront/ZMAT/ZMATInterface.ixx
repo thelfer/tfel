@@ -267,6 +267,90 @@ namespace zmat
     dest(5,5)=src(4,4);
   } // end of ZMATInterface::convert
 
+  template<typename T>
+    typename tfel::meta::EnableIf<
+    tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    void>::type
+    ZMATInterface::convert(tfel::math::tensor<1u,T>& dest,
+			   const double* const src){
+    dest[0] = src[0];
+    dest[1] = src[1];
+    dest[2] = src[2];
+  } // end of ZMATInterface::convert
+
+  template<typename T>
+  typename tfel::meta::EnableIf<
+    tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    void>::type
+  ZMATInterface::convert(tfel::math::tensor<2u,T>& dest,
+			 const double* const src){
+    dest[0] = src[0];
+    dest[1] = src[1];
+    dest[2] = src[2];
+    dest[3] = src[3];
+    dest[4] = src[4];
+  } // end of ZMATInterface::convert
+  
+  template<typename T>
+  typename tfel::meta::EnableIf<
+    tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    void>::type
+  ZMATInterface::convert(tfel::math::tensor<3u,T>& dest,
+			 const double* const src){
+    dest[0] = src[0];
+    dest[1] = src[1];
+    dest[2] = src[2];
+    dest[3] = src[3];
+    dest[7] = src[4];
+    dest[6] = src[5];
+    dest[4] = src[6];
+    dest[8] = src[7];
+    dest[5] = src[8];
+  } // end of ZMATInterface::convert
+
+  template<typename T>
+    typename tfel::meta::EnableIf<
+    tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    void>::type
+    ZMATInterface::convert(double* const dest,
+			   const tfel::math::tensor<1u,T>& src){
+    dest[0] = src[0];
+    dest[1] = src[1];
+    dest[2] = src[2];
+  } // end of ZMATInterface::convert
+
+  template<typename T>
+  typename tfel::meta::EnableIf<
+    tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    void>::type
+  ZMATInterface::convert(double* const dest,
+			 const tfel::math::tensor<2u,T>& src)
+  {
+    dest[0] = src[0];
+    dest[1] = src[1];
+    dest[2] = src[2];
+    dest[3] = src[3];
+    dest[4] = src[4];
+  } // end of ZMATInterface::convert
+  
+  template<typename T>
+  typename tfel::meta::EnableIf<
+    tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    void>::type
+  ZMATInterface::convert(double* const dest,
+			 const tfel::math::tensor<3u,T>& src)
+  {
+    dest[0] = src[0];
+    dest[1] = src[1];
+    dest[2] = src[2];
+    dest[3] = src[3];
+    dest[7] = src[4];
+    dest[6] = src[5];
+    dest[4] = src[6];
+    dest[8] = src[7];
+    dest[5] = src[8];
+  } // end of ZMATInterface::convert
+
 } // end of namespace zmat
 
 #endif /* _LIB_MFRONT_ZMAT_ZMATINTERFACE_IXX */

@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@ModellingHypothesis 'GeneralisedPlaneStrain';
+@ModellingHypothesis 'Axisymmetrical';
 
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asternorton';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
@@ -15,7 +15,7 @@
 
 @Real 'tmax' 2500;
 @Real 'emax' 2.5e-2;
-@ImposedStrain<function> 'EXX' 'emax/tmax*t';
+@ImposedStrain<function> 'ERR' 'emax/tmax*t';
 @ExternalStateVariable 'Temperature' 293.15;
 
 @Times {0.,100. in 10, 'tmax' in 100};

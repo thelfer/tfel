@@ -282,8 +282,8 @@ MTest_setImposedCohesiveForce2(mfront::MTest& t,
 
 static void
 MTest_setImposedDrivingVariable(mfront::MTest& t,
-				   const std::string&  n,
-				   const mfront::real& v)
+				const std::string&  n,
+				const mfront::real& v)
 {
   using namespace std;
   using namespace mfront;
@@ -595,6 +595,12 @@ void declareMTest(void)
 	 (arg("name"),"values"))
     .def("setImposedDrivingVariable",MTest_setImposedDrivingVariable2,
 	 (arg("name"),"values"))
+    .def("setScalarInternalStateVariableInitialValue",
+	 &MTest::setScalarInternalStateVariableInitialValue)
+    .def("setStensorInternalStateVariableInitialValues",
+	 &MTest::setStensorInternalStateVariableInitialValues)
+    .def("setTensorInternalStateVariableInitialValues",
+	 &MTest::setTensorInternalStateVariableInitialValues)
   ;
 
 } // end of declareExternalLibraryManager

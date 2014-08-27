@@ -137,7 +137,7 @@ namespace aster
   // Calcul de la déformation dans le repère global
   // D^g=tN:D^m:N
   void
-  AsterRotationMatrix2D::rotateStiffnessMatrixBackward(AsterReal *const D) const
+  AsterRotationMatrix2D::rotateTangentOperatorBackward(AsterReal *const D) const
   {
     // matrice N
     AsterReal N[4][4];
@@ -181,7 +181,7 @@ namespace aster
 	}
       }
     }
-  } // end of AsterRotationMatrix2D::rotateStiffnessMatrixBackward
+  } // end of AsterRotationMatrix2D::rotateTangentOperatorBackward
 
   // Constructeur
   // drot : Matrice de passage élement/global
@@ -327,7 +327,7 @@ namespace aster
 
   // compute the stiffness matrix in the global space
   void
-  AsterRotationMatrix3D::rotateStiffnessMatrixBackward(AsterReal *const D) const
+  AsterRotationMatrix3D::rotateTangentOperatorBackward(AsterReal *const D) const
   {
     // matrice N
     AsterReal N[6][6];
@@ -364,6 +364,6 @@ namespace aster
 	}
       }
     }
-  } // end of AsterRotationMatrix3D::rotateStiffnessMatrixBackward
+  } // end of AsterRotationMatrix3D::rotateTangentOperatorBackward
 
 } // end of namespace aster

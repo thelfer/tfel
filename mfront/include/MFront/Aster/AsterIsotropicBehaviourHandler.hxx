@@ -16,10 +16,10 @@ namespace aster
 {
 
   template<AsterBehaviourType btype,
-	   unsigned short N,
+	   tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterIsotropicBehaviourHandler
-    : public AsterBehaviourHandler<N,Behaviour>
+    : public AsterBehaviourHandler<H,Behaviour>
   {
     TFEL_ASTER_INLINE static
       void exe(const AsterReal *const DTIME ,
@@ -40,10 +40,10 @@ namespace aster
     {
       using namespace tfel::meta;
       using namespace tfel::material;
-      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef Behaviour<H,AsterReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> MTraits;
       typedef AsterTraits<BV> Traits;
-      typedef AsterBehaviourHandler<N,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;

@@ -129,7 +129,7 @@ const std::vector<std::string>&
 getKeys(void) const;
 
 protected :
-//! all glossary names (to initialise glossary entries
+//! all glossary names (to initialise glossary entries)
 static const char * names[86];
 /*!
  * \brief insert a new entry

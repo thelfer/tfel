@@ -441,6 +441,13 @@ namespace mfront{
     bool
     hasAttribute(const std::string&) const;
     /*!
+     * \return true a glossary or an entry name was associated with the given
+     * variable.
+     * \param[in] v  : variable name
+     */
+    bool
+    hasGlossaryName(const std::string&) const;
+    /*!
      * \return the glossary or entry names associated with the given
      * variable.
      * \param[in] v  : variable name

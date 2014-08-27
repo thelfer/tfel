@@ -19,13 +19,15 @@
 namespace aster
 {
 
-  template<unsigned short N,
+  template<AsterBehaviourType,
+	   tfel::material::ModellingHypothesis::Hypothesis H,
 	   AsterSymmetryType>
   struct AsterComputeThermalExpansionCoefficientTensor;
 
   template<>
   struct MFRONT_ASTER_VISIBILITY_EXPORT
-  AsterComputeThermalExpansionCoefficientTensor<1u,ISOTROPIC>
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
       exe(const AsterReal* const,
@@ -34,7 +36,8 @@ namespace aster
 
   template<>
   struct MFRONT_ASTER_VISIBILITY_EXPORT
-  AsterComputeThermalExpansionCoefficientTensor<2u,ISOTROPIC>
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>
   {
     static void
       exe(const AsterReal* const,
@@ -43,7 +46,39 @@ namespace aster
 
   template<>
   struct MFRONT_ASTER_VISIBILITY_EXPORT
-  AsterComputeThermalExpansionCoefficientTensor<3u,ISOTROPIC>
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
+  {
+    static void
+      exe(const AsterReal* const,
+	  tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+
+  template<>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::PLANESTRAIN,ISOTROPIC>
+  {
+    static void
+      exe(const AsterReal* const,
+	  tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+  template<>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ISOTROPIC>
+  {
+    static void
+      exe(const AsterReal* const,
+	  tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+  template<>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ISOTROPIC>
   {
     static void
       exe(const AsterReal* const,
@@ -52,7 +87,8 @@ namespace aster
 
   template<>
   struct MFRONT_ASTER_VISIBILITY_EXPORT
-  AsterComputeThermalExpansionCoefficientTensor<1u,ORTHOTROPIC>
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
       exe(const AsterReal* const,
@@ -61,7 +97,8 @@ namespace aster
 
   template<>
   struct MFRONT_ASTER_VISIBILITY_EXPORT
-  AsterComputeThermalExpansionCoefficientTensor<2u,ORTHOTROPIC>
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>
   {
     static void
       exe(const AsterReal* const,
@@ -70,11 +107,43 @@ namespace aster
 
   template<>
   struct MFRONT_ASTER_VISIBILITY_EXPORT
-  AsterComputeThermalExpansionCoefficientTensor<3u,ORTHOTROPIC>
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
   {
     static void
       exe(const AsterReal* const,
-	  tfel::config::Types<3u,AsterReal,false>::ThermalExpansionCoefficientTensor&);
+	  tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+
+  template<>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::PLANESTRAIN,ORTHOTROPIC>
+  {
+    static void
+      exe(const AsterReal* const,
+	  tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+  template<>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ORTHOTROPIC>
+  {
+    static void
+    exe(const AsterReal* const,
+	tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor&);
+  }; // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+  template<>
+  struct MFRONT_ASTER_VISIBILITY_EXPORT
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ORTHOTROPIC>
+  {
+    static void
+    exe(const AsterReal* const,
+	tfel::config::Types<3u,AsterReal,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AsterComputeThermalExpansionCoefficientTensor
 
 } // end of namespace aster

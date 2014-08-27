@@ -54,6 +54,7 @@ namespace mfront{
     preExecuteTasks() = 0;
     /*!
      * \param[in,out] u1   : current estimate of the unknowns
+     * \param[in]     u0   : previous estimate of the unknowns
      * \param[in]     r    : Newton residual
      * \param[in]     ueps : criterium on the unknowns
      * \param[in]     seps : criterium on the thermodynamic forces
@@ -61,6 +62,7 @@ namespace mfront{
      */
     virtual void
     execute(tfel::math::vector<real>&,
+	    const tfel::math::vector<real>&,
 	    const tfel::math::vector<real>&,
 	    const real,
 	    const real,

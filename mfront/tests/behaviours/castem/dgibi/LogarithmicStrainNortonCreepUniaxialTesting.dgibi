@@ -17,13 +17,11 @@ s1 = l1 'REGLER' 1 l2;
 coel2D = 'MOTS' 'YOUN' 'NU' 'RHO' 'ALPH' 'A' 'E';
 stav2D = 'MOTS' 'EERR' 'EEZZ' 'EETT' 'EERZ'  'P';
 para2D = 'MOTS' 'T';
-cmp='TABLE' ;
-cmp.'LIBRAIRIE' = '../libMFrontCastemBehaviours.so';
-cmp.'MODELE'    = 'umatlogarithmicstrainnortoncreep';
 
 mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
    'NON_LINEAIRE' 'UTILISATEUR' 'EPSILON' 'UTILISATEUR'
-   'DESC_LOI' cmp
+   'LIB_LOI' '../libMFrontCastemBehaviours.so'
+   'FCT_LOI' 'umatlogarithmicstrainnortoncreep'
    'C_MATERIAU' coel2D
    'C_VARINTER' stav2D
    'PARA_LOI'   para2D

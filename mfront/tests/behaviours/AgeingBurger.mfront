@@ -1,0 +1,160 @@
+/*!
+ * \file   AgeingBurger.mfront
+ * \brief  
+ *   resolution implicite
+ * \author FH
+ * \date   13 05 2013
+ */
+
+@Parser Implicit;
+@Behaviour AgeingBurger;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Theta 1. ;
+@Epsilon 1.e-11 ;
+
+@Description{
+  Nous implantons une loi décrivant le comportement viscoplastique du béton.
+}
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@MaterialProperty stress young; 
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;    
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real KRS;
+@MaterialProperty real NRS;
+@MaterialProperty real NIS;
+@MaterialProperty real KRD;
+@MaterialProperty real NRD;
+@MaterialProperty real NID;
+@MaterialProperty real Alpha;
+@MaterialProperty real Ea_R;
+@MaterialProperty real Tref;
+@MaterialProperty real NFD;
+@MaterialProperty real Cini;
+
+@StateVariable real       ESPHR;
+@StateVariable real       ESPHI;
+@StateVariable Stensor    EDEVR;
+@StateVariable Stensor    EDEVI;
+@StateVariable Stensor    Edess;
+
+// le temps
+@AuxiliaryStateVariable real t0;
+@AuxiliaryStateVariable Stensor EF;
+
+@ExternalStateVariable real C;
+
+@LocalVariable real    lambda;
+@LocalVariable real    mu;
+
+@LocalVariable real KRS_T;
+@LocalVariable real KRD_T;
+@LocalVariable real NRS_T;
+@LocalVariable real NRD_T;
+@LocalVariable real NIS_T;
+@LocalVariable real NID_T;
+
+/*!
+ * Pour préparer l'intégration, on commence par initialiser certaines
+ * variables locales afin de ne calculer qu'une fois certains termes
+ * coûteux.
+ */
+@InitLocalVariables{
+  using namespace tfel::material::lame;
+  /*!
+   * Pour exprimer la loi d'élasticité, nous utilisons les
+   * coefficients de Lamé définis par~:
+   * \[
+   * \begin{aligned}
+   * \mts{\lambda} &= \Frac{\nu\,\mts{E}}{\paren{1+\nu}\,\paren{1-2\,\nu}} \ \
+   * \mts{\mu}     &= \Frac{\mts{E}}{2\,\paren{1+\nu}}
+   * \end{aligned}
+   * \]
+   */
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  // paramètre de la loi de fluage
+  const temperature Tmoy=(2.*T+dT)/2.;
+  const real tmp_exp = exp(Ea_R*(1./(273.+Tmoy)-1./(273+Tref)));
+  KRS_T=KRS*tmp_exp;
+  KRD_T=KRD*tmp_exp;
+  NRS_T=NRS*tmp_exp;
+  NRD_T=NRD*tmp_exp;
+  const real TAlpha = pow(t0+0.5*dt,Alpha);
+  NIS_T=NIS*tmp_exp*TAlpha;
+  NID_T=NID*tmp_exp*TAlpha;
+} 
+
+@ComputeStress{
+  /*!
+   * La contrainte \(\tsigma\) se déduit de la déformation élastique
+   * par la loi de Hooke~:
+   * \[
+   * \sigma = \lambda\,\trace{\tepsilonel}\,\tenseur{I}+2\,\mu\,\tepsilonel
+   * \]
+   */
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} 
+
+/*!
+ * Nous formons pour chaque variable du système, les équations du
+ * système implicite.
+ */
+@Integrator{
+  /*!
+   * On commence par calculer la pression hydrostatique \(p_{r}\)~:
+   * \[
+   * p_{r} = \Frac{1}{3}\,\tsigma\,\colon\,\tenseur{I}
+   * \]
+   */
+  const real    pr = trace(sig)/3.;
+  /*!
+   * \(\tenseur{s}\) est le déviateur des contraines~:
+   * \[
+   * \tenseur{s} = \tsigma-p_{r}\,\tenseur{I}
+   * \]
+   */
+  const Stensor s  = sig-pr*Stensor::Id();
+  fESPHR=dESPHR-((C/Cini*pr-KRS_T*(ESPHR+dESPHR))/NRS_T)*dt;
+  fEDEVR=dEDEVR-((C/Cini*s-KRD_T*(EDEVR+dEDEVR))/NRD_T)*dt;
+  fESPHI=dESPHI-(C/Cini*pr/NIS_T)*dt;
+  fEDEVI=dEDEVI-(C/Cini*s/NID_T)*dt;
+  fEdess=dEdess-NFD*dC/Cini*Stensor::Id();
+  feel=deel-(deto-dEDEVR-dEDEVI-dEdess-(dESPHR+dESPHI)*Stensor::Id());
+}
+
+/*!
+ * En fin d'intégration, nous mettons à jour des variables auxilaires.
+ */
+@UpdateAuxiliaryStateVariables{
+  /*!
+   * Le temps est incrémenté~:
+   * \[
+   * \mts{t_{0}} = \bts{t_{0}}+dt
+   * \]
+   */
+  t0 += dt;
+  EF=EF+dEDEVR+dEDEVI+(dESPHR+dESPHI)*Stensor::Id();
+} 
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
+     (smt==TANGENTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor Hooke;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = Hooke*Je;
+  } else {
+    return false;
+  }
+}

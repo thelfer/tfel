@@ -47,5 +47,7 @@ nu.setGlossaryName("PoissonRatio");
  * loi.
  */
 @TangentOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice
+			  // tangente est toujours l'élastique
   Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
 }

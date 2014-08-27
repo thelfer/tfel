@@ -36,10 +36,12 @@ set(mfront_tests_SOURCES
   NortonRK3
   NortonRK4
   ImplicitNorton
-  ImplicitFiniteStrainNorton
   ImplicitNorton2
+  ImplicitNorton3
+  ImplicitFiniteStrainNorton
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
+  ImplicitNorton_LevenbergMarquardt
   LogarithmicStrainNortonCreep
   EllipticCreep
   OrthotropicCreep
@@ -60,10 +62,12 @@ set(mfront_tests_SOURCES
   MonoCristal_DD_CFC_NumericalJacobian
   MonoCristal_DD_CFC_Irradiation
   MonoCristal_DD_CC
+  MonoCristal_DD_CC_LevenbergMarquardt
   MonoCristal_DD_CC_NumericalJacobian
   MonoCristal_DD_CC_Irradiation
   MonoCristal_DD_CC_Irradiation_NumericalJacobian
   FiniteStrainSingleCrystal
+  FiniteStrainSingleCrystal2
   FiniteStrainSingleCrystal_NumericalJacobian
   PolyCristals
   PolyCristals_DD_CFC
@@ -72,6 +76,7 @@ set(mfront_tests_SOURCES
   Hayhurst
   ImplicitHayhurst
   Burger
+  AgeingBurger
   Tvergaard
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
@@ -192,6 +197,7 @@ test_castem(ddif2-3)
 test_castem(ddif2-4)
 test_castem(lorentz)
 test_castem(mazars)
+test_castem(mazars2)
 test_castem(druckerprager)
 test_castem(druckerprager2)
 test_castem(norton)
@@ -199,8 +205,12 @@ test_castem(norton2)
 test_castem(nortonrk2)
 test_castem(nortonrk3)
 test_castem(nortonrk4)
+test_castem(implicitnorton)
+test_castem(implicitnorton2)
+test_castem(implicitnorton3)
 test_castem(implicitnorton-planestress)
 test_castem(implicitnorton-planestress2)
+test_castem(implicitnorton-levenbergmarquardt)
 test_castem(stressrelaxation)
 test_castem(norton-euler)
 test_castem(norton-rk2)
@@ -234,6 +244,7 @@ test_castem(gursontvergaardneedlemanplasticflow)
 test_castem(gursontvergaardneedlemanviscoplasticflow)
 test_castem(ellipticcreep)
 test_castem(burger)
+test_castem(ageingburger)
 test_castem(tvergaard)
 test_castem(saintvenantkirchhoffelasticity-uniaxialloading-1-1D)
 test_castem(saintvenantkirchhoffelasticity-uniaxialloading-2-1D)
@@ -358,4 +369,5 @@ test_castem(finitestrainsinglecrystal_numericaljacobian-001)
 test_castem(finitestrainsinglecrystal_numericaljacobian-012)
 test_castem(finitestrainsinglecrystal_numericaljacobian-012-2)
 test_castem(finitestrainsinglecrystal_numericaljacobian-159)
+test_castem(finitestrainsinglecrystal2-001)
 test_castem(anistropiclemaitreviscoplasticbehaviour)

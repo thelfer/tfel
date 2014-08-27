@@ -11,6 +11,8 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"MFront/MFrontLogStream.hxx"
+
 namespace mfront{
 
   template<typename Child>
@@ -191,8 +193,16 @@ namespace mfront{
 	} else {
 	  p = this->callBacks.find(this->current->value);
 	  if(p==this->callBacks.end()){
+	    if(getVerboseMode()>=VERBOSE_DEBUG){
+	      ostream& log = getLogStream();
+	      log << "treating unknown keyword" << endl;
+	    }
 	    handler = &Child::treatUnknownKeyword;
 	  } else {
+	    if(getVerboseMode()>=VERBOSE_DEBUG){
+	      ostream& log = getLogStream();
+	      log << "treating keyword : " << this->current->value << endl;
+	    }
 	    handler = p->second;
 	  }
 	  this->currentComment = this->current->comment;

@@ -909,6 +909,23 @@ namespace mfront{
     return names;
   } // end of MechanicalBehaviourData::getCodeBlockNames
 
+  bool
+  MechanicalBehaviourData::hasGlossaryName(const std::string& n) const
+  {
+    using namespace std;
+    map<string,string>::const_iterator p;
+    this->checkVariableName(n);
+    p=this->glossaryNames.find(n);
+    if(p!=this->glossaryNames.end()){
+      return true;
+    }
+    p=this->entryNames.find(n);
+    if(p!=this->entryNames.end()){
+      return true;
+    }
+    return false;
+  } // end of MechanicalBehaviourData::getGlossaryNames
+
   std::string
   MechanicalBehaviourData::getGlossaryName(const std::string& n) const
   {

@@ -675,7 +675,14 @@ namespace mfront
     using namespace std;
     set<Hypothesis> h;
     const set<Hypothesis>& mh = this->getModellingHypotheses();
+    if(mh.size()==1u){
+      // if only one modelling hypothesis is supported, it is not
+      // considered as specialised, so we return it.
+      return mh;
+    }
     if(!this->areAllMechanicalDataSpecialised()){
+      // We return UNDEFINEDHYPOTHESIS to take into account all the
+      // modelling hypotheses that were not specialised
       h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
     for(set<Hypothesis>::const_iterator p=mh.begin();p!=mh.end();++p){

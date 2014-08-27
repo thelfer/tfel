@@ -28,6 +28,17 @@ namespace mfront
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
+    const vector<string>& hh =
+      elm.getSupportedModellingHypotheses(l,b);
+    if(find(hh.begin(),hh.end(),this->hypothesis)==hh.end()){
+      string msg("MTestUmatBehaviourBase::MTestUmatBehaviourBase : "
+		 "unsupported modelling hypothesis '"+this->hypothesis+"'."
+		 "Supported modelling hypotheses are:");
+      for(vector<string>::const_iterator ph=hh.begin();ph!=hh.end();++ph){
+	msg += "\n'"+*ph+"'";
+      }
+      throw(runtime_error(msg));
+    }
     this->type  = elm.getUMATBehaviourType(l,b);
     this->stype = elm.getUMATSymmetryType(l,b);
     if(this->stype>=2u){

@@ -20,6 +20,7 @@ doc-install: doc
 	cp    docs/mfront/finitestrain.pdf               @docdir@/mfront
 	cp    docs/mfront/planestress.pdf                @docdir@/mfront
 	cp    docs/mfront/umat.pdf                       @docdir@/mfront
+	cp    docs/mfront/zmat.pdf                       @docdir@/mfront
 	cp    docs/mfront/aster.pdf                      @docdir@/mfront
 	cp    docs/mtest/mtest.pdf                       @docdir@/mtest
 	cp    docs/release-notes-2.0/tfel-2.0.pdf        @docdir@/release-notes-2.0
@@ -54,7 +55,8 @@ mfront-doc-pdf:
 	make -f Makefile.doc finitestrain ;			    \
 	make -f Makefile.doc planestress ;			    \
 	make -f Makefile.doc aster ;				    \
-	make -f Makefile.doc umat
+	make -f Makefile.doc umat  ;				    \
+	make -f Makefile.doc zmat
 
 presentations-doc-pdf:
 	cd docs/presentations ;                                     \

@@ -27,6 +27,7 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
 #include"TFEL/Math/Forward/st2tost2.hxx"
+#include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx"
@@ -43,6 +44,10 @@ namespace tfel{
     // forward declaration
     template<unsigned short N>
     struct StensorProductRightDerivativeExpr;
+
+    // forward declaration
+    template<unsigned short N>
+    struct ConvertT2toST2ToST2toST2Expr;
 
     /*
      * Partial specialisation for st2tost2
@@ -189,6 +194,18 @@ namespace tfel{
 	ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
       tprd(const StensorType&,
 	   const ST2toST2Type&);
+      /*!
+       * convert a T2toST2 to a ST2toST2
+       * \param[in] src : T2toST2 to be converted
+       */
+      template<typename T2toST2Type>
+      static TFEL_MATH_INLINE 
+      typename tfel::meta::EnableIf<
+	tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
+	T2toST2Traits<T2toST2Type>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,T>::cond,
+	ST2toST2Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> > >::type
+      convert(const T2toST2Type&);
       /*!
        * This is a StensorConcept requirement.
        */

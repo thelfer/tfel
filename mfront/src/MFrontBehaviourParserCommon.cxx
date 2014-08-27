@@ -385,12 +385,148 @@ namespace mfront{
     }
   } // end of MFrontBehaviourParserCommon::endsInputFileProcessing
 
-  void 
+  /*!
+   * \return the "true" integration variables (state variables are excluded)
+   * \param[in] md : mechanical behaviour data
+   */
+  VarContainer
+  getIntegrationVariables(const MechanicalBehaviourData& md)
+  {
+    const VarContainer& ivs = md.getIntegrationVariables();
+    VarContainer v;
+    for(VarContainer::const_iterator pv=ivs.begin();pv!=ivs.end();++pv){
+      if(!md.isStateVariableName(pv->name)){
+	v.push_back(*pv);
+      }
+    }
+    return v;
+  } // end of getIntegrationVariables
+
+  /*!
+   * \brief various checks
+   * \param[in] v  : variables
+   * \param[in] t  : variable type
+   * \param[in] uv : list of all used variables
+   * \param[in] b1 : check if the variable is used
+   * \param[in] b2 : check if the variable increment (or rate) is used
+   * \param[in] b3 : check if glossary name is declared
+   * \param[in] b4 : check if variable is used in more than one code block (test for local variables)
+   */
+  static void
+  performPedanticChecks(const MechanicalBehaviourData& md,
+			const VarContainer& v,
+			const std::string& t,
+			const std::map<std::string,
+				       unsigned short>& uv,
+			const bool b1 = true,
+			const bool b2 = true,
+			const bool b3 = true,
+			const bool b4 = false)
+  {
+    using namespace std;
+    ostream& log = getLogStream();
+    for(VarContainer::const_iterator pv=v.begin();pv!=v.end();++pv){
+      if(b1){
+	const map<std::string,unsigned short>::const_iterator p = uv.find(pv->name);
+	if(p==uv.end()){
+	  log << "- " << t << " '" << pv->name << "' is unused." << endl;
+	} else {
+	  if(b4&&p->second==1){
+	    log << "- " << t << " '" << pv->name << "' is used in one code block only." << endl;
+	  }
+	}
+      }
+      if(b2){
+	if(uv.find("d"+pv->name)==uv.end()){
+	  log << "- " << t << " increment 'd" << pv->name << "' is unused." << endl;
+	}
+      }
+      if(b3){
+	if(!md.hasGlossaryName(pv->name)){
+	  log << "- " << t << " '" << pv->name << "' has no glossary name." << endl;
+	}
+      }
+      if(pv->description.empty()){
+	log << "- " << t << " '" << pv->name << "' has no description." << endl;
+      }
+    }
+  } 
+
+  /*!
+   * \brief various checks on static variables
+   * \param[in] v  : variables
+   * \param[in] uv : list of all static variables
+   */
+  static void
+  performPedanticChecks(const StaticVarContainer& v,
+			const std::map<std::string,
+				       unsigned short>& uv)
+  {
+    using namespace std;
+    ostream& log = getLogStream();
+    for(StaticVarContainer::const_iterator pv=v.begin();pv!=v.end();++pv){
+      if(uv.find(pv->name)==uv.end()){
+	log << "- static variable '" << pv->name << "' is unused." << endl;
+      }
+    }      
+  }
+  
+  void
   MFrontBehaviourParserCommon::doPedanticChecks(void) const
   {
     using namespace std;
-    // set<Hypothesis> h = this->mb.getDistinctModellingHypotheses();
-
+    using namespace tfel::material;
+    const set<Hypothesis>& hs = this->mb.getDistinctModellingHypotheses();
+    ostream& log = getLogStream();
+    log << endl << "* Pedantic checks" << endl;
+    for(set<Hypothesis>::const_iterator ph=hs.begin();ph!=hs.end();++ph){
+      const Hypothesis h = *ph;
+      const MechanicalBehaviourData& md = this->mb.getMechanicalBehaviourData(h);
+      // checks if variables are used
+      if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	log << endl << "** Beginning pedantic checks for default modelling hypothesis"
+	    << endl << endl;
+      } else {
+	log << endl << "** Beginning pedantic checks for modelling hypothesis '"
+	    << ModellingHypothesis::toString(h) << "'" << endl << endl;
+      }
+      // getting all used variables
+      const vector<string>& cbs = md.getCodeBlockNames();
+      map<string,unsigned short> vars;  // variable names and counts
+      map<string,unsigned short> svars; // static variable nanes and counts
+      for(vector<string>::const_iterator pcbs=cbs.begin();pcbs!=cbs.end();++pcbs){
+	const CodeBlock& cb = md.getCode(*pcbs);
+	if(cb.description.empty()){
+	  log << "- code block '" << *pcbs << "' has no description" << endl;
+	}
+	for(set<string>::const_iterator pv=cb.variables.begin();
+	    pv!=cb.variables.end();++pv){
+	  if(vars.count(*pv)==0){
+	    vars[*pv] = 1;
+	  } else{
+	    ++(vars[*pv]);
+	  }
+	}
+	for(set<string>::const_iterator pv=cb.static_variables.begin();
+	    pv!=cb.static_variables.end();++pv){
+	  if(svars.count(*pv)==0){
+	    svars[*pv] = 1;
+	  } else{
+	    ++(svars[*pv]);
+	  }
+	}
+      }
+      performPedanticChecks(md,md.getMaterialProperties(),"material property",vars,true,false,true);
+      const VarContainer& ivs  = getIntegrationVariables(md);
+      performPedanticChecks(md,ivs,"integration variable",vars,false,true,false);
+      performPedanticChecks(md,md.getStateVariables(),"state variable",vars);
+      performPedanticChecks(md,md.getAuxiliaryStateVariables(),"auxiliary state variable",vars,true,false);
+      performPedanticChecks(md,md.getExternalStateVariables(),"external state variable",vars);
+      performPedanticChecks(md,md.getLocalVariables(),"local variable",vars,true,false,false,true);
+      performPedanticChecks(md,md.getParameters(),"parameter",vars,true,false);
+      performPedanticChecks(md.getStaticVariables(),svars);
+    }
+    log << endl << "# End of pedantic checks" << endl;
   } // end of MFrontBehaviourParserCommon::pedanticChecks
 
   void 
@@ -1680,6 +1816,8 @@ namespace mfront{
     this->reserveName("DeformationGradientTensor",false);
     this->reserveName("TangentOperator",false);
     this->reserveName("StressFreeExpansionType",false);
+    this->reserveName("behaviourData",false);
+    this->reserveName("time_scaling_factor",false);
   } // end of MFrontBehaviourParserCommon::registerDefaultVarNames
 
   MFrontBehaviourParserCommon::MFrontBehaviourParserCommon()
@@ -2164,6 +2302,9 @@ namespace mfront{
     this->behaviourDataFile << "// Forward Declaration" << endl;
     this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
     this->behaviourDataFile << "class " << this->mb.getClassName() << "BehaviourData;" << endl << endl;
+    this->behaviourDataFile << "// Forward Declaration" << endl;
+    this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
+    this->behaviourDataFile << "class " << this->mb.getClassName() << "IntegrationData;" << endl << endl;
     if(this->mb.useQt()){
       this->behaviourDataFile << "// Forward Declaration" << endl;
       this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
@@ -2239,6 +2380,13 @@ namespace mfront{
     this->behaviourDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);" << endl << endl;
     this->behaviourDataFile << "friend std::ostream& operator<< <>(std::ostream&,const ";
     this->behaviourDataFile << this->mb.getClassName() << "BehaviourData&);" << endl << endl;
+    this->behaviourDataFile << "/* integration data is declared friend to access"
+			    << "   driving variables at the beginning of the time step */" << endl;
+    if(this->mb.useQt()){
+      this->behaviourDataFile << "friend class " << this->mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt>;" << endl << endl;
+    } else {
+      this->behaviourDataFile << "friend class " << this->mb.getClassName() << "IntegrationData<hypothesis,Type,false>;" << endl << endl;
+    }
     this->writeIntegerConstants(this->behaviourDataFile);    
   }
 
@@ -4412,55 +4560,47 @@ namespace mfront{
     for(p2=this->mb.getMainVariables().begin();(p2!=this->mb.getMainVariables().end())&&(iknown);++p2){
       iknown = p2->first.increment_known;
     }
-    if(iknown){
-      this->checkIntegrationDataFile();
-      this->integrationDataFile << "/*" << endl;
-      this->integrationDataFile << "* Multiplication by a scalar." << endl;
-      this->integrationDataFile << "*/" << endl;
-      this->integrationDataFile << "template<typename Scal>" << endl;
-      this->integrationDataFile << "typename tfel::meta::EnableIf<" << endl;
-      this->integrationDataFile << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&" << endl;
-      this->integrationDataFile << "tfel::typetraits::IsScalar<Scal>::cond&&" << endl;
-      this->integrationDataFile << "tfel::typetraits::IsReal<Scal>::cond&&" << endl;
-      this->integrationDataFile << "tfel::meta::IsSameType<Type," 
-				<< "typename tfel::typetraits::Promote"
-				<< "<Type,Scal>::type>::cond," << endl;
-      this->integrationDataFile << this->mb.getClassName() << "IntegrationData&" << endl
-				<< ">::type" << endl;
-      this->integrationDataFile << "operator *= (const Scal s){" << endl;
-      this->integrationDataFile << "this->dt   *= s;" << endl;
-      for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
-	if(p2->first.increment_known){
-	  this->integrationDataFile << "this->d" <<p2->first.name  << " *= s;" << endl;
-	} else {
-	  string msg("MFrontBehaviourParserCommon::writeIntegrationDataScaleOperators : ");
-	  msg += "unimplemented feature.";
-	  throw(runtime_error(msg));
-	}
+    this->checkIntegrationDataFile();
+    this->integrationDataFile << "/*" << endl;
+    this->integrationDataFile << "* Multiplication by a scalar." << endl;
+    this->integrationDataFile << "*/" << endl;
+    this->integrationDataFile << "template<typename Scal>" << endl;
+    this->integrationDataFile << "typename tfel::meta::EnableIf<" << endl;
+    this->integrationDataFile << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&" << endl;
+    this->integrationDataFile << "tfel::typetraits::IsScalar<Scal>::cond&&" << endl;
+    this->integrationDataFile << "tfel::typetraits::IsReal<Scal>::cond&&" << endl;
+    this->integrationDataFile << "tfel::meta::IsSameType<Type," 
+			      << "typename tfel::typetraits::Promote"
+			      << "<Type,Scal>::type>::cond," << endl;
+    this->integrationDataFile << this->mb.getClassName() << "IntegrationData&" << endl
+			      << ">::type" << endl;
+    if(!iknown){
+      if(this->mb.useQt()){
+	this->integrationDataFile << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt>& behaviourData, const Scal time_scaling_factor){" << endl;
+      } else {
+	this->integrationDataFile << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false>& behaviourData, const Scal time_scaling_factor){" << endl;
       }
-      this->integrationDataFile << "this->dT   *= s;" << endl;
-      for(p=md.getExternalStateVariables().begin();p!=md.getExternalStateVariables().end();++p){
-	this->integrationDataFile << "this->d" << p->name << " *= s;" << endl;
+    } else {
+      if(this->mb.useQt()){
+	this->integrationDataFile << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt>&, const Scal time_scaling_factor){" << endl;
+      } else {
+	this->integrationDataFile << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false>&, const Scal time_scaling_factor){" << endl;
       }
-      this->integrationDataFile << "return *this;" << endl;
-      this->integrationDataFile << "}" << endl << endl;
-      this->integrationDataFile << "/*" << endl;
-      this->integrationDataFile << "* Division by a scalar." << endl;
-      this->integrationDataFile << "*/" << endl;
-      this->integrationDataFile << "template<typename Scal>" << endl;
-      this->integrationDataFile << "typename tfel::meta::EnableIf<" << endl;
-      this->integrationDataFile << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&" << endl;
-      this->integrationDataFile << "tfel::typetraits::IsScalar<Scal>::cond&&" << endl;
-      this->integrationDataFile << "tfel::typetraits::IsReal<Scal>::cond&&" << endl;
-      this->integrationDataFile << "tfel::meta::IsSameType<Type," 
-				<< "typename tfel::typetraits::Promote"
-				<< "<Type,Scal>::type>::cond," << endl;
-      this->integrationDataFile << this->mb.getClassName() << "IntegrationData&" << endl
-				<< ">::type" << endl;
-      this->integrationDataFile << "operator /= (const Scal s){" << endl;
-      this->integrationDataFile << "return this->operator*=(1/s);" << endl;
-      this->integrationDataFile << "}" << endl << endl;
     }
+    this->integrationDataFile << "this->dt   *= time_scaling_factor;" << endl;
+    for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
+      if(p2->first.increment_known){
+	this->integrationDataFile << "this->d" <<p2->first.name  << " *= time_scaling_factor;" << endl;
+      } else {
+	this->integrationDataFile << "this->" <<p2->first.name  << "1 = (1-time_scaling_factor)*(behaviourData." <<p2->first.name  << "0)+time_scaling_factor*(this->" <<p2->first.name  << "1);" << endl;
+      }
+    }
+    this->integrationDataFile << "this->dT   *= time_scaling_factor;" << endl;
+    for(p=md.getExternalStateVariables().begin();p!=md.getExternalStateVariables().end();++p){
+      this->integrationDataFile << "this->d" << p->name << " *= time_scaling_factor;" << endl;
+    }
+    this->integrationDataFile << "return *this;" << endl;
+    this->integrationDataFile << "}" << endl << endl;
   } // end of MFrontBehaviourParserCommon::writeIntegrationDataScaleOpeartors
 
   void MFrontBehaviourParserCommon::writeIntegrationDataClassHeader(void) 

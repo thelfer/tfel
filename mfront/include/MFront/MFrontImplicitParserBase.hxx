@@ -13,25 +13,47 @@
 
 namespace mfront{
 
+  /*!
+   * Base class for all parser based on an implicit scheme
+   */
   struct MFrontImplicitParserBase
     : public MFrontBehaviourParserBase<MFrontImplicitParserBase>
   {
-
+    /*!
+     * \brief constructor
+     */
     MFrontImplicitParserBase();
-
+    /*!
+     * \brief destructor
+     */
     virtual ~MFrontImplicitParserBase();
 
   protected:
 
+    /*!
+     * list of available algorithms
+     */
     enum Algorithm{
-      NEWTONRAPHSON,
-      POWELLDOGLEG_NEWTONRAPHSON,
-      NEWTONRAPHSON_NJ,
-      POWELLDOGLEG_NEWTONRAPHSON_NJ,
-      BROYDEN,
-      POWELLDOGLEG_BROYDEN,
-      BROYDEN2,
-      DEFAULT
+      NEWTONRAPHSON,                 //!< Standard Newton-Raphson algorithm 
+      POWELLDOGLEG_NEWTONRAPHSON,    //!< Powell's dogLeg algorithm based
+				     //!  on the standard Newton-Raphson
+				     //!  algorithm
+      NEWTONRAPHSON_NJ,              //!< Newton-Raphson algorithm
+				     //!  using a numerical jacobian
+      POWELLDOGLEG_NEWTONRAPHSON_NJ, //!< Powell's dogLeg algorithm
+				     //!  based on the Newton-Raphson
+				     //!  and numerical evaluation of
+				     //!  the jacobian				     
+      BROYDEN,                       //!  Girst Broyden algorithm
+      POWELLDOGLEG_BROYDEN,          //!< Powell's dogLeg algorithm
+				     //!  based on the first Broyden algorithm
+      BROYDEN2,                      //<! Second Broyden algorithm
+      LEVENBERGMARQUARDT,            //<! Standard Levenberg-Marquardt
+				     //   algorithm based on the Newton algorithm
+      LEVENBERGMARQUARDT_NJ,         //<! Standard Levenberg-Marquardt
+				     //   algorithm based on the Newton
+				     //   algorithm with numerical jacobian
+      DEFAULT                        //<! Default value
     };
 
     virtual bool
@@ -92,6 +114,14 @@ namespace mfront{
     virtual void endsInputFileProcessing(void);
 
     virtual void writeBehaviourIntegrator(const Hypothesis);
+
+    virtual void writeLevenbergMarquardtAlgorithm(const Hypothesis h);
+
+    virtual void writeStandardImplicitAlgorithm(const Hypothesis h);
+
+    virtual void writeComparisonToNumericalJacobian(const Hypothesis);
+
+    virtual void writeComputeFdF(const Hypothesis);
 
     virtual void writeBehaviourParserSpecificIncludes(void);
 
@@ -223,6 +253,7 @@ namespace mfront{
 		    const std::string& = "this->jacobian",
 		    const std::string& = "");
 
+    // let the MFrontBehaviourParserBase access specific keywords
     friend struct MFrontBehaviourParserBase<MFrontImplicitParserBase>;
 
     std::set<std::string> jacobianPartsUsedInIntegrator;

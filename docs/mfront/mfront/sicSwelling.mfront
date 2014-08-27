@@ -3,13 +3,6 @@
 @Author Helfer Thomas;
 @Date   05 Déc. 2007;
 
-@LocalParameter TabString domains;
-domains.setDefaultValue("MATRIX","CLADDING");
-
-@BindDomainToParameter "domains";
-
-@StaticVar double Phi0 = 0.3396e25;
-
 @Output s;
 s.setGlossaryName("SolidSwelling");
 s.setDepth(1);
@@ -28,10 +21,11 @@ n.setDepth(1);
 
 @Function compute
 {
-  const double theta = 0.5*(T_1+T)-273.15;
-  const double Phi   = 0.5*(f_1+f);
-  double swellingSaturation;
-  double incr;
+  const real Phi0 = 0.3396e25;
+  const real theta = 0.5*(T_1+T)-273.15;
+  const real Phi   = 0.5*(f_1+f);
+  real swellingSaturation;
+  real incr;
   // the original law is given in %, 
   // so values of swellingSaturation are here divided by 100.
   if((25<=theta)&&(theta<=800.)){
@@ -44,7 +38,7 @@ n.setDepth(1);
     ostringstream msg;
     msg << "SICSolidSwellingModel::computeSolidSwellingIncrement : ";
     msg << "temperature is out of bounds (" << theta << ")";
-    throw(Pleiades::PExceptions::PleiadesError(msg.str()));
+    throw(runtime_error(msg.str()));
   }
   incr  = swellingSaturation/Phi0;
   incr *= exp(-Phi/Phi0);

@@ -101,26 +101,23 @@ extern "C" {
 											    const unsigned short);
   /*!
    * \brief this function returns a function of type
-   * void (*)(const UMATIntegerType  *const,
-   *          const UMATRealType *const,
-   *          const UMATRealType *const,
-   *          UMATRealType *const,
-   * 	      const UMATRealType *const,
-   * 	      const UMATRealType *const,
-   * 	      const UMATRealType *const,
-   * 	      const UMATRealType *const,
-   * 	      const UMATRealType *const,
-   * 	      const UMATIntegerType  *const,
-   * 	      const UMATRealType *const,
-   * 	      const UMATRealType *const,
-   * 	      UMATRealType *const,
-   * 	      const UMATIntegerType  *const,
-   * 	      UMATRealType *const,
-   * 	      const UMATIntegerType  *const,
-   * 	      UMATIntegerType  *const);
-   *
-   * The name 'umat' comes from an extension we wrote for the Cast3M
-   * finite element code.
+   * void (*)(const CyranoIntegerType  *const,
+   *          const CyranoRealType *const,
+   *          const CyranoRealType *const,
+   *          CyranoRealType *const,
+   * 	      const CyranoRealType *const,
+   * 	      const CyranoRealType *const,
+   * 	      const CyranoRealType *const,
+   * 	      const CyranoRealType *const,
+   * 	      const CyranoRealType *const,
+   * 	      const CyranoIntegerType  *const,
+   * 	      const CyranoRealType *const,
+   * 	      const CyranoRealType *const,
+   * 	      CyranoRealType *const,
+   * 	      const CyranoIntegerType  *const,
+   * 	      CyranoRealType *const,
+   * 	      const CyranoIntegerType  *const,
+   * 	      CyranoIntegerType  *const);
    *
    * This function is a simple wrapper around dlsym. We can check if a
    * symbol with the given name exists but cannot check if it points to
@@ -130,36 +127,80 @@ extern "C" {
    * \param const char * const, name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  void (TFEL_ADDCALL_PTR tfel_getUMATFunction(LibraryHandlerPtr,const char * const))(const UMATIntegerType  *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATIntegerType  *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     UMATRealType *const,
-										     const UMATIntegerType  *const,
-										     UMATRealType *const,
-										     const UMATIntegerType  *const,
-										     UMATIntegerType  *const);
-
+  void (TFEL_ADDCALL_PTR tfel_getCyranoFunction(LibraryHandlerPtr,const char * const))(const CyranoIntegerType  *const,
+										       const CyranoRealType *const,
+										       const CyranoRealType *const,
+										       CyranoRealType *const,
+										       const CyranoRealType *const,
+										       const CyranoRealType *const,
+										       const CyranoRealType *const,
+										       const CyranoRealType *const,
+										       const CyranoRealType *const,
+										       const CyranoIntegerType  *const,
+										       const CyranoRealType *const,
+										       const CyranoRealType *const,
+										       CyranoRealType *const,
+										       const CyranoIntegerType  *const,
+										       CyranoRealType *const,
+										       const CyranoIntegerType  *const,
+										       CyranoIntegerType  *const);
   /*!
+   * \brief this function returns a function of type
+   *
+   * The name 'umat' comes from the Cast3M finite element code.
+   *
+   * This function is a simple wrapper around dlsym. We can check if a
+   * symbol with the given name exists but cannot check if it points to
+   * a function with that prototype.
+   *
+   * \param LibraryHandlerPtr, link to library opened through dlopen
+   * \param const char * const, name of the function to be checked
+   * \return a function pointer if the call succeed, the NULL pointer if not.
+   */
+  void (TFEL_ADDCALL_PTR tfel_getUMATFunction(LibraryHandlerPtr,const char * const))(UMATRealType *const,
+										     UMATRealType *const,
+										     UMATRealType *const,
+										     UMATRealType *const,
+										     UMATRealType *const,
+										     UMATRealType *const,
+										     UMATRealType *const,
+										     UMATRealType *const,
+										     UMATRealType *const,
+										     UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     const char      *const,
+										     const UMATIntegerType  *const,
+										     const UMATIntegerType  *const,
+										     const UMATIntegerType  *const,
+										     const UMATIntegerType  *const,
+										     const UMATRealType *const,
+										     const UMATIntegerType  *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATRealType *const,
+										     const UMATIntegerType  *const,
+										     const UMATIntegerType  *const,
+										     const UMATIntegerType  *const,
+										     const UMATIntegerType  *const,
+										     const UMATIntegerType  *const,
+										     UMATIntegerType  *const,
+										     const int);
+
+ /*!
    * \brief this function returns a function of type
    *  void (*)(AsterRealType *const,
    *	       AsterRealType *const,
    *	       AsterRealType *const,
-   *	       AsterRealType *const,
-   *	       AsterRealType *const,
-   *	       AsterRealType *const,
-   *	       AsterRealType *const,
-   *	       AsterRealType *const,
-   *	       AsterRealType *const,
-   *	       AsterRealType *const,
    *	       const AsterRealType *const,
    *	       const AsterRealType *const,
    *	       const AsterRealType *const,
@@ -167,26 +208,13 @@ extern "C" {
    *	       const AsterRealType *const,
    *	       const AsterRealType *const,
    *	       const AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const char     *const,
-   *	       const AsterIntegerType  *const,
-   *	       const AsterIntegerType  *const,
    *	       const AsterIntegerType  *const,
    *	       const AsterIntegerType  *const,
    *	       const AsterRealType *const,
    *	       const AsterIntegerType  *const,
-   *	       const AsterRealType *const,
    *	       const AsterRealType *const,
    *	       AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterIntegerType  *const,
-   *	       const AsterIntegerType  *const,
-   *	       const AsterIntegerType  *const,
-   *	       const AsterIntegerType  *const,
-   *	       const AsterIntegerType  *const,
-   *	       AsterIntegerType  *const)
+   *	       const AsterIntegerType  *const)
    *
    * This function is a simple wrapper around dlsym. We can check if a
    * symbol with the given name exists but cannot check if it points to
@@ -199,13 +227,6 @@ extern "C" {
   void (TFEL_ADDCALL_PTR tfel_getAsterFunction(LibraryHandlerPtr,const char * const))(AsterRealType *const,
 										      AsterRealType *const,
 										      AsterRealType *const,
-										      AsterRealType *const,
-										      AsterRealType *const,
-										      AsterRealType *const,
-										      AsterRealType *const,
-										      AsterRealType *const,
-										      AsterRealType *const,
-										      AsterRealType *const,
 										      const AsterRealType *const,
 										      const AsterRealType *const,
 										      const AsterRealType *const,
@@ -213,26 +234,13 @@ extern "C" {
 										      const AsterRealType *const,
 										      const AsterRealType *const,
 										      const AsterRealType *const,
-										      const AsterRealType *const,
-										      const char      *const,
-										      const AsterIntegerType  *const,
-										      const AsterIntegerType  *const,
 										      const AsterIntegerType  *const,
 										      const AsterIntegerType  *const,
 										      const AsterRealType *const,
 										      const AsterIntegerType  *const,
-										      const AsterRealType *const,
 										      const AsterRealType *const,
 										      AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterIntegerType  *const,
-										      const AsterIntegerType  *const,
-										      const AsterIntegerType  *const,
-										      const AsterIntegerType  *const,
-										      const AsterIntegerType  *const,
-										      AsterIntegerType  *const);
+										      const AsterIntegerType  *const);
  
   /*!
    * \brief this function returns a function of type

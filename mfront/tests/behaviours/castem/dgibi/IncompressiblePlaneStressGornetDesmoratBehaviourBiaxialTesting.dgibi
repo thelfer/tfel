@@ -75,12 +75,12 @@ SU = 'DALLER' L1 L2 L3 L4 ;
 *
 *
 coel2D = 'MOTS' 'YOUN' 'NU' 'RHO' 'ALPH' 'H1  ' 'H2  ' 'H3  ';
-cmp='TABLE' ;
-cmp.'LIBRAIRIE' = '../libMFrontCastemBehaviours.so' ;
-cmp.'MODELE'   = 'umatincompressibleplanestressgornetdesmoratbehaviour';
+
 MO = MODE SU 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
-                         'NON_LINEAIRE' 'UTILISATEUR'
-                         'DESC_LOI' cmp 'C_MATERIAU' coel2D ;
+       'NON_LINEAIRE' 'UTILISATEUR'
+       'LIB_LOI' '../libMFrontCastemBehaviours.so'
+       'FCT_LOI' 'umatincompressibleplanestressgornetdesmoratbehaviour'
+       'C_MATERIAU' coel2D ;
 
 * Pour calculer le module d'Young, on utilise les
 * Coefficients du modele de Mooney-Rivlin (en  MPa) :

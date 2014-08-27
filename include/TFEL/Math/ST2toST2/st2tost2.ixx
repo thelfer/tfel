@@ -23,6 +23,7 @@
 #include"TFEL/Math/TinyMatrixInvert.hxx"
 #include"TFEL/Math/ST2toST2/StensorProductLeftDerivativeExpr.hxx"
 #include"TFEL/Math/ST2toST2/StensorProductRightDerivativeExpr.hxx"
+#include"TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx"
 
 namespace tfel{
 
@@ -176,6 +177,18 @@ namespace tfel{
 			const ST2toST2Type& C)
     {
       return ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(A,C);
+    }
+
+    template<unsigned short N, typename T>
+    template<typename T2toST2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
+      T2toST2Traits<T2toST2Type>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,T>::cond,
+      ST2toST2Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> > >::type
+    st2tost2<N,T>::convert(const T2toST2Type& src)
+    {
+      return ST2toST2Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> >(src);
     }
 
     template<unsigned short N, typename T>

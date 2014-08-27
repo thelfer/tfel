@@ -69,12 +69,12 @@ SU = 'DALLER' L1 L2 L3 L4 ;
 * l'operateur de convergence mecanique de PASAPAS-INCREME.
 *
 coel2D = 'MOTS' 'YOUN' 'NU' 'RHO' 'ALPH' 'C1  ' 'C2  ';
-cmp='TABLE' ;
-cmp.'LIBRAIRIE' = '../libMFrontCastemBehaviours.so';
-cmp.'MODELE'    = 'umatincompressibleplanestressmooneyrivlinbehaviour';
+
 MO = MODE SU 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
-                         'NON_LINEAIRE' 'UTILISATEUR'
-                         'DESC_LOI' cmp 'C_MATERIAU' coel2D ;
+          'NON_LINEAIRE' 'UTILISATEUR'
+          'LIB_LOI' '../libMFrontCastemBehaviours.so'
+          'FCT_LOI' 'umatincompressibleplanestressmooneyrivlinbehaviour'
+          'C_MATERIAU' coel2D ;
 *
 * Coefficients du modele de Mooney-Rivlin (en Pa) :
 C1 = 0.183E+6 ;     C2 = 0.0034E+6  ;

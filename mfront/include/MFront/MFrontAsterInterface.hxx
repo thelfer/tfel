@@ -102,7 +102,20 @@ namespace mfront{
      *                    and the behaviour name)
      * \param[in] mb   : behaviour description
      * \param[in] fd   : file description
+     */
+    virtual void
+    writeUMATxxSpecificSymbols(std::ostream&,
+			       const std::string&,
+			       const MechanicalBehaviourDescription&,
+			       const MFrontFileDescription&) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
      * \param[in] h    : modelling hypothesis
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
      */
     virtual void
     writeUMATxxAdditionalSymbols(std::ostream&,

@@ -95,6 +95,7 @@ namespace mfront
 
   void
   MTestCastemAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
+					    const tfel::math::vector<real>&,
 					    const tfel::math::vector<real>& r,
 					    const real,
 					    const real seps,
@@ -107,7 +108,7 @@ namespace mfront
     this->ca_r0.swap(this->ca_r1);
     this->ca_r1.swap(this->ca_r2);
     this->ca_u2 = u1;
-    this->ca_r2 = r;
+    this->ca_r2  = r;
     if((iter>=this->cat)&&((iter-this->cat)%this->cap==0)){
       if(getVerboseMode()>=VERBOSE_LEVEL1){
 	ostream& log = getLogStream();

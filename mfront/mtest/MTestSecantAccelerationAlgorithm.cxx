@@ -75,6 +75,7 @@ namespace mfront
 
   void
   MTestSecantAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
+					    const tfel::math::vector<real>&,
 					    const tfel::math::vector<real>& r,
 					    const real ,
 					    const real seps,
@@ -94,11 +95,31 @@ namespace mfront
       }
       const real nr2_dr = this->sa_dr|this->sa_dr;
       if(nr2_dr>sa_eps){
-	this->sa_w *= -(this->sa_r0|this->sa_dr)/nr2_dr;
-	u1    = (this->sa_w)*this->sa_u1+(1-this->sa_w)*this->sa_u0;
+	const real sa_a = (this->sa_r1|this->sa_dr)/nr2_dr;
+	u1 -= sa_a*(this->sa_u1-this->sa_u0);
+	// this->sa_w *= -(this->sa_r0|this->sa_dr)/nr2_dr;
+	// u1    = (this->sa_w)*this->sa_u1+(1-this->sa_w)*this->sa_u0;
       }
-      this->sa_u1 = u1;
+      //      this->sa_u1 = u1;
     }
+// wk.sa_r0.swap(wk.sa_r1);
+// wk.sa_r1 = wk.rdv;
+// wk.sa_dr = wk.sa_r1 - wk.sa_r0;
+// wk.sa_u0.swap(wk.sa_u1);
+// wk.sa_u1 = state.u1;
+// wk.sa_du = wk.sa_u1 - wk.sa_u0;
+// if(iter>=this->sat){
+// if(getVerboseMode()>=VERBOSE_LEVEL1){
+// ostream& log = getLogStream();
+// log << "Secant acceleration convergence" << endl;
+// }
+// const real nr2_dr = wk.sa_dr|wk.sa_dr;
+// if(nr2_dr>sa_eps){
+// const real sa_a = (wk.sa_du|wk.sa_dr)/nr2_dr;
+// state.u1 -= sa_a*wk.sa_r1;
+// }
+// }
+
   } // end of MTestSecantAccelerationAlgorithm::execute
 
   void

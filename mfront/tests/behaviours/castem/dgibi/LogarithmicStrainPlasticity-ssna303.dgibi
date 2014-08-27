@@ -37,13 +37,11 @@ stot = stot1 'ET' stot2;
 coel2D = 'MOTS' 'YOUN' 'NU' 'RHO' 'ALPH' 'S_Y' 'ET';
 stav2D = 'MOTS'  'P' 'BERR' 'BEZZ' 'BETT' 'BERZ';
 para2D = 'MOTS' 'T';
-cmp='TABLE' ;
-cmp.'LIBRAIRIE' = '../libMFrontCastemBehaviours.so' ;
-cmp.'MODELE'    = 'umatlogarithmicstrainplasticity';
 
 mod1 = 'MODELISER' stot 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
    'NON_LINEAIRE' 'UTILISATEUR' 'EPSILON' 'UTILISATEUR'
-   'DESC_LOI' cmp
+   'LIB_LOI' '../libMFrontCastemBehaviours.so'
+   'FCT_LOI' 'umatlogarithmicstrainplasticity'
    'C_MATERIAU' coel2D
    'C_VARINTER' stav2D
    'PARA_LOI'   para2D

@@ -85,6 +85,11 @@ namespace mfront
     converters.push_back(Converter(TangentOperator::DTAU_DF,TangentOperator::DTAU_DDF,
     				   "const t2tost2<N,stress> tangentOperator_DTAU_DDF = tangentOperator_DTAU_DF*t2tot2<N,real>::tpld(this->F0);",
 				   "this->Dt = tangentOperator_DTAU_DF*t2tot2<N,real>::tpld(this->F0);"));
+    converters.push_back(Converter(TangentOperator::DTAU_DDF,TangentOperator::DTAU_DF,
+    				   "const tensor<N,real> inv_F0_DTAU_DF = invert(this->F0);\n"
+				   "const t2tost2<N,stress> tangentOperator_DTAU_DF = tangentOperator_DTAU_DDF*t2tot2<N,real>::tpld(inv_F0_DTAU_DF);",
+    				   "const tensor<N,real> inv_F0_DTAU_DF = invert(this->F0);\n"
+				   "this->Dt = tangentOperator_DTAU_DDF*t2tot2<N,real>::tpld(inv_F0_DTAU_DF);"));
     converters.push_back(Converter(TangentOperator::DS_DC,TangentOperator::DS_DF,
     				   "const t2tost2<N,stress> tangentOperator_DS_DF = tangentOperator_DS_DC*t2tost2<N,strain>::dCdF(this->F1);",
 				   "this->Dt = tangentOperator_DS_DC*t2tost2<N,real>::dCdF(this->F1);"));
@@ -100,6 +105,13 @@ namespace mfront
     converters.push_back(Converter(TangentOperator::DS_DC,TangentOperator::DS_DEGL,
     				   "const st2tost2<N,stress> tangentOperator_DS_DEGL = 2*tangentOperator_DS_DC;",
 				   "this->Dt = 2*tangentOperator_DS_DC;"));
+    converters.push_back(Converter(TangentOperator::DTAU_DF,TangentOperator::DSIG_DD,
+				   "const real J = det(this->F1);\n"
+				   "const st2tost2<N,stress> Cstar=st2tost2<N,real>::tpld(this->sig)+st2tost2<N,real>::tprd(this->sig)-((this->sig)^Stensor::Id());\n"
+				   "const st2tost2<N,stress> tangentOperator_DSIG_DD = st2tost2<N,real>::convert((1/J)*tangentOperator_DTAU_DF*t2tot2<N,real>::tprd(transpose(this->F1))) - Cstar;\n",
+				   "const real J = det(this->F1);\n"
+				   "const st2tost2<N,stress> Cstar=st2tost2<N,real>::tpld(this->sig)+st2tost2<N,real>::tprd(this->sig)-((this->sig)^Stensor::Id());\n"
+				   "this->Dt = st2tost2<N,real>::convert((1/J)*tangentOperator_DTAU_DF*t2tot2<N,real>::tprd(transpose(this->F1))) - Cstar;"));
     return converters;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions
 

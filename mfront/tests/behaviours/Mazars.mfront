@@ -8,6 +8,11 @@
 
 @Behaviour Mazars;
 
+@ModellingHypotheses {"PlaneStress","PlaneStrain",
+                      "AxisymmetricalGeneralisedPlaneStrain",
+                      "GeneralisedPlaneStrain",
+                      "Axisymmetrical", "Tridimensional"};
+
 @MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;    /* mandatory for castem */
@@ -30,21 +35,56 @@ nu.setGlossaryName("PoissonRatio");
 @StateVariable real Y;
 @StateVariable real eeqcor;
 
-@LocalVariable real    lambda;
-@LocalVariable real    mu;
+@StateVariable<PlaneStress> real etozz;
+PlaneStress::etozz.setGlossaryName("AxialStrain");
 
-/* Initialize Lame coefficients */
-@InitLocalVars{
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+/*!
+ * Nous initialisons les coefficients de Lamé.
+ */
+@InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
-} 
+}
 
 @Integrator{
   using namespace tfel::material::lame;
   const Stensor e  = eto+deto;
   const real    tr = trace(e);
   const Stensor s0 = lambda*tr*Stensor::Id()+2*mu*e;
+}
+
+/*!
+ * Nous commençons par décrire certaines grandeurs dépendant des
+ * déformations et des contraintes. Dans le cas des contraintes
+ * planes, nous ne connaissons pas la déformation axiale. Dans le cas
+ * de la loi de Mazars, celle-ci est déduite de la loi de Hooke.
+ */
+@Integrator<PlaneStress,Replace>{
+  using namespace tfel::material::lame;
+  const stress C1  = young/(1-nu*nu);
+  const stress C2  = nu*C1;
+  const stress C3  = (1-nu)*C1;
+  Stensor s0;
+  Stensor e  = eto+deto;
+  s0[0] = C1*e[0]+C2*e[1];
+  s0[1] = C1*e[1]+C2*e[0];
+  s0[2] = 0;
+  s0[3] = C3*e[3];
+  etozz = -nu/(1-nu)*(e[0]+e[1]);
+  e[2]  = etozz;
+  const real tr = trace(e);
+}
+
+// Ce bloc va s'ajouter à l'un des blocs prédédant, suivant le cas
+// considéré
+/*!
+ * Nous décrivons maintenant l'évolution de l'endommagement.
+ */
+@Integrator<Append,AtEnd>{
   const real dmax=0.99999;
   strain e1,e2,e3;
   e.computeEigenValues(e1,e2,e3);
@@ -106,3 +146,4 @@ nu.setGlossaryName("PoissonRatio");
     }
   }
 }
+

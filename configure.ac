@@ -379,6 +379,7 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/planestress.tex
 	   docs/mfront/aster.tex
 	   docs/mfront/umat.tex
+	   docs/mfront/zmat.tex
 	   docs/mfront/glossary.tex
 	   docs/mfront/InternalNames.tex
 	   docs/mfront/Champs.tex
@@ -444,7 +445,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterelasticity14.mtest
            mfront/tests/behaviours/aster/asterelasticity15.mtest
            mfront/tests/behaviours/aster/asterelasticity16.mtest
-           mfront/tests/behaviours/aster/asterelasticity17.mtest
            mfront/tests/behaviours/aster/asterelasticity18.mtest
            mfront/tests/behaviours/aster/asterelasticity19.mtest
            mfront/tests/behaviours/aster/asterelasticity20.mtest
@@ -452,6 +452,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterelasticity22.mtest
            mfront/tests/behaviours/aster/asterelasticity23.mtest
            mfront/tests/behaviours/aster/astermazars.mtest
+           mfront/tests/behaviours/aster/astermazars2.mtest
            mfront/tests/behaviours/aster/asterlorentz.mtest
            mfront/tests/behaviours/aster/asternorton.mtest
            mfront/tests/behaviours/aster/asternorton2.mtest
@@ -461,8 +462,10 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterorthotropiccreep-rkCastem.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton2.mtest
+           mfront/tests/behaviours/aster/asterimplicitnorton3.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest
+           mfront/tests/behaviours/aster/asterimplicitnorton_levenbergmarquardt.mtest	   
            mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest
            mfront/tests/behaviours/aster/asterellipticcreep.mtest
            mfront/tests/behaviours/aster/asterplasticity.mtest
@@ -489,13 +492,11 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterpolycristals_dd_cfc.mtest
            mfront/tests/behaviours/aster/asterimplicithayhurst.mtest
            mfront/tests/behaviours/aster/asterburger.mtest
+           mfront/tests/behaviours/aster/asterageingburger.mtest
 	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanplasticflow.mtest
 	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanviscoplasticflow.mtest
            mfront/tests/behaviours/aster/asteranistropiclemaitreviscoplasticbehaviour.mtest
            mfront/tests/behaviours/aster/astertvergaard.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-1-1D.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-2-1D.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-2-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-3-2D.mtest
@@ -510,9 +511,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-4-3D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-5-3D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-6-3D.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-1-1D.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-2-1D.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-1-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-2-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-3-2D.mtest
@@ -527,9 +525,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-4-3D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-5-3D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-6-3D.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-1-1D.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-2-1D.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-1-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-2-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-3-2D.mtest
@@ -590,6 +585,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemddif2-3.mtest
            mfront/tests/behaviours/castem/castemddif2-4.mtest
            mfront/tests/behaviours/castem/castemmazars.mtest
+           mfront/tests/behaviours/castem/castemmazars2.mtest
            mfront/tests/behaviours/castem/castemlorentz.mtest
            mfront/tests/behaviours/castem/castemdruckerprager.mtest
            mfront/tests/behaviours/castem/castemdruckerprager2.mtest
@@ -598,8 +594,12 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemnortonrk2.mtest
            mfront/tests/behaviours/castem/castemnortonrk3.mtest
            mfront/tests/behaviours/castem/castemnortonrk4.mtest
+           mfront/tests/behaviours/castem/castemimplicitnorton.mtest
+           mfront/tests/behaviours/castem/castemimplicitnorton2.mtest
+           mfront/tests/behaviours/castem/castemimplicitnorton3.mtest
            mfront/tests/behaviours/castem/castemimplicitnorton-planestress.mtest
            mfront/tests/behaviours/castem/castemimplicitnorton-planestress2.mtest
+           mfront/tests/behaviours/castem/castemimplicitnorton-levenbergmarquardt.mtest	   
            mfront/tests/behaviours/castem/castemnorton-euler.mtest
            mfront/tests/behaviours/castem/castemnorton-rk2.mtest
            mfront/tests/behaviours/castem/castemnorton-rk4.mtest
@@ -633,6 +633,7 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/castem/castemgursontvergaardneedlemanplasticflow.mtest
 	   mfront/tests/behaviours/castem/castemgursontvergaardneedlemanviscoplasticflow.mtest
            mfront/tests/behaviours/castem/castemburger.mtest
+           mfront/tests/behaviours/castem/castemageingburger.mtest
            mfront/tests/behaviours/castem/castemtvergaard.mtest
            mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-2-1D.mtest
@@ -753,6 +754,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal-012.mtest
            mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal-012-2.mtest
            mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal-159.mtest
+           mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal2-001.mtest
            mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-001.mtest
            mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-012.mtest
            mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
@@ -802,6 +804,103 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem2/castem2strainhardeningcreep.mtest
            mfront/tests/behaviours/castem2/castem2stressrelaxation.mtest
            mfront/tests/behaviours/castem2/castem2viscoplasisocin.mtest   
+	   mfront/tests/behaviours/secant/Makefile
+           mfront/tests/behaviours/secant/secantchaboche2.mtest
+           mfront/tests/behaviours/secant/secantchaboche.mtest
+           mfront/tests/behaviours/secant/secantcompressibleneohookeanbehaviour.mtest
+           mfront/tests/behaviours/secant/secantddif2-2.mtest
+           mfront/tests/behaviours/secant/secantddif2-3.mtest
+           mfront/tests/behaviours/secant/secantddif2-4.mtest
+           mfront/tests/behaviours/secant/secantddif2.mtest
+           mfront/tests/behaviours/secant/secantdruckerprager2.mtest
+           mfront/tests/behaviours/secant/secantdruckerprager.mtest
+           mfront/tests/behaviours/secant/secantelasticity_malls-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/secant/secantelasticity_malls-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/secant/secantelasticity_malls-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/secant/secantelasticity_malls-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/secant/secantelasticity_malls-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/secant/secantelasticity_malls-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/secant/secantelasticity_malls-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/secant/secantelasticity_malls-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/secant/secantelasticity_malls-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/secant/secantellipticcreep.mtest
+           mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal-001.mtest
+           mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal-012-2.mtest
+           mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal-012.mtest
+           mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal-159.mtest
+           mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal2-001.mtest
+           mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal_numericaljacobian-001.mtest
+           mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
+           mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal_numericaljacobian-012.mtest
+           mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal_numericaljacobian-159.mtest
+           mfront/tests/behaviours/secant/secanthayhurst.mtest
+           mfront/tests/behaviours/secant/secantimplicithayhurst.mtest
+           mfront/tests/behaviours/secant/secantimplicitmonocristal.mtest
+           mfront/tests/behaviours/secant/secantimplicitnorton3.mtest
+           mfront/tests/behaviours/secant/secantimplicitnorton-planestress2.mtest
+           mfront/tests/behaviours/secant/secantimplicitnorton-planestress.mtest
+           mfront/tests/behaviours/secant/secantimplicitsimomieheelastoplasticity.mtest
+           mfront/tests/behaviours/secant/secantincompressiblemooneyrivlinbehaviour.mtest
+           mfront/tests/behaviours/secant/secantincompressibleplanestressgornetdesmoratbehaviourbiaxialtesting.mtest
+           mfront/tests/behaviours/secant/secantincompressibleplanestressgornetdesmoratbehavioursheartesting.mtest
+           mfront/tests/behaviours/secant/secantincompressibleplanestressgornetdesmoratbehaviouruniaxialtesting.mtest
+           mfront/tests/behaviours/secant/secantincompressibleplanestressmooneyrivlinbehaviouruniaxialtesting.mtest
+           mfront/tests/behaviours/secant/secantlorentz.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-planestress.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-planestress.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/secant/secantmonocristal_dd_cc_irradiation.mtest
+           mfront/tests/behaviours/secant/secantmonocristal_dd_cc_irradiation_numericaljacobian.mtest
+           mfront/tests/behaviours/secant/secantmonocristal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/secant/secantmonocristal_dd_cfc.mtest
+           mfront/tests/behaviours/secant/secantmonocristal_dd_cfc_numericaljacobian.mtest
+           mfront/tests/behaviours/secant/secantmonocristal.mtest
+           mfront/tests/behaviours/secant/secantnorton2.mtest
+           mfront/tests/behaviours/secant/secantnorton-euler.mtest
+           mfront/tests/behaviours/secant/secantnorton.mtest
+           mfront/tests/behaviours/secant/secantnorton-rk2.mtest
+           mfront/tests/behaviours/secant/secantnortonrk2.mtest
+           mfront/tests/behaviours/secant/secantnortonrk3.mtest
+           mfront/tests/behaviours/secant/secantnorton-rk4.mtest
+           mfront/tests/behaviours/secant/secantnortonrk4.mtest
+           mfront/tests/behaviours/secant/secantorthotropiccreep.mtest
+           mfront/tests/behaviours/secant/secantorthotropiccreep-rk42.mtest
+           mfront/tests/behaviours/secant/secantorthotropiccreep-rkCastem.mtest
+           mfront/tests/behaviours/secant/secantplasisocin.mtest
+           mfront/tests/behaviours/secant/secantplasticity.mtest
+           mfront/tests/behaviours/secant/secantpolycristals_dd_cfc.mtest
+           mfront/tests/behaviours/secant/secantstrainhardeningcreep.mtest
+           mfront/tests/behaviours/secant/secantstressrelaxation.mtest
+           mfront/tests/behaviours/secant/secantT91-satohtest.mtest
+           mfront/tests/behaviours/secant/secantT91-viscositytest.mtest
+           mfront/tests/behaviours/secant/secantviscochaboche.mtest
+           mfront/tests/behaviours/secant/secantviscoplasisocin.mtest
            mfront/tests/behaviours/cyrano/Makefile
            mfront/tests/behaviours/cyrano/cyranoelasticity.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest

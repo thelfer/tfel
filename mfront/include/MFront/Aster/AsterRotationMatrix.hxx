@@ -32,7 +32,7 @@ namespace aster
     void rotateStrainsBackward(const AsterReal *const,
 			       AsterReal *const) const;
     // compute the stiffness matrix in the global space
-    void rotateStiffnessMatrixBackward(AsterReal *const) const;
+    void rotateTangentOperatorBackward(AsterReal *const) const;
   private:
     AsterReal MN[3][3];
   }; // end of struct AsterRotationMatrix2D
@@ -56,7 +56,7 @@ namespace aster
     void rotateStrainsBackward(const AsterReal *const,
 			       AsterReal *const) const;
     // compute the stiffness matrix in the global space
-    void rotateStiffnessMatrixBackward(AsterReal *const) const;
+    void rotateTangentOperatorBackward(AsterReal *const) const;
 
   private:
 

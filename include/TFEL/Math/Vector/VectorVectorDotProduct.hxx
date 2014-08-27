@@ -35,7 +35,7 @@ namespace tfel
 	typedef typename T1::size_type size_type;
 	size_type i;
 	Result r(0);
-	for(i=0;i!=v1.size();++i){
+	for(i=0;i!=v1.getRunTimeProperties();++i){
 	  r += v1(i)*v2(i);
 	}
 	return r;

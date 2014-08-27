@@ -32,6 +32,7 @@ set(mfront_tests_SOURCES
   ImplicitNorton2
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
+  ImplicitNorton_LevenbergMarquardt
   EllipticCreep
   StrainHardeningCreep
   Mazars
@@ -48,6 +49,7 @@ set(mfront_tests_SOURCES
   MonoCristal_DD_CFC_NumericalJacobian
   MonoCristal_DD_CFC_Irradiation
   MonoCristal_DD_CC
+  MonoCristal_DD_CC_LevenbergMarquardt
   MonoCristal_DD_CC_NumericalJacobian
   MonoCristal_DD_CC_Irradiation
   MonoCristal_DD_CC_Irradiation_NumericalJacobian
@@ -58,6 +60,7 @@ set(mfront_tests_SOURCES
   Hayhurst
   ImplicitHayhurst
   Burger
+  AgeingBurger
   AnistropicLemaitreViscoplasticBehaviour
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
@@ -144,7 +147,6 @@ test_aster(elasticity13)
 test_aster(elasticity14)
 test_aster(elasticity15)
 test_aster(elasticity16)
-test_aster(elasticity17)
 test_aster(elasticity18)
 test_aster(elasticity19)
 test_aster(elasticity20)
@@ -152,6 +154,7 @@ test_aster(elasticity21)
 test_aster(elasticity22)
 test_aster(elasticity23)
 test_aster(mazars)
+test_aster(mazars2)
 test_aster(lorentz)
 test_aster(norton)
 test_aster(norton2)
@@ -164,9 +167,11 @@ test_aster(orthotropiccreep-rk42)
 test_aster(orthotropiccreep-rkCastem)
 test_aster(implicitnorton)
 test_aster(implicitnorton2)
+test_aster(implicitnorton3)
 test_aster(implicitnorton_broyden)
 test_aster(implicitnorton_broyden2)
 test_aster(implicitorthotropiccreep)
+test_aster(implicitnorton_levenbergmarquardt)
 test_aster(plasticity)
 test_aster(ellipticcreep)
 test_aster(strainhardeningcreep)
@@ -190,13 +195,11 @@ test_aster(polycristals)
 test_aster(polycristals_dd_cfc)
 test_aster(implicithayhurst)
 test_aster(burger)
+test_aster(ageingburger)
 test_aster(gursontvergaardneedlemanplasticflow)
 test_aster(gursontvergaardneedlemanviscoplasticflow)
 test_aster(anistropiclemaitreviscoplasticbehaviour)
 test_aster(tvergaard)
-test_aster(saintvenantkirchhoffelasticity-uniaxialloading-1-1D)
-test_aster(saintvenantkirchhoffelasticity-uniaxialloading-2-1D)
-test_aster(saintvenantkirchhoffelasticity-uniaxialloading-3-1D)
 test_aster(saintvenantkirchhoffelasticity-uniaxialloading-1-2D)
 test_aster(saintvenantkirchhoffelasticity-uniaxialloading-2-2D)
 test_aster(saintvenantkirchhoffelasticity-uniaxialloading-3-2D)
@@ -211,9 +214,6 @@ test_aster(saintvenantkirchhoffelasticity-shear-3-3D)
 test_aster(saintvenantkirchhoffelasticity-shear-4-3D)
 test_aster(saintvenantkirchhoffelasticity-shear-5-3D)
 test_aster(saintvenantkirchhoffelasticity-shear-6-3D)
-test_aster(saintvenantkirchhoffelasticity2-uniaxialloading-1-1D)
-test_aster(saintvenantkirchhoffelasticity2-uniaxialloading-2-1D)
-test_aster(saintvenantkirchhoffelasticity2-uniaxialloading-3-1D)
 test_aster(saintvenantkirchhoffelasticity2-uniaxialloading-1-2D)
 test_aster(saintvenantkirchhoffelasticity2-uniaxialloading-2-2D)
 test_aster(saintvenantkirchhoffelasticity2-uniaxialloading-3-2D)
@@ -228,9 +228,6 @@ test_aster(saintvenantkirchhoffelasticity2-shear-3-3D)
 test_aster(saintvenantkirchhoffelasticity2-shear-4-3D)
 test_aster(saintvenantkirchhoffelasticity2-shear-5-3D)
 test_aster(saintvenantkirchhoffelasticity2-shear-6-3D)
-test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-1-1D)
-test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-2-1D)
-test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-3-1D)
 test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-1-2D)
 test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-2-2D)
 test_aster(saintvenantkirchhoffelasticity3-uniaxialloading-3-2D)

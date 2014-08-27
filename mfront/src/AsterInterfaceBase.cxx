@@ -13,6 +13,8 @@
 
 namespace aster{
 
+  
+
   void
   AsterInterfaceBase::throwUnMatchedNumberOfMaterialProperties(const std::string& b,
 							       const unsigned short n1,
@@ -165,11 +167,11 @@ namespace aster{
   } // end of AsterInterfaceBase::throwUnsupportedStressFreeExpansionException
 
   void
-  AsterInterfaceBase::displayInvalidNTENSValueErrorMessage()
+  AsterInterfaceBase::displayUnsupportedHypothesisMessage()
   {
     using namespace std;
-    cout << "AsterInterfaceBase::displayInvalidNTENSValueErrorMessage : "
-	 << "invalid value for the NTENS paramater" << endl;    
+    cout << "AsterInterfaceBase::displayUnsupportedHypothesisMessage : "
+	 << "unsupported hypothesis" << endl;
   }
 
 
@@ -209,5 +211,29 @@ namespace aster{
     DDSOE[14] = K[20];
     DDSOE[15] = K[21];
   } // end of AsterReduceTangentOperator<1u>::exe
+
+  void
+  AsterUnSupportedCaseHandler::exe(const AsterReal *const,
+				  const AsterReal *const,
+				   AsterReal *const,
+				   const AsterReal *const,
+				   const AsterReal *const,
+				   const AsterReal *const,
+				   const AsterReal *const,
+				   const AsterReal *const,
+				   const AsterInt  *const,
+				   const AsterReal *const,
+				   const AsterReal *const,
+				   AsterReal *const,
+				   const AsterInt  *const,
+				   AsterReal *const,
+				   const StressFreeExpansionHandler&)
+  {
+    using namespace std;
+    string msg("AsterUnSupportedCaseHandler::exe : "
+	       "we fall in a case that the aster interface "
+	       "is not able to handle.");
+    throw(runtime_error(msg));  
+  } // end of exe
 
 } // end of namespace aster 

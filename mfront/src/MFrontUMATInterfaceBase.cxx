@@ -201,16 +201,16 @@ namespace mfront
     const VariableDescriptionContainer& persistentVarsHolder = d.getPersistentVariables();
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
     if(!persistentVarsHolder.empty()){
-      behaviourDataFile << "void\n"
+      behaviourDataFile << "void" << endl
 			<< iprefix+"exportStateData("
-			<< "Type * const "+iprefix+"stress_,Type * const "+iprefix+"statev) const\n";
+			<< "Type * const "+iprefix+"stress_,Type * const "+iprefix+"statev) const" << endl;
     } else {
-      behaviourDataFile << "void\n"
+      behaviourDataFile << "void" << endl
 			<< iprefix+"exportStateData("
-			<< "Type * const "+iprefix+"stress_,Type * const) const\n";
+			<< "Type * const "+iprefix+"stress_,Type * const) const" << endl;
     }
-    behaviourDataFile << "{\n";
-    behaviourDataFile << "using namespace tfel::math;\n";
+    behaviourDataFile << "{" << endl;
+    behaviourDataFile << "using namespace tfel::math;" << endl;
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize of;
@@ -219,23 +219,23 @@ namespace mfront
       const SupportedTypes::TypeFlag flag = this->getTypeFlag(f.type);
       if(flag==SupportedTypes::Scalar){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "*("+iprefix+"stress_+" << of << ") = this->" << f.name << ";\n";
+	  behaviourDataFile << "*("+iprefix+"stress_+" << of << ") = this->" << f.name << ";" << endl;
 	} else {
-	  behaviourDataFile << "*("+iprefix+"stress_) = this->" << f.name << ";\n";
+	  behaviourDataFile << "*("+iprefix+"stress_) = this->" << f.name << ";" << endl;
 	}
       } else if(flag==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_+" << of << ");\n";
+	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_+" << of << ");" << endl;
 	} else {
-	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_"");\n";
+	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_"");" << endl;
 	}
       } else if((flag==SupportedTypes::TVector)||
 		(flag==SupportedTypes::Tensor)){
 	if(pm!=mb.getMainVariables().begin()){
 	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_+"
-			    << of << ");\n";	
+			    << of << ");" << endl;	
 	} else {
-	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_);\n";	
+	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_);" << endl;	
 	}
       } else {
 	string msg("MFrontUMATInterfaceBase::exportMechanicalData : ");
@@ -250,7 +250,7 @@ namespace mfront
 			  iprefix+"statev",
 			  mb.useQt());
     }
-    behaviourDataFile << "} // end of "+iprefix+"ExportStateData\n";
+    behaviourDataFile << "} // end of "+iprefix+"ExportStateData" << endl;
     behaviourDataFile << endl;
   }
   
@@ -261,38 +261,38 @@ namespace mfront
   {
     using namespace std;
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    behaviourFile << "/*\n";
-    behaviourFile << " * \\brief constructor for the umat interface\n";
-    behaviourFile << " *\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"dt_, time increment\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"T_, temperature\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"dT_, temperature increment\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"mat, material properties\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"int_vars, state variables\n"; 
-    behaviourFile << " * \\param const Type *const "+iprefix+"ext_vars, external state variables\n";
+    behaviourFile << "/*" << endl;
+    behaviourFile << " * \\brief constructor for the umat interface" << endl;
+    behaviourFile << " *" << endl;
+    behaviourFile << " * \\param const Type *const "+iprefix+"dt_, time increment" << endl;
+    behaviourFile << " * \\param const Type *const "+iprefix+"T_, temperature" << endl;
+    behaviourFile << " * \\param const Type *const "+iprefix+"dT_, temperature increment" << endl;
+    behaviourFile << " * \\param const Type *const "+iprefix+"mat, material properties" << endl;
+    behaviourFile << " * \\param const Type *const "+iprefix+"int_vars, state variables" << endl; 
+    behaviourFile << " * \\param const Type *const "+iprefix+"ext_vars, external state variables" << endl;
     behaviourFile << " * \\param const Type *const "+iprefix+"dext_vars,";
-    behaviourFile << " external state variables increments\n";
-    behaviourFile << " */\n";
+    behaviourFile << " external state variables increments" << endl;
+    behaviourFile << " */" << endl;
     behaviourFile << mb.getClassName() 
-		  << "(const Type* const "+iprefix+"dt_,\n" 
-		  <<  "const Type* const "+iprefix+"T_,const Type* const "+iprefix+"dT_,\n"
-		  <<  "const Type* const "+iprefix+"mat,const Type* const "+iprefix+"int_vars,\n"
-		  <<  "const Type* const "+iprefix+"ext_vars,const Type* const "+iprefix+"dext_vars)\n";
+		  << "(const Type* const "+iprefix+"dt_," << endl 
+		  <<  "const Type* const "+iprefix+"T_,const Type* const "+iprefix+"dT_," << endl
+		  <<  "const Type* const "+iprefix+"mat,const Type* const "+iprefix+"int_vars," << endl
+		  <<  "const Type* const "+iprefix+"ext_vars,const Type* const "+iprefix+"dext_vars)" << endl;
     if(mb.useQt()){
       behaviourFile << ": " << mb.getClassName() 
-		    << "BehaviourData<hypothesis,Type,use_qt>("+iprefix+"T_,"+iprefix+"mat,\n"
-		    << iprefix+"int_vars,"+iprefix+"ext_vars),\n";
+		    << "BehaviourData<hypothesis,Type,use_qt>("+iprefix+"T_,"+iprefix+"mat," << endl
+		    << iprefix+"int_vars,"+iprefix+"ext_vars)," << endl;
       behaviourFile << mb.getClassName() 
 		    << "IntegrationData<hypothesis,Type,use_qt>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
     } else {
       behaviourFile << ": " << mb.getClassName() 
-		    << "BehaviourData<hypothesis,Type,false>("+iprefix+"T_,"+iprefix+"mat,\n"
-		    << iprefix+"int_vars,"+iprefix+"ext_vars),\n";
+		    << "BehaviourData<hypothesis,Type,false>("+iprefix+"T_,"+iprefix+"mat," << endl
+		    << iprefix+"int_vars,"+iprefix+"ext_vars)," << endl;
       behaviourFile << mb.getClassName() 
 		    << "IntegrationData<hypothesis,Type,false>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
     }
     if(!initStateVarsIncrements.empty()){
-      behaviourFile << ",\n" << initStateVarsIncrements;
+      behaviourFile << "," << endl << initStateVarsIncrements;
     }
   }
 
@@ -318,7 +318,7 @@ namespace mfront
 	    MFrontUMATInterfaceBase::findUMATMaterialProperty(i,mb.getGlossaryName(h,p->name));
 	  SupportedTypes::TypeSize offset = m.offset;
 	  offset -= ioffset;
-	  f << ",\n";
+	  f << "," << endl;
 	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	  if(flag==SupportedTypes::Scalar){
 	    f << n << "("+src+"[" 
@@ -369,21 +369,21 @@ namespace mfront
 	    switch(flag){
 	    case SupportedTypes::Scalar : 
 	      f << n << "[idx] = "+src+"[" 
-		<< offset << "+idx];\n";  
+		<< offset << "+idx];" << endl;  
 	      break;
 	    case SupportedTypes::TVector :
 	      f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
 		<< offset << "+idx*TVectorSize],"
-		<< n << "[idx].begin());\n";  
+		<< n << "[idx].begin());" << endl;  
 	      break;
 	    case SupportedTypes::Stensor :
 	      f << n << "[idx].import(&"+src+"[" 
-		  << offset << "+idx*StensorSize]);\n";  
+		  << offset << "+idx*StensorSize]);" << endl;  
 	      break;
 	    case SupportedTypes::Tensor :
 	      f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
 		<< offset << "+idx*TensorSize],"
-		<< n << "[idx].begin());\n";  
+		<< n << "[idx].begin());" << endl;  
 	      break;
 	    default : 
 	      string msg("SupportedTypes::");
@@ -397,19 +397,19 @@ namespace mfront
 	      switch(flag){
 	      case SupportedTypes::Scalar : 
 		f << n << "[" << index << "] = "+src+"[" 
-		  << offset << "];\n";  
+		  << offset << "];" << endl;  
 		break;
 	      case SupportedTypes::TVector :
 		f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
-		  << offset << "]," << n << "[" << index << "].begin());\n";  
+		  << offset << "]," << n << "[" << index << "].begin());" << endl;  
 		break;
 	      case SupportedTypes::Stensor :
 		f << n << "["<< index << "].import(&"+src+"[" 
-		  << offset << "]);\n";  
+		  << offset << "]);" << endl;  
 		break;
 	      case SupportedTypes::Tensor :
 		f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
-		  << offset << "]," << n << "[" << index << "].begin());\n";  
+		  << offset << "]," << n << "[" << index << "].begin());" << endl;  
 		break;
 	      default : 
 		string msg("SupportedTypes::");
@@ -438,32 +438,32 @@ namespace mfront
     const VariableDescriptionContainer& mp                       = d.getMaterialProperties();
     const VariableDescriptionContainer& persistentVarsHolder     = d.getPersistentVariables();
     const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
-    behaviourDataFile << "/*\n";
-    behaviourDataFile << " * \\brief constructor for the umat interface\n";
-    behaviourDataFile << " *\n";
-    behaviourDataFile << " * \\param const Type *const "+iprefix+"T_, temperature\n";
-    behaviourDataFile << " * \\param const Type *const "+iprefix+"mat, material properties\n";
-    behaviourDataFile << " * \\param const Type *const "+iprefix+"int_vars, state variables\n"; 
-    behaviourDataFile << " * \\param const Type *const "+iprefix+"ext_vars, external state variables\n";
-    behaviourDataFile << " */\n";
+    behaviourDataFile << "/*" << endl;
+    behaviourDataFile << " * \\brief constructor for the umat interface" << endl;
+    behaviourDataFile << " *" << endl;
+    behaviourDataFile << " * \\param const Type *const "+iprefix+"T_, temperature" << endl;
+    behaviourDataFile << " * \\param const Type *const "+iprefix+"mat, material properties" << endl;
+    behaviourDataFile << " * \\param const Type *const "+iprefix+"int_vars, state variables" << endl; 
+    behaviourDataFile << " * \\param const Type *const "+iprefix+"ext_vars, external state variables" << endl;
+    behaviourDataFile << " */" << endl;
     behaviourDataFile << mb.getClassName() << "BehaviourData"
 		      << "(const Type* const "+iprefix+"T_,const Type* const";
     if(!mp.empty()){
-      behaviourDataFile << " "+iprefix+"mat,\n";
+      behaviourDataFile << " "+iprefix+"mat," << endl;
     } else {
-      behaviourDataFile << ",\n";
+      behaviourDataFile << "," << endl;
     }
     behaviourDataFile <<  "const Type* const";
     if(!persistentVarsHolder.empty()){
-      behaviourDataFile << " "+iprefix+"int_vars,\n";
+      behaviourDataFile << " "+iprefix+"int_vars," << endl;
     } else {
-      behaviourDataFile << ",\n";
+      behaviourDataFile << "," << endl;
     }
     behaviourDataFile << "const Type* const";
     if(!externalStateVarsHolder.empty()){
       behaviourDataFile << " "+iprefix+"ext_vars";
     }
-    behaviourDataFile << ")\n";
+    behaviourDataFile << ")" << endl;
     behaviourDataFile << ": T(*"+iprefix+"T_)";
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(behaviourDataFile,
 									 h,mb,mprops.first,
@@ -475,7 +475,7 @@ namespace mfront
     this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
 							       externalStateVarsHolder,
 							       iprefix+"ext_vars","","");
-    behaviourDataFile << "\n{\n";
+    behaviourDataFile << "\n{" << endl;
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(behaviourDataFile,
 									  h,mb,mprops.first,
 									  mprops.second,
@@ -486,7 +486,7 @@ namespace mfront
     this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
 								externalStateVarsHolder,
 								iprefix+"ext_vars","","");
-    behaviourDataFile << "}\n\n";
+    behaviourDataFile << "}" << endl << endl;
   }
   
   void 
@@ -498,21 +498,21 @@ namespace mfront
     const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
     const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
-    behaviourIntegrationFile << "/*\n";
-    behaviourIntegrationFile << " * \\brief constructor for the umat interface\n";
-    behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dt_, time increment\n";
-    behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dT_, temperature increment\n";
+    behaviourIntegrationFile << "/*" << endl;
+    behaviourIntegrationFile << " * \\brief constructor for the umat interface" << endl;
+    behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dt_, time increment" << endl;
+    behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dT_, temperature increment" << endl;
     behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dext_vars,";
-    behaviourIntegrationFile << " external state variables increments\n";
-    behaviourIntegrationFile << " *\n";
-    behaviourIntegrationFile << " */\n";
+    behaviourIntegrationFile << " external state variables increments" << endl;
+    behaviourIntegrationFile << " *" << endl;
+    behaviourIntegrationFile << " */" << endl;
     behaviourIntegrationFile << mb.getClassName() << "IntegrationData"
-			     << "(const Type* const "+iprefix+"dt_,\n" 
+			     << "(const Type* const "+iprefix+"dt_," << endl 
 			     <<  "const Type* const "+iprefix+"dT_,const Type* const";
     if(!externalStateVarsHolder.empty()){
-      behaviourIntegrationFile << " "+iprefix+"dext_vars)\n";
+      behaviourIntegrationFile << " "+iprefix+"dext_vars)" << endl;
     } else {
-      behaviourIntegrationFile << ")\n";
+      behaviourIntegrationFile << ")" << endl;
     }
     behaviourIntegrationFile << ": dt(*"+iprefix+"dt_),dT(*"+iprefix+"dT_)";
     if(!externalStateVarsHolder.empty()){
@@ -520,13 +520,13 @@ namespace mfront
 								 externalStateVarsHolder,
 								 iprefix+"dext_vars","d","");
     }
-    behaviourIntegrationFile << "\n{\n";
+    behaviourIntegrationFile << "\n{" << endl;
     if(!externalStateVarsHolder.empty()){
       this->writeVariableInitializersInBehaviourDataConstructorII(behaviourIntegrationFile,
 								  externalStateVarsHolder,
 								  iprefix+"dext_vars","d","");
     }
-    behaviourIntegrationFile << "}\n\n";
+    behaviourIntegrationFile << "}" << endl << endl;
   }
 
   void 
@@ -538,30 +538,30 @@ namespace mfront
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize ov;
-    os << "void set"+iprefix+"BehaviourDataDrivingVariables(const Type* const "+iprefix+"stran)\n"
-       << "{\n";
+    os << "void set"+iprefix+"BehaviourDataDrivingVariables(const Type* const "+iprefix+"stran)" << endl
+       << "{" << endl;
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
       const DrivingVariable& v = pm->first;
       if(!v.increment_known){
 	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
 	  if(pm!=mb.getMainVariables().begin()){
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+"  << ov <<",this->" << v.name << "0.begin());\n";
+	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+"  << ov <<",this->" << v.name << "0.begin());" << endl;
 	  } else {
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->" << v.name << "0.begin());\n";
+	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->" << v.name << "0.begin());" << endl;
 	  }
 	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
 	  if(pm!=mb.getMainVariables().begin()){
-	    os << "this->" << v.name << "0.importVoigt("+iprefix+"stran+" << ov <<");\n";
+	    os << "this->" << v.name << "0.importVoigt("+iprefix+"stran+" << ov <<");" << endl;
 	  } else {
-	    os << "this->" << v.name << "0.importVoigt("+iprefix+"stran);\n";
+	    os << "this->" << v.name << "0.importVoigt("+iprefix+"stran);" << endl;
 	  }
 	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
 	  if(pm!=mb.getMainVariables().begin()){
 	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << "0,"
-			      << iprefix << "stran+" << ov <<");\n";
+			      << iprefix << "stran+" << ov <<");" << endl;
 	  } else {
 	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << "0,"
-			      << iprefix << "stran);\n";
+			      << iprefix << "stran);" << endl;
 	  }
 	} else {
 	  string msg("MFrontUMATInterfaceBase::writeBehaviourDataMainVariablesSetters : ");
@@ -571,23 +571,23 @@ namespace mfront
       } else {
 	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
 	  if(pm!=mb.getMainVariables().begin()){
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+"  << ov << ",this->"  << v.name << ".begin());\n";
+	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+"  << ov << ",this->"  << v.name << ".begin());" << endl;
 	  } else {
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->"   << v.name << ".begin());\n";
+	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->"   << v.name << ".begin());" << endl;
 	  }
 	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
 	  if(pm!=mb.getMainVariables().begin()){
-	    os << "this->" << v.name << ".importVoigt("+iprefix+"stran+" << ov <<");\n";
+	    os << "this->" << v.name << ".importVoigt("+iprefix+"stran+" << ov <<");" << endl;
 	  } else {
-	    os << "this->"  << v.name << ".importVoigt("+iprefix+"stran);\n";
+	    os << "this->"  << v.name << ".importVoigt("+iprefix+"stran);" << endl;
 	  }
 	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
 	  if(pm!=mb.getMainVariables().begin()){
 	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << ","
-			      << iprefix << "stran+" << ov <<");\n";
+			      << iprefix << "stran+" << ov <<");" << endl;
 	  } else {
 	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << ","
-			      << iprefix+"stran);\n";
+			      << iprefix+"stran);" << endl;
 	  }
 	} else {
 	  string msg("MFrontUMATInterfaceBase::writeBehaviourDataMainVariablesSetters : ");
@@ -597,31 +597,31 @@ namespace mfront
       }
       ov += this->getTypeSize(v.type,1u);
     }
-    os << "}\n\n";
-    os << "void set"+iprefix+"BehaviourDataThermodynamicForces(const Type* const "+iprefix+"stress_)\n"
-      << "{\n";
+    os << "}" << endl << endl;
+    os << "void set"+iprefix+"BehaviourDataThermodynamicForces(const Type* const "+iprefix+"stress_)" << endl
+      << "{" << endl;
     SupportedTypes::TypeSize of;
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
       const ThermodynamicForce& f = pm->second;
       if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
 	if(pm!=mb.getMainVariables().begin()){
-	  os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stress_+" << of <<",this->" << f.name << ".begin());\n";
+	  os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stress_+" << of <<",this->" << f.name << ".begin());" << endl;
 	} else {
-	  os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stress_,this->" << f.name << ".begin());\n";
+	  os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stress_,this->" << f.name << ".begin());" << endl;
 	}
       } else if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
-	  os << "this->" << f.name << ".importTab("+iprefix+"stress_+" << of <<");\n";
+	  os << "this->" << f.name << ".importTab("+iprefix+"stress_+" << of <<");" << endl;
 	} else {
-	  os << "this->" << f.name << ".importTab("+iprefix+"stress_);\n";
+	  os << "this->" << f.name << ".importTab("+iprefix+"stress_);" << endl;
 	}
       } else if(this->getTypeFlag(f.type)==SupportedTypes::Tensor){
 	if(pm!=mb.getMainVariables().begin()){
 	  os << f.type << "::buildFromFortranMatrix(this->" << f.name << ","
-			    << iprefix << "stress_+" << of <<");\n";
+			    << iprefix << "stress_+" << of <<");" << endl;
 	} else {
 	  os << f.type << "::buildFromFortranMatrix(this->" << f.name << ","
-			    << iprefix << "stress_);\n";
+			    << iprefix << "stress_);" << endl;
 	}
       } else {
 	string msg("MFrontUMATInterfaceBase::writeBehaviourDataMainVariablesSetters : ");
@@ -630,7 +630,7 @@ namespace mfront
       }
       of += this->getTypeSize(f.type,1u);
     }
-    os << "}\n\n";
+    os << "}" << endl << endl;
   }
 
   void 
@@ -642,30 +642,30 @@ namespace mfront
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize ov;
-    os << "void set"+iprefix+"IntegrationDataDrivingVariables(const Type* const "+iprefix+"dstran)\n"
-       << "{\n";
+    os << "void set"+iprefix+"IntegrationDataDrivingVariables(const Type* const "+iprefix+"dstran)" << endl
+       << "{" << endl;
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
       const DrivingVariable& v = pm->first;
       if(!v.increment_known){
 	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
 	  if(pm!=mb.getMainVariables().begin()){
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov <<",this->" << v.name << "1.begin());\n";
+	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov <<",this->" << v.name << "1.begin());" << endl;
 	  } else {
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->" << v.name << "1.begin());\n";
+	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->" << v.name << "1.begin());" << endl;
 	  }
 	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
 	  if(pm!=mb.getMainVariables().begin()){
-	    os << "this->" << v.name << "1.importVoigt("+iprefix+"dstran+" << ov <<");\n";
+	    os << "this->" << v.name << "1.importVoigt("+iprefix+"dstran+" << ov <<");" << endl;
 	  } else {
-	    os << "this->" << v.name << "1.importVoigt("+iprefix+"dstran);\n";
+	    os << "this->" << v.name << "1.importVoigt("+iprefix+"dstran);" << endl;
 	  }
 	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
 	  if(pm!=mb.getMainVariables().begin()){
 	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << "1,"
-			      << iprefix << "dstran+" << ov <<");\n";
+			      << iprefix << "dstran+" << ov <<");" << endl;
 	  } else {
 	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << "1,"
-			      << iprefix << "dstran);\n";
+			      << iprefix << "dstran);" << endl;
 	  }
 	} else {
 	  string msg("MFrontUMATInterfaceBase::writeIntegrationDataMainVariablesSetters : ");
@@ -675,23 +675,23 @@ namespace mfront
       } else {
 	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
 	  if(pm!=mb.getMainVariables().begin()){
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov << ",this->d" << v.name << ".begin());\n";
+	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov << ",this->d" << v.name << ".begin());" << endl;
 	  } else {
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->d" << v.name << ".begin());\n";
+	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->d" << v.name << ".begin());" << endl;
 	  }
 	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
 	  if(pm!=mb.getMainVariables().begin()){
-	    os << "this->d" << v.name << ".importVoigt("+iprefix+"dstran+" << ov <<");\n";
+	    os << "this->d" << v.name << ".importVoigt("+iprefix+"dstran+" << ov <<");" << endl;
 	  } else {
-	    os << "this->d" << v.name << ".importVoigt("+iprefix+"dstran);\n";
+	    os << "this->d" << v.name << ".importVoigt("+iprefix+"dstran);" << endl;
 	  }
 	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
 	  if(pm!=mb.getMainVariables().begin()){
 	    os << v.type << "::buildFromFortranMatrix(this->d" << v.name << ","
-			      << iprefix << "dstran+" << ov <<");\n";
+			      << iprefix << "dstran+" << ov <<");" << endl;
 	  } else {
 	    os << v.type << "::buildFromFortranMatrix(this->d" << v.name << ","
-			      << iprefix+"dstran);\n";
+			      << iprefix+"dstran);" << endl;
 	  }
 	} else {
 	  string msg("MFrontUMATInterfaceBase::writeIntegrationDataMainVariablesSetters : ");
@@ -701,7 +701,7 @@ namespace mfront
       }
       ov += this->getTypeSize(v.type,1u);
     }
-    os << "}\n\n";
+    os << "}" << endl << endl;
   }
 
   void
@@ -727,17 +727,17 @@ namespace mfront
 	f << '"' << *p << '"';
 	if(++p!=n.end()){
 	  if(s%5==0){
-	    f << ",\n";
+	    f << "," << endl;
 	  } else {
 	    f << ",";
 	  }
 	}
 	++s;
       }
-      f << "};\n";
+      f << "};" << endl;
     } else {
       f << "MFRONT_SHAREDOBJ const char * const * "  << this->getSymbolName(name,h)
-	<< "_" << array << " = 0;\n\n";
+	<< "_" << array << " = 0;" << endl << endl;
     }      
   } // end of MFrontUMATInterfaceBase::writeGlossaryNames
 
@@ -780,19 +780,20 @@ namespace mfront
   void
   MFrontUMATInterfaceBase::writeVisibilityDefines(std::ostream& out) const
   {
-    out << "#ifdef WIN32\n";
-    out << "#include <windows.h>\n";
-    out << "#ifndef MFRONT_STDCALL\n";
-    out << "#define MFRONT_STDCALL __stdcall\n"; 
-    out << "#endif /* MFRONT_STDCALL */\n"; 
-    out << "#else\n";
-    out << "#ifndef MFRONT_STDCALL\n";
-    out << "#define MFRONT_STDCALL\n"; 
-    out << "#endif /* MFRONT_STDCALL */\n"; 
-    out << "#endif /* WIN32 */\n\n";
-    out << "#ifndef MFRONT_SHAREDOBJ\n";
-    out << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT\n"; 
-    out << "#endif /* MFRONT_SHAREDOBJ */\n\n"; 
+    using namespace std;
+    out << "#ifdef WIN32" << endl;
+    out << "#include <windows.h>" << endl;
+    out << "#ifndef MFRONT_STDCALL" << endl;
+    out << "#define MFRONT_STDCALL __stdcall" << endl; 
+    out << "#endif /* MFRONT_STDCALL */" << endl; 
+    out << "#else" << endl;
+    out << "#ifndef MFRONT_STDCALL" << endl;
+    out << "#define MFRONT_STDCALL" << endl; 
+    out << "#endif /* MFRONT_STDCALL */" << endl; 
+    out << "#endif /* WIN32 */" << endl << endl;
+    out << "#ifndef MFRONT_SHAREDOBJ" << endl;
+    out << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT" << endl; 
+    out << "#endif /* MFRONT_SHAREDOBJ */" << endl << endl; 
   } // end of MFrontUMATInterfaceBase::writeVisibilityDefines
 
   void
@@ -815,7 +816,7 @@ namespace mfront
 	up = true;
       } else {
 	string msg("MFrontUMATInterfaceBase::checkParametersType : ");
-	msg += "unsupport parameter type '"+pp->type+"'.\n";
+	msg += "unsupport parameter type '"+pp->type+"'.";
 	throw(runtime_error(msg));
       } 
     }
@@ -827,8 +828,8 @@ namespace mfront
 								   const MechanicalBehaviourDescription& mb) const
   {
     using namespace std;
-    set<Hypothesis> h  = mb.getDistinctModellingHypotheses();
-    set<Hypothesis> h2 = this->getModellingHypothesesToBeTreated(mb);
+    const set<Hypothesis> h  = mb.getDistinctModellingHypotheses();
+    const set<Hypothesis> h2 = this->getModellingHypothesesToBeTreated(mb);
     set<Hypothesis>::const_iterator p;
     for(p=h.begin();p!=h.end();++p){
       if((*p==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
@@ -837,24 +838,23 @@ namespace mfront
 	const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(*p);
 	const VariableDescriptionContainer& pc = d.getParameters();
 	this->checkParametersType(rp,ip,up,pc);
+	string fctName = this->getFunctionName(name);
 	string suffix;
 	if(*p!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 	  suffix += ModellingHypothesis::toString(*p);
+	  fctName += "_"+suffix;
 	}
 	if(rp){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	      << this->getFunctionName(name) << suffix
-	      << "_setParameter(const char *const,const double);\n\n";
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL" << endl
+	      << fctName << "_setParameter(const char *const,const double);" << endl << endl;
 	}
 	if(ip){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	      << this->getFunctionName(name) << suffix
-	      << "_setIntegerParameter(const char *const,const int);\n\n";
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL" << endl
+	      << fctName << "_setIntegerParameter(const char *const,const int);" << endl << endl;
 	}
 	if(up){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	      << this->getFunctionName(name) << suffix
-	      << "_setUnsignedShortParameter(const char *const,const unsigned short);\n\n";
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL" << endl
+	      << fctName << "_setUnsignedShortParameter(const char *const,const unsigned short);" << endl << endl;
 	}
       }
     }
@@ -876,58 +876,57 @@ namespace mfront
 	const VariableDescriptionContainer& pc = d.getParameters();
 	bool rp,ip,up;
 	this->checkParametersType(rp,ip,up,pc);
+	string fctName = this->getFunctionName(name);
 	string suffix;
 	if(*p!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	  suffix += ModellingHypothesis::toString(*p);
+	  suffix  += ModellingHypothesis::toString(*p);
+	  fctName += "_"+suffix;
 	}
 	string cname = mb.getClassName() + suffix + "ParametersInitializer";
 	if(rp){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	      << this->getFunctionName(name) << suffix
-	      << "_setParameter(const char *const key,const double value){\n"
-	      << "using namespace std;\n"
-	      << "using namespace tfel::material;\n"
-	      << cname << "& i = " << cname << "::get();\n"
-	      << "try{\n"
-	      << "i.set(key,value);\n"
-	      << "} catch(runtime_error& e){\n"
-	      << "cerr << e.what() << endl;\n"
-	      << "return 0;\n"
-	      << "}\n"
-	      << "return 1;\n"
-	      << "}\n\n";
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL" << endl
+	      << fctName << "_setParameter(const char *const key,const double value){" << endl
+	      << "using namespace std;" << endl
+	      << "using namespace tfel::material;" << endl
+	      << cname << "& i = " << cname << "::get();" << endl
+	      << "try{" << endl
+	      << "i.set(key,value);" << endl
+	      << "} catch(runtime_error& e){" << endl
+	      << "cerr << e.what() << endl;" << endl
+	      << "return 0;" << endl
+	      << "}" << endl
+	      << "return 1;" << endl
+	      << "}" << endl << endl;
 	}
 	if(ip){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	      << this->getFunctionName(name) << suffix
-	      << "_setIntegerParameter(const char *const key,const int value){\n"
-	      << "using namespace std;\n"
-	      << "using namespace tfel::material;\n"
-	      << cname << "& i = " << cname << "::get();\n"
-	      << "try{\n"
-	      << "i.set(key,value);\n"
-	      << "} catch(runtime_error& e){\n"
-	      << "cerr << e.what() << endl;\n"
-	      << "return 0;\n"
-	      << "}\n"
-	      << "return 1;\n"
-	      << "}\n\n";
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL" << endl
+	      << fctName << "_setIntegerParameter(const char *const key,const int value){" << endl
+	      << "using namespace std;" << endl
+	      << "using namespace tfel::material;" << endl
+	      << cname << "& i = " << cname << "::get();" << endl
+	      << "try{" << endl
+	      << "i.set(key,value);" << endl
+	      << "} catch(runtime_error& e){" << endl
+	      << "cerr << e.what() << endl;" << endl
+	      << "return 0;" << endl
+	      << "}" << endl
+	      << "return 1;" << endl
+	      << "}" << endl << endl;
 	}
 	if(up){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"
-	      << this->getFunctionName(name) << suffix
-	      << "_setUnsignedShortParameter(const char *const key,const unsigned short value){\n"
-	      << "using namespace std;\n"
-	      << "using namespace tfel::material;\n"
-	      << cname << "& i = " << cname << "::get();\n"
-	      << "try{\n"
-	      << "i.set(key,value);\n"
-	      << "} catch(runtime_error& e){\n"
-	      << "cerr << e.what() << endl;\n"
-	      << "return 0;\n"
-	      << "}\n"
-	      << "return 1;\n"
-	      << "}\n\n";
+	  out << "MFRONT_SHAREDOBJ int MFRONT_STDCALL" << endl
+	      << fctName << "_setUnsignedShortParameter(const char *const key,const unsigned short value){" << endl
+	      << "using namespace std;" << endl
+	      << "using namespace tfel::material;" << endl
+	      << cname << "& i = " << cname << "::get();" << endl
+	      << "try{" << endl
+	      << "i.set(key,value);" << endl
+	      << "} catch(runtime_error& e){" << endl
+	      << "cerr << e.what() << endl;" << endl
+	      << "return 0;" << endl
+	      << "}" << endl
+	      << "return 1;" << endl
+	      << "}" << endl << endl;
 	}
       }
     }
@@ -957,36 +956,38 @@ namespace mfront
   MFrontUMATInterfaceBase::getExtraSrcIncludes(std::ostream& out,
 					       const MechanicalBehaviourDescription& mb) const
   {
+    using namespace std;
     if(mb.hasParameters()){
-      out << "#include<iostream>\n";
-      out << "#include<stdexcept>\n";
+      out << "#include<iostream>" << endl;
+      out << "#include<stdexcept>" << endl;
     }
     if(this->generateMTestFile){
-      out << "#include<vector>\n";
+      out << "#include<vector>" << endl;
     }
     if(this->generateMTestFile){
-      out << "#include<sstream>\n";
+      out << "#include<sstream>" << endl;
     }
     if(this->generateMTestFile){
-      out << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n";
-      out << "#include\"MFront/SupportedTypes.hxx\"\n";
-      out << "#include\"MFront/UMATSmallStrainMTestFileGenerator.hxx\"\n";
-      out << "#include\"MFront/UMATFiniteStrainMTestFileGenerator.hxx\"\n";
+      out << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
+      out << "#include\"MFront/SupportedTypes.hxx\"" << endl;
+      out << "#include\"MFront/UMATSmallStrainMTestFileGenerator.hxx\"" << endl;
+      out << "#include\"MFront/UMATFiniteStrainMTestFileGenerator.hxx\"" << endl;
     }
   } // end of MFrontUMATInterfaceBase::getExtraSrcIncludes
   
   void
   MFrontUMATInterfaceBase::generateMTestFile1(std::ostream& out) const
   {
+    using namespace std;
     if(this->generateMTestFile){
-      out << "using namespace std;\n";
-      out << "using tfel::material::ModellingHypothesis;\n";
-      out << "using mfront::SupportedTypes;\n";
-      out << "// double is used by MTestFileGeneratorBase\n";
-      out << "vector<double> mg_STRESS(*NTENS);\n";
-      out << "vector<double> mg_STATEV(*NSTATV);\n";
-      out << "copy(STRESS,STRESS+*NTENS,mg_STRESS.begin());\n";
-      out << "copy(STATEV,STATEV+*NSTATV,mg_STATEV.begin());\n";
+      out << "using namespace std;" << endl;
+      out << "using tfel::material::ModellingHypothesis;" << endl;
+      out << "using mfront::SupportedTypes;" << endl;
+      out << "// double is used by MTestFileGeneratorBase" << endl;
+      out << "vector<double> mg_STRESS(*NTENS);" << endl;
+      out << "vector<double> mg_STATEV(*NSTATV);" << endl;
+      out << "copy(STRESS,STRESS+*NTENS,mg_STRESS.begin());" << endl;
+      out << "copy(STATEV,STATEV+*NSTATV,mg_STATEV.begin());" << endl;
     }
   } // end of MFrontUMATInterfaceBase::generateMTestFile1
 
@@ -1008,12 +1009,12 @@ namespace mfront
     	out << "mfront::UMATSmallStrainMTestFileGenerator mg(\""
     	    << makeLowerCase(this->getInterfaceName()) << "\",\""
     	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
-    	    <<  "\");\n";
+    	    <<  "\");" << endl;
       } else if(type==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
     	out << "mfront::UMATFiniteStrainMTestFileGenerator mg(\""
     	    << makeLowerCase(this->getInterfaceName()) << "\",\""
     	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
-    	    <<  "\");\n";
+    	    <<  "\");" << endl;
       } else {
     	string msg("MFrontUMATInterfaceBase::generateMTestFile2 : ");
     	msg += "only small strain or finite strain behaviours are supported";
@@ -1021,20 +1022,20 @@ namespace mfront
       }
       this->writeMTestFileGeneratorSetModellingHypothesis(out);
       this->writeMTestFileGeneratorSetRotationMatrix(out,mb);
-      out << "const unsigned short TVectorSize = mg.getTVectorSize();\n";
-      out << "const unsigned short StensorSize = mg.getStensorSize();\n";
-      out << "const unsigned short TensorSize  = mg.getTensorSize();\n";
-      out << "mg.setHandleThermalExpansion(false);\n";
-      out << "mg.addTime(0.);\n";
-      out << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);\n";
+      out << "const unsigned short TVectorSize = mg.getTVectorSize();" << endl;
+      out << "const unsigned short StensorSize = mg.getStensorSize();" << endl;
+      out << "const unsigned short TensorSize  = mg.getTensorSize();" << endl;
+      out << "mg.setHandleThermalExpansion(false);" << endl;
+      out << "mg.addTime(0.);" << endl;
+      out << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);" << endl;
       if(type==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-    	out << "mg.setStrainTensor(STRAN);\n";
-    	out << "mg.setStrainTensorIncrement(DSTRAN);\n";
-    	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+    	out << "mg.setStrainTensor(STRAN);" << endl;
+    	out << "mg.setStrainTensorIncrement(DSTRAN);" << endl;
+    	out << "mg.setStressTensor(&mg_STRESS[0]);" << endl;
       } else if(type==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-    	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(STRAN);\n";
-    	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(DSTRAN);\n";
-    	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+    	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);" << endl;
+    	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);" << endl;
+    	out << "mg.setStressTensor(&mg_STRESS[0]);" << endl;
       } else {
     	string msg("MFrontUMATInterfaceBase::generateMTestFile2 : ");
     	msg += "only small strain or finite strain behaviours are supported";
@@ -1063,18 +1064,18 @@ namespace mfront
 	  }
 	  if(pm->arraySize==1u){
 	    if(offset==0){
-	      out << "mg.addMaterialProperty(\"" << pm->name << "\",*(PROPS));\n";	    
+	      out << "mg.addMaterialProperty(\"" << pm->name << "\",*(PROPS));" << endl;	    
 	    } else {
-	      out << "mg.addMaterialProperty(\"" << pm->name << "\",*(PROPS+" << offset << "));\n";	    
+	      out << "mg.addMaterialProperty(\"" << pm->name << "\",*(PROPS+" << offset << "));" << endl;	    
 	    }
 	    ++offset;
 	  } else {
 	    for(unsigned short s=0;s!=pm->arraySize;++s,++offset){
 	      if(offset==0){
-		out << "mg.addMaterialProperty(\"" << pm->name << "[" << s << "]\",*(PROPS));\n";	    
+		out << "mg.addMaterialProperty(\"" << pm->name << "[" << s << "]\",*(PROPS));" << endl;	    
 	      } else {
 		out << "mg.addMaterialProperty(\"" << pm->name << "[" << s << "]\","
-		    << "*(PROPS+" << offset << "));\n";	    
+		    << "*(PROPS+" << offset << "));" << endl;	    
 	      }
 	    }
 	  }
@@ -1085,23 +1086,23 @@ namespace mfront
 	  const string& ivname = d.getGlossaryName(p->name);
 	  if(p->arraySize==1u){
 	    if(flag==SupportedTypes::Scalar){
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);\n";
+	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);" << endl;
 	      ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 	    } else {
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);\n";
+	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);" << endl;
 	      ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
 	    }
 	  } else {
 	    if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-	      out << "ostringstream name;\n";
-	      out << "name << \"" << ivname << "[\" << i << \"]\";\n";
+	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){" << endl;
+	      out << "ostringstream name;" << endl;
+	      out << "name << \"" << ivname << "[\" << i << \"]\";" << endl;
 	      if(flag==SupportedTypes::Scalar){
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]+i);\n";
+		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]+i);" << endl;
 	      } else {
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]+i);\n";
+		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]+i);" << endl;
 	      }
-	      out << "}\n";
+	      out << "}" << endl;
 	      if(flag==SupportedTypes::Scalar){
 		ivoffset += SupportedTypes::TypeSize(p->arraySize,0u,0u,0u);
 	      } else {
@@ -1111,19 +1112,19 @@ namespace mfront
 	      for(i=0;i!=p->arraySize;++i){
 		if(flag==SupportedTypes::Scalar){
 		  out << "mg.addInternalStateVariable(\""
-		      << ivname << "[" << i << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);\n";
+		      << ivname << "[" << i << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);" << endl;
 		  ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 		} else {
 		  out << "mg.addInternalStateVariable(\""
-		      << ivname << "[" << i << "]\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);\n";
+		      << ivname << "[" << i << "]\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);" << endl;
 		  ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
 		}
 	      }
 	    }
 	  }
 	}
-	out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
-	out << "mg.addExternalStateVariableValue(\"Temperature\",*DTIME,*TEMP+*DTEMP);\n";
+	out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);" << endl;
+	out << "mg.addExternalStateVariableValue(\"Temperature\",*DTIME,*TEMP+*DTEMP);" << endl;
 	for(p=externalStateVarsHolder.begin(),offset=0;p!=externalStateVarsHolder.end();++p){
 	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	  if(flag!=SupportedTypes::Scalar){
@@ -1136,47 +1137,47 @@ namespace mfront
 	  if(p->arraySize==1u){
 	    if(offset==0){
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
-		  << "\",0,*PREDEF);\n";
+		  << "\",0,*PREDEF);" << endl;
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
-		  << "\",*DTIME,*PREDEF+*DPRED);\n";
+		  << "\",*DTIME,*PREDEF+*DPRED);" << endl;
 	    } else {
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
-		  << "\",0,*(PREDEF+" << offset<< "));\n";
+		  << "\",0,*(PREDEF+" << offset<< "));" << endl;
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
-		  << "\",*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));\n";
+		  << "\",*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));" << endl;
 	    }
 	    ++offset;
 	  } else {
 	    if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-	      out << "ostringstream name;\n";
-	      out << "name << \"" << evname << "[\" << i << \"]\";\n";
+	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){" << endl;
+	      out << "ostringstream name;" << endl;
+	      out << "name << \"" << evname << "[\" << i << \"]\";" << endl;
 	      if(offset==0){
-		out << "mg.addExternalStateVariableValue(name.str(),0,*(PREDEF+i));\n";
+		out << "mg.addExternalStateVariableValue(name.str(),0,*(PREDEF+i));" << endl;
 		out << "mg.addExternalStateVariableValue(name.str(),"
-		  "*DTIME,*(PREDEF+i)+*(DPRED+i));\n";
+		  "*DTIME,*(PREDEF+i)+*(DPRED+i));" << endl;
 	      } else {
 		out << "mg.addExternalStateVariableValue(name.str(),"
-		  "0,*(PREDEF+" << offset<< "+i));\n";
+		  "0,*(PREDEF+" << offset<< "+i));" << endl;
 		out << "mg.addExternalStateVariableValue(name.str(),"
-		  "*DTIME,*(PREDEF+" << offset << "+i)+*(DPRED+" << offset<< "+i));\n";
+		  "*DTIME,*(PREDEF+" << offset << "+i)+*(DPRED+" << offset<< "+i));" << endl;
 	      }
-	      out << "}\n";
+	      out << "}" << endl;
 	      offset += p->arraySize;
 	    } else {
 	      for(i=0;i!=p->arraySize;++i,++offset){
 		if(offset==0){
 		  out << "mg.addExternalStateVariableValue(\"" << evname
-		      << "[" << i << "]\",0,*PREDEF);\n";
+		      << "[" << i << "]\",0,*PREDEF);" << endl;
 		  out << "mg.addExternalStateVariableValue(\"" << evname
-		      << "[" << i << "]\",*DTIME,*PREDEF+*DPRED);\n";
+		      << "[" << i << "]\",*DTIME,*PREDEF+*DPRED);" << endl;
 		} else {
 		  out << "mg.addExternalStateVariableValue(\""
 		      << evname << "[" << i << "]\","
-		    "0,*(PREDEF+" << offset<< "));\n";
+		    "0,*(PREDEF+" << offset<< "));" << endl;
 		  out << "mg.addExternalStateVariableValue(\""
 		      << evname << "[" << i << "]\","
-		    "*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));\n";
+		    "*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));" << endl;
 		}
 	      }
 	    }
@@ -1184,10 +1185,10 @@ namespace mfront
 	}
 	out << "}" << endl;
       }
-      out << "mg.generate(\""+name+"\");\n";
-      out << "static_cast<void>(TVectorSize); // remove gcc warning\n";
-      out << "static_cast<void>(StensorSize); // remove gcc warning\n";
-      out << "static_cast<void>(TensorSize);  // remove gcc warning\n";
+      out << "mg.generate(\""+name+"\");" << endl;
+      out << "static_cast<void>(TVectorSize); // remove gcc warning" << endl;
+      out << "static_cast<void>(StensorSize); // remove gcc warning" << endl;
+      out << "static_cast<void>(TensorSize);  // remove gcc warning" << endl;
     }
   }
 
@@ -1195,11 +1196,12 @@ namespace mfront
   MFrontUMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix(std::ostream& out,
 								    const MechanicalBehaviourDescription& mb) const
   {
+    using namespace std;
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "mg.setRotationMatrix("
 	  << "DROT[0],DROT[3],DROT[6],"
 	  << "DROT[1],DROT[4],DROT[7],"
-	  << "DROT[2],DROT[5],DROT[8]);\n";
+	  << "DROT[2],DROT[5],DROT[8]);" << endl;
     }
   } // end of MFrontUMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
 
@@ -1210,6 +1212,7 @@ namespace mfront
 							const MFrontFileDescription & fd) const
   {
     this->writeUMATxxSourceFileSymbols(out,name,mb,fd);
+    this->writeUMATxxSupportedModellingHypothesis(out,name,mb);
     this->writeUMATxxBehaviourTypeSymbols(out,name,mb);
     this->writeUMATxxSymmetryTypeSymbols(out,name,mb);
     this->writeUMATxxElasticSymmetryTypeSymbols(out,name,mb);
@@ -1223,8 +1226,6 @@ namespace mfront
 						 const MechanicalBehaviourDescription& mb,
 						 const MFrontFileDescription & fd) const
   {
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-    }
     this->writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(out,name,h,mb);
     this->writeUMATxxMaterialPropertiesSymbols(out,name,h,mb);
     this->writeUMATxxStateVariablesSymbols(out,name,h,mb);
@@ -1258,10 +1259,39 @@ namespace mfront
       out << "3u;" << endl << endl;
     } else {
       string msg("MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols : ");
-      msg += "unsupported behaviour type.\n";
+      msg += "unsupported behaviour type.";
       throw(runtime_error(msg));
     }
   } // end of MFrontUMATInterfaceBase::writeUMATxxBehaviourTypeSymbols
+
+  void
+  MFrontUMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(std::ostream& out,
+								   const std::string& name,
+								   const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    using namespace tfel::material;
+    set<Hypothesis> ih(this->getModellingHypothesesToBeTreated(mb));
+    if(ih.empty()){
+      out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
+	  << "_nModellingHypotheses = 0u;" << endl << endl;
+      out << "MFRONT_SHAREDOBJ const char * const * "  << this->getFunctionName(name)
+	  << "_ModellingHypotheses = 0;" << endl << endl;
+    } else {
+      set<Hypothesis>::const_iterator ph;
+      out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
+	  << "_nModellingHypotheses = " << ih.size() << "u;" << endl << endl;
+      out << "MFRONT_SHAREDOBJ const char * " << endl
+	  << this->getFunctionName(name) << "_ModellingHypotheses[" << ih.size() << "u] = {";
+      for(ph=ih.begin();ph!=ih.end();){
+	out << "\"" << ModellingHypothesis::toString(*ph) << "\"";
+	if(++ph!=ih.end()){
+	  out << "," << endl;
+	}
+      }
+      out << "};" << endl << endl;
+    }
+  } // end of MFrontUMATInterfaceBase::writeUMATxxSupportedModellingHypothesis
 
   void
   MFrontUMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols(std::ostream& out,
@@ -1274,9 +1304,9 @@ namespace mfront
 	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
     if(mprops.first.empty()){
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
-	  << "_nMaterialProperties = 0u;\n\n";
+	  << "_nMaterialProperties = 0u;" << endl << endl;
       out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
-	  << "_MaterialProperties = 0;\n\n";
+	  << "_MaterialProperties = 0;" << endl << endl;
     } else {
       const UMATMaterialProperty& last = mprops.first.back();
       SupportedTypes::TypeSize s;
@@ -1315,12 +1345,12 @@ namespace mfront
 	  throw(runtime_error(msg));
 	}
 	out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
-	    << "_nMaterialProperties = 0u;\n\n";
+	    << "_nMaterialProperties = 0u;" << endl << endl;
 	out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
-	    << "_MaterialProperties = 0;\n\n";
+	    << "_MaterialProperties = 0;" << endl << endl;
       } else {
 	out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
-	    << "_nMaterialProperties = " << s.getScalarSize() << "u;\n\n";
+	    << "_nMaterialProperties = " << s.getScalarSize() << "u;" << endl << endl;
 	out << "MFRONT_SHAREDOBJ const char *"  << this->getSymbolName(name,h)
 	    << "_MaterialProperties[" <<  s.getScalarSize() << "u] = {";
         for(vector<UMATMaterialProperty>::size_type i=ib;i!=mprops.first.size();){
@@ -1331,19 +1361,18 @@ namespace mfront
 	    for(unsigned short j=0;j!=m.arraySize;){
 	      out << "\"" << m.name << "[" << j << "]\"";
 	      if(++j!=m.arraySize){
-		out << ",\n";
+		out << "," << endl;
 	      }
 	    }
 	  }
 	  if(++i!=mprops.first.size()){
-	    out << ",\n";
+	    out << "," << endl;
 	  }
 	}
 	out << "};" << endl << endl;
       }
     }
   } // end of MFrontUMATInterface::writeUMATxxMaterialPropertiesSymbol
-
 
   void
   MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols(std::ostream& out,
@@ -1358,7 +1387,7 @@ namespace mfront
     VariableDescriptionContainer::const_iterator p;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
   	<< "_nInternalStateVariables = " << nStateVariables
-  	<< ";\n";
+  	<< ";" << endl;
     vector<string> stateVariablesNames;
     mb.getGlossaryNames(stateVariablesNames,h,persistentVarsHolder);
     this->writeGlossaryNames(out,name,h,stateVariablesNames,"InternalStateVariables");
@@ -1394,10 +1423,10 @@ namespace mfront
   	  out << ",";
   	}
       }
-      out << "};\n\n";
+      out << "};" << endl << endl;
     } else {
       out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(name,h)
-  	  << "_InternalStateVariablesTypes = 0;\n\n";
+  	  << "_InternalStateVariablesTypes = 0;" << endl << endl;
     }
   } // end of MFrontUMATInterfaceBase::writeUMATxxStateVariablesSymbols
   
@@ -1407,10 +1436,11 @@ namespace mfront
   								    const Hypothesis h,
   								    const MechanicalBehaviourDescription& mb) const
   {
+    using namespace std;
     const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
     const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
-  	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
+  	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";" << endl;
     this->writeGlossaryNames(out,name,h,mb.getGlossaryNames(h,externalStateVarsHolder),
   			     "ExternalStateVariables",0u);
   } // end of MFrontUMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
@@ -1421,6 +1451,7 @@ namespace mfront
 							  const Hypothesis h,
 							  const MechanicalBehaviourDescription& mb) const
   {
+    using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h);
     out << "_requiresStiffnessTensor = ";
     if(mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false)){
@@ -1428,7 +1459,7 @@ namespace mfront
     } else {
       out << "0";
     }
-    out << ";\n";
+    out << ";" << endl;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h);
     out << "_requiresThermalExpansionCoefficientTensor = ";
     if(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
@@ -1436,7 +1467,7 @@ namespace mfront
     } else {
       out << "0";
     }
-    out << ";\n";
+    out << ";" << endl;
 
   } // end of MFrontUMATInterfaceBase::writeUMATxxRequirementsSymbols
 
@@ -1446,13 +1477,14 @@ namespace mfront
 										const Hypothesis h,
   										const MechanicalBehaviourDescription& mb) const
   {
+    using namespace std;
     const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
   	<< "_UsableInPurelyImplicitResolution = ";
     if(d.isUsableInPurelyImplicitResolution()){
-      out << "1;\n\n";
+      out << "1;" << endl << endl;
     } else {
-      out << "0;\n\n";
+      out << "0;" << endl << endl;
     }
   } // end of MFrontUMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolution
 
@@ -1502,12 +1534,13 @@ namespace mfront
   							const MechanicalBehaviourDescription&,
 							const mfront::MFrontFileDescription& fd) const
   {
+    using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
-    out << "MFRONT_SHAREDOBJ const char *\n" 
+    out << "MFRONT_SHAREDOBJ const char *" << endl 
   	<< this->getFunctionName(name) << "_src = \""
   	<< tokenize(fd.fileName,dirSeparator()).back()
-  	<< "\";\n\n";
+  	<< "\";" << endl << endl;
   }
 
   std::map<MFrontUMATInterfaceBase::Hypothesis,std::string>

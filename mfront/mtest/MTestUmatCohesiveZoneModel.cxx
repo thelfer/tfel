@@ -206,13 +206,15 @@ namespace mfront
       ude[0] = e1[1]-e0[1]; ude[1] = e1[2]-e0[2]; ude[2] = e1[0]-e0[0];
       s1[0]  = s0[1]; s1[1]  = s0[2]; s1[2]  = s0[0];
     }
-    (this->fct)(&ntens,&dt,&drot(0,0),
-		&D(0,0),&ue0(0),&ude(0),
+    UMATReal ndt(1.);
+    (this->fct)(&s1(0),&iv(0),&D(0,0),
+		0,0,0,0,0,0,0,
+		&ue0(0),&ude(0),0,&dt,
 		&ev0(0),&dev(0),
-		&mp(0),&nprops,
 		&ev0(0)+1,&dev(0)+1,
-		&iv(0),&nstatv,&s1(0),
-		&ndi,&kinc);
+		0,&ndi,0,&ntens,&nstatv,&mp(0),
+		&nprops,0,&drot(0,0),&ndt,
+		0,0,0,0,0,0,0,0,&kinc,0);
     if(kinc!=1){
       return false;
     }

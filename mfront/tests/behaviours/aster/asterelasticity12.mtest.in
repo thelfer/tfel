@@ -5,7 +5,7 @@
   "account for an orthotropic material."
 };
 
-@ModellingHypothesis 'GeneralisedPlaneStrain';
+@ModellingHypothesis 'Axisymmetrical';
 
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterorthotropicelastic';
 
@@ -35,9 +35,9 @@
 @Real 'ThermalExpansionReferenceTemperature' 293.15;
 @Real 'Tref' 'ThermalExpansionReferenceTemperature';
 
-@ImposedStrain 'EXX' 0.;
-@ImposedStrain 'EYY' 0.;
+@ImposedStrain 'ERR' 0.;
 @ImposedStrain 'EZZ' 0.;
+@ImposedStrain 'ETT' 0.;
 
 @RotationMatrix {{0,1,0},
                  {1,0,0},
@@ -61,7 +61,7 @@
 @Real 'C20' '(S12*S23-S13*S22)/dS';
 @Real 'C21' '(S12*S13-S11*S23)/dS';
 @Real 'C22' '(S11*S22-S12*S12)/dS';
-@Test<function> 'SYY' '-(C00*a1+C01*a2+C02*a3)*(Temperature-Tref)'  1.e-3;
-@Test<function> 'SXX' '-(C10*a1+C11*a2+C12*a3)*(Temperature-Tref)'  1.e-3;
-@Test<function> 'SZZ' '-(C20*a1+C21*a2+C22*a3)*(Temperature-Tref)'  1.e-3;
-@Test<function> 'EXY' '0.' 1.e-12;
+@Test<function> 'SZZ' '-(C00*a1+C01*a2+C02*a3)*(Temperature-Tref)'  1.e-3;
+@Test<function> 'SRR' '-(C10*a1+C11*a2+C12*a3)*(Temperature-Tref)'  1.e-3;
+@Test<function> 'STT' '-(C20*a1+C21*a2+C22*a3)*(Temperature-Tref)'  1.e-3;
+@Test<function> 'ERZ' '0.' 1.e-12;

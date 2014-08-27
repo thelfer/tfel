@@ -10,7 +10,7 @@
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainnortoncreep';
 @DrivingVariableEpsilon 2.e-8;
-@StressEpsilon          3.e3;
+@StressEpsilon          3.5e3;
 
 @MaterialProperty<constant> 'YoungModulus'      80.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.35;

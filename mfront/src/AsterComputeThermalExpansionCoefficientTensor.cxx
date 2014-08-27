@@ -36,23 +36,46 @@ namespace aster
   } // end of struct AsterComputeThermalExpansionCoefficientTensor
  
   void
-  AsterComputeThermalExpansionCoefficientTensor<1u,ISOTROPIC>::exe(const AsterReal* const props,
-							tfel::config::Types<1u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
-  {
-    const double a = props[0];
-    A(0)=A(1)=A(2)=a;
-  } // end of struct AsterComputeThermalExpansionCoefficientTensor
-
-  void
-  AsterComputeThermalExpansionCoefficientTensor<2u,ISOTROPIC>::exe(const AsterReal* const props,
-							 tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::PLANESTRESS,
+				    ISOTROPIC>::exe(const AsterReal* const props,
+						    tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
   {
     AsterComputeIsotropicThermalExpansionCoefficientTensor2D(props,A);
   } // end of struct AsterComputeThermalExpansionCoefficientTensor
 
   void
-  AsterComputeThermalExpansionCoefficientTensor<3u,ISOTROPIC>::exe(const AsterReal* const props,
-						       tfel::config::Types<3u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::AXISYMMETRICAL,
+				    ISOTROPIC>::exe(const AsterReal* const props,
+						    tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
+  {
+    AsterComputeIsotropicThermalExpansionCoefficientTensor2D(props,A);
+  } // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+  void
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::PLANESTRAIN,
+				    ISOTROPIC>::exe(const AsterReal* const props,
+						    tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
+  {
+    AsterComputeIsotropicThermalExpansionCoefficientTensor2D(props,A);
+  } // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+  void
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
+				    ISOTROPIC>::exe(const AsterReal* const props,
+						    tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
+  {
+    AsterComputeIsotropicThermalExpansionCoefficientTensor2D(props,A);
+  } // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+  void
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
+				    ISOTROPIC>::exe(const AsterReal* const props,
+						    tfel::config::Types<3u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
   {
     const double a = props[0];
     A(0)=A(1)=A(2)=a;
@@ -60,27 +83,46 @@ namespace aster
   } // end of struct AsterComputeThermalExpansionCoefficientTensor
 
   void
-  AsterComputeThermalExpansionCoefficientTensor<1u,ORTHOTROPIC>::exe(const AsterReal* const props,
-							  tfel::config::Types<1u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::PLANESTRESS,
+				    ORTHOTROPIC>::exe(const AsterReal* const props,
+						      tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a0 = props[0];
-    const double a1 = props[1];
-    const double a2 = props[2];
-    A(0)=a0;
-    A(1)=a1;
-    A(2)=a2;
+    AsterComputeOrthotropicThermalExpansionCoefficientTensor2D(props,A);
   } // end of struct AsterComputeThermalExpansionCoefficientTensor
 
   void
-  AsterComputeThermalExpansionCoefficientTensor<2u,ORTHOTROPIC>::exe(const AsterReal* const props,
-							  tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& C)
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::AXISYMMETRICAL,
+				    ORTHOTROPIC>::exe(const AsterReal* const props,
+						      tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& C)
   {
     AsterComputeOrthotropicThermalExpansionCoefficientTensor2D(props,C);
   } // end of struct AsterComputeThermalExpansionCoefficientTensor
-
+  
   void
-  AsterComputeThermalExpansionCoefficientTensor<3u,ORTHOTROPIC>::exe(const AsterReal* const props,
-							 tfel::config::Types<3u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::PLANESTRAIN,
+				    ORTHOTROPIC>::exe(const AsterReal* const props,
+						      tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& C)
+  {
+    AsterComputeOrthotropicThermalExpansionCoefficientTensor2D(props,C);
+  } // end of struct AsterComputeThermalExpansionCoefficientTensor
+  
+  void
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
+				    ORTHOTROPIC>::exe(const AsterReal* const props,
+						      tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& C)
+  {
+    AsterComputeOrthotropicThermalExpansionCoefficientTensor2D(props,C);
+  } // end of struct AsterComputeThermalExpansionCoefficientTensor
+  
+  void
+  AsterComputeThermalExpansionCoefficientTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
+				    ORTHOTROPIC>::exe(const AsterReal* const props,
+						      tfel::config::Types<3u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
   {
     const double a0 = props[0];
     const double a1 = props[1];

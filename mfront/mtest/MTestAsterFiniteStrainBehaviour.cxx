@@ -93,12 +93,12 @@ namespace mfront
     tensor<N,real>  F1(&Fv1[0]);
     tensor<N,real>  inv_F0 = invert(F0);
     // reverting things
-    const AsterReal *v = &D(0,0);
+    AsterReal *v = &D(0,0);
     for(unsigned short i=0;i!=StensorDimeToSize<N>::value;++i){  // boucle sur tau
       for(unsigned short j=0;j!=TensorDimeToSize<N>::value;++j){  // boucle sur F
 	const unsigned short mi = getRowIndex(j);
 	const unsigned short mj = getColumnIndex(j);
-	dtau_ddF(i,j) = v[i+6*(mi+3*mj)];
+	dtau_ddF(i,j) = v[i+(mi+3*mj)*StensorDimeToSize<N>::value];
       }
     }
     dtau = dtau_ddF*t2tot2<N,real>::tpld(inv_F0);
@@ -156,24 +156,23 @@ namespace mfront
     AsterInt dimension;
     AsterInt nprops = static_cast<AsterInt>(mp.size());
     AsterInt nstatv;
-    if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      ntens = 3;
-      dimension = 1u;
-    } else if (h==MH::AXISYMMETRICAL){
+    AsterInt nummod;
+    if (h==MH::AXISYMMETRICAL){
       ntens = 4;
       dimension = 2u;
+      nummod = 4u;
     } else if (h==MH::PLANESTRESS){
       ntens = 4;
       dimension = 2u;
+      nummod = 5u;
     } else if (h==MH::PLANESTRAIN){
       ntens = 4;
       dimension = 2u;
-    } else if (h==MH::GENERALISEDPLANESTRAIN){
-      ntens = 4;
-      dimension = 2u;
+      nummod = 6u;
     } else if (h==MH::TRIDIMENSIONAL){
       ntens = 6;
       dimension = 3u;
+      nummod = 3u;
     } else {
       string msg("MTestAsterFiniteStrainBehaviour::call_beahviour : ");
       msg += "unsupported hypothesis";
@@ -236,13 +235,11 @@ namespace mfront
     }
     AsterReal ndt(1.);
     (this->fct)(&s1(0),&iv(0),&D(0,0),
-		0,0,0,0,0,0,0,
-		&uu0(0,0),&uu1(0,0),0,&dt,
+		&uu0(0,0),&uu1(0,0),&dt,
 		&ev0(0),&dev(0),
 		&ev0(0)+1,&dev(0)+1,
-		0,0,0,&ntens,&nstatv,&mp(0),
-		&nprops,0,&drot(0,0),&ndt,
-		0,0,0,0,0,0,0,0,0);
+		&ntens,&nstatv,&mp(0),
+		&nprops,&drot(0,0),&ndt,&nummod);
     if(ndt<0.){
       return false;
     }

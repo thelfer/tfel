@@ -284,14 +284,12 @@
       const real dgsdalfai = -C*Hsi ;
       const real dalfaidgi = (1-d1*a[i]*sgn[i])/(1+d1*agi[i])/(1+d1*agi[i]) ;
       const real dgsdRi    = -Hsi*sgn[i];
-      const real dRidpi    = b*Q*mh(i,i)*expi[i];  
-      const real dgsdgi    = dgsdalfai*dalfaidgi+dgsdRi*dRidpi*sgn[i];
       // terme du jacobien
       dfg_ddeel(i)  = -Hsi*(ss.mus[i]|dM_ddeel);
       dfg_ddg(i,i) -= dgsdalfai*dalfaidgi ;
       for(unsigned short j=0;j!=Nss;++j){
-	real dRsdpj = b*Q*mh(i,j)*expi[j] ;    
-	real dgsdgj = dgsdRi*dRsdpj*sgn[j];
+	const real dRsdpj = b*Q*mh(i,j)*expi[j] ;    
+	const real dgsdgj = dgsdRi*dRsdpj*sgn[j];
 	dfg_ddg(i,j) -=  dgsdgj ;
       }
     }
@@ -323,6 +321,8 @@
 }
 
 @TangentOperator<DTAU_DDF>{
+  static_cast<void>(smt); // on supprime un warning, on ne traite que
+			  // la tangente cohérente
   const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
   /*!
    * Nous utilisons ici un opérateur naturel pour le code aux éléments
@@ -354,7 +354,7 @@
    * \[
    * \deriv{\tenseur{S}}{\tns{F}_{e}}=\deriv{\tenseur{S}}{\tepsilonel_{GL}}\deriv{\tepsilonel_{GL}}{\tenseur{C}_{e}}\deriv{\tenseur{C}_{e}}{\tns{F}_{e}}
    * \]
-   * soit~:
+   * soit:
    * \[
    * \deriv{\tenseur{S}}{\tns{F}_{e}}=0.5\,D\,\deriv{\tenseur{C}_{e}}{\tns{F}_{e}}
    * \]
@@ -362,8 +362,8 @@
    * La dérivée \(\deriv{\tenseur{C}_{e}}{\tns{F}_{e}}\) se calcule
    * par la méthode statique dCdF de la classe t2tost2.
    */
-  const t2tost2<N,stress> dEgl_dFe = 0.5*t2tost2<N,real>::dCdF(Fe);
-  const t2tost2<N,stress> dS_dFe   = D*dEgl_dFe;
+  const t2tost2<N,stress> dC_dFe = t2tost2<N,real>::dCdF(Fe);
+  const t2tost2<N,stress> dS_dFe = 0.5*D*dC_dFe;
   t2tost2<N,stress> dtau_dFe;
   computePushForwardDerivative(dtau_dFe,dS_dFe,S,Fe); 
   /*!
@@ -410,7 +410,7 @@
    * \]
    *
    * Nous avons explicitement spécifié, en utilisant la notation
-   * classique de la thermodynamique, que le terme
+   * classique de la thermodynamique, que le calcul du terme
    * \(\left.\deriv{F}{\Delta\,\tns{F}}\right|_{\paren{\Delta\,\tepsilonel,\Delta\,g_{i}}}\)
    * se faisait en supposant que \(\Delta\,\tepsilonel\) et
    * \(\Delta\,g_{i}\) étaient des variables indépendantes.
@@ -420,9 +420,9 @@
    * est \(\left.\deriv{f_{\tepsilonel}}{\Delta\,\tns{F}}\right|_{\paren{\Delta\,\tepsilonel,\Delta\,g_{i}}}\)~:
    * \[
    * \left.\deriv{f_{\tepsilonel}}{\Delta\,\tns{F}}\right|_{\paren{\Delta\,\tepsilonel,\Delta\,g_{i}}}=
-   * \deriv{\tenseur{C}_{e}}{\tns{F}_{e}}\,.\,
+   * -\Frac{1}{2}\,\deriv{\tenseur{C}_{e}}{\tns{F}_{e}}\,.\,
    * \deriv{\tns{F}_{e}}{\Delta\,\tns{F}}=
-   * \deriv{\tenseur{C}_{e}}{\tns{F}_{e}}\,.\,
+   * -\Frac{1}{2}\,\deriv{\tenseur{C}_{e}}{\tns{F}_{e}}\,.\,
    * \deriv{}{\Delta\,\tns{F}}\paren{\tns{F}_{e}^{\mathrm{tr}}\,\star\,\paren{\Delta\,\tns{F}_{p}}^{-1}}
    * \]
    *
@@ -434,15 +434,15 @@
    * \partial^{l}_{\star}\paren{\bts{\tns{F}_{e}}}
    * \]
    *
-   * Finalement, \(\deriv{F}{\Delta\,\tns{F}}\) s'écrit~:
+   * Finalement, \(\deriv{f_{\tepsilonel}}{\Delta\,\tns{F}}\) s'écrit~:
    * \[
-   * \deriv{f_{\tepsilonel}}{\Delta\,\tns{F}}=\deriv{\tenseur{C}_{e}}{\tns{F}_{e}}\,.\,
+   * \deriv{f_{\tepsilonel}}{\Delta\,\tns{F}}=-\Frac{1}{2}\,\deriv{\tenseur{C}_{e}}{\tns{F}_{e}}\,.\,
    * \partial^{l}_{\star}\paren{\paren{\Delta\,\tns{F}_{p}}^{-1}}\,.\,
    * \partial^{l}_{\star}\paren{\bts{\tns{F}_{e}}}
    * \]
    */
-  const t2tost2<N,real> dfeel_dF =
-    dEgl_dFe*t2tot2<N,real>::tpld(inv_dFp,t2tot2<N,real>::tpld(Fe0));
+  const t2tot2<N,real>  dFe_dDF_tot = t2tot2<N,real>::tpld(inv_dFp,t2tot2<N,real>::tpld(Fe0));
+  const t2tost2<N,real> dfeel_dDF  = -0.5*dC_dFe*dFe_dDF_tot;
   /*!
    * La dérivée \(\deriv{\Delta\,g_{i}}{\Delta\,\tns{F}}\) est alors~:
    * \[
@@ -452,15 +452,14 @@
   st2tost2<N,real> Je;
   tvector<12u,Stensor> Jg;
   getPartialJacobianInvert(Je,Jg);
-  // calcul de dinv_Fp_dF  
-  t2tot2<N,real> dinv_Fp_dF((ss.mu[0])^(Jg[0]|dfeel_dF));
+  // calcul de dinv_Fp_dDF  
+  t2tot2<N,real> dinv_Fp_dDF((ss.mu[0])^(Jg[0]|dfeel_dDF));
   for(unsigned short i=1;i!=12;++i){
-    dinv_Fp_dF += (ss.mu[i])^(Jg[i]|dfeel_dF);
+    dinv_Fp_dDF += (ss.mu[i])^(Jg[i]|dfeel_dDF);
   }
   // On peut maintenant calculer dFe_dDF
   const t2tot2<N,real> dFe_dDF=
-    t2tot2<N,real>::tpld(inv_dFp,t2tot2<N,real>::tpld(Fe0))+
-    t2tot2<N,real>::tprd(Fe_tr,dinv_Fp_dF);
+    dFe_dDF_tot+t2tot2<N,real>::tprd(Fe_tr,dinv_Fp_dDF);
   // et enfin, l'opérateur tangent
   Dt = dtau_dFe*dFe_dDF;
 }

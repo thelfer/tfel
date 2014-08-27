@@ -92,8 +92,18 @@ namespace tfel
       FiniteStrainBehaviourTangentOperator(tfel::math::st2tost2<N,StressType>* const D)
 	: GenType(D)
       {}
-      // make the set_uninitialised method public
-      using GenType::set_uninitialised;
+      /*!
+       * \param const T1&, the value affected to the GenType.
+       * \pre   T1 must be a type that the GenType can hold.
+       */
+      template<typename T1>
+      TFEL_INLINE
+      typename tfel::meta::EnableIf<
+	tfel::meta::TLCountNbrOfT<T1,TOTypes>::value==1, 
+	void >::type 
+      set_uninitialised(void){
+	GenType::template set_uninitialised<T1>();
+      }
       /*!
        * assignement operator
        */

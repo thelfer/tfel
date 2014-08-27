@@ -20,7 +20,9 @@ namespace mfront{
     // Default state variable
     this->registerVariable("eel",false);
     this->registerVariable("deel",false);
-    this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
+    VariableDescription eel("StrainStensor","eel",1u,0u);
+    eel.description = "elastic strain";
+    this->mb.addStateVariable(h,eel);
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
   } // end of MFrontImplicitParser::MFrontImplicitParser
 

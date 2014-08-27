@@ -597,10 +597,27 @@ namespace mfront
   //   }
   // } // end of MTestUmatfiniteStrainRotationMatrix3D::rotateStiffnessMatrixBackward
 
+  static tfel::material::ModellingHypothesis::Hypothesis
+  getEffectiveModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis& h,
+				  const std::string& l,
+				  const std::string& b)
+  {
+    using namespace tfel::system;
+    using namespace tfel::material;
+    typedef ExternalLibraryManager ELM;
+    if(h==ModellingHypothesis::PLANESTRESS){
+      ELM& elm = ELM::getExternalLibraryManager();
+      if(elm.checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(l,b)){
+	return ModellingHypothesis::GENERALISEDPLANESTRAIN;
+      }
+    }
+    return h;
+  } // end of getEffectiveModellingHypothesis
+
   MTestUmatFiniteStrainBehaviour::MTestUmatFiniteStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
 								 const std::string& l,
 								 const std::string& b)
-    : MTestUmatStandardBehaviour(h,l,b)
+    : MTestUmatStandardBehaviour(getEffectiveModellingHypothesis(h,l,b),l,b)
   {
     using namespace tfel::system;
     using namespace tfel::material;
@@ -772,13 +789,15 @@ namespace mfront
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s1(i)  /= sqrt2;
     }
-    (this->fct)(&ntens,&dt,&drot(0,0),
-		&D(0,0),&uu0(0,0),&uu1(0,0),
+    UMATReal ndt(1.);
+    (this->fct)(&s1(0),&iv(0),&D(0,0),
+		0,0,0,0,0,0,0,
+		0,0,0,&dt,
 		&ev0(0),&dev(0),
-		&mp(0),&nprops,
 		&ev0(0)+1,&dev(0)+1,
-		&iv(0),&nstatv,&s1(0),
-		&ndi,&kinc);
+		0,&ndi,0,&ntens,&nstatv,&mp(0),
+		&nprops,0,&drot(0,0),&ndt,
+		0,&uu0(0,0),&uu1(0,0),0,0,0,0,0,&kinc,0);
     if(kinc!=1){
       return false;
     }

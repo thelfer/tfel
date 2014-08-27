@@ -1,4 +1,4 @@
-SUBDIRS = aster castem castem2 cyrano
+SUBDIRS = aster castem castem2 cyrano secant
 
 MFRONTS= DDIF2.mfront                                                      \
          Elasticity.mfront                                                 \
@@ -12,10 +12,12 @@ MFRONTS= DDIF2.mfront                                                      \
 	 DruckerPrager.mfront                                              \
          Norton.mfront                                                     \
          ImplicitNorton.mfront                                             \
-         ImplicitFiniteStrainNorton.mfront                                 \
          ImplicitNorton2.mfront                                            \
+         ImplicitNorton3.mfront                                            \
+         ImplicitFiniteStrainNorton.mfront                                 \
          ImplicitNorton_Broyden.mfront                                     \
          ImplicitNorton_Broyden2.mfront                                    \
+         ImplicitNorton_LevenbergMarquardt.mfront                          \
 	 EllipticCreep.mfront                                              \
          NortonRK.mfront                                                   \
          NortonRK2.mfront                                                  \
@@ -27,6 +29,7 @@ MFRONTS= DDIF2.mfront                                                      \
          Norton_rk42.mfront                                                \
          Norton_rkCastem.mfront                                            \
          Burger.mfront                                                     \
+         AgeingBurger.mfront                                               \
          OrthotropicCreep.mfront                                           \
          OrthotropicCreep_rk42.mfront                                      \
          OrthotropicCreep_rkCastem.mfront                                  \
@@ -48,6 +51,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 MonoCristal_DD_CFC_Irradiation.mfront                             \
 	 MonoCristal_DD_CFC_InteractionMatrix.mfront                       \
 	 MonoCristal_DD_CC.mfront                                          \
+	 MonoCristal_DD_CC_LevenbergMarquardt.mfront                       \
 	 MonoCristal_DD_CC_NumericalJacobian.mfront                        \
 	 MonoCristal_DD_CC_Irradiation.mfront                              \
 	 MonoCristal_DD_CC_Irradiation_NumericalJacobian.mfront            \
@@ -74,6 +78,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 ImplicitSimoMieheElastoPlasticity.mfront                          \
 	 T91ViscoplasticBehaviour.mfront                                   \
 	 FiniteStrainSingleCrystal.mfront                                  \
+	 FiniteStrainSingleCrystal2.mfront                                 \
 	 FiniteStrainSingleCrystal_NumericalJacobian.mfront                \
 	 AnistropicLemaitreViscoplasticBehaviour.mfront
 
@@ -100,6 +105,7 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/polycristals_dd_cfc.ref                             \
 	   references/hayhurst.ref                                        \
 	   references/burger.ref                                          \
+	   references/ageingburger.ref                                    \
 	   references/tvergaard.ref                                       \
 	   references/druckerprager.ref                                   \
 	   references/druckerprager2.ref                                  \
@@ -110,6 +116,6 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/T91-satohtest.ref                                   \
 	   references/finitestrainsinglecrystal-001.ref			  \
 	   references/finitestrainsinglecrystal-012.ref			  \
-	   references/finitestrainsinglecrystal-159.ref                     \
+	   references/finitestrainsinglecrystal-159.ref                   \
 	   references/AnistropicLemaitreViscoplasticBehaviour.ref         \
 	   references/ViscoChaboche.ref

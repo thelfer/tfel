@@ -36,6 +36,11 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   Images/FueLPellet-DishingFilling1.eps		    \
 	   Images/FueLPellet-DishingFilling2.eps		    \
 	   Images/cyrano-mfront.eps		                    \
+	   Images/norton.inp		                            \
+	   Images/saint_venant_elas.inp				    \
+	   Images/ZebulonNorton.eps	                            \
+	   Images/OrthotropicSaintVenantKirchhoffZebulon.eps	    \
+	   Images/OrthotropicSaintVenantKirchhoffElasticity.mfront  \
 	   annexe-orthotropie.tex		                    \
 	   style.ist				                    \
 	   mfront/SaintVenantKirchhoffElasticity.tex                \

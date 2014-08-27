@@ -5,12 +5,13 @@ TFEL version prior to 0.1 were released under both the LGPL and the
 CECILL-B licences. A copy of those licences are included in the
 distributions of TFEL.
 
-Later versions were developped inside CEA.
+TFEL versions 1.x were developped by CEA within the PLEIADES
+project. Since svn revision 584, TFEL is part of the pleiades
+architecture projet.
 
-TFEL Copyright Notice (2013). Commissariat à l'Énergie Atomique.  All
+TFEL Copyright Notice (2014). Commissariat à l'Énergie Atomique.  All
 rights reserved.
 
-Since revision 584, tfel is part of the pleiades architecture projet.
 
 
 

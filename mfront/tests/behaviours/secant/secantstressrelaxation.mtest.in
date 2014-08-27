@@ -1,0 +1,46 @@
+ /*! 
+ * \file   norton.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@ModellingHypothesis 'Axisymmetrical';
+@AccelerationAlgorithm 'Secant';
+
+@Real 'Y'  150.e9;
+@Real 'nu' 0.3;
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatnorton';
+@MaterialProperty<constant> 'YoungModulus'      'Y';
+@MaterialProperty<constant> 'PoissonRatio'      'nu';
+@MaterialProperty<constant> 'A' 8.e-67;
+@MaterialProperty<constant> 'E' 8.2;
+
+@Real 'err' 1.5e-4;
+@Real 'srr' 'YoungModulus*err';
+@ImposedStrain 'ERR' 'err';
+// Initial value of the elastic strain
+@Real 'EELRR0' 'err';
+@Real 'EELZZ0' '-PoissonRatio*err';
+@InternalStateVariable 'ElasticStrain' {'EELRR0','EELZZ0','EELZZ0',0.};
+// Initial value of the total strain
+@Strain {'EELRR0','EELZZ0','EELZZ0',0.};
+// Initial value of the total stresses
+@Stress {'srr',0.,0.,0.};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,3600 in 100};
+
+// // tests on internal state variables
+@Test<function> 'ElasticStrainRR' '(srr/Y)/((1+(E-1)*A*Y*t*srr**(E-1))**(1./(E-1)))'      1.5e-6;
+@Test<function> 'ElasticStrainTT' '-nu*(srr/Y)/((1+(E-1)*A*Y*t*srr**(E-1))**(1./(E-1)))'  1.5e-6;
+@Test<function> 'ElasticStrainZZ' '-nu*(srr/Y)/((1+(E-1)*A*Y*t*srr**(E-1))**(1./(E-1)))'  1.5e-6;
+@Test<function> 'ElasticStrainRZ' '0.'      1.e-12;
+@Test<function> 'EquivalentViscoplasticStrain' '(srr/Y)*(1-1/((1+(E-1)*A*Y*t*srr**(E-1))**(1./(E-1))))' 1.5e-6;
+// // this test is a bit paranoiac since SRR is imposed
+@Test<function> 'SRR' 'srr/((1+(E-1)*A*Y*t*srr**(E-1))**(1./(E-1)))' 1.e6;
+// check that the mechanical equilibrium is satisfied
+@Test<function> 'SZZ' '0.'      1.e-3;
+@Test<function> 'STT' '0.'      1.e-3;
+@Test<function> 'SRZ' '0.'      1.e-3;

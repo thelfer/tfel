@@ -31,7 +31,7 @@ namespace mfront
     using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
     ELM& elm = ELM::getExternalLibraryManager();
-    this->fct = elm.getUMATFunction(l,b);
+    this->fct = elm.getCyranoFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
     const bool b1 = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);
     const bool b2 = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,b,this->hypothesis);
@@ -67,13 +67,6 @@ namespace mfront
       }
       this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
     }
-    // if(h==ModellingHypothesis::PLANESTRESS){
-    //   ELM& elm = ELM::getExternalLibraryManager();
-    //   if(elm.checkIfCyranoBehaviourUsesGenericPlaneStressAlgorithm(l,b)){
-    // 	this->ivnames.push_back("AxialStrain");
-    // 	this->ivtypes.push_back(0);
-    //   }
-    // }
   }
 
   void

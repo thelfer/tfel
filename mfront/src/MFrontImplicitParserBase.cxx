@@ -55,9 +55,21 @@ namespace mfront{
     this->registerVariable("njacobian",false);
     this->registerVariable("partial_jacobian",false);
     this->registerVariable("jacobian2",false);
+    this->registerVariable("levmar_jacobian_1",false);
+    this->registerVariable("levmar_fzeros_1",false);
+    this->registerVariable("levmar_sm",false);
+    this->registerVariable("levmar_mu",false);
+    this->registerVariable("levmar_muF",false);
+    this->registerVariable("levmar_r",false);
+    this->registerVariable("levmar_p0",false);
+    this->registerVariable("levmar_p1",false);
+    this->registerVariable("levmar_p2",false);
+    this->registerVariable("levmar_m",false);
     this->registerVariable("t",false);
     this->registerVariable("dt_",false);
     this->registerVariable("error",false);
+    this->registerVariable("error_1",false);
+    this->registerVariable("error_p",false);
     this->registerVariable("idx",false);
     this->registerVariable("idx2",false);
     this->registerVariable("idx3",false);
@@ -214,7 +226,9 @@ namespace mfront{
     				  "invalid maximum increment value per iteration.");
     	}
 	this->registerVariable(n+"_maximum_increment_value_per_iteration",false);
-    	this->mb.addParameter(h,VariableDescription("real",n+"_maximum_increment_value_per_iteration",1u,0u));
+	VariableDescription miv("real",n+"_maximum_increment_value_per_iteration",1u,0u);
+	miv.description = "maximum increment allowed per iteration for variable '"+n+"'";
+    	this->mb.addParameter(h,miv);
 	this->mb.setParameterDefaultValue(h,n+"_maximum_increment_value_per_iteration",value);
     	++(this->current);
     	return;
@@ -268,7 +282,9 @@ namespace mfront{
       this->throwRuntimeError("MFrontImplicitParserBase::treatAccelerationTrigger",
 			      "invalid acceleration trigger value.");
     }
-    this->mb.addParameter(h,VariableDescription("ushort","accelerationTrigger",1u,0u));
+    VariableDescription at("ushort","accelerationTrigger",1u,0u);
+    at.description = "trigger period for the Cast3M acceleration algorithm";
+    this->mb.addParameter(h,at);
     this->mb.setParameterDefaultValue(h,"accelerationTrigger",accelerationTrigger);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatAccelerationTrigger",";");
   } // end of MFrontImplicitParserBase::treatAccelerationTrigger
@@ -417,6 +433,10 @@ namespace mfront{
       this->algorithm = MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN;
     } else if(this->current->value=="Broyden2"){
       this->algorithm = MFrontImplicitParserBase::BROYDEN2;
+    } else if(this->current->value=="LevenbergMarquardt"){
+      this->algorithm = MFrontImplicitParserBase::LEVENBERGMARQUARDT;
+    } else if(this->current->value=="LevenbergMarquardt_NumericalJacobian"){
+      this->algorithm = MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ;
     } else {
       this->throwRuntimeError("MFrontImplicitParserBase::treatAlgorithm : ",
 			      this->current->value+" is not a valid algorithm name\n"
@@ -424,7 +444,7 @@ namespace mfront{
 			      "Broyden, and Broyden2, "
 			      "PowellDogLeg_NewtonRaphson, PowellDogLeg_NewtonRaphson_NumericalJacobian, "
 			      "PowellDogLeg_NewtonRaphson, PowellDogLeg_NewtonRaphson_NumericalJacobian, "
-			      "PowellDogLeg_Broyden.");
+			      "PowellDogLeg_Broyden, LevenbergMarquardt.");
     }
     ++this->current;
     this->readSpecifiedToken("MFrontImplicitParserBase::treatAlgorithm",";");
@@ -450,8 +470,11 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatTheta",";");
-    this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));
+    VariableDescription tv("real","theta",1u,0u);
+    tv.description = "theta value used by the implicit scheme";
+    this->mb.addParameter(h,tv);
     this->mb.setParameterDefaultValue(h,"theta",theta);
+    this->mb.setEntryName(h,"theta","theta");
   } // end of MFrontImplicitParserBase::treatTheta
 
   void
@@ -474,8 +497,11 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatEpsilon",";");
-    this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+    VariableDescription e("real","epsilon",1u,0u);
+    e.description = "value used to stop the iteration of the implicit algorithm";
+    this->mb.addParameter(h,e);
     this->mb.setParameterDefaultValue(h,"epsilon",epsilon);
+    this->mb.setEntryName(h,"epsilon","epsilon");
   } // MFrontImplicitParserBase::treatEpsilon
 
   void
@@ -498,7 +524,9 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontImplicitParserBase::treatPerturbationValueForNumericalJacobianComputation",";");
-    this->mb.addParameter(h,VariableDescription("real","numerical_jacobian_epsilon",1u,0u));
+    VariableDescription e("real","numerical_jacobian_epsilon",1u,0u);
+    e.description = "perturbation value used to compute a finite difference approximation of the jacobian";
+    this->mb.addParameter(h,e);
     this->mb.setParameterDefaultValue(h,"numerical_jacobian_epsilon",epsilon);
   } // MFrontImplicitParserBase::treatEpsilon
 
@@ -846,42 +874,42 @@ namespace mfront{
     }
     // output
     this->checkBehaviourFile();
-    this->behaviourFile << "#include\"TFEL/Math/st2tost2.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/st2tost2.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"" << endl;
     if(has_scalar_array){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx\"\n";
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx\"" << endl;
     }
     // tiny vectors
     if(has_tvector){
-      this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n";
-      this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n";
+      this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n" << endl;
     }
     if((has_scalar)&&(has_tvector)){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyVectorView.hxx\"\n";
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyVectorView.hxx\"" << endl;
     }
     if(has_tvector_array){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx\"\n";
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx\"" << endl;
     }
     // symmetric tensors
     if(has_stensor){
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx\"\n\n";
-      this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx\"\n\n";
+      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx\"\n" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx\"\n" << endl;
     }
     if((has_scalar)&&(has_stensor)){
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n";
+      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"" << endl;
     }
     if(has_stensor_array){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"\n";
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"" << endl;
     }
   } // end of MFrontImplicitParserBase::writeBehaviourParserSpecificIncludes(void)
   
@@ -910,23 +938,23 @@ namespace mfront{
 	SupportedTypes::TypeFlag flag  = this->getTypeFlag(p->type);
 	SupportedTypes::TypeFlag flag2 = this->getTypeFlag(p2->type);
 	if((p->arraySize!=1u)||(p2->arraySize!=1u)){
-	  this->behaviourFile << "/*!\n"
+	  this->behaviourFile << "/*!" << endl
 			      << " * \\return the part of the jacobian matrix "
 			      << "corresponding to the derivative "
 			      << "of variable " << p->name 
-			      << " by variable " << p2->name << "\n"
-			      << " */\n";
+			      << " by variable " << p2->name << "" << endl
+			      << " */" << endl;
 	}
 	if((p->arraySize!=1u)&&(p2->arraySize==1u)){
 	  if(flag==SupportedTypes::Scalar){
 	    if(flag2==SupportedTypes::Scalar){
-	      this->behaviourFile << "real&\n"
+	      this->behaviourFile << "real&" << endl
 				  << "df" << p->name << "_dd" << p2->name
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
-				  << "}\n\n";
-	      this->behaviourFile << "real&\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian," << endl
+				  << "const unsigned short idx){" << endl
+				  << "return tjacobian(" << n << "+idx, " << n2 << ");" << endl
+				  << "}\n" << endl;
+	      this->behaviourFile << "real&" << endl
 				  << "df" << p->name << "_dd" << p2->name << "(const unsigned short idx){\n"
 				  << "return this->jacobian(" << n << "+idx, " << n2 << ");\n"
 				  << "}\n\n";
@@ -1286,7 +1314,8 @@ namespace mfront{
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
       this->writeComputeNumericalJacobian(h);
     }
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
@@ -1294,7 +1323,9 @@ namespace mfront{
        (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)||
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
       this->writeGetPartialJacobianInvert(h);
     }
     // compute stress
@@ -1698,6 +1729,216 @@ namespace mfront{
     }
     this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
 						 MechanicalBehaviourData::Integrator);
+    if((this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)||
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
+      this->writeLevenbergMarquardtAlgorithm(h);
+    } else {
+      this->writeStandardImplicitAlgorithm(h);
+    }
+    this->behaviourFile << "if(this->iter==this->iterMax){\n";
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : no convergence after \" "
+			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
+      this->behaviourFile << "cout << *this << endl;\n";
+    }
+    if(this->mb.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
+    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(h);
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : convergence after \" "
+			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
+    }
+    this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+      if(this->nf.find(p->name)!=this->nf.end()){
+	this->behaviourFile << "this->d" << p->name << " *= " << this->nf.find(p->name)->second << ";\n";
+      }
+    }
+    this->behaviourFile << "this->updateIntegrationVariables();\n";
+    this->behaviourFile << "this->updateStateVariables();\n";
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
+      this->behaviourFile << "this->computeFinalStress();\n";
+    }
+    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
+    for(p3  = d.getBounds().begin();
+	p3 != d.getBounds().end();++p3){
+      if(p3->varCategory==BoundsDescription::StateVariable){
+	p3->writeBoundsChecks(this->behaviourFile);
+      }
+    }
+    this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
+    if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
+      if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+      } else {
+	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
+      }
+      if(this->mb.useQt()){        
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+      } else {
+	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+      }
+      this->behaviourFile << "}\n";
+    } else {
+      this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");\n";
+      this->behaviourFile << "msg +=\"unimplemented feature\";\n";
+      this->behaviourFile << "throw(runtime_error(msg));\n";
+    }
+    this->behaviourFile << "}\n";
+    if(this->mb.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
+    }
+    this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
+    this->writeComputeFdF(h);
+  }
+
+  void
+  MFrontImplicitParserBase::writeLevenbergMarquardtAlgorithm(const Hypothesis h)
+  {
+    using namespace std;
+    const string btype = this->convertBehaviourTypeToString();
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
+    VariableDescriptionContainer::const_iterator p;
+    SupportedTypes::TypeSize n2;
+    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+      n2 += this->getTypeSize(p->type,p->arraySize);
+    }
+    this->behaviourFile << "// dumping parameter" << endl;
+    this->behaviourFile << "real levmar_mu = this->levmar_mu0;" << endl;
+    this->behaviourFile << "real error;" << endl;
+    this->behaviourFile << "bool converged=false;" << endl;
+    this->behaviourFile << "this->iter=0;" << endl;
+    if(getDebugMode()){
+      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
+			  << "::integrate() : beginning of resolution\" << endl;" << endl;
+    }
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
+      this->behaviourFile << "this->computeStress();" << endl;
+    }
+    this->behaviourFile << "if(!this->computeFdF()){" << endl;
+    if(getDebugMode()){
+      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
+			  << "::integrate() : computFdF returned false on first call, abording...\" << endl;" << endl;
+    }
+    if(this->mb.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;" << endl;
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;" << endl;
+    }
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "error=norm(this->fzeros);" << endl;
+    this->behaviourFile << "while((converged==false)&&" << endl;
+    this->behaviourFile << "(this->iter<" << this->mb.getClassName() << "::iterMax)){" << endl;
+    this->behaviourFile << "++(this->iter);" << endl;
+    this->behaviourFile << "this->zeros_1  = this->zeros;" << endl;
+    this->writeComparisonToNumericalJacobian(h);
+    this->behaviourFile << "converged = ((error)/(real(" << n2 << "))<";
+    this->behaviourFile << "(this->epsilon));" << endl;
+    if(getDebugMode()){
+      this->behaviourFile << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : iteration \" "
+			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << \", dumping parameter : \" << levmar_mu << endl;" << endl;
+    }
+    this->behaviourFile << "if(!converged){" << endl;
+    this->behaviourFile << "// matrix containing tJJ+levmar_mu*I" << endl;
+    this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> levmar_m;" << endl;
+    this->behaviourFile << "// vector containing tJ*F" << endl;
+    this->behaviourFile << "tvector<" << n2 << ",real> levmar_sm;" << endl;
+    this->behaviourFile << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl
+			<< "levmar_sm(idx)=real(0);"
+			<< "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl
+			<< "levmar_sm(idx)+=(this->jacobian(idx2,idx))*(this->fzeros(idx2));"
+			<< "levmar_m(idx,idx2)=real(0);" << endl
+			<< "for(unsigned short idx3=0;idx3!=" << n2 << ";++idx3){" << endl
+			<< "levmar_m(idx,idx2)+=(this->jacobian(idx3,idx))*(this->jacobian(idx3,idx2));" << endl
+			<< "}" << endl
+			<< "}" << endl
+			<< "}" << endl
+			<< "const real levmar_muF = (levmar_mu)*norm(this->fzeros);" << endl
+			<< "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl
+			<< "levmar_m(idx,idx)+=levmar_muF;" << endl
+			<< "}" << endl;
+    this->behaviourFile << "try{" << endl;
+    this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
+						 "TinyMatrixSolve","lu");
+    this->behaviourFile << "TinyMatrixSolve<" << n2
+			<< "," << "real>::exe(levmar_m,levmar_sm);" << endl;
+    this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "catch(LUException&){" << endl;
+    if(this->mb.useQt()){        
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;" << endl;
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;" << endl;
+    }
+    this->behaviourFile << "}" << endl;
+    this->writeLimitsOnIncrementValues(h,"levmar_sm");
+    // levmar_sm contains the step
+    this->behaviourFile << "this->zeros -= levmar_sm;" << endl; 
+    this->behaviourFile << "tvector<" << n2 <<  ",real> levmar_fzeros_1 = this->fzeros;" << endl; 
+    this->behaviourFile << "tmatrix<" << n2 << "," << n2 <<  ",real> levmar_jacobian_1 = this->jacobian;" << endl; 
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
+      this->behaviourFile << "this->computeStress();" << endl;
+    }
+    this->behaviourFile << "if(!this->computeFdF()){" << endl;
+    this->behaviourFile << "// rejecting the step" << endl;
+    this->behaviourFile << "this->zeros     = this->zeros_1;" << endl; 
+    this->behaviourFile << "this->fzeros    = levmar_fzeros_1;" << endl; 
+    this->behaviourFile << "this->jacobian  = levmar_jacobian_1;" << endl; 
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
+      this->behaviourFile << "this->computeStress();" << endl;
+    }
+    this->behaviourFile << "// updating mu" << endl;
+    this->behaviourFile << "levmar_mu *= 4;" << endl;
+    this->behaviourFile << "} else {" << endl;
+    this->behaviourFile << "const real error_1=error;" << endl;
+    this->behaviourFile << "const real error_p=norm(levmar_fzeros_1-levmar_jacobian_1*levmar_sm);" << endl;
+    this->behaviourFile << "error=norm(this->fzeros);" << endl;
+    this->behaviourFile << "const real levmar_r = (error*error-error_1*error_1)/(error_p*error_p-error_1*error_1);" << endl;
+    this->behaviourFile << "if(levmar_r<this->levmar_p0){" << endl;
+    this->behaviourFile << "// rejecting the step" << endl;
+    this->behaviourFile << "this->zeros     = this->zeros_1;" << endl; 
+    this->behaviourFile << "this->fzeros    = levmar_fzeros_1;" << endl; 
+    this->behaviourFile << "this->jacobian  = levmar_jacobian_1;" << endl; 
+    this->behaviourFile << "error = error_1;" << endl;
+    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
+      this->behaviourFile << "this->computeStress();" << endl;
+    }
+    this->behaviourFile << "levmar_mu *= 4;" << endl;
+    this->behaviourFile << "} else {" << endl;
+    this->behaviourFile << "// accepting the step and updating mu" << endl;
+    this->behaviourFile << "if(levmar_r<this->levmar_p1){" << endl;
+    this->behaviourFile << "levmar_mu *= 4;" << endl;
+    this->behaviourFile << "} else if(levmar_r>this->levmar_p2){" << endl;
+    this->behaviourFile << "levmar_mu  = max(levmar_mu/4,this->levmar_m);" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}" << endl;
+    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(h);
+    this->writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(h);
+    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}" << endl;
+  } // end of MFrontImplicitParserBase::writeLevenbergMarquardtAlgorithm(const Hypothesis h)
+
+  void
+  MFrontImplicitParserBase::writeStandardImplicitAlgorithm(const Hypothesis h)
+  {
+    using namespace std;
+    const string btype = this->convertBehaviourTypeToString();
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
+    VariableDescriptionContainer::const_iterator p;
+    SupportedTypes::TypeSize n2;
+    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+      n2 += this->getTypeSize(p->type,p->arraySize);
+    }
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian)){
       this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
     }
@@ -1756,106 +1997,7 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "} else {\n";
     this->behaviourFile << "this->zeros_1  = this->zeros;\n";
-    if(this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
-      this->behaviourFile << "this->computeNumericalJacobian(njacobian);\n";
-      n = SupportedTypes::TypeSize();
-      for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-	if(p->arraySize==1){
-	  n3 = SupportedTypes::TypeSize();
-	  for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
-	    if((p->arraySize==1)&&(p2->arraySize==1)){
-	      this->behaviourFile << "// derivative of variable f" << p->name 
-				  << " by variable " << p2->name << "\n";
-	      this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
-	      this->behaviourFile << "// numerical derivative of variable f" << p->name 
-				  << " by variable " << p2->name << "\n";
-	      this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3,
-							   "njacobian","n");
-	      n3 += this->getTypeSize(p2->type,p2->arraySize);
-	    }
-	  }
-	}
-	n += this->getTypeSize(p->type,p->arraySize);
-      }
-      for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-	for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
-	  const VariableDescription& v1 = *p;
-	  const VariableDescription& v2 = *p2;
-	  SupportedTypes::TypeSize nv1 = this->getTypeSize(v1.type,1u);
-	  SupportedTypes::TypeSize nv2 = this->getTypeSize(v2.type,1u);
-	  this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
-			      << "(this->jacobianComparisonCriterium)" <<";\n";
-	  if((v1.arraySize==1u)&&(v2.arraySize==1u)){
-	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-				<< "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 
-				<< "{\n";
-	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-				<< "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << error << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name
-				<< "_dd" << v2.name << " :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	    this->behaviourFile << "cout << \"ndf" << v1.name
-				<< "_dd" << v2.name << " :\\n\" << " 
-				<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
-				<< " - ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
-				<< "df" << v1.name  << "_dd" << v2.name << "-"
-				<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	    this->behaviourFile << "cout << endl;\n";
-	    this->behaviourFile << "}\n";
-	  } else if(((v1.arraySize!=1u)&&(v2.arraySize==1u))||
-		    ((v2.arraySize!=1u)&&(v1.arraySize==1u))){
-	    unsigned short asize;
-	    if(v1.arraySize!=1u){
-	      asize = v1.arraySize;
-	    } else {
-	      asize = v2.arraySize;
-	    }
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << asize << ";++idx){\n";
-	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx)) > error)\n" 
-				<< "{\n";
-	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx)) << \" \" << error << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name
-				<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << "(idx) << endl;\n";
-	    this->behaviourFile << "cout << \"ndf" << v1.name
-				<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx) << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
-				<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \") :\\n\" << "
-				<< "df" << v1.name  << "_dd" << v2.name << "(idx) -"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx) << endl;\n";
-	    this->behaviourFile << "cout << endl;\n";
-	    this->behaviourFile << "}\n";
-	    this->behaviourFile << "}\n";
-	  } else {
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << v1.arraySize << ";++idx){\n";
-	    this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
-	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2)) > error)\n" 
-				<< "{\n";
-	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2)) << \" \" << error << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name
-				<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) << endl;\n";
-	    this->behaviourFile << "cout << \"ndf" << v1.name
-				<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2) << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
-				<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << "
-				<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) -"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2) << endl;\n";
-	    this->behaviourFile << "cout << endl;\n";
-	    this->behaviourFile << "}\n";
-	    this->behaviourFile << "}\n";
-	    this->behaviourFile << "}\n";
-	  }
-	}
-      }
-    }
+    this->writeComparisonToNumericalJacobian(h);
     this->behaviourFile << "error=norm(this->fzeros);\n";
     this->behaviourFile << "converged = ((error)/(real(" << n2 << "))<";
     this->behaviourFile << "(this->epsilon));\n";
@@ -1970,68 +2112,135 @@ namespace mfront{
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
     this->behaviourFile << "}\n";
-    this->behaviourFile << "if(this->iter==this->iterMax){\n";
-    if(getDebugMode()){
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : no convergence after \" "
-			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
-      this->behaviourFile << "cout << *this << endl;\n";
-    }
-    if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
-    } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
-    }
-    this->behaviourFile << "}\n";
-    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(h);
-    if(getDebugMode()){
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : convergence after \" "
-			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
-    }
-    this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+  } // end of MFrontImplicitParserBase::writeStandardImplicitAlgorithm
+
+  void
+  MFrontImplicitParserBase::writeComparisonToNumericalJacobian(const Hypothesis h)
+  {
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
+    SupportedTypes::TypeSize n;
+    SupportedTypes::TypeSize n2;
+    SupportedTypes::TypeSize n3;
+    VariableDescriptionContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p2;
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      if(this->nf.find(p->name)!=this->nf.end()){
-	this->behaviourFile << "this->d" << p->name << " *= " << this->nf.find(p->name)->second << ";\n";
+      n2 += this->getTypeSize(p->type,p->arraySize);
+    }
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
+      this->behaviourFile << "this->computeNumericalJacobian(njacobian);\n";
+      n = SupportedTypes::TypeSize();
+      for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+	if(p->arraySize==1){
+	  n3 = SupportedTypes::TypeSize();
+	  for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
+	    if((p->arraySize==1)&&(p2->arraySize==1)){
+	      this->behaviourFile << "// derivative of variable f" << p->name 
+				  << " by variable " << p2->name << "\n";
+	      this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
+	      this->behaviourFile << "// numerical derivative of variable f" << p->name 
+				  << " by variable " << p2->name << "\n";
+	      this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3,
+							   "njacobian","n");
+	      n3 += this->getTypeSize(p2->type,p2->arraySize);
+	    }
+	  }
+	}
+	n += this->getTypeSize(p->type,p->arraySize);
+      }
+      for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+	for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
+	  const VariableDescription& v1 = *p;
+	  const VariableDescription& v2 = *p2;
+	  SupportedTypes::TypeSize nv1 = this->getTypeSize(v1.type,1u);
+	  SupportedTypes::TypeSize nv2 = this->getTypeSize(v2.type,1u);
+	  this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
+			      << "(this->jacobianComparisonCriterium)" <<";\n";
+	  if((v1.arraySize==1u)&&(v2.arraySize==1u)){
+	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+				<< "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 
+				<< "{\n";
+	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+				<< "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << error << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name
+				<< "_dd" << v2.name << " :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << " << endl;\n";
+	    this->behaviourFile << "cout << \"ndf" << v1.name
+				<< "_dd" << v2.name << " :\\n\" << " 
+				<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
+				<< " - ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
+				<< "df" << v1.name  << "_dd" << v2.name << "-"
+				<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
+	    this->behaviourFile << "cout << endl;\n";
+	    this->behaviourFile << "}\n";
+	  } else if(((v1.arraySize!=1u)&&(v2.arraySize==1u))||
+		    ((v2.arraySize!=1u)&&(v1.arraySize==1u))){
+	    unsigned short asize;
+	    if(v1.arraySize!=1u){
+	      asize = v1.arraySize;
+	    } else {
+	      asize = v2.arraySize;
+	    }
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << asize << ";++idx){\n";
+	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx)) > error)\n" 
+				<< "{\n";
+	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx)) << \" \" << error << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name
+				<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << "(idx) << endl;\n";
+	    this->behaviourFile << "cout << \"ndf" << v1.name
+				<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx) << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
+				<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \") :\\n\" << "
+				<< "df" << v1.name  << "_dd" << v2.name << "(idx) -"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx) << endl;\n";
+	    this->behaviourFile << "cout << endl;\n";
+	    this->behaviourFile << "}\n";
+	    this->behaviourFile << "}\n";
+	  } else {
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << v1.arraySize << ";++idx){\n";
+	    this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
+	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2)) > error)\n" 
+				<< "{\n";
+	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2)) << \" \" << error << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name
+				<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) << endl;\n";
+	    this->behaviourFile << "cout << \"ndf" << v1.name
+				<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2) << endl;\n";
+	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
+				<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << "
+				<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) -"
+				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2) << endl;\n";
+	    this->behaviourFile << "cout << endl;\n";
+	    this->behaviourFile << "}\n";
+	    this->behaviourFile << "}\n";
+	    this->behaviourFile << "}\n";
+	  }
+	}
       }
     }
-    this->behaviourFile << "this->updateIntegrationVariables();\n";
-    this->behaviourFile << "this->updateStateVariables();\n";
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
-      this->behaviourFile << "this->computeFinalStress();\n";
+  }
+
+  void
+  MFrontImplicitParserBase::writeComputeFdF(const Hypothesis h)
+  {
+    using namespace std;
+    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
+    SupportedTypes::TypeSize n;
+    SupportedTypes::TypeSize n2;
+    SupportedTypes::TypeSize n3;
+    VariableDescriptionContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p2;
+    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+      n2 += this->getTypeSize(p->type,p->arraySize);
     }
-    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
-    for(p3  = d.getBounds().begin();
-	p3 != d.getBounds().end();++p3){
-      if(p3->varCategory==BoundsDescription::StateVariable){
-	p3->writeBoundsChecks(this->behaviourFile);
-      }
-    }
-    this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
-      if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
-      } else {
-	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
-      }
-      if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
-      } else {
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
-      }
-      this->behaviourFile << "}\n";
-    } else {
-      this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");\n";
-      this->behaviourFile << "msg +=\"unimplemented feature\";\n";
-      this->behaviourFile << "throw(runtime_error(msg));\n";
-    }
-    this->behaviourFile << "}\n";
-    if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
-    } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
-    }
-    this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief compute fzeros and jacobian\n";
     this->behaviourFile << "*/\n";
@@ -2079,7 +2288,9 @@ namespace mfront{
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)||
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
       n = SupportedTypes::TypeSize();
       for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
 	n3 = SupportedTypes::TypeSize();
@@ -2096,7 +2307,8 @@ namespace mfront{
       }
     }
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)){
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)){
       for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
 	this->jacobianPartsUsedInIntegrator.insert("df"+p->name+"_dd"+p->name);
       }
@@ -2122,7 +2334,8 @@ namespace mfront{
     if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
+       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)){
       for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
 	for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
 	  if((p->arraySize==1u)&&(p2->arraySize==1u)){
@@ -2721,11 +2934,17 @@ namespace mfront{
     // creating default parameters if not explicitely specified by the user
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->mb.hasParameter(h,"epsilon")){
-      this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+      VariableDescription e("real","epsilon",1u,0u);
+      e.description = "value used to stop the iteration of the implicit algorithm";
+      this->mb.addParameter(h,e);
+      this->mb.setEntryName(h,"epsilon","epsilon");
       this->mb.setParameterDefaultValue(h,"epsilon",1.e-8);
     }
     if(!this->mb.hasParameter(h,"theta")){
-      this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));
+      VariableDescription tv("real","theta",1u,0u);
+      tv.description = "theta value used by the implicit scheme";
+      this->mb.addParameter(h,tv);
+      this->mb.setEntryName(h,"theta","theta");
       this->mb.setParameterDefaultValue(h,"theta",0.5);
     }
     if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
@@ -2736,11 +2955,35 @@ namespace mfront{
 	this->mb.setParameterDefaultValue(h,"powell_dogleg_trust_region_size",1.e-4);
       }
     }
+    if((this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)||
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
+      if(!this->mb.hasParameter(h,"levmar_mu0")){
+	this->mb.addParameter(h,VariableDescription("real","levmar_mu0",1u,0u));
+	this->mb.setParameterDefaultValue(h,"levmar_mu0",1.e-6);
+      }
+      if(!this->mb.hasParameter(h,"levmar_p0")){
+	this->mb.addParameter(h,VariableDescription("real","levmar_p0",1u,0u));
+	this->mb.setParameterDefaultValue(h,"levmar_p0",1.e-4);
+      }
+      if(!this->mb.hasParameter(h,"levmar_p1")){
+	this->mb.addParameter(h,VariableDescription("real","levmar_p1",1u,0u));
+	this->mb.setParameterDefaultValue(h,"levmar_p1",0.25);
+      }
+      if(!this->mb.hasParameter(h,"levmar_p2")){
+	this->mb.addParameter(h,VariableDescription("real","levmar_p2",1u,0u));
+	this->mb.setParameterDefaultValue(h,"levmar_p2",0.75);
+      }
+      if(!this->mb.hasParameter(h,"levmar_m")){
+	this->mb.addParameter(h,VariableDescription("real","levmar_m",1u,0u));
+	this->mb.setParameterDefaultValue(h,"levmar_m",1.e-8);
+      }
+    }
     if((this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false))||
        (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
+       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
        (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)){
+       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
       const string nje = "numerical_jacobian_epsilon";
       if(!this->mb.hasParameter(h,nje)){
 	const double eps = 0.1*this->mb.getFloattingPointParameterDefaultValue(h,"epsilon");
@@ -2801,7 +3044,8 @@ namespace mfront{
     }
     if(this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
       if((this->algorithm!=MFrontImplicitParserBase::NEWTONRAPHSON)&&
-	 (this->algorithm!=MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)){
+	 (this->algorithm!=MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)&&
+	 (this->algorithm!=MFrontImplicitParserBase::LEVENBERGMARQUARDT)){
 	string msg("MFrontImplicitParserBase::endsInputFileProcessing :");
 	msg += "@CompareToNumericalJacobian can only be used with the NewtonRaphson algorithm";
 	throw(runtime_error(msg));
@@ -2811,24 +3055,22 @@ namespace mfront{
     // correct prediction to take into account normalisation factors
     const set<Hypothesis> mh(this->mb.getDistinctModellingHypotheses());
     for(set<Hypothesis>::const_iterator ph=mh.begin();ph!=mh.end();++ph){
-      if(*ph!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	if(this->mb.hasCode(*ph,MechanicalBehaviourData::ComputePredictor)){
-	  CodeBlock predictor;
-	  VariableDescriptionContainer::const_iterator p;
-	  const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(*ph);
-	  const VariableDescriptionContainer& sv = d.getIntegrationVariables();
-	  for(p=sv.begin();p!=sv.end();++p){
-	    if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+p->name)!=
-	       this->integrationVariablesIncrementsUsedInPredictor.end()){
-	      if(nf.find(p->name)!=nf.end()){
-		predictor.code += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
-	      }
+      if(this->mb.hasCode(*ph,MechanicalBehaviourData::ComputePredictor)){
+	CodeBlock predictor;
+	VariableDescriptionContainer::const_iterator p;
+	const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(*ph);
+	const VariableDescriptionContainer& sv = d.getIntegrationVariables();
+	for(p=sv.begin();p!=sv.end();++p){
+	  if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+p->name)!=
+	     this->integrationVariablesIncrementsUsedInPredictor.end()){
+	    if(nf.find(p->name)!=nf.end()){
+	      predictor.code += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
 	    }
 	  }
-	  this->mb.setCode(*ph,MechanicalBehaviourData::ComputePredictor,predictor,
-			   MechanicalBehaviourData::CREATEORAPPEND,
-			   MechanicalBehaviourData::AT_END);
 	}
+	this->mb.setCode(*ph,MechanicalBehaviourData::ComputePredictor,predictor,
+			 MechanicalBehaviourData::CREATEORAPPEND,
+			 MechanicalBehaviourData::AT_END);
       }
     }
     if(!this->mb.areAllMechanicalDataSpecialised()){

@@ -82,12 +82,11 @@ Shau = 'FACE' 2 Pave 'COULEUR' 'BLEU' ;
 * l'operateur de convergence mecanique de PASAPAS-INCREME.
 *
 coel2D = 'MOTS' 'YOUN' 'NU' 'RHO' 'ALPH' 'C1' 'C2';
-cmp='TABLE' ;
-cmp.'LIBRAIRIE' = '../libMFrontCastemBehaviours.so' ;
-cmp.'MODELE'    = 'umatcompressibleneohookeanbehaviour';
 
 mo = 'MODELISER' Pave 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
-   'NON_LINEAIRE' 'UTILISATEUR' 'DESC_LOI' cmp
+   'NON_LINEAIRE' 'UTILISATEUR'
+   'LIB_LOI' '../libMFrontCastemBehaviours.so'
+   'FCT_LOI' 'umatcompressibleneohookeanbehaviour'
    'C_MATERIAU' coel2D
    'CONS' M;
 

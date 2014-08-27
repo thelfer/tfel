@@ -67,7 +67,7 @@ namespace umat
   {
     const UMATReal E   = props[0];
     const UMATReal n   = props[1];
-    const UMATReal C1  = E/(1+n*n);
+    const UMATReal C1  = E/(1-n*n);
     const UMATReal C2  = n*C1;
     const UMATReal C3  = (1-n)*C1;
     C(0,0)=C1;

@@ -5,16 +5,16 @@
  * \brief  26 nov. 2013
  */
 
-@ModellingHypothesis 'GeneralisedPlaneStrain';
+@ModellingHypothesis 'Axisymmetrical';
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astersaintvenantkirchhoffelasticity3';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
-@ImposedDrivingVariable 'FXX' {0:1.,1.:1.2};
-@ImposedDrivingVariable 'FYY' 1.;
+@ImposedDrivingVariable 'FRR' {0:1.,1.:1.2};
 @ImposedDrivingVariable 'FZZ' 1.;
-@ImposedDrivingVariable 'FXY' 0.;
-@ImposedDrivingVariable 'FYX' 0.;
+@ImposedDrivingVariable 'FTT' 1.;
+@ImposedDrivingVariable 'FRZ' 0.;
+@ImposedDrivingVariable 'FZR' 0.;
 
 @ExternalStateVariable 'Temperature' 293.15;
 
@@ -22,7 +22,7 @@
 
 @Real 'lambda' 'PoissonRatio*YoungModulus/((1+PoissonRatio)*(1-2*PoissonRatio))';
 @Real 'mu'     'YoungModulus/(2*(1+PoissonRatio))';
-@Test<function> {'SXX':'FXX*(lambda+2*mu)*(FXX**2-1)/2'} 1.e-2;
-@Test<function> {'SYY':'lambda*(FXX**2-1)/(2*FXX)'}      1.e-2;
-@Test<function> {'SZZ':'lambda*(FXX**2-1)/(2*FXX)'}      1.e-2;
-@Test<function> {'SXY':'0'} 1.e-2;
+@Test<function> {'SRR':'FRR*(lambda+2*mu)*(FRR**2-1)/2'} 1.e-2;
+@Test<function> {'SZZ':'lambda*(FRR**2-1)/(2*FRR)'}      1.e-2;
+@Test<function> {'STT':'lambda*(FRR**2-1)/(2*FRR)'}      1.e-2;
+@Test<function> {'SRZ':'0'} 1.e-2;

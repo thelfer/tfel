@@ -396,6 +396,66 @@ namespace umat
 	    UMATReal *const STATEV)
       {
 	using namespace tfel::utilities;
+	if(this->dt<0.){
+	  throwNegativeTimeStepException(Name<Behaviour<H,UMATReal,false> >::getName());
+	}
+	if(*DDSOE<-0.5){
+	  this->computePredictionOperator(DDSOE);
+	} else {
+	  this->integrate(DDSOE,0u,true);
+	  this->bData.UMATexportStateData(STRESS,STATEV);
+	}
+      } // end of IntegratorWithTimeStepping::exe
+
+    private:
+
+      void
+      computePredictionOperator(UMATReal *const DDSOE)
+      {
+
+	using namespace tfel::utilities;
+	using namespace tfel::material;
+	typedef MechanicalBehaviourTraits<BV> Traits;
+	typedef typename tfel::meta::IF<
+	  Traits::hasPredictionOperator,
+	  StandardPredictionOperatorComputer,
+	  PredictionOperatorIsNotAvalaible
+	  >::type PredictionOperatorComputer;
+	typedef typename tfel::meta::IF<
+	  Traits::isConsistentTangentOperatorSymmetric,
+	  SymmetricConsistentTangentOperatorComputer,
+	  GeneralConsistentTangentOperatorComputer>::type
+	  ConsistentTangentOperatorHandler;
+	const typename BV::SMFlag smflag = UMATTangentOperatorFlag<UMATTraits<BV>::btype>::value;
+	  typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
+	if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
+	  smtype = BV::TANGENTOPERATOR;
+	} else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
+	  smtype = BV::SECANTOPERATOR;
+	} else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
+	  smtype = BV::ELASTIC;
+	} else {
+	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
+	}
+	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	BV behaviour(this->bData,this->iData);
+	behaviour.initialize();
+	behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	behaviour.checkBounds();
+	const typename BV::IntegrationResult r =
+	  PredictionOperatorComputer::exe(behaviour,smflag,smtype);
+	if(r==BV::FAILURE){
+	  throwPredictionComputationFailedException(Name<BV>::getName());
+	}
+	ConsistentTangentOperatorHandler::exe(behaviour,DDSOE);
+      }
+
+      void
+      integrate(UMATReal *const DDSOE,
+		const unsigned short subSteps,
+		const bool last)
+      {
+	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename tfel::meta::IF<
@@ -406,85 +466,62 @@ namespace umat
 	  GeneralConsistentTangentOperatorComputer>::type,
 	  ConsistentTangentOperatorIsNotAvalaible
 	  >::type ConsistentTangentOperatorHandler;
-	typedef typename tfel::meta::IF<
-	  Traits::hasPredictionOperator,
-	  StandardPredictionOperatorComputer,
-	  PredictionOperatorIsNotAvalaible
-	  >::type PredictionOperatorComputer;
-	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
-	unsigned short subSteps   = 0u;
-	unsigned short iterations = 1u;
-	if(this->dt<0.){
-	  throwNegativeTimeStepException(Name<Behaviour<H,UMATReal,false> >::getName());
+	if(subSteps==UMATTraits<BV>::maximumSubStepping){
+	  throwMaximumNumberOfSubSteppingReachedException(Name<Behaviour<H,UMATReal,false> >::getName());
 	}
-	while((iterations!=0)&&
-	      (subSteps!=UMATTraits<BV>::maximumSubStepping)){
+	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	typename BV::IntegrationResult r = BV::SUCCESS;
+	const typename BV::SMFlag smflag = UMATTangentOperatorFlag<UMATTraits<BV>::btype>::value;
+	typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
+	if(last){
+	  if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
+	  } else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
+	    smtype = BV::ELASTIC;
+	  } else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
+	    smtype = BV::SECANTOPERATOR;
+	  } else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
+	    smtype = BV::TANGENTOPERATOR;
+	  } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
+	    smtype = BV::CONSISTENTTANGENTOPERATOR;
+	  } else {
+	    throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
+	  }
+	}
+	try{
 	  BV behaviour(this->bData,this->iData);
 	  behaviour.initialize();
 	  behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  behaviour.checkBounds();
-	  typename BV::IntegrationResult r = BV::SUCCESS;
-	  const typename BV::SMFlag smflag = UMATTangentOperatorFlag<UMATTraits<BV>::btype>::value;
-	  try{
-	    if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
-	      r = PredictionOperatorComputer::exe(behaviour,smflag,BV::TANGENTOPERATOR);
-	    } else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
-	      r = PredictionOperatorComputer::exe(behaviour,smflag,BV::SECANTOPERATOR);
-	    } else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
-	      r = PredictionOperatorComputer::exe(behaviour,smflag,BV::ELASTIC);
-	    } else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
-	      r = behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
-	    } else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
-	      r = behaviour.integrate(smflag,BV::ELASTIC);
-	    } else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
-	      r = behaviour.integrate(smflag,BV::SECANTOPERATOR);
-	    } else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
-	      r = behaviour.integrate(smflag,BV::TANGENTOPERATOR);
-	    } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-	      r = behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
-	    } else {
-	      throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
-	    }
-	    if(r==BV::FAILURE){
-	      if(*DDSOE<-0.5){
-		throwPredictionComputationFailedException(Name<BV>::getName());
-	      }
-	    }
-	  }
-	  catch(const tfel::material::DivergenceException& e){
-#ifdef MFRONT_UMAT_VERBOSE
-	    std::cerr << "no convergence : " << e.what() << std::endl;
-#endif
+	  r = behaviour.integrate(smflag,smtype);
+	  if((r==BV::UNRELIABLE_RESULTS)&&(!UMATTraits<BV>::doSubSteppingOnInvalidResults)){
 	    r = BV::FAILURE;
 	  }
-	  if((r==BV::SUCCESS)||((r==BV::UNRELIABLE_RESULTS)&&
-	      (!UMATTraits<BV>::doSubSteppingOnInvalidResults))){
-	    --(iterations);
-	    behaviour.checkBounds();
-	    behaviour.updateExternalStateVariables();
+	  if(r==BV::SUCCESS){
 	    this->bData = static_cast<const BData&>(behaviour);
-	    if(iterations==0){
-	      if((*DDSOE>0.5)||(*DDSOE<-0.5)){
+	    behaviour.checkBounds();
+	    if(!last){
+	      behaviour.updateExternalStateVariables();
+	    }
+	    if(last){
+	      if(*DDSOE>0.5){
 		ConsistentTangentOperatorHandler::exe(behaviour,DDSOE);
 	      }
 	    }
-	  } else if ((r==BV::UNRELIABLE_RESULTS)&&
-		     (UMATTraits<BV>::doSubSteppingOnInvalidResults)){
-	    iterations = static_cast<unsigned short>(iterations*2u);
-	    this->iData *= 0.5;
-	  } else {
-	    ++subSteps;
-	    iterations = static_cast<unsigned short>(iterations*2u);
-	    this->iData *= 0.5;
 	  }
+	} catch(const tfel::material::DivergenceException& e){
+#ifdef MFRONT_UMAT_VERBOSE
+	  std::cerr << "no convergence : " << e.what() << std::endl;
+#endif
+	  r = BV::FAILURE;
 	}
-	if((subSteps==UMATTraits<BV>::maximumSubStepping)&&(iterations!=0)){
-	  throwMaximumNumberOfSubSteppingReachedException(Name<Behaviour<H,UMATReal,false> >::getName());
+	if(r==BV::FAILURE){
+	  this->iData.scale(this->bData,UMATReal(0.5));
+	  this->integrate(DDSOE,subSteps+1u,false);
+	  this->integrate(DDSOE,subSteps+1u,last);
+	  this->iData.scale(this->bData,UMATReal(2));
 	}
-	this->bData.UMATexportStateData(STRESS,STATEV);
-      } // end of IntegratorWithTimeStepping::exe
-
-    private:
+      } // end of integrate
+    
       typedef Behaviour<H,UMATReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       typedef typename BV::IntegrationData  IData;
@@ -548,13 +585,10 @@ namespace umat
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename tfel::meta::IF<
-	  Traits::hasConsistentTangentOperator,
-	  typename tfel::meta::IF<
 	  Traits::isConsistentTangentOperatorSymmetric,
 	  SymmetricConsistentTangentOperatorComputer,
-	  GeneralConsistentTangentOperatorComputer>::type,
-	  ConsistentTangentOperatorIsNotAvalaible
-	  >::type ConsistentTangentOperatorHandler;
+	  GeneralConsistentTangentOperatorComputer>::type
+	  ConsistentTangentOperatorHandler;
 	typedef typename tfel::meta::IF<
 	  Traits::hasPredictionOperator,
 	  StandardPredictionOperatorComputer,

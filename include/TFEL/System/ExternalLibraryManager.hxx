@@ -146,7 +146,17 @@ namespace tfel
       std::string
       getSource(const std::string&,
 		const std::string&);
-      
+      /*!
+       * \return the list of supported modelling hypotheses
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour
+       * This function looks for the symbol s+'_ModellingHypotheses'
+       * in the library and expect it to a pointer to characters. If
+       * the symbol is not found, an empty string is returned.
+       */
+      std::vector<std::string>
+      getSupportedModellingHypotheses(const std::string&,
+				      const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
@@ -154,6 +164,13 @@ namespace tfel
       bool
       contains(const std::string&,
 	       const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      CyranoFctPtr
+      getCyranoFunction(const std::string&,
+			const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name

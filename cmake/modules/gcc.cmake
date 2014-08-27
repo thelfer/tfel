@@ -10,6 +10,15 @@ tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "ftree-vectorize")
 #tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fvect-cost-model")
 # tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "floop-interchange")
 
+if (NOT CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  # 32 bits machines.
+  # using sse and sse2 instructions rather than the
+  # i387 FPU du to numerical instabilities
+  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "mfpmath=sse")
+  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "msse")
+  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "msse2")
+endif(NOT CMAKE_SIZEOF_VOID_P EQUAL 8 )
+
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS2 "ffast-math")
 # tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-math-errno")
 # tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-trapping-math")

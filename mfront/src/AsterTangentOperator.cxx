@@ -80,7 +80,7 @@ namespace aster
     // initializing v to 0
     // we explicitely don't use the size member, but the size of real
     // underlying array provided by Aster
-    fill(v,v+54/* 6*3*3*/,real(0));
+    fill(v,v+54/* 6*3*3*/,AsterReal(0));
     for(unsigned short i=0;i!=n1;++i){    // boucle sur tau
       for(unsigned short j=0;j!=n2;++j){  // boucle sur F
 	const unsigned short mi = getRowIndex(j);
@@ -103,7 +103,7 @@ namespace aster
     // initializing v to 0
     // we explicitely don't use the size member, but the size of real
     // underlying array provided by Aster
-    fill(v,v+54/*6*3*3*/,real(0));
+    fill(v,v+54/*6*3*3*/,AsterReal(0));
     for(unsigned short i=0;i!=n1;++i){    // boucle sur tau
       for(unsigned short j=0;j!=n2;++j){  // boucle sur F
 	const unsigned short mi = getRowIndex(j);

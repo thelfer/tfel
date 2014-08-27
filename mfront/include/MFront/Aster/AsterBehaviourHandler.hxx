@@ -73,7 +73,7 @@ namespace aster
     typedef tfel::math::tmatrix<N,N,AsterReal> type;
   };
 
-  template<unsigned short N,
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterBehaviourHandler
     : public AsterInterfaceBase
@@ -86,7 +86,7 @@ namespace aster
       : public AsterInterfaceBase
       {
       //! a simple alias
-      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef Behaviour<H,AsterReal,false> BV;
       /*!
        * \param[out] b      : behaviour
        * \param[in]  STRAN  : driving variable at the beginning of the
@@ -102,10 +102,12 @@ namespace aster
 	       const AsterReal *const DSTRAN,
 	       const StressFreeExpansionHandler& sfeh)
       {
+	using tfel::material::ModellingHypothesisToSpaceDimension;
 	using tfel::utilities::Name;
 	using tfel::fsalgo::copy;
 	using std::pair;
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
+	const AsterInt N = ModellingHypothesisToSpaceDimension<H>::value;
 	AsterReal dv0[AsterTraits<BV>::DrivingVariableSize];
 	AsterReal dv1[AsterTraits<BV>::DrivingVariableSize];
 	copy<AsterTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
@@ -118,7 +120,7 @@ namespace aster
 	b.computeStressFreeExpansion(s);
 	const StressFreeExpansionType& s0 = s.first;
 	const StressFreeExpansionType& s1 = s.second;
-	sfeh(dv0,dv1,&s0[0],&s1[0],AsterInt(N));
+	sfeh(dv0,dv1,&s0[0],&s1[0],N);
 	b.setASTERBehaviourDataDrivingVariables(dv0);
 	b.setASTERIntegrationDataDrivingVariables(dv1);
       } // end of exe
@@ -131,7 +133,7 @@ namespace aster
     struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
     {
       //! a simple alias
-      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef Behaviour<H,AsterReal,false> BV;
       /*!
        * \param[out] b      : b
        * \param[in]  STRAN  : driving variable at the beginning of the
@@ -154,31 +156,35 @@ namespace aster
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
-      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef Behaviour<H,AsterReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_ASTER_INLINE static void
-	exe(BData& data,const AsterReal * const props){
-	AsterComputeStiffnessTensor<N,AsterTraits<BV>::etype>::exe(props,
-								   data.getStiffnessTensor());
+      exe(BData& data,const AsterReal * const props){
+	typedef AsterTraits<BV> Traits;
+	const bool buas = Traits::requiresUnAlteredStiffnessTensor;
+	AsterComputeStiffnessTensor<AsterTraits<BV>::btype,H,
+				    AsterTraits<BV>::etype,buas>::exe(data.getStiffnessTensor(),
+								      props);
       } // end of exe
     }; // end of struct StiffnessOperatorInitializer
 
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer
     {
-      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef Behaviour<H,AsterReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_ASTER_INLINE static void
 	exe(BData& data,const AsterReal * const props){
 	const unsigned short o =
 	  AsterTraits<BV>::elasticPropertiesOffset;
-	AsterComputeThermalExpansionCoefficientTensor<N,AsterTraits<BV>::etype>::exe(props+o,
-										     data.getThermalExpansionCoefficientTensor());
+	AsterComputeThermalExpansionCoefficientTensor<AsterTraits<BV>::btype,H,
+						      AsterTraits<BV>::stype>::exe(props+o,
+										   data.getThermalExpansionCoefficientTensor());
       } // end of exe
     }; // end of struct ThermalExpansionCoefficientTensorInitializer
 
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer
     {
-      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef Behaviour<H,AsterReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_ASTER_INLINE static void
 	exe(BData&,const AsterReal * const)
@@ -209,8 +215,8 @@ namespace aster
       {
 	using namespace std;
 	using namespace tfel::utilities;
-	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
-	throw(AsterInvalidDimension(Name<BV>::getName(),N));
+	typedef Behaviour<H,AsterReal,false> BV;
+	throw(AsterInvalidModellingHypothesis(Name<BV>::getName(),H));
 	return;
       } // end of Error::exe
 	
@@ -329,7 +335,7 @@ namespace aster
 
       struct StandardPredictionOperatorComputer
       {
-	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	typedef Behaviour<H,AsterReal,false> BV;
 	static typename BV::IntegrationResult
 	exe(BV& b,const typename BV::SMFlag smf,const typename BV::SMType smt)
 	{
@@ -339,7 +345,7 @@ namespace aster
 
       struct PredictionOperatorIsNotAvalaible
       {
-	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	typedef Behaviour<H,AsterReal,false> BV;
 	static typename BV::IntegrationResult
 	exe(BV&,const typename BV::SMFlag,
 	    const typename BV::SMType)
@@ -352,7 +358,7 @@ namespace aster
       
       struct ConsistentTangentOperatorIsNotAvalaible
       {
-	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	typedef Behaviour<H,AsterReal,false> BV;
 	static void exe(BV&,AsterReal *const)
 	{
 	  using namespace tfel::utilities;
@@ -362,9 +368,11 @@ namespace aster
 
       struct ConsistentTangentOperatorComputer
       {
-	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	typedef Behaviour<H,AsterReal,false> BV;
 	static void exe(const BV& bv,AsterReal *const DDSOE)
 	{
+	  using tfel::material::ModellingHypothesisToSpaceDimension;
+	  const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
 	  typedef typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type TangentOperatorType;
 	  TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
 	  Dt = bv.getTangentOperator();
@@ -375,7 +383,7 @@ namespace aster
 
       struct SymmetricConsistentTangentOperatorComputer
       {
-	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	typedef Behaviour<H,AsterReal,false> BV;
 	static void exe(const BV& bv,AsterReal *const DDSOE)
 	{
 	  ConsistentTangentOperatorComputer::exe(bv,DDSOE);
@@ -384,9 +392,11 @@ namespace aster
 
       struct GeneralConsistentTangentOperatorComputer
       {
-	typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+	typedef Behaviour<H,AsterReal,false> BV;
 	static void exe(const BV& bv,AsterReal *const DDSOE)
 	{
+	  using tfel::material::ModellingHypothesisToSpaceDimension;
+	  const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
 	  typedef typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type TangentOperatorType;
 	  ConsistentTangentOperatorComputer::exe(bv,DDSOE);
 	  // les conventions fortran.... (petites déformations et modèles de zones cohésives)
@@ -395,7 +405,7 @@ namespace aster
 	} // end of exe	  
       };
 
-      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef Behaviour<H,AsterReal,false> BV;
       BV behaviour;
       AsterReal dt;
     }; // end of struct Integrator
@@ -406,7 +416,7 @@ namespace aster
       using namespace std;
       using namespace tfel::utilities;
       using namespace tfel::material;
-      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef Behaviour<H,AsterReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
       const unsigned short offset  = (AsterTraits<BV>::elasticPropertiesOffset+
 				      AsterTraits<BV>::thermalExpansionPropertiesOffset);
@@ -424,7 +434,7 @@ namespace aster
       checkNSTATV(const AsterInt NSTATV)
     {
       using namespace tfel::utilities;
-      typedef Behaviour<AsterModellingHypothesis<N>::value,AsterReal,false> BV;
+      typedef Behaviour<H,AsterReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short nstatv  = Traits::internal_variables_nb;
       const unsigned short NSTATV_ = nstatv == 0 ? 1u : nstatv;

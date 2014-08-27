@@ -162,7 +162,7 @@ namespace mfront
 			      const tfel::material::ModellingHypothesis::Hypothesis) const;
   protected:
     //! the umat fonction
-    tfel::system::UMATFctPtr fct;
+    tfel::system::CyranoFctPtr fct;
     //! temporary vector
     mutable tfel::math::vector<real> iv;
   }; // end of struct MTestBehaviour

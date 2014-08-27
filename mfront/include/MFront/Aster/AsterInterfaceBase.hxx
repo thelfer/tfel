@@ -20,6 +20,35 @@
 namespace aster{
 
   /*!
+   * This structure is called when we fall in a case that the aster
+   * interface is not able to handle. Normally, this case shall have
+   * been handled during the code generation (see the
+   * MFrontAsterInterface class).
+   */
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterUnSupportedCaseHandler
+  {
+    /*!
+     * \brief throw an exception
+     */
+    static void
+    exe(const AsterReal *const,
+	const AsterReal *const,
+	AsterReal *const,
+	const AsterReal *const,
+	const AsterReal *const,
+	const AsterReal *const,
+	const AsterReal *const,
+	const AsterReal *const,
+	const AsterInt  *const,
+	const AsterReal *const,
+	const AsterReal *const,
+	AsterReal *const,
+	const AsterInt  *const,
+	AsterReal *const,
+	const StressFreeExpansionHandler&);
+  }; // end of struct AsterUnSupportedCaseHandler
+
+  /*!
    * \class  AsterInterfaceBase
    * \brief  Base class for Aster interfaces
    * \author Helfer Thomas
@@ -159,7 +188,7 @@ namespace aster{
      * parameter is not valid
      */
     static void
-    displayInvalidNTENSValueErrorMessage();
+    displayUnsupportedHypothesisMessage();
     
   }; // end of struct AsterInterfaceBase
 

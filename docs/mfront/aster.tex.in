@@ -160,7 +160,7 @@
 %                         & L. Brunel       & 1 & \\
 % AREVA NP/LYON           & P. Melin        & 1 & \\
 %                         & V. Bessiron     & 1 & \\
-%                         & C. Garnier      & 1 & \\                           
+%                         & C. Garnier      & 1 & \\
 %                         & V. Garat        & 1 & \\
 %                         & F. Arnoux       & 1 &
 % }
@@ -194,14 +194,12 @@ qui ne sont pas nécessairement utilisés dans \aster{}.
 \begin{figure}[htbp]
   \centering
   \begin{tabular}[htbp]{lll}
-    & {\tt {\color{purple} SUBROUTINE} {\color{green} aster} ( }&{\tt  STRESS, STATEV, DDSDDE, SSE, SPD, SCD,}\\
-    {\color{ceabluecurve} \&} &                   & {\tt RPL, DDSDDT, DRPLDE, DRPLDT,}\\
-    {\color{ceabluecurve} \&} &                   & {\tt STRAN, DSTRAN, TIME, DTIME,}\\
+    & {\tt {\color{purple} SUBROUTINE} {\color{green} aster} ( }&{\tt  STRESS, STATEV, DDSDDE}\\
+    {\color{ceabluecurve} \&} &                   & {\tt STRAN, DSTRAN, DTIME,}\\
     {\color{ceabluecurve} \&} &                   & {\tt TEMP, DTEMP, PREDEF, DPRED,}\\
-    {\color{ceabluecurve} \&} &                   & {\tt CMNAME, NDI, NSHR, NTENS, NSTATV,}\\
-    {\color{ceabluecurve} \&} &                   & {\tt PROPS, NPROPS, COORDS,}\\
-    {\color{ceabluecurve} \&} &                   & {\tt DROT, PNEWDT, CELENT, DFGRD0, DFGRD1,}\\
-    {\color{ceabluecurve} \&} &                   & {\tt NOEL, NPT, LAYER, KSPT, KSTEP, KINC )}\\
+    {\color{ceabluecurve} \&} &                   & {\tt NTENS, NSTATV,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt PROPS, NPROPS,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt DROT, PNEWDT, NUMMOD,}\\
    \end{tabular}
   \caption{Prototype de la fonction {\tt aster}.}
   \label{fig:aster:prototype}
@@ -219,23 +217,10 @@ qui ne sont pas nécessairement utilisés dans \aster{}.
   les variables internes à $t_{0}+\Delta t$ \\
   {\tt DDSDDE } & REAL*8(NTENS,NTENS) & matrice jacobienne du modèle
   (matrice de Hooke tangente) à $t_{0}+\Delta t$. \\
-  {\tt SSE } & REAL*8 & énergie de déformation élastique \\
-  {\tt SPD } & REAL*8 & dissipation plastique \\
-  {\tt SCD } & REAL*8 & dissipation visqueuse. \\
-  {\tt RPL } & REAL*8 & puissance calorifique volumique dégagée par le
-  travail mécanique, à $t_{0}+\Delta t$ \\
-  {\tt DDSDDT } & REAL*8(NTENS) & dérivée du tenseur des contraintes par
-  rapport a la température, à $t_{0}+\Delta t$ \\
-  {\tt DRPLDE } & REAL*8(NTENS) & dérivées de RPL par rapport aux
-  composantes du tenseur des déformations, à $t_{0}+\Delta t$\\ {\tt
-    DRPLDT } & REAL*8 & derivée de RPL par rapport a la température, à
-  $t_{0}+\Delta t$. \\
   {\tt STRAN } & REAL*8(NTENS) & tenseur des déformations totales à
   $t_{0}$ \\
   {\tt DSTRAN } & REAL*8(NTENS) & tenseur des incréments de déformation
   totale par rapport a l'état de reference à $t_{0}$ \\
-  {\tt TIME } & REAL*8(2) & TIME(1) = 0, TIME(2) = $t_{0}$ où $t_{0}$
-  est le précédent instant d'équilibre atteint \\
   {\tt DTIME } & REAL*8 & DTIME = $\Delta t$ est l'incrément de temps \\
   {\tt TEMP } & REAL*8 & température à $t_{0}$ \\
   {\tt DTEMP } & REAL*8 & incrément de température à $t_{0}+\Delta t$ \\
@@ -243,37 +228,20 @@ qui ne sont pas nécessairement utilisés dans \aster{}.
   de comportement, valeurs à $t_{0}$ \\
   {\tt DPRED } & REAL*8(*) & incréments des paramètres externes à
   $t_{0}+\Delta t$ \\
-  {\tt CMNAME } & CHARACTER*16 & identifiant de la loi de comportement. \\
-  {\tt NDI } & INTEGER & nombre de composantes diagonales du tenseur des
-  contraintes \\
-  {\tt NSHR } & INTEGER & nombre de composantes extradiagonales du
-  tenseur des contraintes. \\
   {\tt NTENS } & INTEGER & nombre de composantes du tenseur des
   contraintes\\ {\tt NSTATV } & INTEGER & nombre de variables internes
   \\
   {\tt PROPS } & REAL*8(NPROPS) & vecteur des propriétés du matériau. \\
   {\tt NPROPS } & INTEGER & nombre de propriétés du matériau \\
-  {\tt COORDS } & REAL*8(3) & coordonnees cartésiennes du point
-  d'intégration courant \\
   {\tt DROT } & REAL*8(3,3) & matrice d'incréments de rotation. Cette
   matrice décrit la rotation sur le pas de temps de la base dans
   laquelle sont exprimés les tenseurs de contraintes et de déformations.
   \\
   {\tt PNEWDT } & REAL*8 & rapport entre le nouveau pas de temps suggéré
   et le pas de temps donné en entrée \\
-  {\tt CELENT } & REAL*8 & longueur caractéristique de l'élément. \\
-  {\tt DFGRD0 } & REAL*8(3,3) & tenseur gradient de déplacement à
-  $t_{0}$ \\
-  {\tt DFGRD1 } & REAL*8(3,3) & tenseur gradient de déplacement à
-  $t_{0}+\Delta t$ \\
-  {\tt NOEL } & INTEGER & numéro de l'élément courant \\
-  {\tt NPT } & INTEGER & numéro du point d'intégration courant \\
-  {\tt LAYER } & INTEGER & numéro de couche pour des coques composites
-  ou des solides multi-couches \\
-  {\tt KSPT } & INTEGER & numéro de section dans la couche courante. \\
-  {\tt KSTEP } & INTEGER & Cette entrée n'a pas de sens dans le cas
-  d'une adhérence à \aster{} \\
-  {\tt KINC } & INTEGER & Code de sortie \\
+  {\tt NUMMOD } & INTEGER & hypothèse de modélisation : 3 pour le 3D,
+  4 pour l'axisymmétrique, 5 pour les contraintes planes et 6 pour
+  les déformation planes. \\
   \hline
   \caption{Arguments de la fonction {\texttt aster}}
   \label{tab:aster:argument}

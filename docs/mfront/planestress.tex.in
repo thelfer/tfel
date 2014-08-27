@@ -53,8 +53,6 @@
 
 \newcommand{\eln}[0]{\ensuremath{\tepsilonto_{\ln{}}}}
 
-\newcommand{\tns}[1]{\ensuremath{\underset{\tilde{}}{\mathbf{#1}}}}
-
 \newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\,t}}}
@@ -128,11 +126,11 @@
 \emetteur{E.~Touron}
 
 \titre{Prise en compte des hypothèses de contraintes planes dans les
-  lois générées par le générateur de code \mfront{}~: application au
-  code combustible ÉDF \cyrano{}}
+  lois générées par le générateur de code \mfront{}~: application à
+  \cyrano{}}
 
 \date{2014}
-\numero{}
+\numero{14-03}
 \indice{0}
 \dateversion{}
 \numeroaffaire{A-SICOM-A1-01}
@@ -142,14 +140,124 @@
 \programmerecherche{SICOM}
 \classification{DO}
 \motsclefs{
-  \mfront{} - \pleiades{}
+  \mfront{} - \pleiades{} - contraintes planes - contraintes planes généralisées - \cyrano{}
 }
 
 % \codebarre{images/code_barre}
 \diffusionexterne{
+{EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+{EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+{EDF/R\&D/MMC}          & P. Ollar         & 1 & \\
+{EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+                        & N. Barnel       & 1 & \\
+{EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+                        & R. Largenton    & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & P. Hemmerich    & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+                        & L. Brunel       & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & V. Garat        & 1 & \\
+                        & F. Arnoux       & 1 &
 }
+
+\diffusionexterne{
+{EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+{EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+{EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
+                        & C. Durand       & 1 & \\
+                        & T. de Soza      & 1 & \\
+                        & J. Delmas       & 1 & \\
+                        & J.M. Proix      & 1 & \\
+                        & F. Hammon       & 1 & \\
+                        & N. Sellenet     & 1 & \\
+                        & D. Haboussa     & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+{EDF/R\&D/MMC}          & N. Rupin        & 1 & \\
+                        & F. Latourte     & 1 & \\
+                        & F. Curtit       & 1 & \\
+                        & N. Prompt       & 1 & \\
+                        & N. Barnel       & 1 & \\
+                        & É. Pouillier    & 1 & \\
+                        & G. Thouvenin    & 1 & \\
+                        & F. Douchin      & 1 & \\
+                        & R. Largenton    & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+                        & L. Brunel       & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & V. Garat        & 1 & \\
+                        & F. Arnoux       & 1 &
+}
+
 \CoupeListeDiffusion{}
 \diffusioninterne{
+  DEN/DISN/SIMU       & J.P. Deffain       & 1 & Diffusion par\\ 
+                      & D. Caruge          & 1 & courriel     \\ 
+  DEN/DM2S/SEMT       & X. Averty          & 1 & \\
+  DEN/DM2S/SEMT/LM2S  & S. Pascal          & 1 & \\
+                      & P. Verpeaux        & 1 & \\
+                      & A. Millard         & 1 & \\
+                      & O. Fandeur         & 1 & \\
+  DEN/DMN             & P. Yvon            & 1 & \\
+                      & J.L. Seran         & 1 & \\
+                      & F. Dalle           & 1 & \\
+  DEN/DMN/SRMA        & P. Chapelot        & 1 & \\
+                      & S. Carassou        & 1 & \\
+                      & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M   & L. Nicolas         & 1 & \\
+                      & J. Garnier         & 1 & \\
+                      & S. Vincent         & 1 & \\
+                      & L. Vincent         & 1 & \\
+                      & L. Gelebart        & 1 & \\
+                      & M. Sauzay          & 1 & \\
+                      & L. Dupuy           & 1 & \\
+                      & P. Forget          & 1 & \\
+                      & A. Hellouin de Menibus  & 1 & \\
+                      & M. Le Saux         & 1 & \\
+                      & C. Robertson       & 1 & \\
+  DEN/DMN/SRMA/LA2M   & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX  & L. Chaffron        & 1 & \\
+                      & D. Sornin          & 1 & \\
+  DEN/DMN/SEMI        & C. Poussard        & 1 & \\
+                      & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LCMI   & V. Vandenberghe    & 1 & \\
+                      & A. Courcelle       & 1 & \\
+                      & F. Hure            & 1 & \\
+                      & D. Leboulch        & 1 & \\
+                      & Q. Auzoux          & 1 & \\
+                      & Y. Robert          & 1 & \\
+                      & C. Ling           & 1 & \\
+  DEN/DER/SESI/LE2S   & P. Lamagnère       & 1 & \\
+                      & D. Gentet          & 1 & \\
+                      & Y. Lejeail         & 1 & \\
+                      &                    &  & \\
+  DEN/DEC             & P. Brossard        &  & Document disponible\\
+  DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
+  DEN/DEC/SESC        & E. Touron          &  & \\
+                      & C. Valot           &  & \\
+                      & M. Agard           &  & \\
+  DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
+  DEN/DEC/SESC/LLCC   & G. Jomard          &  & \\
+  DEN/DEC/SESC/LC2I   & D. Plancq          &  & \\
+  DEN/DEC/SESC/LSC    & R. Masson          &  & \\
+                      & V. Marelle         &  & \\
+                      & B. Michel          &  & \\
+                      & M. Pelletier       &  & \\
+                      & M. Lainet          &  & \\
+                      & T. Helfer          &  & \\
+
 }
 
 % \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
@@ -166,16 +274,17 @@
   modélisation. La première est l'hypothèse d'axisymétrie.
 
   La seconde concerne le traitement de la quasi-invariance du problème
-  le long de l'axe du crayon. \cyrano{} permet de faire l'une des deux
-  hypothèses suivantes~:
+  le long de l'axe du crayon. Deux hypothèses de modélisation sont
+  disponibles dans \cyrano{}~:
   \begin{itemize}
-  \item la contrainte est homogène dans le combustible d'une part et
-    dans la gaine d'autre part. Cette hypothèse de \og~contraintes
-    planes généralisées~\fg{} est spécifique à \cyrano{}. Il s'agit de
-    l'hypothèse utilisée par défaut.
+  \item la contrainte axiale est homogène dans le combustible d'une
+    part et dans la gaine d'autre part. Cette hypothèse de
+    \og~contraintes planes généralisées~\fg{} est spécifique à
+    \cyrano{}. Il s'agit de l'hypothèse utilisée par défaut.
   \item la déformation est homogène dans le combustible d'une part et
     dans la gaine d'autre part. C'est l'hypothèse classique de
-    déformations planes généralisées.
+    déformations planes généralisées utilisée dans \alcyone{} (\(1D\),
+    \(2D\paren{r,\theta}\) et \germinal{}.
   \end{itemize}
 
   De multiples solutions sont possibles en \mfront{} pour implanter
@@ -211,6 +320,10 @@
     partir de la jacobienne du système implicite reste valide sans
     aucune modification.
   \end{itemize}
+  Cette méthode permet donc d'écrire une implantation d'une loi
+  utilisable à la fois dans le code \cyrano{} et dans les applications
+  combustible \cea{}.
+
   Son principal désavantage est d'introduire une variable interne
   supplémentaire (la déformation axiale) ce qui induit un coût mémoire
   et un coût CPU lié d'une part à la gestion par le code appelant de
@@ -220,10 +333,6 @@
   obtenues ont des performances numériques meilleures en moyenne que
   celles obtenues avec les lois internes de \cyrano{} (optimisées pour
   l'hypothèse de contraintes planes généralisées).
-
-  Cette méthode permet d'écrire une implantation d'une loi utilisable
-  à la fois dans le code \cyrano{} et dans les applications
-  combustible \cea{}.
 }
 
 \stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
@@ -233,13 +342,22 @@
 
 \section{Introduction}
 
+Le support des hypothèses de contraintes planes (généralisées ou
+non) a pour but de permettre une utilisation efficace des lois
+générées par \mfront{} dans l'application combustible industrielle
+\cyrano{}, développée par \edf{} au sein du projet \pleiades{}.
+
+L'idée qui sous-tend ce travail est de permettre l'échange de fichiers
+\mfront{} entre les applications \cea{} et \cyrano{}.
+
+\subsection{Rôle de la loi de comportement}
+
 Connaissant l'état du matériau à un instant \(t\), caractérisé par les
-valeurs d'un certain nombre de variables internes
-\(\bts{Z_{i}}\), et l'incrément de déformation totale
-\(\Delta\tepsilonto\) entre cet instant et l'instant \(t+\Delta\,t\),
-le principal rôle des lois de comportement mécanique est de permettre
-le calcul de la contrainte \(\ets{\tsigma}\) et des variables
-internes \(\ets{Z_{i}}\)~:
+valeurs d'un certain nombre de variables internes \(\bts{Z_{i}}\), et
+l'incrément de déformation totale \(\Delta\tepsilonto\) entre cet
+instant et l'instant \(t+\Delta\,t\), le principal rôle des lois de
+comportement mécanique est de permettre le calcul de la contrainte
+\(\ets{\tsigma}\) et des variables internes \(\ets{Z_{i}}\)~:
 \[
 \paren{\bts{Z_{i}},\bts{\tepsilonto},\bts{\sigma}}
 \rightarrow \paren{\ets{Z_{i}},\ets{\sigma}}
@@ -252,6 +370,7 @@ des structures minces, se traduit par la condition~:
 \[
 \ets{\sigmaz}=0
 \]
+où \(\sigmaz\) est la contrainte axiale.
 
 L'hypothèse de contraintes planes généralisées, utilisée par le code
 combustible \cyrano{}, s'écrit~:
@@ -280,7 +399,8 @@ contraintes planes.
 
 Une façon classique de traiter l'hypothèse de contraintes planes est
 de la traiter explicitement dans l'implantation de la loi de
-comportement. Par exemple, l'élasticité isotrope s'écrit~:
+comportement. Par exemple, pour une modélisation plane \(x,y\), un
+comportement élastique peut être représenté par une loi effective~:
 \[
 \begin{pmatrix}
   \sigma_{xx} \\
@@ -301,14 +421,24 @@ comportement. Par exemple, l'élasticité isotrope s'écrit~:
 \end{pmatrix}
 \]
 
+Nous pouvons noter que~:
+\begin{enumerate}[-]
+\item la composante axiale des déformations \(\epsilontoz\)
+  n'apparaît pas~: celle-ci peut être calculée {\tt a posteriori} en
+  utilisant la loi d'élasticité standard~;
+\item Le tenseur d'élasticité effectif sera désigné par le
+  qualificatif altéré dans cette note (et dans \mfront{}).
+\end{enumerate}
+
 La prise en compte explicite de l'hypothèse de contraintes planes est
-sans doute la solution la plus efficace numériquement.
+sans doute la solution la plus efficace numériquement. Elle se fait en
+généralisant le traitement de l'élasticité traitée précédemment.
 
 Un des désavantages de cette méthode est qu'elle utilise un formalisme
 tensoriel particulier dans lequel la composante axiale est
 omise. Cette représentation tensorielle réduite n'est aujourd'hui pas
 supportée dans \TFEL{} (la librairie mathématique sur laquelle
-s'appuie \mfront{}) et ne le sera probablement jamais.
+s'appuie \mfront{}).
 
 L'autre désavantage de cette méthode est qu'elle conduit à
 proposer plusieurs implantations d'une même loi de comportement~:
@@ -343,7 +473,7 @@ exception notable pour deux raisons~:
 Ces lois ne seront pas traitées dans cette note et l'implantation de
 ces algorithmes reste pour l'instant une perspective intéressante.
 
-\subsubsection{Traitement au niveau du point de \nom{Gauss} par une
+\subsubsection{Traitement à l'appel de la loi de comportement par une
   boucle externe}
 
 Dans le cas de l'interface \umat{} et lorsque la loi de comportement
@@ -372,7 +502,7 @@ Cet algorithme se décompose ainsi~:
   \item si la contrainte axiale obtenue n'est pas nulle, au
   critère près, une nouvelle correction élastique est effectuée~:
   \[
-  \left.\Delta\,\epsilontoz\right.^{(1)}=\left.\Delta\,\epsilontoz\right.^{(0)}-\Frac{1}{E}\left.\Frac{1}{E}\sigmaz\right.^{(1)}
+  \left.\Delta\,\epsilontoz\right.^{(1)}=\left.\Delta\,\epsilontoz\right.^{(0)}-\left.\Frac{1}{E}\sigmaz\right.^{(1)}
   \]
   La loi de comportement en déformations planes généralisées est
   appelée une seconde fois.
@@ -389,7 +519,7 @@ d'intégration de la loi (par rapport à l'intégration de la loi en
 déformations planes). Ce surcoût est rédhibitoire pour un code
 industriel tel que \cyrano{}.
 
-\subsubsection{Traitement par le code appelant}
+\subsubsection{Traitement par le code éléments finis appelant}
 
 Il est possible de traiter la condition de contraintes planes au
 niveau du code appelant, ce qui évite de développer une implantation
@@ -410,15 +540,14 @@ spécifique. Deux approches sont particulièrement intéressantes~:
   \]
   où \(I\) est une matrice possédant \(4\) lignes et \(N_{g}\)
   colonnes. Le terme \(\mbox{}^{t}I\,\sigma\) est, en chaque point de
-  \nom{Gauss}, proportionnel à \(\sigma_{33}\), de sorte qu'en
-  l'absence de force imposée associée aux déformations axiales,
-  l'équilibre de la structure satisfait naturellement l'hypothèse de
-  contraintes planes. Cette méthode augmente la largeur de front de la
-  matrice de raideur par le nombre de points de \nom{Gauss} de
-  l'élément. Il n'est pas mentionné si le nombre d'itérations
-  nécessaires pour atteindre l'équilibre mécanique est augmenté par
-  rapport au cas où la loi de comportement gère l'hypothèse de
-  contraintes planes.
+  \nom{Gauss}, proportionnel à \(\sigmaz\), de sorte qu'en l'absence
+  de force imposée associée aux déformations axiales, l'équilibre de
+  la structure satisfait naturellement l'hypothèse de contraintes
+  planes. Cette méthode augmente la largeur de front de la matrice de
+  raideur par le nombre de points de \nom{Gauss} de l'élément. Il
+  n'est pas mentionné si le nombre d'itérations nécessaires pour
+  atteindre l'équilibre mécanique est augmenté par rapport au cas où
+  la loi de comportement gère l'hypothèse de contraintes planes.
 \item \aster{} propose un algorithme dû à \nom{De
     Borst}~\cite{proix_prise_2012} qui utilise la convergence de
   l'équilibre global pour assurer la condition de contraintes
@@ -462,7 +591,7 @@ Nous proposons en section~\ref{sec:trait-gener-de} une modification de
 l'algorithme implicite qui permet de prendre en compte l'hypothèse de
 contraintes planes généralisées. Cette modification s'inspire des
 techniques présentées au paragraphe précédent et peut être utilisée
-dans la plupart des lois de comportement intégrées en implicite.
+pour la plupart des lois de comportement intégrées en implicite.
 
 Nous montrerons alors que l'implantation de la loi de comportement
 peut se scinder en deux blocs de code distincts~:
@@ -486,10 +615,17 @@ implantation est numériquement efficace.
   dans un algorithme implicite}
 \label{sec:trait-gener-de}
 
+La résolution implicite est aujourd'hui considéré comme la méthode
+d'intégration la plus efficace. Son traitement dans \mfront{} est
+décrit dans la documentation de
+référence~\cite{helfer_generateur_2013}.
+
 \subsection{Description de la solution proposée}
 
 L'hypothèse de contraintes planes est traitée en introduisant la
-déformation axiale comme une variable interne supplémentaire. La méthode présentée n'est valide que si les hypothèses suivantes sont vérifiées~:
+déformation axiale comme une variable interne supplémentaire. La
+méthode présentée n'est valide que si les hypothèses suivantes sont
+vérifiées~:
 \begin{enumerate}
 \item la loi de comportement utilise la déformation élastique
   \(\tepsilonel\) comme variable interne~;
@@ -509,7 +645,7 @@ la partition des déformations~:
 La dérivée de cette équation par rapport à la déformation axiale est
 donnée par~:
 \[
-\deriv{f_{\tepsilonel}}{\epsilontoz}=\vec{e}_{z}\otimes\vec{e}_{z}=
+\deriv{f_{\tepsilonel}}{\Delta\,\epsilontoz}=\vec{e}_{z}\otimes\vec{e}_{z}=
 \begin{pmatrix}
   0 \\
   0 \\
@@ -544,7 +680,7 @@ f_{\epsilontoz}=\paren{1-\nu}\,\paren{\epsilonel_{zz}+\Delta\,\epsilonel_{zz}}+\
 
 La seule dérivée non nulle de cette équation est~:
 \[
-\deriv{f_{\epsilontoz}}{\tepsilonel}=
+\deriv{f_{\epsilontoz}}{\Delta\,\tepsilonel}=
 \begin{pmatrix}
   \nu   \\
   \nu   \\
@@ -616,7 +752,7 @@ la loi en implicite et nous donnons son nom~:
 \end{flushleft}
 
 Par défaut, la loi ne sera pas disponible en contraintes planes ou en
-contraintes planes généralisées. La ligne suivante précises que la loi
+contraintes planes généralisées. La ligne suivante précise que la loi
 supporte toutes les hypothèses de modélisation~:
 \begin{flushleft}
   \lstinputlisting[firstline=4,lastline=4,firstnumber=4]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
@@ -626,7 +762,11 @@ L'hypothèse de contraintes planes étant vérifiée à la précision de
 l'algorithme implicite près, il est conseillé d'utiliser une précision
 relativement basse. Dans nos tests, une valeur du critère d'arrêt de
 \(10^{-11}\) nous a semblé satisfaisante (par défaut, cette valeur est
-de \(10^{-8}\)). Nous le précisons ainsi~:
+de \(10^{-8}\))\footnote{Une valeur basse est de toute manière requise
+  pour avoir une matrice tangente cohérente de bonne qualité quand
+  celle-ci est déduite de la partie supérieure de l'inverse de la
+  jacobienne, ce qui est une technique très utilisée.}. Nous le
+précisons ainsi~:
 \begin{flushleft}
   \lstinputlisting[firstline=5,lastline=5,firstnumber=5]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
 \end{flushleft}
@@ -697,6 +837,12 @@ donné par le code suivant~:
 \begin{flushleft}
   \lstinputlisting[firstline=71,lastline=84,firstnumber=71]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
 \end{flushleft}
+Nous précisons que~:
+\begin{itemize}
+\item ce bloc n'est valide qu'en contraintes planes (option {\tt PlaneStress}~;
+\item ce bloc doit être ajouté à la suite de la partie commune à
+  toutes les modélisations (options {\tt Append} et {\tt AtEnd})~;
+\end{itemize}
 
 De même, la partie spécifique à l'hypothèse de contraintes planes
 généralisées est~:
@@ -808,15 +954,28 @@ implantation peut désormais être partagée entre les applications
   \caption{Comparaison des performances obtenues avec l'implantation
     \mfront{} et l'implantation native d'une même loi de comportement
     viscoplastique orthotrope de gaine. Cette loi est testée sur
-    l'ensemble de la base de validation usuelle de \cyrano{}.}
+    l'ensemble de la base de validation usuelle de \cyrano{} (le
+    numéro du cas test est reporté en abscisse).}
   \label{fig:mfront:cyrano:perf}
 \end{figure}
 
+Pour mesurer les performances de la solution proposée, l'équipe
+\cyrano{} a comparé les temps de calcul obtenue avec l'implantation
+\mfront{} et l'implantation native d'une même loi de comportement
+viscoplastique orthotrope de gaine sur l'ensemble de la base de
+validation usuelle de plus de \(30\) cas tests\footnote{La loi
+  utilisée étant généralement hors de son domaine d'usage, les
+  résultats n'ont aucune valeur physique. Il a cependant été vérifié
+  que les deux implantations conduisaient au même résultat.}
+
 Les performances obtenues, illustrées en
 figure~\ref{fig:mfront:cyrano:perf} sont légèrement supérieures à
-celles obtenues avec les lois natives de \cyrano{}. La solution
-proposée est donc compatible avec les exigences industrielles de
-cette application.
+celles obtenues avec les lois natives de \cyrano{}, avec des
+différences pouvant aller jusqu'à \(20\%\) dans les deux sens.
+
+Sur la base de ce cas test, les développeurs de \cyrano{} considère
+que la solution proposée est compatible avec les exigences
+industrielles de cette application.
 
 \subsection{Perspectives}
 
@@ -826,9 +985,9 @@ peuvent être appliqués aux implantations basées sur les méthodes de
 \nom{Runge-Kutta}.
 
 Pour être complet, c'est à dire pour que les développeurs de \cyrano{}
-aient accès à toutes les potentialités écrites avec \mfront{}, il
-serait nécessaire de traiter les analyseurs spécifiques qui décrivent
-les lois de comportement isotropes (plasticité et viscoplasticité).
+aient accès à toutes les potentialités de \mfront{}, il serait
+nécessaire d'enrichir les analyseurs spécifiques qui décrivent les
+lois de comportement isotropes (plasticité et viscoplasticité).
 
 \clearpage
 \newpage

@@ -55,6 +55,8 @@ nu.setGlossaryName("PoissonRatio");
  * loi.
  */
 @TangentOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice
+			  // tangente est toujours l'élastique
   Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
 }
 
@@ -67,6 +69,8 @@ nu.setGlossaryName("PoissonRatio");
  * tenseur de Piola-Kirchhoff est connu à la fin de l'intégration.
  */
 @TangentOperator<DTAU_DF>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice
+			  // tangente est toujours l'élastique
   StiffnessTensor De = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
   t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
   t2tost2<N,stress> dtau;
