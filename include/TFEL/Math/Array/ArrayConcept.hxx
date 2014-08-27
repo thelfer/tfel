@@ -1,3 +1,8 @@
+/*!
+ * \file   ArrayConcept.hxx
+ * \author Helfer Thomas
+ */
+
 #ifndef _TFEL_MATH_ARRAY_CONCEPT_LIB_
 #define _TFEL_MATH_ARRAY_CONCEPT_LIB_ 1
 

@@ -1,3 +1,9 @@
+/*!
+ * \file   MultipleVector.hxx
+ * \brief  This file defines the MultipleVector class.
+ * \author Helfer Thomas
+ */
+
 #ifndef _LIB_TFEL_MULTIPLEVECTOR_H_
 #define _LIB_TFEL_MULTIPLEVECTOR_H_ 1
 

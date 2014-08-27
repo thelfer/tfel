@@ -1,3 +1,8 @@
+/*!
+ * \file   BasicOperations.hxx
+ * \author Helfer Thomas
+ */
+
 #ifndef _TFEL_MATH_BASICOPERATIONS_LIB_
 #define _TFEL_MATH_BASICOPERATIONS_LIB_ 1
 

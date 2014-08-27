@@ -1,3 +1,8 @@
+/*!
+ * \file   ArrayExpr.hxx
+ * \author Helfer Thomas
+ */
+
 #ifndef _TFEL_MATH_MATH_ARRAY_EXPR_LIB_
 #define _TFEL_MATH_MATH_ARRAY_EXPR_LIB_ 1
 

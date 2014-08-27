@@ -1,3 +1,8 @@
+/*!
+ * \file   StensorConcept.hxx
+ * \author Helfer Thomas
+ */
+
 #ifndef _STENSOR_CONCEPT_LIB_
 #define _STENSOR_CONCEPT_LIB_ 1
 

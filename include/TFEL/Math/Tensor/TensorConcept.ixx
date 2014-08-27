@@ -1,6 +1,10 @@
+/*!
+ * \file   TensorConcept.ixx
+ * \author Helfer Thomas
+ */
 
-#ifndef _TFEL_MATH_TENSOR_CONCEPT_IMPL_
-#define _TFEL_MATH_TENSOR_CONCEPT_IMPL_ 1
+#ifndef _LIB_TFEL_MATH_TENSOR_CONCEPT_IMPL_
+#define _LIB_TFEL_MATH_TENSOR_CONCEPT_IMPL_ 1
 
 #include"TFEL/FSAlgorithm/transform.hxx"
 #include"TFEL/FSAlgorithm/copy.hxx"
@@ -933,4 +937,4 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* _TFEL_MATH_TENSOR_CONCEPT_IMPL_ */
+#endif /* _LIB_TFEL_MATH_TENSOR_CONCEPT_IMPL_ */

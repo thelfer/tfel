@@ -1,5 +1,10 @@
-#ifndef _MATH_TENSOR_EXPR_LIB_
-#define _MATH_TENSOR_EXPR_LIB_ 1
+/*!
+ * \file   TensorExpr.hxx
+ * \author Helfer Thomas
+ */
+
+#ifndef _LIB_TFEL_MATH_TENSOR_EXPR_LIB_
+#define _LIB_TFEL_MATH_TENSOR_EXPR_LIB_ 1
 
 #include <string>
 #include <ostream>
@@ -82,4 +87,4 @@ namespace tfel{
 
 } // end of TFEL namespace
 
-#endif /* _MATH_TENSOR_EXPR_LIB_ */
+#endif /* _LIB_TFEL_MATH_TENSOR_EXPR_LIB_ */

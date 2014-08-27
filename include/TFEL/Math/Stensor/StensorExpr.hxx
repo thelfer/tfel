@@ -1,3 +1,8 @@
+/*!
+ * \file   StensorExpr.hxx
+ * \author Helfer Thomas
+ */
+
 #ifndef _MATH_STENSOR_EXPR_LIB_
 #define _MATH_STENSOR_EXPR_LIB_ 1
 

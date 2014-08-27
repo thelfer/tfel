@@ -1,3 +1,8 @@
+/*!
+ * \file   VectorConcept.ixx
+ * \author Helfer Thomas
+ */
+
 #ifndef _VECTOR_CONCEPT_IMPL_
 #define _VECTOR_CONCEPT_IMPL_ 1
 

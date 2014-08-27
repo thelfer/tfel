@@ -1,3 +1,9 @@
+/*!
+ * \file   MultipleDeque.hxx
+ * \brief  This file defines the MultipleDeque class.
+ * \author Helfer Thomas
+ */
+
 #ifndef _LIB_TFEL_MULTIPLEDEQUE_H_
 #define _LIB_TFEL_MULTIPLEDEQUE_H_ 1
 

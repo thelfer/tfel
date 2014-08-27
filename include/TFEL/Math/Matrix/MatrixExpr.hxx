@@ -1,3 +1,8 @@
+/*!
+ * \file   MatrixExpr.hxx
+ * \author Helfer Thomas
+ */
+
 #ifndef _TFEL_MATH_MATRIX_EXPR_LIB_
 #define _TFEL_MATH_MATRIX_EXPR_LIB_ 1
 

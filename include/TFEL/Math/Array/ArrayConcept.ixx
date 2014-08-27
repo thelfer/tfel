@@ -1,5 +1,10 @@
-#ifndef _TFEL_MATH_ARRAY_CONCEPT_IMPL_
-#define _TFEL_MATH_ARRAY_CONCEPT_IMPL_ 1
+/*!
+ * \file   ArrayConcept.ixx
+ * \author Helfer Thomas
+ */
+
+#ifndef _LIB_TFEL_MATH_ARRAY_CONCEPT_IMPL_
+#define _LIB_TFEL_MATH_ARRAY_CONCEPT_IMPL_ 1
 
 namespace tfel{
 

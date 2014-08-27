@@ -1,3 +1,8 @@
+/*!
+ * \file   VectorExpr.hxx
+ * \author Helfer Thomas
+ */
+
 #ifndef _MATH_VECTOR_EXPR_LIB_
 #define _MATH_VECTOR_EXPR_LIB_ 1
 
