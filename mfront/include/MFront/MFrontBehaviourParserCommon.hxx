@@ -171,11 +171,6 @@ namespace mfront{
       std::vector<tfel::utilities::Token> untreated;
     };
     /*!
-     * \return a string describing the behaviour type
-     */
-    virtual std::string
-    convertBehaviourTypeToString(void) const;
-    /*!
      * \return the name of the generated class
      */
     virtual std::string getClassName(void) const;
@@ -357,34 +352,6 @@ namespace mfront{
      */
     virtual void
     writeOutputFiles(void);
-    /*!
-     * \brief : an helper function to declare a timer
-     * \param[out] os : output stream
-     * \param[in]  v  : code block name
-     * \param[in]  s  : time temporary variable suffix
-     */
-    virtual void
-    writeStandardPerformanceProfiling(std::ostream&,
-				      const std::string&,
-				      const std::string& = "");
-    /*!
-     * \brief : an helper function writing the beginning of a
-     * performance measurement
-     * \param[out] os : output stream
-     * \param[in]  v  : code block name
-     * \param[in]  s  : time temporary variable suffix
-     */
-    virtual void
-    writeStandardPerformanceProfilingBegin(std::ostream&,
-					   const std::string&,
-					   const std::string& = "");
-    /*!
-     * \brief : an helper function writing the end of a
-     * performance measurement
-     * \param[out] os : output stream
-     */
-    virtual void
-    writeStandardPerformanceProfilingEnd(std::ostream&);
     /*!
      * \return the list of hypothesis a priori supported by
      * the parser.

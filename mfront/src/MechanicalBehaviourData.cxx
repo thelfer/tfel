@@ -10,6 +10,7 @@
 #include<stdexcept>
 
 #include"TFEL/Glossary/Glossary.hxx"
+#include"MFront/MFrontPerformanceProfiling.hxx"
 #include"MFront/MechanicalBehaviourData.hxx"
 
 namespace mfront{
@@ -42,6 +43,8 @@ namespace mfront{
   MechanicalBehaviourData::ComputeTangentOperator("ComputeTangentOperator");
   const std::string
   MechanicalBehaviourData::InitializeJacobian("InitializeJacobian");
+  const std::string
+  MechanicalBehaviourData::InitializeJacobianInvert("InitializeJacobianInvert");
 
   const std::string
   MechanicalBehaviourData::profiling("profiling");
@@ -53,10 +56,6 @@ namespace mfront{
   MechanicalBehaviourData::isConsistentTangentOperatorSymmetric("isConsistentTangentOperatorSymmetric");
   const std::string
   MechanicalBehaviourData::hasPredictionOperator("hasPredictionOperator");
-  const std::string
-  MechanicalBehaviourData::useCast3MAccelerationAlgorithm("useCast3MAccelerationAlgorithm");
-  const std::string
-  MechanicalBehaviourData::useRelaxationAlgorithm("useRelaxationAlgorithm");
   const std::string
   MechanicalBehaviourData::compareToNumericalJacobian("compareToNumericalJacobian");
   const std::string
@@ -709,7 +708,7 @@ namespace mfront{
 
 
   const CodeBlock&
-  MechanicalBehaviourData::getCode(const std::string& n) const
+  MechanicalBehaviourData::getCodeBlock(const std::string& n) const
   {
     using namespace std;
     map<string,CodeBlocksAggregator>::const_iterator p = this->cblocks.find(n);
@@ -719,6 +718,22 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     return p->second.get();
+  } // end of MechanicalBehaviourData::getCodeBlock
+
+  std::string
+  MechanicalBehaviourData::getCode(const std::string& n,
+				   const std::string& cn,
+				   const bool b) const
+  {
+    using namespace std;
+    if(!b){
+      return this->getCodeBlock(n).code;
+    }
+    ostringstream out;
+    writeStandardPerformanceProfilingBegin(out,cn,n);
+    out << this->getCodeBlock(n).code;
+    writeStandardPerformanceProfilingEnd(out);
+    return out.str();
   } // end of MechanicalBehaviourData::getCode
 
   bool

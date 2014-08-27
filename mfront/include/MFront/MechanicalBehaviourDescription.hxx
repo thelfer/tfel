@@ -209,6 +209,11 @@ namespace mfront
     BehaviourType
     getBehaviourType(void) const;
     /*!
+     * \return a string describing the behaviour type
+     */
+    std::string
+    getBehaviourTypeFlag(void) const;
+    /*!
      * \return the symmetry type of the behaviour
      */
     MechanicalBehaviourSymmetryType
@@ -766,11 +771,20 @@ namespace mfront
     std::vector<std::string>
     getCodeBlockNames(const Hypothesis) const;
     /*!
-     * \return the code with the given name
+     * \return the code block with the given name
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
     const CodeBlock&
+    getCodeBlock(const Hypothesis,
+		 const std::string&) const;
+    /*!
+     * \return the code with the given name
+     * \note if the attribute ""
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : name
+     */
+    std::string
     getCode(const Hypothesis,
 	    const std::string&) const;
     /*!

@@ -6,6 +6,9 @@
  * \date   21 sep 2008
  */
 
+#include<iostream>
+#include<iomanip>
+
 #include<cmath>
 #include<limits>
 #include<cstdlib>
@@ -15,13 +18,24 @@
 
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
+#include"MFront/MFrontNonLinearSystemSolver.hxx"
+#include"MFront/MFrontNonLinearSystemSolverBase.hxx"
+#include"MFront/MFrontNonLinearSystemSolverFactory.hxx"
+#include"MFront/MFrontPerformanceProfiling.hxx"
 #include"MFront/MFrontImplicitParserBase.hxx"
 
+#warning"HERE"
+  // if(this->varNames.find(p+"df"+v1.name+"_dd"+v2.name)!=this->varNames.end()){
+  //   string msg("MFrontNonLinearSystemSolverBase::getJacobianPart : ");
+  //   msg += "variable name 'df"+v1.name+"_dd"+v2.name;
+  //   msg += "' is reserved.\n";
+  //   throw(runtime_error(msg));
+  // }
+  
 namespace mfront{
 
   MFrontImplicitParserBase::MFrontImplicitParserBase()
-    : MFrontBehaviourParserBase<MFrontImplicitParserBase>(),
-      algorithm(MFrontImplicitParserBase::DEFAULT)
+    : MFrontBehaviourParserBase<MFrontImplicitParserBase>()
   {
     using namespace std;
     // dynamically allocated vectors are not yet allowed in implicit
@@ -29,67 +43,26 @@ namespace mfront{
     this->areDynamicallyAllocatedVectorsAllowed_ = false;
     // parameters
     this->registerVariable("theta",false);
-    this->registerVariable("epsilon",false);
-    this->registerVariable("iterMax",false);
-    this->registerVariable("powell_dogleg_trust_region_size",false);
     this->registerVariable("numerical_jacobian_epsilon",false);
     this->registerVariable("maximum_increment_value_per_iteration",false);
     this->registerVariable("jacobianComparisonCriterium",false);
-    this->registerVariable("relaxationTrigger",false);
-    this->registerVariable("accelerationTrigger",false);
-    this->registerVariable("accelerationPeriod",false);
-    this->registerVariable("relaxationCoefficient",false);
-    this->registerVariable("previous_zeros",false);
+    this->registerVariable("epsilon",false);
     this->registerVariable("vect_e",false);
     this->registerVariable("zeros",false);
     this->registerVariable("tzeros",false);
     this->registerVariable("zeros_1",false);
     this->registerVariable("fzeros",false);
-    this->registerVariable("tfzeros",false);
-    this->registerVariable("zeros2",false);
-    this->registerVariable("fzeros2",false);
-    this->registerVariable("Dzeros",false);
-    this->registerVariable("Dfzeros",false);
     this->registerVariable("jacobian",false);
-    this->registerVariable("tjacobian",false);
     this->registerVariable("njacobian",false);
     this->registerVariable("partial_jacobian",false);
-    this->registerVariable("jacobian2",false);
-    this->registerVariable("levmar_jacobian_1",false);
-    this->registerVariable("levmar_fzeros_1",false);
-    this->registerVariable("levmar_sm",false);
-    this->registerVariable("levmar_mu",false);
-    this->registerVariable("levmar_muF",false);
-    this->registerVariable("levmar_r",false);
-    this->registerVariable("levmar_p0",false);
-    this->registerVariable("levmar_p1",false);
-    this->registerVariable("levmar_p2",false);
-    this->registerVariable("levmar_m",false);
     this->registerVariable("t",false);
-    this->registerVariable("dt_",false);
-    this->registerVariable("error",false);
     this->registerVariable("error_1",false);
     this->registerVariable("error_p",false);
     this->registerVariable("idx",false);
     this->registerVariable("idx2",false);
     this->registerVariable("idx3",false);
-    this->reserveName("schmidt",false);
     this->reserveName("computeNumericalJacobian",false);
     this->reserveName("TinyMatrixSolve",false);
-    this->reserveName("accelerate",false);
-    this->reserveName("accelerate_k0",false);
-    this->reserveName("accelerate_k1",false);
-    this->reserveName("accelerate_k2",false);
-    this->reserveName("accelerate_c0",false);
-    this->reserveName("accelerate_c1",false);
-    this->reserveName("accelerate_re0",false);
-    this->reserveName("accelerate_re1",false);
-    this->reserveName("accelerate_r0",false);
-    this->reserveName("accelerate_r1",false);
-    this->reserveName("accelerate_r2",false);
-    this->reserveName("iter",false);
-    this->reserveName("converged",false);
-    this->reserveName("broyden_inv",false);
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
 			      &MFrontImplicitParserBase::treatUsableInPurelyImplicitResolution);
@@ -102,22 +75,16 @@ namespace mfront{
     this->registerNewCallBack("@PerturbationValueForNumericalJacobianComputation",
 			      &MFrontImplicitParserBase::treatPerturbationValueForNumericalJacobianComputation);
     this->registerNewCallBack("@IterMax",&MFrontImplicitParserBase::treatIterMax);
-    this->registerNewCallBack("@PowellDogLegTrustRegionSize",
-			      &MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize);
     this->registerNewCallBack("@MaximumNumberOfIterations",&MFrontImplicitParserBase::treatIterMax);
     this->registerNewCallBack("@Algorithm",&MFrontImplicitParserBase::treatAlgorithm);
-    this->registerNewCallBack("@UseAcceleration",&MFrontImplicitParserBase::treatUseAcceleration);
-    this->registerNewCallBack("@AccelerationTrigger",&MFrontImplicitParserBase::treatAccelerationTrigger);
-    this->registerNewCallBack("@AccelerationPeriod",&MFrontImplicitParserBase::treatAccelerationPeriod);
-    this->registerNewCallBack("@UseRelaxation",&MFrontImplicitParserBase::treatUseRelaxation);
-    this->registerNewCallBack("@RelaxationTrigger",&MFrontImplicitParserBase::treatRelaxationTrigger);
-    this->registerNewCallBack("@RelaxationCoefficient",&MFrontImplicitParserBase::treatRelaxationCoefficient);
     this->registerNewCallBack("@TangentOperator",
 			      &MFrontImplicitParserBase::treatTangentOperator);
     this->registerNewCallBack("@IsTangentOperatorSymmetric",
 			      &MFrontImplicitParserBase::treatIsTangentOperatorSymmetric);
     this->registerNewCallBack("@InitJacobian",
 			      &MFrontImplicitParserBase::treatInitJacobian);
+    this->registerNewCallBack("@InitJacobianInvert",
+			      &MFrontImplicitParserBase::treatInitJacobianInvert);
     this->registerNewCallBack("@CompareToNumericalJacobian",
 			      &MFrontImplicitParserBase::treatCompareToNumericalJacobian);
     this->registerNewCallBack("@JacobianComparisonCriterium",
@@ -131,6 +98,26 @@ namespace mfront{
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
   } // end of MFrontImplicitParserBase::MFrontImplicitParserBase
+
+  void
+  MFrontImplicitParserBase::treatUnknownKeyword()
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    --(this->current);
+    const string key = this->current->value;
+    ++(this->current);
+    if(this->solver.get()!=0){
+      pair<bool,CxxTokenizer::TokensContainer::const_iterator> r = 
+	this->solver->treatSpecificKeywords(this->mb,key,this->current,
+					    this->fileTokens.end());
+      if(r.first){
+	this->current = r.second;
+	return;
+      }
+    }
+    MFrontBehaviourParserCommon::treatUnknownKeyword();
+  } // end of MFrontImplicitParserBase::treatUnknownKeyword
 
   void MFrontImplicitParserBase::treatStateVariable(void)
   {
@@ -151,14 +138,36 @@ namespace mfront{
   void MFrontImplicitParserBase::treatInitJacobian(void)
   {
     using namespace std;
-    if(this->algorithm!=BROYDEN){
+    if(this->solver.get()==0){
       this->throwRuntimeError("MFrontImplicitParserBase::treatInitJacobian",
-			      "@InitJacobian can only be used with "
-			      "the broyden algorithm.");
+			      "undefined algorithm. Please use the '@Algorithm' "
+			      "keyword to define one.");
+    }
+    if(!this->solver->allowsJacobianInitialisation()){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatInitJacobian",
+			      "@InitJacobian can not be used with "
+			      "the current algorithm.");
     }
     this->readCodeBlock(*this,MechanicalBehaviourData::InitializeJacobian,
 			&MFrontImplicitParserBase::standardModifier,true,true);
   } // end of MFrontImplicitParserBase::treatInitJacobian
+
+  void MFrontImplicitParserBase::treatInitJacobianInvert(void)
+  {
+    using namespace std;
+    if(this->solver.get()==0){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatInitJacobianInvert",
+			      "undefined algorithm. Please use the '@Algorithm' "
+			      "keyword to define one.");
+    }
+    if(!this->solver->allowsJacobianInvertInitialisation()){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatInitJacobianInvert",
+			      "@InitJacobianInvert can not be used with "
+			      "the current algorithm.");
+    }
+    this->readCodeBlock(*this,MechanicalBehaviourData::InitializeJacobianInvert,
+			&MFrontImplicitParserBase::standardModifier,true,true);
+  } // end of MFrontImplicitParserBase::treatInitJacobianInvert
   
   void MFrontImplicitParserBase::treatUnknownVariableMethod(const Hypothesis h,
 							    const std::string& n)
@@ -196,10 +205,7 @@ namespace mfront{
     				    "invalid normalisation factor.");
     	  }
     	}
-    	if(!this->nf.insert(make_pair(n,var)).second){
-    	  this->throwRuntimeError("MFrontImplicitParserBase::treatUnknowVariableMethod",
-    				  "Normalisation factor already defined for variable '"+n+"'.");
-    	}
+	this->mb.setAttribute(h,n+"_normalisation_factor",var);
     	++(this->current);
     	return;
       } else if(this->current->value=="setMaximumIncrementValuePerIteration"){
@@ -253,75 +259,6 @@ namespace mfront{
      }
      return MFrontBehaviourParserCommon::isCallableVariable(h,n);
   } // end of MFrontImplicitParserBase::isCallableVariable
-  
-  void
-  MFrontImplicitParserBase::treatUseAcceleration(void)
-  {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->checkNotEndOfFile("MFrontImplicitParserBase::treatUseAcceleration : ",
-			    "Expected 'true' or 'false'.");
-    if(this->current->value=="true"){
-      this->mb.setAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,true);
-    } else if(this->current->value=="false"){
-      this->mb.setAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false);
-    } else {
-      this->throwRuntimeError("MFrontImplicitParserBase::treatUseAcceleration",
-			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MFrontImplicitParserBase::treatUseAcceleration",";");
-  } // end of MFrontImplicitParserBase::treatUseAcceleration
-
-  void
-  MFrontImplicitParserBase::treatAccelerationTrigger(void)
-  {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    unsigned short accelerationTrigger = this->readUnsignedShort("MFrontImplicitParserBase::treatAccelerationTrigger");
-    if(accelerationTrigger<3){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatAccelerationTrigger",
-			      "invalid acceleration trigger value.");
-    }
-    VariableDescription at("ushort","accelerationTrigger",1u,0u);
-    at.description = "trigger period for the Cast3M acceleration algorithm";
-    this->mb.addParameter(h,at);
-    this->mb.setParameterDefaultValue(h,"accelerationTrigger",accelerationTrigger);
-    this->readSpecifiedToken("MFrontImplicitParserBase::treatAccelerationTrigger",";");
-  } // end of MFrontImplicitParserBase::treatAccelerationTrigger
-
-  void
-  MFrontImplicitParserBase::treatAccelerationPeriod(void)
-  {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    unsigned short accelerationPeriod;
-    accelerationPeriod = this->readUnsignedShort("MFrontImplicitParserBase::treatAccelerationPeriod");
-    if(accelerationPeriod==0){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatAccelerationPeriod",
-			      "invalid acceleration period value.");
-    }
-    this->mb.addParameter(h,VariableDescription("ushort","accelerationPeriod",1u,0u));
-    this->mb.setParameterDefaultValue(h,"accelerationPeriod",accelerationPeriod);
-    this->readSpecifiedToken("MFrontImplicitParserBase::treatAccelerationPeriod",";");
-  } // end of MFrontImplicitParserBase::treatAccelerationPeriod
-
-  void
-  MFrontImplicitParserBase::treatUseRelaxation(void)
-  {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->checkNotEndOfFile("MFrontImplicitParserBase::treatUseRelaxation : ",
-			    "Expected 'true' or 'false'.");
-    if(this->current->value=="true"){
-      this->mb.setAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,true);
-    } else if(this->current->value=="false"){
-      this->mb.setAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,false);
-    } else {
-      this->throwRuntimeError("MFrontImplicitParserBase::treatUseRelaxation",
-			      "Expected to read 'true' or 'false' instead of '"+this->current->value+".");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MFrontImplicitParserBase::treatUseRelaxation",";");
-  } // end of MFrontImplicitParserBase::treatUseRelaxation
 
   void
   MFrontImplicitParserBase::treatCompareToNumericalJacobian(void)
@@ -371,83 +308,21 @@ namespace mfront{
 				      jacobianComparisonCriterium);
   } // MFrontImplicitParserBase::treatJacobianComparisonCriterium
 
-  void
-  MFrontImplicitParserBase::treatRelaxationTrigger(void)
-  {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    unsigned short relaxationTrigger;
-    relaxationTrigger = this->readUnsignedShort("MFrontImplicitParserBase::treatRelaxationTrigger");
-    this->readSpecifiedToken("MFrontImplicitParserBase::treatRelaxationTrigger",";");
-    this->mb.addParameter(h,VariableDescription("ushort","relaxationTrigger",1u,0u));
-    this->mb.setParameterDefaultValue(h,"relaxationTrigger",relaxationTrigger);
-  } // end of MFrontImplicitParserBase::treatRelaxationTrigger
-  
-  void
-  MFrontImplicitParserBase::treatRelaxationCoefficient(void)
-  {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(!this->mb.getAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,false)){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatRelaxationCoefficient",
-			      "relaxation unused");
-    }
-    this->checkNotEndOfFile("MFrontImplicitParserBase::treatRelaxationCoefficient",
-			    "Cannot read relaxation coefficient value.");
-    istringstream flux(current->value);
-    double w;
-    flux >> w;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatRelaxationCoefficient",
-			      "Failed to read relaxation coefficient value.");
-    }
-    if(w<0){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatRelaxationCoefficient",
-			      "relaxation coefficient value must be positive.");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MFrontImplicitParserBase::treatRelaxationCoefficient",";");    
-    this->mb.addParameter(h,VariableDescription("real","relaxationCoefficient",1u,0u));
-    this->mb.setParameterDefaultValue(h,"relaxationCoefficient",w);
-  } // end of MFrontImplicitParserBase::treatRelaxationCoefficient
-
   void MFrontImplicitParserBase::treatAlgorithm(void)
   {
     using namespace std;
+    const MFrontNonLinearSystemSolverFactory& f =
+      MFrontNonLinearSystemSolverFactory::getMFrontNonLinearSystemSolverFactory();
+    if(this->solver.get()!=0){
+      this->throwRuntimeError("MFrontImplicitParserBase::treatAlgorithm",
+			      "an algorithm has already been defined.");
+    }
     this->checkNotEndOfFile("MFrontImplicitParserBase::treatAlgorithm",
 			    "Cannot read algorithm name.");
-    if(this->algorithm!=MFrontImplicitParserBase::DEFAULT){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatAlgorithm",
-			      "@Algorithm has already been read.");
-    }
-    if(this->current->value=="NewtonRaphson"){
-      this->algorithm = MFrontImplicitParserBase::NEWTONRAPHSON;
-    } else if(this->current->value=="PowellDogLeg_NewtonRaphson"){
-      this->algorithm = MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON;
-    } else if(this->current->value=="NewtonRaphson_NumericalJacobian"){
-      this->algorithm = MFrontImplicitParserBase::NEWTONRAPHSON_NJ;
-    } else if(this->current->value=="PowellDogleg_NewtonRaphson_NumericalJacobian"){
-      this->algorithm = MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ;
-    } else if(this->current->value=="Broyden"){
-      this->algorithm = MFrontImplicitParserBase::BROYDEN;
-    } else if(this->current->value=="PowellDogLeg_Broyden"){
-      this->algorithm = MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN;
-    } else if(this->current->value=="Broyden2"){
-      this->algorithm = MFrontImplicitParserBase::BROYDEN2;
-    } else if(this->current->value=="LevenbergMarquardt"){
-      this->algorithm = MFrontImplicitParserBase::LEVENBERGMARQUARDT;
-    } else if(this->current->value=="LevenbergMarquardt_NumericalJacobian"){
-      this->algorithm = MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ;
-    } else {
-      this->throwRuntimeError("MFrontImplicitParserBase::treatAlgorithm : ",
-			      this->current->value+" is not a valid algorithm name\n"
-			      "Supported algorithms are : NewtonRaphson, NewtonRaphson_NumericalJacobian, "
-			      "Broyden, and Broyden2, "
-			      "PowellDogLeg_NewtonRaphson, PowellDogLeg_NewtonRaphson_NumericalJacobian, "
-			      "PowellDogLeg_NewtonRaphson, PowellDogLeg_NewtonRaphson_NumericalJacobian, "
-			      "PowellDogLeg_Broyden, LevenbergMarquardt.");
-    }
+    const string& s = this->current->value;
     ++this->current;
     this->readSpecifiedToken("MFrontImplicitParserBase::treatAlgorithm",";");
+    this->solver = f.getSolver(s);
   } // end of MFrontImplicitParserBase::treatAlgorithm
 
   void
@@ -531,30 +406,6 @@ namespace mfront{
   } // MFrontImplicitParserBase::treatEpsilon
 
   void
-  MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize(void)
-  {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    double pdl_trs;
-    this->checkNotEndOfFile("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
-			    "Cannot read pdl_trs value.");
-    istringstream flux(current->value);
-    flux >> pdl_trs;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
-			      "Failed to read region size.");
-    }
-    if(pdl_trs<0){
-      this->throwRuntimeError("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",
-			      "Region size must be positive.");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize",";");
-    this->mb.addParameter(h,VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
-    this->mb.setParameterDefaultValue(h,"powell_dogleg_trust_region_size",pdl_trs);
-  } // MFrontImplicitParserBase::treatPowellDogLegTrustRegionSize
-
-  void
   MFrontImplicitParserBase::treatIterMax(void)
   {
     using namespace std;
@@ -575,21 +426,23 @@ namespace mfront{
 							    const std::string& var,
 							    const bool addThisPtr)
   {
+    using namespace std;
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     if(d.isIntegrationVariableIncrementName(var)){
-      if(nf.find(var.substr(1))!=nf.end()){
+      if(this->mb.hasAttribute(h,var.substr(1)+"_normalisation_factor")){
 	const VariableDescription& s = d.getStateVariableHandler(var.substr(1));
+	const string& nf = this->mb.getAttribute<string>(h,var.substr(1)+"_normalisation_factor");
 	if(s.arraySize==1u){
 	  if(addThisPtr){
-	    return "(("+nf.find(var.substr(1))->second+")*(this->"+var+"))";
+	    return "(("+nf+")*(this->"+var+"))";
 	  } else {
-	    return "("+nf.find(var.substr(1))->second+")*var";
+	    return "("+nf+")*var";
 	  }
 	} else {
 	  if(addThisPtr){
-	    return "("+nf.find(var.substr(1))->second+")*(this->"+var+")";
+	    return "("+nf+")*(this->"+var+")";
 	  } else {
-	    return "("+nf.find(var.substr(1))->second+")*var";
+	    return "("+nf+")*var";
 	  }
 	}
       }
@@ -606,21 +459,23 @@ namespace mfront{
 						       const std::string& var,
 						       const bool addThisPtr)
   {
+    using namespace std;
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     if(d.isIntegrationVariableIncrementName(var)){
-      if(nf.find(var.substr(1))!=nf.end()){
+      if(this->mb.hasAttribute(h,var.substr(1)+"_normalisation_factor")){
 	const VariableDescription& s = d.getStateVariableHandler(var.substr(1));
+	const string& nf = this->mb.getAttribute<string>(h,var.substr(1)+"_normalisation_factor");
 	if(s.arraySize==1u){
 	  if(addThisPtr){
-	    return "(("+nf.find(var.substr(1))->second+")*(this->"+var+"))";
+	    return "(("+nf+")*(this->"+var+"))";
 	  } else {
-	    return "("+nf.find(var.substr(1))->second+")*var";
+	    return "("+nf+")*var";
 	  }
 	} else {
 	  if(addThisPtr){
-	    return "("+nf.find(var.substr(1))->second+")*(this->"+var+")";
+	    return "("+nf+")*(this->"+var+")";
 	  } else {
-	    return "("+nf.find(var.substr(1))->second+")*var";
+	    return "("+nf+")*var";
 	  }
 	}
       }
@@ -648,19 +503,20 @@ namespace mfront{
       }
     }
     if(d.isIntegrationVariableName(var)){
-      if(this->nf.find(var)!=nf.end()){
+      if(this->mb.hasAttribute(h,var+"_normalisation_factor")){
 	const VariableDescription& s = d.getStateVariableHandler(var);
+	const string& nf = this->mb.getAttribute<string>(h,var+"_normalisation_factor");
 	if(s.arraySize==1u){
 	  if(addThisPtr){
-	    return "(this->"+var+"+(this->theta)*(("+this->nf.find(var)->second+")*(this->d"+var+")))";
+	    return "(this->"+var+"+(this->theta)*(("+nf+")*(this->d"+var+")))";
 	  } else {
-	    return "("+var+"+("+this->nf.find(var)->second+")*(this->theta)*d"+var+")";
+	    return "("+var+"+("+nf+")*(this->theta)*d"+var+")";
 	  }
 	} else {
 	  if(addThisPtr){
-	    return "(this->"+var+"+(this->theta)*(("+this->nf.find(var)->second+")*(this->d"+var+")))";
+	    return "(this->"+var+"+(this->theta)*(("+nf+")*(this->d"+var+")))";
 	  } else {
-	    return "("+var+"+("+this->nf.find(var)->second+")*(this->theta)*d"+var+")";
+	    return "("+var+"+("+nf+")*(this->theta)*d"+var+")";
 	  }
 	}
       } else {
@@ -1225,107 +1081,35 @@ namespace mfront{
     }
     // size of linear system
     n = n3;
-    this->behaviourFile << "// Jacobian\n";
-    this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> jacobian;\n";
+    if(this->solver->usesJacobian()){
+      this->behaviourFile << "// Jacobian\n";
+      this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> jacobian;\n";
+    }
+    if(this->solver->usesJacobianInvert()){
+      this->behaviourFile << "// Jacobian\n";
+      this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> inv_jacobian;\n";
+    }
+    this->solver->writeSpecificMembers(this->behaviourFile,this->mb,h);
     this->behaviourFile << "// zeros\n";
     this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros;\n\n";
     this->behaviourFile << "// previous zeros\n";
     this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros_1;\n\n";
     this->behaviourFile << "// function\n";
     this->behaviourFile << "tfel::math::tvector<" << n << ",Type> fzeros;\n\n";
-    if(this->mb.getAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false)){
-      this->behaviourFile << "// previous results (used for acceleration)\n";
-      this->behaviourFile << "tfel::math::tvector<" << n << ",Type> previous_fzeros[3];\n\n";
-      this->behaviourFile << "// previous zeros (used for acceleration)\n";
-      this->behaviourFile << "tfel::math::tvector<" << n << ",Type> previous_zeros[3];\n\n";
-    }
     this->behaviourFile << "// number of iterations\n";
     this->behaviourFile << "unsigned int iter;\n\n";
-    // castem acceleration
-    if(this->mb.getAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false)){
-      this->behaviourFile << "static bool\n";
-      this->behaviourFile << "schmidt(";
-      this->behaviourFile << "Type& k0,\n";
-      this->behaviourFile << "Type& k1,\n";
-      this->behaviourFile << "Type& k2,\n";
-      this->behaviourFile << "tfel::math::tvector<" << n << ",Type>& e0,\n";
-      this->behaviourFile << "tfel::math::tvector<" << n << ",Type>& e1,\n";
-      this->behaviourFile << "const tfel::math::tvector<" << n << ",Type>& v0,\n";
-      this->behaviourFile << "const tfel::math::tvector<" << n << ",Type>& v1,\n";
-      this->behaviourFile << "const tfel::math::tvector<" << n << ",Type>& v2)\n";
-      this->behaviourFile << "{\n";
-      this->behaviourFile << "using namespace std;\n";
-      this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "Type n; // temporary used for norm computation\n";
-      this->behaviourFile << "Type m; // temporary\n";
-      this->behaviourFile << "typename tvector<" << n << ",Type>::size_type i;\n";
-      this->behaviourFile << "for(i=0;i!=N;++i){\n";
-      this->behaviourFile << "m = abs(v0(i))+abs(v1(i))+abs(v2(i));\n";
-      this->behaviourFile << "}\n";
-      this->behaviourFile << "// base du plan\n";
-      this->behaviourFile << "e0 = v1-v0;\n";
-      this->behaviourFile << "n = norm(e0);\n";
-      this->behaviourFile << "if((n<m*numeric_limits<Type>::epsilon())||\n";
-      this->behaviourFile << "(n<10*numeric_limits<Type>::min())){\n";
-      this->behaviourFile << "return false;\n";
-      this->behaviourFile << "}\n";
-      this->behaviourFile << "k0  = Type(1)/n;\n";
-      this->behaviourFile << "e0 *= k0;\n";
-      this->behaviourFile << "k1  = (v2-v0)|e0;\n";
-      this->behaviourFile << "e1  = (v2-v0)-k1*e0;\n";
-      this->behaviourFile << "n = norm(e1);\n";
-      this->behaviourFile << "if((n<m*numeric_limits<Type>::epsilon())||\n";
-      this->behaviourFile << "(n<10*numeric_limits<Type>::min())){\n";
-      this->behaviourFile << "return false;\n";
-      this->behaviourFile << "}\n";
-      this->behaviourFile << "k2  = Type(1)/n;\n";
-      this->behaviourFile << "e1 *= k2;\n";
-      this->behaviourFile << "k1 *= -k2*k0;\n";
-      this->behaviourFile << "return true;\n";
-      this->behaviourFile << "} // end of schmidt\n\n";
-    
-      this->behaviourFile << "void\n";
-      this->behaviourFile << "accelerate(tfel::math::tvector<" << n << ",Type>& r)";
-      this->behaviourFile << "{\n";
-      this->behaviourFile << "using namespace std;\n";
-      this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "tfel::math::tvector<" << n << ",Type> accelearate_re0;\n";
-      this->behaviourFile << "tfel::math::tvector<" << n << ",Type> accelearate_re1;\n";
-      this->behaviourFile << "Type accelearate_k0;\n";
-      this->behaviourFile << "Type accelearate_k1;\n";
-      this->behaviourFile << "Type accelearate_k2;\n";
-      this->behaviourFile << "if(!schmidt(accelearate_k0,\n"
-			  << "accelearate_k1,\n" 
-			  << "accelearate_k2,\n"
-			  << "accelearate_re0,accelearate_re1,previous_fzeros[0],\n"
-			  << "previous_fzeros[1],previous_fzeros[2])){\n";
-      this->behaviourFile << "return;\n"; 
-      this->behaviourFile << "}\n";
-      this->behaviourFile << "const Type accelearate_c0 = -(previous_fzeros[0]|accelearate_re0);\n";
-      this->behaviourFile << "const Type accelearate_c1 = -(previous_fzeros[0]|accelearate_re1);\n";
-      this->behaviourFile << "const Type accelearate_r1 = (accelearate_c0*accelearate_k0+accelearate_c1*accelearate_k1);\n";
-      this->behaviourFile << "const Type accelearate_r2 = accelearate_c1*accelearate_k2;\n";
-      this->behaviourFile << "const Type accelearate_r0 = (1-accelearate_r1-accelearate_r2)\n;";
-      this->behaviourFile << "r = accelearate_r0*previous_zeros[0]+accelearate_r1*previous_zeros[1]+accelearate_r2*previous_zeros[2];\n";
-      this->behaviourFile << "} // end of accelate\n\n";
-    }
-    // compute the numerical part of the jacobian
-    if((this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false))||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
+    if(this->solver->usesJacobian()){
+      // compute the numerical part of the jacobian.  This method is
+      // used to compute a numerical approximation of the jacobian for
+      // the solvers based on it. For solvers providing an analytical
+      // jacobian, or an approximation of it, this method is used to
+      // compare the jacobain to its numerical approximation
       this->writeComputeNumericalJacobian(h);
     }
-    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
+    if(this->solver->usesJacobian()){
+      // for solver based on the jacobian matrix, the get partial
+      // jacobian invert method can be used to compute the tangent
+      // operator.
       this->writeGetPartialJacobianInvert(h);
     }
     // compute stress
@@ -1334,11 +1118,9 @@ namespace mfront{
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";
-      this->writeStandardPerformanceProfiling(this->behaviourFile,
-					      MechanicalBehaviourData::ComputeStress);
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress).code << endl;
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress) << endl;
       this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
@@ -1346,74 +1128,13 @@ namespace mfront{
       this->behaviourFile << "using namespace std;\n";
       this->behaviourFile << "using namespace tfel::math;\n";
       this->behaviourFile << "using std::vector;\n";
-      this->writeStandardPerformanceProfiling(this->behaviourFile,
-					      MechanicalBehaviourData::ComputeFinalStress);
       writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress).code << endl;
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress) << endl;
       this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
       this->behaviourFile << endl;
     }
   } // end of MFrontImplicitParserBase::writeBehaviourParserSpecificMembers
-
-  std::string
-  MFrontImplicitParserBase::getJacobianPart(const VariableDescription&  v1,
-					    const VariableDescription&  v2,
-					    const SupportedTypes::TypeSize& n,
-					    const SupportedTypes::TypeSize& n2,
-					    const SupportedTypes::TypeSize& n3,
-					    const std::string& j,
-					    const std::string& p)
-  {
-    using namespace std;
-    ostringstream d;
-    if(this->varNames.find(p+"df"+v1.name+"_dd"+v2.name)!=this->varNames.end()){
-      string msg("MFrontImplicitParserBase::getJacobianPart : ");
-      msg += "variable name 'df"+v1.name+"_dd"+v2.name;
-      msg += "' is reserved.\n";
-      throw(runtime_error(msg));
-    }
-    if(this->getTypeFlag(v1.type)==SupportedTypes::Stensor){
-      if(this->getTypeFlag(v2.type)==SupportedTypes::Stensor){
-	d << "typename tfel::math::ST2toST2FromTinyMatrixView<N,"
-	  << n2 << "," << n2 << ",\n"
-	  << n  << "," << n3
-	  << ",real>::type "+p+"df" << v1.name << "_dd" << v2.name << "("+j+");\n";
-      } else if(this->getTypeFlag(v2.type)==SupportedTypes::Scalar){
-	d << "typename tfel::math::StensorFromTinyMatrixColumnView<N," 
-	  << n2 << "," << n2 << ",\n"
-	  << n  << "," << n3
-	  << ",real>::type "+p+"df" << v1.name << "_dd" << v2.name << "("+j+");\n";
-      } else {
-	string msg("MFrontImplicitParserBase::getJacobianPart : ");
-	msg += "unsupported type for integration variable ";
-	msg += v2.name;
-	throw(runtime_error(msg));
-      }
-    } else if(this->getTypeFlag(v1.type)==SupportedTypes::Scalar){
-      if(this->getTypeFlag(v2.type)==SupportedTypes::Stensor){
-	d << "typename tfel::math::StensorFromTinyMatrixRowView<N,"
-	  << n2 << "," << n2 << ",\n"
-	  << n  << "," << n3
-	  << ",real>::type "+p+"df" << v1.name 
-	  << "_dd" << v2.name << "("+j+");\n";
-      } else if(this->getTypeFlag(v2.type)==SupportedTypes::Scalar){
-	d << "real& "+p+"df" << v1.name << "_dd" << v2.name 
-	  << " = "+j+"(" << n << "," << n3 << ");\n";
-      } else {
-	string msg("MFrontImplicitParserBase::getJacobianPart : ");
-	msg += "unsupported type for integration variable ";
-	msg += v2.name;
-	throw(runtime_error(msg));
-      }
-    } else {
-      string msg("MFrontImplicitParserBase::getJacobianPart : ");
-      msg += "unsupported type for integration variable ";
-      msg += v1.name;
-      throw(runtime_error(msg));
-    }
-    return d.str();
-  } // void MFrontImplicitParserBase::getJacobianPart
 
   void
   MFrontImplicitParserBase::writeGetPartialJacobianInvert(const Hypothesis h)
@@ -1553,71 +1274,15 @@ namespace mfront{
       }
       this->behaviourFile << "}\n";
       for(p2=d.getIntegrationVariables().begin();p2!=p;++p2){
-	if(nf.find(p2->name)!=nf.end()){
-	  this->behaviourFile << "partial_jacobian_" << p2->name << " /= " << nf.find(p2->name)->second << ";\n";
+	if(this->mb.hasAttribute(h,p2->name+"_normalisation_factor")){
+	  const string& nf = this->mb.getAttribute<string>(h,p2->name+"_normalisation_factor");
+	  this->behaviourFile << "partial_jacobian_" << p2->name << " /= " << nf << ";\n";
 	}
       }
       this->behaviourFile << "}\n\n";
     }
   } // end of MFrontImplicitParserBase::writeGetPartialJacobianInvert
   
-  void
-  MFrontImplicitParserBase::writeLimitsOnIncrementValues(const Hypothesis h,
-							 const std::string& v)
-  {
-    using namespace std;
-    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
-    this->checkBehaviourFile();
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      SupportedTypes::TypeSize nv = this->getTypeSize(p->type,p->arraySize);
-      if(this->mb.hasParameter(h,p->name+"_maximum_increment_value_per_iteration")){
-	this->behaviourFile << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
-	if(this->nf.find(p->name)!=this->nf.end()){
-	  this->behaviourFile << "if(std::abs(" << v << "[" << n 
-			      << "+idx])>" << this->nf[p->name] << "*(this->" << p->name << "_maximum_increment_value_per_iteration)){\n";
-	} else {
-	  this->behaviourFile << "if(std::abs(" << v << "[" << n 
-			      << "+idx])>this->" << p->name << "_maximum_increment_value_per_iteration){\n";
-	}
-	this->behaviourFile << "if("<< v << "[" << n << "+idx]<0){\n";
-	if(this->nf.find(p->name)!=this->nf.end()){
-	  this->behaviourFile << "" << v << "[" << n
-			      << "+idx] = -"  << this->nf[p->name] << "*(this->" << p->name << "_maximum_increment_value_per_iteration);\n";
-	} else {
-	  this->behaviourFile << "" << v << "[" << n
-			      << "+idx] = -this->" << p->name << "_maximum_increment_value_per_iteration;\n";
-	}
-	this->behaviourFile << "} else {\n";
-	if(this->nf.find(p->name)!=this->nf.end()){
-	  this->behaviourFile << "" << v << "[" << n
-			      << "+idx] = " << this->nf[p->name] << "*(this->" << p->name << "_maximum_increment_value_per_iteration);\n";
-	} else {
-	  this->behaviourFile << "" << v << "["
-			      << n << "+idx] =  this->" << p->name << "_maximum_increment_value_per_iteration;\n";
-	}
-	this->behaviourFile << "}\n";
-	this->behaviourFile << "}\n";
-	this->behaviourFile << "}\n";
-      } else if(this->mb.hasParameter(h,"maximum_increment_value_per_iteration")){
-	this->behaviourFile << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
-	this->behaviourFile << "if(std::abs(" << v << "[" << n 
-			    << "+idx])>this->maximum_increment_value_per_iteration){\n";
-	this->behaviourFile << "if("<< v << "[" << n << "+idx]<0){\n";
-	this->behaviourFile << "" << v << "[" << n
-			    << "+idx] = -this->maximum_increment_value_per_iteration;\n";
-	this->behaviourFile << "} else {\n";
-	this->behaviourFile << "" << v << "["
-			    << n << "+idx] =  this->maximum_increment_value_per_iteration;\n";
-	this->behaviourFile << "}\n";
-	this->behaviourFile << "}\n";
-	this->behaviourFile << "}\n";
-      }
-      n += nv;
-    }
-  }
-
   void MFrontImplicitParserBase::writeComputeNumericalJacobian(const Hypothesis h){
     using namespace std;
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
@@ -1642,11 +1307,6 @@ namespace mfront{
     this->behaviourFile << "this->computeFdF();\n";
     this->behaviourFile << "this->zeros = tzeros;\n";
     this->behaviourFile << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n";
-    // if(this->algorithm!=MFrontImplicitParserBase::NEWTONRAPHSON){
-    //   this->behaviourFile << "if(&njacobian!=&(this->jacobian)){\n";
-    //   this->behaviourFile << "this->jacobian = tjacobian;\n";
-    //   this->behaviourFile << "}\n";
-    // }
     this->behaviourFile << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
@@ -1685,7 +1345,7 @@ namespace mfront{
 
   void MFrontImplicitParserBase::writeBehaviourIntegrator(const Hypothesis h){
     using namespace std;
-    const string btype = this->convertBehaviourTypeToString();
+    const string btype = this->mb.getBehaviourTypeFlag();
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     VariableDescriptionContainer::const_iterator p2;
@@ -1727,14 +1387,12 @@ namespace mfront{
 			    << "}" << endl;
       }
     }
-    this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-						 MechanicalBehaviourData::Integrator);
-    if((this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
-      this->writeLevenbergMarquardtAlgorithm(h);
-    } else {
-      this->writeStandardImplicitAlgorithm(h);
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      writeStandardPerformanceProfilingBegin(this->behaviourFile,
+					     mb.getClassName(),
+					     MechanicalBehaviourData::Integrator);
     }
+    this->solver->writeResolutionAlgorithm(this->behaviourFile,this->mb,h);
     this->behaviourFile << "if(this->iter==this->iterMax){\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
@@ -1748,16 +1406,18 @@ namespace mfront{
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
     this->behaviourFile << "}\n";
-    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(h);
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : convergence after \" "
 			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
-    this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      writeStandardPerformanceProfilingEnd(this->behaviourFile);
+    }
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      if(this->nf.find(p->name)!=this->nf.end()){
-	this->behaviourFile << "this->d" << p->name << " *= " << this->nf.find(p->name)->second << ";\n";
+      if(this->mb.hasAttribute(h,p->name+"_normalisation_factor")){
+	const string& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	this->behaviourFile << "this->d" << p->name << " *= " << nf << ";\n";
       }
     }
     this->behaviourFile << "this->updateIntegrationVariables();\n";
@@ -1801,434 +1461,6 @@ namespace mfront{
   }
 
   void
-  MFrontImplicitParserBase::writeLevenbergMarquardtAlgorithm(const Hypothesis h)
-  {
-    using namespace std;
-    const string btype = this->convertBehaviourTypeToString();
-    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n2;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n2 += this->getTypeSize(p->type,p->arraySize);
-    }
-    this->behaviourFile << "// dumping parameter" << endl;
-    this->behaviourFile << "real levmar_mu = this->levmar_mu0;" << endl;
-    this->behaviourFile << "real error;" << endl;
-    this->behaviourFile << "bool converged=false;" << endl;
-    this->behaviourFile << "this->iter=0;" << endl;
-    if(getDebugMode()){
-      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
-			  << "::integrate() : beginning of resolution\" << endl;" << endl;
-    }
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
-      this->behaviourFile << "this->computeStress();" << endl;
-    }
-    this->behaviourFile << "if(!this->computeFdF()){" << endl;
-    if(getDebugMode()){
-      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
-			  << "::integrate() : computFdF returned false on first call, abording...\" << endl;" << endl;
-    }
-    if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;" << endl;
-    } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;" << endl;
-    }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "error=norm(this->fzeros);" << endl;
-    this->behaviourFile << "while((converged==false)&&" << endl;
-    this->behaviourFile << "(this->iter<" << this->mb.getClassName() << "::iterMax)){" << endl;
-    this->behaviourFile << "++(this->iter);" << endl;
-    this->behaviourFile << "this->zeros_1  = this->zeros;" << endl;
-    this->writeComparisonToNumericalJacobian(h);
-    this->behaviourFile << "converged = ((error)/(real(" << n2 << "))<";
-    this->behaviourFile << "(this->epsilon));" << endl;
-    if(getDebugMode()){
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : iteration \" "
-			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << \", dumping parameter : \" << levmar_mu << endl;" << endl;
-    }
-    this->behaviourFile << "if(!converged){" << endl;
-    this->behaviourFile << "// matrix containing tJJ+levmar_mu*I" << endl;
-    this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> levmar_m;" << endl;
-    this->behaviourFile << "// vector containing tJ*F" << endl;
-    this->behaviourFile << "tvector<" << n2 << ",real> levmar_sm;" << endl;
-    this->behaviourFile << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl
-			<< "levmar_sm(idx)=real(0);"
-			<< "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl
-			<< "levmar_sm(idx)+=(this->jacobian(idx2,idx))*(this->fzeros(idx2));"
-			<< "levmar_m(idx,idx2)=real(0);" << endl
-			<< "for(unsigned short idx3=0;idx3!=" << n2 << ";++idx3){" << endl
-			<< "levmar_m(idx,idx2)+=(this->jacobian(idx3,idx))*(this->jacobian(idx3,idx2));" << endl
-			<< "}" << endl
-			<< "}" << endl
-			<< "}" << endl
-			<< "const real levmar_muF = (levmar_mu)*norm(this->fzeros);" << endl
-			<< "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl
-			<< "levmar_m(idx,idx)+=levmar_muF;" << endl
-			<< "}" << endl;
-    this->behaviourFile << "try{" << endl;
-    this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-						 "TinyMatrixSolve","lu");
-    this->behaviourFile << "TinyMatrixSolve<" << n2
-			<< "," << "real>::exe(levmar_m,levmar_sm);" << endl;
-    this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "catch(LUException&){" << endl;
-    if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;" << endl;
-    } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;" << endl;
-    }
-    this->behaviourFile << "}" << endl;
-    this->writeLimitsOnIncrementValues(h,"levmar_sm");
-    // levmar_sm contains the step
-    this->behaviourFile << "this->zeros -= levmar_sm;" << endl; 
-    this->behaviourFile << "tvector<" << n2 <<  ",real> levmar_fzeros_1 = this->fzeros;" << endl; 
-    this->behaviourFile << "tmatrix<" << n2 << "," << n2 <<  ",real> levmar_jacobian_1 = this->jacobian;" << endl; 
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
-      this->behaviourFile << "this->computeStress();" << endl;
-    }
-    this->behaviourFile << "if(!this->computeFdF()){" << endl;
-    this->behaviourFile << "// rejecting the step" << endl;
-    this->behaviourFile << "this->zeros     = this->zeros_1;" << endl; 
-    this->behaviourFile << "this->fzeros    = levmar_fzeros_1;" << endl; 
-    this->behaviourFile << "this->jacobian  = levmar_jacobian_1;" << endl; 
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
-      this->behaviourFile << "this->computeStress();" << endl;
-    }
-    this->behaviourFile << "// updating mu" << endl;
-    this->behaviourFile << "levmar_mu *= 4;" << endl;
-    this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "const real error_1=error;" << endl;
-    this->behaviourFile << "const real error_p=norm(levmar_fzeros_1-levmar_jacobian_1*levmar_sm);" << endl;
-    this->behaviourFile << "error=norm(this->fzeros);" << endl;
-    this->behaviourFile << "const real levmar_r = (error*error-error_1*error_1)/(error_p*error_p-error_1*error_1);" << endl;
-    this->behaviourFile << "if(levmar_r<this->levmar_p0){" << endl;
-    this->behaviourFile << "// rejecting the step" << endl;
-    this->behaviourFile << "this->zeros     = this->zeros_1;" << endl; 
-    this->behaviourFile << "this->fzeros    = levmar_fzeros_1;" << endl; 
-    this->behaviourFile << "this->jacobian  = levmar_jacobian_1;" << endl; 
-    this->behaviourFile << "error = error_1;" << endl;
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
-      this->behaviourFile << "this->computeStress();" << endl;
-    }
-    this->behaviourFile << "levmar_mu *= 4;" << endl;
-    this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "// accepting the step and updating mu" << endl;
-    this->behaviourFile << "if(levmar_r<this->levmar_p1){" << endl;
-    this->behaviourFile << "levmar_mu *= 4;" << endl;
-    this->behaviourFile << "} else if(levmar_r>this->levmar_p2){" << endl;
-    this->behaviourFile << "levmar_mu  = max(levmar_mu/4,this->levmar_m);" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(h);
-    this->writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(h);
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-  } // end of MFrontImplicitParserBase::writeLevenbergMarquardtAlgorithm(const Hypothesis h)
-
-  void
-  MFrontImplicitParserBase::writeStandardImplicitAlgorithm(const Hypothesis h)
-  {
-    using namespace std;
-    const string btype = this->convertBehaviourTypeToString();
-    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n2;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n2 += this->getTypeSize(p->type,p->arraySize);
-    }
-    if(this->mb.hasAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian)){
-      this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
-    }
-    if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
-      this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> jacobian2;\n";
-      this->behaviourFile << "tvector<" << n2 << ",real> fzeros2;\n";
-      this->behaviourFile << "tvector<" << n2 << ",real> Dzeros;\n";
-    }
-    if(this->algorithm==MFrontImplicitParserBase::BROYDEN2){
-      this->behaviourFile << "tvector<" << n2 << ",real> Dfzeros;\n";
-    }
-    if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
-      this->behaviourFile << "real broyden_inv;\n";
-    }
-    this->behaviourFile << "real error;\n";
-    this->behaviourFile << "bool converged=false;\n";
-    this->behaviourFile << "this->iter=0;\n";
-    if(getDebugMode()){
-      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
-			  << "::integrate() : beginning of resolution\" << endl;\n";
-    }
-    this->behaviourFile << "while((converged==false)&&\n";
-    this->behaviourFile << "(this->iter<" << this->mb.getClassName() << "::iterMax)){\n";
-    this->behaviourFile << "++(this->iter);\n";
-    if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
-      this->behaviourFile << "fzeros2 = this->fzeros;\n";
-    }
-    if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeStress)){
-      this->behaviourFile << "this->computeStress();\n";
-    }
-    this->behaviourFile << "const bool computeFdF_ok = this->computeFdF();\n";
-    this->behaviourFile << "if(!computeFdF_ok){\n";
-    this->behaviourFile << "if(this->iter==1){\n";
-    if(getDebugMode()){
-      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
-			  << "::integrate() : computFdF returned false on first iteration, abording...\" << endl;\n";
-    }
-    if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
-    } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
-    }
-    this->behaviourFile << "} else {\n";
-    if(getDebugMode()){
-      this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
-			  << "::integrate() : computFdF returned false, dividing increment by two...\" << endl;\n";
-    }
-    this->behaviourFile << "const real integrate_one_half = real(1)/real(2);\n";
-    this->behaviourFile << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "} else {\n";
-    this->behaviourFile << "this->zeros_1  = this->zeros;\n";
-    this->writeComparisonToNumericalJacobian(h);
-    this->behaviourFile << "error=norm(this->fzeros);\n";
-    this->behaviourFile << "converged = ((error)/(real(" << n2 << "))<";
-    this->behaviourFile << "(this->epsilon));\n";
-    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
-      // We compute the numerical jacobian even if we converged since
-      // most of the time, this tangent operator will be computed
-      // using the partial jacobian invert. We consider very unlikely
-      // that a user may use a numerical jacobian and provide an
-      // analytic definition of the tangent operator
-      this->behaviourFile << "if((!converged)||(smt!=NOSTIFFNESSREQUESTED)){" << endl
-			  << "this->computeNumericalJacobian(this->jacobian);" << endl
-			  << "}" << endl;
-    }
-    if(getDebugMode()){
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : iteration \" "
-			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
-    }
-    this->behaviourFile << "if(!converged){\n";
-    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
-      if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
-	this->behaviourFile << "tmatrix<" << n2 << "," << n2 << ",real> tjacobian(this->jacobian);\n";
-	this->behaviourFile << "tvector<" << n2 << ",real> tfzeros(this->fzeros);\n";
-      }
-      this->behaviourFile << "try{" << endl;
-      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-						   "TinyMatrixSolve","lu");
-      this->behaviourFile << "TinyMatrixSolve<" << n2
-			  << "," << "real>::exe(this->jacobian,this->fzeros);\n";
-      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
-      this->behaviourFile << "}" << endl;
-      this->behaviourFile << "catch(LUException&){" << endl;
-      if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
-      } else {
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
-      }
-      this->behaviourFile << "}" << endl;
-      if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)){
-	this->writePowellDogLegStep(h,"tjacobian","tfzeros","fzeros");
-      } else {
-	this->writeLimitsOnIncrementValues(h,"fzeros");
-	this->behaviourFile << "this->zeros -= this->fzeros;\n";
-      }
-    }
-    if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
-      this->behaviourFile << "Dzeros = this->fzeros;\n";
-      this->behaviourFile << "jacobian2 = this->jacobian;\n";
-      this->behaviourFile << "try{" << endl;
-      this->behaviourFile << "TinyMatrixSolve<" << n2
-			  << "," << "real>::exe(jacobian2,Dzeros);\n";
-      this->behaviourFile << "}" << endl;
-      this->behaviourFile << "catch(LUException&){" << endl;
-      if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
-      } else {
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
-      }
-      this->behaviourFile << "}" << endl;
-      this->behaviourFile << "jacobian2 = this->jacobian;\n";
-      if(this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN){
-	this->writePowellDogLegStep(h,"this->jacobian","fzeros","Dzeros");
-      } else {
-	this->writeLimitsOnIncrementValues(h,"Dzeros");
-	this->behaviourFile << "this->zeros -= Dzeros;\n";
-      }
-      this->behaviourFile << "if(this->iter>1){\n";
-      this->behaviourFile << "broyden_inv = (Dzeros|Dzeros);\n";
-      this->behaviourFile << "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n";
-      this->behaviourFile << "this->jacobian += "
-			  << "(((this->fzeros-fzeros2)-(jacobian2)*(Dzeros))^Dzeros)/broyden_inv;\n";
-      this->behaviourFile << "}\n";
-      this->behaviourFile << "}\n";
-    }
-    if(this->algorithm==MFrontImplicitParserBase::BROYDEN2){
-      this->behaviourFile << "Dzeros   = -(this->jacobian)*(this->fzeros);\n";
-      this->writeLimitsOnIncrementValues(h,"Dzeros");
-      this->behaviourFile << "this->zeros  += Dzeros;\n";
-      this->behaviourFile << "if(this->iter>1){\n";
-      this->behaviourFile << "Dfzeros   = (this->fzeros)-fzeros2;\n";
-      this->behaviourFile << "broyden_inv = Dzeros|((this->jacobian)*Dfzeros);\n";
-      this->behaviourFile << "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n";
-      this->behaviourFile << "jacobian2 = this->jacobian;\n";
-      this->behaviourFile << "this->jacobian += "
-			  << "((Dzeros-jacobian2*Dfzeros)^(Dzeros*jacobian2))/(broyden_inv);\n";
-      this->behaviourFile << "}\n";
-      this->behaviourFile << "}\n";
-    }
-    if(this->mb.getAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false)){
-      this->behaviourFile << "this->previous_fzeros[this->iter%3] = this->fzeros;\n";
-      this->behaviourFile << "this->previous_zeros[this->iter%3]  = this->zeros;\n";
-      this->behaviourFile << "if((this->iter>this->accelerationTrigger" << ")&&\n"
-			  <<  "((this->iter-this->accelerationTrigger)%"
-			  << "(this->accelerationPeriod)==0)){\n";
-      this->behaviourFile << "this->accelerate(this->zeros);\n";
-      this->behaviourFile << "}\n";
-    }
-    if(this->mb.getAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,false)){
-      this->behaviourFile << "if(this->iter>=this->relaxationTrigger" << "){\n";
-      this->behaviourFile << "this->zeros   -= (1-this->relaxationCoefficient) * (this->zeros-this->zeros_1);\n";
-      this->behaviourFile << "}\n";
-    }
-    this->writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(h);
-    this->writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(h);
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "}\n";
-  } // end of MFrontImplicitParserBase::writeStandardImplicitAlgorithm
-
-  void
-  MFrontImplicitParserBase::writeComparisonToNumericalJacobian(const Hypothesis h)
-  {
-    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
-    SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n2;
-    SupportedTypes::TypeSize n3;
-    VariableDescriptionContainer::const_iterator p;
-    VariableDescriptionContainer::const_iterator p2;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n2 += this->getTypeSize(p->type,p->arraySize);
-    }
-    if(this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
-      this->behaviourFile << "this->computeNumericalJacobian(njacobian);\n";
-      n = SupportedTypes::TypeSize();
-      for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-	if(p->arraySize==1){
-	  n3 = SupportedTypes::TypeSize();
-	  for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
-	    if((p->arraySize==1)&&(p2->arraySize==1)){
-	      this->behaviourFile << "// derivative of variable f" << p->name 
-				  << " by variable " << p2->name << "\n";
-	      this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
-	      this->behaviourFile << "// numerical derivative of variable f" << p->name 
-				  << " by variable " << p2->name << "\n";
-	      this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3,
-							   "njacobian","n");
-	      n3 += this->getTypeSize(p2->type,p2->arraySize);
-	    }
-	  }
-	}
-	n += this->getTypeSize(p->type,p->arraySize);
-      }
-      for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-	for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
-	  const VariableDescription& v1 = *p;
-	  const VariableDescription& v2 = *p2;
-	  SupportedTypes::TypeSize nv1 = this->getTypeSize(v1.type,1u);
-	  SupportedTypes::TypeSize nv2 = this->getTypeSize(v2.type,1u);
-	  this->behaviourFile << "error=" << nv1 << "*" << nv2 << "*"
-			      << "(this->jacobianComparisonCriterium)" <<";\n";
-	  if((v1.arraySize==1u)&&(v2.arraySize==1u)){
-	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-				<< "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 
-				<< "{\n";
-	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-				<< "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << error << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name
-				<< "_dd" << v2.name << " :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	    this->behaviourFile << "cout << \"ndf" << v1.name
-				<< "_dd" << v2.name << " :\\n\" << " 
-				<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
-				<< " - ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
-				<< "df" << v1.name  << "_dd" << v2.name << "-"
-				<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	    this->behaviourFile << "cout << endl;\n";
-	    this->behaviourFile << "}\n";
-	  } else if(((v1.arraySize!=1u)&&(v2.arraySize==1u))||
-		    ((v2.arraySize!=1u)&&(v1.arraySize==1u))){
-	    unsigned short asize;
-	    if(v1.arraySize!=1u){
-	      asize = v1.arraySize;
-	    } else {
-	      asize = v2.arraySize;
-	    }
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << asize << ";++idx){\n";
-	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx)) > error)\n" 
-				<< "{\n";
-	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx)) << \" \" << error << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name
-				<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << "(idx) << endl;\n";
-	    this->behaviourFile << "cout << \"ndf" << v1.name
-				<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx) << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
-				<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \") :\\n\" << "
-				<< "df" << v1.name  << "_dd" << v2.name << "(idx) -"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx) << endl;\n";
-	    this->behaviourFile << "cout << endl;\n";
-	    this->behaviourFile << "}\n";
-	    this->behaviourFile << "}\n";
-	  } else {
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << v1.arraySize << ";++idx){\n";
-	    this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
-	    this->behaviourFile << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2)) > error)\n" 
-				<< "{\n";
-	    this->behaviourFile << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2)) << \" \" << error << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name
-				<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) << endl;\n";
-	    this->behaviourFile << "cout << \"ndf" << v1.name
-				<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2) << endl;\n";
-	    this->behaviourFile << "cout << \"df" << v1.name << "_dd" << v2.name 
-				<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << "
-				<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) -"
-				<< "df" << v1.name  << "_dd" << v2.name << "(njacobian,idx,idx2) << endl;\n";
-	    this->behaviourFile << "cout << endl;\n";
-	    this->behaviourFile << "}\n";
-	    this->behaviourFile << "}\n";
-	    this->behaviourFile << "}\n";
-	  }
-	}
-      }
-    }
-  }
-
-  void
   MFrontImplicitParserBase::writeComputeFdF(const Hypothesis h)
   {
     using namespace std;
@@ -2249,8 +1481,11 @@ namespace mfront{
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     this->behaviourFile << "using std::vector;\n";
-    this->writeStandardPerformanceProfiling(this->behaviourFile,
-					    "ComputeFdF");
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      writeStandardPerformanceProfiling(this->behaviourFile,
+					mb.getClassName(),
+					"ComputeFdF");
+    }
     writeMaterialLaws("MFrontImplicitParserBase::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());
     n = SupportedTypes::TypeSize();
@@ -2285,12 +1520,8 @@ namespace mfront{
       }
       n += this->getTypeSize(p->type,p->arraySize);
     }
-    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
+    if((this->solver->usesJacobian())&&
+       (!(this->solver->requiresNumericalJacobian()))){
       n = SupportedTypes::TypeSize();
       for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
 	n3 = SupportedTypes::TypeSize();
@@ -2299,16 +1530,14 @@ namespace mfront{
 	     (p2->arraySize==1u)){
 	    this->behaviourFile << "// derivative of variable f" << p->name 
 				<< " by variable " << p2->name << "\n";
-	    this->behaviourFile << this->getJacobianPart(*p,*p2,n,n2,n3);
+	    this->behaviourFile << MFrontNonLinearSystemSolverBase::getJacobianPart(this->mb,*p,*p2,n,n2,n3);
 	  }
 	  n3 += this->getTypeSize(p2->type,p2->arraySize);
 	}
 	n += this->getTypeSize(p->type,p->arraySize);
       }
     }
-    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)){
+    if(this->solver->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()){
       for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
 	this->jacobianPartsUsedInIntegrator.insert("df"+p->name+"_dd"+p->name);
       }
@@ -2321,21 +1550,20 @@ namespace mfront{
     this->behaviourFile << "// setting f values to zeros\n";
     this->behaviourFile << "this->fzeros = this->zeros;\n";
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      if(this->nf.find(p->name)!=this->nf.end()){
-    	this->behaviourFile << "f" << p->name << " *= " << this->nf.find(p->name)->second << ";" << endl;
+      if(this->mb.hasAttribute(h,p->name+"_normalisation_factor")){
+	const string& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+    	this->behaviourFile << "f" << p->name << " *= " << nf << ";" << endl;
       }
     }
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator).code << "\n";
+    this->behaviourFile << this->mb.getCodeBlock(h,MechanicalBehaviourData::Integrator).code << "\n";
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      if(this->nf.find('f'+p->name)!=this->nf.end()){
-    	this->behaviourFile << "f" << p->name << "*= real(1)/(" << this->nf.find('f'+p->name)->second << ");" << endl;
+      if(this->mb.hasAttribute(h,'f'+p->name+"_normalisation_factor")){
+	const string& nf = this->mb.getAttribute<string>(h,'f'+p->name+"_normalisation_factor");
+    	this->behaviourFile << "f" << p->name << "*= real(1)/(" << nf << ");" << endl;
       }
     }
-    if((this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)){
+    if((this->solver->usesJacobian())&&
+       (!(this->solver->requiresNumericalJacobian()))){
       for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
 	for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
 	  if((p->arraySize==1u)&&(p2->arraySize==1u)){
@@ -2345,10 +1573,12 @@ namespace mfront{
 	  }
 	  if(this->jacobianPartsUsedInIntegrator.find("df"+p->name+"_dd"+p2->name)!=
 	     this->jacobianPartsUsedInIntegrator.end()){
-	    map<string,string>::const_iterator pjf = this->nf.find('f'+p->name);
-	    map<string,string>::const_iterator pjv = this->nf.find(p2->name);
-	    if(pjf!=this->nf.end()){
-	      if(pjv!=this->nf.end()){
+	    const bool bfnf = this->mb.hasAttribute(h,'f'+p->name+"_normalisation_factor");
+	    const bool bvnf = this->mb.hasAttribute(h,p2->name+"_normalisation_factor");
+	    if(bfnf){
+	      const string& fnf = this->mb.getAttribute<string>(h,'f'+p->name+"_normalisation_factor");	      
+	      if(bvnf){
+		const string& vnf = this->mb.getAttribute<string>(h,p2->name+"_normalisation_factor");
 		if((p->arraySize!=1u)&&
 		   (p2->arraySize!=1u)){
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
@@ -2356,7 +1586,7 @@ namespace mfront{
 		  this->behaviourFile << "for(unsigned short idx2=0;idx2!="
 				      << p2->arraySize << ";++idx2){" << endl;
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << "(idx,idx2) *= " 
-				      << pjv->second << "/(" << pjf->second << ");" << endl;
+				      << vnf << "/(" << fnf << ");" << endl;
 		  this->behaviourFile << "}\n";
 		  this->behaviourFile << "}\n";
 		} else if((p->arraySize!=1u)&&
@@ -2364,19 +1594,19 @@ namespace mfront{
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
 				      << p->arraySize << ";++idx){" << endl;
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << "(idx) *= " 
-				      << pjv->second << "/(" << pjf->second << ");" << endl;
+				      << vnf << "/(" << fnf << ");" << endl;
 		  this->behaviourFile << "}\n";
 		} else if((p->arraySize==1u)&&
 			  (p2->arraySize!=1u)){
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
 				      << p2->arraySize << ";++idx){" << endl;
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << "(idx) *= " 
-				      << pjv->second << "/(" << pjf->second << ");" << endl;		  
+				      << vnf << "/(" << fnf << ");" << endl;		  
 		  this->behaviourFile << "}\n";
 		} else if((p->arraySize==1u)&&
 			  (p2->arraySize==1u)){
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << " *= " 
-				      << pjv->second << "/(" << pjf->second << ");" << endl;
+				      << vnf << "/(" << fnf << ");" << endl;
 		}
 	      } else {
 		if((p->arraySize!=1u)&&
@@ -2386,7 +1616,7 @@ namespace mfront{
 		  this->behaviourFile << "for(unsigned short idx2=0;idx2!="
 				      << p2->arraySize << ";++idx2){" << endl;
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << "(idx,idx2) *= " 
-				      << "real(1)/(" << pjf->second << ");" << endl;
+				      << "real(1)/(" << fnf << ");" << endl;
 		  this->behaviourFile << "}\n";
 		  this->behaviourFile << "}\n";
 		} else if((p->arraySize!=1u)&&
@@ -2394,23 +1624,24 @@ namespace mfront{
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
 				      << p->arraySize << ";++idx){" << endl;
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << "(idx) *= " 
-				      << "real(1)/(" << pjf->second << ");" << endl;
+				      << "real(1)/(" << fnf << ");" << endl;
 		  this->behaviourFile << "}\n";
 		} else if((p->arraySize==1u)&&
 			  (p2->arraySize!=1u)){
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
 				      << p2->arraySize << ";++idx){" << endl;
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << "(idx) *= " 
-				      << "real(1)/(" << pjf->second << ");" << endl;
+				      << "real(1)/(" << fnf << ");" << endl;
 		  this->behaviourFile << "}\n";
 		} else if((p->arraySize==1u)&&
 			  (p2->arraySize==1u)){
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << " *= " 
-				      << "real(1)/(" << pjf->second << ");" << endl;
+				      << "real(1)/(" << fnf << ");" << endl;
 		}
 	      }
 	    } else{
-	      if(pjv!=this->nf.end()){
+	      if(bvnf){
+		const string& vnf = this->mb.getAttribute<string>(h,p2->name+"_normalisation_factor");
 		if((p->arraySize!=1u)&&
 		   (p2->arraySize!=1u)){
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
@@ -2418,7 +1649,7 @@ namespace mfront{
 		  this->behaviourFile << "for(unsigned short idx2=0;idx2!="
 				      << p2->arraySize << ";++idx2){" << endl;
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << "(idx,idx2) *= " 
-				      << pjv->second << ";" << endl;
+				      << vnf << ";" << endl;
 		  this->behaviourFile << "}\n";
 		  this->behaviourFile << "}\n";
 		} else if((p->arraySize!=1u)&&
@@ -2426,19 +1657,19 @@ namespace mfront{
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
 				      << p->arraySize << ";++idx){" << endl;
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << "(idx) *= " 
-				      << pjv->second << ";" << endl;
+				      << vnf << ";" << endl;
 		  this->behaviourFile << "}\n";
 		} else if((p->arraySize==1u)&&
 			  (p2->arraySize!=1u)){
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
 				      << p2->arraySize << ";++idx){" << endl;
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << "(idx) *= " 
-				      << pjv->second << ";" << endl;
+				      << vnf << ";" << endl;
 		  this->behaviourFile << "}\n";
 		} else if((p->arraySize==1u)&&
 			  (p2->arraySize==1u)){
 		  this->behaviourFile << "df" << p->name << "_dd" << p2->name << " *= " 
-				      << pjv->second << ";" << endl;
+				      << vnf << ";" << endl;
 		}
 	      }
 	    }
@@ -2449,366 +1680,6 @@ namespace mfront{
     this->behaviourFile << "return true;\n";
     this->behaviourFile << "}\n\n";
   } // end of MFrontImplicitParserBase::writeBehaviourIntegrator
-
-  void
-  MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(const Hypothesis h)
-  {
-    using namespace std;
-    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
-    SupportedTypes::TypeSize n;
-    VariableDescriptionContainer::const_iterator p;
-    vector<BoundsDescription>::const_iterator p2;
-    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      for(p2  = d.getBounds().begin();p2 != d.getBounds().end();++p2){
-	if(p2->name==p->name){
-	  // treating lower bounds
-	  if(((p2->boundsType==BoundsDescription::Lower)||(p2->boundsType==BoundsDescription::LowerAndUpper))&&
-	     (p2->category==BoundsDescription::Physical)){
-	    if((this->getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize==1u)){
-	      if(this->nf.find(p->name)!=this->nf.end()){
-		this->behaviourFile << "if(this->" << p->name << "+ " << nf[p->name ]<< "*(this->zeros[" << n << "]) <" << p2->lowerBound << "){\n";
-	      } else {
-		this->behaviourFile << "if(this->" << p->name << "+this->zeros[" << n << "]<" << p2->lowerBound << "){\n";
-	      }
-	      if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "this->zeros[" << n << "] = (" << p2->lowerBound << "- (this->" << p->name << "))/(" << nf[p->name ]<< ");\n";
-		} else {
-		  this->behaviourFile << "this->zeros[" << n << "] = " << p2->lowerBound << "- (this->" << p->name << ");\n";
-		}
-	      } else {
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "this->zeros[" << n << "] = - (this->" << p->name << ")/(" << nf[p->name] << ");\n";
-		} else {
-		  this->behaviourFile << "this->zeros[" << n << "] = - (this->" << p->name << ");\n";
-		}
-	      }
-	      this->behaviourFile << "}\n";
-	    }
-	    if((this->getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize!=1u)){
-	      this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
-	      if(this->nf.find(p->name)!=this->nf.end()){
-		this->behaviourFile << "if(this->" << p->name << "[idx]+(" << nf[p->name] << ")*(this->zeros[" << n << "+idx])<" << p2->lowerBound << "){\n";
-	      } else {
-		this->behaviourFile << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]<" << p2->lowerBound << "){\n";
-	      }
-	      if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "this->zeros[" << n << "+idx] = (" << p2->lowerBound << "- (this->" << p->name << "[idx]))/(" << nf[p->name] <<");\n";
-		} else {
-		  this->behaviourFile << "this->zeros[" << n << "+idx] = " << p2->lowerBound << "- (this->" << p->name << "[idx]);\n";
-		}
-	      } else {
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf[p->name] << ");\n";
-		} else {
-		  this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
-		}
-	      }
-	      this->behaviourFile << "}\n";
-	      this->behaviourFile << "}\n";
-	    }
-	    if((this->getTypeFlag(p->type)!=SupportedTypes::Scalar)&&(p->arraySize==1u)){
-	      if(p2->component==-1){
-		SupportedTypes::TypeSize n2 =  this->getTypeSize(p->type,1u);
-		this->behaviourFile << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "if(this->" << p->name << "[idx]+(" << nf[p->name] << ")*(this->zeros[" << n << "+idx])<" << p2->lowerBound << "){\n";
-		} else {
-		  this->behaviourFile << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]<" << p2->lowerBound << "){\n";
-		}
-		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+idx] = (" << p2->lowerBound << "- (this->" << p->name << "[idx]))/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+idx] = " << p2->lowerBound << "- (this->" << p->name << "[idx]);\n";
-		  }
-		} else {
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
-		  }
-		}
-		this->behaviourFile << "}\n";
-		this->behaviourFile << "}\n";
-	      } else {
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "if(this->" << p->name << "[" << p2->component << "]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << p2->component << "])<" << p2->lowerBound << "){\n";
-		} else {
-		  this->behaviourFile << "if(this->" << p->name << "[" << p2->component << "]+this->zeros[" << n << "+" << p2->component << "]<" << p2->lowerBound << "){\n";
-		}
-		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = (" << p2->lowerBound << "- (this->" << p->name << "[" << p2->component << "]))/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = " << p2->lowerBound << "- (this->" << p->name << "[" << p2->component << "]);\n";
-		  }
-		} else {
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "])/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "]);\n";
-		  }
-		}
-		this->behaviourFile << "}\n";
-	      }
-	    }
-	    if((this->getTypeFlag(p->type)!=SupportedTypes::Scalar)&&(p->arraySize!=1u)){
-	      SupportedTypes::TypeSize n2 =  this->getTypeSize(p->type,1u);
-	      this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
-	      if(p2->component==-1){
-		this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "if(this->" << p->name << "[idx][idx2]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << n2 << "*idx+idx2])<" << p2->lowerBound << "){\n";
-		} else {
-		  this->behaviourFile << "if(this->" << p->name << "[idx][idx2]+this->zeros[" << n << "+" << n2 << "*idx+idx2]<" << p2->lowerBound << "){\n";
-		}
-		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = (" << p2->lowerBound << "- (this->" << p->name << "[idx][idx2]))/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = " << p2->lowerBound << "- (this->" << p->name << "[idx][idx2]);\n";
-		  }
-		} else {
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2])/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2]);\n";
-		  }
-		}
-		this->behaviourFile << "}\n";
-		this->behaviourFile << "}\n";
-	      } else {
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "if(this->" << p->name << "[idx][" << p2->component << "]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "])<" << p2->lowerBound << "){\n";
-		} else {
-		  this->behaviourFile << "if(this->" << p->name << "[idx][" << p2->component << "]+this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "]<" << p2->lowerBound << "){\n";
-		}
-		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = (" << p2->lowerBound << "- (this->" << p->name << "[idx][" << p2->component << "]))/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = " << p2->lowerBound << "- (this->" << p->name << "[idx][" << p2->component << "]);\n";
-		  }
-		} else {
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "])/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "]);\n";
-		  }
-		}
-		this->behaviourFile << "}\n";
-	      }
-	      this->behaviourFile << "}\n";
-	    }
-	  }
-	  // treating upper bounds
-	  if(((p2->boundsType==BoundsDescription::Upper)||(p2->boundsType==BoundsDescription::LowerAndUpper))&&
-	     (p2->category==BoundsDescription::Physical)){
-	    if((this->getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize==1u)){
-	      if(this->nf.find(p->name)!=this->nf.end()){
-		this->behaviourFile << "if(this->" << p->name << "+ " << nf[p->name] << "*(this->zeros[" << n << "]) >" << p2->upperBound << "){\n";
-	      } else {
-		this->behaviourFile << "if(this->" << p->name << "+this->zeros[" << n << "]>" << p2->upperBound << "){\n";
-	      }
-	      if(abs(p2->upperBound)>numeric_limits<long double>::min()){
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "this->zeros[" << n << "] = (" << p2->upperBound << "- (this->" << p->name << "))/(" << nf[p->name] << ");\n";
-		} else {
-		  this->behaviourFile << "this->zeros[" << n << "] = " << p2->upperBound << "- (this->" << p->name << ");\n";
-		}
-	      } else {
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "this->zeros[" << n << "] = - (this->" << p->name << ")/(" << nf[p->name] << ");\n";
-		} else {
-		  this->behaviourFile << "this->zeros[" << n << "] = - (this->" << p->name << ");\n";
-		}
-	      }
-	      this->behaviourFile << "}\n";
-	    }
-	    if((this->getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize!=1u)){
-	      this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
-	      if(this->nf.find(p->name)!=this->nf.end()){
-		this->behaviourFile << "if(this->" << p->name << "[idx]+(" << nf[p->name] << ")*(this->zeros[" << n << "+idx])>" << p2->upperBound << "){\n";
-	      } else {
-		this->behaviourFile << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]>" << p2->upperBound << "){\n";
-	      }
-	      if(abs(p2->upperBound)>numeric_limits<long double>::min()){
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "this->zeros[" << n << "+idx] = (" << p2->upperBound << "- (this->" << p->name << "[idx]))/(" << nf[p->name] <<");\n";
-		} else {
-		  this->behaviourFile << "this->zeros[" << n << "+idx] = " << p2->upperBound << "- (this->" << p->name << "[idx]);\n";
-		}
-	      } else {
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf[p->name] << ");\n";
-		} else {
-		  this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
-		}
-	      }
-	      this->behaviourFile << "}\n";
-	      this->behaviourFile << "}\n";
-	    }
-	    if((this->getTypeFlag(p->type)!=SupportedTypes::Scalar)&&(p->arraySize==1u)){
-	      if(p2->component==-1){
-		SupportedTypes::TypeSize n2 =  this->getTypeSize(p->type,1u);
-		this->behaviourFile << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "if(this->" << p->name << "[idx]+(" << nf[p->name] << ")*(this->zeros[" << n << "+idx])>" << p2->upperBound << "){\n";
-		} else {
-		  this->behaviourFile << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]>" << p2->upperBound << "){\n";
-		}
-		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+idx] = (" << p2->upperBound << "- (this->" << p->name << "[idx]))/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+idx] = " << p2->upperBound << "- (this->" << p->name << "[idx]);\n";
-		  }
-		} else {
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
-		  }
-		}
-		this->behaviourFile << "}\n";
-		this->behaviourFile << "}\n";
-	      } else {
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "if(this->" << p->name << "[" << p2->component << "]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << p2->component << "])>" << p2->upperBound << "){\n";
-		} else {
-		  this->behaviourFile << "if(this->" << p->name << "[" << p2->component << "]+this->zeros[" << n << "+" << p2->component << "]>" << p2->upperBound << "){\n";
-		}
-		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = (" << p2->upperBound << "- (this->" << p->name << "[" << p2->component << "]))/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = " << p2->upperBound << "- (this->" << p->name << "[" << p2->component << "]);\n";
-		  }
-		} else {
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "])/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "]);\n";
-		  }
-		}
-		this->behaviourFile << "}\n";
-	      }
-	    }
-	    if((this->getTypeFlag(p->type)!=SupportedTypes::Scalar)&&(p->arraySize!=1u)){
-	      SupportedTypes::TypeSize n2 =  this->getTypeSize(p->type,1u);
-	      this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
-	      if(p2->component==-1){
-		this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "if(this->" << p->name << "[idx][idx2]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << n2 << "*idx+idx2])>" << p2->upperBound << "){\n";
-		} else {
-		  this->behaviourFile << "if(this->" << p->name << "[idx][idx2]+this->zeros[" << n << "+" << n2 << "*idx+idx2]>" << p2->upperBound << "){\n";
-		}
-		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = (" << p2->upperBound << "- (this->" << p->name << "[idx][idx2]))/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = " << p2->upperBound << "- (this->" << p->name << "[idx][idx2]);\n";
-		  }
-		} else {
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2])/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2]);\n";
-		  }
-		}
-		this->behaviourFile << "}\n";
-		this->behaviourFile << "}\n";
-	      } else {
-		if(this->nf.find(p->name)!=this->nf.end()){
-		  this->behaviourFile << "if(this->" << p->name << "[idx][" << p2->component << "]+(" << nf[p->name] << ")*(this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "])>" << p2->upperBound << "){\n";
-		} else {
-		  this->behaviourFile << "if(this->" << p->name << "[idx][" << p2->component << "]+this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "]>" << p2->upperBound << "){\n";
-		}
-		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = (" << p2->upperBound << "- (this->" << p->name << "[idx][" << p2->component << "]))/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = " << p2->upperBound << "- (this->" << p->name << "[idx][" << p2->component << "]);\n";
-		  }
-		} else {
-		  if(this->nf.find(p->name)!=this->nf.end()){
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "])/(" << nf[p->name] << ");\n";
-		  } else {
-		    this->behaviourFile << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "]);\n";
-		  }
-		}
-		this->behaviourFile << "}\n";
-	      }
-	      this->behaviourFile << "}\n";
-	    }
-	  }
-	}
-      }
-      n += this->getTypeSize(p->type,p->arraySize);
-    }
-  } // end of MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds
-
-  void
-  MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(const Hypothesis)
-  {
-    
-
-  } // end of MFrontImplicitParserBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds
-
-  void
-  MFrontImplicitParserBase::writePowellDogLegStep(const Hypothesis   h,
-						  const std::string& B,
-						  const std::string& f,
-						  const std::string& pn)
-  {
-    using namespace std;
-    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n += this->getTypeSize(p->type,p->arraySize);
-    }
-    this->behaviourFile << "if(abs(" << pn<< ")<(" << n << ")*(this->powell_dogleg_trust_region_size)){" << endl;
-    this->behaviourFile << "// using the newton method only" << endl;
-    this->writeLimitsOnIncrementValues(h,pn);
-    this->behaviourFile << "this->zeros -= " << pn<< ";\n";
-    this->behaviourFile << "} else { " << endl;
-    this->behaviourFile << "// computing the steepest descent step\n";
-    this->behaviourFile << "tvector<" << n << ",real> pdl_g;\n";
-    this->behaviourFile << "tvector<" << n << ",real> pdl_g2;\n";
-    this->behaviourFile << "for(unsigned short idx=0;idx!=" << n << ";++idx){" << endl;
-    this->behaviourFile << "pdl_g[idx]=real(0);\n";
-    this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << n << ";++idx2){" << endl;
-    this->behaviourFile << "pdl_g[idx] += (" << B << "(idx2,idx)) * (" << f << "(idx2));\n";
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "for(unsigned short idx=0;idx!=" << n << ";++idx){" << endl;
-    this->behaviourFile << "pdl_g2[idx]=real(0);\n";
-    this->behaviourFile << "for(unsigned short idx2=0;idx2!=" << n << ";++idx2){" << endl;
-    this->behaviourFile << "pdl_g2[idx] += (" << B << "(idx,idx2)) * pdl_g(idx2);\n";
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "const real pdl_cste = (pdl_g|pdl_g)/(pdl_g2|pdl_g2);" << endl;
-    this->behaviourFile << "pdl_g *= pdl_cste;" << endl;
-    this->behaviourFile << "if(abs(pdl_g)<(" << n << ")*(this->powell_dogleg_trust_region_size)){" << endl;
-    this->behaviourFile << "const real pdl_0 = (this->powell_dogleg_trust_region_size)*(this->powell_dogleg_trust_region_size);" << endl;
-    this->behaviourFile << "const real pdl_1 = (pdl_g|pdl_g);" << endl;
-    this->behaviourFile << "const real pdl_2 = ((" << pn << ")|pdl_g);" << endl;
-    this->behaviourFile << "const real pdl_3 = ((" << pn << ")|(" << pn << "));" << endl;
-    this->behaviourFile << "const real pdl_alpha = "
-			<< "(pdl_0-pdl_1)/((pdl_2-pdl_1)+sqrt(max((pdl_2-pdl_0)*(pdl_2-pdl_0)+(pdl_3-pdl_0)*(pdl_0-pdl_1),real(0))));" << endl;
-    this->behaviourFile << "pdl_g = pdl_alpha*(" << pn<< ") + (1-pdl_alpha)*pdl_g;" << endl;
-    this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "const real pdl_alpha = (this->powell_dogleg_trust_region_size)/(norm(pdl_g));" << endl;
-    this->behaviourFile << "pdl_g *= pdl_alpha;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->writeLimitsOnIncrementValues(h,"pdl_g");
-    this->behaviourFile << "this->zeros -= pdl_g;\n";
-    this->behaviourFile << "}" << endl;
-  } // end of MFrontImplicitParserBase::writePowellDogLegStep
 
   std::string
   MFrontImplicitParserBase::getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer& v,
@@ -2861,22 +1732,7 @@ namespace mfront{
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
       n += this->getTypeSize(p->type,p->arraySize);
     }
-    if(this->mb.hasCode(h,MechanicalBehaviourData::InitializeJacobian)){
-      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-						   MechanicalBehaviourData::InitializeJacobian);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeJacobian).code;
-      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
-    } else {
-      if((this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-	 (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-	 (this->algorithm==MFrontImplicitParserBase::BROYDEN2)){
-	this->behaviourFile << "// setting jacobian to identity\n";
-	this->behaviourFile << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n";
-	this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n << ";++idx){\n";
-	this->behaviourFile << "this->jacobian(idx,idx)= real(1);\n";
-	this->behaviourFile << "}\n";
-      }
-    }
+    this->solver->writeSpecificInitializeMethodPart(this->behaviourFile,mb,h);
   }
 
   void MFrontImplicitParserBase::writeBehaviourIntegrationVariablesIncrements(const Hypothesis h)
@@ -2928,11 +1784,31 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     typedef unsigned short ushort;
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     MFrontBehaviourParserCommon::endsInputFileProcessing();
+    if(this->solver.get()==0){
+      const MFrontNonLinearSystemSolverFactory& f =
+	MFrontNonLinearSystemSolverFactory::getMFrontNonLinearSystemSolverFactory();
+      this->solver = f.getSolver("NewtonRaphson");
+    }
+#warning "shall be done earlier"
+    // reserved names
+    const vector<string>& n = this->solver->getReservedNames();
+    for(vector<string>::const_iterator pn = n.begin();pn!=n.end();++pn){
+      this->reserveName(*pn,false);
+    }
+    if(this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
+      if((!this->solver->usesJacobian())||(this->solver->requiresNumericalJacobian())){
+	string msg("MFrontImplicitParserBase::endsInputFileProcessing :");
+	msg += "@CompareToNumericalJacobian can only be used with solver using ";
+	msg += "an analytical jacobian (or an approximation of it";
+	throw(runtime_error(msg));
+
+      }
+    }
     // create the compute final stress code is necessary
     this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
     // creating default parameters if not explicitely specified by the user
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->mb.hasParameter(h,"epsilon")){
       VariableDescription e("real","epsilon",1u,0u);
       e.description = "value used to stop the iteration of the implicit algorithm";
@@ -2947,43 +1823,9 @@ namespace mfront{
       this->mb.setEntryName(h,"theta","theta");
       this->mb.setParameterDefaultValue(h,"theta",0.5);
     }
-    if((this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)){
-      if(!this->mb.hasParameter(h,"powell_dogleg_trust_region_size")){
-	this->mb.addParameter(h,VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
-	this->mb.setParameterDefaultValue(h,"powell_dogleg_trust_region_size",1.e-4);
-      }
-    }
-    if((this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
-      if(!this->mb.hasParameter(h,"levmar_mu0")){
-	this->mb.addParameter(h,VariableDescription("real","levmar_mu0",1u,0u));
-	this->mb.setParameterDefaultValue(h,"levmar_mu0",1.e-6);
-      }
-      if(!this->mb.hasParameter(h,"levmar_p0")){
-	this->mb.addParameter(h,VariableDescription("real","levmar_p0",1u,0u));
-	this->mb.setParameterDefaultValue(h,"levmar_p0",1.e-4);
-      }
-      if(!this->mb.hasParameter(h,"levmar_p1")){
-	this->mb.addParameter(h,VariableDescription("real","levmar_p1",1u,0u));
-	this->mb.setParameterDefaultValue(h,"levmar_p1",0.25);
-      }
-      if(!this->mb.hasParameter(h,"levmar_p2")){
-	this->mb.addParameter(h,VariableDescription("real","levmar_p2",1u,0u));
-	this->mb.setParameterDefaultValue(h,"levmar_p2",0.75);
-      }
-      if(!this->mb.hasParameter(h,"levmar_m")){
-	this->mb.addParameter(h,VariableDescription("real","levmar_m",1u,0u));
-	this->mb.setParameterDefaultValue(h,"levmar_m",1.e-8);
-      }
-    }
+    this->solver->endsInputFileProcessing(this->mb);
     if((this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false))||
-       (this->algorithm==MFrontImplicitParserBase::BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_BROYDEN)||
-       (this->algorithm==MFrontImplicitParserBase::NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON_NJ)||
-       (this->algorithm==MFrontImplicitParserBase::LEVENBERGMARQUARDT_NJ)){
+       (this->solver->usesJacobian())){
       const string nje = "numerical_jacobian_epsilon";
       if(!this->mb.hasParameter(h,nje)){
 	const double eps = 0.1*this->mb.getFloattingPointParameterDefaultValue(h,"epsilon");
@@ -3003,55 +1845,6 @@ namespace mfront{
 					  this->mb.getFloattingPointParameterDefaultValue(h,"epsilon"));
       }
     }
-    if(this->mb.getAttribute(h,MechanicalBehaviourData::useRelaxationAlgorithm,false)){
-      if(!this->mb.hasParameter(h,"relaxationCoefficient")){
-	this->mb.addParameter(h,VariableDescription("real","relaxationCoefficient",1u,0u));
-	this->mb.setParameterDefaultValue(h,"relaxationCoefficient",0.5);
-      }
-      if(!this->mb.hasParameter(h,"relaxationTrigger")){
-	this->mb.addParameter(h,VariableDescription("ushort","relaxationTrigger",1u,0u));
-	this->mb.setParameterDefaultValue(h,"relaxationTrigger",ushort(10u));
-      }
-      const unsigned short iterMax           = this->mb.getUnsignedShortParameterDefaultValue(h,"iterMax");
-      const unsigned short relaxationTrigger = this->mb.getUnsignedShortParameterDefaultValue(h,"relaxationTrigger");
-      if(relaxationTrigger+1>=iterMax){
-	string msg("MFrontImplicitParserBase::endsInputFileProcessing :");
-	msg += "relaxation can never take place (relaxationTrigger>=iterMax-1)'";
-	throw(runtime_error(msg));
-      }
-    }
-    if(this->mb.getAttribute(h,MechanicalBehaviourData::useCast3MAccelerationAlgorithm,false)){
-      if(!this->mb.hasParameter(h,"accelerationTrigger")){
-	this->mb.addParameter(h,VariableDescription("ushort","accelerationTrigger",1u,0u));
-	this->mb.setParameterDefaultValue(h,"accelerationTrigger",ushort(10u));
-      }
-      if(!this->mb.hasParameter(h,"accelerationPeriod")){
-	this->mb.addParameter(h,VariableDescription("ushort","accelerationPeriod",1u,0u));
-	this->mb.setParameterDefaultValue(h,"accelerationPeriod",ushort(3u));
-      }
-      const unsigned short iterMax             =
-	this->mb.getUnsignedShortParameterDefaultValue(h,"iterMax");
-      const unsigned short accelerationTrigger =
-	this->mb.getUnsignedShortParameterDefaultValue(h,"accelerationTrigger");
-      if(accelerationTrigger+1>=iterMax){
-	string msg("MFrontImplicitParserBase::endsInputFileProcessing :");
-	msg += "acceleration can never take place (accelerationTrigger>=iterMax-1)'";
-	throw(runtime_error(msg));
-      }
-    }
-    if(this->algorithm==MFrontImplicitParserBase::DEFAULT){
-      this->algorithm=MFrontImplicitParserBase::NEWTONRAPHSON;
-    }
-    if(this->mb.getAttribute(h,MechanicalBehaviourData::compareToNumericalJacobian,false)){
-      if((this->algorithm!=MFrontImplicitParserBase::NEWTONRAPHSON)&&
-	 (this->algorithm!=MFrontImplicitParserBase::POWELLDOGLEG_NEWTONRAPHSON)&&
-	 (this->algorithm!=MFrontImplicitParserBase::LEVENBERGMARQUARDT)){
-	string msg("MFrontImplicitParserBase::endsInputFileProcessing :");
-	msg += "@CompareToNumericalJacobian can only be used with the NewtonRaphson algorithm";
-	throw(runtime_error(msg));
-
-      }
-    }
     // correct prediction to take into account normalisation factors
     const set<Hypothesis> mh(this->mb.getDistinctModellingHypotheses());
     for(set<Hypothesis>::const_iterator ph=mh.begin();ph!=mh.end();++ph){
@@ -3063,8 +1856,9 @@ namespace mfront{
 	for(p=sv.begin();p!=sv.end();++p){
 	  if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+p->name)!=
 	     this->integrationVariablesIncrementsUsedInPredictor.end()){
-	    if(nf.find(p->name)!=nf.end()){
-	      predictor.code += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
+	    if(this->mb.hasAttribute(h,p->name+"_normalisation_factor")){
+	      const string& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	      predictor.code += "this->d"+p->name + " /= " + nf + ";\n";
 	    }
 	  }
 	}
@@ -3084,8 +1878,9 @@ namespace mfront{
 	for(p=sv.begin();p!=sv.end();++p){
 	  if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+p->name)!=
 	     this->integrationVariablesIncrementsUsedInPredictor.end()){
-	    if(nf.find(p->name)!=nf.end()){
-	      predictor.code += "this->d"+p->name + " /= " + nf.find(p->name)->second + ";\n";
+	    if(this->mb.hasAttribute(h,p->name+"_normalisation_factor")){
+	      const string& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	      predictor.code += "this->d"+p->name + " /= " + nf + ";\n";
 	    }
 	  }
 	}

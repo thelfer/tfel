@@ -314,7 +314,7 @@ namespace mfront{
   void MFrontMultipleIsotropicMisesFlowsParser::writeBehaviourIntegrator(const Hypothesis h)
   {
     using namespace std;
-    const string btype = this->convertBehaviourTypeToString();
+    const string btype = this->mb.getBehaviourTypeFlag();
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     vector<BoundsDescription>::const_iterator p;
     vector<FlowHandler>::const_iterator p2;
@@ -476,7 +476,7 @@ namespace mfront{
     cname << MechanicalBehaviourData::FlowRule << flows.size() << endl;
     this->readCodeBlock(*this,cname.str(),
 			&MFrontMultipleIsotropicMisesFlowsParser::flowRuleVariableModifier,true,false);
-    flow.flowRule = this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,cname.str()).code;
+    flow.flowRule = this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,cname.str());
     this->flows.push_back(flow);
   } // end of MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule
 

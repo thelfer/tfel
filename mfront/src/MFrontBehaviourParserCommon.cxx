@@ -28,6 +28,7 @@
 #include"MFront/MFrontMaterialLawParser.hxx"
 #include"MFront/MFrontBehaviourVirtualInterface.hxx"
 #include"MFront/MFrontMFrontLawInterface.hxx"
+#include"MFront/MFrontPerformanceProfiling.hxx"
 #include"MFront/MFrontBehaviourInterfaceFactory.hxx"
 #include"MFront/MFrontBehaviourAnalyserFactory.hxx"
 #include"MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx"
@@ -495,7 +496,7 @@ namespace mfront{
       map<string,unsigned short> vars;  // variable names and counts
       map<string,unsigned short> svars; // static variable nanes and counts
       for(vector<string>::const_iterator pcbs=cbs.begin();pcbs!=cbs.end();++pcbs){
-	const CodeBlock& cb = md.getCode(*pcbs);
+	const CodeBlock& cb = md.getCodeBlock(*pcbs);
 	if(cb.description.empty()){
 	  log << "- code block '" << *pcbs << "' has no description" << endl;
 	}
@@ -1204,7 +1205,6 @@ namespace mfront{
       }
       this->current = p2;
     }
-
   } // end of MFrontBehaviourParserCommon::treatUnknownKeyword
 
   void
@@ -1756,7 +1756,6 @@ namespace mfront{
     this->reserveName("computeFinalStress",false);
     this->reserveName("computeStressFreeExpansion",false);
     this->reserveName("computeFdF",false);
-    this->reserveName("computeFdF_ok",false);
     this->reserveName("updateIntegrationVariables",false);
     this->reserveName("updateStateVariables",false);
     this->reserveName("updateAuxiliaryStateVariables",false);
@@ -2615,24 +2614,6 @@ namespace mfront{
     }
   } // end of MFrontBehaviourParserCommon::writeBehaviourClassForwardDeclarations
 
-  std::string
-  MFrontBehaviourParserCommon::convertBehaviourTypeToString(void) const
-  {
-    using namespace std;
-    std::string btype;
-    if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      btype="MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR";
-    } else if (this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      btype="MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR";
-    } else if (this->mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
-      btype="MechanicalBehaviourBase::COHESIVEZONEMODEL";
-    } else {
-      this->throwRuntimeError("MFrontBehaviourParserCommon::writeBehaviourClassBegin",
-			      "unsupported behaviour type");
-    }
-    return btype;
-  }
-
   void MFrontBehaviourParserCommon::writeBehaviourClassBegin(const Hypothesis h) {
     using namespace std;
     this->checkBehaviourFile();
@@ -2656,7 +2637,7 @@ namespace mfront{
       this->behaviourFile << this->description << endl;
     }
     this->behaviourFile << "*/" << endl;
-    const string btype = this->convertBehaviourTypeToString();
+    const string btype = this->mb.getBehaviourTypeFlag();
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){
 	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
@@ -2854,44 +2835,6 @@ namespace mfront{
   } // end of MFrontBehaviourParserCommon::writeBehaviourUpdateStateVariables
 
   void
-  MFrontBehaviourParserCommon::writeStandardPerformanceProfiling(std::ostream& os,
-								 const std::string& v,
-								 const std::string& s)
-  {
-    using namespace std;
-    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-      const string tn = s.empty() ? "mfront_local_timer" : "mfront_local_timer_"+s;
-      os << "mfront::MFrontBehaviourProfiler::Timer " << tn 
-	 << "(" << this->mb.getClassName() << "Profiler::getProfiler(),"
-	 << "mfront::MFrontBehaviourProfiler::" << makeUpperCase(v) << ");" << endl;
-    }
-  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceProfiling
-
-  void
-  MFrontBehaviourParserCommon::writeStandardPerformanceProfilingBegin(std::ostream& os,
-								      const std::string& v,
-								      const std::string& s)
-  {
-    using namespace std;
-    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-      const string tn = s.empty() ? "mfront_local_timer" : "mfront_local_timer_"+s;
-      os << "{" << endl
-	 << "mfront::MFrontBehaviourProfiler::Timer " << tn 
-	 << "(" << this->mb.getClassName() << "Profiler::getProfiler(),"
-	 << "mfront::MFrontBehaviourProfiler::" << makeUpperCase(v) << ");" << endl;
-    }
-  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceProfilingBegin
-
-  void
-  MFrontBehaviourParserCommon::writeStandardPerformanceProfilingEnd(std::ostream& os)
-  {
-    using namespace std;
-    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-      os << "}" << endl;
-    }
-  } // end of MFrontBehaviourParserCommon::writeStandardPerformanceProfilingEnd
-
-  void
   MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h) 
   {
     using namespace std;
@@ -2906,9 +2849,7 @@ namespace mfront{
       this->behaviourFile << "using namespace tfel::math;" << endl;
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourUpdateAuxiliaryStateVariables",
 			this->behaviourFile,this->mb.getMaterialLaws());		      
-      this->writeStandardPerformanceProfiling(this->behaviourFile,
-					      MechanicalBehaviourData::UpdateAuxiliaryStateVariables);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::UpdateAuxiliaryStateVariables).code << endl;
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::UpdateAuxiliaryStateVariables) << endl;
       this->behaviourFile << "}" << endl << endl;
     } else {
       this->behaviourFile << "\n{}" << endl << endl;
@@ -2942,7 +2883,7 @@ namespace mfront{
 
   void MFrontBehaviourParserCommon::writeBehaviourIntegrator(const Hypothesis h) {
     using namespace std;
-    const string btype = this->convertBehaviourTypeToString();
+    const string btype = this->mb.getBehaviourTypeFlag();
     const MechanicalBehaviourData& md = this->mb.getMechanicalBehaviourData(h);
     vector<BoundsDescription>::const_iterator p;
     this->checkBehaviourFile();
@@ -2971,10 +2912,7 @@ namespace mfront{
     }
     this->behaviourFile << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;" << endl;
     if(this->mb.hasCode(h,MechanicalBehaviourData::Integrator)){
-      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-						      MechanicalBehaviourData::Integrator);
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator).code << endl;
-      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::Integrator) << endl;
     }
     this->behaviourFile << "this->updateIntegrationVariables();" << endl;
     this->behaviourFile << "this->updateStateVariables();" << endl;
@@ -3301,34 +3239,41 @@ namespace mfront{
     writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourInitializeMethod",
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
     if(this->mb.hasCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables)){
-      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-						      MechanicalBehaviourData::BeforeInitializeLocalVariables,
-						      "binit");
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables).code
+      if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	writeStandardPerformanceProfilingBegin(this->behaviourFile,
+					       MechanicalBehaviourData::BeforeInitializeLocalVariables,
+					       "binit");
+      }
+      this->behaviourFile << this->mb.getCodeBlock(h,MechanicalBehaviourData::BeforeInitializeLocalVariables).code
 			  << endl;
-      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
-
+      if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	writeStandardPerformanceProfilingEnd(this->behaviourFile);
+      }
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::InitializeLocalVariables)){
-      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-						      MechanicalBehaviourData::InitializeLocalVariables,"init");
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::InitializeLocalVariables).code
+      if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	writeStandardPerformanceProfilingBegin(this->behaviourFile,
+						     MechanicalBehaviourData::InitializeLocalVariables,"init");
+      }
+      this->behaviourFile << this->mb.getCodeBlock(h,MechanicalBehaviourData::InitializeLocalVariables).code
 			  << endl;
-      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+      if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	writeStandardPerformanceProfilingEnd(this->behaviourFile);
+      }
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables)){
-      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-      						    MechanicalBehaviourData::AfterInitializeLocalVariables,"ainit");
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables).code
+      if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	writeStandardPerformanceProfilingBegin(this->behaviourFile,
+					       MechanicalBehaviourData::AfterInitializeLocalVariables,"ainit");
+      }
+      this->behaviourFile << this->mb.getCodeBlock(h,MechanicalBehaviourData::AfterInitializeLocalVariables).code
 			  << endl;
-      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+      if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+	writeStandardPerformanceProfilingEnd(this->behaviourFile);
+      }
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictor)){
-      this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-						      MechanicalBehaviourData::ComputePredictor,"predictor");
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictor).code
-			  << endl;
-      this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictor) << endl;
     }
     this->writeBehaviourParserSpecificInitializeMethodPart(h);
     this->behaviourFile << "}" << endl << endl;
@@ -3718,7 +3663,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::material;
     this->checkBehaviourFile();
-    const string btype = this->convertBehaviourTypeToString();
+    const string btype = this->mb.getBehaviourTypeFlag();
     this->behaviourFile << "static const unsigned short TVectorSize = N;" << endl;
     this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;" << endl;
     this->behaviourFile << "static const unsigned short StensorSize = ";
@@ -4142,7 +4087,7 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator(const Hypothesis h)
   {
     using namespace std;
-    const string btype = this->convertBehaviourTypeToString();
+    const string btype = this->mb.getBehaviourTypeFlag();
     if((!this->mb.getAttribute<bool>(h,MechanicalBehaviourData::hasPredictionOperator,false))&&
        (this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictionOperator))){
       this->throwRuntimeError("MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator : ",
@@ -4153,8 +4098,6 @@ namespace mfront{
 			  << "computePredictionOperator(const SMFlag smflag,const SMType smt){" << endl;
       this->behaviourFile << "using namespace std;" << endl;
       this->behaviourFile << "using namespace tfel::math;" << endl;
-      this->writeStandardPerformanceProfiling(this->behaviourFile,
-					      MechanicalBehaviourData::ComputePredictionOperator);
       writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputePredictionOperator",
 			this->behaviourFile,this->mb.getMaterialLaws());
       if((this->mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
@@ -4171,7 +4114,7 @@ namespace mfront{
 			      << "}" << endl;
 	}
       }
-      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictionOperator).code;
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputePredictionOperator);
       this->behaviourFile << "return SUCCESS;" << endl;
       this->behaviourFile << "}" << endl << endl;
     } else {
@@ -4222,7 +4165,7 @@ namespace mfront{
 	    this->behaviourFile << "using std::vector;" << endl;
 	    writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator",
 			      this->behaviourFile,this->mb.getMaterialLaws());
-	    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator+"-"+ktype).code << '\n';
+	    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator+"-"+ktype) << '\n';
 	    this->behaviourFile << "return true;" << endl;
 	    this->behaviourFile << "}" << endl << endl;
 	  } else {
@@ -4287,9 +4230,7 @@ namespace mfront{
 	this->behaviourFile << "using std::vector;" << endl;
 	writeMaterialLaws("MFrontBehaviourParserCommon::writeBehaviourComputeTangentOperator",
 			  this->behaviourFile,this->mb.getMaterialLaws());
-	this->writeStandardPerformanceProfiling(this->behaviourFile,
-						MechanicalBehaviourData::ComputeTangentOperator);
-	this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator).code << '\n';
+	this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeTangentOperator) << '\n';
 	this->behaviourFile << "return true;" << endl;
 	this->behaviourFile << "}" << endl << endl;
       }
@@ -5472,7 +5413,7 @@ namespace mfront{
 	if(!this->mb.hasCode(*ph,MechanicalBehaviourData::ComputeFinalStress)){
 	  if(this->mb.hasCode(*ph,MechanicalBehaviourData::ComputeFinalStressCandidate)){
 	    this->mb.setCode(*ph,MechanicalBehaviourData::ComputeFinalStress,
-			     this->mb.getCode(*ph,MechanicalBehaviourData::ComputeFinalStressCandidate),
+			     this->mb.getCodeBlock(*ph,MechanicalBehaviourData::ComputeFinalStressCandidate),
 			     MechanicalBehaviourData::CREATE,
 			     MechanicalBehaviourData::BODY);
 	  }
@@ -5485,7 +5426,7 @@ namespace mfront{
       if(!this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStress)){
 	if(this->mb.hasCode(h,MechanicalBehaviourData::ComputeFinalStressCandidate)){
 	  this->mb.setCode(h,MechanicalBehaviourData::ComputeFinalStress,
-			   this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStressCandidate),
+			   this->mb.getCodeBlock(h,MechanicalBehaviourData::ComputeFinalStressCandidate),
 			   MechanicalBehaviourData::CREATEBUTDONTREPLACE,
 			   MechanicalBehaviourData::BODY);
 	}

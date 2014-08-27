@@ -350,6 +350,24 @@ namespace mfront
     return this->type;
   } // end of MechanicalBehaviourDescription::getBehaviourType
 
+  std::string
+  MechanicalBehaviourDescription::getBehaviourTypeFlag(void) const
+  {
+    using namespace std;
+    std::string btype;
+    if(this->getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      btype="MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR";
+    } else if (this->getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      btype="MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR";
+    } else if (this->getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
+      btype="MechanicalBehaviourBase::COHESIVEZONEMODEL";
+    } else {
+      throw(runtime_error("MechanicalBehaviourDescription::getBehaviourTypeFlag : "
+			  "unsupported behaviour type"));
+    }
+    return btype;
+  } // end of MechanicalBehaviourDescription::getBehaviourTypeFlag
+
   MechanicalBehaviourSymmetryType
   MechanicalBehaviourDescription::getElasticSymmetryType() const
   {
@@ -1218,10 +1236,18 @@ namespace mfront
   } // end of MechanicalBehaviourDescription::setCode
 
   const CodeBlock&
+  MechanicalBehaviourDescription::getCodeBlock(const Hypothesis h,
+					       const std::string& n) const
+  {
+    return this->getMechanicalBehaviourData(h).getCodeBlock(n);
+  } // end of MechanicalBehaviourDescription::getCode
+
+  std::string
   MechanicalBehaviourDescription::getCode(const Hypothesis h,
 					  const std::string& n) const
   {
-    return this->getMechanicalBehaviourData(h).getCode(n);
+    const bool b = this->getAttribute(MechanicalBehaviourData::profiling,false);
+    return this->getMechanicalBehaviourData(h).getCode(n,this->getClassName(),b);
   } // end of MechanicalBehaviourDescription::getCode
 
   bool

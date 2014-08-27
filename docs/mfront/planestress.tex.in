@@ -27,7 +27,7 @@
 \newcommand{\licos}{\texttt{licos}}
 \newcommand{\celaeno}{\texttt{celaeno}}
 \newcommand{\mfm}{\texttt{MFront\-Materials}}
-\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\cyrano}{\texttt{Cyrano3}}
 \newcommand{\galileo}{\texttt{galileo}}
 \newcommand{\castem}{\href{http://www-cast3m.cea.fr}{\texttt{Cast3M}}}
 \newcommand{\gibiane}{\texttt{gibiane}}
@@ -121,16 +121,17 @@
 
 \auteurs{T.~Helfer}
 \redacteur{T.~Helfer}
-\verificateur{J.-M.~Proix}
+\verificateur{C.~Petry$(\mbox{}^{\star})$}
 \approbateur{R.~Masson}
 \emetteur{E.~Touron}
+\affiliation{$(\mbox{}^{\star})$ EDF R\&D MMC}
 
 \titre{Prise en compte des hypothèses de contraintes planes dans les
   lois générées par le générateur de code \mfront{}~: application à
   \cyrano{}}
 
-\date{2014}
-\numero{14-03}
+\date{Septembre 2014}
+\numero{14-013}
 \indice{0}
 \dateversion{}
 \numeroaffaire{A-SICOM-A1-01}
@@ -148,7 +149,7 @@
 {EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
 {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
 {EDF/R\&D/MMC}          & P. Ollar         & 1 & \\
-{EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+{EDF/R\&D/MMC/CPM}      & H.-I. Wong      & 1 & \\
                         & N. Barnel       & 1 & \\
 {EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
                         & R. Largenton    & 1 & \\
@@ -211,7 +212,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
                       & A. Millard         & 1 & \\
                       & O. Fandeur         & 1 & \\
   DEN/DMN             & P. Yvon            & 1 & \\
-                      & J.L. Seran         & 1 & \\
+                      & M. Le Flem         & 1 & \\
                       & F. Dalle           & 1 & \\
   DEN/DMN/SRMA        & P. Chapelot        & 1 & \\
                       & S. Carassou        & 1 & \\
@@ -264,10 +265,11 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 
 \resumecea{
 
-  Le support des hypothèses de contraintes planes (généralisées ou
-  non) a pour but de permettre une utilisation efficace des lois
-  générées par \mfront{} dans l'application combustible industrielle
-  \cyrano{}, développée par \edf{} au sein du projet \pleiades{}.
+  La prise en compte des hypothèses de contraintes planes
+  (généralisées ou non) a pour but de permettre une utilisation
+  efficace des lois générées par \mfront{} dans l'application
+  combustible industrielle \cyrano{}, développée par \edf{} au sein du
+  projet \pleiades{}.
 
   En effet, pour réduire la description d'une tranche de crayon
   combustible à un problème \(1D\), \cyrano{} fait deux hypothèses de
@@ -342,8 +344,8 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 
 \section{Introduction}
 
-Le support des hypothèses de contraintes planes (généralisées ou
-non) a pour but de permettre une utilisation efficace des lois
+La prise en compte des hypothèses de contraintes planes (généralisées
+ou non) a pour but de permettre une utilisation efficace des lois
 générées par \mfront{} dans l'application combustible industrielle
 \cyrano{}, développée par \edf{} au sein du projet \pleiades{}.
 
@@ -426,7 +428,7 @@ Nous pouvons noter que~:
 \item la composante axiale des déformations \(\epsilontoz\)
   n'apparaît pas~: celle-ci peut être calculée {\tt a posteriori} en
   utilisant la loi d'élasticité standard~;
-\item Le tenseur d'élasticité effectif sera désigné par le
+\item le tenseur d'élasticité effectif sera désigné par le
   qualificatif altéré dans cette note (et dans \mfront{}).
 \end{enumerate}
 
@@ -451,7 +453,7 @@ duplication d'une même information physique dans différentes
 implantations nous semble peu souhaitable.
 
 \paragraph{Cas des lois de comportement isotropes}
-Les lois de comportement isotropes, pour lesquels \mfront{} propose
+Les lois de comportement isotropes, pour lesquelles \mfront{} propose
 des analyseurs spécifiques~\cite{helfer_generateur_2013}, forment une
 exception notable pour deux raisons~:
 \begin{itemize}
@@ -506,10 +508,11 @@ Cet algorithme se décompose ainsi~:
   \]
   La loi de comportement en déformations planes généralisées est
   appelée une seconde fois.
-\item si la contrainte axiale obtenue n'est pas nulle (à une précision
-  donnée près), la méthode itérative de la sécante est utilisée pour
-  estimer un incrément convenable. À chaque itération, la loi de
-  comportement en déformations planes généralisées est appelée.
+\item si la contrainte axiale obtenue n'est toujours pas nulle (à une
+  précision donnée près), la méthode itérative de la sécante est
+  utilisée pour estimer un incrément convenable. À chaque itération,
+  la loi de comportement en déformations planes généralisées est
+  appelée.
 \end{itemize}
 
 Cette méthode a un coût numérique important~: pour les lois les plus
@@ -709,7 +712,7 @@ intéressantes~:
 \begin{enumerate}
 \item la modification portée par
   l'équation~\eqref{eq:mfront:planestress:feelzz} est linéaire. On
-  peut donc calculer \(f_{\tepsilonel}\) sans tenir de compte du terme
+  peut donc calculer \(f_{\tepsilonel}\) sans tenir compte du terme
   supplémentaire
   \(\Delta\,\epsilontoz\,\vec{e}_{z}\otimes\vec{e}_{z}\). Celui-ci
   peut être ajouté si nécessaire~;
@@ -833,13 +836,13 @@ ailleurs~\cite{helfer_generateur_2013}, est ensuite donnée~:
 \end{flushleft}
 
 La partie spécifique à l'hypothèse de contraintes planes est alors
-donné par le code suivant~:
+donnée par le code suivant~:
 \begin{flushleft}
   \lstinputlisting[firstline=71,lastline=84,firstnumber=71]{@abs_top_srcdir@/docs/mfront/mfront/ImplicitNorton.mfront}
 \end{flushleft}
 Nous précisons que~:
 \begin{itemize}
-\item ce bloc n'est valide qu'en contraintes planes (option {\tt PlaneStress}~;
+\item ce bloc n'est valide qu'en contraintes planes (option {\tt PlaneStress})~;
 \item ce bloc doit être ajouté à la suite de la partie commune à
   toutes les modélisations (options {\tt Append} et {\tt AtEnd})~;
 \end{itemize}
@@ -888,7 +891,7 @@ Le fichier d'entrée du test est le suivant~:
   \lstinputlisting{@abs_top_srcdir@/docs/mfront/mtest/cyranonorton.mtest}
 \end{flushleft}
 
-En ligne \(15\), la déformation totale axiale à l'instant initiale est
+En ligne \(15\), la déformation totale axiale à l'instant initial est
 imposée nulle, puisque cette valeur est ici portée par la variable
 interne {\tt Axial\-Strain}.
 
@@ -927,7 +930,7 @@ Rappelons que la composante axiale est la seconde composante des
 tenseurs en contraintes planes généralisées. Nous voyons que la
 seconde ligne est nulle. La seconde colonne est numériquement nulle.
 
-Nous pouvons comparer l'opérateur tangent cohérent une approximation
+Nous pouvons comparer l'opérateur tangent cohérent à une approximation
 numérique. Pour cela, ajoutons les lignes suivantes au fichier mtest~:
 \begin{lstlisting}
   @CompareToNumericalTangentOperator true;
@@ -935,7 +938,7 @@ numérique. Pour cela, ajoutons les lignes suivantes au fichier mtest~:
   @NumericalTangentOperatorPerturbationValue 1.e-8;
 \end{lstlisting}
 
-Nous vérifions ainsi numériquement la qualité de matrice tangente
+Nous vérifions ainsi numériquement la qualité de la matrice tangente
 cohérente.
 
 \newpage
@@ -944,8 +947,8 @@ cohérente.
 
 Cette note a présenté comment il est possible de traiter les
 hypothèses de contraintes planes tout en conservant une implantation
-unique quelque soit l'hypothèse de modélisation considérée~: un même
-implantation peut désormais être partagée entre les applications
+unique quelle que soit l'hypothèse de modélisation considérée~: une
+même implantation peut désormais être partagée entre les applications
 \alcyone{} et \cyrano{}.
 
 \begin{figure}

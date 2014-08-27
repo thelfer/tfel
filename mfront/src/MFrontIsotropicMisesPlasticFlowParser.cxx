@@ -95,7 +95,7 @@ namespace mfront{
     this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("MFrontIsotropicMisesPlasticFlowParser::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::FlowRule).code << endl;
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::FlowRule) << endl;
     this->behaviourFile << "}\n\n";
 
     this->behaviourFile << "bool NewtonIntegration(void){\n";
@@ -168,7 +168,7 @@ namespace mfront{
   void MFrontIsotropicMisesPlasticFlowParser::writeBehaviourIntegrator(const Hypothesis h)
   {
     using namespace std;
-    const string btype = this->convertBehaviourTypeToString();
+    const string btype = this->mb.getBehaviourTypeFlag();
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";

@@ -13,6 +13,7 @@
 #include"MFront/MFrontParserFactory.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
+#include"MFront/MFrontPerformanceProfiling.hxx"
 #include"MFront/MFrontRungeKuttaParser.hxx"
 
 namespace mfront{
@@ -567,9 +568,7 @@ namespace mfront{
     this->behaviourFile << "bool\ncomputeStress(void){" << endl;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
-    this->writeStandardPerformanceProfiling(this->behaviourFile,
-					    MechanicalBehaviourData::ComputeStress);
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress).code << endl;
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeStress) << endl;
     this->behaviourFile << "return true;" << endl; 
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress" << endl << endl;
     this->behaviourFile << "bool\ncomputeFinalStress(void){" << endl;
@@ -577,19 +576,15 @@ namespace mfront{
     this->behaviourFile << "using namespace tfel::math;" << endl;
     writeMaterialLaws("MFrontRungeKuttaParser::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
-    this->writeStandardPerformanceProfiling(this->behaviourFile,
-					    MechanicalBehaviourData::ComputeFinalStress);
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress).code << endl;
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeFinalStress) << endl;
     this->behaviourFile << "return true;" << endl; 
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeFinalStress" << endl << endl;
     this->behaviourFile << "bool\ncomputeDerivative(void){" << endl;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
-    this->writeStandardPerformanceProfiling(this->behaviourFile,
-					    MechanicalBehaviourData::ComputeDerivative);
     writeMaterialLaws("MFrontRungeKuttaParser::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
-    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeDerivative).code << endl;
+    this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::ComputeDerivative) << endl;
     this->behaviourFile << "return true;" << endl; 
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeDerivative" << endl << endl;
   } // end of writeBehaviourParserSpecificMembers
@@ -603,8 +598,7 @@ namespace mfront{
   MFrontRungeKuttaParser::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h) 
   {
     using namespace std;
-    const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
-    if(d.hasCode(MechanicalBehaviourData::UpdateAuxiliaryStateVariables)){
+    if(this->mb.hasCode(h,MechanicalBehaviourData::UpdateAuxiliaryStateVariables)){
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Update auxiliary state variables at end of integration\n";
     this->behaviourFile << "*/\n";
@@ -616,9 +610,7 @@ namespace mfront{
       this->behaviourFile << "using namespace tfel::math;" << endl;
       writeMaterialLaws("MFrontRungeKuttaParser::writeBehaviourUpdateAuxiliaryStateVariables",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->writeStandardPerformanceProfiling(this->behaviourFile,
-					      MechanicalBehaviourData::UpdateAuxiliaryStateVariables);
-      this->behaviourFile << d.getCode(MechanicalBehaviourData::UpdateAuxiliaryStateVariables).code << endl;
+      this->behaviourFile << this->mb.getCode(h,MechanicalBehaviourData::UpdateAuxiliaryStateVariables) << endl;
       this->behaviourFile << "}\n\n";
     }
   } // end of  MFrontRungeKuttaParser::writeBehaviourUpdateAuxiliaryStateVariables
@@ -2089,7 +2081,7 @@ namespace mfront{
   void MFrontRungeKuttaParser::writeBehaviourIntegrator(const Hypothesis h)
   {
     using namespace std;
-    const string btype = this->convertBehaviourTypeToString();
+    const string btype = this->mb.getBehaviourTypeFlag();
     const string& algorithm = this->mb.getAttribute<string>(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 							    MechanicalBehaviourData::algorithm);
     const MechanicalBehaviourData& d = this->mb.getMechanicalBehaviourData(h);
@@ -2125,8 +2117,11 @@ namespace mfront{
 			    << "}" << endl;
       }
     }
-    this->writeStandardPerformanceProfilingBegin(this->behaviourFile,
-						 MechanicalBehaviourData::Integrator);
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      writeStandardPerformanceProfilingBegin(this->behaviourFile,
+					     mb.getClassName(),
+					     MechanicalBehaviourData::Integrator);
+    }
     if(algorithm == "Euler"){
       this->writeBehaviourEulerIntegrator(h);
     } else if(algorithm == "RungeKutta2"){
@@ -2153,7 +2148,9 @@ namespace mfront{
 	p2->writeBoundsChecks(this->behaviourFile);
       }
     }
-    this->writeStandardPerformanceProfilingEnd(this->behaviourFile);
+    if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      writeStandardPerformanceProfilingEnd(this->behaviourFile);
+    }
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if(this->mb.hasAttribute(h,MechanicalBehaviourData::hasConsistentTangentOperator)){
       if(this->mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){

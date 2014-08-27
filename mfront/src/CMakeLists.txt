@@ -67,6 +67,15 @@ set(mfront_SOURCES
     MFrontImplicitParser.cxx
     MFrontImplicitParserII.cxx
     MFrontImplicitFiniteStrainParser.cxx
+    MFrontNonLinearSystemSolver.cxx
+    MFrontNonLinearSystemSolverBase.cxx
+    MFrontNonLinearSystemSolverFactory.cxx
+    MFrontPowellDogLegAlgorithmBase.cxx
+    MFrontNewtonRaphsonSolvers.cxx
+    MFrontBroydenSolvers.cxx
+    MFrontSecondBroydenSolver.cxx
+    MFrontLevenbergMarquardtSolvers.cxx
+    MFrontPerformanceProfiling.cxx
     MFrontMultipleIsotropicMisesFlowsParser.cxx
     MFrontIsotropicBehaviourParserBase.cxx
     MFrontMFrontLawInterface.cxx

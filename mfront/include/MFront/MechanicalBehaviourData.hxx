@@ -31,7 +31,7 @@ namespace mfront{
   /*!
    * This structure gathers various behaviour characteristic
    */
-  struct TFEL_VISIBILITY_EXPORT MechanicalBehaviourData
+  struct MechanicalBehaviourData
     : private SupportedTypes
   {
     /*
@@ -77,6 +77,8 @@ namespace mfront{
     static const std::string UpdateAuxiliaryStateVariables;
     //! standard code name
     static const std::string InitializeJacobian;
+    //! standard code name
+    static const std::string InitializeJacobianInvert;
 
     /*
      * normalised attribute names
@@ -94,12 +96,6 @@ namespace mfront{
     //! if this attribute is true, the behaviour can compute a
     //! prediction operator
     static const std::string hasPredictionOperator;
-    //! if this attribute is true, the implicit algorithm may use the
-    //! Cast3M acceleration algorithm
-    static const std::string useCast3MAccelerationAlgorithm;
-    //! if this attribute is true, the implicit algorithm may use the
-    //! Cast3M acceleration algorithm
-    static const std::string useRelaxationAlgorithm;
     //! if this attribute is true, the implicit algorithm compares the
     //! analytical jacobian to the numeric one
     static const std::string compareToNumericalJacobian;
@@ -413,7 +409,17 @@ namespace mfront{
      * \param[in] n : name
      */
     const CodeBlock&
-    getCode(const std::string&) const;
+    getCodeBlock(const std::string&) const;
+    /*!
+     * \return the code block associated with the given name
+     * \param[in] n  : name
+     * \param[in] cn : behaviour class name
+     * \param[in] b  : add profiling information
+     */
+    std::string
+    getCode(const std::string&,
+	    const std::string&,
+	    const bool) const;
     /*!
      * \return true if a code block associated with the given name has
      * been defined

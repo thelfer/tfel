@@ -264,7 +264,7 @@ namespace mfront{
   void MFrontIsotropicBehaviourParserBase::writeBehaviourComputePredictionOperator(const Hypothesis h)
   {
     using namespace std;
-    const string btype = this->convertBehaviourTypeToString();
+    const string btype = this->mb.getBehaviourTypeFlag();
     if(!this->mb.hasCode(h,MechanicalBehaviourData::ComputePredictionOperator)){
       this->behaviourFile << "IntegrationResult" << endl
 			  << "computePredictionOperator(const SMFlag smflag, const SMType smt){\n";

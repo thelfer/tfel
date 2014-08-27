@@ -4,6 +4,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/CodeBlock.hxx                          \
 			MFront/MFrontConfig.hxx	                      \
 			MFront/MFrontDebugMode.hxx	              \
+			MFront/MFrontPerformanceProfiling.hxx         \
 			MFront/MFrontPedanticMode.hxx	              \
 			MFront/MFrontLogStream.hxx                    \
 			MFront/MFrontGenericData.hxx                  \
@@ -80,10 +81,20 @@ nobase_noinst_HEADERS = MFront/MFrontIsotropicBehaviourParserBase.hxx           
 			MFront/MFrontIsotropicMisesPlasticFlowParser.hxx              \
 			MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx            \
 			MFront/MFrontRungeKuttaParser.hxx                             \
+			MFront/MFrontPerformanceProfiling.hxx			      \
+			MFront/MFrontNonLinearSystemSolver.hxx                        \
+			MFront/MFrontNonLinearSystemSolverBase.hxx                    \
+			MFront/MFrontNonLinearSystemSolverFactory.hxx                 \
+			MFront/MFrontNewtonRaphsonSolvers.hxx			      \
+			MFront/MFrontBroydenSolvers.hxx				      \
+			MFront/MFrontSecondBroydenSolver.hxx			      \
+			MFront/MFrontLevenbergMarquardtSolvers.hxx		      \
+			MFront/MFrontPowellDogLegAlgorithmBase.hxx		      \
 			MFront/MFrontImplicitParserBase.hxx                           \
 			MFront/MFrontImplicitParser.hxx                               \
 			MFront/MFrontImplicitParserII.hxx                             \
 			MFront/MFrontImplicitFiniteStrainParser.hxx                   \
+			MFront/MFrontNewtonRaphsonSolvers.hxx                         \
 			MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx     \
 			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx
 

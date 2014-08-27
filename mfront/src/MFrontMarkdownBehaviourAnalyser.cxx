@@ -172,7 +172,7 @@ namespace mfront
 	mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       const vector<string>& cn = d.getCodeBlockNames();
       for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
-	const CodeBlock& c = d.getCode(*pcn);
+	const CodeBlock& c = d.getCodeBlock(*pcn);
 	if(!c.description.empty()){
 	  out <<"### " << *pcn << " description" << endl;
 	  out << c.description << endl << endl;
@@ -193,12 +193,12 @@ namespace mfront
 	const vector<string>& cn = d.getCodeBlockNames();
 	for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
 	  bool print = true;
-	  const CodeBlock& c = d.getCode(*pcn);
+	  const CodeBlock& c = d.getCodeBlock(*pcn);
 	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
 	    const MechanicalBehaviourData& duh =
 	      mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
 	    if(duh.hasCode(*pcn)){
-	      const string& cuh = duh.getCode(*pcn).code;
+	      const string& cuh = duh.getCodeBlock(*pcn).code;
 	      print = c.code!=cuh;
 	    }
 	  }
@@ -290,7 +290,7 @@ namespace mfront
 	mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       const vector<string>& cn = d.getCodeBlockNames();
       for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
-	const CodeBlock& c = d.getCode(*pcn);
+	const CodeBlock& c = d.getCodeBlock(*pcn);
 	if(!c.description.empty()){
 	  out <<"### Description relative à la portion " << *pcn << endl;
 	  out << c.description << endl << endl;
@@ -311,12 +311,12 @@ namespace mfront
 	const vector<string>& cn = d.getCodeBlockNames();
 	for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
 	  bool print = true;
-	  const CodeBlock& c = d.getCode(*pcn);
+	  const CodeBlock& c = d.getCodeBlock(*pcn);
 	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
 	    const MechanicalBehaviourData& duh =
 	      mb.getMechanicalBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
 	    if(duh.hasCode(*pcn)){
-	      const string& cuh = duh.getCode(*pcn).code;
+	      const string& cuh = duh.getCodeBlock(*pcn).code;
 	      print = c.code!=cuh;
 	    }
 	  }
@@ -490,7 +490,7 @@ namespace mfront
       	  const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(*ph);
 	  const bool b = d.isIntegrationVariableName(pd->name)||d.isExternalStateVariableName(pd->name);
 	  if(d.hasCode(*pc)){
-	    const CodeBlock& cb = d.getCode(*pc);
+	    const CodeBlock& cb = d.getCodeBlock(*pc);
 	    if(cb.variables.find(pd->name)!=cb.variables.end()){
 	      vcb[*pc].push_back(*ph);
 	    }
