@@ -1,3 +1,9 @@
+/*! 
+ * \file   MultipleVector.cxx
+ * \brief
+ * \author Helfer Thomas
+ */
+
 #ifdef NDEBUG
 #undef NDEBUG
 #endif

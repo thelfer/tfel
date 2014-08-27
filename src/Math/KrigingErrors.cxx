@@ -1,5 +1,5 @@
 /*! 
- * \file  Kriging.cxx
+ * \file  KrigingErrors.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 avr 2009

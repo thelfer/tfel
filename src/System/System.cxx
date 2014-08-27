@@ -1,5 +1,5 @@
 /*!
- * \file   System.cpp
+ * \file   System.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   06 Nov 2007

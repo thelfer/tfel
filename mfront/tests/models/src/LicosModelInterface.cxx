@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontModelInterface.cxx
+ * \file   LicosModelInterface.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   10 Nov 2006

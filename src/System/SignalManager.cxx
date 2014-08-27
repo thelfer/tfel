@@ -1,5 +1,5 @@
 /*!
- * \file   SignalManager.cpp
+ * \file   SignalManager.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   09 Nov 2007

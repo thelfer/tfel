@@ -1,8 +1,8 @@
 /*! 
- * \file  MTestAsterFiniteBehaviour.cxx
+ * \file   MTestAsterFiniteStrainBehaviour.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 07 avril 2013
+ * \brief  07 avril 2013
  */
 
 #include<cmath>

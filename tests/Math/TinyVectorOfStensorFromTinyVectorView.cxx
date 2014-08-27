@@ -1,8 +1,8 @@
 /*! 
- * \file  tsftv.cxx
+ * \file   TinyVectorOfStensorFromTinyVectorView.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 08 févr. 2013
+ * \brief  08 févr. 2013
  */
 
 #include<cmath>

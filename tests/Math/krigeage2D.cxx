@@ -1,8 +1,8 @@
 /*! 
- * \file  krigeage.cxx
+ * \file   krigeage2D.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 09 avr 2009
+ * \brief  09 avr 2009
  */
 
 #ifdef NDEBUG

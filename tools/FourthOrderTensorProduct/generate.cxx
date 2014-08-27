@@ -1,8 +1,8 @@
 /*! 
- * \file  generate.cxx
+ * \file   generate.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 16 juin 2014
+ * \brief  16 juin 2014
  */
 
 #include<set>

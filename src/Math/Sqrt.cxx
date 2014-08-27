@@ -1,7 +1,6 @@
 /*!
- * \file   Power.cxx
+ * \file   Sqrt.cxx
  * \brief  
- * 
  * \author Helfer Thomas
  * \date   06 jan 2007
  */

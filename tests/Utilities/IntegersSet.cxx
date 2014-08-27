@@ -1,9 +1,9 @@
 /*!
-  \file   IntegersSet.cxx
-  \author Helfer Thomas
-  \date   13 mai 2006
-  \brief  
-*/
+ * \file   IntegersSet.cxx
+ * \author Helfer Thomas
+ * \date   13 mai 2006
+ * \brief  
+ */
 
 #ifdef NDEBUG
 #undef NDEBUG

@@ -1,7 +1,6 @@
 /*!
- * \file   stensor_eigenvalues2.cxx
- * \brief  
- * 
+ * \file   stensor_eigenvectors2.cxx
+ * \brief
  * \author Helfer Thomas
  * \date   03 jui 2006
  */

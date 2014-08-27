@@ -1,8 +1,8 @@
 /*! 
- * \file  stl.cxx
+ * \file   map.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 30 avr 2010
+ * \brief  30 avr 2010
  */
 
 #include<string>

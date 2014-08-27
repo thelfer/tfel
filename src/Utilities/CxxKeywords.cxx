@@ -1,5 +1,5 @@
 /*!
- * \file   CxxKeyWords.cxx
+ * \file   CxxKeywords.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   16 Nov 2006

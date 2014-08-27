@@ -1,7 +1,6 @@
 /*!
- * \file   parser.cxx
+ * \file   parser2.cxx
  * \brief  
- * 
  * \author Helfer Thomas
  * \date   21 sep 2007
  */

@@ -1,5 +1,5 @@
 /*!
- * \file   ProcessManager.cpp
+ * \file   ProcessManager.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   03 nov 2007

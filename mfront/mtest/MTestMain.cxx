@@ -1,8 +1,8 @@
 /*! 
- * \file  mtest.cxx
+ * \file   MTestMain.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 05 avril 2013
+ * \brief  05 avril 2013
  */
 
 #include<cstdlib>

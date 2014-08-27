@@ -1,8 +1,8 @@
 /*! 
- * \file  MFrontLaTeXBehvaviourAnalyser.cxx
+ * \file   MFrontLaTeXBehaviourAnalyser.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 19 mai 2014
+ * \brief  19 mai 2014
  */
 
 #include"MFront/MFrontLaTeXBehaviourAnalyser.hxx"

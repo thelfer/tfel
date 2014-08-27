@@ -1,5 +1,5 @@
 /*!
- * \file   vector1.hxx
+ * \file   vector-function.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   05 Jan 2007

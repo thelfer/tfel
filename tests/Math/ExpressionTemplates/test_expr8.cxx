@@ -1,5 +1,5 @@
 /*!
- * \file   test8.cxx
+ * \file   test_expr8.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   17 Oct 2006

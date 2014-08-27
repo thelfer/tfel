@@ -1,8 +1,8 @@
 /*!
- *\file   Glossary.cxx
- *\author Helfer Thomas
- *\date   09/06/14
-*/
+ * \file   Glossary.cxx
+ * \author Helfer Thomas
+ * \date   09/06/14
+ */
 
 #include<stdexcept>
 #include<algorithm>

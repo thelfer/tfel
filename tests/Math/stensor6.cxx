@@ -1,3 +1,9 @@
+/*! 
+ * \file   stensor6.cxx
+ * \brief
+ * \author Helfer Thomas
+ */
+
 #ifdef NDEBUG
 #undef NDEBUG
 #endif

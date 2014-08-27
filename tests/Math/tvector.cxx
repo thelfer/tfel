@@ -1,3 +1,9 @@
+/*! 
+ * \file   tvector.cxx
+ * \brief
+ * \author Helfer Thomas
+ */
+
 #ifdef NDEBUG
 #undef NDEBUG
 #endif /* NDEBUG */

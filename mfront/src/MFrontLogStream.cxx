@@ -1,8 +1,8 @@
 /*! 
- * \file  LogStream.cxx
+ * \file   MFrontLogStream.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 10 jun 2011
+ * \brief  10 jun 2011
  */
 
 #include<fstream>

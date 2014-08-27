@@ -1,8 +1,8 @@
 /*! 
- * \file  lu.cxx
+ * \file   lu2.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 14 avr 2009
+ * \brief  14 avr 2009
  */
 
 #ifdef NDEBUG

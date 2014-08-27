@@ -1,6 +1,6 @@
 /*!
  * \file   testmanager.cxx
- * \author Helfer Thomas <helferthomas@free.fr>
+ * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief a simple test of the TestSuite class
  */

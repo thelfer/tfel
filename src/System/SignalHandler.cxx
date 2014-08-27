@@ -1,5 +1,5 @@
 /*!
- * \file   SignalHandler.cpp
+ * \file   SignalHandler.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   08 nov 2007

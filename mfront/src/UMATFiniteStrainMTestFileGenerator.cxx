@@ -1,8 +1,8 @@
 /*! 
- * \file  UMATFiniteStrainMTestFileGenerator.hxx
+ * \file   UMATFiniteStrainMTestFileGenerator.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 10 juil. 2013
+ * \brief  10 juil. 2013
  */
 
 #include<cmath>

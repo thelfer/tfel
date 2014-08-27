@@ -1,7 +1,6 @@
 /*!
- * \file   EvaluatorFunction.hxx
+ * \file   EvaluatorFunction.cxx
  * \brief  
- * 
  * \author Helfer Thomas
  * \date   13 jan 2009
  */

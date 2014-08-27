@@ -1,8 +1,8 @@
 /*! 
- * \file  system.cxx
+ * \file   tests.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 31 aoû 2010
+ * \brief  31 août 2010
  */
 
 #include<boost/python.hpp>

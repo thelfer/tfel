@@ -1,5 +1,5 @@
 /*!
- * \File   gentype.cxx
+ * \file   gentype.cxx
  * \brief  This file tests some functionalities of the GenType class.
  * \author Helfer Thomas
  * \date   23 Apr 2007

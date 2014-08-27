@@ -1,6 +1,6 @@
 /*!
  * \file   TestCase.cxx
- * \author Helfer Thomas <helferthomas@free.fr>
+ * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief  
  */
