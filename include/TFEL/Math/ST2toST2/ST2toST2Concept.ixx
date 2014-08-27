@@ -1,5 +1,11 @@
-#ifndef _ST2TOST2_CONCEPT_IMPL_
-#define _ST2TOST2_CONCEPT_IMPL_ 1
+/*! 
+ * \file   ST2toST2Concept.ixx
+ * \brief
+ * \author Helfer Thomas
+ */
+
+#ifndef _LIB_TFEL_MATH_ST2TOST2_CONCEPT_IMPL_
+#define _LIB_TFEL_MATH_ST2TOST2_CONCEPT_IMPL_ 1
 
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 
@@ -70,4 +76,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _ST2TOST2_CONCEPT_IMPL_ */
+#endif /* _LIB_TFEL_MATH_ST2TOST2_CONCEPT_IMPL_ */

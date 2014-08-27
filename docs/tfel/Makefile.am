@@ -1,4 +1,5 @@
 EXTRA_DIST=CMakeLists.txt                               \
+	   tfel.doc                                     \
 	   images/EllipticFuelRodPowerDensity.eps       \
 	   images/EllipticFuelRodPowerDensityLegend.eps \
 	   images/r-epsilon-2.eps			\

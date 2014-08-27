@@ -1,3 +1,9 @@
+/*! 
+ * \file  ST2toST2Concept.hxx
+ * \brief
+ * \author Helfer Thomas
+ */
+
 #ifndef _ST2TOST2_CONCEPT_LIB_
 #define _ST2TOST2_CONCEPT_LIB_ 1
 

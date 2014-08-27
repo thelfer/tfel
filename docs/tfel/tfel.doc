@@ -1,0 +1,18 @@
+/*!
+ * \mainpage TFEL project
+ * \author   Helfer Thomas
+ * \date     27/07/2014
+ *
+ * The TFEL project provides:
+ * - mfront               : a code generator for material properties,
+ *   mechanical behaviours and simple models.
+ * - TFEL/Math            : a set of classes used in mechanical
+ *   implementations of mechanical behaviours and various algorithms.
+ *   Mechanical operations are handled using expression templates.
+ * - TFEL/Material        : classes used by mechanical behaviours
+ * - TFEL/Utilities       : various classes
+ * - TFEL/Metaprogramming : a set of classes to ease metaprogramming in C++98
+ * - TFEL/Typetraits      : a set of classes providing information on types
+ * - TFEL/System          : intefaces to system specific operations on file and
+ *                          processes
+ */

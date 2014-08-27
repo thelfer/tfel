@@ -511,6 +511,7 @@ docs/tfel/images/r-epsilon.eps -text
 docs/tfel/images/r_epsilon.gnuplot -text
 docs/tfel/reference-guide.tex.in -text
 docs/tfel/style.ist -text
+docs/tfel/tfel.doc -text
 docs/tutorial/Bibliographie.tex.in -text
 docs/tutorial/CMakeLists.txt -text
 docs/tutorial/Chaboche.tex.in -text

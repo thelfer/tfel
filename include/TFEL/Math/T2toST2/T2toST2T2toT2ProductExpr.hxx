@@ -1,8 +1,8 @@
 /*! 
- * ile  T2toST2T2toT2ProductExpr.hxx
- * rief
- * uthor Helfer Thomas
- * rief 16 juin 2014
+ * \file   T2toST2T2toT2ProductExpr.hxx
+ * \brief
+ * \author Helfer Thomas
+ * \date   16 juin 2014
  */
 
 #ifndef _LIB_TFEL_MATH_T2TOST2T2TOT2PRODUCTEXPR_H_

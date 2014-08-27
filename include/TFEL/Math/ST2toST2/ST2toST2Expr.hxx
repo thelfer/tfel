@@ -1,3 +1,9 @@
+/*! 
+ * \file  ST2toST2Expr.hxx
+ * \brief
+ * \author Helfer Thomas
+ */
+
 #ifndef _MATH_ST2TOST2_EXPR_LIB_
 #define _MATH_ST2TOST2_EXPR_LIB_ 1
 

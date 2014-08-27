@@ -1,5 +1,5 @@
 /*!
- * \File   MFrontIsotropicStrainHardeningMisesCreepParser.hxx
+ * \file   MFrontIsotropicStrainHardeningMisesCreepParser.hxx
  * \brief  This file declares the MFrontIsotropicStrainHardeningMisesCreepParser class
  * \author Helfer Thomas
  * \date   10 Nov 2006

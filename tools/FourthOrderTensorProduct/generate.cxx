@@ -137,10 +137,10 @@ writeFileHeader(std::ostream& out,
   using namespace std;
   const FourthOrderTensor r = getResult(p);
   out << "/*! " << endl;
-  out << " * \file  " << getName(p) << "ProductExpr.hxx" << endl;
-  out << " * \brief" << endl;
-  out << " * \author Helfer Thomas" << endl;
-  out << " * \brief 16 juin 2014" << endl;
+  out << " * \\file  " << getName(p) << "ProductExpr.hxx" << endl;
+  out << " * \\brief" << endl;
+  out << " * \\author Helfer Thomas" << endl;
+  out << " * \\date 16 juin 2014" << endl;
   out << " */" << endl;
   out << "" << endl;
   out << "#ifndef _LIB_TFEL_MATH_" << toupper(getName(p)) << "PRODUCTEXPR_H_" << endl;
