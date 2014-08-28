@@ -1,5 +1,5 @@
 /*!
- * \file   TestProxy.ixx
+ * \file   include/TFEL/Tests/TestProxy.ixx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief  
@@ -50,7 +50,5 @@ namespace tfel
   } // end of namespace test
 
 } // end of namespace tfel
-
-#include"TFEL/Tests/TestProxy.ixx"
 
 #endif  /*_LIB_TFEL_TESTS_TESTPROXY_IXX */

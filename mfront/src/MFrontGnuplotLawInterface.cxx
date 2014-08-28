@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontGnuplotLawInterface.cxx
+ * \file   mfront/src/MFrontGnuplotLawInterface.cxx
  * \brief    
  * \author P. GOLDBRONN
  * \date   14 mai 2008

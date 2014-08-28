@@ -1,5 +1,5 @@
 /*!
- * \file   t2tost2.ixx
+ * \file   include/TFEL/Math/T2toST2/t2tost2.ixx
  * \brief  This file implements the methods of the class t2tost2.
  * \author Helfer Thomas
  * \date   19 November 2013

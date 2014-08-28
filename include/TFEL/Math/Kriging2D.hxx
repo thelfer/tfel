@@ -1,5 +1,5 @@
 /*! 
- * \file  Kriging2D.hxx
+ * \file  include/TFEL/Math/Kriging2D.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 mai 2010

@@ -1,5 +1,5 @@
 /*!
- * \file   CyranoException.hxx
+ * \file   mfront/include/MFront/Cyrano/CyranoException.hxx
  * 
  * \brief    
  * \author Helfer Thomas

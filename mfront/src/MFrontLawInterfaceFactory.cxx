@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontLawInterfaceFactory.cxx
+ * \file   mfront/src/MFrontLawInterfaceFactory.cxx
  * 
  * \brief    
  * \author Helfer Thomas

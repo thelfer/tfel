@@ -1,5 +1,5 @@
 /*!
- * \file   TensorFromTinyMatrixRowView.hxx
+ * \file   include/TFEL/Math/Tensor/TensorFromTinyMatrixRowView.hxx
  * \brief  
  * Tensor From Tensor Matrix Row View
  * \author Helfer Thomas

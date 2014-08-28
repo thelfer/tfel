@@ -1,5 +1,5 @@
 /*! 
- * \file  VectorVectorDotProduct.hxx
+ * \file  include/TFEL/Math/Vector/VectorVectorDotProduct.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 04 fév 2010

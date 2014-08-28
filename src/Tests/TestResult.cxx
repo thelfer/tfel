@@ -1,5 +1,5 @@
 /*!
- * \file   TestResult.cxx
+ * \file   src/Tests/TestResult.cxx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief  

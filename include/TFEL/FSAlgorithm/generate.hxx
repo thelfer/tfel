@@ -1,5 +1,5 @@
 /*!
- * \file   generate.hxx
+ * \file   include/TFEL/FSAlgorithm/generate.hxx
  * \brief  This file implements the generate class.
  * \author Helfer Thomas
  * \date   30 jun 2006

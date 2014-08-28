@@ -1,5 +1,5 @@
 /*!
- * \file   RungeKutta4.hxx
+ * \file   include/TFEL/Math/RungeKutta4.hxx
  * \brief  This file declares the RungeKutta4 class.
  * \author Helfer Thomas
  * \date   01 Sep 2006

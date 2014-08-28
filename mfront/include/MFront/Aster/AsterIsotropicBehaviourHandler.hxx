@@ -1,5 +1,5 @@
 /*! 
- * \file  AsterIsotropicBehaviourHandler.hxx
+ * \file  mfront/include/MFront/Aster/AsterIsotropicBehaviourHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 janv. 2013

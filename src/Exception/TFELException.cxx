@@ -1,5 +1,5 @@
 /*!
- * \file   TFELException.cxx
+ * \file   src/Exception/TFELException.cxx
  * \brief  
  * 
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*!
- * \file   EnableIf.hxx
+ * \file   include/TFEL/Metaprogramming/EnableIf.hxx
  * \brief  This file implements the EnableIf template class.
  * 
  * \author Helfer Thomas

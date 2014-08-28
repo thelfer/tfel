@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontNewtonRaphsonSolvers.hxx
+ * \file  mfront/include/MFront/MFrontNewtonRaphsonSolvers.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 22 août 2014

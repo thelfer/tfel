@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestImposedThermodynamicForce.cxx
+ * \file  mfront/mtest/MTestImposedThermodynamicForce.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013

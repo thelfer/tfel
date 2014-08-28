@@ -1,13 +1,13 @@
 /*!
- * \file  generate_glossary.cxx
+ * \file  tools/glossary/generate_glossary.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 14 mai 2009
  */
 
-// g++ -fPIC -DPIC `tfel-config --includes --libs --utilities --glossary` generate_glossary.cxx -o generate_glossary
+// g++ -fPIC -DPIC `tfel-config --includes --libs --utilities --glossary` tools/glossary/generate_glossary.cxx -o generate_glossary
 
-// g++ -fPIC -DPIC generate_glossary.cxx  -o generate_glossary -I/home/th202608/codes/tfel/trunk/install/include -L/home/th202608/codes/tfel/trunk/install/lib -lTFELUtilities  -lTFELGlossary && ./generate_glossary && mv Glossary.hxx ../../include/TFEL/Glossary/Glossary.hxx && mv Glossary.cxx ../../src/Glossary/Glossary.cxx && mv PythonGlossary.cxx ../../bindings/python/tfel/Glossary.cxx  &&  ./generate_glossary && pandoc -f markdown+tex_math_single_backslash --toc  glossary-pandoc.txt -o /tmp/glossary.docx
+// g++ -fPIC -DPIC tools/glossary/generate_glossary.cxx  -o generate_glossary -I/home/th202608/codes/tfel/trunk/install/include -L/home/th202608/codes/tfel/trunk/install/lib -lTFELUtilities  -lTFELGlossary && ./generate_glossary && mv Glossary.hxx ../../include/TFEL/Glossary/Glossary.hxx && mv Glossary.cxx ../../src/Glossary/Glossary.cxx && mv PythonGlossary.cxx ../../bindings/python/tfel/Glossary.cxx  &&  ./generate_glossary && pandoc -f markdown+tex_math_single_backslash --toc  glossary-pandoc.txt -o /tmp/glossary.docx
 
 #include<iostream>
 #include<stdexcept>

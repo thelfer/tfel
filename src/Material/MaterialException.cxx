@@ -1,5 +1,5 @@
 /*!
- * \file   MaterialException.cxx
+ * \file   src/Material/MaterialException.cxx
  * \brief  
  * 
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*! 
- * \file  ConfigParser.hxx
+ * \file  tfel-doc/include/TFEL/Utilities/ConfigParser.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011

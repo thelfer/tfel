@@ -1,5 +1,5 @@
 /*!
- * \file   ST2toT2Concept.ixx  
+ * \file   include/TFEL/Math/ST2toT2/ST2toT2Concept.ixx  
  * \brief    
  * \author Helfer Thomas
  * \date   19 November 2013

@@ -1,5 +1,5 @@
 /*!
- * \file   SupportedTypes.cxx
+ * \file   mfront/src/SupportedTypes.cxx
  * 
  * \brief    
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*!
- * \file   TFELTypes.hxx
+ * \file   include/TFEL/Config/TFELTypes.hxx
  * \brief  This file implements the Types class
  * \author Helfer Thomas
  * \date   08 Aug 2006

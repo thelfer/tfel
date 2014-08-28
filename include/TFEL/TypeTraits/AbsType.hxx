@@ -1,5 +1,5 @@
 /*!
- * \file   AbsType.hxx
+ * \file   include/TFEL/TypeTraits/AbsType.hxx
  * \brief  This file declares the AbsType traits class
  * and specialises it for standard numeric types.
  * \author Helfer Thomas

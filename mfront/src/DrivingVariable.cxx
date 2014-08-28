@@ -1,5 +1,5 @@
 /*! 
- * \file  DrivingVariable.cxx
+ * \file  mfront/src/DrivingVariable.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 mai 2013

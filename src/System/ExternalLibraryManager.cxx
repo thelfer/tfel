@@ -1,5 +1,5 @@
 /*!
- * \file   ExternalLibraryManager.cxx
+ * \file   src/System/ExternalLibraryManager.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   31 Oct 2007

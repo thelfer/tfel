@@ -1,5 +1,5 @@
 /*!
- * \file   t2tot2.ixx
+ * \file   include/TFEL/Math/T2toT2/t2tot2.ixx
  * \brief  This file implements the methods of the class t2tot2.
  * \author Helfer Thomas
  * \date   19 November 2013

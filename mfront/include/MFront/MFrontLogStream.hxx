@@ -1,5 +1,5 @@
 /*! 
- * \file   MFrontLogStream.hxx
+ * \file   mfront/include/MFront/MFrontLogStream.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 jun 2011

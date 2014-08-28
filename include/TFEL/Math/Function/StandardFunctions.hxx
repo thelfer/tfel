@@ -1,5 +1,5 @@
 /*!
- * \file   StandardFunction.hxx
+ * \file   include/TFEL/Math/Function/StandardFunctions.hxx
  * \brief  
  * \author Helfer Thomas
  * \date   05 nov 2006

@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontZMATInterface.cxx
+ * \file  mfront/src/MFrontZMATInterface.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 juil. 2013

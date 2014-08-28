@@ -1,5 +1,5 @@
 /*!
- * \file   function_tests.hxx
+ * \file   tests/Math/include/function_tests.hxx
  * \brief  
  * 
  * \author Helfer Thomas

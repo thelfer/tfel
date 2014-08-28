@@ -1,5 +1,5 @@
 /*!
- * \file   MultipleTestOutputs.cxx
+ * \file   src/Tests/MultipleTestOutputs.cxx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief  

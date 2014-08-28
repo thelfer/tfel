@@ -1,5 +1,5 @@
 /*! 
- * \file  ModellingHypothesis.cxx
+ * \file  bindings/python/tfel/ModellingHypothesis.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 mars 2013

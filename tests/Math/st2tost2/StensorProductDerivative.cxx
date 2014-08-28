@@ -1,5 +1,5 @@
 /*! 
- * \file  StensorProductDerivative.cxx
+ * \file  tests/Math/st2tost2/StensorProductDerivative.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 04 juin 2014

@@ -1,5 +1,5 @@
 /*! 
- * \file  TinyMatrixInvert.hxx
+ * \file  include/TFEL/Math/TinyMatrixInvert.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 08 mars 2013

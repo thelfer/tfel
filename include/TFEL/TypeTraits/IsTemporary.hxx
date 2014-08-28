@@ -1,5 +1,5 @@
 /*!
- * \file   IsTemporary.hxx
+ * \file   include/TFEL/TypeTraits/IsTemporary.hxx
  * \brief  This file declares the IsTemporary traits class.
  * \author Helfer Thomas
  * \date   16 Oct 2006

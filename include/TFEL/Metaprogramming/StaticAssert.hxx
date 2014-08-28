@@ -1,5 +1,5 @@
 /*!
- * \file   StaticAssert.hxx
+ * \file   include/TFEL/Metaprogramming/StaticAssert.hxx
  * \brief  This file defines the TFEL_STATIC_ASSERT macro.
  * \author Helfer Thomas
  * \date   28 Aug 2006

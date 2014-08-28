@@ -1,5 +1,5 @@
 /*!
- * \file   RemoveReference.hxx
+ * \file   include/TFEL/Metaprogramming/RemoveReference.hxx
  * \brief  This file declares the RemoveReference metafunction
  * \author Helfer Thomas
  * \date   18 Oct 2006

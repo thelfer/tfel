@@ -1,5 +1,5 @@
 /*! 
- * \file  ExternalFunctionsPrototypes.hxx
+ * \file  include/TFEL/System/ExternalFunctionsPrototypes.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 26 jan 2010

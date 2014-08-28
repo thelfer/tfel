@@ -1,5 +1,5 @@
 /*!
- * \file   ArrayConceptOperations.hxx
+ * \file   include/TFEL/Math/Array/ArrayConceptOperations.hxx
  * \brief  This file implements the various operations that could be made on arrays.
  * \author Helfer Thomas
  * \date   01 jui 2006

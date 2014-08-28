@@ -1,5 +1,5 @@
 /*! 
- * \file  KrigingPieceWiseLinearModel1D.hxx
+ * \file  include/TFEL/Math/Kriging/KrigingPieceWiseLinearModel1D.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 avr 2009

@@ -1,5 +1,5 @@
 /*!
- * \file   VariableBoundsDescription.hxx
+ * \file   mfront/include/MFront/VariableBoundsDescription.hxx
  * \brief  This file declares the VariableBoundsDescription class
  * \author Helfer Thomas
  * \date   06 mai 2008

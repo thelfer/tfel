@@ -1,5 +1,5 @@
 /*!
- * \file   runge_kutta2.cxx
+ * \file   tests/Math/RungeKutta/runge_kutta2.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   20 jui 2006

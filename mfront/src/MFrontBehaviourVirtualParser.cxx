@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontBehaviourVirtualParser.cxx
+ * \file   mfront/src/MFrontBehaviourVirtualParser.cxx
  * 
  * \brief    
  * \author Helfer Thomas

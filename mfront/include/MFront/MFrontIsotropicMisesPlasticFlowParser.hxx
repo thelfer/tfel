@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontIsotropicMisesPlasticFlowParser.hxx
+ * \file   mfront/include/MFront/MFrontIsotropicMisesPlasticFlowParser.hxx
  * \brief  This file declares the MFrontIsotropicMisesPlasticFlowParser class
  * \author Helfer Thomas
  * \date   10 Nov 2006

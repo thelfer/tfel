@@ -1,5 +1,5 @@
 /*!
- * \file   ScalarObjectRandomAccessConstIterator.hxx
+ * \file   include/TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx
  * \brief  This file declares the ScalarObjectRandomAccessConstIterator class
  * \author Helfer Thomas
  * \date   17 Oct 2006

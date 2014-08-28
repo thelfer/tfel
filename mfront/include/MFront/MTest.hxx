@@ -1,5 +1,5 @@
 /*! 
- * \file  MTest.hxx
+ * \file  mfront/include/MFront/MTest.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 09 avril 2013

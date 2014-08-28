@@ -1,5 +1,5 @@
 /*!
- * \file   StensorNullStorage.hxx  
+ * \file   include/TFEL/Math/Stensor/StensorNullStorage.hxx  
  * \brief  This file implements the StensorNullStorage class. 
  * \author Helfer Thomas
  * \date   02 jun 2006

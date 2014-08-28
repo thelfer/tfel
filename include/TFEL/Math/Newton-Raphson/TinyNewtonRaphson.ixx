@@ -1,5 +1,5 @@
 /*!
- * \file   TinyNewtonRaphson.ixx
+ * \file   include/TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx
  * \brief  This file implements the TinyNewtonMatrix
  * \author Helfer Thomas
  * \date   09 Aug 2006

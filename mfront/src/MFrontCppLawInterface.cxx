@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontCppLawInterface.cxx
+ * \file   mfront/src/MFrontCppLawInterface.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   06 mai 2008

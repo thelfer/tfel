@@ -1,5 +1,5 @@
 /*! 
- * \file   MTestAsterFiniteStrainBehaviour.cxx
+ * \file   mfront/mtest/MTestAsterFiniteStrainBehaviour.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  07 avril 2013

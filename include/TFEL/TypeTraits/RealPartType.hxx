@@ -1,5 +1,5 @@
 /*!
- * \file   RealPartType.hxx
+ * \file   include/TFEL/TypeTraits/RealPartType.hxx
  * \brief  This file declares the RealPartType traits class
  * and specialises it for standard numeric types.
  * \author Helfer Thomas

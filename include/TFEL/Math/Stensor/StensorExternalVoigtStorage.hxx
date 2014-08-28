@@ -1,5 +1,5 @@
 /*!
- * \file   StensorExternalVoigtStorage.hxx
+ * \file   include/TFEL/Math/Stensor/StensorExternalVoigtStorage.hxx
  * \brief  This file implements the StensorExternalVoigtStorage
  * \author Helfer Thomas
  * \date   02 jun 2006

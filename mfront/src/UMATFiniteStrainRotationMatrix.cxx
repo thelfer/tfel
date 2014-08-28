@@ -1,5 +1,5 @@
 /*! 
- * \file  UMATFiniteStrainRotationMatrix.cxx
+ * \file  mfront/src/UMATFiniteStrainRotationMatrix.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 26 mars 2014

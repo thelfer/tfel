@@ -1,5 +1,5 @@
 /*!
- * \file   promote.cxx
+ * \file   tests/Math/promote.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   03 May 2006

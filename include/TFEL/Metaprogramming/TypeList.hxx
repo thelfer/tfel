@@ -1,5 +1,5 @@
 /*!
- * \file   TypeList.hxx
+ * \file   include/TFEL/Metaprogramming/TypeList.hxx
  * \brief  This file declares some tools to work with TL.
  * \author Helfer Thomas
  * \date   30 August 2006

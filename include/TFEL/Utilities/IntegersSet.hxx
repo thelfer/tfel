@@ -1,5 +1,5 @@
 /*!
- * \file   IntegersSet.hxx  
+ * \file   include/TFEL/Utilities/IntegersSet.hxx  
  * \brief  This file implements the IntergerSet class.
  * \author Helfer Thomas
  * \date   13 mai 2006

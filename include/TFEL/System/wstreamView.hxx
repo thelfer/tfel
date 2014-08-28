@@ -1,5 +1,5 @@
 /*!
- * \file   wstreamView.hxx
+ * \file   include/TFEL/System/wstreamView.hxx
  * \brief  
  * 
  * \author Helfer Thomas

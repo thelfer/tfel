@@ -1,5 +1,5 @@
 /*! 
- * \file  AsterOrthotropicBehaviour.hxx
+ * \file  mfront/include/MFront/Aster/AsterOrthotropicBehaviour.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 20 mars 2013

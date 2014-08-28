@@ -1,5 +1,5 @@
 /*! 
- * \file  ParserBase.cxx
+ * \file  tfel-doc/src/ParserBase.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011

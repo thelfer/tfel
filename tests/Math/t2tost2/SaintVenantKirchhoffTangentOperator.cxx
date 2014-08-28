@@ -1,5 +1,5 @@
 /*! 
- * \file  SaintVenantKirchhoffTangentOperator.cxx
+ * \file  tests/Math/t2tost2/SaintVenantKirchhoffTangentOperator.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 08 juin 2014

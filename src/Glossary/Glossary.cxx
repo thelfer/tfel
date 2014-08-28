@@ -1,5 +1,5 @@
 /*!
- * \file   Glossary.cxx
+ * \file   src/Glossary/Glossary.cxx
  * \author Helfer Thomas
  * \date   09/06/14
  */

@@ -1,5 +1,5 @@
 /*!
- * \file   levenberg-marquardt3.cxx
+ * \file   tests/Math/levenberg-marquardt3.cxx
  * \brief  
  * 
  * \author Helfer Thomas

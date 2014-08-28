@@ -1,5 +1,5 @@
 /*!
- * \file   IsFundamentalNumericType.hxx
+ * \file   include/TFEL/TypeTraits/IsFundamentalNumericType.hxx
  * \brief  This file declares the IsFundamentalNumericType traits
  * class and specialises it for standard numerical types.
  * \author Helfer Thomas

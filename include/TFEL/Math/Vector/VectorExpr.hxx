@@ -1,5 +1,5 @@
 /*!
- * \file   VectorExpr.hxx
+ * \file   include/TFEL/Math/Vector/VectorExpr.hxx
  * \author Helfer Thomas
  */
 

@@ -1,5 +1,5 @@
 /*! 
- * \file   tests.cxx
+ * \file   bindings/python/tfel/tests.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  31 août 2010

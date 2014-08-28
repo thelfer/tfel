@@ -1,5 +1,5 @@
 /*!
- * \file   HasIterator.hxx
+ * \file   include/TFEL/Metaprogramming/HasIterator.hxx
  * \brief  
  * 
  * \author Helfer Thomas

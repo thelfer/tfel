@@ -1,5 +1,5 @@
 /*!
- * \file   RecursiveUnion.hxx
+ * \file   include/TFEL/Utilities/RecursiveUnion.hxx
  * \brief  This file implements the RecursiveUnion class and some function to manipulate them.
  * \see    TL
  * \author Helfer Thomas

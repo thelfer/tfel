@@ -1,5 +1,5 @@
 /*! 
- * \file   RambergOsgood.hxx
+ * \file   include/TFEL/Material/RambergOsgood.hxx
  * \brief
  * \author Brunon É.
  * \brief  21 déc. 2012

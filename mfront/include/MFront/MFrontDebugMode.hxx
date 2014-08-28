@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontDebugMode.hxx
+ * \file  mfront/include/MFront/MFrontDebugMode.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 avril 2014

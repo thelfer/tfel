@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontBehaviourAnalyserProxy.ixx
+ * \file   mfront/include/MFront/MFrontBehaviourAnalyserProxy.ixx
  * \brief  
  * 
  * \author Helfer Thomas

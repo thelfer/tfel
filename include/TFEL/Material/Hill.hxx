@@ -1,7 +1,8 @@
 /*!
- * \file   Hill.hxx
+ * \file   include/TFEL/Material/Hill.hxx
  * \author Helfer Thomas
  * \date   26 March 2009
+ * \brief  This file declares the hillTensor function.
  */
 
 #include"TFEL/Math/st2tost2.hxx"
@@ -16,13 +17,16 @@ namespace tfel
   {
 
     /*!
-     * \param F :
-     * \param G :
-     * \param H :
-     * \param L :
-     * \param M :
-     * \param N :
-     * build the Hill Tensor :
+     * \brief compute the Hill tensor.
+     * \tparam    N : space dimension
+     * \tparam    T : underlying type
+     * \param[in] F : orthotropic coefficient
+     * \param[in] G : orthotropic coefficient
+     * \param[in] H : orthotropic coefficient
+     * \param[in] L : orthotropic coefficient
+     * \param[in] M : orthotropic coefficient
+     * \param[in] N : orthotropic coefficient
+     * This function builds the Hill Tensor defined by :
      * \f[\left(
      * \begin{array}{cccccc}
      * F+H & -F  & -H  & 0 & 0 & 0 \\
@@ -35,11 +39,12 @@ namespace tfel
      * \right)
      * \f]
      * if \f$\sigma\f$ is a second order symetric tensor (stensor), 
-     * \f$\sigma|H*\sigma\$ computes the Hill stress :
-     * \[
+     * \f$\sigma|H*\sigma\f$ computes the Hill stress :
+     * \f[
      * F\left(\sigma_{11}-\sigma_{22}\right)^2+G\left(\sigma_{22}-\sigma_{33}\right)^2+H\left(\sigma_{33}-\sigma_{11}\right)^2
      * + 2L\sigma_{12}^{2} + 2M\sigma_{13}^{2} + 2N\sigma_{23}^{2}
-     * \]
+     * \f]
+     * \return an object of type st2tost2
      */    
     template<unsigned short N,
 	     typename T>

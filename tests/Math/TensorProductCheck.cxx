@@ -1,5 +1,5 @@
 /*! 
- * \file  TensorProductCheck.cxx
+ * \file  tests/Math/TensorProductCheck.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 16 juin 2014

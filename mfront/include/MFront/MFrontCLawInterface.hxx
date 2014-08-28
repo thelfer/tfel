@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontCLawInterface.hxx
+ * \file   mfront/include/MFront/MFrontCLawInterface.hxx
  * \brief  This file declares the MFrontCLawInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008

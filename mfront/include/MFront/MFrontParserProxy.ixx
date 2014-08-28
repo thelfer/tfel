@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontParserProxy.ixx
+ * \file   mfront/include/MFront/MFrontParserProxy.ixx
  * \brief  
  * 
  * \author Helfer Thomas

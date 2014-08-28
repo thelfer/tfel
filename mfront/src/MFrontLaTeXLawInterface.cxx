@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontLaTeXLawInterface.cxx
+ * \file   mfront/src/MFrontLaTeXLawInterface.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   06 mai 2008

@@ -1,5 +1,5 @@
 /*!
- * \file   MathObjectMathObjectDiadicProductExpr.hxx
+ * \file   include/TFEL/Math/ExpressionTemplates/MathObjectMathObjectDiadicProductExpr.hxx
  * \brief  
  * 
  * \author Helfer Thomas

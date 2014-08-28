@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestAccelerationAlgorithmFactory.cxx
+ * \file  mfront/mtest/MTestAccelerationAlgorithmFactory.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 juin 2014

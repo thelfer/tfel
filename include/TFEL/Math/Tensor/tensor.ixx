@@ -1,5 +1,5 @@
 /*!
- * \file   tensor.ixx
+ * \file   include/TFEL/Math/Tensor/tensor.ixx
  * \brief  This file implements the methods of the class tensor.
  * \author Helfer Thomas
  * \date   02 jun 2006

@@ -1,5 +1,5 @@
 /*!
- * \file   Abs.ixx
+ * \file   include/TFEL/Math/General/Abs.ixx
  * \brief  This file declares the abs function
  * \author Helfer Thomas
  * \date   13 Feb 2007

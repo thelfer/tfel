@@ -1,5 +1,5 @@
 /*!
- * \file   max_element.hxx
+ * \file   include/TFEL/FSAlgorithm/max_element.hxx
  * \brief  This file implements the max_element class.
  * \author Helfer Thomas
  * \date   30 jun 2006

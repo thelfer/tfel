@@ -1,5 +1,5 @@
 /*!
- * \file   StensorStaticStorage.hxx
+ * \file   include/TFEL/Math/Stensor/StensorStaticStorage.hxx
  * \brief  This file implements the StensorStaticStorage class.
  * \author Helfer Thomas
  * \date   02 jun 2006

@@ -1,5 +1,5 @@
 /*!
- * \file   ObjectObjectRandomAccessConstIterator.hxx
+ * \file   include/TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx
  * \brief  This file declares the ObjectObjectRandomAccessConstIterator class
  * \author Helfer Thomas
  * \date   17 Oct 2006

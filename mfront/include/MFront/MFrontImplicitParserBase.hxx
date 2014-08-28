@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontImplicitParserBase.hxx
+ * \file   mfront/include/MFront/MFrontImplicitParserBase.hxx
  * \brief  This file declares the MFrontImplicitParserBase class
  * \author Helfer Thomas
  * \date   10 Nov 2006

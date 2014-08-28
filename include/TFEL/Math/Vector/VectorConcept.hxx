@@ -1,5 +1,5 @@
 /*!
- * \file   VectorConcept.hxx
+ * \file   include/TFEL/Math/Vector/VectorConcept.hxx
  * \author Helfer Thomas
  */
 

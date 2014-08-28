@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontSearchFile.hxx
+ * \file  mfront/include/MFront/MFrontSearchFile.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 21 mai 2013

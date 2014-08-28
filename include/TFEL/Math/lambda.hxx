@@ -1,5 +1,5 @@
 /*!
- * \file   lambda.hxx
+ * \file   include/TFEL/Math/lambda.hxx
  * \brief  
  * 
  * \author Helfer Thomas
@@ -18,8 +18,8 @@
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/UnaryResultType.hxx"
 #include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/Forward/lambda.hxx"
 #include"TFEL/Math/LambdaExpression/LambdaConcept.hxx"
+#include"TFEL/Math/Forward/lambda.hxx"
 
 namespace tfel{
 

@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontLogStream.cxx
+ * \file  bindings/python/mfront/MFrontLogStream.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 22 sept. 2013

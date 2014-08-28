@@ -1,5 +1,5 @@
 /*! 
- * \file   tinymatrixsolve2.cxx
+ * \file   tests/Math/tinymatrixsolve2.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  14 avr 2009

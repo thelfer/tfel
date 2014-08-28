@@ -1,5 +1,5 @@
 /*!
- * \file   InvalidType.hxx
+ * \file   include/TFEL/Metaprogramming/InvalidType.hxx
  * \brief  This file declares InvalidType
  * \author Helfer Thomas
  * \date   28 Aug 2006

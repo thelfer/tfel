@@ -1,5 +1,5 @@
 /*!
- * \file   MultipleDeque.hxx
+ * \file   include/TFEL/Utilities/MultipleDeque.hxx
  * \brief  This file defines the MultipleDeque class.
  * \author Helfer Thomas
  */

@@ -1,5 +1,5 @@
 /*!
- * \file   TestCase.hxx
+ * \file   include/TFEL/Tests/TestCase.hxx
  * \author Helfer Thomas
  * \date   11 Apr 10
  * \brief  

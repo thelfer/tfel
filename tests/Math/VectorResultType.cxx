@@ -1,5 +1,5 @@
 /*!
- * \file   VectorResultType.cxx
+ * \file   tests/Math/VectorResultType.cxx
  * 
  * \brief    
  * \author Helfer Thomas

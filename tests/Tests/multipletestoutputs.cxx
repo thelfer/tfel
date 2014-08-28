@@ -1,5 +1,5 @@
 /*!
- * \file   multipletestoutputs.cxx
+ * \file   tests/Tests/multipletestoutputs.cxx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief a simple test of the MultipleTestOutputs class

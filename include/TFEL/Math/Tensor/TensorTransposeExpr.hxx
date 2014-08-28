@@ -1,5 +1,5 @@
 /*!
- * \file   TensorTransposeExpr.hxx
+ * \file   include/TFEL/Math/Tensor/TensorTransposeExpr.hxx
  * \brief  
  * 
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*! 
- * \file  Discretization1D.ixx
+ * \file  include/TFEL/Math/Discretization1D.ixx
  * \brief
  * \author Helfer Thomas
  * \brief 05 déc. 2011

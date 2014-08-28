@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontCyranoInterface.cxx
+ * \file   mfront/src/MFrontCyranoInterface.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   17 Jan 2007

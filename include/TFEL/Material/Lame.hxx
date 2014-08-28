@@ -1,5 +1,5 @@
 /*!
- * \file   Lame.hxx
+ * \file   include/TFEL/Material/Lame.hxx
  * \brief  This file defines various functions dealing with Lame's coefficients.
  * Using Lame's coefficients, linear elastic behaviour may be written~:
  * \f[ \underline{\sigma} = \lambda*\mathrm{tr}\left(\underline{\epsilon}\right)\underline{I}+2\mu\underline{\epsilon} \f]

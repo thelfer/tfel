@@ -1,5 +1,5 @@
 /*!
- * \file   HasRandomAccessiterator.hxx
+ * \file   include/TFEL/Metaprogramming/HasRandomAccessIterator.hxx
  * \brief  
  * 
  * \author Helfer Thomas

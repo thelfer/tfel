@@ -1,5 +1,5 @@
 /*!
- * \file   AsterComputeThermalExpansionCoefficientTensor.cxx
+ * \file   mfront/src/AsterComputeThermalExpansionCoefficientTensor.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   18 mar 2008

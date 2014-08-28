@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontModelVirtualInterface.hxx
+ * \file   mfront/include/MFront/MFrontModelVirtualInterface.hxx
  * \brief  
  * 
  * \author Helfer Thomas

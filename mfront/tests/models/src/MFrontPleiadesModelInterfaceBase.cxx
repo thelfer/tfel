@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontPleiadesModelInterfaceBase.cxx
+ * \file  mfront/tests/models/src/MFrontPleiadesModelInterfaceBase.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 17 jun 2010

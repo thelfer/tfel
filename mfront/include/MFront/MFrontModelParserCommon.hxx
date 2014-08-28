@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontModelParserCommon.hxx
+ * \file   mfront/include/MFront/MFrontModelParserCommon.hxx
  * \brief  This file declares the MFrontModelParserCommon class
  * \author Helfer Thomas
  * \date   10 Nov 2006

@@ -1,5 +1,5 @@
 /*! 
- * \file  tmatrix5.cxx
+ * \file  tests/Math/tmatrix5.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 27 déc. 2012

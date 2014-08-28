@@ -1,5 +1,5 @@
 /*!
- * \file   stensor3.cxx
+ * \file   tests/Math/stensor3.cxx
  * 
  * \brief    
  * \author Helfer Thomas

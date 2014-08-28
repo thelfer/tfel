@@ -1,5 +1,5 @@
 /*!
- * \file   st2tost2.hxx  
+ * \file   include/TFEL/Math/st2tost2.hxx  
  * \brief    
  * \author Helfer Thomas
  * \date   04 May 2006

@@ -1,5 +1,5 @@
 /*!
- * \file   UMATOrthotropicBehaviour.hxx
+ * \file   mfront/include/MFront/UMAT/UMATOrthotropicBehaviour.hxx
  * \brief  This file declares the UMATOrthotropicBehaviour class
  * \author Helfer Thomas
  * \date   18 mar 2008

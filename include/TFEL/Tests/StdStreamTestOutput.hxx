@@ -1,5 +1,5 @@
  /*!
-  * \file   StdStreamTestOutput.hxx
+  * \file   include/TFEL/Tests/StdStreamTestOutput.hxx
   * \author Helfer Thomas
   * \date   10 Apr 10
   * \brief  

@@ -1,5 +1,5 @@
 /*!
- * \file   GenTypeCastError.hxx
+ * \file   include/TFEL/Utilities/GenTypeCastError.hxx
  * \brief  This file implements the GenTypeCastError class
  * \see    GenTypeBase
  * \author Helfer Thomas

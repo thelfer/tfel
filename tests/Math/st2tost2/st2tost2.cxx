@@ -1,5 +1,5 @@
 /*!
- * \file   st2tost2.cxx
+ * \file   tests/Math/st2tost2/st2tost2.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   30 jan 2007

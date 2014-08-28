@@ -1,5 +1,5 @@
 /*!
- * \file   iota.cxx
+ * \file   tests/FSAlgorithms/iota.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   28 Aug 2006

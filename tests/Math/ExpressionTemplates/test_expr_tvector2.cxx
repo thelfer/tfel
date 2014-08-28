@@ -1,5 +1,5 @@
 /*!
- * \file   test_expr_tvector2.cxx
+ * \file   tests/Math/ExpressionTemplates/test_expr_tvector2.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   16 Oct 2006

@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontCyranoInterface.hxx
+ * \file   mfront/include/MFront/MFrontCyranoInterface.hxx
  * \brief  This file declares the MFrontCyranoInterface class
  * \author Helfer Thomas
  * \date   17 Jan 2007

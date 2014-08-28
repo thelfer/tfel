@@ -1,5 +1,5 @@
 /*!
- * \file   rstream.cxx
+ * \file   tests/System/rstream.cxx
  * \brief  
  * 
  * \author Helfer Thomas

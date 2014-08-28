@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontDefaultFiniteStrainParser.cxx
+ * \file   mfront/src/MFrontDefaultFiniteStrainParser.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   08 nov 2006

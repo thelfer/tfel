@@ -1,5 +1,5 @@
 /*!
- * \file   StensorComputeEigenVectors.hxx
+ * \file   include/TFEL/Math/Stensor/Internals/StensorComputeEigenVectors.hxx
  * \brief    
  * \author Helfer Thomas
  * \date   13 Jul 2006

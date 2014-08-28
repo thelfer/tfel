@@ -1,5 +1,5 @@
 /*!
- * \file   generate.cxx
+ * \file   tests/FSAlgorithms/generate.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   28 Aug 2006

@@ -1,5 +1,5 @@
 /*!
- * \file   ToString.hxx
+ * \file   include/TFEL/Utilities/ToString.hxx
  * \brief  This file implements the ToString function.
  * \author Helfer Thomas
  * \date   17 Jul 2006

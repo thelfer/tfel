@@ -1,5 +1,5 @@
 /*!
- * \file   qt.cxx
+ * \file   tests/Math/qt.cxx
  * \brief  
  * 
  * \author Helfer thomas

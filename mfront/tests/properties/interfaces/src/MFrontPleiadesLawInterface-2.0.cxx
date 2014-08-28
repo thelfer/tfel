@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontPleiadesLawInterface-2.0.cxx
+ * \file   mfront/tests/properties/interfaces/src/MFrontPleiadesLawInterface-2.0.cxx
  * \brief
  * \author Helfer Thomas
  * \date   06 mai 2008

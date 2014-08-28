@@ -1,5 +1,5 @@
 /*!
- * \file   testfunctionwrapper.cxx
+ * \file   tests/Tests/testfunctionwrapper.cxx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief a simple test of the TestFunctionWrapper class

@@ -1,5 +1,5 @@
 /*!
- * \file   StdStreamTestOutput.cxx
+ * \file   src/Tests/StdStreamTestOutput.cxx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief  

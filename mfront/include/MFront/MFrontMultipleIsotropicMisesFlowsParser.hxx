@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontMultipleIsotropicMisesFlowsParser.hxx
+ * \file   mfront/include/MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx
  * \brief  
  * 
  * \author Helfer Thomas

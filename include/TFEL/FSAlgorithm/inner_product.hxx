@@ -1,5 +1,5 @@
 /*!
- * \file   inner_product.hxx
+ * \file   include/TFEL/FSAlgorithm/inner_product.hxx
  * \brief  This file implements the inner_product class.
  * \author Helfer Thomas
  * \date   30 jun 2006

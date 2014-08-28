@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontCppTestLawInterface.hxx
+ * \file   mfront/include/MFront/MFrontCppTestLawInterface.hxx
  * \brief  This file declares the MFrontCppTestLawInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008

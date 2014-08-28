@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontVirtualParser.hxx
+ * \file   mfront/include/MFront/MFrontVirtualParser.hxx
  * \brief  
  * 
  * \author Helfer Thomas

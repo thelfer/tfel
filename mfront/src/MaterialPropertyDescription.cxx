@@ -1,5 +1,5 @@
 /*! 
- * \file  MaterialPropertyDescription.cxx
+ * \file  mfront/src/MaterialPropertyDescription.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mars 2014

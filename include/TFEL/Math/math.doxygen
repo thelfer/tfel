@@ -1,0 +1,10 @@
+/*!
+ * \file include/TFEL/Math/math.doxygen
+ * \brief this file contains the documentation of the math namespace
+ */
+
+/*!
+ * \namespace tfel::math
+ * \brief This namespace contains various classes and functions
+ * défining mathematical objects and numerical algorithms.
+ */

@@ -1,5 +1,5 @@
 /*! 
- * \file  FiniteStrainBehaviourTangentOperatorConversionPath.cxx
+ * \file  mfront/src/FiniteStrainBehaviourTangentOperatorConversionPath.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 juin 2014

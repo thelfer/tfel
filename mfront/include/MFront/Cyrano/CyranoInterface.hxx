@@ -1,5 +1,5 @@
 /*!
- * \file   CyranoInterface.hxx
+ * \file   mfront/include/MFront/Cyrano/CyranoInterface.hxx
  * \brief  This file implements the CyranoInterface class.
  * \author Helfer Thomas
  * \date   21 fév 2014

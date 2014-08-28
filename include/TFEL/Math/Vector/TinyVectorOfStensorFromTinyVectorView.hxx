@@ -1,5 +1,5 @@
 /*!
- * \file   TinyVectorOfStensorFromTinyVectorView.hxx
+ * \file   include/TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx
  * \brief  TinyVectorOfStensorFromTVectorView
  * This class creates an object that acts like a tiny vector of
  * stensors.

@@ -1,5 +1,5 @@
 /*!
- * \file   StensorConceptOperations.hxx
+ * \file   include/TFEL/Math/Stensor/StensorConceptOperations.hxx
  * \brief  This file implements operations that can be applied to stensor.
  * \author Helfer Thomas
  * \date   01 jui 2006

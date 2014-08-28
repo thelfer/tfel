@@ -1,5 +1,5 @@
 /*!
- * \file   Cst.hxx
+ * \file   include/TFEL/Math/Function/Cst.hxx
  * \brief  This file declares the Cst class
  * \author Helfer Thomas
  * \date   04 Jan 2007

@@ -1,5 +1,5 @@
 /*! 
- * \file  Config.hxx
+ * \file  tfel-doc/include/TFEL/Utilities/Config.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011

@@ -1,5 +1,5 @@
 /*!
- * \file   ThermalBehaviour.hxx
+ * \file   include/TFEL/Material/ThermalBehaviour.hxx
  * \brief  This file declares the ThermalBehaviour class
  * \author Helfer Thomas
  * \date   22 Sep 2006

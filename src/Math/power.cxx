@@ -1,5 +1,5 @@
 /*!
- * \file   power.cxx
+ * \file   src/Math/power.cxx
  * \brief  
  * 
  * \author Helfer Thomas

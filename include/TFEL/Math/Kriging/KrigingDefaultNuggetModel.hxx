@@ -1,5 +1,5 @@
 /*! 
- * \file  KrigingDefaultNuggetModel.hxx
+ * \file  include/TFEL/Math/Kriging/KrigingDefaultNuggetModel.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 avr 2009

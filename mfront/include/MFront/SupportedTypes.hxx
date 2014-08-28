@@ -1,5 +1,5 @@
 /*!
- * \file   SupportedTypes.hxx
+ * \file   mfront/include/MFront/SupportedTypes.hxx
  * \brief  This file declares the SupportedTypes class
  * \author Helfer Thomas
  * \date   12 Jan 2007

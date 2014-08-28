@@ -1,5 +1,5 @@
 /*!
- * \file   stensorResultType.hxx
+ * \file   include/TFEL/Math/Stensor/stensorResultType.hxx
  * \brief  this file implements partial specialisations of the
  * ResultType class for stensor.
  * \author Helfer Thomas

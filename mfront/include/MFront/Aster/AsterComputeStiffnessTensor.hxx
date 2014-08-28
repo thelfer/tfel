@@ -1,5 +1,5 @@
 /*!
- * \file   AsterComputeStiffnessTensor.hxx
+ * \file   mfront/include/MFront/Aster/AsterComputeStiffnessTensor.hxx
  * \brief  This file declares the AsterComputeStiffnessTensor class
  * \author Helfer Thomas
  * \date   18 mar 2008

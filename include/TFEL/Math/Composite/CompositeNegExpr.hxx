@@ -1,5 +1,5 @@
 /*!
- * \file   CompositeNegExpr.hxx
+ * \file   include/TFEL/Math/Composite/CompositeNegExpr.hxx
  * \brief  This file declares the  class
  * \author Helfer Thomas
  * \date   13 Mar 2007

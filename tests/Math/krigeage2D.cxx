@@ -1,5 +1,5 @@
 /*! 
- * \file   krigeage2D.cxx
+ * \file   tests/Math/krigeage2D.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  09 avr 2009

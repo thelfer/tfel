@@ -1,5 +1,5 @@
 /*!
- * \file   process_test_target.cxx
+ * \file   tests/System/process_test_target.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   19 nov 2007

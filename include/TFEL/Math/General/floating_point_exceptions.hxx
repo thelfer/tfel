@@ -1,5 +1,5 @@
 /*!
- * \file   floating_point_exceptions.hxx
+ * \file   include/TFEL/Math/General/floating_point_exceptions.hxx
  * \brief  
  * 
  * \author Helfer Thomas

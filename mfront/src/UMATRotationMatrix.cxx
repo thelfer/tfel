@@ -1,5 +1,5 @@
 /*!
- * \file   UMATRotationMatrix.cxx
+ * \file   mfront/src/UMATRotationMatrix.cxx
  * \brief    
  * \author É. Castelier
  * \date   17 mar 2008

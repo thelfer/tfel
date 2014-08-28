@@ -1,5 +1,5 @@
 /*!
- * \file   vectorResultType.hxx
+ * \file   include/TFEL/Math/Vector/vectorResultType.hxx
  * \brief  
  * \author Helfer Thomas
  * \date   06 Oct 2006

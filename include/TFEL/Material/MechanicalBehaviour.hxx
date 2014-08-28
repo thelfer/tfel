@@ -1,5 +1,5 @@
 /*!
- * \file   MechanicalBehaviour.hxx
+ * \file   include/TFEL/Material/MechanicalBehaviour.hxx
  * \brief  This file declares the MechanicalBehaviour class
  * \author Helfer Thomas
  * \date   22 Sep 2006

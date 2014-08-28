@@ -1,5 +1,5 @@
 /*!
- * \file   DotProduct.hxx
+ * \file   include/TFEL/Math/General/DotProduct.hxx
  * \brief  
  * \author Helfer Thomas
  * \date   30 jun 2006

@@ -1,5 +1,5 @@
 /*!
- * \file   IsSameType.hxx
+ * \file   include/TFEL/Metaprogramming/IsSameType.hxx
  * \brief  This file implements the IsSameType metafunction.
  * \author Helfer Thomas
  * \date   28 Aug 2006

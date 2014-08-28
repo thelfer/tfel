@@ -1,5 +1,5 @@
 /*!
- * \file   Implements.hxx
+ * \file   include/TFEL/Metaprogramming/Implements.hxx
  * \brief  This file describes the Implements metafunction  
  * \author Helfer Thomas
  * \date   28 Aug 2006

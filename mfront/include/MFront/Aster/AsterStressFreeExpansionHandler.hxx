@@ -1,5 +1,5 @@
 /*! 
- * \file   AsterStressFreeExpansionHandler.hxx
+ * \file   mfront/include/MFront/Aster/AsterStressFreeExpansionHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \brief  05 mars 2014

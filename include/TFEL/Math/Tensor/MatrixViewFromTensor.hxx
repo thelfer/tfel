@@ -1,5 +1,5 @@
 /*! 
- * \file  MatrixViewFromTensor.hxx
+ * \file  include/TFEL/Math/Tensor/MatrixViewFromTensor.hxx
  * \brief The MatrixViewFromTensor describes how a tensor can be interpreted as a
  * tiny matrix
  * \author Helfer Thomas

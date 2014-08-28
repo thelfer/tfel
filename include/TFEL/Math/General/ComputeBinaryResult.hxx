@@ -1,5 +1,5 @@
 /*!pe 
- * \file   ComputeBinaryResult.hxx
+ * \file   include/TFEL/Math/General/ComputeBinaryResult.hxx
  * \brief  This file declares the ComputeBinaryResult metafunction
  * \author Helfer Thomas
  * \date   13 Oct 2006

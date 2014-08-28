@@ -1,5 +1,5 @@
 /*!
- * \file   stream_traits.hxx
+ * \file   include/TFEL/System/stream_traits.hxx
  * \brief  
  * 
  * \author Helfer Thomas

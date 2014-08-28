@@ -1,5 +1,5 @@
 /*!
- * \file   IntToType.hxx
+ * \file   include/TFEL/Metaprogramming/IntToType.hxx
  * 
  * \brief    
  * \author Helfer Thomas

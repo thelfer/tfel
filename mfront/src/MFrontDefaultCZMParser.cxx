@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontDefaultCZMParser.cxx
+ * \file   mfront/src/MFrontDefaultCZMParser.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   08 nov 2006

@@ -1,5 +1,5 @@
 /*!
- * \file   tfel-config.cxx
+ * \file   src/TFELConfig/tfel-config.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   27 aoû 2007

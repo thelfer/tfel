@@ -1,5 +1,5 @@
 /*! 
- * \file   ConceptCheck.cxx
+ * \file   tests/MetaProgramming/ConceptCheck.cxx
  * \brief
  * \author Helfer Thomas
  */

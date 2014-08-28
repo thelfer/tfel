@@ -1,5 +1,5 @@
 /*!
- * \file   StensorSizeToDime.hxx
+ * \file   include/TFEL/Math/Stensor/StensorSizeToDime.hxx
  * \brief  This file implements the StensorDimeToSize and StensorSizeToDime classes.
  * \author Helfer Thomas
  * \date   07 Aug 2006
@@ -16,49 +16,18 @@ namespace tfel{
      * \class StensorDimeToSize
      * \brief Metafunction which returns the number of components of
      * an stensor given the spatial dimension used.
-     * The correspondance between this two numbers is given by the following table:
-     * \latexonly
-     * \begin{center}
-     *   \begin{tabular}[htbp]{|c|c|}
-     *     \hline
-     *     Spatial Dimension &  Number of components\\
-     *     \hline
-     *     \hline
-     *     1         & 3 \\
-     *     \hline
-     *     2         & 4 \\
-     *     \hline
-     *     3         & 6 \\    
-     *     \hline
-     *   \end{tabular}
-     * \end{center}
-     * \endlatexonly
-     * \htmlonly
-     * <TABLE border="1">
-     * <TBODY>
-     * <TR>
-     * <TD> Spatial Dimension </TD>
-     * <TD> Number of components </TD>
-     * </TR>
-     * <TR>
-     * <TD> 1 </TD>
-     * <TD> 3 </TD>
-     * </TBODY>
-     * <TBODY>
-     * <TD> 2 </TD>
-     * <TD> 4 </TD>
-     * </TR>
-     * <TR>
-     * <TD> 3 </TD>
-     * <TD> 6 </TD>
-     * </TR>
-     * </TBODY>
-     * </TABLE>
-     * \endhtmlonly
-     * \param N, the spatial dimension.
-     * \param value, the number of components of an stensor
+     * The correspondance between these two numbers is given by the
+     * following table:
+     *
+     * | Spatial Dimension | Number of components  |
+     * | :---------------: | :-------------------: |
+     * | 1                 | 3                     |
+     * | 2                 | 4                     |
+     * | 3                 | 6                     | 
+     *
+     * \tparam N : the spatial dimension.
      * \pre   This class is only defined for N=1u,2u and 3u.
-     * \see   StensorSizeToDime and StensorSizeToDime.hxx for implementation.
+     * \see   StensorSizeToDime and include/TFEL/Math/Stensor/StensorSizeToDime.hxx for implementation.
      */
     template<unsigned short N>
     struct StensorDimeToSize;
@@ -70,7 +39,7 @@ namespace tfel{
      * \param N, the number of components of an stensor
      * \param value, the spatial dimension.
      * \pre   This class is only defined for N=3u,4u and 6u.
-     * \see   StensorDimeToSize and StensorSizeToDime.hxx for implementation.
+     * \see   StensorDimeToSize and include/TFEL/Math/Stensor/StensorSizeToDime.hxx for implementation.
      */
     template<unsigned short N>
     struct StensorSizeToDime;

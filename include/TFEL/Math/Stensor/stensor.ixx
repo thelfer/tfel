@@ -1,5 +1,5 @@
 /*!
- * \file   stensor.ixx
+ * \file   include/TFEL/Math/Stensor/stensor.ixx
  * \brief  This file implements the methods of the class stensor.
  * \author Helfer Thomas
  * \date   02 jun 2006

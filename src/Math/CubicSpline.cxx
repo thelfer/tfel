@@ -1,5 +1,5 @@
 /*! 
- * \file  CubicSpline.cxx
+ * \file  src/Math/CubicSpline.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 12 avr 2011

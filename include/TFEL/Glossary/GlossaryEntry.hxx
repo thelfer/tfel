@@ -1,5 +1,5 @@
 /*! 
- * \file  GlossaryEntry.hxx
+ * \file  include/TFEL/Glossary/GlossaryEntry.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 31 mars 2014

@@ -1,5 +1,5 @@
 /*! 
- * \file  General.hxx
+ * \file  include/TFEL/Math/General/Forward/General.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 12 janv. 2012

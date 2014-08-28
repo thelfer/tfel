@@ -1,5 +1,5 @@
 /*!
- * \file   CompositeConcept.hxx
+ * \file   include/TFEL/Math/Composite/CompositeConcept.hxx
  * \brief  
  * 
  * \author Helfer Thomas

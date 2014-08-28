@@ -1,5 +1,5 @@
 /*! 
- * \file  ThermodynamicForce.hxx
+ * \file  mfront/include/MFront/ThermodynamicForce.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 mai 2013

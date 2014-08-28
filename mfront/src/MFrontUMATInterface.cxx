@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontUMATInterface.cxx
+ * \file   mfront/src/MFrontUMATInterface.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   17 Jan 2007

@@ -1,5 +1,5 @@
 /*! 
- * \file  AsterException.hxx
+ * \file  mfront/include/MFront/Aster/AsterException.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 24 janv. 2013

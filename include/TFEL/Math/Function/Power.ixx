@@ -1,5 +1,5 @@
 /*!
- * \file   Power.ixx
+ * \file   include/TFEL/Math/Function/Power.ixx
  * \brief  This file implements methods of class Power.
  * \author Helfer Thomas
  * \date   04 Jan 2007

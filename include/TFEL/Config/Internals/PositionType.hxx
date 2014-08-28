@@ -1,5 +1,5 @@
 /*!
- * \file   PositionType.hxx
+ * \file   include/TFEL/Config/Internals/PositionType.hxx
  * \brief  This file declares the  class
  * \author Helfer Thomas
  * \date   25 Sep 2006

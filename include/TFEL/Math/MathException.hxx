@@ -1,5 +1,5 @@
 /*!
- * \file   MathException.hxx
+ * \file   include/TFEL/Math/MathException.hxx
  * 
  * \brief    
  * \author Helfer Thomas

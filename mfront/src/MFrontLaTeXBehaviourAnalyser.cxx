@@ -1,5 +1,5 @@
 /*! 
- * \file   MFrontLaTeXBehaviourAnalyser.cxx
+ * \file   mfront/src/MFrontLaTeXBehaviourAnalyser.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  19 mai 2014

@@ -1,5 +1,5 @@
 /*!
- * \file   HasConstIterator.cxx
+ * \file   tests/MetaProgramming/HasConstIterator.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   19 oct 2006

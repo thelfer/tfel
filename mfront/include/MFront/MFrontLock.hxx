@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontLock.hxx
+ * \file  mfront/include/MFront/MFrontLock.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 15 nov 2009

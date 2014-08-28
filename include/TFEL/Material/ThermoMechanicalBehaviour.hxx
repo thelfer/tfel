@@ -1,5 +1,5 @@
 /*!
- * \file   ThermoMechanicalBehaviour.hxx
+ * \file   include/TFEL/Material/ThermoMechanicalBehaviour.hxx
  * \brief  This file declares the ThermoMechanicalBehaviour class
  * \author Helfer Thomas
  * \date   27 Sep 2006

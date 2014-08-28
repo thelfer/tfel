@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestFileGeneratorBase.hxx
+ * \file  mfront/include/MFront/MTestFileGeneratorBase.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 09 juil. 2013

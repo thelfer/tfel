@@ -1,5 +1,5 @@
 /*!
- * \file   BinaryOperator.ixx
+ * \file   include/TFEL/Math/Parser/BinaryOperator.ixx
  * \brief  
  * 
  * \author Helfer Thomas

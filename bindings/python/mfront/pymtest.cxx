@@ -1,5 +1,5 @@
 /*! 
- * \file   pymtest.cxx
+ * \file   bindings/python/mfront/pymtest.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  10 avril 2014

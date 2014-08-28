@@ -1,5 +1,5 @@
 /*! 
- * \file  gentype3.cxx
+ * \file  tests/Utilities/gentype3.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 janv. 2011

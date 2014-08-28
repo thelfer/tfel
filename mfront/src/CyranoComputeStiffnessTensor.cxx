@@ -1,5 +1,5 @@
 /*!
- * \file   CyranoComputeStiffnessTensor.cxx
+ * \file   mfront/src/CyranoComputeStiffnessTensor.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   21 fév 2014

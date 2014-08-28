@@ -1,5 +1,5 @@
 /*!
- * \file   AsterRotationMatrix.cxx
+ * \file   mfront/src/AsterRotationMatrix.cxx
  * \brief    
  * \author É. Castelier
  * \date   17 mar 2008

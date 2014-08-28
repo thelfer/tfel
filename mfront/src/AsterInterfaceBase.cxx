@@ -1,5 +1,5 @@
 /*!
- * \file   AsterInterfaceBase.cxx
+ * \file   mfront/src/AsterInterfaceBase.cxx
  * \brief  This file implements the AsterInterfaceBase class.
  * \author Helfer Thomas
  * \date   12/12/2011

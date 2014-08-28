@@ -1,5 +1,5 @@
 /*!
- * \file   tensorResultType.hxx
+ * \file   include/TFEL/Math/Tensor/tensorResultType.hxx
  * \brief  this file implements partial specialisations of the
  * ResultType class for tensor.
  * \author Helfer Thomas

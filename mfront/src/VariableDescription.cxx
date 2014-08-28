@@ -1,5 +1,5 @@
 /*!
- * \file   VariableDescription.cxx
+ * \file   mfront/src/VariableDescription.cxx
  * 
  * \brief    
  * \author Helfer Thomas

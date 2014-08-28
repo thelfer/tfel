@@ -1,5 +1,5 @@
 /*! 
- * \file  tmatrix_const_submatrix_view.ixx
+ * \file  include/TFEL/Math/Matrix/tmatrix_const_submatrix_view.ixx
  * \brief
  * \author Helfer Thomas
  * \brief 27 déc. 2012

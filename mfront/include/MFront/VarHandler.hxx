@@ -1,5 +1,5 @@
 /*!
- * \file   VarHandler.hxx
+ * \file   mfront/include/MFront/VarHandler.hxx
  * \brief  This file declares the VarHandler class
  * \author Helfer Thomas
  * \date   17 Jan 2007

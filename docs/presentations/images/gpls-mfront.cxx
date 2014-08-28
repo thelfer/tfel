@@ -5,8 +5,8 @@
 @Date 27/03/09;
 
 @Includes{
-#include<MaterialLaw/Lame.hxx>
-#include<MaterialLaw/Hill.hxx>
+#include<TFEL/Material/Lame.hxx>
+#include<TFEL/Material/Hill.hxx>
 }
 
 @Epsilon 1.e-6;

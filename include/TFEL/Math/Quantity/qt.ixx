@@ -1,5 +1,5 @@
 /*!
- * \file   qt.ixx
+ * \file   include/TFEL/Math/Quantity/qt.ixx
  * \brief  This file implements the methods defined in the qt class.
  * \author Helfer Thomas
  * \date   09 Jun 2006

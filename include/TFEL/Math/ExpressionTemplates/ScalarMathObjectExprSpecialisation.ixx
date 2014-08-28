@@ -1,5 +1,5 @@
 /*!
- * \file   ScalarMathObjectExprSpecialisation.ixx
+ * \file   include/TFEL/Math/ExpressionTemplates/ScalarMathObjectExprSpecialisation.ixx
  * \brief  This file partially specialises the ScalarMathObjectExpr and MathObjectScalarExpr classes for usual operations.
  * \see    NO_EXPRESSION_TEMPLATE_SPECIALISATION 
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*!
- * \file   TestManager.cxx
+ * \file   src/Tests/TestManager.cxx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief  

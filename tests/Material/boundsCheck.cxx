@@ -1,5 +1,5 @@
 /*!
- * \file   boundsCheck.cxx
+ * \file   tests/Material/boundsCheck.cxx
  * 
  * \brief    
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*! 
- * \file   UMATStressFreeExpansionHandler.hxx
+ * \file   mfront/include/MFront/UMAT/UMATStressFreeExpansionHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \brief  04 mars 2014

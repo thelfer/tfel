@@ -1,5 +1,5 @@
 /*!
- * \file   TensorFromTinyVectorView.hxx
+ * \file   include/TFEL/Math/Tensor/TensorFromTinyVectorView.hxx
  * \brief  TensorFromTVectorView
  * 
  * \author Helfer Thomas

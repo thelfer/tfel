@@ -1,5 +1,5 @@
 /*!
- * \file   StensorChangeBasis.hxx
+ * \file   include/TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx
  * 
  * \brief    
  * \author Helfer Thomas

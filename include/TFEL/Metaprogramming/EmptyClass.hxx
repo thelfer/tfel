@@ -1,5 +1,5 @@
 /*!
- * \file   EmptyClass.hxx
+ * \file   include/TFEL/Metaprogramming/EmptyClass.hxx
  * \brief  
  * \author Helfer Thomas
  * \date   22 oct 2006

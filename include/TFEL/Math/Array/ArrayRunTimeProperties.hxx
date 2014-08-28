@@ -1,5 +1,5 @@
 /*!
- * \file   ArrayRunTimeProperties.hxx
+ * \file   include/TFEL/Math/Array/ArrayRunTimeProperties.hxx
  * \brief  This file declares the ArrayRunTimeProperties class.
  * \author Helfer Thomas
  * \date   02 jui 2006

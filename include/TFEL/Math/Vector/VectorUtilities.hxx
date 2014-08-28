@@ -1,5 +1,5 @@
 /*!
- * \file   VectorUtilities.hxx  
+ * \file   include/TFEL/Math/Vector/VectorUtilities.hxx  
  * \brief  This file implements various helper functions used by tvector.
  * \author Helfer Thomas
  * \date   05 May 2006

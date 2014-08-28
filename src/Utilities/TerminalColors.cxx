@@ -1,5 +1,5 @@
 /*!
- * \file   TerminalColors.cxx
+ * \file   src/Utilities/TerminalColors.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   04 sep 2006

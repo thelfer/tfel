@@ -1,5 +1,5 @@
 /*!
- * \file   IsComplex.hxx
+ * \file   include/TFEL/TypeTraits/IsComplex.hxx
  * \brief  This file declares the IsComplex traits class and
  * specialises it for standard numeric types.
  * \author Helfer Thomas

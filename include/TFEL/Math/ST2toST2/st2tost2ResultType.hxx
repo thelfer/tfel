@@ -1,5 +1,5 @@
 /*!
- * \file   st2tost2ResultType.hxx
+ * \file   include/TFEL/Math/ST2toST2/st2tost2ResultType.hxx
  * \brief  this file implements partial specialisations of the
  * ResultType class for st2tost2.
  * \author Helfer Thomas

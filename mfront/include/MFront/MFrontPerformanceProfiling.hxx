@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontPerformanceProfiling.hxx
+ * \file  mfront/include/MFront/MFrontPerformanceProfiling.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 22 août 2014

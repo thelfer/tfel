@@ -1,5 +1,5 @@
 /*!
- * \file   MatrixConcept.hxx
+ * \file   include/TFEL/Math/Matrix/MatrixConcept.hxx
  * \brief  This file declares the MatrixTraits, MatrixConcept and MatrixType classes.
  * \author Helfer Thomas
  * \date   04 May 2006

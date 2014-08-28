@@ -1,5 +1,5 @@
 /*!
- * \file   CyranoComputeStiffnessTensor.hxx
+ * \file   mfront/include/MFront/Cyrano/CyranoComputeStiffnessTensor.hxx
  * \brief  This file declares the CyranoComputeStiffnessTensor class
  * \author Helfer Thomas
  * \date   21 fév 2014

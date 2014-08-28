@@ -1,5 +1,5 @@
 /*!
- * \file   IsUnaryOperator.hxx
+ * \file   include/TFEL/TypeTraits/IsUnaryOperator.hxx
  * \brief  This file declares the IsUnaryOperator traits class.
  * \author Helfer Thomas
  * \date   07 Jun 2006

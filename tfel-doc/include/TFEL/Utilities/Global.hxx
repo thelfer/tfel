@@ -1,5 +1,5 @@
 /*! 
- * \file  Global.hxx
+ * \file  tfel-doc/include/TFEL/Utilities/Global.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011

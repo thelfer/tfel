@@ -1,5 +1,5 @@
 /*! 
- * \file  StensorProductRightDerivativeExpr.hxx
+ * \file  include/TFEL/Math/ST2toST2/StensorProductRightDerivativeExpr.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 04 juin 2014

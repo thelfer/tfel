@@ -1,5 +1,5 @@
  /*!
-  * \file   MultipleTestOutputs.hxx
+  * \file   include/TFEL/Tests/MultipleTestOutputs.hxx
   * \author Helfer Thomas
   * \date   10 Apr 10
   * \brief  

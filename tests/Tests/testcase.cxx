@@ -1,5 +1,5 @@
 /*!
- * \file   testcase.cxx
+ * \file   tests/Tests/testcase.cxx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief a simple test of the TestCase class

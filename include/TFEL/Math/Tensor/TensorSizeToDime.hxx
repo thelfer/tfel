@@ -1,5 +1,5 @@
 /*!
- * \file   TensorSizeToDime.hxx
+ * \file   include/TFEL/Math/Tensor/TensorSizeToDime.hxx
  * \brief  This file implements the TensorDimeToSize and TensorSizeToDime classes.
  * \author Helfer Thomas
  * \date   07 Aug 2006
@@ -16,49 +16,18 @@ namespace tfel{
      * \class TensorDimeToSize
      * \brief Metafunction which returns the number of components of
      * an tensor given the spatial dimension used.
-     * The correspondance between this two numbers is given by the following table:
-     * \latexonly
-     * \begin{center}
-     *   \begin{tabular}[htbp]{|c|c|}
-     *     \hline
-     *     Spatial Dimension &  Number of components\\
-     *     \hline
-     *     \hline
-     *     1         & 3 \\
-     *     \hline
-     *     2         & 5 \\
-     *     \hline
-     *     3         & 9 \\    
-     *     \hline
-     *   \end{tabular}
-     * \end{center}
-     * \endlatexonly
-     * \htmlonly
-     * <TABLE border="1">
-     * <TBODY>
-     * <TR>
-     * <TD> Spatial Dimension </TD>
-     * <TD> Number of components </TD>
-     * </TR>
-     * <TR>
-     * <TD> 1 </TD>
-     * <TD> 3 </TD>
-     * </TBODY>
-     * <TBODY>
-     * <TD> 2 </TD>
-     * <TD> 5 </TD>
-     * </TR>
-     * <TR>
-     * <TD> 3 </TD>
-     * <TD> 9 </TD>
-     * </TR>
-     * </TBODY>
-     * </TABLE>
-     * \endhtmlonly
-     * \param N, the spatial dimension.
-     * \param value, the number of components of an tensor
+     * The correspondance between these two numbers is given by the
+     * following table:
+     *
+     * | Spatial Dimension | Number of components  |
+     * | :---------------: | :-------------------: |
+     * | 1                 | 3                     |
+     * | 2                 | 5                     |
+     * | 3                 | 9                     | 
+     *
+     * \tparam N, the spatial dimension.
      * \pre   This class is only defined for N=1u,2u and 3u.
-     * \see   TensorSizeToDime and TensorSizeToDime.hxx for implementation.
+     * \see   TensorSizeToDime and include/TFEL/Math/Tensor/TensorSizeToDime.hxx for implementation.
      */
     template<unsigned short N>
     struct TensorDimeToSize;
@@ -70,7 +39,7 @@ namespace tfel{
      * \param N, the number of components of an tensor
      * \param value, the spatial dimension.
      * \pre   This class is only defined for N=3u,5u and 9u.
-     * \see   TensorDimeToSize and TensorSizeToDime.hxx for implementation.
+     * \see   TensorDimeToSize and include/TFEL/Math/Tensor/TensorSizeToDime.hxx for implementation.
      */
     template<unsigned short N>
     struct TensorSizeToDime;

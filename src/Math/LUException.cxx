@@ -1,5 +1,5 @@
 /*! 
- * \file  LUException.cxx
+ * \file  src/Math/LUException.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 12 avr 2009

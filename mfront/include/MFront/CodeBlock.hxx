@@ -1,5 +1,5 @@
 /*! 
- * \file  CodeBlock.hxx
+ * \file  mfront/include/MFront/CodeBlock.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 mai 2014

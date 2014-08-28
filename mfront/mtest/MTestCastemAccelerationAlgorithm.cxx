@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestCastemAccelerationAlgorithm.cxx
+ * \file  mfront/mtest/MTestCastemAccelerationAlgorithm.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 juin 2014

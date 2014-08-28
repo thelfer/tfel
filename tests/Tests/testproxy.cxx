@@ -1,5 +1,5 @@
 /*!
- * \file   testproxy.cxx
+ * \file   tests/Tests/testproxy.cxx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief a simple test of the TestSuite class

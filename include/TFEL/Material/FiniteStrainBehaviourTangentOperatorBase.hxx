@@ -1,5 +1,5 @@
 /*! 
- * \file   FiniteStrainBehaviourTangentOperatorBase.hxx
+ * \file   include/TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx
  * \brief
  * \author Helfer Thomas
  * \brief  11 juin 2014
@@ -29,12 +29,12 @@ namespace tfel
 		    This is the tangent operator expected by mtest */
 	DSIG_DDF, /*!< derivative of the Cauchy stress with respect to
 		    the deformation gradient increment
-		    \(\Delta\,F = F_{1}\,F_{0}^{-1}\)  */
+		    \f$\Delta\,F = F_{1}\,F_{0}^{-1}\f$ */
 	DSIG_DD,  /*!< derivative of the Cauchy stress with respect to
 		    the deformation rate 
-		    \(D=\frac{1}{2}\left(L+L^{tr}\right)\)
+		    \f$D=\frac{1}{2}\left(L+L^{tr}\right)\f$
 		    with
-		    \(L=\dot{F}\,F^{-1}\)
+		    \f$L=\dot{F}\,F^{-1}\f$
 		    This is one of the tangenet operator usable in
 		    the ZeBuLoN finite element solver */
 	DSIG_DDE, /*!< derivative of the Cauchy stress with respect to
@@ -43,7 +43,7 @@ namespace tfel
 		    the deformation gradient increment */
 	DTAU_DDF, /*!< derivative of the Kirchhoff stress with respect
 		    to the deformation gradient increment
-		    \(\Delta\,F\) This is the deformation gradient
+		    \f$\Delta\,F\f$ This is the deformation gradient
 		    used by the Code-Aster finite element solver */
 	DS_DF,    /*!< derivative of the second Piola-Kirchoff stress
 		    with respect to the deformation gradient */

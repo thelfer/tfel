@@ -1,5 +1,5 @@
 /*!
- * \file   stensor_eigenvectors2.cxx
+ * \file   tests/Math/stensor_eigenvectors2.cxx
  * \brief
  * \author Helfer Thomas
  * \date   03 jui 2006

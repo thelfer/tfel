@@ -1,5 +1,5 @@
 /*!
- * \file   StaticVariableDescription.cxx
+ * \file   mfront/src/StaticVariableDescription.cxx
  * 
  * \brief    
  * \author Helfer Thomas

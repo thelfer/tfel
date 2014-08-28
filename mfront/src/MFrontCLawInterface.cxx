@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontCLawInterface.cxx
+ * \file   mfront/src/MFrontCLawInterface.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   06 mai 2008

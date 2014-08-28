@@ -1,5 +1,5 @@
 /*!
- * \file   RemoveConstness.hxx
+ * \file   include/TFEL/Metaprogramming/RemoveConstness.hxx
  * \brief  This file declares the RemoveConstness metafunction
  * \author Helfer Thomas
  * \date   18 Oct 2006

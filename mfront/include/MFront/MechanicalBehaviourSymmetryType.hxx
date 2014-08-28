@@ -1,5 +1,5 @@
 /*! 
- * \file   MechanicalBehaviourSymmetryType.hxx
+ * \file   mfront/include/MFront/MechanicalBehaviourSymmetryType.hxx
  * \brief
  * \author Helfer Thomas
  * \brief  10 avril 2014

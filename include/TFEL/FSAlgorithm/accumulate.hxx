@@ -1,5 +1,5 @@
 /*!
- * \file   accumulate.hxx
+ * \file   include/TFEL/FSAlgorithm/accumulate.hxx
  * \brief  This file implements the accumulate class.
  * \author Helfer Thomas
  * \date   30 jun 2006

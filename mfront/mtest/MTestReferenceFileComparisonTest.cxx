@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestReferenceFileComparisonTest.cxx
+ * \file  mfront/mtest/MTestReferenceFileComparisonTest.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 avril 2013

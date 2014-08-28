@@ -1,5 +1,5 @@
 /*!
- * \file   vector-function.cxx
+ * \file   tests/Math/Functions/vector-function.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   05 Jan 2007

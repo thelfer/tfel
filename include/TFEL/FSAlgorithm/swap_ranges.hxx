@@ -1,5 +1,5 @@
 /*!
- * \file   swap_ranges.hxx
+ * \file   include/TFEL/FSAlgorithm/swap_ranges.hxx
  * \brief  This file implements the swap_ranges class.
  * \author Helfer Thomas
  * \date   30 jun 2006

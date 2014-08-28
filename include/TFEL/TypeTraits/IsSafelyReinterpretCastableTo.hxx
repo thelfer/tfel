@@ -1,5 +1,5 @@
 /*!
- * \file   IsSafelyReinterpretCastableTo.hxx
+ * \file   include/TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx
  * \brief  This file implements the IsSafelyReinterpretCastableTo traits class.
  * \author Helfer Thomas
  * \date   26 Jul 2006

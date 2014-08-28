@@ -1,5 +1,5 @@
 /*!
- * \file   SpatialGradType.hxx
+ * \file   include/TFEL/Config/Internals/SpatialGradType.hxx
  * \brief  This file declares the  class
  * \author Helfer Thomas
  * \date   25 Sep 2006

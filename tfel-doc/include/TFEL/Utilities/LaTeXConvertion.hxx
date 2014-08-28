@@ -1,5 +1,5 @@
 /*! 
- * \file  LaTeXConvertion.hxx
+ * \file  tfel-doc/include/TFEL/Utilities/LaTeXConvertion.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011

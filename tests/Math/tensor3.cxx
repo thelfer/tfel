@@ -1,5 +1,5 @@
 /*! 
- * \file   tensor3.cxx
+ * \file   tests/Math/tensor3.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  1 sept. 2013

@@ -1,5 +1,5 @@
 /*!
- * \file   MultipleDequeVector.ixx
+ * \file   include/TFEL/Utilities/MultipleDequeVector/MultipleDequeVector.ixx
  * \brief  This file implements the MultipleDequeVector class.
  * \author Helfer Thomas
  * \date   31 mai 2006

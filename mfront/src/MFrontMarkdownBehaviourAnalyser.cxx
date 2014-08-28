@@ -1,5 +1,5 @@
 /*! 
- * \file   MFrontMarkdownBehaviourAnalyser.cxx
+ * \file   mfront/src/MFrontMarkdownBehaviourAnalyser.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  19 mai 2014

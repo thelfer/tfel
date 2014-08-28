@@ -1,5 +1,5 @@
 /*! 
- * \file   FiniteStrainBehaviourTangentOperator.hxx
+ * \file   include/TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx
  * \brief
  * \author Helfer Thomas
  * \brief  11 juin 2014

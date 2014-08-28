@@ -1,5 +1,5 @@
 /*!
- * \file   composite.hxx
+ * \file   include/TFEL/Math/composite.hxx
  * \see    GenerateComposite.cxx to see how this file was generated.
  * \brief  This file declares the composite template class.
  * \author Helfer Thomas

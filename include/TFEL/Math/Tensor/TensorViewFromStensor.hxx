@@ -1,5 +1,5 @@
 /*! 
- * \file  TensorViewFromStensor.hxx
+ * \file  include/TFEL/Math/Tensor/TensorViewFromStensor.hxx
  * \brief The TensorViewFromStensor describes how a stensor can be interpreted as a
  * tensor
  * \author Helfer Thomas

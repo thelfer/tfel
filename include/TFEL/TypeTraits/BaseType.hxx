@@ -1,5 +1,5 @@
 /*!
- * \file   BaseType.hxx
+ * \file   include/TFEL/TypeTraits/BaseType.hxx
  * \brief  This file declares the BaseType traits class.
  * \author Helfer Thomas
  * \date   26 Jul 2006

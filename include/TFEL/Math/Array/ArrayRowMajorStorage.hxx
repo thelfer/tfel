@@ -1,5 +1,5 @@
 /*!
- * \file   ArrayRowMajorStorage.hxx
+ * \file   include/TFEL/Math/Array/ArrayRowMajorStorage.hxx
  * \brief  
  * 
  * \author Helfer Thomas

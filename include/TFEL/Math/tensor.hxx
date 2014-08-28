@@ -1,5 +1,5 @@
 /*!
- * \file   tensor.hxx  
+ * \file   include/TFEL/Math/tensor.hxx  
  * \brief    
  * \author Helfer Thomas
  * \date   01 Déc 2013

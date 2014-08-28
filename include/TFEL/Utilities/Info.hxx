@@ -1,5 +1,5 @@
 /*!
- * \file   Info.hxx
+ * \file   include/TFEL/Utilities/Info.hxx
  * \brief  This file implements the INFO macro.
  *	
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*!
- * \file   MaterialException.hxx
+ * \file   include/TFEL/Material/MaterialException.hxx
  * \brief    
  * \author Helfer Thomas
  * \date   10 Aug 2006

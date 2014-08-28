@@ -1,5 +1,5 @@
 /*!
- * \file   IsReal.hxx
+ * \file   include/TFEL/TypeTraits/IsReal.hxx
  * \brief  This file declares the IsReal traits class
  * and specialises it for standard numeric types.
  * \author Helfer Thomas

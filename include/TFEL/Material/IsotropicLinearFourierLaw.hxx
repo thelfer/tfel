@@ -1,5 +1,5 @@
 /*!
- * \file   IsotropicLinearFourierLaw.hxx
+ * \file   include/TFEL/Material/IsotropicLinearFourierLaw.hxx
  * \brief  This file declares the IsotropicLinearFourierLaw class
  * \author Helfer Thomas
  * \date   25 Sep 2006

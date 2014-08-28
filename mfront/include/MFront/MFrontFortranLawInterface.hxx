@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontFortranLawInterface.hxx
+ * \file   mfront/include/MFront/MFrontFortranLawInterface.hxx
  * \brief  This file declares the MFrontFortranLawInterface class
  * \author Helfer Thomas
  * \date   1 décembre 2008

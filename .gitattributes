@@ -511,7 +511,6 @@ docs/tfel/images/r-epsilon.eps -text
 docs/tfel/images/r_epsilon.gnuplot -text
 docs/tfel/reference-guide.tex.in -text
 docs/tfel/style.ist -text
-docs/tfel/tfel.doc -text
 docs/tutorial/Bibliographie.tex.in -text
 docs/tutorial/CMakeLists.txt -text
 docs/tutorial/Chaboche.tex.in -text
@@ -647,6 +646,7 @@ include/TFEL/Material/RambergOsgood.hxx -text
 include/TFEL/Material/ThermalBehaviour.hxx -text
 include/TFEL/Material/ThermalBehaviourData.hxx -text
 include/TFEL/Material/ThermoMechanicalBehaviour.hxx -text
+include/TFEL/Material/material.doxygen -text
 include/TFEL/Math/Array/ArrayConcept.hxx -text
 include/TFEL/Math/Array/ArrayConcept.ixx -text
 include/TFEL/Math/Array/ArrayConceptOperations.hxx -text
@@ -1035,6 +1035,7 @@ include/TFEL/Math/composite.hxx -text
 include/TFEL/Math/fsarray.hxx -text
 include/TFEL/Math/functions.hxx -text
 include/TFEL/Math/lambda.hxx -text
+include/TFEL/Math/math.doxygen -text
 include/TFEL/Math/matrix.hxx -text
 include/TFEL/Math/power.hxx -text
 include/TFEL/Math/power.ixx -text
@@ -1204,6 +1205,7 @@ mfront/include/MFront/Aster/AsterRotationMatrix.hxx -text
 mfront/include/MFront/Aster/AsterStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/Aster/AsterTangentOperator.hxx -text
 mfront/include/MFront/Aster/AsterTraits.hxx -text
+mfront/include/MFront/Aster/aster.doxygen -text
 mfront/include/MFront/BoundsDescription.hxx -text
 mfront/include/MFront/CodeBlock.hxx -text
 mfront/include/MFront/Cyrano/Cyrano.hxx -text
@@ -1221,6 +1223,7 @@ mfront/include/MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx -text
 mfront/include/MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx -text
 mfront/include/MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx -text
 mfront/include/MFront/Cyrano/CyranoTraits.hxx -text
+mfront/include/MFront/Cyrano/cyrano.doxygen -text
 mfront/include/MFront/DrivingVariable.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx -text
@@ -1379,6 +1382,7 @@ mfront/include/MFront/UMAT/UMATRotationMatrix.hxx -text
 mfront/include/MFront/UMAT/UMATStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/UMAT/UMATTangentOperator.hxx -text
 mfront/include/MFront/UMAT/UMATTraits.hxx -text
+mfront/include/MFront/UMAT/umat.doxygen -text
 mfront/include/MFront/UMATFiniteStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/UMATSmallStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/VarHandler.hxx -text
@@ -1387,6 +1391,8 @@ mfront/include/MFront/VariableDescription.hxx -text
 mfront/include/MFront/ZMAT/ZMATInterface.hxx -text
 mfront/include/MFront/ZMAT/ZMATInterface.ixx -text
 mfront/include/MFront/ZMAT/ZMATUndefs.hxx -text
+mfront/include/MFront/ZMAT/zmat.doxygen -text
+mfront/include/MFront/mfront.doxygen -text
 mfront/include/Makefile.am -text
 mfront/include/castem.h -text
 mfront/lisp/CMakeLists.txt -text
@@ -2584,6 +2590,7 @@ tfel-doc/src/TestDocMain.cxx -text
 tfel-doc/src/TestDocParser.cxx -text
 tfel-doc/src/TestDocumentation.cxx -text
 tfel-doc/src/tfel-doc.cxx -text
+/tfel.doxygen -text
 tools/FourthOrderTensorProduct/generate.cxx -text
 tools/glossary/generate_glossary.cxx -text
 tools/glossary/glossary.txt -text

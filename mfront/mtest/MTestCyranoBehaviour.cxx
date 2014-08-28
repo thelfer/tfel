@@ -1,5 +1,5 @@
 /*!
- * \file   MTestCyranoBehaviour.cxx
+ * \file   mfront/mtest/MTestCyranoBehaviour.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013

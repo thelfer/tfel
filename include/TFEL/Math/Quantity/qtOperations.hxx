@@ -1,5 +1,5 @@
 /*!
- * \file   qtOperations.hxx
+ * \file   include/TFEL/Math/Quantity/qtOperations.hxx
  * \brief  This file declares usual operations on quantities.
  * \author Helfer Thomas
  * \date   07 Jun 2006

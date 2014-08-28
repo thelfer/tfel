@@ -1,5 +1,5 @@
 /*!
- * \file   Name.hxx
+ * \file   include/TFEL/Utilities/Name.hxx
  * \brief  Defines the Name traits class which returns the Name of its template argument  
  * \author Helfer Thomas
  * \date   17 Jul 2006

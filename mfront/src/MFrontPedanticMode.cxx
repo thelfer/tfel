@@ -1,5 +1,5 @@
 /*! 
- * \file   MFrontPedanticMode.cxx
+ * \file   mfront/src/MFrontPedanticMode.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  20/05/2014

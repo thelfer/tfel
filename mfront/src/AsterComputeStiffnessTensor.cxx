@@ -1,5 +1,5 @@
 /*!
- * \file   AsterComputeStiffnessTensor.cxx
+ * \file   mfront/src/AsterComputeStiffnessTensor.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   18 mar 2008

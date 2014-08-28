@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontSecondBroydenSolver.hxx
+ * \file  mfront/include/MFront/MFrontSecondBroydenSolver.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 22 août 2014

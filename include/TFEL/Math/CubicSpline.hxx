@@ -1,5 +1,5 @@
 /*!
- * \file   CubicSpline.hxx
+ * \file   include/TFEL/Math/CubicSpline.hxx
  * \author Castelier Etienne
  * \date   07/08/2007
  */

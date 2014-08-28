@@ -1,5 +1,5 @@
 /*!
- * \file   ASTERTraits.hxx
+ * \file   mfront/include/MFront/Aster/AsterTraits.hxx
  * \brief  
  * 
  * \author Helfer Thomas

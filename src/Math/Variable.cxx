@@ -1,5 +1,5 @@
 /*!
- * \file   Variable.cxx
+ * \file   src/Math/Variable.cxx
  * \brief  
  * 
  * \author Helfer Thomas

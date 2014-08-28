@@ -1,5 +1,5 @@
 /*!
- * \file   GenTypeBase.ixx
+ * \file   include/TFEL/Utilities/GenTypeBase.ixx
  * \brief  
  * 
  * \author Helfer Thomas

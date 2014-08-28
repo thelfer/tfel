@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestImposedDrivingVariable.hxx
+ * \file  mfront/include/MFront/MTestImposedDrivingVariable.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013

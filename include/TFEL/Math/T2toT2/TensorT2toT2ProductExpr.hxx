@@ -1,5 +1,5 @@
 /*! 
- * \file  TensorT2toT2ProductExpr.hxx
+ * \file  include/TFEL/Math/T2toT2/TensorT2toT2ProductExpr.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 juin 2014

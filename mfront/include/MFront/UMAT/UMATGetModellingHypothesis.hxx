@@ -1,5 +1,5 @@
 /*! 
- * \file  UMATGetModellingHypothesis.hxx
+ * \file  mfront/include/MFront/UMAT/UMATGetModellingHypothesis.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 16 mar 2011

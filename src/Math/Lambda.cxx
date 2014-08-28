@@ -1,5 +1,5 @@
 /*!
- * \file   Lambda.cxx
+ * \file   src/Math/Lambda.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   12 déc 2006

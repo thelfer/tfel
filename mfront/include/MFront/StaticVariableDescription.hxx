@@ -1,5 +1,5 @@
 /*!
- * \file   StaticVariableDescription.hxx
+ * \file   mfront/include/MFront/StaticVariableDescription.hxx
  * \brief  This file declares the StaticVariableDescription class
  * \author Helfer Thomas
  * \date   17 Jan 2007

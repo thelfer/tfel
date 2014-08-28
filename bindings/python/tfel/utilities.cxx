@@ -1,5 +1,5 @@
 /*! 
- * \file  utilities.cxx
+ * \file  bindings/python/tfel/utilities.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 aoû 2010

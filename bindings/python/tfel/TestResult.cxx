@@ -1,5 +1,5 @@
 /*! 
- * \file  TestResult.cxx
+ * \file  bindings/python/tfel/TestResult.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 20 sept. 2013

@@ -1,5 +1,5 @@
 /*!
- * \file   stensor.hxx  
+ * \file   include/TFEL/Math/stensor.hxx  
  * \brief    
  * \author Helfer Thomas
  * \date   04 May 2006

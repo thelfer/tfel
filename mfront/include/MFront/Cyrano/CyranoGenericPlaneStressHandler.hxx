@@ -1,5 +1,5 @@
 /*! 
- * \file  CyranoGenericPlaneStressHandler.hxx
+ * \file  mfront/include/MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \date   21 fév 2014

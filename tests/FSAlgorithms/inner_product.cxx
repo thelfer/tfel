@@ -1,5 +1,5 @@
 /*!
- * \file   inner_product.cxx
+ * \file   tests/FSAlgorithms/inner_product.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   28 Aug 2006

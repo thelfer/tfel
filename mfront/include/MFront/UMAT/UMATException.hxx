@@ -1,5 +1,5 @@
 /*!
- * \file   UMATException.hxx
+ * \file   mfront/include/MFront/UMAT/UMATException.hxx
  * 
  * \brief    
  * \author Helfer Thomas

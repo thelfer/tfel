@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontBehaviourProfiler.cxx
+ * \file  mfront/src/MFrontBehaviourProfiler.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 15 mai 2014

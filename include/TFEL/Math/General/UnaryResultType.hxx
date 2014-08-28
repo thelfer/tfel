@@ -1,5 +1,5 @@
 /*!
- * \file   UnaryResultType.hxx
+ * \file   include/TFEL/Math/General/UnaryResultType.hxx
  * \brief  This file declares the UnaryResultType class
  * \author Helfer Thomas
  * \date   13 Oct 2006

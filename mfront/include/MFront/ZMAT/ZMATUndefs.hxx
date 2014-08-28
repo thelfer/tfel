@@ -1,5 +1,5 @@
 /*! 
- * \file  ZMATUndefs.hxx
+ * \file  mfront/include/MFront/ZMAT/ZMATUndefs.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 28 mai 2014

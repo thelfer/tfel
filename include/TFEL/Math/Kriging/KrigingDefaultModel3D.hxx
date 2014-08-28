@@ -1,5 +1,5 @@
 /*! 
- * \file  KrigingDefaultModel3D.hxx
+ * \file  include/TFEL/Math/Kriging/KrigingDefaultModel3D.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 avr 2009

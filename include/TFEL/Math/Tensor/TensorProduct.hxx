@@ -1,5 +1,5 @@
 /*!
- * \file   TensorProductExpr.hxx
+ * \file   include/TFEL/Math/Tensor/TensorProduct.hxx
  * \brief  
  * 
  * \author Helfer Thomas

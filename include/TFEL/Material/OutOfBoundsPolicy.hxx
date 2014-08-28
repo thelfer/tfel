@@ -1,5 +1,5 @@
 /*! 
- * \file  OutOfBoundsPolicy.hxx
+ * \file  include/TFEL/Material/OutOfBoundsPolicy.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 jan 2010

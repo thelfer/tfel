@@ -1,5 +1,5 @@
 /*!
- * \file   qtSamples.hxx
+ * \file   include/TFEL/Math/Quantity/qtSamples.hxx
  * \brief  This file declares some useful typedefs for usual quantities.
  * \author Helfer Thomas
  * \date   29 jui 2006

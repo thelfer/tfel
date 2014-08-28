@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontAsterInterface.hxx
+ * \file   mfront/include/MFront/MFrontAsterInterface.hxx
  * \brief  This file declares the MFrontAsterInterface class
  * \author Helfer Thomas
  * \date   17 Jan 2007

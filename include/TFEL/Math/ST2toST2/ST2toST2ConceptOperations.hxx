@@ -1,5 +1,5 @@
 /*!
- * \file   ST2toST2ConceptOperations.hxx
+ * \file   include/TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx
  * \brief  This file implements operations that can be applied to st2tost2.
  * \author Helfer Thomas
  * \date   01 jui 2006

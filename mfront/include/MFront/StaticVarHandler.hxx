@@ -1,5 +1,5 @@
 /*!
- * \file   StaticVarHandler.hxx
+ * \file   mfront/include/MFront/StaticVarHandler.hxx
  * \brief  This file declares the StaticVarHandler class
  * \author Helfer Thomas
  * \date   17 Jan 2007

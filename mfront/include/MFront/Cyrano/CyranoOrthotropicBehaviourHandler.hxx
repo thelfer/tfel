@@ -1,5 +1,5 @@
 /*! 
- * \file  CyranoOrthotropicBehaviourHandler.hxx
+ * \file  mfront/include/MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \date   21 fév 2014

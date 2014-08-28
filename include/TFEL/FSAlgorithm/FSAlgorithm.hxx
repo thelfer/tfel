@@ -1,5 +1,5 @@
 /*!
- * \file   FSAlgorithm.hxx
+ * \file   include/TFEL/FSAlgorithm/FSAlgorithm.hxx
  * \brief  This helper header file includes all headers defined in the
  * directory FSAlgorithm
  * \author Helfer Thomas

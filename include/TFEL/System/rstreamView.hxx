@@ -1,5 +1,5 @@
 /*!
- * \file   rstreamView.hxx
+ * \file   include/TFEL/System/rstreamView.hxx
  * \brief  
  * 
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*!
- * \file   GenTypeCastError.cxx
+ * \file   src/Utilities/GenTypeCastError.cxx
  * \brief  This file implements the GenTypeCastError class
  * \see    GenTypeBase
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*!
- * \file   min_element.hxx
+ * \file   include/TFEL/FSAlgorithm/min_element.hxx
  * \brief  This file implements the min_element class.
  * \author Helfer Thomas
  * \date   30 jun 2006

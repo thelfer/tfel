@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontCppTestLawInterface.cxx
+ * \file   mfront/src/MFrontCppTestLawInterface.cxx
  * \brief    
  * \author P. GOLDBRONN
  * \date   14 mai 2008

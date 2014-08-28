@@ -1,5 +1,5 @@
 /*!
- * \file   TinyNewtonRaphson.hxx
+ * \file   include/TFEL/Math/TinyNewtonRaphson.hxx
  * 
  * \brief    
  * \author Helfer Thomas

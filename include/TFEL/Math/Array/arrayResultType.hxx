@@ -1,5 +1,5 @@
 /*!
- * \file   arrayResultType.hxx
+ * \file   include/TFEL/Math/Array/arrayResultType.hxx
  * \brief  this file implements partial specialisations of the 
  * ResultType class.
  * \author Helfer Thomas

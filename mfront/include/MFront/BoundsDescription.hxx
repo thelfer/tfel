@@ -1,5 +1,5 @@
 /*!
- * \file   BoundsDescription.hxx
+ * \file   mfront/include/MFront/BoundsDescription.hxx
  * \brief  
  * 
  * \author Helfer Thomas

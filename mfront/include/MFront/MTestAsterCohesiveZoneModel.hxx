@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestAsterCohesiveZoneModelBehaviour.hxx
+ * \file  mfront/include/MFront/MTestAsterCohesiveZoneModel.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013

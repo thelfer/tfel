@@ -1,5 +1,5 @@
 /*!
- * \file   test_FSalgorithm.cxx
+ * \file   tests/FSAlgorithms/test_FSalgorithm.cxx
  * \brief  
  * 
  * \author Helfer Thomas

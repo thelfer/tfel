@@ -1,5 +1,5 @@
 /*!
- * \file   LogicalExpr.hxx
+ * \file   include/TFEL/Math/Parser/LogicalExpr.hxx
  * \brief  
  * 
  * \author Helfer Thomas

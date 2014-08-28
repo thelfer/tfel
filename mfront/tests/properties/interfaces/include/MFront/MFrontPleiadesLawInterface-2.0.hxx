@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontPleiadesLawInterface.hxx
+ * \file   mfront/tests/properties/interfaces/include/MFront/MFrontPleiadesLawInterface-2.0.hxx
  * \brief  This file declares the MFrontPleiadesLawInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008

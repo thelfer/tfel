@@ -1,5 +1,5 @@
 /*!
- * \file   UMATComputeThermalExpansionCoefficientTensor.cxx
+ * \file   mfront/src/UMATComputeThermalExpansionCoefficientTensor.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   18 mar 2008

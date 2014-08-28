@@ -1,0 +1,13 @@
+/*!
+ * \file include/TFEL/Material/material.doxygen
+ * \brief This file documents the material namespace.
+ */
+
+/*!
+ * \namespace tfel::material
+ * \brief This namespace contains classes and functions related to
+ * mechanics and material description.
+ * The functionalities included in this namespace includes:
+ * - computation of the Hill tensor (see Hill.hxx)
+ * - computation of the Lamé coefficients (see Lame.hxx)
+ */

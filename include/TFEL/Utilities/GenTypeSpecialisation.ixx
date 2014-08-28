@@ -1,5 +1,5 @@
 /*!
- * \file   GenTypeSpecialisation.hxx
+ * \file   include/TFEL/Utilities/GenTypeSpecialisation.ixx
  * \brief  This file implements some special support for specific classes.
  * \see    TL
  * \author Helfer Thomas

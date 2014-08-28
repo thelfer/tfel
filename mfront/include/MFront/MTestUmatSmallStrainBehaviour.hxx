@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestUmatSmallStrainBehaviour.hxx
+ * \file  mfront/include/MFront/MTestUmatSmallStrainBehaviour.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013

@@ -1,5 +1,5 @@
 /*! 
- * \file  UMATOrthotropicBehaviourHandler.hxx
+ * \file  mfront/include/MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 janv. 2013

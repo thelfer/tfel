@@ -1,5 +1,5 @@
 /*!
- * \file   LicosModelInterface.cxx
+ * \file   mfront/tests/models/src/LicosModelInterface.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   10 Nov 2006

@@ -1,5 +1,5 @@
 /*! 
- * \file  CyranoGetModellingHypothesis.cxx
+ * \file  mfront/src/CyranoGetModellingHypothesis.cxx
  * \brief
  * \author Helfer Thomas
  * \date   21 fév 2014

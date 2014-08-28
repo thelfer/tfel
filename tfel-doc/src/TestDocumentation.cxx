@@ -1,5 +1,5 @@
 /*! 
- * \file  TestDocumentation.cxx
+ * \file  tfel-doc/src/TestDocumentation.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011

@@ -1,5 +1,5 @@
 /*!
- * \file   IsSubClassOf.hxx
+ * \file   include/TFEL/Metaprogramming/IsSubClassOf.hxx
  * \brief  This file implements the IsSubClassOf metafunction.
  * \author Helfer Thomas
  * \date   28 Aug 2006

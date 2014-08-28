@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontInitAnalysers.cxx
+ * \file   mfront/src/MFrontInitAnalysers.cxx
  * \brief  
  * 
  * \author Helfer Thomas

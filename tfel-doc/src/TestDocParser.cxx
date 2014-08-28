@@ -1,5 +1,5 @@
 /*! 
- * \file  TestDocParser.cxx
+ * \file  tfel-doc/src/TestDocParser.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011

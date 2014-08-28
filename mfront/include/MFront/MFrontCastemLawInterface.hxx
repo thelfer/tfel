@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontCastemLawInterface.hxx
+ * \file   mfront/include/MFront/MFrontCastemLawInterface.hxx
  * \brief  This file declares the MFrontCastemLawInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008

@@ -1,5 +1,5 @@
 /*!
- * \file   iota.hxx
+ * \file   include/TFEL/FSAlgorithm/iota.hxx
  * \brief  This file implements the iota class.
  * \author Helfer Thomas
  * \date   01 Aug 2006

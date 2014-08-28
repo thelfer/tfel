@@ -1,5 +1,5 @@
 /*! 
- * \file  AsterFiniteStrainRotationMatrix.cxx
+ * \file  mfront/src/AsterFiniteStrainRotationMatrix.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 26 mars 2014

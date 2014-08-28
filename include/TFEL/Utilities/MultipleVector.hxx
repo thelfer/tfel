@@ -1,5 +1,5 @@
 /*!
- * \file   MultipleVector.hxx
+ * \file   include/TFEL/Utilities/MultipleVector.hxx
  * \brief  This file defines the MultipleVector class.
  * \author Helfer Thomas
  */

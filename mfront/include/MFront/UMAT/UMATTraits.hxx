@@ -1,5 +1,5 @@
 /*!
- * \file   UMATTraits.hxx
+ * \file   mfront/include/MFront/UMAT/UMATTraits.hxx
  * \brief  
  * 
  * \author Helfer Thomas

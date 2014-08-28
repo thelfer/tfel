@@ -1,5 +1,5 @@
 /*!
- * \file   TinyPermutation.ixx
+ * \file   include/TFEL/Math/LU/TinyPermutation.ixx
  * 
  * \brief    
  * \author Helfer Thomas

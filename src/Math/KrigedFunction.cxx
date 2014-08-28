@@ -1,5 +1,5 @@
 /*! 
- * \file  KrigedFunction.cxx
+ * \file  src/Math/KrigedFunction.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 02 fév 2010

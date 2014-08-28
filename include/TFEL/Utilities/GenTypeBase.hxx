@@ -1,5 +1,5 @@
 /*!
- * \file   GenTypeBase.hxx
+ * \file   include/TFEL/Utilities/GenTypeBase.hxx
  * \brief  This file implements the GenTypeBase class and some 
  * internal classes used by the GenType class.
  * \see    TL
@@ -270,8 +270,12 @@ namespace tfel{
        */
       template<typename Child,typename List>
       class GenTypeSpecializedMethods
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	: public GenTypeSpecializedMethods<Child,typename List::Next>,
 	  public GenTypeSpecializedAccessor<Child,typename List::Current>
+#else /* DOXYGEN_SHOULD_SKIP_THIS */
+	: public GenTypeSpecializedAccessor<Child,typename List::Current>
+#endif
       {
 	//! a simple alias.
 	typedef typename List::Current Current;

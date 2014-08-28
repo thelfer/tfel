@@ -1,5 +1,5 @@
 /*!
- * \file   BinaryFunction.cxx
+ * \file   src/Math/BinaryFunction.cxx
  * \brief  
  * 
  * \author Helfer Thomas

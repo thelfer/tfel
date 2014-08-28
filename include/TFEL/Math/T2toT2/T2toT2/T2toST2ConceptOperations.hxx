@@ -1,5 +1,5 @@
 /*!
- * \file   T2toST2ConceptOperations.hxx
+ * \file   include/TFEL/Math/T2toT2/T2toT2/T2toST2ConceptOperations.hxx
  * \brief  This file implements operations that can be applied to t2tost2.
  * \author Helfer Thomas
  * \date   19 November 2013

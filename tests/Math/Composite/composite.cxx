@@ -1,5 +1,5 @@
 /*!
- * \file   composite.cxx
+ * \file   tests/Math/Composite/composite.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   09 Mar 2007

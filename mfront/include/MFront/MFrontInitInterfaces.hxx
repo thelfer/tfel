@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontInitInterfaces.hxx
+ * \file   mfront/include/MFront/MFrontInitInterfaces.hxx
  * \brief  
  * 
  * \author Helfer Thomas

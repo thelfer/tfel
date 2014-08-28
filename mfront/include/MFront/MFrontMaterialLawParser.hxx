@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontMaterialLawParser.hxx
+ * \file   mfront/include/MFront/MFrontMaterialLawParser.hxx
  * \brief  
  * 
  * \author Helfer Thomas

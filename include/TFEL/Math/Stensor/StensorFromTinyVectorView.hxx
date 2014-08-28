@@ -1,5 +1,5 @@
 /*!
- * \file   StensorFromTinyVectorView.hxx
+ * \file   include/TFEL/Math/Stensor/StensorFromTinyVectorView.hxx
  * \brief  StensorFromTVectorView
  * 
  * \author Helfer Thomas

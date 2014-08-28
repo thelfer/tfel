@@ -1,5 +1,5 @@
 /*!
- * \file   tvector3.cxx
+ * \file   tests/Math/tvector3.cxx
  * \brief  
  * 
  * \author Helfer Thomas

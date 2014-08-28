@@ -1,12 +1,12 @@
 /*!
- *\file   qt.hxx
- *\brief  This file declares the qt class.
- *\author Helfer Thomas
- *\date   06 Jun 2006
+ * \file   include/TFEL/Math/qt.hxx
+ * \brief  This file declares the qt class.
+ * \author Helfer Thomas
+ * \date   06 Jun 2006
  */
 
-#ifndef _LIB_TFEL_QT_H_
-#define _LIB_TFEL_QT_H_ 
+#ifndef _LIB_TFEL_MATH_QT_H_
+#define _LIB_TFEL_MATH_QT_H_ 
 
 #include<cmath>
 #include<string>
@@ -390,5 +390,5 @@ namespace tfel{
 #include"TFEL/Math/Quantity/qt.ixx"
 #include"TFEL/Math/Quantity/qtOperations.hxx"
 
-#endif /* _LIB_TFEL_QT_H */
+#endif /* _LIB_TFEL_MATH_QT_H */
 

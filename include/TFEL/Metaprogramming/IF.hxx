@@ -1,5 +1,5 @@
 /*!
- * \file   IF.hxx
+ * \file   include/TFEL/Metaprogramming/IF.hxx
  * \brief  Implements the IF metafunction.
  * \author Helfer Thomas
  * \date   19 aoû 2006

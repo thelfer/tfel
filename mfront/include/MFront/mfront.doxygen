@@ -1,0 +1,17 @@
+/*!
+ * \file  mfront/include/MFront/mfront.doxygen
+ * \brief this file contains the documentation of the mfront and the
+ * mtest namespaces .
+ */
+
+/*!
+ * \namespace mfront
+ * \brief This namespace contains material used to build the MFront
+ * code generator.
+ */
+
+/*!
+ * \namespace mtest
+ * \brief This namespace contains material used to build the MTest
+ * tool.
+ */

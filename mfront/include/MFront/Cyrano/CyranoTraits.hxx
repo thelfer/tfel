@@ -1,5 +1,5 @@
 /*!
- * \file   CyranoTraits.hxx
+ * \file   mfront/include/MFront/Cyrano/CyranoTraits.hxx
  * \brief  
  * 
  * \author Helfer Thomas

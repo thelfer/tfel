@@ -1,5 +1,5 @@
 /*!
- * \file   qtLimits.hxx
+ * \file   include/TFEL/Math/Quantity/qtLimits.hxx
  * \brief  This file declares the numeric_limits classes for quantities.
  * \author Helfer Thomas
  * \date   26 Jul 2006

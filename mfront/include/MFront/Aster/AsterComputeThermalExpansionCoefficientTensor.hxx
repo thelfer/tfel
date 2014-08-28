@@ -1,5 +1,5 @@
 /*!
- * \file   AsterComputeThermalExpansionCoefficientTensor.hxx
+ * \file   mfront/include/MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx
  * \brief  
  * 
  * \author Helfer Thomas

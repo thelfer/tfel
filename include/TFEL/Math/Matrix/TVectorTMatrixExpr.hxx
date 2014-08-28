@@ -1,5 +1,5 @@
 /*!
- * \file   TVectorTMatrixExpr.hxx
+ * \file   include/TFEL/Math/Matrix/TVectorTMatrixExpr.hxx
  * \brief  
  * 
  * \author Helfer Thomas

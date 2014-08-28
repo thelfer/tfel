@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontBehaviourParserCommon.hxx
+ * \file   mfront/include/MFront/MFrontBehaviourParserCommon.hxx
  * \brief  
  * 
  * \author Helfer Thomas

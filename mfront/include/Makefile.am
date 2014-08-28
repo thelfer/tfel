@@ -222,4 +222,9 @@ nobase_include_HEADERS += MFront/MFrontZMATInterface.hxx \
 			  MFront/ZMAT/ZMATInterface.ixx  
 endif
 
-EXTRA_DIST = CMakeLists.txt
+EXTRA_DIST = CMakeLists.txt               \
+	     MFront/mfront.doxygen        \
+	     MFront/UMAT/umat.doxygen     \
+	     MFront/Aster/aster.doxygen   \
+	     MFront/Cyrano/cyrano.doxygen \
+	     MFront/ZMAT/zmat.doxygen

@@ -1,5 +1,5 @@
 /*! 
- * \file  VectorConverter.hxx
+ * \file  bindings/python/include/TFEL/Python/PairConverter.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 mars 2013

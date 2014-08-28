@@ -1,5 +1,5 @@
 /*! 
- * \file  StringAlgorithms.cxx
+ * \file  tests/Utilities/StringAlgorithms.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mar 2011

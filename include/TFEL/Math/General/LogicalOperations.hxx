@@ -1,5 +1,5 @@
 /*!
- * \file   LogicalOperations.hxx
+ * \file   include/TFEL/Math/General/LogicalOperations.hxx
  * \brief  This file implements the OpOr and OpAnd classes.
  * \author Helfer Thomas
  * \date   06 mai 2006

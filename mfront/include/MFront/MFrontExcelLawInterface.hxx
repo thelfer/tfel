@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontExcelLawInterface.hxx
+ * \file   mfront/include/MFront/MFrontExcelLawInterface.hxx
  * \brief  This file declares the MFrontExcelLawInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008

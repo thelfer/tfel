@@ -1,5 +1,5 @@
 /*! 
- * \file  power.hxx
+ * \file  include/TFEL/Math/power.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 13 janv. 2012

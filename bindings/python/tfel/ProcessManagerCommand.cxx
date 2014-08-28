@@ -1,5 +1,5 @@
 /*! 
- * \file  ProcessManagerCommand.cxx
+ * \file  bindings/python/tfel/ProcessManagerCommand.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 31 aoû 2010

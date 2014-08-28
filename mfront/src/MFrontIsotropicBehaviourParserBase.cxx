@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontIsotropicBehaviourParserBase.cxx
+ * \file   mfront/src/MFrontIsotropicBehaviourParserBase.cxx
  * \brief  
  * 
  * \author Helfer Thomas

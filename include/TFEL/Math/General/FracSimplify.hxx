@@ -1,5 +1,5 @@
 /*!
- * \file   FracSimplify.hxx
+ * \file   include/TFEL/Math/General/FracSimplify.hxx
  * \brief  This file declares the FracSimplify metafunction.
  * \author Helfer Thomas
  * \date   18 Jul 2006

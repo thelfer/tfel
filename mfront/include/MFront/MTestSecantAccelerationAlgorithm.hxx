@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestSecantAccelerationAlgorithm.hxx
+ * \file  mfront/include/MFront/MTestSecantAccelerationAlgorithm.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 juin 2014

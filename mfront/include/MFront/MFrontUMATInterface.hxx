@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontUMATInterface.hxx
+ * \file   mfront/include/MFront/MFrontUMATInterface.hxx
  * \brief  This file declares the MFrontUMATInterface class
  * \author Helfer Thomas
  * \date   17 Jan 2007

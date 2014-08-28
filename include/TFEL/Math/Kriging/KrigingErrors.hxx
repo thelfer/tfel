@@ -1,5 +1,5 @@
 /*! 
- * \file  KringingErrors.hxx
+ * \file  include/TFEL/Math/Kriging/KrigingErrors.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 avr 2009

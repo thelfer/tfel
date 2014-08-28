@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontAsterInterface.cxx
+ * \file   mfront/src/MFrontAsterInterface.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   17 Jan 2007

@@ -1,5 +1,5 @@
 /*!
- * \file   parser6.cxx
+ * \file   tests/Math/parser6.cxx
  * \brief  
  * 
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*! 
- * \file  math.cxx
+ * \file  bindings/python/tfel/math.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 aoû 2010

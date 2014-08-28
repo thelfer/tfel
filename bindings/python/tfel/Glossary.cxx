@@ -1,5 +1,5 @@
 /*!
- * \file   Glossary.cxx
+ * \file   bindings/python/tfel/Glossary.cxx
  * \author Helfer Thomas
  * \date   09/06/14
  */

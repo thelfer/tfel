@@ -1,5 +1,5 @@
 /*!
- * \file   MechanicalBehaviourData.hxx
+ * \file   mfront/include/MFront/MechanicalBehaviourData.hxx
  * \brief  This file declares the MechanicalBehaviourData class
  * \author Helfer Thomas
  * \date   21 Mars 2014

@@ -1,5 +1,5 @@
 /*!
- * \file   IsInvalid.hxx
+ * \file   include/TFEL/TypeTraits/IsInvalid.hxx
  * \brief  This file declares the IsInvalid traits class.
  * \author Helfer Thomas
  * \date   14 oct 2006

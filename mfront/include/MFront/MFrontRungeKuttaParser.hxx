@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontRungeKuttaParser.hxx
+ * \file   mfront/include/MFront/MFrontRungeKuttaParser.hxx
  * \brief  This file declares the MFrontRungeKuttaParser class
  * \author Helfer Thomas
  * \date   10 Nov 2006

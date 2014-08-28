@@ -1,5 +1,5 @@
 /*!
- * \file   KrigedFunction.ixx
+ * \file   include/TFEL/Math/Parser/KrigedFunction.ixx
  * \brief  
  * 
  * \author Helfer Thomas

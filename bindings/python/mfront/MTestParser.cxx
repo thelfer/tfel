@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestParser.cxx
+ * \file  bindings/python/mfront/MTestParser.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 20 sept. 2013

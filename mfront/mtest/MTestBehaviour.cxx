@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestBehaviour.cxx
+ * \file  mfront/mtest/MTestBehaviour.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013

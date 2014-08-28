@@ -1,5 +1,5 @@
 /*! 
- * \file  Kriging3D.cxx
+ * \file  src/Math/Kriging3D.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 mai 2010

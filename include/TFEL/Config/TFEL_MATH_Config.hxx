@@ -1,5 +1,5 @@
 /*!
- * \file   TFEL_MATH_Config.hxx
+ * \file   include/TFEL/Config/TFEL_MATH_Config.hxx
  * \brief  
  * 
  * \author Helfer Thomas

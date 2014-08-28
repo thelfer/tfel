@@ -1,5 +1,5 @@
 /*!
- * \file   typelist.cxx
+ * \file   tests/MetaProgramming/typelist.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   06 aoû 2006

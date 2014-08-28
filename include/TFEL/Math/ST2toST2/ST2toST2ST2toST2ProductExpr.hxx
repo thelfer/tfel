@@ -1,5 +1,5 @@
 /*! 
- * \file  ST2toST2ST2toST2ProductExpr.hxx
+ * \file  include/TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx
  * \brief
  * \author Helfer Thomas
  * \date 16 juin 2014

@@ -1,5 +1,5 @@
 /*! 
- * \file   vector.cxx
+ * \file   bindings/python/tfel/vector.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 avr 2010

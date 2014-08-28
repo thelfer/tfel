@@ -1,5 +1,5 @@
 /*!
- * \file   TFELConfig.hxx
+ * \file   include/TFEL/Config/TFELConfig.hxx
  * \brief  This file declares some useful typedef to control the level
  * of inlining used by the different parts of TFEL.
  * \author Helfer Thomas

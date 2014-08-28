@@ -1,5 +1,5 @@
 /*!
- * \file   CyranoComputeThermalExpansionCoefficientTensor.hxx
+ * \file   mfront/include/MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx
  * \brief  
  * 
  * \author Helfer Thomas

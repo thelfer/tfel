@@ -1,5 +1,5 @@
 /*!
- * \file   TerminalColors.hxx
+ * \file   include/TFEL/Utilities/TerminalColors.hxx
  * \brief  This file implements the TerminalColors class. 
  * \author Helfer Thomas
  * \date   26 Jul 2006

@@ -1,5 +1,5 @@
 /*!
- * \file   NegObjectRandomAccessConstIterator.hxx
+ * \file   include/TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx
  * \brief  This file declares the NegObjectRandomAccessConstIterator class
  * \author Helfer Thomas
  * \date   18 Oct 2006

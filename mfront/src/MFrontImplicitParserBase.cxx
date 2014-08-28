@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontImplicitParserBase.cxx
+ * \file   mfront/src/MFrontImplicitParserBase.cxx
  * \brief  
  * 
  * \author Helfer Thomas

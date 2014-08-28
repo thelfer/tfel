@@ -1,5 +1,5 @@
 /*! 
- * \file  StringAlgorithms.hxx
+ * \file  include/TFEL/Utilities/StringAlgorithms.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mar 2011

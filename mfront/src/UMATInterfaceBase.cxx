@@ -1,5 +1,5 @@
 /*!
- * \file   UMATInterfaceBase.cxx
+ * \file   mfront/src/UMATInterfaceBase.cxx
  * \brief  This file implements the UMATInterfaceBase class.
  * \author Helfer Thomas
  * \date   12/12/2011

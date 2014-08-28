@@ -1,5 +1,5 @@
 /*!
- * \file   IsRandomaAccessIterator.hxx
+ * \file   include/TFEL/TypeTraits/IsRandomAccessIterator.hxx
  * \brief  This file declares the IsRandomAccessIterator class.
  * \author Helfer Thomas
  * \date   15 aoû 2006

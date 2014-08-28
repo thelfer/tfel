@@ -1,5 +1,5 @@
 /*! 
- * \file   GURSONTVERGAARDNEEDLEMAN.hxx
+ * \file   include/TFEL/Material/GursonTvergaardNeedleman.hxx
  * \brief
  * \author Jeremy Hure
  * \brief  04 Septembre 2013
@@ -17,14 +17,22 @@ namespace tfel
   {
 
     /*!
-     * \brief This function computes the implicit flow stress sigma_star
-     * of the Gurson-Tvergaard-Needleman model
-     * \param[out] sst:          Implicit flow stress
-     * \param[in]  seq:          Mises stress
-     * \param[in]  skk:          Stress trace
-     * \param[in]  fst:          Void volume fraction
-     * \param[in]  q1:           Parameter q1
-     * \param[in]  q2:           Parameter q2
+     * \brief This function computes the implicit flow stress
+     * \f$\sigma^{\star}\f$ of the Gurson-Tvergaard-Needleman model.
+     *
+     * \f$\sigma^{\star}\f$ is implicitely defined by the following
+     * relation:
+     * \f[
+     * \left(\frac{\sigma_{\mathrm{eq}}}{\sigma^{\star}}\right)^{2}+
+     * 2\,q_{1}\,f^{\star}\,\cosh\left(\frac{q_{2}\,\mathrm{tr}\left(\underline{\sigma}\right)}{2\,\sigma^{\star}}\right)
+     * -1-q_{1}\,f^{\star}=0
+     * \f]
+     * \return the value of \f$\sigma^{\star}\f$
+     * \param[in] seq : Von Mises stress
+     * \param[in] skk : stress trace
+     * \param[in] fst : void volume fraction
+     * \param[in] q1  : \f$q_1\f$ parameter
+     * \param[in] q2  : \f$q_2\f$ parameter
      */
     template<typename T>
     T computeFlowStressGTN(const T seq,

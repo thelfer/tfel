@@ -1,5 +1,5 @@
 /*!
- * \file   ParserBase.hxx
+ * \file   mfront/include/MFront/ParserBase.hxx
  * \brief  
  * 
  * \author Helfer Thomas

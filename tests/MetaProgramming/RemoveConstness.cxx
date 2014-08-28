@@ -1,5 +1,5 @@
 /*!
- * \file   RemoveConstness.cxx
+ * \file   tests/MetaProgramming/RemoveConstness.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   18 Oct 2006

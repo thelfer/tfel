@@ -1,5 +1,5 @@
 /*!
- * \file   Promote.hxx  
+ * \file   include/TFEL/TypeTraits/Promote.hxx  
  * \brief  This file declares the Promote traits class.  
  * \author Helfer Thomas
  * \date   03 May 2006

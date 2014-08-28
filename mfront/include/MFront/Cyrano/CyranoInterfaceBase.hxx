@@ -1,5 +1,5 @@
 /*! 
- * \file  CyranoInterfaceBase.hxx
+ * \file  mfront/include/MFront/Cyrano/CyranoInterfaceBase.hxx
  * \brief
  * \author Helfer Thomas
  * \date   21 fév 2014

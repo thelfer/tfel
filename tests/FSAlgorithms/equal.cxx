@@ -1,5 +1,5 @@
 /*!
- * \file   equal.cxx
+ * \file   tests/FSAlgorithms/equal.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   28 Aug 2006

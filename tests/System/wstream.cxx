@@ -1,5 +1,5 @@
 /*!
- * \file   wstream.cxx
+ * \file   tests/System/wstream.cxx
  * \brief  
  * 
  * \author Helfer Thomas

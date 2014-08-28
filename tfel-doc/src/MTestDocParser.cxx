@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestDocParser.cxx
+ * \file  tfel-doc/src/MTestDocParser.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 28 avril 2013

@@ -1,5 +1,5 @@
 /*!
- * \file   IsConvertibleTo.hxx
+ * \file   include/TFEL/Metaprogramming/IsConvertibleTo.hxx
  * \brief  This file implements the IsConvertibleTo metafunction.  
  * \author Helfer Thomas
  * \date   28 Aug 2006

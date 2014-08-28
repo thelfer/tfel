@@ -1,5 +1,5 @@
 /*!
- * \file   tvectorResultType.hxx
+ * \file   include/TFEL/Math/Vector/tvectorResultType.hxx
  * \brief  this file implements partial specialisations of the ResultType.
  * \brief    
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontCastemLawInterface.cxx
+ * \file   mfront/src/MFrontCastemLawInterface.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   06 mai 2008

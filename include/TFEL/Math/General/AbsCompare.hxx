@@ -1,5 +1,5 @@
 /*!
- * \file   AbsCompare.hxx
+ * \file   include/TFEL/Math/General/AbsCompare.hxx
  * \brief  
  * \author Helfer Thomas
  * \date   03 aoû 2006

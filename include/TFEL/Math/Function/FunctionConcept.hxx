@@ -1,5 +1,5 @@
 /*!
- * \file   FunctionConcept.hxx
+ * \file   include/TFEL/Math/Function/FunctionConcept.hxx
  * \brief  
  * 
  * \author Helfer Thomas
@@ -15,7 +15,7 @@
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 
-#include"TFEL/Math/Forward/FunctionConcept.hxx"
+#include"TFEL/Math/Function/FunctionConcept.hxx"
 
 namespace tfel{
 

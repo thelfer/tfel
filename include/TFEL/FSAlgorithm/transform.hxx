@@ -1,5 +1,5 @@
 /*!
- * \file   transform.hxx
+ * \file   include/TFEL/FSAlgorithm/transform.hxx
  * \brief  This file implements the transform algorithm.
  * \author Helfer Thomas
  * \date   30 Jun 2006

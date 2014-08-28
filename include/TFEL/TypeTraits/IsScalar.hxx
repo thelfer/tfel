@@ -1,5 +1,5 @@
 /*!
- * \file   IsScalar.hxx
+ * \file   include/TFEL/TypeTraits/IsScalar.hxx
  * \brief  This file declares the IsScalar traits class
  * and specialises it for standard numeric types.
  * \author Helfer Thomas

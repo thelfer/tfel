@@ -1,5 +1,5 @@
 /*!
- * \file   TinyMatrixSolve.hxx
+ * \file   include/TFEL/Math/TinyMatrixSolve.hxx
  * 
  * \brief    
  * \author Helfer Thomas

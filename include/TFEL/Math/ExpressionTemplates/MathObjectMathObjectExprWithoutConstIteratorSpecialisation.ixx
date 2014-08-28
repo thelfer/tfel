@@ -1,5 +1,5 @@
 /*!
- * \file   MathObjectMathObjectExprWithoutConstIteratorSpecialisation.ixx
+ * \file   include/TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIteratorSpecialisation.ixx
  * \brief  This file partially specialises the
  * MathObjectMathObjectExprWithoutConstIterator class for usual operations.
  * \see    NO_EXPRESSION_TEMPLATE_SPECIALISATION 

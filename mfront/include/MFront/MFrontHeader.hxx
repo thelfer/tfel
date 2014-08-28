@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontHeader.hxx
+ * \file   mfront/include/MFront/MFrontHeader.hxx
  * \brief  
  * 
  * \author Helfer Thomas

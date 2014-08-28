@@ -1,5 +1,5 @@
 /*! 
- * \file  RandomRotationMatrix.hxx
+ * \file  include/TFEL/Math/General/RandomRotationMatrix.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 16 mai 2013

@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontFileDescription.hxx
+ * \file  mfront/include/MFront/MFrontFileDescription.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 14 jun 2010

@@ -1,5 +1,5 @@
 /*!
- * \file   StensorProductExpr.hxx
+ * \file   include/TFEL/Math/Stensor/StensorProduct.hxx
  * \brief  
  * 
  * \author Helfer Thomas

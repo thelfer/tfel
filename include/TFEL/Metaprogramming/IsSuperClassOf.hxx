@@ -1,5 +1,5 @@
 /*!
- * \file   IsSuperClassOf.hxx
+ * \file   include/TFEL/Metaprogramming/IsSuperClassOf.hxx
  * \brief  This file implements the IsSuperClassOf metafunction.
  * \author Helfer Thomas
  * \date   28 Aug 2006

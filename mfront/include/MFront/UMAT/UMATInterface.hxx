@@ -1,5 +1,5 @@
 /*!
- * \file   UMATInterface.hxx
+ * \file   mfront/include/MFront/UMAT/UMATInterface.hxx
  * \brief  This file implements the UMATInterface class.
  * \author Helfer Thomas
  * \date   28 Jul 2006

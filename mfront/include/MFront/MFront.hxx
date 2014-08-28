@@ -1,5 +1,5 @@
 /*!
- * \file   MFront.hxx
+ * \file   mfront/include/MFront/MFront.hxx
  * \brief  This file declares the MFront class
  * \author Helfer Thomas
  * \date   22 Nov 2006

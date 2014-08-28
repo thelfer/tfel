@@ -1,5 +1,5 @@
 /*!
- * \file   vector1.cxx
+ * \file   tests/Math/vector1.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   06 Oct 2006

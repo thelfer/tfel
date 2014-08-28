@@ -1,5 +1,5 @@
 /*! 
- * \file  ModellingHypothesis.cxx
+ * \file  src/Material/ModellingHypothesis.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 13 mai 2013

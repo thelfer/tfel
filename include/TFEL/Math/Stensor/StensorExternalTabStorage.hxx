@@ -1,5 +1,5 @@
 /*!
- * \file   StensorExternalTabStorage.hxx
+ * \file   include/TFEL/Math/Stensor/StensorExternalTabStorage.hxx
  * \brief  This file implements the StensorExternalTabStorage.
  * \author Helfer Thomas
  * \date   02 jun 2006

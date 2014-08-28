@@ -1,5 +1,5 @@
 /*!
- * \file   Function.cxx
+ * \file   tests/Math/Function.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   05 nov 2006

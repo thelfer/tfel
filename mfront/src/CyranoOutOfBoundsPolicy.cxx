@@ -1,5 +1,5 @@
 /*! 
- * \file   CyranoOutOfBoundsPolicy.cxx
+ * \file   mfront/src/CyranoOutOfBoundsPolicy.cxx
  * \brief
  * \author Helfer Thomas
  * \date   21 fév 2014

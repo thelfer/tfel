@@ -1,5 +1,5 @@
 /*! 
- * \file  ExternalLibraryManager.cxx
+ * \file  bindings/python/tfel/ExternalLibraryManager.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 juil. 2011

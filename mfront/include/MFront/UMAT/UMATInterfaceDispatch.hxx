@@ -1,5 +1,5 @@
 /*! 
- * \file  UMATInterfaceDispatch.hxx
+ * \file  mfront/include/MFront/UMAT/UMATInterfaceDispatch.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 24 juil. 2013

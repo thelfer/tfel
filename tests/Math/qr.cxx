@@ -1,5 +1,5 @@
 /*! 
- * \file  qr.cxx
+ * \file  tests/Math/qr.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 14 avr 2009

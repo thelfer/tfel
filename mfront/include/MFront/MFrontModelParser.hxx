@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontModelParser.hxx
+ * \file  mfront/include/MFront/MFrontModelParser.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 jun 2010

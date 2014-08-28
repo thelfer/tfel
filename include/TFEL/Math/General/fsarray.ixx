@@ -1,5 +1,5 @@
 /*!
- * \file   fsarray.ixx
+ * \file   include/TFEL/Math/General/fsarray.ixx
  * \brief  
  * \author Helfer Thomas
  * \date   30 Août 2013

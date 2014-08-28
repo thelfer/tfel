@@ -15,7 +15,7 @@ ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = NO
 STRIP_FROM_PATH        = 
-STRIP_FROM_INC_PATH    = include Tests
+STRIP_FROM_INC_PATH    = include
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
 MULTILINE_CPP_IS_BRIEF = NO
@@ -74,15 +74,15 @@ WARN_LOGFILE           = doxygen.log
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = @abs_top_srcdir@
-FILE_PATTERNS          = *.cxx \
-                         *.ixx \
-                         *.hxx \
-			 *.doc
+FILE_PATTERNS          = *.ixx     \
+                         *.hxx     \
+			 *.doxygen
 RECURSIVE              = YES
-EXCLUDE                = Museum
+EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = 
-EXAMPLE_PATH           = Tests 
+EXCLUDE_PATTERNS       = */docs/*
+EXCLUDE_PATTERNS      += */.svn/*
+EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             = 
@@ -114,7 +114,8 @@ HTML_HEADER            =
 HTML_FOOTER            = 
 HTML_STYLESHEET        = 
 HTML_ALIGN_MEMBERS     = YES
-GENERATE_HTMLHELP      = NO
+USE_MATHJAX            = YES
+GENERATE_HTMLHELP      = YES
 CHM_FILE               = 
 HHC_LOCATION           = 
 GENERATE_CHI           = NO
@@ -124,6 +125,7 @@ DISABLE_INDEX          = NO
 ENUM_VALUES_PER_LINE   = 4
 GENERATE_TREEVIEW      = NO
 TREEVIEW_WIDTH         = 250
+SEARCH_ENGINE          = YES
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
@@ -184,6 +186,7 @@ SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = 
 INCLUDE_FILE_PATTERNS  = 
 PREDEFINED             = DOXYGENSPECIFIC
+PREDEFINED            += DOXYGEN_SHOULD_SKIP_THIS
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

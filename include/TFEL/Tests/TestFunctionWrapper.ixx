@@ -1,5 +1,5 @@
 /*!
- * \file   TestFunctionWrapper.ixx
+ * \file   include/TFEL/Tests/TestFunctionWrapper.ixx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief  

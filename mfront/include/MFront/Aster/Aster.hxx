@@ -1,5 +1,5 @@
 /*! 
- * \file  Aster.hxx
+ * \file  mfront/include/MFront/Aster/Aster.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 24 janv. 2013

@@ -1,5 +1,5 @@
 /*!
- * \file   TinyVectorOfTinyVectorFromTinyVectorView.hxx
+ * \file   include/TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx
  * \brief  TinyVectorOfTinyVectorFromTVectorView
  * This class creates an object that acts like a tiny vector of
  * tvectors.

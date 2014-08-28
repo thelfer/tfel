@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontImplicitFiniteStrainParser.hxx
+ * \file  mfront/include/MFront/MFrontImplicitFiniteStrainParser.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 févr. 2013

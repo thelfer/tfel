@@ -1,5 +1,5 @@
 /*!
- * \file   TFELException.hxx
+ * \file   include/TFEL/Exception/TFELException.hxx
  * \brief  This file declares the TFELException class. 
  * \author Helfer Thomas
  * \date   02 Aug 2006

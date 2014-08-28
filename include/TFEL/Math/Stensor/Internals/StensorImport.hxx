@@ -1,5 +1,5 @@
 /*!
- * \file   StensorImport.hxx
+ * \file   include/TFEL/Math/Stensor/Internals/StensorImport.hxx
  * 
  * \brief    
  * \author Helfer Thomas

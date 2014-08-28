@@ -1,5 +1,5 @@
 /*!
- * \file   BoundsCheck.hxx
+ * \file   include/TFEL/Material/BoundsCheck.hxx
  * \brief  This file declares the  class
  * \author Helfer Thomas
  * \date   06 Mar 2007

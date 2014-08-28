@@ -1,5 +1,5 @@
 /*!
- * \file   MTestUmatFiniteStrainBehaviour.cxx
+ * \file   mfront/mtest/MTestUmatFiniteStrainBehaviour.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  18 november 2013

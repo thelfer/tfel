@@ -1,5 +1,5 @@
 /*! 
- * \file  UMATGenericPlaneStressHandler.hxx
+ * \file  mfront/include/MFront/UMAT/UMATGenericPlaneStressHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 janv. 2013

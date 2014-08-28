@@ -1,5 +1,5 @@
 /*!
- * \file   Unit.ixx
+ * \file   include/TFEL/Math/Quantity/Unit.ixx
  * \brief  This file implements the classes declared in Unit.hxx
  * \author Helfer Thomas
  * \date   17 Jul 2006

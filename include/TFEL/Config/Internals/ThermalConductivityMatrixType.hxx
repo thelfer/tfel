@@ -1,5 +1,5 @@
 /*!
- * \file   ThermalConductivityMatrixType.hxx
+ * \file   include/TFEL/Config/Internals/ThermalConductivityMatrixType.hxx
  * \brief  This file declares the  class
  * \author Helfer Thomas
  * \date   25 Sep 2006

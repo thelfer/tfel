@@ -1,5 +1,5 @@
 /*!
- * \file   IsAssignableTo.hxx
+ * \file   include/TFEL/TypeTraits/IsAssignableTo.hxx
  * \brief  This file implements the IsAssignableTo class traits and 
  * its partial specialisation for each standard numeric types.
  * 

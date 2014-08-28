@@ -1,5 +1,5 @@
 /*! 
- * \file   MechanicalBehaviourDescription.ixx
+ * \file   mfront/include/MFront/MechanicalBehaviourDescription.ixx
  * \brief
  * \author Helfer Thomas
  * \brief  20 mars 2014

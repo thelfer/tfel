@@ -1,5 +1,5 @@
 /*!
- * \file   GenerateTypeList.hxx
+ * \file   include/TFEL/Metaprogramming/GenerateTypeList.hxx
  * \see    GenerateTypeList.cxx to see how this file was generated.
  * \brief  This file declares the GenerateTypeList template class.
  * \author Helfer Thomas

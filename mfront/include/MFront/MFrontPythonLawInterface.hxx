@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontPythonLawInterface.hxx
+ * \file   mfront/include/MFront/MFrontPythonLawInterface.hxx
  * \brief  This file declares the MFrontPythonLawInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008

@@ -1,5 +1,5 @@
 /*!
- * \file   InterfaceBase.cxx
+ * \file   mfront/src/InterfaceBase.cxx
  * \brief  
  * 
  * \author Helfer Thomas

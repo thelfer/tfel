@@ -1,5 +1,5 @@
 /*!
- * \file   tmatrix.hxx  
+ * \file   include/TFEL/Math/tmatrix.hxx  
  * \brief    
  * \author Helfer Thomas
  */

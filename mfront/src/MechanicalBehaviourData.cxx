@@ -1,5 +1,5 @@
 /*!
- * \file   MechanicalBehaviourData.cxx
+ * \file   mfront/src/MechanicalBehaviourData.cxx
  * 
  * \brief    
  * \author Helfer Thomas

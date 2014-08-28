@@ -1,5 +1,5 @@
 /*!
- * \file   FctCompositeExpr.hxx
+ * \file   include/TFEL/Math/Composite/FctCompositeExpr.hxx
  * \brief  This file declares the  class
  * \author Helfer Thomas
  * \date   13 Mar 2007

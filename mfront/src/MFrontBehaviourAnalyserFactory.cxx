@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontBehaviourAnalyserFactory.cxx
+ * \file   mfront/src/MFrontBehaviourAnalyserFactory.cxx
  * 
  * \brief    
  * \author Helfer Thomas

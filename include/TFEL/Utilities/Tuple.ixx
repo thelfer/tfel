@@ -1,5 +1,5 @@
 /*!
- * \file   Tuple.ixx
+ * \file   include/TFEL/Utilities/Tuple.ixx
  * \see    GenerateTuple.cxx to see how this file was generated.
  * \brief  This file implements the Tuple template class.
  * \author Helfer Thomas

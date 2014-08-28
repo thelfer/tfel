@@ -1,5 +1,5 @@
 /*!
- * \file   functions.hxx
+ * \file   include/TFEL/Math/functions.hxx
  * \brief  This file is an header all functions' related stuff.
  * \author Helfer Thomas
  * \date   04 Jan 2007

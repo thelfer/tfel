@@ -1,5 +1,5 @@
 /*!
- * \file   t2tot2ResultType.hxx
+ * \file   include/TFEL/Math/T2toT2/t2tot2ResultType.hxx
  * \brief  this file implements partial specialisations of the
  * ResultType class for t2tot2.
  * \author Helfer Thomas

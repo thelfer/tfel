@@ -1,5 +1,5 @@
 /*! 
- * \file  FactorizedKriging1D1D.hxx
+ * \file  include/TFEL/Math/FactorizedKriging1D1D.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 mai 2010

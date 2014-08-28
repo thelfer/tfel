@@ -1,5 +1,5 @@
 /*!
- * \file   copy.hxx
+ * \file   include/TFEL/FSAlgorithm/copy.hxx
  * \brief  this file implements the copy class.
  * \author Helfer Thomas
  * \date   30 Jun 2006

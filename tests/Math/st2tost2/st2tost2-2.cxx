@@ -1,5 +1,5 @@
 /*!
- * \file   st2tost2-2.cxx
+ * \file   tests/Math/st2tost2/st2tost2-2.cxx
  * \brief  
  * 
  * \author Helfer Thomas

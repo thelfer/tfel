@@ -1,5 +1,5 @@
 /*! 
- * \file  StensorTensorDiadicProductExpr.hxx
+ * \file  include/TFEL/Math/T2toST2/StensorTensorDiadicProductExpr.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 juin 2014

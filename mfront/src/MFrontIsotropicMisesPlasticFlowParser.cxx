@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontIsotropicMisesPlasticFlowParser.cxx
+ * \file   mfront/src/MFrontIsotropicMisesPlasticFlowParser.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   10 Nov 2006

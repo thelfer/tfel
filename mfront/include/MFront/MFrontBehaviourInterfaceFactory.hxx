@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontBehaviourInterfaceFactory.hxx
+ * \file   mfront/include/MFront/MFrontBehaviourInterfaceFactory.hxx
  * \brief  
  * \author Helfer Thomas
  * \date   09 nov 2006

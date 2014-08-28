@@ -1,5 +1,5 @@
 /*!
- * \file   MatrixUtilities.hxx  
+ * \file   include/TFEL/Math/Matrix/MatrixUtilities.hxx  
  * \brief  This file implements various helper functions used by tmatrix.
  * \author Helfer Thomas
  * \date   05 May 2006

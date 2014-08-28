@@ -1,5 +1,5 @@
 /*! 
- * \file  QRDecomp.hxx
+ * \file  include/TFEL/Math/QR/QRDecomp.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 mai 2013

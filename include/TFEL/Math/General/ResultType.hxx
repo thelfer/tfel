@@ -1,5 +1,5 @@
 /*!
- * \file   ResultType.hxx
+ * \file   include/TFEL/Math/General/ResultType.hxx
  * \brief  This file declares the ResultType class.
  * \author Helfer Thomas
  * \date   24 jun 2006

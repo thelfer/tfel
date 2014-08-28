@@ -1,5 +1,5 @@
 /*!
- * \file   VectorConceptOperations.hxx
+ * \file   include/TFEL/Math/Vector/VectorConceptOperations.hxx
  * \brief  This file implements operations that can be applied to matrices.
  * \author Helfer Thomas
  * \date   01 jui 2006

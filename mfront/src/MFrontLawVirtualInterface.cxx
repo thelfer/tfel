@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontLawVirtualInterface.cxx
+ * \file   mfront/src/MFrontLawVirtualInterface.cxx
  * \brief  
  * 
  * \author Helfer Thomas

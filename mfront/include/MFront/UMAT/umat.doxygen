@@ -1,0 +1,11 @@
+/*!
+ * \file  mfront/include/MFront/UMAT/umat.doxygen
+ * \brief This file documents the umat namespace.
+ */
+
+/*!
+ * \namespace umat
+ * \brief the namespace umat contains material related to the MFront
+ * interface to the [Cast3M](http://www-cast3m.cea.fr/) finite
+ * element solver.
+ */

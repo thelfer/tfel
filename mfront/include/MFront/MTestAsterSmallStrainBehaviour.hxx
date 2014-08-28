@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestAsterSmallStrainBehaviour.hxx
+ * \file  mfront/include/MFront/MTestAsterSmallStrainBehaviour.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013

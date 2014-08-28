@@ -1,5 +1,5 @@
 /*!
- * \file   Name.cxx
+ * \file   src/Utilities/Name.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   17 avr 2008

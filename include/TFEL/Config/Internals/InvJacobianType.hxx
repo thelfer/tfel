@@ -1,5 +1,5 @@
 /*!
- * \file   InvJacobianType.hxx
+ * \file   include/TFEL/Config/Internals/InvJacobianType.hxx
  * \brief  This file declares the  class
  * \author Helfer Thomas
  * \date   25 Sep 2006

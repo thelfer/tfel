@@ -1,5 +1,5 @@
 /*! 
- * \file  lu.cxx
+ * \file  tests/Math/lu.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 14 avr 2009

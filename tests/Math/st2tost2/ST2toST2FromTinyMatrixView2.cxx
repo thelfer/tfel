@@ -1,5 +1,5 @@
 /*!
- * \file   ST2toST2FromTinyMatrixView2.cxx
+ * \file   tests/Math/st2tost2/ST2toST2FromTinyMatrixView2.cxx
  * \brief  
  * 
  * \author Helfer Thomas

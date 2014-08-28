@@ -1,5 +1,5 @@
 /*!
- * \file   UMATComputeStiffnessTensor.hxx
+ * \file   mfront/include/MFront/UMAT/UMATComputeStiffnessTensor.hxx
  * \brief  This file declares the UMATComputeStiffnessTensor class
  * \author Helfer Thomas
  * \date   18 mar 2008

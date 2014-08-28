@@ -1,5 +1,5 @@
 /*!
- * \file   SignalHandler.ixx
+ * \file   include/TFEL/System/SignalHandler.ixx
  * \brief    
  * \author Helfer Thomas
  * \date   09 Nov 2007

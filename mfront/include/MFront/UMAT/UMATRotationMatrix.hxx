@@ -1,5 +1,5 @@
 /*!
- * \file   UMATRotationMatrix.hxx
+ * \file   mfront/include/MFront/UMAT/UMATRotationMatrix.hxx
  * \brief  This file declares the UMATRotationMatrix class
  * \author É. Castelier
  * \date   17 mar 2008

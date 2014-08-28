@@ -1,5 +1,5 @@
 /*!
- * \file   TypeTransform.hxx
+ * \file   include/TFEL/Utilities/MultipleDequeVector/TypeTransform.hxx
  * \info   This file defines two transformations of types which are intended to be used with the multiple_vector and multiple_deque containers
  * \see    TLTransform, multiple_vector, multiple_deque
  * \author Helfer Thomas

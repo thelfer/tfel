@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontModelParserCommon.cxx
+ * \file  mfront/src/MFrontModelParserCommon.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 11 jun 2010

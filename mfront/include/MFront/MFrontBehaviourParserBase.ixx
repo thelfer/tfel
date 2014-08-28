@@ -1,5 +1,5 @@
 /*!
- * \file   CasFrontBehaviourParserBase.ixx
+ * \file   mfront/include/MFront/MFrontBehaviourParserBase.ixx
  * \brief  
  * \author Helfer Thomas
  * \date   08 nov 2006

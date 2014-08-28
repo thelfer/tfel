@@ -1,5 +1,5 @@
 /*! 
- * \file  UMATConfig.hxx
+ * \file  mfront/include/MFront/UMAT/UMATConfig.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 janv. 2013

@@ -1,5 +1,5 @@
 /*!
- * \file   stensor_eigenvalues.cxx
+ * \file   tests/Math/stensor_eigenvalues.cxx
  * \brief  
  * 
  * \author Helfer Thomas

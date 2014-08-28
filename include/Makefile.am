@@ -560,4 +560,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Tests/TestSuite.hxx						                     \
 			TFEL/Exception/TFELException.hxx 
 
-EXTRA_DIST = CMakeLists.txt
+EXTRA_DIST = CMakeLists.txt                 \
+	     TFEL/Math/math.doxygen         \
+	     TFEL/Material/material.doxygen

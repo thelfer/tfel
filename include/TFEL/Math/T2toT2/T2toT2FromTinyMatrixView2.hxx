@@ -1,5 +1,5 @@
 /*!
- * \file   T2toT2FromTinyMatrixView2.hxx
+ * \file   include/TFEL/Math/T2toT2/T2toT2FromTinyMatrixView2.hxx
  * \brief  T2toT2FromTMatrixView
  * 
  * \author Helfer Thomas

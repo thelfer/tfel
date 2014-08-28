@@ -1,5 +1,5 @@
 /*!
- * \file   vector.hxx
+ * \file   include/TFEL/Math/vector.hxx
  * \brief  this class declares the vector template class which is base
  * on STL'vector storage class. This classe is suitable for describing
  * medium sized vectors.

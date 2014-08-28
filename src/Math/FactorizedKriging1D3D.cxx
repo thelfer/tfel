@@ -1,5 +1,5 @@
 /*! 
- * \file  FactorizedKriging1D3D.cxx
+ * \file  src/Math/FactorizedKriging1D3D.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 19 mai 2010

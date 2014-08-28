@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontParserFactory.cxx
+ * \file   mfront/src/MFrontParserFactory.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   09 nov 2006

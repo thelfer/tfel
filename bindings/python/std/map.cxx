@@ -1,5 +1,5 @@
 /*! 
- * \file   map.cxx
+ * \file   bindings/python/std/map.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  30 avr 2010

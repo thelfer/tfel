@@ -1,5 +1,5 @@
 /*! 
- * \file  stensor.cxx
+ * \file  bindings/python/tfel/stensor.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 aoû 2010

@@ -1,5 +1,5 @@
 /*!
- * \file   for_each.hxx
+ * \file   include/TFEL/FSAlgorithm/for_each.hxx
  * \brief  This file implements the for_each class.
  * \author Helfer Thomas
  * \date   30 Jun 2006

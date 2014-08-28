@@ -1,5 +1,5 @@
 /*!
- * \file   accumulate.cxx
+ * \file   tests/FSAlgorithms/accumulate.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   28 Aug 2006

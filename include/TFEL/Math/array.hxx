@@ -1,5 +1,5 @@
 /*!
- * \file   array.hxx
+ * \file   include/TFEL/Math/array.hxx
  * \brief    
  * \author Helfer Thomas
  * \date   04 May 2006

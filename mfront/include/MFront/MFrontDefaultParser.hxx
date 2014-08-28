@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontDefaultParser.hxx
+ * \file   mfront/include/MFront/MFrontDefaultParser.hxx
  * \brief  
  * \author Helfer Thomas
  * \date   08 nov 2006

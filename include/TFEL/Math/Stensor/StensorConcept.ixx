@@ -1,5 +1,5 @@
 /*!
- * \file   StensorConcept.ixx
+ * \file   include/TFEL/Math/Stensor/StensorConcept.ixx
  * \author Helfer Thomas
  */
 

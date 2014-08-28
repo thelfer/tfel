@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontIsotropicStrainHardeningMisesCreepParser.cxx
+ * \file   mfront/src/MFrontIsotropicStrainHardeningMisesCreepParser.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   02 jui 2007

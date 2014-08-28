@@ -1,5 +1,5 @@
 /*! 
- * \file  ST2toT2StensorProductExpr.hxx
+ * \file  include/TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 juin 2014

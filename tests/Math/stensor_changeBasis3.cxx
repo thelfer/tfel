@@ -1,5 +1,5 @@
 /*! 
- * \file  stensor_changeBasis3.cxx
+ * \file  tests/Math/stensor_changeBasis3.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 mai 2013

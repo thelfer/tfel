@@ -1,5 +1,5 @@
 /*!
- * \file   TVectorFromTinyVectorView.hxx
+ * \file   include/TFEL/Math/Vector/TVectorFromTinyVectorView.hxx
  * \brief  TVectorFromTVectorView
  * 
  * \author Helfer Thomas

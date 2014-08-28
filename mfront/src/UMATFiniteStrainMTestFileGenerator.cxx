@@ -1,5 +1,5 @@
 /*! 
- * \file   UMATFiniteStrainMTestFileGenerator.cxx
+ * \file   mfront/src/UMATFiniteStrainMTestFileGenerator.cxx
  * \brief
  * \author Helfer Thomas
  * \brief  10 juil. 2013

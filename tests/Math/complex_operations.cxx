@@ -1,5 +1,5 @@
 /*!
- * \file   complex_operations.cxx
+ * \file   tests/Math/complex_operations.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   05 jui 2006

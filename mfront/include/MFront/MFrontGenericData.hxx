@@ -1,5 +1,5 @@
 g/*! 
- * \file  MFrontGenericData.hxx
+ * \file  mfront/include/MFront/MFrontGenericData.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 26 févr. 2014

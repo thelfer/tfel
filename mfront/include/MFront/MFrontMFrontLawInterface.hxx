@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontMFrontLawInterface.hxx
+ * \file   mfront/include/MFront/MFrontMFrontLawInterface.hxx
  * \brief  This file declares the MFrontMFrontLawInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008

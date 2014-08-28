@@ -1,5 +1,5 @@
 /*!
- * \file   BinaryOperator.cxx
+ * \file   src/Math/BinaryOperator.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   02 oct 2007

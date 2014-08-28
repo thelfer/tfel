@@ -1,5 +1,5 @@
 /*!
- * \file   TFELTypesInternals.hxx
+ * \file   include/TFEL/Config/Internals/TFELTypesInternals.hxx
  * \brief  
  * \author Helfer Thomas
  * \date   15 Sep 2006

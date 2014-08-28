@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontGnuplotLawInterface.hxx
+ * \file   mfront/include/MFront/MFrontGnuplotLawInterface.hxx
  * \brief  This file declares the MFrontGnuplotLawInterface class
  * \author P. GOLDBRONN
  * \date   14 mai 2008

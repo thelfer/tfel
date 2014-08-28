@@ -1,5 +1,5 @@
 /*! 
- * \file  MTestConfig.hxx
+ * \file  mfront/include/MFront/MTestConfig.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 25 juin 2013

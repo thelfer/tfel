@@ -1,5 +1,5 @@
 /*!
- * \file   stdstreamtestoutput.cxx
+ * \file   tests/Tests/stdstreamtestoutput.cxx
  * \author Helfer Thomas
  * \date   10 Apr 10
  * \brief a simple test of the StdStreamTestOutput class

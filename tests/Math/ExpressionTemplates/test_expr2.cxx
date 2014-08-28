@@ -1,5 +1,5 @@
 /*!
- * \file   test_expr2.cxx
+ * \file   tests/Math/ExpressionTemplates/test_expr2.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   13 Oct 2006

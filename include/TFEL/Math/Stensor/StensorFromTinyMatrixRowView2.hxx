@@ -1,5 +1,5 @@
 /*!
- * \file   StensorFromTinyMatrixRowView2.hxx
+ * \file   include/TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx
  * \brief  
  * Stensor From Tensor Matrix Row View
  * \author Helfer Thomas

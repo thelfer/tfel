@@ -1,5 +1,5 @@
 /*!
- * \file   Power.hxx
+ * \file   include/TFEL/Math/Function/Power.hxx
  * \brief  This file declares the power function.
  * \author Helfer Thomas
  * \date   04 Jan 2007

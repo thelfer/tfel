@@ -1,5 +1,5 @@
 /*! 
- * \file  UMATSmallStrainMTestFileGenerator.hxx
+ * \file  mfront/include/MFront/UMATSmallStrainMTestFileGenerator.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 juil. 2013

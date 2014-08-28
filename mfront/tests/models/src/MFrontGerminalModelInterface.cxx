@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontGerminalModelInterface.cxx
+ * \file   mfront/tests/models/src/MFrontGerminalModelInterface.cxx
  * \brief
  * \author Helfer Thomas
  * \date   10 Nov 2006

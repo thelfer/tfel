@@ -1,5 +1,5 @@
 /*!
- * \file   equal.hxx
+ * \file   include/TFEL/FSAlgorithm/equal.hxx
  * \brief  this file implements the equal class.
  * \author Helfer Thomas
  * \date   30 Jun 2006

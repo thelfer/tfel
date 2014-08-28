@@ -1,5 +1,5 @@
 /*! 
- * \file  IsPointer.hxx
+ * \file  include/TFEL/Metaprogramming/IsPointer.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 01 aoû 2010

@@ -1,5 +1,5 @@
 /*! 
- * \file  MFrontPowellDogLegAlgorithmBase.hxx
+ * \file  mfront/src/MFrontPowellDogLegAlgorithmBase.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 22 août 2014

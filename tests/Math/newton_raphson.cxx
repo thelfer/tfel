@@ -1,5 +1,5 @@
 /*!
- * \file   newton_raphson.cxx
+ * \file   tests/Math/newton_raphson.cxx
  * 
  * \brief    
  * \author Helfer Thomas

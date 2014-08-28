@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontModelInterface.hxx
+ * \file   mfront/tests/models/include/MFront/LicosModelInterface.hxx
  * \brief  This file declares the MFrontModelInterface class
  * \author Helfer Thomas
  * \date   10 Nov 2006

@@ -1,5 +1,5 @@
 /*! 
- * \file  TensorChangeBasis.hxx
+ * \file  include/TFEL/Math/Tensor/TensorChangeBasis.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 04 juil. 2013

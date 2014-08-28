@@ -1,5 +1,5 @@
 /*!
- * \file   main.cxx
+ * \file   mfront/src/main.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   09 nov 2006

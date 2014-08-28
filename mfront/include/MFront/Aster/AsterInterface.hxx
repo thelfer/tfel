@@ -1,5 +1,5 @@
 /*!
- * \file   AsterInterface.hxx
+ * \file   mfront/include/MFront/Aster/AsterInterface.hxx
  * \brief  This file implements the AsterInterface class.
  * \author Helfer Thomas
  * \date   28 Jul 2006

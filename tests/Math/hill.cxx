@@ -1,5 +1,5 @@
 /*! 
- * \file   hill.cxx
+ * \file   tests/Math/hill.cxx
  * \brief
  * \author Helfer Thomas
  */

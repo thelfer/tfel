@@ -1,5 +1,5 @@
 /*!
- * \file   array4.cxx
+ * \file   tests/Math/array4.cxx
  * \brief  
  * \author Helfer Thomas
  * \date   01 jui 2006

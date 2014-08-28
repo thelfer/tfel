@@ -1,5 +1,5 @@
 /*!
- * \file   Unit.hxx
+ * \file   include/TFEL/Math/Quantity/Unit.hxx
  * \brief  This file declares the classes Unit, GenerateUnit, AddUnit_, SubUnit_, PowUnit_ and RootUnit_.
  * \author Helfer Thomas
  * \date   07 Jun 2006

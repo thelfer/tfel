@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontFortranLawInterface.cxx
+ * \file   mfront/src/MFrontFortranLawInterface.cxx
  * \brief  
  * 
  * \author Helfer Thomas

@@ -1,5 +1,5 @@
 /*!
- * \file   Token.hxx
+ * \file   include/TFEL/Utilities/Token.hxx
  * \brief  This file declares the Token class
  * \author Helfer Thomas
  * \date   20 Nov 2006

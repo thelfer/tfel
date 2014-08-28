@@ -1,5 +1,5 @@
 /*!
- * \file   AsterRotationMatrix.hxx
+ * \file   mfront/include/MFront/Aster/AsterRotationMatrix.hxx
  * \brief  This file declares the AsterRotationMatrix class
  * \author É. Castelier
  * \date   17 mar 2008

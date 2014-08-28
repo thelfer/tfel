@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontMaterialLawParser.cxx
+ * \file   mfront/src/MFrontMaterialLawParser.cxx
  * \brief    
  * \author Helfer Thomas
  * \date   10 Nov 2006

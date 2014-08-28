@@ -1,5 +1,5 @@
 /*! 
- * \file  Global.cxx
+ * \file  tfel-doc/src/Global.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011

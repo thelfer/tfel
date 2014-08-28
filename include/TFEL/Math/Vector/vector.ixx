@@ -1,5 +1,5 @@
 /*!
- * \file   vector.ixx
+ * \file   include/TFEL/Math/Vector/vector.ixx
  * \brief  
  * \author Helfer Thomas
  * \date   05 oct 2006

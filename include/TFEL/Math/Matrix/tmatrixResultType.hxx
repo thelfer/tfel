@@ -1,5 +1,5 @@
 /*!
- * \file   tmatrixResultType.hxx
+ * \file   include/TFEL/Math/Matrix/tmatrixResultType.hxx
  * \brief  this file implements partial specialisations of the ResultType and GenerateMatrix traits class for tmatrix.
  * \author Helfer Thomas
  * \date   12 Jul 2006

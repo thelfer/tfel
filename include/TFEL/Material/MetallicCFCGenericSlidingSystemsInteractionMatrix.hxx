@@ -1,5 +1,5 @@
 /*! 
- * \file  MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx
+ * \file  include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx
  * \brief
  * \author Helfer Thomas/Proix Jean-Michel
  * \brief 25 mars 2013

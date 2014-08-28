@@ -64,5 +64,6 @@ presentations-doc-pdf:
 
 EXTRA_DIST = bootstrap.sh   \
 	     CMakeLists.txt \
+	     tfel.doxygen   \
 	     INSTALL        \
              INSTALL-cmake
