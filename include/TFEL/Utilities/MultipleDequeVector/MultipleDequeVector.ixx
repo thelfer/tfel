@@ -14,7 +14,7 @@ namespace tfel{
 
   namespace utilities{
 
-    /*!
+    /*
      * \brief Partial specialisation to end the recursion
      * \see   MultipleDequeVectorContainer_
      */

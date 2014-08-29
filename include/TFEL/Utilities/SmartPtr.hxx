@@ -1,4 +1,4 @@
-/*
+/*!
  * \file   include/TFEL/Utilities/SmartPtr.hxx
  * \brief  this file describes the implementation of shared_ptr.
  * \author Thomas Helfer

@@ -74,8 +74,7 @@ WARN_LOGFILE           = doxygen.log
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = @abs_top_srcdir@
-FILE_PATTERNS          = *.ixx     \
-                         *.hxx     \
+FILE_PATTERNS          = *.hxx     \
 			 *.doxygen
 RECURSIVE              = YES
 EXCLUDE                = 
