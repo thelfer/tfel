@@ -32,9 +32,18 @@ namespace tfel
     namespace parser
     {
 
+      /*!
+       * This class handles a function written with the castem
+       * interface.
+       */
       struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCastemFunction
 	: public ExternalFunction
       {
+	/*!
+	 * \brief main constructor of the class
+	 * \param[in] f_ : pointer to Cast3M function
+	 * \param[in] n  : number of variables
+	 */
 	ExternalCastemFunction(const tfel::system::CastemFunctionPtr,
 			       const unsigned short);
 	void

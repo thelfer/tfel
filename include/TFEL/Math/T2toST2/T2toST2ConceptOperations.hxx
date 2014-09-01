@@ -75,8 +75,10 @@ namespace tfel
 				      T2toST2Expr<Result,Expr> >::type Handle;
     };
 
-    /*
-     * Partial Specialisation of ComputeBinaryResult_ for st2tost2-t2tost2 operations
+    /*!
+     * Partial Specialisation of ComputeBinaryResult_ for the
+     * multiplication of object of type st2tost2 by object of type
+     * t2tost2.
      */
     template<typename A, typename B>
     class ComputeBinaryResult_<ST2toST2Tag,T2toST2Tag,A,B,OpMult>

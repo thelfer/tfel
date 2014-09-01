@@ -139,7 +139,7 @@ namespace tfel
 				      ST2toT2Expr<Result,Expr> >::type Handle;
     };
 
-    /*
+    /*!
      * Partial Specialisation of ComputeBinaryResult_ for T2toT2-ST2toT2 operations
      */
     template<typename A, typename B>

@@ -82,9 +82,14 @@ namespace tfel{
   
   namespace typetraits{
 
+    /*!
+     * \brief partial specialisation of the IsTemporary traits class
+     * for objects of type StensorExpr.
+     */
     template<typename T_type, typename Expr>
     struct IsTemporary<tfel::math::StensorExpr<T_type,Expr> >
     {
+      //! the result of the metafunction
       static const bool cond = true;
     };
 
