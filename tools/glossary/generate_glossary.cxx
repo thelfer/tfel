@@ -3,6 +3,12 @@
  * \brief
  * \author Helfer Thomas
  * \brief 14 mai 2009
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 // g++ -fPIC -DPIC `tfel-config --includes --libs --utilities --glossary` tools/glossary/generate_glossary.cxx -o generate_glossary

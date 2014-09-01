@@ -17,7 +17,13 @@ namespace tfel{
      * \class StorageStraits
      * \brief Traits class for storage layouts.
      * \param typename T, Storage class
-     */    
+     * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */    
     template<typename T>
     struct StorageTraits{
       /*
