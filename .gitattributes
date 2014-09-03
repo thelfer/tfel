@@ -6,6 +6,9 @@
 /Doxyfile.in -text
 /INSTALL -text
 /INSTALL-cmake -text
+/LICENCE-CECILL-A-EN -text
+/LICENCE-CECILL-A-FR -text
+/LICENCE-GNU-GPL -text
 /Makefile.am -text
 /README -text
 /TODO -text
