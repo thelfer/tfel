@@ -112,6 +112,9 @@ treatUnknownOption(const std::string&);
 static void
 treatHelp(void);
 
+static void
+treatLicences(void);
+
 static CallBacksContainer callBacksContainer;
 static bool oflags          = false;
 static bool oflags2         = false;
@@ -447,6 +450,24 @@ treatUnknownOption(const std::string& o)
   exit(EXIT_FAILURE);
 } // end of treatUnknownOption
 
+static void
+treatLicences(void)
+{
+  using namespace std;
+  cout << "Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights reserved." << endl;
+  cout << "This project is publicly released under either the GNU GPL Licence or the" << endl;
+  cout << "CECILL-A licence. A copy of thoses licences are delivered with the sources of" << endl;
+  cout << "TFEL. CEA or EDF may also distribute this project under specific licensing" << endl;
+  cout << "conditions." << endl;
+  cout << endl;
+  cout << "For further information, please read the licences files or visit the following" << endl;
+  cout << "websites:" << endl;
+  cout << "    http://www.gnu.org/licenses" << endl;
+  cout << "    http://www.cecill.info/licences.en.html" << endl;
+  cout << "    http://www.cecill.info/licences.fr.html" << endl;
+  exit(EXIT_SUCCESS);
+} // end of treatLicences
+
 int
 main(const int argc,
      const char *const *const argv)
@@ -489,6 +510,7 @@ main(const int argc,
 		   "request flags for libTFELFiniteElement.");
   registerCallBack("--all",&treatAll,"request flags for all librairies.");
   registerCallBack("--version",&treatVersion,"print tfel version and svn revision.");
+  registerCallBack("--licence",&treatLicences,"print tfel licences.");
   for(p2=argv+1;p2!=argv+argc;++p2){
     p = callBacksContainer.find(*p2);
     if(p==callBacksContainer.end()){
