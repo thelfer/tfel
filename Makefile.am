@@ -67,3 +67,8 @@ EXTRA_DIST = bootstrap.sh   \
 	     tfel.doxygen   \
 	     INSTALL        \
              INSTALL-cmake
+
+licencesdir = $(prefix)
+dist_licences_DATA = LICENCE-GNU-GPL \
+                     LICENCE-CECILL-A-EN \
+                     LICENCE-CECILL-A-FR
