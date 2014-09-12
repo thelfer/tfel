@@ -408,8 +408,7 @@ namespace umat
 	if(*DDSOE<-0.5){
 	  this->computePredictionOperator(DDSOE);
 	} else {
-	  this->integrate(DDSOE,0u,true);
-	  this->bData.UMATexportStateData(STRESS,STATEV);
+	  this->integrate(STRESS,STATEV,DDSOE);
 	}
       } // end of IntegratorWithTimeStepping::exe
 
@@ -457,9 +456,9 @@ namespace umat
       }
 
       void
-      integrate(UMATReal *const DDSOE,
-		const unsigned short subSteps,
-		const bool last)
+      integrate(UMATReal *const STRESS,
+		UMATReal *const STATEV,
+		UMATReal *const DDSOE)
       {
 	using namespace tfel::utilities;
 	using namespace tfel::material;
@@ -472,59 +471,73 @@ namespace umat
 	  GeneralConsistentTangentOperatorComputer>::type,
 	  ConsistentTangentOperatorIsNotAvalaible
 	  >::type ConsistentTangentOperatorHandler;
-	if(subSteps==UMATTraits<BV>::maximumSubStepping){
-	  throwMaximumNumberOfSubSteppingReachedException(Name<Behaviour<H,UMATReal,false> >::getName());
-	}
+	using namespace tfel::utilities;
+	using namespace tfel::material;
 	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	unsigned short subSteps   = 0u;
+	unsigned short iterations = 1u;
+	if(this->dt<0.){
+	  throwNegativeTimeStepException(Name<Behaviour<H,UMATReal,false> >::getName());
+	}
 	typename BV::IntegrationResult r = BV::SUCCESS;
 	const typename BV::SMFlag smflag = UMATTangentOperatorFlag<UMATTraits<BV>::btype>::value;
 	typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
-	if(last){
-	  if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
-	  } else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
-	    smtype = BV::ELASTIC;
-	  } else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
-	    smtype = BV::SECANTOPERATOR;
-	  } else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
-	    smtype = BV::TANGENTOPERATOR;
-	  } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-	    smtype = BV::CONSISTENTTANGENTOPERATOR;
-	  } else {
-	    throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
-	  }
+	if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
+	} else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
+	  smtype = BV::ELASTIC;
+	} else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
+	  smtype = BV::SECANTOPERATOR;
+	} else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
+	  smtype = BV::TANGENTOPERATOR;
+	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
+	  smtype = BV::CONSISTENTTANGENTOPERATOR;
+	} else {
+	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	}
-	try{
+	while((iterations!=0)&&
+	      (subSteps!=UMATTraits<BV>::maximumSubStepping)){
+	  typename BV::IntegrationResult result;
 	  BV behaviour(this->bData,this->iData);
-	  behaviour.initialize();
-	  behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
-	  behaviour.checkBounds();
-	  r = behaviour.integrate(smflag,smtype);
-	  if((r==BV::UNRELIABLE_RESULTS)&&(!UMATTraits<BV>::doSubSteppingOnInvalidResults)){
-	    r = BV::FAILURE;
-	  }
-	  if(r==BV::SUCCESS){
-	    this->bData = static_cast<const BData&>(behaviour);
+	  try{
+	    behaviour.initialize();
+	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	    behaviour.checkBounds();
-	    if(!last){
-	      behaviour.updateExternalStateVariables();
-	    }
-	    if(last){
+	    result = behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
+	  }
+#ifdef MFRONT_UMAT_VERBOSE
+	  catch(const tfel::material::DivergenceException& e){
+	    std::cerr << "no convergence : " << e.what() << std::endl;
+#else
+	  catch(const tfel::material::DivergenceException&){
+#endif
+	    result = BV::FAILURE;
+	  }
+	  if((result==BV::SUCCESS)||
+	     ((result==BV::UNRELIABLE_RESULTS)&&
+	      (!UMATTraits<BV>::doSubSteppingOnInvalidResults))){
+	    --(iterations);
+	    behaviour.checkBounds();
+	    behaviour.updateExternalStateVariables();
+	    if(iterations==0){
+	      behaviour.UMATexportStateData(STRESS,STATEV);
 	      if(*DDSOE>0.5){
 		ConsistentTangentOperatorHandler::exe(behaviour,DDSOE);
 	      }
+	    } else {
+	      this->bData = static_cast<const BData&>(behaviour);
 	    }
+	  } else if ((result==BV::UNRELIABLE_RESULTS)&&
+		     (UMATTraits<BV>::doSubSteppingOnInvalidResults)){
+	    iterations = static_cast<unsigned short>(iterations*2u);
+	    this->iData.scale(this->bData,0.5);
+	  } else {
+	    ++subSteps;
+	    iterations = static_cast<unsigned short>(iterations*2u);
+	    this->iData.scale(this->bData,0.5);
 	  }
-	} catch(const tfel::material::DivergenceException& e){
-#ifdef MFRONT_UMAT_VERBOSE
-	  std::cerr << "no convergence : " << e.what() << std::endl;
-#endif
-	  r = BV::FAILURE;
 	}
-	if(r==BV::FAILURE){
-	  this->iData.scale(this->bData,UMATReal(0.5));
-	  this->integrate(DDSOE,subSteps+1u,false);
-	  this->integrate(DDSOE,subSteps+1u,last);
-	  this->iData.scale(this->bData,UMATReal(2));
+	if((subSteps==UMATTraits<BV>::maximumSubStepping)&&(iterations!=0)){
+	  throwMaximumNumberOfSubSteppingReachedException(Name<Behaviour<H,UMATReal,false> >::getName());
 	}
       } // end of integrate
     

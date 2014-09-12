@@ -1,0 +1,112 @@
+/*!
+ * \file   DruckerPragerEcroLin.mfront
+ * \brief  loi de Drucker-Prager avec écrouissage linéaire, cf. R7.01.16
+ * \author JMP
+ * \date   05/09/2014
+ */
+
+@Parser    Implicit;
+@Behaviour DruckerPragerEcroLin;
+@Algorithm NewtonRaphson_NumericalJacobian;
+
+@Theta 1.;
+@Epsilon 1.e-9;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real a ;
+@MaterialProperty real p_ult ;
+@MaterialProperty real sy ;
+@MaterialProperty real H ;
+
+@StateVariable real p;
+p.setGlossaryName("EquivalentPlasticStrain");
+
+@AuxiliaryStateVariable real pvol ;
+@AuxiliaryStateVariable real indic ;
+
+@LocalVariable stress K;
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+@LocalVariable stress Fel;
+@LocalVariable stress i1el;
+@LocalVariable stress seqel;
+@LocalVariable stress Rpel;
+@LocalVariable real Dp ;
+@LocalVariable real ind ;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  K      = lambda+(2*mu)/3;
+  // elastic prediction
+  StressStensor sigel(lambda*trace(eel+deto)*Stensor::Id()+2*mu*(eel+deto));
+  i1el  = trace(sigel);
+  seqel = sigmaeq(sigel);
+  Rpel  = sy + H* min(p, p_ult) ;
+  Fel   = a*i1el + seqel - Rpel ;
+} 
+
+@ComputeStress{
+  sig = lambda*trace(eel)*StrainStensor::Id()+2*mu*eel;
+}
+
+@Integrator{
+  ind=0;
+  Dp=0.;
+  if(Fel > 0){
+     const stress seq_ = sigmaeq(sig);
+     StrainStensor np_(real(0));
+     StrainStensor n_(real(0));
+     if(seq_>1.e-10*young){
+          ind=1 ;
+          n_ = 3/(2*seq_)*deviator(sig);
+          Dp = Fel /(3.*mu+9.*K*a*a+H) ;
+          // verification finale
+          if ((p+Dp) > p_ult) {
+              Dp =  Fel/(3.*mu+9.*K*a*a) ;
+          }
+     } else {
+          // projection au sommet        
+          ind = 2 ;
+          Dp = (a*i1el - Rpel) /(9.*K*a*a+H) ;            
+          // verification finale
+          if ((p+Dp) > p_ult) {
+              Dp = (a*i1el-Rpel)/(9.*K*a*a) ;
+          }
+     }
+     np_ = a*StrainStensor::Id()+n_;
+     feel += Dp*np_;
+   }
+   feel -=deto;
+   fp=dp-Dp ;
+}
+
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}
+
+@UpdateAuxiliaryStateVars{
+  pvol += deto(0)-deel(0) +deto(1)-deel(1)+ deto(2)-deel(2) ;
+  indic = ind ;
+}

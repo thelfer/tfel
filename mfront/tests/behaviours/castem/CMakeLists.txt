@@ -27,6 +27,8 @@ set(mfront_tests_SOURCES
   Plasticity
   LogarithmicStrainPlasticity
   DruckerPrager
+  DruckerPragerEcroLin
+  DruckerPragerEcroLinDefault
   Norton DDIF2
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42

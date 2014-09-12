@@ -1556,6 +1556,8 @@ mfront/tests/behaviours/Chaboche2.mfront -text
 mfront/tests/behaviours/CompressibleNeoHookeanBehaviour.mfront -text
 mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/DruckerPrager.mfront -text
+mfront/tests/behaviours/DruckerPragerEcroLin.mfront -text
+mfront/tests/behaviours/DruckerPragerEcroLinDefault.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
 mfront/tests/behaviours/Elasticity2.mfront -text
 mfront/tests/behaviours/Elasticity3.mfront -text

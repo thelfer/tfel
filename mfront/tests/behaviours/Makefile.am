@@ -80,7 +80,9 @@ MFRONTS= DDIF2.mfront                                                      \
 	 FiniteStrainSingleCrystal.mfront                                  \
 	 FiniteStrainSingleCrystal2.mfront                                 \
 	 FiniteStrainSingleCrystal_NumericalJacobian.mfront                \
-	 AnistropicLemaitreViscoplasticBehaviour.mfront
+	 AnistropicLemaitreViscoplasticBehaviour.mfront                    \
+	 DruckerPragerEcroLin.mfront                                       \
+	 DruckerPragerEcroLinDefault.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

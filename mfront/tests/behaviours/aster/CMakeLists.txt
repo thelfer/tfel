@@ -24,6 +24,8 @@ set(mfront_tests_SOURCES
   ImplicitOrthotropicCreep
   Plasticity
   DruckerPrager
+  DruckerPragerEcroLin
+  DruckerPragerEcroLinDefault
   Norton NortonRK DDIF2
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42
