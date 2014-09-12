@@ -158,7 +158,7 @@
   un fichier externe. Ces tests génèrent des fichiers qui peuvent être
   interprétés par l'automate \jenkins{}, au centre de la politique
   d'intégration continue mise en place par la plate-forme
-  \pleiades{}. Plus de \(400\) cas tests unitaires ont été écrits à
+  \pleiades{}. Plus de \(600\) cas tests unitaires ont été écrits à
   l'aide de \mtest{}.
 
   Au delà de l'aspect test unitaire, cet outil s'est cependant avéré
@@ -217,7 +217,7 @@ Récemment, l'utilisation de \mfront{} s'est accrue~:
 \item au sein du \cea{}, \mfront{} est utilisé par le
   DER~\cite{darrigo_notice_2012} et le
   DMN~\cite{helfer_presentation_2011,milliard_mechanical_2014} dans le
-  cadre de simulation \castem{}~;
+  cadre de simulations \castem{}~;
 \end{itemize}
 
 Par ailleurs, \mfront{} a été évalué par les partenaires industriels
@@ -258,12 +258,12 @@ qu'avec l'aide des code cibles tiers, dont ceux cités précédemment.
 Pour éviter cet écueil, nous avons donc développé un outil permettant
 de simuler le comportement d'un point matériel, similaire en
 possibilités à ce qu'offre la commande {\tt SIMU\_POINT\_MAT}
-d'\aster{}~\cite{proix_macro-commande_2013}~: il est possible de
+d'\aster{}~\cite{edf_macro-commande_2013}~: il est possible de
 piloter le chargement mécanique d'un point matériel, en imposant
 certaines composantes des contraintes et/ou certaines composantes des
 déformations au cours d'un historique défini par l'utilisateur.
 
-L'utilisateur peut de simuler plusieurs essais mécaniques simples (au
+L'utilisateur peut simuler plusieurs essais mécaniques simples (au
 moins tant qu'ils n'impliquent pas d'effets de structure, striction
 notamment), par exemple~:
 \begin{itemize}
@@ -283,9 +283,10 @@ sont créés~:
 \item un fichier texte contenant l'évolution de l'ensemble des
   variables internes de la loi~;
 \item un fichier {\tt xml} qui contient le résultat des différentes
-  comparaisons. Ce fichier peut être interprété par l'automate {\tt
-    jenkins} utilisé dans la plate-forme \pleiades{} pour permettre
-  l'intégration continue des applications et de l'architecture.
+  comparaisons. Ce fichier peut être interprété par l'automate
+  d'intégration continue {\tt
+    jenkins}\footnote{\href{http://jenkins-ci.org}{http://jenkins-ci.org}}
+  utilisé pour le développement de \mfront{}.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -468,16 +469,16 @@ restreint à un point matériel et décrit dans la section suivante, doit
 offrir la même richesse que les algorithmes des codes de calcul de
 structure. Il nous est donc apparu utile de rappeler comment se place
 la loi de comportement dans un calcul d'équilibre mécanique d'un
-calcul de structure. Cette approche nous permet en autres de rappeler
-des notions importantes, telles que celle de matrice de raideur ou de
+calcul de structure. Cette approche nous permet de rappeler des
+notions importantes, telles que celle de matrice de raideur ou de
 matrice de prédiction.
 
 Les lois de comportement mécanique décrites dans ce document
 permettent de calculer d'une part le tenseur des contraintes
 \(\tsigma\) en un point d'une structure mécanique, et par ailleurs
 l'évolution microstructurelle du matériau, représentée par un jeu de
-\(i\) variables internes noté de manière symbolique \(Y\). Nous en
-faisons un présentation volontairement succincte, nous renvoyons à la
+variables internes noté de manière symbolique \(Y\). Nous en faisons
+un présentation volontairement succincte, nous renvoyons à la
 documentation de \mfront{} relative aux lois de comportement pour les
 détails~\cite{helfer_generateur_2013}.
 
@@ -849,9 +850,9 @@ appelée multiplicateur de \nom{Lagrange}, telle que le résidu est~:
   \end{pmatrix}
 \end{equation}
 où \(\begin{pmatrix}\dots&1&\dots\end{pmatrix}\) est un tenseur dont
-seule la \(i\)\ieme composante non nulle et où \(a\) est un paramètre
+seule la \(i\)\ieme composante est non nulle et où \(a\) est un paramètre
 de normalisation tel que les différents termes de la matrice
-jacobienne soit du même ordre de grandeur. La jacobienne est alors~:
+jacobienne soient du même ordre de grandeur. La jacobienne est alors~:
 \[
 \deriv{r}{\paren{\Delta\,\tepsilonto,\Delta\,\lambda_{i}}}=
 \begin{pmatrix}
@@ -1152,10 +1153,10 @@ Par défault, \mtest{} génère deux fichiers de sortie~:
 \begin{itemize}
 \item un fichier texte organisé en colonnes. La première colonne donne
   l'instant considéré. Les colonnes suivantes contiennent les
-  différentes composantes de la déformation, les composantes de la
-  contrainte et les variables internes de la loi de comportement. Par
-  défaut, si le fichier d'entrée se nomme {\tt xxx.mtest}, ce fichier
-  se nomme {\tt xxx.res}~;
+  différentes composantes de la déformation totale, les composantes de
+  la contrainte et les variables internes de la loi de
+  comportement. Par défaut, si le fichier d'entrée se nomme {\tt
+    xxx.mtest}, ce fichier se nomme {\tt xxx.res}~;
 \item le second fichier est un fichier au format {\tt xml} donnant les
   résultats des comparaisons à des résultats de référence (donnés par
   une formule analytique ou par un fichier externe) et le temps

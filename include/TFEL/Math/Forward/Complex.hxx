@@ -1,6 +1,7 @@
 /*! 
  * \file  include/TFEL/Math/Forward/Complex.hxx
- * \brief
+ * \brief This file introduces some forward declaration relative to
+ * the Complex class.
  * \author Helfer Thomas
  * \brief 03 janv. 2012
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 

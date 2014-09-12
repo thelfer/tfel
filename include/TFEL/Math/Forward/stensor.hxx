@@ -1,6 +1,7 @@
 /*! 
  * \file  include/TFEL/Math/Forward/stensor.hxx
- * \brief
+ * \brief This file introduces some forward declaration relative to
+ * the stensor class.
  * \author Helfer Thomas
  * \brief 19 sept. 2011
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 

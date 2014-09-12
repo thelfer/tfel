@@ -8,44 +8,34 @@
 }
 
 // elastic properties
-@MaterialProperty stress young; /* mandatory for castem */
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;    /* mandatory for castem */
+@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
-// equivalent hydrostatic viscoplastic strain
+/*! equivalent hydrostatic viscoplastic strain */
 @StateVariable real pv;
 pv.setEntryName("HydrostaticEquivalentViscoplasticStrain");
-// equivalent deviatoric viscoplastic strain
+/*! equivalent deviatoric viscoplastic strain */
 @StateVariable real pd;
 pd.setEntryName("DeviatoricEquivalentViscoplasticStrain");
 // porosity
 @StateVariable real f;
 f.setGlossaryName("Porosity");
 
+/*! bulk modulus */
+@LocalVar real K;
+/*! first Lame coefficient */
 @LocalVar real lambda;
+/*! second Lame coefficient */
 @LocalVar real mu;
-
-@TangentOperator{
-  using namespace tfel::material::lame;
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    Stensor4 Je;
-    getPartialJacobianInvert(Je);
-    StiffnessTensor De;
-    computeUnalteredElasticStiffness<N,Type>::exe(De,lambda,mu);
-    Dt = De*Je;
-  } else {
-    return false;
-  }
-}
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
+  K = lambda+(2*mu)/3;
 } // end of @InitLocalVariables
 
 @ComputeStress{
@@ -89,8 +79,6 @@ f.setGlossaryName("Porosity");
     const real d2phi_dp2     =  d2phi_ds2*ds_dpr*ds_dpr  +dphi_ds*d2s_dpr2;
     const real d2phi_dpdseq  =  d2phi_ds2*ds_dpr*ds_dseq +dphi_ds*d2s_dprdseq;
     const real d2phi_dseq2   =  d2phi_ds2*ds_dseq*ds_dseq+dphi_ds*d2s_dseq2;
-    // hydrostatic part
-    const real K = lambda+(2*mu)/3;
     fpv        -= dphi_dp*dt;
     dfpv_ddeel -= theta*dt*(d2phi_dp2*K*Stensor::Id()+2*mu*d2phi_dpdseq*n);
     // deviatoric part
@@ -104,3 +92,18 @@ f.setGlossaryName("Porosity");
   }
   feel -= deto;
 } // end of @Integrator
+
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    StiffnessTensor De;
+    computeUnalteredElasticStiffness<N,Type>::exe(De,lambda,mu);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

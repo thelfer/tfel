@@ -117,6 +117,7 @@ docs/mfront/Images/Polar_decomposition_of_F.png -text
 docs/mfront/Images/SaintVenantKirchhoffElasticity.mfront -text
 docs/mfront/Images/TH.eps -text
 docs/mfront/Images/ZebulonNorton.eps -text
+docs/mfront/Images/code-barre-planestress.eps -text
 docs/mfront/Images/cyrano-mfront.eps -text
 docs/mfront/Images/hayhurst.eps -text
 docs/mfront/Images/hsnv125d.eps -text
@@ -130,6 +131,7 @@ docs/mfront/Images/norton.inp -text
 docs/mfront/Images/polybz.eps -text
 docs/mfront/Images/polybz.png -text
 docs/mfront/Images/saint_venant_elas.inp -text
+docs/mfront/Images/signatures-planestress.eps -text
 docs/mfront/Images/sirius8.eps -text
 docs/mfront/Images/sirius8.png -text
 docs/mfront/Images/tubeaxi.eps -text

@@ -121,10 +121,10 @@
 
 \auteurs{T.~Helfer}
 \redacteur{T.~Helfer}
-\verificateur{C.~Petry$(\mbox{}^{\star})$}
+\verificateur{C.~Petry(EDF R\&D MMC)}
 \approbateur{R.~Masson}
 \emetteur{E.~Touron}
-\affiliation{$(\mbox{}^{\star})$ EDF R\&D MMC}
+%\affiliation{$(\mbox{}^{\star})$ EDF R\&D MMC}
 
 \titre{Prise en compte des hypothèses de contraintes planes dans les
   lois générées par le générateur de code \mfront{}~: application à
@@ -144,15 +144,14 @@
   \mfront{} - \pleiades{} - contraintes planes - contraintes planes généralisées - \cyrano{}
 }
 
-% \codebarre{images/code_barre}
+\codebarre{@abs_top_srcdir@/docs/mfront/Images/code-barre-planestress}
 \diffusionexterne{
 {EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
 {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
 {EDF/R\&D/MMC}          & P. Ollar         & 1 & \\
 {EDF/R\&D/MMC/CPM}      & H.-I. Wong      & 1 & \\
                         & N. Barnel       & 1 & \\
-{EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
-                        & R. Largenton    & 1 & \\
+{EDF/R\&D/MMC/CPM}      & R. Largenton    & 1 & \\
                         & C. Petry        & 1 & \\
 EDF/SEPTEN              & N. Waeckel      & 1 & \\
                         & P. Hemmerich    & 1 & \\
@@ -246,8 +245,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
                       &                    &  & \\
   DEN/DEC             & P. Brossard        &  & Document disponible\\
   DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
-  DEN/DEC/SESC        & E. Touron          &  & \\
-                      & C. Valot           &  & \\
+  DEN/DEC/SESC        & C. Valot           &  & \\
                       & M. Agard           &  & \\
   DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
   DEN/DEC/SESC/LLCC   & G. Jomard          &  & \\
@@ -261,7 +259,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 
 }
 
-% \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
+\signatures{2.}{-43.}{0.6}{@abs_top_srcdir@/docs/mfront/Images/signatures-planestress.eps}
 
 \resumecea{
 

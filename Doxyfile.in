@@ -114,6 +114,7 @@ HTML_FOOTER            =
 HTML_STYLESHEET        = 
 HTML_ALIGN_MEMBERS     = YES
 USE_MATHJAX            = YES
+INTERACTIVE_SVG        = YES
 GENERATE_HTMLHELP      = YES
 CHM_FILE               = 
 HHC_LOCATION           = 
@@ -124,6 +125,9 @@ DISABLE_INDEX          = NO
 ENUM_VALUES_PER_LINE   = 4
 GENERATE_TREEVIEW      = NO
 TREEVIEW_WIDTH         = 250
+#---------------------------------------------------------------------------
+# Configuration::additions related to the search engine   
+#---------------------------------------------------------------------------
 SEARCH_ENGINE          = YES
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
@@ -212,7 +216,7 @@ INCLUDED_BY_GRAPH      = YES
 CALL_GRAPH             = YES
 GRAPHICAL_HIERARCHY    = YES
 DIRECTORY_GRAPH        = YES
-DOT_IMAGE_FORMAT       = png
+DOT_IMAGE_FORMAT       = svg
 DOT_PATH               = 
 DOTFILE_DIRS           = 
 MAX_DOT_GRAPH_DEPTH    = 1000
@@ -220,7 +224,3 @@ DOT_TRANSPARENT        = YES
 DOT_MULTI_TARGETS      = NO
 GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
-#---------------------------------------------------------------------------
-# Configuration::additions related to the search engine   
-#---------------------------------------------------------------------------
-SEARCHENGINE           = NO

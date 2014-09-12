@@ -1,6 +1,7 @@
 /*! 
  * \file  include/TFEL/Math/Forward/ExpressionTemplates.hxx
- * \brief
+ * \brief This file introduces some forward declaration relative to
+ * the expression template engine.
  * \author Helfer Thomas
  * \brief 02 juil. 2013
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 

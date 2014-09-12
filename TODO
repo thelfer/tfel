@@ -1,21 +1,38 @@
-- matrice tangente cohérente pour l'analyseur MultipleIsotropicMisesFlows
-- matrice de prédiction pour l'analyseur MultipleIsotropicMisesFlows
-- matrice de prédiction pour l'analyseur IsotropicMisesPlasticFlow
-- contraintes planes dans les analyseurs spécifiques
-- implanter totalement l'algorithme de Powell
-- implanter l'algorithme de Levenberg-Marquart
+% TFEL development
+% Thomas Helfer
+% 6 September 2014
 
-- support des lois non locales (plusieurs variables de pilotages)
-- contrôle du pas de temps (non-radialité du chargement)
-- pour la génération de fichiers mtest, gérer les calculs MPI
+![MFront logo](mfront.svg)
 
-- passage à C++ 11
+<!-- pandoc -s --mathjax -i -t revealjs TODO -o TODO.html -->
+<!-- pandoc -t beamer -V theme:Warsow beamercea TODO -o TODO.pdf -->
 
-- optimiser les stratégies grandes transformations en ne faisant que
-  les étapes de pre et post-traitements nécessaires
-  (contraintes/déformations début de pas optionnelles)
+# Transition to [C++-11](https://isocpp.org)
 
-- sortir l'étape de prédiction du constructeur vers l'intégration (non
-  nécessaire au calcul de l'opérateur de prédiction).
+- transition
 
-#include <iosfwd>
+# Plane stress
+
+- currently only supported by Implicit Parser
+- extension to restricted domain specific languages
+  (IsotropicMisesPlasticFlow, etc..)
+    - reduction to a *scalar* equation
+
+<!-- - matrice tangente cohérente pour l'analyseur MultipleIsotropicMisesFlows -->
+<!-- - matrice de prédiction pour l'analyseur MultipleIsotropicMisesFlows -->
+<!-- - matrice de prédiction pour l'analyseur IsotropicMisesPlasticFlow -->
+<!-- - contraintes planes dans les analyseurs spécifiques -->
+<!-- - implanter totalement l'algorithme de Powell -->
+<!-- - implanter l'algorithme de Levenberg-Marquart -->
+
+<!-- - support des lois non locales (plusieurs variables de pilotages) -->
+<!-- - contrôle du pas de temps (non-radialité du chargement) -->
+<!-- - pour la génération de fichiers mtest, gérer les calculs MPI -->
+
+<!-- - optimiser les stratégies grandes transformations en ne faisant que -->
+<!--   les étapes de pre et post-traitements nécessaires -->
+<!--   (contraintes/déformations début de pas optionnelles) -->
+
+<!-- - sortir l'étape de prédiction du constructeur vers l'intégration (non -->
+<!--   nécessaire au calcul de l'opérateur de prédiction). -->
+
