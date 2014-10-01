@@ -5,9 +5,8 @@
 %%	Répertoire : /home/th202608/codes/pandoc/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[12pt,a4paper]{article}
-
-\usepackage[top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry} 
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -20,6 +19,162 @@
 
 % \gdef\label#1{\TheRealLabel{\roman{chapter}:#1}}
 % \gdef\ref#1{\TheRealRef{\roman{chapter}:#1}}
+
+\input{LSC}
+
+\auteurs{T.~Helfer, J.M.~Proix\(\mbox{}^{(a)}\)}
+\affiliation{\(\mbox{}^{(a)}\) Électricité de France, R\&D - Département Analyses Mécaniques et Acoustique}
+\redacteur{T.~Helfer}
+\verificateur{F.~Hammon (EDF R\&D AMA)}
+\approbateur{R.~Masson}
+\emetteur{E.~Touron}
+%\affiliation{$(\mbox{}^{\star})$ EDF R\&D MMC}
+
+\titre{Écriture de lois de comportements avec \mfront{}~: un tutoriel}
+
+\date{Septembre 2014}
+\numero{}
+\indice{}
+\dateversion{}
+\numeroaffaire{A-SICOM-A1-01}
+\domaine{DEN/DISN/SIMU}
+\accords{tripartite}
+\clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \mfront{} - tutoriel
+}
+
+% \codebarre{@abs_top_srcdir@/docs/mfront/Images/code-barre-planestress}
+\diffusionexterne{
+{EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+{EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+{EDF/R\&D/MMC}          & P. Ollar         & 1 & \\
+{EDF/R\&D/MMC/CPM}      & H.-I. Wong      & 1 & \\
+                        & N. Barnel       & 1 & \\
+{EDF/R\&D/MMC/CPM}      & R. Largenton    & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & P. Hemmerich    & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+                        & L. Brunel       & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & V. Garat        & 1 & \\
+                        & F. Arnoux       & 1 &
+}
+
+\diffusionexterne{
+{EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+{EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+{EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
+                        & C. Durand       & 1 & \\
+                        & T. de Soza      & 1 & \\
+                        & J. Delmas       & 1 & \\
+                        & J.M. Proix      & 1 & \\
+                        & F. Hammon       & 1 & \\
+                        & N. Sellenet     & 1 & \\
+                        & D. Haboussa     & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+{EDF/R\&D/MMC}          & N. Rupin        & 1 & \\
+                        & F. Latourte     & 1 & \\
+                        & F. Curtit       & 1 & \\
+                        & N. Prompt       & 1 & \\
+                        & N. Barnel       & 1 & \\
+                        & É. Pouillier    & 1 & \\
+                        & G. Thouvenin    & 1 & \\
+                        & F. Douchin      & 1 & \\
+                        & R. Largenton    & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+                        & L. Brunel       & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & V. Garat        & 1 & \\
+                        & F. Arnoux       & 1 &
+}
+
+\CoupeListeDiffusion{}
+\diffusioninterne{
+  DEN/DISN/SIMU       & J.P. Deffain       & 1 & Diffusion par\\ 
+                      & D. Caruge          & 1 & courriel     \\ 
+  DEN/DM2S/SEMT       & X. Averty          & 1 & \\
+  DEN/DM2S/SEMT/LM2S  & S. Pascal          & 1 & \\
+                      & P. Verpeaux        & 1 & \\
+                      & A. Millard         & 1 & \\
+                      & O. Fandeur         & 1 & \\
+  DEN/DMN             & P. Yvon            & 1 & \\
+                      & M. Le Flem         & 1 & \\
+                      & F. Dalle           & 1 & \\
+  DEN/DMN/SRMA        & P. Chapelot        & 1 & \\
+                      & S. Carassou        & 1 & \\
+                      & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M   & L. Nicolas         & 1 & \\
+                      & J. Garnier         & 1 & \\
+                      & S. Vincent         & 1 & \\
+                      & L. Vincent         & 1 & \\
+                      & L. Gelebart        & 1 & \\
+                      & M. Sauzay          & 1 & \\
+                      & L. Dupuy           & 1 & \\
+                      & P. Forget          & 1 & \\
+                      & A. Hellouin de Menibus  & 1 & \\
+                      & M. Le Saux         & 1 & \\
+                      & C. Robertson       & 1 & \\
+  DEN/DMN/SRMA/LA2M   & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX  & L. Chaffron        & 1 & \\
+                      & D. Sornin          & 1 & \\
+  DEN/DMN/SEMI        & C. Poussard        & 1 & \\
+                      & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LCMI   & V. Vandenberghe    & 1 & \\
+                      & A. Courcelle       & 1 & \\
+                      & F. Hure            & 1 & \\
+                      & D. Leboulch        & 1 & \\
+                      & Q. Auzoux          & 1 & \\
+                      & Y. Robert          & 1 & \\
+                      & C. Ling           & 1 & \\
+  DEN/DER/SESI/LE2S   & P. Lamagnère       & 1 & \\
+                      & D. Gentet          & 1 & \\
+                      & Y. Lejeail         & 1 & \\
+                      &                    &  & \\
+  DEN/DEC             & P. Brossard        &  & Document disponible\\
+  DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
+  DEN/DEC/SESC        & C. Valot           &  & \\
+                      & M. Agard           &  & \\
+  DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
+  DEN/DEC/SESC/LLCC   & G. Jomard          &  & \\
+  DEN/DEC/SESC/LC2I   & D. Plancq          &  & \\
+  DEN/DEC/SESC/LSC    & R. Masson          &  & \\
+                      & V. Marelle         &  & \\
+                      & B. Michel          &  & \\
+                      & M. Pelletier       &  & \\
+                      & M. Lainet          &  & \\
+                      & T. Helfer          &  & \\
+
+}
+
+\resumecea{
+  Ce document est un tutoriel sur l'écriture des lois de
+  comportement mécanique avec \mfront{}.
+  
+  Deux lois sont traités~:
+  \begin{enumerate}[-]
+  \item une loi élasto-(visco)-plastique typique des métaux~;
+  \item une loi viscoplastique isotrope compressible typique du
+    combustible nucléaire.
+  \end{enumerate}
+
+  La rédaction de ce document fait partie de la démarche de mise en
+  open-source de \mfront{}.
+}
 
 \begin{document}
 

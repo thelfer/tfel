@@ -125,7 +125,7 @@ namespace mfront
     }
     if(a.inputs.size()==1u){
       const VariableDescription& v =  a.inputs.front();
-      const string& vn = v.getGlossaryName(a.glossaryNames,a.entryNames);
+      const string& vn = v.getExternalName(a.glossaryNames,a.entryNames);
       if(vn!="Temperature"){
 	string msg("MechanicalBehaviourDescriptionCheckThermalExpansionCoefficientArgument : "
 		   "thermal expansion shall only depend on temperature");
@@ -1312,27 +1312,27 @@ namespace mfront
   }
 
   std::vector<std::string>
-  MechanicalBehaviourDescription::getGlossaryNames(const Hypothesis h,
+  MechanicalBehaviourDescription::getExternalNames(const Hypothesis h,
 						   const VarContainer& v) const
   {
-    return this->getMechanicalBehaviourData(h).getGlossaryNames(v);
+    return this->getMechanicalBehaviourData(h).getExternalNames(v);
   }
 
   void
-  MechanicalBehaviourDescription::getGlossaryNames(std::vector<std::string>& n,
+  MechanicalBehaviourDescription::getExternalNames(std::vector<std::string>& n,
 						   const Hypothesis h,
 						   const VarContainer& v) const
   {
-    return this->getMechanicalBehaviourData(h).getGlossaryNames(n,v);
-  } // end of MechanicalBehaviourDescription::getGlossaryNames
+    return this->getMechanicalBehaviourData(h).getExternalNames(n,v);
+  } // end of MechanicalBehaviourDescription::getExternalNames
 
   void
-  MechanicalBehaviourDescription::appendGlossaryNames(std::vector<std::string>& n,
+  MechanicalBehaviourDescription::appendExternalNames(std::vector<std::string>& n,
 						      const Hypothesis h,
 						      const VarContainer& v) const
   {
-    return this->getMechanicalBehaviourData(h).appendGlossaryNames(n,v);
-  } // end of MechanicalBehaviourDescription::appendGlossaryNames
+    return this->getMechanicalBehaviourData(h).appendExternalNames(n,v);
+  } // end of MechanicalBehaviourDescription::appendExternalNames
 
   void
   MechanicalBehaviourDescription::setGlossaryName(const Hypothesis h,
@@ -1365,10 +1365,10 @@ namespace mfront
   } // end of MechanicalBehaviourDescription::isEntryName
 
   std::string
-  MechanicalBehaviourDescription::getGlossaryName(const Hypothesis h,
+  MechanicalBehaviourDescription::getExternalName(const Hypothesis h,
 						  const std::string& n) const
   {
-    return this->getData(h,&MechanicalBehaviourData::getGlossaryName,n);
+    return this->getData(h,&MechanicalBehaviourData::getExternalName,n);
   } // end of MechanicalBehaviourDescription::getGlossaryName
 
   std::string

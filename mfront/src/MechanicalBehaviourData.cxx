@@ -16,6 +16,8 @@
 #include<stdexcept>
 
 #include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontPerformanceProfiling.hxx"
 #include"MFront/MechanicalBehaviourData.hxx"
 
@@ -104,30 +106,39 @@ namespace mfront{
   /*!
    * \brief associate a glossary name or an entry name to a variable
    * \param[in] m  : map to be updated
-   * \param[in] gm : glossary names
-   * \param[in] em : entry names
+   * \param[in] gn : glossary names
+   * \param[in] en : entry names
+   * \param[in] vn  : variable name
    * \param[in] n  : variable name
    * \param[in] g  : glossray name or entry name
    */
   static void
   MechanicalBehaviourDataAddToGlossaryOrEntryNames(std::map<std::string,std::string>& m,
-						   const std::map<std::string,std::string>& gm,
-						   const std::map<std::string,std::string>& em,
+						   const std::map<std::string,std::string>& gn,
+						   const std::map<std::string,std::string>& en,
+						   const std::set<std::string>& vn,
 						   const std::string& n,
 						   const std::string& g)
   {
     using namespace std;
     typedef map<string,string>::value_type MVType;
-    MechanicalBehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName(gm,em,g);
-    if(em.find(n)!=em.end()){
+    MechanicalBehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName(gn,en,g);
+    if(en.find(n)!=en.end()){
       string msg("MechanicalBehaviourDataAddToGlossaryOrEntryNames : ");
       msg += "an entry name has already been specified for variable '"+n+"'";
       throw(runtime_error(msg));
     }
-    if(gm.find(n)!=gm.end()){
+    if(gn.find(n)!=gn.end()){
       string msg("MechanicalBehaviourDataAddToGlossaryOrEntryNames : ");
       msg += "an entry name has already been specified for variable '"+n+"'";
       throw(runtime_error(msg));
+    }
+    if(n!=g){
+      if(vn.find(g)!=vn.end()){
+	string msg("MechanicalBehaviourDataAddToGlossaryOrEntryNames : ");
+	msg += "a variable with the '"+g+"' name has already been declared";
+	throw(runtime_error(msg));
+      }
     }
     if(!m.insert(MVType(n,g)).second){
       string msg("MechanicalBehaviourDataAddToGlossaryOrEntryNames : ");
@@ -940,15 +951,24 @@ namespace mfront{
     if(p!=this->glossaryNames.end()){
       return true;
     }
+    return false;
+  } // end of MechanicalBehaviourData::hasGlossaryName
+
+  bool
+  MechanicalBehaviourData::hasEntryName(const std::string& n) const
+  {
+    using namespace std;
+    map<string,string>::const_iterator p;
+    this->checkVariableName(n);
     p=this->entryNames.find(n);
     if(p!=this->entryNames.end()){
       return true;
     }
     return false;
-  } // end of MechanicalBehaviourData::getGlossaryNames
+  } // end of MechanicalBehaviourData::hasEntryName
 
   std::string
-  MechanicalBehaviourData::getGlossaryName(const std::string& n) const
+  MechanicalBehaviourData::getExternalName(const std::string& n) const
   {
     using namespace std;
     map<string,string>::const_iterator p;
@@ -962,33 +982,33 @@ namespace mfront{
       return p->second;
     }
     return n;
-  } // end of MechanicalBehaviourData::getGlossaryNames
+  } // end of MechanicalBehaviourData::getExternalNames
 
   std::vector<std::string>
-  MechanicalBehaviourData::getGlossaryNames(const VarContainer& v) const
+  MechanicalBehaviourData::getExternalNames(const VarContainer& v) const
   {
     using namespace std;
-    return v.getGlossaryNames(this->glossaryNames,
+    return v.getExternalNames(this->glossaryNames,
 			      this->entryNames);
-  } // end of MechanicalBehaviourData::getGlossaryNames
+  } // end of MechanicalBehaviourData::getExternalNames
   
   void
-  MechanicalBehaviourData::getGlossaryNames(std::vector<std::string>& names,
+  MechanicalBehaviourData::getExternalNames(std::vector<std::string>& names,
 					    const VarContainer& v) const
   {
-    v.getGlossaryNames(names,
+    v.getExternalNames(names,
 		       this->glossaryNames,
 		       this->entryNames);
-  } // end of MechanicalBehaviourData::getGlossaryNames
+  } // end of MechanicalBehaviourData::getExternalNames
   
   void
-  MechanicalBehaviourData::appendGlossaryNames(std::vector<std::string>& names,
+  MechanicalBehaviourData::appendExternalNames(std::vector<std::string>& names,
 					       const VarContainer& v) const
   {
-    v.appendGlossaryNames(names,
+    v.appendExternalNames(names,
 			  this->glossaryNames,
 			  this->entryNames);
-  } // end of MechanicalBehaviourData::getGlossaryNames
+  } // end of MechanicalBehaviourData::appendExternalNames
   
   void
   MechanicalBehaviourData::setGlossaryName(const std::string& n,
@@ -1001,13 +1021,13 @@ namespace mfront{
     if(!glossary.contains(g)){
       string msg("MechanicalBehaviourData::setGlossaryName : "
 		 "'"+g+"' is not a glossary name");
-#warning "One day, we will throw"
-      static_cast<void>(msg);
-      //      throw(runtime_error(msg));
+      throw(runtime_error(msg));
     }
     MechanicalBehaviourDataAddToGlossaryOrEntryNames(this->glossaryNames,
 						     this->glossaryNames,
-						     this->entryNames,n,g);
+						     this->entryNames,
+						     this->vnames,n,
+						     glossary.getGlossaryEntry(g).getKey());
   } // end of MechanicalBehaviourData::addGlossaryName
 
   bool
@@ -1027,10 +1047,22 @@ namespace mfront{
   MechanicalBehaviourData::setEntryName(const std::string& n,
 					const std::string& e)
   {
+    using namespace std;
+    using namespace tfel::glossary;
+    const Glossary& glossary = Glossary::getGlossary();
     this->checkVariableName(n);
+    if(glossary.contains(e)){
+      ostringstream msg;
+      msg << "MechanicalBehaviourData::setEntryName : "
+	  << "'" << e << "' is a glossary name. " << endl
+	  << "Please use 'setGlossaryName' method instead or choose another entry name.";
+      displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(e));
+      throw(runtime_error(msg.str()));
+    }
     MechanicalBehaviourDataAddToGlossaryOrEntryNames(this->entryNames,
 						     this->glossaryNames,
-						     this->entryNames,n,e);
+						     this->entryNames,
+						     this->vnames,n,e);
   } // end of MechanicalBehaviourData::addEntryName
 
   bool

@@ -32,10 +32,10 @@ namespace mfront
   struct TFEL_VISIBILITY_EXPORT MaterialPropertyDescription
   {
     /*!
-     * \return the glossary names of each input variables
+     * \return the external names of each input variables.
      */
     std::vector<std::string>
-    getInputVariableGlossaryNames(void);
+    getInputVariablesExternalNames(void);
     /*!
      * body of the material property
      */

@@ -12,12 +12,13 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_PARSERUTILITIES_HXX_
-#define _LIB_PARSERUTILITIES_HXX_ 
+#ifndef _LIB_MFRONT_PARSERUTILITIES_HXX_
+#define _LIB_MFRONT_PARSERUTILITIES_HXX_ 
 
-#include<fstream>
+#include<iosfwd>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Glossary/Forward/Glossary.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront{
@@ -49,7 +50,16 @@ namespace mfront{
   TFEL_VISIBILITY_EXPORT std::string 
   makeLowerCase(const std::string&);
 
+  /*!
+   * \brief display the complete description of a glossary entry
+   * \param[out] os : output stream
+   * \param[in]  e  : glossary entry
+   */
+  TFEL_VISIBILITY_EXPORT void
+  displayGlossaryEntryCompleteDescription(std::ostream&,
+					  const tfel::glossary::GlossaryEntry&);
+
 } // end of namespace mfront  
 
-#endif /* _LIB_PARSERUTILITIES_HXX */
+#endif /* _LIB_MFRONT_PARSERUTILITIES_HXX */
 

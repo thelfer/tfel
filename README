@@ -6,12 +6,13 @@ CECILL-B licences. A copy of those licences are included in the
 distributions of TFEL.
 
 TFEL versions 1.x were developped by CEA within the PLEIADES
-project. Since svn revision 584, TFEL is part of the pleiades
+project. Since svn revision 584, TFEL was part of the pleiades
 architecture projet.
 
-TFEL Copyright Notice (2014). Commissariat à l'Énergie Atomique.  All
-rights reserved.
+Starting from versions 2.x, TFEL has been publicly released under
+either the GPL or the CECILL-A licence. A copy of thoses licences are
+delivered with the sources of TFEL. CEA or EDF may also distribute
+this project under specific licensing conditions.
 
-
-
-
+Copyright (C) 2006-2013 CEA/DEN. All rights reserved. 
+Copyright (C) 2014-2015 CEA/DEN, EDF R&D. All rights reserved. 

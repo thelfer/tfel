@@ -37,7 +37,7 @@ namespace mfront{
   } // end of VariableDescription::VariableDescription
 
   const std::string&
-  VariableDescription::getGlossaryName(const std::map<std::string,std::string>& glossaryNames,
+  VariableDescription::getExternalName(const std::map<std::string,std::string>& glossaryNames,
 				       const std::map<std::string,std::string>& entryNames) const
   {
     using namespace std;
@@ -49,7 +49,7 @@ namespace mfront{
       return p3->second;
     }
     return this->name;
-  } // end of MFrontUMATInterfaceBase::getGlossaryName
+  } // end of VariableDescription::getExternalName
 
   bool
   VariableDescriptionContainer::contains(const std::string& n) const
@@ -64,33 +64,33 @@ namespace mfront{
   } // end of VariableDescriptionContainer::contains
 
   std::vector<std::string>
-  VariableDescriptionContainer::getGlossaryNames(const std::map<std::string,std::string>& glossaryNames,
+  VariableDescriptionContainer::getExternalNames(const std::map<std::string,std::string>& glossaryNames,
 						 const std::map<std::string,std::string>& entryNames) const
   {
     using namespace std;
     vector<string> n;
-    this->appendGlossaryNames(n,glossaryNames,entryNames);
+    this->appendExternalNames(n,glossaryNames,entryNames);
     return n;
   }
 
   void
-  VariableDescriptionContainer::getGlossaryNames(std::vector<std::string>& n,
+  VariableDescriptionContainer::getExternalNames(std::vector<std::string>& n,
 						 const std::map<std::string,std::string>& glossaryNames,
 						 const std::map<std::string,std::string>& entryNames) const
   {
     n.clear();
-    this->appendGlossaryNames(n,glossaryNames,entryNames);
+    this->appendExternalNames(n,glossaryNames,entryNames);
   }
 
   void
-  VariableDescriptionContainer::appendGlossaryNames(std::vector<std::string>& n,
+  VariableDescriptionContainer::appendExternalNames(std::vector<std::string>& n,
 						    const std::map<std::string,std::string>& glossaryNames,
 						    const std::map<std::string,std::string>& entryNames) const
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
     for(p=this->begin();p!=this->end();++p){
-      const string name = p->getGlossaryName(glossaryNames,entryNames);
+      const string name = p->getExternalName(glossaryNames,entryNames);
       if(p->arraySize==1u){
 	n.push_back(name);
       } else {
@@ -101,7 +101,7 @@ namespace mfront{
 	}
       }
     }
-  } // end of VariableDescriptionContainer::appendGlossaryNames
+  } // end of VariableDescriptionContainer::appendExternalNames
 
   const VariableDescription&
   VariableDescriptionContainer::getVariable(const std::string& n)

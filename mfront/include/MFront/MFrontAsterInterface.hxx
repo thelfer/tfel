@@ -135,7 +135,7 @@ namespace mfront{
      * \param[in] mb  : behaviour description
      * \param[in] h   : modelling hypothesis
      */
-    void
+    virtual void
     writeAsterBehaviourTraits(std::ostream&,
 			      const MechanicalBehaviourDescription&,
 			      const tfel::material::ModellingHypothesis::Hypothesis) const;
@@ -151,7 +151,10 @@ namespace mfront{
     virtual std::string
     getModellingHypothesisTest(const Hypothesis) const;
 
-    std::set<tfel::material::ModellingHypothesis::Hypothesis>
+    virtual std::map<MFrontUMATInterfaceBase::Hypothesis,std::string>
+    gatherModellingHypothesesAndTests(const MechanicalBehaviourDescription& mb) const;
+
+    virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const MechanicalBehaviourDescription&) const;
 
     bool   compareToNumericalTangentOperator;

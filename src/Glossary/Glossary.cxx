@@ -1,30 +1,26 @@
 /*!
- * \file   src/Glossary/Glossary.cxx
- * \author Helfer Thomas
- * \date   09/06/14
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
- */
+ *\file   Glossary.cxx
+ *\author Helfer Thomas
+ *\date   09/06/14
+*/
 
 #include<stdexcept>
 #include<algorithm>
 
 #include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 
 namespace tfel
 {
 namespace glossary
 {
 
-const char* Glossary::names[86] = {
+const char* Glossary::names[89] = {
 "AxialStrain",
 "AxialStress",
 "B10BurnUp",
-"BurnUp",
+"BurnUp (at.%)",
+"BurnUp (MWJ/tm)",
 "ConvectiveHeatTransferCoefficient",
 "CrossSectionArea",
 "CylindricalStress",
@@ -34,8 +30,10 @@ const char* Glossary::names[86] = {
 "EquivalentPlasticStrain",
 "EquivalentStrain",
 "EquivalentViscoplasticStrain",
-"FastNeutronFluence",
-"FastNeutronFlux",
+"FastNeutronFluence (>0.1 MeV)",
+"FastNeutronFluence (>1 MeV)",
+"FastNeutronFlux (>0.1 MeV)",
+"FastNeutronFlux (>1 MeV)",
 "FirstAxisSecondMomentArea",
 "FissionDensity",
 "GaseousSwelling",
@@ -125,9 +123,15 @@ const GlossaryEntry Glossary::B10BurnUp("B10BurnUp","B10BurnUp",
 "Ce nombre décrit le nombre d'atomes de \\(\\mbox{}^{10}B\\) consommé par unité de volume au cours de l'irradiation.",
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::BurnUp("BurnUp","BurnUp",
+const GlossaryEntry Glossary::BurnUp_AtPercent("BurnUp_AtPercent","BurnUp (at.%)",
 "at./100","scalar",
-"le taux de combustion",
+"le taux de combustion en atome pour cent",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::BurnUp_MWJperTm("BurnUp_MWJperTm","BurnUp (MWJ/tm)",
+"MWJ/tm","scalar",
+"le taux de combustion en MegaWattJour par tonne (métal)",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -185,21 +189,29 @@ const GlossaryEntry Glossary::EquivalentViscoplasticStrain("EquivalentViscoplast
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::FastNeutronFluence("FastNeutronFluence","FastNeutronFluence",
+const GlossaryEntry Glossary::FastNeutronFluence_01MeV("FastNeutronFluence_01MeV","FastNeutronFluence (>0.1 MeV)",
 "n.m^{-2}","scalar",
 "la fluence rapide",
 "" /* no 'description' defined */,
-"Il n'existe pas de limite standardisée définissantla limite du domaine rapide.""@^separator^@"
-"Pour les REP, il est classique de considérer que les neutrons ayant une énergie supérieure à \\(0.1\\, MeV\\) sont rapides.""@^separator^@"
-"Pour les RNR, la limite classiquement retenue est de \\(1\\, MeV\\).");
+"" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::FastNeutronFlux("FastNeutronFlux","FastNeutronFlux",
+const GlossaryEntry Glossary::FastNeutronFluence_1MeV("FastNeutronFluence_1MeV","FastNeutronFluence (>1 MeV)",
+"n.m^{-2}","scalar",
+"la fluence rapide",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::FastNeutronFlux_01MeV("FastNeutronFlux_01MeV","FastNeutronFlux (>0.1 MeV)",
 "n.m^{-2}.s^{-1}","scalar",
 "le flux de neutron rapide",
 "" /* no 'description' defined */,
-"Il n'existe pas de limite standardisée définissantla limite du domaine rapide.""@^separator^@"
-"Pour les REP, il est classique de considérer que les neutrons ayant une énergie supérieure à \\(0.1\\, MeV\\) sont rapides.""@^separator^@"
-"Pour les RNR, la limite classiquement retenue est de \\(1 MeV\\).");
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::FastNeutronFlux_1MeV("FastNeutronFlux_1MeV","FastNeutronFlux (>1 MeV)",
+"n.m^{-2}.s^{-1}","scalar",
+"le flux de neutron rapide",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
 
 const GlossaryEntry Glossary::FirstAxisSecondMomentArea("FirstAxisSecondMomentArea","FirstAxisSecondMomentArea",
 "??","scalar",
@@ -574,7 +586,7 @@ const GlossaryEntry Glossary::TrescaStress("TrescaStress","TrescaStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+75,Glossary::names+77,
+const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+78,Glossary::names+80,
 "Pa","scalar",
 "la valeur maximale de la contrainte qu'un materiau peut supporter",
 "" /* no 'description' defined */,
@@ -598,7 +610,7 @@ const GlossaryEntry Glossary::VonMisesStress("VonMisesStress","VonMisesStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+80,Glossary::names+82,
+const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+83,Glossary::names+85,
 "Pa","scalar",
 "la limite d'élasticité",
 "" /* no 'description' defined */,
@@ -636,11 +648,12 @@ return glossary;
 } // end of Glossary::getGlossary
 
 Glossary::Glossary(){
-this->keys.reserve(84);
+this->keys.reserve(87);
 this->insert(Glossary::AxialStrain);
 this->insert(Glossary::AxialStress);
 this->insert(Glossary::B10BurnUp);
-this->insert(Glossary::BurnUp);
+this->insert(Glossary::BurnUp_AtPercent);
+this->insert(Glossary::BurnUp_MWJperTm);
 this->insert(Glossary::ConvectiveHeatTransferCoefficient);
 this->insert(Glossary::CrossSectionArea);
 this->insert(Glossary::CylindricalStress);
@@ -650,8 +663,10 @@ this->insert(Glossary::ElasticStrain);
 this->insert(Glossary::EquivalentPlasticStrain);
 this->insert(Glossary::EquivalentStrain);
 this->insert(Glossary::EquivalentViscoplasticStrain);
-this->insert(Glossary::FastNeutronFluence);
-this->insert(Glossary::FastNeutronFlux);
+this->insert(Glossary::FastNeutronFluence_01MeV);
+this->insert(Glossary::FastNeutronFluence_1MeV);
+this->insert(Glossary::FastNeutronFlux_01MeV);
+this->insert(Glossary::FastNeutronFlux_1MeV);
 this->insert(Glossary::FirstAxisSecondMomentArea);
 this->insert(Glossary::FissionDensity);
 this->insert(Glossary::GaseousSwelling);
@@ -736,17 +751,21 @@ this->keys.push_back(e.getKey());
 } // end of Glossary::insert
 
 bool
-Glossary::contains(const std::string& w) const
+Glossary::contains(const std::string& n) const
+{
+return this->findGlossaryEntry(n)!=this->entries.end();
+} // end of Glossary::contains
+
+const GlossaryEntry&
+Glossary::getGlossaryEntry(const std::string& n) const
 {
 using namespace std;
-set<GlossaryEntry>::const_iterator p;
-for(p=this->entries.begin();p!=this->entries.end();++p){
-const vector<string>& n = p->getNames();
-if(find(n.begin(),n.end(),w)!=n.end()){
-return true;
+set<GlossaryEntry>::const_iterator p=this->findGlossaryEntry(n);
+if(p==this->entries.end()){
+string msg("Glossary::getGlossaryEntry : no glossary entry matching '"+n+"'");
+throw(runtime_error(msg));
 }
-}
-return false;
+return *p;
 } // end of Glossary::contains
 
 const std::vector<std::string>&
@@ -754,6 +773,23 @@ Glossary::getKeys(void) const
 {
 return this->keys;
 } // end of Glossary::contains
+
+std::set<GlossaryEntry>::const_iterator
+Glossary::findGlossaryEntry(const std::string& n) const
+{
+using namespace std;
+set<GlossaryEntry>::const_iterator p;
+for(p=this->entries.begin();p!=this->entries.end();++p){
+if(p->getKey()==n){
+return p;
+}
+const vector<string>& names = p->getNames();
+if(find(names.begin(),names.end(),n)!=names.end()){
+return p;
+}
+}
+return this->entries.end();
+} // end of Glossary::findGlossaryEntry
 
 } // end of namespace glossary
 

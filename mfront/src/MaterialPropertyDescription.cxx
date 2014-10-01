@@ -17,10 +17,10 @@ namespace mfront
 {
 
   std::vector<std::string>
-  MaterialPropertyDescription::getInputVariableGlossaryNames(void)
+  MaterialPropertyDescription::getInputVariablesExternalNames(void)
   {
-    return this->inputs.getGlossaryNames(this->glossaryNames,
+    return this->inputs.getExternalNames(this->glossaryNames,
 					 this->entryNames);
-  } // end of MaterialPropertyDescription::getInputVariableGlossaryNames
+  } // end of MaterialPropertyDescription::getInputVariablesExternalNames
 
 } // end of namespace mfront

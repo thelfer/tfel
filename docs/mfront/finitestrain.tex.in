@@ -1,10 +1,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% File      : mfront.tex
+% File      : finitestrain.tex
 % Author    : th202608@pleiades068.intra.cea.fr
 % Date      : 15 oct. 2012
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
 
 \usepackage[dvips]{graphicx}
 \usepackage[dvips,breaklinks]{hyperref}

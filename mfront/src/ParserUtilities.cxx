@@ -13,9 +13,11 @@
  */
 
 #include<stdexcept>
+#include<fstream>
 #include<sstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/ParserUtilities.hxx"
 
@@ -164,5 +166,35 @@ namespace mfront
     os << src;
     return os.str();
   } // end of toString
+
+  void
+  displayGlossaryEntryCompleteDescription(std::ostream& os,
+					  const tfel::glossary::GlossaryEntry& e)
+  {
+    using namespace std;
+    const string& k = e.getKey();
+    const vector<string>& n = e.getNames();
+    const string& sd = e.getShortDescription();
+    const vector<string>& d = e.getDescription();
+    if((!sd.empty())||(!d.empty())){
+      os << endl
+	 << "For your information, the description of the glossary entry '" << k << "' is:" << endl;
+      if(!n.empty()){
+	os << k << ":" ;
+	for(vector<string>::const_iterator p=n.begin();p!=n.end();++p){
+	  os << " '" << *p << "'";
+	}
+	os << endl;
+      }
+      if(!sd.empty()){
+	os << sd << endl;
+      }
+      if(!d.empty()){
+	for(vector<string>::const_iterator p=d.begin();p!=d.end();++p){
+	  os << *p << endl;
+	}
+      }
+    }
+  } // end of displayGlossaryEntryCompleteDescription
 
 } // end of namespace mfront

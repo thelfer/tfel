@@ -11,6 +11,7 @@ install_header(TFEL/Config TFEL_MATH_Config.hxx)
 install_header(TFEL/Config TFELTypes.hxx)
 install_header(TFEL/Config TFELConfig.hxx)
 
+install_header(TFEL/Glossary/Forward Glossary.hxx)
 install_header(TFEL/Glossary Glossary.hxx)
 install_header(TFEL/Glossary GlossaryEntry.hxx)
 

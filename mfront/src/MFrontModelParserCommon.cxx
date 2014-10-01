@@ -15,6 +15,8 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/ParserUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontModelParserCommon.hxx"
@@ -681,10 +683,11 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    string methodName;
+    using namespace tfel::glossary;
     typedef map<string,string>::value_type MVType;
     typedef map<string,double>::value_type MVType2;
     typedef map<string,unsigned short>::value_type MVType3;
+    string methodName;
     unsigned short i;
     if(!this->functions.empty()){
       string msg("MFrontModelParserCommon::treatOutputMethod : ");
@@ -708,6 +711,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("MFrontModelParserCommon::treatOutputMethod","(");
     if(methodName=="setGlossaryName"){
+      const Glossary& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MFrontModelParserCommon::treatOutputMethod",
 			      "Expected glossary name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -728,11 +732,21 @@ namespace mfront{
       MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 								     this->entryNames,
 								     glossaryName);
-      if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
+      if(!glossary.contains(glossaryName)){
+	string msg("MFrontMaterialLawParser::treatMethod : "
+		   "'"+glossaryName+"' is not a valid glossary name");
+	throw(runtime_error(msg));
+      }
+      const string& k = glossary.getGlossaryEntry(glossaryName).getKey();
+      if(k!=this->currentVar){
+	this->reserveName(k,false);
+      }
+      if(!this->glossaryNames.insert(MVType(this->currentVar,k)).second){
 	this->throwRuntimeError("MFrontModelParserCommon::treatOutputMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
     } else if (methodName=="setEntryName"){
+      const Glossary& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MFrontModelParserCommon::treatOutputMethod",
 			      "Expected entry file name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -749,10 +763,21 @@ namespace mfront{
 	this->throwRuntimeError("MFrontModelParserCommon::treatOutputMethod",
 				"Entry file name too short.");
       }
-      string entryName = this->current->value.substr(1,this->current->value.size()-2);
+      const string entryName = this->current->value.substr(1,this->current->value.size()-2);
       MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 								     this->entryNames,
 								     entryName);
+      if(glossary.contains(entryName)){
+	ostringstream msg;
+	msg << "MFrontMaterialLawParser::treatMethod : "
+	    << "'" << entryName <<"' is a glossary name. Please use "
+	    << "the 'setGlossaryName' method or choose another entry name.";
+	displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(entryName));
+	throw(runtime_error(msg.str()));
+      }
+      if(entryName!=this->currentVar){
+	this->reserveName(entryName,false);
+      }
       if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
 	this->throwRuntimeError("MFrontModelParserCommon::treatOutputMethod",
 				"Entry file name for field '"+this->currentVar+"' already defined.");
@@ -809,6 +834,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    using namespace tfel::glossary;
     string methodName;
     typedef map<string,string>::value_type MVType;
     typedef map<string,unsigned short>::value_type MVType2;
@@ -833,6 +859,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("MFrontModelParserCommon::treatInputMethod","(");
     if(methodName=="setGlossaryName"){
+      const Glossary& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MFrontModelParserCommon::treatInputMethod",
 			      "Expected glossary name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -853,11 +880,21 @@ namespace mfront{
       MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 								     this->entryNames,
 								     glossaryName);
-      if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
+      if(!glossary.contains(glossaryName)){
+	string msg("MFrontMaterialLawParser::treatMethod : "
+		   "'"+glossaryName+"' is not a valid glossary name");
+	throw(runtime_error(msg));
+      }
+      const string& k = glossary.getGlossaryEntry(glossaryName).getKey();
+      if(k!=this->currentVar){
+	this->reserveName(k,false);
+      }
+      if(!this->glossaryNames.insert(MVType(this->currentVar,k)).second){
 	this->throwRuntimeError("MFrontModelParserCommon::treatInputMethod",
 				"Glossary name for field '"+this->currentVar+"' already defined.");
       }
     } else if (methodName=="setEntryName"){
+      const Glossary& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MFrontModelParserCommon::treatInputMethod",
 			      "Expected entry file name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -878,6 +915,17 @@ namespace mfront{
       MFrontModelParserCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 								     this->entryNames,
 								     entryName);
+      if(glossary.contains(entryName)){
+	ostringstream msg;
+	msg << "MFrontMaterialLawParser::treatMethod : "
+	    << "'" << entryName <<"' is a glossary name. Please use "
+	    << "the 'setGlossaryName' method or choose another entry name.";
+	displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(entryName));
+	throw(runtime_error(msg.str()));
+      }
+      if(entryName!=this->currentVar){
+	this->reserveName(entryName,false);
+      }
       if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
 	this->throwRuntimeError("MFrontModelParserCommon::treatInputMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
@@ -1222,7 +1270,7 @@ namespace mfront{
       double tmp;
       converter >> tmp;
       if(!converter&&(!converter.eof())){
-	this->throwRuntimeError("MFrontModelParserCommon::readDefaultValue",
+	this->throwRuntimeError("MFrontMode⁹8lParserCommon::readDefaultValue",
 				"Could not read default for variable '"+this->currentVar+"'");
       }
       res = this->current->value;

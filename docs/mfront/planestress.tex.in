@@ -1,4 +1,5 @@
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
 
 \usepackage[dvips]{graphicx}
 \usepackage[dvips,breaklinks]{hyperref}

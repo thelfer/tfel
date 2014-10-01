@@ -11,9 +11,9 @@
  * project under specific licensing conditions. 
  */
 
-// g++ -fPIC -DPIC `tfel-config --includes --libs --utilities --glossary` tools/glossary/generate_glossary.cxx -o generate_glossary
+// g++ -fPIC -DPIC `tfel-config --includes --libs --utilities --glossary` generate_glossary.cxx -o generate_glossary
 
-// g++ -fPIC -DPIC tools/glossary/generate_glossary.cxx  -o generate_glossary -I/home/th202608/codes/tfel/trunk/install/include -L/home/th202608/codes/tfel/trunk/install/lib -lTFELUtilities  -lTFELGlossary && ./generate_glossary && mv Glossary.hxx ../../include/TFEL/Glossary/Glossary.hxx && mv Glossary.cxx ../../src/Glossary/Glossary.cxx && mv PythonGlossary.cxx ../../bindings/python/tfel/Glossary.cxx  &&  ./generate_glossary && pandoc -f markdown+tex_math_single_backslash --toc  glossary-pandoc.txt -o /tmp/glossary.docx
+// g++ -fPIC -DPIC generate_glossary.cxx  -o generate_glossary -I/home/th202608/codes/tfel/trunk/install/include -L/home/th202608/codes/tfel/trunk/install/lib -lTFELUtilities  -lTFELGlossary && ./generate_glossary && mv Glossary.hxx ../../include/TFEL/Glossary/Glossary.hxx && mv Glossary.cxx ../../src/Glossary/Glossary.cxx && mv PythonGlossary.cxx ../../bindings/python/tfel/Glossary.cxx  &&  ./generate_glossary && pandoc -f markdown+tex_math_single_backslash --toc  glossary-pandoc.txt -o /tmp/glossary.docx
 
 #include<iostream>
 #include<stdexcept>
@@ -282,7 +282,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   header << "#include<vector>" << endl;
   header << "#include<string>" << endl;
   header << endl;
-  header << "#include\"TFEL/Glossary/GlossaryEntry.hxx\"" << endl;
+  header << "#include\"TFEL/Glossary/Forward/Glossary.hxx\"" << endl;
   header << endl;
   header << "namespace tfel" << endl;
   header << "{" << endl;
@@ -306,11 +306,17 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   }
   header << endl;
   header << "/*!\n"
-	 << " * \\return true if the glossary contains the given name\n"
+	 << " * \\return true if the glossary contains the given name or key\n"
 	 << " * \\param[in] n : name\n"
 	 << " */" << endl;
   header << "bool" << endl;
   header << "contains(const std::string&) const;" << endl;
+  header << "/*!\n"
+	 << " * \\return the glossary entry associated with the given name or key\n"
+	 << " * \\param[in] n : name\n"
+	 << " */" << endl;
+  header << "const GlossaryEntry&" << endl;
+  header << "getGlossaryEntry(const std::string&) const;" << endl;
   header << "/*!\n"
 	 << " * \\return all the registred keys\n"
 	 << " */" << endl;
@@ -335,9 +341,19 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   header << "Glossary&" << endl;
   header << "operator=(const Glossary&);" << endl;
   header << endl;
-  header << "std::set<GlossaryEntry> entries;" << endl;
+  header << "/*!" << endl
+	 << "\\return an iterator to the glossary associated with the given name or key. " << endl
+	 << "Return this->entries.end() if no matching entry is found. " << endl
+	 << "\\param[in] n : name or key." << endl
+	 << "*/" << endl
+	 << "std::set<GlossaryEntry>::const_iterator" << endl
+	 << "findGlossaryEntry(const std::string&) const;" << endl;
   header << endl;
-  header << "std::vector<std::string> keys;" << endl;
+  header << "//! list of all registred entries" << endl
+	 << "std::set<GlossaryEntry> entries;" << endl;
+  header << endl;
+  header << "//! list of all registred keys" << endl
+	 << "std::vector<std::string> keys;" << endl;
   header << endl;
   header << "}; // end of struct Glossary" << endl;
   header << endl;
@@ -357,6 +373,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   src << "#include<algorithm>" << endl;
   src << endl;
   src << "#include\"TFEL/Glossary/Glossary.hxx\"" << endl;
+  src << "#include\"TFEL/Glossary/GlossaryEntry.hxx\"" << endl;
   src << endl;
   src << "namespace tfel" << endl;
   src << "{" << endl;
@@ -426,24 +443,45 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   src << "} // end of Glossary::insert" << endl;
   src << endl;
   src << "bool" << endl;
-  src << "Glossary::contains(const std::string& w) const" << endl;
-  src << "{" << endl;
-  src << "using namespace std;" << endl;
-  src << "set<GlossaryEntry>::const_iterator p;" << endl;
-  src << "for(p=this->entries.begin();p!=this->entries.end();++p){" << endl;
-  src << "const vector<string>& n = p->getNames();" << endl;
-  src << "if(find(n.begin(),n.end(),w)!=n.end()){" << endl;
-  src << "return true;" << endl;
-  src << "}" << endl;
-  src << "}" << endl;
-  src << "return false;" << endl;
-  src << "} // end of Glossary::contains" << endl;
+  src << "Glossary::contains(const std::string& n) const" << endl
+      << "{" << endl
+      << "return this->findGlossaryEntry(n)!=this->entries.end();" << endl
+      << "} // end of Glossary::contains" << endl;
+  src << endl;
+  src << "const GlossaryEntry&" << endl;
+  src << "Glossary::getGlossaryEntry(const std::string& n) const" << endl
+      << "{" << endl
+      << "using namespace std;" << endl
+      << "set<GlossaryEntry>::const_iterator p=this->findGlossaryEntry(n);" << endl
+      << "if(p==this->entries.end()){" << endl
+      << "string msg(\"Glossary::getGlossaryEntry : no glossary entry matching '\"+n+\"'\");" << endl
+      << "throw(runtime_error(msg));" << endl
+      << "}" << endl
+      << "return *p;" << endl
+      << "} // end of Glossary::contains" << endl;
   src << endl;
   src << "const std::vector<std::string>&" << endl;
   src << "Glossary::getKeys(void) const" << endl;
-  src << "{" << endl;
-  src << "return this->keys;" << endl;
-  src << "} // end of Glossary::contains" << endl;
+  src << "{" << endl
+      << "return this->keys;" << endl
+      << "} // end of Glossary::contains" << endl;
+  src << endl;
+  src << "std::set<GlossaryEntry>::const_iterator" << endl;
+  src << "Glossary::findGlossaryEntry(const std::string& n) const" << endl;
+  src << "{" << endl
+      << "using namespace std;" << endl
+      << "set<GlossaryEntry>::const_iterator p;" << endl
+      << "for(p=this->entries.begin();p!=this->entries.end();++p){" << endl
+      << "if(p->getKey()==n){" << endl
+      << "return p;" << endl
+      << "}" << endl
+      << "const vector<string>& names = p->getNames();" << endl
+      << "if(find(names.begin(),names.end(),n)!=names.end()){" << endl
+      << "return p;" << endl
+      << "}" << endl
+      << "}" << endl
+      << "return this->entries.end();" << endl
+      << "} // end of Glossary::findGlossaryEntry" << endl;
   src << endl;
   src << "} // end of namespace glossary" << endl;
   src << endl;
@@ -670,6 +708,7 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer)
   psrc << "#include<boost/python.hpp>" << endl;
   psrc << endl;
   psrc << "#include\"TFEL/Glossary/Glossary.hxx\"" << endl;
+  psrc << "#include\"TFEL/Glossary/GlossaryEntry.hxx\"" << endl;
   psrc << endl;
   psrc << "void\ndeclareGlossary(void)" << endl;
   psrc << "{" << endl;

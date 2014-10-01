@@ -1,18 +1,13 @@
 /*!
- * \file   bindings/python/tfel/Glossary.cxx
- * \author Helfer Thomas
- * \date   09/06/14
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
- */
+ *\file   PythonGlossary.cxx
+ *\author Helfer Thomas
+ *\date   09/06/14
+*/
 
 #include<boost/python.hpp>
 
 #include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 
 void
 declareGlossary(void)
@@ -31,8 +26,10 @@ return_value_policy<reference_existing_object>())
 "la contrainte axiale")
 .def_readonly("B10BurnUp",&Glossary::B10BurnUp,
 "le taux d'usure en \\(\\mbox{}^{10}B\\)")
-.def_readonly("BurnUp",&Glossary::BurnUp,
-"le taux de combustion")
+.def_readonly("BurnUp_AtPercent",&Glossary::BurnUp_AtPercent,
+"le taux de combustion en atome pour cent")
+.def_readonly("BurnUp_MWJperTm",&Glossary::BurnUp_MWJperTm,
+"le taux de combustion en MegaWattJour par tonne (métal)")
 .def_readonly("ConvectiveHeatTransferCoefficient",&Glossary::ConvectiveHeatTransferCoefficient,
 "le coefficient d'échange par convection")
 .def_readonly("CrossSectionArea",&Glossary::CrossSectionArea,
@@ -51,9 +48,13 @@ return_value_policy<reference_existing_object>())
 "la somme des déformations plastiques ou viscoplastiques équivalentes")
 .def_readonly("EquivalentViscoplasticStrain",&Glossary::EquivalentViscoplasticStrain,
 "la déformation viscoplastique équivalente")
-.def_readonly("FastNeutronFluence",&Glossary::FastNeutronFluence,
+.def_readonly("FastNeutronFluence_01MeV",&Glossary::FastNeutronFluence_01MeV,
 "la fluence rapide")
-.def_readonly("FastNeutronFlux",&Glossary::FastNeutronFlux,
+.def_readonly("FastNeutronFluence_1MeV",&Glossary::FastNeutronFluence_1MeV,
+"la fluence rapide")
+.def_readonly("FastNeutronFlux_01MeV",&Glossary::FastNeutronFlux_01MeV,
+"le flux de neutron rapide")
+.def_readonly("FastNeutronFlux_1MeV",&Glossary::FastNeutronFlux_1MeV,
 "le flux de neutron rapide")
 .def_readonly("FirstAxisSecondMomentArea",&Glossary::FirstAxisSecondMomentArea,
 "??")

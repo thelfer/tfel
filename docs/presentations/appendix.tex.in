@@ -5,7 +5,6 @@ on donne ici des exemples de sources \mfront ~ qui correspondent aux comportemet
 \subsection{Sources \mfront{} de la loi élasto-(visco)-plastique }
 \label{sec:mfrontchaboche}
 
-
 \begin{enumerate}
 \item algorithme implicite avec matrice jacobienne numérique .
   \begin{flushleft}
@@ -97,7 +96,7 @@ jacobienne numérique) permettent d'obtenir une résolution efficace
 \label{sec:mfrontviscochaboche}
 
 Loi viscoplastique~: algorithme implicite avec matrice jacobienne programmée.
-la modification concerne eprincipalment l'équation \texttt{fp}.
+la modification concerne principalement l'équation \texttt{fp}.
 De plus la matrice jacobienne a été ajoutée.
 
   \begin{flushleft}

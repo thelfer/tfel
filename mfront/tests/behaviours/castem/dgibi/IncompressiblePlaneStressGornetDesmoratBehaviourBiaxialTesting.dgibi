@@ -102,7 +102,7 @@ C1 = 0.183  ;     C2 = 0.0034   ;
 XNU = 0.499 ;
 YOUini = 3.*(2.*(C1+C2)) ;   YOU = 20000.* YOUini ;
 *
-*Parametres du modèle GD : essais Treloar/Kawabata MPa
+*Parametres du modÃ¨le GD : essais Treloar/Kawabata MPa
 H1 = 0.142236  ;
 H2 = 1.5854659E-2   ;
 H3 = 3.4946541E-4   ;

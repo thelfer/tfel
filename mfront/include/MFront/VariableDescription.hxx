@@ -62,7 +62,7 @@ namespace mfront
      * \param[in] entryNames
      */
     const std::string&
-    getGlossaryName(const std::map<std::string,std::string>&,
+    getExternalName(const std::map<std::string,std::string>&,
 		    const std::map<std::string,std::string>&) const;
   }; // end of struct VariableDescription
 
@@ -96,34 +96,36 @@ namespace mfront
     bool
     contains(const std::string&) const;
     /*!
-     * \return the list of glossary names associated with this
-     * container
+     * \return the list of external names associated with this
+     * container.
+     * \see VariableDescription::getExternalName
      * \param[in] glossaryNames : glossary names
      * \param[in] entryNames    : entry names
      */
     std::vector<std::string>
-    getGlossaryNames(const std::map<std::string,std::string>&,
+    getExternalNames(const std::map<std::string,std::string>&,
 		     const std::map<std::string,std::string>&) const;
     /*!
-     * get the glossary names associated with this
-     * container
+     * get the external names associated with this container.
+     * \see VariableDescription::getExternalName
      * \param[out] names         : glossary names of the function
      * \param[in]  glossaryNames : glossary names
      * \param[in]  entryNames    : entry names
      */
     void
-    getGlossaryNames(std::vector<std::string>&,
+    getExternalNames(std::vector<std::string>&,
 		     const std::map<std::string,std::string>&,
 		     const std::map<std::string,std::string>&) const;
     /*!
-     * append the list of glossary names associated with this
-     * container at the end of the given list
+     * append the list of external names associated with this
+     * container at the end of the given list.
+     * \see VariableDescription::getExternalName
      * \param[in] names         : list of names
      * \param[in] glossaryNames : glossary names
      * \param[in] entryNames    : entry names
      */
     void
-    appendGlossaryNames(std::vector<std::string>&,
+    appendExternalNames(std::vector<std::string>&,
 			const std::map<std::string,std::string>&,
 			const std::map<std::string,std::string>&) const;
     /*!

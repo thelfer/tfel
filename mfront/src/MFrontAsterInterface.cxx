@@ -810,9 +810,9 @@ namespace mfront{
 	const VariableDescriptionContainer& mps = d.getMaterialProperties();
 	for(VariableDescriptionContainer::const_iterator pm=mps.begin();pm!=mps.end();++pm){
 	  const UMATMaterialProperty& mp1 = findUMATMaterialProperty(mfirst.first,
-								     mb.getGlossaryName(h,pm->name));
+								     mb.getExternalName(h,pm->name));
 	  const UMATMaterialProperty& mp2 = findUMATMaterialProperty(pum->first,
-								     mb.getGlossaryName(h,pm->name));
+								     mb.getExternalName(h,pm->name));
 	  SupportedTypes::TypeSize o1 = mp1.offset;
 	  o1+=pum->second;
 	  SupportedTypes::TypeSize o2 = mp2.offset;
@@ -1063,6 +1063,24 @@ namespace mfront{
     }
     out << "}; // end of class AsterTraits\n\n";
   }
+
+  std::map<MFrontUMATInterfaceBase::Hypothesis,std::string>
+  MFrontAsterInterface::gatherModellingHypothesesAndTests(const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    typedef map<Hypothesis,string>::value_type MVType;
+    map<Hypothesis,string> res;
+    if((mb.getSymmetryType()==mfront::ORTHOTROPIC)&&
+       ((mb.getAttribute(MechanicalBehaviourDescription::requiresStiffnessTensor,false))||
+	(mb.getAttribute(MechanicalBehaviourDescription::requiresThermalExpansionCoefficientTensor,false)))){
+      set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
+      for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
+	res.insert(MVType(*p,this->getModellingHypothesisTest(*p)));
+      }
+      return res;
+    }
+    return MFrontUMATInterfaceBase::gatherModellingHypothesesAndTests(mb);
+  } // end of MFrontAsterInterface::gatherModellingHypothesesAndTests
 
   std::string
   MFrontAsterInterface::getModellingHypothesisTest(const Hypothesis h) const

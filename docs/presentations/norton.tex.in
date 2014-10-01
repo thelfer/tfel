@@ -13,7 +13,7 @@ est définie par~:
     \tepsilonto   &= \tepsilonel+\tepsilonvis \\
     \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\
     \tdepsilonvis &= \dot{p}\,\tenseur{n} \\
-    \dot{p}       &= A\,\sigmaeq^{m}
+    \dot{p}       &= A\,\paren{\sigmaeq}^{m}
   \end{aligned}
 \right.
 \]
@@ -26,7 +26,7 @@ où~:
   \item \(\tenseur{n}=\Frac{3}{2}\,\Frac{\tenseur{s}}{\sigmaeq}\) est
     la direction d'écoulement~;
   \item \(\tenseur{s}\) est le déviateur des contraintes~;
-  \item \(\sigmaeq\) est la norme de \nom{Von Mises}.
+  \item \(\sigmaeq=\sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}\) est la norme de \nom{Von Mises}.
   \end{itemize}
 \end{minipage}
 

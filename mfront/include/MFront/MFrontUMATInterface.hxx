@@ -315,7 +315,10 @@ namespace mfront{
     virtual std::string
     getModellingHypothesisTest(const Hypothesis) const;
 
-    std::set<tfel::material::ModellingHypothesis::Hypothesis>
+    virtual std::map<MFrontUMATInterfaceBase::Hypothesis,std::string>
+    gatherModellingHypothesesAndTests(const MechanicalBehaviourDescription& mb) const;
+
+    virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const MechanicalBehaviourDescription&) const;
 
     std::vector<FiniteStrainStrategy> finiteStrainStrategies;

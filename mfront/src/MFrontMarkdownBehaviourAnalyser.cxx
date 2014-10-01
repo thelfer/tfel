@@ -12,8 +12,11 @@
  */
 
 #include<fstream>
+#include<sstream>
 
 #include"TFEL/Utilities/StringAlgorithms.hxx"
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MechanicalBehaviourDescription.hxx"
@@ -358,6 +361,8 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
+    using namespace tfel::glossary;
+    const Glossary& glossary = Glossary::getGlossary();
     vector<Data> data;
     const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
     for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=dh.begin();ph!=dh.end();++ph){
@@ -394,12 +399,27 @@ namespace mfront
 	      pd->description  += '\n'+ModellingHypothesis::toString(*ph) + " : "+pv->description;
 	    }
 	  }
-	  pd->glossaryName = d.getGlossaryName(pv->name);
+	  pd->externalName = d.getExternalName(pv->name);
+	  if(pd->description.empty()){
+	    if(glossary.contains(pd->externalName)){
+	      const GlossaryEntry& e = glossary.getGlossaryEntry(pd->externalName);
+	      ostringstream os;
+	      if(*ph!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+		os << ModellingHypothesis::toString(*ph) << " : ";
+	      }
+	      os << e.getShortDescription() << endl;
+	      const vector<string>& cd = e.getDescription();
+	      for(vector<string>::const_iterator pcd=cd.begin();pcd!=cd.end();++pcd){
+		os << *pcd << endl;
+	      }
+	      pd->description += os.str();
+	    }
+	  }
 	}
 	if((pd->name         != pv->name)||
 	   (pd->type         != pv->type)||
 	   (pd->type         != pv->type)||
-	   (pd->glossaryName != d.getGlossaryName(pv->name))||
+	   (pd->externalName != d.getExternalName(pv->name))||
 	   (pd->arraySize    != pv->arraySize)){
 	  string msg("MFrontMarkdownBehaviourAnalyser::getData : ");
 	  msg += "inconsistent data across hypothesis for variable '"+pd->name+"'";
@@ -450,8 +470,8 @@ namespace mfront
       cbnames.insert(cn.begin(),cn.end());
     }
     for(pd=data.begin();pd!=data.end();++pd){
-      os << "* " << pd->glossaryName << ":" << endl;
-      if(pd->glossaryName!=pd->name){
+      os << "* " << pd->externalName << ":" << endl;
+      if(pd->externalName!=pd->name){
 	os << "\t+ " << l.at("variable name") << ": " << pd->name << endl; 
       }
       os << "\t+ " << l.at("variable type") << ": " << pd->type << endl; 

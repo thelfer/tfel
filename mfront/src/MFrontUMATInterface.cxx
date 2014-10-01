@@ -1305,9 +1305,9 @@ namespace mfront{
 	const VariableDescriptionContainer& mps = d.getMaterialProperties();
 	for(VariableDescriptionContainer::const_iterator pm=mps.begin();pm!=mps.end();++pm){
 	  const UMATMaterialProperty& mp1 = findUMATMaterialProperty(mfirst.first,
-								     mb.getGlossaryName(h,pm->name));
+								     mb.getExternalName(h,pm->name));
 	  const UMATMaterialProperty& mp2 = findUMATMaterialProperty(pum->first,
-								     mb.getGlossaryName(h,pm->name));
+								     mb.getExternalName(h,pm->name));
 	  SupportedTypes::TypeSize o1 = mp1.offset;
 	  o1+=pum->second;
 	  SupportedTypes::TypeSize o2 = mp2.offset;
@@ -1496,7 +1496,7 @@ namespace mfront{
     const VariableDescriptionContainer& sv  = d.getPersistentVariables();
     SupportedTypes::TypeSize o;
     for(VariableDescriptionContainer::const_iterator p=sv.begin();p!=sv.end();++p){
-      if(d.getGlossaryName(p->name)=="AxialStrain"){
+      if(d.getExternalName(p->name)=="AxialStrain"){
 	return make_pair(true,o);
       }
       o += this->getTypeSize(p->type,p->arraySize);
@@ -2141,6 +2141,22 @@ namespace mfront{
     }
     out << "}; // end of class UMATTraits\n\n";
   } // end of MFrontUMATInterface::writeUMATBehaviourTraits
+
+  std::map<MFrontUMATInterfaceBase::Hypothesis,std::string>
+  MFrontUMATInterface::gatherModellingHypothesesAndTests(const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    typedef map<Hypothesis,string>::value_type MVType;
+    map<Hypothesis,string> res;
+    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
+      for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
+	res.insert(MVType(*p,this->getModellingHypothesisTest(*p)));
+      }
+      return res;
+    }
+    return MFrontUMATInterfaceBase::gatherModellingHypothesesAndTests(mb);
+  } // end of MFrontUMATInterface::gatherModellingHypothesesAndTests
 
   std::string
   MFrontUMATInterface::getModellingHypothesisTest(const Hypothesis h) const

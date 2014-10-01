@@ -138,7 +138,7 @@ namespace mfront
     const VariableDescriptionContainer& mp = d.getMaterialProperties();
     VariableDescriptionContainer::const_iterator p;
     for(p=mp.begin();p!=mp.end();++p){
-      const string& n =  mb.getGlossaryName(h,p->name);
+      const string& n =  mb.getExternalName(h,p->name);
       vector<UMATMaterialProperty>::const_iterator pum;
       bool found = false;
       const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
@@ -321,7 +321,7 @@ namespace mfront
 	if(p->arraySize==1u){
 	  const string n = prefix+p->name+suffix;
 	  const UMATMaterialProperty& m = 
-	    MFrontUMATInterfaceBase::findUMATMaterialProperty(i,mb.getGlossaryName(h,p->name));
+	    MFrontUMATInterfaceBase::findUMATMaterialProperty(i,mb.getExternalName(h,p->name));
 	  SupportedTypes::TypeSize offset = m.offset;
 	  offset -= ioffset;
 	  f << "," << endl;
@@ -364,7 +364,7 @@ namespace mfront
       for(p=v.begin();p!=v.end();++p){
 	if(p->arraySize!=1u){
 	  const UMATMaterialProperty& m =
-	    MFrontUMATInterfaceBase::findUMATMaterialProperty(i,mb.getGlossaryName(h,p->name));	  
+	    MFrontUMATInterfaceBase::findUMATMaterialProperty(i,mb.getExternalName(h,p->name));	  
 	  const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
 	  SupportedTypes::TypeSize offset = m.offset;
 	  offset -= ioffset;
@@ -1089,7 +1089,7 @@ namespace mfront
 	SupportedTypes::TypeSize ivoffset;
 	for(p=persistentVarsHolder.begin();p!=persistentVarsHolder.end();++p){
 	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	  const string& ivname = d.getGlossaryName(p->name);
+	  const string& ivname = d.getExternalName(p->name);
 	  if(p->arraySize==1u){
 	    if(flag==SupportedTypes::Scalar){
 	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);" << endl;
@@ -1139,7 +1139,7 @@ namespace mfront
 		       "in mtest file generation");
 	    throw(runtime_error(msg));
 	  }
-	  const string& evname = d.getGlossaryName(p->name);
+	  const string& evname = d.getExternalName(p->name);
 	  if(p->arraySize==1u){
 	    if(offset==0){
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
@@ -1395,7 +1395,7 @@ namespace mfront
   	<< "_nInternalStateVariables = " << nStateVariables
   	<< ";" << endl;
     vector<string> stateVariablesNames;
-    mb.getGlossaryNames(stateVariablesNames,h,persistentVarsHolder);
+    mb.getExternalNames(stateVariablesNames,h,persistentVarsHolder);
     this->writeGlossaryNames(out,name,h,stateVariablesNames,"InternalStateVariables");
     if(!persistentVarsHolder.empty()){
       out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name,h)
@@ -1447,7 +1447,7 @@ namespace mfront
     const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
   	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";" << endl;
-    this->writeGlossaryNames(out,name,h,mb.getGlossaryNames(h,externalStateVarsHolder),
+    this->writeGlossaryNames(out,name,h,mb.getExternalNames(h,externalStateVarsHolder),
   			     "ExternalStateVariables",0u);
   } // end of MFrontUMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
 

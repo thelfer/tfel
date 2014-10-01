@@ -12,7 +12,7 @@
 #include<vector>
 #include<string>
 
-#include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"TFEL/Glossary/Forward/Glossary.hxx"
 
 namespace tfel
 {
@@ -21,12 +21,6 @@ namespace glossary
 
 /*!
  * \brief Structure in charge of handling the TFEL Glossary
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
  */
 struct TFELGLOSSARY_VISIBILITY_EXPORT Glossary
 {
@@ -40,7 +34,8 @@ getGlossary();
 static const GlossaryEntry AxialStrain;
 static const GlossaryEntry AxialStress;
 static const GlossaryEntry B10BurnUp;
-static const GlossaryEntry BurnUp;
+static const GlossaryEntry BurnUp_AtPercent;
+static const GlossaryEntry BurnUp_MWJperTm;
 static const GlossaryEntry ConvectiveHeatTransferCoefficient;
 static const GlossaryEntry CrossSectionArea;
 static const GlossaryEntry CylindricalStress;
@@ -50,8 +45,10 @@ static const GlossaryEntry ElasticStrain;
 static const GlossaryEntry EquivalentPlasticStrain;
 static const GlossaryEntry EquivalentStrain;
 static const GlossaryEntry EquivalentViscoplasticStrain;
-static const GlossaryEntry FastNeutronFluence;
-static const GlossaryEntry FastNeutronFlux;
+static const GlossaryEntry FastNeutronFluence_01MeV;
+static const GlossaryEntry FastNeutronFluence_1MeV;
+static const GlossaryEntry FastNeutronFlux_01MeV;
+static const GlossaryEntry FastNeutronFlux_1MeV;
 static const GlossaryEntry FirstAxisSecondMomentArea;
 static const GlossaryEntry FissionDensity;
 static const GlossaryEntry GaseousSwelling;
@@ -123,11 +120,17 @@ static const GlossaryEntry YoungModulus2;
 static const GlossaryEntry YoungModulus3;
 
 /*!
- * \return true if the glossary contains the given name
+ * \return true if the glossary contains the given name or key
  * \param[in] n : name
  */
 bool
 contains(const std::string&) const;
+/*!
+ * \return the glossary entry associated with the given name or key
+ * \param[in] n : name
+ */
+const GlossaryEntry&
+getGlossaryEntry(const std::string&) const;
 /*!
  * \return all the registred keys
  */
@@ -136,7 +139,7 @@ getKeys(void) const;
 
 protected :
 //! all glossary names (to initialise glossary entries)
-static const char * names[86];
+static const char * names[89];
 /*!
  * \brief insert a new entry
  */
@@ -150,8 +153,18 @@ Glossary(const Glossary&);
 Glossary&
 operator=(const Glossary&);
 
+/*!
+\return an iterator to the glossary associated with the given name or key. 
+Return this->entries.end() if no matching entry is found. 
+\param[in] n : name or key.
+*/
+std::set<GlossaryEntry>::const_iterator
+findGlossaryEntry(const std::string&) const;
+
+//! list of all registred entries
 std::set<GlossaryEntry> entries;
 
+//! list of all registred keys
 std::vector<std::string> keys;
 
 }; // end of struct Glossary

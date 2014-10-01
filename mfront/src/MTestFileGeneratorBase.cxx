@@ -156,9 +156,9 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(this->handleThermalExpansion){
-      file << "@HandleThermalExpansion true;";
+      file << "@HandleThermalExpansion true;" << endl;
     } else {
-      file << "@HandleThermalExpansion false;";
+      file << "@HandleThermalExpansion false;" << endl;
     }
     this->writeModellingHypothesis(file);
     this->writeBehaviourDeclaration(file);
@@ -176,8 +176,8 @@ namespace mfront{
     using namespace std;
     if(this->hasRotationMatrix){
       os.precision(14);
-      os << "@RotationMatrix {{" << m[0] << "," << m[1] << "," << m[2] << "},\n"
-	 << "                 {" << m[3] << "," << m[4] << "," << m[5] << "},\n"
+      os << "@RotationMatrix {{" << m[0] << "," << m[1] << "," << m[2] << "}," << endl
+	 << "                 {" << m[3] << "," << m[4] << "," << m[5] << "}," << endl
 	 << "                 {" << m[6] << "," << m[7] << "," << m[8] << "}};"
 	 << endl << endl;
     }
@@ -292,7 +292,7 @@ namespace mfront{
 	  for(pv=values.begin();pv!=values.end();){
 	    os << pv->first << " : " << pv->second;
 	    if(++pv!=values.end()){
-	      os << ",\n";	    
+	      os << "," << endl;	    
 	    }
 	  }
 	  os << "};" << endl;

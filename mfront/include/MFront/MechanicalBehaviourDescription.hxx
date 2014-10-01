@@ -576,34 +576,34 @@ namespace mfront
 					 const tfel::utilities::shared_ptr<MaterialPropertyDescription>&,
 					 const tfel::utilities::shared_ptr<MaterialPropertyDescription>&);
     /*!
-     * \return the glossary names associated with the variables
+     * \return the external names associated with the variables
      * contained in the given container
      * \param[in] h : modelling Hypothesis
-     * \param[in] v : variables for which glossary names are requested
+     * \param[in] v : variables for which external names are requested
      */
     std::vector<std::string>
-    getGlossaryNames(const Hypothesis,
+    getExternalNames(const Hypothesis,
 		     const VarContainer&) const;
     /*!
-     * get the glossary names associated with the variables
+     * get the external names associated with the variables
      * contained in the given container
      * \param[out] n : names
      * \param[in]  h : modelling Hypothesis
-     * \param[in]  v : variables for which glossary names are requested
+     * \param[in]  v : variables for which external names are requested
      */
     void
-    getGlossaryNames(std::vector<std::string>&,
+    getExternalNames(std::vector<std::string>&,
 		     const Hypothesis,
 		     const VarContainer&) const;
     /*!
-     * get the glossary names associated with the variables
+     * get the external names associated with the variables
      * contained in the given container
      * \param[out] n : names
      * \param[in]  h : modelling Hypothesis
-     * \param[in]  v : variables for which glossary names are requested
+     * \param[in]  v : variables for which external names are requested
      */
     void
-    appendGlossaryNames(std::vector<std::string>&,
+    appendExternalNames(std::vector<std::string>&,
 			const Hypothesis,
 			const VarContainer&) const;
     /*!
@@ -707,7 +707,7 @@ namespace mfront
      * \param[in] n : variable name
      */
     std::string
-    getGlossaryName(const Hypothesis h,
+    getExternalName(const Hypothesis h,
 		    const std::string& n) const;
     /*!
      * \return the name of the variable associated with the given

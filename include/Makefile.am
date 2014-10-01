@@ -14,6 +14,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/FSAlgorithm/fill.hxx			                                             \
 			TFEL/FSAlgorithm/for_each.hxx		                                                     \
 			TFEL/FSAlgorithm/equal.hxx			                                             \
+			TFEL/Glossary/Forward/Glossary.hxx	                                                     \
 			TFEL/Glossary/Glossary.hxx	                                                             \
 			TFEL/Glossary/GlossaryEntry.hxx	                                                             \
 			TFEL/Material/OutOfBoundsPolicy.hxx	                                                     \

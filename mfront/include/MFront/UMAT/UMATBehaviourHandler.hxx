@@ -368,47 +368,34 @@ namespace umat
 				      DoNothingInitializer>::type AInitializer;
       
       TFEL_UMAT_INLINE
-      IntegratorWithTimeStepping(const UMATReal *const DTIME ,
-				 const UMATReal *const STRAN,
-				 const UMATReal *const DSTRAN,
-				 const UMATReal *const TEMP  ,
-				 const UMATReal *const DTEMP,
-				 const UMATReal *const PROPS ,
-				 const UMATReal *const PREDEF,
-				 const UMATReal *const DPRED,
-				 UMATReal *const STATEV,
-				 UMATReal *const STRESS,
-				 const StressFreeExpansionHandler& sfeh)
-	: bData(TEMP,PROPS+UMATTraits<BV>::propertiesOffset,
-		STATEV,PREDEF),
-	  iData(DTIME,DTEMP,DPRED),
-	  dt(*DTIME)
-       {
-	 using namespace tfel::material;
-	 typedef MechanicalBehaviourTraits<BV> Traits;
-	 typedef typename tfel::meta::IF<
-	   Traits::hasStressFreeExpansion,
-	   DrivingVariableInitialiserWithStressFreeExpansion,
-	   DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	 SInitializer::exe(this->bData,PROPS);
-	 AInitializer::exe(this->bData,PROPS);
-	 DVInitializer::exe(this->bData,this->iData,STRAN,DSTRAN,sfeh);
-	 this->bData.setUMATBehaviourDataThermodynamicForces(STRESS);
-       } // end of IntegratorWithTimeStepping
+      IntegratorWithTimeStepping(const UMATReal *const DTIME_,
+				 const UMATReal *const STRAN_,
+				 const UMATReal *const DSTRAN_,
+				 const UMATReal *const TEMP_,
+				 const UMATReal *const DTEMP_,
+				 const UMATReal *const PROPS_,
+				 const UMATReal *const PREDEF_,
+				 const UMATReal *const DPRED_,
+				 UMATReal *const STATEV_,
+				 UMATReal *const STRESS_,
+				 const StressFreeExpansionHandler& sfeh_)
+	: DTIME(DTIME_),STRAN(STRAN_), DSTRAN(DSTRAN_),
+	TEMP(TEMP_),DTEMP(DTEMP_),PROPS(PROPS_),
+	PREDEF(PREDEF_),DPRED(DPRED_),
+	STATEV(STATEV_),STRESS(STRESS_),
+	sfeh(sfeh_)
+       {} // end of IntegratorWithTimeStepping
       
       TFEL_UMAT_INLINE2 void
-	exe(UMATReal *const DDSOE,
-	    UMATReal *const STRESS,
-	    UMATReal *const STATEV)
+	exe(UMATReal *const ddsoe,
+	    UMATReal *const stress,
+	    UMATReal *const statev)
       {
 	using namespace tfel::utilities;
-	if(this->dt<0.){
-	  throwNegativeTimeStepException(Name<Behaviour<H,UMATReal,false> >::getName());
-	}
-	if(*DDSOE<-0.5){
-	  this->computePredictionOperator(DDSOE);
+	if(*ddsoe<-0.5){
+	  this->computePredictionOperator(ddsoe);
 	} else {
-	  this->integrate(STRESS,STATEV,DDSOE);
+	  this->integrate(stress,statev,ddsoe);
 	}
       } // end of IntegratorWithTimeStepping::exe
 
@@ -427,6 +414,10 @@ namespace umat
 	  PredictionOperatorIsNotAvalaible
 	  >::type PredictionOperatorComputer;
 	typedef typename tfel::meta::IF<
+	  Traits::hasStressFreeExpansion,
+	  DrivingVariableInitialiserWithStressFreeExpansion,
+	  DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	typedef typename tfel::meta::IF<
 	  Traits::isConsistentTangentOperatorSymmetric,
 	  SymmetricConsistentTangentOperatorComputer,
 	  GeneralConsistentTangentOperatorComputer>::type
@@ -443,7 +434,13 @@ namespace umat
 	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	}
 	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
-	BV behaviour(this->bData,this->iData);
+	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
+		     this->PROPS+UMATTraits<BV>::propertiesOffset,
+		     this->STATEV,this->PREDEF,this->DPRED);
+	SInitializer::exe(behaviour,PROPS);
+	AInitializer::exe(behaviour,PROPS);
+	DVInitializer::exe(behaviour,STRAN,DSTRAN,sfeh);
+	behaviour.setUMATBehaviourDataThermodynamicForces(STRESS);
 	behaviour.initialize();
 	behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	behaviour.checkBounds();
@@ -456,13 +453,17 @@ namespace umat
       }
 
       void
-      integrate(UMATReal *const STRESS,
-		UMATReal *const STATEV,
-		UMATReal *const DDSOE)
+      integrate(UMATReal *const stress,
+		UMATReal *const statev,
+		UMATReal *const ddsoe)
       {
 	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
+	typedef typename tfel::meta::IF<
+	  Traits::hasStressFreeExpansion,
+	  DrivingVariableInitialiserWithStressFreeExpansion,
+	  DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	typedef typename tfel::meta::IF<
 	  Traits::hasConsistentTangentOperator,
 	  typename tfel::meta::IF<
@@ -471,38 +472,102 @@ namespace umat
 	  GeneralConsistentTangentOperatorComputer>::type,
 	  ConsistentTangentOperatorIsNotAvalaible
 	  >::type ConsistentTangentOperatorHandler;
-	using namespace tfel::utilities;
-	using namespace tfel::material;
-	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
-	unsigned short subSteps   = 0u;
-	unsigned short iterations = 1u;
-	if(this->dt<0.){
-	  throwNegativeTimeStepException(Name<Behaviour<H,UMATReal,false> >::getName());
-	}
-	typename BV::IntegrationResult r = BV::SUCCESS;
 	const typename BV::SMFlag smflag = UMATTangentOperatorFlag<UMATTraits<BV>::btype>::value;
 	typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
-	if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
-	} else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
+	if((-0.25<*ddsoe)&&(*ddsoe<0.25)){
+	} else if((0.75<*ddsoe)&&(*ddsoe<1.25)){
 	  smtype = BV::ELASTIC;
-	} else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
+	} else if((1.75<*ddsoe)&&(*ddsoe<2.25)){
 	  smtype = BV::SECANTOPERATOR;
-	} else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
+	} else if((2.75<*ddsoe)&&(*ddsoe<3.25)){
 	  smtype = BV::TANGENTOPERATOR;
-	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
+	} else if((3.75<*ddsoe)&&(*ddsoe<4.25)){
 	  smtype = BV::CONSISTENTTANGENTOPERATOR;
 	} else {
-	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
+	  throwInvalidDDSOEException(Name<BV>::getName(),*ddsoe);
 	}
+	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
+		     this->PROPS+UMATTraits<BV>::propertiesOffset,
+		     this->STATEV,this->PREDEF,this->DPRED);
+	typename BV::IntegrationResult r = BV::SUCCESS;
+	try {
+	  SInitializer::exe(behaviour,PROPS);
+	  AInitializer::exe(behaviour,PROPS);
+	  DVInitializer::exe(behaviour,STRAN,DSTRAN,sfeh);
+	  behaviour.setUMATBehaviourDataThermodynamicForces(STRESS);
+	  behaviour.initialize();
+	  behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	  behaviour.checkBounds();
+	  r = behaviour.integrate(smflag,smtype);
+	  behaviour.checkBounds();
+	}
+#ifdef MFRONT_UMAT_VERBOSE
+	catch(const tfel::material::DivergenceException& e){
+	  std::cerr << "no convergence : " << e.what() << std::endl;
+#else
+	catch(const tfel::material::DivergenceException&){
+#endif
+	  r = BV::FAILURE;
+	}
+	if((r==BV::FAILURE)||((r==BV::UNRELIABLE_RESULTS)&&
+			      (UMATTraits<BV>::doSubSteppingOnInvalidResults))){
+	  this->integrate2(stress,statev,ddsoe,smtype);
+	} else {
+	  behaviour.UMATexportStateData(stress,statev);
+	  if((*ddsoe>0.5)||(*ddsoe<-0.5)){
+	    ConsistentTangentOperatorHandler::exe(behaviour,ddsoe);
+	  }
+	}
+      }
+	
+      void
+      integrate2(UMATReal *const stress,
+		 UMATReal *const statev,
+		 UMATReal *const ddsoe,
+		 const typename Behaviour<H,UMATReal,false>::SMType smtype)
+      {
+	using namespace tfel::utilities;
+	using namespace tfel::material;
+	typedef MechanicalBehaviourTraits<BV> Traits;
+	typedef typename tfel::meta::IF<
+	  Traits::hasStressFreeExpansion,
+	  DrivingVariableInitialiserWithStressFreeExpansion,
+	  DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	typedef typename tfel::meta::IF<
+	  Traits::hasConsistentTangentOperator,
+	  typename tfel::meta::IF<
+	  Traits::isConsistentTangentOperatorSymmetric,
+	  SymmetricConsistentTangentOperatorComputer,
+	  GeneralConsistentTangentOperatorComputer>::type,
+	  ConsistentTangentOperatorIsNotAvalaible
+	  >::type ConsistentTangentOperatorHandler;
+	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	BData bData(this->TEMP,this->PROPS+UMATTraits<BV>::propertiesOffset,
+		    this->STATEV,this->PREDEF);
+	IData iData(this->DTIME,this->DTEMP,this->DPRED);
+	SInitializer::exe(bData,this->PROPS);
+	AInitializer::exe(bData,this->PROPS);
+	DVInitializer::exe(bData,iData,this->STRAN,this->DSTRAN,sfeh);
+	bData.setUMATBehaviourDataThermodynamicForces(this->STRESS);
+	iData.scale(bData,0.5);
+	unsigned short subSteps   = 1u;
+	unsigned short iterations = 2u;
+	const typename BV::SMFlag smflag = UMATTangentOperatorFlag<UMATTraits<BV>::btype>::value;
+	typename BV::IntegrationResult r = BV::SUCCESS;
 	while((iterations!=0)&&
 	      (subSteps!=UMATTraits<BV>::maximumSubStepping)){
 	  typename BV::IntegrationResult result;
-	  BV behaviour(this->bData,this->iData);
+	  BV behaviour(bData,iData);
 	  try{
 	    behaviour.initialize();
 	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	    behaviour.checkBounds();
-	    result = behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
+	    if(iterations==1u){
+	      result = behaviour.integrate(smflag,smtype);
+	    } else {
+	      result = behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
+	    }
 	  }
 #ifdef MFRONT_UMAT_VERBOSE
 	  catch(const tfel::material::DivergenceException& e){
@@ -519,21 +584,21 @@ namespace umat
 	    behaviour.checkBounds();
 	    behaviour.updateExternalStateVariables();
 	    if(iterations==0){
-	      behaviour.UMATexportStateData(STRESS,STATEV);
-	      if(*DDSOE>0.5){
-		ConsistentTangentOperatorHandler::exe(behaviour,DDSOE);
+	      behaviour.UMATexportStateData(stress,statev);
+	      if(*ddsoe>0.5){
+		ConsistentTangentOperatorHandler::exe(behaviour,ddsoe);
 	      }
 	    } else {
-	      this->bData = static_cast<const BData&>(behaviour);
+	      bData = static_cast<const BData&>(behaviour);
 	    }
 	  } else if ((result==BV::UNRELIABLE_RESULTS)&&
 		     (UMATTraits<BV>::doSubSteppingOnInvalidResults)){
 	    iterations = static_cast<unsigned short>(iterations*2u);
-	    this->iData.scale(this->bData,0.5);
+	    iData.scale(bData,0.5);
 	  } else {
 	    ++subSteps;
 	    iterations = static_cast<unsigned short>(iterations*2u);
-	    this->iData.scale(this->bData,0.5);
+	    iData.scale(bData,0.5);
 	  }
 	}
 	if((subSteps==UMATTraits<BV>::maximumSubStepping)&&(iterations!=0)){
@@ -545,10 +610,17 @@ namespace umat
       typedef typename BV::BehaviourData  BData;
       typedef typename BV::IntegrationData  IData;
 
-      BData bData;
-      IData iData;
-      UMATReal dt;
-      tfel::material::ModellingHypothesis::Hypothesis hypothesis;
+      const UMATReal *const DTIME;
+      const UMATReal *const STRAN;
+      const UMATReal *const DSTRAN;
+      const UMATReal *const TEMP;
+      const UMATReal *const DTEMP;
+      const UMATReal *const PROPS;
+      const UMATReal *const PREDEF;
+      const UMATReal *const DPRED;
+      const UMATReal *const STATEV;
+      const UMATReal *const STRESS;
+      const StressFreeExpansionHandler sfeh;
 	
     }; // end of struct IntegratorWithTimeStepping
 

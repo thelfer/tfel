@@ -42,13 +42,18 @@ namespace tfel
     {
       using namespace std;
       vector<string> res;
+      const string::size_type sl = s.length();
+      const string::size_type dl = delim.length();
       string::size_type b = 0u;
-      string::size_type e = s.find_first_of(delim, b);
-      while (string::npos != e || string::npos != b){
-	// Found a token, add it to the vector.
-	res.push_back(s.substr(b, e - b));
-	b = s.find_first_not_of(delim, e);
-	e = s.find_first_of(delim, b);
+      string::size_type e;
+      e = s.find(delim,b);
+      while (e!=string::npos) {
+	res.push_back(s.substr(b,e-b));
+	b = e + dl;
+	e = s.find(delim,b);
+      }
+      if(b!=sl){
+	res.push_back(s.substr(b));
       }
       return res;
     } // end of tokenize

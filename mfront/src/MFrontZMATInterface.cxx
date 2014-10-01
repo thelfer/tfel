@@ -78,7 +78,7 @@ namespace mfront
 	for(VariableDescriptionContainer::const_iterator pv=mps.begin();
 	    pv!=mps.end();++pv){
 	  const VariableDescription& v = *pv;
-	  const string& name = d.getGlossaryName(v.name);
+	  const string& name = d.getExternalName(v.name);
 	  if(v.arraySize==1u){
 	    mp_names.insert(name);
 	  } else {
@@ -1326,7 +1326,7 @@ namespace mfront
       int i=0;
       for(pev=esvs.begin();pev!=esvs.end();++pev){
 	const VariableDescription& v = *pev;
-	const string& name = d.getGlossaryName(v.name);
+	const string& name = d.getExternalName(v.name);
 	if(v.arraySize==1u){
 	  out << "this->evs_positions[" << i << "] = " 
 	      << "EXTERNAL_PARAM::rank_of_nodal_ip(\"" << name << "\");" << endl;
@@ -1356,7 +1356,7 @@ namespace mfront
     using namespace std;
     const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
     const VariableDescriptionContainer& params = d.getParameters();
-    const vector<string> pnames = d.getGlossaryNames(params);
+    const vector<string> pnames = d.getExternalNames(params);
     VariableDescriptionContainer::const_iterator p;
     vector<string>::const_iterator pn;
     out << "void" << endl;
@@ -1401,7 +1401,7 @@ namespace mfront
     const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(h);
     const VariableDescriptionContainer& mps  = d.getMaterialProperties();
     const set<string>& all_mp_names = getAllMaterialPropertiesNames(mb);
-    const vector<string> mpnames = d.getGlossaryNames(mps);
+    const vector<string> mpnames = d.getExternalNames(mps);
     const unsigned short nbh =
       (mb.isModellingHypothesisSupported(ModellingHypothesis::TRIDIMENSIONAL) ? 1 : 0) +
       (mb.isModellingHypothesisSupported(ModellingHypothesis::GENERALISEDPLANESTRAIN) ? 1 : 0) +

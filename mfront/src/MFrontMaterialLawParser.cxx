@@ -22,6 +22,7 @@
 #include"TFEL/Utilities/Token.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -581,15 +582,15 @@ namespace mfront{
       if(!glossary.contains(glossaryName)){
 	string msg("MFrontMaterialLawParser::treatMethod : "
 		   "'"+glossaryName+"' is not a valid glossary name");
-#warning "One day, we will throw"
-	static_cast<void>(msg);
-	//	throw(runtime_error(msg));
+	throw(runtime_error(msg));
       }
-      if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
+      const string& k = glossary.getGlossaryEntry(glossaryName).getKey();
+      if(!this->glossaryNames.insert(MVType(this->currentVar,k)).second){
 	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
     } else if (methodName=="setEntryName"){
+      const Glossary& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MFrontMaterialLawParser::treatMethod",
 			      "Expected entry file name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -606,10 +607,18 @@ namespace mfront{
 	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Entry file name too short.");
       }
-      string entryName = this->current->value.substr(1,this->current->value.size()-2);
+      const string entryName = this->current->value.substr(1,this->current->value.size()-2);
       MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 							     this->entryNames,
 							     entryName);
+      if(glossary.contains(entryName)){
+	ostringstream msg;
+	msg << "MFrontMaterialLawParser::treatMethod : "
+	    << "'" << entryName <<"' is a glossary name. Please use "
+	    << "the 'setGlossaryName' method or choose another entry name.";
+	displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(entryName));
+	throw(runtime_error(msg.str()));
+      }
       if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
 	this->throwRuntimeError("MFrontMaterialLawParser::treatMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");

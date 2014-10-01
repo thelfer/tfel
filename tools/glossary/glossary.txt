@@ -483,33 +483,48 @@
  short_description : "la fluence";
 };
 
-"FastNeutronFlux"{
+"FastNeutronFlux_01MeV"{
+ name : "FastNeutronFlux (>0.1 MeV)";
  unit : "n.m^{-2}.s^{-1}";
  type : "scalar";
  short_description : "le flux de neutron rapide";
- notes : {"Il n'existe pas de limite standardisée définissant"
-      "la limite du domaine rapide.",
-      "Pour les REP, il est classique de considérer que les neutrons ayant "
-      "une énergie supérieure à \(0.1\, MeV\) sont rapides.",
-      "Pour les RNR, la limite classiquement retenue est de \(1 MeV\)."};
 };
 
-"FastNeutronFluence"{
+"FastNeutronFlux_1MeV"{
+ name : "FastNeutronFlux (>1 MeV)";
+ unit : "n.m^{-2}.s^{-1}";
+ type : "scalar";
+ short_description : "le flux de neutron rapide";
+};
+
+"FastNeutronFluence_01MeV"{
+ name : "FastNeutronFluence (>0.1 MeV)";
  unit : "n.m^{-2}";
  type : "scalar";
  short_description : "la fluence rapide";
- notes : {"Il n'existe pas de limite standardisée définissant"
-      "la limite du domaine rapide.",
-      "Pour les REP, il est classique de considérer que les neutrons ayant "
-      "une énergie supérieure à \(0.1\, MeV\) sont rapides.",
-      "Pour les RNR, la limite classiquement retenue est de \(1\, MeV\)."};
 };
 
-"BurnUp"{
+"FastNeutronFluence_1MeV"{
+ name : "FastNeutronFluence (>1 MeV)";
+ unit : "n.m^{-2}";
+ type : "scalar";
+ short_description : "la fluence rapide";
+};
+
+"BurnUp_AtPercent"{
+ name : "BurnUp (at.%)";
  unit : "at./100";
  type : "scalar";
- short_description : "le taux de combustion";
+ short_description : "le taux de combustion en atome pour cent";
 };
+
+"BurnUp_MWJperTm"{
+ name : "BurnUp (MWJ/tm)";
+ unit : "MWJ/tm";
+ type : "scalar";
+ short_description : "le taux de combustion en MegaWattJour par tonne (métal)";
+};
+
 
 "B10BurnUp"{
  unit : "m^{-3}";

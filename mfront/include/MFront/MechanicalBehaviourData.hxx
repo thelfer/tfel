@@ -453,43 +453,53 @@ namespace mfront{
     bool
     hasAttribute(const std::string&) const;
     /*!
-     * \return true a glossary or an entry name was associated with the given
+     * \return true a glossary was associated with the given
      * variable.
      * \param[in] v  : variable name
      */
     bool
     hasGlossaryName(const std::string&) const;
     /*!
-     * \return the glossary or entry names associated with the given
+     * \return true if an entry name was associated with the given
      * variable.
      * \param[in] v  : variable name
      */
-    std::string
-    getGlossaryName(const std::string&) const;
+    bool
+    hasEntryName(const std::string&) const;
     /*!
-     * \return the glossary or entry names associated with the
-     * variables contained in the given container
+     * \return the glossary or the entry name associated with the
+     * given variable. If none was defined, return the variable name.
+     * \param[in] v : variable name
+     */
+    std::string
+    getExternalName(const std::string&) const;
+    /*!
+     * \return the external names associated with the
+     * variables contained in the given container.
+     * \see getExternalName
      * \param[in] v  : variables for which glossary names are requested
      */
     std::vector<std::string>
-    getGlossaryNames(const VarContainer&) const;
+    getExternalNames(const VarContainer&) const;
     /*!
-     * get the glossary names associated with the variables
-     * contained in the given container
+     * get the external names associated with the variables
+     * contained in the given container.
+     * \see getExternalName
      * \param[out] n : names
      * \param[in] v  : variables for which glossary names are requested
      */
     void
-    getGlossaryNames(std::vector<std::string>&,
+    getExternalNames(std::vector<std::string>&,
 		     const VarContainer&) const;
     /*!
-     * get the glossary names associated with the variables
-     * contained in the given container
+     * get the external names associated with the variables
+     * contained in the given container.
+     * \see getExternalName
      * \param[out] n : names
      * \param[in]  v : variables for which glossary names are requested
      */
     void
-    appendGlossaryNames(std::vector<std::string>&,
+    appendExternalNames(std::vector<std::string>&,
 			const VarContainer&) const;
     /*!
      * associate a glossary name to a variable

@@ -23,6 +23,8 @@
 #include<cmath>
 
 #include"TFEL/System/System.hxx"
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
 #include"MFront/ParserUtilities.hxx"
@@ -265,7 +267,7 @@ namespace mfront{
     		   "' used by the material property '"+a.law+"'");
     	throw(runtime_error(msg));
       }
-      const string& in = p->getGlossaryName(a.glossaryNames,a.entryNames);
+      const string& in = p->getExternalName(a.glossaryNames,a.entryNames);
       if(in!="Temperature"){
     	if(this->mb.isGlossaryName(h,in)||this->mb.isEntryName(h,in)){
     	  // a variable with the good glossary name has been found
@@ -431,6 +433,8 @@ namespace mfront{
 			const bool b4 = false)
   {
     using namespace std;
+    using namespace tfel::glossary;
+    const Glossary& glossary = Glossary::getGlossary();
     ostream& log = getLogStream();
     for(VarContainer::const_iterator pv=v.begin();pv!=v.end();++pv){
       if(b1){
@@ -449,12 +453,20 @@ namespace mfront{
 	}
       }
       if(b3){
-	if(!md.hasGlossaryName(pv->name)){
+	if((!md.hasGlossaryName(pv->name))&&
+	   (!md.hasEntryName(pv->name))){
 	  log << "- " << t << " '" << pv->name << "' has no glossary name." << endl;
 	}
       }
       if(pv->description.empty()){
-	log << "- " << t << " '" << pv->name << "' has no description." << endl;
+	bool hasDoc = false;
+	if(md.hasGlossaryName(pv->name)){
+	  const GlossaryEntry& e = glossary.getGlossaryEntry(md.getExternalName(pv->name));
+	  hasDoc = (!e.getShortDescription().empty()) || (!e.getDescription().empty());
+	}
+	if(!hasDoc){
+	  log << "- " << t << " '" << pv->name << "' has no description." << endl;
+	}
       }
     }
   } 
@@ -890,7 +902,7 @@ namespace mfront{
       }
       if(a->inputs.size()==1u){
 	const VariableDescription& v =  a->inputs.front();
-	const string& vn = v.getGlossaryName(a->glossaryNames,a->entryNames);
+	const string& vn = v.getExternalName(a->glossaryNames,a->entryNames);
 	if(vn!="Temperature"){
 	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatComputeThermalExpansion : ",
 				  "thermal expansion shall only depend on temperature");
@@ -1013,6 +1025,8 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
+    using namespace tfel::glossary;
+    const Glossary& glossary = Glossary::getGlossary();
     map<string,string>::const_iterator p;
     const string& n = this->current->value;
     ++(this->current);
@@ -1030,9 +1044,9 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
       const string& g = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->isValidIdentifier(g)){
-	string msg("MFrontBehaviourParserCommon::treatVariableMethod : ");
-	msg += "invalid glossary name";
+      if(!glossary.contains(g)){
+	string msg("MechanicalBehaviourData::setGlossaryName : "
+		   "'"+g+"' is not a glossary name");
 	throw(runtime_error(msg));
       }
       this->mb.setGlossaryName(h,n,g);
@@ -1050,7 +1064,7 @@ namespace mfront{
       const string& e = this->current->value.substr(1,this->current->value.size()-2);
       if(!this->isValidIdentifier(e)){
 	string msg("MFrontBehaviourParserCommon::treatVariableMethod : ");
-	msg += "invalid glossary name";
+	msg += "invalid entry name '"+e+"'";
 	throw(runtime_error(msg));
       }
       ++(this->current);
@@ -3107,7 +3121,7 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
       const VariableDescription& v = a.inputs.front();
-      const string& in = v.getGlossaryName(a.glossaryNames,a.entryNames);
+      const string& in = v.getExternalName(a.glossaryNames,a.entryNames);
       if(in!="Temperature"){
 	string msg("MFrontBehaviourParserCommonWriteThermalExpansionCoefficientComputation : "
 		   "a thermal expansion shall only depend on the temperature");
@@ -4992,13 +5006,13 @@ namespace mfront{
 	  } else {
 	    this->srcFile << "} else if(";
 	  }
-	  this->srcFile << "::strcmp(\""+this->mb.getGlossaryName(h,p->name)+"\",key)==0){" << endl;
+	  this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){" << endl;
 	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	    this->srcFile << "this->" << p->name << " = v;" << endl;
 	  } else {
-	    this->srcFile << dcname << "::get().set(\"" << this->mb.getGlossaryName(h,p->name) << "\",v);" << endl;
+	    this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);" << endl;
 	  }
 	}
       }
@@ -5025,13 +5039,13 @@ namespace mfront{
 	  } else {
 	    this->srcFile << "} else if(";
 	  }
-	  this->srcFile << "::strcmp(\""+this->mb.getGlossaryName(h,p->name)+"\",key)==0){" << endl;
+	  this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){" << endl;
 	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	    this->srcFile << "this->" << p->name << " = v;" << endl;
 	  } else {
-	    this->srcFile << dcname << "::get().set(\"" << this->mb.getGlossaryName(h,p->name) << "\",v);" << endl;
+	    this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);" << endl;
 	  }
 	}
       }
@@ -5058,13 +5072,13 @@ namespace mfront{
 	  } else {
 	    this->srcFile << "} else if(";
 	  }
-	  this->srcFile << "::strcmp(\""+this->mb.getGlossaryName(h,p->name)+"\",key)==0){" << endl;
+	  this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){" << endl;
 	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	    this->srcFile << "this->" << p->name << " = v;" << endl;
 	  } else {
-	    this->srcFile << dcname << "::get().set(\"" << this->mb.getGlossaryName(h,p->name) << "\",v);" << endl;
+	    this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);" << endl;
 	  }
 	}
       }

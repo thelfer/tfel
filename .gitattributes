@@ -622,6 +622,7 @@ include/TFEL/FSAlgorithm/max_element.hxx -text
 include/TFEL/FSAlgorithm/min_element.hxx -text
 include/TFEL/FSAlgorithm/swap_ranges.hxx -text
 include/TFEL/FSAlgorithm/transform.hxx -text
+include/TFEL/Glossary/Forward/Glossary.hxx -text
 include/TFEL/Glossary/Glossary.hxx -text
 include/TFEL/Glossary/GlossaryEntry.hxx -text
 include/TFEL/Macros.hxx -text
