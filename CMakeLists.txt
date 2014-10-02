@@ -5,7 +5,7 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-tfel_project(2 0 dev)
+tfel_project(2 1 dev)
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
 # check for the fenv package
