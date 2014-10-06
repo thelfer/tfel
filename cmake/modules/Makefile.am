@@ -11,4 +11,5 @@ EXTRA_DIST = autotools.cmake             \
 	     cyrano.cmake                \
 	     common-compiler-flags.cmake \
 	     gnu-fortran-compiler.cmake  \
-	     tfel.cmake
+	     tfel.cmake                  \
+	     pandoc.cmake

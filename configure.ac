@@ -396,6 +396,8 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/Chaboche.tex
 	   docs/presentations/lemaitre.tex
 	   docs/presentations/appendix.tex
+	   docs/presentations/mfront-user-meeting/Makefile
+	   docs/presentations/portable-behaviour/Makefile
 	   docs/tutorial/Makefile
 	   docs/tutorial/introduction.tex
 	   docs/tutorial/Conclusions.tex
@@ -403,7 +405,9 @@ AC_OUTPUT([debug.sh
 	   docs/tutorial/resume.tex
 	   docs/tutorial/rappels.tex
 	   docs/tutorial/Bibliographie.tex
+	   docs/html/Makefile
 	   docs/tex/Makefile
+	   docs/web/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile
 	   include/Makefile

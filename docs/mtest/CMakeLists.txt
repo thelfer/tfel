@@ -31,7 +31,8 @@ ADD_CUSTOM_COMMAND(
 # Eventually trigger the whole process
 add_custom_target(mtest-doc-pdf echo DEPENDS mtest.pdf)
 add_custom_target(mtest-doc-pdf-install
-                  ${CMAKE_COMMAND} -E copy mtest.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mtest/mtest.pdf)
+                  COMMAND ${CMAKE_COMMAND} -E copy mtest.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mtest/mtest.pdf
+                  COMMAND ${CMAKE_COMMAND} -E copy mtest.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/mtest/mtest.pdf)
 add_dependencies(mtest-doc-pdf-install mtest-doc-pdf)
 
 add_dependencies(doc-pdf

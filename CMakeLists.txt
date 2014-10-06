@@ -210,6 +210,7 @@ if(DOXYGEN_FOUND)
   add_dependencies(doc doc-html)
 endif(DOXYGEN_FOUND)
 
+# Looking for LaTeX
 find_package(LATEX)
 if(LATEX_COMPILER)
   add_custom_target(doc-pdf)
@@ -217,8 +218,15 @@ if(LATEX_COMPILER)
   add_dependencies(doc-install
     doc-pdf-install)
   message(STATUS "latex compiler found : ${LATEX_COMPILER}")
-  add_subdirectory(docs)
+  set(HAVE_LATEX ON)
 endif(LATEX_COMPILER)
+
+# Looking for pandoc (http://johnmacfarlane.net/pandoc)
+include(cmake/modules/pandoc.cmake)
+
+if(HAVE_LATEX OR HAVE_PANDOC)
+  add_subdirectory(docs)
+endif(HAVE_LATEX OR HAVE_PANDOC)
 
 #set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
 set (CPACK_PACKAGE_INSTALL_DIRECTORY   "${PACKAGE_NAME}-${VERSION}")

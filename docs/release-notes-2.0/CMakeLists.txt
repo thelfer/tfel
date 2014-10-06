@@ -27,7 +27,8 @@ ADD_CUSTOM_COMMAND(
 # Eventually trigger the whole process
 add_custom_target(tfel-2.0-doc-pdf echo DEPENDS tfel-2.0.pdf)
 add_custom_target(tfel-2.0-doc-pdf-install
-                  ${CMAKE_COMMAND} -E copy tfel-2.0.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel-2.0/tfel-2.0.pdf)
+                  COMMAND ${CMAKE_COMMAND} -E copy tfel-2.0.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel-2.0/tfel-2.0.pdf
+                  COMMAND ${CMAKE_COMMAND} -E copy tfel-2.0.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/tfel-2.0/tfel-2.0.pdf)
 add_dependencies(tfel-2.0-doc-pdf-install tfel-2.0-doc-pdf)
 
 add_dependencies(doc-pdf

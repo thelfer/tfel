@@ -18,7 +18,8 @@ macro(latex_presentation doc)
   # Eventually trigger the whole process
   add_custom_target(${doc}-doc-pdf echo DEPENDS ${doc}.pdf)
   add_custom_target(${doc}-doc-pdf-install
-    ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/${doc}/${doc}.pdf)
+    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/${doc}/${doc}.pdf
+    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/${doc}/${doc}.pdf)
   add_dependencies(${doc}-doc-pdf-install ${doc}-doc-pdf)
   
   add_dependencies(doc-pdf
@@ -43,7 +44,8 @@ macro(pdflatex_presentation doc)
   # Eventually trigger the whole process
   add_custom_target(${doc}-doc-pdf echo DEPENDS ${doc}.pdf)
   add_custom_target(${doc}-doc-pdf-install
-    ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/${doc}/${doc}.pdf)
+    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/${doc}/${doc}.pdf
+    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/${doc}/${doc}.pdf)
   add_dependencies(${doc}-doc-pdf-install ${doc}-doc-pdf)
   
   add_dependencies(doc-pdf
@@ -53,10 +55,16 @@ macro(pdflatex_presentation doc)
     ${doc}-doc-pdf-install)
 endmacro(pdflatex_presentation doc)
 
-latex_presentation(mfront-presentation)
-latex_presentation(mfront-behaviours)
-latex_presentation(mfront-finitestrain)
-latex_presentation(mtest-presentation)
+if(HAVE_LATEX)
+  latex_presentation(mfront-presentation)
+  latex_presentation(mfront-behaviours)
+  latex_presentation(mfront-finitestrain)
+  latex_presentation(mtest-presentation)
+  pdflatex_presentation(mfront-formation)
+  pdflatex_presentation(tp)
+endif(HAVE_LATEX)
 
-pdflatex_presentation(mfront-formation)
-pdflatex_presentation(tp)
+if(HAVE_PANDOC)
+  add_subdirectory(mfront-user-meeting)
+  add_subdirectory(portable-behaviour)
+endif(HAVE_PANDOC)

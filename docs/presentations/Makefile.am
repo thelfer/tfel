@@ -1,3 +1,6 @@
+SUBDIRS = mfront-user-meeting \
+	  portable-behaviour
+
 EXTRA_DIST=CMakeLists.txt                                                   \
 	   images/mfront.eps                                                \
 	   images/mfront.pdf                                                \
