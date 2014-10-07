@@ -133,7 +133,8 @@ then
       fi
   fi
   $make_exec install
-  $make_exec doc-pdf-install
+  # see Bug report 0015198 in http://www.cmake.org/Bug
+  # $make_exec doc-pdf-install
   $make_exec tests-install
   popd #from build-cmake-i686-w64-mingw32
 fi
@@ -154,7 +155,8 @@ then
       fi
   fi
   $make_exec install
-  $make_exec doc-pdf-install
+  # see Bug report 0015198 in http://www.cmake.org/Bug
+  # $make_exec doc-pdf-install
   $make_exec tests-install
   popd #from build-cmake-i586-mingw32msvc
 fi

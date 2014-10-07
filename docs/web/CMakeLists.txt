@@ -8,6 +8,7 @@ macro(pandoc_html file)
     ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
     ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
     ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mfront-template.html
+    ARGS      --mathjax
     ARGS      --email-obfuscation=javascript
     ARGS      ${ARGN}
     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md -o ${file}.html)
@@ -48,3 +49,4 @@ pandoc_html(castem)
 pandoc_html(documentations)
 pandoc_html(glossary)
 pandoc_html(material-properties)
+pandoc_html(models)

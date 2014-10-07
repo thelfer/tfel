@@ -7,6 +7,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./svn.md					           \
 	   ./index.md					           \
 	   ./material-properties.md				   \
+	   ./models.md				                   \
 	   ./castem.md						   \
 	   ./install.md						   \
 	   ./about.md						   \

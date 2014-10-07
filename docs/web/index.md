@@ -23,8 +23,8 @@ languages covers three kind of material knowledge:
 - [material properties](material-properties.html) (for instance the Young modulus, the thermal
 conductivity, etc.
 - mechanical behaviours
-- simple point-wise models, such as material swelling used in fuel
-performance codes.
+- [simple point-wise models](models.html), such as material swelling
+used in fuel performance codes.
 
 MFront is a collaborative development of [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie atomique") and [EDF](http://www.edf.com/ "Électricité de France").
 
