@@ -13,14 +13,10 @@
 #include"TFEL/Material/Lame.hxx"
 }
 
-@Coef real young; /* mandatory for castem */
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@Coef real nu;    /* mandatory for castem */
+@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
-@Coef real rho;   /* mandatory for castem */
-rho.setGlossaryName("MassDensity");
-@Coef real alpha; /* mandatory for castem */
-alpha.setGlossaryName("ThermalExpansion");
 
 @LocalVariable real     lambda;
 @LocalVariable real     mu;

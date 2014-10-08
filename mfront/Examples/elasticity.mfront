@@ -10,9 +10,9 @@
 @ProvidesSymmetricTangentOperator;
 
 @MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
 @MaterialProperty real   nu;
-@MaterialProperty real   rho;
-@MaterialProperty real   alpha;
+nu.setGlossaryName("PoissonRatio");
 
 @LocalVariable stress lambda;
 @LocalVariable stress mu;
@@ -21,13 +21,10 @@
 #include"TFEL/Material/Lame.hxx"
 }
 
-@InitLocalVars{
+@Integrator{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
-}
-
-@Integrator{
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
   if(computeTangentOperator_){
     Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
