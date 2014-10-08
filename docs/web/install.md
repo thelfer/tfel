@@ -70,7 +70,8 @@ language.
 
 The better way to build the `TFEL` is to use the
 [`cmake`](http://www.cmake.org/) build system (see this
-[section](#using-the-cmake-build-system)).
+[section](#using-the-cmake-build-system)). *We only support `cmake`
+version greater than \(2.8\)*.
 
 To build `TFEL` documentation, one may need:
 
@@ -119,7 +120,12 @@ Both `$srcdir` and `$prefix` must contain an *absolute* path.
 
 The use of the `cmake` build system is described in depth in the
 `INSTALL-cmake` file that is located in the top directory of `TFEL`
-sources.
+sources. *We only support `cmake` version greater than \(2.8\)*, so
+please check the version available on your system:
+
+~~~~ {#building .bash}
+$ cmake --version
+~~~~~~~~~~~~~~~~~~~~~~
 
 A typical usage of `cmake` is the following:
 
@@ -147,10 +153,26 @@ Various other options can be passed to `cmake`:
   `-Denable-python-bindings=ON` option. This requires the
   [Boost.Python](http://www.boost.org) to be available.
 
+Some default compiler settings are detected by `cmake`, depending on
+your system. To explicitly specify the compilers to be used, one may
+define one of the following variables:
+
+- `CXX` : name of the `C++` compiler
+- `CC`  : name of the `C` compiler
+- `FC`  : name of the `fortran` compiler
+- `F77` : name of the `fortran` compiler (77 standard)
+
+For example, we can use the following command to select the
+[Intel compilers suite](https://software.intel.com/en-us/c-compilers):
+
+~~~~ {#building .bash}
+$ CXX=icpc CC=icc FC=ifort F77=ifort cmake $srcdir -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=$prefix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ### Using the `configure` script
 
 ~~~~ {#building .bash}
-$ ../$srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
+$ $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
 ~~~~~~~~~~~~~~~~~~~~~~
 
 This will build `TFEL` with the support of interfaces for the
@@ -172,6 +194,22 @@ Various other options can be passed to the `configure` script:
   language, notably for the `MTest` tool, one may use the
   `--enable-python-bindings` option. This requires the
   [Boost.Python](http://www.boost.org) to be available.
+
+Some default compiler settings are detected by `configure`, depending on
+your system. To explicitly specify the compilers to be used, one may
+define one of the following variables:
+
+- `CXX` : name of the `C++` compiler
+- `CC`  : name of the `C` compiler
+- `FC`  : name of the `fortran` compiler
+- `F77` : name of the `fortran` compiler (77 standard)
+
+For example, we can use the following command to select the
+[Intel compilers suite](https://software.intel.com/en-us/c-compilers):
+
+~~~~ {#building .bash}
+$ CXX=icpc CC=icc FC=ifort F77=ifort $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Building
 

@@ -20,8 +20,8 @@ MFront is a code generator which translates a set of closely related
 domain specific languages into plain [C++](http://isocpp.org/). Those
 languages covers three kind of material knowledge:
 
-- [material properties](material-properties.html) (for instance the Young modulus, the thermal
-conductivity, etc.
+- [material properties](material-properties.html) (for instance the
+  Young modulus, the thermal conductivity, etc.)
 - mechanical behaviours
 - [simple point-wise models](models.html), such as material swelling
 used in fuel performance codes.

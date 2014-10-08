@@ -39,7 +39,7 @@ f.setGlossaryName("Porosity");
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The code computing the Young modulus, introduced by the @Function
+The code computing the Young modulus, introduced by the `@Function`
 keyword on line 24, is reasonably closed to the mathematical
 expression of the material property:
 \[
