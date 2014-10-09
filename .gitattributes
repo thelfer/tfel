@@ -718,6 +718,7 @@ docs/web/about.md -text
 docs/web/apple-touch-icon-precomposed.png -text
 docs/web/benchmark.md -text
 docs/web/bibliography.bib -text
+docs/web/castem-fr.md -text
 docs/web/castem.md -text
 docs/web/crossdomain.xml -text
 docs/web/css/main.css -text
@@ -740,6 +741,7 @@ docs/web/img/172_5pc.png -text
 docs/web/img/172_5pc.xcf -text
 docs/web/img/FuelRod-ddif2.png -text
 docs/web/img/FuelRod-ddif2.xcf -text
+docs/web/img/NortonCreepUniaxialTesting.svg -text
 docs/web/img/VoidsGrowth.png -text
 docs/web/img/VoidsGrowth.xcf -text
 docs/web/img/arrows.png -text

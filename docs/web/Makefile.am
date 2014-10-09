@@ -9,6 +9,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./material-properties.md				   \
 	   ./models.md				                   \
 	   ./castem.md						   \
+	   ./castem-fr.md					   \
 	   ./install.md						   \
 	   ./about.md						   \
 	   ./news.md						   \
@@ -40,6 +41,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/172_5pc.xcf					   \
 	   ./img/arrows.png					   \
 	   ./img/FuelRod-ddif2.xcf				   \
+	   ./img/NortonUniaxialTesting.svg			   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

@@ -2,4 +2,5 @@
 % Helfer Thomas
 % August 19, 2014
 
+This page is also available in French [here](castem-fr.html).
 

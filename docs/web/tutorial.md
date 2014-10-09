@@ -42,15 +42,17 @@ Cette page est extraitre du tutoriel MFront : [tutoriel.pdf](documents/tutoriel/
 
 # Comment écrire une loi de comportement: la loi de comportement de Norton
 
-En guise de préliminaire, prenons par exemple la loi de . Elle est
-définie par: $$\left\{
+En guise de préliminaire, prenons par exemple la loi de Norton. Elle
+est définie par:
+$$\left\{
   \begin{aligned}
     \tepsilonto   &= \tepsilonel+\tepsilonvis \\
     \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\
     \tdepsilonvis &= \dot{p}\,\tenseur{n} \\
     \dot{p}       &= A\,\sigmaeq^{m}
   \end{aligned}
-\right.$$ où:
+\right.$$
+où:
 
 - $\tepsilonto$, $\tepsilonel$, $\tepsilonvis$ représentant
   respectivement les déformations totale, élastique et visqueuse ;
@@ -87,7 +89,7 @@ On obtient ainsi un système de 7 équations (6 équations — en 3D —
 relatives à la décomposition additive du tenseur des déformations, et
 une équation relative à l’écoulement visco-plastique). Les \(7\)
 inconnues sont les \(6\) composantes de $\Delta\,\tepsilonel$ (en
-\(3D\)) et $\Delta p $.
+\(3D\)) et $\Delta p$.
 
 La résolution implicite de ce système est effectuée par une méthode de .
 

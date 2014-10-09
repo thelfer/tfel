@@ -10,6 +10,7 @@ macro(pandoc_html file)
     ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mfront-template.html
     ARGS      --mathjax
     ARGS      --email-obfuscation=javascript
+    ARGS       --default-image-extension=svg
     ARGS      ${ARGN}
     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md -o ${file}.html)
   add_custom_target(${file}-html echo DEPENDS ${file}.html)
@@ -46,6 +47,7 @@ pandoc_html(tutorial)
 pandoc_html(benchmark)
 pandoc_html(news)
 pandoc_html(castem)
+pandoc_html(castem-fr)
 pandoc_html(documentations)
 pandoc_html(glossary)
 pandoc_html(material-properties)

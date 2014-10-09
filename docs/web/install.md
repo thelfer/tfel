@@ -30,9 +30,35 @@ Intel and AMD processors, either 32 or 64 bits. As no specific
 instructions relative to the underlying architecture is used in the
 code, other architectures shall work as well.
 
-The installation procedure itself is broken into five steps:
+If you have `cmake` (version greater than \(2.8\)) installed on your
+system, installing ̀TFEL` basically boils down to the following
+simple commands:
 
-- Prerequisites
+~~~~ {#building1 .bash}
+$ cmake [options]
+$ make 
+$ make install
+~~~~~~~~~~~~~~~~~~~~~~
+
+If you do not have `cmake`, you can use the standard procedure
+
+~~~~ {#building2 .bash}
+$ configure [options]
+$ make 
+$ make install
+~~~~~~~~~~~~~~~~~~~~~~
+
+The optional parameters of `cmake` and `configure` allows you to:
+
+- specify the source location
+- specify the installation directory
+- *specify the interfaces to be build*
+
+The rest of this document is dedicated to giving all the details
+related to the installation process. For completeness, we will broke
+the installation procedure into five steps:
+
+- Checking for available prerequisites
 - Downloading the source
 - Configuration
 - Building
@@ -123,7 +149,7 @@ The use of the `cmake` build system is described in depth in the
 sources. *We only support `cmake` version greater than \(2.8\)*, so
 please check the version available on your system:
 
-~~~~ {#building .bash}
+~~~~ {#cmake-version .bash}
 $ cmake --version
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -165,13 +191,13 @@ define one of the following variables:
 For example, we can use the following command to select the
 [Intel compilers suite](https://software.intel.com/en-us/c-compilers):
 
-~~~~ {#building .bash}
+~~~~ {#building-icpc .bash}
 $ CXX=icpc CC=icc FC=ifort F77=ifort cmake $srcdir -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=$prefix
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Using the `configure` script
 
-~~~~ {#building .bash}
+~~~~ {#building-configure .bash}
 $ $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -207,7 +233,7 @@ define one of the following variables:
 For example, we can use the following command to select the
 [Intel compilers suite](https://software.intel.com/en-us/c-compilers):
 
-~~~~ {#building .bash}
+~~~~ {#building-configure-icpc .bash}
 $ CXX=icpc CC=icc FC=ifort F77=ifort $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -218,14 +244,14 @@ The configuration step created a compilation environment based on the
 
 To build `TFEL` libraries and binaries, just type:
 
-~~~~ {#building .bash}
+~~~~ {#building-make .bash}
 $ make
 ~~~~~~~~~~~~~~~~~~~~~~
 
 To reduce compilation times, one may want to build `TFEL` libraries
 and binaries in parallel. In this case, just type:
 
-~~~~ {#building .bash}
+~~~~ {#building-make-j .bash}
 $ make -j X
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -237,7 +263,7 @@ $ make -j X
 using the `cmake` build system and all the interfaces available). To
 build them and execute them, just type:
 
-~~~~ {#building .bash}
+~~~~ {#building-check .bash}
 $ make check
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -249,7 +275,7 @@ Again, compilation time can be reduced using the `-j` option of the
 To install `TFEL` binaries and libraries in the directory pointed by
 `$prefix`, just type:
 
-~~~~ {#building .bash}
+~~~~ {#building-install .bash}
 $ make install
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -260,14 +286,14 @@ By default, documentation is not installed.
 If a valid [LaTeX](http://www.latex-project.org) distribution is
 available, reference manuals can be installed through:
 
-~~~~ {#building .bash}
+~~~~ {#building-pdf .bash}
 $ make doc-pdf-install
 ~~~~~~~~~~~~~~~~~~~~~~
 
 If the [doxygen](http://www.stack.nl/~dimitri/doxygen/) tool is
 available, code source documentation can be installed through:
 
-~~~~ {#building .bash}
+~~~~ {#building-html .bash}
 $ make doc-html-install
 ~~~~~~~~~~~~~~~~~~~~~~
 
