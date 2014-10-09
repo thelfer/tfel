@@ -908,8 +908,8 @@ namespace tfel{
 		      (p!=this->fileTokens.end())){
 		  current = p;
 		  ++p;
-		  if((current->flag!=Token::Comment)||
-		     (current->flag!=Token::DoxygenComment)||
+		  if((current->flag!=Token::Comment)&&
+		     (current->flag!=Token::DoxygenComment)&&
 		     (current->flag!=Token::DoxygenBackwardComment)){
 		    b->value.append(" ");
 		    b->value.append(current->value);
