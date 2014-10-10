@@ -150,7 +150,12 @@ namespace mfront
       this->current = beg;
       shared_ptr<VariableModifier> vm(makeVariableModifier(child,*ph,m));
       shared_ptr<WordAnalyser>     wa(makeWordAnalyser(child,*ph,a));
-      const CodeBlock& c = this->readNextBlock(b,"{","}",true,true,vm,wa);
+      CodeBlockParserOptions option;
+      option.qualifyStaticVariables = b;
+      option.qualifyMemberVariables = b;
+      option.modifier = vm;
+      option.analyser = wa;
+      const CodeBlock& c = this->readNextBlock(option);
       this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n,c,o.m,o.p);
     }
@@ -174,7 +179,11 @@ namespace mfront
     for(ph=h.begin();ph!=h.end();++ph){
       this->current = beg;
       shared_ptr<VariableModifier> vm(makeVariableModifier(child,*ph,m));
-      const CodeBlock& c = this->readNextBlock(vm,b);
+      CodeBlockParserOptions option;
+      option.qualifyStaticVariables = b;
+      option.qualifyMemberVariables = b;
+      option.modifier = vm;
+      const CodeBlock& c = this->readNextBlock(option);
       this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n,c,o.m,o.p);
     }
@@ -230,8 +239,15 @@ namespace mfront
       this->current = beg;
       CodeBlock c1;
       CodeBlock c2;
-      this->readNextBlock(c1,c2,makeVariableModifier(child,*ph,m1),
-			  makeVariableModifier(child,*ph,m2),b);
+      CodeBlockParserOptions o1;
+      o1.qualifyStaticVariables = b;
+      o1.qualifyMemberVariables = b;
+      o1.modifier = makeVariableModifier(child,*ph,m1);
+      CodeBlockParserOptions o2;
+      o2.qualifyStaticVariables = b;
+      o2.qualifyMemberVariables = b;
+      o2.modifier = makeVariableModifier(child,*ph,m2);
+      this->readNextBlock(c1,c2,o1,o2);
       this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n1,c1,o.m,o.p);
       this->mb.setCode(*ph,n2,c2,o.m,o.p);

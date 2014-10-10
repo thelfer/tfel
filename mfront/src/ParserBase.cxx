@@ -52,6 +52,17 @@ namespace mfront
   ParserBase::WordAnalyser::~WordAnalyser()
   {} // end of ParserBase::WordAnalyser::~WordAnalyser
 
+  ParserBase::CodeBlockParserOptions::CodeBlockParserOptions()
+    : modifier(0),
+      analyser(0),
+      delim1("{"),
+      delim2("}"),
+      qualifyStaticVariables(false),
+      qualifyMemberVariables(false),
+      allowSemiColon(true),
+      registerLine(true)
+  {}
+
   ParserBase::ParserBase()
   {
     this->reserveName("std",false);
@@ -97,41 +108,28 @@ namespace mfront
   void
   ParserBase::readNextBlock(CodeBlock& res1,
 			    CodeBlock& res2,
-			    tfel::utilities::shared_ptr<VariableModifier> modifier1,
-			    tfel::utilities::shared_ptr<VariableModifier> modifier2,
-			    const bool addThisPtr,
-			    const std::string delim1,
-			    const std::string delim2,
-			    const bool allowSemiColon,
-			    const bool registerLine)
+			    const CodeBlockParserOptions& o1,
+			    const CodeBlockParserOptions& o2)
   {
     TokensContainer::const_iterator pb = this->current;
-    res1 = this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier1);
+    res1 = this->readNextBlock(o1);
     this->current = pb;
-    res2 = this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier2);
+    res2 = this->readNextBlock(o2);
   } // end of ParserBase::readNextBlock
 
   CodeBlock
-  ParserBase::readNextBlock(tfel::utilities::shared_ptr<VariableModifier> modifier,
-			    const bool addThisPtr,
-			    const std::string delim1,
-			    const std::string delim2,
-			    const bool allowSemiColon,
-			    const bool registerLine)
-  {
-    return this->readNextBlock(addThisPtr,delim1,delim2,allowSemiColon,registerLine,modifier);
-  } // end of ParserBase::readNextBlock
-
-  CodeBlock
-  ParserBase::readNextBlock(const bool addThisPtr,
-			    const std::string delim1,
-			    const std::string delim2,
-			    const bool allowSemiColon,
-			    const bool registerLine,
-			    tfel::utilities::shared_ptr<VariableModifier> modifier,
-			    tfel::utilities::shared_ptr<WordAnalyser> analyser)
+  ParserBase::readNextBlock(const CodeBlockParserOptions& options)
   {
     using namespace std;
+    using namespace tfel::utilities;
+    const bool addThisPtr     = options.qualifyMemberVariables;
+    const bool addClassName   = options.qualifyStaticVariables;
+    const bool allowSemiColon = options.allowSemiColon;
+    const bool registerLine   = options.registerLine;
+    const std::string& delim1 = options.delim1;
+    const std::string& delim2 = options.delim2;
+    shared_ptr<VariableModifier> modifier = options.modifier;
+    shared_ptr<WordAnalyser>     analyser = options.analyser;
     CodeBlock b;
     if(!this->currentComment.empty()){
       b.description += this->currentComment;
@@ -182,8 +180,10 @@ namespace mfront
       if((previous->value!="->")&&
 	 (previous->value!=".")&&
 	 (previous->value!="::")){
-	res += this->getClassName();
-	res += "::";
+	if(addClassName){
+	  res += this->getClassName();
+	  res += "::";
+	}
       }
       res += this->current->value;
     } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
@@ -256,8 +256,10 @@ namespace mfront
 	if((previous->value!="->")&&
 	   (previous->value!=".")&&
 	   (previous->value!="::")){
-	  res += this->getClassName();
-	  res += "::";
+	  if(addClassName){
+	    res += this->getClassName();
+	    res += "::";
+	  }
 	}
 	res += this->current->value;
       } else if(this->varNames.find(this->current->value)!=this->varNames.end()){
@@ -1097,32 +1099,40 @@ namespace mfront
 
   void ParserBase::treatIncludes(void)
   {
-    this->appendToIncludes(this->readNextBlock().code);
+    CodeBlockParserOptions options;
+    this->appendToIncludes(this->readNextBlock(options).code);
   }
+
+  void
+  ParserBase::treatSources(void)
+  {
+    CodeBlockParserOptions options;
+    this->appendToSources(this->readNextBlock(options).code);
+  } // end of ParserBase::treatSources(void)
 
   void
   ParserBase::treatMembers(void)
   {
-    this->appendToMembers(this->readNextBlock().code);
+    CodeBlockParserOptions options;
+    options.qualifyStaticVariables = true;
+    options.qualifyMemberVariables = true;
+    this->appendToMembers(this->readNextBlock(options).code);
   }
+
+  void
+  ParserBase::treatPrivate(void)
+  {
+    CodeBlockParserOptions options;
+    options.qualifyStaticVariables = true;
+    options.qualifyMemberVariables = true;
+    this->appendToPrivateCode(this->readNextBlock(options).code);
+  } // end of ParserBase::treatSources(void)
 
   void
   ParserBase::treatParser(void)
   {
     this->readUntilEndOfInstruction();
   } // end of ParserBase::treatParser
-
-  void
-  ParserBase::treatSources(void)
-  {
-    this->appendToSources(this->readNextBlock().code);
-  } // end of ParserBase::treatSources(void)
-
-  void
-  ParserBase::treatPrivate(void)
-  {
-    this->appendToPrivateCode(this->readNextBlock().code);
-  } // end of ParserBase::treatSources(void)
 
   void
   ParserBase::treatStaticVar(void)

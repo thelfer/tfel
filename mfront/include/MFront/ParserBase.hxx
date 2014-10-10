@@ -96,6 +96,33 @@ namespace mfront
       virtual ~WordAnalyser() = 0;
     }; // end of struct WordAnalyser
     /*!
+     * options passed to the readNextBlock member
+     */
+    struct CodeBlockParserOptions{
+      /*!
+       * default constructor
+       */
+      CodeBlockParserOptions();
+      //! modifier applied to variables
+      tfel::utilities::shared_ptr<VariableModifier> modifier;
+      //! analyser applied to variables
+      tfel::utilities::shared_ptr<WordAnalyser> analyser;
+      //! delimeter marking the beginning of the block to be read
+      std::string delim1;
+      //! delimeter marking the end of the block to be read
+      std::string delim2;
+      //! if this member is true, the class name will be added in
+      //! front of variables names
+      bool qualifyStaticVariables;
+      //! if this member is true, the "this->" prefix will be added in
+      //! front of variables names
+      bool qualifyMemberVariables;
+      //! if true, the semi-colon will be allowed
+      bool allowSemiColon;
+      //! if true, line number will be registred
+      bool registerLine;
+    }; // end of CodeBlockParserOptions
+    /*!
      * constructor
      */
     ParserBase();
@@ -167,67 +194,24 @@ namespace mfront
      */
     unsigned short
     readUnsignedShort(const std::string&);
-
-    /*
-     * \param std::string&, first result
-     * \param std::string&, second result
-     * \param tfel::utilities::shared_ptr<VariableModifier>,
-     * first modifier of variable names
-     * \param tfel::utilities::shared_ptr<VariableModifier>, 
-     * second modifier of variable names 
-     * \param const bool, add "this->" before variable names
-     * \param const std::string, first delimiter
-     * \param const std::string, second delimiter
-     * \param const bool, allow ';' in the block
-     * \param const bool, add line number between lines
+    /*!
+     * \brief parse the next code block twice.
+     * \param[out] res1 : resulting code block with the first  option set. 
+     * \param[out] res2 : resulting code block with the second option set.
+     * \param[in]  o1   : first  option set.
+     * \param[in]  o2   : second option set.
      */
     void
     readNextBlock(CodeBlock&,
 		  CodeBlock&,
-		  tfel::utilities::shared_ptr<VariableModifier>,
-		  tfel::utilities::shared_ptr<VariableModifier>,
-		  const bool = false,
-		  const std::string = "{",
-		  const std::string = "}",
-		  const bool = true,
-		  const bool = true);
-
-    /*
-     * \param tfel::utilities::shared_ptr<VariableModifier>,
-     * modifier of variable names
-     * \param const bool, add "this->" before variable names
-     * \param const std::string, first delimiter
-     * \param const std::string, second delimiter
-     * \param const bool, allow ';' in the block
-     * \param const bool, add line number between lines
+		  const CodeBlockParserOptions&,
+		  const CodeBlockParserOptions&);
+    /*!
+     * \return the code block read.
+     * \param[in] o : options
      */
     CodeBlock
-    readNextBlock(tfel::utilities::shared_ptr<VariableModifier>,
-		  const bool = false,
-		  const std::string = "{",
-		  const std::string = "}",
-		  const bool = true,
-		  const bool = true);
-
-    /*
-     * \param const bool, add "this->" before variable names
-     * \param const std::string, first delimiter
-     * \param const std::string, second delimiter
-     * \param const bool, allow ';' in the block
-     * \param const bool, add line number between lines
-     * \param tfel::utilities::shared_ptr<VariableModifier>,
-     * modifier of variable names
-     */
-    CodeBlock
-    readNextBlock(const bool = false,
-		  const std::string = "{",
-		  const std::string = "}",
-		  const bool = true,
-		  const bool = true,
-		  tfel::utilities::shared_ptr<VariableModifier> =
-		  tfel::utilities::shared_ptr<VariableModifier>(),
-		  tfel::utilities::shared_ptr<WordAnalyser> =
-		  tfel::utilities::shared_ptr<WordAnalyser>());
+    readNextBlock(const CodeBlockParserOptions&);
     /*!
      * \brief read one token and increment "current"
      */
