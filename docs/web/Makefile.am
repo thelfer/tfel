@@ -41,7 +41,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/172_5pc.xcf					   \
 	   ./img/arrows.png					   \
 	   ./img/FuelRod-ddif2.xcf				   \
-	   ./img/NortonUniaxialTesting.svg			   \
+	   ./img/NortonCreepUniaxialTesting.svg                    \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \
