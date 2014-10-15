@@ -382,7 +382,7 @@ namespace mfront{
 		<< currentOffset << "+idx];\n";  
 	      break;
 	    case SupportedTypes::TVector :
-	      f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
+	      f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
 		<< currentOffset << "+idx*TVectorSize],"
 		<< n << "[idx].begin());\n";  
 	      break;
@@ -391,7 +391,7 @@ namespace mfront{
 		  << currentOffset << "+idx*StensorSize]);\n";  
 	      break;
 	    case SupportedTypes::Tensor :
-	      f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
+	      f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
 		<< currentOffset << "+idx*TensorSize],"
 		<< n << "[idx].begin());\n";  
 	      break;
@@ -411,7 +411,7 @@ namespace mfront{
 		  << currentOffset << "];\n";  
 		break;
 	      case SupportedTypes::TVector :
-		f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
+		f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
 		  << currentOffset << "]," << n << "[" << i << "].begin());\n";  
 		break;
 	      case SupportedTypes::Stensor :
@@ -419,7 +419,7 @@ namespace mfront{
 		  << currentOffset << "]);\n";  
 		break;
 	      case SupportedTypes::Tensor :
-		f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
+		f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
 		  << currentOffset << "]," << n << "[" << i << "].begin());\n";  
 		break;
 	      default : 

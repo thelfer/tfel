@@ -1944,7 +1944,7 @@ namespace mfront{
     file << "typedef typename Types::FrequencyStensor                  FrequencyStensor;" << endl;
     file << "typedef typename Types::ForceTVector                      ForceTVector;" << endl;
     file << "typedef typename Types::StressStensor                     StressStensor;" << endl;
-    file << "typedef typename Types::StrainRateStensor                 StressRateStensor;" << endl;
+    file << "typedef typename Types::StressRateStensor                 StressRateStensor;" << endl;
     file << "typedef typename Types::DisplacementTVector               DisplacementTVector;" << endl;
     file << "typedef typename Types::StrainStensor                     StrainStensor;" << endl;
     file << "typedef typename Types::StrainRateStensor                 StrainRateStensor;" << endl;
