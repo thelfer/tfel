@@ -4,9 +4,10 @@
 
 <div id="slideshow">
   <ul class="slides">
-    <li><img src="img/FuelRod-ddif2.png" width="620" height="320" alt="Fissuration d'une pastille combustible" /></li>
-    <li><img src="img/172_5pc.png" width="620" height="320" alt="Calculs sur polycristal" /></li>
-	<li><img src="img/VoidsGrowth.png" width="620" height="320" alt="Croissance de vides" /></li>
+    <li><img src="img/FuelRod-ddif2.png" width="620" height="320" alt="Fuel pellet cracking" /></li>
+    <li><img src="img/172_5pc.png" width="620" height="320" alt="Polycrystal computations" /></li>
+	<li><img src="img/VoidsGrowth.png" width="620" height="320" alt="Void growth" /></li>
+	<li><img src="img/hsnv125.png" width="620" height="320" alt="Unit testing of a Chaboche-like viscoplastic beahviour" /></li>
   </ul>
   <span class="arrow previous"></span>
   <span class="arrow next"></span>
@@ -22,7 +23,7 @@ languages covers three kind of material knowledge:
 
 - [material properties](material-properties.html) (for instance the
   Young modulus, the thermal conductivity, etc.)
-- mechanical behaviours
+- [mechanical behaviours](behaviours.html)
 - [simple point-wise models](models.html), such as material swelling
 used in fuel performance codes.
 

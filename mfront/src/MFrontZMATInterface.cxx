@@ -555,7 +555,7 @@ namespace mfront
 		<< o << "+idx];\n";  
 	      break;
 	    // case SupportedTypes::TVector :
-	    //   out << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
+	    //   out << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
 	    // 	<< o << "+idx*TVectorSize],"
 	    // 	<< n << "[idx].begin());\n";  
 	    //   break;

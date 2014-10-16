@@ -8,8 +8,10 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
-configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCristalsAngles.txt"
-    PolyCristalsAngles.txt @ONLY)
+configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
+    PolyCrystalsAngles.txt @ONLY)
+configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles-30.txt"
+    PolyCrystalsAngles-30.txt @ONLY)
 
 set(mfront_tests_SOURCES
   Tvergaard
@@ -45,18 +47,19 @@ set(mfront_tests_SOURCES
   Chaboche2
   ViscoChaboche
   ViscoMemoNrad
-  ImplicitMonoCristal
-  MonoCristal
-  MonoCristal_DD_CFC
-  MonoCristal_DD_CFC_NumericalJacobian
-  MonoCristal_DD_CFC_Irradiation
-  MonoCristal_DD_CC
-  MonoCristal_DD_CC_LevenbergMarquardt
-  MonoCristal_DD_CC_NumericalJacobian
-  MonoCristal_DD_CC_Irradiation
-  MonoCristal_DD_CC_Irradiation_NumericalJacobian
-  PolyCristals
-  PolyCristals_DD_CFC
+  ImplicitMonoCrystal
+  MonoCrystal
+  MonoCrystal_DD_CFC
+  MonoCrystal_DD_CFC_NumericalJacobian
+  MonoCrystal_DD_CFC_Irradiation
+  MonoCrystal_DD_CC
+  MonoCrystal_DD_CC_LevenbergMarquardt
+  MonoCrystal_DD_CC_NumericalJacobian
+  MonoCrystal_DD_CC_Irradiation
+  MonoCrystal_DD_CC_Irradiation_NumericalJacobian
+  PolyCrystals
+  PolyCrystals_DD_CC
+  PolyCrystals_DD_CFC
   GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian
   GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian
   Hayhurst
@@ -182,19 +185,20 @@ test_aster(viscoplasisocin)
 test_aster(chaboche)
 test_aster(chaboche2)
 test_aster(viscochaboche)
-test_aster(monocristal)
-test_aster(monocristal-2)
-test_aster(implicitmonocristal)
-test_aster(implicitmonocristal-2)
-test_aster(monocristal_dd_cfc)
-test_aster(monocristal_dd_cfc_numericaljacobian)
-test_aster(monocristal_dd_cfc_irradiation)
-test_aster(monocristal_dd_cc)
-test_aster(monocristal_dd_cc_numericaljacobian)
-test_aster(monocristal_dd_cc_irradiation)
-test_aster(monocristal_dd_cc_irradiation_numericaljacobian)
-test_aster(polycristals)
-test_aster(polycristals_dd_cfc)
+test_aster(monocrystal)
+test_aster(monocrystal-2)
+test_aster(implicitmonocrystal)
+test_aster(implicitmonocrystal-2)
+test_aster(monocrystal_dd_cfc)
+test_aster(monocrystal_dd_cfc_numericaljacobian)
+test_aster(monocrystal_dd_cfc_irradiation)
+test_aster(monocrystal_dd_cc)
+test_aster(monocrystal_dd_cc_numericaljacobian)
+test_aster(monocrystal_dd_cc_irradiation)
+test_aster(monocrystal_dd_cc_irradiation_numericaljacobian)
+test_aster(polycrystals)
+test_aster(polycrystals_dd_cc)
+test_aster(polycrystals_dd_cfc)
 test_aster(implicithayhurst)
 test_aster(burger)
 test_aster(ageingburger)

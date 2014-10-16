@@ -481,19 +481,20 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterviscochaboche.mtest
 	   mfront/tests/behaviours/aster/asterviscochaboche-memo-nrad.py
 	   mfront/tests/behaviours/aster/asterxx.py
-           mfront/tests/behaviours/aster/astermonocristal.mtest
-           mfront/tests/behaviours/aster/astermonocristal-2.mtest
-           mfront/tests/behaviours/aster/asterimplicitmonocristal.mtest
-           mfront/tests/behaviours/aster/asterimplicitmonocristal-2.mtest
-           mfront/tests/behaviours/aster/astermonocristal_dd_cfc.mtest
-           mfront/tests/behaviours/aster/astermonocristal_dd_cfc_numericaljacobian.mtest
-           mfront/tests/behaviours/aster/astermonocristal_dd_cfc_irradiation.mtest
-           mfront/tests/behaviours/aster/astermonocristal_dd_cc.mtest
-           mfront/tests/behaviours/aster/astermonocristal_dd_cc_numericaljacobian.mtest
-           mfront/tests/behaviours/aster/astermonocristal_dd_cc_irradiation.mtest
-           mfront/tests/behaviours/aster/astermonocristal_dd_cc_irradiation_numericaljacobian.mtest
-           mfront/tests/behaviours/aster/asterpolycristals.mtest
-           mfront/tests/behaviours/aster/asterpolycristals_dd_cfc.mtest
+           mfront/tests/behaviours/aster/astermonocrystal.mtest
+           mfront/tests/behaviours/aster/astermonocrystal-2.mtest
+           mfront/tests/behaviours/aster/asterimplicitmonocrystal.mtest
+           mfront/tests/behaviours/aster/asterimplicitmonocrystal-2.mtest
+           mfront/tests/behaviours/aster/astermonocrystal_dd_cfc.mtest
+           mfront/tests/behaviours/aster/astermonocrystal_dd_cfc_numericaljacobian.mtest
+           mfront/tests/behaviours/aster/astermonocrystal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/aster/astermonocrystal_dd_cc.mtest
+           mfront/tests/behaviours/aster/astermonocrystal_dd_cc_numericaljacobian.mtest
+           mfront/tests/behaviours/aster/astermonocrystal_dd_cc_irradiation.mtest
+           mfront/tests/behaviours/aster/astermonocrystal_dd_cc_irradiation_numericaljacobian.mtest
+           mfront/tests/behaviours/aster/asterpolycrystals.mtest
+           mfront/tests/behaviours/aster/asterpolycrystals_dd_cc.mtest
+           mfront/tests/behaviours/aster/asterpolycrystals_dd_cfc.mtest
            mfront/tests/behaviours/aster/asterimplicithayhurst.mtest
            mfront/tests/behaviours/aster/asterburger.mtest
            mfront/tests/behaviours/aster/asterageingburger.mtest
@@ -584,6 +585,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemelasticity30.mtest
            mfront/tests/behaviours/castem/castemelasticity31.mtest
            mfront/tests/behaviours/castem/castemelasticity32.mtest
+           mfront/tests/behaviours/castem/castemgeneralizedmaxwell.mtest
            mfront/tests/behaviours/castem/castemddif2.mtest
            mfront/tests/behaviours/castem/castemddif2-2.mtest
            mfront/tests/behaviours/castem/castemddif2-3.mtest
@@ -619,19 +621,20 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemchaboche.mtest
            mfront/tests/behaviours/castem/castemchaboche2.mtest
            mfront/tests/behaviours/castem/castemviscochaboche.mtest
-           mfront/tests/behaviours/castem/castemmonocristal.mtest
-           mfront/tests/behaviours/castem/castemmonocristal-2.mtest
-           mfront/tests/behaviours/castem/castemimplicitmonocristal.mtest
-           mfront/tests/behaviours/castem/castemimplicitmonocristal-2.mtest
-           mfront/tests/behaviours/castem/castemmonocristal_dd_cfc.mtest
-           mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_numericaljacobian.mtest
-           mfront/tests/behaviours/castem/castemmonocristal_dd_cfc_irradiation.mtest
-           mfront/tests/behaviours/castem/castemmonocristal_dd_cc.mtest
-           mfront/tests/behaviours/castem/castemmonocristal_dd_cc_numericaljacobian.mtest
-           mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation.mtest
-           mfront/tests/behaviours/castem/castemmonocristal_dd_cc_irradiation_numericaljacobian.mtest
-           mfront/tests/behaviours/castem/castempolycristals.mtest
-           mfront/tests/behaviours/castem/castempolycristals_dd_cfc.mtest
+           mfront/tests/behaviours/castem/castemmonocrystal.mtest
+           mfront/tests/behaviours/castem/castemmonocrystal-2.mtest
+           mfront/tests/behaviours/castem/castemimplicitmonocrystal.mtest
+           mfront/tests/behaviours/castem/castemimplicitmonocrystal-2.mtest
+           mfront/tests/behaviours/castem/castemmonocrystal_dd_cfc.mtest
+           mfront/tests/behaviours/castem/castemmonocrystal_dd_cfc_numericaljacobian.mtest
+           mfront/tests/behaviours/castem/castemmonocrystal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/castem/castemmonocrystal_dd_cc.mtest
+           mfront/tests/behaviours/castem/castemmonocrystal_dd_cc_numericaljacobian.mtest
+           mfront/tests/behaviours/castem/castemmonocrystal_dd_cc_irradiation.mtest
+           mfront/tests/behaviours/castem/castemmonocrystal_dd_cc_irradiation_numericaljacobian.mtest
+           mfront/tests/behaviours/castem/castempolycrystals.mtest
+           mfront/tests/behaviours/castem/castempolycrystals_dd_cc.mtest
+           mfront/tests/behaviours/castem/castempolycrystals_dd_cfc.mtest
            mfront/tests/behaviours/castem/castemhayhurst.mtest
            mfront/tests/behaviours/castem/castemimplicithayhurst.mtest
 	   mfront/tests/behaviours/castem/castemgursontvergaardneedlemanplasticflow.mtest
@@ -791,16 +794,16 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem2/castem2gursontvergaardneedlemanplasticflow.mtest
            mfront/tests/behaviours/castem2/castem2gursontvergaardneedlemanviscoplasticflow.mtest
            mfront/tests/behaviours/castem2/castem2implicithayhurst.mtest
-           mfront/tests/behaviours/castem2/castem2implicitmonocristal-2.mtest
-           mfront/tests/behaviours/castem2/castem2implicitmonocristal.mtest
-           mfront/tests/behaviours/castem2/castem2monocristal-2.mtest
-           mfront/tests/behaviours/castem2/castem2monocristal_dd_cc_irradiation_numericaljacobian.mtest
-           mfront/tests/behaviours/castem2/castem2monocristal_dd_cc.mtest
-           mfront/tests/behaviours/castem2/castem2monocristal_dd_cc_numericaljacobian.mtest
-           mfront/tests/behaviours/castem2/castem2monocristal_dd_cfc_irradiation.mtest
-           mfront/tests/behaviours/castem2/castem2monocristal_dd_cfc.mtest
-           mfront/tests/behaviours/castem2/castem2monocristal_dd_cfc_numericaljacobian.mtest
-           mfront/tests/behaviours/castem2/castem2monocristal.mtest
+           mfront/tests/behaviours/castem2/castem2implicitmonocrystal-2.mtest
+           mfront/tests/behaviours/castem2/castem2implicitmonocrystal.mtest
+           mfront/tests/behaviours/castem2/castem2monocrystal-2.mtest
+           mfront/tests/behaviours/castem2/castem2monocrystal_dd_cc_irradiation_numericaljacobian.mtest
+           mfront/tests/behaviours/castem2/castem2monocrystal_dd_cc.mtest
+           mfront/tests/behaviours/castem2/castem2monocrystal_dd_cc_numericaljacobian.mtest
+           mfront/tests/behaviours/castem2/castem2monocrystal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/castem2/castem2monocrystal_dd_cfc.mtest
+           mfront/tests/behaviours/castem2/castem2monocrystal_dd_cfc_numericaljacobian.mtest
+           mfront/tests/behaviours/castem2/castem2monocrystal.mtest
            mfront/tests/behaviours/castem2/castem2norton2.mtest
            mfront/tests/behaviours/castem2/castem2norton.mtest
            mfront/tests/behaviours/castem2/castem2plasisocin.mtest
@@ -839,7 +842,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/secant/secantfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/secant/secanthayhurst.mtest
            mfront/tests/behaviours/secant/secantimplicithayhurst.mtest
-           mfront/tests/behaviours/secant/secantimplicitmonocristal.mtest
+           mfront/tests/behaviours/secant/secantimplicitmonocrystal.mtest
            mfront/tests/behaviours/secant/secantimplicitnorton3.mtest
            mfront/tests/behaviours/secant/secantimplicitnorton-planestress2.mtest
            mfront/tests/behaviours/secant/secantimplicitnorton-planestress.mtest
@@ -879,12 +882,12 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest
            mfront/tests/behaviours/secant/secantmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
-           mfront/tests/behaviours/secant/secantmonocristal_dd_cc_irradiation.mtest
-           mfront/tests/behaviours/secant/secantmonocristal_dd_cc_irradiation_numericaljacobian.mtest
-           mfront/tests/behaviours/secant/secantmonocristal_dd_cfc_irradiation.mtest
-           mfront/tests/behaviours/secant/secantmonocristal_dd_cfc.mtest
-           mfront/tests/behaviours/secant/secantmonocristal_dd_cfc_numericaljacobian.mtest
-           mfront/tests/behaviours/secant/secantmonocristal.mtest
+           mfront/tests/behaviours/secant/secantmonocrystal_dd_cc_irradiation.mtest
+           mfront/tests/behaviours/secant/secantmonocrystal_dd_cc_irradiation_numericaljacobian.mtest
+           mfront/tests/behaviours/secant/secantmonocrystal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/secant/secantmonocrystal_dd_cfc.mtest
+           mfront/tests/behaviours/secant/secantmonocrystal_dd_cfc_numericaljacobian.mtest
+           mfront/tests/behaviours/secant/secantmonocrystal.mtest
            mfront/tests/behaviours/secant/secantnorton2.mtest
            mfront/tests/behaviours/secant/secantnorton-euler.mtest
            mfront/tests/behaviours/secant/secantnorton.mtest
@@ -898,7 +901,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/secant/secantorthotropiccreep-rkCastem.mtest
            mfront/tests/behaviours/secant/secantplasisocin.mtest
            mfront/tests/behaviours/secant/secantplasticity.mtest
-           mfront/tests/behaviours/secant/secantpolycristals_dd_cfc.mtest
+           mfront/tests/behaviours/secant/secantpolycrystals_dd_cfc.mtest
            mfront/tests/behaviours/secant/secantstrainhardeningcreep.mtest
            mfront/tests/behaviours/secant/secantstressrelaxation.mtest
            mfront/tests/behaviours/secant/secantT91-satohtest.mtest

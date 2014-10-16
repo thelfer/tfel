@@ -27,7 +27,7 @@ namespace tfel
 
     /*!
      * An helper class which actually does the computation of the
-     * tensor of directional sense for CFC cristals.
+     * tensor of directional sense for CFC crystals.
      */
     template<typename NumType>
     struct MetallicCFCSlidingSystems

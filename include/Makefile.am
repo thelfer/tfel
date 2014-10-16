@@ -40,8 +40,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/MetallicCFCSlidingSystems.ixx                                                  \
 			TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx                          \
 			TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx                          \
-			TFEL/Material/PolyCristalsSlidingSystems.hxx                                                 \
-			TFEL/Material/PolyCristalsSlidingSystems.ixx                                                 \
+			TFEL/Material/PolyCrystalsSlidingSystems.hxx                                                 \
+			TFEL/Material/PolyCrystalsSlidingSystems.ixx                                                 \
 			TFEL/Material/GursonTvergaardNeedleman.hxx                                                   \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                                             \
 			TFEL/Config/Internals/SpatialGradType.hxx	                                             \

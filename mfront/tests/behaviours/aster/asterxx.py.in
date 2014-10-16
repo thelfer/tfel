@@ -12,7 +12,7 @@ class Asterxx(unittest.TestCase):
         Nss=12
 
         b = Behaviour("Tridimensional","@MFrontAsterBehavioursBuildPath@",
-		      "asterpolycristals")
+		      "asterpolycrystals")
         mpnames=b.getMaterialPropertiesNames()
         ivnames=b.getInternalStateVariablesNames()
         ivtypes=b.getInternalStateVariablesTypes()

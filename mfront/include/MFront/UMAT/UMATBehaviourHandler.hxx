@@ -554,7 +554,6 @@ namespace umat
 	unsigned short subSteps   = 1u;
 	unsigned short iterations = 2u;
 	const typename BV::SMFlag smflag = UMATTangentOperatorFlag<UMATTraits<BV>::btype>::value;
-	typename BV::IntegrationResult r = BV::SUCCESS;
 	while((iterations!=0)&&
 	      (subSteps!=UMATTraits<BV>::maximumSubStepping)){
 	  typename BV::IntegrationResult result;

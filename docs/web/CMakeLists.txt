@@ -25,6 +25,7 @@ add_custom_target(website-install
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/css       ${CMAKE_INSTALL_PREFIX}/share/doc/web/css
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/doc       ${CMAKE_INSTALL_PREFIX}/share/doc/web/doc
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/img       ${CMAKE_INSTALL_PREFIX}/share/doc/web/img
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/downloads ${CMAKE_INSTALL_PREFIX}/share/doc/web/downloads
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/404.html ${CMAKE_INSTALL_PREFIX}/share/doc/web
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/apple-touch-icon-precomposed.png ${CMAKE_INSTALL_PREFIX}/share/doc/web
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CHANGELOG.md ${CMAKE_INSTALL_PREFIX}/share/doc/web
@@ -39,6 +40,7 @@ add_custom_target(website-install
 add_dependencies(doc-install website-install )
 
 pandoc_html(index "-c css/slideshow.css")
+pandoc_html(faq "--toc")
 pandoc_html(install)
 pandoc_html(about)
 pandoc_html(svn)
@@ -48,7 +50,10 @@ pandoc_html(benchmark)
 pandoc_html(news)
 pandoc_html(castem)
 pandoc_html(castem-fr)
+pandoc_html(aster)
+pandoc_html(zmat)
 pandoc_html(documentations)
 pandoc_html(glossary)
 pandoc_html(material-properties)
+pandoc_html(behaviours)
 pandoc_html(models)

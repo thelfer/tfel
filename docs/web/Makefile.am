@@ -7,9 +7,12 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./svn.md					           \
 	   ./index.md					           \
 	   ./material-properties.md				   \
+	   ./behaviours.md				           \
 	   ./models.md				                   \
 	   ./castem.md						   \
 	   ./castem-fr.md					   \
+	   ./aster.md						   \
+	   ./zmat.md						   \
 	   ./install.md						   \
 	   ./about.md						   \
 	   ./news.md						   \
@@ -42,6 +45,9 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/arrows.png					   \
 	   ./img/FuelRod-ddif2.xcf				   \
 	   ./img/NortonCreepUniaxialTesting.svg                    \
+	   ./img/hsnv125.xcf                                       \
+	   ./img/hsnv125.png                                       \
+	   ./img/LogarithmicStrainPlasticity-ssna303.svg           \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \
@@ -54,4 +60,6 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./css/normalize.css					   \
 	   ./css/slideshow.css					   \
 	   ./css/main.css					   \
-	   ./tex/lcmd_utf8.tex
+	   ./tex/lcmd_utf8.tex                                     \
+	   ./downloads/example-castem2014.tar.bz2                  \
+	   ./downloads/example-zset8.5.tar.bz2

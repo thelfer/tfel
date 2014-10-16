@@ -59,7 +59,7 @@ où:
 - $\tenseur{n}=\Frac{3}{2}\,\Frac{\tenseur{s}}{\sigmaeq}$ est la
   direction d’écoulement ;
 - $\tenseur{s}$ est le déviateur des contraintes ;
-- $\sigmaeq$ est la norme de .
+- $\sigmaeq$ est la norme de Von Mises.
 
 L’opérateur d’élasticité $\tenseurq{D}$ est calculé à partir du module
 d’ $E$ et du coefficient de $\nu$.
@@ -72,7 +72,7 @@ d’instants de calcul $\left\{t_{i}\right\}_{1\le i\le I}$.
 
 Pour utiliser un algorithme implicite, il suffit d’écrire toutes les
 quantités à l’instant $t_{i}$ et de remplacer les dérivées en temps par
-leurs incréments sur l’intervalle $ \Delta t= t_{i} - t_{i-1} $ :
+leurs incréments sur l’intervalle $\Delta t= t_{i} - t_{i-1}$ :
 $$\left\{
   \begin{aligned}
     \Delta\,\tepsilonel - \Delta\,\tepsilonto   + \Delta\,p\,\tenseur{n} = 0 \\
@@ -82,8 +82,8 @@ $$\left\{
 
 avec:
 
--   $\tsigma  = \tenseurq{D}\,:\,\tepsilonel $ ;
--   $\tenseur{n}=\Frac{3}{2}\,\Frac{ \tenseur{s} \paren{t_{i}}} { \sigmaeq \paren{ t_{i}}}\ $
+- $\tsigma  = \tenseurq{D}\,:\,\tepsilonel$ ;
+- $\tenseur{n}=\Frac{3}{2}\,\Frac{ \tenseur{s} \paren{t_{i}}} { \sigmaeq \paren{ t_{i}}}$
 
 On obtient ainsi un système de 7 équations (6 équations — en 3D —
 relatives à la décomposition additive du tenseur des déformations, et
@@ -91,11 +91,13 @@ une équation relative à l’écoulement visco-plastique). Les \(7\)
 inconnues sont les \(6\) composantes de $\Delta\,\tepsilonel$ (en
 \(3D\)) et $\Delta p$.
 
-La résolution implicite de ce système est effectuée par une méthode de .
+La résolution implicite de ce système est effectuée par une méthode de
+Newton.
 
 ## Première implantation
 
-Voici un exemple très simple d’intégration implicite de ce modèle avec :
+Voici un exemple très simple d’intégration implicite de ce modèle avec
+`MFront` :
 
 ~~~~ {#UO2YoungModulus .cpp .numberLines}
 @Parser Implicit;

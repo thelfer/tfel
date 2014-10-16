@@ -6,6 +6,7 @@ MFRONTS= DDIF2.mfront                                                      \
          Elasticity3.mfront                                                \
          OrthotropicElastic.mfront                                         \
          OrthotropicElastic2.mfront                                        \
+         GeneralizedMaxwell.mfront                                         \
          FiniteRotationSmallStrainElasticity.mfront                        \
          FiniteRotationSmallStrainElasticity2.mfront                       \
 	 Plasticity.mfront                                                 \
@@ -43,22 +44,24 @@ MFRONTS= DDIF2.mfront                                                      \
          Chaboche2.mfront                                                  \
          ViscoChaboche.mfront                                              \
 	 ViscoMemoNrad.mfront                                              \
-	 ImplicitMonoCristal.mfront                                        \
-	 MonoCristal.mfront                                                \
-	 MonoCristalNewtonRaphson.mfront                                   \
-	 MonoCristal_DD_CFC.mfront                                         \
-	 MonoCristal_DD_CFC_NumericalJacobian.mfront                       \
-	 MonoCristal_DD_CFC_Irradiation.mfront                             \
-	 MonoCristal_DD_CFC_InteractionMatrix.mfront                       \
-	 MonoCristal_DD_CC.mfront                                          \
-	 MonoCristal_DD_CC_LevenbergMarquardt.mfront                       \
-	 MonoCristal_DD_CC_NumericalJacobian.mfront                        \
-	 MonoCristal_DD_CC_Irradiation.mfront                              \
-	 MonoCristal_DD_CC_Irradiation_NumericalJacobian.mfront            \
-	 MonoCristal_DD_CC_InteractionMatrix.mfront                        \
-	 MonoCristal_DD_CC_SlidingSystems.mfront                           \
-	 PolyCristals.mfront                                               \
-	 PolyCristals_DD_CFC.mfront                                        \
+	 ImplicitMonoCrystal.mfront                                        \
+	 MonoCrystal.mfront                                                \
+	 MonoCrystalNewtonRaphson.mfront                                   \
+	 MonoCrystal_DD_CFC.mfront                                         \
+	 MonoCrystal_DD_CFC_NumericalJacobian.mfront                       \
+	 MonoCrystal_DD_CFC_Irradiation.mfront                             \
+	 MonoCrystal_DD_CFC_InteractionMatrix.mfront                       \
+	 MonoCrystal_DD_CC.mfront                                          \
+	 MonoCrystal_DD_CC_LevenbergMarquardt.mfront                       \
+	 MonoCrystal_DD_CC_NumericalJacobian.mfront                        \
+	 MonoCrystal_DD_CC_Irradiation.mfront                              \
+	 MonoCrystal_DD_CC_Irradiation_NumericalJacobian.mfront            \
+	 MonoCrystal_DD_CC_InteractionMatrix.mfront                        \
+	 MonoCrystal_DD_CC_SlidingSystems.mfront                           \
+	 PolyCrystals.mfront                                               \
+	 PolyCrystals_DD_CFC.mfront                                        \
+	 PolyCrystals_DD_CC.mfront                                         \
+	 SlidingSystemsCC.mfront                                           \
 	 GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian.mfront      \
 	 GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian.mfront \
 	 Hayhurst.mfront                                                   \
@@ -93,18 +96,21 @@ EXTRA_DIST=CMakeLists.txt                                                 \
            references/ddif2-biaxialtesting.ref                            \
            references/plasticity.ref                                      \
 	   references/elasticity15-aster.ref                              \
+	   references/generalizedmaxwell.ref                              \
 	   references/mazars-aster.ref                                    \
 	   references/plasisocin.ref                                      \
 	   references/viscoplasisocin.ref                                 \
 	   references/chaboche2-aster.ref                                 \
 	   references/chaboche-aster.ref                                  \
 	   references/chaboche2-aster.ref                                 \
-	   references/monocristal.ref                                     \
-	   references/monocristal_dd_cfc.ref                              \
-	   references/monocristal_dd_cfc_irradiation.ref                  \
-	   references/PolyCristalsAngles.txt                              \
-	   references/polycristals.ref                                    \
-	   references/polycristals_dd_cfc.ref                             \
+	   references/monocrystal.ref                                     \
+	   references/monocrystal_dd_cfc.ref                              \
+	   references/monocrystal_dd_cfc_irradiation.ref                  \
+	   references/PolyCrystalsAngles.txt                              \
+	   references/PolyCrystalsAngles-30.txt                           \
+	   references/polycrystals.ref                                    \
+	   references/polycrystals_dd_cc.ref                              \
+	   references/polycrystals_dd_cfc.ref                             \
 	   references/hayhurst.ref                                        \
 	   references/burger.ref                                          \
 	   references/ageingburger.ref                                    \
@@ -112,8 +118,8 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/druckerprager.ref                                   \
 	   references/druckerprager2.ref                                  \
 	   references/implicitsimomieheelastoplasticity.ref               \
-	   references/monocristal_dd_cc_numericaljacobian.ref             \
-	   references/monocristal_dd_cc_irradiation_numericaljacobian.ref \
+	   references/monocrystal_dd_cc_numericaljacobian.ref             \
+	   references/monocrystal_dd_cc_irradiation_numericaljacobian.ref \
 	   references/logarithmicstrainnortoncreepuniaxialtesting.ref     \
 	   references/T91-satohtest.ref                                   \
 	   references/finitestrainsinglecrystal-001.ref			  \

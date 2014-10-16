@@ -11,8 +11,10 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
-configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCristalsAngles.txt"
-    PolyCristalsAngles.txt @ONLY)
+configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
+    PolyCrystalsAngles.txt @ONLY)
+configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles-30.txt"
+    PolyCrystalsAngles-30.txt @ONLY)
 
 set(mfront_tests_SOURCES
   OrthotropicElastic
@@ -20,6 +22,7 @@ set(mfront_tests_SOURCES
   Elasticity
   Elasticity2
   Elasticity3
+  GeneralizedMaxwell
   FiniteRotationSmallStrainElasticity
   FiniteRotationSmallStrainElasticity2
   LogarithmicStrainElasticity
@@ -58,21 +61,22 @@ set(mfront_tests_SOURCES
   Chaboche
   Chaboche2
   ViscoChaboche
-  ImplicitMonoCristal
-  MonoCristal
-  MonoCristal_DD_CFC
-  MonoCristal_DD_CFC_NumericalJacobian
-  MonoCristal_DD_CFC_Irradiation
-  MonoCristal_DD_CC
-  MonoCristal_DD_CC_LevenbergMarquardt
-  MonoCristal_DD_CC_NumericalJacobian
-  MonoCristal_DD_CC_Irradiation
-  MonoCristal_DD_CC_Irradiation_NumericalJacobian
+  ImplicitMonoCrystal
+  MonoCrystal
+  MonoCrystal_DD_CFC
+  MonoCrystal_DD_CFC_NumericalJacobian
+  MonoCrystal_DD_CFC_Irradiation
+  MonoCrystal_DD_CC
+  MonoCrystal_DD_CC_LevenbergMarquardt
+  MonoCrystal_DD_CC_NumericalJacobian
+  MonoCrystal_DD_CC_Irradiation
+  MonoCrystal_DD_CC_Irradiation_NumericalJacobian
   FiniteStrainSingleCrystal
   FiniteStrainSingleCrystal2
   FiniteStrainSingleCrystal_NumericalJacobian
-  PolyCristals
-  PolyCristals_DD_CFC
+  PolyCrystals
+  PolyCrystals_DD_CC
+  PolyCrystals_DD_CFC
   GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian
   GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian
   Hayhurst
@@ -193,6 +197,7 @@ test_castem(elasticity29)
 test_castem(elasticity30)
 test_castem(elasticity31)
 test_castem(elasticity32)
+test_castem(generalizedmaxwell)
 test_castem(ddif2)
 test_castem(ddif2-2)
 test_castem(ddif2-3)
@@ -227,19 +232,20 @@ test_castem(viscoplasisocin)
 test_castem(chaboche)
 test_castem(chaboche2)
 test_castem(viscochaboche)
-test_castem(monocristal)
-test_castem(monocristal-2)
-test_castem(implicitmonocristal)
-test_castem(implicitmonocristal-2)
-test_castem(monocristal_dd_cfc)
-test_castem(monocristal_dd_cfc_numericaljacobian)
-test_castem(monocristal_dd_cfc_irradiation)
-test_castem(monocristal_dd_cc)
-test_castem(monocristal_dd_cc_numericaljacobian)
-test_castem(monocristal_dd_cc_irradiation)
-test_castem(monocristal_dd_cc_irradiation_numericaljacobian)
-test_castem(polycristals)
-test_castem(polycristals_dd_cfc)
+test_castem(monocrystal)
+test_castem(monocrystal-2)
+test_castem(implicitmonocrystal)
+test_castem(implicitmonocrystal-2)
+test_castem(monocrystal_dd_cfc)
+test_castem(monocrystal_dd_cfc_numericaljacobian)
+test_castem(monocrystal_dd_cfc_irradiation)
+test_castem(monocrystal_dd_cc)
+test_castem(monocrystal_dd_cc_numericaljacobian)
+test_castem(monocrystal_dd_cc_irradiation)
+test_castem(monocrystal_dd_cc_irradiation_numericaljacobian)
+test_castem(polycrystals)
+test_castem(polycrystals_dd_cc)
+test_castem(polycrystals_dd_cfc)
 test_castem(hayhurst)
 test_castem(implicithayhurst)
 test_castem(gursontvergaardneedlemanplasticflow)

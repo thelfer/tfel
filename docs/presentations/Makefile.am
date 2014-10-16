@@ -74,7 +74,7 @@ EXTRA_DIST=CMakeLists.txt                                                   \
 	   mfront/mfron03n.comm						    \
 	   mfront/norton_spec.mfront					    \
 	   mfront/sliding.mfront					    \
-	   mfront/monocristal.mfront					    \
+	   mfront/monocrystal.mfront					    \
 	   mfront/Chaboche.mfront					    \
 	   mfront/norton_jac.mfront					    \
 	   mfront/mazars.mfront						    \

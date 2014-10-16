@@ -1822,8 +1822,8 @@ namespace mfront{
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
-      out << tmp;
     }
+    out << tmp;
   }
 
   void

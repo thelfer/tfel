@@ -1,0 +1,199 @@
+@Parser    Implicit;
+@Behaviour MonoCrystal_DD_CFC_Irradiation;
+@Author    Jean-Michel Proix;
+@Date      26/11/2013;
+@Description{
+  "Loi monocrystalline MONO_DD_CFC_IRRA"
+  "Référence du Code Aster R5.03.11"
+  "www.code-aster.org"
+}
+
+@ModellingHypothesis Tridimensional;
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+
+@Theta 1.0;
+
+@Epsilon 1.e-12 ;
+@IterMax 100 ;
+
+@MaterialProperty real tauf;
+@MaterialProperty real y;
+@MaterialProperty real pn;
+@MaterialProperty real gamma0;
+@MaterialProperty real a;
+@MaterialProperty real b;
+@MaterialProperty real rhoref;
+@MaterialProperty real alpha;
+@MaterialProperty real beta;
+@MaterialProperty real Mu;
+@MaterialProperty real RHO_VOID;
+@MaterialProperty real PHI_LOOP;
+@MaterialProperty real ALP_VOID;
+@MaterialProperty real ALP_LOOP;
+@MaterialProperty real RHO_SAT ;
+@MaterialProperty real PHI_SAT ;
+@MaterialProperty real XI_IRRA ;
+@MaterialProperty real DZ_IRRA ;
+
+@StateVariable strain  omega[12];
+
+@AuxiliaryStateVariable real ome_loops[12];
+@AuxiliaryStateVariable real phi_voids[12];
+
+@LocalVariable real    tau[12];
+@LocalVariable real    Dp[12];
+@LocalVariable real    Dg[12];
+@LocalVariable real    hs[12];
+@LocalVariable real    taufor[12];
+@LocalVariable real    taufor2[12];
+@LocalVariable real    hforest[12];
+@LocalVariable real    htot[12];
+@LocalVariable real    hcopla[12];
+@LocalVariable real    sgn[12];
+@LocalVariable real    terme[12];
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    Dt = D;
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = D*Je;
+  } else {
+    return false;
+  }
+}
+
+@Includes{
+#include"TFEL/Material/MetallicCFCSlidingSystems.hxx"
+}
+@Import"MonoCrystal_DD_CFC_InteractionMatrix.mfront";
+
+@Members{
+  // Mono crystal gliding system
+  typedef MetallicCFCSlidingSystems<real> SlidingSystems;
+  // number of sliding systems
+  static const unsigned short Nss = SlidingSystems::Nss;
+}
+
+@ComputeStress{
+  sig = D*eel;
+}
+
+@Integrator{
+  const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
+  StrainStensor Depsp(real(0));
+  real ppomega[Nss];
+  real C=1.0;
+  real sum=0.0;
+  for(unsigned short k=0;k!=Nss;++k){
+    ppomega[k]=max(0.,omega[k]+theta*domega[k]);
+    sum+=ppomega[k];
+  }
+  if (alpha>0.){
+    C=0.2+0.8*log(alpha*sqrt(sum))/log(alpha*beta*sqrt(rhoref));
+  }
+  const real dCdomega = 0.4/log(alpha*beta*sqrt(rhoref))/sum ;  
+  for(unsigned short i=0;i!=Nss;++i){
+
+    taufor2[i]=0.0;
+    // ecrouissage Tau_forest
+    for(unsigned short j=0;j!=Nss;++j){
+      taufor2[i]+=mh(i,j)*ppomega[j];
+    }
+    taufor[i]=C*C*taufor2[i]+ALP_LOOP*PHI_LOOP*ome_loops[i];
+    taufor[i]+=ALP_VOID*RHO_VOID*phi_voids[i];
+    taufor[i]=Mu*sqrt(taufor[i]);
+    
+    // calcul du terme Hs
+    hs[i]=0.;
+    hforest[i]=0.0;
+    htot[i]=0.0;
+    hcopla[i]=0.0;
+    for(unsigned short j=0;j!=Nss;++j){
+      if (i/3!=j/3){
+	hforest[i]+=sqrt(mh(i,j))*ppomega[j];
+      } else {
+	hcopla[i]+=sqrt(mh(i,j)*ppomega[j]);
+      }
+      htot[i]+=sqrt(mh(i,j)*ppomega[j]);
+    }
+    hs[i]=a*hforest[i]/htot[i]+b*C*hcopla[i]-y/beta*ppomega[i];    
+      
+    // cission resolue
+    tau[i] = ss.mus[i] | sig ;
+    terme[i]=abs(tau[i])/(tauf+taufor[i]);
+    sgn[i]=0.;
+    if (abs(tau[i]) > 0.) {
+      sgn[i]=tau[i]/abs(tau[i]);
+    }
+
+    // ecoulement plastique
+    if (terme[i]>=1.){
+      Dp[i]  = dt*gamma0*pow(terme[i],pn)-dt*gamma0;
+      Dg[i]  = sgn[i]*Dp[i];
+      Depsp+=Dg[i]*ss.mus[i] ;
+      // termes de la jacobienne
+      real dpdtau = pn * (Dp[i] + dt*gamma0)/tau[i] ;
+      dfeel_ddeel  += dpdtau* sgn[i] *( (ss.mus[i]) ^ (ss.mus[i]) ) *D *theta;     
+      dfomega_ddeel(i)  =  -dpdtau*hs[i]*D*ss.mus[i]*theta ;
+        
+    } else {
+      Dp[i]=0.;
+      Dg[i]=0.;
+    }
+    fomega[i] = domega[i]-Dp[i]*hs[i];
+  }
+  feel += Depsp-deto;
+  
+  // autres termes de la jacobienne
+
+  for(unsigned short i=0;i!=Nss;++i){
+    for(unsigned short j=0;j!=Nss;++j){
+      real dpjdomegai   =0.;
+      real dtaujdomegai = 0.5*Mu*Mu*C/taufor[j]*( 2.*dCdomega*taufor2[j]+C*mh(j,i)) ;
+      if (terme[j]>=1.){
+	dpjdomegai   = -pn *(Dp[j]+dt*gamma0)/(tauf+taufor[j])*dtaujdomegai ;
+      }
+      dfeel_ddomega(i) +=  dpjdomegai * sgn[j]* ( ss.mus[j] )  ;
+    }
+    for(unsigned short j=0;j!=Nss;++j){
+      real dpidomegaj   = 0.;
+      real dtauidomegaj = 0. ;            
+      if (terme[i]>= 1.) {
+	dtauidomegaj = 0.5*Mu*Mu*C/taufor[i]*( 2.*dCdomega*taufor2[i]+C*mh(i,j)) ;
+	dpidomegaj = -pn *(Dp[i]+dt*gamma0)/(tauf+taufor[i])*dtauidomegaj ;
+      }
+      real Iforest = 0.;
+      real Icopla = 0. ;
+      // forest
+      if (i/3!=j/3){
+	Iforest=1. ;
+      } else {
+	Icopla=1. ;
+      }
+      real dT1domegaj = sqrt(mh(i,j))/htot[i]*( Iforest-0.5*hforest[i]/htot[i]/sqrt(ppomega[j]) ) ;
+      real dT2domegaj = dCdomega*hcopla[i]+ C * mh(i,j) * Icopla / 2. / sqrt(mh(i,j)*ppomega[j]) ;
+      real dhidpj = a * dT1domegaj + b * dT2domegaj ;
+      dfomega_ddomega(i,j) += -Dp[i]*dhidpj - hs[i]* dpidomegaj  ;
+      if (j==i) {
+	dfomega_ddomega(i,j) += Dp[i]*y/beta ;
+      }
+    }
+  }
+} 
+
+@UpdateAuxiliaryStateVars{
+  for(unsigned short i=0;i!=Nss;++i){
+    real sumg=0.;
+    // coplanaires
+    for(unsigned short j=0;j!=Nss;++j){
+      if (i/3==j/3){
+	sumg+=Dp[j];
+      }
+    }
+    ome_loops[i]=RHO_SAT+(ome_loops[i]-RHO_SAT)*exp(-XI_IRRA*sumg);
+    phi_voids[i]=PHI_SAT+(phi_voids[i]-PHI_SAT)*exp(-DZ_IRRA*sumg);
+  }
+}

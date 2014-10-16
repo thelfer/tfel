@@ -10,7 +10,7 @@
 @Author JMP;
 @Description{
   "Test d'implantation d'une loi "
-  "singlecristalline en grandes déformations "
+  "singlecrystalline en grandes déformations "
   "Nous testons ici le sous-découpage du pas de temps "
   "dans l'interface umat"
 }
@@ -65,7 +65,7 @@
 }
 
 @Members{
-  // Mono cristal gliding system
+  // Mono crystal gliding system
   typedef MetallicCFCSlidingSystems<real> SlidingSystems;
   // Interaction matrix
   typedef MetallicCFCGenericSlidingSystemsInteractionMatrix<real> InteractionMatrix;

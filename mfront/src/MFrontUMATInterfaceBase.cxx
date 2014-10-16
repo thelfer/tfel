@@ -378,7 +378,7 @@ namespace mfront
 		<< offset << "+idx];" << endl;  
 	      break;
 	    case SupportedTypes::TVector :
-	      f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
+	      f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
 		<< offset << "+idx*TVectorSize],"
 		<< n << "[idx].begin());" << endl;  
 	      break;
@@ -387,7 +387,7 @@ namespace mfront
 		  << offset << "+idx*StensorSize]);" << endl;  
 	      break;
 	    case SupportedTypes::Tensor :
-	      f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
+	      f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
 		<< offset << "+idx*TensorSize],"
 		<< n << "[idx].begin());" << endl;  
 	      break;
@@ -406,7 +406,7 @@ namespace mfront
 		  << offset << "];" << endl;  
 		break;
 	      case SupportedTypes::TVector :
-		f << "tfel::fsalgo<TVectorSize>(&"+src+"[" 
+		f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
 		  << offset << "]," << n << "[" << index << "].begin());" << endl;  
 		break;
 	      case SupportedTypes::Stensor :
@@ -414,7 +414,7 @@ namespace mfront
 		  << offset << "]);" << endl;  
 		break;
 	      case SupportedTypes::Tensor :
-		f << "tfel::fsalgo<TensorSize>(&"+src+"[" 
+		f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
 		  << offset << "]," << n << "[" << index << "].begin());" << endl;  
 		break;
 	      default : 
@@ -711,27 +711,24 @@ namespace mfront
   }
 
   void
-  MFrontUMATInterfaceBase::writeGlossaryNames(std::ostream& f,
+  MFrontUMATInterfaceBase::writeExternalNames(std::ostream& f,
 					      const std::string& name,
 					      const Hypothesis& h,
-					      const std::vector<std::string>& n,
-					      const std::string& array,
-					      const unsigned short o) const
+					      const std::vector<std::string>& v,
+					      const std::string& t) const
   {
     using namespace std;
-    if(o>n.size()){
-      string msg("MFrontUMATInterfaceBase::writeGlossaryNames : ");
-      msg += "number of names given is lesser than the offset";
-      throw(runtime_error(msg));
-    }
-    if(n.size()!=o){
+    if(v.empty()){
+      f << "MFRONT_SHAREDOBJ const char * const * "  << this->getSymbolName(name,h)
+	<< "_" << t << " = 0;" << endl << endl;
+    } else {
       vector<string>::size_type s = 0u;
-      vector<string>::const_iterator p = n.begin()+o;      
+      vector<string>::const_iterator p = v.begin();      
       f << "MFRONT_SHAREDOBJ const char * " << this->getSymbolName(name,h)
-	<< "_" << array << "[" << n.size()-o <<  "] = {";
-      while(p!=n.end()){
+	<< "_" << t << "[" << v.size() <<  "] = {";
+      while(p!=v.end()){
 	f << '"' << *p << '"';
-	if(++p!=n.end()){
+	if(++p!=v.end()){
 	  if(s%5==0){
 	    f << "," << endl;
 	  } else {
@@ -741,11 +738,8 @@ namespace mfront
 	++s;
       }
       f << "};" << endl;
-    } else {
-      f << "MFRONT_SHAREDOBJ const char * const * "  << this->getSymbolName(name,h)
-	<< "_" << array << " = 0;" << endl << endl;
-    }      
-  } // end of MFrontUMATInterfaceBase::writeGlossaryNames
+    }
+  } // end of MFrontUMATInterfaceBase::writeExternalNames
 
   bool
   MFrontUMATInterfaceBase::readBooleanValue(const std::string& key,
@@ -1396,7 +1390,7 @@ namespace mfront
   	<< ";" << endl;
     vector<string> stateVariablesNames;
     mb.getExternalNames(stateVariablesNames,h,persistentVarsHolder);
-    this->writeGlossaryNames(out,name,h,stateVariablesNames,"InternalStateVariables");
+    this->writeExternalNames(out,name,h,stateVariablesNames,"InternalStateVariables");
     if(!persistentVarsHolder.empty()){
       out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name,h)
   	  << "_InternalStateVariablesTypes [] = {";
@@ -1447,8 +1441,8 @@ namespace mfront
     const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
   	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";" << endl;
-    this->writeGlossaryNames(out,name,h,mb.getExternalNames(h,externalStateVarsHolder),
-  			     "ExternalStateVariables",0u);
+    this->writeExternalNames(out,name,h,mb.getExternalNames(h,externalStateVarsHolder),
+  			     "ExternalStateVariables");
   } // end of MFrontUMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
 
   void

@@ -38,177 +38,28 @@
 \newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
-`MFront` est un générateur de code open-source développé dans le cadre
-du projet
-[`PLEIADES`](http://www-cadarache.cea.fr/fr/actualite/video/video-pleiades.php)
-qui permet notamment l'écriture de lois de comportements
-mécaniques. Son but est de permettre l'écriture simple et
-numériquement efficace de nouvelles lois de comportements mécaniques.
-
-Plus d'informations sont disponibles sur le
-[site internet de MFront](http://tfel.sourceforge.net).  Des
-[instructions d'installation](http://tfel.sourceforge.net/install.html)
-détaillées y sont notamment décrites.
-
-Son utilisation dans `Cast3M` se fait via l'interface générique
+L'utilisation de lois générées par `MFront` dans
+[`Cast3M`](http://www-cast3m.cea.fr/) se fait via l'interface
+générique
 [`UMAT`](http://www-cast3m.cea.fr/index.php?page=sources&source=umat).
 
 Dans la suite de ce document, nous supposons travailler dans un
-environnement LiNuX. Une page dédiée à l'utilisation de MFront sous
-Windows sera ajoutée à terme.
+environnement `POSIX`. Le shell utilisé est `bash`. Une page dédiée à
+l'utilisation de `MFront` sous `Windows` sera ajoutée à terme.
+
+Nous utiliserons la loi de Norton décrite dans le
+[tutoriel](tutorial.html). L'ensemble des fichiers utilisés dans ce
+document peut être téléchargé
+[ici](downloads/example-castem2014.tar.bz2).
 
 Ce document se découpe en trois partie :
 
-- création de la loi
-- intégration dans `Cast3M`
-- test sur un essai de traction uniaxial
+- compilation de la loi ;
+- intégration dans `Cast3M` ;
+- test sur un essai de traction uniaxial.
 
-L'ensemble des fichiers utilisés dans ce document peut être téléchargé
-[ici](downloads/integration-castem2014.tar.bz2).
 
-# Création d'une première loi
-
-En guise de préliminaire, prenons par exemple la loi de . Elle est
-définie par: $$\left\{
-  \begin{aligned}
-    \tepsilonto   &= \tepsilonel+\tepsilonvis \\
-    \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\
-    \tdepsilonvis &= \dot{p}\,\tenseur{n} \\
-    \dot{p}       &= A\,\sigmaeq^{m}
-  \end{aligned}
-\right.$$ où:
-
-- $\tepsilonto$, $\tepsilonel$, $\tepsilonvis$ représentant
-  respectivement les déformations totale, élastique et visqueuse ;
-- $\tenseur{n}=\Frac{3}{2}\,\Frac{\tenseur{s}}{\sigmaeq}$ est la
-  direction d’écoulement ;
-- $\tenseur{s}$ est le déviateur des contraintes ;
-- $\sigmaeq$ est la norme de .
-
-L’opérateur d’élasticité $\tenseurq{D}$ est calculé à partir du module
-d’ $E$ et du coefficient de $\nu$.
-
-## Discrétisation implicite de loi de Norton
-
-Pour intégrer cette loi dans un calcul de structure, il faut procéder à
-une discrétisation en temps, ce qui revient à définir une suite
-d’instants de calcul $\left\{t_{i}\right\}_{1\le i\le I}$.
-
-Pour utiliser un algorithme implicite, il suffit d’écrire toutes les
-quantités à l’instant $t_{i}$ et de remplacer les dérivées en temps par
-leurs incréments sur l’intervalle $ \Delta t= t_{i} - t_{i-1} $ :
-$$\left\{
-  \begin{aligned}
-    \Delta\,\tepsilonel - \Delta\,\tepsilonto   + \Delta\,p\,\tenseur{n} = 0 \\
-    \Delta\,p  - \Delta\,t\, A\,\sigmaeq^{m} = 0 
-  \end{aligned}
-\right.$$
-
-avec:
-
--   $\tsigma  = \tenseurq{D}\,:\,\tepsilonel $ ;
--   $\tenseur{n}=\Frac{3}{2}\,\Frac{ \tenseur{s} \paren{t_{i}}} { \sigmaeq \paren{ t_{i}}}\ $
-
-On obtient ainsi un système de 7 équations (6 équations — en 3D —
-relatives à la décomposition additive du tenseur des déformations, et
-une équation relative à l’écoulement visco-plastique). Les \(7\)
-inconnues sont les \(6\) composantes de $\Delta\,\tepsilonel$ (en
-\(3D\)) et $\Delta p$.
-
-La résolution implicite de ce système est effectuée par une méthode de .
-
-## Première implantation
-
-Voici un exemple très simple d’intégration implicite de ce modèle avec :
-
-~~~~ {#Norton .cpp .numberLines}
-@Parser Implicit;
-@Behaviour Norton;
-@Algorithm NewtonRaphson_NumericalJacobian ;
-
-@RequireStiffnessTensor;
-
-@MaterialProperty real A;
-@MaterialProperty real m;
-
-@StateVariable real p ;
-
-@ComputeStress{
-  sig = D*eel ;
-}
-
-@Integrator{
-  real seq = sigmaeq(sig) ;
-  Stensor n = Stensor(0.) ;
-  if(seq > 1.e-12){
-    n = 1.5*deviator(sig)/seq ;
-  }
-  feel += dp*n-deto ;
-  fp -= dt*A*pow(seq,m) ;
-} // end of @Integrator
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-### Description ligne par ligne
-
-Un fichier commence généralement par une partie déclarative décrivant
-l’algorithme utilisé pour la résolution, le nom du comportement (ici
-),puis la liste des propriétés matériau utilisées. On fournit ensuite le
-nom des variables internes, et la description des équations du système à
-résoudre.
-
--   la ligne $1$ précise que nous allons utiliser une méthode
-    d’intégration implicite ;
--   la ligne $2$ donne le nom de la loi ;
--   la ligne $3$ précise que l’on utilise un algorithme de avec
-    jacobienne numérique ;
--   la ligne $5$ demande le calcul de la matrice d’élasticité  ;
--   les lignes $7$ et $8$ définissent les propriétés matériau de la
-	loi ;
--   la ligne $10$ déclare la variable interne $p$. Signalons que la
-    variable interne `eel` (tenseur déformation élastique
-    $\tepsilonel$) est prédéfinie par MFront;
--   les lignes $16$ à $24$ définissent les équations à résoudre ; la
-    convention de nom est la suivante : pour chaque variale interne `x`,
-    l’incrément est noté `dx`, et l’équation correspondante `fx` ;
--   la ligne $17$ demande le calcul de la norme de Von Mises ;
--   les lignes $18$ à $21$ correspondent au calcul de la direction
-    d’écoulement ;
--   la ligne $22$ définit l’équation $\Delta\,\tepsilonel -
-      \Delta\,\tepsilonto + \Delta\,p\,\tenseur{n} = 0$. En effet,
-    `feel` est initialisé à `deel` et l’opérateur `+=` cumule les
-    valeurs (comme en langage `c`);
--   la ligne $22$ définit l’équation $\Delta\, p -
-      \Delta\,t\,A\,\sigmaeq^{m}=0$. Comme précédemment, `fp`
-    est initialisé à dp, et `fp -= xx` est équivalent à
-    `fp = fp - xx` .
--   les lignes $26$ à $29$ permettent de calculer automatiquement
-    l’opérateur tangent à partir de l’inverse de la matrice jacobienne,
-    comme explicité ci-dessous.
-
-On constate que l’écriture de la loi se limite quasiment à la
-description des équations. De plus on bénéficie d’un écriture compacte,
-utilisant des variables tensorielles.
-
-Différentes méthodes d’intégration sont diponibles dans MFront (
-@helfer_generateur_2013). L’algorithme d’intégration utilisé ici
-(`NewtonRaphson\_NumericalJacobian`) permet une écriture rapide, et
-est donc tout à fait adapté au test de modèles.
-
-L’implantation fournit un code beaucoup plus rapide que celle d’un
-algorithme explicite, mais peut toutefois être optimisée en termes de
-performances. Pour cela, il suffit d’ajouter les termes de la matrice
-jacobienne (dérivées des équations par rapport aux inconnues).
-
-De plus, la matrice tangente en sortie de l’intégration est calculée
-automatiquement à partir de la matrice jacobienne, ce qui permet
-d’économiser un temps de développement important et conduit à une
-matrice tangente cohérente de très bonne qualité
-(@helfer_generateur_2013). Tout ceci conduit, en très peu de temps, à
-une intégration robuste, et une convergence très bonne. On voit qu’il
-est possible de profiter de cette simplicité d’écriture pour effectuer
-des variantes, des tests de modèles, etc.
-
-## Compilation de la loi
+# Compilation de la loi
 
 MFront gère la compilation de la loi, il suffit de taper dans un
 terminal :
@@ -217,8 +68,7 @@ terminal :
 $ mfront --obuild -interface=umat norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
-suivant le code que l’on souhaite utiliser. Ceci génère trois
-répertoires : `src`, `include` et `castem`.
+Ceci génère trois répertoires : `src`, `include` et `castem`.
 
 Le répertoire `src` contient en particulier une bibliothèque dynamique nommée
 `libUmatBehaviour.so`.
@@ -226,17 +76,41 @@ Le répertoire `src` contient en particulier une bibliothèque dynamique nommée
 Le répertoire `castem` contient un exemple de mise en donnée pour la
 loi générée pour chacune des hypothèses de modélisation supportée.
 
-## Intégration dans `Cast3M`
+# Intégration dans `Cast3M`
 
 Il existe actuellement deux manière d'introduire la loi produite
 précédemment dans `Cast3M` :
 
-- la première utilise le module bouchon `umat.eso` (la seule
-disponible dans la version client 2014).
-- la seconde utilise l'appel direct à la librairie générée. Cette
+- la première utilise l'appel direct à la librairie générée. Cette
   possibilité nécessite une version modifiée de `Cast3M` 2014.
+- la seconde utilise le module bouchon `umat.eso` (Seule cette méthode
+est disponible dans la version client 2014).
 
-### Méthode standard
+## Appels dynamiques
+
+Il est possible d'utiliser un appel direct à la librairie `MFront`
+générée. Pour la version \(2014\), il est nécessaire d'appliquer les
+[certains patchs](downloads/patchs-Cast3M-2014.tar.bz2).
+
+Pour utiliser la librairie générée via les appels dynamiques, l'appel
+à l'opérateur `MODELISER` se fait ainsi :
+
+~~~~{.python}
+mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
+   'NON_LINEAIRE' 'UTILISATEUR'
+   'LIB_LOI' 'src/libUmatBehaviour.so'
+   'FCT_LOI' 'umatnorton'
+   'C_MATERIAU' coel2D
+   'C_VARINTER' stav2D
+   'PARA_LOI'   para2D
+   'CONS' M;
+~~~~
+
+Nous avons explicitement indiqué le chemin vers la librairie. En
+pratique, il est préférable de ne pas le faire et de modifier la
+variable `LD_LIBRARY_PATH`.
+
+## Méthode standard
 
 Pour l'utilisation d'une loi `MFront` de la méthode standard, il nous faut:
 
@@ -247,7 +121,7 @@ Pour l'utilisation d'une loi `MFront` de la méthode standard, il nous faut:
 
 Seule la dernière étape nécessitera un effort particulier.
 
-#### La sous-routine `umat`
+### La sous-routine `umat`
 
 L'implantation de la sous-routine `umat` est direct:
 
@@ -323,7 +197,7 @@ arguments que la fonction `umat` initiale.
 La sous-routine précédente est implantée dans un fichier nommé
 `umat.eso`.
 
-#### Compilation de la sous-routine `umat`
+### Compilation de la sous-routine `umat`
 
 La compilation de la loi précédente peut se faire en utilisant le
 script `compilcast`:
@@ -381,9 +255,9 @@ Il suffit alors de lancer la version locale de ce script :
 $ ./essaicast14 umat.eso
 ~~~~~~~~~~~~~~~~~~~
 
-#### Test
+### Utilisation de l'exécutable généré
 
-Pour tester notre loi, il est nécessaire que la librairie
+Pour utiliser ce nouvel exécutable , il est nécessaire que la librairie
 `libUmatBehaviour.so` soit accessible. Pour cela, il faut mettre à
 jour la variable d'environnement `LD_LIBRARY_PATH` :
 
@@ -399,9 +273,23 @@ Dans la version \(2014\), il est nécessaire de modifier le script
 export LD_LIBRARY_PATH="/lib64:/usr/lib64:/usr/local/lib64:/lib:/lib/i686:/usr/lib:/usr/local/lib:$CASTEM_REP/lib$BIT":$LD_LIBRARY_PATH
 ~~~~~~~~~~~~~~~~~~~
 
+L'appel à la loi se fait alors de manière standard:
 
-Pour tester notre loi, nous pouvons utiliser le jeu de donnés suivant,
-qui fonctionne si on a utilisé la première méthode d'intégration~:
+~~~~{.python}
+mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
+   'NON_LINEAIRE' 'UTILISATEUR'
+   'NUME_LOI' 1
+   'C_MATERIAU' coel2D
+   'C_VARINTER' stav2D
+   'PARA_LOI'   para2D
+   'CONS' M;
+~~~~
+
+où `s1` est le nom du support géométrique du modèle.
+
+# Test
+
+Pour tester notre loi, nous pouvons utiliser le jeu de donnés suivant :
 
 ~~~~{.python .numberLines}
 'OPTION' 'ERREUR' 'FATALE' ;
@@ -509,38 +397,11 @@ EVSIG = 'EVOL' 'ROUG' 'MANU' 'EZZ' peto 'SMZZ' psig;
 'FIN';
 ~~~~
 
-`MFront` est fourni avec un logiciel de test des lois de comportement
-mécanique sur un point matériel (voir la
-[page dédiée](http://tfel.sourceforge.net/mtest.html)). Le résultat
-obtenu par `Cast3M` peut-être comparé à la simulation `MTest`
-équivalente sur la figure ci-dessous :
+ Le résultat obtenu par `Cast3M` peut-être comparé à la simulation
+`MTest` équivalente sur la figure ci-dessous :
 
 ![Comparaison des résultats `MTest`/`Cast3M`](img/NortonCreepUniaxialTesting
  "Comparaison des résultats `MTest`/`Cast3M`")
 
-### Appels dynamiques
 
-Il est possible d'utiliser un appel direct à la librairie `MFront`
-générée. Pour la version \(2014\), il est nécessaire d'appliquer les
-[certains patchs](downloads/patchs-Cast3M-2014.tar.bz2).
-
-Pour utiliser la librairie générée via les appels dynamiques, il
-suffit de modifier l'appel à l'opérateur `MODELISER` dans l'exemple
-précédent ainsi (lignes 21 à 27) :
-
-~~~~{.python .numberLines startFrom="21"}
-mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
-   'NON_LINEAIRE' 'UTILISATEUR'
-   'LIB_LOI' 'src/libUmatBehaviour.so'
-   'FCT_LOI' 'umatnorton'
-   'C_MATERIAU' coel2D
-   'C_VARINTER' stav2D
-   'PARA_LOI'   para2D
-   'CONS' M;
-~~~~
-
-Nous avons explicitement indiqué le chemin vers la librairie. En
-pratique, il est préférable de ne pas le faire et de modifier la
-variable `LD_LIBRARY_PATH`.
-
-# Référence
+# Références

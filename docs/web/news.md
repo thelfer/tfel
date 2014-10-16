@@ -1,6 +1,14 @@
 % News
 % Helfer Thomas
-% October 2, 2014
+% October 15, 2014
+
+# `TFEL/MFront` on `Cast3M` web site (15 October 2014)
+
+[A page dedicated](http://www-cast3m.cea.fr/index.php?xml=mfront) to
+`MFront` is now available on the `Cast3M` web site.
+
+![The `MFront` page on the `Cast3M` web site](img/CastemWebSite.png
+	"The MFront page on the Cast3M web site")
 
 # Release of TFEL 2.0 (1 October 2014)
 

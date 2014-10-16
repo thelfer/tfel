@@ -33,7 +33,7 @@ f.setGlossaryName("Porosity");
 @PhysicalBounds f in [0:1.];   // Porosity is positive and lower than one
 @Bounds T in [273.15:2610.15]; // Validity range
 
-@Function                     // implentation body
+@Function                     // implementation body
 {
   E = 2.2693e11*(1.-2.5*f)*(1-6.786e-05*T-4.23e-08*T*T);
 }

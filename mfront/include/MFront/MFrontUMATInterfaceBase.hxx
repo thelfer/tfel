@@ -280,14 +280,20 @@ namespace mfront{
 								    const std::string&,
 								    const std::string&,
 								    const std::string&) const;
-
+    /*!
+     * \param[out] f    : output stream
+     * \param[in]  name : name of the umat function
+     * \param[in]  h    : modelling hypothesis
+     * \param[in]  v    : variables external names and array size
+     * \param[in]  t    : class of variable treated used as the name for the generated symbol (for example,  'InternalStateVariables')
+     * \param[in]  o    : offset
+     */
     virtual void
-    writeGlossaryNames(std::ostream&,
+    writeExternalNames(std::ostream&,
 		       const std::string&,
 		       const Hypothesis&,
 		       const std::vector<std::string>&,
-		       const std::string&,
-		       const unsigned short = 0u) const;
+		       const std::string&) const;
 
     virtual void
     checkParametersType(bool&,

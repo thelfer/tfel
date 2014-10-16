@@ -32,4 +32,4 @@
 
 - interface of the [Cast3M]() finite element solver [umat.pdf](documents/mfront/umat.pdf);
 - interface of the [Code-Aster]() finite element solver] [aster.pdf](documents/mfront/aster.pdf);
-- interface of the [ZeBuLoN]() finite element solver [zmat.pdf](documents/mfront/aster.pdf);
+- interface of the [ZeBuLoN]() finite element solver [zmat.pdf](documents/mfront/zmat.pdf);

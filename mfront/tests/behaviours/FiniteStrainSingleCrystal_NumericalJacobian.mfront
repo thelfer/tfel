@@ -10,7 +10,7 @@
 @Author JMP;
 @Description{
   "Test d'implantation d'une loi "
-  "monocristalline en grandes déformations"
+  "monocrystalline en grandes déformations"
 }
 
 @ModellingHypothesis Tridimensional;
@@ -60,7 +60,7 @@
 }
 
 @Members{
-  // Mono cristal gliding system
+  // Mono crystal gliding system
   typedef MetallicCFCSlidingSystems<real> SlidingSystems;
   // Interaction matrix
   typedef MetallicCFCGenericSlidingSystemsInteractionMatrix<real> InteractionMatrix;

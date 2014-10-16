@@ -1,0 +1,92 @@
+@Includes{
+
+#ifndef _LIB_TFEL_MATERIAL_SLIDINGSYSTEMS_HXX_
+#define _LIB_TFEL_MATERIAL_SLIDINGSYSTEMS_HXX_ 
+
+#include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/stensor.hxx"
+
+namespace tfel
+{
+
+  namespace material
+  {
+
+    /*!
+     * An helper class which actually does the computation of the
+     * tensor of directional sense for CFC cristals.
+     */
+    template<typename NumType>
+    struct SlidingSystems
+    {
+      //! a simple alias
+      typedef NumType real;
+      //! number of sliding systems
+      static const unsigned short Nss = 12;
+      //! tensor of directional sense
+      tfel::math::tvector<Nss,tfel::math::tensor<3u,real> >  mu;
+      //! symmetric tensor of directional sense
+      tfel::math::tvector<Nss,tfel::math::stensor<3u,real> > mus;
+      //! return the uniq instance of the class
+      static const SlidingSystems&
+      getSlidingSystems(void)
+      {
+	static SlidingSystems gs;
+	return gs;
+      } // end of SlidingSystems::getSlidingSystems
+    protected:
+      /*!
+       * constructor
+       */
+      SlidingSystems()
+      {
+	using namespace tfel::math;
+	using namespace tfel::fsalgo;
+	// sliding systems CC cubic_1
+        const real coefm=1.0/sqrt(3.);
+        const real coefn=1.0/sqrt(2.);
+        const real nx[Nss]={ 1.0, -1.0,  0.0,  0.0,  1.0, -1.0, -1.0,  1.0,  0.0,  1.0, -1.0,  0.0 };
+        const real ny[Nss]={ 1.0,  0.0, -1.0, -1.0,  0.0,  1.0, -1.0,  0.0,  1.0, -1.0,  0.0,  1.0 };
+        const real nz[Nss]={ 0.0,  1.0, -1.0,  1.0, -1.0,  0.0,  0.0,  1.0, -1.0,  0.0, -1.0,  1.0 };
+        const real mx[Nss]={ 1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0, -1.0, -1.0,  1.0,  1.0,  1.0 };
+        const real my[Nss]={-1.0, -1.0, -1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0 };
+        const real mz[Nss]={ 1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0, -1.0, -1.0 };  
+	for(unsigned short i=0;i!=Nss;++i){
+	  tvector<3u,real> ns(real(0)); 
+	  tvector<3u,real> ms(real(0)); 
+	  ns[0]=nx[i]*coefn;
+	  ns[1]=ny[i]*coefn;
+	  ns[2]=nz[i]*coefn;
+	  ms[0]=mx[i]*coefm;
+	  ms[1]=my[i]*coefm;
+	  ms[2]=mz[i]*coefm;
+	  this->mu[i][0]=ns[0]*ms[0]; // XX
+	  this->mu[i][1]=ns[1]*ms[1]; // YY
+	  this->mu[i][2]=ns[2]*ms[2]; // ZZ
+	  this->mu[i][3]=ns[1]*ms[0]; // XY
+	  this->mu[i][4]=ns[0]*ms[1]; // YX
+	  this->mu[i][5]=ns[2]*ms[0]; // XZ
+	  this->mu[i][6]=ns[0]*ms[2]; // ZX
+	  this->mu[i][7]=ns[2]*ms[1]; // YZ
+	  this->mu[i][8]=ns[1]*ms[2]; // ZY
+	  this->mus[i] = syme(this->mu[i]);
+	}
+      } // end of SlidingSystems::SlidingSystems
+    private:
+      // copy constructor (disabled)
+      SlidingSystems(const SlidingSystems&);
+      // assignement operator (disabled)
+      SlidingSystems&
+      operator=(const SlidingSystems&);
+    };
+
+  } // end of namespace material
+
+} // end of namespace tfel
+
+#endif
+
+}
+
+
