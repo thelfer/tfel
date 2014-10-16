@@ -1769,6 +1769,7 @@ mfront/tests/behaviours/LogarithmicStrainPlasticity.mfront -text
 mfront/tests/behaviours/Lorentz.mfront -text
 mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
+mfront/tests/behaviours/MonoCristal_DD_CC_InteractionMatrix.mfront -text
 mfront/tests/behaviours/MonoCrystal.mfront -text
 mfront/tests/behaviours/MonoCrystalNewtonRaphson.mfront -text
 mfront/tests/behaviours/MonoCrystal_DD_CC.mfront -text
