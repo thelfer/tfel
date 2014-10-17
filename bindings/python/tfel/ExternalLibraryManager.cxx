@@ -110,6 +110,8 @@ void declareExternalLibraryManager(void)
 	 &ELM::getUMATBehaviourType)
     .def("getUMATSymmetryType",
 	 &ELM::getUMATSymmetryType)
+    .def("getUMATElasticSymmetryType",
+	 &ELM::getUMATElasticSymmetryType)
     .def("getUMATMaterialPropertiesNames",
 	 &ELM::getUMATMaterialPropertiesNames)
     .def("getUMATInternalStateVariablesNames",

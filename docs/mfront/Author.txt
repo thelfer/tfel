@@ -1,12 +1,17 @@
-The @Author keyword is used give the name of the person who wrote the
-mfront file.
+The `@Author` keyword is used give the name of the person who wrote
+the `mfront` file.
 
 All the following words are appended to the author's name up to a
 final semi-colon.
 
 Note: The name of the person who formulated the material property,
 behaviour or model shall be given in the description section (see the
-@Description keyword).
+`@Description` keyword).
 
-Example:
+## Example
+
+~~~~ {#Author .cpp .numberLines}
 @Author Éric Brunon;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+

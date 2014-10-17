@@ -1,8 +1,9 @@
-The @PredictionPolicy keyword let the user how the initial estimate of
-the solution shall be obtained.
+The `@PredictionPolicy` keyword let the user how the initial estimate
+of the solution shall be obtained.
 
 This keyword is followed by a string. The following values are
 allowed:
+
 - NoPrediction
 - LinearPrediction
 - ElasticPrediction
@@ -10,11 +11,14 @@ allowed:
 - SecantPrediction
 - TangentPrediction
 
-Note:
-The ElasticPredictionFromMaterialProperties policy is only supported
-by the UMAT interface as the Cast3M finite element solver requires the
+## Note
+
+The `ElasticPredictionFromMaterialProperties` policy is only supported
+by the `UMAT` interface as the Cast3M finite element solver requires the
 stiffness matrix to be defined.
 
-Exemple:
-@PredictionPolicy 'ElasticPrediction';
+## Example
 
+~~~~ {.cpp}
+@PredictionPolicy 'ElasticPrediction';
+~~~~~~~~

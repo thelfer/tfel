@@ -1,7 +1,8 @@
-The @MaterialProperty keyword defines a material property.  Only the
+The `@MaterialProperty` keyword defines a material property.  Only the
 mechanical properties defined by the behaviour for the modelling
 hypothesis considered may be used with the noticeable exception of the
 thermal expansions:
+
 - isotropic thermal expansion is defined through the
   'ThermalExpansion' property
 - orthotropic thermal expansion is defined through the
@@ -23,7 +24,14 @@ property are expected.
 If the material property is a function, the function definition is
 expected.
 
-Exemple (constant):
+## Example (constant)
+
+~~~~{.cpp}
 @MaterialProperty<constant> 'YoungModulus' 150.e9;
-Exemple (castem):
+~~~~~~~~
+
+Example (castem):
+
+~~~~{.cpp}
 @MaterialProperty<castem> 'YoungModulus' 'libInconel600MaterialProperties.so' 'Inconel600_YoungModulus';
+~~~~~~~~
