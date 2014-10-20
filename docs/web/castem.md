@@ -38,6 +38,8 @@
 \newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
+# Mechanical behaviours
+
 The `umat` interface has been developed for the CEA
 [`Cast3M`](http://www-cast3m.cea.fr/) finite element solver. Its name
 comes from the name of
@@ -60,7 +62,7 @@ We broke this documents in three parts:
 - use in the `Cast3M` finite element solver
 - unit testing of an uniaxial tensile test.
 
-# Compilation of the behaviour
+## Compilation of the behaviour
 
 The following instruction will compile the `MFront` behaviour using
 the `umat` interface :
@@ -78,7 +80,7 @@ the end-user:
 - the `castem` directory contains an example of how to use the
   generated behaviour for each modelling hypothesis supported.
 
-# Usage in `Cast3M`
+## Usage in `Cast3M`
 
 There are two ways to use `MFront` generated libraries in the `Cas3M`
 finite element solver:
@@ -87,7 +89,7 @@ finite element solver:
 - modifying the `UMAT` subroutine. This is method is the only one
   available in the standard version of `Cast3M` 2014.
 
-## Call to shared libraries
+### Call to shared libraries
 
 [A patch](downloads/patchs-Cast3M-2014.tar.bz2) must be applied to
 `Cast3M` 2014 to be able to call shared libraries directly.
@@ -108,13 +110,13 @@ mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
 Here, we have explicitly given the path to the library. In practice,
 it is better to modify the `LD_LIBRARY_PATH` environment variable.
 
-## Standard method
+### Standard method
 
 The standard method to integrate a `MFront` behaviour through the
 `UMAT` subroutine is described in depth in the
 [french version](castem-fr.html) of this document.
 
-# Test
+## Test
 
 To test our behaviour, we can use the following input file:
 
@@ -230,4 +232,71 @@ computation on the following figure:
 ![Comparaison des résultats `MTest`/`Cast3M`](img/NortonCreepUniaxialTesting
  "Comparaison des résultats `MTest`/`Cast3M`")
 
-# References
+# Material proprerties
+
+## Thermal conductivity of \(UPuC\)
+
+The thermal conductivity of \(UPuC\) \(k\paren{T,p,\tau}\) depends on
+the temperature \(T\) (Kelvin), the porosity \(p\) and the Burn-Up
+\(\tau\) \(at.\%\)
+
+Here is the implementation of this material property using `MFront`:
+
+~~~~{#UPuCThermalConductivity .cpp .numberLines}
+@Parser MaterialLaw;
+@Law ThermalConductivity;
+@Material UPuC;
+@Author Thomas Helfer;
+@Output k; //< changing the name of output
+@Input T,p,Bu; //< inputs of the law
+T.setGlossaryName("Temperature"); //< pleiades name
+p.setGlossaryName("Porosity"); //< pleiades name
+Bu.setGlossaryName("BurnUp"); //< pleiades name
+@PhysicalBounds T in [0 :*[; //< temperature physical bounds
+@Bounds T in [0 :2573.15]; //< temperature bounds
+@PhysicalBounds p in [0 :1]; //< porosity physical bounds
+@PhysicalBounds Bu in [0 :*[; //< burn-up physicalbounds
+@Function{
+  if (T<=773.15){
+    k = (8.14e-6*T-0.010096882)*T+19.65063040915;
+  } else {
+    k = (-1.88e-6*T+0.009737044)*T+10.2405949657;
+  }
+  k *= (1.-p)/(1.+2.*p);
+  k *= 1.-(0.02*Bu);
+}
+~~~~~~~~
+
+This implementation can be turned in a shared library callable from `Cast3M`:
+
+~~~~{#UPuCThermalConductivity-mfront .bash}
+$ mfront --obuild --interface=castem UPuCThermalConductivity.mfront
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+## Usage in `Cast3M`
+
+[A patch](downloads/patchs-Cast3M-2014.tar.bz2) must be applied to
+`Cast3M` 2014 to be able to call shared libraries directly.
+
+The `MATERIAU` can accept a table as parameter.
+
+~~~~{#UPuCThermalConductivity-castem .python .numberLines}
+* Création d un modèle thermique isotrope
+ModT1 = 'MODELISER' s1 'THERMIQUE' 'ISOTROPE';
+* Création d une table contenant les données relatives
+* à la propriété externe :
+* - 'MODELE' contient le nom de la fonction appelée
+* - 'LIBRAIRIE' contient le nom de la librairie externe
+* dans laquelle cette fonction est définie
+* - 'VARIABLES' contient la liste des paramètres dont dépend
+* la fonction appelée
+Tmat = 'TABLE';
+Tmat. 'MODELE' = 'UPuC_ThermalConductivity';
+Tmat. 'LIBRAIRIE' = 'libUPuCMaterialProperties.so';
+Tmat. 'VARIABLES' = 'MOTS' 'T' 'PORO' 'FIMA';
+* Création du matériau.
+MatT1 = 'MATERIAU' ModT1 'K' Tmat;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When using `PASAPAS`, loadings named `PORO` and `FIMA` must be
+declared for the material properties to be evaluated.

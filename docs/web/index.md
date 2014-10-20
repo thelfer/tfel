@@ -17,6 +17,10 @@
 
 # Overview
 
+MFront is a collaborative development of
+[CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie
+atomique") and [EDF](http://www.edf.com/ "Électricité de France").
+
 MFront is a code generator which translates a set of closely related
 domain specific languages into plain [C++](http://isocpp.org/). Those
 languages covers three kind of material knowledge:
@@ -27,7 +31,17 @@ languages covers three kind of material knowledge:
 - [simple point-wise models](models.html), such as material swelling
 used in fuel performance codes.
 
-MFront is a collaborative development of [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie atomique") and [EDF](http://www.edf.com/ "Électricité de France").
+A set of interfaces are provided for various solvers:
+
+- the [`Cast3M`](http://www-cast3m.cea.fr) finite element solver. This
+  interface is described [here](castem.html).
+- the [`Code_Aster`](http://www.code-aster.org) finite element
+  solver. This interface is described [here](aster.html)
+- the [`ZeBuLoN`](http://www.zset-software.com/products/zebulon). This
+  interface is described [here](zmat.html)
+
+For material properties, various interfaces are also provided and
+covers the following languages `C`, `C++`, `python`, `fortran`, etc.
 
 # History
 

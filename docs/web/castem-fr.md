@@ -38,6 +38,8 @@
 \newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
+# Lois de comportement mécanique
+
 L'utilisation de lois générées par `MFront` dans
 [`Cast3M`](http://www-cast3m.cea.fr/) se fait via l'interface
 générique
@@ -58,8 +60,7 @@ Ce document se découpe en trois partie :
 - intégration dans `Cast3M` ;
 - test sur un essai de traction uniaxial.
 
-
-# Compilation de la loi
+## Compilation de la loi
 
 MFront gère la compilation de la loi, il suffit de taper dans un
 terminal :
@@ -76,7 +77,7 @@ Le répertoire `src` contient en particulier une bibliothèque dynamique nommée
 Le répertoire `castem` contient un exemple de mise en donnée pour la
 loi générée pour chacune des hypothèses de modélisation supportée.
 
-# Intégration dans `Cast3M`
+## Intégration dans `Cast3M`
 
 Il existe actuellement deux manière d'introduire la loi produite
 précédemment dans `Cast3M` :
@@ -86,7 +87,7 @@ précédemment dans `Cast3M` :
 - la seconde utilise le module bouchon `umat.eso` (Seule cette méthode
 est disponible dans la version client 2014).
 
-## Appels dynamiques
+### Appels dynamiques
 
 Il est possible d'utiliser un appel direct à la librairie `MFront`
 générée. Pour la version \(2014\), il est nécessaire d'appliquer les
@@ -110,7 +111,7 @@ Nous avons explicitement indiqué le chemin vers la librairie. En
 pratique, il est préférable de ne pas le faire et de modifier la
 variable `LD_LIBRARY_PATH`.
 
-## Méthode standard
+### Méthode standard
 
 Pour l'utilisation d'une loi `MFront` de la méthode standard, il nous faut:
 
@@ -121,7 +122,7 @@ Pour l'utilisation d'une loi `MFront` de la méthode standard, il nous faut:
 
 Seule la dernière étape nécessitera un effort particulier.
 
-### La sous-routine `umat`
+#### La sous-routine `umat`
 
 L'implantation de la sous-routine `umat` est direct:
 
@@ -197,7 +198,7 @@ arguments que la fonction `umat` initiale.
 La sous-routine précédente est implantée dans un fichier nommé
 `umat.eso`.
 
-### Compilation de la sous-routine `umat`
+#### Compilation de la sous-routine `umat`
 
 La compilation de la loi précédente peut se faire en utilisant le
 script `compilcast`:
@@ -255,7 +256,7 @@ Il suffit alors de lancer la version locale de ce script :
 $ ./essaicast14 umat.eso
 ~~~~~~~~~~~~~~~~~~~
 
-### Utilisation de l'exécutable généré
+#### Utilisation de l'exécutable généré
 
 Pour utiliser ce nouvel exécutable , il est nécessaire que la librairie
 `libUmatBehaviour.so` soit accessible. Pour cela, il faut mettre à
@@ -287,7 +288,7 @@ mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
 
 où `s1` est le nom du support géométrique du modèle.
 
-# Test
+## Test
 
 Pour tester notre loi, nous pouvons utiliser le jeu de donnés suivant :
 
@@ -403,5 +404,74 @@ EVSIG = 'EVOL' 'ROUG' 'MANU' 'EZZ' peto 'SMZZ' psig;
 ![Comparaison des résultats `MTest`/`Cast3M`](img/NortonCreepUniaxialTesting
  "Comparaison des résultats `MTest`/`Cast3M`")
 
+# Propriétés matériau
 
-# Références
+## Conductivité thermique du combustible carbure \(UPuC\)
+
+La conductivité thermique d'un combustible carbure \(UPuC\)
+\(k\paren{T,p,\tau}\) est supposée dépendre de la temperature \(T\)
+(Kelvin), de la porosité \(p\) et du taux de combustion \(\tau\)
+\(at.\%\)
+
+Une implantation possible de cette propriété matériau en `MFront` est
+la suivante:
+
+~~~~{#UPuCThermalConductivity .cpp .numberLines}
+@Parser MaterialLaw;
+@Law ThermalConductivity;
+@Material UPuC;
+@Author Thomas Helfer;
+@Output k; //< changing the name of output
+@Input T,p,Bu; //< inputs of the law
+T.setGlossaryName("Temperature"); //< pleiades name
+p.setGlossaryName("Porosity"); //< pleiades name
+Bu.setGlossaryName("BurnUp"); //< pleiades name
+@PhysicalBounds T in [0 :*[; //< temperature physical bounds
+@Bounds T in [0 :2573.15]; //< temperature bounds
+@PhysicalBounds p in [0 :1]; //< porosity physical bounds
+@PhysicalBounds Bu in [0 :*[; //< burn-up physicalbounds
+@Function{
+  if (T<=773.15){
+    k = (8.14e-6*T-0.010096882)*T+19.65063040915;
+  } else {
+    k = (-1.88e-6*T+0.009737044)*T+10.2405949657;
+  }
+  k *= (1.-p)/(1.+2.*p);
+  k *= 1.-(0.02*Bu);
+}
+~~~~~~~~
+
+Cette implantation peut être compilée en une librairie dynamique appelable depuis `Cast3M`:
+
+~~~~{#UPuCThermalConductivity-mfront .bash}
+$ mfront --obuild --interface=castem UPuCThermalConductivity.mfront
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Utilisation dans `Cast3M`
+
+Pour la version 2014, [un patch](downloads/patchs-Cast3M-2014.tar.bz2)
+doit être appliqué à `Cast3M` pour que celui-ci soit capable d'appeler
+des librairies dynamiques.
+
+La directive `MATERIAU` accepte une table comme paramètre:
+
+~~~~{#UPuCThermalConductivity-castem .python .numberLines}
+* Création d un modèle thermique isotrope
+ModT1 = 'MODELISER' s1 'THERMIQUE' 'ISOTROPE';
+* Création d une table contenant les données relatives
+* à la propriété externe :
+* - 'MODELE' contient le nom de la fonction appelée
+* - 'LIBRAIRIE' contient le nom de la librairie externe
+* dans laquelle cette fonction est définie
+* - 'VARIABLES' contient la liste des paramètres dont dépend
+* la fonction appelée
+Tmat = 'TABLE';
+Tmat. 'MODELE' = 'UPuC_ThermalConductivity';
+Tmat. 'LIBRAIRIE' = 'libUPuCMaterialProperties.so';
+Tmat. 'VARIABLES' = 'MOTS' 'T' 'PORO' 'FIMA';
+* Création du matériau.
+MatT1 = 'MATERIAU' ModT1 'K' Tmat;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Pour une utilisation dans `PASAPAS`, deux chargements `PORO` et `FIMA`
+doivent être définis.

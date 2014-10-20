@@ -7,10 +7,11 @@
 - Helfer Thomas
 - Jean-Michel Proix
 - Bruno Michel
-- É. Brunon
+- Éric Brunon
 - Nicolas Sellenet
 - Jérémy Hure
 - Arnaud Courcelle
+- Olivier Fandeur
 
 # Tools
 

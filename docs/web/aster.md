@@ -3,7 +3,8 @@
 % October 13, 2014
 
 This document shows how to use `MFront` mechanical behaviour in EDF
-Code_Aster finite element solver. It is extracted from the
+[Code_Aster](http://www.code-aster.org) finite element solver. It is
+extracted from the
 [`MFront` tutorial](documents/tutoriel/tutoriel.pdf). A full
 description is available in the Code_Aster reference documentation
 (see @code_notice_2014).
