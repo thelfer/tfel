@@ -28,10 +28,10 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real delta1;
 @MaterialProperty real delta2;
 
+@StateVariable real    d;
 @StateVariable real    p;
 @StateVariable real    H1;
 @StateVariable real    H2;
-@StateVariable real    d;
 
 @LocalVariable real    lambda;
 @LocalVariable real    mu;
@@ -45,23 +45,6 @@ nu.setGlossaryName("PoissonRatio");
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
-}
-
-@TangentOperator{
-  using namespace tfel::material::lame;
-  using namespace tfel::material::lame;
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if(smt==CONSISTENTTANGENTOPERATOR){
-    StiffnessTensor Hooke;
-    Stensor4 Je;
-    Stensor Jd;
-    computeUnalteredElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
-    getPartialJacobianInvert(Je,Jd);
-    Dt = (1-d-dd)*Hooke*Je+-((Jd)^(Hooke*(eel+deel)));
-  } else {
-    return false;
-  }
 }
 
 @ComputeStress{
@@ -125,3 +108,19 @@ nu.setGlossaryName("PoissonRatio");
   }
 }
 
+@TangentOperator{
+  using namespace tfel::material::lame;
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if(smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor Hooke;
+    Stensor4 Je;
+    Stensor Jd;
+    computeUnalteredElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+    getPartialJacobianInvert(Je,Jd);
+    Dt = (1-d)*Hooke*Je+-((Jd)^(Hooke*(eel)));
+  } else {
+    return false;
+  }
+}
