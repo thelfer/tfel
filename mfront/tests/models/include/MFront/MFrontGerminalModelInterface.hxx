@@ -14,7 +14,6 @@
 #ifndef _LIB_MFRONTGERMINALMODELINTERFACE_H_
 #define _LIB_MFRONTGERMINALMODELINTERFACE_H_ 
 
-#include"MFront/MFrontModelVirtualInterface.hxx"
 #include"MFront/MFrontPleiadesModelInterfaceBase.hxx"
 
 namespace mfront{
@@ -29,33 +28,33 @@ namespace mfront{
   private:
 
     virtual void
-    setOutputFileNames(const MFrontModelData&);
+    setOutputFileNames(const ModelData&);
 
     virtual void
     writeGetConstantMaterialProperty(const VarHandler&,
-				     const MFrontModelData&);
+				     const ModelData&);
 
     virtual std::string
     getApplicationName(void) const;
 
     virtual void
-    writeInitializeMethod(const MFrontModelData&);
+    writeInitializeMethod(const ModelData&);
 
     virtual void
-    writeSpecificPrivateMethodDeclaration(const MFrontGenericData&,
-					  const MFrontModelData&);
+    writeSpecificPrivateMethodDeclaration(const GenericData&,
+					  const ModelData&);
 
     virtual void
-    generateDomainsList(const MFrontModelData&);
+    generateDomainsList(const ModelData&);
 
     virtual void
     buildDomainName();
 
     virtual bool
-    initializeDefaultDomainListInConstrutor(const MFrontModelData&) const;
+    initializeDefaultDomainListInConstrutor(const ModelData&) const;
 
     void
-    writeInitializeParametersMethod(const MFrontModelData&);
+    writeInitializeParametersMethod(const ModelData&);
 
   }; // end of class MFrontGerminalModelInterface
 

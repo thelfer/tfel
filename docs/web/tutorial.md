@@ -196,13 +196,13 @@ MFront gère la compilation de la loi, il suffit de taper dans un
 terminal :
 
 ~~~~ {.bash}
-$ mfront --obuild -interface=aster norton.mfront
+$ mfront --obuild --interface=aster norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 ou
 
 ~~~~ {.bash}
-$ mfront --obuild -interface=umat norton.mfront
+$ mfront --obuild --interface=umat norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 suivant le code que l’on souhaite utiliser. Ceci génère deux

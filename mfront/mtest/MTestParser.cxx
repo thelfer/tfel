@@ -29,18 +29,18 @@
 #include"TFEL/Utilities/TerminalColors.hxx"
 
 #include"MFront/MFrontLogStream.hxx"
-#include"MFront/MTestParser.hxx"
+#include"MTest/MTestParser.hxx"
 
-#include"MFront/MTestAnalyticalTest.hxx"
-#include"MFront/MTestReferenceFileComparisonTest.hxx"
+#include"MTest/AnalyticalTest.hxx"
+#include"MTest/ReferenceFileComparisonTest.hxx"
 
-#include"MFront/MTestEvolution.hxx"
-#include"MFront/MTestFunctionEvolution.hxx"
-#include"MFront/MTestCastemEvolution.hxx"
+#include"MTest/Evolution.hxx"
+#include"MTest/FunctionEvolution.hxx"
+#include"MTest/CastemEvolution.hxx"
 
-#include"MFront/MTestConstraint.hxx"
-#include"MFront/MTestImposedThermodynamicForce.hxx"
-#include"MFront/MTestImposedDrivingVariable.hxx"
+#include"MTest/Constraint.hxx"
+#include"MTest/ImposedThermodynamicForce.hxx"
+#include"MTest/ImposedDrivingVariable.hxx"
 
 namespace mfront
 {
@@ -679,7 +679,7 @@ namespace mfront
 	unsigned short pos;
 	t.getVariableTypeAndPosition(ttype,pos,pf->first);
 	shared_ptr<MTest::UTest> test;
-	test = shared_ptr<MTest::UTest>(new MTestAnalyticalTest(pf->second,pf->first,
+	test = shared_ptr<MTest::UTest>(new AnalyticalTest(pf->second,pf->first,
 								ttype,pos,t.getEvolutions(),eps));
 	t.addTest(test);
       }
@@ -733,7 +733,7 @@ namespace mfront
 	unsigned short pos;
 	t.getVariableTypeAndPosition(ttype,pos,pf->first);
 	shared_ptr<MTest::UTest> test;
-	test = shared_ptr<MTest::UTest>(new MTestReferenceFileComparisonTest(data,pf->first,
+	test = shared_ptr<MTest::UTest>(new ReferenceFileComparisonTest(data,pf->first,
 									     pf->second,
 									     ttype,pos,eps));
 	t.addTest(test);
@@ -760,8 +760,8 @@ namespace mfront
       throw(runtime_error(msg));
     }
     const real value = this->readDouble(t,p);
-    shared_ptr<MTestEvolution> mpev;
-    mpev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(value));
+    shared_ptr<Evolution> mpev;
+    mpev = shared_ptr<Evolution>(new ConstantEvolution(value));
     this->readSpecifiedToken("MTestParser::handleReal",";",
 			     p,this->fileTokens.end());
     t.addEvolution(v,mpev,true,true);
@@ -1111,8 +1111,8 @@ namespace mfront
     const string& c   = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedThermodynamicForce",p,
 			    this->fileTokens.end());
-    shared_ptr<MTestEvolution> sev = this->parseEvolution(evt,t,p);
-    shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(*(t.getBehaviour()),
+    shared_ptr<Evolution> sev = this->parseEvolution(evt,t,p);
+    shared_ptr<Constraint> sc(new ImposedThermodynamicForce(*(t.getBehaviour()),
 								      t.getModellingHypothesis(),
 								      c,sev));
     t.addEvolution(c,sev,false,true);
@@ -1174,8 +1174,8 @@ namespace mfront
     const string& c   = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedDrivingVariable",p,
 			    this->fileTokens.end());
-    shared_ptr<MTestEvolution> sev = this->parseEvolution(evt,t,p);
-    shared_ptr<MTestConstraint> sc(new MTestImposedDrivingVariable(*(t.getBehaviour()),
+    shared_ptr<Evolution> sev = this->parseEvolution(evt,t,p);
+    shared_ptr<Constraint> sc(new ImposedDrivingVariable(*(t.getBehaviour()),
 								   t.getModellingHypothesis(),
 								   c,sev));
     this->readSpecifiedToken("MTestParser::handleImposedDrivingVariable",";",
@@ -1251,22 +1251,22 @@ namespace mfront
 			     this->fileTokens.end());
     const string& n = this->readString(p,this->fileTokens.end());
     if(i=="constant"){
-      shared_ptr<MTestEvolution> mpev;
+      shared_ptr<Evolution> mpev;
       this->checkNotEndOfLine("MTestParser::handleMaterialProperty",p,
 			      this->fileTokens.end());
       const real v = this->readDouble(t,p);
-      mpev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(v));
+      mpev = shared_ptr<Evolution>(new ConstantEvolution(v));
       t.setMaterialProperty(n,mpev,true);
     } else if(i=="function"){
-      shared_ptr<MTestEvolution> mpev;
+      shared_ptr<Evolution> mpev;
       const string f = this->readString(p,this->fileTokens.end());
-      mpev = shared_ptr<MTestEvolution>(new MTestFunctionEvolution(f,t.getEvolutions()));
+      mpev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
       t.setMaterialProperty(n,mpev,true);
     } else if(i=="castem"){
-      shared_ptr<MTestEvolution> mpev;
+      shared_ptr<Evolution> mpev;
       const string l = this->readString(p,this->fileTokens.end());
       const string f = this->readString(p,this->fileTokens.end());
-      mpev = shared_ptr<MTestEvolution>(new MTestCastemEvolution(l,f,t.getEvolutions()));
+      mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
       t.setMaterialProperty(n,mpev,true);
     } else {
       string msg("MTestParser::handleMaterialProperty : ");
@@ -1378,7 +1378,7 @@ namespace mfront
   MTestParser::handleInternalStateVariable(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
-    tfel::utilities::shared_ptr<MTestBehaviour> b(t.getBehaviour());
+    tfel::utilities::shared_ptr<Behaviour> b(t.getBehaviour());
     const string& n = this->readString(p,this->fileTokens.end());
     const vector<string>& ivsnames = b->getInternalStateVariablesNames();
     if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
@@ -1450,8 +1450,8 @@ namespace mfront
       const vector<string>& vn = ev.getVariablesNames();
       vector<string>::const_iterator pv;
       for(pv=vn.begin();pv!=vn.end();++pv){
-	map<string,shared_ptr<MTestEvolution> >::const_iterator pev;
-	shared_ptr<map<string,shared_ptr<MTestEvolution> > > evs;
+	map<string,shared_ptr<Evolution> >::const_iterator pev;
+	shared_ptr<map<string,shared_ptr<Evolution> > > evs;
 	evs = t.getEvolutions();
 	pev = evs->find(*pv);
 	if(pev==evs->end()){
@@ -1459,7 +1459,7 @@ namespace mfront
 		     "no evolution named '"+*pv+"' defined");
 	  throw(runtime_error(msg));
 	}
-	const MTestEvolution& e = *(pev->second);
+	const Evolution& e = *(pev->second);
 	if(!e.isConstant()){
 	  string msg("MTestParser::readDouble : formula '"+f+"' shall "
 		     "only depend on constant evolutions "
@@ -1502,7 +1502,7 @@ namespace mfront
 			     this->fileTokens.end());
   } // end of MTestParser::readArrayOfSpecifiedSize
   
-  tfel::utilities::shared_ptr<MTestEvolution>
+  tfel::utilities::shared_ptr<Evolution>
   MTestParser::parseEvolution(const std::string& type,
 			      const MTest& t,
 			      TokensContainer::const_iterator& p)
@@ -1510,7 +1510,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using tfel::utilities::shared_ptr;
-    shared_ptr<MTestEvolution> ev;
+    shared_ptr<Evolution> ev;
     this->checkNotEndOfLine("MTestParser::parseEvolution",p,
 			    this->fileTokens.end());
     if(type.empty()||type=="evolution"){
@@ -1547,14 +1547,14 @@ namespace mfront
 	}
 	this->readSpecifiedToken("MTestParser::parseEvolution","}",p,
 				 this->fileTokens.end());
-	ev = shared_ptr<MTestEvolution>(new MTestLPIEvolution(tvalues,values));
+	ev = shared_ptr<Evolution>(new LPIEvolution(tvalues,values));
       } else {
 	const real s = this->readDouble(t,p);
-	ev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(s));
+	ev = shared_ptr<Evolution>(new ConstantEvolution(s));
       }
     } else if(type=="function"){
       const string& f = this->readString(p,this->fileTokens.end());
-      ev = shared_ptr<MTestEvolution>(new MTestFunctionEvolution(f,t.getEvolutions()));
+      ev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
     } else {
       string msg("MTestParser::parseEvolution : ");
       msg += "invalid evolution type '"+type+"'";

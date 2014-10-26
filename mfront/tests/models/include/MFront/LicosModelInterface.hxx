@@ -14,12 +14,12 @@
 #ifndef _LIB_MFRONTMODELINTERFACE_H_
 #define _LIB_MFRONTMODELINTERFACE_H_ 
 
-#include"MFront/MFrontModelVirtualInterface.hxx"
+#include"MFront/AbstractModelInterface.hxx"
 
 namespace mfront{
 
   struct MFrontModelInterface
-    : public MFrontModelVirtualInterface
+    : public AbstractModelInterface
   {
     static std::string 
     getName(void);
@@ -42,38 +42,38 @@ namespace mfront{
      * \param data  : model data
      */
     virtual
-    void writeOutputFiles(const MFrontFileDescription&,
-			  const MFrontModelData&) ;
+    void writeOutputFiles(const FileDescription&,
+			  const ModelData&) ;
 
     /*!
      * \param pdata : processing data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const MFrontModelData&);
+    getGlobalIncludes(const ModelData&);
 
     /*!
      * \param pdata : processing data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const MFrontModelData&);
+    getGlobalDependencies(const ModelData&);
 
     /*!
      * \param pdata : processing data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const MFrontModelData&);
+    getGeneratedSources(const ModelData&);
 
     /*!
      * \param pdata : processing data
      */
     virtual std::vector<std::string>
-    getGeneratedIncludes(const MFrontModelData&);
+    getGeneratedIncludes(const ModelData&);
 
     /*!
      * \param pdata : processing data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const MFrontModelData&);
+    getLibrariesDependencies(const ModelData&);
 
   private:
 
@@ -85,43 +85,43 @@ namespace mfront{
      * \param data  : model data
      */
     void
-    generateOutputFiles(const MFrontFileDescription&,
-			const MFrontModelData&);
+    generateOutputFiles(const FileDescription&,
+			const ModelData&);
 
     /*!
      * \param pdata : processing data
      * \param data  : model data
      */
     void
-    writeHeaderFile(const MFrontFileDescription&,
-		    const MFrontModelData&);
+    writeHeaderFile(const FileDescription&,
+		    const ModelData&);
 
     /*!
      * \param pdata : processing data
      * \param data  : model data
      */
     void
-    writeSrcFile(const MFrontFileDescription&,
-		 const MFrontModelData&);
+    writeSrcFile(const FileDescription&,
+		 const ModelData&);
     
     void
-    writeInitializeIntputsVariablesInitialValues(const MFrontModelData&);
+    writeInitializeIntputsVariablesInitialValues(const ModelData&);
 
     void
-    writeInitializeConstantMaterialProperties(const MFrontModelData&);
+    writeInitializeConstantMaterialProperties(const ModelData&);
 
     void
-    writeInitializeInputsVariablesDepths(const MFrontModelData&);
+    writeInitializeInputsVariablesDepths(const ModelData&);
 
     void
-    writeInitializeOutputsVariablesInitialValues(const MFrontModelData&);
+    writeInitializeOutputsVariablesInitialValues(const ModelData&);
 
     void
-    writeInitializeOutputsVariablesDepths(const MFrontModelData&);
+    writeInitializeOutputsVariablesDepths(const ModelData&);
 
     void
-    writeStaticVariableInitialization(const MFrontFileDescription&,
-				      const MFrontModelData&,
+    writeStaticVariableInitialization(const FileDescription&,
+				      const ModelData&,
 				      const StaticVariableDescription&);
 
     void
@@ -143,7 +143,7 @@ namespace mfront{
 
     std::string
     getVariableName(const std::string&,
-			    const MFrontModelData&) const;
+			    const ModelData&) const;
 
     std::ofstream headerFile;
     std::ofstream srcFile;

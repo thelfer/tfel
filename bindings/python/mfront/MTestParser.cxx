@@ -13,8 +13,8 @@
 
 #include<boost/python.hpp>
 
-#include"MFront/MTest.hxx"
-#include"MFront/MTestParser.hxx"
+#include"MTest/MTest.hxx"
+#include"MTest/MTestParser.hxx"
 
 void declareMTestParser(void)
 {

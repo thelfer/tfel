@@ -5,6 +5,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./404.html						   \
 	   ./bibliography.bib					   \
 	   ./svn.md					           \
+	   ./devel.md					           \
 	   ./index.md					           \
 	   ./material-properties.md				   \
 	   ./behaviours.md				           \
@@ -48,6 +49,9 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/hsnv125.xcf                                       \
 	   ./img/hsnv125.png                                       \
 	   ./img/LogarithmicStrainPlasticity-ssna303.svg           \
+	   ./img/ImplicitDSL.svg				   \
+	   ./img/AMITEX_FFTP_sig1.png				   \
+	   ./img/AMITEX_FFTP_sig1.svg				   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

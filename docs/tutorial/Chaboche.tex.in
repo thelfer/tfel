@@ -26,7 +26,7 @@ résumées brièvement~:
  \[
  F\paren{\tsigma ,\tenseur{X}} =(\sigma -\tenseur{X})_{\mathrm{eq}}-R(p)\le 0
 \]
-avec, pour pou tenseur \(\tenseur{A}\)~:
+avec, pour tout tenseur \(\tenseur{A}\)~:
 \[
 A_{\text{eq}}=\sqrt{\Frac{3}{2}\tenseur{\tilde{A}}:\tenseur{\tilde{A}}}
 \] où
@@ -119,7 +119,7 @@ taille \(6+1+2\times{}6=19\)), la \og~traduction~\fg{} de ces
 \item définition des propriétés matériau (modifiables depuis le jeu de
   commandes \mtest{} ou \aster{})~:
   \begin{flushleft}
-    \lstinputlisting[firstline=5,lastline=16,firstnumber=5]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+    \lstinputlisting[firstline=6,lastline=16,firstnumber=6]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
   \end{flushleft}
 \item définition des variables internes (l'écriture ci-dessus utilise
   des tableaux, ce qui permet de gérer facilement un nombre quelconque
@@ -130,9 +130,10 @@ taille \(6+1+2\times{}6=19\)), la \og~traduction~\fg{} de ces
   De plus, il faut compter en tant que variable interne (donc inconnue
   du problème à résoudre) le tenseur des déformations élastiques (ou
   plutôt son incrément {\tt deel}). L'utilisation de {\tt deel }
-  plutôt que {\tt dsig } permet d'obtenir un système bien conditionné
-  et permet de traiter sans précaution particulière le cas de
-  propriétés élastiques variables dans le temps.
+  plutôt que {\tt dsig } (utilisée habituellement dans {\tt
+    Code-Aster} permet d'obtenir un système bien conditionné et permet
+  de traiter sans précaution particulière le cas de propriétés
+  élastiques variables dans le temps.
 
 \item définition et initialisation des variables locales à
   l'algorithme (l'initialisation est faite une seule fois avant
@@ -154,8 +155,8 @@ taille \(6+1+2\times{}6=19\)), la \og~traduction~\fg{} de ces
     \lstinputlisting[firstline=60,lastline=84,firstnumber=60]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
   \end{flushleft}
   \begin{itemize}
-  \item la valeur de \(p\) est actualisée en \(t_{i} + \theta \Delta t
-    \) à la ligne \(64\), ce qui permet d'actualiser l'écrouissage
+  \item la valeur de \(p\) est actualisée en \(t_{i}+\theta\Delta\,t\)
+    à la ligne \(64\), ce qui permet d'actualiser l'écrouissage
     isotrope \(R\paren{p}\)~;
   \item de même, pour les variables d'écrouissage cinématique
     \(\alpha_{i}\) en ligne \(70\).  Ceci permet de calculer le
@@ -218,7 +219,7 @@ suivant~:
   \lstinputlisting{@top_srcdir@/docs/tutorial/mtest/chaboche.mtest}
 \end{flushleft}
 
-\subsection{Loi viscoplastique de \nom{Chaboche}}
+\subsection{Loi élasto-viscoplastique de \nom{Chaboche}}
 
 Le modèle diffère peu du précédent, car seul le critère de plasticité~:
 $F({{\sigma ,X}})=(\sigma -X)_{\mathrm{eq}}-R(p)\le 0$ est remplacé
@@ -279,9 +280,9 @@ l'évolution de différentes variables d'intérêt au cours du test.
 \end{figure}
 
 
-La figure~\ref{fig:mfront:tutorial:hsnv125:check} montre que la comparaison de
-la loi développée en \mfront avec son équivalent dans \aster 
-fournit des résultats identiques.
+La figure~\ref{fig:mfront:tutorial:hsnv125:check} montre que la
+comparaison de la loi développée en \mfront avec son équivalent dans
+\aster{} fournit des résultats identiques.
 
 \subsection{Traitement des erreurs, déverminage}
 
@@ -485,9 +486,9 @@ Ces expressions peuvent être écrites directement~dans le fichier
 \end{flushleft}
 
 On constate donc que la seule difficulté consiste à calculer les
-dérivées à la main ! Une fois écrite cette matrice jacobienne,
-on peut vérifier sa précision en la comparant à la matrice
-jacobiennne numérique~:
+expressions analytiques de ces dérivées à la main ! Une fois écrite
+cette matrice jacobienne, on peut vérifier sa précision en la
+comparant à la matrice jacobiennne numérique~:
 \begin{flushleft}
   \lstinputlisting[numbers=none]{@top_srcdir@/docs/tutorial/mfront/viscochab3.mfront}
 \end{flushleft}
@@ -588,10 +589,10 @@ correspond à un aller -retour dans le diagramme gamma-epsilon.
   \label{fig:mfront:tutorial:numetoile:check}
 \end{figure}
 
-La réponse obtenue avec un modèle sans effet de 
-non-radialité~\ref{fig:mfront:tutorial:numetoile:check} ( courbe
-verte ) est très différente de celle obtenue avec le modèle qui tient
-compte de cet effet (courbes rouge et bleue, superposées).
+La réponse obtenue avec un modèle sans effet de non-radialité (courbe
+verte sur la figure~~\ref{fig:mfront:tutorial:numetoile:check}) est
+très différente de celle obtenue avec le modèle qui tient compte de
+cet effet (courbes rouge et bleue, superposées).
 
 De même, l'ajout d'un effet de mémoire d'écrouissage ne pose pas de
 problème. Il est important de prendre en compte cet effet, lié à la
@@ -632,7 +633,7 @@ Introduisons ces équations dans notre comportement \mfront{}~:
   que variable interne car ce n'est pas vraiment une inconnue du
   système d'équations ($\Delta\,R$ peut être déterminé explicitement à
   partir de $\Delta p$ et $\Delta\,q$).  On choisit donc de la définir
-  comme variable auxiliaire, actualisé après convergence de
+  comme variable auxiliaire, actualisée après convergence de
   l'algorithme d'intégration implicite~:
   \begin{flushleft}
     \lstinputlisting[firstline=49,lastline=49,firstnumber=49]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
@@ -685,8 +686,9 @@ rapidement de tester des lois de comportement de façon
 opérationnelle.
 
 Plusieurs autres lois de comportement ont été développées et sont
-inclues dans les tests de \mfront{} et de \aster{}. Pour chacun, le
-temps de développement n'a pas dépassé une demi-journée.
+inclues dans les tests de \mfront{} et de \aster{} (version \(12\) en
+cours de développement). Pour chacun, le temps de développement n'a
+pas dépassé une demi-journée.
 
 \begin{center}
   \begin{tabular}{|m{8cm}|m{8cm}|}
@@ -781,7 +783,7 @@ paramètres optimum $H(X^{\mathit{final}})$.
   \label{fig:mfront:tutorial:adao:check}
 \end{figure}
 
-Une copie d'écran de l'interface de \adao dans \salome est présentée
+Une copie d'écran de l'interface de \adao dans \salome{} est présentée
 sur la figure~\ref{fig:mfront:tutorial:adao:check}.
 
 On peut voir sur cette figure~:
@@ -886,10 +888,6 @@ Le résultat de la fonction $\text{DirectOperator}$ est un vecteur
 $\text{Y=H(X)}$ qui est transmis à l'algorithme d'optimisation pour évaluer
 la fonctionnelle, et ses gradients par différences finies.
 
-
-Voici une copie d'écran illustrant les résultats
-de l'optimisation~:
-
 \begin{figure}[!h]
   \centering
   \includegraphics[width=15.998cm,height=9.998cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img20.png}
@@ -897,7 +895,9 @@ de l'optimisation~:
   \label{fig:mfront:tutorial:adao-quatre-courbes:check}
 \end{figure}
 
-On peut voir sur cette figure~:
+La figure~\ref{fig:mfront:tutorial:adao-quatre-courbes:check} présente
+une copie d'écran illustrant les résultats de l'optimisation. On peut
+y~:
 \begin{itemize}
 \item en haut à gauche la décroissance de la fonctionnelle $F$ au
   cours du processus~;
@@ -990,21 +990,22 @@ permettre un redécoupage local du pas de temps.
 \end{figure}
 
 \begin{table}
-\label{temps-calcul}
-\begin{tabular}{| c | c | c | c | c | c | c | }
-\hline
-éprouvette entaillée 2D axi& MFRONT impl& MFRONT impl  & MFRONT expl & Aster impl & Aster impl& Aster expl\\
-                           & J prog     &  J num       & RK4/5       &  J prog    & J num     & RK2/1 \\
-\hline
-Nb de pas de temps       &   601               &   601                   & 4011             & 601             &  601             &       4011 \\
-\hline
-Nb itérations Newton     &   1818        &       1810                   &  17493            &  2479          &  1832             &      17495 \\
-\hline
-Temps CPU                &    3mn5s      &       3mn19s                 &    32mn21s        &   8mn40s       & 8mn53s           &   46mn37s  \\
-\hline
-
-\end{tabular}
-\caption{comparaison des temps de calcul}
+  \label{temps-calcul}
+  \resizebox{\linewidth}{!}{
+    \begin{tabular}{| c | c | c | c | c | c | c | }
+      \hline
+      Éprouvette entaillée 2D axi& MFRONT impl& MFRONT impl  & MFRONT expl & Aster impl & Aster impl& Aster expl\\
+      & J prog     &  J num       & RK4/5       &  J prog    & J num     & RK2/1 \\
+      \hline
+      Nb de pas de temps       &   601               &   601                   & 4011             & 601             &  601             &       4011 \\
+      \hline
+      Nb itérations Newton     &   1818        &       1810                   &  17493            &  2479          &  1832             &      17495 \\
+      \hline
+      Temps CPU                &    3mn5s      &       3mn19s                 &    32mn21s        &   8mn40s       & 8mn53s           &   46mn37s  \\
+      \hline
+    \end{tabular}
+  }
+  \caption{comparaison des temps de calcul}
 \end{table}
 
 En guise d'illustration, les résultats d'un calcul de fluage sur une
@@ -1012,8 +1013,9 @@ En guise d'illustration, les résultats d'un calcul de fluage sur une
 sont donnés sur les figures \ref{fig:courbes-fluage}
 et~\ref{fig:iso-fluage}.
 
-La comparaison des temps CPU est nettement en faveur de MFRONT (\ref{temps-calcul}). Même l’intégration
-implicite avec jacobienne numérique est efficace.
+La comparaison des temps CPU est nettement en faveur de \mfront{}
+(\ref{temps-calcul}). Même l’intégration implicite avec jacobienne
+numérique est efficace.
 
 %%% Local Variables: 
 %%% mode: latex

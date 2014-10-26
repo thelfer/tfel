@@ -17,7 +17,7 @@
 #include"TFEL/Utilities/ParserBase.hxx"
 #include"TFEL/Utilities/TestDocumentation.hxx"
 
-#include"MFront/MTest.hxx"
+#include"MTest/MTest.hxx"
 
 namespace tfel{
 

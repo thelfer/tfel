@@ -26,15 +26,16 @@ chargement~:
 avec~:
 \begin{itemize}
 \item \(t_{i}\) représente la variable d'instant~;
-\item \({\mathrm{u}}_{i}\) est le champ de déplacement~;
+\item \({\mathrm{u}}_{i}\) est le champ de déplacement à l'instant
+  \(t_{i}\) qui est l'inconnu du problème~;
 \item \(\mathrm{L}^{\text{ext}}(t)\) est le chargement mécanique
   extérieur auquel est soumis la structure~;
 \item \(\mathrm{L}^{\text{int}}\) représente les forces internes,
   reliées au champ de contraintes \(\tsigma\).
 \end{itemize}
 
-Ce problème non linéaire est généralement résolu par une méthode de
-type \nom{Newton}.
+Ce problème non linéaire est, à chaque instant d'intérêt \(t_{i}\),
+généralement résolu par une méthode de type \nom{Newton}.
 
 En pratique, on distingue deux phases dans l'algorithme~:
 \begin{enumerate}[-]
@@ -132,11 +133,13 @@ point de \nom{Gauss} de chaque élément fini~:
 \subsubsection{Matrice tangente dite cohérente ou consistante}
 
 \begin{figure}[!h]
-  \includegraphics[width=0.32\linewidth,height=5cm]{@top_srcdir@/docs/tutorial/images/Kcoh.png}  
-  \hfill
-  \includegraphics[width=0.32\linewidth,height=5cm]{@top_srcdir@/docs/tutorial/images/Kel.png}  
-  \hfill
-  \includegraphics[width=0.32\linewidth,height=5cm]{@top_srcdir@/docs/tutorial/images/Ktgt.png}  
+  \begin{tabular}[htbp]{cc}
+  \includegraphics[width=0.4\linewidth]{@top_srcdir@/docs/tutorial/images/Kcoh.png} &
+  \includegraphics[width=0.4\linewidth]{@top_srcdir@/docs/tutorial/images/Kel.png}  \\
+  (A) & (B) \\
+  \includegraphics[width=0.4\linewidth]{@top_srcdir@/docs/tutorial/images/Ktgt.png} & \\
+  (C) & \\
+  \end{tabular}
   \caption{Matrices tangentes (A) cohérente, (B) élastique, (C) prédiction}
   \label{fig:Ktangentes}
 \end{figure}
@@ -221,10 +224,10 @@ sont offerts à l'utilisateur~:
 
 \subsection{nomenclature et mots-clés réservés}
 
-\mfront{} définit par défaut un certain nombre de mots clés
-qui représentent les quantités utiles aux différents algorithmes de résolution. 
-Pour éviter les conflits, 
-ces noms ne peuvent être utilisés pour désigner d'autres variables.
+\mfront{} définit par défaut un certain nombre de mots clés qui
+représentent les quantités utiles aux différents algorithmes de
+résolution.  Pour éviter les conflits, ces noms ne peuvent pas être
+utilisés pour désigner d'autres variables.
 
 \begin{itemize}
   \item {\tt Dt} représente la matrice tangente cohérente qu'il

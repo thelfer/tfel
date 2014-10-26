@@ -1,6 +1,7 @@
 INCLUDES = -I$(top_builddir)/src/TFELConfig \
 	   -I$(top_srcdir)/include          \
-	   -I$(top_srcdir)/mfront/include
+	   -I$(top_srcdir)/mfront/include   \
+	   -I$(top_srcdir)/mtest/include
 
 lib_LTLIBRARIES = libTFELMTest.la
 
@@ -9,23 +10,23 @@ mtest_SOURCES = MTestMain.cxx
 
 libTFELMTest_la_SOURCES = MTest.cxx                                \
 			  MTestParser.cxx                          \
-			  MTestAnalyticalTest.cxx                  \
-			  MTestReferenceFileComparisonTest.cxx     \
-			  MTestEvolution.cxx                       \
-			  MTestCastemEvolution.cxx                 \
-			  MTestFunctionEvolution.cxx               \
-			  MTestBehaviour.cxx                       \
-			  MTestUmatBehaviourBase.cxx               \
-			  MTestUmatNormaliseTangentOperator.cxx    \
-			  MTestConstraint.cxx                      \
-			  MTestImposedDrivingVariable.cxx          \
-			  MTestImposedThermodynamicForce.cxx       \
-			  MTestAccelerationAlgorithmFactory.cxx    \
-			  MTestAccelerationAlgorithm.cxx           \
-			  MTestSecantAccelerationAlgorithm.cxx     \
-			  MTestCastemAccelerationAlgorithm.cxx     \
-			  MTestIronsTuckAccelerationAlgorithm.cxx  \
-			  MTestSteffensenAccelerationAlgorithm.cxx
+			  AnalyticalTest.cxx                  \
+			  ReferenceFileComparisonTest.cxx     \
+			  Evolution.cxx                       \
+			  CastemEvolution.cxx                 \
+			  FunctionEvolution.cxx               \
+			  Behaviour.cxx                       \
+			  UmatBehaviourBase.cxx               \
+			  UmatNormaliseTangentOperator.cxx    \
+			  Constraint.cxx                      \
+			  ImposedDrivingVariable.cxx          \
+			  ImposedThermodynamicForce.cxx       \
+			  AccelerationAlgorithmFactory.cxx    \
+			  AccelerationAlgorithm.cxx           \
+			  SecantAccelerationAlgorithm.cxx     \
+			  CastemAccelerationAlgorithm.cxx     \
+			  IronsTuckAccelerationAlgorithm.cxx  \
+			  SteffensenAccelerationAlgorithm.cxx
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Material -lTFELMaterial   \
@@ -46,23 +47,23 @@ mtest_LDADD = -L$(top_builddir)/mfront/mtest                 \
 mtest_DEPENDENCIES = libTFELMTest.la
 
 if HAVE_CASTEM
-libTFELMTest_la_SOURCES += MTestUmatStandardBehaviour.cxx          \
-			   MTestUmatSmallStrainBehaviour.cxx       \
-			   MTestUmatFiniteStrainBehaviour.cxx      \
-			   MTestUmatCohesiveZoneModel.cxx
+libTFELMTest_la_SOURCES += UmatStandardBehaviour.cxx          \
+			   UmatSmallStrainBehaviour.cxx       \
+			   UmatFiniteStrainBehaviour.cxx      \
+			   UmatCohesiveZoneModel.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lUMATInterface
 endif
 
 if HAVE_ASTER
-libTFELMTest_la_SOURCES += MTestAsterStandardBehaviour.cxx    \
-			   MTestAsterSmallStrainBehaviour.cxx \
-			   MTestAsterFiniteStrainBehaviour.cxx \
-			   MTestAsterCohesiveZoneModel.cxx
+libTFELMTest_la_SOURCES += AsterStandardBehaviour.cxx    \
+			   AsterSmallStrainBehaviour.cxx \
+			   AsterFiniteStrainBehaviour.cxx \
+			   AsterCohesiveZoneModel.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAsterInterface
 endif
 
 if HAVE_CYRANO
-libTFELMTest_la_SOURCES += MTestCyranoBehaviour.cxx
+libTFELMTest_la_SOURCES += CyranoBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lCyranoInterface
 endif
 

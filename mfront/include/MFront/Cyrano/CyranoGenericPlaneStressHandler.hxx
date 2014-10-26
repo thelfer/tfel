@@ -35,7 +35,7 @@ namespace cyrano
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct CyranoGenericPlaneStressHandler
-    : public CyranoInterfaceBase
+    : public CyranoInterfaceExceptions
   {
     
     /*!
@@ -62,7 +62,7 @@ namespace cyrano
       typedef typename IF<Traits::stype==cyrano::ISOTROPIC,
 			  TreatPlaneStressIsotropicBehaviour,
 			  TreatPlaneStressOrthotropicBehaviour>::type Handler;
-      CyranoInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
+      CyranoInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		   STRESS);

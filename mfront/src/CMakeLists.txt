@@ -20,91 +20,96 @@ set(mfront_SOURCES
     main.cxx
     MFront.cxx
     MFrontDebugMode.cxx
-    MFrontPedanticMode.cxx
+    PedanticMode.cxx
     MFrontLock.cxx
-    MFrontSearchFile.cxx
-    MFrontInitInterfaces.cxx
-    MFrontInitParsers.cxx
-    MFrontInitAnalysers.cxx
-    MFrontParserFactory.cxx
+    SearchFile.cxx
+    InitInterfaces.cxx
+    InitDSLs.cxx
+    InitAnalysers.cxx
+    DSLFactory.cxx
     DrivingVariable.cxx
     MaterialPropertyDescription.cxx
-    MechanicalBehaviourData.cxx
-    MechanicalBehaviourDescription.cxx
+    BehaviourData.cxx
+    BehaviourDescription.cxx
     BoundsDescription.cxx
     VariableDescription.cxx
     StaticVariableDescription.cxx
-    MFrontBehaviourParserCommon.cxx
-    MFrontModelParserCommon.cxx
-    MFrontModelParser.cxx
-    MFrontBehaviourVirtualParser.cxx
-    MFrontBehaviourVirtualInterface.cxx
-    MFrontLawVirtualInterface.cxx
-    MFrontModelVirtualInterface.cxx
+    BehaviourDSLCommon.cxx
+    ModelDSLCommon.cxx
+    ModelDSL.cxx
+    AbstractDSL.cxx
+    AbstractBehaviourDSL.cxx
+    AbstractBehaviourInterface.cxx
+    AbstractMaterialPropertyInterface.cxx
+    AbstractModelInterface.cxx
     SupportedTypes.cxx
-    ParserBase.cxx
+    DSLBase.cxx
     InterfaceBase.cxx
-    ParserUtilities.cxx
+    DSLUtilities.cxx
     FiniteStrainBehaviourTangentOperatorConversion.cxx
     FiniteStrainBehaviourTangentOperatorConversionPath.cxx
-    MFrontBehaviourAnalyser.cxx
-    MFrontBehaviourAnalyserFactory.cxx
-    MFrontLawInterfaceFactory.cxx
-    MFrontBehaviourInterfaceFactory.cxx
-    MFrontModelInterfaceFactory.cxx
-    MFrontBehaviourAnalyser.cxx
-    MFrontBehaviourAnalyserFactory.cxx
-    MFrontDefaultParserBase.cxx
-    MFrontDefaultParser.cxx
-    MFrontDefaultCZMParser.cxx
-    MFrontDefaultFiniteStrainParser.cxx
-    MFrontMaterialLawParser.cxx
-    MFrontIsotropicMisesCreepParser.cxx
-    MFrontIsotropicStrainHardeningMisesCreepParser.cxx
-    MFrontIsotropicMisesPlasticFlowParser.cxx
-    MFrontRungeKuttaParser.cxx
-    MFrontImplicitParserBase.cxx
-    MFrontImplicitParser.cxx
-    MFrontImplicitParserII.cxx
-    MFrontImplicitFiniteStrainParser.cxx
-    MFrontNonLinearSystemSolver.cxx
-    MFrontNonLinearSystemSolverBase.cxx
-    MFrontNonLinearSystemSolverFactory.cxx
-    MFrontPowellDogLegAlgorithmBase.cxx
-    MFrontNewtonRaphsonSolvers.cxx
-    MFrontBroydenSolvers.cxx
-    MFrontSecondBroydenSolver.cxx
-    MFrontLevenbergMarquardtSolvers.cxx
-    MFrontPerformanceProfiling.cxx
-    MFrontMultipleIsotropicMisesFlowsParser.cxx
-    MFrontIsotropicBehaviourParserBase.cxx
-    MFrontMFrontLawInterface.cxx
-    MFrontCLawInterfaceBase.cxx
-    MFrontCLawInterface.cxx
-    MFrontCppLawInterface.cxx
-    MFrontCppTestLawInterface.cxx
-    MFrontExcelLawInterface.cxx
-    MFrontLaTeXLawInterface.cxx
-    MFrontLaTeXBehaviourAnalyser.cxx
-    MFrontMarkdownBehaviourAnalyser.cxx
-    MFrontUMATInterfaceBase.cxx
+    BehaviourAnalyser.cxx
+    BehaviourAnalyserFactory.cxx
+    MaterialPropertyInterfaceFactory.cxx
+    BehaviourInterfaceFactory.cxx
+    ModelInterfaceFactory.cxx
+    BehaviourAnalyser.cxx
+    BehaviourAnalyserFactory.cxx
+    DefaultDSLBase.cxx
+    DefaultDSL.cxx
+    DefaultCZMDSL.cxx
+    DefaultFiniteStrainDSL.cxx
+    MaterialPropertyDSL.cxx
+    IsotropicMisesCreepDSL.cxx
+    IsotropicStrainHardeningMisesCreepDSL.cxx
+    IsotropicMisesPlasticFlowDSL.cxx
+    RungeKuttaDSL.cxx
+    ImplicitDSLBase.cxx
+    ImplicitDSL.cxx
+    ImplicitDSLII.cxx
+    ImplicitFiniteStrainDSL.cxx
+    NonLinearSystemSolver.cxx
+    NonLinearSystemSolverBase.cxx
+    NonLinearSystemSolverFactory.cxx
+    PowellDogLegAlgorithmBase.cxx
+    NewtonRaphsonSolvers.cxx
+    BroydenSolvers.cxx
+    SecondBroydenSolver.cxx
+    LevenbergMarquardtSolvers.cxx
+    BehaviourBrick.cxx
+    BehaviourBrickFactory.cxx
+    BehaviourBrickBase.cxx
+    ElasticityBehaviourBrick.cxx
+    PerformanceProfiling.cxx
+    MultipleIsotropicMisesFlowsDSL.cxx
+    IsotropicBehaviourDSLBase.cxx
+    MFrontMaterialPropertyInterface.cxx
+    CMaterialPropertyInterfaceBase.cxx
+    CMaterialPropertyInterface.cxx
+    CppMaterialPropertyInterface.cxx
+    CppTestMaterialPropertyInterface.cxx
+    ExcelMaterialPropertyInterface.cxx
+    LaTeXMaterialPropertyInterface.cxx
+    LaTeXBehaviourAnalyser.cxx
+    MarkdownBehaviourAnalyser.cxx
+    UMATInterfaceBase.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
 if(HAVE_GNUPLOT)
     set(mfront_SOURCES
-	MFrontGnuplotLawInterface.cxx
+	GnuplotMaterialPropertyInterface.cxx
 	${mfront_SOURCES})
 endif(HAVE_GNUPLOT)
 
 if(HAVE_PYTHON)
     set(mfront_SOURCES
-	MFrontPythonLawInterface.cxx
+	PythonMaterialPropertyInterface.cxx
 	${mfront_SOURCES})
 endif(HAVE_PYTHON)
 
 if(HAVE_FORTRAN)
     set(mfront_SOURCES
-	MFrontFortranLawInterface.cxx
+	FortranMaterialPropertyInterface.cxx
 	${mfront_SOURCES})
 endif(HAVE_FORTRAN)
 
@@ -113,7 +118,7 @@ tfel_library(MFrontLogStream
 
 if(enable-cxx-11)
   tfel_library(MFrontProfiling
-    MFrontBehaviourProfiler.cxx)
+    BehaviourProfiler.cxx)
   if(UNIX)
     target_link_libraries(MFrontProfiling rt)
   endif(UNIX)
@@ -131,11 +136,11 @@ target_link_libraries(MTestFileGenerator
 
 if(HAVE_CASTEM)
     set(mfront_SOURCES
-	MFrontUMATInterface.cxx
-	MFrontCastemLawInterface.cxx
+	UMATInterface.cxx
+	CastemMaterialPropertyInterface.cxx
 	${mfront_SOURCES})
     set(UMATInterface_SOURCES
-	UMATInterfaceBase.cxx
+	UMATInterfaceExceptions.cxx
 	UMATFiniteStrain.cxx
 	UMATComputeStiffnessTensor.cxx
 	UMATComputeThermalExpansionCoefficientTensor.cxx
@@ -155,10 +160,10 @@ endif(HAVE_CASTEM)
 
 if(HAVE_ASTER)
   set(mfront_SOURCES
-    MFrontAsterInterface.cxx
+    AsterInterface.cxx
     ${mfront_SOURCES})
   set(AsterInterface_SOURCES
-    AsterInterfaceBase.cxx
+    AsterInterfaceExceptions.cxx
     AsterException.cxx
     AsterRotationMatrix.cxx
     AsterFiniteStrainRotationMatrix.cxx
@@ -175,17 +180,17 @@ endif(HAVE_ASTER)
 
 if(HAVE_ZMAT)
   set(mfront_SOURCES
-    MFrontZMATInterface.cxx
+    ZMATInterface.cxx
     ${mfront_SOURCES})
 endif(HAVE_ZMAT)
 
 if(HAVE_CYRANO)
   set(mfront_SOURCES
-    MFrontCyranoInterface.cxx
+    CyranoInterface.cxx
     ${mfront_SOURCES})
   set(CyranoInterface_SOURCES
     CyranoException.cxx
-    CyranoInterfaceBase.cxx
+    CyranoInterfaceExceptions.cxx
     CyranoComputeStiffnessTensor.cxx
     CyranoComputeThermalExpansionCoefficientTensor.cxx
     CyranoOutOfBoundsPolicy.cxx

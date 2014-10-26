@@ -38,7 +38,7 @@
 #include"MFront/Aster/AsterConfig.hxx"
 #include"MFront/Aster/AsterTraits.hxx"
 #include"MFront/Aster/AsterException.hxx"
-#include"MFront/Aster/AsterInterfaceBase.hxx"
+#include"MFront/Aster/AsterInterfaceExceptions.hxx"
 
 namespace aster
 {
@@ -80,7 +80,7 @@ namespace aster
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterInterface
-    : protected AsterInterfaceBase
+    : protected AsterInterfaceExceptions
   {
 
     TFEL_ASTER_INLINE2 static
@@ -152,7 +152,7 @@ namespace aster
 								       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 								       STATEV,NSTATV,STRESS,sfeh);
       } else {
-        AsterInterfaceBase::displayUnsupportedHypothesisMessage();
+        AsterInterfaceExceptions::displayUnsupportedHypothesisMessage();
         return -2;
       }
     }
@@ -314,31 +314,31 @@ namespace aster
 	} 
 	catch(const AsterException& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceBase::treatAsterException(Name<BV>::getName(),e);
+	    AsterInterfaceExceptions::treatAsterException(Name<BV>::getName(),e);
 	  }
 	  return -2;
 	}
 	catch(const tfel::material::MaterialException& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceBase::treatMaterialException(Name<BV>::getName(),e);
+	    AsterInterfaceExceptions::treatMaterialException(Name<BV>::getName(),e);
 	  }
 	  return -3;
 	}
 	catch(const tfel::exception::TFELException& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceBase::treatTFELException(Name<BV>::getName(),e);
+	    AsterInterfaceExceptions::treatTFELException(Name<BV>::getName(),e);
 	  }
 	  return -4;
 	}
 	catch(const std::exception& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceBase::treatStandardException(Name<BV>::getName(),e);
+	    AsterInterfaceExceptions::treatStandardException(Name<BV>::getName(),e);
 	  }
 	  return -5;
 	}
 	catch(...){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceBase::treatUnknownException(Name<BV>::getName());
+	    AsterInterfaceExceptions::treatUnknownException(Name<BV>::getName());
 	  }
 	  return -6;
 	}

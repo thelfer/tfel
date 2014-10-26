@@ -297,7 +297,15 @@ available, code source documentation can be installed through:
 $ make doc-html-install
 ~~~~~~~~~~~~~~~~~~~~~~
 
-# Cross compiling (Linux host, Windows target)
+All the documentation will be installed with the following command:
+
+~~~~ {#building-html .bash}
+$ make doc-install
+~~~~~~~~~~~~~~~~~~~~~~
+
+**Note** If [`pandoc`](http://johnmacfarlane.net/pandoc/index.html) is
+installed and if you are using the `cmake` build system, the previous
+command will also install a local version of the `TFEL` web site.
 
 # Windows MINGW
 

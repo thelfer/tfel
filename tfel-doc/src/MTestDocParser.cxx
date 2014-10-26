@@ -13,7 +13,7 @@
 
 #include<iostream>
 
-#include"MFront/MTestParser.hxx"
+#include"MTest/MTestParser.hxx"
 #include"TFEL/Utilities/MTestDocParser.hxx"
 
 namespace tfel{

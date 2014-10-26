@@ -36,14 +36,14 @@ namespace cyrano
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CyranoBehaviourHandler
-    :public CyranoInterfaceBase
+    :public CyranoInterfaceExceptions
   {
     
     /*!
      * An helper structure used to initialise the driving variables
      */
     struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
-      : public CyranoInterfaceBase
+      : public CyranoInterfaceExceptions
     {
       //! a simple alias
       typedef Behaviour<H,CyranoReal,false> BV;

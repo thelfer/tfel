@@ -203,44 +203,44 @@ ADD_CUSTOM_COMMAND(
 # Eventually trigger the whole process
 add_custom_target(mfront-doc-pdf echo DEPENDS mfront.pdf)
 add_custom_target(mfront-doc-pdf-install
-                  COMMAND ${CMAKE_COMMAND} -E copy mfront.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/mfront.pdf
-                  COMMAND ${CMAKE_COMMAND} -E copy mfront.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/mfront/mfront.pdf)
+                  COMMAND ${CMAKE_COMMAND} -E copy mfront.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/references/mfront.pdf
+                  COMMAND ${CMAKE_COMMAND} -E copy mfront.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront/mfront.pdf)
 add_dependencies(mfront-doc-pdf-install mfront-doc-pdf)
 
 add_custom_target(behaviours-doc-pdf echo DEPENDS behaviours.pdf)
 add_custom_target(behaviours-doc-pdf-install
-                  COMMAND ${CMAKE_COMMAND} -E copy behaviours.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/behaviours.pdf
-		  COMMAND ${CMAKE_COMMAND} -E copy behaviours.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/mfront/behaviours.pdf)
+                  COMMAND ${CMAKE_COMMAND} -E copy behaviours.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/references/behaviours.pdf
+		  COMMAND ${CMAKE_COMMAND} -E copy behaviours.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront/behaviours.pdf)
 add_dependencies(behaviours-doc-pdf-install behaviours-doc-pdf)
 
 add_custom_target(finitestrain-doc-pdf echo DEPENDS finitestrain.pdf)
 add_custom_target(finitestrain-doc-pdf-install
-                  COMMAND  ${CMAKE_COMMAND} -E copy finitestrain.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/finitestrain.pdf
-		  COMMAND  ${CMAKE_COMMAND} -E copy finitestrain.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/mfront/finitestrain.pdf)
+                  COMMAND  ${CMAKE_COMMAND} -E copy finitestrain.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/references/finitestrain.pdf
+		  COMMAND  ${CMAKE_COMMAND} -E copy finitestrain.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront/finitestrain.pdf)
 add_dependencies(finitestrain-doc-pdf-install finitestrain-doc-pdf)
 
 add_custom_target(planestress-doc-pdf echo DEPENDS planestress.pdf)
 add_custom_target(planestress-doc-pdf-install
-                  COMMAND  ${CMAKE_COMMAND} -E copy planestress.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/planestress.pdf
-		  COMMAND  ${CMAKE_COMMAND} -E copy planestress.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/mfront/planestress.pdf)
+                  COMMAND  ${CMAKE_COMMAND} -E copy planestress.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/references/planestress.pdf
+		  COMMAND  ${CMAKE_COMMAND} -E copy planestress.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront/planestress.pdf)
 add_dependencies(planestress-doc-pdf-install planestress-doc-pdf)
 
 add_custom_target(umat-doc-pdf echo DEPENDS umat.pdf)
 add_custom_target(umat-doc-pdf-install
-                  COMMAND  ${CMAKE_COMMAND} -E copy umat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/umat.pdf
-		  COMMAND  ${CMAKE_COMMAND} -E copy umat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/mfront/umat.pdf)
+                  COMMAND  ${CMAKE_COMMAND} -E copy umat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/references/umat.pdf
+		  COMMAND  ${CMAKE_COMMAND} -E copy umat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront/umat.pdf)
 add_dependencies(umat-doc-pdf-install umat-doc-pdf)
 
 add_custom_target(zmat-doc-pdf echo DEPENDS zmat.pdf)
 add_custom_target(zmat-doc-pdf-install
-                  COMMAND  ${CMAKE_COMMAND} -E copy zmat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/zmat.pdf
-		  COMMAND  ${CMAKE_COMMAND} -E copy zmat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/mfront/zmat.pdf)
+                  COMMAND  ${CMAKE_COMMAND} -E copy zmat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/references/zmat.pdf
+		  COMMAND  ${CMAKE_COMMAND} -E copy zmat.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront/zmat.pdf)
 add_dependencies(zmat-doc-pdf-install zmat-doc-pdf)
 
 add_custom_target(aster-doc-pdf echo DEPENDS aster.pdf)
 add_custom_target(aster-doc-pdf-install
-                  COMMAND  ${CMAKE_COMMAND} -E copy aster.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/aster.pdf
-		  COMMAND  ${CMAKE_COMMAND} -E copy aster.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/mfront/aster.pdf)
+                  COMMAND  ${CMAKE_COMMAND} -E copy aster.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/references/aster.pdf
+		  COMMAND  ${CMAKE_COMMAND} -E copy aster.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront/aster.pdf)
 add_dependencies(aster-doc-pdf-install aster-doc-pdf)
 
 add_dependencies(doc-pdf

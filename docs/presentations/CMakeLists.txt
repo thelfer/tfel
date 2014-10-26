@@ -18,8 +18,8 @@ macro(latex_presentation doc)
   # Eventually trigger the whole process
   add_custom_target(${doc}-doc-pdf echo DEPENDS ${doc}.pdf)
   add_custom_target(${doc}-doc-pdf-install
-    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/${doc}/${doc}.pdf
-    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/${doc}/${doc}.pdf)
+    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/${doc}/${doc}.pdf
+    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/${doc}/${doc}.pdf)
   add_dependencies(${doc}-doc-pdf-install ${doc}-doc-pdf)
   
   add_dependencies(doc-pdf
@@ -44,8 +44,8 @@ macro(pdflatex_presentation doc)
   # Eventually trigger the whole process
   add_custom_target(${doc}-doc-pdf echo DEPENDS ${doc}.pdf)
   add_custom_target(${doc}-doc-pdf-install
-    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/${doc}/${doc}.pdf
-    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/${doc}/${doc}.pdf)
+    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/${doc}/${doc}.pdf
+    COMMAND ${CMAKE_COMMAND} -E copy ${doc}.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/${doc}/${doc}.pdf)
   add_dependencies(${doc}-doc-pdf-install ${doc}-doc-pdf)
   
   add_dependencies(doc-pdf

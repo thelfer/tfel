@@ -1,0 +1,89 @@
+/*!
+ * \file   mfront/include/MFront/AbstractModelInterface.hxx
+ * \brief  
+ * 
+ * \author Helfer Thomas
+ * \date   16 jan 2007
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifndef _LIB_MFRONTMODELVIRTUALINTERFACE_HXX_
+#define _LIB_MFRONTMODELVIRTUALINTERFACE_HXX_ 
+
+#include<map>
+#include<set>
+#include<string>
+#include<vector>
+
+#include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Utilities/CxxTokenizer.hxx"
+
+#include"MFront/ModelData.hxx"
+#include"MFront/FileDescription.hxx"
+
+namespace mfront{
+  
+  struct TFEL_VISIBILITY_EXPORT AbstractModelInterface
+  {
+
+    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    treatKeyword(const std::string&,
+		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
+		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) = 0;
+
+    virtual void
+    reset(void) = 0;
+
+    virtual
+    void declareReservedNames(std::set<std::string>&) = 0;
+
+    /*!
+     * \param pdata : generic data
+     * \param data  : model data
+     */
+    virtual
+    void writeOutputFiles(const FileDescription&,
+			  const ModelData&) = 0;
+
+    /*!
+     * \param pdata : generic data
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGlobalIncludes(const ModelData&) = 0;
+
+    /*!
+     * \param pdata : generic data
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGlobalDependencies(const ModelData&) = 0;
+
+    /*!
+     * \param pdata : generic data
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedSources(const ModelData&) = 0;
+
+    /*!
+     * \param pdata : generic data
+     */
+    virtual std::vector<std::string>
+    getGeneratedIncludes(const ModelData&) = 0;
+
+    /*!
+     * \param pdata : generic data
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getLibrariesDependencies(const ModelData&) = 0;
+
+    virtual ~AbstractModelInterface();
+
+  }; // end of AbstractModelInterface
+
+} // end of namespace mfront  
+
+#endif /* _LIB_MFRONTMODELVIRTUALINTERFACE_HXX */

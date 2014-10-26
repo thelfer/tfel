@@ -44,14 +44,14 @@
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/MFront.hxx"
 #include"MFront/MFrontDebugMode.hxx"
-#include"MFront/MFrontPedanticMode.hxx"
+#include"MFront/PedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontHeader.hxx"
-#include"MFront/MFrontSearchFile.hxx"
-#include"MFront/MFrontParserFactory.hxx"
-#include"MFront/MFrontLawInterfaceFactory.hxx"
-#include"MFront/MFrontBehaviourInterfaceFactory.hxx"
-#include"MFront/MFrontModelInterfaceFactory.hxx"
+#include"MFront/SearchFile.hxx"
+#include"MFront/DSLFactory.hxx"
+#include"MFront/MaterialPropertyInterfaceFactory.hxx"
+#include"MFront/BehaviourInterfaceFactory.hxx"
+#include"MFront/ModelInterfaceFactory.hxx"
 #include"MFront/MFrontLock.hxx"
 
 namespace mfront{
@@ -387,7 +387,7 @@ namespace mfront{
   {
     using namespace std;
     cout << "available parsers : " << endl;
-    MFrontParserFactory& parserFactory = MFrontParserFactory::getMFrontParserFactory();
+    DSLFactory& parserFactory = DSLFactory::getDSLFactory();
     const vector<string>& parsers = parserFactory.getRegistredParsers();
     vector<string>::const_iterator p = parsers.begin();
     while(p!=parsers.end()){
@@ -553,7 +553,7 @@ namespace mfront{
       msg += "no path given";
       throw(runtime_error(msg));
     }
-    MFrontSearchFile::addSearchPaths(o);
+    SearchFile::addSearchPaths(o);
   }
 
   void
@@ -561,15 +561,15 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    MFrontParserFactory& f = MFrontParserFactory::getMFrontParserFactory();
+    DSLFactory& f = DSLFactory::getDSLFactory();
     const string& o = this->currentArgument->getOption();
     if(o.empty()){
       string msg("MFront::treatHelpCommandsList : ");
       msg += "no parser name given";
       throw(runtime_error(msg));
     }
-    auto_ptr<MFrontVirtualParser> p;
-    p = auto_ptr<MFrontVirtualParser>(f.createNewParser(o));
+    auto_ptr<AbstractDSL> p;
+    p = auto_ptr<AbstractDSL>(f.createNewParser(o));
     vector<string> k;
     vector<string>::const_iterator pk;
     p->getKeywordsList(k);
@@ -599,7 +599,7 @@ namespace mfront{
   MFront::treatHelpCommand(void)
   {
     using namespace std;
-    MFrontParserFactory& f = MFrontParserFactory::getMFrontParserFactory();
+    DSLFactory& f = DSLFactory::getDSLFactory();
     const string& o = this->currentArgument->getOption();
     if(o.empty()){
       string msg("MFront::treatHelpCommand : ");
@@ -626,8 +626,8 @@ namespace mfront{
       msg += "ill-formed argument, expected 'parser:@keyword'";
       throw(runtime_error(msg));
     }
-    auto_ptr<MFrontVirtualParser> p;
-    p = auto_ptr<MFrontVirtualParser>(f.createNewParser(pn));
+    auto_ptr<AbstractDSL> p;
+    p = auto_ptr<AbstractDSL>(f.createNewParser(pn));
     vector<string> keys;
     p->getKeywordsList(keys);
     if(find(keys.begin(),keys.end(),k)==keys.end()){
@@ -670,18 +670,18 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::system;
-    typedef MFrontLawInterfaceFactory MLIF;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontModelInterfaceFactory MMIF;
+    typedef MaterialPropertyInterfaceFactory MLIF;
+    typedef BehaviourInterfaceFactory MBIF;
+    typedef ModelInterfaceFactory MMIF;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
-    MFrontParserFactory& parserFactory = MFrontParserFactory::getMFrontParserFactory();
-    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
+    DSLFactory& parserFactory = DSLFactory::getDSLFactory();
+    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    MMIF& mmif = MMIF::getModelInterfaceFactory();
     CxxTokenizer file;
     string library;
     string parserName;
-    auto_ptr<MFrontVirtualParser> parser;
+    auto_ptr<AbstractDSL> parser;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     CxxTokenizer::TokensContainer::const_iterator pt;
@@ -699,7 +699,7 @@ namespace mfront{
     pte = file.end();
     found=false;
     while((pt!=pte)&&(!found)){
-      if(pt->value=="@Parser"){
+      if((pt->value=="@Parser")||(pt->value=="@DSL")){
 	if(pt!=file.begin()){
 	  CxxTokenizer::TokensContainer::const_iterator ptp = pt;
 	  --ptp;
@@ -761,7 +761,7 @@ namespace mfront{
 	  ExternalLibraryManager& lm = ExternalLibraryManager::getExternalLibraryManager();
 	  lm.loadLibrary(library);
 	}
-	parser = auto_ptr<MFrontVirtualParser>(parserFactory.createNewParser(parserName));
+	parser = auto_ptr<AbstractDSL>(parserFactory.createNewParser(parserName));
       } 
       catch(runtime_error& r){
 	ostringstream msg;
@@ -777,7 +777,7 @@ namespace mfront{
 	ostream& log = getLogStream();
 	log << "MFront::treatFile : no parser specified, using default" << endl;
       }
-      parser = auto_ptr<MFrontVirtualParser>(parserFactory.createNewParser());
+      parser = auto_ptr<AbstractDSL>(parserFactory.createNewParser());
     }
     if(!this->interfaces.empty()){
       parser->setInterfaces(this->interfaces);
@@ -1629,8 +1629,8 @@ namespace mfront{
 	}
       }
       // adding the mfront search path to the include files
-      if(!MFrontSearchFile::getSearchPaths().empty()){
-	const vector<string>& paths = MFrontSearchFile::getSearchPaths();
+      if(!SearchFile::getSearchPaths().empty()){
+	const vector<string>& paths = SearchFile::getSearchPaths();
 	for(p6=paths.begin();p6!=paths.end();++p6){
 	  this->makeFile << "\\\n\t     -I" << *p6;
 	}
@@ -1961,9 +1961,9 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
-    typedef MFrontLawInterfaceFactory       MLIF;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontModelInterfaceFactory     MMIF;
+    typedef MaterialPropertyInterfaceFactory       MLIF;
+    typedef BehaviourInterfaceFactory MBIF;
+    typedef ModelInterfaceFactory     MMIF;
     vector<pair<string,string> > errors;
     vector<string> tmp;
     set<string>::const_iterator p;
@@ -1971,9 +1971,9 @@ namespace mfront{
     Target::iterator p3;
     set<string>::const_iterator p5;
     vector<pair<string,string> >::const_iterator p6;
-    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
+    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    MMIF& mmif = MMIF::getModelInterfaceFactory();
     systemCall::mkdir("src");
     systemCall::mkdir("include");
     if(this->specifiedTargets.empty()){
@@ -2086,12 +2086,12 @@ namespace mfront{
 
   MFront::~MFront()
   {
-    typedef MFrontLawInterfaceFactory       MLIF;
-    typedef MFrontBehaviourInterfaceFactory MBIF;
-    typedef MFrontModelInterfaceFactory     MMIF;
-    MLIF& mlif = MLIF::getMFrontLawInterfaceFactory();
-    MBIF& mbif = MBIF::getMFrontBehaviourInterfaceFactory();
-    MMIF& mmif = MMIF::getMFrontModelInterfaceFactory();
+    typedef MaterialPropertyInterfaceFactory       MLIF;
+    typedef BehaviourInterfaceFactory MBIF;
+    typedef ModelInterfaceFactory     MMIF;
+    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    MMIF& mmif = MMIF::getModelInterfaceFactory();
     mlif.clear();
     mbif.clear();
     mmif.clear();

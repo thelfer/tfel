@@ -50,8 +50,7 @@ Matériaux de Mines ParisTech as part of the Zset software
 major difference between `ZebFront` and `MFront` is the programming
 techniques used: `ZebFront` mostly relies on object oriented
 techniques where `MFront` relies on generic programming leading to
-almost orthogonal design choices (see \ref{sec:tfel-library} for
-details).
+almost orthogonal design choices.
 
 Three kind of mechanical behaviours are currently considered with
 `MFront`: small and finite strain behaviours and cohesive zone
@@ -61,7 +60,7 @@ models.
 
 We now precise the role of the mechanical behaviours in standard
 displacement-based finite element solver
-[see @zienkiewicz_finite_1977;besson_mecanique_2001;edf_algorithme_2013]. For
+[see @zienkiewicz_finite_1977;@besson_mecanique_2001;@edf_algorithme_2013]. For
 the sake of simplicity, we only treat the case of small strain
 behaviours for the rest of this document.
 

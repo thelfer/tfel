@@ -19,7 +19,7 @@
 
 #include"MFront/Cyrano/Cyrano.hxx"
 #include"MFront/Cyrano/CyranoTraits.hxx"
-#include"MFront/Cyrano/CyranoInterfaceBase.hxx"
+#include"MFront/Cyrano/CyranoInterfaceExceptions.hxx"
 
 #include"MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx"
 #include"MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx"
@@ -41,7 +41,7 @@ namespace cyrano{
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct CyranoInterfaceDispatch
-    : public CyranoInterfaceBase
+    : public CyranoInterfaceExceptions
   {
     TFEL_CYRANO_INLINE2 static
     void exe(const CyranoReal *const DTIME,
@@ -78,7 +78,7 @@ namespace cyrano{
   // 		    typename,bool> class Behaviour>
   // struct CyranoInterfaceDispatch<tfel::material::ModellingHypothesis::PLANESTRESS,
   // 				 Behaviour>
-  //   : public CyranoInterfaceBase
+  //   : public CyranoInterfaceExceptions
   // {
   //   TFEL_CYRANO_INLINE2 static
   //   void exe(const CyranoInt  *const NTENS, const CyranoReal *const DTIME,
@@ -99,7 +99,7 @@ namespace cyrano{
   // 	typedef typename IF<Traits::stype==cyrano::ISOTROPIC,
   // 			    CyranoIsotropicBehaviourHandler<MH::PLANESTRESS,Behaviour>,
   // 			    CyranoOrthotropicBehaviourHandler<MH::PLANESTRESS,Behaviour> >::type Handler;
-  // 	CyranoInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
+  // 	CyranoInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
   // 	Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
   // 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
   // 		     STRESS);

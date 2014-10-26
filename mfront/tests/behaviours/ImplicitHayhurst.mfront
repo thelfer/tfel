@@ -28,10 +28,10 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real delta1;
 @MaterialProperty real delta2;
 
+@StateVariable real    d;
 @StateVariable real    p;
 @StateVariable real    H1;
 @StateVariable real    H2;
-@StateVariable real    d;
 
 @LocalVariable real    lambda;
 @LocalVariable real    mu;
@@ -45,23 +45,6 @@ nu.setGlossaryName("PoissonRatio");
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
-}
-
-@TangentOperator{
-  using namespace tfel::material::lame;
-  using namespace tfel::material::lame;
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if(smt==CONSISTENTTANGENTOPERATOR){
-    StiffnessTensor Hooke;
-    Stensor4 Je;
-    Stensor Jd;
-    computeUnalteredElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
-    getPartialJacobianInvert(Je,Jd);
-    Dt = (1-d-dd)*Hooke*Je+-((Jd)^(Hooke*(eel+deel)));
-  } else {
-    return false;
-  }
 }
 
 @ComputeStress{
@@ -93,7 +76,7 @@ nu.setGlossaryName("PoissonRatio");
     n       = 1.5*deviator(sig)*inv_seq;
     Stensor dsvmde=2.*mu*theta*(1.-d_)*n;
     Stensor dsvm0de=2.*mu*theta*n;
-    // systeme a resoudre        
+    // systeme a résoudre        
     feel += dp*n-deto;
     fp   = dp-epsi0*dt*shp;
     fH1  = dH1-h1*dp*(H1star-delta1*H1_)*inv_seq ;
@@ -125,3 +108,18 @@ nu.setGlossaryName("PoissonRatio");
   }
 }
 
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if(smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor Hooke;
+    Stensor4 Je;
+    Stensor Jd;
+    computeUnalteredElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+    getPartialJacobianInvert(Je,Jd);
+    Dt = (1-d)*Hooke*Je-((Jd)^(Hooke*eel));
+  } else {
+    return false;
+  }
+}

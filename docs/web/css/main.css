@@ -151,10 +151,30 @@ header {
     background-color: transparent;
 }
 
+table caption{
+    text-align:center;
+    color:black;
+    font-weight: bold;
+}
+
+table thead{
+    background-color:lightgrey;
+}
+
+table, th, td {
+   border: 1px solid black;
+}
+
 .figure img{
     display: block;
     margin-left: auto;
     margin-right: auto ;
+}
+
+.table caption{
+    text-align:center;
+    color:black;
+    font-weight: bold;
 }
 
 .figure p.caption{

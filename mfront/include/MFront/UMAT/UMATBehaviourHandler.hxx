@@ -89,14 +89,14 @@ namespace umat
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL UMATBehaviourHandler
-    :public UMATInterfaceBase
+    :public UMATInterfaceExceptions
   {
     /*!
      * structure in charge of checking the thermal expansion
      * coefficient is zero
      */
     struct CheckThermalExpansionCoefficientIsNull
-      : public UMATInterfaceBase
+      : public UMATInterfaceExceptions
     {
       /*!
        * \param[in] a : thermal expansion coefficient
@@ -109,7 +109,7 @@ namespace umat
 	using tfel::utilities::Name;
 	typedef Behaviour<H,UMATReal,false> BV;
 	if(abs(a)>numeric_limits<UMATReal>::min()){
-	  UMATInterfaceBase::throwThermalExpansionCoefficientShallBeNull(Name<BV>::getName());
+	  UMATInterfaceExceptions::throwThermalExpansionCoefficientShallBeNull(Name<BV>::getName());
 	}
       }
     };
@@ -118,7 +118,7 @@ namespace umat
      * coefficient is zero
      */
     struct DontCheckThermalExpansionCoefficientIsNull
-      : public UMATInterfaceBase
+      : public UMATInterfaceExceptions
     {
       /*!
        * \param[in] a : thermal expansion
@@ -131,7 +131,7 @@ namespace umat
      * An helper structure used to initialise the driving variables
      */
     struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
-      : public UMATInterfaceBase
+      : public UMATInterfaceExceptions
     {
       //! a simple alias
       typedef Behaviour<H,UMATReal,false> BV;

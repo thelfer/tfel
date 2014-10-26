@@ -20,14 +20,14 @@
 #include<cassert>
 #include<cctype>
 
-#include"MFront/ParserUtilities.hxx"
+#include"MFront/DSLUtilities.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
-#include"MFront/MFrontModelParserCommon.hxx"
-#include"MFront/MFrontModelInterfaceProxy.hxx"
+#include"MFront/ModelDSLCommon.hxx"
+#include"MFront/ModelInterfaceProxy.hxx"
 #include"MFront/LicosModelInterface.hxx"
 
 static const unsigned short TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY = 8;
@@ -43,7 +43,7 @@ namespace mfront{
   }
 
   static std::string
-  getLibraryName(const MFrontModelData& mdata)
+  getLibraryName(const ModelData& mdata)
   {
     using namespace std;
     string a = "@Application@";
@@ -58,14 +58,14 @@ namespace mfront{
   } // end of getLibraryName
 
   static bool
-  isInputVariable(const MFrontModelData& data,
+  isInputVariable(const ModelData& data,
 		  const std::string& v)
   {
-    return MFrontModelParserCommon::is(data,data.inputs,v);
-  } // end of MFrontModelParserCommon::isInputVariable(void)
+    return ModelDSLCommon::is(data,data.inputs,v);
+  } // end of isInputVariable
 
   static std::pair<std::string,unsigned short>
-  decomposeVariableName(const MFrontModelData& data,
+  decomposeVariableName(const ModelData& data,
 			const std::string& v)
   {
     using namespace std;
@@ -105,11 +105,11 @@ namespace mfront{
 	}
       }
     }
-    string msg("MFrontModelParserCommon::decomposeVariableName : ");
+    string msg("ModelDSLCommon::decomposeVariableName : ");
     msg += "no decomposition found  for variable '"+v+"'";
     throw(runtime_error(msg));
     return pair<string,unsigned short>("",0u);
-  } // end of MFrontModelParserCommon::getVariableName(const std::string& v)
+  } // end of MFrontModelInterface::getVariableName(const std::string& v)
 
   MFrontModelInterface::MFrontModelInterface(void)
   {
@@ -209,12 +209,12 @@ namespace mfront{
   } // end of MFrontModelInterface::closeOutputFiles()
   
   void
-  MFrontModelInterface::generateOutputFiles(const MFrontFileDescription& fdata,
-					    const MFrontModelData& mdata)
+  MFrontModelInterface::generateOutputFiles(const FileDescription& fdata,
+					    const ModelData& mdata)
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
-    MFrontModelData::FunctionContainer::const_iterator p2;
+    ModelData::FunctionContainer::const_iterator p2;
     bool found;
     this->hasDefaultConstructor=true;
     if(mdata.domains.empty()){
@@ -257,13 +257,13 @@ namespace mfront{
   } // end of MFrontModelInterface::generateOutputFiles(void)
 
   void
-  MFrontModelInterface::writeHeaderFile(const MFrontFileDescription& fdata,
-					const MFrontModelData& mdata)
+  MFrontModelInterface::writeHeaderFile(const FileDescription& fdata,
+					const ModelData& mdata)
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
     StaticVariableDescriptionContainer::const_iterator p2;
-    MFrontModelData::FunctionContainer::const_iterator p3;
+    ModelData::FunctionContainer::const_iterator p3;
     set<string>::iterator p4;
     set<string>::iterator p5;
     set<unsigned short> applyHeaders;
@@ -554,8 +554,8 @@ namespace mfront{
   } // MFrontModelInterface::findVariableDescription
 
   void
-  MFrontModelInterface::writeSrcFile(const MFrontFileDescription& fdata,
-				     const MFrontModelData& mdata)
+  MFrontModelInterface::writeSrcFile(const FileDescription& fdata,
+				     const ModelData& mdata)
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
@@ -564,10 +564,10 @@ namespace mfront{
     map<string,string>::const_iterator p4;
     map<string,unsigned short>::const_iterator p5;
     StaticVariableDescriptionContainer::const_iterator p10;
-    MFrontModelData::FunctionContainer::const_iterator p11;
+    ModelData::FunctionContainer::const_iterator p11;
     set<string>::const_iterator p12;
-    std::map<std::string,std::vector<MFrontModelData::Function> >::iterator p13;
-    std::vector<MFrontModelData::Function>::iterator p14;
+    std::map<std::string,std::vector<ModelData::Function> >::iterator p13;
+    std::vector<ModelData::Function>::iterator p14;
     set<string>::const_iterator p15;
     set<string>::const_iterator p16;
     set<unsigned short> applyHeaders;
@@ -1347,10 +1347,10 @@ namespace mfront{
   } // end of MFrontModelInterface::writeSrcFile(void)
     
   void
-  MFrontModelInterface::writeInitializeOutputsVariablesDepths(const MFrontModelData& mdata)
+  MFrontModelInterface::writeInitializeOutputsVariablesDepths(const ModelData& mdata)
   {
     using namespace std;
-    MFrontModelData::FunctionContainer::const_iterator p;
+    ModelData::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,unsigned short>::const_iterator p3;
     map<string,double>::const_iterator p4;
@@ -1386,10 +1386,10 @@ namespace mfront{
   } // end of MFrontModelInterface::writeInitializeOutputsVariablesDepths()
 
   void
-  MFrontModelInterface::writeInitializeConstantMaterialProperties(const MFrontModelData& mdata)
+  MFrontModelInterface::writeInitializeConstantMaterialProperties(const ModelData& mdata)
   {
     using namespace std;
-    MFrontModelData::FunctionContainer::const_iterator p;
+    ModelData::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,string>::const_iterator p3;
     unsigned short i;
@@ -1451,10 +1451,10 @@ namespace mfront{
   } // end of MFrontModelInterface::writeInitializeConstantMaterialProperties(void)
 
   void
-  MFrontModelInterface::writeInitializeOutputsVariablesInitialValues(const MFrontModelData& mdata)
+  MFrontModelInterface::writeInitializeOutputsVariablesInitialValues(const ModelData& mdata)
   {
     using namespace std;
-    MFrontModelData::FunctionContainer::const_iterator p;
+    ModelData::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,double>::const_iterator p3;
     unsigned short i;
@@ -1543,11 +1543,11 @@ namespace mfront{
   } // end of MFrontModelInterface::writeInitializeOutputsVariablesInitialValues()
 
   void
-  MFrontModelInterface::writeInitializeInputsVariablesDepths(const MFrontModelData& mdata)
+  MFrontModelInterface::writeInitializeInputsVariablesDepths(const ModelData& mdata)
   {
     using namespace std;
     set<string> treatedVars;
-    MFrontModelData::FunctionContainer::const_iterator p;
+    ModelData::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,unsigned short>::const_iterator p3;
     unsigned short i;
@@ -1602,7 +1602,7 @@ namespace mfront{
 
   std::string
   MFrontModelInterface::getVariableName(const std::string& v,
-					const MFrontModelData& mdata) const
+					const ModelData& mdata) const
   {
     using namespace std;
     map<string,string>::const_iterator p;
@@ -1615,8 +1615,8 @@ namespace mfront{
   } // end of MFrontModelInterface::getVariableName(const std::string& v)
 
   void
-  MFrontModelInterface::writeStaticVariableInitialization(const MFrontFileDescription& fdata,
-							  const MFrontModelData& mdata,
+  MFrontModelInterface::writeStaticVariableInitialization(const FileDescription& fdata,
+							  const ModelData& mdata,
 							  const StaticVariableDescription& v)
   {
     using namespace std;
@@ -1665,8 +1665,8 @@ namespace mfront{
   } // end of MFrontModelInterface::writeStaticVariableInitialisation
     
   void
-  MFrontModelInterface::writeOutputFiles(const MFrontFileDescription& fdata,
-					 const MFrontModelData& mdata)
+  MFrontModelInterface::writeOutputFiles(const FileDescription& fdata,
+					 const ModelData& mdata)
   {
     using namespace std;
     if(mdata.className.empty()){
@@ -1730,7 +1730,7 @@ namespace mfront{
   } // end of MFrontModelInterface::getName(void)
 
   std::map<std::string,std::vector<std::string> >
-  MFrontModelInterface::getGeneratedSources(const MFrontModelData& mdata)
+  MFrontModelInterface::getGeneratedSources(const ModelData& mdata)
   {
     using namespace std;
     map<string,vector<string> > src;
@@ -1740,7 +1740,7 @@ namespace mfront{
   } // end of MFrontModelInterface::getGeneratedSources
   
   std::vector<std::string>
-  MFrontModelInterface::getGeneratedIncludes(const MFrontModelData& mdata)
+  MFrontModelInterface::getGeneratedIncludes(const ModelData& mdata)
   {
     using namespace std;
     vector<string> inc;
@@ -1749,7 +1749,7 @@ namespace mfront{
   } // end of MFrontModelInterface::getGeneratedIncludes
 
   std::map<std::string,std::vector<std::string> >
-  MFrontModelInterface::getGlobalIncludes(const MFrontModelData& mdata)
+  MFrontModelInterface::getGlobalIncludes(const ModelData& mdata)
   {
     using namespace std;
     map<string,vector<string> > incs;
@@ -1759,7 +1759,7 @@ namespace mfront{
   } // end of MFrontModelInterface::getGlobalIncludes
   
   std::map<std::string,std::vector<std::string> >
-  MFrontModelInterface::getGlobalDependencies(const MFrontModelData& mdata)
+  MFrontModelInterface::getGlobalDependencies(const ModelData& mdata)
   {
     using namespace std;
     map<string,vector<string> > libs;
@@ -1769,12 +1769,12 @@ namespace mfront{
   } // end of MFrontModelInterface::getGlobalDependencies
     
   std::map<std::string,std::vector<std::string> >
-  MFrontModelInterface::getLibrariesDependencies(const MFrontModelData&)
+  MFrontModelInterface::getLibrariesDependencies(const ModelData&)
   {
     using namespace std;
     return map<string,vector<string> >();
   } // end of MFrontModelInterface::getLibrariesDependencies
 
-  MFrontModelInterfaceProxy<MFrontModelInterface>      ModelProxy;
+  ModelInterfaceProxy<MFrontModelInterface>      ModelProxy;
   
 } // end of namespace mfront  

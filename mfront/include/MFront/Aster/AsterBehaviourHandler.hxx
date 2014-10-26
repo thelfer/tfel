@@ -82,14 +82,14 @@ namespace aster
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterBehaviourHandler
-    : public AsterInterfaceBase
+    : public AsterInterfaceExceptions
   {
 
     /*!
      * An helper structure used to initialise the driving variables
      */
     struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
-      : public AsterInterfaceBase
+      : public AsterInterfaceExceptions
       {
       //! a simple alias
       typedef Behaviour<H,AsterReal,false> BV;

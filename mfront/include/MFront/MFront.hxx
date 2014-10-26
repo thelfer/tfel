@@ -22,7 +22,7 @@
 
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 
-#include"MFront/MFrontVirtualParser.hxx"
+#include"MFront/AbstractDSL.hxx"
 
 namespace mfront{
 

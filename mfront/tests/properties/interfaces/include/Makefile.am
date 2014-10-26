@@ -1,3 +1,3 @@
-nobase_noinst_HEADERS=MFront/MFrontPleiadesLawInterface-2.0.hxx
+nobase_noinst_HEADERS=MFront/MFrontPleiadesMaterialPropertyInterface-2.0.hxx
 
 EXTRA_DIST=CMakeLists.txt

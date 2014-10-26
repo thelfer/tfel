@@ -35,7 +35,7 @@ namespace umat
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct UMATGenericPlaneStressHandler
-    : public UMATInterfaceBase
+    : public UMATInterfaceExceptions
   {
     
     /*!
@@ -63,7 +63,7 @@ namespace umat
       typedef typename IF<Traits::stype==umat::ISOTROPIC,
 			  TreatPlaneStressIsotropicBehaviour,
 			  TreatPlaneStressOrthotropicBehaviour>::type Handler;
-      UMATInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
+      UMATInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		   STRESS,sfeh);

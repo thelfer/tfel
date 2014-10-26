@@ -4,57 +4,58 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/CodeBlock.hxx                          \
 			MFront/MFrontConfig.hxx	                      \
 			MFront/MFrontDebugMode.hxx	              \
-			MFront/MFrontPerformanceProfiling.hxx         \
-			MFront/MFrontPedanticMode.hxx	              \
+			MFront/PerformanceProfiling.hxx               \
+			MFront/PedanticMode.hxx	                      \
 			MFront/MFrontLogStream.hxx                    \
-			MFront/MFrontGenericData.hxx                  \
-			MFront/MFrontFileDescription.hxx              \
+			MFront/GenericData.hxx                        \
+			MFront/FileDescription.hxx                    \
 			MFront/MFrontLock.hxx                         \
-			MFront/MFrontInitParsers.hxx                  \
-			MFront/MFrontInitInterfaces.hxx               \
-			MFront/MFrontInitAnalysers.hxx                \
+			MFront/InitDSLs.hxx                           \
+			MFront/InitInterfaces.hxx                     \
+			MFront/InitAnalysers.hxx                      \
 			MFront/MFrontHeader.hxx                       \
-			MFront/MFrontVirtualParser.hxx                \
-			MFront/MFrontBehaviourParserCommon.hxx        \
-			MFront/MFrontBehaviourParserCommon.ixx        \
-			MFront/MFrontBehaviourParserBase.hxx          \
-			MFront/MFrontBehaviourParserBase.ixx          \
-			MFront/MFrontParserFactory.hxx                \
-			MFront/MFrontParserProxy.hxx                  \
-			MFront/MFrontParserProxy.ixx                  \
-			MFront/MFrontLawVirtualInterface.hxx          \
-			MFront/MFrontLawInterfaceFactory.hxx          \
-			MFront/MFrontLawInterfaceProxy.hxx            \
-			MFront/MFrontLawInterfaceProxy.ixx            \
-			MFront/MFrontBehaviourVirtualInterface.hxx    \
-			MFront/MFrontBehaviourInterfaceProxy.hxx      \
-			MFront/MFrontBehaviourInterfaceProxy.ixx      \
-			MFront/MFrontBehaviourInterfaceFactory.hxx    \
-			MFront/MFrontBehaviourAnalyser.hxx            \
-			MFront/MFrontBehaviourAnalyserProxy.hxx       \
-			MFront/MFrontBehaviourAnalyserProxy.ixx       \
-			MFront/MFrontBehaviourAnalyserFactory.hxx     \
-			MFront/MFrontModelData.hxx                    \
-			MFront/MFrontModelVirtualInterface.hxx        \
-			MFront/MFrontModelInterfaceProxy.hxx          \
-			MFront/MFrontModelInterfaceProxy.ixx          \
-			MFront/MFrontModelInterfaceFactory.hxx        \
-			MFront/MFrontModelParserCommon.hxx            \
-			MFront/MFrontModelParserBase.hxx              \
-			MFront/MFrontModelParserBase.ixx              \
+			MFront/AbstractDSL.hxx                        \
+			MFront/DSLBase.hxx                            \
+			MFront/DSLBase.ixx                            \
+			MFront/AbstractBehaviourDSL.hxx               \
+			MFront/BehaviourDSLCommon.hxx                 \
+			MFront/BehaviourDSLCommon.ixx                 \
+			MFront/BehaviourDSLBase.hxx                   \
+			MFront/BehaviourDSLBase.ixx                   \
+			MFront/DSLFactory.hxx                         \
+			MFront/DSLProxy.hxx                           \
+			MFront/DSLProxy.ixx                           \
+			MFront/AbstractMaterialPropertyInterface.hxx  \
+			MFront/MaterialPropertyInterfaceFactory.hxx   \
+			MFront/MaterialPropertyInterfaceProxy.hxx     \
+			MFront/MaterialPropertyInterfaceProxy.ixx     \
+			MFront/AbstractBehaviourInterface.hxx         \
+			MFront/BehaviourInterfaceProxy.hxx            \
+			MFront/BehaviourInterfaceProxy.ixx            \
+			MFront/BehaviourInterfaceFactory.hxx          \
+			MFront/BehaviourAnalyser.hxx                  \
+			MFront/BehaviourAnalyserProxy.hxx             \
+			MFront/BehaviourAnalyserProxy.ixx             \
+			MFront/BehaviourAnalyserFactory.hxx           \
+			MFront/AbstractModelInterface.hxx             \
+			MFront/ModelData.hxx                          \
+			MFront/ModelInterfaceProxy.hxx                \
+			MFront/ModelInterfaceProxy.ixx                \
+			MFront/ModelInterfaceFactory.hxx              \
+			MFront/ModelDSLCommon.hxx                     \
+			MFront/ModelDSLBase.hxx                       \
+			MFront/ModelDSLBase.ixx                       \
 			MFront/MaterialPropertyDescription.hxx        \
-			MFront/MechanicalBehaviourAttribute.hxx       \
-			MFront/MechanicalBehaviourData.hxx            \
-			MFront/MechanicalBehaviourData.ixx            \
-			MFront/MechanicalBehaviourDescription.hxx     \
-			MFront/MechanicalBehaviourDescription.ixx     \
-			MFront/MechanicalBehaviourSymmetryType.hxx    \
-			MFront/ParserBase.hxx                         \
-			MFront/ParserBase.ixx                         \
+			MFront/BehaviourAttribute.hxx                 \
+			MFront/BehaviourData.hxx                      \
+			MFront/BehaviourData.ixx                      \
+			MFront/BehaviourDescription.hxx               \
+			MFront/BehaviourDescription.ixx               \
+			MFront/BehaviourSymmetryType.hxx              \
 			MFront/InterfaceBase.hxx                      \
-			MFront/ParserUtilities.hxx                    \
+			MFront/DSLUtilities.hxx                       \
 			MFront/SupportedTypes.hxx                     \
-			MFront/MFrontSearchFile.hxx                   \
+			MFront/SearchFile.hxx                         \
 			MFront/DrivingVariable.hxx                    \
 			MFront/ThermodynamicForce.hxx                 \
 			MFront/BoundsDescription.hxx                  \
@@ -64,89 +65,93 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/VariableDescription.hxx                \
 			MFront/StaticVariableDescription.hxx          \
 			MFront/LawFunction.hxx                        \
-			MFront/MFrontDefaultParserBase.hxx            \
-			MFront/MFrontDefaultParser.hxx                \
-			MFront/MFrontDefaultCZMParser.hxx             \
-			MFront/MFrontDefaultFiniteStrainParser.hxx    \
-			MFront/MFrontMaterialLawParser.hxx            \
-			MFront/MFrontModelParser.hxx                  \
-			MFront/MFrontUMATInterfaceBase.hxx            \
+			MFront/DefaultDSLBase.hxx                     \
+			MFront/DefaultDSL.hxx                         \
+			MFront/DefaultCZMDSL.hxx                      \
+			MFront/DefaultFiniteStrainDSL.hxx             \
+			MFront/MaterialPropertyDSL.hxx                \
+			MFront/ModelDSL.hxx                           \
+			MFront/UMATInterfaceBase.hxx                  \
 			MFront/MTestFileGeneratorBase.hxx             \
 			MFront/UMATSmallStrainMTestFileGenerator.hxx  \
 			MFront/UMATFiniteStrainMTestFileGenerator.hxx
 
-nobase_noinst_HEADERS = MFront/MFrontIsotropicBehaviourParserBase.hxx                 \
-			MFront/MFrontIsotropicMisesCreepParser.hxx                    \
-			MFront/MFrontIsotropicStrainHardeningMisesCreepParser.hxx     \
-			MFront/MFrontIsotropicMisesPlasticFlowParser.hxx              \
-			MFront/MFrontMultipleIsotropicMisesFlowsParser.hxx            \
-			MFront/MFrontRungeKuttaParser.hxx                             \
-			MFront/MFrontPerformanceProfiling.hxx			      \
-			MFront/MFrontNonLinearSystemSolver.hxx                        \
-			MFront/MFrontNonLinearSystemSolverBase.hxx                    \
-			MFront/MFrontNonLinearSystemSolverFactory.hxx                 \
-			MFront/MFrontNewtonRaphsonSolvers.hxx			      \
-			MFront/MFrontBroydenSolvers.hxx				      \
-			MFront/MFrontSecondBroydenSolver.hxx			      \
-			MFront/MFrontLevenbergMarquardtSolvers.hxx		      \
-			MFront/MFrontPowellDogLegAlgorithmBase.hxx		      \
-			MFront/MFrontImplicitParserBase.hxx                           \
-			MFront/MFrontImplicitParser.hxx                               \
-			MFront/MFrontImplicitParserII.hxx                             \
-			MFront/MFrontImplicitFiniteStrainParser.hxx                   \
-			MFront/MFrontNewtonRaphsonSolvers.hxx                         \
+nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                       \
+			MFront/IsotropicMisesCreepDSL.hxx                          \
+			MFront/IsotropicStrainHardeningMisesCreepDSL.hxx           \
+			MFront/IsotropicMisesPlasticFlowDSL.hxx                    \
+			MFront/MultipleIsotropicMisesFlowsDSL.hxx                  \
+			MFront/RungeKuttaDSL.hxx                                   \
+			MFront/PerformanceProfiling.hxx			              \
+			MFront/Brick.hxx                                              \
+			MFront/BrickBase.hxx                                          \
+			MFront/ElasticityBrick.hxx                                    \
+			MFront/BrickFactory.hxx                                       \
+			MFront/NonLinearSystemSolver.hxx                              \
+			MFront/NonLinearSystemSolverBase.hxx                          \
+			MFront/NonLinearSystemSolverFactory.hxx                       \
+			MFront/NewtonRaphsonSolvers.hxx			              \
+			MFront/BroydenSolvers.hxx				      \
+			MFront/SecondBroydenSolver.hxx			              \
+			MFront/LevenbergMarquardtSolvers.hxx		              \
+			MFront/PowellDogLegAlgorithmBase.hxx		              \
+			MFront/ImplicitDSLBase.hxx                                 \
+			MFront/ImplicitDSL.hxx                                     \
+			MFront/ImplicitDSLII.hxx                                   \
+			MFront/ImplicitFiniteStrainDSL.hxx                         \
+			MFront/NewtonRaphsonSolvers.hxx                               \
 			MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx     \
 			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx
 
-nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
-			 MFront/MFrontCLawInterface.hxx              \
-			 MFront/MFrontMFrontLawInterface.hxx         \
-			 MFront/MFrontFortranLawInterface.hxx        \
-			 MFront/MFrontCppLawInterface.hxx            \
-			 MFront/MFrontCppTestLawInterface.hxx        \
-			 MFront/MFrontGnuplotLawInterface.hxx        \
-			 MFront/MFrontExcelLawInterface.hxx          \
-			 MFront/MFrontLaTeXLawInterface.hxx          \
-			 MFront/MFrontLaTeXBehaviourAnalyser.hxx     \
-			 MFront/MFrontMarkdownBehaviourAnalyser.hxx  \
-			 MFront/MFrontPythonLawInterface.hxx
+nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
+			 MFront/CMaterialPropertyInterface.hxx              \
+			 MFront/MFrontMaterialPropertyInterface.hxx         \
+			 MFront/FortranMaterialPropertyInterface.hxx        \
+			 MFront/CppMaterialPropertyInterface.hxx            \
+			 MFront/CppTestMaterialPropertyInterface.hxx        \
+			 MFront/GnuplotMaterialPropertyInterface.hxx        \
+			 MFront/ExcelMaterialPropertyInterface.hxx          \
+			 MFront/LaTeXMaterialPropertyInterface.hxx          \
+			 MFront/LaTeXBehaviourAnalyser.hxx     \
+			 MFront/MarkdownBehaviourAnalyser.hxx  \
+			 MFront/PythonMaterialPropertyInterface.hxx
 
-nobase_include_HEADERS += MFront/MFrontBehaviourProfiler.hxx
+nobase_include_HEADERS += MFront/BehaviourProfiler.hxx
 
-nobase_include_HEADERS += MFront/MTestTypes.hxx	                          \
-			  MFront/MTest.hxx	                          \
-			  MFront/MTestParser.hxx	                  \
-			  MFront/MTestConfig.hxx	                  \
-			  MFront/MTestAnalyticalTest.hxx	          \
-			  MFront/MTestReferenceFileComparisonTest.hxx     \
-			  MFront/MTestBehaviour.hxx                       \
-			  MFront/MTestUmatBehaviourBase.hxx               \
-			  MFront/MTestUmatStandardBehaviour.hxx           \
-			  MFront/MTestUmatSmallStrainBehaviour.hxx        \
-			  MFront/MTestUmatFiniteStrainBehaviour.hxx       \
-			  MFront/MTestUmatCohesiveZoneModel.hxx           \
-			  MFront/MTestUmatNormaliseTangentOperator.hxx    \
-			  MFront/MTestAsterStandardBehaviour.hxx          \
-			  MFront/MTestAsterSmallStrainBehaviour.hxx       \
-			  MFront/MTestAsterFiniteStrainBehaviour.hxx      \
-			  MFront/MTestAsterCohesiveZoneModel.hxx          \
-			  MFront/MTestCyranoBehaviour.hxx                 \
-			  MFront/MTestEvolution.hxx                       \
-			  MFront/MTestCastemEvolution.hxx                 \
-			  MFront/MTestFunctionEvolution.hxx               \
-			  MFront/MTestConstraint.hxx                      \
-			  MFront/MTestImposedDrivingVariable.hxx          \
-			  MFront/MTestImposedThermodynamicForce.hxx       \
-			  MFront/MTestAccelerationAlgorithmFactory.hxx    \
-			  MFront/MTestAccelerationAlgorithm.hxx           \
-			  MFront/MTestCastemAccelerationAlgorithm.hxx	  \
-			  MFront/MTestIronsTuckAccelerationAlgorithm.hxx  \
-			  MFront/MTestSteffensenAccelerationAlgorithm.hxx \
-			  MFront/MTestSecantAccelerationAlgorithm.hxx
+nobase_include_HEADERS += MTest/MTestTypes.hxx	                    \
+			  MTest/MTest.hxx	                    \
+			  MTest/MTestParser.hxx	                    \
+			  MTest/MTestConfig.hxx	                    \
+			  MTest/AnalyticalTest.hxx	            \
+			  MTest/ReferenceFileComparisonTest.hxx     \
+			  MTest/Behaviour.hxx                       \
+			  MTest/UmatBehaviourBase.hxx               \
+			  MTest/UmatStandardBehaviour.hxx           \
+			  MTest/UmatSmallStrainBehaviour.hxx        \
+			  MTest/UmatFiniteStrainBehaviour.hxx       \
+			  MTest/UmatCohesiveZoneModel.hxx           \
+			  MTest/UmatNormaliseTangentOperator.hxx    \
+			  MTest/AsterStandardBehaviour.hxx          \
+			  MTest/AsterSmallStrainBehaviour.hxx       \
+			  MTest/AsterFiniteStrainBehaviour.hxx      \
+			  MTest/AsterCohesiveZoneModel.hxx          \
+			  MTest/CyranoBehaviour.hxx                 \
+			  MTest/Evolution.hxx                       \
+			  MTest/CastemEvolution.hxx                 \
+			  MTest/FunctionEvolution.hxx               \
+			  MTest/Constraint.hxx                      \
+			  MTest/ImposedDrivingVariable.hxx          \
+			  MTest/ImposedThermodynamicForce.hxx       \
+			  MTest/AccelerationAlgorithmFactory.hxx    \
+			  MTest/AccelerationAlgorithm.hxx           \
+			  MTest/CastemAccelerationAlgorithm.hxx	    \
+			  MTest/IronsTuckAccelerationAlgorithm.hxx  \
+			  MTest/SteffensenAccelerationAlgorithm.hxx \
+			  MTest/SecantAccelerationAlgorithm.hxx
 
 if HAVE_CASTEM
-nobase_include_HEADERS += MFront/MFrontCastemLawInterface.hxx   \
-	 	          MFront/MFrontUMATInterface.hxx
+nobase_include_HEADERS += MFront/CastemMaterialPropertyInterface.hxx   \
+	 	          MFront/UMATInterface.hxx
 if LOCAL_CASTEM_HEADER
 nobase_include_HEADERS += castem.h
 endif 
@@ -159,7 +164,7 @@ nobase_include_HEADERS += MFront/UMAT/UMAT.hxx                                  
 			  MFront/UMAT/UMATOutOfBoundsPolicy.hxx                        \
 			  MFront/UMAT/UMATInterface.hxx                                \
 			  MFront/UMAT/UMATInterfaceDispatch.hxx                        \
-			  MFront/UMAT/UMATInterfaceBase.hxx                            \
+			  MFront/UMAT/UMATInterfaceExceptions.hxx                      \
 			  MFront/UMAT/UMATFiniteStrain.hxx                             \
 			  MFront/UMAT/UMATBehaviourHandler.hxx                         \
 			  MFront/UMAT/UMATIsotropicBehaviourHandler.hxx                \
@@ -182,7 +187,7 @@ nobase_include_HEADERS += MFront/Cyrano/Cyrano.hxx 				           \
 			  MFront/Cyrano/CyranoException.hxx 			           \
 			  MFront/Cyrano/CyranoInterface.hxx 			           \
 			  MFront/Cyrano/CyranoInterfaceDispatch.hxx 		           \
-			  MFront/Cyrano/CyranoInterfaceBase.hxx 		           \
+			  MFront/Cyrano/CyranoInterfaceExceptions.hxx 		           \
 			  MFront/Cyrano/CyranoBehaviourHandler.hxx 		           \
 			  MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx 	           \
 			  MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx 	           \
@@ -191,7 +196,7 @@ nobase_include_HEADERS += MFront/Cyrano/Cyrano.hxx 				           \
 			  MFront/Cyrano/CyranoComputeStiffnessTensor.hxx 	           \
 			  MFront/Cyrano/CyranoGetModellingHypothesis.hxx 	           \
 			  MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx \
-			  MFront/MFrontCyranoInterface.hxx
+			  MFront/CyranoInterface.hxx
 
 endif
 
@@ -201,7 +206,7 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                                
 			  MFront/Aster/AsterTraits.hxx                                   \
 			  MFront/Aster/AsterException.hxx 		                 \
 			  MFront/Aster/AsterInterface.hxx	                         \
-			  MFront/Aster/AsterInterfaceBase.hxx                            \
+			  MFront/Aster/AsterInterfaceExceptions.hxx                      \
 			  MFront/Aster/AsterBehaviourHandler.hxx                         \
 			  MFront/Aster/AsterIsotropicBehaviourHandler.hxx                \
 			  MFront/Aster/AsterOrthotropicBehaviourHandler.hxx              \
@@ -212,11 +217,11 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                                
 			  MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/Aster/AsterStressFreeExpansionHandler.hxx               \
 			  MFront/Aster/AsterTangentOperator.hxx                          \
-			  MFront/MFrontAsterInterface.hxx
+			  MFront/AsterInterface.hxx
 endif
 
 if HAVE_ZMAT
-nobase_include_HEADERS += MFront/MFrontZMATInterface.hxx \
+nobase_include_HEADERS += MFront/ZMATInterface.hxx \
 			  MFront/ZMAT/ZMATUndefs.hxx     \
 			  MFront/ZMAT/ZMATInterface.hxx  \
 			  MFront/ZMAT/ZMATInterface.ixx  

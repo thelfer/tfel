@@ -13,13 +13,13 @@
 
 #include<boost/python.hpp>
 
-#include"MFront/MTest.hxx"
-#include"MFront/MTestEvolution.hxx"
-#include"MFront/MTestFunctionEvolution.hxx"
-#include"MFront/MTestCastemEvolution.hxx"
-#include"MFront/MTestConstraint.hxx"
-#include"MFront/MTestImposedThermodynamicForce.hxx"
-#include"MFront/MTestImposedDrivingVariable.hxx"
+#include"MTest/MTest.hxx"
+#include"MTest/Evolution.hxx"
+#include"MTest/FunctionEvolution.hxx"
+#include"MTest/CastemEvolution.hxx"
+#include"MTest/Constraint.hxx"
+#include"MTest/ImposedThermodynamicForce.hxx"
+#include"MTest/ImposedDrivingVariable.hxx"
 
 static void
 MTest_addEvolution(mfront::MTest& t,
@@ -30,7 +30,7 @@ MTest_addEvolution(mfront::MTest& t,
 {
   using namespace tfel::utilities;
   using namespace mfront;
-  shared_ptr<MTestEvolution> pev(new MTestConstantEvolution(v));
+  shared_ptr<Evolution> pev(new ConstantEvolution(v));
   t.addEvolution(n,pev,b1,b2);
 }
 
@@ -54,7 +54,7 @@ MTest_addEvolution2(mfront::MTest& t,
     tv[i] = pv->first;
     ev[i] = pv->second;
   }
-  shared_ptr<MTestEvolution> pev(new MTestLPIEvolution(tv,ev));
+  shared_ptr<Evolution> pev(new LPIEvolution(tv,ev));
   t.addEvolution(n,pev,b1,b2);
 }
 
@@ -68,7 +68,7 @@ MTest_addEvolution3(mfront::MTest& t,
   using namespace std;
   using namespace mfront;
   using tfel::utilities::shared_ptr;
-  shared_ptr<MTestEvolution> pev(new MTestFunctionEvolution(f,t.getEvolutions()));
+  shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.addEvolution(n,pev,b1,b2);
 }
 
@@ -80,7 +80,7 @@ MTest_setMaterialProperty(mfront::MTest& t,
 {
   using namespace tfel::utilities;
   using namespace mfront;
-  shared_ptr<MTestEvolution> pev(new MTestConstantEvolution(v));
+  shared_ptr<Evolution> pev(new ConstantEvolution(v));
   t.setMaterialProperty(n,pev,b);
 }
 
@@ -94,8 +94,8 @@ MTest_setMaterialProperty2(mfront::MTest& t,
   using namespace mfront;
   using tfel::utilities::shared_ptr;
   using mfront::real;
-  shared_ptr<MTestEvolution> mpev;
-  mpev = shared_ptr<MTestEvolution>(new MTestFunctionEvolution(f,t.getEvolutions()));
+  shared_ptr<Evolution> mpev;
+  mpev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
   t.setMaterialProperty(n,mpev,b);
 }
 
@@ -108,7 +108,7 @@ MTest_setMaterialProperty3(mfront::MTest& t,
   using namespace std;
   using namespace mfront;
   using tfel::utilities::shared_ptr;
-  shared_ptr<MTestEvolution> pev(new MTestFunctionEvolution(f,t.getEvolutions()));
+  shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.setMaterialProperty(n,pev,b);
 }
 
@@ -123,8 +123,8 @@ MTest_setCastemMaterialProperty(mfront::MTest& t,
   using namespace mfront;
   using tfel::utilities::shared_ptr;
   using mfront::real;
-  shared_ptr<MTestEvolution> mpev;
-  mpev = shared_ptr<MTestEvolution>(new MTestCastemEvolution(l,f,t.getEvolutions()));
+  shared_ptr<Evolution> mpev;
+  mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
   t.setMaterialProperty(n,mpev,b);
 }
 
@@ -136,7 +136,7 @@ MTest_setExternalStateVariable(mfront::MTest& t,
 {
   using namespace tfel::utilities;
   using namespace mfront;
-  shared_ptr<MTestEvolution> pev(new MTestConstantEvolution(v));
+  shared_ptr<Evolution> pev(new ConstantEvolution(v));
   t.setExternalStateVariable(n,pev,b);
 }
 
@@ -159,7 +159,7 @@ MTest_setExternalStateVariable2(mfront::MTest& t,
     tv[i] = pv->first;
     ev[i] = pv->second;
   }
-  shared_ptr<MTestEvolution> pev(new MTestLPIEvolution(tv,ev));
+  shared_ptr<Evolution> pev(new LPIEvolution(tv,ev));
   t.setExternalStateVariable(n,pev,b);
 }
 
@@ -172,7 +172,7 @@ MTest_setExternalStateVariable3(mfront::MTest& t,
   using namespace std;
   using namespace mfront;
   using tfel::utilities::shared_ptr;
-  shared_ptr<MTestEvolution> pev(new MTestFunctionEvolution(f,t.getEvolutions()));
+  shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.setExternalStateVariable(n,pev,b);
 }
 
@@ -184,9 +184,9 @@ MTest_setImposedThermodynamicForce(mfront::MTest& t,
   using namespace std;
   using namespace mfront;
   using tfel::utilities::shared_ptr; 
-  shared_ptr<MTestConstraint> sc;
-  shared_ptr<MTestEvolution> sev(new MTestConstantEvolution(v));
-  sc = shared_ptr<MTestConstraint>(new MTestImposedThermodynamicForce(*(t.getBehaviour()),
+  shared_ptr<Constraint> sc;
+  shared_ptr<Evolution> sev(new ConstantEvolution(v));
+  sc = shared_ptr<Constraint>(new ImposedThermodynamicForce(*(t.getBehaviour()),
 								      t.getModellingHypothesis(),
 								      n,sev));
   t.addEvolution(n,sev,false,true);
@@ -203,7 +203,7 @@ MTest_setImposedThermodynamicForce2(mfront::MTest& t,
   using namespace mfront;
   using tfel::utilities::shared_ptr;
   using mfront::real;
-  shared_ptr<MTestConstraint> sc;
+  shared_ptr<Constraint> sc;
   vector<real> tv(v.size());
   vector<real> ev(v.size());
   vector<real>::size_type i;
@@ -212,8 +212,8 @@ MTest_setImposedThermodynamicForce2(mfront::MTest& t,
     tv[i] = pv->first;
     ev[i] = pv->second;
   }
-  shared_ptr<MTestEvolution> sev(new MTestLPIEvolution(tv,ev));
-  sc = shared_ptr<MTestConstraint>(new MTestImposedThermodynamicForce(*(t.getBehaviour()),
+  shared_ptr<Evolution> sev(new LPIEvolution(tv,ev));
+  sc = shared_ptr<Constraint>(new ImposedThermodynamicForce(*(t.getBehaviour()),
 								      t.getModellingHypothesis(),
 								      n,sev));
   t.addEvolution(n,sev,false,true);
@@ -228,7 +228,7 @@ MTest_setImposedStress(mfront::MTest& t,
   using namespace std;
   using namespace tfel::material;
   if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-    string msg("MTestParser::handleImposedStress : "
+    string msg("MTest::handleImposedStress : "
 	       "the setImposedStress method is only valid "
 	       "for small strain behaviours");
     throw(runtime_error(msg));
@@ -294,9 +294,9 @@ MTest_setImposedDrivingVariable(mfront::MTest& t,
   using namespace std;
   using namespace mfront;
   using tfel::utilities::shared_ptr;
-  shared_ptr<MTestConstraint> sc;
-  shared_ptr<MTestEvolution> sev(new MTestConstantEvolution(v));
-  sc = shared_ptr<MTestConstraint>(new MTestImposedDrivingVariable(*(t.getBehaviour()),
+  shared_ptr<Constraint> sc;
+  shared_ptr<Evolution> sev(new ConstantEvolution(v));
+  sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),
 								   t.getModellingHypothesis(),
 								   n,sev));
   t.addEvolution(n,sev,false,true);
@@ -313,7 +313,7 @@ MTest_setImposedDrivingVariable2(mfront::MTest& t,
   using namespace mfront;
   using tfel::utilities::shared_ptr;
   using mfront::real;
-  shared_ptr<MTestConstraint> sc;
+  shared_ptr<Constraint> sc;
   vector<real> tv(v.size());
   vector<real> ev(v.size());
   vector<real>::size_type i;
@@ -322,8 +322,8 @@ MTest_setImposedDrivingVariable2(mfront::MTest& t,
     tv[i] = pv->first;
     ev[i] = pv->second;
   }
-  shared_ptr<MTestEvolution> sev(new MTestLPIEvolution(tv,ev));
-  sc = shared_ptr<MTestConstraint>(new MTestImposedDrivingVariable(*(t.getBehaviour()),
+  shared_ptr<Evolution> sev(new LPIEvolution(tv,ev));
+  sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),
 								   t.getModellingHypothesis(),
 								   n,sev));
   t.addEvolution(n,sev,false,true);

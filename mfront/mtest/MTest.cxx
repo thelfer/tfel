@@ -36,42 +36,42 @@
 
 #include"MFront/MFrontLogStream.hxx"
 
-#include"MFront/MTest.hxx"
-#include"MFront/MTestBehaviour.hxx"
+#include"MTest/MTest.hxx"
+#include"MTest/Behaviour.hxx"
 #ifdef HAVE_CASTEM
-#include"MFront/MTestUmatSmallStrainBehaviour.hxx"
-#include"MFront/MTestUmatFiniteStrainBehaviour.hxx"
-#include"MFront/MTestUmatCohesiveZoneModel.hxx"
+#include"MTest/UmatSmallStrainBehaviour.hxx"
+#include"MTest/UmatFiniteStrainBehaviour.hxx"
+#include"MTest/UmatCohesiveZoneModel.hxx"
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
-#include"MFront/MTestAsterSmallStrainBehaviour.hxx"
-#include"MFront/MTestAsterFiniteStrainBehaviour.hxx"
-#include"MFront/MTestAsterCohesiveZoneModel.hxx"
+#include"MTest/AsterSmallStrainBehaviour.hxx"
+#include"MTest/AsterFiniteStrainBehaviour.hxx"
+#include"MTest/AsterCohesiveZoneModel.hxx"
 #endif /* HAVE_ASTER  */
 #ifdef HAVE_CYRANO
-#include"MFront/MTestCyranoBehaviour.hxx"
+#include"MTest/CyranoBehaviour.hxx"
 #endif /* HAVE_CYRANO  */
 
-#include"MFront/MTestAnalyticalTest.hxx"
-#include"MFront/MTestReferenceFileComparisonTest.hxx"
+#include"MTest/AnalyticalTest.hxx"
+#include"MTest/ReferenceFileComparisonTest.hxx"
 
-#include"MFront/MTestEvolution.hxx"
-#include"MFront/MTestFunctionEvolution.hxx"
-#include"MFront/MTestCastemEvolution.hxx"
+#include"MTest/Evolution.hxx"
+#include"MTest/FunctionEvolution.hxx"
+#include"MTest/CastemEvolution.hxx"
 
-#include"MFront/MTestConstraint.hxx"
-#include"MFront/MTestImposedThermodynamicForce.hxx"
-#include"MFront/MTestImposedDrivingVariable.hxx"
+#include"MTest/Constraint.hxx"
+#include"MTest/ImposedThermodynamicForce.hxx"
+#include"MTest/ImposedDrivingVariable.hxx"
 
-#include"MFront/MTestAccelerationAlgorithmFactory.hxx"
-#include"MFront/MTestCastemAccelerationAlgorithm.hxx"
+#include"MTest/AccelerationAlgorithmFactory.hxx"
+#include"MTest/CastemAccelerationAlgorithm.hxx"
 
 namespace mfront
 {
 
   static void
   checkIfDeclared(const std::vector<std::string>& n,
-		  const MTestEvolutionManager& m,
+		  const EvolutionManager& m,
 		  const std::string& type)
   {
     using namespace std;
@@ -86,8 +86,8 @@ namespace mfront
 
   static void
   checkIfDeclared(const std::vector<std::string>& n,
-		  const MTestEvolutionManager& evm1,
-		  const MTestEvolutionManager& evm2,
+		  const EvolutionManager& evm1,
+		  const EvolutionManager& evm2,
 		  const std::string& type)
   {
     using namespace std;
@@ -173,8 +173,8 @@ namespace mfront
       rprec(-1),
       rm(real(0)),
       isRmDefined(false),
-      evm(new MTestEvolutionManager()),
-      defaultMaterialPropertiesValues(new MTestEvolutionManager()),
+      evm(new EvolutionManager()),
+      defaultMaterialPropertiesValues(new EvolutionManager()),
       dimension(0u),
       hypothesis(tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS),
       eeps(-1.),
@@ -199,8 +199,8 @@ namespace mfront
   MTest::setAccelerationAlgorithm(const std::string& a)
   {
     using namespace std;
-    MTestAccelerationAlgorithmFactory& f =
-      MTestAccelerationAlgorithmFactory::getMTestAccelerationAlgorithmFactory();
+    AccelerationAlgorithmFactory& f =
+      AccelerationAlgorithmFactory::getAccelerationAlgorithmFactory();
     if(this->aa.get()!=0){
       string msg("MTest::setAccelerationAlgorithm : "
 		 "acceleration algorithm already set");
@@ -228,14 +228,14 @@ namespace mfront
 			   const real v)
   {
     using namespace std;
-    MTestEvolutionManager::iterator pev;
+    EvolutionManager::iterator pev;
     pev = this->evm->find(n);
     if(pev==this->evm->end()){
       string msg("MTest::setEvolutionValue : no evolution '"+
 		 n+"' declared");
       throw(runtime_error(msg));
     }
-    MTestEvolution& ev = *(pev->second);
+    Evolution& ev = *(pev->second);
     ev.setValue(t,v);
   } // end of MTest::setEvolutionValue
 
@@ -322,7 +322,7 @@ namespace mfront
 		   "an algorithm was already set");
 	throw(runtime_error(msg));
       }
-      this->aa = shared_ptr<MTestAccelerationAlgorithm>(new MTestCastemAccelerationAlgorithm);
+      this->aa = shared_ptr<AccelerationAlgorithm>(new CastemAccelerationAlgorithm);
     }
     this->useCastemAcceleration = ucaa;
   }
@@ -403,7 +403,7 @@ namespace mfront
 
   void
   MTest::addEvolution(const std::string& n,
-		      const MTestEvolutionPtr p,
+		      const EvolutionPtr p,
 		      const bool b1,
 		      const bool b2)
   {
@@ -429,7 +429,7 @@ namespace mfront
 
   void
   MTest::setMaterialProperty(const std::string& n,
-			     const MTestEvolutionPtr p,
+			     const EvolutionPtr p,
 			     const bool check)
   {
     using namespace std;
@@ -467,7 +467,7 @@ namespace mfront
 
   void
   MTest::setExternalStateVariable(const std::string& n,
-				  const MTestEvolutionPtr p,
+				  const EvolutionPtr p,
 				  const bool check)
   {
     using namespace std;
@@ -487,7 +487,7 @@ namespace mfront
   }
 
   void
-  MTest::addConstraint(const tfel::utilities::shared_ptr<MTestConstraint> c)
+  MTest::addConstraint(const tfel::utilities::shared_ptr<Constraint> c)
   {
     this->constraints.push_back(c);
   }
@@ -654,7 +654,7 @@ namespace mfront
     return this->b->getBehaviourType();
   }
 
-  tfel::utilities::shared_ptr<MTestBehaviour>
+  tfel::utilities::shared_ptr<Behaviour>
   MTest::getBehaviour(void){
     using namespace std;
     if(this->b.get()==0){
@@ -997,7 +997,7 @@ namespace mfront
     this->times=t;
   } // end of MTest::setTimes
 
-  tfel::utilities::shared_ptr<MTestEvolutionManager>
+  tfel::utilities::shared_ptr<EvolutionManager>
   MTest::getEvolutions() const
   {
     return this->evm;
@@ -1027,11 +1027,11 @@ namespace mfront
       ELM& elm = ELM::getExternalLibraryManager();
       const unsigned short type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
-	this->b = shared_ptr<MTestBehaviour>(new MTestUmatSmallStrainBehaviour(this->hypothesis,l,f));
+	this->b = shared_ptr<Behaviour>(new UmatSmallStrainBehaviour(this->hypothesis,l,f));
       } else if(type==2u){
-	this->b = shared_ptr<MTestBehaviour>(new MTestUmatFiniteStrainBehaviour(this->hypothesis,l,f));
+	this->b = shared_ptr<Behaviour>(new UmatFiniteStrainBehaviour(this->hypothesis,l,f));
       } else if(type==3u){
-	this->b = shared_ptr<MTestBehaviour>(new MTestUmatCohesiveZoneModel(this->hypothesis,l,f));
+	this->b = shared_ptr<Behaviour>(new UmatCohesiveZoneModel(this->hypothesis,l,f));
       } else {
 	ostringstream msg;
 	msg << "MTest::setBehaviour : "
@@ -1045,11 +1045,11 @@ namespace mfront
       ELM& elm = ELM::getExternalLibraryManager();
       const unsigned short type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
-      this->b = shared_ptr<MTestBehaviour>(new MTestAsterSmallStrainBehaviour(this->hypothesis,l,f));
+      this->b = shared_ptr<Behaviour>(new AsterSmallStrainBehaviour(this->hypothesis,l,f));
       } else if(type==2u){
-	this->b = shared_ptr<MTestBehaviour>(new MTestAsterFiniteStrainBehaviour(this->hypothesis,l,f));
+	this->b = shared_ptr<Behaviour>(new AsterFiniteStrainBehaviour(this->hypothesis,l,f));
       } else if(type==3u){
-	this->b = shared_ptr<MTestBehaviour>(new MTestAsterCohesiveZoneModel(this->hypothesis,l,f));
+	this->b = shared_ptr<Behaviour>(new AsterCohesiveZoneModel(this->hypothesis,l,f));
       } else {
 	ostringstream msg;
 	msg << "MTest::setBehaviour : "
@@ -1060,7 +1060,7 @@ namespace mfront
 #endif
 #ifdef HAVE_CYRANO
     if(i=="cyrano"){
-      this->b = shared_ptr<MTestBehaviour>(new MTestCyranoBehaviour(this->hypothesis,l,f));
+      this->b = shared_ptr<Behaviour>(new CyranoBehaviour(this->hypothesis,l,f));
     }
 #endif
     if(this->b.get()==0){
@@ -1117,7 +1117,7 @@ namespace mfront
     using namespace tfel::material;
     using tfel::utilities::shared_ptr;
     typedef tfel::material::ModellingHypothesis MH;
-    MTestEvolutionManager::const_iterator pev;
+    EvolutionManager::const_iterator pev;
     if(this->initialisationFinished){
       string msg("MTest::completeInitialisation : "
 		 "object already initialised");
@@ -1195,24 +1195,24 @@ namespace mfront
     }
     // additional constraints
     if(this->hypothesis==MH::PLANESTRAIN){
-      shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
-      shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(2,eev));
+      shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
+      shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
       this->constraints.push_back(ec);
     }
     if(this->hypothesis==MH::AXISYMMETRICALGENERALISEDPLANESTRESS){
       // shall be in the behaviour
       if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-	shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
-	shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(1,eev));
-	shared_ptr<MTestEvolution>  sev;
+	shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
+	shared_ptr<Constraint> ec(new ImposedDrivingVariable(1,eev));
+	shared_ptr<Evolution>  sev;
 	pev = this->evm->find("AxialStress");
 	if(pev!=this->evm->end()){
 	  sev = pev->second;
 	} else {
-	  sev = shared_ptr<MTestEvolution>(new MTestConstantEvolution(0.));
+	  sev = shared_ptr<Evolution>(new ConstantEvolution(0.));
 	}
-	shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(1,sev));
+	shared_ptr<Constraint> sc(new ImposedThermodynamicForce(1,sev));
 	this->constraints.push_back(ec);
 	this->constraints.push_back(sc);
       } else {
@@ -1226,10 +1226,10 @@ namespace mfront
       // shall be in the behaviour
       if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-	shared_ptr<MTestEvolution>  eev(new MTestConstantEvolution(0.));
-	shared_ptr<MTestConstraint> ec(new MTestImposedDrivingVariable(2,eev));
-	shared_ptr<MTestEvolution>  sev(new MTestConstantEvolution(0.));
-	shared_ptr<MTestConstraint> sc(new MTestImposedThermodynamicForce(2,sev));
+	shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
+	shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
+	shared_ptr<Evolution>  sev(new ConstantEvolution(0.));
+	shared_ptr<Constraint> sc(new ImposedThermodynamicForce(2,sev));
 	this->constraints.push_back(ec);
 	this->constraints.push_back(sc);
       } else {
@@ -1263,7 +1263,7 @@ namespace mfront
     // thermal expansion reference temperature
     pev = this->evm->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evm->end()){
-      const MTestEvolution& ev = *(pev->second);
+      const Evolution& ev = *(pev->second);
       if(!ev.isConstant()){
 	string msg("MTest::completeInitialisation : 'ThermalExpansionReferenceTemperature' "
 		   "must be a constant evolution");
@@ -1387,10 +1387,10 @@ namespace mfront
     s.period = 1u;
     s.dt_1   = 0.;
     // reference temperature
-    MTestEvolutionManager::const_iterator pev;
+    EvolutionManager::const_iterator pev;
     pev = this->evm->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evm->end()){
-      const MTestEvolution& ev = *(pev->second);
+      const Evolution& ev = *(pev->second);
       if(!ev.isConstant()){
 	string msg("MTest::initializeCurrentState : "
 		   "'ThermalExpansionReferenceTemperature' "
@@ -1440,14 +1440,14 @@ namespace mfront
   {
     using tfel::utilities::shared_ptr;
     using tfel::math::vector;
-    vector<shared_ptr<MTestConstraint> >::const_iterator pc;
+    vector<shared_ptr<Constraint> >::const_iterator pc;
     // number of components of the driving variables
     const unsigned short N = this->b->getDrivingVariablesSize(this->hypothesis);
     // getting the total number of unknowns
     size_t s = N;
     for(pc =this->constraints.begin();
 	pc!=this->constraints.end();++pc){
-      const MTestConstraint& c = *(*pc);
+      const Constraint& c = *(*pc);
       s += c.getNumberOfLagrangeMultipliers();
     }
     return s;
@@ -1544,11 +1544,11 @@ namespace mfront
     using tfel::tests::TestResult;
     using tfel::math::vector;
     vector<string>::const_iterator p;
-    vector<shared_ptr<MTestConstraint> >::const_iterator pc;
-    MTestEvolutionManager::const_iterator pev;
-    MTestEvolutionManager::const_iterator pev2;
-    MTestEvolutionManager::const_iterator pev3;
-    MTestEvolutionManager::const_iterator pev4;
+    vector<shared_ptr<Constraint> >::const_iterator pc;
+    EvolutionManager::const_iterator pev;
+    EvolutionManager::const_iterator pev2;
+    EvolutionManager::const_iterator pev3;
+    EvolutionManager::const_iterator pev4;
     vector<shared_ptr<UTest> >::iterator ptest;
     // getting the names of the materials properties
     std::vector<string> mpnames(this->b->getMaterialPropertiesNames());
@@ -1574,12 +1574,12 @@ namespace mfront
       for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
 	pev = this->evm->find(*p);
 	if(pev!=this->evm->end()){
-	  const MTestEvolution& ev = *(pev->second);
+	  const Evolution& ev = *(pev->second);
 	  state.mprops1[i] = ev(t+dt);
 	} else {
 	  pev = this->defaultMaterialPropertiesValues->find(*p);
 	  if(pev!=this->evm->end()){
-	    const MTestEvolution& ev = *(pev->second);
+	    const Evolution& ev = *(pev->second);
 	    state.mprops1[i] = ev(t+dt);
 	  } else {
 	    string msg("MTest::execute : no evolution named '"+*p+"'");
@@ -1593,7 +1593,7 @@ namespace mfront
 	  string msg("MTest::execute : no evolution named '"+*p+"'");
 	  throw(runtime_error(msg));
 	}
-	const MTestEvolution& ev = *(pev->second);
+	const Evolution& ev = *(pev->second);
 	const real evt = ev(t);
 	state.esv0[i] = evt;
 	state.desv[i] = ev(t+dt)-evt;
@@ -1604,8 +1604,8 @@ namespace mfront
 	  pev   = this->evm->find("Temperature");
 	  pev2  = this->evm->find("ThermalExpansion");
 	  if((pev!=this->evm->end())&&(pev2!=this->evm->end())){
-	    const MTestEvolution& T_ev = *(pev->second);
-	    const MTestEvolution& a_ev = *(pev2->second);
+	    const Evolution& T_ev = *(pev->second);
+	    const Evolution& a_ev = *(pev2->second);
 	    const real eth0 = a_ev(t)*(T_ev(t)-state.Tref);
 	    const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-state.Tref);
 	    for(i=0;i!=3;++i){
@@ -1628,10 +1628,10 @@ namespace mfront
 			 "at least one is not");
 	      throw(runtime_error(msg));
 	    }
-	    const MTestEvolution& T_ev  = *(pev->second);
-	    const MTestEvolution& a1_ev = *(pev2->second);
-	    const MTestEvolution& a2_ev = *(pev3->second);
-	    const MTestEvolution& a3_ev = *(pev4->second);
+	    const Evolution& T_ev  = *(pev->second);
+	    const Evolution& a1_ev = *(pev2->second);
+	    const Evolution& a2_ev = *(pev3->second);
+	    const Evolution& a3_ev = *(pev4->second);
 	    if(this->dimension==1u){
 	      state.e_th0[0u] = a1_ev(t)*(T_ev(t)-state.Tref);
 	      state.e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-state.Tref);
@@ -1702,12 +1702,12 @@ namespace mfront
 	for(i=0,p=mpnames.begin();p!=mpnames.end();++p,++i){
 	  pev = this->evm->find(*p);
 	  if(pev!=this->evm->end()){
-	    const MTestEvolution& ev = *(pev->second);
+	    const Evolution& ev = *(pev->second);
 	    state.mprops0[i] = ev(t);
 	  } else {
 	    pev = this->defaultMaterialPropertiesValues->find(*p);
 	    if(pev!=this->evm->end()){
-	      const MTestEvolution& ev = *(pev->second);
+	      const Evolution& ev = *(pev->second);
 	      state.mprops0[i] = ev(t);
 	    } else {
 	      string msg("MTest::execute : no evolution named '"+*p+"'");
@@ -1761,7 +1761,7 @@ namespace mfront
 	  unsigned short pos = ndv;
 	  for(pc =this->constraints.begin();
 	      pc!=this->constraints.end();++pc){
-	    const MTestConstraint& c = *(*pc);
+	    const Constraint& c = *(*pc);
 	    c.setValues(wk.K,wk.r,state.u0,state.u1,pos,
 			this->dimension,t,dt,wk.a);
 	    pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
@@ -1893,7 +1893,7 @@ namespace mfront
 	  unsigned short pos = ndv;
 	  for(pc =this->constraints.begin();
 	      pc!=this->constraints.end();++pc){
-	    const MTestConstraint& c = *(*pc);
+	    const Constraint& c = *(*pc);
 	    c.setValues(wk.K,wk.r,state.u0,state.u1,pos,
 			this->dimension,t,dt,wk.a);
 	    pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
@@ -1945,7 +1945,7 @@ namespace mfront
 	  converged = (ne<this->eeps)&&(nr<this->seps);
 	  for(pc =this->constraints.begin();
 	      (pc!=this->constraints.end())&&(converged);++pc){
-	    const MTestConstraint& c = *(*pc);
+	    const Constraint& c = *(*pc);
 	    converged = c.checkConvergence(state.u1,state.s1,
 					   this->eeps,this->seps,
 					   t,dt);
@@ -1965,7 +1965,7 @@ namespace mfront
 	    }
 	    for(pc =this->constraints.begin();
 		pc!=this->constraints.end();++pc){
-	      const MTestConstraint& c = *(*pc);
+	      const Constraint& c = *(*pc);
 	      bool bc = c.checkConvergence(state.u1,state.s1,
 					   this->eeps,this->seps,
 					   t,dt);

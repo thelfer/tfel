@@ -9,7 +9,7 @@
 \label{sec:impl-dune-loi}
 
 Cette section décrit les étapes de l'implantation d'une loi de
-comportement viscoplastique typique du combustible nucléaire~:
+comportement élasto-viscoplastique typique du combustible nucléaire~:
 \begin{itemize}
 \item nous commençons par décrire la loi de comportement en la
   décomposant en parties élémentaires (élasticité, viscoplasticité)~;
@@ -28,10 +28,10 @@ comportement viscoplastique typique du combustible nucléaire~:
   \item par le calcul les termes du jacobien du système implicite~;
   \item par le calcul de la matrice tangente cohérente.
   \end{itemize}
-\item nous montrons ensuite comment supporter les hypothèses de
-  contraintes planes~;
-\item nous concluons en montrant quelques résultats sur un calcul de
-  structure en grandes transformations~;
+% \item nous montrons ensuite comment supporter les hypothèses de
+%   contraintes planes.
+% \item nous concluons en montrant quelques résultats sur un calcul de
+%   structure en grandes transformations~;
 \end{itemize}
 
 \subsection{Description de la loi de comportement}
@@ -54,12 +54,13 @@ déformation élastique \(\tepsilonel\), une déformation viscoplastique
 Soulignons dès à présent que cette relation, d'apparence anodine, sera
 en réalité centrale dans l'implantation que nous allons proposer~:
 \begin{itemize}
-\item elle permet une grande modularité. Nous verrons qu'il
+\item elle permet une grande modularité. Nous décrivons ailleurs qu'il
   \og~suffit~\fg{} d'ajouter un nouveau terme de déformation pour
   représenter un nouveau phénomène (écoulement viscoplastique sous
   irradiation, plasticité dilatante représentant la décohésion des
   joints de grains, fissuration macroscopique) sans que cela impacte
-  l'implantation de la partie viscoplastique.
+  l'implantation de la partie viscoplastique
+  (voir~\cite{helfer14:_prise_mfron}).
 \item elle permet un calcul quasi-automatique de la matrice tangente
   cohérente. Si la matrice tangente cohérente n'est pas utilisée par
   le code éléments finis \castem{}, c'est un élément important pour
@@ -125,9 +126,9 @@ constant d'une valeur de \(0,316\).
 
 Dans le cas des petites transformations, la dilatation thermique d'un
 corps est généralement traitée par le code appelant, en amont de la
-loi de comportement qui reçoit une déformation totale mécanique. Nous
-avons choisi de traiter explicitement la dilatation thermique pour
-pouvoir~:
+loi de comportement qui reçoit en entrée une déformation totale
+parfois appelée \og~mécanique~\fg. Nous avons choisi de traiter
+explicitement la dilatation thermique pour pouvoir~:
 \begin{itemize}
 \item traiter de manière exacte la dilatation thermique, la plupart
   des codes réalisant une approximation que nous décrirons plus
@@ -135,85 +136,10 @@ pouvoir~:
 \item utiliser notre loi en grandes déformations.
 \end{itemize}
 
-Expérimentalement, on mesure la variation de longueur d'un corps entre
-une température de référence \(T_{\alpha}\) et une température finale
-\(T\).
-
-Si l'on note \(l_{T^{\alpha}}\) et \(l_{T}\) les longueurs respectives
-du corps à ces deux températures, le coefficient de dilatation
-thermique linéique \(\alpha\paren{T}\) est défini par~:
-\begin{equation}
-  \label{eq:umat:alpha}
-  \Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
-\end{equation}
-
-Dans le cas des petites déformations, l'équation~\eqref{eq:umat:alpha}
-définit une déformation associée à la dilatation thermique~:
-\[
-\epsilonth_{T^{\alpha}}\paren{T}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
-\]
-
-Cette déformation prend comme état de référence la longueur du corps à
-la température \(l_{T^{\alpha}}\).
-
-Lors d'un calcul thermo-mécanique, on suppose généralement que la
-température initiale \(T_{i}\) est supposée être celle à laquelle la
-géométrie est fournie.
-
-Il est donc nécessaire de modifier la définition de la dilatation
-thermique pour que l'état de référence soit la géométrie initiale, de
-longueur \(l_{i}\).
-
-Pour cela, nous pouvons définir la déformation thermique
-\(\epsilonth_{T^{i}}\paren{T}\) du corps à la température \(T\) comme sa
-déformation qu'il aurait si aucune contrainte ne s'exerçait sur lui
-par la relation~:
-\[
-\epsilonth_{T^{i}}\paren{T}=\Frac{l_{T}-l_{T^{i}}}{l_{T^{i}}}
-\]
-
-En introduisant la longueur de référence \(l_{T^{\alpha}}\), nous
-obtenons~:
-\[
-\begin{aligned}
-  \epsilonth_{T^{i}}\paren{T}&=\Frac{l_{T^{\alpha}}}{l_{T^{i}}}\,\Frac{l_{T}-l_{T^{i}}}{l_{T^{\alpha}}} = \Frac{1}{1+\Frac{l_{T^{i}}-l_{T^{\alpha}}}{l_{T^{\alpha}}}}\,\left[\Frac{l_{T}-l_{T^{\alpha}}+l_{T^{\alpha}}-l_{T^{i}}}{l_{T^{\alpha}}}\right] \\
-  &= \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}-\Frac{l_{T^{i}}-l_{T^{\alpha}}}{l_{T^{\alpha}}}\right] \\
-\end{aligned}
-\]
-
-Nous obtenons finalement la relation~:
-\begin{equation}
-  \label{eq:umat:epsilonth}
-  \begin{aligned}
-    \epsilonth_{T^{i}}\paren{T}&=
-    \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right] \\
-    &=
-    \Frac{1}{1+\epsilonth_{T^{\alpha}}\paren{T^{i}}}\,\left[\epsilonth_{T^{\alpha}}\paren{T}-\epsilonth_{T^{\alpha}}\paren{T^{i}}\right] \\
-  \end{aligned}
-\end{equation}
-
-Dans la procédure {\tt STAT\_NON\_LINE}
-de \aster{}~\cite{pellet_calcul_2012} ou dans les différentes
-procédures de résolution de \castem{}, la relation précédente
-s'écrit de manière approchée, en négligeant le terme
-\(\epsilonth_{T^{\alpha}}\paren{T^{i}}\) par rapport à \(1\)~:
-\[
-\epsilonth_{T^{i}}\paren{T}=
-\epsilonth_{T^{\alpha}}\paren{T}-\epsilonth_{T^{\alpha}}\paren{T^{i}}
-\]
-
-Au final, pour pouvoir traiter la dilatation thermique, il est
-nécessaire d'avoir accès à~:
-\begin{itemize}
-\item l'évolution du coefficient de dilatation thermique
-  \(\alpha\paren{T}\) avec la température et la température de
-  référence \(T_{\alpha}\)~;
-\item la température initiale à laquelle la géométrie du corps a été
-  mesurée~;
-\end{itemize}
-
-Dans la suite, le coefficient de dilatation thermique \(\alpha\) sera
-supposé constant et égal à \(10^{-5}\,K^{-1}\).
+L'annexe~\ref{sec:rappels-sur-la} donne des précisions sur le
+traitement de la dilatation thermique. Dans la suite, le coefficient
+de dilatation thermique \(\alpha\) sera supposé constant et égal à
+\(10^{-5}\,K^{-1}\).
 
 \subsubsection{Écoulement viscoplastique}
 
@@ -239,17 +165,17 @@ contrainte équivalente au sens de \textsc{Von Mises}~:
 \[
 \begin{aligned}
   p = \Frac{1}{3}\trace{\sigma}\\
-  \sigmaeq = \sqrt{\Frac{3}{2}\tenseur{s}\,\colon\,\tenseur{s}}
+  \sigmaeq = \sqrt{\Frac{3}{2}\mathop{dev}\paren{\tenseur{s}}\,\colon\,\mathop{dev}\paren{\tenseur{s}}}
 \end{aligned}
 \]
-où \(\tenseur{s}\) est la partie déviatorique des contraintes~:
+où \(\mathop{dev}\paren{\tenseur{s}}\) est la partie déviatorique des contraintes~:
 \[
-\tenseur{s}=\sigma-\Frac{1}{3}\,\trace{\sigma}\tenseur{I}
+\mathop{dev}\paren{\tenseur{s}}=\sigma-\Frac{1}{3}\,\trace{\sigma}\tenseur{I}
 \]
-Par définition, \(\tenseur{s}\) est de trace nulle.
+Par définition, \(\mathop{dev}\paren{\tenseur{s}}\) est de trace nulle.
 
 Les fonctions \(A\paren{f}\) et \(B\paren{f}\) dépendent de la porosité. Un
-choix possible pour ses fonctions est~:
+choix possible pour ces fonctions est~:
 \[
   \begin{aligned}
     A\paren{f} &= \Frac{9}{4}\paren{E\,\paren{f^{-1/E}-1}}^{-\frac{2\,E}{E+1}}\\ 
@@ -262,7 +188,7 @@ intéressant d'introduire un coefficient \(C_{A}\) tel que~:
 A\paren{f} = \Frac{9\,C_{A}}{4}\paren{E\,\paren{f^{1/E}-1}}^{-\frac{2\,E}{E+1}}
 \]
 Si \(C_{A}\) est nul, on retrouve une loi viscoplastique isotrope
-incompressible (sans variation de porosité), ce qui est utile lors de
+incompressible (sans effet de la porosité), ce qui est utile lors de
 l'étape de vérification de la loi.
 
 Cette forme de potentiel de dissipation provient de l'homogénisation
@@ -292,7 +218,7 @@ où nous avons introduit le classique tenseur normal \(\tenseur{n}\)
 égal à la dérivée de la contrainte équivalente de \nom{Von Mises} par
 rapport au tenseur des contraintes~:
 \[
-\tenseur{n}=\deriv{\sigmaeq}{\tsigma}=\Frac{3}{2\,\sigmaeq}\tenseur{s}
+\tenseur{n}=\deriv{\sigmaeq}{\tsigma}=\Frac{3}{2\,\sigmaeq}\mathop{dev}\paren{\tenseur{s}}
 \]
 où \(s\) est le déviateur des contraintes introduit plus haut. Le
 tenseur \(n\) est donc également déviatorique (de trace nulle).
@@ -319,7 +245,7 @@ sur différentes propriétés du matériau~:
 \begin{itemize}
 \item le module d'\nom{Young}~;
 \item le coefficient de \nom{Poisson}~;
-\item le coefficient de dilatation thermique~;
+\item le coefficient de dilatation thermique.
 \end{itemize}
 
 Afin de traiter la question de leur implantation en \mfront{}, prenons
@@ -617,8 +543,8 @@ le système. Pour simplifier l'écriture du système implicite et pour
 simplifier les post-traitements, nous avons choisi dans ce tutoriel un
 choix moins optimal qui introduit deux variables internes
 supplémentaires. L'origine de ces variables provient du fait qu'il est
-possible de séparer la vitesse d'écoulement viscoplastique en deux
-parties orthogonales (au sens du produit contracté). Notons
+possible de décomposer la vitesse d'écoulement viscoplastique suivant
+deux directions orthogonales dans l'espace des contraintes: notons
 respectivement \(\dot{p}_{v}\) et \(\dot{p}_{d}\) la trace de
 \(\tepsilonvis\) et la projection de \(\tepsilonvis\) suivant
 \(\tenseur{n}\). Nous avons~:
@@ -632,9 +558,10 @@ respectivement \(\dot{p}_{v}\) et \(\dot{p}_{d}\) la trace de
 Ces équations introduisent les deux variables internes recherchées~:
 \begin{itemize}
 \item la variable \(p_{v}\) qui représente le changement de volume dû
-  à l'écoulement viscoplastique~;
-\item la variables \(p_{d}\) qui représente la déformation plastique
-  déviatorique cumulée.
+  à l'écoulement viscoplastique (liés à la croissance ou la diminution
+  de la porosité)~;
+\item la variables \(p_{d}\) qui représente la déformation
+  viscoplastique déviatorique cumulée.
 \end{itemize}
 
 \paragraph{Traitement de la porosité} En utilisant la variable
@@ -783,7 +710,7 @@ porosité en début de pas.
 \end{figure}
 
 \paragraph{Évaluation des contraintes en milieu et fin de pas de
-  temps} La figure~\ref{fig:tutorial:uo2:EllipticCreep1-3} montrent
+  temps} La figure~\ref{fig:tutorial:uo2:EllipticCreep1-3} montre
 comment sont évaluées les contraintes en milieu de pas et en fin de
 pas. Nous tombons ici sur une spécificité de l'implantation proposée.
 
@@ -968,7 +895,7 @@ figure~\ref{fig:tutorial:uo2:mtest1:convergence} pour le dernier pas
 de temps. Il faut environ \(50\) itérations pour que la norme du
 résidu soit inférieure à la valeur du critère utilisé par \mtest{}. La
 vitesse de convergence est visiblement linéaire. Cela est dû au fait
-que \mtest{} utilise un opérateur tangent élastique (C'est le choix
+que \mtest{} utilise un opérateur tangent élastique (c'est le choix
 par défaut pour les lois compilées avec l'interface {\tt umat}).
 
 \begin{figure}

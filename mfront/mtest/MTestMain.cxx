@@ -23,10 +23,10 @@
 
 #include"MFront/MFrontLogStream.hxx"
 
-#include"MFront/MTest.hxx"
-#include"MFront/MTestParser.hxx"
-#include"MFront/MTestConstraint.hxx"
-#include"MFront/MTestEvolution.hxx"
+#include"MTest/MTest.hxx"
+#include"MTest/MTestParser.hxx"
+#include"MTest/Constraint.hxx"
+#include"MTest/Evolution.hxx"
 
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/XMLTestOutput.hxx"

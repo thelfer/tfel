@@ -21,7 +21,7 @@
 
 #include"MFront/Cyrano/Cyrano.hxx"
 #include"MFront/Cyrano/CyranoException.hxx"
-#include"MFront/Cyrano/CyranoInterfaceBase.hxx"
+#include"MFront/Cyrano/CyranoInterfaceExceptions.hxx"
 #include"MFront/Cyrano/CyranoInterfaceDispatch.hxx"
 
 namespace cyrano{
@@ -35,7 +35,7 @@ namespace cyrano{
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CyranoInterface
-    : protected CyranoInterfaceBase
+    : protected CyranoInterfaceExceptions
   {
 
     /*!
@@ -56,7 +56,7 @@ namespace cyrano{
       using namespace tfel::material;
       using namespace tfel::utilities;
       typedef ModellingHypothesis MH;
-      CyranoInterfaceBase::checkNTENSValue(*NTENS,3u);
+      CyranoInterfaceExceptions::checkNTENSValue(*NTENS,3u);
       if(*NDI==1){
 	CyranoInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 											  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
@@ -66,7 +66,7 @@ namespace cyrano{
 											    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 											    STATEV,NSTATV,STRESS,KINC);
       } else {
-	CyranoInterfaceBase::displayInvalidModellingHypothesisErrorMessage();
+	CyranoInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage();
 	*KINC = -7;
       }
     } // end of exe
@@ -90,27 +90,27 @@ namespace cyrano{
 						  STATEV,NSTATV,STRESS);
       }
       catch(const CyranoIntegrationFailed& e){
-	CyranoInterfaceBase::treatCyranoException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatCyranoException(Name<BV>::getName(),e);
 	*KINC = -1;
       }
       catch(const CyranoException& e){
-	CyranoInterfaceBase::treatCyranoException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatCyranoException(Name<BV>::getName(),e);
 	*KINC = -2;
       }
       catch(const tfel::material::MaterialException& e){
-	CyranoInterfaceBase::treatMaterialException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatMaterialException(Name<BV>::getName(),e);
 	*KINC = -3;
       }
       catch(const tfel::exception::TFELException& e){
-	CyranoInterfaceBase::treatTFELException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatTFELException(Name<BV>::getName(),e);
 	*KINC = -4;
       }
       catch(const std::exception& e){
-	CyranoInterfaceBase::treatStandardException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatStandardException(Name<BV>::getName(),e);
 	*KINC = -5;
       }
       catch(...){
-	CyranoInterfaceBase::treatUnknownException(Name<BV>::getName());
+	CyranoInterfaceExceptions::treatUnknownException(Name<BV>::getName());
 	*KINC = -6;
       }
     } // end of CyranoInterface::callBehaviour

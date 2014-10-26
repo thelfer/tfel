@@ -1,6 +1,7 @@
 include_directories("${PROJECT_BINARY_DIR}/src/TFELConfig"
                     "${PROJECT_SOURCE_DIR}/include"
-                    "${PROJECT_SOURCE_DIR}/mfront/include")
+                    "${PROJECT_SOURCE_DIR}/mfront/include"
+                    "${PROJECT_SOURCE_DIR}/mtest/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/System"
@@ -13,23 +14,23 @@ link_directories("${PROJECT_BINARY_DIR}/src/Material"
 set(TFELMTest_SOURCES
     MTest.cxx
     MTestParser.cxx
-    MTestAnalyticalTest.cxx
-    MTestReferenceFileComparisonTest.cxx
-    MTestEvolution.cxx
-    MTestCastemEvolution.cxx
-    MTestFunctionEvolution.cxx
-    MTestBehaviour.cxx
-    MTestUmatBehaviourBase.cxx
-    MTestUmatNormaliseTangentOperator.cxx
-    MTestConstraint.cxx
-    MTestImposedDrivingVariable.cxx
-    MTestImposedThermodynamicForce.cxx
-    MTestAccelerationAlgorithmFactory.cxx
-    MTestAccelerationAlgorithm.cxx
-    MTestCastemAccelerationAlgorithm.cxx
-    MTestSecantAccelerationAlgorithm.cxx
-    MTestSteffensenAccelerationAlgorithm.cxx
-    MTestIronsTuckAccelerationAlgorithm.cxx)
+    AnalyticalTest.cxx
+    ReferenceFileComparisonTest.cxx
+    Evolution.cxx
+    CastemEvolution.cxx
+    FunctionEvolution.cxx
+    Behaviour.cxx
+    UmatBehaviourBase.cxx
+    UmatNormaliseTangentOperator.cxx
+    Constraint.cxx
+    ImposedDrivingVariable.cxx
+    ImposedThermodynamicForce.cxx
+    AccelerationAlgorithmFactory.cxx
+    AccelerationAlgorithm.cxx
+    CastemAccelerationAlgorithm.cxx
+    SecantAccelerationAlgorithm.cxx
+    SteffensenAccelerationAlgorithm.cxx
+    IronsTuckAccelerationAlgorithm.cxx)
 
 set(TFELMTest_LDADD
     MFrontLogStream
@@ -43,10 +44,10 @@ set(TFELMTest_LDADD
 
 if(HAVE_CASTEM)
 set(TFELMTest_SOURCES
-    MTestUmatStandardBehaviour.cxx
-    MTestUmatSmallStrainBehaviour.cxx
-    MTestUmatFiniteStrainBehaviour.cxx
-    MTestUmatCohesiveZoneModel.cxx
+    UmatStandardBehaviour.cxx
+    UmatSmallStrainBehaviour.cxx
+    UmatFiniteStrainBehaviour.cxx
+    UmatCohesiveZoneModel.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD
     UMATInterface
@@ -55,10 +56,10 @@ endif(HAVE_CASTEM)
 
 if(HAVE_ASTER)
 set(TFELMTest_SOURCES
-    MTestAsterStandardBehaviour.cxx
-    MTestAsterSmallStrainBehaviour.cxx
-    MTestAsterFiniteStrainBehaviour.cxx
-    MTestAsterCohesiveZoneModel.cxx
+    AsterStandardBehaviour.cxx
+    AsterSmallStrainBehaviour.cxx
+    AsterFiniteStrainBehaviour.cxx
+    AsterCohesiveZoneModel.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD
     AsterInterface
@@ -67,7 +68,7 @@ endif(HAVE_ASTER)
 
 if(HAVE_CYRANO)
 set(TFELMTest_SOURCES
-    MTestCyranoBehaviour.cxx
+    CyranoBehaviour.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD
     CyranoInterface

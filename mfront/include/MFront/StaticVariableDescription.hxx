@@ -46,7 +46,7 @@ namespace mfront{
 			      const std::string&,
 			      const unsigned int,
 			      const StaticVariableValueType);
-  }; // end of struct MFrontParserBase<Child>::StaticVariableDescription
+  }; // end of struct MFrontDSLBase<Child>::StaticVariableDescription
 
   //! a simple alias for backward compatibility
   typedef StaticVariableDescription StaticVarHandler;

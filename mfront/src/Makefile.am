@@ -1,4 +1,4 @@
-## Makefile.am -- Process this file with automake to produce a Makefile.in file.
+# Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
 INCLUDES = -I$(top_builddir)/src/TFELConfig \
 	   -I$(top_srcdir)/include          \
@@ -17,100 +17,105 @@ mfront_SOURCES = main.cxx                                               \
 		 FiniteStrainBehaviourTangentOperatorConversion.cxx     \
 		 FiniteStrainBehaviourTangentOperatorConversionPath.cxx \
 	 	 MFrontDebugMode.cxx                                    \
-	 	 MFrontPedanticMode.cxx                                 \
+	 	 PedanticMode.cxx                                       \
 		 MFrontLock.cxx                                         \
-		 MFrontInitAnalysers.cxx                                \
-		 MFrontInitInterfaces.cxx                               \
-		 MFrontInitParsers.cxx                                  \
-		 MFrontParserFactory.cxx                                \
+		 InitAnalysers.cxx                                      \
+		 InitInterfaces.cxx                                     \
+		 InitDSLs.cxx                                           \
+		 DSLFactory.cxx                                         \
 		 DrivingVariable.cxx                                    \
 		 MaterialPropertyDescription.cxx                        \
-		 MechanicalBehaviourData.cxx                            \
-		 MechanicalBehaviourDescription.cxx                     \
+		 BehaviourData.cxx                                      \
+		 BehaviourDescription.cxx                               \
 		 BoundsDescription.cxx                                  \
 		 VariableDescription.cxx                                \
 		 StaticVariableDescription.cxx                          \
-		 MFrontBehaviourParserCommon.cxx                        \
-		 MFrontModelParserCommon.cxx                            \
-		 MFrontBehaviourVirtualParser.cxx                       \
-		 MFrontBehaviourVirtualInterface.cxx                    \
-		 MFrontLawVirtualInterface.cxx                          \
-		 MFrontModelVirtualInterface.cxx                        \
-		 MFrontBehaviourAnalyser.cxx                            \
+		 BehaviourDSLCommon.cxx                                 \
+		 ModelDSLCommon.cxx                                     \
+		 AbstractDSL.cxx                                        \
+		 AbstractBehaviourDSL.cxx                               \
+		 AbstractBehaviourInterface.cxx                         \
+		 AbstractMaterialPropertyInterface.cxx                  \
+		 AbstractModelInterface.cxx                             \
+		 BehaviourAnalyser.cxx                                  \
 		 SupportedTypes.cxx                                     \
 		 MFrontHeader.cxx                                       \
-		 ParserBase.cxx                                         \
+		 DSLBase.cxx                                            \
 		 InterfaceBase.cxx                                      \
-		 ParserUtilities.cxx                                    \
-		 MFrontSearchFile.cxx                                   \
-		 MFrontLawInterfaceFactory.cxx                          \
-		 MFrontBehaviourInterfaceFactory.cxx                    \
-		 MFrontBehaviourAnalyserFactory.cxx                     \
-		 MFrontModelInterfaceFactory.cxx                        \
-		 MFrontDefaultParserBase.cxx                            \
-		 MFrontDefaultParser.cxx                                \
-		 MFrontDefaultCZMParser.cxx                             \
-		 MFrontDefaultFiniteStrainParser.cxx                    \
-		 MFrontModelParser.cxx                                  \
-		 MFrontMaterialLawParser.cxx                            \
-		 MFrontIsotropicMisesCreepParser.cxx                    \
-		 MFrontIsotropicStrainHardeningMisesCreepParser.cxx     \
-		 MFrontIsotropicMisesPlasticFlowParser.cxx              \
-		 MFrontRungeKuttaParser.cxx                             \
-		 MFrontImplicitParserBase.cxx                           \
-		 MFrontImplicitParser.cxx                               \
-		 MFrontImplicitParserII.cxx                             \
-		 MFrontImplicitFiniteStrainParser.cxx                   \
-		 MFrontNonLinearSystemSolver.cxx                        \
-		 MFrontNonLinearSystemSolverBase.cxx                    \
-		 MFrontNonLinearSystemSolverFactory.cxx                 \
-		 MFrontPowellDogLegAlgorithmBase.cxx                    \
-		 MFrontNewtonRaphsonSolvers.cxx                         \
-		 MFrontBroydenSolvers.cxx				\
-		 MFrontSecondBroydenSolver.cxx				\
-		 MFrontLevenbergMarquardtSolvers.cxx			\
-		 MFrontPerformanceProfiling.cxx                         \
-		 MFrontMultipleIsotropicMisesFlowsParser.cxx            \
-		 MFrontIsotropicBehaviourParserBase.cxx                 \
-		 MFrontMFrontLawInterface.cxx                           \
-		 MFrontCLawInterfaceBase.cxx                            \
-		 MFrontCLawInterface.cxx                                \
-		 MFrontCppLawInterface.cxx                              \
-		 MFrontCppTestLawInterface.cxx                          \
-		 MFrontExcelLawInterface.cxx                            \
-		 MFrontLaTeXLawInterface.cxx                            \
-		 MFrontLaTeXBehaviourAnalyser.cxx                       \
-		 MFrontMarkdownBehaviourAnalyser.cxx                    \
-		 MFrontUMATInterfaceBase.cxx
+		 DSLUtilities.cxx                                       \
+		 SearchFile.cxx                                         \
+		 MaterialPropertyInterfaceFactory.cxx                   \
+		 BehaviourInterfaceFactory.cxx                          \
+		 BehaviourAnalyserFactory.cxx                           \
+		 ModelInterfaceFactory.cxx                              \
+		 DefaultDSLBase.cxx                                     \
+		 DefaultDSL.cxx                                         \
+		 DefaultCZMDSL.cxx                                      \
+		 DefaultFiniteStrainDSL.cxx                             \
+		 ModelDSL.cxx                                           \
+		 MaterialPropertyDSL.cxx                                \
+		 IsotropicMisesCreepDSL.cxx                             \
+		 IsotropicStrainHardeningMisesCreepDSL.cxx              \
+		 IsotropicMisesPlasticFlowDSL.cxx                       \
+		 RungeKuttaDSL.cxx                                      \
+		 ImplicitDSLBase.cxx                                    \
+		 ImplicitDSL.cxx                                        \
+		 ImplicitDSLII.cxx                                      \
+		 ImplicitFiniteStrainDSL.cxx                            \
+		 NonLinearSystemSolver.cxx                              \
+		 NonLinearSystemSolverBase.cxx                          \
+		 NonLinearSystemSolverFactory.cxx                       \
+		 PowellDogLegAlgorithmBase.cxx                          \
+		 NewtonRaphsonSolvers.cxx                               \
+		 BroydenSolvers.cxx		      		        \
+		 SecondBroydenSolver.cxx			        \
+		 LevenbergMarquardtSolvers.cxx			        \
+		 PerformanceProfiling.cxx                               \
+		 MultipleIsotropicMisesFlowsDSL.cxx                     \
+		 IsotropicBehaviourDSLBase.cxx                          \
+		 MFrontMaterialPropertyInterface.cxx                    \
+		 CMaterialPropertyInterfaceBase.cxx                     \
+		 CMaterialPropertyInterface.cxx                         \
+		 CppMaterialPropertyInterface.cxx                       \
+		 CppTestMaterialPropertyInterface.cxx                   \
+		 ExcelMaterialPropertyInterface.cxx                     \
+		 LaTeXMaterialPropertyInterface.cxx                     \
+		 LaTeXBehaviourAnalyser.cxx                             \
+		 MarkdownBehaviourAnalyser.cxx                          \
+		 BehaviourBrick.cxx                                     \
+		 BehaviourBrickBase.cxx                                 \
+		 ElasticityBehaviourBrick.cxx                           \
+		 BehaviourBrickFactory.cxx                              \
+		 UMATInterfaceBase.cxx
 
 
 if HAVE_GNUPLOT
-mfront_SOURCES += MFrontGnuplotLawInterface.cxx
+mfront_SOURCES += GnuplotMaterialPropertyInterface.cxx
 endif
 
 if HAVE_FORTRAN
-mfront_SOURCES += MFrontFortranLawInterface.cxx
+mfront_SOURCES += FortranMaterialPropertyInterface.cxx
 endif
 
 if HAVE_PYTHON
-mfront_SOURCES += MFrontPythonLawInterface.cxx
+mfront_SOURCES += PythonMaterialPropertyInterface.cxx
 endif
 
 if HAVE_CASTEM
-mfront_SOURCES += MFrontUMATInterface.cxx      \
-		  MFrontCastemLawInterface.cxx
+mfront_SOURCES += UMATInterface.cxx      \
+		  CastemMaterialPropertyInterface.cxx
 endif
 
 if HAVE_ASTER
-mfront_SOURCES += MFrontAsterInterface.cxx
+mfront_SOURCES += AsterInterface.cxx
 endif
 
 if HAVE_ZMAT
-mfront_SOURCES += MFrontZMATInterface.cxx
+mfront_SOURCES += ZMATInterface.cxx
 endif
 
 if HAVE_CYRANO
-mfront_SOURCES += MFrontCyranoInterface.cxx
+mfront_SOURCES += CyranoInterface.cxx
 endif
 
 mfront_LDADD   = -L$(top_builddir)/mfront/src    -lMFrontLogStream \
@@ -139,7 +144,7 @@ endif # TFEL_WIN
 
 if HAVE_CXX_11
 lib_LTLIBRARIES += libMFrontProfiling.la
-libMFrontProfiling_la_SOURCES = MFrontBehaviourProfiler.cxx
+libMFrontProfiling_la_SOURCES = BehaviourProfiler.cxx
 if ! TFEL_WIN
 libMFrontProfiling_la_LIBADD   = -lrt
 endif
@@ -165,7 +170,7 @@ endif # TFEL_WIN
 # UMAT Interface
 if HAVE_CASTEM
 lib_LTLIBRARIES += libUMATInterface.la
-libUMATInterface_la_SOURCES = UMATInterfaceBase.cxx                            \
+libUMATInterface_la_SOURCES = UMATInterfaceExceptions.cxx                      \
 			      UMATFiniteStrain.cxx                             \
 			      UMATComputeStiffnessTensor.cxx                   \
 			      UMATComputeThermalExpansionCoefficientTensor.cxx \
@@ -188,7 +193,7 @@ endif # HAVE_CASTEM
 
 if HAVE_CYRANO
 lib_LTLIBRARIES += libCyranoInterface.la
-libCyranoInterface_la_SOURCES = CyranoInterfaceBase.cxx                            \
+libCyranoInterface_la_SOURCES = CyranoInterfaceExceptions.cxx                      \
 			        CyranoComputeStiffnessTensor.cxx                   \
 			        CyranoComputeThermalExpansionCoefficientTensor.cxx \
 		                CyranoOutOfBoundsPolicy.cxx                        \
@@ -207,7 +212,7 @@ endif # HAVE_CYRANO
 # Aster Interface
 if HAVE_ASTER
 lib_LTLIBRARIES += libAsterInterface.la
-libAsterInterface_la_SOURCES = AsterInterfaceBase.cxx                            \
+libAsterInterface_la_SOURCES = AsterInterfaceExceptions.cxx                      \
 		               AsterException.cxx                                \
 		               AsterTangentOperator.cxx                          \
 			       AsterRotationMatrix.cxx                           \

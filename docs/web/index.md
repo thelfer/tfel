@@ -5,8 +5,9 @@
 <div id="slideshow">
   <ul class="slides">
     <li><img src="img/FuelRod-ddif2.png" width="620" height="320" alt="Fuel pellet cracking" /></li>
-    <li><img src="img/172_5pc.png" width="620" height="320" alt="Polycrystal computations" /></li>
+    <li><img src="img/172_5pc.png" width="620" height="320" alt="Polycrystals computation" /></li>
 	<li><img src="img/VoidsGrowth.png" width="620" height="320" alt="Void growth" /></li>
+	<li><img src="img/AMITEX_FFTP_sig1.png" width="620" height="320" alt="Polycrystals computation based on FFT" /></li>
 	<li><img src="img/hsnv125.png" width="620" height="320" alt="Unit testing of a Chaboche-like viscoplastic beahviour" /></li>
   </ul>
   <span class="arrow previous"></span>
@@ -27,7 +28,11 @@ languages covers three kind of material knowledge:
 
 - [material properties](material-properties.html) (for instance the
   Young modulus, the thermal conductivity, etc.)
-- [mechanical behaviours](behaviours.html)
+- [mechanical behaviours](behaviours.html). Numerical performances of
+  generated mechanical behaviours was given a particular
+  attention. [Various benchmarks](benchmarks.html) shows that `MFront`
+  implementations are competitive with native implementations
+  available in the `Cast3M`, `Code-Aster` and `Cyrano3` solvers.
 - [simple point-wise models](models.html), such as material swelling
 used in fuel performance codes.
 
@@ -39,6 +44,11 @@ A set of interfaces are provided for various solvers:
   solver. This interface is described [here](aster.html)
 - the [`ZeBuLoN`](http://www.zset-software.com/products/zebulon). This
   interface is described [here](zmat.html)
+- the `TMFFT` and the `AMITEX_FFTP` Fast Fourier Transform solvers
+  developed internally at [CEA](http://www.cea.fr/english-portal
+  "Commissariat à l'énergie atomique"). Those solvers reuse the
+  interface developed for the [`Cast3M`](http://www-cast3m.cea.fr)
+  finite element solver.
 
 For material properties, various interfaces are also provided and
 covers the following languages `C`, `C++`, `python`, `fortran`, etc.

@@ -17,8 +17,8 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"
-#include"MFront/ParserUtilities.hxx"
-#include"MFront/MFrontModelInterfaceProxy.hxx"
+#include"MFront/DSLUtilities.hxx"
+#include"MFront/ModelInterfaceProxy.hxx"
 #include"MFront/MFrontGerminalModelInterface.hxx"
 
 namespace mfront{
@@ -30,7 +30,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::getName(void)
 
   void
-  MFrontGerminalModelInterface::setOutputFileNames(const MFrontModelData& mdata)
+  MFrontGerminalModelInterface::setOutputFileNames(const ModelData& mdata)
   {
     this->headerFileName  = "Pleiades/PMetier/PModels/"+mdata.className;
     this->headerFileName += "-germinal.hxx";
@@ -46,7 +46,7 @@ namespace mfront{
 
   void
   MFrontGerminalModelInterface::writeGetConstantMaterialProperty(const VarHandler& v,
-								 const MFrontModelData& mdata)
+								 const ModelData& mdata)
   {
     using namespace std;
     string name;
@@ -83,7 +83,7 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::writeGetConstantMaterialProperty
 
   void
-  MFrontGerminalModelInterface::writeInitializeMethod(const MFrontModelData& mdata)
+  MFrontGerminalModelInterface::writeInitializeMethod(const ModelData& mdata)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -155,7 +155,7 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::writeInitializeMethod
 
   void
-  MFrontGerminalModelInterface::writeInitializeParametersMethod(const MFrontModelData& mdata)
+  MFrontGerminalModelInterface::writeInitializeParametersMethod(const ModelData& mdata)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -181,7 +181,7 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::writeInitializeParametersMethod
 
   void
-  MFrontGerminalModelInterface::generateDomainsList(const MFrontModelData&)
+  MFrontGerminalModelInterface::generateDomainsList(const ModelData&)
   {
     this->domains.insert("this->getMeshZoneName()");
   } // end of MFrontGerminalModelInterface::generateDomainsList
@@ -193,8 +193,8 @@ namespace mfront{
   }
 
   void
-  MFrontGerminalModelInterface::writeSpecificPrivateMethodDeclaration(const MFrontGenericData&,
-								      const MFrontModelData&)
+  MFrontGerminalModelInterface::writeSpecificPrivateMethodDeclaration(const GenericData&,
+								      const ModelData&)
   {
     using namespace std;
     this->headerFile << "void\n"
@@ -203,11 +203,11 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::writeSpecificPrivateMethodDeclaration
 
   bool
-  MFrontGerminalModelInterface::initializeDefaultDomainListInConstrutor(const MFrontModelData&) const
+  MFrontGerminalModelInterface::initializeDefaultDomainListInConstrutor(const ModelData&) const
   {
     return false;
   } // end of MFrontGerminalModelInterface::initializeDefaultDomainListInConstrutor
 
-  MFrontModelInterfaceProxy<MFrontGerminalModelInterface> ModelGerminalProxy;
+  ModelInterfaceProxy<MFrontGerminalModelInterface> ModelGerminalProxy;
 
 } // end of namespace mfront

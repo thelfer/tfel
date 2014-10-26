@@ -268,11 +268,17 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
     names.insert(names.end(),n.begin(),n.end());
   }
   // writting headers
-  header << "/*!" << endl;
-  header << " *\\file   Glossary.hxx" << endl;
-  header << " *\\author Helfer Thomas" << endl;
-  header << " *\\date   09/06/14" << endl;
-  header << "*/" << endl;
+  header << "/*!" << endl
+	 << " * \\file   Glossary.hxx" << endl
+	 << " * \\author Helfer Thomas" << endl
+	 << " * \\date   09/06/14" << endl
+	 << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights" << endl 
+	 << " * reserved." << endl
+	 << " * This project is publicly released under either the GNU GPL Licence" << endl
+	 << " * or the CECILL-A licence. A copy of thoses licences are delivered" << endl
+	 << " * with the sources of TFEL. CEA or EDF may also distribute this" << endl
+	 << " * project under specific licensing conditions." << endl
+	 << " */" << endl;
   header << endl;
   header << "#ifndef __TFEL_GLOSSARY_GLOSSARY_HH__" << endl;
   header << "#define __TFEL_GLOSSARY_GLOSSARY_HH__" << endl;
@@ -363,11 +369,17 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   header << endl;
   header << "#endif /* __TFEL_GLOSSARY_GLOSSARY_HH__ */" << endl;
   /* writting src file */
-  src << "/*!" << endl;
-  src << " *\\file   Glossary.cxx" << endl;
-  src << " *\\author Helfer Thomas" << endl;
-  src << " *\\date   09/06/14" << endl;
-  src << "*/" << endl;
+  src << "/*!" << endl
+      << " * \\file   Glossary.cxx" << endl
+      << " * \\author Helfer Thomas" << endl
+      << " * \\date   09/06/14" << endl
+      << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights" << endl 
+      << " * reserved." << endl
+      << " * This project is publicly released under either the GNU GPL Licence" << endl
+      << " * or the CECILL-A licence. A copy of thoses licences are delivered" << endl
+      << " * with the sources of TFEL. CEA or EDF may also distribute this" << endl
+      << " * project under specific licensing conditions." << endl
+      << " */" << endl;
   src << endl;
   src << "#include<stdexcept>" << endl;
   src << "#include<algorithm>" << endl;
@@ -513,9 +525,9 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
   }
   // writting headers
   header << "/*!" << endl;
-  header << " *\\file   Glossary.hh" << endl;
-  header << " *\\author auto generated" << endl;
-  header << " *\\date   2014-07-22" << endl;
+  header << " * \\file   Glossary.hh" << endl;
+  header << " * \\author auto generated" << endl;
+  header << " * \\date   2014-07-22" << endl;
   header << "*/" << endl;
   header << endl;
   header << "#ifndef __PLEIADES_GLOSSARY_GLOSSARY_HH__" << endl;
@@ -699,11 +711,17 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer)
   }
   GlossaryTokenizer::const_iterator p;
   // python bindings
-  psrc << "/*!" << endl;
-  psrc << " *\\file   PythonGlossary.cxx" << endl;
-  psrc << " *\\author Helfer Thomas" << endl;
-  psrc << " *\\date   09/06/14" << endl;
-  psrc << "*/" << endl;
+  psrc << "/*!" << endl
+       << " * \\file   PythonGlossary.cxx" << endl
+       << " * \\author Helfer Thomas" << endl
+       << " * \\date   09/06/14" << endl
+       << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights" << endl 
+       << " * reserved." << endl
+       << " * This project is publicly released under either the GNU GPL Licence" << endl
+       << " * or the CECILL-A licence. A copy of thoses licences are delivered" << endl
+       << " * with the sources of TFEL. CEA or EDF may also distribute this" << endl
+       << " * project under specific licensing conditions." << endl
+       << " */" << endl;
   psrc << endl;
   psrc << "#include<boost/python.hpp>" << endl;
   psrc << endl;

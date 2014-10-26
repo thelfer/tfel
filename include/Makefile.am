@@ -24,6 +24,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/Lame.hxx			                                                     \
 			TFEL/Material/Hill.hxx			                                                     \
 			TFEL/Material/Hill.ixx			                                                     \
+			TFEL/Material/StiffnessTensor.hxx			                                     \
+			TFEL/Material/StiffnessTensor.ixx			                                     \
 			TFEL/Material/ThermalBehaviourData.hxx	                                                     \
 			TFEL/Material/MaterialException.hxx	                                                     \
 			TFEL/Material/IsotropicLinearFourierHookLaw.hxx                                              \

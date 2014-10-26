@@ -14,12 +14,12 @@
 #ifndef _LIB_MFRONTPLEIADESMODELINTERFACE_H_
 #define _LIB_MFRONTPLEIADESMODELINTERFACE_H_ 
 
-#include"MFront/MFrontModelVirtualInterface.hxx"
+#include"MFront/AbstractModelInterface.hxx"
 
 namespace mfront{
 
   struct MFrontPleiadesModelInterfaceBase
-    : public MFrontModelVirtualInterface
+    : public AbstractModelInterface
   {
 
     MFrontPleiadesModelInterfaceBase();
@@ -46,33 +46,33 @@ namespace mfront{
      * \param data  : model data
      */
     virtual
-    void writeOutputFiles(const MFrontGenericData&,
-			  const MFrontModelData&);
+    void writeOutputFiles(const GenericData&,
+			  const ModelData&);
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const MFrontModelData&);
+    getGlobalIncludes(const ModelData&);
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const MFrontModelData&);
+    getGlobalDependencies(const ModelData&);
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const MFrontModelData&);
+    getGeneratedSources(const ModelData&);
     /*!
      * \param pdata : generic data
      */
     virtual std::vector<std::string>
-    getGeneratedIncludes(const MFrontModelData&);
+    getGeneratedIncludes(const ModelData&);
     /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const MFrontModelData&);
+    getLibrariesDependencies(const ModelData&);
 
   protected:
 
@@ -83,20 +83,20 @@ namespace mfront{
     closeOutputFiles(void);
 
     virtual void
-    generateOutputFiles(const MFrontGenericData&,
-			const MFrontModelData&);
+    generateOutputFiles(const GenericData&,
+			const ModelData&);
     
     virtual void
-    writeHeaderFile(const MFrontGenericData&,
-		    const MFrontModelData&);
+    writeHeaderFile(const GenericData&,
+		    const ModelData&);
 
     virtual void
-    writeSpecificPrivateMethodDeclaration(const MFrontGenericData&,
-					  const MFrontModelData&);
+    writeSpecificPrivateMethodDeclaration(const GenericData&,
+					  const ModelData&);
     
     virtual void
-    writeSrcFile(const MFrontGenericData&,
-		 const MFrontModelData&);
+    writeSrcFile(const GenericData&,
+		 const ModelData&);
 
     virtual void
     writeAssignDefaultValue(const VarContainer::const_iterator,
@@ -106,15 +106,15 @@ namespace mfront{
     getGenTypeMethod(const std::string& type) const;
 
     virtual void
-    setOutputFileNames(const MFrontModelData&) = 0;
+    setOutputFileNames(const ModelData&) = 0;
 
     virtual void
     writeGetGlobalParameter(const VarHandler&,
-			    const MFrontModelData&);
+			    const ModelData&);
 
     virtual void
     writeGetConstantMaterialProperty(const VarHandler&,
-				     const MFrontModelData&);
+				     const ModelData&);
 
     virtual void
     buildDomainName(void) = 0;
@@ -123,26 +123,26 @@ namespace mfront{
     getApplicationName(void) const = 0;
 
     virtual void
-    generateDomainsList(const MFrontModelData&);
+    generateDomainsList(const ModelData&);
 
     virtual void
-    writeFunctionCall(const MFrontModelData&,
-		      const std::vector<MFrontModelData::Function>&);
+    writeFunctionCall(const ModelData&,
+		      const std::vector<ModelData::Function>&);
 
     virtual void
-    writeInitializeMethod(const MFrontModelData&);
+    writeInitializeMethod(const ModelData&);
 
     virtual void
-    writeInitializeOutputMethod(const MFrontModelData&);
+    writeInitializeOutputMethod(const ModelData&);
 
     virtual void
-    writeInitializeInputMethod(const MFrontModelData&);
+    writeInitializeInputMethod(const ModelData&);
 
     virtual void
-    writeInitializeParametersMethod(const MFrontModelData&);
+    writeInitializeParametersMethod(const ModelData&);
 
     virtual bool
-    initializeDefaultDomainListInConstrutor(const MFrontModelData&) const;
+    initializeDefaultDomainListInConstrutor(const ModelData&) const;
 
     std::set<std::string> domains;
 

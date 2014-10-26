@@ -15,7 +15,7 @@
 #include<sstream>
 #include<stdexcept>
 
-#include"MFront/ParserUtilities.hxx"
+#include"MFront/DSLUtilities.hxx"
 #include"MFront/InterfaceBase.hxx"
 
 
