@@ -1,5 +1,6 @@
 macro(install_mtest_desc file)
-  install(FILES ${file}.txt DESTINATION share/doc/mtest/${file}.txt)
+  install(FILES ${file}.txt DESTINATION share/doc/mtest
+    COMPONENT mtest)
 endmacro(install_mtest_desc file)
 
 configure_file(Champs.tex.in Champs.tex @ONLY)
@@ -32,7 +33,7 @@ ADD_CUSTOM_COMMAND(
 add_custom_target(mtest-doc-pdf echo DEPENDS mtest.pdf)
 add_custom_target(mtest-doc-pdf-install
                   COMMAND ${CMAKE_COMMAND} -E copy mtest.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mtest/mtest.pdf
-                  COMMAND ${CMAKE_COMMAND} -E copy mtest.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/mtest/mtest.pdf)
+                  COMMAND ${CMAKE_COMMAND} -E copy mtest.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mtest/mtest.pdf)
 add_dependencies(mtest-doc-pdf-install mtest-doc-pdf)
 
 add_dependencies(doc-pdf

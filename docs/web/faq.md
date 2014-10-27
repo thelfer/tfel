@@ -75,3 +75,11 @@ units) which allows to checks for the consistency of operations at
 compile-time (no cost at runtime). However, support for this feature
 has not been enabled in `MFront` yet : for the moment, we only have
 introduced the associated types.
+
+# In which order are the blocks given by the user evaluated ?
+
+The following figure shows how the various blocks defined by the user
+may be used when using the `Implicit` domain specific language:
+
+![Use order of the code blocks defined by the user](img/ImplicitDSL.svg
+ "Use order of the code blocks defined by the user")

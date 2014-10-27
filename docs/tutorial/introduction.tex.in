@@ -7,6 +7,11 @@
 
 \section{Introduction}
 
+L'objet de se document est de compléter la documentation de référence
+\mfront{} en permettant aux nouveaux utilisateurs de découvrir pas à
+pas comment une loi de comportement mécanique peut être implantée avec
+\mfront{}.
+
 \subsection{Comment écrire une loi de comportement~:
   un exemple très simple}
 
@@ -27,9 +32,9 @@ est définie par~:
 où~:
 \begin{minipage}[t]{0.9\linewidth}
   \begin{itemize}
-  \item \(\tepsilonto\), \(\tepsilonel\), \(\tepsilonvis\)
-    représentant respectivement les déformations totale, élastique et
-    visqueuse~;
+  \item \(\tepsilonto\), \(\tepsilonel\), \(\tepsilonvis\) sont des
+    variables tensorielles symétriques représentent respectivement les
+    déformations totale, élastique et visqueuse~;
   \item \(\tenseur{n}=\Frac{3}{2}\,\Frac{\tenseur{s}}{\sigmaeq}\) est
     la direction d'écoulement~;
   \item \(\tenseur{s}\) est le déviateur des contraintes~;
@@ -40,7 +45,7 @@ où~:
 L'opérateur d'élasticité \(\tenseurq{D}\) est calculé à partir du
 module d'\nom{Young} \(E\) et du coefficient de \nom{Poisson} \(\nu\).
 
-\subsubsection{Discrétisation implicite de loi de \nom{Norton}}
+\subsubsection{Discrétisation implicite de la loi de \nom{Norton}}
 
 Pour intégrer cette loi dans un calcul de structure, il faut procéder
 à une discrétisation en temps, ce qui revient à définir une suite
@@ -48,8 +53,7 @@ d'instants de calcul \(\left\{t_{i}\right\}_{1\le i\le I}\).
 
 Pour utiliser un algorithme implicite, il suffit d'écrire toutes les
 quantités à l'instant \(t_{i}\) et de remplacer les dérivées en temps
-par leurs incréments sur l'intervalle \( \Delta t= t_{i} - t_{i-1} \)
-~:
+par leurs incréments sur l'intervalle \(\Delta\, t=t_{i}-t_{i-1}\)~:
 \[ 
 \left\{
   \begin{aligned}
@@ -58,20 +62,18 @@ par leurs incréments sur l'intervalle \( \Delta t= t_{i} - t_{i-1} \)
   \end{aligned}
 \right.
 \]
-
 avec~:
 \begin{minipage}[t]{0.9\linewidth}
   \begin{itemize}
-  \item \(\tsigma  = \tenseurq{D}\,:\,\tepsilonel \) ;
-  \item \(\tenseur{n}=\Frac{3}{2}\,\Frac{ \tenseur{s} \paren{t_{i}}} { \sigmaeq \paren{ t_{i}}}\ \) .
+  \item \(\tsigma  = \tenseurq{D}\,:\,\tepsilonel\)~;
+  \item \(\tenseur{n}=\Frac{3}{2}\,\Frac{ \tenseur{s} \paren{t_{i}}} { \sigmaeq \paren{ t_{i}}}\)~.
   \end{itemize}
 \end{minipage}
 
-On obtient ainsi un système de 7 équations (6 équations --- en 3D ---
-relatives à la décomposition additive du tenseur des déformations, et
-une équation relative à l'écoulement visco-plastique).  Les 7
-inconnues sont les 6 composantes de \( \Delta \tepsilonel \) et \(
-\Delta p \).
+On obtient ainsi un système de 7 équations~: 6 équations relatives à
+la décomposition additive du tenseur des déformations (en 3D), et une
+équation relative à l'écoulement visco-plastique). Les 7 inconnues
+sont les 6 composantes de \( \Delta \tepsilonel \) et \( \Delta p \).
 
 La résolution implicite de ce système est effectuée par une méthode de
 \nom{Newton}.
@@ -158,8 +160,11 @@ ou
     \$ mfront -{}-obuild -interface=umat norton.mfront
   }
 \end{flushleft}
-suivant le code que l'on souhaite utiliser. Ceci génère deux
-répertoires :{ \tt src} et {\tt include}.
+suivant le code de résolution que l'on souhaite utiliser~: l'interface
+{\tt aster} correspond au {\tt Code-Aster}, tandis que l'interface
+{\tt umat} correspond au code {\tt Cast3M}.
+
+Ceci génère deux répertoires~: {\tt src} et {\tt include}.
 
 Selon l'interface, le répertoire src contient en particulier une bibliothèque dynamique~:
 \begin{flushleft}
@@ -175,9 +180,9 @@ pour une exécution avec \castem{}.
 
 \subsubsection{Premier test}
 
-De plus, l'outil \mtest{} permet d'effectuer très facilement des
-simulations sur point matériel, permettant de calculer la réponse à
-des sollicitations en contraintes ou en déformations. 
+L'outil \mtest{} permet d'effectuer très facilement des simulations
+sur point matériel, afin de calculer la réponse de la loi de
+comportement à des sollicitations en contraintes ou en déformations.
 
 \mtest{}, couplé à un logiciel d'optimisation comme \adao{}, permet de
 plus d'effectuer le recalage des propriétés matériau.  Le fichier de
@@ -199,8 +204,6 @@ façon suivante~:
 \item la ligne \(9\) définit la discrétisation en temps, donc les
   instants calculés.
 \end{itemize}
-
-
 
 \begin{figure}[!h]
   \centering

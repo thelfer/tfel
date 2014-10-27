@@ -10,20 +10,20 @@
 add_custom_target(portable-behaviour-html echo DEPENDS portability.html)
 
 add_custom_target(portable-behaviour-html-install
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/portable-behaviour
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/portable-behaviour
   COMMAND ${CMAKE_COMMAND} -E copy           ${CMAKE_CURRENT_BINARY_DIR}/portability.html
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/portable-behaviour
+                                             ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/portable-behaviour
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/img
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/portable-behaviour/img
+                                             ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/portable-behaviour/img
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/web/documents/portable-behaviour/reveal.js
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/share/doc/portable-behaviour
+                                             ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/portable-behaviour/reveal.js
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/portable-behaviour
   COMMAND ${CMAKE_COMMAND} -E copy           ${CMAKE_CURRENT_BINARY_DIR}/portability.html
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/portable-behaviour/
+                                             ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/portable-behaviour/
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/img
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/portable-behaviour/img
+                                             ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/portable-behaviour/img
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/portable-behaviour/reveal.js)
+                                             ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/portable-behaviour/reveal.js)
 
 add_dependencies(portable-behaviour-html-install portable-behaviour-html)
 add_dependencies(doc         portable-behaviour-html)

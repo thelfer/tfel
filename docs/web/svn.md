@@ -7,7 +7,6 @@
 version control system. We do wish that many people get involved in
 `TFEL/MFront` usage and development.
 
-
 The `TFEL` repository is accessible at:
 <https://svn-pleiades.cea.fr/SVN/TFEL>
 
@@ -19,4 +18,3 @@ the access is currently restricted. Access can be granted to the
 
 We may consider moving to another server if the number of contributors
 grows significantly.
-
