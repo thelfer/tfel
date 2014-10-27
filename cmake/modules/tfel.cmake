@@ -1,4 +1,4 @@
-macro(tfel_project tfel_version_major tfel_version_minor tfel_version_path)
+macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   project("tfel")
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}")

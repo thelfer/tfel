@@ -83,10 +83,10 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/MultipleIsotropicMisesFlowsDSL.hxx                  \
 			MFront/RungeKuttaDSL.hxx                                   \
 			MFront/PerformanceProfiling.hxx			              \
-			MFront/Brick.hxx                                              \
-			MFront/BrickBase.hxx                                          \
-			MFront/ElasticityBrick.hxx                                    \
-			MFront/BrickFactory.hxx                                       \
+			MFront/BehaviourBrick.hxx                                              \
+			MFront/BehaviourBrickBase.hxx                                          \
+			MFront/ElasticityBehaviourBrick.hxx                                    \
+			MFront/BehaviourBrickFactory.hxx                                       \
 			MFront/NonLinearSystemSolver.hxx                              \
 			MFront/NonLinearSystemSolverBase.hxx                          \
 			MFront/NonLinearSystemSolverFactory.hxx                       \

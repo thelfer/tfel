@@ -1,5 +1,5 @@
 macro(install_mtest_desc file)
-  install(FILES ${file}.txt DESTINATION share/doc/mtest/${file}.txt)
+  install(FILES ${file}.txt DESTINATION share/doc/mtest)
 endmacro(install_mtest_desc file)
 
 configure_file(Champs.tex.in Champs.tex @ONLY)
