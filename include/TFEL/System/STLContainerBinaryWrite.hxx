@@ -66,7 +66,6 @@ namespace tfel
       static void exe(const int f,const std::basic_string<charT,traits,Alloc>& v)
       {
 	using namespace std;
-	typedef typename basic_string<charT,traits,Alloc>::size_type  size_type;
 	typedef typename basic_string<charT,traits,Alloc>::value_type value_type;
 	binary_write(f,v.size());
 	systemCall::write(f,&v[0],v.size()*sizeof(value_type));

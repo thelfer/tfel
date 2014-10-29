@@ -53,6 +53,7 @@ EXTRA_DIST=CMakeLists.txt 				 \
 	   ./images/tutorielch12-img2.pdf		 \
 	   ./images/tutorielch12-img6.png		 \
 	   ./images/tutorielch12-img14.png		 \
+	   ./images/ImplicitDSL.pdf          		 \
 	   ./mtest/viscochab.mtest			 \
 	   ./mtest/castemellipticcreep-convergence.png	 \
 	   ./mtest/castemellipticcreep-pv.png		 \

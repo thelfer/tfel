@@ -719,12 +719,25 @@ le bloc {\tt @Compute\-Stress}~: \mfront{} évalue dans ce cas les
 différentes variables à l'instant considéré (milieu de pas ou fin de
 pas).
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics{@top_srcdir@/docs/tutorial/images/ImplicitDSL.pdf}
+  \caption{Ordre d'évaluation des différents blocs de code fournis par
+    l'utilisateur dans le cas d'une intégration implicite.}
+  \label{fig:ImplicitOrder}
+\end{figure}
+
 Ce n'est pas possible ici du fait de l'utilisation de la porosité
 comme variable auxiliaire~: celle-ci doit être mise à jour
-explicitement avant l'évaluation des propriétés élastiques. Le bloc de
-code {\tt @Compute\-Stress} sera utilisé pour évaluer les contraintes
-en milieu de pas et le bloc de code {\tt @Compute\-Final\-Stress} en
-fin de pas de temps.
+explicitement avant l'évaluation des propriétés élastiques. Pour bien
+comprendre ce point, on peut se référer à la
+figure~\ref{fig:ImplicitOrder} qui montre l'ordre d'appel des
+différents blocs de code définis par l'utilisateur.
+
+
+Le bloc de code {\tt @Compute\-Stress} sera utilisé pour évaluer les
+contraintes en milieu de pas et le bloc de code {\tt
+  @Compute\-Final\-Stress} en fin de pas de temps.
 
 \begin{figure}[!htbp]
   \centering
