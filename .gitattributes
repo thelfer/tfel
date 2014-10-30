@@ -85,6 +85,8 @@ cmake/pyo-compile.py -text
 /debug.sh.in -text
 docs/CMakeLists.txt -text
 docs/Makefile.am -text
+docs/doxygen/CMakeLists.txt -text
+docs/doxygen/Makefile.am -text
 docs/html/Makefile.am -text
 docs/html/reveal.js/.travis.yml -text
 docs/html/reveal.js/Gruntfile.js -text
@@ -185,6 +187,7 @@ docs/mfront/Images/FueLPellet-DishingFilling2.eps -text
 docs/mfront/Images/FueLPellet-DishingFilling2.png -text
 docs/mfront/Images/FuelPelletUniaxialCompressiveTest-sigzz-FiniteRotationSmallStrain-castem2012.eps -text
 docs/mfront/Images/FuelPelletUniaxialCompressiveTest-sigzz-HPP-castem2012.eps -text
+docs/mfront/Images/ImplicitDSL.eps -text
 docs/mfront/Images/ImplicitSimoMieheElastoPlasticity-ssna303.eps -text
 docs/mfront/Images/Makefile.castem.linux -text
 docs/mfront/Images/Makefile.castem.linux.tex -text
@@ -643,6 +646,7 @@ docs/tutorial/Makefile.am -text
 docs/tutorial/ViscoCompressible.tex.in -text
 docs/tutorial/images/CourbeExpBurger.png -text
 docs/tutorial/images/Hayhurstiso.png -text
+docs/tutorial/images/ImplicitDSL.pdf -text
 docs/tutorial/images/Kcoh.png -text
 docs/tutorial/images/Kel.png -text
 docs/tutorial/images/Ktgt.png -text

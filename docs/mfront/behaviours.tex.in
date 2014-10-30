@@ -4048,6 +4048,20 @@ l'algorithme convergé.
 À ce moment, les valeurs externes (déformations totales et températures
 incluses) n'ont pas été mises à jour.
 
+\subsection{Ordre d'évaluation des blocs définis par l'utilisateur}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics{@top_srcdir@/docs/mfront/Images/ImplicitDSL.eps}
+  \caption{Ordre d'évaluation des différents blocs de code fournis par
+    l'utilisateur dans le cas d'une intégration implicite.}
+  \label{fig:ImplicitOrder}
+\end{figure}
+
+La figure~\ref{fig:ImplicitOrder} montre l'ordre d'appel des
+différents blocs de code définis par l'utilisateur.
+
 \subsection{Paramètres automatiquement définis}
 
 L'analyseur implicite définit automatiquement différents

@@ -16,7 +16,7 @@ else(${DIAG_DISABLE_FLAG_AVAILABLE})
 endif(${DIAG_DISABLE_FLAG_AVAILABLE})
 
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wall")
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "xHost")
+tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "xHost")
 tfel_enable_cxx_compiler_flag(CMAKE_CXX_FLAGS    "ipo")
 
 tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")

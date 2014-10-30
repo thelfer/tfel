@@ -1,4 +1,4 @@
-macro(tfel_project tfel_version_major tfel_version_minor tfel_version_path)
+macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   project("tfel")
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}")
@@ -6,18 +6,54 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_path)
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
+  set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}.${TFEL_VERSION_PATCH}")
+  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
   add_definitions("-DVERSION=\\\"\"${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}\"\\\"")
 endmacro(tfel_project)
 
+set(CPACK_COMPONENTS_ALL core mfront mtest python-bindings)
+
+set(CPACK_COMPONENT_CORE_DESCRIPTION 
+  "Contains all the core libraries developped within TFEL")
+set(CPACK_COMPONENT_MFRONT_DESCRIPTION
+  "Contains the MFront code generator and the associated libraries")
+set(CPACK_COMPONENT_MTESTS_DESCRIPTION
+  "Contains the MTest tool")
+set(CPACK_COMPONENT_PYTHON-BINDINGS_DESCRIPTION 
+   "Contains the python bindings for TFEL, MFront and MTest")
+
+set(CPACK_COMPONENT_MFRONT_DEPENDS core)
+set(CPACK_COMPONENT_MTEST_DEPENDS  core mfront)
+set(CPACK_COMPONENT_PYTHON-BINDINGS_DEPENDS  core mfront mtest)
+
 macro(install_header dir file)
   install(FILES ${dir}/${file}
-          DESTINATION "include/${dir}")
+          DESTINATION "include/${dir}"
+	  COMPONENT core)
 endmacro(install_header)
+
+macro(install_mfront_header dir file)
+  install(FILES ${dir}/${file}
+          DESTINATION "include/${dir}"
+	  COMPONENT mfront)
+endmacro(install_mfront_header)
+
+macro(install_mtest_header dir file)
+  install(FILES ${dir}/${file}
+          DESTINATION "include/${dir}"
+	  COMPONENT mtest)
+endmacro(install_mtest_header)
 
 macro(install_data dir file)
   install(FILES ${file}
           DESTINATION "share/tfel/${dir}")
 endmacro(install_data)
+
+macro(install_mfront_data dir file)
+  install(FILES ${file}
+          DESTINATION "share/mfront/${dir}"
+	  COMPONENT mfront)
+endmacro(install_mfront_data)
 
 macro(tfel_library name)
 if(${ARGC} LESS 2)
@@ -25,9 +61,12 @@ if(${ARGC} LESS 2)
 endif(${ARGC} LESS 2)
 add_library(${name} SHARED ${ARGN})
 if(WIN32)
- install(TARGETS ${name} DESTINATION bin)
+ install(TARGETS ${name} DESTINATION bin
+   COMPONENT core)
 else(WIN32)
- install(TARGETS ${name} DESTINATION lib${LIB_SUFFIX})
+ install(TARGETS ${name}
+   DESTINATION lib${LIB_SUFFIX}
+   COMPONENT core)
 endif(WIN32)
 if(enable-static)
  add_library(${name}-static STATIC ${ARGN})
@@ -107,7 +146,9 @@ macro(python_lib_module name package)
     message(FATAL_ERROR "python_lib_module : no source specified")
   endif(${ARGC} LESS 1)
   add_library(py_${package}_${name} SHARED ${ARGN})
-  install(TARGETS py_${package}_${name} DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package})
+  install(TARGETS py_${package}_${name}
+    DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
+    COMPONENT python-bindings)
   set_target_properties(py_${package}_${name} PROPERTIES PREFIX "")
   set_target_properties(py_${package}_${name} PROPERTIES OUTPUT_NAME ${name})
   target_link_libraries(py_${package}_${name}
@@ -139,6 +180,7 @@ macro(tfel_python_script dir)
       set(python_script "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}")
     endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
     install(PROGRAMS ${python_script}
-      DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${dir}/)
+      DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${dir}/
+      COMPONENT python-bindings)
   endforeach(pyscript ${ARGN})
 endmacro(tfel_python_script)

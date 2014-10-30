@@ -5,4 +5,5 @@ configure_file(${PROJECT_SOURCE_DIR}/src/TFELConfig/tfel-config.hxx.in
                ${PROJECT_BINARY_DIR}/src/TFELConfig/tfel-config.hxx)
 
 add_executable(tfel-config tfel-config.cxx)
-install(TARGETS tfel-config DESTINATION bin)
+install(TARGETS tfel-config DESTINATION bin
+  COMPONENT core)

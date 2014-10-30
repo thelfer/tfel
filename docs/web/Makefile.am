@@ -50,8 +50,8 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/hsnv125.png                                       \
 	   ./img/LogarithmicStrainPlasticity-ssna303.svg           \
 	   ./img/ImplicitDSL.svg				   \
+	   ./img/AMITEX_FFTP_sig1.xcf				   \
 	   ./img/AMITEX_FFTP_sig1.png				   \
-	   ./img/AMITEX_FFTP_sig1.svg				   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

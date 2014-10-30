@@ -8,22 +8,30 @@
    ARGS      -H ${CMAKE_CURRENT_SOURCE_DIR}/mysettings.css
    ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/mfront.md -o mfront.html)
 add_custom_target(mfront-user-meeting-html echo DEPENDS mfront.html)
-
-add_custom_target(mfront-user-meeting-html-install
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront-user-meeting
-  COMMAND ${CMAKE_COMMAND} -E copy           ${CMAKE_CURRENT_BINARY_DIR}/mfront.html
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront-user-meeting
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/img
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront-user-meeting/img
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mfront-user-meeting/reveal.js
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/mfront-user-meeting
-  COMMAND ${CMAKE_COMMAND} -E copy           ${CMAKE_CURRENT_BINARY_DIR}/mfront.html
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/mfront-user-meeting/
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/img
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/mfront-user-meeting/img
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
-                                             ${CMAKE_INSTALL_PREFIX}/share/doc/mfront/mfront-user-meeting/reveal.js)
-add_dependencies(mfront-user-meeting-html-install mfront-user-meeting-html)
 add_dependencies(doc         mfront-user-meeting-html)
-add_dependencies(doc-install mfront-user-meeting-html-install)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mfront.html
+    DESTINATION share/doc/tfel/web/documents/mfront-user-meeting
+    COMPONENT website OPTIONAL)
+install(DIRECTORY img
+    DESTINATION share/doc/tfel/web/documents/mfront-user-meeting
+    COMPONENT website
+    PATTERN ".svn" EXCLUDE)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
+    DESTINATION share/doc/tfel/web/documents/mfront-user-meeting
+    COMPONENT website
+    PATTERN ".svn" EXCLUDE)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mfront.html
+    DESTINATION share/doc/mfront/mfront-user-meeting
+    COMPONENT docs OPTIONAL)
+install(DIRECTORY img
+    DESTINATION share/doc/mfront/mfront-user-meeting
+    COMPONENT docs
+    PATTERN ".svn" EXCLUDE)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
+    DESTINATION share/doc/mfront/mfront-user-meeting
+    COMPONENT docs
+    PATTERN ".svn" EXCLUDE)
+
+
