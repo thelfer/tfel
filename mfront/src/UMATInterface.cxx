@@ -689,7 +689,6 @@ namespace mfront{
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/UMAT");
 
-    VariableDescriptionContainer::const_iterator p;    
     vector<FiniteStrainStrategy>::const_iterator pfss;
     
     string name;
@@ -1905,7 +1904,6 @@ namespace mfront{
       pair<vector<UMATMaterialProperty>,
 	   SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,*ph);
       string tmp;
-      VariableDescriptionContainer::const_iterator p;
       out << "** " << ModellingHypothesis::toString(*ph) << " example\n\n";
       ostringstream mcoel;
       mcoel << "coel = 'MOTS' ";

@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # Process this file with automake to produce Makefile.in files.
 
-AC_INIT(tfel,2.1-dev,thomas.helfer@cea.fr)
+AC_INIT(tfel,2.0.1-dev,thomas.helfer@cea.fr)
 AC_CONFIG_SRCDIR([include/TFEL/Config/TFELConfig.hxx])
 AC_CONFIG_COMMANDS
 AC_CONFIG_MACRO_DIR([m4])
@@ -107,6 +107,10 @@ AC_TYPE_SIZE_T
 AC_CHECK_FUNCS([isascii])
 
 # Compiler specific stuff
+AC_ARG_ENABLE([portable_build],
+	       AC_HELP_STRING([--enable-portable_build],
+		              [produce binary that can be shared between various machine
+			       (same architecture, same gcc version, different processors)]))
 AC_ARG_ENABLE([optimizations],
 	       AC_HELP_STRING([--disable-optimizations],
 		              [Do not try to guess what optimization to enable]))
@@ -137,16 +141,24 @@ fi
 # check for compiler
 COMPILER_SPECIFIC_OPTIONS="";
 COMPILER_WARNINGS="";
-OPTIMISATION_FLAGS="-DNO_RUNTIME_CHECK_BOUNDS -DNDEBUG"
-OPTIMISATION_FLAGS2="-DNO_RUNTIME_CHECK_BOUNDS -DNDEBUG"
+OPTIMISATION_FLAGS=""
+OPTIMISATION_FLAGS2=""
 
 # g++ specific treatement
-if test "x$GXX" = "xyes"; then
+if test "x$GXX" == "xyes"; then
+    COMPILER_SPECIFIC_OPTIONS="";
+    COMPILER_WARNINGS="";
+    OPTIMISATION_FLAGS="-DNO_RUNTIME_CHECK_BOUNDS -DNDEBUG"
+    OPTIMISATION_FLAGS2=""
     AC_CHECK_GXX
 fi
 
 # intel icc specific treatement
-if test "x$INTEL" = "xyes"; then
+if test "x$INTEL" == "xyes"; then
+    COMPILER_SPECIFIC_OPTIONS="";
+    COMPILER_WARNINGS="";
+    OPTIMISATION_FLAGS="-DNO_RUNTIME_CHECK_BOUNDS -DNDEBUG"
+    OPTIMISATION_FLAGS2=""
     AC_CHECK_INTEL
 fi
 
@@ -408,6 +420,7 @@ AC_OUTPUT([debug.sh
 	   docs/html/Makefile
 	   docs/tex/Makefile
 	   docs/web/Makefile
+	   docs/doxygen/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile
 	   include/Makefile
@@ -962,4 +975,3 @@ AC_OUTPUT([debug.sh
 	   tests/Material/Makefile
 	   tests/System/Makefile
 	   ])
-

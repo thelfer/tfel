@@ -12,7 +12,9 @@
  */
 
 #include<cmath>
+#include<string>
 #include<stdexcept>
+#include<algorithm>
 
 #include"MFront/Aster/AsterFiniteStrainRotationMatrix.hxx"
 

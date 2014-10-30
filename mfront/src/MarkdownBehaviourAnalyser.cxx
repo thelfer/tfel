@@ -25,6 +25,20 @@
 
 namespace mfront
 {
+  
+  template<typename Map>
+  static inline typename Map::mapped_type
+  map_at(const Map& m,
+	 const typename Map::key_type& k)
+  {
+    using namespace std;
+    const typename Map::const_iterator p = m.find(k);
+    if(p==m.end()){
+      string msg("map_at : unknown key '"+k+"'");
+      throw(runtime_error(msg));
+    }
+    return p->second;
+  }
 
   std::string
   MarkdownBehaviourAnalyser::getName(void)
@@ -472,14 +486,14 @@ namespace mfront
     for(pd=data.begin();pd!=data.end();++pd){
       os << "* " << pd->externalName << ":" << endl;
       if(pd->externalName!=pd->name){
-	os << "\t+ " << l.at("variable name") << ": " << pd->name << endl; 
+	os << "\t+ " << map_at(l,"variable name") << ": " << pd->name << endl; 
       }
-      os << "\t+ " << l.at("variable type") << ": " << pd->type << endl; 
+      os << "\t+ " << map_at(l,"variable type") << ": " << pd->type << endl; 
       if(pd->arraySize!=1u){
-	os << "\t+ " << l.at("array size") << ": " << pd->arraySize << endl;
+	os << "\t+ " << map_at(l,"array size") << ": " << pd->arraySize << endl;
       }
       if(pd->hypotheses.size()!=dh.size()){
-	os << "\t+ " << l.at("defined for") << " ";
+	os << "\t+ " << map_at(l,"defined for") << " ";
 	for(pvh=pd->hypotheses.begin();pvh!=pd->hypotheses.end();){
 	  os << ModellingHypothesis::toString(*pvh);
 	  if(++pvh!=pd->hypotheses.end()){
@@ -489,14 +503,14 @@ namespace mfront
 	os << endl;
       }
       if(!pd->description.empty()){
-	os << "\t+ " << l.at("description") << " : " << pd->description << endl;
+	os << "\t+ " << map_at(l,"description") << " : " << pd->description << endl;
       }
       for(pvh=pd->hypotheses.begin();pvh!=pd->hypotheses.end();++pvh){
 	if(mb.isParameterName(*pvh,pd->name)){
 	  if(*pvh==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	    os << "\t+ " << l.at("default value") << ": ";
+	    os << "\t+ " << map_at(l,"default value") << ": ";
 	  } else {
-	    os << "\t+ " << l.at("default value for")+" "+ModellingHypothesis::toString(*pvh)+" : ";
+	    os << "\t+ " << map_at(l,"default value for")+" "+ModellingHypothesis::toString(*pvh)+" : ";
 	  }
 	  if(pd->type=="real"){
 	    os << mb.getFloattingPointParameterDefaultValue(*pvh,pd->name);

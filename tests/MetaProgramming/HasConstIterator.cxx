@@ -37,9 +37,8 @@ struct Expr
 {};
 
 int main(void){
-
   Expr<std::vector<double> >::const_iterator p;
-
+  static_cast<void>(p);
   return EXIT_SUCCESS;
 
 }

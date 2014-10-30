@@ -37,8 +37,8 @@ namespace mfront{
      * the parser.
      *
      * To enable other hypothesis or restrict the hypotheses
-     * supported, the user must use the @ModellingHypothesis or
-     * @ModellingHypotheses keywords.
+     * supported, the user must use the `@ModellingHypothesis` or
+     * `@ModellingHypotheses` keywords.
      */
     virtual std::set<Hypothesis>
     getDefaultModellingHypotheses(void) const = 0;
@@ -57,7 +57,7 @@ namespace mfront{
      * example, to support plane stress in RungeKutta and Implicit
      * parsers, the user must provide some hand-crafted code. He must
      * enable this modelling hypothesis by calling explicitely
-     * @ModellingHypothesis or @ModellingHypotheses keywords.
+     * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
     virtual bool
     isModellingHypothesisSupported(const Hypothesis) const = 0;

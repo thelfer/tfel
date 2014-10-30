@@ -1359,7 +1359,6 @@ namespace mfront{
     const string btype = this->mb.getBehaviourTypeFlag();
     const BehaviourData& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
-    VariableDescriptionContainer::const_iterator p2;
     vector<BoundsDescription>::const_iterator p3;
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;

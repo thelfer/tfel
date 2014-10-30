@@ -186,8 +186,9 @@ namespace tfel{
 	  for(;(ps!=line.end())&&(!found);++ps){
 	    if(*ps=='\"'){
 	      string::const_reverse_iterator ps2(ps);
+	      const string::const_reverse_iterator pse(line.rend());
 	      found=true;
-	      while((ps2!=line.rend())&&(*ps2=='\\')){
+	      while((ps2!=pse)&&(*ps2=='\\')){
 		found = !found;
 		++ps2;
 	      }

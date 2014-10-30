@@ -270,6 +270,38 @@ $ make check
 Again, compilation time can be reduced using the `-j` option of the
 `make` command.
 
+### Building the documentation
+
+By default, documentation is not build.
+
+If a valid [LaTeX](http://www.latex-project.org) distribution is
+available, reference manuals can be build through:
+
+~~~~ {#building-pdf .bash}
+$ make doc-pdf
+~~~~~~~~~~~~~~~~~~~~~~
+
+If the [doxygen](http://www.stack.nl/~dimitri/doxygen/) tool is
+available, code source documentation can be build through:
+
+~~~~ {#building-html .bash}
+$ make doc-html
+~~~~~~~~~~~~~~~~~~~~~~
+
+If [`pandoc`](http://johnmacfarlane.net/pandoc/index.html) is build
+and if you are using the `cmake` build system, the previous command
+will also install a local version of the `TFEL` web site.
+
+~~~~ {#building-website .bash}
+$ make website
+~~~~~~~~~~~~~~~~~~~~~~
+
+All the documentation will be build with the following command:
+
+~~~~ {#building-html .bash}
+$ make doc
+~~~~~~~~~~~~~~~~~~~~~~
+
 ## Final install
 
 To install `TFEL` binaries and libraries in the directory pointed by
@@ -279,33 +311,24 @@ To install `TFEL` binaries and libraries in the directory pointed by
 $ make install
 ~~~~~~~~~~~~~~~~~~~~~~
 
-### Installing the documentation
+Using `cmake`, the previous command will install the documentation if
+build.
 
-By default, documentation is not installed.
+If you are using the `autotools` build system, the installation of the
+documentation is a separate process done by one of the following
+commands:
 
-If a valid [LaTeX](http://www.latex-project.org) distribution is
-available, reference manuals can be installed through:
-
-~~~~ {#building-pdf .bash}
+~~~~ {#building-doc-install .bash}
+$ # install the reference manual
 $ make doc-pdf-install
-~~~~~~~~~~~~~~~~~~~~~~
-
-If the [doxygen](http://www.stack.nl/~dimitri/doxygen/) tool is
-available, code source documentation can be installed through:
-
-~~~~ {#building-html .bash}
+$ # install the doxygen manual
 $ make doc-html-install
-~~~~~~~~~~~~~~~~~~~~~~
-
-All the documentation will be installed with the following command:
-
-~~~~ {#building-html .bash}
+$ # install all the available documentation
 $ make doc-install
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Note** If [`pandoc`](http://johnmacfarlane.net/pandoc/index.html) is
-installed and if you are using the `cmake` build system, the previous
-command will also install a local version of the `TFEL` web site.
+Note that you can not build the `TFEL` website using the `autotools`
+build system.
 
 # Windows MINGW
 

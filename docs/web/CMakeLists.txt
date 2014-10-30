@@ -14,30 +14,14 @@ macro(pandoc_html file)
     ARGS      ${ARGN}
     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md -o ${file}.html)
   add_custom_target(${file}-html echo DEPENDS ${file}.html)
-  add_custom_target(${file}-html-install
-    COMMAND ${CMAKE_COMMAND} -E copy ${file}.html ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/${file}.html)
-  add_dependencies(${file}-html-install ${file}-html)
-  add_dependencies(website-install ${file}-html-install)
+  add_dependencies(website ${file}-html)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
+    DESTINATION share/doc/tfel/web
+    COMPONENT website OPTIONAL)
 endmacro(pandoc_html)
 
-add_custom_target(website-install
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/js        ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/js
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/css       ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/css
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/doc       ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/doc
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/img       ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/img
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/downloads ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/downloads
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/404.html ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/apple-touch-icon-precomposed.png ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CHANGELOG.md ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CONTRIBUTING.md ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/crossdomain.xml ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/favicon.ico ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/humans.txt ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/robots.txt ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/TODO.md ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web)
-add_dependencies(doc-install website-install )
+add_custom_target(website)
+add_dependencies(doc website)
 
 pandoc_html(index "-c css/slideshow.css")
 pandoc_html(faq "--toc")
@@ -58,3 +42,14 @@ pandoc_html(glossary)
 pandoc_html(material-properties)
 pandoc_html(behaviours)
 pandoc_html(models)
+
+install(DIRECTORY js css doc img downloads
+    DESTINATION share/doc/tfel/web
+    COMPONENT website
+    PATTERN ".svn" EXCLUDE)
+install(FILES 404.html apple-touch-icon-precomposed.png 
+  CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
+  humans.txt LICENSE.md README.md robots.txt TODO.md
+  DESTINATION share/doc/tfel/web
+  COMPONENT website)
+

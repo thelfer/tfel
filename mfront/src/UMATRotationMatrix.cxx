@@ -169,7 +169,6 @@ namespace umat
     N[3][1] *= UMATReal(2.);
     N[3][2] *= UMATReal(2.);
     // matrice temporaire
-    using namespace std;
     UMATReal t[4][4];
     for(unsigned short i=0;i!=4;++i){
       for(unsigned short j=0;j!=4;++j){
@@ -199,7 +198,6 @@ namespace umat
   {
     // Matrice de passage matériau/global
     UMATReal a[9];
-    
     // Premier vecteur
     a[0]=drot[0]*V[0]+drot[3]*V[1]+drot[6]*V[2];
     a[1]=drot[1]*V[0]+drot[4]*V[1]+drot[7]*V[2];

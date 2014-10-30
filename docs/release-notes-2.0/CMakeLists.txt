@@ -23,16 +23,13 @@ ADD_CUSTOM_COMMAND(
     COMMAND   ${PS2PDF_CONVERTER}
     ARGS      tfel-2.0.ps
     COMMENT   "tfel-2.0.pdf")
-  
-# Eventually trigger the whole process
-add_custom_target(tfel-2.0-doc-pdf echo DEPENDS tfel-2.0.pdf)
-add_custom_target(tfel-2.0-doc-pdf-install
-                  COMMAND ${CMAKE_COMMAND} -E copy tfel-2.0.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/tfel-2.0.pdf
-                  COMMAND ${CMAKE_COMMAND} -E copy tfel-2.0.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/tfel-2.0/tfel-2.0.pdf)
-add_dependencies(tfel-2.0-doc-pdf-install tfel-2.0-doc-pdf)
 
+add_custom_target(tfel-2.0-doc-pdf echo DEPENDS tfel-2.0.pdf)
 add_dependencies(doc-pdf
   tfel-2.0-doc-pdf)
-
-add_dependencies(doc-pdf-install
-  tfel-2.0-doc-pdf-install)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.pdf
+  DESTINATION share/doc/tfel/references
+  COMPONENT docs OPTIONAL)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.pdf
+  DESTINATION share/doc/tfel/web/documents/tfel/tfel
+  COMPONENT website OPTIONAL)

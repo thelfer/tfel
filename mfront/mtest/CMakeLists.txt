@@ -98,4 +98,5 @@ else(WIN32 AND enable-static)
   target_link_libraries(mtest TFELMTest TFELSystem)
 endif(WIN32 AND enable-static)
 
-install(TARGETS mtest DESTINATION bin)
+install(TARGETS mtest DESTINATION bin
+  COMPONENT mtest)

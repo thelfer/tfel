@@ -46,7 +46,7 @@ namespace mfront{
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before
      * the input file commandes (those commands are given through the
-     * --@?? option of the command line
+     * `--@??` option of the command line
      */
     virtual void
     analyseFile(const std::string&,

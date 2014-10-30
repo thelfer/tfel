@@ -230,9 +230,9 @@ AC_DEFUN([AC_GCC_LINUX_OPTIMISATIONS],[
 	AC_MSG_NOTICE([detected fpmath flag =$MY_FPMATH_FLAG])
 	AC_MSG_NOTICE([detected sse flag    =$MY_SSE_FLAG])
 
-	CXXFLAGS="-O2 $MY_ARCH_FLAG $MY_FPMATH_FLAG $MY_SSE_FLAG $CXXFLAGS"
-	CFLAGS="-O2 $MY_ARCH_FLAG $MY_FPMATH_FLAG $MY_SSE_FLAG $CFLAGS"
-	OPTIMISATION_FLAGS="-O2 $MY_ARCH_FLAG $MY_FPMATH_FLAG $MY_SSE_FLAG $OPTIMISATION_FLAGS"
+	CXXFLAGS="$MY_ARCH_FLAG $MY_FPMATH_FLAG $MY_SSE_FLAG $CXXFLAGS"
+	CFLAGS="$MY_ARCH_FLAG $MY_FPMATH_FLAG $MY_SSE_FLAG $CFLAGS"
+	OPTIMISATION_FLAGS="$MY_ARCH_FLAG $MY_FPMATH_FLAG $MY_SSE_FLAG $OPTIMISATION_FLAGS"
 
 ]) dnl end of AC_GCC_LINUX_OPTIMISATIONS
 
@@ -247,24 +247,38 @@ dnl
 dnl guess architecture specific options
 dnl 
 dnl Helfer Thomas 22/12/06
+dnl Helfer Thomas 30/10/14 (add test on '-march=native')
 AC_DEFUN([AC_GCC_ARCH_OPTIMISATIONS],[
-	if test "x$host" = "x$build"; then
-	    echo $host | grep "linux" &> /dev/null
-	    if test "x$?" = "x0"; then
-		sys="linux"
+        AC_GCC_DEFAULT_OPTIMISATIONS
+	if test "x$host" = "x$build";
+	then
+	  AC_GCC_CHECK_FLAG(-march=native,NATIVE_MARCH_FLAG)
+	  if test "x$NATIVE_MARCH_FLAG" != "x" ;
+	  then	
+	    if test "x$enable_portable_build" != "xyes";
+	    then   	    
+		CXXFLAGS="-march=native $CXXFLAGS"
+		CFLAGS="-march=native $CFLAGS"
 	    fi
-	    case "$sys" in
-		linux*)
-		    AC_GCC_LINUX_OPTIMISATIONS
-		    ;;
-		*)
-		    AC_GCC_DEFAULT_OPTIMISATIONS
-		    ;;
-    esac
-    else
-    AC_GCC_DEFAULT_OPTIMISATIONS
-    fi
-    ])
+	    OPTIMISATION_FLAGS="-march=native $OPTIMISATION_FLAGS"
+	  else
+	      if test "x$enable_portable_build" != "xyes";
+	      then   	    
+		  echo $host | grep "linux" &> /dev/null
+		  if test "x$?" = "x0"; then
+		      sys="linux"
+		  fi
+		  case "$sys" in
+		      linux*)
+			  AC_GCC_LINUX_OPTIMISATIONS
+			  ;;
+		      *)
+			  ;;
+		  esac
+	      fi
+	  fi
+	fi
+	])
  
 AC_DEFUN([AC_CHECK_GXX],
     [
@@ -361,14 +375,14 @@ fi
 	    CFLAGS="$CFLAGS $GCC_SYMBOL_VISIBILITY"
 	    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
 
-
-	if test "x$enable_optimizations" != "xno"; then   	    
 	    if test "x$enable_debug" != "xyes"; then
 		dnl g++ debug options
 		CPPFLAGS="-DNDEBUG $CPPFLAGS"
+	    fi
+
+	    if test "x$enable_optimizations" != "xno"; then   	    
 		AC_GCC_ARCH_OPTIMISATIONS
 	    fi
-	fi
 	
 	if test "x$enable_debug" == "xyes"; then
 	    dnl g++ debug options

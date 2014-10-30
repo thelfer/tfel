@@ -5,28 +5,20 @@ if(NOT i586-mingw32msvc_COMPILER)
   tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
   tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
 endif(NOT i586-mingw32msvc_COMPILER)
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=native")
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "ftree-vectorize")
-#tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fvect-cost-model")
-# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "floop-interchange")
+
+tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "march=native")
+tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "ftree-vectorize")
 
 if (NOT CMAKE_SIZEOF_VOID_P EQUAL 8 )
   # 32 bits machines.
   # using sse and sse2 instructions rather than the
   # i387 FPU du to numerical instabilities
-  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "mfpmath=sse")
-  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "msse")
-  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "msse2")
+  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "mfpmath=sse")
+  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "msse")
+  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "msse2")
 endif(NOT CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS2 "ffast-math")
-# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-math-errno")
-# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-trapping-math")
-# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "funsafe-math-optimizations")
-# #tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "ffinite-math-only")
-# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-rounding-math")
-# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-signaling-nans")
-# tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fcx-limited-range")
 
 option(enable-sanitize-options "enable various gcc sanitize options (undefined, address,...)" OFF)
 

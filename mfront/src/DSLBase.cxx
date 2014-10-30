@@ -802,7 +802,6 @@ namespace mfront
     using namespace std;
     vector<string> vfiles;
     vector<string> vinterfaces;
-    vector<string>::const_iterator p;
     this->readSpecifiedToken("DSLBase::treatMfront","{");
     vfiles = this->readStringOrArrayOfString("DSLBase::treatMfront");
     this->checkNotEndOfFile("DSLBase::treatMfront","Expected '}'");

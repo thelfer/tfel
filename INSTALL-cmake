@@ -39,6 +39,9 @@ Options
   enable-cxx-11  : enable C++-11 support (currently supported in clang (>=3.4) and g++ (>= 4.7))
 
   enable-sanitize-options : additional compiler flags (gcc specific)
+  enable-portable-build   : do not use processor specific flags. The generated binaries can be
+                            used on other machines as long as the architecture and the compiler
+			    version are the same
 
 cmake usefull variables
 =======================

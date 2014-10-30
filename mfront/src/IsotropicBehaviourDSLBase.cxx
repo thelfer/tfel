@@ -210,7 +210,6 @@ namespace mfront{
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : begin" << endl;
     }
     BehaviourDSLCommon::endsInputFileProcessing();
-    VariableDescriptionContainer::iterator p;
     string currentVarName;
     if(!this->mb.hasParameter(h,"theta")){
       this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));

@@ -5,7 +5,7 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-tfel_project(2 1 dev)
+tfel_project(2 0 "1-dev")
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
 # check for the fenv package
@@ -53,8 +53,12 @@ add_custom_target(tests-install)
 
 # floatting point exceptions (TODO)
 
+# portable-build
+option(enable-portable-build "produce binary that can be shared between various machine (same architecture, same gcc version, different processors" OFF)
+
 # C++-11 (placed before compiler detection)
 option(enable-cxx-11 "enable C++-11 support" OFF)
+
 
 # fortran (placed before compiler detection)
 option(enable-fortran "enable fortran support")
@@ -196,7 +200,6 @@ add_subdirectory(tests)
 
 #documentations
 add_custom_target(doc)
-add_custom_target(doc-install)
 
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
@@ -208,25 +211,34 @@ if(DOXYGEN_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM)
   add_dependencies(doc doc-html)
+  list(APPEND CPACK_COMPONENTS_ALL doxygen)
+  set(CPACK_COMPONENT_DOXYGEN_DESCRIPTION
+    "Contains the TFEL doxygen documentation")
 endif(DOXYGEN_FOUND)
 
 # Looking for LaTeX
 find_package(LATEX)
 if(LATEX_COMPILER)
   add_custom_target(doc-pdf)
-  add_custom_target(doc-pdf-install)
-  add_dependencies(doc-install
-    doc-pdf-install)
+  add_dependencies(doc doc-pdf)
   message(STATUS "latex compiler found : ${LATEX_COMPILER}")
   set(HAVE_LATEX ON)
+  list(APPEND CPACK_COMPONENTS_ALL docs)
+  set(CPACK_COMPONENT_DOCS_DESCRIPTION
+    "Contains the documentation related to TFEL, MFront an MTest")
 endif(LATEX_COMPILER)
 
 # Looking for pandoc (http://johnmacfarlane.net/pandoc)
 include(cmake/modules/pandoc.cmake)
+if(HAVE_PANDOC)
+  list(APPEND CPACK_COMPONENTS_ALL website)
+  set(CPACK_COMPONENT_WEBSITE_DESCRIPTION
+    "Contains the TFEL web site")
+endif(HAVE_PANDOC)
 
-if(HAVE_LATEX OR HAVE_PANDOC)
+if(HAVE_LATEX OR HAVE_PANDOC OR DOXYGEN_FOUND)
   add_subdirectory(docs)
-endif(HAVE_LATEX OR HAVE_PANDOC)
+endif(HAVE_LATEX OR HAVE_PANDOC OR DOXYGEN_FOUND)
 
 #set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
 set (CPACK_PACKAGE_INSTALL_DIRECTORY   "${PACKAGE_NAME}-${VERSION}")
@@ -239,9 +251,13 @@ set (CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "tfel is a mathematical library")
 set (CPACK_PACKAGE_DESCRIPTION 	       "tfel is a mathematical library")
 
-# debian  packaging
-set (CPACK_DEBIAN_PACKAGE_MAINTAINER   "Helfer Thomas ${PACKAGE_BUGREPORT}")
-set (CPACK_DEBIAN_PACKAGE_SECTION      "Science")
+# rpm packaging
+set(CPACK_RPM_COMPONENT_INSTALL ON)
+
+# debian packaging
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Helfer Thomas ${PACKAGE_BUGREPORT}")
+set(CPACK_DEBIAN_PACKAGE_SECTION      "Science")
+set(CPACK_DEB_COMPONENT_INSTALL ON)
 
 #NSIS
 set (CPACK_NSIS_MODIFY_PATH ON)
@@ -260,6 +276,9 @@ set (CPACK_NSIS_MODIFY_PATH ON)
 include(CPack)
 
 # install licences
-install (FILES LICENCE-GNU-GPL DESTINATION "share/doc/tfel")
-install (FILES LICENCE-CECILL-A-EN DESTINATION "share/doc/tfel")
-install (FILES LICENCE-CECILL-A-FR DESTINATION "share/doc/tfel")
+install (FILES LICENCE-GNU-GPL DESTINATION "share/doc/tfel"
+  COMPONENT core)
+install (FILES LICENCE-CECILL-A-EN DESTINATION "share/doc/tfel"
+  COMPONENT core)
+install (FILES LICENCE-CECILL-A-FR DESTINATION "share/doc/tfel"
+  COMPONENT core)

@@ -149,7 +149,6 @@ void MFrontPleiadesMaterialPropertyInterface::writeOutputFiles(const std::string
   using namespace std;
   using namespace tfel::system;
   string dir;
-  vector<string>::const_iterator p;
   systemCall::mkdir("include/Pleiades");
   systemCall::mkdir("include/Pleiades/Metier");
   systemCall::mkdir("include/Pleiades/Metier/MaterialProperty");
@@ -196,10 +195,6 @@ void MFrontPleiadesMaterialPropertyInterface::writeHeaderFile(const std::string&
                                                  const std::string& includes,
                                                  const VarContainer& inputs) {
   using namespace std;
-  VarContainer::const_iterator p;
-  StaticVarContainer::const_iterator p2;
-  vector<string>::const_iterator p3;
-  vector<string>::const_iterator p3e;
   VarContainer::const_iterator p4;
   vector<string>::const_reverse_iterator p5;
   vector<string>::const_reverse_iterator p5e;
@@ -295,8 +290,6 @@ MFrontPleiadesMaterialPropertyInterface::writeSrcFile(const std::string& file,
                                          const std::vector<VariableBoundsDescription>& physicalBounds) {
   using namespace std;
   vector<string>::const_iterator p;
-  vector<string>::const_iterator pe;
-  StaticVarContainer::const_iterator p2;
   VarContainer::const_iterator p3;
   map<string,string>::const_iterator p4;
   vector<string>::const_reverse_iterator p5;

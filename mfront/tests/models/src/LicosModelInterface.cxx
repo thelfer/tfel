@@ -567,7 +567,6 @@ namespace mfront{
     ModelData::FunctionContainer::const_iterator p11;
     set<string>::const_iterator p12;
     std::map<std::string,std::vector<ModelData::Function> >::iterator p13;
-    std::vector<ModelData::Function>::iterator p14;
     set<string>::const_iterator p15;
     set<string>::const_iterator p16;
     set<unsigned short> applyHeaders;

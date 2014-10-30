@@ -61,10 +61,10 @@ namespace mfront{
      * estimate stresses at the middle of the time step and at the
      * end.  However, some finite strains behaviours must compute a
      * stress measure during the iterations which is not the Cauchy
-     * stress. Thus, @ComputeStress also defines an
+     * stress. Thus, `@ComputeStress` also defines an
      * ComputeFinalStressCandidate code block which will be used if
      * the user does not provide an alternative through the
-     * @ComputeFinalStress
+     * `@ComputeFinalStress`
      */
     static const std::string ComputeFinalStressCandidate;
     //! standard code name

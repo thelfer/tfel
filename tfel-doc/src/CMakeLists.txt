@@ -27,4 +27,5 @@ target_link_libraries(tfel-doc
                       TFELSystem
 		      TFELUtilities
 		      TFELException)
-install(TARGETS tfel-doc DESTINATION bin)
+install(TARGETS tfel-doc DESTINATION bin
+  COMPONENT core)

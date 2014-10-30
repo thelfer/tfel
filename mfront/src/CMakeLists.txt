@@ -222,4 +222,5 @@ target_link_libraries(mfront
 		      TFELException)
 endif(UNIX)
 
-install(TARGETS mfront DESTINATION bin)
+install(TARGETS mfront DESTINATION bin
+  COMPONENT mfront)

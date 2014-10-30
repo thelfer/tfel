@@ -141,7 +141,7 @@ namespace mfront
 	tfel::math::t2tost2<2u,real>& C)
     {
       using namespace std;
-      static const real cste = sqrt(2);
+      static const real cste = sqrt(real(2));
       const real E   = props[0];
       const real n   = props[1];
       const real C1  = E/(1+n*n);
@@ -202,7 +202,7 @@ namespace mfront
 	tfel::math::t2tost2<3u,real>& C)
     {
       using namespace std;
-      static const real cste = sqrt(2);
+      static const real cste = sqrt(real(2));
       const real E = props[0];
       const real n = props[1];
       const real l = E*n/((1.-2.*n)*(1+n));

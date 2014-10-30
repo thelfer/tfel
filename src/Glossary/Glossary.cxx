@@ -789,8 +789,8 @@ for(p=this->entries.begin();p!=this->entries.end();++p){
 if(p->getKey()==n){
 return p;
 }
-const vector<string>& names = p->getNames();
-if(find(names.begin(),names.end(),n)!=names.end()){
+const vector<string>& enames = p->getNames();
+if(find(enames.begin(),enames.end(),n)!=enames.end()){
 return p;
 }
 }

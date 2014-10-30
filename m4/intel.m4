@@ -5,7 +5,7 @@ dnl Helfer Thomas 22/12/06
 
 AC_DEFUN([AC_CHECK_INTEL],
     [
-	if test "x$INTEL" = "xyes"; then
+	if test "x$INTEL" == "xyes"; then
 	    dnl icpc default warning options
 	    CXXFLAGS="-Wall  -diag-disable 981,383,444,858,191,68,810,1418 $CXXFLAGS"
 	    dnl 444 : destructor for base class ... is not virtual
@@ -23,6 +23,12 @@ AC_DEFUN([AC_CHECK_INTEL],
 		fi
 		dnl icpc optimization options
 		CXXFLAGS="-O2 -ipo $CXXFLAGS"
+		OPTIMISATION_FLAGS="-O2 -ipo $OPTIMISATION_FLAGS"
+		if test "x$enable_portable_build" != "xyes";
+		then	       	    
+		  CXXFLAGS="-xHost $CXXFLAGS"
+		fi
+		OPTIMISATION_FLAGS="-xHost $OPTIMISATION_FLAGS"
 	    fi
 
 	    if test "x$enable_debug" = "xyes"; then

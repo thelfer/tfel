@@ -24,13 +24,12 @@ ADD_CUSTOM_COMMAND(
   
 # Eventually trigger the whole process
 add_custom_target(tfel-doc-pdf echo DEPENDS reference-guide.pdf)
-add_custom_target(tfel-doc-pdf-install
-                  COMMAND ${CMAKE_COMMAND} -E copy reference-guide.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/reference-guide.pdf
-                  COMMAND ${CMAKE_COMMAND} -E copy reference-guide.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/tfel/reference-guide.pdf)
-add_dependencies(tfel-doc-pdf-install tfel-doc-pdf)
-
 add_dependencies(doc-pdf
   tfel-doc-pdf)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
+  DESTINATION share/doc/tfel
+  COMPONENT docs OPTIONAL)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
+  DESTINATION share/doc/tfel/web/documents/tfel
+  COMPONENT website OPTIONAL)
 
-add_dependencies(doc-pdf-install
-  tfel-doc-pdf-install)

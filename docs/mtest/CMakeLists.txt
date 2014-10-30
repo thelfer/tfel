@@ -1,45 +1,7 @@
 macro(install_mtest_desc file)
-  install(FILES ${file}.txt DESTINATION share/doc/mtest)
+  install(FILES ${file}.txt DESTINATION share/doc/mtest
+    COMPONENT mtest)
 endmacro(install_mtest_desc file)
-
-configure_file(Champs.tex.in Champs.tex @ONLY)
-configure_file(mtest.tex.in
-               mtest.tex @ONLY)
-
-ADD_CUSTOM_COMMAND(
-    OUTPUT    mtest.pdf
-    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
-    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/mtest.tex.in
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mtest.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mtest.tex
-    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
-    ARGS      -terse mtest
-    COMMAND   ${MAKEINDEX_COMPILER}
-    ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mtest.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mtest.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
-    ARGS      -R0 mtest.dvi
-    COMMAND   ${PS2PDF_CONVERTER}
-    ARGS      mtest.ps
-    COMMENT   "mtest.pdf")
-  
-# Eventually trigger the whole process
-add_custom_target(mtest-doc-pdf echo DEPENDS mtest.pdf)
-add_custom_target(mtest-doc-pdf-install
-                  COMMAND ${CMAKE_COMMAND} -E copy mtest.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/mtest/mtest.pdf
-                  COMMAND ${CMAKE_COMMAND} -E copy mtest.pdf ${CMAKE_INSTALL_PREFIX}/share/doc/tfel/web/documents/mtest/mtest.pdf)
-add_dependencies(mtest-doc-pdf-install mtest-doc-pdf)
-
-add_dependencies(doc-pdf
-  mtest-doc-pdf)
-
-add_dependencies(doc-pdf-install
-  mtest-doc-pdf-install)
 
 install_mtest_desc(Author)
 install_mtest_desc(Behaviour)
@@ -82,3 +44,43 @@ install_mtest_desc(AccelerationAlgorithm)
 install_mtest_desc(AccelerationAlgorithmParameter)
 install_mtest_desc(CompareToNumericalTangentOperator)
 install_mtest_desc(NumericalTangentOperatorPerturbationValue)
+
+if(HAVE_LATEX)
+
+  configure_file(Champs.tex.in Champs.tex @ONLY)
+  configure_file(mtest.tex.in
+    mtest.tex @ONLY)
+  
+  ADD_CUSTOM_COMMAND(
+    OUTPUT    mtest.pdf
+    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
+    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/mtest.tex.in
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode mtest.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode mtest.tex
+    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
+    ARGS      -terse mtest
+    COMMAND   ${MAKEINDEX_COMPILER}
+    ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode mtest.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    ARGS      -interaction=batchmode mtest.tex
+    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    ARGS      -R0 mtest.dvi
+    COMMAND   ${PS2PDF_CONVERTER}
+    ARGS      mtest.ps
+    COMMENT   "mtest.pdf")
+  
+  add_custom_target(mtest-doc-pdf echo DEPENDS mtest.pdf)
+  add_dependencies(doc-pdf
+    mtest-doc-pdf)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
+    DESTINATION share/doc/mtest
+    COMPONENT docs OPTIONAL)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
+    DESTINATION share/doc/tfel/web/documents/mtest
+    COMPONENT website OPTIONAL)
+  
+endif(HAVE_LATEX)
