@@ -5,17 +5,19 @@
 The latest version of this document is always available at
 <http://tfel.sourceforge.net/install.html>.
 
-It refers to the current development sources, instructions for
+It refers to the **current development sources**, instructions for
 specific released versions are included with the sources and detailled
 in the `INSTALL` and the `INSTALL-cmake` files located at the root
 directory of the sources).
 
-This document describes the generic installation procedure for
-`TFEL`. The following topics were created:
+This document describes the generic installation procedure for `TFEL`
+from the sources. The following topics are covered:
 
 - Installation on posix-compliant systems (including Linux)
 - Cross-compiling `TFEL` (Linux host, Windows target)
 - Compiling under Windows using [MINGW](http://www.mingw.org)
+
+The creation of binary packages are detailled [here](packages.html)
 
 # Posix-compliant systems
 
@@ -191,6 +193,17 @@ define one of the following variables:
 For example, we can use the following command to select the
 [Intel compilers suite](https://software.intel.com/en-us/c-compilers):
 
+#### Controlling the generation of the documentation
+
+Generation of the documentation can be controlled by the following options:
+
+- `enable-doxygen-doc`,which enable the generation of the doxygen
+  documentation (disabled by default)
+- `disable-reference-doc`, which disable the reference documentation
+  generation (enabled by default if `latex` of `pandoc` is found)
+- `disable-website`, which disables the generation of the `TFEL`
+  website (enabled by default if `pandoc` is found)
+
 ~~~~ {#building-icpc .bash}
 $ CXX=icpc CC=icc FC=ifort F77=ifort cmake $srcdir -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=$prefix
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -271,8 +284,6 @@ Again, compilation time can be reduced using the `-j` option of the
 `make` command.
 
 ### Building the documentation
-
-By default, documentation is not build.
 
 If a valid [LaTeX](http://www.latex-project.org) distribution is
 available, reference manuals can be build through:

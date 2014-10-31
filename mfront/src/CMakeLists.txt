@@ -108,18 +108,18 @@ if(HAVE_FORTRAN)
 	${mfront_SOURCES})
 endif(HAVE_FORTRAN)
 
-tfel_library(MFrontLogStream
+mfront_library(MFrontLogStream
   MFrontLogStream.cxx)
 
 if(enable-cxx-11)
-  tfel_library(MFrontProfiling
+  mfront_library(MFrontProfiling
     MFrontBehaviourProfiler.cxx)
   if(UNIX)
     target_link_libraries(MFrontProfiling rt)
   endif(UNIX)
 endif(enable-cxx-11)
 
-tfel_library(MTestFileGenerator
+mfront_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
   UMATSmallStrainMTestFileGenerator.cxx
   UMATFiniteStrainMTestFileGenerator.cxx)
@@ -146,7 +146,7 @@ if(HAVE_CASTEM)
 	UMATGetModellingHypothesis.cxx
 	UMATStressFreeExpansionHandler.cxx
 	UMATException.cxx)
-    tfel_library(UMATInterface ${UMATInterface_SOURCES})
+    mfront_library(UMATInterface ${UMATInterface_SOURCES})
     target_link_libraries(UMATInterface
       MTestFileGenerator
       TFELUtilities
@@ -166,7 +166,7 @@ if(HAVE_ASTER)
     AsterStressFreeExpansionHandler.cxx
     AsterComputeThermalExpansionCoefficientTensor.cxx
     AsterTangentOperator.cxx)
-  tfel_library(AsterInterface ${AsterInterface_SOURCES})
+  mfront_library(AsterInterface ${AsterInterface_SOURCES})
   target_link_libraries(AsterInterface
     MTestFileGenerator
     TFELUtilities
@@ -190,7 +190,7 @@ if(HAVE_CYRANO)
     CyranoComputeThermalExpansionCoefficientTensor.cxx
     CyranoOutOfBoundsPolicy.cxx
     CyranoGetModellingHypothesis.cxx)
-  tfel_library(CyranoInterface ${CyranoInterface_SOURCES})
+  mfront_library(CyranoInterface ${CyranoInterface_SOURCES})
   target_link_libraries(CyranoInterface
     MTestFileGenerator
     TFELUtilities

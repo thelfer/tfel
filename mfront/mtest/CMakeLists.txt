@@ -74,7 +74,7 @@ set(TFELMTest_LDADD
     ${TFELMTest_LDADD})
 endif(HAVE_CYRANO)
 
-tfel_library(TFELMTest ${TFELMTest_SOURCES})
+mtest_library(TFELMTest ${TFELMTest_SOURCES})
 target_link_libraries(TFELMTest ${TFELMTest_LDADD})
 
 add_executable(mtest MTestMain.cxx)

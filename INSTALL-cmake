@@ -43,6 +43,12 @@ Options
                             used on other machines as long as the architecture and the compiler
 			    version are the same
 
+  enable-doxygen-doc    : generate doxygen documentation (disabled by default)
+  disable-reference-doc : disallow the generation of the reference documentation
+                          (enabled by default if latex or pandoc is found)
+  disable-website       : do not generate the TFEL website
+                          (enabled by default if pandoc is found)
+
 cmake usefull variables
 =======================
 
@@ -82,9 +88,9 @@ main targets:
 =============
 
   - all              : build the libraries
-  - install          : install the libraries
-  - doc-pdf-install  : install TFEL pdf documentation (requires LaTeX)
-  - doc-html-install : install TFEL doxygen documentation (requires Doxygen)
-  - doc-install      : install both pdf and doxygen documentations 
+  - doc-html         : generate the doxygen documentation
+  - doc-pdf          : generate all the documentation in pdf
+  - website          : generate the TFEL website
+  - doc              : generate all the documentation
   - check            : build tests and execute them
-  - tests-install    : install tests files
+  - install          : install the libraries

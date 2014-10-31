@@ -801,6 +801,7 @@ docs/web/mfront-template.html -text
 docs/web/models.md -text
 docs/web/mtest.md -text
 docs/web/news.md -text
+docs/web/packages.md -text
 docs/web/robots.txt -text
 docs/web/svn.md -text
 docs/web/tex/lcmd_utf8.tex -text

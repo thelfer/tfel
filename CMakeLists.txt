@@ -184,6 +184,10 @@ if(enable-python-bindings)
     message(FATAL_ERROR "Boost libraries not found.\n"
       "Required packages are :" ${BOOST_MANDATORY_COMPONENTS})
   endif(Boost_FOUND)
+  list(APPEND CPACK_COMPONENTS_ALL python_bindings)
+  set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION 
+    "Contains the python bindings for TFEL, MFront and MTest")
+  set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS  core mfront mtest)
 endif(enable-python-bindings)
 
 # sub directories
@@ -202,43 +206,71 @@ add_subdirectory(tests)
 add_custom_target(doc)
 
 # add a target to generate API documentation with Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-                 ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-  add_custom_target(doc-html
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM)
-  add_dependencies(doc doc-html)
-  list(APPEND CPACK_COMPONENTS_ALL doxygen)
-  set(CPACK_COMPONENT_DOXYGEN_DESCRIPTION
-    "Contains the TFEL doxygen documentation")
-endif(DOXYGEN_FOUND)
+option(enable-doxygen-doc "enable generation of the Doxygen documentation" OFF)
+if(enable-doxygen-doc)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+      ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+    add_custom_target(doc-html
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMENT "Generating API documentation with Doxygen" VERBATIM)
+    add_dependencies(doc doc-html)
+    list(APPEND CPACK_COMPONENTS_ALL doxygen)
+    set(CPACK_COMPONENT_DOXYGEN_DESCRIPTION
+      "Contains the TFEL doxygen documentation")
+    set(GENERATE_DOXYGEN ON)
+  else(DOXYGEN_FOUND)
+    message(FATAL_ERROR "doxygen is required")
+  endif(DOXYGEN_FOUND)
+else(enable-doxygen-doc)
+  message(STATUS "doxygen documentation is not enabled")
+endif(enable-doxygen-doc)
 
 # Looking for LaTeX
-find_package(LATEX)
-if(LATEX_COMPILER)
-  add_custom_target(doc-pdf)
-  add_dependencies(doc doc-pdf)
-  message(STATUS "latex compiler found : ${LATEX_COMPILER}")
-  set(HAVE_LATEX ON)
-  list(APPEND CPACK_COMPONENTS_ALL docs)
-  set(CPACK_COMPONENT_DOCS_DESCRIPTION
-    "Contains the documentation related to TFEL, MFront an MTest")
-endif(LATEX_COMPILER)
+option(disable-reference-doc "disable generation of the reference documentation" OFF)
+if(NOT disable-reference-doc)
+  find_package(LATEX)
+  if(LATEX_COMPILER)
+    add_custom_target(doc-pdf)
+    add_dependencies(doc doc-pdf)
+    message(STATUS "latex compiler found : ${LATEX_COMPILER}")
+    set(HAVE_LATEX ON)
+  endif(LATEX_COMPILER)
+endif(NOT disable-reference-doc)
 
-# Looking for pandoc (http://johnmacfarlane.net/pandoc)
-include(cmake/modules/pandoc.cmake)
-if(HAVE_PANDOC)
-  list(APPEND CPACK_COMPONENTS_ALL website)
-  set(CPACK_COMPONENT_WEBSITE_DESCRIPTION
-    "Contains the TFEL web site")
-endif(HAVE_PANDOC)
+option(disable-website "disable generation of the website" OFF)
+if((NOT disable-website) OR (NOT disable-reference-doc))
+  # Looking for pandoc (http://johnmacfarlane.net/pandoc)
+  include(cmake/modules/pandoc.cmake)
+endif((NOT disable-website) OR (NOT disable-reference-doc))
 
-if(HAVE_LATEX OR HAVE_PANDOC OR DOXYGEN_FOUND)
-  add_subdirectory(docs)
-endif(HAVE_LATEX OR HAVE_PANDOC OR DOXYGEN_FOUND)
+if(NOT disable-reference-doc)
+  if(HAVE_PANDOC OR HAVE_LATEX)
+    list(APPEND CPACK_COMPONENTS_ALL docs)
+    set(CPACK_COMPONENT_DOCS_DESCRIPTION
+      "Contains the documentation related to TFEL, MFront an MTest")
+  endif(HAVE_PANDOC OR HAVE_LATEX)
+  set(GENERATE_REFERENCE_DOC ON)
+else(NOT disable-reference-doc)
+  message(STATUS "Generation of the reference documentation disabled")
+endif(NOT disable-reference-doc)
+
+if(NOT disable-website)
+  if(HAVE_PANDOC)
+    list(APPEND CPACK_COMPONENTS_ALL website)
+    set(CPACK_COMPONENT_WEBSITE_DESCRIPTION
+      "Contains the TFEL web site")
+    set(GENERATE_WEBSITE ON)
+  endif(HAVE_PANDOC)
+else(NOT disable-website)
+  message(STATUS "Generation of the TFEL website disabled")
+endif(NOT disable-website)
+
+# docs is always included because of the documentation txt files of
+# mfront and mtest (--help-command option of mfront and mtest)
+add_subdirectory(docs)
 
 #set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
 set (CPACK_PACKAGE_INSTALL_DIRECTORY   "${PACKAGE_NAME}-${VERSION}")
@@ -246,7 +278,7 @@ set (CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
 set (CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
 set (CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
 set (CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
-set (CPACK_PACKAGE_VENDOR              "CEA")
+set (CPACK_PACKAGE_VENDOR              "CEA/EDF")
 set (CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "tfel is a mathematical library")
 set (CPACK_PACKAGE_DESCRIPTION 	       "tfel is a mathematical library")
