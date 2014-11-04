@@ -11,9 +11,9 @@
 @IntegerConstant Nv = 3;
 
 @MaterialProperty real k0;
-k0.setEntryName("BulkModulus");
+k0.setGlossaryName("BulkModulus");
 @MaterialProperty real mu0;
-mu0.setEntryName("ShearModulus");
+mu0.setGlossaryName("ShearModulus");
 
 @MaterialProperty real ki[Nv];
 ki.setEntryName("ViscoelasticBulkModulus");
