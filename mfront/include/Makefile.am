@@ -76,17 +76,17 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/UMATSmallStrainMTestFileGenerator.hxx  \
 			MFront/UMATFiniteStrainMTestFileGenerator.hxx
 
-nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                       \
-			MFront/IsotropicMisesCreepDSL.hxx                          \
-			MFront/IsotropicStrainHardeningMisesCreepDSL.hxx           \
-			MFront/IsotropicMisesPlasticFlowDSL.hxx                    \
-			MFront/MultipleIsotropicMisesFlowsDSL.hxx                  \
-			MFront/RungeKuttaDSL.hxx                                   \
+nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                          \
+			MFront/IsotropicMisesCreepDSL.hxx                             \
+			MFront/IsotropicStrainHardeningMisesCreepDSL.hxx              \
+			MFront/IsotropicMisesPlasticFlowDSL.hxx                       \
+			MFront/MultipleIsotropicMisesFlowsDSL.hxx                     \
+			MFront/RungeKuttaDSL.hxx                                      \
 			MFront/PerformanceProfiling.hxx			              \
-			MFront/BehaviourBrick.hxx                                              \
-			MFront/BehaviourBrickBase.hxx                                          \
-			MFront/ElasticityBehaviourBrick.hxx                                    \
-			MFront/BehaviourBrickFactory.hxx                                       \
+			MFront/BehaviourBrick.hxx                                     \
+			MFront/BehaviourBrickBase.hxx                                 \
+			MFront/ElasticityBehaviourBrick.hxx                           \
+			MFront/BehaviourBrickFactory.hxx                              \
 			MFront/NonLinearSystemSolver.hxx                              \
 			MFront/NonLinearSystemSolverBase.hxx                          \
 			MFront/NonLinearSystemSolverFactory.hxx                       \
@@ -95,10 +95,10 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/SecondBroydenSolver.hxx			              \
 			MFront/LevenbergMarquardtSolvers.hxx		              \
 			MFront/PowellDogLegAlgorithmBase.hxx		              \
-			MFront/ImplicitDSLBase.hxx                                 \
-			MFront/ImplicitDSL.hxx                                     \
-			MFront/ImplicitDSLII.hxx                                   \
-			MFront/ImplicitFiniteStrainDSL.hxx                         \
+			MFront/ImplicitDSLBase.hxx                                    \
+			MFront/ImplicitDSL.hxx                                        \
+			MFront/ImplicitDSLII.hxx                                      \
+			MFront/ImplicitFiniteStrainDSL.hxx                            \
 			MFront/NewtonRaphsonSolvers.hxx                               \
 			MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx     \
 			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx
@@ -111,6 +111,7 @@ nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 			 MFront/CppTestMaterialPropertyInterface.hxx        \
 			 MFront/GnuplotMaterialPropertyInterface.hxx        \
 			 MFront/ExcelMaterialPropertyInterface.hxx          \
+			 MFront/ExcelMaterialPropertyInternalInterface.hxx  \
 			 MFront/LaTeXMaterialPropertyInterface.hxx          \
 			 MFront/LaTeXBehaviourAnalyser.hxx     \
 			 MFront/MarkdownBehaviourAnalyser.hxx  \

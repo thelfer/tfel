@@ -75,22 +75,31 @@ set(TFELMTest_LDADD
     ${TFELMTest_LDADD})
 endif(HAVE_CYRANO)
 
-tfel_library(TFELMTest ${TFELMTest_SOURCES})
+mtest_library(TFELMTest ${TFELMTest_SOURCES})
 target_link_libraries(TFELMTest ${TFELMTest_LDADD})
 
 add_executable(mtest MTestMain.cxx)
 if(WIN32 AND enable-static)
-  target_link_libraries(mtest
+  set(mtest_static_link_libraries
     TFELMTest-static
     MFrontLogStream-static    
+    TFELMaterial-static
     TFELMathParser-static
     TFELMath-static
     TFELSystem-static
     TFELUtilities-static
     TFELException-static
-    AsterInterface-static
-    UMATInterface-static
     TFELTests-static)
+  if(HAVE_CASTEM)
+    list(APPEND mtest_static_link_libraries UMATInterface-static)
+  endif(HAVE_CASTEM)
+  if(HAVE_ASTER)
+    list(APPEND mtest_static_link_libraries AsterInterface-static)
+  endif(HAVE_ASTER)
+  if(HAVE_CYRANO)
+    list(APPEND mtest_static_link_libraries CyranoInterface-static)
+  endif(HAVE_CYRANO)
+  target_link_libraries(mtest ${mtest_static_link_libraries})
   set_target_properties(mtest PROPERTIES COMPILE_FLAGS "-DTFEL_STATIC_BUILD")
   set_target_properties(mtest PROPERTIES LINK_FLAGS "-static-libgcc -static") 
   set_target_properties(mtest PROPERTIES LINK_SEARCH_END_STATIC ON) 

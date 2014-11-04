@@ -184,6 +184,10 @@ if(enable-python-bindings)
     message(FATAL_ERROR "Boost libraries not found.\n"
       "Required packages are :" ${BOOST_MANDATORY_COMPONENTS})
   endif(Boost_FOUND)
+  list(APPEND CPACK_COMPONENTS_ALL python_bindings)
+  set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION 
+    "Contains the python bindings for TFEL, MFront and MTest")
+  set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS  core mfront mtest)
 endif(enable-python-bindings)
 
 # sub directories
@@ -202,65 +206,115 @@ add_subdirectory(tests)
 add_custom_target(doc)
 
 # add a target to generate API documentation with Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-                 ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-  add_custom_target(doc-html
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM)
-  add_dependencies(doc doc-html)
-  list(APPEND CPACK_COMPONENTS_ALL doxygen)
-  set(CPACK_COMPONENT_DOXYGEN_DESCRIPTION
-    "Contains the TFEL doxygen documentation")
-endif(DOXYGEN_FOUND)
+option(enable-doxygen-doc "enable generation of the Doxygen documentation" OFF)
+if(enable-doxygen-doc)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+      ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+    add_custom_target(doc-html
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMENT "Generating API documentation with Doxygen" VERBATIM)
+    add_dependencies(doc doc-html)
+    list(APPEND CPACK_COMPONENTS_ALL doxygen)
+    set(CPACK_COMPONENT_DOXYGEN_DESCRIPTION
+      "Contains the TFEL doxygen documentation")
+    set(GENERATE_DOXYGEN ON)
+  else(DOXYGEN_FOUND)
+    message(FATAL_ERROR "doxygen is required")
+  endif(DOXYGEN_FOUND)
+else(enable-doxygen-doc)
+  message(STATUS "doxygen documentation is not enabled")
+endif(enable-doxygen-doc)
 
 # Looking for LaTeX
-find_package(LATEX)
-if(LATEX_COMPILER)
-  add_custom_target(doc-pdf)
-  add_dependencies(doc doc-pdf)
-  message(STATUS "latex compiler found : ${LATEX_COMPILER}")
-  set(HAVE_LATEX ON)
-  list(APPEND CPACK_COMPONENTS_ALL docs)
-  set(CPACK_COMPONENT_DOCS_DESCRIPTION
-    "Contains the documentation related to TFEL, MFront an MTest")
-endif(LATEX_COMPILER)
+option(disable-reference-doc "disable generation of the reference documentation" OFF)
+if(NOT disable-reference-doc)
+  find_package(LATEX)
+  if(LATEX_COMPILER)
+    if((NOT PS2PDF_CONVERTER) AND WIN32)
+      # fixes cmake bug #0015198
+      find_program(PS2PDF_CONVERTER
+	NAMES ps2pdf14.bat ps2pdf14 ps2pdf
+	PATHS ${GHOSTSCRIPT_LIBRARY_PATH}
+        ${MIKTEX_BINARY_PATH})
+    endif((NOT PS2PDF_CONVERTER) AND WIN32)
+    add_custom_target(doc-pdf)
+    add_dependencies(doc doc-pdf)
+    message(STATUS "latex compiler found : ${LATEX_COMPILER}")
+    set(HAVE_LATEX ON)
+  endif(LATEX_COMPILER)
+endif(NOT disable-reference-doc)
 
-# Looking for pandoc (http://johnmacfarlane.net/pandoc)
-include(cmake/modules/pandoc.cmake)
-if(HAVE_PANDOC)
-  list(APPEND CPACK_COMPONENTS_ALL website)
-  set(CPACK_COMPONENT_WEBSITE_DESCRIPTION
-    "Contains the TFEL web site")
-endif(HAVE_PANDOC)
+option(disable-website "disable generation of the website" OFF)
+if((NOT disable-website) OR (NOT disable-reference-doc))
+  # Looking for pandoc (http://johnmacfarlane.net/pandoc)
+  include(cmake/modules/pandoc.cmake)
+endif((NOT disable-website) OR (NOT disable-reference-doc))
 
-if(HAVE_LATEX OR HAVE_PANDOC OR DOXYGEN_FOUND)
-  add_subdirectory(docs)
-endif(HAVE_LATEX OR HAVE_PANDOC OR DOXYGEN_FOUND)
+if(NOT disable-reference-doc)
+  if(HAVE_PANDOC OR HAVE_LATEX)
+    list(APPEND CPACK_COMPONENTS_ALL docs)
+    set(CPACK_COMPONENT_DOCS_DESCRIPTION
+      "Contains the documentation related to TFEL, MFront an MTest")
+  endif(HAVE_PANDOC OR HAVE_LATEX)
+  set(GENERATE_REFERENCE_DOC ON)
+else(NOT disable-reference-doc)
+  message(STATUS "Generation of the reference documentation disabled")
+endif(NOT disable-reference-doc)
 
-#set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
-set (CPACK_PACKAGE_INSTALL_DIRECTORY   "${PACKAGE_NAME}-${VERSION}")
-set (CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
-set (CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
-set (CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
-set (CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
-set (CPACK_PACKAGE_VENDOR              "CEA")
-set (CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "tfel is a mathematical library")
-set (CPACK_PACKAGE_DESCRIPTION 	       "tfel is a mathematical library")
+if(NOT disable-website)
+  if(HAVE_PANDOC)
+    list(APPEND CPACK_COMPONENTS_ALL website)
+    set(CPACK_COMPONENT_WEBSITE_DESCRIPTION
+      "Contains the TFEL web site")
+    set(GENERATE_WEBSITE ON)
+  endif(HAVE_PANDOC)
+else(NOT disable-website)
+  message(STATUS "Generation of the TFEL website disabled")
+endif(NOT disable-website)
+
+# docs is always included because of the documentation txt files of
+# mfront and mtest (--help-command option of mfront and mtest)
+add_subdirectory(docs)
+
+set(CPACK_PACKAGE_VERSION   "${CMAKE_PROJECT_NAME}-${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}.${TFEL_VERSION_PATCH}")
+if(${CMAKE_SYSTEM_PROCESSOR})
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
+else(${CMAKE_SYSTEM_PROCESSOR})
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}") 
+endif(${CMAKE_SYSTEM_PROCESSOR})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CPACK_PACKAGE_VERSION}")
+set(CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
+set(CPACK_PACKAGE_CONTACT             "${PACKAGE_BUGREPORT}")
+set(CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
+set(CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
+set(CPACK_PACKAGE_VENDOR              "CEA/EDF")
+set(CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "TFEL is a numerical library.")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENCE-GNU-GPL")
 
 # rpm packaging
 set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_RPM_PACKAGE_LICENSE "GPL/CECILL-A")
 
 # debian packaging
+set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Helfer Thomas ${PACKAGE_BUGREPORT}")
 set(CPACK_DEBIAN_PACKAGE_SECTION      "Science")
-set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE     "${TFEL_WEBSITE}")
 
 #NSIS
-set (CPACK_NSIS_MODIFY_PATH ON)
+set(CPACK_NSIS_MODIFY_PATH ON)
+set(CPACK_NSIS_MUI_ICON       "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_MUI_UNIICON    "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_URL_INFO_ABOUT "${TFEL_WEBSITE}")
+set(CPACK_NSIS_HELP_LINK "${TFEL_WEBSITE}")
+set(CPACK_NSIS_CONTACT "${PACKAGE_BUGREPORT}")
+set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 
 # if(UNIX)
 #   add_custom_target(dist-bzip2

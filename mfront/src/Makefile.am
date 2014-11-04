@@ -79,6 +79,7 @@ mfront_SOURCES = main.cxx                                               \
 		 CppMaterialPropertyInterface.cxx                       \
 		 CppTestMaterialPropertyInterface.cxx                   \
 		 ExcelMaterialPropertyInterface.cxx                     \
+		 ExcelMaterialPropertyInternalInterface.cxx             \
 		 LaTeXMaterialPropertyInterface.cxx                     \
 		 LaTeXBehaviourAnalyser.cxx                             \
 		 MarkdownBehaviourAnalyser.cxx                          \

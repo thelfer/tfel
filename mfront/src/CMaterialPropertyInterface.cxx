@@ -31,6 +31,13 @@ namespace mfront
     : CMaterialPropertyInterfaceBase()
   {}
 
+  std::string
+  CMaterialPropertyInterface::getGeneratedLibraryName(const std::string& l,
+					       const std::string& m) const
+  {
+    return "lib"+getMaterialLawLibraryNameBase(l,m);
+  } // end of CMaterialPropertyInterface::getGeneratedLibraryName
+
   std::map<std::string,std::vector<std::string> >
   CMaterialPropertyInterface::getGlobalDependencies(const std::string& library,
 					     const std::string& material,
@@ -38,7 +45,7 @@ namespace mfront
   {
     using namespace std;
     map<string,vector<string> > libs;
-    libs["lib"+getMaterialLawLibraryNameBase(library,material)].push_back("-lm");
+    libs[this->getGeneratedLibraryName(library,material)].push_back("-lm");
     return libs;
   } // end of CMaterialPropertyInterface::getGeneratedSources
 
@@ -59,7 +66,7 @@ namespace mfront
     using namespace std;
     map<string,vector<string> > src;
     string name = this->getSrcFileName(material,className);
-    src["lib"+getMaterialLawLibraryNameBase(library,material)].push_back(name+".cxx");
+    src[this->getGeneratedLibraryName(library,material)].push_back(name+".cxx");
     return src;
   } // end of CMaterialPropertyInterface::getGeneratedSources
 
@@ -84,7 +91,7 @@ namespace mfront
   {
     using namespace std;
     map<string,vector<string> > libs;
-    libs["lib"+getMaterialLawLibraryNameBase(library,material)].push_back("-lm");
+    libs[this->getGeneratedLibraryName(library,material)].push_back("-lm");
     return libs;
   } // end of CMaterialPropertyInterface::getLibrariesDependencies()
 
@@ -169,9 +176,9 @@ namespace mfront
 					      const std::string& className)
   {
     if(material.empty()){
-      return "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n"+className;
+      return "MFRONT_SHAREDOBJ double MFRONT_CALLING_CONVENTION\n"+className;
     }
-    return "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n"+material+"_"+className;
+    return "MFRONT_SHAREDOBJ double MFRONT_CALLING_CONVENTION\n"+material+"_"+className;
   } // end of CMaterialPropertyInterface::getFunctionDeclaration
   
   bool
@@ -185,9 +192,9 @@ namespace mfront
 							 const std::string& className)
   {
     if(material.empty()){
-      return "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"+className+"_checkBounds";
+      return "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+className+"_checkBounds";
     }
-    return "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"+material+"_"+className+"_checkBounds";
+    return "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+material+"_"+className+"_checkBounds";
   } // end of CMaterialPropertyInterface::getCheckBoundsFunctionDeclaration
   
   CMaterialPropertyInterface::~CMaterialPropertyInterface()

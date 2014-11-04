@@ -13,7 +13,7 @@
 
 // g++ -fPIC -DPIC `tfel-config --includes --libs --utilities --glossary` generate_glossary.cxx -o generate_glossary
 
-// g++ -fPIC -DPIC generate_glossary.cxx  -o generate_glossary -I/home/th202608/codes/tfel/trunk/install/include -L/home/th202608/codes/tfel/trunk/install/lib -lTFELUtilities  -lTFELGlossary && ./generate_glossary && mv Glossary.hxx ../../include/TFEL/Glossary/Glossary.hxx && mv Glossary.cxx ../../src/Glossary/Glossary.cxx && mv PythonGlossary.cxx ../../bindings/python/tfel/Glossary.cxx  &&  ./generate_glossary && pandoc -f markdown+tex_math_single_backslash --toc  glossary-pandoc.txt -o /tmp/glossary.docx
+// g++ -fPIC -DPIC generate_glossary.cxx  -o generate_glossary -I/home/th202608/codes/tfel/trunk/install/include -L/home/th202608/codes/tfel/trunk/install/lib -lTFELUtilities  -lTFELGlossary && ./generate_glossary && mv Glossary.hxx ../../include/TFEL/Glossary/Glossary.hxx && mv Glossary.cxx ../../src/Glossary/Glossary.cxx && mv PythonGlossary.cxx ../../bindings/python/tfel/Glossary.cxx && pandoc -f markdown+tex_math_single_backslash --toc  glossary-pandoc.txt -o /tmp/glossary.docx && mv glossary-pandoc.txt ../../docs/web/glossary.md
 
 #include<iostream>
 #include<stdexcept>
@@ -798,11 +798,11 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer)
   doc << "% TFEL Glossary description" << endl;
   doc << "% Helfer Thomas; Bernaud Stéphane" << endl;
   doc << endl;
-  doc << "\\newcommand{\\dtot}{\\ensuremath{\\mathrm{d}}}" << endl;
-  doc << "\\newcommand{\\paren}[1]{\\ensuremath{{\\displaystyle \\left(#1\\right)}}}" << endl;
-  doc << "\\newcommand{\\average}[1]{\\ensuremath{{\\displaystyle \\left\\langle#1\\right\\rangle}}}" << endl;
-  doc << "\\newcommand{\\Frac}[2]{\\ensuremath{{\\displaystyle \\frac{\\displaystyle #1}{\\displaystyle #2}}}}" << endl;
-  doc << "\\newcommand{\\deriv}[2]{\\ensuremath{{\\displaystyle \\frac{\\displaystyle \\partial #1}{\\displaystyle \\partial #2}}}}" << endl;
+  doc << "\\newcommand{\\dtot}{\\mathrm{d}}" << endl;
+  doc << "\\newcommand{\\paren}[1]{{\\displaystyle \\left(#1\\right)}}" << endl;
+  doc << "\\newcommand{\\average}[1]{{\\displaystyle \\left\\langle#1\\right\\rangle}}" << endl;
+  doc << "\\newcommand{\\Frac}[2]{{\\displaystyle \\frac{\\displaystyle #1}{\\displaystyle #2}}}" << endl;
+  doc << "\\newcommand{\\deriv}[2]{{\\displaystyle \\frac{\\displaystyle \\partial #1}{\\displaystyle \\partial #2}}}" << endl;
 
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
     const vector<string>& n = p->getNames();

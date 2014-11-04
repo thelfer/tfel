@@ -32,6 +32,8 @@ return_value_policy<reference_existing_object>())
 "la contrainte axiale")
 .def_readonly("B10BurnUp",&Glossary::B10BurnUp,
 "le taux d'usure en \\(\\mbox{}^{10}B\\)")
+.def_readonly("BulkModulus",&Glossary::BulkModulus,
+"le module de compressibilité d'un matériau isotrope")
 .def_readonly("BurnUp_AtPercent",&Glossary::BurnUp_AtPercent,
 "le taux de combustion en atome pour cent")
 .def_readonly("BurnUp_MWJperTm",&Glossary::BurnUp_MWJperTm,
@@ -64,6 +66,8 @@ return_value_policy<reference_existing_object>())
 "le flux de neutron rapide")
 .def_readonly("FirstAxisSecondMomentArea",&Glossary::FirstAxisSecondMomentArea,
 "??")
+.def_readonly("FirstLameCoefficient",&Glossary::FirstLameCoefficient,
+"le premier coefficient de Lamé d'un matériau isotrope")
 .def_readonly("FissionDensity",&Glossary::FissionDensity,
 "la densité de fission")
 .def_readonly("GaseousSwelling",&Glossary::GaseousSwelling,
@@ -88,6 +92,10 @@ return_value_policy<reference_existing_object>())
 "la température")
 .def_readonly("MassDensity",&Glossary::MassDensity,
 "la densité massique")
+.def_readonly("MeanBurnUp_AtPercent",&Glossary::MeanBurnUp_AtPercent,
+"le taux de combustion en atome pour cent moyen (au sens spatial) pour un matériau donné")
+.def_readonly("MeanBurnUp_MWJperTm",&Glossary::MeanBurnUp_MWJperTm,
+"le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens spatial) pour un matériau donné")
 .def_readonly("MeanIrradiationTemperature",&Glossary::MeanIrradiationTemperature,
 "la température moyenne dans le temps et dans un domaine \\(\\Omega\\) donné")
 .def_readonly("MeanTemperature",&Glossary::MeanTemperature,
@@ -138,6 +146,8 @@ return_value_policy<reference_existing_object>())
 "la troisième contrainte principale")
 .def_readonly("SecondAxisSecondMomentArea",&Glossary::SecondAxisSecondMomentArea,
 "??")
+.def_readonly("ShearModulus",&Glossary::ShearModulus,
+"le module de cisaillement d'un matériau isotrope")
 .def_readonly("ShearModulus12",&Glossary::ShearModulus12,
 "le module de cisaillement d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie")
 .def_readonly("ShearModulus13",&Glossary::ShearModulus13,

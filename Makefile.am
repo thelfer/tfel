@@ -68,7 +68,7 @@ EXTRA_DIST = bootstrap.sh   \
 	     INSTALL        \
              INSTALL-cmake
 
-licencesdir = $(prefix)
+licencesdir = $(pkgdatadir)
 dist_licences_DATA = LICENCE-GNU-GPL \
                      LICENCE-CECILL-A-EN \
                      LICENCE-CECILL-A-FR

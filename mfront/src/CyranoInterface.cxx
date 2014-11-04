@@ -564,7 +564,7 @@ namespace mfront{
 							const std::string& name) const
   {
     using namespace std;
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\ncyrano"
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\ncyrano"
     	<< makeLowerCase(name)
     	<< "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
     	<< "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"
@@ -595,7 +595,7 @@ namespace mfront{
   {
     using namespace std;
     const string cyranoFortranFunctionName = this->getFunctionName(n)+"_F77";
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n"
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
 	<< this->getFunctionName(n)
 	<< "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
 	<< "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"

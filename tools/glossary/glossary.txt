@@ -170,6 +170,24 @@
  short_description : "le module d'Young d'un matériau isotrope";
 };
 
+"ShearModulus"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "le module de cisaillement d'un matériau isotrope";
+};
+
+"BulkModulus"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "le module de compressibilité d'un matériau isotrope";
+};
+
+"FirstLameCoefficient"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "le premier coefficient de Lamé d'un matériau isotrope";
+};
+
 "YoungModulus1"{
  unit : "Pa";
  type : "scalar";
@@ -518,6 +536,13 @@
  short_description : "le taux de combustion en atome pour cent";
 };
 
+"MeanBurnUp_AtPercent"{
+ name : "MeanBurnUp (at.%)";
+ unit : "at./100";
+ type : "scalar";
+ short_description : "le taux de combustion en atome pour cent moyen (au sens spatial) pour un matériau donné";
+};
+
 "BurnUp_MWJperTm"{
  name : "BurnUp (MWJ/tm)";
  unit : "MWJ/tm";
@@ -525,6 +550,12 @@
  short_description : "le taux de combustion en MegaWattJour par tonne (métal)";
 };
 
+"MeanBurnUp_MWJperTm"{
+ name : "MeanBurnUp (MWJ/tm)";
+ unit : "MWJ/tm";
+ type : "scalar";
+ short_description : "le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens spatial) pour un matériau donné";
+};
 
 "B10BurnUp"{
  unit : "m^{-3}";

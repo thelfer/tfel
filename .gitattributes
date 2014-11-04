@@ -1498,6 +1498,7 @@ mfront/include/MFront/DefaultFiniteStrainDSL.hxx -text
 mfront/include/MFront/DrivingVariable.hxx -text
 mfront/include/MFront/ElasticityBehaviourBrick.hxx -text
 mfront/include/MFront/ExcelMaterialPropertyInterface.hxx -text
+mfront/include/MFront/ExcelMaterialPropertyInternalInterface.hxx -text
 mfront/include/MFront/FileDescription.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx -text
@@ -1709,6 +1710,7 @@ mfront/src/DefaultFiniteStrainDSL.cxx -text
 mfront/src/DrivingVariable.cxx -text
 mfront/src/ElasticityBehaviourBrick.cxx -text
 mfront/src/ExcelMaterialPropertyInterface.cxx -text
+mfront/src/ExcelMaterialPropertyInternalInterface.cxx -text
 mfront/src/FiniteStrainBehaviourTangentOperatorConversion.cxx -text
 mfront/src/FiniteStrainBehaviourTangentOperatorConversionPath.cxx -text
 mfront/src/FortranMaterialPropertyInterface.cxx -text

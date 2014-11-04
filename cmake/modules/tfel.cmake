@@ -2,16 +2,15 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   project("tfel")
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}")
+  set(TFEL_WEBSITE "http://tfel.sourceforce.net")
   # the version number.
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
-  set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}.${TFEL_VERSION_PATCH}")
-  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
   add_definitions("-DVERSION=\\\"\"${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}\"\\\"")
 endmacro(tfel_project)
 
-set(CPACK_COMPONENTS_ALL core mfront mtest python-bindings)
+set(CPACK_COMPONENTS_ALL core mfront mtest)
 
 set(CPACK_COMPONENT_CORE_DESCRIPTION 
   "Contains all the core libraries developped within TFEL")
@@ -19,12 +18,9 @@ set(CPACK_COMPONENT_MFRONT_DESCRIPTION
   "Contains the MFront code generator and the associated libraries")
 set(CPACK_COMPONENT_MTESTS_DESCRIPTION
   "Contains the MTest tool")
-set(CPACK_COMPONENT_PYTHON-BINDINGS_DESCRIPTION 
-   "Contains the python bindings for TFEL, MFront and MTest")
 
 set(CPACK_COMPONENT_MFRONT_DEPENDS core)
 set(CPACK_COMPONENT_MTEST_DEPENDS  core mfront)
-set(CPACK_COMPONENT_PYTHON-BINDINGS_DEPENDS  core mfront mtest)
 
 macro(install_header dir file)
   install(FILES ${dir}/${file}
@@ -55,41 +51,53 @@ macro(install_mfront_data dir file)
 	  COMPONENT mfront)
 endmacro(install_mfront_data)
 
+macro(tfel_library_internal name component)
+  if(${ARGC} LESS 2)
+    message(FATAL_ERROR "tfel_library_internal : no source specified")
+  endif(${ARGC} LESS 2)
+  add_library(${name} SHARED ${ARGN})
+  if(WIN32)
+    install(TARGETS ${name} DESTINATION bin
+      COMPONENT ${component})
+  else(WIN32)
+    install(TARGETS ${name}
+      DESTINATION lib${LIB_SUFFIX}
+      COMPONENT ${component})
+  endif(WIN32)
+  if(enable-static)
+    add_library(${name}-static STATIC ${ARGN})
+    set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}")
+    # Now the library target "${name}-static" will be named "${name}.lib"
+    # with MS tools.
+    # This conflicts with the "${name}.lib" import library corresponding
+    # to "${name}.dll",
+    # so we add a "lib" prefix (which is default on other platforms
+    # anyway):
+    set_target_properties(${name}-static PROPERTIES PREFIX "lib")
+    # Help CMake 2.6.x and lower (not necessary for 2.8 and above, but
+    # doesn't hurt):
+    set_target_properties(${name}        PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+    set_target_properties(${name}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+    set_target_properties(${name}-static PROPERTIES COMPILE_FLAGS "-D${name}_EXPORTS -DTFEL_STATIC_BUILD")
+    if(WIN32)
+      install(TARGETS ${name}-static DESTINATION bin)
+    else(WIN32)
+      install(TARGETS ${name}-static DESTINATION lib${LIB_SUFFIX})
+    endif(WIN32)
+  endif(enable-static)
+endmacro(tfel_library_internal)
+
 macro(tfel_library name)
-if(${ARGC} LESS 2)
-   message(FATAL_ERROR "tfel_library : no source specified")
-endif(${ARGC} LESS 2)
-add_library(${name} SHARED ${ARGN})
-if(WIN32)
- install(TARGETS ${name} DESTINATION bin
-   COMPONENT core)
-else(WIN32)
- install(TARGETS ${name}
-   DESTINATION lib${LIB_SUFFIX}
-   COMPONENT core)
-endif(WIN32)
-if(enable-static)
- add_library(${name}-static STATIC ${ARGN})
- set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}")
- # Now the library target "${name}-static" will be named "${name}.lib"
- # with MS tools.
- # This conflicts with the "${name}.lib" import library corresponding
- # to "${name}.dll",
- # so we add a "lib" prefix (which is default on other platforms
- # anyway):
- set_target_properties(${name}-static PROPERTIES PREFIX "lib")
- # Help CMake 2.6.x and lower (not necessary for 2.8 and above, but
- # doesn't hurt):
- set_target_properties(${name}        PROPERTIES CLEAN_DIRECT_OUTPUT 1)
- set_target_properties(${name}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
- set_target_properties(${name}-static PROPERTIES COMPILE_FLAGS "-D${name}_EXPORTS -DTFEL_STATIC_BUILD")
-if(WIN32)
- install(TARGETS ${name}-static DESTINATION bin)
-else(WIN32)
- install(TARGETS ${name}-static DESTINATION lib${LIB_SUFFIX})
-endif(WIN32)
-endif(enable-static)
+  tfel_library_internal(${name} core ${ARGN})
 endmacro(tfel_library)
+
+macro(mfront_library name)
+  tfel_library_internal(${name} mfront ${ARGN})
+endmacro(mfront_library)
+
+macro(mtest_library name)
+  tfel_library_internal(${name} mtest ${ARGN})
+endmacro(mtest_library)
 
 macro(add_mfront_behaviour_generated_source lib interface file)
   set(mfront_file   "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${file}.mfront")
@@ -148,7 +156,7 @@ macro(python_lib_module name package)
   add_library(py_${package}_${name} SHARED ${ARGN})
   install(TARGETS py_${package}_${name}
     DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
-    COMPONENT python-bindings)
+    COMPONENT python_bindings)
   set_target_properties(py_${package}_${name} PROPERTIES PREFIX "")
   set_target_properties(py_${package}_${name} PROPERTIES OUTPUT_NAME ${name})
   target_link_libraries(py_${package}_${name}
@@ -181,6 +189,6 @@ macro(tfel_python_script dir)
     endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
     install(PROGRAMS ${python_script}
       DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${dir}/
-      COMPONENT python-bindings)
+      COMPONENT python_bindings)
   endforeach(pyscript ${ARGN})
 endmacro(tfel_python_script)

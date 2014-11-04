@@ -386,7 +386,7 @@ namespace mfront{
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\naster"
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\naster"
 	<< makeLowerCase(name) << "("
 	<< "aster::AsterReal *const,"       /*< tenseur des contraintes */
 	<< "aster::AsterReal *const,"       /*< variables internes */
@@ -484,7 +484,7 @@ namespace mfront{
     
     this->writeSetParametersFunctionsImplementations(out,name,mb);
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\n"
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
 	<< this->getFunctionName(name) << "("
 	<< "aster::AsterReal *const STRESS,"       /*< tenseur des contraintes */
 	<< "aster::AsterReal *const STATEV,"       /*< variables internes */

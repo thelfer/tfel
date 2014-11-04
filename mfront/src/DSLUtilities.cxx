@@ -109,16 +109,17 @@ namespace mfront
   } // end of getLibraryNameBase
 
   void
-  writeExportDirectives(std::ofstream& file)
+  writeExportDirectives(std::ofstream& file,
+			const std::string& c)
   {
     file << "#ifdef WIN32\n";
     file << "#include <windows.h>\n";
     file << "#ifndef MFRONT_SHAREDOBJ\n";
     file << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"; 
     file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    file << "#ifndef MFRONT_STDCALL\n";
-    file << "#define MFRONT_STDCALL __stdcall\n"; 
-    file << "#endif /* MFRONT_STDCALL */\n"; 
+    file << "#ifndef MFRONT_CALLING_CONVENTION\n";
+    file << "#define MFRONT_CALLING_CONVENTION " << c << "\n"; 
+    file << "#endif /* MFRONT_CALLING_CONVENTION */\n"; 
     file << "#else\n";
     file << "#ifndef MFRONT_SHAREDOBJ\n";
     file << "#ifdef __GNUC__\n";
@@ -127,9 +128,9 @@ namespace mfront
     file << "#define MFRONT_SHAREDOBJ\n";
     file << "#endif /* __GNUC__ */\n";
     file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    file << "#ifndef MFRONT_STDCALL\n";
-    file << "#define MFRONT_STDCALL\n"; 
-    file << "#endif /* MFRONT_STDCALL */\n"; 
+    file << "#ifndef MFRONT_CALLING_CONVENTION\n";
+    file << "#define MFRONT_CALLING_CONVENTION\n"; 
+    file << "#endif /* MFRONT_CALLING_CONVENTION */\n"; 
     file << "#endif /* WIN32 */\n\n";
   } // end of writeExportDirectives
 

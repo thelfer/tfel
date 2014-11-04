@@ -38,8 +38,16 @@ namespace mfront{
   getMaterialLawLibraryNameBase(const std::string&,
 				const std::string&);
 
+  /*!
+   * \brief define export directives (visibility attributes) and
+   * calling conventions through the MFRONT_SHAREDOBJ and the
+   * MFRONT_CALLING_CONVENTION macros
+   * \param[out] f : output file
+   * \param[in]  c : calling convention
+   */
   TFEL_VISIBILITY_EXPORT void
-  writeExportDirectives(std::ofstream&);
+  writeExportDirectives(std::ofstream&,
+			const std::string& = "__cdecl");
 
   TFEL_VISIBILITY_EXPORT std::string
   toString(const unsigned short);
