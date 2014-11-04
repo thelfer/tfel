@@ -39,6 +39,14 @@ Cette entrée décrit le taux d'usure en \(\mbox{}^{10}B\).
 
 Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) consommé par unité de volume au cours de l'irradiation.
 
+# L'entrée BulkModulus
+
+Cette entrée décrit le module de compressibilité d'un matériau isotrope.
+
+* noms  : BulkModulus
+* unité : \(Pa\)
+* type : scalaire 
+
 # L'entrée BurnUp_AtPercent
 
 Cette entrée décrit le taux de combustion en atome pour cent.
@@ -169,6 +177,14 @@ Cette entrée décrit ??.
 
 * noms  : FirstAxisSecondMomentArea
 * unité : \(??\)
+* type : scalaire 
+
+# L'entrée FirstLameCoefficient
+
+Cette entrée décrit le premier coefficient de Lamé d'un matériau isotrope.
+
+* noms  : FirstLameCoefficient
+* unité : \(Pa\)
 * type : scalaire 
 
 # L'entrée FissionDensity
@@ -302,6 +318,22 @@ Cette entrée décrit la densité massique.
 
 * noms  : MassDensity
 * unité : \(kg.m^{-3}\)
+* type : scalaire 
+
+# L'entrée MeanBurnUp_AtPercent
+
+Cette entrée décrit le taux de combustion en atome pour cent moyen (au sens spatial) pour un matériau donné.
+
+* noms  : MeanBurnUp (at.%)
+* unité : \(at./100\)
+* type : scalaire 
+
+# L'entrée MeanBurnUp_MWJperTm
+
+Cette entrée décrit le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens spatial) pour un matériau donné.
+
+* noms  : MeanBurnUp (MWJ/tm)
+* unité : \(MWJ/tm\)
 * type : scalaire 
 
 # L'entrée MeanIrradiationTemperature
@@ -554,6 +586,14 @@ Cette entrée décrit ??.
 
 * noms  : SecondAxisSecondMomentArea
 * unité : \(??\)
+* type : scalaire 
+
+# L'entrée ShearModulus
+
+Cette entrée décrit le module de cisaillement d'un matériau isotrope.
+
+* noms  : ShearModulus
+* unité : \(Pa\)
 * type : scalaire 
 
 # L'entrée ShearModulus12

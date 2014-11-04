@@ -34,6 +34,7 @@ getGlossary();
 static const GlossaryEntry AxialStrain;
 static const GlossaryEntry AxialStress;
 static const GlossaryEntry B10BurnUp;
+static const GlossaryEntry BulkModulus;
 static const GlossaryEntry BurnUp_AtPercent;
 static const GlossaryEntry BurnUp_MWJperTm;
 static const GlossaryEntry ConvectiveHeatTransferCoefficient;
@@ -50,6 +51,7 @@ static const GlossaryEntry FastNeutronFluence_1MeV;
 static const GlossaryEntry FastNeutronFlux_01MeV;
 static const GlossaryEntry FastNeutronFlux_1MeV;
 static const GlossaryEntry FirstAxisSecondMomentArea;
+static const GlossaryEntry FirstLameCoefficient;
 static const GlossaryEntry FissionDensity;
 static const GlossaryEntry GaseousSwelling;
 static const GlossaryEntry GrainSize;
@@ -62,6 +64,8 @@ static const GlossaryEntry IrradiationSwelling;
 static const GlossaryEntry IrradiationTemperature;
 static const GlossaryEntry KelvinTemperature;
 static const GlossaryEntry MassDensity;
+static const GlossaryEntry MeanBurnUp_AtPercent;
+static const GlossaryEntry MeanBurnUp_MWJperTm;
 static const GlossaryEntry MeanIrradiationTemperature;
 static const GlossaryEntry MeanTemperature;
 static const GlossaryEntry NeutronFluence;
@@ -87,6 +91,7 @@ static const GlossaryEntry PrincipalStress1;
 static const GlossaryEntry PrincipalStress2;
 static const GlossaryEntry PrincipalStress3;
 static const GlossaryEntry SecondAxisSecondMomentArea;
+static const GlossaryEntry ShearModulus;
 static const GlossaryEntry ShearModulus12;
 static const GlossaryEntry ShearModulus13;
 static const GlossaryEntry ShearModulus23;
@@ -139,7 +144,7 @@ getKeys(void) const;
 
 protected :
 //! all glossary names (to initialise glossary entries)
-static const char * names[89];
+static const char * names[94];
 /*!
  * \brief insert a new entry
  */

@@ -15,10 +15,11 @@ namespace tfel
 namespace glossary
 {
 
-const char* Glossary::names[89] = {
+const char* Glossary::names[94] = {
 "AxialStrain",
 "AxialStress",
 "B10BurnUp",
+"BulkModulus",
 "BurnUp (at.%)",
 "BurnUp (MWJ/tm)",
 "ConvectiveHeatTransferCoefficient",
@@ -35,6 +36,7 @@ const char* Glossary::names[89] = {
 "FastNeutronFlux (>0.1 MeV)",
 "FastNeutronFlux (>1 MeV)",
 "FirstAxisSecondMomentArea",
+"FirstLameCoefficient",
 "FissionDensity",
 "GaseousSwelling",
 "GrainSize",
@@ -47,6 +49,8 @@ const char* Glossary::names[89] = {
 "IrradiationTemperature",
 "KelvinTemperature",
 "MassDensity",
+"MeanBurnUp (at.%)",
+"MeanBurnUp (MWJ/tm)",
 "MeanIrradiationTemperature",
 "MeanTemperature",
 "NeutronFluence",
@@ -72,6 +76,7 @@ const char* Glossary::names[89] = {
 "PrincipalStress2",
 "PrincipalStress3",
 "SecondAxisSecondMomentArea",
+"ShearModulus",
 "ShearModulus12",
 "ShearModulus13",
 "ShearModulus23",
@@ -121,6 +126,12 @@ const GlossaryEntry Glossary::B10BurnUp("B10BurnUp","B10BurnUp",
 "m^{-3}","scalar",
 "le taux d'usure en \\(\\mbox{}^{10}B\\)",
 "Ce nombre décrit le nombre d'atomes de \\(\\mbox{}^{10}B\\) consommé par unité de volume au cours de l'irradiation.",
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::BulkModulus("BulkModulus","BulkModulus",
+"Pa","scalar",
+"le module de compressibilité d'un matériau isotrope",
+"" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
 const GlossaryEntry Glossary::BurnUp_AtPercent("BurnUp_AtPercent","BurnUp (at.%)",
@@ -219,6 +230,12 @@ const GlossaryEntry Glossary::FirstAxisSecondMomentArea("FirstAxisSecondMomentAr
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
+const GlossaryEntry Glossary::FirstLameCoefficient("FirstLameCoefficient","FirstLameCoefficient",
+"Pa","scalar",
+"le premier coefficient de Lamé d'un matériau isotrope",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
 const GlossaryEntry Glossary::FissionDensity("FissionDensity","FissionDensity",
 "m^{-3}","scalar",
 "la densité de fission",
@@ -301,6 +318,18 @@ const GlossaryEntry Glossary::KelvinTemperature("KelvinTemperature","KelvinTempe
 const GlossaryEntry Glossary::MassDensity("MassDensity","MassDensity",
 "kg.m^{-3}","scalar",
 "la densité massique",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::MeanBurnUp_AtPercent("MeanBurnUp_AtPercent","MeanBurnUp (at.%)",
+"at./100","scalar",
+"le taux de combustion en atome pour cent moyen (au sens spatial) pour un matériau donné",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::MeanBurnUp_MWJperTm("MeanBurnUp_MWJperTm","MeanBurnUp (MWJ/tm)",
+"MWJ/tm","scalar",
+"le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens spatial) pour un matériau donné",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -454,6 +483,12 @@ const GlossaryEntry Glossary::SecondAxisSecondMomentArea("SecondAxisSecondMoment
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
+const GlossaryEntry Glossary::ShearModulus("ShearModulus","ShearModulus",
+"Pa","scalar",
+"le module de cisaillement d'un matériau isotrope",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
 const GlossaryEntry Glossary::ShearModulus12("ShearModulus12","ShearModulus12",
 "Pa","scalar",
 "le module de cisaillement d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie",
@@ -586,7 +621,7 @@ const GlossaryEntry Glossary::TrescaStress("TrescaStress","TrescaStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+78,Glossary::names+80,
+const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+83,Glossary::names+85,
 "Pa","scalar",
 "la valeur maximale de la contrainte qu'un materiau peut supporter",
 "" /* no 'description' defined */,
@@ -610,7 +645,7 @@ const GlossaryEntry Glossary::VonMisesStress("VonMisesStress","VonMisesStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+83,Glossary::names+85,
+const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+88,Glossary::names+90,
 "Pa","scalar",
 "la limite d'élasticité",
 "" /* no 'description' defined */,
@@ -648,10 +683,11 @@ return glossary;
 } // end of Glossary::getGlossary
 
 Glossary::Glossary(){
-this->keys.reserve(87);
+this->keys.reserve(92);
 this->insert(Glossary::AxialStrain);
 this->insert(Glossary::AxialStress);
 this->insert(Glossary::B10BurnUp);
+this->insert(Glossary::BulkModulus);
 this->insert(Glossary::BurnUp_AtPercent);
 this->insert(Glossary::BurnUp_MWJperTm);
 this->insert(Glossary::ConvectiveHeatTransferCoefficient);
@@ -668,6 +704,7 @@ this->insert(Glossary::FastNeutronFluence_1MeV);
 this->insert(Glossary::FastNeutronFlux_01MeV);
 this->insert(Glossary::FastNeutronFlux_1MeV);
 this->insert(Glossary::FirstAxisSecondMomentArea);
+this->insert(Glossary::FirstLameCoefficient);
 this->insert(Glossary::FissionDensity);
 this->insert(Glossary::GaseousSwelling);
 this->insert(Glossary::GrainSize);
@@ -680,6 +717,8 @@ this->insert(Glossary::IrradiationSwelling);
 this->insert(Glossary::IrradiationTemperature);
 this->insert(Glossary::KelvinTemperature);
 this->insert(Glossary::MassDensity);
+this->insert(Glossary::MeanBurnUp_AtPercent);
+this->insert(Glossary::MeanBurnUp_MWJperTm);
 this->insert(Glossary::MeanIrradiationTemperature);
 this->insert(Glossary::MeanTemperature);
 this->insert(Glossary::NeutronFluence);
@@ -705,6 +744,7 @@ this->insert(Glossary::PrincipalStress1);
 this->insert(Glossary::PrincipalStress2);
 this->insert(Glossary::PrincipalStress3);
 this->insert(Glossary::SecondAxisSecondMomentArea);
+this->insert(Glossary::ShearModulus);
 this->insert(Glossary::ShearModulus12);
 this->insert(Glossary::ShearModulus13);
 this->insert(Glossary::ShearModulus23);
