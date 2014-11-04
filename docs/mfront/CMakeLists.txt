@@ -17,7 +17,7 @@ install_mfront_desc(Parameter.txt)
 install_mfront_desc2(MaterialLaw Constant.txt)
 install_mfront_desc2(MaterialLaw Function.txt)
 
-if(HAVE_LATEX)
+if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 
   configure_file(Champs.tex.in Champs.tex @ONLY)
   configure_file(annexe-orthotropie.tex.in
@@ -213,13 +213,13 @@ if(HAVE_LATEX)
     ARGS      aster.ps
     COMMENT   "aster.pdf")
 
-  add_custom_target(mfront-doc-pdf echo DEPENDS mfront.pdf)
-  add_custom_target(behaviours-doc-pdf echo DEPENDS behaviours.pdf)
-  add_custom_target(finitestrain-doc-pdf echo DEPENDS finitestrain.pdf)
-  add_custom_target(planestress-doc-pdf echo DEPENDS planestress.pdf)
-  add_custom_target(umat-doc-pdf echo DEPENDS umat.pdf)
-  add_custom_target(zmat-doc-pdf echo DEPENDS zmat.pdf)
-  add_custom_target(aster-doc-pdf echo DEPENDS aster.pdf)
+  add_custom_target(mfront-doc-pdf ALL DEPENDS mfront.pdf)
+  add_custom_target(behaviours-doc-pdf ALL DEPENDS behaviours.pdf)
+  add_custom_target(finitestrain-doc-pdf ALL DEPENDS finitestrain.pdf)
+  add_custom_target(planestress-doc-pdf ALL DEPENDS planestress.pdf)
+  add_custom_target(umat-doc-pdf ALL DEPENDS umat.pdf)
+  add_custom_target(zmat-doc-pdf ALL DEPENDS zmat.pdf)
+  add_custom_target(aster-doc-pdf ALL DEPENDS aster.pdf)
 
   add_dependencies(doc-pdf
     mfront-doc-pdf
@@ -239,7 +239,7 @@ if(HAVE_LATEX)
     ${CMAKE_CURRENT_BINARY_DIR}/zmat.pdf
     ${CMAKE_CURRENT_BINARY_DIR}/aster.pdf
     DESTINATION share/doc/mfront/references
-    COMPONENT docs OPTIONAL)
+    COMPONENT docs)
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/mfront.pdf
     ${CMAKE_CURRENT_BINARY_DIR}/behaviours.pdf
@@ -249,6 +249,6 @@ if(HAVE_LATEX)
     ${CMAKE_CURRENT_BINARY_DIR}/zmat.pdf
     ${CMAKE_CURRENT_BINARY_DIR}/aster.pdf
     DESTINATION share/doc/tfel/web/documents/mfront
-    COMPONENT website OPTIONAL)
+    COMPONENT website)
 
-endif(HAVE_LATEX)
+endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)

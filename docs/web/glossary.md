@@ -1,11 +1,11 @@
 % TFEL Glossary description
 % Helfer Thomas; Bernaud Stéphane
 
-\newcommand{\dtot}{d}
+\newcommand{\dtot}{\mathrm{d}}
 \newcommand{\paren}[1]{{\displaystyle \left(#1\right)}}
-\newcommand{\average}[1]{{{\displaystyle \langle #1\rangle}}}
-\newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
-\newcommand{\deriv}[2]{{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}}
+\newcommand{\average}[1]{{\displaystyle \left\langle#1\right\rangle}}
+\newcommand{\Frac}[2]{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}
+\newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
 # L'entrée AxialStrain
 
@@ -39,12 +39,20 @@ Cette entrée décrit le taux d'usure en \(\mbox{}^{10}B\).
 
 Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) consommé par unité de volume au cours de l'irradiation.
 
-# L'entrée BurnUp
+# L'entrée BurnUp_AtPercent
 
-Cette entrée décrit le taux de combustion.
+Cette entrée décrit le taux de combustion en atome pour cent.
 
-* noms  : BurnUp
+* noms  : BurnUp (at.%)
 * unité : \(at./100\)
+* type : scalaire 
+
+# L'entrée BurnUp_MWJperTm
+
+Cette entrée décrit le taux de combustion en MegaWattJour par tonne (métal).
+
+* noms  : BurnUp (MWJ/tm)
+* unité : \(MWJ/tm\)
 * type : scalaire 
 
 # L'entrée ConvectiveHeatTransferCoefficient
@@ -123,33 +131,37 @@ Cette entrée décrit la déformation viscoplastique équivalente.
 * unité : sans unité
 * type : scalaire 
 
-# L'entrée FastNeutronFluence
+# L'entrée FastNeutronFluence_01MeV
 
 Cette entrée décrit la fluence rapide.
 
-* noms  : FastNeutronFluence
+* noms  : FastNeutronFluence (>0.1 MeV)
 * unité : \(n.m^{-2}\)
 * type : scalaire 
 
-## Notes 
+# L'entrée FastNeutronFluence_1MeV
 
-Il n'existe pas de limite standardisée définissantla limite du domaine rapide.
-Pour les REP, il est classique de considérer que les neutrons ayant une énergie supérieure à \(0.1\, MeV\) sont rapides.
-Pour les RNR, la limite classiquement retenue est de \(1\, MeV\).
+Cette entrée décrit la fluence rapide.
 
-# L'entrée FastNeutronFlux
+* noms  : FastNeutronFluence (>1 MeV)
+* unité : \(n.m^{-2}\)
+* type : scalaire 
+
+# L'entrée FastNeutronFlux_01MeV
 
 Cette entrée décrit le flux de neutron rapide.
 
-* noms  : FastNeutronFlux
+* noms  : FastNeutronFlux (>0.1 MeV)
 * unité : \(n.m^{-2}.s^{-1}\)
 * type : scalaire 
 
-## Notes 
+# L'entrée FastNeutronFlux_1MeV
 
-Il n'existe pas de limite standardisée définissantla limite du domaine rapide.
-Pour les REP, il est classique de considérer que les neutrons ayant une énergie supérieure à \(0.1\, MeV\) sont rapides.
-Pour les RNR, la limite classiquement retenue est de \(1 MeV\).
+Cette entrée décrit le flux de neutron rapide.
+
+* noms  : FastNeutronFlux (>1 MeV)
+* unité : \(n.m^{-2}.s^{-1}\)
+* type : scalaire 
 
 # L'entrée FirstAxisSecondMomentArea
 

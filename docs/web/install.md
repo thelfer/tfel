@@ -5,25 +5,21 @@
 The latest version of this document is always available at
 <http://tfel.sourceforge.net/install.html>.
 
-It refers to the current development sources, instructions for
+It refers to the **current development sources**, instructions for
 specific released versions are included with the sources and detailled
 in the `INSTALL` and the `INSTALL-cmake` files located at the root
 directory of the sources).
 
-This document describes the generic installation procedure for
-`TFEL`. The following topics were created:
+This document describes the generic installation procedure for `TFEL`
+from the sources on posix-compliant systems. Please note that the main
+systems on which `TFEL` was developed is `Linux`. Extensive testing on
+other posix-compliant operating systems, notably `FreeBSD`, is
+lacking, although compilation and unit testing is known to work.
 
-- Installation on posix-compliant systems (including Linux)
-- Cross-compiling `TFEL` (Linux host, Windows target)
-- Compiling under Windows using [MINGW](http://www.mingw.org)
+The isntallation on [Windows plateform](http://windows.microsoft.com)
+is described [here](install-windows.html)
 
-# Posix-compliant systems
-
-This section describes the installation of `TFEL` on posix-compliant
-operating systems. Please note that the main systems on which `TFEL`
-was developed is `Linux`. Extensive testing on other posix-compliant
-operating systems is, notably `FreeBSD`, is lacking, although
-compilation and unit testing is known to work.
+The creation of binary packages are detailled [here](packages.html)
 
 `TFEL` is known to work on standard architectures implemented by the
 Intel and AMD processors, either 32 or 64 bits. As no specific
@@ -65,9 +61,9 @@ the installation procedure into five steps:
 - Testing (optional)
 - Final install
 
-## Prerequisites
+# Prerequisites
 
-### Compilers 
+## Compilers 
 
 `TFEL` version 2.0 requires a `C++-98` compliant compiler, a `C`
 compiler and optionally a `fortran` compiler. The following compilers
@@ -83,7 +79,7 @@ suite are officially supported:
   [Intel compilers suite](https://software.intel.com/en-us/c-compilers).
   All versions starting from 11.0 have been tested successfully.
 
-### Third party libraries
+## Third party libraries
 
 `TFEL` has been designed to have no dependencies to third parties
 libraries to the very exception of the
@@ -91,7 +87,7 @@ libraries to the very exception of the
 optional bindings for the [`Python`](https://www.python.org/)
 language.
 
-### Third party tools
+## Third party tools
 
 
 The better way to build the `TFEL` is to use the
@@ -108,7 +104,7 @@ To build `TFEL` documentation, one may need:
 - the [doxygen](http://www.stack.nl/~dimitri/doxygen/) tool (code
   source documentation)
 
-## Downloading the source
+# Downloading the source
 
 Official releases sources can be downloaded on
 [`TFEL` sourceforge page](http://sourceforge.net/projects/tfel/files)
@@ -119,7 +115,7 @@ servers (see the
 [Contributing](http://tfel.sourceforge.net/contributing.html) page for
 details).
 
-## Configuration
+# Configuration
 
 `TFEL` supports two build-systems:
 
@@ -129,7 +125,7 @@ details).
   deprecated and shall only be used if `cmake` is not available. Note
   that most unit tests will not be build.
 
-### Creating a `build` directory
+## Creating a `build` directory
 
 We highly recommend to use a separate directory to build the
 sources.
@@ -142,7 +138,7 @@ In the following, we use the following convention:
 
 Both `$srcdir` and `$prefix` must contain an *absolute* path.
 
-### Using the `cmake` build system
+## Using the `cmake` build system
 
 The use of the `cmake` build system is described in depth in the
 `INSTALL-cmake` file that is located in the top directory of `TFEL`
@@ -195,7 +191,28 @@ For example, we can use the following command to select the
 $ CXX=icpc CC=icc FC=ifort F77=ifort cmake $srcdir -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=$prefix
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-### Using the `configure` script
+### Controlling the generation of the documentation
+
+Generation of the documentation can be controlled by the following options:
+
+- `enable-doxygen-doc`,which enable the generation of the doxygen
+  documentation (disabled by default)
+- `disable-reference-doc`, which disable the reference documentation
+  generation (enabled by default if `latex` of `pandoc` is found)
+- `disable-website`, which disables the generation of the `TFEL`
+  website (enabled by default if `pandoc` is found)
+
+### Localisation of the libraries
+
+Some `LiNuX` distributions install libraries in `lib64` on \(64\) bits
+architectures and in `lib`. This can be changed by defining a
+`LIB_SUFFIX` variable like this:
+
+~~~~ {#lib-dir .bash}
+$ cmake -DLIB_SUFFIX=64 ....
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+## Using the `configure` script
 
 ~~~~ {#building-configure .bash}
 $ $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
@@ -237,7 +254,7 @@ For example, we can use the following command to select the
 $ CXX=icpc CC=icc FC=ifort F77=ifort $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-## Building
+# Building
 
 The configuration step created a compilation environment based on the
 `make` tool.
@@ -257,7 +274,7 @@ $ make -j X
 
 `X` being the number of processors available.
 
-## Testing (optional)
+# Testing (optional)
 
 `TFEL` is delivered with many unit tests (more than 500 if you are
 using the `cmake` build system and all the interfaces available). To
@@ -270,9 +287,7 @@ $ make check
 Again, compilation time can be reduced using the `-j` option of the
 `make` command.
 
-### Building the documentation
-
-By default, documentation is not build.
+## Building the documentation
 
 If a valid [LaTeX](http://www.latex-project.org) distribution is
 available, reference manuals can be build through:
@@ -302,7 +317,7 @@ All the documentation will be build with the following command:
 $ make doc
 ~~~~~~~~~~~~~~~~~~~~~~
 
-## Final install
+# Final install
 
 To install `TFEL` binaries and libraries in the directory pointed by
 `$prefix`, just type:

@@ -24,12 +24,12 @@ ADD_CUSTOM_COMMAND(
     ARGS      tfel-2.0.ps
     COMMENT   "tfel-2.0.pdf")
 
-add_custom_target(tfel-2.0-doc-pdf echo DEPENDS tfel-2.0.pdf)
+add_custom_target(tfel-2.0-doc-pdf ALL DEPENDS tfel-2.0.pdf)
 add_dependencies(doc-pdf
   tfel-2.0-doc-pdf)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.pdf
   DESTINATION share/doc/tfel/references
-  COMPONENT docs OPTIONAL)
+  COMPONENT docs)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.pdf
   DESTINATION share/doc/tfel/web/documents/tfel/tfel
-  COMPONENT website OPTIONAL)
+  COMPONENT website)

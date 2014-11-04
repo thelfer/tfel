@@ -18,13 +18,14 @@
 
 # Overview
 
-MFront is a collaborative development of
+`TFEL` is a collaborative development of
 [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie
 atomique") and [EDF](http://www.edf.com/ "Électricité de France").
 
-MFront is a code generator which translates a set of closely related
-domain specific languages into plain [C++](http://isocpp.org/). Those
-languages covers three kind of material knowledge:
+`MFront` is a code generator which translates a set of closely related
+domain specific languages into plain [C++](http://isocpp.org/) on top
+of the `TFEL` library. Those languages covers three kind of material
+knowledge:
 
 - [material properties](material-properties.html) (for instance the
   Young modulus, the thermal conductivity, etc.)

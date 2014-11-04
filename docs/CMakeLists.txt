@@ -1,20 +1,17 @@
-if(DOXYGEN_FOUND)
+if(GENERATE_DOXYGEN)
   add_subdirectory(doxygen)
-endif(DOXYGEN_FOUND)
+endif(GENERATE_DOXYGEN)
 
-if(HAVE_LATEX)
+if(GENERATE_REFERENCE_DOC)
   add_subdirectory(tfel)
   add_subdirectory(release-notes-2.0)
   add_subdirectory(tutorial)
-endif(HAVE_LATEX)
+  add_subdirectory(presentations)
+endif(GENERATE_REFERENCE_DOC)
+
+if(GENERATE_WEBSITE)
+  add_subdirectory(web)
+endif(GENERATE_WEBSITE)
 
 add_subdirectory(mfront)
 add_subdirectory(mtest)
-
-if(HAVE_LATEX OR HAVE_PANDOC)
-  add_subdirectory(presentations)
-endif(HAVE_LATEX OR HAVE_PANDOC)
-
-if(HAVE_PANDOC)
-  add_subdirectory(web)
-endif(HAVE_PANDOC)

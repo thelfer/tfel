@@ -13,11 +13,11 @@ macro(pandoc_html file)
     ARGS       --default-image-extension=svg
     ARGS      ${ARGN}
     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md -o ${file}.html)
-  add_custom_target(${file}-html echo DEPENDS ${file}.html)
+  add_custom_target(${file}-html ALL DEPENDS ${file}.html)
   add_dependencies(website ${file}-html)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
     DESTINATION share/doc/tfel/web
-    COMPONENT website OPTIONAL)
+    COMPONENT website)
 endmacro(pandoc_html)
 
 add_custom_target(website)
@@ -26,6 +26,8 @@ add_dependencies(doc website)
 pandoc_html(index "-c css/slideshow.css")
 pandoc_html(faq "--toc")
 pandoc_html(install)
+pandoc_html(install-windows)
+pandoc_html(packages)
 pandoc_html(about)
 pandoc_html(svn)
 pandoc_html(devel)

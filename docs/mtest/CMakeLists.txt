@@ -45,7 +45,7 @@ install_mtest_desc(AccelerationAlgorithmParameter)
 install_mtest_desc(CompareToNumericalTangentOperator)
 install_mtest_desc(NumericalTangentOperatorPerturbationValue)
 
-if(HAVE_LATEX)
+if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 
   configure_file(Champs.tex.in Champs.tex @ONLY)
   configure_file(mtest.tex.in
@@ -73,14 +73,14 @@ if(HAVE_LATEX)
     ARGS      mtest.ps
     COMMENT   "mtest.pdf")
   
-  add_custom_target(mtest-doc-pdf echo DEPENDS mtest.pdf)
+  add_custom_target(mtest-doc-pdf ALL DEPENDS mtest.pdf)
   add_dependencies(doc-pdf
     mtest-doc-pdf)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
     DESTINATION share/doc/mtest
-    COMPONENT docs OPTIONAL)
+    COMPONENT docs)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
     DESTINATION share/doc/tfel/web/documents/mtest
-    COMPONENT website OPTIONAL)
+    COMPONENT website)
   
-endif(HAVE_LATEX)
+endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)

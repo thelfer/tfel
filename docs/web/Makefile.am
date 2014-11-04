@@ -5,6 +5,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./404.html						   \
 	   ./bibliography.bib					   \
 	   ./svn.md					           \
+	   ./faq.md					           \
 	   ./devel.md					           \
 	   ./index.md					           \
 	   ./material-properties.md				   \
@@ -15,6 +16,8 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./aster.md						   \
 	   ./zmat.md						   \
 	   ./install.md						   \
+	   ./install-windows.md					   \
+	   ./packages.md					   \
 	   ./about.md						   \
 	   ./news.md						   \
 	   ./mfront-template.html				   \
@@ -52,6 +55,12 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/ImplicitDSL.svg				   \
 	   ./img/AMITEX_FFTP_sig1.xcf				   \
 	   ./img/AMITEX_FFTP_sig1.png				   \
+	   ./img/mingw-get1.png			                   \
+	   ./img/mingw-get1.xcf			                   \
+	   ./img/mingw-get2.png			                   \
+	   ./img/mingw-get2.xcf			                   \
+	   ./img/mingw-get3.png			                   \
+	   ./img/mingw-get3.xcf			                   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

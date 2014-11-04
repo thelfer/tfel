@@ -7,12 +7,12 @@
    ARGS      --slide-level 1 --toc --mathjax -i -t revealjs -V theme:beige
    ARGS      -H ${CMAKE_CURRENT_SOURCE_DIR}/mysettings.css
    ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/portability.md -o portability.html)
-add_custom_target(portable-behaviour-html echo DEPENDS portability.html)
+add_custom_target(portable-behaviour-html ALL DEPENDS portability.html)
 add_dependencies(doc portable-behaviour-html)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/portability.html
     DESTINATION share/doc/tfel/web/documents/portable-behaviour
-    COMPONENT website OPTIONAL)
+    COMPONENT website)
 install(DIRECTORY img
     DESTINATION share/doc/tfel/web/documents/portable-behaviour
     COMPONENT website
@@ -24,7 +24,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/portability.html
     DESTINATION share/doc/mfront/portable-behaviour
-    COMPONENT docs OPTIONAL)
+    COMPONENT docs)
 install(DIRECTORY img
     DESTINATION share/doc/mfront/portable-behaviour
     COMPONENT docs
