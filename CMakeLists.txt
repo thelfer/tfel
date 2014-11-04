@@ -233,6 +233,13 @@ option(disable-reference-doc "disable generation of the reference documentation"
 if(NOT disable-reference-doc)
   find_package(LATEX)
   if(LATEX_COMPILER)
+    if((NOT PS2PDF_CONVERTER) AND WIN32)
+      # fixes cmake bug #0015198
+      find_program(PS2PDF_CONVERTER
+	NAMES ps2pdf14.bat ps2pdf14 ps2pdf
+	PATHS ${GHOSTSCRIPT_LIBRARY_PATH}
+        ${MIKTEX_BINARY_PATH})
+    endif((NOT PS2PDF_CONVERTER) AND WIN32)
     add_custom_target(doc-pdf)
     add_dependencies(doc doc-pdf)
     message(STATUS "latex compiler found : ${LATEX_COMPILER}")
@@ -272,27 +279,42 @@ endif(NOT disable-website)
 # mfront and mtest (--help-command option of mfront and mtest)
 add_subdirectory(docs)
 
-#set (CPACK_PACKAGE_EXECUTABLES         "mfront;mfront")
-set (CPACK_PACKAGE_INSTALL_DIRECTORY   "${PACKAGE_NAME}-${VERSION}")
-set (CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
-set (CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
-set (CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
-set (CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
-set (CPACK_PACKAGE_VENDOR              "CEA/EDF")
-set (CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "tfel is a mathematical library")
-set (CPACK_PACKAGE_DESCRIPTION 	       "tfel is a mathematical library")
+set(CPACK_PACKAGE_VERSION   "${CMAKE_PROJECT_NAME}-${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}.${TFEL_VERSION_PATCH}")
+if(${CMAKE_SYSTEM_PROCESSOR})
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
+else(${CMAKE_SYSTEM_PROCESSOR})
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}") 
+endif(${CMAKE_SYSTEM_PROCESSOR})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CPACK_PACKAGE_VERSION}")
+set(CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
+set(CPACK_PACKAGE_CONTACT             "${PACKAGE_BUGREPORT}")
+set(CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
+set(CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
+set(CPACK_PACKAGE_VENDOR              "CEA/EDF")
+set(CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "TFEL is a numerical library.")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENCE-GNU-GPL")
 
 # rpm packaging
 set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_RPM_PACKAGE_LICENSE "GPL/CECILL-A")
 
 # debian packaging
+set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Helfer Thomas ${PACKAGE_BUGREPORT}")
 set(CPACK_DEBIAN_PACKAGE_SECTION      "Science")
-set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE     "${TFEL_WEBSITE}")
 
 #NSIS
-set (CPACK_NSIS_MODIFY_PATH ON)
+set(CPACK_NSIS_MODIFY_PATH ON)
+set(CPACK_NSIS_MUI_ICON       "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_MUI_UNIICON    "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_URL_INFO_ABOUT "${TFEL_WEBSITE}")
+set(CPACK_NSIS_HELP_LINK "${TFEL_WEBSITE}")
+set(CPACK_NSIS_CONTACT "${PACKAGE_BUGREPORT}")
+set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 
 # if(UNIX)
 #   add_custom_target(dist-bzip2

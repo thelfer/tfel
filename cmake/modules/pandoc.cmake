@@ -1,4 +1,4 @@
-find_program(PANDOC NAMES pandoc)
+find_program(PANDOC NAMES pandoc pandoc.exe)
 mark_as_advanced(PANDOC)
 if(PANDOC)
     message(STATUS "Found Pandoc")

@@ -243,12 +243,12 @@ namespace mfront
     this->headerFile << "#ifdef __cplusplus\n";
     this->headerFile << "extern \"C\"{\n";
     this->headerFile << "#endif /* __cplusplus */\n\n";
-    this->headerFile << "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n";
+    this->headerFile << "MFRONT_SHAREDOBJ double MFRONT_CALLING_CONVENTION\n";
     this->headerFile << name << "(";
     this->headerFile << "const double * const";
     this->headerFile << ");\n\n";
     if(!params.empty()){
-      this->headerFile << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n";
+      this->headerFile << "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n";
       this->headerFile << name << "_setParameter(const char *const,";
       this->headerFile << "const double";
       this->headerFile << ");\n\n";
@@ -366,7 +366,7 @@ namespace mfront
     this->srcFile << name << "_nargs = " << inputs.size() << "u;\n\n";
 
     if(!params.empty()){
-      this->srcFile << "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n";
+      this->srcFile << "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n";
       this->srcFile << name << "_setParameter(const char *const p,";
       this->srcFile << "const double v";
       this->srcFile << "){\n";
@@ -381,7 +381,7 @@ namespace mfront
       this->srcFile << "}\n\n";
     }
 
-    this->srcFile << "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n";
+    this->srcFile << "MFRONT_SHAREDOBJ double MFRONT_CALLING_CONVENTION\n";
     this->srcFile << name << "(";
     if(!inputs.empty()){
       this->srcFile << "const double * const castem_params";

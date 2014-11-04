@@ -160,7 +160,7 @@ namespace mfront
   MFrontMFrontLawInterface::getFunctionDeclaration(const std::string& material,
 						   const std::string& law)
   {
-    return "MFRONT_SHAREDOBJ double MFRONT_STDCALL\n"+this->getFunctionName(material,law);
+    return "MFRONT_SHAREDOBJ double MFRONT_CALLING_CONVENTION\n"+this->getFunctionName(material,law);
   } // end of MFrontMFrontLawInterface::getFunctionDeclaration
 
   std::string
@@ -184,9 +184,9 @@ namespace mfront
 							      const std::string& className)
   {
     if(material.empty()){
-      return  "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"+className+"_checkBounds";
+      return  "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+className+"_checkBounds";
     }
-    return  "MFRONT_SHAREDOBJ int MFRONT_STDCALL\n"+material+"_"+className+"_checkBounds";
+    return  "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+material+"_"+className+"_checkBounds";
   } // end of MFrontMFrontLawInterface::getCheckBoundsFunctionDeclaration
   
   MFrontMFrontLawInterface::~MFrontMFrontLawInterface()

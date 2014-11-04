@@ -780,11 +780,11 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer)
   doc << "% TFEL Glossary description" << endl;
   doc << "% Helfer Thomas; Bernaud Stéphane" << endl;
   doc << endl;
-  doc << "\\newcommand{\\dtot}{\\ensuremath{\\mathrm{d}}}" << endl;
-  doc << "\\newcommand{\\paren}[1]{\\ensuremath{{\\displaystyle \\left(#1\\right)}}}" << endl;
-  doc << "\\newcommand{\\average}[1]{\\ensuremath{{\\displaystyle \\left\\langle#1\\right\\rangle}}}" << endl;
-  doc << "\\newcommand{\\Frac}[2]{\\ensuremath{{\\displaystyle \\frac{\\displaystyle #1}{\\displaystyle #2}}}}" << endl;
-  doc << "\\newcommand{\\deriv}[2]{\\ensuremath{{\\displaystyle \\frac{\\displaystyle \\partial #1}{\\displaystyle \\partial #2}}}}" << endl;
+  doc << "\\newcommand{\\dtot}{\\mathrm{d}}" << endl;
+  doc << "\\newcommand{\\paren}[1]{{\\displaystyle \\left(#1\\right)}}" << endl;
+  doc << "\\newcommand{\\average}[1]{{\\displaystyle \\left\\langle#1\\right\\rangle}}" << endl;
+  doc << "\\newcommand{\\Frac}[2]{{\\displaystyle \\frac{\\displaystyle #1}{\\displaystyle #2}}}" << endl;
+  doc << "\\newcommand{\\deriv}[2]{{\\displaystyle \\frac{\\displaystyle \\partial #1}{\\displaystyle \\partial #2}}}" << endl;
 
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
     const vector<string>& n = p->getNames();

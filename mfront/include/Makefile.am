@@ -106,6 +106,7 @@ nobase_noinst_HEADERS += MFront/MFrontCLawInterfaceBase.hxx          \
 			 MFront/MFrontCppTestLawInterface.hxx        \
 			 MFront/MFrontGnuplotLawInterface.hxx        \
 			 MFront/MFrontExcelLawInterface.hxx          \
+			 MFront/MFrontExcelLawInternalInterface.hxx  \
 			 MFront/MFrontLaTeXLawInterface.hxx          \
 			 MFront/MFrontLaTeXBehaviourAnalyser.hxx     \
 			 MFront/MFrontMarkdownBehaviourAnalyser.hxx  \

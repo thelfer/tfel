@@ -95,3 +95,37 @@ generator used, various packages can be build:
   and `MTest`).
 - `python_bindings` contains the `python` bindings (for `TFEL`, `MFront`
   and `MTest`).
+
+## Building debian packages
+
+~~~~ {#generator_deb .bash}
+$ cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-portable-build=ON
+$ cpack -G DEB
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+## Building `RPM` packages for `Mageia` (\(64\) bits)
+
+~~~~ {#generator_rpm .bash}
+$ cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-portable-build=ON -DLIB_SUFFIX=64
+$ cpack -G RPM
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `LIB_SUFFIX` is used to specify that the libraries must be place
+in the `lib64` directory.
+
+## Building `NSIS` for `Windows` on `LiNuX`
+
+If you have a cross-compiler (in the case of your example, `mingw64`)
+and the `nsis` package installed, one can build a `Windows` package
+like this:
+
+~~~~ {#generator_NSIS .bash}
+$ cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-zmat=OFF -Denable-cyrano=ON -DCMAKE_TOOLCHAIN_FILE=../trunk/cmake/ToolChain-i686-w64-mingw32.cmake -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/tfel-2.0.x/install -Denable-portable-build=ON -Denable-static=ON
+$ cpack -G NSIS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `enable-static` portion is mandatory since the shared libraries
+associated with the cross compiler won't be present on `Windows`.
+
+One may use another cross-compiler by providing an appropriate
+tool-chain file.

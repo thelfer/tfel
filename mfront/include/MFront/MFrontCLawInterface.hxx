@@ -31,7 +31,7 @@ namespace mfront{
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(const std::string&,
 		      const std::string&,
 		      const std::string&);
@@ -41,7 +41,7 @@ namespace mfront{
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGlobalDependencies(const std::string&,
 			  const std::string&,
 			  const std::string&);
@@ -51,7 +51,7 @@ namespace mfront{
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getGeneratedSources(const std::string&,
 			const std::string&,
 			const std::string&);
@@ -61,7 +61,7 @@ namespace mfront{
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::vector<std::string>
+    virtual std::vector<std::string>
     getGeneratedIncludes(const std::string&,
 			 const std::string&,
 			 const std::string&);
@@ -71,7 +71,7 @@ namespace mfront{
      * \param const std::string&, material
      * \param const std::string&, class
      */
-    std::map<std::string,std::vector<std::string> >
+    virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const std::string&,
 			     const std::string&,
 			     const std::string&);
@@ -82,43 +82,52 @@ namespace mfront{
      * \param const std::string&, class
      * \param const std::vector<std::string>&, library links
      */
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
+    virtual std::map<std::string,
+		     std::pair<std::vector<std::string>,
+			       std::vector<std::string> > >
     getSpecificTargets(const std::string&,
 		       const std::string&,
 		       const std::string&,
 		       const std::vector<std::string>&);
 
-    ~MFrontCLawInterface();
+    virtual ~MFrontCLawInterface();
         
   private:
 
-    void
+    /*!
+     * \return the name of the generated library
+     * \param[in] l: library name (given by the `@Library` keyword)
+     * \param[in] m: material name (given by the `@Material` keyword)
+     */
+    virtual std::string
+    getGeneratedLibraryName(const std::string&,
+			    const std::string&) const;
+
+    virtual void
     writeHeaderPreprocessorDirectives(const std::string&,
 				      const std::string&);
 
-    void
+    virtual void
     writeSrcPreprocessorDirectives(const std::string&,
 				   const std::string&);
 
-    void
+    virtual void
     writeBeginHeaderNamespace(void);
 
-    void
+    virtual void
     writeEndHeaderNamespace(void);
 
-    void
+    virtual void
     writeBeginSrcNamespace(void);
 
-    void
+    virtual void
     writeEndSrcNamespace(void);
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
+    virtual std::string
     getHeaderFileName(const std::string&,
 		      const std::string&);
 
@@ -126,7 +135,7 @@ namespace mfront{
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
+    virtual std::string
     getSrcFileName(const std::string&,
 		   const std::string&);
 
@@ -134,7 +143,7 @@ namespace mfront{
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
+    virtual std::string
     getFunctionDeclaration(const std::string&,
 			   const std::string&);
 
@@ -142,11 +151,11 @@ namespace mfront{
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
+    virtual std::string
     getCheckBoundsFunctionDeclaration(const std::string&,
 				      const std::string&);
 
-    bool
+    virtual bool
     requiresCheckBoundsFunction(void) const;
 
 

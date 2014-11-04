@@ -109,28 +109,30 @@ namespace mfront
   } // end of getLibraryNameBase
 
   void
-  writeExportDirectives(std::ofstream& file)
+  writeExportDirectives(std::ofstream& f,
+			const std::string& c)
   {
-    file << "#ifdef WIN32\n";
-    file << "#include <windows.h>\n";
-    file << "#ifndef MFRONT_SHAREDOBJ\n";
-    file << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"; 
-    file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    file << "#ifndef MFRONT_STDCALL\n";
-    file << "#define MFRONT_STDCALL __stdcall\n"; 
-    file << "#endif /* MFRONT_STDCALL */\n"; 
-    file << "#else\n";
-    file << "#ifndef MFRONT_SHAREDOBJ\n";
-    file << "#ifdef __GNUC__\n";
-    file << "#define MFRONT_SHAREDOBJ __attribute__((visibility(\"default\")))\n";
-    file << "#else\n";
-    file << "#define MFRONT_SHAREDOBJ\n";
-    file << "#endif /* __GNUC__ */\n";
-    file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    file << "#ifndef MFRONT_STDCALL\n";
-    file << "#define MFRONT_STDCALL\n"; 
-    file << "#endif /* MFRONT_STDCALL */\n"; 
-    file << "#endif /* WIN32 */\n\n";
+    using std::endl;
+    f << "#ifdef WIN32" << endl
+      << "#include <windows.h>" << endl
+      << "#ifndef MFRONT_SHAREDOBJ" << endl
+      << "#define MFRONT_SHAREDOBJ __declspec(dllexport)" << endl
+      << "#endif /* MFRONT_SHAREDOBJ */" << endl
+      << "#ifndef MFRONT_CALLING_CONVENTION" << endl
+      << "#define MFRONT_CALLING_CONVENTION " << c << "" << endl
+      << "#endif /* MFRONT_CALLING_CONVENTION */" << endl
+      << "#else" << endl
+      << "#ifndef MFRONT_SHAREDOBJ" << endl
+      << "#ifdef __GNUC__" << endl
+      << "#define MFRONT_SHAREDOBJ __attribute__((visibility(\"default\")))" << endl
+      << "#else" << endl
+      << "#define MFRONT_SHAREDOBJ" << endl
+      << "#endif /* __GNUC__ */" << endl
+      << "#endif /* MFRONT_SHAREDOBJ */" << endl
+      << "#ifndef MFRONT_CALLING_CONVENTION" << endl
+      << "#define MFRONT_CALLING_CONVENTION" << endl
+      << "#endif /* MFRONT_CALLING_CONVENTION */" << endl
+      << "#endif /* WIN32 */" << endl << endl;
   } // end of writeExportDirectives
 
   std::string 

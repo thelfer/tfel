@@ -30,6 +30,7 @@
 #include"MFront/MFrontLock.hxx"
 #include"MFront/MFrontCLawInterface.hxx"
 #include"MFront/MFrontExcelLawInterface.hxx"
+#include"MFront/MFrontExcelLawInternalInterface.hxx"
 
 namespace mfront
 {
@@ -218,7 +219,7 @@ namespace mfront
       }
       iwrapper.close();
     }
-    lib = "lib"+getMaterialLawLibraryNameBase(library,material);
+    lib = "libExcel"+getMaterialLawLibraryNameBase(library,material);
     p2 = interfaces.end();
     for(p=interfaces.begin();p!=interfaces.end();++p){
       if((p->function==name)&&

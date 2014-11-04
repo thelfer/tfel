@@ -168,6 +168,8 @@ docs/html/reveal.js/test/test-markdown.html -text
 docs/html/reveal.js/test/test-markdown.js -text
 docs/html/reveal.js/test/test.html -text
 docs/html/reveal.js/test/test.js -text
+docs/mfront.bmp -text
+docs/mfront.ico -text
 docs/mfront/Author.txt -text
 docs/mfront/Bounds.txt -text
 docs/mfront/CMakeLists.txt -text
@@ -787,8 +789,15 @@ docs/web/img/cyrano-mfront.eps -text
 docs/web/img/cyrano-mfront.svg -text
 docs/web/img/hsnv125.png -text
 docs/web/img/hsnv125.xcf -text
+docs/web/img/mingw-get1.png -text
+docs/web/img/mingw-get1.xcf -text
+docs/web/img/mingw-get2.png -text
+docs/web/img/mingw-get2.xcf -text
+docs/web/img/mingw-get3.png -text
+docs/web/img/mingw-get3.xcf -text
 docs/web/img/tutorielch12-img1.png -text
 docs/web/index.md -text
+docs/web/install-windows.md -text
 docs/web/install.md -text
 docs/web/js/MathJax.js -text
 docs/web/js/main.js -text
@@ -1474,6 +1483,7 @@ mfront/include/MFront/MFrontDefaultFiniteStrainParser.hxx -text
 mfront/include/MFront/MFrontDefaultParser.hxx -text
 mfront/include/MFront/MFrontDefaultParserBase.hxx -text
 mfront/include/MFront/MFrontExcelLawInterface.hxx -text
+mfront/include/MFront/MFrontExcelLawInternalInterface.hxx -text
 mfront/include/MFront/MFrontFileDescription.hxx -text
 mfront/include/MFront/MFrontFortranLawInterface.hxx -text
 mfront/include/MFront/MFrontGenericData.hxx -text
@@ -1686,6 +1696,7 @@ mfront/src/MFrontDefaultFiniteStrainParser.cxx -text
 mfront/src/MFrontDefaultParser.cxx -text
 mfront/src/MFrontDefaultParserBase.cxx -text
 mfront/src/MFrontExcelLawInterface.cxx -text
+mfront/src/MFrontExcelLawInternalInterface.cxx -text
 mfront/src/MFrontFortranLawInterface.cxx -text
 mfront/src/MFrontGnuplotLawInterface.cxx -text
 mfront/src/MFrontHeader.cxx.in -text

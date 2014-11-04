@@ -19,6 +19,7 @@
 #include"MFront/MFrontMFrontLawInterface.hxx"
 #include"MFront/MFrontCLawInterface.hxx"
 #include"MFront/MFrontExcelLawInterface.hxx"
+#include"MFront/MFrontExcelLawInternalInterface.hxx"
 #include"MFront/MFrontLaTeXLawInterface.hxx"
 
 #ifdef HAVE_FORTRAN
@@ -67,7 +68,8 @@ namespace mfront
     MFrontLawInterfaceProxy<MFrontMFrontLawInterface>  mLawProxy;
 
     MFrontLawInterfaceProxy<MFrontExcelLawInterface> excelLawProxy(MFrontExcelLawInterface::getName(),
-								   MFrontCLawInterface::getName());
+								   MFrontExcelLawInternalInterface::getName());
+    MFrontLawInterfaceProxy<MFrontExcelLawInternalInterface> excelLawInternalProxy(MFrontExcelLawInternalInterface::getName());
 
     static const char * const texLawProxyNames [2] = {"latex","LaTex"};
     MFrontLawInterfaceProxy<MFrontLaTeXLawInterface> latexLawProxy(texLawProxyNames,texLawProxyNames+2);

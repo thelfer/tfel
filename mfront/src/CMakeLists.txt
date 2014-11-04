@@ -84,6 +84,7 @@ set(mfront_SOURCES
     MFrontCppLawInterface.cxx
     MFrontCppTestLawInterface.cxx
     MFrontExcelLawInterface.cxx
+    MFrontExcelLawInternalInterface.cxx
     MFrontLaTeXLawInterface.cxx
     MFrontLaTeXBehaviourAnalyser.cxx
     MFrontMarkdownBehaviourAnalyser.cxx
@@ -207,14 +208,28 @@ if(UNIX)
     TFELGlossary TFELException
     -pthread @TFEL_DL_LIBRARY@)
 else(UNIX)
-target_link_libraries(mfront
-                      MFrontLogStream
-                      TFELMaterial
-                      TFELMathParser
-                      TFELSystem
-		      TFELUtilities
-                      TFELGlossary
-		      TFELException)
+  if(WIN32 AND enable-static)
+    target_link_libraries(mfront
+      MFrontLogStream-static
+      TFELMaterial-static
+      TFELMathParser-static
+      TFELSystem-static
+      TFELUtilities-static
+      TFELGlossary-static
+      TFELException-static)
+    set_target_properties(mfront PROPERTIES COMPILE_FLAGS "-DTFEL_STATIC_BUILD")
+    set_target_properties(mfront PROPERTIES LINK_FLAGS "-static-libgcc -static") 
+    set_target_properties(mfront PROPERTIES LINK_SEARCH_END_STATIC ON) 
+  else(WIN32 AND enable-static)
+    target_link_libraries(mfront
+      MFrontLogStream
+      TFELMaterial
+      TFELMathParser
+      TFELSystem
+      TFELUtilities
+      TFELGlossary
+      TFELException)
+  endif(WIN32 AND enable-static)
 endif(UNIX)
 
 install(TARGETS mfront DESTINATION bin

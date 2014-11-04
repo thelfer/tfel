@@ -78,6 +78,7 @@ mfront_SOURCES = main.cxx                                               \
 		 MFrontCppLawInterface.cxx                              \
 		 MFrontCppTestLawInterface.cxx                          \
 		 MFrontExcelLawInterface.cxx                            \
+		 MFrontExcelLawInternalInterface.cxx                    \
 		 MFrontLaTeXLawInterface.cxx                            \
 		 MFrontLaTeXBehaviourAnalyser.cxx                       \
 		 MFrontMarkdownBehaviourAnalyser.cxx                    \

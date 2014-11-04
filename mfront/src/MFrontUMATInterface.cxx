@@ -1478,7 +1478,7 @@ namespace mfront{
 						    const std::string& name) const
   {
     using namespace std;
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\numat"
     	<< makeLowerCase(name);
     writeUMATArguments(out);
     out << ";" << endl << endl;
@@ -1568,7 +1568,7 @@ namespace mfront{
 		 "finite strain strategies shall be used with small strain behaviours");
       throw(runtime_error(msg));
     }
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\numat"
 	<< makeLowerCase(fname);
     writeUMATArguments(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,false);
     out << endl;
@@ -1650,7 +1650,7 @@ namespace mfront{
 		 "finite strain strategies shall be used with small strain behaviours");
       throw(runtime_error(msg));
     }
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\numat"
 	<< makeLowerCase(fname);
     writeUMATArguments(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,false);
     out << endl;
@@ -1730,7 +1730,7 @@ namespace mfront{
       fname += "_"+suffix;
     }
     const string umatFortranFunctionName = "umat"+makeUpperCase(fname)+"_F77";
-    out << "MFRONT_SHAREDOBJ void MFRONT_STDCALL\numat"
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\numat"
 	<< makeLowerCase(fname);
     writeUMATArguments(out,mb.getBehaviourType(),false);
     out << endl;
