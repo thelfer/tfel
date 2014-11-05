@@ -134,7 +134,7 @@
 
 - \(\tenseur{T}\) is the dual of the logarithmic strain
   \(\tepsilonto{}_{\text{log}}\)
-    - \(P=\tenseur{T}\,\colon\,\tepsilonto{}_{\text{log}}=\tenseur{S}\,\colon\,\tepsilonto{}_{\text{GL}}\)
+    - \(P=\tenseur{T}\,\colon\,\tdepsilonto{}_{\text{log}}=\tenseur{S}\,\colon\,\tdepsilonto{}_{\text{GL}}\)
 
 - if the small strain behaviour is **thermodynamically consistent**, so
   does the corresponding finite strain behaviour.

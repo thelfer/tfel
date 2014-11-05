@@ -16,7 +16,7 @@ systems on which `TFEL` was developed is `Linux`. Extensive testing on
 other posix-compliant operating systems, notably `FreeBSD`, is
 lacking, although compilation and unit testing is known to work.
 
-The isntallation on [Windows plateform](http://windows.microsoft.com)
+The installation on [Windows plateform](http://windows.microsoft.com)
 is described [here](install-windows.html)
 
 The creation of binary packages are detailled [here](packages.html)
