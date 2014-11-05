@@ -15,7 +15,7 @@
 #define _LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ 
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#define TFEL_ADDCALL_PTR __stdcall *
+#define TFEL_ADDCALL_PTR __cdecl *
 #else 
 #define TFEL_ADDCALL_PTR *
 #endif
