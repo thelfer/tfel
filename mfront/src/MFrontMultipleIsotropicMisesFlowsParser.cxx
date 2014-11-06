@@ -462,7 +462,7 @@ namespace mfront{
       ostringstream oseq_e;
       flow.hasSpecificTheta = true;
       converter >> flow.theta;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
     	this->throwRuntimeError("MFrontMultipleIsotropicMisesFlowsParser::treatFlowRule",
     				"Could not read theta value (read '"+this->current->value+"').");
       }

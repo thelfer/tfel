@@ -992,7 +992,7 @@ namespace mfront{
       double value;
       istringstream converter(this->current->value);
       converter >> value;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("MFrontBehaviourParserCommon::treatParameterMethod",
 				"could not read default value for parameter '"+n+"'");
       }
@@ -1666,7 +1666,7 @@ namespace mfront{
 	unsigned short component;
 	istringstream converter(this->current->value);
 	converter >> component;
-	if(!converter&&(!converter.eof())){
+	if(!converter||(!converter.eof())){
 	  this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
 				  "could not read component number for variable '"+d.varName+"'");
 	}
@@ -1701,7 +1701,7 @@ namespace mfront{
       istringstream converter(this->current->value);
       converter >> d.lowerBound;
       d.boundsType = BoundsDescription::LowerAndUpper;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
 				"could not read lower bound value for variable '"+d.varName+"'");
       }
@@ -1729,7 +1729,7 @@ namespace mfront{
     } else {
       istringstream converter(this->current->value);
       converter >> d.upperBound;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
 				"could not read upper bound value for variable '"+d.varName+"'");
       }
@@ -4033,9 +4033,10 @@ namespace mfront{
 			<< "operator=(const " << cname << "&);" << endl
 			<< "/*!" << endl
 			<< " * \\brief read the parameters from the given file" << endl
-			<< " * \\param[in] fn : file name" << endl
+			<< " * \\param[out] pi : parameters initializer" << endl
+			<< " * \\param[in]  fn : file name" << endl
 			<< " */" << endl
-			<< "void readParameters(const char* const);" << endl;
+			<< "static void readParameters(" << cname << "&,const char* const);" << endl;
     this->behaviourFile << "};" << endl << endl;
   } // end of MFrontBehaviourParserCommon::writeBehaviourParametersInitializer
 
@@ -4984,7 +4985,7 @@ namespace mfront{
       << type << " value;" << endl
       << "istringstream converter(v);" << endl
       << "converter >> value;" << endl
-      << "if(!converter&&(!converter.eof())){" << endl
+      << "if(!converter||(!converter.eof())){" << endl
       << "string msg(\"" << cname << "::get" << type2 << " : \"" << endl
       << "           \"can't convert '\"+v+\"' to " << type
       << " for parameter '\"+ n+\"'\");" << endl
@@ -5055,9 +5056,9 @@ namespace mfront{
       }
     }
     this->srcFile << "// Reading parameters from a file" << endl;
-    this->srcFile << "this->readParameters(\"" << this->mb.getClassName() << "-parameters.txt\");" << endl;
+    this->srcFile << cname << "::readParameters(*this,\"" << this->mb.getClassName() << "-parameters.txt\");" << endl;
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->srcFile << "this->readParameters(\"" << this->mb.getClassName() << ModellingHypothesis::toString(h) << "-parameters.txt\");" << endl;
+      this->srcFile <<  cname << "::readParameters(*this,\"" << this->mb.getClassName() << ModellingHypothesis::toString(h) << "-parameters.txt\");" << endl;
     }
     this->srcFile <<"}" << endl << endl;
     if(rp){
@@ -5169,16 +5170,20 @@ namespace mfront{
       MFrontBehaviourParserCommon_writeConverter(this->srcFile,cname,"unsigned short","UnsignedShort");
     }
     this->srcFile << "void" << endl
-		  << cname << "::readParameters(const char* const fn)" 
+		  << cname << "::readParameters(" << cname << "&";
+    if(rp2||ip2||up2){
+      this->srcFile << " pi";
+    }
+    this->srcFile << ",const char* const fn)" 
 		  << "{" << endl
 		  << "using namespace std;" << endl
 		  << "ifstream f(fn);" << endl
-		  << "string p;" << endl
-		  << "string v;" << endl
 		  << "if(!f){" << endl
       		  << "return;" << endl
       		  << "}" << endl
 		  << "while(!f.eof()){" << endl
+		  << "string p;" << endl
+		  << "string v;" << endl
 		  << "f >> p;" << endl
 		  << "if(p.empty()){" << endl
 		  << "if(!f.eof()){" << endl
@@ -5201,7 +5206,7 @@ namespace mfront{
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-	  this->srcFile << "this->" << p->name << " = ";
+	  this->srcFile << "pi." << p->name << " = ";
 	  if(p->type=="real"){
 	    this->srcFile <<  cname << "::getDouble(p,v);" << endl;
 	  } else if(p->type=="int"){
@@ -5215,11 +5220,11 @@ namespace mfront{
 	} else {
 	  this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\"," << endl;
 	  if(p->type=="real"){
-	    this->srcFile << dcname << "::getDouble(p,v)" << endl;
+	    this->srcFile << dcname << "::getDouble(p,v)";
 	  } else if(p->type=="int"){
-	    this->srcFile << dcname << "::getInt(p,v)" << endl;
+	    this->srcFile << dcname << "::getInt(p,v)";
 	  } else if(p->type=="ushort"){
-	    this->srcFile << dcname << "::getUnsignedShort(p,v)" << endl;
+	    this->srcFile << dcname << "::getUnsignedShort(p,v)";
 	  } else {
 	    this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
 				    "invalid parameter type '"+p->type+"'");
@@ -5467,7 +5472,7 @@ namespace mfront{
 	this->checkNotEndOfFile("ParserBase::handleParameter");
 	istringstream converter(this->current->value);
 	converter >> value;
-	if(!converter&&(!converter.eof())){
+	if(!converter||(!converter.eof())){
 	  this->throwRuntimeError("ParserBase::handleParameter",
 				  "could not read default value for parameter '"+n+"'");
 	}
