@@ -3995,6 +3995,9 @@ namespace mfront{
     bool rp = false;
     bool ip = false;
     bool up = false;
+    bool rp2 = false;
+    bool ip2 = false;
+    bool up2 = false;
     this->checkBehaviourFile();
     this->behaviourFile << "struct " << cname << endl
 			<< "{" << endl
@@ -4006,6 +4009,7 @@ namespace mfront{
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	  rp2=true;
 	  this->behaviourFile << "double " << p->name << ";" << endl; 
 	}
       } else if(p->type=="int"){
@@ -4013,13 +4017,15 @@ namespace mfront{
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	  ip2 = true;
 	  this->behaviourFile << "double " << p->name << ";" << endl; 
 	}
-      } else 	if(p->type=="ushort"){
+      } else  if(p->type=="ushort"){
 	up = true;
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	  up2 = true;
 	  this->behaviourFile << "unsigned short " << p->name << ";" << endl; 
 	}
       } else {
@@ -4040,11 +4046,40 @@ namespace mfront{
     if(up){
       this->behaviourFile << "void set(const char* const,const unsigned short);" << endl << endl;
     }
+    if(rp2){
+      this->behaviourFile << "/*!" << endl
+			  << " * \\brief convert a string to double" << endl
+			  << " * \\param[in] p : parameter" << endl
+			  << " * \\param[in] v : value" << endl
+			  << " */" << endl
+			  << "static double getDouble(const std::string&,const std::string&);" << endl;
+    }
+    if(ip2){
+      this->behaviourFile << "/*!" << endl
+			  << " * \\brief convert a string to int" << endl
+			  << " * \\param[in] p : parameter" << endl
+			  << " * \\param[in] v : value" << endl
+			  << " */" << endl
+			  << "static int getInt(const std::string&,const std::string&);" << endl;
+    }
+    if(up2){
+      this->behaviourFile << "/*!" << endl
+			  << " * \\brief convert a string to unsigned short" << endl
+			  << " * \\param[in] p : parameter" << endl
+			  << " * \\param[in] v : value" << endl
+			  << " */" << endl
+			  << "static unsigned short getUnsignedShort(const std::string&,const std::string&);" << endl;
+    }
     this->behaviourFile << "private :" << endl << endl
 			<< cname << "();" << endl << endl
 			<< cname << "(const " << cname << "&);" << endl << endl
 			<< cname << "&" << endl
-			<< "operator=(const " << cname << "&);" << endl << endl;
+			<< "operator=(const " << cname << "&);" << endl
+			<< "/*!" << endl
+			<< " * \\brief read the parameters from the given file" << endl
+			<< " * \\param[in] fn : file name" << endl
+			<< " */" << endl
+			<< "void readParameters(const char* const);" << endl;
     this->behaviourFile << "};" << endl << endl;
   } // end of BehaviourDSLCommon::writeBehaviourParametersInitializer
 
@@ -4879,16 +4914,13 @@ namespace mfront{
     }
     this->srcFile << " */" << endl;
     this->srcFile << endl;
-    const set<Hypothesis>& h = this->mb.getDistinctModellingHypotheses();
-    bool found = false;
-    for(set<Hypothesis>::const_iterator ph=h.begin();(ph!=h.end())&&(!found);++ph){
-      const BehaviourData& d = this->mb.getBehaviourData(*ph);
-      found = !d.getParameters().empty();
-    }
-    if(found){
+    if(this->mb.hasParameters()){
+      this->srcFile << "#include<string>" << endl;
       this->srcFile << "#include<cstring>" << endl;
+      this->srcFile << "#include<fstream>" << endl;
+      this->srcFile << "#include<stdexcept>" << endl;
+      this->srcFile << endl;
     }
-    this->srcFile << endl;
     this->srcFile << "#include\"TFEL/Material/" << this->behaviourDataFileName   << "\"" << endl;
     this->srcFile << "#include\"TFEL/Material/" << this->integrationDataFileName << "\"" << endl;
     this->srcFile << "#include\"TFEL/Material/" << this->behaviourFileName       << "\"" << endl;
@@ -4981,15 +5013,43 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writeSrcFileParametersInitializer
 
+  static void
+  BehaviourDSLCommon_writeConverter(std::ostream& f,
+				    const std::string& cname,
+				    const std::string& type,
+				    const std::string& type2)
+  {
+    using std::endl;
+    f << type  << endl
+      << cname << "::get" << type2 << "(const std::string& n," << endl
+      <<                               "const std::string& v)" << endl
+      << "{" << endl
+      << "using namespace std;" << endl
+      << type << " value;" << endl
+      << "istringstream converter(v);" << endl
+      << "converter >> value;" << endl
+      << "if(!converter&&(!converter.eof())){" << endl
+      << "string msg(\"" << cname << "::get" << type2 << " : \"" << endl
+      << "           \"can't convert '\"+v+\"' to " << type
+      << " for parameter '\"+ n+\"'\");" << endl
+      << "throw(runtime_error(msg));" << endl
+      << "}" << endl
+      << "return value;" << endl
+      << "}" << endl << endl;
+  }
+
   void
   BehaviourDSLCommon::writeSrcFileParametersInitializer(const Hypothesis h)
   {
     using namespace std;
     this->checkBehaviourFile();
     // treating the default case
-    bool rp = false; // real    parameter found
-    bool ip = false; // integer parameter found
-    bool up = false; // unsigned short parameter found
+    bool rp  = false; // real    parameter found
+    bool ip  = false; // integer parameter found
+    bool up  = false; // unsigned short parameter found
+    bool rp2 = false; // real    parameter found
+    bool ip2 = false; // integer parameter found
+    bool up2 = false; // unsigned short parameter found
     VariableDescriptionContainer::const_iterator p;
     string cname(this->mb.getClassName());
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -5014,6 +5074,7 @@ namespace mfront{
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	  rp2=true;
 	  this->srcFile << "this->" << p->name << " = " 
 			<< this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";" << endl; 
 	}
@@ -5022,6 +5083,7 @@ namespace mfront{
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	  ip2=true;
 	  this->srcFile << "this->" << p->name << " = " 
 			<< this->mb.getIntegerParameterDefaultValue(h,p->name) << ";" << endl; 
 	}
@@ -5030,10 +5092,16 @@ namespace mfront{
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	  up2=true;
 	  this->srcFile << "this->" << p->name << " = " 
 			<< this->mb.getUnsignedShortParameterDefaultValue(h,p->name) << ";" << endl; 
 	}
       }
+    }
+    this->srcFile << "// Reading parameters from a file" << endl;
+    this->srcFile << "this->readParameters(\"" << this->mb.getClassName() << "-parameters.txt\");" << endl;
+    if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      this->srcFile << "this->readParameters(\"" << this->mb.getClassName() << ModellingHypothesis::toString(h) << "-parameters.txt\");" << endl;
     }
     this->srcFile <<"}" << endl << endl;
     if(rp){
@@ -5135,6 +5203,83 @@ namespace mfront{
 		    << "}" << endl
 		    << "}" << endl << endl;
     }
+    if(rp2){
+      BehaviourDSLCommon_writeConverter(this->srcFile,cname,"double","Double");
+    }
+    if(ip2){
+      BehaviourDSLCommon_writeConverter(this->srcFile,cname,"int","Int");
+    }
+    if(up2){
+      BehaviourDSLCommon_writeConverter(this->srcFile,cname,"unsigned short","UnsignedShort");
+    }
+    this->srcFile << "void" << endl
+		  << cname << "::readParameters(const char* const fn)" 
+		  << "{" << endl
+		  << "using namespace std;" << endl
+		  << "ifstream f(fn);" << endl
+		  << "string p;" << endl
+		  << "string v;" << endl
+		  << "if(!f){" << endl
+      		  << "return;" << endl
+      		  << "}" << endl
+		  << "while(!f.eof()){" << endl
+		  << "f >> p;" << endl
+		  << "if(p.empty()){" << endl
+		  << "if(!f.eof()){" << endl
+		  << "string msg(\"" << cname << "::readParameters : \");" << endl
+		  << "msg+=\"Error while parsing file '\";" << endl
+		  << "msg+=fn;" << endl
+		  << "msg+=\"'\";" << endl
+		  << "throw(runtime_error(msg));" << endl
+		  << "}" << endl
+		  << "break;" << endl
+		  << "}" << endl
+		  << "f >> v;" << endl;
+      for(p=params.begin();p!=params.end();++p){
+	if(p==params.begin()){
+	  this->srcFile << "if(";
+	} else {
+	  this->srcFile << "} else if(";
+	}
+	this->srcFile << "\"" <<  this->mb.getExternalName(h,p->name) << "\"==p){" << endl;
+	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
+	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
+	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	  this->srcFile << "this->" << p->name << " = ";
+	  if(p->type=="real"){
+	    this->srcFile <<  cname << "::getDouble(p,v);" << endl;
+	  } else if(p->type=="int"){
+	    this->srcFile << cname << "::getInt(p,v);" << endl;
+	  } else if(p->type=="ushort"){
+	    this->srcFile << cname << "::getUnsignedShort(p,v);" << endl;
+	  } else {
+	    this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
+				    "invalid parameter type '"+p->type+"'");
+	  }
+	} else {
+	  this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\"," << endl;
+	  if(p->type=="real"){
+	    this->srcFile << dcname << "::getDouble(p,v)" << endl;
+	  } else if(p->type=="int"){
+	    this->srcFile << dcname << "::getInt(p,v)" << endl;
+	  } else if(p->type=="ushort"){
+	    this->srcFile << dcname << "::getUnsignedShort(p,v)" << endl;
+	  } else {
+	    this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
+				    "invalid parameter type '"+p->type+"'");
+	  }
+	  this->srcFile << ");" << endl;
+	}
+      }
+      this->srcFile << "} else {" << endl
+		    << "string msg(\"" << cname << "::readParameters : \");" << endl
+		    << "msg+=\"Error while parsing file '\";" << endl
+		    << "msg+=fn;" << endl
+		    << "msg+=\"'. Invalid parameter '\"+p+\"'\";" << endl
+		    << "throw(runtime_error(msg));" << endl
+		    << "}" << endl
+		    << "}" << endl
+		    << "}" << endl << endl;
   } // end of BehaviourDSLCommon::writeSrcFileParametersInitializer
 
   void

@@ -1897,7 +1897,6 @@ namespace mfront{
     // loop over hypothesis
     const set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      
       const BehaviourData& d = mb.getBehaviourData(*ph);
       const VariableDescriptionContainer& persistentVarsHolder     = d.getPersistentVariables();
       const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
