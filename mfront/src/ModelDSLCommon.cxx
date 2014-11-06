@@ -788,7 +788,7 @@ namespace mfront{
       double value;
       istringstream converter(this->current->value);
       converter >> value;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Could not read initial value of field : '"+this->currentVar+"'");
       }
@@ -802,7 +802,7 @@ namespace mfront{
       unsigned short value;
       istringstream converter(this->current->value);
       converter >> value;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Could not read depth value of field '"+this->currentVar+"'");
       }
@@ -936,7 +936,7 @@ namespace mfront{
       unsigned short value;
       istringstream converter(this->current->value);
       converter >> value;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Could not read initial value of field '"+this->currentVar+"'");
       }
@@ -1237,7 +1237,7 @@ namespace mfront{
 	  istringstream converter(this->current->value);
 	  double tmp;
 	  converter >> tmp;
-	  if(!converter&&(!converter.eof())){
+	  if(!converter||(!converter.eof())){
 	    this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
 				    "Could not read default for variable '"+this->currentVar+"'");
 	  }
@@ -1269,7 +1269,7 @@ namespace mfront{
       istringstream converter(this->current->value);
       double tmp;
       converter >> tmp;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("MFrontMode⁹8lParserCommon::readDefaultValue",
 				"Could not read default for variable '"+this->currentVar+"'");
       }
@@ -1359,7 +1359,7 @@ namespace mfront{
       istringstream converter(this->current->value);
       converter >> boundsDescription.lowerBound;
       boundsDescription.boundsType = VariableBoundsDescription::LowerAndUpper;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("ModelDSLCommon::registerBounds",
 				"Could not read lower bound value for variable '"+
 				boundsDescription.varName+"' (read '"+this->current->value+"')");
@@ -1388,7 +1388,7 @@ namespace mfront{
     } else {
       istringstream converter(this->current->value);
       converter >> boundsDescription.upperBound;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("ModelDSLCommon::registerBounds",
 				"Could not read lower bound value for variable '"+
 				boundsDescription.varName+"' (read '"+this->current->value+"')");

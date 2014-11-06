@@ -1026,7 +1026,7 @@ namespace mfront{
       istringstream converter(this->current->value);
       converter >> boundsDescription.lowerBound;
       boundsDescription.boundsType = VariableBoundsDescription::LowerAndUpper;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
 				"Could not read lower bound value for variable '"+
 				boundsDescription.varName+"' (read '"+this->current->value+"')");
@@ -1055,7 +1055,7 @@ namespace mfront{
     } else {
       istringstream converter(this->current->value);
       converter >> boundsDescription.upperBound;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
 				"Could not read lower bound value for variable '"+
 				boundsDescription.varName+"' (read '"+this->current->value+"')");

@@ -84,7 +84,7 @@ namespace tfel
       }
       unsigned short u;
       converter >> u;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	string msg(method+" : ");
 	msg += "not read value from token '"+value+"'";
 	throw(runtime_error(msg));
@@ -106,7 +106,7 @@ namespace tfel
       }
       unsigned int u;
       converter >> u;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	string msg(method+" : ");
 	msg += "not read value from token '"+value+"'";
 	throw(runtime_error(msg));
@@ -128,7 +128,7 @@ namespace tfel
       }
       int u;
       converter >> u;
-      if(!converter&&(!converter.eof())){
+      if(!converter||(!converter.eof())){
 	string msg(method+" : ");
 	msg += "not read value from token '"+value+"'";
 	throw(runtime_error(msg));

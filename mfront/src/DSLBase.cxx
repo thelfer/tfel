@@ -1252,7 +1252,7 @@ namespace mfront
 	istringstream converter(this->current->value);
 	double value;
 	converter >> value;
-	if(!converter&&(!converter.eof())){
+	if(!converter||(!converter.eof())){
 	  this->throwRuntimeError("DSLBase::handleParameter",
 				  "could not read default value for parameter '"+n+"'");
 	}
