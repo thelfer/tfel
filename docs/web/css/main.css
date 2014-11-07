@@ -104,7 +104,8 @@ body {
     min-width:200px;
     max-width:1200px;
     margin:10px auto;
-    padding:0
+    padding:0;
+    /* background: url("../img/background.svg") no-repeat fixed top left */
 /* background-color:whitefff; */
 /*    background-width: 800px */
 }

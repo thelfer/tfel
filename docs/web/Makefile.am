@@ -27,6 +27,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./tutorial.md					   \
 	   ./LICENSE.md						   \
 	   ./glossary.md					   \
+	   ./parameters.md					   \
 	   ./CONTRIBUTING.md					   \
 	   ./TODO.md						   \
 	   ./robots.txt						   \
@@ -40,6 +41,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./js/plugins.js					   \
 	   ./humans.txt						   \
 	   ./apple-touch-icon-precomposed.png			   \
+	   ./img/background.svg  				   \
 	   ./img/tutorielch12-img1.png				   \
 	   ./img/VoidsGrowth.png				   \
 	   ./img/FuelRod-ddif2.png				   \
