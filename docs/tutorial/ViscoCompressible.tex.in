@@ -193,8 +193,9 @@ l'étape de vérification de la loi.
 
 Cette forme de potentiel de dissipation provient de l'homogénisation
 du problème d'une matrice poreuse incompressible isotrope supposée
-obéir à une loi viscoplastique de \nom{Norton}. Elle a été utilisée à
-plusieurs reprises pour décrire le combustible
+obéir à une loi viscoplastique de
+\nom{Norton}~\cite{Michel199278}. Elle a été utilisée à plusieurs
+reprises pour décrire le combustible
 nucléaire~\cite{monerie_overall_2006}. La constante \(E\) apparaissant
 dans la définition des fonctions \(A\paren{f}\) et \(B\paren{f}\) est
 l'exposant de la loi de de \nom{Norton} de la matrice.

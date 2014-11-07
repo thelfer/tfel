@@ -783,7 +783,7 @@ paramètres optimum $H(X^{\mathit{final}})$.
   \label{fig:mfront:tutorial:adao:check}
 \end{figure}
 
-Une copie d'écran de l'interface de \adao dans \salome{} est présentée
+Une copie d'écran de l'interface de \adao{} dans \salome{} est présentée
 sur la figure~\ref{fig:mfront:tutorial:adao:check}.
 
 On peut voir sur cette figure~:
@@ -897,7 +897,7 @@ la fonctionnelle, et ses gradients par différences finies.
 
 La figure~\ref{fig:mfront:tutorial:adao-quatre-courbes:check} présente
 une copie d'écran illustrant les résultats de l'optimisation. On peut
-y~:
+y voir~:
 \begin{itemize}
 \item en haut à gauche la décroissance de la fonctionnelle $F$ au
   cours du processus~;
