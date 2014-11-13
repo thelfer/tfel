@@ -1651,12 +1651,12 @@ namespace mfront{
 	  this->makeFile << cxxflags << " ";
 	} else if(this->oflags){
 	  if(this->oflags2){
-	    this->makeFile << "`tfel-config --oflags --oflags2` ";
+	    this->makeFile << "`tfel-config --compiler-flags --oflags --oflags2` ";
 	  } else {
-	    this->makeFile << "`tfel-config --oflags` ";
+	    this->makeFile << "`tfel-config --compiler-flags --oflags` ";
 	  }
 	} else {
-	  this->makeFile << "-O2 ";
+	  this->makeFile << "-O2 `tfel-config --compiler-flags`";
 	}
 	if(this->sys=="win32"){
 	  this->makeFile << "-D'F77_FUNC(X,Y)=X\\#\\#_' -D'F77_FUNC_(X,Y)=X\\#\\#__' -DWIN32 $(INCLUDES) \n\n";

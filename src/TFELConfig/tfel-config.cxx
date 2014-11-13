@@ -49,6 +49,9 @@ registerCallBack(const std::string&,
 		 const std::string&);
 
 static void
+treatCompilerFlags(void);
+
+static void
 treatOFlags(void);
 
 static void
@@ -116,6 +119,7 @@ static void
 treatLicences(void);
 
 static CallBacksContainer callBacksContainer;
+static bool compilerflags   = false;
 static bool oflags          = false;
 static bool oflags2         = false;
 static bool warning         = false;
@@ -244,6 +248,12 @@ registerCallBack(const std::string& key,
   using namespace std;
   callBacksContainer.insert(make_pair(key,make_pair(f,description)));
 } // end of registerNewCallBack
+
+static void
+treatCompilerFlags(void)
+{
+  compilerflags = true;
+} // end of treatOFlags
 
 static void
 treatOFlags(void)
@@ -476,6 +486,7 @@ main(const int argc,
   CallBacksContainer::const_iterator p;
   const char * const * p2;
 
+  registerCallBack("--compiler-flags",&treatCompilerFlags,"return tfel recommended compiler flags.");
   registerCallBack("--oflags",&treatOFlags,"return tfel recommended optimisation flags.");
   registerCallBack("--oflags2",&treatOFlags2,"return some aggressive optimisation flags, possibly at the expense of precision.");
   registerCallBack("--warning",&treatWarning,"return tfel recommended warnings.");
@@ -616,6 +627,10 @@ main(const int argc,
     if(tests){
       cout << "-lTFELTests ";
     }
+  }
+
+  if(compilerflags){
+    cout << COMPILER_FLAGS << " ";
   }
 
   if(oflags){
