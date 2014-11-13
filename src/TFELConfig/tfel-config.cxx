@@ -218,10 +218,6 @@ includeDir(void)
   string rpath;
   if(getValueInRegistry(rpath,string("Software\\CEA\\tfel-")+VERSION,"")){
     inc = handleSpace(rpath+"/include");
-#ifdef COMPILER_SPECIFIC_OPTIONS
-    inc += ' ';
-    inc += COMPILER_SPECIFIC_OPTIONS;
-#endif
     return inc;
   }
 #endif
@@ -233,10 +229,6 @@ includeDir(void)
       inc = handleSpace(prefix + "/include");
     }
   }
-#ifdef COMPILER_SPECIFIC_OPTIONS
-  inc += ' ';
-  inc += COMPILER_SPECIFIC_OPTIONS;
-#endif
   return inc;
 } // end of libDir
 

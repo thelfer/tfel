@@ -304,7 +304,7 @@ AC_DEFUN([AC_CHECK_GXX],
                CXXFLAGS="$CXXFLAGS -ftemplate-depth-250"
 #	       CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
 	       CXXFLAGS="$CXXFLAGS"
-	       COMPILER_SPECIFIC_OPTIONS="-ftemplate-depth-250 -Wno-mismatched-tags $COMPILER_SPECIFIC_OPTIONS"
+	       COMPILER_FLAGS="-ftemplate-depth-250 -Wno-mismatched-tags $COMPILER_FLAGS"
             fi
 
 	    if test "${CXX}" != "clang++"; then
@@ -329,7 +329,7 @@ AC_DEFUN([AC_CHECK_GXX],
 		    AC_MSG_WARN("g++3.4 does not work with FSAlgorithm specialisation nicely")
 		    AC_MSG_WARN("Using the -DNO_FSALGORITHM_SPECIALISATION flag")
 		    CPPFLAGS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $CPPFLAGS"
-		    COMPILER_SPECIFIC_OPTIONS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $COMPILER_SPECIFIC_OPTIONS"
+		    COMPILER_FLAGS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $COMPILER_FLAGS"
 		else
 		    CPPFLAGS=" $CPPFLAGS"
 		    CXXFLAGS="$CXXFLAGS"
