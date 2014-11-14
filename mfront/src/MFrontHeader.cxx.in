@@ -20,7 +20,7 @@ namespace mfront{
   std::string
   MFrontHeader::getVersionNumber(void)
   {
-    return "@VERSION@";
+    return "@TFEL_VERSION@";
   }
 
   std::string

@@ -2,7 +2,7 @@
  * \file   src/TFELConfig/tfel-config.cxx
  * \brief  
  * \author Helfer Thomas
- * \date   27 aoû 2007
+ * \date   27 août 2007
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -152,15 +152,21 @@ getValueInRegistry(std::string &value,
 		   const std::string& path,
 		   const std::string &name)
 {
+  using namespace std;
+  std::cout << "SOFTWARE\\CEA_EDF\\tfel-2.0.1-dev" << std::endl;
+  std::cout << path << std::endl;
   HKEY  hKey;
   char  szBuffer[512];
   DWORD dwBufferSize = sizeof(szBuffer);
   LONG  nError;
   LONG  lRes = RegOpenKeyEx(HKEY_LOCAL_MACHINE,path.c_str(),0,KEY_READ,&hKey);
   if(ERROR_SUCCESS != lRes){
+    cout << "HERE" << endl;
     return false;
   }
-  nError = RegQueryValueEx(hKey, name.c_str(), 0, NULL, (LPBYTE)szBuffer, &dwBufferSize);
+  nError = RegQueryValueEx(hKey, name.c_str(), 0,NULL,
+			   reinterpret_cast<LPBYTE>(szBuffer),
+			   &dwBufferSize);
   RegCloseKey(hKey);
   if (ERROR_SUCCESS == nError){
     value = szBuffer;
@@ -187,7 +193,7 @@ libDir(void)
 #if defined _WIN32 || defined _WIN64
   // check in the registry (installation through NSIS)
   string rpath;
-  if(getValueInRegistry(rpath,string("Software\\CEA\\tfel-")+VERSION,"")){
+  if(getValueInRegistry(rpath,string("SOFTWARE\\CEA_EDF\\tfel-")+VERSION,"")){
     return rpath+ldir;
   }
 #endif
@@ -216,7 +222,7 @@ includeDir(void)
 #if defined _WIN32 || defined _WIN64
   // check in the registry (installation through NSIS)
   string rpath;
-  if(getValueInRegistry(rpath,string("Software\\CEA\\tfel-")+VERSION,"")){
+  if(getValueInRegistry(rpath,string("SOFTWARE\\CEA_EDF\\tfel-")+VERSION,"")){
     inc = handleSpace(rpath+"/include");
     return inc;
   }

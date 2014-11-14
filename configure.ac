@@ -27,59 +27,89 @@ if test "x$CXXFLAGS" = "x";
     CXXFLAGS=""
 fi
 
+#disable default flags
+if test "x$CFLAGS" = "x";
+    then
+    CFLAGS="";
+fi
+
 AC_PROG_CXX
 
 AC_CHECKING("architecture type")
 
-TFEL_WIN32="no"
-TFEL_WIN64="no"
+TFEL_WIN="no"
 TFEL_LINUX="no"
+TFEL_ARCH32="no"
+TFEL_ARCH64="no"
 
 case $host in
 # machine 386 -> 686, 32 bits
     i[[3456]]86*linux*)
-	AC_DEFINE(TFEL_ARCH32)
+	TFEL_ARCH32="yes"
 	TFEL_LINUX="yes"
         ;;
 # machine amd opteron, 64 bits
     x86_64*linux*)
-	AC_DEFINE(TFEL_ARCH64)
+	TFEL_ARCH64="yes"
 	TFEL_LINUX="yes"
         ;;
 # machine 386 -> 686, 32 bits
     i[[3456]]86*bsd*)
-	AC_DEFINE(TFEL_ARCH32)
+	TFEL_ARCH32="yes"
         ;;
 # machine amd opteron, 64 bits
     x86_64*bsd*)
-	AC_DEFINE(TFEL_ARCH64)
+	TFEL_ARCH64="yes"
         ;;
     x86_64*-mingw32*)
-# Pas sÃ»r, mais c'est pour le test
-	AC_DEFINE(TFEL_ARCH32)
-	TFEL_WIN32="yes"
+# Pas sûr, on verra plus tard
+	TFEL_ARCH32="yes"
+	TFEL_WIN="yes"
 	;;
     i*86-*-mingw32*)
-	AC_DEFINE(TFEL_ARCH32)
-	TFEL_WIN32="yes"
+	TFEL_ARCH32="yes"
+	TFEL_WIN="yes"
 	;;
     x86_64*mingw*)
-	AC_DEFINE(TFEL_ARCH64)
-	TFEL_WIN64="yes"
+	TFEL_ARCH64="yes"
+	TFEL_WIN="yes"
 	;;
     i[[3456]]86*cygwin*)
-	AC_DEFINE(TFEL_ARCH32)
-	TFEL_WIN32="yes"
+	TFEL_ARCH32="yes"
+	TFEL_WIN="yes"
 	;;
     x86_64*cygwin*)
-	TFEL_WIN64="yes"
-	AC_DEFINE(TFEL_ARCH64)
+	TFEL_WIN="yes"
+	TFEL_ARCH64="yes"
 	;;
     # ben on ne sait pas :-(
     *)
         AC_MSG_ERROR(unsupported host $host)
         ;;
 esac
+
+if test "x$TFEL_WIN" = "xyes" -a "x$TFEL_ARCH32" = "xyes" ;
+then
+    # When compiling against Cast3M, a 32 bits compiler can be used on a
+    # 64 bits machine, so we explicitely test if we are on a 64 bits
+    # system
+    if test -d '/c/Program Files (x86)' ;
+    then
+	TFEL_ARCH32="no"
+	TFEL_ARCH64="yes"
+    fi
+fi
+
+if test "x$TFEL_ARCH32" = "xyes" ;
+then
+	AC_DEFINE(TFEL_ARCH32)
+fi
+
+if test "x$TFEL_ARCH64" = "xyes" ;
+then
+	AC_DEFINE(TFEL_ARCH64)
+fi
+
 
 # Macro for lisp
 # AM_PATH_LISPDIR
@@ -119,8 +149,6 @@ AC_ARG_ENABLE([optimizations],
 AC_ARG_ENABLE([debug],
 	AC_HELP_STRING([--enable-debug], [Compile with debug options]))
 
-#disable default flags
-CFLAGS="";
 
 #choose between intel icpc and g++ and ekopath
 INTEL="no"
@@ -161,6 +189,10 @@ if test "x$INTEL" == "xyes"; then
     OPTIMISATION_FLAGS2=""
     AC_CHECK_INTEL
 fi
+
+CFLAGS="$CFLAGS $COMPILER_FLAGS"
+CXXFLAGS="$CXXFLAGS $COMPILER_FLAGS"
+CXXFLAGS="$CXXFLAGS $COMPILER_WARNINGS"
 
 AC_DEFINE_UNQUOTED(COMPILER_FLAGS,"$COMPILER_FLAGS")
 AC_DEFINE_UNQUOTED(OPTIMISATION_FLAGS,"$OPTIMISATION_FLAGS")
@@ -358,10 +390,10 @@ AC_ARG_ENABLE([tests],
 esac],[enable_tests=false])
 AM_CONDITIONAL(WITH_TESTS, test x"$enable_tests" = "xtrue")
 
-AM_CONDITIONAL([TFEL_WIN],[test x"$TFEL_WIN32" = "xyes" -o x"$TFEL_WIN64" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN],[test x"$TFEL_WIN" = "xyes"])
 AM_CONDITIONAL([TFEL_LINUX],[test x"$TFEL_LINUX" = "xyes"])
-AM_CONDITIONAL([TFEL_WIN32],[test x"$TFEL_WIN32" = "xyes"])
-AM_CONDITIONAL([TFEL_WIN64],[test x"$TFEL_WIN64" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN32],[test x"$TFEL_WIN" = "xyes" -a x"$TFEL_ARCH32" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN64],[test x"$TFEL_WIN" = "xyes" -a x"$TFEL_ARCH64" = "xyes"])
 
 AC_OUTPUT([debug.sh
 	   Makefile
