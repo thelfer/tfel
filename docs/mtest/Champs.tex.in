@@ -10,7 +10,7 @@
 \auteurs{T.~Helfer, J.M.~Proix\(\mbox{}^{(a)}\)}
 \affiliation{\(\mbox{}^{(a)}\) Électricité de France, R\&D - Département Analyses Mécaniques et Acoustique}
 \redacteur{T.~Helfer}
-\verificateur{C. Petry}
+\verificateur{C. Petry (EDF R\&D MMC)}
 \approbateur{R.~Masson}
 \emetteur{M.~Bauer}
 
@@ -28,7 +28,7 @@
 \programmerecherche{SICOM}
 \classification{DO}
 \motsclefs{
-  \mtest{} - \mfront{} - \pleiades{}
+  \mtest{} - \mfront{} - \pleiades{} - simulation du comportement d'un point matériel - tests unitaires
 }
 
 % \codebarre{images/code_barre}
@@ -76,11 +76,12 @@
                       &                    &  & \\
   DEN/DEC             & P. Brossard        &  & Document disponible\\
   DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
-  DEN/DEC/SESC        & C. Valot           &  & \\
+  DEN/DEC/SESC        & M. Bauer           &  & \\
+                      & C. Valot           &  & \\
                       & M. Agard           &  & \\
   DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
                       & C. Bassi           &  & \\
-  DEN/DEC/SESC/LLCC   & G. Jomart          &  & \\
+  DEN/DEC/SESC/LLCC   & G. Jomard          &  & \\
                       & J.-M. Escleine     &  & \\
   DEN/DEC/SESC/LC2I   & D. Plancq          &  & \\
                       & S. Bejaoui         &  & \\
