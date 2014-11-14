@@ -47,9 +47,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/mfront.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/annexe-orthotropie.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mfront.tex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+        ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      mfront.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mfront.tex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+        ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      mfront.tex
     COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse mfront
     COMMAND   ${MAKEINDEX_COMPILER}
@@ -57,9 +65,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mfront.tex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+        ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      mfront.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode mfront.tex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+        ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      mfront.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
     ARGS      -R0 mfront.dvi
     COMMAND   ${PS2PDF_CONVERTER}
@@ -71,9 +87,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/behaviours.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/annexe-orthotropie.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images behaviours.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      behaviours.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images behaviours.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      behaviours.tex
     COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse behaviours
     COMMAND   ${MAKEINDEX_COMPILER}
@@ -85,9 +109,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images behaviours.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      behaviours.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images behaviours.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      behaviours.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
     ARGS      -R0 behaviours.dvi
     COMMAND   ${PS2PDF_CONVERTER}
@@ -98,15 +130,31 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     OUTPUT    finitestrain.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/finitestrain.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images finitestrain.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      finitestrain.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images finitestrain.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      finitestrain.tex
     COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse finitestrain
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images finitestrain.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      finitestrain.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images finitestrain.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      finitestrain.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
     ARGS      -R0 finitestrain.dvi
     COMMAND   ${PS2PDF_CONVERTER}
@@ -117,15 +165,31 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     OUTPUT    planestress.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/planestress.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images planestress.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      planestress.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images planestress.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      planestress.tex
     COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse planestress
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images planestress.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      planestress.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images planestress.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      planestress.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
     ARGS      -R0 planestress.dvi
     COMMAND   ${PS2PDF_CONVERTER}
@@ -136,9 +200,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     OUTPUT    umat.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/umat.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images umat.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      umat.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images umat.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      umat.tex
     COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse umat
     COMMAND   ${MAKEINDEX_COMPILER}
@@ -150,9 +222,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images umat.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      umat.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images umat.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      umat.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
     ARGS      -R0 umat.dvi
     COMMAND   ${PS2PDF_CONVERTER}
@@ -163,9 +243,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     OUTPUT    zmat.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/zmat.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images zmat.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      zmat.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images zmat.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      zmat.tex
     COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse zmat
     COMMAND   ${MAKEINDEX_COMPILER}
@@ -177,9 +265,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images zmat.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      zmat.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images zmat.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      zmat.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
     ARGS      -R0 zmat.dvi
     COMMAND   ${PS2PDF_CONVERTER}
@@ -190,9 +286,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     OUTPUT    aster.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/aster.tex.in
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images aster.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      aster.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images aster.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      aster.tex
     #    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     #    ARGS      -terse aster
     COMMAND   ${MAKEINDEX_COMPILER}
@@ -204,9 +308,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist tfel.idx
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images aster.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      aster.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      -interaction=batchmode --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images aster.tex
+    ARGS      -interaction=batchmode
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
+    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+    ARGS      aster.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
     ARGS      -R0 aster.dvi
     COMMAND   ${PS2PDF_CONVERTER}
