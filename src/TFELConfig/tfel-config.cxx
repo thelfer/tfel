@@ -153,15 +153,12 @@ getValueInRegistry(std::string &value,
 		   const std::string &name)
 {
   using namespace std;
-  std::cout << "SOFTWARE\\CEA_EDF\\tfel-2.0.1-dev" << std::endl;
-  std::cout << path << std::endl;
   HKEY  hKey;
   char  szBuffer[512];
   DWORD dwBufferSize = sizeof(szBuffer);
   LONG  nError;
   LONG  lRes = RegOpenKeyEx(HKEY_LOCAL_MACHINE,path.c_str(),0,KEY_READ,&hKey);
   if(ERROR_SUCCESS != lRes){
-    cout << "HERE" << endl;
     return false;
   }
   nError = RegQueryValueEx(hKey, name.c_str(), 0,NULL,
