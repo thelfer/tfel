@@ -16,7 +16,12 @@
 #include<string>
 #include<fenv.h>
 
+#if defined _WIN32 || defined _WIN64
+#include<windows.h>
+#endif
+
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
+
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #include"TFEL/System/SignalManager.hxx"
 #endif
@@ -357,7 +362,20 @@ namespace mfront
 int main(const int argc,
 	 const char * const * const argv)
 {
+  using namespace std;
   using namespace mfront;
-  MTestMain m(argc,argv);
-  return m.execute();
+  int r = EXIT_FAILURE;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+  try{
+#endif /* __CYGWIN__ */
+    MTestMain m(argc,argv);
+    r = m.execute();
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+  }
+  catch(exception& e){
+    cerr << e.what() << endl;
+    return EXIT_FAILURE;
+  }
+#endif /* __CYGWIN__ */
+  return r;
 } // end of main
