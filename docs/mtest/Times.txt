@@ -9,7 +9,7 @@ into a given number of smaller intervals.
 ## Note
 
 The loadings and the external state variables evolutions are
-described in a totally indenpendant manner (see the `@ImposedStrain`,
+described in a totally independent manner (see the `@ImposedStrain`,
 the `@ImposedStress` and the `@ExternalStateVariable` keywords).
 
 ## Note

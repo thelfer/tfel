@@ -1,6 +1,29 @@
 % News
 % Helfer Thomas
-% October 15, 2014
+% November 17, 2014
+
+# Beta release of tfel-2.0.1 for `Windows 64bits` and `Cast3M 2014` (18 November 2014)
+
+A beta version of tfel-2.0.1 for `Windows 64bits` and `Cast3M 2014`
+has been released. A binary installer is provided
+[here](http://sourceforge.net/projects/tfel/files/Devel/Cast3M-2014/).
+
+Installing this version requires a functional installation of
+`Cast3M` \(2014\) (which shall be
+[patched](downloads/patchs-Cast3M-2014.tar.bz2) to call external
+libraries) and the `MSYS` shell (It is recommended not to install
+`mingw` compilers along with the `MSYS` shell as `Cast3M` provides its
+own version of those compilers).
+
+Installation instructions of those requirements are available
+[here](install-windows.html).
+
+Any feedback would be gratefully acknowledge.
+
+**Note:** The binary provided requires the `mingw` libraries delivered
+with Cast3M 2014. 
+
+**Note:** A standalone version of tfel-2.0.1 will be provided shortly. 
 
 # `MFront` behaviours can now be used in `AMITEX_FFTP` (24 October 2014)
 

@@ -83,6 +83,73 @@ namespace mfront{
 #endif
   }
 
+#if defined _WIN32 || defined _WIN64
+  static bool
+  getValueInRegistry(std::string &value)
+  {
+    using namespace std;
+    HKEY  hKey;
+    char  szBuffer[512];
+    DWORD dwBufferSize = sizeof(szBuffer);
+    LONG  nError;
+    LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-" VERSION,0,KEY_READ,&hKey);
+    if(ERROR_SUCCESS != lRes){
+      return false;
+    }
+    nError = RegQueryValueEx(hKey,"", 0,NULL,
+			     reinterpret_cast<LPBYTE>(szBuffer),
+			     &dwBufferSize);
+    RegCloseKey(hKey);
+    if (ERROR_SUCCESS == nError){
+      value = szBuffer;
+      return true;
+    }
+    return false;
+  }
+#endif
+  
+  static std::string
+  handleSpace(const std::string& p)
+  {
+    using namespace std;
+    if(find(p.begin(),p.end(),' ')!=p.end()){
+#if defined _WIN32 || defined _WIN64
+      string msg("tfel-config handleSpace: "
+		 "path to TFEL shall not contain space as "
+		 "MinGW can't handle it (Found '"+p+"'). "
+		 "Please change TFEL installation directory");
+      throw(runtime_error(msg));
+#endif
+      return '"'+p+'"';
+    }
+  return p;
+  }
+
+  static std::string
+  getTFELHOME(void)
+  {
+    using namespace std;
+#if defined _WIN32 || defined _WIN64
+    // check in the registry (installation through NSIS)
+    string rpath;
+    if(getValueInRegistry(rpath)){
+      return handleSpace(rpath);
+    }
+#endif
+    const char * const path = getenv("TFELHOME");
+    if(path!=0){
+      return handleSpace(path);
+    }
+    
+#if defined _WIN32 || defined _WIN64
+    string msg("tfel-config getTFELHOME: "
+	       "no TFELHOME registry key defined and no TFEHOME "
+	       "environment variable defined");
+    throw(runtime_error(msg));
+#endif
+    return "";
+  }
+
   /*!
    * \return the path to the documentation file if available.
    * If not, an empty string is returned
@@ -94,11 +161,8 @@ namespace mfront{
 			   const std::string& k)
   {
     using namespace std;
-    string root;
-    const char * const path = getenv("TFELHOME");
-    if(path!=0){
-      root = string(path);
-    } else {
+    string root = getTFELHOME();
+    if(root.empty()){
       root = PREFIXDIR;
     }
     string fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".txt";

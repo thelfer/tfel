@@ -9,6 +9,7 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
   add_definitions("-DVERSION=\\\"\"${TFEL_VERSION}\"\\\"")
+  add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
 endmacro(tfel_project)
 
 set(CPACK_COMPONENTS_ALL core mfront mtest)

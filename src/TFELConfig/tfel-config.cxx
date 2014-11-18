@@ -165,7 +165,7 @@ getValueInRegistry(std::string &value)
   char  szBuffer[512];
   DWORD dwBufferSize = sizeof(szBuffer);
   LONG  nError;
-  LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME",0,KEY_READ,&hKey);
+  LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-" VERSION,0,KEY_READ,&hKey);
   if(ERROR_SUCCESS != lRes){
     return false;
   }
@@ -217,7 +217,7 @@ libDir(void)
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   const string ldir("/bin");
 #else 
-  const string ldir("/lib");
+  const string ldir("/lib"LIB_SUFFIX);
 #endif
   const string& th = getTFELHOME();
   if(!th.empty()){

@@ -15,6 +15,7 @@ m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 define([svnrevision],esyscmd([sh -c "svnversion|tr -d '\n'"]))
 AC_DEFINE(TFEL_SVN_REVISION,"svnrevision",[SVN REVISION])
+AC_DEFINE(LIB_SUFFIX,"$LIB_SUFFIX",[library directory suffix])
 AC_SUBST(TFEL_SVN_REVISION,"svnrevision")
 
 #disable static library generation by default
