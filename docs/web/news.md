@@ -4,6 +4,9 @@
 
 # Beta release of tfel-2.0.1 for `Windows 64bits` and `Cast3M 2014` (18 November 2014)
 
+![TFEL and Cast3M 2014 on Windows 7 64 bits](img/Win64.png
+ "TFEL and Cast3M 2014 on Windows 7 64 bits")
+
 A beta version of tfel-2.0.1 for `Windows 64bits` and `Cast3M 2014`
 has been released. A binary installer is provided
 [here](http://sourceforge.net/projects/tfel/files/Devel/Cast3M-2014/).
@@ -34,7 +37,6 @@ CEA. `MFront` behaviours can be used in `AMITEX_FFTP` through the
 ![Polycrystals computation made with `AMITEX_FFTP` (\(1024^{3}\) voxels)](img/AMITEX_FFTP_sig1.png
  "Polycrystals computation made with `AMITEX_FFTP` (\(1024^{3}\)
  voxels)")
-
 
 # `TFEL/MFront` on `Cast3M` web site (15 October 2014)
 

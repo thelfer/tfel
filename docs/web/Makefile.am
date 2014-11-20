@@ -63,6 +63,8 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/mingw-get2.xcf			                   \
 	   ./img/mingw-get3.png			                   \
 	   ./img/mingw-get3.xcf			                   \
+	   ./img/Win64.xcf			                   \
+	   ./img/Win64.png			                   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \
