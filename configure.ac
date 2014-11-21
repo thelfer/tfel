@@ -13,9 +13,20 @@ AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
+# ok, this is ugly, but is sufficient for our needs
+# remember that using autotools is considered deprecated
+case "$libdir" in
+  *lib64)
+	AC_DEFINE(LIB_SUFFIX,"64",[library directory suffix])	
+	;;
+    *)
+	AC_DEFINE(LIB_SUFFIX,"",[library directory suffix])	
+	;;
+esac
+
+
 define([svnrevision],esyscmd([sh -c "svnversion|tr -d '\n'"]))
 AC_DEFINE(TFEL_SVN_REVISION,"svnrevision",[SVN REVISION])
-AC_DEFINE(LIB_SUFFIX,"$LIB_SUFFIX",[library directory suffix])
 AC_SUBST(TFEL_SVN_REVISION,"svnrevision")
 
 #disable static library generation by default

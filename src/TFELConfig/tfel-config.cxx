@@ -225,9 +225,9 @@ libDir(void)
   }
   if(lib.substr(0,14)=="${exec_prefix}"){
     if(execPrefix=="${prefix}"){
-      lib = prefix;
+      lib = prefix+ldir;
     } else {
-      lib = execPrefix;
+      lib = execPrefix+ldir;
     }
   }
   return handleSpace(lib);
