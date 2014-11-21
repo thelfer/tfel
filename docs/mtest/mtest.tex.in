@@ -5,8 +5,8 @@
 % Directory : /home/th202608/codes/tfel/tests/Broyden/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
 
 % \usepackage{draftcopy}
 % \draftcopySetGrey{0.8}
@@ -106,18 +106,31 @@
 
 \resumecea{
 
-  Ce document présente un outil de simulation du comportement
-  mécanique d'un point matériel nommé \mtest{}.  Les lois de
-  comportement mécanique peuvent être écrites en petites ou en
-  grandes transformations. Les modèles de zones cohésives sont
-  également supportés.
+  \mfront{} peut générer des lois de comportement mécanique pour
+  différents codes cibles~: \castem{} (code aux éléments finis
+  généraliste développé par le \cea{} utilisé comme composant
+  mécanique dans \pleiades{}), \aster{} (code aux éléments finis
+  généraliste développé par \edf{}), \cyrano{} (code combustible
+  développé par \edf{})~\cite{helfer_generateur_2013}. Chacun de ces
+  codes présentent des spécificités que \mfront{} doit prendre en
+  compte pour des performances optimales.
 
-  Cet outil permet de piloter le chargement mécanique d'un point
-  matériel, en imposant certaines composantes des contraintes et/ou
-  certaines composantes des déformations (ou le gradient de la
-  déformation en grandes transformations, ou le saut de déplacement
-  pour les modèles de zones cohésives) au cours d'un historique (de
-  contraintes, de température, de fluence, etc.).
+  Ce document présente un outil de simulation du comportement
+  mécanique d'un point matériel nommé \mtest{}. La motivation initiale
+  du développement de \mtest{} était de disposer d'un outil {\em
+  autonome} permettant de maîtriser le développement de \mfront{}~:
+  \mtest{} peut se comporter comme chacun des différents codes, c'est
+  à dire adopter les mêmes conventions ou utiliser les mêmes
+  algorithmes numériques.
+
+  \mtest{} permet de piloter le chargement mécanique d'un point
+  matériel dont le comportement est décrit en petites ou en grandes
+  transformations ou par un modèle de zones cohésives. Il est possible
+  d'imposer certaines composantes des contraintes et/ou certaines
+  composantes des déformations (ou le gradient de la déformation en
+  grandes transformations, ou le saut de déplacement pour les modèles
+  de zones cohésives) au cours d'un historique (de contraintes, de
+  température, de fluence, etc.).
 
   \mtest{} permet de simuler de nombreux essais mécaniques simples
   (sans effet de structure)~:
@@ -131,19 +144,6 @@
   \item essais en pression interne sur tube présentant les mêmes
     variantes que les essais de traction/compression.
   \end{itemize}
-
-  \mfront{} peut générer des lois de comportement mécanique pour
-  différents codes cibles~: \castem{} (code aux éléments finis
-  généraliste développé par le \cea{}), \aster{} (code aux éléments
-  finis généraliste développé par \edf{}), \cyrano{} (code combustible
-  développé par \edf{}). Chacun de ces codes présentent des
-  spécificités que \mfront{} doit prendre en compte pour des
-  performances optimales. La motivation initiale du développement de
-  \mtest{} était de disposer d'un outil {\em autonome} permettant de
-  maîtriser le développement du générateur de code \mfront{}~:
-  \mtest{} peut se comporter comme chacun des différents codes, c'est
-  à dire adopter les mêmes conventions ou utiliser les mêmes
-  algorithmes numériques.
 
   Du fait de sa restriction à un unique point matériel, \mtest{} se
   distingue par ses temps d'exécution, généralement d'un à plusieurs
@@ -161,15 +161,13 @@
   \pleiades{}. Plus de \(600\) cas tests unitaires ont été écrits à
   l'aide de \mtest{}.
 
-  Au delà de l'aspect test unitaire, cet outil s'est cependant avéré
+  Au delà de l'aspect test unitaire, cet outil s'est aussi avéré
   très utile et apprécié des utilisateurs de \mfront{} qui l'emploient
   pour~:
   \begin{itemize}
   \item  valider le développement d'une
     nouvelle loi de comportement~;
-  \item recaler ses paramètres (en le couplant avec un logiciel
-    d'optimisation ou un logiciel de calcul scientifique tel que {\tt
-      Matlab} ou {\tt Scilab}), mais surtout \adao{}, un module
+  \item recaler ses paramètres, notamment avec \adao{}, un module
     \salome{} pour l’Assimilation de Données et l’Aide à
     l’Optimisation~;
   \item tester son comportement numérique, en particulier lorsque
@@ -179,8 +177,8 @@
   Ce document présente tout d'abord les principales fonctionnalités de
   cet outil. Son utilisation en ligne de commande et l'ensemble des
   commandes disponibles sont alors décrits. Nous détaillons ensuite
-  quelques tests intégrés à la gestion de configuration de la
-  librairie \TFEL{}, dont certains sont des contributions externes.
+  quelques tests intégrés à la gestion de configuration de \mfront{},
+  dont certains sont des contributions externes.
 }
 
 \makeindex{env}
@@ -212,8 +210,7 @@ informatiques et numériques étant gérés par
 Récemment, l'utilisation de \mfront{} s'est accrue~:
 \begin{itemize}
 \item au sein de la plate-forme \pleiades{}, l'application \cyrano{},
-  développée par \edf{} peut utiliser des lois générées par
-  \mfront{}~;
+  développée par \edf{} utilise des lois générées par \mfront{}~;
 \item au sein du \cea{}, \mfront{} est utilisé par le
   DER~\cite{darrigo_notice_2012} et le
   DMN~\cite{helfer_presentation_2011,milliard_mechanical_2014} dans le
@@ -240,7 +237,7 @@ les algorithmes numériques dont ils disposent). Ces interfaces sont
 aujourd'hui au nombre de \(3\)~:
 \begin{itemize}
 \item l'interface {\tt umat}, dédiée au code
-  \castem{}~\cite{verpeaux_castem2000_1998,cea_site_2013} et par le
+  \castem{}~\cite{verpeaux_castem2000_1998,cea_site_2013} et le
   solveur \tmfft{} de la plate-forme
   \pleiades{}~\cite{castelier_specifications_2009,jerome_tmfft_2010}~;
 \item l'interface {\tt aster}, dédiée au code
@@ -253,7 +250,7 @@ aujourd'hui au nombre de \(3\)~:
 
 Cette utilisation croissante de \mfront{} risquait de complexifier sa
 maintenance, d'autant que les lois générées ne pouvaient être testées
-qu'avec l'aide des code cibles tiers, dont ceux cités précédemment.
+qu'avec l'aide des codes cibles tiers, dont ceux cités précédemment.
 
 Pour éviter cet écueil, nous avons donc développé un outil permettant
 de simuler le comportement d'un point matériel, similaire en
@@ -292,11 +289,11 @@ sont créés~:
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/mtest/images/tests-jenkins.eps}
-  \caption{Évolution du nombre de cas tests de la librairie {\tt TFEL}
-    enregistrée par l'outil {\tt jenkins}. Le nombre de cas tests
-    unitaires est actuellement supérieur à $400$. Les chiffres
-    présentés par {\tt jenkins} correspondent à la somme des
-    exécutions sur plusieurs plate-forme.}
+  \caption{Évolution du nombre de cas tests enregistrée par l'outil
+    {\tt jenkins}. Le nombre de cas tests unitaires est actuellement
+    supérieur à $400$. Les chiffres présentés par {\tt jenkins}
+    correspondent à la somme des exécutions sur plusieurs
+    plate-forme.}
   \label{fig:mtest:nb_castests}
 \end{figure}
 
@@ -305,9 +302,10 @@ mécaniques (plus de 60 actuellement) dans diverses situations avec
 l'ensemble des interfaces, ce qui conduit à plus de 400 tests
 unitaires. L'évolution du nombre de cas-tests peut être visualisée sur
 la figure~\ref{fig:mtest:nb_castests}. Notons qu'une part
-significative de ces cas tests est due à des contributions externes.
+significative de ces cas tests est due à des contributions externes au
+projet \pleiades{}.
 
-\subsection{Un outil apprécié par les utilisateurs}
+\subsection{Un outil apprécié par les utilisateurs de \mfront{}}
 
 \subsubsection{Une utilisation croissante}
 
@@ -323,10 +321,11 @@ utilisé~:
     cas de non convergence de l'intégration sur un pas de temps. Il
     est ainsi possible d'analyser les causes de divergence sans avoir
     à relancer un calcul éléments finis beaucoup plus coûteux.}~;
-\item comme un outil de recalage des de comportement. \mtest{} a
-  notamment été couplé avec le code {\tt Matlab} pour l'interprétation
-  d'essais sur un acier EM10~\cite{milliard_mechanical_2014} et avec
-  le module \adao{} de la plate-forme \salome{}.
+\item comme un outil de recalage des paramètres du
+  comportement. \mtest{} a notamment été couplé avec le code {\tt
+    Matlab} pour l'interprétation d'essais sur un acier
+  EM10~\cite{milliard_mechanical_2014} et avec le module \adao{} de la
+  plate-forme \salome{}.
 \end{itemize}
 
 \subsubsection{Avantages}
@@ -342,7 +341,7 @@ moins \(140\) fois plus rapidement avec \mtest{} qu'avec
   chargement des librairies dynamiques sur lesquelles s'appuie
   \mtest{} représente pratiquement \(90\%\) du temps d'exécution. Ces
   librairies peuvent être mises en cache lors d'un second
-  appel.}. L'intégralité des cas tests de \TFEL{} associés aux lois de
+  appel.}. L'intégralité des cas tests de \mfront{} associés aux lois de
 comportement mécanique (plus de \(400\)) s'exécutent en une trentaine
 de secondes sur un ordinateur de bureau.
 
@@ -357,8 +356,8 @@ lors du test précédent, la loi de comportement représentait environ
   loi testée étant très efficace, il s'agit pratiquement d'une borne
   inférieure du temps passé dans l'intégration de la loi de
   comportement.}.  Dans la plupart des cas, le temps de calcul total,
-avec \mtest{}, permet donc d'une appréciation de l'efficacité
-numérique de la loi de comportement. Il est donc possible~:
+avec \mtest{}, permet donc une appréciation de l'efficacité numérique
+de la loi de comportement. Il est donc possible~:
 \begin{itemize}
 \item de comparer simplement différents algorithmes~;
 \item de vérifier que les évolutions de \mfront{} ne conduisent pas à
@@ -395,9 +394,9 @@ travers d'une bibliothèque {\tt C++}~\cite{stroustrup_langage_2004} ou
 d'une bibliothèque {\tt python}~\cite{von_rossum_python_2007}. Cette
 possibilité permet~:
 \begin{itemize}
-\item de s'intégrer simplement dans des chaînes de calculs complexes,
-  incluant le recalage de paramètres par rapport à des données
-  expérimentales~;
+\item de intégrer simplement \mtest{} dans des chaînes de calculs
+  complexes, incluant le recalage de paramètres par rapport à des
+  données expérimentales~;
 \item de permettre de réaliser rapidement des essais paramétriques. À
   titre d'exemple, la figure~\ref{fig:mtest:l3f} représente la surface
   de charge du modèle de comportement viscoplastique du dioxyde
@@ -407,16 +406,16 @@ possibilité permet~:
   et chaque direction de l'espace des contraintes un essai de
   traction, soit plusieurs milliers de simulations~;
 \item de simuler des essais relativement complexes tels qu'un tube en
-  pression interne asservi de tel sorte que la vitesse de dilatation
+  pression interne asservi de telle sorte que la vitesse de dilatation
   diamétrale soit tout d'abord constante (phase d'écrouissage durant
-  laquelle pression interne augmente) puis nulle (phase de relaxation
-  durant laquelle la pression interne diminue). Un exemple d'une telle
-  simulation, réalisée par l'équipe de développement du code
-  \cyrano{}, est représenté en figure~\ref{fig:mtest:cpetry}.
+  laquelle la pression interne augmente) puis nulle (phase de
+  relaxation durant laquelle la pression interne diminue). Un exemple
+  d'une telle simulation, réalisée par l'équipe de développement du
+  code \cyrano{}, est représenté en figure~\ref{fig:mtest:cpetry}.
 \end{itemize}
 
-Le dernier avantage est l'ergonomie~: un essai peut être simuler avec
-une dizaine de lignes de mise en données, bien moins que ce qu'il est
+Le dernier avantage est l'ergonomie~: un essai peut être simulé avec
+une dizaine de lignes de mise en données, bien moins que ce qui est
 nécessaire avec un code tel que \castem{} (qui nécessite par ailleurs
 de définir un maillage).
 
@@ -432,9 +431,8 @@ Dans un troisième temps, nous décrivons la structure d'un fichier
 d'entrée et donnons la liste de mots clés disponibles et leurs
 significations.
 
-Enfin, nous donnons des exemples de tests utilisés dans \TFEL{} pour
-assurer la non régression des lois de comportement mécanique générées
-par \mfront{}.
+Enfin, nous donnons des exemples de tests utilisés pour assurer la non
+régression des lois de comportement mécanique générées par \mfront{}.
 
 \newpage
 \clearpage
@@ -478,7 +476,7 @@ permettent de calculer d'une part le tenseur des contraintes
 \(\tsigma\) en un point d'une structure mécanique, et par ailleurs
 l'évolution microstructurelle du matériau, représentée par un jeu de
 variables internes noté de manière symbolique \(Y\). Nous en faisons
-un présentation volontairement succincte, nous renvoyons à la
+une présentation volontairement succincte, nous renvoyons à la
 documentation de \mfront{} relative aux lois de comportement pour les
 détails~\cite{helfer_generateur_2013}.
 
@@ -644,7 +642,7 @@ La matrice de raideur \(K\) doit être bien choisie pour permettre la
 convergence de l'algorithme, mais ce choix n'influence pas la solution
 trouvée.
 
-La matrice de raideur raideur peut-être\footnote{Voir le mot clé
+La matrice de raideur peut-être\footnote{Voir le mot clé
   \mkey{StiffnessMatrixType}.}~:
 \begin{itemize}
 \item la matrice élastique (non endommagée, si la loi de comportement
@@ -697,7 +695,7 @@ convergence (contrainte imposée par exemple).
 cohérente \(\deriv{\ets{\tsigma}}{\Delta\,\tepsilonto}\) est
 exacte, la convergence de l'algorithme de \nom{Newton} est quadratique
 (ordre \(2\)). Si une matrice approchée est utilisée, notamment la
-matrice d'élasticité, la convergence est en générale linéaire (ordre
+matrice d'élasticité, la convergence est en général linéaire (ordre
 \(1\)). \mtest{} fournit une estimation de l'ordre de convergence
 donnée à partir de quatre estimations successives de la solution
 \(\Delta\,\tepsilonto_{n+3}\),
@@ -752,7 +750,7 @@ algorithme. L'idée de cet algorithme est de~:
     coordonnées.
   \item on utilise le procédé d'orthogonalisation de \nom{Schmidt} pour
     construire deux vecteurs normaux dans le plan à partir des vecteurs
-    \(\tilde{r}_{n-1}\) et \(\tilde{r}_{n}\). Deux cas se présente~:
+    \(\tilde{r}_{n-1}\) et \(\tilde{r}_{n}\). Deux cas se présentent~:
     \begin{itemize}
     \item ces deux vecteurs sont colinéaires~;
     \item ces deux vecteurs sont indépendants~;
@@ -1092,15 +1090,14 @@ associée au mot clé \mkey{Behaviour} est accessible ainsi~:
 Nous détaillons dans ce paragraphe les options disponibles à la ligne
 de commandes.
 
-\paragraph{L'option \moption{version}} L'option \moption{version}
-affiche la version de \mtest{} utilisée.
+\paragraph{L'option \moption{version}} affiche la version de \mtest{}
+utilisée.
 
-\paragraph{L'option \moption{help}} L'option \moption{help} liste
-l'ensemble des options disponibles et quitte le programme.
+\paragraph{L'option \moption{help}} liste l'ensemble des options
+disponibles et quitte le programme.
 
-\paragraph{L'option \moption{verbose}} L'option \moption{verbose}
-permet de régler le degré de verbosité de \mtest{}. Plusieurs niveaux
-sont possibles~:
+\paragraph{L'option \moption{verbose}} permet de régler le degré de
+verbosité de \mtest{}. Plusieurs niveaux sont possibles~:
 \begin{itemize}
 \item {\tt quiet} correspond à un affichage minimal~:
 \item {\tt level1}, {\tt level2} et {\tt level3} désignent des niveaux
@@ -1109,30 +1106,25 @@ sont possibles~:
   sont généralement utiles qu'au développeur.
 \end{itemize}
 
-\paragraph{L'option \moption{help-keywords-list}} L'option
-\moption{help-keywords-list} affiche toutes les mots clés utilisables
-dans le fichier d'entrée.
+\paragraph{L'option \moption{help-keywords-list}} affiche tous les
+mots clés utilisables dans le fichier d'entrée.
 
-\paragraph{L'option \moption{help-keyword}} L'option
-\moption{help-keyword} affiche la documentation associée au mot clé
-donné en argument.
+\paragraph{L'option \moption{help-keyword}} affiche la documentation
+associée au mot clé donné en argument.
 
-\paragraph{L'option \moption{help-commands-list}} L'option
-\moption{help-\-commands-\-list} est synonyme de l'option
-\moption{help-\-keywords-\-list}. Elle a été introduite par
+\paragraph{L'option \moption{help-commands-list}} est synonyme de
+l'option \moption{help-\-keywords-\-list}. Elle a été introduite par
 compatibilité avec \cmake{}.
 
-\paragraph{L'option \moption{help-command}} L'option
-\moption{help-command} est synonyme de l'option
+\paragraph{L'option \moption{help-command}} est synonyme de l'option
 \moption{help-keyword}. Elle a été introduite par compatibilité avec
 \cmake{}.
 
-\paragraph{L'option \moption{floating-point-exceptions}} L'option
-\moption{floating-\-point-\-exceptions} demande à ce que certaines
-exceptions mathématiques ne soient plus ignorées. Par défaut, les
-opérations mathématiques invalides conduisent à l'apparition de
-nombres particuliers nommés {\tt NaN} ou {\tt Inf} et n'arrête pas
-l'exécution du programme. Si l'option
+\paragraph{L'option \moption{floating-point-exceptions}} demande à ce
+que certaines exceptions mathématiques ne soient plus ignorées. Par
+défaut, les opérations mathématiques invalides conduisent à
+l'apparition de nombres particuliers nommés {\tt NaN} ou {\tt Inf} et
+n'arrête pas l'exécution du programme. Si l'option
 \moption{floating-\-point-\-exceptions} est utilisée, une opération
 mathématique invalide conduit le système d'exploitation à envoyer à
 \mtest{} le signal {\tt SIGFPE} qui finit son exécution (sauf si
@@ -1250,17 +1242,17 @@ déclarées de deux manières~:
 
 \subsection{Liste des mots clés}
 
-\paragraph{Le mot clé \mkey{Author}} Le mot clé \mkey{Author} permet
-de donner le nom de la personne ayant écrit le fichier de test.
+\paragraph{Le mot clé \mkey{Author}} permet de donner le nom de la
+personne ayant écrit le fichier de test.
 
 Tout ce qui suit ce mot clé jusqu'au premier point virgule est pris en
 compte.
 
-\paragraph{Le mot clé \mkey{Behaviour}} Le mot clé \mkey{Behaviour}
-déclare quelle loi de comportement mécanique est utilisée. Il est
-suivi du type d'interface, donné entre chevrons ouvrant \texttt{<}
-et fermant \texttt{>}. Deux interfaces sont actuellement supportées~:
-l'interface \aster{}~\cite{helfer_interface_2013-1} et l'interface
+\paragraph{Le mot clé \mkey{Behaviour}} déclare quelle loi de
+comportement mécanique est utilisée. Il est suivi du type d'interface,
+donné entre chevrons ouvrant \texttt{<} et fermant \texttt{>}. Deux
+interfaces sont actuellement supportées~: l'interface
+\aster{}~\cite{helfer_interface_2013-1} et l'interface
 \umat{}~\cite{helfer_interface_2013} correspondant au code \castem{}.
 
 Deux arguments sont ensuite attendus~:
@@ -1269,25 +1261,23 @@ Deux arguments sont ensuite attendus~:
 \item le nom de la fonction qui implante la loi.
 \end{itemize}
 
-\paragraph{Le mot clé \mkey{CastemAccelerationPeriod}} Le mot clé
-\mkeyb{CastemAccelerationPeriod}{Castem\-Acceleration\-Period} permet
-de préciser la fréquence d'utilisation de la méthode d'accélération
-présentée au paragraphe~\ref{sec:algor-de-resol}.
+\paragraph{Le mot clé
+  \mkeyb{CastemAccelerationPeriod}{Castem\-Acceleration\-Period}}
+permet de préciser la fréquence d'utilisation de la méthode
+d'accélération présentée au paragraphe~\ref{sec:algor-de-resol}.
 
-\paragraph{Le mot clé \mkey{CastemAccelerationTrigger}} Le mot clé
-\mkeyb{CastemAccelerationTrigger}{Castem\-Acceleration\-Trigger}
+\paragraph{Le mot clé \mkeyb{CastemAccelerationTrigger}{Castem\-Acceleration\-Trigger}}
 permet de préciser à partir de quelle période se déclenche la méthode
 d'accélération présentée au paragraphe~\ref{sec:algor-de-resol}.
 
-\paragraph{Le mot clé \mkey{Date}} Le mot clé \mkey{Date} permet
-de préciser la date d'écriture du fichier de test.
+\paragraph{Le mot clé \mkey{Date}} permet de préciser la date
+d'écriture du fichier de test.
 
 Tout ce qui suit ce mot clé jusqu'au premier point virgule est pris en
 compte.
 
-\paragraph{Le mot clé \mkey{Description}} Le mot clé
-\mkey{Description} permet de donner une description du test. Il est
-suivi d'un bloc contenant la description.
+\paragraph{Le mot clé \mkey{Description}} permet de donner une
+description du test. Il est suivi d'un bloc contenant la description.
 
 \paragraph{Le mot clé \mkey{Evolution}} permet de définir une fonction
 du temps (évolution).
@@ -1305,14 +1295,12 @@ Le mot clé \mkey{Evolution} prend deux arguments~:
 \item l'évolution, dont la forme dépend du type choisi.
 \end{itemize}
 
-\paragraph{Le mot clé \mkey{ExternalStateVariable}} Le mot clé
-\mkey{ExternalStateVariable} permet de spécifier l'évolution d'une
-variable externe à la loi de comportement. Dans la terminologie
-\aster{}, les variables externes s'appellent des variables de
-pilotage. Dans \castem{}, ces variables sont définies par des
-chargements.
-La température est considérée comme une variable externe particulière
-qui est obligatoire.
+\paragraph{Le mot clé \mkey{ExternalStateVariable}} permet de
+spécifier l'évolution d'une variable externe à la loi de
+comportement. Dans la terminologie \aster{}, les variables externes
+s'appellent des variables de pilotage. Dans \castem{}, ces variables
+sont définies par des chargements.  La température est considérée
+comme une variable externe particulière qui est obligatoire.
 
 Ce mot clé prend comme option le type d'évolution souhaitée. Si
 l'option \varcpp{evolution} est utilisée, une évolution discrète sera
@@ -1328,9 +1316,8 @@ Comme le mot clé \mkey{Evolution}, le mot clé
 \item l'évolution, dont la forme dépend du type choisi.
 \end{itemize}
 
-\paragraph{Le mot clé \mkey{ImposedStrain}} Le mot clé
-\mkey{ImposedStrain} permet de spécifier l'évolution d'une des
-composantes du tenseur des déformations.
+\paragraph{Le mot clé \mkey{ImposedStrain}} permet de spécifier
+l'évolution d'une des composantes du tenseur des déformations.
 
 Comme pour le mot clé \mkey{ExternalStateVariable}, le type
 d'évolution est donné en option.
@@ -1376,9 +1363,8 @@ Le mot clé \mkey{ImposedStrain}  prend deux arguments~:
 \item l'évolution, dont la forme dépend du type choisi.
 \end{itemize}
 
-\paragraph{Le mot clé \mkey{ImposedStress}} Le mot clé
-\mkey{ImposedStress} permet de spécifier l'évolution d'une des
-composantes du tenseur des contraintes.
+\paragraph{Le mot clé \mkey{ImposedStress}} permet de spécifier
+l'évolution d'une des composantes du tenseur des contraintes.
 
 Comme pour le mot clé \mkey{ExternalStateVariable}, le type
 d'évolution est donné en option.
@@ -1432,9 +1418,8 @@ Les tenseurs sont représentés en utilisant la convention en vigueur
 dans \aster{} et \mfront{}~: les composantes extra-diagonales des
 tenseurs de déformations sont affectées d'un \(\sqrt{2}\).
 
-\paragraph{Le mot clé \mkey{InternalStateVariable}} Le mot clé
-\mkey{InternalStateVariable} permet de donner la valeur initiale d'une
-variable interne.
+\paragraph{Le mot clé \mkey{InternalStateVariable}} permet de donner
+la valeur initiale d'une variable interne.
 
 Ce mot clé prend deux arguments~:
 \begin{itemize}
@@ -1449,9 +1434,8 @@ Ce mot clé prend deux arguments~:
   \(\sqrt{2}\)~;
 \end{itemize}
 
-\paragraph{Le mot clé \mkey{MaterialProperty}} Le mot clé
-\mkey{MaterialProperty} permet de définir une des propriétés
-matériau.
+\paragraph{Le mot clé \mkey{MaterialProperty}} permet de définir une
+des propriétés matériau.
 
 Le type de propriété matériau est donné en option. Deux types sont
 supportés, \varcpp{constant} et \varcpp{castem}.
@@ -1470,36 +1454,30 @@ Le mot clé \mkey{MaterialProperty} prend deux arguments~:
   \varcpp{castem}~;
 \end{itemize}
 
-\paragraph{Le mot clé \mkey{Parameter}} Le mot clé \mkey{Parameter}
-permet de spécifier la valeur d'un des paramètres réels de la loi. Ce
-mot clé est suivi du nom du paramètre et de sa valeur.
+\paragraph{Le mot clé \mkey{Parameter}} permet de spécifier la valeur
+d'un des paramètres réels de la loi. Ce mot clé est suivi du nom du
+paramètre et de sa valeur.
 
-\paragraph{Le mot clé \mkey{IntegerParameter}} Le mot clé
-\mkey{IntegerParameter} permet de spécifier la valeur d'un des
-paramètres entiers de la loi. Ce mot clé est suivi du nom du paramètre
-et de sa valeur.
+\paragraph{Le mot clé \mkey{IntegerParameter}} permet de spécifier la
+valeur d'un des paramètres entiers de la loi. Ce mot clé est suivi du
+nom du paramètre et de sa valeur.
 
-\paragraph{Le mot clé \mkey{UnsignedIntegerParameter}} Le mot clé
-\mkeyb{UnsignedIntegerParameter}{Unsigned\-Integer\-Parameter} permet
-de spécifier la valeur d'un des paramètres entiers positifs de la
-loi. Ce mot clé est suivi du nom du paramètre et de sa valeur.
+\paragraph{Le mot clé
+  \mkeyb{UnsignedIntegerParameter}{Unsigned\-Integer\-Parameter}}
+permet de spécifier la valeur d'un des paramètres entiers positifs de
+la loi. Ce mot clé est suivi du nom du paramètre et de sa valeur.
 
-\paragraph{Le mot clé \mkey{MaximumNumberOfIterations}}
+\paragraph{Le mot clé \mkey{MaximumNumberOfIterations}} permet de
+spécifier le nombre maximal d'itérations de l'algorithme global,
+nombre qui est le seul argument attendu.
 
-Le mot clé \mkey{MaximumNumberOfIterations} permet de spécifier le
-nombre maximal d'itérations de l'algorithme global, nombre qui est le
-seul argument attendu.
+\paragraph{Le mot clé \mkey{MaximumNumberOfSubSteps}} permet de
+spécifier le nombre maximal de sous-découpages en temps en cas de non
+convergence de l'algorithme global, nombre qui est le seul argument
+attendu.
 
-\paragraph{Le mot clé \mkey{MaximumNumberOfSubSteps}}
-
-Le mot clé \mkey{MaximumNumberOfSubSteps} permet de spécifier le
-nombre maximal de sous-découpages en temps en cas de non convergence
-de l'algorithme global, nombre qui est le
-seul argument attendu.
-
-\paragraph{Le mot clé \mkey{ModellingHypothesis}}Le mot clé
-\mkey{ModellingHypothesis} permet de spécifier l'hypothèse de
-modélisation à utiliser.
+\paragraph{Le mot clé \mkey{ModellingHypothesis}} permet de spécifier
+l'hypothèse de modélisation à utiliser.
 
 Les hypothèses de modélisation valides sont listées au
 tableau~\ref{tab:mtest:modellinghypothesis}.
@@ -1510,20 +1488,18 @@ modélisation et si celle-ci n'est pas encore spécifiée, l'hypothèse
 par défaut sera déclarée. Dans ce cas, le traitement du mot
 \mkey{ModellingHypothesis} conduira à une erreur.
 
-\paragraph{Le mot clé \mkey{OutputFile}} Le mot clé \mkey{OutputFile}
-permet de spécifier la base de noms des fichiers de sortie. \mtest{}
-ajoute à cette base les extensions appropriées, par exemple
-\varcpp{.xml} pour la sortie contenant le résultat des tests (voir à
-ce sujet le paragraphe~\ref{sec:fichiers-generes}).
+\paragraph{Le mot clé \mkey{OutputFile}} permet de spécifier la base
+de noms des fichiers de sortie. \mtest{} ajoute à cette base les
+extensions appropriées, par exemple \varcpp{.xml} pour la sortie
+contenant le résultat des tests (voir à ce sujet le
+paragraphe~\ref{sec:fichiers-generes}).
 
-\paragraph{Le mot clé \mkey{OutputFilePrecision}} Le mot clé
-\mkey{OutputFilePrecision} permet de préciser le nombre de chiffres
-significatifs utilisées pour l'affichage des résultats. Ce nombre est
-l'unique argument attendu.
+\paragraph{Le mot clé \mkey{OutputFilePrecision}} permet de préciser
+le nombre de chiffres significatifs utilisées pour l'affichage des
+résultats. Ce nombre est l'unique argument attendu.
 
-\paragraph{Le mot clé \mkey{PredictionPolicy}} Le mot clé
-\mkey{PredictionPolicy} permet de choisir comment
-est prédite l'estimation de la solution (voir le
+\paragraph{Le mot clé \mkey{PredictionPolicy}} permet de choisir
+comment est prédite l'estimation de la solution (voir le
 paragraphe~\ref{sec:algor-de-resol}).
 
 Ce mot clé est suivi d'une chaîne de caractères. Les valeurs suivantes
@@ -1549,17 +1525,16 @@ son admises~:
   en début de pas de temps.
 \end{itemize}
 
-\paragraph{Le mot clé \mkey{Real}} Le mot clé \mkey{Real} permet de
-déclarer une constante. Deux arguments sont attendus, le nom de la
-constante et sa valeur.
+\paragraph{Le mot clé \mkey{Real}} permet de déclarer une
+constante. Deux arguments sont attendus, le nom de la constante et sa
+valeur.
 
-\paragraph{Le mot clé \mkey{RotationMatrix}} Le mot clé
-\mkey{RotationMatrix} permet de spécifier les axes d'orthotropie du
-matériau. Il n'est valide que si la loi traitée est orthotrope.
+\paragraph{Le mot clé \mkey{RotationMatrix}} permet de spécifier les
+axes d'orthotropie du matériau. Il n'est valide que si la loi traitée
+est orthotrope.
 
-\paragraph{Le mot clé \mkey{StiffnessMatrixType}} Le mot clé
-\mkey{StiffnessMatrixType} permet de spécifier quelle matrice doit
-être utilisée pour la recherche de l'équilibre.
+\paragraph{Le mot clé \mkey{StiffnessMatrixType}} permet de spécifier
+quelle matrice doit être utilisée pour la recherche de l'équilibre.
 
 Ce mot clé est suivi d'une chaîne de caractères. Les valeurs suivantes
 sont admises~:
@@ -1578,8 +1553,8 @@ sont admises~:
 Le type de matrice utilisée par défaut dépend de l'interface à la loi
 de comportement utilisée.
 
-\paragraph{Le mot clé \mkey{Strain}} Le mot clé \mkey{Strain} permet
-de donner la valeur initiale des déformations totales.
+\paragraph{Le mot clé \mkey{Strain}} permet de donner la valeur
+initiale des déformations totales.
 
 Ce mot clé prend un argument, un tableau de valeurs réelles. La taille
 de ce tableau dépend de l'hypothèse de modélisation (voir le
@@ -1587,8 +1562,8 @@ tableau~\ref{tab:mtest:modellinghypothesis}). L'utilisateur doit
 respecter les conventions utilisées dans \mfront{}~: les termes
 extra-diagonaux sont affectés d'un facteur \(\sqrt{2}\)~;
 
-\paragraph{Le mot clé \mkey{Stress}} Le mot clé \mkey{Stress} permet
-de donner la valeur initiale des contraintes.
+\paragraph{Le mot clé \mkey{Stress}} permet de donner la valeur
+initiale des contraintes.
 
 Ce mot clé prend un argument, un tableau de valeurs réelles. La taille
 de ce tableau dépend de l'hypothèse de modélisation (voir le
@@ -1596,23 +1571,20 @@ tableau~\ref{tab:mtest:modellinghypothesis}). L'utilisateur doit
 respecter les conventions utilisées dans \mfront{}~: les termes
 extra-diagonaux sont affectés d'un facteur \(\sqrt{2}\)~;
 
-\paragraph{Le mot clé \mkey{StrainEpsilon}} Le mot clé
-\mkey{StrainEpsilon} permet de spécifier la valeur de critère à
-utiliser pour tester la stationnarité des prédictions de l'incrément
-des déformations totales (voir
+\paragraph{Le mot clé \mkey{StrainEpsilon}} permet de spécifier la
+valeur de critère à utiliser pour tester la stationnarité des
+prédictions de l'incrément des déformations totales (voir
 équation~\eqref{eq:mtest:strainepsilon}).
 
-\paragraph{Le mot clé \mkey{StressEpsilon}} Le mot clé
-\mkey{StressEpsilon} permet de spécifier la valeur de critère à
-utiliser pour tester si l'équilibre mécanique est atteint (voir
-équation~\eqref{eq:mtest:stressepsilon}).
+\paragraph{Le mot clé \mkey{StressEpsilon}} permet de spécifier la
+valeur de critère à utiliser pour tester si l'équilibre mécanique est
+atteint (voir équation~\eqref{eq:mtest:stressepsilon}).
 
-\paragraph{Le mot clé \mkey{Test}} Le mot clé \mkey{Test} permet
-d'introduire de tests sur les déformations totales, les contraintes ou
-les variables internes. Ce mot clé n'a pas d'intérêt pour un
-utilisateur standard. Il est utilisé pour créer des cas de non
-régressions dans \TFEL{} qui contient de nombreux exemples
-d'utilisations.
+\paragraph{Le mot clé \mkey{Test}} permet d'introduire de tests sur
+les déformations totales, les contraintes ou les variables
+internes. Ce mot clé n'a pas d'intérêt pour un utilisateur
+standard. Il est utilisé pour créer des cas de non régressions qui
+contient de nombreux exemples d'utilisations.
 
 Dans ce paragraphe, on appellera résultat~:
 \begin{itemize}
@@ -1655,14 +1627,11 @@ attendu se fait de manière absolue.
 Les tests sont effectués à chaque pas de temps, une fois l'équilibre
 atteint.
 
-\paragraph{Le mot clé \mkey{Times}} Le mot clé \mkey{Times} précise
-les temps de calculs. Ces temps sont donnés par intervalles. Un
-intervalle peut être découpé un certain nombre de fois à l'aide du mot
-clé {\tt in}.
+\paragraph{Le mot clé \mkey{Times}} précise les temps de calculs. Ces
+temps sont donnés par intervalles. Un intervalle peut être découpé un
+certain nombre de fois à l'aide du mot clé {\tt in}.
 
-\paragraph{Le mot clé \mkey{UseCastemAccelerationAlgorithm}} Le mot
-clé
-\mkeyb{UseCastemAccelerationAlgorithm}{Use\-Castem\-Acceleration\-Algorithm}
+\paragraph{Le mot clé \mkeyb{UseCastemAccelerationAlgorithm}{Use\-Castem\-Acceleration\-Algorithm}}
 précise si l'on veut utiliser l'algorithme d'accélération de
 convergence présenté en paragraphe~\ref{sec:algor-de-resol}
 
@@ -1888,6 +1857,15 @@ figure~\ref{fig:mtest:chaboche2:mtest}.
 La figure~\ref{fig:hsnv125:res} compare la solution obtenue à la une
 simulation effectuée avec la macro-commande {\tt SIMU\_POINT\_MAT}
 d'\aster{}~\cite{proix_macro-commande_2013}.
+
+\section{Conclusions}
+
+Ce document a présenté un outil de simulation du comportement
+mécanique d'un point matériel nommé \mtest{}. Initialement développé
+pour des besoins internes permettant d'assurer la qualité du
+développement de \mfront{}, cet outil a su trouver des applications
+plus larges et est utilisé dans de nombreuses situations où le recours
+à un calcul de structure n'est pas nécessaire.
 
 \clearpage
 \newpage

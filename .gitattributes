@@ -784,7 +784,10 @@ docs/web/img/LogarithmicStrainPlasticity-ssna303.svg -text
 docs/web/img/NortonCreepUniaxialTesting.svg -text
 docs/web/img/VoidsGrowth.png -text
 docs/web/img/VoidsGrowth.xcf -text
+docs/web/img/Win64.png -text
+docs/web/img/Win64.xcf -text
 docs/web/img/arrows.png -text
+docs/web/img/background.svg -text
 docs/web/img/cyrano-mfront.eps -text
 docs/web/img/cyrano-mfront.svg -text
 docs/web/img/hsnv125.png -text
@@ -795,6 +798,7 @@ docs/web/img/mingw-get2.png -text
 docs/web/img/mingw-get2.xcf -text
 docs/web/img/mingw-get3.png -text
 docs/web/img/mingw-get3.xcf -text
+docs/web/img/parameters.svg -text
 docs/web/img/tutorielch12-img1.png -text
 docs/web/index.md -text
 docs/web/install-windows.md -text
@@ -811,6 +815,7 @@ docs/web/models.md -text
 docs/web/mtest.md -text
 docs/web/news.md -text
 docs/web/packages.md -text
+docs/web/parameters.md -text
 docs/web/robots.txt -text
 docs/web/svn.md -text
 docs/web/tex/lcmd_utf8.tex -text

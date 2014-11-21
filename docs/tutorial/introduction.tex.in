@@ -8,12 +8,40 @@
 \section{Introduction}
 
 L'objet de se document est de compléter la documentation de référence
-\mfront{} en permettant aux nouveaux utilisateurs de découvrir pas à
-pas comment une loi de comportement mécanique peut être implantée avec
-\mfront{}.
+\mfront{}. Celle-ci se compose aujourd'hui de~:
+\begin{itemize}
+\item une présentation générale et un document de référence sur
+  l'écriture de propriétés matériau et de modèles
+  physico-chimiques~\cite{helfer_generateur_2013-1}~;
+\item un document de référence sur l'écriture de lois de comportement
+  mécanique~\cite{helfer_generateur_2013}~;
+\item différents documents, distribués avec \mfront{}, qui décrivent
+  les interfaces à différents codes aux éléments finis (\castem{},
+  \aster{} et \zebulon{} notamment)~;
+\item différents supports de formation, eux aussi distribués avec
+  \mfront{}.
+\end{itemize}
+
+L'ensemble des ces documents est disponible sur le site officiel de
+\mfront{}~:
+\begin{center}
+  \href{http://tfel.sourceforge.net}{http://tfel.sourceforge.net}
+\end{center}
+
+Par ailleurs, les utilisateurs de \aster{} disposent déjà de
+documentation propre décrivant l'utilisation de
+\mfront{}~\cite{code_notice_2014,code_mfront01_2014,code_mfront02_2014,code_mfront03_2014}.
+
+L'objet du présent document est de permettre aux nouveaux utilisateurs
+de découvrir pas à pas comment une loi de comportement mécanique peut
+être implantée avec \mfront{}.
 
 \subsection{Comment écrire une loi de comportement~:
   un exemple très simple}
+
+Dans la suite, les tenseurs d'ordre \(2\) symétriques seront notés
+\(\tenseur{a}\). Les opérateurs linéaires agissant sur les tenseurs
+d'ordre \(2\) symétriques seront notés \(\tenseurq{D}\).
 
 \subsubsection{La loi de comportement de \nom{Norton}}
 
@@ -177,6 +205,11 @@ pour une exécution avec \aster{}, ou bien~ :
 { \tt src/libUmatBehaviour.so}
 \end{flushleft}
 pour une exécution avec \castem{}.
+
+Dans le cas du code \castem{}, un répertoire nommé {\tt castem} est
+créé dans la plupart des cas. Ce répertoire contient une mise en
+données type de la loi de comportement pour les différentes hypothèses
+de modélisation supportées.
 
 \subsubsection{Premier test}
 

@@ -1,13 +1,15 @@
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   project("tfel")
   set(PACKAGE_NAME "tfel")
-  set(VERSION "${tfel_version_major}.${tfel_version_minor}")
+  set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
+  set(TFEL_VERSION "${VERSION}")
   set(TFEL_WEBSITE "http://tfel.sourceforce.net")
   # the version number.
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
-  add_definitions("-DVERSION=\\\"\"${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}\"\\\"")
+  add_definitions("-DVERSION=\\\"\"${TFEL_VERSION}\"\\\"")
+  add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
 endmacro(tfel_project)
 
 set(CPACK_COMPONENTS_ALL core mfront mtest)

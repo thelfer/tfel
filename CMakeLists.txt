@@ -279,7 +279,42 @@ endif(NOT disable-website)
 # mfront and mtest (--help-command option of mfront and mtest)
 add_subdirectory(docs)
 
-set(CPACK_PACKAGE_VERSION   "${CMAKE_PROJECT_NAME}-${TFEL_VERSION_MAJOR}.${TFEL_VERSION_MINOR}.${TFEL_VERSION_PATCH}")
+## Packaging
+option(install-system-libraries "install system libraries" OFF)
+
+if(install-system-libraries)
+  macro(add_to_system_runtime_libs fn)
+    if(EXISTS ${fn})
+      message(STATUS "adding '${fn}' to system runtime libraries")
+      LIST(APPEND CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS ${fn})
+    endif(EXISTS ${fn})
+  endmacro(add_to_system_runtime_libs)
+      
+  if( MINGW )
+    message(STATUS "Installing system-libraries: MinGW DLLs." )
+    get_filename_component(Mingw_Path ${CMAKE_CXX_COMPILER} PATH)
+    file(GLOB libgcc  "${Mingw_Path}/libgcc_s*")
+    add_to_system_runtime_libs("${libgcc}")
+    add_to_system_runtime_libs("${Mingw_Path}/libstdc++-6.dll")
+  endif( MINGW )
+
+  message(STATUS "runtime libraries : ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}")
+  include(InstallRequiredSystemLibraries)
+
+  # Actually install it when make install is called.
+  if( CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS )
+    list(APPEND CPACK_COMPONENTS_ALL system)
+    set(CPACK_COMPONENT_SYSTEM_DESCRIPTION
+      "build system dependencies (e.g. libstdc++ with MingGW)")
+    set(CPACK_COMPONENT_CORE_DEPENDS  system)
+    foreach(file ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
+      install(PROGRAMS ${file} DESTINATION bin COMPONENT system)
+    endforeach(file)
+  endif( CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS )
+
+endif(install-system-libraries)
+
+set(CPACK_PACKAGE_VERSION   "${CMAKE_PROJECT_NAME}-${TFEL_VERSION}")
 if(${CMAKE_SYSTEM_PROCESSOR})
   set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
 else(${CMAKE_SYSTEM_PROCESSOR})
@@ -291,7 +326,7 @@ set(CPACK_PACKAGE_CONTACT             "${PACKAGE_BUGREPORT}")
 set(CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
 set(CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
-set(CPACK_PACKAGE_VENDOR              "CEA/EDF")
+set(CPACK_PACKAGE_VENDOR              "CEA_EDF")
 set(CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "TFEL is a numerical library.")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README")
@@ -315,6 +350,13 @@ set(CPACK_NSIS_URL_INFO_ABOUT "${TFEL_WEBSITE}")
 set(CPACK_NSIS_HELP_LINK "${TFEL_WEBSITE}")
 set(CPACK_NSIS_CONTACT "${PACKAGE_BUGREPORT}")
 set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+set(CPACK_NSIS_INSTALL_ROOT "C:")
+set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+      SetRegView  64
+      WriteRegStr HKCR 'TFELHOME-${TFEL_VERSION}' '' '$INSTDIR'")
+set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+      SetRegView  64
+      DeleteRegKey HKCR 'TFELHOME-${TFEL_VERSION}'")
 
 # if(UNIX)
 #   add_custom_target(dist-bzip2

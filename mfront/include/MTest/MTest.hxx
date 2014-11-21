@@ -42,13 +42,10 @@ namespace mfront
 {
   
   /*!
-   * MTest is a simple class 
-   * to test mfront behaviours
+   * \brief MTest is a simple class to test mfront behaviours.
    *
-   * The unknowns are made of
-   * the driving variables stensor followed 
-   * by a number of lagrange
-   * multiplier
+   * The unknowns are made of the driving variables stensor (for small
+   * strain behaviours) followed by a number of lagrange multiplier.
    */
   struct MFRONT_MTEST_VISIBILITY_EXPORT MTest
     : public tfel::tests::Test

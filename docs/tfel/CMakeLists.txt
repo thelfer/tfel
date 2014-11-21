@@ -1,8 +1,9 @@
-configure_file(Champs.tex.in Champs.tex @ONLY)
-configure_file(reference-guide.tex.in
-               reference-guide.tex @ONLY)
+if(HAVE_LATEX)
+  configure_file(Champs.tex.in Champs.tex @ONLY)
+  configure_file(reference-guide.tex.in
+    reference-guide.tex @ONLY)
 
-ADD_CUSTOM_COMMAND(
+  ADD_CUSTOM_COMMAND(
     OUTPUT    reference-guide.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/reference-guide.tex.in
@@ -22,14 +23,14 @@ ADD_CUSTOM_COMMAND(
     ARGS      reference-guide.ps
     COMMENT   "reference-guide.pdf")
   
-# Eventually trigger the whole process
-add_custom_target(tfel-doc-pdf ALL DEPENDS reference-guide.pdf)
-add_dependencies(doc-pdf
-  tfel-doc-pdf)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/reference-guide.pdf
-  DESTINATION share/doc/tfel
-  COMPONENT docs)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/reference-guide.pdf
-  DESTINATION share/doc/tfel/web/documents/tfel
-  COMPONENT website)
-
+  # Eventually trigger the whole process
+  add_custom_target(tfel-doc-pdf ALL DEPENDS reference-guide.pdf)
+  add_dependencies(doc-pdf
+    tfel-doc-pdf)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/reference-guide.pdf
+    DESTINATION share/doc/tfel
+    COMPONENT docs)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/reference-guide.pdf
+    DESTINATION share/doc/tfel/web/documents/tfel
+    COMPONENT website)
+endif(HAVE_LATEX)

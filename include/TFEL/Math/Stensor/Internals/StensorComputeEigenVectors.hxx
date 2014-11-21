@@ -525,9 +525,9 @@ namespace tfel{
 	  StensorComputeEigenValues_<3u>::exe(s,vp(0),vp(1),vp(2),b);
 	  const T tr = (s[0]+s[1]+s[2])*one_third;
 	  const T mvp  = max(max(abs(vp(0)-tr),abs(vp(1)-tr)),abs(vp(2)-tr));
-	  const bool small = (mvp<100*std::numeric_limits<T>::min())||
-	                     (mvp*std::numeric_limits<T>::epsilon()<100*std::numeric_limits<T>::min());
-  	  if(small){
+	  const bool bsmall = ((mvp<100*std::numeric_limits<T>::min())||
+			       (mvp*std::numeric_limits<T>::epsilon()<100*std::numeric_limits<T>::min()));
+  	  if(bsmall){
 	    // all eigenvalues are equal
 	    vec = tmatrix<3u,3u,T>::Id();
 #ifdef TFEL_PARANOIC_CHECK

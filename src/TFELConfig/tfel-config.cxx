@@ -2,7 +2,7 @@
  * \file   src/TFELConfig/tfel-config.cxx
  * \brief  
  * \author Helfer Thomas
- * \date   27 aoû 2007
+ * \date   27 août 2007
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -32,21 +32,34 @@ handleSpace(const std::string& p)
 {
   using namespace std;
   if(find(p.begin(),p.end(),' ')!=p.end()){
+#if defined _WIN32 || defined _WIN64
+    string msg("tfel-config handleSpace: "
+	       "path to TFEL shall not contain space as "
+	       "MinGW can't handle it (Found '"+p+"'). "
+	       "Please change TFEL installation directory");
+    throw(runtime_error(msg));
+#endif
     return '"'+p+'"';
   }
   return p;
 }
 
-std::string
+static std::string
+getTFELHOME(void);
+
+static std::string
 libDir(void);
 
-std::string
+static std::string
 includeDir(void);
 
 static void
 registerCallBack(const std::string&,
 		 const FuncPtr&,
 		 const std::string&);
+
+static void
+treatCompilerFlags(void);
 
 static void
 treatOFlags(void);
@@ -116,6 +129,7 @@ static void
 treatLicences(void);
 
 static CallBacksContainer callBacksContainer;
+static bool compilerflags   = false;
 static bool oflags          = false;
 static bool oflags2         = false;
 static bool warning         = false;
@@ -144,19 +158,20 @@ static bool lsystem         = false;
 
 #if defined _WIN32 || defined _WIN64
 static bool
-getValueInRegistry(std::string &value,
-		   const std::string& path,
-		   const std::string &name)
+getValueInRegistry(std::string &value)
 {
+  using namespace std;
   HKEY  hKey;
   char  szBuffer[512];
   DWORD dwBufferSize = sizeof(szBuffer);
   LONG  nError;
-  LONG  lRes = RegOpenKeyEx(HKEY_LOCAL_MACHINE,path.c_str(),0,KEY_READ,&hKey);
+  LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-" VERSION,0,KEY_READ,&hKey);
   if(ERROR_SUCCESS != lRes){
     return false;
   }
-  nError = RegQueryValueEx(hKey, name.c_str(), 0, NULL, (LPBYTE)szBuffer, &dwBufferSize);
+  nError = RegQueryValueEx(hKey,"", 0,NULL,
+			   reinterpret_cast<LPBYTE>(szBuffer),
+			   &dwBufferSize);
   RegCloseKey(hKey);
   if (ERROR_SUCCESS == nError){
     value = szBuffer;
@@ -166,73 +181,72 @@ getValueInRegistry(std::string &value,
 }
 #endif
 
-std::string
+static std::string
+getTFELHOME(void)
+{
+  using namespace std;
+#if defined _WIN32 || defined _WIN64
+  // check in the registry (installation through NSIS)
+  string rpath;
+  if(getValueInRegistry(rpath)){
+    return handleSpace(rpath);
+  }
+#endif
+
+  const char * const path = getenv("TFELHOME");
+  if(path!=0){
+    return handleSpace(path);
+  }
+
+#if defined _WIN32 || defined _WIN64
+  string msg("tfel-config getTFELHOME: "
+	     "no TFELHOME registry key defined and no TFEHOME "
+	     "environment variable defined");
+  throw(runtime_error(msg));
+#endif
+  return "";
+}
+
+static std::string
 libDir(void)
 {
   using namespace std;
   static const string prefix(PREFIXDIR);
   static const string execPrefix(EXECPREFIXDIR);
   string lib(LIBDIR);
-
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-  string ldir("/bin");
+  const string ldir("/bin");
 #else 
-  string ldir("/lib");
+  const string ldir("/lib"LIB_SUFFIX);
 #endif
-
-#if defined _WIN32 || defined _WIN64
-  // check in the registry (installation through NSIS)
-  string rpath;
-  if(getValueInRegistry(rpath,string("Software\\CEA\\tfel-")+VERSION,"")){
-    return rpath+ldir;
+  const string& th = getTFELHOME();
+  if(!th.empty()){
+    return th+ldir;
   }
-#endif
-
-  const char * const path = getenv("TFELHOME");
-  if(path!=0){
-    return handleSpace(string(path)+ldir);
-  }
-  
   if(lib.substr(0,14)=="${exec_prefix}"){
     if(execPrefix=="${prefix}"){
-      lib = prefix + ldir;
+      lib = prefix+ldir;
     } else {
-      lib = execPrefix + ldir;
+      lib = execPrefix+ldir;
     }
   }
   return handleSpace(lib);
 } // end of libDir
 
-std::string
+static std::string
 includeDir(void)
 {
   using namespace std;
   static const string prefix(PREFIXDIR);
   string inc(INCLUDEDIR);
-#if defined _WIN32 || defined _WIN64
-  // check in the registry (installation through NSIS)
-  string rpath;
-  if(getValueInRegistry(rpath,string("Software\\CEA\\tfel-")+VERSION,"")){
-    inc = handleSpace(rpath+"/include");
-#ifdef COMPILER_SPECIFIC_OPTIONS
-    inc += ' ';
-    inc += COMPILER_SPECIFIC_OPTIONS;
-#endif
-    return inc;
-  }
-#endif
-  const char * const path = getenv("TFELHOME");
-  if(path!=0){
-    inc =  handleSpace(string(path)+"/include");
+  const string& th = getTFELHOME();
+  if(!th.empty()){
+    return th+"/include";
   } else {
     if(inc.substr(0,9)=="${prefix}"){
       inc = handleSpace(prefix + "/include");
     }
   }
-#ifdef COMPILER_SPECIFIC_OPTIONS
-  inc += ' ';
-  inc += COMPILER_SPECIFIC_OPTIONS;
-#endif
   return inc;
 } // end of libDir
 
@@ -244,6 +258,12 @@ registerCallBack(const std::string& key,
   using namespace std;
   callBacksContainer.insert(make_pair(key,make_pair(f,description)));
 } // end of registerNewCallBack
+
+static void
+treatCompilerFlags(void)
+{
+  compilerflags = true;
+} // end of treatOFlags
 
 static void
 treatOFlags(void)
@@ -476,6 +496,11 @@ main(const int argc,
   CallBacksContainer::const_iterator p;
   const char * const * p2;
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+  try{
+#endif /* __CYGWIN__ */
+
+  registerCallBack("--compiler-flags",&treatCompilerFlags,"return tfel recommended compiler flags.");
   registerCallBack("--oflags",&treatOFlags,"return tfel recommended optimisation flags.");
   registerCallBack("--oflags2",&treatOFlags2,"return some aggressive optimisation flags, possibly at the expense of precision.");
   registerCallBack("--warning",&treatWarning,"return tfel recommended warnings.");
@@ -618,6 +643,10 @@ main(const int argc,
     }
   }
 
+  if(compilerflags){
+    cout << COMPILER_FLAGS << " ";
+  }
+
   if(oflags){
     cout << OPTIMISATION_FLAGS << " ";
   }
@@ -639,6 +668,18 @@ main(const int argc,
     cout << endl;
   }
 #endif /* HAVE_CASTEM */
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+  }
+  catch(exception& e){
+    MessageBox(0,e.what(),
+	       "mfront",0);
+    return EXIT_FAILURE;
+  }
+  catch(...){
+    return EXIT_FAILURE;
+  }
+#endif /* __CYGWIN__ */
 
   return EXIT_SUCCESS;
 }

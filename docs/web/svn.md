@@ -18,3 +18,26 @@ the access is currently restricted. Access can be granted to the
 
 We may consider moving to another server if the number of contributors
 grows significantly.
+
+# Access through a proxy
+
+If you want to use the `svn` command line through a network using a
+proxy, you must edit your `servers` configuration file to indicate
+which proxy to use (see the subversion
+[FAQ](http://subversion.apache.org/faq.html#proxy) for details).
+
+The files location depends on your operating system. On Linux or Unix
+it is located in the directory `~/.subversion`. On Windows it is in
+`%APPDATA%\Subversion` (Try `echo %APPDATA%`, note this is a hidden
+directory.).
+
+You shall then add the following lines to this file:
+
+~~~~~~~~~~~{#svn-proxy .bash}
+[global] 
+http-proxy-host = XXXXX 
+http-proxy-port = XXXXX
+http-proxy-username = XXXXX
+http-proxy-password = XXXXX
+~~~~~~~~~~~
+

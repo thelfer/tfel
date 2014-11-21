@@ -33,8 +33,8 @@
 \titre{Écriture de lois de comportements avec \mfront{}~: tutoriel}
 
 \date{Novembre 2014}
-\numero{}
-\indice{}
+\numero{14-023}
+\indice{0}
 \dateversion{11/2014}
 \numeroaffaire{A-SICOM-A1-07}
 \typeaction{BE}
@@ -59,7 +59,6 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
                         & F. Arnoux       & 1 &
 }
 
-\CoupeListeDiffusion{}
 \diffusioninterne{
   DEN/DISN/SIMU       & J.P. Deffain       & 1 & Diffusion par\\ 
                       & D. Caruge          & 1 & courriel     \\ 

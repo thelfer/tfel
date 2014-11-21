@@ -36,13 +36,7 @@ namespace mfront
   struct Evolution;
 
   /*!
-   * MTestParser is a simple class 
-   * to test mfront behaviours
-   *
-   * The unknowns are made of
-   * the strain stensor followed 
-   * by a number of lagrange
-   * multiplier
+   * MTestParser is used to parse mtest file.
    */
   struct MFRONT_MTEST_VISIBILITY_EXPORT MTestParser
     : public tfel::utilities::CxxTokenizer

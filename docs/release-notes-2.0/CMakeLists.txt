@@ -1,8 +1,9 @@
-configure_file(Champs.tex.in Champs.tex @ONLY)
-configure_file(tfel-2.0.tex.in
-               tfel-2.0.tex @ONLY)
+if(HAVE_LATEX)
+  configure_file(Champs.tex.in Champs.tex @ONLY)
+  configure_file(tfel-2.0.tex.in
+    tfel-2.0.tex @ONLY)
 
-ADD_CUSTOM_COMMAND(
+  ADD_CUSTOM_COMMAND(
     OUTPUT    tfel-2.0.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/tfel-2.0.tex.in
@@ -24,12 +25,13 @@ ADD_CUSTOM_COMMAND(
     ARGS      tfel-2.0.ps
     COMMENT   "tfel-2.0.pdf")
 
-add_custom_target(tfel-2.0-doc-pdf ALL DEPENDS tfel-2.0.pdf)
-add_dependencies(doc-pdf
-  tfel-2.0-doc-pdf)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.pdf
-  DESTINATION share/doc/tfel/references
-  COMPONENT docs)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.pdf
-  DESTINATION share/doc/tfel/web/documents/tfel/tfel
-  COMPONENT website)
+  add_custom_target(tfel-2.0-doc-pdf ALL DEPENDS tfel-2.0.pdf)
+  add_dependencies(doc-pdf
+    tfel-2.0-doc-pdf)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.pdf
+    DESTINATION share/doc/tfel/references
+    COMPONENT docs)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.pdf
+    DESTINATION share/doc/tfel/web/documents/tfel/tfel
+    COMPONENT website)
+endif(HAVE_LATEX)

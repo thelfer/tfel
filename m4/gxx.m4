@@ -3,18 +3,6 @@ dnl a set of macros related to gxx
 dnl 
 dnl Helfer Thomas 22/12/06
 
-AC_DEFUN([AC_GCC_CHECK_MACHINE_TYPE],[
-  AC_REQUIRE([AC_CANONICAL_HOST])dnl
-
-  AC_CHECKING([for MACHINE_TYPE])
-
-  GCC_MACHINE_TYPE="unknown"
-  case "$build_cpu" in
-  x86_64*)  GCC_MACHINE_TYPE="64" ;; dnl opteron 64 bits
-  i[[3456]]86*linux*) GCC_MACHINE_TYPE="32" ;; dnl intel et compatible 32 bits
-  *)        GCC_MACHINE_TYPE="32" ;; dnl defaut 32 bits
-  esac])
-
 dnl
 dnl @synopsis AC_CHECK_FLAG(-flag,variable where we add flag if ok, optional flag)
 dnl
@@ -42,7 +30,6 @@ dnl
 
 AC_DEFUN([AC_GCC_LINUX_OPTIMISATIONS],[
 	AC_CHECKING(for gcc options regarding gcc version and processor type)
-	AC_REQUIRE([AC_GCC_CHECK_MACHINE_TYPE])
 
 	AC_SUBST(CXXFLAGS)
 	AC_SUBST(CFLAGS)
@@ -113,7 +100,8 @@ AC_DEFUN([AC_GCC_LINUX_OPTIMISATIONS],[
 			line="atom core2 pentium-m pentium4 pentium3 pentium2 pentiumpro pentium-mmx pentium i486 i386"
 		    fi
 		    if test $cpu_model -ge 15 ; then 
-			if test $GCC_MACHINE_TYPE -eq 32 ; then
+		       if test "x$TFEL_ARCH32" = "xyes" ;
+		       then
 			    line="core2 prescott pentium-m pentium4 pentium3 pentium2 pentiumpro pentium-mmx pentium i486 i386"
 			else
 			    line="core2 nocona pentium-m pentium4 pentium3 pentium2 pentiumpro pentium-mmx pentium i486 i386"
@@ -126,16 +114,18 @@ AC_DEFUN([AC_GCC_LINUX_OPTIMISATIONS],[
 		if test $cpu_family -eq 15 ; then
 		    line="pentium4 pentium3 pentium2 pentiumpro pentium-mmx pentium i486 i386"
 		    if test $cpu_model -ge 3 ; then
-			if test $GCC_MACHINE_TYPE -eq 32 ; then
-			    line="prescott $line"
-			else
-			    line="nocona $line"
-			fi
+		       if test "x$TFEL_ARCH32" = "xyes" ;
+		       then
+			   line="prescott $line"
+		       else
+			   line="nocona $line"
+		       fi
 		    fi
 		fi
 		dnl failsafe with default value
 		if test "x$line" == "x" ; then
-		    if test $GCC_MACHINE_TYPE -eq 32 ; then
+		    if test "x$TFEL_ARCH32" = "xyes" ;
+		    then
 			line="prescott"
 		    else
 			line="nocona"
@@ -288,7 +278,6 @@ AC_DEFUN([AC_CHECK_GXX],
 	    CFLAGS="$CFLAGS -W -Wall"
 	    
 	    dnl g++ default warning options
-
 	    COMPILER_WARNINGS="-W -Wall -Wconversion -Wshadow"
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wpointer-arith -Wcast-qual -Wcast-align"
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wwrite-strings -Wctor-dtor-privacy -Wnon-virtual-dtor"
@@ -298,13 +287,11 @@ AC_DEFUN([AC_CHECK_GXX],
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wredundant-decls -Wlong-long -Wdisabled-optimization"
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wunknown-pragmas -Wundef  -Wreorder"
 
-            CXXFLAGS="$CXXFLAGS $COMPILER_WARNINGS"
-
 	    if test "${CXX}" = "clang++"; then
                CXXFLAGS="$CXXFLAGS -ftemplate-depth-250"
 #	       CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
 	       CXXFLAGS="$CXXFLAGS"
-	       COMPILER_SPECIFIC_OPTIONS="-ftemplate-depth-250 -Wno-mismatched-tags $COMPILER_SPECIFIC_OPTIONS"
+	       COMPILER_FLAGS="-ftemplate-depth-250 -Wno-mismatched-tags $COMPILER_FLAGS"
             fi
 
 	    if test "${CXX}" != "clang++"; then
@@ -329,14 +316,25 @@ AC_DEFUN([AC_CHECK_GXX],
 		    AC_MSG_WARN("g++3.4 does not work with FSAlgorithm specialisation nicely")
 		    AC_MSG_WARN("Using the -DNO_FSALGORITHM_SPECIALISATION flag")
 		    CPPFLAGS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $CPPFLAGS"
-		    COMPILER_SPECIFIC_OPTIONS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $COMPILER_SPECIFIC_OPTIONS"
+		    COMPILER_FLAGS="-DNO_FSALGORITHM_SPECIALISATION -fno-builtin-abs $COMPILER_FLAGS"
 		else
 		    CPPFLAGS=" $CPPFLAGS"
 		    CXXFLAGS="$CXXFLAGS"
 		fi
-	    fi
-	fi
 
+		if test "x$TFEL_WIN" = "xyes" ;
+		then
+		  if test "x$TFEL_ARCH64" = "xyes" ;
+		  then
+		      COMPILER_FLAGS="-m64 $COMPILER_FLAGS"
+                  fi
+		  if test "x$TFEL_ARCH32" = "xyes" ;
+		  then
+		      COMPILER_FLAGS="-m32 $COMPILER_FLAGS"
+                  fi
+                fi
+	    fi
+	    fi
 	    dnl symbol visibility
 		GCC_SYMBOL_VISIBILITY=""
 		AC_GCC_CHECK_FLAG(-fvisibility-inlines-hidden,GCC_SYMBOL_VISIBILITY)
