@@ -2,6 +2,7 @@
  * \file   Lorentz.mfront
  */
 
+@Behaviour Lorentz;
 @Author Helfer Thomas;
 @Date   18/06/2013;
 @Description {
@@ -9,69 +10,68 @@
   "le caractère unilatéral de l'endommagement"
 }
 
-@Behaviour Lorentz;
 
-@MaterialProperty stress young; /* mandatory for castem */
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;    /* mandatory for castem */
+@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
 @MaterialProperty real k;
 @MaterialProperty real g;
-
-@ProvidesSymmetricTangentOperator;
 
 @Includes{
 #include"TFEL/Material/Lame.hxx"
 }
 
 @StateVariable real d;
-@StateVariable real y;
 
-@InitLocalVariables{
-  Dt = StiffnessTensor(real(0));
-}
-
+@ProvidesTangentOperator;
 @Integrator{
   using namespace tfel::material::lame;
-  tmatrix<3u,3u,real> m;
-  tvector<3u,real>    vp;
   const real lambda = computeLambda(young,nu);
   const real  mu    = computeMu(young,nu);
-  const Stensor e  = eto+deto;
-  // valeurs propres, parties positives et négatives
-  e.computeEigenVectors(vp,m,true);
-  const real e0p = max(vp(0),real(0));
-  const real e1p = max(vp(1),real(0));
-  const real e2p = max(vp(2),real(0));
-  const real e0n = min(vp(0),real(0));
-  const real e1n = min(vp(1),real(0));
-  const real e2n = min(vp(2),real(0));
+  Stensor4      dpp; // derivative of the positive part
+  StrainStensor pp;  // positive part of the strain tensor
+  const StrainStensor e = eto+deto;  // negative part
+  computeStensorPositivePartAndDerivative(dpp,pp,e,1e-10);
+  const StrainStensor np = e-pp;  // negative part
   // partie positive de la trace
-  const real trp = e0p+e1p+e2p;
-  const real trn = e0n+e1n+e2n;
+  const real trp = trace(pp);
+  const real trn = trace(np);
   // force thermodynamique associé à l'endommagement
-  y = max(0.5*(2*mu*(e0p*e0p+e1p*e1p+e2p*e2p)+lambda*trp*trp),y);
-  if((y>=k*g/(1+g))&&
-     (y<=k*(1+g)/g)){
-    d = max(1. + g - sqrt(k*g*(1+g)/y),d);
-  } else {
-    if(y>=k*(1+g)/g){
+  bool bloading = false;
+  Stensor dd_dde(real(0));
+  if(d<0.99){
+    const real y = mu*(pp|pp)+0.5*lambda*trp*trp;
+    if((y>=k*g/(1+g))&&(y<=k*(1+g)/g)){
+      const real dtest = 1+g-sqrt(k*g*(1+g)/y); 
+      if(d<=dtest){
+	bloading = true;
+	d = min(dtest,real(1));
+      }
+    } else if(y>=k*(1+g)/g){
+      bloading = true;
       d = real(1);
     }
   }
-  d = min(d,real(0.99));
+  const real deff = min(d,real(0.99));
   // eigen values of s0
-  sig = StressStensor(real(0));
-  sig(0) = (1-d)*(lambda*trp+2*mu*e0p)+lambda*trn+2*mu*e0n;
-  sig(1) = (1-d)*(lambda*trp+2*mu*e1p)+lambda*trn+2*mu*e1n;
-  sig(2) = (1-d)*(lambda*trp+2*mu*e2p)+lambda*trn+2*mu*e2n;
-  const tmatrix<3u,3u,real> m2 = transpose(m);
-  sig.changeBasis(m2);
+  sig = lambda*((1-deff)*trp+trn)*StrainStensor::Id()+2*mu*((1-deff)*pp+np);
   if(computeTangentOperator_){
-    if(smt!=ELASTIC){
+    if(smt==ELASTIC){
+      computeUnalteredElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+    } else if ((smt==SECANTOPERATOR)||(smt==CONSISTENTTANGENTOPERATOR)){
+      StiffnessTensor Hooke;
+      computeUnalteredElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+      if((smt==CONSISTENTTANGENTOPERATOR)&&(bloading)){
+	// J'ai pas encore calculé correctement dd_dde !!
+	// Dt = Hooke*(Stensor4::Id()-deff*dpp-(pp^dd_dde));
+	return FAILURE;
+      } else {
+	Dt = Hooke*(Stensor4::Id()-deff*dpp);
+      }
+    } else {
       return FAILURE;
     }
-    computeUnalteredElasticStiffness<N,Type>::exe(Dt,lambda,mu);
   }
 }

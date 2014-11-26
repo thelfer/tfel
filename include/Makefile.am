@@ -220,6 +220,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx                                           \
 			TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx                                          \
 			TFEL/Math/Stensor/StensorFromTinyVectorView.hxx                                              \
+			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx                                \
+			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx                                \
 			TFEL/Math/Vector/tvectorResultType.hxx	                                                     \
 			TFEL/Math/Vector/tvector.ixx			                                             \
 			TFEL/Math/Vector/VectorConcept.hxx		                                             \

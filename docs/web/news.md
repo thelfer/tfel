@@ -30,9 +30,10 @@ with Cast3M 2014.
 
 # `MFront` behaviours can now be used in `AMITEX_FFTP` (24 October 2014)
 
-`AMITEX_FFTP` is a mechanical solver based on FFT developed at
-CEA. `MFront` behaviours can be used in `AMITEX_FFTP` through the
-`UMAT` interface introduced by the [`Cast3M`](http://www-cast3m.cea.fr) finite element solver.
+`AMITEX_FFTP` is a massively parallel mechanical solver based on FFT
+developed at CEA. `MFront` behaviours can be used in `AMITEX_FFTP`
+through the `UMAT` interface introduced by the
+[`Cast3M`](http://www-cast3m.cea.fr) finite element solver.
 
 ![Polycrystals computation made with `AMITEX_FFTP` (\(1024^{3}\) voxels)](img/AMITEX_FFTP_sig1.png
  "Polycrystals computation made with `AMITEX_FFTP` (\(1024^{3}\)

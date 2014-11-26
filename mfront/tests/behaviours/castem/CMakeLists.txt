@@ -55,6 +55,7 @@ set(mfront_tests_SOURCES
   ImplicitOrthotropicCreep
   StrainHardeningCreep
   Lorentz
+  Lorentz2
   Mazars
   PlasIsoCin
   ViscoPlasIsoCin
@@ -203,6 +204,7 @@ test_castem(ddif2-2)
 test_castem(ddif2-3)
 test_castem(ddif2-4)
 test_castem(lorentz)
+test_castem(lorentz2)
 test_castem(mazars)
 test_castem(mazars2)
 test_castem(druckerprager)

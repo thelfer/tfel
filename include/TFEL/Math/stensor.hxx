@@ -750,6 +750,7 @@ namespace tfel{
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include"TFEL/Math/Stensor/stensor.ixx"
 #include"TFEL/Math/Stensor/stensorResultType.hxx"
+#include"TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx"
 
 #endif /* _LIB_TFEL_STENSOR_H */
 

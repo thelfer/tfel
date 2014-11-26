@@ -38,6 +38,7 @@ MFRONTS= DDIF2.mfront                                                      \
          StrainHardeningCreep.mfront                                       \
          Mazars.mfront                                                     \
          Lorentz.mfront                                                    \
+         Lorentz2.mfront                                                   \
 	 PlasIsoCin.mfront                                                 \
 	 ViscoPlasIsoCin.mfront                                            \
          Chaboche.mfront                                                   \

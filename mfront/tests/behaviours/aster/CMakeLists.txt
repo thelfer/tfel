@@ -41,6 +41,7 @@ set(mfront_tests_SOURCES
   StrainHardeningCreep
   Mazars
   Lorentz
+  Lorentz2
   PlasIsoCin
   ViscoPlasIsoCin
   Chaboche
@@ -161,6 +162,7 @@ test_aster(elasticity23)
 test_aster(mazars)
 test_aster(mazars2)
 test_aster(lorentz)
+test_aster(lorentz2)
 test_aster(norton)
 test_aster(norton2)
 test_aster(stressrelaxation)
