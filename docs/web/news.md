@@ -2,6 +2,14 @@
 % Helfer Thomas
 % November 27, 2014
 
+# Release of TFEL version 2.0.1
+
+`TFEL` version 2.0.1 is now available. This is mainly a bug-fix
+release after version 2.0.0.
+
+This version is meant to be used in Code-Aster version 12.3 that will
+be released in January 2015.
+
 # Creation of the [tfel-contact@cea.fr](mailto:tfel-contact@cea.fr) address (1 December 2014)
 
 A new contact address has been created:
