@@ -450,6 +450,7 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/appendix.tex
 	   docs/presentations/mfront-user-meeting/Makefile
 	   docs/presentations/portable-behaviour/Makefile
+	   docs/presentations/Materiaux2014/Makefile
 	   docs/tutorial/Makefile
 	   docs/tutorial/introduction.tex
 	   docs/tutorial/Conclusions.tex
@@ -511,6 +512,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/astermazars.mtest
            mfront/tests/behaviours/aster/astermazars2.mtest
            mfront/tests/behaviours/aster/asterlorentz.mtest
+           mfront/tests/behaviours/aster/asterlorentz2.mtest
            mfront/tests/behaviours/aster/asternorton.mtest
            mfront/tests/behaviours/aster/asternorton2.mtest
            mfront/tests/behaviours/aster/asterstressrelaxation.mtest
@@ -646,6 +648,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmazars.mtest
            mfront/tests/behaviours/castem/castemmazars2.mtest
            mfront/tests/behaviours/castem/castemlorentz.mtest
+           mfront/tests/behaviours/castem/castemlorentz2.mtest
            mfront/tests/behaviours/castem/castemdruckerprager.mtest
            mfront/tests/behaviours/castem/castemdruckerprager2.mtest
            mfront/tests/behaviours/castem/castemnorton.mtest

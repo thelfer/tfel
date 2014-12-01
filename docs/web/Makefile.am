@@ -6,6 +6,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./bibliography.bib					   \
 	   ./svn.md					           \
 	   ./faq.md					           \
+	   ./interfaces.md					   \
 	   ./devel.md					           \
 	   ./index.md					           \
 	   ./material-properties.md				   \
@@ -65,6 +66,8 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/mingw-get3.xcf			                   \
 	   ./img/Win64.xcf			                   \
 	   ./img/Win64.png			                   \
+	   ./img/materiaux2014.jpg		                   \
+	   ./img/Interfaces.svg			                   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

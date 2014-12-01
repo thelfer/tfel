@@ -1,5 +1,6 @@
 SUBDIRS = mfront-user-meeting \
-	  portable-behaviour
+	  portable-behaviour  \
+	  Materiaux2014
 
 EXTRA_DIST=CMakeLists.txt                                                   \
 	   images/mfront.eps                                                \

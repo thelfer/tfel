@@ -25,6 +25,7 @@ add_dependencies(doc website)
 
 pandoc_html(index "-c css/slideshow.css")
 pandoc_html(faq "--toc")
+pandoc_html(interfaces)
 pandoc_html(install)
 pandoc_html(install-windows)
 pandoc_html(packages)

@@ -7,15 +7,19 @@
  */
 
 @Behaviour Mazars;
-
 @ModellingHypotheses {"PlaneStress","PlaneStrain",
                       "AxisymmetricalGeneralisedPlaneStrain",
                       "GeneralisedPlaneStrain",
                       "Axisymmetrical", "Tridimensional"};
+@Description{
+  "Modèle d'endommagement de Mazars"
+  "Implantation valide pour toutes les hypothèses standard et contraintes "
+  "planes. Ce dernier cas est traité à part"
+}
 
-@MaterialProperty stress young; /* mandatory for castem */
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;    /* mandatory for castem */
+@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
 @MaterialProperty real Ac;
@@ -50,6 +54,10 @@ PlaneStress::etozz.setGlossaryName("AxialStrain");
   mu = computeMu(young,nu);
 }
 
+/*!
+ * Initialisation pour toutes les hypothèses de modélisation, sauf la
+ * contrainte plane (voir ci-dessous).
+ */
 @Integrator{
   using namespace tfel::material::lame;
   const Stensor e  = eto+deto;
@@ -62,6 +70,7 @@ PlaneStress::etozz.setGlossaryName("AxialStrain");
  * déformations et des contraintes. Dans le cas des contraintes
  * planes, nous ne connaissons pas la déformation axiale. Dans le cas
  * de la loi de Mazars, celle-ci est déduite de la loi de Hooke.
+ * On "remplace" les initialisations faites précédemment.
  */
 @Integrator<PlaneStress,Replace>{
   using namespace tfel::material::lame;
@@ -79,8 +88,8 @@ PlaneStress::etozz.setGlossaryName("AxialStrain");
   const real tr = trace(e);
 }
 
-// Ce bloc va s'ajouter à l'un des blocs prédédant, suivant le cas
-// considéré
+// Ce bloc va s'ajouter à l'un des blocs précédant, suivant le cas
+// considéré.
 /*!
  * Nous décrivons maintenant l'évolution de l'endommagement.
  */

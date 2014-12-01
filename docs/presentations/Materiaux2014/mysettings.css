@@ -1,0 +1,41 @@
+<style type="text/css">
+  .reveal h1 { font-size: 2.5em; }
+  .reveal section img {
+      border: none;
+      box-shadow: none;
+  }
+  body {
+      background: url("img/background.svg") no-repeat fixed top left
+  }
+  .reveal table {
+      border: 1px solid black;
+      border-collapse: collapse;
+  }
+  .reveal th {
+      vertical-align: middle;
+      font-size: 75%;
+      border: 1px solid black;
+      border-collapse: collapse;
+  }
+  .reveal td {
+      vertical-align: middle;
+      font-size: 75%;
+      border: 1px solid black;
+      border-collapse: collapse;
+  }
+  .reveal thead{
+      background-color:lightgrey;
+  }
+  .reveal p {
+    text-align: justify;
+    text-justify: inter-word;
+  }
+   element.style {
+    top: -800px;
+  }
+  .references p {
+    font-size: 50%;
+    text-align: justify;
+    text-justify: inter-word;
+  }
+</style>
