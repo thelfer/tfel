@@ -2,6 +2,18 @@
 % Helfer Thomas
 % November 27, 2014
 
+# Creation of the [tfel-contact@cea.fr](mailto:tfel-contact@cea.fr) address (1 December 2014)
+
+A new contact address has been created:
+[tfel-contact@cea.fr](mailto:tfel-contact@cea.fr).
+
+This address can be used to contact directly the developers of `TFEL`
+and `MFront` for specific issues. However, if your issue may interest
+a broader audience, you may want to send a post to the TFEL users
+mailing lists:
+[tfel-discuss](mailto:tfel-discuss@lists.sourceforge.net).
+
+
 # `MFront` talk at Materiaux 2014 Montpellier (24 November 2014)
 
 ![](img/materiaux2014.jpg "")
