@@ -1780,12 +1780,13 @@ namespace mfront{
 								  const VariableDescriptionContainer& v) const
   {
     using namespace std;
-    string tmp;
     for(VariableDescriptionContainer::const_iterator p=v.begin();p!=v.end();++p){
-      SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      string tmp;
+      tmp += ' ';
       if(flag==SupportedTypes::Scalar){
 	if(p->arraySize==1){
-	  tmp = treatScalar(p->name);
+	  tmp += treatScalar(p->name);
 	} else {
 	  for(unsigned short j=0;j!=p->arraySize;){
 	    tmp += treatScalar(p->name,j);
@@ -1796,7 +1797,7 @@ namespace mfront{
 	}
       } else if(flag==SupportedTypes::Stensor){
 	if(p->arraySize==1){
-	  tmp = treatStensor(h,p->name);
+	  tmp += treatStensor(h,p->name);
 	} else {
 	  for(unsigned short j=0;j!=p->arraySize;){
 	    tmp += treatStensor(h,p->name,j);
@@ -1807,7 +1808,7 @@ namespace mfront{
 	}
       } else if(flag==SupportedTypes::Tensor){
 	if(p->arraySize==1){
-	  tmp = treatTensor(h,p->name);
+	  tmp += treatTensor(h,p->name);
 	} else {
 	  for(unsigned short j=0;j!=p->arraySize;){
 	    tmp += treatTensor(h,p->name,j);
@@ -1821,8 +1822,8 @@ namespace mfront{
 	msg += "internal error, tag unsupported";
 	throw(runtime_error(msg));
       }
+      out << tmp;
     }
-    out << tmp;
   }
 
   void

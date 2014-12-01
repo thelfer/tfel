@@ -1,6 +1,13 @@
 % News
 % Helfer Thomas
-% November 17, 2014
+% November 27, 2014
+
+# `MFront` talk at Materiaux 2014 Montpellier (24 November 2014)
+
+![](img/materiaux2014.jpg "")
+
+An `MFront` talk was given at Materiaux 2014. Slides (in french) are
+available [here](documents/Materiaux2014/materiaux2014.html).
 
 # Beta release of tfel-2.0.1 for `Windows 64bits` and `Cast3M 2014` (18 November 2014)
 

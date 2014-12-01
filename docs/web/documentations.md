@@ -27,6 +27,7 @@
 - mtest: [mtest.pdf](documents/mtest-presentation/mtest-presentation.pdf)
 - [mfront user meeting](documents/mfront-user-meeting/mfront.html)
 - [writing portable behaviours](documents/portable-behaviour/portability.html)
+- introduction to MFront (talk given at Materiaux 2014 in Montpellier): [materiaux2014.html](documents/Materiaux2014/materiaux2014.html)
 
 # Solver interfaces
 

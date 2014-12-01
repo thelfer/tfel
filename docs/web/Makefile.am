@@ -67,6 +67,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/Win64.xcf			                   \
 	   ./img/Win64.png			                   \
 	   ./img/Interfaces.svg			                   \
+	   ./img/materiaux2014.jpg		                   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \
