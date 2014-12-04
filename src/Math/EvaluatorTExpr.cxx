@@ -261,11 +261,9 @@ namespace tfel
       using namespace tfel::utilities;
       using namespace tfel::math::parser;
       vector<shared_ptr<Evaluator::TExpr> >::iterator p  = this->subExpr.begin();
-      vector<shared_ptr<Evaluator::TExpr> >::iterator pe = this->subExpr.end();
       vector<shared_ptr<Evaluator::TExpr> >::iterator previous;
       vector<shared_ptr<Evaluator::TExpr> >::iterator next;
-      
-      while(p!=pe){
+      while(p!=this->subExpr.end()){
 	if((*p)->isOperator()){
 	  shared_ptr<TOperator> o = shared_ptr<TOperator>(new TOperator(static_cast<const TOperator &>(*(p->get()))));
 	  if(o->getOperatorType()==op){
@@ -339,7 +337,6 @@ namespace tfel
 		++next;
 		p=this->subExpr.erase(p,next);
 		--p;
-		pe=this->subExpr.end();
 	      }
 	    }
 	  }
