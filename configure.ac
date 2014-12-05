@@ -451,6 +451,7 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/mfront-user-meeting/Makefile
 	   docs/presentations/portable-behaviour/Makefile
 	   docs/presentations/Materiaux2014/Makefile
+	   docs/presentations/ClubCast3M2014/Makefile
 	   docs/tutorial/Makefile
 	   docs/tutorial/introduction.tex
 	   docs/tutorial/Conclusions.tex
