@@ -2,6 +2,54 @@
 % Helfer Thomas
 % November 27, 2014
 
+# Some applications of `MFront` at the [`Cast3M`](http://www-cast3m.cea.fr) user meeting  (4 December 2014)
+
+![](img/HureCast3M2014.png "")
+
+The [`Cast3M`](http://www-cast3m.cea.fr) user meeting was held in
+Paris on November 28, 2014. Jérémy Hure had a talk about the
+application of `MFront` in finite strain elasto-plasticity. This talk
+is available [here](documents/ClubCast3M2014/HureCast3M14.pdf).
+
+# `AMITEX_FFTP` has its own website (4 December 2014)
+
+![](img/AMITEX_FFTP_website.png "")
+
+[`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
+has now its own
+[dedicated webiste](](http://www.maisondelasimulation.fr/projects/amitex/html/)).
+
+The main purpose of
+[`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
+is to implement an efficient distributed mechanical solver based on
+Fast Fourier
+Transform. [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
+is developped by CEA in the Departement of Nuclear
+Material.
+
+[`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
+is distributed under a free license for research and education
+purpose.
+
+# Release of TFEL version 2.0.1 (2 December 2014)
+
+`TFEL` version 2.0.1 is now available. This is mainly a bug-fix
+release after version 2.0.0.
+
+This version is meant to be used in Code-Aster version 12.3 that will
+be released in January 2015.
+
+# Creation of the [tfel-contact@cea.fr](mailto:tfel-contact@cea.fr) address (1 December 2014)
+
+A new contact address has been created:
+[tfel-contact@cea.fr](mailto:tfel-contact@cea.fr).
+
+This address can be used to contact directly the developers of `TFEL`
+and `MFront` for specific issues. However, if your issue may interest
+a broader audience, you may want to send a post to the TFEL users
+mailing lists:
+[tfel-discuss](mailto:tfel-discuss@lists.sourceforge.net).
+
 # `MFront` talk at Materiaux 2014 Montpellier (24 November 2014)
 
 ![](img/materiaux2014.jpg "")
@@ -14,15 +62,15 @@ available [here](documents/Materiaux2014/materiaux2014.html).
 ![TFEL and Cast3M 2014 on Windows 7 64 bits](img/Win64.png
  "TFEL and Cast3M 2014 on Windows 7 64 bits")
 
-A beta version of tfel-2.0.1 for `Windows 64bits` and `Cast3M 2014`
+A beta version of tfel-2.0.1 for `Windows 64bits` and [`Cast3M`](http://www-cast3m.cea.fr) `2014`
 has been released. A binary installer is provided
 [here](http://sourceforge.net/projects/tfel/files/Devel/Cast3M-2014/).
 
 Installing this version requires a functional installation of
-`Cast3M` \(2014\) (which shall be
+[`Cast3M`](http://www-cast3m.cea.fr) \(2014\) (which shall be
 [patched](downloads/patchs-Cast3M-2014.tar.bz2) to call external
 libraries) and the `MSYS` shell (It is recommended not to install
-`mingw` compilers along with the `MSYS` shell as `Cast3M` provides its
+`mingw` compilers along with the `MSYS` shell as [`Cast3M`](http://www-cast3m.cea.fr) provides its
 own version of those compilers).
 
 Installation instructions of those requirements are available
@@ -31,7 +79,7 @@ Installation instructions of those requirements are available
 Any feedback would be gratefully acknowledge.
 
 **Note:** The binary provided requires the `mingw` libraries delivered
-with Cast3M 2014. 
+with [`Cast3M`](http://www-cast3m.cea.fr) `2014`. 
 
 **Note:** A standalone version of tfel-2.0.1 will be provided shortly. 
 
@@ -46,7 +94,7 @@ through the `UMAT` interface introduced by the
  "Polycrystals computation made with `AMITEX_FFTP` (\(1024^{3}\)
  voxels)")
 
-# `TFEL/MFront` on `Cast3M` web site (15 October 2014)
+# `TFEL/MFront` on [`Cast3M`](http://www-cast3m.cea.fr) web site (15 October 2014)
 
 [A page dedicated](http://www-cast3m.cea.fr/index.php?xml=mfront) to
 `MFront` is now available on the [`Cast3M`](http://www-cast3m.cea.fr)

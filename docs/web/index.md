@@ -45,11 +45,15 @@ A set of interfaces are provided for various solvers:
   solver. This interface is described [here](aster.html)
 - the [`ZeBuLoN`](http://www.zset-software.com/products/zebulon). This
   interface is described [here](zmat.html)
-- the `TMFFT` and the `AMITEX_FFTP` Fast Fourier Transform solvers
-  developed internally at [CEA](http://www.cea.fr/english-portal
-  "Commissariat à l'énergie atomique"). Those solvers reuse the
-  interface developed for the [`Cast3M`](http://www-cast3m.cea.fr)
-  finite element solver.
+- the `TMFFT` and the
+  [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
+  Fast Fourier Transform solvers developed internally at
+  [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie
+  atomique"). Note that
+  [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
+  is distributed under a free license for research and education
+  purpose. Those solvers reuse the interface developed for the
+  [`Cast3M`](http://www-cast3m.cea.fr) finite element solver.
 
 For material properties, various interfaces are also provided and
 covers the following languages `C`, `C++`, `python`, `fortran`, etc.

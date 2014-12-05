@@ -402,6 +402,9 @@ docs/mtest/mtest.tex.in -text
 docs/mtest/style.ist -text
 docs/presentations/CMakeLists.txt -text
 docs/presentations/Chaboche.tex.in -text
+docs/presentations/ClubCast3M2014/CMakeLists.txt -text
+docs/presentations/ClubCast3M2014/HureCast3M14.pdf -text
+docs/presentations/ClubCast3M2014/Makefile.am -text
 docs/presentations/Makefile.am -text
 docs/presentations/Makefile.doc.in -text
 docs/presentations/Materiaux2014/CMakeLists.txt -text
@@ -794,6 +797,7 @@ docs/web/img/172_5pc.png -text
 docs/web/img/172_5pc.xcf -text
 docs/web/img/AMITEX_FFTP_sig1.png -text
 docs/web/img/AMITEX_FFTP_sig1.xcf -text
+docs/web/img/AMITEX_FFTP_website.png -text
 docs/web/img/Behaviour-img2.eps -text
 docs/web/img/Behaviour-img2.png -text
 docs/web/img/Behaviour-img3.eps -text
@@ -810,6 +814,8 @@ docs/web/img/CastemWebSite.png -text
 docs/web/img/CastemWebSite.xcf -text
 docs/web/img/FuelRod-ddif2.png -text
 docs/web/img/FuelRod-ddif2.xcf -text
+docs/web/img/HureCast3M2014.png -text
+docs/web/img/HureCast3M2014.xcf -text
 docs/web/img/ImplicitDSL.svg -text
 docs/web/img/Interfaces.svg -text
 docs/web/img/LogarithmicStrainPlasticity-ssna303.svg -text
