@@ -34,79 +34,73 @@ namespace zmat
      * \param[in] src  : source
      * \param[in] dest : destination
      */
-    template<typename T,
-	     template<unsigned short,typename> class Storage>
+    template<typename T>
     static inline 
     typename std::enable_if<
       std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
-    convert(tfel::math::stensor<1u,T,Storage>&,
+    convert(tfel::math::stensor<1u,T>&,
 	    const double* const);
     /*!
      * convert an 2D ZMAT symmetric tensor to a TFEL one
      * \param[in] src  : source
      * \param[in] dest : destination
      */
-    template<typename T,
-	     template<unsigned short,typename> class Storage>
+    template<typename T>
     static inline 
     typename std::enable_if<
       std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
-    convert(tfel::math::stensor<2u,T,Storage>&,
+    convert(tfel::math::stensor<2u,T>&,
 	    const double* const);
     /*!
      * convert an 3D ZMAT symmetric tensor to a TFEL one
      * \param[in] src  : source
      * \param[in] dest : destination
      */
-    template<typename T,
-	     template<unsigned short,typename> class Storage>
+    template<typename T>
     static inline 
     typename std::enable_if<
       std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
-    convert(tfel::math::stensor<3u,T,Storage>&,
+    convert(tfel::math::stensor<3u,T>&,
 	    const double* const);
     /*!
      * convert an 1D TFEL symmetric tensor to a ZMAT one
      * \param[in] src  : source
      * \param[in] dest : destination
      */
-    template<typename T,
-	     template<unsigned short,typename> class Storage>
+    template<typename T>
     static inline 
     typename std::enable_if<
       std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(double* const,
-	    const tfel::math::stensor<1u,T,Storage>&);
+	    const tfel::math::stensor<1u,T>&);
     /*!
      * convert an 2D TFEL symmetric tensor to a ZMAT one
      * \param[in] src  : source
      * \param[in] dest : destination
      */
-    template<typename T,
-	     template<unsigned short,typename> class Storage>
+    template<typename T>
     static inline 
     typename std::enable_if<
       std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(double* const,
-	    const tfel::math::stensor<2u,T,Storage>&);
+	    const tfel::math::stensor<2u,T>&);
     /*!
      * convert an 3D TFEL symmetric tensor to a ZMAT one
      * \param[in] src  : source
      * \param[in] dest : destination
      */
-    template<typename T,
-	     template<unsigned short,typename> class Storage>
+    template<typename T>
     static inline 
     typename std::enable_if<
       std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(double* const,
-	    const tfel::math::stensor<3u,T,Storage>&);
+	    const tfel::math::stensor<3u,T>&);
     /*!
      * convert an 1D ZMAT  tensor to a TFEL one
      * \param[in] src  : source

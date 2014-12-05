@@ -58,13 +58,13 @@ namespace tfel
 	public stensor_base<StensorExpr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> > >
     {
       typedef EmptyRunTimeProperties RunTimeProperties;
-      typedef typename stensor<N,T,StensorStatic>::value_type      value_type;      
-      typedef typename stensor<N,T,StensorStatic>::pointer	   pointer;	    
-      typedef typename stensor<N,T,StensorStatic>::const_pointer   const_pointer; 
-      typedef typename stensor<N,T,StensorStatic>::reference	   reference;	    
-      typedef typename stensor<N,T,StensorStatic>::const_reference const_reference;
-      typedef typename stensor<N,T,StensorStatic>::size_type 	   size_type;	    
-      typedef typename stensor<N,T,StensorStatic>::difference_type difference_type;
+      typedef typename stensor<N,T>::value_type      value_type;      
+      typedef typename stensor<N,T>::pointer	   pointer;	    
+      typedef typename stensor<N,T>::const_pointer   const_pointer; 
+      typedef typename stensor<N,T>::reference	   reference;	    
+      typedef typename stensor<N,T>::const_reference const_reference;
+      typedef typename stensor<N,T>::size_type 	   size_type;	    
+      typedef typename stensor<N,T>::difference_type difference_type;
 
       typedef tvector<Mn,T>           first_arg;
       typedef tfel::meta::InvalidType second_arg;

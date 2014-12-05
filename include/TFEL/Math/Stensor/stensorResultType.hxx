@@ -28,15 +28,14 @@ namespace tfel{
     /*
      * Partial specialisation for unary operations
      */
-    template<unsigned short N,typename T,
-	     template<unsigned short,typename> class Storage>
-    class UnaryResultType<stensor<N,T,Storage>,OpNeg>
+    template<unsigned short N,typename T>
+    class UnaryResultType<stensor<N,T>,OpNeg>
     {
       typedef typename UnaryResultType<T,OpNeg>::type ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      stensor<N,ResBase_,StensorStatic> >::type type;
+					tfel::meta::InvalidType,
+					stensor<N,ResBase_> >::type type;
     };
     
     /*!
@@ -44,16 +43,14 @@ namespace tfel{
      * scalars operations
      * \see   ResultType_
      */
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage, 
-	     typename Scal>
-    class ResultType_<StensorTag,ScalarTag,stensor<N,T,Storage>,Scal,OpMult>
+    template<unsigned short N, typename T,typename Scal>
+    class ResultType_<StensorTag,ScalarTag,stensor<N,T>,Scal,OpMult>
     {
       typedef typename ResultType<T,Scal,OpMult>::type ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      stensor<N,ResBase_,StensorStatic> >::type type;
+					tfel::meta::InvalidType,
+					stensor<N,ResBase_> >::type type;
     };
 
     /*!
@@ -61,16 +58,14 @@ namespace tfel{
      * scalars operations
      * \see   ResultType_
      */
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage,
-	     typename Scal>
-    class ResultType_<StensorTag,ScalarTag,stensor<N,T,Storage>,Scal,OpDiv>
+    template<unsigned short N, typename T,typename Scal>
+    class ResultType_<StensorTag,ScalarTag,stensor<N,T>,Scal,OpDiv>
     {
       typedef typename ResultType<T,Scal,OpDiv>::type ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
-				      stensor<N,ResBase_,StensorStatic> >::type type;
+				      stensor<N,ResBase_> >::type type;
     };
     
     /*!
@@ -78,106 +73,93 @@ namespace tfel{
      * scalars operations
      * \see   ResultType_
      */
-    template<typename Scal,unsigned short N,typename T,
-	     template<unsigned short,typename> class Storage>
-    class ResultType_<ScalarTag,StensorTag,Scal,stensor<N,T,Storage>,OpMult>
+    template<typename Scal,unsigned short N,typename T>
+    class ResultType_<ScalarTag,StensorTag,Scal,stensor<N,T>,OpMult>
     {
       typedef typename ResultType<Scal,T,OpMult>::type ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
-				      stensor<N,ResBase_,StensorStatic> >::type type;
+				      stensor<N,ResBase_> >::type type;
     };
 
     /*!
      * \brief Partial specialisation for stensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage,
-	     template<unsigned short,typename> class Storage2>
-    class ResultType<stensor<N,T,Storage>,stensor<N,T2,Storage2>,OpPlus>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<stensor<N,T>,stensor<N,T2>,OpPlus>
     {
       typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
-				      stensor<N,ResBase_,StensorStatic> >::type type;
+				      stensor<N,ResBase_> >::type type;
     };
 
     /*!
      * \brief Partial specialisation for stensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage,
-	     template<unsigned short,typename> class Storage2>
-    class ResultType<stensor<N,T,Storage>,stensor<N,T2,Storage2>,OpMinus>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<stensor<N,T>,stensor<N,T2>,OpMinus>
     {
       typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
-				      stensor<N,ResBase_,StensorStatic> >::type type;
+				      stensor<N,ResBase_> >::type type;
     };
 
     /*!
      * \brief Partial specialisation for stensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage,
-	     template<unsigned short,typename> class Storage2>
-    class ResultType<stensor<N,T,Storage>,stensor<N,T2,Storage2>,OpMult>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<stensor<N,T>,stensor<N,T2>,OpMult>
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      stensor<N,ResBase_,StensorStatic> >::type type;
-    };
-
-    /*!
+					tfel::meta::InvalidType,
+					stensor<N,ResBase_> >::type type;
+  };
+  
+  /*!
      * \brief Partial specialisation for stensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage,
-	     template<unsigned short,typename> class Storage2>
-    class ResultType<stensor<N,T,Storage>,stensor<N,T2,Storage2>,OpDiadicProduct>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<stensor<N,T>,stensor<N,T2>,OpDiadicProduct>
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      st2tost2<N,ResBase_> >::type type;
+					tfel::meta::InvalidType,
+					st2tost2<N,ResBase_> >::type type;
     };
 
     /*!
      * \brief Partial specialisation for stensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage,
-	     template<unsigned short,typename> class Storage2>
-    class ResultType<stensor<N,T,Storage>,
-		     stensor<N,T2,Storage2>,OpDotProduct>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<stensor<N,T>,
+		     stensor<N,T2>,OpDotProduct>
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
       static constexpr bool isValid = tfel::typetraits::IsScalar<T>::cond  &&
-	                          tfel::typetraits::IsScalar<T2>::cond &&
-	                          tfel::typetraits::IsInvalid<ResBase_>::cond;
+	                              tfel::typetraits::IsScalar<T2>::cond &&
+                                      tfel::typetraits::IsInvalid<ResBase_>::cond;
     public:
 	typedef typename std::conditional<isValid,
-					tfel::meta::InvalidType,
-					ResBase_>::type type;
+					  tfel::meta::InvalidType,
+					  ResBase_>::type type;
     }; // end of class ResultType<stensor<N,T>,stensor<M,T2>,OpDotProduct>
 
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage,
-	     template<unsigned short,typename> class Storage2>
-    struct StensorDotProductHandle<stensor<N,T,Storage>,
-				   stensor<N,T2,Storage2> >
+    template<unsigned short N,typename T,typename T2>
+    struct StensorDotProductHandle<stensor<N,T>,
+				   stensor<N,T2> >
     {
       typedef DotProduct<StensorDimeToSize<N>::value,0u> type;
     };

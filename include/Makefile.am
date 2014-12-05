@@ -200,17 +200,13 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/Internals/StensorComputeEigenVectors.hxx                                   \
 			TFEL/Math/Stensor/Internals/StensorImport.hxx                                                \
 			TFEL/Math/Stensor/StensorConcept.hxx		                                             \
-			TFEL/Math/Stensor/StensorNullStorage.hxx	                                             \
 			TFEL/Math/Stensor/StensorConcept.ixx		                                             \
 			TFEL/Math/Stensor/stensor.ixx		                                                     \
-			TFEL/Math/Stensor/StensorExternalTabStorage.hxx                                              \
 			TFEL/Math/Stensor/StensorConceptOperations.hxx                                               \
 			TFEL/Math/Stensor/StensorConceptOperations.ixx                                               \
 			TFEL/Math/Stensor/StensorProduct.hxx                                                         \
-			TFEL/Math/Stensor/StensorStaticStorage.hxx	                                             \
 			TFEL/Math/Stensor/StensorSizeToDime.hxx	                                                     \
 			TFEL/Math/Stensor/StensorExpr.hxx		                                             \
-			TFEL/Math/Stensor/StensorExternalVoigtStorage.hxx                                            \
 			TFEL/Math/Stensor/stensorResultType.hxx	                                                     \
 			TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx                                        \
 			TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx                                       \
@@ -267,7 +263,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/FracSimplify.hxx                                                           \
 			TFEL/Math/General/FracSimplify.ixx		                                             \
 			TFEL/Math/General/LogicalOperations.hxx                                                      \
-			TFEL/Math/General/StorageTraits.hxx	                                                     \
 			TFEL/Math/General/AbsCompare.hxx	                                                     \
 			TFEL/Math/General/Abs.hxx      	                                                             \
 			TFEL/Math/General/Abs.ixx      	                                                             \

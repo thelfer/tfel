@@ -115,9 +115,8 @@ namespace tfel{
      * \brief Partial specialisation for stensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage>
-    class ResultType<tensor<N,T>,stensor<N,T2,Storage>,OpDiadicProduct>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<tensor<N,T>,stensor<N,T2>,OpDiadicProduct>
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
@@ -170,9 +169,8 @@ namespace tfel{
      * \brief Partial specialisation for st2tot2 and stensor multiplication
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage>
-    class ResultType<st2tot2<N,T>,stensor<N,T2,Storage>,OpMult>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<st2tot2<N,T>,stensor<N,T2>,OpMult>
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
@@ -192,7 +190,7 @@ namespace tfel{
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
     				      tfel::meta::InvalidType,
-    				      stensor<N,ResBase_,StensorStatic> >::type type;
+    				      stensor<N,ResBase_> >::type type;
     };
 
 

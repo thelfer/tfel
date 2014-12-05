@@ -20,7 +20,6 @@
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-#include"TFEL/Math/General/StorageTraits.hxx"
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 
@@ -159,7 +158,7 @@ namespace tfel{
 	typename std::enable_if<
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
-	exe(stensor<1u,T,StensorStatic>& s,const MatrixType& m){
+	exe(stensor<1u,T>& s,const MatrixType& m){
 	  using namespace std;
 	  s[0] = m(0,0);
 	  s[1] = m(1,1);
@@ -175,7 +174,7 @@ namespace tfel{
 	typename std::enable_if<
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
-	exe(stensor<2u,T,StensorStatic>& s,const MatrixType& m){
+	exe(stensor<2u,T>& s,const MatrixType& m){
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
@@ -195,7 +194,7 @@ namespace tfel{
 	typename std::enable_if<
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
-	exe(stensor<3u,T,StensorStatic>& s,const MatrixType& m){
+	exe(stensor<3u,T>& s,const MatrixType& m){
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
@@ -222,7 +221,7 @@ namespace tfel{
 	    typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
 	    >::cond,
 	  void>::type
-	exe(stensor<1u,T,StensorStatic>& s,const VectorType& v){
+	exe(stensor<1u,T>& s,const VectorType& v){
 	  using namespace std;
 	  s[0] = v(0)*v(0);
 	  s[1] = v(1)*v(1);
@@ -240,7 +239,7 @@ namespace tfel{
 	    typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
 	    >::cond,
 	  void>::type
-	exe(stensor<2u,T,StensorStatic>& s,const VectorType& v){
+	exe(stensor<2u,T>& s,const VectorType& v){
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
@@ -262,7 +261,7 @@ namespace tfel{
 	    typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
 	    >::cond,
 	  void>::type
-	exe(stensor<3u,T,StensorStatic>& s,const VectorType& v){
+	exe(stensor<3u,T>& s,const VectorType& v){
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
@@ -292,7 +291,7 @@ namespace tfel{
 					 typename VectorTraits<VectorType2>::NumType,OpMult>::Result,T
 	    >::cond,
 	  void>::type
-	exe(stensor<1u,T,StensorStatic>& s,
+	exe(stensor<1u,T>& s,
 	    const VectorType& v1,
 	    const VectorType2& v2){
 	  using namespace std;
@@ -315,7 +314,7 @@ namespace tfel{
 					 typename VectorTraits<VectorType2>::NumType,OpMult>::Result,T
 	    >::cond,
 	  void>::type
-	exe(stensor<2u,T,StensorStatic>& s,
+	exe(stensor<2u,T>& s,
 	    const VectorType& v1,
 	    const VectorType2& v2){
 	  using namespace std;
@@ -342,7 +341,7 @@ namespace tfel{
 					 typename VectorTraits<VectorType2>::NumType,OpMult>::Result,T
 	    >::cond,
 	  void>::type
-	exe(stensor<3u,T,StensorStatic>& s,
+	exe(stensor<3u,T>& s,
 	    const VectorType& v1,
 	    const VectorType2& v2){
 	  using namespace std;
@@ -366,7 +365,7 @@ namespace tfel{
       {
 	template<typename T>
 	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
-	exe(stensor<1u,T,StensorStatic>& s,
+	exe(stensor<1u,T>& s,
 	    const T& v1,
 	    const T& v2,
 	    const T& v3,
@@ -383,7 +382,7 @@ namespace tfel{
       {
 	template<typename T>
 	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
-	exe(stensor<2u,T,StensorStatic>& s,
+	exe(stensor<2u,T>& s,
 	    const T& v1,
 	    const T& v2,
 	    const T& v3,
@@ -404,7 +403,7 @@ namespace tfel{
       {
 	template<typename T>
 	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
-	exe(stensor<3u,T,StensorStatic>& s,
+	exe(stensor<3u,T>& s,
 	    const T& v1,
 	    const T& v2,
 	    const T& v3,
@@ -720,68 +719,94 @@ namespace tfel{
       return child;
     }
 
-    template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
-    stensor<N,T,Storage>::stensor(const T init)
+    template<unsigned short N, typename T>
+    stensor<N,T>::stensor(const T init)
     {
       tfel::fsalgo::fill<StensorDimeToSize<N>::value>::exe(this->v,init);
     }
 
-    template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE
+    template<unsigned short N, typename T>
+    stensor<N,T>::stensor(const typename tfel::typetraits::BaseType<T>::type* const init)
+    {
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
+      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(init,reinterpret_cast<base*>(this->v));
+    }
+
+    template<unsigned short N, typename T>
+    stensor<N,T>::stensor(const stensor<N,T>& src)
+    {
+      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src.v,this->v);
+    }
+
+    template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    stensor<N,T>::stensor(const stensor<N,T2>& src)
+    {
+      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src.begin(),this->v);
+    }
+
+    template<unsigned short N, typename T>
+    template<typename T2,typename Expr,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    stensor<N,T>::stensor(const StensorExpr<stensor<N,T2>,Expr>& src)
+    {
+      vectorToTab<StensorDimeToSize<N>::value>::exe(src,this->v);
+    }
+
+    template<unsigned short N, typename T>
     T& 
-    stensor<N,T,Storage>::operator()(const unsigned short i){
+    stensor<N,T>::operator()(const unsigned short i){
       assert(i<StensorDimeToSize<N>::value);
       return this->v[i];
     }
 
-    template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE
+    template<unsigned short N, typename T>
     const T& 
-    stensor<N,T,Storage>::operator()(const unsigned short i) const{
+    stensor<N,T>::operator()(const unsigned short i) const{
       assert(i<StensorDimeToSize<N>::value);
       return this->v[i];
     }
 
-    template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE
+    template<unsigned short N, typename T>
     T& 
-    stensor<N,T,Storage>::operator[](const unsigned short i){
+    stensor<N,T>::operator[](const unsigned short i){
       assert(i<StensorDimeToSize<N>::value);
       return this->v[i];
     }
 
-    template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
-    typename stensor<N,T,Storage>::RunTimeProperties
-    stensor<N,T,Storage>::getRunTimeProperties(void) const{
+    template<unsigned short N, typename T>
+    typename stensor<N,T>::RunTimeProperties
+    stensor<N,T>::getRunTimeProperties(void) const{
       return RunTimeProperties();
     }
 
-    template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE
+    template<unsigned short N, typename T>
     const T& 
-    stensor<N,T,Storage>::operator[](const unsigned short i) const{
+    stensor<N,T>::operator[](const unsigned short i) const{
       assert(i<StensorDimeToSize<N>::value);
       return this->v[i];
     }
 
     // Import from Voigt
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename T2>
     typename std::enable_if<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
-    stensor<N,T,Storage>::importVoigt(const T2 * const src)
+    stensor<N,T>::importVoigt(const T2 * const src)
     {
       tfel::math::internals::ImportFromVoigt<N>::exe(reinterpret_cast<T2*>(this->v),src);
     }
     
     // Import from Tab
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename T2>
     typename std::enable_if<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
-    stensor<N,T,Storage>::importTab(const T2* const src)
+    stensor<N,T>::importTab(const T2* const src)
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
       typedef tfel::math::internals::ImportFromTab<N> Import;
@@ -790,12 +815,12 @@ namespace tfel{
     }
 
     // Import from values
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename T2>
     typename std::enable_if<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
-    stensor<N,T,Storage>::import(const T2 * const src)
+    stensor<N,T>::import(const T2 * const src)
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
       typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
@@ -804,12 +829,12 @@ namespace tfel{
     }
 
     // Export to Tab
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename T2>
     typename std::enable_if<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
-    stensor<N,T,Storage>::exportTab(T2* const src) const
+    stensor<N,T>::exportTab(T2* const src) const
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
       typedef tfel::math::internals::ExportToTab<N> Export;
@@ -818,13 +843,13 @@ namespace tfel{
     }
 
     // Write to Tab
-    template<unsigned short N, typename T, template<unsigned short,typename> class Storage>
+    template<unsigned short N, typename T>
     template<typename T2>
     typename std::enable_if<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void
       >::type
-    stensor<N,T,Storage>::write(T2* const t) const
+    stensor<N,T>::write(T2* const t) const
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
       typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
@@ -833,8 +858,8 @@ namespace tfel{
     }
 
     // computeEigenValues
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    void stensor<N,T,Storage>::computeEigenValues(T& vp1,T& vp2,T& vp3,
+    template<unsigned short N,typename T>
+    void stensor<N,T>::computeEigenValues(T& vp1,T& vp2,T& vp3,
 						  const bool b) const 
     {
       TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename tfel::typetraits::BaseType<T>::type>::cond);
@@ -847,8 +872,8 @@ namespace tfel{
     }
 
     // computeEigenValues
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
-    void stensor<N,T,Storage>::computeEigenValues(tvector<3u,T>& vp,
+    template<unsigned short N,typename T>
+    void stensor<N,T>::computeEigenValues(tvector<3u,T>& vp,
 						  const bool b) const 
     {
       TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename tfel::typetraits::BaseType<T>::type>::cond);
@@ -861,9 +886,8 @@ namespace tfel{
     }
 
     // computeEigenVectors
-    template<unsigned short N,typename T, 
-	     template<unsigned short,typename> class Storage>
-    bool stensor<N,T,Storage>::computeEigenVectors(tvector<3u,T>& vp,
+    template<unsigned short N,typename T>
+    bool stensor<N,T>::computeEigenVectors(tvector<3u,T>& vp,
 						   tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& vec,
 						   const bool b) const 
     {
@@ -875,11 +899,10 @@ namespace tfel{
     }
 
     // computeEigenVectors
-    template<unsigned short N,typename T, 
-	     template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename VectorType>
     bool
-    stensor<N,T,Storage>::computeEigenVector(VectorType& ev,const T vp) const 
+    stensor<N,T>::computeEigenVector(VectorType& ev,const T vp) const 
     {
       typedef typename VectorTraits<VectorType>::NumType real;
       typedef tfel::math::internals::StensorComputeEigenVectors_<N> SCEV;
@@ -890,8 +913,7 @@ namespace tfel{
 				      *(reinterpret_cast<const real*>(&vp)));
     }
 
-    template<unsigned short N,typename T, 
-	     template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename StensorType>
     typename std::enable_if<
       (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
@@ -899,16 +921,15 @@ namespace tfel{
       (tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
 					typename StensorTraits<StensorType>::NumType>::cond),
       void>::type
-    stensor<N,T,Storage>::computeEigenValuesDerivatives(StensorType& n0,
+    stensor<N,T>::computeEigenValuesDerivatives(StensorType& n0,
 							StensorType& n1,
 							StensorType& n2,
 							const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
     {
       return tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(n0,n1,n2,m);      
-    } // end of stensor<N,T,Storage>::computeEigenValuesDerivatives
+    } // end of stensor<N,T>::computeEigenValuesDerivatives
 
-    template<unsigned short N,typename T, 
-	     template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename StensorType>
     typename std::enable_if<
       (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
@@ -916,16 +937,15 @@ namespace tfel{
       (tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
 					typename StensorTraits<StensorType>::NumType>::cond),
       void>::type
-    stensor<N,T,Storage>::computeEigenTensors(StensorType& n0,
+    stensor<N,T>::computeEigenTensors(StensorType& n0,
 					      StensorType& n1,
 					      StensorType& n2,
 					      const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
     {
       return tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(n0,n1,n2,m);      
-    } // end of stensor<N,T,Storage>::computeEigenTensors
+    } // end of stensor<N,T>::computeEigenTensors
 
-    template<unsigned short N,typename T, 
-	     template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename ST2toST2Type>
     typename std::enable_if<
       (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
@@ -934,7 +954,7 @@ namespace tfel{
 								     T,OpDiv>::Result,
 					typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
       void>::type
-    stensor<N,T,Storage>::computeEigenTensorsDerivatives(ST2toST2Type& dn0_ds,
+    stensor<N,T>::computeEigenTensorsDerivatives(ST2toST2Type& dn0_ds,
 							 ST2toST2Type& dn1_ds,
 							 ST2toST2Type& dn2_ds,
 							 const tvector<3u,T>& vp,
@@ -946,45 +966,41 @@ namespace tfel{
     }
 
     // ChangeBasis
-    template<unsigned short N,typename T, template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     void 
-    stensor<N,T,Storage>::changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
+    stensor<N,T>::changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
     {
       return tfel::math::internals::StensorChangeBasis<N>::exe(this->v,m);
     }
 
     // Return Id
-    template<unsigned short N,typename T,
-	     template<unsigned short,typename> class Storage>
-    TFEL_MATH_INLINE
-    const stensor<N,T,Storage>&
-    stensor<N,T,Storage>::Id(void)
+    template<unsigned short N,typename T>
+    const stensor<N,T>&
+    stensor<N,T>::Id(void)
     {
       using base = typename tfel::typetraits::BaseType<T>::type;
       constexpr base zero{0};
       constexpr base one{1};
       constexpr base IdCoef[]  = {one,one,one,zero,zero,zero};
-      static const stensor<N,T,Storage> id(IdCoef);
+      static const stensor<N,T> id(IdCoef);
       return id;
-    } // end of stensor<N,T,Storage>::Id
+    } // end of stensor<N,T>::Id
 
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
+    template<unsigned short N, typename T>
     template<typename InputIterator>
     void 
-    stensor<N,T,Storage>::copy(const InputIterator src)
+    stensor<N,T>::copy(const InputIterator src)
     {
       tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src,*this);
     }
 
     template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage,
 	     typename OutputIterator>
     TFEL_MATH_INLINE2
     typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond,
       void>::type
-    exportToBaseTypeArray(const stensor<N,T,Storage>& s,
+    exportToBaseTypeArray(const stensor<N,T>& s,
 			  OutputIterator p)
     {    
       typedef typename tfel::typetraits::BaseType<T>::type base;
@@ -993,9 +1009,8 @@ namespace tfel{
       Copy::exe(reinterpret_cast<const base*>(&s[0]),p);
     }
 
-    template<typename T,
-	     template<unsigned short,typename> class Storage>
-    T tresca(const stensor<1u,T,Storage>& s,
+    template<typename T>
+    T tresca(const stensor<1u,T>& s,
 	     const bool)
     {
       using namespace std;
@@ -1007,10 +1022,8 @@ namespace tfel{
       return tmp2;
     } // end of tresca
     
-    template<unsigned short N,
-	     typename T,
-	     template<unsigned short,typename> class Storage>
-    T tresca(const stensor<N,T,Storage>& s,
+    template<unsigned short N,typename T>
+    T tresca(const stensor<N,T>& s,
 	     const bool b)
     {
       using namespace std;
@@ -1075,31 +1088,31 @@ namespace tfel{
       return tfel::math::internals::StensorInvert<StensorTraits<StensorType>::dime>::exe(tmp);
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename MatrixType>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
-      stensor<N,T,StensorStatic> >::type
-    stensor<N,T,Storage>::buildFromMatrix(const MatrixType& m){
-      stensor<N,T,Storage> s;
+      stensor<N,T> >::type
+    stensor<N,T>::buildFromMatrix(const MatrixType& m){
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromMatrix<N>::exe(s,m);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename VectorType>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<
 	typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
       >::cond,
-      stensor<N,T,StensorStatic> >::type
-    stensor<N,T,Storage>::buildFromVectorDiadicProduct(const VectorType& v){
-      stensor<N,T,Storage> s;
+      stensor<N,T> >::type
+    stensor<N,T>::buildFromVectorDiadicProduct(const VectorType& v){
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromVectorDiadicProduct<N>::exe(s,v);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
+    template<unsigned short N,typename T>
     template<typename VectorType,
 	     typename VectorType2>
     typename std::enable_if<
@@ -1108,107 +1121,107 @@ namespace tfel{
 				     typename VectorTraits<VectorType2>::NumType,
 				     OpMult>::Result,T
 				       >::cond,
-      stensor<N,T,StensorStatic> >::type
-    stensor<N,T,Storage>::buildFromVectorsSymmetricDiadicProduct(const VectorType&  v1,
+      stensor<N,T> >::type
+    stensor<N,T>::buildFromVectorsSymmetricDiadicProduct(const VectorType&  v1,
 								 const VectorType2& v2)
     {
-      stensor<N,T,Storage> s;
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromVectorsSymmetricDiadicProduct<N>::exe(s,v1,v2);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
-    stensor<N,T,StensorStatic>
-    stensor<N,T,Storage>::buildFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
+    template<unsigned short N,typename T>
+    stensor<N,T>
+    stensor<N,T>::buildFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
 							 const tmatrix<3u,3u,
 								       typename tfel::typetraits::BaseType<T>::type>& m)
     {
-      stensor<N,T,Storage> s;
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,v1,v2,v3,m);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
-    stensor<N,T,StensorStatic>
-    stensor<N,T,Storage>::buildFromEigenValuesAndVectors(const tvector<3u,T>& vp,
+    template<unsigned short N,typename T>
+    stensor<N,T>
+    stensor<N,T>::buildFromEigenValuesAndVectors(const tvector<3u,T>& vp,
 							 const tmatrix<3u,3u,
 								       typename tfel::typetraits::BaseType<T>::type>& m)
     {
-      stensor<N,T,Storage> s;
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,vp(0),vp(1),vp(2),m);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
-    stensor<N,T,StensorStatic>
-    stensor<N,T,Storage>::buildLogarithmFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
+    template<unsigned short N,typename T>
+    stensor<N,T>
+    stensor<N,T>::buildLogarithmFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
 								  const tmatrix<3u,3u,
 								  typename tfel::typetraits::BaseType<T>::type>& m)
     {
-      stensor<N,T,Storage> s;
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::log(v1),std::log(v2),std::log(v3),m);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
-    stensor<N,T,StensorStatic>
-    stensor<N,T,Storage>::buildLogarithmFromEigenValuesAndVectors(const tvector<3u,T>& vp,
+    template<unsigned short N,typename T>
+    stensor<N,T>
+    stensor<N,T>::buildLogarithmFromEigenValuesAndVectors(const tvector<3u,T>& vp,
 								  const tmatrix<3u,3u,
 								  typename tfel::typetraits::BaseType<T>::type>& m)
     {
-      stensor<N,T,Storage> s;
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::log(vp(0)),
 									   std::log(vp(1)),
 									   std::log(vp(2)),m);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
-    stensor<N,T,StensorStatic>
-    stensor<N,T,Storage>::buildPositivePartFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
+    template<unsigned short N,typename T>
+    stensor<N,T>
+    stensor<N,T>::buildPositivePartFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
 								  const tmatrix<3u,3u,
 								  typename tfel::typetraits::BaseType<T>::type>& m)
     {
-      stensor<N,T,Storage> s;
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::max(T(0),v1),
 									   std::max(T(0),v2),
 									   std::max(T(0),v3),m);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
-    stensor<N,T,StensorStatic>
-    stensor<N,T,Storage>::buildPositivePartFromEigenValuesAndVectors(const tvector<3u,T>& vp,
+    template<unsigned short N,typename T>
+    stensor<N,T>
+    stensor<N,T>::buildPositivePartFromEigenValuesAndVectors(const tvector<3u,T>& vp,
 								     const tmatrix<3u,3u,
 										   typename tfel::typetraits::BaseType<T>::type>& m)
     {
-      stensor<N,T,Storage> s;
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::max(T(0),vp(0)),
 									   std::max(T(0),vp(1)),
 									   std::max(T(0),vp(2)),m);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
-    stensor<N,T,StensorStatic>
-    stensor<N,T,Storage>::buildNegativePartFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
+    template<unsigned short N,typename T>
+    stensor<N,T>
+    stensor<N,T>::buildNegativePartFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
 								     const tmatrix<3u,3u,
 								     typename tfel::typetraits::BaseType<T>::type>& m)
     {
-      stensor<N,T,Storage> s;
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::min(T(0),v1),
 									   std::min(T(0),v2),
 									   std::min(T(0),v3),m);
       return s;
     }
 
-    template<unsigned short N,typename T,template<unsigned short,typename> class Storage>
-    stensor<N,T,StensorStatic>
-    stensor<N,T,Storage>::buildNegativePartFromEigenValuesAndVectors(const tvector<3u,T>& vp,
+    template<unsigned short N,typename T>
+    stensor<N,T>
+    stensor<N,T>::buildNegativePartFromEigenValuesAndVectors(const tvector<3u,T>& vp,
 								     const tmatrix<3u,3u,
 								     typename tfel::typetraits::BaseType<T>::type>& m)
     {
-      stensor<N,T,Storage> s;
+      stensor<N,T> s;
       tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::min(T(0),vp(0)),
 									   std::min(T(0),vp(1)),
 									   std::min(T(0),vp(2)),m);

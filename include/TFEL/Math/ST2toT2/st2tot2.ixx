@@ -14,16 +14,13 @@
 #ifndef _LIB_TFEL_MATH_ST2TOT2_IXX_
 #define _LIB_TFEL_MATH_ST2TOT2_IXX_ 
 
-#include <cmath>
-#include <iterator>
-#include <algorithm>
-
-#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
-
+#include<cmath>
+#include<iterator>
+#include<algorithm>
 #include<type_traits>
 
+#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-#include"TFEL/Math/General/StorageTraits.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
 

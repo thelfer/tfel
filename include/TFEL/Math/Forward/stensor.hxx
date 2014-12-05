@@ -27,30 +27,15 @@ namespace tfel
     template<class T>
     struct StensorTraits;
 
-    template<unsigned short N, typename T>
-    struct StensorNullStorage;
-
-    template<unsigned short N, typename T>
-    struct StensorStatic;
-
-    template<unsigned short N, typename T>
-    class StensorExternalTab;
-
-    template<unsigned short N, typename T>
-    class StensorExternalVoigt;
-
     /*
      * \class stensor
      * \brief finite size symmetric tensor.
-     * \param N, the spatial dimension, see StensorDimeToSize for details. 
-     * \param T, numerical type used, by default, double
-     * \param Storage, type of storage used
+     * \tparam N, the spatial dimension, see StensorDimeToSize for details. 
+     * \tparam T, numerical type used, by default, double
      * \pre   This class is only defined for N=1u,2u and 3u.
      * \see   StensorDimeToSize and StensorSizeToDime. 
-     * \see   StensorStatic, StensorExternalTab,StensorExternalVoigt.
      */
-    template<unsigned short N,typename T=double,
-	     template<unsigned short,typename> class Storage=StensorStatic>
+    template<unsigned short N,typename T=double>
     struct stensor;
 
   } // end of namespace math

@@ -198,9 +198,8 @@ namespace tfel{
      * \brief Partial specialisation for tensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage>
-    class ResultType<tensor<N,T>,stensor<N,T2,Storage>,OpPlus>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<tensor<N,T>,stensor<N,T2>,OpPlus>
     {
       typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
     public:
@@ -213,9 +212,8 @@ namespace tfel{
      * \brief Partial specialisation for tensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage>
-    class ResultType<stensor<N,T2,Storage>,tensor<N,T>,OpPlus>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<stensor<N,T2>,tensor<N,T>,OpPlus>
     {
       typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
     public:
@@ -228,9 +226,8 @@ namespace tfel{
      * \brief Partial specialisation for tensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage>
-    class ResultType<tensor<N,T>,stensor<N,T2,Storage>,OpMinus>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<tensor<N,T>,stensor<N,T2>,OpMinus>
     {
       typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
     public:
@@ -243,9 +240,8 @@ namespace tfel{
      * \brief Partial specialisation for tensor
      * \see   ResultType
      */
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage>
-    class ResultType<stensor<N,T2,Storage>,tensor<N,T>,OpMinus>
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<stensor<N,T2>,tensor<N,T>,OpMinus>
     {
       typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
     public:

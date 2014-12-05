@@ -17,24 +17,22 @@
 namespace zmat
 {
 
-  template<typename T,
-	   template<unsigned short,typename> class Storage>
+  template<typename T>
     typename std::enable_if<
     std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
     void>::type
-    ZMATInterface::convert(tfel::math::stensor<1u,T,Storage>& dest,
+    ZMATInterface::convert(tfel::math::stensor<1u,T>& dest,
 			   const double* const src){
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
   } // end of ZMATInterface::convert
 
-  template<typename T,
-	   template<unsigned short,typename> class Storage>
+  template<typename T>
   typename std::enable_if<
     std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
     void>::type
-  ZMATInterface::convert(tfel::math::stensor<2u,T,Storage>& dest,
+  ZMATInterface::convert(tfel::math::stensor<2u,T>& dest,
 			 const double* const src){
     dest[0] = src[0];
     dest[1] = src[1];
@@ -42,12 +40,11 @@ namespace zmat
     dest[3] = src[3];
   } // end of ZMATInterface::convert
   
-  template<typename T,
-	   template<unsigned short,typename> class Storage>
+  template<typename T>
   typename std::enable_if<
     std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
     void>::type
-  ZMATInterface::convert(tfel::math::stensor<3u,T,Storage>& dest,
+  ZMATInterface::convert(tfel::math::stensor<3u,T>& dest,
 			 const double* const src){
     dest[0] = src[0];
     dest[1] = src[1];
@@ -57,38 +54,35 @@ namespace zmat
     dest[5] = src[4];
   } // end of ZMATInterface::convert
 
-  template<typename T,
-	   template<unsigned short,typename> class Storage>
+  template<typename T>
   typename std::enable_if<
     std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
     void>::type
   ZMATInterface::convert(double* const dest,
-			 const tfel::math::stensor<1u,T,Storage>& src){
+			 const tfel::math::stensor<1u,T>& src){
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
   } // end of ZMATInterface::convert
 
-  template<typename T,
-	   template<unsigned short,typename> class Storage>
+  template<typename T>
   typename std::enable_if<
     std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
     void>::type
   ZMATInterface::convert(double* const dest,
-			 const tfel::math::stensor<2u,T,Storage>& src){
+			 const tfel::math::stensor<2u,T>& src){
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
     dest[3] = src[3];
   } // end of ZMATInterface::convert
 
-  template<typename T,
-	   template<unsigned short,typename> class Storage>
+  template<typename T>
   typename std::enable_if<
     std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
     void>::type
   ZMATInterface::convert(double* const dest,
-			 const tfel::math::stensor<3u,T,Storage>& src){
+			 const tfel::math::stensor<3u,T>& src){
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];

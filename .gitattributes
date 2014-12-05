@@ -1014,7 +1014,6 @@ include/TFEL/Math/General/ResultType.hxx -text
 include/TFEL/Math/General/RunTimeCheck.hxx -text
 include/TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx -text
 include/TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hxx -text
-include/TFEL/Math/General/StorageTraits.hxx -text
 include/TFEL/Math/General/UnaryResultType.hxx -text
 include/TFEL/Math/General/floating_point_exceptions.hxx -text
 include/TFEL/Math/General/fsarray.ixx -text
@@ -1169,17 +1168,13 @@ include/TFEL/Math/Stensor/StensorConcept.ixx -text
 include/TFEL/Math/Stensor/StensorConceptOperations.hxx -text
 include/TFEL/Math/Stensor/StensorConceptOperations.ixx -text
 include/TFEL/Math/Stensor/StensorExpr.hxx -text
-include/TFEL/Math/Stensor/StensorExternalTabStorage.hxx -text
-include/TFEL/Math/Stensor/StensorExternalVoigtStorage.hxx -text
 include/TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx -text
 include/TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx -text
 include/TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx -text
 include/TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Stensor/StensorFromTinyVectorView.hxx -text
-include/TFEL/Math/Stensor/StensorNullStorage.hxx -text
 include/TFEL/Math/Stensor/StensorProduct.hxx -text
 include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
-include/TFEL/Math/Stensor/StensorStaticStorage.hxx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
 include/TFEL/Math/T2toST2/LeftCauchyGreenTensorDerivativeExpr.hxx -text
@@ -2699,7 +2694,6 @@ tests/Math/st2tot2/st2tot2.cxx -text
 tests/Math/stensor.cxx -text
 tests/Math/stensor10.cxx -text
 tests/Math/stensor2.cxx -text
-tests/Math/stensor3.cxx -text
 tests/Math/stensor4.cxx -text
 tests/Math/stensor5.cxx -text
 tests/Math/stensor6.cxx -text

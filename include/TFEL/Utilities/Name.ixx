@@ -505,18 +505,7 @@ namespace tfel
     }; // end of struct TFEL_VISIBILITY_LOCAL Name<tmatrix<N,M,T> >
 
     template<unsigned short N, typename T>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorStatic<N,T> >
-    {
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-      	return string("StensorStatic<")+ToString(N)+string(",")+Name<T>::getName()+string(">");
-      }
-    };
-
-    template<unsigned short N, typename T,
-	     template<unsigned short,typename> class Storage>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::stensor<N,T,Storage> >
+    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::stensor<N,T> >
     {
 
       /*!
@@ -530,50 +519,10 @@ namespace tfel
 	using namespace tfel::utilities;
 	return string("stensor<")
 	  +ToString(N)+string(",")
-	  +Name<T>::getName()+string(",")
-	  +Name<Storage<N,T> >::getName()
+	  +Name<T>::getName()
 	  +string(">");
       }
-    }; // end of Name<stensor<N,T,Storage> >
-
-    template<unsigned short N,
-	     typename T>
-    struct Name<tfel::math::StensorNullStorage<N,T> >
-    {
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-      	return string("StensorNullStorage<")+
-	  ToString(N)+string(",")+
-	  Name<T>::getName()+string(">");
-      }
-    };
-
-    template<unsigned short N,
-	     typename T>
-    struct Name<tfel::math::StensorExternalVoigt<N,T> >
-    {
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("StensorExternalVoigt<")+
-	  ToString(N)+string(",")+
-	  Name<T>::getName()+string(">");
-      }
-    };
-
-    template<unsigned short N,
-	     typename T>
-    struct Name<tfel::math::StensorExternalTab<N,T> >
-    {
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("StensorExternalTab<")+
-	  ToString(N)+string(",")+
-	  Name<T>::getName()+string(">");
-      }
-    };
+    }; // end of Name<stensor<N,T> >
 
     template<typename T>
     struct TFEL_VISIBILITY_LOCAL Name<tfel::math::StensorConcept<T> >

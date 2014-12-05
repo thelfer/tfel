@@ -36,7 +36,6 @@ test_PROGRAMS = hill                                     \
 		tensor4                                  \
 		stensor                                  \
 		stensor2                                 \
-		stensor3                                 \
 		stensor4                                 \
 		stensor5                                 \
 		stensor6                                 \
@@ -118,7 +117,6 @@ tensor3_SOURCES               = tensor3.cxx
 tensor4_SOURCES               = tensor4.cxx
 stensor_SOURCES               = stensor.cxx              
 stensor2_SOURCES              = stensor2.cxx
-stensor3_SOURCES              = stensor3.cxx
 stensor4_SOURCES              = stensor4.cxx
 stensor5_SOURCES              = stensor5.cxx
 stensor6_SOURCES              = stensor6.cxx

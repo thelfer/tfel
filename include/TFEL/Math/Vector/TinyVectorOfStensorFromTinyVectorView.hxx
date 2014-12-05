@@ -130,11 +130,11 @@ namespace tfel
       /*!
        * Assignement operator
        */
-      template<typename T2,template<unsigned short,typename> class Storage2>
+      template<typename T2>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&>::type
-      operator=(const tvector<Nn,stensor<N,T2,Storage2> >& s){
+      operator=(const tvector<Nn,stensor<N,T2> >& s){
 	VectorUtilities<N>::copy(s,*this);
 	return *this;
       }
@@ -142,57 +142,57 @@ namespace tfel
       /*!
        * Assignement operator
        */
-      template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
+      template<typename T2,typename Expr>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator=(const VectorExpr<tvector<Nn,stensor<N,T2,Storage2> >,Expr>& s)
+      operator=(const VectorExpr<tvector<Nn,stensor<N,T2> >,Expr>& s)
       {
 	VectorUtilities<N>::copy(s,*this);
 	return *this;
       }
 
       // Assignement operator
-      template<typename T2,template<unsigned short,typename> class Storage2>
+      template<typename T2>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator+=(const tvector<Nn,stensor<N,T2,Storage2> >& s){
+      operator+=(const tvector<Nn,stensor<N,T2> >& s){
 	VectorUtilities<N>::PlusEqual(*this,s);
 	return *this;
       }
     
       // Assignement operator
-      template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
+      template<typename T2,typename Expr>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator+=(const VectorExpr<tvector<Nn,stensor<N,T2,Storage2> >,Expr>& s){
+      operator+=(const VectorExpr<tvector<Nn,stensor<N,T2> >,Expr>& s){
 	VectorUtilities<N>::PlusEqual(*this,s);
 	return *this;
       }
 
       // Assignement operator
-      template<typename T2,template<unsigned short,typename> class Storage2>
+      template<typename T2>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator-=(const tvector<Nn,stensor<N,T2,Storage2> >& s){
+      operator-=(const tvector<Nn,stensor<N,T2> >& s){
 	VectorUtilities<N>::MinusEqual(*this,s);
 	return *this;
       }
     
       // Assignement operator
-      template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
+      template<typename T2,typename Expr>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
-      operator-=(const VectorExpr<tvector<Nn,stensor<N,T2,Storage2> >,Expr>& s){
+      operator-=(const VectorExpr<tvector<Nn,stensor<N,T2> >,Expr>& s){
 	VectorUtilities<N>::MinusEqual(*this,s);
 	return *this;
       }

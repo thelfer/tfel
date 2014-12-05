@@ -26,11 +26,13 @@ namespace tfel
     /*!
      * \brief a container for finite size array.
      * This is mainly equivalent to the array class of C++11.
-     * \param N : size of the array
-     * \param T : value holded
+     * \tparam N : size of the array
+     * \tparam T : value holded
+     * \note we could not get rid of this class of favor of std::array
+     * because two many classes who inherits from tfel::math::fsarry
+     * used direct access to the values through the `v` member.
      */
-    template<unsigned short N,
-	     typename T>
+    template<unsigned short N,typename T>
     struct TFEL_VISIBILITY_LOCAL fsarray
     {
       /*!
