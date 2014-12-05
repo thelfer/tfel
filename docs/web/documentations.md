@@ -21,13 +21,18 @@
 - general introduction [mfront-formation.pdf](documents/mfront-formation/mfront-formation.pdf)
     - [tp.pdf](documents/tp/tp.pdf)
 
-# Slides
+# Talks
 
 - finite strain: [mfront-finitestrain.pdf](documents/mfront-finitestrain/mfront-finitestrain.pdf)
 - mtest: [mtest.pdf](documents/mtest-presentation/mtest-presentation.pdf)
 - [mfront user meeting](documents/mfront-user-meeting/mfront.html)
 - [writing portable behaviours](documents/portable-behaviour/portability.html)
 - introduction to MFront (talk given at Materiaux 2014 in Montpellier): [materiaux2014.html](documents/Materiaux2014/materiaux2014.html)
+- several applications of MFront to describe elasto-plasticity at
+  finite strains (talk given at the
+  [`Cast3M`](http://www-cast3m.cea.fr) user meeting on November, 28
+  2014: [HureCast3M14.pdf](documents/ClubCast3M2014/HureCast3M14.pdf)
+
 
 # Solver interfaces
 

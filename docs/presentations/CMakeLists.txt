@@ -83,3 +83,5 @@ if(HAVE_PANDOC)
   add_subdirectory(portable-behaviour)
   add_subdirectory(Materiaux2014)
 endif(HAVE_PANDOC)
+
+add_subdirectory(ClubCast3M2014)

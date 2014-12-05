@@ -1,6 +1,7 @@
 SUBDIRS = mfront-user-meeting \
 	  portable-behaviour  \
-	  Materiaux2014
+	  Materiaux2014       \
+	  ClubCast3M2014
 
 EXTRA_DIST=CMakeLists.txt                                                   \
 	   images/mfront.eps                                                \
