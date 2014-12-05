@@ -22,12 +22,12 @@ namespace tfel{
     
     template<bool a, bool b>
     struct OpOr{
-      static const bool cond = a || b; 
+      static constexpr bool cond = a || b; 
     };
 
     template<bool a, bool b>
     struct OpAnd{
-      static const bool cond = a && b; 
+      static constexpr bool cond = a && b; 
     };
 
   }

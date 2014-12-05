@@ -75,7 +75,7 @@ namespace tfel{
        * \return const EmptyRunTimeProperties.
        */
       TFEL_MATH_INLINE
-      static const EmptyRunTimeProperties 
+      static EmptyRunTimeProperties 
       exe(const EmptyRunTimeProperties,const EmptyRunTimeProperties)
       {
 	return EmptyRunTimeProperties();

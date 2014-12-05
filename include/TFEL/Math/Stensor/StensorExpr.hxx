@@ -17,7 +17,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/EmptyClass.hxx"
 #include"TFEL/Metaprogramming/HasIterator.hxx"
 #include"TFEL/Metaprogramming/HasConstIterator.hxx"
@@ -36,7 +36,7 @@ namespace tfel{
     struct StensorTraits<StensorExpr<T_type,Expr> >{
       typedef typename StensorTraits<T_type>::NumType   NumType;
       typedef typename StensorTraits<T_type>::IndexType IndexType;
-      static const unsigned short dime = StensorTraits<T_type>::dime;
+      static constexpr unsigned short dime = StensorTraits<T_type>::dime;
     };
 
     template<typename T_type, typename Expr>
@@ -90,7 +90,7 @@ namespace tfel{
     struct IsTemporary<tfel::math::StensorExpr<T_type,Expr> >
     {
       //! the result of the metafunction
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
   }// end of namespace typetraits

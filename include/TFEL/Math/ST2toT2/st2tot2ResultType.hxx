@@ -33,7 +33,7 @@ namespace tfel{
     {
       typedef typename UnaryResultType<T,OpNeg>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      st2tot2<N,ResBase_> >::type type;
     };
@@ -48,7 +48,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,Scal,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
     				      tfel::meta::InvalidType,
     				      st2tot2<N,ResBase_> >::type type;
     };
@@ -63,7 +63,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,Scal,OpDiv>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      st2tot2<N,ResBase_> >::type type;
     };
@@ -78,7 +78,7 @@ namespace tfel{
     {
       typedef typename ResultType<Scal,T,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      st2tot2<N,ResBase_> >::type type;
     };
@@ -92,7 +92,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      st2tot2<N,ResBase_> >::type type;
     };
@@ -106,7 +106,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      st2tot2<N,ResBase_> >::type type;
     };
@@ -121,7 +121,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      st2tot2<N,ResBase_> >::type type;
     };
@@ -131,7 +131,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      st2tot2<N,ResBase_> >::type type;
     };
@@ -141,7 +141,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      t2tot2<N,ResBase_> >::type type;
     };
@@ -151,7 +151,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      st2tot2<N,ResBase_> >::type type;
     };
@@ -161,7 +161,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      st2tost2<N,ResBase_> >::type type;
     };
@@ -176,7 +176,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
     				      tfel::meta::InvalidType,
     				      tensor<N,ResBase_> >::type type;
     };
@@ -190,7 +190,7 @@ namespace tfel{
     {
       typedef typename ResultType<T2,T,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
     				      tfel::meta::InvalidType,
     				      stensor<N,ResBase_,StensorStatic> >::type type;
     };

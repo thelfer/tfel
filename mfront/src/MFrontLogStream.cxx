@@ -15,7 +15,7 @@
 #include<iostream>
 #include<stdexcept>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"MFront/MFrontLogStream.hxx"
 
@@ -35,7 +35,7 @@ namespace mfront
     getStream(void);
   private:
     std::ostream* s;
-    tfel::utilities::shared_ptr<std::ofstream> ps;
+    std::shared_ptr<std::ofstream> ps;
   }; // end of struct LogStream
 
   LogStream::LogStream()
@@ -46,8 +46,6 @@ namespace mfront
   LogStream::setLogStream(std::ostream& os)
   {
     using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
     if(this->ps.get()!=0){
       this->ps->close();
     }
@@ -59,8 +57,6 @@ namespace mfront
   LogStream::setLogStream(const std::string& f)
   {
     using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
     if(this->ps.get()!=0){
       this->ps->close();
     }

@@ -104,7 +104,7 @@ namespace tfel
        */
       template<typename T1>
       TFEL_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,TOTypes>::value==1, 
 	void >::type 
       set_uninitialised(void){

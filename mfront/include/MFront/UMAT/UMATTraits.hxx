@@ -30,20 +30,20 @@ namespace umat{
 
   template<typename Behaviour>
   struct UMATTraits{
-    static const UMATBehaviourType btype = umat::SMALLSTRAINSTANDARDBEHAVIOUR;
+    static constexpr UMATBehaviourType btype = umat::SMALLSTRAINSTANDARDBEHAVIOUR;
     // size of the driving variable array (STRAN)
-    static const unsigned short DrivingVariableSize = 0u;
+    static constexpr unsigned short DrivingVariableSize = 0u;
     // size of the thermodynamic force variable array (STESS)
-    static const unsigned short ThermodynamicForceVariableSize = 0u;
-    static const bool useTimeSubStepping = false;
-    static const bool doSubSteppingOnInvalidResults  = false;
-    static const unsigned short maximumSubStepping   = 0u;
-    static const bool requiresStiffnessTensor        = false;
-    static const bool requiresThermalExpansionCoefficientTensor = false;
-    static const unsigned short propertiesOffset       = 0u;
-    static const unsigned short material_properties_nb = 0u;
-    static const unsigned short internal_variables_nb  = 0u;
-    static const UMATSymmetryType stype = umat::ISOTROPIC;
+    static constexpr unsigned short ThermodynamicForceVariableSize = 0u;
+    static constexpr bool useTimeSubStepping = false;
+    static constexpr bool doSubSteppingOnInvalidResults  = false;
+    static constexpr unsigned short maximumSubStepping   = 0u;
+    static constexpr bool requiresStiffnessTensor        = false;
+    static constexpr bool requiresThermalExpansionCoefficientTensor = false;
+    static constexpr unsigned short propertiesOffset       = 0u;
+    static constexpr unsigned short material_properties_nb = 0u;
+    static constexpr unsigned short internal_variables_nb  = 0u;
+    static constexpr UMATSymmetryType stype = umat::ISOTROPIC;
   }; // end of class UMATTraits
 
 } // end of namespace umat  

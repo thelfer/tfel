@@ -18,7 +18,7 @@
 #include<string>
 #include<map>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
 
 namespace tfel
@@ -32,7 +32,7 @@ namespace tfel
 
       struct ExternalFunctionManager
 	: public std::map<std::string,
-			  tfel::utilities::shared_ptr<ExternalFunction> >
+			  std::shared_ptr<ExternalFunction> >
       {}; // end of struct ExternalFunctionManager
       
     } // end of namespace parser

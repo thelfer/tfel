@@ -16,7 +16,7 @@
 
 #include<string>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"MFront/BehaviourDSLBase.hxx"
 
 namespace mfront{
@@ -42,7 +42,7 @@ namespace mfront{
   protected:
     
     //! a simple alias
-    typedef tfel::utilities::shared_ptr<NonLinearSystemSolver> Solver;
+    typedef std::shared_ptr<NonLinearSystemSolver> Solver;
 
     virtual bool
     isJacobianPart(const Hypothesis,

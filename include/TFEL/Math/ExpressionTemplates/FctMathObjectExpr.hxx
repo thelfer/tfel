@@ -45,9 +45,9 @@ namespace tfel{
       TFEL_STATIC_ASSERT((tfel::meta::Implements<Func,FunctionConcept>::cond));
 
       typedef typename MathObjectTraits<A>::NumType   NumTypeA;
-      static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
+      static constexpr bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
 
-      typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
+      typename std::conditional<IsATemporary,const A,const A&>::type a;
       const Func f;
       const typename A::RunTimeProperties RTP;
 

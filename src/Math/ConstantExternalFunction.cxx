@@ -61,32 +61,28 @@ namespace tfel
       ConstantExternalFunction::checkCyclicDependency(std::vector<std::string>&) const
       {}
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::differentiate(const std::vector<double>::size_type) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<ExternalFunction>(new ConstantExternalFunction(0.));
+	return std::shared_ptr<ExternalFunction>(new ConstantExternalFunction(0.));
       } // end of ConstantExternalFunction:: differentiate
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::differentiate(const std::string&) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<ExternalFunction>(new ConstantExternalFunction(0.));
+	return std::shared_ptr<ExternalFunction>(new ConstantExternalFunction(0.));
       } // end of ConstantExternalFunction:: differentiate
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::resolveDependencies(void) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<ExternalFunction>(new ConstantExternalFunction(this->value));
+	return std::shared_ptr<ExternalFunction>(new ConstantExternalFunction(this->value));
       }
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	string msg("ConstantExternalFunction::createFunctionByChangingParametersIntoVariables : ");
 	msg += "invalid call";
 	throw(runtime_error(msg));
@@ -94,7 +90,7 @@ namespace tfel
       } // end of ConstantExternalFunction::createFunctionByChangingParametersIntoVariables
 
       
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 										const std::vector<double>&,
 										const std::vector<std::string>&,

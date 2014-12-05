@@ -17,7 +17,7 @@
 #include<map>
 #include<string>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"MFront/NonLinearSystemSolver.hxx"
 
 namespace mfront
@@ -29,7 +29,7 @@ namespace mfront
   struct NonLinearSystemSolverFactory
   {
     //! a simple alias
-    typedef tfel::utilities::shared_ptr<NonLinearSystemSolver> (* constructor)(void);
+    typedef std::shared_ptr<NonLinearSystemSolver> (* constructor)(void);
     /*!
      * \return the uniq instance of the solver factory
      */
@@ -39,7 +39,7 @@ namespace mfront
      * \return the requested solver
      * \param[in] a : solver name
      */
-    tfel::utilities::shared_ptr<NonLinearSystemSolver>
+    std::shared_ptr<NonLinearSystemSolver>
     getSolver(const std::string&) const;
     /*!
      * \param[in] a : solver name 

@@ -395,7 +395,7 @@ MFrontPleiadesMaterialPropertyInterface::writeSrcFile(const std::string& file,
         msg += "internal error (can't find value of parameter " + *p + ")";
         throw(runtime_error(msg));
       }
-      this->srcFile << "static const double " << *p
+      this->srcFile << "static constexpr double " << *p
               << " = " << p7->second << ";\n";
     }
   }

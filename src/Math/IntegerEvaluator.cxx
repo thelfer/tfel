@@ -112,14 +112,13 @@ namespace tfel
       return params;
     } // end of IntegerEvaluator::analyseParameters
 
-    std::vector<tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> >
+    std::vector<std::shared_ptr<IntegerEvaluator::TExpr> >
     IntegerEvaluator::analyseArguments(const unsigned short nbr,
 				std::vector<std::string>::const_iterator& p,
 				const std::vector<std::string>::const_iterator  pe,
 				const bool b)
     {
       using namespace std;
-      using namespace tfel::utilities;
       vector<shared_ptr<IntegerEvaluator::TExpr> > res;
       if(nbr>0){
 	unsigned short i;
@@ -132,13 +131,12 @@ namespace tfel
       return res;
     } // end of IntegerEvaluator::analyseArguments
 
-    std::vector<tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> >
+    std::vector<std::shared_ptr<IntegerEvaluator::TExpr> >
     IntegerEvaluator::analyseArguments(std::vector<std::string>::const_iterator& p,
 				const std::vector<std::string>::const_iterator  pe,
 				const bool b)
     {
       using namespace std;
-      using namespace tfel::utilities;
       vector<shared_ptr<IntegerEvaluator::TExpr> > res;
       unsigned short nbr = this->countNumberOfArguments(p,pe);
       unsigned short i;
@@ -229,14 +227,13 @@ namespace tfel
       return make_pair(false,p);
     } // end of IntegerEvaluator::search
 
-    tfel::utilities::shared_ptr<IntegerEvaluator::TExpr>
+    std::shared_ptr<IntegerEvaluator::TExpr>
     IntegerEvaluator::treatGroup(std::vector<std::string>::const_iterator& p,
 				 const std::vector<std::string>::const_iterator  pe,
 				 const bool b,
 				 const std::string& s)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       IntegerEvaluator::checkNotEndOfExpression("IntegerEvaluator::treatGroup",p,pe);
       assert(p!=pe);
@@ -402,7 +399,6 @@ namespace tfel
 		       const bool b)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       vector<string>::const_iterator p;
       vector<string>::const_iterator pe;
@@ -454,7 +450,6 @@ namespace tfel
     IntegerEvaluator::setFunction(const std::string& f)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       this->variables.clear();
       this->positions.clear();
@@ -467,7 +462,6 @@ namespace tfel
 			   const std::string& f)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       vector<string>::const_iterator p;
       vector<int>::size_type pos;

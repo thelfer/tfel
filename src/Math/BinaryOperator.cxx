@@ -11,7 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
 #include<limits>
 #include<stdexcept>
 #include<string>
@@ -79,52 +78,50 @@ namespace tfel
       }  // end of BinaryOperationBase::throwUnimplementedDifferentiateFunctionException()
 
       template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpPlus>(const tfel::utilities::shared_ptr<Expr> a,
-					   const tfel::utilities::shared_ptr<Expr> b,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpPlus>(const std::shared_ptr<Expr> a,
+					   const std::shared_ptr<Expr> b,
 					   const std::vector<double>::size_type pos,
 					   const std::vector<double>& v)
       {
-	using namespace tfel::utilities;
+	using std::shared_ptr;
 	shared_ptr<Expr> da = a->differentiate(pos,v);
 	shared_ptr<Expr> db = b->differentiate(pos,v);
 	return shared_ptr<Expr>(new BinaryOperation<OpPlus>(da,db));
       } // end of differentiateBinaryOperation<OpPlus>
 
       template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpMinus>(const tfel::utilities::shared_ptr<Expr> a,
-					    const tfel::utilities::shared_ptr<Expr> b,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpMinus>(const std::shared_ptr<Expr> a,
+					    const std::shared_ptr<Expr> b,
 					    const std::vector<double>::size_type pos,
 					    const std::vector<double>& v)
       {
-	using namespace tfel::utilities;
-	return shared_ptr<Expr>(new BinaryOperation<OpMinus>(a->differentiate(pos,v),
-							   b->differentiate(pos,v)));
+	return std::shared_ptr<Expr>(new BinaryOperation<OpMinus>(a->differentiate(pos,v),
+								  b->differentiate(pos,v)));
       } // end of differentiateBinaryOperation<OpMinus>
 
       template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpMult>(const tfel::utilities::shared_ptr<Expr> a,
-					   const tfel::utilities::shared_ptr<Expr> b,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpMult>(const std::shared_ptr<Expr> a,
+					   const std::shared_ptr<Expr> b,
 					   const std::vector<double>::size_type pos,
 					   const std::vector<double>& v)
       {
-	using namespace tfel::utilities;
+	using std::shared_ptr;
 	shared_ptr<Expr> d1(new BinaryOperation<OpMult>(a->differentiate(pos,v),b->clone(v)));
 	shared_ptr<Expr> d2(new BinaryOperation<OpMult>(a->clone(v),b->differentiate(pos,v)));
 	return shared_ptr<Expr>(new BinaryOperation<OpPlus>(d1,d2));
       } // end of differentiateBinaryOperation<OpMult>
 
       template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpDiv>(const tfel::utilities::shared_ptr<Expr> a,
-					  const tfel::utilities::shared_ptr<Expr> b,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpDiv>(const std::shared_ptr<Expr> a,
+					  const std::shared_ptr<Expr> b,
 					  const std::vector<double>::size_type pos,
 					  const std::vector<double>& v)
       {
-	using namespace std;
-	using namespace tfel::utilities;
+	using std::shared_ptr;
 	shared_ptr<Expr> d1(new BinaryOperation<OpDiv>(a->differentiate(pos,v),b->clone(v)));
 	shared_ptr<Expr> d2num(new BinaryOperation<OpMult>(a->clone(v),b->differentiate(pos,v)));
 	shared_ptr<Expr> d2den(new BinaryOperation<OpMult>(b->clone(v),b->clone(v)));
@@ -133,14 +130,13 @@ namespace tfel
       } // end of differentiateBinaryOperation<OpDiv>
 
       template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpPower>(const tfel::utilities::shared_ptr<Expr> a,
-					    const tfel::utilities::shared_ptr<Expr> b,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpPower>(const std::shared_ptr<Expr> a,
+					    const std::shared_ptr<Expr> b,
 					    const std::vector<double>::size_type  pos,
 					    const std::vector<double>& v)
       {
-	using namespace std;
-	using namespace tfel::utilities;
+	using std::shared_ptr;
 	shared_ptr<Expr> ca = a->clone(v);
 	shared_ptr<Expr> cb = b->clone(v);
 	shared_ptr<Expr> l(new BinaryOperation<OpPower>(ca,cb));

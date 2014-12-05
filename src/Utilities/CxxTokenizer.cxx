@@ -33,14 +33,6 @@ namespace tfel{
       return os.str();
     }
 
-    // '.' deserves a special treatement.
-    // '<' and '>' deserve special treatements.
-    const char
-    CxxTokenizer::Separator[20] = {'?',';','/','!','&','*',
-				   '|','{','}','[',']','(',
-				   ')','%','=','^',',',':',
-				   '<','>'};
-
     std::vector<std::string>
     CxxTokenizer::splitStringAtSpaces(const std::string& str)
     {
@@ -649,14 +641,17 @@ namespace tfel{
     CxxTokenizer::splitAtCxxTokenSperator(std::vector<std::string>& tokens)
     {
       using namespace std;
-    
+      // '.' deserves a special treatement.
+      // '<' and '>' deserve special treatements.
+      constexpr char Separator[20] = {'?',';','/','!','&','*',
+				      '|','{','}','[',']','(',
+				      ')','%','=','^',',',':',
+				      '<','>'};
       vector<string> res(tokens);
       vector<string> init;
       vector<string>::const_iterator p;
       unsigned int i;
       char buf[2] = {'\0','\0'};
-
-      
       for(i=0;i<sizeof(Separator)/sizeof(char);++i){
 	switch(Separator[i]){
 	case '<' :
@@ -882,11 +877,10 @@ namespace tfel{
     CxxTokenizer::treatPreprocessorDirectives(void)
     {
       using namespace std;
-
-      static const char * const CppKeywords[11] = {"#define","#undef","#include",
-						   "#line","#error","#if","#ifdef",
-						   "#ifndef","elif","#else","#endif"};
-      static const unsigned short CppKeywordsNumber = 11;
+      constexpr const char * CppKeywords[11] = {"#define","#undef","#include",
+						"#line","#error","#if","#ifdef",
+						"#ifndef","elif","#else","#endif"};
+      constexpr unsigned short CppKeywordsNumber = 11;
 
       unsigned short i;
       TokensContainer::iterator p;

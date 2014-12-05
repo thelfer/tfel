@@ -25,19 +25,19 @@ namespace aster
   template<>
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterOrthotropicElasticPropertiesOffset<1u>
   {
-    static const unsigned short value = 6u;
+    static constexpr unsigned short value = 6u;
   }; // end of struct AsterOrthotropicElasticPropertiesOffset<1u>
 
   template<>
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterOrthotropicElasticPropertiesOffset<2u>
   {
-    static const unsigned short value = 7u;
+    static constexpr unsigned short value = 7u;
   }; // end of struct AsterOrthotropicElasticPropertiesOffset<2u>
 
   template<>
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterOrthotropicElasticPropertiesOffset<3u>
   {
-    static const unsigned short value = 9u;
+    static constexpr unsigned short value = 9u;
   }; // end of struct AsterOrthotropicElasticPropertiesOffset<3u>
 
 } // end of namespace aster

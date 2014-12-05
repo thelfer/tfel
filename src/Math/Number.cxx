@@ -40,22 +40,20 @@ namespace tfel
       Number::checkCyclicDependency(std::vector<std::string>&) const
       {} // end of Number::checkCyclicDependency
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       Number::differentiate(const std::vector<double>::size_type,
 			    const std::vector<double>&) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<Expr>(new Number(0.));
+	return std::shared_ptr<Expr>(new Number(0.));
       } // end of Number::differentiate
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       Number::clone(const std::vector<double>&) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<Expr>(new Number(this->value));
+	return std::shared_ptr<Expr>(new Number(this->value));
       } // end of Number::clone
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       Number::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 							      const std::vector<std::string>&,
 							      const std::map<std::string,
@@ -64,11 +62,10 @@ namespace tfel
 	return this->clone(v);
       } // end of Number::createFunctionByChangingParametersIntoVariables
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       Number::resolveDependencies(const std::vector<double>&) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<Expr>(new Number(this->value));
+	return std::shared_ptr<Expr>(new Number(this->value));
       } // end of Number::resolveDependencies
 
     } // end of namespace parser

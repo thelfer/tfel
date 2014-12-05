@@ -28,20 +28,20 @@ T.setGlossaryName("Temperature");
 @Function{
 
   // coefficients constants
-  static const double T0  = 293.15;
-  static const double T02 = 85936.9225;
-  static const double T03 = 25192408.830875;
-  static const double T04 = 7385154648.77100;
-  static const double T1  = 1273.;
-  static const double T12 = 1620529.;
-  static const double T13 = 2062933417.;
-  static const double T14 = 2626114239841.;
-  static const double a0 =  -1.8276;
-  static const double a1 =   0.0178;
-  static const double a2 =  -1.5544e-5;
-  static const double a3 =   4.5246e-9;
-  static const double a4 =   5.0e-6;
-  static const double M1_3 = 1./3.;
+  static constexpr double T0  = 293.15;
+  static constexpr double T02 = 85936.9225;
+  static constexpr double T03 = 25192408.830875;
+  static constexpr double T04 = 7385154648.77100;
+  static constexpr double T1  = 1273.;
+  static constexpr double T12 = 1620529.;
+  static constexpr double T13 = 2062933417.;
+  static constexpr double T14 = 2626114239841.;
+  static constexpr double a0 =  -1.8276;
+  static constexpr double a1 =   0.0178;
+  static constexpr double a2 =  -1.5544e-5;
+  static constexpr double a3 =   4.5246e-9;
+  static constexpr double a4 =   5.0e-6;
+  static constexpr double M1_3 = 1./3.;
 
   const double T2 = T*T;
   const double T3 = T2*T;

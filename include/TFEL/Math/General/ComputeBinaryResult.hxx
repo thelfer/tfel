@@ -14,7 +14,7 @@
 #ifndef _LIB_TFEL_COMPUTEBINARYRESULT_H_
 #define _LIB_TFEL_COMPUTEBINARYRESULT_H_ 
 
-#include"TFEL/Metaprogramming/RemoveConstness.hxx"
+#include<type_traits>
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/ComputeObjectTag.hxx"
 
@@ -126,12 +126,12 @@ namespace tfel{
        * A little trick so we don't have to declare ResultType
        * for const scalar types.
        */
-      typedef typename tfel::meta::RemoveConstness<A>::type A_;
+      typedef typename std::remove_const<A>::type A_;
       /*
        * A little trick so we don't have to declare ResultType
        * for const scalar types.
        */
-      typedef typename tfel::meta::RemoveConstness<B>::type B_;
+      typedef typename std::remove_const<B>::type B_;
     public:
       /*
        * The result.

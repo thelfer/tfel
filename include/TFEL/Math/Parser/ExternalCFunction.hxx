@@ -57,13 +57,13 @@ namespace tfel
 	checkCyclicDependency(const std::string&) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	differentiate(const std::string&) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 							const std::vector<double>&,
 							const std::vector<std::string>&,
@@ -97,25 +97,23 @@ namespace tfel
       {} // end of ExternalCFunctionBase::checkCyclicDependency
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<N>::differentiate(const std::vector<double>::size_type) const
       {
-	using namespace tfel::utilities;
 	ExternalCFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return std::shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
       } // end of ExternalCFunctionBase<N>::differentiate
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<N>::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
-	using namespace tfel::utilities;
 	ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables();
-	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return std::shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
       }
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<N>::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& v,
 										const std::vector<double>&,
 										const std::vector<std::string>&,
@@ -127,12 +125,11 @@ namespace tfel
       } // end of ExternalCFunctionBase<N>::createFunctionByChangingParametersIntoVariables
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<N>::differentiate(const std::string&) const
       {
-	using namespace tfel::utilities;
 	ExternalCFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return std::shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
       } // end of ExternalCFunctionBase<N>::differentiate
 
       template<unsigned short N>
@@ -167,17 +164,17 @@ namespace tfel
 	checkCyclicDependency(const std::string&) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	differentiate(const std::string&) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 							const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
@@ -194,7 +191,7 @@ namespace tfel
 	typedef tfel::system::CFunction0Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -207,7 +204,7 @@ namespace tfel
 	typedef tfel::system::CFunction1Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -220,7 +217,7 @@ namespace tfel
 	typedef tfel::system::CFunction2Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -233,7 +230,7 @@ namespace tfel
 	typedef tfel::system::CFunction3Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -246,7 +243,7 @@ namespace tfel
 	typedef tfel::system::CFunction4Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -259,7 +256,7 @@ namespace tfel
 	typedef tfel::system::CFunction5Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -272,7 +269,7 @@ namespace tfel
 	typedef tfel::system::CFunction6Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -285,7 +282,7 @@ namespace tfel
 	typedef tfel::system::CFunction7Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -298,7 +295,7 @@ namespace tfel
 	typedef tfel::system::CFunction8Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -311,7 +308,7 @@ namespace tfel
 	typedef tfel::system::CFunction9Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -324,7 +321,7 @@ namespace tfel
 	typedef tfel::system::CFunction10Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -337,7 +334,7 @@ namespace tfel
 	typedef tfel::system::CFunction11Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -350,7 +347,7 @@ namespace tfel
 	typedef tfel::system::CFunction12Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -363,7 +360,7 @@ namespace tfel
 	typedef tfel::system::CFunction13Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -376,7 +373,7 @@ namespace tfel
 	typedef tfel::system::CFunction14Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;
@@ -389,7 +386,7 @@ namespace tfel
 	typedef tfel::system::CFunction15Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
 	double getValue(void) const;
-	tfel::utilities::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
       private:
 	FunctionPtr f;

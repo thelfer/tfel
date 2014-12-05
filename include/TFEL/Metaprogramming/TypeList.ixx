@@ -16,10 +16,10 @@
 #define _LIB_TFEL_TYPELIST_I_ 
 
 #include<string>
+#include<type_traits>
 
 #include"TFEL/Metaprogramming/Forward/TypeList.hxx"
 
-#include"TFEL/Metaprogramming/IF.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/IsSubClassOf.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
@@ -78,7 +78,7 @@ namespace tfel{
     
     template<typename T>
     struct TFEL_VISIBILITY_LOCAL TLSize{
-      static const unsigned int value = 1+TLSize<typename T::Next>::value;
+      static constexpr unsigned int value = 1+TLSize<typename T::Next>::value;
     };
 
     /*!
@@ -88,7 +88,7 @@ namespace tfel{
      */
     template<>
     struct TFEL_VISIBILITY_LOCAL TLSize<TLE>{
-      static const unsigned int value = 0;
+      static constexpr unsigned int value = 0;
     };
     
     /*!
@@ -99,13 +99,13 @@ namespace tfel{
     template<typename T>
     struct TFEL_VISIBILITY_LOCAL TLCountNbrOfT<T,TLE>
     {
-      static const unsigned int value  = 0;
+      static constexpr unsigned int value  = 0;
     };
     
     template<typename T, typename U>
     struct TFEL_VISIBILITY_LOCAL TLCountNbrOfT
     {
-      static const unsigned int value  = (IsSameType<T,typename U::Current>::cond ? 1 : 0) +  TLCountNbrOfT<T,typename U::Next>::value;
+      static constexpr unsigned int value  = (std::is_same<T,typename U::Current>::value ? 1 : 0) +  TLCountNbrOfT<T,typename U::Next>::value;
     };
 
     namespace internals{
@@ -118,7 +118,7 @@ namespace tfel{
       template<typename T, typename List>
       struct TFEL_VISIBILITY_LOCAL TLFindEltPos_
       {
-	static const unsigned int value = (TLCountNbrOfT<T,typename List::Next>::value==1) ? 1+ TLFindEltPos_<T,typename List::Next>::value : 0u; 
+	static constexpr unsigned int value = (TLCountNbrOfT<T,typename List::Next>::value==1) ? 1+ TLFindEltPos_<T,typename List::Next>::value : 0u; 
       };
       
       /*!
@@ -129,7 +129,7 @@ namespace tfel{
       template<typename T>
       struct TFEL_VISIBILITY_LOCAL TLFindEltPos_<T,TLE>
       {
-	static const unsigned int value = 0u;
+	static constexpr unsigned int value = 0u;
       };
     
     } // end of namespace internals
@@ -142,7 +142,7 @@ namespace tfel{
       /*!
        * The result of the metafunction. 
        */
-      static const unsigned int value = tfel::meta::internals::TLFindEltPos_<T,List>::value;
+      static constexpr unsigned int value = tfel::meta::internals::TLFindEltPos_<T,List>::value;
     };
 
     template<unsigned int N>
@@ -220,7 +220,7 @@ namespace tfel{
       /*!
        * The result of the metafunction. True if T is unique in U.
        */
-      static const bool cond = TLCountNbrOfT<T,U>::value==1;
+      static constexpr bool cond = TLCountNbrOfT<T,U>::value==1;
     };
     
     namespace internals{
@@ -232,9 +232,9 @@ namespace tfel{
        */
       template<typename T,typename U>
       struct TFEL_VISIBILITY_LOCAL TLElementsAreUniqueImpl{
-	static const bool c1 = tfel::meta::TLElementIsUnique<typename T::Current,U>::cond;
-	static const bool c2 = TLElementsAreUniqueImpl<typename T::Next,U>::cond;
-	static const bool cond = c1 && c2;
+	static constexpr bool c1 = tfel::meta::TLElementIsUnique<typename T::Current,U>::cond;
+	static constexpr bool c2 = TLElementsAreUniqueImpl<typename T::Next,U>::cond;
+	static constexpr bool cond = c1 && c2;
       };
       
       /*!
@@ -242,7 +242,7 @@ namespace tfel{
        */
       template<typename U>
       struct TFEL_VISIBILITY_LOCAL TLElementsAreUniqueImpl<TLE,U>{
-	static const bool cond = true;
+	static constexpr bool cond = true;
       };
       
     } // end of namespace internals
@@ -252,7 +252,7 @@ namespace tfel{
       /*!
        * The result of the metafunction. True if all elements in T are unique.
        */
-      static const bool cond = tfel::meta::internals::TLElementsAreUniqueImpl<T,T>::cond;
+      static constexpr bool cond = tfel::meta::internals::TLElementsAreUniqueImpl<T,T>::cond;
     };
 
     template<typename List,typename T>
@@ -325,7 +325,7 @@ namespace tfel{
       /*!
        * The result of the metafunction. 
        */
-      typedef typename IF<IsSubClassOf<typename List::Current,BaseType>::cond,TLNode<typename List::Current,typename TLExtractSubClassesOf<typename List::Next,BaseType>::type>,typename TLExtractSubClassesOf<typename List::Next,BaseType>::type>::type type;
+      typedef typename std::conditional<IsSubClassOf<typename List::Current,BaseType>::cond,TLNode<typename List::Current,typename TLExtractSubClassesOf<typename List::Next,BaseType>::type>,typename TLExtractSubClassesOf<typename List::Next,BaseType>::type>::type type;
     };
 
     template<>
@@ -345,12 +345,12 @@ namespace tfel{
       typedef typename List::Current Current;
       typedef typename TLUnique<Next>::type UniqueNext;
       typedef typename TLPrepend<UniqueNext,Current>::type Choice;
-      static const bool unique = TLElementIsUnique<Current,List>::cond;
+      static constexpr bool unique = TLElementIsUnique<Current,List>::cond;
     public:
       /*!
        * The result of the metafunction. 
        */
-      typedef typename IF<unique,Choice,UniqueNext>::type type;
+      typedef typename std::conditional<unique,Choice,UniqueNext>::type type;
     };
 
     template<>
@@ -359,7 +359,7 @@ namespace tfel{
       /*!
        * The result of the metafunction. 
        */
-      static const bool cond  = false;
+      static constexpr bool cond  = false;
     };
     
     template<typename TList>
@@ -371,12 +371,12 @@ namespace tfel{
       //! a simple alias.
       typedef typename TList::Next Next;
       //! check if the current type is invalid.
-      static const bool cond1 = tfel::typetraits::IsInvalid<Current>::cond;
+      static constexpr bool cond1 = tfel::typetraits::IsInvalid<Current>::cond;
       //! check if all the next types in the TypeLis are invalid.
-      static const bool cond2 = TLContainsInvalidType<Next>::cond;
+      static constexpr bool cond2 = TLContainsInvalidType<Next>::cond;
     public:
       //! the result.
-      static const bool cond  = cond1 || cond2 ;
+      static constexpr bool cond  = cond1 || cond2 ;
     };
     
     template<typename List> 
@@ -387,10 +387,10 @@ namespace tfel{
       //! a simple alias
       typedef typename List::Next Next;
       //! the result of the algorithm for the next types of the TL.
-      static const size_t nextValue = TLMaxSize<Next>::value;
+      static constexpr size_t nextValue = TLMaxSize<Next>::value;
     public:
       //! the result of the algorithm.
-      static const size_t value = sizeof(Current) > nextValue ? sizeof(Current) : nextValue;
+      static constexpr size_t value = sizeof(Current) > nextValue ? sizeof(Current) : nextValue;
     }; // end of struct TLMaxSize
     
     //! Partial specialisation to end the recursion.
@@ -401,7 +401,7 @@ namespace tfel{
     struct TFEL_VISIBILITY_LOCAL TLMaxSize<TLE>
     {
       //! the result
-      static const size_t value =  1;
+      static constexpr size_t value =  1;
     }; // end of struct TLMaxSize
     
     template<typename List,size_t size>
@@ -415,7 +415,7 @@ namespace tfel{
       typedef typename TLComputeAlignBound<Next,size>::type TailResult;
     public:
       //! the result.
-      typedef typename IF<(sizeof(Current) <= size),
+      typedef typename std::conditional<(sizeof(Current) <= size),
 	TLNode<Current, TailResult>,
 	TailResult>::type type;
     };
@@ -436,7 +436,7 @@ namespace tfel{
       template<unsigned short N>
       struct TFEL_VISIBILITY_LOCAL IntegerValue
       {
-	static const unsigned short value = N;
+	static constexpr unsigned short value = N;
       }; // end of struct IntegerValue
       
       template<unsigned short N,
@@ -444,10 +444,10 @@ namespace tfel{
 	       typename List>
       struct TFEL_VISIBILITY_LOCAL TLPosition
       {
-	typedef typename tfel::meta::IF<tfel::meta::IsSameType<T,typename List::Current>::cond,
+	typedef typename std::conditional<std::is_same<T,typename List::Current>::value,
 					IntegerValue<N>,
 					TLPosition<N+1,T,typename List::Next> >::type Select;
-      static const unsigned short value = Select::value;
+      static constexpr unsigned short value = Select::value;
       private:
 	TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
       }; // end of TLPosition
@@ -456,7 +456,7 @@ namespace tfel{
 	       typename T>
       struct TLPosition<N,T,TLE>
       {
-	static const unsigned short value = N;
+	static constexpr unsigned short value = N;
       }; // end of TLPosition
 
 
@@ -466,7 +466,7 @@ namespace tfel{
 	     typename List>
     struct TFEL_VISIBILITY_LOCAL TLPosition
     {
-      static const unsigned short value = tfel::meta::internals::TLPosition<0u,T,List>::value;
+      static constexpr unsigned short value = tfel::meta::internals::TLPosition<0u,T,List>::value;
     private:
       TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
     };

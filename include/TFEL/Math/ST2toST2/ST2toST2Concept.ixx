@@ -29,7 +29,7 @@ namespace tfel{
     } // end of ST2toST2Concept<T>::operator()
 
     template<typename ST2toST2Type>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
       typename tfel::typetraits::AbsType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type
     >::type

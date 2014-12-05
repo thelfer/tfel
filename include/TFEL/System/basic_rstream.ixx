@@ -16,7 +16,7 @@
 #define _LIB_TFEL_BASIC_RSTREAM_IXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 
 namespace tfel
 {
@@ -42,7 +42,7 @@ namespace tfel
     void
     basic_rstream<Child,Traits>::read(int fd,void *const buf,const size_t count)
     {      
-      typedef typename tfel::meta::IF<Traits::isBlocking,
+      typedef typename std::conditional<Traits::isBlocking,
 	BlockingStreamReader,
 	NonBlockingStreamReader>::type Reader;
       Reader::read(fd,buf,count);

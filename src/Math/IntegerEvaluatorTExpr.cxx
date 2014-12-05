@@ -28,7 +28,7 @@ namespace tfel
 
     }
     
-    IntegerEvaluator::TNegation::TNegation(tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> e)
+    IntegerEvaluator::TNegation::TNegation(std::shared_ptr<IntegerEvaluator::TExpr> e)
       : expr(e)
     {} // end of IntegerEvaluator::TNegation::TNegation
 
@@ -38,12 +38,11 @@ namespace tfel
       return false;
     }
     
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TNegation::analyse(void)
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<IntegerExpr>(new Negation(this->expr->analyse()));
+      return std::shared_ptr<IntegerExpr>(new Negation(this->expr->analyse()));
     }
     
     std::string
@@ -61,7 +60,7 @@ namespace tfel
     IntegerEvaluator::TNegation::~TNegation()
     {}
 
-    IntegerEvaluator::TNegation::Negation::Negation(const tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr> e)
+    IntegerEvaluator::TNegation::Negation::Negation(const std::shared_ptr<tfel::math::parser::IntegerExpr> e)
       : expr(e)
     {} // end of IntegerEvaluator::TNegation::Negation::Negation
     
@@ -71,12 +70,11 @@ namespace tfel
       return -(this->expr->getValue());
     } // end of IntegerEvaluator::TNegation::Negation::getValue(void)
     
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TNegation::Negation::clone(const std::vector<int>& v) const
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<IntegerExpr>(new Negation(this->expr->clone(v)));
+      return std::shared_ptr<IntegerExpr>(new Negation(this->expr->clone(v)));
     }
     
     IntegerEvaluator::TNegation::Negation::~Negation()
@@ -108,15 +106,14 @@ namespace tfel
       return "IntegerEvaluator::TOperator";
     } // end of IntegerEvaluator::TOperator::getClassName(void) const
     
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TOperator::analyse(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       string msg("IntegerEvaluator::TOperator : invalid call");
       throw(runtime_error(msg));
-      return shared_ptr<IntegerExpr>(static_cast<IntegerExpr*>(0));
+      return std::shared_ptr<IntegerExpr>(static_cast<IntegerExpr*>(0));
     } // end of IntegerEvaluator::TOperator::analyse(void)
 
     int
@@ -148,8 +145,8 @@ namespace tfel
     }
 
     template<typename Op>
-    IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::BinaryOperation(const tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr> a_,
-									     const tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr> b_)
+    IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::BinaryOperation(const std::shared_ptr<tfel::math::parser::IntegerExpr> a_,
+									     const std::shared_ptr<tfel::math::parser::IntegerExpr> b_)
       : a(a_),b(b_)
     {} // end of IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::BinaryOperation 
       
@@ -165,18 +162,17 @@ namespace tfel
     } // end of IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::getValue
 
     template<typename Op>
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::clone(const std::vector<int>& v) const
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<IntegerExpr>(new IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>(this->a->clone(v),
+      return std::shared_ptr<IntegerExpr>(new IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>(this->a->clone(v),
 												 this->b->clone(v)));
     } // end of IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::clone
     
-    IntegerEvaluator::TBinaryOperation::TBinaryOperation(tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> a_,
-							 const tfel::utilities::shared_ptr<TOperator>op_,
-							 tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> b_)
+    IntegerEvaluator::TBinaryOperation::TBinaryOperation(std::shared_ptr<IntegerEvaluator::TExpr> a_,
+							 const std::shared_ptr<TOperator>op_,
+							 std::shared_ptr<IntegerEvaluator::TExpr> b_)
       : a(a_), op(op_), b(b_)
     {} // end of IntegerEvaluator::TBinaryOperation::TBinaryOperation
     
@@ -199,11 +195,10 @@ namespace tfel
       b->reduce();
     } // end of IntegerEvaluator::TBinaryOperation::reduce(void)
      
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TBinaryOperation::analyse(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       if(op->getOperatorType()=="+"){
 	return shared_ptr<IntegerExpr>(new BinaryOperation<IntegerOpPlus>(a->analyse(),b->analyse()));
@@ -251,12 +246,11 @@ namespace tfel
     IntegerEvaluator::TVariable::reduce(void)
     {}
 
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TVariable::analyse(void)
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<IntegerExpr>(new Variable(this->vars,this->pos));
+      return std::shared_ptr<IntegerExpr>(new Variable(this->vars,this->pos));
     }  
 
     IntegerEvaluator::TVariable::Variable::Variable(const std::vector<int>& v_,
@@ -270,12 +264,11 @@ namespace tfel
       return this->v[this->pos];
     } // end of IntegerEvaluator::TVariable::Variable::getValue
 
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TVariable::Variable::clone(const std::vector<int>& v_) const
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<IntegerExpr>(new Variable(v_,this->pos));
+      return std::shared_ptr<IntegerExpr>(new Variable(v_,this->pos));
     } // end of IntegerEvaluator::TVariable::Variable::clone
 
     bool
@@ -285,7 +278,7 @@ namespace tfel
     }
     
     void
-    IntegerEvaluator::TGroup::add(tfel::utilities::shared_ptr<IntegerEvaluator::TExpr>const e)
+    IntegerEvaluator::TGroup::add(std::shared_ptr<IntegerEvaluator::TExpr>const e)
     {
       this->subExpr.push_back(e);
     } // end of IntegerEvaluator::TGroup::add
@@ -294,8 +287,8 @@ namespace tfel
     IntegerEvaluator::TGroup::reduce(void)
     {
       using namespace std;
-      vector<tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> >::iterator p  = this->subExpr.begin();
-      vector<tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> >::iterator pe = this->subExpr.end();
+      vector<std::shared_ptr<IntegerEvaluator::TExpr> >::iterator p  = this->subExpr.begin();
+      vector<std::shared_ptr<IntegerEvaluator::TExpr> >::iterator pe = this->subExpr.end();
       while(p!=pe){
 	(*p)->reduce();
 	++p;
@@ -310,7 +303,7 @@ namespace tfel
       this->reduce("+");
     }
     
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TGroup::analyse(void)
     {
       using namespace std;
@@ -334,14 +327,11 @@ namespace tfel
     IntegerEvaluator::TGroup::reduce(const std::string& op)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator p  = this->subExpr.begin();
-      vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator pe = this->subExpr.end();
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator previous;
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator next;
-      
-      while(p!=pe){
+      while(p!=this->subExpr.end()){
 	if((*p)->isOperator()){
 	  shared_ptr<TOperator> o = shared_ptr<TOperator>(new TOperator(static_cast<const TOperator &>(*(p->get()))));
 	  if(o->getOperatorType()==op){
@@ -415,7 +405,6 @@ namespace tfel
 		++next;
 		p=this->subExpr.erase(p,next);
 		--p;
-		pe=this->subExpr.end();
 	      }
 	    }
 	  }
@@ -440,12 +429,11 @@ namespace tfel
       return "IntegerEvaluator::TNumber";
     }
     
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TNumber::analyse(void)
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<IntegerExpr>(new Number(value));
+      return std::shared_ptr<IntegerExpr>(new Number(value));
     }
     
     void
@@ -462,12 +450,11 @@ namespace tfel
       return this->value;
     } // end of IntegerEvaluator::TNumber::Number::getValue
     
-    tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+    std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TNumber::Number::clone(const std::vector<int>&) const
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<IntegerExpr>(new Number(this->value));
+      return std::shared_ptr<IntegerExpr>(new Number(this->value));
     } // end of IntegerEvaluator::TNumber::Number::clone
     
   } // end of namespace math

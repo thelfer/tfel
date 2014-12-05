@@ -43,8 +43,8 @@ namespace tfel{
       typedef typename StensorTraits<A>::NumType NumTypeA;
       typedef typename StensorTraits<B>::NumType NumTypeB;
 
-      static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
-      static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
+      static constexpr bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
+      static constexpr bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
       StensorProductExprBase();
 
@@ -66,8 +66,8 @@ namespace tfel{
       typedef AIndexType     size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
-      typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
-      typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
+      typename std::conditional<IsATemporary,const A,const A&>::type a;
+      typename std::conditional<IsBTemporary,const B,const B&>::type b;
 
       TFEL_MATH_INLINE StensorProductExprBase(const A& l, const B& r)
 	: a(l), b(r)
@@ -158,7 +158,7 @@ namespace tfel{
 	using namespace std;
 	typedef typename StensorProductExprBase<A,B>::NumType T;
 	typedef typename tfel::typetraits::BaseType<T>::type real;
-	static const real cste = real(1)/sqrt(real(2));
+	static constexpr real cste = real(1)/sqrt(real(2));
 	switch(i){
 	case 0:
 	  return ((this->a(4))*(this->b(4))+(this->a(3))*(this->b(3))+2*(this->a(0))*(this->b(0)))/2;

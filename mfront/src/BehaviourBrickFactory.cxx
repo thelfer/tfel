@@ -21,12 +21,12 @@ namespace mfront
 {
 
   template<typename T>
-  static tfel::utilities::shared_ptr<BehaviourBrick>
+  static std::shared_ptr<BehaviourBrick>
   buildBehaviourBrickConstructor(AbstractBehaviourDSL& dsl,
 			BehaviourDescription& mb,
 			const BehaviourBrick::Parameters& p)
   {
-    return tfel::utilities::shared_ptr<BehaviourBrick>(new T(dsl,mb,p));
+    return std::shared_ptr<BehaviourBrick>(new T(dsl,mb,p));
   } // end of buildAlgoritmConstructor
 
   BehaviourBrickFactory&
@@ -36,7 +36,7 @@ namespace mfront
     return factory;
   }
   
-  tfel::utilities::shared_ptr<BehaviourBrick>
+  std::shared_ptr<BehaviourBrick>
   BehaviourBrickFactory::get(const std::string& a,
 			     AbstractBehaviourDSL& dsl,
 			     BehaviourDescription& mb,

@@ -16,7 +16,7 @@
 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsComplex.hxx"
 #include"TFEL/TypeTraits/IsUnaryOperator.hxx"
@@ -259,7 +259,7 @@ namespace tfel{
     template<>
     struct IsUnaryOperator<tfel::math::OpNeg>
     {
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
   } // end of namespace typetraits
@@ -277,12 +277,12 @@ namespace tfel{
     TFEL_MATH_RESULT_TYPE(long double);
     
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpPlus>::type> >::type
     operator + (const T1 a,const Complex<T2>&b)
     {
@@ -291,12 +291,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpPlus>::type> >::type
     operator + (const Complex<T1>& a,const T2 b)
     {
@@ -305,12 +305,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpPlus>::type> >::type
     operator + (const Complex<T1>& a,const Complex<T2>&b)
     {
@@ -319,12 +319,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpMinus>::type> >::type
     operator - (const T1 a,const Complex<T2>&b)
     {
@@ -333,12 +333,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpMinus>::type> >::type
     operator - (const Complex<T1>& a,const T2 b)
     {
@@ -347,12 +347,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpMinus>::type> >::type
     operator - (const Complex<T1>& a,const Complex<T2>&b)
     {
@@ -361,12 +361,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpMult>::type> >::type
     operator * (const T1 a,const Complex<T2>&b)
     {
@@ -375,12 +375,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpMult>::type> >::type
     operator * (const Complex<T1>& a,const T2 b)
     {
@@ -389,12 +389,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpMinus>::type> >::type
     operator * (const Complex<T1>& a,const Complex<T2>&b)
     {
@@ -403,12 +403,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpDiv>::type> >::type
     operator / (const T1 a,const Complex<T2>&b)
     {
@@ -417,12 +417,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpDiv>::type> >::type
     operator / (const Complex<T1>& a,const T2 b)
     {
@@ -431,12 +431,12 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     (!tfel::typetraits::IsComplex<T1>::cond)&&
     tfel::typetraits::IsScalar<T2>::cond&&
     (!tfel::typetraits::IsComplex<T2>::cond)&&
-    (!tfel::meta::IsSameType<T1,T2>::cond),
+    (!std::is_same<T1,T2>::value),
       Complex<typename tfel::math::ResultType<T1,T2,tfel::math::OpDiv>::type> >::type
     operator / (const Complex<T1>& a,const Complex<T2>&b)
     {
@@ -446,7 +446,7 @@ namespace tfel{
 
     template<typename T>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond&&
       (!tfel::typetraits::IsComplex<T>::cond),
       T>::type 
@@ -456,7 +456,7 @@ namespace tfel{
     }
 
     template<typename T>
-    TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond&&
       (!tfel::typetraits::IsComplex<T>::cond),
       T>::type 

@@ -20,7 +20,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
 #include"TFEL/TypeTraits/IsScalar.hxx"
@@ -56,7 +56,7 @@ namespace tfel{
     {
       typedef T NumType;
       typedef unsigned short IndexType;
-      static const unsigned short dime = N;
+      static constexpr unsigned short dime = N;
     };
 
     /*!
@@ -73,7 +73,7 @@ namespace tfel{
        */
       template<typename StensorType>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
 	StensorTraits<Child>::dime==StensorTraits<StensorType>::dime &&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
@@ -83,7 +83,7 @@ namespace tfel{
       //! Assignement operator
       template<typename StensorType>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
 	StensorTraits<Child>::dime==StensorTraits<StensorType>::dime &&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
@@ -93,7 +93,7 @@ namespace tfel{
       //! Assignement operator
       template<typename StensorType>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
 	StensorTraits<Child>::dime==StensorTraits<StensorType>::dime &&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
@@ -105,23 +105,23 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T2>::cond&&
-	tfel::meta::IsSameType<typename ResultType<typename StensorTraits<Child>::NumType,
-						   T2,OpMult>::type,
-			       typename StensorTraits<Child>::NumType>::cond,
-				 Child&>::type
+	std::is_same<typename ResultType<typename StensorTraits<Child>::NumType,
+					 T2,OpMult>::type,
+		     typename StensorTraits<Child>::NumType>::value,
+		       Child&>::type
       operator*=(const T2);
       /*!
        * operator/=
        */
       template<typename T2>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T2>::cond&&
-        tfel::meta::IsSameType<typename ResultType<typename StensorTraits<Child>::NumType,
+        std::is_same<typename ResultType<typename StensorTraits<Child>::NumType,
 						   T2,OpDiv>::type,
-			       typename StensorTraits<Child>::NumType>::cond,
+			       typename StensorTraits<Child>::NumType>::value,
 	Child&>::type
       operator/=(const T2);
     }; // end of struct stensor_base
@@ -187,7 +187,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void
 	>::type
@@ -197,7 +197,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
       importTab(const T2* const);
@@ -206,7 +206,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
       exportTab(T2* const) const;
@@ -215,7 +215,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void
 	>::type
@@ -225,7 +225,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
       import(const T2* const);
@@ -303,7 +303,7 @@ namespace tfel{
        */
       template<typename MatrixType>
       static TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	stensor<N,T,StensorStatic> >::type
        buildFromMatrix(const MatrixType&);
@@ -314,7 +314,7 @@ namespace tfel{
        */
       template<typename VectorType>
       static TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<
 	  typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,
 				      Power<2> >::Result,T
@@ -330,7 +330,7 @@ namespace tfel{
       template<typename VectorType,
 	       typename VectorType2>
       static TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<
 	  typename ComputeBinaryResult<typename VectorTraits<VectorType>::NumType,
 				       typename VectorTraits<VectorType2>::NumType,
@@ -474,7 +474,7 @@ namespace tfel{
        */
       template<typename StensorType>
       static TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	  (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
 	(StensorTraits<StensorType>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
@@ -493,7 +493,7 @@ namespace tfel{
        */
       template<typename StensorType>
       static TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	(tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
 	(StensorTraits<StensorType>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
@@ -514,7 +514,7 @@ namespace tfel{
        */
       template<typename ST2toST2Type>
       static TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	(tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
 	(ST2toST2Traits<ST2toST2Type>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename tfel::typetraits::BaseType<T>::type,
@@ -540,7 +540,7 @@ namespace tfel{
 	     template<unsigned short,typename> class Storage,
 	     typename OutputIterator>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond,
       void>::type
     exportToBaseTypeArray(const stensor<N,T,Storage>&,
@@ -572,7 +572,7 @@ namespace tfel{
 	     const bool = false);
 
     template<typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       stensor<StensorTraits<StensorType>::dime,
 	      typename StensorTraits<StensorType>::NumType>
@@ -580,14 +580,14 @@ namespace tfel{
     square_root(const StensorType&);
 
     template<typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,Power<3> >::Result
     >::type
     det(const StensorType&);
   
     template<typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       stensor<StensorTraits<StensorType>::dime,
 	      typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
@@ -602,7 +602,7 @@ namespace tfel{
      */
     template<typename StensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        (StensorTraits<StensorType>::dime==1u) &&
        (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
@@ -618,7 +618,7 @@ namespace tfel{
      */
     template<typename StensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        ((StensorTraits<StensorType>::dime==2u)||
 	(StensorTraits<StensorType>::dime==3u))&&
@@ -635,7 +635,7 @@ namespace tfel{
      */
     template<typename StensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        (StensorTraits<StensorType>::dime==1u) &&
        (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
@@ -651,7 +651,7 @@ namespace tfel{
      */
     template<typename StensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        ((StensorTraits<StensorType>::dime==2u)||
 	(StensorTraits<StensorType>::dime==3u))&&
@@ -668,7 +668,7 @@ namespace tfel{
      */
     template<typename StensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        (StensorTraits<StensorType>::dime==1u) &&
        (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
@@ -684,7 +684,7 @@ namespace tfel{
      */
     template<typename StensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        ((StensorTraits<StensorType>::dime==2u)||
 	(StensorTraits<StensorType>::dime==3u))&&
@@ -701,7 +701,7 @@ namespace tfel{
      */
     template<typename StensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        (StensorTraits<StensorType>::dime==1u) &&
        (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
@@ -717,7 +717,7 @@ namespace tfel{
      */
     template<typename StensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        ((StensorTraits<StensorType>::dime==2u)||
 	(StensorTraits<StensorType>::dime==3u))&&
@@ -740,7 +740,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = IsAssignableTo<T2,T>::cond;
+      static constexpr bool cond = IsAssignableTo<T2,T>::cond;
     };
 
   } // end of namespace typetraits

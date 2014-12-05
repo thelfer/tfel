@@ -15,7 +15,7 @@
 #ifndef _LIB_TFEL_FUNCTIONCONCEPT_HXX_
 #define _LIB_TFEL_FUNCTIONCONCEPT_HXX_ 
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
@@ -58,15 +58,15 @@ namespace tfel{
 
       template<typename T>		                                  
       TFEL_MATH_INLINE
-      typename tfel::meta::DisableIf<                                                      
-        tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Func>::Result>::cond, 
+      typename std::enable_if<                                                      
+        !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Func>::Result>::cond, 
         const typename ComputeUnaryResult<T,Func>::Handle                                
       >::type                                                                             
       operator()(const T&) const;
 
       template<typename F>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<F,tfel::math::FunctionConcept>::cond,
 	FunctionExpr<FunctionsCompositionExpr<Func,F> >
       >::type
@@ -87,7 +87,7 @@ namespace tfel{
     template<>
     struct IsUnaryOperator<tfel::math::OpDiff>
     {
-      static const bool cond = true;
+      static constexpr bool cond = true;
     }; // end of IsUnaryOperator
 
   } // end of namespace typetraits

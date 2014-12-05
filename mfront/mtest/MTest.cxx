@@ -24,7 +24,7 @@
 
 #include"tfel-config.hxx"
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Utilities/TextData.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
@@ -315,7 +315,7 @@ namespace mfront
   MTest::setUseCastemAccelerationAlgorithm(const bool ucaa)
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     if(ucaa){
       if(this->aa.get()!=0){
 	string msg("MTest::setUseCastemAccelerationAlgorithm : "
@@ -487,7 +487,7 @@ namespace mfront
   }
 
   void
-  MTest::addConstraint(const tfel::utilities::shared_ptr<Constraint> c)
+  MTest::addConstraint(const std::shared_ptr<Constraint> c)
   {
     this->constraints.push_back(c);
   }
@@ -654,7 +654,7 @@ namespace mfront
     return this->b->getBehaviourType();
   }
 
-  tfel::utilities::shared_ptr<Behaviour>
+  std::shared_ptr<Behaviour>
   MTest::getBehaviour(void){
     using namespace std;
     if(this->b.get()==0){
@@ -838,7 +838,7 @@ namespace mfront
   }
 
   void
-  MTest::addTest(const tfel::utilities::shared_ptr<mfront::MTest::UTest> t)
+  MTest::addTest(const std::shared_ptr<mfront::MTest::UTest> t)
   {
     this->tests.push_back(t);
   }
@@ -997,7 +997,7 @@ namespace mfront
     this->times=t;
   } // end of MTest::setTimes
 
-  tfel::utilities::shared_ptr<EvolutionManager>
+  std::shared_ptr<EvolutionManager>
   MTest::getEvolutions() const
   {
     return this->evm;
@@ -1011,7 +1011,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::system;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     typedef ExternalLibraryManager ELM;
     typedef tfel::material::ModellingHypothesis MH;
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
@@ -1115,7 +1115,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     typedef tfel::material::ModellingHypothesis MH;
     EvolutionManager::const_iterator pev;
     if(this->initialisationFinished){
@@ -1325,7 +1325,7 @@ namespace mfront
   MTest::initializeCurrentState(MTestCurrentState& s) const
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     // getting the names of the materials properties
     vector<string> mpnames(this->b->getMaterialPropertiesNames());
     vector<string> esvnames(this->b->getExternalStateVariablesNames());
@@ -1438,7 +1438,7 @@ namespace mfront
   size_t
   MTest::getNumberOfUnknowns() const
   {
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     using tfel::math::vector;
     vector<shared_ptr<Constraint> >::const_iterator pc;
     // number of components of the driving variables
@@ -1459,7 +1459,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::tests;
     using tfel::math::vector;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     TestResult tr;
     vector<real>::const_iterator pt;
     vector<real>::const_iterator pt2;
@@ -1540,7 +1540,7 @@ namespace mfront
     using namespace tfel::utilities;
     using namespace tfel::math;
     using namespace tfel::material;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     using tfel::tests::TestResult;
     using tfel::math::vector;
     vector<string>::const_iterator p;

@@ -15,7 +15,7 @@
 #ifndef _LIB_TFEL_NEGATION_HXX_
 #define _LIB_TFEL_NEGATION_HXX_ 
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Math/Parser/Expr.hxx"
 
 namespace tfel
@@ -29,18 +29,18 @@ namespace tfel
       struct Negation
 	: public Expr
       {
-	Negation(const tfel::utilities::shared_ptr<Expr>);
+	Negation(const std::shared_ptr<Expr>);
 	double getValue(void) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	tfel::utilities::shared_ptr<Expr>
+	std::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const;
-	tfel::utilities::shared_ptr<Expr>
+	std::shared_ptr<Expr>
 	clone(const std::vector<double>&) const;
-	tfel::utilities::shared_ptr<Expr>
+	std::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const;
-	tfel::utilities::shared_ptr<Expr>
+	std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
@@ -49,7 +49,7 @@ namespace tfel
 	getParametersNames(std::set<std::string>&) const;
 	~Negation();
       private:
-	const tfel::utilities::shared_ptr<Expr> expr;
+	const std::shared_ptr<Expr> expr;
       };
 
     } // end of namespace parser

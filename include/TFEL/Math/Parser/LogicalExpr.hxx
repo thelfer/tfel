@@ -18,9 +18,10 @@
 #include<set>
 #include<vector>
 #include<string>
+#include<memory>
 #include<stdexcept>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Parser/Expr.hxx"
 
 namespace tfel
@@ -79,13 +80,13 @@ namespace tfel
       	virtual bool getValue(void) const = 0;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const = 0;
-	virtual tfel::utilities::shared_ptr<LogicalExpr>
+	virtual std::shared_ptr<LogicalExpr>
 	resolveDependencies(const std::vector<double>&) const = 0;
-	virtual tfel::utilities::shared_ptr<LogicalExpr>
+	virtual std::shared_ptr<LogicalExpr>
 	clone(const std::vector<double>&) const = 0;
 	virtual void
 	getParametersNames(std::set<std::string>&) const = 0;
-	virtual tfel::utilities::shared_ptr<LogicalExpr>
+	virtual std::shared_ptr<LogicalExpr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
@@ -97,78 +98,78 @@ namespace tfel
       struct TFEL_VISIBILITY_LOCAL LogicalOperation
 	: public LogicalExpr
       {
-	LogicalOperation(const tfel::utilities::shared_ptr<Expr>,
-			 const tfel::utilities::shared_ptr<Expr>);
+	LogicalOperation(const std::shared_ptr<Expr>,
+			 const std::shared_ptr<Expr>);
 	bool
 	getValue(void) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	tfel::utilities::shared_ptr<LogicalExpr>
+	std::shared_ptr<LogicalExpr>
 	resolveDependencies(const std::vector<double>&) const;
-	tfel::utilities::shared_ptr<LogicalExpr>
+	std::shared_ptr<LogicalExpr>
 	clone(const std::vector<double>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
-	tfel::utilities::shared_ptr<LogicalExpr>
+	std::shared_ptr<LogicalExpr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const;
 	~LogicalOperation();
       private:
-	const tfel::utilities::shared_ptr<Expr> a;
-	const tfel::utilities::shared_ptr<Expr> b;
+	const std::shared_ptr<Expr> a;
+	const std::shared_ptr<Expr> b;
       }; // end of struct LogicalOperation
 
       template<typename Op>
       struct TFEL_VISIBILITY_LOCAL LogicalBinaryOperation
 	: public LogicalExpr
       {
-	LogicalBinaryOperation(const tfel::utilities::shared_ptr<LogicalExpr>,
-			       const tfel::utilities::shared_ptr<LogicalExpr>);
+	LogicalBinaryOperation(const std::shared_ptr<LogicalExpr>,
+			       const std::shared_ptr<LogicalExpr>);
 	bool
 	getValue(void) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	tfel::utilities::shared_ptr<LogicalExpr>
+	std::shared_ptr<LogicalExpr>
 	resolveDependencies(const std::vector<double>&) const;
-	tfel::utilities::shared_ptr<LogicalExpr>
+	std::shared_ptr<LogicalExpr>
 	clone(const std::vector<double>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
-	tfel::utilities::shared_ptr<LogicalExpr>
+	std::shared_ptr<LogicalExpr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const;
 	~LogicalBinaryOperation();
       private:
-	const tfel::utilities::shared_ptr<LogicalExpr> a;
-	const tfel::utilities::shared_ptr<LogicalExpr> b;
+	const std::shared_ptr<LogicalExpr> a;
+	const std::shared_ptr<LogicalExpr> b;
       }; // end of struct LogicalBinaryOperation
 
       struct TFEL_VISIBILITY_LOCAL NegLogicalExpression
 	: public LogicalExpr
       {
-	NegLogicalExpression(const tfel::utilities::shared_ptr<LogicalExpr>);
+	NegLogicalExpression(const std::shared_ptr<LogicalExpr>);
 	bool
 	getValue(void) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	tfel::utilities::shared_ptr<LogicalExpr>
+	std::shared_ptr<LogicalExpr>
 	resolveDependencies(const std::vector<double>&) const;
-	tfel::utilities::shared_ptr<LogicalExpr>
+	std::shared_ptr<LogicalExpr>
 	clone(const std::vector<double>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
-	tfel::utilities::shared_ptr<LogicalExpr>
+	std::shared_ptr<LogicalExpr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const;
 	~NegLogicalExpression();
       private:
-	const tfel::utilities::shared_ptr<LogicalExpr> a;
+	const std::shared_ptr<LogicalExpr> a;
       }; // end of struct LogicalBinaryOperation
 
     } // end of namespace parser

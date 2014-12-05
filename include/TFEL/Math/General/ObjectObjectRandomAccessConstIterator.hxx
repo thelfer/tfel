@@ -170,7 +170,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = IsInvalid<T>::cond;
+      static constexpr bool cond = IsInvalid<T>::cond;
     };
 
   } // end of namespace typetraits

@@ -82,9 +82,9 @@ namespace tfel
     protected:
 
       //! says if the underlying object is a temporary
-      static const bool IsTemporary = tfel::typetraits::IsTemporary<TensorType>::cond;
+      static constexpr bool IsTemporary = tfel::typetraits::IsTemporary<TensorType>::cond;
       //! The tensor object
-      typename tfel::meta::IF<IsTemporary,
+      typename std::conditional<IsTemporary,
 			      const TensorType,
 			      const TensorType&>::type t;
 

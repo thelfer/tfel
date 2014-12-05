@@ -21,7 +21,7 @@
 #include<string>
 #include<stdexcept>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 namespace tfel
 {
@@ -36,16 +36,16 @@ namespace tfel
 	virtual double getValue(void) const = 0;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const = 0;
-	virtual tfel::utilities::shared_ptr<Expr>
+	virtual std::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const = 0;
-	virtual tfel::utilities::shared_ptr<Expr>
+	virtual std::shared_ptr<Expr>
 	clone(const std::vector<double>&) const = 0;
-	virtual tfel::utilities::shared_ptr<Expr>
+	virtual std::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const = 0;
 	virtual void
 	getParametersNames(std::set<std::string>&) const = 0;
-	virtual tfel::utilities::shared_ptr<Expr>
+	virtual std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,

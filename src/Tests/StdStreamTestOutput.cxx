@@ -48,7 +48,7 @@ namespace tfel
       }
     } // end of StdStreamTestOutput::StdStreamTestOutput
 
-    StdStreamTestOutput::StdStreamTestOutput(const tfel::utilities::shared_ptr<std::ostream>& o,
+    StdStreamTestOutput::StdStreamTestOutput(const std::shared_ptr<std::ostream>& o,
 					     const bool b)
       : pos(o),
 	os(*(pos.get())),

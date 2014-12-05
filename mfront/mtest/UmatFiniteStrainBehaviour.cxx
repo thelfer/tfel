@@ -34,7 +34,7 @@ namespace mfront
 						     tfel::math::t2tost2<2u,real>& C)
   {
     using namespace std;
-    static const real cste = sqrt(real(2));
+    static constexpr real cste = sqrt(real(2));
     const real E   = props[0];
     const real n   = props[1];
     const real l   = E*n/((1.-2.*n)*(1+n));
@@ -67,7 +67,7 @@ namespace mfront
     // props[5] :'NU13'
     // props[6] :'G12'
     using namespace std;
-    static const real cste = sqrt(real(2));
+    static constexpr real cste = sqrt(real(2));
     // S11 = 1/E1
     const real S11=1/props[0];
     // S22 = 1/E2
@@ -141,7 +141,7 @@ namespace mfront
 	tfel::math::t2tost2<2u,real>& C)
     {
       using namespace std;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       const real E   = props[0];
       const real n   = props[1];
       const real C1  = E/(1+n*n);
@@ -202,7 +202,7 @@ namespace mfront
 	tfel::math::t2tost2<3u,real>& C)
     {
       using namespace std;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       const real E = props[0];
       const real n = props[1];
       const real l = E*n/((1.-2.*n)*(1+n));
@@ -279,7 +279,7 @@ namespace mfront
 	tfel::math::t2tost2<2u,real>& C)
     {
       using namespace std;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       // props[0] :'YG1'
       // props[1] :'YG2'
       // props[2] :'NU12'
@@ -377,7 +377,7 @@ namespace mfront
       // props[7] :'G23'
       // props[8] :'G13'
       using namespace std;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       // S11 = 1/E1
       const real S11=1/props[0];
       // S22 = 1/E2
@@ -702,7 +702,7 @@ namespace mfront
     using namespace umat;
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
-    static const real sqrt2 = sqrt(real(2));
+    static constexpr real sqrt2 = sqrt(real(2));
     UMATInt ntens;
     UMATInt ndi;
     UMATInt nprops = static_cast<UMATInt>(mp.size());

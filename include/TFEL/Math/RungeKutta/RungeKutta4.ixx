@@ -60,8 +60,8 @@ namespace tfel{
       }
 
       void increm(void){
-	static const T Cste_1_3 = static_cast<T>(1.f)/static_cast<T>(3.f);
-	static const T Cste_1_6 = static_cast<T>(1.f)/static_cast<T>(6.f);
+	static constexpr T Cste_1_3 = static_cast<T>(1.f)/static_cast<T>(3.f);
+	static constexpr T Cste_1_6 = static_cast<T>(1.f)/static_cast<T>(6.f);
 	static_cast<Func&>(*this).computeF(t,y);
 	k1  = h*f;
 	tmp = y+0.5f*k1;

@@ -36,7 +36,7 @@ namespace tfel{
     {
       TFEL_STATIC_ASSERT((tfel::meta::Implements<A,TensorConcept>::cond));
       
-      static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
+      static constexpr bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
 
       TensorTransposeExprBase();
 
@@ -59,7 +59,7 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
-      typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
+      typename std::conditional<IsATemporary,const A,const A&>::type a;
 
       TFEL_MATH_INLINE TensorTransposeExprBase(const A& l)
 	: a(l)

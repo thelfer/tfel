@@ -15,7 +15,7 @@
 #define _LIB_TFEL_COPY_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsRandomAccessIterator.hxx"
 
 namespace tfel{
@@ -143,7 +143,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
       tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond,
 	OutputIterator
@@ -161,7 +161,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	!(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
 	  tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond),
 	  OutputIterator
@@ -188,7 +188,7 @@ namespace tfel{
 
       /*!
        * This version of copy is used if iterators are Random Access. Test is based on the tfel::typetraits::IsRandomAccessIterator class. 
-       * \see tfel::meta::EnableIf, tfel::typetraits::IsRandomAccessIterator  
+       * \see std::enable_if, tfel::typetraits::IsRandomAccessIterator  
        *
        * \param InputIterator iterator to the element to be copied
        * \param OutputIterator iterator to the place where this element will be copied
@@ -205,7 +205,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
       tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond,
 	OutputIterator
@@ -224,7 +224,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	!(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
 	  tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond),
 	  OutputIterator
@@ -266,7 +266,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
       tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond,
 	OutputIterator
@@ -286,7 +286,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	!(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
 	  tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond),
 	  OutputIterator
@@ -328,7 +328,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
       tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond,
 	OutputIterator
@@ -349,7 +349,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	!(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
 	  tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond),
 	  OutputIterator
@@ -391,7 +391,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
       tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond,
 	OutputIterator
@@ -413,7 +413,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	!(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
 	  tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond),
 	  OutputIterator
@@ -455,7 +455,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
       tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond,
 	OutputIterator
@@ -478,7 +478,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	!(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
 	  tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond),
 	  OutputIterator
@@ -520,7 +520,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
       tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond,
 	OutputIterator
@@ -544,7 +544,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	!(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
 	  tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond),
 	  OutputIterator
@@ -586,7 +586,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
       tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond,
 	OutputIterator
@@ -611,7 +611,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	!(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
 	  tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond),
 	  OutputIterator
@@ -653,7 +653,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
       tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond,
 	OutputIterator
@@ -679,7 +679,7 @@ namespace tfel{
        */
       template<typename InputIterator,typename OutputIterator>
       static TFEL_FSALGORITHM_INLINE typename
-      tfel::meta::EnableIf<
+      std::enable_if<
 	!(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
 	  tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond),
 	  OutputIterator

@@ -68,18 +68,17 @@ namespace tfel
       ExternalCastemFunction::getParametersNames(std::set<std::string>&) const
       {} // endo of ExternalCastemFunction::getParametersNames
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ExternalCastemFunction::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	string msg("ExternalCastemFunction::createFunctionByChangingParametersIntoVariables : ");
 	msg += "invalid call";
 	throw(runtime_error(msg));
 	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
       } // end of ExternalCastemFunction::createFunctionByChangingParametersIntoVariables
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ExternalCastemFunction::createFunctionByChangingParametersIntoVariables(std::vector<std::string>& v,
 									      const std::vector<double>&,
 									      const std::vector<std::string>&,
@@ -90,15 +89,14 @@ namespace tfel
 	return this->resolveDependencies();
       } // end of ExternalCastemFunction::createFunctionByChangingParametersIntoVariables
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ExternalCastemFunction::resolveDependencies(void) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<ExternalFunction>(new ExternalCastemFunction(this->f,
-								     static_cast<unsigned short>(this->variables.size())));
+	return std::shared_ptr<ExternalFunction>(new ExternalCastemFunction(this->f,
+									    static_cast<unsigned short>(this->variables.size())));
       } // end of ExternalCastemFunction::resolveDependencies(void) const
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ExternalCastemFunction::differentiate(const std::vector<double>::size_type) const
       {
 	using namespace std;
@@ -107,7 +105,7 @@ namespace tfel
 	throw(runtime_error(msg));
       } // end of ExternalCastemFunction::differentiate
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       ExternalCastemFunction::differentiate(const std::string&) const
       {
 	using namespace std;

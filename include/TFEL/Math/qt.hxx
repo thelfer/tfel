@@ -49,9 +49,9 @@ namespace tfel{
 	     typename T2>
     struct IsQtScalarOperationValid
     {
-      static const bool cond = tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
+      static constexpr bool cond = tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
         tfel::typetraits::IsScalar<T>::cond&&
-        tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond;
+        std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value;
     };
 
     /*!
@@ -126,8 +126,8 @@ namespace tfel{
        * Assignement operator
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      TFEL_MATH_INLINE typename std::enable_if<
+	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<unit,T>&>::type
       operator = (const qt<unit,T2>&src);
 
@@ -135,8 +135,8 @@ namespace tfel{
        * Operator +=
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      TFEL_MATH_INLINE typename std::enable_if<
+	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<unit,T>&>::type
       operator += (const qt<unit,T2>&src);
 
@@ -144,8 +144,8 @@ namespace tfel{
        * Operator -=
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      TFEL_MATH_INLINE typename std::enable_if<
+	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<unit,T>&>::type
       operator -= (const qt<unit,T2>&src);
 
@@ -154,7 +154,7 @@ namespace tfel{
        * \param T2 a, a scalar
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE typename std::enable_if<
 	IsQtScalarOperationValid<T,T2>::cond,
 	qt<unit,T>&
       >::type
@@ -165,7 +165,7 @@ namespace tfel{
        * \param T2 a, a scalar
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE typename std::enable_if<
 	IsQtScalarOperationValid<T,T2>::cond,
 	qt<unit,T>&
       >::type
@@ -187,7 +187,7 @@ namespace tfel{
     template<typename T,typename T2>
     struct IsConvertibleToQtNoUnit
     {
-      static const bool cond = tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond&&
+      static constexpr bool cond = std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value&&
         tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
         tfel::typetraits::IsScalar<T2>::cond;
     }; 
@@ -259,13 +259,13 @@ namespace tfel{
        * Operator =
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      TFEL_MATH_INLINE typename std::enable_if<
+	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<NoUnit,T>&>::type
       operator = (const qt<NoUnit,T2>&src);
 
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE typename std::enable_if<
 	IsConvertibleToQtNoUnit<T,T2>::cond,
         qt<NoUnit,T>&
        >::type
@@ -275,8 +275,8 @@ namespace tfel{
        * Operator +=
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      TFEL_MATH_INLINE typename std::enable_if<
+	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<NoUnit,T>&>::type
       operator += (const qt<NoUnit,T2>&src);
 
@@ -284,8 +284,8 @@ namespace tfel{
        * Operator -=
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
-	tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T>::cond,
+      TFEL_MATH_INLINE typename std::enable_if<
+	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<NoUnit,T>&>::type
       operator -= (const qt<NoUnit,T2>&src);
 
@@ -294,7 +294,7 @@ namespace tfel{
        * \param T2 a, a scalar
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE typename std::enable_if<
 	IsConvertibleToQtNoUnit<T,T2>::cond,
 	qt<NoUnit,T>&
       >::type
@@ -305,7 +305,7 @@ namespace tfel{
        * \param T2 a, a scalar
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE typename std::enable_if<
 	IsConvertibleToQtNoUnit<T,T2>::cond,
 	qt<NoUnit,T>&
       >::type

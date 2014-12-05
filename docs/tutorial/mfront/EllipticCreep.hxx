@@ -109,7 +109,7 @@ public EllipticCreepBehaviourData<hypothesis,Type,false>,
 public EllipticCreepIntegrationData<hypothesis,Type,false>
 {
 
-static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;
+static constexpr unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;
 
 TFEL_STATIC_ASSERT(N==1||N==2||N==3);
 TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<Type>::cond);
@@ -117,11 +117,11 @@ TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);
 
 friend std::ostream& operator<< <>(std::ostream&,const EllipticCreep&);
 
-static const unsigned short TVectorSize = N;
+static constexpr unsigned short TVectorSize = N;
 typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;
-static const unsigned short StensorSize = StensorDimeToSize::value;
+static constexpr unsigned short StensorSize = StensorDimeToSize::value;
 typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;
-static const unsigned short TensorSize = TensorDimeToSize::value;
+static constexpr unsigned short TensorSize = TensorDimeToSize::value;
 
 typedef unsigned short ushort;
 typedef tfel::config::Types<N,Type,false> Types;
@@ -729,26 +729,26 @@ return os;
 template<ModellingHypothesis::Hypothesis hypothesis,typename Type>
 class MechanicalBehaviourTraits<EllipticCreep<hypothesis,Type,false> >
 {
-static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;
-static const unsigned short TVectorSize = N;
+static constexpr unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;
+static constexpr unsigned short TVectorSize = N;
 typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;
-static const unsigned short StensorSize = StensorDimeToSize::value;
+static constexpr unsigned short StensorSize = StensorDimeToSize::value;
 typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;
-static const unsigned short TensorSize = TensorDimeToSize::value;
+static constexpr unsigned short TensorSize = TensorDimeToSize::value;
 public:
-static const bool is_defined = true;
-static const bool use_quantities = false;
-static const bool hasStressFreeExpansion = true;
-static const bool handlesThermalExpansion = true;
-static const unsigned short dimension = N;
+static constexpr bool is_defined = true;
+static constexpr bool use_quantities = false;
+static constexpr bool hasStressFreeExpansion = true;
+static constexpr bool handlesThermalExpansion = true;
+static constexpr unsigned short dimension = N;
 typedef Type NumType;
-static const unsigned short material_properties_nb = 0;
-static const unsigned short internal_variables_nb  = 3+StensorSize;
-static const unsigned short external_variables_nb  = 0;
-static const bool hasConsistantTangentOperator = false;
-static const bool isConsistantTangentOperatorSymmetric = false;
-static const bool hasPredictionOperator = false;
-static const bool hasTimeStepScalingFactor = false;
+static constexpr unsigned short material_properties_nb = 0;
+static constexpr unsigned short internal_variables_nb  = 3+StensorSize;
+static constexpr unsigned short external_variables_nb  = 0;
+static constexpr bool hasConsistantTangentOperator = false;
+static constexpr bool isConsistantTangentOperatorSymmetric = false;
+static constexpr bool hasPredictionOperator = false;
+static constexpr bool hasTimeStepScalingFactor = false;
 };
 
 /*!
@@ -758,19 +758,19 @@ template<typename Type>
 class MechanicalBehaviourTraits<EllipticCreep<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,Type,false> >
 {
 public:
-static const bool is_defined = false;
-static const bool use_quantities = false;
-static const bool hasStressFreeExpansion = true;
-static const bool handlesThermalExpansion = true;
-static const unsigned short dimension = 0u;
+static constexpr bool is_defined = false;
+static constexpr bool use_quantities = false;
+static constexpr bool hasStressFreeExpansion = true;
+static constexpr bool handlesThermalExpansion = true;
+static constexpr unsigned short dimension = 0u;
 typedef Type NumType;
-static const unsigned short material_properties_nb = 0;
-static const unsigned short internal_variables_nb  = 0;
-static const unsigned short external_variables_nb  = 0;
-static const bool hasConsistantTangentOperator = false;
-static const bool isConsistantTangentOperatorSymmetric = false;
-static const bool hasPredictionOperator = false;
-static const bool hasTimeStepScalingFactor = false;
+static constexpr unsigned short material_properties_nb = 0;
+static constexpr unsigned short internal_variables_nb  = 0;
+static constexpr unsigned short external_variables_nb  = 0;
+static constexpr bool hasConsistantTangentOperator = false;
+static constexpr bool isConsistantTangentOperatorSymmetric = false;
+static constexpr bool hasPredictionOperator = false;
+static constexpr bool hasTimeStepScalingFactor = false;
 };
 
 /*!
@@ -780,19 +780,19 @@ template<typename Type>
 class MechanicalBehaviourTraits<EllipticCreep<ModellingHypothesis::PLANESTRESS,Type,false> >
 {
 public:
-static const bool is_defined = false;
-static const bool use_quantities = false;
-static const bool hasStressFreeExpansion = true;
-static const bool handlesThermalExpansion = true;
-static const unsigned short dimension = 0u;
+static constexpr bool is_defined = false;
+static constexpr bool use_quantities = false;
+static constexpr bool hasStressFreeExpansion = true;
+static constexpr bool handlesThermalExpansion = true;
+static constexpr unsigned short dimension = 0u;
 typedef Type NumType;
-static const unsigned short material_properties_nb = 0;
-static const unsigned short internal_variables_nb  = 0;
-static const unsigned short external_variables_nb  = 0;
-static const bool hasConsistantTangentOperator = false;
-static const bool isConsistantTangentOperatorSymmetric = false;
-static const bool hasPredictionOperator = false;
-static const bool hasTimeStepScalingFactor = false;
+static constexpr unsigned short material_properties_nb = 0;
+static constexpr unsigned short internal_variables_nb  = 0;
+static constexpr unsigned short external_variables_nb  = 0;
+static constexpr bool hasConsistantTangentOperator = false;
+static constexpr bool isConsistantTangentOperatorSymmetric = false;
+static constexpr bool hasPredictionOperator = false;
+static constexpr bool hasTimeStepScalingFactor = false;
 };
 
 } // end of namespace material

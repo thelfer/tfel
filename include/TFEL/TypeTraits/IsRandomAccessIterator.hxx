@@ -16,7 +16,7 @@
 
 #include<iterator>
 
-#include"TFEL/Metaprogramming/IsSameType.hxx"
+#include<type_traits>
 
 namespace tfel{
 
@@ -39,7 +39,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = tfel::meta::IsSameType<typename std::iterator_traits<T>::iterator_category,std::random_access_iterator_tag>::cond;
+      static constexpr bool cond = std::is_same<typename std::iterator_traits<T>::iterator_category,std::random_access_iterator_tag>::value;
     };
 
   } // end of namespace typetraits

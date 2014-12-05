@@ -24,13 +24,13 @@ namespace cyrano{
 
   template<typename Behaviour>
   struct CyranoTraits{
-    static const bool useTimeSubStepping = false;
-    static const bool doSubSteppingOnInvalidResults  = false;
-    static const unsigned short maximumSubStepping   = 0u;
-    static const bool requiresStiffnessTensor        = false;
-    static const bool requiresThermalExpansionCoefficientTensor = false;
-    static const unsigned short propertiesOffset     = 0u;
-    static const CyranoSymmetryType stype = cyrano::ISOTROPIC;
+    static constexpr bool useTimeSubStepping = false;
+    static constexpr bool doSubSteppingOnInvalidResults  = false;
+    static constexpr unsigned short maximumSubStepping   = 0u;
+    static constexpr bool requiresStiffnessTensor        = false;
+    static constexpr bool requiresThermalExpansionCoefficientTensor = false;
+    static constexpr unsigned short propertiesOffset     = 0u;
+    static constexpr CyranoSymmetryType stype = cyrano::ISOTROPIC;
   }; // end of class CyranoTraits
 
 } // end of namespace cyrano  

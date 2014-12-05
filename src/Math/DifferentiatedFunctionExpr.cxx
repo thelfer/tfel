@@ -30,8 +30,8 @@ namespace tfel
     namespace parser
     {
       
-      DifferentiatedFunctionExpr::DifferentiatedFunctionExpr(tfel::utilities::shared_ptr<ExternalFunction> ff,
-							     std::vector<tfel::utilities::shared_ptr<Expr> >& fargs,
+      DifferentiatedFunctionExpr::DifferentiatedFunctionExpr(std::shared_ptr<ExternalFunction> ff,
+							     std::vector<std::shared_ptr<Expr> >& fargs,
 							     const std::vector<std::vector<double>::size_type>& fpvar)
 	: f(ff),
 	  args(fargs),
@@ -48,11 +48,10 @@ namespace tfel
         }
       } // end of DifferentiatedFunctionExpr::DifferentiatedFunctionExpr
 
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       DifferentiatedFunctionExpr::getDerivative(void) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math::parser;
 	vector<vector<double>::size_type>::const_iterator p;
 	shared_ptr<ExternalFunction> df = this->f;
@@ -66,7 +65,6 @@ namespace tfel
       DifferentiatedFunctionExpr::getValue(void) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math::parser;
 	vector<shared_ptr<Expr> >::const_iterator p;
 	vector<shared_ptr<Expr> >::size_type i;
@@ -82,7 +80,6 @@ namespace tfel
       DifferentiatedFunctionExpr::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> >::const_iterator p;
 	vector<string> v(names);
 	this->f->checkCyclicDependency(names);
@@ -93,13 +90,12 @@ namespace tfel
 	}
       } // end of DifferentiatedFunctionExpr::checkCyclicDependency
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       DifferentiatedFunctionExpr::differentiate(const std::vector<double>::size_type pos,
 						const std::vector<double>& v) const
       {
 	using namespace std;
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p = this->args.begin();
 	vector<shared_ptr<Expr> >::const_iterator p3;
@@ -132,11 +128,10 @@ namespace tfel
 	return df;
       } // end of DifferentiatedFunctionExpr::differentiate
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       DifferentiatedFunctionExpr::clone(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::iterator p2;
@@ -146,14 +141,13 @@ namespace tfel
         return shared_ptr<Expr>(new DifferentiatedFunctionExpr(this->f,nargs,this->pvar));	
       } // end of DifferentiatedFunctionExpr::clone
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       DifferentiatedFunctionExpr::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 										  const std::vector<std::string>& params,
 										  const std::map<std::string,
 										  std::vector<double>::size_type>& pos) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs;
 	vector<string> vnames;
 	shared_ptr<ExternalFunction> nf;
@@ -189,7 +183,6 @@ namespace tfel
       DifferentiatedFunctionExpr::getParametersNames(std::set<std::string>& p) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator pt;
 	this->f->getParametersNames(p);
         for(pt=this->args.begin();pt!=this->args.end();++pt){
@@ -197,11 +190,10 @@ namespace tfel
 	}
       } // end of DifferentiatedFunctionExpr::getParametersNames
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       DifferentiatedFunctionExpr::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::iterator p2;

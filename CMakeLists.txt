@@ -5,7 +5,7 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-tfel_project(2 1 "0-dev")
+tfel_project(3 0 "0-dev")
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 
 # check for the fenv package
@@ -57,8 +57,7 @@ add_custom_target(tests-install)
 option(enable-portable-build "produce binary that can be shared between various machine (same architecture, same gcc version, different processors" OFF)
 
 # C++-11 (placed before compiler detection)
-option(enable-cxx-11 "enable C++-11 support" OFF)
-
+set(enable-cxx-11 ON)
 
 # fortran (placed before compiler detection)
 option(enable-fortran "enable fortran support")
@@ -75,11 +74,6 @@ endif(enable-fortran)
 #compiler options
 cmake_policy(SET CMP0005 OLD)
 include(cmake/modules/compiler.cmake)
-
-# C++-11 support (availability is tested by compiler.cmake)
-if(enable-cxx-11)
-  add_definitions("-DHAVE_CXX11")
-endif(enable-cxx-11)
 
 #aster
 option(enable-aster "build aster interface for mechanical behaviours" OFF)

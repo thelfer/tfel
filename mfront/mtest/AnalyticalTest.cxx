@@ -23,8 +23,8 @@ namespace mfront
 					   const std::string& v,
 					   const MTest::UTest::TestedVariable t,
 					   const unsigned short p,
-					   tfel::utilities::shared_ptr<std::map<std::string,
-										tfel::utilities::shared_ptr<Evolution> > > evm_,
+					   std::shared_ptr<std::map<std::string,
+										std::shared_ptr<Evolution> > > evm_,
 					   const real eps_)
     : f(f_),
       name(v),
@@ -45,9 +45,7 @@ namespace mfront
 			     const unsigned int)
   {
     using namespace std;
-    using namespace tfel::utilities;
     using tfel::tests::TestResult;
-    using tfel::utilities::shared_ptr;
     vector<string>::const_iterator p;
     for(p=this->vnames.begin();p!=this->vnames.end();++p){
       if(*p=="t"){

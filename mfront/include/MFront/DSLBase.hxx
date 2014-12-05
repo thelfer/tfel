@@ -20,7 +20,7 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/AbstractDSL.hxx"
@@ -139,9 +139,9 @@ namespace mfront
        */
       CodeBlockParserOptions();
       //! modifier applied to variables
-      tfel::utilities::shared_ptr<VariableModifier> modifier;
+      std::shared_ptr<VariableModifier> modifier;
       //! analyser applied to variables
-      tfel::utilities::shared_ptr<WordAnalyser> analyser;
+      std::shared_ptr<WordAnalyser> analyser;
       //! delimeter marking the beginning of the block to be read
       std::string delim1;
       //! delimeter marking the end of the block to be read

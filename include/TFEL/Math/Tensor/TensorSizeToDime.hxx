@@ -56,7 +56,7 @@ namespace tfel{
     template<>
     struct TensorDimeToSize<1u>
     {
-      static const unsigned short value = 3u;
+      static constexpr unsigned short value = 3u;
     };
 
     /*!
@@ -65,7 +65,7 @@ namespace tfel{
     template<>
     struct TensorDimeToSize<2u>
     {
-      static const unsigned short value = 5u;
+      static constexpr unsigned short value = 5u;
     };
 
     /*!
@@ -74,7 +74,7 @@ namespace tfel{
     template<>
     struct TensorDimeToSize<3u>
     {
-      static const unsigned short value = 9u;
+      static constexpr unsigned short value = 9u;
     };
 
     /*!
@@ -83,7 +83,7 @@ namespace tfel{
     template<>
     struct TensorSizeToDime<3u>
     {
-      static const unsigned short value = 1u;
+      static constexpr unsigned short value = 1u;
     };
 
     /*!
@@ -92,7 +92,7 @@ namespace tfel{
     template<>
     struct TensorSizeToDime<5u>
     {
-      static const unsigned short value = 2u;
+      static constexpr unsigned short value = 2u;
     };
 
     /*!
@@ -101,7 +101,7 @@ namespace tfel{
     template<>
     struct TensorSizeToDime<9u>
     {
-      static const unsigned short value = 3u;
+      static constexpr unsigned short value = 3u;
     };
 
   } // end of namespace math

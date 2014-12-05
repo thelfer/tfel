@@ -101,7 +101,7 @@ namespace tfel{
 	  // const T I3 = (T(2)*v[0]*v[1]*v[2]+cste*v[3]*v[4]*v[5]-v[2]*v[3]*v[3]-v[1]*v[4]*v[4]-v[0]*v[5]*v[5])*one_ha
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  static const T M_1_SQRT2 = 1/std::sqrt(static_cast<T>(2));
+	  static constexpr T M_1_SQRT2 = 1/std::sqrt(static_cast<T>(2));
 	  const T one_half  = T(1)/T(2);
 	  const T one_third = T(1)/T(3);
 	  stensor<3u,T> s(v);
@@ -149,7 +149,7 @@ namespace tfel{
 	// {
 	//   TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	//   TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	//   static const T M_1_SQRT2 = 1/std::sqrt(static_cast<T>(2));
+	//   static constexpr T M_1_SQRT2 = 1/std::sqrt(static_cast<T>(2));
 	//   const T one_half = T(1)/T(2);
 	//   const T p3 = -1.;
 	//   const T p2 = v[0]+v[1]+v[2];

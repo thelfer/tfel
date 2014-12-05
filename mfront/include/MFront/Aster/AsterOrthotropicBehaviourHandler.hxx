@@ -60,9 +60,9 @@ namespace aster
     //! a simple alias
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
     // spatial dimension
-    static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
+    static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
     // the dispatch
-    typedef typename tfel::meta::IF<N==2,
+    typedef typename std::conditional<N==2,
 				    AsterOrthotropicSmallStrainBehaviourHandler2D<H,Behaviour>,
 				    AsterOrthotropicSmallStrainBehaviourHandler3D<H,Behaviour> >::type type;
   }; // end of struct AsterOrthotropicSmallStrainBehaviourDispatcher;
@@ -79,9 +79,9 @@ namespace aster
     //! a simple alias
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
     // spatial dimension
-    static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
+    static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
     // the dispatch
-    typedef typename tfel::meta::IF<N==2,
+    typedef typename std::conditional<N==2,
 				    AsterOrthotropicFiniteStrainBehaviourHandler2D<H,Behaviour>,
 				    AsterOrthotropicFiniteStrainBehaviourHandler3D<H,Behaviour> >::type type;
   }; // end of struct AsterOrthotropicFiniteStrainBehaviourDispatcher;
@@ -144,7 +144,7 @@ namespace aster
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;
@@ -188,7 +188,7 @@ namespace aster
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;
@@ -247,7 +247,7 @@ namespace aster
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;
@@ -303,7 +303,7 @@ namespace aster
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;
@@ -372,7 +372,7 @@ namespace aster
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;
@@ -416,7 +416,7 @@ namespace aster
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;
@@ -476,7 +476,7 @@ namespace aster
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;
@@ -532,7 +532,7 @@ namespace aster
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
 	typename AsterBehaviourHandler::template Integrator<bs,ba>,
 	typename AsterBehaviourHandler::Error>::type Handler;

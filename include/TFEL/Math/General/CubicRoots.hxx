@@ -24,7 +24,7 @@
 
 #include"TFEL/Utilities/Info.hxx"
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 
 #include"TFEL/TypeTraits/IsReal.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
@@ -98,7 +98,7 @@ namespace tfel{
        */
       template<typename T>
       static TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsReal<T>::cond &&
         tfel::typetraits::IsFundamentalNumericType<T>::cond,
 	unsigned short
@@ -111,14 +111,14 @@ namespace tfel{
 		 const T a1,
 		 const T a0)
       {	
-	static const T C_1_2      = T(1)/T(2);
-	static const T C_1_3      = T(1)/T(3);
-	static const T C_2_3      = T(2)*C_1_3;
-	static const T C_m1_27    = T(-1)/T(27);
-	static const T C_2_27     = T(2)/T(27);
-	static const T C_27_2     = T(27)/T(2);
-	static const T C_3SQRT3_2 = std::sqrt(T(3))*T(3)/T(2);
-	static const T C_SQRT3_3  = std::sqrt(T(3))*C_1_3;
+	static constexpr T C_1_2      = T(1)/T(2);
+	static constexpr T C_1_3      = T(1)/T(3);
+	static constexpr T C_2_3      = T(2)*C_1_3;
+	static constexpr T C_m1_27    = T(-1)/T(27);
+	static constexpr T C_2_27     = T(2)/T(27);
+	static constexpr T C_27_2     = T(27)/T(2);
+	static constexpr T C_3SQRT3_2 = std::sqrt(T(3))*T(3)/T(2);
+	static constexpr T C_SQRT3_3  = std::sqrt(T(3))*C_1_3;
       
 	const T prec = 100*std::numeric_limits<T>::min();
       
@@ -233,7 +233,7 @@ namespace tfel{
        */
       template<typename T>
       static TFEL_MATH_INLINE2 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsReal<T>::cond &&
         tfel::typetraits::IsFundamentalNumericType<T>::cond,
 	unsigned short

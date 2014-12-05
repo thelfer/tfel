@@ -17,7 +17,7 @@
 #include<map>
 #include<string>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"MTest/MTestConfig.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
@@ -31,7 +31,7 @@ namespace mfront
   struct AccelerationAlgorithmFactory
   {
     //! a simple alias
-    typedef tfel::utilities::shared_ptr<AccelerationAlgorithm> (* constructor)(void);
+    typedef std::shared_ptr<AccelerationAlgorithm> (* constructor)(void);
     /*!
      * \return the uniq instance of the acceleration algorithm
      */
@@ -41,7 +41,7 @@ namespace mfront
      * \return the requested algorithm
      * \param[in] a : algorithm name
      */
-    tfel::utilities::shared_ptr<AccelerationAlgorithm>
+    std::shared_ptr<AccelerationAlgorithm>
     getAlgorithm(const std::string&) const;
     /*!
      * \param[in] a : algorithm name 

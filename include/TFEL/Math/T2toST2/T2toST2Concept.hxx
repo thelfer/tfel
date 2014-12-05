@@ -19,10 +19,10 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
@@ -39,7 +39,7 @@ namespace tfel{
     template<class T>
     struct T2toST2Traits{
       typedef tfel::meta::InvalidType NumType;
-      static const unsigned short dime = 0u;
+      static constexpr unsigned short dime = 0u;
     };
 
     /*!
@@ -65,8 +65,8 @@ namespace tfel{
     private:
 
       typedef T2toST2Traits<T> traits;
-      static const bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename tfel::meta::IF<isTemporary,
+      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
+      typedef typename std::conditional<isTemporary,
 				      typename traits::NumType,
 				      const typename traits::NumType&>::type ValueType;
 
@@ -95,7 +95,7 @@ namespace tfel{
     };
 
     template<typename T2toST2Type>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond,
       typename tfel::typetraits::AbsType<typename T2toST2Traits<T2toST2Type>::NumType>::type
     >::type
@@ -121,7 +121,7 @@ namespace tfel{
    	     typename StensorType,
    	     typename TensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -160,7 +160,7 @@ namespace tfel{
    	     typename StensorType,
    	     typename TensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -199,7 +199,7 @@ namespace tfel{
    	     typename StensorType,
    	     typename TensorType>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -231,7 +231,7 @@ namespace tfel{
    	     typename StensorType,
    	     typename TensorType>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -262,7 +262,7 @@ namespace tfel{
    	     typename StensorType,
    	     typename TensorType>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&

@@ -37,7 +37,7 @@ namespace tfel
     struct PolyCrystalsSlidingSystems
     {
       //! number of sliding systems of the mono crystal
-      static const unsigned short Nss = GS::Nss;
+      static constexpr unsigned short Nss = GS::Nss;
       //! a simple alias
       typedef NumType real;
       //! a simple alias

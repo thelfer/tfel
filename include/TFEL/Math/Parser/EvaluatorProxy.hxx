@@ -44,10 +44,10 @@ namespace tfel
     namespace parser
     {
     
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunction1P1VGenerator(EvaluatorProxyFunctionPtr1P1V,
 				     const std::vector<std::string>&,
-				     std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >&);
+				     std::vector<std::shared_ptr<tfel::math::parser::Expr> >&);
 
       template<EvaluatorProxyFunctionPtr1V>
       struct TFEL_VISIBILITY_LOCAL EvaluatorProxy

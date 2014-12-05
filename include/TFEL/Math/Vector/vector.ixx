@@ -114,7 +114,7 @@ namespace tfel{
 
     template<typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       vector<T>&
     >::type
@@ -132,7 +132,7 @@ namespace tfel{
 
     template<typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       vector<T>&
     >::type
@@ -150,7 +150,7 @@ namespace tfel{
 
     template<typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       vector<T>&
     >::type
@@ -184,7 +184,7 @@ namespace tfel{
 
     template<typename T>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond,
       typename tfel::typetraits::RealPartType<T>::type
     >::type

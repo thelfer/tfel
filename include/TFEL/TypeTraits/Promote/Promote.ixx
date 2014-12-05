@@ -14,9 +14,9 @@
 #ifndef _LIB_TFEL_PROMOTE_IXX_
 #define _LIB_TFEL_PROMOTE_IXX_ 
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-#include"TFEL/Metaprogramming/IsSameType.hxx"
+#include<type_traits>
 
 /*!
  * \def    TFEL_MATH_CHOOSETYPE
@@ -82,7 +82,7 @@ namespace tfel{
 	/*!
 	 * The result
 	 */
-	typedef typename tfel::meta::IF<((std::numeric_limits<A>::max_exponent10 < std::numeric_limits<B>::max_exponent10 ) || 
+	typedef typename std::conditional<((std::numeric_limits<A>::max_exponent10 < std::numeric_limits<B>::max_exponent10 ) || 
 									((std::numeric_limits<A>::max_exponent10 == std::numeric_limits<B>::max_exponent10)&&
 									 (std::numeric_limits<A>::digits <= std::numeric_limits<B>::digits))),B,A>::type type;
 
@@ -163,7 +163,7 @@ namespace tfel{
 	/*!
 	 * Check if int is greater than short (!)
 	 */
-	TFEL_STATIC_ASSERT((tfel::meta::IsSameType<PromoteNumericsGreater_<short,int>::type,int>::cond));
+	TFEL_STATIC_ASSERT((std::is_same<PromoteNumericsGreater_<short,int>::type,int>::value));
 	/*!
 	 * The result
 	 */
@@ -179,7 +179,7 @@ namespace tfel{
 	/*!
 	 * Check if unsigned int is greater than unsigned short (!)
 	 */
-	TFEL_STATIC_ASSERT((tfel::meta::IsSameType<PromoteNumericsGreater_<unsigned short,unsigned int>::type,unsigned int>::cond));
+	TFEL_STATIC_ASSERT((std::is_same<PromoteNumericsGreater_<unsigned short,unsigned int>::type,unsigned int>::value));
 	/*!
 	 * The result
 	 */
@@ -195,7 +195,7 @@ namespace tfel{
 	/*!
 	 * Check if long int is greater than int (!)
 	 */
-	TFEL_STATIC_ASSERT((tfel::meta::IsSameType<PromoteNumericsGreater_<int,long int>::type,long int>::cond));
+	TFEL_STATIC_ASSERT((std::is_same<PromoteNumericsGreater_<int,long int>::type,long int>::value));
 	/*!
 	 * The result
 	 */
@@ -211,7 +211,7 @@ namespace tfel{
 	/*!
 	 * Check if long unsigned int is greater than unsigned int (!)
 	 */
-	TFEL_STATIC_ASSERT((tfel::meta::IsSameType<PromoteNumericsGreater_<unsigned int,long unsigned int>::type,long unsigned int>::cond));
+	TFEL_STATIC_ASSERT((std::is_same<PromoteNumericsGreater_<unsigned int,long unsigned int>::type,long unsigned int>::value));
 	/*!
 	 * The result
 	 */
@@ -228,7 +228,7 @@ namespace tfel{
 	 * Check if float is greater than long int
 	 * \warning this was false under cygwin
 	 */
-	TFEL_STATIC_ASSERT((tfel::meta::IsSameType<PromoteNumericsGreater_<long int,float>::type,float>::cond));
+	TFEL_STATIC_ASSERT((std::is_same<PromoteNumericsGreater_<long int,float>::type,float>::value));
 	/*!
 	 * The result
 	 */
@@ -245,7 +245,7 @@ namespace tfel{
 	 * Check if float is greater than long unsigned int
 	 * \warning this was false under cygwin
 	 */
-	TFEL_STATIC_ASSERT((tfel::meta::IsSameType<PromoteNumericsGreater_<long unsigned int,float>::type, float>::cond));
+	TFEL_STATIC_ASSERT((std::is_same<PromoteNumericsGreater_<long unsigned int,float>::type, float>::value));
 	/*!
 	 * The result
 	 */
@@ -262,7 +262,7 @@ namespace tfel{
 	/*!
 	 * Check if double is greater than float (!)
 	 */
-	TFEL_STATIC_ASSERT((tfel::meta::IsSameType<PromoteNumericsGreater_<float,double>::type, double>::cond));
+	TFEL_STATIC_ASSERT((std::is_same<PromoteNumericsGreater_<float,double>::type, double>::value));
 	/*!
 	 * The result
 	 */
@@ -278,7 +278,7 @@ namespace tfel{
 	/*!
 	 * Check if long double is greater than double (!)
 	 */
-	TFEL_STATIC_ASSERT((tfel::meta::IsSameType<PromoteNumericsGreater_<double,long double>::type, long double>::cond));
+	TFEL_STATIC_ASSERT((std::is_same<PromoteNumericsGreater_<double,long double>::type, long double>::value));
 	/*!
 	 * The result
 	 */
@@ -343,7 +343,7 @@ namespace tfel{
 	/*!
 	 * The result
 	 */
-	typedef typename tfel::meta::IF<tfel::meta::IsSameType<typename tfel::typetraits::internals::PromoteNumericsGreater_<A,B>::type,A>::cond,A,typename ChooseType<typename Promote_<A>::type,B,true,false>::type>::type type;
+	typedef typename std::conditional<std::is_same<typename tfel::typetraits::internals::PromoteNumericsGreater_<A,B>::type,A>::value,A,typename ChooseType<typename Promote_<A>::type,B,true,false>::type>::type type;
       };
 
       /*!
@@ -356,8 +356,8 @@ namespace tfel{
 	/*!
 	 * The result
 	 */
-	typedef typename tfel::meta::IF<
-	  tfel::meta::IsSameType<typename tfel::typetraits::internals::PromoteNumericsGreater_<A,B>::type,B>::cond,B,typename ChooseType<A,typename Promote_<B>::type,false,true>::type>::type type;
+	typedef typename std::conditional<
+	  std::is_same<typename tfel::typetraits::internals::PromoteNumericsGreater_<A,B>::type,B>::value,B,typename ChooseType<A,typename Promote_<B>::type,false,true>::type>::type type;
       };
 
       TFEL_MATH_CHOOSETYPE(unsigned short);

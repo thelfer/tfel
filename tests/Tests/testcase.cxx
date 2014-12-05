@@ -58,9 +58,6 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
-  using namespace std;
-  using namespace tfel::tests;
   ofstream f("testcase.txt");
   if(!f){
     string msg("can't open file 'testproxy.txt'");

@@ -62,7 +62,7 @@ namespace tfel
 	using std::sqrt;
 	using tfel::typetraits::BaseType;
 	typedef typename BaseType<ValueType>::type real;
-	static const real cste = real(1)/sqrt(real(2));
+	static constexpr real cste = real(1)/sqrt(real(2));
 	switch(i){
 	case 0:
 	  return this->s(0);
@@ -98,9 +98,9 @@ namespace tfel
     protected:
 
       //! says if the underlying object is a temporary
-      static const bool IsTemporary = tfel::typetraits::IsTemporary<T>::cond;
+      static constexpr bool IsTemporary = tfel::typetraits::IsTemporary<T>::cond;
       //! The stensor object
-      typename tfel::meta::IF<IsTemporary,const T,const T&>::type s;
+      typename std::conditional<IsTemporary,const T,const T&>::type s;
 
     private:
 
@@ -110,7 +110,7 @@ namespace tfel
        */
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
       TFEL_STATIC_ASSERT((StensorTraits<T>::dime==N));
-      TFEL_STATIC_ASSERT((tfel::meta::IsSameType<ValueType,StensorValueType>::cond));
+      TFEL_STATIC_ASSERT((std::is_same<ValueType,StensorValueType>::value));
 
     }; // end of struct TensorExpr
 

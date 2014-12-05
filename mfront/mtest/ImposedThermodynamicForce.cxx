@@ -20,14 +20,14 @@ namespace mfront
   ImposedThermodynamicForce::ImposedThermodynamicForce(const Behaviour& b,
 								 const tfel::material::ModellingHypothesis::Hypothesis h,
 								 const std::string& cname,
-								 const tfel::utilities::shared_ptr<Evolution> s_)
+								 const std::shared_ptr<Evolution> s_)
     : sev(s_)
   {
     this->c = b.getThermodynamicForceComponentPosition(h,cname);
   } // end of ImposedThermodynamicForce::ImposedThermodynamicForce
 
   ImposedThermodynamicForce::ImposedThermodynamicForce(const unsigned short c_,
-								 const tfel::utilities::shared_ptr<Evolution> s_)
+								 const std::shared_ptr<Evolution> s_)
     : sev(s_),
       c(c_)
   {} // end of ImposedThermodynamicForce::ImposedThermodynamicForce

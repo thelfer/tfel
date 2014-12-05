@@ -58,7 +58,7 @@
       /*!		                      			    \
        *  Result	                      			    \
        */		                      			    \
-      static const bool cond = IsAssignableTo<T,X >::cond;	    \
+      static constexpr bool cond = IsAssignableTo<T,X >::cond;	    \
     };								    \
 								    \
     /*!                                       			    \
@@ -71,7 +71,7 @@
       /*!		                      			    \
        *  Result	                      			    \
        */		                      			    \
-      static const bool cond = IsAssignableTo<X,T>::cond;	    \
+      static constexpr bool cond = IsAssignableTo<X,T>::cond;	    \
     }                                                              
 
 
@@ -95,7 +95,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
     /*!                                       
@@ -107,7 +107,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
     /*!                                       
@@ -119,7 +119,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = IsReal<T>::cond;
+      static constexpr bool cond = IsReal<T>::cond;
     };
 
     /*!                                       
@@ -131,7 +131,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = IsReal<T>::cond;
+      static constexpr bool cond = IsReal<T>::cond;
     };
 
     /*!                                       
@@ -143,7 +143,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = IsComplex<T>::cond;
+      static constexpr bool cond = IsComplex<T>::cond;
     };
 
     /*!                                       
@@ -155,7 +155,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = IsComplex<T>::cond;
+      static constexpr bool cond = IsComplex<T>::cond;
     };
 
     /*!                                       
@@ -167,7 +167,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
     /*!                                       
@@ -179,7 +179,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
     /*!                                       
@@ -216,7 +216,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = tfel::meta::IsSameType<typename tfel::typetraits::Promote<T,T2>::type,T2>::cond;
+      static constexpr bool cond = std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T2>::value;
     };
 
     TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(unsigned short);
@@ -252,7 +252,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
     /*!                                       
@@ -269,7 +269,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
     /*!                                       
@@ -286,7 +286,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
     /*!                                       
@@ -303,7 +303,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
     /*!                                       
@@ -316,7 +316,7 @@ namespace tfel{
       /*!		                      
        *  Result	                      
        */		                      
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
     TFEL_MATH_QT_BASE_TYPE(unsigned short);

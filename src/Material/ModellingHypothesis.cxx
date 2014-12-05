@@ -25,7 +25,7 @@ namespace tfel
     ModellingHypothesis::getModellingHypotheses(void)
     {
       using namespace std;
-      static const Hypothesis h[7u] = {AXISYMMETRICALGENERALISEDPLANESTRAIN,
+      static constexpr Hypothesis h[7u] = {AXISYMMETRICALGENERALISEDPLANESTRAIN,
 				       AXISYMMETRICALGENERALISEDPLANESTRESS,
 				       AXISYMMETRICAL,
 				       PLANESTRESS,

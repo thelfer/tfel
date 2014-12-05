@@ -69,8 +69,8 @@ namespace tfel{
 	     typename Op>
     struct IsTVectorScalarOperationValid
     {
-      static const bool cond = tfel::typetraits::IsScalar<T2>::cond&&
-        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond;
+      static constexpr bool cond = tfel::typetraits::IsScalar<T2>::cond&&
+        std::is_same<typename ResultType<T,T2,OpMult>::type,T>::value;
     }; // end of struct IsTVectorScalarOperationValid
 
     /*!
@@ -89,7 +89,7 @@ namespace tfel{
        */
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
 	>::type
@@ -98,7 +98,7 @@ namespace tfel{
       // Assignement operator
       template<typename T2>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
 	>::type
@@ -107,7 +107,7 @@ namespace tfel{
       // Assignement operator
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
 	>::type
@@ -116,7 +116,7 @@ namespace tfel{
       // Assignement operator
       template<typename T2>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
 	>::type
@@ -125,7 +125,7 @@ namespace tfel{
       // Assignement operator
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
 	>::type
@@ -135,7 +135,7 @@ namespace tfel{
       template<typename T2>
       TFEL_MATH_INLINE
       typename 
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
 	>::type
@@ -146,7 +146,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	IsTVectorScalarOperationValid<T,T2,OpMult>::cond,
 	Child&
       >::type
@@ -157,7 +157,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	IsTVectorScalarOperationValid<T,T2,OpDiv>::cond,
 	Child&
       >::type
@@ -300,7 +300,7 @@ namespace tfel{
     template<unsigned short N, typename T,
 	     typename OutputIterator>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond,
       void>::type
     exportToBaseTypeArray(const tvector<N,T>&,
@@ -406,7 +406,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = IsAssignableTo<T2,T>::cond;
+      static constexpr bool cond = IsAssignableTo<T2,T>::cond;
     };
 
   } // end of namespace typetraits

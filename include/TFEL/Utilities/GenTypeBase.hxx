@@ -23,7 +23,7 @@
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/TypeList.hxx"
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/Utilities/RecursiveUnion.hxx"
 #include"TFEL/Utilities/GenTypeCastError.hxx"
 
@@ -85,7 +85,7 @@ namespace tfel{
       class AlignedPOD
       {
 	//! maximum of all the sizes of the list.
-	static const size_t size = tfel::meta::TLMaxSize<TList>::value;
+	static constexpr size_t size = tfel::meta::TLMaxSize<TList>::value;
 	//! a simple alias.
 	typedef tfel::meta::TLComputeAlignBound<TypesOfAllAlignments,size> CABounds;
 	//! a list of types whose size may serve to compute the alignement.
@@ -108,7 +108,7 @@ namespace tfel{
 	 * a boolean saying if the type in argument is a plain old
 	 * data type.
 	 */ 
-	static const bool isFundamentalType = false;
+	static constexpr bool isFundamentalType = false;
       };
 
       //! a helper function for destroying a plain old data type.
@@ -221,7 +221,7 @@ namespace tfel{
 	//! a simple alias.
 	typedef typename tfel::meta::TLFindNthElt<List,N-1>::type Current;
 	//! choose the function used to destroy the N-1 type of the typelist.
-	typedef typename tfel::meta::IF<GenTypeTraits<Current>::isFundamentalType,
+	typedef typename std::conditional<GenTypeTraits<Current>::isFundamentalType,
 					GenTypePODDestroy<Current>,
 					GenTypeGenericDestroy<Current> >::type GenTypeDestroy; 
       };
@@ -329,7 +329,7 @@ namespace tfel{
       template<typename T1>
       TFEL_INLINE
       GenTypeBase(const T1& v,
-		  typename tfel::meta::EnableIf<
+		  typename std::enable_if<
 		  tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 		  bool>::type = true)
 	: index(tfel::meta::TLSize<List>::value)
@@ -415,7 +415,7 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	void >::type 
       set(const T1& src)
@@ -448,7 +448,7 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	GenTypeBase&>::type 
       operator=(const T1& src)
@@ -457,7 +457,7 @@ namespace tfel{
 	return *this;
       }
       template<typename T1>
-      typename tfel::meta::EnableIf<tfel::meta::TLCountNbrOfT<T1,List>::value==1,
+      typename std::enable_if<tfel::meta::TLCountNbrOfT<T1,List>::value==1,
 				    bool>::type
       is() const
       {
@@ -472,7 +472,7 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	const T1& >::type 
       get(void) const
@@ -499,7 +499,7 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	T1&>::type 
       get(void)
@@ -538,14 +538,14 @@ namespace tfel{
 	}
       }
       //! number of object that the GenType can hold
-      static const unsigned short ListSize = tfel::meta::TLSize<List>::value;
+      static constexpr unsigned short ListSize = tfel::meta::TLSize<List>::value;
       //! a simple alias.
       typedef tfel::utilities::internals::GenTypeRunTimeMethods<ListSize,List> RunTimeMethods;
     protected:
       //! RunTimeMethods used by the GenType.
       static const RunTimeMethods methods;
       //! maximum size of the types hold by the GenType.
-      static const size_t size = tfel::meta::TLMaxSize<List>::value;
+      static constexpr size_t size = tfel::meta::TLMaxSize<List>::value;
       //! a type properly aligned.
       typedef typename tfel::utilities::internals::AlignedPOD<List>::type Align;
       //! memory where objects are holded
@@ -556,7 +556,7 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	void >::type 
       set_uninitialised(void)

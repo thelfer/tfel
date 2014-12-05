@@ -18,7 +18,7 @@
 #include<string>
 #include<vector>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
 #include"MTest/MTestConfig.hxx"
@@ -43,8 +43,8 @@ namespace mfront
      */
     CastemEvolution(const std::string&,
 			 const std::string&,
-			 const tfel::utilities::shared_ptr<std::map<std::string,
-								    tfel::utilities::shared_ptr<Evolution> > >&);
+			 const std::shared_ptr<std::map<std::string,
+								    std::shared_ptr<Evolution> > >&);
     /*!
      * \return the value of the CastemEvolution
      * at the given time
@@ -67,8 +67,8 @@ namespace mfront
     virtual ~CastemEvolution();
   protected:
     //! externally defined evolutions
-    tfel::utilities::shared_ptr<std::map<std::string,
-					 tfel::utilities::shared_ptr<Evolution> > > evm;
+    std::shared_ptr<std::map<std::string,
+					 std::shared_ptr<Evolution> > > evm;
     //! the castem function
     tfel::system::CastemFunctionPtr f;
     //! names of the variables

@@ -30,7 +30,7 @@
 #include"MFront/ModelInterfaceProxy.hxx"
 #include"MFront/LicosModelInterface.hxx"
 
-static const unsigned short TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY = 8;
+static constexpr unsigned short TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY = 8;
 
 namespace mfront{
 
@@ -442,7 +442,7 @@ namespace mfront{
 	  this->headerFile << "#line " << p2->lineNumber << " \"" 
 			   << fdata.fileName << "\"\n";
 	}
-	this->headerFile << "static const " << getVariableType(p2->type) << " " << p2->name << ";" << endl;
+	this->headerFile << "static constexpr " << getVariableType(p2->type) << " " << p2->name << ";" << endl;
       }
       this->headerFile << endl;
     }
@@ -869,7 +869,7 @@ namespace mfront{
     this->srcFile << "using namespace pleiades::glossary;\n";
     this->srcFile << "using namespace pleiades::parser;\n";
     this->srcFile << "using namespace pleiades::coupling;\n";
-    this->srcFile << "static const string ValidParametersNames[] = {";
+    this->srcFile << "static constexpr string ValidParametersNames[] = {";
     this->srcFile << "\"domain\",\"domains\",\"Active\",\n"
 		  << "\"ActivatingEvents\",\"DesactivatingEvents\"";
     specializedParametersNumber=5u;

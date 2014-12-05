@@ -18,8 +18,8 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
+#include<type_traits>
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/UnaryResultType.hxx"
@@ -38,7 +38,7 @@ namespace tfel{
       /*
        * minimal dimension of the argument.
        */
-      static const unsigned short dimension = N; 
+      static constexpr unsigned short dimension = N; 
       /*
        * variables list
        */
@@ -52,7 +52,7 @@ namespace tfel{
 
        template<unsigned short M,typename T>
        TFEL_MATH_INLINE
-       typename tfel::meta::EnableIf<
+       typename std::enable_if<
 	 (M>=N),
 	   T>::type
        operator()(const tvector<M,T>&) const;
@@ -66,7 +66,7 @@ namespace tfel{
 
       template<unsigned short M,typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	(M>=1u),
 	 T>::type
       operator()(const tvector<M,T>& v) const
@@ -76,7 +76,7 @@ namespace tfel{
       
       template<typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T>::cond,
 	T>::type
       operator()(const T s) const
@@ -91,7 +91,7 @@ namespace tfel{
     {
       typedef tfel::meta::InvalidType InvalidType;
     public:
-      typedef typename tfel::meta::IF<(M>=N),T,InvalidType>::type type;
+      typedef typename std::conditional<(M>=N),T,InvalidType>::type type;
     };
 
     template<typename Scal>

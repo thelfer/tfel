@@ -116,7 +116,7 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
 							     typename T2toST2Traits<T2toST2Type>::NumType>::cond));
-	static const value_type sqrt2 = std::sqrt(value_type(2));
+	static constexpr value_type sqrt2 = std::sqrt(value_type(2));
 	const value_type zero(0);
 	this->v[0]  = 2*F[0];
 	this->v[1]  = this->v[2] = this->v[3] = zero;
@@ -183,7 +183,7 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
 							     typename T2toST2Traits<T2toST2Type>::NumType>::cond));
-	static const value_type sqrt2 = std::sqrt(value_type(2));
+	static constexpr value_type sqrt2 = std::sqrt(value_type(2));
 	const value_type zero(0);
 	this->v[0]  = 2*F[0];
 	this->v[1]  = this->v[2] = this->v[3] = zero;

@@ -27,7 +27,7 @@
 #include<utility>
 #include<vector>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Math/LevenbergMarquardt.hxx"
 #include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardtEvaluatorWrapper.hxx"
@@ -36,7 +36,6 @@ int main(void)
 {
 #if  __GNUC__ != 3
   using namespace std;
-  using namespace tfel::utilities;
   using namespace tfel::math;
   using tfel::math::vector;
   typedef LevenbergMarquardtEvaluatorWrapper EvaluatorWrapper;

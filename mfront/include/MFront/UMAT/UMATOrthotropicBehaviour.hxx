@@ -36,7 +36,7 @@ namespace umat
     // 6 elastic coefficients
     //   mass density
     // 3 thermal expansion coefficients
-    static const unsigned short value = 10u;
+    static constexpr unsigned short value = 10u;
   }; // end of struct UMATOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,1u>
 
   template<>
@@ -47,7 +47,7 @@ namespace umat
     // 2 components of direction
     //   mass density
     // 3 thermal expansion coefficients
-    static const unsigned short value = 13u;
+    static constexpr unsigned short value = 13u;
   }; // end of struct UMATOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,2u>
 
   template<>
@@ -58,7 +58,7 @@ namespace umat
     // 6 components of direction
     //   mass density
     // 3 thermal expansion coefficients
-    static const unsigned short value = 19u;
+    static constexpr unsigned short value = 19u;
   }; // end of struct UMATOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,3u>
 
 } // end of namespace umat

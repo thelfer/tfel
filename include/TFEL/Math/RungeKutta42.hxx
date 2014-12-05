@@ -15,7 +15,7 @@
 #ifndef _LIB_TFEL_RUNGEKUTTA42_HXX_
 #define _LIB_TFEL_RUNGEKUTTA42_HXX_ 
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Math/tvector.hxx"
 
 namespace tfel{
@@ -27,7 +27,7 @@ namespace tfel{
 	     typename Scalar = double>
     struct RungeKutta42
     {
-      typedef typename tfel::meta::IF<N==1,
+      typedef typename std::conditional<N==1,
 				      Scalar,
 				      tvector<N,Scalar> >::type VariableType;
       void

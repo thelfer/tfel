@@ -17,7 +17,7 @@
 #include<map>
 #include<string>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"MFront/BehaviourBrick.hxx"
 
 namespace mfront
@@ -34,7 +34,7 @@ namespace mfront
   struct BehaviourBrickFactory
   {
     //! a simple alias
-    typedef tfel::utilities::shared_ptr<BehaviourBrick> (* constructor)(AbstractBehaviourDSL&,
+    typedef std::shared_ptr<BehaviourBrick> (* constructor)(AbstractBehaviourDSL&,
 									BehaviourDescription&,
 									const BehaviourBrick::Parameters&);
     /*!
@@ -50,7 +50,7 @@ namespace mfront
      * treated
      * \param[out]    p   : parameters
      */
-    tfel::utilities::shared_ptr<BehaviourBrick>
+    std::shared_ptr<BehaviourBrick>
     get(const std::string&,
 	AbstractBehaviourDSL&,
 	BehaviourDescription&,

@@ -70,9 +70,7 @@ TFEL_TESTS_GENERATE_PROXY(STensorTest6,"STensorTest6");
 
 int main(void){
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("stensor6.xml");

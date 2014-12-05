@@ -20,7 +20,7 @@
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/General/StorageTraits.hxx"
@@ -34,7 +34,7 @@ namespace tfel{
     // Assignement operator
     template<typename Child>
     template<typename T2toST2Type>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
       T2toST2Traits<Child>::dime==T2toST2Traits<T2toST2Type>::dime &&
       tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
@@ -51,7 +51,7 @@ namespace tfel{
 
     template<typename Child>
     template<typename T2toST2Type>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
       T2toST2Traits<Child>::dime==T2toST2Traits<T2toST2Type>::dime &&
       tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
@@ -69,7 +69,7 @@ namespace tfel{
     // Assignement operator
     template<typename Child>
     template<typename T2toST2Type>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
       T2toST2Traits<Child>::dime==T2toST2Traits<T2toST2Type>::dime &&
       tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
@@ -87,9 +87,9 @@ namespace tfel{
     // *= operator
     template<typename Child>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<typename T2toST2Traits<Child>::NumType,
+      std::is_same<typename ResultType<typename T2toST2Traits<Child>::NumType,
 						 T2,OpMult>::type,
 			     typename T2toST2Traits<Child>::NumType>::cond,
       Child&>::type
@@ -105,9 +105,9 @@ namespace tfel{
     // /= operator
     template<typename Child>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<typename T2toST2Traits<Child>::NumType,
+      std::is_same<typename ResultType<typename T2toST2Traits<Child>::NumType,
 						 T2,OpDiv>::type,
 			     typename T2toST2Traits<Child>::NumType>::cond,
       Child&>::type

@@ -24,10 +24,10 @@ namespace mfront
 {
 
   template<typename T>
-  static tfel::utilities::shared_ptr<NonLinearSystemSolver>
+  static std::shared_ptr<NonLinearSystemSolver>
   buildSolverConstructor(void)
   {
-    return tfel::utilities::shared_ptr<NonLinearSystemSolver>(new T());
+    return std::shared_ptr<NonLinearSystemSolver>(new T());
   } // end of buildAlgoritmConstructor
 
   NonLinearSystemSolverFactory&
@@ -37,7 +37,7 @@ namespace mfront
     return factory;
   }
   
-  tfel::utilities::shared_ptr<NonLinearSystemSolver>
+  std::shared_ptr<NonLinearSystemSolver>
   NonLinearSystemSolverFactory::getSolver(const std::string& a) const
   {
     using namespace std;

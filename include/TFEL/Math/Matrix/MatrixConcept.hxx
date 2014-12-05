@@ -19,7 +19,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 
 #include"TFEL/Math/General/ResultType.hxx"
@@ -91,8 +91,8 @@ namespace tfel{
        * A simple typedef.
        */
       typedef MatrixTraits<T> traits;
-      static const bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename tfel::meta::IF<isTemporary,
+      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
+      typedef typename std::conditional<isTemporary,
 				      typename traits::NumType,
 				      const typename traits::NumType&>::type ValueType;
 

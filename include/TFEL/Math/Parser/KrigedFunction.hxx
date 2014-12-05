@@ -22,7 +22,7 @@
 #include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Math/Kriging.hxx"
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
 
@@ -75,19 +75,19 @@ namespace tfel
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const;
 
-	virtual tfel::utilities::shared_ptr<ExternalFunction>
+	virtual std::shared_ptr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const;
 
-	virtual	tfel::utilities::shared_ptr<ExternalFunction>
+	virtual	std::shared_ptr<ExternalFunction>
 	differentiate(const std::string&) const;
 
-	virtual	tfel::utilities::shared_ptr<ExternalFunction>
+	virtual	std::shared_ptr<ExternalFunction>
 	resolveDependencies(void) const;
 
-	virtual tfel::utilities::shared_ptr<ExternalFunction>
+	virtual std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
 
-	virtual tfel::utilities::shared_ptr<ExternalFunction>
+	virtual std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 							const std::vector<double>&,
 							const std::vector<std::string>&,
@@ -106,7 +106,7 @@ namespace tfel
 	TFEL_VISIBILITY_LOCAL KrigedFunction&
 	operator = (const KrigedFunction&);
 
-	tfel::utilities::shared_ptr<tfel::math::Kriging<N> > k;
+	std::shared_ptr<tfel::math::Kriging<N> > k;
 
 	Variable v;
 

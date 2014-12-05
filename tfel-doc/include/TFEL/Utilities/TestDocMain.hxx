@@ -18,7 +18,7 @@
 #include<ostream>
 #include<fstream>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 
 namespace tfel{
@@ -89,7 +89,7 @@ namespace tfel{
 
       bool split;
 
-      tfel::utilities::shared_ptr<std::ostream> logptr;
+      std::shared_ptr<std::ostream> logptr;
 
     }; // end of struct TestDocMain
     

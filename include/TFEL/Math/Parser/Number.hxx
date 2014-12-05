@@ -31,16 +31,16 @@ namespace tfel
 	Number(const double);
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	tfel::utilities::shared_ptr<Expr>
+	std::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const;
-	tfel::utilities::shared_ptr<Expr>
+	std::shared_ptr<Expr>
 	clone(const std::vector<double>&) const;
-	tfel::utilities::shared_ptr<Expr>
+	std::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
-	tfel::utilities::shared_ptr<Expr>
+	std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,

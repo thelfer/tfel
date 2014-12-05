@@ -246,7 +246,7 @@ namespace tfel{
 	       typename T>
       struct computeAlteredElasticStiffness
       {
-	static const unsigned short N =
+	static constexpr unsigned short N =
 	  ModellingHypothesisToSpaceDimension<H>::value;
 	static void exe(typename tfel::config::Types<N,T,true>::StiffnessTensor& D,
 			const typename tfel::config::Types<N,T,true>::stress lambda, 

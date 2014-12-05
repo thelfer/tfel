@@ -12,6 +12,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
 #include"TFEL/Math/Evaluator.hxx"
 
 namespace tfel
@@ -23,7 +24,7 @@ namespace tfel
     Evaluator::TLogicalExpr::~TLogicalExpr()
     {} // end of Evaluator::TLogicalExpr::~TLogicalExpr
 
-    Evaluator::TNegLogicalExpr::TNegLogicalExpr(const tfel::utilities::shared_ptr<Evaluator::TLogicalExpr > e_)
+    Evaluator::TNegLogicalExpr::TNegLogicalExpr(const std::shared_ptr<Evaluator::TLogicalExpr > e_)
       : e(e_)
     {} // end of Evaluator::TNegLogicalExpr::TNegLogicalExpr
 
@@ -32,17 +33,16 @@ namespace tfel
       this->e->reduce();
     } // end of Evaluator::TNegLogicalExpr::reduce
     
-    tfel::utilities::shared_ptr<tfel::math::parser::LogicalExpr>
+    std::shared_ptr<tfel::math::parser::LogicalExpr>
     Evaluator::TNegLogicalExpr::analyse(void){
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<LogicalExpr>(new NegLogicalExpression(this->e->analyse()));
+      return std::shared_ptr<LogicalExpr>(new NegLogicalExpression(this->e->analyse()));
     } // end of struct Evaluator::TNegLogicalExpr
 
     Evaluator::TNegLogicalExpr::~TNegLogicalExpr()
     {} // end of Evaluator::TNegLogicalExpr::~TNegLogicalExpr()
 
-    Evaluator::TNegation::TNegation(tfel::utilities::shared_ptr<Evaluator::TExpr> e)
+    Evaluator::TNegation::TNegation(std::shared_ptr<Evaluator::TExpr> e)
       : expr(e)
     {} // end of Evaluator::TNegation::TNegation
 
@@ -52,12 +52,11 @@ namespace tfel
       return false;
     }
     
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TNegation::analyse(void)
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<Expr>(new Negation(this->expr->analyse()));
+      return std::shared_ptr<Expr>(new Negation(this->expr->analyse()));
     }
     
     std::string
@@ -101,20 +100,19 @@ namespace tfel
       return "Evaluator::TOperator";
     } // end of Evaluator::TOperator::getClassName(void) const
     
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TOperator::analyse(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       string msg("Evaluator::TOperator : invalid call");
       throw(runtime_error(msg));
-      return shared_ptr<Expr>(static_cast<Expr*>(0));
+      return std::shared_ptr<Expr>(static_cast<Expr*>(0));
     } // end of Evaluator::TOperator::analyse(void)
 
-    Evaluator::TBinaryOperation::TBinaryOperation(tfel::utilities::shared_ptr<Evaluator::TExpr> a_,
-						  const tfel::utilities::shared_ptr<TOperator>op_,
-						  tfel::utilities::shared_ptr<Evaluator::TExpr> b_)
+    Evaluator::TBinaryOperation::TBinaryOperation(std::shared_ptr<Evaluator::TExpr> a_,
+						  const std::shared_ptr<TOperator>op_,
+						  std::shared_ptr<Evaluator::TExpr> b_)
       : a(a_), op(op_), b(b_)
     {} // end of Evaluator::TBinaryOperation::TBinaryOperation
     
@@ -137,11 +135,10 @@ namespace tfel
       b->reduce();
     } // end of Evaluator::TBinaryOperation::reduce(void)
      
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TBinaryOperation::analyse(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       if(op->getOperatorType()=="+"){
 	return shared_ptr<Expr>(new BinaryOperation<OpPlus>(a->analyse(),b->analyse()));
@@ -191,12 +188,11 @@ namespace tfel
     Evaluator::TVariable::reduce(void)
     {}
 
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TVariable::analyse(void)
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<Expr>(new Variable(this->vars,this->pos));
+      return std::shared_ptr<Expr>(new Variable(this->vars,this->pos));
     }  
 
     bool
@@ -206,7 +202,7 @@ namespace tfel
     }
     
     void
-    Evaluator::TGroup::add(tfel::utilities::shared_ptr<Evaluator::TExpr>const e)
+    Evaluator::TGroup::add(std::shared_ptr<Evaluator::TExpr>const e)
     {
       this->subExpr.push_back(e);
     } // end of Evaluator::TGroup::add
@@ -215,8 +211,8 @@ namespace tfel
     Evaluator::TGroup::reduce(void)
     {
       using namespace std;
-      vector<tfel::utilities::shared_ptr<Evaluator::TExpr> >::iterator p  = this->subExpr.begin();
-      vector<tfel::utilities::shared_ptr<Evaluator::TExpr> >::iterator pe = this->subExpr.end();
+      vector<std::shared_ptr<Evaluator::TExpr> >::iterator p  = this->subExpr.begin();
+      vector<std::shared_ptr<Evaluator::TExpr> >::iterator pe = this->subExpr.end();
       while(p!=pe){
 	(*p)->reduce();
 	++p;
@@ -234,7 +230,7 @@ namespace tfel
       this->reduce("+");
     }
     
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TGroup::analyse(void)
     {
       using namespace std;
@@ -258,14 +254,11 @@ namespace tfel
     Evaluator::TGroup::reduce(const std::string& op)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       vector<shared_ptr<Evaluator::TExpr> >::iterator p  = this->subExpr.begin();
-      vector<shared_ptr<Evaluator::TExpr> >::iterator pe = this->subExpr.end();
       vector<shared_ptr<Evaluator::TExpr> >::iterator previous;
       vector<shared_ptr<Evaluator::TExpr> >::iterator next;
-      
-      while(p!=pe){
+      while(p!=this->subExpr.end()){
 	if((*p)->isOperator()){
 	  shared_ptr<TOperator> o = shared_ptr<TOperator>(new TOperator(static_cast<const TOperator &>(*(p->get()))));
 	  if(o->getOperatorType()==op){
@@ -285,8 +278,9 @@ namespace tfel
 		  throw(runtime_error(msg));
 		}
 		*next = shared_ptr<Evaluator::TExpr>(new TNegation(*next));
+		cout << "*next : " << *next << endl;
 		this->subExpr.erase(p);
-		p = this->subExpr.begin();
+		p  = this->subExpr.begin();
 	      }
 	    } else {
 	      if(next==this->subExpr.end()){
@@ -307,8 +301,12 @@ namespace tfel
 		  string msg("TGroup::reduce group three successive operators");
 		  throw(runtime_error(msg));
 		}
+		cout << "HERE" << endl;
 		*p = shared_ptr<Evaluator::TExpr>(new TNegation(*next));
+		cout << "*p : " << p->get() << endl;
+		cout << "*p : " << next->get() << endl;
 		p=this->subExpr.erase(next);
+		cout << "*p : " << next->get() << endl;
 		--p;
 	      } else {  
 		if((*next)->isOperator()){
@@ -339,7 +337,6 @@ namespace tfel
 		++next;
 		p=this->subExpr.erase(p,next);
 		--p;
-		pe=this->subExpr.end();
 	      }
 	    }
 	  }
@@ -349,7 +346,7 @@ namespace tfel
     } // end of Evaluator::TGroup::reduce
     
     Evaluator::TFunction::TFunction(Evaluator::FunctionGenerator f_,
-				    tfel::utilities::shared_ptr<Evaluator::TExpr> g_)
+				    std::shared_ptr<Evaluator::TExpr> g_)
       : f(f_), arg(g_)
     {}
     
@@ -359,7 +356,7 @@ namespace tfel
       return false;
     }
 
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TFunction::analyse(void)
     {
       return (this->f)(this->arg->analyse());
@@ -380,8 +377,8 @@ namespace tfel
     {} // end of Evaluator::TFunction::~TFunction()
 
     Evaluator::TBinaryFunction::TBinaryFunction(Evaluator::BinaryFunctionGenerator f_,
-						tfel::utilities::shared_ptr<Evaluator::TExpr> a1_,
-						tfel::utilities::shared_ptr<Evaluator::TExpr> a2_)
+						std::shared_ptr<Evaluator::TExpr> a1_,
+						std::shared_ptr<Evaluator::TExpr> a2_)
       : f(f_),arg1(a1_),arg2(a2_)
     {}
     
@@ -391,7 +388,7 @@ namespace tfel
       return false;
     }
     
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TBinaryFunction::analyse(void)
     {
       return (this->f)(this->arg1->analyse(),
@@ -429,12 +426,11 @@ namespace tfel
       return "Evaluator::TNumber";
     }
     
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TNumber::analyse(void)
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<Expr>(new tfel::math::parser::Number(value));
+      return std::shared_ptr<Expr>(new tfel::math::parser::Number(value));
     }
     
     void
@@ -442,8 +438,8 @@ namespace tfel
     {}
 
     Evaluator::TExternalFunctionExpr::TExternalFunctionExpr(const std::string& fname,
-							    std::vector<tfel::utilities::shared_ptr<Evaluator::TExpr> >& fargs,
-							    tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
+							    std::vector<std::shared_ptr<Evaluator::TExpr> >& fargs,
+							    std::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
       : name(fname),
 	args(fargs),
 	manager(m)
@@ -461,11 +457,10 @@ namespace tfel
       return "Evaluator::TExternalFunctionExpr";
     }
     
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TExternalFunctionExpr::analyse(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       vector<shared_ptr<Evaluator::TExpr> >::iterator p;
       vector<shared_ptr<Expr> > fargs;
@@ -479,15 +474,14 @@ namespace tfel
     Evaluator::TExternalFunctionExpr::reduce(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       vector<shared_ptr<Evaluator::TExpr> >::iterator p;
       for(p=this->args.begin();p!=this->args.end();++p){
 	(*p)->reduce();
       }
     }
 
-    Evaluator::TDifferentiatedFunctionExpr::TDifferentiatedFunctionExpr(tfel::utilities::shared_ptr<ExternalFunction> ff,
-									std::vector<tfel::utilities::shared_ptr<Evaluator::TExpr> >& fargs,
+    Evaluator::TDifferentiatedFunctionExpr::TDifferentiatedFunctionExpr(std::shared_ptr<ExternalFunction> ff,
+									std::vector<std::shared_ptr<Evaluator::TExpr> >& fargs,
 									const std::vector<std::vector<double>::size_type>& fvar)
       : f(ff),
 	args(fargs),
@@ -506,11 +500,10 @@ namespace tfel
       return "Evaluator::TDifferentiatedFunctionExpr";
     }
     
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TDifferentiatedFunctionExpr::analyse(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       vector<shared_ptr<Evaluator::TExpr> >::iterator p;
       vector<shared_ptr<Expr> > fargs;
@@ -524,16 +517,15 @@ namespace tfel
     Evaluator::TDifferentiatedFunctionExpr::reduce(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       vector<shared_ptr<Evaluator::TExpr> >::iterator p;
       for(p=this->args.begin();p!=this->args.end();++p){
 	(*p)->reduce();
       }
     }
 
-    Evaluator::TConditionalExpr::TConditionalExpr(tfel::utilities::shared_ptr<Evaluator::TLogicalExpr> c_,
-						  tfel::utilities::shared_ptr<Evaluator::TExpr> a_,
-						  tfel::utilities::shared_ptr<Evaluator::TExpr> b_)
+    Evaluator::TConditionalExpr::TConditionalExpr(std::shared_ptr<Evaluator::TLogicalExpr> c_,
+						  std::shared_ptr<Evaluator::TExpr> a_,
+						  std::shared_ptr<Evaluator::TExpr> b_)
       : c(c_),
 	a(a_),
 	b(b_)
@@ -559,14 +551,13 @@ namespace tfel
       this->b->reduce();
     } // end of Evaluator::TConditionalExpr::reduce
 
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TConditionalExpr::analyse(void)
     {
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
-      return shared_ptr<Expr>(new ConditionalExpr(this->c->analyse(),
-						this->a->analyse(),
-						this->b->analyse()));
+      return std::shared_ptr<Expr>(new ConditionalExpr(this->c->analyse(),
+						       this->a->analyse(),
+						       this->b->analyse()));
     } // end of Evaluator::TConditionalExpr::analyse
 
     Evaluator::TConditionalExpr::~TConditionalExpr()
@@ -574,7 +565,7 @@ namespace tfel
 
     Evaluator::TExternalOperator::TExternalOperator(const Evaluator::ExternalFunctionGenerator f_,
 						    const std::vector<std::string>& param_,
-						    std::vector<tfel::utilities::shared_ptr<Evaluator::TExpr> >& a_)
+						    std::vector<std::shared_ptr<Evaluator::TExpr> >& a_)
       : f(f_),param(param_),args(a_)
     {} // end of Evaluator::TExternalOperator::TExternalOperator
 
@@ -584,11 +575,10 @@ namespace tfel
       return false;
     } // end of Evaluator::TExternalOperator::isOperator(void) const
     
-    tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+    std::shared_ptr<tfel::math::parser::Expr>
     Evaluator::TExternalOperator::analyse(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::math::parser;
       vector<shared_ptr<Expr> > fargs;
       vector<shared_ptr<Evaluator::TExpr> >::iterator p;
@@ -602,7 +592,6 @@ namespace tfel
     Evaluator::TExternalOperator::reduce(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       vector<shared_ptr<Evaluator::TExpr> >::iterator p;
       for(p=this->args.begin();p!=this->args.end();++p){
 	(*p)->reduce();

@@ -25,7 +25,6 @@ int
 main(void)
 {
   using namespace std;
-  using namespace tfel::utilities;
   using namespace tfel::math;
   using namespace tfel::math::parser;
   vector<string> var(1,"x");

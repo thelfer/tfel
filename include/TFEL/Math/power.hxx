@@ -15,7 +15,7 @@
 #define _LIB_TFEL_MATH_POWER_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsScalar.hxx"
 
 namespace tfel{
@@ -26,7 +26,7 @@ namespace tfel{
       
       template<int N,typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T>::cond,
 	T>::type
       power(const T);
@@ -34,7 +34,7 @@ namespace tfel{
       template<int N,unsigned int D,
 	       typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T>::cond,
 	T>::type
       power(const T);

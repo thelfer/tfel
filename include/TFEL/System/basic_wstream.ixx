@@ -18,7 +18,7 @@
 #include<cstring>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 
 namespace tfel
 {
@@ -44,7 +44,7 @@ namespace tfel
     TFEL_INLINE2 void
     basic_wstream<Child,Traits>::write(int fd,const void *const buf,const size_t count)
     {
-      typedef typename tfel::meta::IF<Traits::isBlocking,
+      typedef typename std::conditional<Traits::isBlocking,
 	BlockingStreamWriter,
 	NonBlockingStreamWriter>::type Writer;
       Writer::write(fd,buf,count);

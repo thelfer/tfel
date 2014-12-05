@@ -28,9 +28,8 @@ MTest_addEvolution(mfront::MTest& t,
 		   const bool b1,
 		   const bool b2)
 {
-  using namespace tfel::utilities;
   using namespace mfront;
-  shared_ptr<Evolution> pev(new ConstantEvolution(v));
+  std::shared_ptr<Evolution> pev(new ConstantEvolution(v));
   t.addEvolution(n,pev,b1,b2);
 }
 
@@ -44,7 +43,6 @@ MTest_addEvolution2(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
   using mfront::real;
   vector<real> tv(v.size());
   vector<real> ev(v.size());
@@ -67,7 +65,7 @@ MTest_addEvolution3(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
+  using std::shared_ptr;
   shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.addEvolution(n,pev,b1,b2);
 }
@@ -78,9 +76,8 @@ MTest_setMaterialProperty(mfront::MTest& t,
 			  const mfront::real& v,
 			  const bool b)
 {
-  using namespace tfel::utilities;
   using namespace mfront;
-  shared_ptr<Evolution> pev(new ConstantEvolution(v));
+  std::shared_ptr<Evolution> pev(new ConstantEvolution(v));
   t.setMaterialProperty(n,pev,b);
 }
 
@@ -92,7 +89,6 @@ MTest_setMaterialProperty2(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
   using mfront::real;
   shared_ptr<Evolution> mpev;
   mpev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
@@ -107,7 +103,7 @@ MTest_setMaterialProperty3(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
+  using std::shared_ptr;
   shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.setMaterialProperty(n,pev,b);
 }
@@ -121,7 +117,7 @@ MTest_setCastemMaterialProperty(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
+  using std::shared_ptr;
   using mfront::real;
   shared_ptr<Evolution> mpev;
   mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
@@ -134,9 +130,8 @@ MTest_setExternalStateVariable(mfront::MTest& t,
 			       const mfront::real& v,
 			       const bool b)
 {
-  using namespace tfel::utilities;
   using namespace mfront;
-  shared_ptr<Evolution> pev(new ConstantEvolution(v));
+  std::shared_ptr<Evolution> pev(new ConstantEvolution(v));
   t.setExternalStateVariable(n,pev,b);
 }
 
@@ -149,7 +144,6 @@ MTest_setExternalStateVariable2(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
   using mfront::real;
   vector<real> tv(v.size());
   vector<real> ev(v.size());
@@ -171,7 +165,7 @@ MTest_setExternalStateVariable3(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
+  using std::shared_ptr;
   shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.setExternalStateVariable(n,pev,b);
 }
@@ -183,7 +177,7 @@ MTest_setImposedThermodynamicForce(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr; 
+  using std::shared_ptr; 
   shared_ptr<Constraint> sc;
   shared_ptr<Evolution> sev(new ConstantEvolution(v));
   sc = shared_ptr<Constraint>(new ImposedThermodynamicForce(*(t.getBehaviour()),
@@ -201,7 +195,7 @@ MTest_setImposedThermodynamicForce2(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
+  using std::shared_ptr;
   using mfront::real;
   shared_ptr<Constraint> sc;
   vector<real> tv(v.size());
@@ -293,7 +287,7 @@ MTest_setImposedDrivingVariable(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
+  using std::shared_ptr;
   shared_ptr<Constraint> sc;
   shared_ptr<Evolution> sev(new ConstantEvolution(v));
   sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),
@@ -311,7 +305,7 @@ MTest_setImposedDrivingVariable2(mfront::MTest& t,
 {
   using namespace std;
   using namespace mfront;
-  using tfel::utilities::shared_ptr;
+  using std::shared_ptr;
   using mfront::real;
   shared_ptr<Constraint> sc;
   vector<real> tv(v.size());

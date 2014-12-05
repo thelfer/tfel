@@ -55,8 +55,8 @@ namespace tfel{
 	return *this;
       }
 
-      static const bool storage_is_static   = true;
-      static const bool storage_is_external = false;
+      static constexpr bool storage_is_static   = true;
+      static constexpr bool storage_is_external = false;
 
     };
 

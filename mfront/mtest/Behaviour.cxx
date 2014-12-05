@@ -27,7 +27,7 @@ namespace mfront
 							  const real v)
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     typedef EvolutionManager::value_type MVType;
     if(evm.find(n)==evm.end()){
       if(getVerboseMode()>=VERBOSE_LEVEL2){

@@ -15,8 +15,8 @@
 #define _LIB_TFEL_MATH_FUNCTION_POWER_H_ 
 
 #include<cmath>
-#include"TFEL/Metaprogramming/IF.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
+#include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/power.hxx"
@@ -45,7 +45,7 @@ namespace tfel{
       power(void);
 
       template<int N,typename T>      			                                  
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
 	!tfel::typetraits::IsInvalid<
 	typename ComputeUnaryResult<T,Power<N> >::Result>::cond&&
       !tfel::typetraits::IsScalar<T>::cond,
@@ -54,7 +54,7 @@ namespace tfel{
       power(const T& v);
 
       template<int N,unsigned int D,typename T>
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
 	!tfel::typetraits::IsInvalid<
 	typename ComputeUnaryResult<T,Power<N,D> >::Result>::cond&&
 	!tfel::typetraits::IsScalar<T>::cond,
@@ -63,14 +63,14 @@ namespace tfel{
       power(const T& v);
 
       template<int N,typename F>
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
 	tfel::meta::Implements<F,tfel::math::FunctionConcept>::cond,
 	FunctionExpr<FunctionsCompositionExpr<tfel::math::Power<N,1u>,F> >
 	>::type                                                                             
       power(const F f);
 
       template<int N,unsigned int D,typename F>
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
 	tfel::meta::Implements<F,tfel::math::FunctionConcept>::cond,
 	FunctionExpr<tfel::math::FunctionsCompositionExpr<tfel::math::Power<N,D>,F> >
       >::type                                                                             

@@ -54,9 +54,9 @@ namespace cyrano
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	  Traits::useTimeSubStepping,
 	  typename CyranoBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	  typename CyranoBehaviourHandler::template Integrator<bs,ba>

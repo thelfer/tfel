@@ -108,9 +108,7 @@ TFEL_TESTS_GENERATE_PROXY(STensorTest9_3D,"STensorTest9-3D");
 
 int main(void){
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("stensor8.xml");

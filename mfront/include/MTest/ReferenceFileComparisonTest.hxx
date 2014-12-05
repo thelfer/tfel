@@ -18,7 +18,7 @@
 #include<string>
 
 #include"TFEL/Tests/TestResult.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Utilities/TextData.hxx"
 
@@ -41,7 +41,7 @@ namespace mfront{
      * \param[in] vp   : variable position
      * \param[in] eps : criterium value
      */
-    ReferenceFileComparisonTest(const tfel::utilities::shared_ptr<tfel::utilities::TextData>,
+    ReferenceFileComparisonTest(const std::shared_ptr<tfel::utilities::TextData>,
 				     const std::string&,
 				     const unsigned int,
 				     const MTest::UTest::TestedVariable,

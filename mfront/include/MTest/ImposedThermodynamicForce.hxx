@@ -17,7 +17,7 @@
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"MTest/MTestTypes.hxx"
 #include"MTest/MTestConfig.hxx"
@@ -46,14 +46,14 @@ namespace mfront
     ImposedThermodynamicForce(const Behaviour&,
 				   const tfel::material::ModellingHypothesis::Hypothesis,
 				   const std::string&,
-				   const tfel::utilities::shared_ptr<Evolution>);
+				   const std::shared_ptr<Evolution>);
     /*!
      * constructor
      * \param[in] c : thermodynamic force component
      * \param[in] s : thermodynamic force evolution
      */
     ImposedThermodynamicForce(const unsigned short,
-				   const tfel::utilities::shared_ptr<Evolution>);
+				   const std::shared_ptr<Evolution>);
     /*!
      * \return the number of Lagrange Multipliers
      * associated with this contraint
@@ -118,7 +118,7 @@ namespace mfront
     virtual ~ImposedThermodynamicForce();
   protected:
     //! thermodynamic force evolution
-    const tfel::utilities::shared_ptr<Evolution> sev;
+    const std::shared_ptr<Evolution> sev;
     //! component value
     unsigned short c;
   }; // end of struct ImposedThermodynamicForce

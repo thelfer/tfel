@@ -59,9 +59,9 @@ namespace cyrano
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;
       //! a simple alias
       typedef CyranoTraits<Behaviour<H,CyranoReal,false> > Traits;
-      typedef typename IF<Traits::stype==cyrano::ISOTROPIC,
-			  TreatPlaneStressIsotropicBehaviour,
-			  TreatPlaneStressOrthotropicBehaviour>::type Handler;
+      typedef typename std::conditional<Traits::stype==cyrano::ISOTROPIC,
+	TreatPlaneStressIsotropicBehaviour,
+	TreatPlaneStressOrthotropicBehaviour>::type Handler;
       CyranoInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
@@ -109,7 +109,7 @@ namespace cyrano
       typedef Behaviour<H,CyranoReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
-      typedef typename tfel::meta::IF<(NSTATV_<20),
+      typedef typename std::conditional<(NSTATV_<20),
 	tfel::math::tvector<NSTATV_,CyranoReal>,
 	tfel::math::vector<CyranoReal> >::type SVector;
       CyranoGenericPlaneStressHandler::checkNSTATV(*NSTATV);

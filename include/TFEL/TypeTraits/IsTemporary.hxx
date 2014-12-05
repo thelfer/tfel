@@ -39,7 +39,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = false;
+      static constexpr bool cond = false;
     };
 
   } // end of namespace typetraits

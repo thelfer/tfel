@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # Process this file with automake to produce Makefile.in files.
 
-AC_INIT(tfel,2.1.0-dev,tfel-contact@cea.fr)
+AC_INIT(tfel,3.0.0-dev,tfel-contact@cea.fr)
 AC_CONFIG_SRCDIR([include/TFEL/Config/TFELConfig.hxx])
 AC_CONFIG_COMMANDS
 AC_CONFIG_MACRO_DIR([m4])
@@ -20,7 +20,6 @@ case "$libdir" in
 	AC_DEFINE(LIB_SUFFIX,"64",[library directory suffix])	
 	;;
     *)
-	AC_DEFINE(LIB_SUFFIX,"",[library directory suffix])	
 	;;
 esac
 
@@ -46,6 +45,7 @@ if test "x$CFLAGS" = "x";
 fi
 
 AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
 
 AC_CHECKING("architecture type")
 
@@ -186,7 +186,7 @@ OPTIMISATION_FLAGS2=""
 
 # g++ specific treatement
 if test "x$GXX" == "xyes"; then
-    COMPILER_FLAGS="";
+    COMPILER_FLAGS="-std=c++11";
     COMPILER_WARNINGS="";
     OPTIMISATION_FLAGS="-DNO_RUNTIME_CHECK_BOUNDS -DNDEBUG"
     OPTIMISATION_FLAGS2=""
@@ -210,21 +210,6 @@ AC_DEFINE_UNQUOTED(COMPILER_FLAGS,"$COMPILER_FLAGS")
 AC_DEFINE_UNQUOTED(OPTIMISATION_FLAGS,"$OPTIMISATION_FLAGS")
 AC_DEFINE_UNQUOTED(OPTIMISATION_FLAGS2,"$OPTIMISATION_FLAGS2")
 AC_DEFINE_UNQUOTED(COMPILER_WARNINGS,"$COMPILER_WARNINGS")
-
-# check for C++-11 support
-use_cxx11=no;
-AC_ARG_ENABLE(cxx11,
-   AC_HELP_STRING([--enable-cxx11],
-                  [enable C++ 11 support.]),
-   use_cxx11=yes,[])
-if test "x$use_cxx11" != "xno";
-then
-  AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
-  AC_DEFINE(HAVE_CXX11)
-  AM_CONDITIONAL([HAVE_CXX_11],true)
-else
-  AM_CONDITIONAL([HAVE_CXX_11],false)
-fi
 
 # Checks for compilers
 # disable automatic declaration of
@@ -1010,8 +995,6 @@ AC_OUTPUT([debug.sh
 	   tests/Math/st2tost2/Makefile
 	   tests/Math/t2tost2/Makefile
 	   tests/Math/st2tot2/Makefile
-	   tests/Math/Composite/Makefile
-	   tests/Lambda/Makefile
 	   tests/FSAlgorithms/Makefile
 	   tests/Utilities/Makefile
 	   tests/MetaProgramming/Makefile

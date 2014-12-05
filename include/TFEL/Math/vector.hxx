@@ -19,7 +19,7 @@
 #include<vector>
 #include<string>
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 
@@ -216,7 +216,7 @@ namespace tfel{
        */
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	vector<T>&
       >::type
@@ -230,7 +230,7 @@ namespace tfel{
        */
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	vector<T>&
       >::type
@@ -244,7 +244,7 @@ namespace tfel{
        */
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE2
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	vector<T>&
       >::type
@@ -359,7 +359,7 @@ namespace tfel{
      * \return const typename tfel::typetraits::RealPartType<T>::type, the result
      */
     template<typename T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond,
       typename tfel::typetraits::RealPartType<T>::type
       >::type

@@ -102,7 +102,7 @@ namespace mfront{
      * and a pointer to a member
      */
     template<typename T,typename T2>
-    tfel::utilities::shared_ptr<VariableModifier>
+    std::shared_ptr<VariableModifier>
     makeVariableModifier(T&,
 			 const Hypothesis,
 			 std::string (T2::*)(const Hypothesis,
@@ -141,7 +141,7 @@ namespace mfront{
      * and a pointer to a member
      */
     template<typename T,typename T2>
-    tfel::utilities::shared_ptr<WordAnalyser>
+    std::shared_ptr<WordAnalyser>
     makeWordAnalyser(T&,const Hypothesis,
 		     void (T2::*)(const Hypothesis,
 				  const std::string&));

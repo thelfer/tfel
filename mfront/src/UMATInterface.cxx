@@ -1258,11 +1258,7 @@ namespace mfront{
     map<string,vector<string> > deps;
     string lib = UMATInterface::getLibraryName(mb);
     deps[lib].push_back("-lUMATInterface");
-#ifdef HAVE_CXX11
-      deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
-#else 
-      deps[lib].push_back("`tfel-config --libs --material`");
-#endif
+    deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
     return deps;
   } // end of UMATInterface::getLibrariesDependencies()
 
@@ -2040,65 +2036,65 @@ namespace mfront{
       out << "typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;\n";
     }
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      out << "static const ModellingHypothesis::Hypothesis H = " 
+      out << "static constexpr ModellingHypothesis::Hypothesis H = " 
 	  << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
 	  << ";" << endl;
     }
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "static const UMATBehaviourType btype  = SMALLSTRAINSTANDARDBEHAVIOUR;\n";
+      out << "static constexpr UMATBehaviourType btype  = SMALLSTRAINSTANDARDBEHAVIOUR;\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "static const UMATBehaviourType btype  = FINITESTRAINSTANDARDBEHAVIOUR;\n";
+      out << "static constexpr UMATBehaviourType btype  = FINITESTRAINSTANDARDBEHAVIOUR;\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
-      out << "static const UMATBehaviourType btype  = COHESIVEZONEMODEL;\n";
+      out << "static constexpr UMATBehaviourType btype  = COHESIVEZONEMODEL;\n";
     } else {
       string msg("UMATInterface::writeUMATBehaviourTraits : "
 		 "unsupported behaviour type");
       throw(runtime_error(msg));
     }
     out << "// space dimension\n";
-    out << "static const unsigned short N           = ModellingHypothesisToSpaceDimension::value;\n";
+    out << "static constexpr unsigned short N           = ModellingHypothesisToSpaceDimension::value;\n";
     out << "// tiny vector size\n";
-    out << "static const unsigned short TVectorSize = N;\n";
+    out << "static constexpr unsigned short TVectorSize = N;\n";
     out << "// symmetric tensor size\n";
-    out << "static const unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
+    out << "static constexpr unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
     out << "// tensor size\n";
-    out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
+    out << "static constexpr unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
     out << "// size of the driving variable array (STRAN)\n";
-    out << "static const unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
+    out << "static constexpr unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
     out << "// size of the thermodynamic force variable array (STRESS)\n";
-    out << "static const unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
-    out << "static const bool useTimeSubStepping = ";
+    out << "static constexpr unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
+    out << "static constexpr bool useTimeSubStepping = ";
     if(this->useTimeSubStepping){
       out << "true;\n";
     } else {
       out << "false;\n";
     }
-    out << "static const bool doSubSteppingOnInvalidResults = ";
+    out << "static constexpr bool doSubSteppingOnInvalidResults = ";
     if(this->doSubSteppingOnInvalidResults){
       out << "true;\n";
     } else {
       out << "false;\n";
     }
-    out << "static const unsigned short maximumSubStepping = ";
+    out << "static constexpr unsigned short maximumSubStepping = ";
     if(this->useTimeSubStepping){
       out << this->maximumSubStepping << ";\n";
     } else {
       out << "0u;\n";
     }
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      out << "static const bool requiresStiffnessTensor = true;\n";
+      out << "static constexpr bool requiresStiffnessTensor = true;\n";
       if(mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
-	out << "static const bool requiresUnAlteredStiffnessTensor = true;\n";
+	out << "static constexpr bool requiresUnAlteredStiffnessTensor = true;\n";
       } else {
-	out << "static const bool requiresUnAlteredStiffnessTensor = false;\n";
+	out << "static constexpr bool requiresUnAlteredStiffnessTensor = false;\n";
       }
     } else {
-      out << "static const bool requiresStiffnessTensor = false;\n";
+      out << "static constexpr bool requiresStiffnessTensor = false;\n";
     }
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
+      out << "static constexpr bool requiresThermalExpansionCoefficientTensor = true;\n";
     } else {
-      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
+      out << "static constexpr bool requiresThermalExpansionCoefficientTensor = false;\n";
     }
     // computing material properties size
     SupportedTypes::TypeSize msize;
@@ -2108,14 +2104,14 @@ namespace mfront{
       msize += this->getTypeSize(m.type,m.arraySize);
       msize -= mprops.second;
     }
-    out << "static const unsigned short material_properties_nb = " << msize << ";\n";
+    out << "static constexpr unsigned short material_properties_nb = " << msize << ";\n";
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "static const unsigned short propertiesOffset = 4u;\n";
+      out << "static constexpr unsigned short propertiesOffset = 4u;\n";
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
 	// something needs to be done here
-	out << "static const unsigned short propertiesOffset = UMATOrthotropicOffset<umat::SMALLSTRAINSTANDARDBEHAVIOUR,N>::value;\n";
+	out << "static constexpr unsigned short propertiesOffset = UMATOrthotropicOffset<umat::SMALLSTRAINSTANDARDBEHAVIOUR,N>::value;\n";
       } else {
 	string msg("UMATInterface::writeUMATBehaviourTraits : "
 		   "unsupported behaviour type");
@@ -2128,9 +2124,9 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "static const UMATSymmetryType stype = umat::ISOTROPIC;\n";
+      out << "static constexpr UMATSymmetryType stype = umat::ISOTROPIC;\n";
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "static const UMATSymmetryType stype = umat::ORTHOTROPIC;\n";
+      out << "static constexpr UMATSymmetryType stype = umat::ORTHOTROPIC;\n";
     } else {
       string msg("UMATInterface::writeUMATBehaviourTraits : ");
       msg += "unsupported behaviour symmetry type.\n";

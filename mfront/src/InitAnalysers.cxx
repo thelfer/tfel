@@ -22,9 +22,9 @@ namespace mfront
   void
   initAnalysers(void)
   {
-    static const char * const latexProxyNames[2] = {"latex","Latex"};
+    static constexpr const char * latexProxyNames[2] = {"latex","Latex"};
     BehaviourAnalyserProxy<LaTeXBehaviourAnalyser> latexProxy(latexProxyNames,latexProxyNames+2u);
-    static const char * const markdownProxyNames[1u] = {"markdown"};
+    static constexpr const char * markdownProxyNames[1u] = {"markdown"};
     BehaviourAnalyserProxy<MarkdownBehaviourAnalyser> markdownProxy(markdownProxyNames,markdownProxyNames+1u);
   } // end of initAnalysers(void)
 

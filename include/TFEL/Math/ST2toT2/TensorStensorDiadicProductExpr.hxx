@@ -104,11 +104,11 @@ namespace tfel
 
       TensorStensorDiadicProductExpr();
 
-      typename tfel::meta::IF<tfel::typetraits::IsTemporary<TensorType>::cond,
+      typename std::conditional<tfel::typetraits::IsTemporary<TensorType>::cond,
 			      const TensorType,
 			      const TensorType&>::type a;
       
-      typename tfel::meta::IF<tfel::typetraits::IsTemporary<StensorType>::cond,
+      typename std::conditional<tfel::typetraits::IsTemporary<StensorType>::cond,
 			      const StensorType,
 			      const StensorType&>::type b;
       

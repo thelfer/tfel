@@ -48,7 +48,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = true; 
+      static constexpr bool cond = true; 
     }; // end of struct IsSafelyReinterpretCastableTo
 
   } //end of namespace typetraits

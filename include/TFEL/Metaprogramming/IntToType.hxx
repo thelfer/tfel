@@ -42,7 +42,7 @@ namespace tfel{
       /*
        * Value of the template parameter
        */
-      static const int value = N;
+      static constexpr int value = N;
     };
 
     /*!
@@ -64,7 +64,7 @@ namespace tfel{
       /*
        * Value of the template parameter
        */
-      static const unsigned int value = N;
+      static constexpr unsigned int value = N;
     };
 
   } // end of Namesapce math

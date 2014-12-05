@@ -15,7 +15,7 @@
 #define _LIB_TFEL_ID_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/Math/General/UnaryResultType.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
@@ -50,7 +50,7 @@ namespace tfel{
       static std::string getName(void);
 
       template<typename T>
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
 	tfel::typetraits::IsScalar<T>::cond,
 	T                               
 	>::type                                                                             
@@ -60,7 +60,7 @@ namespace tfel{
       }
   
       template<typename T>      			                                  
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
         !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,FctId>::Result>::cond&&
 	!tfel::typetraits::IsScalar<T>::cond,
         const typename ComputeUnaryResult<T,FctId>::Handle                               

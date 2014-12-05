@@ -24,7 +24,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::math;
-    static const real sqrt2 = sqrt(real(2));
+    static constexpr real sqrt2 = sqrt(real(2));
     // transpose
     for(unsigned short i=0;i!=Kt.getNbRows();++i){
       for(unsigned short j=0;j!=Kt.getNbCols();++j){

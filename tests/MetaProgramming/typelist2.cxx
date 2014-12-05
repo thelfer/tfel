@@ -23,7 +23,7 @@
 #include<vector>
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/TypeList.hxx"
 #include"TFEL/Math/General/LogicalOperations.hxx"
 
@@ -64,7 +64,7 @@ private:
 public:
   
   template<unsigned int N>
-  typename tfel::meta::EnableIf< 
+  typename std::enable_if< 
     (N < tfel::meta::TLSize<T>::value),  
       typename tfel::meta::TLFindNthElt<T,N>::type >::type
   get(void) const {
@@ -72,7 +72,7 @@ public:
   }
   
   template<unsigned int N>
-  typename tfel::meta::EnableIf< 
+  typename std::enable_if< 
     (N < tfel::meta::TLSize<T>::value), 
       void >::type
   set(const typename tfel::meta::TLFindNthElt<T,N>::type& src){
@@ -86,7 +86,7 @@ struct Is_same{
 
   template<class T2>
   struct test{
-    static const bool cond = tfel::meta::IsSameType<T,T2>::cond;
+    static constexpr bool cond = std::is_same<T,T2>::value;
   };
 
 };
@@ -98,7 +98,7 @@ class Mytest{
 
 public:
 
-  static const bool cond = my_test_class::cond;
+  static constexpr bool cond = my_test_class::cond;
 
 };
 

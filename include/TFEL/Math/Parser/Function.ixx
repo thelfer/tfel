@@ -24,15 +24,15 @@
 #ifndef __SUNPRO_CC
 #define TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(X) \
       template<>                                                             \
-      tfel::utilities::shared_ptr<Expr>                                        \
-      differentiateFunction<std::X>(const tfel::utilities::shared_ptr<Expr>,   \
+      std::shared_ptr<Expr>                                        \
+      differentiateFunction<std::X>(const std::shared_ptr<Expr>,   \
 				    const std::vector<double>::size_type,    \
 				    const std::vector<double>&)
 #else  /* __SUNPRO_CC */
 #define TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(X) \
       template<>                                                             \
-      tfel::utilities::shared_ptr<Expr>                                        \
-      differentiateFunction<X>(const tfel::utilities::shared_ptr<Expr>,        \
+      std::shared_ptr<Expr>                                        \
+      differentiateFunction<X>(const std::shared_ptr<Expr>,        \
 			       const std::vector<double>::size_type,         \
 			       const std::vector<double>&)
 #endif /* __SUNPRO_CC */
@@ -47,7 +47,7 @@ namespace tfel
     {
 
       template<StandardFunctionPtr f>
-      StandardFunction<f>::StandardFunction(const tfel::utilities::shared_ptr<Expr> e)
+      StandardFunction<f>::StandardFunction(const std::shared_ptr<Expr> e)
 	: expr(e)
       {} // end of StandardFunction::StandardFunction
 
@@ -89,47 +89,43 @@ namespace tfel
       } // end of StandardFunction<f>::checkCyclicDependency
 
       template<StandardFunctionPtr f>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       StandardFunction<f>::resolveDependencies(const std::vector<double>& v) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<Expr>(new StandardFunction<f>(this->expr->resolveDependencies(v)));
+	return std::shared_ptr<Expr>(new StandardFunction<f>(this->expr->resolveDependencies(v)));
       } // end of StandardFunction<f>::resolveDependencies(void)
       
       template<StandardFunctionPtr f>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       StandardFunction<f>::clone(const std::vector<double>& v) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<Expr>(new StandardFunction<f>(this->expr->clone(v)));
+	return std::shared_ptr<Expr>(new StandardFunction<f>(this->expr->clone(v)));
       } // end of StandardFunction<f>::clone
 
       template<StandardFunctionPtr f>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       StandardFunction<f>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 									   const std::vector<std::string>& p,
 									   const std::map<std::string,
 									   std::vector<double>::size_type>& pos) const
       {
-	using namespace tfel::utilities;
+	using std::shared_ptr;
 	shared_ptr<Expr> nexpr = this->expr->createFunctionByChangingParametersIntoVariables(v,p,pos);
 	return shared_ptr<Expr>(new StandardFunction<f>(nexpr));
       } // end of StandardFunction<f>::createFunctionByChangingParametersIntoVariables
 
       template<StandardFunctionPtr f>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateFunction(const tfel::utilities::shared_ptr<Expr>,
+      std::shared_ptr<Expr>
+      differentiateFunction(const std::shared_ptr<Expr>,
 			    const std::vector<double>::size_type,
 			    const std::vector<double>&)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	StandardFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return shared_ptr<Expr>(static_cast<Expr*>(0));
+	return std::shared_ptr<Expr>(static_cast<Expr*>(0));
       }
       
       template<StandardFunctionPtr f>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       StandardFunction<f>::differentiate(const std::vector<double>::size_type pos,
 					 const std::vector<double>& v) const
       {

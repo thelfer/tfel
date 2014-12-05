@@ -37,8 +37,8 @@ namespace zmat
     template<typename T,
 	     template<unsigned short,typename> class Storage>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(tfel::math::stensor<1u,T,Storage>&,
 	    const double* const);
@@ -50,8 +50,8 @@ namespace zmat
     template<typename T,
 	     template<unsigned short,typename> class Storage>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(tfel::math::stensor<2u,T,Storage>&,
 	    const double* const);
@@ -63,8 +63,8 @@ namespace zmat
     template<typename T,
 	     template<unsigned short,typename> class Storage>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(tfel::math::stensor<3u,T,Storage>&,
 	    const double* const);
@@ -76,8 +76,8 @@ namespace zmat
     template<typename T,
 	     template<unsigned short,typename> class Storage>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(double* const,
 	    const tfel::math::stensor<1u,T,Storage>&);
@@ -89,8 +89,8 @@ namespace zmat
     template<typename T,
 	     template<unsigned short,typename> class Storage>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(double* const,
 	    const tfel::math::stensor<2u,T,Storage>&);
@@ -102,8 +102,8 @@ namespace zmat
     template<typename T,
 	     template<unsigned short,typename> class Storage>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(double* const,
 	    const tfel::math::stensor<3u,T,Storage>&);
@@ -114,8 +114,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(tfel::math::tensor<1u,T>&,
 	    const double* const);
@@ -126,8 +126,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(tfel::math::tensor<2u,T>&,
 	    const double* const);
@@ -138,8 +138,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(tfel::math::tensor<3u,T>&,
 	    const double* const);
@@ -150,8 +150,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(double* const,
 	    const tfel::math::tensor<1u,T>&);
@@ -162,8 +162,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(double* const,
 	    const tfel::math::tensor<2u,T>&);
@@ -174,8 +174,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(double* const,
 	    const tfel::math::tensor<3u,T>&);
@@ -186,8 +186,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(ZSET::MATRIX&,
 	    const tfel::math::st2tost2<1u,T>&);
@@ -198,8 +198,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(ZSET::MATRIX&,
 	    const tfel::math::st2tost2<2u,T>&);
@@ -210,8 +210,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(ZSET::MATRIX&,
 	    const tfel::math::st2tost2<3u,T>&);
@@ -222,8 +222,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(tfel::math::st2tost2<1u,T>&,
 	    const ZSET::MATRIX&);
@@ -234,8 +234,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(tfel::math::st2tost2<2u,T>&,
 	    const ZSET::MATRIX&);
@@ -246,8 +246,8 @@ namespace zmat
      */
     template<typename T>
     static inline 
-    typename tfel::meta::EnableIf<
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<T>::type,double>::cond,
+    typename std::enable_if<
+      std::is_same<typename tfel::typetraits::BaseType<T>::type,double>::value,
       void>::type
     convert(tfel::math::st2tost2<3u,T>&,
 	    const ZSET::MATRIX&);

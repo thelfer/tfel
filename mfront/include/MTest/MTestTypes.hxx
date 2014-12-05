@@ -16,7 +16,7 @@
 
 #include<map>
 #include<string>
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 namespace mfront
 {
@@ -27,7 +27,7 @@ namespace mfront
   //! forward declaration
   struct Evolution;
   // ! a simple alias
-  typedef tfel::utilities::shared_ptr<Evolution> EvolutionPtr;
+  typedef std::shared_ptr<Evolution> EvolutionPtr;
   // ! a simple alias
   typedef std::map<std::string,EvolutionPtr> EvolutionManager;
 

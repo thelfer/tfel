@@ -19,8 +19,8 @@ namespace mfront{
 
   CastemEvolution::CastemEvolution(const std::string& l,
 					     const std::string& fn,
-					     const tfel::utilities::shared_ptr<std::map<std::string,
-											tfel::utilities::shared_ptr<Evolution> > >& evm_)
+					     const std::shared_ptr<std::map<std::string,
+											std::shared_ptr<Evolution> > >& evm_)
     : evm(evm_)
   {
     using namespace tfel::system;
@@ -37,8 +37,6 @@ namespace mfront{
   CastemEvolution::operator()(const real t) const
   {
     using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
     vector<string>::size_type i;
     for(i=0;i!=this->vnames.size();++i){
       map<string,shared_ptr<Evolution> >::const_iterator pev;
@@ -59,8 +57,6 @@ namespace mfront{
   CastemEvolution::isConstant(void) const
   {
     using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
     vector<string>::size_type i;
     for(i=0;i!=this->vnames.size();++i){
       map<string,shared_ptr<Evolution> >::const_iterator pev;

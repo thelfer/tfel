@@ -19,7 +19,7 @@
 #include<algorithm>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/IsSameType.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsReal.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include"TFEL/Math/General/CubicRoots.hxx"
@@ -54,7 +54,7 @@ namespace tfel{
 	{
 	  using namespace std;
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
-	  TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename VectorTraits<VectorType>::NumType,T>::cond));
+	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::cond));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  if(abs(s[0]-vp)<10*numeric_limits<T>::min()){
@@ -115,7 +115,7 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 
-	  static const T M_sqrt2 = std::sqrt(static_cast<T>(2.)); 
+	  static constexpr T M_sqrt2 = std::sqrt(static_cast<T>(2.)); 
 	  T s0 = s_0 - vp;
 	  T s1 = s_1 - vp;
 	  if(std::abs(s3)<std::max(std::min(s_0,s_1)*std::numeric_limits<T>::epsilon(),
@@ -163,7 +163,7 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 
-	  static const T M1_sqrt2  = T(1)/std::sqrt(T(2.)); 
+	  static constexpr T M1_sqrt2  = T(1)/std::sqrt(T(2.)); 
 	  
 	  T tmp;
 	  T y0;
@@ -209,7 +209,7 @@ namespace tfel{
 	{
 	  using namespace std;
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
-	  TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename VectorTraits<VectorType>::NumType,T>::cond));
+	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::value));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  if(abs(s[2]-vp)<10*numeric_limits<T>::min()){
@@ -372,7 +372,7 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  // Assume that vp is a single eigenvalue
-	  static const T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
+	  static constexpr T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
 	  const T a = src[0]-vp;
 	  const T b = src[3]*M1_sqrt2;
 	  const T c = src[4]*M1_sqrt2;
@@ -442,7 +442,7 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 
-	  static const T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
+	  static constexpr T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
 	  T y0,y1,y2;
 	  T tmp;
 
@@ -506,7 +506,7 @@ namespace tfel{
 	static bool computeEigenVector(VectorType& v,const T* const src,const T vp)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
-	  TFEL_STATIC_ASSERT((tfel::meta::IsSameType<typename VectorTraits<VectorType>::NumType,T>::cond));
+	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::value));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  return computeEigenVector(src,vp,v(0),v(1),v(2));

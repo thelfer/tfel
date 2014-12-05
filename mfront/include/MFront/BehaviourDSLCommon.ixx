@@ -43,15 +43,14 @@ namespace mfront
 
   template<typename T,
 	   typename T2>
-  tfel::utilities::shared_ptr<BehaviourDSLCommon::VariableModifier>
+  std::shared_ptr<BehaviourDSLCommon::VariableModifier>
   BehaviourDSLCommon::makeVariableModifier(T& i,
 						    const Hypothesis h,
 						    std::string (T2::* p)(const Hypothesis,
 									  const std::string&,
 									  const bool))
   {
-    using namespace tfel::utilities;
-    return shared_ptr<VariableModifier>(new StandardVariableModifier<T,T2>(i,h,p));
+    return std::shared_ptr<VariableModifier>(new StandardVariableModifier<T,T2>(i,h,p));
   } // end of makeVariableModifier
 
   template<typename T,
@@ -79,14 +78,13 @@ namespace mfront
 
   template<typename T,
 	   typename T2>
-  tfel::utilities::shared_ptr<BehaviourDSLCommon::WordAnalyser>
+  std::shared_ptr<BehaviourDSLCommon::WordAnalyser>
   BehaviourDSLCommon::makeWordAnalyser(T& i,
 						const Hypothesis h,
 						void (T2::* p)(const Hypothesis,
 								    const std::string&))
   {
-    using namespace tfel::utilities;
-    return shared_ptr<WordAnalyser>(new StandardWordAnalyser<T,T2>(i,h,p));
+    return std::shared_ptr<WordAnalyser>(new StandardWordAnalyser<T,T2>(i,h,p));
   } // end of makeWordAnalyser
 
   template<typename T,
@@ -142,7 +140,7 @@ namespace mfront
 
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     const set<Hypothesis>& h = o.hypotheses;
     set<Hypothesis>::const_iterator ph;
     const TokensContainer::const_iterator beg = this->current;
@@ -172,7 +170,7 @@ namespace mfront
 					     const bool b)
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     const set<Hypothesis>& h = o.hypotheses;
     set<Hypothesis>::const_iterator ph;
     const TokensContainer::const_iterator beg = this->current;
@@ -206,7 +204,7 @@ namespace mfront
 
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     CodeBlockOptions o;
     this->readCodeBlockOptions(o,s);
     this->treatUnsupportedCodeBlockOptions(o);
@@ -231,7 +229,7 @@ namespace mfront
 
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     const set<Hypothesis>& h = o.hypotheses;
     set<Hypothesis>::const_iterator ph;
     const TokensContainer::const_iterator beg = this->current;

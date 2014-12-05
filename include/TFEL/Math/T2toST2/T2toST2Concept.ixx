@@ -31,7 +31,7 @@ namespace tfel{
     } // end of T2toST2Concept<T>::operator()
 
     template<typename T2toST2Type>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond,
       typename tfel::typetraits::AbsType<typename T2toST2Traits<T2toST2Type>::NumType>::type
     >::type
@@ -84,7 +84,7 @@ namespace tfel{
 	     typename T2toST2Type,
 	     typename StensorType,
 	     typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -121,7 +121,7 @@ namespace tfel{
 	     typename T2toST2Type,
 	     typename StensorType,
 	     typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -175,7 +175,7 @@ namespace tfel{
 	     typename T2toST2Type,
 	     typename StensorType,
 	     typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -267,7 +267,7 @@ namespace tfel{
    	     typename T2toST2Type,
    	     typename StensorType,
    	     typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -299,7 +299,7 @@ namespace tfel{
    	     typename T2toST2Type,
    	     typename StensorType,
    	     typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&

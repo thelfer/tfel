@@ -21,7 +21,7 @@
 
 #include"TFEL/Config/TFELTypes.hxx"
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Exception/TFELException.hxx"
 #include"TFEL/FSAlgorithm/copy.hxx"
 
@@ -108,7 +108,7 @@ namespace aster
         typedef MechanicalBehaviourTraits<BV> MTraits;
         typedef AsterTraits<BV> Traits;
         const bool is_defined_ = MTraits::is_defined;
-        typedef typename IF<is_defined_,
+        typedef typename std::conditional<is_defined_,
                             CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>,
                             Behaviour2DWrapper<Traits::btype,ModellingHypothesis::GENERALISEDPLANESTRAIN> >::type Handler;
         return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
@@ -119,7 +119,7 @@ namespace aster
         typedef MechanicalBehaviourTraits<BV> MTraits;
         typedef AsterTraits<BV> Traits;
         const bool is_defined_ = MTraits::is_defined;
-        typedef typename IF<is_defined_,
+        typedef typename std::conditional<is_defined_,
                             CallBehaviour<ModellingHypothesis::AXISYMMETRICAL>,
                             Behaviour2DWrapper<Traits::btype,ModellingHypothesis::AXISYMMETRICAL> >::type Handler;
         return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
@@ -130,7 +130,7 @@ namespace aster
         typedef MechanicalBehaviourTraits<BV> MTraits;
         typedef AsterTraits<BV> Traits;
         const bool is_defined_ = MTraits::is_defined;
-        typedef typename IF<is_defined_,
+        typedef typename std::conditional<is_defined_,
                             CallBehaviour<ModellingHypothesis::PLANESTRESS>,
                             Behaviour2DWrapper<Traits::btype,ModellingHypothesis::PLANESTRESS> >::type Handler;
         return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
@@ -141,7 +141,7 @@ namespace aster
         typedef MechanicalBehaviourTraits<BV> MTraits;
         typedef AsterTraits<BV> Traits;
         const bool is_defined_ = MTraits::is_defined;
-        typedef typename IF<is_defined_,
+        typedef typename std::conditional<is_defined_,
                             CallBehaviour<ModellingHypothesis::PLANESTRAIN>,
                             Behaviour2DWrapper<Traits::btype,ModellingHypothesis::PLANESTRAIN> >::type Handler;
         return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
@@ -305,7 +305,7 @@ namespace aster
 	typedef Behaviour<H,AsterReal,false> BV;
 	typedef AsterTraits<BV> Traits;
 	try {
-	  typedef typename IF<Traits::type==aster::ISOTROPIC,
+	  typedef typename std::conditional<Traits::type==aster::ISOTROPIC,
 	    AsterIsotropicBehaviourHandler<Traits::btype,H,Behaviour>,
 	    AsterOrthotropicBehaviourHandler<Traits::btype,H,Behaviour> >::type Handler;
 	  Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,

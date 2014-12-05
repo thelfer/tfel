@@ -19,7 +19,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/EmptyClass.hxx"
 #include"TFEL/Metaprogramming/HasIterator.hxx"
 #include"TFEL/Metaprogramming/HasConstIterator.hxx"
@@ -38,7 +38,7 @@ namespace tfel{
     struct ST2toT2Traits<ST2toT2Expr<T_type,Expr> >{
       typedef typename ST2toT2Traits<T_type>::NumType   NumType;
       typedef unsigned short IndexType;
-      static const unsigned short dime = ST2toT2Traits<T_type>::dime;
+      static constexpr unsigned short dime = ST2toT2Traits<T_type>::dime;
     };
 
     template<typename T_type, typename Expr>
@@ -87,7 +87,7 @@ namespace tfel{
     template<typename T_type, typename Expr>
     struct IsTemporary<tfel::math::ST2toT2Expr<T_type,Expr> >
     {
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
   }// end of namespace typetraits

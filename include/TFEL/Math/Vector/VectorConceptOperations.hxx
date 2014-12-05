@@ -19,7 +19,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 
 #include"TFEL/Metaprogramming/Implements.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx"
 
 #include"TFEL/TypeTraits/IsScalar.hxx"
@@ -64,14 +64,14 @@ namespace tfel{
     {
       struct DummyHandle{};
       typedef typename VectorType<A>::type VectA;
-      typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
+      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond,
                                       FctMathObjectExpr<VectorConcept,VectorTraits,A,Fct>,
                                       FctMathObjectExprWithoutConstIterator<VectorConcept,
 									    VectorTraits,A,Fct>
 				      >::type Expr;
     public:
       typedef typename UnaryResultType<VectA,Fct>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      VectorExpr<Result,Expr> >::type Handle;
     };
@@ -85,7 +85,7 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename VectorType<A>::type VecA;
       typedef typename VectorType<B>::type VecB;
-      typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
+      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
                                       tfel::meta::HasRandomAccessConstIterator<B>::cond,
 				      MathObjectMathObjectExpr<VectorConcept,
 							       VectorTraits,
@@ -96,7 +96,7 @@ namespace tfel{
 				      >::type Expr;
     public:
       typedef typename ResultType<VecA,VecB,Op>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      VectorExpr<Result,Expr> >::type Handle;
     };
@@ -124,7 +124,7 @@ namespace tfel{
       typedef MathObjectMathObjectDiadicProductExpr<VectorConcept,VectorTraits,A,B> Expr;
     public:
       typedef typename ResultType<VecA,VecB,OpDiadicProduct>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      MatrixExpr<Result,Expr> >::type Handle;
     };
@@ -137,13 +137,13 @@ namespace tfel{
     {
       struct DummyHandle{};
       typedef typename VectorType<B>::type      VectB;
-      typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<B>::cond,
+      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<B>::cond,
 				      ScalarMathObjectExpr<VectorConcept,VectorTraits,A,B,Op>,
 				      ScalarMathObjectExprWithoutConstIterator<VectorConcept,VectorTraits,A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<A,VectB,Op>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      VectorExpr<Result,Expr> >::type Handle;
     };
@@ -156,13 +156,13 @@ namespace tfel{
     {
       struct DummyHandle{};
       typedef typename VectorType<A>::type      VectA;
-      typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
+      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond,
 				      MathObjectScalarExpr<VectorConcept,VectorTraits,A,B,Op>,
 				      MathObjectScalarExprWithoutConstIterator<VectorConcept,VectorTraits,A,B,Op>
                                      >::type Expr;
     public:
       typedef typename ResultType<VectA,B,Op>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      VectorExpr<Result,Expr> >::type Handle;
     };
@@ -175,13 +175,13 @@ namespace tfel{
     {
       struct DummyHandle{};
       typedef typename VectorType<A>::type VectA;
-      typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
+      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond,
 				      MathObjectNegExpr<VectorConcept,VectorTraits,A>,
 				      MathObjectNegExprWithoutConstIterator<VectorConcept,VectorTraits,A>
 				      >::type Expr;
     public:
       typedef typename UnaryResultType<VectA,OpNeg>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      VectorExpr<Result,Expr> >::type Handle;
     };
@@ -209,7 +209,7 @@ namespace tfel{
     template<typename T1,typename T2,typename Op>
     struct IsVectorScalarOperationValid
     {
-      static const bool cond =	tfel::meta::Implements<T1,VectorConcept>::cond&&
+      static constexpr bool cond =	tfel::meta::Implements<T1,VectorConcept>::cond&&
 	tfel::typetraits::IsScalar<T2>::cond&&
 	!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,Op>::Result>::cond;
     };
@@ -217,13 +217,13 @@ namespace tfel{
     template<typename T1>
     struct IsEuclidianNormValid
     {
-      static const bool cond =tfel::meta::Implements<T1,VectorConcept>::cond&&
+      static constexpr bool cond =tfel::meta::Implements<T1,VectorConcept>::cond&&
 	!tfel::typetraits::IsInvalid<typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type>::cond;
     };
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpPlus>::cond,
       typename ComputeBinaryResult<T1,T2,OpPlus>::Handle
     >::type
@@ -231,7 +231,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpMinus>::cond,
       typename ComputeBinaryResult<T1,T2,OpMinus>::Handle
     >::type
@@ -239,7 +239,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpMult>::cond,
       typename ComputeBinaryResult<T1,T2,OpMult>::Handle
     >::type
@@ -247,7 +247,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpDiadicProduct>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Handle
     >::type
@@ -255,7 +255,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpDiv>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiv>::Handle
     >::type
@@ -263,7 +263,7 @@ namespace tfel{
     
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsScalarVectorOperationValid<T1,T2,OpMult>::cond,
       typename ComputeBinaryResult<T1,T2,OpMult>::Handle
     >::type
@@ -271,7 +271,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorScalarOperationValid<T1,T2,OpMult>::cond,
       typename ComputeBinaryResult<T1,T2,OpMult>::Handle
     >::type
@@ -279,14 +279,14 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorScalarOperationValid<T1,T2,OpDiv>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiv>::Handle
     >::type
     operator / (const T1&,const T2);
 
     template<typename T1>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,VectorConcept>::cond,
       typename ComputeUnaryResult<T1,OpNeg>::Handle
     >::type
@@ -302,7 +302,7 @@ namespace tfel{
      * an operation : use of parenthesis is required.
      */
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpDotProduct>::cond,
       typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
     >::type
@@ -314,7 +314,7 @@ namespace tfel{
      * \return const typename tfel::typetraits::RealPartType<T>::type, the result
      */
     template<typename T1>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsEuclidianNormValid<T1>::cond,
       typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type
     >::type

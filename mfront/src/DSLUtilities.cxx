@@ -53,31 +53,31 @@ namespace mfront
 		  << file << "\"\n";
 	}
 	if(p->type=="short"){
-	  srcFile << "static const  short " << p->name 
+	  srcFile << "static constexpr  short " << p->name 
 		  << " = " << static_cast<short>(p->value) << ";" << endl;
 	} else if(p->type=="ushort"){
-	  srcFile << "static const  unsigned short "  << p->name 
+	  srcFile << "static constexpr  unsigned short "  << p->name 
 		  << " = " << static_cast<unsigned short>(p->value) << ";" << endl;
 	} else if(p->type=="int"){
-	  srcFile << "static const  int " << p->name 
+	  srcFile << "static constexpr  int " << p->name 
 		  << " = " << static_cast<int>(p->value) << ";" << endl;
 	} else if(p->type=="uint"){
-	  srcFile << "static const  unsigned int " << p->name 
+	  srcFile << "static constexpr  unsigned int " << p->name 
 		  << " = " << static_cast<unsigned int>(p->value) << ";" << endl;
 	} else if(p->type=="long"){
-	  srcFile << "static const  long " << p->name 
+	  srcFile << "static constexpr  long " << p->name 
 		  << " = " << static_cast<long>(p->value) << ";" << endl;
 	} else if(p->type=="ulong"){
-	  srcFile << "static const  unsigned long " << p->name 
+	  srcFile << "static constexpr  unsigned long " << p->name 
 		  << " = " << static_cast<unsigned long>(p->value) << ";" << endl;
 	} else if(p->type=="float"){
-	  srcFile << "static const  float " << p->name 
+	  srcFile << "static constexpr  float " << p->name 
 		  << " = " << static_cast<float>(p->value) << ";" << endl;
 	} else if((p->type=="double")||(p->type=="real")){
-	  srcFile << "static const  double " << p->name 
+	  srcFile << "static constexpr  double " << p->name 
 		  << " = " << static_cast<double>(p->value) << ";" << endl;
 	} else if(p->type=="ldouble"){
-	  srcFile << "static const  long double " << p->name 
+	  srcFile << "static constexpr  long double " << p->name 
 		  << " = " << static_cast<long double>(p->value) << ";" << endl;
 	} else {
 	  ostringstream msg;

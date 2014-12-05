@@ -54,7 +54,7 @@ namespace cyrano
       //! a simple alias
       typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
       // spatial dimension
-      static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
+      static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
       /*!
        * \param[out] bData  : behaviour data
        * \param[out] iData  : integration data
@@ -277,11 +277,11 @@ namespace cyrano
       struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping
     {
       //! A simple alias
-      typedef typename tfel::meta::IF<bs,
+      typedef typename std::conditional<bs,
 	StiffnessOperatorInitializer,
 	DoNothingInitializer>::type SInitializer;
       //! A simple alias
-      typedef typename tfel::meta::IF<ba,
+      typedef typename std::conditional<ba,
 				      ThermalExpansionCoefficientTensorInitializer,
 				      DoNothingInitializer>::type AInitializer;
       
@@ -303,7 +303,7 @@ namespace cyrano
 	{
 	  using namespace tfel::material;
 	  typedef MechanicalBehaviourTraits<BV> Traits;
-	  typedef typename tfel::meta::IF<
+	  typedef typename std::conditional<
 	    Traits::hasStressFreeExpansion,
 	    DrivingVariableInitialiserWithStressFreeExpansion,
 	    DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
@@ -329,15 +329,15 @@ namespace cyrano
 	  using namespace tfel::utilities;
 	  using namespace tfel::material;
 	  typedef MechanicalBehaviourTraits<BV> Traits;
-	  typedef typename tfel::meta::IF<
+	  typedef typename std::conditional<
 	    Traits::hasConsistentTangentOperator,
-	    typename tfel::meta::IF<
+	    typename std::conditional<
 	    Traits::isConsistentTangentOperatorSymmetric,
 	    SymmetricConsistentTangentOperatorComputer,
 	    GeneralConsistentTangentOperatorComputer>::type,
 	    ConsistentTangentOperatorIsNotAvalaible
 	    >::type ConsistentTangentOperatorHandler;
-	  typedef typename tfel::meta::IF<
+	  typedef typename std::conditional<
 	    Traits::hasPredictionOperator,
 	    StandardPredictionOperatorComputer,
 	    PredictionOperatorIsNotAvalaible
@@ -436,11 +436,11 @@ namespace cyrano
 	     const bool ba>     // requires ThermalExpansionCoefficientTensor
       struct TFEL_VISIBILITY_LOCAL Integrator
     {
-      typedef typename tfel::meta::IF<bs,
+      typedef typename std::conditional<bs,
 				      StiffnessOperatorInitializer,
 				      DoNothingInitializer>::type SInitializer;
 
-      typedef typename tfel::meta::IF<ba,
+      typedef typename std::conditional<ba,
 				      ThermalExpansionCoefficientTensorInitializer,
 				      DoNothingInitializer>::type AInitializer;
 
@@ -461,7 +461,7 @@ namespace cyrano
 	{
 	  using namespace tfel::material;
 	  typedef MechanicalBehaviourTraits<BV> Traits;
-	  typedef typename tfel::meta::IF<
+	  typedef typename std::conditional<
 	    Traits::hasStressFreeExpansion,
 	    DrivingVariableInitialiserWithStressFreeExpansion,
 	    DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
@@ -492,15 +492,15 @@ namespace cyrano
 	  using namespace tfel::utilities;
 	  using namespace tfel::material;
 	  typedef MechanicalBehaviourTraits<BV> Traits;
-	  typedef typename tfel::meta::IF<
+	  typedef typename std::conditional<
 	    Traits::hasConsistentTangentOperator,
-	    typename tfel::meta::IF<
+	    typename std::conditional<
 	      Traits::isConsistentTangentOperatorSymmetric,
 	      SymmetricConsistentTangentOperatorComputer,
 	      GeneralConsistentTangentOperatorComputer>::type,
 	    ConsistentTangentOperatorIsNotAvalaible
 	    >::type ConsistentTangentOperatorHandler;
-	  typedef typename tfel::meta::IF<
+	  typedef typename std::conditional<
 	    Traits::hasPredictionOperator,
 	    StandardPredictionOperatorComputer,
 	    PredictionOperatorIsNotAvalaible

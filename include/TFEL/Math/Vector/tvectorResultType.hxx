@@ -15,7 +15,7 @@
 #ifndef _LIB_TFEL_TINY_VECTOR_RESULT_TYPE_H_
 #define _LIB_TFEL_TINY_VECTOR_RESULT_TYPE_H_ 
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/DotProduct.hxx"
@@ -33,7 +33,7 @@ namespace tfel{
     {
       typedef typename UnaryResultType<T,Op>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      tvector<N,ResBase_> >::type type;
     };
@@ -46,7 +46,7 @@ namespace tfel{
     {
       typedef typename UnaryResultType<T,OpNeg>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      tvector<N,ResBase_> >::type type;
     };
@@ -61,7 +61,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,Scal,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      tvector<N,ResBase_> >::type type;
     };
@@ -76,7 +76,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,Scal,OpDiv>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      tvector<N,ResBase_> >::type type;
     };
@@ -91,7 +91,7 @@ namespace tfel{
     {
       typedef typename ResultType<Scal,T,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      tvector<N,ResBase_> >::type type;
     };
@@ -105,7 +105,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      tvector<N,ResBase_> >::type type;
     };
@@ -119,7 +119,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      tvector<N,ResBase_> >::type type;
     };
@@ -133,7 +133,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      tvector<N,ResBase_> >::type type;
     };
@@ -148,7 +148,7 @@ namespace tfel{
     {
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
     public:
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
 				      tmatrix<N,M,ResBase_> >::type type;
     };
@@ -163,9 +163,9 @@ namespace tfel{
     {
     private:
       typedef typename ResultType<T,T2,OpMult>::type ResBase_;
-      static const bool isValid = tfel::typetraits::IsInvalid<ResBase_>::cond;
+      static constexpr bool isValid = tfel::typetraits::IsInvalid<ResBase_>::cond;
     public:
-	typedef typename tfel::meta::IF<isValid,
+	typedef typename std::conditional<isValid,
 					tfel::meta::InvalidType,
 					ResBase_>::type type;
     }; // end of class ResultType<tvector<N,T>,tvector<M,T2>,OpDotProduct>

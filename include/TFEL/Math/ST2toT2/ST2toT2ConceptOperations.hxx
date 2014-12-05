@@ -66,7 +66,7 @@ namespace tfel
       struct DummyHandle{};
       typedef typename ST2toT2Type<A>::type StensA;
       typedef typename ST2toT2Type<B>::type StensB;
-      typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
+      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
       tfel::meta::HasRandomAccessConstIterator<B>::cond,
 				      MathObjectMathObjectExpr<ST2toT2Concept,ST2toT2Traits,
 							       A,B,Op>,
@@ -75,7 +75,7 @@ namespace tfel
       >::type Expr;			    
     public:
       typedef typename ResultType<StensA,StensB,Op>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      ST2toT2Expr<Result,Expr> >::type Handle;
     };
@@ -92,7 +92,7 @@ namespace tfel
       typedef TensorStensorDiadicProductExpr<A,B> Expr;
     public:
       typedef typename ResultType<TensA,StensB,OpDiadicProduct>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      ST2toT2Expr<Result,Expr> >::type Handle;
     };
@@ -105,7 +105,7 @@ namespace tfel
     {
       struct DummyHandle{};
       typedef typename ST2toT2Type<B>::type StensB;
-      typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<B>::cond,
+      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<B>::cond,
 				      ScalarMathObjectExpr<ST2toT2Concept,ST2toT2Traits,
 							   A,B,Op>,
 				      ScalarMathObjectExprWithoutConstIterator<ST2toT2Concept,ST2toT2Traits,
@@ -113,7 +113,7 @@ namespace tfel
       >::type Expr;
     public:
       typedef typename ResultType<A,StensB,Op>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      ST2toT2Expr<Result,Expr> >::type Handle;
     };
@@ -126,7 +126,7 @@ namespace tfel
     {
       struct DummyHandle{};
       typedef typename ST2toT2Type<A>::type      StensA;
-      typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
+      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond,
 				      MathObjectScalarExpr<ST2toT2Concept,ST2toT2Traits,
 							   A,B,Op>,
 				      MathObjectScalarExprWithoutConstIterator<ST2toT2Concept,ST2toT2Traits,
@@ -134,7 +134,7 @@ namespace tfel
       >::type Expr;
     public:
       typedef typename ResultType<StensA,B,Op>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      ST2toT2Expr<Result,Expr> >::type Handle;
     };
@@ -150,7 +150,7 @@ namespace tfel
       typedef typename ST2toT2Type<B>::type ST2toT2B;
     public:
       typedef typename ResultType<T2toT2A,ST2toT2B,OpMult>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      ST2toT2Expr<Result,T2toT2ST2toT2ProductExpr<ST2toT2Traits<Result>::dime> > >::type Handle;
     };
@@ -166,7 +166,7 @@ namespace tfel
       typedef typename T2toST2Type<B>::type T2toST2B;
     public:
       typedef typename ResultType<ST2toT2A,B,OpMult>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      T2toT2Expr<Result,ST2toT2T2toST2ProductExpr<T2toT2Traits<Result>::dime> > >::type Handle;
     };
@@ -182,7 +182,7 @@ namespace tfel
       typedef typename ST2toST2Type<B>::type ST2toST2B;
     public:
       typedef typename ResultType<ST2toT2A,ST2toST2B,OpMult>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      ST2toT2Expr<Result,ST2toT2ST2toST2ProductExpr<ST2toT2Traits<Result>::dime> > >::type Handle;
     };
@@ -198,7 +198,7 @@ namespace tfel
       typedef typename ST2toT2Type<B>::type ST2toT2B;
     public:
       typedef typename ResultType<T2toST2A,ST2toT2B,OpMult>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      ST2toST2Expr<Result,T2toST2ST2toT2ProductExpr<ST2toST2Traits<Result>::dime> > >::type Handle;
     };
@@ -214,7 +214,7 @@ namespace tfel
       typedef typename StensorType<B>::type StensB;
     public:
       typedef typename ResultType<ST2toT2A,StensB,OpMult>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      TensorExpr<Result,ST2toT2StensorProductExpr<TensorTraits<Result>::dime> > >::type Handle;
     };
@@ -230,7 +230,7 @@ namespace tfel
       typedef typename ST2toT2Type<B>::type ST2toT2B;
     public:
       typedef typename ResultType<TensA,ST2toT2B,OpMult>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      StensorExpr<Result,TensorST2toT2ProductExpr<StensorTraits<Result>::dime> > >::type Handle;
     };
@@ -245,20 +245,20 @@ namespace tfel
       typedef typename ST2toT2Type<A>::type                    StensA;
       typedef typename ST2toT2Traits<A>::NumType               NumA;
       typedef typename ComputeUnaryResult<NumA,OpNeg>::Result  NumResult;
-      typedef typename tfel::meta::IF<tfel::meta::HasRandomAccessConstIterator<A>::cond,
+      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond,
 				      MathObjectNegExpr<ST2toT2Concept,ST2toT2Traits,A>,
 				      MathObjectNegExprWithoutConstIterator<ST2toT2Concept,ST2toT2Traits,A>
       >::type Expr;
     public:
       typedef typename UnaryResultType<StensA,OpNeg>::type Result;
-      typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
+      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
 				      ST2toT2Expr<Result,Expr> >::type Handle;
     };
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
     tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
     !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpPlus>::Result>::cond,
@@ -272,7 +272,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
     tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
     !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMinus>::Result>::cond,
@@ -286,7 +286,7 @@ namespace tfel
 
     // template<typename T1,typename T2>
     // TFEL_MATH_INLINE 
-    // typename tfel::meta::EnableIf<
+    // typename std::enable_if<
     //   tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
     // tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
     // !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -303,7 +303,7 @@ namespace tfel
 
     // template<typename T1,typename T2>
     // TFEL_MATH_INLINE 
-    // typename tfel::meta::EnableIf<
+    // typename std::enable_if<
     //   tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
     // tfel::meta::Implements<T2,StensorConcept>::cond&&
     // !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -320,7 +320,7 @@ namespace tfel
 
     // template<typename T1,typename T2>
     // TFEL_MATH_INLINE 
-    // typename tfel::meta::EnableIf<
+    // typename std::enable_if<
     //   tfel::meta::Implements<T1,StensorConcept>::cond&&
     //   tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
     // !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -337,7 +337,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
     tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
     !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -351,7 +351,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
     tfel::typetraits::IsScalar<T2>::cond&&
     !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -365,7 +365,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
     tfel::typetraits::IsScalar<T2>::cond&&
     !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiv>::Result>::cond,
@@ -378,7 +378,7 @@ namespace tfel
     }
 
     template<typename T1>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,ST2toT2Concept>::cond,
       typename ComputeUnaryResult<T1,OpNeg>::Handle
     >::type
@@ -390,7 +390,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Result>::cond,
@@ -404,7 +404,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,T2toT2Concept>::cond&&
       tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -418,7 +418,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
       tfel::meta::Implements<T2,T2toST2Concept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -432,7 +432,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
       tfel::meta::Implements<T2,ST2toST2Concept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -446,7 +446,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -460,7 +460,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,ST2toT2Concept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -474,7 +474,7 @@ namespace tfel
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::meta::Implements<T2,ST2toT2Concept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,

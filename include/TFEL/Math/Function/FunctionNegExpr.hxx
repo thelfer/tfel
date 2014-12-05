@@ -75,7 +75,7 @@ namespace tfel{
 
       template<typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	!tfel::typetraits::IsInvalid<
 	  typename ComputeUnaryResult<typename ComputeUnaryResult<T,F>::Result,OpNeg>::Result
         >::cond,

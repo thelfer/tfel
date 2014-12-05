@@ -36,7 +36,7 @@ namespace umat
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
     TangentOperatorTraits;
-    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
@@ -45,7 +45,7 @@ namespace umat
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
     TangentOperatorTraits;
-    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DSIG_DF;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DSIG_DF;
   };
 
   template<>
@@ -54,7 +54,7 @@ namespace umat
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::COHESIVEZONEMODEL>
     TangentOperatorTraits;
-    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<UMATBehaviourType btype,
@@ -142,7 +142,7 @@ namespace umat
       //! a simple alias
       typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
       // spatial dimension
-      static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
+      static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
       /*!
        * \param[out] bData  : behaviour data
        * \param[out] iData  : integration data
@@ -359,11 +359,11 @@ namespace umat
       struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping
     {
       //! A simple alias
-      typedef typename tfel::meta::IF<bs,
+      typedef typename std::conditional<bs,
 				      StiffnessTensorInitializer,
 				      DoNothingInitializer>::type SInitializer;
       //! A simple alias
-      typedef typename tfel::meta::IF<ba,
+      typedef typename std::conditional<ba,
 				      ThermalExpansionCoefficientTensorInitializer,
 				      DoNothingInitializer>::type AInitializer;
       
@@ -408,16 +408,16 @@ namespace umat
 	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::hasPredictionOperator,
 	  StandardPredictionOperatorComputer,
 	  PredictionOperatorIsNotAvalaible
 	  >::type PredictionOperatorComputer;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::hasStressFreeExpansion,
 	  DrivingVariableInitialiserWithStressFreeExpansion,
 	  DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::isConsistentTangentOperatorSymmetric,
 	  SymmetricConsistentTangentOperatorComputer,
 	  GeneralConsistentTangentOperatorComputer>::type
@@ -460,13 +460,13 @@ namespace umat
 	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::hasStressFreeExpansion,
 	  DrivingVariableInitialiserWithStressFreeExpansion,
 	  DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::hasConsistentTangentOperator,
-	  typename tfel::meta::IF<
+	  typename std::conditional<
 	  Traits::isConsistentTangentOperatorSymmetric,
 	  SymmetricConsistentTangentOperatorComputer,
 	  GeneralConsistentTangentOperatorComputer>::type,
@@ -530,13 +530,13 @@ namespace umat
 	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::hasStressFreeExpansion,
 	  DrivingVariableInitialiserWithStressFreeExpansion,
 	  DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::hasConsistentTangentOperator,
-	  typename tfel::meta::IF<
+	  typename std::conditional<
 	  Traits::isConsistentTangentOperatorSymmetric,
 	  SymmetricConsistentTangentOperatorComputer,
 	  GeneralConsistentTangentOperatorComputer>::type,
@@ -627,11 +627,11 @@ namespace umat
 	     const bool ba>     // requires ThermalExpansionCoefficientTensor
       struct TFEL_VISIBILITY_LOCAL Integrator
     {
-      typedef typename tfel::meta::IF<bs,
+      typedef typename std::conditional<bs,
 				      StiffnessTensorInitializer,
 				      DoNothingInitializer>::type SInitializer;
 
-      typedef typename tfel::meta::IF<ba,
+      typedef typename std::conditional<ba,
 				      ThermalExpansionCoefficientTensorInitializer,
 				      DoNothingInitializer>::type AInitializer;
 
@@ -653,7 +653,7 @@ namespace umat
 	  {
 	    using namespace tfel::material;
 	    typedef MechanicalBehaviourTraits<BV> Traits;
-	    typedef typename tfel::meta::IF<
+	    typedef typename std::conditional<
 	      Traits::hasStressFreeExpansion,
 	      DrivingVariableInitialiserWithStressFreeExpansion,
 	      DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
@@ -674,12 +674,12 @@ namespace umat
 	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::isConsistentTangentOperatorSymmetric,
 	  SymmetricConsistentTangentOperatorComputer,
 	  GeneralConsistentTangentOperatorComputer>::type
 	  ConsistentTangentOperatorHandler;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::hasPredictionOperator,
 	  StandardPredictionOperatorComputer,
 	  PredictionOperatorIsNotAvalaible

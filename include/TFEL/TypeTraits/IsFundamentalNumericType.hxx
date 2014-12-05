@@ -34,7 +34,7 @@
       /*!						 \
        *  Result					 \
        */						 \
-      static const bool cond = true;                     \
+      static constexpr bool cond = true;                     \
     };                                                   \
     /*!                                                  \
      * \brief Partial specialisation for X               \
@@ -45,7 +45,7 @@
       /*!						 \
        *  Result					 \
        */						 \
-      static const bool cond = true;                     \
+      static constexpr bool cond = true;                     \
     }                                 
 
 
@@ -71,7 +71,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = false;
+      static constexpr bool cond = false;
     };
 
     TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(unsigned short);

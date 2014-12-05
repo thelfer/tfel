@@ -35,7 +35,6 @@ struct ParserTest
   execute()
   {
     using namespace std;
-    using namespace tfel::utilities;
     using namespace tfel::math;
     using namespace tfel::math::parser;
     vector<string> var(1,"x");
@@ -65,9 +64,7 @@ TFEL_TESTS_GENERATE_PROXY(ParserTest,
 int main(void)
 {
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("Parser9.xml");

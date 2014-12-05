@@ -18,6 +18,7 @@
 #endif /* NDEBUG */
 
 #include<cmath>
+#include<cassert>
 #include<cstdlib>
 #include<cstring>
 

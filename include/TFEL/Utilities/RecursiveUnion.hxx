@@ -69,7 +69,7 @@ namespace tfel{
       static inline typename tfel::meta::TLFindNthElt<List,N>::type& exe(RecursiveUnion<List>& src)
       {
 	TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<List,tfel::meta::TL>::cond));
-	TFEL_STATIC_ASSERT((!tfel::meta::IsSameType<typename tfel::meta::TLFindNthElt<List,N>::type,tfel::meta::TLE>::cond));
+	TFEL_STATIC_ASSERT((!std::is_same<typename tfel::meta::TLFindNthElt<List,N>::type,tfel::meta::TLE>::value));
 	return RecursiveRetrieve<N-1>::exe(src.next);
       }
 
@@ -82,7 +82,7 @@ namespace tfel{
       exe(const RecursiveUnion<List>& src)
       {
 	TFEL_STATIC_ASSERT((tfel::meta::IsSubClassOf<List,tfel::meta::TL>::cond));
-	TFEL_STATIC_ASSERT((!tfel::meta::IsSameType<typename tfel::meta::TLFindNthElt<List,N>::type,tfel::meta::TLE>::cond));
+	TFEL_STATIC_ASSERT((!std::is_same<typename tfel::meta::TLFindNthElt<List,N>::type,tfel::meta::TLE>::value));
 	return RecursiveRetrieve<N-1>::exe(src.next);
       }
 

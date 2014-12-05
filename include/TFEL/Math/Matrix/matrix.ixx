@@ -129,7 +129,7 @@ namespace tfel{
 
     template<typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       matrix<T>&
     >::type
@@ -151,7 +151,7 @@ namespace tfel{
 
     template<typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       matrix<T>&
     >::type
@@ -173,7 +173,7 @@ namespace tfel{
 
     template<typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+    TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       matrix<T>&
     >::type

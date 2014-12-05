@@ -18,7 +18,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 #include"TFEL/Math/Forward/qt.hxx"
@@ -71,7 +71,7 @@
       operator()(const qt<NoUnit,Complex<long double> >) const;                           \
                                                                                           \
       template<typename T>      			                                  \
-      typename tfel::meta::EnableIf<                                                      \
+      typename std::enable_if<                                                      \
         !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Fct##X>::Result>::cond,\
 	 typename ComputeUnaryResult<T,Fct##X>::Handle			                  \
       >::type                                                                             \
@@ -121,7 +121,7 @@
       qt<NoUnit,long double> operator()(const qt<NoUnit,long double>) const;              \
                                 							  \
       template<typename T>      			                                  \
-      typename tfel::meta::EnableIf<                                                      \
+      typename std::enable_if<                                                      \
         !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Fct##X>::Result>::cond,\
         typename ComputeUnaryResult<T,Fct##X>::Handle                                     \
       >::type                                                                             \

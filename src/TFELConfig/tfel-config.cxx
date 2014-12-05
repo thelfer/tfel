@@ -211,13 +211,17 @@ static std::string
 libDir(void)
 {
   using namespace std;
-  static const string prefix(PREFIXDIR);
-  static const string execPrefix(EXECPREFIXDIR);
+  const string prefix(PREFIXDIR);
+  const string execPrefix(EXECPREFIXDIR);
   string lib(LIBDIR);
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   const string ldir("/bin");
 #else 
+#ifdef LIB_SUFFIX
   const string ldir("/lib"LIB_SUFFIX);
+#else
+  const string ldir("/lib");
+#endif
 #endif
   const string& th = getTFELHOME();
   if(!th.empty()){
@@ -237,7 +241,7 @@ static std::string
 includeDir(void)
 {
   using namespace std;
-  static const string prefix(PREFIXDIR);
+  const string prefix(PREFIXDIR);
   string inc(INCLUDEDIR);
   const string& th = getTFELHOME();
   if(!th.empty()){

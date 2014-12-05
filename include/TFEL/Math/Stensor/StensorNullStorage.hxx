@@ -23,8 +23,8 @@ namespace tfel{
     template<unsigned short N, typename T>
     struct StensorNullStorage{
 
-      static const bool storage_is_static   = false;
-      static const bool storage_is_external = false;
+      static constexpr bool storage_is_static   = false;
+      static constexpr bool storage_is_external = false;
 
     };
 

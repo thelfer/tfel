@@ -25,71 +25,59 @@ namespace tfel
     {
 
       template<EvaluatorProxyFunctionPtr1P1V f>
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunction1P1VGenerator(const std::vector<std::string>& params,
-				     std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
+				     std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math;
-	using namespace tfel::math::parser;
 	int nbr;
 	Evaluator::checkParameterNumber(1,params.size());
 	Evaluator::checkVariableNumber(1,args.size());
 	nbr = Evaluator::convertToInt("EvaluatorFunction1P1VGenerator",params[0]);
-	return shared_ptr<Expr>(new EvaluatorFunction1P1V(f,nbr,args[0]));
+	return std::shared_ptr<Expr>(new EvaluatorFunction1P1V(f,nbr,args[0]));
       } // end of EvaluatorFunction1P1VGenerator
 
       template<EvaluatorProxyFunctionPtr2P1V f>
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunction2P1VGenerator(const std::vector<std::string>& params,
-				     std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
+				     std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math;
-	using namespace tfel::math::parser;
 	int nbr;
 	int nbr2;
 	Evaluator::checkParameterNumber(2,params.size());
 	Evaluator::checkVariableNumber(1,args.size());
 	nbr  = Evaluator::convertToInt("EvaluatorFunction2P1VGenerator",params[0]);
 	nbr2 = Evaluator::convertToInt("EvaluatorFunction2P1VGenerator",params[1]);
-	return shared_ptr<Expr>(new EvaluatorFunction2P1V(f,nbr,nbr2,args[0]));
+	return std::shared_ptr<Expr>(new EvaluatorFunction2P1V(f,nbr,nbr2,args[0]));
       } // end of EvaluatorFunction2P1VGenerator
 
       template<EvaluatorProxyFunctionPtr1P2V f>
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunction1P2VGenerator(const std::vector<std::string>& params,
-				     std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
+				     std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math;
-	using namespace tfel::math::parser;
 	int nbr;
 	Evaluator::checkParameterNumber(1,params.size());
 	Evaluator::checkVariableNumber(2,args.size());
 	nbr = Evaluator::convertToInt("EvaluatorFunction1P2VGenerator",params[0]);
-	return shared_ptr<Expr>(new EvaluatorFunction1P2V(f,nbr,args[0],args[1]));
+	return std::shared_ptr<Expr>(new EvaluatorFunction1P2V(f,nbr,args[0],args[1]));
       } // end of EvaluatorFunction1P2VGenerator
 
       template<EvaluatorProxyFunctionPtr2P2V f>
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunction2P2VGenerator(const std::vector<std::string>& params,
-				     std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
+				     std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math;
-	using namespace tfel::math::parser;
 	int nbr;
 	int nbr2;
 	Evaluator::checkParameterNumber(2,params.size());
 	Evaluator::checkVariableNumber(2,args.size());
 	nbr  = Evaluator::convertToInt("EvaluatorFunction2P2VGenerator",params[0]);
 	nbr2 = Evaluator::convertToInt("EvaluatorFunction2P2VGenerator",params[1]);
-	return shared_ptr<Expr>(new EvaluatorFunction2P2V(f,nbr,nbr2,args[0],args[1]));
+	return std::shared_ptr<Expr>(new EvaluatorFunction2P2V(f,nbr,nbr2,args[0],args[1]));
       } // end of EvaluatorFunction2P2VGenerator
 
 #ifdef __SUNPRO_CC
@@ -238,19 +226,19 @@ namespace tfel
 
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<1u>
 
       template<>
@@ -264,19 +252,19 @@ namespace tfel
 
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<1u>
 
       template<>
@@ -290,19 +278,19 @@ namespace tfel
 
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<2u>
 
       template<>
@@ -316,19 +304,19 @@ namespace tfel
 
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<3u>
 
       template<>
@@ -342,19 +330,19 @@ namespace tfel
 
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<4u>
 
       template<>
@@ -368,19 +356,19 @@ namespace tfel
 
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<5u>
 
       template<>
@@ -394,19 +382,19 @@ namespace tfel
 
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<6u>
 
       template<>
@@ -420,19 +408,19 @@ namespace tfel
 
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<7u>
 
       template<>
@@ -445,19 +433,19 @@ namespace tfel
 	typedef EvaluatorFunctionWrapper8_type2UP type2UP;
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<8u>
 
       template<>
@@ -470,19 +458,19 @@ namespace tfel
 	typedef EvaluatorFunctionWrapper9_type2UP type2UP;
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<9u>
 
       template<>
@@ -495,24 +483,24 @@ namespace tfel
 	typedef EvaluatorFunctionWrapper10_type2UP type2UP;
 	static double
 	apply(const type,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1P,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2P,int,int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type1UP,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
 	static double
 	apply(const type2UP,unsigned int,unsigned int,
-	      const std::vector<tfel::utilities::shared_ptr<Expr> >&);
+	      const std::vector<std::shared_ptr<Expr> >&);
       }; // end of EvaluatorFunctionWrapper<10u>
 
       template<unsigned short N>
       EvaluatorFunctionNV<N>::EvaluatorFunctionNV(typename EvaluatorFunctionWrapper<N>::type f_,
-						  const std::vector<tfel::utilities::shared_ptr<Expr> >& args_)
+						  const std::vector<std::shared_ptr<Expr> >& args_)
 	: f(f_),
 	  args(args_)
       {} // end of EvaluatorFunctionNV<N>::EvaluatorFunctionNV
@@ -529,7 +517,6 @@ namespace tfel
       EvaluatorFunctionNV<N>::getParametersNames(std::set<std::string>& p) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator pa;
         for(pa=this->args.begin();pa!=this->args.end();++pa){
 	  (*pa)->getParametersNames(p);
@@ -537,11 +524,10 @@ namespace tfel
       } // end of EvaluatorFunctionNV<N>::getParametersNames
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunctionNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -552,11 +538,10 @@ namespace tfel
       } // end of EvaluatorFunctionNV<N>::resolveDependencies const
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunctionNV<N>::clone(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -567,14 +552,13 @@ namespace tfel
       } // end of EvaluatorFunctionNV<N>::resolveDependencies const
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunctionNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 									      const std::vector<std::string>& params,
 									      const std::map<std::string,
 									      std::vector<double>::size_type>& pos) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -589,7 +573,6 @@ namespace tfel
       EvaluatorFunctionNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
 	vector<string> a(names);
 	for(p=this->args.begin();p!=this->args.end();++p){
@@ -606,7 +589,7 @@ namespace tfel
       template<unsigned short N>
       EvaluatorFunction1PNV<N>::EvaluatorFunction1PNV(typename EvaluatorFunctionWrapper<N>::type1P f_,
 						      const int n_,
-						      const std::vector<tfel::utilities::shared_ptr<Expr> >& args_)
+						      const std::vector<std::shared_ptr<Expr> >& args_)
 	: f(f_),
 	  n(n_),
 	  args(args_)
@@ -620,11 +603,10 @@ namespace tfel
       } // end of EvaluatorFunction1PNV<N>::getValue(void) const
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction1PNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -639,7 +621,6 @@ namespace tfel
       EvaluatorFunction1PNV<N>::getParametersNames(std::set<std::string>& p) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         typename vector<shared_ptr<Expr> >::const_iterator pa;
         for(pa=this->args.begin();pa!=this->args.end();++pa){
 	  (*pa)->getParametersNames(p);
@@ -647,11 +628,10 @@ namespace tfel
       } // end of EvaluatorFunction1PNV<N>::getParametersNames
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction1PNV<N>::clone(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -662,14 +642,13 @@ namespace tfel
       } // end of EvaluatorFunction1PNV<N>::clone
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction1PNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 										const std::vector<std::string>& params,
 										const std::map<std::string,
 										std::vector<double>::size_type>& pos) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -684,7 +663,6 @@ namespace tfel
       EvaluatorFunction1PNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
 	vector<string> a(names);
         for(p=this->args.begin();p!=this->args.end();++p){
@@ -702,7 +680,7 @@ namespace tfel
       EvaluatorFunction2PNV<N>::EvaluatorFunction2PNV(typename EvaluatorFunctionWrapper<N>::type2P f_,
 						      const int n_,
 						      const int m_,
-						      const std::vector<tfel::utilities::shared_ptr<Expr> >& args_)
+						      const std::vector<std::shared_ptr<Expr> >& args_)
 	: f(f_),
 	  n(n_),
 	  m(m_),
@@ -717,11 +695,10 @@ namespace tfel
       } // end of EvaluatorFunction2PNV<N>::getValue(void) const
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction2PNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -732,11 +709,10 @@ namespace tfel
       } // end of EvaluatorFunction2PNV<N>::resolveDependencies const
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction2PNV<N>::clone(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -747,14 +723,13 @@ namespace tfel
       } // end of EvaluatorFunction2PNV<N>::clone
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction2PNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 										const std::vector<std::string>& params,
 										const std::map<std::string,
 										std::vector<double>::size_type>& pos) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -769,7 +744,6 @@ namespace tfel
       EvaluatorFunction2PNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
 	vector<string> a(names);
         for(p=this->args.begin();p!=this->args.end();++p){
@@ -786,7 +760,7 @@ namespace tfel
       template<unsigned short N>
       EvaluatorFunction1UPNV<N>::EvaluatorFunction1UPNV(typename EvaluatorFunctionWrapper<N>::type1UP f_,
 							const unsigned int n_,
-							const std::vector<tfel::utilities::shared_ptr<Expr> >& args_)
+							const std::vector<std::shared_ptr<Expr> >& args_)
 	: f(f_),
 	  n(n_),
 	  args(args_)
@@ -800,11 +774,10 @@ namespace tfel
       } // end of EvaluatorFunction1UPNV<N>::getValue(void) const
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction1UPNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -819,7 +792,6 @@ namespace tfel
       EvaluatorFunction1UPNV<N>::getParametersNames(std::set<std::string>& p) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         typename vector<shared_ptr<Expr> >::const_iterator pa;
         for(pa=this->args.begin();pa!=this->args.end();++pa){
 	  (*pa)->getParametersNames(p);
@@ -827,11 +799,10 @@ namespace tfel
       } // end of EvaluatorFunction1UPNV<N>::getParametersNames
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction1UPNV<N>::clone(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -842,14 +813,13 @@ namespace tfel
       } // end of EvaluatorFunction1UPNV<N>::clone
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction1UPNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 										 const std::vector<std::string>& params,
 										 const std::map<std::string,
 										 std::vector<double>::size_type>& pos) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -864,7 +834,6 @@ namespace tfel
       EvaluatorFunction1UPNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
 	vector<string> a(names);
         for(p=this->args.begin();p!=this->args.end();++p){
@@ -882,7 +851,7 @@ namespace tfel
       EvaluatorFunction2UPNV<N>::EvaluatorFunction2UPNV(typename EvaluatorFunctionWrapper<N>::type2UP f_,
 							const unsigned int n_,
 							const unsigned int m_,
-							const std::vector<tfel::utilities::shared_ptr<Expr> >& args_)
+							const std::vector<std::shared_ptr<Expr> >& args_)
 	: f(f_),
 	  n(n_),
 	  m(m_),
@@ -897,11 +866,10 @@ namespace tfel
       } // end of EvaluatorFunction2UPNV<N>::getValue(void) const
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction2UPNV<N>::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -912,11 +880,10 @@ namespace tfel
       } // end of EvaluatorFunction2UPNV<N>::resolveDependencies const
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction2UPNV<N>::clone(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -927,14 +894,13 @@ namespace tfel
       } // end of EvaluatorFunction2UPNV<N>::clone
 
       template<unsigned short N>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       EvaluatorFunction2UPNV<N>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 										 const std::vector<std::string>& params,
 										 const std::map<std::string,
 										 std::vector<double>::size_type>& pos) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::size_type i;
@@ -949,7 +915,6 @@ namespace tfel
       EvaluatorFunction2UPNV<N>::getParametersNames(std::set<std::string>& p) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         typename vector<shared_ptr<Expr> >::const_iterator pa;
         for(pa=this->args.begin();pa!=this->args.end();++pa){
 	  (*pa)->getParametersNames(p);
@@ -961,7 +926,6 @@ namespace tfel
       EvaluatorFunction2UPNV<N>::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
 	vector<string> a(names);
         for(p=this->args.begin();p!=this->args.end();++p){
@@ -977,89 +941,74 @@ namespace tfel
 
       template<unsigned short N,
 	       typename EvaluatorFunctionWrapper<N>::type f>
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunctionNVGenerator(const std::vector<std::string>& params,
-				   std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
+				   std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math;
-	using namespace tfel::math::parser;
 	Evaluator::checkParameterNumber(0,params.size());
 	Evaluator::checkVariableNumber(N,args.size());
-	return shared_ptr<Expr>(new EvaluatorFunctionNV<N>(f,args));
+	return std::shared_ptr<Expr>(new EvaluatorFunctionNV<N>(f,args));
       } // end of EvaluatorFunctionNVGenerator
 
       template<unsigned short N,
 	       typename EvaluatorFunctionWrapper<N>::type1P f>
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunction1PNVGenerator(const std::vector<std::string>& params,
-				     std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
+				     std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math;
-	using namespace tfel::math::parser;
 	int nbr;
 	Evaluator::checkParameterNumber(1,params.size());
 	Evaluator::checkVariableNumber(N,args.size());
 	nbr  = Evaluator::convertToInt("EvaluatorFunction1PNVGenerator",params[0]);
-	return shared_ptr<Expr>(new EvaluatorFunction1PNV<N>(f,nbr,args));
+	return std::shared_ptr<Expr>(new EvaluatorFunction1PNV<N>(f,nbr,args));
       } // end of EvaluatorFunction1PNVGenerator
 
       template<unsigned short N,
 	       typename EvaluatorFunctionWrapper<N>::type2P f>
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunction2PNVGenerator(const std::vector<std::string>& params,
-				     std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
+				     std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math;
-	using namespace tfel::math::parser;
 	int nbr;
 	int nbr2;
 	Evaluator::checkParameterNumber(2,params.size());
 	Evaluator::checkVariableNumber(N,args.size());
 	nbr  = Evaluator::convertToInt("EvaluatorFunction2PNVGenerator",params[0]);
 	nbr2 = Evaluator::convertToInt("EvaluatorFunction2PNVGenerator",params[1]);
-	return shared_ptr<Expr>(new EvaluatorFunction2PNV<N>(f,nbr,nbr2,args));
+	return std::shared_ptr<Expr>(new EvaluatorFunction2PNV<N>(f,nbr,nbr2,args));
       } // end of EvaluatorFunction1PNVGenerator
 
       template<unsigned short N,
 	       typename EvaluatorFunctionWrapper<N>::type1UP f>
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunction1UPNVGenerator(const std::vector<std::string>& params,
-				      std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
+				      std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math;
-	using namespace tfel::math::parser;
 	unsigned int nbr;
 	Evaluator::checkParameterNumber(1,params.size());
 	Evaluator::checkVariableNumber(N,args.size());
 	nbr  = Evaluator::convertToUnsignedInt("EvaluatorFunction1UPNVGenerator",params[0]);
-	return shared_ptr<Expr>(new EvaluatorFunction1UPNV<N>(f,nbr,args));
+	return std::shared_ptr<Expr>(new EvaluatorFunction1UPNV<N>(f,nbr,args));
       } // end of EvaluatorFunction1UPNVGenerator
 
       template<unsigned short N,
 	       typename EvaluatorFunctionWrapper<N>::type2UP f>
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      std::shared_ptr<tfel::math::parser::Expr>
       EvaluatorFunction2UPNVGenerator(const std::vector<std::string>& params,
-				      std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >& args)
+				      std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math;
-	using namespace tfel::math::parser;
 	unsigned int nbr;
 	unsigned int nbr2;
 	Evaluator::checkParameterNumber(2,params.size());
 	Evaluator::checkVariableNumber(N,args.size());
 	nbr  = Evaluator::convertToUnsignedInt("EvaluatorFunction2UPNVGenerator",params[0]);
 	nbr2 = Evaluator::convertToUnsignedInt("EvaluatorFunction2UPNVGenerator",params[1]);
-	return shared_ptr<Expr>(new EvaluatorFunction2UPNV<N>(f,nbr,nbr2,args));
+	return std::shared_ptr<Expr>(new EvaluatorFunction2UPNV<N>(f,nbr,nbr2,args));
       } // end of EvaluatorFunction1UPNVGenerator
 
     } // end of namespace parser

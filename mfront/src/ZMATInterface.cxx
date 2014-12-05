@@ -1617,11 +1617,7 @@ namespace mfront
     using namespace std;
     map<string,vector<string> > deps;
     const string lib = getLibraryName(mb);
-#ifdef HAVE_CXX11
-      deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
-#else 
-      deps[lib].push_back("`tfel-config --libs --material`");
-#endif
+    deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
     return deps;
   } // end of ZMATInterface::getLibrariesDependencies
 

@@ -20,7 +20,7 @@ namespace tfel{
   namespace math{
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::meta::Implements<T2,TensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpPlus>::Result>::cond,
@@ -33,7 +33,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpPlus>::Result>::cond,
@@ -47,7 +47,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,TensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpPlus>::Result>::cond,
@@ -61,7 +61,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::meta::Implements<T2,TensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMinus>::Result>::cond,
@@ -74,7 +74,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMinus>::Result>::cond,
@@ -88,7 +88,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,TensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMinus>::Result>::cond,
@@ -102,7 +102,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::meta::Implements<T2,TensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -115,7 +115,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -129,7 +129,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,TensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -143,7 +143,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::meta::Implements<T2,TensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Result>::cond,
@@ -156,7 +156,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T1>::cond&&
       tfel::meta::Implements<T2,TensorConcept>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -169,7 +169,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::typetraits::IsScalar<T2>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
@@ -182,7 +182,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond&&
       tfel::typetraits::IsScalar<T2>::cond&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiv>::Result>::cond,
@@ -195,7 +195,7 @@ namespace tfel{
     }
 
     template<typename T1>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,TensorConcept>::cond,
       typename ComputeUnaryResult<T1,OpNeg>::Handle
     >::type
@@ -206,7 +206,7 @@ namespace tfel{
     }
 
     // template<typename T1,typename T2>
-    // typename tfel::meta::EnableIf<
+    // typename std::enable_if<
     //   tfel::meta::Implements<T1,TensorConcept>::cond&&
     //   tfel::meta::Implements<T2,TensorConcept>::cond&&
     //   !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,

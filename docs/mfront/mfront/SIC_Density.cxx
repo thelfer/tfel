@@ -18,6 +18,6 @@ p.setGlossaryName("Porosity");
 @PhysicalBounds p in [0:1];
 
 @Function{
-  static const double a =  3215. ;
+  static constexpr double a =  3215. ;
   r=a*(1.-p);
 } // end of function

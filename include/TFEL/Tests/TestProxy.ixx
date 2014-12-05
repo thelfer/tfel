@@ -14,7 +14,7 @@
 #ifndef _LIB_TFEL_TESTS_TESTPROXY_IXX
 #define _LIB_TFEL_TESTS_TESTPROXY_IXX 1
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Tests/TestManager.hxx"
 
 namespace tfel
@@ -26,9 +26,8 @@ namespace tfel
     template<typename T>
     TestProxy<T>::TestProxy(const std::string& n)
     {
-      using namespace tfel::utilities;
       TestManager& tm = TestManager::getTestManager();
-      tm.addTest(n,shared_ptr<Test>(new T()));
+      tm.addTest(n,std::shared_ptr<Test>(new T()));
     } // end of TestProxy<T>::TestProxy
 
     template<typename T>
@@ -36,9 +35,8 @@ namespace tfel
     TestProxy<T>::TestProxy(const std::string& n,
 			    const T2& t)
     {
-      using namespace tfel::utilities;
       TestManager& tm = TestManager::getTestManager();
-      tm.addTest(n,shared_ptr<Test>(new T(t)));
+      tm.addTest(n,std::shared_ptr<Test>(new T(t)));
     } // end of TestProxy<T>::TestProxy
 
     template<typename T>
@@ -48,9 +46,8 @@ namespace tfel
 			    const T2& t1,
 			    const T3& t2)
     {
-      using namespace tfel::utilities;
       TestManager& tm = TestManager::getTestManager();
-      tm.addTest(n,shared_ptr<Test>(new T(t1,t2)));
+      tm.addTest(n,std::shared_ptr<Test>(new T(t1,t2)));
     } // end of TestProxy<T>::TestProxy
     
   } // end of namespace test

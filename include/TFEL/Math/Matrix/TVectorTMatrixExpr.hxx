@@ -53,17 +53,17 @@ namespace tfel{
       typedef typename VectorTraits<A>::NumType NumTypeA;
       typedef typename MatrixTraits<B>::NumType NumTypeB;
   
-      static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
-      static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
+      static constexpr bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
+      static constexpr bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
-      typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
-      typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
+      typename std::conditional<IsATemporary,const A,const A&>::type a;
+      typename std::conditional<IsBTemporary,const B,const B&>::type b;
 
       TVectorTMatrixExpr();
 
       struct ColumnConstIterator
       {	
-	typedef typename tfel::meta::IF<IsBTemporary,const B,const B&>::type MType;
+	typedef typename std::conditional<IsBTemporary,const B,const B&>::type MType;
 	typedef typename MatrixTraits<B>::NumType NumType;
 	TFEL_MATH_INLINE ColumnConstIterator(const MType m_,
 					     const unsigned short j_)
@@ -87,7 +87,7 @@ namespace tfel{
 
       struct VectorConstIterator
       {	
-	typedef typename tfel::meta::IF<IsBTemporary,const A,const A&>::type VType;
+	typedef typename std::conditional<IsBTemporary,const A,const A&>::type VType;
 	typedef typename VectorTraits<A>::NumType NumType;
 	TFEL_MATH_INLINE VectorConstIterator(VType v_)
 	  : v(v_),i(0)

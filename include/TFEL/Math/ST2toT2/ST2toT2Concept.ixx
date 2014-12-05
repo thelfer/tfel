@@ -31,7 +31,7 @@ namespace tfel{
     } // end of ST2toT2Concept<T>::operator()
 
     template<typename ST2toT2Type>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<ST2toT2Type,ST2toT2Concept>::cond,
       typename tfel::typetraits::AbsType<typename ST2toT2Traits<ST2toT2Type>::NumType>::type
     >::type

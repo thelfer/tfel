@@ -90,7 +90,6 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   typedef TestFunctionWrapper<TinyMatrixSolveTest<long double> >  Wrapper1;
   typedef TestFunctionWrapper<TinyMatrixSolveTest<double> >       Wrapper2;
   typedef TestFunctionWrapper<TinyMatrixSolveTest<float> >        Wrapper3;

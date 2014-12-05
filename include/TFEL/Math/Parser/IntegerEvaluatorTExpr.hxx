@@ -25,7 +25,7 @@ namespace tfel
 
     struct IntegerEvaluator::TExpr
     {
-      virtual tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+      virtual std::shared_ptr<tfel::math::parser::IntegerExpr>
       analyse(void) = 0;
       virtual
       void reduce(void) = 0;
@@ -43,19 +43,19 @@ namespace tfel
       struct Negation
 	: public tfel::math::parser::IntegerExpr
       {
-	Negation(const tfel::utilities::shared_ptr<IntegerExpr>);
+	Negation(const std::shared_ptr<IntegerExpr>);
 	int getValue(void) const;
-	tfel::utilities::shared_ptr<IntegerExpr>
+	std::shared_ptr<IntegerExpr>
 	clone(const std::vector<int>&) const;
 	~Negation();
       private:
-	const tfel::utilities::shared_ptr<IntegerExpr> expr;
+	const std::shared_ptr<IntegerExpr> expr;
       };
       
-      TNegation(tfel::utilities::shared_ptr<IntegerEvaluator::TExpr>);
+      TNegation(std::shared_ptr<IntegerEvaluator::TExpr>);
       bool
       isOperator(void) const;
-      tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+      std::shared_ptr<tfel::math::parser::IntegerExpr>
       analyse(void);
       std::string
       getClassName(void) const;
@@ -63,7 +63,7 @@ namespace tfel
       reduce(void);
       ~TNegation();
     private:
-      tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> expr;
+      std::shared_ptr<IntegerEvaluator::TExpr> expr;
     }; // end of struct IntegerEvaluator::TNegation
 
     struct IntegerEvaluator::TBinaryOperation
@@ -96,36 +96,36 @@ namespace tfel
       struct TFEL_VISIBILITY_LOCAL BinaryOperation
 	: public tfel::math::parser::IntegerExpr
       {
-	BinaryOperation(const tfel::utilities::shared_ptr<IntegerExpr>,
-			const tfel::utilities::shared_ptr<IntegerExpr>);
+	BinaryOperation(const std::shared_ptr<IntegerExpr>,
+			const std::shared_ptr<IntegerExpr>);
 	int
 	getValue(void) const;
-	tfel::utilities::shared_ptr<IntegerExpr>
+	std::shared_ptr<IntegerExpr>
 	clone(const std::vector<int>&) const;
 	~BinaryOperation();
       private:
-	const tfel::utilities::shared_ptr<IntegerExpr> a;
-	const tfel::utilities::shared_ptr<IntegerExpr> b;
+	const std::shared_ptr<IntegerExpr> a;
+	const std::shared_ptr<IntegerExpr> b;
       }; // end of struct BinaryOperation
       /*!
        * Constructor
        */
-      TBinaryOperation(tfel::utilities::shared_ptr<IntegerEvaluator::TExpr>,
-		       const tfel::utilities::shared_ptr<TOperator>,
-		       tfel::utilities::shared_ptr<IntegerEvaluator::TExpr>);
+      TBinaryOperation(std::shared_ptr<IntegerEvaluator::TExpr>,
+		       const std::shared_ptr<TOperator>,
+		       std::shared_ptr<IntegerEvaluator::TExpr>);
       bool
       isOperator(void) const;
       std::string
       getClassName(void) const;
       void
       reduce(void);
-      tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+      std::shared_ptr<tfel::math::parser::IntegerExpr>
       analyse(void);
       ~TBinaryOperation();
     private:
-      tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> a;
-      const tfel::utilities::shared_ptr<TOperator>op;
-      tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> b;
+      std::shared_ptr<IntegerEvaluator::TExpr> a;
+      const std::shared_ptr<TOperator>op;
+      std::shared_ptr<IntegerEvaluator::TExpr> b;
     }; // end of struct IntegerEvaluator::TBinaryOperation
 
     struct IntegerEvaluator::TVariable
@@ -138,7 +138,7 @@ namespace tfel
 		 const std::vector<int>::size_type);
 	int
 	getValue(void) const;
-	tfel::utilities::shared_ptr<IntegerExpr>
+	std::shared_ptr<IntegerExpr>
 	clone(const std::vector<int>&) const;
       private:
 	const std::vector<int>& v;
@@ -153,7 +153,7 @@ namespace tfel
       std::string
       getClassName(void) const;
       void reduce(void);
-      tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+      std::shared_ptr<tfel::math::parser::IntegerExpr>
       analyse(void);
     private:
       std::vector<int>& vars;
@@ -172,7 +172,7 @@ namespace tfel
       reduce(void);
       std::string
       getClassName(void) const;
-      tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+      std::shared_ptr<tfel::math::parser::IntegerExpr>
       analyse(void);
     private:
       const std::string type;
@@ -184,10 +184,10 @@ namespace tfel
       bool
       isOperator(void) const;
       void
-      add(tfel::utilities::shared_ptr<IntegerEvaluator::TExpr>const);
+      add(std::shared_ptr<IntegerEvaluator::TExpr>const);
       void
       reduce(void);
-      tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+      std::shared_ptr<tfel::math::parser::IntegerExpr>
       analyse(void);
       std::string
       getClassName(void) const;
@@ -195,7 +195,7 @@ namespace tfel
     private:
       void
       reduce(const std::string&);
-      std::vector<tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> > subExpr;
+      std::vector<std::shared_ptr<IntegerEvaluator::TExpr> > subExpr;
     }; // end of struct IntegerEvaluator::TGroup
 
     struct IntegerEvaluator::TNumber
@@ -205,7 +205,7 @@ namespace tfel
 	: public tfel::math::parser::IntegerExpr
       {
 	Number(const int);
-	tfel::utilities::shared_ptr<IntegerExpr>
+	std::shared_ptr<IntegerExpr>
 	clone(const std::vector<int>&) const;
 	int
 	getValue(void) const;
@@ -217,7 +217,7 @@ namespace tfel
       isOperator(void) const;
       std::string
       getClassName(void) const;
-      tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr>
+      std::shared_ptr<tfel::math::parser::IntegerExpr>
       analyse(void);
       void
       reduce(void);

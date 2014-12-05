@@ -120,7 +120,7 @@ namespace tfel{
       /*!
        * dimension of the space for the the given modelling hypothesis
        */
-      static const unsigned short N =
+      static constexpr unsigned short N =
 	ModellingHypothesisToSpaceDimension<H>::value;
       /*!
        * \brief only compute a prediction stiffness matrix.

@@ -14,8 +14,9 @@
 #ifndef _LIB_TFEL_IMPLEMENTS_H_
 #define _LIB_TFEL_IMPLEMENTS_H_ 
 
+#include<type_traits>
+
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/IsSuperClassOf.hxx"
 
 namespace tfel{
 
@@ -38,10 +39,10 @@ namespace tfel{
     template<typename T, template<typename> class concept>
     struct TFEL_VISIBILITY_LOCAL Implements
     {
-      /*
+      /*!
        * The result of the metafunction.
        */
-      static const bool cond = tfel::meta::IsSuperClassOf<concept<T>,T>::cond;
+      static constexpr bool cond = std::is_base_of<concept<T>,T>::value;
     };
 
   } // end of namespace meta

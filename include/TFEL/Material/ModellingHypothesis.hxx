@@ -101,7 +101,7 @@ namespace tfel
     struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN>
     {
       //! the return of the metafunction
-      static const unsigned short value = 1u;
+      static constexpr unsigned short value = 1u;
     };
 
     /*!
@@ -112,7 +112,7 @@ namespace tfel
     struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS>
     {
       //! the return of the metafunction
-      static const unsigned short value = 1u;
+      static constexpr unsigned short value = 1u;
     };
 
     /*!
@@ -123,7 +123,7 @@ namespace tfel
     struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::AXISYMMETRICAL>
     {
       //! the return of the metafunction
-      static const unsigned short value = 2u;
+      static constexpr unsigned short value = 2u;
     };
 
     /*!
@@ -134,7 +134,7 @@ namespace tfel
     struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::PLANESTRESS>
     {
       //! the return of the metafunction
-      static const unsigned short value = 2u;
+      static constexpr unsigned short value = 2u;
     };
 
     /*!
@@ -145,7 +145,7 @@ namespace tfel
     struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::PLANESTRAIN>
     {
       //! the return of the metafunction
-      static const unsigned short value = 2u;
+      static constexpr unsigned short value = 2u;
     };
 
     /*!
@@ -156,7 +156,7 @@ namespace tfel
     struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::GENERALISEDPLANESTRAIN>
     {
       //! the return of the metafunction
-      static const unsigned short value = 2u;
+      static constexpr unsigned short value = 2u;
     };
 
     /*!
@@ -167,7 +167,7 @@ namespace tfel
     struct ModellingHypothesisToSpaceDimension<ModellingHypothesis::TRIDIMENSIONAL>
     {
       //! the return of the metafunction
-      static const unsigned short value = 3u;
+      static constexpr unsigned short value = 3u;
     };
 
   } // end of namespace material

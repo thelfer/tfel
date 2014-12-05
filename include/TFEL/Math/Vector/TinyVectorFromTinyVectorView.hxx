@@ -63,7 +63,7 @@ namespace tfel
       : public VectorConcept<VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > >,
 	public tvector_base<VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> >,N,T>
     {
-      typedef typename tfel::meta::IF<b,const tvector<Mn,T>&,
+      typedef typename std::conditional<b,const tvector<Mn,T>&,
 				      tvector<Mn,T>&>::type ref_type;
 
       //! a simple alias
@@ -159,7 +159,7 @@ namespace tfel
     struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<N,T>,
 					      tfel::math::TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > >
     {
-      static const bool cond = false;
+      static constexpr bool cond = false;
     };
 
   }// end of namespace typetraits

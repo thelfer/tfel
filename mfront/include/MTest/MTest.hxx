@@ -27,7 +27,7 @@
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/LUSolve.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"MTest/MTestConfig.hxx"
 #include"MTest/MTestTypes.hxx"
@@ -470,14 +470,14 @@ namespace mfront
     /*!
      * \return the list of evolutions
      */
-    tfel::utilities::shared_ptr<EvolutionManager>
+    std::shared_ptr<EvolutionManager>
     getEvolutions() const;
     /*!
      * \brief add a new test
      * \param[in] t : test to be added
      */
     virtual void
-    addTest(tfel::utilities::shared_ptr<UTest>);
+    addTest(std::shared_ptr<UTest>);
     /*!
      * \brief add a new evolution
      * \param[in] n  : evolution name
@@ -568,7 +568,7 @@ namespace mfront
      * \param[in] c     : constraint
      */
     virtual void
-    addConstraint(const tfel::utilities::shared_ptr<Constraint>);
+    addConstraint(const std::shared_ptr<Constraint>);
     /*!
      * \return the behaviour type
      */
@@ -577,7 +577,7 @@ namespace mfront
     /*!
      * \return the behaviour
      */
-    virtual tfel::utilities::shared_ptr<Behaviour>
+    virtual std::shared_ptr<Behaviour>
     getBehaviour(void);
     /*!
      * \return the modelling hypothesis
@@ -629,13 +629,13 @@ namespace mfront
     //! residual file precision
     int rprec;
     //! list of tests
-    std::vector<tfel::utilities::shared_ptr<UTest> > tests;
+    std::vector<std::shared_ptr<UTest> > tests;
     //! declared variable names
     std::vector<std::string> vnames;
     //! the mechanical behaviour
-    tfel::utilities::shared_ptr<Behaviour> b;
+    std::shared_ptr<Behaviour> b;
     //! constraints
-    std::vector<tfel::utilities::shared_ptr<Constraint> > constraints;
+    std::vector<std::shared_ptr<Constraint> > constraints;
     //! rotation matrix
     tfel::math::tmatrix<3u,3u,real> rm;
     //! boolean, true if the rotation matrix has been defined by the user
@@ -643,9 +643,9 @@ namespace mfront
     //! times
     std::vector<real> times;
     //! list of evolutions
-    tfel::utilities::shared_ptr<EvolutionManager> evm;
+    std::shared_ptr<EvolutionManager> evm;
     //! default values for material properties as given by the behaviour
-    tfel::utilities::shared_ptr<EvolutionManager> defaultMaterialPropertiesValues;
+    std::shared_ptr<EvolutionManager> defaultMaterialPropertiesValues;
     //! output file name
     std::string output;
     //! output file
@@ -691,7 +691,7 @@ namespace mfront
     //! use a prediction matrix before beginning the resolution
     PredictionPolicy ppolicy;
     //! acceleration algorithm
-    tfel::utilities::shared_ptr<AccelerationAlgorithm> aa;
+    std::shared_ptr<AccelerationAlgorithm> aa;
     //! handle the computation of thermal expansion
     bool handleThermalExpansion;
     //! use castem acceleration

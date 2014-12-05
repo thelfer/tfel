@@ -32,7 +32,7 @@
       /*!				   \
        *  Result			   \
        */				   \
-      static const bool cond = true;       \
+      static constexpr bool cond = true;       \
     };                                     \
     /*!                                    \
      * \brief Partial specialisation for X \
@@ -43,7 +43,7 @@
       /*!				   \
        *  Result			   \
        */				   \
-      static const bool cond = true;       \
+      static constexpr bool cond = true;       \
     }                                 
 
 namespace tfel{
@@ -68,7 +68,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = false;
+      static constexpr bool cond = false;
     };
 
     TFEL_META_IS_REAL(float);

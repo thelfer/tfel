@@ -31,8 +31,8 @@ namespace tfel
     {
       
       ExternalFunctionExpr::ExternalFunctionExpr(const std::string& fname,
-						 std::vector<tfel::utilities::shared_ptr<Expr> >& fargs,
-						 tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
+						 std::vector<std::shared_ptr<Expr> >& fargs,
+						 std::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
 	: name(fname),
 	  args(fargs),
 	  manager(m)
@@ -42,7 +42,6 @@ namespace tfel
       ExternalFunctionExpr::getValue(void) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	using namespace tfel::math::parser;
 	vector<shared_ptr<Expr> >::const_iterator p;
 	vector<shared_ptr<Expr> >::size_type i;
@@ -73,7 +72,6 @@ namespace tfel
       ExternalFunctionExpr::checkCyclicDependency(std::vector<std::string>& names) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	using std::vector;
 	vector<string> pnames;
 	vector<shared_ptr<Expr> >::const_iterator p;
@@ -99,12 +97,11 @@ namespace tfel
 	}
       } // end of ExternalFunctionExpr::checkCyclicDependency
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       ExternalFunctionExpr::differentiate(const std::vector<double>::size_type pos,
 					  const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	using std::vector;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
 	vector<shared_ptr<Expr> >::const_iterator p = this->args.begin();
@@ -153,11 +150,10 @@ namespace tfel
 	return df;
       } // end of ExternalFunctionExpr::differentiate
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       ExternalFunctionExpr::clone(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	using std::vector;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
@@ -168,21 +164,20 @@ namespace tfel
         return shared_ptr<Expr>(new ExternalFunctionExpr(this->name,nargs,this->manager));	
       } // end of ExternalFunctionExpr::clone
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       ExternalFunctionExpr::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 									    const std::vector<std::string>& params,
 									    const std::map<std::string,
 									    std::vector<double>::size_type>& pos) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::iterator p2;
 	map<string,vector<double>::size_type>::const_iterator p3;
 	vector<shared_ptr<Expr> > nargs;
 	vector<string> vnames;
 	vector<string>::size_type i;
-	tfel::utilities::shared_ptr<ExternalFunction> nf;
+	std::shared_ptr<ExternalFunction> nf;
 	ExternalFunctionManager::iterator pf;
 	if(this->args.size()==0){
 	  if(find(params.begin(),params.end(),this->name)!=params.end()){
@@ -239,7 +234,6 @@ namespace tfel
       ExternalFunctionExpr::getParametersNames(std::set<std::string>& p) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> >::const_iterator pa;
 	ExternalFunctionManager::iterator pf;
 	if(this->args.size()==0){
@@ -258,11 +252,10 @@ namespace tfel
 	}
       } // end of ExternalFunctionExpr::getParametersNames(std::set<std::string>&) const;
 
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       ExternalFunctionExpr::resolveDependencies(const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::iterator p2;

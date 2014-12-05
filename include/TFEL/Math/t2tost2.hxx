@@ -59,7 +59,7 @@ namespace tfel{
     struct T2toST2Traits<t2tost2<N,T> >{
       typedef T              NumType;
       typedef unsigned short IndexType;
-      static const unsigned short dime = N;
+      static constexpr unsigned short dime = N;
     };
 
     /*!
@@ -76,7 +76,7 @@ namespace tfel{
        */
       template<typename T2toST2Type>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
 	T2toST2Traits<Child>::dime==T2toST2Traits<T2toST2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
@@ -86,7 +86,7 @@ namespace tfel{
       //! Assignement operator
       template<typename T2toST2Type>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
 	T2toST2Traits<Child>::dime==T2toST2Traits<T2toST2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
@@ -96,7 +96,7 @@ namespace tfel{
       //! Assignement operator
       template<typename T2toST2Type>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
 	T2toST2Traits<Child>::dime==T2toST2Traits<T2toST2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
@@ -108,9 +108,9 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T2>::cond&&
-	tfel::meta::IsSameType<typename ResultType<typename T2toST2Traits<Child>::NumType,
+	std::is_same<typename ResultType<typename T2toST2Traits<Child>::NumType,
 						   T2,OpMult>::type,
 			       typename T2toST2Traits<Child>::NumType>::cond,
 	Child&>::type
@@ -120,9 +120,9 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T2>::cond&&
-        tfel::meta::IsSameType<typename ResultType<typename T2toST2Traits<Child>::NumType,
+        std::is_same<typename ResultType<typename T2toST2Traits<Child>::NumType,
 						   T2,OpDiv>::type,
 			       typename T2toST2Traits<Child>::NumType>::cond,
 	Child&>::type
@@ -142,7 +142,7 @@ namespace tfel{
        */
       template<typename TensorType>
       static TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
@@ -155,7 +155,7 @@ namespace tfel{
        */
       template<typename TensorType>
       static TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
@@ -192,7 +192,7 @@ namespace tfel{
        * Import values
        */
       template<typename T2>
-      TFEL_MATH_INLINE2 typename tfel::meta::EnableIf<
+      TFEL_MATH_INLINE2 typename std::enable_if<
 	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
 	void>::type
       import(const T2* const);
@@ -229,7 +229,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = IsAssignableTo<T2,T>::cond;
+      static constexpr bool cond = IsAssignableTo<T2,T>::cond;
     };
     
   } // end of namespace typetraits

@@ -72,12 +72,12 @@ namespace umat
     //! a simple alias
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
     // spatial dimension
-    static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
+    static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
     // the dispatch
     typedef typename 
-      tfel::meta::IF<N==1,
+      std::conditional<N==1,
 		     UMATOrthotropicSmallStrainBehaviourHandler1D<H,Behaviour>,
-		     typename tfel::meta::IF<N==2,
+		     typename std::conditional<N==2,
 					     UMATOrthotropicSmallStrainBehaviourHandler2D<H,Behaviour>,
 					     UMATOrthotropicSmallStrainBehaviourHandler3D<H,Behaviour> >::type
 		     >::type type;
@@ -95,12 +95,12 @@ namespace umat
     //! a simple alias
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
     // spatial dimension
-    static const unsigned short N = ModellingHypothesisToSpaceDimension::value;
+    static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
     // the dispatch
     typedef typename 
-      tfel::meta::IF<N==1,
+      std::conditional<N==1,
 		     UMATOrthotropicFiniteStrainBehaviourHandler1D<H,Behaviour>,
-		     typename tfel::meta::IF<N==2,
+		     typename std::conditional<N==2,
 					     UMATOrthotropicFiniteStrainBehaviourHandler2D<H,Behaviour>,
 					     UMATOrthotropicFiniteStrainBehaviourHandler3D<H,Behaviour> >::type
 		     >::type type;
@@ -165,15 +165,15 @@ namespace umat
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	  Traits::useTimeSubStepping,
 	  typename UMATBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	  typename UMATBehaviourHandler::template Integrator<bs,ba>
 	  >::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
-      typedef typename IF<
+      typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
 	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
@@ -221,15 +221,15 @@ namespace umat
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	Traits::useTimeSubStepping,
 	typename UMATBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	typename UMATBehaviourHandler::template Integrator<bs,ba>
 	>::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
-      typedef typename IF<
+      typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
 	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
@@ -293,15 +293,15 @@ namespace umat
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	Traits::useTimeSubStepping,
 	typename UMATBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	typename UMATBehaviourHandler::template Integrator<bs,ba>
 	>::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
-      typedef typename IF<
+      typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
 	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
@@ -361,15 +361,15 @@ namespace umat
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	Traits::useTimeSubStepping,
 	typename UMATBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	typename UMATBehaviourHandler::template Integrator<bs,ba>
 	>::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
-      typedef typename IF<
+      typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
 	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
@@ -442,15 +442,15 @@ namespace umat
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	  Traits::useTimeSubStepping,
 	  typename UMATBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	  typename UMATBehaviourHandler::template Integrator<bs,ba>
 	  >::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
-      typedef typename IF<
+      typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
 	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
@@ -498,15 +498,15 @@ namespace umat
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	Traits::useTimeSubStepping,
 	typename UMATBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	typename UMATBehaviourHandler::template Integrator<bs,ba>
 	>::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
-      typedef typename IF<
+      typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
 	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
@@ -570,15 +570,15 @@ namespace umat
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	Traits::useTimeSubStepping,
 	typename UMATBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	typename UMATBehaviourHandler::template Integrator<bs,ba>
 	>::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
-      typedef typename IF<
+      typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
 	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
@@ -638,15 +638,15 @@ namespace umat
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	Traits::useTimeSubStepping,
 	typename UMATBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	typename UMATBehaviourHandler::template Integrator<bs,ba>
 	>::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
-      typedef typename IF<
+      typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
 	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull

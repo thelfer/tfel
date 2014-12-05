@@ -32,18 +32,18 @@ namespace tfel{
        * The storage class is responsible for desallocating 
        * this memory.
        */
-      static const bool storage_is_dynamic  = T::storage_is_dynamic;
+      static constexpr bool storage_is_dynamic  = T::storage_is_dynamic;
       /*
        * Tells if memory used by the storage class 
        * is allocated on the stack.
        * Memory is automatically destroyed when the storage class is.
        */
-      static const bool storage_is_static   = T::storage_is_static;
+      static constexpr bool storage_is_static   = T::storage_is_static;
       /*
        * Tells if memory used by the storage class 
        * is not under the responsability of the storage class.
        */
-      static const bool storage_is_external = T::storage_is_external;
+      static constexpr bool storage_is_external = T::storage_is_external;
     };
 
   } // end of namespace math

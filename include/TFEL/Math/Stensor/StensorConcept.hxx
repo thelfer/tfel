@@ -17,10 +17,10 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 
@@ -34,7 +34,7 @@ namespace tfel{
     struct StensorTraits{
       typedef tfel::meta::InvalidType NumType;
       typedef unsigned short          IndexType;
-      static const unsigned short dime = 0u;
+      static constexpr unsigned short dime = 0u;
     };
 
     /*!
@@ -58,8 +58,8 @@ namespace tfel{
     {
       
       typedef StensorTraits<T> traits;
-      static const bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename tfel::meta::IF<isTemporary,
+      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
+      typedef typename std::conditional<isTemporary,
 				      typename traits::NumType,
 				      const typename traits::NumType&>::type ValueType;
       
@@ -84,7 +84,7 @@ namespace tfel{
     };
 
     template<typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
     >::type
@@ -92,7 +92,7 @@ namespace tfel{
 
     template<class T>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorTraits<T>::NumType
     >::type
@@ -100,7 +100,7 @@ namespace tfel{
 
     template<class T>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorTraits<T>::NumType
     >::type
@@ -108,7 +108,7 @@ namespace tfel{
 
     template<class T>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorType<T>::type
     >::type

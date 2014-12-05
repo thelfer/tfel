@@ -32,7 +32,7 @@ namespace tfel{
 #ifndef DOXYGENSPECIFIC
 
     template<typename Child,unsigned short N,typename T>    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&
     >::type 
@@ -42,7 +42,7 @@ namespace tfel{
     }
 
     template<typename Child,unsigned short N,typename T>    template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&
     >::type 
@@ -52,7 +52,7 @@ namespace tfel{
     }
 
     template<typename Child,unsigned short N,typename T>    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&
     >::type 
@@ -62,7 +62,7 @@ namespace tfel{
     }
 
     template<typename Child,unsigned short N,typename T>    template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&
     >::type 
@@ -72,7 +72,7 @@ namespace tfel{
     }
     
     template<typename Child,unsigned short N,typename T>    template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&
     >::type 
@@ -82,7 +82,7 @@ namespace tfel{
     }
 
     template<typename Child,unsigned short N,typename T>    template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&
     >::type 
@@ -94,7 +94,7 @@ namespace tfel{
     // *= operator
     template<typename Child,unsigned short N,typename T>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsTVectorScalarOperationValid<T,T2,OpMult>::cond,
       Child&
     >::type
@@ -107,7 +107,7 @@ namespace tfel{
     // /= operator
     template<typename Child,unsigned short N,typename T>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsTVectorScalarOperationValid<T,T2,OpDiv>::cond,
       Child&
     >::type
@@ -225,7 +225,7 @@ namespace tfel{
 
     template<unsigned short N, typename T,
 	     typename OutputIterator>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond,
       void>::type
     exportToBaseTypeArray(const tvector<N,T>& v,
@@ -239,7 +239,7 @@ namespace tfel{
 
     // Norm2
     template<unsigned short N,typename T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond,
       typename tfel::typetraits::RealPartType<T>::type
     >::type

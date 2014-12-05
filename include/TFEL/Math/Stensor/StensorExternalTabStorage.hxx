@@ -67,8 +67,8 @@ namespace tfel{
 	Export::exe(reinterpret_cast<const base*>(this->v),p);
       }
 
-      static const bool storage_is_static   = false;
-      static const bool storage_is_external = true;
+      static constexpr bool storage_is_static   = false;
+      static constexpr bool storage_is_external = true;
 
     };
 

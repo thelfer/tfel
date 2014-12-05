@@ -699,10 +699,10 @@ namespace mfront
 	  throw(runtime_error(msg));
 	}
 	if(useTemplate){
-	  this->srcFile << "static const real " << *p
+	  this->srcFile << "static constexpr real " << *p
 			<< " = " << p7->second << ";\n";
 	} else {
-	  this->srcFile << "static const double " << *p
+	  this->srcFile << "static constexpr double " << *p
 			<< " = " << p7->second << ";\n";
 	}
       }

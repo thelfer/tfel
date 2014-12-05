@@ -23,30 +23,29 @@ namespace tfel
     
     wfstream::wfstream()
       : basic_wstream<wfstream,stream_traits<wfstream> >(),
-	tfel::utilities::shared_ptr<int>(new int(-1))
+	std::shared_ptr<int>(new int(-1))
     {} // end of wfstream::wfstream
 
     wfstream::wfstream(const wfstream& src)
       : basic_wstream<wfstream,stream_traits<wfstream> >(src),
-	tfel::utilities::shared_ptr<int>(src)
+	std::shared_ptr<int>(src)
     {} // end of wfstream::wfstream
 
     wfstream &
     wfstream::operator=(const wfstream& src)
     {
-      using namespace tfel::utilities;
       if(this==&src){
 	return *this;
       }
       this->close();
       basic_wstream<wfstream,stream_traits<wfstream> >::operator=(src);
-      shared_ptr<int>::operator=(src);
+      std::shared_ptr<int>::operator=(src);
       return *this;
     } // end of wfstream::operator
 
     wfstream::wfstream(const std::string& name, const int flags,const mode_t mode)
       : basic_wstream<wfstream,stream_traits<wfstream> >(),
-	tfel::utilities::shared_ptr<int>(new int(-1))
+	std::shared_ptr<int>(new int(-1))
     {
       this->open(name,flags,mode);
     } // end of wfstream::wfstream
@@ -57,7 +56,6 @@ namespace tfel
 		   const mode_t mode)
     {
       using namespace std;
-      using namespace tfel::utilities;
       int fd;
       if(*(this->get())!=-1){
 	// closing the previous file
@@ -76,7 +74,6 @@ namespace tfel
     wfstream::close(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       if(*(this->get())==-1){
 	return;
       }

@@ -19,7 +19,7 @@
 #include<iostream>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestSuite.hxx"
@@ -59,9 +59,9 @@ namespace tfel
     struct TFELTESTS_VISIBILITY_EXPORT TestManager
     {
       //! a simple alias
-      typedef tfel::utilities::shared_ptr<TestOutput> TestOutputPtr;
+      typedef std::shared_ptr<TestOutput> TestOutputPtr;
       //! a simple alias
-      typedef tfel::utilities::shared_ptr<Test> TestPtr;
+      typedef std::shared_ptr<Test> TestPtr;
       /*!
        * \return the unique instance of the class
        */
@@ -134,9 +134,9 @@ namespace tfel
       execute(void);
     private:
       //! a simple alias
-      typedef tfel::utilities::shared_ptr<MultipleTestOutputs> MultipleTestOutputsPtr;
+      typedef std::shared_ptr<MultipleTestOutputs> MultipleTestOutputsPtr;
       //! a simple alias
-      typedef tfel::utilities::shared_ptr<TestSuite> TestSuitePtr;
+      typedef std::shared_ptr<TestSuite> TestSuitePtr;
       /*!
        * default constructor declared private to implement the
        * Singleton pattern.

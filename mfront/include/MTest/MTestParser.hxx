@@ -20,7 +20,7 @@
 #include<fstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MTest/MTestConfig.hxx"
@@ -393,7 +393,7 @@ namespace mfront
      * \param[in]     t    : MTest object
      * \param[in,out] p    : position in the input file
      */
-    tfel::utilities::shared_ptr<Evolution>
+    std::shared_ptr<Evolution>
     parseEvolution(const std::string&,
 		   const MTest&,
 		   TokensContainer::const_iterator&);

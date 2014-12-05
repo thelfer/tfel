@@ -107,7 +107,7 @@ namespace tfel{
        */
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
       >::type
@@ -115,7 +115,7 @@ namespace tfel{
       // Assignement operator
       template<typename T2>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
       >::type
@@ -128,7 +128,7 @@ namespace tfel{
        */
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
       >::type
@@ -136,7 +136,7 @@ namespace tfel{
       // Assignement operator
       template<typename T2>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
       >::type
@@ -149,7 +149,7 @@ namespace tfel{
        */
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
       >::type
@@ -157,7 +157,7 @@ namespace tfel{
       // Assignement operator
       template<typename T2>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
       >::type
@@ -167,9 +167,9 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+	std::is_same<typename ResultType<T,T2,OpMult>::type,T>::value,
 	Child&
       >::type
       operator*=(const T2);
@@ -178,9 +178,9 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T2>::cond&&
-        tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+        std::is_same<typename ResultType<T,T2,OpMult>::type,T>::value,
 	Child&
       >::type
       operator/=(const T2);
@@ -422,7 +422,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = IsAssignableTo<T2,T>::cond;
+      static constexpr bool cond = IsAssignableTo<T2,T>::cond;
     };
 
   } // end of namespace typetraits

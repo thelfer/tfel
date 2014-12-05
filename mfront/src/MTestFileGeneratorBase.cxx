@@ -307,11 +307,11 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::material;
-    static const string exts[9u]  = {"FXX","FYY","FZZ",
-				     "FXY","FYX","FXZ",
-				     "FZX","FYZ","FZY"};
-    static const string aexts[5u] = {"FRR","FZZ","FTT",
-				     "FRZ","FZR"};  
+    const string exts[9u]  = {"FXX","FYY","FZZ",
+			      "FXY","FYX","FXZ",
+			      "FZX","FYZ","FZY"};
+    const string aexts[5u] = {"FRR","FZZ","FTT",
+			      "FRZ","FZR"};  
     vector<string> n;
     if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       string msg("MTestFileGeneratorBase::getDeformationGradientsComponentsNames : ");
@@ -342,9 +342,9 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::material;
-    static const string exts[6u]  = {"EXX","EYY","EZZ",
-				     "EXY","EXZ","EYZ"};
-    static const string aexts[4u] = {"ERR","EZZ","ETT","ERZ"};  
+    const string exts[6u]  = {"EXX","EYY","EZZ",
+			      "EXY","EXZ","EYZ"};
+    const string aexts[4u] = {"ERR","EZZ","ETT","ERZ"};  
     vector<string> n;
     if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       string msg("MTestFileGeneratorBase::getStrainComponentsNames : ");
@@ -375,9 +375,9 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::material;
-    static const string exts[6u]  = {"SXX","SYY","SZZ",
-				     "SXY","SXZ","SYZ"};
-    static const string aexts[4u] = {"SRR","SZZ","STT","SRZ"};  
+    const string exts[6u]  = {"SXX","SYY","SZZ",
+			      "SXY","SXZ","SYZ"};
+    const string aexts[4u] = {"SRR","SZZ","STT","SRZ"};  
     vector<string> n;
     if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       string msg("MTestFileGeneratorBase::getStressComponentsNames : ");

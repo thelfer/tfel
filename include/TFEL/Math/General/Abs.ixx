@@ -18,7 +18,7 @@
 #include<functional>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 
 namespace tfel{

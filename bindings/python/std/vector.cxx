@@ -13,7 +13,7 @@
 
 #include<string>
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/System/ProcessManager.hxx"
@@ -63,10 +63,10 @@ BOOST_PYTHON_MODULE(_stl_vector)
   initializeVectorConverter<vector<vector<string> > >();
   initializeVectorConverter<vector<pair<string,string> > >();
   
-  IF<IsSameType<ProcessManager::ProcessId,
-		int>::cond,
-     DontDeclareAnyThing,
-     DeclareProcessIdVector>::type::declare();
+  conditional<is_same<ProcessManager::ProcessId,
+		      int>::value,
+	      DontDeclareAnyThing,
+	      DeclareProcessIdVector>::type::declare();
 
 }
 

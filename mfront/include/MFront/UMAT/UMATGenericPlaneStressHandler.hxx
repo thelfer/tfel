@@ -60,9 +60,9 @@ namespace umat
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;
       //! a simple alias
       typedef UMATTraits<Behaviour<H,UMATReal,false> > Traits;
-      typedef typename IF<Traits::stype==umat::ISOTROPIC,
-			  TreatPlaneStressIsotropicBehaviour,
-			  TreatPlaneStressOrthotropicBehaviour>::type Handler;
+      typedef typename std::conditional<Traits::stype==umat::ISOTROPIC,
+	TreatPlaneStressIsotropicBehaviour,
+	TreatPlaneStressOrthotropicBehaviour>::type Handler;
       UMATInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
@@ -111,7 +111,7 @@ namespace umat
       typedef Behaviour<H,UMATReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
-      typedef typename tfel::meta::IF<(NSTATV_<20),
+      typedef typename std::conditional<(NSTATV_<20),
 	tfel::math::tvector<NSTATV_,UMATReal>,
 	tfel::math::vector<UMATReal> >::type SVector;
       UMATGenericPlaneStressHandler::checkNSTATV(*NSTATV);

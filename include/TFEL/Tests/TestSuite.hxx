@@ -18,7 +18,7 @@
 #include<vector>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestOutput.hxx"
@@ -35,7 +35,7 @@ namespace tfel
     struct TFELTESTS_VISIBILITY_EXPORT TestSuite
     {
       //! a simple alias
-      typedef tfel::utilities::shared_ptr<Test> TestPtr;
+      typedef std::shared_ptr<Test> TestPtr;
      /*!
       * Default constructor
       */

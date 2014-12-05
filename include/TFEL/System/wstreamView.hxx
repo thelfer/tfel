@@ -31,7 +31,7 @@ namespace tfel
     template<bool is>
     struct stream_traits<wstreamView<is> >
     {
-      static const bool isBlocking = is;
+      static constexpr bool isBlocking = is;
     }; // end of struct stream_traits<wstreamView<isBlocking> >
 
     template<bool isBlocking>

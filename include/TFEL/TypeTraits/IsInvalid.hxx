@@ -34,7 +34,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = false;
+      static constexpr bool cond = false;
     };
 
     /*
@@ -45,7 +45,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
   } // end of namespace typetraits

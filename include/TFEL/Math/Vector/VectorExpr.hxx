@@ -17,7 +17,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/EmptyClass.hxx"
 #include"TFEL/Metaprogramming/HasIterator.hxx"
 #include"TFEL/Metaprogramming/HasConstIterator.hxx"
@@ -97,7 +97,7 @@ namespace tfel{
     template<typename T_type, typename Expr>
     struct IsTemporary<tfel::math::VectorExpr<T_type,Expr> >
     {
-      static const bool cond = true;
+      static constexpr bool cond = true;
     };
 
   }// end of namespace typetraits

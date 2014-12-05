@@ -16,7 +16,7 @@
 
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
@@ -85,7 +85,7 @@ namespace tfel{
       template<typename Scal,typename Func>
       struct DerivateScalarFunctionExpr<Scal,Func,OpPlus>
       {
-	static const typename 
+	static constexpr typename 
 	FunctionTraits<FunctionExpr<ScalarFunctionExpr<Scal,Func,OpPlus> > >::DerivateFunc
 	exe(const Scal,const Func f)
 	{
@@ -96,7 +96,7 @@ namespace tfel{
       template<typename Scal,typename Func>
       struct DerivateScalarFunctionExpr<Scal,Func,OpMinus>
       {
-	static const typename 
+	static constexpr typename 
 	FunctionTraits<FunctionExpr<ScalarFunctionExpr<Scal,Func,OpMinus> > >::DerivateFunc
 	exe(const Scal,const Func f)
 	{
@@ -107,7 +107,7 @@ namespace tfel{
       template<typename Scal,typename Func>
       struct DerivateScalarFunctionExpr<Scal,Func,OpMult>
       {
-	static const typename 
+	static constexpr typename 
 	FunctionTraits<FunctionExpr<ScalarFunctionExpr<Scal,Func,OpMult> > >::DerivateFunc
 	exe(const Scal s,const Func f)
 	{
@@ -118,7 +118,7 @@ namespace tfel{
       template<typename Scal,typename Func>
       struct DerivateScalarFunctionExpr<Scal,Func,OpDiv>
       {
-	static const typename 
+	static constexpr typename 
 	FunctionTraits<FunctionExpr<ScalarFunctionExpr<Scal,Func,OpDiv> > >::DerivateFunc
 	exe(const Scal s,const Func f)
 	{
@@ -164,7 +164,7 @@ namespace tfel{
 
       template<typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<
 	S,typename ComputeUnaryResult<T,F>::Result,Op>::Result>::cond,
 	typename ComputeBinaryResult<

@@ -233,7 +233,7 @@ namespace umat
     using namespace tfel::math;
     using std::log;
     using std::sqrt;
-    static const UMATReal cste = sqrt(UMATReal(2));
+    static constexpr UMATReal cste = sqrt(UMATReal(2));
     UMATCheckNDIValue(NDI);
     tvector<3u,UMATReal>    vp;
     tvector<3u,UMATReal>    log_vp;
@@ -283,7 +283,7 @@ namespace umat
   {
     using namespace tfel::math;
     using std::log;
-    static const UMATReal cste = sqrt(UMATReal(2));
+    static constexpr UMATReal cste = sqrt(UMATReal(2));
     tvector<3u,UMATReal>    vp;
     tvector<3u,UMATReal>    log_vp;
     tmatrix<3u,3u,UMATReal> m;
@@ -379,8 +379,8 @@ namespace umat
    {
      using namespace tfel::math;
      using std::sqrt;
-     static const UMATReal cste  = sqrt(UMATReal(2));
-     static const UMATReal icste = UMATReal(1)/sqrt(UMATReal(2));
+     static constexpr UMATReal cste  = sqrt(UMATReal(2));
+     static constexpr UMATReal icste = UMATReal(1)/sqrt(UMATReal(2));
      // now, we compute the second Piolay Kirchoff stress
      UMATReal sk2[6u];
      // first we compute the second Piola-Kirchhoff stress
@@ -418,7 +418,7 @@ namespace umat
    {
      using namespace tfel::math;
      using std::sqrt;
-     static const UMATReal cste = UMATReal(1)/sqrt(UMATReal(2));
+     static constexpr UMATReal cste = UMATReal(1)/sqrt(UMATReal(2));
      // first we compute the second Piola-Kirchhoff stress
      if(NTENS==3u){
        STRESS[0] = s[0] * P[0];

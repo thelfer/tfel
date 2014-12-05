@@ -17,7 +17,7 @@
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"MTest/MTestTypes.hxx"
 #include"MTest/MTestConfig.hxx"
@@ -46,14 +46,14 @@ namespace mfront
     ImposedDrivingVariable(const Behaviour&,
 				const tfel::material::ModellingHypothesis::Hypothesis,
 				const std::string&,
-				const tfel::utilities::shared_ptr<Evolution>);
+				const std::shared_ptr<Evolution>);
     /*!
      * constructor
      * \param[in] c : component
      * \param[in] s : driving variable evolution
      */
     ImposedDrivingVariable(const unsigned short c,
-				const tfel::utilities::shared_ptr<Evolution>);
+				const std::shared_ptr<Evolution>);
     /*!
      * \return the number of Lagrange Multipliers
      * associated with this contraint
@@ -118,7 +118,7 @@ namespace mfront
     virtual ~ImposedDrivingVariable();
   protected:
     //! driving variable evolution
-    const tfel::utilities::shared_ptr<Evolution> eev;
+    const std::shared_ptr<Evolution> eev;
     //! component value
     unsigned short c;
   }; // end of struct ImposedDrivingVariable

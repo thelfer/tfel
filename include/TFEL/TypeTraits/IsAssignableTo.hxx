@@ -16,7 +16,7 @@
 #ifndef _LIB_TFEL_IS_ASSIGNABLETO_HXX_
 #define _LIB_TFEL_IS_ASSIGNABLETO_HXX_ 
 
-#include"TFEL/Metaprogramming/IsSameType.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/Promote.hxx"
 #include"TFEL/Math/Forward/Complex.hxx"
 
@@ -27,18 +27,18 @@
  * \author Helfer Thomas
  * \date   28 jun 2006 
  */
-#define TFEL_MATH_IS_ASSIGNABLE_(X,Y)                                                    \
-    /*!                                                                                  \
-     * \brief Partial specialisation for X and Y                                         \
-     * \see   IsAssignableTo                                                             \
-     */                                                                                  \
-    template<>                                                                           \
-    struct IsAssignableTo< X , Y >                                                       \
-    {                                                                                    \
-      /*!									         \
-       *  Result								         \
-       */									         \
-      static const bool cond = tfel::meta::IsSameType<Promote< X , Y >::type, Y >::cond; \
+#define TFEL_MATH_IS_ASSIGNABLE_(X,Y)                                           \
+    /*!                                                                         \
+     * \brief Partial specialisation for X and Y                                \
+     * \see   IsAssignableTo                                                    \
+     */                                                                         \
+    template<>                                                                  \
+    struct IsAssignableTo< X , Y >                                              \
+    {                                                                           \
+      /*!									\
+       *  Result								\
+       */									\
+      static constexpr bool cond = std::is_same<Promote< X , Y >::type, Y >::value; \
     }
 
 /*!
@@ -91,7 +91,7 @@ namespace tfel{
       /*!
        *  Result
        */
-      static const bool cond = false;
+      static constexpr bool cond = false;
     };
 
     TFEL_MATH_IS_ASSIGNABLE(unsigned short);

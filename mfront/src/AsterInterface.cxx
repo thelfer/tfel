@@ -764,11 +764,7 @@ namespace mfront{
     map<string,vector<string> > deps;
     string lib = AsterInterface::getLibraryName(mb);
     deps[lib].push_back("-lAsterInterface");
-#ifdef HAVE_CXX11
-      deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
-#else 
-      deps[lib].push_back("`tfel-config --libs --material`");
-#endif
+    deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
     return deps;
   } // end of AsterInterface::getLibrariesDependencies()
 
@@ -962,11 +958,11 @@ namespace mfront{
     out << "> >\n{\n";
     out << "//! behaviour type\n";
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "static const AsterBehaviourType btype = aster::SMALLSTRAINSTANDARDBEHAVIOUR;"  << endl;
+      out << "static constexpr AsterBehaviourType btype = aster::SMALLSTRAINSTANDARDBEHAVIOUR;"  << endl;
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "static const AsterBehaviourType btype = aster::FINITESTRAINSTANDARDBEHAVIOUR;" << endl;
+      out << "static constexpr AsterBehaviourType btype = aster::FINITESTRAINSTANDARDBEHAVIOUR;" << endl;
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
-      out << "static const AsterBehaviourType btype = aster::COHESIVEZONEMODEL;" << endl;
+      out << "static constexpr AsterBehaviourType btype = aster::COHESIVEZONEMODEL;" << endl;
     } else {
       string msg("AsterInterface::writeAsterBehaviourTraits : "
 		 "unsupported behaviour type");
@@ -974,47 +970,47 @@ namespace mfront{
     }
     out << "//! space dimension\n";
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
+      out << "static constexpr unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
     } else {
-      out << "static const unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<"
+      out << "static constexpr unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<"
 	  << "tfel::material::ModellingHypothesis::"
 	  << ModellingHypothesis::toUpperCaseString(h)
 	  << ">::value;\n";
     }
     out << "// tiny vector size\n";
-    out << "static const unsigned short TVectorSize = N;\n";
+    out << "static constexpr unsigned short TVectorSize = N;\n";
     out << "// symmetric tensor size\n";
-    out << "static const unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
+    out << "static constexpr unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
     out << "// tensor size\n";
-    out << "static const unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
+    out << "static constexpr unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
     out << "// size of the driving variable array\n";
-    out << "static const unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
+    out << "static constexpr unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
     out << "// size of the thermodynamic force variable array (STRESS)\n";
-    out << "static const unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
+    out << "static constexpr unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
     if(this->errorReport){
-      out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_WRITEONSTDOUT;\n";
+      out << "static constexpr AsterErrorReportPolicy errorReportPolicy = ASTER_WRITEONSTDOUT;\n";
     } else {
-      out << "static const AsterErrorReportPolicy errorReportPolicy = ASTER_NOERRORREPORT;\n";
+      out << "static constexpr AsterErrorReportPolicy errorReportPolicy = ASTER_NOERRORREPORT;\n";
     }
     if(mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
-      out << "static const bool requiresUnAlteredStiffnessTensor = true;\n";
+      out << "static constexpr bool requiresUnAlteredStiffnessTensor = true;\n";
     } else {
-      out << "static const bool requiresUnAlteredStiffnessTensor = false;\n";
+      out << "static constexpr bool requiresUnAlteredStiffnessTensor = false;\n";
     }
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      out << "static const bool requiresStiffnessTensor = true;\n";
+      out << "static constexpr bool requiresStiffnessTensor = true;\n";
     } else {
-      out << "static const bool requiresStiffnessTensor = false;\n";
+      out << "static constexpr bool requiresStiffnessTensor = false;\n";
     }
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      out << "static const bool requiresThermalExpansionCoefficientTensor = true;\n";
+      out << "static constexpr bool requiresThermalExpansionCoefficientTensor = true;\n";
     } else {
-      out << "static const bool requiresThermalExpansionCoefficientTensor = false;\n";
+      out << "static constexpr bool requiresThermalExpansionCoefficientTensor = false;\n";
     }
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "static const AsterSymmetryType type = aster::ISOTROPIC;\n";
+      out << "static constexpr AsterSymmetryType type = aster::ISOTROPIC;\n";
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "static const AsterSymmetryType type = aster::ORTHOTROPIC;\n";
+      out << "static constexpr AsterSymmetryType type = aster::ORTHOTROPIC;\n";
     } else {
       string msg("AsterInterface::endTreatement : ");
       msg += "unsupported behaviour type.\n";
@@ -1029,31 +1025,31 @@ namespace mfront{
       msize += this->getTypeSize(m.type,m.arraySize);
       msize -= mprops.second;
     }
-    out << "static const unsigned short material_properties_nb = " << msize << ";\n";
+    out << "static constexpr unsigned short material_properties_nb = " << msize << ";\n";
     if(mb.getElasticSymmetryType()==mfront::ISOTROPIC){
-      out << "static const AsterSymmetryType etype = aster::ISOTROPIC;\n";
+      out << "static constexpr AsterSymmetryType etype = aster::ISOTROPIC;\n";
       if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-	out << "static const unsigned short elasticPropertiesOffset = 2u;\n";
+	out << "static constexpr unsigned short elasticPropertiesOffset = 2u;\n";
       } else {
-	out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+	out << "static constexpr unsigned short elasticPropertiesOffset = 0u;\n";
       }
       if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-	out << "static const unsigned short thermalExpansionPropertiesOffset = 1u;\n"; 
+	out << "static constexpr unsigned short thermalExpansionPropertiesOffset = 1u;\n"; 
       } else {
-	out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
+	out << "static constexpr unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
       }
     } else if (mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-      out << "static const AsterSymmetryType etype = aster::ORTHOTROPIC;\n";
+      out << "static constexpr AsterSymmetryType etype = aster::ORTHOTROPIC;\n";
       if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-    	out << "static const unsigned short elasticPropertiesOffset "
+    	out << "static constexpr unsigned short elasticPropertiesOffset "
     	    << "= AsterOrthotropicElasticPropertiesOffset<N>::value;\n";
       } else {
-	out << "static const unsigned short elasticPropertiesOffset = 0u;\n";
+	out << "static constexpr unsigned short elasticPropertiesOffset = 0u;\n";
       }
       if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-	out << "static const unsigned short thermalExpansionPropertiesOffset = 3u;\n"; 
+	out << "static constexpr unsigned short thermalExpansionPropertiesOffset = 3u;\n"; 
       } else {
-	out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
+	out << "static constexpr unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
       }
     } else {
       string msg("AsterInterface::endTreatement : ");

@@ -20,7 +20,7 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"MFront/CodeBlock.hxx"
 #include"MFront/VariableDescription.hxx"
@@ -575,7 +575,7 @@ namespace mfront{
      * \param[in] n : name
      */
     template<typename T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
       T&>::type
     getAttribute(const std::string&);
@@ -584,7 +584,7 @@ namespace mfront{
      * \param[in] n : name
      */
     template<typename T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
       const T&>::type
     getAttribute(const std::string&) const;

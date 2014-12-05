@@ -31,8 +31,8 @@ namespace mfront
      * \param[in] : 
      */
     FunctionEvolution(const std::string&,
-			   const tfel::utilities::shared_ptr<std::map<std::string,
-								      tfel::utilities::shared_ptr<Evolution> > >&);
+			   const std::shared_ptr<std::map<std::string,
+								      std::shared_ptr<Evolution> > >&);
     /*!
      * \return the value of the evolution
      * at the given time
@@ -55,8 +55,8 @@ namespace mfront
     virtual ~FunctionEvolution();
   private:
     //! externally defined evolutions
-    tfel::utilities::shared_ptr<std::map<std::string,
-					 tfel::utilities::shared_ptr<Evolution> > > evm;
+    std::shared_ptr<std::map<std::string,
+					 std::shared_ptr<Evolution> > > evm;
     //! Evaluator
     mutable tfel::math::Evaluator f;
   };

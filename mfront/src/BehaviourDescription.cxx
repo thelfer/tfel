@@ -613,7 +613,7 @@ namespace mfront
   } // end of BehaviourDescription::getMainVariablesSize
 
   void
-  BehaviourDescription::setThermalExpansionCoefficient(const tfel::utilities::shared_ptr<MaterialPropertyDescription>& a)
+  BehaviourDescription::setThermalExpansionCoefficient(const std::shared_ptr<MaterialPropertyDescription>& a)
   {
     using namespace std;
     if(this->areThermalExpansionCoefficientsDefined()){
@@ -631,9 +631,9 @@ namespace mfront
   } // end of BehaviourDescription::setThermalExpansionCoefficient
 
   void
-  BehaviourDescription::setThermalExpansionCoefficients(const tfel::utilities::shared_ptr<MaterialPropertyDescription>& a1,
-							const tfel::utilities::shared_ptr<MaterialPropertyDescription>& a2,
-							const tfel::utilities::shared_ptr<MaterialPropertyDescription>& a3)
+  BehaviourDescription::setThermalExpansionCoefficients(const std::shared_ptr<MaterialPropertyDescription>& a1,
+							const std::shared_ptr<MaterialPropertyDescription>& a2,
+							const std::shared_ptr<MaterialPropertyDescription>& a3)
   {
     using namespace std;
     if(this->areThermalExpansionCoefficientsDefined()){
@@ -660,7 +660,7 @@ namespace mfront
     return !this->thermalExpansionCoefficients.empty();
   } // end of BehaviourDescription::areThermalExpansionCoefficientsDefined
 
-  const std::vector<tfel::utilities::shared_ptr<MaterialPropertyDescription> >&
+  const std::vector<std::shared_ptr<MaterialPropertyDescription> >&
   BehaviourDescription::getThermalExpansionCoefficients(void) const
   {
     using namespace std;

@@ -19,7 +19,7 @@
 
 #include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Tests/TestResult.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"MTest/MTest.hxx"
 
@@ -45,8 +45,8 @@ namespace mfront{
 			const std::string&,
 			const MTest::UTest::TestedVariable,
 			const unsigned short,
-			tfel::utilities::shared_ptr<std::map<std::string,
-							     tfel::utilities::shared_ptr<Evolution> > >,
+			std::shared_ptr<std::map<std::string,
+							     std::shared_ptr<Evolution> > >,
 			const real);
     /*!
      * \param[in] e  : strains
@@ -84,8 +84,8 @@ namespace mfront{
     //! position of variable
     const unsigned short pos;
     //! external evolution
-    const tfel::utilities::shared_ptr<std::map<std::string,
-					       tfel::utilities::shared_ptr<Evolution> > > evm;
+    const std::shared_ptr<std::map<std::string,
+					       std::shared_ptr<Evolution> > > evm;
     //! criterium value
     const real eps;
   }; 

@@ -35,7 +35,7 @@ namespace tfel{
        * cout.write(TerminalColors::Black,sizeof(TerminalColors::Black));
        * \endcode
        */
-      static const char Black[5];
+      static constexpr char Black[5] = {033, '[', '3', '0', 'm'};
 
       /*!
        * \brief char sequence correponding to red.
@@ -43,7 +43,7 @@ namespace tfel{
        * cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
        * \endcode
        */
-      static const char Red[5];
+      static constexpr char Red[5] = {033, '[', '3', '1', 'm'};
 
       /*!
        * \brief char sequence correponding to green.
@@ -51,7 +51,7 @@ namespace tfel{
        * cout.write(TerminalColors::Green,sizeof(TerminalColors::Greeb));
        * \endcode
        */
-      static const char Green[5];
+      static constexpr char Green[5] = {033, '[', '3', '2', 'm'};
 
       /*!
        * \brief char sequence correponding to yellow.
@@ -59,7 +59,7 @@ namespace tfel{
        * cout.write(TerminalColors::Yellow,sizeof(TerminalColors::Yellow));
        * \endcode
        */
-      static const char Yellow[5];
+      static constexpr char Yellow[5] = {033, '[', '3', '3', 'm'};
 
       /*!
        * \brief char sequence correponding to blue.
@@ -67,7 +67,7 @@ namespace tfel{
        * cout.write(TerminalColors::Blue,sizeof(TerminalColors::Blue));
        * \endcode
        */
-      static const char Blue[5];
+      static constexpr char Blue[5] = {033, '[', '3', '4', 'm'};
 
       /*!
        * \brief char sequence correponding to purple.
@@ -75,7 +75,7 @@ namespace tfel{
        * cout.write(TerminalColors::Purple,sizeof(TerminalColors::Purple));
        * \endcode
        */
-      static const char Purple[5];
+      static constexpr char Purple[5] = {033, '[', '3', '5', 'm'};
 
       /*!
        * \brief char sequence correponding to light blue.
@@ -83,7 +83,7 @@ namespace tfel{
        * cout.write(TerminalColors::LightBlue,sizeof(TerminalColors::LightBlue));
        * \endcode
        */
-      static const char LightBlue[5];
+      static constexpr char LightBlue[5] = {033, '[', '3', '6', 'm'};
 
       /*!
        * \brief char sequence correponding to white.
@@ -91,7 +91,7 @@ namespace tfel{
        * cout.write(TerminalColors::White,sizeof(TerminalColors::White));
        * \endcode
        */
-      static const char White[5];
+      static constexpr char White[5] = {033, '[', '3', '7', 'm'};
 
       /*!
        * \brief char sequence correponding to the reset command.
@@ -100,7 +100,7 @@ namespace tfel{
        * cout.write(TerminalColors::Reset,sizeof(TerminalColors::Reset));
        * \endcode
        */
-      static const char Reset[4];
+      static constexpr char Reset[4] = {033, '[', 'm', 017};
 
     };
 

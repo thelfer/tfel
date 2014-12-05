@@ -44,7 +44,6 @@ struct ParserTest
   {
     using namespace std;
     using namespace tfel::math;
-    using namespace tfel::utilities;
     using namespace tfel::math::parser;
     const double eps = 1.e-14;
     const std::string f("12*x*y*cos(u)*sin(v)");
@@ -102,7 +101,6 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("parser8.xml");

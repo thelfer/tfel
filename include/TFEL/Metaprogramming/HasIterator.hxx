@@ -16,7 +16,7 @@
 #define _LIB_TFEL_HASITERATOR_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 
 namespace tfel{
 
@@ -52,7 +52,7 @@ namespace tfel{
        * Can only be called if B defines an iterator.
        */
       template<typename B>
-      static typename tfel::meta::EnableIf<
+      static typename std::enable_if<
 	sizeof(typename B::iterator)!=0,
 	Small
       >::type
@@ -75,7 +75,7 @@ namespace tfel{
       /*
        * The result of the metafunction.
        */
-      static const bool cond = sizeof(Test(MakeSubsA()))==sizeof(Small);
+      static constexpr bool cond = sizeof(Test(MakeSubsA()))==sizeof(Small);
 
     };
 

@@ -185,7 +185,7 @@ namespace mfront{
   void
   RungeKuttaDSL::treatUpdateAuxiliaryStateVariables(void)
   {
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     this->readCodeBlock(*this,BehaviourData::UpdateAuxiliaryStateVariables,
 			&RungeKuttaDSL::standardModifier,true,true);
   } // end of RungeKuttaDSL::treatUpdateAuxiliaryStateVarBase
@@ -701,26 +701,26 @@ namespace mfront{
       eev = ERRORSUMMATIONEVALUATION;
     }
     SupportedTypes::TypeSize stateVarsSize = this->getTotalSize(d.getStateVariables());
-    this->behaviourFile << "static const Type cste12_13       = Type(12)/Type(13);" << endl;
-    this->behaviourFile << "static const Type cste1932_2197   = Type(1932)/Type(2197);" << endl;
-    this->behaviourFile << "static const Type cste7200_2197   = Type(7200)/Type(2197);" << endl;
-    this->behaviourFile << "static const Type cste7296_2197   = Type(7296)/Type(2197);" << endl;
-    this->behaviourFile << "static const Type cste439_216     = Type(439)/Type(216);" << endl;
-    this->behaviourFile << "static const Type cste3680_513    = Type(3680)/Type(513);" << endl;
-    this->behaviourFile << "static const Type cste845_4104    = Type(845)/Type(4104);" << endl;
-    this->behaviourFile << "static const Type cste8_27        = Type(8)/Type(27);" << endl;
-    this->behaviourFile << "static const Type cste3544_2565   = Type(3544)/Type(2565);" << endl;
-    this->behaviourFile << "static const Type cste1859_4104   = Type(1859)/Type(4104);" << endl;
-    this->behaviourFile << "static const Type cste11_40       = Type(11)/Type(40);" << endl;
-    this->behaviourFile << "static const Type cste16_135      = Type(16)/Type(135);" << endl;
-    this->behaviourFile << "static const Type cste6656_12825  = Type(6656)/Type(12825);" << endl;
-    this->behaviourFile << "static const Type cste28561_56430 = Type(28561)/Type(56430);" << endl;
-    this->behaviourFile << "static const Type cste9_50        = Type(9)/Type(50);" << endl;
-    this->behaviourFile << "static const Type cste2_55        = Type(2)/Type(55);" << endl;
-    this->behaviourFile << "static const Type cste1_360       = Type(1)/Type(360);" << endl;
-    this->behaviourFile << "static const Type cste128_4275    = Type(128)/Type(4275);" << endl;
-    this->behaviourFile << "static const Type cste2197_75240  = Type(2197)/Type(75240);" << endl;
-    this->behaviourFile << "static const Type cste1_50        = Type(1)/Type(50);" << endl;
+    this->behaviourFile << "static constexpr Type cste12_13       = Type(12)/Type(13);" << endl;
+    this->behaviourFile << "static constexpr Type cste1932_2197   = Type(1932)/Type(2197);" << endl;
+    this->behaviourFile << "static constexpr Type cste7200_2197   = Type(7200)/Type(2197);" << endl;
+    this->behaviourFile << "static constexpr Type cste7296_2197   = Type(7296)/Type(2197);" << endl;
+    this->behaviourFile << "static constexpr Type cste439_216     = Type(439)/Type(216);" << endl;
+    this->behaviourFile << "static constexpr Type cste3680_513    = Type(3680)/Type(513);" << endl;
+    this->behaviourFile << "static constexpr Type cste845_4104    = Type(845)/Type(4104);" << endl;
+    this->behaviourFile << "static constexpr Type cste8_27        = Type(8)/Type(27);" << endl;
+    this->behaviourFile << "static constexpr Type cste3544_2565   = Type(3544)/Type(2565);" << endl;
+    this->behaviourFile << "static constexpr Type cste1859_4104   = Type(1859)/Type(4104);" << endl;
+    this->behaviourFile << "static constexpr Type cste11_40       = Type(11)/Type(40);" << endl;
+    this->behaviourFile << "static constexpr Type cste16_135      = Type(16)/Type(135);" << endl;
+    this->behaviourFile << "static constexpr Type cste6656_12825  = Type(6656)/Type(12825);" << endl;
+    this->behaviourFile << "static constexpr Type cste28561_56430 = Type(28561)/Type(56430);" << endl;
+    this->behaviourFile << "static constexpr Type cste9_50        = Type(9)/Type(50);" << endl;
+    this->behaviourFile << "static constexpr Type cste2_55        = Type(2)/Type(55);" << endl;
+    this->behaviourFile << "static constexpr Type cste1_360       = Type(1)/Type(360);" << endl;
+    this->behaviourFile << "static constexpr Type cste128_4275    = Type(128)/Type(4275);" << endl;
+    this->behaviourFile << "static constexpr Type cste2197_75240  = Type(2197)/Type(75240);" << endl;
+    this->behaviourFile << "static constexpr Type cste1_50        = Type(1)/Type(50);" << endl;
     this->behaviourFile << "time t      = time(0);" << endl;
     this->behaviourFile << "time dt_    = this->dt;" << endl;
     this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
@@ -1244,7 +1244,7 @@ namespace mfront{
     for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
-    this->behaviourFile << "static const Type cste1_6 = Type(1)/Type(6);" << endl; 
+    this->behaviourFile << "static constexpr Type cste1_6 = Type(1)/Type(6);" << endl; 
     this->behaviourFile << "time t   = time(0);" << endl;
     this->behaviourFile << "time dt_ = this->dt;" << endl;
     this->behaviourFile << "StressStensor sigf;" << endl;
@@ -1613,8 +1613,8 @@ namespace mfront{
     for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
-    this->behaviourFile << "static const Type cste1_6 = Type(1)/Type(6);" << endl;
-    this->behaviourFile << "static const Type cste1_3 = Type(1)/Type(3);" << endl;
+    this->behaviourFile << "static constexpr Type cste1_6 = Type(1)/Type(6);" << endl;
+    this->behaviourFile << "static constexpr Type cste1_3 = Type(1)/Type(3);" << endl;
 
     this->behaviourFile << "time t   = time(0);" << endl;
     this->behaviourFile << "time dt_ = this->dt;" << endl;

@@ -72,12 +72,12 @@ namespace mfront
     MaterialPropertyInterfaceProxy<ExcelMaterialPropertyInterface> excelLawProxy(ExcelMaterialPropertyInterface::getName(),
 										 ExcelMaterialPropertyInternalInterface::getName());
 
-    static const char * const texLawProxyNames [2] = {"latex","LaTex"};
+    constexpr const char * texLawProxyNames [2] = {"latex","LaTex"};
     MaterialPropertyInterfaceProxy<LaTeXMaterialPropertyInterface> latexLawProxy(texLawProxyNames,texLawProxyNames+2);
     
-    static const char * const cppLawProxyNames [6] = {"c++","C++",
-						      "cxx","Cxx",
-						      "cpp","Cpp"};
+    constexpr const char * cppLawProxyNames [6] = {"c++","C++",
+						   "cxx","Cxx",
+						   "cpp","Cpp"};
     MaterialPropertyInterfaceProxy<CppMaterialPropertyInterface> cppLawProxy(cppLawProxyNames,cppLawProxyNames+6);
 
     MaterialPropertyInterfaceProxy<CppTestMaterialPropertyInterface> cppTestLawProxy(CppTestMaterialPropertyInterface::getName(),
@@ -89,12 +89,12 @@ namespace mfront
 #endif /* HAVE_GNUPLOT */
 
 #ifdef HAVE_PYTHON
-    static const char * const pythonProxyNames[2] = {"python","Python"};
+    constexpr const char * pythonProxyNames[2] = {"python","Python"};
     MaterialPropertyInterfaceProxy<PythonMaterialPropertyInterface> pythonLawProxy(pythonProxyNames,pythonProxyNames+2);
 #endif /* HAVE_PYTHON */
 
 #ifdef HAVE_CASTEM
-    static const char * const castemProxyNames[3] = {"castem","Castem","Cast3M"};
+    constexpr const char * castemProxyNames[3] = {"castem","Castem","Cast3M"};
     MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface> castemLawProxy(castemProxyNames,castemProxyNames+3);
     BehaviourInterfaceProxy<UMATInterface> umatProxy;
 #endif /* HAVE_CASTEM */

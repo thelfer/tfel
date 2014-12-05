@@ -56,7 +56,7 @@ namespace tfel{
     template<>
     struct StensorDimeToSize<1u>
     {
-      static const unsigned short value = 3u;
+      static constexpr unsigned short value = 3u;
     };
 
     /*!
@@ -65,7 +65,7 @@ namespace tfel{
     template<>
     struct StensorDimeToSize<2u>
     {
-      static const unsigned short value = 4u;
+      static constexpr unsigned short value = 4u;
     };
 
     /*!
@@ -74,7 +74,7 @@ namespace tfel{
     template<>
     struct StensorDimeToSize<3u>
     {
-      static const unsigned short value = 6u;
+      static constexpr unsigned short value = 6u;
     };
 
     /*!
@@ -83,7 +83,7 @@ namespace tfel{
     template<>
     struct StensorSizeToDime<3u>
     {
-      static const unsigned short value = 1u;
+      static constexpr unsigned short value = 1u;
     };
 
     /*!
@@ -92,7 +92,7 @@ namespace tfel{
     template<>
     struct StensorSizeToDime<4u>
     {
-      static const unsigned short value = 2u;
+      static constexpr unsigned short value = 2u;
     };
 
     /*!
@@ -101,7 +101,7 @@ namespace tfel{
     template<>
     struct StensorSizeToDime<6u>
     {
-      static const unsigned short value = 3u;
+      static constexpr unsigned short value = 3u;
     };
 
   } // end of namespace math

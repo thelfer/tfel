@@ -15,7 +15,7 @@
 #define _LIB_LEVENBERGMARQUARDTEXTERNALFUNCTIONWRAPPER_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
 
@@ -30,7 +30,7 @@ namespace tfel
       typedef tfel::math::vector<double>::size_type size_type;
       typedef double NumericType;
       
-      LevenbergMarquardtExternalFunctionWrapper(tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>,
+      LevenbergMarquardtExternalFunctionWrapper(std::shared_ptr<tfel::math::parser::ExternalFunction>,
 						const size_type,
 						const size_type);
       
@@ -47,8 +47,8 @@ namespace tfel
       
     private:
       
-      tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction> ev;
-      tfel::math::vector<tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction> > dev;
+      std::shared_ptr<tfel::math::parser::ExternalFunction> ev;
+      tfel::math::vector<std::shared_ptr<tfel::math::parser::ExternalFunction> > dev;
       size_type nv;
       size_type np;
     };

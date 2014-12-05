@@ -17,7 +17,7 @@
 #include<set>
 #include<map>
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
@@ -593,22 +593,22 @@ namespace mfront
     /*!
      * \return the thermal expansion coefficients
      */
-    const std::vector<tfel::utilities::shared_ptr<MaterialPropertyDescription> >&
+    const std::vector<std::shared_ptr<MaterialPropertyDescription> >&
     getThermalExpansionCoefficients(void) const;
     /*!
      * set the behaviour thermal expansion coefficient (isotropic behaviour)
      * \param[in] a : thermal expansion
      */
-    void setThermalExpansionCoefficient(const tfel::utilities::shared_ptr<MaterialPropertyDescription>&);
+    void setThermalExpansionCoefficient(const std::shared_ptr<MaterialPropertyDescription>&);
     /*!
      * set the behaviour thermal expansions coefficient (orthotropic behaviour)
      * \param[in] a1 : thermal expansion in the first direction
      * \param[in] a2 : thermal expansion in the second direction
      * \param[in] a3 : thermal expansion in the third  direction
      */
-    void setThermalExpansionCoefficients(const tfel::utilities::shared_ptr<MaterialPropertyDescription>&,
-					 const tfel::utilities::shared_ptr<MaterialPropertyDescription>&,
-					 const tfel::utilities::shared_ptr<MaterialPropertyDescription>&);
+    void setThermalExpansionCoefficients(const std::shared_ptr<MaterialPropertyDescription>&,
+					 const std::shared_ptr<MaterialPropertyDescription>&,
+					 const std::shared_ptr<MaterialPropertyDescription>&);
     /*!
      * \return the external names associated with the variables
      * contained in the given container
@@ -934,7 +934,7 @@ namespace mfront
      * \param[in] n : name
      */
     template<typename T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
       T&>::type
     getAttribute(const std::string&);
@@ -943,7 +943,7 @@ namespace mfront
      * \param[in] n : name
      */
     template<typename T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
       const T&>::type
     getAttribute(const std::string&) const;
@@ -952,7 +952,7 @@ namespace mfront
      * \param[in] n : name
      */
     template<typename T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
       T>::type
     getAttribute(const std::string&,
@@ -1160,7 +1160,7 @@ namespace mfront
     void
     checkModellingHypothesis(const Hypothesis&) const;
     //! a simple alias
-    typedef tfel::utilities::shared_ptr<BehaviourData> MBDPtr;
+    typedef std::shared_ptr<BehaviourData> MBDPtr;
     /*!
      * behaviour attributes
      */
@@ -1231,7 +1231,7 @@ namespace mfront
      * For isotropic   behaviours, only one thermal expansion coefficient must be defined.
      * For orthotropic behaviours, three thermal expansions coefficient must be defined.
      */
-    std::vector<tfel::utilities::shared_ptr<MaterialPropertyDescription> > thermalExpansionCoefficients;
+    std::vector<std::shared_ptr<MaterialPropertyDescription> > thermalExpansionCoefficients;
     /*!
      * use units
      */

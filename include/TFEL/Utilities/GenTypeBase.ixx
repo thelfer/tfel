@@ -90,11 +90,11 @@ namespace tfel{
 
       public:
       
-	typedef typename tfel::meta::IF<N+1==tfel::meta::TLSize<List>::value,
-					typename tfel::meta::IF<tfel::meta::IsSameType<return_type,void>::cond,
-								EndRecursionII,
-								EndRecursion>::type,
-					GenTypeBaseApply<T,List,N+1> >::type Next;
+	typedef typename std::conditional<N+1==tfel::meta::TLSize<List>::value,
+					typename std::conditional<std::is_same<return_type,void>::value,
+								  EndRecursionII,
+								  EndRecursion>::type,
+					  GenTypeBaseApply<T,List,N+1> >::type Next;
       
 	static return_type
 	apply(const GenTypeBase<List>& v)
@@ -220,23 +220,23 @@ namespace tfel{
 
       public:
       
-	typedef typename tfel::meta::IF<((N+1==tfel::meta::TLSize<List>::value)||
+	typedef typename std::conditional<((N+1==tfel::meta::TLSize<List>::value)||
+					   (M+1==tfel::meta::TLSize<List>::value)),
+					  typename std::conditional<std::is_same<return_type,void>::value,
+								    EndRecursionII,
+								    EndRecursion>::type,
+					  GenTypeBaseApplyII<T,List,N+1,M+1> >::type Next;
+	typedef typename std::conditional<((N+1==tfel::meta::TLSize<List>::value)||
+					   (M+1==tfel::meta::TLSize<List>::value)),
+					  typename std::conditional<std::is_same<return_type,void>::value,
+								    EndRecursionII,
+								    EndRecursion>::type,
+					  GenTypeBaseApplyII<T,List,N+1,M> >::type NextI;
+      typedef typename std::conditional<((N+1==tfel::meta::TLSize<List>::value)||
 					 (M+1==tfel::meta::TLSize<List>::value)),
-					typename tfel::meta::IF<tfel::meta::IsSameType<return_type,void>::cond,
-								EndRecursionII,
-								EndRecursion>::type,
-					GenTypeBaseApplyII<T,List,N+1,M+1> >::type Next;
-	typedef typename tfel::meta::IF<((N+1==tfel::meta::TLSize<List>::value)||
-					 (M+1==tfel::meta::TLSize<List>::value)),
-					typename tfel::meta::IF<tfel::meta::IsSameType<return_type,void>::cond,
-								EndRecursionII,
-								EndRecursion>::type,
-					GenTypeBaseApplyII<T,List,N+1,M> >::type NextI;
-	typedef typename tfel::meta::IF<((N+1==tfel::meta::TLSize<List>::value)||
-					 (M+1==tfel::meta::TLSize<List>::value)),
-					typename tfel::meta::IF<tfel::meta::IsSameType<return_type,void>::cond,
-								EndRecursionII,
-								EndRecursion>::type,
+					typename std::conditional<std::is_same<return_type,void>::value,
+								  EndRecursionII,
+								  EndRecursion>::type,
 					GenTypeBaseApplyII<T,List,N,M+1> >::type NextII;
       
 	static return_type

@@ -18,7 +18,7 @@
 #include<ostream>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"TFEL/Tests/TestOutput.hxx"
 #include"TFEL/Tests/TestResult.hxx"
@@ -52,7 +52,7 @@ namespace tfel
        * \param o : output stream
        * \param b : color output
        */
-      StdStreamTestOutput(const tfel::utilities::shared_ptr<std::ostream>&,
+      StdStreamTestOutput(const std::shared_ptr<std::ostream>&,
 			  const bool = false);
       /*!
        * Begin a new test suite
@@ -103,7 +103,7 @@ namespace tfel
       /*!
        * pointer used to close stream, if the class has to handle it
        */
-      tfel::utilities::shared_ptr<std::ostream> pos;
+      std::shared_ptr<std::ostream> pos;
       //! output stream
       std::ostream& os;
       //! tells if the output shall be colorized

@@ -17,7 +17,7 @@
 #include<cmath>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
 #include"TFEL/Math/General/FracSimplify.hxx"
@@ -183,14 +183,14 @@ namespace tfel{
     template<int N>
     class TFEL_VISIBILITY_LOCAL PowerImplSelector<N,1u>
     {
-      static const unsigned short AbsN = static_cast<unsigned short>((N<0) ? -N : N);
+      static constexpr unsigned short AbsN = static_cast<unsigned short>((N<0) ? -N : N);
 
-      typedef typename tfel::meta::IF<(N<0),PowerNeg<N>,
+      typedef typename std::conditional<(N<0),PowerNeg<N>,
 	PowerPos<AbsN> >::type PowerImplSpe;
 
     public:
 
-      typedef typename tfel::meta::IF<(AbsN>100),PowerGenerator<N,1u>,
+      typedef typename std::conditional<(AbsN>100),PowerGenerator<N,1u>,
 				      PowerImplSpe>::type type;
 
     };
@@ -198,14 +198,14 @@ namespace tfel{
     template<int N>
     class TFEL_VISIBILITY_LOCAL PowerImplSelector<N,2u>
     {
-      static const unsigned short AbsN = static_cast<unsigned short>((N<0) ? -N : N);
+      static constexpr unsigned short AbsN = static_cast<unsigned short>((N<0) ? -N : N);
 
-      typedef typename tfel::meta::IF<(N<0),PowerSqrtNeg<N>,
+      typedef typename std::conditional<(N<0),PowerSqrtNeg<N>,
 	PowerSqrtPos<N> >::type PowerImplSpe;
 
     public:
 
-      typedef typename tfel::meta::IF<(AbsN>100),PowerGenerator<N,2u>,
+      typedef typename std::conditional<(AbsN>100),PowerGenerator<N,2u>,
 				      PowerImplSpe>::type type;
     };
 
@@ -214,16 +214,16 @@ namespace tfel{
     {
       TFEL_STATIC_ASSERT(D!=0);
 
-      static const int N_ = FracSimplify<N,D>::N;
-      static const int D_ = FracSimplify<N,D>::D;
+      static constexpr int N_ = FracSimplify<N,D>::N;
+      static constexpr int D_ = FracSimplify<N,D>::D;
 
     public:
       
       // On fait un choix sur les valeurs de D
       typedef typename 
-      tfel::meta::IF<D_==1u,
+      std::conditional<D_==1u,
 		     typename PowerImplSelector<N_,1u>::type,
-		     typename tfel::meta::IF<D_==2u,
+		     typename std::conditional<D_==2u,
 					     typename PowerImplSelector<N_,2u>::type,
 					     PowerGenerator<N_,D_>
       >::type
@@ -235,7 +235,7 @@ namespace tfel{
       
       template<int N,typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T>::cond,
 	T>::type
       power(const T x){
@@ -245,7 +245,7 @@ namespace tfel{
 
       template<int N,unsigned int D,typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T>::cond,
 	T>::type
       power(const T x){

@@ -38,7 +38,7 @@ namespace tfel{
     template<typename DPPType,
 	     typename PPType,
 	     typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<PPType,StensorConcept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -95,7 +95,7 @@ namespace tfel{
     template<typename DPPType,
 	     typename PPType,
 	     typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<PPType,StensorConcept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -173,7 +173,7 @@ namespace tfel{
     template<typename DPPType,
 	     typename PPType,
 	     typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<PPType,StensorConcept>::cond&&
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
@@ -320,7 +320,7 @@ namespace tfel{
 	     typename PPType,
 	     typename NPType,
 	     typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<DNPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<PPType,StensorConcept>::cond&&
@@ -405,7 +405,7 @@ namespace tfel{
 	     typename PPType,
 	     typename NPType,
 	     typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<DNPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<PPType,StensorConcept>::cond&&
@@ -512,7 +512,7 @@ namespace tfel{
 	     typename PPType,
 	     typename NPType,
 	     typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<DNPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<PPType,StensorConcept>::cond&&

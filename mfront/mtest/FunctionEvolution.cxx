@@ -18,8 +18,8 @@
 namespace mfront{
 
   FunctionEvolution::FunctionEvolution(const std::string& f_,
-						 const tfel::utilities::shared_ptr<std::map<std::string,
-											tfel::utilities::shared_ptr<Evolution> > >& evm_)
+						 const std::shared_ptr<std::map<std::string,
+											std::shared_ptr<Evolution> > >& evm_)
     : evm(evm_),
       f(f_)
   {} // end of FunctionEvolution::FunctionEvolution
@@ -28,8 +28,6 @@ namespace mfront{
   FunctionEvolution::operator()(const real t) const
   {
     using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
     const vector<string>& args = this->f.getVariablesNames();
     vector<string>::size_type i;
     for(i=0;i!=args.size();++i){
@@ -55,8 +53,6 @@ namespace mfront{
   FunctionEvolution::isConstant(void) const
   {
     using namespace std;
-    using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
     const vector<string>& args = this->f.getVariablesNames();
     vector<string>::size_type i;
     for(i=0;i!=args.size();++i){

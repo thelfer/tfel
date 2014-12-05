@@ -32,7 +32,7 @@ namespace tfel{
     }
     
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorTraits<T>::NumType
     >::type
@@ -61,7 +61,7 @@ namespace tfel{
 	: public SigmaEqImplBase
       {
 	template<class T>
-	static typename tfel::meta::EnableIf<
+	static typename std::enable_if<
 	  tfel::meta::Implements<T,StensorConcept>::cond,
 	  typename StensorTraits<T>::NumType
 	>::type
@@ -81,7 +81,7 @@ namespace tfel{
 	: public SigmaEqImplBase
       {
 	template<class T>
-	static typename tfel::meta::EnableIf<
+	static typename std::enable_if<
 	  tfel::meta::Implements<T,StensorConcept>::cond,
 	  typename StensorTraits<T>::NumType
 	>::type
@@ -102,7 +102,7 @@ namespace tfel{
 	: public SigmaEqImplBase
       {
 	template<class T>
-	static typename tfel::meta::EnableIf<
+	static typename std::enable_if<
 	  tfel::meta::Implements<T,StensorConcept>::cond,
 	  typename StensorTraits<T>::NumType
 	>::type
@@ -164,7 +164,7 @@ namespace tfel{
     } // end of namespace internals
 
     template<typename StensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
     >::type
@@ -174,7 +174,7 @@ namespace tfel{
     }
 
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorTraits<T>::NumType
     >::type
@@ -185,7 +185,7 @@ namespace tfel{
     }    
 
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorType<T>::type
     >::type

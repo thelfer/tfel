@@ -309,7 +309,7 @@ namespace mfront{
   BehaviourDSLCommon::endsInputFileProcessing()
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     typedef BehaviourInterfaceFactory MBIF;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       ostream& log = getLogStream();
@@ -902,7 +902,7 @@ namespace mfront{
   BehaviourDSLCommon::treatComputeThermalExpansion(void)
   {
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     const string m("BehaviourDSLCommon::treatComputeThermalExpansion");
     const vector<string>& files = this->readStringOrArrayOfString(m);
     this->readSpecifiedToken(m,";");
@@ -1953,7 +1953,7 @@ namespace mfront{
       file << endl;
     }
     for(p=this->integerConstants.begin();p!=this->integerConstants.end();++p){
-      file << "static const int " << p->first << " = " << p->second << ";" << endl;
+      file << "static constexpr int " << p->first << " = " << p->second << ";" << endl;
     }
   } // end of BehaviourDSLCommon::writeIntegerConstants
 
@@ -2134,12 +2134,12 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "static const unsigned short TVectorSize = N;" << endl;
+    this->behaviourDataFile << "static constexpr unsigned short TVectorSize = N;" << endl;
     this->behaviourDataFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;" << endl;
-    this->behaviourDataFile << "static const unsigned short StensorSize = ";
+    this->behaviourDataFile << "static constexpr unsigned short StensorSize = ";
     this->behaviourDataFile << "StensorDimeToSize::value;" << endl;
     this->behaviourDataFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;" << endl;
-    this->behaviourDataFile << "static const unsigned short TensorSize = ";
+    this->behaviourDataFile << "static constexpr unsigned short TensorSize = ";
     this->behaviourDataFile << "TensorDimeToSize::value;" << endl;
     this->behaviourDataFile << endl;
     this->writeStandardTFELTypedefs(this->behaviourDataFile);
@@ -2432,11 +2432,11 @@ namespace mfront{
     this->behaviourDataFile << "{" << endl;
     this->behaviourDataFile << endl;
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->behaviourDataFile << "static const ModellingHypothesis::Hypothesis hypothesis = " 
+      this->behaviourDataFile << "static constexpr ModellingHypothesis::Hypothesis hypothesis = " 
 			      << "ModellingHypothesis::"
 			      << ModellingHypothesis::toUpperCaseString(h) << ";" << endl;
     }
-    this->behaviourDataFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;" << endl;
+    this->behaviourDataFile << "static constexpr unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;" << endl;
     this->behaviourDataFile << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);" << endl;
     this->behaviourDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::"
 			    << "IsFundamentalNumericType<Type>::cond);" << endl;
@@ -2772,11 +2772,11 @@ namespace mfront{
     this->behaviourFile << "{" << endl;
     this->behaviourFile << endl;
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->behaviourFile << "static const ModellingHypothesis::Hypothesis hypothesis = " 
+      this->behaviourFile << "static constexpr ModellingHypothesis::Hypothesis hypothesis = " 
 			  << "ModellingHypothesis::"
 			  << ModellingHypothesis::toUpperCaseString(h) << ";" << endl;
     }
-    this->behaviourFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;" << endl;
+    this->behaviourFile << "static constexpr unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;" << endl;
     this->behaviourFile << endl;
     this->behaviourFile << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);" << endl;
     this->behaviourFile << "TFEL_STATIC_ASSERT(tfel::typetraits::"
@@ -3229,7 +3229,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion(void)
   {    
     using namespace std;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     bool b = this->mb.areThermalExpansionCoefficientsDefined();
     if(b){
       if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
@@ -3728,12 +3728,12 @@ namespace mfront{
     using namespace tfel::material;
     this->checkBehaviourFile();
     const string btype = this->mb.getBehaviourTypeFlag();
-    this->behaviourFile << "static const unsigned short TVectorSize = N;" << endl;
+    this->behaviourFile << "static constexpr unsigned short TVectorSize = N;" << endl;
     this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;" << endl;
-    this->behaviourFile << "static const unsigned short StensorSize = ";
+    this->behaviourFile << "static constexpr unsigned short StensorSize = ";
     this->behaviourFile << "StensorDimeToSize::value;" << endl;
     this->behaviourFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;" << endl;
-    this->behaviourFile << "static const unsigned short TensorSize = ";
+    this->behaviourFile << "static constexpr unsigned short TensorSize = ";
     this->behaviourFile << "TensorDimeToSize::value;" << endl;
     this->behaviourFile << endl;
     this->writeStandardTFELTypedefs(this->behaviourFile);
@@ -3853,53 +3853,53 @@ namespace mfront{
     this->behaviourFile << "{" << endl;
     if(b){
       if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	this->behaviourFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;" << endl;
+	this->behaviourFile << "static constexpr unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;" << endl;
       } else {
-	this->behaviourFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<"
+	this->behaviourFile << "static constexpr unsigned short N = ModellingHypothesisToSpaceDimension<"
 			    << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ">::value;" << endl;
       }
-      this->behaviourFile << "static const unsigned short TVectorSize = N;" << endl;
+      this->behaviourFile << "static constexpr unsigned short TVectorSize = N;" << endl;
       this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;" << endl;
-      this->behaviourFile << "static const unsigned short StensorSize = ";
+      this->behaviourFile << "static constexpr unsigned short StensorSize = ";
       this->behaviourFile << "StensorDimeToSize::value;" << endl;
       this->behaviourFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;" << endl;
-      this->behaviourFile << "static const unsigned short TensorSize = ";
+      this->behaviourFile << "static constexpr unsigned short TensorSize = ";
       this->behaviourFile << "TensorDimeToSize::value;" << endl;
     }
     this->behaviourFile << "public:" << endl;
     if(b){
-      this->behaviourFile << "static const bool is_defined = true;" << endl;
+      this->behaviourFile << "static constexpr bool is_defined = true;" << endl;
     } else {
-      this->behaviourFile << "static const bool is_defined = false;" << endl;
+      this->behaviourFile << "static constexpr bool is_defined = false;" << endl;
     }
     if(this->mb.useQt()){
-      this->behaviourFile << "static const bool use_quantities = use_qt;" << endl;
+      this->behaviourFile << "static constexpr bool use_quantities = use_qt;" << endl;
     } else {
-      this->behaviourFile << "static const bool use_quantities = false;" << endl;
+      this->behaviourFile << "static constexpr bool use_quantities = false;" << endl;
     }
     if(this->mb.areThermalExpansionCoefficientsDefined()){
-      this->behaviourFile << "static const bool hasStressFreeExpansion = true;" << endl;    
+      this->behaviourFile << "static constexpr bool hasStressFreeExpansion = true;" << endl;    
     } else {
-      this->behaviourFile << "static const bool hasStressFreeExpansion = false;" << endl;
+      this->behaviourFile << "static constexpr bool hasStressFreeExpansion = false;" << endl;
     }
     if(this->mb.areThermalExpansionCoefficientsDefined()){
-      this->behaviourFile << "static const bool handlesThermalExpansion = true;" << endl;    
+      this->behaviourFile << "static constexpr bool handlesThermalExpansion = true;" << endl;    
     } else {
-      this->behaviourFile << "static const bool handlesThermalExpansion = false;" << endl;
+      this->behaviourFile << "static constexpr bool handlesThermalExpansion = false;" << endl;
     }
     if(b){
-      this->behaviourFile << "static const unsigned short dimension = N;" << endl;
+      this->behaviourFile << "static constexpr unsigned short dimension = N;" << endl;
     } else {
-      this->behaviourFile << "static const unsigned short dimension = 0u;" << endl;
+      this->behaviourFile << "static constexpr unsigned short dimension = 0u;" << endl;
     }
     this->behaviourFile << "typedef Type NumType;" << endl;
-    this->behaviourFile << "static const unsigned short material_properties_nb = ";
+    this->behaviourFile << "static constexpr unsigned short material_properties_nb = ";
     this->behaviourFile << coefSize << ";" << endl;
-    this->behaviourFile << "static const unsigned short internal_variables_nb  = ";
+    this->behaviourFile << "static constexpr unsigned short internal_variables_nb  = ";
     this->behaviourFile << stateVarsSize << ";" << endl;
-    this->behaviourFile << "static const unsigned short external_variables_nb  = ";
+    this->behaviourFile << "static constexpr unsigned short external_variables_nb  = ";
     this->behaviourFile << externalStateVarsSize << ";" << endl;
-    this->behaviourFile << "static const bool hasConsistentTangentOperator = ";
+    this->behaviourFile << "static constexpr bool hasConsistentTangentOperator = ";
     if(b){
       if(this->mb.getAttribute<bool>(h,BehaviourData::hasConsistentTangentOperator,false)){
 	this->behaviourFile << "true;" << endl;
@@ -3909,7 +3909,7 @@ namespace mfront{
     } else {
       this->behaviourFile << "false;" << endl;
     }
-    this->behaviourFile << "static const bool isConsistentTangentOperatorSymmetric = ";
+    this->behaviourFile << "static constexpr bool isConsistentTangentOperatorSymmetric = ";
     if(b){
       if(this->mb.getAttribute<bool>(h,BehaviourData::isConsistentTangentOperatorSymmetric,false)){
 	this->behaviourFile << "true;" << endl;
@@ -3919,7 +3919,7 @@ namespace mfront{
     } else {
       this->behaviourFile << "false;" << endl;
     }
-    this->behaviourFile << "static const bool hasPredictionOperator = ";
+    this->behaviourFile << "static constexpr bool hasPredictionOperator = ";
     if(b){
       if(this->mb.getAttribute<bool>(h,BehaviourData::hasPredictionOperator,false)){
 	this->behaviourFile << "true;" << endl;
@@ -3929,7 +3929,7 @@ namespace mfront{
     } else {
       this->behaviourFile << "false;" << endl;
     }
-    this->behaviourFile << "static const bool hasTimeStepScalingFactor = ";
+    this->behaviourFile << "static constexpr bool hasTimeStepScalingFactor = ";
     if(b){
       if(this->mb.getAttribute<bool>(h,BehaviourData::hasTimeStepScalingFactor,false)){
 	this->behaviourFile << "true;" << endl;
@@ -4436,8 +4436,6 @@ namespace mfront{
     this->integrationDataFile << "#include\"TFEL/Config/TFELConfig.hxx\"" << endl;
     this->integrationDataFile << "#include\"TFEL/Config/TFELTypes.hxx\"" << endl;
     this->integrationDataFile << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"" << endl;
-    this->integrationDataFile << "#include\"TFEL/Metaprogramming/IsSameType.hxx\"" << endl;
-    this->integrationDataFile << "#include\"TFEL/Metaprogramming/EnableIf.hxx\"" << endl;
     this->integrationDataFile << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"" << endl;
     this->integrationDataFile << "#include\"TFEL/TypeTraits/IsScalar.hxx\"" << endl;
     this->integrationDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"" << endl;
@@ -4495,12 +4493,12 @@ namespace mfront{
   {
     using namespace std;
     this->checkIntegrationDataFile();
-    this->integrationDataFile << "static const unsigned short TVectorSize = N;" << endl;
+    this->integrationDataFile << "static constexpr unsigned short TVectorSize = N;" << endl;
     this->integrationDataFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;" << endl;
-    this->integrationDataFile << "static const unsigned short StensorSize = ";
+    this->integrationDataFile << "static constexpr unsigned short StensorSize = ";
     this->integrationDataFile << "StensorDimeToSize::value;" << endl;
     this->integrationDataFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;" << endl;
-    this->integrationDataFile << "static const unsigned short TensorSize = ";
+    this->integrationDataFile << "static constexpr unsigned short TensorSize = ";
     this->integrationDataFile << "TensorDimeToSize::value;" << endl;
     this->integrationDataFile << endl;
     this->writeStandardTFELTypedefs(this->integrationDataFile);
@@ -4606,13 +4604,13 @@ namespace mfront{
     this->integrationDataFile << "* Multiplication by a scalar." << endl;
     this->integrationDataFile << "*/" << endl;
     this->integrationDataFile << "template<typename Scal>" << endl;
-    this->integrationDataFile << "typename tfel::meta::EnableIf<" << endl;
+    this->integrationDataFile << "typename std::enable_if<" << endl;
     this->integrationDataFile << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&" << endl;
     this->integrationDataFile << "tfel::typetraits::IsScalar<Scal>::cond&&" << endl;
     this->integrationDataFile << "tfel::typetraits::IsReal<Scal>::cond&&" << endl;
-    this->integrationDataFile << "tfel::meta::IsSameType<Type," 
+    this->integrationDataFile << "std::is_same<Type," 
 			      << "typename tfel::typetraits::Promote"
-			      << "<Type,Scal>::type>::cond," << endl;
+			      << "<Type,Scal>::type>::value," << endl;
     this->integrationDataFile << this->mb.getClassName() << "IntegrationData&" << endl
 			      << ">::type" << endl;
     if(!iknown){
@@ -4736,11 +4734,11 @@ namespace mfront{
     this->integrationDataFile << "{" << endl;
     this->integrationDataFile << endl;
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->integrationDataFile << "static const ModellingHypothesis::Hypothesis hypothesis = " 
+      this->integrationDataFile << "static constexpr ModellingHypothesis::Hypothesis hypothesis = " 
 				<< "ModellingHypothesis::"
 				<< ModellingHypothesis::toUpperCaseString(h) << ";" << endl;
     }
-    this->integrationDataFile << "static const unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;" << endl;
+    this->integrationDataFile << "static constexpr unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;" << endl;
     this->integrationDataFile << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);" << endl;
     this->integrationDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::"
 			      << "IsFundamentalNumericType<Type>::cond);" << endl;
@@ -5461,16 +5459,7 @@ namespace mfront{
     const bool b = 
       this->readBooleanValue("BehaviourDSLCommon::treatProfiling");
     this->readSpecifiedToken("BehaviourDSLCommon::treatProfiling",";");
-#ifdef HAVE_CXX11
     this->mb.setAttribute(BehaviourData::profiling,b,false);
-#else
-    static_cast<void>(b);
-    if(getVerboseMode()>=VERBOSE_QUIET){
-      ostream& log = getLogStream();
-      log << "BehaviourDSLCommon::treatProfiling : performances measurements "
-	"are only available if C++-11 support have been enabled";
-    }
-#endif
   } // end of BehaviourDSLCommon::treatProfiling
 
   void BehaviourDSLCommon::treatPredictionOperator(void)

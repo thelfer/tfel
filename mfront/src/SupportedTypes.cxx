@@ -21,9 +21,6 @@
 
 namespace mfront{
 
-
-  const int SupportedTypes::ArraySizeLimit = 10u;
-
   SupportedTypes::TypeSize::TypeSize()
     : scalarSize(0),
       tvectorSize(0),

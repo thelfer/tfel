@@ -275,7 +275,7 @@ namespace mfront
 	  msg += "internal error (can't find value of parameter " + *p + ")";
 	  throw(runtime_error(msg));
 	}
-	this->srcFile << "static const double " << *p << " = " << p6->second << ";\n";
+	this->srcFile << "static constexpr double " << *p << " = " << p6->second << ";\n";
       }
     }
     this->writeInterfaceSpecificVariables(inputs);

@@ -17,7 +17,7 @@
 #include<vector>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"TFEL/Tests/TestOutput.hxx"
 #include"TFEL/Tests/TestResult.hxx"
@@ -35,7 +35,7 @@ namespace tfel
       : public TestOutput
     {
       //! a simple alias
-      typedef tfel::utilities::shared_ptr<TestOutput> TestOutputPtr;
+      typedef std::shared_ptr<TestOutput> TestOutputPtr;
       /*!
        * Constructor
        */

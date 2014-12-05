@@ -32,8 +32,8 @@ T.setGlossaryName("Temperature");
 @PhysicalBounds T in [0:*[;
 
 @Function{
-  static const double a =  0.781151102452916 ;
-  static const double b =  1.05E-5 ;
-  static const double c = -3.00E-4 ;
+  static constexpr double a =  0.781151102452916 ;
+  static constexpr double b =  1.05E-5 ;
+  static constexpr double c = -3.00E-4 ;
   k = a/(b*T+c);
 } // end of function

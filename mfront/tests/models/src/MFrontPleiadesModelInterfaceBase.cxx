@@ -314,7 +314,7 @@ namespace mfront{
 	  this->headerFile << "#line " << p2->lineNumber << " \"" 
 			   << pdata.fileName << "\"\n";
 	}
-	this->headerFile << "static const " << p2->type << " " << p2->name << ";" << endl;
+	this->headerFile << "static constexpr " << p2->type << " " << p2->name << ";" << endl;
       }
       this->headerFile << endl;
     }

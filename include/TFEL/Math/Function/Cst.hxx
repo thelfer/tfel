@@ -116,7 +116,7 @@ namespace tfel{
       }
                                                                                           
       template<typename T>      			                                  
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
         !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Cst<N,D> >::Result>::cond,
 	typename ComputeUnaryResult<T,Cst<N,D> >::Handle                               
       >::type                                                                             
@@ -212,7 +212,7 @@ namespace tfel{
       }
                                                                                           
       template<typename T>      			                                  
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
         !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Cst<N,1u> >::Result>::cond,
 	typename ComputeUnaryResult<T,Cst<N,1u> >::Handle                               
       >::type                                                                             

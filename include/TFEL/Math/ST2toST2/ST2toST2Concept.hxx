@@ -18,10 +18,10 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 
 #include"TFEL/Math/General/Abs.hxx"
@@ -34,7 +34,7 @@ namespace tfel{
     template<class T>
     struct ST2toST2Traits{
       typedef tfel::meta::InvalidType NumType;
-      static const unsigned short dime = 0u;
+      static constexpr unsigned short dime = 0u;
     };
 
     /*!
@@ -60,8 +60,8 @@ namespace tfel{
     private:
 
       typedef ST2toST2Traits<T> traits;
-      static const bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename tfel::meta::IF<isTemporary,
+      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
+      typedef typename std::conditional<isTemporary,
 				      typename traits::NumType,
 				      const typename traits::NumType&>::type ValueType;
 
@@ -90,7 +90,7 @@ namespace tfel{
     };
 
     template<typename ST2toST2Type>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
       typename tfel::typetraits::AbsType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type
     >::type

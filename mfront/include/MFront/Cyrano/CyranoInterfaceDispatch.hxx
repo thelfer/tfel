@@ -14,7 +14,7 @@
 #ifndef _LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_H_
 #define _LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_H_ 
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
 
 #include"MFront/Cyrano/Cyrano.hxx"
@@ -59,7 +59,7 @@ namespace cyrano{
       typedef Behaviour<H,CyranoReal,false> BV;
       //! a simple alias
       typedef CyranoTraits<BV> Traits;
-      typedef typename IF<Traits::stype==cyrano::ISOTROPIC,
+      typedef typename std::conditional<Traits::stype==cyrano::ISOTROPIC,
 			  CyranoIsotropicBehaviourHandler<H,Behaviour>,
 			  CyranoOrthotropicBehaviourHandler<H,Behaviour> >::type Handler;
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
@@ -96,7 +96,7 @@ namespace cyrano{
   //     typedef Behaviour<MH::PLANESTRESS,CyranoReal,false> BV;
   //     typedef CyranoTraits<BV> Traits;
   //     if(tfel::material::MechanicalBehaviourTraits<BV>::is_defined){
-  // 	typedef typename IF<Traits::stype==cyrano::ISOTROPIC,
+  // 	typedef typename std::conditional<Traits::stype==cyrano::ISOTROPIC,
   // 			    CyranoIsotropicBehaviourHandler<MH::PLANESTRESS,Behaviour>,
   // 			    CyranoOrthotropicBehaviourHandler<MH::PLANESTRESS,Behaviour> >::type Handler;
   // 	CyranoInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);

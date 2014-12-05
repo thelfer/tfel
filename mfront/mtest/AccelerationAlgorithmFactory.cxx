@@ -24,10 +24,10 @@ namespace mfront
 {
 
   template<typename T>
-  static tfel::utilities::shared_ptr<AccelerationAlgorithm>
+  static std::shared_ptr<AccelerationAlgorithm>
   buildAlgorithmConstructor(void)
   {
-    return tfel::utilities::shared_ptr<AccelerationAlgorithm>(new T());
+    return std::shared_ptr<AccelerationAlgorithm>(new T());
   } // end of buildAlgoritmConstructor
 
   AccelerationAlgorithmFactory&
@@ -37,7 +37,7 @@ namespace mfront
     return factory;
   }
   
-  tfel::utilities::shared_ptr<AccelerationAlgorithm>
+  std::shared_ptr<AccelerationAlgorithm>
   AccelerationAlgorithmFactory::getAlgorithm(const std::string& a) const
   {
     using namespace std;

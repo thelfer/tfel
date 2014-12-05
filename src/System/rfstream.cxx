@@ -25,30 +25,29 @@ namespace tfel
     
     rfstream::rfstream()
       : basic_rstream<rfstream,stream_traits<rfstream> >(),
-	tfel::utilities::shared_ptr<int>(new int(-1))
+	std::shared_ptr<int>(new int(-1))
     {} // end of rfstream::rfstream
 
     rfstream::rfstream(const rfstream& src)
       : basic_rstream<rfstream,stream_traits<rfstream> >(src),
-	tfel::utilities::shared_ptr<int>(src)
+	std::shared_ptr<int>(src)
     {} // end of rfstream::rfstream
 
     rfstream &
     rfstream::operator=(const rfstream& src)
     {
-      using namespace tfel::utilities;
       if(this==&src){
 	return *this;
       }
       this->close();
       basic_rstream<rfstream,stream_traits<rfstream> >::operator=(src);
-      shared_ptr<int>::operator=(src);
+      std::shared_ptr<int>::operator=(src);
       return *this;
     } // end of rfstream::operator
 
     rfstream::rfstream(const std::string& name, const int flags)
       : basic_rstream<rfstream,stream_traits<rfstream> >(),
-	tfel::utilities::shared_ptr<int>(new int(-1))
+	std::shared_ptr<int>(new int(-1))
     {
       this->open(name,flags);
     } // end of rfstream::rfstream
@@ -58,7 +57,6 @@ namespace tfel
 		   const int flags)
     {
       using namespace std;
-      using namespace tfel::utilities;
       int fd;
       if(*(this->get())!=-1){
 	// closing the previous file
@@ -77,7 +75,6 @@ namespace tfel
     rfstream::close(void)
     {
       using namespace std;
-      using namespace tfel::utilities;
       if(*(this->get())==-1){
 	return;
       }

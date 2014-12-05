@@ -35,8 +35,8 @@ namespace tfel{
       getName(void);
 
       template<typename F>
-      static const typename 
-      tfel::meta::EnableIf<
+      static constexpr typename 
+      std::enable_if<
 	tfel::meta::Implements<F,FunctionConcept>::cond,
 	typename ComputeUnaryResult<F,OpDiff>::Handle
       >::type
@@ -47,7 +47,7 @@ namespace tfel{
 
       template<typename F>
       const typename 
-      tfel::meta::EnableIf<
+      std::enable_if<
 	tfel::meta::Implements<F,FunctionConcept>::cond,
 	typename ComputeUnaryResult<F,OpDiff>::Handle
       >::type
@@ -74,8 +74,8 @@ namespace tfel{
 
     template<typename Func>
     template<typename T>      			                                  
-    typename tfel::meta::DisableIf<                                                      
-      tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Func>::Result>::cond, 
+    typename std::enable_if<                                                      
+      !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Func>::Result>::cond, 
       const typename ComputeUnaryResult<T,Func>::Handle                                
     >::type                                                                             
     FunctionConcept<Func>::operator()(const T& x) const{
@@ -85,7 +85,7 @@ namespace tfel{
     template<typename Func>
     template<typename F>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<F,FunctionConcept>::cond,
       FunctionExpr<FunctionsCompositionExpr<Func,F> >
     >::type

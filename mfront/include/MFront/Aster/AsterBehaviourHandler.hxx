@@ -36,7 +36,7 @@ namespace aster
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
     TangentOperatorTraits;
-    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
@@ -45,7 +45,7 @@ namespace aster
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
     TangentOperatorTraits;
-    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DTAU_DDF;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DTAU_DDF;
   };
 
   template<>
@@ -54,7 +54,7 @@ namespace aster
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::COHESIVEZONEMODEL>
     TangentOperatorTraits;
-    static const TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<AsterBehaviourType btype,
@@ -232,11 +232,11 @@ namespace aster
 	     const bool ba>     // requires ThermalExpansionCoefficientTensor
       struct TFEL_VISIBILITY_LOCAL Integrator
     {
-      typedef typename tfel::meta::IF<bs,
+      typedef typename std::conditional<bs,
 				      StiffnessOperatorInitializer,
 				      DoNothingInitializer>::type SInitializer;
 
-      typedef typename tfel::meta::IF<ba,
+      typedef typename std::conditional<ba,
 				      ThermalExpansionCoefficientTensorInitializer,
 				      DoNothingInitializer>::type AInitializer;
 
@@ -259,7 +259,7 @@ namespace aster
 	  {
 	    using namespace tfel::material;
 	    typedef MechanicalBehaviourTraits<BV> Traits;
-	    typedef typename tfel::meta::IF<
+	    typedef typename std::conditional<
 	      Traits::hasStressFreeExpansion,
 	      DrivingVariableInitialiserWithStressFreeExpansion,
 	      DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
@@ -281,15 +281,15 @@ namespace aster
 	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::hasConsistentTangentOperator,
-	  typename tfel::meta::IF<
+	  typename std::conditional<
 	    Traits::isConsistentTangentOperatorSymmetric,
 	    SymmetricConsistentTangentOperatorComputer,
 	    GeneralConsistentTangentOperatorComputer>::type,
 	  ConsistentTangentOperatorIsNotAvalaible
 	  >::type ConsistentTangentOperatorHandler;
-	typedef typename tfel::meta::IF<
+	typedef typename std::conditional<
 	  Traits::hasPredictionOperator,
 	  StandardPredictionOperatorComputer,
 	  PredictionOperatorIsNotAvalaible

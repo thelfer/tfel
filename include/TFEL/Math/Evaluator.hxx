@@ -20,7 +20,7 @@
 #include<map>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Math/Parser/Expr.hxx"  
 #include"TFEL/Math/Parser/EvaluatorBase.hxx"  
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
@@ -60,14 +60,14 @@ namespace tfel
       template<typename LogicalOperator>
       struct TLogicalBinaryOperation;
       struct TConditionalExpr;
-      typedef tfel::utilities::shared_ptr<tfel::math::parser::Expr>
-      (*FunctionGenerator)(const tfel::utilities::shared_ptr<tfel::math::parser::Expr>);
-      typedef tfel::utilities::shared_ptr<tfel::math::parser::Expr>
-      (*BinaryFunctionGenerator)(const tfel::utilities::shared_ptr<tfel::math::parser::Expr>,
-				 const tfel::utilities::shared_ptr<tfel::math::parser::Expr>);
-      typedef tfel::utilities::shared_ptr<tfel::math::parser::Expr>
+      typedef std::shared_ptr<tfel::math::parser::Expr>
+      (*FunctionGenerator)(const std::shared_ptr<tfel::math::parser::Expr>);
+      typedef std::shared_ptr<tfel::math::parser::Expr>
+      (*BinaryFunctionGenerator)(const std::shared_ptr<tfel::math::parser::Expr>,
+				 const std::shared_ptr<tfel::math::parser::Expr>);
+      typedef std::shared_ptr<tfel::math::parser::Expr>
       (*ExternalFunctionGenerator)(const std::vector<std::string>&,
-				   std::vector<tfel::utilities::shared_ptr<tfel::math::parser::Expr> >&);
+				   std::vector<std::shared_ptr<tfel::math::parser::Expr> >&);
       struct FunctionGeneratorManager;
       static FunctionGeneratorManager&
       getFunctionGeneratorManager(void);
@@ -123,20 +123,20 @@ namespace tfel
 			 const std::string&);
       /*!
        * \param const std::string&, function definition
-       * \param tfel::utilities::shared_ptr<ExternalFunctionManager>&, external
+       * \param std::shared_ptr<ExternalFunctionManager>&, external
        * function definition
        */
       explicit Evaluator(const std::string&,
-			 tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
+			 std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
       /*!
        * \param const vector<std::string>&, variable name
        * \param const std::string&, function definition
-       * \param tfel::utilities::shared_ptr<ExternalFunctionManager>&, external
+       * \param std::shared_ptr<ExternalFunctionManager>&, external
        * function definition
        */
       explicit Evaluator(const std::vector<std::string>&,
 			 const std::string&,
-			 tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
+			 std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
       /*!
        * Build an evaluator from a value
        * v : value
@@ -163,22 +163,22 @@ namespace tfel
 		  const std::string&);
       /*!
        * \param const std::string&, function definition
-       * \param tfel::utilities::shared_ptr<ExternalFunctionManager>&, external
+       * \param std::shared_ptr<ExternalFunctionManager>&, external
        * function definition
        */
       void
       setFunction(const std::string&,
-		  tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
+		  std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
       /*!
        * \param const vector<std::string>&, variable name
        * \param const std::string&, function definition
-       * \param tfel::utilities::shared_ptr<ExternalFunctionManager>&, external
+       * \param std::shared_ptr<ExternalFunctionManager>&, external
        * function definition
        */
       void
       setFunction(const std::vector<std::string>&,
 		  const std::string&,
-		  tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
+		  std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
       double
       getValue(void) const;
       std::vector<std::string>
@@ -192,11 +192,11 @@ namespace tfel
       checkCyclicDependency(const std::string&) const;
       void
       checkCyclicDependency(std::vector<std::string>&) const;
-      tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>
+      std::shared_ptr<tfel::math::parser::ExternalFunction>
       differentiate(const std::vector<double>::size_type) const;
-      tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>
+      std::shared_ptr<tfel::math::parser::ExternalFunction>
       differentiate(const std::string&) const;
-      tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunction>
+      std::shared_ptr<tfel::math::parser::ExternalFunction>
       resolveDependencies(void) const;
       void
       removeDependencies(void);
@@ -205,9 +205,9 @@ namespace tfel
 		       const double);
       void
       setVariableValue(const std::string&,const double);
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
-      tfel::utilities::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 						      const std::vector<double>&,
 						      const std::vector<std::string>&,
@@ -220,8 +220,8 @@ namespace tfel
       static ExternalFunctionRegister externalFunctionRegister TFEL_VISIBILITY_LOCAL;
       std::vector<double> variables;
       std::map<std::string,std::vector<double>::size_type> positions;
-      tfel::utilities::shared_ptr<tfel::math::parser::Expr> expr;
-      tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager> manager;
+      std::shared_ptr<tfel::math::parser::Expr> expr;
+      std::shared_ptr<tfel::math::parser::ExternalFunctionManager> manager;
       template<typename T>
       static bool TFEL_VISIBILITY_LOCAL
       convert(const std::string&);
@@ -234,7 +234,7 @@ namespace tfel
 		const bool);
       std::vector<double>::size_type  TFEL_VISIBILITY_LOCAL
       registerVariable(const std::string&);
-      tfel::utilities::shared_ptr<tfel::math::parser::ExternalFunctionManager>
+      std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
       TFEL_VISIBILITY_LOCAL
       getExternalFunctionManager();
       std::vector<double>::size_type
@@ -244,18 +244,18 @@ namespace tfel
       TFEL_VISIBILITY_LOCAL
       analyseParameters(std::vector<std::string>::const_iterator&,
 			const std::vector<std::string>::const_iterator);
-      std::vector<tfel::utilities::shared_ptr<Evaluator::TExpr> >
+      std::vector<std::shared_ptr<Evaluator::TExpr> >
       TFEL_VISIBILITY_LOCAL
       analyseArguments(std::vector<std::string>::const_iterator&,
 		       const std::vector<std::string>::const_iterator,
 		       const bool);
-      std::vector<tfel::utilities::shared_ptr<Evaluator::TExpr> >
+      std::vector<std::shared_ptr<Evaluator::TExpr> >
       TFEL_VISIBILITY_LOCAL
       analyseArguments(const unsigned short,
 		       std::vector<std::string>::const_iterator&,
 		       const std::vector<std::string>::const_iterator,
 		       const bool);
-      tfel::utilities::shared_ptr<Evaluator::TExpr>
+      std::shared_ptr<Evaluator::TExpr>
       TFEL_VISIBILITY_LOCAL
       treatGroup(std::vector<std::string>::const_iterator&,
 		 std::vector<std::string>::const_iterator,
@@ -285,17 +285,17 @@ namespace tfel
       TFEL_VISIBILITY_LOCAL
       searchComparisonOperator(const std::vector<std::string>::const_iterator,
 			       const std::vector<std::string>::const_iterator);
-      tfel::utilities::shared_ptr<Evaluator::TLogicalExpr>
+      std::shared_ptr<Evaluator::TLogicalExpr>
       TFEL_VISIBILITY_LOCAL
       treatLogicalExpression(const std::vector<std::string>::const_iterator,
 			     const std::vector<std::string>::const_iterator,
 			     const bool);
-      tfel::utilities::shared_ptr<Evaluator::TLogicalExpr>
+      std::shared_ptr<Evaluator::TLogicalExpr>
       TFEL_VISIBILITY_LOCAL
       treatLogicalExpression2(const std::vector<std::string>::const_iterator,
 			      const std::vector<std::string>::const_iterator,
 			      const bool);
-      tfel::utilities::shared_ptr<Evaluator::TExpr>
+      std::shared_ptr<Evaluator::TExpr>
       TFEL_VISIBILITY_LOCAL
       treatGroup2(std::vector<std::string>::const_iterator&,
 		  std::vector<std::string>::const_iterator,
@@ -325,13 +325,13 @@ namespace tfel
     }; // end of struct FunctionManager
 
     template<double (*f)(const double,const double)>
-    static tfel::utilities::shared_ptr<tfel::math::parser::Expr>
-    StandardBinaryFctGenerator(tfel::utilities::shared_ptr<tfel::math::parser::Expr>,
-			       tfel::utilities::shared_ptr<tfel::math::parser::Expr>);
+    static std::shared_ptr<tfel::math::parser::Expr>
+    StandardBinaryFctGenerator(std::shared_ptr<tfel::math::parser::Expr>,
+			       std::shared_ptr<tfel::math::parser::Expr>);
     
     template<double (*f)(const double)>
-    static tfel::utilities::shared_ptr<tfel::math::parser::Expr>
-    StandardFctGenerator(const tfel::utilities::shared_ptr<tfel::math::parser::Expr>);
+    static std::shared_ptr<tfel::math::parser::Expr>
+    StandardFctGenerator(const std::shared_ptr<tfel::math::parser::Expr>);
     
   } // end of namespace math
 

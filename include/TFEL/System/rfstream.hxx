@@ -21,7 +21,7 @@
 #include<fcntl.h>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/System/stream_traits.hxx"
 #include"TFEL/System/basic_rstream.hxx"
 
@@ -35,12 +35,12 @@ namespace tfel
     template<>
     struct stream_traits<rfstream>
     {
-      static const bool isBlocking = false;
+      static constexpr bool isBlocking = false;
     }; // end of stream_traits<rfstream>
     
     struct TFELSYSTEM_VISIBILITY_EXPORT rfstream
       : public basic_rstream<rfstream,stream_traits<rfstream> >,
-	protected tfel::utilities::shared_ptr<int>
+	protected std::shared_ptr<int>
     {
 
       // default constructor

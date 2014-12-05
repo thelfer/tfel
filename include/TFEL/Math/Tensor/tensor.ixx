@@ -241,7 +241,7 @@ namespace tfel{
 
     template<typename Child>
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
       tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
@@ -255,7 +255,7 @@ namespace tfel{
 
     template<typename Child>
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
       tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
@@ -269,7 +269,7 @@ namespace tfel{
 
     template<typename Child>
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
       tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
@@ -284,11 +284,11 @@ namespace tfel{
     // *= operator
     template<typename Child>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<typename TensorTraits<Child>::NumType,
+      std::is_same<typename ResultType<typename TensorTraits<Child>::NumType,
 						 T2,OpMult>::type,
-			     typename TensorTraits<Child>::NumType>::cond,
+			     typename TensorTraits<Child>::NumType>::value,
       Child&>::type
     tensor_base<Child>::operator*=(const T2 s)
     {
@@ -300,11 +300,11 @@ namespace tfel{
     // /= operator
     template<typename Child>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<typename TensorTraits<Child>::NumType,
+      std::is_same<typename ResultType<typename TensorTraits<Child>::NumType,
 						 T2,OpDiv>::type,
-			     typename TensorTraits<Child>::NumType>::cond,
+			     typename TensorTraits<Child>::NumType>::value,
       Child&>::type
     tensor_base<Child>::operator/=(const T2 s)
     {
@@ -382,7 +382,7 @@ namespace tfel{
     // Import from values
     template<unsigned short N,typename T>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
       void>::type
     tensor<N,T>::import(const T2 * const src)
@@ -417,11 +417,11 @@ namespace tfel{
     tensor<N,T>::Id(void)
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
-      static const base zero = static_cast<base>(0);
-      static const base one  = static_cast<base>(1);
-      static const base IdCoef[]  = {one,one,one,
-				     zero,zero,zero,
-				     zero,zero,zero};
+      constexpr base zero{0};
+      constexpr base one{1};
+      constexpr base IdCoef[]  = {one,one,one,
+				  zero,zero,zero,
+				  zero,zero,zero};
       static const tensor<N,T> id(IdCoef);
       return id;
     } // end of tensor<N,T>::Id
@@ -437,7 +437,7 @@ namespace tfel{
     template<unsigned short N, typename T,
 	     typename OutputIterator>
     TFEL_MATH_INLINE2
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond,
       void>::type
     exportToBaseTypeArray(const tensor<N,T>& t,
@@ -450,7 +450,7 @@ namespace tfel{
     }
 
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 1u,
       tensor<1u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
@@ -468,7 +468,7 @@ namespace tfel{
     }
     
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 2u,
       tensor<2u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
@@ -491,7 +491,7 @@ namespace tfel{
     }
 
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 3u,
       tensor<3u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,

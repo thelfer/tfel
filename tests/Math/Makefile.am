@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 SUBDIRS = include ExpressionTemplates RungeKutta Functions \
-	   st2tost2 t2tost2 st2tot2 t2tot2 Composite
+	   st2tost2 t2tost2 st2tot2 t2tot2
 
 INCLUDES = -I$(top_srcdir)/include -I$(srcdir)/include
 
@@ -14,11 +14,6 @@ test_PROGRAMS = hill                                     \
 		qt2                                      \
 		qt3                                      \
 		CubicRoots                               \
-		array                                    \
-		array2                                   \
-		array2                                   \
-		array3                                   \
-		array4                                   \
 		complex_operations                       \
 		conj                                     \
 		Function                                 \
@@ -108,10 +103,6 @@ qt2_SOURCES                   = qt2.cxx
 qt3_SOURCES                   = qt3.cxx
 hill_SOURCES                  = hill.cxx
 CubicRoots_SOURCES            = CubicRoots.cxx
-array2_SOURCES                = array2.cxx               
-array3_SOURCES                = array3.cxx               
-array4_SOURCES                = array4.cxx               
-array_SOURCES                 = array.cxx                
 complex_operations_SOURCES    = complex_operations.cxx   
 conj_SOURCES                  = conj.cxx                 
 Function_SOURCES              = Function.cxx             

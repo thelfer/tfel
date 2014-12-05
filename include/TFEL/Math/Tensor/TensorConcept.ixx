@@ -170,7 +170,7 @@ namespace tfel{
     }
     
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T,TensorConcept>::cond,
       typename TensorTraits<T>::NumType
       >::type
@@ -180,7 +180,7 @@ namespace tfel{
     }     
     
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond,
       typename tfel::typetraits::AbsType<typename TensorTraits<TensorType>::NumType>::type
       >::type
@@ -189,7 +189,7 @@ namespace tfel{
     }
     
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==1u)),
       stensor<1u,typename TensorTraits<T>::NumType>
@@ -200,7 +200,7 @@ namespace tfel{
     }
 
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==2u)),
       stensor<2u,typename TensorTraits<T>::NumType>
@@ -209,7 +209,7 @@ namespace tfel{
       using namespace std;
       typedef typename TensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2))/real(2);
+      static constexpr real cste = sqrt(real(2))/real(2);
       stensor<2u,NumType> s;
       s[0] = t[0];
       s[1] = t[1];
@@ -219,7 +219,7 @@ namespace tfel{
     }
 
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==3u)),
       stensor<3u,typename TensorTraits<T>::NumType>
@@ -229,7 +229,7 @@ namespace tfel{
       using namespace std;
       typedef typename TensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2))/real(2);
+      static constexpr real cste = sqrt(real(2))/real(2);
       stensor<3u,NumType> s;
       s[0] = t[0];
       s[1] = t[1];
@@ -241,7 +241,7 @@ namespace tfel{
     }
 
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==1u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
@@ -258,7 +258,7 @@ namespace tfel{
     }
   
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==2u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
@@ -267,7 +267,7 @@ namespace tfel{
     computeRightCauchyGreenTensor(const T& t){
       using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<2u,real> r;
       r[0] = t[0]*t[0]+t[4]*t[4];
       r[1] = t[1]*t[1]+t[3]*t[3];
@@ -277,7 +277,7 @@ namespace tfel{
     }
     
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==3u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
@@ -287,7 +287,7 @@ namespace tfel{
     {
       using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<3u,real> r;
       r[0] = t[0]*t[0]+t[4]*t[4]+t[6]*t[6];
       r[1] = t[1]*t[1]+t[3]*t[3]+t[8]*t[8];
@@ -299,7 +299,7 @@ namespace tfel{
     }
 
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==1u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
@@ -316,7 +316,7 @@ namespace tfel{
     }
   
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==2u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
@@ -325,7 +325,7 @@ namespace tfel{
     computeLeftCauchyGreenTensor(const T& t){
       using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<2u,real> r;
       r[0] = t[0]*t[0]+t[3]*t[3];
       r[1] = t[1]*t[1]+t[4]*t[4];
@@ -335,7 +335,7 @@ namespace tfel{
     }
     
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==3u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
@@ -345,7 +345,7 @@ namespace tfel{
     {
       using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<3u,real> r;
       r[0] = t[0]*t[0]+t[3]*t[3]+t[5]*t[5];
       r[1] = t[1]*t[1]+t[4]*t[4]+t[7]*t[7];
@@ -357,7 +357,7 @@ namespace tfel{
     }
 
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==1u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
@@ -374,7 +374,7 @@ namespace tfel{
     }
   
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==2u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
@@ -383,7 +383,7 @@ namespace tfel{
     computeGreenLagrangeTensor(const T& t){
       using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2))/2;
+      static constexpr real cste = sqrt(real(2))/2;
       stensor<2u,real> r;
       r[0] = (t[0]*t[0]+t[4]*t[4]-1)/2;
       r[1] = (t[1]*t[1]+t[3]*t[3]-1)/2;
@@ -393,7 +393,7 @@ namespace tfel{
     }
     
     template<class T>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==3u)&&
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T>::NumType>::cond)),
@@ -403,7 +403,7 @@ namespace tfel{
     {
       using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2))/2;
+      static constexpr real cste = sqrt(real(2))/2;
       stensor<3u,real> r;
       r[0] = (t[0]*t[0]+t[4]*t[4]+t[6]*t[6]-1)/2;
       r[1] = (t[1]*t[1]+t[3]*t[3]+t[8]*t[8]-1)/2;
@@ -415,7 +415,7 @@ namespace tfel{
     }
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -435,7 +435,7 @@ namespace tfel{
     } // end of pushForward
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -448,7 +448,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<2u,NumType> s;
       s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
@@ -458,7 +458,7 @@ namespace tfel{
     } // end of pushForward
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -471,7 +471,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<3u,NumType> s;
       s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
@@ -483,7 +483,7 @@ namespace tfel{
     } // end of pushForward
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -503,7 +503,7 @@ namespace tfel{
     } // end of push_forward
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -516,7 +516,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<2u,NumType> s;
       s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
@@ -526,7 +526,7 @@ namespace tfel{
     } // end of push_forward
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -539,7 +539,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<3u,NumType> s;
       s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
@@ -551,7 +551,7 @@ namespace tfel{
     } // end of push_forward
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -571,7 +571,7 @@ namespace tfel{
     } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -584,7 +584,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       const tensor<2u,typename TensorTraits<T2>::NumType> iF = invert(F);
       const real J = det(F);
       stensor<2u,stress> p;
@@ -596,7 +596,7 @@ namespace tfel{
     } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -609,7 +609,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
-      static const real cste  = sqrt(real(2));
+      static constexpr real cste  = sqrt(real(2));
       const tensor<3u,typename TensorTraits<T2>::NumType> iF = invert(F);
       const real J = det(F);
       stensor<3u,stress> p;
@@ -623,7 +623,7 @@ namespace tfel{
     } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -645,7 +645,7 @@ namespace tfel{
     } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -658,7 +658,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<2u,stress> s;
       const real inv_J = 1/det(F);
       s[0] = (p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*inv_J;
@@ -669,7 +669,7 @@ namespace tfel{
     } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 
     template<typename T,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
        (tfel::meta::Implements<T2,TensorConcept>::cond) &&
@@ -682,7 +682,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
-      static const real cste = sqrt(real(2));
+      static constexpr real cste = sqrt(real(2));
       stensor<3u,stress> s;
       const real inv_J = 1/det(F);
       s[0] = (p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*inv_J;
@@ -695,7 +695,7 @@ namespace tfel{
     } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 1u,
       typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
@@ -707,7 +707,7 @@ namespace tfel{
     } // end of 
 
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 2u,
       typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
@@ -719,7 +719,7 @@ namespace tfel{
     }
 
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 3u,
       typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
@@ -742,7 +742,7 @@ namespace tfel{
 
     template<typename TensorResultType,
 	     typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 1u&&
@@ -761,7 +761,7 @@ namespace tfel{
 
     template<typename TensorResultType,
 	     typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 2u&&
@@ -782,7 +782,7 @@ namespace tfel{
 
     template<typename TensorResultType,
 	     typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 3u&&
@@ -808,14 +808,14 @@ namespace tfel{
     template<typename TensorType,
 	     typename StensorType,
 	     typename TensorType2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType2,TensorConcept>::cond &&
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-      tfel::meta::IsSameType<typename StensorTraits<StensorType>::NumType,
-			     typename TensorTraits<TensorType2>::NumType>::cond &&
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType2>::NumType>::type,
-			     typename TensorTraits<TensorType>::NumType>::cond &&
+      std::is_same<typename StensorTraits<StensorType>::NumType,
+		   typename TensorTraits<TensorType2>::NumType>::value &&
+      std::is_same<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType2>::NumType>::type,
+		   typename TensorTraits<TensorType>::NumType>::value &&
       (TensorTraits<TensorType>::dime==TensorTraits<TensorType2>::dime)&&
       (TensorTraits<TensorType>::dime==StensorTraits<StensorType>::dime)&&
       (TensorTraits<TensorType>::dime == 1u),
@@ -836,14 +836,14 @@ namespace tfel{
     template<typename TensorType,
 	     typename StensorType,
 	     typename TensorType2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType2,TensorConcept>::cond &&
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-      tfel::meta::IsSameType<typename StensorTraits<StensorType>::NumType,
-			     typename TensorTraits<TensorType2>::NumType>::cond &&
-      tfel::meta::IsSameType<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType2>::NumType>::type,
-			     typename TensorTraits<TensorType>::NumType>::cond &&
+      std::is_same<typename StensorTraits<StensorType>::NumType,
+		   typename TensorTraits<TensorType2>::NumType>::value &&
+      std::is_same<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType2>::NumType>::type,
+		   typename TensorTraits<TensorType>::NumType>::value &&
       (TensorTraits<TensorType>::dime==TensorTraits<TensorType2>::dime)&&
       (TensorTraits<TensorType>::dime==StensorTraits<StensorType>::dime)&&
       ((TensorTraits<TensorType>::dime == 2u)||(TensorTraits<TensorType>::dime == 3u)),
@@ -879,7 +879,7 @@ namespace tfel{
     } // end of polar_decomposition
 
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond,
       MatrixExpr<tmatrix<3u,3u,typename TensorTraits<TensorType>::NumType>,
 		 MatrixViewFromTensorExpr<TensorType> >
@@ -891,7 +891,7 @@ namespace tfel{
     } // end of matrix_view
 
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       (TensorTraits<TensorType>::dime==1u),
       TensorExpr<tensor<1u,typename TensorTraits<TensorType>::NumType>,
@@ -903,7 +903,7 @@ namespace tfel{
     } // end of transpose
 
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       (TensorTraits<TensorType>::dime==2u),
       TensorExpr<tensor<2u,typename TensorTraits<TensorType>::NumType>,
@@ -915,7 +915,7 @@ namespace tfel{
     } // end of transpose
 
     template<typename TensorType>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       (TensorTraits<TensorType>::dime==3u),
       TensorExpr<tensor<3u,typename TensorTraits<TensorType>::NumType>,

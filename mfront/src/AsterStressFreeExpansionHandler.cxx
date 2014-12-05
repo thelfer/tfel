@@ -24,7 +24,7 @@ namespace aster
 							  const AsterInt d)
   {
     using namespace std;
-    static const AsterReal cste = AsterReal(2)/sqrt(AsterReal(2));
+    static constexpr AsterReal cste = AsterReal(2)/sqrt(AsterReal(2));
     e[0]  -= s0[0];
     e[1]  -= s0[1];
     e[2]  -= s0[2];

@@ -30,7 +30,7 @@
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/RecursiveFind.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 
 #include"TFEL/Utilities/Global.hxx"
 #include"TFEL/Utilities/LaTeXConvertion.hxx"

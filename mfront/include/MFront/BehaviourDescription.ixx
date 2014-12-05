@@ -40,7 +40,7 @@ namespace mfront
   }
 
   template<typename T>
-  typename tfel::meta::EnableIf<
+  typename std::enable_if<
     tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
     T&>::type
   BehaviourDescription::getAttribute(const std::string& n)
@@ -56,7 +56,7 @@ namespace mfront
   } // end of BehaviourDescription::getAttribute
 
   template<typename T>
-  typename tfel::meta::EnableIf<
+  typename std::enable_if<
     tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
     const T&>::type
   BehaviourDescription::getAttribute(const std::string& n) const
@@ -71,7 +71,7 @@ namespace mfront
   } // end of BehaviourDescription::getAttribute
 
   template<typename T>
-  typename tfel::meta::EnableIf<
+  typename std::enable_if<
     tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
     T>::type
   BehaviourDescription::getAttribute(const std::string& n,

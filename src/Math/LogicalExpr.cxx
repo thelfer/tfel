@@ -78,7 +78,7 @@ namespace tfel
       LogicalExpr::~LogicalExpr()
       {} // end of LogicalExpr::~LogicalExpr()
 
-      NegLogicalExpression::NegLogicalExpression(const tfel::utilities::shared_ptr<LogicalExpr> a_)
+      NegLogicalExpression::NegLogicalExpression(const std::shared_ptr<LogicalExpr> a_)
 	: a(a_)
       {} // end of NegLogicalExpression::NegLogicalOperation
 
@@ -94,27 +94,25 @@ namespace tfel
 	this->a->checkCyclicDependency(names);
       } // end of NegLogicalExpression::checkCyclicDependency
       
-      tfel::utilities::shared_ptr<LogicalExpr>
+      std::shared_ptr<LogicalExpr>
       NegLogicalExpression::resolveDependencies(const std::vector<double>& v) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<LogicalExpr>(new NegLogicalExpression(this->a->resolveDependencies(v)));
+	return std::shared_ptr<LogicalExpr>(new NegLogicalExpression(this->a->resolveDependencies(v)));
       } // end of NegLogicalExpression::resolveDependencies(void) const
       
-      tfel::utilities::shared_ptr<LogicalExpr>
+      std::shared_ptr<LogicalExpr>
       NegLogicalExpression::clone(const std::vector<double>& v) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<LogicalExpr>(new NegLogicalExpression(this->a->clone(v)));
+	return std::shared_ptr<LogicalExpr>(new NegLogicalExpression(this->a->clone(v)));
       }
 
-      tfel::utilities::shared_ptr<LogicalExpr>
+      std::shared_ptr<LogicalExpr>
       NegLogicalExpression::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 										  const std::vector<std::string>& p,
 										  const std::map<std::string,
 										  std::vector<double>::size_type>& pos) const
       {
-	using namespace tfel::utilities;
+	using std::shared_ptr;
 	shared_ptr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
 	return shared_ptr<LogicalExpr>(new NegLogicalExpression(na));
       }

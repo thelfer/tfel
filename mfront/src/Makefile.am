@@ -143,7 +143,6 @@ if TFEL_WIN
 libMFrontLogStream_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 
-if HAVE_CXX_11
 lib_LTLIBRARIES += libMFrontProfiling.la
 libMFrontProfiling_la_SOURCES = BehaviourProfiler.cxx
 if ! TFEL_WIN
@@ -153,7 +152,6 @@ libMFrontProfiling_la_CPPFLAGS = -DMFrontProfiling_EXPORTS
 if TFEL_WIN
 libMFrontProfiling_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
-endif # HAVE_CXX_11
 
 libMTestFileGenerator_la_SOURCES = MTestFileGeneratorBase.cxx             \
 				   UMATSmallStrainMTestFileGenerator.cxx  \

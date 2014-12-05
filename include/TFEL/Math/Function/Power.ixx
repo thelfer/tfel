@@ -15,7 +15,7 @@
 #define _LIB_TFEL_MATH_FUNCTION_POWER_I_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 #include"TFEL/Math/Function/Cst.hxx"
 
@@ -51,8 +51,8 @@ namespace tfel{
     struct TFEL_VISIBILITY_LOCAL FunctionTraits<Power<N,D> >
     {
     private:
-      static const int N_ = FracSimplify<N-1,D>::N;
-      static const int D_ = FracSimplify<N-1,D>::D;
+      static constexpr int N_ = FracSimplify<N-1,D>::N;
+      static constexpr int D_ = FracSimplify<N-1,D>::D;
       typedef Cst<N,D> Cst_;
       typedef Power<N_,D_> Pow_;
     public:
@@ -99,7 +99,7 @@ namespace tfel{
 
       template<typename T>      			                                  
       static TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
         !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Power<N,D> >::Result>::cond&&
       !tfel::typetraits::IsScalar<T>::cond,
 	typename ComputeUnaryResult<T,Power<N,D> >::Handle                               
@@ -111,7 +111,7 @@ namespace tfel{
 
       template<typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
         !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Power<N,D> >::Result>::cond&&
 	tfel::typetraits::IsScalar<T>::cond,
 	typename ComputeUnaryResult<T,Power<N,D> >::Handle                               
@@ -124,7 +124,7 @@ namespace tfel{
 
       template<typename T>      			                                  
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
         !tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Power<N,D> >::Result>::cond&&
       !tfel::typetraits::IsScalar<T>::cond,
 	typename ComputeUnaryResult<T,Power<N,D> >::Handle                               
@@ -141,8 +141,8 @@ namespace tfel{
       template<int N,unsigned int D>
       class TFEL_VISIBILITY_LOCAL DerivatePower
       {
-	static const int N_ = FracSimplify<N-1,D>::N;
-	static const int D_ = FracSimplify<N-1,D>::D;
+	static constexpr int N_ = FracSimplify<N-1,D>::N;
+	static constexpr int D_ = FracSimplify<N-1,D>::D;
 	typedef Cst<N,D> Cst_;
 	typedef Power<N_,D_> Pow_;
 	
@@ -201,7 +201,7 @@ namespace tfel{
       }
 
       template<int N,typename T>      			                                  
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
 	!tfel::typetraits::IsInvalid<typename ComputeUnaryResult<T,Power<N> >::Result>::cond&&
 	!tfel::typetraits::IsScalar<T>::cond,
 	typename ComputeUnaryResult<T,Power<N> >::Handle                               
@@ -213,7 +213,7 @@ namespace tfel{
       }
 
       template<int N,typename F>
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
 	tfel::meta::Implements<F,tfel::math::FunctionConcept>::cond,
 	FunctionExpr<FunctionsCompositionExpr<tfel::math::Power<N,1u>,F> >
       >::type                                                                             
@@ -233,7 +233,7 @@ namespace tfel{
       }
 
       template<int N,unsigned int D,typename T>
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
 	!tfel::typetraits::IsInvalid<
 	typename tfel::math::ComputeUnaryResult<T,Power<N,D> >::Result>::cond&&
       !tfel::typetraits::IsScalar<T>::cond,
@@ -247,7 +247,7 @@ namespace tfel{
       }
 
       template<int N,unsigned int D,typename F>
-      typename tfel::meta::EnableIf<                                                      
+      typename std::enable_if<                                                      
 	tfel::meta::Implements<F,tfel::math::FunctionConcept>::cond,
 	FunctionExpr<FunctionsCompositionExpr<tfel::math::Power<N,D>,F> >
       >::type                                                                             

@@ -22,15 +22,15 @@
 #ifndef __SUNPRO_CC
 #define TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(X)     \
       template<>                                                                \
-      tfel::utilities::shared_ptr<Expr>                                           \
-      differentiateFunction<std::X>(const tfel::utilities::shared_ptr<Expr> expr, \
+      std::shared_ptr<Expr>                                           \
+      differentiateFunction<std::X>(const std::shared_ptr<Expr> expr, \
 				    const std::vector<double>::size_type  pos,  \
 				    const std::vector<double>& v)
 #else  /* __SUNPRO_CC */
 #define TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(X)  \
       template<>                                                             \
-      tfel::utilities::shared_ptr<Expr>                                        \
-      differentiateFunction<X>(const tfel::utilities::shared_ptr<Expr> expr,   \
+      std::shared_ptr<Expr>                                        \
+      differentiateFunction<X>(const std::shared_ptr<Expr> expr,   \
 			       const std::vector<double>::size_type pos,     \
 			       const std::vector<double>& v)
 #endif /* __SUNPRO_CC */
@@ -73,7 +73,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(exp)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> expe(new StandardFunction<exp>(ce));
@@ -83,7 +82,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(sin)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> cose(new StandardFunction<cos>(ce));
@@ -93,7 +91,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(cos)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> sine(new StandardFunction<sin>(ce));
@@ -103,7 +100,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(tan)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> tane(new StandardFunction<tan>(ce));
@@ -115,7 +111,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(sqrt)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> sqrte(new StandardFunction<sqrt>(ce));
@@ -127,7 +122,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(log)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(de,ce));
@@ -137,7 +131,6 @@ namespace tfel
       {
 	using namespace std;
 	using namespace std;
-	using namespace tfel::utilities;
 	static double ln10 = log(10.);
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
@@ -148,7 +141,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(asin)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> den1(new BinaryOperation<OpMult>(ce,ce));
@@ -160,7 +152,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(acos)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> num1(new Number(-1.));
@@ -174,7 +165,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(atan)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> den1(new BinaryOperation<OpMult>(ce,ce));
@@ -185,7 +175,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(sinh)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> coshe(new StandardFunction<cosh>(ce));
@@ -195,7 +184,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(cosh)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> sinhe(new StandardFunction<sinh>(ce));
@@ -205,7 +193,6 @@ namespace tfel
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(tanh)
       {
 	using namespace std;
-	using namespace tfel::utilities;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> coshe(new StandardFunction<cosh>(ce));

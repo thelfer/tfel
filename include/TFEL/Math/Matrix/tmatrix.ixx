@@ -65,7 +65,7 @@ namespace tfel{
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
     template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type 
     tmatrix_base<Child,N,M,T>::operator=(const MatrixExpr<tmatrix<N,M,T2>, Expr>& src){
@@ -76,7 +76,7 @@ namespace tfel{
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator=(const tmatrix<N,M,T2>& src)
@@ -88,7 +88,7 @@ namespace tfel{
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
     template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type 
     tmatrix_base<Child,N,M,T>::operator+=(const MatrixExpr<tmatrix<N,M,T2>, Expr>& src){
@@ -99,7 +99,7 @@ namespace tfel{
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator+=(const tmatrix<N,M,T2>& src)
@@ -111,7 +111,7 @@ namespace tfel{
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
     template<typename T2,typename Expr>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type 
     tmatrix_base<Child,N,M,T>::operator-=(const MatrixExpr<tmatrix<N,M,T2>, Expr>& src){
@@ -122,7 +122,7 @@ namespace tfel{
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator-=(const tmatrix<N,M,T2>& src)
@@ -135,9 +135,9 @@ namespace tfel{
     // *= operator
     template<typename Child,unsigned short N,unsigned short M,typename T>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      std::is_same<typename ResultType<T,T2,OpMult>::type,T>::value,
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator*=(const T2 s)
     {
@@ -149,9 +149,9 @@ namespace tfel{
     // /= operator
     template<typename Child,unsigned short N,unsigned short M,typename T>
     template<typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      std::is_same<typename ResultType<T,T2,OpMult>::type,T>::value,
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator/=(const T2 s)
     {
@@ -335,7 +335,7 @@ namespace tfel{
 
       template<typename Matrix>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<Matrix,MatrixConcept>::cond,
 	typename ComputeUnaryResult<typename MatrixTraits<Matrix>::NumType,Power<3> >::Result
 	>::type
@@ -346,7 +346,7 @@ namespace tfel{
 
       template<typename Matrix>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::meta::Implements<Matrix,MatrixConcept>::cond,
 	typename ComputeUnaryResult<typename MatrixTraits<Matrix>::NumType,Power<3> >::Result
 	>::type

@@ -27,21 +27,21 @@ namespace tfel{
       {
 	TFEL_STATIC_ASSERT(D1!=0u);
 	
-	static const unsigned int Ntmp    = ((N1%Dac==0)&&(D1%Dac==0u)) ? N1/Dac  : N1;
-	static const unsigned int Dtmp    = ((N1%Dac==0)&&(D1%Dac==0u)) ? D1/Dac  : D1;
-	static const unsigned int Dactmp1 = ((N1%Dac==0)&&(D1%Dac==0u)) ? Dac     : Dac+1;
-	static const unsigned int Dactmp  = (Dactmp1>Dtmp) ? 0u : Dactmp1;
+	static constexpr unsigned int Ntmp    = ((N1%Dac==0)&&(D1%Dac==0u)) ? N1/Dac  : N1;
+	static constexpr unsigned int Dtmp    = ((N1%Dac==0)&&(D1%Dac==0u)) ? D1/Dac  : D1;
+	static constexpr unsigned int Dactmp1 = ((N1%Dac==0)&&(D1%Dac==0u)) ? Dac     : Dac+1;
+	static constexpr unsigned int Dactmp  = (Dactmp1>Dtmp) ? 0u : Dactmp1;
 	
-	static const unsigned int N = (Dac>D1) ? N1 : RecursiveFracSimplify<Ntmp,Dtmp,Dactmp>::N;
-	static const unsigned int D = (Dac>D1) ? D1 : RecursiveFracSimplify<Ntmp,Dtmp,Dactmp>::D;
+	static constexpr unsigned int N = (Dac>D1) ? N1 : RecursiveFracSimplify<Ntmp,Dtmp,Dactmp>::N;
+	static constexpr unsigned int D = (Dac>D1) ? D1 : RecursiveFracSimplify<Ntmp,Dtmp,Dactmp>::D;
       };
       
       template<unsigned int N1,unsigned int D1>
       struct RecursiveFracSimplify<N1,D1,0u>
       {
 	TFEL_STATIC_ASSERT(D1!=0u);
-	static const unsigned int N = N1;
-	static const unsigned int D = D1;
+	static constexpr unsigned int N = N1;
+	static constexpr unsigned int D = D1;
       };
     
     } // end of namespace internals
@@ -51,34 +51,34 @@ namespace tfel{
     {
     private:
       TFEL_STATIC_ASSERT(D1!=0u);
-      static const int sign           = (N1<0) ? -1 : 1;   
-      static const unsigned int Ntmp  = sign*N1;
-      static const unsigned int Ntmp2 = tfel::math::internals::RecursiveFracSimplify<Ntmp,D1,2>::N;
+      static constexpr int sign           = (N1<0) ? -1 : 1;   
+      static constexpr unsigned int Ntmp  = sign*N1;
+      static constexpr unsigned int Ntmp2 = tfel::math::internals::RecursiveFracSimplify<Ntmp,D1,2>::N;
     public:
-      static const int N              = sign*static_cast<int>(Ntmp2);
-      static const unsigned int D     = tfel::math::internals::RecursiveFracSimplify<Ntmp,D1,2>::D;
+      static constexpr int N              = sign*static_cast<int>(Ntmp2);
+      static constexpr unsigned int D     = tfel::math::internals::RecursiveFracSimplify<Ntmp,D1,2>::D;
     };
       
     template<unsigned int D1>
     struct FracSimplify<0,D1>
     {
       TFEL_STATIC_ASSERT(D1!=0u);
-      static const int N          = 0;
-      static const unsigned int D = 1u;
+      static constexpr int N          = 0;
+      static constexpr unsigned int D = 1u;
     };
       
     template<int N1>
     struct FracSimplify<N1,1u>
     {
-      static const int N          = N1;
-      static const unsigned int D = 1u;
+      static constexpr int N          = N1;
+      static constexpr unsigned int D = 1u;
     };
       
     template<>
     struct FracSimplify<0,1u>
     {
-      static const int N          = 0;
-      static const unsigned int D = 1u;
+      static constexpr int N          = 0;
+      static constexpr unsigned int D = 1u;
     };
 
     } // end of namespace math

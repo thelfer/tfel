@@ -25,7 +25,6 @@
 #include"TFEL/Metaprogramming/Forward/TypeList.hxx"
 
 #include"TFEL/Math/Forward/qt.hxx"
-#include"TFEL/Math/Forward/array.hxx"
 #include"TFEL/Math/Forward/vector.hxx"
 #include"TFEL/Math/Forward/lambda.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
@@ -34,13 +33,10 @@
 #include"TFEL/Math/Forward/Complex.hxx"
 #include"TFEL/Math/Forward/st2tost2.hxx"
 #include"TFEL/Math/Forward/Function.hxx"
-#include"TFEL/Math/Forward/ArrayConcept.hxx"
-#include"TFEL/Math/Forward/LambdaConcept.hxx"
 #include"TFEL/Math/Forward/VectorConcept.hxx"
 #include"TFEL/Math/Forward/MatrixConcept.hxx"
 #include"TFEL/Math/Forward/StensorConcept.hxx"
 #include"TFEL/Math/Forward/ST2toST2Concept.hxx"
-#include"TFEL/Math/Forward/CompositeConcept.hxx"
 
 #include"TFEL/Math/Forward/TinyNewtonRaphson.hxx"
 #include"TFEL/Math/General/Forward/General.hxx"
@@ -424,86 +420,6 @@ namespace tfel
     TFEL_UTILITIES_NAME(tfel::math::Complex<long double>);
     TFEL_UTILITIES_NAME(std::string);
 
-    template<typename A>
-    struct Name<tfel::math::ArrayConcept<A> >
-    {
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ArrayConcept<")
-	  +Name<A>::getName()+string(">");        
-      }
-    };
-
-    template<typename T_type, typename Expr>
-    struct Name<tfel::math::ArrayExpr<T_type,Expr> >
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \return the name of the class.
-       * \see    Name.
-       */
-      static std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ArrayExpr<")
-	  +Name<T_type>::getName()+string(",")
-	  +Name<Expr>::getName()+string(">");
-      }
-    };
-
-    template<typename T,
-	     typename Ordering,
-	     typename TAllocator>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::ArrayStorage_<T,Ordering,TAllocator> >
-    {
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ArrayStorage_<")+
-	  Name<T>::getName()+string(",")+
-	  Name<Ordering>::getName()+string(",")+
-	  Name<TAllocator>::getName()+string(">");
-      }
-    };
-
-    template<unsigned short N,
-	     typename T,
-	     typename Ordering,
-	     typename TAllocator>
-    struct Name<tfel::math::ArrayStorage<N,T,Ordering,TAllocator> >
-    {
-      static std::string getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("ArrayStorage<,")+ToString(N)+
-	  Name<T>::getName()+string(",")+
-	  Name<Ordering>::getName()+string(",")+
-	  Name<TAllocator>::getName()+string(">");
-      }
-    };
-
-    template<unsigned short N,typename T,
-	     template<unsigned short,typename> class TStorage>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::array<N,T,TStorage> >
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \return the name of the class.
-       * \see    Name.
-       */
-      static std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	string tmp = "array<"+ToString(N)+","+Name<T>::getName();
-	tmp+=","+Name<TStorage<N,T> >::getName()+">";
-	return tmp;
-      }
-    }; // end of Name<array<N,T,TStorage> >
-
     template<typename T>
     struct TFEL_VISIBILITY_LOCAL Name<tfel::math::VectorConcept<T> >
     {
@@ -689,21 +605,6 @@ namespace tfel
 	  +Name<Expr>::getName()+string(">");
       }
     };
-
-    template<unsigned short N>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::Lambda<N> >
-    {
-      /*!
-       * \return the name of the class.
-       * \see    Name.
-       */
-      static std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return std::string("x")+ToString(N)+string("_");
-      }
-    }; // end of struct TFEL_VISIBILITY_LOCAL Name<Lambda<N> >
 
     template<typename unit,typename T>
     struct TFEL_VISIBILITY_LOCAL Name<tfel::math::qt<unit,T> >
@@ -1181,72 +1082,6 @@ namespace tfel
       static std::string getName(void);
     };
 
-    template<typename T>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::LambdaConcept<T> >
-    {
-      static std::string getName(void)
-      {
-	return std::string("LambdaConcept<")
-	  +tfel::utilities::Name<T>::getName()
-	  +std::string(">");
-      } // end of LambdaConcept<T>::getName()
-    };
-
-    template<typename T_type, typename Expr>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::LambdaExpr<T_type,Expr> >
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \return the name of the class.
-       * \see    Name.
-       */
-      static std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("LambdaExpr<")
-	  +Name<T_type>::getName()+string(",")
-	  +Name<Expr>::getName()+string(">");
-      }
-    };
-
-    template<typename A, typename B,typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::LambdaLambdaExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("LambdaLambdaExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::LambdaLambdaExpr<A,B,Op> >
-
-    template<typename A,typename Func>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::FctLambdaExpr<A,Func> >
-    {
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FctLambdaExpr<")
-	  +Name<A>::getName()+string(",")
-	  +Name<Func>::getName()+string(">");        
-      }
-    };
-
-    template<typename F>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::LambdaNegExpr<F> >
-    {
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("LambdaNegExpr<")+Name<F>::getName()+string(">");
-      }
-    };
-
     template<typename A>
     struct Name<tfel::math::MatrixConcept<A> >
     {
@@ -1303,72 +1138,6 @@ namespace tfel
       	return string("TVectorTMatrixExpr<")+
 	  Name<A>::getName()+string(",")+
       	  Name<B>::getName()+string(">");
-      }
-    };
-
-    template<typename T>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::CompositeConcept<T> >
-    {
-      static std::string getName(void)
-      {
-	return std::string("CompositeConcept<")
-	  +tfel::utilities::Name<T>::getName()
-	  +std::string(">");
-      } // end of CompositeConcept<T>::getName()
-    };
-
-    template<typename T_type, typename Expr>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::CompositeExpr<T_type,Expr> >
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \return the name of the class.
-       * \see    Name.
-       */
-      static std::string
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("CompositeExpr<")
-	  +Name<T_type>::getName()+string(",")
-	  +Name<Expr>::getName()+string(">");
-      }
-    };
-
-    template<typename A, typename B,typename Op>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::CompositeCompositeExpr<A,B,Op> >
-    {
-      static std::string getName(void){
-      	using namespace std;
-      	using namespace tfel::utilities;
-      	return string("CompositeCompositeExpr<")+
-	  Name<A>::getName()+string(",")+
-	  Name<B>::getName()+string(",")+
-	  Name<Op>::getName()+string(">");
-      }
-    }; // end of struct TFEL_VISIBILITY_LOCAL Name<tfel::math::CompositeCompositeExpr<A,B,Op> >
-
-    template<typename A,typename Func>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::FctCompositeExpr<A,Func> >
-    {
-      static std::string 
-      getName(void){ 
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("FctCompositeExpr<")
-	  +Name<A>::getName()+string(",")
-	  +Name<Func>::getName()+string(">");        
-      }
-    };
-
-    template<typename F>
-    struct TFEL_VISIBILITY_LOCAL Name<tfel::math::CompositeNegExpr<F> >
-    {
-      static std::string 
-      getName(void){
-	using namespace std;
-	using namespace tfel::utilities;
-	return string("CompositeNegExpr<")+Name<F>::getName()+string(">");
       }
     };
 

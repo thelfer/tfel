@@ -85,26 +85,26 @@ namespace tfel
     void
     RungeKutta54<N,Child,Scalar>::iterate(void)
     {
-      static const Scalar cste12_13       = Scalar(12)/Scalar(13);
-      static const Scalar cste1932_2197   = Scalar(1932)/Scalar(2197);
-      static const Scalar cste7200_2197   = Scalar(7200)/Scalar(2197);
-      static const Scalar cste7296_2197   = Scalar(7296)/Scalar(2197);
-      static const Scalar cste439_216     = Scalar(439)/Scalar(216);
-      static const Scalar cste3680_513    = Scalar(3680)/Scalar(513);
-      static const Scalar cste845_4104    = Scalar(845)/Scalar(4104);
-      static const Scalar cste8_27        = Scalar(8)/Scalar(27);
-      static const Scalar cste3544_2565   = Scalar(3544)/Scalar(2565);
-      static const Scalar cste1859_4104   = Scalar(1859)/Scalar(4104);
-      static const Scalar cste11_40       = Scalar(11)/Scalar(40);
-      static const Scalar cste16_135      = Scalar(16)/Scalar(135);
-      static const Scalar cste6656_12825  = Scalar(6656)/Scalar(12825);
-      static const Scalar cste28561_56430 = Scalar(28561)/Scalar(56430);
-      static const Scalar cste9_50        = Scalar(9)/Scalar(50);
-      static const Scalar cste2_55        = Scalar(2)/Scalar(55);
-      static const Scalar cste1_360       = Scalar(1)/Scalar(360);
-      static const Scalar cste128_4275    = Scalar(128)/Scalar(4275);
-      static const Scalar cste2197_75240  = Scalar(2197)/Scalar(75240);
-      static const Scalar cste1_50        = Scalar(1)/Scalar(50);
+      static constexpr Scalar cste12_13       = Scalar(12)/Scalar(13);
+      static constexpr Scalar cste1932_2197   = Scalar(1932)/Scalar(2197);
+      static constexpr Scalar cste7200_2197   = Scalar(7200)/Scalar(2197);
+      static constexpr Scalar cste7296_2197   = Scalar(7296)/Scalar(2197);
+      static constexpr Scalar cste439_216     = Scalar(439)/Scalar(216);
+      static constexpr Scalar cste3680_513    = Scalar(3680)/Scalar(513);
+      static constexpr Scalar cste845_4104    = Scalar(845)/Scalar(4104);
+      static constexpr Scalar cste8_27        = Scalar(8)/Scalar(27);
+      static constexpr Scalar cste3544_2565   = Scalar(3544)/Scalar(2565);
+      static constexpr Scalar cste1859_4104   = Scalar(1859)/Scalar(4104);
+      static constexpr Scalar cste11_40       = Scalar(11)/Scalar(40);
+      static constexpr Scalar cste16_135      = Scalar(16)/Scalar(135);
+      static constexpr Scalar cste6656_12825  = Scalar(6656)/Scalar(12825);
+      static constexpr Scalar cste28561_56430 = Scalar(28561)/Scalar(56430);
+      static constexpr Scalar cste9_50        = Scalar(9)/Scalar(50);
+      static constexpr Scalar cste2_55        = Scalar(2)/Scalar(55);
+      static constexpr Scalar cste1_360       = Scalar(1)/Scalar(360);
+      static constexpr Scalar cste128_4275    = Scalar(128)/Scalar(4275);
+      static constexpr Scalar cste2197_75240  = Scalar(2197)/Scalar(75240);
+      static constexpr Scalar cste1_50        = Scalar(1)/Scalar(50);
       Scalar t = this->ti; // current time
       Scalar t_;           // intermediate time
       Scalar e = 0;        // error norm

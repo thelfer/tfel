@@ -61,9 +61,7 @@ TFEL_TESTS_GENERATE_PROXY(TVector7,
 int main(void)
 {
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("tvector7.xml");

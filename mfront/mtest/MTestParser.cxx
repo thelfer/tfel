@@ -29,7 +29,7 @@
 
 #include"tfel-config.hxx"
 
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Utilities/TerminalColors.hxx"
 
 #include"MFront/MFrontLogStream.hxx"
@@ -94,7 +94,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     map<string,CallBack>::const_iterator pc;
     this->file = f;
     this->treatCharAsString(true);
@@ -682,7 +682,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     typedef map<string,string>::value_type MVType;
     typedef map<string,unsigned int>::value_type MVType2;
     this->readSpecifiedToken("MTestParser::handleTest","<",
@@ -820,7 +820,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     const string& v = this->readString(p,this->fileTokens.end());
     if(!this->isValidIdentifier(v)){
       string msg("MTestParser::handleReal : '"+
@@ -1174,7 +1174,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     const string& evt = this->readEvolutionType(p);
     const string& c   = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedThermodynamicForce",p,
@@ -1237,7 +1237,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     const string& evt = this->readEvolutionType(p);
     const string& c   = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedDrivingVariable",p,
@@ -1258,7 +1258,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::system;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     string i;
     this->readSpecifiedToken("MTestParser::handleBehaviour","<",p,
 			     this->fileTokens.end());
@@ -1299,7 +1299,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     string i;
     this->readSpecifiedToken("MTestParser::handleMaterialProperty","<",p,
 			     this->fileTokens.end());
@@ -1446,7 +1446,7 @@ namespace mfront
   MTestParser::handleInternalStateVariable(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
-    tfel::utilities::shared_ptr<Behaviour> b(t.getBehaviour());
+    std::shared_ptr<Behaviour> b(t.getBehaviour());
     const string& n = this->readString(p,this->fileTokens.end());
     const vector<string>& ivsnames = b->getInternalStateVariablesNames();
     if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
@@ -1507,7 +1507,7 @@ namespace mfront
   {
     using namespace std;
     using tfel::utilities::Token;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     using tfel::math::Evaluator;
     this->checkNotEndOfLine("MTestParser::readDouble",p,
 			    this->fileTokens.end());
@@ -1570,14 +1570,14 @@ namespace mfront
 			     this->fileTokens.end());
   } // end of MTestParser::readArrayOfSpecifiedSize
   
-  tfel::utilities::shared_ptr<Evolution>
+  std::shared_ptr<Evolution>
   MTestParser::parseEvolution(const std::string& type,
 			      const MTest& t,
 			      TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
-    using tfel::utilities::shared_ptr;
+    using std::shared_ptr;
     shared_ptr<Evolution> ev;
     this->checkNotEndOfLine("MTestParser::parseEvolution",p,
 			    this->fileTokens.end());

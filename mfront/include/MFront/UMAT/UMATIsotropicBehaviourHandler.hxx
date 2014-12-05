@@ -55,15 +55,15 @@ namespace umat
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
-      typedef typename IF<
+      typedef typename std::conditional<
 	is_defined_,
-	typename IF<
+	typename std::conditional<
 	  Traits::useTimeSubStepping,
 	  typename UMATBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
 	  typename UMATBehaviourHandler::template Integrator<bs,ba>
 	  >::type,
 	typename UMATBehaviourHandler::Error>::type Handler;
-      typedef typename IF<
+      typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
 	typename UMATBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
 	typename UMATBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull

@@ -25,10 +25,10 @@
 struct Func
   : public tfel::math::TinyNewtonRaphson<2u,double,Func>
 {
-  static const double a; 
-  static const double b;
   void computeFdF()
   {
+    constexpr double a = 1.; 
+    constexpr double b = 10.;
     f(0)   = a*(1-x(0));
     f(1)   = b*(x(1)-x(0)*x(0));
     J(0,0) = -a;
@@ -37,9 +37,6 @@ struct Func
     J(1,1) = b;
   } // end of computeFdF
 }; // end of struct Func
-
-const double Func::a = 1.;
-const double Func::b = 10.;
 
 struct Func2
   : public tfel::math::TinyNewtonRaphson<1u,double,Func2>

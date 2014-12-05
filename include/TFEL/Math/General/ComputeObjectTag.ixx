@@ -16,7 +16,7 @@
 
 #include <string>
 
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsUnaryOperator.hxx"
@@ -48,7 +48,7 @@ namespace tfel{
       protected:
 	
 	template<typename B>
-	static typename tfel::meta::EnableIf<
+	static typename std::enable_if<
 	  sizeof(typename B::ConceptTag)!=0,
 	  Small
 	  >::type
@@ -64,7 +64,7 @@ namespace tfel{
 	
       public:
 	
-	static const bool cond = sizeof(Test(MakeSubsA()))==sizeof(Small);
+	static constexpr bool cond = sizeof(Test(MakeSubsA()))==sizeof(Small);
 	
       }; // end of class HasConceptTag
       
@@ -164,15 +164,15 @@ namespace tfel{
       /*!
        * \brief tells if T is a scalar.
        */
-      static const bool IsTScalar = tfel::typetraits::IsScalar<T>::cond;
+      static constexpr bool IsTScalar = tfel::typetraits::IsScalar<T>::cond;
       /*!
        * \brief tells if T is an unary operator.
        */
-      static const bool IsTUnaryOperator = tfel::typetraits::IsUnaryOperator<T>::cond;
+      static constexpr bool IsTUnaryOperator = tfel::typetraits::IsUnaryOperator<T>::cond;
       /*!
        * \brief tells if T has a ConceptTag typedef.
        */
-      static const bool HasConceptTag = tfel::math::internals::HasConceptTag<T>::cond;
+      static constexpr bool HasConceptTag = tfel::math::internals::HasConceptTag<T>::cond;
     public:
       /*!
        * The result type, which is computed by the auxiliary

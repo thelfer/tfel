@@ -19,7 +19,7 @@
 
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
@@ -82,7 +82,7 @@ namespace tfel{
 
       template<typename T>
       TFEL_MATH_INLINE
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	!tfel::typetraits::IsInvalid<
 	typename ComputeUnaryResult<
 	typename ComputeUnaryResult<T,Func2>::Result,Func1>::Result>::cond,

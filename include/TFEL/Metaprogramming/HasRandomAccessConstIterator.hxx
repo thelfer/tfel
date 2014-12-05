@@ -18,8 +18,8 @@
 #include<iterator>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
-#include"TFEL/Metaprogramming/IsSameType.hxx"
+#include<type_traits>
+#include<type_traits>
 
 namespace tfel{
 
@@ -55,9 +55,9 @@ namespace tfel{
        * Can only be called if B defines a random access const iterator.
        */
       template<typename B>
-      static typename tfel::meta::EnableIf<
-	IsSameType<typename std::iterator_traits<typename B::const_iterator>::iterator_category,
-		   std::random_access_iterator_tag>::cond,
+      static typename std::enable_if<
+	std::is_same<typename std::iterator_traits<typename B::const_iterator>::iterator_category,
+		     std::random_access_iterator_tag>::value,
 	Small
       >::type
       Test(const Subs<B>);
@@ -79,7 +79,7 @@ namespace tfel{
       /*
        * The result of the metafunction.
        */
-      static const bool cond = sizeof(Test(MakeSubsA()))==sizeof(Small);
+      static constexpr bool cond = sizeof(Test(MakeSubsA()))==sizeof(Small);
 
     };
 

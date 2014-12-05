@@ -14,7 +14,7 @@
 #ifndef _LIB_MFRONT_UMAT_UMATINTERFACEDISPATCH_H_
 #define _LIB_MFRONT_UMAT_UMATINTERFACEDISPATCH_H_ 
 
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
 
 #include"MFront/UMAT/UMAT.hxx"
@@ -90,7 +90,7 @@ namespace umat{
       typedef Behaviour<H,UMATReal,false> BV;
       //! a simple alias
       typedef UMATTraits<BV> Traits;
-      typedef typename IF<Traits::stype==umat::ISOTROPIC,
+      typedef typename std::conditional<Traits::stype==umat::ISOTROPIC,
 			  UMATIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
 							H,Behaviour>,
 			  UMATOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
@@ -132,7 +132,7 @@ namespace umat{
       typedef Behaviour<MH::PLANESTRESS,UMATReal,false> BV;
       typedef UMATTraits<BV> Traits;
       if(tfel::material::MechanicalBehaviourTraits<BV>::is_defined){
-	typedef typename IF<Traits::stype==umat::ISOTROPIC,
+	typedef typename std::conditional<Traits::stype==umat::ISOTROPIC,
 			    UMATIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
 							  MH::PLANESTRESS,Behaviour>,
 			    UMATOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
@@ -178,7 +178,7 @@ namespace umat{
       typedef Behaviour<H,UMATReal,false> BV;
       //! a simple alias
       typedef UMATTraits<BV> Traits;
-      typedef typename IF<Traits::stype==umat::ISOTROPIC,
+      typedef typename std::conditional<Traits::stype==umat::ISOTROPIC,
 			  UMATIsotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,
 							H,Behaviour>,
 			  UMATOrthotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,
@@ -213,7 +213,7 @@ namespace umat{
       typedef Behaviour<MH::PLANESTRAIN,UMATReal,false> BV;
       //! a simple alias
       typedef UMATTraits<BV> Traits;
-      typedef typename IF<Traits::stype==umat::ISOTROPIC,
+      typedef typename std::conditional<Traits::stype==umat::ISOTROPIC,
 			  UMATIsotropicBehaviourHandler<COHESIVEZONEMODEL,
 							MH::PLANESTRAIN,Behaviour>,
 			  UMATOrthotropicBehaviourHandler<COHESIVEZONEMODEL,
@@ -257,11 +257,11 @@ namespace umat{
       typedef Behaviour<MH::TRIDIMENSIONAL,UMATReal,false> BV;
       //! a simple alias
       typedef UMATTraits<BV> Traits;
-      typedef typename IF<Traits::stype==umat::ISOTROPIC,
-			  UMATIsotropicBehaviourHandler<COHESIVEZONEMODEL,
-							MH::TRIDIMENSIONAL,Behaviour>,
-			  UMATOrthotropicBehaviourHandler<COHESIVEZONEMODEL,
-							  MH::TRIDIMENSIONAL,Behaviour> >::type Handler;
+      typedef typename std::conditional<Traits::stype==umat::ISOTROPIC,
+	UMATIsotropicBehaviourHandler<COHESIVEZONEMODEL,
+				      MH::TRIDIMENSIONAL,Behaviour>,
+	UMATOrthotropicBehaviourHandler<COHESIVEZONEMODEL,
+					MH::TRIDIMENSIONAL,Behaviour> >::type Handler;
       UMATInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       UMATReal D[9];
       UMATReal u[3],du[3],t[3];

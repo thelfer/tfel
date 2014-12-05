@@ -14,7 +14,7 @@
 #ifndef _LIB_TFEL_COMPUTEUNARYRESULT_H_
 #define _LIB_TFEL_COMPUTEUNARYRESULT_H_ 
 
-#include"TFEL/Metaprogramming/RemoveConstness.hxx"
+#include<type_traits>
 
 #include"TFEL/Math/General/UnaryResultType.hxx"
 #include"TFEL/Math/General/ComputeObjectTag.hxx"
@@ -49,7 +49,7 @@ namespace tfel{
     class ComputeUnaryResult_<ScalarTag,TagOp,A,Op>
     {
     public:
-      typedef typename tfel::meta::RemoveConstness<A>::type A_;
+      typedef typename std::remove_const<A>::type A_;
       typedef typename UnaryResultType<A_,Op>::type Result;
       typedef typename UnaryResultType<A_,Op>::type Handle;
     };

@@ -31,57 +31,57 @@ namespace tfel{
       /*!
        * Says if the traits class has been specialised 
        */
-      static const bool is_defined = false;
+      static constexpr bool is_defined = false;
       /*!
        * if true, the behaviour must provide a
        * compouteStressFreeExpansion method.
        */
-      static const bool hasStressFreeExpansion = false;
+      static constexpr bool hasStressFreeExpansion = false;
       /*!
        * if true, the hasStressFreeExpansion must also be ture.
        */
-      static const bool handlesThermalExpansion = false;
+      static constexpr bool handlesThermalExpansion = false;
       /*!
        * Number of material properties.
        */
-      static const unsigned short material_properties_nb = 0;
+      static constexpr unsigned short material_properties_nb = 0;
       /*!
        * Number of external variables.
        */
-      static const unsigned short external_variables_nb  = 0;
+      static constexpr unsigned short external_variables_nb  = 0;
       /*!
        * Number of internal variables.
        */
-      static const unsigned short internal_variables_nb  = 0;
+      static constexpr unsigned short internal_variables_nb  = 0;
       /*!
        * Says if the Behaviour class uses quantities
        * \see qt.hxx
        */
-      static const bool use_quantities = false;
+      static constexpr bool use_quantities = false;
       /*!
        * Says if the Behaviour class is able to compute a consistent
        * tangent operator. More precisely, this must be true if the
        * behaviour is able to compute an approximation of the
        * consistent tangent operator.
        */
-      static const bool hasConsistentTangentOperator = false;
+      static constexpr bool hasConsistentTangentOperator = false;
       /*!
        * Says if the consistent tangent operator computed by the
        * Behaviour class (if any) is symmetric. If true, we also
        * consider that all the possible stiffness matrix are
        * symmetric.
        */
-      static const bool isConsistentTangentOperatorSymmetric = false;
+      static constexpr bool isConsistentTangentOperatorSymmetric = false;
       /*!
        * Says if the Behaviour class is able to compute a prediction
        * operator.
        */
-      static const bool hasPredictionOperator = false;
+      static constexpr bool hasPredictionOperator = false;
       /*!
        * Says if the Behaviour class is able the compute a Time Step
        * Scaling factor
        */
-      static const bool hasTimeStepScalingFactor = false;
+      static constexpr bool hasTimeStepScalingFactor = false;
     };
 
   } // end of namespace material

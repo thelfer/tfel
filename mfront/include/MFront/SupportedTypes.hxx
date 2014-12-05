@@ -28,7 +28,7 @@ namespace mfront
   struct TFEL_VISIBILITY_EXPORT SupportedTypes
   {
 
-    static const int ArraySizeLimit;
+    static constexpr int ArraySizeLimit = 10u;
 
     enum TypeFlag{Scalar,TVector,Stensor,Tensor};
 

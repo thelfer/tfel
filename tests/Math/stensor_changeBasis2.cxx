@@ -113,9 +113,7 @@ TFEL_TESTS_GENERATE_PROXY(StensorChangeBasis2Test,
 int main(void)
 {
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("StensorChangeBasis2.xml");

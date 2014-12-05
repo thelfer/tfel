@@ -18,7 +18,7 @@
 
 #include"TFEL/Metaprogramming/HasConstIterator.hxx"
 #include"TFEL/Metaprogramming/HasIterator.hxx"
-#include"TFEL/Metaprogramming/IF.hxx"
+#include<type_traits>
 
 template<typename T>
 struct ConstIteratorHolder
@@ -31,7 +31,7 @@ struct DoNothing
 
 template<typename T>
 struct Expr
-  : public tfel::meta::IF<tfel::meta::HasConstIterator<T>::cond,
+  : public std::conditional<tfel::meta::HasConstIterator<T>::cond,
 			  ConstIteratorHolder<T>,
 			  DoNothing>::type
 {};

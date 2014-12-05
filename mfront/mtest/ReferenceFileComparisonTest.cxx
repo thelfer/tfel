@@ -17,7 +17,7 @@
 
 namespace mfront{
 
-  ReferenceFileComparisonTest::ReferenceFileComparisonTest(const tfel::utilities::shared_ptr<tfel::utilities::TextData> d,
+  ReferenceFileComparisonTest::ReferenceFileComparisonTest(const std::shared_ptr<tfel::utilities::TextData> d,
 								     const std::string& v,
 								     const unsigned int c,
 								     const MTest::UTest::TestedVariable t,

@@ -67,7 +67,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,FunctionConcept>::cond&&
       tfel::meta::Implements<T2,FunctionConcept>::cond,
       FunctionExpr<FunctionFunctionExpr<T1,T2,OpPlus> >
@@ -80,7 +80,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,FunctionConcept>::cond&&
       tfel::meta::Implements<T2,FunctionConcept>::cond,
       FunctionExpr<FunctionFunctionExpr<T1,T2,OpMinus> >
@@ -93,7 +93,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,FunctionConcept>::cond&&
       tfel::meta::Implements<T2,FunctionConcept>::cond,
       FunctionExpr<FunctionFunctionExpr<T1,T2,OpMult> >
@@ -106,7 +106,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,FunctionConcept>::cond&&
       tfel::meta::Implements<T2,FunctionConcept>::cond,
       FunctionExpr<FunctionFunctionExpr<T1,T2,OpDiv> >
@@ -119,7 +119,7 @@ namespace tfel{
 
     template<typename S,typename F>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<S>::cond&&
       tfel::meta::Implements<F,FunctionConcept>::cond,
       FunctionExpr<ScalarFunctionExpr<S,F,OpMult> >
@@ -132,7 +132,7 @@ namespace tfel{
 
     template<typename S,typename F>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<S>::cond&&
       tfel::meta::Implements<F,FunctionConcept>::cond,
       FunctionExpr<ScalarFunctionExpr<S,F,OpDiv> >
@@ -145,7 +145,7 @@ namespace tfel{
 
     template<typename F,typename S>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<S>::cond&&
       tfel::meta::Implements<F,FunctionConcept>::cond,
       FunctionExpr<FunctionScalarExpr<F,S,OpMult> >
@@ -158,7 +158,7 @@ namespace tfel{
 
     template<typename F,typename S>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsScalar<S>::cond&&
       tfel::meta::Implements<F,FunctionConcept>::cond,
       FunctionExpr<FunctionScalarExpr<F,S,OpDiv> >
@@ -171,7 +171,7 @@ namespace tfel{
 
     template<typename F>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<F,FunctionConcept>::cond,
       FunctionExpr<FunctionNegExpr<F> >
     >::type

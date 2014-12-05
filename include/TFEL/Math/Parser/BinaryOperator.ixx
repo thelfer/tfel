@@ -24,8 +24,8 @@ namespace tfel
     {
 
       template<typename Op>
-      BinaryOperation<Op>::BinaryOperation(const tfel::utilities::shared_ptr<Expr> a_,
-					   const tfel::utilities::shared_ptr<Expr> b_)
+      BinaryOperation<Op>::BinaryOperation(const std::shared_ptr<Expr> a_,
+					   const std::shared_ptr<Expr> b_)
 	: a(a_),b(b_)
       {} // end of BinaryOperation<Op>::BinaryOperation 
       
@@ -64,88 +64,84 @@ namespace tfel
       } // end of BinaryOperation<Op>::getParametersNames
 
       template<typename Op>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       BinaryOperation<Op>::resolveDependencies(const std::vector<double>& v) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<Expr>(new BinaryOperation<Op>(this->a->resolveDependencies(v),
-						      this->b->resolveDependencies(v)));
+	return std::shared_ptr<Expr>(new BinaryOperation<Op>(this->a->resolveDependencies(v),
+							     this->b->resolveDependencies(v)));
       } // end of BinaryOperation<Op>::resolveDependencies
 
       template<typename Op>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       BinaryOperation<Op>::clone(const std::vector<double>& v) const
       {
-	using namespace tfel::utilities;
-	return shared_ptr<Expr>(new BinaryOperation<Op>(this->a->clone(v),
-						      this->b->clone(v)));
+	return std::shared_ptr<Expr>(new BinaryOperation<Op>(this->a->clone(v),
+							     this->b->clone(v)));
       } // end of BinaryOperation<Op>::clone
 
       template<typename Op>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       BinaryOperation<Op>::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
 									   const std::vector<std::string>& params,
 									   const std::map<std::string,
 									   std::vector<double>::size_type>& pos) const
       {
-	using namespace tfel::utilities;
+	using std::shared_ptr;
 	shared_ptr<Expr> na(this->a->createFunctionByChangingParametersIntoVariables(v,params,pos));
 	shared_ptr<Expr> nb(this->b->createFunctionByChangingParametersIntoVariables(v,params,pos));
 	return shared_ptr<Expr>(new BinaryOperation<Op>(na,nb));
       } // end of BinaryOperation<Op>::createFunctionByChangingParametersIntoVariables
 
       template<typename BinaryOperation>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation(const tfel::utilities::shared_ptr<Expr>,
-				   const tfel::utilities::shared_ptr<Expr>,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation(const std::shared_ptr<Expr>,
+				   const std::shared_ptr<Expr>,
 				   const std::vector<double>::size_type,
 				   const std::vector<double>&)
       {
-	using namespace std;
-	using namespace tfel::utilities;
 	BinaryOperationBase::throwUnimplementedDifferentiateFunctionException();
-	return shared_ptr<Expr>(0);
+	return std::shared_ptr<Expr>(0);
       } // end of differentiateBinaryOperation
 
       template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpPlus>(const tfel::utilities::shared_ptr<Expr>,
-					   const tfel::utilities::shared_ptr<Expr>,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpPlus>(const std::shared_ptr<Expr>,
+					   const std::shared_ptr<Expr>,
 					   const std::vector<double>::size_type,
 					   const std::vector<double>&);
 
       template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpMinus>(const tfel::utilities::shared_ptr<Expr>,
-					   const tfel::utilities::shared_ptr<Expr>,
-					   const std::vector<double>::size_type,
-					   const std::vector<double>&);
-
-
-      template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpMult>(const tfel::utilities::shared_ptr<Expr>,
-					   const tfel::utilities::shared_ptr<Expr>,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpMinus>(const std::shared_ptr<Expr>,
+					   const std::shared_ptr<Expr>,
 					   const std::vector<double>::size_type,
 					   const std::vector<double>&);
 
 
       template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpDiv>(const tfel::utilities::shared_ptr<Expr>,
-					  const tfel::utilities::shared_ptr<Expr>,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpMult>(const std::shared_ptr<Expr>,
+					   const std::shared_ptr<Expr>,
+					   const std::vector<double>::size_type,
+					   const std::vector<double>&);
+
+
+      template<>
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpDiv>(const std::shared_ptr<Expr>,
+					  const std::shared_ptr<Expr>,
 					  const std::vector<double>::size_type,
 					  const std::vector<double>&);
 
       template<>
-      tfel::utilities::shared_ptr<Expr>
-      differentiateBinaryOperation<OpPower>(const tfel::utilities::shared_ptr<Expr>,
-					    const tfel::utilities::shared_ptr<Expr>,
+      std::shared_ptr<Expr>
+      differentiateBinaryOperation<OpPower>(const std::shared_ptr<Expr>,
+					    const std::shared_ptr<Expr>,
 					    const std::vector<double>::size_type,
 					    const std::vector<double>&);
 
       template<typename Op>
-      tfel::utilities::shared_ptr<Expr>
+      std::shared_ptr<Expr>
       BinaryOperation<Op>::differentiate(const std::vector<double>::size_type pos,
 					 const std::vector<double>& v) const
       {

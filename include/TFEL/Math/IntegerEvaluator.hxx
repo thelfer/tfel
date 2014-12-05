@@ -21,7 +21,7 @@
 #include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/SmartPtr.hxx"
+#include<memory>
 #include"TFEL/Math/Parser/EvaluatorBase.hxx"  
 
 namespace tfel
@@ -35,7 +35,7 @@ namespace tfel
       struct TFEL_VISIBILITY_LOCAL IntegerExpr
       {
 	virtual int getValue(void) const = 0;
-	virtual tfel::utilities::shared_ptr<IntegerExpr>
+	virtual std::shared_ptr<IntegerExpr>
 	clone(const std::vector<int>&) const = 0;
 	virtual ~IntegerExpr();
       }; // end of struct IntegerExpr
@@ -105,7 +105,7 @@ namespace tfel
     private:
       std::vector<int> variables;
       std::map<std::string,std::vector<int>::size_type> positions;
-      tfel::utilities::shared_ptr<tfel::math::parser::IntegerExpr> expr;
+      std::shared_ptr<tfel::math::parser::IntegerExpr> expr;
       template<typename T>
       static bool TFEL_VISIBILITY_LOCAL
       convert(const std::string&);
@@ -120,18 +120,18 @@ namespace tfel
       TFEL_VISIBILITY_LOCAL
       analyseParameters(std::vector<std::string>::const_iterator&,
 			const std::vector<std::string>::const_iterator);
-      std::vector<tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> >
+      std::vector<std::shared_ptr<IntegerEvaluator::TExpr> >
       TFEL_VISIBILITY_LOCAL
       analyseArguments(std::vector<std::string>::const_iterator&,
 		       const std::vector<std::string>::const_iterator,
 		       const bool);
-      std::vector<tfel::utilities::shared_ptr<IntegerEvaluator::TExpr> >
+      std::vector<std::shared_ptr<IntegerEvaluator::TExpr> >
       TFEL_VISIBILITY_LOCAL
       analyseArguments(const unsigned short,
 		       std::vector<std::string>::const_iterator&,
 		       const std::vector<std::string>::const_iterator,
 		       const bool);
-      tfel::utilities::shared_ptr<IntegerEvaluator::TExpr>
+      std::shared_ptr<IntegerEvaluator::TExpr>
       TFEL_VISIBILITY_LOCAL
       treatGroup(std::vector<std::string>::const_iterator&,
 		 std::vector<std::string>::const_iterator,

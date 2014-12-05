@@ -11,13 +11,9 @@ set(TFELMath_SOURCES
     Discretization1D.cxx
     BasicOperations.cxx
     Id.cxx
-    Lambda.cxx
     power.cxx
     Sqrt.cxx
     OpDiff.cxx
-    CompositeTag.cxx
-    ArrayTag.cxx
-    LambdaTag.cxx
     ST2toST2Tag.cxx
     VectorTag.cxx
     FunctionTag.cxx

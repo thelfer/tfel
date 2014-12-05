@@ -43,8 +43,8 @@ namespace tfel{
       typedef typename TensorTraits<A>::NumType NumTypeA;
       typedef typename TensorTraits<B>::NumType NumTypeB;
 
-      static const bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
-      static const bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
+      static constexpr bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
+      static constexpr bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
 
       TensorProductExprBase();
 
@@ -66,8 +66,8 @@ namespace tfel{
       typedef AIndexType     size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
-      typename tfel::meta::IF<IsATemporary,const A,const A&>::type a;
-      typename tfel::meta::IF<IsBTemporary,const B,const B&>::type b;
+      typename std::conditional<IsATemporary,const A,const A&>::type a;
+      typename std::conditional<IsBTemporary,const B,const B&>::type b;
 
       TFEL_MATH_INLINE TensorProductExprBase(const A& l, const B& r)
 	: a(l), b(r)

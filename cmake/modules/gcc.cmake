@@ -81,7 +81,7 @@ if(enable-cxx-11)
   if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
     message(FATAL_ERROR "TFEL C++11 support is only available for gcc version >= 4.7")
   endif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
-  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "std=c++11")
+  LIST(APPEND COMPILER_FLAGS "-std=c++11")
 endif(enable-cxx-11)
 
 if(HAVE_FORTRAN)

@@ -131,7 +131,7 @@ namespace tfel
        * Assignement operator
        */
       template<typename T2,template<unsigned short,typename> class Storage2>
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&>::type
       operator=(const tvector<Nn,stensor<N,T2,Storage2> >& s){
@@ -143,7 +143,7 @@ namespace tfel
        * Assignement operator
        */
       template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
@@ -155,7 +155,7 @@ namespace tfel
 
       // Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2>
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
@@ -166,7 +166,7 @@ namespace tfel
     
       // Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
@@ -177,7 +177,7 @@ namespace tfel
 
       // Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2>
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
@@ -188,7 +188,7 @@ namespace tfel
     
       // Assignement operator
       template<typename T2,template<unsigned short,typename> class Storage2,typename Expr>
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	VectorExpr&
       >::type
@@ -201,9 +201,9 @@ namespace tfel
        * operator*=
        */
       template<typename T2>
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
 	tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      std::is_same<typename ResultType<T,T2,OpMult>::type,T>::cond,
 	VectorExpr&
       >::type
       operator*=(const T2 a){
@@ -215,9 +215,9 @@ namespace tfel
        * operator/=
        */
       template<typename T2>
-      typename tfel::meta::EnableIf<
+      typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      tfel::meta::IsSameType<typename ResultType<T,T2,OpMult>::type,T>::cond,
+      std::is_same<typename ResultType<T,T2,OpMult>::type,T>::cond,
 	VectorExpr&
 	>::type
 	operator/=(const T2 a){
@@ -281,7 +281,7 @@ namespace tfel
     struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<Nn,tfel::math::stensor<N,T> >,
 					      tfel::math::TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >
     {
-      static const bool cond = false;
+      static constexpr bool cond = false;
     };
 
   } // end of namespace typetraits

@@ -18,7 +18,7 @@
 #include<functional>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EnableIf.hxx"
+#include<type_traits>
 #include"TFEL/TypeTraits/AbsType.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 
@@ -28,7 +28,7 @@ namespace tfel{
 
     template<typename Scal>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
       Scal
       >::type
@@ -39,7 +39,7 @@ namespace tfel{
 
     template<typename Scal>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
       Scal
       >::type

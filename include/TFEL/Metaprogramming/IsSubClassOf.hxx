@@ -14,9 +14,8 @@
 #ifndef _LIB_TFEL_ISSUBCLASSOF_H_
 #define _LIB_TFEL_ISSUBCLASSOF_H_ 
 
+#include<type_traits>
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/IsConvertibleTo.hxx"
-#include"TFEL/Metaprogramming/IsSuperClassOf.hxx"
 
 namespace tfel{
 
@@ -44,7 +43,7 @@ namespace tfel{
        * True if T is publically inherits from U, false otherwise.
        * \see IsSuperClassOf
        */
-      static const bool cond = tfel::meta::IsSuperClassOf<U,T>::cond;
+      static constexpr bool cond = std::is_base_of<U,T>::value;
     };
 
   } // end of namespace meta

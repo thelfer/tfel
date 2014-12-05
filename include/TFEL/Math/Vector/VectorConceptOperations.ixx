@@ -21,7 +21,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpPlus>::cond,
       typename ComputeBinaryResult<T1,T2,OpPlus>::Handle
     >::type
@@ -33,7 +33,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpMinus>::cond,
       typename ComputeBinaryResult<T1,T2,OpMinus>::Handle
     >::type
@@ -45,7 +45,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpMult>::cond,
       typename ComputeBinaryResult<T1,T2,OpMult>::Handle
     >::type
@@ -57,7 +57,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpDiv>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiv>::Handle
     >::type
@@ -69,7 +69,7 @@ namespace tfel{
     
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsScalarVectorOperationValid<T1,T2,OpMult>::cond,
       typename ComputeBinaryResult<T1,T2,OpMult>::Handle
     >::type
@@ -81,7 +81,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpDiadicProduct>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiadicProduct>::Handle
     >::type
@@ -93,7 +93,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorScalarOperationValid<T1,T2,OpMult>::cond,
       typename ComputeBinaryResult<T1,T2,OpMult>::Handle
     >::type
@@ -105,7 +105,7 @@ namespace tfel{
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorScalarOperationValid<T1,T2,OpDiv>::cond,
       typename ComputeBinaryResult<T1,T2,OpDiv>::Handle
     >::type
@@ -117,7 +117,7 @@ namespace tfel{
 
     template<typename T1>
     TFEL_MATH_INLINE 
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       tfel::meta::Implements<T1,VectorConcept>::cond,
       typename ComputeUnaryResult<T1,OpNeg>::Handle
     >::type
@@ -128,7 +128,7 @@ namespace tfel{
     }
 
     template<typename T1,typename T2>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpDotProduct>::cond,
       typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
     >::type
@@ -140,7 +140,7 @@ namespace tfel{
     }
 
     template<typename T1>
-    typename tfel::meta::EnableIf<
+    typename std::enable_if<
       IsEuclidianNormValid<T1>::cond,
       typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type
     >::type

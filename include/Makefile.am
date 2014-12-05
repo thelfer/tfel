@@ -77,7 +77,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Discretization1D.hxx                                                               \
 			TFEL/Math/Discretization1D.ixx                                                               \
 			TFEL/Math/Forward/qt.hxx                                                                     \
-			TFEL/Math/Forward/array.hxx                                                                  \
 			TFEL/Math/Forward/vector.hxx                                                                 \
 			TFEL/Math/Forward/matrix.hxx                                                                 \
 			TFEL/Math/Forward/lambda.hxx                                                                 \
@@ -91,7 +90,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/t2tost2.hxx                                                                \
 			TFEL/Math/Forward/st2tot2.hxx                                                                \
 			TFEL/Math/Forward/Function.hxx                                                               \
-			TFEL/Math/Forward/ArrayConcept.hxx                                                           \
 			TFEL/Math/Forward/LambdaConcept.hxx                                                          \
 			TFEL/Math/Forward/VectorConcept.hxx                                                          \
 			TFEL/Math/Forward/MatrixConcept.hxx                                                          \
@@ -101,7 +99,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/ST2toST2Concept.hxx                                                        \
 			TFEL/Math/Forward/T2toST2Concept.hxx                                                         \
 			TFEL/Math/Forward/ST2toT2Concept.hxx                                                         \
-			TFEL/Math/Forward/CompositeConcept.hxx                                                       \
 			TFEL/Math/Forward/TinyNewtonRaphson.hxx                                                      \
 			TFEL/Math/Forward/FunctionConcept.hxx                                                        \
 			TFEL/Math/Forward/ExpressionTemplates.hxx                                                    \
@@ -317,27 +314,12 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Quantity/qt.ixx			                                             \
 			TFEL/Math/Quantity/qtLimits.hxx                                                              \
 			TFEL/Math/Quantity/qtOperations.hxx                                                          \
-			TFEL/Math/Array/Internals/ArraySerialize.hxx	                                             \
-			TFEL/Math/Array/arrayResultType.hxx                                                          \
-			TFEL/Math/Array/ArrayExpr.hxx	                                                             \
-			TFEL/Math/Array/array.ixx		                                                     \
-			TFEL/Math/Array/ArrayRefCountedStorage.hxx	                                             \
-			TFEL/Math/Array/ArrayRowMajorStorage.hxx                                                     \
-			TFEL/Math/Array/ArrayRowMajorStorage.ixx                                                     \
-			TFEL/Math/Array/ArrayConcept.hxx	                                                     \
-			TFEL/Math/Array/ArrayConcept.ixx	                                                     \
-			TFEL/Math/Array/ArrayConceptOperations.hxx                                                   \
-			TFEL/Math/Array/ArrayRunTimeProperties.hxx	                                             \
-			TFEL/Math/Array/ArrayRunTimeProperties.ixx	                                             \
-			TFEL/Math/Array/ArrayStorage.hxx                                                             \
-			TFEL/Math/Array/ArrayStorage.ixx                                                             \
 			TFEL/Math/qt.hxx				                                             \
 			TFEL/Math/TinyNewtonRaphson.hxx		                                                     \
 			TFEL/Math/RungeKutta2.hxx			                                             \
 			TFEL/Math/RungeKutta4.hxx			                                             \
 			TFEL/Math/RungeKutta42.hxx			                                             \
 			TFEL/Math/RungeKutta54.hxx			                                             \
-			TFEL/Math/array.hxx				                                             \
 			TFEL/Math/TinyMatrixSolve.hxx		                                                     \
 			TFEL/Math/TinyMatrixInvert.hxx		                                                     \
 			TFEL/Math/tvector.hxx			                                                     \
@@ -366,20 +348,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Function/Cst.hxx	                                                             \
 			TFEL/Math/Function/Cst.ixx	                                                             \
 			TFEL/Math/Function/Power.ixx                                                                 \
-			TFEL/Math/LambdaExpression/LambdaConcept.hxx	                                             \
-			TFEL/Math/LambdaExpression/LambdaConcept.ixx	                                             \
-			TFEL/Math/LambdaExpression/LambdaConceptOperations.hxx                                       \
-			TFEL/Math/LambdaExpression/lambda.ixx	                                                     \
-			TFEL/Math/LambdaExpression/ScalarLambdaExpr.hxx                                              \
-			TFEL/Math/LambdaExpression/LambdaLambdaExpr.hxx                                              \
-			TFEL/Math/LambdaExpression/LambdaLambdaExpr.ixx                                              \
-			TFEL/Math/LambdaExpression/LambdaScalarExpr.hxx                                              \
-			TFEL/Math/LambdaExpression/ScalarLambdaExpr.ixx                                              \
-			TFEL/Math/LambdaExpression/LambdaScalarExpr.ixx                                              \
-			TFEL/Math/LambdaExpression/FctLambdaExpr.hxx                                                 \
-			TFEL/Math/LambdaExpression/FctLambdaExpr.ixx                                                 \
-			TFEL/Math/LambdaExpression/LambdaConceptOperations.ixx	                                     \
-			TFEL/Math/lambda.hxx				                                             \
 			TFEL/Math/functions.hxx	                                	                             \
 			TFEL/Math/t2tot2.hxx                                                                         \
 			TFEL/Math/T2toT2/t2tot2.ixx                                                                  \
@@ -442,17 +410,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx					     \
 			TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx						     \
 			TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx						     \
-			TFEL/Math/composite.hxx                                                                      \
-			TFEL/Math/Composite/CompositeCompositeExpr.hxx                                               \
-			TFEL/Math/Composite/CompositeConceptOperations.ixx                                           \
-			TFEL/Math/Composite/CompositeNegExpr.hxx                                                     \
-			TFEL/Math/Composite/FctCompositeExpr.hxx                                                     \
-			TFEL/Math/Composite/CompositeConcept.hxx                                                     \
-			TFEL/Math/Composite/CompositeExpr.hxx                                                        \
-			TFEL/Math/Composite/compositeResultType.ixx                                                  \
-			TFEL/Math/Composite/ScalarCompositeExpr.hxx                                                  \
-			TFEL/Math/Composite/composite.ixx                                                            \
-			TFEL/Math/Composite/CompositeScalarExpr.hxx                                                  \
 			TFEL/Math/Broyden.hxx                                                                        \
 			TFEL/Math/Broyden2.hxx                                                                       \
 			TFEL/Math/RootFinding/Broyden.ixx                                                            \
@@ -466,24 +423,14 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/FSLevenbergMarquardt.hxx                                                           \
 			TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx                                        \
 			TFEL/Metaprogramming/Forward/TypeList.hxx                                                    \
-			TFEL/Metaprogramming/GenerateTypeList.ixx                                                    \
 			TFEL/Metaprogramming/StaticAssert.hxx                                                        \
-			TFEL/Metaprogramming/IsConvertibleTo.hxx                                                     \
 			TFEL/Metaprogramming/Implements.hxx	                                                     \
 			TFEL/Metaprogramming/TypeList.hxx	                                                     \
-			TFEL/Metaprogramming/IF.hxx		                                                     \
 			TFEL/Metaprogramming/TypeList.ixx                                                            \
 			TFEL/Metaprogramming/IntToType.hxx                                                           \
 			TFEL/Metaprogramming/IsSubClassOf.hxx	                                                     \
-			TFEL/Metaprogramming/IsSameType.hxx                                                          \
-			TFEL/Metaprogramming/IsReference.hxx                                                         \
-			TFEL/Metaprogramming/IsPointer.hxx                                                           \
-			TFEL/Metaprogramming/EnableIf.hxx	                                                     \
-			TFEL/Metaprogramming/IsSuperClassOf.hxx                                                      \
 			TFEL/Metaprogramming/GenerateTypeList.hxx                                                    \
 			TFEL/Metaprogramming/InvalidType.hxx	                                                     \
-			TFEL/Metaprogramming/RemoveConstness.hxx                                                     \
-			TFEL/Metaprogramming/RemoveReference.hxx                                                     \
 			TFEL/Metaprogramming/HasIterator.hxx	                                                     \
 			TFEL/Metaprogramming/HasConstIterator.hxx                                                    \
 			TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx	                                     \
@@ -523,21 +470,11 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Utilities/CxxTokenizer.hxx                                                              \
 			TFEL/Utilities/CxxTokenizer.ixx                                                              \
 		 	TFEL/Utilities/Token.hxx                                                                     \
-			TFEL/Utilities/ContainerRebind.hxx                                                           \
-			TFEL/Utilities/MultipleDequeVector/MultipleDequeVector.hxx	                             \
-			TFEL/Utilities/MultipleDequeVector/TypeTransform.hxx                                         \
-			TFEL/Utilities/MultipleDequeVector/TypeTransform.ixx                                         \
-			TFEL/Utilities/MultipleDequeVector/MultipleDequeVectorIterators.ixx	                     \
-			TFEL/Utilities/MultipleDequeVector/MultipleDequeVector.ixx	                             \
-			TFEL/Utilities/NewAllocator.hxx	                                                             \
 			TFEL/Utilities/ToString.hxx		                                                     \
 			TFEL/Utilities/ToString.ixx		                                                     \
-			TFEL/Utilities/SmartPtr.hxx		                                                     \
 			TFEL/Utilities/Info.hxx		                                                             \
 			TFEL/Utilities/TerminalColors.hxx	                                                     \
 			TFEL/Utilities/IntegersSet.hxx	                                                             \
-			TFEL/Utilities/MultipleVector.hxx	                                                     \
-			TFEL/Utilities/MultipleDeque.hxx	                                                     \
 			TFEL/Utilities/Name.hxx		                                                             \
 			TFEL/Utilities/Name.ixx			                                                     \
 			TFEL/Utilities/GenTypeCastError.hxx	                                                     \
@@ -545,9 +482,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Utilities/GenTypeBase.ixx	                                                             \
 			TFEL/Utilities/GenTypeSpecialisation.ixx                                                     \
 			TFEL/Utilities/RecursiveUnion.hxx		                                             \
-			TFEL/Utilities/MallocAllocator.hxx                                                           \
-			TFEL/Utilities/Tuple.hxx   	                                                             \
-			TFEL/Utilities/Tuple.ixx                                                                     \
 			TFEL/Utilities/TextData.hxx                                                                  \
 			TFEL/Utilities/StringAlgorithms.hxx                                                          \
 			TFEL/Tests/MultipleTestOutputs.hxx					                     \

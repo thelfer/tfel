@@ -25,7 +25,7 @@
       template<>                                       \
       struct GenTypeTraits< X >                        \
       {                                                \
-	static const bool isFundamentalType = true;    \
+	static constexpr bool isFundamentalType = true;    \
       }
 
 //! an helper macro to specialize GenTypeSpecializedAccessor.
