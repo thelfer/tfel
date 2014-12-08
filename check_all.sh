@@ -118,6 +118,7 @@ $make_exec tests-install
 popd #from build-cmake-debug
 
 if [ test "x$wbuild" == "xyes" ];
+then
     if [ "x$(which i686-w64-mingw32-gcc)" != "x" ];
     then
 	mkdir build-cmake-i686-w64-mingw32
