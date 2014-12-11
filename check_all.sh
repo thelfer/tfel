@@ -3,10 +3,13 @@
 set -e
 
 pbuild=no
+wbuild=no # cross compilation using mingw
 while getopts ":j:" opt; do
   case $opt in
     j) pbuild=yes;
        nbproc="$OPTARG";
+      ;;
+    w) wbuild=yes
       ;;
     \?)
       echo "$0 : invalid option '$OPTARG'" >&2
@@ -114,44 +117,47 @@ $make_exec install
 $make_exec tests-install
 popd #from build-cmake-debug
 
-if [ "x$(which i686-w64-mingw32-gcc)" != "x" ];
+if [ test "x$wbuild" == "xyes" ];
 then
-  mkdir build-cmake-i686-w64-mingw32
-  pushd build-cmake-i686-w64-mingw32
-  cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
-  $make_exec
-  if [ "x$(which wine)" != "x" ];
-  then
-      if [ test "x$pbuild" == "xyes" ];
-      then
-	  make check ARGS="-j $nbproc"
-      else
-	  $make_exec check 
-      fi
-  fi
-  $make_exec install
-  $make_exec tests-install
-  popd #from build-cmake-i686-w64-mingw32
-fi
-
-if [ "x$(which i586-mingw32msvc-gcc)" != "x" ];
-then
-  mkdir build-cmake-i586-mingw32msvc
-  pushd build-cmake-i586-mingw32msvc
-  cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
-  $make_exec
-  if [ "x$(which wine)" != "x" ];
-  then
-      if [ test "x$pbuild" == "xyes" ];
-      then
-	  make check ARGS="-j $nbproc"
-      else
-	  $make_exec check 
-      fi
-  fi
-  $make_exec install
-  $make_exec tests-install
-  popd #from build-cmake-i586-mingw32msvc
+    if [ "x$(which i686-w64-mingw32-gcc)" != "x" ];
+    then
+	mkdir build-cmake-i686-w64-mingw32
+	pushd build-cmake-i686-w64-mingw32
+	cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
+	$make_exec
+	if [ "x$(which wine)" != "x" ];
+	then
+	    if [ test "x$pbuild" == "xyes" ];
+	    then
+		make check ARGS="-j $nbproc"
+	    else
+		$make_exec check 
+	    fi
+	fi
+	$make_exec install
+	$make_exec tests-install
+	popd #from build-cmake-i686-w64-mingw32
+    fi
+    
+    if [ "x$(which i586-mingw32msvc-gcc)" != "x" ];
+    then
+	mkdir build-cmake-i586-mingw32msvc
+	pushd build-cmake-i586-mingw32msvc
+	cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
+	$make_exec
+	if [ "x$(which wine)" != "x" ];
+	then
+	    if [ test "x$pbuild" == "xyes" ];
+	    then
+		make check ARGS="-j $nbproc"
+	    else
+		$make_exec check 
+	    fi
+	fi
+	$make_exec install
+	$make_exec tests-install
+	popd #from build-cmake-i586-mingw32msvc
+    fi
 fi
 
 popd #from cmake
