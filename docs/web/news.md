@@ -50,7 +50,6 @@ a broader audience, you may want to send a post to the TFEL users
 mailing lists:
 [tfel-discuss](mailto:tfel-discuss@lists.sourceforge.net).
 
-
 # `MFront` talk at Materiaux 2014 Montpellier (24 November 2014)
 
 ![](img/materiaux2014.jpg "")
