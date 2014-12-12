@@ -117,7 +117,7 @@
 
 @UpdateAuxiliaryStateVars{
   // valeur de milieu de pas, q ayant
-  // déjà été mis à jour
+  // deja ete mis a jour
   const real q_ = q-(1-theta)*dq;
   const real Q = Q0 + (Qm - Q0) * (1 - exp(-2 * Mu * q_) );
   R+=b*(Q-R)*dp; 
