@@ -366,11 +366,14 @@ namespace mfront{
 	this->finiteStrainStrategies.push_back(FINITEROTATIONSMALLSTRAIN);
       } else if(fss=="MieheApelLambrechtLogarithmicStrain"){
 	this->finiteStrainStrategies.push_back(MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN);
+      } else if(fss=="LogarithmicStrain1D"){
+	this->finiteStrainStrategies.push_back(LOGARITHMICSTRAIN1D);
       } else {
 	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
 	msg += "unsupported strategy '"+fss+"'\n";
 	msg += "The only supported strategies are "
-	  "'FiniteRotationSmallStrain' and 'MieheApelLambrechtLogarithmicStrain'";
+	  "'FiniteRotationSmallStrain', 'MieheApelLambrechtLogarithmicStrain' "
+	  "and 'LogarithmicStrain1D'";
 	throw(runtime_error(msg));
       }
       ++(current);
@@ -431,11 +434,21 @@ namespace mfront{
 	    throw(runtime_error(msg));
 	  }
 	  this->finiteStrainStrategies.push_back(MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN);
+	} else if(*pfss=="LogarithmicStrain1D"){
+	  if(find(this->finiteStrainStrategies.begin(),
+		  this->finiteStrainStrategies.end(),LOGARITHMICSTRAIN1D)!=
+	     this->finiteStrainStrategies.end()){
+	    string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
+	    msg += "strategy 'LogarithmicStrain1D' multiply defined.\n";
+	    throw(runtime_error(msg));
+	  }
+	  this->finiteStrainStrategies.push_back(LOGARITHMICSTRAIN1D);
 	} else {
 	  string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
 	  msg += "unsupported strategy '"+*pfss+"'\n";
 	  msg += "The only supported strategies are "
-	    "'None', 'FiniteRotationSmallStrain' and 'MieheApelLambrechtLogarithmicStrain'";
+	    "'None', 'FiniteRotationSmallStrain', 'MieheApelLambrechtLogarithmicStrain' "
+	    "and 'LogarithmicStrain1D'";
 	  throw(runtime_error(msg));
 	}
       }
@@ -755,6 +768,11 @@ namespace mfront{
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeUmatFortranFunctionDefine(out,name);
 	    }
+	  } else if(*pfss==LOGARITHMICSTRAIN1D){
+	    this->writeUmatFortranFunctionDefine(out,name+"_log1D");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeUmatFortranFunctionDefine(out,name);
+	    }
 	  } else if(*pfss==NONE){
 	    this->writeUmatFortranFunctionDefine(out,name+"_ss");
 	    if(this->finiteStrainStrategies.size()==1u){
@@ -812,6 +830,11 @@ namespace mfront{
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
 	    }
+	  } else if(*pfss==LOGARITHMICSTRAIN1D){
+	    this->writeSetParametersFunctionsDeclarations(out,name+"_log1D",mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	    }
 	  } else if(*pfss==NONE){
 	    this->writeSetParametersFunctionsDeclarations(out,name+"_ss",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
@@ -845,6 +868,11 @@ namespace mfront{
 	    }
 	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
 	    this->writeUmatFunctionDeclaration(out,name+"_malls");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeUmatFunctionDeclaration(out,name);
+	    }
+	  } else if(*pfss==LOGARITHMICSTRAIN1D){
+	    this->writeUmatFunctionDeclaration(out,name+"_log1D");
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeUmatFunctionDeclaration(out,name);
 	    }
@@ -1003,6 +1031,37 @@ namespace mfront{
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
+	  } else if(*pfss==LOGARITHMICSTRAIN1D){
+	      this->generateUMATxxGeneralSymbols(out,name+"_log1D",mb,fd);
+	    if(!mb.areAllMechanicalDataSpecialised(h)){
+	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	      this->generateUMATxxSymbols(out,name+"_log1D",uh,mb,fd);
+	    }
+	    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+	      if(mb.hasSpecialisedMechanicalData(*ph)){
+		this->generateUMATxxSymbols(out,name+"_log1D",*ph,mb,fd);
+	      }
+	    }
+	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_log1D") 
+		<< "_BehaviourType = 1u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short umat"
+		<< makeLowerCase(name+"_log1D") << "_Interface = 1u;\n\n";
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	      if(!mb.areAllMechanicalDataSpecialised(h)){
+		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+		this->generateUMATxxSymbols(out,name,uh,mb,fd);
+	      }
+	      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
+		if(mb.hasSpecialisedMechanicalData(*ph)){
+		  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+		}
+	      }
+	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+		  << "_BehaviourType = 1u;\n\n";
+	      out << "MFRONT_SHAREDOBJ unsigned short umat"
+		  << makeLowerCase(name) << "_Interface = 1u;\n\n";
+	    }
 	  } else if(*pfss==NONE){
 	    this->generateUMATxxGeneralSymbols(out,name+"_ss",mb,fd);
 	    if(!mb.areAllMechanicalDataSpecialised(h)){
@@ -1098,6 +1157,11 @@ namespace mfront{
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsImplementations(out,name,mb);
 	    }
+	  } else if(*pfss==LOGARITHMICSTRAIN1D){
+	    this->writeSetParametersFunctionsImplementations(out,name+"_log1D",mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeSetParametersFunctionsImplementations(out,name,mb);
+	    }
 	  } else if(*pfss==NONE){
 	    this->writeSetParametersFunctionsImplementations(out,name+"_ss",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
@@ -1152,6 +1216,11 @@ namespace mfront{
 	    this->writeMieheApelLambrechtLogarithmicStrainUmatFunction(out,name,"malls",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeMieheApelLambrechtLogarithmicStrainUmatFunction(out,name,"",mb);
+	    }
+	  } else if(*pfss==LOGARITHMICSTRAIN1D){
+	    this->writeLogarithmicStrain1DUmatFunction(out,name,"log1D",mb);
+	    if(this->finiteStrainStrategies.size()==1u){
+	      this->writeLogarithmicStrain1DUmatFunction(out,name,"",mb);
 	    }
 	  } else if(*pfss==NONE){
 	    this->writeStandardUmatFunction(out,name,"ss",mb);
@@ -1633,6 +1702,94 @@ namespace mfront{
     out << "}" << endl << endl;
   }
   
+  void
+  MFrontUMATInterface::writeLogarithmicStrain1DUmatFunction(std::ostream& out,
+							    const std::string& name,
+							    const std::string& suffix,
+							    const MechanicalBehaviourDescription& mb) const
+  {
+    using namespace std;
+    string fname = name;
+    if(!suffix.empty()){
+      fname += "_"+suffix;
+    }
+    const string umatFortranFunctionName = "umat"+makeUpperCase(fname)+"_F77";
+    if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      string msg("MFrontUMATInterface::writeLogarithmicStrain1DUmatFunction : "
+    		 "finite strain strategies shall be used with small strain behaviours");
+      throw(runtime_error(msg));
+    }
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\numat"
+    	<< makeLowerCase(fname);
+    writeUMATArguments(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,false);
+    out << endl;
+    out << "{\n";
+    out << "using namespace umat;\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "using mfront::BehaviourProfiler;\n";
+      out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
+      out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+    	  << "BehaviourProfiler::TOTALTIME);\n";
+    }
+    this->generateMTestFile1(out);
+    out << "// computing the logarithmic strain\n";
+    out << "UMATReal eto[3];\n";
+    out << "UMATReal deto[3];\n";
+    out << "UMATReal s[3];\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "{\n"
+    	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+    	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
+    out << "if(*NDI!=14){" << endl
+	<< "*KINC=-7;" << endl
+	<< "}" << endl;
+    out << "eto[0]=std::log(1+*STRAN);\n";
+    out << "eto[1]=std::log(1+*(STRAN+1));\n";
+    out << "eto[2]=std::log(1+*(STRAN+2));\n";
+    out << "deto[0]=std::log(1+*STRAN+*DSTRAN)-eto[0];\n";
+    out << "deto[1]=std::log(1+*(STRAN+1)+*(DSTRAN+1))-eto[1];\n";
+    out << "deto[2]=std::log(1+*(STRAN+2)+*(DSTRAN+2))-eto[2];\n";
+    out << "s[0]=(*STRESS)*(1+*STRAN);\n";
+    out << "s[1]=(*(STRESS+1))*(1+*(STRAN+1));\n";
+    out << "s[2]=(*(STRESS+2))*(1+*(STRAN+2));\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "}\n";
+    }
+    out << "umat" << makeLowerCase(name)
+    	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
+    	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+    	<< "s,NDI,KINC,\n"
+    	<< "umat::UMATStandardSmallStrainStressFreeExpansionHandler);\n";
+    out << "if(*KINC==1){\n";
+    if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
+      out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+    	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
+    }
+    out << "STRESS[0]=s[0]/(1+*STRAN+*DSTRAN);\n";
+    out << "STRESS[1]=s[1]/(1+*(STRAN+1)+*(DSTRAN+1));\n";
+    out << "STRESS[2]=s[2]/(1+*(STRAN+2)+*(DSTRAN+2));\n";
+    out << "}\n";
+    if(this->generateMTestFile){
+      out << "if(*KINC!=1){\n";
+      this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+       			       name,suffix,mb);
+      out << "}\n";
+    }
+    out << "}\n\n";
+    out << "MFRONT_SHAREDOBJ void\n" << umatFortranFunctionName;
+    writeUMATArguments(out,MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
+    out << endl;
+    out << "{\n";
+    out << "umat" << makeLowerCase(fname)
+    	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,"
+    	<< "DRPLDT,STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,"
+    	<< "CMNAME,NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,"
+    	<< "PNEWDT,CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,"
+    	<< "KINC,size);" << endl;
+    out << "}\n\n";
+  }
+
   void
   MFrontUMATInterface::writeMieheApelLambrechtLogarithmicStrainUmatFunction(std::ostream& out,
 									    const std::string& name,

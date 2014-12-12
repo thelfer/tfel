@@ -3,6 +3,8 @@
 @Author Helfer Thomas;
 @Date 23/11/06;
 
+@UMATFiniteStrainStrategies[umat] {None,LogarithmicStrain1D};
+
 @MaterialProperty real A;
 @MaterialProperty real E;
 

@@ -122,6 +122,7 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/monocrystal_dd_cc_numericaljacobian.ref             \
 	   references/monocrystal_dd_cc_irradiation_numericaljacobian.ref \
 	   references/logarithmicstrainnortoncreepuniaxialtesting.ref     \
+	   references/norton_log1D-uniaxialtesting.ref                    \
 	   references/T91-satohtest.ref                                   \
 	   references/finitestrainsinglecrystal-001.ref			  \
 	   references/finitestrainsinglecrystal-012.ref			  \

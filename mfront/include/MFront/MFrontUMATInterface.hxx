@@ -52,11 +52,20 @@ namespace mfront{
      * pp.5383-5425, 2002.
      * This strategy is also developped int the reference of the Code-Aster finite element software:
      * [R5.03.24] Modèles de grandes déformations GDEF_LOG et GDEF_HYPO_ELAS
+     *
+     * The 1D logarithmic strain strategy has been designed for fuel
+     * performance code written in small deformation. The handling of
+     * finite strains is done within the behaviour.
+     * See Helfer Thomas: Extension of monodimensional fuel
+     * performance codes to finite strain analysis using a lagrangian
+     * logarithmic strain framework. Proposed to Nuclear Engineering
+     * And Design.
      */
     enum FiniteStrainStrategy{
       NONE,
       FINITEROTATIONSMALLSTRAIN,
-      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN
+      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN,
+      LOGARITHMICSTRAIN1D
     }; // end of enum FiniteStrainStrategy
 
     static std::string 
@@ -276,6 +285,19 @@ namespace mfront{
 							 const std::string&,
 							 const std::string&,
 							 const MechanicalBehaviourDescription&) const;
+    /*!
+     * \brief write the implementation of the umat function
+     * corresponding to the LOGARITHMICSTRAIN1D finite strain strategy
+     * \param[out] out     : output file
+     * \param[in]  name    : name of law
+     * \param[in]  suffix  : suffix library
+     * \param[in]  mb      : mechanical behaviourd description
+     */
+    virtual void
+    writeLogarithmicStrain1DUmatFunction(std::ostream&,
+					 const std::string&,
+					 const std::string&,
+					 const MechanicalBehaviourDescription&) const;
     /*!
      * \param[out] out     : output file
      * \param[in]  name    : name of law
