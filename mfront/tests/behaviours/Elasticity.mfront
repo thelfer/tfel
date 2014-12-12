@@ -12,7 +12,8 @@
 @ProvidesSymmetricTangentOperator;
 
 @UMATFiniteStrainStrategies[umat] {None,FiniteRotationSmallStrain,
-                                   MieheApelLambrechtLogarithmicStrain};
+                                   MieheApelLambrechtLogarithmicStrain,
+                                   LogarithmicStrain1D};
 
 @AsterSaveTangentOperator[aster]        true;
 @AsterGenerateMTestFileOnFailure[aster] true;

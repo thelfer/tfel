@@ -2111,6 +2111,9 @@ mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-2-3D.mtest.
 mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-3-1D.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-3-2D.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity_frst-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/castem/castemelasticity_log1D-uniaxialloading-1-1D.mtest.in -text
+mfront/tests/behaviours/castem/castemelasticity_log1D-uniaxialloading-2-1D.mtest.in -text
+mfront/tests/behaviours/castem/castemelasticity_log1D-uniaxialloading-3-1D.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-1D.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-2D.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-3D.mtest.in -text
@@ -2230,6 +2233,9 @@ mfront/tests/behaviours/castem/castemnorton-rk2.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton-rk4.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton.mtest.in -text
 mfront/tests/behaviours/castem/castemnorton2.mtest.in -text
+mfront/tests/behaviours/castem/castemnorton_log1D-uniaxialloading-1-1D.mtest.in -text
+mfront/tests/behaviours/castem/castemnorton_log1D-uniaxialloading-2-1D.mtest.in -text
+mfront/tests/behaviours/castem/castemnorton_log1D-uniaxialloading-3-1D.mtest.in -text
 mfront/tests/behaviours/castem/castemnortonrk2.mtest.in -text
 mfront/tests/behaviours/castem/castemnortonrk3.mtest.in -text
 mfront/tests/behaviours/castem/castemnortonrk4.mtest.in -text
@@ -2376,6 +2382,7 @@ mfront/tests/behaviours/references/monocrystal_dd_cc_irradiation_numericaljacobi
 mfront/tests/behaviours/references/monocrystal_dd_cc_numericaljacobian.ref -text
 mfront/tests/behaviours/references/monocrystal_dd_cfc.ref -text
 mfront/tests/behaviours/references/monocrystal_dd_cfc_irradiation.ref -text
+mfront/tests/behaviours/references/norton_log1D-uniaxialtesting.ref -text
 mfront/tests/behaviours/references/plasisocin.ref -text
 mfront/tests/behaviours/references/plasticity.ref -text
 mfront/tests/behaviours/references/polycrystals.ref -text
