@@ -772,6 +772,12 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-2D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_log1D-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_log1D-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_log1D-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem/castemnorton_log1D-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem/castemnorton_log1D-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem/castemnorton_log1D-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-2D.mtest
            mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-3D.mtest
