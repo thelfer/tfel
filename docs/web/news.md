@@ -1,6 +1,27 @@
 % News
 % Helfer Thomas
-% November 27, 2014
+% December 12, 2014
+
+# First `MFront` user meeting (12 December 2014)
+
+We are glad to announce that the first `MFront` user meeting will be
+held in Cadarache on Februar,6 2015. Everyone is invited but a
+registration must be performed before Januar, 16 2015
+([tfel-contact@cea.fr](mailto:tfel-contact@cea.fr)).
+
+Various subjects are already planned:
+
+- New functionalities introduced in `TFEL`/`MFront` 2.0
+- Feed-back from users:
+    - Feed-back from the `Code-Aster` development team
+	- Feed-back from the `Cyrano3` development team
+- `MFront` usage for concrete modelling
+- Examples of `MFront` usage in finite strain analyses
+- Application of `MFront` to nuclear fuel modelling
+- How to write portable behaviour implementations ?
+- Conclusions
+
+Other talks are welcomed.
 
 # Some applications of `MFront` at the [`Cast3M`](http://www-cast3m.cea.fr) user meeting  (4 December 2014)
 
