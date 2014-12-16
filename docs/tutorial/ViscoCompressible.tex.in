@@ -25,7 +25,7 @@ comportement élasto-viscoplastique typique du combustible nucléaire~:
 \item nous reprenons ensuite le travail d'implantation de la loi pour
   obtenir une implantation optimisée de la loi~:
   \begin{itemize}
-  \item par le calcul les termes du jacobien du système implicite~;
+  \item par le calcul des termes du jacobien du système implicite~;
   \item par le calcul de la matrice tangente cohérente.
   \end{itemize}
 % \item nous montrons ensuite comment supporter les hypothèses de
@@ -194,7 +194,7 @@ l'étape de vérification de la loi.
 Cette forme de potentiel de dissipation provient de l'homogénisation
 du problème d'une matrice poreuse incompressible isotrope supposée
 obéir à une loi viscoplastique de
-\nom{Norton}~\cite{Michel199278}. Elle a été utilisée à plusieurs
+\nom{Norton}~\cite{Michel1992783}. Elle a été utilisée à plusieurs
 reprises pour décrire le combustible
 nucléaire~\cite{monerie_overall_2006}. La constante \(E\) apparaissant
 dans la définition des fonctions \(A\paren{f}\) et \(B\paren{f}\) est
@@ -250,7 +250,7 @@ sur différentes propriétés du matériau~:
 \end{itemize}
 
 Afin de traiter la question de leur implantation en \mfront{}, prenons
-le temps d'examiner deux question~:
+le temps d'examiner deux questions~:
 \begin{itemize}
 \item ces propriétés doivent-elles être évaluées par la loi de
   comportement ou par le code appelant ?
@@ -401,7 +401,7 @@ peut être utilisé pour la vérification.
   \centering
   \lstinputlisting[language=gnuplot]{@top_srcdir@/docs/tutorial/mfront/UO2.tplot}  
   \caption{Script \tplot{} permettant de tracer l'évolution du module
-    d'\nom{Young} de l'uranium au travers de son l'implantation
+    d'\nom{Young} de l'uranium au travers de son implantation
     \mfront{} et de la comparer à une expression analytique.}
   \label{fig:tutorial:uo2:youngmodulus:tplot}
 \end{figure}
@@ -416,7 +416,7 @@ peut être utilisé pour la vérification.
 
 \paragraph{Vérification} Il existe différentes façons de vérifier
 l'implantation d'une loi \mfront{}. \licos{} propose un utilitaire
-graphique nommée \tplot{} qui propose un language de script proche de
+graphique nommée \tplot{} qui propose un langage de script proche de
 celui du classique \gnuplot{} et qui permet de comparer les valeurs
 retournées par la fonction générée avec \mfront{} à l'expression
 analytique. La figure~\ref{fig:tutorial:uo2:youngmodulus:tplot}
@@ -459,7 +459,7 @@ fournir le code appelant.
 
 Le principal avantage de cette méthode est de permettre l'écriture de
 lois de comportement génériques. En effet, l'écriture d'une loi de
-comportement avec un language de bas niveau ({\tt fortran} ou {\tt C}
+comportement avec un langage de bas niveau ({\tt fortran} ou {\tt C}
 par exemple) est une tâche longue, difficile et fastidieuse. L'usage
 de \mfront{} limite considérablement la portée de cet argument.
 
@@ -960,7 +960,7 @@ sa convergence locale~:
 \end{flushleft}
 
 Cet exemple montre que l'algorithme de \nom{Newton} local converge en
-\(2\) itérations (la précision par défaut est de \(10^{-8}\).
+\(2\) itérations (la précision par défaut est de \(10^{-8}\)).
 
 \paragraph{Choix des paramètres numériques} Nous allons maintenant
 nous intéresser à deux paramètres numériques~:
@@ -999,7 +999,7 @@ de modifier ces valeurs depuis \mtest{} à l'aide du mot clé {\tt
 \end{center}
 
 Avec un seuil à \(10^{-13}\) et une perturbation de \(10^{-9}\), nous
-voyons que la sortie~:
+obtenons la sortie suivante~:
 \begin{flushleft}
   {\tt
     EllipticCreep::integrate() : beginning of resolution\\

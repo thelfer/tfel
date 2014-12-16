@@ -7,7 +7,7 @@
 
 \section{Introduction}
 
-L'objet de se document est de compléter la documentation de référence
+L'objet de ce document est de compléter la documentation de référence
 \mfront{}. Celle-ci se compose aujourd'hui de~:
 \begin{itemize}
 \item une présentation générale et un document de référence sur
@@ -34,7 +34,11 @@ documentation propre décrivant l'utilisation de
 
 L'objet du présent document est de permettre aux nouveaux utilisateurs
 de découvrir pas à pas comment une loi de comportement mécanique peut
-être implantée avec \mfront{}.
+être implantée avec \mfront{}. Pour les applications, nous utiliserons
+dans un premier temps des simulations sur point matériel avec \mtest{}
+(logiciel livré avec \mfront{}) puis, dans un second temps, des
+simulations par éléments finis, en utilisant soit \aster{}, soit
+\castem{}.
 
 \subsection{Comment écrire une loi de comportement~:
   un exemple très simple}
@@ -100,7 +104,7 @@ avec~:
 
 On obtient ainsi un système de 7 équations~: 6 équations relatives à
 la décomposition additive du tenseur des déformations (en 3D), et une
-équation relative à l'écoulement visco-plastique). Les 7 inconnues
+équation relative à l'écoulement visco-plastique. Les 7 inconnues
 sont les 6 composantes de \( \Delta \tepsilonel \) et \( \Delta p \).
 
 La résolution implicite de ce système est effectuée par une méthode de
@@ -144,7 +148,7 @@ la convention de nom est la suivante~:
   \Delta\,\tepsilonto + \Delta\,p\,\tenseur{n} = 0\).  En effet, {\tt
     feel} est initialisé à {\tt deel} et l'opérateur {\tt +=} cumule
   les valeurs (comme en langage {\tt c});
-\item la ligne \(22\) définit l'équation \(\Delta\, p -
+\item la ligne \(23\) définit l'équation \(\Delta\, p -
   \Delta\,t\,A\,\sigmaeq^{m}=0\). Comme précédemment, {\tt fp} est
   initialisé à {\tt dp}, et {\tt fp -= xx} est équivalent à {\tt fp =
     fp - xx} .
@@ -154,8 +158,8 @@ la convention de nom est la suivante~:
 \end{itemize}
 
 On constate que l'écriture de la loi se limite quasiment à la
-description des équations. De plus on bénéficie d'un écriture
-compacte, utilisant des variables tensorielles. 
+description des équations. De plus on bénéficie d'une écriture
+compacte, utilisant des variables tensorielles.
 
 Différentes méthodes d'intégration sont diponibles dans \mfront
 (~\cite{helfer_generateur_2013}).  L'algorithme d'intégration utilisé

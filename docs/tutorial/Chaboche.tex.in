@@ -210,8 +210,7 @@ matériel à l'aide de \mtest{}, puis sur un maillage éléments finis
 
 Pour une sollicitation uniaxiale de 10 cycles en traction - compression, on
 obtient très rapidement (0,024s) le résultat donné en
-figure~\ref{fig:mfront:tutorial:chaboche:check}. On vérifie qu'il est
-identique à celui de \aster{}.
+figure~\ref{fig:mfront:tutorial:chaboche:check}.
 
 Le fichier \mtest{} pour cet exemple est le
 suivant~:
@@ -326,9 +325,11 @@ numériques ou autres via les options de compilation~:
   \texttt{\textbf{CXXFLAGS='-g'}}\texttt{ mfront -{}-obuild
     -{}-interface=aster chaboche.mfront}
 \item enfin, dans un calcul \aster, on peut générer des fichiers mtest
-  en cas d'échec d'intégration~: \newline \texttt{mfront -{}-obuild
+  en cas d'échec d'intégration~:
+  \newline 
+  \texttt{mfront -{}-obuild
     --interface=aster -{}-@Aster\-Generate\-MTest\-File\-On\-Fail\-ure=\-true
-    chaboche.mfront}
+    cha\-boche\-.mfront}
 \end{itemize}
 
 \subsection{Zoom sur les performances}
@@ -685,12 +686,8 @@ d'un comportement déjà sophistiqué montre qu'il est possible très
 rapidement de tester des lois de comportement de façon
 opérationnelle.
 
-Plusieurs autres lois de comportement ont été développées et sont
-inclues dans les tests de \mfront{} et de \aster{} (version \(12\) en
-cours de développement). Pour chacun, le temps de développement n'a
-pas dépassé une demi-journée.
-
-\begin{center}
+\begin{table}[htbp]
+  \centering
   \begin{tabular}{|m{8cm}|m{8cm}|}
     \hline
     Loi  &
@@ -698,44 +695,51 @@ pas dépassé une demi-journée.
     et test\\\hline
     Chaboche &
     Implicite\\\hline
- HAYHURST (fluage et
- endommagement des aciers) &
- { Implicite, jacobienne ,
-   GDEF\_LOG, Theta=0.5 }
- et Explicite,
- Runge-Kutta\\\hline
- MAZARS (béton,
- endommagement) &
- Avec séchage et
- hydratation\\\hline
- BETON\_BURGER\_FP &
- Fluage propre du béton
- avec retrait\\\hline
- MONOCRISTAL (MC) &
- Implicite, jacobienne,
- petites déformations\\\hline
- POLYCRISTAL (MC) &
- Runge-kutta , 30
- grains\\\hline
- MONOCRISTAL (DD\_CFC)(+
- irradiation) &
- Implicite, jacobienne,
- petites déformations\\\hline
- POLYCRISTAL (DD\_CFC) &
- Runge-Kutta , 30
- grains\\\hline
- MONOCRISTAL (DD\_CC)(+
- irradiation) &
- Implicite, jacobienne,
- petites déformations\\\hline
- META\_LEMA\_ANI &
- Implicite, jacobienne
- numérique, avec effet des phases métallurgiques\\\hline
- MONOCRISTAL (MC) &
- Implicite, jacobienne
- numérique, grandes déformations\\\hline
-\end{tabular}
-\end{center}
+    HAYHURST (fluage et
+    endommagement des aciers) &
+    { Implicite, jacobienne ,
+      GDEF\_LOG, Theta=0.5 }
+    et Explicite,
+    Runge-Kutta\\\hline
+    MAZARS (béton,
+    endommagement) &
+    Avec séchage et
+    hydratation\\\hline
+    BETON\_BURGER\_FP &
+    Fluage propre du béton
+    avec retrait\\\hline
+    MONOCRISTAL (MC) &
+    Implicite, jacobienne,
+    petites déformations\\\hline
+    POLYCRISTAL (MC) &
+    Runge-kutta , 30
+    grains\\\hline
+    MONOCRISTAL (DD\_CFC)(+
+    irradiation) &
+    Implicite, jacobienne,
+    petites déformations\\\hline
+    POLYCRISTAL (DD\_CFC) &
+    Runge-Kutta , 30
+    grains\\\hline
+    MONOCRISTAL (DD\_CC)(+
+    irradiation) &
+    Implicite, jacobienne,
+    petites déformations\\\hline
+    META\_LEMA\_ANI &
+    Implicite, jacobienne
+    numérique, avec effet des phases métallurgiques\\\hline
+    MONOCRISTAL (MC) &
+    Implicite, jacobienne
+    numérique, grandes déformations\\\hline
+  \end{tabular}
+  \caption{Quelques exemples de lois de comportement dévelopées avec \mfront{}.}
+  \label{tab:mfront:aster:examples}
+\end{table}
+
+Plusieurs autres lois de comportement ont été développées et sont
+inclues dans les tests de \mfront{} et de \aster{}. Nous en donnons
+une liste partielle au tableau~\ref{tab:mfront:aster:examples}. Pour
+chacun, le temps de développement n'a pas dépassé une demi-journée.
 
 \subsection{Identification des propriétés matériau à l'aide d'\adao{}}
 
@@ -807,7 +811,7 @@ Nous allons utiliser \mtest{} (associé au comportement
 élasto-visco-plastique précédent) comme moteur de simulation $H(X)$
 pour chercher les valeurs des propriétés matériau de cette loi
 permettant de simuler les 4 courbes contraintes-déformation
-représentée en figure~\ref{fig:mfront:tutorial:quatre-courbes:check},
+représentées en figure~\ref{fig:mfront:tutorial:quatre-courbes:check},
 pour différentes amplitudes de déformation imposée~:
 
 Il faut définir, pour \adao{}, {\em a minima}~:
@@ -911,7 +915,7 @@ y voir~:
 
 \subsection{Utilisation dans Code\_Aster}
 
-\subsubsection{modification du fichier de commandes}
+\subsubsection{Modification du fichier de commandes}
 
 Une fois le comportement défini dans \mfront, et compilé de façon habituelle :
 
@@ -921,9 +925,9 @@ une bibliothèqe dynamique est produite :
 
 {\tt libAsterBehabviour.so }
 
-Avant de l'utiliser dans un calcul de structures avec \aster, 
-il est conseillé d'effectuer
-les premiers tests sur un point matériel à l'aide \mtest.
+Avant de l'utiliser dans un calcul de structures avec \aster, il est
+conseillé d'effectuer les premiers tests sur un point matériel à
+l'aide de \mtest.
 
 Ensuite, tout est prêt pour une étude avec \aster. 
 Pour une description complète, 
@@ -1009,13 +1013,13 @@ permettre un redécoupage local du pas de temps.
 \end{table}
 
 En guise d'illustration, les résultats d'un calcul de fluage sur une
-éprouvette entaillée (maillage axisymétrique, 3300 DDL) avec \aster
+éprouvette entaillée (maillage axisymétrique, 3300 DDL) avec \aster{}
 sont donnés sur les figures \ref{fig:courbes-fluage}
 et~\ref{fig:iso-fluage}.
 
-La comparaison des temps CPU est nettement en faveur de \mfront{}
-(\ref{temps-calcul}). Même l’intégration implicite avec jacobienne
-numérique est efficace.
+La comparaison des temps CPU est nettement en faveur de \mfront{},
+détaillés au tableau~\ref{temps-calcul}. Notons que même l’intégration
+implicite avec jacobienne numérique est efficace.
 
 %%% Local Variables: 
 %%% mode: latex

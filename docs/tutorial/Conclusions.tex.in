@@ -10,9 +10,10 @@
 
 Cette note a pour but de guider un utilisateur de \mfront{} à
 développer une loi de comportement, afin de l'utiliser en premier lieu
-pour des tests
-unitaires sur point matériel, à l'aide de \mtest{}, ce qui permet d'aller
-jusqu'à l'identification des propriétés matériau à l'aide d'\adao.
+pour des tests unitaires sur point matériel, à l'aide de \mtest{}, ce
+qui permet d'aller jusqu'à l'identification des propriétés matériau à
+l'aide du logiciel d'acquisition \adao{} développé dans la plate-forme
+\salome{}~\cite{argaud_documentation_2014}.
 
 Ce comportement peut ensuite être utilisé avec les codes de calcul
  par éléments finis interfacés
@@ -22,7 +23,7 @@ De plus, une réflexion est en cours pour que certaines lois de
 comportement disponibles dans \aster{} soient intégrées via
 \mfront{}. Le document~\cite{proix_cr_lois_2014} établit une liste de
 lois de comportement candidates à ce remplacement, une fois que la
-diffusion libre de \mfront avec \aster sera effective.
+diffusion libre de \mfront{} avec \aster{} sera effective.
 
 Pour revenir à ce tutoriel, une bonne façon d'utiliser cette note
 consiste à expérimenter soi-même le développement d'une loi de

@@ -5,8 +5,8 @@
 %%	Répertoire : /home/th202608/codes/pandoc/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
-% \documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -30,12 +30,12 @@
 \emetteur{M.~Bauer}
 %\affiliation{$(\mbox{}^{\star})$ EDF R\&D MMC}
 
-\titre{Écriture de lois de comportements avec \mfront{}~: tutoriel}
+\titre{Écriture de lois de comportement avec \mfront{}~: tutoriel}
 
-\date{Novembre 2014}
+\date{Décembre 2014}
 \numero{14-023}
 \indice{0}
-\dateversion{11/2014}
+\dateversion{12/2014}
 \numeroaffaire{A-SICOM-A1-07}
 \typeaction{BE}
 \jalon{Documentation MFront}
@@ -49,7 +49,21 @@
 }
 
 % \codebarre{@abs_top_srcdir@/docs/mfront/Images/code-barre-planestress}
+\CoupeListeDiffusion{}
+
 \diffusionexterne{
+{EDF/R\&D/CHATOUX}      & D. Baner        & 1 & Diffusion par\\
+{EDF/R\&D./CLAMART}     & P. Barbrault    & 1 & courriel     \\
+{EDF/R\&D/AMA}          & T. de Soza      & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+                        & N. Rupin        & 1 & \\
+                        & H. Wong       & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & G. Thouvenin    & 1 & \\
+                        & C. Bernaudat    & 1 & \\
 AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
                         & L. Brunel       & 1 & \\
 AREVA NP/LYON           & P. Melin        & 1 & \\
@@ -102,7 +116,8 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
                       &                    &  & \\
   DEN/DEC             & P. Brossard        &  & Document disponible\\
   DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
-  DEN/DEC/SESC        & C. Valot           &  & \\
+  DEN/DEC/SESC        & M. Bauer           &  & \\
+                      & C. Valot           &  & \\
                       & M. Agard           &  & \\
   DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
   DEN/DEC/SESC/LLCC   & G. Jomard          &  & \\
@@ -115,7 +130,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
   Ce document est un tutoriel sur l'écriture des lois de
   comportement mécanique avec \mfront{}.
   
-  Deux lois sont traités~:
+  Deux lois sont traitées~:
   \begin{enumerate}[-]
   \item une loi élasto-(visco)-plastique typique des métaux~;
   \item une loi élasto-viscoplastique isotrope compressible typique du
@@ -198,7 +213,7 @@ thermique pour que l'état de référence soit la géométrie initiale, de
 longueur \(l_{i}\).
 
 Pour cela, nous pouvons définir la déformation thermique
-\(\epsilonth_{T^{i}}\paren{T}\) du corps à la température \(T\) comme sa
+\(\epsilonth_{T^{i}}\paren{T}\) du corps à la température \(T\) comme la
 déformation qu'il aurait si aucune contrainte ne s'exerçait sur lui
 par la relation~:
 \[
