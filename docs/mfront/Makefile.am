@@ -42,7 +42,6 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   Images/OrthotropicSaintVenantKirchhoffZebulon.eps	    \
 	   Images/OrthotropicSaintVenantKirchhoffElasticity.mfront  \
 	   Images/code-barre-planestress.eps                        \
-	   Images/signatures-planestress.eps                        \
 	   Images/ImplicitDSL.eps          		            \
 	   annexe-orthotropie.tex		                    \
 	   style.ist				                    \

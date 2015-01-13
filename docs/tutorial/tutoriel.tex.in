@@ -48,12 +48,13 @@
   \mfront{} - tutoriel - loi de comportement mécanique
 }
 
-% \codebarre{@abs_top_srcdir@/docs/mfront/Images/code-barre-planestress}
+\codebarre{@abs_top_srcdir@/docs/tutorial/images/code-barre.pdf}
+\signatures{3.}{-44.}{1.05}{@abs_top_srcdir@/docs/tutorial/images/signatures.pdf}
 \CoupeListeDiffusion{}
 
 \diffusionexterne{
-{EDF/R\&D/CHATOUX}      & D. Baner        & 1 & Diffusion par\\
-{EDF/R\&D./CLAMART}     & P. Barbrault    & 1 & courriel     \\
+{EDF/R\&D/CHATOU}       & D. Banner       & 1 & Diffusion par\\
+                        & P. Barbrault    & 1 & courriel     \\
 {EDF/R\&D/AMA}          & T. de Soza      & 1 & \\
 {EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
                         & N. Rupin        & 1 & \\

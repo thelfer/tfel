@@ -45,7 +45,10 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     OUTPUT    mfront.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/mfront.tex.in
-    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/annexe-orthotropie.tex.in
+    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/glossary.tex.in
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/Champs.tex
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/mfront.tex
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/glossary.tex
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
         ARGS      -interaction=batchmode
     ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
@@ -86,6 +89,16 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     OUTPUT    behaviours.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/behaviours.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/annexe-orthotropie.tex.in
+    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/InternalNames.tex.in
+    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/glossary.tex.in
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/behaviours.tex
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/annexe-orthotropie.tex
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/InternalNames.tex
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/glossary.tex
+    # additional dependencies to avoid a conflict: both mfront.tex.in
+    # and behaviours.tex.in includes glossary.tex, so the latex
+    # processing generates in both cases a glossary.aux file.
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/mfront.pdf
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
     ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
@@ -129,6 +142,7 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   ADD_CUSTOM_COMMAND(
     OUTPUT    finitestrain.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/finitestrain.tex.in
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/behaviours.pdf
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
     ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
@@ -164,6 +178,7 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   ADD_CUSTOM_COMMAND(
     OUTPUT    planestress.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/planestress.tex.in
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/finitestrain.pdf
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
     ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
@@ -199,6 +214,7 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   ADD_CUSTOM_COMMAND(
     OUTPUT    umat.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/umat.tex.in
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/planestress.pdf
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
     ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
@@ -242,6 +258,7 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   ADD_CUSTOM_COMMAND(
     OUTPUT    zmat.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/zmat.tex.in
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/umat.pdf
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
     ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
@@ -285,6 +302,7 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   ADD_CUSTOM_COMMAND(
     OUTPUT    aster.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/aster.tex.in
+    DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/zmat.pdf
     COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
     ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex

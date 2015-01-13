@@ -8,7 +8,7 @@
 - writing mechanical behaviours: [behaviours.pdf](documents/mfront/behaviours.pdf)
 - how to handle plane stress in implicit schemes: [planestress.pdf](documents/mfront/planestress.pdf)
 - finite strain behaviours [finitestrain.pdf](documents/mfront/finitestrain.pdf)
-- mtest user guide: [mtest.pdf](documents/mtest/mtest.pdf)
+<!-- - mtest user guide: [mtest.pdf](documents/mtest/mtest.pdf) -->
 
 # Tutorials
 
@@ -24,7 +24,6 @@
 # Talks
 
 - finite strain: [mfront-finitestrain.pdf](documents/mfront-finitestrain/mfront-finitestrain.pdf)
-- mtest: [mtest.pdf](documents/mtest-presentation/mtest-presentation.pdf)
 - [mfront user meeting](documents/mfront-user-meeting/mfront.html)
 - [writing portable behaviours](documents/portable-behaviour/portability.html)
 - introduction to MFront (talk given at Materiaux 2014 in Montpellier): [materiaux2014.html](documents/Materiaux2014/materiaux2014.html)
@@ -32,6 +31,7 @@
   finite strains (talk given at the
   [`Cast3M`](http://www-cast3m.cea.fr) user meeting on November, 28
   2014: [HureCast3M14.pdf](documents/ClubCast3M2014/HureCast3M14.pdf)
+<!-- - mtest: [mtest.pdf](documents/mtest-presentation/mtest-presentation.pdf) -->
 
 
 # Solver interfaces
