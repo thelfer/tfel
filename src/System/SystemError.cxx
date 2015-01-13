@@ -22,6 +22,9 @@ namespace tfel
       : tfel::exception::TFELException(msg_)
     {} // end of SystemError::SystemError
 
+    SystemError::~SystemError() throw()
+    {} // end of SystemError::~SystemError
+
   } // end of namespace system
 
 } // end of namespace tfel

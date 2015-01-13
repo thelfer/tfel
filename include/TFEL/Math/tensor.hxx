@@ -150,7 +150,7 @@ namespace tfel{
        */
       TFEL_MATH_INLINE explicit
       tensor()
-      {};
+      {}
       /*!
        * \brief Default Constructor 
        * \param T, value used to initialise the components of the tensor 

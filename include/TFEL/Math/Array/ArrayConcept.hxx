@@ -64,7 +64,7 @@ namespace tfel{
       typedef ArrayTraits<T> traits;
 
     protected:
-      ~ArrayConcept(){};
+      ~ArrayConcept(){}
 
     public:
 

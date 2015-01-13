@@ -30,10 +30,8 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidDensity
       : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
       GeometricDiscretizationInvalidDensity();
+      virtual ~GeometricDiscretizationInvalidDensity() throw();
     }; // end of struct GeometricDiscretizationInvalidDensity
 
     /*!
@@ -43,10 +41,8 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidLength
       : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
       GeometricDiscretizationInvalidLength();
+      virtual ~GeometricDiscretizationInvalidLength() throw();
     }; // end of struct GeometricDiscretizationInvalidLength
 
     /*!
@@ -56,10 +52,8 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidNumberOfElements
       : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
       GeometricDiscretizationInvalidNumberOfElements();
+      virtual ~GeometricDiscretizationInvalidNumberOfElements() throw();
     }; // end of struct GeometricDiscretizationInvalidNumberOfElements
 
     /*!

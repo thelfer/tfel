@@ -71,7 +71,7 @@ namespace tfel{
 				      const typename traits::NumType&>::type ValueType;
 
     protected:
-      ~T2toST2Concept(){};
+      ~T2toST2Concept(){}
       
     public:
       

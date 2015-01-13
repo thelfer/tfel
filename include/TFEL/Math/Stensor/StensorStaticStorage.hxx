@@ -38,7 +38,7 @@ namespace tfel{
     public:
 
       //Default Constructor
-      StensorStatic(){};
+      StensorStatic(){}
 
       // Default Constructor 
       explicit TFEL_MATH_INLINE StensorStatic(const typename tfel::typetraits::BaseType<T>::type* const init)

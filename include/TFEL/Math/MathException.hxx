@@ -28,18 +28,21 @@ namespace tfel{
       : public tfel::exception::TFELException 
     {      
       MathException(const std::string& s);
+      virtual ~MathException() throw();
     }; // end of struct MathException
 
     struct TFELMATH_VISIBILITY_EXPORT MathRunTimeException
       : public MathException
     {
       MathRunTimeException(const std::string& s);
+      virtual ~MathRunTimeException() throw();
     }; // end of struct MathRunTimeException
 
     struct TFELMATH_VISIBILITY_EXPORT MathDivergenceException
       : public MathException
     {
       MathDivergenceException(const std::string& s);
+      virtual ~MathDivergenceException() throw();
     }; // end of struct MathDivergenceException
 
   } // end of namespace math

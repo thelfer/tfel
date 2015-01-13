@@ -22,12 +22,21 @@ namespace tfel{
       :  tfel::exception::TFELException(s)
     {}
 
+    MathException::~MathException() throw()
+    {}
+
     MathRunTimeException::MathRunTimeException(const std::string& s)
       :  MathException(s)
     {}
 
+    MathRunTimeException::~MathRunTimeException() throw()
+    {}
+
     MathDivergenceException::MathDivergenceException(const std::string& s)
       :  MathException(s)
+    {}
+
+    MathDivergenceException::~MathDivergenceException() throw()
     {}
 
   } // end of namespace math

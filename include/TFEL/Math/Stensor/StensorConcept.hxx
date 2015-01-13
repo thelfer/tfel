@@ -64,7 +64,7 @@ namespace tfel{
 				      const typename traits::NumType&>::type ValueType;
       
     protected:
-      ~StensorConcept(){};
+      ~StensorConcept(){}
       
     public:
 

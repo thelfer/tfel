@@ -73,6 +73,7 @@ namespace tfel{
        * \param[in] i : index
        */
       TensorInvalidIndexException(const unsigned short);
+      virtual ~TensorInvalidIndexException() throw();
     private:
       /*!
        * format the error message
@@ -95,6 +96,7 @@ namespace tfel{
        */
       TensorInvalidIndexesException(const unsigned short,
 				    const unsigned short);
+      virtual ~TensorInvalidIndexesException() throw();
     private:
       /*!
        * format the error message
@@ -117,7 +119,7 @@ namespace tfel{
 				      const NumType&>::type ValueType;
       
     protected:
-      ~TensorConcept(){};
+      ~TensorConcept(){}
       
     public:
 

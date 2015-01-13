@@ -160,7 +160,7 @@ namespace tfel{
       /*!
        * destructor
        */
-      virtual ~MechanicalBehaviour(){};
+      virtual ~MechanicalBehaviour(){}
     };
 
   } // end of namespace material 

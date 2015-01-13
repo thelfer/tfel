@@ -30,6 +30,7 @@ namespace tfel
     {
       LUException(const char* const);
       LUException(const std::string&);
+      virtual ~LUException() throw();
     }; // end of struct LUException
     
   } // end of namespace math

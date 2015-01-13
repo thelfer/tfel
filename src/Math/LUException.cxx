@@ -27,6 +27,9 @@ namespace tfel
       : tfel::exception::TFELException(s)
     {} // end of LUException::LUException
     
+    LUException::~LUException() throw()
+    {}
+
   } // end of namespace math
 
 } // end of namespace tfel

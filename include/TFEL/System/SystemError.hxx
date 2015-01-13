@@ -29,13 +29,14 @@ namespace tfel
       : public tfel::exception::TFELException
     {
       SystemError(const std::string&);
+      virtual ~SystemError() throw();
     }; // end of struct SystemError
     
     template<unsigned short N>
     struct PosixError
       : public SystemError
     {
-      PosixError(const std::string& msg);
+      PosixError(const std::string&);
     }; // end of struct PosixError
 
     //! a simple alias

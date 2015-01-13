@@ -102,7 +102,7 @@ namespace tfel{
        * This destructor is declared protected to remind users 
        * that MatrixConcept shall not be instantiated directly. 
        */
-      ~MatrixConcept(){};
+      ~MatrixConcept(){}
       
     public :
 

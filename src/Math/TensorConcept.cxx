@@ -34,6 +34,9 @@ namespace tfel{
       : std::runtime_error(TensorInvalidIndexException::getErrorMessage(i))
     {} // end of TensorInvalidIndexException::TensorInvalidIndexException
 
+    TensorInvalidIndexException::~TensorInvalidIndexException() throw()
+    {} // end of TensorInvalidIndexException::~TensorInvalidIndexException
+
     std::string
     TensorInvalidIndexesException::getErrorMessage(const unsigned short i,
 						   const unsigned short j)
@@ -49,6 +52,9 @@ namespace tfel{
 								 const unsigned short j)
       : std::runtime_error(TensorInvalidIndexesException::getErrorMessage(i,j))
     {} // end of TensorInvalidIndexesException::TensorInvalidIndexesException
+
+    TensorInvalidIndexesException::~TensorInvalidIndexesException() throw()
+    {} // end of TensorInvalidIndexesException::~TensorInvalidIndexesException() throw
     
   } // end of namespace math
 

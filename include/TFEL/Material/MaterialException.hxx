@@ -28,8 +28,8 @@ namespace tfel{
     {
       static std::string 
       getName(void);
-      
-      MaterialException(const std::string& s);
+      MaterialException(const std::string&);
+      virtual ~MaterialException() throw();
     };
 
     struct TFELMATERIAL_VISIBILITY_EXPORT DivergenceException
@@ -37,8 +37,8 @@ namespace tfel{
     {
       static std::string 
       getName(void);
-      
-      DivergenceException(const std::string& s);
+      DivergenceException(const std::string&);
+      virtual ~DivergenceException() throw();
     };
     
     struct TFELMATERIAL_VISIBILITY_EXPORT OutOfBoundsException
@@ -46,8 +46,8 @@ namespace tfel{
     {
       static std::string 
       getName(void);
-      
-      OutOfBoundsException(const std::string& s);
+      OutOfBoundsException(const std::string&);
+      virtual ~OutOfBoundsException() throw();
     };
     
   } // end of namespace material

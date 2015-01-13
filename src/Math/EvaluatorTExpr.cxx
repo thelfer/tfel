@@ -20,6 +20,9 @@ namespace tfel
   namespace math
   {
 
+    Evaluator::TExpr::~TExpr()
+    {} // end of Evaluator::TExpr::~TExpr
+
     Evaluator::TLogicalExpr::~TLogicalExpr()
     {} // end of Evaluator::TLogicalExpr::~TLogicalExpr
 

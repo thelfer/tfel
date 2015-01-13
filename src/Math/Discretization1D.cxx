@@ -23,13 +23,22 @@ namespace tfel
       : MathRunTimeException("geometricDiscretization : invalid density")
     {} // end of GeometricDiscretizationInvalidDensity::GeometricDiscretizationInvalidDensity
 
+    GeometricDiscretizationInvalidDensity::~GeometricDiscretizationInvalidDensity() throw()
+    {} // end of GeometricDiscretizationInvalidDensity::~GeometricDiscretizationInvalidDensity
+
     GeometricDiscretizationInvalidLength::GeometricDiscretizationInvalidLength()
       : MathRunTimeException("geometricDiscretization : invalid length")
     {} // end of GeometricDiscretizationInvalidLength::GeometricDiscretizationInvalidLength
 
+    GeometricDiscretizationInvalidLength::~GeometricDiscretizationInvalidLength() throw()
+    {} // end of GeometricDiscretizationInvalidLength::~GeometricDiscretizationInvalidLength
+
     GeometricDiscretizationInvalidNumberOfElements::GeometricDiscretizationInvalidNumberOfElements()
       : MathRunTimeException("geometricDiscretization : invalid number of elements")
     {} // end of GeometricDiscretizationInvalidNumberOfElements::GeometricDiscretizationInvalidNumberOfElements
+
+    GeometricDiscretizationInvalidNumberOfElements::~GeometricDiscretizationInvalidNumberOfElements() throw()
+    {} // end of GeometricDiscretizationInvalidNumberOfElements::~GeometricDiscretizationInvalidNumberOfElements
 
   } // end of namespace math
 

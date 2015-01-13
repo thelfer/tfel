@@ -21,6 +21,9 @@ namespace tfel{
     MaterialException::MaterialException(const std::string& s)
       :  tfel::exception::TFELException(s)
     {}
+
+    MaterialException::~MaterialException() throw()
+    {} // end of MaterialException::~MaterialException
     
     std::string 
     MaterialException::getName(void){
@@ -36,6 +39,9 @@ namespace tfel{
       :  tfel::material::MaterialException(s)
     {}
 
+    DivergenceException::~DivergenceException() throw()
+    {} // end of DivergenceException::~DivergenceException
+
     std::string 
     OutOfBoundsException::getName(void){
       return "OutOfBoundsException";
@@ -45,6 +51,9 @@ namespace tfel{
       :  tfel::material::MaterialException(s)
     {}
   
+    OutOfBoundsException::~OutOfBoundsException() throw()
+    {} // end of OutOfBoundsException::~OutOfBoundsException
+
   } // end of namespace material
 
 } // end of namespace tfel
