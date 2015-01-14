@@ -69,7 +69,7 @@ namespace umat
   UMATTangentOperator::normalize(tfel::math::st2tost2<2u,UMATReal>& Dt)
   {
     using namespace std;
-    static constexpr UMATReal inv_sqrt2 = 1./std::sqrt(UMATReal(2));
+    static const UMATReal inv_sqrt2 = UMATReal(1)/std::sqrt(UMATReal(2));
     Dt(0,3) *= inv_sqrt2;
     Dt(1,3) *= inv_sqrt2;
     Dt(2,3) *= inv_sqrt2;
@@ -86,7 +86,7 @@ namespace umat
   UMATTangentOperator::normalize(tfel::math::st2tost2<3u,UMATReal>& Dt)
   {
     using namespace std;
-    static constexpr UMATReal inv_sqrt2 = 1./std::sqrt(UMATReal(2));
+    static const UMATReal inv_sqrt2 = UMATReal(1)/std::sqrt(UMATReal(2));
     Dt(0,3) *= inv_sqrt2;
     Dt(1,3) *= inv_sqrt2;
     Dt(2,3) *= inv_sqrt2;

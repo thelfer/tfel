@@ -14,24 +14,20 @@
 #ifndef _LIB_TFEL_ST2TOST2_H_
 #define _LIB_TFEL_ST2TOST2_H_ 
 
-#include<string>
 #include<cstddef>
 #include<cassert>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-
 #include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
-
 #include"TFEL/Math/Forward/st2tost2.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
@@ -216,19 +212,17 @@ namespace tfel{
        * This is a StensorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
-      /*!
-       * \brief Default Constructor 
-       */
-      TFEL_MATH_INLINE 
-      explicit st2tost2()
-      {};
+      //! \brief default Constructor 
+      TFEL_MATH_INLINE explicit constexpr
+      st2tost2();
       /*!
        * \brief Default Constructor 
        * \param T, value used to initialise the components of the st2tost2 
        */
-      TFEL_MATH_INLINE
-      explicit st2tost2(const T);
-
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      explicit st2tost2(const T2&);
       /*!
        * \brief Default Constructor.
        * \param const typename tfel::typetraits::BaseType<T>::type* const,
@@ -237,18 +231,18 @@ namespace tfel{
        */
       TFEL_MATH_INLINE
       explicit st2tost2(const typename tfel::typetraits::BaseType<T>::type* const);
-
       /*!
-       * \brief Copy Constructor
+       * \brief copy Constructor
        */
-      TFEL_MATH_INLINE
+      TFEL_MATH_INLINE constexpr
       st2tost2(const st2tost2<N,T>&);
-
       // Copy Constructor
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE 
       st2tost2(const ST2toST2Expr<st2tost2<N,T2>,Expr>&);
-
+      //! assignement operator
+      TFEL_MATH_INLINE st2tost2&
+      operator=(const st2tost2&);
       /*!
        * Import values
        */

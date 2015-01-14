@@ -22,17 +22,17 @@ namespace tfel{
   namespace math{
 
     template<typename ValueType>
-    Complex<ValueType>::Complex(const ValueType& a,const ValueType& b)
+    constexpr Complex<ValueType>::Complex(const ValueType& a,const ValueType& b)
       : std::complex<ValueType>(a,b)
     {}
 
     template<typename ValueType>
-    Complex<ValueType>::Complex(const Complex& a)
+    constexpr Complex<ValueType>::Complex(const Complex& a)
       : std::complex<ValueType>(a)
     {}
 
     template<typename ValueType>
-    Complex<ValueType>::Complex(const std::complex<ValueType>& a)
+    constexpr Complex<ValueType>::Complex(const std::complex<ValueType>& a)
       : std::complex<ValueType>(a)
     {}
 
@@ -53,14 +53,14 @@ namespace tfel{
     }
 
     template<typename ValueType>
-    TFEL_MATH_INLINE const Complex<ValueType>
+    TFEL_MATH_INLINE constexpr Complex<ValueType>
     conj(const Complex<ValueType>& z)
     {
       return Complex<ValueType>(z.real(),-z.imag());
     }
 
     template<typename ValueType>
-    TFEL_MATH_INLINE const ValueType
+    TFEL_MATH_INLINE constexpr ValueType
     real(const Complex<ValueType>& z)
     {
       return z.real();

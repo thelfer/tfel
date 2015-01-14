@@ -20,7 +20,6 @@
 #include<algorithm>
 #include<iterator>
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/General/FctObjectRandomAccessConstIterator.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/functions.hxx"
@@ -28,7 +27,6 @@
 int main(void)
 {
   using namespace std;
-  using namespace tfel::utilities;
   using namespace tfel::math;
   using tfel::math::vector;
   USING_TFEL_FUNCTIONS;
@@ -44,8 +42,6 @@ int main(void)
   FctObjectRandomAccessConstIterator<vector<double>,FctSin> begin(v.begin(),sin);
   FctObjectRandomAccessConstIterator<vector<double>,FctSin> end(v.end(),sin);
   FctObjectRandomAccessConstIterator<vector<double>,FctSin> p;
-  
-  assert(name(p)=="FctObjectRandomAccessConstIterator<tfel::math::vector<double>,FctSin>");
 
   for(i=0,p=begin;p!=end;++p,++i){
     assert(abs(*p-sin(v(i)))<1.e-14);

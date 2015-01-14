@@ -4,6 +4,7 @@ link_directories("${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
 set(TFELMaterial_SOURCES
+    BoundsCheck.cxx
     MaterialException.cxx
     ModellingHypothesis.cxx
     FiniteStrainBehaviourTangentOperator.cxx)

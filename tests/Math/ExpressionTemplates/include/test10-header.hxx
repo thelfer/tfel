@@ -24,7 +24,6 @@
 #include<algorithm>
 #include<iterator>
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/functions.hxx"
 
@@ -34,9 +33,7 @@ void function(const T&);
 template<typename T>
 void function(const T&)
 {
-  using namespace std;
   using namespace tfel::meta;
-  using namespace tfel::utilities;
   assert(HasRandomAccessConstIterator<T>::cond);
 }
 

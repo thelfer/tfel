@@ -40,7 +40,7 @@ namespace tfel{
     public:
 
       RungeKutta2()
-      {};
+      {}
       
       TFEL_MATH_INLINE2 void set_y(const tvector<N,T>& y_){
 	this->y = y_;

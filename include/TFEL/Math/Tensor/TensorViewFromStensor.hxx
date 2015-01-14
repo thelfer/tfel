@@ -62,7 +62,7 @@ namespace tfel
 	using std::sqrt;
 	using tfel::typetraits::BaseType;
 	typedef typename BaseType<ValueType>::type real;
-	static constexpr real cste = real(1)/sqrt(real(2));
+	static const real cste = real(1)/sqrt(real(2));
 	switch(i){
 	case 0:
 	  return this->s(0);

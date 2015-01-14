@@ -14,12 +14,11 @@
 #ifndef _LIB_TFEL_MATH_TENSORSTENSORDIADICPRODUCTEXPR_H_
 #define _LIB_TFEL_MATH_TENSORSTENSORDIADICPRODUCTEXPR_H_ 
 
-#include<string>
 #include<cstddef>
 #include<iterator>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"

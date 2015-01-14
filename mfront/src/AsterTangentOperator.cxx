@@ -157,7 +157,7 @@ namespace aster
   AsterTangentOperator::normalize(tfel::math::st2tost2<2u,AsterReal>& Dt)
   {
     using namespace std;
-    static constexpr AsterReal inv_sqrt2 = 1./std::sqrt(AsterReal(2));
+    static const AsterReal inv_sqrt2 = AsterReal(1)/std::sqrt(AsterReal(2));
     Dt(0,3) *= inv_sqrt2;
     Dt(1,3) *= inv_sqrt2;
     Dt(2,3) *= inv_sqrt2;
@@ -171,7 +171,7 @@ namespace aster
   AsterTangentOperator::normalize(tfel::math::st2tost2<3u,AsterReal>& Dt)
   {
     using namespace std;
-    static constexpr AsterReal inv_sqrt2 = 1./std::sqrt(AsterReal(2));
+    static const AsterReal inv_sqrt2 = AsterReal(1)/std::sqrt(AsterReal(2));
     Dt(0,3) *= inv_sqrt2;
     Dt(1,3) *= inv_sqrt2;
     Dt(2,3) *= inv_sqrt2;

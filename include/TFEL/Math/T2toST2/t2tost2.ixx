@@ -144,18 +144,21 @@ namespace tfel{
     } // end of t2tost2::dBdF
 
     template<unsigned short N, typename T>
-    t2tost2<N,T>::t2tost2(const T init)
-    {
-      tfel::fsalgo::fill<StensorDimeToSize<N>::value*
-			 TensorDimeToSize<N>::value>::exe(this->v,init);
-    }
+    constexpr t2tost2<N,T>::t2tost2()
+    {} // end of t2tost2<N,T>::t2tost2
+
+    template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr t2tost2<N,T>::t2tost2(const T2& init)
+      : fsarray<StensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>(init)
+    {} // end of t2tost2<N,T>::t2tost2
 
     template<unsigned short N,typename T>
-    t2tost2<N,T>::t2tost2(const t2tost2<N,T>& src){
-      matrix_utilities<StensorDimeToSize<N>::value,
-		       TensorDimeToSize<N>::value,
-		       TensorDimeToSize<N>::value>::copy(src,*this);
-    }
+    constexpr t2tost2<N,T>::t2tost2(const t2tost2<N,T>& src)
+      : T2toST2Concept<t2tost2<N,T>>(src),
+        fsarray<StensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>(src)
+    {}
     
     template<unsigned short N,typename T>
     template<typename T2,typename Expr>
@@ -163,6 +166,14 @@ namespace tfel{
       matrix_utilities<StensorDimeToSize<N>::value,
 		       TensorDimeToSize<N>::value,
 		       TensorDimeToSize<N>::value>::copy(src,*this);
+    }
+
+    template<unsigned short N,typename T>
+    t2tost2<N,T>&
+    t2tost2<N,T>::operator=(const t2tost2<N,T>& src)
+    {
+      fsarray<StensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>::operator=(src);
+      return *this;
     }
 
     template<unsigned short N, typename T>
@@ -174,10 +185,8 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    const T& 
+    constexpr const T& 
     t2tost2<N,T>::operator()(const unsigned short i,const unsigned short j) const{
-      assert(i<StensorDimeToSize<N>::value);
-      assert(j<TensorDimeToSize<N>::value);
       return this->v[TensorDimeToSize<N>::value*i+j];
     }
 

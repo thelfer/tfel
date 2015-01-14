@@ -7,9 +7,6 @@ testdir = $(pkgdatadir)/tests/Utilities
 test_PROGRAMS = gentype          \
 		gentype2         \
 		gentype3         \
-		Name             \
-		Name2            \
-		IntegersSet      \
 		StringAlgorithms
 
 LDADD = -lTFELUtilities -lTFELException  \
@@ -23,7 +20,6 @@ gentype2_SOURCES         = gentype2.cxx
 gentype3_SOURCES         = gentype3.cxx
 Name_SOURCES	         = Name.cxx
 Name2_SOURCES	         = Name2.cxx
-IntegersSet_SOURCES      = IntegersSet.cxx
 StringAlgorithms_SOURCES = StringAlgorithms.cxx
 
 TESTS=$(test_PROGRAMS)

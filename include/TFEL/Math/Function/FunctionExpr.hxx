@@ -14,8 +14,6 @@
 #ifndef _LIB_TFEL_FUNCTIONEXPR_HXX_
 #define _LIB_TFEL_FUNCTIONEXPR_HXX_ 
 
-#include<string>
-
 namespace tfel{
 
   namespace math{

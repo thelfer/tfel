@@ -54,7 +54,6 @@ namespace cyrano
 	     CyranoReal *const STRESS)
     {
       using namespace tfel::meta;
-      using namespace tfel::utilities;
       using namespace tfel::material;
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;
       //! a simple alias
@@ -73,7 +72,6 @@ namespace cyrano
     TFEL_CYRANO_INLINE2 static void
     checkNSTATV(const CyranoInt NSTATV)
     {
-      using namespace tfel::utilities;
       using namespace tfel::material;
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
       typedef Behaviour<H,CyranoReal,false> BV;
@@ -82,7 +80,7 @@ namespace cyrano
       const bool is_defined_        = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((NSTATV_!=NSTATV)&&is_defined_){
-	throwUnMatchedNumberOfStateVariables(Name<BV>::getName(),NSTATV_,NSTATV);
+	throwUnMatchedNumberOfStateVariables(Traits::getName(),NSTATV_,NSTATV);
       }
     } // end of checkNSTATV
 
@@ -102,7 +100,6 @@ namespace cyrano
     {
       using namespace std;
       using namespace tfel::meta;
-      using namespace tfel::utilities;
       using namespace tfel::material;
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
       using tfel::fsalgo::copy;
@@ -162,7 +159,7 @@ namespace cyrano
 	++iter;
       }
       if(iter==iterMax){
-	throwPlaneStressMaximumNumberOfIterationsReachedException(Name<BV>::getName());
+	throwPlaneStressMaximumNumberOfIterationsReachedException(Traits::getName());
       }
       copy<4>::exe(s,STRESS);
       std::copy(v.begin(),v.end(),STATEV);

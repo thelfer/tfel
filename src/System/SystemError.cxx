@@ -19,8 +19,17 @@ namespace tfel
   {
 
     SystemError::SystemError(const std::string& msg_)
-      : tfel::exception::TFELException(msg_)
+      : msg(msg_)
     {} // end of SystemError::SystemError
+
+    const char*
+    SystemError::what() const noexcept
+    {
+      return this->msg.c_str();
+    }
+
+    SystemError::~SystemError() noexcept
+    {} // end of SystemError::~SystemError
 
   } // end of namespace system
 

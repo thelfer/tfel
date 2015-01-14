@@ -12,11 +12,9 @@
 #ifndef _TFEL_MATH_BASICOPERATIONS_LIB_
 #define _TFEL_MATH_BASICOPERATIONS_LIB_ 1
 
-#include <string>
-
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<type_traits>
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsComplex.hxx"
 #include"TFEL/TypeTraits/IsUnaryOperator.hxx"
@@ -117,15 +115,6 @@ namespace tfel{
     struct Complex;
 
     struct TFELMATH_VISIBILITY_EXPORT OpPlus {
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void);
-
       /*
        * Add its two arguments.
        * \see ComputeBinaryResult.
@@ -136,19 +125,9 @@ namespace tfel{
       apply(const T1& a, const T2& b) {
 	return a+b;
       }
-
     };
     
     struct TFELMATH_VISIBILITY_EXPORT OpMinus {
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void);
-
       /*
        * Substract its two arguments.
        * \see ComputeBinaryResult.
@@ -163,15 +142,6 @@ namespace tfel{
     }; // end of OpMinus
 
     struct TFELMATH_VISIBILITY_EXPORT OpMult {
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void);
-
       /*
        * Multiply its two arguments.
        * \see ComputeBinaryResult
@@ -182,19 +152,10 @@ namespace tfel{
       apply(const T1& a, const T2& b) {
 	return a*b;
       }
-
     }; // end of OpMult
 
-    struct TFELMATH_VISIBILITY_EXPORT OpDiv {
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void);
-      
+    struct TFELMATH_VISIBILITY_EXPORT OpDiv
+    {
       /*
        * Divide the two argument
        * \see ComputeBinaryResult.
@@ -205,19 +166,10 @@ namespace tfel{
       apply(const T1& a, const T2& b) {
 	return a/b;
       }
-
     }; // end of OpDiv
 
-    struct TFELMATH_VISIBILITY_EXPORT OpNeg {
-	
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void);
-
+    struct TFELMATH_VISIBILITY_EXPORT OpNeg
+    {
       template<typename T1>
       static TFEL_MATH_INLINE 
       const typename ComputeUnaryResult<T1,OpNeg>::Handle
@@ -228,26 +180,10 @@ namespace tfel{
     };
 
     struct TFELMATH_VISIBILITY_EXPORT OpDotProduct
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void);
-    }; // end of struct OpDotProduct
+    {}; // end of struct OpDotProduct
 
     struct TFELMATH_VISIBILITY_EXPORT OpDiadicProduct
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void);
-    };
+    {};
 
   } // end of namespace math
 

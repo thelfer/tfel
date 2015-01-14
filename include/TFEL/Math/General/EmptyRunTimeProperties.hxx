@@ -28,35 +28,24 @@ namespace tfel{
      */
     struct EmptyRunTimeProperties
     {
-
-      TFEL_MATH_INLINE
-      EmptyRunTimeProperties()
-      {}
-
-      TFEL_MATH_INLINE
-      EmptyRunTimeProperties(const EmptyRunTimeProperties&)
-      {}
-
-      TFEL_MATH_INLINE
+      EmptyRunTimeProperties() = default;
+      EmptyRunTimeProperties(const EmptyRunTimeProperties&) = default;
+      TFEL_MATH_INLINE constexpr
       EmptyRunTimeProperties(const EmptyRunTimeProperties&,
 			     const EmptyRunTimeProperties&)
       {}
-
-      TFEL_MATH_INLINE EmptyRunTimeProperties&
-      operator=(const EmptyRunTimeProperties&)
-      {
-	return *this;
-      }
-
+      EmptyRunTimeProperties(EmptyRunTimeProperties&&) = default;
+      EmptyRunTimeProperties&
+      operator=(const EmptyRunTimeProperties&) = default;
     };
 
-    inline bool 
+    inline constexpr bool 
     operator == (const EmptyRunTimeProperties&,const EmptyRunTimeProperties&)
     {
       return true;
     }
 
-    inline bool 
+    inline constexpr bool 
     operator != (const EmptyRunTimeProperties&,const EmptyRunTimeProperties&)
     {
       return false;

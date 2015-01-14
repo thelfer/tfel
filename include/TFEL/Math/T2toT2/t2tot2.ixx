@@ -181,11 +181,15 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    t2tot2<N,T>::t2tot2(const T init)
-    {
-      tfel::fsalgo::fill<TensorDimeToSize<N>::value*
-			 TensorDimeToSize<N>::value>::exe(this->v,init);
-    }
+    constexpr t2tot2<N,T>::t2tot2()
+    {}
+
+    template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr t2tot2<N,T>::t2tot2(const T2& init)
+      : fsarray<TensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>(init)
+    {}
 
     template<unsigned short N,typename T>
     template<typename T2,typename Expr>
@@ -196,10 +200,17 @@ namespace tfel{
     }
 
     template<unsigned short N,typename T>
-    t2tot2<N,T>::t2tot2(const t2tot2<N,T>& src){
-      matrix_utilities<TensorDimeToSize<N>::value,
-		       TensorDimeToSize<N>::value,
-		       TensorDimeToSize<N>::value>::copy(src,*this);
+    constexpr t2tot2<N,T>::t2tot2(const t2tot2<N,T>& src)
+      : T2toT2Concept<t2tot2<N,T>>(src),
+        fsarray<TensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>(src)
+    {}
+
+    template<unsigned short N,typename T>
+    t2tot2<N,T>&
+    t2tot2<N,T>::operator=(const t2tot2<N,T>& src)
+    {
+      fsarray<TensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>::operator=(src);
+      return *this;
     }
 
     template<unsigned short N, typename T>
@@ -211,10 +222,8 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    const T& 
+    constexpr const T& 
     t2tot2<N,T>::operator()(const unsigned short i,const unsigned short j) const{
-      assert(i<TensorDimeToSize<N>::value);
-      assert(j<TensorDimeToSize<N>::value);
       return this->v[TensorDimeToSize<N>::value*i+j];
     }
 

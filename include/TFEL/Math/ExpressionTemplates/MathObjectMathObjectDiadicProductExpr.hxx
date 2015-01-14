@@ -15,12 +15,11 @@
 #ifndef _LIB_MATHOBJECTMATHOBJECTDIADICPRODUCTEXPR_HXX_
 #define _LIB_MATHOBJECTMATHOBJECTDIADICPRODUCTEXPR_HXX_ 
 
-#include<string>
 #include<cstddef>
 #include<iterator>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"

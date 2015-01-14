@@ -82,6 +82,17 @@ namespace tfel{
        * Scaling factor
        */
       static constexpr bool hasTimeStepScalingFactor = false;
+      /*!
+       * \return the name of the behaviour.
+       * \note This method can't be a static method of the
+       * behaviour. If it were, requesting the name of the behaviour
+       * would instantiate the class even if it is not defined. This
+       * can lead to static assertion failures.
+       */
+      static const char*
+      getName(void){
+	return "";
+      }
     };
 
   } // end of namespace material

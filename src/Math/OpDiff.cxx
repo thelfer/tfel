@@ -18,12 +18,6 @@
 namespace tfel{
 
   namespace math{
-    
-    std::string
-    OpDiff::getName(void)
-    {
-      return "OpDiff";
-    } // end of OpDiff
 
     namespace stdfunctions{
 

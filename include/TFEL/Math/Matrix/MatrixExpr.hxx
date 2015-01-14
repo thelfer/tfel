@@ -12,10 +12,9 @@
 #ifndef _TFEL_MATH_MATRIX_EXPR_LIB_
 #define _TFEL_MATH_MATRIX_EXPR_LIB_ 1
 
-#include <string>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<type_traits>
 #include"TFEL/Metaprogramming/EmptyClass.hxx"
 #include"TFEL/Metaprogramming/HasIterator.hxx"
 #include"TFEL/Metaprogramming/HasConstIterator.hxx"

@@ -30,12 +30,12 @@ namespace aster {
     AsterException(const AsterException&);
 
     const char* 
-    what (void) const throw();
+    what (void) const noexcept;
 
     std::string 
-    getMsg(void) const throw();
+    getMsg(void) const noexcept;
     
-    virtual ~AsterException() throw();
+    virtual ~AsterException() noexcept;
 
   private:
     
@@ -53,7 +53,7 @@ namespace aster {
   {
     AsterInvalidNTENSValue(const unsigned short);
     AsterInvalidNTENSValue(const AsterInvalidNTENSValue&);
-    virtual ~AsterInvalidNTENSValue() throw();
+    virtual ~AsterInvalidNTENSValue() noexcept;
   private:
     AsterInvalidNTENSValue();
     AsterInvalidNTENSValue&
@@ -66,7 +66,7 @@ namespace aster {
     AsterInvalidDimension(const std::string&,
 			 const unsigned short);
     AsterInvalidDimension(const AsterInvalidDimension&);
-    virtual ~AsterInvalidDimension() throw();
+    virtual ~AsterInvalidDimension() noexcept;
   private:
     AsterInvalidDimension();
     AsterInvalidDimension&

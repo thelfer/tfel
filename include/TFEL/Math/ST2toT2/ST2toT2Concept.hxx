@@ -14,17 +14,13 @@
 #ifndef _TFEL_MATH_ST2TOT2_CONCEPT_LIB_
 #define _TFEL_MATH_ST2TOT2_CONCEPT_LIB_ 1
 
-#include <ostream>
-#include <string>
+#include<iosfwd>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
-#include<type_traits>
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include<type_traits>
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Forward/ST2toT2Concept.hxx"
 
@@ -43,16 +39,7 @@ namespace tfel{
      * \brief Helper class to characterise st2tot2.
      */ 
     struct ST2toT2Tag
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string 
-      getName(void);
-    };
+    {};
 
     template<class T>
     struct ST2toT2Concept 
@@ -67,8 +54,12 @@ namespace tfel{
 				      const typename traits::NumType&>::type ValueType;
 
     protected:
-      ~ST2toT2Concept(){};
-      
+      ST2toT2Concept() = default;
+      ST2toT2Concept(ST2toT2Concept&&) = default;
+      ST2toT2Concept(const ST2toT2Concept&) = default;
+      ST2toT2Concept&
+      operator=(const ST2toT2Concept&) = default;
+      ~ST2toT2Concept() = default;
     public:
       
       typedef ST2toT2Tag ConceptTag;

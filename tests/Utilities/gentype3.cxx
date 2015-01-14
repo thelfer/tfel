@@ -16,7 +16,6 @@
 #include<sstream>
 #include<string>
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
 
 #include"TFEL/Tests/TestCase.hxx"

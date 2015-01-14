@@ -21,7 +21,6 @@
 #include<limits>
 #include<string>
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/TypeTraits/Promote.hxx"
 #include"TFEL/Math/General/Complex.hxx"
 

@@ -13,32 +13,26 @@
 #ifndef _LIB_TFEL_TINY_VECTOR_
 #define _LIB_TFEL_TINY_VECTOR_ 1
 
-#include<string>
-#include<ostream>
+#include<iosfwd>
 #include<cstddef>
 #include<iterator>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/RealPartType.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-
 #include"TFEL/FSAlgorithm/copy.hxx"
-
 #include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
-
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Vector/VectorConceptOperations.hxx"
 #include"TFEL/Math/Vector/VectorExpr.hxx"
 #include"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx"
-
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
 
@@ -175,24 +169,23 @@ namespace tfel{
        * This is a VectorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
+      //! \brief default constructor.
+      TFEL_MATH_INLINE explicit constexpr tvector();
+      //! copy constructor
+      TFEL_MATH_INLINE constexpr tvector(const tvector&);
       /*!
-       * Default constructor.
+       * \brief Default Constructor 
+       * \param[in] init: value used to initialise the components of the stensor 
        */
-      tvector();
-      /*!
-       * Constructor from a scalar.
-       * \param const T : initial value.
-       */
-      explicit
-      tvector(const T);
-
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      tvector(const T2&);
       /*!
        * Constructor from a pointer.
        * \param const T* : initial values.
        */
-      explicit
-      tvector(const T*const);
-
+      TFEL_MATH_INLINE explicit tvector(const T*const);
       //! Assignement operator
       /*!
        * \param const VectorExpr<tvector<N,T2>,Expr>&, a vector expression.
@@ -200,8 +193,10 @@ namespace tfel{
        * \rec T2 must be assignable to a T.
        */
       template<typename T2,typename Expr>
-      tvector(const VectorExpr<tvector<N,T2>,Expr>&);
-
+      TFEL_MATH_INLINE tvector(const VectorExpr<tvector<N,T2>,Expr>&);
+      //! assignement operator
+      TFEL_MATH_INLINE tvector&
+      operator=(const tvector&);
       //! using tvector_base::operator=
       using tvector_base<tvector,N,T>::operator=;
       /*!
@@ -210,39 +205,24 @@ namespace tfel{
        * \param const unsigned short, index.
        * \return const T&, a reference to the tvector ith element.
        */
-      TFEL_MATH_INLINE
-      const T& 
-      operator()(const unsigned short) const;
-      
-      /*!
-       * \brief index operator.
-       * \param const unsigned short, index.
-       * \return T&, a reference to the tvector ith element.
-       */
-      TFEL_MATH_INLINE
-      T& operator()(const unsigned short);
+      TFEL_MATH_INLINE constexpr const T& 
+      operator()(const unsigned short) const noexcept;
       /*!
        * \brief index operator.
        * This is a vector concept requirement.
        * \param const unsigned short, index.
        * \return const T&, a reference to the tvector ith element.
        */
-      TFEL_MATH_INLINE
-      const T& 
-      operator[](const unsigned short) const;
-      /*!
-       * \brief index operator.
-       * \param const unsigned short, index.
-       * \return T&, a reference to the tvector ith element.
-       */
-      TFEL_MATH_INLINE
-      T& operator[](const unsigned short);
+      TFEL_MATH_INLINE T& 
+      operator()(const unsigned short) noexcept;
+      // using fsarray assignement operator
+      using fsarray<N,T>::operator[];
       /*!
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
-      TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const;
+      TFEL_MATH_INLINE constexpr RunTimeProperties
+      getRunTimeProperties(void) const noexcept;
       /*!
        * copy the Nth elements following this argument.
        * \param const InputIterator, an iterator to the first element

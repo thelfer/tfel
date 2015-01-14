@@ -43,7 +43,6 @@ namespace tfel
       template<typename Op>
       void
       BinaryOperation<Op>::checkCyclicDependency(std::vector<std::string>& names) const
-	throw(std::runtime_error)
       {
 	using namespace std;
 	using std::vector;

@@ -118,18 +118,21 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    st2tot2<N,T>::st2tot2(const T init)
-    {
-      tfel::fsalgo::fill<TensorDimeToSize<N>::value*
-			 StensorDimeToSize<N>::value>::exe(this->v,init);
-    }
+    constexpr st2tot2<N,T>::st2tot2()
+    {} // end of st2tot2<N,T>::st2tot2
+
+    template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr st2tot2<N,T>::st2tot2(const T2& init)
+      : fsarray<TensorDimeToSize<N>::value*StensorDimeToSize<N>::value,T>(init)
+    {}
 
     template<unsigned short N,typename T>
-    st2tot2<N,T>::st2tot2(const st2tot2<N,T>& src){
-      matrix_utilities<TensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value>::copy(src,*this);
-    }
+    constexpr st2tot2<N,T>::st2tot2(const st2tot2<N,T>& src)
+      : ST2toT2Concept<st2tot2<N,T>>(src),
+	fsarray<TensorDimeToSize<N>::value*StensorDimeToSize<N>::value,T>(src)
+    {}
 
     template<unsigned short N,typename T>
     template<typename T2,typename Expr>
@@ -138,6 +141,14 @@ namespace tfel{
 		       StensorDimeToSize<N>::value,
 		       StensorDimeToSize<N>::value>::copy(src,*this);
     }
+
+    template<unsigned short N,typename T>
+    st2tot2<N,T>&
+    st2tot2<N,T>::operator=(const st2tot2<N,T>& src){
+      fsarray<TensorDimeToSize<N>::value*StensorDimeToSize<N>::value,T>::operator=(src);
+      return *this;
+    }
+
 
     template<unsigned short N, typename T>
     T& 
@@ -148,10 +159,8 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    const T& 
+    constexpr const T& 
     st2tot2<N,T>::operator()(const unsigned short i,const unsigned short j) const{
-      assert(i<TensorDimeToSize<N>::value);
-      assert(j<StensorDimeToSize<N>::value);
       return this->v[StensorDimeToSize<N>::value*i+j];
     }
 

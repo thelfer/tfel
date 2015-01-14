@@ -15,11 +15,9 @@
 #ifndef _LIB_TFEL_TYPELIST_I_
 #define _LIB_TFEL_TYPELIST_I_ 
 
-#include<string>
 #include<type_traits>
 
 #include"TFEL/Metaprogramming/Forward/TypeList.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/IsSubClassOf.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
@@ -392,7 +390,7 @@ namespace tfel{
       //! the result of the algorithm.
       static constexpr size_t value = sizeof(Current) > nextValue ? sizeof(Current) : nextValue;
     }; // end of struct TLMaxSize
-    
+
     //! Partial specialisation to end the recursion.
     /*
      * \return cons size_t value, the result.
@@ -403,6 +401,31 @@ namespace tfel{
       //! the result
       static constexpr size_t value =  1;
     }; // end of struct TLMaxSize
+
+    template<typename List> 
+    class TLMaxAlign
+    {
+      //! a simple alias
+      typedef typename List::Current Current;
+      //! a simple alias
+      typedef typename List::Next Next;
+      //! the result of the algorithm for the next types of the TL.
+      static constexpr size_t nextValue = TLMaxAlign<Next>::value;
+    public:
+      //! the result of the algorithm.
+      static constexpr size_t value = alignof(Current) > nextValue ? alignof(Current) : nextValue;
+    }; // end of struct TLMaxAlign
+    
+    //! Partial specialisation to end the recursion.
+    /*
+     * \return cons size_t value, the result.
+     */
+    template<> 
+    struct TFEL_VISIBILITY_LOCAL TLMaxAlign<TLE>
+    {
+      //! the result
+      static constexpr size_t value = alignof(char);
+    }; // end of struct TLMaxAlign
     
     template<typename List,size_t size>
     class TLComputeAlignBound

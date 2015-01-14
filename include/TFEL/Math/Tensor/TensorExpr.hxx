@@ -12,12 +12,10 @@
 #ifndef _LIB_TFEL_MATH_TENSOR_EXPR_LIB_
 #define _LIB_TFEL_MATH_TENSOR_EXPR_LIB_ 1
 
-#include <string>
 #include <ostream>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
-#include<type_traits>
 #include"TFEL/Metaprogramming/EmptyClass.hxx"
 #include"TFEL/Metaprogramming/HasIterator.hxx"
 #include"TFEL/Metaprogramming/HasConstIterator.hxx"

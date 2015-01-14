@@ -18,28 +18,7 @@ namespace tfel{
 
   namespace exception{
     
-    std::string 
-    TFELException::getName(void){
-      return "TFELException";
-    }
-
-    TFELException::TFELException(const std::string& s)
-      : msg(s)
-    {}
-
-    const char* 
-    TFELException::what(void) const throw()
-    { 
-      return this->msg.c_str(); 
-    }
-
-    const std::string
-    TFELException::getMsg(void) const
-    {
-      return this->msg;
-    }
-    
-    TFELException::~TFELException() throw()
+    TFELException::~TFELException() noexcept
     {}
 
   } // end of namespace exception

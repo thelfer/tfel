@@ -14,8 +14,6 @@
 #ifndef _LIB_TFEL_CST_H_
 #define _LIB_TFEL_CST_H_ 
 
-#include<string>
-
 #include"TFEL/Math/qt.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 

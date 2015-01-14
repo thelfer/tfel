@@ -19,7 +19,6 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/functions.hxx"
 
 
@@ -27,11 +26,8 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::math;
-  using namespace tfel::utilities;
   using tfel::math::stdfunctions::power;
-
   double epsilon = 1.e-10;
-  
   // We choose 1.12 as value so that power of it don't grow too much...
   assert(abs(Power<-49>()(1.12)-std::pow(1.12,-49.))<epsilon);
   assert(abs(Power<-48>()(1.12)-std::pow(1.12,-48.))<epsilon);
@@ -633,6 +629,5 @@ int main(void)
   assert(abs(power<47,7>(1.12)-std::pow(1.12,47./7.))<epsilon);
   assert(abs(power<48,7>(1.12)-std::pow(1.12,48./7.))<epsilon);
   assert(abs(power<49,7>(1.12)-std::pow(1.12,49./7.))<epsilon);
-
   return EXIT_SUCCESS;
 }

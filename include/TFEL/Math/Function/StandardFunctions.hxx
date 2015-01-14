@@ -15,10 +15,9 @@
 #define _LIB_TFEL_STANDARDFUNCTION_HXX_ 
 
 #include<cmath>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
-#include<type_traits>
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 #include"TFEL/Math/Forward/qt.hxx"
@@ -33,17 +32,9 @@
       typedef Z DerivateFunc;                                                             \
     };                                                                                    \
                                                                                           \
-    struct TFELMATH_VISIBILITY_EXPORT Fct##X                                                  \
+    struct TFELMATH_VISIBILITY_EXPORT Fct##X                                              \
       : public FunctionConcept<Fct##X>                                                    \
     {					                                                  \
-							                                  \
-      /*!						                                  \
-       * \brief  Return the name of the class.		                                  \
-       * \param  void.					                                  \
-       * \return std::string, the name of the class.	                                  \
-       * \see    Name.					                                  \
-       */						                                  \
-      static std::string getName(void);                                                   \
 							                                  \
       float operator()(const float) const;                                                \
       qt<NoUnit,float> operator()(const qt<NoUnit,float>) const;                          \
@@ -104,14 +95,6 @@
     struct TFELMATH_VISIBILITY_EXPORT Fct##X                                                  \
       : public FunctionConcept<Fct##X>                                                    \
     {            					                                  \
-							                                  \
-      /*!						                                  \
-       * \brief  Return the name of the class.		                                  \
-       * \param  void.					                                  \
-       * \return std::string, the name of the class.	                                  \
-       * \see    Name.					                                  \
-       */						                                  \
-      static std::string getName(void);                                                   \
 							                                  \
       float operator()(const float) const;					          \
       qt<NoUnit,float> operator()(const qt<NoUnit,float>) const;                          \

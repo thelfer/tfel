@@ -18,13 +18,12 @@
 
 #include<cmath>
 #include<limits>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/TypeList.hxx"
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
-#include<type_traits>
-#include"TFEL/Utilities/RecursiveUnion.hxx"
 #include"TFEL/Utilities/GenTypeCastError.hxx"
 
 namespace tfel{
@@ -50,50 +49,6 @@ namespace tfel{
 
       //! a simple alias
       typedef tfel::meta::TLE TLEnd;
-
-      //! a usefull list of types for computing alignements
-      typedef tfel::meta::GenerateTypeList<char,short int,int,long int,float,double,long double,
-					   char*,short int*,int*,long int*,float*,double*,
-					   long double*,void*,TLEnd (*)(TLEnd),
-					   TLEnd* TLEnd::*,TLEnd (TLEnd::*)(TLEnd),
-					   Structify<char>,Structify<short int>,
-					   Structify<int>,Structify<long int>,
-					   Structify<float>,Structify<double>,
-					   Structify<long double>,Structify<char*>,
-					   Structify<short int*>,Structify<int*>,
-					   Structify<long int*>,Structify<float*>,
-					   Structify<double*>,Structify<long double*>,
-					   Structify<void*>,Structify<TLEnd (*)(TLEnd)>,
-					   Structify<TLEnd* TLEnd::*>,
-					   Structify<TLEnd (TLEnd::*)(TLEnd)> >::type 
-                                           TypesOfAllAlignments;
-      
-      /*
-       * \class  AlignedPOD
-       * \author Helfer Thomas
-       * \date   20 Apr. 2007
-       * \param  TList, a list of types.
-       * \return type, a properly aligned type.
-       * a class which aims to provide the correct alignement for a
-       * memory zone which may contain any of the types in the
-       * typelist given in parameter.
-       * \see    http://www.ddj.com/dept/cpp/184403828 for details.
-       * \author Helfer Thomas.
-       * \date   20 Apr. 2007.
-       */
-      template<typename TList>
-      class AlignedPOD
-      {
-	//! maximum of all the sizes of the list.
-	static constexpr size_t size = tfel::meta::TLMaxSize<TList>::value;
-	//! a simple alias.
-	typedef tfel::meta::TLComputeAlignBound<TypesOfAllAlignments,size> CABounds;
-	//! a list of types whose size may serve to compute the alignement.
-	typedef typename CABounds::type AlignedTypes;
-      public:
-	//! the result.
-	typedef RecursiveUnion<AlignedTypes> type;
-      };
 
       //! a simple trait class for some minimalistic optimisation.
       /*
@@ -347,8 +302,8 @@ namespace tfel{
 	using namespace tfel::meta;
 	if(this->index!=TLSize<List>::value){
 	  // create a new object by copy
-	  void  * tmp       = reinterpret_cast<void*>(&(this->container.buffer[0]));
-	  const void * tmp2 = reinterpret_cast<const void*>(&(src.container.buffer[0]));
+	  void  * tmp       = reinterpret_cast<void*>(&buffer);
+	  const void * tmp2 = reinterpret_cast<const void*>(&(src.buffer));
 	  (*(GenTypeBase::methods.copyMethod[this->index]))(tmp,tmp2);
 	}
       }
@@ -367,14 +322,14 @@ namespace tfel{
 	    if(src.index!=TLSize<List>::value){
 	      // the two GenTypes hold the same objects
 	      // we then use the assignement operator.
-	      void  * tmp       = reinterpret_cast<void*>(&(this->container.buffer[0]));
-	      const void * tmp2 = reinterpret_cast<const void*>(&(src.container.buffer[0]));
+	      void  * tmp       = reinterpret_cast<void*>(&buffer);
+	      const void * tmp2 = reinterpret_cast<const void*>(&(src.buffer));
 	      (*(GenTypeBase::methods.assignMethod[this->index]))(tmp,tmp2);
 	    } else {
 	      // src is not initialized,
 	      // we then destroy holded object
 	      if(this->index!=TLSize<List>::value){
-		void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
+		void * tmp = reinterpret_cast<void*>(&buffer);
 		(*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
 	      }
 	      this->index = TLSize<List>::value;
@@ -384,13 +339,13 @@ namespace tfel{
 	    // we first destroy the previous object and create a new
 	    // one by copy.
 	    if(this->index!=TLSize<List>::value){
-	      void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	      void * tmp = reinterpret_cast<void*>(&buffer);
 	      (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
 	    }
 	    this->index = src.index;
 	    if(this->index!=TLSize<List>::value){
-	      void  * tmp       = reinterpret_cast<void*>(&(this->container.buffer[0]));
-	      const void * tmp2 = reinterpret_cast<const void*>(&(src.container.buffer[0]));
+	      void  * tmp       = reinterpret_cast<void*>(&buffer);
+	      const void * tmp2 = reinterpret_cast<const void*>(&(src.buffer));
 	      (*(GenTypeBase::methods.copyMethod[this->index]))(tmp,tmp2);
 	    }
 	  }
@@ -425,17 +380,17 @@ namespace tfel{
 	if(this->index==TLFindEltPos<T1,List>::value){
 	  // a silly trick to avoir a gcc warning
 	  union{
-	    unsigned char *c;
+	    storage_t *c;
 	    T1 *ptr;
 	  } ptr;
 	  // The GenType already holds an object of type T1
-	  ptr.c = this->container.buffer;
+	  ptr.c = &(this->buffer);
 	  T1& tmp  = *(ptr.ptr);
 	  tmp = src;
 	} else {
 	  // We create a new object of type T1 by calling the copy constructor
 	  this->template set_uninitialised<T1>();
-	  void * p = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	  void * p = reinterpret_cast<void*>(&(this->buffer));
 	  // the magic of placement new...
 	  new (p) T1(src);
 	}
@@ -482,13 +437,13 @@ namespace tfel{
 	using namespace tfel::utilities::internals;
 	// a silly trick to avoir a gcc warning
 	union{
-	  const unsigned char *c;
+	  const storage_t *c;
 	  const T1 *ptr;
 	} ptr;
 	if(this->index!=TLFindEltPos<T1,List>::value){
 	  throw(GenTypeCastError());
 	}
-	ptr.c = this->container.buffer;
+	ptr.c = &(this->buffer);
 	return *(ptr.ptr);
       }
       //! get the value contained in the GenType.
@@ -509,13 +464,13 @@ namespace tfel{
 	using namespace tfel::utilities::internals;
 	// a silly trick to avoir a gcc warning
 	union{
-	  unsigned char *c;
+	  storage_t *c;
 	  T1 *ptr;
 	} ptr;
 	if(this->index!=TLFindEltPos<T1,List>::value){
 	  throw(GenTypeCastError());
 	}
-	ptr.c = this->container.buffer;
+	ptr.c = &(this->buffer);
 	return *(ptr.ptr);
       }
       /*!
@@ -533,7 +488,7 @@ namespace tfel{
 	using namespace tfel::meta;
 	if(this->index!=TLSize<List>::value){
 	  //This calls the destructor of the type hold
-	  void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	  void * tmp = reinterpret_cast<void*>(&buffer);
 	  (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
 	}
       }
@@ -544,10 +499,6 @@ namespace tfel{
     protected:
       //! RunTimeMethods used by the GenType.
       static const RunTimeMethods methods;
-      //! maximum size of the types hold by the GenType.
-      static constexpr size_t size = tfel::meta::TLMaxSize<List>::value;
-      //! a type properly aligned.
-      typedef typename tfel::utilities::internals::AlignedPOD<List>::type Align;
       //! memory where objects are holded
       //! set the value of the GenType.
       /*
@@ -564,21 +515,16 @@ namespace tfel{
 	using namespace tfel::meta;
 	if(this->index!=TLSize<List>::value){
 	  // destroy the current object
-	  void * tmp = reinterpret_cast<void*>(&(this->container.buffer[0]));
+	  void * tmp = reinterpret_cast<void*>(&buffer);
 	  (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
 	}
 	this->index=TLFindEltPos<T1,List>::value;
       }
-      union 
-      {
-	//! the buffer where objects are hold.
-	unsigned char buffer[size];
-	//! Align is here to ensure correct alignement of the memory.
-	//  see for http://www.ddj.com/dept/cpp/184403821 and 
-	//  http://www.ddj.com/dept/cpp/184403828 
-	//  for more details...
-	Align dummy;
-      } container;
+      //! container type
+      typedef typename std::aligned_storage<tfel::meta::TLMaxSize<List>::value,
+					    tfel::meta::TLMaxAlign<List>::value>::type storage_t;
+      //! the buffer where objects are hold.
+      storage_t buffer;
       //! index to the current type hold by the GenType.
       unsigned short index;
     private:

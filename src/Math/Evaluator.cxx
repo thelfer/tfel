@@ -210,55 +210,38 @@ namespace tfel
       switch (nbr){
       case 0:
 	return shared_ptr<Expr>(new Number(1.));
-	break;
       case 1:
 	return EvaluatorPowerFunctionGenerator<1>(args[0]);
-	break;
       case 2:
 	return EvaluatorPowerFunctionGenerator<2>(args[0]);
-	break;
       case 3:
 	return EvaluatorPowerFunctionGenerator<3>(args[0]);
-	break;
       case 4:
 	return EvaluatorPowerFunctionGenerator<4>(args[0]);
-	break;
       case 5:
 	return EvaluatorPowerFunctionGenerator<5>(args[0]);
-	break;
       case 6:
 	return EvaluatorPowerFunctionGenerator<6>(args[0]);
-	break;
       case 7:
 	return EvaluatorPowerFunctionGenerator<7>(args[0]);
-	break;
       case 8:
 	return EvaluatorPowerFunctionGenerator<8>(args[0]);
-	break;
       case 9:
 	return EvaluatorPowerFunctionGenerator<9>(args[0]);
-	break;
       case 10:
 	return EvaluatorPowerFunctionGenerator<10>(args[0]);
-	break;
       case 11:
 	return EvaluatorPowerFunctionGenerator<11>(args[0]);
-	break;
       case 12:
 	return EvaluatorPowerFunctionGenerator<12>(args[0]);
-	break;
       case 13:
 	return EvaluatorPowerFunctionGenerator<13>(args[0]);
-	break;
       case 14:
 	return EvaluatorPowerFunctionGenerator<14>(args[0]);
-	break;
       case 15:
 	return EvaluatorPowerFunctionGenerator<15>(args[0]);
-	break;
       case 16:
 	return EvaluatorPowerFunctionGenerator<16>(args[0]);
-	break;
       default:
 	string msg("EvaluatorTreatPower : only exponent below 16 are supported");
 	throw(runtime_error(msg));
@@ -547,7 +530,6 @@ namespace tfel
 
     void
     Evaluator::checkCyclicDependency(void) const
-      throw(std::runtime_error)
     {
       using namespace std;
       vector<string> names;
@@ -1233,7 +1215,6 @@ namespace tfel
 
     Evaluator::Evaluator(const Evaluator& src)
       : EvaluatorBase(src),
-	ExternalFunction(src),
 	variables(src.variables),
 	positions(src.positions),
 	expr(static_cast<tfel::math::parser::Expr*>(0)),

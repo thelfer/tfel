@@ -104,7 +104,7 @@ namespace tfel{
 	    ++(iter);
 	  }
 	  if(iter==iter_max){
-	    throw(MathDivergenceException("Maximum number of iterations reached"));
+	    throw(MaximumNumberOfIterationsReachedException());
 	  }
 	}
       }
@@ -175,14 +175,14 @@ namespace tfel{
 	    convergence = true;
 	  } else {
 	    if(std::abs(J)<100*std::numeric_limits<T>::min()){
-	      throw(MathDivergenceException("Derivative is too small"));
+	      throw(SingularJacobianException());
 	    }
 	    f/=J;
 	    x-=f;
 	    ++(iter);
 	  }
 	  if(iter==iter_max){
-	    throw(MathDivergenceException("Maximum number of iterations reached"));
+	    throw(MaximumNumberOfIterationsReachedException());
 	  }
 	}
       }

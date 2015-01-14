@@ -73,8 +73,7 @@ namespace tfel
 	double
 	getValue(void) const;
 	void
-	checkCyclicDependency(std::vector<std::string>&) const
-	  throw(std::runtime_error);
+        checkCyclicDependency(std::vector<std::string>&) const;
 	std::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const;
  	std::shared_ptr<Expr>

@@ -14,24 +14,20 @@
 #ifndef _LIB_TFEL_MATH_ST2TOT2_H_
 #define _LIB_TFEL_MATH_ST2TOT2_H_ 
 
-#include<string>
 #include<cstddef>
 #include<cassert>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-
 #include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
-
 #include"TFEL/Math/Forward/st2tot2.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
@@ -133,24 +129,27 @@ namespace tfel{
       /*!
        * \brief Default Constructor 
        */
-      TFEL_MATH_INLINE 
-      explicit st2tot2()
-      {};
+      TFEL_MATH_INLINE explicit constexpr st2tot2();
       /*!
-       * \brief Default Constructor 
-       * \param T, value used to initialise the components of the st2tot2 
+       * \brief default Constructor 
+       * \param[in] init: value used to initialise the components of the st2tot2 
        */
-      TFEL_MATH_INLINE 
-      explicit st2tot2(const T);
+	template<typename T2,
+		 typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE explicit constexpr
+      st2tot2(const T2&);
       /*!
        * \brief Copy Constructor
        */
-      TFEL_MATH_INLINE 
+      TFEL_MATH_INLINE constexpr
       st2tot2(const st2tot2<N,T>& src);
       // Copy Constructor
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE 
-      st2tot2(const ST2toT2Expr<st2tot2<N,T2>,Expr>& src);
+      st2tot2(const ST2toT2Expr<st2tot2<N,T2>,Expr>&x);
+      //! assignement operator
+      TFEL_MATH_INLINE st2tot2&
+      operator=(const st2tot2<N,T>&);
       /*!
        * Import values
        */
@@ -165,7 +164,8 @@ namespace tfel{
       using st2tot2_base<st2tot2>::operator=;
 
       //! access operator
-      TFEL_MATH_INLINE const T& operator()(const unsigned short,const unsigned short) const;      
+      TFEL_MATH_INLINE constexpr const T&
+      operator()(const unsigned short,const unsigned short) const;      
       //! access operator
       TFEL_MATH_INLINE       T& operator()(const unsigned short,const unsigned short);
       /*!

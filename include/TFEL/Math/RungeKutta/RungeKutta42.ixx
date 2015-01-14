@@ -99,7 +99,7 @@ namespace tfel
       VariableType k4;
       this->dt=std::min(this->dt,this->tf-this->ti);
       if(this->dt<0){
-	//	throw(MathRunTimeException("Invalid time increment"));
+	throw(InvalidTimeStepException());
       }
       while(t<this->tf-0.5*(this->dt)){
 	// compute k1

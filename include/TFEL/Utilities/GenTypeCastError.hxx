@@ -32,10 +32,12 @@ namespace tfel
     struct TFELUTILITIES_VISIBILITY_EXPORT GenTypeCastError
       : public std::runtime_error
     {
-      /*!
-       * Default consutructor
-       */
+      //! Default consutructor
       GenTypeCastError();
+      GenTypeCastError(const GenTypeCastError&) = default;
+      GenTypeCastError(GenTypeCastError&&) = default;
+      //! destructor
+      virtual ~GenTypeCastError() noexcept;
     }; // end of struct GenTypeCastErrro
 
   } // end of namespace utilities

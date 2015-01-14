@@ -55,28 +55,28 @@ namespace std{
     static constexpr bool tinyness_before          = numeric_limits<T>::tinyness_before;
     static constexpr float_round_style round_style = numeric_limits<T>::round_style;
 
-    static tfel::math::qt<unit,T> min() throw() { 
+    static tfel::math::qt<unit,T> min() noexcept { 
       return tfel::math::qt<unit,T>(numeric_limits<T>::min()); 
     }
-    static tfel::math::qt<unit,T> max() throw() { 
+    static tfel::math::qt<unit,T> max() noexcept { 
       return tfel::math::qt<unit,T>(numeric_limits<T>::max()); 
     }
-    static tfel::math::qt<unit,T> epsilon() throw() {
+    static tfel::math::qt<unit,T> epsilon() noexcept {
       return tfel::math::qt<unit,T>(numeric_limits<T>::epsilon());
     }
-    static tfel::math::qt<unit,T> round_error() throw() {
+    static tfel::math::qt<unit,T> round_error() noexcept {
       return tfel::math::qt<unit,T>(numeric_limits<T>::round_error());
     }
-    static tfel::math::qt<unit,T> infinity() throw()  {
+    static tfel::math::qt<unit,T> infinity() noexcept  {
       return tfel::math::qt<unit,T>(numeric_limits<T>::infinity());
     }
-    static tfel::math::qt<unit,T> quiet_NaN() throw() {
+    static tfel::math::qt<unit,T> quiet_NaN() noexcept {
       return tfel::math::qt<unit,T>(numeric_limits<T>::quiet_NaN());
     }
-    static tfel::math::qt<unit,T> signaling_NaN() throw() {
+    static tfel::math::qt<unit,T> signaling_NaN() noexcept {
       return tfel::math::qt<unit,T>(numeric_limits<T>::signaling_NaN());
     }
-    static tfel::math::qt<unit,T> denorm_min() throw() {
+    static tfel::math::qt<unit,T> denorm_min() noexcept {
       return tfel::math::qt<unit,T>(numeric_limits<T>::denorm_min());
     }
     

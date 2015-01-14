@@ -43,7 +43,7 @@ namespace tfel
       isOperator(void) const =0;
       virtual std::string
       getClassName() const = 0;
-      virtual ~TExpr(){};
+      virtual ~TExpr();
     }; // end of Evaluator::TExpr
   
     struct Evaluator::TNegation
@@ -58,7 +58,7 @@ namespace tfel
       getClassName(void) const;
       void
       reduce(void);
-      ~TNegation();
+      virtual ~TNegation();
     private:
       std::shared_ptr<Evaluator::TExpr> expr;
     }; // end of struct Evaluator::TNegation
@@ -95,7 +95,7 @@ namespace tfel
       reduce(void);
       std::shared_ptr<tfel::math::parser::Expr>
       analyse(void);
-      ~TBinaryOperation();
+      virtual ~TBinaryOperation();
     private:
       std::shared_ptr<Evaluator::TExpr> a;
       const std::shared_ptr<TOperator>op;
@@ -169,7 +169,7 @@ namespace tfel
       reduce(void);
       std::shared_ptr<tfel::math::parser::Expr>
       analyse(void);
-      ~TConditionalExpr();
+      virtual ~TConditionalExpr();
     private:
       std::shared_ptr<Evaluator::TLogicalExpr> c;
       std::shared_ptr<Evaluator::TExpr> a;
@@ -207,7 +207,7 @@ namespace tfel
       analyse(void);
       std::string
       getClassName(void) const;
-      ~TGroup();
+      virtual ~TGroup();
     private:
       void
       reduce(const std::string&);
@@ -228,7 +228,7 @@ namespace tfel
       reduce(void);
       std::string
       getClassName(void) const;
-      ~TFunction();
+      virtual ~TFunction();
     private:
       Evaluator::FunctionGenerator f;
       std::shared_ptr<Evaluator::TExpr>arg;
@@ -248,7 +248,7 @@ namespace tfel
       reduce(void);
       std::string
       getClassName(void) const;
-      ~TBinaryFunction();
+      virtual ~TBinaryFunction();
     private:
       Evaluator::BinaryFunctionGenerator f;
       std::shared_ptr<Evaluator::TExpr> arg1;
@@ -269,7 +269,7 @@ namespace tfel
       reduce(void);
       std::string
       getClassName(void) const;
-      ~TExternalOperator();
+      virtual ~TExternalOperator();
     private:
       Evaluator::ExternalFunctionGenerator f;
       std::vector<std::string> param;

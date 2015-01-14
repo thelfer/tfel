@@ -16,7 +16,7 @@
 #include <vector>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Exception/TFELException.hxx"
+#include"TFEL/Math/MathException.hxx"
 
 namespace tfel
 {
@@ -29,12 +29,13 @@ namespace tfel
      * calling setCollocationPoints.
      */
     struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUninitialised
-      : public tfel::exception::TFELException
+      : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
-      CubicSplineUninitialised();
+      CubicSplineUninitialised() = default;
+      CubicSplineUninitialised(const CubicSplineUninitialised&) = default;
+      CubicSplineUninitialised(CubicSplineUninitialised&&) = default;
+      virtual const char* what() const noexcept final;
+      virtual ~CubicSplineUninitialised() noexcept;
     }; // end of struct CubicSplineUninitialised
 
     /*!
@@ -42,24 +43,26 @@ namespace tfel
      * CubicSpline constructor has a size smaller than 3.
      */
     struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidAbscissaVectorSize
-      : public tfel::exception::TFELException
+      : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
-      CubicSplineInvalidAbscissaVectorSize();
+      CubicSplineInvalidAbscissaVectorSize() = default;
+      CubicSplineInvalidAbscissaVectorSize(const CubicSplineInvalidAbscissaVectorSize&) = default;
+      CubicSplineInvalidAbscissaVectorSize(CubicSplineInvalidAbscissaVectorSize&&) = default;
+      virtual const char* what() const noexcept final;
+      virtual ~CubicSplineInvalidAbscissaVectorSize() noexcept;
     }; // end of struct CubicSplineInvalidAbscissaVectorSize
 
     /*!
      * Exception thrown when the linear system solved leads to a null pivot
      */
     struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineNullPivot
-      : public tfel::exception::TFELException
+      : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
-      CubicSplineNullPivot();
+      CubicSplineNullPivot() = default;
+      CubicSplineNullPivot(const CubicSplineNullPivot&) = default;
+      CubicSplineNullPivot(CubicSplineNullPivot&&) = default;
+      virtual const char* what() const noexcept final;
+      virtual ~CubicSplineNullPivot() noexcept;
     }; // end of struct CubicSplineInvalidAbscissaVectorSize
 
     /*!
@@ -67,12 +70,13 @@ namespace tfel
      * CubicSpline constructor has a size smaller than 3.
      */
     struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidOrdinateVectorSize
-      : public tfel::exception::TFELException
+      : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
-      CubicSplineInvalidOrdinateVectorSize();
+      CubicSplineInvalidOrdinateVectorSize() = default;
+      CubicSplineInvalidOrdinateVectorSize(const CubicSplineInvalidOrdinateVectorSize&) = default;
+      CubicSplineInvalidOrdinateVectorSize(CubicSplineInvalidOrdinateVectorSize&&) = default;
+      virtual const char* what() const noexcept final;
+      virtual ~CubicSplineInvalidOrdinateVectorSize() noexcept;
     }; // end of struct CubicSplineInvalidOrdinateVectorSize
 
     /*!
@@ -80,24 +84,26 @@ namespace tfel
      * don't have the same size
      */
     struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidInputs
-      : public tfel::exception::TFELException
+      : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
-      CubicSplineInvalidInputs();
+      CubicSplineInvalidInputs() = default;
+      CubicSplineInvalidInputs(const CubicSplineInvalidInputs&) = default;
+      CubicSplineInvalidInputs(CubicSplineInvalidInputs&&) = default;
+      virtual const char* what() const noexcept final;
+      virtual ~CubicSplineInvalidInputs() noexcept;
     }; // end of struct CubicSplineInvalidInputs
 
     /*!
      * Exception thrown when the abscissa vector is not ordered
      */
     struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUnorderedAbscissaVector
-      : public tfel::exception::TFELException
+      : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
-      CubicSplineUnorderedAbscissaVector();
+      CubicSplineUnorderedAbscissaVector() = default;
+      CubicSplineUnorderedAbscissaVector(const CubicSplineUnorderedAbscissaVector&) = default;
+      CubicSplineUnorderedAbscissaVector(CubicSplineUnorderedAbscissaVector&&) = default;
+      virtual const char* what() const noexcept final;
+      virtual ~CubicSplineUnorderedAbscissaVector() noexcept;
     }; // end of struct CubicSplineUnorderedAbscissaVector
 
     /*!

@@ -79,7 +79,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/qt.hxx                                                                     \
 			TFEL/Math/Forward/vector.hxx                                                                 \
 			TFEL/Math/Forward/matrix.hxx                                                                 \
-			TFEL/Math/Forward/lambda.hxx                                                                 \
 			TFEL/Math/Forward/Complex.hxx                                                                \
 			TFEL/Math/Forward/tvector.hxx                                                                \
 			TFEL/Math/Forward/tmatrix.hxx                                                                \
@@ -90,7 +89,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/t2tost2.hxx                                                                \
 			TFEL/Math/Forward/st2tot2.hxx                                                                \
 			TFEL/Math/Forward/Function.hxx                                                               \
-			TFEL/Math/Forward/LambdaConcept.hxx                                                          \
 			TFEL/Math/Forward/VectorConcept.hxx                                                          \
 			TFEL/Math/Forward/MatrixConcept.hxx                                                          \
 			TFEL/Math/Forward/StensorConcept.hxx                                                         \
@@ -422,7 +420,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Metaprogramming/Implements.hxx	                                                     \
 			TFEL/Metaprogramming/TypeList.hxx	                                                     \
 			TFEL/Metaprogramming/TypeList.ixx                                                            \
-			TFEL/Metaprogramming/IntToType.hxx                                                           \
 			TFEL/Metaprogramming/IsSubClassOf.hxx	                                                     \
 			TFEL/Metaprogramming/GenerateTypeList.hxx                                                    \
 			TFEL/Metaprogramming/InvalidType.hxx	                                                     \
@@ -467,16 +464,13 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 		 	TFEL/Utilities/Token.hxx                                                                     \
 			TFEL/Utilities/ToString.hxx		                                                     \
 			TFEL/Utilities/ToString.ixx		                                                     \
-			TFEL/Utilities/Info.hxx		                                                             \
 			TFEL/Utilities/TerminalColors.hxx	                                                     \
-			TFEL/Utilities/IntegersSet.hxx	                                                             \
 			TFEL/Utilities/Name.hxx		                                                             \
 			TFEL/Utilities/Name.ixx			                                                     \
 			TFEL/Utilities/GenTypeCastError.hxx	                                                     \
 			TFEL/Utilities/GenTypeBase.hxx	                                                             \
 			TFEL/Utilities/GenTypeBase.ixx	                                                             \
 			TFEL/Utilities/GenTypeSpecialisation.ixx                                                     \
-			TFEL/Utilities/RecursiveUnion.hxx		                                             \
 			TFEL/Utilities/TextData.hxx                                                                  \
 			TFEL/Utilities/StringAlgorithms.hxx                                                          \
 			TFEL/Tests/MultipleTestOutputs.hxx					                     \

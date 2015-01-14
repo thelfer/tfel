@@ -17,12 +17,10 @@
 #define _LIB_TFEL_VECTOR_HXX_ 
 
 #include<vector>
-#include<string>
-
 #include<type_traits>
+
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
-
 #include"TFEL/Math/Forward/vector.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Vector/VectorConceptOperations.hxx"
@@ -125,29 +123,23 @@ namespace tfel{
        */
       typedef size_type RunTimeProperties;
 
-      /*
-       * Default constructor
-       */
-      vector();
-
-      /*
-       * Copy constructor
-       */ 
-      vector(const vector&);
-
+      //! default constructor
+      vector() = default;
+      //! copy constructor
+      vector(const vector&) = default;
+      //! move constructor
+      vector(vector&&) = default;
       /*
        * Constructor
        * \param size_type size, size of vector
        */
       vector(const size_type);
-
       /*
        * Constructor
        * \param size_type size, size of vector
        * \param T value, initial value 
        */
       vector(const size_type, const T&);
-
       /*
        * Constructor from a sequence
        * \param InputIterator, type of the iterator used
@@ -156,58 +148,39 @@ namespace tfel{
        */
       template<typename InputIterator>
       vector(const InputIterator,const InputIterator);
-
-      /*
-       * get the first element of the vector
-       */
       using Container::front;
-
-      /*
-       * get the last element of the vector
-       */
       using Container::back;
-
-      /*
-       * insert element in the vector
-       */
       using Container::insert;
-
-      /*
-       * clear the vector
-       */
       using Container::clear;
-
-      /*
-       * Resize the vector
-       * \param size_type, new size of the vector 
-       * Elements added have their default values
-       */
       using Container::resize;
-
-      /*
-       * Assignement operator.
-       * \param  const vector&, the vector to be copied.
-       * \return vector&, a reference to itself.
-       */
-      vector& 
+      using Container::size;
+      using Container::begin;
+      using Container::end;
+      using Container::cbegin;
+      using Container::cend;
+      using Container::rbegin;
+      using Container::rend;
+      using Container::push_back;
+      using Container::emplace_back;
+      using Container::empty;
+      using std::vector<T>::operator[];
+      //! assignement operator
+      TFEL_MATH_INLINE vector& 
       operator=(const vector&);
-
-      /*
+      /*!
        * Assignement operator.
        * \param  const vector&, the vector to be copied.
        * \return vector&, a reference to itself.
        */
       vector& 
       operator+=(const vector&);
-
-      /*
+      /*!
        * Assignement operator.
        * \param  const vector&, the vector to be copied.
        * \return vector&, a reference to itself.
        */
       vector& 
       operator-=(const vector&);
-
       /*
        * Assignement operator
        * \param const VectorExpr<vector<T2>,Expr>&, a vector
@@ -221,7 +194,6 @@ namespace tfel{
 	vector<T>&
       >::type
       operator=(const VectorExpr<vector<T2>,Expr>&);
-
       /*
        * Assignement operator
        * \param const VectorExpr<vector<T2>,Expr>&, a vector
@@ -235,7 +207,6 @@ namespace tfel{
 	vector<T>&
       >::type
       operator+=(const VectorExpr<vector<T2>,Expr>&);
-
       /*
        * Assignement operator
        * \param const VectorExpr<vector<T2>,Expr>&, a vector
@@ -249,28 +220,21 @@ namespace tfel{
 	vector<T>&
       >::type
       operator-=(const VectorExpr<vector<T2>,Expr>&);
-
       /*
        * index operator
        * \param size_type, index
        * \return T&, a reference to the vector ith element.
        */
-      TFEL_MATH_INLINE
-      T&
-      operator()(const size_type);
-
+      TFEL_MATH_INLINE T&
+      operator()(const size_type) noexcept;
       /*
        * index operator
        * this is a vector concept requirement
        * \param size_type, index
        * \return const T&, a reference to the vector ith element
        */
-      TFEL_MATH_INLINE
-      const T&
-      operator()(const size_type) const;
-
-      using std::vector<T>::operator[];
-
+      TFEL_MATH_INLINE constexpr const T&
+      operator()(const size_type) const noexcept;
       /*
        * Return the runtime property of the vector
        * \return const RunTimeProperties, the runtime properties of the
@@ -280,64 +244,12 @@ namespace tfel{
       TFEL_MATH_INLINE2
       const RunTimeProperties
       getRunTimeProperties(void) const;
-
-      /*
-       * get vector's size
-       */
-      using Container::size;
       
       /*
        * swap two vectors
        * \param vector&, the other vector
        */
       void swap(vector&);
-
-      /*
-       * return an iterator to the first element of the vector
-       * (provided for stl compatibility)
-       * \return iterator, an iterator to the first element
-       */
-      using Container::begin;
-      
-      /*
-       * return an iterator after the last element of the vector
-       * (provided for stl compatibility)
-       * \return iterator, an iterator after the last element
-       */
-      using Container::end;
-
-      /*
-       * return an reverse iterator to the last element of the vector
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator to the last element
-       */
-    using Container::rbegin;
-      
-      /*
-       * return an  reverse iterator before the first element of the vector
-       * (provided for stl compatibility)
-       * \return reverse_iterator, a reverse iterator before the first element
-       */
-      using Container::rend;
-      
-      /*!
-       *  \brief  add data to the end of the %vector.
-       *  \param  x : data to be added.
-       *
-       *  This is a typical stack operation.  The function creates an
-       *  element at the end of the %vector and assigns the given data
-       *  to it.  Due to the nature of a %vector this operation can be
-       *  done in constant time if the %vector has preallocated space
-       *  available.
-       */
-      using Container::push_back;
-      
-      /*!
-       *  returns true if the %vector is empty.  (Thus begin() would
-       *  equal end().)
-       */
-      using Container::empty;
-      
       /*
        * copy all the elements between two iterators at the beginning
        * of the vector.

@@ -18,17 +18,41 @@ namespace tfel{
 
   namespace math{
 
-    MathException::MathException(const std::string& s)
-      :  tfel::exception::TFELException(s)
+    MathException::~MathException() noexcept
     {}
 
-    MathRunTimeException::MathRunTimeException(const std::string& s)
-      :  MathException(s)
+    MathRunTimeException::~MathRunTimeException() noexcept
     {}
 
-    MathDivergenceException::MathDivergenceException(const std::string& s)
-      :  MathException(s)
+    const char*
+    InvalidTimeStepException::what() const noexcept
+    {
+      return "invalid time step";
+    } // end of InvalidTimeStepException::what
+
+    InvalidTimeStepException::~InvalidTimeStepException() noexcept
+    {} // end of InvalidTimeStepException::InvalidTimeStepException
+
+    MathDivergenceException::~MathDivergenceException() noexcept
     {}
+
+    const char*
+    MaximumNumberOfIterationsReachedException::what() const noexcept
+    {
+      return "maximum number of iterations reached";
+    } // end of MaximumNumberOfIterationsReachedException::what
+
+    MaximumNumberOfIterationsReachedException::~MaximumNumberOfIterationsReachedException() noexcept
+    {} // end of MaximumNumberOfIterationsReachedException::MaximumNumberOfIterationsReachedException
+
+    const char*
+    SingularJacobianException::what() const noexcept
+    {
+      return "jacobian is not invertible";
+    } // end of SingularJacobianException::what
+
+    SingularJacobianException::~SingularJacobianException() noexcept
+    {} // end of SingularJacobianException::SingularJacobianException
 
   } // end of namespace math
 

@@ -14,7 +14,6 @@
 #ifndef _LIB_TFEL_TENSOR_H_
 #define _LIB_TFEL_TENSOR_H_ 
 
-#include<string>
 #include<cassert>
 #include<cstddef>
 
@@ -148,16 +147,16 @@ namespace tfel{
        * \brief Default Constructor 
        * \warning enabled only if storage is static
        */
-      TFEL_MATH_INLINE explicit
-      tensor()
-      {};
+      TFEL_MATH_INLINE explicit constexpr tensor() = default;
       /*!
        * \brief Default Constructor 
        * \param T, value used to initialise the components of the tensor 
        * \warning enabled only if storage is static
        */
-      TFEL_MATH_INLINE explicit
-      tensor(const T);
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      tensor(const T2&);
       /*!
        * \brief Default Constructor.
        * \param init, pointer to an array used to initialise the
@@ -170,15 +169,8 @@ namespace tfel{
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
 	tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(init,reinterpret_cast<base*>(this->v));
       }
-
-      /*!
-       * \brief Copy Constructor
-       */
-      TFEL_MATH_INLINE tensor(const tensor<N,T>& src)
-      {
-	tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(src.v,this->v);
-      }
-
+      //! \brief copy constructor
+      TFEL_MATH_INLINE constexpr tensor(const tensor<N,T>&) = default;
       // Copy Constructor
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE tensor(const TensorExpr<tensor<N,T2>,Expr>& src)
@@ -186,7 +178,9 @@ namespace tfel{
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T2,T>::cond));
 	vectorToTab<TensorDimeToSize<N>::value>::exe(src,this->v);
       }
-
+      //! assignement operator
+      TFEL_MATH_INLINE tensor&
+      operator=(const tensor<N,T>&) = default;
       /*!
        * Write to Tab
        */
@@ -217,29 +211,23 @@ namespace tfel{
        */
       TFEL_MATH_INLINE static const tensor<N,T>& Id(void);
 
-      TFEL_MATH_INLINE const T&
+      using fsarray<TensorDimeToSize<N>::value,T>::operator[];
+
+      TFEL_MATH_INLINE constexpr const T&
       operator()(const unsigned short) const;      
       TFEL_MATH_INLINE       T&
       operator()(const unsigned short);
-
       TFEL_MATH_INLINE T
       operator()(const unsigned short,
 		 const unsigned short) const;      
-      
       TFEL_MATH_INLINE       T&
       operator()(const unsigned short,
 		 const unsigned short);
-
-      TFEL_MATH_INLINE const T&
-      operator[](const unsigned short) const;      
-      TFEL_MATH_INLINE       T&
-      operator[](const unsigned short);
-
       /*!
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
-      TFEL_MATH_INLINE RunTimeProperties
+      constexpr TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const;
 
       template<typename InputIterator>

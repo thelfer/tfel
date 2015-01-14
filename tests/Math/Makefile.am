@@ -30,6 +30,7 @@ test_PROGRAMS = hill                                     \
 		krigeage2D                               \
 		newton_raphson                           \
 		solve                                    \
+		fsarray                                  \
 		tensor                                   \
 		tensor2                                  \
 		tensor3                                  \
@@ -111,6 +112,7 @@ tinymatrixsolve_SOURCES       = tinymatrixsolve.cxx
 tinymatrixsolve2_SOURCES      = tinymatrixsolve2.cxx
 newton_raphson_SOURCES        = newton_raphson.cxx       
 solve_SOURCES                 = solve.cxx                
+fsarray_SOURCES               = fsarray.cxx
 tensor_SOURCES                = tensor.cxx
 tensor2_SOURCES               = tensor2.cxx
 tensor3_SOURCES               = tensor3.cxx

@@ -15,13 +15,10 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<cstdlib>
 #include<cmath>
-#include<cassert>
-
 #include<limits>
-
-#include"TFEL/Utilities/Info.hxx"
+#include<cstdlib>
+#include<cassert>
 
 #include"TFEL/Math/General/floating_point_exceptions.hxx"
 #include"TFEL/Math/qt.hxx"
@@ -32,10 +29,9 @@
 template<typename T>
 void test(void)
 {
+  using namespace std;
   using namespace tfel::math;
   using namespace tfel::math::internals;
-  using namespace std;
-  
   T vp1;
   T vp2;
   T vp3;

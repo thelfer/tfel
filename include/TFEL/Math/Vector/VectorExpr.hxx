@@ -12,12 +12,7 @@
 #ifndef _MATH_VECTOR_EXPR_LIB_
 #define _MATH_VECTOR_EXPR_LIB_ 1
 
-#include <string>
-#include <ostream>
-
 #include"TFEL/Config/TFELConfig.hxx"
-
-#include<type_traits>
 #include"TFEL/Metaprogramming/EmptyClass.hxx"
 #include"TFEL/Metaprogramming/HasIterator.hxx"
 #include"TFEL/Metaprogramming/HasConstIterator.hxx"
@@ -63,7 +58,8 @@ namespace tfel{
       {}
 
       TFEL_MATH_INLINE VectorExpr(const VectorExpr& src)
-	: Expr(src)	
+        : VectorConcept<VectorExpr>(src),
+	  Expr(src)	
       {}
 
       explicit TFEL_MATH_INLINE VectorExpr(typename Expr::first_arg& a_)

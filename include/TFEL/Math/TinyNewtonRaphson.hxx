@@ -15,12 +15,8 @@
 #ifndef _LIB_TFEL_TINYNEWTONRAPHSON_H_
 #define _LIB_TFEL_TINYNEWTONRAPHSON_H_ 
 
-#include<string>
-
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
-
 #include"TFEL/Math/MathException.hxx"
 #include"TFEL/Math/TinyMatrixSolve.hxx"
 #include"TFEL/Math/tvector.hxx"

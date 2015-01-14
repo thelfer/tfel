@@ -15,9 +15,7 @@
 #define _LIB_TFEL_MATH_QREXCEPTION_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Exception/TFELException.hxx"
-
-#include<string>
+#include"TFEL/Math/MathException.hxx"
  
 namespace tfel
 {
@@ -30,18 +28,10 @@ namespace tfel
      * the QRDecomp class
      */
     struct TFELMATH_VISIBILITY_EXPORT QRException
-      : public tfel::exception::TFELException
+      : public MathRunTimeException
     {
-      /*!
-       * destructor
-       */
-      virtual ~QRException() throw();
-    protected:
-      /*!
-       * constructor
-       * \param[in] m : exception message
-       */
-      QRException(const char* const);
+      //! destructor
+      virtual ~QRException() noexcept;
     }; // end of struct QRException
 
     /*!
@@ -51,14 +41,10 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT QRUnmatchedSize
       : public QRException
     {
-      /*!
-       * constructor
-       */
-      QRUnmatchedSize();
-      /*!
-       * destructor
-       */
-      virtual ~QRUnmatchedSize() throw();
+      //! \return a string describing the error
+      virtual const char* what() const noexcept final;
+      //! destructor
+      virtual ~QRUnmatchedSize() noexcept;
     }; // end of struct QRException
 
     /*!
@@ -68,14 +54,10 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT QRInvalidMatrixSize
       : public QRException
     {
-      /*!
-       * constructor
-       */
-      QRInvalidMatrixSize();
-      /*!
-       * destructor
-       */
-      virtual ~QRInvalidMatrixSize() throw();
+      //! \return a string describing the error
+      virtual const char* what() const noexcept final;
+      //! destructor
+      virtual ~QRInvalidMatrixSize() noexcept;
     }; // end of struct QRException
 
     /*!
@@ -85,14 +67,10 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT QRNullPivot
       : public QRException
     {
-      /*!
-       * constructor
-       */
-      QRNullPivot();
-      /*!
-       * destructor
-       */
-      virtual ~QRNullPivot() throw();
+      //! \return a string describing the error
+      virtual const char* what() const noexcept final;
+      //! destructor
+      virtual ~QRNullPivot() noexcept;
     }; // end of struct QRException
     
   } // end of namespace math

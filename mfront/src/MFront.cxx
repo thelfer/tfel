@@ -632,8 +632,8 @@ namespace mfront{
       msg += "no parser name given";
       throw(runtime_error(msg));
     }
-    auto_ptr<AbstractDSL> p;
-    p = auto_ptr<AbstractDSL>(f.createNewParser(o));
+    unique_ptr<AbstractDSL> p;
+    p = unique_ptr<AbstractDSL>(f.createNewParser(o));
     vector<string> k;
     vector<string>::const_iterator pk;
     p->getKeywordsList(k);
@@ -690,8 +690,8 @@ namespace mfront{
       msg += "ill-formed argument, expected 'parser:@keyword'";
       throw(runtime_error(msg));
     }
-    auto_ptr<AbstractDSL> p;
-    p = auto_ptr<AbstractDSL>(f.createNewParser(pn));
+    unique_ptr<AbstractDSL> p;
+    p = unique_ptr<AbstractDSL>(f.createNewParser(pn));
     vector<string> keys;
     p->getKeywordsList(keys);
     if(find(keys.begin(),keys.end(),k)==keys.end()){
@@ -745,7 +745,7 @@ namespace mfront{
     CxxTokenizer file;
     string library;
     string parserName;
-    auto_ptr<AbstractDSL> parser;
+    unique_ptr<AbstractDSL> parser;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     CxxTokenizer::TokensContainer::const_iterator pt;
@@ -825,7 +825,7 @@ namespace mfront{
 	  ExternalLibraryManager& lm = ExternalLibraryManager::getExternalLibraryManager();
 	  lm.loadLibrary(library);
 	}
-	parser = auto_ptr<AbstractDSL>(parserFactory.createNewParser(parserName));
+	parser = unique_ptr<AbstractDSL>(parserFactory.createNewParser(parserName));
       } 
       catch(runtime_error& r){
 	ostringstream msg;
@@ -841,7 +841,7 @@ namespace mfront{
 	ostream& log = getLogStream();
 	log << "MFront::treatFile : no parser specified, using default" << endl;
       }
-      parser = auto_ptr<AbstractDSL>(parserFactory.createNewParser());
+      parser = unique_ptr<AbstractDSL>(parserFactory.createNewParser());
     }
     if(!this->interfaces.empty()){
       parser->setInterfaces(this->interfaces);

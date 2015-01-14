@@ -16,7 +16,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Material/MaterialException.hxx"
 
 #include"MFront/UMAT/UMAT.hxx"
@@ -65,7 +64,6 @@ namespace umat{
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::material;
-      using namespace tfel::utilities;
       typedef ModellingHypothesis MH;
       if(*NDI==2){
 	UMATInterface::template callBehaviour<MH::TRIDIMENSIONAL>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
@@ -109,37 +107,38 @@ namespace umat{
 		  UMATReal *const STRESS,UMATInt  *const KINC,
 		  const StressFreeExpansionHandler& sfeh)
     {
-      using namespace tfel::utilities;
+      using tfel::material::MechanicalBehaviourTraits;
       typedef Behaviour<H,UMATReal,false> BV;
-      typedef UMATTraits<BV> Traits;
+      typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+      typedef UMATTraits<BV> UMATTraits;
       try {
-	UMATInterfaceDispatch<Traits::btype,H,
+	UMATInterfaceDispatch<UMATTraits::btype,H,
 			      Behaviour>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 					      TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 					      STATEV,NSTATV,STRESS,sfeh);
       }
       catch(const UMATIntegrationFailed& e){
-	UMATInterfaceExceptions::treatUmatException(Name<BV>::getName(),e);
+	UMATInterfaceExceptions::treatUmatException(Traits::getName(),e);
 	*KINC = -1;
       }
       catch(const UMATException& e){
-	UMATInterfaceExceptions::treatUmatException(Name<BV>::getName(),e);
+	UMATInterfaceExceptions::treatUmatException(Traits::getName(),e);
 	*KINC = -2;
       }
       catch(const tfel::material::MaterialException& e){
-	UMATInterfaceExceptions::treatMaterialException(Name<BV>::getName(),e);
+	UMATInterfaceExceptions::treatMaterialException(Traits::getName(),e);
 	*KINC = -3;
       }
       catch(const tfel::exception::TFELException& e){
-	UMATInterfaceExceptions::treatTFELException(Name<BV>::getName(),e);
+	UMATInterfaceExceptions::treatTFELException(Traits::getName(),e);
 	*KINC = -4;
       }
       catch(const std::exception& e){
-	UMATInterfaceExceptions::treatStandardException(Name<BV>::getName(),e);
+	UMATInterfaceExceptions::treatStandardException(Traits::getName(),e);
 	*KINC = -5;
       }
       catch(...){
-	UMATInterfaceExceptions::treatUnknownException(Name<BV>::getName());
+	UMATInterfaceExceptions::treatUnknownException(Traits::getName());
 	*KINC = -6;
       }
     } // end of UMATInterface::callBehaviour

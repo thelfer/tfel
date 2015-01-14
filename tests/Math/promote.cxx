@@ -93,19 +93,14 @@ std::string Test(const tfel::math::Complex<long double>&){
 struct A{};
 
 int main(void){
-
   using namespace std;
   using namespace tfel::typetraits;
   using namespace tfel::typetraits::internals;
-  using namespace tfel::utilities;
-
   Promote<int,double>::type a;
   Promote<int,unsigned int>::type b;
-
   Promote<int,float>::type c;
   Promote<unsigned int,float>::type d;
   Promote<double,float>::type e;
-
   Promote<short,short>::type f;
   Promote<short,unsigned short>::type g;
   Promote<double,unsigned short>::type h;
@@ -116,13 +111,10 @@ int main(void){
   Promote<double,tfel::math::Complex<double> >::type m;
   Promote<unsigned int,long unsigned int>::type n;
   Promote<int,long int>::type o;
-
   Promote<unsigned short,unsigned short>::type p;
   const unsigned short q = 2u;
   const unsigned short r = 3u;
-
   /*  Beginning of the tests */
-
   ASSERT(Test(a)=="double");
   ASSERT((Test(b)=="float")||(Test(b)=="long int"));
   ASSERT(Test(c)=="float");
@@ -141,7 +133,6 @@ int main(void){
   ASSERT(Test(p)=="unsigned short");
   ASSERT(Test(p)=="unsigned short");
   ASSERT(Test(q*r)=="int");
-
   return EXIT_SUCCESS;
 
 }

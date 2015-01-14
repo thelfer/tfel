@@ -14,8 +14,6 @@
 #ifndef _LIB_TFEL_COMPUTEOBJECTTAG_I_
 #define _LIB_TFEL_COMPUTEOBJECTTAG_I_ 
 
-#include <string>
-
 #include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
@@ -72,32 +70,10 @@ namespace tfel{
     } // end of namespace internals
 
     struct ScalarTag
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void){
-	return std::string("ScalarTag");
-      } // end of getName()
-
-    }; // end of ScalarTag
+    {}; // end of ScalarTag
 
     struct UnaryOperatorTag
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void){
-	return std::string("UnaryOperatorTag");
-      } // end of getName()
-
-    }; // end of UnaryOperatorTag
+    {}; // end of UnaryOperatorTag
 
     /*!                                       
      * \class   ComputeObjectTag_

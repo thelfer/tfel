@@ -48,7 +48,8 @@ namespace tfel
       typedef typename Expr::difference_type difference_type;
 
       TFEL_MATH_INLINE MatrixExpr(const MatrixExpr& src)
-	: Expr(src)	
+        : MatrixConcept<MatrixExpr>(src),
+	  Expr(src)	
       {}
 
       explicit TFEL_MATH_INLINE MatrixExpr(typename Expr::first_arg& a_)

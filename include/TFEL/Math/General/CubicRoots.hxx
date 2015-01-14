@@ -19,13 +19,9 @@
 #include <limits>
 #include <algorithm>
 #include <iostream>
-
-#include"TFEL/Config/TFELConfig.hxx"
-
-#include"TFEL/Utilities/Info.hxx"
-
 #include<type_traits>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/IsReal.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 
@@ -117,13 +113,12 @@ namespace tfel{
 	static constexpr T C_m1_27    = T(-1)/T(27);
 	static constexpr T C_2_27     = T(2)/T(27);
 	static constexpr T C_27_2     = T(27)/T(2);
-	static constexpr T C_3SQRT3_2 = std::sqrt(T(3))*T(3)/T(2);
-	static constexpr T C_SQRT3_3  = std::sqrt(T(3))*C_1_3;
+	static const T C_3SQRT3_2 = std::sqrt(T(3))*T(3)/T(2);
+	static const T C_SQRT3_3  = std::sqrt(T(3))*C_1_3;
       
 	const T prec = 100*std::numeric_limits<T>::min();
       
 	if(std::abs(a3)<=prec){
-	  TFEL_UTILITIES_INFO("coefficient a3 is too small");
 	  return 0u;
 	}
       

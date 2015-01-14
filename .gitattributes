@@ -953,7 +953,6 @@ include/TFEL/Math/Forward/Complex.hxx -text
 include/TFEL/Math/Forward/ExpressionTemplates.hxx -text
 include/TFEL/Math/Forward/Function.hxx -text
 include/TFEL/Math/Forward/FunctionConcept.hxx -text
-include/TFEL/Math/Forward/LambdaConcept.hxx -text
 include/TFEL/Math/Forward/MatrixConcept.hxx -text
 include/TFEL/Math/Forward/ST2toST2Concept.hxx -text
 include/TFEL/Math/Forward/ST2toT2Concept.hxx -text
@@ -963,7 +962,6 @@ include/TFEL/Math/Forward/T2toT2Concept.hxx -text
 include/TFEL/Math/Forward/TensorConcept.hxx -text
 include/TFEL/Math/Forward/TinyNewtonRaphson.hxx -text
 include/TFEL/Math/Forward/VectorConcept.hxx -text
-include/TFEL/Math/Forward/lambda.hxx -text
 include/TFEL/Math/Forward/matrix.hxx -text
 include/TFEL/Math/Forward/qt.hxx -text
 include/TFEL/Math/Forward/st2tost2.hxx -text
@@ -1264,7 +1262,6 @@ include/TFEL/Math/Vector/vector.ixx -text
 include/TFEL/Math/Vector/vectorResultType.hxx -text
 include/TFEL/Math/fsarray.hxx -text
 include/TFEL/Math/functions.hxx -text
-include/TFEL/Math/lambda.hxx -text
 include/TFEL/Math/math.doxygen -text
 include/TFEL/Math/matrix.hxx -text
 include/TFEL/Math/power.hxx -text
@@ -1287,7 +1284,6 @@ include/TFEL/Metaprogramming/HasIterator.hxx -text
 include/TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx -text
 include/TFEL/Metaprogramming/HasRandomAccessIterator.hxx -text
 include/TFEL/Metaprogramming/Implements.hxx -text
-include/TFEL/Metaprogramming/IntToType.hxx -text
 include/TFEL/Metaprogramming/InvalidType.hxx -text
 include/TFEL/Metaprogramming/IsSubClassOf.hxx -text
 include/TFEL/Metaprogramming/StaticAssert.hxx -text
@@ -1351,7 +1347,6 @@ include/TFEL/TypeTraits/Promote/Promote.ixx -text
 include/TFEL/TypeTraits/RealPartType.hxx -text
 include/TFEL/Utilities/ArgumentParserBase.hxx -text
 include/TFEL/Utilities/ArgumentParserBase.ixx -text
-include/TFEL/Utilities/ContainerRebind.hxx -text
 include/TFEL/Utilities/CxxKeywords.hxx -text
 include/TFEL/Utilities/CxxTokenizer.hxx -text
 include/TFEL/Utilities/CxxTokenizer.ixx -text
@@ -1359,11 +1354,6 @@ include/TFEL/Utilities/GenTypeBase.hxx -text
 include/TFEL/Utilities/GenTypeBase.ixx -text
 include/TFEL/Utilities/GenTypeCastError.hxx -text
 include/TFEL/Utilities/GenTypeSpecialisation.ixx -text
-include/TFEL/Utilities/Info.hxx -text
-include/TFEL/Utilities/IntegersSet.hxx -text
-include/TFEL/Utilities/Name.hxx -text
-include/TFEL/Utilities/Name.ixx -text
-include/TFEL/Utilities/RecursiveUnion.hxx -text
 include/TFEL/Utilities/StringAlgorithms.hxx -text
 include/TFEL/Utilities/TerminalColors.hxx -text
 include/TFEL/Utilities/TextData.hxx -text
@@ -2494,7 +2484,6 @@ src/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 src/Material/Makefile.am -text
 src/Material/MaterialException.cxx -text
 src/Material/ModellingHypothesis.cxx -text
-src/Math/BasicOperations.cxx -text
 src/Math/BinaryFunction.cxx -text
 src/Math/BinaryOperator.cxx -text
 src/Math/CMakeLists.txt -text
@@ -2517,7 +2506,6 @@ src/Math/FactorizedKriging1D1D.cxx -text
 src/Math/FactorizedKriging1D2D.cxx -text
 src/Math/FactorizedKriging1D3D.cxx -text
 src/Math/Function.cxx -text
-src/Math/FunctionTag.cxx -text
 src/Math/Id.cxx -text
 src/Math/IntegerEvaluator.cxx -text
 src/Math/IntegerEvaluatorTExpr.cxx -text
@@ -2533,19 +2521,14 @@ src/Math/LevenbergMarquardtExternalFunctionWrapper.cxx -text
 src/Math/LogicalExpr.cxx -text
 src/Math/Makefile.am -text
 src/Math/MathException.cxx -text
-src/Math/MatrixTag.cxx -text
 src/Math/Negation.cxx -text
 src/Math/Number.cxx -text
 src/Math/OpDiff.cxx -text
 src/Math/QRException.cxx -text
-src/Math/ST2toST2Tag.cxx -text
 src/Math/Sqrt.cxx -text
 src/Math/StandardFunctions.cxx -text
-src/Math/StensorTag.cxx -text
 src/Math/TensorConcept.cxx -text
-src/Math/TensorTag.cxx -text
 src/Math/Variable.cxx -text
-src/Math/VectorTag.cxx -text
 src/Math/power.cxx -text
 src/System/BinaryRead.cxx -text
 src/System/BinaryWrite.cxx -text
@@ -2587,7 +2570,6 @@ src/Utilities/CxxKeywords.cxx -text
 src/Utilities/CxxTokenizer.cxx -text
 src/Utilities/GenTypeCastError.cxx -text
 src/Utilities/Makefile.am -text
-src/Utilities/Name.cxx -text
 src/Utilities/StringAlgorithms.cxx -text
 src/Utilities/TerminalColors.cxx -text
 src/Utilities/TextData.cxx -text
@@ -2622,7 +2604,6 @@ tests/Math/ExpressionTemplates/test_expr10.cxx -text
 tests/Math/ExpressionTemplates/test_expr11.cxx -text
 tests/Math/ExpressionTemplates/test_expr12.cxx -text
 tests/Math/ExpressionTemplates/test_expr2.cxx -text
-tests/Math/ExpressionTemplates/test_expr3.cxx -text
 tests/Math/ExpressionTemplates/test_expr4.cxx -text
 tests/Math/ExpressionTemplates/test_expr5.cxx -text
 tests/Math/ExpressionTemplates/test_expr6.cxx -text
@@ -2660,6 +2641,7 @@ tests/Math/broyden2.cxx -text
 tests/Math/complex_operations.cxx -text
 tests/Math/conj.cxx -text
 tests/Math/discretization1D.cxx -text
+tests/Math/fsarray.cxx -text
 tests/Math/hill.cxx -text
 tests/Math/include/CubicRoots-header.hxx -text
 tests/Math/include/Makefile.am -text
@@ -2756,7 +2738,6 @@ tests/Math/vector1.cxx -text
 tests/MetaProgramming/CMakeLists.txt -text
 tests/MetaProgramming/HasConstIterator.cxx -text
 tests/MetaProgramming/Makefile.am -text
-tests/MetaProgramming/typelist.cxx -text
 tests/MetaProgramming/typelist2.cxx -text
 tests/System/CMakeLists.txt -text
 tests/System/CastemParameterTest.cxx -text
@@ -2778,10 +2759,7 @@ tests/Tests/testproxy.cxx -text
 tests/Tests/testproxy2.cxx -text
 tests/Tests/testsuite.cxx -text
 tests/Utilities/CMakeLists.txt -text
-tests/Utilities/IntegersSet.cxx -text
 tests/Utilities/Makefile.am -text
-tests/Utilities/Name.cxx -text
-tests/Utilities/Name2.cxx -text
 tests/Utilities/StringAlgorithms.cxx -text
 tests/Utilities/gentype.cxx -text
 tests/Utilities/gentype2.cxx -text

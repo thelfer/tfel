@@ -157,7 +157,7 @@ namespace mfront
     using namespace aster;
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
-    static constexpr real sqrt2 = sqrt(real(2));
+    static const real sqrt2 = sqrt(real(2));
     AsterInt ntens;
     AsterInt dimension;
     AsterInt nprops = static_cast<AsterInt>(mp.size());

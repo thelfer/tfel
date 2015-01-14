@@ -15,7 +15,6 @@ endmacro(tests_expr)
 
 tests_expr(test_expr1)
 tests_expr(test_expr2)
-tests_expr(test_expr3)
 tests_expr(test_expr4)
 tests_expr(test_expr5)
 tests_expr(test_expr6)

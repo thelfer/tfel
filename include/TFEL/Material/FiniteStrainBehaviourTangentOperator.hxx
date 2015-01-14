@@ -98,6 +98,11 @@ namespace tfel
       FiniteStrainBehaviourTangentOperator(tfel::math::st2tost2<N,StressType>* const D)
 	: GenType(D)
       {}
+      FiniteStrainBehaviourTangentOperator&
+      operator=(const FiniteStrainBehaviourTangentOperator& src){
+	GenType::operator=(src);
+	return *this;
+      }
       /*!
        * \param const T1&, the value affected to the GenType.
        * \pre   T1 must be a type that the GenType can hold.

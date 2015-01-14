@@ -10,5 +10,4 @@ macro(tests_metaprogramming test_arg)
 endmacro(tests_metaprogramming)
 
 tests_metaprogramming(HasConstIterator)
-tests_metaprogramming(typelist)
 tests_metaprogramming(typelist2)

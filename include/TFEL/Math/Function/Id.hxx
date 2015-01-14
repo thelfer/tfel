@@ -14,8 +14,8 @@
 #ifndef _LIB_TFEL_ID_H_
 #define _LIB_TFEL_ID_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
 #include<type_traits>
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/Math/General/UnaryResultType.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
@@ -40,15 +40,6 @@ namespace tfel{
     struct TFELMATH_VISIBILITY_EXPORT FctId
       : public FunctionConcept<FctId>
     {
-    
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void);
-
       template<typename T>
       typename std::enable_if<                                                      
 	tfel::typetraits::IsScalar<T>::cond,

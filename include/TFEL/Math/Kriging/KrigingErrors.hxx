@@ -28,18 +28,24 @@ namespace tfel
       : public std::runtime_error
     {
       KrigingErrorInvalidLength();
+      KrigingErrorInvalidLength(const KrigingErrorInvalidLength&) = default;
+      virtual ~KrigingErrorInvalidLength() noexcept;
     }; // end of struct KrigingErrorInvalidLength
 
     struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorNoDataSpecified
       : public std::runtime_error
     {
       KrigingErrorNoDataSpecified();
+      KrigingErrorNoDataSpecified(const KrigingErrorNoDataSpecified&) = default;
+      virtual ~KrigingErrorNoDataSpecified() noexcept;
     }; // end of struct KrigingErrorNoDataSpecified
 
     struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorInsufficientData
       : public std::runtime_error
     {
       KrigingErrorInsufficientData();
+      KrigingErrorInsufficientData(const KrigingErrorInsufficientData&) = default;
+      virtual ~KrigingErrorInsufficientData() noexcept;
     }; // end of struct KrigingErrorInsufficientData
 
   } // end of namespace math

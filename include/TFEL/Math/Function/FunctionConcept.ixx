@@ -25,15 +25,6 @@ namespace tfel{
 
     struct OpDiff
     {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string 
-      getName(void);
-
       template<typename F>
       static constexpr typename 
       std::enable_if<

@@ -18,15 +18,12 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"TFEL/Utilities/Name.hxx"
-
 #include"TFEL/Math/tvector.hxx"
 
 int main(void)
 {
   using namespace std;
   using namespace tfel::math;
-  using namespace tfel::utilities;
 
   tvector<3,tvector<2,double> > v1(tvector<2,double>(1.4));
   tvector<3,tvector<2,double> > v2(tvector<2,double>(3.));

@@ -22,24 +22,13 @@ namespace umat
     : msg(s)
   {} // end of UMATException::UMATException
     
-  UMATException::UMATException(const UMATException& e)
-    : std::exception(),
-      msg(e.msg)
-  {} // end of UMATException::UMATException
-
   const char* 
-  UMATException::what (void) const throw()
+  UMATException::what (void) const noexcept
   { 
     return msg.c_str(); 
   } // end of UMATException::what
 
-  std::string
-  UMATException::getMsg(void) const throw()
-  {
-    return msg;
-  } // end of UMATException::getMsg
-  
-  UMATException::~UMATException() throw()
+  UMATException::~UMATException() noexcept
   {} // end of UMATException::~UMATException
 
   UMATIntegrationFailed::UMATIntegrationFailed()
@@ -54,7 +43,7 @@ namespace umat
     : UMATException(e)
   {} // end of UMATIntegrationFailed::UMATIntegrationFailed
 
-  UMATIntegrationFailed::~UMATIntegrationFailed() throw()
+  UMATIntegrationFailed::~UMATIntegrationFailed() noexcept
   {} // end of UMATIntegrationFailed::~UMATIntegrationFailed()
 
   UMATInvalidNTENSValue::UMATInvalidNTENSValue(const unsigned short N)
@@ -65,7 +54,7 @@ namespace umat
     : UMATException(e)
   {} // end of UMATInvalidNTENSValue::UMATInvalidNTENSValue
 
-  UMATInvalidNTENSValue::~UMATInvalidNTENSValue() throw()
+  UMATInvalidNTENSValue::~UMATInvalidNTENSValue() noexcept
   {} // end of UMATInvalidNTENSValue::~UMATInvalidNTENSValue()
 
   UMATInvalidDimension::UMATInvalidDimension(const std::string& b,
@@ -77,7 +66,7 @@ namespace umat
     : UMATException(e)
   {} // end of UMATInvalidDimension::UMATInvalidDimension
 
-  UMATInvalidDimension::~UMATInvalidDimension() throw()
+  UMATInvalidDimension::~UMATInvalidDimension() noexcept
   {} // end of UMATInvalidDimension::~UMATInvalidDimension()
 
 } // end of namespace umat

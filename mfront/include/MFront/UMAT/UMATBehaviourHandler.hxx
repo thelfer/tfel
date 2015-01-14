@@ -18,7 +18,6 @@
 #error "This header shall not be called directly"
 #endif
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"MFront/UMAT/UMATTangentOperator.hxx"
@@ -106,10 +105,11 @@ namespace umat
       {
 	using std::abs;
 	using std::numeric_limits;
-	using tfel::utilities::Name;
+	using tfel::material::MechanicalBehaviourTraits;
 	typedef Behaviour<H,UMATReal,false> BV;
+	typedef MechanicalBehaviourTraits<BV> Traits;
 	if(abs(a)>numeric_limits<UMATReal>::min()){
-	  UMATInterfaceExceptions::throwThermalExpansionCoefficientShallBeNull(Name<BV>::getName());
+	  UMATInterfaceExceptions::throwThermalExpansionCoefficientShallBeNull(Traits::getName());
 	}
       }
     };
@@ -161,9 +161,10 @@ namespace umat
 	       const UMATReal *const DSTRAN,
 	       const StressFreeExpansionHandler& sfeh)
       {
-	using tfel::utilities::Name;
 	using tfel::fsalgo::copy;
 	using std::pair;
+	using tfel::material::MechanicalBehaviourTraits;
+	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
 	UMATReal dv0[UMATTraits<BV>::DrivingVariableSize];
 	UMATReal dv1[UMATTraits<BV>::DrivingVariableSize];
@@ -171,7 +172,7 @@ namespace umat
 	copy<UMATTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
 	if(sfeh==0){
-	  throwUnsupportedStressFreeExpansionException(Name<BV>::getName());
+	  throwUnsupportedStressFreeExpansionException(Traits::getName());
 	}
 	// creating a fake behaviour to compoute the stress-free expansion
 	// this is not really elegant by can't do better
@@ -199,9 +200,10 @@ namespace umat
 	       const UMATReal *const DSTRAN,
 	       const StressFreeExpansionHandler& sfeh)
       {
-	using tfel::utilities::Name;
 	using tfel::fsalgo::copy;
 	using std::pair;
+	using tfel::material::MechanicalBehaviourTraits;
+	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
 	UMATReal dv0[UMATTraits<BV>::DrivingVariableSize];
 	UMATReal dv1[UMATTraits<BV>::DrivingVariableSize];
@@ -209,7 +211,7 @@ namespace umat
 	copy<UMATTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
 	if(sfeh==0){
-	  throwUnsupportedStressFreeExpansionException(Name<BV>::getName());
+	  throwUnsupportedStressFreeExpansionException(Traits::getName());
 	}
 	pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	b.computeStressFreeExpansion(s);
@@ -346,8 +348,8 @@ namespace umat
       {
 	using namespace std;
 	using namespace tfel::material;
-	using namespace tfel::utilities;
-	throw(UMATInvalidDimension(Name<Behaviour<H,UMATReal,false> >::getName(),
+	typedef MechanicalBehaviourTraits<Behaviour<H,UMATReal,false>> Traits;
+	throw(UMATInvalidDimension(Traits::getName(),
 				   ModellingHypothesisToSpaceDimension<H>::value));
 	return;
       } // end of Error::exe
@@ -391,7 +393,6 @@ namespace umat
 	    UMATReal *const stress,
 	    UMATReal *const statev)
       {
-	using namespace tfel::utilities;
 	if(*ddsoe<-0.5){
 	  this->computePredictionOperator(ddsoe);
 	} else {
@@ -404,8 +405,6 @@ namespace umat
       void
       computePredictionOperator(UMATReal *const DDSOE)
       {
-
-	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename std::conditional<
@@ -431,7 +430,7 @@ namespace umat
 	} else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
 	  smtype = BV::ELASTIC;
 	} else {
-	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
+	  throwInvalidDDSOEException(Traits::getName(),*DDSOE);
 	}
 	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
@@ -447,7 +446,7 @@ namespace umat
 	const typename BV::IntegrationResult r =
 	  PredictionOperatorComputer::exe(behaviour,smflag,smtype);
 	if(r==BV::FAILURE){
-	  throwPredictionComputationFailedException(Name<BV>::getName());
+	  throwPredictionComputationFailedException(Traits::getName());
 	}
 	ConsistentTangentOperatorHandler::exe(behaviour,DDSOE);
       }
@@ -457,7 +456,6 @@ namespace umat
 		UMATReal *const statev,
 		UMATReal *const ddsoe)
       {
-	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename std::conditional<
@@ -484,7 +482,7 @@ namespace umat
 	} else if((3.75<*ddsoe)&&(*ddsoe<4.25)){
 	  smtype = BV::CONSISTENTTANGENTOPERATOR;
 	} else {
-	  throwInvalidDDSOEException(Name<BV>::getName(),*ddsoe);
+	  throwInvalidDDSOEException(Traits::getName(),*ddsoe);
 	}
 	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
@@ -527,7 +525,6 @@ namespace umat
 		 UMATReal *const ddsoe,
 		 const typename Behaviour<H,UMATReal,false>::SMType smtype)
       {
-	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename std::conditional<
@@ -601,7 +598,7 @@ namespace umat
 	  }
 	}
 	if((subSteps==UMATTraits<BV>::maximumSubStepping)&&(iterations!=0)){
-	  throwMaximumNumberOfSubSteppingReachedException(Name<Behaviour<H,UMATReal,false> >::getName());
+	  throwMaximumNumberOfSubSteppingReachedException(Traits::getName());
 	}
       } // end of integrate
     
@@ -671,7 +668,6 @@ namespace umat
 		 UMATReal *const STRESS,
 		 UMATReal *const STATEV)
       {
-	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename std::conditional<
@@ -685,7 +681,7 @@ namespace umat
 	  PredictionOperatorIsNotAvalaible
 	  >::type PredictionOperatorComputer;
 	if(this->dt<0.){
-	  throwNegativeTimeStepException(Name<BV>::getName());
+	  throwNegativeTimeStepException(Traits::getName());
 	}
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
@@ -710,18 +706,18 @@ namespace umat
 	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
 	  r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	} else {
-	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
+	  throwInvalidDDSOEException(Traits::getName(),*DDSOE);
 	}
 	if(r==BV::FAILURE){
 	  // Il manque un vraie gestion locale de résultats imprécis
 	  if(*DDSOE<-0.5){
-	    throwPredictionComputationFailedException(Name<BV>::getName());
+	    throwPredictionComputationFailedException(Traits::getName());
 	  } else {
-	    throwBehaviourIntegrationFailedException(Name<BV>::getName());
+	    throwBehaviourIntegrationFailedException(Traits::getName());
 	  }
 	}
 	// if(this->behaviour.integrate(BV::NOSTIFFNESSREQUESTED)==BV::FAILURE){
-	//   throwBehaviourIntegrationFailedException(Name<BV>::getName());
+	//   throwBehaviourIntegrationFailedException(Traits::getName());
 	// }
 	behaviour.checkBounds();
 	this->behaviour.UMATexportStateData(STRESS,STATEV);
@@ -753,8 +749,9 @@ namespace umat
       exe(BV&,const typename BV::SMFlag,
 	  const typename BV::SMType)
       {
-	using namespace tfel::utilities;
-	throwPredictionOperatorIsNotAvalaible(Name<BV>::getName());
+	typedef Behaviour<H,UMATReal,false> BV;
+	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+	throwPredictionOperatorIsNotAvalaible(Traits::getName());
 	return BV::FAILURE;
       } // end of exe	  
     };
@@ -762,12 +759,12 @@ namespace umat
     struct ConsistentTangentOperatorIsNotAvalaible
     {
       typedef Behaviour<H,UMATReal,false> BV;
+      typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const static unsigned short N = 
 	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(BV&,UMATReal *const)
       {
-	using namespace tfel::utilities;
-	throwConsistentTangentOperatorIsNotAvalaible(Name<BV>::getName());
+	throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
       } // end of exe	  
     };
 
@@ -817,7 +814,6 @@ namespace umat
       checkNPROPS(const UMATInt NPROPS)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::material;
       typedef Behaviour<H,UMATReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
@@ -827,7 +823,7 @@ namespace umat
       const bool is_defined_       = Traits::is_defined;
       // Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){
-      	throwUnMatchedNumberOfMaterialProperties(Name<Behaviour<H,UMATReal,false> >::getName(),
+      	throwUnMatchedNumberOfMaterialProperties(Traits::getName(),
       						 NPROPS_,NPROPS);
       }
     } // end of checkNPROPS
@@ -835,7 +831,6 @@ namespace umat
     TFEL_UMAT_INLINE2 static void
       checkNSTATV(const UMATInt NSTATV)
     {
-      using namespace tfel::utilities;
       typedef Behaviour<H,UMATReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short nstatv  = Traits::internal_variables_nb;
@@ -843,7 +838,7 @@ namespace umat
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((NSTATV_!=NSTATV)&&is_defined_){
-	throwUnMatchedNumberOfStateVariables(Name<Behaviour<H,UMATReal,false> >::getName(),
+	throwUnMatchedNumberOfStateVariables(Traits::getName(),
 					     NSTATV_,NSTATV);
       }
     } // end of checkNSTATV

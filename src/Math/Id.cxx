@@ -20,10 +20,6 @@ namespace tfel{
   namespace math{
 
     TFELMATH_VISIBILITY_EXPORT FctId id TFEL_UNUSED_ATTRIBUTE;
-    
-    std::string FctId::getName(void){
-      return "FctId";
-    }
 
     Cst<1,1>
     derivate(const FctId)

@@ -84,7 +84,6 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
 	  vp(0)=s[0];
 	  vp(1)=s[1];
 	  vp(2)=s[2];
@@ -114,8 +113,7 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
-	  static constexpr T M_sqrt2 = std::sqrt(static_cast<T>(2.)); 
+	  static const T M_sqrt2 = std::sqrt(T(2)); 
 	  T s0 = s_0 - vp;
 	  T s1 = s_1 - vp;
 	  if(std::abs(s3)<std::max(std::min(s_0,s_1)*std::numeric_limits<T>::epsilon(),
@@ -132,14 +130,12 @@ namespace tfel{
 	  }
 	  if(std::abs(s0)>std::abs(s1)){
 	    if(std::abs(s0)<100*std::numeric_limits<T>::min()){
-	      TFEL_UTILITIES_INFO("s0 is too small");
 	      return false;
 	    }
 	    y=static_cast<T>(1.);
 	    x=-s3/(M_sqrt2*s0);
 	  } else {
 	    if(std::abs(s1)<100*std::numeric_limits<T>::min()){
-	      TFEL_UTILITIES_INFO("s1 is too small");
 	      return false;
 	    }
 	    x=static_cast<T>(1.);
@@ -147,7 +143,6 @@ namespace tfel{
 	  }
 	  s0 = std::sqrt(x*x+y*y);
 	  if(s0<100*std::numeric_limits<T>::min()){
-	    TFEL_UTILITIES_INFO("std::sqrt(x*x+y*y) is too small");
 	    return false;
 	  }
 	  x/=s0;
@@ -162,45 +157,24 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
-	  static constexpr T M1_sqrt2  = T(1)/std::sqrt(T(2.)); 
-	  
+	  static const T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
 	  T tmp;
 	  T y0;
 	  T y1;
-
 	  // first eigenvalue
 	  y0 = s[0]*m(0,0)+s[3]*M1_sqrt2*m(1,0)-vp(0)*m(0,0);
 	  y1 = s[1]*m(1,0)+s[3]*M1_sqrt2*m(0,0)-vp(0)*m(1,0);
-
 	  tmp = std::sqrt(y0*y0+y1*y1);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
-	    TFEL_UTILITIES_INFO("first eigenvalue false : " << tmp);
-	    TFEL_UTILITIES_INFO("s = " );
-	    TFEL_UTILITIES_INFO(s);
-	    TFEL_UTILITIES_INFO("vp = " );
-	    TFEL_UTILITIES_INFO(vp);
-	    TFEL_UTILITIES_INFO("m = " );
-	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
-  
 	  // second eigenvalue
 	  y0 = s[0]*m(0,1)+s[3]*M1_sqrt2*m(1,1)-vp(1)*m(0,1);
 	  y1 = s[1]*m(1,1)+s[3]*M1_sqrt2*m(0,1)-vp(1)*m(1,1);
-
 	  tmp = std::sqrt(y0*y0+y1*y1);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
-	    TFEL_UTILITIES_INFO("second eigenvalue false : " << tmp);
-	    TFEL_UTILITIES_INFO("s = " );
-	    TFEL_UTILITIES_INFO(s);
-	    TFEL_UTILITIES_INFO("vp = " );
-	    TFEL_UTILITIES_INFO(vp);
-	    TFEL_UTILITIES_INFO("m = " );
-	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
-
 	  return true;
 	}
 
@@ -224,24 +198,20 @@ namespace tfel{
 
 	template<typename T>
 	static bool exe(const T* const s,
-			tfel::math::tvector<3u,T>& vp,tfel::
-			math::tmatrix<3u,3u,T>& vec,
+			tfel::math::tvector<3u,T>& vp,
+			tfel::math::tmatrix<3u,3u,T>& vec,
 			const bool)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
 	  T prec;
-
 	  vp(2)=s[2];
 	  vec = tmatrix<3u,3u,T>::Id();
-
 	  StensorComputeEigenVectors_<2u>::computeEigenValues(s[0],s[1],s[3],vp(0),vp(1));
 	  prec = 10*std::max(vp(0),vp(1))*std::numeric_limits<T>::epsilon();
 	  if(std::abs(vp(0)-vp(1))<=prec){
 	    return true;
 	  }
-
 	  if(StensorComputeEigenVectors_<2u>::computeEigenVector(s[0],s[1],s[3],vp(0),vec(0,0),vec(1,0))==false){
 	    return false;
 	  }
@@ -264,16 +234,12 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
 	  T tmp  = a+b;
 	  T tmp2 = a-b;
-
 	  T X = static_cast<T>(0.5)*(tmp);
 	  T Y = static_cast<T>(0.5)*std::sqrt(tmp2*tmp2+2*c*c);
-    
 	  tmp  = std::abs(X+Y);
 	  tmp2 = std::abs(X-Y);
-
 	  if(tmp>tmp2){
 	    if(tmp2<100.*std::numeric_limits<T>::min()){
 	      return std::numeric_limits<T>::max();
@@ -292,7 +258,6 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
 	  return std::sqrt(x0*x0+x1*x1+x2*x2);
 	}
 
@@ -301,7 +266,6 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
 	  return x0*x0+x1*x1+x2*x2;
 	}
 
@@ -311,7 +275,6 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
 	  z0 = x1*y2-x2*y1;
 	  z1 = x2*y0-x0*y2;
 	  z2 = x0*y1-x1*y0;
@@ -322,10 +285,8 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
 	  T norm2_x = norm2(x0,x1,x2);
 	  T tmp;
-
 	  if(norm2_x<100*std::numeric_limits<T>::min()){
 	    //x is null
 	    y0 = static_cast<T>(1.);
@@ -333,7 +294,6 @@ namespace tfel{
 	    y2 = static_cast<T>(0.);
 	    return;
 	  }
-
 	  if(std::abs(x0)<std::abs(x1)){
 	    if(std::abs(x0)<std::abs(x2)){
 	      //|x0| is min, (1 0 0) is a good choice
@@ -357,12 +317,10 @@ namespace tfel{
 	    y1 =                   - x2*x1/norm2_x;
 	    y2 = static_cast<T>(1.)- x2*x2/norm2_x;
 	  }
-
 	  tmp = norm(y0,y1,y2);
 	  y0 /=tmp;
 	  y1 /=tmp;
 	  y2 /=tmp; 
-
 	}
 
 	template<typename T>
@@ -372,7 +330,7 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  // Assume that vp is a single eigenvalue
-	  static constexpr T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
+	  static const T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
 	  const T a = src[0]-vp;
 	  const T b = src[3]*M1_sqrt2;
 	  const T c = src[4]*M1_sqrt2;
@@ -441,11 +399,9 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-
-	  static constexpr T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
+	  static const T M1_sqrt2  = T(1)/std::sqrt(T(2)); 
 	  T y0,y1,y2;
 	  T tmp;
-
 	  // first eigenvalue
 	  y0 = s[0]*m(0,0)+s[3]*M1_sqrt2*m(1,0)+s[4]*M1_sqrt2*m(2,0)-vp(0)*m(0,0);
 	  y1 = s[1]*m(1,0)+s[3]*M1_sqrt2*m(0,0)+s[5]*M1_sqrt2*m(2,0)-vp(0)*m(1,0);
@@ -453,13 +409,6 @@ namespace tfel{
 
 	  tmp = norm(y0,y1,y2);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
-	    TFEL_UTILITIES_INFO("first eigenvalue false : " << tmp);
-	    TFEL_UTILITIES_INFO("s = " );
-	    TFEL_UTILITIES_INFO(s);
-	    TFEL_UTILITIES_INFO("vp = " );
-	    TFEL_UTILITIES_INFO(vp);
-	    TFEL_UTILITIES_INFO("m = " );
-	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
   
@@ -470,13 +419,6 @@ namespace tfel{
 
 	  tmp = norm(y0,y1,y2);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
-	    TFEL_UTILITIES_INFO("second eigenvalue false : " << tmp);
-	    TFEL_UTILITIES_INFO("s = " );
-	    TFEL_UTILITIES_INFO(s);
-	    TFEL_UTILITIES_INFO("vp = " );
-	    TFEL_UTILITIES_INFO(vp);
-	    TFEL_UTILITIES_INFO("m = " );
-	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
 
@@ -487,13 +429,6 @@ namespace tfel{
 
 	  tmp = norm(y0,y1,y2);
 	  if(tmp>1000*std::numeric_limits<T>::epsilon()){
-	    TFEL_UTILITIES_INFO("third eigenvalue false : " << tmp);
-	    TFEL_UTILITIES_INFO("s = " );
-	    TFEL_UTILITIES_INFO(s);
-	    TFEL_UTILITIES_INFO("vp = " );
-	    TFEL_UTILITIES_INFO(vp);
-	    TFEL_UTILITIES_INFO("m = " );
-	    TFEL_UTILITIES_INFO(m);
 	    return false;
 	  }
  

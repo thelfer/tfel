@@ -19,9 +19,38 @@
 #include<fstream>
 #include<string>
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/RungeKutta2.hxx"
+
+template<typename T>
+struct Name;
+
+template<>
+struct Name<long double>
+{
+  static std::string getName()
+  {
+    return "long double";
+  }
+};
+
+template<>
+struct Name<double>
+{
+  static std::string getName()
+  {
+    return "double";
+  }
+};
+
+template<>
+struct Name<float>
+{
+  static std::string getName()
+  {
+    return "float";
+  }
+};
 
 template<typename T>
 class VanDerPol
@@ -56,7 +85,7 @@ void test(void){
   using namespace tfel::math;
 
   string name("rk2_");
-  name += tfel::utilities::Name<T>::getName();
+  name += Name<T>::getName();
   name += ".txt";
   
   ofstream out(name.c_str());

@@ -108,11 +108,11 @@ namespace aster
 	       const AsterReal *const DSTRAN,
 	       const StressFreeExpansionHandler& sfeh)
       {
-	using tfel::material::ModellingHypothesisToSpaceDimension;
-	using tfel::utilities::Name;
-	using tfel::fsalgo::copy;
 	using std::pair;
+	using tfel::fsalgo::copy;
+	using namespace tfel::material;
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
+	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	const AsterInt N = ModellingHypothesisToSpaceDimension<H>::value;
 	AsterReal dv0[AsterTraits<BV>::DrivingVariableSize];
 	AsterReal dv1[AsterTraits<BV>::DrivingVariableSize];
@@ -120,7 +120,7 @@ namespace aster
 	copy<AsterTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
 	if(sfeh==0){
-	  throwUnsupportedStressFreeExpansionException(Name<BV>::getName());
+	  throwUnsupportedStressFreeExpansionException(Traits::getName());
 	}
 	pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	b.computeStressFreeExpansion(s);
@@ -219,10 +219,8 @@ namespace aster
 				 AsterReal *const)
 	throw(AsterException)
       {
-	using namespace std;
-	using namespace tfel::utilities;
-	typedef Behaviour<H,AsterReal,false> BV;
-	throw(AsterInvalidModellingHypothesis(Name<BV>::getName(),H));
+	typedef tfel::material::MechanicalBehaviourTraits<Behaviour<H,AsterReal,false>> Traits;
+	throw(AsterInvalidModellingHypothesis(Traits::getName(),H));
 	return;
       } // end of Error::exe
 	
@@ -278,7 +276,6 @@ namespace aster
 		 AsterReal *const STRESS,
 		 AsterReal *const STATEV)
       {
-	using namespace tfel::utilities;
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename std::conditional<
@@ -295,7 +292,7 @@ namespace aster
 	  PredictionOperatorIsNotAvalaible
 	  >::type PredictionOperatorComputer;
 	if(this->dt<0.){
-	  throwNegativeTimeStepException(Name<BV>::getName());
+	  throwNegativeTimeStepException(Traits::getName());
 	}
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
@@ -320,14 +317,14 @@ namespace aster
 	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
 	  r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	} else {
-	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
+	  throwInvalidDDSOEException(Traits::getName(),*DDSOE);
 	}
 	if(r==BV::FAILURE){
 	  // Il manque un vraie gestion locale de résultats imprécis
 	  if(*DDSOE<-0.5){
-	    throwPredictionComputationFailedException(Name<BV>::getName());
+	    throwPredictionComputationFailedException(Traits::getName());
 	  } else {
-	    throwBehaviourIntegrationFailedException(Name<BV>::getName());
+	    throwBehaviourIntegrationFailedException(Traits::getName());
 	  }
 	}
 	this->behaviour.checkBounds();
@@ -356,8 +353,8 @@ namespace aster
 	exe(BV&,const typename BV::SMFlag,
 	    const typename BV::SMType)
 	{
-	  using namespace tfel::utilities;
-	  throwPredictionOperatorIsNotAvalaible(Name<BV>::getName());
+	  typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+	  throwPredictionOperatorIsNotAvalaible(Traits::getName());
 	  return BV::FAILURE;
 	} // end of exe	  
       };
@@ -367,8 +364,8 @@ namespace aster
 	typedef Behaviour<H,AsterReal,false> BV;
 	static void exe(BV&,AsterReal *const)
 	{
-	  using namespace tfel::utilities;
-	  throwConsistentTangentOperatorIsNotAvalaible(Name<BV>::getName());
+	  typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+	  throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
 	} // end of exe	  
       };
 
@@ -420,7 +417,6 @@ namespace aster
       checkNPROPS(const AsterInt NPROPS)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::material;
       typedef Behaviour<H,AsterReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
@@ -431,7 +427,7 @@ namespace aster
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){
-	throwUnMatchedNumberOfMaterialProperties(Name<BV>::getName(),
+	throwUnMatchedNumberOfMaterialProperties(Traits::getName(),
 						 NPROPS_,NPROPS);
       }
     } // end of checkNPROPS
@@ -439,7 +435,6 @@ namespace aster
     TFEL_ASTER_INLINE2 static void
       checkNSTATV(const AsterInt NSTATV)
     {
-      using namespace tfel::utilities;
       typedef Behaviour<H,AsterReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short nstatv  = Traits::internal_variables_nb;
@@ -447,7 +442,7 @@ namespace aster
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((NSTATV_!=NSTATV)&&is_defined_){
-	throwUnMatchedNumberOfStateVariables(Name<BV>::getName(),
+	throwUnMatchedNumberOfStateVariables(Traits::getName(),
 					     NSTATV_,NSTATV);
       }
     } // end of checkNSTATV

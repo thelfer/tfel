@@ -158,7 +158,7 @@ namespace tfel{
 	using namespace std;
 	typedef typename StensorProductExprBase<A,B>::NumType T;
 	typedef typename tfel::typetraits::BaseType<T>::type real;
-	static constexpr real cste = real(1)/sqrt(real(2));
+	static const real cste = real(1)/sqrt(real(2));
 	switch(i){
 	case 0:
 	  return ((this->a(4))*(this->b(4))+(this->a(3))*(this->b(3))+2*(this->a(0))*(this->b(0)))/2;

@@ -25,28 +25,13 @@ namespace umat {
   struct MFRONT_UMAT_VISIBILITY_EXPORT UMATException
     : public std::exception
   {
-
     UMATException(const std::string&);
-
-    UMATException(const UMATException&);
-
-    const char* 
-    what (void) const throw();
-
-    std::string 
-    getMsg(void) const throw();
-    
-    virtual ~UMATException() throw();
-
+    UMATException(const UMATException&) = default;
+    UMATException(UMATException&&)      = default;
+    virtual const char* what (void) const noexcept final;
+    virtual ~UMATException() noexcept;
   private:
-    
-    UMATException();
-
-    UMATException&
-    operator=(const UMATException&);
-
     const std::string msg;
-    
   }; // end of struct UMATException
 
   struct MFRONT_UMAT_VISIBILITY_EXPORT UMATIntegrationFailed
@@ -55,7 +40,7 @@ namespace umat {
     UMATIntegrationFailed();
     UMATIntegrationFailed(const std::string&);
     UMATIntegrationFailed(const UMATIntegrationFailed&);
-    virtual ~UMATIntegrationFailed() throw();
+    virtual ~UMATIntegrationFailed() noexcept;
   private:
     UMATIntegrationFailed&
     operator=(const UMATIntegrationFailed&);
@@ -66,7 +51,7 @@ namespace umat {
   {
     UMATInvalidNTENSValue(const unsigned short);
     UMATInvalidNTENSValue(const UMATInvalidNTENSValue&);
-    virtual ~UMATInvalidNTENSValue() throw();
+    virtual ~UMATInvalidNTENSValue() noexcept;
   private:
     UMATInvalidNTENSValue();
     UMATInvalidNTENSValue&
@@ -79,7 +64,7 @@ namespace umat {
     UMATInvalidDimension(const std::string&,
 			 const unsigned short);
     UMATInvalidDimension(const UMATInvalidDimension&);
-    virtual ~UMATInvalidDimension() throw();
+    virtual ~UMATInvalidDimension() noexcept;
   private:
     UMATInvalidDimension();
     UMATInvalidDimension&

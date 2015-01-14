@@ -14,8 +14,6 @@
 #ifndef _LIB_TFEL_VECTOR_UTILITIES_H_
 #define _LIB_TFEL_VECTOR_UTILITIES_H_ 
 
-#include<string>
-
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel{

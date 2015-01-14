@@ -13,14 +13,11 @@
 #define _STENSOR_CONCEPT_LIB_ 1
 
 #include <ostream>
-#include <string>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
-#include<type_traits>
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include<type_traits>
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 
@@ -42,16 +39,7 @@ namespace tfel{
      * \brief Helper class to characterise stensors.
      */ 
     struct StensorTag
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string 
-      getName(void);
-    }; // end of StensorTag
+    {}; // end of StensorTag
     
     template<class T>
     class StensorConcept 
@@ -64,8 +52,12 @@ namespace tfel{
 				      const typename traits::NumType&>::type ValueType;
       
     protected:
-      ~StensorConcept(){};
-      
+      StensorConcept() = default;
+      StensorConcept(StensorConcept&&) = default;
+      StensorConcept(const StensorConcept&) = default;
+      StensorConcept&
+      operator=(const StensorConcept&) = default;
+      ~StensorConcept() = default;
     public:
 
       typedef StensorTag ConceptTag;

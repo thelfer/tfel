@@ -65,107 +65,73 @@ namespace tfel
       switch(errNbr){
       case EPERM:
 	throw(PosixError<EPERM>(msg));
-	break;
       case ENOENT:
 	throw(PosixError<ENOENT>(msg));
-	break;
       case ESRCH:
 	throw(PosixError<ESRCH>(msg));
-	break;
       case EINTR:
 	throw(PosixError<EINTR>(msg));
-	break;
       case EIO:
 	throw(PosixError<EIO>(msg));
-	break;
       case ENXIO:
 	throw(PosixError<ENXIO>(msg));
-	break;
       case E2BIG:
 	throw(PosixError<E2BIG>(msg));
-	break;
       case ENOEXEC:
 	throw(PosixError<ENOEXEC>(msg));
-	break;
       case EBADF:
 	throw(PosixError<EBADF>(msg));
-	break;
       case ECHILD:
 	throw(PosixError<ECHILD>(msg));
-	break;
       case EAGAIN:
 	throw(PosixError<EAGAIN>(msg));
-	break;
       case ENOMEM:
 	throw(PosixError<ENOMEM>(msg));
-	break;
       case EACCES:
 	throw(PosixError<EACCES>(msg));
-	break;
       case EFAULT:
 	throw(PosixError<EFAULT>(msg));
-	break;
       case EBUSY:
 	throw(PosixError<EBUSY>(msg));
-	break;
       case EEXIST:
 	throw(PosixError<EEXIST>(msg));
-	break;
       case EXDEV:
 	throw(PosixError<EXDEV>(msg));
-	break;
       case ENODEV:
 	throw(PosixError<ENODEV>(msg));
-	break;
       case ENOTDIR:
 	throw(PosixError<ENOTDIR>(msg));
-	break;
       case EISDIR:
 	throw(PosixError<EISDIR>(msg));
-	break;
       case EINVAL:
 	throw(PosixError<EINVAL>(msg));
-	break;
       case ENFILE:
 	throw(PosixError<ENFILE>(msg));
-	break;
       case EMFILE:
 	throw(PosixError<EMFILE>(msg));
-	break;
       case ENOTTY:
 	throw(PosixError<ENOTTY>(msg));
-	break;
       case EFBIG:
 	throw(PosixError<EFBIG>(msg));
-	break;
       case ENOSPC:
 	throw(PosixError<ENOSPC>(msg));
-	break;
       case ESPIPE:
 	throw(PosixError<ESPIPE>(msg));
-	break;
       case EROFS:
 	throw(PosixError<EROFS>(msg));
-	break;
       case EMLINK:
 	throw(PosixError<EMLINK>(msg));
-	break;
       case EPIPE:
 	throw(PosixError<EPIPE>(msg));
-	break;
       case EDOM:
 	throw(PosixError<EDOM>(msg));
-	break;
       case ERANGE:
 	throw(PosixError<ERANGE>(msg));
-	break;
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       case ENOTBLK:
 	throw(PosixError<ENOTBLK>(msg));
-	break;
       case ETXTBSY:
 	throw(PosixError<ETXTBSY>(msg));
-	break;
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
       default:
 	throw(SystemError(msg));

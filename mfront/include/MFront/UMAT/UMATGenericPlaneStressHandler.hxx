@@ -55,7 +55,6 @@ namespace umat
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
-      using namespace tfel::utilities;
       using namespace tfel::material;
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;
       //! a simple alias
@@ -74,7 +73,6 @@ namespace umat
     TFEL_UMAT_INLINE2 static void
     checkNSTATV(const UMATInt NSTATV)
     {
-      using namespace tfel::utilities;
       using namespace tfel::material;
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
       typedef Behaviour<H,UMATReal,false> BV;
@@ -83,7 +81,7 @@ namespace umat
       const bool is_defined_        = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((NSTATV_!=NSTATV)&&is_defined_){
-	throwUnMatchedNumberOfStateVariables(Name<BV>::getName(),NSTATV_,NSTATV);
+	throwUnMatchedNumberOfStateVariables(Traits::getName(),NSTATV_,NSTATV);
       }
     } // end of checkNSTATV
 
@@ -104,7 +102,6 @@ namespace umat
     {
       using namespace std;
       using namespace tfel::meta;
-      using namespace tfel::utilities;
       using namespace tfel::material;
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
       using tfel::fsalgo::copy;
@@ -167,7 +164,7 @@ namespace umat
 	++iter;
       }
       if(iter==iterMax){
-	throwPlaneStressMaximumNumberOfIterationsReachedException(Name<BV>::getName());
+	throwPlaneStressMaximumNumberOfIterationsReachedException(Traits::getName());
       }
       copy<4>::exe(s,STRESS);
       std::copy(v.begin(),v.end(),STATEV);

@@ -7,7 +7,7 @@
 @LocalVariable tfel::math::tmatrix<3,3,real> A3;
 
 @InitLocalVariables<Append>{
-  const real NN[12]={6,8,7,1,0,2,11,10,9,4,3,5};
+  const unsigned short NN[12]={6,8,7,1,0,2,11,10,9,4,3,5};
   const real AETOIL = 0.124 ;  
   const real ACOLIN = 0.625 ;
   const real AGLISS = 0.137 ;

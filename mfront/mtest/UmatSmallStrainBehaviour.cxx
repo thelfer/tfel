@@ -357,7 +357,7 @@ namespace mfront
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     using umat::UMATComputeStiffnessTensor;
-    static constexpr real sqrt2 = sqrt(real(2));
+    static const real sqrt2 = sqrt(real(2));
     UMATInt ntens;
     UMATInt ndi;
     UMATInt nprops = static_cast<UMATInt>(mp.size());

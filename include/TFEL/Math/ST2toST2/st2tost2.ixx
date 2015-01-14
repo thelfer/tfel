@@ -198,19 +198,32 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    st2tost2<N,T>::st2tost2(const T init)
-    {
-      tfel::fsalgo::fill<StensorDimeToSize<N>::value*
-			 StensorDimeToSize<N>::value>::exe(this->v,init);
-    }
+    constexpr st2tost2<N,T>::st2tost2()
+    {} // end of st2tost2<N,T>::st2tost2
 
     template<unsigned short N, typename T>
-    st2tost2<N,T>::st2tost2(const st2tost2<N,T>& src)
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr st2tost2<N,T>::st2tost2(const T2& init)
+      : fsarray<StensorDimeToSize<N>::value*
+		StensorDimeToSize<N>::value,T>(init)
+    {}
+
+    template<unsigned short N, typename T>
+    constexpr st2tost2<N,T>::st2tost2(const st2tost2<N,T>& src)
+      : ST2toST2Concept<st2tost2<N,T>>(src),
+        fsarray<StensorDimeToSize<N>::value*
+		StensorDimeToSize<N>::value,T>(src)
+    {}
+
+    template<unsigned short N, typename T>
+    st2tost2<N,T>&
+    st2tost2<N,T>::operator=(const st2tost2<N,T>& src)
     {
-      matrix_utilities<StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value,
-		       StensorDimeToSize<N>::value>::copy(src,*this);
-    }
+      fsarray<StensorDimeToSize<N>::value*
+	      StensorDimeToSize<N>::value,T>::operator=(src);
+      return *this;
+    } // end of st2tost2<N,T>::operator=
 
     template<unsigned short N, typename T>
     const st2tost2<N,T>&

@@ -10,6 +10,8 @@
 # Transition to [C++-11](https://isocpp.org)
 
 - transition
+- add noexcept
+- add constexpr
 
 # Plane stress
 

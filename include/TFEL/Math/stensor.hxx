@@ -14,7 +14,6 @@
 #ifndef _LIB_TFEL_STENSOR_H_
 #define _LIB_TFEL_STENSOR_H_ 
 
-#include<string>
 #include<cassert>
 #include<cstddef>
 #include<type_traits>
@@ -34,11 +33,9 @@
 #include"TFEL/Math/Stensor/StensorConceptOperations.hxx"
 #include"TFEL/Math/Stensor/StensorExpr.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
-
 #include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
-
 #include"TFEL/Math/fsarray.hxx"
 
 namespace tfel{
@@ -133,42 +130,46 @@ namespace tfel{
       /*!
        * \brief Default Constructor 
        */
-      explicit stensor()
-      {}
+      TFEL_MATH_INLINE explicit constexpr
+      stensor();
       /*!
        * \brief Default Constructor 
-       * \param T, value used to initialise the components of the stensor 
+       * \param[in] init: value used to initialise the components of the stensor 
        */
-      explicit stensor(const T);
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      stensor(const T2&);
       /*!
        * \brief Default Constructor.
        * \param const typename tfel::typetraits::BaseType<T>::type*
        * const, pointer to a tabular used to initialise the components
        * of the stensor. This tabular is left unchanged.
        */
-      explicit stensor(const typename tfel::typetraits::BaseType<T>::type* const);
-      /*!
-       * \brief Default Constructor.
-       * \param typename tfel::typetraits::BaseType<T>::type* const,
-       * pointer to a tabular used to initialise the components of the stensor. 
-       */
-      explicit stensor(typename tfel::typetraits::BaseType<T>::type* const);
+      TFEL_MATH_INLINE explicit
+      stensor(const typename tfel::typetraits::BaseType<T>::type* const);
       /*!
        * \brief Copy Constructor
        */
+      TFEL_MATH_INLINE constexpr
       stensor(const stensor<N,T>&);
       /*!
        * \brief constructor
        */
       template<typename T2,
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
       stensor(const stensor<N,T2>&);
       /*!
        * copy from stensor expression template object
        */
       template<typename T2,typename Expr,
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE 
       stensor(const StensorExpr<stensor<N,T2>,Expr>& src);
+      //! copy assignement operator
+      TFEL_MATH_INLINE stensor&
+      operator = (const stensor&);
       /*!
        * \brief Import from Voigt
        */
@@ -266,17 +267,18 @@ namespace tfel{
        */
       TFEL_MATH_INLINE static const stensor<N,T>& Id(void);
 
-      TFEL_MATH_INLINE const T& operator()(const unsigned short) const;      
-      TFEL_MATH_INLINE       T& operator()(const unsigned short);
+      TFEL_MATH_INLINE constexpr const T&
+      operator()(const unsigned short) const noexcept;
 
-      TFEL_MATH_INLINE const T& operator[](const unsigned short) const;      
-      TFEL_MATH_INLINE       T& operator[](const unsigned short);
-       /*
-       * Return the RunTimeProperties of the tvector
-       * \return tvector::RunTimeProperties
+      TFEL_MATH_INLINE T&
+      operator()(const unsigned short) noexcept;
+      // fsarray access operator
+      using fsarray<StensorDimeToSize<N>::value,T>::operator[];
+      /*!
+       * \return the RunTimeProperties of the stensor
        */
-      TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const;
+      constexpr TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties(void) const noexcept;
       /*!
        * copy the value from a container
        */

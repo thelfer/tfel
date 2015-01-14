@@ -15,8 +15,6 @@
 #ifndef _LIB_TFEL_MATHEXCEPTION_H_
 #define _LIB_TFEL_MATHEXCEPTION_H_ 
 
-#include<string>
-
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
 
@@ -27,20 +25,59 @@ namespace tfel{
     struct TFELMATH_VISIBILITY_EXPORT MathException
       : public tfel::exception::TFELException 
     {      
-      MathException(const std::string& s);
+      MathException() = default;
+      MathException(MathException&&) = default;
+      MathException(const MathException&) = default;
+      virtual ~MathException() noexcept;
     }; // end of struct MathException
 
     struct TFELMATH_VISIBILITY_EXPORT MathRunTimeException
       : public MathException
     {
-      MathRunTimeException(const std::string& s);
+      MathRunTimeException() = default;
+      MathRunTimeException(MathRunTimeException&&) = default;
+      MathRunTimeException(const MathRunTimeException&) = default;
+      virtual ~MathRunTimeException() noexcept;
     }; // end of struct MathRunTimeException
+
+    struct TFELMATH_VISIBILITY_EXPORT InvalidTimeStepException
+      : public MathRunTimeException
+    {
+      InvalidTimeStepException() = default;
+      InvalidTimeStepException(InvalidTimeStepException&&) = default;
+      InvalidTimeStepException(const InvalidTimeStepException&) = default;
+      virtual const char* what() const noexcept final;
+      virtual ~InvalidTimeStepException() noexcept;
+    }; // end of struct InvalidTimeStepException
 
     struct TFELMATH_VISIBILITY_EXPORT MathDivergenceException
       : public MathException
     {
-      MathDivergenceException(const std::string& s);
+      MathDivergenceException() = default;
+      MathDivergenceException(MathDivergenceException&&) = default;
+      MathDivergenceException(const MathDivergenceException&) = default;
+      virtual ~MathDivergenceException() noexcept;
     }; // end of struct MathDivergenceException
+
+    struct TFELMATH_VISIBILITY_EXPORT MaximumNumberOfIterationsReachedException
+      : public MathDivergenceException
+    {
+      MaximumNumberOfIterationsReachedException() = default;
+      MaximumNumberOfIterationsReachedException(MaximumNumberOfIterationsReachedException&&) = default;
+      MaximumNumberOfIterationsReachedException(const MaximumNumberOfIterationsReachedException&) = default;
+      virtual const char* what() const noexcept final;
+      virtual ~MaximumNumberOfIterationsReachedException() noexcept;
+    }; // end of struct MaximumNumberOfIterationsReachedException
+
+    struct TFELMATH_VISIBILITY_EXPORT SingularJacobianException
+      : public MathDivergenceException
+    {
+      SingularJacobianException() = default;
+      SingularJacobianException(SingularJacobianException&&) = default;
+      SingularJacobianException(const SingularJacobianException&) = default;
+      virtual const char* what() const noexcept final;
+      virtual ~SingularJacobianException() noexcept;
+    }; // end of struct SingularJacobianException
 
   } // end of namespace math
 

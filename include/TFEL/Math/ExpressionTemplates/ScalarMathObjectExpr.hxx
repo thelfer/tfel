@@ -14,13 +14,11 @@
 #ifndef _MATH_SCALAR_MATHOBJECT_EXPR_LIB_
 #define _MATH_SCALAR_MATHOBJECT_EXPR_LIB_ 1
 
-#include <string>
 #include<cstddef>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/TypeTraits/IsScalar.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"

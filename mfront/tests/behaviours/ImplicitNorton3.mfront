@@ -59,7 +59,7 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
   if(dt>0.1){
-    throw(DivergenceException("time step too small"));
+    throw(DivergenceException());
   }
 } // end of @InitLocalVars
 

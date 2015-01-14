@@ -21,16 +21,6 @@ namespace tfel{
   namespace math{
 
     template<typename T>
-    vector<T>::vector()
-      : std::vector<T>()
-    {}
-
-    template<typename T>
-    vector<T>::vector(const vector<T>& src)
-      : std::vector<T>(src)
-    {}
-
-    template<typename T>
     vector<T>::vector(const typename vector<T>::size_type s)
       : std::vector<T>(s)
     {}
@@ -94,7 +84,7 @@ namespace tfel{
 
     template<typename T>
     TFEL_MATH_INLINE T& 
-    vector<T>::operator()(const typename vector<T>::size_type i)
+    vector<T>::operator()(const typename vector<T>::size_type i) noexcept
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 	assert(i<this->size());
@@ -103,8 +93,8 @@ namespace tfel{
     }
 
     template<typename T>
-    TFEL_MATH_INLINE const T& 
-    vector<T>::operator()(const typename vector<T>::size_type i) const
+    TFEL_MATH_INLINE constexpr const T& 
+    vector<T>::operator()(const typename vector<T>::size_type i) const  noexcept
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 	assert(i<this->size());

@@ -31,12 +31,12 @@ namespace cyrano {
     CyranoException(const CyranoException&);
 
     const char* 
-    what (void) const throw();
+    what (void) const noexcept;
 
     std::string 
-    getMsg(void) const throw();
+    getMsg(void) const noexcept;
     
-    virtual ~CyranoException() throw();
+    virtual ~CyranoException() noexcept;
 
   private:
     
@@ -55,7 +55,7 @@ namespace cyrano {
     CyranoIntegrationFailed();
     CyranoIntegrationFailed(const std::string&);
     CyranoIntegrationFailed(const CyranoIntegrationFailed&);
-    virtual ~CyranoIntegrationFailed() throw();
+    virtual ~CyranoIntegrationFailed() noexcept;
   private:
     CyranoIntegrationFailed&
     operator=(const CyranoIntegrationFailed&);
@@ -66,7 +66,7 @@ namespace cyrano {
   {
     CyranoInvalidNTENSValue(const unsigned short);
     CyranoInvalidNTENSValue(const CyranoInvalidNTENSValue&);
-    virtual ~CyranoInvalidNTENSValue() throw();
+    virtual ~CyranoInvalidNTENSValue() noexcept;
   private:
     CyranoInvalidNTENSValue();
     CyranoInvalidNTENSValue&
@@ -79,7 +79,7 @@ namespace cyrano {
     CyranoInvalidDimension(const std::string&,
 			 const unsigned short);
     CyranoInvalidDimension(const CyranoInvalidDimension&);
-    virtual ~CyranoInvalidDimension() throw();
+    virtual ~CyranoInvalidDimension() noexcept;
   private:
     CyranoInvalidDimension();
     CyranoInvalidDimension&

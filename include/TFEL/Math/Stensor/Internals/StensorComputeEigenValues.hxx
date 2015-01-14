@@ -14,8 +14,7 @@
 #ifndef _LIB_TFEL_STENSORCOMPUTEEIGENVALUES_H_
 #define _LIB_TFEL_STENSORCOMPUTEEIGENVALUES_H_ 
 
-#include <cmath>
-#include <sstream>
+#include<cmath>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/MathException.hxx"
@@ -28,30 +27,18 @@ namespace tfel{
 
     namespace internals{
 
-      struct TFEL_VISIBILITY_LOCAL StensorEigenValuesComputationFailureException
+      struct TFELMATH_VISIBILITY_EXPORT StensorEigenValuesComputationFailureException
 	: tfel::math::MathException
       {
-	template<typename T>
-	StensorEigenValuesComputationFailureException(const T* const v)
-	  : tfel::math::MathException(StensorEigenValuesComputationFailureException::buildErrorMessage(v))
-	{}
-      private:
-	template<typename T>
-	static std::string
-	buildErrorMessage(const T* const v)
-	{
-	  using namespace std;
-	  ostringstream msg;
-	  msg.precision(16);
-	  msg << "StensorEigenValuesComputationFailureException::StensorEigenValuesComputationFailureException : "
-	    "eigen value computation failed for symmetric tensor [" << v[0] << " " << v[1] << " " << v[2] << " "
-	      << v[3] << " " << v[4] << " " << v[5] << "]";
-	  return msg.str();
-	}
+	StensorEigenValuesComputationFailureException() = default;
+	StensorEigenValuesComputationFailureException(StensorEigenValuesComputationFailureException&&) = default;
+	StensorEigenValuesComputationFailureException(const StensorEigenValuesComputationFailureException&) = default;
+	virtual const char* what() const noexcept final;
+	virtual ~StensorEigenValuesComputationFailureException() noexcept;
       }; // end of struct StensorEigenValuesComputationFailureException
 	
       // computeEigenValues
-	template<unsigned short N>
+      template<unsigned short N>
       struct StensorComputeEigenValues_;
       
       template<>
@@ -96,12 +83,9 @@ namespace tfel{
 	static TFEL_MATH_INLINE2 void exe(const T* const v,T& vp1,T& vp2,T& vp3,
 					  const bool b)
 	{
-	  // const T I1 = v[0]+v[1]+v[2];
-	  // const T I2 = v[0]*(v[1]+v[2])+v[1]*v[2]-(v[3]*v[3]+v[4]*v[4]+v[5]*v[5])*one_half;
-	  // const T I3 = (T(2)*v[0]*v[1]*v[2]+cste*v[3]*v[4]*v[5]-v[2]*v[3]*v[3]-v[1]*v[4]*v[4]-v[0]*v[5]*v[5])*one_ha
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  static constexpr T M_1_SQRT2 = 1/std::sqrt(static_cast<T>(2));
+	  static const T M_1_SQRT2 = 1/std::sqrt(static_cast<T>(2));
 	  const T one_half  = T(1)/T(2);
 	  const T one_third = T(1)/T(3);
 	  stensor<3u,T> s(v);
@@ -118,7 +102,7 @@ namespace tfel{
 	  const T p0 = -one_half*(s2[0]*s2[5]*s2[5]+s2[1]*s2[4]*s2[4]+s2[2]*s2[3]*s2[3])+M_1_SQRT2*(s2[3]*s2[4]*s2[5])+s2[0]*s2[1]*s2[2];
 	  const unsigned short nb = CubicRoots::exe(vp1,vp2,vp3,p3,p2,p1,p0,b);
 	  if(nb==0u){
-	    throw(StensorEigenValuesComputationFailureException(v));
+	    throw(StensorEigenValuesComputationFailureException());
 	  } else if(nb==1u){
 	    if(std::abs(vp1-vp2)<std::numeric_limits<T>::epsilon()){
 	      const T vm = (vp1+vp2)*one_half;

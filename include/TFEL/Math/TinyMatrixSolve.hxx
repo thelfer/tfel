@@ -17,16 +17,12 @@
 
 #include<cmath>
 #include<limits>
-#include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/TypeTraits/IsReal.hxx"
-
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/LU/TinyPermutation.hxx"
 #include"TFEL/Math/tmatrix.hxx"
-
 #include"TFEL/Math/LU/LUException.hxx"
 
 namespace tfel{

@@ -9,18 +9,13 @@ set(TFELMath_SOURCES
     LUException.cxx
     QRException.cxx
     Discretization1D.cxx
-    BasicOperations.cxx
     Id.cxx
     power.cxx
     Sqrt.cxx
     OpDiff.cxx
-    ST2toST2Tag.cxx
-    VectorTag.cxx
-    FunctionTag.cxx
-    MatrixTag.cxx
-    StensorTag.cxx
-    TensorTag.cxx
     TensorConcept.cxx
+    RunTimeCheck.cxx
+    StensorComputeEigenValues.cxx
     StandardFunctions.cxx)
 
 set(TFELMathCubicSpline_SOURCES

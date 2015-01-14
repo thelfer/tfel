@@ -13,8 +13,5 @@ endmacro(tests_utilities)
 tests_utilities(gentype)
 tests_utilities(gentype2)
 tests_utilities(gentype3)
-tests_utilities(Name)
-tests_utilities(Name2)
-tests_utilities(IntegersSet)
 tests_utilities(StringAlgorithms)
 

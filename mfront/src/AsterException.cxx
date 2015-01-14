@@ -28,18 +28,18 @@ namespace aster
   {} // end of AsterException::AsterException
 
   const char* 
-  AsterException::what (void) const throw()
+  AsterException::what (void) const noexcept
   { 
     return msg.c_str(); 
   } // end of AsterException::what
 
   std::string
-  AsterException::getMsg(void) const throw()
+  AsterException::getMsg(void) const noexcept
   {
     return msg;
   } // end of AsterException::getMsg
   
-  AsterException::~AsterException() throw()
+  AsterException::~AsterException() noexcept
   {} // end of AsterException::~AsterException
 
   AsterInvalidNTENSValue::AsterInvalidNTENSValue(const unsigned short N)
@@ -50,7 +50,7 @@ namespace aster
     : AsterException(e)
   {} // end of AsterInvalidNTENSValue::AsterInvalidNTENSValue
 
-  AsterInvalidNTENSValue::~AsterInvalidNTENSValue() throw()
+  AsterInvalidNTENSValue::~AsterInvalidNTENSValue() noexcept
   {} // end of AsterInvalidNTENSValue::~AsterInvalidNTENSValue()
 
   AsterInvalidDimension::AsterInvalidDimension(const std::string& b,
@@ -62,7 +62,7 @@ namespace aster
     : AsterException(e)
   {} // end of AsterInvalidDimension::AsterInvalidDimension
 
-  AsterInvalidDimension::~AsterInvalidDimension() throw()
+  AsterInvalidDimension::~AsterInvalidDimension() noexcept
   {} // end of AsterInvalidDimension::~AsterInvalidDimension()
 
 } // end of namespace aster

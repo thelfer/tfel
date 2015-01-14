@@ -15,12 +15,11 @@
 #ifndef _LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_
 #define _LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_ 
 
-#include<string>
 #include<cstddef>
 #include<iterator>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
@@ -30,7 +29,6 @@
 #include"TFEL/Math/General/RunTimeCheck.hxx"
 #include"TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
-
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 

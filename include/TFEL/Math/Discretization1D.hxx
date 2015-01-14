@@ -30,10 +30,13 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidDensity
       : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
-      GeometricDiscretizationInvalidDensity();
+      GeometricDiscretizationInvalidDensity() = default;
+      GeometricDiscretizationInvalidDensity(GeometricDiscretizationInvalidDensity&&) = default;
+      GeometricDiscretizationInvalidDensity(const GeometricDiscretizationInvalidDensity&) = default;
+      //! \return a string describing the error
+      virtual const char* what() const noexcept final;
+      //! destructor
+      virtual ~GeometricDiscretizationInvalidDensity() noexcept;
     }; // end of struct GeometricDiscretizationInvalidDensity
 
     /*!
@@ -43,10 +46,13 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidLength
       : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
-      GeometricDiscretizationInvalidLength();
+      GeometricDiscretizationInvalidLength() = default;
+      GeometricDiscretizationInvalidLength(GeometricDiscretizationInvalidLength&&) = default;
+      GeometricDiscretizationInvalidLength(const GeometricDiscretizationInvalidLength&) = default;
+      //! \return a string describing the error
+      virtual const char* what() const noexcept final;
+      //! destructor
+      virtual ~GeometricDiscretizationInvalidLength() noexcept;
     }; // end of struct GeometricDiscretizationInvalidLength
 
     /*!
@@ -56,10 +62,13 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidNumberOfElements
       : public MathRunTimeException
     {
-      /*!
-       * default constructor
-       */
-      GeometricDiscretizationInvalidNumberOfElements();
+      GeometricDiscretizationInvalidNumberOfElements() = default;
+      GeometricDiscretizationInvalidNumberOfElements(GeometricDiscretizationInvalidNumberOfElements&&) = default;
+      GeometricDiscretizationInvalidNumberOfElements(const GeometricDiscretizationInvalidNumberOfElements&) = default;
+      //! \return a string describing the error
+      virtual const char* what() const noexcept final;
+      //! destructor
+      virtual ~GeometricDiscretizationInvalidNumberOfElements() noexcept;
     }; // end of struct GeometricDiscretizationInvalidNumberOfElements
 
     /*!

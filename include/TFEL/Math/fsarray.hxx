@@ -14,6 +14,9 @@
 #ifndef _LIB_TFEL_MATH_FSARRAY_H_
 #define _LIB_TFEL_MATH_FSARRAY_H_ 
 
+#include<iterator>
+#include<type_traits>
+#include<initializer_list>
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -22,18 +25,31 @@ namespace tfel
 
   namespace math
   {
+
+    /*!
+     * an aggregate type
+     * \tparam N : size of the array
+     * \tparam T : value type
+     */
+    template<unsigned short N,typename T>
+    struct array_container
+    {
+      //! values holded
+      T v[N];
+    };
     
     /*!
      * \brief a container for finite size array.
      * This is mainly equivalent to the array class of C++11.
      * \tparam N : size of the array
-     * \tparam T : value holded
+     * \tparam T : value type
      * \note we could not get rid of this class of favor of std::array
      * because two many classes who inherits from tfel::math::fsarry
      * used direct access to the values through the `v` member.
      */
     template<unsigned short N,typename T>
     struct TFEL_VISIBILITY_LOCAL fsarray
+      : protected array_container<N,T>
     {
       /*!
        * type of the tvector's values.
@@ -91,71 +107,119 @@ namespace tfel
        */
       typedef std::reverse_iterator<iterator> reverse_iterator;
       /*!
+       * default constructor
+       */
+      TFEL_MATH_INLINE fsarray() noexcept;
+      /*!
+       * constructor
+       * \param[in] values
+       */
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      fsarray(const fsarray<N,T2>&);
+      /*!
+       * constructor
+       * \param[in] values
+       */
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      fsarray(const std::initializer_list<T2>&);
+      /*!
+       * constructor from a single value
+       * \param[in] value
+       */
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      fsarray(const T2&);
+      /*!
        * return an iterator to the first element of the vector
        * (provided for stl compatibility)
        * \return iterator, an iterator to the first element
        */
       TFEL_MATH_INLINE iterator
-      begin(void);
+      begin(void) noexcept;
       /*!
        * return an const iterator to the first element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator to the first element
        */
       TFEL_MATH_INLINE const_iterator 
-      begin(void) const;
+      begin(void) const noexcept;
+      /*!
+       * return an const iterator to the first element of the vector
+       * (provided for stl compatibility)
+       * \return const_iterator, a const iterator to the first element
+       */
+      TFEL_MATH_INLINE const_iterator 
+      cbegin(void) const noexcept;
       /*!
        * return an iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return iterator, an iterator after the last element
        */
       TFEL_MATH_INLINE iterator
-      end(void);
+      end(void) noexcept;
       /*!
        * return an const iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator after the last element
        */
       TFEL_MATH_INLINE const_iterator
-      end(void) const;
+      end(void) const noexcept;
+      /*!
+       * return an const iterator after the last element of the vector
+       * (provided for stl compatibility)
+       * \return const_iterator, a const iterator after the last element
+       */
+      TFEL_MATH_INLINE const_iterator
+      cend(void) const noexcept;
       /*!
        * return an reverse iterator to the last element of the vector
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator to the last element
        */
       TFEL_MATH_INLINE reverse_iterator
-      rbegin(void);
+      rbegin(void) noexcept;
       /*!
        * return an const reverse iterator to the last element of the vector
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator to the last element
        */
       TFEL_MATH_INLINE const_reverse_iterator
-      rbegin(void) const;
-      
+      rbegin(void) const noexcept;
       /*!
        * return an  reverse iterator before the first element of the vector
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
        */
       TFEL_MATH_INLINE reverse_iterator
-      rend(void);
+      rend(void) noexcept;
       /*!
        * return an const reverse iterator before the first element of the vector
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator before the first element
        */
       TFEL_MATH_INLINE const_reverse_iterator
-      rend(void) const;
+      rend(void) const noexcept;
       /*!
        * size of the tiny vector
        * (compatibility with vector)
        */
-      TFEL_MATH_INLINE unsigned short
-      size(void) const;
-    protected:
-      // values holded by the tvector.
-      T v[N];
+      constexpr TFEL_MATH_INLINE unsigned short
+      size(void) const noexcept;
+      /*!
+       * access operator
+       */
+      TFEL_MATH_INLINE reference
+      operator[](const size_type) noexcept;
+      /*!
+       * access operator
+       */
+      constexpr TFEL_MATH_INLINE const_reference
+      operator[](const size_type) const noexcept;
     private:
       //! a simple assertion stating that the dimension is valid.
       TFEL_STATIC_ASSERT(N!=0);

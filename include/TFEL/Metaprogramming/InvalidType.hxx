@@ -14,7 +14,6 @@
 #ifndef _LIB_TFEL_INVALIDTYPE_H_
 #define _LIB_TFEL_INVALIDTYPE_H_ 
 
-#include<string>
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel{

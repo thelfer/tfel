@@ -26,6 +26,9 @@ namespace tfel
       : std::runtime_error(std::string("GenTypeCastError : bad cast"))
     {} // end of GenTypeCastError::GenTypeCastError
 
+    GenTypeCastError::~GenTypeCastError() noexcept
+    {} // end of GenTypeCastError::~GenTypeCastError()
+
   } // end of namespace utilities
 
 } // end of namespace tfel

@@ -3,26 +3,24 @@
  * \brief  This file declares the qt class.
  * \author Helfer Thomas
  * \date   06 Jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef _LIB_TFEL_MATH_QT_H_
-#define _LIB_TFEL_MATH_QT_H_ 
+#define _LIB_TFEL_MATH_QT_H_
 
 #include<cmath>
-#include<string>
-#include<ostream>
+#include<iosfwd>
 
 #include"TFEL/Config/TFELConfig.hxx"
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/TypeList.hxx"
-#include"TFEL/Metaprogramming/IntToType.hxx"
 
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/IsReal.hxx"
@@ -67,7 +65,7 @@ namespace tfel{
      */
     template<typename unit,typename T=double>
     class qt{
-      
+
       /*!
        * A simple check, T must be a fundamental numerical type.
        */
@@ -92,15 +90,17 @@ namespace tfel{
        * \brief Default constructor
        * value is left uninitialised.
        */
-      TFEL_MATH_INLINE qt()
+      TFEL_MATH_INLINE constexpr
+      qt() noexcept(T())
       {}
-      
+
       /*!
        * \brief Copy constructor.
        * \param qt src.
        * value takes the src's value.
        */
-      TFEL_MATH_INLINE qt(const qt<unit,T>& src)
+      TFEL_MATH_INLINE constexpr
+      qt(const qt<unit,T>& src) noexcept(std::is_nothrow_constructible<T>::value)
 	: value(src.value)
       {}
 
@@ -108,34 +108,39 @@ namespace tfel{
        * \brief constructor from a value
        * \param T src, the src.
        */
-      TFEL_MATH_INLINE explicit qt(const T src)
+      TFEL_MATH_INLINE constexpr
+      explicit qt(const T& src) noexcept(std::is_nothrow_constructible<T>::value)
 	: value(src)
       {}
 
       /*!
        * Return the value of the qt.
        */
-      TFEL_MATH_INLINE T& getValue(void);
+      TFEL_MATH_INLINE T& getValue(void) noexcept;
 
       /*!
        * Return the value of the qt, const version
        */
-      TFEL_MATH_INLINE const T  getValue(void) const;
-      
+      TFEL_MATH_INLINE constexpr const T&
+      getValue(void) const noexcept;
+      //! assignement operator
+      TFEL_MATH_INLINE qt<unit,T>&
+      operator = (const qt<unit,T>&);
       /*!
        * Assignement operator
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<unit,T>&>::type
       operator = (const qt<unit,T2>&src);
-
       /*!
        * Operator +=
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<unit,T>&>::type
       operator += (const qt<unit,T2>&src);
@@ -144,7 +149,8 @@ namespace tfel{
        * Operator -=
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<unit,T>&>::type
       operator -= (const qt<unit,T2>&src);
@@ -154,18 +160,19 @@ namespace tfel{
        * \param T2 a, a scalar
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	IsQtScalarOperationValid<T,T2>::cond,
 	qt<unit,T>&
       >::type
       operator *= (const T2 a);
-      
       /*!
        * Operator /=
        * \param T2 a, a scalar
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	IsQtScalarOperationValid<T,T2>::cond,
 	qt<unit,T>&
       >::type
@@ -174,7 +181,9 @@ namespace tfel{
       /*!
        * negation operator
        */
-      qt<unit,T> operator -() const
+      TFEL_MATH_INLINE constexpr
+      qt<unit,T>
+      operator -() const
       {
 	return qt<unit,T>(-(this->value));
       }
@@ -190,16 +199,16 @@ namespace tfel{
       static constexpr bool cond = std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value&&
         tfel::typetraits::IsFundamentalNumericType<T2>::cond&&
         tfel::typetraits::IsScalar<T2>::cond;
-    }; 
+    };
 
     /*!
      * \brief Specialization in case NoUnit.
      * This class shall be implicitly convertible to T and T must be convertible to qt<T,nounit>.
      * \see qt.
-     */ 
+     */
     template<typename T>
     class qt<NoUnit,T>{
-      
+
       /*!
        * A simple check, T must be a fundamental numerical type.
        */
@@ -224,7 +233,7 @@ namespace tfel{
        * \brief Default constructor
        * value is left uninitialised.
        */
-      TFEL_MATH_INLINE qt()
+      TFEL_MATH_INLINE qt() noexcept(T())
       {}
 
       /*!
@@ -232,7 +241,7 @@ namespace tfel{
        * \param qt src.
        * value takes the src's value.
        */
-      TFEL_MATH_INLINE qt(const qt<NoUnit,T>& src)
+      TFEL_MATH_INLINE qt(const qt<NoUnit,T>& src) noexcept(std::is_nothrow_constructible<T>::value)
 	: value(src.value)
       {}
 
@@ -241,31 +250,38 @@ namespace tfel{
        * Here, it is not declared explicit.
        * \param T src, the src.
        */
-      TFEL_MATH_INLINE qt(const T& src)
+      TFEL_MATH_INLINE qt(const T& src) noexcept(std::is_nothrow_constructible<T>::value)
 	: value(src)
       {}
 
       /*!
        * Return the value of the qt
        */
-      TFEL_MATH_INLINE T& getValue(void);
+      TFEL_MATH_INLINE T& getValue(void) noexcept;
 
       /*!
        * Return the value of the qt, const version
        */
-      TFEL_MATH_INLINE const T getValue(void) const;
-      
+      TFEL_MATH_INLINE constexpr
+      const T& getValue(void) const noexcept;
+      /*!
+       * Operator =
+       */
+      TFEL_MATH_INLINE qt<NoUnit,T>&
+      operator = (const qt<NoUnit,T>& src);
       /*!
        * Operator =
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<NoUnit,T>&>::type
       operator = (const qt<NoUnit,T2>&src);
 
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	IsConvertibleToQtNoUnit<T,T2>::cond,
         qt<NoUnit,T>&
        >::type
@@ -275,46 +291,50 @@ namespace tfel{
        * Operator +=
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<NoUnit,T>&>::type
-      operator += (const qt<NoUnit,T2>&src);
+      operator += (const qt<NoUnit,T2>&src) ;
 
       /*!
        * Operator -=
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	std::is_same<typename tfel::typetraits::Promote<T,T2>::type,T>::value,
 	qt<NoUnit,T>&>::type
-      operator -= (const qt<NoUnit,T2>&src);
+      operator -= (const qt<NoUnit,T2>&src) ;
 
       /*!
        * Operator *=
        * \param T2 a, a scalar
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	IsConvertibleToQtNoUnit<T,T2>::cond,
 	qt<NoUnit,T>&
       >::type
-      operator *= (const T2 a);
-      
+      operator *= (const T2 a) ;
+
       /*!
        * Operator /=
        * \param T2 a, a scalar
        */
       template<typename T2>
-      TFEL_MATH_INLINE typename std::enable_if<
+      TFEL_MATH_INLINE
+      typename std::enable_if<
 	IsConvertibleToQtNoUnit<T,T2>::cond,
 	qt<NoUnit,T>&
       >::type
-      operator /= (const T2 a);
+      operator /= (const T2 a) ;
 
       /*!
        * Conversion operator
        */
-      operator T() const;
+      constexpr operator T() const ;
 
       /*!
        * negation operator
@@ -325,32 +345,37 @@ namespace tfel{
       }
 
     };
-    
+
     template<typename unit,typename T>
     TFEL_MATH_INLINE2 std::ostream& operator << (std::ostream&, const qt<unit,T>&);
 
     template<typename unit,typename T>
-    TFEL_MATH_INLINE bool operator < (const qt<unit,T>, const qt<unit,T>);
+    TFEL_MATH_INLINE constexpr
+    bool operator < (const qt<unit,T>, const qt<unit,T>) ;
 
     template<typename unit,typename T>
-    TFEL_MATH_INLINE bool operator <= (const qt<unit,T>, const qt<unit,T>);
+    TFEL_MATH_INLINE constexpr
+    bool operator <= (const qt<unit,T>, const qt<unit,T>) ;
 
     template<typename unit,typename T>
-    TFEL_MATH_INLINE bool operator > (const qt<unit,T>, const qt<unit,T>);
+    TFEL_MATH_INLINE constexpr
+    bool operator > (const qt<unit,T>, const qt<unit,T>) ;
 
     template<typename unit,typename T>
-    TFEL_MATH_INLINE bool operator >= (const qt<unit,T>, const qt<unit,T>);
+    TFEL_MATH_INLINE constexpr
+    bool operator >= (const qt<unit,T>, const qt<unit,T>) ;
 
     template<typename unit,typename T>
-    TFEL_MATH_INLINE bool operator == (const qt<unit,T>, const qt<unit,T>);
+    TFEL_MATH_INLINE constexpr
+    bool operator == (const qt<unit,T>, const qt<unit,T>) ;
 
     template<typename unit,typename T>
-    TFEL_MATH_INLINE bool operator != (const qt<unit,T>, const qt<unit,T>);
+    TFEL_MATH_INLINE constexpr
+    bool operator != (const qt<unit,T>, const qt<unit,T>) ;
 
     template<typename Unit,typename Scal>
-    TFEL_MATH_INLINE
-    Scal
-    abs(const qt<Unit,Scal>&);
+    TFEL_MATH_INLINE constexpr
+    Scal abs(const qt<Unit,Scal>&) ;
 
     namespace stdfunctions{
 

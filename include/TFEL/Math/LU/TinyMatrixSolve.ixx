@@ -41,7 +41,7 @@ namespace tfel{
 	    v += mv[j]*x(j);
 	  }
 	  if(std::abs(mv[i])<eps){
-	    throw(LUException("TinyMatrixSolve<N,T>::exe : null pivot"));
+	    throw(LUNullPivot());
 	  }
 	  T& xv = x(i);
 	  xv -= v;
@@ -68,7 +68,7 @@ namespace tfel{
 	    v += mv[j]*x(p(j));
 	  }
 	  if(std::abs(mv[i])<eps){
-	    throw(LUException("TinyMatrixSolve<N,T>::exe : null pivot"));
+	    throw(LUNullPivot());
 	  }
 	  T& xv = x(pi);
 	  xv -= v;
@@ -116,7 +116,7 @@ namespace tfel{
       using namespace std;
       const T det = m(0,0)*m(1,1) - m(0,1)*m(1,0);
       if(abs(det)<eps){
-	throw(LUException("TinyMatrixSolve<2u,T>::exe : null determinant"));
+	throw(LUNullDeterminant());
       }
       const T b0 = b(0);
       const T b1 = b(1);
@@ -135,7 +135,7 @@ namespace tfel{
       const T det = m(0,0)*(m(1,1)*m(2,2) - m(1,2)*m(2,1)) - m(0,1)*(m(1,0)*m(2,2) - m(1,2)*m(2,0))
 	+ m(0,2)*(m(1,0)*m(2,1) - m(1,1)*m(2,0));
       if(abs(det)<eps){
-	throw(LUException("TinyMatrixSolve<3u,T>::exe : null determinant"));
+	throw(LUNullDeterminant());
       }
       const T b0 = b(0);
       const T b1 = b(1);

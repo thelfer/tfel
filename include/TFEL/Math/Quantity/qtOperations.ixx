@@ -21,15 +21,17 @@ namespace tfel{
   namespace math{
 
     template<typename unit,typename T1, typename T2>
-    TFEL_MATH_INLINE qt<unit,typename tfel::typetraits::Promote<T1,T2>::type>
-    operator + (const qt<unit,T1> a,qt<unit,T2> b)
+    TFEL_MATH_INLINE constexpr
+    qt<unit,typename tfel::typetraits::Promote<T1,T2>::type>
+    operator + (const qt<unit,T1> a,const qt<unit,T2> b)
     {
       typedef typename ResultType<qt<unit,T1>,qt<unit,T2>,OpPlus>::type result;
       return static_cast<result>(a.getValue()+b.getValue());
     }
 
     template<typename unit,typename T1, typename T2>
-    TFEL_MATH_INLINE qt<unit,typename tfel::typetraits::Promote<T1,T2>::type>
+    TFEL_MATH_INLINE constexpr
+    qt<unit,typename tfel::typetraits::Promote<T1,T2>::type>
     operator - (const qt<unit,T1> a, const qt<unit,T2> b)
     {
       typedef typename ResultType<qt<unit,T1>,qt<unit,T2>,OpMinus>::type result;
@@ -37,7 +39,8 @@ namespace tfel{
     }
 
     template<typename unit,typename T1, typename unit2, typename T2>
-    TFEL_MATH_INLINE qt<typename AddUnit_<unit,unit2>::type,typename tfel::typetraits::Promote<T1,T2>::type>
+    TFEL_MATH_INLINE constexpr
+    qt<typename AddUnit_<unit,unit2>::type,typename tfel::typetraits::Promote<T1,T2>::type>
     operator * (const qt<unit,T1> a, const qt<unit2,T2> b)
     {
       typedef typename ResultType<qt<unit,T1>,qt<unit2,T2>,OpMult>::type result;
@@ -45,7 +48,8 @@ namespace tfel{
     }
 
     template<typename unit,typename T1, typename unit2, typename T2>
-    TFEL_MATH_INLINE qt<typename SubUnit_<unit,unit2>::type,typename tfel::typetraits::Promote<T1,T2>::type>
+    TFEL_MATH_INLINE constexpr
+    qt<typename SubUnit_<unit,unit2>::type,typename tfel::typetraits::Promote<T1,T2>::type>
     operator / (const qt<unit,T1> a, const qt<unit2,T2> b)
     {
       typedef typename ResultType<qt<unit,T1>,qt<unit2,T2>,OpDiv>::type result;
@@ -56,7 +60,8 @@ namespace tfel{
 
 #define TFEL_MATH_QT_RESULT_TYPE_IMPL(X)                                                    \
     template<typename unit,typename T1>                                                     \
-    TFEL_MATH_INLINE qt<unit,typename tfel::typetraits::Promote<T1,X >::type>               \
+    TFEL_MATH_INLINE constexpr                                                              \
+    qt<unit,typename tfel::typetraits::Promote<T1,X >::type>                                \
     operator * (const qt<unit,T1> a, const X b)                                             \
     {                                                                                       \
       typedef qt<unit,typename tfel::typetraits::Promote<T1,X >::type> result;              \
@@ -64,7 +69,8 @@ namespace tfel{
     }                                                                                       \
                                                                                             \
     template<typename unit,typename T1>                                                     \
-    TFEL_MATH_INLINE qt<unit,typename tfel::typetraits::Promote<T1,X >::type>               \
+    TFEL_MATH_INLINE constexpr                                                              \
+    qt<unit,typename tfel::typetraits::Promote<T1,X >::type>		                    \
     operator * (const X b, const qt<unit,T1> a)                                             \
     {                                                                                       \
       typedef qt<unit,typename tfel::typetraits::Promote<T1,X >::type> result;              \
@@ -72,7 +78,8 @@ namespace tfel{
     }                                                                                       \
                                                                                             \
     template<typename unit,typename T1>                                                     \
-    TFEL_MATH_INLINE qt<unit,typename tfel::typetraits::Promote<T1,X >::type>               \
+    TFEL_MATH_INLINE constexpr                                                              \
+    qt<unit,typename tfel::typetraits::Promote<T1,X >::type>		                    \
     operator / (const qt<unit,T1> a, const X b)                                             \
     {                                                                                       \
       typedef qt<unit,typename tfel::typetraits::Promote<T1,X >::type> result;              \
@@ -80,7 +87,8 @@ namespace tfel{
     }                                                                                       \
                                                                                             \
     template<typename T1, typename unit>                                                    \
-    TFEL_MATH_INLINE qt<typename SubUnit_<NoUnit,unit>::type,                               \
+    TFEL_MATH_INLINE constexpr                                                              \
+    qt<typename SubUnit_<NoUnit,unit>::type,				                    \
 			typename tfel::typetraits::Promote<T1,X >::type>                    \
     operator / (const X b, const qt<unit,T1> a)                                             \
     {                                                                                       \

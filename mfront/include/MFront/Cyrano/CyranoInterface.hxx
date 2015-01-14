@@ -16,7 +16,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Material/MaterialException.hxx"
 
 #include"MFront/Cyrano/Cyrano.hxx"
@@ -54,7 +53,6 @@ namespace cyrano{
 	       CyranoInt  *const KINC)
     {
       using namespace tfel::material;
-      using namespace tfel::utilities;
       typedef ModellingHypothesis MH;
       CyranoInterfaceExceptions::checkNTENSValue(*NTENS,3u);
       if(*NDI==1){
@@ -82,35 +80,35 @@ namespace cyrano{
 		  CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
 		  CyranoReal *const STRESS,CyranoInt  *const KINC)
     {
-      using namespace tfel::utilities;
       typedef Behaviour<H,CyranoReal,false> BV;
+      typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       try {
 	CyranoInterfaceDispatch<H,Behaviour>::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 						  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 						  STATEV,NSTATV,STRESS);
       }
       catch(const CyranoIntegrationFailed& e){
-	CyranoInterfaceExceptions::treatCyranoException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatCyranoException(Traits::getName(),e);
 	*KINC = -1;
       }
       catch(const CyranoException& e){
-	CyranoInterfaceExceptions::treatCyranoException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatCyranoException(Traits::getName(),e);
 	*KINC = -2;
       }
       catch(const tfel::material::MaterialException& e){
-	CyranoInterfaceExceptions::treatMaterialException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatMaterialException(Traits::getName(),e);
 	*KINC = -3;
       }
       catch(const tfel::exception::TFELException& e){
-	CyranoInterfaceExceptions::treatTFELException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatTFELException(Traits::getName(),e);
 	*KINC = -4;
       }
       catch(const std::exception& e){
-	CyranoInterfaceExceptions::treatStandardException(Name<BV>::getName(),e);
+	CyranoInterfaceExceptions::treatStandardException(Traits::getName(),e);
 	*KINC = -5;
       }
       catch(...){
-	CyranoInterfaceExceptions::treatUnknownException(Name<BV>::getName());
+	CyranoInterfaceExceptions::treatUnknownException(Traits::getName());
 	*KINC = -6;
       }
     } // end of CyranoInterface::callBehaviour

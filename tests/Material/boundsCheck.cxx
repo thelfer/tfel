@@ -20,6 +20,7 @@
 #include<cstdlib>
 
 #include"TFEL/Material/BoundsCheck.hxx"
+#include"TFEL/Material/MaterialException.hxx"
 
 int main(void)
 {

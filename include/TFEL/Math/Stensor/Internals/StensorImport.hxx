@@ -51,7 +51,8 @@ namespace tfel{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src){
-	  static constexpr typename tfel::typetraits::BaseType<T>::type CSTE_1_SQRT2 = 1./std::sqrt(static_cast<typename tfel::typetraits::BaseType<T>::type>(2.));
+	  using real = typename tfel::typetraits::BaseType<T>::type;
+	  static const real CSTE_1_SQRT2 = real(1)/std::sqrt(real(2));
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
@@ -64,7 +65,8 @@ namespace tfel{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2 * const src){
-	  static constexpr typename tfel::typetraits::BaseType<T>::type CSTE_1_SQRT2 = 1./std::sqrt(static_cast<typename tfel::typetraits::BaseType<T>::type>(2.));
+	  using real = typename tfel::typetraits::BaseType<T>::type;
+	  static const real CSTE_1_SQRT2 = real(1)/std::sqrt(real(2));
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
@@ -93,7 +95,8 @@ namespace tfel{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src){
-	  static constexpr typename tfel::typetraits::BaseType<T>::type CSTE_SQRT2 = std::sqrt(static_cast<typename tfel::typetraits::BaseType<T>::type>(2.));
+	  using real = typename tfel::typetraits::BaseType<T>::type;
+	  static const real CSTE_SQRT2 = std::sqrt(real(2));
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
@@ -106,7 +109,8 @@ namespace tfel{
 	template<typename T,typename T2>
 	static TFEL_MATH_INLINE typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src){
-	  static constexpr typename tfel::typetraits::BaseType<T>::type CSTE_SQRT2 = std::sqrt(static_cast<typename tfel::typetraits::BaseType<T>::type>(2.));
+	  using real = typename tfel::typetraits::BaseType<T>::type;
+	  static const real CSTE_SQRT2 = std::sqrt(real(2));
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];

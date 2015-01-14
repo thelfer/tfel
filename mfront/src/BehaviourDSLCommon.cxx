@@ -2081,7 +2081,6 @@ namespace mfront{
     this->behaviourDataFile << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"" << endl;
-    this->behaviourDataFile << "#include\"TFEL/Utilities/Name.hxx\"" << endl;
     if(this->mb.useQt()){
       this->behaviourDataFile << "#include\"TFEL/Math/General/BaseCast.hxx\"" << endl;
     }
@@ -2144,35 +2143,6 @@ namespace mfront{
     this->behaviourDataFile << endl;
     this->writeStandardTFELTypedefs(this->behaviourDataFile);
     this->behaviourDataFile << endl;
-  }
-
-  void BehaviourDSLCommon::writeBehaviourDataGetName(void){    
-    using namespace std;
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "namespace tfel{" << endl;
-    this->behaviourDataFile << "namespace utilities{" << endl;
-    this->behaviourDataFile << "//! Partial specialisation of the Name class" << endl;
-    if(this->mb.useQt()){        
-      this->behaviourDataFile << "template<tfel::material::ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
-      this->behaviourDataFile << "struct Name<tfel::material::" << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt> >" << endl;
-    } else {
-      this->behaviourDataFile << "template<tfel::material::ModellingHypothesis::Hypothesis hypothesis,typename Type>" << endl;
-      this->behaviourDataFile << "struct Name<tfel::material::" << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false> >" << endl;
-    }
-    this->behaviourDataFile << "{" << endl;
-    this->behaviourDataFile << "/*!" << endl;
-    this->behaviourDataFile << "* \\brief  Return the name of the class." << endl;
-    this->behaviourDataFile << "* \\return the name of the class." << endl;
-    this->behaviourDataFile << "* \\see    Name." << endl;
-    this->behaviourDataFile << "*/" << endl;
-    this->behaviourDataFile << "static std::string" << endl;
-    this->behaviourDataFile << "getName(void){" << endl;
-    this->behaviourDataFile << "return std::string(\"";
-    this->behaviourDataFile << this->mb.getClassName() << "BehaviourData\");" << endl;
-    this->behaviourDataFile << "}" << endl << endl;
-    this->behaviourDataFile << "}; // end of struct Name" << endl;
-    this->behaviourDataFile << "} // end of namespace utilities" << endl;
-    this->behaviourDataFile << "} // end of namespace tfel" << endl << endl;
   }
 
   void BehaviourDSLCommon::writeBehaviourDataDisabledConstructors(void)
@@ -2529,26 +2499,6 @@ namespace mfront{
     }
     this->behaviourDataFile << "{" << endl;
     this->behaviourDataFile << "using namespace std;" << endl;
-    this->behaviourDataFile << "using namespace tfel::utilities;" << endl;
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      if(this->mb.useQt()){        
-	this->behaviourDataFile << "os << Name<" << this->mb.getClassName() 
-				<< "BehaviourData<hypothesis,Type,use_qt> >::getName() << endl;" << endl;
-      } else {
-	this->behaviourDataFile << "os << Name<" << this->mb.getClassName() 
-				<< "BehaviourData<hypothesis,Type,false> >::getName() << endl;" << endl;
-      }
-    } else {
-      if(this->mb.useQt()){        
-	this->behaviourDataFile << "os << Name<" << this->mb.getClassName() 
-				<< "BehaviourData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
-				<< ",Type,use_qt> >::getName() << endl;" << endl;
-      } else {
-	this->behaviourDataFile << "os << Name<" << this->mb.getClassName() 
-				<< "BehaviourData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
-				<< ",Type,false> >::getName() << endl;" << endl;
-      }
-    }
     for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
       if(p2->first.increment_known){
 	this->behaviourDataFile << "os << \"" << p2->first.name  << " : \" << b." << p2->first.name  << " << endl;" << endl;
@@ -2623,7 +2573,6 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourDataFileEnd(void)
   {
     this->writeNamespaceEnd(this->behaviourDataFile);
-    this->writeBehaviourDataGetName();
     this->writeBehaviourDataFileHeaderEnd();
   } // end of BehaviourDSLCommon::writeBehaviourDataFileEnd
 
@@ -3550,24 +3499,6 @@ namespace mfront{
     }
     this->behaviourFile << "{" << endl;
     this->behaviourFile << "using namespace std;" << endl;
-    this->behaviourFile << "using namespace tfel::utilities;" << endl;
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      if(this->mb.useQt()){        
-	this->behaviourFile << "os << Name<" << this->mb.getClassName() 
-			    << "<hypothesis,Type,use_qt> >::getName() << endl;" << endl;
-      } else {
-	this->behaviourFile << "os << Name<" << this->mb.getClassName() 
-			    << "<hypothesis,Type,false> >::getName() << endl;" << endl;
-      }
-    } else {
-      if(this->mb.useQt()){        
-	this->behaviourFile << "os << Name<" << this->mb.getClassName() 
-			    << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt> >::getName() << endl;" << endl;
-      } else {
-	this->behaviourFile << "os << Name<" << this->mb.getClassName() 
-			    << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false> >::getName() << endl;" << endl;
-      }
-    }
     for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
       if(p2->first.increment_known){
 	this->behaviourFile << "os << \""  << p2->first.name << " : \" << b." << p2->first.name << " << endl;" << endl;
@@ -3661,6 +3592,7 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Material/MaterialException.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviour.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"" << endl;
@@ -3692,35 +3624,6 @@ namespace mfront{
       this->behaviourFile << c << endl << endl;
     }
   } // end of void BehaviourDSLCommon::writeBehaviourPrivate
-
-  void BehaviourDSLCommon::writeBehaviourGetName(void){    
-    using namespace std;
-    this->checkBehaviourFile();
-    this->behaviourFile << "namespace tfel{" << endl;
-    this->behaviourFile << "namespace utilities{" << endl;
-    this->behaviourFile << "//! Partial specialisation of the Name class" << endl;
-    if(this->mb.useQt()){        
-      this->behaviourFile << "template<tfel::material::ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
-      this->behaviourFile << "struct Name<tfel::material::" << this->mb.getClassName() << "<hypothesis,Type,use_qt> >" << endl;
-    } else {
-      this->behaviourFile << "template<tfel::material::ModellingHypothesis::Hypothesis hypothesis,typename Type>" << endl;
-      this->behaviourFile << "struct Name<tfel::material::" << this->mb.getClassName() << "<hypothesis,Type,false> >" << endl;
-    }
-    this->behaviourFile << "{" << endl;
-    this->behaviourFile << "/*!" << endl;
-    this->behaviourFile << "* \\brief  Return the name of the class." << endl;
-    this->behaviourFile << "* \\return the name of the class." << endl;
-    this->behaviourFile << "* \\see    Name." << endl;
-    this->behaviourFile << "*/" << endl;
-    this->behaviourFile << "static std::string" << endl;
-    this->behaviourFile << "getName(void){" << endl;
-    this->behaviourFile << "return std::string(\"";
-    this->behaviourFile << this->mb.getClassName() << "\");" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}; // end of struct Name" << endl;
-    this->behaviourFile << "} // end of namespace utilities" << endl;
-    this->behaviourFile << "} // end of namespace tfel" << endl << endl;
-  }
 
   void BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs(void)
   {
@@ -3939,6 +3842,13 @@ namespace mfront{
     } else {
       this->behaviourFile << "false;" << endl;
     }
+    this->behaviourFile << "/*!" << endl
+			<< "* \\return the name of the class." << endl
+			<< "*/" << endl
+			<< "static const char*" << endl
+			<< "getName(void){" << endl
+			<< "return \"" << this->mb.getClassName() << "\";" << endl
+			<< "}" << endl << endl;
     this->behaviourFile << "};" << endl << endl;
   }
 
@@ -4180,7 +4090,6 @@ namespace mfront{
     this->checkBehaviourFile();
     this->writeBehaviourTraits();
     this->writeNamespaceEnd(this->behaviourFile);
-    this->writeBehaviourGetName();
     this->writeBehaviourFileHeaderEnd();
   } // end of BehaviourDSLCommon::writeBehaviourFileBegin
 
@@ -4440,7 +4349,6 @@ namespace mfront{
     this->integrationDataFile << "#include\"TFEL/TypeTraits/IsScalar.hxx\"" << endl;
     this->integrationDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"" << endl;
     this->integrationDataFile << "#include\"TFEL/TypeTraits/Promote.hxx\"" << endl;
-    this->integrationDataFile << "#include\"TFEL/Utilities/Name.hxx\"" << endl;
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
       this->integrationDataFile << "#include\"TFEL/Math/tvector.hxx\"" << endl;
@@ -4503,35 +4411,6 @@ namespace mfront{
     this->integrationDataFile << endl;
     this->writeStandardTFELTypedefs(this->integrationDataFile);
     this->integrationDataFile << endl;
-  }
-
-  void BehaviourDSLCommon::writeIntegrationDataGetName(void){    
-    using namespace std;
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "namespace tfel{" << endl;
-    this->integrationDataFile << "namespace utilities{" << endl;
-    this->integrationDataFile << "//! Partial specialisation of the Name class" << endl;
-    if(this->mb.useQt()){        
-      this->integrationDataFile << "template<tfel::material::ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>" << endl;
-      this->integrationDataFile << "struct Name<tfel::material::" << this->mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt> >" << endl;
-    } else {
-      this->integrationDataFile << "template<tfel::material::ModellingHypothesis::Hypothesis hypothesis,typename Type>" << endl;
-      this->integrationDataFile << "struct Name<tfel::material::" << this->mb.getClassName() << "IntegrationData<hypothesis,Type,false> >" << endl;
-    }
-    this->integrationDataFile << "{" << endl;
-    this->integrationDataFile << "/*!" << endl;
-    this->integrationDataFile << "* \\brief  Return the name of the class." << endl;
-    this->integrationDataFile << "* \\return the name of the class." << endl;
-    this->integrationDataFile << "* \\see    Name." << endl;
-    this->integrationDataFile << "*/" << endl;
-    this->integrationDataFile << "static std::string" << endl;
-    this->integrationDataFile << "getName(void){" << endl;
-    this->integrationDataFile << "return std::string(\"";
-    this->integrationDataFile << this->mb.getClassName() << "IntegrationData\");" << endl;
-    this->integrationDataFile << "}" << endl << endl;
-    this->integrationDataFile << "}; // end of struct Name" << endl;
-    this->integrationDataFile << "} // end of namespace utilities" << endl;
-    this->integrationDataFile << "} // end of namespace tfel" << endl << endl;
   }
 
   void BehaviourDSLCommon::writeIntegrationDataDisabledConstructors(void)
@@ -4787,24 +4666,6 @@ namespace mfront{
     }
     this->integrationDataFile << "{" << endl;
     this->integrationDataFile << "using namespace std;" << endl;
-    this->integrationDataFile << "using namespace tfel::utilities;" << endl;
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      if(this->mb.useQt()){        
-	this->integrationDataFile << "os << Name<" << this->mb.getClassName() 
-				  << "IntegrationData<hypothesis,Type,use_qt> >::getName() << endl;" << endl;
-      } else {
-	this->integrationDataFile << "os << Name<" << this->mb.getClassName() 
-				  << "IntegrationData<hypothesis,Type,false> >::getName() << endl;" << endl;
-      }
-    } else {
-      if(this->mb.useQt()){        
-	this->integrationDataFile << "os << Name<" << this->mb.getClassName() 
-				  << "IntegrationData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt> >::getName() << endl;" << endl;
-      } else {
-	this->integrationDataFile << "os << Name<" << this->mb.getClassName() 
-				  << "IntegrationData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false> >::getName() << endl;" << endl;
-      }
-    }
     for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
       if(p2->first.increment_known){
 	this->integrationDataFile << "os << \"d" << p2->first.name << " : \" << b.d" << p2->first.name << " << endl;" << endl;
@@ -4880,7 +4741,6 @@ namespace mfront{
   {
     this->checkIntegrationDataFile();
     this->writeNamespaceEnd(this->integrationDataFile);
-    this->writeIntegrationDataGetName();
     this->writeIntegrationDataFileHeaderEnd();
   } // end of BehaviourDSLCommon::writeIntegrationDataFileEnd
 

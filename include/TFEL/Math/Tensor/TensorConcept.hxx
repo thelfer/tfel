@@ -51,16 +51,7 @@ namespace tfel{
      * \brief Helper class to characterise tensors.
      */ 
     struct TensorTag
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string 
-      getName(void);
-    }; // end of TensorTag
+    {}; // end of TensorTag
 
     /*!
      * exception thrown if invalid index is given
@@ -73,6 +64,7 @@ namespace tfel{
        * \param[in] i : index
        */
       TensorInvalidIndexException(const unsigned short);
+      virtual ~TensorInvalidIndexException() noexcept;
     private:
       /*!
        * format the error message
@@ -95,6 +87,7 @@ namespace tfel{
        */
       TensorInvalidIndexesException(const unsigned short,
 				    const unsigned short);
+      virtual ~TensorInvalidIndexesException() noexcept;
     private:
       /*!
        * format the error message
@@ -117,8 +110,12 @@ namespace tfel{
 				      const NumType&>::type ValueType;
       
     protected:
-      ~TensorConcept(){};
-      
+      TensorConcept() = default;
+      TensorConcept(TensorConcept&&) = default;
+      TensorConcept(const TensorConcept&) = default;
+      TensorConcept&
+      operator=(const TensorConcept&) = default;
+      ~TensorConcept() = default;
     public:
 
       typedef TensorTag ConceptTag;

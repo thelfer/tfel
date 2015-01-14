@@ -119,14 +119,21 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    tvector<N,T>::tvector()
+    constexpr tvector<N,T>::tvector()
     {}
 
     template<unsigned short N, typename T>
-    tvector<N,T>::tvector(const T init)
-    {
-      tfel::fsalgo::fill<N>::exe(this->v,init);
-    }
+    constexpr tvector<N,T>::tvector(const tvector<N,T>& src)
+      : VectorConcept<tvector<N,T>>(src),
+        fsarray<N,T>(src)
+    {}
+
+    template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr tvector<N,T>::tvector(const T2& init)
+      : fsarray<N,T>(init)
+    {}
 
     template<unsigned short N, typename T>
     tvector<N,T>::tvector(const T *const init)
@@ -143,40 +150,31 @@ namespace tfel{
     } // end of tvector<N,T>::tvector(const VectorExpr<tvector<N,T2>, Expr>&)
 
     template<unsigned short N, typename T>
-    const T& 
-    tvector<N,T>::operator()(const unsigned short i) const
+    tvector<N,T>&
+    tvector<N,T>::operator=(const tvector<N,T>& src)
     {
-      assert(i<N);
+      fsarray<N,T>::operator=(src);
+      return *this;
+    }
+
+    template<unsigned short N, typename T>
+    constexpr const T& 
+    tvector<N,T>::operator()(const unsigned short i) const noexcept
+    {
       return this->v[i];
     }
 
     template<unsigned short N, typename T>
     T& 
-    tvector<N,T>::operator()(const unsigned short i)
-    {
-      assert(i<N);
-      return this->v[i];
-    }
-
-    template<unsigned short N, typename T>
-    const T& 
-    tvector<N,T>::operator[](const unsigned short i) const
-    {
-      assert(i<N);
-      return this->v[i];
-    }
-
-    template<unsigned short N, typename T>
-    T& 
-    tvector<N,T>::operator[](const unsigned short i)
+    tvector<N,T>::operator()(const unsigned short i) noexcept
     {
       assert(i<N);
       return this->v[i];
     }
     
     template<unsigned short N, typename T>
-    typename tvector<N,T>::RunTimeProperties
-    tvector<N,T>::getRunTimeProperties(void) const
+    constexpr typename tvector<N,T>::RunTimeProperties
+    tvector<N,T>::getRunTimeProperties(void) const noexcept
     {
       return RunTimeProperties();
     }

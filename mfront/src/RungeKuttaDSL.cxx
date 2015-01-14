@@ -1145,11 +1145,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     this->behaviourFile << "if(::isnan(error)){" << endl;
-    this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : nan decteted\");" << endl;
-    if(getDebugMode()){
-      this->behaviourFile << "cout << msg << endl;" << endl;
-    }
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
     this->behaviourFile << "}" << endl;
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
@@ -1209,9 +1205,7 @@ namespace mfront{
     this->behaviourFile << "dt_ *= corrector;" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
     this->behaviourFile << "dt_=this->dt-t;" << endl;
@@ -1225,9 +1219,7 @@ namespace mfront{
     this->behaviourFile << "// failed is true" << endl;
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;
     this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
@@ -1275,9 +1267,7 @@ namespace mfront{
       this->behaviourFile << "}" << endl;
     }
     this->behaviourFile << "if(failed){" << endl;
-    this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"initial stress computations failed.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "asig = sqrt((this->sig)|(this->sig));" << endl;
     this->behaviourFile << "if ((this->young)*Type(1.e-3)>asig){" << endl;
@@ -1582,9 +1572,7 @@ namespace mfront{
     }
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(!converged){" << endl;
     this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
@@ -1916,11 +1904,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     this->behaviourFile << "if(::isnan(error)){" << endl;
-    this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : nan decteted\");" << endl;
-    if(getDebugMode()){
-      this->behaviourFile << "cout << msg << endl;" << endl;
-    }
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
     this->behaviourFile << "}" << endl;
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
@@ -1976,9 +1960,7 @@ namespace mfront{
     }
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
     this->behaviourFile << "dt_=this->dt-t;" << endl;
@@ -1988,9 +1970,7 @@ namespace mfront{
     this->behaviourFile << "// failed is true" << endl;
     this->behaviourFile << "dt_ *= real(0.1f);" << endl;
     this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");" << endl;
-    this->behaviourFile << "msg += \"time step reduction has gone too far.\";" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException(msg));" << endl;
+    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;

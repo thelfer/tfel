@@ -32,25 +32,9 @@ namespace tfel{
     template<unsigned short N,typename NumType, bool use_qt>
     class ThermalBehaviour
     {
-
       typedef ThermalBehaviourData<N,NumType,use_qt> ThermalBehaviourData;
-
     public:
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void){
-	return std::string("ThermalBehaviour");
-      }
-
-      // virtual void doThermalIntegration(ThermalBehaviourData&) = 0;
-
       virtual ~ThermalBehaviour(){};
-
     };
 
   } // end of namespace material 

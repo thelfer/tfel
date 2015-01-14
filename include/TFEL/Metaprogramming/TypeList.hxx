@@ -14,8 +14,6 @@
 #ifndef _LIB_TFEL_TYPELIST_H_
 #define _LIB_TFEL_TYPELIST_H_ 
 
-#include <string>
-
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel{
@@ -270,6 +268,18 @@ namespace tfel{
      */
     template<typename List> 
     class TLMaxSize;
+
+    /*
+     * \class TLMaxSize.
+     * \param  List, the list of types evaluated.
+     * \return cons size_t value, the result.
+     * The size is given by the sizeof operator.
+     * The minimum size is alignof(char).
+     * \author Helfer Thomas.
+     * \date   16/12/2014
+     */
+    template<typename List> 
+    class TLMaxAlign;
 
     /*
      * \class TLComputeAlignBound.

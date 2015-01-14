@@ -52,15 +52,15 @@ namespace tfel{
       {
 	using namespace std;
 	if(m.getNbRows()!=m.getNbCols()){
-	  throw(LUException("matrix is not square"));
+	  throw(LUMatrixNotSquare());
 	}
 	if((m.getNbRows()!=b.size())||
 	   (m.getNbRows()!=p.size())||
 	   (m.getNbRows()!=p.size())){
-	  throw(LUException("matrix size and vector size does not match"));
+	  throw(LUUnmatchedSize());
 	}
 	if(m.getNbRows()==0){
-	  throw(LUException("invalid matrix size"));
+	  throw(LUInvalidMatrixSize());
 	}
 	p.reset();
 	LUDecomp::exe(m,p);
@@ -77,15 +77,15 @@ namespace tfel{
 	using namespace std;
 	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
 	if(m.getNbRows()!=m.getNbCols()){
-	  throw(LUException("matrix is not square"));
+	  throw(LUMatrixNotSquare());
 	}
 	if((m.getNbRows()!=b.size())||
 	   (m.getNbRows()!=p.size())||
 	   (m.getNbRows()!=p.size())){
-	  throw(LUException("matrix size and vector size does not match"));
+	  throw(LUUnmatchedSize());
 	}
 	if(m.getNbRows()==0){
-	  throw(LUException("invalid matrix size"));
+	  throw(LUInvalidMatrixSize());
 	}
 	IndexType i,j;
 	IndexType pi;

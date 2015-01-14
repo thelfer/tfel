@@ -19,14 +19,54 @@ namespace tfel
   namespace math
   {
     
-    LUException::LUException(const std::string& s)
-      : tfel::exception::TFELException(s)
-    {} // end of LUException::LUException
+    LUException::~LUException() noexcept
+    {} // end of LUException::~LUException
 
-    LUException::LUException(const char* const s)
-      : tfel::exception::TFELException(s)
-    {} // end of LUException::LUException
-    
+    const char*
+    LUMatrixNotSquare::what() const noexcept 
+    {
+      return "LUDecomp::exe : matrix is not square";
+    } // end of LUMatrixNotSquare::what
+
+    LUMatrixNotSquare::~LUMatrixNotSquare() noexcept
+    {} // end of LUMatrixNotSquare::~LUMatrixNotSquare
+
+    const char*
+    LUUnmatchedSize::what() const noexcept 
+    {
+      return "LUDecomp::exe : matrix size and permutation size does not match";
+    } // end of LUUnmatchedSize::what
+
+    LUUnmatchedSize::~LUUnmatchedSize() noexcept
+    {} // end of LUUnmatchedSize::~LUUnmatchedSize
+
+    const char*
+    LUInvalidMatrixSize::what() const noexcept
+    {
+      return "LUDecomp : null matrix size";
+    } // end of LUInvalidMatrixSize::what
+
+    LUInvalidMatrixSize::~LUInvalidMatrixSize() noexcept
+    {} // end of LUInvalidMatrixSize::~LUInvalidMatrixSize
+
+    const char*
+    LUNullPivot::what() const noexcept
+    {
+      return "LUDecomp::back_substitute : null pivot";
+    } // end of LUNullPivot::LUNullPivot
+
+    LUNullPivot::~LUNullPivot() noexcept
+    {} // end of LUNullPivot::~LUNullPivot
+
+    const char*
+    LUNullDeterminant::what() const noexcept
+    {
+      return "LUDecomp::back_substitute : null pivot";
+    } // end of LUNullDeterminant::LUNullDeterminant
+
+    LUNullDeterminant::~LUNullDeterminant() noexcept
+    {} // end of LUNullDeterminant::~LUNullDeterminant
+
   } // end of namespace math
 
 } // end of namespace tfel

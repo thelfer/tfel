@@ -21,10 +21,39 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/TinyMatrixInvert.hxx"
+
+template<typename T>
+struct Name;
+
+template<>
+struct Name<long double>
+{
+  static std::string getName()
+  {
+    return "long double";
+  }
+};
+
+template<>
+struct Name<double>
+{
+  static std::string getName()
+  {
+    return "double";
+  }
+};
+
+template<>
+struct Name<float>
+{
+  static std::string getName()
+  {
+    return "float";
+  }
+};
 
 template<typename T>
 struct TinyMatrixInvertTest2D
@@ -33,7 +62,7 @@ struct TinyMatrixInvertTest2D
   
   TinyMatrixInvertTest2D()
     : tfel::tests::TestCase("TFEL/Math",
-			    "TinyMatrixInvertTest2D<"+tfel::utilities::Name<T>::getName()+">")
+			    "TinyMatrixInvertTest2D<"+Name<T>::getName()+">")
   {} // end of TinyMatrixInvertTest2D
   
   tfel::tests::TestResult
@@ -64,7 +93,7 @@ struct TinyMatrixInvertTest3D
   
   TinyMatrixInvertTest3D()
     : tfel::tests::TestCase("TFEL/Math",
-			    "TinyMatrixInvertTest3D<"+tfel::utilities::Name<T>::getName()+">")
+			    "TinyMatrixInvertTest3D<"+Name<T>::getName()+">")
   {} // end of TinyMatrixInvertTest3D
   
   tfel::tests::TestResult
@@ -126,9 +155,7 @@ TFEL_TESTS_GENERATE_PROXY(LongDoubleTinyMatrixInvertTest3D,
 int main(void)
 {
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("Invert.xml");

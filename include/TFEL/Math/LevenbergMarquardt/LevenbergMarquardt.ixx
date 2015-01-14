@@ -172,9 +172,7 @@ namespace tfel
 	}
       }
       if(!success){
-	string msg("LevenbergMarquardt<F>::execute : ");
-	msg += "maximum number of iterations reached";
-	throw(MathDivergenceException(msg));
+	throw(MaximumNumberOfIterationsReachedException());
       }
 
       return this->p;

@@ -42,29 +42,26 @@ namespace tfel{
        * \param const ValueType&, imaginary part value (calls
        * ValueType's default if none given).
        */
-      Complex(const ValueType& = ValueType(), const ValueType & = ValueType());
-
+      constexpr Complex(const ValueType&  = ValueType(),
+			const ValueType & = ValueType());
       /*
        * Copy constructor
        * \param const Complex&, objet to be copied.
        */
-      Complex(const Complex&);
-
+      constexpr Complex(const Complex&);
       /*
        * Constructor from std::complex, so that both are
        * interchangeables. Conversion from Complex to std::complex 
        * automatic du to inheritance.
        * \param const std::complex&, object to be copied.
        */
-      Complex(const std::complex<ValueType>&);
-
+      constexpr Complex(const std::complex<ValueType>&);
       /*
        * Assignement operator.
        * \param const Complex&, source object.
        * \return Complex&.
        */
       Complex& operator=(const Complex&);
-
       /*
        * Assignement operator.
        * \param const std::complex&, source object.
@@ -80,8 +77,8 @@ namespace tfel{
      * \return const Complex<ValueType>.
      */
     template<typename ValueType>
-    TFEL_MATH_INLINE 
-    const Complex<ValueType>
+    TFEL_MATH_INLINE constexpr
+    Complex<ValueType>
     conj(const Complex<ValueType>&);
 
     /*
@@ -91,7 +88,8 @@ namespace tfel{
      * \return const ValueType.
      */
     template<typename ValueType>
-    TFEL_MATH_INLINE const ValueType
+    TFEL_MATH_INLINE constexpr
+    ValueType
     real(const Complex<ValueType>&);
 
   } // end of namespace math

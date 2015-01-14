@@ -73,9 +73,9 @@ namespace tfel{
 	static TFEL_MATH_INLINE typename ComputeUnaryResult<T,Power<3> >::Result
 	exe(const tfel::math::stensor<3u,T>& s)
 	{
-	  typedef typename tfel::typetraits::BaseType<T>::type base;
-	  static constexpr base cste = std::sqrt(base(2));
-	  return (T(2)*s(0)*s(1)*s(2)+cste*s(3)*s(4)*s(5)-s(2)*s(3)*s(3)-s(1)*s(4)*s(4)-s(0)*s(5)*s(5))/base(2);
+	  typedef typename tfel::typetraits::BaseType<T>::type real;
+	  static const real cste = std::sqrt(real(2));
+	  return (T(2)*s(0)*s(1)*s(2)+cste*s(3)*s(4)*s(5)-s(2)*s(3)*s(3)-s(1)*s(4)*s(4)-s(0)*s(5)*s(5))/real(2);
 	}
       }; // end of struct StensorDeterminant
 
@@ -132,9 +132,9 @@ namespace tfel{
 	  typedef typename tfel::typetraits::BaseType<T>::type base;
 	  typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
 	  typedef typename ComputeUnaryResult<T,Power<3> >::Result T3;
-	  static constexpr base two          = base(2);
-	  static constexpr base inv_sqrt_two = base(1)/std::sqrt(two);
-	  static constexpr base one_half     = base(1)/two;
+	  constexpr base two          = base(2);
+	  constexpr base one_half     = base(1)/two;
+	  static const base inv_sqrt_two = base(1)/std::sqrt(two);
 	  stensor<3u,T2> inv;
 	  const T3 inv_det = base(1)/det(s);
 	  inv(0)=(s(1)*s(2)-s(5)*s(5)*one_half)*inv_det;
@@ -178,7 +178,7 @@ namespace tfel{
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
-	  static constexpr real cste = sqrt(real(2))/(real(2));
+	  static const real cste = sqrt(real(2))/(real(2));
 	  s[0] = m(0,0);
 	  s[1] = m(1,1);
 	  s[2] = m(2,2);
@@ -198,7 +198,7 @@ namespace tfel{
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
-	  static constexpr real cste = sqrt(real(2))/(real(2));
+	  static const real cste = sqrt(real(2))/(real(2));
 	  s[0] = m(0,0);
 	  s[1] = m(1,1);
 	  s[2] = m(2,2);
@@ -243,7 +243,7 @@ namespace tfel{
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
-	  static constexpr real cste = sqrt(real(2));
+	  static const real cste = sqrt(real(2));
 	  s[0] = v(0)*v(0);
 	  s[1] = v(1)*v(1);
 	  s[2] = v(2)*v(2);
@@ -265,7 +265,7 @@ namespace tfel{
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
-	  static constexpr real cste = sqrt(real(2));
+	  static const real cste = sqrt(real(2));
 	  s[0] = v(0)*v(0);
 	  s[1] = v(1)*v(1);
 	  s[2] = v(2)*v(2);
@@ -320,7 +320,7 @@ namespace tfel{
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
-	  static constexpr real cste = sqrt(real(2));
+	  static const real cste = sqrt(real(2));
 	  s[0] = 2*v1(0)*v2(0);
 	  s[1] = 2*v1(1)*v2(1);
 	  s[2] = 2*v1(2)*v2(2);
@@ -347,7 +347,7 @@ namespace tfel{
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
-	  static constexpr real cste = sqrt(real(2));
+	  static const real cste = sqrt(real(2));
 	  s[0] = 2*v1(0)*v2(0);
 	  s[1] = 2*v1(1)*v2(1);
 	  s[2] = 2*v1(2)*v2(2);
@@ -370,7 +370,6 @@ namespace tfel{
 	    const T& v2,
 	    const T& v3,
 	    const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&){
-	  using namespace std;
 	  s[0] = v1;
 	  s[1] = v2;
 	  s[2] = v3;
@@ -390,7 +389,7 @@ namespace tfel{
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
-	  static constexpr real cste = sqrt(real(2));
+	  static const real cste = sqrt(real(2));
 	  s[0] = v1*m(0,0)*m(0,0)+v2*m(0,1)*m(0,1);
 	  s[1] = v1*m(1,0)*m(1,0)+v2*m(1,1)*m(1,1);
 	  s[2] = v3;
@@ -411,7 +410,7 @@ namespace tfel{
 	  using namespace std;
 	  using namespace tfel::typetraits;
 	  typedef typename BaseType<T>::type real;
-	  static constexpr real cste = sqrt(real(2));
+	  static const real cste = sqrt(real(2));
 	  s[0] =  v1*m(0,0)*m(0,0)+v2*m(0,1)*m(0,1)+v3*m(0,2)*m(0,2);
 	  s[1] =  v1*m(1,0)*m(1,0)+v2*m(1,1)*m(1,1)+v3*m(1,2)*m(1,2);
 	  s[2] =  v1*m(2,0)*m(2,0)+v2*m(2,1)*m(2,1)+v3*m(2,2)*m(2,2);
@@ -720,10 +719,15 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    stensor<N,T>::stensor(const T init)
-    {
-      tfel::fsalgo::fill<StensorDimeToSize<N>::value>::exe(this->v,init);
-    }
+    constexpr stensor<N,T>::stensor()
+    {}
+
+    template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr stensor<N,T>::stensor(const T2& init)
+    : fsarray<StensorDimeToSize<N>::value,T>(init)
+    {}
 
     template<unsigned short N, typename T>
     stensor<N,T>::stensor(const typename tfel::typetraits::BaseType<T>::type* const init)
@@ -734,18 +738,26 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    stensor<N,T>::stensor(const stensor<N,T>& src)
-    {
-      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src.v,this->v);
-    }
+    constexpr stensor<N,T>::stensor(const stensor<N,T>& src)
+      : StensorConcept<stensor<N,T>>(src),
+	fsarray<StensorDimeToSize<N>::value,T>(src)
+    {}
 
     template<unsigned short N, typename T>
     template<typename T2,
 	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
-    stensor<N,T>::stensor(const stensor<N,T2>& src)
+    constexpr stensor<N,T>::stensor(const stensor<N,T2>& src)
+      : fsarray<StensorDimeToSize<N>::value,T>(src)
+    {}
+
+    template<unsigned short N, typename T>
+    TFEL_MATH_INLINE stensor<N,T>&
+    stensor<N,T>::operator = (const stensor<N,T>& src)
     {
-      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src.begin(),this->v);
-    }
+      fsarray<StensorDimeToSize<N>::value,T>::operator=(src);
+      return *this;
+    } // end of stensor<N,T>::operator =
+
 
     template<unsigned short N, typename T>
     template<typename T2,typename Expr,
@@ -757,36 +769,21 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     T& 
-    stensor<N,T>::operator()(const unsigned short i){
+    stensor<N,T>::operator()(const unsigned short i) noexcept{
       assert(i<StensorDimeToSize<N>::value);
       return this->v[i];
     }
 
     template<unsigned short N, typename T>
-    const T& 
-    stensor<N,T>::operator()(const unsigned short i) const{
-      assert(i<StensorDimeToSize<N>::value);
+    constexpr const T& 
+    stensor<N,T>::operator()(const unsigned short i) const noexcept{
       return this->v[i];
     }
 
     template<unsigned short N, typename T>
-    T& 
-    stensor<N,T>::operator[](const unsigned short i){
-      assert(i<StensorDimeToSize<N>::value);
-      return this->v[i];
-    }
-
-    template<unsigned short N, typename T>
-    typename stensor<N,T>::RunTimeProperties
-    stensor<N,T>::getRunTimeProperties(void) const{
+    constexpr typename stensor<N,T>::RunTimeProperties
+    stensor<N,T>::getRunTimeProperties(void) const noexcept{
       return RunTimeProperties();
-    }
-
-    template<unsigned short N, typename T>
-    const T& 
-    stensor<N,T>::operator[](const unsigned short i) const{
-      assert(i<StensorDimeToSize<N>::value);
-      return this->v[i];
     }
 
     // Import from Voigt

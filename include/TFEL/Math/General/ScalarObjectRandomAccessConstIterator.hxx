@@ -15,7 +15,6 @@
 #define _LIB_TFEL_SCALAROBJECTRANDOMACCESSCONSTITERATOR_H_ 
 
 #include<iterator>
-#include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"

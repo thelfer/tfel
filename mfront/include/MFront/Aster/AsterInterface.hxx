@@ -15,21 +15,16 @@
 #define _LIB_MFRONT_ASTER_CALL_H_ 
 
 #include<string>
-#include<algorithm>
 #include<vector>
 #include<limits>
+#include<algorithm>
+#include<type_traits>
 
 #include"TFEL/Config/TFELTypes.hxx"
-
-#include<type_traits>
 #include"TFEL/Exception/TFELException.hxx"
 #include"TFEL/FSAlgorithm/copy.hxx"
 
-#include"TFEL/Utilities/Info.hxx"
-#include"TFEL/Utilities/Name.hxx"
-
 #include"TFEL/Math/stensor.hxx"
-
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
 #include"TFEL/Material/MaterialException.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -300,45 +295,45 @@ namespace aster
 	      const StressFreeExpansionHandler& sfeh)
       {
 	using namespace std;
-	using namespace tfel::meta;
-	using namespace tfel::utilities;
+	using tfel::material::MechanicalBehaviourTraits;
 	typedef Behaviour<H,AsterReal,false> BV;
-	typedef AsterTraits<BV> Traits;
+	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+	typedef AsterTraits<BV> AsterTraits;
 	try {
-	  typedef typename std::conditional<Traits::type==aster::ISOTROPIC,
-	    AsterIsotropicBehaviourHandler<Traits::btype,H,Behaviour>,
-	    AsterOrthotropicBehaviourHandler<Traits::btype,H,Behaviour> >::type Handler;
+	  typedef typename conditional<AsterTraits::type==aster::ISOTROPIC,
+				       AsterIsotropicBehaviourHandler<AsterTraits::btype,H,Behaviour>,
+				       AsterOrthotropicBehaviourHandler<AsterTraits::btype,H,Behaviour> >::type Handler;
 	  Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		       PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		       STRESS,sfeh);
 	} 
 	catch(const AsterException& e){
-	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceExceptions::treatAsterException(Name<BV>::getName(),e);
+	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceExceptions::treatAsterException(Traits::getName(),e);
 	  }
 	  return -2;
 	}
 	catch(const tfel::material::MaterialException& e){
-	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceExceptions::treatMaterialException(Name<BV>::getName(),e);
+	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceExceptions::treatMaterialException(Traits::getName(),e);
 	  }
 	  return -3;
 	}
 	catch(const tfel::exception::TFELException& e){
-	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceExceptions::treatTFELException(Name<BV>::getName(),e);
+	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceExceptions::treatTFELException(Traits::getName(),e);
 	  }
 	  return -4;
 	}
 	catch(const std::exception& e){
-	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceExceptions::treatStandardException(Name<BV>::getName(),e);
+	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceExceptions::treatStandardException(Traits::getName(),e);
 	  }
 	  return -5;
 	}
 	catch(...){
-	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
-	    AsterInterfaceExceptions::treatUnknownException(Name<BV>::getName());
+	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceExceptions::treatUnknownException(Traits::getName());
 	  }
 	  return -6;
 	}

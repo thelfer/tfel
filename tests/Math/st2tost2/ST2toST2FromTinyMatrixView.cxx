@@ -18,7 +18,7 @@
 
 #include<cassert>
 #include<cstdlib>
-
+#include<iostream>
 #include"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx"
 
 int

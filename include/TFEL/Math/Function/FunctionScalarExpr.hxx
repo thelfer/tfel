@@ -12,11 +12,10 @@
  * project under specific licensing conditions. 
  */
 
-#include<string>
+#include<type_traits>
 
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-#include<type_traits>
 #include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"

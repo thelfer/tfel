@@ -14,14 +14,12 @@
 #ifndef _LIB_TFEL_FCT_MATHOBJECT_EXPR_HXX_
 #define _LIB_TFEL_FCT_MATHOBJECT_EXPR_HXX_
 
-#include<string>
 #include<cstddef>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-
 #include"TFEL/Math/General/FctObjectRandomAccessConstIterator.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 

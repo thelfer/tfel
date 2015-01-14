@@ -67,6 +67,9 @@ namespace tfel
       : public SystemError
     {
       ChildProcessCreationFailedException();
+      ChildProcessCreationFailedException(const ChildProcessCreationFailedException&) = default;
+      ChildProcessCreationFailedException(ChildProcessCreationFailedException&&) = default;
+      virtual ~ChildProcessCreationFailedException() noexcept;
     }; // end of struct ChildProcessCreationFailedException
 
     template<typename T>

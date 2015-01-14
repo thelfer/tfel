@@ -118,7 +118,7 @@ namespace tfel
       VariableType k6;
       this->dt=std::min(this->dt,this->tf-this->ti);
       if(this->dt<0){
-      	throw(MathRunTimeException("RungeKutta54<N,Child,Scalar>::iterate : invalid time increment"));
+      	throw(InvalidTimeStepException());
       }
       while(t<this->tf-0.5*(this->dt)){
 	k1  = this->dt*(static_cast<const Child*>(this)->computeF(t,this->y));

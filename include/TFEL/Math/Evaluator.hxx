@@ -15,12 +15,12 @@
 #ifndef _LIB_TFEL_MATH_EVALUATOR_HXX_
 #define _LIB_TFEL_MATH_EVALUATOR_HXX_ 
 
+#include<map>
+#include<memory>
 #include<vector>
 #include<string>
-#include<map>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<memory>
 #include"TFEL/Math/Parser/Expr.hxx"  
 #include"TFEL/Math/Parser/EvaluatorBase.hxx"  
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
@@ -186,8 +186,7 @@ namespace tfel
       std::vector<double>::size_type
       getNumberOfVariables(void) const;
       void
-      checkCyclicDependency(void) const
-	throw(std::runtime_error);
+      checkCyclicDependency(void) const;
       void
       checkCyclicDependency(const std::string&) const;
       void

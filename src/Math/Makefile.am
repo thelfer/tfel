@@ -14,18 +14,13 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 			 LUException.cxx                \
 			 QRException.cxx                \
 			 Discretization1D.cxx           \
-		         BasicOperations.cxx            \
 		         Id.cxx                         \
 		         power.cxx                      \
 		         Sqrt.cxx                       \
 		         OpDiff.cxx                     \
-		         ST2toST2Tag.cxx                \
-		         VectorTag.cxx                  \
-		         FunctionTag.cxx                \
-		         MatrixTag.cxx                  \
-		         StensorTag.cxx                 \
-		         TensorTag.cxx                  \
+		         RunTimeCheck.cxx               \
 		         TensorConcept.cxx              \
+			 StensorComputeEigenValues.cxx  \
 			 StandardFunctions.cxx
 if TFEL_WIN
 libTFELMath_la_CPPFLAGS = -DTFELMath_EXPORTS

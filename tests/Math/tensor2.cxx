@@ -15,19 +15,14 @@
 #endif /* NDEBUG */
 
 #include<cmath>
-#include<cassert>
 #include<cstdlib>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
-
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/General/Complex.hxx"
 
 struct RightCauchyGreenTensorTest
   : public tfel::tests::TestCase
@@ -85,9 +80,7 @@ TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorTest2,"RightCauchyGreenTensorTes
 
 int main(void){
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("Tensor.xml");

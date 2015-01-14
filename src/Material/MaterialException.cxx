@@ -12,39 +12,38 @@
  * project under specific licensing conditions. 
  */
 
+#include<utility>
 #include"TFEL/Material/MaterialException.hxx"
 
 namespace tfel{
   
   namespace material {
 
-    MaterialException::MaterialException(const std::string& s)
-      :  tfel::exception::TFELException(s)
-    {}
-    
-    std::string 
-    MaterialException::getName(void){
-      return "MaterialException";
-    }
-    
-    std::string 
-    DivergenceException::getName(void){
+    MaterialException::~MaterialException() noexcept
+    {} // end of MaterialException::~MaterialException
+
+    const char*
+    DivergenceException::what() const noexcept
+    {
       return "DivergenceException";
-    }
+    } // end of DivergenceException::~DivergenceException
+    
+    DivergenceException::~DivergenceException() noexcept
+    {} // end of DivergenceException::~DivergenceException
 
-    DivergenceException::DivergenceException(const std::string& s)
-      :  tfel::material::MaterialException(s)
+    OutOfBoundsException::OutOfBoundsException(std::string m)
+      : msg(std::forward<std::string>(m))
     {}
 
-    std::string 
-    OutOfBoundsException::getName(void){
-      return "OutOfBoundsException";
-    }
+    const char*
+    OutOfBoundsException::what() const noexcept
+    {
+      return this->msg.c_str();
+    } // end of DivergenceException::~DivergenceException
 
-    OutOfBoundsException::OutOfBoundsException(const std::string& s)
-      :  tfel::material::MaterialException(s)
-    {}
-  
+    OutOfBoundsException::~OutOfBoundsException() noexcept
+    {} // end of OutOfBoundsException::~OutOfBoundsException
+
   } // end of namespace material
 
 } // end of namespace tfel

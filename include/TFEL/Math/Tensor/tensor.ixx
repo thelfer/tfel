@@ -322,10 +322,11 @@ namespace tfel{
     } // end of void tensor<N,T>::buildFromFortranMatrix
 
     template<unsigned short N, typename T>
-    tensor<N,T>::tensor(const T init)
-    {
-      tfel::fsalgo::fill<TensorDimeToSize<N>::value>::exe(this->v,init);
-    }
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr tensor<N,T>::tensor(const T2& init)
+      : fsarray<TensorDimeToSize<N>::value,T>(init)
+    {}
 
     template<unsigned short N, typename T>
     T& 
@@ -335,9 +336,8 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    const T& 
+    constexpr const T& 
     tensor<N,T>::operator()(const unsigned short i) const{
-      assert(i<TensorDimeToSize<N>::value);
       return this->v[i];
     }
 
@@ -360,23 +360,9 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    T& 
-    tensor<N,T>::operator[](const unsigned short i){
-      assert(i<TensorDimeToSize<N>::value);
-      return this->v[i];
-    }
-
-    template<unsigned short N, typename T>
-    typename tensor<N,T>::RunTimeProperties
+    constexpr typename tensor<N,T>::RunTimeProperties
     tensor<N,T>::getRunTimeProperties(void) const{
       return RunTimeProperties();
-    }
-
-    template<unsigned short N, typename T>
-    const T& 
-    tensor<N,T>::operator[](const unsigned short i) const{
-      assert(i<TensorDimeToSize<N>::value);
-      return this->v[i];
     }
 
     // Import from values

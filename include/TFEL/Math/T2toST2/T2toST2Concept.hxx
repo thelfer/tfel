@@ -15,18 +15,14 @@
 #define _TFEL_MATH_T2TOST2_CONCEPT_LIB_ 1
 
 #include <ostream>
-#include <string>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
-#include<type_traits>
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include<type_traits>
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
-
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
@@ -47,16 +43,7 @@ namespace tfel{
      * \brief Helper class to characterise t2tost2.
      */ 
     struct T2toST2Tag
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string 
-      getName(void);
-    };
+    {};
 
     template<class T>
     struct T2toST2Concept 
@@ -71,8 +58,12 @@ namespace tfel{
 				      const typename traits::NumType&>::type ValueType;
 
     protected:
-      ~T2toST2Concept(){};
-      
+      T2toST2Concept() = default;
+      T2toST2Concept(T2toST2Concept&&) = default;
+      T2toST2Concept(const T2toST2Concept&) = default;
+      T2toST2Concept&
+      operator=(const T2toST2Concept&) = default;
+      ~T2toST2Concept() = default;
     public:
       
       typedef T2toST2Tag ConceptTag;

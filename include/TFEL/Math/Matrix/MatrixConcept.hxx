@@ -14,17 +14,13 @@
 #ifndef _TFEL_MATH_MATRIX_CONCEPT_LIB_
 #define _TFEL_MATH_MATRIX_CONCEPT_LIB_ 1
 
-#include <string>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include<type_traits>
 #include"TFEL/TypeTraits/IsTemporary.hxx"
-
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
-
 #include"TFEL/Math/Forward/MatrixConcept.hxx"
 
 namespace tfel{
@@ -63,17 +59,7 @@ namespace tfel{
      * \brief Helper class to characterise matrices.
      */ 
     struct MatrixTag
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return const std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string 
-      getName(void);
-
-    }; // end of MatrixTag
+    {}; // end of MatrixTag
 
     /*!
      * \class MatrixConcept
@@ -97,13 +83,12 @@ namespace tfel{
 				      const typename traits::NumType&>::type ValueType;
 
     protected:
-      /*!
-       * \brief MatrixConcept destructor
-       * This destructor is declared protected to remind users 
-       * that MatrixConcept shall not be instantiated directly. 
-       */
-      ~MatrixConcept(){};
-      
+      MatrixConcept() = default;
+      MatrixConcept(MatrixConcept&&) = default;
+      MatrixConcept(const MatrixConcept&) = default;
+      MatrixConcept&
+      operator=(const MatrixConcept&) = default;
+      ~MatrixConcept() = default;
     public :
 
       typedef MatrixTag ConceptTag;

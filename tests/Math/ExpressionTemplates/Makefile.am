@@ -10,7 +10,6 @@ if WITH_TESTS
 testdir = $(pkgdatadir)/tests/Math/ExpressionTemplates
 test_PROGRAMS = test_expr1   \
 		test_expr2   \
-		test_expr3   \
 		test_expr4   \
 		test_expr5   \
 		test_expr6   \
@@ -33,7 +32,6 @@ LDADD = -L$(top_builddir)/src/Math                 \
 
 test_expr1_SOURCES   = test_expr1.cxx    
 test_expr2_SOURCES   = test_expr2.cxx   
-test_expr3_SOURCES   = test_expr3.cxx   
 test_expr4_SOURCES   = test_expr4.cxx   
 test_expr5_SOURCES   = test_expr5.cxx   
 test_expr6_SOURCES   = test_expr6.cxx   

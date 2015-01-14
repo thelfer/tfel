@@ -14,8 +14,8 @@
 #ifndef _LIB_TFEL_FCTMATHOBJECTEXPRWITHOUTCONSTITERATOR_HXX_
 #define _LIB_TFEL_FCTMATHOBJECTEXPRWITHOUTCONSTITERATOR_HXX_ 
 
-#include<string>
 #include<cstddef>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"

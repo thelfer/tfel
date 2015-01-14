@@ -19,33 +19,34 @@ namespace tfel
   namespace math
   {
     
-    QRException::~QRException() throw()
+    QRException::~QRException() noexcept
     {} // end of QRException::~QRException
 
-    QRException::QRException(const char* const m)
-      : tfel::exception::TFELException(m)
-    {} // end of QRException::QRException
+    const char*
+    QRUnmatchedSize::what() const noexcept 
+    {
+      return "QRDecomp : entry size does not match";
+    } // end of QRUnmatchedSize::what
 
-    QRUnmatchedSize::QRUnmatchedSize() 
-      : QRException("QRDecomp : entry size does not match")
-    {} // end of QRUnmatchedSize::QRUnmatchedSize
-
-    QRUnmatchedSize::~QRUnmatchedSize() throw()
+    QRUnmatchedSize::~QRUnmatchedSize() noexcept
     {} // end of QRUnmatchedSize::~QRUnmatchedSize
 
-    QRInvalidMatrixSize::QRInvalidMatrixSize()
-      : QRException("QRDecomp : null matrix size")
-    {} // end of QRInvalidMatrixSize::QRInvalidMatrixSize
+    const char*
+    QRInvalidMatrixSize::what() const noexcept
+    {
+      return "QRDecomp : null matrix size";
+    } // end of QRInvalidMatrixSize::what
 
-    QRInvalidMatrixSize::~QRInvalidMatrixSize() throw()
+    QRInvalidMatrixSize::~QRInvalidMatrixSize() noexcept
     {} // end of QRInvalidMatrixSize::~QRInvalidMatrixSize
 
-    QRNullPivot::QRNullPivot()
-      : QRException("QRDecomp::back_substitute : "
-		    "null pivot")
-    {} // end of QRNullPivot::QRNullPivot
+    const char*
+    QRNullPivot::what() const noexcept
+    {
+      return "QRDecomp::back_substitute : null pivot";
+    } // end of QRNullPivot::QRNullPivot
 
-    QRNullPivot::~QRNullPivot() throw()
+    QRNullPivot::~QRNullPivot() noexcept
     {} // end of QRNullPivot::~QRNullPivot
 
   } // end of namespace math

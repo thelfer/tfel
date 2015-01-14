@@ -14,12 +14,11 @@
 #ifndef _MATH_MATHOBJECTMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_
 #define _MATH_MATHOBJECTMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_ 1
 
-#include<string>
 #include<cstddef>
 #include<iterator>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/TypeTraits/IsTemporary.hxx"

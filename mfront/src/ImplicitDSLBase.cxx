@@ -1793,7 +1793,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef unsigned short ushort;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::endsInputFileProcessing();
     if(this->solver.get()==0){

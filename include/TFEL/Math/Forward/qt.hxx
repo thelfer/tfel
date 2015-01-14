@@ -14,7 +14,7 @@
 #ifndef _LIB_TFEL_MATH_FORWARD_QT_H_
 #define _LIB_TFEL_MATH_FORWARD_QT_H_ 
 
-#include"TFEL/Metaprogramming/IntToType.hxx"
+#include<type_traits>
 
 namespace tfel
 {
@@ -50,37 +50,37 @@ namespace tfel
 	     unsigned int D5=1,unsigned int D6=1,
 	     unsigned int D7=1>
     struct GenerateUnit{
-      typedef Unit<tfel::meta::Int2Type<N1>,
-		   tfel::meta::Int2Type<N2>,
-		   tfel::meta::Int2Type<N3>,
-		   tfel::meta::Int2Type<N4>,
-		   tfel::meta::Int2Type<N5>,
-		   tfel::meta::Int2Type<N6>,
-		   tfel::meta::Int2Type<N7>,
-		   tfel::meta::UInt2Type<D1>,
-		   tfel::meta::UInt2Type<D2>,
-		   tfel::meta::UInt2Type<D3>,
-		   tfel::meta::UInt2Type<D4>,
-		   tfel::meta::UInt2Type<D5>,
-		   tfel::meta::UInt2Type<D6>,
-		   tfel::meta::UInt2Type<D7> > type;
+      typedef Unit<std::integral_constant<int,N1>,
+		   std::integral_constant<int,N2>,
+		   std::integral_constant<int,N3>,
+		   std::integral_constant<int,N4>,
+		   std::integral_constant<int,N5>,
+		   std::integral_constant<int,N6>,
+		   std::integral_constant<int,N7>,
+		   std::integral_constant<unsigned int,D1>,
+		   std::integral_constant<unsigned int,D2>,
+		   std::integral_constant<unsigned int,D3>,
+		   std::integral_constant<unsigned int,D4>,
+		   std::integral_constant<unsigned int,D5>,
+		   std::integral_constant<unsigned int,D6>,
+		   std::integral_constant<unsigned int,D7> > type;
     };
 
     // A simple alias
-    typedef Unit<tfel::meta::Int2Type<0>,
-		 tfel::meta::Int2Type<0>,
-		 tfel::meta::Int2Type<0>,
-		 tfel::meta::Int2Type<0>,
-		 tfel::meta::Int2Type<0>,
-		 tfel::meta::Int2Type<0>,
-		 tfel::meta::Int2Type<0>,
-		 tfel::meta::UInt2Type<1u>,
-		 tfel::meta::UInt2Type<1u>,
-		 tfel::meta::UInt2Type<1u>,
-		 tfel::meta::UInt2Type<1u>,
-		 tfel::meta::UInt2Type<1u>,
-		 tfel::meta::UInt2Type<1u>,
-		 tfel::meta::UInt2Type<1u> > NoUnit;
+    typedef Unit<std::integral_constant<int,0>,
+		 std::integral_constant<int,0>,
+		 std::integral_constant<int,0>,
+		 std::integral_constant<int,0>,
+		 std::integral_constant<int,0>,
+		 std::integral_constant<int,0>,
+		 std::integral_constant<int,0>,
+		 std::integral_constant<unsigned int,1u>,
+		 std::integral_constant<unsigned int,1u>,
+		 std::integral_constant<unsigned int,1u>,
+		 std::integral_constant<unsigned int,1u>,
+		 std::integral_constant<unsigned int,1u>,
+		 std::integral_constant<unsigned int,1u>,
+		 std::integral_constant<unsigned int,1u> > NoUnit;
 
     /*!
      * \brief Declares the Mass unit 

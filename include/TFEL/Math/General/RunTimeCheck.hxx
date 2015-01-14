@@ -12,17 +12,31 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_RUNTIMECHECK_H_
-#define _LIB_TFEL_RUNTIMECHECK_H_ 
+#ifndef _LIB_TFEL_MATH_RUNTIMECHECK_H_
+#define _LIB_TFEL_MATH_RUNTIMECHECK_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Math/MathException.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
 namespace tfel{
 
   namespace math{
+
+    /*!
+     * Exception thrown when runtime checks failed
+     */
+    struct TFELMATH_VISIBILITY_EXPORT RuntimeCheckFailure
+      : public MathRunTimeException
+    {
+      RuntimeCheckFailure() = default;
+      RuntimeCheckFailure(RuntimeCheckFailure&&) = default;
+      RuntimeCheckFailure(const RuntimeCheckFailure&) = default;
+      //! \return a string describing the error
+      virtual const char* what() const noexcept final;
+      //! destructor
+      virtual ~RuntimeCheckFailure() noexcept;
+    }; // end of struct RuntimeCheckFailure
 
     /*
      * \class RunTimeCheck
@@ -32,14 +46,13 @@ namespace tfel{
     template<typename RunTimeProperties>
     struct RunTimeCheck
     {
-      
       /*
-       * \brief Check if two runtime properties matches.
+       * \brief check if two runtime properties matches.
        * This is the default implementation which takes two arguments,
        * and checks if they are equals. If they are, return a copy of
        * the first one. If not, throws an exception.
-       * \param const RunTimeProperties, first property.
-       * \param const RunTimeProperties, second property.
+       * \param[in] a : first property.
+       * \param[in] b : second property.
        * \return const RunTimeProperties.
        * \require fdq
        * \pre RunTimeProperties must be comparable.
@@ -52,27 +65,23 @@ namespace tfel{
 	  const RunTimeProperties& b)
       {
 	if(a!=b){
-	  throw(MathRunTimeException("RunTimeProperties exception : RunTimeProperties does not match"));
+	  throw(RuntimeCheckFailure());
 	}
 	return a;
       } // end of exe.
       
     }; // end of RunTimeCheck.
 
-    /*
-     * Partial Specialisation for EmptyRunTimeProperties.
+    /*!
+     * Partial specialisation for EmptyRunTimeProperties.
      * \see RunTimeCheck.
      * \see EmptyRunTimeProperties.
      */
     template<>
     struct RunTimeCheck<EmptyRunTimeProperties>
     {
-
-      /*
+      /*!
        * A do nothing function.
-       * \param const EmptyRunTimeProperties, first property  (not used).
-       * \param const EmptyRunTimeProperties, second property (not used).
-       * \return const EmptyRunTimeProperties.
        */
       TFEL_MATH_INLINE
       static EmptyRunTimeProperties 
@@ -80,12 +89,11 @@ namespace tfel{
       {
 	return EmptyRunTimeProperties();
       } // end of exe
-      
     }; // end of RunTimeCheck<EmptyRunTimeProperties>
 
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_RUNTIMECHECK_H */
+#endif /* _LIB_TFEL_MATH_RUNTIMECHECK_H */
 

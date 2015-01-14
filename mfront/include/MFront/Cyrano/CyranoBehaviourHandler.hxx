@@ -20,7 +20,6 @@
 
 #include<algorithm>
 #include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
@@ -70,7 +69,6 @@ namespace cyrano
 	       const CyranoReal *const STRAN,
 	       const CyranoReal *const DSTRAN)
       {
-	using tfel::utilities::Name;
 	using tfel::fsalgo::copy;
 	using std::pair;
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
@@ -105,7 +103,6 @@ namespace cyrano
 	       const CyranoReal *const STRAN,
 	       const CyranoReal *const DSTRAN)
       {
-	using tfel::utilities::Name;
 	using tfel::fsalgo::copy;
 	using std::pair;
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
@@ -263,10 +260,8 @@ namespace cyrano
 				  CyranoReal *const)
 	throw(CyranoException)
 	{
-	  using namespace std;
-	  using namespace tfel::material;
-	  using namespace tfel::utilities;
-	  throw(CyranoInvalidDimension(Name<Behaviour<H,CyranoReal,false> >::getName(),1u));
+	  typedef tfel::material::MechanicalBehaviourTraits<Behaviour<H,CyranoReal,false>> Traits;
+	  throw(CyranoInvalidDimension(Traits::getName(),1u));
 	  return;
 	} // end of Error::exe
       
@@ -326,7 +321,6 @@ namespace cyrano
 	    CyranoReal *const STRESS,
 	    CyranoReal *const STATEV)
 	{
-	  using namespace tfel::utilities;
 	  using namespace tfel::material;
 	  typedef MechanicalBehaviourTraits<BV> Traits;
 	  typedef typename std::conditional<
@@ -347,7 +341,7 @@ namespace cyrano
 	  unsigned short subSteps   = 0u;
 	  unsigned short iterations = 1u;
 	  if(this->dt<0.){
-	    throwNegativeTimeStepException(Name<Behaviour<H,CyranoReal,false> >::getName());
+	    throwNegativeTimeStepException(Traits::getName());
 	  }
 	  while((iterations!=0)&&
 		(subSteps!=CyranoTraits<BV>::maximumSubStepping)){
@@ -376,11 +370,11 @@ namespace cyrano
 	      } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
 		r = behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	      } else {
-		throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
+		throwInvalidDDSOEException(BV::getName(),*DDSOE);
 	      }
 	      if(r==BV::FAILURE){
 		if(*DDSOE<-0.5){
-		  throwPredictionComputationFailedException(Name<BV>::getName());
+		  throwPredictionComputationFailedException(BV::getName());
 		}
 	      }
 	    }
@@ -412,7 +406,7 @@ namespace cyrano
 	    }
 	  }
 	  if((subSteps==CyranoTraits<BV>::maximumSubStepping)&&(iterations!=0)){
-	    throwMaximumNumberOfSubSteppingReachedException(Name<Behaviour<H,CyranoReal,false> >::getName());
+	    throwMaximumNumberOfSubSteppingReachedException(Traits::getName());
 	  }
 	  this->bData.CYRANOexportStateData(STRESS,STATEV);
 	  STRESS[0]=sig[0];
@@ -489,7 +483,6 @@ namespace cyrano
 		 CyranoReal *const STRESS,
 		 CyranoReal *const STATEV)
 	{
-	  using namespace tfel::utilities;
 	  using namespace tfel::material;
 	  typedef MechanicalBehaviourTraits<BV> Traits;
 	  typedef typename std::conditional<
@@ -507,7 +500,7 @@ namespace cyrano
 	    >::type PredictionOperatorComputer;
 	  CyranoReal sig[3];
 	  if(this->dt<0.){
-	    throwNegativeTimeStepException(Name<BV>::getName());
+	    throwNegativeTimeStepException(Traits::getName());
 	  }
 	  behaviour.checkBounds();
 	  typename BV::IntegrationResult r = BV::SUCCESS;
@@ -531,18 +524,18 @@ ELASTIC);
 	  } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
 	    r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	  } else {
-	    throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
+	    throwInvalidDDSOEException(Traits::getName(),*DDSOE);
 	  }
 	  if(r==BV::FAILURE){
 	    // Il manque un vraie gestion locale de résultats imprécis
 	    if(*DDSOE<-0.5){
-	      throwPredictionComputationFailedException(Name<BV>::getName());
+	      throwPredictionComputationFailedException(Traits::getName());
 	    } else {
-	      throwBehaviourIntegrationFailedException(Name<BV>::getName());
+	      throwBehaviourIntegrationFailedException(Traits::getName());
 	    }
 	  }
 	  // if(this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED)==BV::FAILURE){
-	  //   throwBehaviourIntegrationFailedException(Name<BV>::getName());
+	  //   throwBehaviourIntegrationFailedException(Traits::getName());
 	  // }
 	  behaviour.checkBounds();
 	  this->behaviour.CYRANOexportStateData(sig,STATEV);
@@ -578,8 +571,8 @@ ELASTIC);
       exe(BV&,const typename BV::SMFlag,
 	  const typename BV::SMType)
       {
-	using namespace tfel::utilities;
-	throwPredictionOperatorIsNotAvalaible(Name<BV>::getName());
+	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+	throwPredictionOperatorIsNotAvalaible(Traits::getName());
 	return BV::FAILURE;
       } // end of exe	  
     };
@@ -589,8 +582,8 @@ ELASTIC);
       typedef Behaviour<H,CyranoReal,false> BV;
       static void exe(BV&,CyranoReal *const)
       {
-	using namespace tfel::utilities;
-	throwConsistentTangentOperatorIsNotAvalaible(Name<BV>::getName());
+	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+	throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
       } // end of exe	  
     };
 
@@ -644,7 +637,6 @@ ELASTIC);
       checkNPROPS(const CyranoInt NPROPS)
     {
       using namespace std;
-      using namespace tfel::utilities;
       using namespace tfel::material;
       typedef Behaviour<H,CyranoReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
@@ -654,7 +646,7 @@ ELASTIC);
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){
-	throwUnMatchedNumberOfMaterialProperties(Name<Behaviour<H,CyranoReal,false> >::getName(),
+	throwUnMatchedNumberOfMaterialProperties(Traits::getName(),
 						 NPROPS_,NPROPS);
       }
     } // end of checkNPROPS
@@ -662,7 +654,6 @@ ELASTIC);
     TFEL_CYRANO_INLINE2 static void
       checkNSTATV(const CyranoInt NSTATV)
     {
-      using namespace tfel::utilities;
       typedef Behaviour<H,CyranoReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short nstatv  = Traits::internal_variables_nb;
@@ -670,7 +661,7 @@ ELASTIC);
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((NSTATV_!=NSTATV)&&is_defined_){
-	throwUnMatchedNumberOfStateVariables(Name<Behaviour<H,CyranoReal,false> >::getName(),
+	throwUnMatchedNumberOfStateVariables(Traits::getName(),
 					     NSTATV_,NSTATV);
       }
     } // end of checkNSTATV

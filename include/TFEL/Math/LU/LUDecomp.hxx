@@ -57,13 +57,13 @@ namespace tfel{
 	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
 	typedef typename MatrixTraits<MatrixType>::NumType NumType;
 	if(m.getNbRows()!=m.getNbCols()){
-	  throw(LUException("LUDecomp::exe : matrix is not square"));
+	  throw(LUMatrixNotSquare());
 	}
 	if(m.getNbRows()!=p.size()){
-	  throw(LUException("LUDecomp::exe : matrix size and permutation size does not match"));
+	  throw(LUUnmatchedSize());
 	}
 	if(m.getNbRows()==0){
-	  throw(LUException("LUDecomp::exe : invalid matrix size"));
+	  throw(LUInvalidMatrixSize());
 	}
 	const IndexType n = m.getNbRows();
 	int d = 1;
@@ -123,7 +123,7 @@ namespace tfel{
 	    }
 	  }
 	  if(abs(m(p(i),i))<eps){
-	    throw(LUException("LUDecomp::exe : null pivot"));
+	    throw(LUNullPivot());
 	  }
 	  if(p.isIdentity()){
 	    for(IndexType j=static_cast<IndexType>(i+1);j!=n;++j){

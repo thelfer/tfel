@@ -618,9 +618,6 @@ namespace mfront{
     writeBehaviourDataClassHeader(void);
     
     virtual void
-    writeBehaviourDataGetName(void);
-    
-    virtual void
     writeBehaviourDataDisabledConstructors(void);
     
     virtual void
@@ -690,9 +687,6 @@ namespace mfront{
 
     virtual void
     writeIntegrationDataClassHeader(void);
-
-    virtual void
-    writeIntegrationDataGetName(void);
 
     virtual void
     writeIntegrationDataDisabledConstructors(void);
@@ -784,9 +778,6 @@ namespace mfront{
 
     virtual void
     writeBehaviourClassEnd(void);
-
-    virtual void
-    writeBehaviourGetName(void);
 
     virtual void
     writeBehaviourPolicyVariable(void);

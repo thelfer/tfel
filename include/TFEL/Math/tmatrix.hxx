@@ -13,19 +13,17 @@
 #ifndef _TFEL_MATH_TINY_MATRIX_LIB_
 #define _TFEL_MATH_TINY_MATRIX_LIB_ 1
 
-#include <string>
-#include <cstddef>
-#include <ostream>
+#include<iosfwd>
+#include<cstddef>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
-
 #include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Function/Power.hxx"
-
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
 #include"TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 #include"TFEL/Math/Matrix/MatrixExpr.hxx"
@@ -201,15 +199,22 @@ namespace tfel{
       /*!
        * Default constructor.
        */
-      TFEL_MATH_INLINE
+      TFEL_MATH_INLINE explicit constexpr
       tmatrix();
       /*!
        * Constructor from a scalar.
        * \param const T : initial value.
        */
-      explicit
-      TFEL_MATH_INLINE
-      tmatrix(const T);
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE explicit constexpr
+      tmatrix(const T2&);
+      /*!
+       * copy constructor
+       * \param const src : copy constructor
+       */
+      TFEL_MATH_INLINE constexpr
+      tmatrix(const tmatrix&);
       /*
        * Constructor from a pointer.
        * \param const T* : initial values.
@@ -223,8 +228,7 @@ namespace tfel{
        * \param const unsigned short, column index.
        * \return const T&, a reference to the tmatrix ith element.
        */
-      TFEL_MATH_INLINE
-      const T&
+      TFEL_MATH_INLINE constexpr const T&
       operator()(const unsigned short,const unsigned short) const;
       /*!
        * \brief index operator.
@@ -232,8 +236,7 @@ namespace tfel{
        * \param const unsigned short, column index.
        * \return T&, a reference to the tmatrix ith element.
        */
-      TFEL_MATH_INLINE
-      T&
+      TFEL_MATH_INLINE T&
       operator()(const unsigned short,const unsigned short);
       //! Return the RunTimeProperties of the tmatrix.
       /*
@@ -362,7 +365,9 @@ namespace tfel{
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void
       copy(const InputIterator);
-
+      // copy assignement operator
+      TFEL_MATH_INLINE tmatrix&
+      operator=(const tmatrix&);
       //! using tmatrix_base::operator=
       using tmatrix_base<tmatrix,N,M,T>::operator=;
       //! using tmatrix_base::operator+=

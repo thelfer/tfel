@@ -23,8 +23,6 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-#include"TFEL/Utilities/Info.hxx"
-
 #include"TFEL/Math/General/floating_point_exceptions.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/tmatrix.hxx"
@@ -122,7 +120,7 @@ private:
     unsigned int failure;
     unsigned int unprecised_results;
 
-    stensor<3,T>     s(0.);
+    stensor<3,T>     s(T(0));
     tmatrix<3u,3u,T> m(T(0));
     tvector<3u,T>    vp(T(0));
 
@@ -156,7 +154,7 @@ private:
     unsigned int i;
     unsigned int failure;
 
-    stensor<2u,T>        s(0.);
+    stensor<2u,T>    s(T(0));
     tmatrix<3u,3u,T> m(T(0));
     tvector<3u,T>    vp(T(0));
 

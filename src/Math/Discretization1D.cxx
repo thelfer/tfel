@@ -19,17 +19,32 @@ namespace tfel
   namespace math
   {
     
-    GeometricDiscretizationInvalidDensity::GeometricDiscretizationInvalidDensity()
-      : MathRunTimeException("geometricDiscretization : invalid density")
-    {} // end of GeometricDiscretizationInvalidDensity::GeometricDiscretizationInvalidDensity
+    const char*
+    GeometricDiscretizationInvalidDensity::what() const noexcept
+    {
+      return "geometricDiscretization : invalid density";
+    } // end of GeometricDiscretizationInvalidDensity::what
 
-    GeometricDiscretizationInvalidLength::GeometricDiscretizationInvalidLength()
-      : MathRunTimeException("geometricDiscretization : invalid length")
-    {} // end of GeometricDiscretizationInvalidLength::GeometricDiscretizationInvalidLength
+    GeometricDiscretizationInvalidDensity::~GeometricDiscretizationInvalidDensity() noexcept
+    {} // end of GeometricDiscretizationInvalidDensity::~GeometricDiscretizationInvalidDensity
 
-    GeometricDiscretizationInvalidNumberOfElements::GeometricDiscretizationInvalidNumberOfElements()
-      : MathRunTimeException("geometricDiscretization : invalid number of elements")
-    {} // end of GeometricDiscretizationInvalidNumberOfElements::GeometricDiscretizationInvalidNumberOfElements
+    const char*
+    GeometricDiscretizationInvalidLength::what() const noexcept
+    {
+      return "geometricDiscretization : invalid length";
+    } // end of GeometricDiscretizationInvalidLength::what
+
+    GeometricDiscretizationInvalidLength::~GeometricDiscretizationInvalidLength() noexcept
+    {} // end of GeometricDiscretizationInvalidLength::~GeometricDiscretizationInvalidLength
+
+    const char*
+    GeometricDiscretizationInvalidNumberOfElements::what() const noexcept
+    {
+      return "geometricDiscretization : invalid number of elements";
+    } // end of GeometricDiscretizationInvalidNumberOfElements::what
+
+    GeometricDiscretizationInvalidNumberOfElements::~GeometricDiscretizationInvalidNumberOfElements() noexcept
+    {} // end of GeometricDiscretizationInvalidNumberOfElements::~GeometricDiscretizationInvalidNumberOfElements
 
   } // end of namespace math
 

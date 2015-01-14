@@ -15,7 +15,6 @@
 #define _LIB_TFEL_MATERIALEXCEPTION_H_ 
 
 #include<string>
-
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
 
@@ -26,28 +25,32 @@ namespace tfel{
     struct TFELMATERIAL_VISIBILITY_EXPORT MaterialException
       : public tfel::exception::TFELException 
     {
-      static std::string 
-      getName(void);
-      
-      MaterialException(const std::string& s);
+      MaterialException() = default;
+      MaterialException(MaterialException&&)      = default;
+      MaterialException(const MaterialException&) = default;
+      virtual ~MaterialException() noexcept;
     };
 
     struct TFELMATERIAL_VISIBILITY_EXPORT DivergenceException
-      : public tfel::material::MaterialException
+      : public MaterialException
     {
-      static std::string 
-      getName(void);
-      
-      DivergenceException(const std::string& s);
+      DivergenceException() = default;
+      DivergenceException(DivergenceException&&)      = default;
+      DivergenceException(const DivergenceException&) = default;
+      const char * what() const noexcept final;
+      virtual ~DivergenceException() noexcept;
     };
     
     struct TFELMATERIAL_VISIBILITY_EXPORT OutOfBoundsException
-      : public tfel::material::MaterialException
+      : public MaterialException
     {
-      static std::string 
-      getName(void);
-      
-      OutOfBoundsException(const std::string& s);
+      OutOfBoundsException(std::string);
+      OutOfBoundsException(OutOfBoundsException&&)      = default;
+      OutOfBoundsException(const OutOfBoundsException&) = default;
+      const char * what() const noexcept final;
+      virtual ~OutOfBoundsException() noexcept;
+    private:
+      std::string msg;
     };
     
   } // end of namespace material

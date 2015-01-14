@@ -15,6 +15,7 @@
 #endif /* NDEBUG */
 
 #include<cmath>
+#include<string>
 #include<cassert>
 #include<cstdlib>
 
@@ -22,13 +23,41 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-#include"TFEL/Utilities/Name.hxx"
-#include"TFEL/Utilities/ToString.hxx"
-
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/Tensor/TensorViewFromStensor.hxx"
 #include"TFEL/Math/General/Complex.hxx"
+
+template<typename T>
+struct Name;
+
+template<>
+struct Name<long double>
+{
+  static std::string getName()
+  {
+    return "long double";
+  }
+};
+
+template<>
+struct Name<double>
+{
+  static std::string getName()
+  {
+    return "double";
+  }
+};
+
+template<>
+struct Name<float>
+{
+  static std::string getName()
+  {
+    return "float";
+  }
+};
+
 
 struct TensorTest
   : public tfel::tests::TestCase
@@ -96,7 +125,7 @@ struct TensorTest3_1D
   TensorTest3_1D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "TensorTest3<1D,"+
-			    tfel::utilities::Name<real>::getName()+">")
+			    Name<real>::getName()+">")
   {} // end of TensorTest3
   tfel::tests::TestResult
   execute()
@@ -124,7 +153,7 @@ struct TensorTest3_2D
   TensorTest3_2D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "TensorTest3<2D,"+
-			    tfel::utilities::Name<real>::getName()+">")
+			    Name<real>::getName()+">")
   {} // end of TensorTest3
   tfel::tests::TestResult
   execute()
@@ -154,7 +183,7 @@ struct TensorTest3_3D
   TensorTest3_3D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "TensorTest3<3D,"+
-			    tfel::utilities::Name<real>::getName()+">")
+			    Name<real>::getName()+">")
   {} // end of TensorTest3
   tfel::tests::TestResult
   execute()
@@ -601,9 +630,7 @@ TFEL_TESTS_GENERATE_PROXY(TensorTest9_3D,"TensorTest9_3D");
 
 int main(void){
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("Tensor.xml");

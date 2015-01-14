@@ -57,7 +57,7 @@ namespace mfront
 
   tfel::math::tmatrix<3u,3u,real>
   UmatCohesiveZoneModel::getRotationMatrix(const tfel::math::vector<real>&,
-							 const tfel::math::tmatrix<3u,3u,real>& r) const
+					   const tfel::math::tmatrix<3u,3u,real>& r) const
   {
     using namespace std;
     string msg("UmatCohesiveZoneModel::getRotationMatrix : "

@@ -14,11 +14,9 @@
 #ifndef _LIB_TFEL_UNIT_H_
 #define _LIB_TFEL_UNIT_H_ 
 
-#include<string>
-#include<sstream>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/IntToType.hxx"
 #include"TFEL/Math/Forward/qt.hxx"
 
 namespace tfel{
@@ -34,23 +32,21 @@ namespace tfel{
 	     unsigned int D1,unsigned int D2,unsigned int D3,
 	     unsigned int D4,unsigned int D5,unsigned int D6,
 	     unsigned int D7>
-    struct Unit<tfel::meta::Int2Type<N1>,
-		tfel::meta::Int2Type<N2>,
-		tfel::meta::Int2Type<N3>,
-		tfel::meta::Int2Type<N4>,
-		tfel::meta::Int2Type<N5>,
-		tfel::meta::Int2Type<N6>,
-		tfel::meta::Int2Type<N7>,
-		tfel::meta::UInt2Type<D1>,
-		tfel::meta::UInt2Type<D2>,
-		tfel::meta::UInt2Type<D3>,
-		tfel::meta::UInt2Type<D4>,
-		tfel::meta::UInt2Type<D5>,
-		tfel::meta::UInt2Type<D6>,
-		tfel::meta::UInt2Type<D7> >
-    {
-      static std::string getName(void);
-    };
+    struct Unit<std::integral_constant<int,N1>,
+		std::integral_constant<int,N2>,
+		std::integral_constant<int,N3>,
+		std::integral_constant<int,N4>,
+		std::integral_constant<int,N5>,
+		std::integral_constant<int,N6>,
+		std::integral_constant<int,N7>,
+		std::integral_constant<unsigned int,D1>,
+		std::integral_constant<unsigned int,D2>,
+		std::integral_constant<unsigned int,D3>,
+		std::integral_constant<unsigned int,D4>,
+		std::integral_constant<unsigned int,D5>,
+		std::integral_constant<unsigned int,D6>,
+		std::integral_constant<unsigned int,D7> >
+    {};
 
     template<typename A, typename B>
     struct AddUnit_;

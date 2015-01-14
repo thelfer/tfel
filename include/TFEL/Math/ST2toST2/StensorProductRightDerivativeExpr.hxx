@@ -14,8 +14,6 @@
 #ifndef _LIB_TFEL_MATH_STENSORPRODUCTRIGHTDERIVATIVEEXPR_H_
 #define _LIB_TFEL_MATH_STENSORPRODUCTRIGHTDERIVATIVEEXPR_H_ 
 
-#include<iostream>
-
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"

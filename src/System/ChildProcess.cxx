@@ -64,7 +64,10 @@ namespace tfel
 
     ChildProcessCreationFailedException::ChildProcessCreationFailedException()
       : SystemError(strerror(errno))
-    {} // end of ChildProcessCreationFailedException::ChildProcessCreationFailedException()
+    {} // end of ChildProcessCreationFailedException::ChildProcessCreationFailedException
+
+    ChildProcessCreationFailedException::~ChildProcessCreationFailedException() noexcept
+    {} // end of ChildProcessCreationFailedException::ChildProcessCreationFailedException
 
   } // end of namespace system
 

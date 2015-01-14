@@ -14,6 +14,7 @@
 #ifndef _LIB_TFEL_SYSTEMERROR_HXX_
 #define _LIB_TFEL_SYSTEMERROR_HXX_ 
 
+#include<string>
 #include<cerrno>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -29,13 +30,21 @@ namespace tfel
       : public tfel::exception::TFELException
     {
       SystemError(const std::string&);
+      SystemError(SystemError&&) = default;
+      SystemError(const SystemError&) = default;
+      virtual const char* what(void) const noexcept;
+      virtual ~SystemError() noexcept;
+    private:
+      std::string msg;
     }; // end of struct SystemError
     
     template<unsigned short N>
     struct PosixError
       : public SystemError
     {
-      PosixError(const std::string& msg);
+      PosixError(const std::string&);
+      PosixError(PosixError&&) = default;
+      PosixError(const PosixError&) = default;
     }; // end of struct PosixError
 
     //! a simple alias

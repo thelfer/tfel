@@ -5,11 +5,9 @@ if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Metaprogramming
 test_PROGRAMS = HasConstIterator \
-		typelist         \
 		typelist2
 
 HasConstIterator_SOURCES = HasConstIterator.cxx 
-typelist_SOURCES         = typelist.cxx         
 typelist2_SOURCES        = typelist2.cxx         
 
 LDADD = -L$(top_builddir)/src/Utilities \

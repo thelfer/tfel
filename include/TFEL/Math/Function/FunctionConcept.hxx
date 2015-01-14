@@ -41,15 +41,7 @@ namespace tfel{
      * \brief Helper class to characterise functions.
      */ 
     struct FunctionTag
-    {
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string getName(void);
-    }; // end of FunctionTag
+    {}; // end of FunctionTag
 
     template<typename Func>
     struct FunctionConcept

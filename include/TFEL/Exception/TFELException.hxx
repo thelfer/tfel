@@ -14,7 +14,6 @@
 #ifndef _LIB_TFEL_EXCEPTIONS_H_
 #define _LIB_TFEL_EXCEPTIONS_H_ 
 
-#include<string>
 #include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -34,47 +33,14 @@ namespace tfel
     struct TFELEXCEPTION_VISIBILITY_EXPORT TFELException
       : public std::exception
     {
-
-      /*!
-       * \brief  Return the name of the class.
-       * \param  void.
-       * \return std::string, the name of the class.
-       * \see    Name.
-       */
-      static std::string 
-      getName(void);
-
-      /*!
-       *  \brief Default Constructor.
-       *  \param s, string describing the exception that occured
-       */
-      TFELException(const std::string& s);
-
-      /*!
-       * \brief  Return a string describing the exception that occured.
-       * \param  void.
-       * \return const char*.
-       */
-      virtual const char* 
-      what(void) const throw();
-
-      /*!
-       * \brief  Return a string describing the exception that occured.
-       * \param  void.
-       * \return const std::string.
-       */
-      virtual const std::string
-      getMsg(void) const;
-
-      virtual ~TFELException() throw();
-
-    private:
-
-      /*!
-       * A string describing the exception that occured
-       */
-      std::string msg;
-
+      //! default constructor
+      TFELException() = default;
+      //! copy constructor
+      TFELException(const TFELException&) = default;
+      //! copy constructor
+      TFELException(TFELException&&) = default;
+      //! destructor
+      virtual ~TFELException() noexcept;
     };
 
   } // end of namespace exception

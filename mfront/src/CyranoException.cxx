@@ -28,18 +28,18 @@ namespace cyrano
   {} // end of CyranoException::CyranoException
 
   const char* 
-  CyranoException::what (void) const throw()
+  CyranoException::what (void) const noexcept
   { 
     return msg.c_str(); 
   } // end of CyranoException::what
 
   std::string
-  CyranoException::getMsg(void) const throw()
+  CyranoException::getMsg(void) const noexcept
   {
     return msg;
   } // end of CyranoException::getMsg
   
-  CyranoException::~CyranoException() throw()
+  CyranoException::~CyranoException() noexcept
   {} // end of CyranoException::~CyranoException
 
   CyranoIntegrationFailed::CyranoIntegrationFailed()
@@ -54,7 +54,7 @@ namespace cyrano
     : CyranoException(e)
   {} // end of CyranoIntegrationFailed::CyranoIntegrationFailed
 
-  CyranoIntegrationFailed::~CyranoIntegrationFailed() throw()
+  CyranoIntegrationFailed::~CyranoIntegrationFailed() noexcept
   {} // end of CyranoIntegrationFailed::~CyranoIntegrationFailed()
 
   CyranoInvalidNTENSValue::CyranoInvalidNTENSValue(const unsigned short N)
@@ -65,7 +65,7 @@ namespace cyrano
     : CyranoException(e)
   {} // end of CyranoInvalidNTENSValue::CyranoInvalidNTENSValue
 
-  CyranoInvalidNTENSValue::~CyranoInvalidNTENSValue() throw()
+  CyranoInvalidNTENSValue::~CyranoInvalidNTENSValue() noexcept
   {} // end of CyranoInvalidNTENSValue::~CyranoInvalidNTENSValue()
 
   CyranoInvalidDimension::CyranoInvalidDimension(const std::string& b,
@@ -77,7 +77,7 @@ namespace cyrano
     : CyranoException(e)
   {} // end of CyranoInvalidDimension::CyranoInvalidDimension
 
-  CyranoInvalidDimension::~CyranoInvalidDimension() throw()
+  CyranoInvalidDimension::~CyranoInvalidDimension() noexcept
   {} // end of CyranoInvalidDimension::~CyranoInvalidDimension()
 
 } // end of namespace cyrano

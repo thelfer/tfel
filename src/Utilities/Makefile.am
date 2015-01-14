@@ -11,7 +11,6 @@ libTFELUtilities_la_SOURCES = TextData.cxx         \
 			      GenTypeCastError.cxx \
 			      Token.cxx            \
 			      CxxKeywords.cxx      \
-			      Name.cxx             \
 			      CxxTokenizer.cxx     \
 			      TerminalColors.cxx   \
 			      StringAlgorithms.cxx

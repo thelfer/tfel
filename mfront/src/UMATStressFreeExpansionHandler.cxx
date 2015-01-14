@@ -24,7 +24,7 @@ namespace umat
 							 const UMATInt d)
   {
     using namespace std;
-    static constexpr UMATReal cste = UMATReal(2)/sqrt(UMATReal(2));
+    static const UMATReal cste = UMATReal(2)/sqrt(UMATReal(2));
     e[0]  -= s0[0];
     e[1]  -= s0[1];
     e[2]  -= s0[2];

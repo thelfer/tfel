@@ -51,7 +51,8 @@ namespace tfel
       typedef typename Expr::difference_type difference_type;
 
       TFEL_MATH_INLINE VectorExpr(const VectorExpr& src)
-	: Expr(src)	
+        : VectorConcept<VectorExpr>(src),
+	  Expr(src)	
       {}
 
       explicit TFEL_MATH_INLINE VectorExpr(typename Expr::first_arg& a_)

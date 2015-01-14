@@ -14,8 +14,8 @@
 #ifndef _MATH_SCALARMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_
 #define _MATH_SCALARMATHOBJECTEXPRWITHOUTCONSTITERATOR_LIB_ 1
 
-#include <string>
 #include<cstddef>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
