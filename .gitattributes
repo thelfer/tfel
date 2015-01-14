@@ -2478,6 +2478,7 @@ src/Glossary/Glossary.cxx -text
 src/Glossary/GlossaryEntry.cxx -text
 src/Glossary/Makefile.am -text
 src/Makefile.am -text
+src/Material/BoundsCheck.cxx -text
 src/Material/CMakeLists.txt -text
 src/Material/DDIF2Base.cxx -text
 src/Material/FiniteStrainBehaviourTangentOperator.cxx -text
@@ -2525,8 +2526,10 @@ src/Math/Negation.cxx -text
 src/Math/Number.cxx -text
 src/Math/OpDiff.cxx -text
 src/Math/QRException.cxx -text
+src/Math/RunTimeCheck.cxx -text
 src/Math/Sqrt.cxx -text
 src/Math/StandardFunctions.cxx -text
+src/Math/StensorComputeEigenValues.cxx -text
 src/Math/TensorConcept.cxx -text
 src/Math/Variable.cxx -text
 src/Math/power.cxx -text

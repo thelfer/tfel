@@ -29,8 +29,6 @@ struct TFEL_VISIBILITY_EXPORT GenType
 {
   using tfel::utilities::GenTypeBase<HoldedTypes>::operator =;
 
-  std::string getType() const;
-  
   std::string dumpToString(void) const;
 
   void dump(std::ostream&) const;
@@ -40,24 +38,11 @@ struct TFEL_VISIBILITY_EXPORT GenType
   
  private:
 
-  struct GetType;
   struct DumpToString;
   struct Dump;
   struct Load;
 
 }; // end of struct TFEL_VISIBILITY_EXPORT GenType
-
-struct GenType::GetType
-{
-  typedef std::string return_type;
-  template<typename T>
-  static return_type
-  apply(const T& v)
-  {
-    using namespace tfel::utilities;
-    return name(v);
-  }
-};
 
 struct GenType::DumpToString
 {
@@ -120,13 +105,6 @@ private:
 };
 
 std::string
-GenType::getType() const
-{
-  using namespace tfel::utilities;
-  return apply<GetType>(*this);
-}
-
-std::string
 GenType::dumpToString(void) const
 {
   using namespace tfel::utilities;
@@ -173,7 +151,6 @@ struct GenTypeTest3
     ostringstream os;
     TFEL_TESTS_ASSERT(g.is<int>());
     TFEL_TESTS_CHECK_EQUAL(g.get<int>(),21);
-    TFEL_TESTS_CHECK_EQUAL(g.getType(),"int");
     TFEL_TESTS_CHECK_EQUAL(g.dumpToString(),"21");
     g.dump(os);
     TFEL_TESTS_CHECK_EQUAL(os.str(),"21");
@@ -182,7 +159,6 @@ struct GenTypeTest3
     g = string("toto");
     TFEL_TESTS_ASSERT(g.is<string>());
     TFEL_TESTS_CHECK_EQUAL(g.get<string>(),"toto");
-    TFEL_TESTS_CHECK_EQUAL(g.getType(),"std::string");
     TFEL_TESTS_CHECK_EQUAL(g.dumpToString(),"toto");
     g.dump(os);
     TFEL_TESTS_CHECK_EQUAL(os.str(),"toto");
@@ -191,7 +167,6 @@ struct GenTypeTest3
     g.load("int","21");
     TFEL_TESTS_ASSERT(g.is<int>());
     TFEL_TESTS_CHECK_EQUAL(g.get<int>(),21);
-    TFEL_TESTS_CHECK_EQUAL(g.getType(),"int");
     TFEL_TESTS_CHECK_EQUAL(g.dumpToString(),"21");
     g.dump(os);
     TFEL_TESTS_CHECK_EQUAL(os.str(),"21");
