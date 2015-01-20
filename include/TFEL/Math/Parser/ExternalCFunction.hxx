@@ -101,7 +101,7 @@ namespace tfel
       ExternalCFunctionBase<N>::differentiate(const std::vector<double>::size_type) const
       {
 	ExternalCFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return std::shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return std::shared_ptr<ExternalFunction>();
       } // end of ExternalCFunctionBase<N>::differentiate
 
       template<unsigned short N>
@@ -109,7 +109,7 @@ namespace tfel
       ExternalCFunctionBase<N>::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
 	ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables();
-	return std::shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return std::shared_ptr<ExternalFunction>();
       }
 
       template<unsigned short N>
@@ -129,7 +129,7 @@ namespace tfel
       ExternalCFunctionBase<N>::differentiate(const std::string&) const
       {
 	ExternalCFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return std::shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return std::shared_ptr<ExternalFunction>();
       } // end of ExternalCFunctionBase<N>::differentiate
 
       template<unsigned short N>

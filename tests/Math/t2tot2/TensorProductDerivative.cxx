@@ -16,13 +16,12 @@
 #endif /* NDEBUG */
 
 #include<cmath>
-#include<cstdlib>
+#include<string>
 #include<cassert>
+#include<cstdlib>
 
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/t2tot2.hxx"
-#include"TFEL/Utilities/ToString.hxx"
-
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
@@ -34,7 +33,7 @@ struct TensorProductDerivative
   TensorProductDerivative()
     : tfel::tests::TestCase("TFEL/Math",
 			    "TensorProductDerivative"+
-			    tfel::utilities::ToString(N))
+			    std::to_string(static_cast<unsigned int>(N)))
   {} // end of TensorProductDerivative
   tfel::tests::TestResult
   execute()
@@ -99,12 +98,9 @@ TFEL_TESTS_GENERATE_PROXY(TensorProductDerivative_2D,"TensorProductDerivative-2D
 TFEL_TESTS_GENERATE_PROXY(TensorProductDerivative_3D,"TensorProductDerivative-3D");
 
 int main(void){
-  using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("TensorProductDerivative.xml");
   TestResult r = manager.execute();
   if(!r.success()){

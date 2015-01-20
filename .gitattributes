@@ -1004,6 +1004,7 @@ include/TFEL/Math/General/ComputeBinaryResult.hxx -text
 include/TFEL/Math/General/ComputeObjectTag.hxx -text
 include/TFEL/Math/General/ComputeObjectTag.ixx -text
 include/TFEL/Math/General/ComputeUnaryResult.hxx -text
+include/TFEL/Math/General/ConstExprMathFunctions.hxx -text
 include/TFEL/Math/General/CubicRoots.hxx -text
 include/TFEL/Math/General/DotProduct.hxx -text
 include/TFEL/Math/General/EmptyRunTimeProperties.hxx -text
@@ -1357,8 +1358,6 @@ include/TFEL/Utilities/GenTypeSpecialisation.ixx -text
 include/TFEL/Utilities/StringAlgorithms.hxx -text
 include/TFEL/Utilities/TerminalColors.hxx -text
 include/TFEL/Utilities/TextData.hxx -text
-include/TFEL/Utilities/ToString.hxx -text
-include/TFEL/Utilities/ToString.ixx -text
 include/TFEL/Utilities/Token.hxx -text
 m4/aster-machine-type.m4 -text
 m4/ax_cxx_compile_stdcxx_11.m4 -text

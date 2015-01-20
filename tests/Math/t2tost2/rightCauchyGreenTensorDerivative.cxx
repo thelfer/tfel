@@ -16,14 +16,13 @@
 #endif /* NDEBUG */
 
 #include<cmath>
+#include<string>
 #include<cstdlib>
 #include<cassert>
 
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/t2tost2.hxx"
-#include"TFEL/Utilities/ToString.hxx"
-
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
@@ -35,7 +34,7 @@ struct RightCauchyGreenTensorDerivative
   RightCauchyGreenTensorDerivative()
     : tfel::tests::TestCase("TFEL/Math",
 			    "RightCauchyGreenTensorDerivative"+
-			    tfel::utilities::ToString(N))
+			    std::to_string(static_cast<unsigned int>(N)))
   {} // end of RightCauchyGreenTensorDerivative
   tfel::tests::TestResult
   execute()
@@ -86,9 +85,7 @@ TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorDerivative_3D,"RightCauchyGreenT
 
 int main(void){
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("RightCauchyGreenTensorDerivative.xml");

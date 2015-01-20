@@ -129,14 +129,14 @@ namespace mfront{
 	this->registerVariable(currentVarName,false);
 	this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
 	if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	  ib.code += "this->"+currentVarName +".resize("+toString(p->arraySize)+");\n";
+	  ib.code += "this->"+currentVarName +".resize("+to_string(p->arraySize)+");\n";
 	}
 	ib.code += "this->" +currentVarName + " = this->" + p->name + ";\n";
 	const unsigned short n =
 	  this->mb.getAttribute<unsigned short>(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 						BehaviourData::numberOfEvaluations);
 	for(unsigned short i=0u;i!=n;++i){
-	  currentVarName = "d" + p->name + "_K"+toString(static_cast<unsigned short>(i+1u));
+	  currentVarName = "d" + p->name + "_K"+to_string(i+1u);
 	  if(getVerboseMode()>=VERBOSE_DEBUG){
 	    ostream& log = getLogStream();
 	    log << "registring variable '" << currentVarName << "'";
@@ -172,7 +172,7 @@ namespace mfront{
 	this->registerVariable(currentVarName,false);
 	this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
 	if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	  ib.code += "this->"+currentVarName+".resize("+toString(p->arraySize)+");\n";
+	  ib.code += "this->"+currentVarName+".resize("+to_string(p->arraySize)+");\n";
 	}
 	ib.code += "this->" + currentVarName + " = this->" + p->name + ";\n";
       }
@@ -486,7 +486,7 @@ namespace mfront{
     this->mb.addLocalVariable(h,VariableDescription("StrainStensor","eel_",1u,0u));
     ib.code += "this->eel_ = this->eel;\n";
     for(unsigned short i=0u;i!=n;++i){
-      string currentVarName = "deel_K"+toString(static_cast<unsigned short>(i+1u));
+      string currentVarName = "deel_K"+to_string(i+1u);
       this->registerVariable(currentVarName,false);
       this->mb.addLocalVariable(h,VariableDescription("StrainStensor",currentVarName,1u,0u));
     }

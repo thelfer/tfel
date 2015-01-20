@@ -30,7 +30,7 @@ namespace umat
   {
     using namespace tfel::material;
     const char * const p = ::getenv("CASTEM_OUT_OF_BOUND_POLICY");
-    if(p!=0){
+    if(p!=nullptr){
       if(strcmp(p,"STRICT")==0){
 	this->policy = Strict;
       } else if (strcmp(p,"WARNING")==0){

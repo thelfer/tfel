@@ -15,9 +15,8 @@
 #ifndef _LIB_TFEL_FUNCTION_HXX_
 #define _LIB_TFEL_FUNCTION_HXX_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
 #include<memory>
-#include"TFEL/System/ExternalFunctionsPrototypes.hxx"
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Parser/Expr.hxx"
 
 namespace tfel

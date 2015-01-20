@@ -26,11 +26,12 @@ namespace mfront
   GnuplotMaterialPropertyInterface::nextToken(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 				       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens,
 				       const std::string &msg) {
-    std::string what(msg) ;
+    using namespace std;
+    string what(msg) ;
     if(++current==endTokens){
       what+="unexpected end of file.\n";
       what+="Error at line : ";
-      what+=toString((--current)->line);
+      what+=to_string((--current)->line);
       throw(std::runtime_error(what));
     }
     return current;
@@ -94,7 +95,7 @@ namespace mfront
     if(current->value=="{"){
       msg+="'{' is not allowed in graph bounds.\n";
       msg+="Error at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
     }
     // howto test if current->value is a word ????
     boundsDescription.lineNumber = current->line;
@@ -109,7 +110,7 @@ namespace mfront
       msg+="expected 'in' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     current=nextToken(current,endTokens,msg);
@@ -117,7 +118,7 @@ namespace mfront
       msg+="expected '[' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     current=nextToken(current,endTokens,msg);
@@ -128,7 +129,7 @@ namespace mfront
       msg+="could not read lower bound value\nRead : ";
       msg+=current->value;
       msg+="\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     current=nextToken(current,endTokens,msg);
@@ -136,7 +137,7 @@ namespace mfront
       msg+="expected ':' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     current=nextToken(current,endTokens,msg);
@@ -146,7 +147,7 @@ namespace mfront
       msg+="could not read upper bound value\nRead : ";
       msg+=current->value;
       msg+="\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     if(boundsDescription.boundsType==VariableBoundsDescription::LowerAndUpper){
@@ -154,7 +155,7 @@ namespace mfront
 	msg+="lower bound value is greater than upper bound value for variable ";
 	msg+=boundsDescription.varName;
 	msg+="\nError at line : ";
-	msg+=toString(current->line);
+	msg+=to_string(current->line);
 	throw(runtime_error(msg));
       }
     }
@@ -163,7 +164,7 @@ namespace mfront
       msg+="expected ']' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }      
     current=nextToken(current,endTokens,msg);
@@ -171,7 +172,7 @@ namespace mfront
       msg+="expected ';' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }      
     testBounds.push_back(boundsDescription);
@@ -189,7 +190,7 @@ namespace mfront
     if(current->value!="{"){
       msg+="expected '{'.\n";
       msg+="Error at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     current=nextToken(current,endTokens,msg);
@@ -198,7 +199,7 @@ namespace mfront
       if(current->value=="{"){
 	msg+="'{' is not allowed in graph.\n";
 	msg+="Error at line : ";
-	msg+=toString(current->line);
+	msg+=to_string(current->line);
 	throw(runtime_error(msg));
       }
       // on lit les mots clefs
@@ -213,7 +214,7 @@ namespace mfront
 	if (current->value != ";") {
 	  msg+="Label : you must give only a string.\n";
 	  msg+="Error at line : ";
-	  msg+=toString((--current)->line);
+	  msg+=to_string((--current)->line);
 	  throw(runtime_error(msg));
 	}
 	current=nextToken(current,endTokens,msg);
@@ -230,7 +231,7 @@ namespace mfront
 	if (current->value != ";") {
 	  msg+="ExperimentalData : you provide more than three arguments.\n";
 	  msg+="Error at line : ";
-	  msg+=toString((--current)->line);
+	  msg+=to_string((--current)->line);
 	  throw(runtime_error(msg));
 	}
 	current=nextToken(current,endTokens,msg);
@@ -240,7 +241,7 @@ namespace mfront
 	msg+=current->value ;
 	msg+=" is not allowed in graph.\n";
 	msg+="Error at line : ";
-	msg+=toString(current->line);
+	msg+=to_string(current->line);
 	throw(runtime_error(msg));
       }
       //current=nextToken(current,endTokens,msg);
@@ -248,7 +249,7 @@ namespace mfront
     if(current==endTokens){
       msg+="File ended before the end of graph.\n";
       msg+="Error at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     return make_pair(true,++current);

@@ -26,14 +26,19 @@ namespace tfel{
     {}
 
     template<typename T>
+    vector<T>::vector(const std::initializer_list<T>& v)
+      : std::vector<T>(v)
+    {}
+
+    template<typename T>
     vector<T>::vector(const typename vector<T>::size_type s, const T& v)
       : std::vector<T>(s,v)
     {}
 
     template<typename T>
     template<typename InputIterator>
-    vector<T>::vector(const InputIterator begin_, const InputIterator end_)
-      : std::vector<T>(begin_,end_)
+    vector<T>::vector(const InputIterator b, const InputIterator e)
+      : std::vector<T>(b,e)
     {}
 
     template<typename T>

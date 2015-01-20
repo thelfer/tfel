@@ -71,7 +71,7 @@ namespace tfel
 	while(p!=pe){
 	  extract<typename T::value_type> e(*p);
 	  if(!e.check()){
-	    return 0;
+	    return nullptr;
 	  }
 	  ++p;
 	}

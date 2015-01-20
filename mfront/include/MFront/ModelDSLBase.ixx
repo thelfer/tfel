@@ -84,7 +84,7 @@ namespace mfront{
     using namespace std;
     typename CallBackContainer::const_iterator p;
     typename VariableDescriptionContainer::const_iterator p2;
-    MemberFuncPtr handler = 0;
+    MemberFuncPtr handler = nullptr;
     this->fileName = fileName_;
     this->openFile(this->fileName,ecmds);
     // strip comments from file

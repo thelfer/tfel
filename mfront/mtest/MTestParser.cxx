@@ -360,7 +360,7 @@ namespace mfront
     }
     string root;
     const char * const path = getenv("TFELHOME");
-    if(path!=0){
+    if(path!=nullptr){
       root = string(path);
     } else {
       root = PREFIXDIR;
@@ -404,15 +404,13 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    unsigned short currentLine;
-    unsigned short openedBrackets;
-    string description;
     this->readSpecifiedToken("MTestParser::handleDescription","{",
 			     p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleDescription",
 			    p,this->fileTokens.end());
-    currentLine = p->line;
-    openedBrackets = 1u;
+    auto currentLine = p->line;
+    auto openedBrackets = 1u;
+    string description;
     while((!((p->value=="}")&&
 	     (openedBrackets==1u)))&&
 	  (p!=this->fileTokens.end())){

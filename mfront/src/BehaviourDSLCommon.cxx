@@ -1708,7 +1708,7 @@ namespace mfront{
       this->readSpecifiedToken("BehaviourDSLCommon::treatBounds : ","(");
       this->checkNotEndOfFile("BehaviourDSLCommon::treatBounds : ");
       if(this->current->value!="*"){
-	unsigned short component;
+	unsigned int component;
 	istringstream converter(this->current->value);
 	converter >> component;
 	if(!converter||(!converter.eof())){
@@ -1718,7 +1718,7 @@ namespace mfront{
 	d.component=component;
 	d.varType=Scalar;
 	d.varName+="(";
-	d.varName+=toString(component);
+	d.varName+=to_string(component);
 	d.varName+=")";
       }
       ++(this->current);
@@ -5346,8 +5346,8 @@ namespace mfront{
 	this->throwRuntimeError("DSLBase::handleParameter : ",
 				"variable given is not valid (read '"+this->current->value+"').");
       }
-      const string n = this->current->value;
-      const unsigned short lineNumber = this->current->line;
+      const auto n = this->current->value;
+      const auto lineNumber = this->current->line;
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::handleParameter");
       if((this->current->value=="=")||

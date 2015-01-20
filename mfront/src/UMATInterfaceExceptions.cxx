@@ -15,7 +15,6 @@
 #include<sstream>
 #include<iostream>
 
-#include "TFEL/Utilities/ToString.hxx"
 #include "MFront/UMAT/UMATInterfaceExceptions.hxx"
 
 namespace umat{
@@ -138,12 +137,11 @@ namespace umat{
 					   const unsigned short s)
   {
     using namespace std;
-    using namespace tfel::utilities;
     if(NTENS!=s){
       string msg("UMATInterfaceExceptions::checkNTENSValue : "
 		 "invalid value for the NTENS parameter "
-		 "(got '"+ToString(NTENS)+"', "
-		 "expected '"+ToString(s)+"')");
+		 "(got '"+to_string(NTENS)+"', "
+		 "expected '"+to_string(static_cast<unsigned int>(s))+"')");
       throw(runtime_error(msg));  
     }
   } // end of UMATInterfaceExceptions::checkNTENSValue

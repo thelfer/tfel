@@ -20,8 +20,6 @@
 #include<cstdlib>
 #include<sstream>
 
-#include"TFEL/Utilities/ToString.hxx"
-
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/NonLinearSystemSolver.hxx"
@@ -118,7 +116,7 @@ namespace mfront{
     --(this->current);
     const string key = this->current->value;
     ++(this->current);
-    if(this->solver.get()!=0){
+    if(this->solver.get()!=nullptr){
       pair<bool,CxxTokenizer::TokensContainer::const_iterator> r = 
 	this->solver->treatSpecificKeywords(this->mb,key,this->current,
 					    this->fileTokens.end());
@@ -149,7 +147,7 @@ namespace mfront{
   void ImplicitDSLBase::treatInitJacobian(void)
   {
     using namespace std;
-    if(this->solver.get()==0){
+    if(this->solver.get()==nullptr){
       this->throwRuntimeError("ImplicitDSLBase::treatInitJacobian",
 			      "undefined algorithm. Please use the '@Algorithm' "
 			      "keyword to define one.");
@@ -166,7 +164,7 @@ namespace mfront{
   void ImplicitDSLBase::treatInitJacobianInvert(void)
   {
     using namespace std;
-    if(this->solver.get()==0){
+    if(this->solver.get()==nullptr){
       this->throwRuntimeError("ImplicitDSLBase::treatInitJacobianInvert",
 			      "undefined algorithm. Please use the '@Algorithm' "
 			      "keyword to define one.");
@@ -324,7 +322,7 @@ namespace mfront{
     using namespace std;
     const NonLinearSystemSolverFactory& f =
       NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
-    if(this->solver.get()!=0){
+    if(this->solver.get()!=nullptr){
       this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
 			      "an algorithm has already been defined.");
     }
@@ -1795,7 +1793,7 @@ namespace mfront{
     using namespace tfel::utilities;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::endsInputFileProcessing();
-    if(this->solver.get()==0){
+    if(this->solver.get()==nullptr){
       const NonLinearSystemSolverFactory& f =
 	NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
       this->solver = f.getSolver("NewtonRaphson");

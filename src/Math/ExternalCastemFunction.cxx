@@ -75,7 +75,7 @@ namespace tfel
 	string msg("ExternalCastemFunction::createFunctionByChangingParametersIntoVariables : ");
 	msg += "invalid call";
 	throw(runtime_error(msg));
-	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return shared_ptr<ExternalFunction>();
       } // end of ExternalCastemFunction::createFunctionByChangingParametersIntoVariables
 
       std::shared_ptr<ExternalFunction>

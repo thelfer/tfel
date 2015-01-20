@@ -52,7 +52,7 @@ namespace mfront{
     string msg("StaticVariableDescriptionContainer::get : "
 	       "no static variable named '"+n+"'");
     throw(runtime_error(msg));
-    return *(static_cast<StaticVariableDescription*>(0));
+    return *(static_cast<StaticVariableDescription*>(nullptr));
   } // end of StaticVariableDescriptionContainer::get
 
 } // end of namespace mfront

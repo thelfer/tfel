@@ -12,10 +12,10 @@
  * project under specific licensing conditions. 
  */
 
-#include<stdexcept>
-#include<sstream>
-#include<algorithm>
 #include<iterator>
+#include<sstream>
+#include<stdexcept>
+#include<algorithm>
 
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #include"TFEL/System/ProcessManager.hxx"
@@ -53,8 +53,8 @@ namespace mfront
   {} // end of DSLBase::WordAnalyser::~WordAnalyser
 
   DSLBase::CodeBlockParserOptions::CodeBlockParserOptions()
-    : modifier(0),
-      analyser(0),
+    : modifier(nullptr),
+      analyser(nullptr),
       delim1("{"),
       delim2("}"),
       qualifyStaticVariables(false),
@@ -135,8 +135,8 @@ namespace mfront
       b.description += this->currentComment;
     }
     string& res = b.code;
-    unsigned short currentLine;
-    unsigned short openedBlock;
+    unsigned int currentLine;
+    unsigned int openedBlock;
     TokensContainer::const_iterator previous;
     openedBlock=0;
     this->readSpecifiedToken("DSLBase::readNextBlock",delim1);
@@ -146,7 +146,7 @@ namespace mfront
       string msg("DSLBase::readNextBlock : ");
       msg += "read ';' before the end of block.\n";
       msg += "Number of block opened : ";
-      msg += toString(openedBlock);
+      msg += to_string(openedBlock);
       throw(runtime_error(msg));
     }
     if(this->current->value==delim1){
@@ -159,7 +159,7 @@ namespace mfront
     currentLine = this->current->line;
     if((registerLine)&&(!getDebugMode())){
       res  = "#line ";
-      res += toString(currentLine);
+      res += to_string(currentLine);
       res += " \"";
       res += this->fileName;
       res += "\"\n";
@@ -170,7 +170,7 @@ namespace mfront
       }
       b.description += this->current->comment;
     }
-    if(analyser.get()!=0){
+    if(analyser.get()!=nullptr){
       analyser->exe(this->current->value);
     }
     if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
@@ -196,7 +196,7 @@ namespace mfront
 	 (previous->value=="::")){
 	currentValue = this->current->value;
       } else {
-	if(modifier.get()!=0){
+	if(modifier.get()!=nullptr){
 	  currentValue = modifier->exe(this->current->value,addThisPtr);
 	} else {
 	  if(addThisPtr){
@@ -225,7 +225,7 @@ namespace mfront
 	if((registerLine)&&(!getDebugMode())){
 	  res += "\n";
 	  res += "#line ";
-	  res += toString(currentLine);
+	  res += to_string(currentLine);
 	  res += " \"";
 	  res += this->fileName;
 	  res += "\"\n";
@@ -237,7 +237,7 @@ namespace mfront
 	string msg("DSLBase::readNextBlock : ");
 	msg += "read ';' before the end of block.\n";
 	msg += "Number of block opened : ";
-	msg += toString(openedBlock);
+	msg += to_string(openedBlock);
 	throw(runtime_error(msg));
       }
       if(!this->current->comment.empty()){
@@ -246,7 +246,7 @@ namespace mfront
 	}
 	b.description += this->current->comment;
       }
-      if(analyser.get()!=0){
+      if(analyser.get()!=nullptr){
 	analyser->exe(this->current->value);
       }
       if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
@@ -272,7 +272,7 @@ namespace mfront
 	   (previous->value=="::")){
 	  currentValue = this->current->value;
 	} else {
-	  if(modifier.get()!=0){
+	  if(modifier.get()!=nullptr){
 	    currentValue = modifier->exe(this->current->value,addThisPtr);	    
 	  } else {
 	    if(addThisPtr){
@@ -304,7 +304,7 @@ namespace mfront
       string msg("DSLBase::readNextBlock : ");
       msg += "Expected the end of a block.\n";
       msg += "Number of block opened : ";
-      msg += toString(openedBlock);
+      msg += to_string(openedBlock);
       throw(runtime_error(msg));
     }
     ++(this->current);
@@ -325,7 +325,7 @@ namespace mfront
       msg +=" : " + m;
     }
     if(!this->fileTokens.empty()){
-      msg += "\nError at line " + toString(t->line);
+      msg += "\nError at line " + to_string(t->line);
     }
     throw(runtime_error(msg));
   } // end of DSLBase::throwRuntimeError
@@ -365,7 +365,7 @@ namespace mfront
 	msg += "\n"+error;
       }
       if(!this->fileTokens.empty()){
-	msg += "\nError at line " + toString(this->current->line);
+	msg += "\nError at line " + to_string(this->current->line);
       }
       throw(runtime_error(msg));
     }
@@ -398,7 +398,7 @@ namespace mfront
       msg += this->current->value;
       msg += ".\n";
       msg += "Error at line : ";
-      msg += toString(this->current->line);
+      msg += to_string(this->current->line);
       throw(runtime_error(msg));
     }
     ++(this->current);
@@ -482,14 +482,13 @@ namespace mfront
     using namespace std;
     using namespace tfel::math;
     using namespace tfel::utilities;
-    string varName;
-    unsigned short lineNumber;
+    unsigned int lineNumber;
     unsigned short asize;
     string endComment;
     bool endOfTreatement=false;
     while((this->current!=this->fileTokens.end())&&
 	  (!endOfTreatement)){
-      varName = this->current->value;
+      const auto& varName = this->current->value;
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("DSLBase::readVarList : ",
 				"variable given is not valid (read '"+this->current->value+"').");
@@ -531,11 +530,12 @@ namespace mfront
 	  }
 	  ev.setVariableValue(*pv,pvv->second);
 	}
-	asize = ev.getValue();
-	if(asize<=0){
+	const auto iv = ev.getValue();
+	if(iv<=0){
 	  this->throwRuntimeError("DSLBase::readVarList : ",
 				  "invalid array size for '"+varName+"'");
 	}
+	asize = static_cast<unsigned int>(iv);
 	this->readSpecifiedToken("DSLBase::readVarList","]");
 	this->checkNotEndOfFile("DSLBase::readVarList");
       }
@@ -1030,8 +1030,8 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    unsigned short currentLine;
-    unsigned short openedBrackets;
+    unsigned int currentLine;
+    unsigned int openedBrackets;
     this->readSpecifiedToken("DSLBase::treatDescription","{");
     this->checkNotEndOfFile("DSLBase::treatDescription");
     currentLine = this->current->line;
@@ -1139,7 +1139,7 @@ namespace mfront
     using namespace std;
     string type;
     string name;
-    unsigned short line;
+    unsigned int line;
     pair<bool,long double> value;
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
 			    "Cannot read type of static variable.");
@@ -1234,7 +1234,7 @@ namespace mfront
 				"variable given is not valid (read '"+this->current->value+"').");
       }
       const string n = this->current->value;
-      const unsigned short lineNumber = this->current->line;
+      const auto lineNumber = this->current->line;
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::handleParameter");
       if((this->current->value=="=")||

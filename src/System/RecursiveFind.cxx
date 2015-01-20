@@ -96,10 +96,10 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       dir = opendir(name.c_str());
-      if(dir==0){
+      if(dir==nullptr){
 	systemCall::throwSystemError("can't open directory '"+name+"'",errno);
       }
-      while((p=readdir(dir))!=0){
+      while((p=readdir(dir))!=nullptr){
 	string file = name+"/";
 	file += p->d_name;
 	if(stat(file.c_str(),&buf)!=0){
@@ -108,7 +108,7 @@ namespace tfel
 	  systemCall::throwSystemError(msg,errno);
 	}
 	if(S_ISREG(buf.st_mode)){
-	  if(regexec(&re,p->d_name,0,0,0)==0){
+	  if(regexec(&re,p->d_name,0,nullptr,0)==0){
 	    r[name].push_back(p->d_name);
 	  }
 	} else if(S_ISDIR(buf.st_mode)){

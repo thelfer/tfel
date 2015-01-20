@@ -69,46 +69,43 @@ namespace mfront{
 			const std::string& v)
   {
     using namespace std;
-    VariableDescriptionContainer::const_iterator p;
-    map<string,unsigned short>::const_iterator p2;
     unsigned short d;
-    unsigned short i;
-    for(p=data.inputs.begin();p!=data.inputs.end();++p){
+    for(auto p=data.inputs.begin();p!=data.inputs.end();++p){
       if(v==p->name){
-	return pair<string,unsigned short>(v,0u);
+	return {v,0u};
       }
-      p2 = data.depths.find(p->name);
+      auto p2 = data.depths.find(p->name);
       if(p2!=data.depths.end()){
 	d = p2->second;
       } else {
 	d = 0;
       }
-      for(i=1;i!=d+1;++i){
-	if(v==p->name+"_"+toString(i)){
-	  return pair<string,unsigned short>(p->name,i);
+      for(unsigned short i=1;i!=d+1;++i){
+	if(v==p->name+"_"+to_string(static_cast<unsigned int>(i))){
+	  return {p->name,i};
 	}
       }
     }
-    for(p=data.outputs.begin();p!=data.outputs.end();++p){
+    for(auto p=data.outputs.begin();p!=data.outputs.end();++p){
       if(v==p->name){
-	return pair<string,unsigned short>(v,0);
+	return {v,0};
       }
-      p2 = data.depths.find(p->name);
+      auto p2 = data.depths.find(p->name);
       if(p2!=data.depths.end()){
 	d = p2->second;
       } else {
 	d = 0;
       }
-      for(i=1;i!=d+1;++i){
-	if(v==p->name+"_"+toString(i)){
-	  return pair<string,unsigned short>(p->name,i);
+      for(unsigned short i=1;i!=d+1;++i){
+	if(v==p->name+"_"+to_string(static_cast<unsigned int>(i))){
+	  return {p->name,i};
 	}
       }
     }
     string msg("ModelDSLCommon::decomposeVariableName : ");
     msg += "no decomposition found  for variable '"+v+"'";
     throw(runtime_error(msg));
-    return pair<string,unsigned short>("",0u);
+    return {"",0u};
   } // end of MFrontModelInterface::getVariableName(const std::string& v)
 
   MFrontModelInterface::MFrontModelInterface(void)
@@ -574,7 +571,7 @@ namespace mfront{
     vector<VariableBoundsDescription>::const_iterator p19;
     vector<VariableBoundsDescription>::const_iterator p20;
     unsigned short specializedParametersNumber;
-    unsigned short i;
+    unsigned int i;
     bool found;
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
@@ -1024,7 +1021,7 @@ namespace mfront{
     }
     // initializing functor members
     for(i=0,p11=mdata.functions.begin();p11!=mdata.functions.end();++p11,++i){
-      string functor = "functor"+toString(i);
+      string functor = "functor"+to_string(i);
       for(p15=p11->localParameters.begin();
 	  p15!=p11->localParameters.end();++p15){
 	this->srcFile << "this->" << functor << '.' << *p15 << " = this->" << *p15 << ";\n";
@@ -1209,7 +1206,7 @@ namespace mfront{
       }
     }
     for(i=0,p11=mdata.functions.begin();p11!=mdata.functions.end();++p11,++i){
-      string functor = "functor"+toString(i);
+      string functor = "functor"+to_string(i);
       if(p11->useTimeIncrement){
 	this->srcFile << "this->" << functor << ".dt=dt;\n";
       }
@@ -1349,32 +1346,29 @@ namespace mfront{
   MFrontModelInterface::writeInitializeOutputsVariablesDepths(const ModelData& mdata)
   {
     using namespace std;
-    ModelData::FunctionContainer::const_iterator p;
-    set<string>::const_iterator p2;
-    map<string,unsigned short>::const_iterator p3;
-    map<string,double>::const_iterator p4;
-    unsigned short i;
     this->srcFile << "void\n" << mdata.className << "::initializeOutputsVariablesDepths(void)\n{\n";
     this->srcFile << "using namespace std;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
-    for(i=0,p=mdata.functions.begin();p!=mdata.functions.end();++p,++i){
-      for(p2=p->modifiedVariables.begin();p2!=p->modifiedVariables.end();++p2){
-	string functor = "functor"+toString(i);
-	p3 = p->depths.find(*p2);
-	if(p3==p->depths.end()){
+    unsigned int i = 0;
+    for(const auto& f : mdata.functions){
+      ++i;
+      for(const auto& mf : f.modifiedVariables){
+	const auto functor = "functor"+to_string(i);
+	auto p3 = f.depths.find(mf);
+	if(p3==f.depths.end()){
 	  string msg("MFrontModelInterface::writeInitializeOutputsVariablesDepths : ");
-	  msg += "internal error, no depth found for variable '"+*p2+"' in function '"+p->name+"'";
+	  msg += "internal error, no depth found for variable '"+mf+"' in function '"+f.name+"'";
 	  throw(runtime_error(msg));
 	}
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	this->srcFile << "if(!this->outputsDepths[" << this->getVariableName(*p2,mdata)
+	this->srcFile << "if(!this->outputsDepths[" << this->getVariableName(mf,mdata)
 		      << "].insert(make_pair(*ptr,";
 	this->srcFile << p3->second;
 	this->srcFile << ")).second){\n";
 	this->srcFile << "string msg(\"" << mdata.className << "::" << mdata.className << " : \");\n";
 	this->srcFile << "msg += \"output '\";\n";
-	this->srcFile << "msg += " << this->getVariableName(*p2,mdata) << ";\n";
+	this->srcFile << "msg += " << this->getVariableName(mf,mdata) << ";\n";
 	this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
 	this->srcFile << "throw(runtime_error(msg));\n";
 	this->srcFile << "}\n";
@@ -1391,7 +1385,7 @@ namespace mfront{
     ModelData::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,string>::const_iterator p3;
-    unsigned short i;
+    unsigned int i;
     this->srcFile << "void\n" << mdata.className
 		  << "::initializeConstantMaterialProperties(" 
 		  << "const pleiades::parser::DataManager& data)\n{\n";
@@ -1402,7 +1396,7 @@ namespace mfront{
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     for(i=0,p=mdata.functions.begin();p!=mdata.functions.end();++p,++i){
       for(p2=p->constantMaterialProperties.begin();p2!=p->constantMaterialProperties.end();++p2){
-	string functor = "functor"+toString(i);
+	string functor = "functor"+to_string(i);
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
 	this->srcFile << "if(!mdata.hasMaterialDescription(*ptr)){\n";
@@ -1456,7 +1450,7 @@ namespace mfront{
     ModelData::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,double>::const_iterator p3;
-    unsigned short i;
+    unsigned int i;
     this->srcFile << "void\n" << mdata.className
 		  << "::initializeOutputsVariablesInitialValues(" 
 		  << "const pleiades::parser::DataManager& data)\n{\n";
@@ -1468,7 +1462,7 @@ namespace mfront{
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     for(i=0,p=mdata.functions.begin();p!=mdata.functions.end();++p,++i){
       for(p2=p->modifiedVariables.begin();p2!=p->modifiedVariables.end();++p2){
-	string functor = "functor"+toString(i);
+	string functor = "functor"+to_string(i);
 	p3=mdata.initialValues.find(*p2);
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
@@ -1549,7 +1543,7 @@ namespace mfront{
     ModelData::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,unsigned short>::const_iterator p3;
-    unsigned short i;
+    unsigned int i;
     this->srcFile << "void\n" << mdata.className << "::initializeInputsVariablesDepths(void)\n{\n";
     for(i=0,p=mdata.functions.begin();p!=mdata.functions.end();++p){
       for(p2=p->usedVariables.begin();p2!=p->usedVariables.end();++p2){
@@ -1567,7 +1561,7 @@ namespace mfront{
 	  if(isInputVariable(mdata,*p2)){
 	    const string& v = decomposeVariableName(mdata,*p2).first;
 	    if(treatedVars.find(v)==treatedVars.end()){
-	      string functor = "functor"+toString(i);
+	      string functor = "functor"+to_string(i);
 	      p3 = p->depths.find(v);
 	      if(p3==p->depths.end()){
 		string msg("MFrontModelInterface::writeInitializeInputsVariablesDepths : ");
@@ -1658,7 +1652,7 @@ namespace mfront{
       msg += "type " + v.type + " is not a supported type for a static variable.";
       msg += "Supported types are short, ushort, int, uint, long, ulong,";
       msg += "float, double, ldouble and real.\n";
-      msg += "Error at line " + toString(v.lineNumber);
+      msg += "Error at line " + to_string(v.lineNumber);
       throw(runtime_error(msg));
     }
   } // end of MFrontModelInterface::writeStaticVariableInitialisation

@@ -172,15 +172,21 @@ namespace tfel{
       //! \brief default constructor.
       TFEL_MATH_INLINE explicit constexpr tvector();
       //! copy constructor
-      TFEL_MATH_INLINE constexpr tvector(const tvector&);
+      TFEL_MATH_INLINE constexpr tvector(const tvector&) = default;
       /*!
        * \brief Default Constructor 
-       * \param[in] init: value used to initialise the components of the stensor 
+       * \param[in] init: value used to initialise the components of the vector 
        */
       template<typename T2,
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
-      TFEL_MATH_INLINE constexpr
-      tvector(const T2&);
+      TFEL_MATH_INLINE constexpr tvector(const T2&);
+      /*!
+       * \brief Default Constructor 
+       * \param[in] init: values used to initialise the components of the vector 
+       */
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr tvector(const std::initializer_list<T2>&);
       /*!
        * Constructor from a pointer.
        * \param const T* : initial values.

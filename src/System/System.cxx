@@ -319,11 +319,11 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       DIR *dir = opendir(d.c_str());
-      struct dirent *p;
-      if(dir==0){
+      if(dir==nullptr){
 	systemCall::throwSystemError("systemCall::rmdir, can't open directory "+d,
 				     errno);
       }
+      struct dirent *p;
       while((p=readdir(dir))!=NULL){
 	if((strcmp(p->d_name,".")!=0)&&
 	   (strcmp(p->d_name,"..")!=0)){
@@ -427,12 +427,12 @@ namespace tfel
       }
       systemCall::mkdir(rdest);
       DIR *dir = opendir(src.c_str());
-      struct dirent *p;
-      if(dir==0){
+      if(dir==nullptr){
 	systemCall::throwSystemError("systemCall::copy, can't open directory "+src,
 				     errno);
       }
-      while((p=readdir(dir))!=NULL){
+      struct dirent *p;
+      while((p=readdir(dir))!=nullptr){
 	if((strcmp(p->d_name,".")!=0)&&
 	   (strcmp(p->d_name,"..")!=0)){
 	  systemCall::copy(src+'/'+p->d_name,rdest);
@@ -482,13 +482,14 @@ namespace tfel
     systemCall::getCurrentWorkingDirectory(void)
     {
       using namespace std;
-      char *name  = 0;
+      char *name  = nullptr;
       size_t size = 16u;
       while(1){
-	if((name=static_cast<char *>(realloc(name,size)))==0){
+	name=static_cast<char *>(realloc(name,size));
+	if(name==nullptr){
 	  throw(SystemError("systemCall::getCurrentWorkingDirectory : out of memory"));
 	}
-	if(::getcwd(name,size)!=0){
+	if(::getcwd(name,size)!=nullptr){
 	  break;
 	}
 	if(errno!=ERANGE){
@@ -509,10 +510,11 @@ namespace tfel
 #warning "windows port"
       return "";
 #else
-      char *name  = 0;
+      char *name  = nullptr;
       size_t size = 16u;
       while(1){
-	if((name=static_cast<char *>(realloc(name,size)))==0){
+	name = static_cast<char *>(realloc(name,size));
+	if(name==nullptr){
 	  throw(SystemError("systemCall::getHostName : out of memory"));
 	}
 	if(::gethostname(name,size)==0){
@@ -537,7 +539,7 @@ namespace tfel
       return "";
 #else
       const char * const l = ::getlogin();
-      if(l!=0){
+      if(l!=nullptr){
 	return l;
       }
       return "";

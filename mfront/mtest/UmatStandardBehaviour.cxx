@@ -161,9 +161,9 @@ namespace mfront
   void
   UmatStandardBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    const unsigned short ndv     = this->getDrivingVariablesSize(h);
-    const unsigned short nth     = this->getThermodynamicForcesSize(h);
-    const unsigned short nstatev = this->getInternalStateVariablesSize(h);
+    const auto ndv     = this->getDrivingVariablesSize(h);
+    const auto nth     = this->getThermodynamicForcesSize(h);
+    const auto nstatev = this->getInternalStateVariablesSize(h);
     this->D.resize(nth,ndv);
     this->iv.resize(nstatev);
     if(iv.size()==0){

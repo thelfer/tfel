@@ -96,7 +96,7 @@ namespace mfront
   } // end pf print
 
   static std::string
-  getCodeBlockName(const unsigned short c)
+  getCodeBlockName(const unsigned int c)
   {
     using namespace std;
     string n;

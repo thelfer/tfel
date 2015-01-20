@@ -160,14 +160,6 @@ namespace mfront
     return s;
   } // end of makeLowerCase
 
-  std::string
-  toString(const unsigned short src)
-  {
-    std::ostringstream os;
-    os << src;
-    return os.str();
-  } // end of toString
-
   void
   displayGlossaryEntryCompleteDescription(std::ostream& os,
 					  const tfel::glossary::GlossaryEntry& e)

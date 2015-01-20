@@ -42,7 +42,7 @@ int main(const int argc, const char *const *const argv)
 
   // calling mfront plugins
   const char * libs = ::getenv("MFRONT_ADDITIONAL_LIBRARIES");
-  if(libs!=static_cast<const char*>(0)){
+  if(libs!=nullptr){
     const vector<string>& l = tokenize(libs,':');
     vector<string>::const_iterator p;
     for(p=l.begin();p!=l.end();++p){

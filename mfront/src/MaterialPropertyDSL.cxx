@@ -211,17 +211,14 @@ namespace mfront{
   MaterialPropertyDSL::treatConstant(void)
   {
     using namespace std;
-    string type;
-    string name;
-    unsigned short line;
     this->checkNotEndOfFile("MaterialPropertyDSL::treatConstant",
 			    "Cannot read variable name.");
-    name = this->current->value;
+    const auto name = this->current->value;
     if(!isValidIdentifier(name)){
       this->throwRuntimeError("DSLBase::treatConstant",
 			      "constant name '"+name+"' is not valid.");
     }
-    line = this->current->line;
+    const auto line = this->current->line;
     ++(this->current);
     const pair<bool,long double> value = this->readInitialisationValue<long double>(name,true);
     this->readSpecifiedToken("MaterialPropertyDSL::treatConstant",";");
@@ -368,9 +365,9 @@ namespace mfront{
     using namespace std;
     set<string>::const_iterator p2;
     set<string>::iterator p3;
-    unsigned short openedBrackets = 0;
-    unsigned short openedParenthesis = 0;
-    unsigned short currentLine;
+    unsigned int openedBrackets = 0;
+    unsigned int openedParenthesis = 0;
+    unsigned int currentLine;
     bool newLine;
     bool newInstruction;
     bool treated;
@@ -401,7 +398,7 @@ namespace mfront{
     currentLine = this->current->line;
     newLine=true;
     if(!getDebugMode()){
-      this->f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
+      this->f.body  +="#line " + to_string(currentLine) + " \"" + this->fileName + "\"\n";
     }
     for(;(this->current!=this->fileTokens.end())&&
 	  (openedBrackets!=0);++(this->current)){
@@ -409,7 +406,7 @@ namespace mfront{
 	currentLine=this->current->line;
 	f.body  += "\n";
 	if(!getDebugMode()){
-	  this->f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
+	  this->f.body  +="#line " + to_string(currentLine) + " \"" + this->fileName + "\"\n";
 	}
 	newLine = true;
       } 
@@ -665,8 +662,7 @@ namespace mfront{
     typedef MaterialPropertyInterfaceFactory MLIF;
     MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     string key;
-    CallBackContainer::const_iterator p;
-    MemberFuncPtr handler = 0;
+    MemberFuncPtr handler = nullptr;
     this->fileName = fileName_;
     this->openFile(this->fileName,ecmds);
     // strip comments from file
@@ -674,7 +670,7 @@ namespace mfront{
     // begin treatement
     this->current = this->fileTokens.begin();
     while(this->current != this->fileTokens.end()){
-      p = this->callBacks.find(this->current->value);
+      const auto p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
 	VariableDescriptionContainer::const_iterator   p2;
 	vector<string>::const_iterator p3;

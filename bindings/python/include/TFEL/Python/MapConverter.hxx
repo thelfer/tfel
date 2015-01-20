@@ -63,7 +63,7 @@ namespace tfel
       {
 	using namespace boost::python;
 	if (!PyDict_Check(ptr)){
-	  return 0;
+	  return nullptr;
 	}
 	handle<> h(borrowed(ptr));
 	dict d(h);
@@ -76,10 +76,10 @@ namespace tfel
 	  extract<K> k(*pk);
 	  extract<V> v(*pv);
 	  if(!k.check()){
-	    return 0;
+	    return nullptr;
 	  }
 	  if(!v.check()){
-	    return 0;
+	    return nullptr;
 	  }
 	  ++pk;
 	  ++pv;

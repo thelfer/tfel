@@ -113,7 +113,7 @@ namespace tfel
       using namespace tfel::math::parser;
       string msg("IntegerEvaluator::TOperator : invalid call");
       throw(runtime_error(msg));
-      return std::shared_ptr<IntegerExpr>(static_cast<IntegerExpr*>(0));
+      return std::shared_ptr<IntegerExpr>();
     } // end of IntegerEvaluator::TOperator::analyse(void)
 
     int
@@ -213,7 +213,7 @@ namespace tfel
 	msg += "invalid operation type  '"+op->getOperatorType()+"'";
 	throw(runtime_error(msg));
       }
-      return shared_ptr<IntegerExpr>(static_cast<IntegerExpr*>(0));
+      return shared_ptr<IntegerExpr>();
     } // end of IntegerEvaluator::TBinaryOperation::analyse(void)
     
     IntegerEvaluator::TBinaryOperation::~TBinaryOperation()

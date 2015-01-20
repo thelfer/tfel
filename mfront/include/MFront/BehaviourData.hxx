@@ -114,7 +114,6 @@ namespace mfront{
     //! number of evaluation of the computeDerivative method 
     //  of a Runge-Kutta algorithm
     static const std::string numberOfEvaluations;
-
     /*!
      * mode used when inserting code
      */
@@ -146,10 +145,16 @@ namespace mfront{
       BODY,
       AT_END   
     }; // end of enum Mode
-    /*!
-     * constructor
-     */
+    //! constructor
     BehaviourData();
+    //! copy constructor (disabled)
+    BehaviourData(const BehaviourData&) = default;
+    //! move constructor (disabled)
+    BehaviourData(BehaviourData&&) = delete;
+    //! assignement operator (disabled)
+    BehaviourData& operator = (const BehaviourData&) = delete;
+    //! move assignement operator (disabled)
+    BehaviourData& operator = (BehaviourData&&) = delete;
     /*!
      * This method has been introduced to optimize the mechanical
      * resolution in licos : a purely implicit resolution only
@@ -678,9 +683,6 @@ namespace mfront{
      * \brief throw an exception saying that no attribute with the given name exists
      */
     static void throwUndefinedAttribute(const std::string&);
-    //! assignement operator constructor (disabled)
-    BehaviourData&
-    operator = (const BehaviourData&);
     /*!
      * check that the given name has been registred as a variable name
      * \param[in] n : variable name

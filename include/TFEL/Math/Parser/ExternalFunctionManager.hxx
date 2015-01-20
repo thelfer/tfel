@@ -15,10 +15,10 @@
 #ifndef _LIB_TFEL_MATH_PARSER_EXTERNALFUNCTIONMANAGER_HXX_
 #define _LIB_TFEL_MATH_PARSER_EXTERNALFUNCTIONMANAGER_HXX_ 
 
-#include<string>
 #include<map>
-
 #include<memory>
+#include<string>
+
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
 
 namespace tfel
@@ -34,6 +34,8 @@ namespace tfel
 	: public std::map<std::string,
 			  std::shared_ptr<ExternalFunction> >
       {}; // end of struct ExternalFunctionManager
+
+      typedef std::shared_ptr<ExternalFunctionManager> ExternalFunctionManagerPtr;
       
     } // end of namespace parser
 

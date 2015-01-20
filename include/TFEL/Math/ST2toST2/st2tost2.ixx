@@ -210,6 +210,14 @@ namespace tfel{
     {}
 
     template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr st2tost2<N,T>::st2tost2(const std::initializer_list<T2>& init)
+      : fsarray<StensorDimeToSize<N>::value*
+		StensorDimeToSize<N>::value,T>(init)
+    {}
+
+    template<unsigned short N, typename T>
     constexpr st2tost2<N,T>::st2tost2(const st2tost2<N,T>& src)
       : ST2toST2Concept<st2tost2<N,T>>(src),
         fsarray<StensorDimeToSize<N>::value*
@@ -226,39 +234,162 @@ namespace tfel{
     } // end of st2tost2<N,T>::operator=
 
     template<unsigned short N, typename T>
-    const st2tost2<N,T>&
+    struct ComputeSpeciatlST2ST2Values;
+
+    template<typename T>
+    struct ComputeSpeciatlST2ST2Values<1u,T>
+    {
+      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
+      getId(void){
+	return st2tost2<1u,T>{{T{1},T{0},T{0},
+			       T{0},T{1},T{0},
+			       T{0},T{0},T{1}}};
+      } // end of getId()
+      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
+      getIxI(void){
+	return st2tost2<1u,T>{{T{1},T{1},T{1},
+			       T{1},T{1},T{1},
+			       T{1},T{1},T{1}}};
+      } // end of getIxI()
+      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
+      getJ(void){
+	return st2tost2<1u,T>{{T{1}/T{3},T{1}/T{3},T{1}/T{3},
+			       T{1}/T{3},T{1}/T{3},T{1}/T{3},
+			       T{1}/T{3},T{1}/T{3},T{1}/T{3}}};
+      } // end of getJ()
+      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
+      getK(void){
+	return st2tost2<1u,T>{{ T{2}/T{3},-T{1}/T{3},-T{1}/T{3},
+			       -T{1}/T{3}, T{2}/T{3},-T{1}/T{3},
+			       -T{1}/T{3},-T{1}/T{3}, T{2}/T{3}}};
+      } // end of getK()
+      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
+      getM(void){
+	return st2tost2<1u,T>{{ T{1}     ,-T{1}/T{2},-T{1}/T{2},
+			       -T{1}/T{2}, T{1}     ,-T{1}/T{2},
+			       -T{1}/T{2},-T{1}/T{2}, T{1}}};
+      } // end of getM()
+    };
+
+    template<typename T>
+    struct ComputeSpeciatlST2ST2Values<2u,T>
+    {
+      static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
+      getId(void){
+	return st2tost2<2u,T>{{T{1},T{0},T{0},T{0},
+			       T{0},T{1},T{0},T{0},
+			       T{0},T{0},T{1},T{0},
+			       T{0},T{0},T{0},T{1}}};
+      } // end of getId()
+      static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
+      getIxI(void){
+	return st2tost2<2u,T>{{T{1},T{1},T{1},T{0},
+			       T{1},T{1},T{1},T{0},
+			       T{1},T{1},T{1},T{0},
+			       T{0},T{0},T{0},T{0}}};
+      } // end of getIxI()
+      static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
+      getJ(void){
+	return st2tost2<2u,T>{{T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},
+			       T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},
+			       T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},
+			       T{0},T{0},T{0},T{0}}};
+      } // end of getJ()
+      static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
+      getK(void){
+	return st2tost2<2u,T>{{ T{2}/T{3},-T{1}/T{3},-T{1}/T{3},T{0},
+			       -T{1}/T{3}, T{2}/T{3},-T{1}/T{3},T{0},
+			       -T{1}/T{3},-T{1}/T{3}, T{2}/T{3},T{0},
+			        T{0},           T{0},      T{0},T{1}}};
+      } // end of getK()
+      static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
+      getM(void){
+	return st2tost2<2u,T>{{      T{1},-T{1}/T{2},-T{1}/T{2},T{0},
+			       -T{1}/T{2},      T{1},-T{1}/T{2},T{0},
+			       -T{1}/T{2},-T{1}/T{2},      T{1},T{0},
+    				     T{0},           T{0},      T{0},T{3}/T{2}}};
+      } // end of getM()
+    };
+  
+    template<typename T>
+    struct ComputeSpeciatlST2ST2Values<3u,T>
+    {
+      static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
+      getId(void){
+	return st2tost2<3u,T>{{T{1},T{0},T{0},T{0},T{0},T{0},
+			       T{0},T{1},T{0},T{0},T{0},T{0},
+			       T{0},T{0},T{1},T{0},T{0},T{0},
+			       T{0},T{0},T{0},T{1},T{0},T{0},
+			       T{0},T{0},T{0},T{0},T{1},T{0},
+			       T{0},T{0},T{0},T{0},T{0},T{1}}};
+      } // end of getId()
+      static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
+      getIxI(void){
+	return st2tost2<3u,T>{{T{1},T{1},T{1},T{0},T{0},T{0},
+			       T{1},T{1},T{1},T{0},T{0},T{0},
+			       T{1},T{1},T{1},T{0},T{0},T{0},
+			       T{0},T{0},T{0},T{0},T{0},T{0},
+			       T{0},T{0},T{0},T{0},T{0},T{0},
+			       T{0},T{0},T{0},T{0},T{0},T{0}}};
+      } // end of getIxI()
+      static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
+      getJ(void){
+	return st2tost2<3u,T>{{T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},T{0},T{0},
+			       T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},T{0},T{0},
+			       T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},T{0},T{0},
+			       T{0},T{0},T{0},T{0},T{0},T{0},
+			       T{0},T{0},T{0},T{0},T{0},T{0},
+			       T{0},T{0},T{0},T{0},T{0},T{0}}};
+      } // end of getJ()
+      static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
+      getK(void){
+	return st2tost2<3u,T>{{ T{2}/T{3},-T{1}/T{3},-T{1}/T{3},T{0},T{0},T{0},
+			       -T{1}/T{3}, T{2}/T{3},-T{1}/T{3},T{0},T{0},T{0},
+			       -T{1}/T{3},-T{1}/T{3}, T{2}/T{3},T{0},T{0},T{0},
+				T{0},           T{0},      T{0},T{1},T{0},T{0},
+				T{0},           T{0},      T{0},T{0},T{1},T{0},
+			        T{0},           T{0},      T{0},T{0},T{0},T{1}}};
+      } // end of getK()
+      static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
+      getM(void){
+	return st2tost2<3u,T>{{       T{1},-T{1}/T{2},-T{1}/T{2},T{0},T{0},T{0},
+				-T{1}/T{2},      T{1},-T{1}/T{2},T{0},T{0},T{0},
+				-T{1}/T{2},-T{1}/T{2},      T{1},T{0},T{0},T{0},
+				 T{0},           T{0},      T{0},T{3}/T{2},T{0},T{0},
+				 T{0},           T{0},      T{0},T{0},T{3}/T{2},T{0},
+			         T{0},           T{0},      T{0},T{0},T{0},T{3}/T{2}}};
+      } // end of getM()
+    };
+
+    template<unsigned short N, typename T>
+    constexpr st2tost2<N,T>
     st2tost2<N,T>::Id(void){
-      static const st2tost2<N,T> sId(st2tost2<N,T>::ST2TOST2_IDENTITY);
-      return sId;
+      return ComputeSpeciatlST2ST2Values<N,T>::getId();
     } // end of st2tost2<N,T>::Id
 
     template<unsigned short N, typename T>
-    const st2tost2<N,T>&
-    st2tost2<N,T>::J(void){
-      static const st2tost2<N,T> sJ(st2tost2<N,T>::ST2TOST2_J);
-      return sJ;
-    } // end of st2tost2<N,T>::J
-
-    template<unsigned short N, typename T>
-    const st2tost2<N,T>&
+    constexpr st2tost2<N,T>
     st2tost2<N,T>::IxI(void){
-      static const st2tost2<N,T> sIxI(st2tost2<N,T>::ST2TOST2_IxI);
-      return sIxI;
-    } // end of st2tost2<N,T>::IxI
+      return ComputeSpeciatlST2ST2Values<N,T>::getIxI();
+    } // end of st2tost2<N,T>::Id
 
     template<unsigned short N, typename T>
-    const st2tost2<N,T>&
+    constexpr st2tost2<N,T>
     st2tost2<N,T>::K(void){
-      static const st2tost2<N,T> sK(st2tost2<N,T>::ST2TOST2_K);
-      return sK;
+      return ComputeSpeciatlST2ST2Values<N,T>::getK();
     } // end of st2tost2<N,T>::K
 
     template<unsigned short N, typename T>
-    const st2tost2<N,T>&
+    constexpr st2tost2<N,T>
     st2tost2<N,T>::M(void){
-      static const st2tost2<N,T> sM(T(1.5)*st2tost2<N,T>::K());
-      return sM;
+      return ComputeSpeciatlST2ST2Values<N,T>::getM();
     } // end of st2tost2<N,T>::M
+
+    template<unsigned short N, typename T>
+    constexpr st2tost2<N,T>
+    st2tost2<N,T>::J(void){
+      return ComputeSpeciatlST2ST2Values<N,T>::getJ();
+    } // end of st2tost2<N,T>::J
 
     template<unsigned short N,typename T>
     template<typename T2,typename Expr>

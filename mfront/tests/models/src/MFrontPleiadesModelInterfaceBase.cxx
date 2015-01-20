@@ -508,7 +508,7 @@ namespace mfront{
 	  msg += "type " + p10->type + " is not a supported type for a static variable. ";
 	  msg += "Supported types are short, ushort, int, uint, long, ulong,";
 	  msg += "float, double, real and ldouble.\n";
-	  msg += "Error at line " + toString(p10->lineNumber);
+	  msg += "Error at line " + to_string(p10->lineNumber);
 	  throw(runtime_error(msg));
 	}
       }

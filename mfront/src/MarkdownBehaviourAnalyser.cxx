@@ -27,7 +27,7 @@ namespace mfront
 {
   
   template<typename Map>
-  static inline typename Map::mapped_type
+  static typename Map::mapped_type
   map_at(const Map& m,
 	 const typename Map::key_type& k)
   {

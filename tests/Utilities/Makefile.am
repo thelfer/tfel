@@ -18,8 +18,6 @@ LDADD = -lTFELUtilities -lTFELException  \
 gentype_SOURCES          = gentype.cxx
 gentype2_SOURCES         = gentype2.cxx
 gentype3_SOURCES         = gentype3.cxx
-Name_SOURCES	         = Name.cxx
-Name2_SOURCES	         = Name2.cxx
 StringAlgorithms_SOURCES = StringAlgorithms.cxx
 
 TESTS=$(test_PROGRAMS)

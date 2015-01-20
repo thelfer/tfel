@@ -54,10 +54,10 @@ namespace tfel
       {
 	using namespace boost::python;
 	if (!PyTuple_Check(ptr)){
-	  return 0;
+	  return nullptr;
 	}
 	if(PyTuple_Size(ptr)!=2){
-	  return 0;
+	  return nullptr;
 	} 
 	handle<> h(borrowed(ptr));
 	tuple l(h);
@@ -65,12 +65,12 @@ namespace tfel
 	stl_input_iterator<object> pe;
         extract<T1> e1(*p);
         if(!e1.check()){
-	  return 0;
+	  return nullptr;
 	}
         ++p;
         extract<T2> e2(*p);
         if(!e2.check()){
-	  return 0;
+	  return nullptr;
 	}
 	return ptr;
       }

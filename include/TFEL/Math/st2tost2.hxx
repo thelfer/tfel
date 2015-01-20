@@ -216,13 +216,21 @@ namespace tfel{
       TFEL_MATH_INLINE explicit constexpr
       st2tost2();
       /*!
-       * \brief Default Constructor 
-       * \param T, value used to initialise the components of the st2tost2 
+       * \brief default constructor 
+       * \param[in] init : value used to initialise the components of the st2tost2 
        */
       template<typename T2,
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
       TFEL_MATH_INLINE constexpr
       explicit st2tost2(const T2&);
+      /*!
+       * \brief default constructor 
+       * \param[in] init : values used to initialise the components of the st2tost2 
+       */
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      explicit st2tost2(const std::initializer_list<T2>&);
       /*!
        * \brief Default Constructor.
        * \param const typename tfel::typetraits::BaseType<T>::type* const,
@@ -271,11 +279,11 @@ namespace tfel{
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void copy(const InputIterator src);
 
-      static const st2tost2& Id(void);
-      static const st2tost2& J(void);
-      static const st2tost2& K(void);
-      static const st2tost2& M(void);
-      static const st2tost2& IxI(void);
+      static TFEL_MATH_INLINE constexpr st2tost2 Id(void);
+      static TFEL_MATH_INLINE constexpr st2tost2 IxI(void);
+      static TFEL_MATH_INLINE constexpr st2tost2 K(void);
+      static TFEL_MATH_INLINE constexpr st2tost2 M(void);
+      static TFEL_MATH_INLINE constexpr st2tost2 J(void);
 
     private:
             

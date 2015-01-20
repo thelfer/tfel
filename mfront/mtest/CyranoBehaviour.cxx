@@ -78,7 +78,7 @@ namespace mfront
   void
   CyranoBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    const unsigned short nstatev = this->getInternalStateVariablesSize(h);
+    const auto nstatev = this->getInternalStateVariablesSize(h);
     this->D.resize(3u,3u);
     this->iv.resize(nstatev);
     if(iv.size()==0){

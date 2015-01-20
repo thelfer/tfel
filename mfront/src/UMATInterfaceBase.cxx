@@ -56,7 +56,7 @@ namespace mfront
     string msg("UMATInterfaceBase::findUMATMaterialProperty : "
 	       "no material property associated with the glossary name '"+n+"'");
     throw(runtime_error(msg));
-    return *(static_cast<const UMATMaterialProperty*>(0));
+    return *(static_cast<const UMATMaterialProperty*>(nullptr));
   } // end of UMATInterfaceBase::findUMATMaterialProperty
 
 

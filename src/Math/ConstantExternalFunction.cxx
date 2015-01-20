@@ -86,7 +86,7 @@ namespace tfel
 	string msg("ConstantExternalFunction::createFunctionByChangingParametersIntoVariables : ");
 	msg += "invalid call";
 	throw(runtime_error(msg));
-	return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return shared_ptr<ExternalFunction>();
       } // end of ConstantExternalFunction::createFunctionByChangingParametersIntoVariables
 
       

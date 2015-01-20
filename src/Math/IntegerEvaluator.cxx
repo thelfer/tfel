@@ -28,6 +28,9 @@ namespace tfel
   namespace math
   {
 
+    IntegerEvaluator::TExpr::~TExpr()
+    {} // end of IntegerEvaluator::IntegerEvaluator::~TExpr()
+
     void
     IntegerEvaluator::checkNotEndOfExpression(const std::string& method,
 				       const std::string& error,
@@ -361,7 +364,7 @@ namespace tfel
     IntegerEvaluator::getValue(void) const
     {
       using namespace std;
-      if(this->expr.get()==0){
+      if(this->expr.get()==nullptr){
 	string msg("IntegerEvaluator::getValue : ");
 	msg += "uninitialized expression.";
 	throw(runtime_error(msg));
@@ -411,27 +414,31 @@ namespace tfel
     }
 
     IntegerEvaluator::IntegerEvaluator()
-      : expr(static_cast<tfel::math::parser::IntegerExpr*>(0))
+      : expr()
     {} // end of IntegerEvaluator::IntegerEvaluator
 
     IntegerEvaluator::IntegerEvaluator(const IntegerEvaluator& src)
       : EvaluatorBase(src),
 	variables(src.variables),
-	positions(src.positions),
-	expr(static_cast<tfel::math::parser::IntegerExpr*>(0))
+	positions(src.positions)
     {
-      this->expr = src.expr->clone(this->variables);
+      if(src.expr.get()!=nullptr){
+	this->expr = src.expr->clone(this->variables);
+      }
     } // end of IntegerEvaluator::IntegerEvaluator
 
     IntegerEvaluator&
     IntegerEvaluator::operator = (const IntegerEvaluator& src)
     {
-      if(this==&src){
-	return *this;
+      if(this!=&src){
+	this->variables = src.variables;
+	this->positions = src.positions;
+	 if(src.expr.get()!=nullptr){
+	   this->expr = src.expr->clone(this->variables);
+	 } else {
+	   this->expr.reset();
+	 }
       }
-      this->variables = src.variables;
-      this->positions = src.positions;
-      this->expr = src.expr->clone(this->variables);
       return *this;
     } // end of IntegerEvaluator::IntegerEvaluator
 
@@ -453,7 +460,7 @@ namespace tfel
       using namespace tfel::math::parser;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = shared_ptr<IntegerExpr>(static_cast<IntegerExpr*>(0));
+      this->expr.reset();
       this->analyse(f,false);
     } // end of IntegerEvaluator::setFunction
 
@@ -467,7 +474,7 @@ namespace tfel
       vector<int>::size_type pos;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = shared_ptr<IntegerExpr>(static_cast<IntegerExpr*>(0));
+      this->expr.reset();
       this->variables.resize(vars.size());
       for(p=vars.begin(),pos=0u;p!=vars.end();++p,++pos){
 	if(this->positions.find(*p)!=this->positions.end()){
@@ -493,8 +500,6 @@ namespace tfel
       }
       return p->second;
     } // end of IntegerEvaluator::getVariablePosition(const std::string&)
-
-
 
   } // end of namespace math
   

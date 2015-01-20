@@ -12,7 +12,6 @@
  * project under specific licensing conditions. 
  */
 
-#include"TFEL/Utilities/ToString.hxx"
 #include"MFront/UMAT/UMATException.hxx"
 
 namespace umat 
@@ -47,7 +46,8 @@ namespace umat
   {} // end of UMATIntegrationFailed::~UMATIntegrationFailed()
 
   UMATInvalidNTENSValue::UMATInvalidNTENSValue(const unsigned short N)
-    : UMATException("Invalid tensor size declared '"+tfel::utilities::ToString(N)+"'")
+    : UMATException("Invalid tensor size declared '"+
+		    std::to_string(static_cast<unsigned int>(N))+"'")
   {} // end of UMATInvalidNTENSValue::UMATInvalidNTENSValue
 
   UMATInvalidNTENSValue::UMATInvalidNTENSValue(const UMATInvalidNTENSValue& e)
@@ -59,7 +59,8 @@ namespace umat
 
   UMATInvalidDimension::UMATInvalidDimension(const std::string& b,
 					     const unsigned short N)
-    : UMATException("''"+b+"' can't be used in "+tfel::utilities::ToString(N)+"D")
+    : UMATException("''"+b+"' can't be used in "+
+		    std::to_string(static_cast<unsigned int>(N))+"D")
   {} // end of UMATInvalidDimension::UMATInvalidDimension
 
   UMATInvalidDimension::UMATInvalidDimension(const UMATInvalidDimension& e)

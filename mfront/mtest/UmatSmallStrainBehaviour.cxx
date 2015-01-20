@@ -436,13 +436,15 @@ namespace mfront
     }
     UMATReal ndt(1.);
     (this->fct)(&s1(0),&iv(0),&D(0,0),
-		0,0,0,0,0,0,0,
-		&ue0(0),&ude(0),0,&dt,
+		nullptr,nullptr,nullptr,nullptr,
+		nullptr,nullptr,nullptr,
+		&ue0(0),&ude(0),nullptr,&dt,
 		&ev0(0),&dev(0),
 		&ev0(0)+1,&dev(0)+1,
-		0,&ndi,0,&ntens,&nstatv,&mp(0),
-		&nprops,0,&drot(0,0),&ndt,
-		0,0,0,0,0,0,0,0,&kinc,0);
+		nullptr,&ndi,nullptr,&ntens,&nstatv,&mp(0),
+		&nprops,nullptr,&drot(0,0),&ndt,
+		nullptr,nullptr,nullptr,nullptr,nullptr,
+		nullptr,nullptr,nullptr,&kinc,0);
     if(kinc!=1){
       return false;
     }

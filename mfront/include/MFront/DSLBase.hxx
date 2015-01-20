@@ -110,7 +110,7 @@ namespace mfront
       /*!
        * destructor
        */
-      virtual ~VariableModifier() = 0;
+      virtual ~VariableModifier();
     }; // end of struct VariableModifier
     /*!
      * \brief An helper structure used by the DSLBase class to modify the
@@ -128,7 +128,7 @@ namespace mfront
       /*!
        * destructor
        */
-      virtual ~WordAnalyser() = 0;
+      virtual ~WordAnalyser();
     }; // end of struct WordAnalyser
     /*!
      * options passed to the readNextBlock member

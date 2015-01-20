@@ -85,7 +85,7 @@ namespace tfel
 	  dup2(in[0],STDIN_FILENO);
 	}
 	// calling the external process
-	execlp("gdb","gdb","-q",static_cast<void*>(0));
+	execlp("gdb","gdb","-q",nullptr);
 	// called failed, tells the father, free memory and quit
 	write(ffd[1],"NO",2u);
 	close(ffd[1]);
@@ -207,7 +207,7 @@ namespace tfel
       handler = SignalManager::handlerNbr;
       SignalManager::callBacks[sig].insert(MVType(handler,f));
       ++SignalManager::handlerNbr;
-      ::sigaction(sig,&action,0);
+      ::sigaction(sig,&action,nullptr);
       return handler;
     } // end of SignalManager::registerHandler
     
@@ -255,7 +255,7 @@ namespace tfel
 	}
       }
       // restoring the previous signal mask
-      ::sigprocmask(SIG_SETMASK,&oSigSet,0);
+      ::sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
       if(!found){
 	cerr << "SignalManager::removeHandler : "
 	     << "unknown handler " << id << endl;

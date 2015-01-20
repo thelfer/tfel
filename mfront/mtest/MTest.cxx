@@ -201,7 +201,7 @@ namespace mfront
     using namespace std;
     AccelerationAlgorithmFactory& f =
       AccelerationAlgorithmFactory::getAccelerationAlgorithmFactory();
-    if(this->aa.get()!=0){
+    if(this->aa.get()!=nullptr){
       string msg("MTest::setAccelerationAlgorithm : "
 		 "acceleration algorithm already set");
       throw(runtime_error(msg));
@@ -214,7 +214,7 @@ namespace mfront
 					   const std::string& v)
   {
     using namespace std;
-    if(this->aa.get()==0){
+    if(this->aa.get()==nullptr){
       string msg("MTest::setAccelerationAlgorithmParameter : "
 		 "no acceleration algorithm set");
       throw(runtime_error(msg));
@@ -317,7 +317,7 @@ namespace mfront
     using namespace std;
     using std::shared_ptr;
     if(ucaa){
-      if(this->aa.get()!=0){
+      if(this->aa.get()!=nullptr){
 	string msg("MTest::setUseCastemAccelerationAlgorithm : "
 		   "an algorithm was already set");
 	throw(runtime_error(msg));
@@ -340,7 +340,7 @@ namespace mfront
 		 "specify the acceleration trigger.");
       throw(runtime_error(msg));
     }
-    if(this->aa.get()==0){
+    if(this->aa.get()==nullptr){
       string msg("MTest::setCastemAccelerationTrigger : "
 		 "internal error");
       throw(runtime_error(msg));
@@ -364,7 +364,7 @@ namespace mfront
 		 "specify the acceleration period.");
       throw(runtime_error(msg));
     }
-    if(this->aa.get()==0){
+    if(this->aa.get()==nullptr){
       string msg("MTest::setCastemAccelerationPeriod : "
 		 "internal error");
       throw(runtime_error(msg));
@@ -433,7 +433,7 @@ namespace mfront
 			     const bool check)
   {
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setMaterialProperty : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -471,7 +471,7 @@ namespace mfront
 				  const bool check)
   {
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setExternalStateVariable : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -547,7 +547,7 @@ namespace mfront
 		      const double v)
   {
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setParameter : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -560,7 +560,7 @@ namespace mfront
 			     const int v)
   {
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setIntegerParameter : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -573,7 +573,7 @@ namespace mfront
 				     const unsigned int v)
   {
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setUnsignedIntegerParameter : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -646,7 +646,7 @@ namespace mfront
   tfel::material::MechanicalBehaviourBase::BehaviourType
   MTest::getBehaviourType() const{
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::getBehaviourType : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -657,7 +657,7 @@ namespace mfront
   std::shared_ptr<Behaviour>
   MTest::getBehaviour(void){
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::getBehaviour : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -693,7 +693,7 @@ namespace mfront
 		 "rotation matrix already defined");
       throw(runtime_error(msg));
     }
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setRotationMatrix : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -733,7 +733,7 @@ namespace mfront
   {
     using namespace std;
     vector<string>::const_iterator p;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::getVariableTypeAndPosition : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -776,7 +776,7 @@ namespace mfront
 		 "hypothesis is already defined");
       throw(runtime_error(msg));
     }
-    if(this->b.get()!=0){
+    if(this->b.get()!=nullptr){
       string msg("MTest::setDefaultHypothesis : ");
       msg += "behaviour already defined";
       throw(runtime_error(msg));
@@ -886,7 +886,7 @@ namespace mfront
 						    const real v)
   {
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setScalarInternalStateVariableInitialValue : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -916,7 +916,7 @@ namespace mfront
 						      const std::vector<real>& v)
   {
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setStensorInternalStateVariableInitialValue : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -953,7 +953,7 @@ namespace mfront
 						      const std::vector<real>& v)
   {
     using namespace std;
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setTensorInternalStateVariableInitialValue : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -1017,7 +1017,7 @@ namespace mfront
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
       this->setDefaultHypothesis();
     }
-    if(this->b.get()!=0){
+    if(this->b.get()!=nullptr){
       string msg("MTest::setBehaviour : "
 		 "behaviour already defined");
       throw(runtime_error(msg));
@@ -1063,7 +1063,7 @@ namespace mfront
       this->b = shared_ptr<Behaviour>(new CyranoBehaviour(this->hypothesis,l,f));
     }
 #endif
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::setBehaviour : ");
       msg += "unknown interface '"+i+"'";
       throw(runtime_error(msg));
@@ -1126,7 +1126,7 @@ namespace mfront
     if(this->dimension==0u){
       this->setDefaultHypothesis();
     }
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       string msg("MTest::completeInitialisation : ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
@@ -1249,7 +1249,7 @@ namespace mfront
     if(this->iterMax==-1){
       this->iterMax=100;
     }
-    if(this->aa.get()!=0){
+    if(this->aa.get()!=nullptr){
       this->aa->initialize(this->getNumberOfUnknowns());
     }
     // prediction policy
@@ -1273,7 +1273,7 @@ namespace mfront
     // options selected
     if(getVerboseMode()>=VERBOSE_LEVEL1){
       ostream& log = getLogStream();
-      if(this->aa.get()!=0){
+      if(this->aa.get()!=nullptr){
 	log << "mtest : " << this->aa->getName() << " acceleration algorithm selected" << endl;
       }
       if(this->ppolicy==LINEARPREDICTION){
@@ -1327,9 +1327,9 @@ namespace mfront
     using namespace std;
     using std::shared_ptr;
     // getting the names of the materials properties
-    vector<string> mpnames(this->b->getMaterialPropertiesNames());
-    vector<string> esvnames(this->b->getExternalStateVariablesNames());
-    unsigned short psz = this->getNumberOfUnknowns();
+    const auto mpnames(this->b->getMaterialPropertiesNames());
+    const auto esvnames(this->b->getExternalStateVariablesNames());
+    const auto psz = this->getNumberOfUnknowns();
     // clear
     s.s_1.clear();
     s.s0.clear();
@@ -1349,8 +1349,8 @@ namespace mfront
     s.esv0.clear();
     s.desv.clear();
     // resizing
-    const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
     s.s_1.resize(nth,0.);
     s.s0.resize(nth,0.);
     s.s1.resize(nth,0.);
@@ -1387,8 +1387,7 @@ namespace mfront
     s.period = 1u;
     s.dt_1   = 0.;
     // reference temperature
-    EvolutionManager::const_iterator pev;
-    pev = this->evm->find("ThermalExpansionReferenceTemperature");
+    const auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evm->end()){
       const Evolution& ev = *(pev->second);
       if(!ev.isConstant()){
@@ -1406,10 +1405,10 @@ namespace mfront
   void
   MTest::initializeWorkSpace(MTestWorkSpace& wk) const
   {
-    const unsigned short psz = this->getNumberOfUnknowns();
-    const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
-    const size_t nstatev = this->b->getInternalStateVariablesSize(this->hypothesis);
+    const auto psz = this->getNumberOfUnknowns();
+    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+    const auto nstatev = this->b->getInternalStateVariablesSize(this->hypothesis);
     // clear
     wk.K.clear();
     wk.Kt.clear();
@@ -1792,7 +1791,7 @@ namespace mfront
       /* resolution */
       bool cont = true;
       vector<string> failed_criteria;
-      if(this->aa.get()!=0){
+      if(this->aa.get()!=nullptr){
 	this->aa->preExecuteTasks();
       }
       while((!converged)&&(iter!=this->iterMax)&&(cont)){
@@ -1980,7 +1979,7 @@ namespace mfront
 	    converged = (converged) && (iter>1);
 	  }
 	  if(!converged){
-	    if(this->aa.get()!=0){
+	    if(this->aa.get()!=nullptr){
 	      this->aa->execute(state.u1,state.u0,wk.r,this->eeps,this->seps,iter);
 	    }
 	  }
@@ -2041,7 +2040,7 @@ namespace mfront
 		  << endl << endl;
 	    }
 	  }
-	  if(this->aa.get()!=0){
+	  if(this->aa.get()!=nullptr){
 	    this->aa->postExecuteTasks();
 	  }
 	}

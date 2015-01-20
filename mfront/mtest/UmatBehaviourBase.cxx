@@ -32,16 +32,15 @@ namespace mfront
     using namespace std;
     using namespace tfel::material;
     using namespace tfel::system;
-    typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
-    const vector<string>& hh =
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    const auto& hh =
       elm.getSupportedModellingHypotheses(l,b);
     if(find(hh.begin(),hh.end(),this->hypothesis)==hh.end()){
       string msg("UmatBehaviourBase::UmatBehaviourBase : "
 		 "unsupported modelling hypothesis '"+this->hypothesis+"'."
 		 "Supported modelling hypotheses are:");
-      for(vector<string>::const_iterator ph=hh.begin();ph!=hh.end();++ph){
-	msg += "\n'"+*ph+"'";
+      for(const auto& vh : hh){
+	msg += "\n'"+vh+"'";
       }
       throw(runtime_error(msg));
     }
@@ -638,28 +637,25 @@ namespace mfront
 				       const real v) const
   {
     using namespace tfel::system;
-    typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
   } // end of UmatBehaviourBase::setParameter
 
   void
   UmatBehaviourBase::setIntegerParameter(const std::string& n,
-					      const int v) const
+					 const int v) const
   {
     using namespace tfel::system;
-    typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
   } // end of UmatBehaviourBase::setIntegerParameter
 
   void
   UmatBehaviourBase::setUnsignedIntegerParameter(const std::string& n,
-						      const unsigned short v) const
+						 const unsigned short v) const
   {
     using namespace tfel::system;
-    typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
   } // end of UmatBehaviourBase::setUnsignedIntegerParameter
 

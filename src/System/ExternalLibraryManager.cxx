@@ -86,7 +86,7 @@ namespace tfel
 	void * lib;
 	lib = ::dlopen(name.c_str(),RTLD_NOW);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-	if((lib==0)&&(!b)){
+	if((lib==nullptr)&&(!b)){
 	  string msg("ExternalLibraryManager::loadLibrary : library '");
 	  msg += name;
 	  msg += "' could not be loaded, (";
@@ -97,7 +97,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 	  msg += ")";
 	  throw(runtime_error(msg));
-	} else if((lib==0)&&(b)){
+	} else if((lib==nullptr)&&(b)){
 	  return lib;
 	}
 	this->librairies.insert(MVType(name,lib));
@@ -117,7 +117,7 @@ namespace tfel
 #else
       void * lib = this->loadLibrary(l);
       void * p   = ::dlsym(lib,s.c_str());
-      return p!=static_cast<void *>(0);
+      return p!=nullptr;
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
     } // end of ExternalLibraryManager::contains
 
@@ -134,7 +134,7 @@ namespace tfel
       void * lib = this->loadLibrary(l);
       void * p   = ::dlsym(lib,(f+"_src").c_str());
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-      if(p!=0){
+      if(p!=nullptr){
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 	s = *p;
 #else
@@ -169,7 +169,7 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       res = ::tfel_getArrayOfStrings(lib,(f+"_ModellingHypotheses").c_str());
-      if(res==0){
+      if(res==nullptr){
 	string msg("ExternalLibraryManager::getSupportedModellingHypotheses : ");
 	msg += "modelling hypotheses could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -198,7 +198,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       int (TFEL_ADDCALL_PTR fct)(const char*const,const double);
       fct = ::tfel_getSetParameterFunction(lib,(f+"_setParameter").c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -230,7 +230,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       int (TFEL_ADDCALL_PTR fct)(const char*const,const int);
       fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_setIntegerParameter").c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -262,7 +262,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       int (TFEL_ADDCALL_PTR fct)(const char*const,const unsigned short);
       fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_setUnsignedShortParameter").c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -295,10 +295,10 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       int (TFEL_ADDCALL_PTR fct)(const char*const,const double);
       fct = ::tfel_getSetParameterFunction(lib,(f+"_"+h+"_setParameter").c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	fct = ::tfel_getSetParameterFunction(lib,(f+"_setParameter").c_str());
       }
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -331,10 +331,10 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       int (TFEL_ADDCALL_PTR fct)(const char*const,const int);
       fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_"+h+"_setIntegerParameter").c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_setIntegerParameter").c_str());
       }
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -367,10 +367,10 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       int (TFEL_ADDCALL_PTR fct)(const char*const,const unsigned short);
       fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_"+h+"_setUnsignedShortParameter").c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_setUnsignedShortParameter").c_str());
       }
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -552,7 +552,7 @@ namespace tfel
       unsigned short nb = this->getCastemFunctionNumberOfVariables(l,f);
       char ** res = ::tfel_getCastemFunctionVariables(lib,f.c_str());
       char **p;
-      if(res==0){
+      if(res==nullptr){
 	string msg("ExternalLibraryManager::getCastemFunctionNumberOfVariables : ");
 	msg += " variables names could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -579,7 +579,7 @@ namespace tfel
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       CyranoFctPtr fct = ::tfel_getCyranoFunction(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCyranoFunction : ");
 	msg += " could not load Cyrano function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -604,7 +604,7 @@ namespace tfel
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       UMATFctPtr fct = ::tfel_getUMATFunction(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getUMATFunction : ");
 	msg += " could not load UMAT function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -629,7 +629,7 @@ namespace tfel
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       AsterFctPtr fct = ::tfel_getAsterFunction(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getAsterFunction : ");
 	msg += " could not load Aster function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -675,10 +675,10 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       res = ::tfel_getArrayOfStrings(lib,(f+"_"+h+'_'+n).c_str());
-      if(res==0){
+      if(res==nullptr){
 	res = ::tfel_getArrayOfStrings(lib,(f+'_'+n).c_str());
       }
-      if(res==0){
+      if(res==nullptr){
 	string msg("ExternalLibraryManager::getUMATNames : ");
 	msg += "variables names could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -849,10 +849,10 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       res = ::tfel_getArrayOfInt(lib,(f+"_"+h+"_InternalStateVariablesTypes").c_str());
-      if(res==0){
+      if(res==nullptr){
 	res = ::tfel_getArrayOfInt(lib,(f+"_InternalStateVariablesTypes").c_str());
       }
-      if(res==0){
+      if(res==nullptr){
 	string msg("ExternalLibraryManager::getUMATInternalStateVariablesTypes : ");
 	msg += "internal state variables types could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -913,7 +913,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CastemFunctionPtr fct = ::tfel_getCastemFunction(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCastemFunction : ");
 	msg += " could not load castem function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -939,7 +939,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction0Ptr fct = ::tfel_getCFunction0(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction0 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -965,7 +965,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction1Ptr fct = ::tfel_getCFunction1(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction1 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -991,7 +991,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction2Ptr fct = ::tfel_getCFunction2(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction2 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1017,7 +1017,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction3Ptr fct = ::tfel_getCFunction3(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction3 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1043,7 +1043,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction4Ptr fct  = ::tfel_getCFunction4(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction4 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1069,7 +1069,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction5Ptr fct = ::tfel_getCFunction5(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction5 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1095,7 +1095,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction6Ptr fct = ::tfel_getCFunction6(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction6 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1121,7 +1121,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction7Ptr fct = ::tfel_getCFunction7(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction7 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1147,7 +1147,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction8Ptr fct = ::tfel_getCFunction8(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction8 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1173,7 +1173,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction9Ptr fct = ::tfel_getCFunction9(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction9 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1199,7 +1199,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction10Ptr fct = ::tfel_getCFunction10(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction10 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1225,7 +1225,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction11Ptr fct = ::tfel_getCFunction11(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction11 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1251,7 +1251,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction12Ptr fct = ::tfel_getCFunction12(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction12 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1277,7 +1277,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction13Ptr fct = ::tfel_getCFunction13(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction13 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1303,7 +1303,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction14Ptr fct = ::tfel_getCFunction14(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction14 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1329,7 +1329,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       CFunction15Ptr fct = ::tfel_getCFunction15(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction15 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1355,7 +1355,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction0Ptr fct = ::tfel_getFortranFunction0(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction0 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1381,7 +1381,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction1Ptr fct = ::tfel_getFortranFunction1(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction1 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1407,7 +1407,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction2Ptr fct = ::tfel_getFortranFunction2(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction2 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1433,7 +1433,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction3Ptr fct = ::tfel_getFortranFunction3(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction3 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1459,7 +1459,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction4Ptr fct  = ::tfel_getFortranFunction4(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction4 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1485,7 +1485,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction5Ptr fct = ::tfel_getFortranFunction5(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction5 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1511,7 +1511,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction6Ptr fct = ::tfel_getFortranFunction6(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction6 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1537,7 +1537,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction7Ptr fct = ::tfel_getFortranFunction7(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction7 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1563,7 +1563,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction8Ptr fct = ::tfel_getFortranFunction8(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction8 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1589,7 +1589,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction9Ptr fct = ::tfel_getFortranFunction9(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction9 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1615,7 +1615,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction10Ptr fct = ::tfel_getFortranFunction10(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction10 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1641,7 +1641,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction11Ptr fct = ::tfel_getFortranFunction11(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction11 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1667,7 +1667,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction12Ptr fct = ::tfel_getFortranFunction12(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction12 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1693,7 +1693,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction13Ptr fct = ::tfel_getFortranFunction13(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction13 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1719,7 +1719,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
       FortranFunction14Ptr fct = ::tfel_getFortranFunction14(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction14 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -1744,7 +1744,7 @@ namespace tfel
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       FortranFunction15Ptr fct = ::tfel_getFortranFunction15(lib,f.c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction15 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__

@@ -430,7 +430,7 @@ namespace tfel
       map<string,vector<TestDocumentation> > tests;
       string currentDirectory;
 
-      if(realpath(".",cpath)==0){
+      if(realpath(".",cpath)==nullptr){
 	*(this->log) << "main : can't get real path of current directory, aborting\n";
 	exit(EXIT_FAILURE);
       }
@@ -446,7 +446,7 @@ namespace tfel
       map<string,vector<string> > files;
       recursiveFind(files,".*\\.testdoc$",".");
       for(p=files.begin();p!=files.end();++p){
-	if(realpath(p->first.c_str(),path)==0){
+	if(realpath(p->first.c_str(),path)==nullptr){
 	  *(this->log) << "entering directory " << p->first << endl;
 	} else {
 	  *(this->log) << "entering directory " << path << endl;
@@ -469,7 +469,7 @@ namespace tfel
       // mtest files
       recursiveFind(files,".*\\.mtest",".");
       for(p=files.begin();p!=files.end();++p){
-	if(realpath(p->first.c_str(),path)==0){
+	if(realpath(p->first.c_str(),path)==nullptr){
 	  *(this->log) << "entering directory " << p->first << endl;
 	} else {
 	  *(this->log) << "entering directory " << path << endl;

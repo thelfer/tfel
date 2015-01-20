@@ -351,7 +351,7 @@ namespace mfront{
     string msg("BehaviourData::getVariableHandler : ");
     msg += "no state variable '"+v+"'";
     throw(runtime_error(msg));
-    return *(static_cast<VariableDescription*>(0));
+    return *(static_cast<VariableDescription*>(nullptr));
   } // end of BehaviourData::getVariableHandler
 
   void

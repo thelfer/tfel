@@ -40,7 +40,7 @@ namespace tfel
     void
     TestManager::addTestOutput(const TestOutputPtr& o)
     {
-      if(this->default_outputs.get()==0){
+      if(this->default_outputs.get()==nullptr){
 	this->default_outputs = MultipleTestOutputsPtr(new MultipleTestOutputs());
       }
       this->default_outputs->addTestOutput(o);
@@ -134,7 +134,7 @@ namespace tfel
 	if(p2!=this->outputs.end()){
 	  output = p2->second;
 	} else{
-	  if(this->default_outputs.get()==0){
+	  if(this->default_outputs.get()==nullptr){
 	    string msg("TestManager::execute : ");
 	    msg += "no output defined for test suite '"+n+"'";
 	    throw(runtime_error(msg));

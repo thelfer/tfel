@@ -130,16 +130,21 @@ namespace tfel{
       /*!
        * \brief Default Constructor 
        */
-      TFEL_MATH_INLINE explicit constexpr
-      stensor();
+      TFEL_MATH_INLINE explicit constexpr stensor() = default;
       /*!
        * \brief Default Constructor 
        * \param[in] init: value used to initialise the components of the stensor 
        */
       template<typename T2,
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
-      TFEL_MATH_INLINE constexpr
-      stensor(const T2&);
+      TFEL_MATH_INLINE explicit constexpr stensor(const T2&);
+      /*!
+       * \brief Default Constructor 
+       * \param[in] init: values used to initialise the components of the vector 
+       */
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr stensor(const std::initializer_list<T2>&);
       /*!
        * \brief Default Constructor.
        * \param const typename tfel::typetraits::BaseType<T>::type*
@@ -148,11 +153,9 @@ namespace tfel{
        */
       TFEL_MATH_INLINE explicit
       stensor(const typename tfel::typetraits::BaseType<T>::type* const);
-      /*!
-       * \brief Copy Constructor
-       */
+      //! \brief copy constructor
       TFEL_MATH_INLINE constexpr
-      stensor(const stensor<N,T>&);
+      stensor(const stensor<N,T>&) = default;
       /*!
        * \brief constructor
        */
@@ -265,7 +268,7 @@ namespace tfel{
       /*!
        * Return Identity
        */
-      TFEL_MATH_INLINE static const stensor<N,T>& Id(void);
+      TFEL_MATH_INLINE static constexpr stensor<N,T> Id(void);
 
       TFEL_MATH_INLINE constexpr const T&
       operator()(const unsigned short) const noexcept;

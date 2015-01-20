@@ -14,7 +14,6 @@
 #include<fstream>
 #include<stdexcept>
 
-#include"TFEL/Utilities/ToString.hxx"
 #include"MFront/MTestFileGeneratorBase.hxx"
 
 namespace mfront{
@@ -60,10 +59,9 @@ namespace mfront{
   MTestFileGeneratorBase::addTime(const MTestFileGeneratorBase::real t)
   {
     using namespace std;
-    using namespace tfel::utilities;
     if(!this->times.insert(t).second){
       string msg("MTestFileGeneratorBase::addTime : "
-		 "time '"+ToString(t)+"' already defined");
+		 "time '"+to_string(t)+"' already defined");
       throw(runtime_error(msg));
     }
   } // end of MTestFileGeneratorBase::addTime
@@ -90,9 +88,7 @@ namespace mfront{
 					      const MTestFileGeneratorBase::real v)
   {
     using namespace std;
-    using namespace tfel::utilities;
-    typedef map<string,real>::value_type MVType;
-    if(!(this->mps.insert(MVType(n,v)).second)){
+    if(!(this->mps.insert({n,v}).second)){
       string msg("MTestFileGeneratorBase::addMaterialProperty : "
 		 "material property '"+n+"' already defined");
       throw(runtime_error(msg));
@@ -134,11 +130,9 @@ namespace mfront{
 							const MTestFileGeneratorBase::real v)
   {
     using namespace std;
-    using namespace tfel::utilities;
-    typedef map<real,real>::value_type MVType;
-    if(!(this->evs[n].insert(MVType(t,v)).second)){
+    if(!(this->evs[n].insert({t,v}).second)){
       string msg("MTestFileGeneratorBase::addExternalStateVariableValue : "
-		 "time '"+ToString(t)+"' already defined "
+		 "time '"+to_string(t)+"' already defined "
 		 "for variable '"+n+"'");
       throw(runtime_error(msg));
     }
@@ -148,8 +142,7 @@ namespace mfront{
   MTestFileGeneratorBase::generate(const std::string& n) const
   {
     using namespace std;
-    using namespace tfel::utilities;
-    ofstream file((n+"-"+ToString(getIdentifier())+".mtest").c_str());
+    ofstream file((n+"-"+to_string(getIdentifier())+".mtest").c_str());
     if(!file){
       string msg("MTestFileGeneratorBase::generate : "
 		 "can't open file '"+n+".mtest'");

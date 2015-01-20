@@ -258,6 +258,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/MatrixConceptOperations.ixx                                                 \
 			TFEL/Math/Matrix/TMatrixTVectorExpr.hxx                                                      \
 			TFEL/Math/Matrix/TVectorTMatrixExpr.hxx                                                      \
+	                TFEL/Math/General/ConstExprMathFunctions.hxx                                                 \
 			TFEL/Math/General/FracSimplify.hxx                                                           \
 			TFEL/Math/General/FracSimplify.ixx		                                             \
 			TFEL/Math/General/LogicalOperations.hxx                                                      \
@@ -462,11 +463,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Utilities/CxxTokenizer.hxx                                                              \
 			TFEL/Utilities/CxxTokenizer.ixx                                                              \
 		 	TFEL/Utilities/Token.hxx                                                                     \
-			TFEL/Utilities/ToString.hxx		                                                     \
-			TFEL/Utilities/ToString.ixx		                                                     \
 			TFEL/Utilities/TerminalColors.hxx	                                                     \
-			TFEL/Utilities/Name.hxx		                                                             \
-			TFEL/Utilities/Name.ixx			                                                     \
 			TFEL/Utilities/GenTypeCastError.hxx	                                                     \
 			TFEL/Utilities/GenTypeBase.hxx	                                                             \
 			TFEL/Utilities/GenTypeBase.ixx	                                                             \

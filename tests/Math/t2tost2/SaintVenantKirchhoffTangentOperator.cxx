@@ -16,13 +16,13 @@
 #endif /* NDEBUG */
 
 #include<cmath>
+#include<string>
 #include<cstdlib>
 #include<cassert>
 
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/t2tost2.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 #include"TFEL/Material/Lame.hxx"
 
 #include"TFEL/Tests/TestCase.hxx"
@@ -36,7 +36,7 @@ struct SaintVenantKirchoffTangentOperator
   SaintVenantKirchoffTangentOperator()
     : tfel::tests::TestCase("TFEL/Math",
 			    "SaintVenantKirchoffTangentOperator"+
-			    tfel::utilities::ToString(N))
+			    std::to_string(static_cast<unsigned int>(N)))
   {} // end of SaintVenantKirchoffTangentOperator
   tfel::tests::TestResult
   execute()
@@ -133,12 +133,9 @@ TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchoffTangentOperator_2D,"SaintVenantKirc
 TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchoffTangentOperator_3D,"SaintVenantKirchoffTangentOperator-3D");
 
 int main(void){
-  using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("SaintVenantKirchoffTangentOperator.xml");
   TestResult r = manager.execute();
   if(!r.success()){

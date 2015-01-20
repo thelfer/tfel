@@ -137,7 +137,7 @@ namespace mfront{
     }
 #endif
     const char * const path = getenv("TFELHOME");
-    if(path!=0){
+    if(path!=nullptr){
       return handleSpace(path);
     }
     
@@ -1257,7 +1257,7 @@ namespace mfront{
     using namespace tfel::system;
     vector<string> files;
     vector<string>::const_iterator p;
-    DIR *directory = 0;
+    DIR *directory = nullptr;
     struct dirent* dir;
     struct stat buf;
     MFrontLock& l = MFrontLock::getMFrontLock();
@@ -1268,7 +1268,7 @@ namespace mfront{
 	throw(runtime_error("MFront::analyseSourceDirectory : can't open directory 'src'"));
       }
       dir=readdir(directory);
-      while(dir!=0){
+      while(dir!=nullptr){
 	string file = "src/";
 	file += dir->d_name;
 	if(stat(file.c_str(),&buf)!=0){
@@ -1311,7 +1311,7 @@ namespace mfront{
       }
       dir=readdir(directory);
       files.clear();
-      while(dir!=0){
+      while(dir!=nullptr){
 	string file = "src/";
 	file += dir->d_name;
 	if(stat(file.c_str(),&buf)!=0){
@@ -1629,12 +1629,12 @@ namespace mfront{
       ostream& log = getLogStream();
       log << "generating Makefile\n";
     }
-    if(env_cxx==0){
+    if(env_cxx==nullptr){
       cxx = "$(CXX)";
     } else {
       cxx = "$(CXX)";
     }
-    if(env_cc==0){
+    if(env_cc==nullptr){
       cc = "$(CC)";
     } else {
       cc = "$(CC)";
@@ -1667,18 +1667,18 @@ namespace mfront{
 		     << MFrontHeader::getHeader("# ") << "\n";
       this->makeFile << "export LD_LIBRARY_PATH:=$(PWD):$(LD_LIBRARY_PATH)\n\n";
       // COMPILERS
-      if(env_cc!=0){
+      if(env_cc!=nullptr){
 	this->makeFile << "CC := "  << env_cc  << "\n";
       }
-      if(env_cxx!=0){
+      if(env_cxx!=nullptr){
 	this->makeFile << "CXX := " << env_cxx << "\n";
       }
-      if((env_cc!=0)||(env_cxx!=0)){
+      if((env_cc!=nullptr)||(env_cxx!=nullptr)){
 	this->makeFile << endl;
       }
       // INCLUDES
       this->makeFile << "INCLUDES := ";
-      if(inc!=0){
+      if(inc!=nullptr){
 	this->makeFile << inc << " ";
       }
       this->makeFile << "-I../include `tfel-config --includes`";
@@ -1702,7 +1702,7 @@ namespace mfront{
       //
       this->makeFile << endl << endl;
       // LDFLAGS
-      if(ldflags!=0){
+      if(ldflags!=nullptr){
 	this->makeFile << "LDFLAGS := " << ldflags  << endl;
       }
       // CXXFLAGS
@@ -1711,7 +1711,7 @@ namespace mfront{
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 	this->makeFile << "-ansi ";
 #endif /* __CYGWIN__ */
-	if(cxxflags!=0){
+	if(cxxflags!=nullptr){
 	  this->makeFile << cxxflags << " ";
 	} else if(this->oflags){
 	  if(this->oflags2){
@@ -1734,7 +1734,7 @@ namespace mfront{
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 	this->makeFile << "-ansi -std=c99 ";
 #endif /* __CYGWIN__ */
-	if(cflags!=0){
+	if(cflags!=nullptr){
 	  this->makeFile << cflags << " ";
 	} else if(this->oflags){
 	  if(this->oflags2){
@@ -1862,7 +1862,7 @@ namespace mfront{
 	} else {
 	  this->makeFile << sb << cc  << " ";
 	}
-	if(ldflags!=0){
+	if(ldflags!=nullptr){
 	  this->makeFile << "$(LDFLAGS) ";
 	}
 	this->makeFile << "-shared ";
@@ -1950,7 +1950,8 @@ namespace mfront{
     }
 #else
     const char *const argv[] = {"make","-f",
-				"Makefile.mfront",target.c_str(),0};
+				"Makefile.mfront",target.c_str(),
+				nullptr};
     pid_t child_pid;
     int status;
     child_pid = fork();
@@ -1983,7 +1984,7 @@ namespace mfront{
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     const char *const argv[] = {"make.exe","-C","src",
 				"-f","Makefile.mfront",
-				"clean",0};
+				"clean",nullptr};
     if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
       string msg("MFront::cleanLibraries : ");
       msg += "can't clean libraries";
@@ -1992,7 +1993,7 @@ namespace mfront{
 #else
     const char *const argv[] = {"make","-f",
 				"Makefile.mfront",
-				"clean",0};
+				"clean",nullptr};
     map<string,set<string> >::const_iterator p;
     pid_t child_pid;
     int status;

@@ -1284,7 +1284,7 @@ namespace mfront{
 #ifndef LOCAL_CASTEM_HEADER
 #ifdef CASTEM_ROOT
     char * castem_root = ::getenv("CASTEM_ROOT");
-    if(castem_root!=0){
+    if(castem_root!=nullptr){
       incs[lib].push_back("-I"+string(castem_root)+"/include");
     } else {
       incs[lib].push_back("-I"+string(CASTEM_ROOT)+"/include");
@@ -1828,6 +1828,7 @@ namespace mfront{
     }
     out << "if(*NDI!=14){" << endl
 	<< "*KINC=-7;" << endl
+	<< "return;" << endl
 	<< "}" << endl;
     out << "eto[0]=std::log(1+*STRAN);\n";
     out << "eto[1]=std::log(1+*(STRAN+1));\n";

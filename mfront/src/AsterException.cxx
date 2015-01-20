@@ -12,7 +12,6 @@
  * project under specific licensing conditions. 
  */
 
-#include"TFEL/Utilities/ToString.hxx"
 #include"MFront/Aster/AsterException.hxx"
 
 namespace aster 
@@ -43,7 +42,8 @@ namespace aster
   {} // end of AsterException::~AsterException
 
   AsterInvalidNTENSValue::AsterInvalidNTENSValue(const unsigned short N)
-    : AsterException("Invalid tensor size declared '"+tfel::utilities::ToString(N)+"'")
+    : AsterException("Invalid tensor size declared '"+
+		     std::to_string(static_cast<unsigned int>(N))+"'")
   {} // end of AsterInvalidNTENSValue::AsterInvalidNTENSValue
 
   AsterInvalidNTENSValue::AsterInvalidNTENSValue(const AsterInvalidNTENSValue& e)
@@ -55,7 +55,8 @@ namespace aster
 
   AsterInvalidDimension::AsterInvalidDimension(const std::string& b,
 					     const unsigned short N)
-    : AsterException("''"+b+"' can't be used in "+tfel::utilities::ToString(N)+"D")
+    : AsterException("''"+b+"' can't be used in "+
+		     std::to_string(static_cast<unsigned int>(N))+"D")
   {} // end of AsterInvalidDimension::AsterInvalidDimension
 
   AsterInvalidDimension::AsterInvalidDimension(const AsterInvalidDimension& e)

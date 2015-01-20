@@ -123,15 +123,16 @@ namespace tfel{
     {}
 
     template<unsigned short N, typename T>
-    constexpr tvector<N,T>::tvector(const tvector<N,T>& src)
-      : VectorConcept<tvector<N,T>>(src),
-        fsarray<N,T>(src)
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr tvector<N,T>::tvector(const T2& init)
+      : fsarray<N,T>(init)
     {}
 
     template<unsigned short N, typename T>
     template<typename T2,
 	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
-    constexpr tvector<N,T>::tvector(const T2& init)
+    constexpr tvector<N,T>::tvector(const std::initializer_list<T2>& init)
       : fsarray<N,T>(init)
     {}
 

@@ -16,12 +16,12 @@
 #endif /* NDEBUG */
 
 #include<cmath>
+#include<string>
 #include<cstdlib>
 #include<cassert>
 
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/Utilities/ToString.hxx"
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
@@ -34,7 +34,7 @@ struct StensorProductDerivative
   StensorProductDerivative()
     : tfel::tests::TestCase("TFEL/Math",
 			    "StensorProductDerivative"+
-			    tfel::utilities::ToString(N))
+			    std::to_string(static_cast<unsigned int>(N)))
   {} // end of StensorProductDerivative
   tfel::tests::TestResult
   execute()
@@ -103,9 +103,7 @@ TFEL_TESTS_GENERATE_PROXY(StensorProductDerivative_3D,"StensorProductDerivative-
 
 int main(void){
   using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("StensorProductDerivative.xml");

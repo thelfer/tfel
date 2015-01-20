@@ -30,22 +30,19 @@ namespace mfront{
 			      const std::string& v)
   {
     using namespace std;
-    VariableDescriptionContainer::const_iterator p;
-    map<string,unsigned short>::const_iterator p2;
-    unsigned short d;
-    unsigned short i;
-    for(p=vc.begin();p!=vc.end();++p){
+    unsigned int d,i;
+    for(auto p=vc.begin();p!=vc.end();++p){
       if(p->name==v){
 	return true;
       }
-      p2 = data.depths.find(p->name);
+      auto p2 = data.depths.find(p->name);
       if(p2==data.depths.end()){
 	d = 0;
       } else {
 	d = p2->second;
       }
       for(i=1;i!=d+1;++i){
-	if(p->name+'_'+toString(i)==v){
+	if(p->name+'_'+to_string(i)==v){
 	  return true;
 	}
       }
@@ -324,38 +321,35 @@ namespace mfront{
   ModelDSLCommon::decomposeVariableName(const std::string& v) const
   {
     using namespace std;
-    VariableDescriptionContainer::const_iterator p;
-    map<string,unsigned short>::const_iterator p2;
-    unsigned short d;
-    unsigned short i;
-    for(p=this->inputs.begin();p!=this->inputs.end();++p){
+    unsigned int d,i;
+    for(auto p=this->inputs.begin();p!=this->inputs.end();++p){
       if(v==p->name){
 	return pair<string,unsigned short>(v,0u);
       }
-      p2 = this->depths.find(p->name);
+      auto p2 = this->depths.find(p->name);
       if(p2!=this->depths.end()){
 	d = p2->second;
       } else {
 	d = 0;
       }
       for(i=1;i!=d+1;++i){
-	if(v==p->name+"_"+toString(i)){
+	if(v==p->name+"_"+to_string(i)){
 	  return pair<string,unsigned short>(p->name,i);
 	}
       }
     }
-    for(p=this->outputs.begin();p!=this->outputs.end();++p){
+    for(auto p=this->outputs.begin();p!=this->outputs.end();++p){
       if(v==p->name){
 	return pair<string,unsigned short>(v,0);
       }
-      p2 = this->depths.find(p->name);
+      auto p2 = this->depths.find(p->name);
       if(p2!=this->depths.end()){
 	d = p2->second;
       } else {
 	d = 0;
       }
       for(i=1;i!=d+1;++i){
-	if(v==p->name+"_"+toString(i)){
+	if(v==p->name+"_"+to_string(i)){
 	  return pair<string,unsigned short>(p->name,i);
 	}
       }
@@ -389,14 +383,14 @@ namespace mfront{
     set<string>::iterator p3;
     StaticVariableDescriptionContainer::const_iterator p5;
     map<string,unsigned short>::const_iterator p6;
-    unsigned short openedBrackets = 0;
-    unsigned short openedParenthesis = 0;
-    unsigned short currentLine;
+    unsigned int openedBrackets = 0;
+    unsigned int openedParenthesis = 0;
+    unsigned int currentLine;
     bool newLine;
     bool newInstruction;
     bool found = false;
     f.useTimeIncrement = false;
-    this->registerVariable("functor"+toString(static_cast<unsigned short>(this->functions.size())),false);
+    this->registerVariable("functor"+to_string(this->functions.size()),false);
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
     f.name = this->current->value;
     if(!this->isValidIdentifier(f.name)){
@@ -417,7 +411,7 @@ namespace mfront{
     currentLine = this->current->line;
     newLine=true;
     if(getDebugMode()){
-      f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
+      f.body  +="#line " + to_string(currentLine) + " \"" + this->fileName + "\"\n";
     }
     for(;(this->current!=this->fileTokens.end())&&
 	  (openedBrackets!=0);++(this->current)){
@@ -425,7 +419,7 @@ namespace mfront{
 	currentLine=this->current->line;
 	f.body  += "\n";
 	if(getDebugMode()){
-	  f.body  +="#line " + toString(currentLine) + " \"" + this->fileName + "\"\n";
+	  f.body  +="#line " + to_string(currentLine) + " \"" + this->fileName + "\"\n";
 	}
 	newLine = true;
       } 
@@ -688,7 +682,6 @@ namespace mfront{
     typedef map<string,double>::value_type MVType2;
     typedef map<string,unsigned short>::value_type MVType3;
     string methodName;
-    unsigned short i;
     if(!this->functions.empty()){
       string msg("ModelDSLCommon::treatOutputMethod : ");
       msg += "output must be called before declaring functions";
@@ -799,7 +792,7 @@ namespace mfront{
     } else if (methodName=="setDepth"){
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
 			      "Expected depth value.");
-      unsigned short value;
+      unsigned int value;
       istringstream converter(this->current->value);
       converter >> value;
       if(!converter||(!converter.eof())){
@@ -810,13 +803,14 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"depth value for field '"+this->currentVar+"' already defined.");
       }
-      for(i=1;i<=value;++i){
-	this->registerVariable(this->currentVar+"_"+toString(i),false);
-	this->registerVariable("f_"+this->currentVar+"_"+toString(i),false);
-	this->registerVariable("ff_"+this->currentVar+"_"+toString(i),false);
-	if(!this->fieldNames.insert(this->currentVar+"_"+toString(i)).second){
+      for(unsigned int i=1;i<=value;++i){
+	const auto vn = this->currentVar+"_"+to_string(i);
+	this->registerVariable(vn,false);
+	this->registerVariable("f_"+vn,false);
+	this->registerVariable("ff_"+vn,false);
+	if(!this->fieldNames.insert(vn).second){
 	  this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
-				  "Field '"+this->currentVar+"_"+toString(i)+"' has already been declared "
+				  "Field '"+vn+"' has already been declared "
 				  "(internal error, this shall have been detected before).");
 	}
       }
@@ -838,7 +832,6 @@ namespace mfront{
     string methodName;
     typedef map<string,string>::value_type MVType;
     typedef map<string,unsigned short>::value_type MVType2;
-    unsigned short i;
     if(!this->functions.empty()){
       string msg("ModelDSLCommon::treatInputMethod : ");
       msg += "input method must be called before declaring functions";
@@ -933,7 +926,7 @@ namespace mfront{
     } else if (methodName=="setDepth"){
       this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
 			      "Expected depth value.");
-      unsigned short value;
+      unsigned int value;
       istringstream converter(this->current->value);
       converter >> value;
       if(!converter||(!converter.eof())){
@@ -944,13 +937,14 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Initial value for field '"+this->currentVar+"' already defined.");
       }
-      for(i=1;i<=value;++i){
-	this->registerVariable(this->currentVar+"_"+toString(i),false);
-	this->registerVariable("f_"+this->currentVar+"_"+toString(i),false);
-	this->registerVariable("ff_"+this->currentVar+"_"+toString(i),false);
-	if(!this->fieldNames.insert(this->currentVar+"_"+toString(i)).second){
+      for(unsigned int i=1;i<=value;++i){
+	const auto vn = this->currentVar+"_"+to_string(i);
+	this->registerVariable(vn,false);
+	this->registerVariable("f_"+vn,false);
+	this->registerVariable("ff_"+vn,false);
+	if(!this->fieldNames.insert(this->currentVar+"_"+to_string(i)).second){
 	  this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
-				  "Field '"+this->currentVar+"_"+toString(i)+"' has already been declared "
+				  "Field '"+vn+"' has already been declared "
 				  "(internal error, this shall have been detected before).");
 	}
       }
@@ -1189,7 +1183,6 @@ namespace mfront{
     using namespace tfel::utilities;
     typedef map<string,string>::value_type MVType;
     VariableDescriptionContainer::const_iterator p;
-    unsigned short nbr;
     string res;
     bool found;
     bool bend;
@@ -1230,7 +1223,7 @@ namespace mfront{
 			    "Expected default value.");
     if((p->type=="DoubleArray")||
        (p->type=="StringArray")){
-      nbr=0u;
+      unsigned int nbr=0u;
       bend = false;
       while(bend==false){
 	if(p->type=="DoubleArray"){
@@ -1264,7 +1257,7 @@ namespace mfront{
 				  "Unexpected token (expected ',' or ')', read '"+this->current->value+"').");
 	}
       }
-      res = toString(nbr)+res;
+      res = to_string(nbr)+res;
     } else if ((p->type=="double")||(p->type=="real")){
       istringstream converter(this->current->value);
       double tmp;

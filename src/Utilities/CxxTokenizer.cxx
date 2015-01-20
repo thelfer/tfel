@@ -11,11 +11,11 @@
  * project under specific licensing conditions. 
  */
 
+#include<cctype>
+#include<sstream>
+#include<iterator>
 #include<stdexcept>
 #include<algorithm>
-#include<iterator>
-#include<sstream>
-#include<cctype>
 
 #include"TFEL/Utilities/CxxKeywords.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
@@ -23,15 +23,6 @@
 namespace tfel{
 
   namespace utilities{
-
-    template<typename T>
-    static std::string 
-    toString(const T& src)
-    {
-      std::ostringstream os;
-      os << src;
-      return os.str();
-    }
 
     std::vector<std::string>
     CxxTokenizer::splitStringAtSpaces(const std::string& str)
@@ -190,7 +181,7 @@ namespace tfel{
 	    string msg("CxxTokenizer::splitLine : ");
 	    msg += "found no matching \" to close string\n";
 	    msg += "Error at line : ";
-	    msg += toString(lineNumber);
+	    msg += to_string(lineNumber);
 	    throw(runtime_error(msg));
 	  }
 	  if(!this->fileTokens.empty()){
@@ -315,7 +306,7 @@ namespace tfel{
 	      string msg("CxxTokenizer::splitLine : ");
 	      msg += "found no matching \' to close string\n";
 	      msg += "Error at line : ";
-	      msg += toString(lineNumber);
+	      msg += to_string(lineNumber);
 	      throw(runtime_error(msg));
 	    }
 	    this->fileTokens.push_back(Token(lineNumber,string(line.begin(),ps),Token::String));
@@ -333,7 +324,7 @@ namespace tfel{
 	      string msg("CxxTokenizer::splitString : ");
 	      msg += "error while reading char (1)\n";
 	      msg += "Error at line : ";
-	      msg += toString(lineNumber);
+	      msg += to_string(lineNumber);
 	      throw(runtime_error(msg));
 	    }
 	    if(line[1]=='\\'){
@@ -341,14 +332,14 @@ namespace tfel{
 		string msg("CxxTokenizer::splitString : ");
 		msg += "error while reading char (2)\n";
 		msg += "Error at line : ";
-		msg += toString(lineNumber);
+		msg += to_string(lineNumber);
 		throw(runtime_error(msg));
 	      }
 	      if(line[3]!='\''){
 		string msg("CxxTokenizer::splitString : ");
 		msg += "error while reading char (3)\n";
 		msg += "Error at line : ";
-		msg += toString(lineNumber);
+		msg += to_string(lineNumber);
 		throw(runtime_error(msg));	      
 	      }
 	      this->fileTokens.push_back(Token(lineNumber,line.substr(0,4),Token::Char));
@@ -360,7 +351,7 @@ namespace tfel{
 		msg += line[2];
 		msg += "')\n";
 		msg += "Error at line : ";
-		msg += toString(lineNumber);
+		msg += to_string(lineNumber);
 		throw(runtime_error(msg));
 	      }
 	      this->fileTokens.push_back(Token(lineNumber,line.substr(0,3),Token::Char));
@@ -1050,7 +1041,7 @@ namespace tfel{
 	string msg("CxxTokenizer::joinPreviousCurrentNext : ");
 	msg += "internal error \"::\"\n";
 	msg += "Error at line : ";
-	msg += toString(p->line);
+	msg += to_string(p->line);
 	throw(runtime_error(msg));
       }
       if(previous&&next){
@@ -1075,20 +1066,19 @@ namespace tfel{
     {
       using namespace std;
       TokensContainer res;
-      TokensContainer::iterator p;
-      unsigned short indent=0;
+      unsigned int indent=0;
       unsigned int current_line=0;
-      for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
+      for(auto p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
 	if(p->flag==Token::Standard){
 	  if(p->value=="}"){
 	    if(indent<2){
 	      string msg("CxxTokenizer::beautifyCode : ");
 	      msg += "Found unmatched closing bracket \"}\"\n";
 	      msg += "Error at line : ";
-	      msg += toString(p->line);
+	      msg += to_string(p->line);
 	      msg += "\n";
 	      msg += "indent = ";
-	      msg += toString(indent);
+	      msg += to_string(indent);
 	      throw(runtime_error(msg));
 	    } else{
 	      --indent;
@@ -1102,10 +1092,10 @@ namespace tfel{
 	  if((p->line!=current_line)){
 	    if(indent!=0){
 	      if(p->value=="{"){
-		p->value.insert(static_cast<string::size_type>(0),indent-2,' ');
+		p->value.insert(0u,indent-2,' ');
 		current_line = p->line;
 	      } else {
-		p->value.insert(static_cast<string::size_type>(0),indent,' ');
+		p->value.insert(0u,indent,' ');
 		current_line = p->line;
 	      }
 	    }
@@ -1125,12 +1115,11 @@ namespace tfel{
 	  res.push_back(*p);
 	}
       }
-
       if(indent!=0){
 	string msg("CxxTokenizer::beautifyCode : ");
 	msg += "File ended with unmatched closing bracket \"}\"\n";
 	msg += "indent : ";
-	msg += toString(indent);
+	msg += to_string(indent);
 	throw(runtime_error(msg));
       }
     

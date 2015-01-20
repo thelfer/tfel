@@ -80,7 +80,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     const char * const p = ::getenv("MFRONT_INCLUDE_PATH");
-    if(p!=0){
+    if(p!=nullptr){
 #if defined _WIN32 || defined _WIN64
     vector<string> npaths(tokenize(p,';'));
 #else

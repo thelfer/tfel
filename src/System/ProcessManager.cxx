@@ -150,7 +150,7 @@ namespace tfel
       for(p=this->processes.begin();p!=this->processes.end();++p){
 	if(p->isRunning){
 	  this->sendSignal(p->id);
-	  ::waitpid(p->id,0,0);
+	  ::waitpid(p->id,nullptr,0);
 	  this->closeProcessFiles(p->id);
 	}
       }
@@ -245,7 +245,7 @@ namespace tfel
 	// we are in the child
 	this->cleanUp();
 	// restoring the previous signal mask
-	::sigprocmask(SIG_SETMASK,&oSigSet,0);
+	::sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
 	// wait that the father has made its administrative job
 	while((readChar=read(cfd[0],buf,2u))==-1){
 	  if(errno!=EINTR)
@@ -270,7 +270,7 @@ namespace tfel
       // registering is made, tell the child
       write(cfd[1],"OK",2u);
       // the pipe was broken, which means that exec succeed
-      ::sigprocmask(SIG_SETMASK,&oSigSet,0);
+      ::sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
       return pid;
     } // end of ProcessManager::createProcess
 
@@ -351,7 +351,7 @@ namespace tfel
 	  ++p;
 	  ++p2;
 	}
-	*p2 = 0;
+	*p2 = nullptr;
 	// wait that the father has made its administrative job
 	while((readChar=read(cfd[0],buf,2u))==-1){
 	  if(errno!=EINTR)
@@ -360,7 +360,7 @@ namespace tfel
 	assert(readChar==2);
 	close(cfd[0]);
 	// restoring the previous signal mask
-	::sigprocmask(SIG_SETMASK,&oSigSet,0);
+	::sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
 	// calling the command
 	execvp(argv[0],argv);
 	// called failed, tells the father, free memory and quit
@@ -407,13 +407,13 @@ namespace tfel
 	}
 	this->processes.pop_back();
 	waitpid(pid,&status,0);
-	::sigprocmask(SIG_SETMASK,&oSigSet,0);
+	::sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
 	string msg("ProcessManager::createProcess : call to execvp failed ");
 	msg += "(can't execute command '"+cmd+"')";
 	throw(SystemError(msg));
       }
       // the pipe was broken, which means that exec succeed
-      ::sigprocmask(SIG_SETMASK,&oSigSet,0);
+      ::sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
       return pid;
     } // end of ProcessManager::createProces
 
@@ -656,7 +656,7 @@ namespace tfel
 	signalManager.removeHandler(this->sHandlerSIGQUIT);
       }
       // restoring the previous signal mask
-      ::sigprocmask(SIG_SETMASK,&oSigSet,0);
+      ::sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
     } // end of ProcessManager::~ProcessManager
 
     ProcessManager::wstream

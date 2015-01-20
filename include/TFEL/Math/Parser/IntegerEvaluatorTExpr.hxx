@@ -25,6 +25,11 @@ namespace tfel
 
     struct IntegerEvaluator::TExpr
     {
+      TExpr() = default;
+      TExpr(const TExpr&) = default;
+      TExpr(TExpr&&) = default;
+      TExpr& operator=(TExpr&&) = default;
+      TExpr& operator=(const TExpr&) = default;
       virtual std::shared_ptr<tfel::math::parser::IntegerExpr>
       analyse(void) = 0;
       virtual
@@ -33,7 +38,7 @@ namespace tfel
       isOperator(void) const =0;
       virtual std::string
       getClassName() const = 0;
-      virtual ~TExpr(){};
+      virtual ~TExpr();
     }; // end of IntegerEvaluator::TExpr
   
     struct IntegerEvaluator::TNegation

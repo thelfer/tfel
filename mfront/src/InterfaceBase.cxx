@@ -35,7 +35,7 @@ namespace mfront{
       if(!error.empty()){
 	msg += "\n"+error;
       }
-      msg += "\nError at line " + toString(current->line);
+      msg += "\nError at line " + to_string(current->line);
       throw(runtime_error(msg));
     }
   } // end of InterfaceBase::checkNotEndOfFile
@@ -55,7 +55,7 @@ namespace mfront{
       msg += current->value;
       msg += ".\n";
       msg += "Error at line : ";
-      msg += toString(current->line);
+      msg += to_string(current->line);
       throw(runtime_error(msg));
     }
     ++(current);
@@ -75,7 +75,7 @@ namespace mfront{
     if(!m.empty()){
       msg +=" : " + m;
     }
-    msg += "\nError at line " + toString(current->line);
+    msg += "\nError at line " + to_string(current->line);
     throw(runtime_error(msg));
   } // end of InterfaceBase::throwRuntimeError
   

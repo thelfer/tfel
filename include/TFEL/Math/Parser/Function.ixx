@@ -121,7 +121,7 @@ namespace tfel
 			    const std::vector<double>&)
       {
 	StandardFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return std::shared_ptr<Expr>(static_cast<Expr*>(0));
+	return std::shared_ptr<Expr>();
       }
       
       template<StandardFunctionPtr f>

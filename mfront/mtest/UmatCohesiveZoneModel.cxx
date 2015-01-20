@@ -69,9 +69,9 @@ namespace mfront
   void
   UmatCohesiveZoneModel::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    const unsigned short ndv     = this->getDrivingVariablesSize(h);
-    const unsigned short nth     = this->getThermodynamicForcesSize(h);
-    const unsigned short nstatev = this->getInternalStateVariablesSize(h);
+    const auto ndv     = this->getDrivingVariablesSize(h);
+    const auto nth     = this->getThermodynamicForcesSize(h);
+    const auto nstatev = this->getInternalStateVariablesSize(h);
     this->D.resize(nth,ndv);
     this->iv.resize(nstatev);
     if(iv.size()==0){
@@ -115,14 +115,13 @@ namespace mfront
 	}
       }
       this->computeElasticStiffness(Kt,mp,drot,h);
-      return true;
     } else {
       string msg("UmatCohesiveZoneModel::computePredictionOperator : "
 		 "computation of the tangent operator "
 		 "is not supported");
       throw(runtime_error(msg));
     }
-    return false;
+    return true;
   } // end of UmatCohesiveZoneModel::computePredictionOperator
 
   bool
@@ -214,13 +213,15 @@ namespace mfront
     }
     UMATReal ndt(1.);
     (this->fct)(&s1(0),&iv(0),&D(0,0),
-		0,0,0,0,0,0,0,
-		&ue0(0),&ude(0),0,&dt,
+		nullptr,nullptr,nullptr,
+		nullptr,nullptr,nullptr,nullptr,
+		&ue0(0),&ude(0),nullptr,&dt,
 		&ev0(0),&dev(0),
 		&ev0(0)+1,&dev(0)+1,
-		0,&ndi,0,&ntens,&nstatv,&mp(0),
-		&nprops,0,&drot(0,0),&ndt,
-		0,0,0,0,0,0,0,0,&kinc,0);
+		nullptr,&ndi,nullptr,&ntens,&nstatv,&mp(0),
+		&nprops,nullptr,&drot(0,0),&ndt,
+		nullptr,nullptr,nullptr,nullptr,
+		nullptr,nullptr,nullptr,nullptr,&kinc,0);
     if(kinc!=1){
       return false;
     }

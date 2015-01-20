@@ -69,7 +69,7 @@ namespace mfront
   void
   AsterCohesiveZoneModel::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    const unsigned short nstatev = this->getInternalStateVariablesSize(h);
+    const auto nstatev = this->getInternalStateVariablesSize(h);
     this->iv.resize(nstatev);
     if(iv.size()==0){
       iv.push_back(0.);

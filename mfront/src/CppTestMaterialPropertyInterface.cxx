@@ -27,12 +27,13 @@ namespace mfront
 				       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens,
 				       const std::string &msg)
   {
-    std::string what(msg) ;
+    using namespace std;
+    string what(msg) ;
     if(++current==endTokens){
       what+="unexpected end of file.\n";
       what+="Error at line : ";
-      what+=toString((--current)->line);
-      throw(std::runtime_error(what));
+      what+=to_string((--current)->line);
+      throw(runtime_error(what));
     }
     return current;
   }
@@ -73,27 +74,24 @@ namespace mfront
     using namespace std;
     string msg("CppTestMaterialPropertyInterface::registerTestBounds : ");
     VariableBoundsDescription boundsDescription;
-    
     current=nextToken(--current,endTokens,msg);
     if(current->value=="{"){
       msg+="'{' is not allowed in test bounds.\n";
       msg+="Error at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
     }
     // howto test if current->value is a word ????
     boundsDescription.lineNumber = current->line;
     boundsDescription.varName = current->value;
-
     // on ne peut pas tester si la variable existe bien en input :-(
     // peut-on avoir ici autre chose que 1 ?
     boundsDescription.varNbr = 1 ;
-
     current=nextToken(current,endTokens,msg);
     if(current->value!="in"){
       msg+="expected 'in' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     current=nextToken(current,endTokens,msg);
@@ -101,7 +99,7 @@ namespace mfront
       msg+="expected '[' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     current=nextToken(current,endTokens,msg);
@@ -112,7 +110,7 @@ namespace mfront
       msg+="could not read lower bound value\nRead : ";
       msg+=current->value;
       msg+="\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     current=nextToken(current,endTokens,msg);
@@ -120,7 +118,7 @@ namespace mfront
       msg+="expected ':' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     current=nextToken(current,endTokens,msg);
@@ -130,7 +128,7 @@ namespace mfront
       msg+="could not read upper bound value\nRead : ";
       msg+=current->value;
       msg+="\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
     if(boundsDescription.boundsType==VariableBoundsDescription::LowerAndUpper){
@@ -138,7 +136,7 @@ namespace mfront
 	msg+="lower bound value is greater than upper bound value for variable ";
 	msg+=boundsDescription.varName;
 	msg+="\nError at line : ";
-	msg+=toString(current->line);
+	msg+=to_string(current->line);
 	throw(runtime_error(msg));
       }
     }
@@ -147,7 +145,7 @@ namespace mfront
       msg+="expected ']' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }      
     current=nextToken(current,endTokens,msg);
@@ -155,7 +153,7 @@ namespace mfront
       msg+="expected ';' (read ";
       msg+=current->value;
       msg+=")\nError at line : ";
-      msg+=toString(current->line);
+      msg+=to_string(current->line);
       throw(runtime_error(msg));
     }      
     testBounds.push_back(boundsDescription);

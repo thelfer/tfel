@@ -46,7 +46,7 @@ namespace mfront
   LogStream::setLogStream(std::ostream& os)
   {
     using namespace std;
-    if(this->ps.get()!=0){
+    if(this->ps.get()!=nullptr){
       this->ps->close();
     }
     this->ps = shared_ptr<ofstream>();
@@ -57,11 +57,11 @@ namespace mfront
   LogStream::setLogStream(const std::string& f)
   {
     using namespace std;
-    if(this->ps.get()!=0){
+    if(this->ps.get()!=nullptr){
       this->ps->close();
     }
     this->ps = shared_ptr<ofstream>(new ofstream(f.c_str()));
-    if(this->ps.get()==0){
+    if(this->ps.get()==nullptr){
       string msg("LogStream::setLogStream : ");
       msg += "can't allocate ofstream obect";
       throw(runtime_error(msg));
@@ -76,7 +76,7 @@ namespace mfront
   std::ostream&
   LogStream::getStream(void)
   {
-    if(this->ps.get()==0){
+    if(this->ps.get()==nullptr){
       return *s;
     }
     return *(this->ps);

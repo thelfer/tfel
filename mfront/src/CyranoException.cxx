@@ -12,7 +12,6 @@
  * project under specific licensing conditions. 
  */
 
-#include"TFEL/Utilities/ToString.hxx"
 #include"MFront/Cyrano/CyranoException.hxx"
 
 namespace cyrano 
@@ -58,7 +57,8 @@ namespace cyrano
   {} // end of CyranoIntegrationFailed::~CyranoIntegrationFailed()
 
   CyranoInvalidNTENSValue::CyranoInvalidNTENSValue(const unsigned short N)
-    : CyranoException("Invalid tensor size declared '"+tfel::utilities::ToString(N)+"'")
+    : CyranoException("Invalid tensor size declared '"+
+		      std::to_string(static_cast<unsigned int>(N))+"'")
   {} // end of CyranoInvalidNTENSValue::CyranoInvalidNTENSValue
 
   CyranoInvalidNTENSValue::CyranoInvalidNTENSValue(const CyranoInvalidNTENSValue& e)
@@ -70,7 +70,8 @@ namespace cyrano
 
   CyranoInvalidDimension::CyranoInvalidDimension(const std::string& b,
 					     const unsigned short N)
-    : CyranoException("''"+b+"' can't be used in "+tfel::utilities::ToString(N)+"D")
+    : CyranoException("''"+b+"' can't be used in "+
+		      std::to_string(static_cast<unsigned int>(N))+"D")
   {} // end of CyranoInvalidDimension::CyranoInvalidDimension
 
   CyranoInvalidDimension::CyranoInvalidDimension(const CyranoInvalidDimension& e)

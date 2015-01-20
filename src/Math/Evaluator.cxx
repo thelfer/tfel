@@ -342,7 +342,7 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       shared_ptr<Evaluator::ExternalFunction> pev;
-      if(this->manager.get()==0){
+      if(this->manager.get()==nullptr){
 	if(b){
 	  // variable names are fixed
 	  pev= shared_ptr<Evaluator::ExternalFunction>(new Evaluator(this->getVariablesNames(),f));
@@ -901,7 +901,7 @@ namespace tfel
 	msg += "unsupported logical operator '"+*plo+"'";
 	throw(runtime_error(msg));
       }
-      return shared_ptr<Evaluator::TLogicalExpr>(static_cast<Evaluator::TLogicalExpr*>(0));
+      return shared_ptr<Evaluator::TLogicalExpr>();
     } // end of Evaluator::treatLogicalExpression2
 
     std::shared_ptr<Evaluator::TExpr>
@@ -1040,7 +1040,7 @@ namespace tfel
 	  vector<string>::const_iterator pt = p;
 	  ++pt;
 	  if((pt!=pe)&&(*pt=="(")){
-	    if(this->manager.get()!=0){
+	    if(this->manager.get()!=nullptr){
 	      this->addExternalFunctionToGroup(g,p,pe,b);
 	    } else {
 	      string msg("Evaluator::treatGroup2 : unknown function '"+*p+"'");
@@ -1051,7 +1051,7 @@ namespace tfel
 	      // variable name is fixed
 	      if(this->positions.find(*p)==this->positions.end()){
 		vector<shared_ptr<Evaluator::TExpr> > args;
-		if(this->manager.get()==0){
+		if(this->manager.get()==nullptr){
 		  string msg("Evaluator::treatGroup2 : ");
 		  msg += "unknown variable '"+*p+"'";
 		  throw(runtime_error(msg));
@@ -1143,7 +1143,7 @@ namespace tfel
     Evaluator::getValue(void) const
     {
       using namespace std;
-      if(this->expr.get()==0){
+      if(this->expr.get()==nullptr){
 	string msg("Evaluator::getValue : ");
 	msg += "uninitialized expression.";
 	throw(runtime_error(msg));
@@ -1209,31 +1209,32 @@ namespace tfel
     } // end of Evaluator::addExternalFunctionToGroup
 
     Evaluator::Evaluator()
-      : expr(static_cast<tfel::math::parser::Expr*>(0)),
-	manager(static_cast<tfel::math::parser::ExternalFunctionManager*>(0))
     {} // end of Evaluator::Evaluator
 
     Evaluator::Evaluator(const Evaluator& src)
       : EvaluatorBase(src),
 	variables(src.variables),
-	positions(src.positions),
-	expr(static_cast<tfel::math::parser::Expr*>(0)),
-	manager(static_cast<tfel::math::parser::ExternalFunctionManager*>(0))
+	positions(src.positions)
     {
       this->manager = src.manager;
-      this->expr = src.expr->clone(this->variables);
+      if(src.expr.get()!=nullptr){
+	this->expr = src.expr->clone(this->variables);
+      }
     } // end of Evaluator::Evaluator
 
     Evaluator&
     Evaluator::operator = (const Evaluator& src)
     {
-      if(this==&src){
-	return *this;
+      if(this!=&src){
+	this->variables = src.variables;
+	this->positions = src.positions;
+	this->manager   = src.manager;
+	if(src.expr.get()!=nullptr){
+	  this->expr = src.expr->clone(this->variables);
+	} else {
+	  this->expr.reset();
+	}
       }
-      this->variables = src.variables;
-      this->positions = src.positions;
-      this->manager   = src.manager;
-      this->expr = src.expr->clone(this->variables);
       return *this;
     } // end of Evaluator::Evaluator
 
@@ -1274,8 +1275,8 @@ namespace tfel
       using namespace tfel::math::parser;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = shared_ptr<Expr>(static_cast<Expr*>(0));
-      this->manager = shared_ptr<ExternalFunctionManager>(static_cast<ExternalFunctionManager*>(0));
+      this->expr.reset();
+      this->manager.reset();
       this->analyse(f,false);
     } // end of Evaluator::setFunction
 
@@ -1289,8 +1290,8 @@ namespace tfel
       vector<double>::size_type pos;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = shared_ptr<Expr>(static_cast<Expr*>(0));
-      this->manager = shared_ptr<ExternalFunctionManager>(static_cast<ExternalFunctionManager*>(0));
+      this->expr.reset();
+      this->manager.reset();
       this->variables.resize(vars.size());
       for(p=vars.begin(),pos=0u;p!=vars.end();++p,++pos){
 	if(this->positions.find(*p)!=this->positions.end()){
@@ -1316,7 +1317,7 @@ namespace tfel
       using namespace tfel::math::parser;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = shared_ptr<Expr>(static_cast<Expr*>(0));
+      this->expr.reset();
       this->manager = m;
       this->analyse(f,false);
     } // end of Evaluator::setFunction
@@ -1332,7 +1333,7 @@ namespace tfel
       vector<double>::size_type pos;
       this->variables.clear();
       this->positions.clear();
-      this->expr    = shared_ptr<Expr>(static_cast<Expr*>(0));
+      this->expr.reset();
       this->manager = m;
       this->variables.resize(vars.size());
       for(p=vars.begin(),pos=0u;p!=vars.end();++p,++pos){
@@ -1358,7 +1359,7 @@ namespace tfel
       using namespace tfel::math::parser;
       shared_ptr<ExternalFunction> pev(new Evaluator());
       Evaluator& ev = static_cast<Evaluator&>(*(pev.get()));
-      if(this->expr.get()==0){
+      if(this->expr.get()==nullptr){
 	string msg("Evaluator::differentiate : ");
 	msg += "uninitialized expression.";
 	throw(runtime_error(msg));
@@ -1393,12 +1394,7 @@ namespace tfel
       using namespace tfel::math::parser;
       string msg("Evaluator::differentiate : unimplemented feature");
       throw(runtime_error(msg));
-      if(this->expr.get()==0){
-	string emsg("Evaluator::differentiate : ");
-	emsg += "uninitialized expression.";
-	throw(runtime_error(emsg));
-      }
-      return shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+      return shared_ptr<ExternalFunction>();
     } // end of std::shared_ptr<ExternalFunction>
 
     std::shared_ptr<tfel::math::parser::ExternalFunction>

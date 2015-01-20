@@ -194,7 +194,7 @@ getTFELHOME(void)
 #endif
 
   const char * const path = getenv("TFELHOME");
-  if(path!=0){
+  if(path!=nullptr){
     return handleSpace(path);
   }
 
@@ -575,7 +575,7 @@ main(const int argc,
       cout << CASTEMFLAGS1 << " ";
     }
     const char * const castempath = getenv("CASTEM_ROOT");
-    if(castempath!=0){
+    if(castempath!=nullptr){
       cout << "-I" << castempath << "/include ";
     } else {
       cout << CASTEMFLAGS2 << " ";
@@ -590,7 +590,7 @@ main(const int argc,
       cout << ZMATFLAGS1 << " ";
     }
     const char * const zmatpath = getenv("ZSET_ROOT");
-    if(zmatpath!=0){
+    if(zmatpath!=nullptr){
       cout << "-I" << zmatpath << "/include ";
     } else {
 #ifndef ZSET_ROOT

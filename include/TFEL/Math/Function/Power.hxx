@@ -16,10 +16,9 @@
 
 #include<cmath>
 #include<type_traits>
-#include<type_traits>
+#include"TFEL/Math/power.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"
-#include"TFEL/Math/power.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
 #include"TFEL/Math/Function/FunctionConcept.hxx"
 

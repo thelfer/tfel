@@ -140,14 +140,16 @@ namespace tfel{
        * \param T value, initial value 
        */
       vector(const size_type, const T&);
-      /*
+      //! constructor from initializer list
+      vector(const std::initializer_list<T>&);
+      /*!
        * Constructor from a sequence
-       * \param InputIterator, type of the iterator used
-       * \param InputIterator begin, beginning of the sequence
-       * \param InputIterator end, end of the sequence
+       * \param[in] b: beginning of the sequence
+       * \param[in] e: end of the sequence
        */
       template<typename InputIterator>
       vector(const InputIterator,const InputIterator);
+      
       using Container::front;
       using Container::back;
       using Container::insert;

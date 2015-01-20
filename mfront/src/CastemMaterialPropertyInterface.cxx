@@ -405,13 +405,13 @@ namespace mfront
       }
     }
     if(!inputs.empty()){
-      unsigned short i;
-      for(i=0,p3=inputs.begin();p3!=inputs.end();++p3,++i){
+      p3=inputs.begin();
+      for(auto i=0u;p3!=inputs.end();++p3,++i){
 	this->srcFile << "const double " << p3->name << " = ";
 	if(i==0){
 	  this->srcFile << "*(castem_params);\n";
 	} else {
-	  this->srcFile << "*(castem_params+"+toString(i)+"u);\n";
+	  this->srcFile << "*(castem_params+"+to_string(i)+"u);\n";
 	}
       }
     }

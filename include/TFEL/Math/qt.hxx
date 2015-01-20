@@ -108,8 +108,8 @@ namespace tfel{
        * \brief constructor from a value
        * \param T src, the src.
        */
-      TFEL_MATH_INLINE constexpr
-      explicit qt(const T& src) noexcept(std::is_nothrow_constructible<T>::value)
+      TFEL_MATH_INLINE constexpr explicit
+      qt(const T& src) noexcept(std::is_nothrow_constructible<T>::value)
 	: value(src)
       {}
 

@@ -50,9 +50,6 @@ namespace mfront{
 			const std::string& = "__cdecl");
 
   TFEL_VISIBILITY_EXPORT std::string
-  toString(const unsigned short);
-
-  TFEL_VISIBILITY_EXPORT std::string
   makeUpperCase(const std::string&);
 
   TFEL_VISIBILITY_EXPORT std::string 
