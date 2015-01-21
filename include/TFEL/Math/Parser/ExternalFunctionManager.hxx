@@ -35,6 +35,8 @@ namespace tfel
 			  tfel::utilities::shared_ptr<ExternalFunction> >
       {}; // end of struct ExternalFunctionManager
       
+      typedef tfel::utilities::shared_ptr<ExternalFunctionManager> ExternalFunctionManagerPtr;
+
     } // end of namespace parser
 
   } // end of namespace math
