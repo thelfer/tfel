@@ -26,6 +26,12 @@ namespace mfront
    */
   struct DrivingVariable
   {
+    DrivingVariable() = default;
+    DrivingVariable(DrivingVariable&&) = default;
+    DrivingVariable(const DrivingVariable&) = default;
+    DrivingVariable& operator=(DrivingVariable&&) = default;
+    DrivingVariable& operator=(const DrivingVariable&) = default;
+    ~DrivingVariable() noexcept;
     //! name of the driving variable
     std::string name;
     //! type of the driving variable

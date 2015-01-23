@@ -12,7 +12,7 @@
 #ifndef _STENSOR_CONCEPT_LIB_
 #define _STENSOR_CONCEPT_LIB_ 1
 
-#include <ostream>
+#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"

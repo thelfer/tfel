@@ -74,7 +74,7 @@ struct Tensor4Test2D
   {
     using namespace std;
     using namespace tfel::math;
-    const double eps = 10*numeric_limits<double>::epsilon();
+    const double eps = 100*numeric_limits<double>::epsilon();
     tensor<2u,double>  F = tensor<2u,double>::Id();
     F(0,1) = -1.23;
     tensor<2u,double>  R;

@@ -34,17 +34,16 @@ namespace tfel
 					 const size_type,
 					 const size_type);
       
-      size_type
-      getNumberOfVariables(void) const;
+      size_type getNumberOfVariables(void) const;
       
-      size_type
-      getNumberOfParameters(void) const;
+      size_type getNumberOfParameters(void) const;
       
-      void
-      operator()(double&,tfel::math::vector<double>&,
-		 const tfel::math::vector<double>&,
-		 const tfel::math::vector<double>&);
+      void operator()(double&,tfel::math::vector<double>&,
+		      const tfel::math::vector<double>&,
+		      const tfel::math::vector<double>&);
       
+      ~LevenbergMarquardtEvaluatorWrapper();
+
     private:
       
       std::shared_ptr<tfel::math::Evaluator> ev;

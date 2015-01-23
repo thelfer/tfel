@@ -55,9 +55,7 @@ namespace tfel{
       : public VectorConcept<vector<T> >,
 	protected std::vector<T>
     {
-      /*
-       * Typedef to the underlying storage class.
-       */
+      //! typedef to the underlying container class.
       typedef std::vector<T> Container;
 
     public:
@@ -165,9 +163,9 @@ namespace tfel{
       using Container::push_back;
       using Container::emplace_back;
       using Container::empty;
-      using std::vector<T>::operator[];
+      using Container::operator[];
       //! assignement operator
-      TFEL_MATH_INLINE vector& 
+      vector& 
       operator=(const vector&);
       /*!
        * Assignement operator.
@@ -246,7 +244,6 @@ namespace tfel{
       TFEL_MATH_INLINE2
       const RunTimeProperties
       getRunTimeProperties(void) const;
-      
       /*
        * swap two vectors
        * \param vector&, the other vector
@@ -264,7 +261,8 @@ namespace tfel{
       TFEL_MATH_INLINE2
       void 
       copy(const InputIterator,const InputIterator);
-
+      //! destructor
+      ~vector() noexcept;
     };
 
     /*!

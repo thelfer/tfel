@@ -109,6 +109,8 @@ namespace tfel
        * \return test duration
        */
       double duration(void) const;
+      //! destructor
+      virtual ~TestResult();
     private:
       //! detail
       std::string d;

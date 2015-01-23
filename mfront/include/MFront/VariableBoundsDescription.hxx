@@ -14,6 +14,7 @@
 #ifndef _LIB_VARIABLEBOUNDSDESCRIPTION_H_
 #define _LIB_VARIABLEBOUNDSDESCRIPTION_H_ 
 
+#include<string>
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace mfront
@@ -22,6 +23,12 @@ namespace mfront
   struct TFEL_VISIBILITY_EXPORT VariableBoundsDescription
   {
     enum BoundsType{Lower,Upper,LowerAndUpper};
+    VariableBoundsDescription() = default;
+    VariableBoundsDescription(VariableBoundsDescription&&) = default;
+    VariableBoundsDescription(const VariableBoundsDescription&) = default;
+    VariableBoundsDescription& operator=(VariableBoundsDescription&&) = default;
+    VariableBoundsDescription& operator=(const VariableBoundsDescription&) = default;
+    ~VariableBoundsDescription() noexcept;
     BoundsType     boundsType;
     std::string    varName;
     unsigned short varNbr;

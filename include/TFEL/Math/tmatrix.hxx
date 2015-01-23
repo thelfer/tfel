@@ -214,13 +214,14 @@ namespace tfel{
        * \param const src : copy constructor
        */
       TFEL_MATH_INLINE constexpr
-      tmatrix(const tmatrix&);
-      /*
-       * Constructor from a pointer.
-       * \param const T* : initial values.
+      tmatrix(const tmatrix&) = default;
+      /*!
+       * \brief Default Constructor 
+       * \param[in] init: values used to initialise the components of the matrix 
        */
-      explicit TFEL_MATH_INLINE
-      tmatrix(const T* const);
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr tmatrix(const std::initializer_list<T2>&);
       /*!
        * \brief index operator (const version).
        * This is a matrix concept requirement.
@@ -244,17 +245,16 @@ namespace tfel{
        * \return const RunTimeProperties, the runtime properties of
        * the tmatrix
        */
-      TFEL_MATH_INLINE
-      RunTimeProperties
+      TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RunTimeProperties();
       }
       
-      TFEL_MATH_INLINE2
+      TFEL_MATH_INLINE
       unsigned short getNbCols(void) const ;
 
-      TFEL_MATH_INLINE2
+      TFEL_MATH_INLINE
       unsigned short getNbRows(void) const ;
       /*!
        * \return a view of a row of this matrix
@@ -366,8 +366,7 @@ namespace tfel{
       TFEL_MATH_INLINE2 void
       copy(const InputIterator);
       // copy assignement operator
-      TFEL_MATH_INLINE tmatrix&
-      operator=(const tmatrix&);
+      tmatrix& operator=(const tmatrix&) = default;
       //! using tmatrix_base::operator=
       using tmatrix_base<tmatrix,N,M,T>::operator=;
       //! using tmatrix_base::operator+=

@@ -197,6 +197,14 @@ namespace mfront
      */
     struct InternalStateVariable
     {
+      InternalStateVariable() = default;
+      InternalStateVariable(InternalStateVariable&&) = default;
+      InternalStateVariable(const InternalStateVariable&) = default;
+      InternalStateVariable&
+      operator = (InternalStateVariable&&) = default;
+      InternalStateVariable&
+      operator = (const InternalStateVariable&) = default;
+      ~InternalStateVariable();
       //! name
       std::string name;
       //! type of the variable

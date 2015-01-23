@@ -68,11 +68,13 @@ namespace tfel{
 	exe(const T& s)
 	{
 	  typedef typename StensorTraits<T>::NumType NumType;
-	  typedef typename tfel::typetraits::BaseType<NumType>::type Base;
-	  NumType tr = (Base(1)/Base(3))*trace(s);
-	  return sqrt(Base(1.5f)*(SigmaEqImplBase::square(s(0)-tr)+
-				  SigmaEqImplBase::square(s(1)-tr)+
-				  SigmaEqImplBase::square(s(2)-tr)));
+	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
+	  constexpr base one_third = base(1)/base(3);
+	  constexpr base cste      = base(3)/base(2);
+	  const NumType tr = one_third*trace(s);
+	  return std::sqrt(cste*(SigmaEqImplBase::square(s(0)-tr)+
+				 SigmaEqImplBase::square(s(1)-tr)+
+				 SigmaEqImplBase::square(s(2)-tr)));
 	}
       };
       
@@ -88,12 +90,14 @@ namespace tfel{
 	exe(const T& s)
 	{
 	  typedef typename StensorTraits<T>::NumType NumType;
-	  typedef typename tfel::typetraits::BaseType<NumType>::type Base;
-	  NumType tr = (Base(1)/Base(3))*trace(s);
-	  return sqrt(Base(1.5f)*(SigmaEqImplBase::square(s(0)-tr)+
-				  SigmaEqImplBase::square(s(1)-tr)+
-				  SigmaEqImplBase::square(s(2)-tr)+
-				  SigmaEqImplBase::square(s(3))));
+	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
+	  constexpr base one_third = base(1)/base(3);
+	  constexpr base cste      = base(3)/base(2);
+	  const NumType tr = one_third*trace(s);
+	  return std::sqrt(cste*(SigmaEqImplBase::square(s(0)-tr)+
+				 SigmaEqImplBase::square(s(1)-tr)+
+				 SigmaEqImplBase::square(s(2)-tr)+
+				 SigmaEqImplBase::square(s(3))));
 	}
       };
 
@@ -109,14 +113,16 @@ namespace tfel{
 	exe(const T& s)
 	{
 	  typedef typename StensorTraits<T>::NumType NumType;
-	  typedef typename tfel::typetraits::BaseType<NumType>::type Base;
-	  NumType tr = (Base(1)/Base(3))*trace(s);
-	  return sqrt(Base(1.5f)*(SigmaEqImplBase::square(s(0)-tr)+
-				  SigmaEqImplBase::square(s(1)-tr)+
-				  SigmaEqImplBase::square(s(2)-tr)+
-				  SigmaEqImplBase::square(s(3))   +
-				  SigmaEqImplBase::square(s(4))   +
-				  SigmaEqImplBase::square(s(5))));
+	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
+	  constexpr base one_third = base(1)/base(3);
+	  constexpr base cste      = base(3)/base(2);
+	  const NumType tr = one_third*trace(s);
+	  return sqrt(cste*(SigmaEqImplBase::square(s(0)-tr)+
+			    SigmaEqImplBase::square(s(1)-tr)+
+			    SigmaEqImplBase::square(s(2)-tr)+
+			    SigmaEqImplBase::square(s(3))   +
+			    SigmaEqImplBase::square(s(4))   +
+			    SigmaEqImplBase::square(s(5))));
 	}
       };
 

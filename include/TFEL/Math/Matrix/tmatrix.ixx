@@ -15,8 +15,6 @@
 #ifndef _LIB_TFEL_TINY_MATRIX_IXX_
 #define _LIB_TFEL_TINY_MATRIX_IXX_ 
 
-#include <cassert>
-
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 
@@ -41,17 +39,12 @@ namespace tfel{
     {}
 
     template<unsigned short N,unsigned short M, typename T>
-    constexpr tmatrix<N,M,T>::tmatrix(const tmatrix<N,M,T>& src)
-      : MatrixConcept<tmatrix<N,M,T>>(src),
-        fsarray<N*M,T>(src)
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr tmatrix<N,M,T>::tmatrix(const std::initializer_list<T2>& init)
+      : fsarray<N*M,T>(init)
     {}
 
-    template<unsigned short N,unsigned short M, typename T>
-    tmatrix<N,M,T>::tmatrix(const T * const init)
-    {
-      tfel::fsalgo::copy<N*M>::exe(init,this->v);
-    }
-    
     template<unsigned short N,unsigned short M, typename T>
     constexpr const T& 
     tmatrix<N,M,T>::operator()(const unsigned short i,const unsigned short j) const
@@ -63,18 +56,8 @@ namespace tfel{
     T& 
     tmatrix<N,M,T>::operator()(const unsigned short i,const unsigned short j)
     {
-      assert(i<N);
-      assert(j<M);
       return this->v[i*M+j];
     }
-
-    template<unsigned short N,unsigned short M, typename T>
-    tmatrix<N,M,T>&
-    tmatrix<N,M,T>::operator=(const tmatrix<N,M,T>& src)
-    {
-      fsarray<N*M,T>::operator=(src);
-      return *this;
-    } // end of tmatrix<N,M,T>::operator=
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
     template<typename T2,typename Expr>
@@ -200,8 +183,6 @@ namespace tfel{
     template<unsigned short N,unsigned short M, typename T>
     void 
     tmatrix<N,M,T>::swap_rows(const unsigned short i,const unsigned short j){
-      assert(i<N);
-      assert(j<N);
       tfel::fsalgo::swap_ranges<M>::exe(this->v+M*i,this->v+M*j);
     }
     

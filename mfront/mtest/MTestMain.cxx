@@ -47,7 +47,7 @@ namespace mfront
 
     
     int execute(void);
-
+    ~MTestMain();
   protected:
     friend struct tfel::utilities::ArgumentParserBase<MTestMain>;
     void
@@ -356,6 +356,8 @@ namespace mfront
     return EXIT_SUCCESS;
   }
 
+  MTestMain::~MTestMain()
+  {}
 
 } // end of namespace mfront
 

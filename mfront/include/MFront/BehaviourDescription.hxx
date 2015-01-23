@@ -1021,6 +1021,8 @@ namespace mfront
     checkVariablePosition(const std::string&,
 			  const std::string&,
 			  const size_t);
+    //! destructor
+    ~BehaviourDescription();
   private:
     /*!
      * \brief throw an exception saying that no attribute with the given name exists

@@ -27,7 +27,7 @@ namespace tfel
       : public Model
     {
       typedef typename Model::Drifts Drifts;
-      static const unsigned short nb = Model::nb-1u; /* number of drifts */
+      static constexpr unsigned short nb = Model::nb-1u; /* number of drifts */
       static const Drifts* drifts;
     };
 
@@ -43,7 +43,7 @@ namespace tfel
     struct FactorizedKriging
     {
 
-      FactorizedKriging();
+      FactorizedKriging() = default;
       
       FactorizedKriging(const Model1&,
 			const Model2&);
@@ -59,6 +59,8 @@ namespace tfel
       T
       operator()(const typename KrigingVariable<N,T>::type&,
 		 const typename KrigingVariable<M,T>::type&) const;
+
+      ~FactorizedKriging() noexcept;
 
     private:
 

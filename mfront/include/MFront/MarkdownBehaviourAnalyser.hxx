@@ -96,6 +96,12 @@ namespace mfront{
      */
     struct Data
     {
+      Data() = default;
+      Data(Data&&) = default;
+      Data(const Data&) = default;
+      Data& operator=(Data&&) = default;
+      Data& operator=(const Data&) = default;
+      ~Data() noexcept;
       std::string name;
       std::string type;
       std::string description;

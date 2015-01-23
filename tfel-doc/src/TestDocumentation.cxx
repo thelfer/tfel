@@ -174,6 +174,9 @@ namespace tfel{
       }
     
     } // end of TestDocumentation::writeLaTexDescription
+    
+    TestDocumentation::~TestDocumentation()
+    {} // end of TestDocumentation::~TestDocumentation
 
   } // end of namespace utilities
 

@@ -55,6 +55,9 @@ namespace mfront{
     this->hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
   } // end of BehaviourDSLCommon::CodeBlockOptions::CodeBlockOptions
 
+  BehaviourDSLCommon::CodeBlockOptions::~CodeBlockOptions()
+  {} // end of BehaviourDSLCommon::CodeBlockOptions::~CodeBlockOptions
+
   std::string
   BehaviourDSLCommon::getClassName(void) const
   {

@@ -1768,6 +1768,9 @@ namespace mfront{
     return map<string,vector<string> >();
   } // end of MFrontModelInterface::getLibrariesDependencies
 
+  MFrontModelInterface::~MFrontModelInterface()
+  {} // end of MFrontModelInterface::~MFrontModelInterface
+
   ModelInterfaceProxy<MFrontModelInterface>      ModelProxy;
   
 } // end of namespace mfront  

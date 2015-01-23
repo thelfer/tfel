@@ -14,7 +14,6 @@
 #ifndef _LIB_TFEL_STENSOR_H_
 #define _LIB_TFEL_STENSOR_H_ 
 
-#include<cassert>
 #include<cstddef>
 #include<type_traits>
 

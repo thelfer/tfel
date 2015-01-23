@@ -97,7 +97,8 @@ namespace tfel
       if(c>=this->legends.size()+1){
 	return "";
       }
-      return this->legends[c-1];
+      auto c2 = c;
+      return this->legends[--c2];
     } // end of TextData::getLegend
 
     unsigned short

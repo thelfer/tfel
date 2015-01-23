@@ -14,6 +14,7 @@ endif
 bin_PROGRAMS = mfront
 mfront_SOURCES = main.cxx                                               \
 		 MFront.cxx                                             \
+		 CodeBlock.cxx                                          \
 		 FiniteStrainBehaviourTangentOperatorConversion.cxx     \
 		 FiniteStrainBehaviourTangentOperatorConversionPath.cxx \
 	 	 MFrontDebugMode.cxx                                    \
@@ -24,13 +25,17 @@ mfront_SOURCES = main.cxx                                               \
 		 InitDSLs.cxx                                           \
 		 DSLFactory.cxx                                         \
 		 DrivingVariable.cxx                                    \
+		 ThermodynamicForce.cxx                                 \
+		 LawFunction.cxx                                        \
 		 MaterialPropertyDescription.cxx                        \
 		 BehaviourData.cxx                                      \
 		 BehaviourDescription.cxx                               \
 		 BoundsDescription.cxx                                  \
 		 VariableDescription.cxx                                \
 		 StaticVariableDescription.cxx                          \
+		 VariableBoundsDescription.cxx                          \
 		 BehaviourDSLCommon.cxx                                 \
+		 ModelData.cxx                                          \
 		 ModelDSLCommon.cxx                                     \
 		 AbstractDSL.cxx                                        \
 		 AbstractBehaviourDSL.cxx                               \

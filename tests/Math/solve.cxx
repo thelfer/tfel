@@ -28,19 +28,13 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::math;
-
-  double a[] = {0.132, 0.60, 0.57,
-		0.324, 0.25, 0.99,
-		0.26 , 0.78, 0.29};
-  double b[] = {0.132, 0.60, 0.,
-		0.324, 0.25, 0.,
-		0.26 , 0.78, 0.};
-  double c[] = {1.0, 2.0, 3.0};
-
-  tmatrix<3,3> m(a);
-  tmatrix<3,3> m2(b);
-  tvector<3>   v(c);
-
+  tmatrix<3,3> m{{0.132, 0.60, 0.57,
+	          0.324, 0.25, 0.99,
+                  0.26 , 0.78, 0.29}};
+  tmatrix<3,3> m2{{0.132, 0.60, 0.,
+	           0.324, 0.25, 0.,
+                   0.26 , 0.78, 0.}};
+  tvector<3>   v{{1.0, 2.0, 3.0}};
   try{
     TinyMatrixSolve<3,double>::exe(m,v);
     assert(std::abs(v(0)-10.6118682566723)<=1.e-13);

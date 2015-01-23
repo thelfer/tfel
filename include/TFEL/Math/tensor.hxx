@@ -14,7 +14,6 @@
 #ifndef _LIB_TFEL_TENSOR_H_
 #define _LIB_TFEL_TENSOR_H_ 
 
-#include<cassert>
 #include<cstddef>
 
 #include"TFEL/Config/TFELConfig.hxx"

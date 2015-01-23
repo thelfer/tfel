@@ -67,7 +67,6 @@ namespace tfel{
        * \brief resize the permutation
        * This automatically calls the reset method
        */
-      TFEL_MATH_INLINE
       void resize(const typename vector<T>::size_type);
 
     private:

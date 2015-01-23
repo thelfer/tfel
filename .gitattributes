@@ -1660,6 +1660,7 @@ mfront/src/CMakeLists.txt -text
 mfront/src/CMaterialPropertyInterface.cxx -text
 mfront/src/CMaterialPropertyInterfaceBase.cxx -text
 mfront/src/CastemMaterialPropertyInterface.cxx -text
+mfront/src/CodeBlock.cxx -text
 mfront/src/CppMaterialPropertyInterface.cxx -text
 mfront/src/CppTestMaterialPropertyInterface.cxx -text
 mfront/src/CyranoComputeStiffnessTensor.cxx -text
@@ -1698,6 +1699,7 @@ mfront/src/IsotropicMisesPlasticFlowDSL.cxx -text
 mfront/src/IsotropicStrainHardeningMisesCreepDSL.cxx -text
 mfront/src/LaTeXBehaviourAnalyser.cxx -text
 mfront/src/LaTeXMaterialPropertyInterface.cxx -text
+mfront/src/LawFunction.cxx -text
 mfront/src/LevenbergMarquardtSolvers.cxx -text
 mfront/src/MFront.cxx -text
 mfront/src/MFrontDebugMode.cxx -text
@@ -1713,6 +1715,7 @@ mfront/src/MaterialPropertyDescription.cxx -text
 mfront/src/MaterialPropertyInterfaceFactory.cxx -text
 mfront/src/ModelDSL.cxx -text
 mfront/src/ModelDSLCommon.cxx -text
+mfront/src/ModelData.cxx -text
 mfront/src/ModelInterfaceFactory.cxx -text
 mfront/src/MultipleIsotropicMisesFlowsDSL.cxx -text
 mfront/src/NewtonRaphsonSolvers.cxx -text
@@ -1728,6 +1731,7 @@ mfront/src/SearchFile.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
 mfront/src/SupportedTypes.cxx -text
+mfront/src/ThermodynamicForce.cxx -text
 mfront/src/UMATComputeStiffnessTensor.cxx -text
 mfront/src/UMATComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/UMATException.cxx -text
@@ -1743,6 +1747,7 @@ mfront/src/UMATRotationMatrix.cxx -text
 mfront/src/UMATSmallStrainMTestFileGenerator.cxx -text
 mfront/src/UMATStressFreeExpansionHandler.cxx -text
 mfront/src/UMATTangentOperator.cxx -text
+mfront/src/VariableBoundsDescription.cxx -text
 mfront/src/VariableDescription.cxx -text
 mfront/src/ZMATInterface.cxx -text
 mfront/src/main.cxx -text

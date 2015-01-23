@@ -1607,5 +1607,8 @@ namespace mfront
       }
     }
   } // end of BehaviourDescription::checkVariablePosition
+  
+  BehaviourDescription::~BehaviourDescription()
+  {}
 
 } // end of namespace mfront

@@ -15,7 +15,6 @@
 #define _LIB_TFEL_MATH_ST2TOT2_H_ 
 
 #include<cstddef>
-#include<cassert>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"

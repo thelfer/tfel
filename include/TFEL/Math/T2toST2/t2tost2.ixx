@@ -179,8 +179,6 @@ namespace tfel{
     template<unsigned short N, typename T>
     T& 
     t2tost2<N,T>::operator()(const unsigned short i,const unsigned short j){
-      assert(i<StensorDimeToSize<N>::value);
-      assert(j<TensorDimeToSize<N>::value);
       return this->v[TensorDimeToSize<N>::value*i+j];
     }
 

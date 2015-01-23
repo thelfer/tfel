@@ -14,9 +14,9 @@
 #ifndef _TFEL_MATH_TENSOR_CONCEPT_LIB_
 #define _TFEL_MATH_TENSOR_CONCEPT_LIB_ 1
 
-#include <stdexcept>
-#include <ostream>
-#include <string>
+#include<iosfwd>
+#include<string>
+#include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -180,7 +180,6 @@ namespace tfel{
     syme(const T&);
     
     template<class T>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==1u)&&
@@ -190,7 +189,6 @@ namespace tfel{
     computeRightCauchyGreenTensor(const T&);
   
     template<class T>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==2u)&&
@@ -200,7 +198,6 @@ namespace tfel{
     computeRightCauchyGreenTensor(const T&);
 
     template<class T>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==3u)&&
@@ -210,7 +207,6 @@ namespace tfel{
     computeRightCauchyGreenTensor(const T&);
 
     template<class T>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==1u)&&
@@ -220,7 +216,6 @@ namespace tfel{
     computeLeftCauchyGreenTensor(const T&);
   
     template<class T>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==2u)&&
@@ -230,7 +225,6 @@ namespace tfel{
     computeLeftCauchyGreenTensor(const T&);
 
     template<class T>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==3u)&&
@@ -240,7 +234,6 @@ namespace tfel{
     computeLeftCauchyGreenTensor(const T&);
 
     template<class T>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==1u)&&
@@ -250,7 +243,6 @@ namespace tfel{
     computeGreenLagrangeTensor(const T&);
   
     template<class T>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==2u)&&
@@ -260,7 +252,6 @@ namespace tfel{
     computeGreenLagrangeTensor(const T&);
 
     template<class T>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&
        (TensorTraits<T>::dime==3u)&&
@@ -276,7 +267,6 @@ namespace tfel{
      * \param[in] F: a tensor
      */
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)&&
@@ -294,7 +284,6 @@ namespace tfel{
      * \param[in] F: a tensor
      */
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
@@ -312,7 +301,6 @@ namespace tfel{
      * \param[in] F: a tensor
      */
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
@@ -331,7 +319,6 @@ namespace tfel{
      * \note the same as pushForward
      */
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)&&
@@ -350,7 +337,6 @@ namespace tfel{
      * \note the same as pushForward
      */
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
@@ -369,7 +355,6 @@ namespace tfel{
      * \note the same as pushForward
      */
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
@@ -382,7 +367,6 @@ namespace tfel{
 		 const T2&);
 
   template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)&&
@@ -395,7 +379,6 @@ namespace tfel{
 						    const T2&);
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
@@ -408,7 +391,6 @@ namespace tfel{
 						    const T2&);
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
@@ -421,7 +403,6 @@ namespace tfel{
 						    const T2&);
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)&&
@@ -434,7 +415,6 @@ namespace tfel{
 						    const T2&);
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)&&
@@ -447,7 +427,6 @@ namespace tfel{
 						    const T2&);
 
     template<typename T,typename T2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)&&
@@ -460,7 +439,6 @@ namespace tfel{
 						    const T2&);
   
     template<typename TensorType>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 1u,
@@ -470,7 +448,6 @@ namespace tfel{
     det(const TensorType&);
 
     template<typename TensorType>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 2u,
@@ -480,7 +457,6 @@ namespace tfel{
     det(const TensorType&);
 
     template<typename TensorType>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 3u,
@@ -497,7 +473,6 @@ namespace tfel{
      */
     template<typename TensorResultType,
 	     typename TensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
@@ -517,7 +492,6 @@ namespace tfel{
      */
     template<typename TensorResultType,
 	     typename TensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
@@ -537,7 +511,6 @@ namespace tfel{
      */
     template<typename TensorResultType,
 	     typename TensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       tfel::meta::Implements<TensorResultType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
@@ -559,7 +532,6 @@ namespace tfel{
     template<typename TensorType,
 	     typename StensorType,
 	     typename TensorType2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType2,TensorConcept>::cond &&
@@ -586,7 +558,6 @@ namespace tfel{
     template<typename TensorType,
 	     typename StensorType,
 	     typename TensorType2>
-    TFEL_MATH_INLINE2 
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       tfel::meta::Implements<TensorType2,TensorConcept>::cond &&

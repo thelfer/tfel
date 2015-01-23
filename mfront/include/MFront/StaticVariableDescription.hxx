@@ -33,8 +33,6 @@ namespace mfront{
 #else 
     typedef long double StaticVariableValueType;
 #endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
-    //! value of the static variable
-    StaticVariableValueType value;
     /*!
      * Constructor
      * \param[in] type_       : variable type
@@ -46,6 +44,12 @@ namespace mfront{
 			      const std::string&,
 			      const unsigned int,
 			      const StaticVariableValueType);
+    StaticVariableDescription(StaticVariableDescription&&) = default;    
+    StaticVariableDescription(const StaticVariableDescription&) = default;
+    StaticVariableDescription& operator=(StaticVariableDescription&&) = default;    
+    StaticVariableDescription& operator=(const StaticVariableDescription&) = default;
+    //! value of the static variable
+    StaticVariableValueType value;
   }; // end of struct MFrontDSLBase<Child>::StaticVariableDescription
 
   //! a simple alias for backward compatibility

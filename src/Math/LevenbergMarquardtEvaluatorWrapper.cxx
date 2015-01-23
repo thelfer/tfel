@@ -112,6 +112,9 @@ namespace tfel
       }
     } // end of LevenbergMarquardtEvaluatorWrapper::operator()
 
+    LevenbergMarquardtEvaluatorWrapper::~LevenbergMarquardtEvaluatorWrapper()
+    {}
+
   } // end of namespace math
 
 } // end of namespace tfel

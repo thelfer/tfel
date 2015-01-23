@@ -49,9 +49,17 @@ namespace mfront{
     };
 
     BoundsDescription();
+    BoundsDescription(const BoundsDescription&) = default;
+    BoundsDescription(BoundsDescription&&) = default;
+    BoundsDescription&
+    operator=(const BoundsDescription&) = default;
+    BoundsDescription&
+    operator=(BoundsDescription&&) = default;
 
     void
     writeBoundsChecks(std::ofstream&) const;
+
+    ~BoundsDescription() noexcept;
 
     // name of the variable on which the bounds acts
     std::string    name;

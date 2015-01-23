@@ -119,6 +119,9 @@ namespace tfel
       return r;
     }
 
+    TestResult::~TestResult(void)
+    {}
+
     std::ostream&
     operator << (std::ostream& os,const TestResult& r)
     {

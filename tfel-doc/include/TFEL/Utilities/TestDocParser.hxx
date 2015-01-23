@@ -39,7 +39,7 @@ namespace tfel{
       /*!
        * desctructor
        */
-      virtual ~TestDocParser();
+      virtual ~TestDocParser() noexcept;
     private:
       
       void

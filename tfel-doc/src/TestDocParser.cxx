@@ -256,7 +256,7 @@ namespace tfel{
       this->readSpecifiedToken("}",p);
     }
 
-    TestDocParser::~TestDocParser()
+    TestDocParser::~TestDocParser() noexcept
     {} // end of MTestDocParser::~MTestDocParser
 
   } // end of namespace utilities

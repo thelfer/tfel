@@ -31,7 +31,8 @@ namespace tfel{
        */
       void execute(std::map<std::string,std::map<std::string,std::string> >&,
 		   const std::string&);
-      
+      //! desctructor
+      virtual ~ConfigParser() noexcept;
     }; // end of struct ConfigParser
 
   } // end of namespace utilities

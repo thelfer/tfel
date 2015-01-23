@@ -41,6 +41,9 @@ namespace mfront
       offset(o),
       dummy(d)
   {} // end olf UMATMaterialProperty::UMATMaterialProperty
+  
+  UMATInterfaceBase::UMATMaterialProperty::~UMATMaterialProperty()
+  {} // end of UMATInterfaceBase::~UMATMaterialProperty()
 
   const UMATInterfaceBase::UMATMaterialProperty&
   UMATInterfaceBase::findUMATMaterialProperty(const std::vector<UMATMaterialProperty>& mprops,

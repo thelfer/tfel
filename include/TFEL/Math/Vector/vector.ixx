@@ -81,15 +81,14 @@ namespace tfel{
     }
 
     template<typename T>
-    TFEL_MATH_INLINE2 const typename vector<T>::RunTimeProperties 
+    const typename vector<T>::RunTimeProperties 
     vector<T>::getRunTimeProperties(void) const
     {
       return std::vector<T>::size();
     }
 
     template<typename T>
-    TFEL_MATH_INLINE T& 
-    vector<T>::operator()(const typename vector<T>::size_type i) noexcept
+    T& vector<T>::operator()(const typename vector<T>::size_type i) noexcept
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 	assert(i<this->size());
@@ -98,7 +97,7 @@ namespace tfel{
     }
 
     template<typename T>
-    TFEL_MATH_INLINE constexpr const T& 
+    constexpr const T& 
     vector<T>::operator()(const typename vector<T>::size_type i) const  noexcept
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
@@ -109,17 +108,17 @@ namespace tfel{
 
     template<typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE2 typename std::enable_if<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       vector<T>&
     >::type
     vector<T>::operator=(const VectorExpr<vector<T2>,Expr>& expr)
     {
-      size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif
-      for(i=0;i<this->size();++i){
+      size_type s = this->size();
+      for(size_type i=0;i!=s;++i){
 	std::vector<T>::operator[](i) = expr(i);
       }
       return *this;
@@ -127,17 +126,17 @@ namespace tfel{
 
     template<typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE2 typename std::enable_if<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       vector<T>&
     >::type
     vector<T>::operator+=(const VectorExpr<vector<T2>,Expr>& expr)
     {
-      size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif
-      for(i=0;i<this->size();++i){
+      size_type s = this->size();
+      for(size_type i=0;i!=s;++i){
 	std::vector<T>::operator[](i) += expr(i);
       }
       return *this;
@@ -145,17 +144,17 @@ namespace tfel{
 
     template<typename T>
     template<typename T2,typename Expr>
-    TFEL_MATH_INLINE2 typename std::enable_if<
+    typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       vector<T>&
     >::type
     vector<T>::operator-=(const VectorExpr<vector<T2>,Expr>& expr)
     {
-      size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif
-      for(i=0;i<this->size();++i){
+      size_type s = this->size();
+      for(size_type i=0;i!=s;++i){
 	std::vector<T>::operator[](i) -= expr(i);
       }
       return *this;
@@ -163,7 +162,7 @@ namespace tfel{
 
     template<typename T>
     template<typename InputIterator>
-    TFEL_MATH_INLINE2 void vector<T>::copy(const InputIterator b,const InputIterator e)
+    void vector<T>::copy(const InputIterator b,const InputIterator e)
     {
       std::copy(b,e,this->v);
     }
@@ -176,6 +175,10 @@ namespace tfel{
 #endif
       std::vector<T>::swap(a);
     }
+
+    template<typename T>
+    vector<T>::~vector() noexcept
+    {}
 
     template<typename T>
     TFEL_MATH_INLINE2
@@ -193,7 +196,7 @@ namespace tfel{
       }
       return sqrt(real(n));
     }
-
+    
   } // end of namespace math
 
 } // end of namespace tfel

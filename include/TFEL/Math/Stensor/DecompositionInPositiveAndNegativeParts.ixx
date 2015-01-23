@@ -113,13 +113,12 @@ namespace tfel{
 					    const typename StensorTraits<StensorType>::NumType eps)
     {
       using std::abs;
-      using std::sqrt;
       using tfel::math::internals::stensor_ppos;
       using tfel::math::internals::stensor_pneg;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      const real cste     = sqrt(real(2));
-      const real one_half = real(1)/(real(2));
+      constexpr real cste     = constexpr_fct::sqrt(real(2));
+      constexpr real one_half = real(1)/(real(2));
       stensor<2u,NumType> ls(s); // local copy of s
       stensor<2u,real> n0;
       stensor<2u,real> n1;
@@ -190,13 +189,12 @@ namespace tfel{
 					    const StensorType& s,
 					    const typename StensorTraits<StensorType>::NumType eps)
     {
-      using std::sqrt;
       using tfel::math::internals::stensor_ppos;
       using tfel::math::internals::stensor_pneg;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      const real cste = sqrt(real(2));
-      const real one_half = real(1)/(real(2));
+      constexpr real cste     = constexpr_fct::sqrt(real(2));
+      constexpr real one_half = real(1)/(real(2));
       stensor<3u,NumType> ls(s); // local copy of s
       stensor<3u,real> n0;
       stensor<3u,real> n1;
@@ -433,13 +431,12 @@ namespace tfel{
 							  const typename StensorTraits<StensorType>::NumType eps)
     {
       using std::abs;
-      using std::sqrt;
       using tfel::math::internals::stensor_ppos;
       using tfel::math::internals::stensor_pneg;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      const real cste     = sqrt(real(2));
-      const real one_half = real(1)/(real(2));
+      constexpr real cste     = constexpr_fct::sqrt(real(2));
+      constexpr real one_half = real(1)/(real(2));
       stensor<2u,NumType> ls(s); // local copy of s
       stensor<2u,real> n0;
       stensor<2u,real> n1;
@@ -539,13 +536,12 @@ namespace tfel{
 							  const StensorType& s,
 							  const typename StensorTraits<StensorType>::NumType eps)
     {
-      using std::sqrt;
       using tfel::math::internals::stensor_ppos;
       using tfel::math::internals::stensor_pneg;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      const real cste = sqrt(real(2));
-      const real one_half = real(1)/(real(2));
+      constexpr real cste     = constexpr_fct::sqrt(real(2));
+      constexpr real one_half = real(1)/(real(2));
       stensor<3u,NumType> ls(s); // local copy of s
       stensor<3u,real> n0;
       stensor<3u,real> n1;

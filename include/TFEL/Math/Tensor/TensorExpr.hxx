@@ -12,7 +12,7 @@
 #ifndef _LIB_TFEL_MATH_TENSOR_EXPR_LIB_
 #define _LIB_TFEL_MATH_TENSOR_EXPR_LIB_ 1
 
-#include <ostream>
+#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"

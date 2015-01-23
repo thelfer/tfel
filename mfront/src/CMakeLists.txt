@@ -19,6 +19,7 @@ configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
 set(mfront_SOURCES
     main.cxx
     MFront.cxx
+    CodeBlock.cxx
     MFrontDebugMode.cxx
     PedanticMode.cxx
     MFrontLock.cxx
@@ -28,13 +29,17 @@ set(mfront_SOURCES
     InitAnalysers.cxx
     DSLFactory.cxx
     DrivingVariable.cxx
+    ThermodynamicForce.cxx
+    LawFunction.cxx
     MaterialPropertyDescription.cxx
     BehaviourData.cxx
     BehaviourDescription.cxx
     BoundsDescription.cxx
     VariableDescription.cxx
     StaticVariableDescription.cxx
+    VariableBoundsDescription.cxx
     BehaviourDSLCommon.cxx
+    ModelData.cxx
     ModelDSLCommon.cxx
     ModelDSL.cxx
     AbstractDSL.cxx

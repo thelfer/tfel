@@ -14,6 +14,8 @@
 #ifndef _LIB_MFRONT_THERMODYNAMICFORCE_H_
 #define _LIB_MFRONT_THERMODYNAMICFORCE_H_ 
 
+#include<string>
+
 namespace mfront
 {
 
@@ -23,6 +25,12 @@ namespace mfront
    */
   struct ThermodynamicForce
   {
+    ThermodynamicForce() = default;
+    ThermodynamicForce(ThermodynamicForce&&) = default;
+    ThermodynamicForce(const ThermodynamicForce&) = default;
+    ThermodynamicForce& operator=(ThermodynamicForce&&) = default;
+    ThermodynamicForce& operator=(const ThermodynamicForce&) = default;
+    ~ThermodynamicForce() noexcept;
     //! name of the thermodynamic force
     std::string name;
     //! type of the thermodynamic force

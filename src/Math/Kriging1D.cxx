@@ -65,8 +65,8 @@ namespace tfel
       return Kriging<1u,double>::operator()(this->a*vx+this->b);
     } // end of Kriging1D::operator()
       
-    Kriging1D::~Kriging1D()
-    {} // end of Kriging1D::~Kriging1D
+    // Kriging1D::~Kriging1D()
+    // {} // end of Kriging1D::~Kriging1D
 
   } // end of namespace math
 

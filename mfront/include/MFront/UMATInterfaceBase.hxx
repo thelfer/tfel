@@ -131,6 +131,13 @@ namespace mfront{
 			   const unsigned short,
 			   const SupportedTypes::TypeSize,
 			   const bool);
+      UMATMaterialProperty(const UMATMaterialProperty&) = default;
+      UMATMaterialProperty(UMATMaterialProperty&&) = default;
+      UMATMaterialProperty&
+      operator=(const UMATMaterialProperty&) = default;
+      UMATMaterialProperty&
+      operator=(UMATMaterialProperty&&) = default;
+      ~UMATMaterialProperty();
       /*!
        *  Type of the variable.
        *  If the variable has been declared as an array (see below),

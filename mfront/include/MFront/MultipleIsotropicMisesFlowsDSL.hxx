@@ -63,8 +63,14 @@ namespace mfront{
 	CreepFlow,
 	StrainHardeningCreepFlow
       }; // end of enum FlowType
-      FlowType flow;
+      FlowHandler() = default;
+      FlowHandler(FlowHandler&&) = default;
+      FlowHandler(const FlowHandler&) = default;
+      FlowHandler& operator=(FlowHandler&&) = default;
+      FlowHandler& operator=(const FlowHandler&) = default;
+      ~FlowHandler() noexcept;
       std::string flowRule;
+      FlowType flow;
       double theta;
       bool hasSpecificTheta;
     }; // end of struct LawHandler

@@ -44,12 +44,6 @@ namespace tfel
       using namespace tfel::math::parser;
       return std::shared_ptr<IntegerExpr>(new Negation(this->expr->analyse()));
     }
-    
-    std::string
-    IntegerEvaluator::TNegation::getClassName(void) const
-    {
-      return "IntegerEvaluator::TNegation";
-    }
 
     void
     IntegerEvaluator::TNegation::reduce(void)
@@ -99,12 +93,6 @@ namespace tfel
     void
     IntegerEvaluator::TOperator::reduce(void)
     {} // end of IntegerEvaluator::TOperator::reduce(void)
-    
-    std::string
-    IntegerEvaluator::TOperator::getClassName(void) const
-    {
-      return "IntegerEvaluator::TOperator";
-    } // end of IntegerEvaluator::TOperator::getClassName(void) const
     
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TOperator::analyse(void)
@@ -182,12 +170,6 @@ namespace tfel
       return false;
     } // end of IntegerEvaluator::TBinaryOperation::isOperator(void) const
     
-    std::string
-    IntegerEvaluator::TBinaryOperation::getClassName(void) const
-    {
-      return "IntegerEvaluator::TBinaryOperation";
-    } // end of IntegerEvaluator::TBinaryOperation::getClassName(void) const
-    
     void
     IntegerEvaluator::TBinaryOperation::reduce(void)
     {
@@ -234,12 +216,6 @@ namespace tfel
     IntegerEvaluator::TVariable::isOperator(void) const
     {
       return false;
-    }
-    
-    std::string
-    IntegerEvaluator::TVariable::getClassName(void) const
-    {
-      return "IntegerEvaluator::TVariable";
     }
     
     void
@@ -312,12 +288,6 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       return (this->subExpr[0])->analyse();
-    }
-    
-    std::string
-    IntegerEvaluator::TGroup::getClassName(void) const
-    {
-      return "IntegerEvaluator::TGroup";
     }
     
     IntegerEvaluator::TGroup::~TGroup()
@@ -423,17 +393,10 @@ namespace tfel
       return false;
     }
     
-    std::string
-    IntegerEvaluator::TNumber::getClassName(void) const
-    {
-      return "IntegerEvaluator::TNumber";
-    }
-    
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TNumber::analyse(void)
     {
-      using namespace tfel::math::parser;
-      return std::shared_ptr<IntegerExpr>(new Number(value));
+      return parser::IntegerExprPtr(new Number(value));
     }
     
     void

@@ -26,18 +26,9 @@ namespace tfel{
 		 const TokenFlag flag_)
       : line(line_),value(token_),flag(flag_)
     {}
-  
-    Token::Token(const Token& src):
-      line(src.line),value(src.value),flag(src.flag)
+
+    Token::~Token() noexcept
     {}
-  
-    Token& Token::operator=(const Token& src)
-    {
-      this->line  = src.line;
-      this->value = src.value;
-      this->flag  = src.flag;
-      return *this;
-    }
 
   } // end of namespace utilities
 

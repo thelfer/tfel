@@ -177,5 +177,8 @@ namespace mfront{
       throw(runtime_error("BoundsDescription::writeBoundsChecks : internal error"));
     }
   } // end of BoundsDescription::writeBoundsChecks
+
+  BoundsDescription::~BoundsDescription() noexcept
+  {} // end of BoundsDescription::BoundsDescription
   
 } // end of namespace mfront

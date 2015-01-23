@@ -14,6 +14,7 @@
 #ifndef _LIB_TFEL_MATH_T2TOST2_CONCEPT_IMPL_
 #define _LIB_TFEL_MATH_T2TOST2_CONCEPT_IMPL_ 1
 
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 
@@ -142,8 +143,8 @@ namespace tfel{
 				 const TensorType&  F){
       typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
       typedef typename tfel::typetraits::BaseType<value_type>::type real;
-      const real sqrt2     = std::sqrt(real(2));
-      const real inv_sqrt2 = 1/sqrt2;
+      constexpr real sqrt2     = constexpr_fct::sqrt(real(2));
+      constexpr real inv_sqrt2 = 1/sqrt2;
       // derivative with respect to F0
       dTdF(0,0) = F[0]*((F[3]*dSdF(3,0))*inv_sqrt2+F[0]*dSdF(0,0)+S[0])+F[3]*((F[0]*dSdF(3,0))*inv_sqrt2+(S[3])*inv_sqrt2+F[3]*dSdF(1,0))+(F[3]*S[3])*inv_sqrt2+F[0]*S[0];
       dTdF(1,0) = F[1]*((F[4]*dSdF(3,0))*inv_sqrt2+F[1]*dSdF(1,0))+F[4]*((F[1]*dSdF(3,0))*inv_sqrt2+F[4]*dSdF(0,0));
@@ -196,8 +197,8 @@ namespace tfel{
 				 const TensorType&  F){
       typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
       typedef typename tfel::typetraits::BaseType<value_type>::type real;
-      const real sqrt2     = std::sqrt(real(2));
-      const real inv_sqrt2 = 1/sqrt2;
+      constexpr real sqrt2     = constexpr_fct::sqrt(real(2));
+      constexpr real inv_sqrt2 = 1/sqrt2;
       // derivative with respect to F0
       dTdF(0,0)=F[3]*((F[5]*dSdF(5,0))*inv_sqrt2+(F[0]*dSdF(3,0))*inv_sqrt2+(S[3])*inv_sqrt2+F[3]*dSdF(1,0))+F[5]*((F[3]*dSdF(5,0))*inv_sqrt2+(F[0]*dSdF(4,0))*inv_sqrt2+(S[4])*inv_sqrt2+F[5]*dSdF(2,0))+F[0]*((F[5]*dSdF(4,0))*inv_sqrt2+(F[3]*dSdF(3,0))*inv_sqrt2+F[0]*dSdF(0,0)+S[0])+(F[5]*S[4])*inv_sqrt2+(F[3]*S[3])*inv_sqrt2+F[0]*S[0];
       dTdF(1,0)=F[1]*((F[7]*dSdF(5,0))*inv_sqrt2+(F[4]*dSdF(3,0))*inv_sqrt2+F[1]*dSdF(1,0))+F[7]*((F[1]*dSdF(5,0))*inv_sqrt2+(F[4]*dSdF(4,0))*inv_sqrt2+F[7]*dSdF(2,0))+F[4]*((F[7]*dSdF(4,0))*inv_sqrt2+(F[1]*dSdF(3,0))*inv_sqrt2+F[4]*dSdF(0,0));

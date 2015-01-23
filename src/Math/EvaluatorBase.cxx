@@ -275,6 +275,9 @@ namespace tfel
 	pe = this->tokens.end();
       } // end of EvaluatorBase::analyse
 
+      EvaluatorBase::~EvaluatorBase()
+      {} // end of EvaluatorBase::~EvaluatorBase()
+
     } // end of namespace parser
 
   } // end of namespace math

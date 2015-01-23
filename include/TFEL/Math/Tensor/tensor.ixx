@@ -331,7 +331,6 @@ namespace tfel{
     template<unsigned short N, typename T>
     T& 
     tensor<N,T>::operator()(const unsigned short i){
-      assert(i<TensorDimeToSize<N>::value);
       return this->v[i];
     }
 

@@ -178,6 +178,10 @@ namespace tfel
       return this->p;
     } // end of execute
 
+    template<typename F>
+    LevenbergMarquardt<F>::~LevenbergMarquardt()
+    {}
+
   } // end of namespace math
 
 } // end of namespace tfel

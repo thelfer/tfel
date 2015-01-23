@@ -13,7 +13,7 @@
 #ifndef _MATH_ST2TOST2_EXPR_LIB_
 #define _MATH_ST2TOST2_EXPR_LIB_ 1
 
-#include <ostream>
+#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"

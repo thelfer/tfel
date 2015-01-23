@@ -16,11 +16,11 @@
 #undef NDEBUG
 #endif
 
-#include<iostream>
-#include<iterator>
+#include<vector>
 #include<cassert>
 #include<cstdlib>
-#include<vector>
+#include<iostream>
+#include<iterator>
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
@@ -28,12 +28,10 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::fsalgo;
-
   vector<unsigned short> v(10);
   vector<unsigned short> v2(10);
   vector<unsigned short>::size_type i;
-
-  tfel::fsalgo::iota<10u>::exe(v.begin(),0);
+  tfel::fsalgo::iota<10u>::exe(v.begin(),ushort{0});
   tfel::fsalgo::copy<10u>::exe(v.begin(),v2.begin());
   for(i=0;i!=10;++i){
     assert(v2[i]==i);

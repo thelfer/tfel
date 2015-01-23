@@ -30,29 +30,15 @@ namespace tfel
   namespace math
   {
 
-    template<unsigned short N,
-	     unsigned short M,
-	     typename T,
-	     typename Model1,
-	     typename Model2>
-    FactorizedKriging<N,M,T,Model1,Model2>::FactorizedKriging()
-    {}
-
-    template<unsigned short N,
-	     unsigned short M,
-	     typename T,
-	     typename Model1,
-	     typename Model2>
+    template<unsigned short N,unsigned short M,
+	     typename T,typename Model1,typename Model2>
     FactorizedKriging<N,M,T,Model1,Model2>::FactorizedKriging(const Model1& m1_,
 							      const Model2& m2_)
       : m1(m1_),m2(m2_)
     {}
 
-    template<unsigned short N,
-	     unsigned short M,
-	     typename T,
-	     typename Model1,
-	     typename Model2>
+    template<unsigned short N,unsigned short M,
+	     typename T,typename Model1,typename Model2>
     T
     FactorizedKriging<N,M,T,Model1,Model2>::operator()(const typename KrigingVariable<N,T>::type& xv1,
 						       const typename KrigingVariable<M,T>::type& xv2) const
@@ -71,11 +57,8 @@ namespace tfel
       return r;
     } // end of FactorizedKriging<N,M,T,Model>::operator()
 
-    template<unsigned short N,
-	     unsigned short M,
-	     typename T,
-	     typename Model1,
-	     typename Model2>
+    template<unsigned short N,unsigned short M,
+	     typename T,typename Model1,typename Model2>
     void
     FactorizedKriging<N,M,T,Model1,Model2>::addValue(const typename KrigingVariable<N,T>::type& xv1,
 						     const typename KrigingVariable<M,T>::type& xv2,
@@ -87,11 +70,8 @@ namespace tfel
       this->f.push_back(fv);
     }
 
-    template<unsigned short N,
-	     unsigned short M,
-	     typename T,
-	     typename Model1,
-	     typename Model2>
+    template<unsigned short N,unsigned short M,
+	     typename T,typename Model1,typename Model2>
     void
     FactorizedKriging<N,M,T,Model1,Model2>::buildInterpolation(void)
     {
@@ -137,6 +117,11 @@ namespace tfel
       LUSolve::exe(m,this->a);
 #endif
     }
+
+    template<unsigned short N,unsigned short M,
+	     typename T,typename Model1,typename Model2>
+    FactorizedKriging<N,M,T,Model1,Model2>::~FactorizedKriging() noexcept
+    {}
 
   } // end of namespace math
 

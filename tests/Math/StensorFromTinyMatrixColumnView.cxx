@@ -17,6 +17,7 @@
 #endif /* NDEBUG */
 
 #include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx"
 #include"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx"

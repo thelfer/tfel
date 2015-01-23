@@ -611,6 +611,8 @@ namespace mfront{
      */
     const std::set<std::string>&
     getRegistredVariableNames(void) const;
+    //! destructor
+    virtual ~BehaviourData() noexcept;
   private:
     /*!
      * structure used to handle a blocks of code
@@ -623,6 +625,10 @@ namespace mfront{
       typedef BehaviourData::Mode Mode;
       //! constructor
       CodeBlocksAggregator();
+      CodeBlocksAggregator(CodeBlocksAggregator&&) = default;
+      CodeBlocksAggregator(const CodeBlocksAggregator&) = default;
+      CodeBlocksAggregator& operator=(CodeBlocksAggregator&&) = default;
+      CodeBlocksAggregator& operator=(const CodeBlocksAggregator&) = default;
       /*!
      * setter
      * \param[in] c : code
@@ -649,8 +655,9 @@ namespace mfront{
       /*!
        * \return true if the code is mutable
        */
-      bool
-      isMutable(void) const;
+      bool isMutable(void) const;
+      //! destructor
+      ~CodeBlocksAggregator();
     private:
       /*! 
        * \brief update the code block

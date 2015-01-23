@@ -19,6 +19,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Expr.hxx"
 
 namespace tfel{
@@ -60,7 +61,7 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
 							     typename T2toST2Traits<T2toST2Type>::NumType>::cond));
-	const value_type zero(0);
+	constexpr value_type zero{0};
 	this->v[0] = 2*F[0];
 	this->v[1] = this->v[2] = this->v[3] = zero;
 	this->v[4] = 2*F[1];
@@ -116,8 +117,9 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
 							     typename T2toST2Traits<T2toST2Type>::NumType>::cond));
-	static const value_type sqrt2 = std::sqrt(value_type(2));
-	const value_type zero(0);
+	using tfel::math::constexpr_fct::sqrt;
+	constexpr value_type sqrt2 = sqrt(value_type{2});
+	constexpr value_type zero{0};
 	this->v[0]  = 2*F[0];
 	this->v[1]  = this->v[2] = this->v[3] = zero;
 	this->v[4]  = 2*F[4];
@@ -183,8 +185,9 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
 							     typename T2toST2Traits<T2toST2Type>::NumType>::cond));
-	static const value_type sqrt2 = std::sqrt(value_type(2));
-	const value_type zero(0);
+	using tfel::math::constexpr_fct::sqrt;
+	constexpr value_type sqrt2 = sqrt(value_type{2});
+	constexpr value_type zero{0};
 	this->v[0]  = 2*F[0];
 	this->v[1]  = this->v[2] = this->v[3] = zero;
 	this->v[4]  = 2*F[4];

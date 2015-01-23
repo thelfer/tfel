@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<ostream>
 #include"MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx"
 
 namespace mfront
@@ -25,23 +26,6 @@ namespace mfront
       c(s),
       cf(s2)
   {} // end of FiniteStrainBehaviourTangentOperatorConversion::FiniteStrainBehaviourTangentOperatorConversion
-
-  FiniteStrainBehaviourTangentOperatorConversion::FiniteStrainBehaviourTangentOperatorConversion(const FiniteStrainBehaviourTangentOperatorConversion& src)
-    : b(src.b),
-      e(src.e),
-      c(src.c),
-      cf(src.cf)
-  {} // end of FiniteStrainBehaviourTangentOperatorConversion::FiniteStrainBehaviourTangentOperatorConversion
-
-  FiniteStrainBehaviourTangentOperatorConversion&
-  FiniteStrainBehaviourTangentOperatorConversion::operator=(const FiniteStrainBehaviourTangentOperatorConversion& src)
-  {
-    this->b  = src.b;
-    this->e  = src.e;
-    this->c  = src.c;
-    this->cf = src.cf;
-    return *this;
-  } // end of FiniteStrainBehaviourTangentOperatorConversion::operator=
 
   FiniteStrainBehaviourTangentOperatorConversion::TangentOperatorFlag
   FiniteStrainBehaviourTangentOperatorConversion::from(void) const
@@ -120,5 +104,8 @@ namespace mfront
 				   "this->Dt = st2tost2<N,real>::convert((1/J)*tangentOperator_DTAU_DF*t2tot2<N,real>::tprd(transpose(this->F1))) - Cstar;"));
     return converters;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions
+  
+  FiniteStrainBehaviourTangentOperatorConversion::~FiniteStrainBehaviourTangentOperatorConversion() noexcept
+  {} // end of FiniteStrainBehaviourTangentOperatorConversion::~FiniteStrainBehaviourTangentOperatorConversion
 
 } // end of namespace mfront

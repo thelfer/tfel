@@ -43,7 +43,7 @@ namespace tfel{
        * \param p   : permutation vector
        * \param eps : numerical parameter to detect null pivot
        */
-      static TFEL_MATH_INLINE2 void
+      static void
       decomp(tmatrix<N,N,T>&,
 	     TinyPermutation<N>&,
 	     const T = 100*std::numeric_limits<T>::min());
@@ -55,7 +55,7 @@ namespace tfel{
        * \param b   : right member
        * \param eps : numerical parameter to detect null pivot
        */
-      static TFEL_MATH_INLINE2 void
+      static void
       back_substitute(const tmatrix<N,N,T>&,
 		      const TinyPermutation<N>&,
 		      tvector<N,T>&,

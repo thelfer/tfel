@@ -15,11 +15,9 @@
 #define _LIB_TFEL_MATH_T2TOT2_H_ 
 
 #include<cstddef>
-#include<cassert>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsInvalid.hxx"

@@ -1,8 +1,8 @@
 /*! 
- * \file  mfront/src/DrivingVariable.cxx
+ * \file  LawFunction.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 11 mai 2013
+ * \date   22 janv. 2015
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -11,19 +11,11 @@
  * project under specific licensing conditions. 
  */
 
-#include"MFront/DrivingVariable.hxx"
+#include"MFront/LawFunction.hxx"
 
-namespace mfront
-{
+namespace mfront{
 
-  DrivingVariable::~DrivingVariable() noexcept
-  {}
-
-  bool
-  DrivingVariable::operator < (const DrivingVariable& o) const
-  {
-    return this->name < o.name;
-  }
+  LawFunction::~LawFunction()
+  {} // end of LawFunction::~LawFunction
 
 } // end of namespace mfront
-

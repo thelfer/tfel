@@ -184,7 +184,7 @@ namespace mfront
     }
 #endif
     const char * const path = getenv("TFELHOME");
-    if(path!=0){
+    if(path!=nullptr){
       return handleSpace(path);
     }
     

@@ -25,10 +25,20 @@ namespace tfel{
 
     struct TestDocumentation
     {
+      TestDocumentation() = default;
+      TestDocumentation(const TestDocumentation&) = default;
+      TestDocumentation(TestDocumentation&&) = default;
+      TestDocumentation&
+      operator=(const TestDocumentation& ) = default;
+      TestDocumentation&
+      operator=(TestDocumentation&&) = default;
+
       void writeLaTexDescription(std::ostream&,
 				 const std::string&, 
 				 const std::string&) const;
-
+      //! destructor
+      ~TestDocumentation();
+      
       std::string name;
       std::string date;
       std::string author;
@@ -39,7 +49,6 @@ namespace tfel{
       std::map<std::string,std::string> descriptions;
       std::map<std::string,
 	       std::vector<std::string> > keys;
-  
     };
 
   } // end of namespace utilities

@@ -25,22 +25,9 @@ namespace tfel{
     TinyPermutation<N>::TinyPermutation()
       : is_identity(true)
     {
-      tfel::fsalgo::iota<N>::exe(this->begin(),0u);
+      using value_type = unsigned short;
+      tfel::fsalgo::iota<N>::exe(this->begin(),value_type(0u));
     }
-
-    template<unsigned short N>
-    const unsigned short&
-    TinyPermutation<N>::operator[](const unsigned short i) const
-    {
-      return tvector<N,unsigned short>::operator[](i);
-    } // end of TinyPermutation<N>::operator[]
-
-    template<unsigned short N>
-    const unsigned short&
-    TinyPermutation<N>::operator()(const unsigned short i) const
-    {
-      return tvector<N,unsigned short>::operator[](i);
-    } // end of TinyPermutation<N>::operator[]
       
     template<unsigned short N>
     void

@@ -439,16 +439,12 @@ namespace tfel{
     template<unsigned short N, typename T>
     T& 
     st2tost2<N,T>::operator()(const unsigned short i,const unsigned short j){
-      assert(i<StensorDimeToSize<N>::value);
-      assert(j<StensorDimeToSize<N>::value);
       return this->v[StensorDimeToSize<N>::value*i+j];
     }
 
     template<unsigned short N, typename T>
     const T& 
     st2tost2<N,T>::operator()(const unsigned short i,const unsigned short j) const{
-      assert(i<StensorDimeToSize<N>::value);
-      assert(j<StensorDimeToSize<N>::value);
       return this->v[StensorDimeToSize<N>::value*i+j];
     }
 

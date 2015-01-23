@@ -15,7 +15,6 @@
 #ifndef _LIB_TFEL_TINY_VECTOR_IXX_
 #define _LIB_TFEL_TINY_VECTOR_IXX_ 
 
-#include <cassert>
 #include <iterator>
 
 #include"TFEL/TypeTraits/BaseType.hxx"
@@ -169,7 +168,6 @@ namespace tfel{
     T& 
     tvector<N,T>::operator()(const unsigned short i) noexcept
     {
-      assert(i<N);
       return this->v[i];
     }
     

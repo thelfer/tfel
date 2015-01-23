@@ -1,8 +1,8 @@
 /*! 
- * \file  mfront/src/DrivingVariable.cxx
+ * \file  ModelData.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 11 mai 2013
+ * \date   21 janv. 2015
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -11,19 +11,15 @@
  * project under specific licensing conditions. 
  */
 
-#include"MFront/DrivingVariable.hxx"
+#include"MFront/ModelData.hxx"
 
 namespace mfront
 {
 
-  DrivingVariable::~DrivingVariable() noexcept
-  {}
+  ModelData::Function::~Function()
+  {} // end of ModelData::Function::~Function
 
-  bool
-  DrivingVariable::operator < (const DrivingVariable& o) const
-  {
-    return this->name < o.name;
-  }
+  ModelData::~ModelData()
+  {} // end of ModelData::~ModelData
 
 } // end of namespace mfront
-

@@ -15,7 +15,6 @@
 #define _LIB_TFEL_MATH_T2TOST2_H_ 
 
 #include<cstddef>
-#include<cassert>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"

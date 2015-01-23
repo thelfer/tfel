@@ -45,53 +45,46 @@ namespace tfel
        * Class holding a command line argument
        *
        * This class is used internally.
-       *
        * \note inheriting from std::string shall be forbidden in most
        *cases. Here its does not harm.
        */
       struct Argument
 	: public std::string
       {
-	/*!
-	 * Default constructor
-	 *
-	 * \param s : argument name
-	 */
-	Argument(const std::string& s)
+	//! \param s : argument name
+	Argument(std::string s)
+	  : std::string(std::forward<std::string>(s))
+	{}
+	//! \param s : argument name
+	Argument(const char* const s)
 	  : std::string(s)
 	{}
-	/*!
-	 * Default constructor
-	 *
-	 * \param s : argument name
-	 */
-	Argument(const char * const s)
-	  : std::string(s),
-	    isOptionSet(false)
-	{}
-	bool hasOption(void) const
+	Argument(Argument&&) = default;
+	Argument(const Argument&) = default;
+	Argument& operator=(Argument&&) = default;
+	Argument& operator=(const Argument&) = default;
+	//! \return true if an option was given for this argument
+	bool hasOption(void) const noexcept
 	{
 	  return this->isOptionSet;
 	}
 	/*!
-	 * set argument option
-	 *
+	 * \brief set argument option
 	 * \param o : option
 	 */
-	void
-	setOption(const std::string& o)
+	void setOption(const std::string& o)
 	{
 	  this->isOptionSet = true;
 	  this->option = o;
 	}
-	/*!
-	 * get argument option
-	 */
-	const std::string&
-	getOption() const
+	//! \return argument option
+	const std::string& getOption() const noexcept
 	{
 	  return option;
 	}
+	//! destructor
+	~Argument() noexcept
+	{}
       private:
 	//! argument option
 	std::string option;

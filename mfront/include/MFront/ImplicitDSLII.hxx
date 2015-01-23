@@ -34,6 +34,8 @@ namespace mfront
     static std::string 
     getDescription(void);
 
+    virtual ~ImplicitDSLII() noexcept;
+
   }; // end of struct ImplicitDSLII
 
 } // end of namespace mfront

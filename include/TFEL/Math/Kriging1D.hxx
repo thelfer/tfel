@@ -39,7 +39,7 @@ namespace tfel
       double
       operator()(const double) const;
       
-      ~Kriging1D();
+      Kriging1D() = default;
 
     private:
 

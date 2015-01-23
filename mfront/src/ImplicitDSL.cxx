@@ -45,5 +45,8 @@ namespace mfront{
     return "this parser provides a generic integrator based on a theta method.";
   } // end of ImplicitDSL::getDescription
 
+  ImplicitDSL::~ImplicitDSL()
+  {}
+
 } // end of namespace mfront  
 

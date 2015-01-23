@@ -20,38 +20,38 @@ namespace tfel{
 
   namespace utilities {
 
-static void
-insert(std::map<std::string,std::map<std::string,std::string> >& m,
-       const std::string& n1)
-{
-  using namespace std;
-  typedef map<string,string>::value_type MVType;
-  if(!m["english"].insert(MVType(n1,n1)).second){
-    string msg("insert : ");
-    msg += "category '"+n1+"' already declared";
-    throw(runtime_error(msg));
-  }
-} // end of insert
+    static void
+    insert(std::map<std::string,std::map<std::string,std::string> >& m,
+	   const std::string& n1)
+    {
+      using namespace std;
+      typedef map<string,string>::value_type MVType;
+      if(!m["english"].insert(MVType(n1,n1)).second){
+	string msg("insert : ");
+	msg += "category '"+n1+"' already declared";
+	throw(runtime_error(msg));
+      }
+    } // end of insert
 
-static void
-insert(std::map<std::string,std::map<std::string,std::string> >& m,
-       const std::string& n1,
-       const std::string& n2,
-       const std::string& l)
-{
-  using namespace std;
-  typedef map<string,string>::value_type MVType;
-  if(m["english"].find(n1)==m["english"].end()){
-    string msg("insert : ");
-    msg += "category '"+n1+"' undeclared";
-    throw(runtime_error(msg));
-  }
-  if(!m[l].insert(MVType(n1,n2)).second){
-    string msg("insert : ");
-    msg += "category '"+n1+"' already declared";
-    throw(runtime_error(msg));
-  }
-} // end of insert
+    static void
+    insert(std::map<std::string,std::map<std::string,std::string> >& m,
+	   const std::string& n1,
+	   const std::string& n2,
+	   const std::string& l)
+    {
+      using namespace std;
+      typedef map<string,string>::value_type MVType;
+      if(m["english"].find(n1)==m["english"].end()){
+	string msg("insert : ");
+	msg += "category '"+n1+"' undeclared";
+	throw(runtime_error(msg));
+      }
+      if(!m[l].insert(MVType(n1,n2)).second){
+	string msg("insert : ");
+	msg += "category '"+n1+"' already declared";
+	throw(runtime_error(msg));
+      }
+    } // end of insert
 
     void
     ConfigParser::execute(std::map<std::string,std::map<std::string,std::string> >& m,
@@ -108,6 +108,9 @@ insert(std::map<std::string,std::map<std::string,std::string> >& m,
 	throw(runtime_error(msg.str()));
       }
     } // end of ConfigParser::execute
+
+    ConfigParser::~ConfigParser() noexcept
+    {} // end of ConfigParser::~ConfigParser
 
   } // end of namespace utilities
 

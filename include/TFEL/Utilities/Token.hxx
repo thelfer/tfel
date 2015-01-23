@@ -33,20 +33,10 @@ namespace tfel{
       enum TokenFlag{Standard,Comment,DoxygenComment,
 		     DoxygenBackwardComment,
 		     String,Char,Preprocessor};
-      //! line number
-      unsigned int line;
-      //! string holded by the token
-      std::string value;
-      //! comment
-      std::string comment;
-      //! type of the token
-      TokenFlag flag;
-
       /*!
        * \brief default constructor
        */
       Token();
-
       /*!
        * \brief constructor
        * \param line_  : line number
@@ -57,20 +47,19 @@ namespace tfel{
 	    const std::string&,
 	    const TokenFlag = Standard);
 
-      /*!
-       * \brief copy constructor
-       * \param src : token to be copied
-       */
-      Token(const Token&);
-
-      /*!
-       * \brief assignement operator
-       * \param src : token to be assigned
-       * \return this token
-       */
-      Token&
-      operator=(const Token&);
-
+      Token(const Token&) = default;
+      Token(Token&&) = default;
+      Token& operator=(const Token&) = default;
+      Token& operator=(Token&&) = default;
+      ~Token() noexcept;
+      //! line number
+      unsigned int line;
+      //! string holded by the token
+      std::string value;
+      //! comment
+      std::string comment;
+      //! type of the token
+      TokenFlag flag;
     }; // end of struct Token
 
   } // end of namespace utilities

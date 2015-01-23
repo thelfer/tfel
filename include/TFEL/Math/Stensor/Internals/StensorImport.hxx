@@ -16,11 +16,12 @@
 #define _LIB_TFEL_STENSORIMPORT_H_ 
 
 #include<cmath>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<type_traits>
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace tfel{
 
@@ -52,7 +53,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src){
 	  using real = typename tfel::typetraits::BaseType<T>::type;
-	  static const real CSTE_1_SQRT2 = real(1)/std::sqrt(real(2));
+	  using tfel::math::constexpr_fct::sqrt;
+	  constexpr real CSTE_1_SQRT2 = real{1}/sqrt(real{2});
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
@@ -66,7 +68,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2 * const src){
 	  using real = typename tfel::typetraits::BaseType<T>::type;
-	  static const real CSTE_1_SQRT2 = real(1)/std::sqrt(real(2));
+	  using tfel::math::constexpr_fct::sqrt;
+	  constexpr real CSTE_1_SQRT2 = real{1}/sqrt(real{2});
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
@@ -96,7 +99,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src){
 	  using real = typename tfel::typetraits::BaseType<T>::type;
-	  static const real CSTE_SQRT2 = std::sqrt(real(2));
+	  using tfel::math::constexpr_fct::sqrt;
+	  constexpr real CSTE_SQRT2 = sqrt(real{2});
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
@@ -110,7 +114,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,void>::type
 	exe(T* const target, const T2* const src){
 	  using real = typename tfel::typetraits::BaseType<T>::type;
-	  static const real CSTE_SQRT2 = std::sqrt(real(2));
+	  using tfel::math::constexpr_fct::sqrt;
+	  constexpr real CSTE_SQRT2 = sqrt(real{2});
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];

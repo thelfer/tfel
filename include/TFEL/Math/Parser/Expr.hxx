@@ -19,9 +19,8 @@
 #include<set>
 #include<vector>
 #include<string>
-#include<stdexcept>
-
 #include<memory>
+#include<stdexcept>
 
 namespace tfel
 {
@@ -53,12 +52,12 @@ namespace tfel
 	virtual ~Expr();
       }; // end of struct Expr
 
-      /*!
-       * a simple helper function for checkCyclicDependency
-       */
-      void
-      mergeVariablesNames(std::vector<std::string>&,
-			  const std::vector<std::string>&);
+      //! a simple alias
+      using ExprPtr =  std::shared_ptr<Expr>;
+
+      //!a simple helper function for checkCyclicDependency
+      void mergeVariablesNames(std::vector<std::string>&,
+			       const std::vector<std::string>&);
 
     } // end of namespace parser
 

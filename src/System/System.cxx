@@ -324,7 +324,7 @@ namespace tfel
 				     errno);
       }
       struct dirent *p;
-      while((p=readdir(dir))!=NULL){
+      while((p=readdir(dir))!=nullptr){
 	if((strcmp(p->d_name,".")!=0)&&
 	   (strcmp(p->d_name,"..")!=0)){
 	  o.push_back(p->d_name);

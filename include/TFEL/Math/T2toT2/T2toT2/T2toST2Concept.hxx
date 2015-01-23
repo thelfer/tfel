@@ -14,7 +14,7 @@
 #ifndef _TFEL_MATH_T2TOST2_CONCEPT_LIB_
 #define _TFEL_MATH_T2TOST2_CONCEPT_LIB_ 1
 
-#include <ostream>
+#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"

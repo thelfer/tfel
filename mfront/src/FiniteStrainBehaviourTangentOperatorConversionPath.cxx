@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<ostream>
 #include<algorithm>
 #include"MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx"
 

@@ -94,82 +94,84 @@ namespace tfel
 	virtual ~LogicalExpr();
       }; // end of struct LogicalExpr
 
+      //! a simple alias
+      using LogicalExprPtr = std::shared_ptr<LogicalExpr>;
+
       template<typename Op>
       struct TFEL_VISIBILITY_LOCAL LogicalOperation
 	: public LogicalExpr
       {
-	LogicalOperation(const std::shared_ptr<Expr>,
-			 const std::shared_ptr<Expr>);
+	LogicalOperation(const ExprPtr,
+			 const ExprPtr);
 	bool
 	getValue(void) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	std::shared_ptr<LogicalExpr>
+	LogicalExprPtr
 	resolveDependencies(const std::vector<double>&) const;
-	std::shared_ptr<LogicalExpr>
+	LogicalExprPtr
 	clone(const std::vector<double>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
-	std::shared_ptr<LogicalExpr>
+	LogicalExprPtr
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const;
 	~LogicalOperation();
       private:
-	const std::shared_ptr<Expr> a;
-	const std::shared_ptr<Expr> b;
+	const ExprPtr a;
+	const ExprPtr b;
       }; // end of struct LogicalOperation
 
       template<typename Op>
       struct TFEL_VISIBILITY_LOCAL LogicalBinaryOperation
 	: public LogicalExpr
       {
-	LogicalBinaryOperation(const std::shared_ptr<LogicalExpr>,
-			       const std::shared_ptr<LogicalExpr>);
+	LogicalBinaryOperation(LogicalExprPtr,
+			       LogicalExprPtr);
 	bool
 	getValue(void) const;
 	void
 	checkCyclicDependency(std::vector<std::string>&) const;
-	std::shared_ptr<LogicalExpr>
+	LogicalExprPtr
 	resolveDependencies(const std::vector<double>&) const;
-	std::shared_ptr<LogicalExpr>
+	LogicalExprPtr
 	clone(const std::vector<double>&) const;
 	void
 	getParametersNames(std::set<std::string>&) const;
-	std::shared_ptr<LogicalExpr>
+	LogicalExprPtr
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const;
 	~LogicalBinaryOperation();
       private:
-	const std::shared_ptr<LogicalExpr> a;
-	const std::shared_ptr<LogicalExpr> b;
+	LogicalExprPtr a;
+	LogicalExprPtr b;
       }; // end of struct LogicalBinaryOperation
 
       struct TFEL_VISIBILITY_LOCAL NegLogicalExpression
 	: public LogicalExpr
       {
-	NegLogicalExpression(const std::shared_ptr<LogicalExpr>);
-	bool
-	getValue(void) const;
-	void
-	checkCyclicDependency(std::vector<std::string>&) const;
-	std::shared_ptr<LogicalExpr>
-	resolveDependencies(const std::vector<double>&) const;
-	std::shared_ptr<LogicalExpr>
-	clone(const std::vector<double>&) const;
-	void
-	getParametersNames(std::set<std::string>&) const;
-	std::shared_ptr<LogicalExpr>
+	NegLogicalExpression(LogicalExprPtr);
+	virtual bool getValue(void) const final;
+	virtual void
+	checkCyclicDependency(std::vector<std::string>&) const final;
+	virtual LogicalExprPtr
+	resolveDependencies(const std::vector<double>&) const final;
+	virtual LogicalExprPtr
+	clone(const std::vector<double>&) const final;
+	virtual void
+	getParametersNames(std::set<std::string>&) const final;
+	virtual LogicalExprPtr
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
-							std::vector<double>::size_type>&) const;
+							std::vector<double>::size_type>&) const final;
 	~NegLogicalExpression();
       private:
-	const std::shared_ptr<LogicalExpr> a;
+	LogicalExprPtr a;
       }; // end of struct LogicalBinaryOperation
 
     } // end of namespace parser

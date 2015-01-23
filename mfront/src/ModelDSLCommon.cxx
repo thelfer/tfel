@@ -1585,4 +1585,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::appendToSources
 
+  ModelDSLCommon::~ModelDSLCommon()
+  {} // end of ModelDSLCommon::~ModelDSLCommon
+
 } // end of mfront

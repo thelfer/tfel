@@ -15,7 +15,6 @@
 #define _LIB_TFEL_ST2TOST2_H_ 
 
 #include<cstddef>
-#include<cassert>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"

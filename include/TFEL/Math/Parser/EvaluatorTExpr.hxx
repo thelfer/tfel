@@ -35,14 +35,12 @@ namespace tfel
     
     struct Evaluator::TExpr
     {
-      virtual std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void) = 0;
-      virtual
-      void reduce(void) = 0;
-      virtual bool
-      isOperator(void) const =0;
-      virtual std::string
-      getClassName() const = 0;
+      TExpr() = default;
+      TExpr(TExpr&&) = default;
+      TExpr(const TExpr&) = default;
+      virtual parser::ExprPtr analyse(void) = 0;
+      virtual void reduce(void) = 0;
+      virtual bool isOperator(void) const =0;
       virtual ~TExpr();
     }; // end of Evaluator::TExpr
   
@@ -50,15 +48,12 @@ namespace tfel
       : public Evaluator::TExpr
     {
       TNegation(std::shared_ptr<Evaluator::TExpr>);
-      bool
-      isOperator(void) const;
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
-      std::string
-      getClassName(void) const;
-      void
-      reduce(void);
-      virtual ~TNegation();
+      TNegation(TNegation&&) = default;
+      TNegation(const TNegation&) = default;
+      virtual bool isOperator(void) const final;
+      virtual parser::ExprPtr analyse(void) final;
+      virtual void reduce(void) final;
+      virtual ~TNegation() noexcept;
     private:
       std::shared_ptr<Evaluator::TExpr> expr;
     }; // end of struct Evaluator::TNegation
@@ -67,16 +62,13 @@ namespace tfel
       : public Evaluator::TExpr
     {
       TOperator(const std::string&);
-      std::string
-      getOperatorType(void) const;
-      bool
-      isOperator(void) const;
-      void
-      reduce(void);
-      std::string
-      getClassName(void) const;
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
+      TOperator(TOperator&&) = default;
+      TOperator(const TOperator&) = default;
+      virtual bool isOperator(void) const final;
+      virtual void reduce(void) final;
+      virtual parser::ExprPtr analyse(void) final;
+      std::string getOperatorType(void) const;
+      virtual ~TOperator() noexcept;
     private:
       const std::string type;
     }; // end of struct Evaluator::TOperator
@@ -87,14 +79,9 @@ namespace tfel
       TBinaryOperation(std::shared_ptr<Evaluator::TExpr>,
 		       const std::shared_ptr<TOperator>,
 		       std::shared_ptr<Evaluator::TExpr>);
-      bool
-      isOperator(void) const;
-      std::string
-      getClassName(void) const;
-      void
-      reduce(void);
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
+      virtual bool isOperator(void) const final;
+      virtual void reduce(void) final;
+      virtual parser::ExprPtr analyse(void) final;
       virtual ~TBinaryOperation();
     private:
       std::shared_ptr<Evaluator::TExpr> a;
@@ -104,11 +91,8 @@ namespace tfel
 
     struct Evaluator::TLogicalExpr
     {
-      virtual void
-      reduce(void) = 0;
-      virtual
-      std::shared_ptr<tfel::math::parser::LogicalExpr>
-      analyse(void) = 0;
+      virtual void reduce(void) = 0;
+      virtual parser::LogicalExprPtr analyse(void) = 0;
       virtual ~TLogicalExpr();
     }; // end of struct Evaluator::TLogicalExpr 
 
@@ -116,10 +100,8 @@ namespace tfel
       : public Evaluator::TLogicalExpr
     {
       TNegLogicalExpr(const std::shared_ptr<Evaluator::TLogicalExpr >);
-      void
-      reduce(void);
-      std::shared_ptr<tfel::math::parser::LogicalExpr>
-      analyse(void);
+      virtual void reduce(void) final;
+      virtual parser::LogicalExprPtr analyse(void) final;
       virtual ~TNegLogicalExpr();
     private:
       std::shared_ptr<Evaluator::TLogicalExpr > e;
@@ -131,10 +113,9 @@ namespace tfel
     {
       TLogicalOperation(std::shared_ptr<Evaluator::TExpr>,
 			std::shared_ptr<Evaluator::TExpr>);
-      void
-      reduce(void);
-      std::shared_ptr<tfel::math::parser::LogicalExpr>
-      analyse(void);
+      virtual void reduce(void) final;
+      virtual parser::LogicalExprPtr analyse(void) final;
+      virtual ~TLogicalOperation() noexcept;
     private:
       std::shared_ptr<Evaluator::TExpr> a;
       std::shared_ptr<Evaluator::TExpr> b;
@@ -146,10 +127,9 @@ namespace tfel
     {
       TLogicalBinaryOperation(std::shared_ptr<Evaluator::TLogicalExpr>,
 			      std::shared_ptr<Evaluator::TLogicalExpr>);
-      void
-      reduce(void);
-      std::shared_ptr<tfel::math::parser::LogicalExpr>
-      analyse(void);
+      virtual void reduce(void) final;
+      virtual parser::LogicalExprPtr analyse(void)  final;
+      virtual ~TLogicalBinaryOperation() noexcept;
     private:
       std::shared_ptr<Evaluator::TLogicalExpr> a;
       std::shared_ptr<Evaluator::TLogicalExpr> b;
@@ -161,14 +141,9 @@ namespace tfel
       TConditionalExpr(std::shared_ptr<Evaluator::TLogicalExpr>,
 		       std::shared_ptr<Evaluator::TExpr>,
 		       std::shared_ptr<Evaluator::TExpr>);
-      bool
-      isOperator(void) const;
-      std::string
-      getClassName(void) const;
-      void
-      reduce(void);
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
+      virtual bool isOperator(void) const final;
+      virtual void reduce(void) final;
+      virtual parser::ExprPtr analyse(void) final;
       virtual ~TConditionalExpr();
     private:
       std::shared_ptr<Evaluator::TLogicalExpr> c;
@@ -183,13 +158,9 @@ namespace tfel
 		Evaluator &);
       TVariable(const std::vector<double>::size_type,
 		std::vector<double>&);
-      bool
-      isOperator(void) const;
-      std::string
-      getClassName(void) const;
-      void reduce(void);
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
+      virtual bool isOperator(void) const final;
+      virtual void reduce(void) final;
+      virtual parser::ExprPtr analyse(void) final;
     private:
       std::vector<double>& vars;
       std::vector<double>::size_type pos;
@@ -198,15 +169,10 @@ namespace tfel
     struct Evaluator::TGroup
       : public Evaluator::TExpr
     {
-      bool
-      isOperator(void) const;
-      void
-      add(std::shared_ptr<Evaluator::TExpr>const);      void
-      reduce(void);
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
-      std::string
-      getClassName(void) const;
+      void add(std::shared_ptr<Evaluator::TExpr>const);
+      virtual bool isOperator(void) const final;
+      virtual void reduce(void) final;
+      virtual parser::ExprPtr  analyse(void) final;
       virtual ~TGroup();
     private:
       void
@@ -220,14 +186,9 @@ namespace tfel
     {
       TFunction(Evaluator::FunctionGenerator,
 		std::shared_ptr<Evaluator::TExpr>);
-      bool
-      isOperator(void) const;
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
-      void
-      reduce(void);
-      std::string
-      getClassName(void) const;
+      virtual bool isOperator(void) const final;
+      virtual parser::ExprPtr analyse(void) final;
+      virtual void reduce(void) final;
       virtual ~TFunction();
     private:
       Evaluator::FunctionGenerator f;
@@ -240,14 +201,9 @@ namespace tfel
       TBinaryFunction(Evaluator::BinaryFunctionGenerator,
 		      std::shared_ptr<Evaluator::TExpr>,
 		      std::shared_ptr<Evaluator::TExpr>);
-      bool
-      isOperator(void) const;
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
-      void
-      reduce(void);
-      std::string
-      getClassName(void) const;
+      virtual bool isOperator(void) const final;
+      virtual parser::ExprPtr analyse(void) final;
+      virtual void reduce(void) final;
       virtual ~TBinaryFunction();
     private:
       Evaluator::BinaryFunctionGenerator f;
@@ -261,14 +217,9 @@ namespace tfel
       TExternalOperator(const Evaluator::ExternalFunctionGenerator,
 			const std::vector<std::string>&,
 			std::vector<std::shared_ptr<Evaluator::TExpr> >&);
-      bool
-      isOperator(void) const;
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
-      void
-      reduce(void);
-      std::string
-      getClassName(void) const;
+      virtual bool isOperator(void) const final;
+      virtual parser::ExprPtr analyse(void) final;
+      virtual void reduce(void) final;
       virtual ~TExternalOperator();
     private:
       Evaluator::ExternalFunctionGenerator f;
@@ -280,14 +231,9 @@ namespace tfel
       : public Evaluator::TExpr
     {
       TNumber(const double v);
-      bool
-      isOperator(void) const;
-      std::string
-      getClassName(void) const;
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
-      void
-      reduce(void);
+      virtual bool isOperator(void) const final;
+      virtual parser::ExprPtr analyse(void) final;
+      virtual void reduce(void) final;
     private:
       const double value;
     }; // end of struct Evaluator::TNumber
@@ -298,14 +244,10 @@ namespace tfel
       TExternalFunctionExpr(const std::string&,
 			    std::vector<std::shared_ptr<Evaluator::TExpr> >&,
 			    std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
-      bool
-      isOperator(void) const;
-      std::string
-      getClassName(void) const;
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
-      void
-      reduce(void);
+      virtual bool isOperator(void) const final;
+      virtual parser::ExprPtr analyse(void) final;
+      virtual void reduce(void);
+      virtual ~TExternalFunctionExpr() noexcept;
     private:
       std::string name;
       std::vector<std::shared_ptr<Evaluator::TExpr> > args;
@@ -318,14 +260,10 @@ namespace tfel
       TDifferentiatedFunctionExpr(std::shared_ptr<ExternalFunction>,
 				  std::vector<std::shared_ptr<Evaluator::TExpr> >&,
 				  const std::vector<std::vector<double>::size_type>&);
-      bool
-      isOperator(void) const;
-      std::string
-      getClassName(void) const;
-      std::shared_ptr<tfel::math::parser::Expr>
-      analyse(void);
-      void
-      reduce(void);
+      virtual bool isOperator(void) const final;
+      virtual parser::ExprPtr analyse(void) final;
+      virtual void reduce(void) final;
+      virtual ~TDifferentiatedFunctionExpr() noexcept final;
     private:
       std::shared_ptr<ExternalFunction> f;
       std::vector<std::shared_ptr<Evaluator::TExpr> > args;

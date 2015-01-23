@@ -40,6 +40,9 @@ namespace mfront
     return p->second;
   }
 
+  MarkdownBehaviourAnalyser::Data::~Data() noexcept
+  {} // end of MarkdownBehaviourAnalyser::Data::~Data
+
   std::string
   MarkdownBehaviourAnalyser::getName(void)
   {

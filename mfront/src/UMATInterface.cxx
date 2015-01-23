@@ -495,7 +495,7 @@ namespace mfront{
 
   std::string
   UMATInterface::treatStensor(const Hypothesis h,
-				    const std::string& s)
+			      const std::string& s)
   {
     using namespace std;
     string res;

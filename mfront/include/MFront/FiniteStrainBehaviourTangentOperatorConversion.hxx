@@ -28,40 +28,28 @@ namespace mfront
   {
     //! a simple alias
     typedef tfel::material::FiniteStrainBehaviourTangentOperatorBase::Flag TangentOperatorFlag;
-    /*!
-     * \return : the list of all available conversions
-     */
+    //! \return : the list of all available conversions
     static std::vector<FiniteStrainBehaviourTangentOperatorConversion>
     getAvailableFiniteStrainBehaviourTangentOperatorConversions(void);
-    /*!
-     * copy constructor
-     * \param[in] src : copied object
-     */
-    FiniteStrainBehaviourTangentOperatorConversion(const FiniteStrainBehaviourTangentOperatorConversion&);
-    /*!
-     * assignement operator
-     * \param[in] src : assigned object
-     */
+    /* copy and move constructors/assignement operators */
+    FiniteStrainBehaviourTangentOperatorConversion(const FiniteStrainBehaviourTangentOperatorConversion&) = default;
+    FiniteStrainBehaviourTangentOperatorConversion(FiniteStrainBehaviourTangentOperatorConversion&&) = default;
     FiniteStrainBehaviourTangentOperatorConversion&
-    operator=(const FiniteStrainBehaviourTangentOperatorConversion&);
-    /*!
-     * \return the conversion starting point
-     */
+    operator=(const FiniteStrainBehaviourTangentOperatorConversion&) = default;
+    FiniteStrainBehaviourTangentOperatorConversion&
+    operator=(FiniteStrainBehaviourTangentOperatorConversion&&) = default;
+    //! \return the conversion starting point
     TangentOperatorFlag from(void) const;
-    /*!
-     * \return the conversion result point
-     */
+    //! \return the conversion result point
     TangentOperatorFlag to(void) const;
-    /*!
-     * \return ther intermediate conversion code
-     */
+    //! \return ther intermediate conversion code
     const std::string&
     getIntermediateConversion(void) const;
-    /*!
-     * \return ther intermediate conversion code
-     */
+    //! \return ther intermediate conversion code
     const std::string&
     getFinalConversion(void) const;
+    //! destrutor
+    ~FiniteStrainBehaviourTangentOperatorConversion() noexcept;
   protected:
     /*!
      * \param[in] f  : conversion starting point

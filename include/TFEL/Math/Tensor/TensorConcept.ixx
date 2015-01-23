@@ -15,6 +15,7 @@
 #include"TFEL/FSAlgorithm/transform.hxx"
 #include"TFEL/FSAlgorithm/copy.hxx"
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/Forward/tensor.hxx"
@@ -206,10 +207,9 @@ namespace tfel{
       stensor<2u,typename TensorTraits<T>::NumType>
       >::type
     syme(const T& t){
-      using namespace std;
       typedef typename TensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2))/real(2);
+      constexpr real cste = constexpr_fct::sqrt(real(2))/real(2);
       stensor<2u,NumType> s;
       s[0] = t[0];
       s[1] = t[1];
@@ -226,10 +226,9 @@ namespace tfel{
       >::type
     syme(const T& t)
     {
-      using namespace std;
       typedef typename TensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2))/real(2);
+      constexpr real cste = constexpr_fct::sqrt(real(2))/real(2);
       stensor<3u,NumType> s;
       s[0] = t[0];
       s[1] = t[1];
@@ -248,7 +247,6 @@ namespace tfel{
       stensor<1u,typename TensorTraits<T>::NumType> >::type
     computeRightCauchyGreenTensor(const T& t)
     {
-      using namespace std;
       typedef typename TensorTraits<T>::NumType real;
       stensor<1u,real> r;
       r[0] = t[0]*t[0];
@@ -265,9 +263,8 @@ namespace tfel{
       stensor<2u,typename TensorTraits<T>::NumType>
       >::type
     computeRightCauchyGreenTensor(const T& t){
-      using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<2u,real> r;
       r[0] = t[0]*t[0]+t[4]*t[4];
       r[1] = t[1]*t[1]+t[3]*t[3];
@@ -285,9 +282,8 @@ namespace tfel{
       >::type
     computeRightCauchyGreenTensor(const T& t)
     {
-      using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<3u,real> r;
       r[0] = t[0]*t[0]+t[4]*t[4]+t[6]*t[6];
       r[1] = t[1]*t[1]+t[3]*t[3]+t[8]*t[8];
@@ -306,7 +302,6 @@ namespace tfel{
       stensor<1u,typename TensorTraits<T>::NumType> >::type
     computeLeftCauchyGreenTensor(const T& t)
     {
-      using namespace std;
       typedef typename TensorTraits<T>::NumType real;
       stensor<1u,real> r;
       r[0] = t[0]*t[0];
@@ -323,9 +318,8 @@ namespace tfel{
       stensor<2u,typename TensorTraits<T>::NumType>
       >::type
     computeLeftCauchyGreenTensor(const T& t){
-      using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<2u,real> r;
       r[0] = t[0]*t[0]+t[3]*t[3];
       r[1] = t[1]*t[1]+t[4]*t[4];
@@ -343,9 +337,8 @@ namespace tfel{
       >::type
     computeLeftCauchyGreenTensor(const T& t)
     {
-      using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<3u,real> r;
       r[0] = t[0]*t[0]+t[3]*t[3]+t[5]*t[5];
       r[1] = t[1]*t[1]+t[4]*t[4]+t[7]*t[7];
@@ -364,7 +357,6 @@ namespace tfel{
       stensor<1u,typename TensorTraits<T>::NumType> >::type
     computeGreenLagrangeTensor(const T& t)
     {
-      using namespace std;
       typedef typename TensorTraits<T>::NumType real;
       stensor<1u,real> r;
       r[0] = (t[0]*t[0]-1)/2;
@@ -381,9 +373,8 @@ namespace tfel{
       stensor<2u,typename TensorTraits<T>::NumType>
       >::type
     computeGreenLagrangeTensor(const T& t){
-      using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2))/2;
+      constexpr real cste = constexpr_fct::sqrt(real(2))/2;
       stensor<2u,real> r;
       r[0] = (t[0]*t[0]+t[4]*t[4]-1)/2;
       r[1] = (t[1]*t[1]+t[3]*t[3]-1)/2;
@@ -401,9 +392,8 @@ namespace tfel{
       >::type
     computeGreenLagrangeTensor(const T& t)
     {
-      using namespace std;
       typedef typename TensorTraits<T>::NumType real;
-      static const real cste = sqrt(real(2))/2;
+      constexpr real cste = constexpr_fct::sqrt(real(2))/2;
       stensor<3u,real> r;
       r[0] = (t[0]*t[0]+t[4]*t[4]+t[6]*t[6]-1)/2;
       r[1] = (t[1]*t[1]+t[3]*t[3]+t[8]*t[8]-1)/2;
@@ -448,7 +438,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<2u,NumType> s;
       s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
@@ -471,7 +461,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<3u,NumType> s;
       s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
@@ -516,7 +506,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<2u,NumType> s;
       s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
@@ -539,7 +529,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<3u,NumType> s;
       s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
       s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
@@ -584,7 +574,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       const tensor<2u,typename TensorTraits<T2>::NumType> iF = invert(F);
       const real J = det(F);
       stensor<2u,stress> p;
@@ -609,7 +599,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
-      static const real cste  = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       const tensor<3u,typename TensorTraits<T2>::NumType> iF = invert(F);
       const real J = det(F);
       stensor<3u,stress> p;
@@ -658,7 +648,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<2u,stress> s;
       const real inv_J = 1/det(F);
       s[0] = (p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*inv_J;
@@ -682,7 +672,7 @@ namespace tfel{
     {
       typedef typename StensorTraits<T>::NumType stress;
       typedef typename tfel::typetraits::BaseType<stress>::type real;
-      static const real cste = sqrt(real(2));
+      constexpr real cste = constexpr_fct::sqrt(real(2));
       stensor<3u,stress> s;
       const real inv_J = 1/det(F);
       s[0] = (p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*inv_J;

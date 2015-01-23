@@ -58,14 +58,13 @@ namespace mfront
      */
     struct MTestCurrentState
     {
-      /*!
-       * default constructor
-       */
+      //! default constructor
       MTestCurrentState();
-      /*!
-       * copy constructor
-       */
-      MTestCurrentState(const MTestCurrentState&);
+      //! copy constructor
+      MTestCurrentState(const MTestCurrentState&) = default;
+      MTestCurrentState(MTestCurrentState&&)      = default;
+      //! destructor
+      ~MTestCurrentState() noexcept;
       // vector of unknows at 
       // the beginning of the
       // previous time step.
@@ -126,7 +125,9 @@ namespace mfront
       real Tref;
     private:
       MTestCurrentState&
-      operator=(const MTestCurrentState&);
+      operator=(const MTestCurrentState&) = delete;
+      MTestCurrentState&
+      operator=(MTestCurrentState&&) = delete;
     };
     /*!
      * structure where usefull variables for the computations are
@@ -137,6 +138,7 @@ namespace mfront
     struct MTestWorkSpace
     {
       MTestWorkSpace();
+      ~MTestWorkSpace() noexcept;
       // stiffness tensor
       tfel::math::matrix<real> Kt;
       // numertical stiffness tensor
@@ -169,9 +171,9 @@ namespace mfront
       bool first;
       real a;
     private:
-      MTestWorkSpace(const MTestWorkSpace&);
+      MTestWorkSpace(const MTestWorkSpace&) = delete;
       MTestWorkSpace&
-      operator=(const MTestWorkSpace&);
+      operator=(const MTestWorkSpace&) = delete;
     };
     /*!
      * \brief possible algorithms used for global convergence to

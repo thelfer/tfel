@@ -18,6 +18,9 @@
 
 namespace mfront{
 
+  MTestFileGeneratorBase::InternalStateVariable::~InternalStateVariable()
+  {} // end of MTestFileGeneratorBase::InternalStateVariable::~InternalStateVariable
+
   unsigned int
   MTestFileGeneratorBase::getIdentifier(void)
   {

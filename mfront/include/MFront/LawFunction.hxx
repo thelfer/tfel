@@ -14,6 +14,7 @@
 #ifndef _LIB_LAWFUNCTION_H_
 #define _LIB_LAWFUNCTION_H_ 
 
+#include<string>
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace mfront
@@ -21,6 +22,12 @@ namespace mfront
 
   struct TFEL_VISIBILITY_EXPORT LawFunction
   {
+    LawFunction() = default;
+    LawFunction(LawFunction&&) = default;
+    LawFunction(const LawFunction&) = default;
+    LawFunction& operator=(LawFunction&&) = default;
+    LawFunction& operator=(const LawFunction&) = default;
+    ~LawFunction();
     std::string body;
     unsigned int line;
     bool modified;

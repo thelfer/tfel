@@ -32,6 +32,7 @@ namespace tfel
 
     namespace parser
     {
+
       struct TFEL_VISIBILITY_LOCAL IntegerExpr
       {
 	virtual int getValue(void) const = 0;
@@ -39,7 +40,10 @@ namespace tfel
 	clone(const std::vector<int>&) const = 0;
 	virtual ~IntegerExpr();
       }; // end of struct IntegerExpr
-    }
+      //! a simple alias
+      using IntegerExprPtr =  std::shared_ptr<IntegerExpr>;
+
+    } // end of namespace parser
 
     /*!
      * class in charge of handling a function defined by a string.

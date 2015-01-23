@@ -106,63 +106,50 @@ namespace mfront
   getStensorSize(const unsigned short d)
   {
     using namespace std;
+    unsigned short s = 0u;
     if(d==1){
-      return 3;
+      s=3;
     } else if(d==2){
-      return 4;
+      s=4;
     } else if(d==3){
-      return 6;
+      s=6;
+    } else {
+      string msg("mfront::getStensorSize : ");
+      msg += "";
+      throw(runtime_error(msg));
     }
-    string msg("mfront::getStensorSize : ");
-    msg += "";
-    throw(runtime_error(msg));
-    return 0;
+    return s;
   }
 
   static unsigned short
   getTensorSize(const unsigned short d)
   {
     using namespace std;
+    unsigned short s = 0u;
     if(d==1){
-      return 3;
+      s=3;
     } else if(d==2){
-      return 5;
+      s=5;
     } else if(d==3){
-      return 9;
+      s=9;
+    } else {
+      string msg("mfront::getTensorSize : ");
+      msg += "";
+      throw(runtime_error(msg));
     }
-    string msg("mfront::getTensorSize : ");
-    msg += "";
-    throw(runtime_error(msg));
-    return 0;
+    return s;
   }
 
   MTest::MTestCurrentState::MTestCurrentState()
   {}
 
-  MTest::MTestCurrentState::MTestCurrentState(const MTest::MTestCurrentState& src)
-    : u_1(src.u_1),
-      u0(src.u0),
-      u1(src.u1),
-      s_1(src.s_1),
-      s0(src.s0),
-      s1(src.s1),
-      e0(src.e0),
-      e1(src.e1),
-      e_th0(src.e_th0),
-      e_th1(src.e_th1),
-      mprops0(src.mprops0),
-      mprops1(src.mprops1),
-      iv_1(src.iv_1),
-      iv0(src.iv0),
-      iv1(src.iv1),
-      esv0(src.esv0),
-      desv(src.desv),
-      period(src.period),
-      dt_1(src.dt_1),
-      Tref(src.Tref)
-  {} // end of MTest::MTestCurrentState::MTestCurrentState
+  MTest::MTestCurrentState::~MTestCurrentState() noexcept
+  {}
 
   MTest::MTestWorkSpace::MTestWorkSpace()
+  {}
+
+  MTest::MTestWorkSpace::~MTestWorkSpace() noexcept
   {}
 
   MTest::UTest::~UTest()

@@ -30,19 +30,12 @@ namespace mfront
    */
   struct TFEL_VISIBILITY_EXPORT VariableDescription
   {
-    //! type of the variable
-    //  If the variable has been declared as an array (see below),
-    //  this field holds the type contained by the array.
-    std::string type;
-    //! name of the variable
-    std::string name;
-    //! description
-    std::string description;
-    //! if the variable has been declared as an array, this field
-    //  contains a value greater than 1
-    unsigned short arraySize;
-    //! line at wich the variable has been declared
-    unsigned int lineNumber;
+    VariableDescription(const VariableDescription&) = default;
+    VariableDescription(VariableDescription&&) = default;
+    VariableDescription&
+    operator=(VariableDescription&&) = default;
+    VariableDescription&
+    operator=(const VariableDescription&) = default;
     /*!
      * Constructor
      * \param[in] t : variable type
@@ -64,6 +57,21 @@ namespace mfront
     const std::string&
     getExternalName(const std::map<std::string,std::string>&,
 		    const std::map<std::string,std::string>&) const;
+    //! destructor
+    ~VariableDescription();
+    //! type of the variable
+    //  If the variable has been declared as an array (see below),
+    //  this field holds the type contained by the array.
+    std::string type;
+    //! name of the variable
+    std::string name;
+    //! description
+    std::string description;
+    //! if the variable has been declared as an array, this field
+    //  contains a value greater than 1
+    unsigned short arraySize;
+    //! line at wich the variable has been declared
+    unsigned int lineNumber;
   }; // end of struct VariableDescription
 
   //! a simple alias for backward compatibility
@@ -73,6 +81,12 @@ namespace mfront
   struct VariableDescriptionContainer
     : private std::vector<VariableDescription>
   {
+    VariableDescriptionContainer() = default;
+    VariableDescriptionContainer(VariableDescriptionContainer&&) = default;
+    VariableDescriptionContainer(const VariableDescriptionContainer&) = default;
+    VariableDescriptionContainer& operator=(VariableDescriptionContainer&&) = default;
+    VariableDescriptionContainer& operator=(const VariableDescriptionContainer&) = default;
+    // resusing method from std::vector
     using std::vector<VariableDescription>::size_type;
     using std::vector<VariableDescription>::value_type;
     using std::vector<VariableDescription>::reference;
@@ -93,8 +107,7 @@ namespace mfront
      * \param[in] n : variable name
      * \return true if a variable with the given name exists
      */
-    bool
-    contains(const std::string&) const;
+    bool contains(const std::string&) const;
     /*!
      * \return the list of external names associated with this
      * container.
@@ -134,8 +147,9 @@ namespace mfront
      */
     const VariableDescription&
     getVariable(const std::string&);
-    
-  };
+    //! destrocut
+    ~VariableDescriptionContainer();
+  }; // end of struct VariableDescription
 
   //! a simple alias for backward compatibility
   typedef VariableDescriptionContainer      VarContainer;  

@@ -28,17 +28,18 @@ namespace tfel{
       
       TFEL_MATH_INLINE TinyPermutation();
 
-      using tvector<N,unsigned short>::size;
-      
+      TinyPermutation(const TinyPermutation&) = delete;
+      TinyPermutation(TinyPermutation&&) = delete;
+      TinyPermutation&
+      operator=(TinyPermutation&&) = delete;
+
       template<typename T>
       TFEL_MATH_INLINE void exe(tvector<N,T>&) const;
 
-      TFEL_MATH_INLINE const unsigned short&
-      operator[](const unsigned short) const;
-
-      TFEL_MATH_INLINE const unsigned short&
-      operator()(const unsigned short) const;
-      
+      using tvector<N,unsigned short>::operator[];
+      using tvector<N,unsigned short>::operator();
+      using tvector<N,unsigned short>::size;
+            
       TFEL_MATH_INLINE void
       swap(const unsigned short,
 	   const unsigned short);
@@ -47,11 +48,6 @@ namespace tfel{
       isIdentity() const;
       
     protected:
-
-      TFEL_MATH_INLINE TinyPermutation(const TinyPermutation&);
-      
-      TFEL_MATH_INLINE TinyPermutation&
-      operator=(const TinyPermutation&);
 
       bool is_identity;
 

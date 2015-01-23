@@ -72,8 +72,6 @@ namespace tfel
       operator()(const unsigned short i,
 		 const unsigned short j) const
       {
-	assert(i<StensorDimeToSize<N>::value);
-	assert(j<StensorDimeToSize<N>::value);
 	return this->m(In+i,Im+j);
       } // end of operator() const
 
@@ -81,8 +79,6 @@ namespace tfel
       operator()(const unsigned short i,
 		 const unsigned short j)
       {
-	assert(i<StensorDimeToSize<N>::value);
-	assert(j<StensorDimeToSize<N>::value);
 	return this->m(In+i,Im+j);
       } // end of operator()
 

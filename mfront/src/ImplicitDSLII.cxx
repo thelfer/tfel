@@ -36,4 +36,7 @@ namespace mfront{
     return "this parser provides a generic integrator based on a theta method.";
   } // end of ImplicitDSLII::getDescription
 
+  ImplicitDSLII::~ImplicitDSLII() noexcept
+  {}
+
 } // end of namespace mfront  

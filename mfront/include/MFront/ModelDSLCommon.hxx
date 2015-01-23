@@ -70,6 +70,8 @@ namespace mfront{
        const VariableDescriptionContainer&,
        const std::string&);
 
+    virtual ~ModelDSLCommon();
+
   protected:
 
     /*!

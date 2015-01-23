@@ -51,6 +51,9 @@ namespace mfront{
     return this->name;
   } // end of VariableDescription::getExternalName
 
+  VariableDescription::~VariableDescription()
+  {} // end of VariableDescription::~VariableDescription
+
   bool
   VariableDescriptionContainer::contains(const std::string& n) const
   {
@@ -119,5 +122,7 @@ namespace mfront{
     return *(this->end());
   }
 
+  VariableDescriptionContainer::~VariableDescriptionContainer()
+  {} // end of VariableDescriptionContainer::~VariableDescriptionContainer
 
 } // end of namespace mfront

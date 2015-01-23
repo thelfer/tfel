@@ -156,6 +156,11 @@ namespace mfront{
       typedef BehaviourData::Position Position;
       //! constructor
       CodeBlockOptions();
+      CodeBlockOptions(CodeBlockOptions&&) = default;
+      CodeBlockOptions(const CodeBlockOptions&) = default;
+      CodeBlockOptions& operator=(CodeBlockOptions&&) = default;
+      CodeBlockOptions& operator=(const CodeBlockOptions&) = default;
+      ~CodeBlockOptions();
       //! position where the code block will be inserted (body by defaut)
       Position p;
       //! insertion mode (create or append by default)

@@ -1310,6 +1310,9 @@ namespace tfel{
       return this->fileTokens.size();
     } // end of CxxTokenizer::size
 
+    CxxTokenizer::~CxxTokenizer()
+    {} // end of CxxTokenizer::~CxxTokenizer
+
   } // end of namespace utilities
 
 } // end of namespace tfel

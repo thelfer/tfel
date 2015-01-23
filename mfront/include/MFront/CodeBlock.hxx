@@ -26,6 +26,13 @@ namespace mfront{
    */
   struct TFEL_VISIBILITY_EXPORT CodeBlock
   {
+    CodeBlock() = default;
+    CodeBlock(CodeBlock&&) = default;
+    CodeBlock(const CodeBlock&) = default;
+    CodeBlock& operator=(CodeBlock&&) = default;
+    CodeBlock& operator=(const CodeBlock&) = default;
+    //! destructor
+    ~CodeBlock();
     //! code
     std::string code;
     //! description

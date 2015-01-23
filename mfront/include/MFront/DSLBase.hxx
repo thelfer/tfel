@@ -138,6 +138,12 @@ namespace mfront
        * default constructor
        */
       CodeBlockParserOptions();
+      CodeBlockParserOptions(CodeBlockParserOptions&&) = default;
+      CodeBlockParserOptions(const CodeBlockParserOptions&) = default;
+      CodeBlockParserOptions& operator=(CodeBlockParserOptions&&) = default;
+      CodeBlockParserOptions& operator=(const CodeBlockParserOptions&) = default;
+      //! destructor
+      ~CodeBlockParserOptions() noexcept;
       //! modifier applied to variables
       std::shared_ptr<VariableModifier> modifier;
       //! analyser applied to variables

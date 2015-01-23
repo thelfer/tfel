@@ -34,6 +34,8 @@ namespace mfront
     static std::string 
     getDescription(void);
 
+    virtual ~ImplicitFiniteStrainDSL() noexcept;
+
   }; // end of struct ImplicitFiniteStrainDSL
 
 } // end of namespace mfront

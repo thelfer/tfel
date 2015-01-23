@@ -77,11 +77,11 @@
      * \param void                                                                        \
      * \return const Z, the derivate                                                      \
      */                                                                                   \
-    TFELMATH_VISIBILITY_EXPORT                                                                \
+    TFELMATH_VISIBILITY_EXPORT                                                            \
     const Z derivate(const Fct##X);                                                       \
                                                                                           \
     namespace stdfunctions{                                                               \
-      extern TFELMATH_VISIBILITY_EXPORT Fct##X Y TFEL_UNUSED_ATTRIBUTE;                   \
+      extern TFELMATH_VISIBILITY_EXPORT Fct##X Y;                                         \
     }
 
 

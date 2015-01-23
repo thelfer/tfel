@@ -14,7 +14,7 @@
 #ifndef _TFEL_MATH_T2TOST2_CONCEPT_LIB_
 #define _TFEL_MATH_T2TOST2_CONCEPT_LIB_ 1
 
-#include <ostream>
+#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -111,7 +111,6 @@ namespace tfel{
    	     typename T2toST2Type,
    	     typename StensorType,
    	     typename TensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
@@ -150,7 +149,6 @@ namespace tfel{
    	     typename T2toST2Type,
    	     typename StensorType,
    	     typename TensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
@@ -189,7 +187,6 @@ namespace tfel{
    	     typename T2toST2Type,
    	     typename StensorType,
    	     typename TensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
@@ -221,7 +218,6 @@ namespace tfel{
    	     typename T2toST2Type,
    	     typename StensorType,
    	     typename TensorType>
-    TFEL_MATH_INLINE
     typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
@@ -252,7 +248,6 @@ namespace tfel{
    	     typename T2toST2Type,
    	     typename StensorType,
    	     typename TensorType>
-    TFEL_MATH_INLINE
     typename std::enable_if<
       tfel::meta::Implements<T2toST2ResultType,T2toST2Concept>::cond&&
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&

@@ -31,9 +31,16 @@ namespace tfel
       struct TFELMATHPARSER_VISIBILITY_EXPORT EvaluatorBase
       {
       protected:
-	void
-	analyse(const std::string&);
+	EvaluatorBase() = default;
+	EvaluatorBase(const EvaluatorBase&) = default;
+	EvaluatorBase(EvaluatorBase&&) = default;
+	EvaluatorBase&
+	operator=(const EvaluatorBase&) = default;
+	EvaluatorBase&
+	operator=(EvaluatorBase&&) = default;
+	void analyse(const std::string&);
 	std::vector<std::string> tokens;
+	~EvaluatorBase();
       private:
 	static TFEL_VISIBILITY_LOCAL void
 	splitAtTokenSeperator(std::vector<std::string>&);

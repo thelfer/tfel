@@ -16,6 +16,7 @@
 #endif /* NDEBUG */
 
 #include<cmath>
+#include<cassert>
 #include<cstdlib>
 
 #include"TFEL/Math/tvector.hxx"

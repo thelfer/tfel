@@ -30,14 +30,10 @@ namespace tfel
       TExpr(TExpr&&) = default;
       TExpr& operator=(TExpr&&) = default;
       TExpr& operator=(const TExpr&) = default;
-      virtual std::shared_ptr<tfel::math::parser::IntegerExpr>
+      virtual parser::IntegerExprPtr
       analyse(void) = 0;
-      virtual
-      void reduce(void) = 0;
-      virtual bool
-      isOperator(void) const =0;
-      virtual std::string
-      getClassName() const = 0;
+      virtual void reduce(void) = 0;
+      virtual bool isOperator(void) const =0;
       virtual ~TExpr();
     }; // end of IntegerEvaluator::TExpr
   
@@ -48,22 +44,19 @@ namespace tfel
       struct Negation
 	: public tfel::math::parser::IntegerExpr
       {
-	Negation(const std::shared_ptr<IntegerExpr>);
+	Negation(const parser::IntegerExprPtr);
 	int getValue(void) const;
-	std::shared_ptr<IntegerExpr>
+	parser::IntegerExprPtr
 	clone(const std::vector<int>&) const;
 	~Negation();
       private:
-	const std::shared_ptr<IntegerExpr> expr;
+	const parser::IntegerExprPtr expr;
       };
-      
       TNegation(std::shared_ptr<IntegerEvaluator::TExpr>);
       bool
       isOperator(void) const;
-      std::shared_ptr<tfel::math::parser::IntegerExpr>
+      parser::IntegerExprPtr
       analyse(void);
-      std::string
-      getClassName(void) const;
       void
       reduce(void);
       ~TNegation();
@@ -101,16 +94,16 @@ namespace tfel
       struct TFEL_VISIBILITY_LOCAL BinaryOperation
 	: public tfel::math::parser::IntegerExpr
       {
-	BinaryOperation(const std::shared_ptr<IntegerExpr>,
-			const std::shared_ptr<IntegerExpr>);
+	BinaryOperation(const parser::IntegerExprPtr,
+			const parser::IntegerExprPtr);
 	int
 	getValue(void) const;
-	std::shared_ptr<IntegerExpr>
+	parser::IntegerExprPtr
 	clone(const std::vector<int>&) const;
 	~BinaryOperation();
       private:
-	const std::shared_ptr<IntegerExpr> a;
-	const std::shared_ptr<IntegerExpr> b;
+	const parser::IntegerExprPtr a;
+	const parser::IntegerExprPtr b;
       }; // end of struct BinaryOperation
       /*!
        * Constructor
@@ -120,11 +113,9 @@ namespace tfel
 		       std::shared_ptr<IntegerEvaluator::TExpr>);
       bool
       isOperator(void) const;
-      std::string
-      getClassName(void) const;
       void
       reduce(void);
-      std::shared_ptr<tfel::math::parser::IntegerExpr>
+      parser::IntegerExprPtr
       analyse(void);
       ~TBinaryOperation();
     private:
@@ -143,7 +134,7 @@ namespace tfel
 		 const std::vector<int>::size_type);
 	int
 	getValue(void) const;
-	std::shared_ptr<IntegerExpr>
+	parser::IntegerExprPtr
 	clone(const std::vector<int>&) const;
       private:
 	const std::vector<int>& v;
@@ -155,10 +146,8 @@ namespace tfel
 		std::vector<int>&);
       bool
       isOperator(void) const;
-      std::string
-      getClassName(void) const;
       void reduce(void);
-      std::shared_ptr<tfel::math::parser::IntegerExpr>
+      parser::IntegerExprPtr
       analyse(void);
     private:
       std::vector<int>& vars;
@@ -175,9 +164,7 @@ namespace tfel
       isOperator(void) const;
       void
       reduce(void);
-      std::string
-      getClassName(void) const;
-      std::shared_ptr<tfel::math::parser::IntegerExpr>
+      parser::IntegerExprPtr
       analyse(void);
     private:
       const std::string type;
@@ -192,10 +179,8 @@ namespace tfel
       add(std::shared_ptr<IntegerEvaluator::TExpr>const);
       void
       reduce(void);
-      std::shared_ptr<tfel::math::parser::IntegerExpr>
+      parser::IntegerExprPtr
       analyse(void);
-      std::string
-      getClassName(void) const;
       ~TGroup();
     private:
       void
@@ -210,7 +195,7 @@ namespace tfel
 	: public tfel::math::parser::IntegerExpr
       {
 	Number(const int);
-	std::shared_ptr<IntegerExpr>
+	parser::IntegerExprPtr
 	clone(const std::vector<int>&) const;
 	int
 	getValue(void) const;
@@ -220,9 +205,7 @@ namespace tfel
       TNumber(const int v);
       bool
       isOperator(void) const;
-      std::string
-      getClassName(void) const;
-      std::shared_ptr<tfel::math::parser::IntegerExpr>
+      parser::IntegerExprPtr
       analyse(void);
       void
       reduce(void);

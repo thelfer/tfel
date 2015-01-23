@@ -43,6 +43,10 @@ namespace tfel
     } // end of Evaluator::TLogicalOperation::TLogicalOperation::analyse(void)
 
     template<typename Op>
+    Evaluator::TLogicalOperation<Op>::~TLogicalOperation() noexcept
+    {} // end of Evaluator::TLogicalOperation::~TLogicalOperation
+
+    template<typename Op>
     Evaluator::TLogicalBinaryOperation<Op>::TLogicalBinaryOperation(std::shared_ptr<Evaluator::TLogicalExpr> a_,
 								    std::shared_ptr<Evaluator::TLogicalExpr> b_)
       : a(a_),b(b_)
@@ -64,6 +68,10 @@ namespace tfel
       return std::shared_ptr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->analyse(),
 									 this->b->analyse()));
     } // end of Evaluator::TLogicalBinaryOperation<Op>::analyse
+
+    template<typename Op>
+    Evaluator::TLogicalBinaryOperation<Op>::~TLogicalBinaryOperation() noexcept
+    {} // end of Evaluator::TLogicalBinaryOperation<Op>::~TLogicalBinaryOperation
 
   } // end of namespace math
 

@@ -22,6 +22,9 @@
 
 namespace mfront{
 
+  MultipleIsotropicMisesFlowsDSL::FlowHandler::~FlowHandler() noexcept
+  {} // end of MultipleIsotropicMisesFlowsDSL::FlowHandler::~FlowHandler
+
   MultipleIsotropicMisesFlowsDSL::MultipleIsotropicMisesFlowsDSL()
   {
     using namespace std;

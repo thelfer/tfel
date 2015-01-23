@@ -245,24 +245,14 @@ namespace tfel{
       static int
       readInt(const_iterator&, 
 	      const const_iterator);	
-
-      /*!
-       * \return an iterator to the first token
-       */ 
-      const_iterator
-      begin(void) const;
-
-      /*!
-       * \return an iterator past the last token
-       */ 
-      const_iterator
-      end(void) const;
-
-      /*!
-       * \return the number of token
-       */ 
-      size_type
-      size() const;
+      //! \return an iterator to the first token
+      const_iterator begin(void) const;
+      //! \return an iterator past the last token
+      const_iterator end(void) const;
+      //! \return the number of token
+      size_type size() const;
+      //! destructor
+      virtual ~CxxTokenizer();
 
     private:
 

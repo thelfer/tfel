@@ -292,6 +292,9 @@ namespace mfront{
     return this->cblock;
   } // end of BehaviourData::CodeBlocksAggregator::get
 
+  BehaviourData::CodeBlocksAggregator::~CodeBlocksAggregator()
+  {} // end of BehaviourData::CodeBlocksAggregator::~CodeBlocksAggregator()
+
   BehaviourData::BehaviourData()
     : usableInPurelyImplicitResolution(false)
   {
@@ -1159,5 +1162,8 @@ namespace mfront{
   {
     return this->parameters;
   } // end of BehaviourData::getParameters
+
+  BehaviourData::~BehaviourData() noexcept
+  {} // end of BehaviourData::~BehaviourData
 
 } // end of namespace mfront

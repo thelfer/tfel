@@ -73,6 +73,8 @@ namespace tfel
       const Parameter&
       execute(void);
       
+      ~LevenbergMarquardt();
+
     private:
 
       F f;

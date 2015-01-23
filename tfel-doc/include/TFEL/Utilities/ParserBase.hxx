@@ -30,7 +30,6 @@ namespace tfel
       : public tfel::utilities::CxxTokenizer
     {
     protected:
-      
       /*!
        * check if the end of file has not been reached
        * \param p : current location in file
@@ -62,7 +61,8 @@ namespace tfel
        */
       std::string
       readString(const_iterator&);
-      
+      //! destructor
+      virtual ~ParserBase() noexcept;
     };
 
   } // end of namespace utilities

@@ -75,8 +75,7 @@ namespace tfel{
 	exe(const tfel::math::stensor<3u,T>& s)
 	{
 	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real cste = sqrt(real(2));
+	  constexpr real cste = constexpr_fct::sqrt(real(2));
 	  return (T(2)*s(0)*s(1)*s(2)+cste*s(3)*s(4)*s(5)-s(2)*s(3)*s(3)-s(1)*s(4)*s(4)-s(0)*s(5)*s(5))/real(2);
 	}
       }; // end of struct StensorDeterminant
@@ -576,10 +575,9 @@ namespace tfel{
 	    const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<NumType>::type>& m,
 	    const NumType eps)
 	{
-	  using tfel::math::constexpr_fct::sqrt;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
 	  typedef typename ComputeBinaryResult<base,NumType,OpDiv>::Result InvNumType;
-	  const base cste = base(1)/sqrt(base(2));
+	  constexpr base cste = base(1)/constexpr_fct::sqrt(base(2));
 	  const tvector<3u,base> v0 = m.template column_view<0u>();
 	  const tvector<3u,base> v1 = m.template column_view<1u>();
 	  const stensor<2u,base> n01 = stensor<2u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*cste;
@@ -613,7 +611,7 @@ namespace tfel{
 	  using namespace tfel::math;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
 	  using tfel::math::constexpr_fct::sqrt;
-	  const base cste = base(1)/sqrt(base(2));
+	  constexpr base cste = base(1)/sqrt(base(2));
 	  const tvector<3u,base> v0 = m.template column_view<0u>();
 	  const tvector<3u,base> v1 = m.template column_view<1u>();
 	  const tvector<3u,base> v2 = m.template column_view<2u>();
@@ -751,7 +749,6 @@ namespace tfel{
     template<unsigned short N, typename T>
     T& 
     stensor<N,T>::operator()(const unsigned short i) noexcept{
-      assert(i<StensorDimeToSize<N>::value);
       return this->v[i];
     }
 

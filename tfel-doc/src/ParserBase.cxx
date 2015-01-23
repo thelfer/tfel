@@ -70,6 +70,9 @@ namespace tfel
       return r;
     } // end of ParserBase::readString
 
+    ParserBase::~ParserBase() noexcept
+    {} // end of ParserBase::~ParserBase
+
   } // end of namespace utilities
 
 } // end of namespace tfel

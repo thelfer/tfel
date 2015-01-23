@@ -63,6 +63,9 @@ namespace mfront
       registerLine(true)
   {}
 
+  DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions() noexcept
+  {} // end of DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions()
+
   DSLBase::DSLBase()
   {
     this->reserveName("std",false);
@@ -1284,5 +1287,7 @@ namespace mfront
 			      "Expected ';' before end of file");
     }
   } // end of DSLBase::handleParameter
+
+  
 
 } // end of namespace mfront

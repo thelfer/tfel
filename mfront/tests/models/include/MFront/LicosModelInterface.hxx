@@ -143,7 +143,11 @@ namespace mfront{
 
     std::string
     getVariableName(const std::string&,
-			    const ModelData&) const;
+		    const ModelData&) const;
+
+    ~MFrontModelInterface();
+
+    private:
 
     std::ofstream headerFile;
     std::ofstream srcFile;

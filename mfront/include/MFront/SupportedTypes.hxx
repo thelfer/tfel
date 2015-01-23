@@ -87,6 +87,10 @@ namespace mfront
     }; // end of class SupportedTypes::TypeSize
 
     SupportedTypes();
+    SupportedTypes(SupportedTypes&&) = default;
+    SupportedTypes(const SupportedTypes&) = default;
+    SupportedTypes& operator=(SupportedTypes&&) = default;
+    SupportedTypes& operator=(const SupportedTypes&) = default;
 
     TypeFlag
     getTypeFlag(const std::string&) const;

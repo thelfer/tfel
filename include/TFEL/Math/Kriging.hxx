@@ -33,24 +33,23 @@ namespace tfel
       : public Model
     {
 
-      Kriging();
+      Kriging() = default;
 
       void
       addValue(const typename KrigingVariable<N,T>::type&,
 	       const T&);
 
-      void
-      buildInterpolation(void);
+      void buildInterpolation(void);
   
-      T
-      operator()(const typename KrigingVariable<N,T>::type&) const;
+      T operator()(const typename KrigingVariable<N,T>::type&) const;
+
+      ~Kriging() noexcept;
 
     private:
 
-      Kriging(const Kriging&);
-
+      Kriging(const Kriging&) = delete;
       Kriging&
-      operator=(const Kriging&);
+      operator=(const Kriging&) = delete;
 
       tfel::math::vector<typename KrigingVariable<N,T>::type> x;
       tfel::math::vector<T> f;

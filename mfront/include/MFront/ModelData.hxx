@@ -29,8 +29,14 @@ namespace mfront
   struct TFEL_VISIBILITY_EXPORT ModelData
   {
 
-    struct Function
+    struct TFEL_VISIBILITY_EXPORT Function
     {
+      Function() = default;
+      Function(const Function&) = default;
+      Function(Function&&) = default;
+      Function& operator=(const Function&) = default;
+      Function& operator=(Function&&) = default;
+      ~Function();
       std::set<std::string> usedVariables;
       std::set<std::string> modifiedVariables;
       std::set<std::string> constantMaterialProperties;
@@ -41,11 +47,18 @@ namespace mfront
       std::string body;
       unsigned int line;
       bool useTimeIncrement;
-    }; // end of struct MFrontPleiadesModelDSL::Function
+    }; // end of struct MFrontData::Function
 
     typedef std::vector<Function> FunctionContainer;
-    FunctionContainer functions;
 
+    ModelData() = default;
+    ModelData(const ModelData&) = default;
+    ModelData(ModelData&&) = default;
+    ModelData& operator=(const ModelData&) = default;
+    ModelData& operator=(ModelData&&) = default;
+    ~ModelData();
+
+    FunctionContainer functions;
     VariableDescriptionContainer outputs;
     VariableDescriptionContainer inputs;
     VariableDescriptionContainer globalParameters;

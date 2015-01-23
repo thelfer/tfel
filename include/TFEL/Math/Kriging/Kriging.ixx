@@ -84,12 +84,6 @@ namespace tfel
     template<unsigned short N,
 	     typename T,
 	     typename Model>
-    Kriging<N,T,Model>::Kriging()
-    {} // end of Kriging<N,T,Model>::Kriging()
-
-    template<unsigned short N,
-	     typename T,
-	     typename Model>
     T
     Kriging<N,T,Model>::operator()(const typename KrigingVariable<N,T>::type& xv) const
     {
@@ -118,9 +112,7 @@ namespace tfel
       this->f.push_back(fv);
     }
 
-    template<unsigned short N,
-	     typename T,
-	     typename Model>
+    template<unsigned short N,typename T,typename Model>
     void
     Kriging<N,T,Model>::buildInterpolation(void)
     {
@@ -161,6 +153,10 @@ namespace tfel
       LUSolve::exe(m,this->a);
 #endif
     }
+
+    template<unsigned short N,typename T,typename Model>
+    Kriging<N,T,Model>::~Kriging() noexcept
+    {}
 
   } // end of namespace math
 
