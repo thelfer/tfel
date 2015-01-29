@@ -126,12 +126,12 @@ namespace tfel{
        * A little trick so we don't have to declare ResultType
        * for const scalar types.
        */
-      typedef typename std::remove_const<A>::type A_;
+      typedef typename std::decay<A>::type A_;
       /*
        * A little trick so we don't have to declare ResultType
        * for const scalar types.
        */
-      typedef typename std::remove_const<B>::type B_;
+      typedef typename std::decay<B>::type B_;
     public:
       /*
        * The result.

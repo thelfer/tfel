@@ -80,7 +80,7 @@ namespace tfel{
        * \note the matrix m is overwritten during computations
        * \note the right member is overwritten by the solution
        */
-      static TFEL_MATH_INLINE2 void 
+      static void 
       exe(tmatrix<N,N,T>& m, tvector<N,T>&,
 	  const T = 100*std::numeric_limits<T>::min());
     }; 

@@ -12,7 +12,6 @@
 #ifndef _MATH_STENSOR_EXPR_LIB_
 #define _MATH_STENSOR_EXPR_LIB_ 1
 
-#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"

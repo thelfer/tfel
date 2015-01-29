@@ -17,6 +17,7 @@
 #include<fstream>
 #include<cassert>
 
+#include"TFEL/Math/Vector/tvectorIO.hxx"
 #include"TFEL/Math/RungeKutta42.hxx"
 
 struct VanDerPol

@@ -178,14 +178,12 @@ namespace tfel{
 	vectorToTab<TensorDimeToSize<N>::value>::exe(src,this->v);
       }
       //! assignement operator
-      TFEL_MATH_INLINE tensor&
-      operator=(const tensor<N,T>&) = default;
+      TFEL_MATH_INLINE tensor& operator=(const tensor<N,T>&) = default;
       /*!
        * Write to Tab
        */
       TFEL_MATH_INLINE2 void
       write(typename tfel::typetraits::BaseType<T>::type* const) const;
-
       /*!
        * Import values
        */

@@ -730,15 +730,6 @@ namespace tfel{
     {}
 
     template<unsigned short N, typename T>
-    TFEL_MATH_INLINE stensor<N,T>&
-    stensor<N,T>::operator = (const stensor<N,T>& src)
-    {
-      fsarray<StensorDimeToSize<N>::value,T>::operator=(src);
-      return *this;
-    } // end of stensor<N,T>::operator =
-
-
-    template<unsigned short N, typename T>
     template<typename T2,typename Expr,
 	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
     stensor<N,T>::stensor(const StensorExpr<stensor<N,T2>,Expr>& src)

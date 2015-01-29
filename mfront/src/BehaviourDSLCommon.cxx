@@ -2090,17 +2090,24 @@ namespace mfront{
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
       this->behaviourDataFile << "#include\"TFEL/Math/tvector.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"" << endl;
     }
     if(b2){
       this->behaviourDataFile << "#include\"TFEL/Math/vector.hxx\"" << endl;
     }
     this->behaviourDataFile << "#include\"TFEL/Math/stensor.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Math/st2tost2.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"" << endl;
     if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"" << endl;
       this->behaviourDataFile << "#include\"TFEL/Math/t2tot2.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx\"" << endl;
       this->behaviourDataFile << "#include\"TFEL/Math/t2tost2.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"" << endl;
       this->behaviourDataFile << "#include\"TFEL/Math/st2tot2.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"" << endl;
       this->behaviourDataFile << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"" << endl;
     }
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
@@ -4263,7 +4270,7 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourFile();
-    this->behaviourFile << "real" << endl;
+    this->behaviourFile << "constexpr real" << endl;
     this->behaviourFile << "getTimeStepScalingFactor(void) const{" << endl;
     this->behaviourFile << "return real(1);" << endl;
     this->behaviourFile << "}" << endl << endl;

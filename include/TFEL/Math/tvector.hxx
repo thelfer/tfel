@@ -13,7 +13,6 @@
 #ifndef _LIB_TFEL_TINY_VECTOR_
 #define _LIB_TFEL_TINY_VECTOR_ 1
 
-#include<iosfwd>
 #include<cstddef>
 #include<iterator>
 #include<type_traits>
@@ -201,8 +200,7 @@ namespace tfel{
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE tvector(const VectorExpr<tvector<N,T2>,Expr>&);
       //! assignement operator
-      TFEL_MATH_INLINE tvector&
-      operator=(const tvector&);
+      tvector& operator=(const tvector&) = default;
       //! using tvector_base::operator=
       using tvector_base<tvector,N,T>::operator=;
       /*!
@@ -296,16 +294,6 @@ namespace tfel{
     TFEL_MATH_INLINE2
     typename tfel::typetraits::AbsType<T>::type
     abs(const tvector<N,T>& v);
-
-    //! Serialisation operator
-    /*!
-     * \param  std::ostream&, stream to which the vector is serialized.
-     * \param  const tvector<N,T>&, the tvector serialized.
-     * \return std::ostream&, stream to which the vector has been serialized.
-     */
-    template<unsigned short N,typename T>
-    std::ostream&
-    operator << (std::ostream &, const tvector<N,T>&);
 
     template<typename T>
     tvector<1u,T>

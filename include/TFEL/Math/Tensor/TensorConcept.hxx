@@ -14,21 +14,20 @@
 #ifndef _TFEL_MATH_TENSOR_CONCEPT_LIB_
 #define _TFEL_MATH_TENSOR_CONCEPT_LIB_ 1
 
-#include<iosfwd>
 #include<string>
 #include<stdexcept>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include<type_traits>
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include<type_traits>
 #include"TFEL/TypeTraits/IsTemporary.hxx"
+#include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 
+#include"TFEL/Math/power.hxx"
 #include"TFEL/Math/General/Abs.hxx"
-#include"TFEL/Math/Function/Power.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
 #include"TFEL/Math/Forward/MatrixConcept.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"
@@ -622,11 +621,6 @@ namespace tfel{
 		 TensorTransposeExpr3D<TensorType> >
       >::type
     transpose(const TensorType&);
-
-    // Serialisation operator
-    template<typename T>
-    std::ostream&
-    operator << (std::ostream &,const TensorConcept<T>&);
 
   } // end of namespace math
 

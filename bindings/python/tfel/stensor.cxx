@@ -2,7 +2,7 @@
  * \file  bindings/python/tfel/stensor.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 30 aoû 2010
+ * \brief 30 août 2010
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -14,6 +14,7 @@
 #include<boost/python.hpp>
 
 #include<TFEL/Math/stensor.hxx>
+#include<TFEL/Math/Stensor/StensorConceptIO.hxx>
 
 template<unsigned short N>
 static double&

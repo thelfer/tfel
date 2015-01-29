@@ -13,7 +13,6 @@
 #ifndef _ST2TOST2_CONCEPT_LIB_
 #define _ST2TOST2_CONCEPT_LIB_ 1
 
-#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -68,12 +67,6 @@ namespace tfel{
 		 const unsigned short) const;
       
     };
-
-    // Serialisation operator
-    template<typename T>
-    std::ostream &
-    operator << (std::ostream &,
-		 const ST2toST2Concept<T>&);
 
     template<typename T>
     struct ST2toST2Type{

@@ -14,7 +14,6 @@
 #ifndef _TFEL_MATH_T2TOT2_CONCEPT_LIB_
 #define _TFEL_MATH_T2TOT2_CONCEPT_LIB_ 1
 
-#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -69,12 +68,6 @@ namespace tfel{
 		 const unsigned short) const;
       
     };
-
-    // Serialisation operator
-    template<typename T>
-    std::ostream &
-    operator << (std::ostream &,
-		 const T2toT2Concept<T>&);
 
     template<typename T>
     struct T2toT2Type{

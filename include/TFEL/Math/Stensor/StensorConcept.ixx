@@ -199,22 +199,11 @@ namespace tfel{
     {
       typedef typename StensorType<T>::type Res;
       typedef typename StensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type Base;
-      return Res(s-(Base(1)/Base(3))*trace(s)*Res::Id());
+      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      constexpr real one_third = real{1}/real{3};
+      const real tr = one_third*trace(s);
+      return s-tr*Res::Id();
     }
-
-    template<typename T>
-    std::ostream&
-    operator << (std::ostream & os,const StensorConcept<T>& s)
-    {
-      unsigned short i;
-      os << "[ ";
-      for(i=0;i!=StensorDimeToSize<StensorTraits<T>::dime>::value;++i){
-	os << s(i) << " ";
-      }
-      os << "]";
-      return os;
-    } // end of operator << 
 
   } // end of namespace math
 

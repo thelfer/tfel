@@ -26,19 +26,6 @@ namespace tfel{
   namespace math{
 
     /*
-     * Partial specialisation for functions.
-     */
-    template<unsigned short N,typename T, typename Op>
-    class UnaryResultType_<VectorTag,FunctionTag,tvector<N,T>,Op>
-    {
-      typedef typename UnaryResultType<T,Op>::type ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      tvector<N,ResBase_> >::type type;
-    };
-
-    /*
      * Partial specialisation for negation.
      */
     template<unsigned short N,typename T>

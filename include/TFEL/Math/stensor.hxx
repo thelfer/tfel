@@ -23,9 +23,9 @@
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
+#include"TFEL/Math/power.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
-#include"TFEL/Math/Function/Power.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
@@ -170,8 +170,7 @@ namespace tfel{
       TFEL_MATH_INLINE 
       stensor(const StensorExpr<stensor<N,T2>,Expr>& src);
       //! copy assignement operator
-      TFEL_MATH_INLINE stensor&
-      operator = (const stensor&);
+      stensor& operator = (const stensor&) =default;
       /*!
        * \brief Import from Voigt
        */

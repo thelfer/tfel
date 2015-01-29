@@ -50,7 +50,6 @@ namespace tfel{
       typedef typename std::conditional<isTemporary,
 				      typename traits::NumType,
 				      const typename traits::NumType&>::type ValueType;
-
     protected:
       VectorConcept() = default;
       VectorConcept(VectorConcept&&) = default;
@@ -67,7 +66,6 @@ namespace tfel{
 
       TFEL_MATH_INLINE ValueType
       operator[](const typename traits::IndexType) const;
-      
     };
 
     template<typename T>

@@ -251,24 +251,6 @@ namespace tfel
       typedef VectorExpr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > type;
     }; // end of struct TinyVectorOfStensorFromTinyVectorView
 
-    // Serialisation operator
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     unsigned short Nn,
-	     typename T>
-    std::ostream&
-    operator << (std::ostream & os,
-		 const VectorExpr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >& s)
-    {
-      os << "[ ";
-      for(unsigned short i=0;i<Nn;++i){
-	os << s(i) << " ";
-      }
-      os << "]";
-      return os;
-    } // end of operator << 
-    
   } // end of namespace math
 
   namespace typetraits{

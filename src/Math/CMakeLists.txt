@@ -9,14 +9,9 @@ set(TFELMath_SOURCES
     LUException.cxx
     QRException.cxx
     Discretization1D.cxx
-    Id.cxx
-    power.cxx
-    Sqrt.cxx
-    OpDiff.cxx
     TensorConcept.cxx
     RunTimeCheck.cxx
-    StensorComputeEigenValues.cxx
-    StandardFunctions.cxx)
+    StensorComputeEigenValues.cxx)
 
 set(TFELMathCubicSpline_SOURCES
     CubicSpline.cxx)

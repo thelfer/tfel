@@ -723,7 +723,7 @@ namespace mfront
     using namespace std;
     if(v.empty()){
       f << "MFRONT_SHAREDOBJ const char * const * "  << this->getSymbolName(name,h)
-	<< "_" << t << " = 0;" << endl << endl;
+	<< "_" << t << " = nullptr;" << endl << endl;
     } else {
       vector<string>::size_type s = 0u;
       vector<string>::const_iterator p = v.begin();      

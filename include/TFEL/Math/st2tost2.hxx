@@ -212,8 +212,7 @@ namespace tfel{
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       //! \brief default Constructor 
-      TFEL_MATH_INLINE explicit constexpr
-      st2tost2();
+      explicit constexpr st2tost2() = default;
       /*!
        * \brief default constructor 
        * \param[in] init : value used to initialise the components of the st2tost2 
@@ -238,18 +237,14 @@ namespace tfel{
        */
       TFEL_MATH_INLINE
       explicit st2tost2(const typename tfel::typetraits::BaseType<T>::type* const);
-      /*!
-       * \brief copy Constructor
-       */
-      TFEL_MATH_INLINE constexpr
-      st2tost2(const st2tost2<N,T>&);
+      //! copy Constructor
+      constexpr st2tost2(const st2tost2<N,T>&) = default;
       // Copy Constructor
       template<typename T2,typename Expr>
       TFEL_MATH_INLINE 
       st2tost2(const ST2toST2Expr<st2tost2<N,T2>,Expr>&);
       //! assignement operator
-      TFEL_MATH_INLINE st2tost2&
-      operator=(const st2tost2&);
+      st2tost2& operator=(const st2tost2&) = default;
       /*!
        * Import values
        */

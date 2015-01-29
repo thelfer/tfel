@@ -23,6 +23,7 @@
 #include"TFEL/Tests/TestManager.hxx"
 
 #include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/Vector/tvectorIO.hxx"
 
 struct TVectorTest5
   : public tfel::tests::TestCase

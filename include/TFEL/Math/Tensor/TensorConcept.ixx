@@ -915,19 +915,6 @@ namespace tfel{
 			TensorTransposeExpr3D<TensorType> >(t);
     } // end of transpose
   
-    template<typename T>
-    std::ostream&
-    operator << (std::ostream & os,const TensorConcept<T>& s)
-    {
-      unsigned short i;
-      os << "[ ";
-      for(i=0;i!=TensorDimeToSize<TensorTraits<T>::dime>::value;++i){
-	os << s(i) << " ";
-      }
-      os << "]";
-      return os;
-    } // end of operator << 
-    
   } // end of namespace math
   
 } // end of namespace tfel

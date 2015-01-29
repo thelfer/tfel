@@ -230,29 +230,30 @@ namespace tfel{
       >::type type;
 
     };
+
+    template<int N,typename T>
+    typename std::enable_if<
+      tfel::typetraits::IsScalar<T>::cond,
+      T>::type
+    power(const T x){
+      typedef typename tfel::math::PowerImplSelector<N,1u>::type Implementation;
+      return Implementation::exe(x);
+    }
+
+    template<int N,unsigned int D,typename T>
+    typename std::enable_if<
+      tfel::typetraits::IsScalar<T>::cond,
+      T>::type
+    power(const T x){
+      typedef typename tfel::math::PowerImplSelector<N,D>::type Implementation;
+      return Implementation::exe(x);
+    }
     
     namespace stdfunctions{
       
-      template<int N,typename T>
-      TFEL_MATH_INLINE
-      typename std::enable_if<
-	tfel::typetraits::IsScalar<T>::cond,
-	T>::type
-      power(const T x){
-	typedef typename tfel::math::PowerImplSelector<N,1u>::type Implementation;
-	return Implementation::exe(x);
-      }
-
-      template<int N,unsigned int D,typename T>
-      TFEL_MATH_INLINE
-      typename std::enable_if<
-	tfel::typetraits::IsScalar<T>::cond,
-	T>::type
-      power(const T x){
-	typedef typename tfel::math::PowerImplSelector<N,D>::type Implementation;
-	return Implementation::exe(x);
-      }
-      
+      // for backward compatibility with TFEL <= 3.0.x
+      using tfel::math::power;
+  
     } // end of namespace stdfunctions
 
   } // end of namespace math

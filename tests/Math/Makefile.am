@@ -1,5 +1,5 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
-SUBDIRS = include ExpressionTemplates RungeKutta Functions \
+SUBDIRS = include ExpressionTemplates RungeKutta \
 	   st2tost2 t2tost2 st2tot2 t2tot2
 
 INCLUDES = -I$(top_srcdir)/include -I$(srcdir)/include
@@ -9,6 +9,7 @@ if WITH_TESTS
 testdir = $(pkgdatadir)/tests/Math
 test_PROGRAMS = hill                                     \
 		promote                                  \
+		power                                    \
 		FracSimplify                             \
 		qt                                       \
 		qt2                                      \
@@ -16,7 +17,6 @@ test_PROGRAMS = hill                                     \
 		CubicRoots                               \
 		complex_operations                       \
 		conj                                     \
-		Function                                 \
 		lu                                       \
 		lu2                                      \
 		invert                                   \
@@ -54,7 +54,6 @@ test_PROGRAMS = hill                                     \
 		tmatrix                                  \
 		tmatrix1                                 \
 		tmatrix2                                 \
-		tmatrix3                                 \
 		tmatrix4                                 \
 		tmatrix5                                 \
 		tmatrix6                                 \
@@ -66,7 +65,6 @@ test_PROGRAMS = hill                                     \
 		tvector6                                 \
 		tvector7                                 \
 		VectorResultType                         \
-		vector1                                  \
 		parser                                   \
 		parser2                                  \
 		parser3                                  \
@@ -96,6 +94,7 @@ LDADD = -L$(top_builddir)/src/Math      \
 	-lTFELMath -lTFELUtilities      \
 	-lTFELException -lTFELTests
 
+power_SOURCES                 = power.cxx
 FracSimplify_SOURCES          = FracSimplify.cxx
 promote_SOURCES               = promote.cxx
 qt_SOURCES                    = qt.cxx
@@ -105,7 +104,6 @@ hill_SOURCES                  = hill.cxx
 CubicRoots_SOURCES            = CubicRoots.cxx
 complex_operations_SOURCES    = complex_operations.cxx   
 conj_SOURCES                  = conj.cxx                 
-Function_SOURCES              = Function.cxx             
 invert_SOURCES                = invert.cxx
 invert2_SOURCES               = invert2.cxx
 tinymatrixsolve_SOURCES       = tinymatrixsolve.cxx
@@ -136,7 +134,6 @@ stensor_eigenvectors2_SOURCES = stensor_eigenvectors2.cxx
 tmatrix_SOURCES               = tmatrix.cxx
 tmatrix1_SOURCES              = tmatrix1.cxx
 tmatrix2_SOURCES              = tmatrix2.cxx
-tmatrix3_SOURCES              = tmatrix3.cxx
 tmatrix4_SOURCES              = tmatrix4.cxx
 tmatrix5_SOURCES              = tmatrix5.cxx
 tmatrix6_SOURCES              = tmatrix6.cxx
@@ -147,7 +144,6 @@ tvector4_SOURCES              = tvector4.cxx
 tvector5_SOURCES              = tvector5.cxx
 tvector6_SOURCES              = tvector6.cxx
 tvector7_SOURCES              = tvector7.cxx
-vector1_SOURCES               = vector1.cxx   
 VectorResultType_SOURCES      = VectorResultType.cxx
 Range_SOURCES                 = Range.cxx
 broyden_SOURCES               = broyden.cxx

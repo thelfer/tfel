@@ -27,19 +27,6 @@ namespace tfel{
     template<typename T>
     struct matrix;
 
-    /*!
-     * Partial specialisation for functions.
-     */
-    template<typename T, typename Op>
-    class UnaryResultType_<VectorTag,FunctionTag,vector<T>,Op>
-    {
-      typedef typename UnaryResultType<T,Op>::type ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      vector<ResBase_> >::type type;
-    };
-
     /*
      * Partial specialisation for negation.
      */

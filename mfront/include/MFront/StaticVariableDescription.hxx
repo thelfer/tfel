@@ -48,6 +48,7 @@ namespace mfront{
     StaticVariableDescription(const StaticVariableDescription&) = default;
     StaticVariableDescription& operator=(StaticVariableDescription&&) = default;    
     StaticVariableDescription& operator=(const StaticVariableDescription&) = default;
+    ~StaticVariableDescription();
     //! value of the static variable
     StaticVariableValueType value;
   }; // end of struct MFrontDSLBase<Child>::StaticVariableDescription

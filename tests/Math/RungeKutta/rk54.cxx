@@ -17,7 +17,9 @@
 #include<fstream>
 #include<cassert>
 
+#include"TFEL/Math/Vector/tvectorIO.hxx"
 #include"TFEL/Math/RungeKutta54.hxx"
+
 
 struct VanDerPol
   : public tfel::math::RungeKutta54<2,VanDerPol>

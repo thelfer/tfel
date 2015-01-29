@@ -304,26 +304,6 @@ namespace tfel{
       return tm;
     }
 
-    template<unsigned short N,unsigned short M,typename T>
-    std::ostream &
-    operator << (std::ostream & os, const tmatrix<N,M,T>& m)
-    {
-      unsigned short i,j;
-      os << "[";
-      for(i=0;i<N;++i){
-	os << "[";
-	for(j=0;j<M;++j){
-	  os << m(i,j);
-	  if(j!=M-1){
-	    os << ",";
-	  }
-	}
-	os << "]" ;
-      }
-      os << "]";
-      return os;
-    }
-
     namespace internals
     {
 

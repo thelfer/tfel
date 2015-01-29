@@ -1,0 +1,44 @@
+/*! 
+ * \file  tvectorIO.hxx
+ * \brief
+ * \author Helfer Thomas
+ * \date   24 janv. 2015
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifndef _LIB_TFEL_MATH_TVECTORIO_H_
+#define _LIB_TFEL_MATH_TVECTORIO_H_ 
+
+#include<ostream>
+#include"TFEL/FSAlgorithm/copy.hxx"
+#include"TFEL/Math/tvector.hxx"
+
+namespace tfel{
+  
+  namespace math{
+
+    template<unsigned short N,typename T>
+    std::ostream &
+    operator << (std::ostream &, const tvector<N,T>&);
+
+    template<unsigned short N,typename T>
+    std::ostream &
+    operator << (std::ostream & os, const tvector<N,T>& s)
+    {
+      os << "( ";
+      tfel::fsalgo::copy<N>::exe(s.begin(),std::ostream_iterator<T>(os," "));
+      os << ")";
+      return os;
+    }
+    
+  } // end of namespace math
+  
+} // end of namespace tfel
+
+#endif /* _LIB_TFEL_MATH_TVECTORIO_H */
+

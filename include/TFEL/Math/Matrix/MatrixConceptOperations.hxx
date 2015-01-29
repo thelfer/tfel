@@ -29,14 +29,11 @@
 #include"TFEL/Math/General/ComputeObjectTag.hxx"
 #include"TFEL/Math/General/ComputeBinaryResult.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
-#include"TFEL/Math/Function/StandardFunctions.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 
-#include"TFEL/Math/ExpressionTemplates/FctMathObjectExpr.hxx"
 #include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx"
 #include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExpr.hxx"
 #include"TFEL/Math/ExpressionTemplates/MathObjectNegExpr.hxx"
-#include"TFEL/Math/ExpressionTemplates/FctMathObjectExprWithoutConstIterator.hxx"
 #include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx"
 #include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIterator.hxx"
 #include"TFEL/Math/ExpressionTemplates/MathObjectNegExprWithoutConstIterator.hxx"
@@ -69,25 +66,6 @@ namespace tfel{
       {};
     public:
       typedef DummyHandle type;
-    };
-
-    /*									                
-     * Partial Specialisation of ComputeUnaryResult_ for matrix	                
-     */									                
-    template<typename A,typename Fct>
-    class ComputeUnaryResult_<MatrixTag,FunctionTag,A,Fct>
-    {
-      struct DummyHandle{};
-      typedef typename MatrixType<A>::type VectA;
-      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-                                      FctMathObjectExpr<MatrixConcept,MatrixTraits,A,Fct>,
-                                      FctMathObjectExprWithoutConstIterator<MatrixConcept,MatrixTraits,A,Fct>
-				      >::type Expr;
-    public:
-      typedef typename UnaryResultType<VectA,Fct>::type Result;
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-				      DummyHandle,
-				      MatrixExpr<Result,Expr> >::type Handle;
     };
 
     /*

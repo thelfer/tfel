@@ -994,10 +994,8 @@ AC_OUTPUT([debug.sh
 	   tests/Math/Makefile
 	   tests/Math/include/Makefile
 	   tests/Math/ExpressionTemplates/Makefile
-	   tests/Math/ExpressionTemplates/include/Makefile
 	   tests/Math/RungeKutta/Makefile
 	   tests/Math/RungeKutta/include/Makefile
-	   tests/Math/Functions/Makefile
 	   tests/Math/t2tot2/Makefile
 	   tests/Math/st2tost2/Makefile
 	   tests/Math/t2tost2/Makefile

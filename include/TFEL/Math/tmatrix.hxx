@@ -13,7 +13,6 @@
 #ifndef _TFEL_MATH_TINY_MATRIX_LIB_
 #define _TFEL_MATH_TINY_MATRIX_LIB_ 1
 
-#include<iosfwd>
 #include<cstddef>
 #include<type_traits>
 
@@ -23,11 +22,11 @@
 #include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
-#include"TFEL/Math/Function/Power.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
 #include"TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 #include"TFEL/Math/Matrix/MatrixExpr.hxx"
 #include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/power.hxx"
 
 #include"TFEL/Math/Forward/tmatrix.hxx"
 
@@ -410,10 +409,6 @@ namespace tfel{
     TFEL_MATH_INLINE
     typename ComputeUnaryResult<T,Power<3> >::Result
     det(const tmatrix<3,3,T>&);
-
-    // Serialisation operator
-    template<unsigned short N,unsigned short M,typename T>
-    std::ostream & operator << (std::ostream &, const tmatrix<N,M,T>&);
 
   } // end of namespace math
 

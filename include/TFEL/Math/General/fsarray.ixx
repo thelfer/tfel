@@ -100,7 +100,9 @@ namespace tfel{
     template<typename T2,
 	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
     constexpr fsarray<N,T>::fsarray(const std::initializer_list<T2>& values)
-      : array_container<N,T>(tfel::math::internals::fsarray_initializer<N>::template applyFromInitializerList<T>(values))
+      : array_container<N,T>(values.size() == 1u ?
+			     tfel::math::internals::fsarray_initializer<N>::template applyFromValue<T>(*(values.begin())) :
+			     tfel::math::internals::fsarray_initializer<N>::template applyFromInitializerList<T>(values))
     {}
 
     template<unsigned short N, typename T>

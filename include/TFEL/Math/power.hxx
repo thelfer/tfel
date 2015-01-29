@@ -14,41 +14,53 @@
 #ifndef _LIB_TFEL_MATH_POWER_H_
 #define _LIB_TFEL_MATH_POWER_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
 #include<type_traits>
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/IsScalar.hxx"
+#include"TFEL/Math/General/ComputeUnaryResult.hxx"
 
 namespace tfel{
 
   namespace math{
 
-    namespace stdfunctions{
-      
-      template<int N,typename T>
-      TFEL_MATH_INLINE
-      typename std::enable_if<
-	tfel::typetraits::IsScalar<T>::cond,
-	T>::type
-      power(const T);
+    template<int N,unsigned int D=1>
+    struct Power;
 
-      template<int N,unsigned int D,
-	       typename T>
-      TFEL_MATH_INLINE
-      typename std::enable_if<
-	tfel::typetraits::IsScalar<T>::cond,
-	T>::type
-      power(const T);
+    template<int N,unsigned int D>
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<float,Power<N,D> >
+    {
+    public:
+      typedef float type;
+    };
 
-      float
-      pow(const float,const float);
+    template<int N,unsigned int D>
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<double,Power<N,D> >
+    {
+    public:
+      typedef double type;
+    };
 
-      double
-      pow(const double,const double);
-      
-      long double
-      pow(const long double,const long double);
-      
-    } // end of namespace stdfunctions
+    template<int N,unsigned int D>
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<long double,Power<N,D> >
+    {
+    public:
+      typedef long double type;
+    };
+
+    template<int N,typename T>
+    TFEL_MATH_INLINE
+    typename std::enable_if<
+      tfel::typetraits::IsScalar<T>::cond,
+      T>::type
+    power(const T);
+  
+    template<int N,unsigned int D,
+	     typename T>
+    TFEL_MATH_INLINE
+    typename std::enable_if<
+      tfel::typetraits::IsScalar<T>::cond,
+      T>::type
+    power(const T);
 
   } // end of namespace math
 

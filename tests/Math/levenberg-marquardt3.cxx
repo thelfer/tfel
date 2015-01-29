@@ -23,6 +23,7 @@
 #include<utility>
 #include<vector>
 
+#include"TFEL/Math/Vector/tvectorIO.hxx"
 #include"TFEL/Math/FSLevenbergMarquardt.hxx"
 
 std::pair<double,tfel::math::tvector<2u,double> >

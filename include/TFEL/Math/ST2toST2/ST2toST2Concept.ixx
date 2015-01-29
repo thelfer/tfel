@@ -48,36 +48,6 @@ namespace tfel{
       return a;
     }
     
-    template<typename T>
-    std::ostream &
-    operator << (std::ostream & os,
-		 const ST2toST2Concept<T>& s)
-    {
-      unsigned short i;
-      unsigned short j;
-      os << "[";
-      for(i=0;i<StensorDimeToSize<ST2toST2Traits<T>::dime>::value;++i){
-	if(i!=0){
-	  os << " [";
-	} else {
-	  os << "[";
-	}
-	for(j=0;j<StensorDimeToSize<ST2toST2Traits<T>::dime>::value;++j){
-	  os << s(i,j);
-	  if(j!=StensorDimeToSize<ST2toST2Traits<T>::dime>::value-1){
-	    os << ",";
-	  }
-	}
-	if(i!=StensorDimeToSize<ST2toST2Traits<T>::dime>::value-1){
-	  os << "]\n";
-	} else {
-	  os << "]";
-	}
-      }
-      os << "]";
-      return os;
-    } // end of operator <<
-
   } // end of namespace math
 
 } // end of namespace tfel

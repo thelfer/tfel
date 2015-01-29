@@ -36,10 +36,19 @@ namespace mfront
 
   struct ExcelMaterialPropertyInterface::ExcelInterface
   {
+    ExcelInterface() = default;
+    ExcelInterface(ExcelInterface&&) = default;
+    ExcelInterface(const ExcelInterface&) = default;
+    ExcelInterface& operator=(ExcelInterface&&) = default;
+    ExcelInterface& operator=(const ExcelInterface&) = default;
+    ~ExcelInterface();
+    std::vector<std::string> variables;
     std::string function;
     std::string library;
-    std::vector<std::string> variables;
   }; // end of ExcelInterface
+
+  ExcelMaterialPropertyInterface::ExcelInterface::~ExcelInterface()
+  {} // end of ExcelMaterialPropertyInterface::ExcelMaterialPropertyInterface::~ExcelInterface
 
   void
   ExcelMaterialPropertyInterface::readExcelInterface(std::vector<ExcelMaterialPropertyInterface::ExcelInterface>& interfaces,

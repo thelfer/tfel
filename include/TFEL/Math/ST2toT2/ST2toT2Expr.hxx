@@ -14,7 +14,6 @@
 #ifndef _LIB_TFEL_MATH_ST2TOT2_EXPR_LIB_
 #define _LIB_TFEL_MATH_ST2TOT2_EXPR_LIB_ 1
 
-#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"

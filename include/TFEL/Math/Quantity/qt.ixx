@@ -220,14 +220,6 @@ namespace tfel{
       return a.getValue() != b.getValue();
     }
 
-
-    template<typename unit,typename T>
-    std::ostream& operator << (std::ostream& os, const qt<unit,T>& q)
-    {
-      os << q.getValue();
-      return os;
-    }
-
     template<typename Unit,typename Scal>
     TFEL_MATH_INLINE constexpr Scal
     abs(const qt<Unit,Scal>& s)

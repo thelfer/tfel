@@ -27,6 +27,9 @@ namespace mfront{
       value(value_)
   {}
 
+  StaticVariableDescription::~StaticVariableDescription()
+  {}
+
   bool
   StaticVariableDescriptionContainer::contains(const std::string& n) const
   {

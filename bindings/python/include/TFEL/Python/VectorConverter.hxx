@@ -62,7 +62,7 @@ namespace tfel
       {
 	using namespace boost::python;
 	if (!PyList_Check(ptr)){
-	  return 0;
+	  return nullptr;
 	}
 	handle<> h(borrowed(ptr));
 	list l(h);

@@ -130,23 +130,6 @@ namespace tfel
     {
       typedef VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > type;
     }; // end of struct TinyVectorFromTinyVectorView
-
-    // Serialisation operator
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     typename T,bool b>
-    std::ostream&
-    operator << (std::ostream & os,
-		 const VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> >& s)
-    {
-      os << "[ ";
-      for(unsigned short i=0;i<N;++i){
-	os << s(i) << " ";
-      }
-      os << "]";
-      return os;
-    } // end of operator << 
     
   } // end of namespace math
 

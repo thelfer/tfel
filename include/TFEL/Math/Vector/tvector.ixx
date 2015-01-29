@@ -150,14 +150,6 @@ namespace tfel{
     } // end of tvector<N,T>::tvector(const VectorExpr<tvector<N,T2>, Expr>&)
 
     template<unsigned short N, typename T>
-    tvector<N,T>&
-    tvector<N,T>::operator=(const tvector<N,T>& src)
-    {
-      fsarray<N,T>::operator=(src);
-      return *this;
-    }
-
-    template<unsigned short N, typename T>
     constexpr const T& 
     tvector<N,T>::operator()(const unsigned short i) const noexcept
     {
@@ -254,17 +246,6 @@ namespace tfel{
       AbsSum<T> a;
       for_each<N>::exe(v.begin(),a);
       return a.result;
-    }
-
-    template<unsigned short N,typename T>
-    std::ostream &
-    operator << (std::ostream & os, const tvector<N,T>& s)
-    {
-      os << "( ";
-      tfel::fsalgo::copy<N>::exe(s.begin(),std::ostream_iterator<T>(os," "));
-      os << ")";
-
-      return os;
     }
 
 #endif

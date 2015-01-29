@@ -14,6 +14,7 @@
 #include<boost/python.hpp>
 
 #include<TFEL/Math/tvector.hxx>
+#include<TFEL/Math/Vector/tvectorIO.hxx>
 
 template<unsigned short N>
 static double&

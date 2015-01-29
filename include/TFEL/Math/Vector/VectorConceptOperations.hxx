@@ -15,11 +15,11 @@
 #define _LIB_TFEL_VECTOR_OPERATIONS_HXX_ 
 
 #include <cmath>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
 
 #include"TFEL/Metaprogramming/Implements.hxx"
-#include<type_traits>
 #include"TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx"
 
 #include"TFEL/TypeTraits/IsScalar.hxx"
@@ -30,12 +30,9 @@
 
 #include"TFEL/Math/General/ComputeBinaryResult.hxx"
 #include"TFEL/Math/General/ComputeUnaryResult.hxx"
-#include"TFEL/Math/Function/StandardFunctions.hxx"
 
 #include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExpr.hxx"
 #include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIterator.hxx"
-#include"TFEL/Math/ExpressionTemplates/FctMathObjectExpr.hxx"
-#include"TFEL/Math/ExpressionTemplates/FctMathObjectExprWithoutConstIterator.hxx"
 #include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx"
 #include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx"
 #include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectDiadicProductExpr.hxx"
@@ -54,26 +51,6 @@ namespace tfel{
     struct VectorDotProductHandle
     {
       typedef VectorVectorDotProduct type;
-    };
-
-    /*									                
-     * Partial Specialisation of ComputeUnaryResult_ for vectors	                
-     */									                
-    template<typename A,typename Fct>
-    class ComputeUnaryResult_<VectorTag,FunctionTag,A,Fct>
-    {
-      struct DummyHandle{};
-      typedef typename VectorType<A>::type VectA;
-      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-                                      FctMathObjectExpr<VectorConcept,VectorTraits,A,Fct>,
-                                      FctMathObjectExprWithoutConstIterator<VectorConcept,
-									    VectorTraits,A,Fct>
-				      >::type Expr;
-    public:
-      typedef typename UnaryResultType<VectA,Fct>::type Result;
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-				      DummyHandle,
-				      VectorExpr<Result,Expr> >::type Handle;
     };
 
     /*
@@ -189,21 +166,17 @@ namespace tfel{
     template<typename T1,typename T2,typename Op>
     struct IsVectorVectorOperationValid
     {
-      enum{
-	cond = (tfel::meta::Implements<T1,VectorConcept>::cond&&
-		tfel::meta::Implements<T2,VectorConcept>::cond&&
-		(!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,Op>::Result>::cond))
-      };
+      static constexpr bool cond = (tfel::meta::Implements<T1,VectorConcept>::cond&&
+				    tfel::meta::Implements<T2,VectorConcept>::cond&&
+				    (!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,Op>::Result>::cond));
     };
 
     template<typename T1,typename T2,typename Op>
     struct IsScalarVectorOperationValid
     {
-      enum{
-	cond = (tfel::typetraits::IsScalar<T1>::cond&&
-		tfel::meta::Implements<T2,VectorConcept>::cond&&
-		(!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,Op>::Result>::cond))
-      };
+      static constexpr bool cond = (tfel::typetraits::IsScalar<T1>::cond&&
+				    tfel::meta::Implements<T2,VectorConcept>::cond&&
+				    (!tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,Op>::Result>::cond));
     };
 
     template<typename T1,typename T2,typename Op>
@@ -221,8 +194,16 @@ namespace tfel{
 	!tfel::typetraits::IsInvalid<typename tfel::typetraits::RealPartType<typename ComputeBinaryResult<T1,T1,OpDotProduct>::Result>::type>::cond;
     };
 
+    // template<typename T1,typename T2>
+    // TFEL_MATH_INLINE auto
+    // operator + (T1&& a,T2&& b)
+    //   -> typename std::enable_if<IsVectorVectorOperationValid<typename std::decay<T1>::type,
+    // 							      typename std::decay<T2>::type,OpPlus>::cond,
+    // 				 typename ComputeBinaryResult<typename std::decay<T1>::type,
+    // 							      typename std::decay<T2>::type,OpPlus>::Handle>::type;
+
     template<typename T1,typename T2>
-    TFEL_MATH_INLINE
+    TFEL_MATH_INLINE 
     typename std::enable_if<
       IsVectorVectorOperationValid<T1,T2,OpPlus>::cond,
       typename ComputeBinaryResult<T1,T2,OpPlus>::Handle

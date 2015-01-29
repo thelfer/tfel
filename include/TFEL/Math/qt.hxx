@@ -15,7 +15,6 @@
 #define _LIB_TFEL_MATH_QT_H_
 
 #include<cmath>
-#include<iosfwd>
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -345,9 +344,6 @@ namespace tfel{
       }
 
     };
-
-    template<typename unit,typename T>
-    TFEL_MATH_INLINE2 std::ostream& operator << (std::ostream&, const qt<unit,T>&);
 
     template<typename unit,typename T>
     TFEL_MATH_INLINE constexpr

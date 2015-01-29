@@ -12,7 +12,6 @@
 #ifndef _STENSOR_CONCEPT_LIB_
 #define _STENSOR_CONCEPT_LIB_ 1
 
-#include<iosfwd>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -105,11 +104,6 @@ namespace tfel{
       typename StensorType<T>::type
     >::type
     deviator(const T&);
-
-    //! Serialisation operator
-    template<typename T>
-    std::ostream&
-    operator << (std::ostream &,const StensorConcept<T>&);
 
   } // end of namespace math
 
