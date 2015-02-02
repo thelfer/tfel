@@ -746,7 +746,7 @@ namespace tfel{
 	  p = --(this->fileTokens.erase(p));
 	}
 	if(p->flag==Token::DoxygenComment){
-	  TokensContainer::iterator p2 = p;
+	  auto p2 = p;
 	  ++p2;
 	  if(p2!=this->fileTokens.end()){
 	    if(p2->flag==Token::Standard){
@@ -762,7 +762,7 @@ namespace tfel{
 	  p = --(this->fileTokens.erase(p));
 	}
 	if(p->flag==Token::DoxygenBackwardComment){
-	  TokensContainer::iterator p2 = p;
+	  auto p2 = p;
 	  --p2;
 	  if(p2!=this->fileTokens.begin()){
 	    if(p2->flag==Token::Standard){
@@ -785,8 +785,8 @@ namespace tfel{
 	  splittedTokens.push_back(p->value);
 	  splitAtCxxTokenSperator(splittedTokens);
 	  unsigned int line = p->line;
-	  vector<string>::iterator p2 = splittedTokens.begin();
-	  TokensContainer::iterator current=p;
+	  auto p2 = splittedTokens.begin();
+	  auto current=p;
 	  for(;p2!=splittedTokens.end();++p2){
 	    p = this->fileTokens.insert(current,Token(line,*p2));
 	  }
@@ -881,7 +881,7 @@ namespace tfel{
 	  if(p->flag==Token::Standard){
 	    pos=p->value.find(CppKeywords[i]);
 	    if(pos!=string::npos){
-	      TokensContainer::iterator b=p;
+	      auto b=p;
 	      TokensContainer::iterator current;
 	      b->flag=Token::Preprocessor;
 	      ++p;

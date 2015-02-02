@@ -243,16 +243,16 @@ namespace mfront{
     VariableDescriptionContainer ev;
     set<Hypothesis> h;
     this->readVariableList(ev,h,&BehaviourDescription::addExternalStateVariables,true,true,false);
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
+    for(const auto & elem : h){
       CodeBlock ib;
       for(VariableDescriptionContainer::const_iterator p=ev.begin();p!=ev.end();++p){
 	string currentVarName = p->name + "_";
 	this->registerVariable(currentVarName,false);
-	this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
+	this->mb.addLocalVariable(elem,VariableDescription(p->type,currentVarName,p->arraySize,0u));
 	ib.code = "this->" + currentVarName + " = this->" + p->name +
 	  "+(" + this->mb.getClassName() + "::theta)*(this->d" + p->name + ");\n";
       }
-      this->mb.setCode(*ph,BehaviourData::BeforeInitializeLocalVariables,ib,
+      this->mb.setCode(elem,BehaviourData::BeforeInitializeLocalVariables,ib,
 		       BehaviourData::CREATEORAPPEND,
 		       BehaviourData::AT_END);
     }

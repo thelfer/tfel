@@ -268,7 +268,7 @@ namespace tfel
 	} else if(*p=="/"){
 	  g->add(shared_ptr<TExpr>(new TOperator("/")));
 	} else {
-	  vector<string>::const_iterator pt = p;
+	  auto pt = p;
 	  ++pt;
 	  if((pt!=pe)&&(*pt=="(")){
 	    string msg("IntegerEvaluator::treatGroup2 : unknown function '"+*p+"'");

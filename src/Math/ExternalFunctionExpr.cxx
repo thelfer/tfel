@@ -104,7 +104,7 @@ namespace tfel
 	using namespace std;
 	using std::vector;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
-	vector<shared_ptr<Expr> >::const_iterator p = this->args.begin();
+	auto p = this->args.begin();
 	ExternalFunctionManager::const_iterator p2;
         vector<shared_ptr<Expr> >::const_iterator p3;
         vector<shared_ptr<Expr> >::iterator p4;

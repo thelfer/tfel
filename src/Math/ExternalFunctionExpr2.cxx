@@ -30,7 +30,7 @@ namespace tfel
       
       ExternalFunctionExpr2::ExternalFunctionExpr2(std::shared_ptr<ExternalFunction> ff,
 						   std::vector<std::shared_ptr<Expr> >& fargs)
-	: f(ff),
+	: f(std::move(ff)),
 	  args(fargs)	
       {
 	using namespace std;
@@ -87,7 +87,7 @@ namespace tfel
       {
 	using namespace std;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
-        vector<shared_ptr<Expr> >::const_iterator p = this->args.begin();
+        auto p = this->args.begin();
 	vector<shared_ptr<Expr> >::const_iterator p3;
         vector<shared_ptr<Expr> >::iterator p4;
 	unsigned short i = 0;

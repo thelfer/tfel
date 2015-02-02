@@ -167,9 +167,9 @@ namespace mfront
     out << "### List of supported Hypotheses" << endl << endl;
     const set<ModellingHypothesis::Hypothesis>& h  = mb.getModellingHypotheses();
     const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
-    for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      out << "* " <<  ModellingHypothesis::toString(*ph);
-      if(dh.find(*ph)!=dh.end()){
+    for(const auto & elem : h){
+      out << "* " <<  ModellingHypothesis::toString(elem);
+      if(dh.find(elem)!=dh.end()){
 	out << ", specialised";
       }
       out << endl;
@@ -197,14 +197,14 @@ namespace mfront
       const BehaviourData& d =
 	mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       const vector<string>& cn = d.getCodeBlockNames();
-      for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
-	const CodeBlock& c = d.getCodeBlock(*pcn);
+      for(const auto & elem : cn){
+	const CodeBlock& c = d.getCodeBlock(elem);
 	if(!c.description.empty()){
-	  out <<"### " << *pcn << " description" << endl;
+	  out <<"### " << elem << " description" << endl;
 	  out << c.description << endl << endl;
 	}
 	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  out <<"### " << *pcn << " listing" << endl;
+	  out <<"### " << elem << " listing" << endl;
 	  out << endl;
 	  out << "~~~~~~~ {.cpp}" << endl;
 	  out << c.code << endl;
@@ -212,28 +212,28 @@ namespace mfront
 	}
       }
     }
-    for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      if(*ph!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+    for(const auto & elem : h){
+      if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 	const BehaviourData& d =
-	  mb.getBehaviourData(*ph);
+	  mb.getBehaviourData(elem);
 	const vector<string>& cn = d.getCodeBlockNames();
-	for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
+	for(const auto & cn_pcn : cn){
 	  bool print = true;
-	  const CodeBlock& c = d.getCodeBlock(*pcn);
+	  const CodeBlock& c = d.getCodeBlock(cn_pcn);
 	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
 	    const BehaviourData& duh =
 	      mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-	    if(duh.hasCode(*pcn)){
-	      const string& cuh = duh.getCodeBlock(*pcn).code;
+	    if(duh.hasCode(cn_pcn)){
+	      const string& cuh = duh.getCodeBlock(cn_pcn).code;
 	      print = c.code!=cuh;
 	    }
 	  }
 	  if(print){
 	    if(!c.description.empty()){
-	      out <<"### " << *pcn << " description(" << ModellingHypothesis::toString(*ph) << ")" << endl;
+	      out <<"### " << cn_pcn << " description(" << ModellingHypothesis::toString(elem) << ")" << endl;
 	      out << c.description << endl << endl;
 	    }
-	    out <<"### " << *pcn << " listing (" << ModellingHypothesis::toString(*ph) << ")" << endl;
+	    out <<"### " << cn_pcn << " listing (" << ModellingHypothesis::toString(elem) << ")" << endl;
 	    out << endl;
 	    out << "~~~~~~~ {.cpp} "<< endl;
 	    out << c.code << endl;
@@ -285,9 +285,9 @@ namespace mfront
     out << "### Liste des hypothèses modélisées" << endl << endl;
     const set<ModellingHypothesis::Hypothesis>& h  = mb.getModellingHypotheses();
     const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
-    for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      out << "* " <<  ModellingHypothesis::toString(*ph);
-      if(dh.find(*ph)!=dh.end()){
+    for(const auto & elem : h){
+      out << "* " <<  ModellingHypothesis::toString(elem);
+      if(dh.find(elem)!=dh.end()){
 	out << ", spécialisée";
       }
       out << endl;
@@ -315,14 +315,14 @@ namespace mfront
       const BehaviourData& d =
 	mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       const vector<string>& cn = d.getCodeBlockNames();
-      for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
-	const CodeBlock& c = d.getCodeBlock(*pcn);
+      for(const auto & elem : cn){
+	const CodeBlock& c = d.getCodeBlock(elem);
 	if(!c.description.empty()){
-	  out <<"### Description relative à la portion " << *pcn << endl;
+	  out <<"### Description relative à la portion " << elem << endl;
 	  out << c.description << endl << endl;
 	}
 	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  out <<"### Listing associée à la portion " << *pcn << endl;
+	  out <<"### Listing associée à la portion " << elem << endl;
 	  out << endl;
 	  out << "~~~~~~~ {.cpp}" << endl;
 	  out << c.code << endl;
@@ -330,28 +330,28 @@ namespace mfront
 	}
       }
     }
-    for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      if(*ph!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+    for(const auto & elem : h){
+      if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 	const BehaviourData& d =
-	  mb.getBehaviourData(*ph);
+	  mb.getBehaviourData(elem);
 	const vector<string>& cn = d.getCodeBlockNames();
-	for(vector<string>::const_iterator pcn = cn.begin();pcn!=cn.end();++pcn){
+	for(const auto & cn_pcn : cn){
 	  bool print = true;
-	  const CodeBlock& c = d.getCodeBlock(*pcn);
+	  const CodeBlock& c = d.getCodeBlock(cn_pcn);
 	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
 	    const BehaviourData& duh =
 	      mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-	    if(duh.hasCode(*pcn)){
-	      const string& cuh = duh.getCodeBlock(*pcn).code;
+	    if(duh.hasCode(cn_pcn)){
+	      const string& cuh = duh.getCodeBlock(cn_pcn).code;
 	      print = c.code!=cuh;
 	    }
 	  }
 	  if(print){
 	    if(!c.description.empty()){
-	      out <<"### Description relative à la portion " << *pcn << " (spécialisée pour l'hypothèse " << ModellingHypothesis::toString(*ph) << ")" << endl;
+	      out <<"### Description relative à la portion " << cn_pcn << " (spécialisée pour l'hypothèse " << ModellingHypothesis::toString(elem) << ")" << endl;
 	      out << c.description << endl << endl;
 	    }
-	    out <<"### Listing associé à la portion " << *pcn << " (spécialisée pour l'hypothèse " << ModellingHypothesis::toString(*ph) << ")" << endl;
+	    out <<"### Listing associé à la portion " << cn_pcn << " (spécialisée pour l'hypothèse " << ModellingHypothesis::toString(elem) << ")" << endl;
 	    out << endl;
 	    out << "~~~~~~~ {.cpp} "<< endl;
 	    out << c.code << endl;
@@ -382,8 +382,8 @@ namespace mfront
     const Glossary& glossary = Glossary::getGlossary();
     vector<Data> data;
     const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
-    for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=dh.begin();ph!=dh.end();++ph){
-      const BehaviourData& d = mb.getBehaviourData(*ph);
+    for(const auto & elem : dh){
+      const BehaviourData& d = mb.getBehaviourData(elem);
       const VariableDescriptionContainer& mdata = (d.*m)();
       VariableDescriptionContainer::const_iterator pv;
       for(pv=mdata.begin();pv!=mdata.end();++pv){
@@ -403,7 +403,7 @@ namespace mfront
 	  pd->name         = pv->name;
 	  pd->arraySize    = pv->arraySize;
 	  pd->type         = pv->type;
-	  if(*ph==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	  if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 	    if(pd->description.empty()){
 	      pd->description  = pv->description;
 	    } else {
@@ -411,9 +411,9 @@ namespace mfront
 	    }
 	  } else {
 	    if(pd->description.empty()){
-	      pd->description  = ModellingHypothesis::toString(*ph) + " : "+ pv->description;
+	      pd->description  = ModellingHypothesis::toString(elem) + " : "+ pv->description;
 	    } else {
-	      pd->description  += '\n'+ModellingHypothesis::toString(*ph) + " : "+pv->description;
+	      pd->description  += '\n'+ModellingHypothesis::toString(elem) + " : "+pv->description;
 	    }
 	  }
 	  pd->externalName = d.getExternalName(pv->name);
@@ -421,13 +421,13 @@ namespace mfront
 	    if(glossary.contains(pd->externalName)){
 	      const GlossaryEntry& e = glossary.getGlossaryEntry(pd->externalName);
 	      ostringstream os;
-	      if(*ph!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-		os << ModellingHypothesis::toString(*ph) << " : ";
+	      if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+		os << ModellingHypothesis::toString(elem) << " : ";
 	      }
 	      os << e.getShortDescription() << endl;
 	      const vector<string>& cd = e.getDescription();
-	      for(vector<string>::const_iterator pcd=cd.begin();pcd!=cd.end();++pcd){
-		os << *pcd << endl;
+	      for(const auto & cd_pcd : cd){
+		os << cd_pcd << endl;
 	      }
 	      pd->description += os.str();
 	    }
@@ -442,7 +442,7 @@ namespace mfront
 	  msg += "inconsistent data across hypothesis for variable '"+pd->name+"'";
 	  throw(runtime_error(msg));
 	}
-	pd->hypotheses.push_back(*ph);
+	pd->hypotheses.push_back(elem);
       }
     }
     return data;
@@ -481,8 +481,8 @@ namespace mfront
     const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
     set<string> cbnames;
     vector<ModellingHypothesis::Hypothesis>::const_iterator pvh;
-    for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=dh.begin();ph!=dh.end();++ph){
-      const BehaviourData& d = mb.getBehaviourData(*ph);
+    for(const auto & elem : dh){
+      const BehaviourData& d = mb.getBehaviourData(elem);
       const vector<string>& cn = d.getCodeBlockNames();
       cbnames.insert(cn.begin(),cn.end());
     }
@@ -528,18 +528,18 @@ namespace mfront
       // codes blocks referring to the current variable
       map<string,vector<ModellingHypothesis::Hypothesis> > vcb;
       map<string,vector<ModellingHypothesis::Hypothesis> > dvcb;
-      for(set<string>::const_iterator pc=cbnames.begin();pc!=cbnames.end();++pc){
-      	for(set<ModellingHypothesis::Hypothesis>::const_iterator ph=dh.begin();ph!=dh.end();++ph){
-      	  const BehaviourData& d = mb.getBehaviourData(*ph);
+      for(const auto & cbname : cbnames){
+      	for(const auto & elem : dh){
+      	  const BehaviourData& d = mb.getBehaviourData(elem);
 	  const bool b = d.isIntegrationVariableName(pd->name)||d.isExternalStateVariableName(pd->name);
-	  if(d.hasCode(*pc)){
-	    const CodeBlock& cb = d.getCodeBlock(*pc);
+	  if(d.hasCode(cbname)){
+	    const CodeBlock& cb = d.getCodeBlock(cbname);
 	    if(cb.variables.find(pd->name)!=cb.variables.end()){
-	      vcb[*pc].push_back(*ph);
+	      vcb[cbname].push_back(elem);
 	    }
 	    if(b){
 	      if(cb.variables.find("d"+pd->name)!=cb.variables.end()){
-		dvcb[*pc].push_back(*ph);
+		dvcb[cbname].push_back(elem);
 	      }
 	    }
 	  }

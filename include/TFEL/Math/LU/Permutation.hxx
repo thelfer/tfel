@@ -27,19 +27,14 @@ namespace tfel{
     struct Permutation
       : protected vector<T>
     {
-      
-      /*!
-       * default constructor
-       */
-      TFEL_MATH_INLINE
-      Permutation();
-
-      /*!
-       * default constructor
-       */
+      Permutation() = default;
+      Permutation(const Permutation&) = delete;
+      Permutation(Permutation&&) = delete;
+      Permutation& operator=(Permutation&&) = delete;
+      Permutation& operator=(const Permutation&) = delete;
+      //! default constructor
       TFEL_MATH_INLINE
       Permutation(const typename vector<T>::size_type);
-
       /*!
        * \brief set this permutation vector to be equal to the
        * identity
@@ -47,37 +42,26 @@ namespace tfel{
       TFEL_MATH_INLINE
       void reset(void);
 
-      TFEL_MATH_INLINE const T&
-      operator[](const typename vector<T>::size_type) const;
-
-      TFEL_MATH_INLINE const T&
-      operator()(const typename vector<T>::size_type) const;
+      using vector<T>::operator[];
+      using vector<T>::operator();
+      using vector<T>::size;
+      using vector<T>::clear;
       
       TFEL_MATH_INLINE void
       swap(const typename vector<T>::size_type,
 	   const typename vector<T>::size_type);
-
-      TFEL_MATH_INLINE bool
-      isIdentity() const;
-
-      using vector<T>::size;
-      using vector<T>::clear;
-
+      //! \return true is the permutation is the identity
+      TFEL_MATH_INLINE bool isIdentity() const;
       /*!
        * \brief resize the permutation
        * This automatically calls the reset method
        */
       void resize(const typename vector<T>::size_type);
-
+      //! destructor
+      ~Permutation();
     private:
 
-      Permutation(const Permutation&);
-
-      Permutation&
-      operator=(const Permutation&);
-
       bool is_identity;
-
     };
 
   } // end of namespace math

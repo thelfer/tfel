@@ -46,7 +46,7 @@ namespace tfel
     {} // end of Evaluator::TNegLogicalExpr::~TNegLogicalExpr()
 
     Evaluator::TNegation::TNegation(std::shared_ptr<Evaluator::TExpr> e)
-      : expr(e)
+      : expr(std::move(e))
     {} // end of Evaluator::TNegation::TNegation
 
     bool
@@ -106,7 +106,7 @@ namespace tfel
     Evaluator::TBinaryOperation::TBinaryOperation(std::shared_ptr<Evaluator::TExpr> a_,
 						  const std::shared_ptr<TOperator>op_,
 						  std::shared_ptr<Evaluator::TExpr> b_)
-      : a(a_), op(op_), b(b_)
+      : a(std::move(a_)), op(op_), b(std::move(b_))
     {} // end of Evaluator::TBinaryOperation::TBinaryOperation
     
     bool
@@ -192,8 +192,8 @@ namespace tfel
     Evaluator::TGroup::reduce(void)
     {
       using namespace std;
-      vector<std::shared_ptr<Evaluator::TExpr>>::iterator p  = this->subExpr.begin();
-      vector<std::shared_ptr<Evaluator::TExpr>>::iterator pe = this->subExpr.end();
+      auto p  = this->subExpr.begin();
+      auto pe = this->subExpr.end();
       while(p!=pe){
 	(*p)->reduce();
 	++p;
@@ -230,7 +230,7 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::math::parser;
-      vector<shared_ptr<Evaluator::TExpr>>::iterator p  = this->subExpr.begin();
+      auto p  = this->subExpr.begin();
       vector<shared_ptr<Evaluator::TExpr>>::iterator previous;
       vector<shared_ptr<Evaluator::TExpr>>::iterator next;
       while(p!=this->subExpr.end()){
@@ -294,7 +294,7 @@ namespace tfel
 		    string msg("TGroup::reduce group two successive operators");
 		    throw(runtime_error(msg));
 		  }
-		  vector<shared_ptr<Evaluator::TExpr>>::iterator nnext = next+1;
+		  auto nnext = next+1;
 		  if(nnext==this->subExpr.end()){
 		    string msg("TGroup::reduce group ends by operator "+op);
 		    throw(runtime_error(msg));
@@ -322,7 +322,7 @@ namespace tfel
     
     Evaluator::TFunction::TFunction(Evaluator::FunctionGenerator f_,
 				    std::shared_ptr<Evaluator::TExpr> g_)
-      : f(f_), arg(g_)
+      : f(f_), arg(std::move(g_))
     {}
     
     bool
@@ -348,7 +348,7 @@ namespace tfel
     Evaluator::TBinaryFunction::TBinaryFunction(Evaluator::BinaryFunctionGenerator f_,
 						std::shared_ptr<Evaluator::TExpr> a1_,
 						std::shared_ptr<Evaluator::TExpr> a2_)
-      : f(f_),arg1(a1_),arg2(a2_)
+      : f(f_),arg1(std::move(a1_)),arg2(std::move(a2_))
     {}
     
     bool
@@ -435,7 +435,7 @@ namespace tfel
     Evaluator::TDifferentiatedFunctionExpr::TDifferentiatedFunctionExpr(std::shared_ptr<ExternalFunction> ff,
 									std::vector<std::shared_ptr<Evaluator::TExpr>>& fargs,
 									const std::vector<std::vector<double>::size_type>& fvar)
-      : f(ff),
+      : f(std::move(ff)),
 	args(fargs),
 	var(fvar)
     {} // end of TDifferentiatedFunctionExpr
@@ -472,9 +472,9 @@ namespace tfel
     Evaluator::TConditionalExpr::TConditionalExpr(std::shared_ptr<Evaluator::TLogicalExpr> c_,
 						  std::shared_ptr<Evaluator::TExpr> a_,
 						  std::shared_ptr<Evaluator::TExpr> b_)
-      : c(c_),
-	a(a_),
-	b(b_)
+      : c(std::move(c_)),
+	a(std::move(a_)),
+	b(std::move(b_))
     {} // end of Evaluator::TConditionalExpr::TConditionalExpr
 
     bool

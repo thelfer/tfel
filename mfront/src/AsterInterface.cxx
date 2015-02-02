@@ -370,9 +370,9 @@ namespace mfront{
     if(!mb.areAllMechanicalDataSpecialised(h)){
       this->writeAsterBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-      if(mb.hasSpecialisedMechanicalData(*ph)){
-	this->writeAsterBehaviourTraits(out,mb,*ph);
+    for(const auto & elem : h){
+      if(mb.hasSpecialisedMechanicalData(elem)){
+	this->writeAsterBehaviourTraits(out,mb,elem);
       }
     }
 
@@ -476,9 +476,9 @@ namespace mfront{
       const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       this->generateUMATxxSymbols(out,name,uh,mb,fd);
     }
-    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-      if(mb.hasSpecialisedMechanicalData(*ph)){
-	this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+    for(const auto & elem : h){
+      if(mb.hasSpecialisedMechanicalData(elem)){
+	this->generateUMATxxSymbols(out,name,elem,mb,fd);
       }
     }
     
@@ -777,9 +777,9 @@ namespace mfront{
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       const set<Hypothesis> ah = this->getModellingHypothesesToBeTreated(mb);
       set<Hypothesis> uh;
-      for(set<Hypothesis>::const_iterator ph=ah.begin();ph!=ah.end();++ph){
-	if(!mb.hasSpecialisedMechanicalData(*ph)){
-	  uh.insert(*ph);
+      for(const auto & elem : ah){
+	if(!mb.hasSpecialisedMechanicalData(elem)){
+	  uh.insert(elem);
 	}
       }
       if(uh.empty()){
@@ -791,8 +791,8 @@ namespace mfront{
       // material properties for all the selected hypothesis
       vector<pair<vector<UMATMaterialProperty>,
 		  SupportedTypes::TypeSize> > mpositions;
-      for(set<Hypothesis>::const_iterator ph=uh.begin();ph!=uh.end();++ph){
-	mpositions.push_back(this->buildMaterialPropertiesList(mb,*ph));
+      for(const auto & elem : uh){
+	mpositions.push_back(this->buildMaterialPropertiesList(mb,elem));
       }
       set<Hypothesis>::const_iterator ph=uh.begin();
       vector<pair<vector<UMATMaterialProperty>,
@@ -804,18 +804,18 @@ namespace mfront{
       for(;ph!=uh.end();++ph,++pum){
 	const BehaviourData& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
 	const VariableDescriptionContainer& mps = d.getMaterialProperties();
-	for(VariableDescriptionContainer::const_iterator pm=mps.begin();pm!=mps.end();++pm){
+	for(const auto & mp : mps){
 	  const UMATMaterialProperty& mp1 = findUMATMaterialProperty(mfirst.first,
-								     mb.getExternalName(h,pm->name));
+								     mb.getExternalName(h,mp.name));
 	  const UMATMaterialProperty& mp2 = findUMATMaterialProperty(pum->first,
-								     mb.getExternalName(h,pm->name));
+								     mb.getExternalName(h,mp.name));
 	  SupportedTypes::TypeSize o1 = mp1.offset;
 	  o1+=pum->second;
 	  SupportedTypes::TypeSize o2 = mp2.offset;
 	  o2+=mfirst.second;
 	  if(o1!=o2){
 	    string msg("UMATInterface::buildMaterialPropertiesList : "
-		       "incompatible offset for material property '"+pm->name+
+		       "incompatible offset for material property '"+mp.name+
 		       "' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
 		       "To by-pass this limitation, you may want to explicitely "
 		       "specialise some modelling hypotheses");
@@ -1070,8 +1070,8 @@ namespace mfront{
        ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
 	(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)))){
       set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
-      for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
-	res.insert(MVType(*p,this->getModellingHypothesisTest(*p)));
+      for(const auto & elem : h){
+	res.insert(MVType(elem,this->getModellingHypothesisTest(elem)));
       }
       return res;
     }

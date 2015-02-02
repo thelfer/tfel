@@ -75,9 +75,8 @@ namespace mfront
       if(mb.isModellingHypothesisSupported(h)){
 	const BehaviourData& d = mb.getBehaviourData(h);
 	const VariableDescriptionContainer& mps  = d.getMaterialProperties();
-	for(VariableDescriptionContainer::const_iterator pv=mps.begin();
-	    pv!=mps.end();++pv){
-	  const VariableDescription& v = *pv;
+	for(const auto & v : mps){
+	  
 	  const string& name = d.getExternalName(v.name);
 	  if(v.arraySize==1u){
 	    mp_names.insert(name);
@@ -109,17 +108,16 @@ namespace mfront
       if(mb.isModellingHypothesisSupported(h)){
 	const BehaviourData& d         = mb.getBehaviourData(h);
 	const VariableDescriptionContainer& svs  = d.getPersistentVariables();
-	for(VariableDescriptionContainer::const_iterator pv=svs.begin();
-	    pv!=svs.end();++pv){
-	  if(s.contains(pv->name)){
-	    const VariableDescription& v = s.getVariable(pv->name);
-	    if((pv->type!=v.type)||(pv->arraySize!=v.arraySize)){
+	for(const auto & sv : svs){
+	  if(s.contains(sv.name)){
+	    const VariableDescription& v = s.getVariable(sv.name);
+	    if((sv.type!=v.type)||(sv.arraySize!=v.arraySize)){
 	      string msg("getAllStateVariables : "
-			 "inconsistent type for variable '"+pv->name+"'");
+			 "inconsistent type for variable '"+sv.name+"'");
 	      throw(runtime_error(msg));
 	    }
 	  } else {
-	    s.push_back(*pv);
+	    s.push_back(sv);
 	  }
 	}
       }
@@ -498,23 +496,23 @@ namespace mfront
     }
     if(!mps.empty()){
       SupportedTypes::TypeSize o;
-      for(VariableDescriptionContainer::const_iterator pv=mps.begin();pv!=mps.end();++pv){
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(pv->type);
+      for(const auto & mp : mps){
+	const SupportedTypes::TypeFlag flag = this->getTypeFlag(mp.type);
 	if(flag==SupportedTypes::Scalar){
-	  if(pv->arraySize==1u){
-	    out << "this->" << pv->name << " = ZMATmprops[" << o << "]();" << endl;
-	    o+=this->getTypeSize(pv->type,1u);
+	  if(mp.arraySize==1u){
+	    out << "this->" << mp.name << " = ZMATmprops[" << o << "]();" << endl;
+	    o+=this->getTypeSize(mp.type,1u);
 	  } else {
-	    if(this->useDynamicallyAllocatedVector(pv->arraySize)){
-	      out << "this->" << pv->name << ".resize(" << pv->arraySize << ");" << endl;
-	      out << "for(unsigned short idx=0;idx!=" << pv->arraySize << ";++idx){" << endl;
-	      out << "this->" << pv->name << "[idx] = ZMATmprops[" << o << "+idx]();" << endl;
+	    if(this->useDynamicallyAllocatedVector(mp.arraySize)){
+	      out << "this->" << mp.name << ".resize(" << mp.arraySize << ");" << endl;
+	      out << "for(unsigned short idx=0;idx!=" << mp.arraySize << ";++idx){" << endl;
+	      out << "this->" << mp.name << "[idx] = ZMATmprops[" << o << "+idx]();" << endl;
 	      out << "}" << endl;
-	      o+=this->getTypeSize(pv->type,pv->arraySize);
+	      o+=this->getTypeSize(mp.type,mp.arraySize);
 	    } else {
-	      for(unsigned short i=0;i!=pv->arraySize;++i){
-		out << "this->" << pv->name << "[" << i << "] = ZMATmprops[" << o << "]();" << endl;
-		o+=this->getTypeSize(pv->type,1u);
+	      for(unsigned short i=0;i!=mp.arraySize;++i){
+		out << "this->" << mp.name << "[" << i << "] = ZMATmprops[" << o << "]();" << endl;
+		o+=this->getTypeSize(mp.type,1u);
 	      }
 	    }
 	  }
@@ -527,10 +525,10 @@ namespace mfront
     }
     if(!ivs.empty()){
       SupportedTypes::TypeSize o;
-      for(VariableDescriptionContainer::const_iterator pv=ivs.begin();pv!=ivs.end();++pv){
-	const string n = "this->"+pv->name;
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(pv->type);
-	if(pv->arraySize==1u){
+      for(const auto & iv : ivs){
+	const string n = "this->"+iv.name;
+	const SupportedTypes::TypeFlag flag = this->getTypeFlag(iv.type);
+	if(iv.arraySize==1u){
 	  switch(flag){
 	  case SupportedTypes::Scalar : 	  
 	    out << n << " = ZMATstatev[" << o << "];" << endl;
@@ -541,14 +539,14 @@ namespace mfront
 	    break;
 	  default:
 	    string msg("ZMATInterface::writeBehaviourDataConstructor : ");
-	    msg += "unsupported variable type ('"+pv->type+"')";
+	    msg += "unsupported variable type ('"+iv.type+"')";
 	    throw(runtime_error(msg));
 	  }
-	  o+=this->getTypeSize(pv->type,1u);
+	  o+=this->getTypeSize(iv.type,1u);
 	} else {
-	  if(this->useDynamicallyAllocatedVector(pv->arraySize)){
-	    out << n << ".resize(" << pv->arraySize << ");" << endl;
-	    out << "for(unsigned short idx=0;idx!=" << pv->arraySize << ";++idx){" << endl;
+	  if(this->useDynamicallyAllocatedVector(iv.arraySize)){
+	    out << n << ".resize(" << iv.arraySize << ");" << endl;
+	    out << "for(unsigned short idx=0;idx!=" << iv.arraySize << ";++idx){" << endl;
 	    switch(flag){
 	    case SupportedTypes::Scalar : 
 	      out << n << "[idx] = ZMATstatev[" 
@@ -566,13 +564,13 @@ namespace mfront
 	      break;
 	    default : 
 	      string msg("ZMATInterface::writeBehaviourDataConstructor : "
-			 "unsupported variable type ('"+pv->type+"')");
+			 "unsupported variable type ('"+iv.type+"')");
 	      throw(runtime_error(msg));
 	    }
 	    out << "}" << endl;
-	    o+=this->getTypeSize(pv->type,pv->arraySize);
+	    o+=this->getTypeSize(iv.type,iv.arraySize);
 	  } else {
-	    for(int i=0;i!=pv->arraySize;++i){
+	    for(int i=0;i!=iv.arraySize;++i){
 	      switch(flag){
 	      case SupportedTypes::Scalar : 
 		out << n << "[" << i << "] = ZMATstatev[" 
@@ -585,10 +583,10 @@ namespace mfront
 		break;
 	      default : 
 		string msg("ZMATInterface::writeBehaviourDataConstructor : "
-			   "unsupported variable type ('"+pv->type+"')");
+			   "unsupported variable type ('"+iv.type+"')");
 		throw(runtime_error(msg));
 	      }
-	      o+=this->getTypeSize(pv->type,1u);
+	      o+=this->getTypeSize(iv.type,1u);
 	    }
 	  }
 	}
@@ -596,23 +594,23 @@ namespace mfront
     }
     if(!evs.empty()){
       SupportedTypes::TypeSize o;
-      for(VariableDescriptionContainer::const_iterator pv=evs.begin();pv!=evs.end();++pv){
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(pv->type);
+      for(const auto & ev : evs){
+	const SupportedTypes::TypeFlag flag = this->getTypeFlag(ev.type);
 	if(flag==SupportedTypes::Scalar){
-	  if(pv->arraySize==1u){
-	    out << "this->" << pv->name << " = ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
-	    o+=this->getTypeSize(pv->type,1u);
+	  if(ev.arraySize==1u){
+	    out << "this->" << ev.name << " = ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
+	    o+=this->getTypeSize(ev.type,1u);
 	  } else {
-	    if(this->useDynamicallyAllocatedVector(pv->arraySize)){
-	      out << "this->" << pv->name << ".resize(" << pv->arraySize << ");" << endl;
-	      out << "for(unsigned short idx=0;idx!=" << pv->arraySize << ";++idx){" << endl;
-	      out << "this->" << pv->name << "[idx] = ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];" << endl;
+	    if(this->useDynamicallyAllocatedVector(ev.arraySize)){
+	      out << "this->" << ev.name << ".resize(" << ev.arraySize << ");" << endl;
+	      out << "for(unsigned short idx=0;idx!=" << ev.arraySize << ";++idx){" << endl;
+	      out << "this->" << ev.name << "[idx] = ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];" << endl;
 	      out << "}" << endl;
-	      o+=this->getTypeSize(pv->type,pv->arraySize);
+	      o+=this->getTypeSize(ev.type,ev.arraySize);
 	    } else {
-	      for(unsigned short i=0;i!=pv->arraySize;++i){
-		out << "this->" << pv->name << "[" << i << "] = ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
-		o+=this->getTypeSize(pv->type,1u);
+	      for(unsigned short i=0;i!=ev.arraySize;++i){
+		out << "this->" << ev.name << "[" << i << "] = ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
+		o+=this->getTypeSize(ev.type,1u);
 	      }
 	    }
 	  }
@@ -800,23 +798,23 @@ namespace mfront
     }
     if(!evs.empty()){
       SupportedTypes::TypeSize o;
-      for(VariableDescriptionContainer::const_iterator pv=evs.begin();pv!=evs.end();++pv){
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(pv->type);
+      for(const auto & ev : evs){
+	const SupportedTypes::TypeFlag flag = this->getTypeFlag(ev.type);
 	if(flag==SupportedTypes::Scalar){
-	  if(pv->arraySize==1u){
-	    out << "this->" << pv->name << " = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
-	    o+=this->getTypeSize(pv->type,1u);
+	  if(ev.arraySize==1u){
+	    out << "this->" << ev.name << " = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
+	    o+=this->getTypeSize(ev.type,1u);
 	  } else {
-	    if(this->useDynamicallyAllocatedVector(pv->arraySize)){
-	      out << "this->" << pv->name << ".resize(" << pv->arraySize << ");" << endl;
-	      out << "for(unsigned short idx=0;idx!=" << pv->arraySize << ";++idx){" << endl;
-	      out << "this->" << pv->name << "[idx] = ZMATextvars_td-[ZMATevs_pos[" << o << "+idx]]-ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];" << endl;
+	    if(this->useDynamicallyAllocatedVector(ev.arraySize)){
+	      out << "this->" << ev.name << ".resize(" << ev.arraySize << ");" << endl;
+	      out << "for(unsigned short idx=0;idx!=" << ev.arraySize << ";++idx){" << endl;
+	      out << "this->" << ev.name << "[idx] = ZMATextvars_td-[ZMATevs_pos[" << o << "+idx]]-ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];" << endl;
 	      out << "}" << endl;
-	      o+=this->getTypeSize(pv->type,pv->arraySize);
+	      o+=this->getTypeSize(ev.type,ev.arraySize);
 	    } else {
-	      for(unsigned short i=0;i!=pv->arraySize;++i){
-		out << "this->" << pv->name << "[" << i << "] = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
-		o+=this->getTypeSize(pv->type,1u);
+	      for(unsigned short i=0;i!=ev.arraySize;++i){
+		out << "this->" << ev.name << "[" << i << "] = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
+		o+=this->getTypeSize(ev.type,1u);
 	      }
 	    }
 	  }
@@ -998,21 +996,21 @@ namespace mfront
     out << "ARRAY<COEFF> mprops; " << endl;
     const VariableDescriptionContainer& svs = getAllStateVariables(mb);
     if(!svs.empty()){
-      for(VariableDescriptionContainer::const_iterator pv=svs.begin();pv!=svs.end();++pv){
-	out << "//! '" << pv->name << "' state variable" << endl;
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(pv->type);
+      for(const auto & sv : svs){
+	out << "//! '" << sv.name << "' state variable" << endl;
+	const SupportedTypes::TypeFlag flag = this->getTypeFlag(sv.type);
 	if(flag==SupportedTypes::Scalar){
-	  if(pv->arraySize==1u){
-	    out << "SCALAR_VINT " << pv->name << ";" << endl; 
+	  if(sv.arraySize==1u){
+	    out << "SCALAR_VINT " << sv.name << ";" << endl; 
 	  } else {
-	    out << "VECTOR_VINT " << pv->name << ";" << endl; 
+	    out << "VECTOR_VINT " << sv.name << ";" << endl; 
 	  }
 	} else if ((flag==SupportedTypes::Stensor)||
 		   (flag==SupportedTypes::Tensor)){
-	  if(pv->arraySize==1u){
-	    out << "TENSOR2_VINT " << pv->name << ";" << endl; 
+	  if(sv.arraySize==1u){
+	    out << "TENSOR2_VINT " << sv.name << ";" << endl; 
 	  } else {
-	    out << "ARRAY<TENSOR2_VINT> " << pv->name << ";" << endl; 
+	    out << "ARRAY<TENSOR2_VINT> " << sv.name << ";" << endl; 
 	  }
 	} else {
 	  string msg("ZMATInterface::endTreatement : "
@@ -1257,26 +1255,26 @@ namespace mfront
       out << "this->mprops.resize(" << mps_size << ");" << endl; 
     }
     if(!isvs.empty()){
-      for(VariableDescriptionContainer::const_iterator pv=isvs.begin();pv!=isvs.end();++pv){
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(pv->type);
+      for(const auto & isv : isvs){
+	const SupportedTypes::TypeFlag flag = this->getTypeFlag(isv.type);
 	if(flag==SupportedTypes::Scalar){
-	  out << "this->" << pv->name << ".initialize(this,\"" << pv->name 
-	      << "\"," << pv->arraySize << ",1);" << endl; 
+	  out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
+	      << "\"," << isv.arraySize << ",1);" << endl; 
 	} else if (flag==SupportedTypes::Stensor){
-	  if(pv->arraySize==1u){
-	    out << "this->" << pv->name << ".initialize(this,\"" << pv->name 
+	  if(isv.arraySize==1u){
+	    out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
 		<< "\",this->tsz(),1);" << endl; 
 	  } else {
-	    out << "this->" << pv->name << ".initialize(this,\"" << pv->name 
-		<< "\"," << pv->arraySize << "*(this->tsz()),1);" << endl; 
+	    out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
+		<< "\"," << isv.arraySize << "*(this->tsz()),1);" << endl; 
 	  }
 	} else if (flag==SupportedTypes::Tensor){
-	  if(pv->arraySize==1u){
-	    out << "this->" << pv->name << ".initialize(this,\"" << pv->name 
+	  if(isv.arraySize==1u){
+	    out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
 		<< "\",this->utsz(),1);" << endl; 
 	  } else {
-	    out << "this->" << pv->name << ".initialize(this,\"" << pv->name 
-		<< "\"," << pv->arraySize << "*(this->uts()),1);" << endl; 
+	    out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
+		<< "\"," << isv.arraySize << "*(this->uts()),1);" << endl; 
 	  }
 	} else {
 	  string msg("ZMATInterface::endTreatement : "

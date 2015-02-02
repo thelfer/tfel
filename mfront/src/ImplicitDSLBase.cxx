@@ -712,8 +712,8 @@ namespace mfront{
     bool has_stensor_array = false;
     // checks
     const set<Hypothesis>& h = this->mb.getModellingHypotheses();
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      const BehaviourData& d = this->mb.getBehaviourData(*ph);
+    for(const auto & elem : h){
+      const BehaviourData& d = this->mb.getBehaviourData(elem);
       const VariableDescriptionContainer& sv = d.getIntegrationVariables();
       for(p=sv.begin();p!=sv.end();++p){
 	SupportedTypes::TypeFlag flag  = this->getTypeFlag(p->type);
@@ -1801,8 +1801,8 @@ namespace mfront{
 #warning "shall be done earlier"
     // reserved names
     const vector<string>& n = this->solver->getReservedNames();
-    for(vector<string>::const_iterator pn = n.begin();pn!=n.end();++pn){
-      this->reserveName(*pn,false);
+    for(const auto & elem : n){
+      this->reserveName(elem,false);
     }
     if(this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
       if((!this->solver->usesJacobian())||(this->solver->requiresNumericalJacobian())){
@@ -1854,11 +1854,11 @@ namespace mfront{
     }
     // correct prediction to take into account normalisation factors
     const set<Hypothesis> mh(this->mb.getDistinctModellingHypotheses());
-    for(set<Hypothesis>::const_iterator ph=mh.begin();ph!=mh.end();++ph){
-      if(this->mb.hasCode(*ph,BehaviourData::ComputePredictor)){
+    for(const auto & elem : mh){
+      if(this->mb.hasCode(elem,BehaviourData::ComputePredictor)){
 	CodeBlock predictor;
 	VariableDescriptionContainer::const_iterator p;
-	const BehaviourData& d = this->mb.getBehaviourData(*ph);
+	const BehaviourData& d = this->mb.getBehaviourData(elem);
 	const VariableDescriptionContainer& sv = d.getIntegrationVariables();
 	for(p=sv.begin();p!=sv.end();++p){
 	  if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+p->name)!=
@@ -1869,7 +1869,7 @@ namespace mfront{
 	    }
 	  }
 	}
-	this->mb.setCode(*ph,BehaviourData::ComputePredictor,predictor,
+	this->mb.setCode(elem,BehaviourData::ComputePredictor,predictor,
 			 BehaviourData::CREATEORAPPEND,
 			 BehaviourData::AT_END);
       }

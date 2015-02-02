@@ -33,7 +33,7 @@ namespace tfel
       DifferentiatedFunctionExpr::DifferentiatedFunctionExpr(std::shared_ptr<ExternalFunction> ff,
 							     std::vector<std::shared_ptr<Expr> >& fargs,
 							     const std::vector<std::vector<double>::size_type>& fpvar)
-	: f(ff),
+	: f(std::move(ff)),
 	  args(fargs),
 	  pvar(fpvar)
       {
@@ -97,7 +97,7 @@ namespace tfel
 	using namespace std;
 	using namespace std;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
-        vector<shared_ptr<Expr> >::const_iterator p = this->args.begin();
+        auto p = this->args.begin();
 	vector<shared_ptr<Expr> >::const_iterator p3;
         vector<shared_ptr<Expr> >::iterator p4;
 	unsigned short i = 0;

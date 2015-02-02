@@ -806,7 +806,7 @@ const GlossaryEntry&
 Glossary::getGlossaryEntry(const std::string& n) const
 {
 using namespace std;
-set<GlossaryEntry>::const_iterator p=this->findGlossaryEntry(n);
+auto p=this->findGlossaryEntry(n);
 if(p==this->entries.end()){
 string msg("Glossary::getGlossaryEntry : no glossary entry matching '"+n+"'");
 throw(runtime_error(msg));

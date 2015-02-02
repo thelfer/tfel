@@ -25,7 +25,7 @@ namespace tfel
     LevenbergMarquardtEvaluatorWrapper::LevenbergMarquardtEvaluatorWrapper(std::shared_ptr<tfel::math::Evaluator> ev_,
 									   const LevenbergMarquardtEvaluatorWrapper::size_type nv_,
 									   const LevenbergMarquardtEvaluatorWrapper::size_type np_)
-      : ev(ev_),
+      : ev(std::move(ev_)),
 	dev(np_),
 	nv(nv_),
 	np(np_)

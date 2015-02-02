@@ -24,10 +24,6 @@ namespace tfel{
   namespace math{
 
     template<typename T>
-    Permutation<T>::Permutation()
-    {}
-
-    template<typename T>
     Permutation<T>::Permutation(const typename vector<T>::size_type n)
       : vector<T>(n)
     {
@@ -52,25 +48,10 @@ namespace tfel{
     }
 
     template<typename T>
-    const T&
-    Permutation<T>::operator[](const typename vector<T>::size_type i) const
-    {
-      return vector<T>::operator[](i);
-    }
-
-    template<typename T>
-    const T&
-    Permutation<T>::operator()(const typename vector<T>::size_type i) const
-    {
-      return vector<T>::operator[](i);
-    }
-
-    template<typename T>
     void
     Permutation<T>::reset()
     {
-      typename vector<T>::size_type i;
-      for(i=0;i!=this->size();++i){
+      for(auto i=0;i!=this->size();++i){
 	vector<T>::operator[](i) = i;
       }
       this->is_identity = true;
@@ -83,6 +64,10 @@ namespace tfel{
       vector<T>::resize(s);
       this->reset();
     }
+
+    template<typename T>
+    Permutation<T>::~Permutation()
+    {} // end of Permutation<T>::~Permutation
 
   } // end of namespace math
 

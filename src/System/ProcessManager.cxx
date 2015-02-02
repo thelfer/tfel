@@ -525,8 +525,8 @@ namespace tfel
     ProcessManager::killProcess(const ProcessId pid)
     {
       using namespace std;
-      vector<Process>::reverse_iterator p  = this->findProcess(pid);
-      vector<Process>::reverse_iterator pe = this->processes.rend();
+      auto p  = this->findProcess(pid);
+      auto pe = this->processes.rend();
       if(p==pe){
 	ostringstream msg;
 	msg << "ProcessManager::killProcess : ";
@@ -543,7 +543,7 @@ namespace tfel
     {
       using namespace std;
       int status;
-      vector<Process>::reverse_iterator p = this->findProcess(pid);
+      auto p = this->findProcess(pid);
       if(p==this->processes.rend()){
 	ostringstream msg;
 	msg << "ProcessManager::sendSignal : process " << pid << " is not registred";
@@ -560,7 +560,7 @@ namespace tfel
     ProcessManager::sendSignal(const ProcessId pid,const int signal)
     {
       using namespace std;
-      vector<Process>::reverse_iterator p = this->findProcess(pid);
+      auto p = this->findProcess(pid);
       if(p==this->processes.rend()){
 	ostringstream msg;
 	msg << "ProcessManager::sendSignal : process " << pid << " is not registred";
@@ -759,8 +759,8 @@ namespace tfel
     ProcessManager::findProcess(const ProcessId pid)
     {
       using namespace std;
-      vector<Process>::reverse_iterator p  = this->processes.rbegin();
-      vector<Process>::reverse_iterator pe = this->processes.rend();
+      auto p  = this->processes.rbegin();
+      auto pe = this->processes.rend();
       bool found = false;
       while((p!=pe)&&(!found)){
 	if(p->id==pid){
@@ -776,8 +776,8 @@ namespace tfel
     ProcessManager::findProcess(const ProcessId pid) const
     {
       using namespace std;
-      vector<Process>::const_reverse_iterator p  = this->processes.rbegin();
-      vector<Process>::const_reverse_iterator pe = this->processes.rend();
+      auto p  = this->processes.rbegin();
+      auto pe = this->processes.rend();
       bool found = false;
       while((p!=pe)&&(!found)){
 	if(p->id==pid){

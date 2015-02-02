@@ -174,8 +174,8 @@ namespace mfront
 	 << "For your information, the description of the glossary entry '" << k << "' is:" << endl;
       if(!n.empty()){
 	os << k << ":" ;
-	for(vector<string>::const_iterator p=n.begin();p!=n.end();++p){
-	  os << " '" << *p << "'";
+	for(const auto & elem : n){
+	  os << " '" << elem << "'";
 	}
 	os << endl;
       }
@@ -183,8 +183,8 @@ namespace mfront
 	os << sd << endl;
       }
       if(!d.empty()){
-	for(vector<string>::const_iterator p=d.begin();p!=d.end();++p){
-	  os << *p << endl;
+	for(const auto & elem : d){
+	  os << elem << endl;
 	}
       }
     }

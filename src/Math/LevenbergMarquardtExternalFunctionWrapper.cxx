@@ -25,7 +25,7 @@ namespace tfel
     LevenbergMarquardtExternalFunctionWrapper::LevenbergMarquardtExternalFunctionWrapper(std::shared_ptr<tfel::math::parser::ExternalFunction> ev_,
 											 const LevenbergMarquardtExternalFunctionWrapper::size_type nv_,
 											 const LevenbergMarquardtExternalFunctionWrapper::size_type np_)
-      : ev(ev_),
+      : ev(std::move(ev_)),
 	dev(np_),
 	nv(nv_),
 	np(np_)

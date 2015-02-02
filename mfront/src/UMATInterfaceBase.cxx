@@ -1045,16 +1045,16 @@ namespace mfront
     	throw(runtime_error(msg));
       }
       const map<Hypothesis,string>& gh = this->gatherModellingHypothesesAndTests(mb);
-      for(map<Hypothesis,string>::const_iterator ph=gh.begin();ph!=gh.end();++ph){
-	const BehaviourData& d = mb.getBehaviourData(ph->first);
+      for(const auto & elem : gh){
+	const BehaviourData& d = mb.getBehaviourData(elem.first);
 	const VariableDescriptionContainer& persistentVarsHolder    = d.getPersistentVariables();
 	const VariableDescriptionContainer& externalStateVarsHolder = d.getExternalStateVariables();
 	pair<vector<UMATMaterialProperty>,
-	     SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,ph->first);
+	     SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,elem.first);
 	VariableDescriptionContainer::const_iterator p;
 	unsigned short i;
 	unsigned int offset;
-	out << "if(" << ph->second << "){" << endl;
+	out << "if(" << elem.second << "){" << endl;
 	offset=0;
 	for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
 	    pm!=mprops.first.end();++pm){
@@ -1555,11 +1555,11 @@ namespace mfront
     set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
     set<Hypothesis> h1;
     set<Hypothesis> h2;
-    for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
-      if(!mb.hasSpecialisedMechanicalData(*p)){
-	h1.insert(*p);
+    for(const auto & elem : h){
+      if(!mb.hasSpecialisedMechanicalData(elem)){
+	h1.insert(elem);
       } else {
-	h2.insert(*p);
+	h2.insert(elem);
       }
     }
     if(!h1.empty()){
@@ -1576,8 +1576,8 @@ namespace mfront
 	res.insert(MVType(ModellingHypothesis::UNDEFINEDHYPOTHESIS,r));
       }
     }
-    for(set<Hypothesis>::const_iterator p=h2.begin();p!=h2.end();++p){
-      res.insert(MVType(*p,this->getModellingHypothesisTest(*p)));
+    for(const auto & elem : h2){
+      res.insert(MVType(elem,this->getModellingHypothesisTest(elem)));
     }
     return res;
   } // end of UMATInterface::gatherModellingHypothesesAndTests

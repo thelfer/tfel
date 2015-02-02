@@ -723,7 +723,7 @@ namespace tfel
       pair<bool,vector<string>::const_iterator> pa = this->search(pb,pbe,"&&","");
       pair<bool,vector<string>::const_iterator> po = this->search(pb,pbe,"||","");
       if((pa.second!=pe)||(po.second!=pe)){
-	vector<string>::const_iterator pt = pa.first ? pa.second : po.second;
+	auto pt = pa.first ? pa.second : po.second;
 	if(pt==pb){
 	  string msg("Evaluator::treatLogicalExpression : ");
 	  msg += "no left logical expression";
@@ -881,10 +881,10 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::math::parser;
-      vector<string>::const_iterator plo = this->searchComparisonOperator(p,pe);
+      auto plo = this->searchComparisonOperator(p,pe);
       vector<string>::const_iterator tmp2 = p;
       shared_ptr<Evaluator::TExpr> loexpr = this->treatGroup(tmp2,plo,b,"");
-      vector<string>::const_iterator tmp3 = plo+1;
+      auto tmp3 = plo+1;
       shared_ptr<Evaluator::TExpr> roexpr = this->treatGroup(tmp3,pe,b,"");
       if(*plo=="=="){
 	return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpEqual>(loexpr,roexpr));
@@ -953,7 +953,7 @@ namespace tfel
 	  throw(runtime_error(msg));
 	}
 	shared_ptr<Evaluator::TLogicalExpr> l = this->treatLogicalExpression(p,res.second,b);
-	vector<string>::const_iterator tmp2 = res.second+1;
+	auto tmp2 = res.second+1;
 	shared_ptr<Evaluator::TExpr> lexpr = this->treatGroup(tmp2,res2.second,b,"");
 	p = res2.second+1;
 	shared_ptr<Evaluator::TExpr> rexpr = this->treatGroup(p,pe,b,s);
@@ -1037,7 +1037,7 @@ namespace tfel
 	} else if(*p=="**"){
 	  g->add(shared_ptr<TExpr>(new TOperator("**")));
 	} else {
-	  vector<string>::const_iterator pt = p;
+	  auto pt = p;
 	  ++pt;
 	  if((pt!=pe)&&(*pt=="(")){
 	    if(this->manager.get()!=nullptr){
@@ -1482,7 +1482,7 @@ namespace tfel
 	  throw(runtime_error(msg));
 	}
       }
-      Evaluator* ev = new Evaluator();
+      auto  ev = new Evaluator();
       shared_ptr<ExternalFunction> pev = shared_ptr<ExternalFunction>(ev);
       ev->variables.resize(this->variables.size()+params.size());
       ev->positions = this->positions;

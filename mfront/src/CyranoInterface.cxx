@@ -365,9 +365,9 @@ namespace mfront{
     if(!mb.areAllMechanicalDataSpecialised(h)){
       this->writeCyranoBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-      if(mb.hasSpecialisedMechanicalData(*ph)){
-	this->writeCyranoBehaviourTraits(out,mb,*ph);
+    for(const auto & elem : h){
+      if(mb.hasSpecialisedMechanicalData(elem)){
+	this->writeCyranoBehaviourTraits(out,mb,elem);
       }
     }
 
@@ -428,9 +428,9 @@ namespace mfront{
       const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       this->generateUMATxxSymbols(out,name,uh,mb,fd);
     }
-    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-      if(mb.hasSpecialisedMechanicalData(*ph)){
-	this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+    for(const auto & elem : h){
+      if(mb.hasSpecialisedMechanicalData(elem)){
+	this->generateUMATxxSymbols(out,name,elem,mb,fd);
       }
     }
 

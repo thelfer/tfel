@@ -50,23 +50,23 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     // parameters
-    for(BehaviourBrick::Parameters::const_iterator pp=p.begin();pp!=p.end();++pp){
-      if(pp->first=="NoPlaneStressSupport"){
-	this->checkThatParameterHasNoValue(*pp);
+    for(const auto & elem : p){
+      if(elem.first=="NoPlaneStressSupport"){
+	this->checkThatParameterHasNoValue(elem);
 	pss = false;
-      } else if(pp->first=="Isotropic"){
-	this->checkThatParameterHasNoValue(*pp);
+      } else if(elem.first=="Isotropic"){
+	this->checkThatParameterHasNoValue(elem);
 	this->bd.setElasticSymmetryType(mfront::ISOTROPIC);
-      } else if(pp->first=="Orthotropic"){
-	this->checkThatParameterHasNoValue(*pp);
+      } else if(elem.first=="Orthotropic"){
+	this->checkThatParameterHasNoValue(elem);
 	this->bd.setElasticSymmetryType(mfront::ORTHOTROPIC);
-      } else if(pp->first=="NoGenericTangentOperator"){
-	this->checkThatParameterHasNoValue(*pp);
+      } else if(elem.first=="NoGenericTangentOperator"){
+	this->checkThatParameterHasNoValue(elem);
 	gto = false;
 	throw(runtime_error("ElasticityBehaviourBrick: unimplemented parameter handling"));
       } else {
 	string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		   "unsupported parameter '"+pp->first+"'");
+		   "unsupported parameter '"+elem.first+"'");
 	throw(runtime_error(msg));
       }
     }

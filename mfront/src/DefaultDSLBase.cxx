@@ -50,14 +50,14 @@ namespace mfront{
     this->readHypothesesList(h);
     this->readSpecifiedToken("BehaviourDSLBaseCommon::"
 			     "treatProvidesTangentOperator",";");
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      if(this->mb.hasAttribute(*ph,BehaviourData::hasConsistentTangentOperator)){
+    for(const auto & elem : h){
+      if(this->mb.hasAttribute(elem,BehaviourData::hasConsistentTangentOperator)){
 	this->throwRuntimeError("DefaultDSLBase::treatProvidesTangentOperator",
 				"one of the key @ProvidesTangentOperator "
 				"or @ProvidesSymmetricTangentOperator "
 				"has already been called");
       }
-      this->mb.setAttribute(*ph,BehaviourData::hasConsistentTangentOperator,true);
+      this->mb.setAttribute(elem,BehaviourData::hasConsistentTangentOperator,true);
     }
   } // end of DefaultDSLBase::treatProvidesTangentOperator
 
@@ -71,15 +71,15 @@ namespace mfront{
 			    "treatProvidesSymmetricTangentOperator");
     this->readSpecifiedToken("BehaviourDSLBaseCommon::"
 			     "treatProvidesSymmetricTangentOperator",";");
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      if(this->mb.hasAttribute(*ph,BehaviourData::hasConsistentTangentOperator)){
+    for(const auto & elem : h){
+      if(this->mb.hasAttribute(elem,BehaviourData::hasConsistentTangentOperator)){
 	this->throwRuntimeError("DefaultDSLBase::treatProvidesSymmetricTangentOperator",
 				"one of the key @ProvidesTangentOperator "
 				"or @ProvidesSymmetricTangentOperator "
 				"has already been called");
       }
-      this->mb.setAttribute(*ph,BehaviourData::hasConsistentTangentOperator,true);
-      this->mb.setAttribute(*ph,BehaviourData::isConsistentTangentOperatorSymmetric,true);
+      this->mb.setAttribute(elem,BehaviourData::hasConsistentTangentOperator,true);
+      this->mb.setAttribute(elem,BehaviourData::isConsistentTangentOperatorSymmetric,true);
     }
   } // end of DefaultDSLBase::treatProvidesSymmetricTangentOperator
 

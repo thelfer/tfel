@@ -29,7 +29,7 @@ namespace tfel
     }
     
     IntegerEvaluator::TNegation::TNegation(std::shared_ptr<IntegerEvaluator::TExpr> e)
-      : expr(e)
+      : expr(std::move(e))
     {} // end of IntegerEvaluator::TNegation::TNegation
 
     bool
@@ -161,7 +161,7 @@ namespace tfel
     IntegerEvaluator::TBinaryOperation::TBinaryOperation(std::shared_ptr<IntegerEvaluator::TExpr> a_,
 							 const std::shared_ptr<TOperator>op_,
 							 std::shared_ptr<IntegerEvaluator::TExpr> b_)
-      : a(a_), op(op_), b(b_)
+      : a(std::move(a_)), op(op_), b(std::move(b_))
     {} // end of IntegerEvaluator::TBinaryOperation::TBinaryOperation
     
     bool
@@ -263,8 +263,8 @@ namespace tfel
     IntegerEvaluator::TGroup::reduce(void)
     {
       using namespace std;
-      vector<std::shared_ptr<IntegerEvaluator::TExpr> >::iterator p  = this->subExpr.begin();
-      vector<std::shared_ptr<IntegerEvaluator::TExpr> >::iterator pe = this->subExpr.end();
+      auto p  = this->subExpr.begin();
+      auto pe = this->subExpr.end();
       while(p!=pe){
 	(*p)->reduce();
 	++p;
@@ -298,7 +298,7 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::math::parser;
-      vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator p  = this->subExpr.begin();
+      auto p  = this->subExpr.begin();
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator previous;
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator next;
       while(p!=this->subExpr.end()){
@@ -357,7 +357,7 @@ namespace tfel
 		    string msg("TGroup::reduce group two successive operators");
 		    throw(runtime_error(msg));
 		  }
-		  vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator nnext = next+1;
+		  auto nnext = next+1;
 		  if(nnext==this->subExpr.end()){
 		    string msg("TGroup::reduce group ends by operator "+op);
 		    throw(runtime_error(msg));

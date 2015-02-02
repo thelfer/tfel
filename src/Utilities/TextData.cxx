@@ -187,7 +187,7 @@ namespace tfel
     TextData::skipLines(const unsigned short n)
     {
       using namespace std;
-      vector<Line>::iterator p = this->lines. begin();
+      auto p = this->lines. begin();
       while((p->nbr<=n+1)&&(p!=this->lines.end())){
 	++p;
       }

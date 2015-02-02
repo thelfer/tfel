@@ -805,9 +805,9 @@ namespace mfront{
     if(!mb.areAllMechanicalDataSpecialised(h)){
       this->writeUMATBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-      if(mb.hasSpecialisedMechanicalData(*ph)){
-	this->writeUMATBehaviourTraits(out,mb,*ph);
+    for(const auto & elem : h){
+      if(mb.hasSpecialisedMechanicalData(elem)){
+	this->writeUMATBehaviourTraits(out,mb,elem);
       }
     }
 
@@ -962,9 +962,9 @@ namespace mfront{
 	  const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	  this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	}
-	for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-	  if(mb.hasSpecialisedMechanicalData(*ph)){
-	    this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+	for(const auto & elem : h){
+	  if(mb.hasSpecialisedMechanicalData(elem)){
+	    this->generateUMATxxSymbols(out,name,elem,mb,fd);
 	  }
 	}
 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -979,9 +979,9 @@ namespace mfront{
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_frst",uh,mb,fd);
 	    }
-	    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-	      if(mb.hasSpecialisedMechanicalData(*ph)){
-		this->generateUMATxxSymbols(out,name+"_frst",*ph,mb,fd);
+	    for(const auto & elem : h){
+	      if(mb.hasSpecialisedMechanicalData(elem)){
+		this->generateUMATxxSymbols(out,name+"_frst",elem,mb,fd);
 	      }
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_frst") 
@@ -994,9 +994,9 @@ namespace mfront{
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	      }
-	      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-		if(mb.hasSpecialisedMechanicalData(*ph)){
-		  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+	      for(const auto & elem : h){
+		if(mb.hasSpecialisedMechanicalData(elem)){
+		  this->generateUMATxxSymbols(out,name,elem,mb,fd);
 		}
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -1010,9 +1010,9 @@ namespace mfront{
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_malls",uh,mb,fd);
 	    }
-	    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-	      if(mb.hasSpecialisedMechanicalData(*ph)){
-		this->generateUMATxxSymbols(out,name+"_malls",*ph,mb,fd);
+	    for(const auto & elem : h){
+	      if(mb.hasSpecialisedMechanicalData(elem)){
+		this->generateUMATxxSymbols(out,name+"_malls",elem,mb,fd);
 	      }
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_malls") 
@@ -1025,9 +1025,9 @@ namespace mfront{
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	      }
-	      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-		if(mb.hasSpecialisedMechanicalData(*ph)){
-		  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+	      for(const auto & elem : h){
+		if(mb.hasSpecialisedMechanicalData(elem)){
+		  this->generateUMATxxSymbols(out,name,elem,mb,fd);
 		}
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -1041,9 +1041,9 @@ namespace mfront{
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_log1D",uh,mb,fd);
 	    }
-	    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-	      if(mb.hasSpecialisedMechanicalData(*ph)){
-		this->generateUMATxxSymbols(out,name+"_log1D",*ph,mb,fd);
+	    for(const auto & elem : h){
+	      if(mb.hasSpecialisedMechanicalData(elem)){
+		this->generateUMATxxSymbols(out,name+"_log1D",elem,mb,fd);
 	      }
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_log1D") 
@@ -1056,9 +1056,9 @@ namespace mfront{
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	      }
-	      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-		if(mb.hasSpecialisedMechanicalData(*ph)){
-		  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+	      for(const auto & elem : h){
+		if(mb.hasSpecialisedMechanicalData(elem)){
+		  this->generateUMATxxSymbols(out,name,elem,mb,fd);
 		}
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -1072,9 +1072,9 @@ namespace mfront{
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_ss",uh,mb,fd);
 	    }
-	    for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-	      if(mb.hasSpecialisedMechanicalData(*ph)){
-		this->generateUMATxxSymbols(out,name+"_ss",*ph,mb,fd);
+	    for(const auto & elem : h){
+	      if(mb.hasSpecialisedMechanicalData(elem)){
+		this->generateUMATxxSymbols(out,name+"_ss",elem,mb,fd);
 	      }
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_ss") 
@@ -1087,9 +1087,9 @@ namespace mfront{
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	      }
-	      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-		if(mb.hasSpecialisedMechanicalData(*ph)){
-		  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+	      for(const auto & elem : h){
+		if(mb.hasSpecialisedMechanicalData(elem)){
+		  this->generateUMATxxSymbols(out,name,elem,mb,fd);
 		}
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -1111,9 +1111,9 @@ namespace mfront{
 	    const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	    this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	  }
-	  for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-	    if(mb.hasSpecialisedMechanicalData(*ph)){
-	      this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+	  for(const auto & elem : h){
+	    if(mb.hasSpecialisedMechanicalData(elem)){
+	      this->generateUMATxxSymbols(out,name,elem,mb,fd);
 	    }
 	  }
 	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -1128,9 +1128,9 @@ namespace mfront{
 	const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	this->generateUMATxxSymbols(out,name,uh,mb,fd);
       }
-      for(set<Hypothesis>::const_iterator ph = h.begin();ph!=h.end();++ph){
-	if(mb.hasSpecialisedMechanicalData(*ph)){
-	  this->generateUMATxxSymbols(out,name,*ph,mb,fd);
+      for(const auto & elem : h){
+	if(mb.hasSpecialisedMechanicalData(elem)){
+	  this->generateUMATxxSymbols(out,name,elem,mb,fd);
 	}
       }
       if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){ 
@@ -1345,9 +1345,9 @@ namespace mfront{
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       const set<Hypothesis> ah = this->getModellingHypothesesToBeTreated(mb);
       set<Hypothesis> uh;
-      for(set<Hypothesis>::const_iterator ph=ah.begin();ph!=ah.end();++ph){
-	if(!mb.hasSpecialisedMechanicalData(*ph)){
-	  uh.insert(*ph);
+      for(const auto & elem : ah){
+	if(!mb.hasSpecialisedMechanicalData(elem)){
+	  uh.insert(elem);
 	}
       }
       if(uh.empty()){
@@ -1359,8 +1359,8 @@ namespace mfront{
       // material properties for all the selected hypothesis
       vector<pair<vector<UMATMaterialProperty>,
 		  SupportedTypes::TypeSize> > mpositions;
-      for(set<Hypothesis>::const_iterator ph=uh.begin();ph!=uh.end();++ph){
-	mpositions.push_back(this->buildMaterialPropertiesList(mb,*ph));
+      for(const auto & elem : uh){
+	mpositions.push_back(this->buildMaterialPropertiesList(mb,elem));
       }
       set<Hypothesis>::const_iterator ph=uh.begin();
       vector<pair<vector<UMATMaterialProperty>,
@@ -1372,18 +1372,18 @@ namespace mfront{
       for(;ph!=uh.end();++ph,++pum){
 	const BehaviourData& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
 	const VariableDescriptionContainer& mps = d.getMaterialProperties();
-	for(VariableDescriptionContainer::const_iterator pm=mps.begin();pm!=mps.end();++pm){
+	for(const auto & mp : mps){
 	  const UMATMaterialProperty& mp1 = findUMATMaterialProperty(mfirst.first,
-								     mb.getExternalName(h,pm->name));
+								     mb.getExternalName(h,mp.name));
 	  const UMATMaterialProperty& mp2 = findUMATMaterialProperty(pum->first,
-								     mb.getExternalName(h,pm->name));
+								     mb.getExternalName(h,mp.name));
 	  SupportedTypes::TypeSize o1 = mp1.offset;
 	  o1+=pum->second;
 	  SupportedTypes::TypeSize o2 = mp2.offset;
 	  o2+=mfirst.second;
 	  if(o1!=o2){
 	    string msg("UMATInterface::buildMaterialPropertiesList : "
-		       "incompatible offset for material property '"+pm->name+
+		       "incompatible offset for material property '"+mp.name+
 		       "' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
 		       "To by-pass this limitation, you may want to explicitely "
 		       "specialise some modelling hypotheses");
@@ -1564,11 +1564,11 @@ namespace mfront{
     const BehaviourData& d = mb.getBehaviourData(ModellingHypothesis::PLANESTRESS);
     const VariableDescriptionContainer& sv  = d.getPersistentVariables();
     SupportedTypes::TypeSize o;
-    for(VariableDescriptionContainer::const_iterator p=sv.begin();p!=sv.end();++p){
-      if(d.getExternalName(p->name)=="AxialStrain"){
+    for(const auto & elem : sv){
+      if(d.getExternalName(elem.name)=="AxialStrain"){
 	return make_pair(true,o);
       }
-      o += this->getTypeSize(p->type,p->arraySize);
+      o += this->getTypeSize(elem.type,elem.arraySize);
     }
     return make_pair(false,o);
   }
@@ -1939,39 +1939,39 @@ namespace mfront{
 								  const VariableDescriptionContainer& v) const
   {
     using namespace std;
-    for(VariableDescriptionContainer::const_iterator p=v.begin();p!=v.end();++p){
-      const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+    for(const auto & elem : v){
+      const SupportedTypes::TypeFlag flag = this->getTypeFlag(elem.type);
       string tmp;
       tmp += ' ';
       if(flag==SupportedTypes::Scalar){
-	if(p->arraySize==1){
-	  tmp += treatScalar(p->name);
+	if(elem.arraySize==1){
+	  tmp += treatScalar(elem.name);
 	} else {
-	  for(unsigned short j=0;j!=p->arraySize;){
-	    tmp += treatScalar(p->name,j);
-	    if(++j!=p->arraySize){
+	  for(unsigned short j=0;j!=elem.arraySize;){
+	    tmp += treatScalar(elem.name,j);
+	    if(++j!=elem.arraySize){
 	      tmp += ' ';
 	    }
 	  }
 	}
       } else if(flag==SupportedTypes::Stensor){
-	if(p->arraySize==1){
-	  tmp += treatStensor(h,p->name);
+	if(elem.arraySize==1){
+	  tmp += treatStensor(h,elem.name);
 	} else {
-	  for(unsigned short j=0;j!=p->arraySize;){
-	    tmp += treatStensor(h,p->name,j);
-	    if(++j!=p->arraySize){
+	  for(unsigned short j=0;j!=elem.arraySize;){
+	    tmp += treatStensor(h,elem.name,j);
+	    if(++j!=elem.arraySize){
 	      tmp += ' ';
 	    }
 	  }
 	}
       } else if(flag==SupportedTypes::Tensor){
-	if(p->arraySize==1){
-	  tmp += treatTensor(h,p->name);
+	if(elem.arraySize==1){
+	  tmp += treatTensor(h,elem.name);
 	} else {
-	  for(unsigned short j=0;j!=p->arraySize;){
-	    tmp += treatTensor(h,p->name,j);
-	    if(++j!=p->arraySize){
+	  for(unsigned short j=0;j!=elem.arraySize;){
+	    tmp += treatTensor(h,elem.name,j);
+	    if(++j!=elem.arraySize){
 	      tmp += ' ';
 	    }
 	  }
@@ -2056,14 +2056,14 @@ namespace mfront{
     }
     // loop over hypothesis
     const set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      const BehaviourData& d = mb.getBehaviourData(*ph);
+    for(const auto & elem : h){
+      const BehaviourData& d = mb.getBehaviourData(elem);
       const VariableDescriptionContainer& persistentVarsHolder     = d.getPersistentVariables();
       const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
       pair<vector<UMATMaterialProperty>,
-	   SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,*ph);
+	   SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,elem);
       string tmp;
-      out << "** " << ModellingHypothesis::toString(*ph) << " example\n\n";
+      out << "** " << ModellingHypothesis::toString(elem) << " example\n\n";
       ostringstream mcoel;
       mcoel << "coel = 'MOTS' ";
       for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
@@ -2093,7 +2093,7 @@ namespace mfront{
       out << endl;
       ostringstream mstatev;
       mstatev << "statev = 'MOTS' ";
-      this->writeVariableDescriptionContainerToGibiane(mstatev,*ph,persistentVarsHolder);
+      this->writeVariableDescriptionContainerToGibiane(mstatev,elem,persistentVarsHolder);
       mstatev << ";";
       writeGibianeInstruction(out,mstatev.str());
       out << endl;
@@ -2101,7 +2101,7 @@ namespace mfront{
       mparam << "params = 'MOTS' 'T'";
       if(!externalStateVarsHolder.empty()){
 	mparam << " ";
-	this->writeVariableDescriptionContainerToGibiane(mparam,*ph,externalStateVarsHolder);
+	this->writeVariableDescriptionContainerToGibiane(mparam,elem,externalStateVarsHolder);
       }
       mparam << ";";
       writeGibianeInstruction(out,mparam.str());
@@ -2141,12 +2141,12 @@ namespace mfront{
 	}
       }
       if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	if((*ph==ModellingHypothesis::PLANESTRESS)||
-	   (*ph==ModellingHypothesis::AXISYMMETRICAL)||
-	   (*ph==ModellingHypothesis::PLANESTRAIN)||
-	   (*ph==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	if((elem==ModellingHypothesis::PLANESTRESS)||
+	   (elem==ModellingHypothesis::AXISYMMETRICAL)||
+	   (elem==ModellingHypothesis::PLANESTRAIN)||
+	   (elem==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	  mi << " 'DIRECTION' (1 0) 'PARALLELE'";
-	} else if(*ph==ModellingHypothesis::TRIDIMENSIONAL){	    
+	} else if(elem==ModellingHypothesis::TRIDIMENSIONAL){	    
 	  mi << " 'DIRECTION' (1 0 0) (0 0 1) 'PARALLELE'";
 	}
       }
@@ -2307,8 +2307,8 @@ namespace mfront{
     map<Hypothesis,string> res;
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
-      for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
-	res.insert(MVType(*p,this->getModellingHypothesisTest(*p)));
+      for(const auto & elem : h){
+	res.insert(MVType(elem,this->getModellingHypothesisTest(elem)));
       }
       return res;
     }

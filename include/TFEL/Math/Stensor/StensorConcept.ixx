@@ -197,9 +197,9 @@ namespace tfel{
     >::type
     deviator(const T& s)
     {
-      typedef typename StensorType<T>::type Res;
       typedef typename StensorTraits<T>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      typedef typename StensorType<T>::type Res;
       constexpr real one_third = real{1}/real{3};
       const real tr = one_third*trace(s);
       return s-tr*Res::Id();

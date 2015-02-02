@@ -735,9 +735,8 @@ namespace mfront
 	  << "the '@ModellingHypothesis' or "
 	  << "the '@ModellingHypotheses' keywords for details.\n";
       msg << "Supported modelling hypotheses are :";
-      for(set<Hypothesis>::const_iterator ph=this->hypotheses.begin();
-	  ph!=this->hypotheses.end();++ph){
-	msg << "\n- '" << ModellingHypothesis::toString(*ph) << "'";
+      for(const auto & elem : this->hypotheses){
+	msg << "\n- '" << ModellingHypothesis::toString(elem) << "'";
       }
       throw(runtime_error(msg.str()));
     }
@@ -777,9 +776,9 @@ namespace mfront
       // modelling hypotheses that were not specialised
       h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for(set<Hypothesis>::const_iterator p=mh.begin();p!=mh.end();++p){
-      if(this->hasSpecialisedMechanicalData(*p)){
-	h.insert(*p);
+    for(const auto & elem : mh){
+      if(this->hasSpecialisedMechanicalData(elem)){
+	h.insert(elem);
       }
     }
     return h;
@@ -1093,8 +1092,8 @@ namespace mfront
 				     const VariableDescriptionContainer& v,
 				     void (BehaviourData::* m)(const VariableDescription&))
   {
-    for(VariableDescriptionContainer::const_iterator p=v.begin();p!=v.end();++p){
-      this->addVariable(b,*p,m);
+    for(const auto & elem : v){
+      this->addVariable(b,elem,m);
     }
   }
 
@@ -1114,8 +1113,8 @@ namespace mfront
   bool BehaviourDescription::areAllMechanicalDataSpecialised(const std::set<Hypothesis>& h) const
   {
     using namespace std;
-    for(set<Hypothesis>::const_iterator p=h.begin();p!=h.end();++p){
-      if(!this->hasSpecialisedMechanicalData(*p)){
+    for(const auto & elem : h){
+      if(!this->hasSpecialisedMechanicalData(elem)){
 	return false;
       }
     }
@@ -1289,15 +1288,14 @@ namespace mfront
 	    << n << "' on default hypothesis"  << endl;
       }
       this->d.setCode(n,c,m,p,b);
-      map<Hypothesis,MBDPtr>::iterator pd;
-      for(pd=this->sd.begin();pd!=this->sd.end();++pd){
+      for(const auto& pd : sd){
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  ostream& log = getLogStream();
 	  log << "BehaviourDescription::setCode : setting '"
 	      << n << "' on hypothesis '" 
-	      << ModellingHypothesis::toString(pd->first) << "'" << endl;
+	      << ModellingHypothesis::toString(pd.first) << "'" << endl;
 	}
-	pd->second->setCode(n,c,m,p,b);
+	pd.second->setCode(n,c,m,p,b);
       }
     } else {
       if(getVerboseMode()>=VERBOSE_DEBUG){
@@ -1513,12 +1511,12 @@ namespace mfront
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
-    const set<Hypothesis>& h = this->getDistinctModellingHypotheses();
+    const auto& h = this->getDistinctModellingHypotheses();
     pair<bool,bool> r;
     r.first  = true;
     r.second = false;
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      const BehaviourData& bdata = this->getBehaviourData(*ph);
+    for(const auto & elem : h){
+      const BehaviourData& bdata = this->getBehaviourData(elem);
       const set<string>& vn = bdata.getRegistredVariableNames();
       const bool b = vn.find(v)!=vn.end();
       r.first  = r.first  && b;
@@ -1537,12 +1535,10 @@ namespace mfront
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
-    const set<Hypothesis>& h = this->getDistinctModellingHypotheses();
-    pair<bool,bool> r;
-    r.first  = true;
-    r.second = false;
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      const BehaviourData& bdata = this->getBehaviourData(*ph);
+    const auto& h = this->getDistinctModellingHypotheses();
+    pair<bool,bool> r = {true,false};
+    for(const auto & elem : h){
+      const BehaviourData& bdata = this->getBehaviourData(elem);
       const bool f = bdata.getVariables(c).contains(n);
       if(!f&&b){
 	string msg("BehaviourDescription::checkVariableExistence : "
@@ -1564,9 +1560,9 @@ namespace mfront
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
-    const set<Hypothesis>& h = this->getDistinctModellingHypotheses();
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      const BehaviourData& bdata = this->getBehaviourData(*ph);
+    const auto& h = this->getDistinctModellingHypotheses();
+    for(const auto & elem : h){
+      const BehaviourData& bdata = this->getBehaviourData(elem);
       if(!bdata.hasGlossaryName(n)){
 	string msg("BehaviourDescription::VariableGlossaryName : "
 		   "no glossary name associated with variable '"+n+"'");
@@ -1588,21 +1584,21 @@ namespace mfront
 					      const size_t p)
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
-    const set<Hypothesis>& h = this->getDistinctModellingHypotheses();
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      const BehaviourData& bdata = this->getBehaviourData(*ph);
-      const VariableDescriptionContainer& vc = bdata.getVariables(c);
+    const auto& h = this->getDistinctModellingHypotheses();
+    for(const auto & elem : h){
+      const auto& bdata = this->getBehaviourData(elem);
+      const auto& vc = bdata.getVariables(c);
       if(p>=vc.size()){
 	string msg("BehaviourDescription::checkVariablePosition : "
 		   "position given is greater than the number "
 		   "of variables of category '"+c+"'");
 	throw(runtime_error(msg));
       }
-      const VariableDescription& v = *(vc.begin()+p);
+      const auto& v = vc[p];
       if(v.name!=n){
 	string msg("BehaviourDescription::checkVariablePosition : "
-		   "variable at the given position is not named '"+v.name+"'");
+		   "variable at the given position is not named '"+n+
+		   "' but '"+v.name+"'");
 	throw(runtime_error(msg));
       }
     }

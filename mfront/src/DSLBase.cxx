@@ -564,11 +564,11 @@ namespace mfront
       }
     }
     if(!endComment.empty()){
-      for(VariableDescriptionContainer::iterator p=cont.begin();p!=cont.end();++p){
-	if(!p->description.empty()){
-	  p->description += ' ';
+      for(auto & elem : cont){
+	if(!elem.description.empty()){
+	  elem.description += ' ';
 	}
-	p->description += endComment;
+	elem.description += endComment;
       }
     }
     if(!endOfTreatement){

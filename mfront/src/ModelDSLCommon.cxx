@@ -31,18 +31,18 @@ namespace mfront{
   {
     using namespace std;
     unsigned int d,i;
-    for(auto p=vc.begin();p!=vc.end();++p){
-      if(p->name==v){
+    for(const auto & elem : vc){
+      if(elem.name==v){
 	return true;
       }
-      auto p2 = data.depths.find(p->name);
+      auto p2 = data.depths.find(elem.name);
       if(p2==data.depths.end()){
 	d = 0;
       } else {
 	d = p2->second;
       }
       for(i=1;i!=d+1;++i){
-	if(p->name+'_'+to_string(i)==v){
+	if(elem.name+'_'+to_string(i)==v){
 	  return true;
 	}
       }
@@ -187,14 +187,14 @@ namespace mfront{
       if(s.empty()){
 	this->ignoreKeyWord(key);
       } else {
-	for(set<string>::const_iterator pi  = s.begin();pi != s.end();++pi){
-	  AbstractModelInterface *interface = mmif.getInterfacePtr(*pi);
+	for(const auto & elem : s){
+	  AbstractModelInterface *interface = mmif.getInterfacePtr(elem);
 	  p = interface->treatKeyword(key,this->current,
 				      this->fileTokens.end());
 	  if(!p.first){
 	    string msg("ModelDSLCommon::treatUnknownKeyword : the keyword '");
 	    msg += key;
-	    msg += " has not been treated by interface '"+*pi+"'";
+	    msg += " has not been treated by interface '"+elem+"'";
 	    throw(runtime_error(msg));
 	  }
 	  if(treated){
@@ -322,35 +322,35 @@ namespace mfront{
   {
     using namespace std;
     unsigned int d,i;
-    for(auto p=this->inputs.begin();p!=this->inputs.end();++p){
-      if(v==p->name){
+    for(const auto & elem : this->inputs){
+      if(v==elem.name){
 	return pair<string,unsigned short>(v,0u);
       }
-      auto p2 = this->depths.find(p->name);
+      auto p2 = this->depths.find(elem.name);
       if(p2!=this->depths.end()){
 	d = p2->second;
       } else {
 	d = 0;
       }
       for(i=1;i!=d+1;++i){
-	if(v==p->name+"_"+to_string(i)){
-	  return pair<string,unsigned short>(p->name,i);
+	if(v==elem.name+"_"+to_string(i)){
+	  return pair<string,unsigned short>(elem.name,i);
 	}
       }
     }
-    for(auto p=this->outputs.begin();p!=this->outputs.end();++p){
-      if(v==p->name){
+    for(const auto & elem : this->outputs){
+      if(v==elem.name){
 	return pair<string,unsigned short>(v,0);
       }
-      auto p2 = this->depths.find(p->name);
+      auto p2 = this->depths.find(elem.name);
       if(p2!=this->depths.end()){
 	d = p2->second;
       } else {
 	d = 0;
       }
       for(i=1;i!=d+1;++i){
-	if(v==p->name+"_"+to_string(i)){
-	  return pair<string,unsigned short>(p->name,i);
+	if(v==elem.name+"_"+to_string(i)){
+	  return pair<string,unsigned short>(elem.name,i);
 	}
       }
     }
