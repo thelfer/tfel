@@ -42,7 +42,7 @@ int main(void)
   using namespace tfel::tests;
   typedef TestFunctionWrapper<test1> Wrapper1;
   typedef TestFunctionWrapper<test2> Wrapper2;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   shared_ptr<Test> a(new Wrapper1("test1"));
   shared_ptr<Test> b(new Wrapper2("test2"));
   ofstream f("testmanager-3.txt");

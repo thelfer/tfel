@@ -112,7 +112,7 @@ namespace mfront
 	throw(runtime_error(msg.str()));
       }
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "MTestParser::execute : treating keyword '" << p->value
 	    << "' at line '" << p->line << "'" << endl;
       }
@@ -508,7 +508,7 @@ namespace mfront
     MTest::PredictionPolicy ppolicy;
     this->checkNotEndOfLine("handlePredictionPolicy",
 			    p,this->fileTokens.end());
-    const string& s = this->readString(p,this->fileTokens.end());
+    const auto& s = this->readString(p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handlePredictionPolicy",";",
 			     p,this->fileTokens.end());
     if(s=="NoPrediction"){
@@ -541,7 +541,7 @@ namespace mfront
   {
     using namespace std;
     MTestStiffnessMatrixType::mtype ktype;
-    const string& type = this->readString(p,this->fileTokens.end());
+    const auto& type = this->readString(p,this->fileTokens.end());
     if(type=="Elastic"){
       ktype=MTestStiffnessMatrixType::ELASTIC;
     } else if(type=="SecantOperator"){
@@ -630,7 +630,7 @@ namespace mfront
     using namespace std;
     this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithm",
 			    p,this->fileTokens.end());
-    const string& a = this->readString(p,this->fileTokens.end());
+    const auto& a = this->readString(p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handleAccelerationAlgorithm",
 			     ";",p,this->fileTokens.end());
     t.setAccelerationAlgorithm(a);
@@ -643,10 +643,10 @@ namespace mfront
     using namespace std;
     this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithmParameter",
 			    p,this->fileTokens.end());
-    const string& pn = this->readString(p,this->fileTokens.end());
+    const auto& pn = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithmParameter",
 			    p,this->fileTokens.end());
-    const string& v = this->readString(p,this->fileTokens.end());
+    const auto& v = this->readString(p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handleAccelerationAlgorithmParameter",";",
 			     p,this->fileTokens.end());
     t.setAccelerationAlgorithmParameter(pn,v);
@@ -658,7 +658,7 @@ namespace mfront
   {
     using namespace std;
     MTest::StiffnessUpdatingPolicy ks;
-    const string& type = this->readString(p,this->fileTokens.end());
+    const auto& type = this->readString(p,this->fileTokens.end());
     if(type=="ConstantStiffness"){
       ks=MTest::CONSTANTSTIFFNESS;
     } else if(type=="SecantOperator"){
@@ -687,7 +687,7 @@ namespace mfront
 			     p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleTest",p,
 			    this->fileTokens.end());
-    const string& type = p->value;
+    const auto& type = p->value;
     if((type!="function")&&
        (type!="file")){
       string msg("MTestParser::handleTest : "
@@ -702,8 +702,8 @@ namespace mfront
 			      this->fileTokens.end());
       map<string,string> functions; 
       if(p->flag==Token::String){
-	const string& v = this->readString(p,this->fileTokens.end());
-	const string& f = this->readString(p,this->fileTokens.end());
+	const auto& v = this->readString(p,this->fileTokens.end());
+	const auto& f = this->readString(p,this->fileTokens.end());
 	functions.insert(MVType(v,f));
       } else {
 	this->readSpecifiedToken("MTestParser::handleTest","{",
@@ -711,10 +711,10 @@ namespace mfront
 	this->checkNotEndOfLine("MTestParser::handleTest",p,
 				this->fileTokens.end());
 	while(p->value!="}"){
-	  const string& v = this->readString(p,this->fileTokens.end());
+	  const auto& v = this->readString(p,this->fileTokens.end());
 	  this->readSpecifiedToken("MTestParser::handleTest",":",
 				   p,this->fileTokens.end());
-	  const string& f = this->readString(p,this->fileTokens.end());
+	  const auto& f = this->readString(p,this->fileTokens.end());
 	  functions.insert(MVType(v,f));
 	  this->checkNotEndOfLine("MTestParser::handleTest",p,
 				  this->fileTokens.end());
@@ -750,12 +750,12 @@ namespace mfront
 	t.addTest(test);
       }
     } else if (type=="file"){
-      const string& f = this->readString(p,this->fileTokens.end());
+      const auto& f = this->readString(p,this->fileTokens.end());
       this->checkNotEndOfLine("MTestParser::handleTest",p,
 			      this->fileTokens.end());
       map<string,unsigned int> columns; 
       if(p->flag==Token::String){
-	const string& v      = this->readString(p,this->fileTokens.end());
+	const auto& v = this->readString(p,this->fileTokens.end());
 	const unsigned int c = this->readUnsignedInt(p,this->fileTokens.end());
 	columns.insert(MVType2(v,c));
       } else {
@@ -764,7 +764,7 @@ namespace mfront
 	this->checkNotEndOfLine("MTestParser::handleTest",p,
 				this->fileTokens.end());
 	while(p->value!="}"){
-	  const string& v = this->readString(p,this->fileTokens.end());
+	  const auto& v = this->readString(p,this->fileTokens.end());
 	  this->readSpecifiedToken("MTestParser::handleTest",":",
 				   p,this->fileTokens.end());
 	  const unsigned int c = this->readUnsignedInt(p,this->fileTokens.end());
@@ -819,7 +819,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using std::shared_ptr;
-    const string& v = this->readString(p,this->fileTokens.end());
+    const auto& v = this->readString(p,this->fileTokens.end());
     if(!this->isValidIdentifier(v)){
       string msg("MTestParser::handleReal : '"+
 		 v+"' is not a valid identifier");
@@ -1173,8 +1173,8 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using std::shared_ptr;
-    const string& evt = this->readEvolutionType(p);
-    const string& c   = this->readString(p,this->fileTokens.end());
+    const auto& evt = this->readEvolutionType(p);
+    const auto& c = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedThermodynamicForce",p,
 			    this->fileTokens.end());
     shared_ptr<Evolution> sev = this->parseEvolution(evt,t,p);
@@ -1236,8 +1236,8 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using std::shared_ptr;
-    const string& evt = this->readEvolutionType(p);
-    const string& c   = this->readString(p,this->fileTokens.end());
+    const auto& evt = this->readEvolutionType(p);
+    const auto& c = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedDrivingVariable",p,
 			    this->fileTokens.end());
     shared_ptr<Evolution> sev = this->parseEvolution(evt,t,p);
@@ -1285,8 +1285,8 @@ namespace mfront
     ++p;
     this->readSpecifiedToken("MTestParser::handleBehaviour",">",p,
 			     this->fileTokens.end());
-    const string& l = this->readString(p,this->fileTokens.end());
-    const string& f = this->readString(p,this->fileTokens.end());
+    const auto& l = this->readString(p,this->fileTokens.end());
+    const auto& f = this->readString(p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handleBehaviour",";",p,
 			     this->fileTokens.end());
     t.setBehaviour(i,l,f);
@@ -1315,7 +1315,7 @@ namespace mfront
     ++p;
     this->readSpecifiedToken("MTestParser::handleMaterialProperty",">",p,
 			     this->fileTokens.end());
-    const string& n = this->readString(p,this->fileTokens.end());
+    const auto& n = this->readString(p,this->fileTokens.end());
     if(i=="constant"){
       shared_ptr<Evolution> mpev;
       this->checkNotEndOfLine("MTestParser::handleMaterialProperty",p,
@@ -1445,8 +1445,8 @@ namespace mfront
   {
     using namespace std;
     std::shared_ptr<Behaviour> b(t.getBehaviour());
-    const string& n = this->readString(p,this->fileTokens.end());
-    const vector<string>& ivsnames = b->getInternalStateVariablesNames();
+    const auto& n = this->readString(p,this->fileTokens.end());
+    const auto& ivsnames = b->getInternalStateVariablesNames();
     if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
       string msg("MTestParser::handleInternalStateVariable : ");
       msg += "the behaviour don't declare an internal state variable named '";
@@ -1481,8 +1481,8 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    const string& evt = this->readEvolutionType(p);
-    const string& n   = this->readString(p,this->fileTokens.end());
+    const auto& evt = this->readEvolutionType(p);
+    const auto& n = this->readString(p,this->fileTokens.end());
     t.setExternalStateVariable(n,this->parseEvolution(evt,t,p),true);
     this->readSpecifiedToken("MTestParser::handleExternalStateVariable",";",p,
 			     this->fileTokens.end());
@@ -1493,8 +1493,8 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    const string& evt = this->readEvolutionType(p);
-    const string& n   = this->readString(p,this->fileTokens.end());
+    const auto& evt = this->readEvolutionType(p);
+    const auto& n = this->readString(p,this->fileTokens.end());
     t.addEvolution(n,this->parseEvolution(evt,t,p),true,true);
     this->readSpecifiedToken("MTestParser::handleEvolution",";",p,
 			     this->fileTokens.end());
@@ -1513,7 +1513,7 @@ namespace mfront
     if(p->flag==Token::String){
       const string&f = this->readString(p,this->fileTokens.end());
       Evaluator ev(f);
-      const vector<string>& vn = ev.getVariablesNames();
+      const auto& vn = ev.getVariablesNames();
       vector<string>::const_iterator pv;
       for(pv=vn.begin();pv!=vn.end();++pv){
 	map<string,shared_ptr<Evolution> >::const_iterator pev;
@@ -1619,7 +1619,7 @@ namespace mfront
 	ev = shared_ptr<Evolution>(new ConstantEvolution(s));
       }
     } else if(type=="function"){
-      const string& f = this->readString(p,this->fileTokens.end());
+      const auto& f = this->readString(p,this->fileTokens.end());
       ev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
     } else {
       string msg("MTestParser::parseEvolution : ");

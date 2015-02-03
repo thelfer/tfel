@@ -22,7 +22,7 @@ namespace mfront
   BehaviourDescription::getAttribute(const Hypothesis h,
 				     const std::string& n) const
   {
-    const BehaviourData& bdata = this->getBehaviourData(h);
+    const auto& bdata = this->getBehaviourData(h);
     return bdata.template getAttribute<T>(n);
   } // end of BehaviourDescription::getAttribute
 
@@ -32,7 +32,7 @@ namespace mfront
 					       const std::string& n,
 					       const T& v) const
   {
-    const BehaviourData& bdata = this->getBehaviourData(h);
+    const auto& bdata = this->getBehaviourData(h);
     if(!bdata.hasAttribute(n)){
       return v;
     }

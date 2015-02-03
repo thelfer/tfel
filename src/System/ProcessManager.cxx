@@ -44,7 +44,7 @@ namespace tfel
     ProcessManager::ProcessManager()
       : shallStopOnSignals(false)
     {
-      SignalManager& signalManager = SignalManager::getSignalManager();
+      auto& signalManager = SignalManager::getSignalManager();
       struct sigaction action;
       MemberSignalHandler<ProcessManager>::Fct f = &ProcessManager::sigChildHandler;
       // blocking all signals during treatment of sigChildHandler
@@ -58,7 +58,7 @@ namespace tfel
     ProcessManager::stopOnSignals(const bool b)
     {
       using namespace std;
-      SignalManager& signalManager = SignalManager::getSignalManager();
+      auto& signalManager = SignalManager::getSignalManager();
       if(b==this->shallStopOnSignals){
 	return;
       }
@@ -145,7 +145,7 @@ namespace tfel
       using namespace std;
       vector<Process>::iterator p;
       // treating handled processes
-      SignalManager& signalManager = SignalManager::getSignalManager();
+      auto& signalManager = SignalManager::getSignalManager();
       signalManager.removeHandler(this->sHandler);
       for(p=this->processes.begin();p!=this->processes.end();++p){
 	if(p->isRunning){
@@ -582,7 +582,7 @@ namespace tfel
     ProcessManager::~ProcessManager()
     {
       using namespace std;
-      SignalManager& signalManager = SignalManager::getSignalManager();
+      auto& signalManager = SignalManager::getSignalManager();
       vector<Process>::iterator p;
       map<ProcessId,StreamId>::iterator p2;
       int status;

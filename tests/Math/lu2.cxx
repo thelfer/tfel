@@ -97,7 +97,7 @@ int main(void)
   typedef TestFunctionWrapper<TinyMatrixSolveTest2<double> >      Wrapper5;
   typedef TestFunctionWrapper<TinyMatrixSolveTest2<float> >       Wrapper6;
   //  typedef TestFunctionWrapper<test2> Wrapper2;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("lu2.xml");
   manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper1("TinyMatrixSolveTest<long double>")));

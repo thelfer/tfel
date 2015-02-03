@@ -21,7 +21,7 @@ namespace mfront{
   BehaviourInterfaceProxy<Interface>::BehaviourInterfaceProxy()
   {
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
     mbif.registerInterfaceAlias(Interface::getName(),Interface::getName());
   }
@@ -30,7 +30,7 @@ namespace mfront{
   BehaviourInterfaceProxy<Interface>::BehaviourInterfaceProxy(const std::string& name)
   {
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
     mbif.registerInterfaceAlias(Interface::getName(),name);
   }
@@ -41,7 +41,7 @@ namespace mfront{
 									  const InputIterator e)
   {
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     InputIterator p;
     mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
     for(p=b;p!=e;++p){

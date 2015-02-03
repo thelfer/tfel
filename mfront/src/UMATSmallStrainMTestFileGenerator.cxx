@@ -69,7 +69,7 @@ namespace mfront
   UMATSmallStrainMTestFileGenerator::writeDrivingVariables(std::ostream& os) const
   {
     using namespace std;
-    const vector<string>& n = this->getStrainComponentsNames();
+    const auto& n = this->getStrainComponentsNames();
     vector<string>::const_iterator p;
     unsigned short i;
     if(this->times.size()!=2){

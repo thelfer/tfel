@@ -248,7 +248,7 @@ struct TensorTest5_1D
     for(unsigned short i=0;i!=t.size();++i){
       t[i] = exp(cos(real(i)));
     }
-    const TensorConcept<tensor<1u,real> >& t_c = t;
+    const TensorConcept<tensor<1u,real>>& t_c = t;
     TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
@@ -279,7 +279,7 @@ struct TensorTest5_2D
     for(unsigned short i=0;i!=t.size();++i){
       t[i] = exp(cos(real(i)));
     }
-    const TensorConcept<tensor<2u,real> >& t_c = t;
+    const TensorConcept<tensor<2u,real>>& t_c = t;
     TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
@@ -310,7 +310,7 @@ struct TensorTest5_3D
     for(unsigned short i=0;i!=t.size();++i){
       t[i] = exp(cos(real(i)));
     }
-    const TensorConcept<tensor<3u,real> >& t_c = t;
+    const TensorConcept<tensor<3u,real>>& t_c = t;
     TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
@@ -341,7 +341,7 @@ struct TensorTest6
     for(unsigned short i=0;i!=t.size();++i){
       t[i] = exp(cos(real(i)));
     }
-    const TensorConcept<tensor<3u,real> >& t_c = t;
+    const TensorConcept<tensor<3u,real>>& t_c = t;
     TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
@@ -631,7 +631,7 @@ TFEL_TESTS_GENERATE_PROXY(TensorTest9_3D,"TensorTest9_3D");
 int main(void){
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("Tensor.xml");
   TestResult r = manager.execute();

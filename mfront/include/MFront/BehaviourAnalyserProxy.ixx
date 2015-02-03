@@ -21,7 +21,7 @@ namespace mfront{
   BehaviourAnalyserProxy<Analyser>::BehaviourAnalyserProxy()
   {
     typedef BehaviourAnalyserFactory MBAF;
-    MBAF& mbaf = MBAF::getBehaviourAnalyserFactory();
+    auto& mbaf = MBAF::getBehaviourAnalyserFactory();
     mbaf.registerAnalyserCreator(Analyser::getName(),&createAnalyser);
     mbaf.registerAnalyserAlias(Analyser::getName(),Analyser::getName());
   }
@@ -30,7 +30,7 @@ namespace mfront{
   BehaviourAnalyserProxy<Analyser>::BehaviourAnalyserProxy(const std::string& name)
   {
     typedef BehaviourAnalyserFactory MBAF;
-    MBAF& mbaf = MBAF::getBehaviourAnalyserFactory();
+    auto& mbaf = MBAF::getBehaviourAnalyserFactory();
     mbaf.registerAnalyserCreator(Analyser::getName(),&createAnalyser);
     mbaf.registerAnalyserAlias(Analyser::getName(),name);
   }
@@ -41,7 +41,7 @@ namespace mfront{
 									const InputIterator e)
   {
     typedef BehaviourAnalyserFactory MBAF;
-    MBAF& mbaf = MBAF::getBehaviourAnalyserFactory();
+    auto& mbaf = MBAF::getBehaviourAnalyserFactory();
     InputIterator p;
     mbaf.registerAnalyserCreator(Analyser::getName(),&createAnalyser);
     for(p=b;p!=e;++p){

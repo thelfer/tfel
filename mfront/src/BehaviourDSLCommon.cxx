@@ -100,7 +100,7 @@ namespace mfront{
   {
     using namespace std;
     if(v==".+"){
-      const vector<Hypothesis>& ash = ModellingHypothesis::getModellingHypotheses();
+      const auto& ash = ModellingHypothesis::getModellingHypotheses();
       for(const auto & elem : ash){
 	this->appendToHypothesesList(h,ModellingHypothesis::toString(elem));
       }
@@ -111,7 +111,7 @@ namespace mfront{
 				"hypothesis '"+v+"' is not supported by this parser");
       }
       if(this->mb.areModellingHypothesesDefined()){
-	const set<Hypothesis>& bh = this->mb.getModellingHypotheses();
+	const auto& bh = this->mb.getModellingHypotheses();
 	if(bh.find(nh)==bh.end()){
 	  this->throwRuntimeError("BehaviourDSLCommon::appendToHypothesesList",
 				  "hypothesis '"+v+"' is not supported by the "
@@ -274,11 +274,11 @@ namespace mfront{
     		   "' used by the material property '"+a.law+"'");
     	throw(runtime_error(msg));
       }
-      const string& in = p->getExternalName(a.glossaryNames,a.entryNames);
+      const auto& in = p->getExternalName(a.glossaryNames,a.entryNames);
       if(in!="Temperature"){
     	if(this->mb.isGlossaryNameUsed(h,in)||this->mb.isUsedAsEntryName(h,in)){
     	  // a variable with the good glossary name has been found
-    	  const string& n = this->mb.getVariableNameFromGlossaryNameOrEntryName(h,in);
+    	  const auto& n = this->mb.getVariableNameFromGlossaryNameOrEntryName(h,in);
 	  if(!((this->mb.isMaterialPropertyName(h,n))||
 	       (this->mb.isExternalStateVariableName(h,n))||
 	       (this->mb.isParameterName(h,n))||
@@ -315,17 +315,17 @@ namespace mfront{
     using std::shared_ptr;
     typedef BehaviourInterfaceFactory MBIF;
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "BehaviourDSLCommon::endsInputFileProcessing : begin" << endl;
     }
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     vector<string>::const_iterator i;
     if(!this->mb.areModellingHypothesesDefined()){
       this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());
     }
-    const set<Hypothesis>& h = this->mb.getModellingHypotheses();
+    const auto& h = this->mb.getModellingHypotheses();
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "behaviour '" << this->mb.getClassName()
 	  << "' supports the following hypotheses : " << endl;
       for(const auto & elem : h){
@@ -396,7 +396,7 @@ namespace mfront{
       this->doPedanticChecks();
     }
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "BehaviourDSLCommon::endsInputFileProcessing : end" << endl;
     }
   } // end of BehaviourDSLCommon::endsInputFileProcessing
@@ -408,7 +408,7 @@ namespace mfront{
   VarContainer
   getIntegrationVariables(const BehaviourData& md)
   {
-    const VarContainer& ivs = md.getIntegrationVariables();
+    const auto& ivs = md.getIntegrationVariables();
     VarContainer v;
     for(const auto & iv : ivs){
       if(!md.isStateVariableName(iv.name)){
@@ -441,8 +441,8 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::glossary;
-    const Glossary& glossary = Glossary::getGlossary();
-    ostream& log = getLogStream();
+    const auto& glossary = Glossary::getGlossary();
+    auto& log = getLogStream();
     for(const auto & elem : v){
       if(b1){
 	const map<std::string,unsigned short>::const_iterator p = uv.find(elem.name);
@@ -468,7 +468,7 @@ namespace mfront{
       if(elem.description.empty()){
 	bool hasDoc = false;
 	if(md.hasGlossaryName(elem.name)){
-	  const GlossaryEntry& e = glossary.getGlossaryEntry(md.getExternalName(elem.name));
+	  const auto& e = glossary.getGlossaryEntry(md.getExternalName(elem.name));
 	  hasDoc = (!e.getShortDescription().empty()) || (!e.getDescription().empty());
 	}
 	if(!hasDoc){
@@ -489,7 +489,7 @@ namespace mfront{
 			unsigned short>& uv)
   {
     using namespace std;
-    ostream& log = getLogStream();
+    auto& log = getLogStream();
     for(const auto & elem : v){
       if(uv.find(elem.name)==uv.end()){
 	log << "- static variable '" << elem.name << "' is unused." << endl;
@@ -502,12 +502,12 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::material;
-    const set<Hypothesis>& hs = this->mb.getDistinctModellingHypotheses();
-    ostream& log = getLogStream();
+    const auto& hs = this->mb.getDistinctModellingHypotheses();
+    auto& log = getLogStream();
     log << endl << "* Pedantic checks" << endl;
     for(auto h : hs){
       
-      const BehaviourData& md = this->mb.getBehaviourData(h);
+      const auto& md = this->mb.getBehaviourData(h);
       // checks if variables are used
       if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 	log << endl << "** Beginning pedantic checks for default modelling hypothesis"
@@ -517,11 +517,11 @@ namespace mfront{
 	    << ModellingHypothesis::toString(h) << "'" << endl << endl;
       }
       // getting all used variables
-      const vector<string>& cbs = md.getCodeBlockNames();
+      const auto& cbs = md.getCodeBlockNames();
       map<string,unsigned short> vars;  // variable names and counts
       map<string,unsigned short> svars; // static variable nanes and counts
       for(const auto & cbs_pcbs : cbs){
-	const CodeBlock& cb = md.getCodeBlock(cbs_pcbs);
+	const auto& cb = md.getCodeBlock(cbs_pcbs);
 	if(cb.description.empty()){
 	  log << "- code block '" << cbs_pcbs << "' has no description" << endl;
 	}
@@ -541,7 +541,7 @@ namespace mfront{
 	}
       }
       performPedanticChecks(md,md.getMaterialProperties(),"material property",vars,true,false,true);
-      const VarContainer& ivs  = getIntegrationVariables(md);
+      const auto& ivs = getIntegrationVariables(md);
       performPedanticChecks(md,ivs,"integration variable",vars,false,true,false);
       performPedanticChecks(md,md.getStateVariables(),"state variable",vars);
       performPedanticChecks(md,md.getAuxiliaryStateVariables(),"auxiliary state variable",vars,true,false);
@@ -560,8 +560,8 @@ namespace mfront{
     using namespace tfel::system;
     typedef BehaviourInterfaceFactory MBIF;
     typedef BehaviourAnalyserFactory  MBAF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
-    MBAF& mbaf = MBAF::getBehaviourAnalyserFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbaf = MBAF::getBehaviourAnalyserFactory();
     systemCall::mkdir("src");
     systemCall::mkdir("include");
     systemCall::mkdir("include/TFEL/");
@@ -617,7 +617,7 @@ namespace mfront{
     // interface is defined), or by the behaviour
     set<Hypothesis> hh;
     if(this->interfaces.empty()){
-      const set<Hypothesis>& bh = this->mb.getModellingHypotheses();
+      const auto& bh = this->mb.getModellingHypotheses();
       hh.insert(bh.begin(),bh.end());
     } else {
       // calling the interfaces
@@ -625,34 +625,34 @@ namespace mfront{
       for(pi  = this->interfaces.begin();
 	  pi != this->interfaces.end();++pi){
 	AbstractBehaviourInterface& i = *(mbif.getInterfacePtr(*pi));
-	const set<Hypothesis>& ih = i.getModellingHypothesesToBeTreated(this->mb);
+	const auto& ih = i.getModellingHypothesesToBeTreated(this->mb);
 	hh.insert(ih.begin(),ih.end());
       }
     }
     if(!this->mb.areAllMechanicalDataSpecialised(hh)){
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : "
 	    << "treating default hypothesis" << endl;
       }
       const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // Generating BehaviourData's outputClass
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour data "
 	    << "for default hypothesis"  << endl;
       }
       this->writeBehaviourDataClass(h);
       // Generating IntegrationData's outputClass
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : writing integration data "
 	    << "for default hypothesis"  << endl;
       }
       this->writeIntegrationDataClass(h);
       // Generating Behaviour's outputFile
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour class "
 	    << "for default hypothesis"  << endl;
       }
@@ -661,28 +661,28 @@ namespace mfront{
     for(const auto & elem : hh){
       if(mb.hasSpecialisedMechanicalData(elem)){
 	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  ostream& log = getLogStream();
+	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : "
 	      << "treating hypothesis '" << ModellingHypothesis::toString(elem)
 	      << "'" << endl;
 	}
 	// Generating BehaviourData's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  ostream& log = getLogStream();
+	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour data "
 	      << "for hypothesis '" << ModellingHypothesis::toString(elem) << "'" << endl;
 	}
 	this->writeBehaviourDataClass(elem);
 	// Generating IntegrationData's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  ostream& log = getLogStream();
+	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : writing integration data "
 	      << "for hypothesis '" << ModellingHypothesis::toString(elem) << "'" << endl;
 	}
 	this->writeIntegrationDataClass(elem);
 	// Generating behaviour's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  ostream& log = getLogStream();
+	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour class "
 	      << "for hypothesis '" << ModellingHypothesis::toString(elem) << "'" << endl;
 	}
@@ -694,7 +694,7 @@ namespace mfront{
     this->writeBehaviourFileEnd();
     // Generating behaviour's source file
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "BehaviourDSLCommon::writeOutputFiles : writing source file" << endl;
     }
     this->writeSrcFile();
@@ -704,7 +704,7 @@ namespace mfront{
 	pi != this->interfaces.end();++pi){
       AbstractBehaviourInterface& i = *(mbif.getInterfacePtr(*pi));
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : "
 	    << "calling interface '" << *pi << "'" << endl;
       }
@@ -716,7 +716,7 @@ namespace mfront{
 	pa != this->analysers.end();++pa){
       BehaviourAnalyser& a = *(mbaf.getAnalyserPtr(*pa));
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : "
 	    << "calling analyser '" << *pa << "'" << endl;
       }
@@ -761,14 +761,14 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     typedef BehaviourBrick::Parameters::value_type MType;
-    BehaviourBrickFactory& f = BehaviourBrickFactory::getFactory();
+    auto& f = BehaviourBrickFactory::getFactory();
     BehaviourBrick::Parameters parameters;
     if(this->current->value=="<"){
       vector<Token> tokens;
       this->readList(tokens,"BehaviourDSLCommon::treatBehaviourBrick",
 		     "<",">",true);
       for(vector<Token>::const_iterator p=tokens.begin();p!=tokens.end();++p){
-	const string& t = p->value;
+	const auto& t = p->value;
 	const string::size_type pos = t.find('=');
 	if(pos!=string::npos){
 	  if(pos==0){
@@ -776,13 +776,13 @@ namespace mfront{
 				    "no parameter name given");
 	  }
 	  // extracting the name
-	  const string& n = t.substr(0,pos);
+	  const auto& n = t.substr(0,pos);
 	  if(pos==t.size()){
 	    this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
 				    "no option given to the parameter '"+n+"'");
 	  }
 	  // extracting the option
-	  const string& o = t.substr(pos+1);
+	  const auto& o = t.substr(pos+1);
 	  parameters.insert(MType(n,o));
 	} else {
 	  parameters.insert(MType(t,""));
@@ -791,7 +791,7 @@ namespace mfront{
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatIsTangentOperatorSymmetric : ",
   			    "Expected 'true' or 'false'.");
-    const string& b = this->readString("BehaviourDSLCommon::treatBehaviourBrick");
+    const auto& b = this->readString("BehaviourDSLCommon::treatBehaviourBrick");
     this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick",";");
     cout << "add brick : " << b << endl;
     f.get(b,*this,this->mb,parameters);
@@ -823,7 +823,7 @@ namespace mfront{
 		   "invalid option '"+o.untreated[0].value+"'");
 	throw(runtime_error(msg));
       }
-      const string& ktype = o.untreated[0].value;
+      const auto& ktype = o.untreated[0].value;
       for(pto=to.begin();(pto!=to.end())&&(!found);++pto){
 	found = (ktype==convertFiniteStrainBehaviourTangentOperatorFlagToString(*pto));
       }
@@ -872,7 +872,7 @@ namespace mfront{
   BehaviourDSLCommon::treatMaterial(void)
   {
     using namespace std;
-    const string& m = this->readOnlyOneToken();
+    const auto& m = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(m,true)){
       string msg("BehaviourDSLCommon::treatMaterial : ");
       msg += "invalid material name '"+m+"'";
@@ -890,7 +890,7 @@ namespace mfront{
   BehaviourDSLCommon::treatLibrary(void)
   {
     using namespace std;
-    const string& m = this->readOnlyOneToken();
+    const auto& m = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(m,true)){
       string msg("BehaviourDSLCommon::treatLibrary : ");
       msg += "invalid library name '"+m+"'";
@@ -905,7 +905,7 @@ namespace mfront{
     using namespace std;
     using std::shared_ptr;
     const string m("BehaviourDSLCommon::treatComputeThermalExpansion");
-    const vector<string>& files = this->readStringOrArrayOfString(m);
+    const auto& files = this->readStringOrArrayOfString(m);
     this->readSpecifiedToken(m,";");
     if((files.size()!=1u)&&(files.size()!=3u)){
       this->throwRuntimeError("BehaviourDSLCommon::treatComputeThermalExpansion",
@@ -929,12 +929,12 @@ namespace mfront{
     }
     vector<shared_ptr<MaterialPropertyDescription> > acs;
     for(const auto & file : files){
-      const string& f = SearchFile::search(file);
+      const auto& f = SearchFile::search(file);
       shared_ptr<MaterialPropertyDescription> a;
       a = shared_ptr<MaterialPropertyDescription>(new MaterialPropertyDescription(this->handleMaterialLaw(f)));
       if(!a->staticVars.contains("ReferenceTemperature")){
 	if(getVerboseMode()!=VERBOSE_QUIET){
-	  ostream& os = getLogStream();
+	  auto& os = getLogStream();
 	  os  << "no reference temperature in material property '";
 	  if(a->material.empty()){
 	    os << a->material << '_';
@@ -947,8 +947,8 @@ namespace mfront{
 				"thermal expansion shall only depend on temperature");
       }
       if(a->inputs.size()==1u){
-	const VariableDescription& v =  a->inputs.front();
-	const string& vn = v.getExternalName(a->glossaryNames,a->entryNames);
+	const auto& v = a->inputs.front();
+	const auto& vn = v.getExternalName(a->glossaryNames,a->entryNames);
 	if(vn!="Temperature"){
 	  this->throwRuntimeError("BehaviourDSLCommon::treatComputeThermalExpansion : ",
 				  "thermal expansion shall only depend on temperature");
@@ -1025,7 +1025,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    const string& n = this->current->value;
+    const auto& n = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatParameterMethod");
     this->readSpecifiedToken("BehaviourDSLCommon::treatParameterMethod",".");
@@ -1072,9 +1072,9 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::glossary;
-    const Glossary& glossary = Glossary::getGlossary();
+    const auto& glossary = Glossary::getGlossary();
     map<string,string>::const_iterator p;
-    const string& n = this->current->value;
+    const auto& n = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
     this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod",".");
@@ -1089,7 +1089,7 @@ namespace mfront{
 	msg += "expected to read a string";
 	throw(runtime_error(msg));
       }
-      const string& g = this->current->value.substr(1,this->current->value.size()-2);
+      const auto& g = this->current->value.substr(1,this->current->value.size()-2);
       if(!glossary.contains(g)){
 	string msg("BehaviourData::setGlossaryName : "
 		   "'"+g+"' is not a glossary name");
@@ -1107,7 +1107,7 @@ namespace mfront{
 	msg += "expected to read a string";
 	throw(runtime_error(msg));
       }
-      const string& e = this->current->value.substr(1,this->current->value.size()-2);
+      const auto& e = this->current->value.substr(1,this->current->value.size()-2);
       if(!this->isValidIdentifier(e)){
 	string msg("BehaviourDSLCommon::treatVariableMethod : ");
 	msg += "invalid entry name '"+e+"'";
@@ -1142,8 +1142,8 @@ namespace mfront{
     using namespace tfel::utilities;
     typedef BehaviourInterfaceFactory MBIF;
     typedef BehaviourAnalyserFactory  MBAF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
-    MBAF& mbaf = MBAF::getBehaviourAnalyserFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbaf = MBAF::getBehaviourAnalyserFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
     vector<string>::const_iterator i;
@@ -1336,7 +1336,7 @@ namespace mfront{
   {
     using namespace std;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "BehaviourDSLCommon::treatRequireStiffnessOperator : "
 	  << "@RequireStiffnessOperator is deprecated" << endl
 	  << "You shall use @RequireStiffnessTensor instead" << endl;
@@ -1379,7 +1379,7 @@ namespace mfront{
   void BehaviourDSLCommon::treatBehaviour(void)
   {
     using namespace std;
-    const string& b = this->readOnlyOneToken();
+    const auto& b = this->readOnlyOneToken();
     this->mb.setBehaviourName(b);
     if(!isValidIdentifier(this->mb.getClassName())){
       this->throwRuntimeError("BehaviourDSLCommon::treatBehaviour",
@@ -1613,7 +1613,7 @@ namespace mfront{
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     bool found;
     this->checkNotEndOfFile("BehaviourDSLCommon::treatBounds");
 
@@ -1907,7 +1907,7 @@ namespace mfront{
       msg += "ouput file is not valid";
       throw(runtime_error(msg));
     }
-    const string& h = this->mb.getIncludes();
+    const auto& h = this->mb.getIncludes();
     if(!h.empty()){
       file << h << endl;
     }
@@ -2163,10 +2163,10 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator p3;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     VariableDescriptionContainer::const_iterator p;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "/*!" << endl;
@@ -2235,7 +2235,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourDataAssignementOperator(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator p3;
     VariableDescriptionContainer::const_iterator p;
@@ -2283,7 +2283,7 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     this->checkBehaviourDataFile();
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
@@ -2360,7 +2360,7 @@ namespace mfront{
 			      << "BehaviourData<hypothesis,Type,false>&);" << endl << endl;
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
-    const set<Hypothesis>& h = this->mb.getModellingHypotheses();
+    const auto& h = this->mb.getModellingHypotheses();
     for(const auto & elem : h){
       if(this->mb.hasSpecialisedMechanicalData(elem)){
 	if(this->mb.useQt()){
@@ -2455,7 +2455,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourDataStateVariables(const Hypothesis h) {
     using namespace std;
     this->checkBehaviourDataFile();
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     this->writeVariablesDeclarations(this->behaviourDataFile,
 				     d.getStateVariables(),
 				     "","",this->fileName,false);
@@ -2472,7 +2472,7 @@ namespace mfront{
   {    
     using namespace std;
     this->checkBehaviourFile();
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator p2;
@@ -2542,7 +2542,7 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     this->checkBehaviourDataFile();
     this->writeBehaviourDataFileHeader();
     this->writeBehaviourDataFileHeaderBegin();
@@ -2613,7 +2613,7 @@ namespace mfront{
       this->behaviourFile << "const " << this->mb.getClassName() << "<hypothesis,Type,false>&);" << endl << endl;
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
-    const set<Hypothesis>& h = this->mb.getModellingHypotheses();
+    const auto& h = this->mb.getModellingHypotheses();
     for(const auto & elem : h){
       if(this->mb.hasSpecialisedMechanicalData(elem)){
 	if(this->mb.useQt()){
@@ -2807,7 +2807,7 @@ namespace mfront{
   BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     this->checkBehaviourFile();
     this->behaviourFile << "/*!" << endl;
@@ -2835,7 +2835,7 @@ namespace mfront{
   BehaviourDSLCommon::writeBehaviourUpdateStateVariables(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     this->checkBehaviourFile();
     this->behaviourFile << "/*!" << endl;
@@ -2905,7 +2905,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourIntegrator(const Hypothesis h) {
     using namespace std;
     const string btype = this->mb.getBehaviourTypeFlag();
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     vector<BoundsDescription>::const_iterator p;
     this->checkBehaviourFile();
     this->behaviourFile << "/*!" << endl;
@@ -3001,7 +3001,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourCheckBounds(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
     this->behaviourFile << "/*!" << endl;
     this->behaviourFile << "* \\brief check bounds" << endl;
@@ -3019,7 +3019,7 @@ namespace mfront{
   BehaviourDSLCommon::getBehaviourConstructorsInitializers(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     // variable initialisation
     string init;
     init = this->getIntegrationVariablesIncrementsInitializers(md.getIntegrationVariables(),
@@ -3037,10 +3037,10 @@ namespace mfront{
   {    
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     this->checkBehaviourFile();
     // initializers
-    const string& init = this->getBehaviourConstructorsInitializers(h);;
+    const auto& init = this->getBehaviourConstructorsInitializers(h);;
     // writing constructors
     this->behaviourFile << "/*!" << endl;
     this->behaviourFile << "* \\brief Constructor" << endl;
@@ -3109,7 +3109,7 @@ namespace mfront{
   {
     using namespace std;
     MFrontMaterialPropertyInterface minterface;
-    const string& mname = minterface.getFunctionName(a.material,a.law);
+    const auto& mname = minterface.getFunctionName(a.material,a.law);
     out << "const thermalexpansion alpha" << suffix;
     if(!i.empty()){
       out << "_" << i;
@@ -3121,8 +3121,8 @@ namespace mfront{
 		   "a thermal expansion shall only depend on the temperature");
 	throw(runtime_error(msg));
       }
-      const VariableDescription& v = a.inputs.front();
-      const string& in = v.getExternalName(a.glossaryNames,a.entryNames);
+      const auto& v = a.inputs.front();
+      const auto& in = v.getExternalName(a.glossaryNames,a.entryNames);
       if(in!="Temperature"){
 	string msg("BehaviourDSLCommonWriteThermalExpansionCoefficientComputation : "
 		   "a thermal expansion shall only depend on the temperature");
@@ -3141,7 +3141,7 @@ namespace mfront{
     using namespace std;
     if(a.inputs.empty()){
       MFrontMaterialPropertyInterface minterface;
-      const string& mname = minterface.getFunctionName(a.material,a.law);
+      const auto& mname = minterface.getFunctionName(a.material,a.law);
       out << "const thermalexpansion alpha" << suffix << "_Ti        = " << mname << "();" << endl;
       out << "const thermalexpansion alpha" << suffix << "_T_t       = " << mname << "();" << endl;
       out << "const thermalexpansion alpha" << suffix << "_T_t_dt    = " << mname << "();" << endl;
@@ -3202,8 +3202,8 @@ namespace mfront{
       this->behaviourFile << "using std::vector;" << endl;
       writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
 			this->behaviourFile,this->mb.getMaterialLaws());		      
-      this->behaviourFile << "StressFreeExpansionType& dl_l0 = dl_l01.first;" << endl;
-      this->behaviourFile << "StressFreeExpansionType& dl_l1 = dl_l01.second;" << endl;
+      this->behaviourFile << "auto& dl_l0 = dl_l01.first;" << endl;
+      this->behaviourFile << "auto& dl_l1 = dl_l01.second;" << endl;
       this->behaviourFile << "dl_l0 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));" << endl;
       this->behaviourFile << "dl_l1 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));" << endl;
       const vector<shared_ptr<MaterialPropertyDescription> >& acs =
@@ -3304,7 +3304,7 @@ namespace mfront{
   BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     this->checkBehaviourFile();
     for(p=md.getLocalVariables().begin();p!=md.getLocalVariables().end();++p){
@@ -3318,8 +3318,8 @@ namespace mfront{
   {    
     using namespace std;
     this->checkBehaviourFile();
-    const BehaviourData& d = this->mb.getBehaviourData(h);
-    const VariableDescriptionContainer& params = d.getParameters();
+    const auto& d = this->mb.getBehaviourData(h);
+    const auto& params = d.getParameters();
     VariableDescriptionContainer::const_iterator p;
     for(p=params.begin();p!=params.end();++p){
       if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -3342,7 +3342,7 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     vector<string>::const_iterator i;
     this->checkBehaviourDataFile();
     for(i  = this->interfaces.begin();
@@ -3358,7 +3358,7 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     vector<string>::const_iterator i;
     this->checkIntegrationDataFile();
     for(i  = this->interfaces.begin();
@@ -3385,7 +3385,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourLocalVariables(const Hypothesis h)
   {    
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
     this->writeVariablesDeclarations(this->behaviourFile,
 				     md.getLocalVariables(),
@@ -3397,8 +3397,8 @@ namespace mfront{
   BehaviourDSLCommon::writeBehaviourIntegrationVariables(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
-    const VariableDescriptionContainer& v = md.getIntegrationVariables();
+    const auto& md = this->mb.getBehaviourData(h);
+    const auto& v = md.getIntegrationVariables();
     this->checkBehaviourFile();
     VariableDescriptionContainer::const_iterator p;
     for(p=v.begin();p!=v.end();++p){
@@ -3416,8 +3416,8 @@ namespace mfront{
   {    
     using namespace std;
     this->checkBehaviourFile();
-    const BehaviourData& d = this->mb.getBehaviourData(h);
-    const VariableDescriptionContainer& params = d.getParameters();
+    const auto& d = this->mb.getBehaviourData(h);
+    const auto& params = d.getParameters();
     VariableDescriptionContainer::const_iterator p;
     for(p=params.begin();p!=params.end();++p){
       if(!getDebugMode()){
@@ -3443,7 +3443,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourStaticVariables(const Hypothesis h)
   {    
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
     StaticVariableDescriptionContainer::const_iterator p;
     for(p=md.getStaticVariables().begin();p!=md.getStaticVariables().end();++p){
@@ -3461,7 +3461,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourIntegrationVariablesIncrements(const Hypothesis h)
   {    
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
     this->writeVariablesDeclarations(this->behaviourFile,
 				     md.getIntegrationVariables(),
@@ -3473,7 +3473,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourOutputOperator(const Hypothesis h)
   {    
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator p2;
@@ -3567,7 +3567,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourUpdateExternalStateVariables(const Hypothesis h) 
   {    
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator p2;
@@ -3617,7 +3617,7 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourMembersFunc(void) {    
     using namespace std;
-    const string& m = this->mb.getMembers();
+    const auto& m = this->mb.getMembers();
     this->checkBehaviourFile();
     if(!m.empty()){
       this->behaviourFile << m << endl << endl;
@@ -3626,7 +3626,7 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourPrivate(void) {    
     using namespace std;
-    const string& c = this->mb.getPrivateCode();
+    const auto& c = this->mb.getPrivateCode();
     this->checkBehaviourFile();
     if(!c.empty()){
       this->behaviourFile << c << endl << endl;
@@ -3686,7 +3686,7 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourFile();
-    const vector<ModellingHypothesis::Hypothesis>& ah = ModellingHypothesis::getModellingHypotheses();
+    const auto& ah = ModellingHypothesis::getModellingHypotheses();
     // writing partial specialisations
     if(this->mb.getModellingHypotheses().size()>=4u){
       // on définit toutes les hypothèses par défaut
@@ -3723,7 +3723,7 @@ namespace mfront{
     SupportedTypes::TypeSize externalStateVarsSize;
     if(b){
       VariableDescriptionContainer::const_iterator p;
-      const BehaviourData& d = this->mb.getBehaviourData(h);
+      const auto& d = this->mb.getBehaviourData(h);
       for(p=d.getMaterialProperties().begin();p!=d.getMaterialProperties().end();++p){
 	coefSize+=this->getTypeSize(p->type,p->arraySize);
       }
@@ -3901,8 +3901,8 @@ namespace mfront{
   BehaviourDSLCommon::writeBehaviourParametersInitializer(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
-    const VariableDescriptionContainer& params = md.getParameters();
+    const auto& md = this->mb.getBehaviourData(h);
+    const auto& params = md.getParameters();
     string cname(this->mb.getClassName());
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       cname += ModellingHypothesis::toString(h);
@@ -4011,7 +4011,7 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     this->checkBehaviourFile();
     this->writeBehaviourFileHeader();
     this->writeBehaviourFileHeaderBegin();
@@ -4430,8 +4430,8 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
+    const auto& md = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator p2;
@@ -4477,7 +4477,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeIntegrationDataScaleOperators(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator p2;
@@ -4570,7 +4570,7 @@ namespace mfront{
 				<< "IntegrationData<hypothesis,Type,false>&);" << endl << endl;
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
-    const set<Hypothesis>& h = this->mb.getModellingHypotheses();
+    const auto& h = this->mb.getModellingHypotheses();
     for(const auto & elem : h){
       if(this->mb.hasSpecialisedMechanicalData(elem)){
 	if(this->mb.useQt()){
@@ -4637,7 +4637,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeIntegrationDataOutputOperator(const Hypothesis h)
   {    
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator p2;
@@ -4700,7 +4700,7 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeIntegrationDataExternalStateVariables(const Hypothesis h) {
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     this->checkIntegrationDataFile();
     this->writeVariablesDeclarations(this->integrationDataFile,
 				     md.getExternalStateVariables(),
@@ -4711,7 +4711,7 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     this->checkIntegrationDataFile();
     this->writeIntegrationDataFileHeader();
     this->writeIntegrationDataFileHeaderBegin();
@@ -4795,7 +4795,7 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeSrcFileStaticVariables(const Hypothesis h){
     using namespace std;
-    const BehaviourData& md = this->mb.getBehaviourData(h);
+    const auto& md = this->mb.getBehaviourData(h);
     const string m("tfel::material::ModellingHypothesis::"+
 		   ModellingHypothesis::toUpperCaseString(h));
     this->checkSrcFile();
@@ -4856,7 +4856,7 @@ namespace mfront{
   BehaviourDSLCommon::writeSrcFileUserDefinedCode(void)
   {
     using namespace std;
-    const string& s = this->mb.getSources();
+    const auto& s = this->mb.getSources();
     this->checkBehaviourFile();
     if(!s.empty()){
       this->srcFile << s << endl << endl;
@@ -5177,7 +5177,7 @@ namespace mfront{
     this->writeSrcFileBehaviourProfiler();
     this->writeSrcFileParametersInitializers();
     // modelling hypotheses handled by the behaviour
-    const set<Hypothesis>& h = this->mb.getModellingHypotheses();
+    const auto& h = this->mb.getModellingHypotheses();
     for(const auto & elem : h){
       this->writeSrcFileStaticVariables(elem);
     }
@@ -5189,7 +5189,7 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     typedef map<string,vector<string> > Map;
     Map incs;
     vector<string>::const_iterator i;
@@ -5197,7 +5197,7 @@ namespace mfront{
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
-      const Map& iincs = interface->getGlobalIncludes(this->mb);
+      const auto& iincs = interface->getGlobalIncludes(this->mb);
       for(p=iincs.begin();p!=iincs.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
       }
@@ -5211,14 +5211,14 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     Map deps;
     vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
-      const Map& ideps = interface->getGlobalDependencies(this->mb);
+      const auto& ideps = interface->getGlobalDependencies(this->mb);
       for(p=ideps.begin();p!=ideps.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
       }
@@ -5232,7 +5232,7 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     Map osources;
     vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
@@ -5240,7 +5240,7 @@ namespace mfront{
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
-      const Map& isources = interface->getGeneratedSources(this->mb);
+      const auto& isources = interface->getGeneratedSources(this->mb);
       for(p=isources.begin();p!=isources.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
 	osources[p->first].push_back(this->srcFileName);
@@ -5262,13 +5262,13 @@ namespace mfront{
   {
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     vector<string> incs;
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
-      const vector<string>& iincs = interface->getGeneratedIncludes(this->mb);
+      const auto& iincs = interface->getGeneratedIncludes(this->mb);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
     }
     incs.push_back(this->behaviourFileName);
@@ -5283,14 +5283,14 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef BehaviourInterfaceFactory MBIF;
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
     vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
-      const Map& ideps = interface->getLibrariesDependencies(this->mb);
+      const auto& ideps = interface->getLibrariesDependencies(this->mb);
       for(p=ideps.begin();p!=ideps.end();++p){
 	for(p2=p->second.begin();p2!=p->second.end();++p2){
 	  if(find(this->sourcesLibrairiesDependencies[p->first].begin(),
@@ -5332,7 +5332,7 @@ namespace mfront{
   void BehaviourDSLCommon::treatPredictionOperator(void)
   {
     using namespace std;
-    const CodeBlockOptions& o = this->readCodeBlock(*this,BehaviourData::ComputePredictionOperator,
+    const auto& o = this->readCodeBlock(*this,BehaviourData::ComputePredictionOperator,
 						    &BehaviourDSLCommon::predictionOperatorVariableModifier,
 						    true,true);
     for(const auto & elem : o.hypotheses){
@@ -5438,7 +5438,7 @@ namespace mfront{
   {
     using namespace std;
     if(this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      const set<Hypothesis>& mh = this->mb.getDistinctModellingHypotheses();
+      const auto& mh = this->mb.getDistinctModellingHypotheses();
       for(const auto & elem : mh){
 	// basic check
 	if(this->mb.hasAttribute(elem,BehaviourData::hasConsistentTangentOperator)){
@@ -5476,7 +5476,7 @@ namespace mfront{
   BehaviourDSLCommon::setComputeFinalStressFromComputeFinalStressCandidateIfNecessary(void)
   {
     using namespace std;
-    const set<Hypothesis>& mh = this->mb.getDistinctModellingHypotheses();
+    const auto& mh = this->mb.getDistinctModellingHypotheses();
     // first treating specialised mechanical data
     for(const auto & elem : mh){
       if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){

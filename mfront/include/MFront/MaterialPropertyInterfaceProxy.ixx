@@ -21,7 +21,7 @@ namespace mfront{
   MaterialPropertyInterfaceProxy<Interface>::MaterialPropertyInterfaceProxy()
   {
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
     mlif.registerInterfaceAlias(Interface::getName(),Interface::getName());
   }
@@ -30,7 +30,7 @@ namespace mfront{
   MaterialPropertyInterfaceProxy<Interface>::MaterialPropertyInterfaceProxy(const std::string& name)
   {
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
     mlif.registerInterfaceAlias(Interface::getName(),name);
   }
@@ -42,7 +42,7 @@ namespace mfront{
 							      const InputIterator e)
   {
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     InputIterator p;
     mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
     mlif.registerInterfaceAlias(Interface::getName(),name);
@@ -58,7 +58,7 @@ namespace mfront{
 							      const InputIterator e)
   {
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     InputIterator p;
     mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
     for(p=b;p!=e;++p){
@@ -71,7 +71,7 @@ namespace mfront{
 							      const std::string& dep)
   {
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
     mlif.registerInterfaceAlias(Interface::getName(),name);
     mlif.registerInterfaceDependency(Interface::getName(),dep);
@@ -84,7 +84,7 @@ namespace mfront{
 							      const std::string& dep)
   {
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     InputIterator p;
     mlif.registerInterfaceCreator(Interface::getName(),&createInterface);
     for(p=b;p!=e;++p){
@@ -102,7 +102,7 @@ namespace mfront{
 							      const InputIterator2 e2)
   {
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     InputIterator  p;
     InputIterator2 p2;
     mlif.registerInterfaceCreator(Interface::getName(),&createInterface);

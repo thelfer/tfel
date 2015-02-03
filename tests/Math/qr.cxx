@@ -65,7 +65,7 @@ int main(void)
   typedef TestFunctionWrapper<QRDecompTest<long double> >  Wrapper1;
   typedef TestFunctionWrapper<QRDecompTest<double> >       Wrapper2;
   typedef TestFunctionWrapper<QRDecompTest<float> >        Wrapper3;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("qr.xml");
   manager.addTest("QRDecomp",shared_ptr<Test>(new Wrapper1("QRDecompTest<long double>")));

@@ -328,7 +328,7 @@ namespace mfront{
     }
     this->checkNotEndOfFile("ImplicitDSLBase::treatAlgorithm",
 			    "Cannot read algorithm name.");
-    const string& s = this->current->value;
+    const auto& s = this->current->value;
     ++this->current;
     this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm",";");
     this->solver = f.getSolver(s);
@@ -436,11 +436,11 @@ namespace mfront{
 							    const bool addThisPtr)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     if(d.isIntegrationVariableIncrementName(var)){
       if(this->mb.hasAttribute(h,var.substr(1)+"_normalisation_factor")){
-	const VariableDescription& s = d.getStateVariableHandler(var.substr(1));
-	const string& nf = this->mb.getAttribute<string>(h,var.substr(1)+"_normalisation_factor");
+	const auto& s = d.getStateVariableHandler(var.substr(1));
+	const auto& nf = this->mb.getAttribute<string>(h,var.substr(1)+"_normalisation_factor");
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(("+nf+")*(this->"+var+"))";
@@ -469,11 +469,11 @@ namespace mfront{
 						       const bool addThisPtr)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     if(d.isIntegrationVariableIncrementName(var)){
       if(this->mb.hasAttribute(h,var.substr(1)+"_normalisation_factor")){
-	const VariableDescription& s = d.getStateVariableHandler(var.substr(1));
-	const string& nf = this->mb.getAttribute<string>(h,var.substr(1)+"_normalisation_factor");
+	const auto& s = d.getStateVariableHandler(var.substr(1));
+	const auto& nf = this->mb.getAttribute<string>(h,var.substr(1)+"_normalisation_factor");
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(("+nf+")*(this->"+var+"))";
@@ -502,7 +502,7 @@ namespace mfront{
 							   const bool addThisPtr)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     if(this->mb.isDrivingVariableName(var)||(var=="T")|
        (d.isExternalStateVariableName(var))){
       if(addThisPtr){
@@ -513,8 +513,8 @@ namespace mfront{
     }
     if(d.isIntegrationVariableName(var)){
       if(this->mb.hasAttribute(h,var+"_normalisation_factor")){
-	const VariableDescription& s = d.getStateVariableHandler(var);
-	const string& nf = this->mb.getAttribute<string>(h,var+"_normalisation_factor");
+	const auto& s = d.getStateVariableHandler(var);
+	const auto& nf = this->mb.getAttribute<string>(h,var+"_normalisation_factor");
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(this->"+var+"+(this->theta)*(("+nf+")*(this->d"+var+")))";
@@ -550,7 +550,7 @@ namespace mfront{
 							   const std::string& var,
 							   const bool addThisPtr)
   {
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     if((this->mb.isDrivingVariableName(var))||(var=="T")||
        (d.isExternalStateVariableName(var))){
       if(addThisPtr){
@@ -572,7 +572,7 @@ namespace mfront{
   ImplicitDSLBase::isJacobianPart(const Hypothesis h,
 					   const std::string& w)
   {
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     TokensContainer::const_iterator previous;
     VariableDescriptionContainer::const_iterator p;
     VariableDescriptionContainer::const_iterator p2;
@@ -627,7 +627,7 @@ namespace mfront{
   ImplicitDSLBase::predictorAnalyser(const Hypothesis h,
 					      const std::string& w)
   {
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     if(d.isIntegrationVariableIncrementName(w)){
       this->integrationVariablesIncrementsUsedInPredictor.insert(w);
     }
@@ -711,10 +711,10 @@ namespace mfront{
     bool has_stensor = false;
     bool has_stensor_array = false;
     // checks
-    const set<Hypothesis>& h = this->mb.getModellingHypotheses();
+    const auto& h = this->mb.getModellingHypotheses();
     for(const auto & elem : h){
-      const BehaviourData& d = this->mb.getBehaviourData(elem);
-      const VariableDescriptionContainer& sv = d.getIntegrationVariables();
+      const auto& d = this->mb.getBehaviourData(elem);
+      const auto& sv = d.getIntegrationVariables();
       for(p=sv.begin();p!=sv.end();++p){
 	SupportedTypes::TypeFlag flag  = this->getTypeFlag(p->type);
 	if(flag==SupportedTypes::Scalar){
@@ -788,7 +788,7 @@ namespace mfront{
   ImplicitDSLBase::writeBehaviourParserSpecificMembers(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     VariableDescriptionContainer::const_iterator p2;
     SupportedTypes::TypeSize n;
@@ -1149,7 +1149,7 @@ namespace mfront{
   ImplicitDSLBase::writeGetPartialJacobianInvert(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
     SupportedTypes::TypeSize n;
     VariableDescriptionContainer::size_type i;
@@ -1284,7 +1284,7 @@ namespace mfront{
       this->behaviourFile << "}\n";
       for(p2=d.getIntegrationVariables().begin();p2!=p;++p2){
 	if(this->mb.hasAttribute(h,p2->name+"_normalisation_factor")){
-	  const string& nf = this->mb.getAttribute<string>(h,p2->name+"_normalisation_factor");
+	  const auto& nf = this->mb.getAttribute<string>(h,p2->name+"_normalisation_factor");
 	  this->behaviourFile << "partial_jacobian_" << p2->name << " /= " << nf << ";\n";
 	}
       }
@@ -1294,7 +1294,7 @@ namespace mfront{
   
   void ImplicitDSLBase::writeComputeNumericalJacobian(const Hypothesis h){
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
@@ -1355,7 +1355,7 @@ namespace mfront{
   void ImplicitDSLBase::writeBehaviourIntegrator(const Hypothesis h){
     using namespace std;
     const string btype = this->mb.getBehaviourTypeFlag();
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     vector<BoundsDescription>::const_iterator p3;
     SupportedTypes::TypeSize n;
@@ -1424,7 +1424,7 @@ namespace mfront{
     }
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
       if(this->mb.hasAttribute(h,p->name+"_normalisation_factor")){
-	const string& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	const auto& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 	this->behaviourFile << "this->d" << p->name << " *= " << nf << ";\n";
       }
     }
@@ -1472,7 +1472,7 @@ namespace mfront{
   ImplicitDSLBase::writeComputeFdF(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
     SupportedTypes::TypeSize n3;
@@ -1559,14 +1559,14 @@ namespace mfront{
     this->behaviourFile << "this->fzeros = this->zeros;\n";
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
       if(this->mb.hasAttribute(h,p->name+"_normalisation_factor")){
-	const string& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	const auto& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
     	this->behaviourFile << "f" << p->name << " *= " << nf << ";" << endl;
       }
     }
     this->behaviourFile << this->mb.getCodeBlock(h,BehaviourData::Integrator).code << "\n";
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
       if(this->mb.hasAttribute(h,'f'+p->name+"_normalisation_factor")){
-	const string& nf = this->mb.getAttribute<string>(h,'f'+p->name+"_normalisation_factor");
+	const auto& nf = this->mb.getAttribute<string>(h,'f'+p->name+"_normalisation_factor");
     	this->behaviourFile << "f" << p->name << "*= real(1)/(" << nf << ");" << endl;
       }
     }
@@ -1584,9 +1584,9 @@ namespace mfront{
 	    const bool bfnf = this->mb.hasAttribute(h,'f'+p->name+"_normalisation_factor");
 	    const bool bvnf = this->mb.hasAttribute(h,p2->name+"_normalisation_factor");
 	    if(bfnf){
-	      const string& fnf = this->mb.getAttribute<string>(h,'f'+p->name+"_normalisation_factor");	      
+	      const auto& fnf = this->mb.getAttribute<string>(h,'f'+p->name+"_normalisation_factor");	      
 	      if(bvnf){
-		const string& vnf = this->mb.getAttribute<string>(h,p2->name+"_normalisation_factor");
+		const auto& vnf = this->mb.getAttribute<string>(h,p2->name+"_normalisation_factor");
 		if((p->arraySize!=1u)&&
 		   (p2->arraySize!=1u)){
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
@@ -1649,7 +1649,7 @@ namespace mfront{
 	      }
 	    } else{
 	      if(bvnf){
-		const string& vnf = this->mb.getAttribute<string>(h,p2->name+"_normalisation_factor");
+		const auto& vnf = this->mb.getAttribute<string>(h,p2->name+"_normalisation_factor");
 		if((p->arraySize!=1u)&&
 		   (p2->arraySize!=1u)){
 		  this->behaviourFile << "for(unsigned short idx=0;idx!="
@@ -1733,7 +1733,7 @@ namespace mfront{
 
   void ImplicitDSLBase::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis h)
   {
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     this->checkBehaviourFile();
@@ -1746,7 +1746,7 @@ namespace mfront{
   void ImplicitDSLBase::writeBehaviourIntegrationVariablesIncrements(const Hypothesis h)
   {    
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
@@ -1800,7 +1800,7 @@ namespace mfront{
     }
 #warning "shall be done earlier"
     // reserved names
-    const vector<string>& n = this->solver->getReservedNames();
+    const auto& n = this->solver->getReservedNames();
     for(const auto & elem : n){
       this->reserveName(elem,false);
     }
@@ -1858,13 +1858,13 @@ namespace mfront{
       if(this->mb.hasCode(elem,BehaviourData::ComputePredictor)){
 	CodeBlock predictor;
 	VariableDescriptionContainer::const_iterator p;
-	const BehaviourData& d = this->mb.getBehaviourData(elem);
-	const VariableDescriptionContainer& sv = d.getIntegrationVariables();
+	const auto& d = this->mb.getBehaviourData(elem);
+	const auto& sv = d.getIntegrationVariables();
 	for(p=sv.begin();p!=sv.end();++p){
 	  if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+p->name)!=
 	     this->integrationVariablesIncrementsUsedInPredictor.end()){
 	    if(this->mb.hasAttribute(h,p->name+"_normalisation_factor")){
-	      const string& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	      const auto& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 	      predictor.code += "this->d"+p->name + " /= " + nf + ";\n";
 	    }
 	  }
@@ -1881,12 +1881,12 @@ namespace mfront{
 	VariableDescriptionContainer::const_iterator p;
 	const BehaviourData& d =
 	  this->mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-	const VariableDescriptionContainer& sv = d.getIntegrationVariables();
+	const auto& sv = d.getIntegrationVariables();
 	for(p=sv.begin();p!=sv.end();++p){
 	  if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+p->name)!=
 	     this->integrationVariablesIncrementsUsedInPredictor.end()){
 	    if(this->mb.hasAttribute(h,p->name+"_normalisation_factor")){
-	      const string& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	      const auto& nf = this->mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 	      predictor.code += "this->d"+p->name + " /= " + nf + ";\n";
 	    }
 	  }

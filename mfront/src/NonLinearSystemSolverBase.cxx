@@ -91,7 +91,7 @@ namespace mfront{
 								      const tfel::material::ModellingHypothesis::Hypothesis h,
 								      const std::string& nj)
   {
-    const BehaviourData& d = mb.getBehaviourData(h);
+    const auto& d = mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
     SupportedTypes::TypeSize n3;
@@ -209,7 +209,7 @@ namespace mfront{
 								const std::string& v)
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
+    const auto& d = mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
@@ -217,7 +217,7 @@ namespace mfront{
       if(mb.hasParameter(h,p->name+"_maximum_increment_value_per_iteration")){
 	out << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
 	if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-	  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 	  out << "if(std::abs(" << v << "[" << n 
 	      << "+idx])>" << nf << "*(this->" << p->name << "_maximum_increment_value_per_iteration)){\n";
 	} else {
@@ -226,7 +226,7 @@ namespace mfront{
 	}
 	out << "if("<< v << "[" << n << "+idx]<0){\n";
 	if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-	  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 	  out << "" << v << "[" << n
 	      << "+idx] = -"  << nf << "*(this->" << p->name << "_maximum_increment_value_per_iteration);\n";
 	} else {
@@ -235,7 +235,7 @@ namespace mfront{
 	}
 	out << "} else {\n";
 	if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-	  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+	  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 	  out << "" << v << "[" << n
 	      << "+idx] = " << nf << "*(this->" << p->name << "_maximum_increment_value_per_iteration);\n";
 	} else {
@@ -269,7 +269,7 @@ namespace mfront{
   												   const tfel::material::ModellingHypothesis::Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
+    const auto& d = mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     VariableDescriptionContainer::const_iterator p;
     vector<BoundsDescription>::const_iterator p2;
@@ -281,21 +281,21 @@ namespace mfront{
 	     (p2->category==BoundsDescription::Physical)){
 	    if((mb.getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize==1u)){
 	      if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
   		out << "if(this->" << p->name << "+ " << nf << "*(this->zeros[" << n << "]) <" << p2->lowerBound << "){\n";
 	      } else {
 		out << "if(this->" << p->name << "+this->zeros[" << n << "]<" << p2->lowerBound << "){\n";
 	      }
 	      if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "this->zeros[" << n << "] = (" << p2->lowerBound << "- (this->" << p->name << "))/(" << nf << ");\n";
 		} else {
 		  out << "this->zeros[" << n << "] = " << p2->lowerBound << "- (this->" << p->name << ");\n";
 		}
 	      } else {
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "this->zeros[" << n << "] = - (this->" << p->name << ")/(" << nf << ");\n";
 		} else {
 		  out << "this->zeros[" << n << "] = - (this->" << p->name << ");\n";
@@ -306,21 +306,21 @@ namespace mfront{
 	    if((mb.getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize!=1u)){
 	      out << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
 	      if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		out << "if(this->" << p->name << "[idx]+(" << nf << ")*(this->zeros[" << n << "+idx])<" << p2->lowerBound << "){\n";
 	      } else {
 		out << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]<" << p2->lowerBound << "){\n";
 	      }
 	      if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "this->zeros[" << n << "+idx] = (" << p2->lowerBound << "- (this->" << p->name << "[idx]))/(" << nf <<");\n";
 		} else {
 		  out << "this->zeros[" << n << "+idx] = " << p2->lowerBound << "- (this->" << p->name << "[idx]);\n";
 		}
 	      } else {
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf << ");\n";
 		} else {
 		  out << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
@@ -334,21 +334,21 @@ namespace mfront{
 		SupportedTypes::TypeSize n2 =  mb.getTypeSize(p->type,1u);
 		out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "if(this->" << p->name << "[idx]+(" << nf << ")*(this->zeros[" << n << "+idx])<" << p2->lowerBound << "){\n";
 		} else {
 		  out << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]<" << p2->lowerBound << "){\n";
 		}
 		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+idx] = (" << p2->lowerBound << "- (this->" << p->name << "[idx]))/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+idx] = " << p2->lowerBound << "- (this->" << p->name << "[idx]);\n";
 		  }
 		} else {
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
@@ -358,21 +358,21 @@ namespace mfront{
 		out << "}\n";
 	      } else {
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "if(this->" << p->name << "[" << p2->component << "]+(" << nf << ")*(this->zeros[" << n << "+" << p2->component << "])<" << p2->lowerBound << "){\n";
 		} else {
 		  out << "if(this->" << p->name << "[" << p2->component << "]+this->zeros[" << n << "+" << p2->component << "]<" << p2->lowerBound << "){\n";
 		}
 		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << p2->component << "] = (" << p2->lowerBound << "- (this->" << p->name << "[" << p2->component << "]))/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << p2->component << "] = " << p2->lowerBound << "- (this->" << p->name << "[" << p2->component << "]);\n";
 		  }
 		} else {
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "])/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "]);\n";
@@ -387,21 +387,21 @@ namespace mfront{
 	      if(p2->component==-1){
 		out << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "if(this->" << p->name << "[idx][idx2]+(" << nf << ")*(this->zeros[" << n << "+" << n2 << "*idx+idx2])<" << p2->lowerBound << "){\n";
 		} else {
 		  out << "if(this->" << p->name << "[idx][idx2]+this->zeros[" << n << "+" << n2 << "*idx+idx2]<" << p2->lowerBound << "){\n";
 		}
 		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = (" << p2->lowerBound << "- (this->" << p->name << "[idx][idx2]))/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = " << p2->lowerBound << "- (this->" << p->name << "[idx][idx2]);\n";
 		  }
 		} else {
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2])/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2]);\n";
@@ -411,21 +411,21 @@ namespace mfront{
 		out << "}\n";
 	      } else {
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "if(this->" << p->name << "[idx][" << p2->component << "]+(" << nf << ")*(this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "])<" << p2->lowerBound << "){\n";
 		} else {
 		  out << "if(this->" << p->name << "[idx][" << p2->component << "]+this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "]<" << p2->lowerBound << "){\n";
 		}
 		if(abs(p2->lowerBound)>numeric_limits<long double>::min()){
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = (" << p2->lowerBound << "- (this->" << p->name << "[idx][" << p2->component << "]))/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = " << p2->lowerBound << "- (this->" << p->name << "[idx][" << p2->component << "]);\n";
 		  }
 		} else {
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "])/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "]);\n";
@@ -441,21 +441,21 @@ namespace mfront{
 	     (p2->category==BoundsDescription::Physical)){
 	    if((mb.getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize==1u)){
 	      if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		out << "if(this->" << p->name << "+ " << nf << "*(this->zeros[" << n << "]) >" << p2->upperBound << "){\n";
 	      } else {
 		out << "if(this->" << p->name << "+this->zeros[" << n << "]>" << p2->upperBound << "){\n";
 	      }
 	      if(abs(p2->upperBound)>numeric_limits<long double>::min()){
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "this->zeros[" << n << "] = (" << p2->upperBound << "- (this->" << p->name << "))/(" << nf << ");\n";
 		} else {
 		  out << "this->zeros[" << n << "] = " << p2->upperBound << "- (this->" << p->name << ");\n";
 		}
 	      } else {
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "this->zeros[" << n << "] = - (this->" << p->name << ")/(" << nf << ");\n";
 		} else {
 		  out << "this->zeros[" << n << "] = - (this->" << p->name << ");\n";
@@ -466,21 +466,21 @@ namespace mfront{
 	    if((mb.getTypeFlag(p->type)==SupportedTypes::Scalar)&&(p->arraySize!=1u)){
 	      out << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
 	      if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		out << "if(this->" << p->name << "[idx]+(" << nf << ")*(this->zeros[" << n << "+idx])>" << p2->upperBound << "){\n";
 	      } else {
 		out << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]>" << p2->upperBound << "){\n";
 	      }
 	      if(abs(p2->upperBound)>numeric_limits<long double>::min()){
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "this->zeros[" << n << "+idx] = (" << p2->upperBound << "- (this->" << p->name << "[idx]))/(" << nf <<");\n";
 		} else {
 		  out << "this->zeros[" << n << "+idx] = " << p2->upperBound << "- (this->" << p->name << "[idx]);\n";
 		}
 	      } else {
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf << ");\n";
 		} else {
 		  out << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
@@ -494,21 +494,21 @@ namespace mfront{
 		SupportedTypes::TypeSize n2 =  mb.getTypeSize(p->type,1u);
 		out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "if(this->" << p->name << "[idx]+(" << nf << ")*(this->zeros[" << n << "+idx])>" << p2->upperBound << "){\n";
 		} else {
 		  out << "if(this->" << p->name << "[idx]+this->zeros[" << n << "+idx]>" << p2->upperBound << "){\n";
 		}
 		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+idx] = (" << p2->upperBound << "- (this->" << p->name << "[idx]))/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+idx] = " << p2->upperBound << "- (this->" << p->name << "[idx]);\n";
 		  }
 		} else {
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx])/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+idx] = - (this->" << p->name << "[idx]);\n";
@@ -518,21 +518,21 @@ namespace mfront{
 		out << "}\n";
 	      } else {
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "if(this->" << p->name << "[" << p2->component << "]+(" << nf << ")*(this->zeros[" << n << "+" << p2->component << "])>" << p2->upperBound << "){\n";
 		} else {
 		  out << "if(this->" << p->name << "[" << p2->component << "]+this->zeros[" << n << "+" << p2->component << "]>" << p2->upperBound << "){\n";
 		}
 		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << p2->component << "] = (" << p2->upperBound << "- (this->" << p->name << "[" << p2->component << "]))/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << p2->component << "] = " << p2->upperBound << "- (this->" << p->name << "[" << p2->component << "]);\n";
 		  }
 		} else {
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "])/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << p2->component << "] = - (this->" << p->name << "[" << p2->component << "]);\n";
@@ -547,21 +547,21 @@ namespace mfront{
 	      if(p2->component==-1){
 		out << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "if(this->" << p->name << "[idx][idx2]+(" << nf << ")*(this->zeros[" << n << "+" << n2 << "*idx+idx2])>" << p2->upperBound << "){\n";
 		} else {
 		  out << "if(this->" << p->name << "[idx][idx2]+this->zeros[" << n << "+" << n2 << "*idx+idx2]>" << p2->upperBound << "){\n";
 		}
 		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = (" << p2->upperBound << "- (this->" << p->name << "[idx][idx2]))/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = " << p2->upperBound << "- (this->" << p->name << "[idx][idx2]);\n";
 		  }
 		} else {
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2])/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << p->name << "[idx][idx2]);\n";
@@ -571,21 +571,21 @@ namespace mfront{
 		out << "}\n";
 	      } else {
 		if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		  const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		  const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		  out << "if(this->" << p->name << "[idx][" << p2->component << "]+(" << nf << ")*(this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "])>" << p2->upperBound << "){\n";
 		} else {
 		  out << "if(this->" << p->name << "[idx][" << p2->component << "]+this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "]>" << p2->upperBound << "){\n";
 		}
 		if(abs(p2->upperBound)>numeric_limits<long double>::min()){
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = (" << p2->upperBound << "- (this->" << p->name << "[idx][" << p2->component << "]))/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = " << p2->upperBound << "- (this->" << p->name << "[idx][" << p2->component << "]);\n";
 		  }
 		} else {
 		  if(mb.hasAttribute(h,p->name+"_normalisation_factor")){
-		    const string& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
+		    const auto& nf = mb.getAttribute<string>(h,p->name+"_normalisation_factor");
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "])/(" << nf << ");\n";
 		  } else {
 		    out << "this->zeros[" << n << "+" << n2 << "*idx+" << p2->component << "] = - (this->" << p->name << "[idx][" << p2->component << "]);\n";

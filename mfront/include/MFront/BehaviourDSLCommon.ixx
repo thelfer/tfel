@@ -141,7 +141,7 @@ namespace mfront
   {
     using namespace std;
     using std::shared_ptr;
-    const set<Hypothesis>& h = o.hypotheses;
+    const auto& h = o.hypotheses;
     set<Hypothesis>::const_iterator ph;
     const TokensContainer::const_iterator beg = this->current;
     for(ph=h.begin();ph!=h.end();++ph){
@@ -153,7 +153,7 @@ namespace mfront
       option.qualifyMemberVariables = b;
       option.modifier = vm;
       option.analyser = wa;
-      const CodeBlock& c = this->readNextBlock(option);
+      const auto& c = this->readNextBlock(option);
       this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n,c,o.m,o.p);
     }
@@ -171,7 +171,7 @@ namespace mfront
   {
     using namespace std;
     using std::shared_ptr;
-    const set<Hypothesis>& h = o.hypotheses;
+    const auto& h = o.hypotheses;
     set<Hypothesis>::const_iterator ph;
     const TokensContainer::const_iterator beg = this->current;
     for(ph=h.begin();ph!=h.end();++ph){
@@ -181,7 +181,7 @@ namespace mfront
       option.qualifyStaticVariables = b;
       option.qualifyMemberVariables = b;
       option.modifier = vm;
-      const CodeBlock& c = this->readNextBlock(option);
+      const auto& c = this->readNextBlock(option);
       this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n,c,o.m,o.p);
     }
@@ -230,7 +230,7 @@ namespace mfront
   {
     using namespace std;
     using std::shared_ptr;
-    const set<Hypothesis>& h = o.hypotheses;
+    const auto& h = o.hypotheses;
     set<Hypothesis>::const_iterator ph;
     const TokensContainer::const_iterator beg = this->current;
     for(ph=h.begin();ph!=h.end();++ph){

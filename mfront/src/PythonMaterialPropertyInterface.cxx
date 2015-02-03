@@ -435,7 +435,7 @@ namespace mfront
     this->srcFile << "#endif /* __cplusplus */\n\n";
     this->srcFile.close();
     // writing python interface
-    MFrontLock& lock = MFrontLock::getMFrontLock();
+    auto& lock = MFrontLock::getMFrontLock();
     lock.lock();
     string fname;
     if(lib.empty()){

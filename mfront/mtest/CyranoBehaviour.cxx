@@ -36,7 +36,7 @@ namespace mfront
     using namespace tfel::system;
     using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getCyranoFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
     const bool b1 = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);

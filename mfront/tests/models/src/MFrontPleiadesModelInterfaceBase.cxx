@@ -776,7 +776,7 @@ namespace mfront{
 //     this->srcFile << "msg += \"internal error (no group named '\"+*ptr+\"' defined\";\n";
 //     this->srcFile << "throw(PleiadesError(msg));\n";
 //     this->srcFile << "}\n";
-//     this->srcFile << "const vector<int>& nodes = ptr2->second;\n";
+//     this->srcFile << "const auto& nodes = ptr2->second;\n";
     this->srcFile << "for(int node_k=0;node_k!=static_cast<int>(nodes.size());++node_k){\n";
     this->srcFile << "const int gnode_k=nodes[node_k];\n";
     this->writeFunctionCall(mdata,mdata.functions);
@@ -989,7 +989,7 @@ namespace mfront{
     // declaring temporaries
     for(p2=usedVariables.begin();p2!=usedVariables.end();++p2){
       if(data.fieldNames.find(*p2)!=data.fieldNames.end()){
-	const pair<string,ushort>& fn = getFieldAndDepthFromFieldName(data,*p2);
+	const auto& fn = getFieldAndDepthFromFieldName(data,*p2);
 	if(fn.second==0){
 	  this->srcFile << "const double tmp_" << *p2 << " = this->_ple" 
 			<< fn.first << "->getValueType(gnode_k,0);\n";
@@ -1001,7 +1001,7 @@ namespace mfront{
     }
     for(p2=modifiedVariables.begin();p2!=modifiedVariables.end();++p2){
       if(data.fieldNames.find(*p2)!=data.fieldNames.end()){
-	const pair<string,ushort>& fn = getFieldAndDepthFromFieldName(data,*p2);
+	const auto& fn = getFieldAndDepthFromFieldName(data,*p2);
 	if(fn.second==0){
 	  this->srcFile << "double tmp_" << *p2 << " = this->_ple" 
 			<< fn.first << "->getValueType(gnode_k,0);\n";
@@ -1055,7 +1055,7 @@ namespace mfront{
       this->srcFile << ");\n";
     }
     for(p2=modifiedVariables.begin();p2!=modifiedVariables.end();++p2){
-	const pair<string,ushort>& fn = getFieldAndDepthFromFieldName(data,*p2);
+	const auto& fn = getFieldAndDepthFromFieldName(data,*p2);
 	if(fn.second==0){
 	  this->srcFile << "this->_ple" << fn.first << "->setValueType(gnode_k,tmp_" << *p2 << ",0);\n";
 	} else {

@@ -95,7 +95,7 @@ namespace mfront{
 							 const std::string& pn)
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
+    const auto& d = mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){

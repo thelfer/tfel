@@ -110,7 +110,7 @@ namespace mfront{
 							     const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
+    const auto& d = mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     // size of linear system
@@ -135,7 +135,7 @@ namespace mfront{
   {
     using namespace std;
     const string btype = mb.getBehaviourTypeFlag();
-    const BehaviourData& d = mb.getBehaviourData(h);
+    const auto& d = mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n2;
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){

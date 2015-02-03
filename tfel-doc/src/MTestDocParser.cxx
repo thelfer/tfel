@@ -42,7 +42,7 @@ namespace tfel{
 	pdoc = docs.insert(MVType(c,vector<TestDocumentation>())).first;
       }
       pdoc->second.push_back(TestDocumentation());
-      TestDocumentation& t = pdoc->second.back();
+      auto& t = pdoc->second.back();
       t.name    = this->file;
       t.date    = this->date;
       t.author  = this->author;

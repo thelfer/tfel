@@ -90,7 +90,7 @@ namespace mfront
     this->sta_u2 = u1;
     if((iter>=this->stat)&&((iter-this->stat)%2==0)){
       if(getVerboseMode()>=VERBOSE_LEVEL1){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "Steffensen acceleration convergence" << endl;
       }
       this->sta_du2  = this->sta_u2-this->sta_u1;

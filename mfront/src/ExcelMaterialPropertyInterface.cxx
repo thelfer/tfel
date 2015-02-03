@@ -184,7 +184,7 @@ namespace mfront
     using namespace std;
     using namespace tfel::system;
     // writing excel interface
-    MFrontLock& lock = MFrontLock::getMFrontLock();
+    auto& lock = MFrontLock::getMFrontLock();
     lock.lock();
     vector<ExcelInterface> interfaces;
     map<string,vector<ExcelInterface> > interfaces2;

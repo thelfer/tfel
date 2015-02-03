@@ -159,7 +159,7 @@ namespace mfront
   {
     using namespace tfel::system;
     // posix signals
-    SignalManager& sm = SignalManager::getSignalManager();
+    auto& sm = SignalManager::getSignalManager();
     // blocking all signals during treatment of signals SIGSEGV, SIGFPE
     struct sigaction action;
     ::sigfillset(&(action.sa_mask));
@@ -176,7 +176,7 @@ namespace mfront
     if(this->currentArgument->getOption().empty()){
       setVerboseMode(VERBOSE_LEVEL1);
     } else {
-      const std::string& option = this->currentArgument->getOption();
+      const auto& option = this->currentArgument->getOption();
       if(option=="quiet"){
 	setVerboseMode(VERBOSE_QUIET);
       } else if(option=="level0"){
@@ -206,7 +206,7 @@ namespace mfront
     if(this->currentArgument->getOption().empty()){
       this->xml_output = true;
     } else {
-      const std::string& option = this->currentArgument->getOption();
+      const auto& option = this->currentArgument->getOption();
       if(option=="true"){
 	this->xml_output = true;
       } else if(option=="false"){
@@ -226,7 +226,7 @@ namespace mfront
     if(this->currentArgument->getOption().empty()){
       this->result_file_output = true;
     } else {
-      const std::string& option = this->currentArgument->getOption();
+      const auto& option = this->currentArgument->getOption();
       if(option=="true"){
 	this->result_file_output = true;
       } else if(option=="false"){
@@ -246,7 +246,7 @@ namespace mfront
     if(this->currentArgument->getOption().empty()){
       this->residual_file_output = true;
     } else {
-      const std::string& option = this->currentArgument->getOption();
+      const auto& option = this->currentArgument->getOption();
       if(option=="true"){
 	this->residual_file_output = true;
       } else if(option=="false"){
@@ -271,7 +271,7 @@ namespace mfront
   MTestMain::treatHelpCommand()
   {
     using namespace std;
-    const string& k = this->currentArgument->getOption();
+    const auto& k = this->currentArgument->getOption();
     if(k.empty()){
       string msg("MTestMain::treatHelpCommand : ");
       msg += "no command specified";
@@ -322,7 +322,7 @@ namespace mfront
     using namespace tfel::tests;
     using namespace tfel::utilities;
     using std::shared_ptr;
-    TestManager& tm = TestManager::getTestManager();
+    auto& tm = TestManager::getTestManager();
     vector<string>::const_iterator p;
     for(p=this->inputs.begin();
 	p!=this->inputs.end();++p){

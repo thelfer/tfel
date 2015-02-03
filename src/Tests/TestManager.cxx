@@ -129,7 +129,7 @@ namespace tfel
       TestResult r;
       for(p=this->tests.begin();p!=this->tests.end();++p){
 	MultipleTestOutputsPtr output;
-	const string& n = p->first;
+	const auto& n = p->first;
 	p2 = this->outputs.find(n);
 	if(p2!=this->outputs.end()){
 	  output = p2->second;

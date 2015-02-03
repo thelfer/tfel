@@ -361,7 +361,7 @@ namespace mfront{
 	msg += "unexpected end of file";
 	throw(runtime_error(msg));
       }
-      const string& fss = current->value;
+      const auto& fss = current->value;
       if(fss=="FiniteRotationSmallStrain"){
 	this->finiteStrainStrategies.push_back(FINITEROTATIONSMALLSTRAIN);
       } else if(fss=="MieheApelLambrechtLogarithmicStrain"){
@@ -652,7 +652,7 @@ namespace mfront{
     // treatment 
     set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour
-    const set<Hypothesis>& bh = mb.getModellingHypotheses();
+    const auto& bh = mb.getModellingHypotheses();
     for(const Hypothesis *ph = sh;ph!=sh+6u;++ph){
       if(bh.find(*ph)!=bh.end()){
 	h.insert(*ph);
@@ -678,7 +678,7 @@ namespace mfront{
     using namespace tfel::utilities;
 
     // get the modelling hypotheses to be treated
-    const set<Hypothesis>& h = this->getModellingHypothesesToBeTreated(mb);
+    const auto& h = this->getModellingHypothesesToBeTreated(mb);
 
     // some consistency checks
     if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){
@@ -1370,12 +1370,12 @@ namespace mfront{
       ++ph;
       ++pum;
       for(;ph!=uh.end();++ph,++pum){
-	const BehaviourData& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-	const VariableDescriptionContainer& mps = d.getMaterialProperties();
+	const auto& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+	const auto& mps = d.getMaterialProperties();
 	for(const auto & mp : mps){
-	  const UMATMaterialProperty& mp1 = findUMATMaterialProperty(mfirst.first,
+	  const auto& mp1 = findUMATMaterialProperty(mfirst.first,
 								     mb.getExternalName(h,mp.name));
-	  const UMATMaterialProperty& mp2 = findUMATMaterialProperty(pum->first,
+	  const auto& mp2 = findUMATMaterialProperty(pum->first,
 								     mb.getExternalName(h,mp.name));
 	  SupportedTypes::TypeSize o1 = mp1.offset;
 	  o1+=pum->second;
@@ -1395,7 +1395,7 @@ namespace mfront{
     }
     pair<vector<UMATMaterialProperty>,
 	 SupportedTypes::TypeSize> res;
-    vector<UMATMaterialProperty>& mprops = res.first;
+    auto& mprops = res.first;
     if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
@@ -1496,7 +1496,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(!mprops.empty()){
-      const UMATMaterialProperty& m = mprops.back();
+      const auto& m = mprops.back();
       res.second  = m.offset;
       res.second += this->getTypeSize(m.type,m.arraySize);
     }
@@ -1561,8 +1561,8 @@ namespace mfront{
   UMATInterface::checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(ModellingHypothesis::PLANESTRESS);
-    const VariableDescriptionContainer& sv  = d.getPersistentVariables();
+    const auto& d = mb.getBehaviourData(ModellingHypothesis::PLANESTRESS);
+    const auto& sv = d.getPersistentVariables();
     SupportedTypes::TypeSize o;
     for(const auto & elem : sv){
       if(d.getExternalName(elem.name)=="AxialStrain"){
@@ -1599,7 +1599,7 @@ namespace mfront{
       } else {
 	// generic algorithm, this means that the behaviour
 	// can be called in generalised plane strain
-	const BehaviourData& d = mb.getBehaviourData(ModellingHypothesis::GENERALISEDPLANESTRAIN);
+	const auto& d = mb.getBehaviourData(ModellingHypothesis::GENERALISEDPLANESTRAIN);
 	SupportedTypes::TypeSize s =  this->getTotalSize(d.getPersistentVariables());
 	if(s.getValueForDimension(2)==0){
 	  out << "const UMATReal ezz = STATEV[0];\n";
@@ -2057,9 +2057,9 @@ namespace mfront{
     // loop over hypothesis
     const set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
     for(const auto & elem : h){
-      const BehaviourData& d = mb.getBehaviourData(elem);
-      const VariableDescriptionContainer& persistentVarsHolder     = d.getPersistentVariables();
-      const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
+      const auto& d = mb.getBehaviourData(elem);
+      const auto& persistentVarsHolder = d.getPersistentVariables();
+      const auto& externalStateVarsHolder = d.getExternalStateVariables();
       pair<vector<UMATMaterialProperty>,
 	   SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,elem);
       string tmp;
@@ -2262,7 +2262,7 @@ namespace mfront{
     // computing material properties size
     SupportedTypes::TypeSize msize;
     if(!mprops.first.empty()){
-      const UMATMaterialProperty& m = mprops.first.back();
+      const auto& m = mprops.first.back();
       msize  = m.offset;
       msize += this->getTypeSize(m.type,m.arraySize);
       msize -= mprops.second;
@@ -2303,12 +2303,11 @@ namespace mfront{
   UMATInterface::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
   {
     using namespace std;
-    typedef map<Hypothesis,string>::value_type MVType;
     map<Hypothesis,string> res;
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
-      for(const auto & elem : h){
-	res.insert(MVType(elem,this->getModellingHypothesisTest(elem)));
+      const auto h = this->getModellingHypothesesToBeTreated(mb);
+      for(const auto & mh : h){
+	res.insert({mh,this->getModellingHypothesisTest(mh)});
       }
       return res;
     }

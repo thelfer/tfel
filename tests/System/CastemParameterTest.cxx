@@ -35,7 +35,7 @@ struct CastemParameterTest
     using namespace std;
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = ELM::getExternalLibraryManager();
     CastemFunctionPtr f;
     const double eps = 1.e-13;
     f = elm.getCastemFunction(".libs/libCastemMaterialLaw.so","Test");
@@ -56,7 +56,7 @@ int main(void)
   using namespace std;
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("CastemParameter.xml");
   TestResult r = manager.execute();

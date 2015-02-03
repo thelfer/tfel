@@ -184,7 +184,7 @@ int main(void)
 
   using namespace tfel::tests;
   using namespace tfel::utilities;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("gentype3.xml");
   TestResult r = manager.execute();

@@ -43,10 +43,10 @@ int main(const int argc, const char *const *const argv)
   // calling mfront plugins
   const char * libs = ::getenv("MFRONT_ADDITIONAL_LIBRARIES");
   if(libs!=nullptr){
-    const vector<string>& l = tokenize(libs,':');
+    const auto& l = tokenize(libs,':');
     vector<string>::const_iterator p;
     for(p=l.begin();p!=l.end();++p){
-      ExternalLibraryManager& lm = ExternalLibraryManager::getExternalLibraryManager();
+      auto& lm = ExternalLibraryManager::getExternalLibraryManager();
       lm.loadLibrary(*p);
     }
   }

@@ -92,7 +92,7 @@ namespace mfront
     using namespace tfel::material;
     using namespace tfel::utilities;
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "MarkdownBehaviourAnalyser::endTreatement : begin" << endl;
     }
     string name;
@@ -121,7 +121,7 @@ namespace mfront
     }
     out.close();
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "MarkdownBehaviourAnalyser::endTreatement : end" << endl;
     }
   } // end of MarkdownBehaviourAnalyser::endTreatement
@@ -165,8 +165,8 @@ namespace mfront
     out << endl << endl;
     out << "## Mechanical behaviour description" << endl << endl;
     out << "### List of supported Hypotheses" << endl << endl;
-    const set<ModellingHypothesis::Hypothesis>& h  = mb.getModellingHypotheses();
-    const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
+    const auto& h = mb.getModellingHypotheses();
+    const auto& dh = mb.getDistinctModellingHypotheses();
     for(const auto & elem : h){
       out << "* " <<  ModellingHypothesis::toString(elem);
       if(dh.find(elem)!=dh.end()){
@@ -196,9 +196,9 @@ namespace mfront
     if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
       const BehaviourData& d =
 	mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-      const vector<string>& cn = d.getCodeBlockNames();
+      const auto& cn = d.getCodeBlockNames();
       for(const auto & elem : cn){
-	const CodeBlock& c = d.getCodeBlock(elem);
+	const auto& c = d.getCodeBlock(elem);
 	if(!c.description.empty()){
 	  out <<"### " << elem << " description" << endl;
 	  out << c.description << endl << endl;
@@ -216,15 +216,15 @@ namespace mfront
       if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 	const BehaviourData& d =
 	  mb.getBehaviourData(elem);
-	const vector<string>& cn = d.getCodeBlockNames();
+	const auto& cn = d.getCodeBlockNames();
 	for(const auto & cn_pcn : cn){
 	  bool print = true;
-	  const CodeBlock& c = d.getCodeBlock(cn_pcn);
+	  const auto& c = d.getCodeBlock(cn_pcn);
 	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
 	    const BehaviourData& duh =
 	      mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
 	    if(duh.hasCode(cn_pcn)){
-	      const string& cuh = duh.getCodeBlock(cn_pcn).code;
+	      const auto& cuh = duh.getCodeBlock(cn_pcn).code;
 	      print = c.code!=cuh;
 	    }
 	  }
@@ -283,8 +283,8 @@ namespace mfront
     out << endl << endl;
     out << "## Informations générales sur la loi de comportement" << endl << endl;
     out << "### Liste des hypothèses modélisées" << endl << endl;
-    const set<ModellingHypothesis::Hypothesis>& h  = mb.getModellingHypotheses();
-    const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
+    const auto& h = mb.getModellingHypotheses();
+    const auto& dh = mb.getDistinctModellingHypotheses();
     for(const auto & elem : h){
       out << "* " <<  ModellingHypothesis::toString(elem);
       if(dh.find(elem)!=dh.end()){
@@ -314,9 +314,9 @@ namespace mfront
     if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
       const BehaviourData& d =
 	mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-      const vector<string>& cn = d.getCodeBlockNames();
+      const auto& cn = d.getCodeBlockNames();
       for(const auto & elem : cn){
-	const CodeBlock& c = d.getCodeBlock(elem);
+	const auto& c = d.getCodeBlock(elem);
 	if(!c.description.empty()){
 	  out <<"### Description relative à la portion " << elem << endl;
 	  out << c.description << endl << endl;
@@ -334,15 +334,15 @@ namespace mfront
       if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 	const BehaviourData& d =
 	  mb.getBehaviourData(elem);
-	const vector<string>& cn = d.getCodeBlockNames();
+	const auto& cn = d.getCodeBlockNames();
 	for(const auto & cn_pcn : cn){
 	  bool print = true;
-	  const CodeBlock& c = d.getCodeBlock(cn_pcn);
+	  const auto& c = d.getCodeBlock(cn_pcn);
 	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
 	    const BehaviourData& duh =
 	      mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
 	    if(duh.hasCode(cn_pcn)){
-	      const string& cuh = duh.getCodeBlock(cn_pcn).code;
+	      const auto& cuh = duh.getCodeBlock(cn_pcn).code;
 	      print = c.code!=cuh;
 	    }
 	  }
@@ -379,11 +379,11 @@ namespace mfront
     using namespace std;
     using namespace tfel::material;
     using namespace tfel::glossary;
-    const Glossary& glossary = Glossary::getGlossary();
+    const auto& glossary = Glossary::getGlossary();
     vector<Data> data;
-    const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
+    const auto& dh = mb.getDistinctModellingHypotheses();
     for(const auto & elem : dh){
-      const BehaviourData& d = mb.getBehaviourData(elem);
+      const auto& d = mb.getBehaviourData(elem);
       const VariableDescriptionContainer& mdata = (d.*m)();
       VariableDescriptionContainer::const_iterator pv;
       for(pv=mdata.begin();pv!=mdata.end();++pv){
@@ -419,13 +419,13 @@ namespace mfront
 	  pd->externalName = d.getExternalName(pv->name);
 	  if(pd->description.empty()){
 	    if(glossary.contains(pd->externalName)){
-	      const GlossaryEntry& e = glossary.getGlossaryEntry(pd->externalName);
+	      const auto& e = glossary.getGlossaryEntry(pd->externalName);
 	      ostringstream os;
 	      if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 		os << ModellingHypothesis::toString(elem) << " : ";
 	      }
 	      os << e.getShortDescription() << endl;
-	      const vector<string>& cd = e.getDescription();
+	      const auto& cd = e.getDescription();
 	      for(const auto & cd_pcd : cd){
 		os << cd_pcd << endl;
 	      }
@@ -456,8 +456,8 @@ namespace mfront
     using namespace std;
     using namespace tfel::material;
     map<string,map<string,string> > translations;
-    map<string,string>& en = translations["english"]; 
-    map<string,string>& fr = translations["french"]; 
+    auto& en = translations["english"]; 
+    auto& fr = translations["french"]; 
     en["variable name"] = "variable name";
     fr["variable name"] = "nom";
     en["variable type"] = "variable type";
@@ -472,18 +472,18 @@ namespace mfront
     fr["default value"] = "valeur par défaut";
     en["default value for"] = "default value for";
     fr["default value for"] = "valeur par défaut pour l'hypothèse de modélsation ";
-    const map<string,string>& l = translations[this->language];
+    const auto& l = translations[this->language];
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "MarkdownBehaviourAnalyser::printData : begin" << endl;
     }
     vector<Data>::const_iterator pd;
-    const set<ModellingHypothesis::Hypothesis>& dh = mb.getDistinctModellingHypotheses();
+    const auto& dh = mb.getDistinctModellingHypotheses();
     set<string> cbnames;
     vector<ModellingHypothesis::Hypothesis>::const_iterator pvh;
     for(const auto & elem : dh){
-      const BehaviourData& d = mb.getBehaviourData(elem);
-      const vector<string>& cn = d.getCodeBlockNames();
+      const auto& d = mb.getBehaviourData(elem);
+      const auto& cn = d.getCodeBlockNames();
       cbnames.insert(cn.begin(),cn.end());
     }
     for(pd=data.begin();pd!=data.end();++pd){
@@ -530,10 +530,10 @@ namespace mfront
       map<string,vector<ModellingHypothesis::Hypothesis> > dvcb;
       for(const auto & cbname : cbnames){
       	for(const auto & elem : dh){
-      	  const BehaviourData& d = mb.getBehaviourData(elem);
+      	  const auto& d = mb.getBehaviourData(elem);
 	  const bool b = d.isIntegrationVariableName(pd->name)||d.isExternalStateVariableName(pd->name);
 	  if(d.hasCode(cbname)){
-	    const CodeBlock& cb = d.getCodeBlock(cbname);
+	    const auto& cb = d.getCodeBlock(cbname);
 	    if(cb.variables.find(pd->name)!=cb.variables.end()){
 	      vcb[cbname].push_back(elem);
 	    }
@@ -592,7 +592,7 @@ namespace mfront
     }
     // bounds
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "MarkdownBehaviourAnalyser::printData : end" << endl;
     }
   }

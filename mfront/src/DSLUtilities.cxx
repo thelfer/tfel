@@ -165,10 +165,10 @@ namespace mfront
 					  const tfel::glossary::GlossaryEntry& e)
   {
     using namespace std;
-    const string& k = e.getKey();
-    const vector<string>& n = e.getNames();
-    const string& sd = e.getShortDescription();
-    const vector<string>& d = e.getDescription();
+    const auto& k = e.getKey();
+    const auto& n = e.getNames();
+    const auto& sd = e.getShortDescription();
+    const auto& d = e.getDescription();
     if((!sd.empty())||(!d.empty())){
       os << endl
 	 << "For your information, the description of the glossary entry '" << k << "' is:" << endl;

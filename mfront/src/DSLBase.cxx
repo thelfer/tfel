@@ -129,15 +129,15 @@ namespace mfront
     const bool addClassName   = options.qualifyStaticVariables;
     const bool allowSemiColon = options.allowSemiColon;
     const bool registerLine   = options.registerLine;
-    const std::string& delim1 = options.delim1;
-    const std::string& delim2 = options.delim2;
+    const auto& delim1 = options.delim1;
+    const auto& delim2 = options.delim2;
     shared_ptr<VariableModifier> modifier = options.modifier;
     shared_ptr<WordAnalyser>     analyser = options.analyser;
     CodeBlock b;
     if(!this->currentComment.empty()){
       b.description += this->currentComment;
     }
-    string& res = b.code;
+    auto& res = b.code;
     unsigned int currentLine;
     unsigned int openedBlock;
     TokensContainer::const_iterator previous;
@@ -339,7 +339,7 @@ namespace mfront
     const string m = "DSLBase::treatImport";
     const string oFileName = this->fileName;
     this->checkNotEndOfFile(m);
-    const vector<string>& files = this->readStringOrArrayOfString(m);
+    const auto& files = this->readStringOrArrayOfString(m);
     this->checkNotEndOfFile(m);
     this->readSpecifiedToken(m,";");
     vector<string>::const_iterator p;
@@ -456,7 +456,6 @@ namespace mfront
   DSLBase::treatIntegerConstant()
   {
     using namespace std;
-    typedef map<string,int>::value_type MVType;
     string name;
     pair<bool,int> value;
     this->checkNotEndOfFile("DSLBase::treatIntegerConstant",
@@ -470,7 +469,7 @@ namespace mfront
     value = this->readInitialisationValue<int>(name,true);
     this->readSpecifiedToken("DSLBase::treatIntegerConstant",";");
     this->registerStaticVariable(name);
-    if(!this->integerConstants.insert(MVType(name,value.second)).second){
+    if(!this->integerConstants.insert({name,value.second}).second){
       this->throwRuntimeError("DSLBase::treatIntegerConstant",
 			      "variable '"+name+"' already declared");
     }
@@ -523,7 +522,7 @@ namespace mfront
 				  "empty array size for '"+varName+"'");
 	}
 	IntegerEvaluator ev(array_size);
-	const vector<string>& vars = ev.getVariablesNames();
+	const auto& vars = ev.getVariablesNames();
 	vector<string>::const_iterator pv;
 	for(pv=vars.begin();pv!=vars.end();++pv){
 	  map<string,int>::const_iterator pvv = this->integerConstants.find(*pv);
@@ -738,7 +737,7 @@ namespace mfront
     if(this->current->flag!=Token::String){
       this->throwRuntimeError(m,"Expected a string");
     }
-    const string& r = this->current->value.substr(1,this->current->value.size()-2);
+    const auto& r = this->current->value.substr(1,this->current->value.size()-2);
     ++(this->current);
     return r;
   } // end of DSLBase::readString
@@ -980,10 +979,10 @@ namespace mfront
     MaterialPropertyDSL mp;
     try{
       MFrontMaterialPropertyInterface minterface;
-      const string& path = SearchFile::search(f);
+      const auto& path = SearchFile::search(f);
       mp.analyseFile(path);
-      const MaterialPropertyDescription& mpd  = mp.getMaterialPropertyDescription();
-      const string& mname = minterface.getFunctionName(mpd.material,
+      const auto& mpd = mp.getMaterialPropertyDescription();
+      const auto& mname = minterface.getFunctionName(mpd.material,
 						       mpd.law);
       this->reserveName(mname,false);
       this->appendToIncludes("#include\""+minterface.getHeaderFileName(mpd.material,
@@ -1228,7 +1227,6 @@ namespace mfront
 			      std::map<std::string,double>& v)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
     bool endOfTreatement=false;
     while((this->current!=this->fileTokens.end())&&
 	  (!endOfTreatement)){
@@ -1261,7 +1259,7 @@ namespace mfront
 	}
 	++(this->current);
 	this->checkNotEndOfFile("DSLBase::handleParameter");
-	if(!v.insert(MVType(n,value)).second){
+	if(!v.insert({n,value}).second){
 	  this->throwRuntimeError("DSLBase::handleParameter",
 				  "default value already defined for parameter '"+n+"'");
 	}

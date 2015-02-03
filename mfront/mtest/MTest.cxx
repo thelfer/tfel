@@ -425,7 +425,7 @@ namespace mfront
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
-    const vector<string>& mpnames = this->b->getMaterialPropertiesNames();
+    const auto& mpnames = this->b->getMaterialPropertiesNames();
     bool is_mp = find(mpnames.begin(),mpnames.end(),n)==mpnames.end();
     if((is_mp)&&(n!="ThermalExpansion") &&(n!="ThermalExpansion1")&&
        (n!="ThermalExpansion2")&&(n!="ThermalExpansion3")){
@@ -463,7 +463,7 @@ namespace mfront
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
-    const vector<string>& evsnames = this->b->getExternalStateVariablesNames();
+    const auto& evsnames = this->b->getExternalStateVariablesNames();
     if(find(evsnames.begin(),evsnames.end(),n)==evsnames.end()){
       string msg("MTestParser::setExternalStateVariable : ");
       msg += "the behaviour don't declare an external state variable '";
@@ -769,7 +769,7 @@ namespace mfront
       throw(runtime_error(msg));
     }
     if(getVerboseMode()>=VERBOSE_LEVEL1){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "No hypothesis defined, using default" << endl;
     }
     this->hypothesis = MH::TRIDIMENSIONAL;
@@ -878,7 +878,7 @@ namespace mfront
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
-    const vector<string>& ivsnames = this->b->getInternalStateVariablesNames();
+    const auto& ivsnames = this->b->getInternalStateVariablesNames();
     if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
       string msg("MTest::setScalarInternalStateVariableInitialValue : ");
       msg += "the behaviour don't declare an internal state variable named '";
@@ -908,7 +908,7 @@ namespace mfront
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
-    const vector<string>& ivsnames = this->b->getInternalStateVariablesNames();
+    const auto& ivsnames = this->b->getInternalStateVariablesNames();
     if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
       string msg("MTest::setStensorInternalStateVariableInitialValue : ");
       msg += "the behaviour don't declare an internal state variable named '";
@@ -945,7 +945,7 @@ namespace mfront
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
-    const vector<string>& ivsnames = this->b->getInternalStateVariablesNames();
+    const auto& ivsnames = this->b->getInternalStateVariablesNames();
     if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
       string msg("MTest::setTensorInternalStateVariableInitialValue : ");
       msg += "the behaviour don't declare an internal state variable named '";
@@ -1011,7 +1011,7 @@ namespace mfront
     }
 #ifdef HAVE_CASTEM
     if(i=="umat"){
-      ELM& elm = ELM::getExternalLibraryManager();
+      auto& elm = ELM::getExternalLibraryManager();
       const unsigned short type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
 	this->b = shared_ptr<Behaviour>(new UmatSmallStrainBehaviour(this->hypothesis,l,f));
@@ -1029,7 +1029,7 @@ namespace mfront
 #endif
 #ifdef HAVE_ASTER
     if(i=="aster"){
-      ELM& elm = ELM::getExternalLibraryManager();
+      auto& elm = ELM::getExternalLibraryManager();
       const unsigned short type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
       this->b = shared_ptr<Behaviour>(new AsterSmallStrainBehaviour(this->hypothesis,l,f));
@@ -1055,7 +1055,7 @@ namespace mfront
       msg += "unknown interface '"+i+"'";
       throw(runtime_error(msg));
     }
-    const vector<string>& ivnames = this->b->getInternalStateVariablesNames();
+    const auto& ivnames = this->b->getInternalStateVariablesNames();
     this->declareVariables(this->b->getMaterialPropertiesNames(),true);
     this->declareVariables(ivnames,true);
     this->declareVariables(this->b->getExternalStateVariablesNames(),true);
@@ -1259,7 +1259,7 @@ namespace mfront
     }
     // options selected
     if(getVerboseMode()>=VERBOSE_LEVEL1){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       if(this->aa.get()!=nullptr){
 	log << "mtest : " << this->aa->getName() << " acceleration algorithm selected" << endl;
       }
@@ -1547,7 +1547,7 @@ namespace mfront
     real t  = ti;
     real dt = te-ti;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "number of driving variables : "    << ndv << endl;
       log << "number of thermodynamic forces : " << nth << endl;
       log << "number of constraints       : " << this->constraints.size() << endl;
@@ -1657,7 +1657,7 @@ namespace mfront
       bool converged = false;
       unsigned short iter = 0;
       if(getVerboseMode()>=VERBOSE_LEVEL1){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "resolution from " << t << " to " << t+dt << endl;
       }
       if(this->residual){
@@ -1757,7 +1757,7 @@ namespace mfront
 	  state.u1 -= wk.du;
 	} else {
 	  if(getVerboseMode()>VERBOSE_QUIET){
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    log << "MTest::execute : behaviour compute prediction matrix failed" << endl;
 	  }
 	  state.u1  = state.u0;
@@ -1836,7 +1836,7 @@ namespace mfront
 	      }
 	    }
 	    if(merr>this->toeps){
-	      ostream& log = getLogStream();
+	      auto& log = getLogStream();
 	      log << "Compaison to numerical jacobian failed (error : " << merr << ", criterium " << this->toeps << ")." << endl;
 	      log << "Tangent operator returned by the behaviour : " << endl;
 	      for(i=0;i!=nth;++i){
@@ -1860,7 +1860,7 @@ namespace mfront
 	      }
 	    }
 	  } else {
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    log << "Numerical evalution of tangent operator failed." << endl << endl;
 	  }
 	}
@@ -1885,7 +1885,7 @@ namespace mfront
 	    pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
 	  }
 	  if(getVerboseMode()>=VERBOSE_DEBUG){
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    for(i=0;i!=wk.K.getNbRows();++i){
 	      for(j=0;j!=wk.K.getNbCols();++j){
 		log << wk.K(i,j) << " ";
@@ -1906,7 +1906,7 @@ namespace mfront
 	    ne += abs(wk.du(i));
 	  }
 	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    log << "iteration " << iter << " : " << ne << " " 
 		<< nr << " (";
 	    for(i=0;i!=ndv;){
@@ -1972,7 +1972,7 @@ namespace mfront
 	  }
 	} else {
 	  if(getVerboseMode()>VERBOSE_QUIET){
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    log << "MTest::execute : behaviour intregration failed" << endl;
 	  }
 	  cont = false;
@@ -1982,7 +1982,7 @@ namespace mfront
 	// no convergence
 	if(iter==this->iterMax){
 	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    log << "No convergence, the following criteria were not met : " << endl;
 	    for(vector<string>::const_iterator pfc=failed_criteria.begin();
 		pfc!=failed_criteria.end();++pfc){
@@ -1998,7 +1998,7 @@ namespace mfront
 	  throw(runtime_error(msg));
 	}
 	if(getVerboseMode()>=VERBOSE_LEVEL1){
-	  ostream& log = getLogStream();
+	  auto& log = getLogStream();
 	  log << "Dividing time "
 	      << "step by two" << endl << endl;
 	}
@@ -2009,11 +2009,11 @@ namespace mfront
       } else {
 	if(getVerboseMode()>=VERBOSE_LEVEL1){
 	  if(iter==1u){
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    log << "convergence, after one iteration "
 		<< endl << endl;
 	  } else {
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    if((iter>=3)&&
 	       (ne  >100*numeric_limits<real>::min())&&
 	       (nep >100*numeric_limits<real>::min())&&

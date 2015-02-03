@@ -134,7 +134,7 @@ TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchoffTangentOperator_3D,"SaintVenantKirc
 
 int main(void){
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("SaintVenantKirchoffTangentOperator.xml");
   TestResult r = manager.execute();

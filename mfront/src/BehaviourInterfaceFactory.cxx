@@ -61,7 +61,7 @@ namespace mfront{
 							    const BehaviourInterfaceFactory::InterfaceCreator f)
   {
     using namespace std;
-    InterfaceCreatorsContainer& imap = this->getInterfaceCreatorsMap();
+    auto& imap = this->getInterfaceCreatorsMap();
     if(imap.find(i)!=imap.end()){
       string msg("BehaviourInterfaceFactory::registerInterfaceCreator : ");
       msg += "interface creator '"+i+"' already declared";
@@ -75,7 +75,7 @@ namespace mfront{
 							  const std::string& a)
   {
     using namespace std;
-    AliasContainer& amap = this->getAliasesMap();
+    auto& amap = this->getAliasesMap();
     if(amap.find(a)!=amap.end()){
       string msg("BehaviourInterfaceFactory::registerInterfaceCreator : ");
       msg += "interface alias '"+a+"' already declared";

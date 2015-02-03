@@ -267,7 +267,7 @@ namespace tfel
     SignalManager::treatAction(int sig)
     {
       using namespace std;
-      SignalManager& signalManager = SignalManager::getSignalManager();
+      auto& signalManager = SignalManager::getSignalManager();
       map<int,map<unsigned short,SignalHandler *> >::const_iterator p;
       map<unsigned short,SignalHandler *>::const_iterator p2;
       p=signalManager.callBacks.find(sig);

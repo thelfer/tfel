@@ -148,34 +148,30 @@ namespace mfront{
   void
   SupportedTypes::registerTypes(void)
   {
-    using namespace std;
-    typedef map<string,TypeFlag>::value_type MVType;
-    this->flags.insert(MVType("real",Scalar));
-    this->flags.insert(MVType("frequency",Scalar));
-    this->flags.insert(MVType("stress",Scalar));
-    this->flags.insert(MVType("length",Scalar));
-    this->flags.insert(MVType("time",Scalar));
-    //    this->flags.insert(MVType("stressrate",Scalar));
-    this->flags.insert(MVType("strain",Scalar));
-    this->flags.insert(MVType("strainrate",Scalar));
-    this->flags.insert(MVType("temperature",Scalar));
-    this->flags.insert(MVType("energy_density",Scalar));
-    this->flags.insert(MVType("thermalexpansion",Scalar));
-    this->flags.insert(MVType("massdensity",Scalar));
-    this->flags.insert(MVType("TVector",TVector));
-    this->flags.insert(MVType("Stensor",Stensor));
-    this->flags.insert(MVType("Tensor",Tensor));
-    this->flags.insert(MVType("StressStensor",Stensor));
-    this->flags.insert(MVType("StressRateStensor",Stensor));
-    this->flags.insert(MVType("StrainStensor",Stensor));
-    this->flags.insert(MVType("StrainRateStensor",Stensor));
+    this->flags.insert({"real",Scalar});
+    this->flags.insert({"frequency",Scalar});
+    this->flags.insert({"stress",Scalar});
+    this->flags.insert({"length",Scalar});
+    this->flags.insert({"time",Scalar});
+    //    this->flags.insert({"stressrate",Scalar});
+    this->flags.insert({"strain",Scalar});
+    this->flags.insert({"strainrate",Scalar});
+    this->flags.insert({"temperature",Scalar});
+    this->flags.insert({"energy_density",Scalar});
+    this->flags.insert({"thermalexpansion",Scalar});
+    this->flags.insert({"massdensity",Scalar});
+    this->flags.insert({"TVector",TVector});
+    this->flags.insert({"Stensor",Stensor});
+    this->flags.insert({"Tensor",Tensor});
+    this->flags.insert({"StressStensor",Stensor});
+    this->flags.insert({"StressRateStensor",Stensor});
+    this->flags.insert({"StrainStensor",Stensor});
+    this->flags.insert({"StrainRateStensor",Stensor});
     // CZM
-    this->flags.insert(MVType("DisplacementTVector",
-			      TVector));
-    this->flags.insert(MVType("ForceTVector",
-			      TVector));
+    this->flags.insert({"DisplacementTVector",TVector});
+    this->flags.insert({"ForceTVector",TVector});
     // Finite Strain
-    this->flags.insert(MVType("DeformationGradientTensor",Tensor));
+    this->flags.insert({"DeformationGradientTensor",Tensor});
   }
 
   SupportedTypes::SupportedTypes()

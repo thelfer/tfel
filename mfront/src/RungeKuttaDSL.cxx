@@ -1,14 +1,14 @@
 /*!
  * \file   mfront/src/RungeKuttaDSL.cxx
- * \brief    
+ * \brief
  * \author Helfer Thomas
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include<string>
@@ -23,6 +23,89 @@
 #include"MFront/RungeKuttaDSL.hxx"
 
 namespace mfront{
+
+  static void
+  writeExternalVariablesCurrentValues(std::ostream& f,
+				      const BehaviourDescription& mb,
+				      const RungeKuttaDSL::Hypothesis h,
+				      const std::string& p)
+  {
+    using namespace std;
+    const string t = ((p=="0") ? "(t/this->dt)" :
+		      ((p=="1") ? "((t+dt_)/this->dt)" : "((t+"+p+"*dt_)/this->dt)"));
+    const auto& d = mb.getBehaviourData(h);
+    //! all registred variables used in this block
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    uvs.insert(uvs2.begin(),uvs2.end());
+    for(const auto& mv : mb.getMainVariables()){
+      const auto& dv = mv.first;
+      if(!dv.increment_known){
+	string msg("writeExternalVariablesCurrentValues : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      if(uvs.find(dv.name)!=uvs.end()){
+	f << "this->"+dv.name+"_ = this->"+dv.name+"+(this->d"+dv.name+")*" << t << ";\n";
+      }
+    }
+    if(uvs.find("T")!=uvs.end()){
+      f << "this->T_   = this->T+(this->dT)*" << t << ";" << endl;
+    }
+    for(const auto& v : d.getExternalStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	f << "this->" << v.name << "_ = this->" << v.name
+	  << "+(this->d" << v.name << ")*" << t << ";" << endl;
+      }
+    }
+  }
+
+  void
+  writeExternalVariableCurrentValue2(std::ostream& f,
+				     const std::string& n,
+				     const std::string& p)
+  {
+    if(p=="0"){
+      f << "this->"  << n  << "_ = this->"  << n  << ";\n";
+    } else if(p=="1"){
+      f << "this->"  << n  << "_ = this->"  << n  << "+this->d" << n << ";\n";
+    } else {
+      f << "this->"  << n  << "_ = this->"  << n  << "+" << p << "*(this->d" << n << ");\n";
+    }
+  }
+
+  static void
+  writeExternalVariablesCurrentValues2(std::ostream& f,
+				       const BehaviourDescription& mb,
+				       const RungeKuttaDSL::Hypothesis h,
+				       const std::string& p)
+  {
+    using namespace std;
+    const auto& d = mb.getBehaviourData(h);
+    //! all registred variables used in this block
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    uvs.insert(uvs2.begin(),uvs2.end());
+    for(const auto& mv : mb.getMainVariables()){
+      const auto& dv = mv.first;
+      if(!dv.increment_known){
+	string msg("writeExternalVariablesCurrentValues2 : ");
+	msg += "unsupported driving variable '"+dv.name+"'";
+	throw(runtime_error(msg));
+      }
+      if(uvs.find(dv.name)!=uvs.end()){
+	writeExternalVariableCurrentValue2(f,dv.name,p);
+      }
+    }
+    if(uvs.find("T")!=uvs.end()){
+      writeExternalVariableCurrentValue2(f,"T",p);
+    }
+    for(const auto& v : d.getExternalStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	writeExternalVariableCurrentValue2(f,v.name,p);
+      }
+    }
+  } // end of writeExternalVariablesCurrentValues2
 
   RungeKuttaDSL::RungeKuttaDSL()
     : BehaviourDSLBase<RungeKuttaDSL>()
@@ -42,7 +125,7 @@ namespace mfront{
 	ThermodynamicForce>::const_iterator pm;
     for(pm=this->mb.getMainVariables().begin();
 	pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
+      const auto& dv = pm->first;
       this->registerVariable(dv.name+"_",false);
       this->registerVariable("d"+dv.name+"_",false);
       this->mb.addLocalVariable(h,VariableDescription(dv.type,dv.name+"_",1u,0u));
@@ -60,6 +143,30 @@ namespace mfront{
     this->reserveName("converged",false);
     this->reserveName("error",false);
     this->reserveName("failed",false);
+    this->reserveName("cste1_2",false);
+    this->reserveName("cste1_4",false);
+    this->reserveName("cste3_8",false);
+    this->reserveName("cste3_32",false);
+    this->reserveName("cste12_13",false);
+    this->reserveName("cste1932_2197",false);
+    this->reserveName("cste7200_2197",false);
+    this->reserveName("cste7296_2197",false);
+    this->reserveName("cste439_216",false);
+    this->reserveName("cste3680_513",false);
+    this->reserveName("cste845_4104",false);
+    this->reserveName("cste8_27",false);
+    this->reserveName("cste3544_2565",false);
+    this->reserveName("cste1859_4104",false);
+    this->reserveName("cste11_40",false);
+    this->reserveName("cste16_135",false);
+    this->reserveName("cste6656_12825",false);
+    this->reserveName("cste28561_56430",false);
+    this->reserveName("cste9_50",false);
+    this->reserveName("cste2_55",false);
+    this->reserveName("cste1_360",false);
+    this->reserveName("cste128_4275",false);
+    this->reserveName("cste2197_75240",false);
+    this->reserveName("cste1_50",false);
     this->mb.addLocalVariable(h,VariableDescription("temperature","T_",1u,0u));
     this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
@@ -100,88 +207,6 @@ namespace mfront{
     }
   }
 
-  void RungeKuttaDSL::treatStateVariable(void)
-  {
-    using namespace std;
-    VarContainer sv;
-    set<Hypothesis> h;
-    this->readVariableList(sv,h,&BehaviourDescription::addStateVariables,true,true,false);
-    if(!this->mb.hasAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			      BehaviourData::numberOfEvaluations)){
-      this->setDefaultAlgorithm();
-    }
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      // On devrait le faire plus tard, pour ne traiter que les variables effectivement utilisées
-#warning "HERE"
-      CodeBlock ib;
-      for(VariableDescriptionContainer::const_iterator p=sv.begin();p!=sv.end();++p){
-	string currentVarName = p->name + "_";
-	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  ostream& log = getLogStream();
-	  log << "registring variable '" << currentVarName << "'";
-	  if(*ph==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	    log << " for default hypothesis" << endl;
-	  } else {
-	    log << " for the '" << ModellingHypothesis::toString(*ph)
-		<< "' hypothesis" << endl;
-	  }
-	}
-	this->registerVariable(currentVarName,false);
-	this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
-	if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	  ib.code += "this->"+currentVarName +".resize("+to_string(p->arraySize)+");\n";
-	}
-	ib.code += "this->" +currentVarName + " = this->" + p->name + ";\n";
-	const unsigned short n =
-	  this->mb.getAttribute<unsigned short>(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-						BehaviourData::numberOfEvaluations);
-	for(unsigned short i=0u;i!=n;++i){
-	  currentVarName = "d" + p->name + "_K"+to_string(i+1u);
-	  if(getVerboseMode()>=VERBOSE_DEBUG){
-	    ostream& log = getLogStream();
-	    log << "registring variable '" << currentVarName << "'";
-	    if(*ph==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	      log << " for default hypothesis" << endl;
-	    } else {
-	      log << " for the '" << ModellingHypothesis::toString(*ph)
-		  << "' hypothesis" << endl;
-	    }
-	  }
-	  this->registerVariable(currentVarName,false);
-	  this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
-	}
-      }
-      this->mb.setCode(*ph,BehaviourData::BeforeInitializeLocalVariables,ib,
-		       BehaviourData::CREATEORAPPEND,
-		       BehaviourData::AT_END);
-    }
-  } // end of RungeKuttaDSL::treatStateVariable
-
-  void RungeKuttaDSL::treatExternalStateVariable(void)
-  {
-    using namespace std;
-    VariableDescriptionContainer ev;
-    set<Hypothesis> h;
-    this->readVariableList(ev,h,&BehaviourDescription::addExternalStateVariables,true,true,false);
-    for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      // On devrait le faire plus tard, pour ne traiter que les variables effectivement utilisées
-#warning "HERE"
-      CodeBlock ib;
-      for(VariableDescriptionContainer::const_iterator p=ev.begin();p!=ev.end();++p){
-	string currentVarName = p->name + "_";
-	this->registerVariable(currentVarName,false);
-	this->mb.addLocalVariable(*ph,VariableDescription(p->type,currentVarName,p->arraySize,0u));
-	if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	  ib.code += "this->"+currentVarName+".resize("+to_string(p->arraySize)+");\n";
-	}
-	ib.code += "this->" + currentVarName + " = this->" + p->name + ";\n";
-      }
-      this->mb.setCode(*ph,BehaviourData::BeforeInitializeLocalVariables,ib,
-		       BehaviourData::CREATEORAPPEND,
-		       BehaviourData::AT_END);
-    }
-  } // end of RungeKuttaDSL::treatStateVariable
-
   void
   RungeKuttaDSL::treatUpdateAuxiliaryStateVariables(void)
   {
@@ -192,11 +217,11 @@ namespace mfront{
 
   std::string
   RungeKuttaDSL::computeStressVariableModifier1(const Hypothesis h,
-							 const std::string& var,
-							 const bool addThisPtr)
+						const std::string& var,
+						const bool addThisPtr)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     if((this->mb.isDrivingVariableName(var)) ||(var=="T") ||
        (this->mb.isDrivingVariableIncrementName(var))||
        (d.isIntegrationVariableName(var))||
@@ -217,7 +242,7 @@ namespace mfront{
     }
     if(this->mb.isExternalStateVariableIncrementName(h,var)){
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
-      const VariableDescription& v = d.getVariableHandler(d.getExternalStateVariables(),
+      const auto& v = d.getVariableHandler(d.getExternalStateVariables(),
 							  var.substr(1));
       if(v.arraySize>1){
 	if(addThisPtr){
@@ -245,7 +270,7 @@ namespace mfront{
 							 const bool addThisPtr)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     if((this->mb.isDrivingVariableName(var))||(var=="T")||
        (d.isExternalStateVariableName(var))){
       if(addThisPtr){
@@ -473,7 +498,7 @@ namespace mfront{
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
-    CodeBlock ib; // code inserted at the beginning of the local variable initialisation
+    CodeBlock ib; // code inserted at before of the local variable initialisation
     CodeBlock ie; // code inserted at the end of the local variable initialisation
     if(!this->mb.hasAttribute(h,BehaviourData::algorithm)){
       this->setDefaultAlgorithm();
@@ -482,27 +507,103 @@ namespace mfront{
       this->mb.getAttribute<string>(h,BehaviourData::algorithm);
     const unsigned short n =
 	  this->mb.getAttribute<unsigned short>(h,BehaviourData::numberOfEvaluations);
-    // registring the eel_ variable
-    this->mb.addLocalVariable(h,VariableDescription("StrainStensor","eel_",1u,0u));
-    ib.code += "this->eel_ = this->eel;\n";
-    for(unsigned short i=0u;i!=n;++i){
-      string currentVarName = "deel_K"+to_string(i+1u);
-      this->registerVariable(currentVarName,false);
-      this->mb.addLocalVariable(h,VariableDescription("StrainStensor",currentVarName,1u,0u));
-    }
     // some checks
-    const set<Hypothesis>& bh = this->mb.getDistinctModellingHypotheses();
-    for(set<Hypothesis>::const_iterator ph=bh.begin();ph!=bh.end();++ph){
-      if(!this->mb.hasCode(*ph,BehaviourData::ComputeStress)){
+    const auto& bh = this->mb.getDistinctModellingHypotheses();
+    for(const auto & elem : bh){
+      const auto& d = this->mb.getBehaviourData(elem);
+      if(!d.hasCode(BehaviourData::ComputeStress)){
 	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
 	msg += "@ComputeStress was not defined.";
 	throw(runtime_error(msg));
       }
-      if(!this->mb.hasCode(*ph,BehaviourData::ComputeDerivative)){
+      if(!d.hasCode(BehaviourData::ComputeDerivative)){
 	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
 	msg += "@Derivative was not defined.";
 	throw(runtime_error(msg));
       }
+      auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
+      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+      uvs.insert(uvs2.begin(),uvs2.end());
+      CodeBlock icb; // code inserted at the beginning of the local variable initialisation
+      // creating local variables
+      const auto& ivs = d.getStateVariables();
+      const auto& evs = d.getExternalStateVariables();
+      for(const auto& iv:ivs){
+	for(unsigned short i=0u;i!=n;++i){
+	  string currentVarName = "d" + iv.name + "_K"+to_string(i+1u);
+	  if(getVerboseMode()>=VERBOSE_DEBUG){
+	    auto& log = getLogStream();
+	    log << "registring variable '" << currentVarName << "'";
+	    if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	      log << " for default hypothesis" << endl;
+	    } else {
+	      log << " for the '" << ModellingHypothesis::toString(elem)
+		  << "' hypothesis" << endl;
+	    }
+	  }
+	  this->registerVariable(currentVarName,false);
+	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
+	}
+	if(uvs.find(iv.name)!=uvs.end()){
+	  string currentVarName = iv.name + "_";
+	  if(getVerboseMode()>=VERBOSE_DEBUG){
+	    auto& log = getLogStream();
+	    log << "registring variable '" << currentVarName << "'";
+	    if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	      log << " for default hypothesis" << endl;
+	    } else {
+	      log << " for the '" << ModellingHypothesis::toString(elem)
+		  << "' hypothesis" << endl;
+	    }
+	  }
+	  this->registerVariable(currentVarName,false);
+	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
+	  if(this->useDynamicallyAllocatedVector(iv.arraySize)){
+	    icb.code += "this->"+currentVarName +".resize("+to_string(iv.arraySize)+");\n";
+	  }
+	  if((algorithm!="RungeKutta4/2")&&(algorithm!="RungeKutta5/4")){
+	    icb.code += "this->" +currentVarName + " = this->" + iv.name + ";\n";
+	  }
+	}
+      }
+      // driving variables
+      if((algorithm!="RungeKutta4/2")&&(algorithm!="RungeKutta5/4")){
+	for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
+	  const auto& dv = pm->first;
+	  if(uvs.find(dv.name)!=uvs.end()){
+	    ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
+	  }
+	}
+	if(uvs.find("T")!=uvs.end()){
+	  ib.code += "this->T_ = this->T;\n";
+	}
+      }
+      for(const auto& ev:evs){
+	if(uvs.find(ev.name)!=uvs.end()){
+	  string currentVarName = ev.name + "_";
+	  if(getVerboseMode()>=VERBOSE_DEBUG){
+	    auto& log = getLogStream();
+	    log << "registring variable '" << currentVarName << "'";
+	    if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	      log << " for default hypothesis" << endl;
+	    } else {
+	      log << " for the '" << ModellingHypothesis::toString(elem)
+		  << "' hypothesis" << endl;
+	    }
+	  }
+	  this->registerVariable(currentVarName,false);
+	  this->mb.addLocalVariable(elem,VariableDescription(ev.type,currentVarName,ev.arraySize,0u));
+	  if(this->useDynamicallyAllocatedVector(ev.arraySize)){
+	    icb.code += "this->"+currentVarName +".resize("+to_string(ev.arraySize)+");\n";
+	  }
+	  if((algorithm!="RungeKutta4/2")&&(algorithm!="RungeKutta5/4")){
+	    icb.code += "this->" +currentVarName + " = this->" + ev.name + ";\n";
+	  }
+	}
+      }
+      this->mb.setCode(elem,BehaviourData::BeforeInitializeLocalVariables,icb,
+		       BehaviourData::CREATEORAPPEND,
+		       BehaviourData::AT_END);
     }
     // create the compute final stress code is necessary
     this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
@@ -523,25 +624,12 @@ namespace mfront{
       ib.code += "throw(runtime_error(msg));\n";
       ib.code += "}\n";
     }
-    // driving variables
-    if((algorithm!="RungeKutta4/2")&&
-       (algorithm!="RungeKutta5/4")){
-      for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-	const DrivingVariable& dv = pm->first;
-	ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
-      }
-    }
-    // temperature
-    if((algorithm!="RungeKutta4/2")&&
-       (algorithm!="RungeKutta5/4")){
-      ib.code += "this->T_ = this->T;\n";
-    }
     this->mb.setCode(h,BehaviourData::BeforeInitializeLocalVariables,ib,
 		     BehaviourData::CREATEORAPPEND,
 		     BehaviourData::AT_BEGINNING);
     // part introduced at the end of the initialize local variables
     for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
+      const auto& dv = pm->first;
       if(dv.increment_known){
 	ie.code += "this->d" + dv.name + "_ = (this->d"+dv.name+")/(this->dt);\n";
       } else {
@@ -549,10 +637,6 @@ namespace mfront{
 	msg += "unsupported driving variable '"+dv.name+"'";
 	throw(runtime_error(msg));
       }
-    }
-    if((algorithm!="RungeKutta4/2")&&
-       (algorithm!="RungeKutta5/4")){
-      ie.code += "this->computeStress();\n";
     }
     this->mb.setCode(h,BehaviourData::AfterInitializeLocalVariables,ie,
 		     BehaviourData::CREATEORAPPEND,
@@ -576,23 +660,23 @@ namespace mfront{
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
     this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeStress) << endl;
-    this->behaviourFile << "return true;" << endl; 
+    this->behaviourFile << "return true;" << endl;
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress" << endl << endl;
     this->behaviourFile << "bool\ncomputeFinalStress(void){" << endl;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
     writeMaterialLaws("RungeKuttaDSL::writeBehaviourParserSpecificMembers",
-		      this->behaviourFile,this->mb.getMaterialLaws());		      
+		      this->behaviourFile,this->mb.getMaterialLaws());
     this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeFinalStress) << endl;
-    this->behaviourFile << "return true;" << endl; 
+    this->behaviourFile << "return true;" << endl;
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeFinalStress" << endl << endl;
     this->behaviourFile << "bool\ncomputeDerivative(void){" << endl;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
     writeMaterialLaws("RungeKuttaDSL::writeBehaviourParserSpecificMembers",
-		      this->behaviourFile,this->mb.getMaterialLaws());		      
+		      this->behaviourFile,this->mb.getMaterialLaws());
     this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeDerivative) << endl;
-    this->behaviourFile << "return true;" << endl; 
+    this->behaviourFile << "return true;" << endl;
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeDerivative" << endl << endl;
   } // end of writeBehaviourParserSpecificMembers
 
@@ -602,7 +686,7 @@ namespace mfront{
   } // end of writeBehaviourUpdateStateVariables
 
   void
-  RungeKuttaDSL::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h) 
+  RungeKuttaDSL::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h)
   {
     using namespace std;
     if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
@@ -624,14 +708,13 @@ namespace mfront{
 
   void RungeKuttaDSL::writeBehaviourEulerIntegrator(const Hypothesis h)
   {
-    using namespace std;
-    using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
+    using std::endl;
+    const auto& d = this->mb.getBehaviourData(h);
+    this->behaviourFile << "this->computeStress();" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << " += " 
-			  << "this->dt*(this->d" << p->name << ");" << endl;
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->" << v.name << " += "
+			  << "this->dt*(this->d" << v.name << ");" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeFinalStress();" << endl;
@@ -642,41 +725,31 @@ namespace mfront{
 
   void RungeKuttaDSL::writeBehaviourRK2Integrator(const Hypothesis h)
   {
-    using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
-    this->behaviourFile << "using namespace std;" << endl;
+    using std::endl;
+    const auto& d = this->mb.getBehaviourData(h);
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    uvs.insert(uvs2.begin(),uvs2.end());
+    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
+    this->behaviourFile << "this->computeStress();" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
-			  << "_K1 = (this->dt)*(this->d" << p->name << ");" << endl;
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K1 = (this->dt)*(this->d" << v.name << ");" << endl;
     }
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
-    }
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
+    writeExternalVariablesCurrentValues2(this->behaviourFile,this->mb,h,"cste1_2");
+    for(const auto& iv : d.getStateVariables()){
+      if(uvs.find(iv.name)!=uvs.end()){
+	this->behaviourFile << "this->" << iv.name << "_ += cste1_2*(this->d" << iv.name << "_K1);" << endl;
       }
-      this->behaviourFile << "this->"+dv.name+"_ += 0.5f*(this->d"+dv.name+");" << endl;
     }
-    this->behaviourFile << "this->T_   += 0.5f*(this->dT);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << ");" << endl;
-    }
-    this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeStress();" << endl << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     this->behaviourFile << "// Final Step" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << " += " 
-			  << "this->dt*(this->d" << p->name << ");" << endl;
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->" << v.name << " += "
+			  << "this->dt*(this->d" << v.name << ");" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeFinalStress();" << endl;
@@ -688,39 +761,44 @@ namespace mfront{
   void RungeKuttaDSL::writeBehaviourRK54Integrator(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
+    //! all registred variables used in ComputeDerivatives and ComputeStress blocks
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    uvs.insert(uvs2.begin(),uvs2.end());
     VariableDescriptionContainer::const_iterator p;
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
     ErrorEvaluation eev;
-    SupportedTypes::TypeSize svsize = this->getTotalSize(d.getStateVariables());
+    auto svsize = this->getTotalSize(d.getStateVariables());
     if(svsize.getScalarSize()+svsize.getTVectorSize()+
        3u*svsize.getStensorSize()+3u*svsize.getTensorSize()>=20){
       eev = MAXIMUMVALUEERROREVALUATION;
     } else {
       eev = ERRORSUMMATIONEVALUATION;
     }
-    SupportedTypes::TypeSize stateVarsSize = this->getTotalSize(d.getStateVariables());
-    this->behaviourFile << "static constexpr Type cste12_13       = Type(12)/Type(13);" << endl;
-    this->behaviourFile << "static constexpr Type cste1932_2197   = Type(1932)/Type(2197);" << endl;
-    this->behaviourFile << "static constexpr Type cste7200_2197   = Type(7200)/Type(2197);" << endl;
-    this->behaviourFile << "static constexpr Type cste7296_2197   = Type(7296)/Type(2197);" << endl;
-    this->behaviourFile << "static constexpr Type cste439_216     = Type(439)/Type(216);" << endl;
-    this->behaviourFile << "static constexpr Type cste3680_513    = Type(3680)/Type(513);" << endl;
-    this->behaviourFile << "static constexpr Type cste845_4104    = Type(845)/Type(4104);" << endl;
-    this->behaviourFile << "static constexpr Type cste8_27        = Type(8)/Type(27);" << endl;
-    this->behaviourFile << "static constexpr Type cste3544_2565   = Type(3544)/Type(2565);" << endl;
-    this->behaviourFile << "static constexpr Type cste1859_4104   = Type(1859)/Type(4104);" << endl;
-    this->behaviourFile << "static constexpr Type cste11_40       = Type(11)/Type(40);" << endl;
-    this->behaviourFile << "static constexpr Type cste16_135      = Type(16)/Type(135);" << endl;
-    this->behaviourFile << "static constexpr Type cste6656_12825  = Type(6656)/Type(12825);" << endl;
-    this->behaviourFile << "static constexpr Type cste28561_56430 = Type(28561)/Type(56430);" << endl;
-    this->behaviourFile << "static constexpr Type cste9_50        = Type(9)/Type(50);" << endl;
-    this->behaviourFile << "static constexpr Type cste2_55        = Type(2)/Type(55);" << endl;
-    this->behaviourFile << "static constexpr Type cste1_360       = Type(1)/Type(360);" << endl;
-    this->behaviourFile << "static constexpr Type cste128_4275    = Type(128)/Type(4275);" << endl;
-    this->behaviourFile << "static constexpr Type cste2197_75240  = Type(2197)/Type(75240);" << endl;
-    this->behaviourFile << "static constexpr Type cste1_50        = Type(1)/Type(50);" << endl;
+    this->behaviourFile << "constexpr real cste1_2         = real{1}/real{2};" << endl;
+    this->behaviourFile << "constexpr real cste1_4         = real{1}/real{4};" << endl;
+    this->behaviourFile << "constexpr real cste3_8         = real{3}/real{8};" << endl;
+    this->behaviourFile << "constexpr real cste3_32        = real{3}/real{32};" << endl;
+    this->behaviourFile << "constexpr real cste12_13       = Type(12)/Type(13);" << endl;
+    this->behaviourFile << "constexpr real cste1932_2197   = Type(1932)/Type(2197);" << endl;
+    this->behaviourFile << "constexpr real cste7200_2197   = Type(7200)/Type(2197);" << endl;
+    this->behaviourFile << "constexpr real cste7296_2197   = Type(7296)/Type(2197);" << endl;
+    this->behaviourFile << "constexpr real cste439_216     = Type(439)/Type(216);" << endl;
+    this->behaviourFile << "constexpr real cste3680_513    = Type(3680)/Type(513);" << endl;
+    this->behaviourFile << "constexpr real cste845_4104    = Type(845)/Type(4104);" << endl;
+    this->behaviourFile << "constexpr real cste8_27        = Type(8)/Type(27);" << endl;
+    this->behaviourFile << "constexpr real cste3544_2565   = Type(3544)/Type(2565);" << endl;
+    this->behaviourFile << "constexpr real cste1859_4104   = Type(1859)/Type(4104);" << endl;
+    this->behaviourFile << "constexpr real cste11_40       = Type(11)/Type(40);" << endl;
+    this->behaviourFile << "constexpr real cste16_135      = Type(16)/Type(135);" << endl;
+    this->behaviourFile << "constexpr real cste6656_12825  = Type(6656)/Type(12825);" << endl;
+    this->behaviourFile << "constexpr real cste28561_56430 = Type(28561)/Type(56430);" << endl;
+    this->behaviourFile << "constexpr real cste9_50        = Type(9)/Type(50);" << endl;
+    this->behaviourFile << "constexpr real cste2_55        = Type(2)/Type(55);" << endl;
+    this->behaviourFile << "constexpr real cste1_360       = Type(1)/Type(360);" << endl;
+    this->behaviourFile << "constexpr real cste128_4275    = Type(128)/Type(4275);" << endl;
+    this->behaviourFile << "constexpr real cste2197_75240  = Type(2197)/Type(75240);" << endl;
+    this->behaviourFile << "constexpr real cste1_50        = Type(1)/Type(50);" << endl;
     this->behaviourFile << "time t      = time(0);" << endl;
     this->behaviourFile << "time dt_    = this->dt;" << endl;
     this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
@@ -737,21 +815,11 @@ namespace mfront{
     }
     this->behaviourFile << "bool failed = false;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->"+dv.name+"_ = this->"+dv.name+"+(this->d"+dv.name+")*(t/this->dt);\n";
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t/this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << "+(this->d" << p->name << ")*(t/this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+      }
     }
     this->behaviourFile << "failed = !this->computeStress();" << endl;
     if(getDebugMode()){
@@ -770,30 +838,18 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K1 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K2's values" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
-			  << "+(this->d" << dv.name << ")*(t+0.25f*dt_)/(this->dt);" << endl;
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.25f*dt_)/(this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->d" << p->name << ")*(t+0.25f*dt_)/(this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_4");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ += 0.25f*(this->d" << p->name << "_K1);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name << "_ += cste1_4*(this->d" << p->name << "_K1);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -813,7 +869,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K2 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -821,26 +877,14 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K3's values" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
-			  << "+(this->d" << dv.name << ")*(t+0.375f*dt_)/(this->dt);" << endl;
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.375f*dt_)/(this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->d" << p->name << ")*(t+0.375f*dt_)/(this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste3_8");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ = this->" << p->name
-			  << "+0.09375f*(this->d" << p->name << "_K1+3*(this->d"
-			  << p->name << "_K2));" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ = this->" << p->name
+			    << "+cste3_32*(this->d" << p->name << "_K1+3*(this->d"
+			    << p->name << "_K2));" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -860,36 +904,24 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K3 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl << endl;
 
-    this->behaviourFile << "if(!failed){" << endl;    
+    this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K4's values" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
-			  << "+(this->d" << dv.name << ")*(t+cste12_13*dt_)/(this->dt);" << endl;
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+cste12_13*dt_)/(this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->d" << p->name << ")*(t+cste12_13*dt_)/(this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste12_13");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ = this->" << p->name
-			  << "+cste1932_2197*(this->d" << p->name << "_K1)"
-			  << "-cste7200_2197*(this->d" << p->name << "_K2)"
-			  << "+cste7296_2197*(this->d" << p->name << "_K3);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ = this->" << p->name
+			    << "+cste1932_2197*(this->d" << p->name << "_K1)"
+			    << "-cste7200_2197*(this->d" << p->name << "_K2)"
+			    << "+cste7296_2197*(this->d" << p->name << "_K3);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -909,7 +941,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K4 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -917,28 +949,16 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K5's values" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
-			  << "+(this->d" << dv.name << ")*(t+dt_)/(this->dt);" << endl;
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+dt_)/(this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->d" << p->name << ")*(t+dt_)/(this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ = this->" << p->name
-			  << "+cste439_216*(this->d" << p->name << "_K1)"
-			  << "-8*(this->d" << p->name << "_K2)"
-			  << "+cste3680_513*(this->d" << p->name << "_K3)"
-			  << "-cste845_4104*(this->d" << p->name << "_K4);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ = this->" << p->name
+			    << "+cste439_216*(this->d" << p->name << "_K1)"
+			    << "-8*(this->d" << p->name << "_K2)"
+			    << "+cste3680_513*(this->d" << p->name << "_K3)"
+			    << "-cste845_4104*(this->d" << p->name << "_K4);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -958,7 +978,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K5 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -966,29 +986,17 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K6's values" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
-			  << "+(this->d" << dv.name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.5f*dt_)/(this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  << "+(this->d" << p->name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ = this->" << p->name
-			  << "-cste8_27*(this->d" << p->name << "_K1)"
-			  << "+2*(this->d" << p->name << "_K2)"
-			  << "-cste3544_2565*(this->d" << p->name << "_K3)"
-			  << "+cste1859_4104*(this->d" << p->name << "_K4)"
-			  << "-cste11_40*(this->d" << p->name << "_K5);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ = this->" << p->name
+			    << "-cste8_27*(this->d" << p->name << "_K1)"
+			    << "+2*(this->d" << p->name << "_K2)"
+			    << "-cste3544_2565*(this->d" << p->name << "_K3)"
+			    << "+cste1859_4104*(this->d" << p->name << "_K4)"
+			    << "-cste11_40*(this->d" << p->name << "_K5);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1008,7 +1016,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K6 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -1082,7 +1090,7 @@ namespace mfront{
 	  }
 	}
       }
-      this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
+      this->behaviourFile << "error/=" << svsize << ";" << endl;
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
       this->behaviourFile << "error  = Type(0);" << endl;
       for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
@@ -1155,7 +1163,7 @@ namespace mfront{
     this->behaviourFile << "if(error<this->epsilon){" << endl;
     this->behaviourFile << "// Final Step" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
+      this->behaviourFile << "this->" << p->name
 			  << " += cste16_135*(this->d" << p->name << "_K1)"
 			  << "+cste6656_12825*(this->d" << p->name << "_K3)"
 			  << "+cste28561_56430*(this->d" << p->name << "_K4)"
@@ -1228,38 +1236,25 @@ namespace mfront{
   void RungeKuttaDSL::writeBehaviourRKCastemIntegrator(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
+    //! all registred variables used in ComputeDerivatives and ComputeStress blocks
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    uvs.insert(uvs2.begin(),uvs2.end());
     VariableDescriptionContainer::const_iterator p;
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize stateVarsSize;
     for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
-    this->behaviourFile << "static constexpr Type cste1_6 = Type(1)/Type(6);" << endl; 
+    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
+    this->behaviourFile << "constexpr real cste1_4 = real{1}/real{4};" << endl;
+    this->behaviourFile << "constexpr real cste1_6 = Type(1)/Type(6);" << endl;
     this->behaviourFile << "time t   = time(0);" << endl;
     this->behaviourFile << "time dt_ = this->dt;" << endl;
     this->behaviourFile << "StressStensor sigf;" << endl;
     this->behaviourFile << "real errabs;" << endl;
     this->behaviourFile << "real asig;" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_  = this->" << dv.name << ";" << endl;
-    }
-    this->behaviourFile << "this->T_    = this->T;" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
-    }
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
-    }
-    this->behaviourFile << "bool failed;" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "bool failed = !this->computeStress();" << endl;
     if(getDebugMode()){
       this->behaviourFile << "if(failed){" << endl;
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
@@ -1281,7 +1276,7 @@ namespace mfront{
 			  << "::integrate() : beginning of resolution\" << endl;\n";
     }
     this->behaviourFile << "while(!converged){" << endl;
-    this->behaviourFile << "if(dt_< dtprec){" << endl; 
+    this->behaviourFile << "if(dt_< dtprec){" << endl;
     this->behaviourFile << "cout<<\" dt \"<<this->dt<<\" t \"<<t<<\" dt_ \"<<dt_<<endl;" << endl;
     this->behaviourFile << "string msg(\"DDIF2::DDIF2\");" << endl;
     this->behaviourFile << "msg += \" time step too small \"; " << endl;
@@ -1292,23 +1287,11 @@ namespace mfront{
 			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
     }
     this->behaviourFile << "// Compute K1's values => y in castem " << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_  = this->" << dv.name 
-			  << "+(t/(this->dt))*(this->d" << dv.name << ");" << endl;
-    }
-    this->behaviourFile << "this->T_    = this->T+(t/(this->dt))*(this->dT);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name
-			  << "+ (t/(this->dt))*(this->d" << p->name << ");" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+      }
     }
     this->behaviourFile << "failed = !this->computeStress();" << endl;
     if(getDebugMode()){
@@ -1328,30 +1311,18 @@ namespace mfront{
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'1*dt=f(y)*dt in castem" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K1 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K2's values => y1 in castem" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
-			  << "+(this->d" << dv.name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.5f*dt_)/(this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name   << "_ = this->" << p->name 
-			  <<"+(this->d" << p->name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name << "_ += cste1_2*(this->d" << p->name << "_K1);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1372,7 +1343,7 @@ namespace mfront{
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'2*dt=f(y1)*dt in castem" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K2 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -1381,9 +1352,11 @@ namespace mfront{
     this->behaviourFile << "// Compute K3's values => y12 in castem" << endl;
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ = this->" << p->name
-			  << "+0.25f*(this->d" << p->name << "_K1 + this->d" << p->name << "_K2);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ = this->" << p->name
+			    << "+cste1_4*(this->d" << p->name << "_K1 + this->d" << p->name << "_K2);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1404,7 +1377,7 @@ namespace mfront{
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'3*dt=f(y12)*dt in castem" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K3 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -1412,25 +1385,12 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K4's values => y13 = y12+y'3*dt/2 in castem" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name 
-			  << "+(this->d" << dv.name << ")*(t+dt_)/(this->dt);" << endl;
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+dt_)/(this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  <<"+(this->d" << p->name 
-			  << ")*(t+dt_)/(this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ += 0.5f*(this->d" << p->name << "_K3);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ += cste1_2*(this->d" << p->name << "_K3);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1451,7 +1411,7 @@ namespace mfront{
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'4*dt=f(y13)*dt in castem" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K4 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -1461,10 +1421,12 @@ namespace mfront{
     this->behaviourFile << "// Compute K5's values => yf = y12+0.5*(y'3+y'4)*dt/2 in castem" << endl;
     this->behaviourFile << "//                     => yf = y+0.5*(y'1+y'2+y'3+y'4)*dt/2 in castem" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ = this->" << p->name
-			  << "+0.25f*(this->d" << p->name << "_K1 + this->d" << p->name 
-			  << "_K2 + this->d" << p->name << "_K3 + this->d" << p->name << "_K4);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ = this->" << p->name
+			    << "+cste1_4*(this->d" << p->name << "_K1 + this->d" << p->name
+			    << "_K2 + this->d" << p->name << "_K3 + this->d" << p->name << "_K4);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1487,7 +1449,7 @@ namespace mfront{
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute y'5*dt=f(yf)*dt in castem" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K5 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -1496,10 +1458,12 @@ namespace mfront{
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K6's values => y5 = y+1/6*(y'1+4*y'3+y'5)*dt in castem" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ = this->" << p->name
-			  << "+cste1_6*(this->d" << p->name << "_K1 + Type(4)*this->d" << p->name 
-			  << "_K3 + this->d" << p->name << "_K5);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ = this->" << p->name
+			    << "+cste1_6*(this->d" << p->name << "_K1 + Type(4)*this->d" << p->name
+			    << "_K3 + this->d" << p->name << "_K5);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1533,8 +1497,8 @@ namespace mfront{
     }
     this->behaviourFile << "}else{" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << " += 0.25f*(this->d" << p->name << "_K1 + this->d" << p->name 
+      this->behaviourFile << "this->" << p->name
+			  << " += cste1_4*(this->d" << p->name << "_K1 + this->d" << p->name
 			  << "_K2 + this->d" << p->name << "_K3 + this->d" << p->name << "_K4);" << endl;
     }
     this->behaviourFile << "this->computeFinalStress();" << endl;
@@ -1585,10 +1549,11 @@ namespace mfront{
   void RungeKuttaDSL::writeBehaviourRK42Integrator(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    uvs.insert(uvs2.begin(),uvs2.end());
     VariableDescriptionContainer::const_iterator p;
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
     ErrorEvaluation eev;
     SupportedTypes::TypeSize svsize = this->getTotalSize(d.getStateVariables());
     if(svsize.getScalarSize()+svsize.getTVectorSize()+
@@ -1601,9 +1566,9 @@ namespace mfront{
     for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
       stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
     }
-    this->behaviourFile << "static constexpr Type cste1_6 = Type(1)/Type(6);" << endl;
-    this->behaviourFile << "static constexpr Type cste1_3 = Type(1)/Type(3);" << endl;
-
+    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
+    this->behaviourFile << "constexpr real cste1_6  = Type(1)/Type(6);" << endl;
+    this->behaviourFile << "constexpr real cste1_3  = Type(1)/Type(3);" << endl;
     this->behaviourFile << "time t   = time(0);" << endl;
     this->behaviourFile << "time dt_ = this->dt;" << endl;
     this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
@@ -1620,23 +1585,11 @@ namespace mfront{
     }
     this->behaviourFile << "bool failed = false;" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_  = this->" << dv.name
-			  << "+(t/(this->dt))*(this->d" << dv.name << ");" << endl;
-    }
-    this->behaviourFile << "this->T_    = this->T+(t/(this->dt))*(this->dT);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name
-			  << "+ (t/(this->dt))*(this->d" << p->name << ");" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+      }
     }
     this->behaviourFile << "failed = !this->computeStress();" << endl;
     if(getDebugMode()){
@@ -1655,31 +1608,18 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K1 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K2's values" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name
-			  << "+(this->d" << dv.name << ")*(t+0.5f*dt_)/(this->dt);" << endl;
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+0.5f*dt_)/(this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  <<"+(this->d" << p->name 
-			  << ")*(t+0.5f*dt_)/(this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name << "_ += cste1_2*(this->d" << p->name << "_K1);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1699,7 +1639,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K2 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -1708,9 +1648,11 @@ namespace mfront{
     this->behaviourFile << "// Compute K3's values" << endl;
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ = this->" << p->name
-			  << "+0.5f*(this->d" << p->name << "_K2);" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ = this->" << p->name
+			    << "+cste1_2*(this->d" << p->name << "_K2);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1730,7 +1672,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K3 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -1738,26 +1680,13 @@ namespace mfront{
     this->behaviourFile << "}" << endl << endl;
     this->behaviourFile << "if(!failed){" << endl;
     this->behaviourFile << "// Compute K4's values" << endl;
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
-      }
-      this->behaviourFile << "this->" << dv.name << "_ = this->" << dv.name
-			  << "+(this->d" << dv.name << ")*(t+dt_)/(this->dt);" << endl;
-    }
-    this->behaviourFile << "this->T_   = this->T+(this->dT)*(t+dt_)/(this->dt);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = this->" << p->name 
-			  <<"+(this->d" << p->name 
-			  << ")*(t+dt_)/(this->dt);" << endl;
-    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
-			  << "_ = this->" << p->name
-			  << "+this->d" << p->name << "_K3;" << endl;
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name
+			    << "_ = this->" << p->name
+			    << "+this->d" << p->name << "_K3;" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "failed = !this->computeStress();" << endl;
@@ -1777,7 +1706,7 @@ namespace mfront{
     }
     this->behaviourFile << "if(!failed){" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K4 = (dt_)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "}" << endl;
@@ -1914,7 +1843,7 @@ namespace mfront{
     this->behaviourFile << "if(error<this->epsilon){" << endl;
     this->behaviourFile << "// Final Step" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name 
+      this->behaviourFile << "this->" << p->name
 			  << " += cste1_6*(this->d" << p->name << "_K1 + this->d" << p->name << "_K4)+"
 			  << "    cste1_3*(this->d" << p->name << "_K3 + this->d" << p->name << "_K2);" << endl;
     }
@@ -1979,83 +1908,67 @@ namespace mfront{
   void RungeKuttaDSL::writeBehaviourRK4Integrator(const Hypothesis h)
   {
     using namespace std;
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    uvs.insert(uvs2.begin(),uvs2.end());
+    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
+    this->behaviourFile << "this->computeStress();" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K1 = (this->dt)*(this->d" << p->name << ");" << endl;
     }
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << "_K1);" << endl;
-    }
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
+    writeExternalVariablesCurrentValues2(this->behaviourFile,this->mb,h,"cste1_2");
+    for(const auto& iv : d.getStateVariables()){
+      if(uvs.find(iv.name)!=uvs.end()){
+	this->behaviourFile << "this->" << iv.name << "_ += cste1_2*(this->d" << iv.name << "_K1);" << endl;
       }
-      this->behaviourFile << "this->" << dv.name << "_ += 0.5f*(this->d" << dv.name << ");" << endl;
-    }
-    this->behaviourFile << "this->T_   += 0.5f*(this->dT);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeStress();" << endl << endl;
     this->behaviourFile << "// Compute K2's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K2 = (this->dt)*(this->d" << p->name << ");" << endl;
     }
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = " << "this->" << p->name 
-			  << "+ 0.5f*(this->d" << p->name << "_K2);" << endl;
+    for(const auto& iv : d.getStateVariables()){
+      if(uvs.find(iv.name)!=uvs.end()){
+	this->behaviourFile << "this->" << iv.name << "_ = " << "this->" << iv.name
+			    << "+ cste1_2*(this->d" << iv.name << "_K2);" << endl;
+      }
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeStress();" << endl << endl;
     this->behaviourFile << "// Compute K3's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K3 = (this->dt)*(this->d" << p->name << ");" << endl;
     }
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ = " << "this->" << p->name 
-			  << "+ (this->d" << p->name << "_K3);" << endl;
-    }
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
-      if(!dv.increment_known){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
+      if(uvs.find(p->name)!=uvs.end()){
+	this->behaviourFile << "this->" << p->name << "_ = " << "this->" << p->name
+			    << "+ (this->d" << p->name << "_K3);" << endl;
       }
-      this->behaviourFile << "this->" << dv.name << "_ += 0.5f*(this->d" << dv.name << ");" << endl;
-    }
-    this->behaviourFile << "this->T_   += 0.5f*(this->dT);" << endl;
-    for(p =d.getExternalStateVariables().begin();p!=d.getExternalStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << "_ += 0.5f*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
     this->behaviourFile << "this->computeStress();" << endl << endl;
     this->behaviourFile << "// Compute K4's values" << endl;
     this->behaviourFile << "this->computeDerivative();" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name 
+      this->behaviourFile << "this->d" << p->name
 			  << "_K4 = (this->dt)*(this->d" << p->name << ");" << endl;
     }
     this->behaviourFile << "// Final Step" << endl;
     for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << " += " 
-			  << "1.f/6.f*(this->d" << p->name 
+      this->behaviourFile << "this->" << p->name << " += "
+			  << "1.f/6.f*(this->d" << p->name
 			  << "_K1+this->d" << p->name << "_K4)+" << endl;
-      this->behaviourFile << "1.f/3.f*(this->d" << p->name 
+      this->behaviourFile << "1.f/3.f*(this->d" << p->name
 			  << "_K2+this->d" << p->name << "_K3);" << endl;
     }
     this->behaviourFile << "// Update stress field" << endl;
@@ -2069,9 +1982,9 @@ namespace mfront{
   {
     using namespace std;
     const string btype = this->mb.getBehaviourTypeFlag();
-    const string& algorithm = this->mb.getAttribute<string>(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+    const auto& algorithm = this->mb.getAttribute<string>(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 							    BehaviourData::algorithm);
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     std::vector<BoundsDescription>::const_iterator p2;
     this->checkBehaviourFile();
     this->behaviourFile << "/*!" << endl;
@@ -2093,12 +2006,12 @@ namespace mfront{
     if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       if(this->mb.useQt()){
-	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype
 			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
 			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
 			    << "}" << endl;
       } else {
-	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
+	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype
 			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
 			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
 			    << "}" << endl;
@@ -2145,7 +2058,7 @@ namespace mfront{
       } else {
 	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
       }
-      if(this->mb.useQt()){        
+      if(this->mb.useQt()){
 	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
 	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
@@ -2157,15 +2070,15 @@ namespace mfront{
       this->behaviourFile << "throw(runtime_error(msg));\n";
     }
     this->behaviourFile << "}\n";
-    if(this->mb.useQt()){        
+    if(this->mb.useQt()){
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
     }
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate" << endl << endl;
   } // end of void RungeKuttaDSL::writeBehaviourIntegrator(void)
-  
+
   RungeKuttaDSL::~RungeKuttaDSL()
   {} // end of ~RungeKuttaDSL
 
-} // end of namespace mfront  
+} // end of namespace mfront

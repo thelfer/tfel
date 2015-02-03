@@ -184,7 +184,6 @@ namespace mfront
 					   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
   {
     using namespace std;
-    typedef multimap<string,dataFile>::value_type MVType;
     string msg("GnuplotMaterialPropertyInterface::registerGraph : ");
     current=nextToken(--current,endTokens,msg);
     if(current->value!="{"){
@@ -226,7 +225,7 @@ namespace mfront
 	mydataFile.name = eraseQuote(current->value) ;
 	current=nextToken(current,endTokens,msg);
 	mydataFile.legend = eraseQuote(current->value) ;
-	experimentalData.insert(MVType(input,mydataFile)) ;
+	experimentalData.insert({input,mydataFile}) ;
 	current=nextToken(current,endTokens,msg);
 	if (current->value != ";") {
 	  msg+="ExperimentalData : you provide more than three arguments.\n";

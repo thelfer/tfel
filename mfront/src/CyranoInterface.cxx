@@ -192,7 +192,7 @@ namespace mfront{
     using namespace std;
     pair<vector<UMATMaterialProperty>,
 	 SupportedTypes::TypeSize> res;
-    vector<UMATMaterialProperty>& mprops = res.first;
+    auto& mprops = res.first;
     if((h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)&&
        (h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)&&
        (h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)){
@@ -231,7 +231,7 @@ namespace mfront{
       }
     }
     if(!mprops.empty()){
-      const UMATMaterialProperty& m = mprops.back();
+      const auto& m = mprops.back();
       res.second  = m.offset;
       res.second += this->getTypeSize(m.type,m.arraySize);
     }
@@ -248,7 +248,7 @@ namespace mfront{
     // treatment 
     set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour
-    const set<Hypothesis>& bh = mb.getModellingHypotheses();
+    const auto& bh = mb.getModellingHypotheses();
     // cyrano only supports the AxisymmetricalGeneralisedPlaneStrain
     // and the AxisymmetricalGeneralisedPlaneStress hypotheses
     if(bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)!=bh.end()){
@@ -284,7 +284,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     // get the modelling hypotheses to be treated
-    const set<Hypothesis>& h = this->getModellingHypothesesToBeTreated(mb);
+    const auto& h = this->getModellingHypothesesToBeTreated(mb);
 
     string name;
     if(!mb.getLibrary().empty()){
@@ -727,7 +727,7 @@ namespace mfront{
     // computing material properties size
     SupportedTypes::TypeSize msize;
     if(!mprops.first.empty()){
-      const UMATMaterialProperty& m = mprops.first.back();
+      const auto& m = mprops.first.back();
       msize  = m.offset;
       msize += this->getTypeSize(m.type,m.arraySize);
       msize -= mprops.second;

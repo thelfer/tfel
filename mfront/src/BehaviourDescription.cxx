@@ -49,12 +49,10 @@ namespace mfront
 					  void (BehaviourData:: *m)(const Arg1),
 					  const Arg1 a)
   {
-    using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a);
-      typename map<Hypothesis,MBDPtr>::iterator p;
-      for(p=this->sd.begin();p!=this->sd.end();++p){
-	BehaviourData& bdata = *(p->second);
+      for(const auto& ptr : this->sd){
+	auto& bdata = *(ptr.second);
 	(bdata.*m)(a);
       }
     } else {
@@ -71,12 +69,10 @@ namespace mfront
 					  const Arg1& a,
 					  const Arg2  b)
   {
-    using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a,b);
-      typename map<Hypothesis,MBDPtr>::iterator p;
-      for(p=this->sd.begin();p!=this->sd.end();++p){
-	BehaviourData& bdata = *(p->second);
+      for(const auto& ptr : this->sd){
+	auto& bdata = *(ptr.second);
 	(bdata.*m)(a,b);
       }
     } else {
@@ -93,12 +89,10 @@ namespace mfront
 					  const Arg1& a,
 					  const Arg2& b)
   {
-    using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a,b);
-      typename map<Hypothesis,MBDPtr>::iterator p;
-      for(p=this->sd.begin();p!=this->sd.end();++p){
-	BehaviourData& bdata = *(p->second);
+      for(const auto& ptr : this->sd){
+	auto& bdata = *(ptr.second);
 	(bdata.*m)(a,b);
       }
     } else {
@@ -126,8 +120,8 @@ namespace mfront
       throw(runtime_error(msg));
     }
     if(a.inputs.size()==1u){
-      const VariableDescription& v =  a.inputs.front();
-      const string& vn = v.getExternalName(a.glossaryNames,a.entryNames);
+      const auto& v = a.inputs.front();
+      const auto& vn = v.getExternalName(a.glossaryNames,a.entryNames);
       if(vn!="Temperature"){
 	string msg("BehaviourDescriptionCheckThermalExpansionCoefficientArgument : "
 		   "thermal expansion shall only depend on temperature");
@@ -169,7 +163,6 @@ namespace mfront
   const BehaviourData&
   BehaviourDescription::getBehaviourData(const Hypothesis& h) const
   {
-    using namespace std;
     // check that the given hypothesis is supported
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       return this->d;
@@ -178,7 +171,7 @@ namespace mfront
     this->requestedHypotheses.insert(h);
     // check if a specialised version of the mechanical behaviour
     // description has been defined
-    map<Hypothesis,MBDPtr>::const_iterator p =this->sd.find(h);
+    const auto p = this->sd.find(h);
     if(p!=this->sd.end()){
       return *(p->second);
     }
@@ -189,8 +182,6 @@ namespace mfront
   BehaviourData&
   BehaviourDescription::getBehaviourData2(const ModellingHypothesis::Hypothesis& h)
   {
-    using namespace std;
-    typedef map<Hypothesis,MBDPtr>::value_type MVType;
     // check that the given hypothesis is supported
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       return this->d;
@@ -199,10 +190,10 @@ namespace mfront
       this->checkModellingHypothesis(h);
     }
     this->requestedHypotheses.insert(h);
-    map<Hypothesis,MBDPtr>::iterator p = this->sd.find(h);
+    auto p = this->sd.find(h);
     if(p==this->sd.end()){
       // copy of the default description
-      p=this->sd.insert(MVType(h,MBDPtr(new BehaviourData(this->d)))).first;
+      p=this->sd.insert({h,MBDPtr{new BehaviourData{this->d}}}).first;
     }
     return *(p->second);
   } // end of BehaviourDescription::getBehaviourData2
@@ -479,7 +470,6 @@ namespace mfront
   BehaviourDescription::declareAsASmallStrainStandardBehaviour(void)
   {
     using namespace std;
-    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
     if(!this->mvariables.empty()){
       string msg("BehaviourDescription::declareAsASmallStrainStandardBehaviour : ");
       msg += "some driving variables are already declared";
@@ -492,7 +482,7 @@ namespace mfront
     ThermodynamicForce sig;
     sig.name = "sig";
     sig.type = "StressStensor";
-    this->mvariables.insert(MVType(eto,sig));
+    this->mvariables.insert({eto,sig});
     this->type = BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR;
   }
 
@@ -500,7 +490,6 @@ namespace mfront
   BehaviourDescription::declareAsAFiniteStrainStandardBehaviour(void)
   {
     using namespace std;
-    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
     if(!this->mvariables.empty()){
       string msg("BehaviourDescription::declareAsAFiniteStrainStandardBehaviour : ");
       msg += "some driving variables are already declared";
@@ -513,7 +502,7 @@ namespace mfront
     ThermodynamicForce sig;
     sig.name = "sig";
     sig.type = "StressStensor";
-    this->mvariables.insert(MVType(F,sig));
+    this->mvariables.insert({F,sig});
     this->type = BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR;
   }
     
@@ -521,7 +510,6 @@ namespace mfront
   BehaviourDescription::declareAsACohesiveZoneModel(void)
   {
     using namespace std;
-    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
     if(!this->mvariables.empty()){
       string msg("BehaviourDescription::declareAsACohesiveZoneModel : ");
       msg += "some driving variables are already declared";
@@ -534,7 +522,7 @@ namespace mfront
     ThermodynamicForce t;
     t.name = "t";
     t.type = "ForceTVector";
-    this->mvariables.insert(MVType(u,t));
+    this->mvariables.insert({u,t});
     this->type = BehaviourDescription::COHESIVEZONEMODEL;
   }
 
@@ -543,14 +531,13 @@ namespace mfront
 					const ThermodynamicForce& f)
   {
     using namespace std;
-    typedef map<DrivingVariable,ThermodynamicForce>::value_type MVType;
     if(this->type!=BehaviourDescription::GENERALBEHAVIOUR){
       string msg("BehaviourDescription::addMainVariables : "
 		 "one can not add a main variable if the behaviour "
 		 "don't have a general behaviour type");
       throw(runtime_error(msg));
     }
-    if(!this->mvariables.insert(MVType(v,f)).second){
+    if(!this->mvariables.insert({v,f}).second){
       string msg("BehaviourDescription::addMainVariables : "
 		 "a driving variable '"+v.name+"' has already been declared");
       throw(runtime_error(msg));
@@ -571,7 +558,7 @@ namespace mfront
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator pm;
     for(pm=this->getMainVariables().begin();pm!=this->getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
+      const auto& dv = pm->first;
       if(dv.name==n){
 	return true;
       }
@@ -586,7 +573,7 @@ namespace mfront
     map<DrivingVariable,
       ThermodynamicForce>::const_iterator pm;
     for(pm=this->getMainVariables().begin();pm!=this->getMainVariables().end();++pm){
-      const DrivingVariable& dv = pm->first;
+      const auto& dv = pm->first;
       if(dv.increment_known){
 	if("d"+dv.name==n){
 	  return true;
@@ -765,7 +752,7 @@ namespace mfront
   {
     using namespace std;
     set<Hypothesis> h;
-    const set<Hypothesis>& mh = this->getModellingHypotheses();
+    const auto& mh = this->getModellingHypotheses();
     if(mh.size()==1u){
       // if only one modelling hypothesis is supported, it is not
       // considered as specialised, so we return it.
@@ -1283,14 +1270,14 @@ namespace mfront
     using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "BehaviourDescription::setCode : setting '"
 	    << n << "' on default hypothesis"  << endl;
       }
       this->d.setCode(n,c,m,p,b);
       for(const auto& pd : sd){
 	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  ostream& log = getLogStream();
+	  auto& log = getLogStream();
 	  log << "BehaviourDescription::setCode : setting '"
 	      << n << "' on hypothesis '" 
 	      << ModellingHypothesis::toString(pd.first) << "'" << endl;
@@ -1299,7 +1286,7 @@ namespace mfront
       }
     } else {
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "BehaviourDescription::setCode : setting '"
 	    << n << "' on hypothesis '" 
 	    << ModellingHypothesis::toString(h) << "'" << endl;
@@ -1451,10 +1438,8 @@ namespace mfront
 				     const bool b)
   {
     using namespace std;
-    typedef map<string,BehaviourAttribute>::value_type MVType;
-    map<string,BehaviourAttribute>::const_iterator p;
     if(b){
-      p=this->attributes.find(n);
+      auto p=this->attributes.find(n);
       if(p!=this->attributes.end()){
 	if(a.getTypeIndex()!=p->second.getTypeIndex()){
 	  string msg("BehaviourDescription::setAttribute : ",
@@ -1464,7 +1449,7 @@ namespace mfront
 	return;
       }
     }
-    if(!this->attributes.insert(MVType(n,a)).second){
+    if(!this->attributes.insert({n,a}).second){
       string msg("BehaviourDescription::setAttribute : "
 		 "attribute '"+n+"' already declared");
       throw(runtime_error(msg));
@@ -1493,7 +1478,6 @@ namespace mfront
   void
   BehaviourDescription::addMaterialLaw(const std::string& m)
   {
-    using namespace std;
     if(find(this->materialLaws.begin(),
 	    this->materialLaws.end(),m)==this->materialLaws.end()){
       this->materialLaws.push_back(m);
@@ -1509,15 +1493,12 @@ namespace mfront
   std::pair<bool,bool>
   BehaviourDescription::checkVariableExistence(const std::string& v) const
   {
-    using namespace std;
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
     const auto& h = this->getDistinctModellingHypotheses();
-    pair<bool,bool> r;
-    r.first  = true;
-    r.second = false;
+    std::pair<bool,bool> r{true,false};
     for(const auto & elem : h){
-      const BehaviourData& bdata = this->getBehaviourData(elem);
-      const set<string>& vn = bdata.getRegistredVariableNames();
+      const auto& bdata = this->getBehaviourData(elem);
+      const auto& vn = bdata.getRegistredVariableNames();
       const bool b = vn.find(v)!=vn.end();
       r.first  = r.first  && b;
       r.second = r.second || b;
@@ -1538,7 +1519,7 @@ namespace mfront
     const auto& h = this->getDistinctModellingHypotheses();
     pair<bool,bool> r = {true,false};
     for(const auto & elem : h){
-      const BehaviourData& bdata = this->getBehaviourData(elem);
+      const auto& bdata = this->getBehaviourData(elem);
       const bool f = bdata.getVariables(c).contains(n);
       if(!f&&b){
 	string msg("BehaviourDescription::checkVariableExistence : "
@@ -1562,13 +1543,13 @@ namespace mfront
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
     const auto& h = this->getDistinctModellingHypotheses();
     for(const auto & elem : h){
-      const BehaviourData& bdata = this->getBehaviourData(elem);
+      const auto& bdata = this->getBehaviourData(elem);
       if(!bdata.hasGlossaryName(n)){
 	string msg("BehaviourDescription::VariableGlossaryName : "
 		   "no glossary name associated with variable '"+n+"'");
 	throw(runtime_error(msg));
       }
-      const string& en = bdata.getExternalName(n);
+      const auto& en = bdata.getExternalName(n);
       if(en!=g){
 	string msg("BehaviourDescription::VariableGlossaryName : "
 		   "the glossary name associated with "

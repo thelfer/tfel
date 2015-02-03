@@ -76,7 +76,7 @@ namespace mfront{
 						      const MaterialPropertyInterfaceFactory::InterfaceCreator f)
   {
     using namespace std;
-    InterfaceCreatorsContainer& imap = this->getInterfaceCreatorsMap();
+    auto& imap = this->getInterfaceCreatorsMap();
     if(imap.find(i)!=imap.end()){
       string msg("MaterialPropertyInterfaceFactory::registerInterfaceCreator : ");
       msg += "interface creator '"+i+"' already declared";
@@ -90,7 +90,7 @@ namespace mfront{
 						    const std::string& a)
   {
     using namespace std;
-    AliasContainer& amap = this->getAliasesMap();
+    auto& amap = this->getAliasesMap();
     if(amap.find(a)!=amap.end()){
       string msg("MaterialPropertyInterfaceFactory::registerInterfaceCreator : ");
       msg += "interface alias '"+a+"' already declared";
@@ -125,10 +125,10 @@ namespace mfront{
       }
       throw(runtime_error(msg));
     }
-    const vector<string>& deps = this->getDependenciesMap()[p->second];
+    const auto& deps = this->getDependenciesMap()[p->second];
     copy(deps.begin(),deps.end(),back_inserter(tmp));
     for(p2=deps.begin();p2!=deps.end();++p2){
-      const vector<string>& deps2 = this->getInterfaceDependencies(*p2);
+      const auto& deps2 = this->getInterfaceDependencies(*p2);
       copy(deps2.begin(),deps2.end(),back_inserter(tmp));
     }
     unique_copy(tmp.begin(),tmp.end(),back_inserter(res));

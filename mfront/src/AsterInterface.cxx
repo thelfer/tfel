@@ -249,7 +249,7 @@ namespace mfront{
     // treatment 
     set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour
-    const set<Hypothesis>& bh = mb.getModellingHypotheses();
+    const auto& bh = mb.getModellingHypotheses();
     if(bh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN)!=bh.end()){
       h.insert(ModellingHypothesis::GENERALISEDPLANESTRAIN);
     }
@@ -306,7 +306,7 @@ namespace mfront{
     }
 
     // get the modelling hypotheses to be treated
-    const set<Hypothesis>& h = this->getModellingHypothesesToBeTreated(mb);
+    const auto& h = this->getModellingHypothesesToBeTreated(mb);
 
     if(!mb.getLibrary().empty()){
       name += mb.getLibrary();
@@ -775,7 +775,7 @@ namespace mfront{
   {
     using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      const set<Hypothesis> ah = this->getModellingHypothesesToBeTreated(mb);
+      const auto ah = this->getModellingHypothesesToBeTreated(mb);
       set<Hypothesis> uh;
       for(const auto & elem : ah){
 	if(!mb.hasSpecialisedMechanicalData(elem)){
@@ -794,24 +794,22 @@ namespace mfront{
       for(const auto & elem : uh){
 	mpositions.push_back(this->buildMaterialPropertiesList(mb,elem));
       }
-      set<Hypothesis>::const_iterator ph=uh.begin();
-      vector<pair<vector<UMATMaterialProperty>,
-		  SupportedTypes::TypeSize> >::const_iterator pum = mpositions.begin();
-      const pair<vector<UMATMaterialProperty>,
-		 SupportedTypes::TypeSize>& mfirst = *pum;
+      auto ph=uh.begin();
+      auto pum = mpositions.begin();
+      const auto& mfirst = *pum;
       ++ph;
       ++pum;
       for(;ph!=uh.end();++ph,++pum){
-	const BehaviourData& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-	const VariableDescriptionContainer& mps = d.getMaterialProperties();
+	const auto& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+	const auto& mps = d.getMaterialProperties();
 	for(const auto & mp : mps){
-	  const UMATMaterialProperty& mp1 = findUMATMaterialProperty(mfirst.first,
+	  const auto& mp1 = findUMATMaterialProperty(mfirst.first,
 								     mb.getExternalName(h,mp.name));
-	  const UMATMaterialProperty& mp2 = findUMATMaterialProperty(pum->first,
+	  const auto& mp2 = findUMATMaterialProperty(pum->first,
 								     mb.getExternalName(h,mp.name));
-	  SupportedTypes::TypeSize o1 = mp1.offset;
+	  auto o1 = mp1.offset;
 	  o1+=pum->second;
-	  SupportedTypes::TypeSize o2 = mp2.offset;
+	  auto o2 = mp2.offset;
 	  o2+=mfirst.second;
 	  if(o1!=o2){
 	    string msg("UMATInterface::buildMaterialPropertiesList : "
@@ -827,7 +825,7 @@ namespace mfront{
     }
     pair<vector<UMATMaterialProperty>,
 	 SupportedTypes::TypeSize> res;
-    vector<UMATMaterialProperty>& mprops = res.first;
+    auto& mprops = res.first;
     if((h!=ModellingHypothesis::GENERALISEDPLANESTRAIN)&&
        (h!=ModellingHypothesis::AXISYMMETRICAL)&&
        (h!=ModellingHypothesis::PLANESTRAIN)&&
@@ -887,7 +885,7 @@ namespace mfront{
       }
     }
     if(!mprops.empty()){
-      const UMATMaterialProperty& m = mprops.back();
+      const auto& m = mprops.back();
       res.second  = m.offset;
       res.second += this->getTypeSize(m.type,m.arraySize);
     }
@@ -926,11 +924,9 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::material;
-    const pair<SupportedTypes::TypeSize,
-	       SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
-    pair<vector<UMATMaterialProperty>,
-	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
-     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+    const auto mvs = mb.getMainVariablesSize();
+    const auto mprops = this->buildMaterialPropertiesList(mb,h);
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type";
       if(mb.useQt()){
 	out << ",bool use_qt";
@@ -1018,9 +1014,9 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     // computing material properties size
-    SupportedTypes::TypeSize msize;
+    auto msize = SupportedTypes::TypeSize{};
     if(!mprops.first.empty()){
-      const UMATMaterialProperty& m = mprops.first.back();
+      const auto& m = mprops.first.back();
       msize  = m.offset;
       msize += this->getTypeSize(m.type,m.arraySize);
       msize -= mprops.second;
@@ -1064,14 +1060,13 @@ namespace mfront{
   AsterInterface::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
   {
     using namespace std;
-    typedef map<Hypothesis,string>::value_type MVType;
     map<Hypothesis,string> res;
     if((mb.getSymmetryType()==mfront::ORTHOTROPIC)&&
        ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
 	(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)))){
       set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
-      for(const auto & elem : h){
-	res.insert(MVType(elem,this->getModellingHypothesisTest(elem)));
+      for(const auto & mh : h){
+	res.insert({mh,this->getModellingHypothesisTest(mh)});
       }
       return res;
     }

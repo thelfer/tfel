@@ -99,7 +99,7 @@ TFEL_TESTS_GENERATE_PROXY(TensorProductDerivative_3D,"TensorProductDerivative-3D
 
 int main(void){
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("TensorProductDerivative.xml");
   TestResult r = manager.execute();

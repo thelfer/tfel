@@ -357,7 +357,7 @@ namespace tfel
 	  pev= shared_ptr<Evaluator::ExternalFunction>(new Evaluator(f,this->manager));
 	}
       }
-      const vector<string>& fvars = static_cast<Evaluator *>(pev.get())->getVariablesNames();
+      const auto& fvars = static_cast<Evaluator *>(pev.get())->getVariablesNames();
       for(pv=var.begin();pv!=var.end();++pv){
 	if(find(fvars.begin(),fvars.end(),*pv)==fvars.end()){
 	  string msg("Evaluator::treatDiff : ");
@@ -479,7 +479,7 @@ namespace tfel
     bool
     Evaluator::isValidIdentifier(const std::string& s)
     {
-      FunctionGeneratorManager& f = Evaluator::getFunctionGeneratorManager();
+      auto& f = Evaluator::getFunctionGeneratorManager();
       if(s=="diff"){
 	return false;
       }
@@ -991,7 +991,7 @@ namespace tfel
 	  Evaluator::checkNotEndOfExpression("Evaluator::treatGroup2",p,pe);
 	  if(*p=="<"){
 	    ++p;
-	    const vector<string>& params = this->analyseParameters(p,pe);
+	    const auto& params = this->analyseParameters(p,pe);
 	    Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
 	    vector<shared_ptr<Evaluator::TExpr> > args   = this->analyseArguments(p,pe,b);
 	    g->add(shared_ptr<Evaluator::TExpr>(new TExternalOperator(p4->second,
@@ -1358,7 +1358,7 @@ namespace tfel
       using namespace std;
       using namespace tfel::math::parser;
       shared_ptr<ExternalFunction> pev(new Evaluator());
-      Evaluator& ev = static_cast<Evaluator&>(*(pev.get()));
+      auto& ev = static_cast<Evaluator&>(*(pev.get()));
       if(this->expr.get()==nullptr){
 	string msg("Evaluator::differentiate : ");
 	msg += "uninitialized expression.";

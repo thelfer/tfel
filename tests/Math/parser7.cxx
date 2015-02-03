@@ -98,7 +98,7 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("parser7.xml");
   TFEL_MATH_PARSER7_TESTFUNCTION(sin,-1.,1.,0.1);

@@ -227,7 +227,7 @@ namespace mfront{
       if(this->currentArgument->size()>=4){
 	if(((*(this->currentArgument))[1]=='-')&&
 	   ((*(this->currentArgument))[2]=='@')){
-	  const string& o = this->currentArgument->getOption();
+	  const auto& o = this->currentArgument->getOption();
 	  string cmd = this->currentArgument->substr(2);
 	  if(!o.empty()){
 	    cmd += ' '+o;
@@ -258,7 +258,7 @@ namespace mfront{
     if(this->currentArgument->getOption().empty()){
       setVerboseMode(VERBOSE_LEVEL1);
     } else {
-      const std::string& option = this->currentArgument->getOption();
+      const auto& option = this->currentArgument->getOption();
       if(option=="quiet"){
 	setVerboseMode(VERBOSE_QUIET);
       } else if(option=="level0"){
@@ -451,8 +451,8 @@ namespace mfront{
   {
     using namespace std;
     cout << "available parsers : " << endl;
-    DSLFactory& parserFactory = DSLFactory::getDSLFactory();
-    const vector<string>& parsers = parserFactory.getRegistredParsers();
+    auto& parserFactory = DSLFactory::getDSLFactory();
+    const auto& parsers = parserFactory.getRegistredParsers();
     vector<string>::const_iterator p = parsers.begin();
     while(p!=parsers.end()){
       string tmp;
@@ -470,7 +470,7 @@ namespace mfront{
   MFront::treatSilentBuild(void)
   {
     using namespace std;
-    const string& o = this->currentArgument->getOption();
+    const auto& o = this->currentArgument->getOption();
     if(o.empty()){
       string msg("MFront::treatSilentBuild : ");
       msg += "no argument given to the --silentBuild option";
@@ -491,7 +491,7 @@ namespace mfront{
   MFront::treatTarget(void)
   {
     using namespace std;
-    const vector<string>& t = MFront::tokenize(this->currentArgument->getOption(),',');
+    const auto& t = MFront::tokenize(this->currentArgument->getOption(),',');
     if(t.empty()){
       string msg("MFront::treatTarget : ");
       msg += "no argument given to the --target option";
@@ -611,7 +611,7 @@ namespace mfront{
   MFront::treatSearchPath(void)
   {
     using namespace std;
-    const string& o = this->currentArgument->getOption();
+    const auto& o = this->currentArgument->getOption();
     if(o.empty()){
       string msg("MFront::treatSearchPath : ");
       msg += "no path given";
@@ -625,8 +625,8 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    DSLFactory& f = DSLFactory::getDSLFactory();
-    const string& o = this->currentArgument->getOption();
+    auto& f = DSLFactory::getDSLFactory();
+    const auto& o = this->currentArgument->getOption();
     if(o.empty()){
       string msg("MFront::treatHelpCommandsList : ");
       msg += "no parser name given";
@@ -663,8 +663,8 @@ namespace mfront{
   MFront::treatHelpCommand(void)
   {
     using namespace std;
-    DSLFactory& f = DSLFactory::getDSLFactory();
-    const string& o = this->currentArgument->getOption();
+    auto& f = DSLFactory::getDSLFactory();
+    const auto& o = this->currentArgument->getOption();
     if(o.empty()){
       string msg("MFront::treatHelpCommand : ");
       msg += "no argument given";
@@ -738,10 +738,10 @@ namespace mfront{
     typedef BehaviourInterfaceFactory MBIF;
     typedef ModelInterfaceFactory MMIF;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
-    DSLFactory& parserFactory = DSLFactory::getDSLFactory();
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& parserFactory = DSLFactory::getDSLFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     CxxTokenizer file;
     string library;
     string parserName;
@@ -754,7 +754,7 @@ namespace mfront{
     vector<string>::const_iterator p4;
     bool found;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "Treating file : " << this->fileName << endl;
     }
     file.openFile(this->fileName);
@@ -822,7 +822,7 @@ namespace mfront{
     if(found){
       try{
 	if(!library.empty()){
-	  ExternalLibraryManager& lm = ExternalLibraryManager::getExternalLibraryManager();
+	  auto& lm = ExternalLibraryManager::getExternalLibraryManager();
 	  lm.loadLibrary(library);
 	}
 	parser = unique_ptr<AbstractDSL>(parserFactory.createNewParser(parserName));
@@ -832,13 +832,13 @@ namespace mfront{
 	msg << "MFront::treatFile : error while loading parser "
 	    << parserName << " (" << r.what() << ")\n";
 	msg << "Available parsers : " << endl;
-	const vector<string>& parsers = parserFactory.getRegistredParsers();
+	const auto& parsers = parserFactory.getRegistredParsers();
 	copy(parsers.begin(),parsers.end(),ostream_iterator<string>(msg," "));
 	throw(runtime_error(msg.str()));
       }
     } else {
       if(getVerboseMode()>=VERBOSE_LEVEL2){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "MFront::treatFile : no parser specified, using default" << endl;
       }
       parser = unique_ptr<AbstractDSL>(parserFactory.createNewParser());
@@ -855,15 +855,15 @@ namespace mfront{
 		      this->ecmds);
 
     // getting generated sources
-    const map<string,vector<string> >& src = parser->getGeneratedSources();
+    const auto& src = parser->getGeneratedSources();
     for(p=src.begin();p!=src.end();++p){
-      set<string>& tmp  = this->sources[p->first];
+      auto& tmp = this->sources[p->first];
       copy(p->second.begin(),p->second.end(),insert_iterator<set<string> >(tmp,tmp.begin()));
     }
     // getting generated dependencies
-    const map<string,vector<string> >& deps = parser->getLibrariesDependencies();
+    const auto& deps = parser->getLibrariesDependencies();
     for(p=deps.begin();p!=deps.end();++p){
-      vector<string>& tmp = this->dependencies[p->first];
+      auto& tmp = this->dependencies[p->first];
       for(p2=p->second.begin();p2!=p->second.end();++p2){
 	if(find(tmp.begin(),tmp.end(),*p2)==tmp.end()){
 	  // treat a very special case where a library can be declared
@@ -880,7 +880,7 @@ namespace mfront{
       }
     }
     // getting specific targets
-    const Target& t = parser->getSpecificTargets();
+    const auto& t = parser->getSpecificTargets();
     for(p3=t.begin();p3!=t.end();++p3){
       for(p4=p3->second.first.begin();p4!=p3->second.first.end();++p4){
 	if(find(this->targets[p3->first].first.begin(),
@@ -896,10 +896,9 @@ namespace mfront{
       }
     }
     // getting includes
-    const map<string,vector<string> >& incs = parser->getGlobalIncludes();
+    const auto& incs = parser->getGlobalIncludes();
     for(p=incs.begin();p!=incs.end();++p){
-      copy(p->second.begin(),
-	   p->second.end(),
+      copy(p->second.begin(),p->second.end(),
 	   insert_iterator<set<string> >(this->globalIncludes,this->globalIncludes.begin()));
     }
     // Some clean-up
@@ -1014,7 +1013,7 @@ namespace mfront{
     }
     if(!files.empty()){
       if(getVerboseMode()>=VERBOSE_LEVEL2){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "inserting library " << name.substr(0,name.size()-3) << "so "
 	     << "sources : \n";
 	copy(files.begin(),files.end(),ostream_iterator<string>(log," "));
@@ -1029,7 +1028,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
-    typedef map<string,vector<string> >::value_type MVType;
     ifstream file;
     ofstream f;
     vector<string> libs; // list of libraries contained in the file
@@ -1059,13 +1057,13 @@ namespace mfront{
     }
     if(!libs.empty()){
       if(getVerboseMode()>=VERBOSE_LEVEL2){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "inserting library " << name.substr(0,name.size()-4) << "so "
 	     << "dependencies : \n";
 	copy(libs.begin(),libs.end(),ostream_iterator<string>(log," "));
 	log << endl;
       }
-      this->dependencies.insert(MVType(name.substr(0,name.size()-5),libs));
+      this->dependencies.insert({name.substr(0,name.size()-5),libs});
     }
   } // end of MFront::analyseDependencies
 
@@ -1188,7 +1186,7 @@ namespace mfront{
     vector<string>::const_iterator p;
     HANDLE          hFile;                // Handle to file
     WIN32_FIND_DATA FileInformation;      // File information
-    MFrontLock& l = MFrontLock::getMFrontLock();
+    auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
       hFile = ::FindFirstFile("src/*", &FileInformation);
@@ -1207,7 +1205,7 @@ namespace mfront{
       for(p=files.begin();p!=files.end();++p){
 	if(p->substr(p->size()-4)==".src"){
 	  if(getVerboseMode()>=VERBOSE_LEVEL2){
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
 	  }
 	  this->analyseSources(*p);
@@ -1239,7 +1237,7 @@ namespace mfront{
 	if(p->size()>5){
 	  if(p->substr(p->size()-5)==".deps"){
 	    if(getVerboseMode()>=VERBOSE_LEVEL2){
-	      ostream& log = getLogStream();
+	      auto& log = getLogStream();
 	      log << "treating library " << p->substr(0,p->size()-5) << " dependencies.\n";
 	    }
 	    this->analyseDependencies(*p);
@@ -1260,7 +1258,7 @@ namespace mfront{
     DIR *directory = nullptr;
     struct dirent* dir;
     struct stat buf;
-    MFrontLock& l = MFrontLock::getMFrontLock();
+    auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
       directory = opendir("src");
@@ -1287,7 +1285,7 @@ namespace mfront{
       for(p=files.begin();p!=files.end();++p){
 	if(p->substr(p->size()-4)==".src"){
 	  if(getVerboseMode()>=VERBOSE_LEVEL2){
-	    ostream& log = getLogStream();
+	    auto& log = getLogStream();
 	    if(this->sys=="win32"){
 	      log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
 	    } else {
@@ -1330,7 +1328,7 @@ namespace mfront{
 	if(p->size()>5){
 	  if(p->substr(p->size()-5)==".deps"){
 	    if(getVerboseMode()>=VERBOSE_LEVEL2){
-	      ostream& log = getLogStream();
+	      auto& log = getLogStream();
 	      log << "treating library " << p->substr(0,p->size()-5) << " dependencies.\n";
 	    }
 	    this->analyseDependencies(*p);
@@ -1352,13 +1350,13 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     ofstream file;
-    MFrontLock& l = MFrontLock::getMFrontLock();
+    auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
       map<string,set<string> >::const_iterator p;
       for(p=this->sources.begin();p!=this->sources.end();++p){
 	if(getVerboseMode()>=VERBOSE_LEVEL2){
-	  ostream& log = getLogStream();
+	  auto& log = getLogStream();
 	  if(this->sys=="win32"){
 	    log << "writing sources list for library " << p->first << ".dll\n";
 	  } else {
@@ -1388,13 +1386,13 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     ofstream file;
-    MFrontLock& l = MFrontLock::getMFrontLock();
+    auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
       map<string,vector<string> >::const_iterator p;
       for(p=this->dependencies.begin();p!=this->dependencies.end();++p){
 	if(getVerboseMode()>=VERBOSE_LEVEL2){
-	  ostream& log = getLogStream();
+	  auto& log = getLogStream();
 	  if(this->sys=="win32"){
 	    log << "writing dependencies list for library " << p->first << ".dll\n";
 	  } else {
@@ -1421,7 +1419,7 @@ namespace mfront{
     typedef map<string,pair<vector<string>,vector<string> > > Target;
     ofstream file;
     Target::const_iterator p;
-    MFrontLock& l = MFrontLock::getMFrontLock();
+    auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
       if(!this->targets.empty()){
@@ -1456,7 +1454,7 @@ namespace mfront{
     using namespace tfel::system;
     ofstream file;
     set<string>::const_iterator p;
-    MFrontLock& l = MFrontLock::getMFrontLock();
+    auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
       if(!this->globalIncludes.empty()){
@@ -1626,7 +1624,7 @@ namespace mfront{
       sb = "@"; 
     }
     if(getVerboseMode()>=VERBOSE_LEVEL2){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "generating Makefile\n";
     }
     if(env_cxx==nullptr){
@@ -1639,7 +1637,7 @@ namespace mfront{
     } else {
       cc = "$(CC)";
     }
-    MFrontLock& l = MFrontLock::getMFrontLock();
+    auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
       this->makeFile.open(("src"+dirStringSeparator()+"Makefile.mfront").c_str());
@@ -1694,7 +1692,7 @@ namespace mfront{
       }
       // adding the mfront search path to the include files
       if(!SearchFile::getSearchPaths().empty()){
-	const vector<string>& paths = SearchFile::getSearchPaths();
+	const auto& paths = SearchFile::getSearchPaths();
 	for(p6=paths.begin();p6!=paths.end();++p6){
 	  this->makeFile << "\\\n\t     -I" << *p6;
 	}
@@ -2036,9 +2034,9 @@ namespace mfront{
     Target::iterator p3;
     set<string>::const_iterator p5;
     vector<pair<string,string> >::const_iterator p6;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     systemCall::mkdir("src");
     systemCall::mkdir("include");
     if(this->specifiedTargets.empty()){
@@ -2154,9 +2152,9 @@ namespace mfront{
     typedef MaterialPropertyInterfaceFactory       MLIF;
     typedef BehaviourInterfaceFactory MBIF;
     typedef ModelInterfaceFactory     MMIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    MBIF& mbif = MBIF::getBehaviourInterfaceFactory();
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     mlif.clear();
     mbif.clear();
     mmif.clear();

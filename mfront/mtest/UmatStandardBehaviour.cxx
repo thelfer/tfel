@@ -28,7 +28,7 @@ namespace mfront
     using namespace tfel::system;
     using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getUMATFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
     if(this->stype==0){
@@ -117,7 +117,7 @@ namespace mfront
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
     typedef ModellingHypothesis::Hypothesis Hypothesis;
     tmatrix<3u,3u,real> nr(0.);
-    const Hypothesis& h = ModellingHypothesis::fromString(this->hypothesis);
+    const auto& h = ModellingHypothesis::fromString(this->hypothesis);
     if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       nr(0,0) = nr(1,1) = nr(2,2) = 1.; // identité
     } else if((h==ModellingHypothesis::AXISYMMETRICAL)||

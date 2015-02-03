@@ -31,7 +31,7 @@ namespace mfront
     typedef EvolutionManager::value_type MVType;
     if(evm.find(n)==evm.end()){
       if(getVerboseMode()>=VERBOSE_LEVEL2){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues : "
 	    << "set material property '" << n << "' to default value" << endl;
       }

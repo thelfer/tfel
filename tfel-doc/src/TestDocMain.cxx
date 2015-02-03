@@ -154,8 +154,8 @@ namespace tfel
 	log << "\\clearpage" << endl;
 	log << "\\newpage" << endl;
 	if(split){
-	  const string& tf   = replace_all(p->first,' ','_')+".tex";
-	  const string& file = d+"/"+tf;
+	  const auto& tf = replace_all(p->first,' ','_')+".tex";
+	  const auto& file = d+"/"+tf;
 	  ofstream f(file.c_str());
 	  if(!f){
 	    string msg("printLaTeXFile : can't open file '"+file+"'");
@@ -382,7 +382,7 @@ namespace tfel
     TestDocMain::treatKeyFile(void)
     {
       using namespace std;
-      const string& f = this->currentArgument->getOption();
+      const auto& f = this->currentArgument->getOption();
       declareKeys(f);
     } // end of TestDocMain::treatKeyFile
 
@@ -390,7 +390,7 @@ namespace tfel
     TestDocMain::treatCategoryFile(void)
     {
       using namespace std;
-      const string& f = this->currentArgument->getOption();
+      const auto& f = this->currentArgument->getOption();
       declareCategories(f);
     } // end of TestDocMain::treatCategoryFile
 
@@ -398,7 +398,7 @@ namespace tfel
     TestDocMain::treatTranslationFile(void)
     {
       using namespace std;
-      const string& f = this->currentArgument->getOption();
+      const auto& f = this->currentArgument->getOption();
       declareTranslations(f);
     } // end of TestDocMain::treatTranslationFile
 

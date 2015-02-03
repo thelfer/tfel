@@ -20,7 +20,7 @@ namespace mfront{
   template<typename DSLType>
   DSLProxy<DSLType>::DSLProxy()
   {
-    DSLFactory& parserFactory = DSLFactory::getDSLFactory();
+    auto& parserFactory = DSLFactory::getDSLFactory();
     parserFactory.registerParserCreator(DSLType::getName(),
 					&DSLProxy<DSLType>::createParser,
 					&DSLType::getDescription);
@@ -29,7 +29,7 @@ namespace mfront{
   template<typename DSLType>
   DSLProxy<DSLType>::DSLProxy(const std::string& n)
   {
-    DSLFactory& parserFactory = DSLFactory::getDSLFactory();
+    auto& parserFactory = DSLFactory::getDSLFactory();
     parserFactory.registerParserCreator(DSLType::getName(),
 					&DSLProxy<DSLType>::createParser,
 					&DSLType::getDescription);

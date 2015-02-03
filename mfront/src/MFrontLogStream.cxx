@@ -105,20 +105,20 @@ namespace mfront
   std::ostream&
   getLogStream()
   {
-    LogStream& log = LogStream::getLogStream();
+    auto& log = LogStream::getLogStream();
     return log.getStream();
   } // end of function getLogStream
 
   void
   setLogStream(const std::string& f)
   {
-    LogStream& log = LogStream::getLogStream();
+    auto& log = LogStream::getLogStream();
     log.setLogStream(f);
   } // end of function setLogStream
 
   void
   setLogStream(std::ostream& os){
-    LogStream& log = LogStream::getLogStream();
+    auto& log = LogStream::getLogStream();
     log.setLogStream(os);
   } // end of function setLogStream
 

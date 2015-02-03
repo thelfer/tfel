@@ -124,8 +124,8 @@ static FourthOrderTensor
 getResult(const FourthOrderTensorProduct& p)
 {
   using namespace std;
-  const FourthOrderTensor& t1 = p.first;
-  const FourthOrderTensor& t2 = p.second;
+  const auto& t1 = p.first;
+  const auto& t2 = p.second;
   return make_pair(t2.first,t1.second);
 }
 

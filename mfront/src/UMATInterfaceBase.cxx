@@ -124,7 +124,7 @@ namespace mfront
     }
     SupportedTypes::TypeSize o;
     if(!l.empty()){
-      const UMATMaterialProperty& m = l.back();
+      const auto& m = l.back();
       o  = m.offset;
       o += this->getTypeSize(t,1u);
     }
@@ -137,11 +137,11 @@ namespace mfront
 							  const Hypothesis h) const
   {
     using namespace std;
-    const BehaviourData& d   = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& mp = d.getMaterialProperties();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& mp = d.getMaterialProperties();
     VariableDescriptionContainer::const_iterator p;
     for(p=mp.begin();p!=mp.end();++p){
-      const string& n =  mb.getExternalName(h,p->name);
+      const auto& n = mb.getExternalName(h,p->name);
       vector<UMATMaterialProperty>::const_iterator pum;
       bool found = false;
       const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
@@ -171,7 +171,7 @@ namespace mfront
 		throw(runtime_error(msg));
 	      }
 	      if(p->type!=pum->type){
-		ostream& log = getLogStream();
+		auto& log = getLogStream();
 		log << "UMATInterfaceBase::completeMaterialPropertiesList : "
 		    << "inconsistent type for variable '" << n
 		    << "' ('" << p->type << "' vs '" << pum->type << "')" << endl;
@@ -190,7 +190,7 @@ namespace mfront
       if(!found){
 	SupportedTypes::TypeSize o;
 	if(!mprops.empty()){
-	  const UMATMaterialProperty& m = mprops.back();
+	  const auto& m = mprops.back();
 	  o  = m.offset;
 	  o += this->getTypeSize(m.type,m.arraySize);
 	}
@@ -206,8 +206,8 @@ namespace mfront
 						const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& persistentVarsHolder = d.getPersistentVariables();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& persistentVarsHolder = d.getPersistentVariables();
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
     if(!persistentVarsHolder.empty()){
       behaviourDataFile << "void" << endl
@@ -224,7 +224,7 @@ namespace mfront
       ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize of;
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const ThermodynamicForce& f = pm->second;
+      const auto& f = pm->second;
       const SupportedTypes::TypeFlag flag = this->getTypeFlag(f.type);
       if(flag==SupportedTypes::Scalar){
 	if(pm!=mb.getMainVariables().begin()){
@@ -316,8 +316,8 @@ namespace mfront
 											  const std::string& suffix) const
   {
     using namespace std;
-    const BehaviourData&      d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& v = d.getMaterialProperties();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& v = d.getMaterialProperties();
     VariableDescriptionContainer::const_iterator p;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
@@ -360,8 +360,8 @@ namespace mfront
 											   const std::string& suffix) const
   {
     using namespace std;
-    const BehaviourData&      d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& v = d.getMaterialProperties();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& v = d.getMaterialProperties();
     VariableDescriptionContainer::const_iterator p;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
@@ -440,13 +440,13 @@ namespace mfront
 							 const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
+    const auto& d = mb.getBehaviourData(h);
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
     pair<vector<UMATMaterialProperty>,
 	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
-    const VariableDescriptionContainer& mp                       = d.getMaterialProperties();
-    const VariableDescriptionContainer& persistentVarsHolder     = d.getPersistentVariables();
-    const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
+    const auto& mp = d.getMaterialProperties();
+    const auto& persistentVarsHolder = d.getPersistentVariables();
+    const auto& externalStateVarsHolder = d.getExternalStateVariables();
     behaviourDataFile << "/*" << endl;
     behaviourDataFile << " * \\brief constructor for the umat interface" << endl;
     behaviourDataFile << " *" << endl;
@@ -504,9 +504,9 @@ namespace mfront
 							   const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
+    const auto& d = mb.getBehaviourData(h);
     const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
+    const auto& externalStateVarsHolder = d.getExternalStateVariables();
     behaviourIntegrationFile << "/*" << endl;
     behaviourIntegrationFile << " * \\brief constructor for the umat interface" << endl;
     behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dt_, time increment" << endl;
@@ -550,7 +550,7 @@ namespace mfront
     os << "void set"+iprefix+"BehaviourDataDrivingVariables(const Type* const "+iprefix+"stran)" << endl
        << "{" << endl;
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const DrivingVariable& v = pm->first;
+      const auto& v = pm->first;
       if(!v.increment_known){
 	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
 	  if(pm!=mb.getMainVariables().begin()){
@@ -611,7 +611,7 @@ namespace mfront
       << "{" << endl;
     SupportedTypes::TypeSize of;
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const ThermodynamicForce& f = pm->second;
+      const auto& f = pm->second;
       if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
 	if(pm!=mb.getMainVariables().begin()){
 	  os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stress_+" << of <<",this->" << f.name << ".begin());" << endl;
@@ -654,7 +654,7 @@ namespace mfront
     os << "void set"+iprefix+"IntegrationDataDrivingVariables(const Type* const "+iprefix+"dstran)" << endl
        << "{" << endl;
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const DrivingVariable& v = pm->first;
+      const auto& v = pm->first;
       if(!v.increment_known){
 	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
 	  if(pm!=mb.getMainVariables().begin()){
@@ -838,8 +838,8 @@ namespace mfront
       if((*p==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	 (h2.find(*p)!=h2.end())){
 	bool rp,ip,up;
-	const BehaviourData& d = mb.getBehaviourData(*p);
-	const VariableDescriptionContainer& pc = d.getParameters();
+	const auto& d = mb.getBehaviourData(*p);
+	const auto& pc = d.getParameters();
 	this->checkParametersType(rp,ip,up,pc);
 	string fctName = this->getFunctionName(name);
 	string suffix;
@@ -875,8 +875,8 @@ namespace mfront
     for(p=h.begin();p!=h.end();++p){
       if((*p==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	 (h2.find(*p)!=h2.end())){
-	const BehaviourData& d = mb.getBehaviourData(*p);
-	const VariableDescriptionContainer& pc = d.getParameters();
+	const auto& d = mb.getBehaviourData(*p);
+	const auto& pc = d.getParameters();
 	bool rp,ip,up;
 	this->checkParametersType(rp,ip,up,pc);
 	string fctName = this->getFunctionName(name);
@@ -939,7 +939,7 @@ namespace mfront
   UMATInterfaceBase::getHeaderDefine(const BehaviourDescription& mb) const
   {
     using namespace std;
-    const string & m = mb.getMaterialName();
+    const auto& m = mb.getMaterialName();
     string header = "_LIB_"+makeUpperCase(this->getInterfaceName());
     if(!mb.getLibrary().empty()){
       header += "_";
@@ -1044,11 +1044,11 @@ namespace mfront
     	msg += "only small strain or finite strain behaviours are supported";
     	throw(runtime_error(msg));
       }
-      const map<Hypothesis,string>& gh = this->gatherModellingHypothesesAndTests(mb);
+      const auto& gh = this->gatherModellingHypothesesAndTests(mb);
       for(const auto & elem : gh){
-	const BehaviourData& d = mb.getBehaviourData(elem.first);
-	const VariableDescriptionContainer& persistentVarsHolder    = d.getPersistentVariables();
-	const VariableDescriptionContainer& externalStateVarsHolder = d.getExternalStateVariables();
+	const auto& d = mb.getBehaviourData(elem.first);
+	const auto& persistentVarsHolder = d.getPersistentVariables();
+	const auto& externalStateVarsHolder = d.getExternalStateVariables();
 	pair<vector<UMATMaterialProperty>,
 	     SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,elem.first);
 	VariableDescriptionContainer::const_iterator p;
@@ -1086,7 +1086,7 @@ namespace mfront
 	SupportedTypes::TypeSize ivoffset;
 	for(p=persistentVarsHolder.begin();p!=persistentVarsHolder.end();++p){
 	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	  const string& ivname = d.getExternalName(p->name);
+	  const auto& ivname = d.getExternalName(p->name);
 	  if(p->arraySize==1u){
 	    if(flag==SupportedTypes::Scalar){
 	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);" << endl;
@@ -1136,7 +1136,7 @@ namespace mfront
 		       "in mtest file generation");
 	    throw(runtime_error(msg));
 	  }
-	  const string& evname = d.getExternalName(p->name);
+	  const auto& evname = d.getExternalName(p->name);
 	  if(p->arraySize==1u){
 	    if(offset==0){
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
@@ -1311,7 +1311,7 @@ namespace mfront
       out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
 	  << "_MaterialProperties = 0;" << endl << endl;
     } else {
-      const UMATMaterialProperty& last = mprops.first.back();
+      const auto& last = mprops.first.back();
       SupportedTypes::TypeSize s;
       if((mprops.second.getTensorSize()!=0)||(mprops.second.getStensorSize()!=0)||
 	 (mprops.second.getTVectorSize()!=0)){
@@ -1357,7 +1357,7 @@ namespace mfront
 	out << "MFRONT_SHAREDOBJ const char *"  << this->getSymbolName(name,h)
 	    << "_MaterialProperties[" <<  s.getScalarSize() << "u] = {";
         for(vector<UMATMaterialProperty>::size_type i=ib;i!=mprops.first.size();){
-	  const UMATMaterialProperty& m = mprops.first[i];
+	  const auto& m = mprops.first[i];
 	  if(m.arraySize==1u){
 	    out << "\"" << m.name << "\"";
 	  } else {
@@ -1384,8 +1384,8 @@ namespace mfront
   							    const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& persistentVarsHolder = d.getPersistentVariables();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& persistentVarsHolder = d.getPersistentVariables();
     const unsigned short nStateVariables = static_cast<unsigned short>(this->getNumberOfVariables(persistentVarsHolder));
     VariableDescriptionContainer::const_iterator p;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
@@ -1440,8 +1440,8 @@ namespace mfront
   								    const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& externalStateVarsHolder = d.getExternalStateVariables();
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
   	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";" << endl;
     this->writeExternalNames(out,name,h,mb.getExternalNames(h,externalStateVarsHolder),
@@ -1481,7 +1481,7 @@ namespace mfront
   										const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
+    const auto& d = mb.getBehaviourData(h);
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
   	<< "_UsableInPurelyImplicitResolution = ";
     if(d.isUsableInPurelyImplicitResolution()){
@@ -1550,9 +1550,8 @@ namespace mfront
   UMATInterfaceBase::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
   {
     using namespace std;
-    typedef map<Hypothesis,string>::value_type MVType;
     map<Hypothesis,string> res;
-    set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
+    auto h = this->getModellingHypothesesToBeTreated(mb);
     set<Hypothesis> h1;
     set<Hypothesis> h2;
     for(const auto & elem : h){
@@ -1564,20 +1563,20 @@ namespace mfront
     }
     if(!h1.empty()){
       if(h1.size()==1u){
-	res.insert(MVType(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			  this->getModellingHypothesisTest(*(h1.begin()))));
+	res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	      this->getModellingHypothesisTest(*(h1.begin()))});
       } else {
-	set<Hypothesis>::const_iterator p = h1.begin();
+	auto p = h1.begin();
 	string r = "("+this->getModellingHypothesisTest(*(h1.begin()))+")";
 	++p;
 	for(;p!=h1.end();++p){
 	  r += "||("+this->getModellingHypothesisTest(*p)+")";
 	}
-	res.insert(MVType(ModellingHypothesis::UNDEFINEDHYPOTHESIS,r));
+	res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS,r});
       }
     }
     for(const auto & elem : h2){
-      res.insert(MVType(elem,this->getModellingHypothesisTest(elem)));
+      res.insert({elem,this->getModellingHypothesisTest(elem)});
     }
     return res;
   } // end of UMATInterface::gatherModellingHypothesesAndTests

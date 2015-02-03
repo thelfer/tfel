@@ -223,7 +223,7 @@ libDir(void)
   const string ldir("/lib");
 #endif
 #endif
-  const string& th = getTFELHOME();
+  const auto& th = getTFELHOME();
   if(!th.empty()){
     return th+ldir;
   }
@@ -243,7 +243,7 @@ includeDir(void)
   using namespace std;
   const string prefix(PREFIXDIR);
   string inc(INCLUDEDIR);
-  const string& th = getTFELHOME();
+  const auto& th = getTFELHOME();
   if(!th.empty()){
     return th+"/include";
   } else {

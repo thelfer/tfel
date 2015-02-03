@@ -87,7 +87,7 @@ namespace mfront{
       }
       this->bd.setModellingHypotheses(mh);
     }
-    const set<BehaviourDescription::Hypothesis>& bmh = this->bd.getModellingHypotheses();
+    const auto& bmh = this->bd.getModellingHypotheses();
     if(((bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0)||
 	(bmh.count(MH::PLANESTRESS)!=0))&&(!pss)){
       string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : ");

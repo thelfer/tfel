@@ -213,7 +213,7 @@ namespace tfel
 	if(destStatus){
 	  if(S_ISDIR(destInfos.st_mode)){
 	    // destination is a directory
-	    const vector<string>& tmp = systemCall::tokenize(src,'/');
+	    const auto& tmp = systemCall::tokenize(src,'/');
 	    systemCall::copyFile(src,dest+'/'+tmp.back());
 	    return;
 	  } else if (S_ISREG(destInfos.st_mode)){
@@ -251,7 +251,7 @@ namespace tfel
     {
       using namespace std;
       string path;
-      const vector<string>& paths = systemCall::tokenize(dir,'/');
+      const auto& paths = systemCall::tokenize(dir,'/');
       vector<string>::const_iterator p;
       for(p=paths.begin();p!=paths.end();++p){
 	if(!path.empty()){
@@ -418,7 +418,7 @@ namespace tfel
 			      const bool exists)
     {
       using namespace std;
-      const vector<string>& paths = systemCall::tokenize(src,'/');
+      const auto& paths = systemCall::tokenize(src,'/');
       string rdest;
       if(exists){
 	rdest=dest+'/'+paths.back();

@@ -36,7 +36,7 @@ struct CastemSourceTest
     using namespace std;
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = ELM::getExternalLibraryManager();
     const string f = elm.getSource(".libs/libCastemMaterialLaw.so","Test");
     TFEL_TESTS_ASSERT(f=="Test.mfront");
     return this->result;
@@ -50,7 +50,7 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("CastemSource.xml");
   TestResult r = manager.execute();

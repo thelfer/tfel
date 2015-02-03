@@ -1045,7 +1045,7 @@ namespace mfront{
     this->srcFile << "map<string,map<string,unsigned short> >::const_iterator ptr;\n";
     this->srcFile << "map<string,unsigned short>::const_iterator ptr2;\n";
     this->srcFile << "for(ptr=this->inputsDepths.begin();ptr!=this->inputsDepths.end();++ptr){\n";
-    this->srcFile << "const map<string,unsigned short>& tmp = ptr->second;\n";
+    this->srcFile << "const map<string,unsigned auto& tmp = ptr->second;\n";
     this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
     this->srcFile << "requirementManager.addRequirement(static_cast<IModel&>(*this),\n";
     this->srcFile << "ptr->first,ptr2->first,\n";
@@ -1066,7 +1066,7 @@ namespace mfront{
     this->srcFile << "map<string,map<string,unsigned short> >::const_iterator ptr;\n";
     this->srcFile << "map<string,unsigned short>::const_iterator ptr2;\n";
     this->srcFile << "for(ptr=this->outputsDepths.begin();ptr!=this->outputsDepths.end();++ptr){\n";
-    this->srcFile << "const map<string,unsigned short>& tmp = ptr->second;\n";
+    this->srcFile << "const map<string,unsigned auto& tmp = ptr->second;\n";
     this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
     this->srcFile << "if(this->outputsInitialValues.find(ptr->first)==this->outputsInitialValues.end()){\n";
     this->srcFile << "requirementManager.setRequirementProvider(static_cast<IModel&>(*this),\n"
@@ -1128,8 +1128,8 @@ namespace mfront{
 		  << "typedef map<string,string>::value_type MVType;\n"
 		  << "vector<string>::const_iterator ptr;\n"
 		  << "ModelBase::save(directory,saveddata);\n"
-		  << "DataMap& msaveddata = savedmdata.get<DataMap>(this->getName(),true);\n"
-		  << "map<string,string>& activestate = msavedmdata.get<map<string,string> >(\"ActiveState\",true);\n"
+		  << "auto& msaveddata = savedmdata.get<DataMap>(this->getName(),true);\n"
+		  << "auto& activestate = msavedmdata.get<map<string,string> >(\"ActiveState\",true);\n"
 		  << "if(this->isActive()){\n" 
 		  << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n"
 		  << "activestate.insert(MVType(*ptr,\"true\"));\n"
@@ -1154,13 +1154,13 @@ namespace mfront{
 		  <<  "if(!savedmdata.contains(this->getName())){\n"
 		  << "return;"
 		  << "}\n"
-		  << "const DataMap& msaveddata = savedmdata.get<DataMap>(this->getName());\n"
+		  << "const auto& msaveddata = savedmdata.get<DataMap>(this->getName());\n"
 		  << "if(!msavedmdata.contains(\"ActiveState\")){\n"
 		  << "return;\n"
 		  << "}\n"
 		  << "bool first     = true;\n"
 		  << "bool dactivate = true;\n"
-		  << "const map<string,string>& activestate = msavedmdata.get<map<string,string> >(\"ActiveState\");\n"
+		  << "const auto& activestate = msavedmdata.get<map<string,string> >(\"ActiveState\");\n"
 		  << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n"
 		  << "ptr2 = activestate.find(*ptr);\n"
 		  << "if(ptr2!=activestate.end()){\n"
@@ -1211,7 +1211,7 @@ namespace mfront{
 	this->srcFile << "this->" << functor << ".dt=dt;\n";
       }
       this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-      this->srcFile << "MTFieldManager& mm = this->smanager.getMTFieldManager(*ptr);\n";
+      this->srcFile << "auto& mm = this->smanager.getMTFieldManager(*ptr);\n";
       for(p15=p11->usedVariables.begin();p15!=p11->usedVariables.end();++p15){
 	pair<string,unsigned short> dv = decomposeVariableName(mdata,*p15);
 	this->srcFile << "const NFieldHolder& " << "f_" << *p15 
@@ -1228,7 +1228,7 @@ namespace mfront{
 		      << " = this->constantMaterialProperties[*ptr][\"" << *p15 << "\"];\n";
       }
       this->srcFile << "if(getVerboseMode()==VERBOSE_LEVEL1){\n";
-      this->srcFile << "ostream& log = getLogStream();\n";
+      this->srcFile << "auto& log = getLogStream();\n";
       this->srcFile << "log << \"**" << mdata.className << "::execute : \"" << "\n";
       this->srcFile << "<< \"executing function '" << p11->name << "' on domain '\" << *ptr << \"'\" << endl;\n";
       this->srcFile << "}\n";
@@ -1559,7 +1559,7 @@ namespace mfront{
       for(i=0,p=mdata.functions.begin();p!=mdata.functions.end();++p,++i){
 	for(p2=p->usedVariables.begin();p2!=p->usedVariables.end();++p2){
 	  if(isInputVariable(mdata,*p2)){
-	    const string& v = decomposeVariableName(mdata,*p2).first;
+	    const auto& v = decomposeVariableName(mdata,*p2).first;
 	    if(treatedVars.find(v)==treatedVars.end()){
 	      string functor = "functor"+to_string(i);
 	      p3 = p->depths.find(v);
@@ -1569,7 +1569,7 @@ namespace mfront{
 		throw(runtime_error(msg));
 	      }
 	      this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	      this->srcFile << "map<string,unsigned short>& tmp = this->inputsDepths[" << this->getVariableName(v,mdata) << "];\n";
+	      this->srcFile << "map<string,unsigned auto& tmp = this->inputsDepths[" << this->getVariableName(v,mdata) << "];\n";
 	      if(p3->second==0){
 		this->srcFile << "if(tmp.find(*ptr)==tmp.end()){\n";
 		this->srcFile << "tmp[*ptr]=0;\n";
@@ -1727,7 +1727,7 @@ namespace mfront{
   {
     using namespace std;
     map<string,vector<string> > src;
-    const string& lib = getLibraryName(mdata);
+    const auto& lib = getLibraryName(mdata);
     src[lib].push_back(mdata.className+"-@application@.cxx");
     return src;
   } // end of MFrontModelInterface::getGeneratedSources
@@ -1746,7 +1746,7 @@ namespace mfront{
   {
     using namespace std;
     map<string,vector<string> > incs;
-    const string& lib = getLibraryName(mdata);
+    const auto& lib = getLibraryName(mdata);
     incs[lib].push_back("`@application@-config --includes`\n");
     return incs;
   } // end of MFrontModelInterface::getGlobalIncludes
@@ -1756,7 +1756,7 @@ namespace mfront{
   {
     using namespace std;
     map<string,vector<string> > libs;
-    const string& lib = getLibraryName(mdata);
+    const auto& lib = getLibraryName(mdata);
     libs[lib].push_back("`@application@-config --libs` -lm");
     return libs;
   } // end of MFrontModelInterface::getGlobalDependencies

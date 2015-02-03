@@ -206,7 +206,7 @@ namespace mfront{
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : begin" << endl;
     }
     BehaviourDSLCommon::endsInputFileProcessing();
@@ -232,7 +232,7 @@ namespace mfront{
     		     initLocalVars,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::BODY);
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      ostream& log = getLogStream();
+      auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : end" << endl;
     }
   } // end of IsotropicBehaviourDSLBase::endsInputFileProcessing

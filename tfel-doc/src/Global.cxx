@@ -87,7 +87,7 @@ namespace tfel{
     {
       using namespace std;
       using namespace tfel::utilities;
-      const map<string,string>& translations = getTranslationsMap(l);
+      const auto& translations = getTranslationsMap(l);
       map<string,string>::const_iterator pk;
       if(l=="english"){
 	return s;
@@ -109,7 +109,7 @@ namespace tfel{
     {
       using namespace std;
       using namespace tfel::utilities;
-      const map<string,string>& categories = getCategoriesMap(l);
+      const auto& categories = getCategoriesMap(l);
       map<string,string>::const_iterator pk;
       pk = categories.find(s);
       if(pk!=categories.end()){
@@ -128,7 +128,7 @@ namespace tfel{
     {
       using namespace std;
       using namespace tfel::utilities;
-      const map<string,string>& keys = getKeysMap(l);
+      const auto& keys = getKeysMap(l);
       map<string,string>::const_iterator pk;
       if(s.empty()){
 	return s;

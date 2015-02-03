@@ -86,7 +86,7 @@ namespace mfront{
   ModelDSLCommon::treatLibrary(void)
   {
     using namespace std;
-    const string& l = this->readOnlyOneToken();
+    const auto& l = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(l,true)){
       string msg("ModelDSLCommon::treatLibrary : ");
       msg += "invalid library name '"+l+"'";
@@ -138,7 +138,7 @@ namespace mfront{
   {
     using namespace std;
     typedef ModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
@@ -153,7 +153,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     typedef ModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
     vector<string>::const_iterator i;
@@ -678,9 +678,6 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::glossary;
-    typedef map<string,string>::value_type MVType;
-    typedef map<string,double>::value_type MVType2;
-    typedef map<string,unsigned short>::value_type MVType3;
     string methodName;
     if(!this->functions.empty()){
       string msg("ModelDSLCommon::treatOutputMethod : ");
@@ -704,7 +701,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatOutputMethod","(");
     if(methodName=="setGlossaryName"){
-      const Glossary& glossary = Glossary::getGlossary();
+      const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
 			      "Expected glossary name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -730,16 +727,16 @@ namespace mfront{
 		   "'"+glossaryName+"' is not a valid glossary name");
 	throw(runtime_error(msg));
       }
-      const string& k = glossary.getGlossaryEntry(glossaryName).getKey();
+      const auto& k = glossary.getGlossaryEntry(glossaryName).getKey();
       if(k!=this->currentVar){
 	this->reserveName(k,false);
       }
-      if(!this->glossaryNames.insert(MVType(this->currentVar,k)).second){
+      if(!this->glossaryNames.insert({this->currentVar,k}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
     } else if (methodName=="setEntryName"){
-      const Glossary& glossary = Glossary::getGlossary();
+      const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
 			      "Expected entry file name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -771,7 +768,7 @@ namespace mfront{
       if(entryName!=this->currentVar){
 	this->reserveName(entryName,false);
       }
-      if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
+      if(!this->entryNames.insert({this->currentVar,entryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Entry file name for field '"+this->currentVar+"' already defined.");
       }
@@ -785,7 +782,7 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Could not read initial value of field : '"+this->currentVar+"'");
       }
-      if(!this->initialValues.insert(MVType2(this->currentVar,value)).second){
+      if(!this->initialValues.insert({this->currentVar,value}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Initial value for field '"+this->currentVar +"' already defined.");
       }
@@ -799,7 +796,7 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Could not read depth value of field '"+this->currentVar+"'");
       }
-      if(!this->depths.insert(MVType3(this->currentVar,value)).second){
+      if(!this->depths.insert({this->currentVar,value}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"depth value for field '"+this->currentVar+"' already defined.");
       }
@@ -830,8 +827,6 @@ namespace mfront{
     using namespace tfel::utilities;
     using namespace tfel::glossary;
     string methodName;
-    typedef map<string,string>::value_type MVType;
-    typedef map<string,unsigned short>::value_type MVType2;
     if(!this->functions.empty()){
       string msg("ModelDSLCommon::treatInputMethod : ");
       msg += "input method must be called before declaring functions";
@@ -852,7 +847,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatInputMethod","(");
     if(methodName=="setGlossaryName"){
-      const Glossary& glossary = Glossary::getGlossary();
+      const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
 			      "Expected glossary name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -878,16 +873,16 @@ namespace mfront{
 		   "'"+glossaryName+"' is not a valid glossary name");
 	throw(runtime_error(msg));
       }
-      const string& k = glossary.getGlossaryEntry(glossaryName).getKey();
+      const auto& k = glossary.getGlossaryEntry(glossaryName).getKey();
       if(k!=this->currentVar){
 	this->reserveName(k,false);
       }
-      if(!this->glossaryNames.insert(MVType(this->currentVar,k)).second){
+      if(!this->glossaryNames.insert({this->currentVar,k}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Glossary name for field '"+this->currentVar+"' already defined.");
       }
     } else if (methodName=="setEntryName"){
-      const Glossary& glossary = Glossary::getGlossary();
+      const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
 			      "Expected entry file name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -919,7 +914,7 @@ namespace mfront{
       if(entryName!=this->currentVar){
 	this->reserveName(entryName,false);
       }
-      if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
+      if(!this->entryNames.insert({this->currentVar,entryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
@@ -933,7 +928,7 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Could not read initial value of field '"+this->currentVar+"'");
       }
-      if(!this->depths.insert(MVType2(this->currentVar,value)).second){
+      if(!this->depths.insert({this->currentVar,value}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Initial value for field '"+this->currentVar+"' already defined.");
       }
@@ -968,7 +963,6 @@ namespace mfront{
   {
     using namespace std; 
     using namespace tfel::utilities;
-    typedef map<string,string>::value_type MVType;
     string methodName;
     this->readSpecifiedToken("ModelDSLCommon::treatGlobalParameterMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatGlobalParameterMethod",
@@ -1002,7 +996,7 @@ namespace mfront{
 				"Glossary name too short.");
       }
       string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
+      if(!this->glossaryNames.insert({this->currentVar,glossaryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
@@ -1018,7 +1012,7 @@ namespace mfront{
 				"Entry file name too short.");
       }
       string entryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
+      if(!this->entryNames.insert({this->currentVar,entryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
@@ -1041,7 +1035,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef map<string,string>::value_type MVType;
     string methodName;
     this->readSpecifiedToken("ModelDSLCommon::treatLocalParameterMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatLocalParameterMethod",
@@ -1075,7 +1068,7 @@ namespace mfront{
 				"Glossary name too short.");
       }
       string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
+      if(!this->glossaryNames.insert({this->currentVar,glossaryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
@@ -1091,7 +1084,7 @@ namespace mfront{
 				"Entry file name too short.");
       }
       string entryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
+      if(!this->entryNames.insert({this->currentVar,entryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
@@ -1114,7 +1107,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef map<string,string>::value_type MVType;
     string methodName;
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatConstantMaterialPropertyMethod",
@@ -1148,7 +1140,7 @@ namespace mfront{
 				"Glossary name too short.");
       }
       string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
+      if(!this->glossaryNames.insert({this->currentVar,glossaryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
@@ -1164,7 +1156,7 @@ namespace mfront{
 				"Entry file name too short.");
       }
       string entryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
+      if(!this->entryNames.insert({this->currentVar,entryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
@@ -1181,7 +1173,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef map<string,string>::value_type MVType;
     VariableDescriptionContainer::const_iterator p;
     string res;
     bool found;
@@ -1285,7 +1276,7 @@ namespace mfront{
       this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
 			      "type '"+p->type+"' is not supported.");
     }
-    if(!this->defaultValues.insert(MVType(this->currentVar,res)).second){
+    if(!this->defaultValues.insert({this->currentVar,res}).second){
       this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
 			      "default value for field '"+ this->currentVar +"' already defined.");
     }
@@ -1411,7 +1402,7 @@ namespace mfront{
   {
     using namespace std;
     typedef ModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     typedef map<string,vector<string> > Map;
     Map incs;
     vector<string>::const_iterator i;
@@ -1419,7 +1410,7 @@ namespace mfront{
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
-      const Map& iincs = interface->getGlobalIncludes(*this);
+      const auto& iincs = interface->getGlobalIncludes(*this);
       for(p=iincs.begin();p!=iincs.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
       }
@@ -1433,14 +1424,14 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef ModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     Map deps;
     vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
-      const Map& ideps = interface->getGlobalDependencies(*this);
+      const auto& ideps = interface->getGlobalDependencies(*this);
       for(p=ideps.begin();p!=ideps.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
       }
@@ -1454,7 +1445,7 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef ModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     Map osources;
     vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
@@ -1462,7 +1453,7 @@ namespace mfront{
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
-      const Map& isources = interface->getGeneratedSources(*this);
+      const auto& isources = interface->getGeneratedSources(*this);
       for(p=isources.begin();p!=isources.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
       }
@@ -1483,13 +1474,13 @@ namespace mfront{
   {
     using namespace std;
     typedef ModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     vector<string> incs;
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
-      const vector<string>& iincs = interface->getGeneratedIncludes(*this);
+      const auto& iincs = interface->getGeneratedIncludes(*this);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
     }
     return incs;
@@ -1501,14 +1492,14 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef ModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     vector<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
-      const Map& ideps = interface->getLibrariesDependencies(*this);
+      const auto& ideps = interface->getLibrariesDependencies(*this);
       for(p=ideps.begin();p!=ideps.end();++p){
 	for(p2=p->second.begin();p2!=p->second.end();++p2){
 	  if(find(this->sourcesLibrairiesDependencies[p->first].begin(),

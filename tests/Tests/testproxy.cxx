@@ -43,7 +43,7 @@ int main(void)
     string msg("can't open file 'testproxy.txt'");
     throw(runtime_error(msg));
   }
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(f,false);
   TestResult r = manager.execute();
   assert(r.success());

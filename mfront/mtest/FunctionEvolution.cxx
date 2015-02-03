@@ -28,7 +28,7 @@ namespace mfront{
   FunctionEvolution::operator()(const real t) const
   {
     using namespace std;
-    const vector<string>& args = this->f.getVariablesNames();
+    const auto& args = this->f.getVariablesNames();
     vector<string>::size_type i;
     for(i=0;i!=args.size();++i){
       if(args[i]=="t"){
@@ -53,7 +53,7 @@ namespace mfront{
   FunctionEvolution::isConstant(void) const
   {
     using namespace std;
-    const vector<string>& args = this->f.getVariablesNames();
+    const auto& args = this->f.getVariablesNames();
     vector<string>::size_type i;
     for(i=0;i!=args.size();++i){
       if(args[i]=="t"){

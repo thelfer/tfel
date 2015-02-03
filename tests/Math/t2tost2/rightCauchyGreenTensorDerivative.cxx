@@ -86,7 +86,7 @@ TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorDerivative_3D,"RightCauchyGreenT
 int main(void){
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("RightCauchyGreenTensorDerivative.xml");
   TestResult r = manager.execute();

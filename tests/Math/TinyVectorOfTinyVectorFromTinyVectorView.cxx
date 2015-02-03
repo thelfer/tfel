@@ -44,8 +44,8 @@ struct TinyVectorOfTinyVectorFromTinyVectorViewTest
 			 4.7,7.4,5.6,6.5};
     tvector<10,double> v(values);
     TinyVectorOfTinyVectorFromTinyVectorView<2,10,2,2,double>::type view(v);
-    const tvector<2,double>& s1 = view(0);
-    tvector<2,double>& s2 = view(1);
+    const auto& s1 = view(0);
+    auto& s2 = view(1);
     tvector<2,double>::size_type i;
     for(i=0;i!=s1.size();++i){
       unsigned short idx;
@@ -74,7 +74,7 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("TinyVectorOfTinyVectorFromTinyVectorView.xml");
   TestResult r = manager.execute();

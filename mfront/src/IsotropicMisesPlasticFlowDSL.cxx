@@ -176,7 +176,7 @@ namespace mfront{
   {
     using namespace std;
     const string btype = this->mb.getBehaviourTypeFlag();
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
@@ -241,7 +241,7 @@ namespace mfront{
     this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);" << endl;
     this->behaviourFile << "if(this->dp>prec){" << endl;
     this->behaviourFile << "const real ccto_tmp_1 =  this->dp/this->seq_e;" << endl;
-    this->behaviourFile << "const st2tost2<N,Type>& M = st2tost2<N,Type>::M();" << endl;
+    this->behaviourFile << "const auto& M = st2tost2<N,Type>::M();" << endl;
     this->behaviourFile << "this->Dt += -4*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq/((this->theta)*(3*(this->mu)*(this->df_dseq)-(this->df_dp))))*((this->n)^(this->n)));" << endl;
     this->behaviourFile << "}" << endl;
     this->behaviourFile << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl;

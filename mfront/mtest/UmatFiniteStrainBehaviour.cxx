@@ -611,7 +611,7 @@ namespace mfront
     using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
     if(h==ModellingHypothesis::PLANESTRESS){
-      ELM& elm = ELM::getExternalLibraryManager();
+      auto& elm = ELM::getExternalLibraryManager();
       if(elm.checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(l,b)){
 	return ModellingHypothesis::GENERALISEDPLANESTRAIN;
       }
@@ -628,7 +628,7 @@ namespace mfront
     using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
     if(h==ModellingHypothesis::PLANESTRESS){
-      ELM& elm = ELM::getExternalLibraryManager();
+      auto& elm = ELM::getExternalLibraryManager();
       if(elm.checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(l,b)){
 	//! better name required
 	this->ivnames.push_back("AxialStrain");

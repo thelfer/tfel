@@ -124,8 +124,8 @@ namespace aster
 	}
 	pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	b.computeStressFreeExpansion(s);
-	const StressFreeExpansionType& s0 = s.first;
-	const StressFreeExpansionType& s1 = s.second;
+	const auto& s0 = s.first;
+	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],N);
 	b.setASTERBehaviourDataDrivingVariables(dv0);
 	b.setASTERIntegrationDataDrivingVariables(dv1);
@@ -267,7 +267,7 @@ namespace aster
 	    this->behaviour.setASTERBehaviourDataThermodynamicForces(STRESS);
 	    this->behaviour.initialize();
 	    // 22/03/2012 : la gestion des bornes sera implantée plus tard
-	    // const AsterOutOfBoundsPolicy& up = AsterOutOfBoundsPolicy::getAsterOutOfBoundsPolicy();
+	    // const auto& up = AsterOutOfBoundsPolicy::getAsterOutOfBoundsPolicy();
 	    // this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  } // end of Integrator::Integrator
 	

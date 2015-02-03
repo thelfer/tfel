@@ -117,7 +117,7 @@ namespace mfront
     this->ca_r2  = r;
     if((iter>=this->cat)&&((iter-this->cat)%this->cap==0)){
       if(getVerboseMode()>=VERBOSE_LEVEL1){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "Cast3M acceleration convergence" << endl;
       }
       bool c  = true;

@@ -36,7 +36,7 @@ namespace mfront
     ModelDSLCommon::setInterfaces(f);
     vector<string>::const_iterator p;
     typedef ModelInterfaceFactory MMIF;
-    MMIF& mmif = MMIF::getModelInterfaceFactory();
+    auto& mmif = MMIF::getModelInterfaceFactory();
     for(p=this->interfaces.begin();p!=this->interfaces.end();++p){
       AbstractModelInterface *interface = mmif.getInterfacePtr(*p);
       interface->declareReservedNames(this->reservedNames);

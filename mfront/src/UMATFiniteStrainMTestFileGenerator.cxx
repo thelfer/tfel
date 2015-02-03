@@ -91,7 +91,7 @@ namespace mfront
   UMATFiniteStrainMTestFileGenerator::writeDrivingVariables(std::ostream& os) const
   {
     using namespace std;
-    const vector<string>& n = this->getDeformationGradientComponentsNames();
+    const auto& n = this->getDeformationGradientComponentsNames();
     vector<string>::const_iterator p;
     unsigned short i;
     if(this->times.size()!=2){

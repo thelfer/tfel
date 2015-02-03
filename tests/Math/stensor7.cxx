@@ -117,7 +117,7 @@ TFEL_TESTS_GENERATE_PROXY(STensorTest7,"STensorTest7");
 int main(void){
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("stensor7.xml");
   TestResult r = manager.execute();

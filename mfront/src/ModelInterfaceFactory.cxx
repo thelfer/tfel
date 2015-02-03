@@ -61,7 +61,7 @@ namespace mfront{
 							const ModelInterfaceFactory::InterfaceCreator f)
   {
     using namespace std;
-    InterfaceCreatorsContainer& imap = this->getInterfaceCreatorsMap();
+    auto& imap = this->getInterfaceCreatorsMap();
     if(imap.find(i)!=imap.end()){
       string msg("ModelInterfaceFactory::registerInterfaceCreator : ");
       msg += "interface creator '"+i+"' already declared";

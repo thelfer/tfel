@@ -31,8 +31,8 @@ namespace mfront
     using namespace tfel::system;
     using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
-    const string& nh = ModellingHypothesis::toString(h);
-    ELM& elm = ELM::getExternalLibraryManager();
+    const auto& nh = ModellingHypothesis::toString(h);
+    auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getUMATFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
     if(this->type!=3u){

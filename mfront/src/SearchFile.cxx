@@ -26,7 +26,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::system;
-    SearchFile& msf = SearchFile::getSearchFile();
+    auto& msf = SearchFile::getSearchFile();
     vector<string>::const_iterator p;
     string file(f);
     if(::access(file.c_str(),F_OK)==0){
@@ -59,7 +59,7 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    SearchFile& msf = SearchFile::getSearchFile();
+    auto& msf = SearchFile::getSearchFile();
 #if defined _WIN32 || defined _WIN64
     vector<string> npaths(tokenize(p,';'));
 #else

@@ -158,7 +158,7 @@ namespace mfront{
   {
     using namespace std;
     typename CallBackContainer::const_iterator p;
-    const vector<Hypothesis>& mh = ModellingHypothesis::getModellingHypotheses();
+    const auto& mh = ModellingHypothesis::getModellingHypotheses();
     vector<string> hn(mh.size());
     vector<Hypothesis>::const_iterator pmh;
     vector<string>::iterator phn;      
@@ -202,13 +202,13 @@ namespace mfront{
 	  p = this->callBacks.find(this->current->value);
 	  if(p==this->callBacks.end()){
 	    if(getVerboseMode()>=VERBOSE_DEBUG){
-	      ostream& log = getLogStream();
+	      auto& log = getLogStream();
 	      log << "treating unknown keyword" << endl;
 	    }
 	    handler = &Child::treatUnknownKeyword;
 	  } else {
 	    if(getVerboseMode()>=VERBOSE_DEBUG){
-	      ostream& log = getLogStream();
+	      auto& log = getLogStream();
 	      log << "treating keyword : " << this->current->value << endl;
 	    }
 	    handler = p->second;

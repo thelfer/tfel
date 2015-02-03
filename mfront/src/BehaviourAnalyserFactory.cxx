@@ -61,7 +61,7 @@ namespace mfront{
 							  const BehaviourAnalyserFactory::AnalyserCreator f)
   {
     using namespace std;
-    AnalyserCreatorsContainer& imap = this->getAnalyserCreatorsMap();
+    auto& imap = this->getAnalyserCreatorsMap();
     if(imap.find(i)!=imap.end()){
       string msg("BehaviourAnalyserFactory::registerAnalyserCreator : ");
       msg += "analyser creator '"+i+"' already declared";
@@ -75,7 +75,7 @@ namespace mfront{
 							 const std::string& a)
   {
     using namespace std;
-    AliasContainer& amap = this->getAliasesMap();
+    auto& amap = this->getAliasesMap();
     if(amap.find(a)!=amap.end()){
       string msg("BehaviourAnalyserFactory::registerAnalyserCreator : ");
       msg += "interface alias '"+a+"' already declared";

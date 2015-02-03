@@ -96,7 +96,7 @@ namespace mfront
     this->sa_dr = this->sa_r1-this->sa_r0;
     if(iter>=this->sat){
       if(getVerboseMode()>=VERBOSE_LEVEL1){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "Secant acceleration convergence" << endl;
       }
       const real nr2_dr = this->sa_dr|this->sa_dr;
@@ -116,7 +116,7 @@ namespace mfront
 // wk.sa_du = wk.sa_u1 - wk.sa_u0;
 // if(iter>=this->sat){
 // if(getVerboseMode()>=VERBOSE_LEVEL1){
-// ostream& log = getLogStream();
+// auto& log = getLogStream();
 // log << "Secant acceleration convergence" << endl;
 // }
 // const real nr2_dr = wk.sa_dr|wk.sa_dr;

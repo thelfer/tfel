@@ -79,8 +79,8 @@ namespace cyrano
 	pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	BV b(bData,iData);
 	b.computeStressFreeExpansion(s);
-	const StressFreeExpansionType& s0 = s.first;
-	const StressFreeExpansionType& s1 = s.second;
+	const auto& s0 = s.first;
+	const auto& s1 = s.second;
 	// convert to MFront conventions
 	eto[0]  = STRAN[0]  - s0[0];
 	eto[1]  = STRAN[2]  - s0[1];
@@ -110,8 +110,8 @@ namespace cyrano
 	CyranoReal deto[3];
 	pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	b.computeStressFreeExpansion(s);
-	const StressFreeExpansionType& s0 = s.first;
-	const StressFreeExpansionType& s1 = s.second;
+	const auto& s0 = s.first;
+	const auto& s1 = s.second;
 	// convert to MFront conventions
 	eto[0]  = STRAN[0]  - s0[0];
 	eto[1]  = STRAN[2]  - s0[1];
@@ -336,7 +336,7 @@ namespace cyrano
 	    StandardPredictionOperatorComputer,
 	    PredictionOperatorIsNotAvalaible
 	    >::type PredictionOperatorComputer;
-	  const CyranoOutOfBoundsPolicy& up = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy();
+	  const auto& up = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy();
 	  CyranoReal sig[3];
 	  unsigned short subSteps   = 0u;
 	  unsigned short iterations = 1u;
@@ -459,7 +459,7 @@ namespace cyrano
 	    Traits::hasStressFreeExpansion,
 	    DrivingVariableInitialiserWithStressFreeExpansion,
 	    DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	  const CyranoOutOfBoundsPolicy& up = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy();
+	  const auto& up = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy();
 	  this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
 	  // elastic tensor
 	  SInitializer::exe(this->behaviour,PROPS);
@@ -594,7 +594,7 @@ ELASTIC);
       {
 	using namespace tfel::math;
 	st2tost2<1u,CyranoReal>& Kt = *(reinterpret_cast<st2tost2<1u,CyranoReal>*>(DDSOE));
-	const st2tost2<1u,CyranoReal>& Dt = bv.getTangentOperator();
+	const auto& Dt = bv.getTangentOperator();
 	// conversion vers les conventions cyrano
 	Kt(0,0)=Dt(0,0);
 	Kt(1,0)=Dt(2,0);
@@ -615,7 +615,7 @@ ELASTIC);
       {
 	using namespace tfel::math;
 	st2tost2<1u,CyranoReal>& Kt = *(reinterpret_cast<st2tost2<1u,CyranoReal>*>(DDSOE));
-	const st2tost2<1u,CyranoReal>& Dt = bv.getTangentOperator();
+	const auto& Dt = bv.getTangentOperator();
 	// conversion vers les conventions cyrano
 	Kt(0,0)=Dt(0,0);
 	Kt(1,0)=Dt(2,0);

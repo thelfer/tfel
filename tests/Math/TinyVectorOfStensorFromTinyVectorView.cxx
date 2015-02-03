@@ -44,8 +44,8 @@ struct TinyVectorOfStensorFromTinyVectorViewTest
 			 4.7,7.4,5.6,6.5};
     tvector<10,double> v(values);
     TinyVectorOfStensorFromTinyVectorView<2,10,2,2,double>::type tsftv(v);
-    const stensor<2,double>& s1 = tsftv(0);
-    stensor<2,double>& s2 = tsftv(1);
+    const auto& s1 = tsftv(0);
+    auto& s2 = tsftv(1);
     stensor<2,double>::size_type i;
 
     for(i=0;i!=4u;++i){
@@ -77,7 +77,7 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("TinyVectorOfStensorFromTinyVectorView.xml");
   TestResult r = manager.execute();

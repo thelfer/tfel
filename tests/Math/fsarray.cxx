@@ -103,7 +103,7 @@ TFEL_TESTS_GENERATE_PROXY(FSArrayTest,"FSArrayTest");
 int main(void){
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("fsarray.xml");
   TestResult r = manager.execute();

@@ -276,8 +276,8 @@ namespace mfront{
     if(!this->evs.empty()){
       os << "// External state variables" << endl;
       for(p=this->evs.begin();p!=this->evs.end();++p){
-	const string& n                = p->first;
-	const map<real,real>& values = p->second;
+	const auto& n = p->first;
+	const auto& values = p->second;
 	if(values.size()==1){
 	  os.precision(14);
 	  os << "@ExternalStateVariable '" << n<< "' " << values.begin()->second << endl;

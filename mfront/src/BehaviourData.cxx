@@ -121,7 +121,6 @@ namespace mfront{
 					 const std::string& g)
   {
     using namespace std;
-    typedef map<string,string>::value_type MVType;
     BehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName(gn,en,g);
     if(en.find(n)!=en.end()){
       string msg("BehaviourDataAddToGlossaryOrEntryNames : ");
@@ -140,7 +139,7 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     }
-    if(!m.insert(MVType(n,g)).second){
+    if(!m.insert({n,g}).second){
       string msg("BehaviourDataAddToGlossaryOrEntryNames : ");
       msg += "glossary name for variable '"+n+"' already specified";
       throw(runtime_error(msg));
@@ -298,9 +297,7 @@ namespace mfront{
   BehaviourData::BehaviourData()
     : usableInPurelyImplicitResolution(false)
   {
-    using namespace std;
-    typedef map<string,string>::value_type MVType;
-    this->glossaryNames.insert(MVType("T","Temperature"));
+    this->glossaryNames.insert({"T","Temperature"});
   } // end of BehaviourData::BehaviourData()
 
   void
@@ -439,7 +436,7 @@ namespace mfront{
     using namespace std;
     map<string,CodeBlocksAggregator>::const_iterator pc;
     for(pc=this->cblocks.begin();pc!=this->cblocks.end();++pc){
-      const CodeBlock& c = pc->second.get();
+      const auto& c = pc->second.get();
       if(c.variables.find(v)!=c.variables.end()){
 	return true;
       }
@@ -746,10 +743,9 @@ namespace mfront{
 			 const bool b)
   {
     using namespace std;
-    typedef map<string,CodeBlocksAggregator>::value_type MVType;
-    map<string,CodeBlocksAggregator>::iterator pc = this->cblocks.find(n);
+    auto pc = this->cblocks.find(n);
     if(pc==this->cblocks.end()){
-      pc = this->cblocks.insert(MVType(n,CodeBlocksAggregator())).first;
+      pc = this->cblocks.insert({n,CodeBlocksAggregator{}}).first;
     } else {
       if(m==CREATE){
 	string msg("BehaviourData::setCode : "
@@ -766,7 +762,7 @@ namespace mfront{
 	  throw(runtime_error(msg));
 	}
 	this->cblocks.erase(pc);
-	pc = this->cblocks.insert(MVType(n,CodeBlocksAggregator())).first;
+	pc = this->cblocks.insert({n,CodeBlocksAggregator{}}).first;
       } else if(m==CREATEBUTDONTREPLACE){
 	return;
       }
@@ -779,7 +775,7 @@ namespace mfront{
   BehaviourData::getCodeBlock(const std::string& n) const
   {
     using namespace std;
-    map<string,CodeBlocksAggregator>::const_iterator p = this->cblocks.find(n);
+    auto p = this->cblocks.find(n);
     if(p==this->cblocks.end()){
       string msg("BehaviourData::getCode : "
 		 "no code block associated with '"+n+"'");
@@ -793,11 +789,10 @@ namespace mfront{
 				   const std::string& cn,
 				   const bool b) const
   {
-    using namespace std;
     if(!b){
       return this->getCodeBlock(n).code;
     }
-    ostringstream out;
+    std::ostringstream out;
     writeStandardPerformanceProfilingBegin(out,cn,n);
     out << this->getCodeBlock(n).code;
     writeStandardPerformanceProfilingEnd(out);
@@ -821,19 +816,18 @@ namespace mfront{
 						    const double v)
   {
     using namespace std;
-    typedef map<string,double>::value_type MVType;
     if(!this->parameters.contains(n)){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "no parameter '"+n+"' defined");
       throw(runtime_error(msg));
     }
-    const VariableDescription& p = this->getVariableHandler(this->parameters,n);
+    const auto& p = this->getVariableHandler(this->parameters,n);
     if(p.type!="real"){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "parameter '"+n+"' is not a floatting point");
       throw(runtime_error(msg));
     }
-    if(!this->parametersDefaultValues.insert(MVType(n,v)).second){
+    if(!this->parametersDefaultValues.insert({n,v}).second){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "default value for parameter '"+n+"' already defined");
       throw(runtime_error(msg));
@@ -845,19 +839,18 @@ namespace mfront{
 						    const int v)
   {
     using namespace std;
-    typedef map<string,int>::value_type MVType;
     if(!this->parameters.contains(n)){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "no parameter '"+n+"' defined");
       throw(runtime_error(msg));
     }
-    const VariableDescription& p = this->getVariableHandler(this->parameters,n);
+    const auto& p = this->getVariableHandler(this->parameters,n);
     if(p.type!="int"){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "parameter '"+n+"' is not an integer");
       throw(runtime_error(msg));
     }
-    if(!this->iParametersDefaultValues.insert(MVType(n,v)).second){
+    if(!this->iParametersDefaultValues.insert({n,v}).second){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "default value for parameter '"+n+"' already defined");
       throw(runtime_error(msg));
@@ -869,19 +862,18 @@ namespace mfront{
 						    const unsigned short v)
   {
     using namespace std;
-    typedef map<string,unsigned short>::value_type MVType;
     if(!this->parameters.contains(n)){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "no parameter '"+n+"' defined");
       throw(runtime_error(msg));
     }
-    const VariableDescription& p = this->getVariableHandler(this->parameters,n);
+    const auto& p = this->getVariableHandler(this->parameters,n);
     if(p.type!="ushort"){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "parameter '"+n+"' is not an unsigned short integer");
       throw(runtime_error(msg));
     }
-    if(!this->uParametersDefaultValues.insert(MVType(n,v)).second){
+    if(!this->uParametersDefaultValues.insert({n,v}).second){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "default value for parameter '"+n+"' already defined");
       throw(runtime_error(msg));
@@ -933,7 +925,7 @@ namespace mfront{
 		 "no parameter '"+n+"' defined");
       throw(runtime_error(msg));
     }
-    map<string,unsigned short>::const_iterator p = this->uParametersDefaultValues.find(n);
+    auto p = this->uParametersDefaultValues.find(n);
     if(p==this->uParametersDefaultValues.end()){
       string msg("BehaviourData::getUnsignedShortParameterDefaultValue : "
 		 "no default value defined for parameter '"+n+"'");
@@ -948,10 +940,8 @@ namespace mfront{
 					const bool b)
   {
     using namespace std;
-    typedef map<string,BehaviourAttribute>::value_type MVType;
-    map<string,BehaviourAttribute>::const_iterator p;
     if(b){
-      p=this->attributes.find(n);
+      auto p=this->attributes.find(n);
       if(p!=this->attributes.end()){
 	if(a.getTypeIndex()!=p->second.getTypeIndex()){
 	  string msg("BehaviourData::setAttribute : ",
@@ -961,7 +951,7 @@ namespace mfront{
 	return;
       }
     }
-    if(!this->attributes.insert(MVType(n,a)).second){
+    if(!this->attributes.insert({n,a}).second){
       string msg("BehaviourData::setAttribute : "
 		 "attribute '"+n+"' already declared");
       throw(runtime_error(msg));
@@ -985,9 +975,8 @@ namespace mfront{
   {
     using namespace std;
     vector<string> names;
-    map<string,CodeBlocksAggregator>::const_iterator pc;
-    for(pc=this->cblocks.begin();pc!=this->cblocks.end();++pc){
-      names.push_back(pc->first);
+    for(const auto c : this->cblocks){
+      names.push_back(c.first);
     }
     return names;
   } // end of BehaviourData::getCodeBlockNames
@@ -995,36 +984,22 @@ namespace mfront{
   bool
   BehaviourData::hasGlossaryName(const std::string& n) const
   {
-    using namespace std;
-    map<string,string>::const_iterator p;
     this->checkVariableName(n);
-    p=this->glossaryNames.find(n);
-    if(p!=this->glossaryNames.end()){
-      return true;
-    }
-    return false;
+    return this->glossaryNames.find(n)!=this->glossaryNames.end();
   } // end of BehaviourData::hasGlossaryName
 
   bool
   BehaviourData::hasEntryName(const std::string& n) const
   {
-    using namespace std;
-    map<string,string>::const_iterator p;
     this->checkVariableName(n);
-    p=this->entryNames.find(n);
-    if(p!=this->entryNames.end()){
-      return true;
-    }
-    return false;
+    return this->entryNames.find(n)!=this->entryNames.end();
   } // end of BehaviourData::hasEntryName
 
   std::string
   BehaviourData::getExternalName(const std::string& n) const
   {
-    using namespace std;
-    map<string,string>::const_iterator p;
     this->checkVariableName(n);
-    p=this->glossaryNames.find(n);
+    auto p=this->glossaryNames.find(n);
     if(p!=this->glossaryNames.end()){
       return p->second;
     }
@@ -1047,8 +1022,7 @@ namespace mfront{
   BehaviourData::getExternalNames(std::vector<std::string>& names,
 				  const VarContainer& v) const
   {
-    v.getExternalNames(names,
-		       this->glossaryNames,
+    v.getExternalNames(names,this->glossaryNames,
 		       this->entryNames);
   } // end of BehaviourData::getExternalNames
   
@@ -1056,8 +1030,7 @@ namespace mfront{
   BehaviourData::appendExternalNames(std::vector<std::string>& names,
 				     const VarContainer& v) const
   {
-    v.appendExternalNames(names,
-			  this->glossaryNames,
+    v.appendExternalNames(names,this->glossaryNames,
 			  this->entryNames);
   } // end of BehaviourData::appendExternalNames
   
@@ -1067,7 +1040,7 @@ namespace mfront{
   {
     using namespace std;
     using tfel::glossary::Glossary;
-    const Glossary& glossary = Glossary::getGlossary();
+    const auto& glossary = Glossary::getGlossary();
     this->checkVariableName(n);
     if(!glossary.contains(g)){
       string msg("BehaviourData::setGlossaryName : "
@@ -1086,15 +1059,14 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::glossary;
-    const Glossary& g = Glossary::getGlossary();
+    const auto& g = Glossary::getGlossary();
     if(!g.contains(n)){
       string msg("BehaviourData::isGlossaryNameUsed : "
 		 "'"+n+"' is not a glossary name");
       throw(runtime_error(msg));
     }
-    map<string,string>::const_iterator p;
-    for(p=this->glossaryNames.begin();p!=this->glossaryNames.end();++p){
-      if(p->second==n){
+    for(const auto& gn : this->glossaryNames){
+      if(gn.second==n){
 	return true;
       }
     }
@@ -1107,7 +1079,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::glossary;
-    const Glossary& glossary = Glossary::getGlossary();
+    const auto& glossary = Glossary::getGlossary();
     this->checkVariableName(n);
     if(glossary.contains(e)){
       ostringstream msg;
@@ -1118,18 +1090,16 @@ namespace mfront{
       throw(runtime_error(msg.str()));
     }
     BehaviourDataAddToGlossaryOrEntryNames(this->entryNames,
-						     this->glossaryNames,
-						     this->entryNames,
-						     this->vnames,n,e);
+					   this->glossaryNames,
+					   this->entryNames,
+					   this->vnames,n,e);
   } // end of BehaviourData::addEntryName
 
   bool
   BehaviourData::isUsedAsEntryName(const std::string& n) const
   {
-    using namespace std;
-    map<string,string>::const_iterator p;
-    for(p=this->entryNames.begin();p!=this->entryNames.end();++p){
-      if(p->second==n){
+    for(const auto& en : this->entryNames){
+      if(en.second==n){
 	return true;
       }
     }
@@ -1140,15 +1110,14 @@ namespace mfront{
   BehaviourData::getVariableNameFromGlossaryNameOrEntryName(const std::string& n) const
   {
     using namespace std;
-    map<string,string>::const_iterator p;
-    for(p=this->glossaryNames.begin();p!=this->glossaryNames.end();++p){
-      if(p->second==n){
-	return p->first;
+    for(const auto& e : this->glossaryNames){
+      if(e.second==n){
+	return e.first;
       }
     }
-    for(p=this->entryNames.begin();p!=this->entryNames.end();++p){
-      if(p->second==n){
-	return p->first;
+    for(const auto& e : this->entryNames){
+      if(e.second==n){
+	return e.first;
       }
     }
     string msg("BehaviourData::getVariableNameFromGlossaryNameOrEntryName : "

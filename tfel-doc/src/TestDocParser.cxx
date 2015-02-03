@@ -102,7 +102,7 @@ namespace tfel{
 	} else if((key=="install")||(key=="prefix")){
 	  this->getStringValue(t.install,t.name,key,p);
 	} else if(key=="category"){
-	  map<string,string>& categories = getCategoriesMap("english");
+	  auto& categories = getCategoriesMap("english");
 	  map<string,string>::const_iterator pc;
 	  this->getStringValue(c,t.name,key,p);
 	  pc = categories.find(c);
@@ -163,7 +163,7 @@ namespace tfel{
 	msg += " 'for test '"+n+"'";
 	throw(runtime_error(msg));
       }
-      string& d = dm[l];
+      auto& d = dm[l];
       this->readSpecifiedToken("{",p);
       this->checkNotEndOfFile(p);
       while(p->value!="}"){
@@ -185,7 +185,7 @@ namespace tfel{
     {
       using namespace std;
       using namespace tfel::utilities;
-      const map<string,string>& k = getKeysMap("english");
+      const auto& k = getKeysMap("english");
       map<string,string>::const_iterator pk;
       this->checkNotEndOfFile(p);
       this->readSpecifiedToken("{",p);
@@ -229,7 +229,7 @@ namespace tfel{
 	  if(p2==i.end()){
 	    p2 = i.insert(make_pair(key2,vector<string>())).first;
 	  }
-	  vector<string>& keys = p2->second;
+	  auto& keys = p2->second;
 	  if(find(keys.begin(),keys.end(),key1)!=keys.end()){
 	    string msg("TestDocParser::treatIndex : ");
 	    msg += "key '"+key1+"' already defined for entry '"+key2+"' for test '"+n+"'";

@@ -108,8 +108,8 @@ namespace mfront{
   {
     using namespace std;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    const std::vector<std::string>& ai = mlif.getRegistredInterfaces();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    const auto& ai = mlif.getRegistredInterfaces();
     vector<string>::const_iterator p2  = ai.begin();
     vector<string>::const_iterator p2e = ai.end();
     string msg ("this parser is used to define material properties. ");
@@ -157,7 +157,7 @@ namespace mfront{
       msg += "material name alreay defined";
       throw(runtime_error(msg));
     }
-    const string& l = this->readOnlyOneToken();
+    const auto& l = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(l,true)){
       string msg("MaterialPropertyDSL::treatLibrary : ");
       msg += "invalid library name '"+l+"'";
@@ -275,11 +275,11 @@ namespace mfront{
   {
     using namespace std;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     vector<string>::const_iterator p2;
     vector<string>::const_iterator p2b;
     vector<string>::const_iterator p2e;
-    const std::vector<std::string>& ai = mlif.getRegistredInterfaces();
+    const auto& ai = mlif.getRegistredInterfaces();
     if(this->interfaces.find(i)!=this->interfaces.end()){
       string msg("MaterialPropertyDSL::addInterface : ");
       msg += "interface '"+i+"' already declared";
@@ -317,13 +317,13 @@ namespace mfront{
   {
     using namespace std;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     set<string>::const_iterator p;
     vector<string>::const_iterator p2;
     set<string> i2(i);
     // searching i2 depedencies
     for(p=i.begin();p!=i.end();++p){
-      const vector<string>& dependencies = mlif.getInterfaceDependencies(*p);
+      const auto& dependencies = mlif.getInterfaceDependencies(*p);
       for(p2=dependencies.begin();p2!=dependencies.end();++p2){
 	i2.insert(*p2);
       }
@@ -538,7 +538,6 @@ namespace mfront{
     using namespace tfel::utilities;
     using namespace tfel::glossary;
     string methodName;
-    typedef map<string,string>::value_type MVType;
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod",".");
     this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
 			    "Expected method name.");
@@ -554,7 +553,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod","(");
     if(methodName=="setGlossaryName"){
-      const Glossary& glossary = Glossary::getGlossary();
+      const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
 			      "Expected glossary name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -580,13 +579,13 @@ namespace mfront{
 		   "'"+glossaryName+"' is not a valid glossary name");
 	throw(runtime_error(msg));
       }
-      const string& k = glossary.getGlossaryEntry(glossaryName).getKey();
-      if(!this->glossaryNames.insert(MVType(this->currentVar,k)).second){
+      const auto& k = glossary.getGlossaryEntry(glossaryName).getKey();
+      if(!this->glossaryNames.insert({this->currentVar,k}).second){
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
     } else if (methodName=="setEntryName"){
-      const Glossary& glossary = Glossary::getGlossary();
+      const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
 			      "Expected entry file name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
@@ -615,7 +614,7 @@ namespace mfront{
 	displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(entryName));
 	throw(runtime_error(msg.str()));
       }
-      if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
+      if(!this->entryNames.insert({this->currentVar,entryName}).second){
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
@@ -660,7 +659,7 @@ namespace mfront{
   {
     using namespace std;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     string key;
     MemberFuncPtr handler = nullptr;
     this->fileName = fileName_;
@@ -763,7 +762,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     set<string>::const_iterator p;
     if(this->className.empty()){
       string msg("MaterialPropertyDSL::writeOutputFiles : ");
@@ -835,7 +834,7 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     Map osources;
     set<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
@@ -843,7 +842,7 @@ namespace mfront{
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractMaterialPropertyInterface *interface = mlif.getInterfacePtr(*i);
-      const Map& isources = interface->getGeneratedSources(this->library,
+      const auto& isources = interface->getGeneratedSources(this->library,
 							   this->material,
 							   this->className);
       for(p=isources.begin();p!=isources.end();++p){
@@ -866,13 +865,13 @@ namespace mfront{
   {
     using namespace std;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     vector<string> incs;
     set<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractMaterialPropertyInterface *interface = mlif.getInterfacePtr(*i);
-      const vector<string>& iincs = interface->getGeneratedIncludes(this->library,
+      const auto& iincs = interface->getGeneratedIncludes(this->library,
 								    this->material,
 								    this->className);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
@@ -886,14 +885,14 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     Map incs;
     set<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractMaterialPropertyInterface *interface = mlif.getInterfacePtr(*i);
-      const Map& iincs = interface->getGlobalIncludes(this->library,
+      const auto& iincs = interface->getGlobalIncludes(this->library,
 						      this->material,
 						      this->className);
       for(p=iincs.begin();p!=iincs.end();++p){
@@ -909,14 +908,14 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     Map deps;
     set<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractMaterialPropertyInterface *interface = mlif.getInterfacePtr(*i);
-      const Map& ideps = interface->getGlobalDependencies(this->library,
+      const auto& ideps = interface->getGlobalDependencies(this->library,
 							  this->material,
 							  this->className);
       for(p=ideps.begin();p!=ideps.end();++p){
@@ -932,7 +931,7 @@ namespace mfront{
     using namespace std;
     typedef map<string,vector<string> > Map;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     Map deps;
     set<string>::const_iterator i;
     map<string,vector<string> >::const_iterator p;
@@ -940,7 +939,7 @@ namespace mfront{
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
       AbstractMaterialPropertyInterface *interface = mlif.getInterfacePtr(*i);
-      const Map& ideps = interface->getLibrariesDependencies(this->library,
+      const auto& ideps = interface->getLibrariesDependencies(this->library,
 							     this->material,
 							     this->className);
       for(p=ideps.begin();p!=ideps.end();++p){
@@ -1083,14 +1082,14 @@ namespace mfront{
   {
     using namespace std;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     typedef map<string,pair<vector<string>,vector<string> > > Target;
     Target res;
     set<string>::const_iterator p;
     Target::const_iterator p2;
     for(p=this->interfaces.begin();p!=this->interfaces.end();++p){
       AbstractMaterialPropertyInterface *i = mlif.getInterfacePtr(*p);
-      const Target& targets = i->getSpecificTargets(this->library,
+      const auto& targets = i->getSpecificTargets(this->library,
 						    this->material,
 						    this->className,
 						    this->librariesDependencies);
@@ -1112,7 +1111,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    MLIF& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
     set<string>::const_iterator i;

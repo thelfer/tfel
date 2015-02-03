@@ -324,7 +324,7 @@ namespace mfront{
   {
     using namespace std;
     const string btype = this->mb.getBehaviourTypeFlag();
-    const BehaviourData& d = this->mb.getBehaviourData(h);
+    const auto& d = this->mb.getBehaviourData(h);
     vector<BoundsDescription>::const_iterator p;
     vector<FlowHandler>::const_iterator p2;
     unsigned short n;

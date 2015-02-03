@@ -264,7 +264,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   // gathering all names
   vector<string> names;
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
-    const vector<string>& n = p->getNames();
+    const auto& n = p->getNames();
     names.insert(names.end(),n.begin(),n.end());
   }
   // writting headers
@@ -404,9 +404,9 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   }
   vector<string>::size_type pos = 0;
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
-    const string& d  = replace_all(serialize(p->getDescription(),"description"),"\\","\\\\");
-    const string& n  = replace_all(serialize(p->getNotes(),"notes"),"\\","\\\\");
-    const vector<string>& names = p->getNames();
+    const auto& d = replace_all(serialize(p->getDescription(),"description"),"\\","\\\\");
+    const auto& n = replace_all(serialize(p->getNotes(),"notes"),"\\","\\\\");
+    const auto& names = p->getNames();
     src << "const GlossaryEntry Glossary::" << p->getKey() << "("
 	<< "\"" << replace_all(p->getKey(),"\\","\\\\")  << "\",";
     if(names.size()==1u){
@@ -487,7 +487,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
       << "if(p->getKey()==n){" << endl
       << "return p;" << endl
       << "}" << endl
-      << "const vector<string>& names = p->getNames();" << endl
+      << "const auto& names = p->getNames();" << endl
       << "if(find(names.begin(),names.end(),n)!=names.end()){" << endl
       << "return p;" << endl
       << "}" << endl
@@ -520,7 +520,7 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
   // gathering all names
   vector<string> names;
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
-    const vector<string>& n = p->getNames();
+    const auto& n = p->getNames();
     names.insert(names.end(),n.begin(),n.end());
   }
   // writting headers
@@ -627,9 +627,9 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
 
   vector<string>::size_type pos = 0;
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
-    const string& d  = replace_all(serialize(p->getDescription(),"description"),"\\","\\\\");
-    const string& n  = replace_all(serialize(p->getNotes(),"notes"),"\\","\\\\");
-    const vector<string>& names = p->getNames();
+    const auto& d = replace_all(serialize(p->getDescription(),"description"),"\\","\\\\");
+    const auto& n = replace_all(serialize(p->getNotes(),"notes"),"\\","\\\\");
+    const auto& names = p->getNames();
     src << "const GlossaryEntry Glossary::" << p->getKey() << "("
   << "\"" << replace_all(p->getKey(),"\\","\\\\")  << "\",";
     if(names.size()==1u){
@@ -681,7 +681,7 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
   src << "  using namespace std;" << endl;
   src << "  set<GlossaryEntry>::const_iterator p;" << endl;
   src << "  for(p=this->entries.begin();p!=this->entries.end();++p){" << endl;
-  src << "    const vector<string>& n = p->getNames();" << endl;
+  src << "    const auto& n = p->getNames();" << endl;
   src << "    if(find(n.begin(),n.end(),w)!=n.end()){" << endl;
   src << "      return true;" << endl;
   src << "    }" << endl;
@@ -740,7 +740,7 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer)
        << ".def(\"contains\",&Glossary::contains)" << endl;
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
     psrc << ".def_readonly(\"" << p->getKey() << "\",&Glossary::" << p->getKey();
-    const string& d = replace_all(p->getShortDescription(),"\\","\\\\");
+    const auto& d = replace_all(p->getShortDescription(),"\\","\\\\");
     if(!d.empty()){
       psrc << ",\n\"" << d << "\"";
     }
@@ -763,7 +763,7 @@ void generateXMLOutput(const GlossaryTokenizer& tokenizer)
   xml << "<?xml version=\"1.0\"?>" << endl;
   xml << "<glossary>" << endl;
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
-    const vector<std::string>& n = p->getNames();
+    const auto& n = p->getNames();
     xml << "<glossary_entry key=\"" << p->getKey() << "\">" << endl;
     for(vector<string>::const_iterator pn=n.begin();pn!=n.end();++pn){
       xml << "<name>" << *pn << "</name>" << endl;
@@ -773,7 +773,7 @@ void generateXMLOutput(const GlossaryTokenizer& tokenizer)
     xml << "<short_description>" << p->getShortDescription() << "</short_description>" << endl;
     xml << "<description>" << endl
 	<< "<![CDATA[" << endl;
-    const vector<string>& d =  p->getDescription();
+    const auto& d = p->getDescription();
     for(vector<string>::const_iterator p2=d.begin();p2!=d.end();++p2){
       xml << *p2 << endl;
     }
@@ -805,7 +805,7 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer)
   doc << "\\newcommand{\\deriv}[2]{{\\displaystyle \\frac{\\displaystyle \\partial #1}{\\displaystyle \\partial #2}}}" << endl;
 
   for(p=tokenizer.begin();p!=tokenizer.end();++p){
-    const vector<string>& n = p->getNames();
+    const auto& n = p->getNames();
     doc << endl;
     doc << "# L'entrée " << p->getKey() << endl << endl;
     if(!p->getShortDescription().empty()){
@@ -835,14 +835,14 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer)
     } else {
       doc << "* type : unsupported type" << endl;
     }
-    const vector<string>& d =  p->getDescription();
+    const auto& d = p->getDescription();
     if(!d.empty()){
       doc << endl << "## Description" << endl << endl;
     }
     for(vector<string>::const_iterator p2=d.begin();p2!=d.end();++p2){
       doc << *p2 << endl;
     }
-    const vector<string>& notes =  p->getNotes();
+    const auto& notes = p->getNotes();
     if(!notes.empty()){
       doc << endl << "## Notes " << endl << endl;
     }

@@ -55,7 +55,7 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
+  auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("tvector5.xml");
   TestResult r = manager.execute();

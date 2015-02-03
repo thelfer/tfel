@@ -37,7 +37,7 @@ namespace mfront
     using namespace tfel::system;
     using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getAsterFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
     bool eo = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);

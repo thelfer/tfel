@@ -89,7 +89,7 @@ namespace mfront
     this->ita_u2 = u1;
     if((iter>=this->itat)&&((iter-this->itat)%2==0)){
       if(getVerboseMode()>=VERBOSE_LEVEL1){
-	ostream& log = getLogStream();
+	auto& log = getLogStream();
 	log << "Irons Tuck acceleration convergence" << endl;
       }
       this->ita_du  = this->ita_u2-this->ita_u1;

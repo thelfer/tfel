@@ -73,11 +73,11 @@ namespace mfront
     for(const Hypothesis* ph = hypotheses;ph!=hypotheses+3u;++ph){
       const Hypothesis h = *ph;
       if(mb.isModellingHypothesisSupported(h)){
-	const BehaviourData& d = mb.getBehaviourData(h);
-	const VariableDescriptionContainer& mps  = d.getMaterialProperties();
+	const auto& d = mb.getBehaviourData(h);
+	const auto& mps = d.getMaterialProperties();
 	for(const auto & v : mps){
 	  
-	  const string& name = d.getExternalName(v.name);
+	  const auto& name = d.getExternalName(v.name);
 	  if(v.arraySize==1u){
 	    mp_names.insert(name);
 	  } else {
@@ -106,11 +106,11 @@ namespace mfront
     for(const Hypothesis* ph = hypotheses;ph!=hypotheses+3u;++ph){
       const Hypothesis h = *ph;
       if(mb.isModellingHypothesisSupported(h)){
-	const BehaviourData& d         = mb.getBehaviourData(h);
-	const VariableDescriptionContainer& svs  = d.getPersistentVariables();
+	const auto& d = mb.getBehaviourData(h);
+	const auto& svs = d.getPersistentVariables();
 	for(const auto & sv : svs){
 	  if(s.contains(sv.name)){
-	    const VariableDescription& v = s.getVariable(sv.name);
+	    const auto& v = s.getVariable(sv.name);
 	    if((sv.type!=v.type)||(sv.arraySize!=v.arraySize)){
 	      string msg("getAllStateVariables : "
 			 "inconsistent type for variable '"+sv.name+"'");
@@ -256,7 +256,7 @@ namespace mfront
     // treatment 
     set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour
-    const set<Hypothesis>& bh = mb.getModellingHypotheses();
+    const auto& bh = mb.getModellingHypotheses();
     if(bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)!=bh.end()){
       h.insert(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
     }
@@ -289,8 +289,8 @@ namespace mfront
 					    const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& persistentVarsHolder = d.getPersistentVariables();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& persistentVarsHolder = d.getPersistentVariables();
     if(!persistentVarsHolder.empty()){
       behaviourDataFile << "void" << endl
     			<< "ZMATexportStateData("
@@ -310,7 +310,7 @@ namespace mfront
     }
     behaviourDataFile << "zmat::ZMATInterface::convert(&ZMATsig[0],this->sig);" << endl;
     if(!persistentVarsHolder.empty()){
-      behaviourDataFile << "ZSET::INTERNAL_VARIABLE_VECTOR& ZMATstatev = ZMATdata.var_int()[0];" << endl;
+      behaviourDataFile << "auto& ZMATstatev = ZMATdata.var_int()[0];" << endl;
       VariableDescriptionContainer::const_iterator p;
       SupportedTypes::TypeSize currentOffset;
       for(p=persistentVarsHolder.begin();p!=persistentVarsHolder.end();++p){
@@ -420,10 +420,10 @@ namespace mfront
 						     const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& mps = d.getMaterialProperties();
-    const VariableDescriptionContainer& ivs = d.getPersistentVariables();
-    const VariableDescriptionContainer& evs = d.getExternalStateVariables();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& mps = d.getMaterialProperties();
+    const auto& ivs = d.getPersistentVariables();
+    const auto& evs = d.getExternalStateVariables();
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
       string msg("ZMATInterface::writeBehaviourDataConstructor : "
@@ -478,7 +478,7 @@ namespace mfront
       out << "const ZSET::ARRAY<int>&){" << endl;
     }
     if(!ivs.empty()){
-      out << "const ZSET::INTERNAL_VARIABLE_VECTOR& ZMATstatev = ZMATdata.var_int_ini()[0];"  << endl;
+      out << "const auto& ZMATstatev = ZMATdata.var_int_ini()[0];"  << endl;
     }
     out << "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_t = *(ZMATdata.param_set_ini());"  << endl;
     out << "zmat::ZMATInterface::convert(this->sig,&ZMATsig[0]);" << endl;
@@ -731,8 +731,8 @@ namespace mfront
 						       const BehaviourDescription& mb) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& evs  = d.getExternalStateVariables();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& evs = d.getExternalStateVariables();
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
       string msg("ZMATInterface::writeBehaviourDataConstructor : "
@@ -858,7 +858,7 @@ namespace mfront
     const string name = mb.getLibrary()+mb.getClassName();
     const string headerFileName("ZMAT"+name+".hxx");
     const string srcFileName("ZMAT"+name+".cxx");
-    const std::set<std::string>& all_mp_names = getAllMaterialPropertiesNames(mb);
+    const auto& all_mp_names = getAllMaterialPropertiesNames(mb);
     const unsigned short nbh =
       (mb.isModellingHypothesisSupported(ModellingHypothesis::TRIDIMENSIONAL) ? 1 : 0) +
       (mb.isModellingHypothesisSupported(ModellingHypothesis::GENERALISEDPLANESTRAIN) ? 1 : 0) +
@@ -994,7 +994,7 @@ namespace mfront
     }
     out << "//! material properties" << endl;
     out << "ARRAY<COEFF> mprops; " << endl;
-    const VariableDescriptionContainer& svs = getAllStateVariables(mb);
+    const auto& svs = getAllStateVariables(mb);
     if(!svs.empty()){
       for(const auto & sv : svs){
 	out << "//! '" << sv.name << "' state variable" << endl;
@@ -1245,10 +1245,10 @@ namespace mfront
 	  << "\"'" << mb.getClassName() << "' behaviour\");" << endl;
       return;
     }
-    const BehaviourData& d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& mps  = d.getMaterialProperties();
-    const VariableDescriptionContainer& isvs = d.getPersistentVariables();
-    const VariableDescriptionContainer& esvs = d.getExternalStateVariables();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& mps = d.getMaterialProperties();
+    const auto& isvs = d.getPersistentVariables();
+    const auto& esvs = d.getExternalStateVariables();
     const unsigned short dime = getSpaceDimension(h);
     const int mps_size  = this->getTotalSize(mps).getValueForDimension(dime);
     if(!mps.empty()){
@@ -1286,7 +1286,7 @@ namespace mfront
     out << "for(;;){" << endl;
     out << "STRING str=file.getSTRING();" << endl;
     out << "if(this->base_read(str,file)){" << endl;
-    const set<string>& all_mp_names = getAllMaterialPropertiesNames(mb);
+    const auto& all_mp_names = getAllMaterialPropertiesNames(mb);
     if(!all_mp_names.empty()){
       out << "} else if((str==\"**model_coef\")||(str==\"**material_properties\")){" << endl;
       out << "this->initializeMaterialProperties" << getSpaceDimensionSuffix(h) << "(file);" << endl;
@@ -1324,7 +1324,7 @@ namespace mfront
       int i=0;
       for(pev=esvs.begin();pev!=esvs.end();++pev){
 	const VariableDescription& v = *pev;
-	const string& name = d.getExternalName(v.name);
+	const auto& name = d.getExternalName(v.name);
 	if(v.arraySize==1u){
 	  out << "this->evs_positions[" << i << "] = " 
 	      << "EXTERNAL_PARAM::rank_of_nodal_ip(\"" << name << "\");" << endl;
@@ -1352,8 +1352,8 @@ namespace mfront
 						     const ZMATInterface::Hypothesis h) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& params = d.getParameters();
+    const auto& d = mb.getBehaviourData(h);
+    const auto& params = d.getParameters();
     const vector<string> pnames = d.getExternalNames(params);
     VariableDescriptionContainer::const_iterator p;
     vector<string>::const_iterator pn;
@@ -1396,9 +1396,9 @@ namespace mfront
 							     const ZMATInterface::Hypothesis h) const
   {
     using namespace std;
-    const BehaviourData& d = mb.getBehaviourData(h);
-    const VariableDescriptionContainer& mps  = d.getMaterialProperties();
-    const set<string>& all_mp_names = getAllMaterialPropertiesNames(mb);
+    const auto& d = mb.getBehaviourData(h);
+    const auto& mps = d.getMaterialProperties();
+    const auto& all_mp_names = getAllMaterialPropertiesNames(mb);
     const vector<string> mpnames = d.getExternalNames(mps);
     const unsigned short nbh =
       (mb.isModellingHypothesisSupported(ModellingHypothesis::TRIDIMENSIONAL) ? 1 : 0) +

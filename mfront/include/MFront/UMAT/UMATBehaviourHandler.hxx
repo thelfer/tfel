@@ -179,8 +179,8 @@ namespace umat
 	pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	BV b(bData,iData);
 	b.computeStressFreeExpansion(s);
-	const StressFreeExpansionType& s0 = s.first;
-	const StressFreeExpansionType& s1 = s.second;
+	const auto& s0 = s.first;
+	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],UMATInt(N));
 	bData.setUMATBehaviourDataDrivingVariables(dv0);
 	iData.setUMATIntegrationDataDrivingVariables(dv1);
@@ -215,8 +215,8 @@ namespace umat
 	}
 	pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	b.computeStressFreeExpansion(s);
-	const StressFreeExpansionType& s0 = s.first;
-	const StressFreeExpansionType& s1 = s.second;
+	const auto& s0 = s.first;
+	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],UMATInt(N));
 	b.setUMATBehaviourDataDrivingVariables(dv0);
 	b.setUMATIntegrationDataDrivingVariables(dv1);
@@ -432,7 +432,7 @@ namespace umat
 	} else {
 	  throwInvalidDDSOEException(Traits::getName(),*DDSOE);
 	}
-	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	const auto& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
 		     this->PROPS+UMATTraits<BV>::propertiesOffset,
 		     this->STATEV,this->PREDEF,this->DPRED);
@@ -484,7 +484,7 @@ namespace umat
 	} else {
 	  throwInvalidDDSOEException(Traits::getName(),*ddsoe);
 	}
-	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	const auto& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
 		     this->PROPS+UMATTraits<BV>::propertiesOffset,
 		     this->STATEV,this->PREDEF,this->DPRED);
@@ -539,7 +539,7 @@ namespace umat
 	  GeneralConsistentTangentOperatorComputer>::type,
 	  ConsistentTangentOperatorIsNotAvalaible
 	  >::type ConsistentTangentOperatorHandler;
-	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	const auto& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	BData bData(this->TEMP,this->PROPS+UMATTraits<BV>::propertiesOffset,
 		    this->STATEV,this->PREDEF);
 	IData iData(this->DTIME,this->DTEMP,this->DPRED);
@@ -654,7 +654,7 @@ namespace umat
 	      Traits::hasStressFreeExpansion,
 	      DrivingVariableInitialiserWithStressFreeExpansion,
 	      DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	    const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
+	    const auto& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	    SInitializer::exe(this->behaviour,PROPS);
 	    AInitializer::exe(this->behaviour,PROPS);
 	    DVInitializer::exe(this->behaviour,STRAN,DSTRAN,sfeh);

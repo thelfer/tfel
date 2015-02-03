@@ -25,7 +25,7 @@ namespace mfront{
   {
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = ELM::getExternalLibraryManager();
     this->f = elm.getCastemFunction(l,fn);
     if(elm.getCastemFunctionNumberOfVariables(l,fn)!=0u){
       elm.getCastemFunctionVariables(this->vnames,l,fn);
