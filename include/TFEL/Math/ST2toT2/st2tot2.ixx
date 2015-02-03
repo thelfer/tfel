@@ -39,7 +39,7 @@ namespace tfel{
       Child&>::type
     st2tot2_base<Child>::operator=(const ST2toT2Type& src)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::copy(src,child);
@@ -56,7 +56,7 @@ namespace tfel{
       Child&>::type
     st2tot2_base<Child>::operator+=(const ST2toT2Type& src)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::plusEqual(child,src);
@@ -74,7 +74,7 @@ namespace tfel{
       Child&>::type
     st2tot2_base<Child>::operator-=(const ST2toT2Type& src)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::minusEqual(child,src);
@@ -92,7 +92,7 @@ namespace tfel{
       Child&>::type
     st2tot2_base<Child>::operator*=(const T2 s)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::multByScalar(child,s);
@@ -110,7 +110,7 @@ namespace tfel{
       Child&>::type
     st2tot2_base<Child>::operator/=(const T2 s)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::divByScalar(child,s);

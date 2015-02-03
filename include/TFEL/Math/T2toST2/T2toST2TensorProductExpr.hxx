@@ -39,8 +39,7 @@ namespace tfel
     template<typename StensorResultType>
     struct StensorExpr<StensorResultType,T2toST2TensorProductExpr<1u> >
       : public StensorConcept<StensorExpr<StensorResultType,T2toST2TensorProductExpr<1u> > >,
-	public fsarray<StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
-		       typename StensorTraits<StensorResultType>::NumType>
+	public fsarray<3u,typename StensorTraits<StensorResultType>::NumType>
     {
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -70,6 +69,8 @@ namespace tfel
 	this->v[1]=a(1,0)*b(0)+a(1,1)*b(1)+a(1,2)*b(2);
 	this->v[2]=a(2,0)*b(0)+a(2,1)*b(1)+a(2,2)*b(2);
       } // end of StensorExpr
+      //! using operator []
+      using fsarray<3u,value_type>::operator[];
       /*!
        * \brief access operator
        * \param[in] i : index
@@ -95,8 +96,7 @@ namespace tfel
     template<typename StensorResultType>
     struct StensorExpr<StensorResultType,T2toST2TensorProductExpr<2u> >
       : public StensorConcept<StensorExpr<StensorResultType,T2toST2TensorProductExpr<2u> > >,
-	public fsarray<StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
-		       typename StensorTraits<StensorResultType>::NumType>
+	public fsarray<4u,typename StensorTraits<StensorResultType>::NumType>
     {
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -127,6 +127,8 @@ namespace tfel
 	this->v[2]=a(2,4)*b[4]+a(2,3)*b[3]+a(2,2)*b[2]+a(2,1)*b[1]+a(2,0)*b[0];
 	this->v[3]=a(3,4)*b[4]+a(3,3)*b[3]+a(3,2)*b[2]+a(3,1)*b[1]+a(3,0)*b[0];
       } // end of StensorExpr
+      //! using operator []
+      using fsarray<4u,value_type>::operator[];
       /*!
        * \brief access operator
        * \param[in] i : index
@@ -152,8 +154,7 @@ namespace tfel
     template<typename StensorResultType>
     struct StensorExpr<StensorResultType,T2toST2TensorProductExpr<3u> >
       : public StensorConcept<StensorExpr<StensorResultType,T2toST2TensorProductExpr<3u> > >,
-	public fsarray<StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
-		       typename StensorTraits<StensorResultType>::NumType>
+	public fsarray<6u,typename StensorTraits<StensorResultType>::NumType>
     {
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -186,6 +187,8 @@ namespace tfel
 	this->v[4]=a(4,8)*b[8]+a(4,7)*b[7]+a(4,6)*b[6]+a(4,5)*b[5]+a(4,4)*b[4]+a(4,3)*b[3]+a(4,2)*b[2]+a(4,1)*b[1]+a(4,0)*b[0];
 	this->v[5]=a(5,8)*b[8]+a(5,7)*b[7]+a(5,6)*b[6]+a(5,5)*b[5]+a(5,4)*b[4]+a(5,3)*b[3]+a(5,2)*b[2]+a(5,1)*b[1]+a(5,0)*b[0];
       } // end of StensorExpr
+      //! using operator []
+      using fsarray<6u,value_type>::operator[];
       /*!
        * \brief access operator
        * \param[in] i : index

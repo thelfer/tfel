@@ -64,6 +64,8 @@ namespace tfel{
 	: Expr(a_,b_)
       {}
 
+      using Expr::operator[];
+
       using Expr::operator();
 
       using Expr::operator=;

@@ -210,7 +210,7 @@ namespace tfel
 	throw(CubicSplineUninitialised());
       }
       if (this->values.size() == 1) {
-	const value& f = values.back().y;
+	const auto& f = values.back().y;
 	return f*(xb-xa);
       }
       if(xb<xa){
@@ -221,8 +221,8 @@ namespace tfel
       if(pa==pb){
 	if(pb==this->values.begin()){
 	  const real   xe = this->values.front().x;
-	  const value& ye = this->values.front().y;
-	  const value& df = this->values.front().d;
+	  const auto& ye = this->values.front().y;
+	  const auto& df = this->values.front().d;
 	  // l'équation de l'extrapoltion est :
 	  // y = ye-df*xe + df*x
 	  // l'intégrale est alors:
@@ -230,8 +230,8 @@ namespace tfel
 	  return ye*(xb-xa)+0.5*df*((xb-xe)*(xb-xe)-(xa-xe)*(xa-xe));
 	} else if(pb==this->values.end()){
 	  const real   xe = this->values.back().x;
-	  const value& ye = this->values.back().y;
-	  const value& df = this->values.back().d;
+	  const auto& ye = this->values.back().y;
+	  const auto& df = this->values.back().d;
 	  // l'équation de l'extrapoltion est :
 	  // y = ye-df*xe + df*x
 	  // l'intégrale est alors:
@@ -247,8 +247,8 @@ namespace tfel
       value s(real(0));
       if(pa==this->values.begin()){
 	const real   xe = this->values.front().x;
-	const value& ye = this->values.front().y;
-	const value& df = this->values.front().d;
+	const auto& ye = this->values.front().y;
+	const auto& df = this->values.front().d;
 	// l'équation de l'extrapoltion est :
 	// y = ye-df*xe + df*x
 	// l'intégrale est alors:
@@ -259,8 +259,8 @@ namespace tfel
       }
       if(pb==this->values.end()){
 	const real   xe = this->values.back().x;
-	const value& ye = this->values.back().y;
-	const value& df = this->values.back().d;
+	const auto& ye = this->values.back().y;
+	const auto& df = this->values.back().d;
 	// l'équation de l'extrapoltion est :
 	// y = ye-df*xe + df*x
 	// l'intégrale est alors:

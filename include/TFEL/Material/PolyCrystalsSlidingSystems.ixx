@@ -43,7 +43,7 @@ namespace tfel
       using namespace tfel::math;
       using namespace tfel::utilities;
       // the sliding systems of one phase
-      const GS& gs = GS::getSlidingSystems();
+      const auto& gs = GS::getSlidingSystems();
       if(f.empty()){
 	for (unsigned short i=0;i!=Np;i++){
 	  // allocting memory
@@ -51,7 +51,7 @@ namespace tfel
 	  // rotation matrix
 	  tmatrix<3u,3u,real> drot = getRandomRotationMatrix<real>();
 	  for (unsigned short j=0;j!=Nss;j++){
-	    StrainStensor& mu = this->mus[i][j];
+	    auto& mu = this->mus[i][j];
 	    // local tensor of directional sense
 	    mu = gs.mus[j];
 	    // change to the global direction
@@ -87,7 +87,7 @@ namespace tfel
 	  drot(2,1) = -sinthe*cospsi;
 	  drot(2,2) =  costhe;
 	  for (unsigned short j=0;j!=Nss;j++){
-	    StrainStensor& mu = this->mus[i][j];
+	    auto& mu = this->mus[i][j];
 	    mu = gs.mus[j];
 	    mu.changeBasis(drot);
 	  }

@@ -26,7 +26,7 @@ namespace tfel
     template<typename T>
     TestProxy<T>::TestProxy(const std::string& n)
     {
-      TestManager& tm = TestManager::getTestManager();
+      auto& tm = TestManager::getTestManager();
       tm.addTest(n,std::shared_ptr<Test>(new T()));
     } // end of TestProxy<T>::TestProxy
 
@@ -35,7 +35,7 @@ namespace tfel
     TestProxy<T>::TestProxy(const std::string& n,
 			    const T2& t)
     {
-      TestManager& tm = TestManager::getTestManager();
+      auto& tm = TestManager::getTestManager();
       tm.addTest(n,std::shared_ptr<Test>(new T(t)));
     } // end of TestProxy<T>::TestProxy
 
@@ -46,7 +46,7 @@ namespace tfel
 			    const T2& t1,
 			    const T3& t2)
     {
-      TestManager& tm = TestManager::getTestManager();
+      auto& tm = TestManager::getTestManager();
       tm.addTest(n,std::shared_ptr<Test>(new T(t1,t2)));
     } // end of TestProxy<T>::TestProxy
     

@@ -43,7 +43,7 @@ namespace tfel{
 	  if(std::abs(mv[i])<eps){
 	    throw(LUNullPivot());
 	  }
-	  T& xv = x(i);
+	  auto& xv = x(i);
 	  xv -= v;
 	  xv /= mv[i];
 	}
@@ -70,7 +70,7 @@ namespace tfel{
 	  if(std::abs(mv[i])<eps){
 	    throw(LUNullPivot());
 	  }
-	  T& xv = x(pi);
+	  auto& xv = x(pi);
 	  xv -= v;
 	  xv /= mv[i];
 	}

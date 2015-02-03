@@ -635,7 +635,7 @@ namespace tfel{
 				       typename StensorTraits<Child>::NumType>::cond,
       Child&>::type
     stensor_base<Child>::operator=(const StensorType& src){
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       vectorToTab<StensorDimeToSize<StensorTraits<Child>::dime>::value>::exe(src,child);
       return child;
     }
@@ -649,7 +649,7 @@ namespace tfel{
 				       typename StensorTraits<Child>::NumType>::cond,
       Child&>::type
     stensor_base<Child>::operator+=(const StensorType& src){
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       VectorUtilities<StensorDimeToSize<StensorTraits<Child>::dime>::value>::PlusEqual(child,src);
       return child;
     }
@@ -663,7 +663,7 @@ namespace tfel{
 				       typename StensorTraits<Child>::NumType>::cond,
       Child&>::type
     stensor_base<Child>::operator-=(const StensorType& src){
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       VectorUtilities<StensorDimeToSize<StensorTraits<Child>::dime>::value>::MinusEqual(child,src);
       return child;
     }
@@ -679,7 +679,7 @@ namespace tfel{
     Child&>::type
     stensor_base<Child>::operator*=(const T2 s)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       VectorUtilities<StensorDimeToSize<StensorTraits<Child>::dime>::value>::scale(child,s);
       return child;
     }
@@ -695,7 +695,7 @@ namespace tfel{
     Child&>::type
     stensor_base<Child>::operator/=(const T2 s)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       VectorUtilities<StensorDimeToSize<StensorTraits<Child>::dime>::value>::scale(child,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
       return child;
     }

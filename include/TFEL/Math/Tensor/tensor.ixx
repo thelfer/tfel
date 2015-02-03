@@ -248,7 +248,7 @@ namespace tfel{
 				       typename TensorTraits<Child>::NumType>::cond,
       Child&>::type
     tensor_base<Child>::operator=(const TensorType& src){
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       vectorToTab<TensorDimeToSize<TensorTraits<Child>::dime>::value>::exe(src,child);
       return child;
     }
@@ -262,7 +262,7 @@ namespace tfel{
 				       typename TensorTraits<Child>::NumType>::cond,
       Child&>::type
     tensor_base<Child>::operator+=(const TensorType& src){
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::PlusEqual(child,src);
       return child;
     }
@@ -276,7 +276,7 @@ namespace tfel{
 				       typename TensorTraits<Child>::NumType>::cond,
       Child&>::type
     tensor_base<Child>::operator-=(const TensorType& src){
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::MinusEqual(child,src);
       return child;
     }
@@ -292,7 +292,7 @@ namespace tfel{
       Child&>::type
     tensor_base<Child>::operator*=(const T2 s)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::scale(child,s);
       return child;
     }
@@ -308,7 +308,7 @@ namespace tfel{
       Child&>::type
     tensor_base<Child>::operator/=(const T2 s)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::scale(child,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
       return child;
     }

@@ -227,10 +227,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/Range.hxx			                                             \
 			TFEL/Math/Vector/VectorVectorDotProduct.hxx                                                  \
 			TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx                                            \
-			TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx                                   \
+			TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx                                          \
 			TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx                                \
 			TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx                              \
-			TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx                                          \
+			TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx                                   \
 			TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorViewIO.hxx                                 \
 			TFEL/Math/Vector/TVectorFromTinyVectorView.hxx						     \
 			TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx					     \

@@ -65,7 +65,7 @@ namespace tfel{
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type 
     tmatrix_base<Child,N,M,T>::operator=(const MatrixExpr<tmatrix<N,M,T2>, Expr>& src){
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::copy(src,child);
       return child;
     }
@@ -77,7 +77,7 @@ namespace tfel{
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator=(const tmatrix<N,M,T2>& src)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::copy(src,child);
       return child;
     }
@@ -88,7 +88,7 @@ namespace tfel{
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type 
     tmatrix_base<Child,N,M,T>::operator+=(const MatrixExpr<tmatrix<N,M,T2>, Expr>& src){
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::plusEqual(child,src);
       return child;
     }
@@ -100,7 +100,7 @@ namespace tfel{
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator+=(const tmatrix<N,M,T2>& src)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::plusEqual(child,src);
       return child;
     }
@@ -111,7 +111,7 @@ namespace tfel{
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type 
     tmatrix_base<Child,N,M,T>::operator-=(const MatrixExpr<tmatrix<N,M,T2>, Expr>& src){
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::minusEqual(child,src);
       return child;
     }
@@ -123,7 +123,7 @@ namespace tfel{
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator-=(const tmatrix<N,M,T2>& src)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::minusEqual(child,src);
       return child;
     }
@@ -137,7 +137,7 @@ namespace tfel{
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator*=(const T2 s)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::multByScalar(child,s);
       return child;
     }
@@ -151,7 +151,7 @@ namespace tfel{
       Child&>::type
     tmatrix_base<Child,N,M,T>::operator/=(const T2 s)
     {
-      Child& child = static_cast<Child&>(*this);
+      auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::multByScalar(child,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
       return child;
     }
