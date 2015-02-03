@@ -87,10 +87,7 @@ TFEL_TESTS_GENERATE_PROXY(GenTypeTest,"GenType");
 int main(void)
 {
   using namespace std;
-  using namespace std;
-
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("gentype.xml");
