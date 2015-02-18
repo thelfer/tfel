@@ -1,0 +1,19 @@
+@ModellingHypotheses {".+"};
+...
+@StateVariable<PlaneStress> real etozz;
+PlaneStress::etozz.setGlossaryName("AxialStrain");
+...
+@Integrator<PlaneStress,Append,AtEnd>{
+  // the plane stress equation is satisfied at the end of the time step
+  const stress szz = (lambda+2*mu)*(eel(2)+deel(2))
+	+lambda*(eel(0)+deel(0)+eel(1)+deel(1));
+  fetozz   = szz/young;
+  // modification of the partition of strain
+  feel(2) -= detozz;
+  // jacobian
+  dfeel_ddetozz(2)=-1;
+  dfetozz_ddetozz  = real(0);
+  dfetozz_ddeel(2) = (lambda+2*mu)/young;
+  dfetozz_ddeel(0) = lambda/young;
+  dfetozz_ddeel(1) = lambda/young;
+}

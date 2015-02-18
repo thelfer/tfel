@@ -1,0 +1,13 @@
+@UseCastemAccelerationAlgorithm true;
+@ModellingHypothesis 'Axisymmetrical';
+@Behaviour<umat> 'src/libUmatBehaviour.so' 'umatnorton';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'A' 8.e-67;
+@MaterialProperty<constant> 'E' 8.2;
+
+@ImposedStrain 'EZZ' {0:0,3600.:1.e3};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,3600 in 20};

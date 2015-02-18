@@ -1,0 +1,244 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : tfel-3.
+%%	Auteur     : th202608@pleiades077.intra.cea.fr
+%%	Date       : 28 janv. 2015
+%%	Répertoire : /home/th202608/Documents/presentations/2015/MFrontUserMeeting2015/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{beamer}
+
+\usepackage{beamerthemecea2012}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{pstricks}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{couleurs}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{gnuplot}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\python}{\href{https://www.python.org/}{\texttt{python}}}
+
+\newcommand{\unix}{\texttt{Unix}}
+\newcommand{\linux}{\texttt{LiNuX}}
+\newcommand{\freebsd}{\href{https://www.freebsd.org/}{\texttt{FreeBSD}}}
+\newcommand{\opensolaris}{\texttt{OpenSolaris}}
+
+\newcommand{\windows}{\texttt{Windows}}
+
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\umat}{\texttt{umat}}
+
+\newcommand{\adao}{\texttt{adao}}
+\newcommand{\tfel}{\href{http://www.tfel.sourceforge.net}{\texttt{TFEL}}}
+\newcommand{\mfront}{\href{http://www.tfel.sourceforge.net}{\texttt{MFront}}}
+\newcommand{\pleiades}{\texttt{PLEIADES}}
+\newcommand{\salome}{\href{http://www.salome-platform.org}{\texttt{salome}}}
+
+\newcommand{\cea}{\href{http://www.cea.fr}{CEA}}
+\newcommand{\edf}{\href{http://www.edf.com}{EDF}}
+\newcommand{\inria}{\href{http://www.inria.fr}{INRIA}}
+\newcommand{\castem}{\href{http://www-cast3m.cea.fr}{\texttt{Cast3M}}}
+\newcommand{\cyrano}{Cyrano3} 
+\newcommand{\aster}{\href{http://www.code-aster.org}{Code-Aster}} 
+\newcommand{\zebulon}{\href{http://www.zset-software.com/products/zebulon}{\texttt{ZeBuLoN}}}
+\newcommand{\amitex}{\href{http://www.maisondelasimulation.fr/projects/amitex/html}{\texttt{AMITEX\_FFT}}}
+\newcommand{\gpl}{\href{http://www.gnu.org/licenses/gpl-3.0.txt}{GNU Public License}}
+
+\newcommand{\pandoc}{\href{}{pandoc}}
+\newcommand{\gcc}{\href{https://gcc.gnu.org/}{gcc}}
+\newcommand{\clang}{\href{clang.llvm.org}{clang}}
+\newcommand{\icc}{\href{https://software.intel.com/en-us/c-compilers}{icc}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{MSYS}}
+\newcommand{\jenkins}{\href{http://jenkins-ci.org}{\texttt{Jenkins}}}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\tiny,       % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{red},        % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C++,                    % the language of the code
+  morekeywords={Output Author Input Date},            % if you want to add more keywords to the set
+  numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
+  rulecolor=\color{orange},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{green},       % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+}
+
+\Titre{On the road to TFEL \(3.x\)}
+\Auteur{Thomas Helfer}
+\Date{Februar 2015}
+
+
+\begin{document}
+
+\PageTitre{}
+\section{Forewords}
+
+\intercalaire{A changing development model}
+
+\titre{Objectives and financial support}
+\frame{
+  \begin{itemize}
+  \item Up to now, \mfront{} was developed to meet PLEIADES project
+    needs:
+    \begin{itemize}
+    \item clear financial support
+    \item clear objectives: fuel performances codes
+    \end{itemize}
+  \item With open-source, things may change:
+    \begin{itemize}
+    \item "open-sourcisation" was funded by  EDF and CEA:
+      \begin{itemize}
+      \item for 2015, support is limited to the web site maintenance
+        and documentation (ex: mtest documentation)
+      \end{itemize}
+    \item interest of a broader community:
+      \begin{itemize}
+      \item external contributions are welcomed !
+      \item search of additional financial support
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+}
+
+\intercalaire{Planned new mfront features}
+
+\titre{Missing features}
+\frame{
+  \begin{itemize}
+  \item tangent consistent operator for
+    \texttt{MultipleIsotropicMisesCreep}~;
+  \item plane stress (and generalised plane stress) support for
+    specific behaviours
+  \end{itemize}
+  \begin{center}
+    {\bf Interesting for the Cyrano fuel performances codes: planned
+      for 2015/2016}
+  \end{center}
+}
+
+\titre{Various improvements}
+\frame{
+  \begin{itemize}
+  \item the mechanical behaviour shall (to be developed):
+    \begin{itemize}
+    \item give an estimate of the next time step
+    \item warn if the given strain increment is too large
+    \item warn if the given strain increment leads to unreliable
+      results:
+      \begin{itemize}
+      \item an increment of \(10\,\%\) of the equivalent plastic
+        strain is {\bf not} admissible whatever the integration scheme
+        is used
+      \end{itemize}
+    \end{itemize}
+  \item consistent tangent operators in \castem{}/\pleiades{}
+  \end{itemize}
+  \begin{center}
+    {\bf Depends on the evolution of the PLEIADES/COPL operator
+      (2015/2016)}
+  \end{center}
+}
+
+\intercalaire{Interesting evolutions of MFront}
+
+\titre{Port to C++11}
+\frame{
+  \begin{itemize}
+  \item \tfel{} heavily relies on advanced programming techniques:
+    \begin{itemize}
+    \item this is a {\bf serious} maintainability issue
+    \end{itemize}
+  \item Most of those techniques are now part of the C++11 standard
+    \begin{itemize}
+    \item this was anticipated !!
+    \item we reduced the code size by more than \(10\,\%\) only by
+      removing some header and using {\tt sed} !
+    \item generated code is more than \(11\,\%\) smaller !
+    \end{itemize}
+  \item There could be a performance win
+  \end{itemize}
+}
+
+\titre{New algorithms}
+\frame{
+  \begin{itemize}
+  \item the "true" Powell dogleg algorithm
+  \item the Brent method (scalar non linear equation)
+  \item introduce other trust region update algorithm:
+    \begin{itemize}
+    \item in particular non monotonic ones
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Bricks}
+\frame{
+  \lstinputlisting[language=C++]{@abs_top_srcdir@/docs/presentations/mfront-user-meeting-2015/img/ElasticityBrick.mfront}
+  \begin{itemize}
+  \item making a portable behaviour requires {\em too much of boiler
+      plate} code:
+    \begin{itemize}
+    \item \(\approx\, 50\%\) of the \texttt{ImplicitNorton} example
+    \item most of them are related to elasticity !
+    \end{itemize}
+  \item most behaviours are build by adding (uncoupled)
+    plastic/viscoplastic flows and a (damaged) elasticity tensor
+  \item We want to introduce {\em mechanical behaviour bricks} in \mfront{}:
+    \begin{itemize}
+    \item must be compatible/consistent with current \mfront{} practices
+      \begin{itemize}
+      \item some parts of the behaviour may come from bricks, other
+        may come from standard user code
+      \item one must take care of evil details: variation of material
+        properties with temperature, etc..
+      \item requires a dependency manager à la \licos{}
+      \end{itemize}
+    \item one may provide robust and optimised implementations
+    \end{itemize}
+    \begin{itemize}
+    \item we already have an experimental \texttt{Elasticity} brick
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Potential}
+\frame{
+  \begin{itemize}
+  \item integration of some common mechanical behaviours can be
+    written as a minimisation of this potential:
+    \[
+    \rho\phi\paren{\ets{\vec{Y}},\tepsilonto}+\Delta\,t\,D\paren{\Frac{\ets{\vec{Y}}-\bts{\vec{Y}}}{\Delta\,t}}
+    \]
+  \item formalism used in \texttt{matlib} ?
+  \item could probably be extended to implicit standard materials
+    (bipotential)...
+  \item only requires on function definition:
+    \begin{itemize}
+    \item (smart)-automatic differentiation ?
+    \end{itemize}
+  \end{itemize}
+}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
