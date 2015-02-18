@@ -80,9 +80,6 @@
 \newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
 \newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
 
-\newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
-\newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
-\newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
 \newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
 
 \newcommand{\code}[1]{

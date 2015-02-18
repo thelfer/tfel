@@ -56,79 +56,6 @@
   [NW Numerics & Modeling](http://www.nwnumerics.com), Inc (USA) and
   various academic partners.
 
-# Supported modelling hypotheses
-
-|   Solver  |                                                         Convention                                                 |
-|:---------:|:------------------------------------------------------------------------------------------------------------------:|
-|Cast3M     | Axisymmetrical generalised plane strain, plane strain, generalised plane strain, plane stress, axisymmetrical, tridimensional  |
-|Code-Aster | Plane strain, plane stress (1), axisymmetrical, tridimensional                                                     |
-|Zebulon    | \(1D\), \(2D\), \(3D\) (2)                                                                                         |
-|Cyrano     | Axisymmetrical generalised plane strain, axisymmetrical generalised plane stress (3)                               |
-
-(1) Can be supported by the behaviour or by the solver (De Borst)
-(2) Modelling hypothesis is not accessible within the behaviour. Plane stress is supported
-(3) The default.
-
-# Plane stress
-
-- Supported for plane stress and axisymmetrical generalised plane stress *shall* be explicit
-- See the `MFront` documentation
-
-# Prediction operator
-
-|:---------:|:-------:|
-|Cast3M     | No (1)  |
-|Code-Aster | Elastic, secant, tangent |
-|Zebulon    | No      |
-|Cyrano     | No      |
-
-(1) Expected in PLEIADES version (2014 or 2015 ?)
-
-# Consistent tangent operator
-
-|:---------:|:-------:|
-|Cast3M     | No (1)  |
-|Code-Aster | Elastic, secant, tangent, consistent tangent operator  |
-|Zebulon    | Consistent tangent operator (2)  |
-|Cyrano     | Consistent tangent operator      |
-
-(1) Expected in PLEIADES version (2014 or 2015 ?)
-(2) By default.
-
-# Finite strains
-
-![](img/LogarithmicStrainPlasticity-ssna303.svg)
-
-- for standard laws, **use the Miehe logarithmic strains framework**:
-    - available in Cast3M (through `MFront`), Code-Aster, ZeBuLoN
-	- can easily inserted in Cyrano (paper under review)
-- avoid using Cast3M's `PASAPAS` `GRANDS_DEPLACEMENTS` option
-
-# Consistent tangent operator in finite strain
-
-|:---------:|:-------:|
-|Cast3M     | No  |
-|Code-Aster | \(\deriv{\tenseur{\tau}}{\Delta\, \tns{F}}\) (1)  |
-|Zebulon    | `DSIG_DD` (2)  |
-
-**MFront generates convertion between consistent tangent operators :
-  use the most natural one for your formalism**
-
-(1) \(\Delta\, \tns{F} = \ets{\tns{F}}.\left(\bts{\tns{F}}\right)^{-1}\)
-(2) The only finite strain formulation supported by `MFront` is the
-`Updated_Lagrangian`.
-
-
-
-# Orthotropy
-
-![](img/pipe.svg "Recommended definition for the orthotropic axes")
-
-- behaviour and orthotropic axes definitions **must be consistent**
-- no general purpose solver allow uniform definition of the
-  orthotropic axes for all modelling hypotheses
-    - example of pipes
-
 # Strains
 
 |   Solver  |                                                         Convention                                                                            |
@@ -168,5 +95,79 @@
 - Internal state variables are stored using TFEL conventions
     - In the material frame (for orthotropic behaviours)
     - Except for ZeBuLoN
+
+# Orthotropy
+
+![](img/pipe.svg "Recommended definition for the orthotropic axes for pipes")
+
+- behaviour and orthotropic axes definitions **must be consistent**
+- no general purpose solver allow uniform definition of the
+  orthotropic axes for all modelling hypotheses
+    - example of pipes
+
+# Supported modelling hypotheses
+
+|   Solver  |                                                         Convention                                                 |
+|:---------:|:------------------------------------------------------------------------------------------------------------------:|
+|Cast3M     | Axisymmetrical generalised plane strain, plane strain, generalised plane strain, plane stress, axisymmetrical, tridimensional  |
+|Code-Aster | Plane strain, plane stress (1), axisymmetrical, tridimensional                                                     |
+|Zebulon    | \(1D\), \(2D\), \(3D\) (2)                                                                                         |
+|Cyrano     | Axisymmetrical generalised plane strain, axisymmetrical generalised plane stress (3)                               |
+
+(1) Can be supported by the behaviour or by the solver (De Borst)
+(2) Modelling hypothesis is not accessible within the behaviour. Plane
+	stress is supported by the finite element (additional ddl)
+(3) The default.
+
+# Plane stress
+
+- Support for plane stress and axisymmetrical generalised plane
+  stress *shall* be **explicitely provided**
+    - for performance reasons
+- See the `MFront` documentation
+
+# Prediction operator
+
+|:---------:|:-------:|
+|Cast3M     | No (1)  |
+|Code-Aster | Elastic, secant, tangent |
+|Zebulon    | No      |
+|Cyrano     | No      |
+
+(1) Expected in PLEIADES version (2015 ?)
+
+# Consistent tangent operator
+
+|:---------:|:-------:|
+|Cast3M     | No (1)  |
+|Code-Aster | Elastic, secant, tangent, consistent tangent operator  |
+|Zebulon    | Consistent tangent operator (2)  |
+|Cyrano     | Consistent tangent operator      |
+
+(1) Expected in PLEIADES version (2015 ?)
+(2) By default.
+
+# Finite strains
+
+![](img/LogarithmicStrainPlasticity-ssna303.svg)
+
+- for standard laws, **use the Miehe logarithmic strains framework**:
+    - available in Cast3M (through `MFront`), Code-Aster, ZeBuLoN
+	- can easily inserted in Cyrano (paper under review)
+- avoid using Cast3M's `PASAPAS` `GRANDS_DEPLACEMENTS` option
+
+# Consistent tangent operator in finite strain
+
+|:---------:|:-------:|
+|Cast3M     | No  |
+|Code-Aster | \(\deriv{\tenseur{\tau}}{\Delta\, \tns{F}}\) (1)  |
+|Zebulon    | `DSIG_DD` (2)  |
+
+**MFront generates convertion between consistent tangent operators :
+  use the most natural one for your formalism**
+
+(1) \(\Delta\, \tns{F} = \ets{\tns{F}}.\left(\bts{\tns{F}}\right)^{-1}\)
+(2) The only finite strain formulation supported by `MFront` is the
+`Updated_Lagrangian`.
 
 <!-- pandoc -s -f markdown+tex_math_single_backslash --bibliography=bibliography.bib --filter pandoc-citeproc --slide-level 1 --toc --mathjax -i -t revealjs -V theme:beige -H mysettings.css  portability.md -o portability.html -->

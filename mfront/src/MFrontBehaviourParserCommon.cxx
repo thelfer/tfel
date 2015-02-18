@@ -3260,7 +3260,7 @@ namespace mfront{
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
     if(this->mb.hasCode(h,MechanicalBehaviourData::BeforeInitializeLocalVariables)){
       if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingBegin(this->behaviourFile,
+	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
 					       MechanicalBehaviourData::BeforeInitializeLocalVariables,
 					       "binit");
       }
@@ -3272,7 +3272,7 @@ namespace mfront{
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::InitializeLocalVariables)){
       if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingBegin(this->behaviourFile,
+	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
 						     MechanicalBehaviourData::InitializeLocalVariables,"init");
       }
       this->behaviourFile << this->mb.getCodeBlock(h,MechanicalBehaviourData::InitializeLocalVariables).code
@@ -3283,7 +3283,7 @@ namespace mfront{
     }
     if(this->mb.hasCode(h,MechanicalBehaviourData::AfterInitializeLocalVariables)){
       if(this->mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingBegin(this->behaviourFile,
+	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
 					       MechanicalBehaviourData::AfterInitializeLocalVariables,"ainit");
       }
       this->behaviourFile << this->mb.getCodeBlock(h,MechanicalBehaviourData::AfterInitializeLocalVariables).code

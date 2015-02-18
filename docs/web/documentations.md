@@ -24,7 +24,7 @@
 # Talks
 
 - finite strain: [mfront-finitestrain.pdf](documents/mfront-finitestrain/mfront-finitestrain.pdf)
-- [mfront user meeting](documents/mfront-user-meeting/mfront.html)
+- [mfront user meeting](documents/mfront-user-meeting-2015/mfront.html)
 - [writing portable behaviours](documents/portable-behaviour/portability.html)
 - introduction to MFront (talk given at Materiaux 2014 in Montpellier): [materiaux2014.html](documents/Materiaux2014/materiaux2014.html)
 - several applications of MFront to describe elasto-plasticity at

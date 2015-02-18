@@ -1,6 +1,6 @@
-SUBDIRS = mfront-user-meeting \
-	  portable-behaviour  \
-	  Materiaux2014       \
+SUBDIRS = mfront-user-meeting-2015 \
+	  portable-behaviour       \
+	  Materiaux2014            \
 	  ClubCast3M2014
 
 EXTRA_DIST=CMakeLists.txt                                                   \

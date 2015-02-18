@@ -217,7 +217,11 @@ libDir(void)
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   const string ldir("/bin");
 #else 
+#ifdef LIB_SUFFIX
   const string ldir("/lib"LIB_SUFFIX);
+#else
+  const string ldir("/lib");
+#endif
 #endif
   const string& th = getTFELHOME();
   if(!th.empty()){

@@ -79,7 +79,7 @@ if(HAVE_LATEX)
 endif(HAVE_LATEX)
 
 if(HAVE_PANDOC)
-  add_subdirectory(mfront-user-meeting)
+  add_subdirectory(mfront-user-meeting-2015)
   add_subdirectory(portable-behaviour)
   add_subdirectory(Materiaux2014)
 endif(HAVE_PANDOC)

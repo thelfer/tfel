@@ -2,6 +2,24 @@
 % Helfer Thomas
 % December 12, 2014
 
+# `MFront` user meeting (6 Februar 2015)
+
+The first `MFront` user meeting was held in Cadarache on
+Februar,6 2015. 27 participants from CEA, EDF, Areva and CNRS could
+discuss and comment about their use of MFront.
+
+Various subjects were discussed:
+
+- [Introduction to the user meeting](documents/mfront-user-meeting-2015/VM-ClubU_MFront_6-2-2015.pdf)
+- [New functionalities introduced in `TFEL`/`MFront` 2.0](documents/mfront-user-meeting-2015/mfront-cea.pdf)
+- Feed-back from users:
+    - [Feed-back from the `Code-Aster` development team](documents/mfront-user-meeting-2015/2015-ClubU-MFront-REX-Aster.pdf)
+	- [Feed-back from the `Cyrano3` development team](documents/mfront-user-meeting-2015/petry_MFRONT.pdf)
+- Modèle de couplage Fluage/Endommagement/Réaction Alcali Granulat (RAG) du béton
+- Modélisation à différentes échelles du comportement mécanique du dioxyde d'uranium
+- [Writing portable behaviour with `MFront`](documents/mfront-user-meeting-2015/writing-portable-behaviour.pdf)
+- [On the road to `TFEL 3.x`](documents/mfront-user-meeting-2015/tfel-3.0.pdf)
+
 # First `MFront` user meeting (12 December 2014)
 
 We are glad to announce that the first `MFront` user meeting will be

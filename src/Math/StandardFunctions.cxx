@@ -160,77 +160,73 @@ namespace tfel{
       TFELMATH_VISIBILITY_EXPORT tfel::math::FctAtan  atan TFEL_UNUSED_ATTRIBUTE;
     } // end of namespace stdfunctions
 
+
     const FctCos derivate(const FctSin)
     {
-      USING_TFEL_FUNCTIONS;
-      return cos;
+      return FctCos();
     }
     
     const FunctionExpr<FunctionNegExpr<FctSin> > 
     derivate(const FctCos)
     {
-      USING_TFEL_FUNCTIONS;
-      return -sin;
+      return -FctSin();
     }
     
     const FctCosh derivate(const FctSinh)
     {
-      USING_TFEL_FUNCTIONS;
-      return cosh;
+      return FctCosh();
     }
 
     const FctSinh derivate(const FctCosh)
     {
-      USING_TFEL_FUNCTIONS;
-      return sinh;
+      return FctSinh();
     }
 
     const FctExp derivate(const FctExp)
     {
-      USING_TFEL_FUNCTIONS;
-      return exp;
+      return FctExp();
     }
     
     const DFctLog derivate(const FctLog)
     {
-      USING_TFEL_FUNCTIONS;
-      return (Cst<1>())/id;
+      return (Cst<1>())/FctId();
     }
 
     const DFctTan derivate(const FctTan)
     {
-      USING_TFEL_FUNCTIONS;
-      return Cst<1>()/(power<2>(cos));
+      using tfel::math::stdfunctions::power;
+      return Cst<1>()/(power<2>(FctCos()));
     }
 
     const DFctTanh derivate(const FctTanh)
     {
-      USING_TFEL_FUNCTIONS;
-      return Cst<1>()/(power<2>(cosh));
+      using tfel::math::stdfunctions::power;
+      return Cst<1>()/(power<2>(FctCosh()));
     }
 
     const DFctLog10 derivate(const FctLog10)
     {
-      USING_TFEL_FUNCTIONS;
-      return M_LN10/id;
+      return M_LN10/FctId();
     }
 
     const DFctAsin derivate(const FctAsin)
     {
-      USING_TFEL_FUNCTIONS;
-      return Cst<1>()/sqrt[Cst<1>()-power<2>(id)];
+      using tfel::math::stdfunctions::power;
+      FctSqrt sqrt;
+      return Cst<1>()/(sqrt[Cst<1>()-power<2>(FctId())]);
     }
     
     const DFctAcos derivate(const FctAcos)
     {
-      USING_TFEL_FUNCTIONS;
-      return Cst<-1>()/sqrt[Cst<1>()-power<2>(id)];
+      using tfel::math::stdfunctions::power;
+      FctSqrt sqrt;
+      return Cst<-1>()/(sqrt[Cst<1>()-power<2>(FctId())]);
     }
     
     const DFctAtan derivate(const FctAtan)
     {
-      USING_TFEL_FUNCTIONS;
-      return Cst<1>()/(Cst<1>()+power<2>(id));
+      using tfel::math::stdfunctions::power;
+      return Cst<1>()/(Cst<1>()+power<2>(FctId()));
     }
 
   } // end of namespace math

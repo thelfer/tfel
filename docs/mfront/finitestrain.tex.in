@@ -56,9 +56,6 @@
 
 \newcommand{\egl}[0]{\ensuremath{\tepsilonto_{GL}}}
 \newcommand{\degl}[0]{\ensuremath{\tdepsilonto_{GL}}}
-\newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
-\newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\,\Delta\,t}}}
-\newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\,t}}}
 
 \newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
 
