@@ -63,5 +63,6 @@ EXTRA_DIST=./CMakeLists.txt				   \
 	   ./Contributions/VM-ClubU_MFront_6-2-2015.pdf	   \
 	   ./Contributions/petry_MFRONT.pdf		   \
 	   ./Contributions/2015-ClubU-MFront-REX-Aster.pdf \
+	   ./Contributions/hamon_ClubU_MFront_6-2-2015.pdf \
 	   ./bibliographie.bib				   \
 	   ./img/LogarithmicStrainPlasticity-ssna303.eps

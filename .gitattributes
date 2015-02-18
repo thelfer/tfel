@@ -508,6 +508,7 @@ docs/presentations/mfront-presentation.tex.in -text
 docs/presentations/mfront-user-meeting-2015/CMakeLists.txt -text
 docs/presentations/mfront-user-meeting-2015/Contributions/2015-ClubU-MFront-REX-Aster.pdf -text
 docs/presentations/mfront-user-meeting-2015/Contributions/VM-ClubU_MFront_6-2-2015.pdf -text
+docs/presentations/mfront-user-meeting-2015/Contributions/hamon_ClubU_MFront_6-2-2015.pdf -text
 docs/presentations/mfront-user-meeting-2015/Contributions/petry_MFRONT.pdf -text
 docs/presentations/mfront-user-meeting-2015/Makefile.am -text
 docs/presentations/mfront-user-meeting-2015/bibliographie.bib -text

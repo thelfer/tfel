@@ -95,3 +95,7 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Contributions/petry_MFRONT.pdf
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Contributions/2015-ClubU-MFront-REX-Aster.pdf
   DESTINATION share/doc/tfel/web/documents/mfront-user-meeting-2015/
   COMPONENT website)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Contributions/hamon_ClubU_MFront_6-2-2015.pdf
+  DESTINATION share/doc/tfel/web/documents/mfront-user-meeting-2015/
+  COMPONENT website)
