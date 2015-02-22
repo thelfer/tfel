@@ -375,7 +375,7 @@ fi
 
 	    if test "x$enable_debug" != "xyes"; then
 		dnl g++ debug options
-		CPPFLAGS="-DNDEBUG $CPPFLAGS"
+		CPPFLAGS="-DNDEBUG -DNO_RUNTIME_CHECK_BOUNDS $CPPFLAGS"
 	    fi
 
 	    if test "x$enable_optimizations" != "xno"; then   	    
