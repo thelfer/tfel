@@ -20,7 +20,6 @@
 
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
-#include"TFEL/Math/Tensor/TensorExpr.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -45,9 +44,9 @@ namespace tfel
 	     unsigned short In,
 	     unsigned short Im,
 	     typename T>
-    struct TensorExpr<tensor<N,T>,TensorFromTinyMatrixRowViewExpr<N,Mn,Mm,In,Im,T> >
-      : public TensorConcept<TensorExpr<tensor<N,T>,TensorFromTinyMatrixRowViewExpr<N,Mn,Mm,In,Im,T> > >,
-	public tensor_base<TensorExpr<tensor<N,T>,TensorFromTinyMatrixRowViewExpr<N,Mn,Mm,In,Im,T> > >
+    struct Expr<tensor<N,T>,TensorFromTinyMatrixRowViewExpr<N,Mn,Mm,In,Im,T> >
+      : public TensorConcept<Expr<tensor<N,T>,TensorFromTinyMatrixRowViewExpr<N,Mn,Mm,In,Im,T> > >,
+	public tensor_base<Expr<tensor<N,T>,TensorFromTinyMatrixRowViewExpr<N,Mn,Mm,In,Im,T> > >
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -58,9 +57,9 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      TensorExpr(tmatrix<Mn,Mm,T>& m_)
+      Expr(tmatrix<Mn,Mm,T>& m_)
 	: m(m_)
-      {} // end of TensorExpr
+      {} // end of Expr
 
       const T&
       operator()(const unsigned short i) const
@@ -87,7 +86,7 @@ namespace tfel
       } // end of operator[]
 
       //! assignement operator
-      using tensor_base<TensorExpr>::operator=;
+      using tensor_base<Expr>::operator=;
 
     protected:
 
@@ -102,7 +101,7 @@ namespace tfel
       TFEL_STATIC_ASSERT((In<Mn));
       TFEL_STATIC_ASSERT((TensorDimeToSize<N>::value<=Mm-Im));
 
-    }; // end of struct TensorExpr
+    }; // end of struct Expr
 
 
     template<unsigned short N,
@@ -113,7 +112,7 @@ namespace tfel
 	     typename T = double>
     struct TensorFromTinyMatrixRowView
     {
-      typedef TensorExpr<tensor<N,T>,TensorFromTinyMatrixRowViewExpr<N,Mn,Mm,In,Im,T> > type;
+      typedef Expr<tensor<N,T>,TensorFromTinyMatrixRowViewExpr<N,Mn,Mm,In,Im,T> > type;
     }; // end of struct TensorFromTinyMatrixRowView
     
   } // end of namespace math

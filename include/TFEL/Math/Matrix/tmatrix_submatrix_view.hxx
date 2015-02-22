@@ -41,13 +41,13 @@ namespace tfel
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
-       * an alias defined for the constructor of the MatrixExpr
+       * an alias defined for the constructor of the Expr
        */
-      typedef tmatrix<N,M,T> first_arg;
+      typedef tmatrix<N,M,T>& first_arg;
       //! a dummy structure
       struct invalid_argument;
       /*!
-       * an alias defined for the constructor of the MatrixExpr
+       * an alias defined for the constructor of the Expr
        */
       typedef invalid_argument second_arg;
       /*!
@@ -136,7 +136,7 @@ namespace tfel
 	     unsigned short R,unsigned short C,
 	     typename T>
     struct tmatrix_submatrix_view
-      : public MatrixExpr<tmatrix<R,C,T>, tmatrix_submatrix_view_expr<N,M,I,J,R,C,T> >,
+      : public Expr<tmatrix<R,C,T>, tmatrix_submatrix_view_expr<N,M,I,J,R,C,T> >,
 	public tmatrix_base<tmatrix_submatrix_view<N,M,I,J,R,C,T>,R,C,T>
     {
       /*!

@@ -107,12 +107,12 @@ namespace tfel{
     }
 
     template<typename T>
-    template<typename T2,typename Expr>
+    template<typename T2,typename Operation>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       vector<T>&
     >::type
-    vector<T>::operator=(const VectorExpr<vector<T2>,Expr>& expr)
+    vector<T>::operator=(const Expr<vector<T2>,Operation>& expr)
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
@@ -125,12 +125,12 @@ namespace tfel{
     }
 
     template<typename T>
-    template<typename T2,typename Expr>
+    template<typename T2,typename Operation>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       vector<T>&
     >::type
-    vector<T>::operator+=(const VectorExpr<vector<T2>,Expr>& expr)
+    vector<T>::operator+=(const Expr<vector<T2>,Operation>& expr)
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
@@ -143,12 +143,12 @@ namespace tfel{
     }
 
     template<typename T>
-    template<typename T2,typename Expr>
+    template<typename T2,typename Operation>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       vector<T>&
     >::type
-    vector<T>::operator-=(const VectorExpr<vector<T2>,Expr>& expr)
+    vector<T>::operator-=(const Expr<vector<T2>,Operation>& expr)
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());

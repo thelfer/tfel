@@ -21,7 +21,6 @@
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
@@ -32,47 +31,42 @@ namespace tfel{
 
     template<typename A, typename B>
     class TFEL_VISIBILITY_LOCAL StensorProductExprBase
+      : public ExprBase
     {
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,StensorConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,StensorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,
+						 StensorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<B>::type,
+						 StensorConcept>::cond));
       
       typedef typename ComputeBinaryResult<A,B,OpMult>::Result Result;
-
-      typedef typename StensorTraits<A>::IndexType AIndexType;
-      typedef typename StensorTraits<B>::IndexType BIndexType;
-
-      typedef typename StensorTraits<A>::NumType NumTypeA;
-      typedef typename StensorTraits<B>::NumType NumTypeB;
-
-      static constexpr bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
-      static constexpr bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
-
-      StensorProductExprBase();
 
     public:
 
       typedef EmptyRunTimeProperties RunTimeProperties; 
       typedef typename StensorTraits<Result>::IndexType IndexType;
-      typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
+      typedef typename StensorTraits<Result>::NumType   NumType;
+
     protected:
 
-      typedef const A first_arg;
-      typedef const B second_arg;
+      TFEL_MATH_INLINE StensorProductExprBase(A l,B r)
+	: a(l), b(r)
+      {}
+
+      StensorProductExprBase() = delete;
+
+      typedef A first_arg;
+      typedef B second_arg;
 
       typedef NumType        value_type;                                                
       typedef NumType*       pointer;	    						
       typedef const NumType* const_pointer; 						
       typedef NumType&       reference;	    						
       typedef const NumType& const_reference;						
-      typedef AIndexType     size_type;	    						
+      typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
-      typename std::conditional<IsATemporary,const A,const A&>::type a;
-      typename std::conditional<IsBTemporary,const B,const B&>::type b;
-
-      TFEL_MATH_INLINE StensorProductExprBase(const A& l, const B& r)
-	: a(l), b(r)
-      {}
+      ArgumentStorage<A> a;
+      ArgumentStorage<B> b;
 
     public:
       
@@ -87,21 +81,25 @@ namespace tfel{
     struct TFEL_VISIBILITY_LOCAL StensorProductExpr1D
       : public StensorProductExprBase<A,B>
     {
+      using size_type = typename StensorProductExprBase<A,B>::size_type;
 
-      TFEL_MATH_INLINE StensorProductExpr1D(const A& l, const B& r)
-	: StensorProductExprBase<A,B>(l,r)
+      TFEL_MATH_INLINE StensorProductExpr1D(A l,B r)
+	: StensorProductExprBase<A,B>(std::forward<A>(l),
+				      std::forward<B>(r))
       {}
       
-      TFEL_MATH_INLINE typename StensorProductExprBase<A,B>::NumType 
-      operator()(const typename StensorProductExprBase<A,B>::IndexType i) const 
+      TFEL_MATH_INLINE
+      BinaryOperationResult<typename tfel::meta::ResultOf<A,size_type>::type,
+			    typename tfel::meta::ResultOf<B,size_type>::type,OpMult>
+      operator()(const size_type i) const 
       {
 	return (this->a(i))*(this->b(i));
       } // end of operator()
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<A>::dime==1u));
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<B>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<A>::type>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<B>::type>::dime==1u));
 
     };
 
@@ -109,13 +107,17 @@ namespace tfel{
     struct TFEL_VISIBILITY_LOCAL StensorProductExpr2D
       : public StensorProductExprBase<A,B>
     {
+      using size_type = typename StensorProductExprBase<A,B>::size_type;
 
-      TFEL_MATH_INLINE StensorProductExpr2D(const A& l, const B& r)
-	: StensorProductExprBase<A,B>(l,r)
+      TFEL_MATH_INLINE StensorProductExpr2D(A l,B r)
+	: StensorProductExprBase<A,B>(std::forward<A>(l),
+				      std::forward<B>(r))
       {}
       
-      TFEL_MATH_INLINE typename StensorProductExprBase<A,B>::NumType 
-      operator()(const typename StensorProductExprBase<A,B>::IndexType i) const 
+      TFEL_MATH_INLINE
+      BinaryOperationResult<typename tfel::meta::ResultOf<A,size_type>::type,
+			    typename tfel::meta::ResultOf<B,size_type>::type,OpMult>
+      operator()(const size_type i) const 
       {
 	typedef typename StensorProductExprBase<A,B>::NumType T;
 	switch(i){
@@ -139,8 +141,8 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<A>::dime==2u));
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<B>::dime==2u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<A>::type>::dime==2u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<B>::type>::dime==2u));
 
     };
 
@@ -148,13 +150,17 @@ namespace tfel{
     struct TFEL_VISIBILITY_LOCAL StensorProductExpr3D
       : public StensorProductExprBase<A,B>
     {
+      using size_type = typename StensorProductExprBase<A,B>::size_type;
 
-      TFEL_MATH_INLINE StensorProductExpr3D(const A& l, const B& r)
-	: StensorProductExprBase<A,B>(l,r)
+      TFEL_MATH_INLINE StensorProductExpr3D(A l,B r)
+	: StensorProductExprBase<A,B>(std::forward<A>(l),
+				      std::forward<B>(r))
       {}
       
-      TFEL_MATH_INLINE typename StensorProductExprBase<A,B>::NumType 
-      operator()(const typename StensorProductExprBase<A,B>::IndexType i) const 
+      TFEL_MATH_INLINE
+      BinaryOperationResult<typename tfel::meta::ResultOf<A,size_type>::type,
+			    typename tfel::meta::ResultOf<B,size_type>::type,OpMult>
+      operator()(const size_type i) const 
       {
 	typedef typename StensorProductExprBase<A,B>::NumType T;
 	typedef typename tfel::typetraits::BaseType<T>::type real;
@@ -187,8 +193,8 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<A>::dime==3u));
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<B>::dime==3u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<A>::type>::dime==3u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<B>::type>::dime==3u));
 
     };
 

@@ -17,7 +17,6 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
 
 namespace tfel{
 
@@ -34,8 +33,8 @@ namespace tfel{
      * Partial specialisation for 1D tensor
      */
     template<typename ST2toST2ResultType>
-    struct ST2toST2Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> >
-      : public ST2toST2Concept<ST2toST2Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> > >,
+    struct Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> >
+      : public ST2toST2Concept<Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> > >,
 	public fsarray<9u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
     {
       //! a simple check
@@ -48,7 +47,7 @@ namespace tfel{
        * \param[in] B : second tensor of the product
        */
       template<typename StensorType>
-      ST2toST2Expr(const StensorType& B)
+      Expr(const StensorType& B)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<StensorType,StensorConcept>::cond));
@@ -64,14 +63,14 @@ namespace tfel{
 	this->v[1] = this->v[2] = zero;
 	this->v[3] = this->v[5] = zero;
 	this->v[6] = this->v[7] = zero;
-      } // end of ST2toST2Expr
+      } // end of Expr
       /*!
        * \param[in] B : second tensor of the product
        * \param[in] C : derivative of the first tensor
        */
       template<typename StensorType,
 	       typename ST2toST2Type>
-      ST2toST2Expr(const StensorType& B,
+      Expr(const StensorType& B,
 		   const ST2toST2Type& C)
       {
 	//! a simple check
@@ -96,7 +95,7 @@ namespace tfel{
 	this->v[6]=C(2,0)*B[2];
 	this->v[7]=C(2,1)*B[2];
 	this->v[8]=C(2,2)*B[2];
-      } // end of ST2toST2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -118,14 +117,14 @@ namespace tfel{
       {
 	return RunTimeProperties();
       }
-    }; // end of struct ST2toST2Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> >
+    }; // end of struct Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> >
 
     /*!
      * Partial specialisation for 2D tensor
      */
     template<typename ST2toST2ResultType>
-    struct ST2toST2Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<2u> >
-      : public ST2toST2Concept<ST2toST2Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<2u> > >,
+    struct Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<2u> >
+      : public ST2toST2Concept<Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<2u> > >,
 	public fsarray<16u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
     {
       //! a simple check
@@ -138,7 +137,7 @@ namespace tfel{
        * \param[in] B : second tensor of the product
        */
       template<typename StensorType>
-      ST2toST2Expr(const StensorType& B)
+      Expr(const StensorType& B)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<StensorType,StensorConcept>::cond));
@@ -167,14 +166,14 @@ namespace tfel{
 	this->v[13] = zero;
 	this->v[14] = zero;
 	this->v[15] = B[1];
-      } // end of ST2toST2Expr
+      } // end of Expr
       /*!
        * \param[in] B : second tensor of the product
        * \param[in] C : derivative of the first tensor
        */
       template<typename StensorType,
 	       typename ST2toST2Type>
-      ST2toST2Expr(const StensorType& B,
+      Expr(const StensorType& B,
 		   const ST2toST2Type& C)
       {
 	//! a simple check
@@ -209,7 +208,7 @@ namespace tfel{
 	this->v[13]=C(0,1)*B[3]+C(3,1)*B[1];
 	this->v[14]=C(0,2)*B[3]+C(3,2)*B[1];
 	this->v[15]=C(0,3)*B[3]+C(3,3)*B[1];
-      } // end of ST2toST2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -231,14 +230,14 @@ namespace tfel{
       {
 	return RunTimeProperties();
       }
-    }; // end of struct ST2toST2Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> >
+    }; // end of struct Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> >
 
     /*!
      * Partial specialisation for 3D tensor
      */
     template<typename ST2toST2ResultType>
-    struct ST2toST2Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<3u> >
-      : public ST2toST2Concept<ST2toST2Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<3u> > >,
+    struct Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<3u> >
+      : public ST2toST2Concept<Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<3u> > >,
 	public fsarray<36u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
     {
       //! a simple check
@@ -251,7 +250,7 @@ namespace tfel{
        * \param[in] B : second tensor of the product
        */
       template<typename StensorType>
-      ST2toST2Expr(const StensorType& B)
+      Expr(const StensorType& B)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<StensorType,StensorConcept>::cond));
@@ -295,14 +294,14 @@ namespace tfel{
 	this->v[33] = zero;
 	this->v[34] = B[3]*cste;
 	this->v[35] = B[1];
-      } // end of ST2toST2Expr
+      } // end of Expr
       /*!
        * \param[in] B : second tensor of the product
        * \param[in] C : derivative of the first tensor
        */
       template<typename StensorType,
 	       typename ST2toST2Type>
-      ST2toST2Expr(const StensorType& B,
+      Expr(const StensorType& B,
 		   const ST2toST2Type& C)
       {
 	//! a simple check
@@ -380,7 +379,7 @@ namespace tfel{
       {
 	return RunTimeProperties();
       }
-    }; // end of struct ST2toST2Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> >
+    }; // end of struct Expr<ST2toST2ResultType,StensorProductLeftDerivativeExpr<1u> >
 
   } // end of namespace tfel
 

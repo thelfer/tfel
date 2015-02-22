@@ -21,6 +21,17 @@
 #include"TFEL/Tests/TestResult.hxx"
 
 /*!
+ * \def TFEL_TESTS_STATIC_ASSERT
+ * \brief an helper macro to ease the use of TestCase::registerResult
+ * \param X : code to be evaluated
+ */
+#define TFEL_TESTS_STATIC_ASSERT(X)				\
+  {						              	\
+    static_assert((X),"static assertion : '"#X"'");		\
+    TestCase::registerResult("static assertion : '"#X"'",(X));	\
+  }
+
+/*!
  * \def TFEL_TESTS_ASSERT
  * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : code to be evaluated

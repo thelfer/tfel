@@ -20,13 +20,13 @@ namespace tfel{
   namespace math{
     
     template<class T>
-    typename StensorConcept<T>::ValueType
+    typename StensorTraits<T>::NumType
     StensorConcept<T>::operator()(const unsigned short i) const {
       return static_cast<const T&>(*this).operator()(i);
     }
 
     template<class T>
-    typename StensorConcept<T>::ValueType
+    typename StensorTraits<T>::NumType
     StensorConcept<T>::operator[](const unsigned short i) const {
       return static_cast<const T&>(*this).operator()(i);
     }

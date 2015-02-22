@@ -118,7 +118,7 @@ namespace tfel{
 	  if((i==j)&&(i<3)){
 	    return t(i);
 	  }
-	  throw(TensorInvalidIndexesException(i,j));
+	  throw(TensorInvalidIndexesException());
 	  return t(0);
 	}
 	template<typename T>
@@ -129,7 +129,7 @@ namespace tfel{
 	    const unsigned short j)
 	{
 	  if((i>2)||(j>2)){
-	    throw(TensorInvalidIndexesException(i,j));
+	    throw(TensorInvalidIndexesException());
 	  }
 	  if(i==j){
 	    return t(i);
@@ -155,7 +155,7 @@ namespace tfel{
 	  } else if((i==1)&&(j==0)){
 	    return t(4);
 	  }
-	  throw(TensorInvalidIndexesException(i,j));
+	  throw(TensorInvalidIndexesException());
 	  return t(0);
 	}
 	template<typename T>
@@ -166,7 +166,7 @@ namespace tfel{
 	    const unsigned short j)
 	{
 	  if((i>2)||(j>2)){
-	    throw(TensorInvalidIndexesException(i,j));
+	    throw(TensorInvalidIndexesException());
 	  }
 	  if(i==j){
 	    return t(i);
@@ -204,7 +204,7 @@ namespace tfel{
 	  } else if((i==2)&&(j==1)){
 	    return t(8);
 	  }
-	  throw(TensorInvalidIndexesException(i,j));
+	  throw(TensorInvalidIndexesException());
 	  return t(0);
 	}
 
@@ -230,7 +230,7 @@ namespace tfel{
 	  } else if((i==2)&&(j==1)){
 	    return t(8);
 	  }
-	  throw(TensorInvalidIndexesException(i,j));
+	  throw(TensorInvalidIndexesException());
 	  return T(0);
 	}
       };

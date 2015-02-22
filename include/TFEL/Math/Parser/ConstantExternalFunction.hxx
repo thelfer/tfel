@@ -14,9 +14,7 @@
 #ifndef _LIB_TFEL_MATH_PARSER_CONSTANTEXTERNALFUNCTION_H_
 #define _LIB_TFEL_MATH_PARSER_CONSTANTEXTERNALFUNCTION_H_ 
 
-#include<sstream>
 #include<vector>
-#include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Parser/ExternalFunction.hxx"

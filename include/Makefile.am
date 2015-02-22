@@ -68,7 +68,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/TypeTraits/IsUnaryOperator.hxx		                                             \
 			TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx                                            \
 			TFEL/TypeTraits/IsInvalid.hxx		                                                     \
-			TFEL/TypeTraits/IsTemporary.hxx		                                                     \
 			TFEL/TypeTraits/IsRandomAccessIterator.hxx	                                             \
 			TFEL/Math/fsarray.hxx                                                                        \
 			TFEL/Math/General/fsarray.ixx                                                                \
@@ -97,7 +96,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/T2toST2Concept.hxx                                                         \
 			TFEL/Math/Forward/ST2toT2Concept.hxx                                                         \
 			TFEL/Math/Forward/TinyNewtonRaphson.hxx                                                      \
-			TFEL/Math/Forward/ExpressionTemplates.hxx                                                    \
 			TFEL/Math/General/Forward/General.hxx                                                        \
 			TFEL/Math/Bindings/atlas.hxx                                                                 \
 			TFEL/Math/Parser/BinaryFunction.hxx					                     \
@@ -174,7 +172,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Tensor/tensor.ixx								     \
 			TFEL/Math/Tensor/tensorResultType.hxx							     \
 			TFEL/Math/Tensor/TensorChangeBasis.hxx							     \
-			TFEL/Math/Tensor/TensorExpr.hxx								     \
 			TFEL/Math/Tensor/TensorConcept.hxx							     \
 			TFEL/Math/Tensor/TensorConcept.ixx							     \
 			TFEL/Math/Tensor/TensorConceptIO.hxx							     \
@@ -204,7 +201,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/StensorConceptOperations.ixx                                               \
 			TFEL/Math/Stensor/StensorProduct.hxx                                                         \
 			TFEL/Math/Stensor/StensorSizeToDime.hxx	                                                     \
-			TFEL/Math/Stensor/StensorExpr.hxx		                                             \
 			TFEL/Math/Stensor/stensorResultType.hxx	                                                     \
 			TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx                                        \
 			TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx                                       \
@@ -219,12 +215,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/VectorUtilities.hxx		                                             \
 			TFEL/Math/Vector/VectorConcept.hxx		                                             \
 			TFEL/Math/Vector/VectorConcept.ixx		                                             \
-			TFEL/Math/Vector/VectorExpr.hxx		                                                     \
 			TFEL/Math/Vector/vector.ixx			                                             \
 			TFEL/Math/Vector/VectorConceptOperations.hxx	                                             \
 			TFEL/Math/Vector/VectorConceptOperations.ixx	                                             \
 			TFEL/Math/Vector/vectorResultType.hxx	                                                     \
-			TFEL/Math/Vector/Range.hxx			                                             \
 			TFEL/Math/Vector/VectorVectorDotProduct.hxx                                                  \
 			TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx                                            \
 			TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx                                          \
@@ -258,11 +252,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/MatrixConcept.hxx		                                             \
 			TFEL/Math/Matrix/MatrixUtilities.hxx		                                             \
 			TFEL/Math/Matrix/MatrixConcept.ixx		                                             \
-			TFEL/Math/Matrix/MatrixExpr.hxx		                                                     \
 			TFEL/Math/Matrix/MatrixConceptOperations.hxx                                                 \
-			TFEL/Math/Matrix/MatrixConceptOperations.ixx                                                 \
 			TFEL/Math/Matrix/TMatrixTVectorExpr.hxx                                                      \
 			TFEL/Math/Matrix/TVectorTMatrixExpr.hxx                                                      \
+	                TFEL/Math/General/ConceptRebind.hxx                                                          \
 	                TFEL/Math/General/ConstExprMathFunctions.hxx                                                 \
 			TFEL/Math/General/FracSimplify.hxx                                                           \
 			TFEL/Math/General/FracSimplify.ixx		                                             \
@@ -284,25 +277,15 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/ComputeObjectTag.ixx	                                                     \
 			TFEL/Math/General/ComputeObjectTag.hxx	                                                     \
 			TFEL/Math/General/Complex.hxx		                                                     \
-			TFEL/Math/General/Complex.ixx		                                                     \
 			TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx                                  \
 			TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx                                     \
 			TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx	                             \
 			TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hxx                    \
 			TFEL/Math/General/ObjectObjectRandomAccessConstIteratorSpecialisation.hxx                    \
-			TFEL/Math/ExpressionTemplates/MathObjectMathObjectDiadicProductExpr.hxx			     \
-			TFEL/Math/ExpressionTemplates/MathObjectMathObjectExpr.hxx				     \
-			TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprSpecialisation.ixx		     \
-			TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIterator.hxx		     \
-			TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIteratorSpecialisation.ixx \
-			TFEL/Math/ExpressionTemplates/MathObjectNegExpr.hxx					     \
-			TFEL/Math/ExpressionTemplates/MathObjectNegExprWithoutConstIterator.hxx			     \
-			TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx					     \
-			TFEL/Math/ExpressionTemplates/ScalarMathObjectExprSpecialisation.ixx			     \
-			TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx		     \
-			TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIteratorSpecialisation.ixx     \
 			TFEL/Math/General/RandomRotationMatrix.hxx                                                   \
+			TFEL/Math/Quantity/qtOperations.hxx                                                          \
 			TFEL/Math/Quantity/qtOperations.ixx		                                             \
+			TFEL/Math/Quantity/qtComplexOperations.hxx		                                     \
 			TFEL/Math/Quantity/qtSamples.hxx		                                             \
 			TFEL/Math/Quantity/qtSpecific.hxx		                                             \
 			TFEL/Math/Quantity/Unit.hxx			                                             \
@@ -310,7 +293,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Quantity/qt.ixx			                                             \
 			TFEL/Math/Quantity/qtIO.hxx			                                             \
 			TFEL/Math/Quantity/qtLimits.hxx                                                              \
-			TFEL/Math/Quantity/qtOperations.hxx                                                          \
 			TFEL/Math/qt.hxx				                                             \
 			TFEL/Math/TinyNewtonRaphson.hxx		                                                     \
 			TFEL/Math/RungeKutta2.hxx			                                             \
@@ -331,7 +313,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toT2/T2toT2Concept.ixx                                                           \
 			TFEL/Math/T2toT2/T2toT2ConceptIO.hxx                                                         \
 			TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx                                                 \
-			TFEL/Math/T2toT2/T2toT2Expr.hxx                                                              \
 			TFEL/Math/T2toT2/t2tot2ResultType.hxx                                                        \
 			TFEL/Math/T2toT2/T2toT2FromTinyMatrixView.hxx                                                \
 			TFEL/Math/T2toT2/T2toT2FromTinyMatrixView2.hxx                                               \
@@ -346,7 +327,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ST2toST2Concept.ixx                                                       \
 			TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx                                                     \
 			TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx                                             \
-			TFEL/Math/ST2toST2/ST2toST2Expr.hxx                                                          \
 			TFEL/Math/ST2toST2/st2tost2ResultType.hxx                                                    \
 			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx                                            \
 			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx                                           \
@@ -362,7 +342,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toST2/T2toST2Concept.ixx                                                         \
 			TFEL/Math/T2toST2/T2toST2ConceptIO.hxx                                                       \
 			TFEL/Math/T2toST2/T2toST2ConceptOperations.hxx                                               \
-			TFEL/Math/T2toST2/T2toST2Expr.hxx                                                            \
 			TFEL/Math/T2toST2/t2tost2ResultType.hxx                                                      \
 			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView.hxx                                              \
 			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView2.hxx                                             \
@@ -372,7 +351,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toST2/StensorT2toST2ProductExpr.hxx						     \
 			TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx                                               \
 			TFEL/Math/T2toST2/ST2toST2T2toST2ProductExpr.hxx					     \
-			TFEL/Math/T2toST2/StensorTensorDiadicProductExpr.hxx                                         \
 			TFEL/Math/st2tot2.hxx                                                                        \
 			TFEL/Math/ST2toT2/st2tot2.ixx                                                                \
 			TFEL/Math/ST2toT2/st2tot2ResultType.hxx                                                      \
@@ -380,10 +358,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toT2/ST2toT2Concept.ixx                                                         \
 			TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx                                                       \
 			TFEL/Math/ST2toT2/ST2toT2ConceptOperations.hxx                                               \
-			TFEL/Math/ST2toT2/ST2toT2Expr.hxx                                                            \
 			TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView.hxx                                              \
 			TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView2.hxx                                             \
-			TFEL/Math/ST2toT2/TensorStensorDiadicProductExpr.hxx                                         \
 			TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx						     \
 			TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx						     \
 			TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx						     \
@@ -402,6 +378,9 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/LevenbergMarquardt/LevenbergMarquardtExternalFunctionWrapper.hxx                   \
 			TFEL/Math/FSLevenbergMarquardt.hxx                                                           \
 			TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx                                        \
+			TFEL/Math/ExpressionTemplates/Expr.hxx							     \
+			TFEL/Math/ExpressionTemplates/StandardOperations.hxx					     \
+			TFEL/Math/ExpressionTemplates/StandardOperations.ixx					     \
 			TFEL/Metaprogramming/Forward/TypeList.hxx                                                    \
 			TFEL/Metaprogramming/StaticAssert.hxx                                                        \
 			TFEL/Metaprogramming/Implements.hxx	                                                     \
@@ -415,6 +394,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx	                                     \
 			TFEL/Metaprogramming/EmptyClass.hxx    	                                                     \
 			TFEL/Metaprogramming/HasRandomAccessIterator.hxx                                             \
+			TFEL/Metaprogramming/ResultOf.hxx                                                            \
 			TFEL/System/RecursiveFind.hxx                                                                \
 			TFEL/System/ExternalFunctionsPrototypes.hxx                                                  \
 			TFEL/System/ExternalLibraryManager.hxx                                                       \

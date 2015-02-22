@@ -20,7 +20,7 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
-#include"TFEL/Math/T2toT2/T2toT2Expr.hxx"
+
 #include"TFEL/Math/t2tot2.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -48,11 +48,11 @@ namespace tfel
     // 	     unsigned short In,
     // 	     unsigned short Im,
     // 	     typename T>
-    // struct T2toT2Expr<t2tot2<N,T>,
+    // struct Expr<t2tot2<N,T>,
     // 			T2toT2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> >
-    // 	: public T2toT2Concept<T2toT2Expr<t2tot2<N,T>,
+    // 	: public T2toT2Concept<Expr<t2tot2<N,T>,
     // 					      T2toT2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> > >,
-    // 	  public t2tot2_base<T2toT2Expr<t2tot2<N,T>,
+    // 	  public t2tot2_base<Expr<t2tot2<N,T>,
     // 					    T2toT2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> > >
 
     // {
@@ -65,13 +65,13 @@ namespace tfel
     // 	return RunTimeProperties();
     //   }
 
-    //   T2toT2Expr(tmatrix<Mn,Mm,T>& m_,
+    //   Expr(tmatrix<Mn,Mm,T>& m_,
     // 		   const unsigned short i_,
     // 		   const unsigned short j_)
     // 	: m(m_),
     // 	  oi(i_),
     // 	  oj(j_)
-    //   {} // end of T2toT2Expr
+    //   {} // end of Expr
 
     //   const T&
     //   operator()(const unsigned short i,
@@ -94,7 +94,7 @@ namespace tfel
     //   } // end of operator()
 
     //   //! assignement operator
-    //   using t2tot2_base<T2toT2Expr>::operator=;
+    //   using t2tot2_base<Expr>::operator=;
 
     // protected:
 
@@ -111,7 +111,7 @@ namespace tfel
     //   TFEL_STATIC_ASSERT((In<Mn));
     //   TFEL_STATIC_ASSERT((StensorDimeToSize<N>::value<=Mm-Im));
       
-    // }; // end of struct T2toT2Expr
+    // }; // end of struct Expr
     
     // template<unsigned short N,
     // 	     unsigned short Mn,
@@ -121,7 +121,7 @@ namespace tfel
     // 	     typename T = double>
     // struct T2toT2FromTinyMatrixView2
     // {
-    //   typedef T2toT2Expr<t2tot2<N,T>,T2toT2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> > type;
+    //   typedef Expr<t2tot2<N,T>,T2toT2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> > type;
     // }; // end of struct T2toT2FromTinyMatrixView2
     
   } // end of namespace math

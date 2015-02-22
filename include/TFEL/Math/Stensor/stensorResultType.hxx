@@ -19,7 +19,7 @@
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Math/General/DotProduct.hxx"
 #include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/Forward/st2tost2.hxx"
 
 namespace tfel{
   

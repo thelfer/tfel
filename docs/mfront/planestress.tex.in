@@ -54,10 +54,6 @@
 
 \newcommand{\eln}[0]{\ensuremath{\tepsilonto_{\ln{}}}}
 
-\newcommand{\bts}[1]{\ensuremath{\left.#1\right|_{t}}}
-\newcommand{\mts}[1]{\ensuremath{\left.#1\right|_{t+\theta\,\Delta\,t}}}
-\newcommand{\ets}[1]{\ensuremath{\left.#1\right|_{t+\Delta\,t}}}
-
 \newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
 
 %c from texinfo.tex

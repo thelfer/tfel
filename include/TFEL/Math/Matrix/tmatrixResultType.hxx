@@ -137,8 +137,8 @@ namespace tfel{
       struct DummyHandle
       {};
     public:
-      typedef VectorExpr<typename ResultType<tmatrix<N,M,T>,tvector<M,T2>,OpMult>::type,
-			 TMatrixTVectorExpr<N,M,A,B> > type;
+      typedef Expr<typename ResultType<tmatrix<N,M,T>,tvector<M,T2>,OpMult>::type,
+		   TMatrixTVectorExpr<N,M,A,B> > type;
     };
 
     template<unsigned short N,unsigned short M,
@@ -149,8 +149,8 @@ namespace tfel{
       struct DummyHandle
       {};
     public:
-      typedef VectorExpr<typename ResultType<tvector<N,T>,tmatrix<N,M,T2>,OpMult>::type,
-			 TVectorTMatrixExpr<N,M,A,B> > type;
+      typedef Expr<typename ResultType<tvector<N,T>,tmatrix<N,M,T2>,OpMult>::type,
+		   TVectorTMatrixExpr<N,M,A,B> > type;
     };
 
   } // end of namespace math

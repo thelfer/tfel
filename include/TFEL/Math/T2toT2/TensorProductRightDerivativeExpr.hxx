@@ -16,7 +16,7 @@
 
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-#include"TFEL/Math/T2toT2/T2toT2Expr.hxx"
+#include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
 
 namespace tfel{
 
@@ -33,8 +33,8 @@ namespace tfel{
      * Partial specialisation for 1D tensor
      */
     template<typename T2toT2ResultType>
-    struct T2toT2Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> >
-      : public T2toT2Concept<T2toT2Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> > >,
+    struct Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> >
+      : public T2toT2Concept<Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> > >,
 	public fsarray<9u,typename T2toT2Traits<T2toT2ResultType>::NumType>
     {
       //! a simple check
@@ -47,7 +47,7 @@ namespace tfel{
        * \param[in] A : second tensor of the product
        */
       template<typename TensorType>
-      T2toT2Expr(const TensorType& A)
+      Expr(const TensorType& A)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
@@ -62,14 +62,14 @@ namespace tfel{
 	this->v[1] = this->v[2] = value_type(0);
 	this->v[3] = this->v[5] = value_type(0);
 	this->v[6] = this->v[7] = value_type(0);
-      } // end of T2toT2Expr
+      } // end of Expr
       /*!
        * \param[in] A : first tensor of the product
        * \param[in] C : derivative of the second tensor
        */
       template<typename TensorType,
 	       typename T2toT2Type>
-      T2toT2Expr(const TensorType& A,
+      Expr(const TensorType& A,
 		 const T2toT2Type& C)
       {
 	//! a simple check
@@ -94,7 +94,7 @@ namespace tfel{
 	this->v[6]=C(2,0)*A[2];
 	this->v[7]=C(2,1)*A[2];
 	this->v[8]=C(2,2)*A[2];
-      } // end of T2toT2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -116,14 +116,14 @@ namespace tfel{
       {
 	return RunTimeProperties();
       }
-    }; // end of struct T2toT2Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> >
+    }; // end of struct Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> >
 
     /*!
      * Partial specialisation for 2D tensor
      */
     template<typename T2toT2ResultType>
-    struct T2toT2Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<2u> >
-      : public T2toT2Concept<T2toT2Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<2u> > >,
+    struct Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<2u> >
+      : public T2toT2Concept<Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<2u> > >,
 	public fsarray<25u,typename T2toT2Traits<T2toT2ResultType>::NumType>
     {
       //! a simple check
@@ -136,7 +136,7 @@ namespace tfel{
        * \param[in] A : second tensor of the product
        */
       template<typename TensorType>
-      T2toT2Expr(const TensorType& A)
+      Expr(const TensorType& A)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
@@ -155,14 +155,14 @@ namespace tfel{
 	this->v[15] = this->v[17] = this->v[19]  = value_type(0);
 	this->v[20] = A[4]; this->v[24]  = A[1];
 	this->v[21] = this->v[22] = this->v[23]  = value_type(0);
-      } // end of T2toT2Expr
+      } // end of Expr
       /*!
        * \param[in] A : first tensor of the product
        * \param[in] C : derivative of the second tensor
        */
       template<typename TensorType,
 	       typename T2toT2Type>
-      T2toT2Expr(const TensorType& A,
+      Expr(const TensorType& A,
 		 const T2toT2Type& C)
       {
 	//! a simple check
@@ -203,7 +203,7 @@ namespace tfel{
 	this->v[22]=C(0,2)*A[4]+C(4,2)*A[1];
 	this->v[23]=C(0,3)*A[4]+C(4,3)*A[1];
 	this->v[24]=C(0,4)*A[4]+C(4,4)*A[1];
-      } // end of T2toT2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -225,14 +225,14 @@ namespace tfel{
       {
 	return RunTimeProperties();
       }
-    }; // end of struct T2toT2Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> >
+    }; // end of struct Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> >
 
     /*!
      * Partial specialisation for 3D tensor
      */
     template<typename T2toT2ResultType>
-    struct T2toT2Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<3u> >
-      : public T2toT2Concept<T2toT2Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<3u> > >,
+    struct Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<3u> >
+      : public T2toT2Concept<Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<3u> > >,
 	public fsarray<81u,typename T2toT2Traits<T2toT2ResultType>::NumType>
     {
       //! a simple check
@@ -245,7 +245,7 @@ namespace tfel{
        * \param[in] A : second tensor of the product
        */
       template<typename TensorType>
-      T2toT2Expr(const TensorType& A)
+      Expr(const TensorType& A)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
@@ -272,14 +272,14 @@ namespace tfel{
 	this->v[63] = this->v[64] = this->v[66] = this->v[67] = this->v[69] = this->v[71] = value_type(0);
 	this->v[73] = A[8]; this->v[75] = A[6]; this->v[80]=A[2];
 	this->v[72] = this->v[74] = this->v[76] = this->v[77] = this->v[78] = this->v[79] = value_type(0);
-      } // end of T2toT2Expr
+      } // end of Expr
       /*!
        * \param[in] A : first tensor of the product
        * \param[in] C : derivative of the second tensor
        */
       template<typename TensorType,
 	       typename T2toT2Type>
-      T2toT2Expr(const TensorType& A,
+      Expr(const TensorType& A,
 		 const T2toT2Type& C)
       {
 	//! a simple check
@@ -376,7 +376,7 @@ namespace tfel{
 	this->v[78]=C(1,6)*A[8]+C(3,6)*A[6]+C(8,6)*A[2];
 	this->v[79]=C(1,7)*A[8]+C(3,7)*A[6]+C(8,7)*A[2];
 	this->v[80]=C(1,8)*A[8]+C(3,8)*A[6]+C(8,8)*A[2];
-      } // end of T2toT2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -398,7 +398,7 @@ namespace tfel{
       {
 	return RunTimeProperties();
       }
-    }; // end of struct T2toT2Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> >
+    }; // end of struct Expr<T2toT2ResultType,TensorProductRightDerivativeExpr<1u> >
 
   } // end of namespace tfel
 

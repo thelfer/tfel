@@ -18,9 +18,9 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
+#include"TFEL/Math/General/ConceptRebind.hxx"
 #include"TFEL/Math/Forward/MatrixConcept.hxx"
 
 namespace tfel{
@@ -72,15 +72,15 @@ namespace tfel{
     template<typename T>
     struct MatrixConcept 
     {
-    private:
+      using ConceptTag = MatrixTag;
       /*!
-       * A simple typedef.
+       * \param  i: the row index
+       * \param  j: the column index
+       * \return m(i,j)
        */
-      typedef MatrixTraits<T> traits;
-      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename std::conditional<isTemporary,
-				      typename traits::NumType,
-				      const typename traits::NumType&>::type ValueType;
+      typename MatrixTraits<T>::NumType
+      operator()(const typename MatrixTraits<T>::IndexType,
+		 const typename MatrixTraits<T>::IndexType) const ;
 
     protected:
       MatrixConcept() = default;
@@ -89,25 +89,13 @@ namespace tfel{
       MatrixConcept&
       operator=(const MatrixConcept&) = default;
       ~MatrixConcept() = default;
-    public :
-
-      typedef MatrixTag ConceptTag;
-
-      /*!
-       * \param  traits::IndexType the line index
-       * \param  traits::IndexType the column index
-       * \return traits::NumType
-       */
-      ValueType
-      operator()(const typename traits::IndexType,
-		 const typename traits::IndexType) const ;
-
     };
 
-    template<typename T>
-    struct MatrixType
+    //! paratial specialisation for matrices
+    template<typename Type>
+    struct ConceptRebind<MatrixTag,Type>
     {
-      typedef T type;
+      using type = MatrixConcept<Type>;
     };
   
   } // end of namespace math

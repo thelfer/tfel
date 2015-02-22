@@ -84,8 +84,11 @@ namespace tfel
     template<typename T>
     struct TFEL_VISIBILITY_LOCAL matrix
       : protected tfel::math::vector<T>,
-	protected MatrixProperties<T>
+	protected MatrixProperties<T>,
+	public MatrixConcept<matrix<T>>
     {
+      //! a simple alias
+      using ConceptTag = typename MatrixConcept<matrix<T>>::ConceptTag;
       //! a simple alias
 #ifdef NO_RUNTIME_CHECK_BOUNDS
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -96,57 +99,57 @@ namespace tfel
        * type of the matrix's values.
        * (this i<s a stl requirement).
        */
-      using typename std::vector<T>::value_type;
+      using typename tfel::math::vector<T>::value_type;
       /*!
        * type of a pointer to the value contained.
        * (this is a stl requirement).
        */
-      using typename std::vector<T>::pointer;
+      using typename tfel::math::vector<T>::pointer;
       /*!
        * type of a const pointer to the value contained.
        * (this is a stl requirement).
        */
-      using typename std::vector<T>::const_pointer;
+      using typename tfel::math::vector<T>::const_pointer;
       /*!
        * type of the matrix's iterator.
        * (provided for stl compatibility).
        */
-      using typename std::vector<T>::iterator;
+      using typename tfel::math::vector<T>::iterator;
       /*!
        * type of the matrix's const iterator.
        * (provided for stl compatibility).
        */
-      using typename std::vector<T>::const_iterator;
+      using typename tfel::math::vector<T>::const_iterator;
       /*!
        * type of the matrix's reverse iterator.
        * (provided for stl compatibility).
        */
-      using typename std::vector<T>::const_reverse_iterator;
+      using typename tfel::math::vector<T>::const_reverse_iterator;
       /*!
        * type of the matrix's const reverse iterator.
        * (provided for stl compatibility).
        */
-      using typename std::vector<T>::reverse_iterator;
+      using typename tfel::math::vector<T>::reverse_iterator;
       /*!
        * type of a reference to the value contained.
        * (this is a stl requirement).
        */
-      using typename std::vector<T>::reference;
+      using typename tfel::math::vector<T>::reference;
       /*!
        * type of a const reference to the value contained.
        * (this is a stl requirement).
        */
-      using typename std::vector<T>::const_reference;
+      using typename tfel::math::vector<T>::const_reference;
       /*!
        * type of the size of the container.
        * (this is a stl requirement).
        */
-      typedef typename std::vector<T>::size_type size_type;
+      typedef typename tfel::math::vector<T>::size_type size_type;
       /*!
        * type of the difference between two iterators.
        * (this is a stl requirement).
        */
-      using typename std::vector<T>::difference_type;
+      using typename tfel::math::vector<T>::difference_type;
 
       TFEL_MATH_INLINE2
       matrix(void);
@@ -199,28 +202,28 @@ namespace tfel
        * (provided for stl compatibility)
        * \return iterator, an iterator to the first element
        */
-      using std::vector<T>::begin;
+      using tfel::math::vector<T>::begin;
       
       /*
        * return an iterator after the last element of the matrix
        * (provided for stl compatibility)
        * \return iterator, an iterator after the last element
        */
-      using std::vector<T>::end;
+      using tfel::math::vector<T>::end;
 
       /*
        * return an reverse iterator to the last element of the matrix
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator to the last element
        */
-      using std::vector<T>::rbegin;
+      using tfel::math::vector<T>::rbegin;
       
       /*
        * return an  reverse iterator before the first element of the matrix
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
        */
-      using std::vector<T>::rend;
+      using tfel::math::vector<T>::rend;
 
       /*
        * Assignement operator.
@@ -248,45 +251,45 @@ namespace tfel
 
       /*
        * Assignement operator
-       * \param const MatrixExpr<matrix<T2>,Expr>&, a matrix
+       * \param const expr : a matrix
        * expression based on matrix
        * \return matrix&, a reference to itself.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE2
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	matrix<T>&
       >::type
-      operator=(const MatrixExpr<matrix<T2>,Expr>&);
+      operator=(const Expr<matrix<T2>,Operation>&);
 
       /*
        * Assignement operator
-       * \param const MatrixExpr<matrix<T2>,Expr>&, a matrix
+       * \param const expr : a matrix
        * expression based on matrix
        * \return matrix&, a reference to itself.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE2
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	matrix<T>&
       >::type
-      operator+=(const MatrixExpr<matrix<T2>,Expr>&);
+      operator+=(const Expr<matrix<T2>,Operation>&);
 
       /*
        * Assignement operator
-       * \param const MatrixExpr<matrix<T2>,Expr>&, a matrix
+       * \param const expr : a matrix
        * expression based on matrix
        * \return matrix&, a reference to itself.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE2
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	matrix<T>&
       >::type
-      operator-=(const MatrixExpr<matrix<T2>,Expr>&);
+      operator-=(const Expr<matrix<T2>,Operation>&);
 
       void swap(matrix&);
 

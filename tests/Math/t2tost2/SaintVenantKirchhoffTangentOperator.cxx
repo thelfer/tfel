@@ -23,6 +23,7 @@
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/t2tost2.hxx"
+#include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Material/Lame.hxx"
 
 #include"TFEL/Tests/TestCase.hxx"

@@ -51,6 +51,7 @@ struct Tensor4Test1D
     TFEL_TESTS_ASSERT(abs(R(1)-1.)<eps);
     TFEL_TESTS_ASSERT(abs(R(1)-1.)<eps);
     // check that we can get back F
+    std::cout << "&U : " << &U << endl;
     tensor<1u,double> F1 = R*U;
     TFEL_TESTS_ASSERT(abs(F(0)-F1(0))<eps);
     TFEL_TESTS_ASSERT(abs(F(1)-F1(1))<eps);

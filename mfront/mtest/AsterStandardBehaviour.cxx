@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<sstream>
 #include<algorithm>
 
 #include"TFEL/Math/tmatrix.hxx"

@@ -23,9 +23,6 @@ namespace tfel
     template<class T>
     class TensorConcept;
 
-    template<typename T_type, typename Expr>
-    struct TensorExpr;
-
     template<typename T_type>
     struct TensorTraits;
 

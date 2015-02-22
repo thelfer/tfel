@@ -14,7 +14,6 @@
 #ifndef _TFEL_MATH_TENSOR_CONCEPT_LIB_
 #define _TFEL_MATH_TENSOR_CONCEPT_LIB_ 1
 
-#include<string>
 #include<stdexcept>
 #include<type_traits>
 
@@ -22,12 +21,13 @@
 
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 
 #include"TFEL/Math/power.hxx"
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/General/ConceptRebind.hxx"
+#include"TFEL/Math/MathException.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
 #include"TFEL/Math/Forward/MatrixConcept.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"
@@ -56,57 +56,36 @@ namespace tfel{
      * exception thrown if invalid index is given
      */
     struct TFELMATH_VISIBILITY_EXPORT TensorInvalidIndexException
-      : public std::runtime_error
+      : public MathRunTimeException
     {
-      /*!
-       * constructor
-       * \param[in] i : index
-       */
-      TensorInvalidIndexException(const unsigned short);
+      virtual const char* what() const noexcept final;
       virtual ~TensorInvalidIndexException() noexcept;
-    private:
-      /*!
-       * format the error message
-       * \param[in] i : index
-       */
-      static std::string
-      getErrorMessage(const unsigned short);
     }; // end of struct TensorInvalidIndexException
     
     /*!
      * exception thrown if invalid indexes were given
      */
     struct TFELMATH_VISIBILITY_EXPORT TensorInvalidIndexesException
-      : public std::runtime_error
+      : public MathRunTimeException
     {
-      /*!
-       * constructor
-       * \param[in] i : line index
-       * \param[in] j : column index
-       */
-      TensorInvalidIndexesException(const unsigned short,
-				    const unsigned short);
+      virtual const char* what() const noexcept final;
       virtual ~TensorInvalidIndexesException() noexcept;
-    private:
-      /*!
-       * format the error message
-       * \param[in] i : line index
-       * \param[in] j : column index
-       */
-      static std::string
-      getErrorMessage(const unsigned short,
-		      const unsigned short);
     }; // end of struct TensorInvalidIndexesException
 
     template<class T>
-    class TensorConcept 
+    struct TensorConcept 
     {
+      typedef TensorTag ConceptTag;
       
-      typedef TensorTraits<T> traits;
-      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename traits::NumType NumType;
-      typedef typename std::conditional<isTemporary,NumType,
-				      const NumType&>::type ValueType;
+      typename TensorTraits<T>::NumType
+      operator()(const unsigned short,
+		 const unsigned short) const;
+      
+      typename TensorTraits<T>::NumType
+      operator()(const unsigned short) const;
+
+      typename TensorTraits<T>::NumType
+      operator[](const unsigned short) const;
       
     protected:
       TensorConcept() = default;
@@ -115,22 +94,15 @@ namespace tfel{
       TensorConcept&
       operator=(const TensorConcept&) = default;
       ~TensorConcept() = default;
-    public:
-
-      typedef TensorTag ConceptTag;
-
-      NumType 
-      operator()(const unsigned short,
-		 const unsigned short) const;
-      
-      ValueType 
-      operator()(const unsigned short) const;
-
-      ValueType 
-      operator[](const unsigned short) const;
-      
     };
   
+    //! paratial specialisation for tensors
+    template<typename Type>
+    struct ConceptRebind<TensorTag,Type>
+    {
+      using type = TensorConcept<Type>;
+    };
+
     template<typename T>
     struct TensorType{
       typedef T type;
@@ -578,8 +550,8 @@ namespace tfel{
     TFEL_MATH_INLINE
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond,
-      MatrixExpr<tmatrix<3u,3u,typename TensorTraits<TensorType>::NumType>,
-		 MatrixViewFromTensorExpr<TensorType> >
+      Expr<tmatrix<3u,3u,typename TensorTraits<TensorType>::NumType>,
+	   MatrixViewFromTensorExpr<TensorType> >
     >::type
     matrix_view(const TensorType&);
 
@@ -587,40 +559,37 @@ namespace tfel{
      * \return a transposed view of  the tensor
      */
     template<typename TensorType>
-    TFEL_MATH_INLINE
-    typename std::enable_if<
-      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
-      (TensorTraits<TensorType>::dime==1u),
-      TensorExpr<tensor<1u,typename TensorTraits<TensorType>::NumType>,
-		 TensorTransposeExpr1D<TensorType> >
-      >::type
-    transpose(const TensorType&);
+    TFEL_MATH_INLINE auto
+    transpose(TensorType&& t)
+    -> typename std::enable_if<
+      tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
+      (TensorTraits<typename std::decay<TensorType>::type>::dime==1u),
+      Expr<tensor<1u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
+	   TensorTransposeExpr1D<decltype(t)>>>::type;
 
     /*!
      * \return a transposed view of  the tensor
      */
     template<typename TensorType>
-    TFEL_MATH_INLINE
-    typename std::enable_if<
-      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
-      (TensorTraits<TensorType>::dime==2u),
-      TensorExpr<tensor<2u,typename TensorTraits<TensorType>::NumType>,
-		 TensorTransposeExpr2D<TensorType> >
-      >::type
-    transpose(const TensorType&);
+    TFEL_MATH_INLINE auto
+    transpose(TensorType&& t)
+    -> typename std::enable_if<
+      tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
+      (TensorTraits<typename std::decay<TensorType>::type>::dime==2u),
+      Expr<tensor<2u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
+	   TensorTransposeExpr2D<decltype(t)>>>::type;
 
     /*!
      * \return a transposed view of  the tensor
      */
     template<typename TensorType>
-    TFEL_MATH_INLINE
-    typename std::enable_if<
-      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
-      (TensorTraits<TensorType>::dime==3u),
-      TensorExpr<tensor<3u,typename TensorTraits<TensorType>::NumType>,
-		 TensorTransposeExpr3D<TensorType> >
-      >::type
-    transpose(const TensorType&);
+    TFEL_MATH_INLINE auto
+    transpose(TensorType&& t)
+    -> typename std::enable_if<
+      tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
+      (TensorTraits<typename std::decay<TensorType>::type>::dime==3u),
+      Expr<tensor<3u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
+	   TensorTransposeExpr3D<decltype(t)>>>::type;
 
   } // end of namespace math
 

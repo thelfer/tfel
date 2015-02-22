@@ -32,7 +32,6 @@
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
 
 namespace tfel{
   
@@ -143,7 +142,7 @@ namespace tfel{
 	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
 	StensorTraits<StensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
-	ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
+	Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
       tpld(const StensorType&);
       /*!
        * \param[in] B : second tensor of the product
@@ -161,7 +160,7 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
 								      typename ST2toST2Traits<ST2toST2Type>::NumType,
 								      OpMult>::Result,T>::cond,
-	ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
+	Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
       tpld(const StensorType&,
 	   const ST2toST2Type&);
       /*!
@@ -174,7 +173,7 @@ namespace tfel{
 	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
 	StensorTraits<StensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
-	ST2toST2Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
+	Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
       tprd(const StensorType&);
       /*!
        * \param[in] A : first tensor of the product
@@ -192,7 +191,7 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
 								      typename ST2toST2Traits<ST2toST2Type>::NumType,
 								      OpMult>::Result,T>::cond,
-	ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
+	Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
       tprd(const StensorType&,
 	   const ST2toST2Type&);
       /*!
@@ -205,7 +204,7 @@ namespace tfel{
 	tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
 	T2toST2Traits<T2toST2Type>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,T>::cond,
-	ST2toST2Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> > >::type
+	Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> > >::type
       convert(const T2toST2Type&);
       /*!
        * This is a StensorConcept requirement.
@@ -240,9 +239,9 @@ namespace tfel{
       //! copy Constructor
       constexpr st2tost2(const st2tost2<N,T>&) = default;
       // Copy Constructor
-      template<typename T2,typename Expr>
+      template<typename T2,typename Op>
       TFEL_MATH_INLINE 
-      st2tost2(const ST2toST2Expr<st2tost2<N,T2>,Expr>&);
+      st2tost2(const Expr<st2tost2<N,T2>,Op>&);
       //! assignement operator
       st2tost2& operator=(const st2tost2&) = default;
       /*!

@@ -17,10 +17,9 @@
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
-
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
-#include"TFEL/Math/Tensor/TensorExpr.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 #include"TFEL/Math/Forward/tensor.hxx"
 
@@ -37,11 +36,10 @@ namespace tfel
     struct TensorViewFromStensorExpr
     {}; // end of struct TensorViewFromStensorExpr
 
-    template<unsigned short N,
-	     typename ValueType,
-	     typename T>
-    struct TensorExpr<tensor<N,ValueType>,TensorViewFromStensorExpr<T> >
-      : public TensorConcept<TensorExpr<tensor<N,ValueType>,TensorViewFromStensorExpr<T> > >
+    template<unsigned short N,typename ValueType,typename T>
+    struct Expr<tensor<N,ValueType>,TensorViewFromStensorExpr<T> >
+      : public TensorConcept<Expr<tensor<N,ValueType>,TensorViewFromStensorExpr<T> > >,
+	public ExprBase
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -52,17 +50,22 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      TensorExpr(const T& s_)
+      TFEL_MATH_INLINE Expr(T s_)
 	: s(s_)
-      {} // end of TensorExpr
-
-      const ValueType
+      {} // end of Expr
+      
+      TFEL_MATH_INLINE Expr(const Expr&) = default;
+      TFEL_MATH_INLINE Expr(Expr&&) = default;
+      TFEL_MATH_INLINE Expr& operator=(const Expr&) = default;
+      TFEL_MATH_INLINE Expr& operator=(Expr&&) = default;
+      
+      ValueType
       operator()(const unsigned short i) const
       {
-	using std::sqrt;
-	using tfel::typetraits::BaseType;
-	typedef typename BaseType<ValueType>::type real;
-	static const real cste = real(1)/sqrt(real(2));
+	using constexpr_fct::sqrt;
+	using traits = StensorTraits<typename std::decay<T>::type>;
+	using real = typename tfel::typetraits::BaseType<ValueType>::type;
+	constexpr real cste = real(1)/sqrt(real(2));
 	switch(i){
 	case 0:
 	  return this->s(0);
@@ -72,54 +75,53 @@ namespace tfel
 	  return this->s(2);
 	case 3:
 	case 4:
-	  if(StensorTraits<T>::dime<2){
-	    throw(TensorInvalidIndexException(i));
+	  if(traits::dime<2){
+	    throw(TensorInvalidIndexException());
 	  }
 	  return this->s(3)*cste;
 	case 5:
 	case 6:
-	  if(StensorTraits<T>::dime<3){
-	    throw(TensorInvalidIndexException(i));
+	  if(traits::dime<3){
+	    throw(TensorInvalidIndexException());
 	  }
 	  return this->s(4)*cste;
 	case 7:
 	case 8:
-	  if(StensorTraits<T>::dime<3){
-	    throw(TensorInvalidIndexException(i));
+	  if(traits::dime<3){
+	    throw(TensorInvalidIndexException());
 	  }
 	  return this->s(5)*cste;
 	default:
 	  ;
 	}
-	throw(TensorInvalidIndexException(i));
+	throw(TensorInvalidIndexException());
 	return ValueType(0);
       } // end of operator() const
 
     protected:
 
-      //! says if the underlying object is a temporary
-      static constexpr bool IsTemporary = tfel::typetraits::IsTemporary<T>::cond;
       //! The stensor object
-      typename std::conditional<IsTemporary,const T,const T&>::type s;
+      ArgumentStorage<T> s;
 
     private:
 
-      typedef typename StensorTraits<T>::NumType StensorValueType;
+      using stype  = typename std::decay<T>::type;
+      using traits = StensorTraits<stype>;
       /*!
        * Simple checks
        */
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
-      TFEL_STATIC_ASSERT((StensorTraits<T>::dime==N));
-      TFEL_STATIC_ASSERT((std::is_same<ValueType,StensorValueType>::value));
-
-    }; // end of struct TensorExpr
+      TFEL_STATIC_ASSERT((traits::dime==N));
+      TFEL_STATIC_ASSERT((std::is_same<ValueType,typename traits::NumType>::value));
+    }; // end of struct Expr
 
     template<typename T>
     struct TensorViewFromStensor
     {
-      typedef typename StensorTraits<T>::NumType NumType;
-      static  const unsigned short N = StensorTraits<T>::dime;
-      typedef TensorExpr<tensor<N,NumType>,TensorViewFromStensorExpr<T> > type;
+      using stype  = typename std::decay<T>::type;
+      using traits = StensorTraits<stype>;
+      static  const unsigned short N = traits::dime;
+      typedef Expr<tensor<N,typename traits::NumType>,TensorViewFromStensorExpr<T>> type;
     }; // end of struct TensorViewFromStensor
     
   } // end of namespace math

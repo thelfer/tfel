@@ -7,7 +7,7 @@ AC_DEFUN([AC_CHECK_INTEL],
     [
 	if test "x$INTEL" == "xyes"; then
 	    dnl icpc default warning options
-	    CXXFLAGS="-Wall  -diag-disable 981,383,444,858,191,68,810,1418 $CXXFLAGS"
+	    CXXFLAGS="-std=c++11 -Wall  -diag-disable 981,383,444,858,191,68,810,1418 $CXXFLAGS"
 	    dnl 444 : destructor for base class ... is not virtual
 	    dnl 383 : value copied to temporary, reference to temporary used
 	    dnl 981 : operands are evaluated in unspecified order
@@ -19,7 +19,7 @@ AC_DEFUN([AC_CHECK_INTEL],
 	    if test "x$enable_optimizations" != "xno"; then   	    
 		if test "x$enable_debug" != "xyes"; then
 		    dnl g++ debug options
-		    CXXFLAGS="-DNDEBUG $CXXFLAGS"
+		    CXXFLAGS="-DNDEBUG -DNO_RUNTIME_CHECK_BOUNDS $CXXFLAGS"
 		fi
 		dnl icpc optimization options
 		CXXFLAGS="-O2 -ipo $CXXFLAGS"

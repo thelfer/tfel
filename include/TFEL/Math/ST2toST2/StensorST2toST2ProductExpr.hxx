@@ -16,9 +16,9 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
+#include"TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
-#include"TFEL/Math/Stensor/StensorExpr.hxx"
 
 namespace tfel
 {
@@ -27,7 +27,7 @@ namespace tfel
   {
 
     //! Empty structure used for partial specialisation of the
-    //! StensorExpr class
+    //! Expr class
     template<unsigned short N>
     struct StensorST2toST2ProductExpr
     {}; // end of struct StensorST2toST2ProductExpr
@@ -36,8 +36,8 @@ namespace tfel
      * Partial specialisation
      */
     template<typename StensorResultType>
-    struct StensorExpr<StensorResultType,StensorST2toST2ProductExpr<1u> >
-      : public StensorConcept<StensorExpr<StensorResultType,StensorST2toST2ProductExpr<1u> > >,
+    struct Expr<StensorResultType,StensorST2toST2ProductExpr<1u> >
+      : public StensorConcept<Expr<StensorResultType,StensorST2toST2ProductExpr<1u> > >,
 	public fsarray<StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
 		       typename StensorTraits<StensorResultType>::NumType>
     {
@@ -54,7 +54,7 @@ namespace tfel
       template<typename StensorType,
 	       typename ST2toST2Type>
       TFEL_MATH_INLINE
-      StensorExpr(const StensorType& a,
+      Expr(const StensorType& a,
 		  const ST2toST2Type&  b)
       {
 	//! a simple check
@@ -68,7 +68,7 @@ namespace tfel
 	this->v[0]=b(0,0)*a(0)+b(1,0)*a(1)+b(2,0)*a(2);
 	this->v[1]=b(0,1)*a(0)+b(1,1)*a(1)+b(2,1)*a(2);
 	this->v[2]=b(0,2)*a(0)+b(1,2)*a(1)+b(2,2)*a(2);
-      } // end of StensorExpr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : index
@@ -86,14 +86,14 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct StensorExpr<StensorResultType,T2SStensorST2toST2ProductExp>
+    }; // end of struct Expr<StensorResultType,T2SStensorST2toST2ProductExp>
 
     /*!
      * Partial specialisation
      */
     template<typename StensorResultType>
-    struct StensorExpr<StensorResultType,StensorST2toST2ProductExpr<2u> >
-      : public StensorConcept<StensorExpr<StensorResultType,StensorST2toST2ProductExpr<2u> > >,
+    struct Expr<StensorResultType,StensorST2toST2ProductExpr<2u> >
+      : public StensorConcept<Expr<StensorResultType,StensorST2toST2ProductExpr<2u> > >,
 	public fsarray<StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
 		       typename StensorTraits<StensorResultType>::NumType>
     {
@@ -110,7 +110,7 @@ namespace tfel
       template<typename StensorType,
 	       typename ST2toST2Type>
       TFEL_MATH_INLINE
-      StensorExpr(const StensorType& a,
+      Expr(const StensorType& a,
 		  const ST2toST2Type&  b)
       {
 	//! a simple check
@@ -125,7 +125,7 @@ namespace tfel
 	this->v[1]=b(0,1)*a(0)+b(1,1)*a(1)+b(2,1)*a(2)+b(3,1)*a(3);
 	this->v[2]=b(0,2)*a(0)+b(1,2)*a(1)+b(2,2)*a(2)+b(3,2)*a(3);
 	this->v[3]=b(0,3)*a(0)+b(1,3)*a(1)+b(2,3)*a(2)+b(3,3)*a(3);
-      } // end of StensorExpr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : index
@@ -143,14 +143,14 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct StensorExpr<StensorResultType,T2SStensorST2toST2ProductExp>
+    }; // end of struct Expr<StensorResultType,T2SStensorST2toST2ProductExp>
 
     /*!
      * Partial specialisation
      */
     template<typename StensorResultType>
-    struct StensorExpr<StensorResultType,StensorST2toST2ProductExpr<3u> >
-      : public StensorConcept<StensorExpr<StensorResultType,StensorST2toST2ProductExpr<3u> > >,
+    struct Expr<StensorResultType,StensorST2toST2ProductExpr<3u> >
+      : public StensorConcept<Expr<StensorResultType,StensorST2toST2ProductExpr<3u> > >,
 	public fsarray<StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
 		       typename StensorTraits<StensorResultType>::NumType>
     {
@@ -167,7 +167,7 @@ namespace tfel
       template<typename StensorType,
 	       typename ST2toST2Type>
       TFEL_MATH_INLINE
-      StensorExpr(const StensorType& a,
+      Expr(const StensorType& a,
 		  const ST2toST2Type&  b)
       {
 	//! a simple check
@@ -184,7 +184,7 @@ namespace tfel
 	this->v[3]=b(0,3)*a(0)+b(1,3)*a(1)+b(2,3)*a(2)+b(3,3)*a(3)+b(4,3)*a(4)+b(5,3)*a(5);
 	this->v[4]=b(0,4)*a(0)+b(1,4)*a(1)+b(2,4)*a(2)+b(3,4)*a(3)+b(4,4)*a(4)+b(5,4)*a(5);
 	this->v[5]=b(0,5)*a(0)+b(1,5)*a(1)+b(2,5)*a(2)+b(3,5)*a(3)+b(4,5)*a(4)+b(5,5)*a(5);
-      } // end of StensorExpr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : index
@@ -202,7 +202,7 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct StensorExpr<StensorResultType,T2SStensorST2toST2ProductExp>
+    }; // end of struct Expr<StensorResultType,T2SStensorST2toST2ProductExp>
 
   } // end of namespace math
 

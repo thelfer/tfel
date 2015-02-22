@@ -17,14 +17,14 @@ namespace tfel{
   namespace math{
     
     template<class T>
-    typename VectorConcept<T>::ValueType
+    typename VectorTraits<T>::NumType
     VectorConcept<T>::operator()(const typename VectorTraits<T>::IndexType i) const
     {
       return static_cast<const T&>(*this).operator()(i);
     } // end of VectorConcept<T>::operator()
 
     template<class T>
-    typename VectorConcept<T>::ValueType
+    typename VectorTraits<T>::NumType
     VectorConcept<T>::operator[](const typename VectorTraits<T>::IndexType i) const
     {
       return static_cast<const T&>(*this).operator()(i);

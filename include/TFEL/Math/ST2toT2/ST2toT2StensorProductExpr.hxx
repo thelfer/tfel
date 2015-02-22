@@ -19,7 +19,6 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
-#include"TFEL/Math/Tensor/TensorExpr.hxx"
 
 namespace tfel
 {
@@ -28,7 +27,7 @@ namespace tfel
   {
 
     //! Empty structure used for partial specialisation of the
-    //! TensorExpr class
+    //! Expr class
     template<unsigned short N>
     struct ST2toT2StensorProductExpr
     {}; // end of struct ST2toT2StensorProductExpr
@@ -37,8 +36,8 @@ namespace tfel
      * Partial specialisation
      */
     template<typename TensorResultType>
-    struct TensorExpr<TensorResultType,ST2toT2StensorProductExpr<1u> >
-      : public TensorConcept<TensorExpr<TensorResultType,ST2toT2StensorProductExpr<1u> > >,
+    struct Expr<TensorResultType,ST2toT2StensorProductExpr<1u> >
+      : public TensorConcept<Expr<TensorResultType,ST2toT2StensorProductExpr<1u> > >,
 	public fsarray<TensorDimeToSize<TensorTraits<TensorResultType>::dime>::value,
 		       typename TensorTraits<TensorResultType>::NumType>
     {
@@ -55,7 +54,7 @@ namespace tfel
       template<typename ST2toT2Type,
 	       typename StensorType>
       TFEL_MATH_INLINE
-      TensorExpr(const ST2toT2Type& a,
+      Expr(const ST2toT2Type& a,
 		  const StensorType&  b)
       {
 	//! a simple check
@@ -69,7 +68,7 @@ namespace tfel
 	this->v[0]=a(0,0)*b(0)+a(0,1)*b(1)+a(0,2)*b(2);
 	this->v[1]=a(1,0)*b(0)+a(1,1)*b(1)+a(1,2)*b(2);
 	this->v[2]=a(2,0)*b(0)+a(2,1)*b(1)+a(2,2)*b(2);
-      } // end of TensorExpr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : index
@@ -87,14 +86,14 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct TensorExpr<TensorResultType,T2SST2toT2StensorProductExp>
+    }; // end of struct Expr<TensorResultType,T2SST2toT2StensorProductExp>
 
     /*!
      * Partial specialisation
      */
     template<typename TensorResultType>
-    struct TensorExpr<TensorResultType,ST2toT2StensorProductExpr<2u> >
-      : public TensorConcept<TensorExpr<TensorResultType,ST2toT2StensorProductExpr<2u> > >,
+    struct Expr<TensorResultType,ST2toT2StensorProductExpr<2u> >
+      : public TensorConcept<Expr<TensorResultType,ST2toT2StensorProductExpr<2u> > >,
 	public fsarray<TensorDimeToSize<TensorTraits<TensorResultType>::dime>::value,
 		       typename TensorTraits<TensorResultType>::NumType>
     {
@@ -111,7 +110,7 @@ namespace tfel
       template<typename ST2toT2Type,
 	       typename StensorType>
       TFEL_MATH_INLINE
-      TensorExpr(const ST2toT2Type& a,
+      Expr(const ST2toT2Type& a,
 		  const StensorType&  b)
       {
 	//! a simple check
@@ -127,7 +126,7 @@ namespace tfel
 	this->v[2]=a(2,0)*b(0)+a(2,1)*b(1)+a(2,2)*b(2)+a(2,3)*b(3);
 	this->v[3]=a(3,0)*b(0)+a(3,1)*b(1)+a(3,2)*b(2)+a(3,3)*b(3);
 	this->v[4]=a(4,0)*b(0)+a(4,1)*b(1)+a(4,2)*b(2)+a(4,3)*b(3);
-      } // end of TensorExpr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : index
@@ -145,14 +144,14 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct TensorExpr<TensorResultType,T2SST2toT2StensorProductExp>
+    }; // end of struct Expr<TensorResultType,T2SST2toT2StensorProductExp>
 
     /*!
      * Partial specialisation
      */
     template<typename TensorResultType>
-    struct TensorExpr<TensorResultType,ST2toT2StensorProductExpr<3u> >
-      : public TensorConcept<TensorExpr<TensorResultType,ST2toT2StensorProductExpr<3u> > >,
+    struct Expr<TensorResultType,ST2toT2StensorProductExpr<3u> >
+      : public TensorConcept<Expr<TensorResultType,ST2toT2StensorProductExpr<3u> > >,
 	public fsarray<TensorDimeToSize<TensorTraits<TensorResultType>::dime>::value,
 		       typename TensorTraits<TensorResultType>::NumType>
     {
@@ -169,7 +168,7 @@ namespace tfel
       template<typename ST2toT2Type,
 	       typename StensorType>
       TFEL_MATH_INLINE
-      TensorExpr(const ST2toT2Type& a,
+      Expr(const ST2toT2Type& a,
 		  const StensorType&  b)
       {
 	//! a simple check
@@ -189,7 +188,7 @@ namespace tfel
 	this->v[6]=a(6,0)*b(0)+a(6,1)*b(1)+a(6,2)*b(2)+a(6,3)*b(3)+a(6,4)*b(4)+a(6,5)*b(5);
 	this->v[7]=a(7,0)*b(0)+a(7,1)*b(1)+a(7,2)*b(2)+a(7,3)*b(3)+a(7,4)*b(4)+a(7,5)*b(5);
 	this->v[8]=a(8,0)*b(0)+a(8,1)*b(1)+a(8,2)*b(2)+a(8,3)*b(3)+a(8,4)*b(4)+a(8,5)*b(5);
-      } // end of TensorExpr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : index
@@ -207,7 +206,7 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct TensorExpr<TensorResultType,T2SST2toT2StensorProductExp>
+    }; // end of struct Expr<TensorResultType,T2SST2toT2StensorProductExp>
 
   } // end of namespace math
 

@@ -26,7 +26,7 @@ namespace tfel
 	     unsigned short J,
 	     unsigned short K,
 	     typename T>
-    struct tmatrix_const_column_view_expr
+    struct TMatrixConstColumnView
     {
       //! a simple typedef to the tmatrix runtime properties
       /*
@@ -34,13 +34,13 @@ namespace tfel
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the Expr
        */
-      typedef const tmatrix<N,M,T> first_arg;
+      typedef const tmatrix<N,M,T>& first_arg;
       //! a dummy structure
       struct invalid_argument;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the Expr
        */
       typedef invalid_argument second_arg;
       /*!
@@ -88,7 +88,7 @@ namespace tfel
        * \param[in] m_ : the underlying matrix
        */      
       TFEL_MATH_INLINE
-      tmatrix_const_column_view_expr(const tmatrix<N,M,T>&);
+      TMatrixConstColumnView(const tmatrix<N,M,T>&);
       //! Return the RunTimeProperties of the tmatrix.
       /*
        * This is a VectorConcept requirement.
@@ -131,7 +131,7 @@ namespace tfel
 	     unsigned short K,
 	     typename T>
     struct tmatrix_const_column_view
-      : public VectorExpr<tvector<K,T>, tmatrix_const_column_view_expr<N,M,I,J,K,T> >
+      : public Expr<tvector<K,T>,TMatrixConstColumnView<N,M,I,J,K,T> >
     {
       /*!
        * constructor

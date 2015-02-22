@@ -18,9 +18,9 @@
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
+#include"TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
-#include"TFEL/Math/Matrix/MatrixExpr.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/tensor.hxx"
 
@@ -50,14 +50,15 @@ namespace tfel
     {}; // end of struct MatrixViewFromTensorExpr
 
     template<typename TensorType>
-    struct MatrixExpr<tmatrix<3u,3u,typename TensorTraits<TensorType>::NumType>,
+    struct Expr<tmatrix<3u,3u,typename TensorTraits<typename std::decay<TensorType>::type>::NumType>,
 		      MatrixViewFromTensorExpr<TensorType> >
-      : public MatrixConcept<MatrixExpr<tmatrix<3u,3u,
-						typename TensorTraits<TensorType>::NumType>,
-					MatrixViewFromTensorExpr<TensorType> > >
+      : public ExprBase,
+	public MatrixConcept<Expr<tmatrix<3u,3u,typename TensorTraits<typename std::decay<TensorType>::type>::NumType>,
+				  MatrixViewFromTensorExpr<TensorType> > >
     {
       
-      typedef typename TensorTraits<TensorType>::NumType NumType;
+      using traits  = TensorTraits<typename std::decay<TensorType>::type>;
+      using NumType = typename traits::NumType;
       typedef unsigned short IndexType;
       typedef EmptyRunTimeProperties RunTimeProperties;
 
@@ -67,35 +68,25 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      MatrixExpr(const TensorType& t_)
+      Expr(TensorType t_)
 	: t(t_)
-      {} // end of MatrixExpr
+      {} // end of Expr
 
-      const NumType
+      NumType
       operator()(const unsigned short i,
 		 const unsigned short j) const
       {
 	using tfel::math::internals::TensorConceptMatrixAccessOperator;
-	return TensorConceptMatrixAccessOperator<TensorTraits<TensorType>::dime>::exe(this->t,i,j);
+	return TensorConceptMatrixAccessOperator<traits::dime>::exe(this->t,i,j);
       } // end of operator() const
 
     protected:
 
-      //! says if the underlying object is a temporary
-      static constexpr bool IsTemporary = tfel::typetraits::IsTemporary<TensorType>::cond;
-      //! The tensor object
-      typename std::conditional<IsTemporary,
-			      const TensorType,
-			      const TensorType&>::type t;
-
-    private:
-
-      /*!
-       * a simple check
-       */
+      ArgumentStorage<TensorType> t;
+      //! a simple check
       TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
 
-    }; // end of struct MatrixExpr
+    }; // end of struct Expr
     
   } // end of namespace math
 

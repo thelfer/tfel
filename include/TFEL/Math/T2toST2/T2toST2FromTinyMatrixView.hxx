@@ -20,7 +20,6 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
-#include"TFEL/Math/T2toST2/T2toST2Expr.hxx"
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -48,11 +47,11 @@
 // 	     unsigned short In,
 // 	     unsigned short Im,
 // 	     typename T>
-//     struct T2toST2Expr<t2tost2<N,T>,
+//     struct Expr<t2tost2<N,T>,
 // 			T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> >
-// 	: public T2toST2Concept<T2toST2Expr<t2tost2<N,T>,
+// 	: public T2toST2Concept<Expr<t2tost2<N,T>,
 // 					      T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > >,
-// 	  public t2tost2_base<T2toST2Expr<t2tost2<N,T>,
+// 	  public t2tost2_base<Expr<t2tost2<N,T>,
 // 					    T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > >
 //     {
 
@@ -64,9 +63,9 @@
 // 	return RunTimeProperties();
 //       }
 
-//       T2toST2Expr(tmatrix<Mn,Mm,T>& m_)
+//       Expr(tmatrix<Mn,Mm,T>& m_)
 // 	: m(m_)
-//       {} // end of T2toST2Expr
+//       {} // end of Expr
 
 //       const T&
 //       operator()(const unsigned short i,
@@ -87,7 +86,7 @@
 //       } // end of operator()
 
 //       //! assignement operator
-//       using t2tost2_base<T2toST2Expr>::operator=;
+//       using t2tost2_base<Expr>::operator=;
       
 //     protected:
 
@@ -102,7 +101,7 @@
 //       TFEL_STATIC_ASSERT((In<Mn));
 //       TFEL_STATIC_ASSERT((StensorDimeToSize<N>::value<=Mm-Im));
       
-//     }; // end of struct T2toST2Expr
+//     }; // end of struct Expr
     
     
 //     template<unsigned short N,
@@ -113,7 +112,7 @@
 // 	     typename T = double>
 //     struct T2toST2FromTinyMatrixView
 //     {
-//       typedef T2toST2Expr<t2tost2<N,T>,T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > type;
+//       typedef Expr<t2tost2<N,T>,T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > type;
 //     }; // end of struct T2toST2FromTinyMatrixView
     
 //   } // end of namespace math

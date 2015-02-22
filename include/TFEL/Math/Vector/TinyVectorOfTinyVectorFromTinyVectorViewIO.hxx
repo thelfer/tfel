@@ -27,14 +27,14 @@ namespace tfel{
 	     typename T>
     std::ostream&
     operator << (std::ostream &,
-		 const VectorExpr<tvector<Nn,tvector<N,T> >,TinyVectorOfTinyVectorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >&);
+		 const Expr<tvector<Nn,tvector<N,T> >,TinyVectorOfTinyVectorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >&);
 
     template<unsigned short N, unsigned short Mn,
 	     unsigned short In,unsigned short Nn,
 	     typename T>
     std::ostream&
     operator << (std::ostream & os,
-		 const VectorExpr<tvector<Nn,tvector<N,T> >,TinyVectorOfTinyVectorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >& s)
+		 const Expr<tvector<Nn,tvector<N,T> >,TinyVectorOfTinyVectorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >& s)
     {
       os << "[ ";
       for(unsigned short i=0;i<Nn;++i){

@@ -125,10 +125,10 @@ namespace tfel{
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime==N&&
       tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-      T2toST2Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> > >::type
+      Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> > >::type
     t2tost2<N,T>::dCdF(const TensorType& F)
     {
-      return T2toST2Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> >(F);
+      return Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> >(F);
     } // end of t2tost2::dCdF
 
     template<unsigned short N,typename T>
@@ -137,10 +137,10 @@ namespace tfel{
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime==N&&
       tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-      T2toST2Expr<t2tost2<N,T>,LeftCauchyGreenTensorDerivativeExpr<N> > >::type
+      Expr<t2tost2<N,T>,LeftCauchyGreenTensorDerivativeExpr<N> > >::type
     t2tost2<N,T>::dBdF(const TensorType& F)
     {
-      return T2toST2Expr<t2tost2<N,T>,LeftCauchyGreenTensorDerivativeExpr<N> >(F);
+      return Expr<t2tost2<N,T>,LeftCauchyGreenTensorDerivativeExpr<N> >(F);
     } // end of t2tost2::dBdF
 
     template<unsigned short N, typename T>
@@ -161,8 +161,8 @@ namespace tfel{
     {}
     
     template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    t2tost2<N,T>::t2tost2(const T2toST2Expr<t2tost2<N,T2>,Expr>& src){
+    template<typename T2,typename Op>
+    t2tost2<N,T>::t2tost2(const Expr<t2tost2<N,T2>,Op>& src){
       matrix_utilities<StensorDimeToSize<N>::value,
 		       TensorDimeToSize<N>::value,
 		       TensorDimeToSize<N>::value>::copy(src,*this);

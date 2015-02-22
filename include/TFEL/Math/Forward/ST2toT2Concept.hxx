@@ -23,9 +23,6 @@ namespace tfel
     template<class T>
     struct T2toT2Concept;
 
-    template<typename T_type, typename Expr>
-    struct T2toT2Expr;
-
   } // end of namespace math
 
 } // end of namespace tfel

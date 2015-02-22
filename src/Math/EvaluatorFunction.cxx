@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<stdexcept>
 #include"TFEL/Math/Parser/EvaluatorFunction.hxx"
    
 namespace tfel

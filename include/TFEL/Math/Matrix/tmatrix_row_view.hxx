@@ -20,10 +20,8 @@ namespace tfel
   namespace math
   {
     
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
+    template<unsigned short N,unsigned short M,
+	     unsigned short I,unsigned short J,
 	     unsigned short K,
 	     typename T>
     struct tmatrix_row_view_expr
@@ -34,13 +32,13 @@ namespace tfel
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the Expr
        */
-      typedef tmatrix<N,M,T> first_arg;
+      typedef tmatrix<N,M,T>& first_arg;
       //! a dummy structure
       struct invalid_argument;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the Expr
        */
       typedef invalid_argument second_arg;
       /*!
@@ -114,7 +112,6 @@ namespace tfel
        */
       TFEL_MATH_INLINE
       T& operator()(const unsigned short);
-
       /*!
        * \brief index operator.
        * This is a vector concept requirement.
@@ -146,7 +143,7 @@ namespace tfel
 	     unsigned short K,
 	     typename T>
     struct tmatrix_row_view
-      : public VectorExpr<tvector<K,T>, tmatrix_row_view_expr<N,M,I,J,K,T> >,
+      : public Expr<tvector<K,T>, tmatrix_row_view_expr<N,M,I,J,K,T> >,
 	public tvector_base<tmatrix_row_view<N,M,I,J,K,T>,K,T>
     {
       /*!

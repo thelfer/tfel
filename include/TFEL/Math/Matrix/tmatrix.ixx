@@ -60,11 +60,11 @@ namespace tfel{
     }
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
-    template<typename T2,typename Expr>
+    template<typename T2,typename Operation>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type 
-    tmatrix_base<Child,N,M,T>::operator=(const MatrixExpr<tmatrix<N,M,T2>, Expr>& src){
+    tmatrix_base<Child,N,M,T>::operator=(const Expr<tmatrix<N,M,T2>,Operation>& src){
       auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::copy(src,child);
       return child;
@@ -83,11 +83,11 @@ namespace tfel{
     }
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
-    template<typename T2,typename Expr>
+    template<typename T2,typename Operation>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type 
-    tmatrix_base<Child,N,M,T>::operator+=(const MatrixExpr<tmatrix<N,M,T2>, Expr>& src){
+    tmatrix_base<Child,N,M,T>::operator+=(const Expr<tmatrix<N,M,T2>,Operation>& src){
       auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::plusEqual(child,src);
       return child;
@@ -106,11 +106,11 @@ namespace tfel{
     }
 
     template<typename Child,unsigned short N,unsigned short M, typename T>
-    template<typename T2,typename Expr>
+    template<typename T2,typename Operation>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&>::type 
-    tmatrix_base<Child,N,M,T>::operator-=(const MatrixExpr<tmatrix<N,M,T2>, Expr>& src){
+    tmatrix_base<Child,N,M,T>::operator-=(const Expr<tmatrix<N,M,T2>,Operation>& src){
       auto& child = static_cast<Child&>(*this);
       matrix_utilities<N,M,M>::minusEqual(child,src);
       return child;
@@ -341,10 +341,9 @@ namespace tfel{
 
     }
     
-    template<typename T,
-	     typename Expr>
+    template<typename T,typename Operation>
     typename ComputeUnaryResult<T,Power<3> >::Result
-    det(const MatrixExpr<tmatrix<2,2,T>,Expr>& m)
+    det(const Expr<tmatrix<2,2,T>,Operation>& m)
     {
       return tfel::math::internals::det2(m);
     }
@@ -356,10 +355,9 @@ namespace tfel{
       return tfel::math::internals::det2(m);
     }
     
-    template<typename T,
-	     typename Expr>
+    template<typename T,typename Operation>
     typename ComputeUnaryResult<T,Power<3> >::Result
-    det(const MatrixExpr<tmatrix<3,3,T>,Expr>& m)
+    det(const Expr<tmatrix<3,3,T>,Operation>& m)
     {
       return tfel::math::internals::det3(m);
     }

@@ -32,7 +32,6 @@
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include"TFEL/Math/ST2toT2/ST2toT2Concept.hxx"
 #include"TFEL/Math/ST2toT2/ST2toT2ConceptOperations.hxx"
-#include"TFEL/Math/ST2toT2/ST2toT2Expr.hxx"
 
 namespace tfel{
   
@@ -143,9 +142,9 @@ namespace tfel{
       TFEL_MATH_INLINE constexpr
       st2tot2(const st2tot2<N,T>& src);
       // Copy Constructor
-      template<typename T2,typename Expr>
+      template<typename T2,typename Op>
       TFEL_MATH_INLINE 
-      st2tot2(const ST2toT2Expr<st2tot2<N,T2>,Expr>&x);
+      st2tot2(const Expr<st2tot2<N,T2>,Op>&x);
       //! assignement operator
       TFEL_MATH_INLINE st2tot2&
       operator=(const st2tot2<N,T>&);

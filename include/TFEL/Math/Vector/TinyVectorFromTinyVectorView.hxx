@@ -18,7 +18,6 @@
 
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
-#include"TFEL/Math/Vector/VectorExpr.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/tvector.hxx"
@@ -59,9 +58,9 @@ namespace tfel
 	     unsigned short Mn,
 	     unsigned short In,
 	     typename T,bool b>
-    struct VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> >
-      : public VectorConcept<VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > >,
-	public tvector_base<VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> >,N,T>
+    struct Expr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> >
+      : public VectorConcept<Expr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > >,
+	public tvector_base<Expr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> >,N,T>
     {
       typedef typename std::conditional<b,const tvector<Mn,T>&,
 				      tvector<Mn,T>&>::type ref_type;
@@ -71,9 +70,9 @@ namespace tfel
       /*!
        * constructor
        */
-      VectorExpr(ref_type v_)
+      Expr(ref_type v_)
 	: v(v_)
-      {} // end of VectorExpr
+      {} // end of Expr
       /*!
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
@@ -108,7 +107,7 @@ namespace tfel
 	return this->v[static_cast<unsigned short>(In+i)];
       } // end of operator()
 
-      using tvector_base<VectorExpr,N,T>::operator=;
+      using tvector_base<Expr,N,T>::operator=;
 
     protected:
       //! underlying vector
@@ -119,7 +118,7 @@ namespace tfel
        */
       TFEL_STATIC_ASSERT((In<Mn));
       TFEL_STATIC_ASSERT((N<=Mn-In));
-    }; // end of struct VectorExpr
+    }; // end of struct Expr
 
 
     template<unsigned short N,
@@ -128,24 +127,10 @@ namespace tfel
 	     typename T,bool b>
     struct TinyVectorFromTinyVectorView
     {
-      typedef VectorExpr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > type;
+      typedef Expr<tvector<N,T>,TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > type;
     }; // end of struct TinyVectorFromTinyVectorView
     
   } // end of namespace math
-
-  namespace typetraits{
-
-    template<unsigned short N,
-  	     unsigned short Mn,
-  	     unsigned short In,
-  	     typename T,bool b>
-    struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<N,T>,
-					      tfel::math::TinyVectorFromTinyVectorViewExpr<N,Mn,In,T,b> > >
-    {
-      static constexpr bool cond = false;
-    };
-
-  }// end of namespace typetraits
 
 } // end of namespace tfel
 

@@ -16,7 +16,6 @@
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
-#include<type_traits>
 
 /*!
  * \def    TFEL_MATH_CHOOSETYPE

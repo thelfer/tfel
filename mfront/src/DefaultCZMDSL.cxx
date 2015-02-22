@@ -43,9 +43,9 @@ namespace mfront{
     this->mb.addLocalVariable(h,VariableDescription("real&","u_n",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("real&","du_n",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("real&","t_n",1u,0u));    
-    this->mb.addLocalVariable(h,VariableDescription("tfel::math::VectorExpr<tfel::math::tvector<N-1,real>,tfel::math::TinyVectorFromTinyVectorViewExpr<N-1,N,1,real,false> >","u_t",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("tfel::math::VectorExpr<tfel::math::tvector<N-1,real>,tfel::math::TinyVectorFromTinyVectorViewExpr<N-1,N,1,real,false> >","du_t",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("tfel::math::VectorExpr<tfel::math::tvector<N-1,real>,tfel::math::TinyVectorFromTinyVectorViewExpr<N-1,N,1,real,false> >","t_t",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("tfel::math::Expr<tfel::math::tvector<N-1,real>,tfel::math::TinyVectorFromTinyVectorViewExpr<N-1,N,1,real,false> >","u_t",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("tfel::math::Expr<tfel::math::tvector<N-1,real>,tfel::math::TinyVectorFromTinyVectorViewExpr<N-1,N,1,real,false> >","du_t",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("tfel::math::Expr<tfel::math::tvector<N-1,real>,tfel::math::TinyVectorFromTinyVectorViewExpr<N-1,N,1,real,false> >","t_t",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("real&","Dt_nn",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("tfel::math::tmatrix_row_view<N,N,0,1,N-1,real>","Dt_nt",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("tfel::math::tmatrix_column_view<N,N,0,1,N-1,real>","Dt_tn",1u,0u));

@@ -34,18 +34,13 @@ namespace tfel
   namespace math
   {
     
-    /*
-     * \class Complex
-     * \brief a class to replace std::complex.
-     * All standard operations are defined in a more tfelish way for
-     * Complex than for std::complex.
-     * This is mostly a way to simulate template typedef (not yet in
-     * standard C++).
+    /*!
+     * \brief an alias std::complex.
      * \param ValueType, underlying type.
      * \see std::complex.
      */
     template<typename ValueType>
-    struct Complex;
+    using Complex = std::complex<ValueType>;
 
   } // end of namespace math
 

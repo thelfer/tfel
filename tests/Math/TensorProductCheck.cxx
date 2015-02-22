@@ -200,7 +200,6 @@ private:
   checkMatrixMatrixProduct(const MatrixType&  m,
   			   const MatrixType2& m2)
   {
-    using namespace std;
     using namespace tfel::math;
     using std::vector;
     typedef typename ResultType<MatrixType,MatrixType2,OpMult>::type Result;
@@ -229,10 +228,9 @@ private:
   checkMatrixVectorProduct(const MatrixType& m,
 			   const VectorType& v)
   {
-    using namespace std;
     using namespace tfel::math;
     using std::vector;
-    typedef typename ResultType<MatrixType,VectorType,OpMult>::type Result;
+    using Result = typename ResultType<MatrixType,VectorType,OpMult>::type;
     const Result r = m*v;
     vector<double> nr(r.size());
     for(unsigned short i=0;i!=nr.size();++i){

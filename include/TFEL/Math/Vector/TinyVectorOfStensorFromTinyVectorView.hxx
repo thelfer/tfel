@@ -20,7 +20,6 @@
 
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
-#include"TFEL/Math/Vector/VectorExpr.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/stensor.hxx"
 
@@ -63,15 +62,15 @@ namespace tfel
 	     unsigned short In,
 	     unsigned short Nn,
 	     typename T>
-    struct VectorExpr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >
-      : public VectorConcept<VectorExpr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >
+    struct Expr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >
+      : public VectorConcept<Expr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
 
-      VectorExpr(tvector<Mn,T>& v_)
+      Expr(tvector<Mn,T>& v_)
 	: v(v_)
-      {} // end of VectorExpr
+      {} // end of Expr
 
       /*
        * Return the RunTimeProperties of the tvector
@@ -133,7 +132,7 @@ namespace tfel
       template<typename T2>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&>::type
+	Expr&>::type
       operator=(const tvector<Nn,stensor<N,T2> >& s){
 	VectorUtilities<N>::copy(s,*this);
 	return *this;
@@ -142,12 +141,12 @@ namespace tfel
       /*!
        * Assignement operator
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Op>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
+	Expr&
       >::type
-      operator=(const VectorExpr<tvector<Nn,stensor<N,T2> >,Expr>& s)
+      operator=(const Expr<tvector<Nn,stensor<N,T2> >,Op>& s)
       {
 	VectorUtilities<N>::copy(s,*this);
 	return *this;
@@ -157,7 +156,7 @@ namespace tfel
       template<typename T2>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
+	Expr&
       >::type
       operator+=(const tvector<Nn,stensor<N,T2> >& s){
 	VectorUtilities<N>::PlusEqual(*this,s);
@@ -165,12 +164,12 @@ namespace tfel
       }
     
       // Assignement operator
-      template<typename T2,typename Expr>
+      template<typename T2,typename Op>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
+	Expr&
       >::type
-      operator+=(const VectorExpr<tvector<Nn,stensor<N,T2> >,Expr>& s){
+      operator+=(const Expr<tvector<Nn,stensor<N,T2> >,Op>& s){
 	VectorUtilities<N>::PlusEqual(*this,s);
 	return *this;
       }
@@ -179,7 +178,7 @@ namespace tfel
       template<typename T2>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
+	Expr&
       >::type
       operator-=(const tvector<Nn,stensor<N,T2> >& s){
 	VectorUtilities<N>::MinusEqual(*this,s);
@@ -187,12 +186,12 @@ namespace tfel
       }
     
       // Assignement operator
-      template<typename T2,typename Expr>
+      template<typename T2,typename Op>
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	VectorExpr&
+	Expr&
       >::type
-      operator-=(const VectorExpr<tvector<Nn,stensor<N,T2> >,Expr>& s){
+      operator-=(const Expr<tvector<Nn,stensor<N,T2> >,Op>& s){
 	VectorUtilities<N>::MinusEqual(*this,s);
 	return *this;
       }
@@ -204,7 +203,7 @@ namespace tfel
       typename std::enable_if<
 	tfel::typetraits::IsScalar<T2>::cond&&
       std::is_same<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	VectorExpr&
+	Expr&
       >::type
       operator*=(const T2 a){
 	VectorUtilities<N>::scale(*this,a);
@@ -218,7 +217,7 @@ namespace tfel
       typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
       std::is_same<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	VectorExpr&
+	Expr&
 	>::type
 	operator/=(const T2 a){
 	VectorUtilities<N>::scale(*this,1/a);
@@ -238,7 +237,7 @@ namespace tfel
 	TFEL_STATIC_ASSERT((In<Mn));
 	TFEL_STATIC_ASSERT((Nn*StensorDimeToSize<N>::value<=Mn-In));
 
-    }; // end of struct VectorExpr
+    }; // end of struct Expr
 
 
     template<unsigned short N,
@@ -248,25 +247,10 @@ namespace tfel
 	     typename T = double>
     struct TinyVectorOfStensorFromTinyVectorView
     {
-      typedef VectorExpr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > type;
+      typedef Expr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > type;
     }; // end of struct TinyVectorOfStensorFromTinyVectorView
 
   } // end of namespace math
-
-  namespace typetraits{
-
-    template<unsigned short N,
-  	     unsigned short Mn,
-  	     unsigned short In,
-  	     unsigned short Nn,
-  	     typename T>
-    struct IsTemporary<tfel::math::VectorExpr<tfel::math::tvector<Nn,tfel::math::stensor<N,T> >,
-					      tfel::math::TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >
-    {
-      static constexpr bool cond = false;
-    };
-
-  } // end of namespace typetraits
 
 } // end of namespace tfel
 

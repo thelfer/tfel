@@ -24,7 +24,6 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
 #include"TFEL/Math/Matrix/MatrixConceptOperations.hxx"
-#include"TFEL/Math/Matrix/MatrixExpr.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/power.hxx"
 
@@ -98,17 +97,17 @@ namespace tfel{
     {
       // Assignement operator
       /*
-       * \param const MatrixExpr<tmatrix<N,T2>,Expr>&, a matrix expression.
+       * \param expr : a matrix expression.
        * \return Child& a reference to this.
        * \pre T2 must be assignable to a T.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE 
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
       >::type
-      operator=(const MatrixExpr<tmatrix<N,M,T2>,Expr>&);
+      operator=(const Expr<tmatrix<N,M,T2>,Operation>&);
       // Assignement operator
       template<typename T2>
       TFEL_MATH_INLINE
@@ -119,17 +118,17 @@ namespace tfel{
       operator=(const tmatrix<N,M,T2>&);
       // Assignement operator
       /*
-       * \param const MatrixExpr<tmatrix<N,T2>,Expr>&, a matrix expression.
+       * \param expr : a matrix expression.
        * \return Child& a reference to this.
        * \pre T2 must be assignable to a T.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE 
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
       >::type
-      operator+=(const MatrixExpr<tmatrix<N,M,T2>,Expr>&);
+      operator+=(const Expr<tmatrix<N,M,T2>,Operation>&);
       // Assignement operator
       template<typename T2>
       TFEL_MATH_INLINE
@@ -140,17 +139,17 @@ namespace tfel{
       operator+=(const tmatrix<N,M,T2>&);
       // Assignement operator
       /*
-       * \param const MatrixExpr<tmatrix<N,T2>,Expr>&, a matrix expression.
+       * \param expr : a matrix expression.
        * \return Child& a reference to this.
        * \pre T2 must be assignable to a T.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE 
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
       >::type
-      operator-=(const MatrixExpr<tmatrix<N,M,T2>,Expr>&);
+      operator-=(const Expr<tmatrix<N,M,T2>,Operation>&);
       // Assignement operator
       template<typename T2>
       TFEL_MATH_INLINE
@@ -388,22 +387,20 @@ namespace tfel{
     TFEL_MATH_INLINE2
     tmatrix<M,N,T> transpose(const tmatrix<N,M,T>&);
 
-    template<typename T,
-	     typename Expr>
+    template<typename T,typename Operation>
     TFEL_MATH_INLINE
     typename ComputeUnaryResult<T,Power<3> >::Result
-    det(const MatrixExpr<tmatrix<2,2,T>,Expr>&);
+    det(const Expr<tmatrix<2,2,T>,Operation>&);
     
     template<typename T>
     TFEL_MATH_INLINE
     typename ComputeUnaryResult<T,Power<3> >::Result
     det(const tmatrix<2,2,T>&);
 
-    template<typename T,
-	     typename Expr>
+    template<typename T,typename Operation>
     TFEL_MATH_INLINE
     typename ComputeUnaryResult<T,Power<3> >::Result
-    det(const MatrixExpr<tmatrix<3,3,T>,Expr>&);
+    det(const Expr<tmatrix<3,3,T>,Operation>&);
     
     template<typename T>
     TFEL_MATH_INLINE

@@ -18,9 +18,9 @@
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include"TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
-#include"TFEL/Math/Stensor/StensorExpr.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -53,9 +53,9 @@ namespace tfel
      */
     template<unsigned short N, unsigned short Mn,
 	     unsigned short In,typename T>
-    struct StensorExpr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> >
-      : public StensorConcept<StensorExpr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> > >,
-	public stensor_base<StensorExpr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> > >
+    struct Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> >
+      : public StensorConcept<Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> > >,
+	public stensor_base<Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> > >
     {
       typedef EmptyRunTimeProperties RunTimeProperties;
       typedef typename stensor<N,T>::value_type      value_type;      
@@ -75,9 +75,9 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      StensorExpr(tvector<Mn,T>& v_)
+      Expr(tvector<Mn,T>& v_)
 	: v(v_)
-      {} // end of StensorExpr
+      {} // end of Expr
 
       const T&
       operator()(const unsigned short i) const
@@ -104,7 +104,7 @@ namespace tfel
       } // end of operator[]
 
       //! using stensor_base::operator=
-      using stensor_base<StensorExpr>::operator=;
+      using stensor_base<Expr>::operator=;
 
     protected:
 
@@ -119,15 +119,13 @@ namespace tfel
       TFEL_STATIC_ASSERT((In<Mn));
       TFEL_STATIC_ASSERT((StensorDimeToSize<N>::value<=Mn-In));
 
-    }; // end of struct StensorExpr
+    }; // end of struct Expr
 
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     typename T = double>
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short In,typename T = double>
     struct StensorFromTinyVectorView
     {
-      typedef StensorExpr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> > type;
+      typedef Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> > type;
     }; // end of struct StensorFromTinyVectorView
     
   } // end of namespace math

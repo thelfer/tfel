@@ -18,6 +18,7 @@
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/st2tost2.hxx"
 #include"MFront/UMAT/UMATFiniteStrain.hxx"
 
 namespace umat
@@ -271,6 +272,7 @@ namespace umat
       *(reinterpret_cast<st2tost2<2u,UMATReal>*>(P)) =
 	(n0^n0)/vp(0)+(n1^n1)/vp(1)+(n2^n2)/vp(2)+(log_vp(0)-log_vp(1))/(vp(0)-vp(1))*(n01^n01);
     } else {
+
       *(reinterpret_cast<st2tost2<2u,UMATReal>*>(P)) =
 	(n0^n0)/vp(0)+(n1^n1)/vp(1)+(n2^n2)/vp(2)+(n01^n01)/vp(0);
     }

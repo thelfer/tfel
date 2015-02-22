@@ -13,6 +13,7 @@
  */
 
 #include<iostream>
+#include<stdexcept>
 #include"TFEL/Math/Evaluator.hxx"
 
 namespace tfel
@@ -253,7 +254,6 @@ namespace tfel
 		  throw(runtime_error(msg));
 		}
 		*next = shared_ptr<Evaluator::TExpr>(new TNegation(*next));
-		cout << "*next : " << *next << endl;
 		this->subExpr.erase(p);
 		p  = this->subExpr.begin();
 	      }
@@ -276,12 +276,8 @@ namespace tfel
 		  string msg("TGroup::reduce group three successive operators");
 		  throw(runtime_error(msg));
 		}
-		cout << "HERE" << endl;
 		*p = shared_ptr<Evaluator::TExpr>(new TNegation(*next));
-		cout << "*p : " << p->get() << endl;
-		cout << "*p : " << next->get() << endl;
 		p=this->subExpr.erase(next);
-		cout << "*p : " << next->get() << endl;
 		--p;
 	      } else {  
 		if((*next)->isOperator()){

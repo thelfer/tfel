@@ -20,7 +20,6 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
-#include"TFEL/Math/Vector/VectorExpr.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 

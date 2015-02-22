@@ -17,11 +17,6 @@
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/EmptyClass.hxx"
-#include"TFEL/Metaprogramming/HasIterator.hxx"
-#include"TFEL/Metaprogramming/HasConstIterator.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
-#include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 
 namespace tfel{
@@ -53,17 +48,10 @@ namespace tfel{
       typedef typename Expr::size_type 	     size_type;	    
       typedef typename Expr::difference_type difference_type;
 
-      explicit TFEL_MATH_INLINE T2toST2Expr()
-	: Expr()
-      {}
+      explicit T2toST2Expr() = default;
 
-      explicit TFEL_MATH_INLINE T2toST2Expr(const typename Expr::first_arg& a_)
-	: Expr(a_)
-      {}
-
-      explicit TFEL_MATH_INLINE T2toST2Expr(const typename Expr::first_arg& a_, 
-					    const typename Expr::second_arg& b_)
-	: Expr(a_,b_)
+      explicit TFEL_MATH_INLINE T2toST2Expr(typename Expr::first_arg a_)
+	: Expr(std::forward<typename Expr::first_arg>(a_))
       {}
 
       using Expr::operator();
@@ -78,16 +66,6 @@ namespace tfel{
     };
 
   } // end of namespace math
-
-  namespace typetraits{
-
-    template<typename T_type, typename Expr>
-    struct IsTemporary<tfel::math::T2toST2Expr<T_type,Expr> >
-    {
-      static constexpr bool cond = true;
-    };
-
-  }// end of namespace typetraits
 
 } // end of TFEL namespace
 

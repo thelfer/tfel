@@ -19,7 +19,6 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Forward/T2toST2Concept.hxx"
 
@@ -43,14 +42,11 @@ namespace tfel{
     template<class T>
     struct T2toST2Concept 
     {
+      typedef T2tost2Tag ConceptTag;
 
-    private:
-
-      typedef T2toST2Traits<T> traits;
-      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename std::conditional<isTemporary,
-				      typename traits::NumType,
-				      const typename traits::NumType&>::type ValueType;
+      TFEL_MATH_INLINE typename T2toST2Traits<T>::NumType NumType
+      operator()(const unsigned short,
+		 const unsigned short) const;
 
     protected:
       T2toST2Concept() = default;
@@ -59,14 +55,6 @@ namespace tfel{
       T2toST2Concept&
       operator=(const T2toST2Concept&) = default;
       ~T2toST2Concept() = default;
-    public:
-      
-      typedef T2tost2Tag ConceptTag;
-
-      ValueType
-      operator()(const unsigned short,
-		 const unsigned short) const;
-      
     };
 
     template<typename T>

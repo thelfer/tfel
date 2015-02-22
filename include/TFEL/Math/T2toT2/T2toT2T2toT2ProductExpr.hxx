@@ -18,7 +18,6 @@
 
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
-#include"TFEL/Math/T2toT2/T2toT2Expr.hxx"
 
 namespace tfel
 {
@@ -27,7 +26,7 @@ namespace tfel
   {
 
     //! Empty structure used for partial specialisation of the
-    //! T2toT2Expr class
+    //! Expr class
     template<unsigned short N>
     struct TFEL_VISIBILITY_LOCAL T2toT2T2toT2ProductExpr
     {}; // end of struct T2toT2T2toT2ProductExpr
@@ -36,8 +35,8 @@ namespace tfel
  * Partial specialisation
  */
 template<typename T2toT2ResultType>
-struct TFEL_VISIBILITY_LOCAL T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<1u> >
-  : public T2toT2Concept<T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<1u> > >,
+struct TFEL_VISIBILITY_LOCAL Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<1u> >
+  : public T2toT2Concept<Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<1u> > >,
 	public fsarray<TensorDimeToSize<T2toT2Traits<T2toT2ResultType>::dime>::value*
 		       TensorDimeToSize<T2toT2Traits<T2toT2ResultType>::dime>::value,
 		       typename T2toT2Traits<T2toT2ResultType>::NumType>
@@ -55,7 +54,7 @@ struct TFEL_VISIBILITY_LOCAL T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr
   template<typename T2toT2Type,
 	       typename T2toT2Type2>
   TFEL_MATH_INLINE
-  T2toT2Expr(const T2toT2Type& a,
+  Expr(const T2toT2Type& a,
 		 const T2toT2Type2& b)
   {
 	//! a simple check
@@ -75,7 +74,7 @@ this->v[5]=a(1,0)*b(0,2)+a(1,1)*b(1,2)+a(1,2)*b(2,2);
 this->v[6]=a(2,0)*b(0,0)+a(2,1)*b(1,0)+a(2,2)*b(2,0);
 this->v[7]=a(2,0)*b(0,1)+a(2,1)*b(1,1)+a(2,2)*b(2,1);
 this->v[8]=a(2,0)*b(0,2)+a(2,1)*b(1,2)+a(2,2)*b(2,2);
-  } // end of T2toT2Expr
+  } // end of Expr
   /*!
    * \brief access operator
    * \param[in] i : line index
@@ -95,14 +94,14 @@ this->v[8]=a(2,0)*b(0,2)+a(2,1)*b(1,2)+a(2,2)*b(2,2);
   {
 	return RunTimeProperties();
   }
-}; // end of struct T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr>
+}; // end of struct Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr>
 
 /*!
  * Partial specialisation
  */
 template<typename T2toT2ResultType>
-struct TFEL_VISIBILITY_LOCAL T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<2u> >
-  : public T2toT2Concept<T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<2u> > >,
+struct TFEL_VISIBILITY_LOCAL Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<2u> >
+  : public T2toT2Concept<Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<2u> > >,
 	public fsarray<TensorDimeToSize<T2toT2Traits<T2toT2ResultType>::dime>::value*
 		       TensorDimeToSize<T2toT2Traits<T2toT2ResultType>::dime>::value,
 		       typename T2toT2Traits<T2toT2ResultType>::NumType>
@@ -120,7 +119,7 @@ struct TFEL_VISIBILITY_LOCAL T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr
   template<typename T2toT2Type,
 	       typename T2toT2Type2>
   TFEL_MATH_INLINE
-  T2toT2Expr(const T2toT2Type& a,
+  Expr(const T2toT2Type& a,
 		 const T2toT2Type2& b)
   {
 	//! a simple check
@@ -156,7 +155,7 @@ this->v[21]=a(4,0)*b(0,1)+a(4,1)*b(1,1)+a(4,2)*b(2,1)+a(4,3)*b(3,1)+a(4,4)*b(4,1
 this->v[22]=a(4,0)*b(0,2)+a(4,1)*b(1,2)+a(4,2)*b(2,2)+a(4,3)*b(3,2)+a(4,4)*b(4,2);
 this->v[23]=a(4,0)*b(0,3)+a(4,1)*b(1,3)+a(4,2)*b(2,3)+a(4,3)*b(3,3)+a(4,4)*b(4,3);
 this->v[24]=a(4,0)*b(0,4)+a(4,1)*b(1,4)+a(4,2)*b(2,4)+a(4,3)*b(3,4)+a(4,4)*b(4,4);
-  } // end of T2toT2Expr
+  } // end of Expr
   /*!
    * \brief access operator
    * \param[in] i : line index
@@ -176,14 +175,14 @@ this->v[24]=a(4,0)*b(0,4)+a(4,1)*b(1,4)+a(4,2)*b(2,4)+a(4,3)*b(3,4)+a(4,4)*b(4,4
   {
 	return RunTimeProperties();
   }
-}; // end of struct T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr>
+}; // end of struct Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr>
 
 /*!
  * Partial specialisation
  */
 template<typename T2toT2ResultType>
-struct TFEL_VISIBILITY_LOCAL T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<3u> >
-  : public T2toT2Concept<T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<3u> > >,
+struct TFEL_VISIBILITY_LOCAL Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<3u> >
+  : public T2toT2Concept<Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr<3u> > >,
 	public fsarray<TensorDimeToSize<T2toT2Traits<T2toT2ResultType>::dime>::value*
 		       TensorDimeToSize<T2toT2Traits<T2toT2ResultType>::dime>::value,
 		       typename T2toT2Traits<T2toT2ResultType>::NumType>
@@ -201,7 +200,7 @@ struct TFEL_VISIBILITY_LOCAL T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr
   template<typename T2toT2Type,
 	       typename T2toT2Type2>
   TFEL_MATH_INLINE
-  T2toT2Expr(const T2toT2Type& a,
+  Expr(const T2toT2Type& a,
 		 const T2toT2Type2& b)
   {
 	//! a simple check
@@ -293,7 +292,7 @@ this->v[77]=a(8,0)*b(0,5)+a(8,1)*b(1,5)+a(8,2)*b(2,5)+a(8,3)*b(3,5)+a(8,4)*b(4,5
 this->v[78]=a(8,0)*b(0,6)+a(8,1)*b(1,6)+a(8,2)*b(2,6)+a(8,3)*b(3,6)+a(8,4)*b(4,6)+a(8,5)*b(5,6)+a(8,6)*b(6,6)+a(8,7)*b(7,6)+a(8,8)*b(8,6);
 this->v[79]=a(8,0)*b(0,7)+a(8,1)*b(1,7)+a(8,2)*b(2,7)+a(8,3)*b(3,7)+a(8,4)*b(4,7)+a(8,5)*b(5,7)+a(8,6)*b(6,7)+a(8,7)*b(7,7)+a(8,8)*b(8,7);
 this->v[80]=a(8,0)*b(0,8)+a(8,1)*b(1,8)+a(8,2)*b(2,8)+a(8,3)*b(3,8)+a(8,4)*b(4,8)+a(8,5)*b(5,8)+a(8,6)*b(6,8)+a(8,7)*b(7,8)+a(8,8)*b(8,8);
-  } // end of T2toT2Expr
+  } // end of Expr
   /*!
    * \brief access operator
    * \param[in] i : line index
@@ -313,7 +312,7 @@ this->v[80]=a(8,0)*b(0,8)+a(8,1)*b(1,8)+a(8,2)*b(2,8)+a(8,3)*b(3,8)+a(8,4)*b(4,8
   {
 	return RunTimeProperties();
   }
-}; // end of struct T2toT2Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr>
+}; // end of struct Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr>
 
 } // end of namespace math
 

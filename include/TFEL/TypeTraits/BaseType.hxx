@@ -113,60 +113,6 @@ namespace tfel{
      * \brief Partial specialisation for Complex<unsigned short>
      * \see   BaseType
      */
-    TFEL_MATH_BASETYPE(std::complex<unsigned short>);
-
-    /*!
-     * \brief Partial specialisation for Complex<unsigned int>
-     * \see   BaseType
-     */
-    TFEL_MATH_BASETYPE(std::complex<unsigned int>);
-
-    /*!
-     * \brief Partial specialisation for Complex<long unsigned int>
-     * \see   BaseType
-     */
-    TFEL_MATH_BASETYPE(std::complex<long unsigned int>);
-
-    /*!
-     * \brief Partial specialisation for Complex<short>
-     * \see   BaseType
-     */
-    TFEL_MATH_BASETYPE(std::complex<short>);
-
-    /*!
-     * \brief Partial specialisation for Complex<int>
-     * \see   BaseType
-     */
-    TFEL_MATH_BASETYPE(std::complex<int>);
-
-    /*!
-     * \brief Partial specialisation for Complex<long int>
-     * \see   BaseType
-     */
-    TFEL_MATH_BASETYPE(std::complex<long int>);
-
-    /*!
-     * \brief Partial specialisation for Complex<float>
-     * \see   BaseType
-     */
-    TFEL_MATH_BASETYPE(std::complex<float>);
-
-    /*!
-     * \brief Partial specialisation for Complex<double>
-     * \see   BaseType
-     */
-    TFEL_MATH_BASETYPE(std::complex<double>);
-
-    /*!
-     * \brief Partial specialisation for Complex<long double>
-     * \see   BaseType
-     */
-    TFEL_MATH_BASETYPE(std::complex<long double>);
-
-    /*!
-     * \brief Partial specialisation for Complex<unsigned short>
-     * \see   BaseType
-     */
     TFEL_MATH_BASETYPE(tfel::math::Complex<unsigned short>);
 
     /*!

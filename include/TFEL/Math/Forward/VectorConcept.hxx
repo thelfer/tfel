@@ -23,9 +23,6 @@ namespace tfel
     template<class T>
     struct VectorConcept;
 
-    template<typename T_type, typename Expr>
-    class VectorExpr;
-
     template<unsigned short N,
 	     unsigned short M,
 	     typename A, typename B>

@@ -32,7 +32,6 @@
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include"TFEL/Math/T2toST2/T2toST2ConceptOperations.hxx"
-#include"TFEL/Math/T2toST2/T2toST2Expr.hxx"
 
 namespace tfel{
   
@@ -140,7 +139,7 @@ namespace tfel{
 	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-	T2toST2Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> > >::type
+	Expr<t2tost2<N,T>,RightCauchyGreenTensorDerivativeExpr<N> > >::type
       dCdF(const TensorType&);
       /*!
        * \param[in] F : deformation gradient
@@ -153,7 +152,7 @@ namespace tfel{
 	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-	T2toST2Expr<t2tost2<N,T>,LeftCauchyGreenTensorDerivativeExpr<N> > >::type
+	Expr<t2tost2<N,T>,LeftCauchyGreenTensorDerivativeExpr<N> > >::type
       dBdF(const TensorType&);
       /*!
        * This is a StensorConcept requirement.
@@ -176,9 +175,9 @@ namespace tfel{
       TFEL_MATH_INLINE constexpr
       t2tost2(const t2tost2<N,T>&);
       // Copy Constructor
-      template<typename T2,typename Expr>
+      template<typename T2,typename Op>
       TFEL_MATH_INLINE
-      t2tost2(const T2toST2Expr<t2tost2<N,T2>,Expr>&);
+      t2tost2(const Expr<t2tost2<N,T2>,Op>&);
       //! assignement operator
       TFEL_MATH_INLINE t2tost2&
       operator=(const t2tost2&);

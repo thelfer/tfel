@@ -16,7 +16,6 @@
 #define _LIB_TFEL_FUNCTION_IXX_ 
 
 #include<string>
-#include<stdexcept>
 #include<cerrno>
 #include<cstring>
 #include<cmath>

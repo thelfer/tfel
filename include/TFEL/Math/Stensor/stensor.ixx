@@ -730,9 +730,9 @@ namespace tfel{
     {}
 
     template<unsigned short N, typename T>
-    template<typename T2,typename Expr,
+    template<typename T2,typename Operation,
 	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
-    stensor<N,T>::stensor(const StensorExpr<stensor<N,T2>,Expr>& src)
+    stensor<N,T>::stensor(const Expr<stensor<N,T2>,Operation>& src)
     {
       vectorToTab<StensorDimeToSize<N>::value>::exe(src,this->v);
     }

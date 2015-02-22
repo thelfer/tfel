@@ -12,6 +12,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<stdexcept>
+
 #include"TFEL/Math/IntegerEvaluator.hxx"
 #include"TFEL/Math/Parser/IntegerEvaluatorTExpr.hxx"
 

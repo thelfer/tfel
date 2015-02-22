@@ -189,7 +189,7 @@ namespace mfront{
 	<< "}" << endl;
     out << "try{" << endl;
     if(mb.getAttribute(BehaviourData::profiling,false)){
-      writeStandardPerformanceProfilingBegin(out,
+      writeStandardPerformanceProfilingBegin(out,mb.getClassName(),
 					     "TinyMatrixSolve","lu");
     }
     out << "TinyMatrixSolve<" << n2

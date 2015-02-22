@@ -21,7 +21,6 @@
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
@@ -30,56 +29,46 @@ namespace tfel{
   namespace math {
 
     template<typename A, typename B>
-    class TFEL_VISIBILITY_LOCAL TensorProductExprBase
+    struct TFEL_VISIBILITY_LOCAL TensorProductExprBase
+      : public ExprBase
     {
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,TensorConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,TensorConcept>::cond));
-      
-      typedef typename ComputeBinaryResult<A,B,OpMult>::Result Result;
-
-      typedef typename TensorTraits<A>::IndexType AIndexType;
-      typedef typename TensorTraits<B>::IndexType BIndexType;
-
-      typedef typename TensorTraits<A>::NumType NumTypeA;
-      typedef typename TensorTraits<B>::NumType NumTypeB;
-
-      static constexpr bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
-      static constexpr bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
-
-      TensorProductExprBase();
-
-    public:
 
       typedef EmptyRunTimeProperties RunTimeProperties; 
-      typedef typename TensorTraits<Result>::IndexType IndexType;
-      typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
-    protected:
 
-      typedef const A first_arg;
-      typedef const B second_arg;
+      TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties(void) const
+      {
+	return EmptyRunTimeProperties();
+      }
+
+    protected:
+      
+      typedef A first_arg;
+      typedef B second_arg;
+
+      typedef typename ComputeBinaryResult<A,B,OpMult>::Result Result;
+      typedef typename TensorTraits<Result>::NumType   NumType;
+      typedef typename TensorTraits<Result>::IndexType IndexType;
 
       typedef NumType        value_type;                                                
       typedef NumType*       pointer;	    						
       typedef const NumType* const_pointer; 						
       typedef NumType&       reference;	    						
       typedef const NumType& const_reference;						
-      typedef AIndexType     size_type;	    						
+      typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
-      typename std::conditional<IsATemporary,const A,const A&>::type a;
-      typename std::conditional<IsBTemporary,const B,const B&>::type b;
+      TensorProductExprBase() = delete;
 
-      TFEL_MATH_INLINE TensorProductExprBase(const A& l, const B& r)
+      TFEL_MATH_INLINE TensorProductExprBase(A l,B r)
 	: a(l), b(r)
       {}
-
-    public:
       
-      TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const
-      {
-	return EmptyRunTimeProperties();
-      }
+      ArgumentStorage<A> a;
+      ArgumentStorage<B> b;
+
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,TensorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<B>::type,TensorConcept>::cond));
     };
 
     template<typename A, typename B>
@@ -87,8 +76,8 @@ namespace tfel{
       : public TensorProductExprBase<A,B>
     {
 
-      TFEL_MATH_INLINE TensorProductExpr1D(const A& l, const B& r)
-	: TensorProductExprBase<A,B>(l,r)
+      TFEL_MATH_INLINE TensorProductExpr1D(A l,B r)
+	: TensorProductExprBase<A,B>(std::forward<A>(l),std::forward<B>(r))
       {}
       
       TFEL_MATH_INLINE typename TensorProductExprBase<A,B>::NumType 
@@ -99,8 +88,8 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<A>::dime==1u));
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<B>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<B>::type>::dime==1u));
 
     };
 
@@ -109,8 +98,8 @@ namespace tfel{
       : public TensorProductExprBase<A,B>
     {
 
-      TFEL_MATH_INLINE TensorProductExpr2D(const A& l, const B& r)
-	: TensorProductExprBase<A,B>(l,r)
+      TFEL_MATH_INLINE TensorProductExpr2D(A l,B r)
+	: TensorProductExprBase<A,B>(std::forward<A>(l),std::forward<B>(r))
       {}
       
       TFEL_MATH_INLINE typename TensorProductExprBase<A,B>::NumType 
@@ -141,9 +130,8 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<A>::dime==2u));
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<B>::dime==2u));
-
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==2u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<B>::type>::dime==2u));
     };
 
     template<typename A, typename B>
@@ -151,8 +139,8 @@ namespace tfel{
       : public TensorProductExprBase<A,B>
     {
 
-      TFEL_MATH_INLINE TensorProductExpr3D(const A& l, const B& r)
-	: TensorProductExprBase<A,B>(l,r)
+      TFEL_MATH_INLINE TensorProductExpr3D(A l,B r)
+	: TensorProductExprBase<A,B>(std::forward<A>(l),std::forward<B>(r))
       {}
       
       TFEL_MATH_INLINE typename TensorProductExprBase<A,B>::NumType 
@@ -196,9 +184,10 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<A>::dime==3u));
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<B>::dime==3u));
-
+      using ttypeA = typename std::decay<A>::type;
+      using ttypeB = typename std::decay<A>::type;
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<ttypeA>::dime==3u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<ttypeB>::dime==3u));
     };
 
   } // end of namespace math

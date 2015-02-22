@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<sstream>
 
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -33,8 +34,7 @@ namespace mfront
     using namespace tfel::material;
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
-    const auto& hh =
-      elm.getSupportedModellingHypotheses(l,b);
+    const auto& hh = elm.getSupportedModellingHypotheses(l,b);
     if(find(hh.begin(),hh.end(),this->hypothesis)==hh.end()){
       string msg("UmatBehaviourBase::UmatBehaviourBase : "
 		 "unsupported modelling hypothesis '"+this->hypothesis+"'."

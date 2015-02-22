@@ -28,10 +28,10 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
+#include"TFEL/Math/Matrix/MatrixConcept.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 #include"TFEL/Math/Stensor/StensorConceptOperations.hxx"
-#include"TFEL/Math/Stensor/StensorExpr.hxx"
-#include"TFEL/Math/Matrix/MatrixConcept.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
@@ -165,10 +165,10 @@ namespace tfel{
       /*!
        * copy from stensor expression template object
        */
-      template<typename T2,typename Expr,
+      template<typename T2,typename Operation,
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
       TFEL_MATH_INLINE 
-      stensor(const StensorExpr<stensor<N,T2>,Expr>& src);
+      stensor(const Expr<stensor<N,T2>,Operation>& src);
       //! copy assignement operator
       stensor& operator = (const stensor&) =default;
       /*!

@@ -11,6 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<sstream>
+
 #include"MTest/Behaviour.hxx"
 #include"MTest/ImposedThermodynamicForce.hxx"
 

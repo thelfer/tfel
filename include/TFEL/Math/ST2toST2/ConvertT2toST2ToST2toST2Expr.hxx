@@ -25,7 +25,7 @@ namespace tfel
     
     /*!
      * an helper class to define a partial specialisation of the class
-     * ST2toST2Expr
+     * Expr
      */
     template<unsigned short N>
     struct ConvertT2toST2ToST2toST2Expr;
@@ -34,8 +34,8 @@ namespace tfel
      * Partial specialisation for 1D stensor
      */
     template<typename ST2toST2ResultType>
-    struct ST2toST2Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> >
-      : public ST2toST2Concept<ST2toST2Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> > >,
+    struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> >
+      : public ST2toST2Concept<Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> > >,
 	public fsarray<9u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
     {
       //! a simple check
@@ -48,7 +48,7 @@ namespace tfel
        * \param[in] A : t2tost2 to be converted
        */
       template<typename T2toST2Type>
-      ST2toST2Expr(const T2toST2Type& A)
+      Expr(const T2toST2Type& A)
       {
 	using tfel::fsalgo::copy;
 	//! a simple check
@@ -59,7 +59,7 @@ namespace tfel
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
 							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
 	copy<9u>::exe(&A(0,0),this->v);
-      } // end of ST2toST2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -81,14 +81,14 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct ST2toST2Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> >
+    }; // end of struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> >
 
     /*!
      * Partial specialisation for 2D stensor
      */
     template<typename ST2toST2ResultType>
-    struct ST2toST2Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<2u> >
-      : public ST2toST2Concept<ST2toST2Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<2u> > >,
+    struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<2u> >
+      : public ST2toST2Concept<Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<2u> > >,
 	public fsarray<16u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
     {
       //! a simple check
@@ -101,7 +101,7 @@ namespace tfel
        * \param[in] A : t2tost2 to be converted
        */
       template<typename T2toST2Type>
-      ST2toST2Expr(const T2toST2Type& A)
+      Expr(const T2toST2Type& A)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond));
@@ -129,7 +129,7 @@ namespace tfel
 	this->v[7]  = (A(1,3)+A(1,4))*cste;
 	this->v[11] = (A(2,3)+A(2,4))*cste;
 	this->v[15] = (A(3,3)+A(3,4))*cste;
-      } // end of ST2toST2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -151,14 +151,14 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct ST2toST2Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> >
+    }; // end of struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<2u> >
 
     /*!
      * Partial specialisation for 3D stensor
      */
     template<typename ST2toST2ResultType>
-    struct ST2toST2Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<3u> >
-      : public ST2toST2Concept<ST2toST2Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<3u> > >,
+    struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<3u> >
+      : public ST2toST2Concept<Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<3u> > >,
 	public fsarray<36u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
     {
       //! a simple check
@@ -171,7 +171,7 @@ namespace tfel
        * \param[in] A : t2tost2 to be converted
        */
       template<typename T2toST2Type>
-      ST2toST2Expr(const T2toST2Type& A)
+      Expr(const T2toST2Type& A)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond));
@@ -219,7 +219,7 @@ namespace tfel
 	this->v[33] = (A(5,3)+A(5,4))*cste;
 	this->v[34] = (A(5,5)+A(5,6))*cste;
 	this->v[35] = (A(5,7)+A(5,8))*cste;
-      } // end of ST2toST2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -241,7 +241,7 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct ST2toST2Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> >
+    }; // end of struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<3u> >
 
   } // end of namespace math
   

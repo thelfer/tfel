@@ -17,9 +17,9 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 
+#include"TFEL/Math/General/ConceptRebind.hxx"
 #include"TFEL/Math/General/Abs.hxx"
 
 namespace tfel{
@@ -39,17 +39,23 @@ namespace tfel{
      */ 
     struct StensorTag
     {}; // end of StensorTag
-    
+
+    template<typename T>
+    struct StensorType{
+      typedef T type;
+    };
+
     template<class T>
-    class StensorConcept 
+    struct StensorConcept 
     {
+      typedef StensorTag ConceptTag;
       
-      typedef StensorTraits<T> traits;
-      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename std::conditional<isTemporary,
-				      typename traits::NumType,
-				      const typename traits::NumType&>::type ValueType;
-      
+      typename StensorTraits<T>::NumType
+      operator()(const unsigned short) const;
+
+      typename StensorTraits<T>::NumType
+      operator[](const unsigned short) const;
+
     protected:
       StensorConcept() = default;
       StensorConcept(StensorConcept&&) = default;
@@ -57,23 +63,15 @@ namespace tfel{
       StensorConcept&
       operator=(const StensorConcept&) = default;
       ~StensorConcept() = default;
-    public:
+    };
 
-      typedef StensorTag ConceptTag;
-      
-      ValueType 
-      operator()(const unsigned short) const;
-
-      ValueType 
-      operator[](const unsigned short) const;
-      
+    //! paratial specialisation for symmetric tensors
+    template<typename Type>
+    struct ConceptRebind<StensorTag,Type>
+    {
+      using type = StensorConcept<Type>;
     };
   
-    template<typename T>
-    struct StensorType{
-      typedef T type;
-    };
-
     template<typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,

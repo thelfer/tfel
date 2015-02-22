@@ -16,11 +16,11 @@
 #define _LIB_TFEL_MATH_STENSORFROMTINYMATRIXCOLUMNVIEW_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
+#include"TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
-#include"TFEL/Math/Stensor/StensorExpr.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -39,9 +39,9 @@ namespace tfel
     template<unsigned short N, unsigned short Mn,
 	     unsigned short Mm,unsigned short In,
 	     unsigned short Im,typename T>
-    struct StensorExpr<stensor<N,T>,StensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> >
-      : public StensorConcept<StensorExpr<stensor<N,T>,StensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > >,
-	public stensor_base<StensorExpr<stensor<N,T>,StensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > >
+    struct Expr<stensor<N,T>,StensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> >
+      : public StensorConcept<Expr<stensor<N,T>,StensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > >,
+	public stensor_base<Expr<stensor<N,T>,StensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > >
     {
 
       //! a simple alias
@@ -53,9 +53,9 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      StensorExpr(tmatrix<Mn,Mm,T>& m_)
+      Expr(tmatrix<Mn,Mm,T>& m_)
 	: m(m_)
-      {} // end of StensorExpr
+      {} // end of Expr
 
       const T&
       operator()(const unsigned short i) const
@@ -82,7 +82,7 @@ namespace tfel
       } // end of operator[]
 
       //! assignement operator
-      using stensor_base<StensorExpr>::operator =;
+      using stensor_base<Expr>::operator =;
 
     protected:
 
@@ -98,14 +98,14 @@ namespace tfel
       //! a simple check
       TFEL_STATIC_ASSERT((StensorDimeToSize<N>::value<=Mn-In));
 
-    }; // end of struct StensorExpr
+    }; // end of struct Expr
 
     template<unsigned short N, unsigned short Mn,
 	     unsigned short Mm,unsigned short In,
 	     unsigned short Im,typename T = double>
     struct StensorFromTinyMatrixColumnView
     {
-      typedef StensorExpr<stensor<N,T>,StensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > type;
+      typedef Expr<stensor<N,T>,StensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > type;
     }; // end of struct StensorFromTinyMatrixColumnView
     
   } // end of namespace math

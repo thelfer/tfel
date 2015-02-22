@@ -23,9 +23,6 @@ namespace tfel
     template<class T>
     struct MatrixConcept;
 
-    template<typename T_type, typename Expr>
-    struct MatrixExpr;
-
   } // end of namespace math
 
 } // end of namespace tfel

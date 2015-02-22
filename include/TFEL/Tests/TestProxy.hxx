@@ -64,7 +64,8 @@
  * \author Helfer Thomas
  * \date   11 Apr 2010
  */
-#define TFEL_TESTS_GENERATE_PROXY2(X,X2,Y)                   \
+#define TFEL_TESTS_GENERATE_PROXY2(X,X2,Y)                       \
+  extern tfel::tests::TestProxy< X > TFEL_PP_JOIN(testproxy,X2); \
   tfel::tests::TestProxy< X > TFEL_PP_JOIN(testproxy,X2)(Y)
 
 /*!
@@ -77,7 +78,8 @@
  * \author Helfer Thomas
  * \date   11 Apr 2010
  */
-#define TFEL_TESTS_GENERATE_PROXY3(X,X2,Y,Y2)			\
+#define TFEL_TESTS_GENERATE_PROXY3(X,X2,Y,Y2)			 \
+  extern tfel::tests::TestProxy< X > TFEL_PP_JOIN(testproxy,X2); \
   tfel::tests::TestProxy< X > TFEL_PP_JOIN(testproxy,X2)(Y,Y2)
 
 /*!

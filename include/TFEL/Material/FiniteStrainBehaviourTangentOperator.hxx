@@ -20,10 +20,11 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
+#include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Math/Forward/st2tost2.hxx"
-#include"TFEL/Math/T2toST2/T2toST2Expr.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 #include"TFEL/Math/Forward/t2tost2.hxx"
+#include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 
 #include"TFEL/Utilities/GenTypeBase.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx"
@@ -118,8 +119,14 @@ namespace tfel
       /*!
        * assignement operator
        */
-      FiniteStrainBehaviourTangentOperator&
-      operator = (const tfel::math::t2tost2<N,StressType>& e){
+      template<typename T>
+      typename std::enable_if<
+	tfel::meta::Implements<T,tfel::math::T2toST2Concept>::cond&&
+	tfel::math::T2toST2Traits<T>::dime==N &&
+	std::is_same<typename tfel::math::T2toST2Traits<T>::NumType,StressType>::value,
+	FiniteStrainBehaviourTangentOperator&
+	>::type
+      operator = (const T& e){
 	using namespace tfel::math;
 	if(this->template is<t2tost2<N,StressType>* >()){
 	  *(this->template get<t2tost2<N,StressType>* >()) = e;
@@ -134,43 +141,14 @@ namespace tfel
       /*!
        * assignement operator
        */
-      template<typename Expr>
-      FiniteStrainBehaviourTangentOperator&
-      operator = (const tfel::math::T2toST2Expr<tfel::math::t2tost2<N,StressType>,Expr>& e){
-	using namespace tfel::math;
-	if(this->template is<t2tost2<N,StressType>* >()){
-	  *(this->template get<t2tost2<N,StressType>* >()) = e;
-	} else {
-	  if(!this->template is<t2tost2<N,StressType> >()){
-	    this->template set_uninitialised<t2tost2<N,StressType> >();
-	  }
-	  this->template get<t2tost2<N,StressType> >() = e;
-	}
-	return *this;
-      }
-      /*!
-       * assignement operator
-       */
-      template<typename Expr>
-      FiniteStrainBehaviourTangentOperator&
-      operator = (const tfel::math::st2tost2<N,StressType>& e){
-	using namespace tfel::math;
-	if(this->template is<st2tost2<N,StressType>* >()){
-	  *(this->template get<st2tost2<N,StressType>* >()) = e;
-	} else {
-	  if(!this->template is<st2tost2<N,StressType> >()){
-	    this->template set_uninitialised<st2tost2<N,StressType> >();
-	  }
-	  this->template get<st2tost2<N,StressType> >() = e;
-	}
-	return *this;
-      }
-      /*!
-       * assignement operator
-       */
-      template<typename Expr>
-      FiniteStrainBehaviourTangentOperator&
-      operator = (const tfel::math::ST2toST2Expr<tfel::math::st2tost2<N,StressType>,Expr>& e){
+      template<typename T>
+      typename std::enable_if<
+	tfel::meta::Implements<T,tfel::math::ST2toST2Concept>::cond&&
+	tfel::math::ST2toST2Traits<T>::dime==N&&
+	std::is_same<typename tfel::math::ST2toST2Traits<T>::NumType,StressType>::value,
+	FiniteStrainBehaviourTangentOperator&
+	>::type
+      operator = (const T& e){
 	using namespace tfel::math;
 	if(this->template is<st2tost2<N,StressType>* >()){
 	  *(this->template get<st2tost2<N,StressType>* >()) = e;

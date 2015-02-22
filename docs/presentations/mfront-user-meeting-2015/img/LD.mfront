@@ -1,0 +1,14 @@
+@Integrator{
+  ...
+  for(unsigned short i=0;i!=Nss;i++){
+    stress  tauc = tau0+mu*sqrt(sum_a_rho[i]);
+    stress  tau  = ss.mus[i] | M;
+    real    sgn  = (tau>0) ? 1 : -1;
+    strain  dp   = abs(dgamma[i]);
+    stress  Dtau = abs(tau)-tauc;
+    fgamma[i] -= dt*pow(max(Dtau,0.)/K,n)*sgn;
+    frho[i] =(drho[i]-dp*(sqrt(sum_b_rho[i])/Ka-G0*(rho0+rho[i]+theta*drho[i])))/rho0; 
+  }
+    feel = eel+deel-computeGreenLagrangeTensor(Fe);
+   ...
+}

@@ -21,7 +21,7 @@ namespace tfel{
     
     template<class T>
     TFEL_MATH_INLINE 
-    typename ST2toST2Concept<T>::ValueType
+    typename ST2toST2Traits<T>::NumType
     ST2toST2Concept<T>::operator()(const unsigned short i,
 				   const unsigned short j) const
     {

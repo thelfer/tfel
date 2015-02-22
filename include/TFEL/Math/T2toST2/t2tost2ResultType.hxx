@@ -79,8 +79,8 @@ namespace tfel{
       typedef typename ResultType<Scal,T,OpMult>::type ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      t2tost2<N,ResBase_> >::type type;
+					tfel::meta::InvalidType,
+					t2tost2<N,ResBase_> >::type type;
     };
 
     /*!

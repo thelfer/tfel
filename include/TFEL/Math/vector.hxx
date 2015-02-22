@@ -183,43 +183,43 @@ namespace tfel{
       operator-=(const vector&);
       /*
        * Assignement operator
-       * \param const VectorExpr<vector<T2>,Expr>&, a vector
+       * \param const Expr<vector<T2>,Expr>&, a vector
        * expression based on vector
        * \return vector&, a reference to itself.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE2
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	vector<T>&
       >::type
-      operator=(const VectorExpr<vector<T2>,Expr>&);
+      operator=(const Expr<vector<T2>,Operation>&);
       /*
        * Assignement operator
-       * \param const VectorExpr<vector<T2>,Expr>&, a vector
+       * \param const Expr<vector<T2>,Operation>&, a vector
        * expression based on vector
        * \return vector&, a reference to itself.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE2
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	vector<T>&
       >::type
-      operator+=(const VectorExpr<vector<T2>,Expr>&);
+      operator+=(const Expr<vector<T2>,Operation>&);
       /*
        * Assignement operator
-       * \param const VectorExpr<vector<T2>,Expr>&, a vector
+       * \param const Expr<vector<T2>,Operation>&, a vector
        * expression based on vector
        * \return vector&, a reference to itself.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE2
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	vector<T>&
       >::type
-      operator-=(const VectorExpr<vector<T2>,Expr>&);
+      operator-=(const Expr<vector<T2>,Operation>&);
       /*
        * index operator
        * \param size_type, index

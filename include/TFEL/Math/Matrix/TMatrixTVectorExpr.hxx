@@ -22,7 +22,6 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/FSAlgorithm/inner_product.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
@@ -36,65 +35,56 @@ namespace tfel{
 
   namespace math {
     
-    template<unsigned short N,
-	     unsigned short M,
+    template<unsigned short N,unsigned short M,
 	     typename A, typename B>
-    class TMatrixTVectorExpr
+    struct TMatrixTVectorExpr
+      : public ExprBase
     {
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,MatrixConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<B,VectorConcept>::cond));
-      
-      typedef typename ComputeBinaryResult<A,B,OpMult>::Result Result;
-      typedef VectorTraits<Result> traits;
-      typedef typename traits::IndexType IndexType;
 
-      typedef typename MatrixTraits<A>::NumType NumTypeA;
-      typedef typename VectorTraits<B>::NumType NumTypeB;
-  
-      static constexpr bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
-      static constexpr bool IsBTemporary = tfel::typetraits::IsTemporary<B>::cond;
+      typedef EmptyRunTimeProperties RunTimeProperties;
 
-      typename std::conditional<IsATemporary,const A,const A&>::type a;
-      typename std::conditional<IsBTemporary,const B,const B&>::type b;
-
-      TMatrixTVectorExpr();
-
+      TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties(void) const
+      {
+	return RunTimeProperties();
+      }
+      /*!
+       * a pseudo iterator allowing to iterate over values in the same
+       * row
+       */
       struct RowConstIterator
       {	
-	typedef typename std::conditional<IsATemporary,
-					const A,
-					const A&>::type MType;
-
-	typedef typename MatrixTraits<A>::NumType NumType;
-	TFEL_MATH_INLINE RowConstIterator(const A& m_,
+	using MType   = typename std::decay<A>::type;
+	using NumType = typename MatrixTraits<MType>::NumType;
+	//! default constructor
+	TFEL_MATH_INLINE RowConstIterator(const MType& m_,
 					  const unsigned short i_)
 	  : m(m_),i(i_),j(0)
 	{}
-	TFEL_MATH_INLINE
-	RowConstIterator& operator++ ()
+	//! go to the next column
+	TFEL_MATH_INLINE RowConstIterator& operator++ ()
 	{
 	  ++j;
 	  return *this;
 	} // end of operator++
-	
-	TFEL_MATH_INLINE
-	NumType
+	//! \return the current matrix value
+	TFEL_MATH_INLINE NumType
 	operator *(void) const
 	{
-	  using namespace std;
 	  return m(i,j);
 	}
       private:
-	MType m;
-	const unsigned short i;
-	unsigned short j;
+	const MType& m;         //! reference to the underlying matrix
+	const unsigned short i; //! row index
+	unsigned short j;       //! current column 
       }; // end of struc RowConstIterator
-
+      //! a pseudo iterator for the vector. This iterator works even if
+      // VType does not provide an iterator
       struct VectorConstIterator
       {	
-	typedef typename std::conditional<IsBTemporary,const B,const B&>::type VType;
-	typedef typename VectorTraits<B>::NumType NumType;
-	TFEL_MATH_INLINE VectorConstIterator(const B& v_)
+	using VType   = typename std::decay<B>::type;
+	using NumType = typename VectorTraits<VType>::NumType;
+	TFEL_MATH_INLINE VectorConstIterator(const VType& v_)
 	  : v(v_),i(0)
 	{}
 	TFEL_MATH_INLINE VectorConstIterator& operator++ ()
@@ -108,19 +98,19 @@ namespace tfel{
 	  return v(i);
 	}
       private:
-	VType v;
+	const VType& v;
 	unsigned short i;
       }; // end of struc VectorConstIterator
 
-    public:
-
-      typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
-      typedef EmptyRunTimeProperties RunTimeProperties;
-
     protected:
 
-      typedef const A first_arg;
-      typedef const B second_arg;
+      
+      typedef typename ComputeBinaryResult<A,B,OpMult>::Result Result;
+      using NumType   = typename VectorTraits<Result>::NumType;
+      using IndexType = typename VectorTraits<Result>::IndexType;
+
+      typedef A first_arg;
+      typedef B second_arg;
 
       typedef NumType        value_type;                                                
       typedef NumType*       pointer;	    						
@@ -130,17 +120,13 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
-      TFEL_MATH_INLINE TMatrixTVectorExpr(const A& l, const B& r)
+      TMatrixTVectorExpr() = delete;
+
+      TFEL_MATH_INLINE TMatrixTVectorExpr(A l,B r)
 	: a(l), b(r)
       {}
 
-      TFEL_MATH_INLINE
-      TMatrixTVectorExpr(const TMatrixTVectorExpr<N,M,A,B>& src)
-	: a(src.a), b(src.b)
-      {}
-
-      TFEL_MATH_INLINE
-      NumType 
+      TFEL_MATH_INLINE NumType 
       operator()(const IndexType i) const 
       {
 	using namespace tfel::fsalgo;
@@ -148,15 +134,10 @@ namespace tfel{
 						       VectorConstIterator(b));
       }
 
-    public:
-      
-      TFEL_MATH_INLINE
-      RunTimeProperties
-      getRunTimeProperties(void) const
-      {
-	return RunTimeProperties();
-      }
-
+      ArgumentStorage<A> a;
+      ArgumentStorage<B> b;
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,MatrixConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<B>::type,VectorConcept>::cond));
     };
 
   } // end of namespace math

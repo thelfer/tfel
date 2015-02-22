@@ -87,7 +87,7 @@ namespace tfel{
  * \date   28 Aug 2006
  */
 #define TFEL_STATIC_ASSERT(x) \
-  typedef tfel::meta::internals::Dummy<sizeof(tfel::meta::internals::StaticTest<static_cast<bool>(x)>)> TFEL_PP_JOIN(static_assert_typedef_,__LINE__) TFEL_UNUSED_ATTRIBUTE
+  static_assert(x,#x)
 #else
 #define TFEL_STATIC_ASSERT(x)
 #endif

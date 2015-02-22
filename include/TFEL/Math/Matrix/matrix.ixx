@@ -128,12 +128,12 @@ namespace tfel{
     }
 
     template<typename T>
-    template<typename T2,typename Expr>
+    template<typename T2,typename Operation>
     TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       matrix<T>&
     >::type
-    matrix<T>::operator=(const MatrixExpr<matrix<T2>,Expr>& expr)
+    matrix<T>::operator=(const Expr<matrix<T2>,Operation>& expr)
     {
       size_type i;
       size_type j;
@@ -150,12 +150,12 @@ namespace tfel{
     }
 
     template<typename T>
-    template<typename T2,typename Expr>
+    template<typename T2,typename Operation>
     TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       matrix<T>&
     >::type
-    matrix<T>::operator+=(const MatrixExpr<matrix<T2>,Expr>& expr)
+    matrix<T>::operator+=(const Expr<matrix<T2>,Operation>& expr)
     {
       size_type i;
       size_type j;
@@ -172,12 +172,12 @@ namespace tfel{
     }
 
     template<typename T>
-    template<typename T2,typename Expr>
+    template<typename T2,typename Operation>
     TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       matrix<T>&
     >::type
-    matrix<T>::operator-=(const MatrixExpr<matrix<T2>,Expr>& expr)
+    matrix<T>::operator-=(const Expr<matrix<T2>,Operation>& expr)
     {
       size_type i;
       size_type j;

@@ -29,15 +29,17 @@ namespace tfel
     StandardFctGenerator(std::shared_ptr<tfel::math::parser::Expr> e)
     {
       using namespace tfel::math::parser;
-      return std::shared_ptr<Expr>(new StandardFunction<f>(e));
+      using tfel::math::parser::Expr;
+      return  std::shared_ptr<Expr>(new StandardFunction<f>(e));
     } // end of Evaluator::FctGenerator::StandardFctGenerator
 
     template<double (*f)(const double,const double)>
     std::shared_ptr<tfel::math::parser::Expr>
     StandardBinaryFctGenerator(std::shared_ptr<tfel::math::parser::Expr> e1,
-			       std::shared_ptr<tfel::math::parser::Expr> e2)
+    			       std::shared_ptr<tfel::math::parser::Expr> e2)
     {
       using namespace tfel::math::parser;
+      using tfel::math::parser::Expr;
       return std::shared_ptr<Expr>(new StandardBinaryFunction<f>(e1,e2));
     } // end of Evaluator::FctGenerator::StandardBinaryFctGenerator
   

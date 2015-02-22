@@ -30,7 +30,6 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Vector/VectorConceptOperations.hxx"
-#include"TFEL/Math/Vector/VectorExpr.hxx"
 #include"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
@@ -76,17 +75,17 @@ namespace tfel{
     {
       //! Assignement operator
       /*!
-       * \param const VectorExpr<tvector<N,T2>,Expr>&, a vector expression.
+       * \param src: a vector expression.
        * \return a reference to this.
        * \rec T2 must be assignable to a T.
        */
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
 	>::type
-      operator=(const VectorExpr<tvector<N,T2>,Expr>&);
+      operator=(const Expr<tvector<N,T2>,Operation>&);
       
       // Assignement operator
       template<typename T2>
@@ -98,13 +97,13 @@ namespace tfel{
       operator=(const tvector<N,T2>&);
 
       // Assignement operator
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
 	>::type
-      operator+=(const VectorExpr<tvector<N,T2>,Expr>&);
+      operator+=(const Expr<tvector<N,T2>,Operation>&);
 
       // Assignement operator
       template<typename T2>
@@ -116,13 +115,13 @@ namespace tfel{
       operator+=(const tvector<N,T2>&);
     
       // Assignement operator
-      template<typename T2,typename Expr>
+      template<typename T2,typename Operation>
       TFEL_MATH_INLINE
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<T2,T>::cond,
 	Child&
 	>::type
-      operator-=(const VectorExpr<tvector<N,T2>,Expr>&);
+      operator-=(const Expr<tvector<N,T2>,Operation>&);
     
       // Assignement operator
       template<typename T2>
@@ -193,12 +192,12 @@ namespace tfel{
       TFEL_MATH_INLINE explicit tvector(const T*const);
       //! Assignement operator
       /*!
-       * \param const VectorExpr<tvector<N,T2>,Expr>&, a vector expression.
+       * \param src: a vector expression.
        * \return tvector<N,T>& a reference to this.
        * \rec T2 must be assignable to a T.
        */
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE tvector(const VectorExpr<tvector<N,T2>,Expr>&);
+      template<typename T2,typename Operation>
+      TFEL_MATH_INLINE tvector(const Expr<tvector<N,T2>,Operation>&);
       //! assignement operator
       tvector& operator=(const tvector&) = default;
       //! using tvector_base::operator=
@@ -240,7 +239,7 @@ namespace tfel{
        * \param[in] I : the starting index
        */
       template<unsigned short I>
-      VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
+      Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
       slice(void);
       /*!
        * \brief create a slice
@@ -251,7 +250,7 @@ namespace tfel{
        */
       template<unsigned short I,
 	       unsigned short J>
-      VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
+      Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
       slice(void);
       /*!
        * \brief create a slice (const version)
@@ -260,7 +259,7 @@ namespace tfel{
        * vector, so this vector shall not be destroyed before the slice
        */
       template<unsigned short I>
-      VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
+      Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
       slice(void) const;
       /*!
        * \brief create a slice (const version)
@@ -271,7 +270,7 @@ namespace tfel{
        */
       template<unsigned short I,
 	       unsigned short J>
-      VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
+      Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
       slice(void) const;
     private:
       //! a simple assertion stating that the dimension is valid.
@@ -335,7 +334,7 @@ namespace tfel{
      * vector, so this vector shall not be destroyed before the slice
      */
     template<unsigned short I,unsigned short N,typename T>
-    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
+    Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
     slice(tvector<N,T>&);
     /*!
      * \brief create a slice from a tiny vector
@@ -345,7 +344,7 @@ namespace tfel{
      */
     template<unsigned short I,unsigned short J,
 	     unsigned short N,typename T>
-    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
+    Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
     slice(tvector<N,T>&);
     /*!
      * \brief create a slice from a tiny vector
@@ -354,7 +353,7 @@ namespace tfel{
      * vector, so this vector shall not be destroyed before the slice
      */
     template<unsigned short I,unsigned short N,typename T>
-    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
+    Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
     slice(const tvector<N,T>&);
     /*!
      * \brief create a slice from a tiny vector (const version)
@@ -364,7 +363,7 @@ namespace tfel{
      */
     template<unsigned short I,unsigned short J,
 	     unsigned short N,typename T>
-    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
+    Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
     slice(const tvector<N,T>&);
 
   } // end of namespace math

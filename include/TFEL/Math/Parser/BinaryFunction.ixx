@@ -16,7 +16,6 @@
 #define _LIB_TFEL_BINARYFUNCTION_IXX_ 
 
 #include<string>
-#include<stdexcept>
 #include<cstring>
 #include<cerrno>
 

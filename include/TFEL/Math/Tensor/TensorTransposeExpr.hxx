@@ -22,33 +22,32 @@
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/Forward/TensorConcept.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include"TFEL/Math/ExpressionTemplates/Expr.hxx"
 
 namespace tfel{
 
   namespace math {
 
     template<typename A>
-    class TFEL_VISIBILITY_LOCAL TensorTransposeExprBase
+    struct TFEL_VISIBILITY_LOCAL TensorTransposeExprBase
+      : public ExprBase
     {
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<A,TensorConcept>::cond));
-      
-      static constexpr bool IsATemporary = tfel::typetraits::IsTemporary<A>::cond;
-
-      TensorTransposeExprBase();
-
-    public:
-
       typedef EmptyRunTimeProperties RunTimeProperties; 
-      typedef typename TensorTraits<A>::IndexType IndexType;
-      typedef typename TensorTraits<A>::NumType   NumType;
+      typedef typename TensorTraits<typename std::decay<A>::type>::IndexType IndexType;
+      typedef typename TensorTraits<typename std::decay<A>::type>::NumType   NumType;
+      
+      TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties(void) const
+      {
+	return EmptyRunTimeProperties();
+      }
 
     protected:
 
-      typedef const A first_arg;
+      typedef A first_arg;
       typedef tfel::meta::InvalidType second_arg;
 
       typedef NumType        value_type;                                                
@@ -59,19 +58,15 @@ namespace tfel{
       typedef IndexType      size_type;	    						
       typedef ptrdiff_t      difference_type;                                          	
 
-      typename std::conditional<IsATemporary,const A,const A&>::type a;
-
-      TFEL_MATH_INLINE TensorTransposeExprBase(const A& l)
+      TFEL_MATH_INLINE TensorTransposeExprBase(A l)
 	: a(l)
       {}
 
-    public:
-      
-      TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const
-      {
-	return EmptyRunTimeProperties();
-      }
+      ArgumentStorage<A> a;
+
+    private:
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,TensorConcept>::cond));
+
     };
 
     template<typename A>
@@ -79,8 +74,8 @@ namespace tfel{
       : public TensorTransposeExprBase<A>
     {
 
-      TFEL_MATH_INLINE TensorTransposeExpr1D(const A& l)
-	: TensorTransposeExprBase<A>(l)
+      TFEL_MATH_INLINE TensorTransposeExpr1D(A l)
+	: TensorTransposeExprBase<A>(std::forward<A>(l))
       {}
       
       TFEL_MATH_INLINE typename TensorTransposeExprBase<A>::NumType 
@@ -91,7 +86,7 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<A>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==1u));
     };
 
     template<typename A>
@@ -99,8 +94,8 @@ namespace tfel{
       : public TensorTransposeExprBase<A>
     {
 
-      TFEL_MATH_INLINE TensorTransposeExpr2D(const A& l)
-	: TensorTransposeExprBase<A>(l)
+      TFEL_MATH_INLINE TensorTransposeExpr2D(A l)
+	: TensorTransposeExprBase<A>(std::forward<A>(l))
       {}
       
       TFEL_MATH_INLINE typename TensorTransposeExprBase<A>::NumType 
@@ -131,7 +126,7 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<A>::dime==2u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==2u));
     };
 
     template<typename A>
@@ -139,8 +134,8 @@ namespace tfel{
       : public TensorTransposeExprBase<A>
     {
 
-      TFEL_MATH_INLINE TensorTransposeExpr3D(const A& l)
-	: TensorTransposeExprBase<A>(l)
+      TFEL_MATH_INLINE TensorTransposeExpr3D(A l)
+	: TensorTransposeExprBase<A>(std::forward<A>(l))
       {}
       
       TFEL_MATH_INLINE typename TensorTransposeExprBase<A>::NumType 
@@ -183,7 +178,7 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<A>::dime==3u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==3u));
     };
 
   } // end of namespace math

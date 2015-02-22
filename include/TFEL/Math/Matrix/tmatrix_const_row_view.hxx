@@ -20,12 +20,9 @@ namespace tfel
   namespace math
   {
 
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
-	     unsigned short K,
-	     typename T>
+    template<unsigned short N,unsigned short M,
+	     unsigned short I,unsigned short J,
+	     unsigned short K,typename T>
     struct tmatrix_const_row_view_expr
     {
       //! a simple typedef to the tmatrix runtime properties
@@ -34,13 +31,13 @@ namespace tfel
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the Expr
        */
-      typedef const tmatrix<N,M,T> first_arg;
+      typedef const tmatrix<N,M,T>& first_arg;
       //! a dummy structure
       struct invalid_argument;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the Expr
        */
       typedef invalid_argument second_arg;
       /*!
@@ -89,14 +86,16 @@ namespace tfel
        */      
       TFEL_MATH_INLINE
       tmatrix_const_row_view_expr(const tmatrix<N,M,T>&);
+      tmatrix_const_row_view_expr() = delete;
+      TFEL_MATH_INLINE tmatrix_const_row_view_expr(const tmatrix_const_row_view_expr&) = default;
+      TFEL_MATH_INLINE tmatrix_const_row_view_expr(tmatrix_const_row_view_expr&&) = default;
       //! Return the RunTimeProperties of the tmatrix.
       /*
        * This is a VectorConcept requirement.
        * \return const RunTimeProperties, the runtime properties of
        * the tmatrix
        */
-      TFEL_MATH_INLINE
-      RunTimeProperties
+      TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const;
       /*!
        * \brief index operator.
@@ -104,8 +103,7 @@ namespace tfel
        * \param[in] i : index.
        * \return a reference to the ith element of the row.
        */
-      TFEL_MATH_INLINE
-      const T& 
+      TFEL_MATH_INLINE const T& 
       operator()(const unsigned short i) const;
       /*!
        * \brief index operator.
@@ -113,8 +111,7 @@ namespace tfel
        * \param[in] i : index.
        * \return a reference to the ith element of the row.
        */
-      TFEL_MATH_INLINE
-      const T& 
+      TFEL_MATH_INLINE const T& 
       operator[](const unsigned short) const;
 
     private:
@@ -124,14 +121,11 @@ namespace tfel
 
     };
 
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
-	     unsigned short K,
-	     typename T>
+    template<unsigned short N,unsigned short M,
+	     unsigned short I,unsigned short J,
+	     unsigned short K,typename T>
     struct tmatrix_const_row_view
-      : public VectorExpr<tvector<K,T>, tmatrix_const_row_view_expr<N,M,I,J,K,T> >
+      : public Expr<tvector<K,T>, tmatrix_const_row_view_expr<N,M,I,J,K,T> >
     {
       /*!
        * constructor
@@ -139,6 +133,9 @@ namespace tfel
        */      
       TFEL_MATH_INLINE
       tmatrix_const_row_view(const tmatrix<N,M,T>&);
+      tmatrix_const_row_view() = delete;
+      TFEL_MATH_INLINE tmatrix_const_row_view(const tmatrix_const_row_view&) = default;
+      TFEL_MATH_INLINE tmatrix_const_row_view(tmatrix_const_row_view&&) = default;
     };
 
   } // end of namespace math

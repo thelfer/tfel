@@ -19,8 +19,8 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/General/ConceptRebind.hxx"
 #include"TFEL/Math/Forward/T2toT2Concept.hxx"
 
 namespace tfel{
@@ -43,14 +43,11 @@ namespace tfel{
     template<class T>
     struct T2toT2Concept 
     {
+      typedef T2toT2Tag ConceptTag;
 
-    private:
-
-      typedef T2toT2Traits<T> traits;
-      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename std::conditional<isTemporary,
-				      typename traits::NumType,
-				      const typename traits::NumType&>::type ValueType;
+      typename T2toT2Traits<T>::NumType
+      operator()(const unsigned short,
+		 const unsigned short) const;
 
     protected:
       T2toT2Concept() = default;
@@ -59,14 +56,13 @@ namespace tfel{
       T2toT2Concept&
       operator=(const T2toT2Concept&) = default;
       ~T2toT2Concept() = default;      
-    public:
-      
-      typedef T2toT2Tag ConceptTag;
+    };
 
-      ValueType
-      operator()(const unsigned short,
-		 const unsigned short) const;
-      
+    //! paratial specialisation for symmetric tensors
+    template<typename Type>
+    struct ConceptRebind<T2toT2Tag,Type>
+    {
+      using type = T2toT2Concept<Type>;
     };
 
     template<typename T>

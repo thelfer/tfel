@@ -135,8 +135,8 @@ namespace tfel{
     {}
 
     template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    st2tot2<N,T>::st2tot2(const ST2toT2Expr<st2tot2<N,T2>,Expr>& src){
+    template<typename T2,typename Op>
+    st2tot2<N,T>::st2tot2(const Expr<st2tot2<N,T2>,Op>& src){
       matrix_utilities<TensorDimeToSize<N>::value,
 		       StensorDimeToSize<N>::value,
 		       StensorDimeToSize<N>::value>::copy(src,*this);

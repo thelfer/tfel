@@ -20,7 +20,6 @@
 
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
-#include"TFEL/Math/Tensor/TensorExpr.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -39,9 +38,9 @@ namespace tfel
     template<unsigned short N, unsigned short Mn,
 	     unsigned short Mm,unsigned short In,
 	     unsigned short Im,typename T>
-    struct TensorExpr<tensor<N,T>,TensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> >
-      : public TensorConcept<TensorExpr<tensor<N,T>,TensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > >,
-	public tensor_base<TensorExpr<tensor<N,T>,TensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > >
+    struct Expr<tensor<N,T>,TensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> >
+      : public TensorConcept<Expr<tensor<N,T>,TensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > >,
+	public tensor_base<Expr<tensor<N,T>,TensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > >
     {
 
       //! a simple alias
@@ -53,9 +52,9 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      TensorExpr(tmatrix<Mn,Mm,T>& m_)
+      Expr(tmatrix<Mn,Mm,T>& m_)
 	: m(m_)
-      {} // end of TensorExpr
+      {} // end of Expr
 
       const T&
       operator()(const unsigned short i) const
@@ -82,7 +81,7 @@ namespace tfel
       } // end of operator[]
 
       //! assignement operator
-      using tensor_base<TensorExpr>::operator =;
+      using tensor_base<Expr>::operator =;
 
     protected:
 
@@ -98,14 +97,14 @@ namespace tfel
       //! a simple check
       TFEL_STATIC_ASSERT((TensorDimeToSize<N>::value<=Mn-In));
 
-    }; // end of struct TensorExpr
+    }; // end of struct Expr
 
     template<unsigned short N, unsigned short Mn,
 	     unsigned short Mm,unsigned short In,
 	     unsigned short Im,typename T = double>
     struct TensorFromTinyMatrixColumnView
     {
-      typedef TensorExpr<tensor<N,T>,TensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > type;
+      typedef Expr<tensor<N,T>,TensorFromTinyMatrixColumnViewExpr<N,Mn,Mm,In,Im,T> > type;
     }; // end of struct TensorFromTinyMatrixColumnView
     
   } // end of namespace math

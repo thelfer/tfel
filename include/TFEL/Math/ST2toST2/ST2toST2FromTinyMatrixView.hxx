@@ -20,7 +20,6 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -33,26 +32,20 @@ namespace tfel
     /*!
      * ST2toST2 From Tiny Matrix
      */
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short Mm,
-	     unsigned short In,
-	     unsigned short Im,
-	     typename T>
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short Mm,unsigned short In,
+	     unsigned short Im,typename T>
     struct ST2toST2FromTinyMatrixViewExpr
     {}; // end of struct ST2toST2FromTinyMatrixViewExpr
 
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short Mm,
-	     unsigned short In,
-	     unsigned short Im,
-	     typename T>
-    struct ST2toST2Expr<st2tost2<N,T>,
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short Mm,unsigned short In,
+	     unsigned short Im,typename T>
+    struct Expr<st2tost2<N,T>,
 			ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> >
-	: public ST2toST2Concept<ST2toST2Expr<st2tost2<N,T>,
+	: public ST2toST2Concept<Expr<st2tost2<N,T>,
 					      ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > >,
-	  public st2tost2_base<ST2toST2Expr<st2tost2<N,T>,
+	  public st2tost2_base<Expr<st2tost2<N,T>,
 					    ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > >
     {
 
@@ -64,9 +57,9 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      ST2toST2Expr(tmatrix<Mn,Mm,T>& m_)
+      Expr(tmatrix<Mn,Mm,T>& m_)
 	: m(m_)
-      {} // end of ST2toST2Expr
+      {} // end of Expr
 
       const T&
       operator()(const unsigned short i,
@@ -83,7 +76,7 @@ namespace tfel
       } // end of operator()
 
       //! assignement operator
-      using st2tost2_base<ST2toST2Expr>::operator=;
+      using st2tost2_base<Expr>::operator=;
       
     protected:
 
@@ -98,18 +91,14 @@ namespace tfel
       TFEL_STATIC_ASSERT((In<Mn));
       TFEL_STATIC_ASSERT((StensorDimeToSize<N>::value<=Mm-Im));
       
-    }; // end of struct ST2toST2Expr
+    }; // end of struct Expr
     
-    
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short Mm,
-	     unsigned short In,
-	     unsigned short Im,
-	     typename T = double>
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short Mm,unsigned short In,
+	     unsigned short Im,typename T = double>
     struct ST2toST2FromTinyMatrixView
     {
-      typedef ST2toST2Expr<st2tost2<N,T>,ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > type;
+      typedef Expr<st2tost2<N,T>,ST2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > type;
     }; // end of struct ST2toST2FromTinyMatrixView
     
   } // end of namespace math

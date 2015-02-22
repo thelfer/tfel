@@ -38,7 +38,7 @@ namespace tfel{
        * \brief A Second type which size is higher than Small
        */
       struct Big{Small dummy[2];};
-      /*
+      /*!
        * \brief a substitute for classes that have only protected constructors
        */
       template<typename B>

@@ -23,9 +23,6 @@ namespace tfel
     template<class T>
     class StensorConcept;
 
-    template<typename T_type, typename Expr>
-    struct StensorExpr;
-
   } // end of namespace math
 
 } // end of namespace tfel

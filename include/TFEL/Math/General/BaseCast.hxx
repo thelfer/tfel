@@ -17,7 +17,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
-#include"TFEL/Math/qt.hxx"
+#include"TFEL/Math/Forward/qt.hxx"
 
 namespace tfel{
 

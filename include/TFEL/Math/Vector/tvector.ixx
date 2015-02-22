@@ -30,12 +30,12 @@ namespace tfel{
 
 #ifndef DOXYGENSPECIFIC
 
-    template<typename Child,unsigned short N,typename T>    template<typename T2,typename Expr>
+    template<typename Child,unsigned short N,typename T>    template<typename T2,typename Operation>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&
     >::type 
-    tvector_base<Child,N,T>::operator=(const VectorExpr<tvector<N,T2>, Expr>& src){
+    tvector_base<Child,N,T>::operator=(const Expr<tvector<N,T2>,Operation>& src){
       vectorToTab<N>::exe(src,static_cast<Child&>(*this));
       return static_cast<Child&>(*this);
     }
@@ -50,22 +50,22 @@ namespace tfel{
       return static_cast<Child&>(*this);
     }
 
-    template<typename Child,unsigned short N,typename T>    template<typename T2,typename Expr>
+    template<typename Child,unsigned short N,typename T>    template<typename T2,typename Operation>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&
     >::type 
-    tvector_base<Child,N,T>::operator+=(const VectorExpr<tvector<N,T2>, Expr>& src){
+    tvector_base<Child,N,T>::operator+=(const Expr<tvector<N,T2>,Operation>& src){
       VectorUtilities<N>::PlusEqual(static_cast<Child&>(*this),src);
       return static_cast<Child&>(*this);
     }
 
-    template<typename Child,unsigned short N,typename T>    template<typename T2,typename Expr>
+    template<typename Child,unsigned short N,typename T>    template<typename T2,typename Operation>
     typename std::enable_if<
       tfel::typetraits::IsAssignableTo<T2,T>::cond,
       Child&
     >::type 
-    tvector_base<Child,N,T>::operator-=(const VectorExpr<tvector<N,T2>, Expr>& src){
+    tvector_base<Child,N,T>::operator-=(const Expr<tvector<N,T2>,Operation>& src){
       VectorUtilities<N>::MinusEqual(static_cast<Child&>(*this),src);
       return static_cast<Child&>(*this);
     }
@@ -142,12 +142,12 @@ namespace tfel{
     }
     
     template<unsigned short N, typename T>
-    template<typename T2,typename Expr>
-    tvector<N,T>::tvector(const VectorExpr<tvector<N,T2>, Expr>& src)
+    template<typename T2,typename Operation>
+    tvector<N,T>::tvector(const Expr<tvector<N,T2>,Operation>& src)
     {
       TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<T2,T>::cond));
       vectorToTab<N>::exe(src,this->v);
-    } // end of tvector<N,T>::tvector(const VectorExpr<tvector<N,T2>, Expr>&)
+    } // end of tvector<N,T>::tvector(const Expr<tvector<N,T2>,Operation>&)
 
     template<unsigned short N, typename T>
     constexpr const T& 
@@ -180,36 +180,36 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     template<unsigned short I>
-    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
+    Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
     tvector<N,T>::slice(void)
     {
-      return VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >(*this);
+      return Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >(*this);
     } // end of tvector<N,T>::slice(void)
 
     template<unsigned short N, typename T>
     template<unsigned short I,
 	     unsigned short J>
-    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
+    Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
     tvector<N,T>::slice(void)
     {
-      return VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >(*this);
+      return Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >(*this);
     }
 
     template<unsigned short N, typename T>
       template<unsigned short I>
-    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
+    Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
     tvector<N,T>::slice(void) const
     {
-      return VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >(*this);
+      return Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >(*this);
     } // end of tvector<N,T>::slice
 
     template<unsigned short N, typename T>
     template<unsigned short I,
 	     unsigned short J>
-    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
+    Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
     tvector<N,T>::slice(void) const
     {
-      return VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >(*this);
+      return Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >(*this);
     } // end of tvector<N,T>::slice
 
     template<unsigned short N, typename T,
@@ -353,7 +353,7 @@ namespace tfel{
     }
 
     template<unsigned short I,unsigned short N,typename T>
-    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
+    Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
     slice(tvector<N,T>& v)
     {
       return v.template slice<I>();
@@ -361,14 +361,14 @@ namespace tfel{
 
     template<unsigned short I,unsigned short J,
 	     unsigned short N,typename T>
-    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
+    Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
     slice(tvector<N,T>& v)
     {
       return v.template slice<I,J>();
     } // end of slice
 
     template<unsigned short I,unsigned short N,typename T>
-    VectorExpr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
+    Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
     slice(const tvector<N,T>& v)
     {
       return v.template slice<I>();
@@ -376,7 +376,7 @@ namespace tfel{
 
     template<unsigned short I,unsigned short J,
 	     unsigned short N,typename T>
-    VectorExpr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
+    Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
     slice(const tvector<N,T>& v)
     {
       return v.template slice<I,J>();

@@ -26,6 +26,7 @@
 #include"TFEL/Tests/TestManager.hxx"
 
 #include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx"
 
 struct ComputePositivePartAndDerivativeTest1D

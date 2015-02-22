@@ -31,13 +31,13 @@ namespace tfel
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the Expr
        */
-      typedef tmatrix<N,M,T> first_arg;
+      typedef tmatrix<N,M,T>& first_arg;
       //! a dummy structure
       struct invalid_argument;
       /*!
-       * an alias defined for the constructor of the VectorExpr
+       * an alias defined for the constructor of the Expr
        */
       typedef invalid_argument second_arg;
       /*!
@@ -140,7 +140,7 @@ namespace tfel
 	     unsigned short I,unsigned short J,
 	     unsigned short K,typename T>
     struct tmatrix_column_view
-      : public VectorExpr<tvector<K,T>,tmatrix_column_view_expr<N,M,I,J,K,T> >,
+      : public Expr<tvector<K,T>,tmatrix_column_view_expr<N,M,I,J,K,T> >,
 	public tvector_base<tmatrix_column_view<N,M,I,J,K,T>,K,T>
     {
       /*!

@@ -15,6 +15,7 @@
 #define _LIB_TFEL_RESULT_TYPE_HXX_
 
 #include"TFEL/Metaprogramming/InvalidType.hxx"
+#include"TFEL/TypeTraits/IsInvalid.hxx"
 #include"TFEL/Math/General/ComputeObjectTag.hxx"
 
 namespace tfel{
@@ -47,7 +48,6 @@ namespace tfel{
        * Result of the binary operation.
        */
       typedef tfel::meta::InvalidType type;
-
     }; // end of ResultType_
 
     /*
@@ -68,20 +68,16 @@ namespace tfel{
     template<typename A, typename B, typename Op>
     struct ResultType
     {
-    private:
-      /*
-       * Tag of the object A
-       */
-      typedef typename ComputeObjectTag<A>::type TagA;
-      /*
-       * Tag of the object A
-       */
-      typedef typename ComputeObjectTag<B>::type TagB;
-    public:
-      /*
-       * Result
-       */
-      typedef typename ResultType_<TagA,TagB,A,B,Op>::type type;
+      //! a simple alias
+      using A_ = typename std::decay<A>::type;
+      //! a simple alias
+      using B_ = typename std::decay<B>::type;
+      //! Tag of the object A
+      using TagA = typename ComputeObjectTag<A_>::type;
+      //! Tag of the object B
+      using TagB = typename ComputeObjectTag<B_>::type;
+      //! Result
+      using type = typename ResultType_<TagA,TagB,A_,B_,Op>::type;
     };
 
   } // end of namespace math

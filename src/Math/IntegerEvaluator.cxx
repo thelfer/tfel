@@ -12,8 +12,9 @@
  * project under specific licensing conditions. 
  */
 
-#include<cassert>
 #include<cmath>
+#include<cassert>
+#include<stdexcept>
 #include<algorithm>
 #include<iterator>
 #include<sstream>

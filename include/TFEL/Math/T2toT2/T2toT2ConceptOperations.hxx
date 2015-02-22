@@ -15,28 +15,10 @@
 #define _LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX_ 
 
 #include <cmath>
-
 #include"TFEL/Config/TFELConfig.hxx"
 
-#include"TFEL/Metaprogramming/Implements.hxx"
-#include"TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx"
-
-#include"TFEL/TypeTraits/IsScalar.hxx"
-
-#include"TFEL/Math/General/ResultType.hxx"
-#include"TFEL/Math/General/BasicOperations.hxx"
-#include"TFEL/Math/General/ComputeObjectTag.hxx"
-#include"TFEL/Math/General/ComputeBinaryResult.hxx"
-#include"TFEL/Math/General/ComputeUnaryResult.hxx"
-
-#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExpr.hxx"
-#include"TFEL/Math/ExpressionTemplates/ScalarMathObjectExprWithoutConstIterator.hxx"
-#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExpr.hxx"
-#include"TFEL/Math/ExpressionTemplates/MathObjectMathObjectExprWithoutConstIterator.hxx"
-#include"TFEL/Math/ExpressionTemplates/MathObjectNegExpr.hxx"
-#include"TFEL/Math/ExpressionTemplates/MathObjectNegExprWithoutConstIterator.hxx"
-
-#include"TFEL/Math/T2toT2/T2toT2Expr.hxx"
+#include"TFEL/Math/ExpressionTemplates/Expr.hxx"
+#include"TFEL/Math/ExpressionTemplates/StandardOperations.hxx"
 #include"TFEL/Math/T2toT2/T2toT2TensorProductExpr.hxx"
 #include"TFEL/Math/T2toT2/TensorT2toT2ProductExpr.hxx"
 #include"TFEL/Math/T2toT2/T2toT2T2toT2ProductExpr.hxx"
@@ -47,6 +29,19 @@ namespace tfel
   namespace math
   {
 
+    template<typename T_type, typename Operation>
+    struct T2toT2Type<Expr<T_type,Operation> >
+    {
+      typedef T_type type;
+    };
+
+    template<typename T_type, typename Operation>
+    struct T2toT2Traits<Expr<T_type,Operation>>
+    {
+      typedef typename T2toT2Traits<T_type>::NumType   NumType;
+      static constexpr unsigned short dime = T2toT2Traits<T_type>::dime;
+    };
+
     /*
      * Partial Specialisation of ComputeBinaryResult_ for t2tot2's operation
      */
@@ -54,20 +49,13 @@ namespace tfel
     class ComputeBinaryResult_<T2toT2Tag,T2toT2Tag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename T2toT2Type<A>::type T2toT2TypeA;
-      typedef typename T2toT2Type<B>::type T2toT2TypeB;
-      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond&&
-      tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      MathObjectMathObjectExpr<T2toT2Concept,T2toT2Traits,
-							       A,B,Op>,
-				      MathObjectMathObjectExprWithoutConstIterator<T2toT2Concept,T2toT2Traits,
-										   A,B,Op>
-      >::type Expr;			    
+      typedef typename T2toT2Type<typename std::decay<A>::type>::type T2toT2TypeA;
+      typedef typename T2toT2Type<typename std::decay<B>::type>::type T2toT2TypeB;
     public:
       typedef typename ResultType<T2toT2TypeA,T2toT2TypeB,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-				      DummyHandle,
-				      T2toT2Expr<Result,Expr> >::type Handle;
+					DummyHandle,
+					Expr<Result,BinaryOperation<A,B,Op>>>::type Handle;
     };
 
     /*
@@ -77,18 +65,12 @@ namespace tfel
     class ComputeBinaryResult_<ScalarTag,T2toT2Tag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename T2toT2Type<B>::type T2toT2TypeB;
-      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<B>::cond,
-				      ScalarMathObjectExpr<T2toT2Concept,T2toT2Traits,
-							   A,B,Op>,
-				      ScalarMathObjectExprWithoutConstIterator<T2toT2Concept,T2toT2Traits,
-									       A,B,Op>
-      >::type Expr;
+      typedef typename T2toT2Type<typename std::decay<B>::type>::type T2toT2TypeB;
     public:
       typedef typename ResultType<A,T2toT2TypeB,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-				      DummyHandle,
-				      T2toT2Expr<Result,Expr> >::type Handle;
+					DummyHandle,
+					Expr<Result,ScalarObjectOperation<A,B,Op>>>::type Handle;
     };
 
     /*
@@ -99,17 +81,11 @@ namespace tfel
     {
       struct DummyHandle{};
       typedef typename T2toT2Type<A>::type T2toT2TypeA;
-      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      MathObjectScalarExpr<T2toT2Concept,T2toT2Traits,
-							   A,B,Op>,
-				      MathObjectScalarExprWithoutConstIterator<T2toT2Concept,T2toT2Traits,
-									       A,B,Op>
-      >::type Expr;
     public:
       typedef typename ResultType<T2toT2TypeA,B,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
-				      T2toT2Expr<Result,Expr> >::type Handle;
+					Expr<Result,ObjectScalarOperation<A,B,Op>>>::type Handle;
     };
 
     /*
@@ -119,13 +95,13 @@ namespace tfel
     class ComputeBinaryResult_<T2toT2Tag,T2toT2Tag,A,B,OpMult>
     {
       struct DummyHandle{};
-      typedef typename T2toT2Type<A>::type T2toT2A;
-      typedef typename T2toT2Type<B>::type T2toT2B;
+      typedef typename T2toT2Type<typename std::decay<A>::type>::type T2toT2A;
+      typedef typename T2toT2Type<typename std::decay<B>::type>::type T2toT2B;
     public:
       typedef typename ResultType<T2toT2A,T2toT2B,OpMult>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-				      DummyHandle,
-				      T2toT2Expr<Result,T2toT2T2toT2ProductExpr<T2toT2Traits<Result>::dime> > >::type Handle;
+					DummyHandle,
+					Expr<Result,T2toT2T2toT2ProductExpr<T2toT2Traits<Result>::dime> > >::type Handle;
     };
 
     /*
@@ -135,13 +111,13 @@ namespace tfel
     class ComputeBinaryResult_<T2toT2Tag,TensorTag,A,B,OpMult>
     {
       struct DummyHandle{};
-      typedef typename T2toT2Type<A>::type T2toT2A;
-      typedef typename TensorType<B>::type  TensB;
+      typedef typename T2toT2Type<typename std::decay<A>::type>::type T2toT2A;
+      typedef typename TensorType<typename std::decay<B>::type>::type TensB;
     public:
       typedef typename ResultType<T2toT2A,TensB,OpMult>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-				      DummyHandle,
-				      TensorExpr<Result,T2toT2TensorProductExpr<TensorTraits<Result>::dime> > >::type Handle;
+					DummyHandle,
+					Expr<Result,T2toT2TensorProductExpr<TensorTraits<Result>::dime> > >::type Handle;
     };
 
     /*
@@ -151,13 +127,13 @@ namespace tfel
     class ComputeBinaryResult_<TensorTag,T2toT2Tag,A,B,OpMult>
     {
       struct DummyHandle{};
-      typedef typename TensorType<A>::type  TensA;
-      typedef typename T2toT2Type<B>::type T2toT2B;
+      typedef typename TensorType<typename std::decay<A>::type>::type  TensA;
+      typedef typename T2toT2Type<typename std::decay<B>::type>::type T2toT2B;
     public:
       typedef typename ResultType<TensA,T2toT2B,OpMult>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-				      DummyHandle,
-				      TensorExpr<Result,TensorT2toT2ProductExpr<TensorTraits<Result>::dime> > >:: type Handle;
+					DummyHandle,
+					Expr<Result,TensorT2toT2ProductExpr<TensorTraits<Result>::dime> > >:: type Handle;
     };
 
     /*
@@ -167,75 +143,13 @@ namespace tfel
     struct ComputeUnaryResult_<T2toT2Tag,UnaryOperatorTag,A,OpNeg>
     {
       struct DummyHandle{};
-      typedef typename T2toT2Type<A>::type                    T2toT2TypeA;
-      typedef typename T2toT2Traits<A>::NumType               NumA;
-      typedef typename ComputeUnaryResult<NumA,OpNeg>::Result  NumResult;
-      typedef typename std::conditional<tfel::meta::HasRandomAccessConstIterator<A>::cond,
-				      MathObjectNegExpr<T2toT2Concept,T2toT2Traits,A>,
-				      MathObjectNegExprWithoutConstIterator<T2toT2Concept,T2toT2Traits,A>
-      >::type Expr;
+      typedef typename T2toT2Type<typename std::decay<A>::type>::type T2toT2TypeA;
     public:
       typedef typename UnaryResultType<T2toT2TypeA,OpNeg>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-				      DummyHandle,
-				      T2toT2Expr<Result,Expr> >::type Handle;
+					DummyHandle,
+					Expr<Result,UnaryOperation<A,OpNeg>>>::type Handle;
     };
-
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
-    typename std::enable_if<
-      tfel::meta::Implements<T1,T2toT2Concept>::cond&&
-    tfel::meta::Implements<T2,T2toT2Concept>::cond&&
-    !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpPlus>::Result>::cond,
-      typename ComputeBinaryResult<T1,T2,OpPlus>::Handle
-    >::type
-    operator + (const T1& a,const T2& b)
-    {
-      typedef typename ComputeBinaryResult<T1,T2,OpPlus>::Handle Handle;
-      return  Handle(a,b);
-    }
-
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
-    typename std::enable_if<
-      tfel::meta::Implements<T1,T2toT2Concept>::cond&&
-    tfel::meta::Implements<T2,T2toT2Concept>::cond&&
-    !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMinus>::Result>::cond,
-      typename ComputeBinaryResult<T1,T2,OpMinus>::Handle
-    >::type
-    operator - (const T1& a,const T2& b)
-    {
-      typedef typename ComputeBinaryResult<T1,T2,OpMinus>::Handle Handle;
-      return  Handle(a,b);
-    }
-
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
-    typename std::enable_if<
-      tfel::meta::Implements<T1,T2toT2Concept>::cond&&
-      tfel::meta::Implements<T2,T2toT2Concept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
-      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
-    >::type
-    operator * (const T1& a,const T2& b)
-    {
-      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
-      return Handle(a,b);
-    }
-
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
-    typename std::enable_if<
-      tfel::meta::Implements<T1,T2toT2Concept>::cond&&
-      tfel::meta::Implements<T2,TensorConcept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
-      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
-      >::type
-    operator * (const T1& a,const T2& b)
-    {
-      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
-      return Handle(a,b);
-    }
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
@@ -249,59 +163,6 @@ namespace tfel
     {
       typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
       return Handle(a,b);
-    }
-
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
-    typename std::enable_if<
-      tfel::typetraits::IsScalar<T1>::cond&&
-      tfel::meta::Implements<T2,T2toT2Concept>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
-      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
-    >::type
-    operator * (const T1 a,const T2& b)
-    {
-      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
-      return  Handle(a,b);
-    }
-
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
-    typename std::enable_if<
-      tfel::meta::Implements<T1,T2toT2Concept>::cond&&
-      tfel::typetraits::IsScalar<T2>::cond&&
-      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpMult>::Result>::cond,
-      typename ComputeBinaryResult<T1,T2,OpMult>::Handle
-    >::type
-    operator * (const T1& a,const T2 b)
-    {
-      typedef typename ComputeBinaryResult<T1,T2,OpMult>::Handle Handle;
-      return  Handle(a,b);
-    }
-
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE 
-    typename std::enable_if<
-      tfel::meta::Implements<T1,T2toT2Concept>::cond&&
-      tfel::typetraits::IsScalar<T2>::cond&&
-    !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDiv>::Result>::cond,
-      typename ComputeBinaryResult<T1,T2,OpDiv>::Handle
-    >::type
-    operator / (const T1& a,const T2 b)
-    {
-      typedef typename ComputeBinaryResult<T1,T2,OpDiv>::Handle Handle;
-      return  Handle(a,b);
-    }
-
-    template<typename T1>
-    typename std::enable_if<
-      tfel::meta::Implements<T1,T2toT2Concept>::cond,
-      typename ComputeUnaryResult<T1,OpNeg>::Handle
-    >::type
-    operator - (const T1& a)
-    {
-      typedef typename ComputeUnaryResult<T1,OpNeg>::Handle Handle;
-      return Handle(a);
     }
     
   } // end of namespace math

@@ -20,7 +20,6 @@
 #include<vector>
 #include<string>
 #include<memory>
-#include<stdexcept>
 
 namespace tfel
 {

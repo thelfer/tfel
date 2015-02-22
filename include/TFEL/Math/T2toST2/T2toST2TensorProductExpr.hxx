@@ -19,7 +19,6 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
-#include"TFEL/Math/Stensor/StensorExpr.hxx"
 
 namespace tfel
 {
@@ -28,7 +27,7 @@ namespace tfel
   {
 
     //! Empty structure used for partial specialisation of the
-    //! StensorExpr class
+    //! Expr class
     template<unsigned short N>
     struct T2toST2TensorProductExpr
     {}; // end of struct T2toST2TensorProductExpr
@@ -37,8 +36,8 @@ namespace tfel
      * Partial specialisation
      */
     template<typename StensorResultType>
-    struct StensorExpr<StensorResultType,T2toST2TensorProductExpr<1u> >
-      : public StensorConcept<StensorExpr<StensorResultType,T2toST2TensorProductExpr<1u> > >,
+    struct Expr<StensorResultType,T2toST2TensorProductExpr<1u> >
+      : public StensorConcept<Expr<StensorResultType,T2toST2TensorProductExpr<1u> > >,
 	public fsarray<3u,typename StensorTraits<StensorResultType>::NumType>
     {
       //! a simple alias
@@ -54,7 +53,7 @@ namespace tfel
       template<typename T2toST2Type,
 	       typename TensorType>
       TFEL_MATH_INLINE
-      StensorExpr(const T2toST2Type& a,
+      Expr(const T2toST2Type& a,
 		  const TensorType&  b)
       {
 	//! a simple check
@@ -68,7 +67,7 @@ namespace tfel
 	this->v[0]=a(0,0)*b(0)+a(0,1)*b(1)+a(0,2)*b(2);
 	this->v[1]=a(1,0)*b(0)+a(1,1)*b(1)+a(1,2)*b(2);
 	this->v[2]=a(2,0)*b(0)+a(2,1)*b(1)+a(2,2)*b(2);
-      } // end of StensorExpr
+      } // end of Expr
       //! using operator []
       using fsarray<3u,value_type>::operator[];
       /*!
@@ -88,14 +87,14 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct StensorExpr<StensorResultType,T2ST2toST2TensorProductExp>
+    }; // end of struct Expr<StensorResultType,T2ST2toST2TensorProductExp>
 
     /*!
      * Partial specialisation
      */
     template<typename StensorResultType>
-    struct StensorExpr<StensorResultType,T2toST2TensorProductExpr<2u> >
-      : public StensorConcept<StensorExpr<StensorResultType,T2toST2TensorProductExpr<2u> > >,
+    struct Expr<StensorResultType,T2toST2TensorProductExpr<2u> >
+      : public StensorConcept<Expr<StensorResultType,T2toST2TensorProductExpr<2u> > >,
 	public fsarray<4u,typename StensorTraits<StensorResultType>::NumType>
     {
       //! a simple alias
@@ -111,7 +110,7 @@ namespace tfel
       template<typename T2toST2Type,
 	       typename TensorType>
       TFEL_MATH_INLINE
-      StensorExpr(const T2toST2Type& a,
+      Expr(const T2toST2Type& a,
 		  const TensorType&  b)
       {
 	//! a simple check
@@ -126,7 +125,7 @@ namespace tfel
 	this->v[1]=a(1,4)*b[4]+a(1,3)*b[3]+a(1,2)*b[2]+a(1,1)*b[1]+a(1,0)*b[0];
 	this->v[2]=a(2,4)*b[4]+a(2,3)*b[3]+a(2,2)*b[2]+a(2,1)*b[1]+a(2,0)*b[0];
 	this->v[3]=a(3,4)*b[4]+a(3,3)*b[3]+a(3,2)*b[2]+a(3,1)*b[1]+a(3,0)*b[0];
-      } // end of StensorExpr
+      } // end of Expr
       //! using operator []
       using fsarray<4u,value_type>::operator[];
       /*!
@@ -146,14 +145,14 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct StensorExpr<StensorResultType,T2ST2toST2TensorProductExp>
+    }; // end of struct Expr<StensorResultType,T2ST2toST2TensorProductExp>
 
     /*!
      * Partial specialisation
      */
     template<typename StensorResultType>
-    struct StensorExpr<StensorResultType,T2toST2TensorProductExpr<3u> >
-      : public StensorConcept<StensorExpr<StensorResultType,T2toST2TensorProductExpr<3u> > >,
+    struct Expr<StensorResultType,T2toST2TensorProductExpr<3u> >
+      : public StensorConcept<Expr<StensorResultType,T2toST2TensorProductExpr<3u> > >,
 	public fsarray<6u,typename StensorTraits<StensorResultType>::NumType>
     {
       //! a simple alias
@@ -169,7 +168,7 @@ namespace tfel
       template<typename T2toST2Type,
 	       typename TensorType>
       TFEL_MATH_INLINE
-      StensorExpr(const T2toST2Type& a,
+      Expr(const T2toST2Type& a,
 		  const TensorType&  b)
       {
 	//! a simple check
@@ -186,7 +185,7 @@ namespace tfel
 	this->v[3]=a(3,8)*b[8]+a(3,7)*b[7]+a(3,6)*b[6]+a(3,5)*b[5]+a(3,4)*b[4]+a(3,3)*b[3]+a(3,2)*b[2]+a(3,1)*b[1]+a(3,0)*b[0];
 	this->v[4]=a(4,8)*b[8]+a(4,7)*b[7]+a(4,6)*b[6]+a(4,5)*b[5]+a(4,4)*b[4]+a(4,3)*b[3]+a(4,2)*b[2]+a(4,1)*b[1]+a(4,0)*b[0];
 	this->v[5]=a(5,8)*b[8]+a(5,7)*b[7]+a(5,6)*b[6]+a(5,5)*b[5]+a(5,4)*b[4]+a(5,3)*b[3]+a(5,2)*b[2]+a(5,1)*b[1]+a(5,0)*b[0];
-      } // end of StensorExpr
+      } // end of Expr
       //! using operator []
       using fsarray<6u,value_type>::operator[];
       /*!
@@ -206,7 +205,7 @@ namespace tfel
       {
 	return RunTimeProperties();
       }
-    }; // end of struct StensorExpr<StensorResultType,T2ST2toST2TensorProductExp>
+    }; // end of struct Expr<StensorResultType,T2ST2toST2TensorProductExp>
 
   } // end of namespace math
 

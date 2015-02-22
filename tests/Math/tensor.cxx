@@ -435,7 +435,7 @@ struct TensorTest8<2u>
     using namespace tfel::math;
     typedef double real;
     const real cste = real(1)/sqrt(real(2));
-    const real eps  = 10.*numeric_limits<real>::epsilon();
+    const real eps  = 1e-12;
     stensor<2u,real> s;
     tensor<2u,real> t;
     for(unsigned short i=0;i!=s.size();++i){
@@ -468,7 +468,7 @@ struct TensorTest8<3u>
     using namespace tfel::math;
     typedef double real;
     const real cste = real(1)/sqrt(real(2));
-    const real eps  = 10.*numeric_limits<real>::epsilon();
+    const real eps  = 100.*numeric_limits<real>::epsilon();
     stensor<3u,real> s;
     tensor<3u,real> t;
     for(unsigned short i=0;i!=s.size();++i){
@@ -539,7 +539,7 @@ struct TensorTest9<2u>
     using namespace tfel::math;
     typedef double real;
     const real cste = real(1)/sqrt(real(2));
-    const real eps  = 10.*numeric_limits<real>::epsilon();
+    const real eps  = 1e-12;
     stensor<2u,real> s;
     tensor<2u,real> t;
     for(unsigned short i=0;i!=s.size();++i){

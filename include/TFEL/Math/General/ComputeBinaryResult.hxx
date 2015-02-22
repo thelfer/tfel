@@ -22,20 +22,20 @@ namespace tfel{
 
   namespace math{
 
-    /*
+    /*!
      * \class ComputeBinaryResult_
      * \brief A helper class for ComputeBinaryResult.
      * This default version returns InvalidType both for
      * Result and Handle.
-     * \param typename TagA, tag of the type of the first 
+     * \tparam TagA, tag of the type of the first 
      * argument of the operation.
-     * \param typename TagB, tag of the type of second 
+     * \tparam TagB, tag of the type of second 
      * argument of the operation.
-     * \param typename A, type of the first argument of the
+     * \tparam A, type of the first argument of the
      * operation.
-     * \param typename B, type of the second argument of the
+     * \tparam B, type of the second argument of the
      * operation.
-     * \param typename Op, operation.
+     * \tparam Op, operation.
      * \return Result, type of the result of the operation.
      * \return Handle, type that will handle the operation.
      * \see ComputeBinaryResult.
@@ -46,17 +46,17 @@ namespace tfel{
 	     typename A,   typename B,typename Op>
     struct ComputeBinaryResult_
     {
-      /*
+      /*!
        * Result of the binary operation.
        */
       typedef tfel::meta::InvalidType Result;
-      /*
+      /*!
        * Type that will handle the operation.
        */
       typedef tfel::meta::InvalidType Handle;
     }; // end of ComputeBinaryResult_
 
-    /*
+    /*!
      * \class ComputeBinaryResult.
      * A metafunction to manage binary operations.
      * Binary operations are central part of tfel::math which makes
@@ -75,11 +75,11 @@ namespace tfel{
      * by ComputeBinaryResult class after having computed the tag 
      * associated with each arguments of the binary operations thanks
      * to the ComputeObjectTag.
-     * \param typename A, type of the first argument of the
+     * \tparam A, type of the first argument of the
      * operation.
-     * \param typename B, type of the second argument of the
+     * \tparam B, type of the second argument of the
      * operation.
-     * \param typename Op, operation.
+     * \tparam Op, operation.
      * \return Result, type of the result of the operation.
      * \return Handle, type that will handle the operation.
      * \see ResultType.
@@ -88,60 +88,54 @@ namespace tfel{
     template<typename A, typename B,typename Op>
     class ComputeBinaryResult
     {
-      /*
-       * Tag of the object A
-       */
-      typedef typename ComputeObjectTag<A>::type TagA;
-      /*
-       * Tag of the object A
-       */
-      typedef typename ComputeObjectTag<B>::type TagB;
+      //! a simple alias
+      using A_ = typename std::decay<A>::type;
+      //! a simple alias
+      using B_ = typename std::decay<B>::type;
+      //! tag of the left hand side
+      typedef typename ComputeObjectTag<A_>::type TagA;
+      //! tag of the right hand side
+      typedef typename ComputeObjectTag<B_>::type TagB;
     public:
-      /*
-       * Call to ComputeBinaryResult_ to get the Result type.
-       */
+      //! call to ComputeBinaryResult_ to get the Result type.
       typedef typename ComputeBinaryResult_<TagA,TagB,A,B,Op>::Result Result;
-      /*
-       * Call to ComputeBinaryResult_ to get the Handle type
-       */
+      //! call to ComputeBinaryResult_ to get the Handle type.
       typedef typename ComputeBinaryResult_<TagA,TagB,A,B,Op>::Handle Handle;
-
     }; // end of ComputeBinaryResult.
 
-    /*
+    /*!
      * Partial Specialisation of ComputeBinaryResult_ for scalars.
      * In that case, Result.
-     * \param typename A, type of the first argument of the
+     * \tparam A, type of the first argument of the
      * operation.
-     * \param typename B, type of the second argument of the
+     * \tparam B, type of the second argument of the
      * operation.
-     * \param typename Op, operation.
-     * \see RemoveConstness.
+     * \tparam Op, operation.
      */
     template<typename A, typename B,typename Op>
     class ComputeBinaryResult_<ScalarTag,ScalarTag,A,B,Op>
     {
     private:
-      /*
-       * A little trick so we don't have to declare ResultType
-       * for const scalar types.
-       */
+      //! bare type
       typedef typename std::decay<A>::type A_;
-      /*
-       * A little trick so we don't have to declare ResultType
-       * for const scalar types.
-       */
+      //! bare type
       typedef typename std::decay<B>::type B_;
     public:
-      /*
-       * The result.
-       */
+      //! the result.
       typedef typename ResultType<A_,B_,Op>::type Result;
-      /*
-       * The handle.
-       */
+      //! the handle.
       typedef typename ResultType<A_,B_,Op>::type Handle;
     }; // end of ComputeBinaryResult_.
+
+    //! an alias for the result of an binary operation
+    template<typename T1,typename T2,typename Op>
+    using BinaryOperationResult = typename ComputeBinaryResult<T1,T2,Op>::Result;
+    //! a metafunction returning true if the result of the binary operation is valid
+    template<typename T1, typename T2, typename Op>
+    using isBinaryOperationResultTypeValid = std::integral_constant<bool,!tfel::typetraits::IsInvalid<BinaryOperationResult<T1,T2,Op>>::cond>;
+    //! an alias of the handler of an binary operation
+    template<typename T1,typename T2,typename Op>
+    using BinaryOperationHandler = typename ComputeBinaryResult<T1,T2,Op>::Handle;
 
   } // end of namespace math
 

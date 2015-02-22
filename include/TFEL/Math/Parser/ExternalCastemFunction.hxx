@@ -15,9 +15,7 @@
 #ifndef _LIB_TFEL_MATH_PARSER_EXTERNALCASTEMFUNCTION_HXX_
 #define _LIB_TFEL_MATH_PARSER_EXTERNALCASTEMFUNCTION_HXX_ 
 
-#include<sstream>
 #include<vector>
-#include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"

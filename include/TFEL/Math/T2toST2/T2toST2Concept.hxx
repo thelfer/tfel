@@ -19,10 +19,10 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/General/ConceptRebind.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 #include"TFEL/Math/Forward/T2toST2Concept.hxx"
@@ -47,14 +47,11 @@ namespace tfel{
     template<class T>
     struct T2toST2Concept 
     {
+      typedef T2toST2Tag ConceptTag;
 
-    private:
-
-      typedef T2toST2Traits<T> traits;
-      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename std::conditional<isTemporary,
-				      typename traits::NumType,
-				      const typename traits::NumType&>::type ValueType;
+      typename T2toST2Traits<T>::NumType
+      operator()(const unsigned short,
+		 const unsigned short) const;
 
     protected:
       T2toST2Concept() = default;
@@ -63,14 +60,13 @@ namespace tfel{
       T2toST2Concept&
       operator=(const T2toST2Concept&) = default;
       ~T2toST2Concept() = default;
-    public:
-      
-      typedef T2toST2Tag ConceptTag;
+    };
 
-      ValueType
-      operator()(const unsigned short,
-		 const unsigned short) const;
-      
+    //! paratial specialisation for T2toST2
+    template<typename Type>
+    struct ConceptRebind<T2toST2Tag,Type>
+    {
+      using type = T2toST2Concept<Type>;
     };
 
     template<typename T>

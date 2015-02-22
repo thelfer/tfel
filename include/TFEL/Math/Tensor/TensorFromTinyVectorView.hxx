@@ -20,7 +20,6 @@
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
-#include"TFEL/Math/Tensor/TensorExpr.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -53,9 +52,9 @@ namespace tfel
      */
     template<unsigned short N, unsigned short Mn,
 	     unsigned short In,typename T>
-    struct TensorExpr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> >
-      : public TensorConcept<TensorExpr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> > >,
-	public tensor_base<TensorExpr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> > >
+    struct Expr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> >
+      : public TensorConcept<Expr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> > >,
+	public tensor_base<Expr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> > >
     {
       typedef EmptyRunTimeProperties RunTimeProperties;
       typedef typename tensor<N,T>::value_type      value_type;      
@@ -75,9 +74,9 @@ namespace tfel
 	return RunTimeProperties();
       }
 
-      TensorExpr(tvector<Mn,T>& v_)
+      Expr(tvector<Mn,T>& v_)
 	: v(v_)
-      {} // end of TensorExpr
+      {} // end of Expr
 
       const T&
       operator()(const unsigned short i) const
@@ -104,7 +103,7 @@ namespace tfel
       } // end of operator[]
 
       //! using tensor_base::operator=
-      using tensor_base<TensorExpr>::operator=;
+      using tensor_base<Expr>::operator=;
 
     protected:
 
@@ -119,7 +118,7 @@ namespace tfel
       TFEL_STATIC_ASSERT((In<Mn));
       TFEL_STATIC_ASSERT((TensorDimeToSize<N>::value<=Mn-In));
 
-    }; // end of struct TensorExpr
+    }; // end of struct Expr
 
     template<unsigned short N,
 	     unsigned short Mn,
@@ -127,7 +126,7 @@ namespace tfel
 	     typename T = double>
     struct TensorFromTinyVectorView
     {
-      typedef TensorExpr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> > type;
+      typedef Expr<tensor<N,T>,TensorFromTinyVectorViewExpr<N,Mn,In,T> > type;
     }; // end of struct TensorFromTinyVectorView
     
   } // end of namespace math

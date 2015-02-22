@@ -12,8 +12,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<algorithm>
 #include<iterator>
 #include<vector>
@@ -793,7 +791,6 @@ namespace mfront{
   			    "Expected 'true' or 'false'.");
     const auto& b = this->readString("BehaviourDSLCommon::treatBehaviourBrick");
     this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick",";");
-    cout << "add brick : " << b << endl;
     f.get(b,*this,this->mb,parameters);
   } // end of BehaviourDSLCommon::treatBrick
   
@@ -2072,9 +2069,10 @@ namespace mfront{
     bool b1 = false;
     bool b2 = false;
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "#include<string>" << endl;
-    this->behaviourDataFile << "#include<iostream>" << endl;
     this->behaviourDataFile << "#include<limits>" << endl;
+    this->behaviourDataFile << "#include<string>" << endl;
+    this->behaviourDataFile << "#include<sstream>" << endl;
+    this->behaviourDataFile << "#include<iostream>" << endl;
     this->behaviourDataFile << "#include<stdexcept>" << endl;
     this->behaviourDataFile << "#include<algorithm>" << endl << endl;
     this->behaviourDataFile << "#include\"TFEL/Config/TFELConfig.hxx\"" << endl;
@@ -3261,7 +3259,7 @@ namespace mfront{
 		      this->behaviourFile,this->mb.getMaterialLaws());		      
     if(this->mb.hasCode(h,BehaviourData::BeforeInitializeLocalVariables)){
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingBegin(this->behaviourFile,
+	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
 					       BehaviourData::BeforeInitializeLocalVariables,
 					       "binit");
       }
@@ -3273,7 +3271,7 @@ namespace mfront{
     }
     if(this->mb.hasCode(h,BehaviourData::InitializeLocalVariables)){
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingBegin(this->behaviourFile,
+	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
 					       BehaviourData::InitializeLocalVariables,"init");
       }
       this->behaviourFile << this->mb.getCodeBlock(h,BehaviourData::InitializeLocalVariables).code
@@ -3284,7 +3282,7 @@ namespace mfront{
     }
     if(this->mb.hasCode(h,BehaviourData::AfterInitializeLocalVariables)){
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingBegin(this->behaviourFile,
+	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
 					       BehaviourData::AfterInitializeLocalVariables,"ainit");
       }
       this->behaviourFile << this->mb.getCodeBlock(h,BehaviourData::AfterInitializeLocalVariables).code
@@ -4783,6 +4781,7 @@ namespace mfront{
     if(this->mb.hasParameters()){
       this->srcFile << "#include<string>" << endl;
       this->srcFile << "#include<cstring>" << endl;
+      this->srcFile << "#include<sstream>" << endl;
       this->srcFile << "#include<fstream>" << endl;
       this->srcFile << "#include<stdexcept>" << endl;
       this->srcFile << endl;

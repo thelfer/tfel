@@ -19,10 +19,9 @@
 #include<string>
 #include<vector>
 #include<utility>
-#include<stdexcept>
+#include<memory>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<memory>
 #include"TFEL/Math/Kriging.hxx"
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
 

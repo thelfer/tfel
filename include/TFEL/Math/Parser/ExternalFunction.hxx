@@ -19,10 +19,10 @@
 #include<map>
 #include<vector>
 #include<string>
-#include<stdexcept>
+#include<memory>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<memory>
+
 
 namespace tfel
 {

@@ -25,34 +25,39 @@ namespace tfel{
 
     template<typename TagA,typename TagOp,
 	     typename A,typename Op>
-    class ComputeUnaryResult_
+    struct ComputeUnaryResult_
     {
-    public:
-      typedef tfel::meta::InvalidType Result;
-      typedef tfel::meta::InvalidType Handle;
+      using Result = tfel::meta::InvalidType;
+      using Handle = tfel::meta::InvalidType;
+    };
+
+    //! Partial Specialisation of ComputeUnaryResult_ for scalars
+    template<typename A,typename TagOp,typename Op>
+    struct ComputeUnaryResult_<ScalarTag,TagOp,A,Op>
+    {
+      typedef typename std::decay<A>::type A_;
+      typedef typename UnaryResultType<A_,Op>::type Result;
+      typedef typename UnaryResultType<A_,Op>::type Handle;
     };
 
     template<typename A,typename Op>
     class ComputeUnaryResult
     {
-      typedef typename ComputeObjectTag<A>::type TagA;
+      //! a simple alias
+      typedef typename std::decay<A>::type A_;
+      typedef typename ComputeObjectTag<A_>::type TagA;
       typedef typename ComputeObjectTag<Op>::type TagOp;
     public:
       typedef typename ComputeUnaryResult_<TagA,TagOp,A,Op>::Result Result;
       typedef typename ComputeUnaryResult_<TagA,TagOp,A,Op>::Handle Handle;
     };
 
-    /*
-     * Partial Specialisation of ComputeUnaryResult_ for scalars
-     */
-    template<typename A,typename TagOp,typename Op>
-    class ComputeUnaryResult_<ScalarTag,TagOp,A,Op>
-    {
-    public:
-      typedef typename std::remove_const<A>::type A_;
-      typedef typename UnaryResultType<A_,Op>::type Result;
-      typedef typename UnaryResultType<A_,Op>::type Handle;
-    };
+    //! an alias for the result of an unary operation
+    template<typename T1,typename Op>
+    using UnaryOperationResult = typename ComputeUnaryResult<T1,Op>::Result;
+    //! an alias of the handler of an unary operation
+    template<typename T1,typename Op>
+    using UnaryOperationHandler = typename ComputeUnaryResult<T1,Op>::Handle;
 
   } // end of namespace math
 

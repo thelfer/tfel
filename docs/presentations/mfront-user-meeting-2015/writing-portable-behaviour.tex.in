@@ -1,0 +1,380 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%	Fichier	   : ces
+%%	Auteur     : th202608@pleiades043.intra.cea.fr
+%%	Date       : 26 mai 2009
+%%	Répertoire : /home/th202608/documents/presentations/2009/CES/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\documentclass{beamer}
+
+\usepackage{beamerthemecea2012}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{pstricks}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{couleurs}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{gnuplot}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\python}{\href{https://www.python.org/}{\texttt{python}}}
+
+\newcommand{\unix}{\texttt{Unix}}
+\newcommand{\linux}{\texttt{LiNuX}}
+\newcommand{\freebsd}{\href{https://www.freebsd.org/}{\texttt{FreeBSD}}}
+\newcommand{\opensolaris}{\texttt{OpenSolaris}}
+
+\newcommand{\windows}{\texttt{Windows}}
+
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\umat}{\texttt{umat}}
+
+\newcommand{\adao}{\texttt{adao}}
+\newcommand{\tfel}{\href{http://www.tfel.sourceforge.net}{\texttt{TFEL}}}
+\newcommand{\mfront}{\href{http://www.tfel.sourceforge.net}{\texttt{MFront}}}
+\newcommand{\pleiades}{\texttt{PLEIADES}}
+\newcommand{\salome}{\href{http://www.salome-platform.org}{\texttt{salome}}}
+
+\newcommand{\cea}{\href{http://www.cea.fr}{CEA}}
+\newcommand{\edf}{\href{http://www.edf.com}{EDF}}
+\newcommand{\inria}{\href{http://www.inria.fr}{INRIA}}
+\newcommand{\castem}{\href{http://www-cast3m.cea.fr}{\texttt{Cast3M}}}
+\newcommand{\cyrano}{Cyrano3} 
+\newcommand{\aster}{\href{http://www.code-aster.org}{Code-Aster}} 
+\newcommand{\zebulon}{\href{http://www.zset-software.com/products/zebulon}{\texttt{ZeBuLoN}}}
+\newcommand{\amitex}{\href{http://www.maisondelasimulation.fr/projects/amitex/html}{\texttt{AMITEX\_FFT}}}
+\newcommand{\gpl}{\href{http://www.gnu.org/licenses/gpl-3.0.txt}{GNU Public License}}
+
+\newcommand{\pandoc}{\href{}{pandoc}}
+\newcommand{\gcc}{\href{https://gcc.gnu.org/}{gcc}}
+\newcommand{\clang}{\href{clang.llvm.org}{clang}}
+\newcommand{\icc}{\href{https://software.intel.com/en-us/c-compilers}{icc}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{MSYS}}
+\newcommand{\jenkins}{\href{http://jenkins-ci.org}{\texttt{Jenkins}}}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\tiny,       % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{red},        % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C++,                    % the language of the code
+  morekeywords={Output Author Input Date},            % if you want to add more keywords to the set
+  numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
+  rulecolor=\color{orange},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{green},       % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+}
+
+\Titre{Writing portable behaviours implementations}
+\Auteur{Thomas Helfer}
+\Date{Februar 2015}
+
+\begin{document}
+
+\PageTitre{}
+\section{Forewords}
+
+\titre{Purpose of this talk}
+\begin{frame}
+  \begin{itemize}
+  \item It is possible to reuse an \mfront{} among all the supported
+    simulation codes:
+    \begin{itemize}
+    \item However, one has to comply to all the specific requirements
+      of all the supported simulation codes.
+    \end{itemize}
+  \item This talks provides some guidelines and provides a comparison
+    of the choices made in each solver.
+  \end{itemize}
+\end{frame}
+
+\intercalaire{Good practices}
+
+\titre{Units}
+\frame{
+  \begin{itemize}
+  \item use SI units:
+    \begin{itemize}
+    \item general purpose finite element solver don't put
+      constraints on units: user are free to choose the most
+      appropriate one (in his own view).
+      \begin{itemize}
+      \item how many hours have you lost due to units inconsistencies
+        ?
+      \end{itemize}
+    \item \pleiades{} fuel performance codes uses SI units
+      \begin{itemize}
+      \item consistent choices
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Glossary names}
+\frame{
+  \begin{center}
+    \includegraphics[width=\linewidth]{@abs_top_srcdir@/docs/presentations/mfront-user-meeting-2015/img/dependencies.eps} \\
+  \end{center}
+  {\tt @StateVariable evp;\\
+    evp.setGlossaryName("ViscoplasticStrain");
+  }
+  \begin{itemize}
+  \item glossary names make explicit the inputs and the outputs of
+    material properties and behaviours:
+    \begin{itemize}
+    \item in some solvers, those names are visible to the user
+      (\aster{}, \zebulon{}, {\tt licos}, {\tt mtest})
+    \item used by some solvers tp properly fill the input of
+      dynamically loaded mechanical behaviours ({\tt licos},
+      \cyrano{}, \mtest{} \zebulon{})
+    \item used internally for specific tasks:
+      \begin{itemize}
+      \item the value of a variable whose glossary name is {\tt
+          AxialStrain} is used in finite strain strategies to compute
+        the Cauchy stress
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+}
+
+
+\titre{Material properties}
+\frame{
+  \begin{itemize}
+  \item don't use material properties defined through {\tt @MaterialProperties}:
+    \begin{itemize}
+    \item are they evaluated at the beginning of the time step, at the
+      end ? 
+    \item part of physical information of your material is in the
+      solver input file: this is bad.
+    \item extra work is requested in the finite element solver which
+      may induce lot of overhead ({\em a priori} more than evaluating
+      material properties within the behaviour).
+    \item use the \texttt{@MaterialLaw} keyword instead
+    \item {\bf note:} elastic stiffness in orthotropic behaviours
+      still requires some work
+    \end{itemize}
+  \end{itemize}
+}
+
+\intercalaire{Portability issues and advices}
+
+\titre{Supported modelling hypotheses}
+\frame{
+  \begin{center}
+    \begin{tabular}[htbp]{|c|p{7cm}|}
+      \hline
+      Solver  & Modelling hypothesis  \\
+      \hline
+      \hline
+      \castem{}     &  Axisymmetrical generalised plane strain, plane strain, generalised
+      plane strain, plane stress, axisymmetrical, tridimensional\\
+      \hline
+      \aster{}      &  Plane strain, plane stress\footnote{Can be supported by the behaviour or by the solver (De Borst)},
+      axisymmetrical, tridimensional \\
+      \hline
+      \zebulon{}    &  \(1D\), \(2D\), \(3D\)\footnote{Modelling hypothesis is not accessible within the behaviour. Plane
+	stress is supported by the finite element (additional ddl)} \\
+      \hline
+      \cyrano{}     &  Axisymmetrical generalised plane strain, axisymmetrical generalised plane stress\footnote{The default.} \\
+      \hline
+    \end{tabular}
+  \end{center}
+}
+
+\titre{Conventions (strains)}
+\frame{
+  \begin{center}
+  \begin{center}
+    \textbf{3D}
+  \end{center}
+    \begin{tabular}[htbp]{|c|c|}
+      \hline
+      Solver  & Convention  \\
+      \hline
+      \hline
+      \tfel{}       & \(\left(\epsilonto_{xx},\epsilonto_{yy},\epsilonto_{zz},\sqrt{2}\,\epsilonto_{xy},\sqrt{2}\,\epsilonto_{xy},\sqrt{2}\,\epsilonto_{yz}\right)\)\\
+      \hline
+      \castem{}     & \(\left(\epsilonto_{xx},\epsilonto_{yy},\epsilonto_{zz},2\,\epsilonto_{xy},2\,\epsilonto_{xy},2\,\epsilonto_{yz}\right)\)                     \\
+      \hline
+      \aster{}      & \(\left(\epsilonto_{xx},\epsilonto_{yy},\epsilonto_{zz},\sqrt{2}\,\epsilonto_{xy},\sqrt{2}\,\epsilonto_{xy},\sqrt{2}\,\epsilonto_{yz}\right)\)\footnote{Requires "still to be done" modifications to the \aster{} external behaviour handler and \mfront{} \aster{} interface}\\
+      \hline
+      \zebulon{}    & \(\left(\epsilonto_{xx},\epsilonto_{yy},\epsilonto_{zz},\sqrt{2}\,\epsilonto_{xy},\sqrt{2}\,\epsilonto_{yz},\sqrt{2}\,\epsilonto_{xz}\right)\)\\
+      \hline      
+    \end{tabular}
+  \end{center}
+  \begin{center}
+    \textbf{1D}
+  \end{center}
+  \begin{center}
+    \begin{tabular}[htbp]{|c|c|}
+      \hline
+      Solver  & Convention  \\
+      \hline
+      \hline
+      \castem{}   & \(\left(\epsilonto_{rr},\epsilonto_{zz},\epsilonto_{\theta}\right)\) \\
+      \hline
+      \aster{}    & \(\left(\epsilonto_{rr},\epsilonto_{zz},\epsilonto_{\theta}\right)\) \\
+      \hline
+      \cyrano{}   & \(\left(\epsilonto_{rr},\epsilonto_{\theta},\epsilonto_{zz}\right)\) \\
+      \hline
+    \end{tabular}
+  \end{center}
+}
+
+\titre{Conversions}
+\frame{
+  \begin{itemize}
+  \item Conversions of strain, stresses and consistent tangent
+    operators are handled by the interface
+  \item Internal state variables are stored:
+    \begin{itemize}
+    \item Using \tfel{} conventions
+      \begin{itemize}
+      \item Except for ZeBuLoN{} to match native behaviours (this
+        may induce some overhead)
+      \end{itemize}
+    \item In the material frame (for orthotropic behaviours)
+    \end{itemize}
+  \end{itemize}
+  \begin{center}
+    {\bf It would be nice to have native conversion procedures in each
+      solver for post-processings}
+  \end{center}
+}
+
+\titre{Orthotropy}
+\frame{
+  \begin{center}
+    \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/presentations/mfront-user-meeting-2015/img/pipe.eps}
+  \end{center}
+  \begin{itemize}
+  \item Rotation to and from in the material frame must be handled by the
+    behaviour in \aster{} and \castem{}
+  \item In \castem{} and \aster{}, behaviour conventions and
+    orthotropic axes definitions (in the input file) {\em must be
+      consistent}
+  \item no general purpose solver allow uniform definition of the
+    orthotropic axes for all modelling hypotheses
+    \begin{itemize}
+    \item example of pipes
+      \begin{itemize}
+      \item the definition of the Hill tensor has to be different in \(2D\paren{r,z}\) and \(2D\paren{r,\theta}\)
+      \item this is an issue in \zebulon{}
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Plane stress}
+\frame{
+  \begin{itemize}
+  \item Support for plane stress and axisymmetrical generalised plane
+    stress (\cyrano{}) modelling hypotheses {\em shall} explicitly
+    provided for performance reasons:
+    \begin{itemize}
+    \item De Borst algorithm (\cyrano{} and \aster{}) is slow !
+    \item the generic algorithm provided in the \castem{} interface is
+      very slow !
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Prediction operator}
+\frame{
+  \begin{itemize}
+  \item only usable in \aster{} !
+  \end{itemize}
+}
+
+\titre{Finite strain strategies}
+\frame{
+  \begin{itemize}
+  \item finite strain strategies allows the user to reuse the small
+    strain formalism to build consistent finite strain behaviours.
+  \item the most portable (and the most appealing on physical grounds)
+    finite strain strategy is the logarithmic strain formalism
+    introduced by Miehe et al.~\cite{miehe_anisotropic_2002}.
+    \begin{itemize}
+    \item native in \aster{} and \zebulon{} (although this can be a
+      problem, the user must understand what he is doing)
+    \item handled by \mfront{} in the \castem{} interface
+    \item usable in \(1D\) fuel performance codes without any
+      modification of the code (requires special interface feature)
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Consistent tangent operator}
+\frame{
+  \begin{itemize}
+  \item most finite element solver preferably uses the consistent
+    tangent operator:
+    \begin{itemize}
+    \item {\bf \castem{} does not}~: fixed point iterations and
+      (modified and specialised) Anderson acceleration algorithm;
+      \begin{itemize}
+      \item support for the true Newton is planned in COPL/INCREPL
+      \end{itemize}
+    \item \zebulon{} only consider one type of operator: the
+      consistent tangent operator (which can be hand-crafted to keep a
+      positive definite matrix).
+    \item \aster{} may use one the following operator~:
+      \begin{itemize}
+      \item elastic
+      \item secant
+      \item tangent operator
+      \item consistent tangent operator
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+}
+
+
+\titre{Finite strain consistent tangent operator}
+\frame{
+  \begin{center}
+    \begin{tabular}[htbp]{|c|c|}
+      \hline
+      Solver & Definition \\
+      \hline
+      \hline
+      \castem    & None  \\
+      \hline
+      \aster{}   & \(\deriv{\tenseur{\tau}}{\Delta\, \tns{F}}\)\footnote{\(\Delta\, \tns{F} = \ets{\tns{F}}.\left(\bts{\tns{F}}\right)^{-1}\)} \\
+      \hline
+      \zebulon{} & \texttt{DSIG\_DD}\footnote{The only finite strain formulation supported by \mfront{} is {\tt Updated\_Lagrangian}} \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \begin{itemize}
+  \item \mfront{} handles automatically the conversion from the
+    tangent operator defined by the user and the tangent operator
+    expected by the solver.
+  \end{itemize}
+}
+
+
+\intercalaire{References}
+
+\titre{}
+\frame{
+  \bibliographystyle{fr-insa}
+  \bibliography{@abs_top_srcdir@/docs/presentations/mfront-user-meeting-2015/bibliographie}
+}
+
+\end{document}

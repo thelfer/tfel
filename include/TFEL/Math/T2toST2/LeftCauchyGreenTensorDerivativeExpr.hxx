@@ -19,7 +19,7 @@
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
-#include"TFEL/Math/T2toST2/T2toST2Expr.hxx"
+#include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 
 namespace tfel{
 
@@ -36,8 +36,8 @@ namespace tfel{
      * Partial specialisation for 1D tensor
      */
     template<typename T2toST2Type>
-    struct T2toST2Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> >
-      : public T2toST2Concept<T2toST2Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> > >,
+    struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> >
+      : public T2toST2Concept<Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> > >,
 	public fsarray<9u,typename T2toST2Traits<T2toST2Type>::NumType>
     {
       //! a simple alias
@@ -51,7 +51,7 @@ namespace tfel{
        */
       template<typename TensorType>
       TFEL_MATH_INLINE2
-      T2toST2Expr(const TensorType& F)
+      Expr(const TensorType& F)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
@@ -66,7 +66,7 @@ namespace tfel{
 	this->v[4] = 2*F[1];
 	this->v[5] = this->v[6] = this->v[7] = zero;
 	this->v[8] = 2*F[2];
-      } // end of T2toST2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -78,14 +78,14 @@ namespace tfel{
       {
 	return this->v[i*3+j];
       } // end of operator()
-    }; // end of struct T2toST2Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> >
+    }; // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> >
 
     /*!
      * Partial specialisation for 2D tensor
      */
     template<typename T2toST2Type>
-    struct T2toST2Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<2u> >
-      : public T2toST2Concept<T2toST2Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<2u> > >,
+    struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<2u> >
+      : public T2toST2Concept<Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<2u> > >,
 	public fsarray<20u,typename T2toST2Traits<T2toST2Type>::NumType>
     {
       //! a simple check
@@ -99,7 +99,7 @@ namespace tfel{
        */
       template<typename TensorType>
       TFEL_MATH_INLINE2
-      T2toST2Expr(const TensorType& F)
+      Expr(const TensorType& F)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
@@ -126,7 +126,7 @@ namespace tfel{
 	this->v[17]=zero;
 	this->v[18]=sqrt2*F[1];
 	this->v[19]=sqrt2*F[0];
-      } // end of T2toST2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -138,14 +138,14 @@ namespace tfel{
       {
 	return this->v[i*5+j];
       } // end of operator()
-    }; // end of struct T2toST2Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> >
+    }; // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> >
 
     /*!
      * Partial specialisation for 3D tensor
      */
     template<typename T2toST2Type>
-    struct T2toST2Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<3u> >
-      : public T2toST2Concept<T2toST2Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<3u> > >,
+    struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<3u> >
+      : public T2toST2Concept<Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<3u> > >,
 	public fsarray<54u,typename T2toST2Traits<T2toST2Type>::NumType>
     {
       //! a simple check
@@ -159,7 +159,7 @@ namespace tfel{
        */
       template<typename TensorType>
       TFEL_MATH_INLINE2
-      T2toST2Expr(const TensorType& F)
+      Expr(const TensorType& F)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
@@ -215,7 +215,7 @@ namespace tfel{
 	this->v[51]=sqrt2*F[4];
 	this->v[52]=sqrt2*F[2];
 	this->v[53]=sqrt2*F[1];
-      } // end of T2toST2Expr
+      } // end of Expr
       /*!
        * \brief access operator
        * \param[in] i : line   index
@@ -227,7 +227,7 @@ namespace tfel{
       {
 	return this->v[i*9+j];
       } // end of operator()
-    }; // end of struct T2toST2Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> >
+    }; // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u> >
 
   } // end of namespace tfel
 

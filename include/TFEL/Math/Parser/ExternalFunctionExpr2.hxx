@@ -17,9 +17,8 @@
 
 #include<string>
 #include<vector>
-#include<stdexcept>
-
 #include<memory>
+
 #include"TFEL/Math/Parser/Expr.hxx"
 #include"TFEL/Math/Parser/ExternalFunction.hxx"
 

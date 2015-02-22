@@ -13,6 +13,7 @@
  */
 
 #include<sstream>
+#include<stdexcept>
 #include<algorithm>
 
 #include"TFEL/Math/Parser/Number.hxx"

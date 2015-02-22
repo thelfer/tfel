@@ -55,7 +55,7 @@ namespace tfel
 	     unsigned short R,unsigned short C,
 	     typename T>
     tmatrix_const_submatrix_view<N,M,I,J,R,C,T>::tmatrix_const_submatrix_view(const tmatrix<N,M,T>& m_)
-      : MatrixExpr<tmatrix<R,C,T>, tmatrix_const_submatrix_view_expr<N,M,I,J,R,C,T> >(m_)
+      : Expr<tmatrix<R,C,T>, tmatrix_const_submatrix_view_expr<N,M,I,J,R,C,T> >(m_)
     {} // end of tmatrix_const_submatrix_view
 
   } // end of namespace math

@@ -26,9 +26,9 @@ namespace tfel
 	     unsigned short J,
 	     unsigned short K,
 	     typename T>
-    tmatrix_const_column_view_expr<N,M,I,J,K,T>::tmatrix_const_column_view_expr(const tmatrix<N,M,T>& m_)
+    TMatrixConstColumnView<N,M,I,J,K,T>::TMatrixConstColumnView(const tmatrix<N,M,T>& m_)
       : m(m_)
-    {} // end of tmatrix_const_column_view_expr
+    {} // end of TMatrixConstColumnView
     
     template<unsigned short N,
 	     unsigned short M,
@@ -36,8 +36,8 @@ namespace tfel
 	     unsigned short J,
 	     unsigned short K,
 	     typename T>
-    typename tmatrix_const_column_view_expr<N,M,I,J,K,T>::RunTimeProperties
-    tmatrix_const_column_view_expr<N,M,I,J,K,T>::getRunTimeProperties(void) const
+    typename TMatrixConstColumnView<N,M,I,J,K,T>::RunTimeProperties
+    TMatrixConstColumnView<N,M,I,J,K,T>::getRunTimeProperties(void) const
     {
       return RunTimeProperties();
     }
@@ -49,7 +49,7 @@ namespace tfel
 	     unsigned short K,
 	     typename T>
     const T& 
-    tmatrix_const_column_view_expr<N,M,I,J,K,T>::operator()(const unsigned short i) const
+    TMatrixConstColumnView<N,M,I,J,K,T>::operator()(const unsigned short i) const
     {
       return m(static_cast<unsigned short>(J+i),I);
     }
@@ -61,7 +61,7 @@ namespace tfel
 	     unsigned short K,
 	     typename T>
     const T& 
-    tmatrix_const_column_view_expr<N,M,I,J,K,T>::operator[](const unsigned short i) const
+    TMatrixConstColumnView<N,M,I,J,K,T>::operator[](const unsigned short i) const
     {
       return m(static_cast<unsigned short>(J+i),I);
     }
@@ -73,7 +73,7 @@ namespace tfel
 	     unsigned short K,
 	     typename T>
     tmatrix_const_column_view<N,M,I,J,K,T>::tmatrix_const_column_view(const tmatrix<N,M,T>& m_)
-      : VectorExpr<tvector<K,T>, tmatrix_const_column_view_expr<N,M,I,J,K,T> >(m_)
+      : Expr<tvector<K,T>, TMatrixConstColumnView<N,M,I,J,K,T> >(m_)
     {} // end of tmatrix_const_column_view
 
   } // end of namespace math

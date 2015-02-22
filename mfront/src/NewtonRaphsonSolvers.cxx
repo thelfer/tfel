@@ -178,7 +178,7 @@ namespace mfront{
     }
     out << "try{" << endl;
     if(mb.getAttribute(BehaviourData::profiling,false)){
-      writeStandardPerformanceProfilingBegin(out,"TinyMatrixSolve","lu");
+      writeStandardPerformanceProfilingBegin(out,mb.getClassName(),"TinyMatrixSolve","lu");
     }
     out << "TinyMatrixSolve<" << n2
 	<< "," << "real>::exe(this->jacobian,this->fzeros);\n";

@@ -19,7 +19,6 @@
 #include<vector>
 #include<string>
 #include<memory>
-#include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Parser/Expr.hxx"

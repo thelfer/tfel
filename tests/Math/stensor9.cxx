@@ -26,6 +26,7 @@
 #include"TFEL/Tests/TestManager.hxx"
 
 #include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/st2tost2.hxx"
 
 struct STensorTest9_3D
   : public tfel::tests::TestCase

@@ -126,10 +126,10 @@ namespace tfel{
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime==N&&
       tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-      T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+      Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
     t2tot2<N,T>::tpld(const TensorType& B)
     {
-      return T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(B);
+      return Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(B);
     } // end of t2tot2<N,T>
 
     template<unsigned short N, typename T>
@@ -143,11 +143,11 @@ namespace tfel{
       tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
 								    typename T2toT2Traits<T2toT2Type>::NumType,
 								    OpMult>::Result,T>::cond,
-      T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+      Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
     t2tot2<N,T>::tpld(const TensorType& B,
 		      const T2toT2Type& C)
     {
-      return T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(B,C);
+      return Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(B,C);
     }
 
     template<unsigned short N, typename T>
@@ -156,10 +156,10 @@ namespace tfel{
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime==N&&
       tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-      T2toT2Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
+      Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
     t2tot2<N,T>::tprd(const TensorType& A)
     {
-      return T2toT2Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> >(A);
+      return Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> >(A);
     }
 
     template<unsigned short N, typename T>
@@ -173,11 +173,11 @@ namespace tfel{
       tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
 								    typename T2toT2Traits<T2toT2Type>::NumType,
 								    OpMult>::Result,T>::cond,
-      T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+      Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
     t2tot2<N,T>::tprd(const TensorType& A,
 		      const T2toT2Type& C)
     {
-      return T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(A,C);
+      return Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(A,C);
     }
 
     template<unsigned short N, typename T>
@@ -192,8 +192,8 @@ namespace tfel{
     {}
 
     template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    t2tot2<N,T>::t2tot2(const T2toT2Expr<t2tot2<N,T2>,Expr>& src){
+    template<typename T2,typename Op>
+    t2tot2<N,T>::t2tot2(const Expr<t2tot2<N,T2>,Op>& src){
       matrix_utilities<TensorDimeToSize<N>::value,
 		       TensorDimeToSize<N>::value,
 		       TensorDimeToSize<N>::value>::copy(src,*this);

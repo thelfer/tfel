@@ -31,7 +31,6 @@
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include"TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx"
-#include"TFEL/Math/T2toT2/T2toT2Expr.hxx"
 
 namespace tfel{
   
@@ -138,7 +137,7 @@ namespace tfel{
 	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-	T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+	Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
       tpld(const TensorType&);
       /*!
        * \param[in] B : second tensor of the product
@@ -156,7 +155,7 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
 								      typename T2toT2Traits<T2toT2Type>::NumType,
 								      OpMult>::Result,T>::cond,
-	T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+	Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
       tpld(const TensorType&,
 	   const T2toT2Type&);
       /*!
@@ -169,7 +168,7 @@ namespace tfel{
 	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-	T2toT2Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
+	Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
       tprd(const TensorType&);
       /*!
        * \param[in] A : first tensor of the product
@@ -187,7 +186,7 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
 								      typename T2toT2Traits<T2toT2Type>::NumType,
 								      OpMult>::Result,T>::cond,
-	T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+	Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
       tprd(const TensorType&,
 	   const T2toT2Type&);
       /*!
@@ -211,9 +210,9 @@ namespace tfel{
       TFEL_MATH_INLINE constexpr
       t2tot2(const t2tot2<N,T>&);
       // Copy Constructor
-      template<typename T2,typename Expr>
+      template<typename T2,typename Op>
       TFEL_MATH_INLINE
-      t2tot2(const T2toT2Expr<t2tot2<N,T2>,Expr>&);
+      t2tot2(const Expr<t2tot2<N,T2>,Op>&);
       //! assignement operator
       TFEL_MATH_INLINE t2tot2&
       operator=(const t2tot2&);

@@ -36,7 +36,6 @@
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
 #include"TFEL/Math/Tensor/TensorConceptOperations.hxx"
-#include"TFEL/Math/Tensor/TensorExpr.hxx"
 
 #include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"
@@ -171,8 +170,8 @@ namespace tfel{
       //! \brief copy constructor
       TFEL_MATH_INLINE constexpr tensor(const tensor<N,T>&) = default;
       // Copy Constructor
-      template<typename T2,typename Expr>
-      TFEL_MATH_INLINE tensor(const TensorExpr<tensor<N,T2>,Expr>& src)
+      template<typename T2,typename Op>
+      TFEL_MATH_INLINE tensor(const Expr<tensor<N,T2>,Op>& src)
       {
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T2,T>::cond));
 	vectorToTab<TensorDimeToSize<N>::value>::exe(src,this->v);

@@ -30,9 +30,8 @@
 #include"TFEL/TypeTraits/Promote.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
 
-#include"TFEL/Math/General/Complex.hxx"
+#include"TFEL/Math/Forward/Complex.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
-
 #include"TFEL/Math/Quantity/Unit.hxx"
 
 namespace tfel{

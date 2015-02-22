@@ -16,8 +16,8 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
+#include"TFEL/Math/General/ConceptRebind.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/Forward/VectorConcept.hxx"
 
@@ -42,14 +42,14 @@ namespace tfel{
     template<typename T>
     struct VectorConcept 
     {
+      typedef VectorTag ConceptTag;
+        
+      TFEL_MATH_INLINE typename VectorTraits<T>::NumType
+      operator()(const typename VectorTraits<T>::IndexType) const;
 
-    private:
+      TFEL_MATH_INLINE typename VectorTraits<T>::NumType
+      operator[](const typename VectorTraits<T>::IndexType) const;
 
-      typedef VectorTraits<T> traits;
-      static constexpr bool isTemporary = tfel::typetraits::IsTemporary<T>::cond;
-      typedef typename std::conditional<isTemporary,
-				      typename traits::NumType,
-				      const typename traits::NumType&>::type ValueType;
     protected:
       VectorConcept() = default;
       VectorConcept(VectorConcept&&) = default;
@@ -57,21 +57,13 @@ namespace tfel{
       VectorConcept&
       operator=(const VectorConcept&) = default;
       ~VectorConcept() = default;
-    public :
-    
-      typedef VectorTag ConceptTag;
-        
-      TFEL_MATH_INLINE ValueType
-      operator()(const typename traits::IndexType) const;
-
-      TFEL_MATH_INLINE ValueType
-      operator[](const typename traits::IndexType) const;
     };
 
-    template<typename T>
-    struct VectorType
+    //! paratial specialisation for vectors
+    template<typename Type>
+    struct ConceptRebind<VectorTag,Type>
     {
-      typedef T type;
+      using type = VectorConcept<Type>;
     };
   
   } // end of namespace math
@@ -79,5 +71,6 @@ namespace tfel{
 } // end of namespace tfel
 
 #include"TFEL/Math/Vector/VectorConcept.ixx"
+#include"TFEL/Math/Vector/VectorConceptOperations.hxx"
 
 #endif /* _VECTOR_CONCEPT_LIB_ */

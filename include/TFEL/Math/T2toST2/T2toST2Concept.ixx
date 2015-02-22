@@ -23,8 +23,7 @@ namespace tfel{
   namespace math{
     
     template<class T>
-    TFEL_MATH_INLINE 
-    typename T2toST2Concept<T>::ValueType
+    TFEL_MATH_INLINE typename T2toST2Traits<T>::NumType
     T2toST2Concept<T>::operator()(const unsigned short i,
 				  const unsigned short j) const
     {

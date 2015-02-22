@@ -131,10 +131,10 @@ namespace tfel{
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime==N&&
       tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
-      ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
+      Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
     st2tost2<N,T>::tpld(const StensorType& B)
     {
-      return ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(B);
+      return Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(B);
     } // end of st2tost2<N,T>
 
     template<unsigned short N, typename T>
@@ -148,11 +148,11 @@ namespace tfel{
       tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
 								    typename ST2toST2Traits<ST2toST2Type>::NumType,
 								    OpMult>::Result,T>::cond,
-      ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
+      Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
     st2tost2<N,T>::tpld(const StensorType&  B,
 			const ST2toST2Type& C)
     {
-      return ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(B,C);
+      return Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(B,C);
     }
 
     template<unsigned short N, typename T>
@@ -161,10 +161,10 @@ namespace tfel{
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime==N&&
       tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
-      ST2toST2Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
+      Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
     st2tost2<N,T>::tprd(const StensorType& A)
     {
-      return ST2toST2Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> >(A);
+      return Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> >(A);
     }
 
     template<unsigned short N, typename T>
@@ -178,11 +178,11 @@ namespace tfel{
       tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
 								    typename ST2toST2Traits<ST2toST2Type>::NumType,
 								    OpMult>::Result,T>::cond,
-      ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
+      Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
     st2tost2<N,T>::tprd(const StensorType&  A,
 			const ST2toST2Type& C)
     {
-      return ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(A,C);
+      return Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(A,C);
     }
 
     template<unsigned short N, typename T>
@@ -191,10 +191,10 @@ namespace tfel{
       tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
       T2toST2Traits<T2toST2Type>::dime==N&&
       tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,T>::cond,
-      ST2toST2Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> > >::type
+      Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> > >::type
     st2tost2<N,T>::convert(const T2toST2Type& src)
     {
-      return ST2toST2Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> >(src);
+      return Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> >(src);
     }
 
     template<unsigned short N, typename T>
@@ -372,8 +372,8 @@ namespace tfel{
     } // end of st2tost2<N,T>::J
 
     template<unsigned short N,typename T>
-    template<typename T2,typename Expr>
-    st2tost2<N,T>::st2tost2(const ST2toST2Expr<st2tost2<N,T2>,Expr>& src){
+    template<typename T2,typename Op>
+    st2tost2<N,T>::st2tost2(const Expr<st2tost2<N,T2>,Op>& src){
       matrix_utilities<StensorDimeToSize<N>::value,
 		       StensorDimeToSize<N>::value,
 		       StensorDimeToSize<N>::value>::copy(src,*this);

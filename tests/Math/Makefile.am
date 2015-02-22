@@ -76,7 +76,6 @@ test_PROGRAMS = hill                                     \
 		parser9                                  \
 		broyden                                  \
 		broyden2                                 \
-		Range                                    \
 		StensorFromTinyMatrixColumnView          \
 		TinyVectorOfTinyVectorFromTinyVectorView \
 		TinyVectorOfStensorFromTinyVectorView    \
@@ -145,7 +144,6 @@ tvector5_SOURCES              = tvector5.cxx
 tvector6_SOURCES              = tvector6.cxx
 tvector7_SOURCES              = tvector7.cxx
 VectorResultType_SOURCES      = VectorResultType.cxx
-Range_SOURCES                 = Range.cxx
 broyden_SOURCES               = broyden.cxx
 broyden2_SOURCES              = broyden2.cxx
 StensorFromTinyMatrixColumnView_SOURCES          = StensorFromTinyMatrixColumnView.cxx

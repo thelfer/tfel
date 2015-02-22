@@ -13,6 +13,7 @@
  */
 
 #include<sstream>
+#include<stdexcept>
 
 #include"TFEL/Math/Parser/Negation.hxx"
 #include"TFEL/Math/Parser/Number.hxx"
