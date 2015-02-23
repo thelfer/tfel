@@ -40,7 +40,6 @@ struct Expr8Test
     const double tr = trace(s1);
     using res      = BinaryOperationResult<int&&,const stensor&,OpMult>;
     using handler  = Expr<stensor,ScalarObjectOperation<double&&,const stensor&,OpMult>>;
-    using handler2 = Expr<stensor,BinaryOperation<const stensor&,const handler&,OpMinus>>;
     const auto expr = (tr/3)*id;
     TFEL_TESTS_ASSERT(std::abs(expr(0)-4)<eps);
     TFEL_TESTS_ASSERT(std::abs(expr(1)-4)<eps);

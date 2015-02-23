@@ -58,6 +58,9 @@ namespace tfel{
     struct TFELMATH_VISIBILITY_EXPORT TensorInvalidIndexException
       : public MathRunTimeException
     {
+      TensorInvalidIndexException()=default;
+      TensorInvalidIndexException(const TensorInvalidIndexException&)=default;
+      TensorInvalidIndexException(TensorInvalidIndexException&&)=default;
       virtual const char* what() const noexcept final;
       virtual ~TensorInvalidIndexException() noexcept;
     }; // end of struct TensorInvalidIndexException
@@ -68,6 +71,9 @@ namespace tfel{
     struct TFELMATH_VISIBILITY_EXPORT TensorInvalidIndexesException
       : public MathRunTimeException
     {
+      TensorInvalidIndexesException() = default;
+      TensorInvalidIndexesException(const TensorInvalidIndexesException&) = default;
+      TensorInvalidIndexesException(TensorInvalidIndexesException&&) = default;
       virtual const char* what() const noexcept final;
       virtual ~TensorInvalidIndexesException() noexcept;
     }; // end of struct TensorInvalidIndexesException

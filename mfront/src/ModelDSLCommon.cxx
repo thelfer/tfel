@@ -1490,7 +1490,6 @@ namespace mfront{
   ModelDSLCommon::getLibrariesDependencies(void)
   {
     using namespace std;
-    typedef map<string,vector<string> > Map;
     typedef ModelInterfaceFactory MMIF;
     auto& mmif = MMIF::getModelInterfaceFactory();
     vector<string>::const_iterator i;
