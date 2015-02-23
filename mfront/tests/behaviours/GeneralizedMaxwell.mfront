@@ -26,9 +26,9 @@ taui.setEntryName("TimeScale");
 sej.setEntryName("ViscoelasticStrain");
 
 @Integrator{
-  const StrainStensor dev_eto = deviator(eto);
+  const StrainStensor eto_ = eto+deto;
   // standard elasticity
-  sig = k0*trace(eto)*StrainStensor::Id()+2.*mu0*dev_eto;
+  sig = k0*trace(eto_)*StrainStensor::Id()+2*mu0*deviator(eto_);
   // Inside the forced convergence procedure of Cast3M, time step is
   // null.
   if(dt>0){
@@ -36,13 +36,13 @@ sej.setEntryName("ViscoelasticStrain");
     const Stensor epsev=deviator(deto)/dt;
     for(unsigned short i=0;i!=Nv;++i){
       const real edt = exp(-dt/taui[i]);
-      real trsej = trace(sej[i]);
-      Stensor devsej = deviator(sej[i]);
-      trsej = trsej*edt+ki[i]*taui[i]*(1.-edt)*ksi; 
-      devsej = devsej*edt+2.*mui[i]*taui[i]*(1.-edt)*epsev;
+      real pr_j      = trace(sej[i])/3;  // pressure
+      Stensor devsej = deviator(sej[i]); // deviatoric part
+      pr_j   = pr_j  *edt +    ki[i]*taui[i]*(1-edt)*ksi; 
+      devsej = devsej*edt + 2*mui[i]*taui[i]*(1-edt)*epsev;
       // updating stresses
-      sig+=trsej*StrainStensor::Id()+devsej;
-      dsej[i] = devsej+trsej/3.*StrainStensor::Id()-sej[i];
+      sej[i]  = devsej+pr_j*StrainStensor::Id();
+      sig    += sej[i];
     }
   }
   if(computeTangentOperator_){
