@@ -986,6 +986,8 @@ include/TFEL/Math/Discretization1D.hxx -text
 include/TFEL/Math/Discretization1D.ixx -text
 include/TFEL/Math/Evaluator.hxx -text
 include/TFEL/Math/Evaluator.ixx -text
+include/TFEL/Math/ExpressionTemplates/Expr.hxx -text
+include/TFEL/Math/ExpressionTemplates/StandardOperations.hxx -text
 include/TFEL/Math/FSLevenbergMarquardt.hxx -text
 include/TFEL/Math/FactorizedKriging.hxx -text
 include/TFEL/Math/FactorizedKriging1D1D.hxx -text
@@ -1022,6 +1024,7 @@ include/TFEL/Math/General/ComputeBinaryResult.hxx -text
 include/TFEL/Math/General/ComputeObjectTag.hxx -text
 include/TFEL/Math/General/ComputeObjectTag.ixx -text
 include/TFEL/Math/General/ComputeUnaryResult.hxx -text
+include/TFEL/Math/General/ConceptRebind.hxx -text
 include/TFEL/Math/General/ConstExprMathFunctions.hxx -text
 include/TFEL/Math/General/CubicRoots.hxx -text
 include/TFEL/Math/General/DotProduct.hxx -text
@@ -1134,6 +1137,7 @@ include/TFEL/Math/QR/QRException.hxx -text
 include/TFEL/Math/Quantity/Unit.hxx -text
 include/TFEL/Math/Quantity/Unit.ixx -text
 include/TFEL/Math/Quantity/qt.ixx -text
+include/TFEL/Math/Quantity/qtComplexOperations.hxx -text
 include/TFEL/Math/Quantity/qtIO.hxx -text
 include/TFEL/Math/Quantity/qtLimits.hxx -text
 include/TFEL/Math/Quantity/qtOperations.hxx -text
@@ -1304,6 +1308,7 @@ include/TFEL/Metaprogramming/HasRandomAccessIterator.hxx -text
 include/TFEL/Metaprogramming/Implements.hxx -text
 include/TFEL/Metaprogramming/InvalidType.hxx -text
 include/TFEL/Metaprogramming/IsSubClassOf.hxx -text
+include/TFEL/Metaprogramming/ResultOf.hxx -text
 include/TFEL/Metaprogramming/StaticAssert.hxx -text
 include/TFEL/Metaprogramming/TypeList.hxx -text
 include/TFEL/Metaprogramming/TypeList.ixx -text
@@ -2613,6 +2618,15 @@ tests/Math/CMakeLists.txt -text
 tests/Math/CubicRoots.cxx -text
 tests/Math/CubicSplineTest.cxx -text
 tests/Math/ExpressionTemplates/CMakeLists.txt -text
+tests/Math/ExpressionTemplates/Expr.cxx -text
+tests/Math/ExpressionTemplates/Expr2.cxx -text
+tests/Math/ExpressionTemplates/Expr3.cxx -text
+tests/Math/ExpressionTemplates/Expr4.cxx -text
+tests/Math/ExpressionTemplates/Expr5.cxx -text
+tests/Math/ExpressionTemplates/Expr6.cxx -text
+tests/Math/ExpressionTemplates/Expr7.cxx -text
+tests/Math/ExpressionTemplates/Expr8.cxx -text
+tests/Math/ExpressionTemplates/Expr9.cxx -text
 tests/Math/ExpressionTemplates/Makefile.am -text
 tests/Math/ExpressionTemplates/test_expr1.cxx -text
 tests/Math/ExpressionTemplates/test_expr12.cxx -text
@@ -2736,6 +2750,7 @@ tests/Math/tvector6.cxx -text
 tests/Math/tvector7.cxx -text
 tests/MetaProgramming/CMakeLists.txt -text
 tests/MetaProgramming/HasConstIterator.cxx -text
+tests/MetaProgramming/IsConstCallable.cxx -text
 tests/MetaProgramming/Makefile.am -text
 tests/MetaProgramming/typelist2.cxx -text
 tests/System/CMakeLists.txt -text

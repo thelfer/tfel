@@ -5280,7 +5280,6 @@ namespace mfront{
   BehaviourDSLCommon::getLibrariesDependencies(void)
   {
     using namespace std;
-    typedef map<string,vector<string> > Map;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
     vector<string>::const_iterator i;

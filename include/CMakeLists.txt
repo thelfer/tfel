@@ -419,7 +419,6 @@ install_header(TFEL/Math FSLevenbergMarquardt.hxx)
 install_header(TFEL/Math/LevenbergMarquardt FSLevenbergMarquardt.ixx)
 install_header(TFEL/Math/ExpressionTemplates Expr.hxx)
 install_header(TFEL/Math/ExpressionTemplates StandardOperations.hxx)
-install_header(TFEL/Math/ExpressionTemplates StandardOperations.ixx)
 
 install_header(TFEL/Material ModellingHypothesis.hxx)
 install_header(TFEL/Material OutOfBoundsPolicy.hxx)

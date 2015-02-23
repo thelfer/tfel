@@ -380,7 +380,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx                                        \
 			TFEL/Math/ExpressionTemplates/Expr.hxx							     \
 			TFEL/Math/ExpressionTemplates/StandardOperations.hxx					     \
-			TFEL/Math/ExpressionTemplates/StandardOperations.ixx					     \
 			TFEL/Metaprogramming/Forward/TypeList.hxx                                                    \
 			TFEL/Metaprogramming/StaticAssert.hxx                                                        \
 			TFEL/Metaprogramming/Implements.hxx	                                                     \

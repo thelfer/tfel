@@ -1,0 +1,94 @@
+/*! 
+ * \file  Expr8.cxx
+ * \brief
+ * \author Helfer Thomas
+ * \date   04 févr. 2015
+ */
+
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include<array>
+#include<cmath>
+#include<fstream>
+#include<cstdlib>
+#include<iostream>
+
+#include"TFEL/Math/stensor.hxx"
+
+struct Expr8Test
+  : public tfel::tests::TestCase
+{
+  Expr8Test()
+    : tfel::tests::TestCase("TFEL/Math","Expr8Test")
+  {} // end of Expr8Test()
+  tfel::tests::TestResult
+  execute()
+  {
+    using namespace std;
+    using namespace tfel::meta;
+    using namespace tfel::math;
+    constexpr auto eps = 10*numeric_limits<double>::epsilon();
+    using stensor  = stensor<2u,double>;
+    const stensor s1{3.,4.,5.,0.};
+    const stensor id = stensor::Id();
+    const double tr = trace(s1);
+    using res      = BinaryOperationResult<int&&,const stensor&,OpMult>;
+    using handler  = Expr<stensor,ScalarObjectOperation<double&&,const stensor&,OpMult>>;
+    using handler2 = Expr<stensor,BinaryOperation<const stensor&,const handler&,OpMinus>>;
+    const auto expr = (tr/3)*id;
+    TFEL_TESTS_ASSERT(std::abs(expr(0)-4)<eps);
+    TFEL_TESTS_ASSERT(std::abs(expr(1)-4)<eps);
+    TFEL_TESTS_ASSERT(std::abs(expr(2)-4)<eps);
+    TFEL_TESTS_ASSERT(std::abs(expr(3)-0)<eps);
+    TFEL_TESTS_STATIC_ASSERT((is_same<res,stensor>::value));
+    TFEL_TESTS_STATIC_ASSERT((is_same<decltype(expr)::lhs_type,double&&>::value));
+    TFEL_TESTS_STATIC_ASSERT((is_same<decltype(expr)::lhs_storage_type,const double>::value));
+    TFEL_TESTS_STATIC_ASSERT((is_same<decltype(expr)::rhs_type,const stensor&>::value));
+    TFEL_TESTS_STATIC_ASSERT((is_same<decltype(expr)::rhs_storage_type,const stensor&>::value));
+    TFEL_TESTS_STATIC_ASSERT((is_same<decltype(expr)::result_type,stensor>::value));
+    TFEL_TESTS_STATIC_ASSERT((is_same<decltype(expr),const handler>::value));
+    TFEL_TESTS_STATIC_ASSERT((is_same<ComputeObjectTag<res>::type,StensorTag>::value));
+    TFEL_TESTS_STATIC_ASSERT((is_base_of<StensorConcept<handler>,handler>::value));
+    TFEL_TESTS_STATIC_ASSERT((is_same<ConceptRebind<ComputeObjectTag<res>::type,double>::type,
+			              StensorConcept<double>>::value));
+    TFEL_TESTS_STATIC_ASSERT((isBinaryOperationResultTypeValid<const stensor&,const handler&,OpMinus>::value));
+    const auto expr2 = s1-expr;
+    TFEL_TESTS_ASSERT(std::abs(expr2(0)+1)<eps);
+    TFEL_TESTS_ASSERT(std::abs(expr2(1)+0)<eps);
+    TFEL_TESTS_ASSERT(std::abs(expr2(2)-1)<eps);
+    TFEL_TESTS_ASSERT(std::abs(expr2(3)-0)<eps);
+    const stensor s3{expr2};
+    TFEL_TESTS_ASSERT(std::abs(s3(0)+1)<eps);
+    TFEL_TESTS_ASSERT(std::abs(s3(1)+0)<eps);
+    TFEL_TESTS_ASSERT(std::abs(s3(2)-1)<eps);
+    TFEL_TESTS_ASSERT(std::abs(s3(3)-0)<eps);
+    return this->result;
+  }
+  virtual ~Expr8Test();
+};
+
+Expr8Test::~Expr8Test()
+{}
+
+TFEL_TESTS_GENERATE_PROXY(Expr8Test,"Expr8Test");
+
+int main(void)
+{
+  using namespace std;
+  using namespace tfel::tests;
+  auto& manager = TestManager::getTestManager();
+  manager.addTestOutput(cout);
+  manager.addXMLTestOutput("Expr8.xml");
+  TestResult r = manager.execute();
+  if(!r.success()){
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+} // end of main
+

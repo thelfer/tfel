@@ -115,7 +115,6 @@ namespace mfront
     using namespace std;
     using namespace tfel::math;
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
-    typedef ModellingHypothesis::Hypothesis Hypothesis;
     tmatrix<3u,3u,real> nr(0.);
     const auto& h = ModellingHypothesis::fromString(this->hypothesis);
     if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){

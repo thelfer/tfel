@@ -1493,7 +1493,6 @@ namespace mfront
   std::pair<bool,bool>
   BehaviourDescription::checkVariableExistence(const std::string& v) const
   {
-    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
     const auto& h = this->getDistinctModellingHypotheses();
     std::pair<bool,bool> r{true,false};
     for(const auto & elem : h){
@@ -1515,7 +1514,6 @@ namespace mfront
 					       const bool b) const
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
     const auto& h = this->getDistinctModellingHypotheses();
     pair<bool,bool> r = {true,false};
     for(const auto & elem : h){
@@ -1540,7 +1538,6 @@ namespace mfront
 						  const std::string& g) const
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
     const auto& h = this->getDistinctModellingHypotheses();
     for(const auto & elem : h){
       const auto& bdata = this->getBehaviourData(elem);
