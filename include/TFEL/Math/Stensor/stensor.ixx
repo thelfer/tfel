@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_STENSOR_IXX_
-#define _LIB_TFEL_STENSOR_IXX_ 
+#ifndef LIB_TFEL_STENSOR_IXX_
+#define LIB_TFEL_STENSOR_IXX_ 
 
 #include <cmath>
 #include <iterator>
@@ -1353,10 +1353,10 @@ namespace tfel{
 						     std::min(vp(2),NumType(0)),m);
     }
     
-#endif
+#endif /* LIB_TFEL_STENSOR_IXX_ */
 
   } //end of namespace math
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_STENSOR_IXX */
+#endif /* LIB_TFEL_STENSOR_IXX_ */

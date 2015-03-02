@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_KRIGING_H_
-#define _LIB_TFEL_MATH_KRIGING_H_ 
+#ifndef LIB_TFEL_MATH_KRIGING_H_
+#define LIB_TFEL_MATH_KRIGING_H_ 
 
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/vector.hxx"
@@ -63,5 +63,5 @@ namespace tfel
 
 #include"TFEL/Math/Kriging/Kriging.ixx"
 
-#endif /* _LIB_TFEL_MATH_KRIGING_H */
+#endif /* LIB_TFEL_MATH_KRIGING_H_ */
 

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_RUNGEKUTTA42_HXX_
-#define _LIB_TFEL_RUNGEKUTTA42_HXX_ 
+#ifndef LIB_TFEL_RUNGEKUTTA42_HXX_
+#define LIB_TFEL_RUNGEKUTTA42_HXX_ 
 
 #include<type_traits>
 #include"TFEL/Math/tvector.hxx"
@@ -61,5 +61,5 @@ namespace tfel{
 
 #include"TFEL/Math/RungeKutta/RungeKutta42.ixx"
 
-#endif /* _LIB_TFEL_RUNGEKUTTA42_HXX */
+#endif /* LIB_TFEL_RUNGEKUTTA42_HXX_ */
 

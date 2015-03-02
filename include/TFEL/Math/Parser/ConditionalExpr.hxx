@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_CONDITIONALEXPR_HXX_
-#define _LIB_TFEL_CONDITIONALEXPR_HXX_ 
+#ifndef LIB_TFEL_CONDITIONALEXPR_HXX_
+#define LIB_TFEL_CONDITIONALEXPR_HXX_ 
 
 #include<vector>
 #include<string>
@@ -67,4 +67,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_CONDITIONALEXPR_HXX_ */
+#endif /* LIB_TFEL_CONDITIONALEXPR_HXX_ */

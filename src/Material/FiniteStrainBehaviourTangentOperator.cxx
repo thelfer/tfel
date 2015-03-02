@@ -36,15 +36,6 @@ namespace tfel{
       return res;
     }
 
-    std::vector<std::pair<FiniteStrainBehaviourTangentOperatorBase::Flag,
-			  FiniteStrainBehaviourTangentOperatorBase::Flag> >
-    getAvailableFiniteStrainBehaviourTangentOperatorConvertions(void)
-    {
-      using namespace std;
-      return vector<pair<FiniteStrainBehaviourTangentOperatorBase::Flag,
-			 FiniteStrainBehaviourTangentOperatorBase::Flag> >();
-    } // end of getAvailableFiniteStrainBehaviourTangentOperatorConvertions
-
     std::string
     getFiniteStrainBehaviourTangentOperatorFlagType(const FiniteStrainBehaviourTangentOperatorBase::Flag f)
     {

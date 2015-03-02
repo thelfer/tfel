@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_BEHAVIOURDESCRIPTION_H_
-#define _LIB_MFRONT_BEHAVIOURDESCRIPTION_H_ 
+#ifndef LIB_MFRONT_BEHAVIOURDESCRIPTION_H_
+#define LIB_MFRONT_BEHAVIOURDESCRIPTION_H_ 
 
 #include<set>
 #include<map>
@@ -1268,4 +1268,4 @@ namespace mfront
 
 #include"MFront/BehaviourDescription.ixx"
 
-#endif /* _LIB_MFRONT_BEHAVIOURDESCRIPTION_H */
+#endif /* LIB_MFRONT_BEHAVIOURDESCRIPTION_H_ */

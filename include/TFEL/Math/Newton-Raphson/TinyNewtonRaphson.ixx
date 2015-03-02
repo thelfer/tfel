@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TINYNEWTONRAPHSON_I_
-#define _LIB_TFEL_TINYNEWTONRAPHSON_I_ 
+#ifndef LIB_TFEL_TINYNEWTONRAPHSON_I_
+#define LIB_TFEL_TINYNEWTONRAPHSON_I_ 
 
 #include<cmath>
 #include<limits>
@@ -204,5 +204,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_TINYNEWTONRAPHSON_I_ */
+#endif /* LIB_TFEL_TINYNEWTONRAPHSON_I_ */
 

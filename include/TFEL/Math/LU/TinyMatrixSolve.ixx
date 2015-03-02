@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TINYMATRIXSOLVE_I_
-#define _LIB_TFEL_TINYMATRIXSOLVE_I_ 
+#ifndef LIB_TFEL_TINYMATRIXSOLVE_I_
+#define LIB_TFEL_TINYMATRIXSOLVE_I_ 
 
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/LU/LUDecomp.hxx"
@@ -149,5 +149,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_TINYMATRIXSOLVE_I_ */
+#endif /* LIB_TFEL_TINYMATRIXSOLVE_I_ */
 

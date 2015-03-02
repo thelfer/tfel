@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef   _LIB_TFEL_MATH_KRIGINGUTILITIES_H_
-#define   _LIB_TFEL_MATH_KRIGINGUTILITIES_H_ 
+#ifndef LIB_TFEL_MATH_KRIGINGUTILITIES_HXX
+#define LIB_TFEL_MATH_KRIGINGUTILITIES_HXX 
 
 #include<vector>
 #include<utility>
@@ -41,5 +41,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_KRIGINGUTILITIES_H */
+#endif /* LIB_TFEL_MATH_KRIGINGUTILITIES_HXX */
 

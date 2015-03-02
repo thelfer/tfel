@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_UMAT_MFRONT_UMAT_H_
-#define _LIB_TFEL_UMAT_MFRONT_UMAT_H_ 
+#ifndef LIB_TFEL_UMAT_MFRONT_UMAT_H_
+#define LIB_TFEL_UMAT_MFRONT_UMAT_H_ 
 
 #include<castem.h>
 
@@ -21,15 +21,15 @@
 	     * in the castem header, so remove it
 	     */
 #undef umat
-#endif
+#endif /* LIB_TFEL_UMAT_MFRONT_UMAT_H_ */
 
 #ifndef TFEL_UMAT_INLINE
 #define TFEL_UMAT_INLINE inline
-#endif  /* TFEL_UMAT_INLINE */
+#endif /* LIB_TFEL_UMAT_MFRONT_UMAT_H_ */
 
 #ifndef TFEL_UMAT_INLINE2
 #define TFEL_UMAT_INLINE2 inline
-#endif  /* TFEL_UMAT_INLINE2 */
+#endif /* LIB_TFEL_UMAT_MFRONT_UMAT_H_ */
 
 namespace umat{
 
@@ -56,5 +56,5 @@ namespace umat{
 
 } // end of namespace umat
 
-#endif /* _LIB_TFEL_UMAT_MFRONT_UMAT_H */
+#endif /* LIB_TFEL_UMAT_MFRONT_UMAT_H_ */
 

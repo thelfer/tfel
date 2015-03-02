@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_THERMODYNAMICFORCE_H_
-#define _LIB_MFRONT_THERMODYNAMICFORCE_H_ 
+#ifndef LIB_MFRONT_THERMODYNAMICFORCE_H_
+#define LIB_MFRONT_THERMODYNAMICFORCE_H_ 
 
 #include<string>
 
@@ -39,5 +39,5 @@ namespace mfront
   
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_THERMODYNAMICFORCE_H */
+#endif /* LIB_MFRONT_THERMODYNAMICFORCE_H_ */
 

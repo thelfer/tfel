@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTPARSERPROXY_HXX_
-#define _LIB_MFRONTPARSERPROXY_HXX_ 
+#ifndef LIB_MFRONTPARSERPROXY_HXX_
+#define LIB_MFRONTPARSERPROXY_HXX_ 
 
 #include<string>
 
@@ -37,5 +37,5 @@ namespace mfront{
 
 #include"MFront/DSLProxy.ixx"
 
-#endif /* _LIB_MFRONTPARSERPROXY_HXX */
+#endif /* LIB_MFRONTPARSERPROXY_HXX_ */
 

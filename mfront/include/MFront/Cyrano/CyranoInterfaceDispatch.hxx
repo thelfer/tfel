@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_H_
-#define _LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_H_ 
+#ifndef LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_H_
+#define LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_H_ 
 
 #include<type_traits>
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
@@ -113,4 +113,4 @@ namespace cyrano{
 
 } // end of namespace cyrano
 
-#endif /* _LIBMFRONT_CYRANO_CYRANOINTERFACEDISPATCH_H */
+#endif /* LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_H_ */

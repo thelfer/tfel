@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_CONVERTT2TOST2TOST2TOST2EXPR_H_
-#define _LIB_TFEL_MATH_CONVERTT2TOST2TOST2TOST2EXPR_H_ 
+#ifndef LIB_TFEL_MATH_CONVERTT2TOST2TOST2TOST2EXPR_H_
+#define LIB_TFEL_MATH_CONVERTT2TOST2TOST2TOST2EXPR_H_ 
 
 #include"TFEL/FSAlgorithm/copy.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
@@ -247,5 +247,5 @@ namespace tfel
   
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_CONVERTT2TOST2TOST2TOST2EXPR_H */
+#endif /* LIB_TFEL_MATH_CONVERTT2TOST2TOST2TOST2EXPR_H_ */
 

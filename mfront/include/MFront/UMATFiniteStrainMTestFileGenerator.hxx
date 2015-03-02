@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_UMATFINITESTRAINMTESTFILEGENERATOR_H_
-#define _LIB_UMATFINITESTRAINMTESTFILEGENERATOR_H_ 
+#ifndef LIB_UMATFINITESTRAINMTESTFILEGENERATOR_H_
+#define LIB_UMATFINITESTRAINMTESTFILEGENERATOR_H_ 
 
 #include"MFront/MFrontConfig.hxx"
 #include"MFront/MTestFileGeneratorBase.hxx"
@@ -80,5 +80,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* _LIB_UMATFINITESTRAINMTESTFILEGENERATOR_H */
+#endif /* LIB_UMATFINITESTRAINMTESTFILEGENERATOR_H_ */
 

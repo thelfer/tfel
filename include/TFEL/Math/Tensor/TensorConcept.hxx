@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _TFEL_MATH_TENSOR_CONCEPT_LIB_
-#define _TFEL_MATH_TENSOR_CONCEPT_LIB_ 1
+#ifndef TFEL_MATH_TENSOR_CONCEPT_LIB_
+#define TFEL_MATH_TENSOR_CONCEPT_LIB_ 1
 
 #include<stdexcept>
 #include<type_traits>
@@ -603,4 +603,4 @@ namespace tfel{
 
 #include"TFEL/Math/Tensor/TensorConcept.ixx"
 
-#endif /* _TFEL_MATH_TENSOR_CONCEPT_LIB_ */
+#endif /* TFEL_MATH_TENSOR_CONCEPT_LIB_ */

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTMODELINTERFACEPROXY_IXX_
-#define _LIB_MFRONTMODELINTERFACEPROXY_IXX_ 
+#ifndef LIB_MFRONTMODELINTERFACEPROXY_IXX_
+#define LIB_MFRONTMODELINTERFACEPROXY_IXX_ 
 
 namespace mfront{
 
@@ -34,4 +34,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONTMODELINTERFACEPROXY_IXX */
+#endif /* LIB_MFRONTMODELINTERFACEPROXY_IXX_ */

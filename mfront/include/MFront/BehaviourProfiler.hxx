@@ -11,12 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_
-#define _LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_ 
+#ifndef LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_
+#define LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_ 
 
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #include<time.h>
-#endif
+#endif /* LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_ */
 
 #include"MFront/MFrontConfig.hxx"
 
@@ -56,7 +56,7 @@ namespace mfront{
       timespec start;
       //! end
       timespec end;
-#endif
+#endif /* LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_ */
     }; // end of struct Timer
     /*!
      * constructor
@@ -117,5 +117,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H */
+#endif /* LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_ */
 

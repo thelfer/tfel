@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_SIGNALMANAGER_HXX_
-#define _LIB_TFEL_SIGNALMANAGER_HXX_ 
+#ifndef LIB_TFEL_SIGNALMANAGER_HXX_
+#define LIB_TFEL_SIGNALMANAGER_HXX_ 
 
 #include<map>
 #include<string>
@@ -67,5 +67,5 @@ namespace tfel
   
 } // end of tfel
 
-#endif /* _LIB_TFEL_SIGNALMANAGER_HXX */
+#endif /* LIB_TFEL_SIGNALMANAGER_HXX_ */
 

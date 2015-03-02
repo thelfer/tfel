@@ -14,10 +14,10 @@
 
 #ifdef HAVE_FENV
 #include "fenv.h"
-#endif /* HAVE_FENV */
+#endif /* LIB_TFEL_MATH_CONFIG_HXX_ */
 
-#ifndef _LIB_TFEL_MATH_CONFIG_HXX_
-#define _LIB_TFEL_MATH_CONFIG_HXX_ 
+#ifndef LIB_TFEL_MATH_CONFIG_HXX_
+#define LIB_TFEL_MATH_CONFIG_HXX_ 
 
 #ifdef TFEL_MATH_USE_HARD_INLINING
 #ifdef __GNUC__
@@ -27,18 +27,18 @@
 #else
 // Intel Compiler
 #define TFEL_MATH_INLINE __forceinline
-#endif
+#endif /* LIB_TFEL_MATH_CONFIG_HXX_ */
 #else
 // Unknown Compiler
 #define TFEL_MATH_INLINE inline  
-#endif
+#endif /* LIB_TFEL_MATH_CONFIG_HXX_ */
 #else
 // TFEL_MATH_USE_HARD_INLINING is not defined
 #define TFEL_MATH_INLINE inline  
-#endif
+#endif /* LIB_TFEL_MATH_CONFIG_HXX_ */
 
 #define TFEL_MATH_INLINE2 inline  
 #define TFEL_MATH_INLINE3
 
-#endif /* _LIB_TFEL_MATH_CONFIG_HXX */
+#endif /* LIB_TFEL_MATH_CONFIG_HXX_ */
 

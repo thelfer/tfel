@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATERIAL_DDIF2BASE_I_
-#define _LIB_TFEL_MATERIAL_DDIF2BASE_I_ 
+#ifndef LIB_TFEL_MATERIAL_DDIF2BASE_I_
+#define LIB_TFEL_MATERIAL_DDIF2BASE_I_ 
 
 #include<cmath>
 #include<algorithm>
@@ -234,5 +234,5 @@ namespace tfel
     
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATERIAL_DDIF2BASE_I */
+#endif /* LIB_TFEL_MATERIAL_DDIF2BASE_I_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_GENERATETYPELIST_H_
-#define _LIB_TFEL_GENERATETYPELIST_H_ 
+#ifndef LIB_TFEL_GENERATETYPELIST_H_
+#define LIB_TFEL_GENERATETYPELIST_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/TypeList.hxx"
@@ -55,4 +55,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_GENERATETYPELIST_H_ */
+#endif /* LIB_TFEL_GENERATETYPELIST_H_ */

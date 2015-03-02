@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_TINYPERMUTATION_I_
-#define _LIB_TFEL_MATH_TINYPERMUTATION_I_ 
+#ifndef LIB_TFEL_MATH_TINYPERMUTATION_I_
+#define LIB_TFEL_MATH_TINYPERMUTATION_I_ 
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
@@ -63,5 +63,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* _LIB_TFEL_MATH_TINYPERMUTATION_I_ */
+#endif /* LIB_TFEL_MATH_TINYPERMUTATION_I_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTRUNGEKUTTAPARSER_H_
-#define _LIB_MFRONTRUNGEKUTTAPARSER_H_ 
+#ifndef LIB_MFRONTRUNGEKUTTAPARSER_H_
+#define LIB_MFRONTRUNGEKUTTAPARSER_H_ 
 
 #include<string>
 #include"MFront/BehaviourDSLBase.hxx"
@@ -108,5 +108,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTRUNGEKUTTAPARSER_H */
+#endif /* LIB_MFRONTRUNGEKUTTAPARSER_H_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_BOUNDSCHECK_H_
-#define _LIB_TFEL_BOUNDSCHECK_H_ 
+#ifndef LIB_TFEL_BOUNDSCHECK_H_
+#define LIB_TFEL_BOUNDSCHECK_H_ 
 
 #include<string>
 
@@ -526,5 +526,5 @@ namespace tfel{
     
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_BOUNDSCHECK_H */
+#endif /* LIB_TFEL_BOUNDSCHECK_H_ */
 

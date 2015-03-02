@@ -381,6 +381,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ExpressionTemplates/Expr.hxx							     \
 			TFEL/Math/ExpressionTemplates/StandardOperations.hxx					     \
 			TFEL/Metaprogramming/Forward/TypeList.hxx                                                    \
+			TFEL/Metaprogramming/IsConstCallable.hxx                                                     \
 			TFEL/Metaprogramming/StaticAssert.hxx                                                        \
 			TFEL/Metaprogramming/Implements.hxx	                                                     \
 			TFEL/Metaprogramming/TypeList.hxx	                                                     \

@@ -6,21 +6,21 @@
  * \date   13 déc 2008
  */
 
-#ifndef _LIB_TFEL_GETFUNCTION_H_
-#define _LIB_TFEL_GETFUNCTION_H_
+#ifndef LIB_TFEL_GETFUNCTION_H_
+#define LIB_TFEL_GETFUNCTION_H_
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #include <windows.h>
 typedef HINSTANCE__* LibraryHandlerPtr;
 #else
 typedef void*        LibraryHandlerPtr;
-#endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
+#endif /* LIB_TFEL_GETFUNCTION_H_ */
 
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 
 #ifdef	__cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif /* LIB_TFEL_GETFUNCTION_H_ */
 
   /*!
    * \brief this function get if the number of argument of the
@@ -833,6 +833,6 @@ extern "C" {
 											    const double* const);
 #ifdef	__cplusplus
 }
-#endif /* __cplusplus */
+#endif /* LIB_TFEL_GETFUNCTION_H_ */
 
-#endif 	/* _LIB_TFEL_GETFUNCTION_H_ */
+#endif /* LIB_TFEL_GETFUNCTION_H_ */

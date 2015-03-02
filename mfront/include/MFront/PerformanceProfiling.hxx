@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTPERFORMANCEPROFILING_H_
-#define _LIB_MFRONTPERFORMANCEPROFILING_H_ 
+#ifndef LIB_MFRONTPERFORMANCEPROFILING_H_
+#define LIB_MFRONTPERFORMANCEPROFILING_H_ 
 
 #include<iosfwd>
 #include<string>
@@ -54,4 +54,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONTPERFORMANCEPROFILING_H */
+#endif /* LIB_MFRONTPERFORMANCEPROFILING_H_ */

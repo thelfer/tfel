@@ -11,12 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_H_
-#define _LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_H_ 
+#ifndef LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_H_
+#define LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_H_ 
 
-#ifndef _LIB_MFRONT_CYRANO_CALL_H_
+#ifndef LIB_MFRONT_CYRANO_CALL_H_
 #error "This header shall not be called directly"
-#endif
+#endif /* LIB_MFRONT_CYRANO_CALL_H_ */
 
 #include<algorithm>
 #include"TFEL/Math/st2tost2.hxx"
@@ -381,7 +381,7 @@ namespace cyrano
 	    catch(const tfel::material::DivergenceException& e){
 #ifdef MFRONT_CYRANO_VERBOSE
 	      std::cerr << "no convergence : " << e.what() << std::endl;
-#endif
+#endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_H_ */
 	      r = BV::FAILURE;
 	    }
 	    if((r==BV::SUCCESS)||((r==BV::UNRELIABLE_RESULTS)&&
@@ -673,5 +673,5 @@ ELASTIC);
 #include"MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx"
 #include"MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx"
 
-#endif /* _LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_H */
+#endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_H_ */
 

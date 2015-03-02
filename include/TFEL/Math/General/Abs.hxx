@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_ABS_H_
-#define _LIB_TFEL_MATH_ABS_H_ 
+#ifndef LIB_TFEL_MATH_ABS_H_
+#define LIB_TFEL_MATH_ABS_H_ 
 
 #include<cmath>
 #include<functional>
@@ -77,5 +77,5 @@ namespace tfel{
 
 #include"TFEL/Math/General/Abs.ixx"
 
-#endif /* _LIB_TFEL_MATH_ABS_H */
+#endif /* LIB_TFEL_MATH_ABS_H_ */
 

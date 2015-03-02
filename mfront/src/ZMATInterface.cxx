@@ -882,8 +882,8 @@ namespace mfront
     out << "* \\author "  << fd.authorName << endl;
     out << "* \\date   "  << fd.date       << endl;
     out << "*/" << endl << endl;
-    out << "#ifndef __MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX" << endl;
-    out << "#define __MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX" << endl << endl;
+    out << "#ifndef MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX" << endl;
+    out << "#define MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX" << endl << endl;
     out << "#include\"Behavior.h\"" << endl;
     writeZMATUndefs(out);
     out << endl;
@@ -1032,7 +1032,7 @@ namespace mfront
     out << "tfel::material::OutOfBoundsPolicy obp;" << endl;
     out << "};" << endl << endl;
     out << "Z_END_NAMESPACE;" << endl << endl;
-    out << "#endif /* __MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX*/" << endl;
+    out << "#endif /* MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX*/" << endl;
     out.close();
     out.open(("src/"+srcFileName).c_str());
     if(!out){

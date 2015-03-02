@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_QT_OPERATIONS_H_
-#define _LIB_TFEL_QT_OPERATIONS_H_ 
+#ifndef LIB_TFEL_QT_OPERATIONS_H_
+#define LIB_TFEL_QT_OPERATIONS_H_ 
 
 #include"TFEL/Math/Forward/Complex.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
@@ -163,5 +163,5 @@ namespace tfel{
 
 #include"TFEL/Math/Quantity/qtOperations.ixx"
 
-#endif /* _LIB_TFEL_QT_OPERATIONS_H_ */
+#endif /* LIB_TFEL_QT_OPERATIONS_H_ */
 

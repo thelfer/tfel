@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTMATERIALLAWPARSER_HXX_
-#define _LIB_MFRONTMATERIALLAWPARSER_HXX_ 
+#ifndef LIB_MFRONTMATERIALLAWPARSER_HXX_
+#define LIB_MFRONTMATERIALLAWPARSER_HXX_ 
 
 #include<string>
 #include<set>
@@ -235,5 +235,5 @@ namespace mfront{
 
 } // end of namespace mfront  
   
-#endif /* _LIB_MFRONTMATERIALLAWPARSER_HXX */
+#endif /* LIB_MFRONTMATERIALLAWPARSER_HXX_ */
 

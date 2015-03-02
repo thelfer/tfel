@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX_
-#define _LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX_ 
+#ifndef LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX_
+#define LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX_ 
 
 #include<cstddef>
 #include<iterator>
@@ -101,9 +101,6 @@ namespace tfel{
 	unsigned short i;
       }; // end of struc VectorConstIterator
 
-      typedef A first_arg;
-      typedef B second_arg;
-
       using NumType   = typename VectorTraits<Result>::NumType;
       using IndexType = typename VectorTraits<Result>::NumType;
 
@@ -145,5 +142,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX */
+#endif /* LIB_TFEL_MATH_TVECTORTMATRIXEXPR_HXX_ */
 

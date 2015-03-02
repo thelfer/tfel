@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMAT_CALL_H_
-#define _LIB_MFRONT_UMAT_CALL_H_ 
+#ifndef LIB_MFRONT_UMAT_CALL_HXX
+#define LIB_MFRONT_UMAT_CALL_HXX
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
@@ -150,5 +150,5 @@ namespace umat{
 #include"MFront/UMAT/UMATBehaviourHandler.hxx"
 #include"MFront/UMAT/UMATGenericPlaneStressHandler.hxx"
 
-#endif /* _LIB_MFRONT_UMAT_CALL_H */
+#endif /* LIB_MFRONT_UMAT_CALL_HXX */
 

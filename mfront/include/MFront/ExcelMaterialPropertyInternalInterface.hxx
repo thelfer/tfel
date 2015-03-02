@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_H_
-#define _LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_H_ 
+#ifndef LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_H_
+#define LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_H_ 
 
 #include"MFront/CMaterialPropertyInterface.hxx"
 
@@ -61,5 +61,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_H */
+#endif /* LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_H_ */
 

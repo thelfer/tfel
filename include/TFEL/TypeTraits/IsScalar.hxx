@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_ISSCALAR_H_
-#define _LIB_TFEL_ISSCALAR_H_ 
+#ifndef LIB_TFEL_ISSCALAR_H_
+#define LIB_TFEL_ISSCALAR_H_ 
 
 #include"TFEL/Math/Forward/Complex.hxx"
 
@@ -95,5 +95,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_ISSCALAR_H */
+#endif /* LIB_TFEL_ISSCALAR_H_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_THERMALBEHAVIOURDATA_H_
-#define _LIB_TFEL_THERMALBEHAVIOURDATA_H_ 
+#ifndef LIB_TFEL_THERMALBEHAVIOURDATA_H_
+#define LIB_TFEL_THERMALBEHAVIOURDATA_H_ 
 
 #include<vector>
 #include<algorithm>
@@ -59,5 +59,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_THERMALBEHAVIOURDATA_H */
+#endif /* LIB_TFEL_THERMALBEHAVIOURDATA_H_ */
 

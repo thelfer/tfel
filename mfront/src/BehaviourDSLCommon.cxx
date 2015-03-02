@@ -2043,12 +2043,12 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourDataFileHeaderBegin(){
     using namespace std;
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "#ifndef _LIB_TFELMATERIAL_";
+    this->behaviourDataFile << "#ifndef LIB_TFELMATERIAL_";
     this->behaviourDataFile << makeUpperCase(this->mb.getClassName());
-    this->behaviourDataFile << "_BEHAVIOUR_DATA_HXX_" << endl;
-    this->behaviourDataFile << "#define _LIB_TFELMATERIAL_";
+    this->behaviourDataFile << "_BEHAVIOUR_DATA_HXX" << endl;
+    this->behaviourDataFile << "#define LIB_TFELMATERIAL_";
     this->behaviourDataFile << makeUpperCase(this->mb.getClassName());
-    this->behaviourDataFile << "_BEHAVIOUR_DATA_HXX_" << endl;
+    this->behaviourDataFile << "_BEHAVIOUR_DATA_HXX" << endl;
     this->behaviourDataFile << endl;
   }
 
@@ -2058,9 +2058,9 @@ namespace mfront{
 
     this->checkBehaviourDataFile();
 
-    this->behaviourDataFile << "#endif /* _LIB_TFELMATERIAL_";
+    this->behaviourDataFile << "#endif /* LIB_TFELMATERIAL_";
     this->behaviourDataFile << makeUpperCase(this->mb.getClassName());
-    this->behaviourDataFile << "_BEHAVIOUR_DATA_HXX_ */" << endl;
+    this->behaviourDataFile << "_BEHAVIOUR_DATA_HXX */" << endl;
   }
 
   void BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes(void)
@@ -2769,21 +2769,21 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
 
-    this->behaviourFile << "#ifndef _LIB_TFELMATERIAL_";
+    this->behaviourFile << "#ifndef LIB_TFELMATERIAL_";
     this->behaviourFile << makeUpperCase(this->mb.getClassName());
-    this->behaviourFile << "_HXX_" << endl;
-    this->behaviourFile << "#define _LIB_TFELMATERIAL_";
+    this->behaviourFile << "_HXX" << endl;
+    this->behaviourFile << "#define LIB_TFELMATERIAL_";
     this->behaviourFile << makeUpperCase(this->mb.getClassName());
-    this->behaviourFile << "_HXX_" << endl;
+    this->behaviourFile << "_HXX" << endl;
     this->behaviourFile << endl;
   }
 
   void BehaviourDSLCommon::writeBehaviourFileHeaderEnd() {
     using namespace std;
     this->checkBehaviourFile();
-    this->behaviourFile << "#endif /* _LIB_TFELMATERIAL_";
+    this->behaviourFile << "#endif /* LIB_TFELMATERIAL_";
     this->behaviourFile << makeUpperCase(this->mb.getClassName());
-    this->behaviourFile << "_HXX_ */" << endl;
+    this->behaviourFile << "_HXX */" << endl;
   }
 
   void BehaviourDSLCommon::writeBehaviourClassEnd() {    
@@ -4291,9 +4291,7 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeIntegrationDataFileHeader(){
     using namespace std;
-
     this->checkIntegrationDataFile();
-
     this->integrationDataFile << "/*!" << endl;
     this->integrationDataFile << "* \\file   " << this->integrationDataFileName << endl;
     this->integrationDataFile << "* \\brief  " << "this file implements the " 
@@ -4315,25 +4313,22 @@ namespace mfront{
   void BehaviourDSLCommon::writeIntegrationDataFileHeaderBegin(){
     using namespace std;
     this->checkIntegrationDataFile();
-
-    this->integrationDataFile << "#ifndef _LIB_TFELMATERIAL_";
+    this->integrationDataFile << "#ifndef LIB_TFELMATERIAL_";
     this->integrationDataFile << makeUpperCase(this->mb.getClassName());
-    this->integrationDataFile << "_INTEGRATION_DATA_HXX_" << endl;
-    this->integrationDataFile << "#define _LIB_TFELMATERIAL_";
+    this->integrationDataFile << "_INTEGRATION_DATA_HXX" << endl;
+    this->integrationDataFile << "#define LIB_TFELMATERIAL_";
     this->integrationDataFile << makeUpperCase(this->mb.getClassName());
-    this->integrationDataFile << "_INTEGRATION_DATA_HXX_" << endl;
+    this->integrationDataFile << "_INTEGRATION_DATA_HXX" << endl;
     this->integrationDataFile << endl;
   }
 
   void BehaviourDSLCommon::writeIntegrationDataFileHeaderEnd()
   {
     using namespace std;
-
     this->checkIntegrationDataFile();
-
-    this->integrationDataFile << "#endif /* _LIB_TFELMATERIAL_";
+    this->integrationDataFile << "#endif /* LIB_TFELMATERIAL_";
     this->integrationDataFile << makeUpperCase(this->mb.getClassName());
-    this->integrationDataFile << "_INTEGRATION_DATA_HXX_ */" << endl;
+    this->integrationDataFile << "_INTEGRATION_DATA_HXX */" << endl;
   }
 
   void BehaviourDSLCommon::writeIntegrationDataStandardTFELIncludes(void)

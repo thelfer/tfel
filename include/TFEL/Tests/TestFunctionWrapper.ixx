@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TESTS_TESTFUNCTIONWRAPPER_IXX
-#define _LIB_TFEL_TESTS_TESTFUNCTIONWRAPPER_IXX 1
+#ifndef LIB_TFEL_TESTS_TESTFUNCTIONWRAPPER_IXX
+#define LIB_TFEL_TESTS_TESTFUNCTIONWRAPPER_IXX 1
 
 namespace tfel
 {
@@ -63,4 +63,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif  /*_LIB_TFEL_TESTS_TEST_IXX */
+#endif /* LIB_TFEL_TESTS_TESTFUNCTIONWRAPPER_IXX */

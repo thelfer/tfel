@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TINY_MATRIX_IXX_
-#define _LIB_TFEL_TINY_MATRIX_IXX_ 
+#ifndef LIB_TFEL_TINY_MATRIX_IXX_
+#define LIB_TFEL_TINY_MATRIX_IXX_ 
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
@@ -157,13 +157,13 @@ namespace tfel{
     }
 
     template<unsigned short N,unsigned short M, typename T>
-    unsigned short tmatrix<N,M,T>::getNbCols(void) const
+    constexpr unsigned short tmatrix<N,M,T>::getNbCols(void) const
     {
       return M;
     }
 
     template<unsigned short N,unsigned short M, typename T>
-    unsigned short tmatrix<N,M,T>::getNbRows(void) const
+    constexpr unsigned short tmatrix<N,M,T>::getNbRows(void) const
     {
       return N;
     }
@@ -369,11 +369,11 @@ namespace tfel{
       return tfel::math::internals::det3(m);
     }
 
-#endif
+#endif /* LIB_TFEL_TINY_MATRIX_IXX_ */
     
   } // end of namespace math
   
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_TINY_MATRIX_IXX */
+#endif /* LIB_TFEL_TINY_MATRIX_IXX_ */
 

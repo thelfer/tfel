@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TENSOR_IXX_
-#define _LIB_TFEL_TENSOR_IXX_ 
+#ifndef LIB_TFEL_TENSOR_IXX_
+#define LIB_TFEL_TENSOR_IXX_ 
 
 #include <cmath>
 #include <iterator>
@@ -503,11 +503,11 @@ namespace tfel{
       return t2;
     }
     
-#endif
+#endif /* LIB_TFEL_TENSOR_IXX_ */
 
   } //end of namespace math
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_TENSOR_IXX */
+#endif /* LIB_TFEL_TENSOR_IXX_ */
 

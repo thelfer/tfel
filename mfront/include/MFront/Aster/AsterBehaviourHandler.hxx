@@ -11,12 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_
-#define _LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_ 
+#ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_
+#define LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_ 
 
-#ifndef _LIB_MFRONT_ASTER_CALL_H_
+#ifndef LIB_MFRONT_ASTER_CALL_H_
 #error "This header shall not be called directly"
-#endif
+#endif /* LIB_MFRONT_ASTER_CALL_H_ */
 
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
@@ -454,4 +454,4 @@ namespace aster
 #include"MFront/Aster/AsterIsotropicBehaviourHandler.hxx"
 #include"MFront/Aster/AsterOrthotropicBehaviourHandler.hxx"
 
-#endif /* _LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H */
+#endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_ */

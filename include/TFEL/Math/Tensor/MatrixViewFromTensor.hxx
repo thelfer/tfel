@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_MATRIXVIEWFROMTENSOR_H_
-#define _LIB_TFEL_MATH_MATRIXVIEWFROMTENSOR_H_ 
+#ifndef LIB_TFEL_MATH_MATRIXVIEWFROMTENSOR_H_
+#define LIB_TFEL_MATH_MATRIXVIEWFROMTENSOR_H_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
@@ -37,7 +37,7 @@ namespace tfel
     }
 
     template<typename T>
-     class TensorConcept;
+    struct TensorConcept;
 
     template<typename T>
     struct TensorTraits;
@@ -92,5 +92,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_MATRIXVIEWFROMTENSOR_H */
+#endif /* LIB_TFEL_MATH_MATRIXVIEWFROMTENSOR_H_ */
 

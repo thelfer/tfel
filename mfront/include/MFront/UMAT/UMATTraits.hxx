@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMATTRAITS_HXX_
-#define _LIB_MFRONT_UMATTRAITS_HXX_ 
+#ifndef LIB_MFRONT_UMATTRAITS_HXX_
+#define LIB_MFRONT_UMATTRAITS_HXX_ 
 
 namespace umat{
 
@@ -48,5 +48,5 @@ namespace umat{
 
 } // end of namespace umat  
 
-#endif /* _LIB_MFRONT_UMATTRAITS_HXX */
+#endif /* LIB_MFRONT_UMATTRAITS_HXX_ */
 

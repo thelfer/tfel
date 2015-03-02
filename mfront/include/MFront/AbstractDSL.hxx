@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_ABSTRACTDSL_HXX_
-#define _LIB_MFRONT_ABSTRACTDSL_HXX_ 
+#ifndef LIB_MFRONT_ABSTRACTDSL_HXX_
+#define LIB_MFRONT_ABSTRACTDSL_HXX_ 
 
 #include<map>
 #include<set>
@@ -114,5 +114,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_ABSTRACTDSL_HXX */
+#endif /* LIB_MFRONT_ABSTRACTDSL_HXX_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTPARSERFACTORY_HXX_
-#define _LIB_MFRONTPARSERFACTORY_HXX_ 
+#ifndef LIB_MFRONTPARSERFACTORY_HXX_
+#define LIB_MFRONTPARSERFACTORY_HXX_ 
 
 #include<vector>
 #include<string>
@@ -68,5 +68,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTPARSERFACTORY_HXX */
+#endif /* LIB_MFRONTPARSERFACTORY_HXX_ */
 

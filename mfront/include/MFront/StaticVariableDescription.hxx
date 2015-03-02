@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_
-#define _LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_ 
+#ifndef LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_
+#define LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_ 
 
 #include<string>
 #include<vector>
@@ -32,7 +32,7 @@ namespace mfront{
     typedef double StaticVariableValueType;
 #else 
     typedef long double StaticVariableValueType;
-#endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
+#endif /* LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_ */
     /*!
      * Constructor
      * \param[in] type_       : variable type
@@ -93,4 +93,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_STATICVARIABLEDESCRIPTION_H */
+#endif /* LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_ */

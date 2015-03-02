@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MFRONTUMATINTERFACEBASE_H_
-#define _LIB_MFRONT_MFRONTUMATINTERFACEBASE_H_ 
+#ifndef LIB_MFRONT_MFRONTUMATINTERFACEBASE_H_
+#define LIB_MFRONT_MFRONTUMATINTERFACEBASE_H_ 
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
@@ -547,5 +547,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MFRONTUMATINTERFACEBASE_H */
+#endif /* LIB_MFRONT_MFRONTUMATINTERFACEBASE_H_ */
 

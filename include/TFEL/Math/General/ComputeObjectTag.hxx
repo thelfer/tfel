@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_COMPUTEOBJECTTAG_H_
-#define _LIB_TFEL_COMPUTEOBJECTTAG_H_ 
+#ifndef LIB_TFEL_COMPUTEOBJECTTAG_H_
+#define LIB_TFEL_COMPUTEOBJECTTAG_H_ 
 
 namespace tfel{
 
@@ -47,5 +47,5 @@ namespace tfel{
 
 #include"TFEL/Math/General/ComputeObjectTag.ixx"
 
-#endif /* _LIB_TFEL_COMPUTEOBJECTTAG_H */
+#endif /* LIB_TFEL_COMPUTEOBJECTTAG_H_ */
 

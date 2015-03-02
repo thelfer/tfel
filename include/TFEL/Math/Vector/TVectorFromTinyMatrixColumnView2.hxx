@@ -13,8 +13,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_TVECTORFROMTINYMATRIXCOLUMNVIEW2_HXX_
-#define _LIB_TFEL_MATH_TVECTORFROMTINYMATRIXCOLUMNVIEW2_HXX_ 
+#ifndef LIB_TFEL_MATH_TVECTORFROMTINYMATRIXCOLUMNVIEW2_HXX_
+#define LIB_TFEL_MATH_TVECTORFROMTINYMATRIXCOLUMNVIEW2_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
@@ -115,4 +115,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TVECTORFROMTINYMATRIXCOLUMNVIEW2_HXX */
+#endif /* LIB_TFEL_MATH_TVECTORFROMTINYMATRIXCOLUMNVIEW2_HXX_ */

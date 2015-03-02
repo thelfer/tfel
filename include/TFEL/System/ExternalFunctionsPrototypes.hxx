@@ -11,24 +11,24 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_
-#define _LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ 
+#ifndef LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_
+#define LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ 
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #define TFEL_ADDCALL_PTR __cdecl *
 #else 
 #define TFEL_ADDCALL_PTR *
-#endif
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 
 #ifdef	__cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 
 #ifdef TFEL_ARCH32
   typedef int    CyranoIntegerType;
   typedef int    UMATIntegerType;
   typedef int    AsterIntegerType;
-#endif 
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 #ifdef TFEL_ARCH64
 #ifdef WIN64
   typedef long long   CyranoIntegerType;
@@ -38,15 +38,15 @@ extern "C" {
   typedef long   CyranoIntegerType;
   typedef long   UMATIntegerType;
   typedef long   AsterIntegerType;
-#endif
-#endif
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
   typedef double CyranoRealType;
   typedef double UMATRealType;
   typedef double AsterRealType;
 
 #ifdef	__cplusplus
 }
-#endif /* __cplusplus */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 
 #ifdef	__cplusplus
 
@@ -332,7 +332,7 @@ namespace tfel
     
 } // end of namespace tfel
 
-#endif /* __cplusplus */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 
-#endif /* _LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 

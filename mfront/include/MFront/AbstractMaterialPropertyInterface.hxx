@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTLAWVIRTUALINTERFACE_HXX_
-#define _LIB_MFRONTLAWVIRTUALINTERFACE_HXX_ 
+#ifndef LIB_MFRONTLAWVIRTUALINTERFACE_HXX_
+#define LIB_MFRONTLAWVIRTUALINTERFACE_HXX_ 
 
 #include<utility>
 #include<string>
@@ -156,4 +156,4 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTLAWVIRTUALINTERFACE_HXX */
+#endif /* LIB_MFRONTLAWVIRTUALINTERFACE_HXX_ */

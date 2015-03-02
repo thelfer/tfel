@@ -280,8 +280,8 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
 	 << " * project under specific licensing conditions." << endl
 	 << " */" << endl;
   header << endl;
-  header << "#ifndef __TFEL_GLOSSARY_GLOSSARY_HH__" << endl;
-  header << "#define __TFEL_GLOSSARY_GLOSSARY_HH__" << endl;
+  header << "#ifndef TFEL_GLOSSARY_GLOSSARY_HXX" << endl;
+  header << "#define TFEL_GLOSSARY_GLOSSARY_HXX" << endl;
   header << endl;
   header << "#include\"TFEL/Config/TFELConfig.hxx\"" << endl;
   header << "#include<set>"    << endl;
@@ -367,7 +367,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   header << endl;
   header << "} // end of namespace tfel" << endl;
   header << endl;
-  header << "#endif /* __TFEL_GLOSSARY_GLOSSARY_HH__ */" << endl;
+  header << "#endif /* TFEL_GLOSSARY_GLOSSARY_HXX */" << endl;
   /* writting src file */
   src << "/*!" << endl
       << " * \\file   Glossary.cxx" << endl
@@ -530,8 +530,8 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
   header << " * \\date   2014-07-22" << endl;
   header << "*/" << endl;
   header << endl;
-  header << "#ifndef __PLEIADES_GLOSSARY_GLOSSARY_HH__" << endl;
-  header << "#define __PLEIADES_GLOSSARY_GLOSSARY_HH__" << endl;
+  header << "#ifndef PLEIADES_GLOSSARY_GLOSSARY_HXX" << endl;
+  header << "#define PLEIADES_GLOSSARY_GLOSSARY_HXX" << endl;
   header << endl;
   header << "#include <set>"    << endl;
   header << "#include <vector>" << endl;
@@ -597,7 +597,7 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
   header << "}; // end of class Glossary" << endl;
   header << "} // end of namespace Pleiades" << endl;
   header << endl;
-  header << "#endif /* __PLEIADES_GLOSSARY_GLOSSARY_HH__ */" << endl;
+  header << "#endif /* PLEIADES_GLOSSARY_GLOSSARY_HXX */" << endl;
 
   /* writting src file */
   src << "/*!" << endl;

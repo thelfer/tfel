@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_
-#define _LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_ 
+#ifndef LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_
+#define LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_ 
 
 #include<cstddef>
 #include<iterator>
@@ -35,19 +35,27 @@ namespace tfel{
 
   namespace math {
     
+    /*!
+     * \brief A placeholder for the computation of product of a tiny
+     * matrix and a tiny vector.
+     * \tparam N : numbers of rows of the matrix
+     * \tparam M : numbers of columns of the matrix
+     * \tparam A : type of the tiny matrix object (can be a reference)
+     * \tparam B : type of the tiny vector object (can be a reference)
+     */
     template<unsigned short N,unsigned short M,
 	     typename A, typename B>
     struct TMatrixTVectorExpr
       : public ExprBase
     {
-
+      //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
-
+      //! \brief return the runtime properties
       TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RunTimeProperties();
-      }
+      } // end of getRunTimeProperties
       /*!
        * a pseudo iterator allowing to iterate over values in the same
        * row
@@ -103,14 +111,13 @@ namespace tfel{
       }; // end of struc VectorConstIterator
 
     protected:
-
-      
-      typedef typename ComputeBinaryResult<A,B,OpMult>::Result Result;
+      //! a simple alias
+      using Result = typename ComputeBinaryResult<typename std::decay<A>::type,
+						  typename std::decay<B>::type,OpMult>::Result;
+      //! a simple alias
       using NumType   = typename VectorTraits<Result>::NumType;
+      //! a simple alias
       using IndexType = typename VectorTraits<Result>::IndexType;
-
-      typedef A first_arg;
-      typedef B second_arg;
 
       typedef NumType        value_type;                                                
       typedef NumType*       pointer;	    						
@@ -144,5 +151,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX */
+#endif /* LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_ */
 

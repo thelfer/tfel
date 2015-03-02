@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTPLEIADESMODELINTERFACE_H_
-#define _LIB_MFRONTPLEIADESMODELINTERFACE_H_ 
+#ifndef LIB_MFRONTPLEIADESMODELINTERFACE_H_
+#define LIB_MFRONTPLEIADESMODELINTERFACE_H_ 
 
 #include"MFront/AbstractModelInterface.hxx"
 
@@ -160,5 +160,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTPLEIADESMODELINTERFACE_H */
+#endif /* LIB_MFRONTPLEIADESMODELINTERFACE_H */
 

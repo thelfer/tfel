@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_THERMALBEHAVIOUR_H_
-#define _LIB_TFEL_THERMALBEHAVIOUR_H_ 
+#ifndef LIB_TFEL_THERMALBEHAVIOUR_H_
+#define LIB_TFEL_THERMALBEHAVIOUR_H_ 
 
 #include"TFEL/Material/ThermalBehaviourData.hxx"
 
@@ -41,5 +41,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_THERMALBEHAVIOUR_H */
+#endif /* LIB_TFEL_THERMALBEHAVIOUR_H_ */
 

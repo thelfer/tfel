@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMATEXCEPTION_H_
-#define _LIB_MFRONT_UMATEXCEPTION_H_ 
+#ifndef LIB_MFRONT_UMATEXCEPTION_H_
+#define LIB_MFRONT_UMATEXCEPTION_H_ 
 
 #include<string>
 #include<exception>
@@ -73,5 +73,5 @@ namespace umat {
   
 } // end of namespace umat
 
-#endif /* _LIB_MFRONT_UMATEXCEPTION_H */
+#endif /* LIB_MFRONT_UMATEXCEPTION_H_ */
 

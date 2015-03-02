@@ -11,12 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_H_
-#define _LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_H_ 
+#ifndef LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_H_
+#define LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_H_ 
 
-#ifndef _LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_
+#ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_
 #error "This header shall not be called directly"
-#endif
+#endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_ */
 
 #include"MFront/Aster/AsterRotationMatrix.hxx"
 #include"MFront/Aster/AsterFiniteStrainRotationMatrix.hxx"
@@ -560,4 +560,4 @@ namespace aster
 
 } // end of namespace aster
 
-#endif /* _LIB_MFRONT_UMAT_UMATORTHOTROPICBEHAVIOURHANDLER_H */
+#endif /* LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_H_ */

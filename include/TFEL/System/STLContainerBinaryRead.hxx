@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_SYSTEM_STLCONTAINERBINARYREADE_H_
-#define _LIB_TFEL_SYSTEM_STLCONTAINERBINARYREADE_H_ 
+#ifndef LIB_TFEL_SYSTEM_STLCONTAINERBINARYREADE_H_
+#define LIB_TFEL_SYSTEM_STLCONTAINERBINARYREADE_H_ 
 
 #include<map>
 #include<set>
@@ -137,5 +137,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_SYSTEM_STLCONTAINERBINARYREADER_H */
+#endif /* LIB_TFEL_SYSTEM_STLCONTAINERBINARYREADE_H_ */
 

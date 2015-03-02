@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX_
-#define _LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX_ 
+#ifndef LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX_
+#define LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX_ 
 
 #include<iterator>
 
@@ -46,5 +46,5 @@ namespace tfel{
 
 } // end of namespace typetraits
 
-#endif /* _LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX */
+#endif /* LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX_ */
 

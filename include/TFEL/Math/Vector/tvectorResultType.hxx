@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TINY_VECTOR_RESULT_TYPE_H_
-#define _LIB_TFEL_TINY_VECTOR_RESULT_TYPE_H_ 
+#ifndef LIB_TFEL_TINY_VECTOR_RESULT_TYPE_H_
+#define LIB_TFEL_TINY_VECTOR_RESULT_TYPE_H_ 
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
@@ -168,5 +168,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_TINY_VECTOR_RESULT_TYPE_H */
+#endif /* LIB_TFEL_TINY_VECTOR_RESULT_TYPE_H_ */
 

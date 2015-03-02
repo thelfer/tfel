@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_RUNGE_KUTTA2_HEADER_HXX_
-#define _LIB_TFEL_RUNGE_KUTTA2_HEADER_HXX_ 
+#ifndef LIB_TFEL_RUNGE_KUTTA2_HEADER_HXX
+#define LIB_TFEL_RUNGE_KUTTA2_HEADER_HXX 
 
 #include<cstdlib>
 #include<fstream>
@@ -113,4 +113,4 @@ void test(void){
   }
 }
   
-#endif /* _LIB_TFEL_RUNGE_KUTTA2_HEADER_HXX */
+#endif /* LIB_TFEL_RUNGE_KUTTA2_HEADER_HXX */

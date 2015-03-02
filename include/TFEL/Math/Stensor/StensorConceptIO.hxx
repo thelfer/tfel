@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_STENSORCONCEPTIO_H_
-#define _LIB_TFEL_MATH_STENSORCONCEPTIO_H_ 
+#ifndef LIB_TFEL_MATH_STENSORCONCEPTIO_H_
+#define LIB_TFEL_MATH_STENSORCONCEPTIO_H_ 
 
 #include<ostream>
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
@@ -45,6 +45,6 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_STENSORCONCEPTIO_H_ */
+#endif /* LIB_TFEL_MATH_STENSORCONCEPTIO_H_ */
 
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MFRONT_UMATOUTOFBOUNDSPOLICY_H_
-#define _LIB_TFEL_MFRONT_UMATOUTOFBOUNDSPOLICY_H_ 
+#ifndef LIB_TFEL_MFRONT_UMATOUTOFBOUNDSPOLICY_H_
+#define LIB_TFEL_MFRONT_UMATOUTOFBOUNDSPOLICY_H_ 
 
 #include"MFront/UMAT/UMATConfig.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
@@ -36,5 +36,5 @@ namespace umat
 
 } // end of namespace umat
 
-#endif /* _LIB_TFEL_MFRONT_UMATOUTOFBOUNDS_H */
+#endif /* LIB_TFEL_MFRONT_UMATOUTOFBOUNDSPOLICY_H_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_ZMAT_ZMATINTERFACE_H_
-#define _LIB_MFRONT_ZMAT_ZMATINTERFACE_H_ 
+#ifndef LIB_MFRONT_ZMAT_ZMATINTERFACE_H_
+#define LIB_MFRONT_ZMAT_ZMATINTERFACE_H_ 
 
 #include<Matrix.h>
 #include"MFront/ZMAT/ZMATUndefs.hxx"
@@ -251,5 +251,5 @@ namespace zmat
 
 #include"MFront/ZMAT/ZMATInterface.ixx"
 
-#endif /* _LIB_MFRONT_ZMAT_ZMATINTERFACE_H */
+#endif /* LIB_MFRONT_ZMAT_ZMATINTERFACE_H_ */
 

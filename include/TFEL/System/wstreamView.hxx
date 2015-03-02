@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_WSTREAMVIEW_HXX_
-#define _LIB_TFEL_WSTREAMVIEW_HXX_ 
+#ifndef LIB_TFEL_WSTREAMVIEW_HXX_
+#define LIB_TFEL_WSTREAMVIEW_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/stream_traits.hxx"
@@ -57,5 +57,5 @@ namespace tfel
 
 #include"TFEL/System/wstreamView.ixx"
 
-#endif /* _LIB_TFEL_WSTREAMVIEW_HXX */
+#endif /* LIB_TFEL_WSTREAMVIEW_HXX_ */
 

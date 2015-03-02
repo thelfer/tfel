@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_FUNCTION_IXX_
-#define _LIB_TFEL_FUNCTION_IXX_ 
+#ifndef LIB_TFEL_FUNCTION_IXX_
+#define LIB_TFEL_FUNCTION_IXX_ 
 
 #include<string>
 #include<cerrno>
@@ -34,7 +34,7 @@
       differentiateFunction<X>(const std::shared_ptr<Expr>,        \
 			       const std::vector<double>::size_type,         \
 			       const std::vector<double>&)
-#endif /* __SUNPRO_CC */
+#endif /* LIB_TFEL_FUNCTION_IXX_ */
 
 namespace tfel
 {
@@ -151,5 +151,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_FUNCTION_IXX */
+#endif /* LIB_TFEL_FUNCTION_IXX_ */
 

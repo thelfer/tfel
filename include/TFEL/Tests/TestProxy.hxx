@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TESTS_TESTPROXY_HXX
-#define _LIB_TFEL_TESTS_TESTPROXY_HXX 1
+#ifndef LIB_TFEL_TESTS_TESTPROXY_HXX
+#define LIB_TFEL_TESTS_TESTPROXY_HXX 1
 
 #include<string>
 
@@ -152,4 +152,4 @@ namespace tfel
 
 #include"TFEL/Tests/TestProxy.ixx"
 
-#endif  /*_LIB_TFEL_TESTS_TEST_HXX */
+#endif /* LIB_TFEL_TESTS_TESTPROXY_HXX */

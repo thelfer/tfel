@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_BEHAVIOURBRICKBASE_H_
-#define _LIB_MFRONT_BEHAVIOURBRICKBASE_H_ 
+#ifndef LIB_MFRONT_BEHAVIOURBRICKBASE_H_
+#define LIB_MFRONT_BEHAVIOURBRICKBASE_H_ 
 
 #include"MFront/BehaviourBrick.hxx"
 
@@ -76,5 +76,5 @@ namespace mfront{
 
 }
 
-#endif /* _LIB_MFRONT_BEHAVIOURBRICKBASE_H */
+#endif /* LIB_MFRONT_BEHAVIOURBRICKBASE_H_ */
 

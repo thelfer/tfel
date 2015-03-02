@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_FUNCTION_HXX_
-#define _LIB_TFEL_FUNCTION_HXX_ 
+#ifndef LIB_TFEL_FUNCTION_HXX
+#define LIB_TFEL_FUNCTION_HXX 
 
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
@@ -43,5 +43,5 @@ void function(const tfel::math::StensorConcept<T>&);
 
 #include "function_unary_tests.ixx"
 
-#endif /* _LIB_TFEL_FUNCTION_HXX */
+#endif /* LIB_TFEL_FUNCTION_HXX */
 

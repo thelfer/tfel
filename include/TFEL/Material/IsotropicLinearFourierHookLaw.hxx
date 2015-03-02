@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_
-#define _LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_ 
+#ifndef LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_
+#define LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_ 
 
 #include"TFEL/Material/IsotropicLinearFourierLaw.hxx"
 #include"TFEL/Material/IsotropicLinearHookLaw.hxx"
@@ -40,5 +40,5 @@ namespace tfel{
 } // end of namespace  tfel
 
 
-#endif /* _LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H */
+#endif /* LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_ */
 

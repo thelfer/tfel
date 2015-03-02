@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_UTILITIES_TEXTDATA_H_
-#define _LIB_TFEL_UTILITIES_TEXTDATA_H_ 
+#ifndef LIB_TFEL_UTILITIES_TEXTDATA_H_
+#define LIB_TFEL_UTILITIES_TEXTDATA_H_ 
 
 #include<vector>
 #include<string>
@@ -148,4 +148,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_UTILITIES_TEXTDATA_H */
+#endif /* LIB_TFEL_UTILITIES_TEXTDATA_H_ */

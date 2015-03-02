@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_
-#define _LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_ 
+#ifndef LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_
+#define LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -62,9 +62,6 @@ namespace tfel
       typedef typename tvector<N,T>::const_reference const_reference;
       typedef typename tvector<N,T>::size_type 	   size_type;	    
       typedef typename tvector<N,T>::difference_type difference_type;
-
-      typedef tvector<Mn,T>           first_arg;
-      typedef tfel::meta::InvalidType second_arg;
 
       RunTimeProperties
       getRunTimeProperties() const
@@ -131,5 +128,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX */
+#endif /* LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_ */
 

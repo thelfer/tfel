@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTPARSER_HXX_
-#define _LIB_MFRONTPARSER_HXX_ 
+#ifndef LIB_MFRONTPARSER_HXX_
+#define LIB_MFRONTPARSER_HXX_ 
 
 #include<string>
 #include"MFront/DefaultDSLBase.hxx"
@@ -37,5 +37,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTPARSER_HXX */
+#endif /* LIB_MFRONTPARSER_HXX_ */
 

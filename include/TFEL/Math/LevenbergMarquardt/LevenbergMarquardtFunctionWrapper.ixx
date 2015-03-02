@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_I_
-#define _LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_I_ 
+#ifndef LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_I_
+#define LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_I_ 
 
 namespace tfel
 {
@@ -73,5 +73,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_H */
+#endif /* LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_I_ */
 

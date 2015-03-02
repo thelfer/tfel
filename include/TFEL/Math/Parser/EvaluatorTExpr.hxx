@@ -24,8 +24,8 @@
 #include"TFEL/Math/Parser/DifferentiatedFunctionExpr.hxx"
 #include"TFEL/Math/Parser/ConditionalExpr.hxx"
 
-#ifndef _LIB_TFEL_MATH_EVALUATORTEXPR_HXX_
-#define _LIB_TFEL_MATH_EVALUATORTEXPR_HXX_ 
+#ifndef LIB_TFEL_MATH_EVALUATORTEXPR_HXX_
+#define LIB_TFEL_MATH_EVALUATORTEXPR_HXX_ 
 
 namespace tfel
 {
@@ -276,4 +276,4 @@ namespace tfel
 
 #include"TFEL/Math/Parser/EvaluatorTExpr.ixx"
 
-#endif /* _LIB_TFEL_MATH_EVALUATORTEXPR_HXX_ */
+#endif /* LIB_TFEL_MATH_EVALUATORTEXPR_HXX_ */

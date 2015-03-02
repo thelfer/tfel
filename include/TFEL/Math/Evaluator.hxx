@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_EVALUATOR_HXX_
-#define _LIB_TFEL_MATH_EVALUATOR_HXX_ 
+#ifndef LIB_TFEL_MATH_EVALUATOR_HXX_
+#define LIB_TFEL_MATH_EVALUATOR_HXX_ 
 
 #include<map>
 #include<memory>
@@ -339,4 +339,4 @@ namespace tfel
 #include"TFEL/Math/Evaluator.ixx"
 #include"TFEL/Math/Parser/EvaluatorTExpr.hxx"
 
-#endif /* _LIB_TFEL_MATH_EVALUATOR_HXX */
+#endif /* LIB_TFEL_MATH_EVALUATOR_HXX_ */

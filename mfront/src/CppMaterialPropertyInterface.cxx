@@ -245,21 +245,21 @@ namespace mfront
     this->headerFile << " */\n\n";
 
     if(!namespaces.empty()){
-      this->headerFile << "#ifndef _LIB_";
+      this->headerFile << "#ifndef LIB_";
       for(p3=namespaces.begin();p3!=namespaces.end();++p3){
 	this->headerFile << makeUpperCase(*p3) << "_";
       }
       this->headerFile << makeUpperCase(name) << "_HXX\n";
-      this->headerFile << "#define _LIB_";
+      this->headerFile << "#define LIB_";
       for(p3=namespaces.begin();p3!=namespaces.end();++p3){
 	this->headerFile << makeUpperCase(*p3) << "_";
       }
       this->headerFile << makeUpperCase(name) << "_HXX\n";
     } else {
-      this->headerFile << "#ifndef _LIB_MFRONT_" 
+      this->headerFile << "#ifndef LIB_MFRONT_" 
 		       << makeUpperCase(name)
 		       << "_HXX\n";
-      this->headerFile << "#define _LIB_MFRONT_"
+      this->headerFile << "#define LIB_MFRONT_"
 		       << makeUpperCase(name)
 		       << "_HXX\n\n";
     }
@@ -447,13 +447,13 @@ namespace mfront
     }
 
     if(!namespaces.empty()){
-      this->headerFile << "#endif /* _LIB_";
+      this->headerFile << "#endif /* LIB_";
       for(p3=namespaces.begin();p3!=namespaces.end();++p3){
 	this->headerFile << makeUpperCase(*p3) << "_";
       }
       this->headerFile << makeUpperCase(name) << "_HXX */\n";
     } else {
-      this->headerFile << "#endif /* _LIB_MFRONT_"
+      this->headerFile << "#endif /* LIB_MFRONT_"
 		       << makeUpperCase(name)
 		       << "_HXX */\n";
     }

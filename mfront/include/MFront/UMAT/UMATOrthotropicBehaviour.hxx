@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMATORTHOTROPICBEHAVIOUR_H_
-#define _LIB_MFRONT_UMATORTHOTROPICBEHAVIOUR_H_ 
+#ifndef LIB_MFRONT_UMATORTHOTROPICBEHAVIOUR_H_
+#define LIB_MFRONT_UMATORTHOTROPICBEHAVIOUR_H_ 
 
 #include"MFront/UMAT/UMATConfig.hxx"
 #include"MFront/UMAT/UMATTraits.hxx"
@@ -63,5 +63,5 @@ namespace umat
 
 } // end of namespace umat
 
-#endif /* _LIB_MFRONT_UMATORTHOTROPICBEHAVIOUR_H */
+#endif /* LIB_MFRONT_UMATORTHOTROPICBEHAVIOUR_H_ */
 

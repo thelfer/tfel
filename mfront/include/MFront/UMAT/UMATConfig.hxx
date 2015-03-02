@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMAT_UMATCONFIG_H_
-#define _LIB_MFRONT_UMAT_UMATCONFIG_H_ 
+#ifndef LIB_MFRONT_UMAT_UMATCONFIG_H_
+#define LIB_MFRONT_UMAT_UMATCONFIG_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -28,7 +28,7 @@
 #  endif
 #else
 #  define MFRONT_UMATTIMER_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_MFRONT_UMAT_UMATCONFIG_H_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined UMATInterface_EXPORTS
@@ -42,7 +42,7 @@
 #  endif
 #else
 #  define MFRONT_UMAT_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_MFRONT_UMAT_UMATCONFIG_H_ */
 
-#endif /* _LIB_MFRONT_UMAT_UMATCONFIG_H */
+#endif /* LIB_MFRONT_UMAT_UMATCONFIG_H_ */
 

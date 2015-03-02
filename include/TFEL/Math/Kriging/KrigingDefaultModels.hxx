@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL_H_
-#define _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL_H_ 
+#ifndef LIB_TFEL_MATH_KRIGINGDEFAULTMODEL_H_
+#define LIB_TFEL_MATH_KRIGINGDEFAULTMODEL_H_ 
 
 #include<cmath>
 
@@ -39,5 +39,5 @@ namespace tfel
 #include"TFEL/Math/Kriging/KrigingDefaultModel2D.hxx"
 #include"TFEL/Math/Kriging/KrigingDefaultModel3D.hxx"
 
-#endif /* _LIB_TFEL_MATH_KRIGINGDEFAULTMODEL_H */
+#endif /* LIB_TFEL_MATH_KRIGINGDEFAULTMODEL_H_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_FUNCTION_IXX_
-#define _LIB_TFEL_FUNCTION_IXX_ 
+#ifndef LIB_TFEL_FUNCTION_IXX
+#define LIB_TFEL_FUNCTION_IXX 
 
 #include<cmath>
 #include<cstdlib>
@@ -75,5 +75,5 @@ void function(const tfel::math::StensorConcept<T>& x){
 }  
 
 
-#endif /* _LIB_TFEL_FUNCTION_IXX */
+#endif /* LIB_TFEL_FUNCTION_IXX */
 

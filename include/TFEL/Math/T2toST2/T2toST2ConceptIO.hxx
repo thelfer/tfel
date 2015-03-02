@@ -5,8 +5,8 @@
  * \date   24 janv. 2015
  */
 
-#ifndef _LIB_TFEL_MATH_T2TOST2CONCEPTIO_H_
-#define _LIB_TFEL_MATH_T2TOST2CONCEPTIO_H_ 
+#ifndef LIB_TFEL_MATH_T2TOST2CONCEPTIO_H_
+#define LIB_TFEL_MATH_T2TOST2CONCEPTIO_H_ 
 
 #include<ostream>
 #include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
@@ -55,5 +55,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_T2TOST2CONCEPTIO_H */
+#endif /* LIB_TFEL_MATH_T2TOST2CONCEPTIO_H_ */
 

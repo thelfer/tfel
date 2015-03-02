@@ -10,8 +10,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_CUBICSPLINE_HXX
-#define _LIB_TFEL_MATH_CUBICSPLINE_HXX 1
+#ifndef LIB_TFEL_MATH_CUBICSPLINE_HXX
+#define LIB_TFEL_MATH_CUBICSPLINE_HXX 1
 
 #include <vector>
 
@@ -262,5 +262,5 @@ namespace tfel
 
 #include"TFEL/Math/CubicSpline.ixx"
 
-#endif /* _LIB_TFEL_MATH_CUBICSPLINE_HXX */
+#endif /* LIB_TFEL_MATH_CUBICSPLINE_HXX */
 

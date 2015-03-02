@@ -158,12 +158,8 @@ namespace mfront
       this->headerFile << description << endl;
     }
     this->headerFile << " */\n\n";
-    this->headerFile << "#ifndef _" 
-		     << this->transformHeaderName(material,className)
-		     << "_HH\n";
-    this->headerFile << "#define _"
-		     << this->transformHeaderName(material,className)
-		     << "_HH\n\n";
+    this->headerFile << "#ifndef " << this->transformHeaderName(material,className) << "_HH\n";
+    this->headerFile << "#define " << this->transformHeaderName(material,className) << "_HH\n\n";
     this->writeHeaderPreprocessorDirectives(material,className);
     this->writeBeginHeaderNamespace();
     this->headerFile << this->getFunctionDeclaration(material,className);
@@ -178,9 +174,7 @@ namespace mfront
       this->headerFile << ");\n\n";
     }
     this->writeEndHeaderNamespace();
-    this->headerFile << "#endif /* _"
-		     << this->transformHeaderName(material,className)
-		     << "_HH */\n";
+    this->headerFile << "#endif /* " << this->transformHeaderName(material,className) << "_HH */\n";
     this->headerFile.close();
   } // end of CMaterialPropertyInterfaceBase::writeHeaderFile(void)
 

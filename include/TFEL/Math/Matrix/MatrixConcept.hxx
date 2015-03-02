@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _TFEL_MATH_MATRIX_CONCEPT_LIB_
-#define _TFEL_MATH_MATRIX_CONCEPT_LIB_ 1
+#ifndef TFEL_MATH_MATRIX_CONCEPT_LIB_
+#define TFEL_MATH_MATRIX_CONCEPT_LIB_ 1
 
 #include<type_traits>
 
@@ -104,4 +104,4 @@ namespace tfel{
 
 #include"TFEL/Math/Matrix/MatrixConcept.ixx"
 
-#endif /* _TFEL_MATH_MATRIX_CONCEPT_LIB_ */
+#endif /* TFEL_MATH_MATRIX_CONCEPT_LIB_ */

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MACROS_H_
-#define _LIB_TFEL_MACROS_H_ 
+#ifndef LIB_TFEL_MACROS_H_
+#define LIB_TFEL_MACROS_H_ 
 
 /* !
  * \def TFEL_PP_JOIN
@@ -50,5 +50,5 @@
  */
 #define TFEL_PP_DO_JOIN2( X, Y ) X##Y
 
-#endif /* _LIB_TFEL_MACROS_H */
+#endif /* LIB_TFEL_MACROS_H_ */
 

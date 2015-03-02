@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MTEST_MTESTCONFIG_H_
-#define _LIB_MFRONT_MTEST_MTESTCONFIG_H_ 
+#ifndef LIB_MFRONT_MTEST_MTESTCONFIG_H_
+#define LIB_MFRONT_MTEST_MTESTCONFIG_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -28,7 +28,7 @@
 #  endif
 #else
 #  define MFRONT_MTEST_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_MFRONT_MTEST_MTESTCONFIG_H_ */
 
-#endif /* _LIB_MFRONT_MTEST_MTESTCONFIG_H */
+#endif /* LIB_MFRONT_MTEST_MTESTCONFIG_H_ */
 

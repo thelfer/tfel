@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_QTSAMPLES_HXX_
-#define _LIB_TFEL_QTSAMPLES_HXX_ 
+#ifndef LIB_TFEL_QTSAMPLES_HXX_
+#define LIB_TFEL_QTSAMPLES_HXX_ 
 
 #include"TFEL/Math/Forward/qt.hxx"
 
@@ -85,5 +85,5 @@ namespace tfel{
 
 } // end of namespace tfel
   
-#endif /* _LIB_TFEL_QTSAMPLES_HXX */
+#endif /* LIB_TFEL_QTSAMPLES_HXX_ */
 

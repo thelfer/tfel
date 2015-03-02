@@ -13,8 +13,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_GENTYPEBASE_H_
-#define _LIB_TFEL_GENTYPEBASE_H_ 
+#ifndef LIB_TFEL_GENTYPEBASE_H_
+#define LIB_TFEL_GENTYPEBASE_H_ 
 
 #include<cmath>
 #include<limits>
@@ -236,7 +236,7 @@ namespace tfel{
 	  public GenTypeSpecializedAccessor<Child,typename List::Current>
 #else /* DOXYGEN_SHOULD_SKIP_THIS */
 	: public GenTypeSpecializedAccessor<Child,typename List::Current>
-#endif
+#endif /* LIB_TFEL_GENTYPEBASE_H_ */
       {
 	//! a simple alias.
 	typedef typename List::Current Current;
@@ -713,4 +713,4 @@ namespace tfel{
 #include"TFEL/Utilities/GenTypeBase.ixx"
 #include"TFEL/Utilities/GenTypeSpecialisation.ixx"
 
-#endif /* _LIB_TFEL_GENTYPEBASE_H_ */
+#endif /* LIB_TFEL_GENTYPEBASE_H_ */

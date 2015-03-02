@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_GENTYPESPECIALISATION_I_
-#define _LIB_TFEL_GENTYPESPECIALISATION_I_ 
+#ifndef LIB_TFEL_GENTYPESPECIALISATION_I_
+#define LIB_TFEL_GENTYPESPECIALISATION_I_ 
 
 //! an helper macro to specialize GenTypeTraits for plain old data types.
 #define TFEL_UTILITIES_GENTYPETRAITS(X)                \
@@ -159,4 +159,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_GENTYPESPECIALISATION_I */
+#endif /* LIB_TFEL_GENTYPESPECIALISATION_I_ */

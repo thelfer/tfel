@@ -15,12 +15,13 @@
 #undef NDEBUG
 #endif
 
-#include<cstdlib>
-#include<cmath>
-#include<vector>
-#include<cassert>
+#include<iostream>
 #include<functional>
 #include<iterator>
+#include<cstdlib>
+#include<cassert>
+#include<vector>
+#include<cmath>
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
@@ -29,7 +30,7 @@ int main(void)
   using namespace std;
   using namespace tfel::fsalgo;
 
-  const unsigned short N = 10;
+  constexpr unsigned short N = 10;
   vector<int> V1(N);
   vector<int> V2(N);
   vector<int> V3(N);
@@ -46,18 +47,20 @@ int main(void)
   }
 
   tfel::fsalgo::iota<N>::exe(V1.begin(), 1);
-  for(int i=0;i!=N;++i){
-    assert(V1[i]==i+1);
+  int v=0;
+  for(vector<int>::size_type i=0;i!=N;++i){
+    assert(V1[i]==++v);
   }
 
   tfel::fsalgo::fill<N>::exe(V2.begin(), 75);
-  for(int i=0;i!=N;++i){
+  for(vector<int>::size_type i=0;i!=N;++i){
     assert(V2[i]==75);
   }
   
   tfel::fsalgo::transform<N>::exe(V1.begin(), V2.begin(),V3.begin(),plus<int>());
-  for(int i=0;i!=N;++i){
-    assert(V3[i]==76+i);
+  v=0;
+  for(vector<int>::size_type i=0;i!=N;++i){
+    assert(V3[i]==V1[i]+V2[i]);
   }
 
   return EXIT_SUCCESS;

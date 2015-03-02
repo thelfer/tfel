@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_NEGATION_HXX_
-#define _LIB_TFEL_NEGATION_HXX_ 
+#ifndef LIB_TFEL_NEGATION_HXX_
+#define LIB_TFEL_NEGATION_HXX_ 
 
 #include<memory>
 #include"TFEL/Math/Parser/Expr.hxx"
@@ -58,5 +58,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_NEGATION_HXX */
+#endif /* LIB_TFEL_NEGATION_HXX_ */
 

@@ -9,8 +9,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _TFEL_MATH_BASICOPERATIONS_LIB_
-#define _TFEL_MATH_BASICOPERATIONS_LIB_ 1
+#ifndef TFEL_MATH_BASICOPERATIONS_LIB_
+#define TFEL_MATH_BASICOPERATIONS_LIB_ 1
 
 #include<functional>
 #include<type_traits>
@@ -250,4 +250,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _TFEL_MATH_BASICOPERATIONS_LIB_ */
+#endif /* TFEL_MATH_BASICOPERATIONS_LIB_ */

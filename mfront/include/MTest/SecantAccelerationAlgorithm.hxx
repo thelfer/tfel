@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MTEST_MTESTSECANTACCELERATIONALGORITHM_H_
-#define _LIB_MFRONT_MTEST_MTESTSECANTACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MFRONT_MTEST_MTESTSECANTACCELERATIONALGORITHM_H_
+#define LIB_MFRONT_MTEST_MTESTSECANTACCELERATIONALGORITHM_H_ 
 
 #include"MTest/MTestConfig.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
@@ -92,5 +92,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MTEST_MTESTSECANTACCELERATIONALGORITHM_H */
+#endif /* LIB_MFRONT_MTEST_MTESTSECANTACCELERATIONALGORITHM_H_ */
 

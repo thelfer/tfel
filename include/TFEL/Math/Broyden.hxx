@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_BROYDEN_HXX_
-#define _LIB_TFEL_MATH_BROYDEN_HXX_ 
+#ifndef LIB_TFEL_MATH_BROYDEN_HXX_
+#define LIB_TFEL_MATH_BROYDEN_HXX_ 
 
 #include<utility>
 
@@ -76,5 +76,5 @@ namespace tfel
 
 #include"TFEL/Math/RootFinding/Broyden.ixx"
 
-#endif /* _LIB_TFEL_MATH_BROYDEN_HXX */
+#endif /* LIB_TFEL_MATH_BROYDEN_HXX_ */
 

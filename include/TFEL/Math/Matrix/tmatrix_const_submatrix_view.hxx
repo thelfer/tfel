@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_H_
-#define _LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_H_ 
+#ifndef LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_H_
+#define LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_H_ 
 
 namespace tfel
 {
@@ -31,16 +31,6 @@ namespace tfel
        * This is a MatrixConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
-      /*!
-       * an alias defined for the constructor of the Expr
-       */
-      typedef const tmatrix<N,M,T>& first_arg;
-      //! a dummy structure
-      struct invalid_argument;
-      /*!
-       * an alias defined for the constructor of the Expr
-       */
-      typedef invalid_argument second_arg;
       /*!
        * type of the tmatrix's values.
        * (this is a MatrixConcept requirement).
@@ -136,5 +126,5 @@ namespace tfel
 
 #include"TFEL/Math/Matrix/tmatrix_const_submatrix_view.ixx"
 
-#endif /* _LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_H */
+#endif /* LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_H_ */
 

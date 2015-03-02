@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_REALPARTTYPE_H_
-#define _LIB_TFEL_REALPARTTYPE_H_ 
+#ifndef LIB_TFEL_REALPARTTYPE_H_
+#define LIB_TFEL_REALPARTTYPE_H_ 
 
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Math/Forward/Complex.hxx"
@@ -103,5 +103,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_REALPARTTYPE_H */
+#endif /* LIB_TFEL_REALPARTTYPE_H_ */
 

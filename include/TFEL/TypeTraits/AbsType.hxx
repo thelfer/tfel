@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_ABSTYPE_H_
-#define _LIB_TFEL_ABSTYPE_H_ 
+#ifndef LIB_TFEL_ABSTYPE_H_
+#define LIB_TFEL_ABSTYPE_H_ 
 
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/TypeTraits/RealPartType.hxx"
@@ -89,5 +89,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_ABSTYPE_H */
+#endif /* LIB_TFEL_ABSTYPE_H_ */
 

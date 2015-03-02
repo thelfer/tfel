@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_T2TOST2_RESULT_TYPE_HXX_
-#define _LIB_TFEL_MATH_T2TOST2_RESULT_TYPE_HXX_ 
+#ifndef LIB_TFEL_MATH_T2TOST2_RESULT_TYPE_HXX_
+#define LIB_TFEL_MATH_T2TOST2_RESULT_TYPE_HXX_ 
 
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/Forward/tensor.hxx"
@@ -185,5 +185,5 @@ namespace tfel{
 
 } // end of namespace tfel
   
-#endif /* _LIB_TFEL_MATH_T2TOST2_RESULT_TYPE_HXX */
+#endif /* LIB_TFEL_MATH_T2TOST2_RESULT_TYPE_HXX_ */
 

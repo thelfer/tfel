@@ -13,8 +13,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_LAME_H_
-#define _LIB_TFEL_LAME_H_ 
+#ifndef LIB_TFEL_LAME_H_
+#define LIB_TFEL_LAME_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Config/TFELTypes.hxx"
@@ -334,5 +334,5 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_LAME_H */
+#endif /* LIB_TFEL_LAME_H_ */
 

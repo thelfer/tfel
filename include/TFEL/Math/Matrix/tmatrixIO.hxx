@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_TMATRIXIO_H_
-#define _LIB_TFEL_MATH_TMATRIXIO_H_ 
+#ifndef LIB_TFEL_MATH_TMATRIXIO_H_
+#define LIB_TFEL_MATH_TMATRIXIO_H_ 
 
 #include<ostream>
 #include"TFEL/Math/tmatrix.hxx"
@@ -49,5 +49,5 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TMATRIXIO_H */
+#endif /* LIB_TFEL_MATH_TMATRIXIO_H_ */
 

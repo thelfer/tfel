@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_VARIABLEBOUNDSDESCRIPTION_H_
-#define _LIB_VARIABLEBOUNDSDESCRIPTION_H_ 
+#ifndef LIB_VARIABLEBOUNDSDESCRIPTION_H_
+#define LIB_VARIABLEBOUNDSDESCRIPTION_H_ 
 
 #include<string>
 #include"TFEL/Config/TFELConfig.hxx"
@@ -39,5 +39,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* _LIB_VARIABLEBOUNDSDESCRIPTION_H */
+#endif /* LIB_VARIABLEBOUNDSDESCRIPTION_H_ */
 

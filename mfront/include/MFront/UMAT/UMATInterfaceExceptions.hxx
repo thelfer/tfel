@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMAT_UMATINTERFACEEXCEPTIONS_H_
-#define _LIB_MFRONT_UMAT_UMATINTERFACEEXCEPTIONS_H_ 
+#ifndef LIB_MFRONT_UMAT_UMATINTERFACEEXCEPTIONS_H_
+#define LIB_MFRONT_UMAT_UMATINTERFACEEXCEPTIONS_H_ 
 
 #include<string>
 
@@ -239,5 +239,5 @@ namespace umat{
   
 } // end of namespace umat
 
-#endif /* _LIB_MFRONT_UMAT_UMATINTERFACEEXCEPTIONS_H */
+#endif /* LIB_MFRONT_UMAT_UMATINTERFACEEXCEPTIONS_H_ */
 

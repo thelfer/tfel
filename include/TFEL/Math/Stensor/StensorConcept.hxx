@@ -9,8 +9,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _STENSOR_CONCEPT_LIB_
-#define _STENSOR_CONCEPT_LIB_ 1
+#ifndef STENSOR_CONCEPT_LIB_
+#define STENSOR_CONCEPT_LIB_ 1
 
 #include<type_traits>
 
@@ -79,7 +79,7 @@ namespace tfel{
     >::type
     abs(const StensorType&);
 
-    template<class T>
+    template<typename T>
     TFEL_MATH_INLINE 
     typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
@@ -87,7 +87,7 @@ namespace tfel{
     >::type
     trace(const T& s);
 
-    template<class T>
+    template<typename T>
     TFEL_MATH_INLINE2
     typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
@@ -95,10 +95,26 @@ namespace tfel{
     >::type
     sigmaeq(const T& s);
 
-    template<class T>
-    TFEL_MATH_INLINE2
+    template<typename T>
     typename std::enable_if<
-      tfel::meta::Implements<T,StensorConcept>::cond,
+      tfel::meta::Implements<T,StensorConcept>::cond&&
+      StensorTraits<T>::dime==1u,
+      typename StensorType<T>::type
+    >::type
+    deviator(const T&);
+
+    template<typename T>
+    typename std::enable_if<
+      tfel::meta::Implements<T,StensorConcept>::cond&&
+      StensorTraits<T>::dime==2u,
+      typename StensorType<T>::type
+    >::type
+    deviator(const T&);
+
+    template<typename T>
+    typename std::enable_if<
+      tfel::meta::Implements<T,StensorConcept>::cond&&
+      StensorTraits<T>::dime==3u,
       typename StensorType<T>::type
     >::type
     deviator(const T&);
@@ -109,4 +125,4 @@ namespace tfel{
 
 #include"TFEL/Math/Stensor/StensorConcept.ixx"
 
-#endif /* _STENSOR_CONCEPT_LIB_ */
+#endif /* STENSOR_CONCEPT_LIB_ */

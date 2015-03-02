@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATERIAL_RAMBERGOSGOOD_H_
-#define _LIB_TFEL_MATERIAL_RAMBERGOSGOOD_H_ 
+#ifndef LIB_TFEL_MATERIAL_RAMBERGOSGOOD_H_
+#define LIB_TFEL_MATERIAL_RAMBERGOSGOOD_H_ 
 
 #include<cmath>
 
@@ -88,5 +88,5 @@ namespace tfel
 } // end of namespace tfel
 
 
-#endif /* _LIB_TFEL_MATERIAL_RAMBERGOSGOOD_H */
+#endif /* LIB_TFEL_MATERIAL_RAMBERGOSGOOD_H_ */
 

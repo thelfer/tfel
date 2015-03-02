@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_
-#define _LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_ 
+#ifndef LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_
+#define LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_ 
 
 #include<map>
 #include<set>
@@ -168,4 +168,4 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX */
+#endif /* LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_ */

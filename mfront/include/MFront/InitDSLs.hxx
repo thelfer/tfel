@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTINITPARSERS_HXX_
-#define _LIB_MFRONTINITPARSERS_HXX_ 
+#ifndef LIB_MFRONTINITPARSERS_HXX_
+#define LIB_MFRONTINITPARSERS_HXX_ 
 
 namespace mfront
 {
@@ -23,5 +23,5 @@ namespace mfront
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTINITPARSERS_HXX */
+#endif /* LIB_MFRONTINITPARSERS_HXX_ */
 

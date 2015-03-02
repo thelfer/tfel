@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_STENSORPRODUCTEXPR_HXX_
-#define _LIB_STENSORPRODUCTEXPR_HXX_ 
+#ifndef LIB_STENSORPRODUCTEXPR_HXX_
+#define LIB_STENSORPRODUCTEXPR_HXX_ 
 
 #include<cmath>
 
@@ -45,6 +45,13 @@ namespace tfel{
       typedef EmptyRunTimeProperties RunTimeProperties; 
       typedef typename StensorTraits<Result>::IndexType IndexType;
       typedef typename StensorTraits<Result>::NumType   NumType;
+      typedef NumType        value_type;                                                
+      typedef NumType*       pointer;	    						
+      typedef const NumType* const_pointer; 						
+      typedef NumType&       reference;	    						
+      typedef const NumType& const_reference;						
+      typedef IndexType      size_type;	    						
+      typedef ptrdiff_t      difference_type;                                          	
 
     protected:
 
@@ -53,17 +60,6 @@ namespace tfel{
       {}
 
       StensorProductExprBase() = delete;
-
-      typedef A first_arg;
-      typedef B second_arg;
-
-      typedef NumType        value_type;                                                
-      typedef NumType*       pointer;	    						
-      typedef const NumType* const_pointer; 						
-      typedef NumType&       reference;	    						
-      typedef const NumType& const_reference;						
-      typedef IndexType      size_type;	    						
-      typedef ptrdiff_t      difference_type;                                          	
 
       ArgumentStorage<A> a;
       ArgumentStorage<B> b;
@@ -202,4 +198,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_STENSORPRODUCTEXPR_HXX */
+#endif /* LIB_STENSORPRODUCTEXPR_HXX_ */

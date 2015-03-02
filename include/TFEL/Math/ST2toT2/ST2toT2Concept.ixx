@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_ST2TOT2_CONCEPT_IMPL_
-#define _LIB_TFEL_MATH_ST2TOT2_CONCEPT_IMPL_ 1
+#ifndef LIB_TFEL_MATH_ST2TOT2_CONCEPT_IMPL_
+#define LIB_TFEL_MATH_ST2TOT2_CONCEPT_IMPL_ 1
 
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
@@ -53,4 +53,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_ST2TOT2_CONCEPT_IMPL_ */
+#endif /* LIB_TFEL_MATH_ST2TOT2_CONCEPT_IMPL_ */

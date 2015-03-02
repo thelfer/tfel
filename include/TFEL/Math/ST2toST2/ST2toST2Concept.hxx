@@ -10,8 +10,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _ST2TOST2_CONCEPT_LIB_
-#define _ST2TOST2_CONCEPT_LIB_ 1
+#ifndef ST2TOST2_CONCEPT_LIB_
+#define ST2TOST2_CONCEPT_LIB_ 1
 
 #include<type_traits>
 
@@ -81,4 +81,4 @@ namespace tfel{
 
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.ixx"
 
-#endif /* _ST2TOST2_CONCEPT_LIB_ */
+#endif /* ST2TOST2_CONCEPT_LIB_ */

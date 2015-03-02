@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTPYTHONLAWINTERFACE_H_
-#define _LIB_MFRONTPYTHONLAWINTERFACE_H_ 
+#ifndef LIB_MFRONTPYTHONLAWINTERFACE_H_
+#define LIB_MFRONTPYTHONLAWINTERFACE_H_ 
 
 #include<string>
 #include<fstream>
@@ -170,5 +170,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONTPYTHONLAWINTERFACE_H */
+#endif /* LIB_MFRONTPYTHONLAWINTERFACE_H_ */
 

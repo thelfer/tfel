@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMATCOMPUTESTIFFNESSTENSOR_H_
-#define _LIB_MFRONT_UMATCOMPUTESTIFFNESSTENSOR_H_ 
+#ifndef LIB_MFRONT_UMATCOMPUTESTIFFNESSTENSOR_H_
+#define LIB_MFRONT_UMATCOMPUTESTIFFNESSTENSOR_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Config/TFELTypes.hxx"
@@ -415,5 +415,5 @@ namespace umat
 
 } // end of namespace umat
 
-#endif /* _LIB_MFRONT_UMATCOMPUTESTIFFNESSTENSOR_H */
+#endif /* LIB_MFRONT_UMATCOMPUTESTIFFNESSTENSOR_H_ */
 

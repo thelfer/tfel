@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTLAWINTERFACEFACTORY_HXX_
-#define _LIB_MFRONTLAWINTERFACEFACTORY_HXX_ 
+#ifndef LIB_MFRONTLAWINTERFACEFACTORY_HXX_
+#define LIB_MFRONTLAWINTERFACEFACTORY_HXX_ 
 
 #include<vector>
 #include<string>
@@ -90,5 +90,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTLAWINTERFACEFACTORY_HXX */
+#endif /* LIB_MFRONTLAWINTERFACEFACTORY_HXX_ */
 

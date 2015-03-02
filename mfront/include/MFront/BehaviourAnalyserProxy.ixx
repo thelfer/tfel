@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTBEHAVIOURANALYSERPROXY_IXX_
-#define _LIB_MFRONTBEHAVIOURANALYSERPROXY_IXX_ 
+#ifndef LIB_MFRONTBEHAVIOURANALYSERPROXY_IXX_
+#define LIB_MFRONTBEHAVIOURANALYSERPROXY_IXX_ 
 
 namespace mfront{
 
@@ -58,4 +58,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONTBEHAVIOURANALYSERPROXY_IXX */
+#endif /* LIB_MFRONTBEHAVIOURANALYSERPROXY_IXX_ */

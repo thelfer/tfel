@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_FRACSIMPLIFY_I_
-#define _LIB_TFEL_FRACSIMPLIFY_I_ 
+#ifndef LIB_TFEL_FRACSIMPLIFY_I_
+#define LIB_TFEL_FRACSIMPLIFY_I_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -85,5 +85,5 @@ namespace tfel{
     
   } // end of namespace tfel
 
-#endif /* _LIB_TFEL_FRACSIMPLIFY_I_ */
+#endif /* LIB_TFEL_FRACSIMPLIFY_I_ */
 

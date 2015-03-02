@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_KRIGINGPIECEWISELINEARMODEL1D_H_
-#define _LIB_TFEL_MATH_KRIGINGPIECEWISELINEARMODEL1D_H_ 
+#ifndef LIB_TFEL_MATH_KRIGINGPIECEWISELINEARMODEL1D_H_
+#define LIB_TFEL_MATH_KRIGINGPIECEWISELINEARMODEL1D_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Kriging/KrigingVariable.hxx"
@@ -57,5 +57,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_KRIGINGPIECEWISELINEARMODEL1D_H */
+#endif /* LIB_TFEL_MATH_KRIGINGPIECEWISELINEARMODEL1D_H_ */
 

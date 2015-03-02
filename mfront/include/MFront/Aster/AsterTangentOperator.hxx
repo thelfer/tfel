@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_ASTER_ASTERTANGENTOPERATOR_H_
-#define _LIB_MFRONT_ASTER_ASTERTANGENTOPERATOR_H_ 
+#ifndef LIB_MFRONT_ASTER_ASTERTANGENTOPERATOR_H_
+#define LIB_MFRONT_ASTER_ASTERTANGENTOPERATOR_H_ 
 
 #include"TFEL/Math/Forward/t2tost2.hxx"
 #include"TFEL/Math/Forward/st2tost2.hxx"
@@ -150,5 +150,5 @@ namespace aster
 
 } // end of namespace aster
 
-#endif /* _LIB_MFRONT_ASTER_ASTERTANGENTOPERATOR_H */
+#endif /* LIB_MFRONT_ASTER_ASTERTANGENTOPERATOR_H_ */
 

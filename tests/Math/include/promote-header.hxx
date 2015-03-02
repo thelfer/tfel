@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_PROMOTE_HEADER_HXX_
-#define _LIB_TFEL_PROMOTE_HEADER_HXX_ 
+#ifndef LIB_TFEL_PROMOTE_HEADER_HXX
+#define LIB_TFEL_PROMOTE_HEADER_HXX 
 
 #include<iostream>
 #include<cstdlib>
@@ -56,4 +56,4 @@ std::string Test(const tfel::math::Complex<double>&);
 
 std::string Test(const tfel::math::Complex<long double>&);
   
-#endif /* _LIB_TFEL_PROMOTE_HEADER_HXX */
+#endif /* LIB_TFEL_PROMOTE_HEADER_HXX */

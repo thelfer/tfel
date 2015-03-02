@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MTESTFINITESTRAINUMATBEHAVIOUR_H_
-#define _LIB_MFRONT_MTESTFINITESTRAINUMATBEHAVIOUR_H_ 
+#ifndef LIB_MFRONT_MTESTFINITESTRAINUMATBEHAVIOUR_H_
+#define LIB_MFRONT_MTESTFINITESTRAINUMATBEHAVIOUR_H_ 
 
 #include"MTest/UmatStandardBehaviour.hxx"
 
@@ -128,5 +128,5 @@ namespace mfront
   
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MTESTUMATFINITESTRAINBEHAVIOUR_H */
+#endif /* LIB_MFRONT_MTESTFINITESTRAINUMATBEHAVIOUR_H_ */
 

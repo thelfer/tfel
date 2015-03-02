@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_VECTOR_IXX_
-#define _LIB_TFEL_VECTOR_IXX_ 
+#ifndef LIB_TFEL_VECTOR_IXX_
+#define LIB_TFEL_VECTOR_IXX_ 
 
 #include<cassert>
 
@@ -47,7 +47,7 @@ namespace tfel{
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
-#endif
+#endif /* LIB_TFEL_VECTOR_IXX_ */
       std::vector<T>::operator=(src);
       return *this;
     }
@@ -59,7 +59,7 @@ namespace tfel{
       size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
-#endif
+#endif /* LIB_TFEL_VECTOR_IXX_ */
       for(i=0;i<this->size();++i){
 	std::vector<T>::operator[](i) += src(i);
       }
@@ -73,7 +73,7 @@ namespace tfel{
       size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
-#endif
+#endif /* LIB_TFEL_VECTOR_IXX_ */
       for(i=0;i<this->size();++i){
 	std::vector<T>::operator[](i) -= src(i);
       }
@@ -92,7 +92,7 @@ namespace tfel{
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 	assert(i<this->size());
-#endif
+#endif /* LIB_TFEL_VECTOR_IXX_ */
       return std::vector<T>::operator[](i);
     }
 
@@ -102,7 +102,7 @@ namespace tfel{
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 	assert(i<this->size());
-#endif
+#endif /* LIB_TFEL_VECTOR_IXX_ */
       return std::vector<T>::operator[](i);
     }
 
@@ -116,7 +116,7 @@ namespace tfel{
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
-#endif
+#endif /* LIB_TFEL_VECTOR_IXX_ */
       size_type s = this->size();
       for(size_type i=0;i!=s;++i){
 	std::vector<T>::operator[](i) = expr(i);
@@ -134,7 +134,7 @@ namespace tfel{
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
-#endif
+#endif /* LIB_TFEL_VECTOR_IXX_ */
       size_type s = this->size();
       for(size_type i=0;i!=s;++i){
 	std::vector<T>::operator[](i) += expr(i);
@@ -152,7 +152,7 @@ namespace tfel{
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
-#endif
+#endif /* LIB_TFEL_VECTOR_IXX_ */
       size_type s = this->size();
       for(size_type i=0;i!=s;++i){
 	std::vector<T>::operator[](i) -= expr(i);
@@ -172,7 +172,7 @@ namespace tfel{
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->size(),a.size());
-#endif
+#endif /* LIB_TFEL_VECTOR_IXX_ */
       std::vector<T>::swap(a);
     }
 
@@ -203,5 +203,5 @@ namespace tfel{
 
 #include"TFEL/Math/Vector/vectorResultType.hxx"
 
-#endif /* _LIB_TFEL_VECTOR_IXX */
+#endif /* LIB_TFEL_VECTOR_IXX_ */
 

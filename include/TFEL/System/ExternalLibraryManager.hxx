@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_EXTERNALLIBRARYMANAGER_H_
-#define _LIB_EXTERNALLIBRARYMANAGER_H_ 
+#ifndef LIB_EXTERNALLIBRARYMANAGER_H_
+#define LIB_EXTERNALLIBRARYMANAGER_H_ 
 
 #include<map>
 #include<vector>
@@ -20,7 +20,7 @@
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #include <windows.h>
-#endif
+#endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
@@ -55,7 +55,7 @@ namespace tfel
       void *
       loadLibrary(const std::string&,
 		  const bool = false);
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+#endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */
 
       /*!
        * \param[in] l : name of the library
@@ -690,7 +690,7 @@ namespace tfel
       std::map<std::string,HINSTANCE__*> librairies;
 #else 
       std::map<std::string,void *> librairies;
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+#endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */
 
 
     }; // end of struct LibraryManager
@@ -699,4 +699,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_EXTERNALLIBRARYMANAGER_H */
+#endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTDEBUGMODE_H_
-#define _LIB_MFRONTDEBUGMODE_H_ 
+#ifndef LIB_MFRONTDEBUGMODE_H_
+#define LIB_MFRONTDEBUGMODE_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -31,5 +31,5 @@ namespace mfront{
 
 }
 
-#endif /* _LIB_MFRONTDEBUGMODE_H */
+#endif /* LIB_MFRONTDEBUGMODE_H_ */
 

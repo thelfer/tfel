@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTASTERINTERFACE_H_
-#define _LIB_MFRONTASTERINTERFACE_H_ 
+#ifndef LIB_MFRONTASTERINTERFACE_H_
+#define LIB_MFRONTASTERINTERFACE_H_ 
 
 #include<string>
 #include<fstream>
@@ -171,4 +171,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONTASTERINTERFACE_H */
+#endif /* LIB_MFRONTASTERINTERFACE_H_ */

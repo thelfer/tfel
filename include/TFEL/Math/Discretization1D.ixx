@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_DISCRETIZATION1D_IXX_
-#define _LIB_TFEL_MATH_DISCRETIZATION1D_IXX_ 
+#ifndef LIB_TFEL_MATH_DISCRETIZATION1D_IXX_
+#define LIB_TFEL_MATH_DISCRETIZATION1D_IXX_ 
 
 #include<cmath>
 #include<limits>
@@ -85,5 +85,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_DISCRETIZATION1D_IXX */
+#endif /* LIB_TFEL_MATH_DISCRETIZATION1D_IXX_ */
 

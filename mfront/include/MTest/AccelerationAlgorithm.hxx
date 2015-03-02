@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_
-#define _LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_
+#define LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_ 
 
 #include"TFEL/Math/vector.hxx"
 #include"MTest/MTestConfig.hxx"
@@ -84,5 +84,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H */
+#endif /* LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_ */
 

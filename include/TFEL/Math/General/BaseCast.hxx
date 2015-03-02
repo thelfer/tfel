@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_BASECAST_HXX_
-#define _LIB_TFEL_BASECAST_HXX_ 
+#ifndef LIB_TFEL_BASECAST_HXX_
+#define LIB_TFEL_BASECAST_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
@@ -43,5 +43,5 @@ namespace tfel{
 
 } // end of namespace tfel  
 
-#endif /* _LIB_TFEL_BASECAST_HXX */
+#endif /* LIB_TFEL_BASECAST_HXX_ */
 

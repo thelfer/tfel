@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_
-#define _LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ 
+#ifndef LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_
+#define LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ 
 
 #include<cmath>
 #include<cassert>
@@ -224,7 +224,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors_<2u>::test(s,vp,vec);
 #else
 	    return true;
-#endif
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	}
       };
 
@@ -467,7 +467,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
 #else
 	    return true;
-#endif
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	  }
 	  const T inv_mvp = T(1)/mvp;
 	  tvector<6u,T> s2(s);
@@ -488,7 +488,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
 #else
 	    return true;
-#endif
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	  }
 	  if((abs(vp2(0)-vp2(1))>prec)&&
 	     (abs(vp2(0)-vp2(2))>prec)){
@@ -515,7 +515,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
 #else
 	    return true;
-#endif
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	  } else if((abs(vp2(1)-vp2(0))>prec)&&
 		    (abs(vp2(1)-vp2(2))>prec)){
 	    // vp1 is single, vp0 and vp2 are equal
@@ -531,7 +531,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
 #else
 	    return true;
-#endif
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	  } 
 	  assert((abs(vp2(2)-vp2(0))>prec)&&(abs(vp2(2)-vp2(1))>prec));
 	  assert(abs(vp2(0)-vp2(1))<prec);
@@ -546,7 +546,7 @@ namespace tfel{
 	  return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
 #else
 	  return true;
-#endif
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	}
 
       };
@@ -557,5 +557,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H */
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 

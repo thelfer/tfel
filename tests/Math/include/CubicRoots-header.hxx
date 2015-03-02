@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_CUBICROOTS_HEADER_HXX_
-#define _LIB_TFEL_CUBICROOTS_HEADER_HXX_
+#ifndef LIB_TFEL_CUBICROOTS_HEADER_HXX
+#define LIB_TFEL_CUBICROOTS_HEADER_HXX
 
 double
 cubic(const double,const double,const double,const double, const double);
@@ -24,5 +24,5 @@ generate_coef(double&,double&,double&,double&,const double,const double,const do
 void
 solve(const double,const double,const double,const double);
 
-#endif /* _LIB_TFEL_CUBICROOTS-HEADER_HXX */
+#endif /* LIB_TFEL_CUBICROOTS-HEADER_HXX */
 

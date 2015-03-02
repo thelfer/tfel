@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_FACTORIZEDKRIGING_H_
-#define _LIB_TFEL_MATH_FACTORIZEDKRIGING_H_ 
+#ifndef LIB_TFEL_MATH_FACTORIZEDKRIGING_H_
+#define LIB_TFEL_MATH_FACTORIZEDKRIGING_H_ 
 
 #include"TFEL/Math/Kriging.hxx"
 
@@ -80,5 +80,5 @@ namespace tfel
 
 #include"TFEL/Math/Kriging/FactorizedKriging.ixx"
 
-#endif /* _LIB_TFEL_MATH_FACTORIZEDKRIGING_H */
+#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGING_H_ */
 

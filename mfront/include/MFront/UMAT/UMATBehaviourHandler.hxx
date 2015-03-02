@@ -11,12 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMAT_UMATBEHAVIOURHANDLER_H_
-#define _LIB_MFRONT_UMAT_UMATBEHAVIOURHANDLER_H_ 
+#ifndef LIB_MFRONT_UMAT_UMATBEHAVIOURHANDLER_H_
+#define LIB_MFRONT_UMAT_UMATBEHAVIOURHANDLER_H_ 
 
-#ifndef _LIB_MFRONT_UMAT_CALL_H_
+#ifndef LIB_MFRONT_UMAT_CALL_HXX
 #error "This header shall not be called directly"
-#endif
+#endif /* LIB_MFRONT_UMAT_CALL_HXX */
 
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
@@ -505,7 +505,7 @@ namespace umat
 	  std::cerr << "no convergence : " << e.what() << std::endl;
 #else
 	catch(const tfel::material::DivergenceException&){
-#endif
+#endif /* LIB_MFRONT_UMAT_UMATBEHAVIOURHANDLER_H_ */
 	  r = BV::FAILURE;
 	}
 	if((r==BV::FAILURE)||((r==BV::UNRELIABLE_RESULTS)&&
@@ -570,7 +570,7 @@ namespace umat
 	    std::cerr << "no convergence : " << e.what() << std::endl;
 #else
 	  catch(const tfel::material::DivergenceException&){
-#endif
+#endif /* LIB_MFRONT_UMAT_UMATBEHAVIOURHANDLER_H_ */
 	    result = BV::FAILURE;
 	  }
 	  if((result==BV::SUCCESS)||
@@ -850,5 +850,5 @@ namespace umat
 #include"MFront/UMAT/UMATIsotropicBehaviourHandler.hxx"
 #include"MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx"
 
-#endif /* _LIB_MFRONT_UMAT_UMATBEHAVIOURHANDLER_H */
+#endif /* LIB_MFRONT_UMAT_UMATBEHAVIOURHANDLER_H_ */
 

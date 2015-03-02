@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_TENSORCONCEPTIO_H_
-#define _LIB_TFEL_MATH_TENSORCONCEPTIO_H_ 
+#ifndef LIB_TFEL_MATH_TENSORCONCEPTIO_H_
+#define LIB_TFEL_MATH_TENSORCONCEPTIO_H_ 
 
 #include<ostream>
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
@@ -43,5 +43,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TENSORCONCEPTIO_H */
+#endif /* LIB_TFEL_MATH_TENSORCONCEPTIO_H_ */
 

@@ -1218,15 +1218,6 @@ include/TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx -text
 include/TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx -text
 include/TFEL/Math/T2toST2/t2tost2.ixx -text
 include/TFEL/Math/T2toST2/t2tost2ResultType.hxx -text
-include/TFEL/Math/T2toT2/T2toT2/T2toST2Concept.hxx -text
-include/TFEL/Math/T2toT2/T2toT2/T2toST2Concept.ixx -text
-include/TFEL/Math/T2toT2/T2toT2/T2toST2ConceptIO.hxx -text
-include/TFEL/Math/T2toT2/T2toT2/T2toST2ConceptOperations.hxx -text
-include/TFEL/Math/T2toT2/T2toT2/T2toST2Expr.hxx -text
-include/TFEL/Math/T2toT2/T2toT2/T2toST2FromTinyMatrixView.hxx -text
-include/TFEL/Math/T2toT2/T2toT2/T2toST2FromTinyMatrixView2.hxx -text
-include/TFEL/Math/T2toT2/T2toT2/t2tost2.ixx -text
-include/TFEL/Math/T2toT2/T2toT2/t2tost2ResultType.hxx -text
 include/TFEL/Math/T2toT2/T2toT2Concept.hxx -text
 include/TFEL/Math/T2toT2/T2toT2Concept.ixx -text
 include/TFEL/Math/T2toT2/T2toT2ConceptIO.hxx -text
@@ -1307,6 +1298,7 @@ include/TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx -text
 include/TFEL/Metaprogramming/HasRandomAccessIterator.hxx -text
 include/TFEL/Metaprogramming/Implements.hxx -text
 include/TFEL/Metaprogramming/InvalidType.hxx -text
+include/TFEL/Metaprogramming/IsConstCallable.hxx -text
 include/TFEL/Metaprogramming/IsSubClassOf.hxx -text
 include/TFEL/Metaprogramming/ResultOf.hxx -text
 include/TFEL/Metaprogramming/StaticAssert.hxx -text

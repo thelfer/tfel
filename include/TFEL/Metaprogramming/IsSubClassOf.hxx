@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_ISSUBCLASSOF_H_
-#define _LIB_TFEL_ISSUBCLASSOF_H_ 
+#ifndef LIB_TFEL_ISSUBCLASSOF_H_
+#define LIB_TFEL_ISSUBCLASSOF_H_ 
 
 #include<type_traits>
 #include"TFEL/Config/TFELConfig.hxx"
@@ -51,5 +51,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* _LIB_TFEL_ISSUBCLASSOF_H */
+#endif /* LIB_TFEL_ISSUBCLASSOF_H_ */
 

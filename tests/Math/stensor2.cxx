@@ -37,10 +37,10 @@ int main(void){
   s2 = 0.5f*s;
 
   assert((abs(real(s2(0)-Complex<float>(1.f)))<1.e-3f));
-  assert(abs(imag(s2(0)))<1.e-3);
+  assert(abs(imag(s2(0)))<1.e-3f);
 
   assert((abs(real(s2(1)-Complex<float>(1.5708f)))<1.e-3f));
-  assert(abs(imag(s2(1)))<1.e-3);
+  assert(abs(imag(s2(1)))<1.e-3f);
 
   assert((abs(real(s2(2)-Complex<float>(2115.7f)))<1.f));
   assert(abs(imag(s2(2)))<1.e-3f);

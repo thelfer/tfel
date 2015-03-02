@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TINY_VECTOR_IXX_
-#define _LIB_TFEL_TINY_VECTOR_IXX_ 
+#ifndef LIB_TFEL_TINY_VECTOR_IXX_
+#define LIB_TFEL_TINY_VECTOR_IXX_ 
 
 #include <iterator>
 
@@ -248,7 +248,7 @@ namespace tfel{
       return a.result;
     }
 
-#endif
+#endif /* LIB_TFEL_TINY_VECTOR_IXX_ */
 
     template<typename T>
     tvector<1u,T>
@@ -386,5 +386,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_TINY_VECTOR_IXX */
+#endif /* LIB_TFEL_TINY_VECTOR_IXX_ */
 

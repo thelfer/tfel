@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTBEHAVIOURINTERFACEPROXY_HXX_
-#define _LIB_MFRONTBEHAVIOURINTERFACEPROXY_HXX_ 
+#ifndef LIB_MFRONTBEHAVIOURINTERFACEPROXY_HXX_
+#define LIB_MFRONTBEHAVIOURINTERFACEPROXY_HXX_ 
 
 #include<string>
 
@@ -39,4 +39,4 @@ namespace mfront{
 
 #include"MFront/BehaviourInterfaceProxy.ixx"
 
-#endif /* _LIB_MFRONTBEHAVIOURINTERFACEPROXY_HXX */
+#endif /* LIB_MFRONTBEHAVIOURINTERFACEPROXY_HXX_ */

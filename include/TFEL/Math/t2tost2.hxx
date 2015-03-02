@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_T2TOST2_H_
-#define _LIB_TFEL_MATH_T2TOST2_H_ 
+#ifndef LIB_TFEL_MATH_T2TOST2_H_
+#define LIB_TFEL_MATH_T2TOST2_H_ 
 
 #include<cstddef>
 
@@ -231,5 +231,5 @@ namespace tfel{
 #include"TFEL/Math/T2toST2/t2tost2.ixx"
 #include"TFEL/Math/T2toST2/t2tost2ResultType.hxx"
 
-#endif /* _LIB_TFEL_MATH_T2TOST2_H */
+#endif /* LIB_TFEL_MATH_T2TOST2_H_ */
 

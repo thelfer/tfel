@@ -940,7 +940,7 @@ namespace mfront
   {
     using namespace std;
     const auto& m = mb.getMaterialName();
-    string header = "_LIB_"+makeUpperCase(this->getInterfaceName());
+    string header = "LIB_"+makeUpperCase(this->getInterfaceName());
     if(!mb.getLibrary().empty()){
       header += "_";
       header += makeUpperCase(mb.getLibrary());

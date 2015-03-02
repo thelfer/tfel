@@ -9,8 +9,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _STENSOR_CONCEPT_IMPL_
-#define _STENSOR_CONCEPT_IMPL_ 1
+#ifndef STENSOR_CONCEPT_IMPL_
+#define STENSOR_CONCEPT_IMPL_ 1
 
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
@@ -46,8 +46,7 @@ namespace tfel{
       struct SigmaEqImplBase
       {
 	template<typename T>
-	static T
-	square(const T& x)
+	static T square(const T x)
 	{
 	  return x*x;
 	}
@@ -69,8 +68,8 @@ namespace tfel{
 	{
 	  typedef typename StensorTraits<T>::NumType NumType;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
-	  constexpr base one_third = base(1)/base(3);
-	  constexpr base cste      = base(3)/base(2);
+	  constexpr base one_third = base{1}/base{3};
+	  constexpr base cste      = base{3}/base{2};
 	  const NumType tr = one_third*trace(s);
 	  return std::sqrt(cste*(SigmaEqImplBase::square(s(0)-tr)+
 				 SigmaEqImplBase::square(s(1)-tr)+
@@ -179,7 +178,7 @@ namespace tfel{
       return tfel::math::internals::StensorAbs<StensorTraits<StensorType>::dime>::exe(s);
     }
 
-    template<class T>
+    template<typename T>
     typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
       typename StensorTraits<T>::NumType
@@ -190,23 +189,53 @@ namespace tfel{
       return Impl::exe(s);
     }    
 
-    template<class T>
+    template<typename T>
     typename std::enable_if<
-      tfel::meta::Implements<T,StensorConcept>::cond,
+      tfel::meta::Implements<T,StensorConcept>::cond&&
+      StensorTraits<T>::dime==1u,
       typename StensorType<T>::type
-    >::type
+      >::type
     deviator(const T& s)
     {
-      typedef typename StensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      typedef typename StensorType<T>::type Res;
+      using NumType = typename StensorTraits<T>::NumType;
+      using real    = typename tfel::typetraits::BaseType<NumType>::type;
       constexpr real one_third = real{1}/real{3};
-      const real tr = one_third*trace(s);
-      return s-tr*Res::Id();
+      const NumType tr = one_third*trace(s);
+      return {s(0)-tr,s(1)-tr,s(2)-tr};
+    }
+
+    template<typename T>
+    typename std::enable_if<
+      tfel::meta::Implements<T,StensorConcept>::cond&&
+      StensorTraits<T>::dime==2u,
+      typename StensorType<T>::type
+      >::type
+    deviator(const T& s)
+    {
+      using NumType = typename StensorTraits<T>::NumType;
+      using real    = typename tfel::typetraits::BaseType<NumType>::type;
+      constexpr real one_third = real{1}/real{3};
+      const NumType tr = one_third*trace(s);
+      return {s(0)-tr,s(1)-tr,s(2)-tr,s(3)};
+    }
+
+    template<typename T>
+    typename std::enable_if<
+      tfel::meta::Implements<T,StensorConcept>::cond&&
+      StensorTraits<T>::dime==3u,
+      typename StensorType<T>::type
+      >::type
+    deviator(const T& s)
+    {
+      using NumType = typename StensorTraits<T>::NumType;
+      using real    = typename tfel::typetraits::BaseType<NumType>::type;
+      constexpr real one_third = real{1}/real{3};
+      const NumType tr = one_third*trace(s);
+      return {s(0)-tr,s(1)-tr,s(2)-tr,s(3),s(4),s(5)};
     }
 
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* _STENSOR_CONCEPT_IMPL_ */
+#endif /* STENSOR_CONCEPT_IMPL_ */

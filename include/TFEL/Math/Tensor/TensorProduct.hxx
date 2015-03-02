@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_
-#define _LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_ 
+#ifndef LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_
+#define LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_ 
 
 #include<cmath>
 
@@ -43,9 +43,6 @@ namespace tfel{
 
     protected:
       
-      typedef A first_arg;
-      typedef B second_arg;
-
       typedef typename ComputeBinaryResult<A,B,OpMult>::Result Result;
       typedef typename TensorTraits<Result>::NumType   NumType;
       typedef typename TensorTraits<Result>::IndexType IndexType;
@@ -194,4 +191,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX */
+#endif /* LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_ */

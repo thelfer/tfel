@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_METAPROGRAMMING_FORWARD_TYPELIST_H_
-#define _LIB_TFEL_METAPROGRAMMING_FORWARD_TYPELIST_H_ 
+#ifndef LIB_TFEL_METAPROGRAMMING_FORWARD_TYPELIST_H_
+#define LIB_TFEL_METAPROGRAMMING_FORWARD_TYPELIST_H_ 
 
 namespace tfel{
   
@@ -32,5 +32,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_METAPROGRAMMING_FORWARD_TYPELIST_H */
+#endif /* LIB_TFEL_METAPROGRAMMING_FORWARD_TYPELIST_H_ */
 

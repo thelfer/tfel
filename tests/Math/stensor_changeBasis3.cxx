@@ -39,10 +39,11 @@ struct StensorChangeBasis3Test
     const real eps = 1.e-4;
     const real pi = 4.0 * atan(1.0);  
     unsigned short i,j,k,t;
+    default_random_engine g;
     for(t=0;t!=10;++t){
-      const real psi    = 2.*pi*(rand()/((double)RAND_MAX));
-      const real co = cos(psi);
-      const real si = sin(psi);
+      const real psi = uniform_real_distribution<real>{0.,2.*pi}(g);
+      const real co  = cos(psi);
+      const real si  = sin(psi);
       // rotation matrix
       tmatrix<3u,3u,real> r(real(0));
       r(0,0) = co;
@@ -53,9 +54,9 @@ struct StensorChangeBasis3Test
       // stresses as a symmetric matrix
       tmatrix<3u,3u,real> sm(0.);
       for(i=0;i!=3;++i){
-	sm(i,i) = 100e6*(rand()/((double)RAND_MAX));
+	sm(i,i) = uniform_real_distribution<real>{0.,100e6}(g);
       }
-      sm(0,1) = sm(1,0) = 100e6*(rand()/((double)RAND_MAX));
+      sm(0,1) = sm(1,0) = uniform_real_distribution<real>{0.,100e6}(g);
       // stresses as a symmetric tensor
       stensor<2u,real> st(0.);
       for(i=0;i!=3;++i){

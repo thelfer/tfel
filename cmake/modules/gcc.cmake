@@ -1,3 +1,4 @@
+tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-conversion")
 include(cmake/modules/common-compiler-flags.cmake)
 
 set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_STENSORFROMTINYMATRIXCOLUMNVIEW_HXX_
-#define _LIB_TFEL_MATH_STENSORFROMTINYMATRIXCOLUMNVIEW_HXX_ 
+#ifndef LIB_TFEL_MATH_STENSORFROMTINYMATRIXCOLUMNVIEW_HXX_
+#define LIB_TFEL_MATH_STENSORFROMTINYMATRIXCOLUMNVIEW_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Math/ExpressionTemplates/Expr.hxx"
@@ -112,5 +112,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_STENSORFROMTINYMATRIXCOLUMNVIEW_HXX */
+#endif /* LIB_TFEL_MATH_STENSORFROMTINYMATRIXCOLUMNVIEW_HXX_ */
 

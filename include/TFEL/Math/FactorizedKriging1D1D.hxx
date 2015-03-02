@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef   _LIB_TFEL_MATH_FACTORIZEDKRIGING1D1D_H_
-#define   _LIB_TFEL_MATH_FACTORIZEDKRIGING1D1D_H_ 
+#ifndef LIB_TFEL_MATH_FACTORIZEDKRIGING1D1D_HXX
+#define LIB_TFEL_MATH_FACTORIZEDKRIGING1D1D_HXX
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/vector.hxx"
@@ -64,5 +64,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_FACTORIZEDKRIGING1D1D_H */
+#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGING1D1D_HXX */
 

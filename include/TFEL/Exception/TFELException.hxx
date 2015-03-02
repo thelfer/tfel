@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_EXCEPTIONS_H_
-#define _LIB_TFEL_EXCEPTIONS_H_ 
+#ifndef LIB_TFEL_EXCEPTIONS_H_
+#define LIB_TFEL_EXCEPTIONS_H_ 
 
 #include<stdexcept>
 
@@ -47,5 +47,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_EXCEPTIONS_H */
+#endif /* LIB_TFEL_EXCEPTIONS_H_ */
 

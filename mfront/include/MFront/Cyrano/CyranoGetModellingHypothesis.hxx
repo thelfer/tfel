@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_CYRANO_CYRANOGETMODELLINGHYPOTHESIS_H_
-#define _LIB_MFRONT_CYRANO_CYRANOGETMODELLINGHYPOTHESIS_H_ 
+#ifndef LIB_MFRONT_CYRANO_CYRANOGETMODELLINGHYPOTHESIS_H_
+#define LIB_MFRONT_CYRANO_CYRANOGETMODELLINGHYPOTHESIS_H_ 
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
@@ -43,5 +43,5 @@ namespace cyrano
   
 } // end of namespace cyrano
 
-#endif /* _LIB_MFRONT_CYRANO_CYRANOGETMODELLINGHYPOTHESIS_H */
+#endif /* LIB_MFRONT_CYRANO_CYRANOGETMODELLINGHYPOTHESIS_H_ */
 

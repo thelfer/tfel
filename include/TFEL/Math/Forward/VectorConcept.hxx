@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_FORWARD_VECTORCONCEPT_H_
-#define _LIB_TFEL_MATH_FORWARD_VECTORCONCEPT_H_ 
+#ifndef LIB_TFEL_MATH_FORWARD_VECTORCONCEPT_H_
+#define LIB_TFEL_MATH_FORWARD_VECTORCONCEPT_H_ 
 
 namespace tfel
 {
@@ -26,16 +26,16 @@ namespace tfel
     template<unsigned short N,
 	     unsigned short M,
 	     typename A, typename B>
-    class TMatrixTVectorExpr;
+    struct TMatrixTVectorExpr;
 
     template<unsigned short N,
 	     unsigned short M,
 	     typename A, typename B>
-    class TVectorTMatrixExpr;
+    struct TVectorTMatrixExpr;
 
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_FORWARD_VECTORCONCEPT_H */
+#endif /* LIB_TFEL_MATH_FORWARD_VECTORCONCEPT_H_ */
 

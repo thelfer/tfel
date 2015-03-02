@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_
-#define _LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_ 
+#ifndef LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_
+#define LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_ 
 
 #include<map>
 #include<vector>
@@ -1056,5 +1056,5 @@ namespace mfront{
 
 #include"MFront/BehaviourDSLCommon.ixx"
 
-#endif /* _LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX */
+#endif /* LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_ */
 

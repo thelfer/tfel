@@ -1,13 +1,18 @@
 /*!
-* \file   include/TFEL/Math/Parser/EvaluatorFunction.hxx
-* \brief  
-* 
-* \author Helfer Thomas
-* \date   15 jan 2009
-*/
+ * \file   include/TFEL/Math/Parser/EvaluatorFunction.hxx
+ * \brief  
+ * 
+ * \author Helfer Thomas
+ * \date   15 jan 2009
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
 
-#ifndef _LIB_TFEL_MATH_EVALUATORFUNCTION_HXX_
-#define _LIB_TFEL_MATH_EVALUATORFUNCTION_HXX_ 
+#ifndef LIB_TFEL_MATH_EVALUATORFUNCTION_HXX_
+#define LIB_TFEL_MATH_EVALUATORFUNCTION_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Evaluator.hxx"
@@ -23,13 +28,7 @@ namespace tfel
 
 #ifdef __SUNPRO_CC
       extern "C" {
-#endif /* __SUNPRO_CC * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
- */
+#endif __SUNPRO_CC
 	typedef double (*EvaluatorProxyFunctionPtr1V)(double); 
 	typedef double (*EvaluatorProxyFunctionPtr2V)(double,double); 
 	typedef double (*EvaluatorProxyFunctionPtr1P1V)(int,double); 
@@ -38,7 +37,7 @@ namespace tfel
 	typedef double (*EvaluatorProxyFunctionPtr2P2V)(int,int,double,double);
 #ifdef __SUNPRO_CC
      }
-#endif /* __SUNPRO_CC */
+#endif __SUNPRO_CC
 
       struct EvaluatorFunctionBase
 	: public Function
@@ -326,4 +325,4 @@ namespace tfel
 
 #include"TFEL/Math/Parser/EvaluatorFunction.ixx"
 
-#endif /* _LIB_TFEL_MATH_EVALUATORFUNCTION_HXX_  */
+#endif /* LIB_TFEL_MATH_EVALUATORFUNCTION_HXX_ */

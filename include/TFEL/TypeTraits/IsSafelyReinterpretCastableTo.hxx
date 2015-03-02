@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H_
-#define _LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H_ 
+#ifndef LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H_
+#define LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H_ 
 
 namespace tfel{
 
@@ -55,5 +55,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H */
+#endif /* LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H_ */
 

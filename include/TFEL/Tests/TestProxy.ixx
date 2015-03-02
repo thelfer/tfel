@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TESTS_TESTPROXY_IXX
-#define _LIB_TFEL_TESTS_TESTPROXY_IXX 1
+#ifndef LIB_TFEL_TESTS_TESTPROXY_IXX
+#define LIB_TFEL_TESTS_TESTPROXY_IXX 1
 
 #include<memory>
 #include"TFEL/Tests/TestManager.hxx"
@@ -54,4 +54,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif  /*_LIB_TFEL_TESTS_TESTPROXY_IXX */
+#endif /* LIB_TFEL_TESTS_TESTPROXY_IXX */

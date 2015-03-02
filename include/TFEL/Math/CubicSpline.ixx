@@ -10,8 +10,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_CUBICSPLINE_IXX
-#define _LIB_TFEL_MATH_CUBICSPLINE_IXX 1
+#ifndef LIB_TFEL_MATH_CUBICSPLINE_IXX
+#define LIB_TFEL_MATH_CUBICSPLINE_IXX 1
 
 #include<limits>
 #include<algorithm>
@@ -417,4 +417,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_CUBICSPLINE_IXX */
+#endif /* LIB_TFEL_MATH_CUBICSPLINE_IXX */

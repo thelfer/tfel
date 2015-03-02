@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_HASITERATOR_HXX_
-#define _LIB_TFEL_HASITERATOR_HXX_ 
+#ifndef LIB_TFEL_HASITERATOR_HXX_
+#define LIB_TFEL_HASITERATOR_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include<type_traits>
@@ -83,5 +83,5 @@ namespace tfel{
 
 } // end of namespace tfel  
 
-#endif /* _LIB_TFEL_HASITERATOR_HXX */
+#endif /* LIB_TFEL_HASITERATOR_HXX_ */
 

@@ -5,8 +5,8 @@
  * \date   10 févr. 2015
  */
 
-#ifndef _LIB_TFEL_MATH_QTCOMPLEXOPERATIONS_H_
-#define _LIB_TFEL_MATH_QTCOMPLEXOPERATIONS_H_ 
+#ifndef LIB_TFEL_MATH_QTCOMPLEXOPERATIONS_H_
+#define LIB_TFEL_MATH_QTCOMPLEXOPERATIONS_H_ 
 
 #include"TFEL/Math/qt.hxx"
 #include"TFEL/Math/Genral/Complex.hxx"
@@ -29,5 +29,5 @@ namespace tfel{
 
 }
 
-#endif /* _LIB_TFEL_MATH_QTCOMPLEXOPERATIONS_H */
+#endif /* LIB_TFEL_MATH_QTCOMPLEXOPERATIONS_H_ */
 

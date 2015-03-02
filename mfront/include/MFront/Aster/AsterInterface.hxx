@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_ASTER_CALL_H_
-#define _LIB_MFRONT_ASTER_CALL_H_ 
+#ifndef LIB_MFRONT_ASTER_CALL_H_
+#define LIB_MFRONT_ASTER_CALL_H_ 
 
 #include<string>
 #include<vector>
@@ -346,5 +346,5 @@ namespace aster
 
 #include"MFront/Aster/AsterBehaviourHandler.hxx"
 
-#endif /* _LIB_MFRONT_ASTER_CALL_H */
+#endif /* LIB_MFRONT_ASTER_CALL_H_ */
 

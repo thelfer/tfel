@@ -10,8 +10,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TINY_VECTOR_
-#define _LIB_TFEL_TINY_VECTOR_ 1
+#ifndef LIB_TFEL_TINY_VECTOR_
+#define LIB_TFEL_TINY_VECTOR_ 1
 
 #include<cstddef>
 #include<iterator>
@@ -389,4 +389,4 @@ namespace tfel{
 #include"TFEL/Math/Vector/tvector.ixx"
 #include"TFEL/Math/Vector/tvectorResultType.hxx"
 
-#endif /* _LIB_TFEL_TINY_VECTOR_ */
+#endif /* LIB_TFEL_TINY_VECTOR_ */

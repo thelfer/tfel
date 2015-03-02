@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_COMPUTEOBJECTTAG_I_
-#define _LIB_TFEL_COMPUTEOBJECTTAG_I_ 
+#ifndef LIB_TFEL_COMPUTEOBJECTTAG_I_
+#define LIB_TFEL_COMPUTEOBJECTTAG_I_ 
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
@@ -162,5 +162,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_COMPUTEOBJECTTAG_I */
+#endif /* LIB_TFEL_COMPUTEOBJECTTAG_I_ */
 

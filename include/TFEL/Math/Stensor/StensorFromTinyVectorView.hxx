@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_STENSORFROMTINYVECTORVIEW_HXX_
-#define _LIB_TFEL_MATH_STENSORFROMTINYVECTORVIEW_HXX_ 
+#ifndef LIB_TFEL_MATH_STENSORFROMTINYVECTORVIEW_HXX_
+#define LIB_TFEL_MATH_STENSORFROMTINYVECTORVIEW_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -65,9 +65,6 @@ namespace tfel
       typedef typename stensor<N,T>::const_reference const_reference;
       typedef typename stensor<N,T>::size_type 	   size_type;	    
       typedef typename stensor<N,T>::difference_type difference_type;
-
-      typedef tvector<Mn,T>           first_arg;
-      typedef tfel::meta::InvalidType second_arg;
 
       RunTimeProperties
       getRunTimeProperties() const
@@ -132,5 +129,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_STENSORFROMTINYVECTORVIEW_HXX */
+#endif /* LIB_TFEL_MATH_STENSORFROMTINYVECTORVIEW_HXX_ */
 

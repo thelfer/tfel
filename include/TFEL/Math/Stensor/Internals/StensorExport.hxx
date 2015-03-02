@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_STENSOREXPORT_H_
-#define _LIB_TFEL_STENSOREXPORT_H_ 
+#ifndef LIB_TFEL_STENSOREXPORT_H_
+#define LIB_TFEL_STENSOREXPORT_H_ 
 
 namespace tfel{
 
@@ -35,5 +35,5 @@ namespace tfel{
 
 #include"TFEL/Math/Stensor/Internals/StensorExport.ixx"
 
-#endif /* _LIB_TFEL_STENSOREXPORT_H */
+#endif /* LIB_TFEL_STENSOREXPORT_H_ */
 

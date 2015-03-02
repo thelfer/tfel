@@ -6,12 +6,12 @@
  * \date   09 nov 2007
  */
 
-#ifndef _LIB_TFEL_PROCESSMANAGER_H_
-#define _LIB_TFEL_PROCESSMANAGER_H_ 
+#ifndef LIB_TFEL_PROCESSMANAGER_H_
+#define LIB_TFEL_PROCESSMANAGER_H_ 
 
 #ifdef	__cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif /* LIB_TFEL_PROCESSMANAGER_H_ */
   
   int
   processManager_wifsignaled(int);
@@ -33,6 +33,6 @@ extern "C" {
 
 #ifdef	__cplusplus
 }
-#endif /* __cplusplus */
+#endif /* LIB_TFEL_PROCESSMANAGER_H_ */
 
-#endif  /* !PROCESSMANAGER_H_ */
+#endif /* LIB_TFEL_PROCESSMANAGER_H_ */

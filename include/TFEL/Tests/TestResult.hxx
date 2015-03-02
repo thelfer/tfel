@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_TESTS_TESTRESULT_HXX
-#define _LIB_TFEL_TESTS_TESTRESULT_HXX 1
+#ifndef LIB_TFEL_TESTS_TESTRESULT_HXX
+#define LIB_TFEL_TESTS_TESTRESULT_HXX 1
 
 #include<ostream>
 #include<string>
@@ -127,4 +127,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif  /*_LIB_TFEL_TESTS_TESTRESULT_HXX */
+#endif /* LIB_TFEL_TESTS_TESTRESULT_HXX */

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_ARGUMENTPARSERBASE_I_
-#define _LIB_TFEL_ARGUMENTPARSERBASE_I_ 
+#ifndef LIB_TFEL_ARGUMENTPARSERBASE_I_
+#define LIB_TFEL_ARGUMENTPARSERBASE_I_ 
 
 #include<iostream>
 #include<utility>
@@ -235,5 +235,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_ARGUMENTPARSERBASE_I_ */
+#endif /* LIB_TFEL_ARGUMENTPARSERBASE_I_ */
 

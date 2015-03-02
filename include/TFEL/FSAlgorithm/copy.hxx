@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_COPY_HXX_
-#define _LIB_TFEL_COPY_HXX_ 
+#ifndef LIB_TFEL_COPY_HXX_
+#define LIB_TFEL_COPY_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include<type_traits>
@@ -690,11 +690,11 @@ namespace tfel{
 	return copy<9u>::exe(++p,++q);
       }
     };
-#endif
+#endif /* LIB_TFEL_COPY_HXX_ */
 
   } // end of namespace fsalgo
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_COPY_HXX */
+#endif /* LIB_TFEL_COPY_HXX_ */
 

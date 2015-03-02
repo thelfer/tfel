@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTGNUPLOTLAWINTERFACE_H_
-#define _LIB_MFRONTGNUPLOTLAWINTERFACE_H_ 
+#ifndef LIB_MFRONTGNUPLOTLAWINTERFACE_H_
+#define LIB_MFRONTGNUPLOTLAWINTERFACE_H_ 
 
 #include<map>
 #include<vector>
@@ -221,4 +221,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONTGNUPLOTLAWINTERFACE_H */
+#endif /* LIB_MFRONTGNUPLOTLAWINTERFACE_H_ */

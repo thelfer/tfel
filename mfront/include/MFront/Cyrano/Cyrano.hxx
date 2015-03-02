@@ -11,16 +11,16 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_CYRANO_MFRONT_CYRANO_H_
-#define _LIB_TFEL_CYRANO_MFRONT_CYRANO_H_ 
+#ifndef LIB_TFEL_CYRANO_MFRONT_CYRANO_H_
+#define LIB_TFEL_CYRANO_MFRONT_CYRANO_H_ 
 
 #ifndef TFEL_CYRANO_INLINE
 #define TFEL_CYRANO_INLINE inline
-#endif  /* TFEL_CYRANO_INLINE */
+#endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_H_ */
 
 #ifndef TFEL_CYRANO_INLINE2
 #define TFEL_CYRANO_INLINE2 inline
-#endif  /* TFEL_CYRANO_INLINE2 */
+#endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_H_ */
 
 namespace cyrano{
 
@@ -29,12 +29,12 @@ namespace cyrano{
   typedef long long   CyranoInt;
 #else
   typedef long   CyranoInt;
-#endif
+#endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_H_ */
 #elif CYRANO_ARCH == 32
   typedef int    CyranoInt;
 #else
   #error "cyrano : unsupported machine type"
-#endif
+#endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_H_ */
 
   typedef double   CyranoReal;
 
@@ -56,5 +56,5 @@ namespace cyrano{
 
 } // end of namespace cyrano
 
-#endif /* _LIB_TFEL_CYRANO_MFRONT_CYRANO_H */
+#endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_H_ */
 

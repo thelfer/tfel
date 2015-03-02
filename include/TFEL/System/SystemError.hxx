@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_SYSTEMERROR_HXX_
-#define _LIB_TFEL_SYSTEMERROR_HXX_ 
+#ifndef LIB_TFEL_SYSTEMERROR_HXX_
+#define LIB_TFEL_SYSTEMERROR_HXX_ 
 
 #include<string>
 #include<cerrno>
@@ -117,7 +117,7 @@ namespace tfel
     typedef PosixError<ENOTBLK> ENOTBLKError;
     //! a simple alias
     typedef PosixError<ETXTBSY> ETXTBSYError;
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+#endif /* LIB_TFEL_SYSTEMERROR_HXX_ */
 
   } // end of namespace system
 
@@ -125,4 +125,4 @@ namespace tfel
 
 #include"TFEL/System/SystemError.ixx"
 
-#endif /* _LIB_TFEL_SYSTEMERROR_HXX */
+#endif /* LIB_TFEL_SYSTEMERROR_HXX_ */

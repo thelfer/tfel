@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_ST2TOST2STENSORPRODUCTEXPR_H_
-#define _LIB_TFEL_MATH_ST2TOST2STENSORPRODUCTEXPR_H_ 
+#ifndef LIB_TFEL_MATH_ST2TOST2STENSORPRODUCTEXPR_H_
+#define LIB_TFEL_MATH_ST2TOST2STENSORPRODUCTEXPR_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/ExpressionTemplates/Expr.hxx"
@@ -209,5 +209,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_ST2TOST2STENSORPRODUCTEXPR_H */
+#endif /* LIB_TFEL_MATH_ST2TOST2STENSORPRODUCTEXPR_H_ */
 

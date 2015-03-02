@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_BASIC_RSTREAM_HXX_
-#define _LIB_TFEL_BASIC_RSTREAM_HXX_ 
+#ifndef LIB_TFEL_BASIC_RSTREAM_HXX_
+#define LIB_TFEL_BASIC_RSTREAM_HXX_ 
 
 #include<cctype>
 #include<string>
@@ -135,5 +135,5 @@ namespace tfel
 
 #include"TFEL/System/basic_rstream.ixx"
  
-#endif /* _LIB_TFEL_BASIC_RSTREAM_HXX */
+#endif /* LIB_TFEL_BASIC_RSTREAM_HXX_ */
 

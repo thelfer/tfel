@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_SYSTEM_HXX_
-#define _LIB_TFEL_SYSTEM_HXX_ 
+#ifndef LIB_TFEL_SYSTEM_HXX_
+#define LIB_TFEL_SYSTEM_HXX_ 
 
 #include<vector>
 #include<string>
@@ -72,7 +72,7 @@ namespace tfel
 #else 
       static void
       mkdir(const std::string&,const mode_t = S_IRWXU|S_IRWXG);
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+#endif /* LIB_TFEL_SYSTEM_HXX_ */
 
       /*!
        * \param f : file to unlink
@@ -154,5 +154,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_SYSTEM_HXX_ */
+#endif /* LIB_TFEL_SYSTEM_HXX_ */
 

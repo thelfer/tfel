@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_POWER_H_
-#define _LIB_TFEL_MATH_POWER_H_ 
+#ifndef LIB_TFEL_MATH_POWER_H_
+#define LIB_TFEL_MATH_POWER_H_ 
 
 #include<type_traits>
 #include"TFEL/Config/TFELConfig.hxx"
@@ -68,4 +68,4 @@ namespace tfel{
 
 #include"TFEL/Math/power.ixx"
 
-#endif /* _LIB_TFEL_MATH_POWER_H */
+#endif /* LIB_TFEL_MATH_POWER_H_ */

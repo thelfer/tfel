@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTHEADER_HXX_
-#define _LIB_MFRONTHEADER_HXX_ 
+#ifndef LIB_MFRONTHEADER_HXX_
+#define LIB_MFRONTHEADER_HXX_ 
 
 #include<string>
 
@@ -49,5 +49,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONTHEADER_HXX */
+#endif /* LIB_MFRONTHEADER_HXX_ */
 

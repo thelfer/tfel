@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_DSLBASE_HXX_
-#define _LIB_MFRONT_DSLBASE_HXX_ 
+#ifndef LIB_MFRONT_DSLBASE_HXX_
+#define LIB_MFRONT_DSLBASE_HXX_ 
 
 #include<set>
 #include<map>
@@ -456,4 +456,4 @@ namespace mfront
 
 #include"MFront/DSLBase.ixx"
 
-#endif /* _LIB_MFRONT_DSLBASE_HXX */
+#endif /* LIB_MFRONT_DSLBASE_HXX_ */

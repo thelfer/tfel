@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONBEHAVIOURTINTERFACEFACTORY_HXX_
-#define _LIB_MFRONBEHAVIOURTINTERFACEFACTORY_HXX_ 
+#ifndef LIB_MFRONBEHAVIOURTINTERFACEFACTORY_HXX_
+#define LIB_MFRONBEHAVIOURTINTERFACEFACTORY_HXX_ 
 
 #include<vector>
 #include<string>
@@ -76,5 +76,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTBEHAVIOURINTERFACEFACTORY_HXX */
+#endif /* LIB_MFRONBEHAVIOURTINTERFACEFACTORY_HXX_ */
 

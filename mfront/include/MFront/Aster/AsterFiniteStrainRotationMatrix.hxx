@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_ASTER_ASTERFINITESTRAINROTATIONMATRIX_H_
-#define _LIB_MFRONT_ASTER_ASTERFINITESTRAINROTATIONMATRIX_H_ 
+#ifndef LIB_MFRONT_ASTER_ASTERFINITESTRAINROTATIONMATRIX_H_
+#define LIB_MFRONT_ASTER_ASTERFINITESTRAINROTATIONMATRIX_H_ 
 
 #include"MFront/Aster/AsterConfig.hxx"
 #include"MFront/Aster/Aster.hxx"
@@ -78,5 +78,5 @@ namespace aster
 
 } // end of namespace aster
 
-#endif /* _LIB_MFRONT_ASTER_ASTERFINITESTRAINROTATIONMATRIX_H */
+#endif /* LIB_MFRONT_ASTER_ASTERFINITESTRAINROTATIONMATRIX_H_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef   _LIB_TFEL_MATERIAL_OUTOFBOUNDSPOLICY_H_
-#define   _LIB_TFEL_MATERIAL_OUTOFBOUNDSPOLICY_H_ 
+#ifndef LIB_TFEL_MATERIAL_OUTOFBOUNDSPOLICY_HXX
+#define LIB_TFEL_MATERIAL_OUTOFBOUNDSPOLICY_HXX 
 
 namespace tfel{
   
@@ -28,5 +28,5 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATERIAL_OUTOFBOUNDSPOLICY_H */
+#endif /* LIB_TFEL_MATERIAL_OUTOFBOUNDSPOLICY_HXX */
 

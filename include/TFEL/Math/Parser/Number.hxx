@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_NUMBER_HXX_
-#define _LIB_TFEL_NUMBER_HXX_ 
+#ifndef LIB_TFEL_NUMBER_HXX_
+#define LIB_TFEL_NUMBER_HXX_ 
 
 #include"TFEL/Math/Parser/Expr.hxx"
 
@@ -57,5 +57,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_NUMBER_HXX */
+#endif /* LIB_TFEL_NUMBER_HXX_ */
 

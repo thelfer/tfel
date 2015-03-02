@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_CONSTEXPRMATHFUNCTIONS_H_
-#define _LIB_TFEL_MATH_CONSTEXPRMATHFUNCTIONS_H_ 
+#ifndef LIB_TFEL_MATH_CONSTEXPRMATHFUNCTIONS_H_
+#define LIB_TFEL_MATH_CONSTEXPRMATHFUNCTIONS_H_ 
 
 #include<limits>
 
@@ -60,5 +60,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* _LIB_TFEL_MATH_CONSTEXPRMATHFUNCTIONS_H */
+#endif /* LIB_TFEL_MATH_CONSTEXPRMATHFUNCTIONS_H_ */
 

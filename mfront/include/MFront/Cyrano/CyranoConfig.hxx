@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_CYRANO_CYRANOCONFIG_H_
-#define _LIB_MFRONT_CYRANO_CYRANOCONFIG_H_ 
+#ifndef LIB_MFRONT_CYRANO_CYRANOCONFIG_H_
+#define LIB_MFRONT_CYRANO_CYRANOCONFIG_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -28,7 +28,7 @@
 #  endif
 #else
 #  define MFRONT_CYRANO_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_MFRONT_CYRANO_CYRANOCONFIG_H_ */
 
-#endif /* _LIB_MFRONT_CYRANO_CYRANOCONFIG_H */
+#endif /* LIB_MFRONT_CYRANO_CYRANOCONFIG_H_ */
 

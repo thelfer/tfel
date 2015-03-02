@@ -233,12 +233,8 @@ namespace mfront
     }
     this->headerFile << " */\n\n";
 
-    this->headerFile << "#ifndef _" 
-		     << makeUpperCase(name)
-		     << "_CASTEM_HH\n";
-    this->headerFile << "#define _"
-		     << makeUpperCase(name)
-		     << "_CASTEM_HH\n\n";
+    this->headerFile << "#ifndef " << makeUpperCase(name) << "_CASTEM_HH\n";
+    this->headerFile << "#define " << makeUpperCase(name) << "_CASTEM_HH\n\n";
     writeExportDirectives(this->headerFile);
     this->headerFile << "#ifdef __cplusplus\n";
     this->headerFile << "extern \"C\"{\n";
@@ -256,9 +252,7 @@ namespace mfront
     this->headerFile << "#ifdef __cplusplus\n";
     this->headerFile << "} // end of extern \"C\"\n";
     this->headerFile << "#endif /* __cplusplus */\n\n";
-    this->headerFile << "#endif /* _"
-		     << makeUpperCase(name)
-		     << "_CASTEM_HH */\n";
+    this->headerFile << "#endif /* " << makeUpperCase(name) << "_CASTEM_HH */\n";
     this->headerFile.close();
   } // end of CastemMaterialPropertyInterface::writeHeaderFile(void)
 

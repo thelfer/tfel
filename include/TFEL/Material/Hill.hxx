@@ -13,8 +13,8 @@
 
 #include"TFEL/Math/st2tost2.hxx"
 
-#ifndef _LIB_TFEL_MATERIAL_HILL_H_
-#define _LIB_TFEL_MATERIAL_HILL_H_ 
+#ifndef LIB_TFEL_MATERIAL_HILL_H_
+#define LIB_TFEL_MATERIAL_HILL_H_ 
 
 namespace tfel
 {
@@ -68,4 +68,4 @@ namespace tfel
 
 #include"TFEL/Material/Hill.ixx"
 
-#endif /* _LIB_TFEL_MATERIAL_HILL_H_ */
+#endif /* LIB_TFEL_MATERIAL_HILL_H_ */

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_FORWARD_TENSORCONCEPT_H_
-#define _LIB_TFEL_MATH_FORWARD_TENSORCONCEPT_H_ 
+#ifndef LIB_TFEL_MATH_FORWARD_TENSORCONCEPT_H_
+#define LIB_TFEL_MATH_FORWARD_TENSORCONCEPT_H_ 
 
 namespace tfel
 {
@@ -21,7 +21,7 @@ namespace tfel
   {
 
     template<class T>
-    class TensorConcept;
+    struct TensorConcept;
 
     template<typename T_type>
     struct TensorTraits;
@@ -30,5 +30,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_FORWARD_TENSORCONCEPT_H */
+#endif /* LIB_TFEL_MATH_FORWARD_TENSORCONCEPT_H_ */
 

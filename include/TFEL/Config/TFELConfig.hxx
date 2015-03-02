@@ -12,20 +12,20 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_CONFIG_HXX_
-#define _LIB_TFEL_CONFIG_HXX_ 
+#ifndef LIB_TFEL_CONFIG_HXX_
+#define LIB_TFEL_CONFIG_HXX_ 
 
 //! a usefull macro for defining levels of inlining. This is
 //  mainly used in the utilities namespace.
 #ifndef TFEL_INLINE
 #define TFEL_INLINE  inline  
-#endif /* TFEL_INLINE */
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 //! a usefull macro for defining levels of inlining. This is
 //  mainly used in the utilities namespace.
 #ifndef TFEL_INLINE2
 #define TFEL_INLINE2 inline  
-#endif /* TFEL_INLINEZ */
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #include"TFEL/Config/TFEL_MATH_Config.hxx"
 
@@ -33,45 +33,45 @@
 //  mainly used in the fsalgorithm namespace.
 #ifndef TFEL_FSALGORITHM_INLINE
 #define TFEL_FSALGORITHM_INLINE    inline
-#endif /* TFEL_FSALGORITHM_INLINE */
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 //! a usefull macro for defining levels of inlining. This is
 //  mainly used in the material namespace.
 #ifndef TFEL_MATERIAL_INLINE
 #define TFEL_MATERIAL_INLINE   inline  
-#endif /* TFEL_MATERIAL_INLINE */
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 //! a usefull macro for defining levels of inlining. This is
 //  mainly used in the materiallaw namespace.
 #ifndef TFEL_MATERIAL_LAW_INLINE2
 #define TFEL_MATERIAL_LAW_INLINE2  inline  
-#endif /* TFEL_MATERIAL_LAW_INLINE2 */
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 //! a usefull macro for defining levels of inlining. This is
 //  mainly used in the fe namespace.
 #ifndef TFEL_FE_INLINE
 #define TFEL_FE_INLINE             inline  
-#endif /* TFEL_FE_INLINE */
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if (defined __GNUC__) && (! defined __INTEL_COMPILER)
 #if __GNUC__ >= 4
 #define TFEL_MAY_ALIAS_ATTRIBUTE __attribute__((__may_alias__)) 
 #else /* __GNUC__ >= 4 */
 #define TFEL_MAY_ALIAS_ATTRIBUTE 
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 #else /* (defined __GNUC__) && (! defined __INTEL_COMPILER) */
 #define TFEL_MAY_ALIAS_ATTRIBUTE 
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if (defined __GNUC__) && (! defined __INTEL_COMPILER)
 #if __GNUC__ >= 4
 #define TFEL_UNUSED_ATTRIBUTE __attribute__((__unused__)) 
 #else /* __GNUC__ >= 4 */
 #define TFEL_UNUSED_ATTRIBUTE 
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 #else /* (defined __GNUC__) && (! defined __INTEL_COMPILER) */
 #define TFEL_UNUSED_ATTRIBUTE
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 /*!
  * Macro extracted from :
@@ -92,7 +92,7 @@
 #define TFEL_VISIBILITY_IMPORT
 #define TFEL_VISIBILITY_EXPORT
 #define TFEL_VISIBILITY_LOCAL
-#endif /* __GNUC__ >= 4 */
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 #elif defined __INTEL_COMPILER
 #define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
 #define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
@@ -101,8 +101,8 @@
 #define TFEL_VISIBILITY_IMPORT
 #define TFEL_VISIBILITY_EXPORT
 #define TFEL_VISIBILITY_LOCAL
-#endif 
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+#endif /* LIB_TFEL_CONFIG_HXX_ */
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 /*!
  * defining macros by librairies using cmake conventions.
@@ -121,7 +121,7 @@
 #  endif
 #else
 #  define TFELEXCEPTION_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELTests_EXPORTS
@@ -135,7 +135,7 @@
 #  endif
 #else
 #  define TFELTESTS_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELUtilities_EXPORTS
@@ -149,7 +149,7 @@
 #  endif
 #else
 #  define TFELUTILITIES_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELGlossary_EXPORTS
@@ -163,7 +163,7 @@
 #  endif
 #else
 #  define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELSystem_EXPORTS
@@ -177,7 +177,7 @@
 #  endif
 #else
 #  define TFELSYSTEM_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELMath_EXPORTS
@@ -191,7 +191,7 @@
 #  endif
 #else
 #  define TFELMATH_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELMathCubicSpline_EXPORTS
@@ -205,7 +205,7 @@
 #  endif
 #else
 #  define TFELMATHCUBICSPLINE_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELMathKriging_EXPORTS
@@ -219,7 +219,7 @@
 #  endif
 #else
 #  define TFELMATHKRIGING_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELMathParser_EXPORTS
@@ -233,7 +233,7 @@
 #  endif
 #else
 #  define TFELMATHPARSER_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELMaterial_EXPORTS
@@ -247,6 +247,6 @@
 #  endif
 #else
 #  define TFELMATERIAL_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif
+#endif /* LIB_TFEL_CONFIG_HXX_ */
 
-#endif /* _LIB_TFEL_CONFIG_HXX */
+#endif /* LIB_TFEL_CONFIG_HXX_ */

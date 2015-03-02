@@ -100,20 +100,21 @@ struct TensorTest2
   tfel::tests::TestResult
   execute()
   {
-    using namespace tfel::math;
     using namespace std;
+    using namespace tfel::math;
+    constexpr float prec = 1.e-3f;
     tensor<1,Complex<float> > s;
     tensor<1,Complex<float> > s2;
     s(0) = Complex<float>(2.f);
     s(1) = Complex<float>(3.1415929f);
     s(2) = Complex<float>(4231.421f);
     s2 = 0.5f*s;
-    TFEL_TESTS_ASSERT((abs(real(s2(0)-Complex<float>(1.f)))<1.e-3f));
-    TFEL_TESTS_ASSERT(abs(imag(s2(0)))<1.e-3);
-    TFEL_TESTS_ASSERT((abs(real(s2(1)-Complex<float>(1.5708f)))<1.e-3f));
-    TFEL_TESTS_ASSERT(abs(imag(s2(1)))<1.e-3);
+    TFEL_TESTS_ASSERT((abs(real(s2(0)-Complex<float>(1.f)))<prec));
+    TFEL_TESTS_ASSERT(abs(imag(s2(0)))<prec);
+    TFEL_TESTS_ASSERT((abs(real(s2(1)-Complex<float>(1.5708f)))<prec));
+    TFEL_TESTS_ASSERT(abs(imag(s2(1)))<prec);
     TFEL_TESTS_ASSERT((abs(real(s2(2)-Complex<float>(2115.7f)))<1.f));
-    TFEL_TESTS_ASSERT(abs(imag(s2(2)))<1.e-3f);
+    TFEL_TESTS_ASSERT(abs(imag(s2(2)))<prec);
     return this->result;
   } // end of execute
 };
@@ -132,7 +133,7 @@ struct TensorTest3_1D
   {
     using namespace std;
     using namespace tfel::math;
-    const real eps = 10.*numeric_limits<real>::epsilon();
+    const real eps = 10*numeric_limits<real>::epsilon();
     stensor<1u,real> s;
     tensor<1u,real> t;
     for(unsigned short i=0;i!=t.size();++i){
@@ -160,7 +161,7 @@ struct TensorTest3_2D
   {
     using namespace std;
     using namespace tfel::math;
-    const real eps = 10.*numeric_limits<real>::epsilon();
+    const real eps = 10*numeric_limits<real>::epsilon();
     const real cste = sqrt(real(2))/real(2);
     stensor<2u,real> s;
     tensor<2u,real> t;
@@ -190,7 +191,7 @@ struct TensorTest3_3D
   {
     using namespace std;
     using namespace tfel::math;
-    const real eps = 10.*numeric_limits<real>::epsilon();
+    const real eps = 10*numeric_limits<real>::epsilon();
     const real cste = sqrt(real(2))/real(2);
     stensor<3u,real> s;
     tensor<3u,real> t;

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_RUNGEKUTTA42_IXX_
-#define _LIB_TFEL_RUNGEKUTTA42_IXX_ 
+#ifndef LIB_TFEL_RUNGEKUTTA42_IXX_
+#define LIB_TFEL_RUNGEKUTTA42_IXX_ 
 
 namespace tfel
 {
@@ -146,5 +146,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_RUNGEKUTTA42_IXX */
+#endif /* LIB_TFEL_RUNGEKUTTA42_IXX_ */
 

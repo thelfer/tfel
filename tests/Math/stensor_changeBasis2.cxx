@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<random>
 #include<fstream>
 #include<cstdlib>
 
@@ -40,11 +41,12 @@ struct StensorChangeBasis2Test
     const real pi = 4.0 * atan(1.0);  
     tmatrix<3u,3u,real> r;
     unsigned short i,j,k,t;
+    default_random_engine g;
     for(t=0;t!=10;++t){
-      const real psi    = 2.*pi*(rand()/((double)RAND_MAX));
-      const real cthe   = 2.*((rand()/((double)RAND_MAX))-0.5);
+      const real psi    = uniform_real_distribution<real>{0.,2.*pi}(g);
+      const real cthe   = uniform_real_distribution<real>{-1,1.}(g);
       const real the    = acos(cthe);
-      const real phi    = 2.*pi*(rand()/((double)RAND_MAX));
+      const real phi    = uniform_real_distribution<real>{0.,2.*pi}(g);
       const real cospsi = cos(psi);
       const real costhe = cos(the);
       const real cosphi = cos(phi);
@@ -65,7 +67,7 @@ struct StensorChangeBasis2Test
       tmatrix<3u,3u,real> sm(0.);
       for(i=0;i!=3;++i){
 	for(j=i;j!=3;++j){
-	  sm(i,j) = sm(j,i) = 100e6*(rand()/((double)RAND_MAX));
+	  sm(i,j) = sm(j,i) = uniform_real_distribution<real>{0.,100e6}(g);
 	}
       }
       // stresses as a symmetric tensor

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTISOTROPICPLASTICFLOWPARSER_H_
-#define _LIB_MFRONTISOTROPICPLASTICFLOWPARSER_H_ 
+#ifndef LIB_MFRONTISOTROPICPLASTICFLOWPARSER_H_
+#define LIB_MFRONTISOTROPICPLASTICFLOWPARSER_H_ 
 
 #include<string>
 #include"MFront/IsotropicBehaviourDSLBase.hxx"
@@ -51,5 +51,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTISOTROPICPLASTICFLOWPARSER_H */
+#endif /* LIB_MFRONTISOTROPICPLASTICFLOWPARSER_H_ */
 

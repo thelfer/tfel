@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_CYRANOTRAITS_HXX_
-#define _LIB_MFRONT_CYRANOTRAITS_HXX_ 
+#ifndef LIB_MFRONT_CYRANOTRAITS_HXX_
+#define LIB_MFRONT_CYRANOTRAITS_HXX_ 
 
 namespace cyrano{
 
@@ -35,5 +35,5 @@ namespace cyrano{
 
 } // end of namespace cyrano  
 
-#endif /* _LIB_MFRONT_CYRANOTRAITS_HXX */
+#endif /* LIB_MFRONT_CYRANOTRAITS_HXX_ */
 

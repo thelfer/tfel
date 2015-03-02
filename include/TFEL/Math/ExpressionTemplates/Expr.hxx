@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_EXPRESSION_EXPR_H_
-#define _LIB_TFEL_MATH_EXPRESSION_EXPR_H_ 
+#ifndef LIB_TFEL_MATH_EXPRESSION_EXPR_H_
+#define LIB_TFEL_MATH_EXPRESSION_EXPR_H_ 
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/ResultOf.hxx"
@@ -89,6 +89,34 @@ namespace tfel{
     }; // end of strut ExprBase
 
     /*!
+     * \brief An helper class which defines array-like access operator
+     * by relying on the operator() of the derived class.
+     * \tparam Child : child class
+     */
+    template<typename Child>
+    struct ExprWithArrayAccessOperator
+    {
+      // /*!
+      //  * \brief array like access operator
+      //  * \param[in] i : index
+      //  */ 
+      // auto operator[](const typename Child::size_type i) const
+      // 	-> decltype(std::declval<const Child>()(i))
+      // {
+      // 	return static_cast<const Child&>(this).operator()(i);
+      // }
+      // /*!
+      //  * \brief array like access operator
+      //  * \param[in] i : index
+      //  */ 
+      // auto operator[](const size_type i)
+      // 	-> decltype(std::declval<Child>()(i))
+      // {
+      // 	return static_cast<const Child&>(this).operator()(i);
+      // }
+    }; // end of struct ExprWithArrayAccessOperator
+
+    /*!
      * \brief an Expr object allows the lazy evaluation of a mathematical
      * operation.
      * \tparam ResultType : the type of the result of the operation
@@ -104,27 +132,17 @@ namespace tfel{
 			      Expr<ResultType,Operation>>::type,
 	 public Operation
     {
-      typedef typename Operation::RunTimeProperties RunTimeProperties;
+      //! a simple alias
       typedef typename Operation::value_type        value_type;      
-      typedef typename Operation::pointer	    pointer;	    
-      typedef typename Operation::const_pointer     const_pointer; 
-      typedef typename Operation::reference	    reference;	    
-      typedef typename Operation::const_reference   const_reference;
+      //! a simple alias
       typedef typename Operation::size_type 	    size_type;	    
-      typedef typename Operation::difference_type   difference_type;
-
-      explicit TFEL_MATH_INLINE Expr()
-	: Expr()
-      {}
-
-      explicit TFEL_MATH_INLINE Expr(typename Operation::first_arg a_)
-	: Operation(std::forward<typename Operation::first_arg>(a_))
-      {}
-
-      explicit TFEL_MATH_INLINE Expr(typename Operation::first_arg  a_, 
-				     typename Operation::second_arg b_)
-	: Operation(std::forward<typename Operation::first_arg>(a_),
-		    std::forward<typename Operation::second_arg>(b_))
+      /*!
+       * default constructor
+       * \param[in] args : arguments of Operation constructor
+       */
+      template<typename... Args>
+      explicit TFEL_MATH_INLINE Expr(Args&&... args)
+	: Operation(std::forward<Args>(args)...)
       {}
       /*!
        * \brief array like access operator
@@ -136,9 +154,11 @@ namespace tfel{
       operator[](const size_type i) const
       {
 	// may not be defined
+	static_assert(tfel::meta::IsConstCallable<Expr,size_type>::cond,
+		      "Expr is not callable");
 	return Operation::operator()(i);
       }
-      /*
+      /*!
        * \brief array like access operator
        * \param[in] i : index
        * \note This operator is always defined, even tough it might not be
@@ -148,6 +168,9 @@ namespace tfel{
       operator[](const size_type i)
       {
 	// may not be defined
+	static_assert(std::is_same<decltype(Operation::operator()(i)),
+				   value_type&>::value,
+		      "unexpected return value for Operation::operator(size_type)");
 	return Operation::operator()(i);
       }
 
@@ -190,20 +213,6 @@ namespace tfel{
       TFEL_MATH_INLINE Expr(T1 l)
 	: a(l)
       {} // end of Expr
-      /*!
-       * \brief array like access operator
-       * \param[in] i : index
-       * \note This operator is always defined, even tough it might not be
-       * valid
-       */ 
-      value_type
-      operator[](const size_type i) const
-      {
-	// may not be defined, so we add some check
-	static_assert(isUnaryOperationResultTypeValid<typename tfel::meta::ResultOf<argument_storage_type,size_type>::type,Op>::value,
-		      "invalid call to unary operation operator[]");
-	return Op::apply(this->operator()(i));
-      }
       /*!
        * multidimensional access operator
        */
@@ -262,46 +271,17 @@ namespace tfel{
       TFEL_MATH_INLINE Expr(T1 l,T2 r)
 	: a(l),b(r)
       {} // end of Expr
-      // /*!
-      //  * array-like access operator
-      //  */
-      // TFEL_MATH_INLINE
-      // BinaryOperationHandler<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
-      // 			     typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>
-      // operator[](const size_type i) const
-      // {
-      // 	static_assert(isBinaryOperationResultTypeValid<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
-      // 						       typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>::value,
-      // 		      "invalid call to unary operation operator[]");
-      // 	return Op::apply(this->a(i),this->b(i));
-      // }
-      // /*!
-      //  * vector-like access operator
-      //  */
-      // TFEL_MATH_INLINE
-      // BinaryOperationHandler<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
-      // 			     typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>
-      // operator()(const size_type i) const
-      // {
-      // 	static_assert(isBinaryOperationResultTypeValid<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
-      // 						       typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>::value,
-      // 		      "invalid call to unary operation operator()");
-      // 	return Op::apply(this->a(i),this->b(i));
-      // }
-      // /*!
-      //  * matrix-like access operator
-      //  */
-      // TFEL_MATH_INLINE
-      // BinaryOperationHandler<typename tfel::meta::ResultOf<lhs_storage_type,size_type,size_type>::type,
-      // 			     typename tfel::meta::ResultOf<rhs_storage_type,size_type,size_type>::type,Op>
-      // operator()(const size_type i,
-      // 		 const size_type j) const
-      // {
-      // 	static_assert(isBinaryOperationResultTypeValid<typename tfel::meta::ResultOf<lhs_storage_type,size_type,size_type>::type,
-      // 						       typename tfel::meta::ResultOf<rhs_storage_type,size_type,size_type>::type,Op>::value,
-      // 		      "invalid call to unary operation operator()");
-      // 	return Op::apply(this->a(i,j),this->b(i,j));
-      // }
+      /*!
+       * array-like access operator
+       */
+      TFEL_MATH_INLINE value_type
+      operator[](const size_type i) const
+      {
+      	static_assert(isBinaryOperationResultTypeValid<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
+      						       typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>::value,
+      		      "invalid call to unary operation operator[]");
+      	return Op::apply(this->a(i),this->b(i));
+      }
       /*!
        * multi-dimensional operator acces
        */
@@ -366,46 +346,17 @@ namespace tfel{
       TFEL_MATH_INLINE Expr(T1 l,T2 r)
 	: a(l),b(r)
       {} // end of Expr
-      // /*!
-      //  * array-like access operator
-      //  */
-      // TFEL_MATH_INLINE
-      // BinaryOperationHandler<typename std::add_lvalue_reference<lhs_storage_type>::type,
-      // 			     typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>
-      // operator[](const size_type i) const
-      // {
-      // 	static_assert(isBinaryOperationResultTypeValid<typename std::add_lvalue_reference<lhs_storage_type>::type,
-      // 						       typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>::value,
-      // 		      "invalid call");
-      // 	return Op::apply(this->a,this->b(i));
-      // }
-      // /*!
-      //  * vector-like access operator
-      //  */
-      // TFEL_MATH_INLINE
-      // typename ComputeBinaryResult<typename std::add_lvalue_reference<lhs_storage_type>::type,
-      // 				   typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>::Handle
-      // operator()(const size_type i) const
-      // {
-      // 	static_assert(isBinaryOperationResultTypeValid<typename std::add_lvalue_reference<lhs_storage_type>::type,
-      // 						       typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>::value,
-      // 		      "invalid call");
-      // 	return Op::apply(this->a,this->b(i));
-      // }
-      // /*!
-      //  * matrix-like access operator
-      //  */
-      // TFEL_MATH_INLINE
-      // typename ComputeBinaryResult<typename std::add_lvalue_reference<lhs_storage_type>::type,
-      // 				   typename tfel::meta::ResultOf<rhs_storage_type,size_type,size_type>::type,Op>::Handle
-      // operator()(const size_type i,
-      // 		 const size_type j) const
-      // {
-      // 	static_assert(isBinaryOperationResultTypeValid<typename std::add_lvalue_reference<lhs_storage_type>::type,
-      // 						       typename tfel::meta::ResultOf<rhs_storage_type,size_type,size_type>::type,Op>::value,
-      // 		      "invalid call");
-      // 	return Op::apply(this->a,this->b(i,j));
-      // }
+      /*!
+       * array-like access operator
+       */
+      TFEL_MATH_INLINE value_type
+      operator[](const size_type i) const
+      {
+      	static_assert(isBinaryOperationResultTypeValid<typename std::add_lvalue_reference<lhs_storage_type>::type,
+      						       typename tfel::meta::ResultOf<rhs_storage_type,size_type>::type,Op>::value,
+      		      "invalid call");
+      	return Op::apply(this->a,this->b(i));
+      }
       /*!
        * multi-dimensional operator acces
        */
@@ -468,46 +419,17 @@ namespace tfel{
       TFEL_MATH_INLINE Expr(T1 l,T2 r)
 	: a(l),b(r)
       {} // end of Expr
-      // /*!
-      //  * array-like access operator
-      //  */
-      // TFEL_MATH_INLINE
-      // typename ComputeBinaryResult<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
-      // 				   typename std::add_lvalue_reference<rhs_storage_type>::type,Op>::Handle
-      // operator[](const size_type i) const
-      // {
-      // 	static_assert(isBinaryOperationResultTypeValid<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
-      // 						       typename std::add_lvalue_reference<rhs_storage_type>::type,Op>::value,
-      // 		      "invalid call");      				   
-      // 	return Op::apply(this->a(i),this->b);
-      // }
-      // /*!
-      //  * vector-like access operator
-      //  */
-      // TFEL_MATH_INLINE
-      // typename ComputeBinaryResult<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
-      // 				   typename std::add_lvalue_reference<rhs_storage_type>::type,Op>::Handle
-      // operator()(const size_type i) const
-      // {
-      // 	static_assert(isBinaryOperationResultTypeValid<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
-      // 						       typename std::add_lvalue_reference<rhs_storage_type>::type,Op>::value,
-      // 		      "invalid call");
-      // 	return Op::apply(this->a(i),this->b);
-      // }
-      // /*!
-      //  * matrix-like access operator
-      //  */
-      // TFEL_MATH_INLINE
-      // typename ComputeBinaryResult<typename tfel::meta::ResultOf<lhs_storage_type,size_type,size_type>::type,
-      // 				   typename std::add_lvalue_reference<rhs_storage_type>::type,Op>::Handle
-      // operator()(const size_type i,
-      // 		 const size_type j) const
-      // {
-      // 	static_assert(isBinaryOperationResultTypeValid<typename tfel::meta::ResultOf<lhs_storage_type,size_type,size_type>::type,
-      // 						       typename std::add_lvalue_reference<rhs_storage_type>::type,Op>::value,
-      // 		      "invalid call");
-      // 	return Op::apply(this->a(i,j),this->b);
-      // }
+      /*!
+       * array-like access operator
+       */
+      TFEL_MATH_INLINE value_type
+      operator[](const size_type i) const
+      {
+      	static_assert(isBinaryOperationResultTypeValid<typename tfel::meta::ResultOf<lhs_storage_type,size_type>::type,
+      						       typename std::add_lvalue_reference<rhs_storage_type>::type,Op>::value,
+      		      "invalid call");      				   
+      	return Op::apply(this->a(i),this->b);
+      }
       /*!
        * multi-dimensional operator acces
        */
@@ -590,5 +512,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_EXPRESSION_EXPR_H */
+#endif /* LIB_TFEL_MATH_EXPRESSION_EXPR_H_ */
 

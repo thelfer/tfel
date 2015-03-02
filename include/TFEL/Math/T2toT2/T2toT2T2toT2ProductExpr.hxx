@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_H_
-#define _LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_H_ 
+#ifndef LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_H_
+#define LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -318,4 +318,4 @@ this->v[80]=a(8,0)*b(0,8)+a(8,1)*b(1,8)+a(8,2)*b(2,8)+a(8,3)*b(3,8)+a(8,4)*b(4,8
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_H */
+#endif /* LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_H_ */

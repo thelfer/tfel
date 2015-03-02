@@ -9,8 +9,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _VECTOR_CONCEPT_IMPL_
-#define _VECTOR_CONCEPT_IMPL_ 1
+#ifndef VECTOR_CONCEPT_IMPL_
+#define VECTOR_CONCEPT_IMPL_ 1
 
 namespace tfel{
 
@@ -34,4 +34,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _VECTOR_CONCEPT_IMPL_ */
+#endif /* VECTOR_CONCEPT_IMPL_ */

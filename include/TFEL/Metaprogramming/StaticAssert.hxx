@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_STATICASSERT_H_
-#define _LIB_TFEL_STATICASSERT_H_ 
+#ifndef LIB_TFEL_STATICASSERT_H_
+#define LIB_TFEL_STATICASSERT_H_ 
 
 #include"TFEL/Macros.hxx"
 #include"TFEL/Config/TFELConfig.hxx"
@@ -90,7 +90,7 @@ namespace tfel{
   static_assert(x,#x)
 #else
 #define TFEL_STATIC_ASSERT(x)
-#endif
+#endif /* LIB_TFEL_STATICASSERT_H_ */
 
-#endif /* _LIB_TFEL_STATICASSERT_H */
+#endif /* LIB_TFEL_STATICASSERT_H_ */
 

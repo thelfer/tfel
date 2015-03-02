@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTMODELPARSERCOMMON_H_
-#define _LIB_MFRONTMODELPARSERCOMMON_H_ 
+#ifndef LIB_MFRONTMODELPARSERCOMMON_H_
+#define LIB_MFRONTMODELPARSERCOMMON_H_ 
 
 #include<vector>
 #include<map>
@@ -193,5 +193,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTMODELPARSERCOMMON_H */
+#endif /* LIB_MFRONTMODELPARSERCOMMON_H_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMAT_UMATINTERFACEDISPATCH_H_
-#define _LIB_MFRONT_UMAT_UMATINTERFACEDISPATCH_H_ 
+#ifndef LIB_MFRONT_UMAT_UMATINTERFACEDISPATCH_H_
+#define LIB_MFRONT_UMAT_UMATINTERFACEDISPATCH_H_ 
 
 #include<type_traits>
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
@@ -282,4 +282,4 @@ namespace umat{
 
 } // end of namespace umat
 
-#endif /* _LIBMFRONT_UMAT_UMATINTERFACEDISPATCH_H */
+#endif /* LIB_MFRONT_UMAT_UMATINTERFACEDISPATCH_H_ */

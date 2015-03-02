@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTGERMINALMODELINTERFACE_H_
-#define _LIB_MFRONTGERMINALMODELINTERFACE_H_ 
+#ifndef LIB_MFRONTGERMINALMODELINTERFACE_HXX
+#define LIB_MFRONTGERMINALMODELINTERFACE_HXX 
 
 #include"MFront/MFrontPleiadesModelInterfaceBase.hxx"
 
@@ -60,5 +60,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* _LIB_MFRONTGERMINALMODELINTERFACE_H */
+#endif /* LIB_MFRONTGERMINALMODELINTERFACE_HXX */
 

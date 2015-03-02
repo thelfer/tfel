@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONTCASTEMLAWINTERFACE_H_
-#define _LIB_MFRONTCASTEMLAWINTERFACE_H_ 
+#ifndef LIB_MFRONTCASTEMLAWINTERFACE_H_
+#define LIB_MFRONTCASTEMLAWINTERFACE_H_ 
 
 #include<string>
 #include<fstream>
@@ -234,4 +234,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONTCASTEMLAWINTERFACE_H */
+#endif /* LIB_MFRONTCASTEMLAWINTERFACE_H_ */

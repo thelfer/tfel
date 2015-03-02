@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _RUNGE_KUTTA4_I_
-#define _RUNGE_KUTTA4_I_ 1
+#ifndef RUNGE_KUTTA4_I_
+#define RUNGE_KUTTA4_I_ 1
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -103,4 +103,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _RUNGE_KUTTA4_I_ */
+#endif /* RUNGE_KUTTA4_I_ */

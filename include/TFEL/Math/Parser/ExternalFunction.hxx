@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_PARSER_EXTERNALFUNCTION_HXX_
-#define _LIB_TFEL_MATH_PARSER_EXTERNALFUNCTION_HXX_ 
+#ifndef LIB_TFEL_MATH_PARSER_EXTERNALFUNCTION_HXX_
+#define LIB_TFEL_MATH_PARSER_EXTERNALFUNCTION_HXX_ 
 
 #include<set>
 #include<map>
@@ -71,4 +71,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_PARSER_EVALUATOR_HXX */
+#endif /* LIB_TFEL_MATH_PARSER_EXTERNALFUNCTION_HXX_ */

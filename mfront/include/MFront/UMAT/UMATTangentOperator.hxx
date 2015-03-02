@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMATTANGENTOPERATOR_H_
-#define _LIB_MFRONT_UMATTANGENTOPERATOR_H_ 
+#ifndef LIB_MFRONT_UMATTANGENTOPERATOR_H_
+#define LIB_MFRONT_UMATTANGENTOPERATOR_H_ 
 
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/t2tost2.hxx"
@@ -152,5 +152,5 @@ namespace umat
 } // end of namespace umat
 
 
-#endif /* _LIB_MFRONT_UMATTANGENTOPERATOR_H */
+#endif /* LIB_MFRONT_UMATTANGENTOPERATOR_H_ */
 

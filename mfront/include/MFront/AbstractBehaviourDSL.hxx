@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX_
-#define _LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX_ 
+#ifndef LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX_
+#define LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -67,5 +67,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX */
+#endif /* LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX_ */
 

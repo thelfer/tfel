@@ -11,17 +11,17 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H_
-#define _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H_ 
+#ifndef LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H_
+#define LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H_ 
 
 #include<algorithm>
 
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/tvector.hxx"
 
-#ifndef _LIB_MFRONT_UMAT_CALL_H_
+#ifndef LIB_MFRONT_UMAT_CALL_HXX
 #error "This header shall not be called directly"
-#endif
+#endif /* LIB_MFRONT_UMAT_CALL_HXX */
 
 namespace umat
 {
@@ -330,5 +330,5 @@ namespace umat
 
 } // end of namespace umat
 
-#endif /* _LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H */
+#endif /* LIB_MFRONT_UMAT_UMATGENERICPLANESTRESSHANDLER_H_ */
 

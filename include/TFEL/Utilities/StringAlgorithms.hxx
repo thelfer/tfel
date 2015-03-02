@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_UTILITIES_STRINGALGORITHMS_H_
-#define _LIB_TFEL_UTILITIES_STRINGALGORITHMS_H_ 
+#ifndef LIB_TFEL_UTILITIES_STRINGALGORITHMS_H_
+#define LIB_TFEL_UTILITIES_STRINGALGORITHMS_H_ 
 
 #include<vector>
 #include<string>
@@ -78,5 +78,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_UTILITIES_STRINGALGORITHMS_H */
+#endif /* LIB_TFEL_UTILITIES_STRINGALGORITHMS_H_ */
 

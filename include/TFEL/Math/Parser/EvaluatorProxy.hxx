@@ -6,8 +6,8 @@
 * \date   13 jan 2009
 */
 
-#ifndef _LIB_TFEL_MATH_EVALUATORPROXY_HXX_
-#define _LIB_TFEL_MATH_EVALUATORPROXY_HXX_ 
+#ifndef LIB_TFEL_MATH_EVALUATORPROXY_HXX_
+#define LIB_TFEL_MATH_EVALUATORPROXY_HXX_ 
 
 #include"TFEL/Math/Parser/EvaluatorFunction.hxx"
 #include"TFEL/Math/Evaluator.hxx"
@@ -128,7 +128,7 @@ namespace tfel
 
 #include"TFEL/Math/Parser/EvaluatorProxy.ixx"
 
-#endif /* _LIB_TFEL_MATH_EVALUATORPROXY_HXX_ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+#endif /* LIB_TFEL_MATH_EVALUATORPROXY_HXX_ */
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 

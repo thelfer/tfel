@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _TFEL_MATH_T2TOST2_CONCEPT_LIB_
-#define _TFEL_MATH_T2TOST2_CONCEPT_LIB_ 1
+#ifndef TFEL_MATH_T2TOST2_CONCEPT_LIB_
+#define TFEL_MATH_T2TOST2_CONCEPT_LIB_ 1
 
 #include<type_traits>
 
@@ -262,4 +262,4 @@ namespace tfel{
 
 #include"TFEL/Math/T2toST2/T2toST2Concept.ixx"
 
-#endif /* _LIB_TFEL_MATH_T2TOST2_CONCEPT_LIB_ */
+#endif /* TFEL_MATH_T2TOST2_CONCEPT_LIB_ */

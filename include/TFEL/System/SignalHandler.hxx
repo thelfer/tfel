@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_SIGNALHANDLER_HXX_
-#define _LIB_TFEL_SIGNALHANDLER_HXX_ 
+#ifndef LIB_TFEL_SIGNALHANDLER_HXX_
+#define LIB_TFEL_SIGNALHANDLER_HXX_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -66,5 +66,5 @@ namespace tfel
 
 #include"TFEL/System/SignalHandler.ixx"
 
-#endif /* _LIB_TFEL_SIGNALHANDLER_HXX */
+#endif /* LIB_TFEL_SIGNALHANDLER_HXX_ */
 

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_CXXTOKENIZER_HXX_
-#define _LIB_TFEL_CXXTOKENIZER_HXX_ 
+#ifndef LIB_TFEL_CXXTOKENIZER_HXX_
+#define LIB_TFEL_CXXTOKENIZER_HXX_ 
 
 #include<map>
 #include<list>
@@ -324,4 +324,4 @@ namespace tfel{
 
 #include"TFEL/Utilities/CxxTokenizer.ixx"
 
-#endif /* _LIB_TFEL_CXXTOKENIZER_HXX */
+#endif /* LIB_TFEL_CXXTOKENIZER_HXX_ */

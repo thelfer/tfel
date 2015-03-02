@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_FORWARD_ST2TOT2_H_
-#define _LIB_TFEL_MATH_FORWARD_ST2TOT2_H_ 
+#ifndef LIB_TFEL_MATH_FORWARD_ST2TOT2_H_
+#define LIB_TFEL_MATH_FORWARD_ST2TOT2_H_ 
 
 namespace tfel{
   
@@ -35,5 +35,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_FORWARD_ST2TOT2_H */
+#endif /* LIB_TFEL_MATH_FORWARD_ST2TOT2_H_ */
 

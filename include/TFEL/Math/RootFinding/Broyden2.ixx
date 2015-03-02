@@ -12,12 +12,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_BROYDEN2_IXX_
-#define _LIB_TFEL_BROYDEN2_IXX_ 
+#ifndef LIB_TFEL_BROYDEN2_IXX_
+#define LIB_TFEL_BROYDEN2_IXX_ 
 
 #ifdef TFEL_BROYDEN2_VERBOSE_MODE
 #include<iostream>
-#endif /* TFEL_BROYDEN2_VERBOSE_MODE */
+#endif /* LIB_TFEL_BROYDEN2_IXX_ */
 
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -54,7 +54,7 @@ namespace tfel
 	std::cout << "x         : " << x        << std::endl;	
 	std::cout << "||f||     : " << norm(vf) << std::endl;	
 	std::cout << "A         : " << A        << std::endl;	
-#endif /* TFEL_BROYDEN2_VERBOSE_MODE */
+#endif /* LIB_TFEL_BROYDEN2_IXX_ */
 	s   = -A*vf;
 	x  += s;
 	vf2 = vf;
@@ -89,5 +89,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_BROYDEN2_IXX */
+#endif /* LIB_TFEL_BROYDEN2_IXX_ */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_SCALAROBJECTRANDOMACCESSCONSTITERATOR_H_
-#define _LIB_TFEL_SCALAROBJECTRANDOMACCESSCONSTITERATOR_H_ 
+#ifndef LIB_TFEL_SCALAROBJECTRANDOMACCESSCONSTITERATOR_H_
+#define LIB_TFEL_SCALAROBJECTRANDOMACCESSCONSTITERATOR_H_ 
 
 #include<iterator>
 
@@ -303,5 +303,5 @@ namespace tfel{
 
 #include"TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hxx"
 
-#endif /* _LIB_TFEL_SCALAROBJECTRANDOMACCESSCONSTITERATOR_H */
+#endif /* LIB_TFEL_SCALAROBJECTRANDOMACCESSCONSTITERATOR_H_ */
 

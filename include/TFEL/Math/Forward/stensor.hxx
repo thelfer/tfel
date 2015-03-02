@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_FORWARD_STENSOR_H_
-#define _LIB_TFEL_MATH_FORWARD_STENSOR_H_ 
+#ifndef LIB_TFEL_MATH_FORWARD_STENSOR_H_
+#define LIB_TFEL_MATH_FORWARD_STENSOR_H_ 
 
 namespace tfel
 {
@@ -22,7 +22,7 @@ namespace tfel
   {
 
     template<class T>
-    class StensorConcept ;
+    struct StensorConcept ;
 
     template<class T>
     struct StensorTraits;
@@ -42,5 +42,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_FORWARD_STENSOR_H */
+#endif /* LIB_TFEL_MATH_FORWARD_STENSOR_H_ */
 
