@@ -17,13 +17,13 @@
 
 #include<string>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 namespace mfront
 {
 
-  struct TFEL_VISIBILITY_EXPORT InterfaceBase
+  struct MFRONT_VISIBILITY_EXPORT InterfaceBase
   {
 
   protected :

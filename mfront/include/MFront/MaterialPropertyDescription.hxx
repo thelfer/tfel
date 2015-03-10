@@ -29,13 +29,15 @@ namespace mfront
   /*!
    * structure describing a material property
    */
-  struct TFEL_VISIBILITY_EXPORT MaterialPropertyDescription
+  struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDescription
   {
     /*!
      * \return the external names of each input variables.
      */
     std::vector<std::string>
     getInputVariablesExternalNames(void);
+    //! destructor
+    ~MaterialPropertyDescription();
     /*!
      * body of the material property
      */

@@ -9,7 +9,7 @@
 @MaterialProperty real E;
 
 @FlowRule{
-  const real tmp = A*pow(seq,E-1.);
+  const real tmp = A*pow(seq,E-1);
   f       = tmp*seq;
   df_dseq = E*tmp;
 }

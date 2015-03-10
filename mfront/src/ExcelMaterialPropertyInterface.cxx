@@ -108,25 +108,33 @@ namespace mfront
   {
     using namespace std;
     return map<string,vector<string> >();
-  } // end of ExcelMaterialPropertyInterface::getGeneratedSources
+  } // end of ExcelMaterialPropertyInterface::getGlobalDependencies
 
   std::map<std::string,std::vector<std::string> >
   ExcelMaterialPropertyInterface::getGlobalIncludes(const std::string&,
-					     const std::string&,
-					     const std::string&)
+						    const std::string&,
+						    const std::string&)
+  {
+    using namespace std;
+    return map<string,vector<string> >();
+  } // end of ExcelMaterialPropertyInterface::getGlobalIncludes
+
+  std::map<std::string,std::vector<std::string> >
+  ExcelMaterialPropertyInterface::getGeneratedSources(const std::string&,
+						      const std::string&,
+						      const std::string&)
   {
     using namespace std;
     return map<string,vector<string> >();
   } // end of ExcelMaterialPropertyInterface::getGeneratedSources
 
   std::map<std::string,std::vector<std::string> >
-  ExcelMaterialPropertyInterface::getGeneratedSources(const std::string&,
-					       const std::string&,
-					       const std::string&)
+  ExcelMaterialPropertyInterface::getGeneratedEntryPoints(const std::string&,
+							  const std::string&,
+							  const std::string&)
   {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of ExcelMaterialPropertyInterface::getGeneratedSources
+    return {};
+  } // end of ExcelMaterialPropertyInterface::getGeneratedEntryPoints
 
   std::vector<std::string>
   ExcelMaterialPropertyInterface::getGeneratedIncludes(const std::string&,

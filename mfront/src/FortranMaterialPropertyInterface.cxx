@@ -87,14 +87,26 @@ namespace mfront
   std::map<std::string,
 	   std::pair<std::vector<std::string>,
 		     std::vector<std::string> > >
-    FortranMaterialPropertyInterface::getSpecificTargets(const std::string&,
-						  const std::string&,
-						  const std::string&,
-						  const std::vector<std::string>&)
+  FortranMaterialPropertyInterface::getSpecificTargets(const std::string&,
+						       const std::string&,
+						       const std::string&,
+						       const std::vector<std::string>&)
   {
     using namespace std;
     return map<string,pair<vector<string>,vector<string> > >();
   } // end of FortranMaterialPropertyInterface::getSpecificTargets
+
+  std::map<std::string,std::vector<std::string> >
+  FortranMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
+							    const std::string& material,
+							    const std::string& className){
+    using namespace std;
+    auto epts = map<string,vector<string>>{};
+    const auto f = makeLowerCase(material.empty() ? className : material+"_"+className);
+    const auto l = "libFortran"+getMaterialLawLibraryNameBase(library,material);
+    epts[l] = {f,f+"_checkBounds"};
+    return epts;
+  } // end of FortranMaterialPropertyInterface::getGeneratedEntryPoints
 
   std::string
   FortranMaterialPropertyInterface::getHeaderFileName(const std::string&,

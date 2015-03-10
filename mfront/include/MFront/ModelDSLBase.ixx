@@ -66,20 +66,10 @@ namespace mfront{
     }
   } // end of ModelDSLBase<Child>::getKeywordsList
 
-
   template<typename Child>
   void
-  ModelDSLBase<Child>::treatFile(const std::string& fileName_,
-					  const std::vector<std::string>& ecmds) 
-  {
-    this->analyseFile(fileName_,ecmds);
-    this->writeOutputFiles();
-  } // end of Child::treatFile
-
-  template<typename Child>
-  void
-  ModelDSLBase<Child>::analyseFile(const std::string& fileName_,
-						const std::vector<std::string>& ecmds)
+  ModelDSLBase<Child>::importFile(const std::string& fileName_,
+				   const std::vector<std::string>& ecmds)
   {
     using namespace std;
     typename CallBackContainer::const_iterator p;
@@ -157,6 +147,14 @@ namespace mfront{
       this->currentComment.clear();
     }
   } // end of ModelDSLBase<Child>::analyseFile
+
+  template<typename Child>
+  void
+  ModelDSLBase<Child>::analyseFile(const std::string& fileName_,
+				   const std::vector<std::string>& ecmds)
+  {
+    this->importFile(fileName_,ecmds);
+  }
 
   template<typename Child>
   void ModelDSLBase<Child>::registerNewCallBack(const std::string& keyword,

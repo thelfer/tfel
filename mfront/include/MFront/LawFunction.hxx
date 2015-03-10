@@ -15,12 +15,12 @@
 #define LIB_LAWFUNCTION_H_ 
 
 #include<string>
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
 
-  struct TFEL_VISIBILITY_EXPORT LawFunction
+  struct MFRONT_VISIBILITY_EXPORT LawFunction
   {
     LawFunction() = default;
     LawFunction(LawFunction&&) = default;

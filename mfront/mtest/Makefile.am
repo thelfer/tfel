@@ -41,10 +41,11 @@ if TFEL_WIN
 libTFELMTest_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 
-mtest_LDADD = -L$(top_builddir)/mfront/mtest                 \
-	      -L$(top_builddir)/mfront/src -lMFrontLogStream \
-	      -L$(top_builddir)/src/System    -lTFELSystem   \
-	      -L$(top_builddir)/src/Tests     -lTFELTests    \
+mtest_LDADD = -L$(top_builddir)/mfront/mtest                  \
+	      -L$(top_builddir)/mfront/src -lMFrontLogStream  \
+	      -L$(top_builddir)/src/Utilities -lTFELUtilities \
+	      -L$(top_builddir)/src/System    -lTFELSystem    \
+	      -L$(top_builddir)/src/Tests     -lTFELTests     \
 	      -lTFELMTest
 
 mtest_DEPENDENCIES = libTFELMTest.la

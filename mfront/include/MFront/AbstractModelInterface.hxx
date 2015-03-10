@@ -20,7 +20,7 @@
 #include<string>
 #include<vector>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/ModelData.hxx"
@@ -28,7 +28,7 @@
 
 namespace mfront{
   
-  struct TFEL_VISIBILITY_EXPORT AbstractModelInterface
+  struct MFRONT_VISIBILITY_EXPORT AbstractModelInterface
   {
 
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
@@ -79,7 +79,13 @@ namespace mfront{
      */
     virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const ModelData&) = 0;
-
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const ModelData&) const = 0;
+    //! desctructor
     virtual ~AbstractModelInterface();
 
   }; // end of AbstractModelInterface

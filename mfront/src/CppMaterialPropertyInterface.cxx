@@ -124,16 +124,35 @@ namespace mfront
     return map<string,pair<vector<string>,vector<string> > >();
   } // end of CppMaterialPropertyInterface::getSpecificTargets
 
+  std::map<std::string,std::vector<std::string> >
+  CppMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
+							const std::string& material,
+							const std::string& className)
+  {
+    using namespace std;
+    const auto name = (!material.empty()) ? material+"_"+className : className;
+    auto cn = string{};
+#warning "HERE"
+    // for(const auto& ns : this->namespaces){
+    //   cc += ns + "::"
+    // }
+    cn += name;    
+    auto r = map<string,vector<string>>{};
+    const auto l = "libCpp"+getMaterialLawLibraryNameBase(library,material);
+    r[l].push_back(cn);
+    return r;
+  }
+
   void
   CppMaterialPropertyInterface::writeOutputFiles(const std::string& file,
-					  const std::string& ,
-					  const std::string& material,
-					  const std::string& className,
-					  const std::string& author,
-					  const std::string& date,
-					  const std::string& description,
-					  const std::string& includes,
-					  const std::string& output,
+						 const std::string& ,
+						 const std::string& material,
+						 const std::string& className,
+						 const std::string& author,
+						 const std::string& date,
+						 const std::string& description,
+						 const std::string& includes,
+						 const std::string& output,
 					  const VariableDescriptionContainer& inputs,
 					  const std::vector<std::string>& materialLaws,
 					  const std::map<std::string,std::string>&,

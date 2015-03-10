@@ -44,22 +44,29 @@ namespace mfront{
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const BehaviourDescription&) const;
+    getGlobalIncludes(const BehaviourDescription&) const override;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const BehaviourDescription&) const;
+    getGeneratedSources(const BehaviourDescription&) const override;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::vector<std::string>
-    getGeneratedIncludes(const BehaviourDescription&) const;
+    getGeneratedIncludes(const BehaviourDescription&) const override;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const BehaviourDescription&) const;
+    getLibrariesDependencies(const BehaviourDescription&) const override;
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     * \param[in] mb : mechanical behaviour description
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const BehaviourDescription&) const override;
     /*!
      * write interface specific includes
      * \param[in] out : output file
@@ -67,12 +74,12 @@ namespace mfront{
      */
     virtual void 
     writeInterfaceSpecificIncludes(std::ofstream&,
-				   const BehaviourDescription&) const;
+				   const BehaviourDescription&) const override;
     
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
+		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
@@ -80,17 +87,16 @@ namespace mfront{
      */
     virtual void
     endTreatement(const BehaviourDescription&,
-		  const FileDescription&) const;
+		  const FileDescription&) const override;
     /*!
      * \brief write output files
      * \param[in] mb : mechanical behaviour description
      * \param[in] fd : mfront file description
      * \param[in] h  : modelling hypothesis
      */
-    virtual void
-    reset(void);
+    virtual void reset(void);
 
-    ~CyranoInterface();
+    virtual ~CyranoInterface();
     
   protected:
 

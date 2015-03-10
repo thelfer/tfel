@@ -18,16 +18,16 @@
 #include<string>
 #include<map>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 
 #include"MFront/AbstractDSL.hxx"
 #include"MFront/DefaultDSL.hxx"
 
 namespace mfront{
 
-  struct TFEL_VISIBILITY_EXPORT DSLFactory
+  struct MFRONT_VISIBILITY_EXPORT DSLFactory
   {
-    typedef AbstractDSL* (*ParserCreator)(void);
+    typedef std::shared_ptr<AbstractDSL> (*ParserCreator)(void);
     typedef std::string (*DescriptionPtr)(void);
     
     static DSLFactory&
@@ -40,7 +40,7 @@ namespace mfront{
 			       ParserCreator,
 			       DescriptionPtr);
     
-    AbstractDSL*
+    std::shared_ptr<AbstractDSL>
     createNewParser(const std::string& = DefaultDSL::getName());
 
     std::string

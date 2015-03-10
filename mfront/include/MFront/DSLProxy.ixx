@@ -39,10 +39,10 @@ namespace mfront{
 
 
   template<typename DSLType>
-  AbstractDSL* 
+  std::shared_ptr<AbstractDSL>
   DSLProxy<DSLType>::createParser()
   {
-    return new DSLType;
+    return std::make_shared<DSLType>();
   }
 
 } // end of namespace mfront

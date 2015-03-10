@@ -11,142 +11,147 @@ endif
 INCLUDES += $(CASTEM_CPPFLAGS)
 endif
 
-bin_PROGRAMS = mfront
-mfront_SOURCES = main.cxx                                               \
-		 MFront.cxx                                             \
-		 CodeBlock.cxx                                          \
-		 FiniteStrainBehaviourTangentOperatorConversion.cxx     \
-		 FiniteStrainBehaviourTangentOperatorConversionPath.cxx \
-	 	 MFrontDebugMode.cxx                                    \
-	 	 PedanticMode.cxx                                       \
-		 MFrontLock.cxx                                         \
-		 InitAnalysers.cxx                                      \
-		 InitInterfaces.cxx                                     \
-		 InitDSLs.cxx                                           \
-		 DSLFactory.cxx                                         \
-		 DrivingVariable.cxx                                    \
-		 ThermodynamicForce.cxx                                 \
-		 LawFunction.cxx                                        \
-		 MaterialPropertyDescription.cxx                        \
-		 BehaviourData.cxx                                      \
-		 BehaviourDescription.cxx                               \
-		 BoundsDescription.cxx                                  \
-		 VariableDescription.cxx                                \
-		 StaticVariableDescription.cxx                          \
-		 VariableBoundsDescription.cxx                          \
-		 BehaviourDSLCommon.cxx                                 \
-		 ModelData.cxx                                          \
-		 ModelDSLCommon.cxx                                     \
-		 AbstractDSL.cxx                                        \
-		 AbstractBehaviourDSL.cxx                               \
-		 AbstractBehaviourInterface.cxx                         \
-		 AbstractMaterialPropertyInterface.cxx                  \
-		 AbstractModelInterface.cxx                             \
-		 BehaviourAnalyser.cxx                                  \
-		 SupportedTypes.cxx                                     \
-		 MFrontHeader.cxx                                       \
-		 DSLBase.cxx                                            \
-		 InterfaceBase.cxx                                      \
-		 DSLUtilities.cxx                                       \
-		 SearchFile.cxx                                         \
-		 MaterialPropertyInterfaceFactory.cxx                   \
-		 BehaviourInterfaceFactory.cxx                          \
-		 BehaviourAnalyserFactory.cxx                           \
-		 ModelInterfaceFactory.cxx                              \
-		 DefaultDSLBase.cxx                                     \
-		 DefaultDSL.cxx                                         \
-		 DefaultCZMDSL.cxx                                      \
-		 DefaultFiniteStrainDSL.cxx                             \
-		 ModelDSL.cxx                                           \
-		 MaterialPropertyDSL.cxx                                \
-		 IsotropicMisesCreepDSL.cxx                             \
-		 IsotropicStrainHardeningMisesCreepDSL.cxx              \
-		 IsotropicMisesPlasticFlowDSL.cxx                       \
-		 RungeKuttaDSL.cxx                                      \
-		 ImplicitDSLBase.cxx                                    \
-		 ImplicitDSL.cxx                                        \
-		 ImplicitDSLII.cxx                                      \
-		 ImplicitFiniteStrainDSL.cxx                            \
-		 NonLinearSystemSolver.cxx                              \
-		 NonLinearSystemSolverBase.cxx                          \
-		 NonLinearSystemSolverFactory.cxx                       \
-		 PowellDogLegAlgorithmBase.cxx                          \
-		 NewtonRaphsonSolvers.cxx                               \
-		 BroydenSolvers.cxx		      		        \
-		 SecondBroydenSolver.cxx			        \
-		 LevenbergMarquardtSolvers.cxx			        \
-		 PerformanceProfiling.cxx                               \
-		 MultipleIsotropicMisesFlowsDSL.cxx                     \
-		 IsotropicBehaviourDSLBase.cxx                          \
-		 MFrontMaterialPropertyInterface.cxx                    \
-		 CMaterialPropertyInterfaceBase.cxx                     \
-		 CMaterialPropertyInterface.cxx                         \
-		 CppMaterialPropertyInterface.cxx                       \
-		 CppTestMaterialPropertyInterface.cxx                   \
-		 ExcelMaterialPropertyInterface.cxx                     \
-		 ExcelMaterialPropertyInternalInterface.cxx             \
-		 LaTeXMaterialPropertyInterface.cxx                     \
-		 LaTeXBehaviourAnalyser.cxx                             \
-		 MarkdownBehaviourAnalyser.cxx                          \
-		 BehaviourBrick.cxx                                     \
-		 BehaviourBrickBase.cxx                                 \
-		 ElasticityBehaviourBrick.cxx                           \
-		 BehaviourBrickFactory.cxx                              \
-		 UMATInterfaceBase.cxx
-
-
-if HAVE_GNUPLOT
-mfront_SOURCES += GnuplotMaterialPropertyInterface.cxx
-endif
-
-if HAVE_FORTRAN
-mfront_SOURCES += FortranMaterialPropertyInterface.cxx
-endif
-
-if HAVE_PYTHON
-mfront_SOURCES += PythonMaterialPropertyInterface.cxx
-endif
-
-if HAVE_CASTEM
-mfront_SOURCES += UMATInterface.cxx      \
-		  CastemMaterialPropertyInterface.cxx
-endif
-
-if HAVE_ASTER
-mfront_SOURCES += AsterInterface.cxx
-endif
-
-if HAVE_ZMAT
-mfront_SOURCES += ZMATInterface.cxx
-endif
-
-if HAVE_CYRANO
-mfront_SOURCES += CyranoInterface.cxx
-endif
-
-mfront_LDADD   = -L$(top_builddir)/mfront/src    -lMFrontLogStream \
-	   	 -L$(top_builddir)/src/Material  -lTFELMaterial    \
-		 -L$(top_builddir)/src/Math      -lTFELMathParser  \
-		 -L$(top_builddir)/src/System    -lTFELSystem      \
-		 -L$(top_builddir)/src/Glossary  -lTFELGlossary    \
-		 -L$(top_builddir)/src/Utilities -lTFELUtilities   \
-		 -L$(top_builddir)/src/Exception -lTFELException
-
-if !TFEL_WIN
-mfront_LDADD   +=  -lpthread
-if TFEL_LINUX
-mfront_LDADD   +=  -ldl
-endif
-mfront_LDFLAGS  = -export-dynamic
-endif # !TFEL_WIN
-
-lib_LTLIBRARIES = libMFrontLogStream.la libMTestFileGenerator.la
+bin_PROGRAMS = mfront mfront-query
+lib_LTLIBRARIES = libMFrontLogStream.la libTFELMFront.la libMTestFileGenerator.la
 
 libMFrontLogStream_la_SOURCES  = MFrontLogStream.cxx
 libMFrontLogStream_la_CPPFLAGS = -DMFrontLogStream_EXPORTS
 if TFEL_WIN
 libMFrontLogStream_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
+
+libTFELMFront_la_SOURCES = MFrontBase.cxx                                         \
+			   MFrontExecutableName.cxx                               \
+		           FileDescription.cxx                                    \
+		           CodeBlock.cxx                                          \
+		           FiniteStrainBehaviourTangentOperatorConversion.cxx     \
+		           FiniteStrainBehaviourTangentOperatorConversionPath.cxx \
+		           MFrontDebugMode.cxx                                    \
+		           PedanticMode.cxx                                       \
+		           MFrontLock.cxx                                         \
+		           InitAnalysers.cxx                                      \
+		           InitInterfaces.cxx                                     \
+		           InitDSLs.cxx                                           \
+		           DSLFactory.cxx                                         \
+		           DrivingVariable.cxx                                    \
+		           ThermodynamicForce.cxx                                 \
+		           LawFunction.cxx                                        \
+		           MaterialPropertyDescription.cxx                        \
+		           BehaviourData.cxx                                      \
+		           BehaviourDescription.cxx                               \
+		           BoundsDescription.cxx                                  \
+		           VariableDescription.cxx                                \
+		           StaticVariableDescription.cxx                          \
+		           VariableBoundsDescription.cxx                          \
+		           BehaviourDSLCommon.cxx                                 \
+		           ModelData.cxx                                          \
+		           ModelDSLCommon.cxx                                     \
+		           AbstractDSL.cxx                                        \
+		           AbstractBehaviourDSL.cxx                               \
+		           AbstractBehaviourInterface.cxx                         \
+		           AbstractMaterialPropertyInterface.cxx                  \
+		           AbstractModelInterface.cxx                             \
+		           BehaviourAnalyser.cxx                                  \
+		           SupportedTypes.cxx                                     \
+		           MFrontHeader.cxx                                       \
+		           DSLBase.cxx                                            \
+		           InterfaceBase.cxx                                      \
+		           DSLUtilities.cxx                                       \
+		           SearchFile.cxx                                         \
+		           MaterialPropertyInterfaceFactory.cxx                   \
+		           BehaviourInterfaceFactory.cxx                          \
+		           BehaviourAnalyserFactory.cxx                           \
+		           ModelInterfaceFactory.cxx                              \
+		           DefaultDSLBase.cxx                                     \
+		           DefaultDSL.cxx                                         \
+		           DefaultCZMDSL.cxx                                      \
+		           DefaultFiniteStrainDSL.cxx                             \
+		           ModelDSL.cxx                                           \
+		           MaterialPropertyDSL.cxx                                \
+		           IsotropicMisesCreepDSL.cxx                             \
+		           IsotropicStrainHardeningMisesCreepDSL.cxx              \
+		           IsotropicMisesPlasticFlowDSL.cxx                       \
+		           RungeKuttaDSL.cxx                                      \
+		           ImplicitDSLBase.cxx                                    \
+		           ImplicitDSL.cxx                                        \
+		           ImplicitDSLII.cxx                                      \
+		           ImplicitFiniteStrainDSL.cxx                            \
+		           NonLinearSystemSolver.cxx                              \
+		           NonLinearSystemSolverBase.cxx                          \
+		           NonLinearSystemSolverFactory.cxx                       \
+		           PowellDogLegAlgorithmBase.cxx                          \
+		           NewtonRaphsonSolvers.cxx                               \
+		           BroydenSolvers.cxx		      		          \
+		           SecondBroydenSolver.cxx			          \
+		           LevenbergMarquardtSolvers.cxx			  \
+		           PerformanceProfiling.cxx                               \
+		           MultipleIsotropicMisesFlowsDSL.cxx                     \
+		           IsotropicBehaviourDSLBase.cxx                          \
+		           MFrontMaterialPropertyInterface.cxx                    \
+		           CMaterialPropertyInterfaceBase.cxx                     \
+		           CMaterialPropertyInterface.cxx                         \
+		           CppMaterialPropertyInterface.cxx                       \
+		           CppTestMaterialPropertyInterface.cxx                   \
+		           ExcelMaterialPropertyInterface.cxx                     \
+		           ExcelMaterialPropertyInternalInterface.cxx             \
+		           LaTeXBehaviourAnalyser.cxx                             \
+		           MarkdownBehaviourAnalyser.cxx                          \
+		           BehaviourBrick.cxx                                     \
+		           BehaviourBrickBase.cxx                                 \
+		           ElasticityBehaviourBrick.cxx                           \
+		           BehaviourBrickFactory.cxx                              \
+		           UMATInterfaceBase.cxx
+
+
+if HAVE_GNUPLOT
+libTFELMFront_la_SOURCES += GnuplotMaterialPropertyInterface.cxx
+endif
+
+if HAVE_FORTRAN
+libTFELMFront_la_SOURCES += FortranMaterialPropertyInterface.cxx
+endif
+
+if HAVE_PYTHON
+libTFELMFront_la_SOURCES += PythonMaterialPropertyInterface.cxx
+endif
+
+if HAVE_CASTEM
+libTFELMFront_la_SOURCES += UMATInterface.cxx      \
+		  CastemMaterialPropertyInterface.cxx
+endif
+
+if HAVE_ASTER
+libTFELMFront_la_SOURCES += AsterInterface.cxx
+endif
+
+if HAVE_ZMAT
+libTFELMFront_la_SOURCES += ZMATInterface.cxx
+endif
+
+if HAVE_CYRANO
+libTFELMFront_la_SOURCES += CyranoInterface.cxx
+endif
+libTFELMFront_la_CPPFLAGS = -DTFELMTest_EXPORTS
+
+libTFELMFront_la_LIBADD  = -L$(top_builddir)/mfront/src    -lMFrontLogStream \
+	   	           -L$(top_builddir)/src/Material  -lTFELMaterial    \
+		           -L$(top_builddir)/src/Math      -lTFELMathParser  \
+		           -L$(top_builddir)/src/System    -lTFELSystem      \
+		           -L$(top_builddir)/src/Glossary  -lTFELGlossary    \
+		           -L$(top_builddir)/src/Utilities -lTFELUtilities   \
+		           -L$(top_builddir)/src/Exception -lTFELException
+if TFEL_WIN
+libTFELMFront_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
+
+if !TFEL_WIN
+libTFELMFront_la_LIBADD   +=  -lpthread
+if TFEL_LINUX
+libTFELMFront_la_LIBADD   +=  -ldl
+endif
+endif # !TFEL_WIN
+
+libTFELMFront_la_DEPENDENCIES = libMFrontLogStream.la
 
 lib_LTLIBRARIES += libMFrontProfiling.la
 libMFrontProfiling_la_SOURCES = BehaviourProfiler.cxx
@@ -235,5 +240,27 @@ libAsterInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-a
 endif # TFEL_WIN
 endif # HAVE_ASTER
 
+mfront_SOURCES = main.cxx MFront.cxx
+mfront_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \
+               -L$(top_builddir)/src/Utilities -lTFELUtilities             \
+               -L$(top_builddir)/src/System -lTFELSystem
+
+mfront_DEPENDENCIES = libTFELMFront.la libMFrontLogStream.la
+if !TFEL_WIN
+mfront_LDFLAGS  = -export-dynamic
+endif # TFEL_WIN
+
+mfront_query_SOURCES = mfront-query.cxx BehaviourQuery.cxx
+mfront_query_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \
+                     -L$(top_builddir)/src/Glossary -lTFELGlossary   \
+                     -L$(top_builddir)/src/Material -lTFELMaterial   \
+                     -L$(top_builddir)/src/Math -lTFELMath           \
+                     -L$(top_builddir)/src/Utilities -lTFELUtilities \
+                     -L$(top_builddir)/src/System -lTFELSystem
+mfront_query_DEPENDENCIES = libTFELMFront.la libMFrontLogStream.la
+
+if !TFEL_WIN
+mfront_query_LDFLAGS  = -export-dynamic
+endif # TFEL_WIN
 
 EXTRA_DIST = CMakeLists.txt

@@ -24,7 +24,7 @@ namespace mfront{
   /*!
    * Raw code block
    */
-  struct TFEL_VISIBILITY_EXPORT CodeBlock
+  struct MFRONT_VISIBILITY_EXPORT CodeBlock
   {
     CodeBlock() = default;
     CodeBlock(CodeBlock&&) = default;

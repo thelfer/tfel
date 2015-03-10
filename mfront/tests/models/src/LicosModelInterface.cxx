@@ -1764,9 +1764,14 @@ namespace mfront{
   std::map<std::string,std::vector<std::string> >
   MFrontModelInterface::getLibrariesDependencies(const ModelData&)
   {
-    using namespace std;
-    return map<string,vector<string> >();
+    return {};
   } // end of MFrontModelInterface::getLibrariesDependencies
+
+  std::map<std::string,std::vector<std::string> >
+  MFrontModelInterface::getGeneratedEntryPoints(const ModelData& mdata) const{
+    const auto& lib = getLibraryName(mdata);
+    return {{lib,{mdata.className}}};
+  } // end of MFrontModelInterface::getGeneratedEntryPoints
 
   MFrontModelInterface::~MFrontModelInterface()
   {} // end of MFrontModelInterface::~MFrontModelInterface

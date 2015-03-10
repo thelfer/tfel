@@ -28,7 +28,7 @@ namespace tfel
 
 #ifdef __SUNPRO_CC
       extern "C" {
-#endif __SUNPRO_CC
+#endif /*__SUNPRO_CC */
 	typedef double (*EvaluatorProxyFunctionPtr1V)(double); 
 	typedef double (*EvaluatorProxyFunctionPtr2V)(double,double); 
 	typedef double (*EvaluatorProxyFunctionPtr1P1V)(int,double); 
@@ -37,7 +37,7 @@ namespace tfel
 	typedef double (*EvaluatorProxyFunctionPtr2P2V)(int,int,double,double);
 #ifdef __SUNPRO_CC
      }
-#endif __SUNPRO_CC
+#endif /* __SUNPRO_CC */
 
       struct EvaluatorFunctionBase
 	: public Function

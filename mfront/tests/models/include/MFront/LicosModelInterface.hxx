@@ -26,6 +26,8 @@ namespace mfront{
 
     MFrontModelInterface();
 
+    virtual ~MFrontModelInterface();
+
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
@@ -74,6 +76,12 @@ namespace mfront{
      */
     virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const ModelData&);
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const ModelData&) const override;
 
   private:
 
@@ -145,9 +153,7 @@ namespace mfront{
     getVariableName(const std::string&,
 		    const ModelData&) const;
 
-    ~MFrontModelInterface();
-
-    private:
+  private:
 
     std::ofstream headerFile;
     std::ofstream srcFile;

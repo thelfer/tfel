@@ -19,7 +19,7 @@
 #include<map>
 #include<string>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
@@ -36,12 +36,13 @@ namespace mfront
   /*!
    * base structure for parsers
    */
-  struct TFEL_VISIBILITY_EXPORT DSLBase
+  struct MFRONT_VISIBILITY_EXPORT DSLBase
     : public virtual AbstractDSL,
       public tfel::utilities::CxxTokenizer,
       public FileDescription
   {
-
+    //! \return the file description associated with the treated file
+    virtual const FileDescription& getFileDescription() const final;
     /*!
      * \brief open a file and add given external instructions at the
      * beginning
@@ -51,11 +52,6 @@ namespace mfront
     virtual void
     openFile(const std::string&,
 	     const std::vector<std::string>&);
-    /*!
-     * \return generic data about the MFront file being treated
-     */
-    virtual const FileDescription&
-    getFileDescription(void) const;
     /*!
      * \brief register a variable name.
      * \param[in] v : variable name
@@ -98,7 +94,7 @@ namespace mfront
      * 
      * These modifiers are called when the parser encounters variables.
      */
-    struct TFEL_VISIBILITY_EXPORT VariableModifier
+    struct MFRONT_VISIBILITY_EXPORT VariableModifier
     {
       /*!
        * \param[in] v : the variable name
@@ -118,7 +114,7 @@ namespace mfront
      * 
      * These modifiers are called when the parser encounters variables.
      */
-    struct TFEL_VISIBILITY_EXPORT WordAnalyser
+    struct MFRONT_VISIBILITY_EXPORT WordAnalyser
     {
       /*!
        * \param[in] k : the current word
@@ -193,15 +189,25 @@ namespace mfront
      */
     virtual void appendToSources(const std::string&) = 0;
     /*!
-     * \brief analyse a file
+     * \brief analyse a file. This method is called only once, for the
+     * main mfront file. The imported files are treated by the import
+     * method.
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before
-     * the input file commandes (those commands are given through the
-     * --@?? option of the command line
+     * the input file commande (those commands are given through the
+     * --@?? option of the command line)
      */
     virtual void
     analyseFile(const std::string&,
 		const std::vector<std::string>&) = 0;
+    /*!
+     * \brief import a file
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commands
+     */
+    virtual void importFile(const std::string&,
+			    const std::vector<std::string>&) = 0;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description

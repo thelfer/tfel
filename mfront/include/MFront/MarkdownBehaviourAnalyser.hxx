@@ -16,7 +16,7 @@
 
 #include<ostream>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/BehaviourAnalyser.hxx"
 
@@ -31,7 +31,7 @@ namespace mfront{
   /*!
    * This is the abstract base class of all behaviour interfaces
    */
-  struct TFEL_VISIBILITY_EXPORT MarkdownBehaviourAnalyser
+  struct MFRONT_VISIBILITY_EXPORT MarkdownBehaviourAnalyser
     : public BehaviourAnalyser
   {
     /*!

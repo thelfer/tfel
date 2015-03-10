@@ -20,21 +20,24 @@
 #include<semaphore.h>
 #endif
 
+#include"MFront/MFrontConfig.hxx"
+
 namespace mfront{
 
   //! The Great Mfront Lock
-  struct MFrontLock
+  struct MFRONT_VISIBILITY_EXPORT MFrontLock
   {
     static MFrontLock&
     getMFrontLock();
     void lock();
     void unlock();
   private:
-    MFrontLock();
-    MFrontLock(const MFrontLock&);
-    MFrontLock&
-    operator = (const MFrontLock&);
-    ~MFrontLock();
+    MFRONT_VISIBILITY_EXPORT MFrontLock();
+    MFrontLock(const MFrontLock&) = delete;
+    MFrontLock(MFrontLock&&) = delete;
+    MFrontLock& operator = (const MFrontLock&) = delete;
+    MFrontLock& operator = (MFrontLock&&) = delete;
+    MFRONT_VISIBILITY_EXPORT ~MFrontLock();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     HANDLE ghMutex;
 #else

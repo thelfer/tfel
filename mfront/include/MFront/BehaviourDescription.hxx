@@ -21,6 +21,7 @@
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/CodeBlock.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/BehaviourAttribute.hxx"
@@ -41,7 +42,7 @@ namespace mfront
    * which is intendend to be valid for most hypotheses, and specific
    * mechanical behaviour datas when required.
    */
-  struct BehaviourDescription
+  struct MFRONT_VISIBILITY_EXPORT BehaviourDescription
     : public tfel::material::MechanicalBehaviourBase,
       public SupportedTypes  
   {
@@ -115,7 +116,7 @@ namespace mfront
      */
     void setLibrary(const std::string&);
     /*!
-     * \return the material name
+     * \return the library name
      */
     const std::string&
     getLibrary(void) const;
@@ -822,7 +823,6 @@ namespace mfront
 		 const std::string&) const;
     /*!
      * \return the code with the given name
-     * \note if the attribute ""
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */

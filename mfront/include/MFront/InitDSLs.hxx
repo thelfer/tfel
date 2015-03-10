@@ -12,16 +12,18 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTINITPARSERS_HXX_
-#define LIB_MFRONTINITPARSERS_HXX_ 
+#ifndef LIB_MFRONT_INITPARSERS_HXX_
+#define LIB_MFRONT_INITPARSERS_HXX_ 
+
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
   
-  void
+  MFRONT_VISIBILITY_EXPORT void
   initParsers(void);
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONTINITPARSERS_HXX_ */
+#endif /* LIB_MFRONT_INITPARSERS_HXX_ */
 

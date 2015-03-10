@@ -43,7 +43,6 @@ endmacro(tests_math4)
 
 tests_math(power)
 tests_math(CubicRoots)
-tests_math(FracSimplify)
 tests_math(promote)
 tests_math(hill)
 tests_math(qt)

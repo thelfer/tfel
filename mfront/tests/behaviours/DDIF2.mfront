@@ -63,9 +63,10 @@ sigr.setEntryName("FractureStress");
 } // end of @ComputeStresss
 
 @Integrator{
-  const real Rp = -0.5*young;
+  constexpr real cste = real{3}/real{2};
+  const stress Rp = -0.5*young;
   // fracture strain
-  Stensor de_fis = de0*n0+de1*n1+de2*n2;
+  const Stensor de_fis = de0*n0+de1*n1+de2*n2;
   /* elasticity */
   // normal 
   const real sigeq = min(sigmaeq(sig),500.e6);
@@ -74,7 +75,7 @@ sigr.setEntryName("FractureStress");
   if(sigeq > 1.){
     inv_sigeq = 1/sigeq;
   }
-  n     = 1.5f*deviator(sig)*inv_sigeq;
+  n     = cste*deviator(sig)*inv_sigeq;
   // implicit equation for elasticity
   feel += de_fis+dp*n-deto;
   // jacobian
@@ -82,7 +83,7 @@ sigr.setEntryName("FractureStress");
   dfeel_dde1   = n1;
   dfeel_dde2   = n2;
   dfeel_ddp    = n;
-  dfeel_ddeel += 2*mu*theta*inv_sigeq*dp*(1.5f*Stensor4::K()-(n^n));
+  dfeel_ddeel += 2*mu*theta*inv_sigeq*dp*(cste*Stensor4::K()-(n^n));
   /* creep */
   const real tmp  = A*pow(sigeq,E-1.);
   fp             -= tmp*sigeq*dt;

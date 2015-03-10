@@ -41,7 +41,7 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(const std::string&,
 		      const std::string&,
-		      const std::string&);
+		      const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -51,7 +51,7 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> >
     getGlobalDependencies(const std::string&,
 			  const std::string&,
-			  const std::string&);
+			  const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -61,7 +61,7 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> >
     getGeneratedSources(const std::string&,
 			const std::string&,
-			const std::string&);
+			const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -71,7 +71,7 @@ namespace mfront{
     std::vector<std::string>
     getGeneratedIncludes(const std::string&,
 			 const std::string&,
-			 const std::string&);
+			 const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -81,7 +81,7 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const std::string&,
 			     const std::string&,
-			     const std::string&);
+			     const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -95,12 +95,23 @@ namespace mfront{
     getSpecificTargets(const std::string&,
 		       const std::string&,
 		       const std::string&,
-		       const std::vector<std::string>&);
+		       const std::vector<std::string>&) override;
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const std::string&,
+			    const std::string&,
+			    const std::string&) override;
 
     std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
+		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
 
     /*
      * \param const std::string&, name of the original file
@@ -145,12 +156,11 @@ namespace mfront{
 			  const std::vector<VariableBoundsDescription>&,
 			  const std::vector<VariableBoundsDescription>&,
 			  const bool,
-			  const std::vector<std::string>&);
+			  const std::vector<std::string>&) override;
     
-    void
-    reset(void);
+    virtual void reset(void) override;
 
-    ~CppMaterialPropertyInterface();
+    virtual ~CppMaterialPropertyInterface();
     
   private:
 

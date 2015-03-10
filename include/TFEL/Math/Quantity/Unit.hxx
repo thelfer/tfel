@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_UNIT_H_
 #define LIB_TFEL_UNIT_H_ 
 
+#include<ratio>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"

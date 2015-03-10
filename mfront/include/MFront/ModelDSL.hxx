@@ -29,12 +29,7 @@ namespace mfront{
     getDescription(void);
 
     virtual void
-    treatFile(const std::string&,
-	      const std::vector<std::string>&);
-
-    virtual void
     setInterfaces(const std::set<std::string>&);
-
   }; // end of ModelDSL
 
 } // end of namespace mfront

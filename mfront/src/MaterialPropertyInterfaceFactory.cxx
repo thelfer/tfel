@@ -135,17 +135,14 @@ namespace mfront{
     return res;
   } // end of MaterialPropertyInterfaceFactory::getInterfaceDependencies
 
-  AbstractMaterialPropertyInterface* 
+  std::shared_ptr<AbstractMaterialPropertyInterface>
   MaterialPropertyInterfaceFactory::getInterfacePtr(const std::string& interfaceName)
   {
     using namespace std;
-    InterfaceCreatorsContainer::iterator p;
-    AliasContainer::iterator p2;
-    InterfaceContainer::iterator m;
-    AbstractMaterialPropertyInterface *i;
-    m = this->getInterfacesMap().find(interfaceName);
+    shared_ptr<AbstractMaterialPropertyInterface> i;
+    auto m = this->getInterfacesMap().find(interfaceName);
     if(m==this->getInterfacesMap().end()){
-      p2 = this->getAliasesMap().find(interfaceName);
+      auto p2 = this->getAliasesMap().find(interfaceName);
       if(p2==this->getAliasesMap().end()){
 	string msg = "MaterialPropertyInterfaceFactory::createNewInterface : no interface named '";
 	msg += interfaceName+"'.\n";
@@ -156,7 +153,7 @@ namespace mfront{
 	}
 	throw(runtime_error(msg));
       }
-      p = this->getInterfaceCreatorsMap().find(p2->second);
+      auto p = this->getInterfaceCreatorsMap().find(p2->second);
       assert(p!=this->getInterfaceCreatorsMap().end());
       InterfaceCreator c = p->second;
       i = c();
@@ -167,27 +164,14 @@ namespace mfront{
     return i;
   }
 
-  void
-  MaterialPropertyInterfaceFactory::clear(void)
-  {
-    InterfaceContainer::iterator m;
-    for(m = this->getInterfacesMap().begin();m!= this->getInterfacesMap().end();++m){
-      delete m->second;
-    }
-    this->getInterfacesMap().clear();
-  } // end of MaterialPropertyInterfaceFactory::clear(void)
-
   MaterialPropertyInterfaceFactory::~MaterialPropertyInterfaceFactory()
-  {
-    assert(this->getInterfacesMap().empty());
-  } // end of MaterialPropertyInterfaceFactory::~MaterialPropertyInterfaceFactory()
+  {} // end of MaterialPropertyInterfaceFactory::~MaterialPropertyInterfaceFactory()
   
   void
   MaterialPropertyInterfaceFactory::reset(void)
   {
-    InterfaceContainer::iterator m;
-    for(m = this->getInterfacesMap().begin();m!= this->getInterfacesMap().end();++m){
-      m->second->reset();
+    for(const auto& i : this->getInterfacesMap()){
+      i.second->reset();
     }
   } // end of MaterialPropertyInterfaceFactory::reset
 

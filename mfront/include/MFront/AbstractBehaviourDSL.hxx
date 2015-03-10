@@ -15,23 +15,31 @@
 #ifndef LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX_
 #define LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
 #include"MFront/AbstractDSL.hxx"
 
 namespace mfront{
 
+  // forward declaration
+  struct BehaviourDescription;
+
   /*!
    * Interface class for all domain specific languages.
    */
-  struct TFEL_VISIBILITY_EXPORT AbstractBehaviourDSL
+  struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourDSL
     : public virtual AbstractDSL
   {
     //! a simple alias
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
     //! a simple alias
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
+    //! \return the target of the dsl
+    virtual DSLTarget getTargetType(void) const final;
+    //! \return the behaviour description
+    virtual const BehaviourDescription&
+    getBehaviourDescription(void) const = 0;
     /*!
      * \return the list of hypothesis a priori supported by
      * the parser.

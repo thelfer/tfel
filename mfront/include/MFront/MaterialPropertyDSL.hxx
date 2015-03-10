@@ -29,10 +29,12 @@ namespace mfront{
   /*!
    * Parser handling material properties
    */
-  struct TFEL_VISIBILITY_EXPORT MaterialPropertyDSL
+  struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDSL
     : public DSLBase,
       protected MaterialPropertyDescription
   {
+    //! \return the target of the dsl
+    virtual DSLTarget getTargetType(void) const final;
     /*!
      * return the name of the parser
      */
@@ -80,17 +82,11 @@ namespace mfront{
 			       std::vector<std::string> > >
     getSpecificTargets(void);
     /*!
-     * \brief analyse a file and generates output files
-     * \param[in] f     : file name
-     * \param[in] ecmds : additionnal commands inserted treated before
-     * the input file commandes (those commands are given through the
-     * --@?? option of the command line
-     * \note the method barely calls the analyseFile method and the
-     * generateOutputFiles
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
      */
-    virtual void
-    treatFile(const std::string&,
-	      const std::vector<std::string>&);
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(void) override;
     /*!
      * \brief analyse a file without generating any output
      * \param[in] f     : file name
@@ -98,10 +94,21 @@ namespace mfront{
      */
     virtual void
     analyseFile(const std::string&,
-		const std::vector<std::string>& = std::vector<std::string>());
+		const std::vector<std::string>& = std::vector<std::string>()) override;
+    /*!
+     * \brief import a file
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commands.
+     */
+    virtual void importFile(const std::string&,
+			    const std::vector<std::string>&) override;
     
     virtual const MaterialPropertyDescription&
     getMaterialPropertyDescription(void) const;
+
+    //! destructor
+    virtual ~MaterialPropertyDSL();
 
   protected:
 
@@ -136,8 +143,7 @@ namespace mfront{
      * \brief write the output files.
      * \note this shall be called after the analyseFile method.
      */
-    virtual void
-    writeOutputFiles(void);
+    virtual void generateOutputFiles(void) override;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
@@ -206,6 +212,7 @@ namespace mfront{
     
     void
     registerNewCallBack(const std::string&,const MemberFuncPtr);
+
     /*!
      * registred interfaces for the material property being treated
      */

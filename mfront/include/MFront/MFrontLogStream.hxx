@@ -15,7 +15,7 @@
 #define LIB_MFRONT_LOGSTREAM_H_ 
 
 #include<string>
-#include<ostream>
+#include<iosfwd>
 
 #include"MFront/MFrontConfig.hxx"
 

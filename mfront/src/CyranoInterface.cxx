@@ -485,6 +485,13 @@ namespace mfront{
     return src;
   } // end of CyranoInterface::getGeneratedSources
 
+  std::map<std::string,std::vector<std::string> >
+  CyranoInterface::getGeneratedEntryPoints(const BehaviourDescription& mb) const
+  {
+    const auto name = ((!mb.getLibrary().empty()) ? mb.getLibrary() : "") + mb.getClassName();
+    return {{this->getLibraryName(mb),{this->getFunctionName(name)}}};
+  } // end of 
+
   std::vector<std::string>
   CyranoInterface::getGeneratedIncludes(const BehaviourDescription& mb) const
   {
@@ -524,27 +531,6 @@ namespace mfront{
 						      const BehaviourDescription&,
 						      const FileDescription&) const
   {} // end of CyranoInterface::writeUMATxxAdditionalSymbols
-  
-  // void
-  // CyranoInterface::writeUMATxxSpecificSymbols(std::ostream& out,
-  // 						    const std::string& name,
-  // 						    const BehaviourDescription& mb,
-  // 						    const FileDescription&) const
-  // {
-  //   if(!mb.isModellingHypothesisSupported(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)){
-  // 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-  // 	    << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";    
-  //   } else {
-  //     if(!mb.isModellingHypothesisSupported(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
-  // 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-  // 	    << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";    
-  //     } else {
-  // 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-  // 	    << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";    
-  //     }
-  //   }
-  // }
-
 
   void
   CyranoInterface::writeCyranoFortranFunctionDefine(std::ostream& out,

@@ -116,16 +116,6 @@ namespace mfront{
     return i;
   }
 
-  void
-  BehaviourAnalyserFactory::clear(void)
-  {
-    AnalyserContainer::iterator m;
-    for(m = this->getAnalysersMap().begin();m!= this->getAnalysersMap().end();++m){
-      delete m->second;
-    }
-    this->getAnalysersMap().clear();
-  } // end of BehaviourAnalyserFactory::clear(void)
-
   BehaviourAnalyserFactory::~BehaviourAnalyserFactory()
   {
     assert(this->getAnalysersMap().empty());
@@ -134,9 +124,8 @@ namespace mfront{
   void
   BehaviourAnalyserFactory::reset(void)
   {
-    AnalyserContainer::iterator m;
-    for(m = this->getAnalysersMap().begin();m!= this->getAnalysersMap().end();++m){
-      m->second->reset();
+    for(auto & a : this->getAnalysersMap()){
+      a.second->reset();
     }
   } // end of BehaviourAnalyserFactory::reset
 

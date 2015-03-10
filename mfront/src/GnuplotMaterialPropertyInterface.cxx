@@ -325,6 +325,14 @@ namespace mfront
     res["check"].first.push_back(target);
     return res;
   } // end of GnuplotMaterialPropertyInterface::getSpecificTargets
+  
+  std::map<std::string,std::vector<std::string> >
+  GnuplotMaterialPropertyInterface::getGeneratedEntryPoints(const std::string&,
+							    const std::string&,
+							    const std::string&)
+  {
+    return {};
+  } // end of GnuplotMaterialPropertyInterface::getGeneratedEntryPoints
 
   void
   GnuplotMaterialPropertyInterface::writeOutputFiles(const std::string& file,

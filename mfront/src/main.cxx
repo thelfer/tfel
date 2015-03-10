@@ -16,44 +16,22 @@
 #endif /* __CYGWIN__ */
 
 #include<cstdlib>
-
-#include"TFEL/Utilities/StringAlgorithms.hxx"
-#include"TFEL/System/ExternalLibraryManager.hxx"
-
-#include"MFront/MFront.hxx"
 #include"MFront/InitDSLs.hxx"
 #include"MFront/InitInterfaces.hxx"
 #include"MFront/InitAnalysers.hxx"
+#include"MFront/MFront.hxx"
 
 int main(const int argc, const char *const *const argv)
 {
-  using namespace std;
-  using namespace tfel::utilities;
-  using namespace tfel::system;
   using namespace mfront;
-  
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-  try{
-#endif /* __CYGWIN__ */
-
   initParsers();
   initInterfaces();
   initAnalysers();
-
-  // calling mfront plugins
-  const char * libs = ::getenv("MFRONT_ADDITIONAL_LIBRARIES");
-  if(libs!=nullptr){
-    const auto& l = tokenize(libs,':');
-    vector<string>::const_iterator p;
-    for(p=l.begin();p!=l.end();++p){
-      auto& lm = ExternalLibraryManager::getExternalLibraryManager();
-      lm.loadLibrary(*p);
-    }
-  }
-
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+  try{
+#endif /* __CYGWIN__ */
   MFront mfront(argc,argv);
   mfront.exe();
-
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   }
   catch(exception& e){
@@ -65,6 +43,5 @@ int main(const int argc, const char *const *const argv)
     return EXIT_FAILURE;
   }
 #endif /* __CYGWIN__ */
-
   return EXIT_SUCCESS;
 }

@@ -21,7 +21,7 @@
 #include<string>
 #include<fstream>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 
 #include"MFront/DSLBase.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
@@ -35,32 +35,40 @@ namespace mfront{
    * behaviour parsers.
    *
    */
-  struct TFEL_VISIBILITY_EXPORT BehaviourDSLCommon
+  struct MFRONT_VISIBILITY_EXPORT BehaviourDSLCommon
     : public virtual AbstractBehaviourDSL,
       public DSLBase,
       public SupportedTypes
   {
+    //! \return the behaviour description
+    virtual const BehaviourDescription&
+    getBehaviourDescription(void) const final;
 
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(void);
+    getGlobalIncludes(void) override;
 	
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(void);
+    getGlobalDependencies(void) override;
 
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(void);
+    getGeneratedSources(void) override;
 
     virtual std::vector<std::string>
-    getGeneratedIncludes(void);
+    getGeneratedIncludes(void) override;
 
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(void);
+    getLibrariesDependencies(void) override;
     
     virtual std::map<std::string,
 		     std::pair<std::vector<std::string>,
 			       std::vector<std::string> > >
-    getSpecificTargets(void);
-
+    getSpecificTargets(void) override;
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(void) override;
   protected:
     /*!
      * create a variable modifier from a method
@@ -350,8 +358,7 @@ namespace mfront{
     /*!
      * write the output files
      */
-    virtual void
-    writeOutputFiles(void);
+    virtual void generateOutputFiles(void) override;
     /*!
      * \return the list of hypothesis a priori supported by
      * the parser.

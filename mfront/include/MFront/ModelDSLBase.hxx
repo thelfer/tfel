@@ -32,22 +32,33 @@ namespace mfront{
      * \param[out] k : the list of keywords registred for this parser
      */
     virtual void
-    getKeywordsList(std::vector<std::string>&) const;
-
+    getKeywordsList(std::vector<std::string>&) const override;
+    /*!
+     * \brief analyse a file. This method is called only once, for the
+     * main mfront file. The imported files are treated by the import
+     * method.
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commandes (those commands are given through the
+     * --@?? option of the command line
+     */
     virtual void
-    treatFile(const std::string&,
-	      const std::vector<std::string>&);
-
+    analyseFile(const std::string&,
+		const std::vector<std::string>&) override;
+    /*!
+     * \brief import a file
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commands
+     */
+    virtual void importFile(const std::string&,
+			    const std::vector<std::string>&) override;
   protected:
 
     typedef void (Child::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
 
     ModelDSLBase();
-
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&);
 
     void
     registerDefaultCallBacks(void);

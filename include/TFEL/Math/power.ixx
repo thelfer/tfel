@@ -14,13 +14,13 @@
 #ifndef LIB_TFEL_MATH_POWER_I_
 #define LIB_TFEL_MATH_POWER_I_ 
 
+#include<ratio>
 #include<cmath>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<type_traits>
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
-#include"TFEL/Math/General/FracSimplify.hxx"
 
 namespace tfel{
 
@@ -214,8 +214,8 @@ namespace tfel{
     {
       TFEL_STATIC_ASSERT(D!=0);
 
-      static constexpr int N_ = FracSimplify<N,D>::N;
-      static constexpr int D_ = FracSimplify<N,D>::D;
+      static constexpr int N_ = std::ratio<N,D>::num;
+      static constexpr int D_ = std::ratio<N,D>::den;
 
     public:
       

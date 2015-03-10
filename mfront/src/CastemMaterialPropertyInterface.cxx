@@ -128,9 +128,22 @@ namespace mfront
     return map<string,pair<vector<string>,vector<string> > >();
   } // end of CastemMaterialPropertyInterface::getSpecificTargets
 
+  std::map<std::string,std::vector<std::string> >
+  CastemMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
+							   const std::string& material,
+							   const std::string& className)
+  {
+    using namespace std;
+    auto r = map<string,vector<string>>{};
+    const auto l = "libCastem"+getMaterialLawLibraryNameBase(library,material);
+    const auto n = this->getCastemFunctionName(material,className);
+    r[l].push_back(n);
+    return r;
+  }
+
   std::string
   CastemMaterialPropertyInterface::getCastemFunctionName(const std::string& material,
-						  const std::string& className)
+							 const std::string& className)
   {
     if(material.empty()){
       return className;

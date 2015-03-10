@@ -69,6 +69,12 @@ namespace mfront{
     virtual std::vector<std::string>
     getGeneratedIncludes(const ModelData&);
     /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const ModelData&) const override;
+    /*!
      * \param pdata : generic data
      */
     virtual std::map<std::string,std::vector<std::string> >

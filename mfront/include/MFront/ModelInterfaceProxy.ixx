@@ -26,10 +26,10 @@ namespace mfront{
   }
   
   template<typename Interface>
-  AbstractModelInterface* 
+  std::shared_ptr<AbstractModelInterface>
   ModelInterfaceProxy<Interface>::createInterface()
   {
-    return new Interface;
+    return std::make_shared<Interface>();
   }
 
 } // end of namespace mfront

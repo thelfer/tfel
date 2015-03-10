@@ -23,6 +23,7 @@
 #include"TFEL/Math/IntegerEvaluator.hxx"
 
 #include"MFront/MFront.hxx"
+#include"MFront/MFrontExecutableName.hxx"
 #include"MFront/DSLBase.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/SearchFile.hxx"
@@ -347,8 +348,8 @@ namespace mfront
     oFileTokens.swap(this->fileTokens);
     TokensContainer::const_iterator ocurrent = this->current;
     for(p=files.begin();p!=files.end();++p){
-      this->analyseFile(SearchFile::search(*p),
-			vector<string>());
+      this->importFile(SearchFile::search(*p),
+		       vector<string>());
     }
     this->fileName = oFileName;
     this->fileTokens.swap(oFileTokens);
@@ -781,7 +782,7 @@ namespace mfront
     ProcessManager m;
     ostringstream cmd;
     vector<string>::const_iterator p;
-    cmd << MFront::getCallingName();
+    cmd << getMFrontExecutableName();
     cmd << " --interface=";
     for(p=interfaces.begin();p!=interfaces.end();){
       cmd << *p;

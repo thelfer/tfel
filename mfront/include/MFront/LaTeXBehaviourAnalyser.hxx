@@ -14,7 +14,7 @@
 #ifndef LIB_MFRONT_MFRONTLATEXBEHAVIOURANALYSER_H_
 #define LIB_MFRONT_MFRONTLATEXBEHAVIOURANALYSER_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/BehaviourAnalyser.hxx"
 
 namespace mfront{
@@ -22,7 +22,7 @@ namespace mfront{
   /*!
    * This is the abstract base class of all behaviour interfaces
    */
-  struct TFEL_VISIBILITY_EXPORT LaTeXBehaviourAnalyser
+  struct MFRONT_VISIBILITY_EXPORT LaTeXBehaviourAnalyser
     : public BehaviourAnalyser
   {
     /*!

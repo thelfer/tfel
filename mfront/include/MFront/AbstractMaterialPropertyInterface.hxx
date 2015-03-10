@@ -20,7 +20,7 @@
 #include<map>
 #include<vector>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/LawFunction.hxx"
@@ -29,7 +29,7 @@
 
 namespace mfront{
   
-  struct TFEL_VISIBILITY_EXPORT AbstractMaterialPropertyInterface
+  struct MFRONT_VISIBILITY_EXPORT AbstractMaterialPropertyInterface
   {
 
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
@@ -85,21 +85,30 @@ namespace mfront{
 
     virtual void
     reset(void) = 0;
-
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     virtual std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(const std::string&,
 		      const std::string&,
 		      const std::string&) = 0;
-
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const std::string&,
+			    const std::string&,
+			    const std::string&) = 0;
+    /*!
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     virtual std::map<std::string,std::vector<std::string> >
     getGlobalDependencies(const std::string&,
@@ -107,9 +116,9 @@ namespace mfront{
 			  const std::string&) = 0;
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     virtual std::map<std::string,std::vector<std::string> >
     getGeneratedSources(const std::string&,
@@ -117,9 +126,9 @@ namespace mfront{
 			const std::string&) = 0;
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     virtual std::vector<std::string>
     getGeneratedIncludes(const std::string&,
@@ -127,9 +136,9 @@ namespace mfront{
 			 const std::string&) = 0;
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const std::string&,
@@ -137,9 +146,9 @@ namespace mfront{
 			     const std::string&) = 0;
 
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      * \param const std::vector<std::string>&, library links
      */
     virtual std::map<std::string,

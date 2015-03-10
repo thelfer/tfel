@@ -56,6 +56,11 @@ namespace mfront{
   BehaviourDSLCommon::CodeBlockOptions::~CodeBlockOptions()
   {} // end of BehaviourDSLCommon::CodeBlockOptions::~CodeBlockOptions
 
+  const BehaviourDescription&
+  BehaviourDSLCommon::getBehaviourDescription(void) const{
+    return this->mb;
+  } // end of BehaviourDSLCommon::getBehaviourDescription
+
   std::string
   BehaviourDSLCommon::getClassName(void) const
   {
@@ -387,7 +392,7 @@ namespace mfront{
     }
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+      auto interface = mbif.getInterfacePtr(*i);
       interface->allowDynamicallyAllocatedArrays(this->areDynamicallyAllocatedVectorsAllowed());
     }
     if(getPedanticMode()){
@@ -403,7 +408,7 @@ namespace mfront{
    * \return the "true" integration variables (state variables are excluded)
    * \param[in] md : mechanical behaviour data
    */
-  VarContainer
+  static VarContainer
   getIntegrationVariables(const BehaviourData& md)
   {
     const auto& ivs = md.getIntegrationVariables();
@@ -552,7 +557,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::pedanticChecks
 
   void 
-  BehaviourDSLCommon::writeOutputFiles(void)
+  BehaviourDSLCommon::generateOutputFiles(void)
   {
     using namespace std;
     using namespace tfel::system;
@@ -564,9 +569,7 @@ namespace mfront{
     systemCall::mkdir("include");
     systemCall::mkdir("include/TFEL/");
     systemCall::mkdir("include/TFEL/Material");
-    this->behaviourFileName  = this->mb.getClassName();
-    this->behaviourFileName += ".hxx";
-    this->behaviourFile.open(("include/TFEL/Material/"+this->behaviourFileName).c_str());
+    this->behaviourFile.open("include/"+this->behaviourFileName);
     if(!this->behaviourFile){
       string msg("BehaviourDSLCommon::writeOutputFiles : ");
       msg += "unable to open ";
@@ -574,9 +577,7 @@ namespace mfront{
       msg += " for writing output file.";
       throw(runtime_error(msg));
     }
-    this->behaviourDataFileName  = this->mb.getClassName();
-    this->behaviourDataFileName += "BehaviourData.hxx";
-    this->behaviourDataFile.open(("include/TFEL/Material/"+this->behaviourDataFileName).c_str());
+    this->behaviourDataFile.open("include/"+this->behaviourDataFileName);
     if(!this->behaviourDataFile){
       string msg("BehaviourDSLCommon::writeOutputFiles : ");
       msg += "unable to open ";
@@ -584,9 +585,7 @@ namespace mfront{
       msg += " for writing output file.";
       throw(runtime_error(msg));
     }
-    this->integrationDataFileName  = this->mb.getClassName();
-    this->integrationDataFileName += "IntegrationData.hxx";
-    this->integrationDataFile.open(("include/TFEL/Material/"+this->integrationDataFileName).c_str());
+    this->integrationDataFile.open("include/"+this->integrationDataFileName);
     if(!this->integrationDataFile){
       string msg("BehaviourDSLCommon::writeOutputFiles : ");
       msg += "unable to open ";
@@ -594,19 +593,14 @@ namespace mfront{
       msg += " for writing output file.";
       throw(runtime_error(msg));
     }
-    this->srcFileName  = this->mb.getClassName();
-    this->srcFileName += ".cxx";
-    this->srcFile.open(("src/"+this->srcFileName).c_str());
+    this->srcFile.open("src/"+this->srcFileName);
     if(!this->srcFile){
       string msg("BehaviourDSLCommon::writeOutputFiles : ");
       msg += "unable to open ";
       msg += this->srcFileName;
       msg += " for writing output file.";
       throw(runtime_error(msg));
-
     }
-    // Adds some stuff
-    this->endsInputFileProcessing();
     // generate outpout files
     this->writeBehaviourDataFileBegin();
     this->writeIntegrationDataFileBegin();
@@ -1179,7 +1173,7 @@ namespace mfront{
 	this->ignoreKeyWord(key);
       } else {
 	for(const auto & elem : s){
-	  AbstractBehaviourInterface *interface = mbif.getInterfacePtr(elem);
+	  auto interface = mbif.getInterfacePtr(elem);
 	  p = interface->treatKeyword(key,this->current,
 				      this->fileTokens.end());
 	  if(!p.first){
@@ -1227,7 +1221,7 @@ namespace mfront{
     } else {
       for(i  = this->interfaces.begin();
 	  i != this->interfaces.end();++i){
-	AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+	auto interface = mbif.getInterfacePtr(*i);
 	p = interface->treatKeyword(key,this->current,
 				    this->fileTokens.end());
 	if(p.first){
@@ -2223,7 +2217,7 @@ namespace mfront{
     // Creating constructor for external interfaces
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+      auto interface = mbif.getInterfacePtr(*i);
       if(interface->isModellingHypothesisHandled(h,this->mb)){
 	interface->writeBehaviourDataConstructor(this->behaviourDataFile,h,this->mb);
       }
@@ -2279,14 +2273,11 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourDataExport(const Hypothesis h)
   {
-    using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
     this->checkBehaviourDataFile();
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       interface->exportMechanicalData(this->behaviourDataFile,h,
 				      this->mb);
     }
@@ -2547,10 +2538,8 @@ namespace mfront{
     this->writeBehaviourDataStandardTFELIncludes();
     this->writeIncludes(this->behaviourDataFile);
     // includes specific to interfaces
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       interface->writeInterfaceSpecificIncludes(this->behaviourDataFile,this->mb);
     }
     this->writeNamespaceBegin(this->behaviourDataFile);
@@ -3079,10 +3068,8 @@ namespace mfront{
     this->writeBehaviourLocalVariablesInitialisation(h);
     this->behaviourFile << "}" << endl << endl;
     // constructor specific to interfaces
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       if(interface->isModellingHypothesisHandled(h,this->mb)){
 	interface->writeBehaviourConstructor(this->behaviourFile,this->mb,init);
 	this->behaviourFile << "\n{" << endl;
@@ -3338,14 +3325,12 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourDataMainVariablesSetters(void)
   {
-    using namespace std;
+    using std::endl;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    vector<string>::const_iterator i;
     this->checkBehaviourDataFile();
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       interface->writeBehaviourDataMainVariablesSetters(this->behaviourDataFile,
 							this->mb);
       this->behaviourDataFile << endl;
@@ -3354,14 +3339,12 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeIntegrationDataMainVariablesSetters(void)
   {
-    using namespace std;
+    using std::endl;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    vector<string>::const_iterator i;
     this->checkIntegrationDataFile();
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       interface->writeIntegrationDataMainVariablesSetters(this->integrationDataFile,
 							  this->mb);
       this->integrationDataFile << endl;
@@ -3603,10 +3586,8 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/BoundsCheck.hxx\"" << endl;
-    this->behaviourFile << "#include\"TFEL/Material/";
-    this->behaviourFile << this->behaviourDataFileName << "\"" << endl;
-    this->behaviourFile << "#include\"TFEL/Material/";
-    this->behaviourFile << this->integrationDataFileName << "\"" << endl;
+    this->behaviourFile << "#include\"" << this->behaviourDataFileName << "\"" << endl;
+    this->behaviourFile << "#include\"" << this->integrationDataFileName << "\"" << endl;
     if(this->mb.getAttribute<bool>(BehaviourData::profiling,false)){
       this->behaviourFile << "#include\"MFront/BehaviourProfiler.hxx\"" << endl;
     }
@@ -4017,10 +3998,8 @@ namespace mfront{
     this->writeBehaviourParserSpecificIncludes();
     this->writeIncludes(this->behaviourFile);
     // includes specific to interfaces
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       interface->writeInterfaceSpecificIncludes(this->behaviourFile,this->mb);
     }
     this->writeNamespaceBegin(this->behaviourFile);
@@ -4458,9 +4437,8 @@ namespace mfront{
     }
     this->integrationDataFile << "\n{}" << endl << endl;
     // Creating constructor for external interfaces
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin(); i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       if(interface->isModellingHypothesisHandled(h,this->mb)){
 	interface->writeIntegrationDataConstructor(this->integrationDataFile,h,this->mb);
       }
@@ -4702,7 +4680,6 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeIntegrationDataFileBegin(void)
   {
-    using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
     this->checkIntegrationDataFile();
@@ -4711,10 +4688,8 @@ namespace mfront{
     this->writeIntegrationDataStandardTFELIncludes();
     this->writeIncludes(this->integrationDataFile);
     // includes specific to interfaces
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       interface->writeInterfaceSpecificIncludes(this->integrationDataFile,this->mb);
     }
     this->writeNamespaceBegin(this->integrationDataFile);
@@ -4781,9 +4756,9 @@ namespace mfront{
       this->srcFile << "#include<stdexcept>" << endl;
       this->srcFile << endl;
     }
-    this->srcFile << "#include\"TFEL/Material/" << this->behaviourDataFileName   << "\"" << endl;
-    this->srcFile << "#include\"TFEL/Material/" << this->integrationDataFileName << "\"" << endl;
-    this->srcFile << "#include\"TFEL/Material/" << this->behaviourFileName       << "\"" << endl;
+    this->srcFile << "#include\"" << this->behaviourDataFileName   << "\"" << endl;
+    this->srcFile << "#include\"" << this->integrationDataFileName << "\"" << endl;
+    this->srcFile << "#include\"" << this->behaviourFileName       << "\"" << endl;
     this->srcFile << endl;
   } // end of BehaviourDSLCommon::writeSrcFileHeader()
 
@@ -5184,16 +5159,12 @@ namespace mfront{
     using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    typedef map<string,vector<string> > Map;
-    Map incs;
-    vector<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    map<string,vector<string> > incs;
+    for(const auto & i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       const auto& iincs = interface->getGlobalIncludes(this->mb);
-      for(p=iincs.begin();p!=iincs.end();++p){
-	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
+      for(const auto& v : iincs){
+	copy(v.second.begin(),v.second.end(),back_inserter(incs[v.first]));
       }
     }
     return incs;
@@ -5203,18 +5174,14 @@ namespace mfront{
   BehaviourDSLCommon::getGlobalDependencies(void)
   {
     using namespace std;
-    typedef map<string,vector<string> > Map;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    Map deps;
-    vector<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    map<string,vector<string> > deps;
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       const auto& ideps = interface->getGlobalDependencies(this->mb);
-      for(p=ideps.begin();p!=ideps.end();++p){
-	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
+      for(const auto& v : ideps){
+	copy(v.second.begin(),v.second.end(),back_inserter(deps[v.first]));
       }
     }
     return deps;
@@ -5224,24 +5191,19 @@ namespace mfront{
   BehaviourDSLCommon::getGeneratedSources(void)
   {
     using namespace std;
-    typedef map<string,vector<string> > Map;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    Map osources;
-    vector<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    vector<string>::const_iterator p2;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    auto osources = map<string,vector<string> >{};
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       const auto& isources = interface->getGeneratedSources(this->mb);
-      for(p=isources.begin();p!=isources.end();++p){
+      for(auto p=isources.begin();p!=isources.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
 	osources[p->first].push_back(this->srcFileName);
       }
     }
-    for(p=osources.begin();p!=osources.end();++p){
-      for(p2=this->librariesDependencies.begin();
+    for(auto p=osources.begin();p!=osources.end();++p){
+      for(auto p2=this->librariesDependencies.begin();
 	  p2!=this->librariesDependencies.end();++p2){
 	if("-l"+p->first!=*p2){
 	  this->sourcesLibrairiesDependencies[p->first].push_back(*p2);
@@ -5249,7 +5211,29 @@ namespace mfront{
       }
     }
     return osources;
-  } // end of BehaviourDSLCommonCommon::getGeneratedSources
+  } // end of BehaviourDSLCommon::getGeneratedSources
+
+  std::map<std::string,std::vector<std::string> >
+  BehaviourDSLCommon::getGeneratedEntryPoints(void)
+  {
+    using namespace std;
+    typedef BehaviourInterfaceFactory MBIF;
+    auto& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto r = map<string,vector<string>>{};
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
+      const auto& epts = interface->getGeneratedEntryPoints(this->mb);
+      for(auto l:epts){
+	auto& lepts = r[l.first];
+	for(auto p: l.second){
+	  if(find(lepts.begin(),lepts.end(),p)==lepts.end()){
+	    lepts.push_back(p);
+	  }
+	}
+      }
+    }
+    return r;
+  } // end of BehaviourDSLCommon::getLibrariesDependencies
 
   std::vector<std::string>
   BehaviourDSLCommon::getGeneratedIncludes(void)
@@ -5258,10 +5242,8 @@ namespace mfront{
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
     vector<string> incs;
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       const auto& iincs = interface->getGeneratedIncludes(this->mb);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
     }
@@ -5274,18 +5256,13 @@ namespace mfront{
   std::map<std::string,std::vector<std::string> >
   BehaviourDSLCommon::getLibrariesDependencies(void)
   {
-    using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    vector<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    vector<string>::const_iterator p2;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractBehaviourInterface *interface = mbif.getInterfacePtr(*i);
+    for(const auto& i : this->interfaces){
+      auto interface = mbif.getInterfacePtr(i);
       const auto& ideps = interface->getLibrariesDependencies(this->mb);
-      for(p=ideps.begin();p!=ideps.end();++p){
-	for(p2=p->second.begin();p2!=p->second.end();++p2){
+      for(auto p=ideps.begin();p!=ideps.end();++p){
+	for(auto p2=p->second.begin();p2!=p->second.end();++p2){
 	  if(find(this->sourcesLibrairiesDependencies[p->first].begin(),
 		  this->sourcesLibrairiesDependencies[p->first].end(),
 		  *p2)==this->sourcesLibrairiesDependencies[p->first].end()){

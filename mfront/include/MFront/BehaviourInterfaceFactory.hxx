@@ -14,18 +14,19 @@
 #ifndef LIB_MFRONBEHAVIOURTINTERFACEFACTORY_HXX_
 #define LIB_MFRONBEHAVIOURTINTERFACEFACTORY_HXX_ 
 
+#include<map>
+#include<memory>
 #include<vector>
 #include<string>
-#include<map>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/AbstractBehaviourInterface.hxx"
 
 namespace mfront{
 
-  struct TFEL_VISIBILITY_EXPORT BehaviourInterfaceFactory
+  struct MFRONT_VISIBILITY_EXPORT BehaviourInterfaceFactory
   {
-    typedef AbstractBehaviourInterface* (*InterfaceCreator)(void);
+    typedef std::shared_ptr<AbstractBehaviourInterface> (*InterfaceCreator)(void);
     
     static BehaviourInterfaceFactory&
     getBehaviourInterfaceFactory();
@@ -40,14 +41,10 @@ namespace mfront{
     registerInterfaceAlias(const std::string&,
 			   const std::string&);
  
-    AbstractBehaviourInterface* 
+    std::shared_ptr<AbstractBehaviourInterface>
     getInterfacePtr(const std::string&);
     
-    void
-    reset(void);
-
-    void
-    clear(void);
+    void reset(void);
 
     ~BehaviourInterfaceFactory();
     
@@ -55,7 +52,7 @@ namespace mfront{
 
     typedef std::map<std::string,std::string> AliasContainer;
     typedef std::map<std::string,InterfaceCreator> InterfaceCreatorsContainer;
-    typedef std::map<std::string,AbstractBehaviourInterface *> InterfaceContainer;
+    typedef std::map<std::string,std::shared_ptr<AbstractBehaviourInterface>> InterfaceContainer;
 
     TFEL_VISIBILITY_LOCAL
     BehaviourInterfaceFactory();

@@ -17,7 +17,7 @@
 
 #include<fstream>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/SupportedTypes.hxx"
 
 namespace mfront{
@@ -25,7 +25,7 @@ namespace mfront{
   /*!
    * a structure in charge of describing bounds
    */
-  struct TFEL_VISIBILITY_EXPORT BoundsDescription
+  struct MFRONT_VISIBILITY_EXPORT BoundsDescription
   {
     
     enum Category{

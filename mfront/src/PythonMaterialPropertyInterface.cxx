@@ -86,8 +86,8 @@ namespace mfront
 
   std::map<std::string,std::vector<std::string> >
   PythonMaterialPropertyInterface::getGeneratedSources(const std::string& lib,
-						const std::string& mat,
-						const std::string& law)
+						       const std::string& mat,
+						       const std::string& law)
   {
     using namespace std;
     map<string,vector<string> > src;
@@ -125,8 +125,8 @@ namespace mfront
 
   std::map<std::string,std::vector<std::string> >
   PythonMaterialPropertyInterface::getLibrariesDependencies(const std::string& lib,
-						     const std::string& mat,
-						     const std::string&)
+							    const std::string& mat,
+							    const std::string&)
   {
     using namespace std;
     map<string,vector<string> > libs;
@@ -148,28 +148,41 @@ namespace mfront
     return map<string,pair<vector<string>,vector<string> > >();
   } // end of PythonMaterialPropertyInterface::getSpecificTargets
 
+  std::map<std::string,std::vector<std::string> >
+  PythonMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
+							   const std::string& material,
+							   const std::string& className)
+  {
+    using namespace std;
+    auto r = map<string,vector<string>>{};
+    const auto l = makeLowerCase(getMaterialLawLibraryNameBase(library,material));
+    const auto n = (!material.empty()) ? material+"_"+className : className;
+    r[l].push_back(n);
+    return r;
+  }
+
   void
   PythonMaterialPropertyInterface::writeOutputFiles(const std::string& file,
-					     const std::string& lib,
-					     const std::string& material,
-					     const std::string& law,
-					     const std::string& author,
-					     const std::string& date,
-					     const std::string& description,
-					     const std::string& includes,
-					     const std::string& output,
-					     const VariableDescriptionContainer& inputs,
-					     const std::vector<std::string>& materialLaws,
-					     const std::map<std::string,std::string>&,
-					     const std::map<std::string,std::string>&,
-					     const StaticVariableDescriptionContainer& staticVars,
-					     const std::vector<std::string>& params,
-					     const std::map<std::string,double>& paramValues,
-					     const LawFunction& function,
-					     const std::vector<VariableBoundsDescription>& bounds,
-					     const std::vector<VariableBoundsDescription>& physicalBounds,
-					     const bool,
-					     const std::vector<std::string>&)
+						    const std::string& lib,
+						    const std::string& material,
+						    const std::string& law,
+						    const std::string& author,
+						    const std::string& date,
+						    const std::string& description,
+						    const std::string& includes,
+						    const std::string& output,
+						    const VariableDescriptionContainer& inputs,
+						    const std::vector<std::string>& materialLaws,
+						    const std::map<std::string,std::string>&,
+						    const std::map<std::string,std::string>&,
+						    const StaticVariableDescriptionContainer& staticVars,
+						    const std::vector<std::string>& params,
+						    const std::map<std::string,double>& paramValues,
+						    const LawFunction& function,
+						    const std::vector<VariableBoundsDescription>& bounds,
+						    const std::vector<VariableBoundsDescription>& physicalBounds,
+						    const bool,
+						    const std::vector<std::string>&)
   {
     using namespace std;
     using namespace tfel::system;

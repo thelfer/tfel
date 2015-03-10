@@ -64,10 +64,10 @@ namespace mfront{
      */
     virtual bool
     isModellingHypothesisHandled(const Hypothesis,
-				 const BehaviourDescription&) const;
+				 const BehaviourDescription&) const override;
     
     virtual std::set<Hypothesis>
-    getModellingHypothesesToBeTreated(const BehaviourDescription&) const;
+    getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
     /*!
      * write interface specific includes
      * \param[in] out : output file
@@ -75,12 +75,12 @@ namespace mfront{
      */
     virtual void 
     writeInterfaceSpecificIncludes(std::ofstream&,
-				   const BehaviourDescription&) const;
+				   const BehaviourDescription&) const override;
 
     virtual void
     exportMechanicalData(std::ofstream&,
 			 const Hypothesis,
-			 const BehaviourDescription&) const;
+			 const BehaviourDescription&) const override;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
@@ -92,12 +92,12 @@ namespace mfront{
     virtual void
     writeBehaviourConstructor(std::ofstream&,
 			      const BehaviourDescription&,
-			      const std::string&) const;
+			      const std::string&) const override;
 
     virtual void
     writeBehaviourDataConstructor(std::ofstream&,
 				  const Hypothesis,
-				  const BehaviourDescription&) const;
+				  const BehaviourDescription&) const override;
 
     /*!
      * write the initialisation of the driving variables
@@ -106,12 +106,12 @@ namespace mfront{
      */
     virtual void 
     writeBehaviourDataMainVariablesSetters(std::ofstream&,
-					   const BehaviourDescription&) const;
+					   const BehaviourDescription&) const override;
     
     virtual void
     writeIntegrationDataConstructor(std::ofstream&,
 				    const Hypothesis,
-				    const BehaviourDescription&) const;
+				    const BehaviourDescription&) const override;
     /*!
      * write the initialisation of the driving variables
      * \param[in] behaviourFile : output file
@@ -119,7 +119,7 @@ namespace mfront{
      */
     virtual void 
     writeIntegrationDataMainVariablesSetters(std::ofstream&,
-					     const BehaviourDescription&) const;
+					     const BehaviourDescription&) const override;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
@@ -127,38 +127,42 @@ namespace mfront{
      */
     virtual void
     endTreatement(const BehaviourDescription&,
-		  const FileDescription&) const;
+		  const FileDescription&) const override;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const BehaviourDescription&) const;
+    getGlobalIncludes(const BehaviourDescription&) const override;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const BehaviourDescription&) const;
+    getGlobalDependencies(const BehaviourDescription&) const override;
 
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const BehaviourDescription&) const;
-
+    getGeneratedSources(const BehaviourDescription&) const override;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::vector<std::string>
-    getGeneratedIncludes(const BehaviourDescription&) const;
-
+    getGeneratedIncludes(const BehaviourDescription&) const override;
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const BehaviourDescription&) const;
+    getLibrariesDependencies(const BehaviourDescription&) const override;
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     * \param[in] mb : mechanical behaviour description
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const BehaviourDescription&) const override;
 
-    virtual void
-    reset(void);
+    virtual void reset(void) override;
     
     virtual ~ZMATInterface();
 

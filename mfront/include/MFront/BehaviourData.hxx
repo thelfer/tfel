@@ -18,10 +18,9 @@
 #include<map>
 #include<vector>
 #include<string>
-
-#include"TFEL/Config/TFELConfig.hxx"
 #include<memory>
 
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/CodeBlock.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/DrivingVariable.hxx"
@@ -37,7 +36,7 @@ namespace mfront{
   /*!
    * This structure gathers various behaviour characteristic
    */
-  struct BehaviourData
+  struct MFRONT_VISIBILITY_EXPORT BehaviourData
     : private SupportedTypes
   {
     /*
@@ -379,41 +378,35 @@ namespace mfront{
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void
-    setParameterDefaultValue(const std::string&,
-			     const double);
+    void setParameterDefaultValue(const std::string&,
+				  const double);
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void
-    setParameterDefaultValue(const std::string&,
-			     const int);
+    void setParameterDefaultValue(const std::string&,
+				  const int);
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void
-    setParameterDefaultValue(const std::string&,
-			     const unsigned short);
+    void setParameterDefaultValue(const std::string&,
+				  const unsigned short);
     /*!
      * \return the default value of a paramater
      * \param[in] v : parameter default value
      */
-    double
-    getFloattingPointParameterDefaultValue(const std::string&) const;
+    double getFloattingPointParameterDefaultValue(const std::string&) const;
     /*!
      * \return the default value of a paramater
      * \param[in] v : parameter default value
      */
-    int
-    getIntegerParameterDefaultValue(const std::string&) const;
+    int getIntegerParameterDefaultValue(const std::string&) const;
     /*!
      * \return the default value of a paramater
      * \param[in] v : parameter default value
      */
-    unsigned short
-    getUnsignedShortParameterDefaultValue(const std::string&) const;
+    unsigned short getUnsignedShortParameterDefaultValue(const std::string&) const;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description

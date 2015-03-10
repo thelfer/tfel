@@ -20,7 +20,7 @@
 #include<string>
 #include<fstream>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 
 #include"MFront/DSLBase.hxx"
 #include"MFront/AbstractDSL.hxx"
@@ -28,13 +28,17 @@
 
 namespace mfront{
 
-  struct TFEL_VISIBILITY_EXPORT ModelDSLCommon
+  struct MFRONT_VISIBILITY_EXPORT ModelDSLCommon
     : public DSLBase,
       protected ModelData
   {
-
-    virtual void
-    writeOutputFiles(void);
+    //! \return the target of the dsl
+    virtual DSLTarget getTargetType(void) const final;
+    /*!
+     * \brief write the output files.
+     * \note this shall be called after the analyseFile method.
+     */
+    virtual void generateOutputFiles(void) override;
 
     virtual void
     setInterfaces(const std::set<std::string>&);
@@ -64,6 +68,12 @@ namespace mfront{
 		     std::pair<std::vector<std::string>,
 			       std::vector<std::string> > >
     getSpecificTargets(void);
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(void) override;
 
     static bool
     is(const ModelData&,

@@ -23,4 +23,7 @@ namespace mfront
 					 this->entryNames);
   } // end of MaterialPropertyDescription::getInputVariablesExternalNames
 
+  MaterialPropertyDescription::~MaterialPropertyDescription()
+  {} // end of MaterialPropertyDescription::~MaterialPropertyDescription()
+
 } // end of namespace mfront

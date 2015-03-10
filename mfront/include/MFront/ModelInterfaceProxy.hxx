@@ -15,6 +15,7 @@
 #define LIB_MFRONTMODELINTERFACEPROXY_HXX_ 
 
 #include<string>
+#include<memory>
 
 #include"MFront/ModelInterfaceFactory.hxx"
 #include"MFront/AbstractModelInterface.hxx"
@@ -26,7 +27,8 @@ namespace mfront{
   {
     ModelInterfaceProxy();
 
-    static AbstractModelInterface* createInterface();
+    static std::shared_ptr<AbstractModelInterface>
+    createInterface();
   };
 
 } // end of namespace mfront

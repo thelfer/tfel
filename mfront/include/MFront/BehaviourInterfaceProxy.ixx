@@ -42,18 +42,17 @@ namespace mfront{
   {
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    InputIterator p;
     mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
-    for(p=b;p!=e;++p){
+    for(auto p=b;p!=e;++p){
       mbif.registerInterfaceAlias(Interface::getName(),*p);
     }
   } // end of BehaviourInterfaceProxy<Interface>::BehaviourInterfaceProxy
   
   template<typename Interface>
-  AbstractBehaviourInterface* 
+  std::shared_ptr<AbstractBehaviourInterface>
   BehaviourInterfaceProxy<Interface>::createInterface()
   {
-    return new Interface;
+    return std::make_shared<Interface>();
   }
 
 } // end of namespace mfront

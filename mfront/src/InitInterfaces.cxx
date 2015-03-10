@@ -20,7 +20,6 @@
 #include"MFront/CMaterialPropertyInterface.hxx"
 #include"MFront/ExcelMaterialPropertyInterface.hxx"
 #include"MFront/ExcelMaterialPropertyInternalInterface.hxx"
-#include"MFront/LaTeXMaterialPropertyInterface.hxx"
 
 #ifdef HAVE_FORTRAN
 #include"MFront/FortranMaterialPropertyInterface.hxx"
@@ -51,6 +50,7 @@
 #endif
 
 #include"MFront/ZMATInterface.hxx"
+#include"MFront/InitInterfaces.hxx"
 
 namespace mfront
 {
@@ -72,9 +72,6 @@ namespace mfront
     MaterialPropertyInterfaceProxy<ExcelMaterialPropertyInterface> excelLawProxy(ExcelMaterialPropertyInterface::getName(),
 										 ExcelMaterialPropertyInternalInterface::getName());
 
-    constexpr const char * texLawProxyNames [2] = {"latex","LaTex"};
-    MaterialPropertyInterfaceProxy<LaTeXMaterialPropertyInterface> latexLawProxy(texLawProxyNames,texLawProxyNames+2);
-    
     constexpr const char * cppLawProxyNames [6] = {"c++","C++",
 						   "cxx","Cxx",
 						   "cpp","Cpp"};

@@ -11,141 +11,120 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_H_
-#define LIB_MFRONT_H_ 
+#ifndef LIB_MFRONT_MFRONT_H_
+#define LIB_MFRONT_MFRONT_H_ 
 
-#include<fstream>
-#include<string>
-#include<vector>
 #include<set>
 #include<map>
+#include<string>
+#include<vector>
+#include<fstream>
 
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
-
-#include"MFront/AbstractDSL.hxx"
+#include"MFront/MFrontBase.hxx"
 
 namespace mfront{
 
   struct MFront
-    : public tfel::utilities::ArgumentParserBase<MFront>
+    : public tfel::utilities::ArgumentParserBase<MFront>,
+      public MFrontBase
   {
     MFront(const int, const char *const *const);
 
-    void exe(void);
+    virtual void exe(void);
 
     ~MFront();
-
-    static const std::string& getCallingName(void);
 
   private :
 
     friend struct tfel::utilities::ArgumentParserBase<MFront>;
 
-    static std::string callingName;
+    //! treat an unknown argument
+    virtual void treatUnknownArgument(void) final;
+    //! return the current argument
+    virtual const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const final;
+    //! get the version description
+    virtual std::string
+    getVersionDescription(void) const final;
+    //! get the usage description
+    virtual std::string
+    getUsageDescription(void) const final;
 
-    void treatUnknownArgument(void);
+    virtual void treatHelpCommandsList(void);
 
-    static std::vector<std::string>
-    tokenize(const std::string&,
-	     const char);
+    virtual void treatHelpCommand(void);
 
-    std::string
-    getVersionDescription(void) const;
+    virtual void treatAnalyser(void);
 
-    std::string
-    getUsageDescription(void) const;
+    virtual void treatSilentBuild(void);
 
-    void treatVerbose(void);
+    virtual void treatNoDeps(void);
 
-    void treatSearchPath(void);
+    virtual void treatNoMelt(void);
 
-    void treatHelpCommandsList(void);
+    virtual void treatOMake(void);
 
-    void treatHelpCommand(void);
+    virtual void treatOBuild(void);
 
-    void treatWarning(void);
+    virtual void treatMake(void);
 
-    void treatDebug(void);
+    virtual void treatBuild(void);
 
-    void treatPedantic(void);
+    virtual void treatClean(void);
 
-    void treatInterface(void);
+    virtual void treatTarget(void);
 
-    void treatAnalyser(void);
+    virtual void treatOTarget(void);
 
-    void treatSilentBuild(void);
+    virtual void treatFile(const std::string&);
 
-    void treatNoDeps(void);
+    virtual void treatListParsers(void);
 
-    void treatNoMelt(void);
+    virtual void registerArgumentCallBacks(void);
 
-    void treatOMake(void);
+    virtual void analyseSourceDirectory(void);
 
-    void treatOBuild(void);
+    virtual void analyseSources(const std::string&);
 
-    void treatMake(void);
+    virtual void analyseEntryPoints(const std::string&);
 
-    void treatBuild(void);
+    virtual void analyseDependencies(const std::string&);
 
-    void treatClean(void);
+    virtual void analyseMakefileSpecificTargets(void);
 
-    void treatTarget(void);
+    virtual void analyseGlobalIncludes(void);
 
-    void treatOTarget(void);
+    virtual void writeSourcesLists(void);
 
-    void treatFile(void);
+    virtual void writeEntryPointsLists(void);
 
-    void treatListParsers(void);
+    virtual void writeDependenciesLists(void);
 
-    void registerArgumentCallBacks(void);
+    virtual void writeSpecificTargets(void);
 
-    void
-    analyseSourceDirectory(void);
+    virtual void writeGlobalIncludes(void);
 
-    void
-    analyseSources(const std::string&);
-
-    void
-    analyseDependencies(const std::string&);
-
-    void
-    analyseMakefileSpecificTargets(void);
-
-    void
-    analyseGlobalIncludes(void);
-
-    void
-    writeSourcesLists(void);
-
-    void
-    writeDependenciesLists(void);
-
-    void
-    writeSpecificTargets(void);
-
-    void
-    writeGlobalIncludes(void);
-
-    std::pair<bool,std::pair<std::string,std::string> >
+    virtual std::pair<bool,std::pair<std::string,std::string> >
     getLibraryDependencies(const std::string&);
 
-    std::string
+    virtual std::string
     getLibraryLinkDependencies(const std::string&);
 
-    std::string
+    virtual std::string
     sortLibraryList(const std::string&);
 
-    void
+    virtual void
     generateMakeFile(void);
 
-    void
+    virtual void
     buildLibraries(const std::string&);
 
-    void
+    virtual void
     cleanLibraries(void);
 
 #ifndef __CYGWIN
-    void
+    virtual void
     treatWin32(void);
 #endif /* LIB_MFRONT_H_ */
 
@@ -156,31 +135,17 @@ namespace mfront{
 
     std::map<std::string,std::set<std::string> > sources;
 
+    std::map<std::string,std::set<std::string> > epts;
+
     std::map<std::string,std::vector<std::string> > dependencies;
 
-    std::set<std::string> interfaces;
-
     std::set<std::string> analysers;
-
-    std::set<std::string> inputs;
 
     std::set<std::string> globalIncludes;
 
     std::set<std::string> specifiedTargets;
 
-    /*!
-     * \brief external commands specificed on the command line through
-     * an --@XXX option
-     */
-    std::vector<std::string> ecmds;
-
-    std::string fileName;
-
     std::string sys;
-
-    bool warningMode;
-
-    bool debugMode;
 
     bool oflags;
 
@@ -202,4 +167,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_H_ */
+#endif /* LIB_MFRONT_MFRONT_H_ */

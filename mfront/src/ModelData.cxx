@@ -16,6 +16,9 @@
 namespace mfront
 {
 
+  ModelData::Function::Function()
+  {} // end of ModelData::Function::Function()
+
   ModelData::Function::~Function()
   {} // end of ModelData::Function::~Function
 

@@ -86,7 +86,7 @@ namespace mfront
 
   void
   MarkdownBehaviourAnalyser::endTreatement(const BehaviourDescription& mb,
-						 const FileDescription& fd)
+					   const FileDescription& fd)
   {
     using namespace std;
     using namespace tfel::material;
@@ -151,12 +151,12 @@ namespace mfront
     }
     out << endl << endl;
     if(!fd.description.empty()){
-      vector<string> d = tokenize(fd.description,'\n');
-      for(vector<string>::const_iterator pd=d.begin();pd!=d.end();++pd){
-	if((pd->size()>=2)&&((*pd)[0]=='*')&&((*pd)[1]==' ')){
-	  out << pd->substr(2) << endl;
+      const auto d = tokenize(fd.description,'\n');
+      for(const auto& l : d){
+	if((l.size()>=2)&&((l)[0]=='*')&&((l)[1]==' ')){
+	  out << l.substr(2) << endl;
 	} else {
-	  out << *pd << endl;
+	  out << l << endl;
 	}
       }
     } else {

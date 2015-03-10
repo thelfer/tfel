@@ -18,11 +18,48 @@
 #include<vector>
 #include<string>
 
+#include"TFEL/Config/TFELConfig.hxx"
+
 namespace tfel
 {
 
   namespace utilities
   {
+
+    /*!
+     * Class holding a command line argument
+     *
+     * This class is used internally.
+     * \note inheriting from std::string shall be forbidden in most
+     *cases. Here its does not harm.
+     */
+    struct TFELUTILITIES_VISIBILITY_EXPORT Argument
+      : public std::string
+    {
+      //! \param s : argument name
+      Argument(std::string s);
+      //! \param s : argument name
+      Argument(const char* const s);
+      Argument(Argument&&) = default;
+      Argument(const Argument&) = default;
+      Argument& operator=(Argument&&) = default;
+      Argument& operator=(const Argument&) = default;
+      //! \return true if an option was given for this argument
+      bool hasOption(void) const noexcept;
+      /*!
+       * \brief set argument option
+       * \param o : option
+       */
+      void setOption(const std::string& o);
+      //! \return argument option
+      const std::string& getOption() const noexcept;
+      //! destructor
+      ~Argument() noexcept;
+    private:
+      //! argument option
+      std::string option;
+      bool isOptionSet;
+    }; // end of struct Argument
 
     /*!
      * \brief Class used for command line argument parsing.
@@ -40,56 +77,6 @@ namespace tfel
     {
 
     protected:
-
-      /*!
-       * Class holding a command line argument
-       *
-       * This class is used internally.
-       * \note inheriting from std::string shall be forbidden in most
-       *cases. Here its does not harm.
-       */
-      struct Argument
-	: public std::string
-      {
-	//! \param s : argument name
-	Argument(std::string s)
-	  : std::string(std::forward<std::string>(s))
-	{}
-	//! \param s : argument name
-	Argument(const char* const s)
-	  : std::string(s)
-	{}
-	Argument(Argument&&) = default;
-	Argument(const Argument&) = default;
-	Argument& operator=(Argument&&) = default;
-	Argument& operator=(const Argument&) = default;
-	//! \return true if an option was given for this argument
-	bool hasOption(void) const noexcept
-	{
-	  return this->isOptionSet;
-	}
-	/*!
-	 * \brief set argument option
-	 * \param o : option
-	 */
-	void setOption(const std::string& o)
-	{
-	  this->isOptionSet = true;
-	  this->option = o;
-	}
-	//! \return argument option
-	const std::string& getOption() const noexcept
-	{
-	  return option;
-	}
-	//! destructor
-	~Argument() noexcept
-	{}
-      private:
-	//! argument option
-	std::string option;
-	bool isOptionSet;
-      }; // end of struct Argument
     
       //! a simple alias
       typedef void (Child::* MemberFuncPtr)(void);

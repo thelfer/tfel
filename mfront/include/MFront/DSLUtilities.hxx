@@ -17,24 +17,24 @@
 
 #include<iosfwd>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Glossary/Forward/Glossary.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront{
 
-  TFEL_VISIBILITY_EXPORT void
+  MFRONT_VISIBILITY_EXPORT void
   writeMaterialLaws(const std::string&,
 		    std::ofstream&,
 		    const std::vector<std::string>&);
 
-  TFEL_VISIBILITY_EXPORT void
+  MFRONT_VISIBILITY_EXPORT void
   writeStaticVariables(const std::string&,
 		       std::ofstream&,
 		       const StaticVariableDescriptionContainer&,
 		       const std::string&);
   
-  TFEL_VISIBILITY_EXPORT std::string
+  MFRONT_VISIBILITY_EXPORT std::string
   getMaterialLawLibraryNameBase(const std::string&,
 				const std::string&);
 
@@ -45,14 +45,14 @@ namespace mfront{
    * \param[out] f : output file
    * \param[in]  c : calling convention
    */
-  TFEL_VISIBILITY_EXPORT void
+  MFRONT_VISIBILITY_EXPORT void
   writeExportDirectives(std::ofstream&,
 			const std::string& = "__cdecl");
 
-  TFEL_VISIBILITY_EXPORT std::string
+  MFRONT_VISIBILITY_EXPORT std::string
   makeUpperCase(const std::string&);
 
-  TFEL_VISIBILITY_EXPORT std::string 
+  MFRONT_VISIBILITY_EXPORT std::string 
   makeLowerCase(const std::string&);
 
   /*!
@@ -60,7 +60,7 @@ namespace mfront{
    * \param[out] os : output stream
    * \param[in]  e  : glossary entry
    */
-  TFEL_VISIBILITY_EXPORT void
+  MFRONT_VISIBILITY_EXPORT void
   displayGlossaryEntryCompleteDescription(std::ostream&,
 					  const tfel::glossary::GlossaryEntry&);
 

@@ -25,14 +25,16 @@ namespace tfel{
     struct TinyPermutation
       : protected tvector<N,unsigned short>
     {
-      
-      TFEL_MATH_INLINE TinyPermutation();
-
+      //! default constructor
+      TinyPermutation();
+      //! disabling default constructors and assignement operators
       TinyPermutation(const TinyPermutation&) = delete;
       TinyPermutation(TinyPermutation&&) = delete;
       TinyPermutation&
+      operator=(const TinyPermutation&) = delete;
+      TinyPermutation&
       operator=(TinyPermutation&&) = delete;
-
+      //! apply the permutation to the given vector
       template<typename T>
       TFEL_MATH_INLINE void exe(tvector<N,T>&) const;
 

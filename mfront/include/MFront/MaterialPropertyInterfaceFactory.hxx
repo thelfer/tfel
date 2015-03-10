@@ -14,20 +14,21 @@
 #ifndef LIB_MFRONTLAWINTERFACEFACTORY_HXX_
 #define LIB_MFRONTLAWINTERFACEFACTORY_HXX_ 
 
-#include<vector>
-#include<string>
 #include<map>
+#include<vector>
+#include<memory>
+#include<string>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/AbstractMaterialPropertyInterface.hxx"
 
 namespace mfront{
 
-  struct TFEL_VISIBILITY_EXPORT MaterialPropertyInterfaceFactory
+  struct MFRONT_VISIBILITY_EXPORT MaterialPropertyInterfaceFactory
   {
 
-    typedef AbstractMaterialPropertyInterface* (*InterfaceCreator)(void);
-    
+    typedef std::shared_ptr<AbstractMaterialPropertyInterface> (*InterfaceCreator)(void);
+  
     static MaterialPropertyInterfaceFactory&
     getMaterialPropertyInterfaceFactory();
 
@@ -49,14 +50,10 @@ namespace mfront{
     std::vector<std::string>
     getInterfaceDependencies(const std::string&);
 
-    AbstractMaterialPropertyInterface* 
+    std::shared_ptr<AbstractMaterialPropertyInterface>
     getInterfacePtr(const std::string&);
     
-    void
-    reset(void);
-
-    void
-    clear(void);
+    void reset(void);
 
     ~MaterialPropertyInterfaceFactory();
 
@@ -64,7 +61,7 @@ namespace mfront{
 
     typedef std::map<std::string,std::string> AliasContainer;
     typedef std::map<std::string,InterfaceCreator> InterfaceCreatorsContainer;
-    typedef std::map<std::string,AbstractMaterialPropertyInterface *> InterfaceContainer;
+    typedef std::map<std::string,std::shared_ptr<AbstractMaterialPropertyInterface>> InterfaceContainer;
     typedef std::map<std::string,std::vector<std::string> > InterfaceDependencyContainer;
 
     TFEL_VISIBILITY_LOCAL

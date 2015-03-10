@@ -25,61 +25,55 @@ namespace mfront{
     getName(void);
     
     FortranMaterialPropertyInterface();
-
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(const std::string&,
 		      const std::string&,
-		      const std::string&);
-
+		      const std::string&) override;
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     std::map<std::string,std::vector<std::string> >
     getGlobalDependencies(const std::string&,
 			  const std::string&,
-			  const std::string&);
-
+			  const std::string&) override;
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     std::map<std::string,std::vector<std::string> >
     getGeneratedSources(const std::string&,
 			const std::string&,
-			const std::string&);
-
+			const std::string&) override;
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     std::vector<std::string>
     getGeneratedIncludes(const std::string&,
 			 const std::string&,
-			 const std::string&);
-
+			 const std::string&) override;
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      */
     std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const std::string&,
 			     const std::string&,
-			     const std::string&);
-
+			     const std::string&) override;
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
      * \param const std::vector<std::string>&, library links
      */
     std::map<std::string,
@@ -88,9 +82,20 @@ namespace mfront{
     getSpecificTargets(const std::string&,
 		       const std::string&,
 		       const std::string&,
-		       const std::vector<std::string>&);
-
-    ~FortranMaterialPropertyInterface();
+		       const std::vector<std::string>&) override;
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const std::string&,
+			    const std::string&,
+			    const std::string&) override;
+    //! destructor
+    virtual ~FortranMaterialPropertyInterface();
         
   private:
 

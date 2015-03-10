@@ -12,16 +12,18 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTINITANALYSERS_HXX_
-#define LIB_MFRONTINITANALYSERS_HXX_ 
+#ifndef LIB_MFRONT_INITANALYSERS_HXX_
+#define LIB_MFRONT_INITANALYSERS_HXX_ 
+
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
   
-  void
+  MFRONT_VISIBILITY_EXPORT void
   initAnalysers(void);
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONTINITANALYSERS_HXX_ */
+#endif /* LIB_MFRONT_INITANALYSERS_HXX_ */
 

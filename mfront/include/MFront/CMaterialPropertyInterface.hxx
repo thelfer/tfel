@@ -89,7 +89,12 @@ namespace mfront{
 		       const std::string&,
 		       const std::string&,
 		       const std::vector<std::string>&);
-
+    
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const std::string&,
+			    const std::string&,
+			    const std::string&) override;
+    //! destructor
     virtual ~CMaterialPropertyInterface();
         
   private:

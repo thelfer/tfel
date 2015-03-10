@@ -17,7 +17,7 @@
 #include<string>
 #include<vector>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/VariableDescription.hxx"
 
 namespace mfront{
@@ -25,7 +25,7 @@ namespace mfront{
   /*!
    * Class representing a static variable
    */
-  struct TFEL_VISIBILITY_EXPORT StaticVariableDescription
+  struct MFRONT_VISIBILITY_EXPORT StaticVariableDescription
     : public VariableDescription
   {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__

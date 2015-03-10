@@ -14,20 +14,20 @@
 #ifndef LIB_MFRONT_MFRONTPEDANTICMODE_H_
 #define LIB_MFRONT_MFRONTPEDANTICMODE_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront{
 
   /*!
    * \return true if the pedantic mode is enabled
    */
-  TFEL_VISIBILITY_EXPORT bool getPedanticMode();
+  MFRONT_VISIBILITY_EXPORT bool getPedanticMode();
 
   /*!
    * \brief enable or diable the pedantic mode
    * \param[in] b : if true, set the pedantic mode
    */
-  TFEL_VISIBILITY_EXPORT void setPedanticMode(const bool);
+  MFRONT_VISIBILITY_EXPORT void setPedanticMode(const bool);
 
 }
 

@@ -1,4 +1,7 @@
 install_header(MFront MFront.hxx)
+install_header(MFront BehaviourQuery.hxx)
+install_mfront_header(MFront MFrontBase.hxx)
+install_mfront_header(MFront MFrontExecutableName.hxx)
 install_mfront_header(MFront CodeBlock.hxx)
 install_mfront_header(MFront MFrontConfig.hxx)
 install_mfront_header(MFront MFrontDebugMode.hxx)

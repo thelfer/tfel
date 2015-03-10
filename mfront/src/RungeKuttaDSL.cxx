@@ -60,7 +60,7 @@ namespace mfront{
     }
   }
 
-  void
+  static void
   writeExternalVariableCurrentValue2(std::ostream& f,
 				     const std::string& n,
 				     const std::string& p)

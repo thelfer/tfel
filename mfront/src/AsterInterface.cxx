@@ -728,7 +728,7 @@ namespace mfront{
 #error "AsterInterface::getGlobalIncludes : unsuported architecture"
 #endif
     return incs;
-  } // end of AsterInterface::getGeneratedSources
+  } // end of AsterInterface::getGlobalIncludes
 
   std::map<std::string,std::vector<std::string> >
   AsterInterface::getGeneratedSources(const BehaviourDescription& mb) const
@@ -767,6 +767,14 @@ namespace mfront{
     deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
     return deps;
   } // end of AsterInterface::getLibrariesDependencies()
+
+  std::map<std::string,std::vector<std::string> >
+  AsterInterface::getGeneratedEntryPoints(const BehaviourDescription& mb) const
+  {
+    const auto name = ((!mb.getLibrary().empty()) ? mb.getLibrary() : "") + mb.getClassName();
+    return {{AsterInterface::getLibraryName(mb),{"aster"+makeLowerCase(name)}}};
+  } // end of AsterInterface::getGeneratedSources
+
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
 	    SupportedTypes::TypeSize>

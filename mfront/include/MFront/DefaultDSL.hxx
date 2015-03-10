@@ -15,11 +15,12 @@
 #define LIB_MFRONTPARSER_HXX_ 
 
 #include<string>
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/DefaultDSLBase.hxx"
 
 namespace mfront{
 
-  struct DefaultDSL
+  struct MFRONT_VISIBILITY_EXPORT DefaultDSL
     : public DefaultDSLBase
   {
 

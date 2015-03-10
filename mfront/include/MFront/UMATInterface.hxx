@@ -104,6 +104,13 @@ namespace mfront{
     virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const BehaviourDescription&) const;
     /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     * \param[in] mb : mechanical behaviour description
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const BehaviourDescription&) const override;
+    /*!
      * write interface specific includes
      * \param[in] out : output file
      * \param[in] mb  : mechanical behaviour description
@@ -115,7 +122,7 @@ namespace mfront{
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
+		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
@@ -125,10 +132,9 @@ namespace mfront{
     endTreatement(const BehaviourDescription&,
 		  const FileDescription&) const;
 
-    virtual void
-    reset(void);
+    virtual void reset(void) override;
 
-    ~UMATInterface();
+    virtual ~UMATInterface();
     
   protected:
 

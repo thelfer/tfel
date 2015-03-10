@@ -15,6 +15,7 @@
 #define LIB_MFRONTBEHAVIOURINTERFACEPROXY_HXX_ 
 
 #include<string>
+#include<memory>
 
 #include"MFront/BehaviourInterfaceFactory.hxx"
 #include"MFront/AbstractBehaviourInterface.hxx"
@@ -32,7 +33,8 @@ namespace mfront{
     BehaviourInterfaceProxy(const InputIterator,
 				  const InputIterator);
 
-    static AbstractBehaviourInterface* createInterface();
+    static std::shared_ptr<AbstractBehaviourInterface>
+    createInterface();
   };
 
 } // end of namespace mfront

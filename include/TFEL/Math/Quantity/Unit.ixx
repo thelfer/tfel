@@ -14,8 +14,6 @@
 #ifndef LIB_TFEL_UNIT_I_
 #define LIB_TFEL_UNIT_I_ 
 
-#include"TFEL/Math/General/FracSimplify.hxx"
-
 namespace tfel{
 
   namespace math{
@@ -56,20 +54,20 @@ namespace tfel{
 			 std::integral_constant<unsigned int,AP6>,
 			 std::integral_constant<unsigned int,AP7> > >
     {
-      typedef typename GenerateUnit<FracSimplify<N1*AP1+O1*D1,D1*AP1>::N,
-				    FracSimplify<N2*AP2+O2*D2,D2*AP2>::N,
-				    FracSimplify<N3*AP3+O3*D3,D3*AP3>::N,
-				    FracSimplify<N4*AP4+O4*D4,D4*AP4>::N,
-				    FracSimplify<N5*AP5+O5*D5,D5*AP5>::N,
-				    FracSimplify<N6*AP6+O6*D6,D6*AP6>::N,
-				    FracSimplify<N7*AP7+O7*D7,D7*AP7>::N,
-				    FracSimplify<N1*AP1+O1*D1,D1*AP1>::D,
-				    FracSimplify<N2*AP2+O2*D2,D2*AP2>::D,
-				    FracSimplify<N3*AP3+O3*D3,D3*AP3>::D,
-				    FracSimplify<N4*AP4+O4*D4,D4*AP4>::D,
-				    FracSimplify<N5*AP5+O5*D5,D5*AP5>::D,
-				    FracSimplify<N6*AP6+O6*D6,D6*AP6>::D,
-				    FracSimplify<N7*AP7+O7*D7,D7*AP7>::D>::type type;
+      typedef typename GenerateUnit<std::ratio<N1*AP1+O1*D1,D1*AP1>::num,
+				    std::ratio<N2*AP2+O2*D2,D2*AP2>::num,
+				    std::ratio<N3*AP3+O3*D3,D3*AP3>::num,
+				    std::ratio<N4*AP4+O4*D4,D4*AP4>::num,
+				    std::ratio<N5*AP5+O5*D5,D5*AP5>::num,
+				    std::ratio<N6*AP6+O6*D6,D6*AP6>::num,
+				    std::ratio<N7*AP7+O7*D7,D7*AP7>::num,
+				    std::ratio<N1*AP1+O1*D1,D1*AP1>::den,
+				    std::ratio<N2*AP2+O2*D2,D2*AP2>::den,
+				    std::ratio<N3*AP3+O3*D3,D3*AP3>::den,
+				    std::ratio<N4*AP4+O4*D4,D4*AP4>::den,
+				    std::ratio<N5*AP5+O5*D5,D5*AP5>::den,
+				    std::ratio<N6*AP6+O6*D6,D6*AP6>::den,
+				    std::ratio<N7*AP7+O7*D7,D7*AP7>::den>::type type;
     };
 
     template<int N1,int N2,int N3,int N4,int N5,int N6,int N7,
@@ -143,20 +141,20 @@ namespace tfel{
 			 std::integral_constant<unsigned int,AP6>,
 			 std::integral_constant<unsigned int,AP7> > >
     {
-      typedef typename GenerateUnit<FracSimplify<N1*AP1-O1*D1,D1*AP1>::N,
-				    FracSimplify<N2*AP2-O2*D2,D2*AP2>::N,
-				    FracSimplify<N3*AP3-O3*D3,D3*AP3>::N,
-				    FracSimplify<N4*AP4-O4*D4,D4*AP4>::N,
-				    FracSimplify<N5*AP5-O5*D5,D5*AP5>::N,
-				    FracSimplify<N6*AP6-O6*D6,D6*AP6>::N,
-				    FracSimplify<N7*AP7-O7*D7,D7*AP7>::N,
-				    FracSimplify<N1*AP1-O1*D1,D1*AP1>::D,
-				    FracSimplify<N2*AP2-O2*D2,D2*AP2>::D,
-				    FracSimplify<N3*AP3-O3*D3,D3*AP3>::D,
-				    FracSimplify<N4*AP4-O4*D4,D4*AP4>::D,
-				    FracSimplify<N5*AP5-O5*D5,D5*AP5>::D,
-				    FracSimplify<N6*AP6-O6*D6,D6*AP6>::D,
-				    FracSimplify<N7*AP7-O7*D7,D7*AP7>::D>::type type;
+      typedef typename GenerateUnit<std::ratio<N1*AP1-O1*D1,D1*AP1>::num,
+				    std::ratio<N2*AP2-O2*D2,D2*AP2>::num,
+				    std::ratio<N3*AP3-O3*D3,D3*AP3>::num,
+				    std::ratio<N4*AP4-O4*D4,D4*AP4>::num,
+				    std::ratio<N5*AP5-O5*D5,D5*AP5>::num,
+				    std::ratio<N6*AP6-O6*D6,D6*AP6>::num,
+				    std::ratio<N7*AP7-O7*D7,D7*AP7>::num,
+				    std::ratio<N1*AP1-O1*D1,D1*AP1>::den,
+				    std::ratio<N2*AP2-O2*D2,D2*AP2>::den,
+				    std::ratio<N3*AP3-O3*D3,D3*AP3>::den,
+				    std::ratio<N4*AP4-O4*D4,D4*AP4>::den,
+				    std::ratio<N5*AP5-O5*D5,D5*AP5>::den,
+				    std::ratio<N6*AP6-O6*D6,D6*AP6>::den,
+				    std::ratio<N7*AP7-O7*D7,D7*AP7>::den>::type type;
     };
 
     template<int N1,int N2,int N3,int N4,int N5,int N6,int N7,
@@ -211,20 +209,20 @@ namespace tfel{
 			     std::integral_constant<unsigned int,D6>,
 			     std::integral_constant<unsigned int,D7> > >
     {
-      typedef typename GenerateUnit<FracSimplify<N1*N,D1*D>::N,
-				    FracSimplify<N2*N,D2*D>::N,
-				    FracSimplify<N3*N,D3*D>::N,
-				    FracSimplify<N4*N,D4*D>::N,
-				    FracSimplify<N5*N,D5*D>::N,
-				    FracSimplify<N6*N,D6*D>::N,
-				    FracSimplify<N7*N,D7*D>::N,
-				    FracSimplify<N1*N,D1*D>::D,
-				    FracSimplify<N2*N,D2*D>::D,
-				    FracSimplify<N3*N,D3*D>::D,
-				    FracSimplify<N4*N,D4*D>::D,
-				    FracSimplify<N5*N,D5*D>::D,
-				    FracSimplify<N6*N,D6*D>::D,
-				    FracSimplify<N7*N,D7*D>::D>::type type;
+      typedef typename GenerateUnit<std::ratio<N1*N,D1*D>::num,
+				    std::ratio<N2*N,D2*D>::num,
+				    std::ratio<N3*N,D3*D>::num,
+				    std::ratio<N4*N,D4*D>::num,
+				    std::ratio<N5*N,D5*D>::num,
+				    std::ratio<N6*N,D6*D>::num,
+				    std::ratio<N7*N,D7*D>::num,
+				    std::ratio<N1*N,D1*D>::den,
+				    std::ratio<N2*N,D2*D>::den,
+				    std::ratio<N3*N,D3*D>::den,
+				    std::ratio<N4*N,D4*D>::den,
+				    std::ratio<N5*N,D5*D>::den,
+				    std::ratio<N6*N,D6*D>::den,
+				    std::ratio<N7*N,D7*D>::den>::type type;
     };
 
   } // end of Namesapce math

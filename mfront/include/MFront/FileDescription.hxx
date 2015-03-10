@@ -14,10 +14,8 @@
 #ifndef LIB_MFRONT_MFRONTFILEDESCRIPTION_HXX
 #define LIB_MFRONT_MFRONTFILEDESCRIPTION_HXX 
 
-#include<set>
 #include<string>
-
-#include"MFront/StaticVariableDescription.hxx"
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
@@ -26,12 +24,13 @@ namespace mfront
    * this class gathers some information about the MFront file being
    * treatd
    */
-  struct FileDescription
+  struct MFRONT_VISIBILITY_EXPORT FileDescription
   {
     std::string fileName;    
     std::string authorName;
     std::string date;
     std::string description;
+    ~FileDescription();
   }; // end of struct FileDescription
 
   //! typedef provided

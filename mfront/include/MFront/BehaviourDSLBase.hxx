@@ -23,11 +23,25 @@ namespace mfront{
   struct BehaviourDSLBase
     : public BehaviourDSLCommon
   {
-
+    /*!
+     * \brief import a file
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commands (those commands are given through the
+     * `--@??` option of the command line
+     */
     virtual void
-    treatFile(const std::string&,
-	      const std::vector<std::string>&);
-
+    analyseFile(const std::string&,
+		const std::vector<std::string>&) override;
+    /*!
+     * \brief analyse a file
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commands
+     */
+    virtual void
+    importFile(const std::string&,
+	       const std::vector<std::string>&) override;
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
@@ -41,16 +55,6 @@ namespace mfront{
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
 
     BehaviourDSLBase();
-    /*!
-     * \brief analyse a file
-     * \param[in] f     : file name
-     * \param[in] ecmds : additionnal commands inserted treated before
-     * the input file commandes (those commands are given through the
-     * `--@??` option of the command line
-     */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&);
 
     void registerDefaultCallBacks(void);
 
@@ -63,7 +67,6 @@ namespace mfront{
     virtual ~BehaviourDSLBase();
 
     CallBackContainer callBacks;
-
   };
 
 } // end of namespace mfront  

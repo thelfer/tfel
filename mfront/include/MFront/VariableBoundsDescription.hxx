@@ -15,12 +15,12 @@
 #define LIB_VARIABLEBOUNDSDESCRIPTION_H_ 
 
 #include<string>
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
 
-  struct TFEL_VISIBILITY_EXPORT VariableBoundsDescription
+  struct MFRONT_VISIBILITY_EXPORT VariableBoundsDescription
   {
     enum BoundsType{Lower,Upper,LowerAndUpper};
     VariableBoundsDescription() = default;

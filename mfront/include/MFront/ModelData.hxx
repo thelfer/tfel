@@ -18,7 +18,7 @@
 #include<map>
 #include<string>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
@@ -26,12 +26,12 @@
 namespace mfront
 {
 
-  struct TFEL_VISIBILITY_EXPORT ModelData
+  struct MFRONT_VISIBILITY_EXPORT ModelData
   {
 
-    struct TFEL_VISIBILITY_EXPORT Function
+    struct MFRONT_VISIBILITY_EXPORT Function
     {
-      Function() = default;
+      Function();
       Function(const Function&) = default;
       Function(Function&&) = default;
       Function& operator=(const Function&) = default;

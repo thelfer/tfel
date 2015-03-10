@@ -7,12 +7,13 @@ endif
 INCLUDES = -I$(top_srcdir)/include
 
 lib_LTLIBRARIES = libTFELUtilities.la 
-libTFELUtilities_la_SOURCES = TextData.cxx         \
-			      GenTypeCastError.cxx \
-			      Token.cxx            \
-			      CxxKeywords.cxx      \
-			      CxxTokenizer.cxx     \
-			      TerminalColors.cxx   \
-			      StringAlgorithms.cxx
+libTFELUtilities_la_SOURCES = TextData.cxx           \
+			      GenTypeCastError.cxx   \
+			      Token.cxx              \
+			      CxxKeywords.cxx        \
+			      CxxTokenizer.cxx       \
+			      TerminalColors.cxx     \
+			      StringAlgorithms.cxx   \
+			      ArgumentParserBase.cxx 
 
 EXTRA_DIST = CMakeLists.txt

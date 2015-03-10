@@ -103,7 +103,7 @@ if(WIN32 AND enable-static)
   set_target_properties(mtest PROPERTIES LINK_FLAGS "-static-libgcc -static") 
   set_target_properties(mtest PROPERTIES LINK_SEARCH_END_STATIC ON) 
 else(WIN32 AND enable-static)
-  target_link_libraries(mtest TFELMTest TFELSystem)
+  target_link_libraries(mtest TFELMTest TFELSystem TFELUtilities TFELTests)
 endif(WIN32 AND enable-static)
 
 install(TARGETS mtest DESTINATION bin

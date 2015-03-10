@@ -34,7 +34,7 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> >
     getGlobalIncludes(const std::string&,
 		      const std::string&,
-		      const std::string&);
+		      const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -44,7 +44,7 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> >
     getGlobalDependencies(const std::string&,
 			  const std::string&,
-			  const std::string&);
+			  const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -54,7 +54,7 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> >
     getGeneratedSources(const std::string&,
 			const std::string&,
-			const std::string&);
+			const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -64,7 +64,7 @@ namespace mfront{
     std::vector<std::string>
     getGeneratedIncludes(const std::string&,
 			 const std::string&,
-			 const std::string&);
+			 const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -74,7 +74,7 @@ namespace mfront{
     std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const std::string&,
 			     const std::string&,
-			     const std::string&);
+			     const std::string&) override;
 
     /*!
      * \param const std::string&, library
@@ -88,15 +88,25 @@ namespace mfront{
     getSpecificTargets(const std::string&,
 		       const std::string&,
 		       const std::string&,
-		       const std::vector<std::string>&);
-
+		       const std::vector<std::string>&) override;
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const std::string&,
+			    const std::string&,
+			    const std::string&) override;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
     std::string
     getHeaderFileName(const std::string&,
-		      const std::string&);
+		      const std::string&) override;
 
     /*!
      * \param[in] m : name of the material
@@ -108,7 +118,7 @@ namespace mfront{
     /*!
      * destructor
      */
-    ~MFrontMaterialPropertyInterface();
+    virtual ~MFrontMaterialPropertyInterface();
         
   private:
 

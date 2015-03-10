@@ -12,16 +12,17 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTINITINTERFACES_HXX_
-#define LIB_MFRONTINITINTERFACES_HXX_ 
+#ifndef LIB_MFRONT_INITINTERFACES_HXX_
+#define LIB_MFRONT_INITINTERFACES_HXX_ 
+
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
   
-  void
+  MFRONT_VISIBILITY_EXPORT void
   initInterfaces(void);
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONTINITINTERFACES_HXX_ */
-
+#endif /* LIB_MFRONT_INITINTERFACES_HXX_ */

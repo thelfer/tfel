@@ -14,7 +14,7 @@
 #ifndef LIB_MFRONT_UMATCOMPUTESTIFFNESSTENSOR_H_
 #define LIB_MFRONT_UMATCOMPUTESTIFFNESSTENSOR_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Config/TFELTypes.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 

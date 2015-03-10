@@ -15,6 +15,7 @@
 #define LIB_MFRONTLAWINTERFACEPROXY_HXX_ 
 
 #include<string>
+#include<memory>
 
 #include"MFront/MaterialPropertyInterfaceFactory.hxx"
 #include"MFront/AbstractMaterialPropertyInterface.hxx"
@@ -52,7 +53,8 @@ namespace mfront{
 			    const InputIterator2,
 			    const InputIterator2);
 
-    static AbstractMaterialPropertyInterface* createInterface();
+    static std::shared_ptr<AbstractMaterialPropertyInterface>
+    createInterface();
   };
 
 } // end of namespace mfront

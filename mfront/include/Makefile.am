@@ -1,6 +1,9 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
 nobase_include_HEADERS= MFront/MFront.hxx                             \
+			MFront/BehaviourQuery.hxx                     \
+			MFront/MFrontBase.hxx                         \
+			MFront/MFrontExecutableName.hxx               \
 			MFront/CodeBlock.hxx                          \
 			MFront/MFrontConfig.hxx	                      \
 			MFront/MFrontDebugMode.hxx	              \
@@ -112,7 +115,6 @@ nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 			 MFront/GnuplotMaterialPropertyInterface.hxx        \
 			 MFront/ExcelMaterialPropertyInterface.hxx          \
 			 MFront/ExcelMaterialPropertyInternalInterface.hxx  \
-			 MFront/LaTeXMaterialPropertyInterface.hxx          \
 			 MFront/LaTeXBehaviourAnalyser.hxx     \
 			 MFront/MarkdownBehaviourAnalyser.hxx  \
 			 MFront/PythonMaterialPropertyInterface.hxx

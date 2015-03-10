@@ -15,7 +15,7 @@
 #include"MFront/BehaviourAnalyserProxy.hxx"
 #include"MFront/LaTeXBehaviourAnalyser.hxx"
 #include"MFront/MarkdownBehaviourAnalyser.hxx"
-
+#include"MFront/InitAnalysers.hxx"
 namespace mfront
 {
 

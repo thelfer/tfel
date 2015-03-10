@@ -27,7 +27,6 @@ namespace mfront
     using namespace std;
     using namespace tfel::system;
     auto& msf = SearchFile::getSearchFile();
-    vector<string>::const_iterator p;
     string file(f);
     if(::access(file.c_str(),F_OK)==0){
       if(::access(file.c_str(),R_OK)!=0){
@@ -37,7 +36,7 @@ namespace mfront
       }
       return file;
     }
-    for(p=msf.paths.begin();p!=msf.paths.end();++p){
+    for(auto p=msf.paths.begin();p!=msf.paths.end();++p){
       file = *p+dirSeparator()+f;
       if(::access(file.c_str(),F_OK)==0){
 	if(::access(file.c_str(),R_OK)!=0){

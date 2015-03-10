@@ -102,6 +102,17 @@ namespace mfront{
 		       const std::string&,
 		       const std::string&,
 		       const std::vector<std::string>&);
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     * \param[in] library   : libary name
+     * \param[in] material  : material name
+     * \param[in] className : className
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const std::string&,
+			    const std::string&,
+			    const std::string&) override;
 
     std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,

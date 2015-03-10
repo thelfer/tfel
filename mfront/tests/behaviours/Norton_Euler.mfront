@@ -37,14 +37,12 @@ nu.setGlossaryName("PoissonRatio");
 }
 
 @Derivative{
-  real sigeq = sigmaeq(sig);
+  constexpr real cste = real{3}/real{2};
+  const real sigeq = sigmaeq(sig);
   if(sigeq>1.e9){
     return false;
   }
-  Stensor  n(0.);
-  if(sigeq > 10.e-7){
-    n    = 1.5f*deviator(sig)/sigeq;
-  }
+  const Stensor n = (sigeq > 10.e-7) ? cste*deviator(sig)/sigeq : Stensor(0);
   dp   = A*pow(sigeq,E);
   devp = dp*n;
   deel = deto - devp;

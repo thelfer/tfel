@@ -17,11 +17,12 @@
 
 #include<map>
 #include<set>
-#include<utility>
 #include<string>
 #include<vector>
+#include<memory>
+#include<utility>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
@@ -36,7 +37,7 @@ namespace mfront{
   /*!
    * This is the abstract base class of all behaviour interfaces
    */
-  struct TFEL_VISIBILITY_EXPORT AbstractBehaviourInterface
+  struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourInterface
   {
 
     //! a simple alias
@@ -155,13 +156,19 @@ namespace mfront{
      */
     virtual std::vector<std::string>
     getGeneratedIncludes(const BehaviourDescription&) const = 0;
-
     /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const BehaviourDescription&) const = 0;
-
+    /*!
+     * \return a map associating to each library a list of entry
+     * points (function or classes)
+     * \param[in] mb : mechanical behaviour description
+     */
+    virtual std::map<std::string,std::vector<std::string> >
+    getGeneratedEntryPoints(const BehaviourDescription&) const = 0;
+    //! destructor
     virtual ~AbstractBehaviourInterface();
 
   }; // end of AbstractBehaviourInterface

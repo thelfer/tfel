@@ -18,12 +18,12 @@
 #include<string>
 #include<map>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/BehaviourAnalyser.hxx"
 
 namespace mfront{
 
-  struct TFEL_VISIBILITY_EXPORT BehaviourAnalyserFactory
+  struct MFRONT_VISIBILITY_EXPORT BehaviourAnalyserFactory
   {
     typedef BehaviourAnalyser* (*AnalyserCreator)(void);
     
@@ -43,11 +43,7 @@ namespace mfront{
     BehaviourAnalyser* 
     getAnalyserPtr(const std::string&);
     
-    void
-    reset(void);
-
-    void
-    clear(void);
+    void reset(void);
 
     ~BehaviourAnalyserFactory();
     

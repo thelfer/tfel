@@ -36,27 +36,26 @@
 #endif
 
 #include"tfel-config.hxx"
-#include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
-#include"TFEL/System/ExternalLibraryManager.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
+#include"TFEL/System/ExternalLibraryManager.hxx"
 
-#include"MFront/SupportedTypes.hxx"
-#include"MFront/MFront.hxx"
-#include"MFront/MFrontDebugMode.hxx"
-#include"MFront/PedanticMode.hxx"
-#include"MFront/MFrontLogStream.hxx"
+#include"MFront/InitDSLs.hxx"
+#include"MFront/InitInterfaces.hxx"
+#include"MFront/InitAnalysers.hxx"
+#include"MFront/MFrontExecutableName.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/SearchFile.hxx"
 #include"MFront/DSLFactory.hxx"
 #include"MFront/MaterialPropertyInterfaceFactory.hxx"
 #include"MFront/BehaviourInterfaceFactory.hxx"
 #include"MFront/ModelInterfaceFactory.hxx"
 #include"MFront/MFrontLock.hxx"
+#include"MFront/MFront.hxx"
 
 namespace mfront{
-
-  std::string MFront::callingName("mfront");
 
   static void
   checkIfFileIsRegularAndReadable(const std::string& n)
@@ -66,18 +65,18 @@ namespace mfront{
     DWORD dwAttrib = GetFileAttributes(n.c_str());
     if((dwAttrib == INVALID_FILE_ATTRIBUTES)||
        (dwAttrib & FILE_ATTRIBUTE_DIRECTORY)){
-      string msg("MFront::analyseSources : can't stat file '"+n+"' ");
+      string msg("MFront::checkIfFileIsRegularAndReadable : can't stat file '"+n+"' ");
       msg += "or is not a regular file";
       throw(runtime_error(msg));
     }
 #else
     struct stat buffer; // for call to stat
     if(stat(n.c_str(),&buffer)!=0){
-      string msg("MFront::analyseSources : can't stat file '"+n+"'");
+      string msg("MFront::checkIfFileIsRegularAndReadable : can't stat file '"+n+"'");
       throw(runtime_error(msg));
     }
     if(!S_ISREG(buffer.st_mode)){
-      string msg("MFront::analyseSources : '"+n+"' is not a regular file");
+      string msg("MFront::checkIfFileIsRegularAndReadable : '"+n+"' is not a regular file");
       throw(runtime_error(msg));
     }
 #endif
@@ -122,7 +121,7 @@ namespace mfront{
 #endif
       return '"'+p+'"';
     }
-  return p;
+    return p;
   }
 
   static std::string
@@ -166,44 +165,21 @@ namespace mfront{
       root = PREFIXDIR;
     }
     string fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".txt";
-    ifstream desc(fn.c_str());
+    ifstream desc(fn);
     if(desc){
       return fn;
     }
     fn = root+"/share/doc/mfront/"+k.substr(1)+".txt";
-    desc.open(fn.c_str());
+    desc.open(fn);
     if(desc){
       return fn;
     }
     return "";
   }
 
-  std::vector<std::string>
-  MFront::tokenize(const std::string& s,
-		   const char c)
-  {
-    using namespace std;
-    vector<string> res;
-    string::size_type b = 0u;
-    string::size_type e = s.find_first_of(c, b);
-    while (string::npos != e || string::npos != b){
-      // Found a token, add it to the vector.
-      res.push_back(s.substr(b, e - b));
-      b = s.find_first_not_of(c, e);
-      e = s.find_first_of(c, b);
-    }
-    return res;
-  } // end of MFront::tokenize
-
-  const std::string&
-  MFront::getCallingName(void){
-    return MFront::callingName;
-  } // end of MFront::getCallingName
-
   std::string 
   MFront::getVersionDescription(void) const
   {
-    using namespace std;
     return MFrontHeader::getHeader();
   }
 
@@ -217,87 +193,24 @@ namespace mfront{
     return usage;
   }
 
+  const tfel::utilities::Argument&
+  MFront::getCurrentCommandLineArgument() const
+  {
+    return *(this->currentArgument);
+  }
+
   void
   MFront::treatUnknownArgument(void)
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    if((*(this->currentArgument))[0]=='-'){
-      bool ok = false;
-      if(this->currentArgument->size()>=4){
-	if(((*(this->currentArgument))[1]=='-')&&
-	   ((*(this->currentArgument))[2]=='@')){
-	  const auto& o = this->currentArgument->getOption();
-	  string cmd = this->currentArgument->substr(2);
-	  if(!o.empty()){
-	    cmd += ' '+o;
-	  }
-	  cmd += ';';
-	  this->ecmds.push_back(cmd);
-	  ok = true;
-	}
-      }
-      if(!ok){
+    if(!MFrontBase::treatUnknownArgumentBase()){
 #if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<MFront>::treatUnknownArgument();
 #else
-      cerr << "mfront : unsupported option '" << *(this->currentArgument) << "'\n";
+      cerr << "mfront : unsupported option '" << a << "'\n";
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
-      }
-      return;
     }
-    this->inputs.insert(*(this->currentArgument));
-    return;
   } // end of MFront::treatUnknownArgument()
-
-  void
-  MFront::treatVerbose(void)
-  {
-    using namespace std;
-    if(this->currentArgument->getOption().empty()){
-      setVerboseMode(VERBOSE_LEVEL1);
-    } else {
-      const auto& option = this->currentArgument->getOption();
-      if(option=="quiet"){
-	setVerboseMode(VERBOSE_QUIET);
-      } else if(option=="level0"){
-	setVerboseMode(VERBOSE_LEVEL0);
-      } else if(option=="level1"){
-	setVerboseMode(VERBOSE_LEVEL1);
-      } else if (option=="level2"){
-	setVerboseMode(VERBOSE_LEVEL2);
-      } else if (option=="level3"){
-	setVerboseMode(VERBOSE_LEVEL3);
-      } else if (option=="debug"){
-	setVerboseMode(VERBOSE_DEBUG);
-      } else if (option=="full"){
-	setVerboseMode(VERBOSE_FULL);
-      } else {
-	string msg("MTestMain::treatVerbose : ");
-	msg += "unknown option '"+option+"'";
-	throw(runtime_error(msg));
-      }
-    }
-  }
-
-  void
-  MFront::treatDebug(void)
-  {
-    setDebugMode(true);
-  }
-
-  void
-  MFront::treatPedantic(void)
-  {
-    setPedanticMode(true);
-  }
-
-  void
-  MFront::treatWarning(void)
-  {
-    
-  }
 
   void
   MFront::treatMake(void)
@@ -357,50 +270,6 @@ namespace mfront{
       }
     }
   } // end of MFront::treatOBuild
-
-  void
-  MFront::treatInterface(void)
-  {
-    using namespace std;
-    string ninterface;
-    string tmp;
-    string::size_type n;
-    string::size_type n2;
-    ninterface = this->currentArgument->getOption();
-    if(ninterface.empty()){
-      string msg("MFront::treatInterface : ");
-      msg += "no option given to the --interface argument";
-      throw(runtime_error(msg));
-    }
-    n = 0u;
-    n2=ninterface.find(',',n);
-    while(n2!=string::npos){
-      tmp = ninterface.substr(n,n2-n);
-      if(tmp.empty()){
-	string msg("MFront::treatInterface : ");
-	msg += "empty interface specified.";
-	throw(runtime_error(msg));
-      }
-      if(!this->interfaces.insert(tmp).second){
-	string msg("MFront::treatInterface : ");
-	msg += "the interface "+tmp+" has already been specified";
-	throw(runtime_error(msg));
-      }
-      n=n2+1;
-      n2=ninterface.find(',',n);
-    }
-    tmp = ninterface.substr(n,n2-n);
-    if(tmp.empty()){
-      string msg("MFront::treatInterface : ");
-      msg += "empty interface specified.";
-      throw(runtime_error(msg));
-    }
-    if(!this->interfaces.insert(tmp).second){
-      string msg("MFront::treatInterface : ");
-      msg += "the interface "+tmp+" has already been specified";
-      throw(runtime_error(msg));
-    }
-  } // end of MFront::treatOMake
 
   void
   MFront::treatAnalyser(void)
@@ -491,7 +360,8 @@ namespace mfront{
   MFront::treatTarget(void)
   {
     using namespace std;
-    const auto& t = MFront::tokenize(this->currentArgument->getOption(),',');
+    using tfel::utilities::tokenize;
+    const auto& t = tokenize(this->currentArgument->getOption(),',');
     if(t.empty()){
       string msg("MFront::treatTarget : ");
       msg += "no argument given to the --target option";
@@ -582,13 +452,12 @@ namespace mfront{
 
   MFront::MFront(const int argc, const char *const *const argv)
     : tfel::utilities::ArgumentParserBase<MFront>(argc,argv),
+      MFrontBase(argc,argv),
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       sys("win32"),
 #else
       sys("default"),
 #endif /* __CYGWIN__ */
-      warningMode(false),
-      debugMode(false),
       oflags(false),
       oflags2(false),
       genMake(false),
@@ -604,21 +473,7 @@ namespace mfront{
   {
     this->registerArgumentCallBacks();
     this->parseArguments();
-    MFront::callingName = argv[0];
   } // end of MFront::MFront
-
-  void
-  MFront::treatSearchPath(void)
-  {
-    using namespace std;
-    const auto& o = this->currentArgument->getOption();
-    if(o.empty()){
-      string msg("MFront::treatSearchPath : ");
-      msg += "no path given";
-      throw(runtime_error(msg));
-    }
-    SearchFile::addSearchPaths(o);
-  }
 
   void
   MFront::treatHelpCommandsList(void)
@@ -632,8 +487,7 @@ namespace mfront{
       msg += "no parser name given";
       throw(runtime_error(msg));
     }
-    unique_ptr<AbstractDSL> p;
-    p = unique_ptr<AbstractDSL>(f.createNewParser(o));
+    shared_ptr<AbstractDSL> p{f.createNewParser(o)};
     vector<string> k;
     vector<string>::const_iterator pk;
     p->getKeywordsList(k);
@@ -690,8 +544,7 @@ namespace mfront{
       msg += "ill-formed argument, expected 'parser:@keyword'";
       throw(runtime_error(msg));
     }
-    unique_ptr<AbstractDSL> p;
-    p = unique_ptr<AbstractDSL>(f.createNewParser(pn));
+    auto p = f.createNewParser(pn);
     vector<string> keys;
     p->getKeywordsList(keys);
     if(find(keys.begin(),keys.end(),k)==keys.end()){
@@ -704,7 +557,7 @@ namespace mfront{
       cout << "no description available for keyword '"
 	   << k << "'" << endl;
     } else {
-      ifstream desc(fp.c_str());
+      ifstream desc(fp);
       if(!desc){
 	// note, this shall never append...
 	cout << "can't access to the description of keyword '"
@@ -729,136 +582,46 @@ namespace mfront{
   } // end of MFront::treatNoMelt
 
   void
-  MFront::treatFile(void)
+  MFront::treatFile(const std::string& f)
   {
     using namespace std;
-    using namespace tfel::utilities;
     using namespace tfel::system;
     typedef MaterialPropertyInterfaceFactory MLIF;
     typedef BehaviourInterfaceFactory MBIF;
     typedef ModelInterfaceFactory MMIF;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
-    auto& parserFactory = DSLFactory::getDSLFactory();
     auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
     auto& mmif = MMIF::getModelInterfaceFactory();
-    CxxTokenizer file;
-    string library;
-    string parserName;
-    unique_ptr<AbstractDSL> parser;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
-    CxxTokenizer::TokensContainer::const_iterator pt;
-    CxxTokenizer::TokensContainer::const_iterator pte;
     Target::const_iterator p3;
     vector<string>::const_iterator p4;
-    bool found;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       auto& log = getLogStream();
-      log << "Treating file : " << this->fileName << endl;
+      log << "Treating file : '" << f << "'" <<  endl;
     }
-    file.openFile(this->fileName);
-    file.stripComments();
-    pt  = file.begin();
-    pte = file.end();
-    found=false;
-    while((pt!=pte)&&(!found)){
-      if((pt->value=="@Parser")||(pt->value=="@DSL")){
-	if(pt!=file.begin()){
-	  CxxTokenizer::TokensContainer::const_iterator ptp = pt;
-	  --ptp;
-	  if(ptp->value!=";"){
-	    string msg("MFront::treatFile : ");
-	    msg += "the keyword @Parser does not begin a new instruction.";
-	    throw(runtime_error(msg));
-	  }
-	}
-	++pt;
-	if(pt==pte){
-	  ostringstream msg;
-	  msg << "MFront::treatFile : ";
-	  msg << "unexepected end of file (exepected parser name).\n";
-	  msg << "Error at line " << pt->line << ".";
-	  throw(runtime_error(msg.str()));
-	}
-	if(pt->value==";"){
-	  ostringstream msg;
-	  msg << "MFront::treatFile : ";
-	  msg << "unexepected end of file (exepected parser name).\n";
-	  msg << "Error at line " << pt->line << ".";
-	  throw(runtime_error(msg.str()));
-	}
-	parserName = pt->value;
-	++pt;
-	if(pt==pte){
-	  ostringstream msg;
-	  msg << "MFront::treatFile : ";
-	  msg << "unexepected end of file (exepected library name or ';').\n";
-	  msg << "Error at line " << pt->line << ".";
-	  throw(runtime_error(msg.str()));
-	}
-	if(pt->value!=";"){
-	  library = pt->value;
-	  ++pt;
-	  if(pt==pte){
-	    ostringstream msg;
-	    msg << "MFront::treatFile : ";
-	    msg << "unexepected end of file (exepected ';').\n";
-	    msg << "Error at line " << pt->line << ".";
-	    throw(runtime_error(msg.str()));
-	  }
-	  if(pt->value!=";"){
-	    ostringstream msg;
-	    msg << "MFront::treatFile : ";
-	    msg << "unexepected token '" << pt->value << "' (exepected ';').\n";
-	    msg << "Error at line " << pt->line << ".";
-	    throw(runtime_error(msg.str()));
-	  }
-	}
-	found = true;
-      }
-      ++pt;
-    }
-    if(found){
-      try{
-	if(!library.empty()){
-	  auto& lm = ExternalLibraryManager::getExternalLibraryManager();
-	  lm.loadLibrary(library);
-	}
-	parser = unique_ptr<AbstractDSL>(parserFactory.createNewParser(parserName));
-      } 
-      catch(runtime_error& r){
-	ostringstream msg;
-	msg << "MFront::treatFile : error while loading parser "
-	    << parserName << " (" << r.what() << ")\n";
-	msg << "Available parsers : " << endl;
-	const auto& parsers = parserFactory.getRegistredParsers();
-	copy(parsers.begin(),parsers.end(),ostream_iterator<string>(msg," "));
-	throw(runtime_error(msg.str()));
-      }
-    } else {
-      if(getVerboseMode()>=VERBOSE_LEVEL2){
-	auto& log = getLogStream();
-	log << "MFront::treatFile : no parser specified, using default" << endl;
-      }
-      parser = unique_ptr<AbstractDSL>(parserFactory.createNewParser());
-    }
+    shared_ptr<AbstractDSL> parser = MFrontBase::getDSL(f);
     if(!this->interfaces.empty()){
       parser->setInterfaces(this->interfaces);
     }
     if(!this->analysers.empty()){
       parser->setAnalysers(this->analysers);
     }
-    file.clear();
-
-    parser->treatFile(this->fileName,
-		      this->ecmds);
-
+    parser->analyseFile(f,this->ecmds);
+    parser->generateOutputFiles();
     // getting generated sources
     const auto& src = parser->getGeneratedSources();
     for(p=src.begin();p!=src.end();++p){
       auto& tmp = this->sources[p->first];
       copy(p->second.begin(),p->second.end(),insert_iterator<set<string> >(tmp,tmp.begin()));
+    }
+    // getting generated entry points
+    const auto& nepts = parser->getGeneratedEntryPoints();
+    for(const auto& e: nepts){
+      auto& pts = this->epts[e.first];
+      copy(e.second.begin(),e.second.end(),
+	   insert_iterator<set<string> >(pts,pts.begin()));
     }
     // getting generated dependencies
     const auto& deps = parser->getLibrariesDependencies();
@@ -923,10 +686,10 @@ namespace mfront{
     bool erased = false;
     fName = "src"+dirStringSeparator()+ name;
     checkIfFileIsRegularAndReadable(fName);
-    file.open(fName.c_str());
+    file.open(fName);
     if(!file){
       string msg("MFront::analyseSources : can't open file ");
-      msg += fName;
+      msg += "'"+fName+'\'';
       msg += "\nError while analysing "+fName;
       throw(runtime_error(msg));
     }
@@ -995,17 +758,17 @@ namespace mfront{
     if(erased){
       if(files.empty()){
 	if(unlink(fName.c_str())!=0){
-	  string msg("MFront::analyseSources : can't unlink file"+fName);
-	  msg += "\nError while analysing "+fName;
+	  string msg("MFront::analyseSources : can't unlink file '"+fName+'\'');
+	  msg += "\nError while analysing \'"+fName+'\'';
 	  throw(runtime_error(msg));
 	}
 	return;
       }
-      f.open(fName.c_str());
+      f.open(fName);
       if(!f){
 	string msg("MFront::analyseSources : ");
-	msg += "error while opening "+fName+" for writing.\n";
-	msg += "\nError while analysing "+fName;
+	msg += "error while opening '"+fName+"' for writing.\n";
+	msg += "\nError while analysing '"+fName+"'";
 	throw(runtime_error(msg));
       }
       copy(files.begin(),files.end(),ostream_iterator<string>(f,"\n"));
@@ -1035,7 +798,7 @@ namespace mfront{
     string line;
     fName = "src" +dirStringSeparator() + name;
     checkIfFileIsRegularAndReadable(fName);
-    file.open(fName.c_str());
+    file.open(fName);
     if(!file){
       string msg("MFront::analyseDependencies : can't open file '");
       msg += fName + "'";
@@ -1068,6 +831,45 @@ namespace mfront{
   } // end of MFront::analyseDependencies
 
   void
+  MFront::analyseEntryPoints(const std::string& name)
+  {
+    using namespace std;
+    using namespace tfel::system;
+    const auto fName = "src" +dirStringSeparator() + name;
+    checkIfFileIsRegularAndReadable(fName);
+    ifstream file(fName);
+    if(!file){
+      string msg("MFront::analyseEntryPoints : can't open file '");
+      msg += fName + "'";
+      throw(runtime_error(msg));
+    }
+    auto nepts = set<string>{}; // list of entry points contained in the file
+    while(!file.eof()){
+      string line;
+      getline(file,line);
+      nepts.insert(line);
+    }
+    file.close();
+    if(nepts.empty()){
+      if(unlink(fName.c_str())!=0){
+	string msg("MFront::analyseEntryPoints : can't unlink file '"+fName+'\'');
+	throw(runtime_error(msg));
+      }
+      return;
+    }
+    if(!nepts.empty()){
+      if(getVerboseMode()>=VERBOSE_LEVEL2){
+	auto& log = getLogStream();
+	log << "inserting library '" << name.substr(0,name.size()-4) << "' "
+	     << "entry points : \n";
+	copy(nepts.begin(),nepts.end(),ostream_iterator<string>(log," "));
+	log << endl;
+      }
+      this->epts.insert({name.substr(0,name.size()-5),nepts});
+    }
+  } // end of MFront::analyseEntryPoints
+
+  void
   MFront::analyseGlobalIncludes()
   {
     using namespace std;
@@ -1077,7 +879,7 @@ namespace mfront{
     string name = "src"+dirStringSeparator()+"Makefile.incs";
     string line;
     checkIfFileIsRegularAndReadable(name);
-    file.open(name.c_str());
+    file.open(name);
     if(!file){
       string msg("MFront::analyseGlobalIncludes : can't open file '"+name+"'");
       throw(runtime_error(msg));
@@ -1103,7 +905,7 @@ namespace mfront{
     unsigned short lineNbr;
     vector<string>::const_iterator p;
     checkIfFileIsRegularAndReadable(name);
-    file.open(name.c_str());
+    file.open(name);
     lineNbr = 0u;
     if(!file.eof()){
       getline(file,line);
@@ -1203,12 +1005,23 @@ namespace mfront{
       // Close handle
       ::FindClose(hFile);
       for(p=files.begin();p!=files.end();++p){
-	if(p->substr(p->size()-4)==".src"){
-	  if(getVerboseMode()>=VERBOSE_LEVEL2){
-	    auto& log = getLogStream();
-	    log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
+	if(p->size>4){
+	  if(p->substr(p->size()-4)==".src"){
+	    if(getVerboseMode()>=VERBOSE_LEVEL2){
+	      auto& log = getLogStream();
+	      log << "treating library '" << p->substr(0,p->size()-4) << "' sources.\n";
+	    }
+	    this->analyseSources(*p);
 	  }
-	  this->analyseSources(*p);
+	}
+	if(p->size>5){
+	  if(p->substr(p->size()-5)==".epts"){
+	    if(getVerboseMode()>=VERBOSE_LEVEL2){
+	      auto& log = getLogStream();
+	      log << "treating library '" << p->substr(0,p->size()-5) << "' entry points.\n";
+	    }
+	    this->analyseEntryPoints(*p);
+	  }
 	}
 	if(*p=="Makefile.spec"){
 	  this->analyseMakefileSpecificTargets();
@@ -1273,7 +1086,6 @@ namespace mfront{
 	  string msg("MFront::analyseSourceDirectory : ");
 	  msg += "can't stat file ";
 	  msg += file;
-	  cerr << msg << endl;
 	  systemCall::throwSystemError(msg,errno);
 	}
 	if(S_ISREG(buf.st_mode)){
@@ -1283,16 +1095,27 @@ namespace mfront{
       }
       closedir(directory);
       for(p=files.begin();p!=files.end();++p){
-	if(p->substr(p->size()-4)==".src"){
-	  if(getVerboseMode()>=VERBOSE_LEVEL2){
-	    auto& log = getLogStream();
-	    if(this->sys=="win32"){
-	      log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
-	    } else {
-	      log << "treating library " << p->substr(0,p->size()-4) << ".so sources.\n";
+	if(p->size()>4){
+	  if(p->substr(p->size()-4)==".src"){
+	    if(getVerboseMode()>=VERBOSE_LEVEL2){
+	      auto& log = getLogStream();
+	      if(this->sys=="win32"){
+		log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
+	      } else {
+		log << "treating library " << p->substr(0,p->size()-4) << ".so sources.\n";
+	      }
 	    }
+	    this->analyseSources(*p);
 	  }
-	  this->analyseSources(*p);
+	}
+	if(p->size()>5){
+	  if(p->substr(p->size()-5)==".epts"){
+	    if(getVerboseMode()>=VERBOSE_LEVEL2){
+	      auto& log = getLogStream();
+	      log << "treating library " << p->substr(0,p->size()-5) << " entry points.\n";
+	    }
+	    this->analyseEntryPoints(*p);
+	  }
 	}
 	if(*p=="Makefile.spec"){
 	  this->analyseMakefileSpecificTargets();
@@ -1358,12 +1181,12 @@ namespace mfront{
 	if(getVerboseMode()>=VERBOSE_LEVEL2){
 	  auto& log = getLogStream();
 	  if(this->sys=="win32"){
-	    log << "writing sources list for library " << p->first << ".dll\n";
+	    log << "writing sources list for library '" << p->first << ".dll'\n";
 	  } else {
-	    log << "writing sources list for library " << p->first << ".so\n";
+	    log << "writing sources list for library '" << p->first << ".so'\n";
 	  }
 	}
-	file.open(("src"+dirStringSeparator()+p->first+".src").c_str());
+	file.open("src"+dirStringSeparator()+p->first+".src");
 	if(!file){
 	  string msg("MFront::writeSourcesLists : ");
 	  msg += "can't open file 'src"+dirStringSeparator()+p->first+".src";
@@ -1379,6 +1202,41 @@ namespace mfront{
     }
     l.unlock();
   } // end of MFront::writeSourceLists
+
+  void
+  MFront::writeEntryPointsLists(void)
+  {
+    using namespace std;
+    using namespace tfel::system;
+    auto& l = MFrontLock::getMFrontLock();
+    l.lock();
+    try{
+      for(const auto& e : this->epts){
+	if(getVerboseMode()>=VERBOSE_LEVEL2){
+	  auto& log = getLogStream();
+	  if(this->sys=="win32"){
+	    log << "writing entry points list for library '" << e.first << ".dll'\n";
+	  } else {
+	    log << "writing entry points list for library '" << e.first << ".so'\n";
+	  }
+	}
+	ofstream file("src"+dirStringSeparator()+e.first+".epts");
+	if(!file){
+	  string msg("MFront::writeEntryPointsLists : ");
+	  msg += "can't open file 'src"+dirStringSeparator()+e.first+".epts'";
+	  throw(runtime_error(msg));
+	}
+	copy(e.second.begin(),e.second.end(),
+	     ostream_iterator<string>(file,"\n"));
+	file.close();
+      }
+    }
+    catch(...){
+      l.unlock();
+      throw;
+    }
+    l.unlock();
+  } // end of MFront::writeEntryPointsLists
   
   void
   MFront::writeDependenciesLists(void)
@@ -2052,9 +1910,8 @@ namespace mfront{
     this->analyseSourceDirectory();
     if(!this->inputs.empty()){
       for(p=this->inputs.begin();p!=this->inputs.end();++p){
-	this->fileName = *p;
 	try{
-	  this->treatFile();
+	  this->treatFile(*p);
 	} catch(exception& e){
 	  // Some clean-up
 	  mlif.reset();
@@ -2085,6 +1942,7 @@ namespace mfront{
       this->analyseSourceDirectory();
       // save generated files
       this->writeSourcesLists();
+      this->writeEntryPointsLists();
       this->writeDependenciesLists();
       this->writeSpecificTargets();
       this->writeGlobalIncludes();
@@ -2118,16 +1976,24 @@ namespace mfront{
       }
       if(!this->sources.empty()){
 	if(this->sources.size()==1){
-	  cout << "The following library has been build :\n";
+	  cout << "The following library has been built :\n";
 	} else {
-	  cout << "The following libraries have been build :\n";
+	  cout << "The following libraries have been built :\n";
 	}
-	for(pt=this->sources.begin();pt!=this->sources.end();++pt){
+	for(const auto& l:this->sources){
 	  if(this->sys=="win32"){
-	    cout << "- " << pt->first << ".dll\n";
+	    cout << "- " << l.first << ".dll :";
 	  } else {
-	    cout << "- " << pt->first << ".so\n";
+	    cout << "- " << l.first << ".so :";
 	  }
+	  const auto pepts = epts.find(l.first);
+	  if(pepts!=epts.end()){
+	    const auto& lepts = pepts->second;
+	    for(const auto& pts:lepts){
+	      cout << " " << pts;
+	    }
+	  }
+	  cout << endl;
 	}
       }
       if(!this->targets.empty()){
@@ -2148,16 +2014,6 @@ namespace mfront{
   } // end of MFront::exe
 
   MFront::~MFront()
-  {
-    typedef MaterialPropertyInterfaceFactory       MLIF;
-    typedef BehaviourInterfaceFactory MBIF;
-    typedef ModelInterfaceFactory     MMIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    auto& mmif = MMIF::getModelInterfaceFactory();
-    mlif.clear();
-    mbif.clear();
-    mmif.clear();
-  } // end of MFront::~MFront
+  {} // end of MFront::~MFront
 
 } // end of namespace mfront

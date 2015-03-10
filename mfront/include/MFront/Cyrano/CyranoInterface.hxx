@@ -14,7 +14,7 @@
 #ifndef LIB_MFRONT_CYRANO_CALL_H_
 #define LIB_MFRONT_CYRANO_CALL_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
 #include"TFEL/Material/MaterialException.hxx"
 

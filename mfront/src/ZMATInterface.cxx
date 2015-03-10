@@ -60,7 +60,7 @@ namespace mfront
     out << "};" << endl;
   }
 
-  std::set<std::string>
+  static std::set<std::string>
   getAllMaterialPropertiesNames(const BehaviourDescription& mb)
   {
     using namespace std;
@@ -93,7 +93,7 @@ namespace mfront
     return mp_names;
   }
 
-  VariableDescriptionContainer
+  static VariableDescriptionContainer
   getAllStateVariables(const BehaviourDescription& mb)
   {
     using namespace std;
@@ -1599,6 +1599,12 @@ namespace mfront
     src[getLibraryName(mb)].push_back("ZMAT"+mb.getLibrary()+mb.getClassName()+".cxx");
     return src;
   } // end of ZMATInterface::getGeneratedSources
+
+  std::map<std::string,std::vector<std::string> >
+  ZMATInterface::getGeneratedEntryPoints(const BehaviourDescription& mb) const
+  {
+    return {{getLibraryName(mb),{mb.getClassName()}}};
+  } // end of ZMATInterface::getGeneratedEntryPoints
 
   std::vector<std::string>
   ZMATInterface::getGeneratedIncludes(const BehaviourDescription& mb) const

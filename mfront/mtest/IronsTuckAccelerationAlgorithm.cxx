@@ -12,6 +12,7 @@
  */
 
 #include<limits>
+#include<ostream>
 #include<stdexcept>
 
 #include"MFront/MFrontLogStream.hxx"

@@ -257,8 +257,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/TVectorTMatrixExpr.hxx                                                      \
 	                TFEL/Math/General/ConceptRebind.hxx                                                          \
 	                TFEL/Math/General/ConstExprMathFunctions.hxx                                                 \
-			TFEL/Math/General/FracSimplify.hxx                                                           \
-			TFEL/Math/General/FracSimplify.ixx		                                             \
 			TFEL/Math/General/LogicalOperations.hxx                                                      \
 			TFEL/Math/General/AbsCompare.hxx	                                                     \
 			TFEL/Math/General/Abs.hxx      	                                                             \

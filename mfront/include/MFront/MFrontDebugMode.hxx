@@ -14,20 +14,20 @@
 #ifndef LIB_MFRONTDEBUGMODE_H_
 #define LIB_MFRONTDEBUGMODE_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront{
 
   /*!
    * \return true if the debug mode is enabled
    */
-  TFEL_VISIBILITY_EXPORT bool getDebugMode();
+  MFRONT_VISIBILITY_EXPORT bool getDebugMode();
 
   /*!
    * \brief enable or diable the debug mode
    * \param[in] b : if true, set the debug mode
    */
-  TFEL_VISIBILITY_EXPORT void setDebugMode(const bool);
+  MFRONT_VISIBILITY_EXPORT void setDebugMode(const bool);
 
 }
 

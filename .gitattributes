@@ -1030,8 +1030,6 @@ include/TFEL/Math/General/CubicRoots.hxx -text
 include/TFEL/Math/General/DotProduct.hxx -text
 include/TFEL/Math/General/EmptyRunTimeProperties.hxx -text
 include/TFEL/Math/General/Forward/General.hxx -text
-include/TFEL/Math/General/FracSimplify.hxx -text
-include/TFEL/Math/General/FracSimplify.ixx -text
 include/TFEL/Math/General/LogicalOperations.hxx -text
 include/TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx -text
 include/TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx -text
@@ -1440,6 +1438,7 @@ mfront/include/MFront/BehaviourInterfaceFactory.hxx -text
 mfront/include/MFront/BehaviourInterfaceProxy.hxx -text
 mfront/include/MFront/BehaviourInterfaceProxy.ixx -text
 mfront/include/MFront/BehaviourProfiler.hxx -text
+mfront/include/MFront/BehaviourQuery.hxx -text
 mfront/include/MFront/BehaviourSymmetryType.hxx -text
 mfront/include/MFront/BehaviourTimer.hxx -text
 mfront/include/MFront/BoundsDescription.hxx -text
@@ -1500,12 +1499,13 @@ mfront/include/MFront/IsotropicMisesCreepDSL.hxx -text
 mfront/include/MFront/IsotropicMisesPlasticFlowDSL.hxx -text
 mfront/include/MFront/IsotropicStrainHardeningMisesCreepDSL.hxx -text
 mfront/include/MFront/LaTeXBehaviourAnalyser.hxx -text
-mfront/include/MFront/LaTeXMaterialPropertyInterface.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
 mfront/include/MFront/LevenbergMarquardtSolvers.hxx -text
 mfront/include/MFront/MFront.hxx -text
+mfront/include/MFront/MFrontBase.hxx -text
 mfront/include/MFront/MFrontConfig.hxx -text
 mfront/include/MFront/MFrontDebugMode.hxx -text
+mfront/include/MFront/MFrontExecutableName.hxx -text
 mfront/include/MFront/MFrontHeader.hxx -text
 mfront/include/MFront/MFrontLock.hxx -text
 mfront/include/MFront/MFrontLogStream.hxx -text
@@ -1667,6 +1667,7 @@ mfront/src/BehaviourData.cxx -text
 mfront/src/BehaviourDescription.cxx -text
 mfront/src/BehaviourInterfaceFactory.cxx -text
 mfront/src/BehaviourProfiler.cxx -text
+mfront/src/BehaviourQuery.cxx -text
 mfront/src/BoundsDescription.cxx -text
 mfront/src/BroydenSolvers.cxx -text
 mfront/src/CMakeLists.txt -text
@@ -1694,6 +1695,7 @@ mfront/src/DrivingVariable.cxx -text
 mfront/src/ElasticityBehaviourBrick.cxx -text
 mfront/src/ExcelMaterialPropertyInterface.cxx -text
 mfront/src/ExcelMaterialPropertyInternalInterface.cxx -text
+mfront/src/FileDescription.cxx -text
 mfront/src/FiniteStrainBehaviourTangentOperatorConversion.cxx -text
 mfront/src/FiniteStrainBehaviourTangentOperatorConversionPath.cxx -text
 mfront/src/FortranMaterialPropertyInterface.cxx -text
@@ -1711,11 +1713,12 @@ mfront/src/IsotropicMisesCreepDSL.cxx -text
 mfront/src/IsotropicMisesPlasticFlowDSL.cxx -text
 mfront/src/IsotropicStrainHardeningMisesCreepDSL.cxx -text
 mfront/src/LaTeXBehaviourAnalyser.cxx -text
-mfront/src/LaTeXMaterialPropertyInterface.cxx -text
 mfront/src/LawFunction.cxx -text
 mfront/src/LevenbergMarquardtSolvers.cxx -text
 mfront/src/MFront.cxx -text
+mfront/src/MFrontBase.cxx -text
 mfront/src/MFrontDebugMode.cxx -text
+mfront/src/MFrontExecutableName.cxx -text
 mfront/src/MFrontHeader.cxx.in -text
 mfront/src/MFrontLock.cxx -text
 mfront/src/MFrontLogStream.cxx -text
@@ -1764,6 +1767,7 @@ mfront/src/VariableBoundsDescription.cxx -text
 mfront/src/VariableDescription.cxx -text
 mfront/src/ZMATInterface.cxx -text
 mfront/src/main.cxx -text
+mfront/src/mfront-query.cxx -text
 mfront/tests/CMakeLists.txt -text
 mfront/tests/Makefile.am -text
 mfront/tests/behaviours/AgeingBurger.mfront -text
@@ -1812,7 +1816,6 @@ mfront/tests/behaviours/Lorentz.mfront -text
 mfront/tests/behaviours/Lorentz2.mfront -text
 mfront/tests/behaviours/Makefile.am -text
 mfront/tests/behaviours/Mazars.mfront -text
-mfront/tests/behaviours/MonoCristal_DD_CC_InteractionMatrix.mfront -text
 mfront/tests/behaviours/MonoCrystal.mfront -text
 mfront/tests/behaviours/MonoCrystalNewtonRaphson.mfront -text
 mfront/tests/behaviours/MonoCrystal_DD_CC.mfront -text
@@ -2580,6 +2583,7 @@ src/Tests/TestOutput.cxx -text
 src/Tests/TestResult.cxx -text
 src/Tests/TestSuite.cxx -text
 src/Tests/XMLTestOutput.cxx -text
+src/Utilities/ArgumentParserBase.cxx -text
 src/Utilities/CMakeLists.txt -text
 src/Utilities/CxxKeywords.cxx -text
 src/Utilities/CxxTokenizer.cxx -text
@@ -2626,7 +2630,6 @@ tests/Math/ExpressionTemplates/test_expr2.cxx -text
 tests/Math/ExpressionTemplates/test_expr6.cxx -text
 tests/Math/ExpressionTemplates/test_expr7.cxx -text
 tests/Math/ExpressionTemplates/test_expr9.cxx -text
-tests/Math/FracSimplify.cxx -text
 tests/Math/Makefile.am -text
 tests/Math/RungeKutta/CMakeLists.txt -text
 tests/Math/RungeKutta/Makefile.am -text

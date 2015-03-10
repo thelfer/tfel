@@ -16,6 +16,11 @@
 
 namespace mfront{
 
+  AbstractDSL::DSLTarget
+  AbstractBehaviourDSL::getTargetType(void) const{
+    return BEHAVIOURDSL;
+  }
+
   AbstractBehaviourDSL::~AbstractBehaviourDSL()
   {}
 

@@ -79,29 +79,27 @@ namespace mfront{
   DSLFactory::getParserDescription(const std::string& parserName)
   {
     using namespace std;
-    DescriptionPtrContainer::const_iterator p;
-    p = this->getDescriptionMap().find(parserName);
+    auto p = this->getDescriptionMap().find(parserName);
     if(p==this->getDescriptionMap().end()){
       string msg = "DSLFactory::getParserDescription : no parser named ";
       msg += parserName;
       throw(runtime_error(msg));
     }
-    DescriptionPtr c = p->second;
+    auto c = p->second;
     return c();
   } // end of 
 
-  AbstractDSL * 
+  std::shared_ptr<AbstractDSL>
   DSLFactory::createNewParser(const std::string& parserName)
   {
     using namespace std;
-    ParserCreatorsContainer::iterator p;
-    p = this->getMap().find(parserName);
+    auto p = this->getMap().find(parserName);
     if(p==this->getMap().end()){
       string msg = "DSLFactory::createNewParser : no parser named '";
       msg += parserName+"'";
       throw(runtime_error(msg));
     }
-    ParserCreator c = p->second;
+    auto c = p->second;
     return c();
   }
 

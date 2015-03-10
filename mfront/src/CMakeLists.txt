@@ -16,10 +16,11 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
-set(mfront_SOURCES
-    main.cxx
-    MFront.cxx
+set(TFELMFront_SOURCES
+    MFrontBase.cxx
     CodeBlock.cxx
+    FileDescription.cxx
+    MFrontExecutableName.cxx
     MFrontDebugMode.cxx
     PedanticMode.cxx
     MFrontLock.cxx
@@ -95,40 +96,37 @@ set(mfront_SOURCES
     CppTestMaterialPropertyInterface.cxx
     ExcelMaterialPropertyInterface.cxx
     ExcelMaterialPropertyInternalInterface.cxx
-    LaTeXMaterialPropertyInterface.cxx
     LaTeXBehaviourAnalyser.cxx
     MarkdownBehaviourAnalyser.cxx
     UMATInterfaceBase.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
 if(HAVE_GNUPLOT)
-    set(mfront_SOURCES
+    set(TFELMFront_SOURCES
 	GnuplotMaterialPropertyInterface.cxx
-	${mfront_SOURCES})
+	${TFELMFront_SOURCES})
 endif(HAVE_GNUPLOT)
 
 if(HAVE_PYTHON)
-    set(mfront_SOURCES
+    set(TFELMFront_SOURCES
 	PythonMaterialPropertyInterface.cxx
-	${mfront_SOURCES})
+	${TFELMFront_SOURCES})
 endif(HAVE_PYTHON)
 
 if(HAVE_FORTRAN)
-    set(mfront_SOURCES
+    set(TFELMFront_SOURCES
 	FortranMaterialPropertyInterface.cxx
-	${mfront_SOURCES})
+	${TFELMFront_SOURCES})
 endif(HAVE_FORTRAN)
 
 mfront_library(MFrontLogStream
   MFrontLogStream.cxx)
 
-if(enable-cxx-11)
-  mfront_library(MFrontProfiling
-    BehaviourProfiler.cxx)
-  if(UNIX)
-    target_link_libraries(MFrontProfiling rt)
-  endif(UNIX)
-endif(enable-cxx-11)
+mfront_library(MFrontProfiling
+  BehaviourProfiler.cxx)
+if(UNIX)
+  target_link_libraries(MFrontProfiling rt)
+endif(UNIX)
 
 mfront_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
@@ -141,10 +139,10 @@ target_link_libraries(MTestFileGenerator
   TFELException)
 
 if(HAVE_CASTEM)
-    set(mfront_SOURCES
+    set(TFELMFront_SOURCES
 	UMATInterface.cxx
 	CastemMaterialPropertyInterface.cxx
-	${mfront_SOURCES})
+	${TFELMFront_SOURCES})
     set(UMATInterface_SOURCES
 	UMATInterfaceExceptions.cxx
 	UMATFiniteStrain.cxx
@@ -165,9 +163,9 @@ if(HAVE_CASTEM)
 endif(HAVE_CASTEM)
 
 if(HAVE_ASTER)
-  set(mfront_SOURCES
+  set(TFELMFront_SOURCES
     AsterInterface.cxx
-    ${mfront_SOURCES})
+    ${TFELMFront_SOURCES})
   set(AsterInterface_SOURCES
     AsterInterfaceExceptions.cxx
     AsterException.cxx
@@ -185,15 +183,15 @@ if(HAVE_ASTER)
 endif(HAVE_ASTER)
 
 if(HAVE_ZMAT)
-  set(mfront_SOURCES
+  set(TFELMFront_SOURCES
     ZMATInterface.cxx
-    ${mfront_SOURCES})
+    ${TFELMFront_SOURCES})
 endif(HAVE_ZMAT)
 
 if(HAVE_CYRANO)
-  set(mfront_SOURCES
+  set(TFELMFront_SOURCES
     CyranoInterface.cxx
-    ${mfront_SOURCES})
+    ${TFELMFront_SOURCES})
   set(CyranoInterface_SOURCES
     CyranoException.cxx
     CyranoInterfaceExceptions.cxx
@@ -208,25 +206,36 @@ if(HAVE_CYRANO)
     TFELException)
 endif(HAVE_CYRANO)
 
-add_executable(mfront ${mfront_SOURCES})
+mfront_library(TFELMFront ${TFELMFront_SOURCES})
 
 if(UNIX)
-  target_link_libraries(mfront
+  target_link_libraries(TFELMFront
     MFrontLogStream
     TFELMaterial TFELMathParser
     TFELSystem   TFELUtilities
     TFELGlossary TFELException
     -pthread @TFEL_DL_LIBRARY@)
 else(UNIX)
-target_link_libraries(mfront
-                      MFrontLogStream
-                      TFELMaterial
-                      TFELMathParser
-                      TFELSystem
-		      TFELUtilities
-                      TFELGlossary
-		      TFELException)
+  target_link_libraries(TFELMFront
+    MFrontLogStream
+    TFELMaterial TFELMathParser
+    TFELSystem   TFELUtilities
+    TFELGlossary TFELException)
 endif(UNIX)
 
+add_executable(mfront main.cxx MFront.cxx)
+add_executable(mfront-query mfront-query.cxx
+  BehaviourQuery.cxx)
+
+target_link_libraries(mfront
+  TFELMFront MFrontLogStream
+  TFELSystem TFELUtilities)
+
+target_link_libraries(mfront-query
+  TFELMFront MFrontLogStream
+  TFELSystem TFELUtilities)
+
 install(TARGETS mfront DESTINATION bin
+  COMPONENT mfront)
+install(TARGETS mfront-query DESTINATION bin
   COMPONENT mfront)

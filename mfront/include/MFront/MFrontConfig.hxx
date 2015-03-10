@@ -45,6 +45,20 @@
 #endif /* LIB_MFRONT_MFRONTCONFIG_H_ */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELMFront_EXPORTS
+#    define MFRONT_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#  if not defined TFEL_STATIC_BUILD
+#    define MFRONT_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  else 
+#    define MFRONT_VISIBILITY_EXPORT 
+#  endif
+#  endif
+#else
+#  define MFRONT_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif /* LIB_MFRONT_MFRONTCONFIG_H_ */
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined MTestFileGenerator_EXPORTS
 #    define MTESTFILEGENERATOR_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #  else

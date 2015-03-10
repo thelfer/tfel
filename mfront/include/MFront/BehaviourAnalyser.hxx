@@ -14,7 +14,7 @@
 #ifndef LIB_MFRONT_MFRONTBEHAVIOURANALYSER_H_
 #define LIB_MFRONT_MFRONTBEHAVIOURANALYSER_H_ 
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
@@ -29,7 +29,7 @@ namespace mfront{
   /*!
    * This is the abstract base class of all behaviour analysers
    */
-  struct TFEL_VISIBILITY_EXPORT BehaviourAnalyser
+  struct MFRONT_VISIBILITY_EXPORT BehaviourAnalyser
   {
     /*!
      * \return a pair containing a boolean which is true if the

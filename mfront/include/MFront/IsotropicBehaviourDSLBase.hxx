@@ -17,12 +17,12 @@
 
 #include<string>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/BehaviourDSLBase.hxx"
 
 namespace mfront{
 
-  struct TFEL_VISIBILITY_EXPORT IsotropicBehaviourDSLBase
+  struct MFRONT_VISIBILITY_EXPORT IsotropicBehaviourDSLBase
     : public BehaviourDSLBase<IsotropicBehaviourDSLBase>
   {
     IsotropicBehaviourDSLBase();

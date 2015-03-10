@@ -10,7 +10,6 @@ testdir = $(pkgdatadir)/tests/Math
 test_PROGRAMS = hill                                     \
 		promote                                  \
 		power                                    \
-		FracSimplify                             \
 		qt                                       \
 		qt2                                      \
 		qt3                                      \
@@ -94,7 +93,6 @@ LDADD = -L$(top_builddir)/src/Math      \
 	-lTFELException -lTFELTests
 
 power_SOURCES                 = power.cxx
-FracSimplify_SOURCES          = FracSimplify.cxx
 promote_SOURCES               = promote.cxx
 qt_SOURCES                    = qt.cxx
 qt2_SOURCES                   = qt2.cxx

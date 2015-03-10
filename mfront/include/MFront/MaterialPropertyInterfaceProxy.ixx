@@ -115,10 +115,10 @@ namespace mfront{
   } // end of MaterialPropertyInterfaceProxy<Interface>::MaterialPropertyInterfaceProxy
 
   template<typename Interface>
-  AbstractMaterialPropertyInterface* 
+  std::shared_ptr<AbstractMaterialPropertyInterface>
   MaterialPropertyInterfaceProxy<Interface>::createInterface()
   {
-    return new Interface;
+    return std::make_shared<Interface>();
   }
 
 } // end of namespace mfront

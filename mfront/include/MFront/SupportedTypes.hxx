@@ -19,20 +19,20 @@
 #include<vector>
 #include<ostream>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/VariableDescription.hxx"
 
 namespace mfront
 {
 
-  struct TFEL_VISIBILITY_EXPORT SupportedTypes
+  struct MFRONT_VISIBILITY_EXPORT SupportedTypes
   {
 
     static constexpr int ArraySizeLimit = 10u;
 
     enum TypeFlag{Scalar,TVector,Stensor,Tensor};
 
-    struct TFEL_VISIBILITY_EXPORT TypeSize
+    struct MFRONT_VISIBILITY_EXPORT TypeSize
     {
 
       TypeSize();

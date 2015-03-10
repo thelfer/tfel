@@ -28,6 +28,7 @@
 #include"MFront/ImplicitFiniteStrainDSL.hxx"
 
 #include"MFront/ModelDSL.hxx"
+#include"MFront/InitDSLs.hxx"
 
 namespace mfront
 {

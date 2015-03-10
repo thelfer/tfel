@@ -237,6 +237,14 @@ namespace mfront
     return res;
   } // end of CppMaterialPropertyInterface::getSpecificTargets
 
+  std::map<std::string,std::vector<std::string> >
+  CppTestMaterialPropertyInterface::getGeneratedEntryPoints(const std::string&,
+							    const std::string&,
+							    const std::string&)
+  {
+    return {};
+  }
+
   void
   CppTestMaterialPropertyInterface::writeOutputFiles(const std::string& file,
 					      const std::string& ,

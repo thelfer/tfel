@@ -1336,6 +1336,56 @@ namespace mfront{
     return deps;
   } // end of UMATInterface::getLibrariesDependencies()
 
+  std::map<std::string,std::vector<std::string> >
+  UMATInterface::getGeneratedEntryPoints(const BehaviourDescription& mb) const
+  {
+    using namespace std;
+    const auto l = UMATInterface::getLibraryName(mb);
+    auto b = vector<string>{};
+    const auto base = "umat"+makeLowerCase(UMATInterface::getBehaviourName(mb));
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategies.empty()){
+	b.push_back(base);
+      } else {
+	for(const auto& fss : this->finiteStrainStrategies){
+	  if(fss==FINITEROTATIONSMALLSTRAIN){
+	    b.push_back(base+"_frst");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      b.push_back(base);
+	    }
+	  } else if(fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	    b.push_back(base+"_malls");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      b.push_back(base);
+	    }
+	  } else if(fss==LOGARITHMICSTRAIN1D){
+	    b.push_back(base+"_log1D");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      b.push_back(base);
+	    }
+	  } else if(fss==NONE){
+	    b.push_back(base+"_ss");
+	    if(this->finiteStrainStrategies.size()==1u){
+	      b.push_back(base);
+	    }
+	  } else {
+	    string msg("UMATInterface::getGeneratedEntryPoints : "
+		       "internal error, unsupported finite strain strategy");
+	    throw(runtime_error(msg));
+	  }
+	}
+	if((this->finiteStrainStrategies.size()!=1u)&&
+	   (find(this->finiteStrainStrategies.begin(),
+		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	  b.push_back(base);
+	}
+      }
+    } else {
+      b.push_back(base);
+    }
+    return {{l,b}};
+  } // end of UMATInterface::getGeneratedSources
+
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
 	    SupportedTypes::TypeSize>
   UMATInterface::buildMaterialPropertiesList(const BehaviourDescription& mb,

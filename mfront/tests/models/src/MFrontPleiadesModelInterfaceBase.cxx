@@ -827,6 +827,21 @@ namespace mfront{
     return src;
   } // end of MFrontPleiadesModelInterfaceBase::getGeneratedSources
   
+  std::map<std::string,std::vector<std::string> >
+  MFrontPleiadesModelInterfaceBase::getGeneratedEntryPoints(const ModelData& mdata) const{
+    std::string lib;
+    if(mdata.library.empty()){
+      if(!mdata.material.empty()){
+	lib = "lib"+this->getApplicationName()+mdata.material+"Models";
+      } else {
+	lib = "lib"+this->getApplicationName()+"MaterialModels";
+      }
+    } else {
+      lib = mdata.library;
+    }
+    return {{lib,{mdata.className}}};
+  } // end of MFrontPleiadesModelInterfaceBase::getGeneratedEntryPoints
+
   std::vector<std::string>
   MFrontPleiadesModelInterfaceBase::getGeneratedIncludes(const ModelData&)
   {

@@ -14,18 +14,19 @@
 #ifndef LIB_MFRONMODELTINTERFACEFACTORY_HXX_
 #define LIB_MFRONMODELTINTERFACEFACTORY_HXX_ 
 
+#include<map>
+#include<memory>
 #include<vector>
 #include<string>
-#include<map>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/AbstractModelInterface.hxx"
 
 namespace mfront{
 
-  struct TFEL_VISIBILITY_EXPORT ModelInterfaceFactory
+  struct MFRONT_VISIBILITY_EXPORT ModelInterfaceFactory
   {
-    typedef AbstractModelInterface* (*InterfaceCreator)(void);
+    typedef std::shared_ptr<AbstractModelInterface> (*InterfaceCreator)(void);
     
     static ModelInterfaceFactory&
     getModelInterfaceFactory();
@@ -36,21 +37,17 @@ namespace mfront{
     void registerInterfaceCreator(const std::string&,
 				  InterfaceCreator);
     
-    AbstractModelInterface* 
+    std::shared_ptr<AbstractModelInterface>
     getInterfacePtr(const std::string&);
     
-    void
-    reset(void);
-
-    void
-    clear(void);
+    void reset(void);
 
     ~ModelInterfaceFactory();
     
   private:
 
     typedef std::map<std::string,InterfaceCreator> InterfaceCreatorsContainer;
-    typedef std::map<std::string,AbstractModelInterface *> InterfaceContainer;
+    typedef std::map<std::string,std::shared_ptr<AbstractModelInterface>> InterfaceContainer;
 
     TFEL_VISIBILITY_LOCAL
     ModelInterfaceFactory();

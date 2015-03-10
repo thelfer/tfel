@@ -26,7 +26,7 @@ namespace tfel{
       : is_identity(true)
     {
       using value_type = unsigned short;
-      tfel::fsalgo::iota<N>::exe(this->begin(),value_type(0u));
+      tfel::fsalgo::iota<N>::exe(this->begin(),value_type{0u});
     }
       
     template<unsigned short N>
@@ -48,14 +48,12 @@ namespace tfel{
 
     template<unsigned short N>
     template<typename T>
-    void TinyPermutation<N>::exe(tvector<N,T>& vec) const
+    void TinyPermutation<N>::exe(tvector<N,T>& v) const
     {
-      tvector<N,T> tmp;
-      unsigned short i;
-      for(i=0;i<N;++i){
-	tmp(i) = vec(*(this->v+i));
+      const tvector<N,T> tmp{v};
+      for(unsigned short i=0;i<N;++i){
+	v(i) = tmp(*(this->v+i));
       }
-      vec = tmp;
     }
 
   } // end of namespace math

@@ -15,6 +15,7 @@
 #define LIB_MFRONTPARSERPROXY_HXX_ 
 
 #include<string>
+#include<memory>
 
 #include"MFront/DSLFactory.hxx"
 #include"MFront/AbstractDSL.hxx"
@@ -30,7 +31,7 @@ namespace mfront{
      */
     DSLProxy(const std::string&);
 
-    static AbstractDSL* createParser();
+    static std::shared_ptr<AbstractDSL> createParser();
   };
 
 } // end of namespace mfront

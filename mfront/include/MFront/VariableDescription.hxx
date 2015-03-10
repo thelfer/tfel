@@ -18,7 +18,7 @@
 #include<vector>
 #include<string>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
@@ -28,7 +28,7 @@ namespace mfront
    * The support of fixed-sized arrays has been added lately.
    * This variable is considered as an array if arraySize is greater than 1.
    */
-  struct TFEL_VISIBILITY_EXPORT VariableDescription
+  struct MFRONT_VISIBILITY_EXPORT VariableDescription
   {
     VariableDescription(const VariableDescription&) = default;
     VariableDescription(VariableDescription&&) = default;

@@ -88,6 +88,16 @@ namespace mfront
     return libs;
   } // end of MFrontMaterialPropertyInterface::getLibrariesDependencies()
 
+  std::map<std::string,std::vector<std::string> >
+  MFrontMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
+							   const std::string& material,
+							   const std::string& className)
+  {
+    const auto f = material.empty() ? className : material+"_"+className;
+    const auto l = "libMFrontMaterialLaw";
+    return {{l,{f,f+"_checkBounds"}}};
+  }
+
   std::map<std::string,
 	   std::pair<std::vector<std::string>,
 		     std::vector<std::string> > >
@@ -102,7 +112,7 @@ namespace mfront
 
   std::string
   MFrontMaterialPropertyInterface::getHeaderFileName(const std::string& material,
-					      const std::string& className)
+						     const std::string& className)
   {
     if(material.empty()){
       return className+"-mfront";
@@ -165,7 +175,7 @@ namespace mfront
 
   std::string
   MFrontMaterialPropertyInterface::getFunctionName(const std::string& material,
-					    const std::string& law) const
+						   const std::string& law) const
   {
     if(material.empty()){
       return law;
@@ -181,7 +191,7 @@ namespace mfront
 
   std::string
   MFrontMaterialPropertyInterface::getCheckBoundsFunctionDeclaration(const std::string& material,
-							      const std::string& className)
+								     const std::string& className)
   {
     if(material.empty()){
       return  "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+className+"_checkBounds";

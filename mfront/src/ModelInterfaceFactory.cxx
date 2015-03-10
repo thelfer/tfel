@@ -70,16 +70,14 @@ namespace mfront{
     imap.insert(make_pair(i,f));
   }
 
-  AbstractModelInterface* 
+  std::shared_ptr<AbstractModelInterface>
   ModelInterfaceFactory::getInterfacePtr(const std::string& interfaceName)
   {
     using namespace std;
-    InterfaceCreatorsContainer::iterator p;
-    InterfaceContainer::iterator m;
-    AbstractModelInterface *i;
-    m = this->getInterfacesMap().find(interfaceName);
+    std::shared_ptr<AbstractModelInterface> i;
+    auto m = this->getInterfacesMap().find(interfaceName);
     if(m==this->getInterfacesMap().end()){
-      p = this->getInterfaceCreatorsMap().find(interfaceName);
+      auto p = this->getInterfaceCreatorsMap().find(interfaceName);
       if(p==this->getInterfaceCreatorsMap().end()){
 	string msg = "ModelInterfaceFactory::createNewInterface : no interface named ";
 	msg += interfaceName+".\n";
@@ -99,27 +97,15 @@ namespace mfront{
     return i;
   }
 
-  void
-  ModelInterfaceFactory::clear(void)
-  {
-    InterfaceContainer::iterator m;
-    for(m = this->getInterfacesMap().begin();m!= this->getInterfacesMap().end();++m){
-      delete m->second;
-    }
-    this->getInterfacesMap().clear();
-  } // end of ModelInterfaceFactory::clear(void)
 
   ModelInterfaceFactory::~ModelInterfaceFactory()
-  {
-    assert(this->getInterfacesMap().empty());
-  } // end of ModelInterfaceFactory::~ModelInterfaceFactory()
+  {} // end of ModelInterfaceFactory::~ModelInterfaceFactory()
   
   void
   ModelInterfaceFactory::reset(void)
   {
-    InterfaceContainer::iterator m;
-    for(m = this->getInterfacesMap().begin();m!= this->getInterfacesMap().end();++m){
-      m->second->reset();
+    for(auto& i : this->getInterfacesMap()){
+      i.second->reset();
     }
   } // end of ModelInterfaceFactory::reset
 

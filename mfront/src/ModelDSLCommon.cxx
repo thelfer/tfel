@@ -24,6 +24,11 @@
 
 namespace mfront{
 
+  AbstractDSL::DSLTarget
+  ModelDSLCommon::getTargetType(void) const{
+    return MODELDSL;
+  }
+
   bool
   ModelDSLCommon::is(const ModelData& data,
 			      const VariableDescriptionContainer& vc,
@@ -134,15 +139,18 @@ namespace mfront{
   } // end of ModelDSLCommon::setAnalysers
 
   void
-  ModelDSLCommon::writeOutputFiles(void)
+  ModelDSLCommon::generateOutputFiles(void)
   {
     using namespace std;
     typedef ModelInterfaceFactory MMIF;
     auto& mmif = MMIF::getModelInterfaceFactory();
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
+    if(this->interfaces.empty()){
+      string msg("ModelDSLCommon::generateOutputFile : ");
+      msg += "no interface defined";
+      throw(runtime_error(msg));
+    }
+    for(const auto& i : this->interfaces){
+      auto interface = mmif.getInterfacePtr(i);
       interface->writeOutputFiles(*this,*this);
     }
   } // end of ModelDSLCommon::writeOutputFiles
@@ -156,7 +164,6 @@ namespace mfront{
     auto& mmif = MMIF::getModelInterfaceFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
-    vector<string>::const_iterator i;
     bool treated = false;
     string key;
     --(this->current);
@@ -188,7 +195,7 @@ namespace mfront{
 	this->ignoreKeyWord(key);
       } else {
 	for(const auto & elem : s){
-	  AbstractModelInterface *interface = mmif.getInterfacePtr(elem);
+	  auto interface = mmif.getInterfacePtr(elem);
 	  p = interface->treatKeyword(key,this->current,
 				      this->fileTokens.end());
 	  if(!p.first){
@@ -212,9 +219,8 @@ namespace mfront{
 	this->current = p2;
       }
     } else {
-      for(i  = this->interfaces.begin();
-	  i != this->interfaces.end();++i){
-	AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
+      for(const auto& i : this->interfaces){
+	auto interface = mmif.getInterfacePtr(i);
 	p = interface->treatKeyword(key,this->current,
 				    this->fileTokens.end());
 	if(p.first){
@@ -1409,7 +1415,7 @@ namespace mfront{
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
+      auto interface = mmif.getInterfacePtr(*i);
       const auto& iincs = interface->getGlobalIncludes(*this);
       for(p=iincs.begin();p!=iincs.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
@@ -1430,7 +1436,7 @@ namespace mfront{
     map<string,vector<string> >::const_iterator p;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
+      auto interface = mmif.getInterfacePtr(*i);
       const auto& ideps = interface->getGlobalDependencies(*this);
       for(p=ideps.begin();p!=ideps.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
@@ -1452,7 +1458,7 @@ namespace mfront{
     vector<string>::const_iterator p2;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
+      auto interface = mmif.getInterfacePtr(*i);
       const auto& isources = interface->getGeneratedSources(*this);
       for(p=isources.begin();p!=isources.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
@@ -1479,7 +1485,7 @@ namespace mfront{
     vector<string>::const_iterator i;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
+      auto interface = mmif.getInterfacePtr(*i);
       const auto& iincs = interface->getGeneratedIncludes(*this);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
     }
@@ -1497,7 +1503,7 @@ namespace mfront{
     vector<string>::const_iterator p2;
     for(i  = this->interfaces.begin();
 	i != this->interfaces.end();++i){
-      AbstractModelInterface *interface = mmif.getInterfacePtr(*i);
+      auto interface = mmif.getInterfacePtr(*i);
       const auto& ideps = interface->getLibrariesDependencies(*this);
       for(p=ideps.begin();p!=ideps.end();++p){
 	for(p2=p->second.begin();p2!=p->second.end();++p2){
@@ -1510,6 +1516,28 @@ namespace mfront{
       }
     }
     return this->sourcesLibrairiesDependencies;
+  } // end of ModelDSLCommon::getLibrariesDependencies
+
+  std::map<std::string,std::vector<std::string> >
+  ModelDSLCommon::getGeneratedEntryPoints(void)
+  {
+    using namespace std;
+    typedef ModelInterfaceFactory MMIF;
+    auto& mmif = MMIF::getModelInterfaceFactory();
+    auto r = map<string,vector<string>>{};
+    for(const auto& i : this->interfaces){
+      auto interface = mmif.getInterfacePtr(i);
+      const auto& epts = interface->getGeneratedEntryPoints(*this);
+      for(auto l:epts){
+	auto& lepts = r[l.first];
+	for(auto p: l.second){
+	  if(find(lepts.begin(),lepts.end(),p)==lepts.end()){
+	    lepts.push_back(p);
+	  }
+	}
+      }
+    }
+    return r;
   } // end of ModelDSLCommon::getLibrariesDependencies
 
   std::map<std::string,

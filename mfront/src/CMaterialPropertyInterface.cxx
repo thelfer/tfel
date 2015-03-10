@@ -60,8 +60,8 @@ namespace mfront
 
   std::map<std::string,std::vector<std::string> >
   CMaterialPropertyInterface::getGeneratedSources(const std::string& library,
-					   const std::string& material,
-					   const std::string& className)
+						  const std::string& material,
+						  const std::string& className)
   {
     using namespace std;
     map<string,vector<string> > src;
@@ -70,10 +70,20 @@ namespace mfront
     return src;
   } // end of CMaterialPropertyInterface::getGeneratedSources
 
+  std::map<std::string,std::vector<std::string> >
+  CMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
+						      const std::string& material,
+						      const std::string& className)
+  {
+    const auto f = material.empty() ? className : material+"_"+className;
+    const auto l = this->getGeneratedLibraryName(library,material);
+    return {{l,{f,f+"_checkBounds"}}};
+  } // end of CMaterialPropertyInterface::getGeneratedEntryPoints
+
   std::vector<std::string>
   CMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-					    const std::string& material,
-					    const std::string& className)
+						   const std::string& material,
+						   const std::string& className)
   {
     using namespace std;
     vector<string> incs;
@@ -109,7 +119,7 @@ namespace mfront
 
   std::string
   CMaterialPropertyInterface::getHeaderFileName(const std::string& material,
-					 const std::string& className)
+						const std::string& className)
   {
     if(material.empty()){
       return className;
@@ -119,7 +129,7 @@ namespace mfront
 
   std::string
   CMaterialPropertyInterface::getSrcFileName(const std::string& material,
-				      const std::string& className)
+					     const std::string& className)
   {
     if(material.empty()){
       return className;
@@ -173,7 +183,7 @@ namespace mfront
 
   std::string
   CMaterialPropertyInterface::getFunctionDeclaration(const std::string& material,
-					      const std::string& className)
+						     const std::string& className)
   {
     if(material.empty()){
       return "MFRONT_SHAREDOBJ double MFRONT_CALLING_CONVENTION\n"+className;
@@ -189,7 +199,7 @@ namespace mfront
 
   std::string
   CMaterialPropertyInterface::getCheckBoundsFunctionDeclaration(const std::string& material,
-							 const std::string& className)
+								const std::string& className)
   {
     if(material.empty()){
       return "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+className+"_checkBounds";

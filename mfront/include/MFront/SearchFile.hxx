@@ -17,6 +17,8 @@
 #include<set>
 #include<string>
 
+#include"MFront/MFrontConfig.hxx"
+
 namespace mfront
 {
 
@@ -25,7 +27,7 @@ namespace mfront
    * - storing search paths
    * - searching imported mfront file
    */
-  struct SearchFile
+  struct MFRONT_VISIBILITY_EXPORT SearchFile
   {
     /*!
      * search a file in the specified paths.
@@ -57,7 +59,7 @@ namespace mfront
     /*!
      * return the uniq instance of the class
      */
-    static SearchFile&
+    static TFEL_VISIBILITY_LOCAL SearchFile&
     getSearchFile(void);
     /*!
      * Default constructor
@@ -65,12 +67,11 @@ namespace mfront
      * The MFRONT_INCLUDE_PATH environnement variable
      * is used to fill the search paths.
      */
-    SearchFile();
-    //! copy constructor (disabled)
-    SearchFile(const SearchFile&);
-    //! assignement operator constructor (disabled)
-    SearchFile&
-    operator=(const SearchFile&);
+    TFEL_VISIBILITY_LOCAL SearchFile();
+    SearchFile(const SearchFile&) = delete;
+    SearchFile(SearchFile&&) = delete;
+    SearchFile& operator=(const SearchFile&) = delete;
+    SearchFile& operator=(SearchFile&&) = delete;
     //! list of search paths
     std::vector<std::string> paths;
   };
