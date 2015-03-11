@@ -51,7 +51,11 @@ namespace mfront
 
   void
   MFrontCppTestLawInterface::reset(void)
-  {} // end of MFrontCppTestLawInterface::reset(void)
+  {
+    if(this->srcFile.is_open()){
+      this->srcFile.close();
+    }
+  } // end of MFrontCppTestLawInterface::reset(void)
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontCppTestLawInterface::treatKeyword(const std::string& key,
@@ -283,6 +287,7 @@ namespace mfront
     this->writeSrcFile(file,name,author,date,output,
 		       inputs,staticVars,params,paramValues,
 		       function,bounds,physicalBounds,useTemplate,namespaces);
+    this->srcFile.close();
   } // end of MFrontCppTestLawInterface::writeOutputFiles
 
   void

@@ -2036,11 +2036,11 @@ namespace mfront{
     out << "* \\date   "  << fd.date       << endl;
     out << "*\n\n";
     out << "* Note for Cast3M pleiades users, you may want to use\n"
-	<< "* the syntaxe based on the DESC_LOI keyword. In this case,\n"
-	<< "* you may want to use the following table declaration : \n\n";
+	<< "* the syntaxe based on the LIB_LOI keyword. In this case,\n"
+	<< "* you may want to use the following declaration : \n\n";
     out << "cmp = 'TABLE';\n";
-    out << "cmp. 'LIBRAIRIE' = '" << this->getLibraryName(mb) << "';\n";
-    out << "cmp. 'MODELE'    = '" << this->getUmatFunctionName(mb) << "';\n";
+    out << "cmp. 'LIB_LOI' = '" << this->getLibraryName(mb) << "';\n";
+    out << "cmp. 'FCT_LOI' = '" << this->getUmatFunctionName(mb) << "';\n";
     out << "*\n\n";
     // specific declaration
     string nonlin;

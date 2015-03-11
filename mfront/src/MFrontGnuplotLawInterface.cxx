@@ -370,6 +370,7 @@ namespace mfront
     this->writeSrcFile(file,name,author,date,
 		       inputs,staticVars,params,paramValues,
 		       function,bounds,physicalBounds,useTemplate,namespaces);
+    this->srcFile.close();
   } // end of MFrontGnuplotLawInterface::writeOutputFiles
 
   void
