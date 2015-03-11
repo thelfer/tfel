@@ -396,6 +396,20 @@ MTest_setImposedOpeningDisplacement2(mfront::MTest& t,
   MTest_setImposedDrivingVariable2(t,n,v);
 }
 
+static void
+MTest_setRotationMatrix(mfront::MTest& t,
+			const std::vector<std::vector<mfront::real> >& m){
+  using namespace std;
+  typedef tfel::math::tmatrix<3u,3u,mfront::real> matrix;
+  matrix r;
+  for(int i = 0; i!=3;++i){
+    for(int j = 0; j!=3;++j){
+      r(i,j) = m[i][j];
+    }
+  }
+  t.setRotationMatrix(r);
+} // end of MTest_setRotationMatrix
+
 static mfront::MTest::MTestCurrentState
 MTestCurrentState_copy(const mfront::MTest::MTestCurrentState& src)
 {
@@ -601,6 +615,8 @@ void declareMTest(void)
 	 (arg("name"),"values"))
     .def("setImposedDrivingVariable",MTest_setImposedDrivingVariable2,
 	 (arg("name"),"values"))
+    .def("setRotationMatrix",
+	 &MTest_setRotationMatrix)
     .def("setScalarInternalStateVariableInitialValue",
 	 &MTest::setScalarInternalStateVariableInitialValue)
     .def("setStensorInternalStateVariableInitialValues",
