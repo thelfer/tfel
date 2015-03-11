@@ -52,7 +52,11 @@ namespace mfront
 
   void
   CppTestMaterialPropertyInterface::reset(void)
-  {} // end of CppTestMaterialPropertyInterface::reset(void)
+  {
+    if(this->srcFile.is_open()){
+      this->srcFile.close();
+    }
+  } // end of CppTestMaterialPropertyInterface::reset(void)
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppTestMaterialPropertyInterface::treatKeyword(const std::string& key,
@@ -289,6 +293,7 @@ namespace mfront
     this->writeSrcFile(file,name,author,date,output,
 		       inputs,staticVars,params,paramValues,
 		       function,bounds,physicalBounds,useTemplate,namespaces);
+    this->srcFile.close();
   } // end of CppTestMaterialPropertyInterface::writeOutputFiles
 
   void
