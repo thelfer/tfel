@@ -397,8 +397,9 @@ MTestCurrentState_copy(const mfront::MTest::MTestCurrentState& src)
 }
 
 static void
-MTest_setRotationMatrix(mfront::MTest& t,
-			const std::vector<std::vector<mfront::real> >& m){
+MTest_setRotationMatrix1(mfront::MTest& t,
+			 const std::vector<std::vector<mfront::real> >& m,
+			 const bool b){
   using namespace std;
   typedef tfel::math::tmatrix<3u,3u,mfront::real> matrix;
   matrix r;
@@ -407,7 +408,13 @@ MTest_setRotationMatrix(mfront::MTest& t,
       r(i,j) = m[i][j];
     }
   }
-  t.setRotationMatrix(r);
+  t.setRotationMatrix(r,b);
+} // end of MTest_setRotationMatrix
+
+static void
+MTest_setRotationMatrix2(mfront::MTest& t,
+			 const std::vector<std::vector<mfront::real> >& m){
+  MTest_setRotationMatrix1(t,m,false);
 } // end of MTest_setRotationMatrix
 
 #define TFEL_PYTHON_MTESTCURRENTSTATEGETTER( X )		        \
@@ -610,7 +617,9 @@ void declareMTest(void)
     .def("setImposedDrivingVariable",MTest_setImposedDrivingVariable2,
 	 (arg("name"),"values"))
     .def("setRotationMatrix",
-	 &MTest_setRotationMatrix)
+	 &MTest_setRotationMatrix1)
+    .def("setRotationMatrix",
+	 &MTest_setRotationMatrix2)
     .def("setScalarInternalStateVariableInitialValue",
 	 &MTest::setScalarInternalStateVariableInitialValue)
     .def("setStensorInternalStateVariableInitialValues",

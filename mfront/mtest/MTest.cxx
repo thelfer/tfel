@@ -671,11 +671,12 @@ namespace mfront
   }
 
   void
-  MTest::setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>& r)
+  MTest::setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>& r,
+			   const bool bo)
   {
     using namespace std;
     using namespace tfel::math;
-    if(this->isRmDefined){
+    if((this->isRmDefined)&&(!bo)){
       string msg("MTest::setRotationMatrix : "
 		 "rotation matrix already defined");
       throw(runtime_error(msg));

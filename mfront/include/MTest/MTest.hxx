@@ -379,7 +379,13 @@ namespace mfront
     virtual void setCastemAccelerationPeriod(const int);
     virtual void setMaximumNumberOfIterations(const unsigned int);
     virtual void setMaximumNumberOfSubSteps(const unsigned int);
-    virtual void setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>&);
+    /*!
+     * \brief set the rotation matrix
+     * \param[in] r : rotation matrix
+     * \param[in] b : allow redefining the rotation matrix 
+     */
+    virtual void setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>&,
+				   const bool = false);
     /*!
      * \brief set the behaviour
      * \param[in] i : interface
