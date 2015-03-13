@@ -31,7 +31,7 @@ libTFELMTest_la_CPPFLAGS = -DTFELMTest_EXPORTS
 
 mtest_LDADD = -L$(top_builddir)/mfront/mtest              \
 	      -L$(top_builddir)/src/Tests     -lTFELTests \
-	      -lTFELMTest
+	      -lTFELMTest -lTFELSystem
 
 mtest_DEPENDENCIES = libTFELMTest.la
 
