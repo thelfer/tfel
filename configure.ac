@@ -440,6 +440,8 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/portable-behaviour/Makefile
 	   docs/presentations/Materiaux2014/Makefile
 	   docs/presentations/ClubCast3M2014/Makefile
+	   docs/presentations/CodeAsterUserMeeting2015/Makefile
+	   docs/presentations/CodeAsterUserMeeting2015/mfront-aster-2015.tex
 	   docs/tutorial/Makefile
 	   docs/tutorial/introduction.tex
 	   docs/tutorial/Conclusions.tex

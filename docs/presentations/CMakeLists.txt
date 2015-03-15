@@ -85,3 +85,4 @@ if(HAVE_PANDOC)
 endif(HAVE_PANDOC)
 
 add_subdirectory(ClubCast3M2014)
+add_subdirectory(CodeAsterUserMeeting2015)

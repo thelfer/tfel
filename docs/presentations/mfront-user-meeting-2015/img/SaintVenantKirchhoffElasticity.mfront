@@ -1,4 +1,4 @@
-@Parser DefaultFiniteStrainParser;
+@DSL DefaultFiniteStrainParser;
 @Behaviour SaintVenantKirchhoffElasticity;
 
 @MaterialProperty stress young;

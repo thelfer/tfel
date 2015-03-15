@@ -262,8 +262,18 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 \newpage
 \section{Introduction}
 
-Les éléments nécessaire pour ce texte sont repris dans la première
-section.
+Plusieurs mythes entourent les grandes transformations~:
+\begin{itemize}
+\item elles sont réputées inutiles, au moins pour les applications
+  combustible.
+\item elles sont réputées difficiles d'approche~;
+\end{itemize}
+
+Nous pensons ces deux affirmations fausses. Avant d'introduire cette
+note, il nous paraît intéressant de démystifier les grandes
+transformations pour partir sur des bases saines.
+
+
 
 Pour traiter les grandes transformations, les approches de la
 littérature se classent grossièrement en deux catégories~:
@@ -279,6 +289,8 @@ littérature se classent grossièrement en deux catégories~:
   passer d'une étape d'identification des paramètres de la loi une
   fois une \og~stratégie grandes transformations~\fg{} choisie.
 \end{enumerate}
+
+
 
 \subsection{Écritures de lois en grandes transformations}
 

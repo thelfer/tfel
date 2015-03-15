@@ -405,6 +405,14 @@ docs/presentations/Chaboche.tex.in -text
 docs/presentations/ClubCast3M2014/CMakeLists.txt -text
 docs/presentations/ClubCast3M2014/HureCast3M14.pdf -text
 docs/presentations/ClubCast3M2014/Makefile.am -text
+docs/presentations/CodeAsterUserMeeting2015/CMakeLists.txt -text
+docs/presentations/CodeAsterUserMeeting2015/Makefile.am -text
+docs/presentations/CodeAsterUserMeeting2015/img/CEATitleBanner2012.eps -text
+docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex-v3.eps -text
+docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex-v3.svg -text
+docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex.eps -text
+docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex.svg -text
+docs/presentations/CodeAsterUserMeeting2015/mfront-aster-2015.tex.in -text
 docs/presentations/Makefile.am -text
 docs/presentations/Makefile.doc.in -text
 docs/presentations/Materiaux2014/CMakeLists.txt -text
@@ -649,10 +657,12 @@ docs/tex/texmf/tex/images/CEA_puces.svg -text
 docs/tex/texmf/tex/images/CEA_web_quadri-sur-fond-rouge.eps -text
 docs/tex/texmf/tex/images/CEA_web_quadri-sur-fond-rouge.pdf -text
 docs/tex/texmf/tex/images/CEA_web_quadri-sur-fond-rouge.svg -text
+docs/tex/texmf/tex/images/CodeAster.eps -text
 docs/tex/texmf/tex/images/Energie.eps -text
 docs/tex/texmf/tex/images/Energie2010.eps -text
 docs/tex/texmf/tex/images/Energie2010.pdf -text
 docs/tex/texmf/tex/images/Energie_pleiades.eps -text
+docs/tex/texmf/tex/images/Pleiades.eps -text
 docs/tex/texmf/tex/images/barre_verte.eps -text
 docs/tex/texmf/tex/images/barre_verte.pdf -text
 docs/tex/texmf/tex/images/barre_verte.svg -text

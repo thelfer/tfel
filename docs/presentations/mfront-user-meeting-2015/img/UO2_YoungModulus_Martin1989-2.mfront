@@ -1,4 +1,4 @@
-@Parser MaterialLaw;          // treating a material property
+@DSL MaterialLaw;             // treating a material property
 @Material UO2;                // material name
 @Law YoungModulus_Martin1989; // name of the material property 
 @Author   T. Helfer;          // author name

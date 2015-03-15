@@ -27,6 +27,7 @@
 \newcommand{\Date}[1]{\def\Prodate{#1}}
 \newcommand{\Complement}[1]{\def\Procomplement{#1}}
 \newcommand{\Piedpage}[1]{\def\Propiedpage{#1}}
+\newcommand{\ImagePageTitre}[1]{\def\ProFirstPageBanner{#1}}
 
 % Masque
 
@@ -69,8 +70,12 @@
 \newcommand{\PageTitre}{
   \setbeamertemplate{footline}{}
   \frame{
-    \rput[l](-0.34,0.2){\includegraphics[width=0.3622\paperwidth]{CEATitleBanner2012.eps}}
-    \rput[l](1.5,-2.7){\tiny\white{www.cea.fr}}
+    \ifthenelse{\isundefined{\ProFirstPageBanner}}{
+      \rput[l](-0.34,0.2){\includegraphics[width=0.3622\paperwidth]{CEATitleBanner2012.eps}}
+      \rput[l](1.5,-2.7){\tiny\white{www.cea.fr}}
+    }{
+      \ProFirstPageBanner
+    }
     \hspace{0.38\linewidth}
     \begin{minipage}[h]{0.6\linewidth}
       \baselineskip=18pt
@@ -85,7 +90,7 @@
           \color{ceagrisfonce} \textsc{\Proauteur}}} 
       \vskip 1mm
       \ifthenelse{\isundefined{\Prodate}}{}{{\small \color{ceagrisfonce} \textsc{\Prodate}}}
-      \vskip 20mm
+      \vskip 5mm
       \baselineskip=5pt
       \ifthenelse{\isundefined{\Procomplement}}{}{{\scriptsize \color{ceagrisfonce} {\Procomplement}}}
     \end{minipage}

@@ -37,6 +37,7 @@
 \newcommand{\gibiane}{\texttt{gibiane}}
 \newcommand{\tmfft}{\texttt{TMFFT}}
 \newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\zebulon}{\texttt{ZeBuLoN}}
 \newcommand{\pycastem}{\texttt{pyCast3M}}
 \newcommand{\umat}{\texttt{umat}}
 \newcommand{\sirius}{\texttt{sirius}}
@@ -132,7 +133,7 @@
 \titre{L'interface \umat{} aux lois de comportements
   mécaniques de \mfront{}}
 
-\date{2013}
+\date{2015}
 % \numero{12-014}
 \indice{0}
 % \dateversion{09/2012}
@@ -194,88 +195,132 @@ Nous présentons dans cette note l'interface \umat{} utilisée par le
 code aux éléments finis \castem{} pour l'utilisation de lois de
 comportement mécanique externes.
 
-Nous traitons dans le corps du texte des aspects physiques ou
-numériques. Les aspects informatiques sont traités en
-annexe~\ref{sec:castem:materialbehaviours}.
-
-Cette note traite les points~:
+Cette note se décompose en deux parties~:
 \begin{itemize}
-\item le sous-découpage automatique du pas de temps~;
-\item la gestion des contraintes planes~;
-\item l'utilisation de lois de comportements en petites déformations
-  dans des calculs en transformations finies~;
-\item la gestion des bornes~;
-\item la génération automatique de la déclaration des lois de
-  comportement en \gibiane{}.
+\item la première décrit comment utiliser correctement les lois de
+  comportement générées par \mfront{} dans \castem{}~;
+\item la seconde décrit les fonctionnalités de l'interface \umat{}~;
 \end{itemize}
 
 Cette note suppose que le lecteur soit familier avec l'écriture de
 lois de comportement mécanique à l'aide de \mfront{}, écriture qui est
 décrite en détail par ailleurs~\cite{helfer_generateur_2013}.
 
-\section{Description de l'interface}
+\section{De la bonne utilisation des lois de comportement \mfront{}
+  dans \castem{}}
 
-\subsection{Choix du type de calcul}
+Nous considérons dans cette section les conditions d'une utilisation
+correcte des lois de comportement \mfront{} dans la procédure {\tt
+  PASAPAS} de \castem{} 2014. Pour les utilisateurs PLEIADES, ces
+remarques s'appliquent également aux procédures spécifiques {\tt
+  INCREPL}/{\tt MEPL}.
 
-Le premier élément du tableau \varcpp{DDSOE} permet de préciser le
-type de calcul à effectuer et le type de matrice de raideur
-attendue.
+Nous commençons par considérer les lois écrites en petites
+déformations, puis les lois écrites en grandes transformations.
 
-Une valeur strictement négative correspond à un calcul d'une matrice
-de prédiction. Dans ce cas, il n'y a pas d'intégration de la loi de
-comportement. Les valeurs supportées sont~:
+\subsection{Lois écrites en petites déformations}
+
+Les lois de comportement \mfront{} écrites en petites déformations
+sont utilisables dans \texttt{PASAPAS} si l'option {\tt
+  GRANDS\_DEPLACEMENTS} est mise à {\tt FAUX}.
+
+Ces lois peuvent décrire des matériaux isotropes et orthotropes. Le
+cas orthotrope nécessite quelques précautions rappelées en
+section~\ref{sec:trait-de-mater}.
+
+\subsubsection{Incompatibilité avec les formulations hypoélastiques de \castem{}}
+
+Lorsque l'on active la gestion des grands déplacements, \castem{}
+propose différentes formulations hypoélastiques pour traiter les lois
+écrites dans le formalisme des petites transformations. Une
+description sommaire des formulations hypoélastiques est donnée en
+annexe~\ref{sec:rappel-sur-les}.
+
+Le point important est que les lois de comportement écrites en
+\mfront{} sont généralement incompatibles avec les formulations
+hypoélastiques de \castem{} (sauf cas particulier construit dans ce
+but).
+
+L'une des manière de mettre ce point en évidence est que pour tenir
+compte de la variation des propriétés élastiques avec la température
+notamment, {\em il est d'usage dans \mfront{} d'utiliser la
+  déformation élastique comme variable interne}. Or une telle variable
+interne est prohibée pour les raisons décrites dans
+l'annexe~\ref{sec:rappel-sur-les}.
+
+Cette incompatibilité est d'autant plus regrettable que~:
 \begin{itemize}
-\item -1, qui correspond au calcul de la matrice d'élasticité initiale
-  (non endommagée)~;
-\item -2, qui correspond au calcul de la matrice sécante (matrice
-  d'élasticité endommagée)~;
-\item -3, qui correspond au calcul de la matrice tangente.
+\item \castem{} impose le recours à l'option {\tt
+    GRANDS\_DEPLACEMENTS} dès qu'il est nécessaire de décrire le
+  contact entre différents corps~;
+\item comme nous l'avons souligné dans
+  l'annexe~\ref{sec:rappel-sur-les}, tout semble fait pour que les
+  lois de comportement écrites en petites déformations continue de
+  fonctionner \og{}~comme si de rien n'était~\fg{}.
 \end{itemize}
 
-Une valeur positive ou nulle du premier élément du tableau
-\varcpp{DDSOE} conduit à l'intégration de la loi de comportement sur
-le pas de temps. Si cette intégration s'effectue avec succès, une
-matrice de raideur peut être calculée. Le type de matrice calculée
-dépend de la valeur du premier élément du tableau \varcpp{DDSOE}~:
-\begin{itemize}
-\item 1, correspond au calcul de la matrice d'élasticité initiale
-  (non endommagée)~;
-\item 2, correspond au calcul de la matrice sécante (matrice
-  d'élasticité endommagée)~;
-\item 3, correspond au calcul de la matrice tangente~;
-\item 4, correspond au calcul de la matrice tangente cohérente~;
-\end{itemize}
+En conséquence, de nombreux calculs sont aujourd'hui effectués en
+combinant de manière inappropriée des lois \mfront{} aux formulations
+hypoélastiques de \castem{}.
 
-\subsection{Méta-données}
+Pour contrebalancer cette vision pessimiste, nous pouvons quand même
+espérer, dans les cas où les déformations et les rotations restent
+faibles, c'est à dire dans les cas où l'hypothèse des petites
+perturbations reste raisonnablement vérifiée, que les erreurs induites
+sur les résultats soient faibles. D'après notre expérience, le cas de
+chargement monotone semble également favorable.
 
-\clearpage
-\newpage
-\section{Utilisation des lois générées par \mfront{} dans \castem{}}
+Si l'on souhaite utiliser des modèles écrits avec le même formalisme
+qu'en petites transformations dans un contexte de grandes
+transformations, \mfront{} propose différentes stratégies, exactes,
+décrites en section~\ref{sec:utilisation-des-lois}. Nous suggérons
+fortement d'utiliser ces stratégies plutôt que les formulations
+hypoélastiques de \castem{}.
+
+\subsubsection{Comparaison avec les lois natives de \castem{} ou à des
+  lois \umat{} écrites en fortran}
+
+Si l'on est amené à comparé les lois \mfront{} aux lois natives de
+\castem{} ou à des lois \umat{} écrites en fortran, il faut se prendre
+garde au fait que ces lois sont généralement écrites en vitesses pour
+être compatible avec les formulations hypoélastiques décrites plus
+haut.
+
+{\em En particulier, pour les lois exposées, elles ne peuvent en
+  général pas traiter de manière exacte le cas des propriétés
+  élastiques variables dans le temps.} Nous avons donner les raisons
+de cette limite au paragraphe~\eqref{sec:rappel-sur-les}. Notons en
+particulier que l'élasticité, traitée de manière incrémentale pour
+pouvoir être utilisée avec une formulation hypoélastique, conduit à
+des résultats erronés dans ce cas.
+
+\subsection{Lois écrites en grandes transformations}
+\label{sec:LoisGrandesTransformations}
+
+Les lois \mfront{} écrites en grandes transformations peuvent être
+utilisées dans \castem{}.
+
+Il faut cependant prendre garde à explicitement préciser {\tt
+  'EPSILON' 'UTILISATEUR'} lors de la définition du modèle. Ce point
+est important car si l'on ne le fait pas, les contraintes seront
+modifiées comme dans les cas des formulations hypo-élastiques par
+l'opérateur {\tt PICA}. Il n'y a malheureusement aucun garde-fous
+actuellement dans \castem{} pour éviter cette erreur.
+
+\subsection{Utilisation des lois générées par \mfront{} dans \castem{}}
 
 Cette section suppose que l'utilisateur sait comment introduire une
 loi \umat{} dans \castem{} et est familier avec la syntaxe \gibiane{}
 associée.
 
-\subsection{Utilisation dans la version \pleiades{}}
-
-Le projet \pleiades{} maintient pour ses propres besoins une version
-modifiée de \castem{} qui permet de charger dynamiquement des
-bibliothèques matériaux.
-
 \begin{figure}[htbp]
   \centering
   \code{
-    \textcolor{blue}{* Création d'une table contenant les données relatives }\\
-    \textcolor{blue}{* à la propriété externe : }\\
-    \textcolor{blue}{* - 'MODELE' contient le nom de la fonction appelée }\\
-    \textcolor{blue}{* - 'LIBRAIRIE' contient le nom de la librairie externe }\\
-    Tloi = '\textcolor{green}{TABLE}'; \\
-    Tloi. '\textcolor{red}{MODELE}'    = '\textcolor{red}{NbZrCCreep}' ; \\
-    Tloi. '\textcolor{red}{LIBRAIRIE}' = '\textcolor{red}{libNbZrCBehaviours.so}' ; \\
     \textcolor{blue}{* Création du modèle mécanique}\\    
     ModM1 = '\textcolor{green}{MODELISER}' s1 '\textcolor{red}{MECANIQUE}' '\textcolor{red}{ELASTIQUE}'     \\
     \hspace{7em}'\textcolor{red}{ISOTROPE}' '\textcolor{red}{NON\_LINEAIRE}' '\textcolor{red}{UTILISATEUR}' \\
-    \hspace{7em}'\textcolor{red}{'DESC\_LOI'}  Tloi \\
+    \hspace{7em}'\textcolor{red}{LIB\_LOI}' '\textcolor{blue}{libMFrontCastemBehaviours.so}' \\
+    \hspace{7em}'\textcolor{red}{FCT\_LOI}' '\textcolor{blue}{umatcompressibleneohookeanbehaviour}' \\
     \hspace{7em}'\textcolor{red}{C\_MATERIAU}' CLOI \\
     \hspace{7em}'\textcolor{red}{C\_VARINTER}' VLOI \\
     \hspace{7em}'\textcolor{red}{PARA\_LOI}'   PLOI;
@@ -284,10 +329,10 @@ bibliothèques matériaux.
   \label{fig:umat:desc_loi}
 \end{figure}
 
-L'appel, illustré en figure~\ref{fig:umat:desc_loi}, se fait en deux étapes~:
+L'appel, illustré en figure~\ref{fig:umat:desc_loi} présente deux mots
+clés intéressants~:
 \begin{itemize}
-\item la définition d'un tableau contenant les deux indices
-  \texttt{LIBRAIRIE} et \texttt{MODELE}. L'indice \texttt{LIBRAIRIE}
+\item l'indice \texttt{LIB\_LOI}
   désigne le nom de la librairie dynamique qui contient la loi de
   comportement. L'extension de la librairie dépend du système~:
   \texttt{so} sous \unix{}, \texttt{dll} sous \windows{}. Il est
@@ -295,121 +340,97 @@ L'appel, illustré en figure~\ref{fig:umat:desc_loi}, se fait en deux étapes~:
   librairie, mais cette manière de faire est déconseillée. Il est
   préférable de modifier la variable d'environnement
   \texttt{LD\_LIBRARY\_PATH} sous \unix{}, ou {\tt PATH} sous
-  \windows{}. L'indice \texttt{MODELE} contient le nom de la fonction
-  à appeler~;
-\item la définition du modèle. Par rapport à une syntaxe classique qui
-  utilise le mot clé \texttt{NUME\_LOI}, nous utilisons ici le mot clé
-  \texttt{DESC\_LOI} qui prend en argument la table construite
-  précédemment.
+  \windows{}~;
+\item l'indice \texttt{FCT\_LOI} qui contient le nom de la fonction
+  à appeler.
 \end{itemize}
 
-\subsection{Utilisation de la version standard de \castem{}}
+Ces mots clés sont disponibles dans la version \(2014\) {\tt PLEIADES}
+de \castem{} et seront standard dans la version \(2015\). Le site {\tt
+  mfront} décrit comment utiliser les lois \mfront{} dans les versions
+officielles de \castem{} antérieures.
 
-\subsubsection{Sous \unix{}}
+\section{Fonctionnalités de l'interface \umat{}}
 
-L'utilisation des lois \mfront{} dans la version standard de \castem{}
-est moins aisée~:
+\subsection{Utilisation des lois écrites en petites
+  déformations dans un contexte de transformations finies}
+\label{sec:utilisation-des-lois}
+
+Les lois de comportement générées par \mfront{} sont généralement
+écrites avec l'hypothèse des petites déformations et ne peuvent en
+l'état être utilisées dans des calculs en transformations finies. Nous
+avons vu au paragraphe~\ref{sec:rappel-sur-les} pourquoi l'utilisation
+des formulations hypoélastiques de \castem{} est insatisfaisant.
+
+Il existe cependant différentes façons d'adapter des lois de
+comportements en petites déformations au contexte des transformations
+finies. Trois stratégies sont disponibles~:
 \begin{itemize}
-\item l'utilisateur doit écrire une fonction chapeau nommée
-  \umat{}. Cette fonction chapeau sert à appeler la bonne loi de
-  comportement~;
-\item l'utilisateur doit recompiler une version locale de l'exécutable
-  \castem{} qui inclut cette fonction chapeau et qui est liée avec la
-  ou les librairies \mfront{}~;
+\item un cas simple, en terme d'implantation informatique, est celui
+  de cas des grandes rotations mais petites
+  déformations~\cite{proix_loi_2013}. Cette stratégie est intéressante
+  car elle permet de réutiliser telle quelle des lois identifiées en
+  petites déformations~;
+\item un cas plus complexe qui consiste à déduire du gradient de la
+  transformation des déformations dites logarithmiques. Elle a été
+  proposée par Miehe et est disponibles dans \aster{} et
+  \zebulon{}~\cite{miehe_anisotropic_2002,bargellini_modeles_2013}~;
+\item la dernière stratégie permet l'utilisation des déformations
+  logarithmiques ci-dessus dans le cadre d'un code \(1D\) écrit en
+  petites déformations.
 \end{itemize}
 
-Pour cela, \castem{} fournit les utilitaires {\tt essaicast} et {\tt
-  compilcast}. Ces scripts {\tt shell} sont prévus pour compiler des
-fichiers {\tt esope} et ne sont pas prévus pour gérer des fichiers
-\mfront{}. Ils contiennent cependant les directives de compilation
-nécessaires à la construction de l'exécutable \castem{}.
+L'utilisateur peut choisir d'utiliser l'une et l'autre des ces
+stratégies par la directive
+\mkeyb{UMATFiniteStrainStrategy}{UMAT\-Finite\-Strain\-Strategy} qui
+admet pour arguments {\tt Finite\-Rotation\-Small\-Strain}, {\tt
+  Miehe\-Apel\-Lambrecht\-Logarithmic\-Strain} ou {\tt
+  Logarithmic\-Strain1D}.
 
-\begin{figure}[htbp]
-  \centering
-  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/Images/Makefile.castem.linux.tex}}}  
-  \caption{Exemple de fichier {\tt Makefile} utilisable sous \linux{}}
-  \label{fig:umat:Makfile:linux}
-\end{figure}
+Ces différentes stratégies sont exemptes des défauts des formulations
+hypoélastiques de \castem{}. Elles permettent de construire des lois
+objectives capables de décrire des matériaux isotropes ou orthotropes,
+de tenir compte de la variation des propriétés matériau avec la
+température. De plus, appliquées à une loi élastiques, elles
+conduisent à une loi hyperélastique.
 
-L'utilisateur doit ensuite déplacer l'utilitaire créé.
+\subsection{Traitements de matériaux orthotropes}
+\label{sec:trait-de-mater}
 
-\section{Sous \windows{}}
-
-Il faut tout d'abord disposer d'un environnement de compilation
-adapté. Le seul supporté actuellement est {\tt MSYS}.
-
-\paragraph{Utilisation sous \windows{}}
-
-De plus, dans le cas d'un système \(64\) bits, il faut télécharger
-{\tt mingw64}.
-
-\begin{figure}[htbp]
-  \centering
-  \code{{\ttfamily \input{@abs_top_srcdir@/docs/mfront/Images/Makefile.castem.win.tex}}}  
-  \caption{Exemple de fichier {\tt Makefile} utilisable sous \windows{}}
-  \label{fig:umat:Makfile:win}
-\end{figure}
-
-\clearpage
-\newpage
-\section{Sous-découpage automatique du pas de temps}
-
-L'intégration d'une loi de comportement peut échouer. La
-loi de comportement peut également indiquer que les résultats obtenus
-sont imprécis.
-
-Pour gérer ces cas, l'interface \umat{} permet de sous-découper
-localement, au niveau des points de \nom{Gauss}, le pas de temps.
-
-\paragraph{Note} Il est important de réaliser que
-l'intégration peut échouer ou indiquer que les résultats sont imprécis
-pour deux raisons~:
+Dans le cas des matériaux orthotropes, l'interface {\tt umat} peut
+être amenée à gérer plusieurs aspects du calcul~:
 \begin{itemize}
-  \item l'intégration locale peut effectivement être très
-  difficile~;
-  \item le pas de temps utilisé globalement pour la recherche
-  d'équilibre est trop grand. En particulier, ce pas de temps peut ne
-  pas respecter l'hypothèse de radialité du
-  chargement~\cite{proix_etude_2011}.
+\item dans le cas de matériaux orthotropes, l'interface \umat{} se
+  charge des changements de repère. Ils sont assurés par la classe
+  \tfelb{UMATRotationMatrix}{UMAT\-Rotation\-Matrix}.
+\item l'interface se charge du calcul de la matrice d'élasticité, si
+  l'utilisateur le demande via la directive
+  \mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor}.  Il
+  est important de noter que l'interface \texttt{umat} passe cette
+  matrice d'élasticité {\em après} l'appel au constructeur de la loi
+  de comportement, ce qui signifie qu'elle ne peut être utilisée dans
+  la phase d'initialisation introduite par le mot-clé {\tt
+    Init\-Local\-Variables}.
+\item l'interface se charge du calcul du tenseur des coefficients de
+  dilatation thermique, si l'utilisateur le demande via la directive
+  \mkeyb{RequireThermalExpansionCoefficientTensor}{Require\-Thermal\-Expansion\-Tensor}.
+  Il est important de noter que l'interface \texttt{umat} passe ce
+  tenseur {\em après} l'appel au constructeur de la loi de
+  comportement, ce qui signifie qu'il ne peut être utilisé dans la
+  phase d'initialisation introduite par le mot-clé {\tt
+    Init\-Local\-Variables}. Ce tenseur est calculé par la classe
+  \tfelb{UMATComputeThermalExpansionCoefficientTensor}{UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
 \end{itemize}
-Le défault de méthode présentée est de ne pas distinguer ces deux cas.
-En particulier, elle peut permetre la convergence de l'intégration
-locale en masquant le fait que la recherche de l'équilibre global est
-fondamentalement faussée par un pas de temps trop grand.
 
-\subsection{Description de l'algorithme}
+Les lois orthotropes posent le problème d'une définition cohérente des
+axes d'orthotropie. \castem{} (ni aucun autre code aux éléments finis
+à notre connaissance) ne permet pas une définition cohérente pour
+l'ensemble des hypothèses de modélisations. Nous recommandons de
+suivre la démarche que nous avons proposée pour les tubes dans la note
+générale sur l'écriture des lois de comportement
+mécanique~\cite{helfer_generateur_2013}
 
-Pour décrire l'algorithme utilisé, notons \(\Delta\,t\) le pas de
-temps utilisé par l'algorithme de résolution global, \(\delta\,t\) un
-pas de temps de courant et \(n\) le nombre d'étapes d'intégration qu'il
-reste pour réaliser l'intégration sur l'intégralité du pas de temps.
-
-En début d'intégration, le pas de temps courant \(\delta\,t\) est
-initialisé à \(\Delta\,t\) et \(n\) est initialisé à \(1\).
-
-En cas de sous-découpage, la stratégie adoptée est simpliste~: le pas
-de temps courant \(\delta\,t\) est divisé par \(2\) et \(n\) est
-multiplié par \(2\).
-
-Quand l'intégration réussit pour le pas de temps courant
-\(\delta\,t\), \(n\) est diminué de \(1\). Le travail d'intégration est
-fini quand \(n\) vaut \(0\).
-
-Le nombre maximum de sous-découpage est limité. Si cette limite est
-atteinte, le code retourne une execption.
-
-\subsection{Directives gérant le sous-découpage du pas de temps}
-
-Le mot clé
-\mkeyb{UMATUseTimeSubStepping}{UMAT\-Use\-Time\-Sub\-Stepping} demande
-à ce que l'interface mette en place une stratégie de sous-découpage.
-
-Le mot clé
-\mkeyb{UMATMaximumSubStepping}{UMAT\-Maximum\-Sub\-Stepping} permet de
-préciser le nombre maximum de sous-découpages autorisés. Cette
-information doit être explicitement fournie par l'utilisateur.
-
-\section{Gestion générique des contraintes planes}
+\subsection{Gestion générique des contraintes planes}
 
 L'hypothèse de contraintes planes constituent un cas
 particulier~:
@@ -426,8 +447,11 @@ supplémentaire du problème.
 
 Pour tenir compte de ces particularités, deux voies sont possibles~:
 \begin{itemize}
-  \item écrire un algorithme de résolution spécifique qui tient
-  explicitement compte de la condition de contraintes planes~;
+\item écrire un algorithme de résolution spécifique qui tient
+  explicitement compte de la condition de contraintes planes. La note
+  \mfront{} décrivant le support des contraintes planes montre comment
+  cela peut être réalisé~\cite{helfer14:_prise_mfron}. Il s'agit de la
+  voie la plus efficace~;
   \item réutiliser l'intégration en {\em déformations planes} au
   sein d'un algorithme de résolution qui se charge de trouver une
   déformation axiale telle que la contrainte axiale soit nulle. Cette
@@ -472,7 +496,64 @@ où \(E\) est le module d'\nom{Young} du matériau et où \(\varepsilon\)
 est choisi égal à \(10^{-12}\)\footnote{Cette valeur n'est aujourd'hui
   pas modifiable}.
 
-\section{Génération automatique d'un fichier {\tt mtest} en cas d'échec}
+\subsection{Sous-découpage automatique du pas de temps}
+
+L'intégration d'une loi de comportement peut échouer. La
+loi de comportement peut également indiquer que les résultats obtenus
+sont imprécis.
+
+Pour gérer ces cas, l'interface \umat{} permet de sous-découper
+localement, au niveau des points de \nom{Gauss}, le pas de temps.
+
+\paragraph{Note} Il est important de réaliser que
+l'intégration peut échouer ou indiquer que les résultats sont imprécis
+pour deux raisons~:
+\begin{itemize}
+  \item l'intégration locale peut effectivement être très
+  difficile~;
+  \item le pas de temps utilisé globalement pour la recherche
+  d'équilibre est trop grand. En particulier, ce pas de temps peut ne
+  pas respecter l'hypothèse de radialité du
+  chargement~\cite{proix_etude_2011}.
+\end{itemize}
+Le défault de méthode présentée est de ne pas distinguer ces deux cas.
+En particulier, elle peut permetre la convergence de l'intégration
+locale en masquant le fait que la recherche de l'équilibre global est
+fondamentalement faussée par un pas de temps trop grand.
+
+\subsubsection{Description de l'algorithme}
+
+Pour décrire l'algorithme utilisé, notons \(\Delta\,t\) le pas de
+temps utilisé par l'algorithme de résolution global, \(\delta\,t\) un
+pas de temps de courant et \(n\) le nombre d'étapes d'intégration qu'il
+reste pour réaliser l'intégration sur l'intégralité du pas de temps.
+
+En début d'intégration, le pas de temps courant \(\delta\,t\) est
+initialisé à \(\Delta\,t\) et \(n\) est initialisé à \(1\).
+
+En cas de sous-découpage, la stratégie adoptée est simpliste~: le pas
+de temps courant \(\delta\,t\) est divisé par \(2\) et \(n\) est
+multiplié par \(2\).
+
+Quand l'intégration réussit pour le pas de temps courant
+\(\delta\,t\), \(n\) est diminué de \(1\). Le travail d'intégration est
+fini quand \(n\) vaut \(0\).
+
+Le nombre maximum de sous-découpage est limité. Si cette limite est
+atteinte, le code retourne une execption.
+
+\subsubsection{Directives gérant le sous-découpage du pas de temps}
+
+Le mot clé
+\mkeyb{UMATUseTimeSubStepping}{UMAT\-Use\-Time\-Sub\-Stepping} demande
+à ce que l'interface mette en place une stratégie de sous-découpage.
+
+Le mot clé
+\mkeyb{UMATMaximumSubStepping}{UMAT\-Maximum\-Sub\-Stepping} permet de
+préciser le nombre maximum de sous-découpages autorisés. Cette
+information doit être explicitement fournie par l'utilisateur.
+
+\subsection{Génération automatique d'un fichier {\tt mtest} en cas d'échec}
 
 Le mot clé
 \mkeyb{UMATGenerateMTestFileOnFailure}{UMAT\-Generate\-MTest\-File\-On\-Failure}
@@ -480,67 +561,7 @@ est suivi d'une valeur booléenne. Si cette valeur est vraie, un
 fichier {\tt mtest} sera généré automatiquement en cas d'échec de
 l'intégration.
 
-
-\clearpage
-\newpage
-\section{Utilisation des lois écrites en petites
-  déformations dans un contexte de transformations finies}
-
-Les lois de comportement générées par \mfront{} sont écrites avec
-l'hypothèse des petites déformations et ne peuvent en l'état être
-utilisées dans des calculs en transformations finies.
-
-Il existe cependant différentes façon d'adapter des lois de
-comportements en petites déformations au contexte des transformations
-finies. Deux stratégies sont disponibles~:
-\begin{itemize}
-\item un cas simple, en terme d'implantation informatique, est celui
-  de cas des grandes rotations mais petites déformations. Ce cas est
-  traité en annexe~\ref{sec:umat:gdef_rot}~;
-\item un cas plus complexe qui consiste à déduire du gradient de la
-  transformation des déformations dites logarithmiques. Ce cas est
-  traité en annexe~\ref{sec:umat:gdef_log}.
-\end{itemize}
-
-L'utilisateur peut choisir d'utiliser l'une et l'autre des ces
-stratégies par la directive
-\mkeyb{UMATFiniteStrainStrategy}{UMAT\-Finite\-Strain\-Strategy} qui
-admet pour arguments {\tt Finite\-Rotation\-Small\-Strain} et {\tt
-  Logarithmic\-Strain}.
-
-\clearpage
-\newpage
-\section{Traitements de matériaux orthotropes}
-
-Dans le cas des matériaux orthotropes, l'interface {\tt umat} peut
-être amenée à gérer plusieurs aspects du calcul~:
-\begin{itemize}
-\item dans le cas de matériaux orthotropes, l'interface \umat{} se
-  charge des changements de repère. Ils sont assurés par la classe
-  \tfelb{UMATRotationMatrix}{UMAT\-Rotation\-Matrix}.
-\item l'interface se charge du calcul de la matrice d'élasticité, si
-  l'utilisateur le demande via la directive
-  \mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor}.  Il
-  est important de noter que l'interface \texttt{umat} passe cette
-  matrice d'élasticité {\em après} l'appel au constructeur de la loi
-  de comportement, ce qui signifie qu'elle ne peut être utilisée dans
-  la phase d'initialisation introduite par le mot-clé {\tt
-    Init\-Local\-Variables}. Le calcul de la matrice d'élasticité est
-  décrit en annexe~\ref{sec:calcul-de-la}.
-\item l'interface se charge du calcul du tenseur des coefficients de
-  dilatation thermique, si l'utilisateur le demande via la directive
-  \mkeyb{RequireThermalExpansionCoefficientTensor}{Require\-Thermal\-Expansion\-Tensor}.
-  Il est important de noter que l'interface \texttt{umat} passe ce
-  tenseur {\em après} l'appel au constructeur de la loi de
-  comportement, ce qui signifie qu'il ne peut être utilisé dans la
-  phase d'initialisation introduite par le mot-clé {\tt
-    Init\-Local\-Variables}. Ce tenseur est calculé par la classe
-  \tfelb{UMATComputeThermalExpansionCoefficientTensor}{UMAT\-Compute\-Thermal\-Expansion\-Tensor}.
-\end{itemize}
-
-\clearpage
-\newpage
-\section{Gestion des bornes de validité}
+\subsection{Gestion des bornes de validité}
 
 Le traitement d'une violation des bornes de validité expérimentale
 dépendant de la politique définie par l'utilisateur à l'aide de la
@@ -560,9 +581,7 @@ Si la variable
 \envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
 n'est pas définie, les dépassements sont ignorés.
 
-\clearpage
-\newpage
-\section{Génération de la mise en donnée \castem{}}
+\subsection{Génération de la mise en donnée \castem{}}
 
 Dans le cas de l'interface \texttt{umat}, \mfront{} génère
 automatiquement un exemple de mise en donnée \castem{} pour l'appel de
@@ -617,66 +636,153 @@ La nécessité de passer par la construction d'un chapeau
   \label{fig:mfrontcastem2}
 \end{figure}
 
-Nous avons développé une extension à \castem{} pour
-l'appel directe à la loi généré par \mfront{}, qui
-ne nécessite aucun travail supplémentaire ni
-recompilation. Cette extension a été intégrée à la
-version de \castem{} livrée avec les applications
-\pleiades{}. Cette version permet d'utiliser
-la syntaxe proposé par la
-figure~\ref{fig:mfrontcastem2}. 
-
-Cette extension est décrite dans
-l'annexe~\ref{sec:castem:materialbehaviours}.
-
-\clearpage
-\newpage
 \referencecea
 \listetableaux
 \listefigures
 
 \appendix
+\section{Description de l'interface}
 
-\clearpage
-\newpage
-\section{Appel de lois de comportement mécanique externes dans \castem{}}
-\label{sec:castem:materialbehaviours}
+\subsection{Choix du type de calcul}
 
-Pour les besoins du projet \pleiades{}, nous avons modifié le code
-aux éléments finis \castem{} pour pouvoir appeler des lois de
-comportement définies dans des librairies externes.
+Le premier élément du tableau \varcpp{DDSOE} permet de préciser le
+type de calcul à effectuer et le type de matrice de raideur
+attendue.
 
-\begin{figure}[htbp]
-  \centering
-  \code{
-    \textcolor{blue}{* Création d'une table contenant les données relatives }\\
-    \textcolor{blue}{* à la propriété externe : }\\
-    \textcolor{blue}{* - 'MODELE' contient le nom de la fonction appelée }\\
-    \textcolor{blue}{* - 'LIBRAIRIE' contient le nom de la librairie externe }\\
-    Tloi = '\textcolor{green}{TABLE}'; \\
-    Tloi. '\textcolor{red}{MODELE}'    = '\textcolor{red}{NbZrCCreep}' ; \\
-    Tloi. '\textcolor{red}{LIBRAIRIE}' = '\textcolor{red}{libNbZrCBehaviours.so}' ; \\
-    \textcolor{blue}{* Création du modèle mécanique}\\
-    ModM1 = '\textcolor{green}{MODELISER}' s1 '\textcolor{red}{MECANIQUE}' '\textcolor{red}{ELASTIQUE}'     \\
-    \hspace{7em}'\textcolor{red}{ISOTROPE}' '\textcolor{red}{NON\_LINEAIRE}' '\textcolor{red}{UTILISATEUR}' \\
-    \hspace{7em}'\textcolor{red}{'DESC\_LOI'}  Tloi \\
-    \hspace{7em}'\textcolor{red}{C\_MATERIAU}' CLOI \\
-    \hspace{7em}'\textcolor{red}{C\_VARINTER}' VLOI \\
-    \hspace{7em}'\textcolor{red}{PARA\_LOI}'   PLOI;
-  }
-  \caption{Déclaration d'un modèle utilisant une loi de comportement externe.}
-  \label{fig:delaration_loi_comportement}
-\end{figure}
-
-La figure~\ref{fig:delaration_loi_comportement} montre comment utiliser une
-loi de comportement fournie par une librairie externe. Par rapport à une
-utilisation standard des lois utilisateur, nous utilisons ici le mot clé
-\texttt{DESC\_LOI} en lieu et place du mot clé \texttt{NUME\_LOI}. Ce mot
-clé est suivi d'une table qui doit avoir deux indices~:
+Une valeur strictement négative correspond à un calcul d'une matrice
+de prédiction. Dans ce cas, il n'y a pas d'intégration de la loi de
+comportement. Les valeurs supportées sont~:
 \begin{itemize}
-\item l'indice \texttt{MODELE} contient le nom de la fonction à appeler~;
-\item l'indice \texttt{LIBRAIRIE} contient le nom de la librairie
-contenant la fonction à appeler~;
+\item -1, qui correspond au calcul de la matrice d'élasticité initiale
+  (non endommagée)~;
+\item -2, qui correspond au calcul de la matrice sécante (matrice
+  d'élasticité endommagée)~;
+\item -3, qui correspond au calcul de la matrice tangente.
 \end{itemize}
+
+Une valeur positive ou nulle du premier élément du tableau
+\varcpp{DDSOE} conduit à l'intégration de la loi de comportement sur
+le pas de temps. Si cette intégration s'effectue avec succès, une
+matrice de raideur peut être calculée. Le type de matrice calculée
+dépend de la valeur du premier élément du tableau \varcpp{DDSOE}~:
+\begin{itemize}
+\item 1, correspond au calcul de la matrice d'élasticité initiale
+  (non endommagée)~;
+\item 2, correspond au calcul de la matrice sécante (matrice
+  d'élasticité endommagée)~;
+\item 3, correspond au calcul de la matrice tangente~;
+\item 4, correspond au calcul de la matrice tangente cohérente~;
+\end{itemize}
+
+\subsection{Méta-données}
+
+\section{Rappel sur les formulations hypoélastiques de \castem{}}
+\label{sec:rappel-sur-les}
+
+Quand l'option {\tt GRANDS\_DEPLACEMENTS} est mise à {\tt VRAI},
+\castem{} propose différentes formulations hypoélastiques pour pouvoir
+utiliser des lois de comportement écrites dans l'hypothèse des petites
+déformations alors que les déformations ou les rotations peuvent
+devenir importantes.
+
+Une formulation hypoélastique est tout d'abord une loi écrite \og{}~en
+vitesses~\fg{} et se construit grossièrement ainsi~:
+\begin{itemize}
+\item on calcule un incrément de déformation \(\Delta\,\tepsilonto\)
+  sur la configuration de début de pas (ou éventuellement sur une
+  configuration intermédaire, la configuration à mi-pas étant
+  particulièrement intéressante d'un point de vue
+  numérique~\cite{simo_computational_1998}). Le calcul de l'incrément
+  dépend de la formulation choisie.
+\item connaissant la contrainte en début de pas, on appelle la loi de
+  comportement pour en déduire la contrainte en fin de pas
+  \(\ets{\tsigma}\) \footnote{On peut noter que calculer l'incrément
+    de la contrainte serait plus cohérent avec l'hypothèse de
+    formulation en vitesses.} sur la configuration utilisée pour
+  calculer \(\Delta\,\tepsilonto\).
+\item \(\ets{\tsigma}\) est porté sur la configuration de fin de pas
+  suivant une méthode qui dépend de la formulation choisie. C'est le
+  rôle de l'opérateur {\tt 'PICA'}.
+\end{itemize}
+
+\subsection{Limites intrinsèques des formulations hypoélastiques}
+
+À partir du schéma général décrit au paragraphe précédent, nous
+pouvons faire quelques remarques importantes~:
+\begin{itemize}
+\item {\em les formulations hypoélastiques, travaillant sur des
+    incréments conduisent à un travail non nul lors d'un
+    cycle fermé dans l'espace des déformations, même en l'absence de
+    phénomènes dissipatifs}~: elles sont donc particulièrement
+  insatisfaisantes d'un point de vue théorique, même si en pratique ce
+  travail est très faible~\cite{forest_mecanique_2013}.
+\item la déformation totale n'a pas de sens~: seul son incrément
+  \(\Delta\,\tepsilonto\) est défini. Sommer ces incréments est
+  incohérent puisqu'ils ont tous été calculés sur des configurations
+  différentes.
+\item de la même manière que la déformation totale n'a pas de sens, il
+  est impossible que la loi utilise des variables internes
+  tensorielles. En effet, il ne serait possible que de calculer leurs
+  incréments, mais impossible de sommer ces incréments aux valeurs de
+  début de pas.
+\item la contrainte apparaît comme une variable
+  interne. Ce point est problématique, car les formulations
+  hypoélastiques ne peuvent décrire des matériaux dont les propriétés
+  élastiques dépendent du temps. Plus précisément, si l'on considère
+  la loi élastique anisotherme, sa formulation en vitesses serait~:
+  \[
+  \tdsigma=\tenseurq{D}\,\colon\,\tdepsilonel+\tenseurq{\dot{D}}\,\colon\,\tepsilonel
+  \]
+  Pour les raisons évoquées plus haut, \(\tepsilonel\) ne peut être
+  défini. Le choix fait dans \castem{} et dans la plupart des lois de
+  comportement natives semble être de négliger le second terme de cet
+  équation, ce qui est une approximation forte.
+\end{itemize}
+
+Une autre limite importante, apportée par des considérations
+théoriques sur l'objectivité des lois, est que {\em les formulations
+  hypoélastiques ne peuvent décrire que des matériaux
+  isotropes}~\cite{sidoroff_formulations_1981,sidoroff_cours_1982,simo_computational_1998}.
+
+\castem{} n'impose malheureusement pas le respect de ses limites,
+laissant l'utilisateur responsable de la bonne utilisation de sa
+loi. Pire, pour les lois \umat{}, les entrées suivantes sont
+improprement renseignées~:
+\begin{itemize}
+\item la déformation totale (qui n'a aucun sens physique)~;
+\item les axes d'orthotropie (seules les lois isotropes devraient
+  pouvoir être utilisées). Cette entrée est d'autant plus fausse
+  qu'elle reste relative à la configuration initiale (ce qu'il est
+  d'ailleurs la bonne chose à faire si la loi est réellement écrite en
+  grandes transformations).
+\end{itemize}
+
+À cela s'ajoute le fait que l'utilisateur peut définir des variables
+internes sans préciser leurs natures scalaires ou tensorielles~: du
+point de vue de \castem{}, toutes les variables internes de la loi
+sont scalaires. L'utilisateur peut donc facilement \og{}~oublier~\fg{}
+la restriction citée plus haut.
+
+\subsection{Choix de la formulation hypoélastique}
+
+Le choix de la formulation hypoélastique à utiliser se fait via le mot
+clé {\tt EPSILON} lors de la définition du modèle mécanique. Pour des
+raisons historiques, {\em ce mot clé est aujourd'hui optionnel}~: si
+il n'est pas précisé, \castem{} utilisera une formulation par défaut
+que l'utilisateur peut modifier par un appel à la commande {\tt
+  'OPTION' 'EPSILON'}.
+
+Le fait que ce mot clé soit optionnel est potentiellement une source
+d'erreur importante, en particulier si la loi est effectivement écrite
+en grandes transformations. Il semble qu'une proposition visant à le
+rendre obligatoire ait été rejetée en réunion de développement
+\castem{}. Nous pensons que cela est regrettable.
+
+Les formulations actuellement disponibles sont~: {\tt LINEAIRE}, {\tt
+  QUADRATIQUE}, {\tt JAUMAN}, {\tt TRUESDELL}\footnote{L'option
+  'UTILISATEUR' sert à préciser que les lois de comportement sont
+  écrites en grandes transformations et n'est pas traitée ici. Elle le
+  sera au paragraphe~\ref{sec:LoisGrandesTransformations}.}.
+
 
 \end{document}
