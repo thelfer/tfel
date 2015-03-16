@@ -93,11 +93,7 @@ namespace mfront{
     virtual void 
     writeIntegrationDataMainVariablesSetters(std::ofstream&,
 					     const BehaviourDescription&) const;
-
-
-    virtual void
-    reset(void);
-    
+    //! destructor
     virtual ~UMATInterfaceBase();
 
   protected:

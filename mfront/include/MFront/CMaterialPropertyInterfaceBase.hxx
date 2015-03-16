@@ -80,10 +80,7 @@ namespace mfront{
 			  const std::vector<VariableBoundsDescription>&,
 			  const bool,
 			  const std::vector<std::string>&);
-    
-    void
-    reset(void);
-
+    //! destructor
     virtual ~CMaterialPropertyInterfaceBase();
     
   protected:

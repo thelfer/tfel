@@ -15,9 +15,9 @@
 #ifndef LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_
 #define LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_ 
 
+#include<set>
 #include<map>
 #include<vector>
-#include<set>
 #include<string>
 #include<fstream>
 
@@ -29,6 +29,9 @@
 #include"MFront/BehaviourDescription.hxx"
 
 namespace mfront{
+
+  // forward declaration
+  struct AbstractBehaviourInterface;
 
   /*!
    * This class provides most functionnalities used by mechanical
@@ -1031,7 +1034,11 @@ namespace mfront{
 
     std::set<std::string> registredKeyWords;
 
-    std::vector<std::string> interfaces;
+    /*!
+     * list of registred interfaces
+     */
+    std::map<std::string,
+	     std::shared_ptr<AbstractBehaviourInterface>> interfaces;
 
     std::vector<std::string> analysers;
 

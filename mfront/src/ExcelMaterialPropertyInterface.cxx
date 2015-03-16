@@ -85,10 +85,6 @@ namespace mfront
   ExcelMaterialPropertyInterface::ExcelMaterialPropertyInterface()
   {}
 
-  void
-  ExcelMaterialPropertyInterface::reset(void)
-  {} // end of ExcelMaterialPropertyInterface::reset(void)
-
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   ExcelMaterialPropertyInterface::treatKeyword(const std::string&,
 					 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,

@@ -158,9 +158,7 @@ namespace mfront{
 		     const std::vector<VariableBoundsDescription>&,
 		     const bool,
 		     const std::vector<std::string>&) override;
-    
-    virtual void reset(void) override;
-
+    //! destructor
     virtual ~CastemMaterialPropertyInterface() override;
 
   protected:

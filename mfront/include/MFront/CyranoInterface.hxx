@@ -88,14 +88,7 @@ namespace mfront{
     virtual void
     endTreatement(const BehaviourDescription&,
 		  const FileDescription&) const override;
-    /*!
-     * \brief write output files
-     * \param[in] mb : mechanical behaviour description
-     * \param[in] fd : mfront file description
-     * \param[in] h  : modelling hypothesis
-     */
-    virtual void reset(void);
-
+    //! destructor
     virtual ~CyranoInterface();
     
   protected:

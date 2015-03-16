@@ -131,9 +131,7 @@ namespace mfront{
     virtual void
     endTreatement(const BehaviourDescription&,
 		  const FileDescription&) const;
-
-    virtual void reset(void) override;
-
+    //! destructor
     virtual ~UMATInterface();
     
   protected:

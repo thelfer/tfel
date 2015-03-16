@@ -26,6 +26,9 @@
 
 namespace mfront{
 
+  // forward declaration
+  struct AbstractMaterialPropertyInterface;
+
   /*!
    * Parser handling material properties
    */
@@ -212,11 +215,11 @@ namespace mfront{
     
     void
     registerNewCallBack(const std::string&,const MemberFuncPtr);
-
     /*!
-     * registred interfaces for the material property being treated
+     * list of registred interfaces
      */
-    std::set<std::string> interfaces;
+    std::map<std::string,
+	     std::shared_ptr<AbstractMaterialPropertyInterface>> interfaces;
     /*!
      * list of resgistred keywords
      */

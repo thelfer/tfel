@@ -82,9 +82,6 @@ namespace mfront{
 				  const std::vector<VariableBoundsDescription>&,
 				  const bool,
 				  const std::vector<std::string>&) = 0;
-
-    virtual void
-    reset(void) = 0;
     /*!
      * \param[in] library   : libary name
      * \param[in] material  : material name

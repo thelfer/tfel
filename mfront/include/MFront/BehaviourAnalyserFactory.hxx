@@ -42,9 +42,7 @@ namespace mfront{
 
     BehaviourAnalyser* 
     getAnalyserPtr(const std::string&);
-    
-    void reset(void);
-
+    //! destructor
     ~BehaviourAnalyserFactory();
     
   private:

@@ -33,7 +33,7 @@ namespace mfront{
     getMaterialPropertyInterfaceFactory();
 
     std::vector<std::string>
-    getRegistredInterfaces(void);
+    getRegistredInterfaces(void) const;
 
     void
     registerInterfaceCreator(const std::string&,
@@ -48,40 +48,46 @@ namespace mfront{
 				const std::string&);
     
     std::vector<std::string>
-    getInterfaceDependencies(const std::string&);
-
+    getInterfaceDependencies(const std::string&) const;
+    /*!
+     * \return true if the given interface exists
+     * \param[in] n : interface name
+     */
+    bool exists(const std::string&) const; 
+    /*!
+     * \return a newly created interface
+     * \param[in] n : interface name
+     */
     std::shared_ptr<AbstractMaterialPropertyInterface>
-    getInterfacePtr(const std::string&);
+    getInterface(const std::string&) const;
     
-    void reset(void);
-
     ~MaterialPropertyInterfaceFactory();
 
   private:
 
     typedef std::map<std::string,std::string> AliasContainer;
     typedef std::map<std::string,InterfaceCreator> InterfaceCreatorsContainer;
-    typedef std::map<std::string,std::shared_ptr<AbstractMaterialPropertyInterface>> InterfaceContainer;
     typedef std::map<std::string,std::vector<std::string> > InterfaceDependencyContainer;
 
     TFEL_VISIBILITY_LOCAL
     MaterialPropertyInterfaceFactory();
 
+    MaterialPropertyInterfaceFactory(const MaterialPropertyInterfaceFactory&) = delete;
+    MaterialPropertyInterfaceFactory(MaterialPropertyInterfaceFactory&&) = delete;
+    MaterialPropertyInterfaceFactory& operator=(const MaterialPropertyInterfaceFactory&) = delete;
+    MaterialPropertyInterfaceFactory& operator=(MaterialPropertyInterfaceFactory&&) = delete;
+
     TFEL_VISIBILITY_LOCAL
     InterfaceDependencyContainer&
-    getDependenciesMap(void);
+    getDependenciesMap(void) const;
 
     TFEL_VISIBILITY_LOCAL
     InterfaceCreatorsContainer&
-    getInterfaceCreatorsMap(void);
-
-    TFEL_VISIBILITY_LOCAL
-    InterfaceContainer&
-    getInterfacesMap(void);
+    getInterfaceCreatorsMap(void) const;
 
     TFEL_VISIBILITY_LOCAL
     AliasContainer&
-    getAliasesMap(void);
+    getAliasesMap(void) const;
 
   };
 

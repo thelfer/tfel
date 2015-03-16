@@ -586,13 +586,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    typedef BehaviourInterfaceFactory MBIF;
-    typedef ModelInterfaceFactory MMIF;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    auto& mmif = MMIF::getModelInterfaceFactory();
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     Target::const_iterator p3;
@@ -664,10 +658,6 @@ namespace mfront{
       copy(p->second.begin(),p->second.end(),
 	   insert_iterator<set<string> >(this->globalIncludes,this->globalIncludes.begin()));
     }
-    // Some clean-up
-    mlif.reset();
-    mbif.reset();
-    mmif.reset();
   } // end of MFront::treatFile(void)
 
   void
@@ -1882,9 +1872,6 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
-    typedef MaterialPropertyInterfaceFactory       MLIF;
-    typedef BehaviourInterfaceFactory MBIF;
-    typedef ModelInterfaceFactory     MMIF;
     vector<pair<string,string> > errors;
     vector<string> tmp;
     set<string>::const_iterator p;
@@ -1892,9 +1879,6 @@ namespace mfront{
     Target::iterator p3;
     set<string>::const_iterator p5;
     vector<pair<string,string> >::const_iterator p6;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    auto& mmif = MMIF::getModelInterfaceFactory();
     systemCall::mkdir("src");
     systemCall::mkdir("include");
     if(this->specifiedTargets.empty()){
@@ -1913,10 +1897,6 @@ namespace mfront{
 	try{
 	  this->treatFile(*p);
 	} catch(exception& e){
-	  // Some clean-up
-	  mlif.reset();
-	  mbif.reset();
-	  mmif.reset();
 	  errors.push_back(pair<string,string>(*p,e.what()));
 	}
       }

@@ -33,11 +33,8 @@ namespace mfront
   ModelDSL::setInterfaces(const std::set<std::string>& f)
   {
     ModelDSLCommon::setInterfaces(f);
-    typedef ModelInterfaceFactory MMIF;
-    auto& mmif = MMIF::getModelInterfaceFactory();
     for(const auto& i : this->interfaces){
-      auto interface = mmif.getInterfacePtr(i);
-      interface->declareReservedNames(this->reservedNames);
+      i.second->declareReservedNames(this->reservedNames);
     }
   } // end of ModelDSL::setInterfaces
 

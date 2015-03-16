@@ -362,12 +362,6 @@ namespace mfront
     }
   } // end of MarkdownBehaviourAnalyser::treatFrenchOutput
 
-  void
-  MarkdownBehaviourAnalyser::reset(void)
-  {
-    this->language="default";
-  } // end of MarkdownBehaviourAnalyser::reset
-  
   MarkdownBehaviourAnalyser::~MarkdownBehaviourAnalyser()
   {} // end of MFrontBehaviourMarkdownAnalyser::~MFrontBehaviourMarkdownAnalyser
 

@@ -32,33 +32,34 @@ namespace mfront{
     getModelInterfaceFactory();
 
     std::vector<std::string>
-    getRegistredInterfaces(void);
+    getRegistredInterfaces(void) const;
 
     void registerInterfaceCreator(const std::string&,
 				  InterfaceCreator);
-    
+    /*!
+     * \return true if the given interface exists
+     * \param[in] n : interface name
+     */
+    bool exists(const std::string&) const; 
+    /*!
+     * \return a newly created interface
+     * \param[in] n : interface name
+     */
     std::shared_ptr<AbstractModelInterface>
-    getInterfacePtr(const std::string&);
-    
-    void reset(void);
+    getInterface(const std::string&) const;
 
     ~ModelInterfaceFactory();
     
   private:
 
     typedef std::map<std::string,InterfaceCreator> InterfaceCreatorsContainer;
-    typedef std::map<std::string,std::shared_ptr<AbstractModelInterface>> InterfaceContainer;
 
     TFEL_VISIBILITY_LOCAL
     ModelInterfaceFactory();
 
     TFEL_VISIBILITY_LOCAL
     InterfaceCreatorsContainer&
-    getInterfaceCreatorsMap(void);
-
-    TFEL_VISIBILITY_LOCAL
-    InterfaceContainer&
-    getInterfacesMap(void);
+    getInterfaceCreatorsMap(void) const;
 
   };
 

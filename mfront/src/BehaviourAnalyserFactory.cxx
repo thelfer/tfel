@@ -120,14 +120,6 @@ namespace mfront{
   {
     assert(this->getAnalysersMap().empty());
   } // end of BehaviourAnalyserFactory::~BehaviourAnalyserFactory()
-  
-  void
-  BehaviourAnalyserFactory::reset(void)
-  {
-    for(auto & a : this->getAnalysersMap()){
-      a.second->reset();
-    }
-  } // end of BehaviourAnalyserFactory::reset
 
   BehaviourAnalyserFactory::AliasContainer&
   BehaviourAnalyserFactory::getAliasesMap(void)

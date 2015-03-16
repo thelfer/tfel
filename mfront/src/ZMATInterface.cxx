@@ -277,12 +277,6 @@ namespace mfront
     return h;
   } // edn of ZMATInterface::getModellingHypothesesToBeTreated
 
-  void
-  ZMATInterface::reset(void)
-  {
-    SupportedTypes::reset();
-  } // end of ZMATInterface::reset
-
   void 
   ZMATInterface::exportMechanicalData(std::ofstream& behaviourDataFile,
 					    const Hypothesis h,

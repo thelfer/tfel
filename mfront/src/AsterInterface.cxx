@@ -62,20 +62,7 @@ namespace mfront{
   } // end of AsterInterface::getLibraryName
 
   AsterInterface::AsterInterface()
-  {
-    this->reset();
-  }
-
-  void
-  AsterInterface::reset(void)
-  {
-    UMATInterfaceBase::reset();
-    this->compareToNumericalTangentOperator  = false;
-    this->strainPerturbationValue            = 1.e-6;
-    this->tangentOperatorComparisonCriterium = 1.e7;
-    this->savesTangentOperator               = false;
-    this->errorReport                        = true;
-  }
+  {} // end of AsterInterface::AsterInterface()
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   AsterInterface::treatKeyword(const std::string& key,

@@ -48,14 +48,6 @@ namespace mfront
 
   GnuplotMaterialPropertyInterface::~GnuplotMaterialPropertyInterface()
   {}
-
-  void
-  GnuplotMaterialPropertyInterface::reset(void)
-  {
-    if(this->srcFile){
-      this->srcFile.close();
-    }
-  } // end of GnuplotMaterialPropertyInterface::reset
   
   std::string
   GnuplotMaterialPropertyInterface::eraseQuote(const std::string& in)

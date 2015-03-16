@@ -35,10 +35,6 @@ namespace mfront
 					      const FileDescription&)
   {} // end of LaTeXBehaviourAnalyser::endTreatement
 
-  void
-  LaTeXBehaviourAnalyser::reset(void)
-  {} // end of LaTeXBehaviourAnalyser::reset
-  
   LaTeXBehaviourAnalyser::~LaTeXBehaviourAnalyser()
   {} // end of MFrontBehaviourLaTeXAnalyser::~MFrontBehaviourLaTeXAnalyser
 

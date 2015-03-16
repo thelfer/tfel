@@ -27,38 +27,35 @@ namespace mfront{
   } // end of ModelInterfaceFactory::getModelInterfaceFactory
 
   ModelInterfaceFactory::InterfaceCreatorsContainer&
-  ModelInterfaceFactory::getInterfaceCreatorsMap(void)
+  ModelInterfaceFactory::getInterfaceCreatorsMap(void) const
   {
     static InterfaceCreatorsContainer map;
     return map;
   } // end of ModelInterfaceFactory::getInterfaceCreatorsMap
 
-  ModelInterfaceFactory::InterfaceContainer&
-  ModelInterfaceFactory::getInterfacesMap(void)
-  {
-    static InterfaceContainer map;
-    return map;
-  } // end of ModelInterfaceFactory::getInterfacesMap
-
   ModelInterfaceFactory::ModelInterfaceFactory()
   {}
 
   std::vector<std::string>
-  ModelInterfaceFactory::getRegistredInterfaces(void)
+  ModelInterfaceFactory::getRegistredInterfaces(void) const
   {
     using namespace std;
-    InterfaceCreatorsContainer::const_iterator p;
-    vector<string> res;
-    for(p  = this->getInterfaceCreatorsMap().begin();
-	p != this->getInterfaceCreatorsMap().end();++p){
-      res.push_back(p->first);
+    auto res = vector<string>{};
+    for(const auto& c : this->getInterfaceCreatorsMap()){
+      res.push_back(c.first);
     }
     return res;
   }
 
+  bool
+  ModelInterfaceFactory::exists(const std::string& n) const
+  {
+    return this->getInterfaceCreatorsMap().count(n)!=0;
+  } // end of ModelInterfaceFactory::exists
+
   void 
   ModelInterfaceFactory::registerInterfaceCreator(const std::string& i,
-							const ModelInterfaceFactory::InterfaceCreator f)
+						  const ModelInterfaceFactory::InterfaceCreator f)
   {
     using namespace std;
     auto& imap = this->getInterfaceCreatorsMap();
@@ -67,46 +64,29 @@ namespace mfront{
       msg += "interface creator '"+i+"' already declared";
       throw(runtime_error(msg));
     }
-    imap.insert(make_pair(i,f));
+    imap.insert({i,f});
   }
 
   std::shared_ptr<AbstractModelInterface>
-  ModelInterfaceFactory::getInterfacePtr(const std::string& interfaceName)
+  ModelInterfaceFactory::getInterface(const std::string& n) const
   {
     using namespace std;
-    std::shared_ptr<AbstractModelInterface> i;
-    auto m = this->getInterfacesMap().find(interfaceName);
-    if(m==this->getInterfacesMap().end()){
-      auto p = this->getInterfaceCreatorsMap().find(interfaceName);
-      if(p==this->getInterfaceCreatorsMap().end()){
-	string msg = "ModelInterfaceFactory::createNewInterface : no interface named ";
-	msg += interfaceName+".\n";
-	msg += "Available interface are : \n";
-	for(p  = this->getInterfaceCreatorsMap().begin();
-	    p != this->getInterfaceCreatorsMap().end();++p){
-	  msg += p->first + " ";
-	}
-	throw(runtime_error(msg));
+    auto p = this->getInterfaceCreatorsMap().find(n);
+    if(p==this->getInterfaceCreatorsMap().end()){
+      string msg = "ModelInterfaceFactory::createNewInterface : no interface named '";
+      msg += n+"'.\n";
+      msg += "Available interface are : \n";
+      for(p  = this->getInterfaceCreatorsMap().begin();
+	  p != this->getInterfaceCreatorsMap().end();++p){
+	msg += p->first + " ";
       }
-      InterfaceCreator c = p->second;
-      i = c();
-      this->getInterfacesMap().insert(make_pair(interfaceName,i));
-    } else {
-      i = m->second;
+      throw(runtime_error(msg));
     }
-    return i;
+    InterfaceCreator c = p->second;
+    return c();
   }
-
 
   ModelInterfaceFactory::~ModelInterfaceFactory()
   {} // end of ModelInterfaceFactory::~ModelInterfaceFactory()
-  
-  void
-  ModelInterfaceFactory::reset(void)
-  {
-    for(auto& i : this->getInterfacesMap()){
-      i.second->reset();
-    }
-  } // end of ModelInterfaceFactory::reset
 
 } // end of namespace mfront

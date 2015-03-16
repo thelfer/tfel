@@ -23,17 +23,6 @@ namespace mfront
 
   CMaterialPropertyInterfaceBase::CMaterialPropertyInterfaceBase()
   {}
-
-  void
-  CMaterialPropertyInterfaceBase::reset(void)
-  {
-    if(this->headerFile.is_open()){
-      this->headerFile.close();
-    }
-    if(this->srcFile.is_open()){
-      this->srcFile.close();
-    }
-  } // end of CMaterialPropertyInterfaceBase::reset(void)
   
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CMaterialPropertyInterfaceBase::treatKeyword(const std::string&,

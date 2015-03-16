@@ -28,6 +28,9 @@
 
 namespace mfront{
 
+  // forward declaration
+  struct AbstractModelInterface;
+
   struct MFRONT_VISIBILITY_EXPORT ModelDSLCommon
     : public DSLBase,
       protected ModelData
@@ -192,7 +195,8 @@ namespace mfront{
     bool
     isInputVariable(const std::string&) const;
 
-    std::vector<std::string> interfaces;
+    std::map<std::string,
+	     std::shared_ptr<AbstractModelInterface>> interfaces;
     
     std::map<std::string,
 	     std::vector<std::string> > sourcesLibrairiesDependencies;

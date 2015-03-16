@@ -28,28 +28,21 @@ namespace mfront{
   } // end of MaterialPropertyInterfaceFactory::getMaterialPropertyInterfaceFactory
 
   MaterialPropertyInterfaceFactory::InterfaceDependencyContainer&
-  MaterialPropertyInterfaceFactory::getDependenciesMap(void)
+  MaterialPropertyInterfaceFactory::getDependenciesMap(void) const
   {
     static InterfaceDependencyContainer map;
     return map;
   } // end of MaterialPropertyInterfaceFactory::getDependenciesMap
 
   MaterialPropertyInterfaceFactory::InterfaceCreatorsContainer&
-  MaterialPropertyInterfaceFactory::getInterfaceCreatorsMap(void)
+  MaterialPropertyInterfaceFactory::getInterfaceCreatorsMap(void) const
   {
     static InterfaceCreatorsContainer map;
     return map;
   } // end of MaterialPropertyInterfaceFactory::getInterfaceCreatorsMap
 
-  MaterialPropertyInterfaceFactory::InterfaceContainer&
-  MaterialPropertyInterfaceFactory::getInterfacesMap(void)
-  {
-    static InterfaceContainer map;
-    return map;
-  } // end of MaterialPropertyInterfaceFactory::getInterfacesMap
-
   MaterialPropertyInterfaceFactory::AliasContainer&
-  MaterialPropertyInterfaceFactory::getAliasesMap(void)
+  MaterialPropertyInterfaceFactory::getAliasesMap(void) const
   {
     static AliasContainer map;
     return map;
@@ -59,21 +52,19 @@ namespace mfront{
   {}
 
   std::vector<std::string>
-  MaterialPropertyInterfaceFactory::getRegistredInterfaces(void)
+  MaterialPropertyInterfaceFactory::getRegistredInterfaces(void) const
   {
     using namespace std;
-    AliasContainer::const_iterator p;
     vector<string> res;
-    for(p  = this->getAliasesMap().begin();
-	p != this->getAliasesMap().end();++p){
-      res.push_back(p->first);
+    for(const auto& a : this->getAliasesMap()){
+      res.push_back(a.first);
     }
     return res;
   }
 
   void 
   MaterialPropertyInterfaceFactory::registerInterfaceCreator(const std::string& i,
-						      const MaterialPropertyInterfaceFactory::InterfaceCreator f)
+							     const MaterialPropertyInterfaceFactory::InterfaceCreator f)
   {
     using namespace std;
     auto& imap = this->getInterfaceCreatorsMap();
@@ -87,7 +78,7 @@ namespace mfront{
 
   void
   MaterialPropertyInterfaceFactory::registerInterfaceAlias(const std::string& i,
-						    const std::string& a)
+							   const std::string& a)
   {
     using namespace std;
     auto& amap = this->getAliasesMap();
@@ -101,14 +92,14 @@ namespace mfront{
 
   void
   MaterialPropertyInterfaceFactory::registerInterfaceDependency(const std::string& name,
-							 const std::string& dep)
+								const std::string& dep)
   {
     using namespace std;
     this->getDependenciesMap()[name].push_back(dep);
   } // end of MaterialPropertyInterfaceFactory::registerInterfaceDependency
   
   std::vector<std::string>
-  MaterialPropertyInterfaceFactory::getInterfaceDependencies(const std::string& name)
+  MaterialPropertyInterfaceFactory::getInterfaceDependencies(const std::string& name) const
   {
     using namespace std;
     vector<string> res;
@@ -135,44 +126,35 @@ namespace mfront{
     return res;
   } // end of MaterialPropertyInterfaceFactory::getInterfaceDependencies
 
+  bool
+  MaterialPropertyInterfaceFactory::exists(const std::string& n) const
+  {
+    return this->getAliasesMap().count(n)!=0;
+  } // end of MaterialPropertyInterfaceFactory::exists
+
   std::shared_ptr<AbstractMaterialPropertyInterface>
-  MaterialPropertyInterfaceFactory::getInterfacePtr(const std::string& interfaceName)
+  MaterialPropertyInterfaceFactory::getInterface(const std::string& interfaceName) const
   {
     using namespace std;
-    shared_ptr<AbstractMaterialPropertyInterface> i;
-    auto m = this->getInterfacesMap().find(interfaceName);
-    if(m==this->getInterfacesMap().end()){
-      auto p2 = this->getAliasesMap().find(interfaceName);
-      if(p2==this->getAliasesMap().end()){
-	string msg = "MaterialPropertyInterfaceFactory::createNewInterface : no interface named '";
-	msg += interfaceName+"'.\n";
-	msg += "Available interface are : \n";
-	for(p2  = this->getAliasesMap().begin();
-	    p2 != this->getAliasesMap().end();++p2){
-	  msg += p2->first + " ";
-	}
-	throw(runtime_error(msg));
+    auto p2 = this->getAliasesMap().find(interfaceName);
+    if(p2==this->getAliasesMap().end()){
+      string msg = "MaterialPropertyInterfaceFactory::createNewInterface : no interface named '";
+      msg += interfaceName+"'.\n";
+      msg += "Available interface are : \n";
+      for(p2  = this->getAliasesMap().begin();
+	  p2 != this->getAliasesMap().end();++p2){
+	msg += p2->first + " ";
       }
-      auto p = this->getInterfaceCreatorsMap().find(p2->second);
-      assert(p!=this->getInterfaceCreatorsMap().end());
-      InterfaceCreator c = p->second;
-      i = c();
-      this->getInterfacesMap().insert(make_pair(interfaceName,i));
-    } else {
-      i = m->second;
+      throw(runtime_error(msg));
     }
-    return i;
+    auto p = this->getInterfaceCreatorsMap().find(p2->second);
+    assert(p!=this->getInterfaceCreatorsMap().end());
+    InterfaceCreator c = p->second;
+    return c();
   }
 
   MaterialPropertyInterfaceFactory::~MaterialPropertyInterfaceFactory()
   {} // end of MaterialPropertyInterfaceFactory::~MaterialPropertyInterfaceFactory()
   
-  void
-  MaterialPropertyInterfaceFactory::reset(void)
-  {
-    for(const auto& i : this->getInterfacesMap()){
-      i.second->reset();
-    }
-  } // end of MaterialPropertyInterfaceFactory::reset
 
 } // end of namespace mfront

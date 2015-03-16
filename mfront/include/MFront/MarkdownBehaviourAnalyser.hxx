@@ -60,14 +60,7 @@ namespace mfront{
     virtual void
     endTreatement(const BehaviourDescription&,
 		  const FileDescription&);
-    /*!
-     * \brief reset the interface
-     */
-    virtual void
-    reset(void);
-    /*!
-     * destructor
-     */
+    //! destructor
     virtual ~MarkdownBehaviourAnalyser();
   protected:
     /*!

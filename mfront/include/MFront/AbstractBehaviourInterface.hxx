@@ -128,12 +128,6 @@ namespace mfront{
     endTreatement(const BehaviourDescription&,
 		  const FileDescription&) const = 0;
     /*!
-     * \brief reset the interface
-     */
-    virtual void
-    reset(void) = 0;
-
-    /*!
      * \param[in] mb : mechanical behaviour description
      */
     virtual std::map<std::string,std::vector<std::string> >

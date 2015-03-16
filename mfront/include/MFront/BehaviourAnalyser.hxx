@@ -48,14 +48,7 @@ namespace mfront{
     virtual void
     endTreatement(const BehaviourDescription&,
 		  const FileDescription&) = 0;
-    /*!
-     * \brief reset the interface
-     */
-    virtual void
-    reset(void) = 0;
-    /*!
-     * destructor
-     */
+    //! destructor
     virtual ~BehaviourAnalyser();
   }; // end of struct BehaviourAnalyser
 

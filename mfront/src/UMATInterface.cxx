@@ -280,19 +280,7 @@ namespace mfront{
   } // end of UMATInterface::getUmatFunctionName
 
   UMATInterface::UMATInterface()
-  {
-    this->reset();
-  }
-
-  void
-  UMATInterface::reset(void)
-  {
-    UMATInterfaceBase::reset();
-    this->finiteStrainStrategies.clear();
-    this->useTimeSubStepping            = false;
-    this->maximumSubStepping            = 0u;
-    this->doSubSteppingOnInvalidResults = false;
-  }
+  {}
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   UMATInterface::treatKeyword(const std::string& key,

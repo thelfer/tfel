@@ -281,61 +281,24 @@ namespace mfront{
   {
     using namespace std;
     typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    vector<string>::const_iterator p2;
-    vector<string>::const_iterator p2b;
-    vector<string>::const_iterator p2e;
-    const auto& ai = mlif.getRegistredInterfaces();
-    if(this->interfaces.find(i)!=this->interfaces.end()){
-      string msg("MaterialPropertyDSL::addInterface : ");
-      msg += "interface '"+i+"' already declared";
-      throw(runtime_error(msg));
+    if(this->interfaces.find(i)==this->interfaces.end()){
+      auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
+      this->interfaces.insert({i,mlif.getInterface(i)});
     }
-    if(find(ai.begin(),ai.end(),i)==ai.end()){
-      string msg("MaterialPropertyDSL::addInterface : ");
-      msg += "unsupported interface '"+i+"'";
-      if(ai.size()==1){
-	msg += " (available interface is : '"+*(ai.begin())+"')";
-      } else if(ai.size()!=0){
-	msg += " (available interface are : ";
-	p2   = ai.begin();
-	p2b  = ai.begin();
-	++p2b;
-	p2e  = ai.end();
-	while(p2b!=p2e){
-	  msg += "'"+*p2+"'";
-	  if(++p2b!=p2e){
-	    msg+=",";
-	  } else {
-	    msg+=" and ";
-	  }
-	  ++p2;
-	}
-	msg += "'"+*p2+"')";
-      }
-      throw(runtime_error(msg));	
-    }
-    this->interfaces.insert(i);
   } // end of MaterialPropertyDSL::addInterface
 
   void
-  MaterialPropertyDSL::setInterfaces(const std::set<std::string>& i) 
+  MaterialPropertyDSL::setInterfaces(const std::set<std::string>& inames) 
   {
     using namespace std;
     typedef MaterialPropertyInterfaceFactory MLIF;
     auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    set<string>::const_iterator p;
-    vector<string>::const_iterator p2;
-    set<string> i2(i);
     // searching i2 depedencies
-    for(p=i.begin();p!=i.end();++p){
-      const auto& dependencies = mlif.getInterfaceDependencies(*p);
-      for(p2=dependencies.begin();p2!=dependencies.end();++p2){
-	i2.insert(*p2);
+    for(const auto i: inames){
+      for(const auto& d : mlif.getInterfaceDependencies(i)){
+	this->addInterface(d);
       }
-    }
-    for(p=i2.begin();p!=i2.end();++p){
-      this->addInterface(*p);
+      this->addInterface(i);
     }
   } // end of MaterialPropertyDSL::setInterface
 
@@ -656,8 +619,6 @@ namespace mfront{
 				  const std::vector<std::string>& ecmds) 
   {
     using namespace std;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     string key;
     MemberFuncPtr handler = nullptr;
     this->fileName = fileName_;
@@ -725,9 +686,8 @@ namespace mfront{
 	  throw(runtime_error(msg.str()));
 	}
 	for(const auto& i : this->interfaces){
-	  auto interface = mlif.getInterfacePtr(i);
 	  try{
-	    p2 = interface->treatKeyword(key,b,this->fileTokens.end());
+	    p2 = i.second->treatKeyword(key,b,this->fileTokens.end());
 	  }
 	  catch(const runtime_error& e){
 	    ostringstream msg;
@@ -763,8 +723,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     if(this->className.empty()){
       string msg("MaterialPropertyDSL::generateOutputFiles : ");
       msg += "no behaviour name defined.";
@@ -786,27 +744,26 @@ namespace mfront{
     // calling interfaces
     for(const auto& i : this->interfaces){
       if(getVerboseMode()>=VERBOSE_LEVEL2){
-	getLogStream() << "calling interface " << i << endl;
+	getLogStream() << "calling interface " << i.first << endl;
       }
-      auto interface = mlif.getInterfacePtr(i);
-      interface->writeOutputFiles(this->fileName,
-				  this->library,
-				  this->material,
-				  this->className,
-				  this->authorName,this->date,
-				  this->description,
-				  this->includes,
-				  this->output,this->inputs,
-				  this->materialLaws,
-				  this->glossaryNames,
-				  this->entryNames,
-				  MaterialPropertyDescription::staticVars,
-				  this->parameters,
-				  this->parametersValues,this->f,
-				  this->boundsDescriptions,
-				  this->physicalBoundsDescriptions,
-				  this->useTemplate,
-				  this->namespaces);
+      i.second->writeOutputFiles(this->fileName,
+				 this->library,
+				 this->material,
+				 this->className,
+				 this->authorName,this->date,
+				 this->description,
+				 this->includes,
+				 this->output,this->inputs,
+				 this->materialLaws,
+				 this->glossaryNames,
+				 this->entryNames,
+				 MaterialPropertyDescription::staticVars,
+				 this->parameters,
+				 this->parametersValues,this->f,
+				 this->boundsDescriptions,
+				 this->physicalBoundsDescriptions,
+				 this->useTemplate,
+				 this->namespaces);
     }
   } // end of MaterialPropertyDSL::generateOutputFiles
 
@@ -834,16 +791,13 @@ namespace mfront{
   {
     using namespace std;
     typedef map<string,vector<string> > Map;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     Map osources;
     map<string,vector<string> >::const_iterator p;
     vector<string>::const_iterator p2;
     for(const auto& i : this->interfaces){
-      auto interface = mlif.getInterfacePtr(i);
-      const auto& isources = interface->getGeneratedSources(this->library,
-							    this->material,
-							    this->className);
+      const auto& isources = i.second->getGeneratedSources(this->library,
+							   this->material,
+							   this->className);
       for(p=isources.begin();p!=isources.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
       }
@@ -863,14 +817,11 @@ namespace mfront{
   MaterialPropertyDSL::getGeneratedEntryPoints(void)
   {
     using namespace std;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mmif = MLIF::getMaterialPropertyInterfaceFactory();
     auto r = map<string,vector<string>>{};
     for(const auto& i : this->interfaces){
-      auto interface = mmif.getInterfacePtr(i);
-      const auto& epts = interface->getGeneratedEntryPoints(this->library,
-							    this->material,
-							    this->className);
+      const auto& epts = i.second->getGeneratedEntryPoints(this->library,
+							   this->material,
+							   this->className);
       for(auto l:epts){
 	auto& lepts = r[l.first];
 	for(auto p: l.second){
@@ -887,16 +838,11 @@ namespace mfront{
   MaterialPropertyDSL::getGeneratedIncludes(void)
   {
     using namespace std;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     vector<string> incs;
-    set<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      auto interface = mlif.getInterfacePtr(*i);
-      const auto& iincs = interface->getGeneratedIncludes(this->library,
-								    this->material,
-								    this->className);
+    for(const auto& i : this->interfaces){
+      const auto& iincs = i.second->getGeneratedIncludes(this->library,
+							 this->material,
+							 this->className);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
     }
     return incs;
@@ -906,19 +852,12 @@ namespace mfront{
   MaterialPropertyDSL::getGlobalIncludes(void)
   {
     using namespace std;
-    typedef map<string,vector<string> > Map;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    Map incs;
-    set<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      auto interface = mlif.getInterfacePtr(*i);
-      const auto& iincs = interface->getGlobalIncludes(this->library,
+    auto incs = map<string,vector<string>>{};
+    for(const auto& i : this->interfaces){
+      const auto& iincs = i.second->getGlobalIncludes(this->library,
 						      this->material,
 						      this->className);
-      for(p=iincs.begin();p!=iincs.end();++p){
+      for(auto p=iincs.begin();p!=iincs.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
       }
     }
@@ -929,19 +868,12 @@ namespace mfront{
   MaterialPropertyDSL::getGlobalDependencies(void)
   {
     using namespace std;
-    typedef map<string,vector<string> > Map;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    Map deps;
-    set<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      auto interface = mlif.getInterfacePtr(*i);
-      const auto& ideps = interface->getGlobalDependencies(this->library,
+    auto deps = map<string,vector<string>>{};
+    for(const auto& i : this->interfaces){
+      const auto& ideps = i.second->getGlobalDependencies(this->library,
 							  this->material,
 							  this->className);
-      for(p=ideps.begin();p!=ideps.end();++p){
+      for(auto p=ideps.begin();p!=ideps.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
       }
     }
@@ -952,21 +884,13 @@ namespace mfront{
   MaterialPropertyDSL::getLibrariesDependencies(void)
   {
     using namespace std;
-    typedef map<string,vector<string> > Map;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    Map deps;
-    set<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    vector<string>::const_iterator p2;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      auto interface = mlif.getInterfacePtr(*i);
-      const auto& ideps = interface->getLibrariesDependencies(this->library,
+    auto deps = map<string,vector<string>>{};
+    for(const auto& i : this->interfaces){
+      const auto& ideps = i.second->getLibrariesDependencies(this->library,
 							     this->material,
 							     this->className);
-      for(p=ideps.begin();p!=ideps.end();++p){
-	for(p2=p->second.begin();p2!=p->second.end();++p2){
+      for(auto p=ideps.begin();p!=ideps.end();++p){
+	for(auto p2=p->second.begin();p2!=p->second.end();++p2){
 	  if(find(this->sourcesLibrairiesDependencies[p->first].begin(),
 		  this->sourcesLibrairiesDependencies[p->first].end(),
 		  *p2)!=this->sourcesLibrairiesDependencies[p->first].end()){
@@ -1104,19 +1028,13 @@ namespace mfront{
   MaterialPropertyDSL::getSpecificTargets(void)
   {
     using namespace std;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-    typedef map<string,pair<vector<string>,vector<string> > > Target;
-    Target res;
-    set<string>::const_iterator p;
-    Target::const_iterator p2;
-    for(p=this->interfaces.begin();p!=this->interfaces.end();++p){
-      auto i = mlif.getInterfacePtr(*p);
-      const auto& targets = i->getSpecificTargets(this->library,
-						    this->material,
-						    this->className,
-						    this->librariesDependencies);
-      for(p2=targets.begin();p2!=targets.end();++p2){
+    auto res = map<string,pair<vector<string>,vector<string> > >{};
+    for(const auto& i : this->interfaces){
+      const auto& targets = i.second->getSpecificTargets(this->library,
+							 this->material,
+							 this->className,
+							 this->librariesDependencies);
+      for(auto p2=targets.begin();p2!=targets.end();++p2){
 	copy(p2->second.first.begin(),
 	     p2->second.first.end(),
 	     back_inserter(res[p2->first].first));
@@ -1133,11 +1051,8 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef MaterialPropertyInterfaceFactory MLIF;
-    auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
-    set<string>::const_iterator i;
     bool treated = false;
     string key;
     --(this->current);
@@ -1168,14 +1083,13 @@ namespace mfront{
       if(s.empty()){
 	this->ignoreKeyWord(key);
       } else {
-	for(i  = s.begin();i != s.end();++i){
-	  auto interface = mlif.getInterfacePtr(*i);
-	  p = interface->treatKeyword(key,this->current,
-				      this->fileTokens.end());
+	for(const auto &i : s){
+	  p = this->interfaces.at(i)->treatKeyword(key,this->current,
+						   this->fileTokens.end());
 	  if(!p.first){
 	    string msg("MaterialPropertyDSL::treatUnknownKeyword : the keyword '");
 	    msg += key;
-	    msg += " has not been treated by interface '"+*i+"'";
+	    msg += " has not been treated by interface '"+i+"'";
 	    throw(runtime_error(msg));
 	  }
 	  if(treated){
@@ -1193,11 +1107,9 @@ namespace mfront{
 	this->current = p2;
       }
     } else {
-      for(i  = this->interfaces.begin();
-	  i != this->interfaces.end();++i){
-	auto interface = mlif.getInterfacePtr(*i);
-	p = interface->treatKeyword(key,this->current,
-				    this->fileTokens.end());
+      for(const auto& i : this->interfaces){
+	p = i.second->treatKeyword(key,this->current,
+				   this->fileTokens.end());
 	if(p.first){
 	  if(treated){
 	    if(p2!=p.second){

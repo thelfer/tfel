@@ -97,16 +97,8 @@ namespace mfront
   std::map<std::string,std::vector<std::string> >
   UMATInterfaceBase::getGlobalDependencies(const BehaviourDescription&) const
   {
-    using namespace std;
-    return map<string,vector<string> >();
+    return {};
   } // end of UMATInterfaceBase::getGlobalDependencies
-
-  void
-  UMATInterfaceBase::reset(void)
-  {
-    SupportedTypes::reset();
-    this->generateMTestFile = false;
-  } // end of UMATInterfaceBase::reset
 
   void
   UMATInterfaceBase::appendToMaterialPropertiesList(std::vector<UMATMaterialProperty>& l,
@@ -116,7 +108,7 @@ namespace mfront
 						    const bool b) const
   {
     using namespace std;
-    const SupportedTypes::TypeFlag flag = this->getTypeFlag(t);
+    const auto flag = this->getTypeFlag(t);
     if(flag!=SupportedTypes::Scalar){
       string msg("UMATMaterialProperty::UMATMaterialProperty : "
 		 "material properties shall be scalars");
@@ -144,7 +136,7 @@ namespace mfront
       const auto& n = mb.getExternalName(h,p->name);
       vector<UMATMaterialProperty>::const_iterator pum;
       bool found = false;
-      const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+      const auto flag = this->getTypeFlag(p->type);
       if(flag!=SupportedTypes::Scalar){
 	string msg("UMATMaterialProperty::UMATMaterialProperty : "
 		   "Invalid type for material property '"+p->name+"' ("+p->type+").\n"
@@ -225,7 +217,7 @@ namespace mfront
     SupportedTypes::TypeSize of;
     for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
       const auto& f = pm->second;
-      const SupportedTypes::TypeFlag flag = this->getTypeFlag(f.type);
+      const auto flag = this->getTypeFlag(f.type);
       if(flag==SupportedTypes::Scalar){
 	if(pm!=mb.getMainVariables().begin()){
 	  behaviourDataFile << "*("+iprefix+"stress_+" << of << ") = this->" << f.name << ";" << endl;
@@ -328,7 +320,7 @@ namespace mfront
 	  SupportedTypes::TypeSize offset = m.offset;
 	  offset -= ioffset;
 	  f << "," << endl;
-	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	  auto flag = this->getTypeFlag(p->type);
 	  if(flag==SupportedTypes::Scalar){
 	    f << n << "("+src+"[" 
 	      << offset << "])";  
@@ -368,7 +360,7 @@ namespace mfront
 	if(p->arraySize!=1u){
 	  const UMATMaterialProperty& m =
 	    UMATInterfaceBase::findUMATMaterialProperty(i,mb.getExternalName(h,p->name));	  
-	  const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	  const auto flag = this->getTypeFlag(p->type);
 	  SupportedTypes::TypeSize offset = m.offset;
 	  offset -= ioffset;
 	  const string n = prefix+p->name+suffix;
@@ -1058,7 +1050,7 @@ namespace mfront
 	offset=0;
 	for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
 	    pm!=mprops.first.end();++pm){
-	  SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);
+	  auto flag = this->getTypeFlag(pm->type);
 	  if(flag!=SupportedTypes::Scalar){
 	    string msg("UMATInterfaceBase::generateFile2 : "
 		       "unsupported external state variable type "
@@ -1085,7 +1077,7 @@ namespace mfront
 	}
 	SupportedTypes::TypeSize ivoffset;
 	for(p=persistentVarsHolder.begin();p!=persistentVarsHolder.end();++p){
-	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	  auto flag = this->getTypeFlag(p->type);
 	  const auto& ivname = d.getExternalName(p->name);
 	  if(p->arraySize==1u){
 	    if(flag==SupportedTypes::Scalar){
@@ -1129,7 +1121,7 @@ namespace mfront
 	out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);" << endl;
 	out << "mg.addExternalStateVariableValue(\"Temperature\",*DTIME,*TEMP+*DTEMP);" << endl;
 	for(p=externalStateVarsHolder.begin(),offset=0;p!=externalStateVarsHolder.end();++p){
-	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	  auto flag = this->getTypeFlag(p->type);
 	  if(flag!=SupportedTypes::Scalar){
 	    string msg("UMATInterfaceBase::generateFile2 : "
 		       "unsupported external state variable type "
@@ -1398,7 +1390,7 @@ namespace mfront
       out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name,h)
   	  << "_InternalStateVariablesTypes [] = {";
       for(p=persistentVarsHolder.begin();p!=persistentVarsHolder.end();){
-  	const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+  	const auto flag = this->getTypeFlag(p->type);
   	for(unsigned short is=0;is!=p->arraySize;){
   	  switch(flag){
   	  case SupportedTypes::Scalar : 

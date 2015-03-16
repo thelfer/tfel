@@ -35,10 +35,6 @@ namespace mfront{
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) = 0;
-
-    virtual void
-    reset(void) = 0;
-
     virtual
     void declareReservedNames(std::set<std::string>&) = 0;
 

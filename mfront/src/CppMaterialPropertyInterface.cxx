@@ -32,17 +32,6 @@ namespace mfront
   CppMaterialPropertyInterface::CppMaterialPropertyInterface()
   {}
 
-  void
-  CppMaterialPropertyInterface::reset(void)
-  {
-    if(this->headerFile.is_open()){
-      this->headerFile.close();
-    }
-    if(this->srcFile.is_open()){
-      this->srcFile.close();
-    }
-  } // end of CppMaterialPropertyInterface::reset(void)
-
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppMaterialPropertyInterface::treatKeyword(const std::string&,
 				      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,

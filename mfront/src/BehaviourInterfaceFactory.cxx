@@ -27,24 +27,14 @@ namespace mfront{
   } // end of BehaviourInterfaceFactory::getBehaviourInterfaceFactory
 
   BehaviourInterfaceFactory::InterfaceCreatorsContainer&
-  BehaviourInterfaceFactory::getInterfaceCreatorsMap(void)
+  BehaviourInterfaceFactory::getInterfaceCreatorsMap(void) const
   {
     static InterfaceCreatorsContainer map;
     return map;
   } // end of BehaviourInterfaceFactory::getInterfaceCreatorsMap
 
-  BehaviourInterfaceFactory::InterfaceContainer&
-  BehaviourInterfaceFactory::getInterfacesMap(void)
-  {
-    static InterfaceContainer map;
-    return map;
-  } // end of BehaviourInterfaceFactory::getInterfacesMap
-
-  BehaviourInterfaceFactory::BehaviourInterfaceFactory()
-  {}
-
   std::vector<std::string>
-  BehaviourInterfaceFactory::getRegistredInterfaces(void)
+  BehaviourInterfaceFactory::getRegistredInterfaces(void) const
   {
     using namespace std;
     vector<string> res;
@@ -54,9 +44,15 @@ namespace mfront{
     return res;
   }
 
+  bool
+  BehaviourInterfaceFactory::exists(const std::string& n) const
+  {
+    return this->getAliasesMap().count(n)!=0;
+  } // end of BehaviourInterfaceFactory::exists
+
   void 
   BehaviourInterfaceFactory::registerInterfaceCreator(const std::string& i,
-							    const BehaviourInterfaceFactory::InterfaceCreator f)
+						      const BehaviourInterfaceFactory::InterfaceCreator f)
   {
     using namespace std;
     auto& imap = this->getInterfaceCreatorsMap();
@@ -66,6 +62,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     imap.insert({i,f});
+    this->registerInterfaceAlias(i,i);
   }
 
   void
@@ -75,56 +72,45 @@ namespace mfront{
     using namespace std;
     auto& amap = this->getAliasesMap();
     if(amap.find(a)!=amap.end()){
-      string msg("BehaviourInterfaceFactory::registerInterfaceCreator : ");
+      string msg("BehaviourInterfaceFactory::registerInterfaceAlias : ");
       msg += "interface alias '"+a+"' already declared";
+      throw(runtime_error(msg));
+    }
+    auto& imap = this->getInterfaceCreatorsMap();
+    if(imap.find(i)==imap.end()){
+      string msg("BehaviourInterfaceFactory::registerInterfaceAlias : ");
+      msg += "no interface named '"+i+"' declared";
       throw(runtime_error(msg));
     }
     amap.insert({a,i});
   }
 
   std::shared_ptr<AbstractBehaviourInterface>
-  BehaviourInterfaceFactory::getInterfacePtr(const std::string& interfaceName)
+  BehaviourInterfaceFactory::getInterface(const std::string& n)
   {
     using namespace std;
-    shared_ptr<AbstractBehaviourInterface> i;
-    auto m = this->getInterfacesMap().find(interfaceName);
-    if(m==this->getInterfacesMap().end()){
-      auto p2 = this->getAliasesMap().find(interfaceName);
-      if(p2==this->getAliasesMap().end()){
-	string msg = "BehaviourInterfaceFactory::createNewInterface : no interface named '";
-	msg += interfaceName+"'.\n";
-	msg += "Available interface are : \n";
-	for(p2  = this->getAliasesMap().begin();
-	    p2 != this->getAliasesMap().end();++p2){
-	  msg += p2->first + " ";
-	}
-	throw(runtime_error(msg));
+    auto p2 = this->getAliasesMap().find(n);
+    if(p2==this->getAliasesMap().end()){
+      string msg = "BehaviourInterfaceFactory::createNewInterface : no interface named '";
+      msg += n+"'.\n";
+      msg += "Available interfaces are : \n";
+      for(p2  = this->getAliasesMap().begin();
+	  p2 != this->getAliasesMap().end();++p2){
+	msg += p2->first + " ";
       }
-      auto p = this->getInterfaceCreatorsMap().find(p2->second);
-      assert(p!=this->getInterfaceCreatorsMap().end());
-      InterfaceCreator c = p->second;
-      i = c();
-      this->getInterfacesMap().insert(make_pair(interfaceName,i));
-    } else {
-      i = m->second;
+      throw(runtime_error(msg));
     }
-    return i;
+    auto p = this->getInterfaceCreatorsMap().find(p2->second);
+    assert(p!=this->getInterfaceCreatorsMap().end());
+    InterfaceCreator c = p->second;
+    return c();
   }
 
   BehaviourInterfaceFactory::~BehaviourInterfaceFactory()
   {} // end of BehaviourInterfaceFactory::~BehaviourInterfaceFactory()
   
-  void
-  BehaviourInterfaceFactory::reset(void)
-  {
-    for(const auto& m : this->getInterfacesMap()){
-      m.second->reset();
-    }
-    this->getInterfacesMap().clear();
-  } // end of BehaviourInterfaceFactory::reset
-
   BehaviourInterfaceFactory::AliasContainer&
-  BehaviourInterfaceFactory::getAliasesMap(void)
+  BehaviourInterfaceFactory::getAliasesMap(void) const
   {
     static AliasContainer map;
     return map;

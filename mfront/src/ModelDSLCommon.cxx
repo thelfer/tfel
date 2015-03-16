@@ -123,10 +123,15 @@ namespace mfront{
   } // end of ModelDSLCommon::treatModel
 
   void
-  ModelDSLCommon::setInterfaces(const std::set<std::string>& i)
+  ModelDSLCommon::setInterfaces(const std::set<std::string>& inames)
   {
     using namespace std;
-    copy(i.begin(),i.end(),back_inserter(this->interfaces));
+    auto& mbif = ModelInterfaceFactory::getModelInterfaceFactory();
+    for(const auto& i : inames){
+      if(this->interfaces.count(i)==0){
+	this->interfaces.insert({i,mbif.getInterface(i)});
+      }
+    }
   } // end of ModelDSLCommon::setInterfaces
 
   void
@@ -142,16 +147,13 @@ namespace mfront{
   ModelDSLCommon::generateOutputFiles(void)
   {
     using namespace std;
-    typedef ModelInterfaceFactory MMIF;
-    auto& mmif = MMIF::getModelInterfaceFactory();
     if(this->interfaces.empty()){
       string msg("ModelDSLCommon::generateOutputFile : ");
       msg += "no interface defined";
       throw(runtime_error(msg));
     }
     for(const auto& i : this->interfaces){
-      auto interface = mmif.getInterfacePtr(i);
-      interface->writeOutputFiles(*this,*this);
+      i.second->writeOutputFiles(*this,*this);
     }
   } // end of ModelDSLCommon::writeOutputFiles
 
@@ -160,8 +162,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef ModelInterfaceFactory MMIF;
-    auto& mmif = MMIF::getModelInterfaceFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
     bool treated = false;
@@ -181,7 +181,7 @@ namespace mfront{
 	} else {
 	  t = this->current->value;
 	}
-	if(find(this->interfaces.begin(),this->interfaces.end(),t)!=this->interfaces.end()){
+	if(this->interfaces.find(t)!=this->interfaces.end()){
 	  s.insert(t);
 	}
 	++(this->current);
@@ -195,9 +195,8 @@ namespace mfront{
 	this->ignoreKeyWord(key);
       } else {
 	for(const auto & elem : s){
-	  auto interface = mmif.getInterfacePtr(elem);
-	  p = interface->treatKeyword(key,this->current,
-				      this->fileTokens.end());
+	  p = interfaces.at(elem)->treatKeyword(key,this->current,
+						this->fileTokens.end());
 	  if(!p.first){
 	    string msg("ModelDSLCommon::treatUnknownKeyword : the keyword '");
 	    msg += key;
@@ -220,9 +219,8 @@ namespace mfront{
       }
     } else {
       for(const auto& i : this->interfaces){
-	auto interface = mmif.getInterfacePtr(i);
-	p = interface->treatKeyword(key,this->current,
-				    this->fileTokens.end());
+	p = i.second->treatKeyword(key,this->current,
+				   this->fileTokens.end());
 	if(p.first){
 	  if(treated){
 	    if(p2!=p.second){
@@ -1407,17 +1405,10 @@ namespace mfront{
   ModelDSLCommon::getGlobalIncludes(void)
   {
     using namespace std;
-    typedef ModelInterfaceFactory MMIF;
-    auto& mmif = MMIF::getModelInterfaceFactory();
-    typedef map<string,vector<string> > Map;
-    Map incs;
-    vector<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      auto interface = mmif.getInterfacePtr(*i);
-      const auto& iincs = interface->getGlobalIncludes(*this);
-      for(p=iincs.begin();p!=iincs.end();++p){
+    auto incs = map<string,vector<string>>{};
+    for(const auto& i : this->interfaces){
+      const auto& iincs = i.second->getGlobalIncludes(*this);
+      for(auto p=iincs.begin();p!=iincs.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
       }
     }
@@ -1428,17 +1419,10 @@ namespace mfront{
   ModelDSLCommon::getGlobalDependencies(void)
   {
     using namespace std;
-    typedef map<string,vector<string> > Map;
-    typedef ModelInterfaceFactory MMIF;
-    auto& mmif = MMIF::getModelInterfaceFactory();
-    Map deps;
-    vector<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      auto interface = mmif.getInterfacePtr(*i);
-      const auto& ideps = interface->getGlobalDependencies(*this);
-      for(p=ideps.begin();p!=ideps.end();++p){
+    auto deps = map<string,vector<string>>{};
+    for(const auto& i : this->interfaces){
+      const auto& ideps = i.second->getGlobalDependencies(*this);
+      for(auto p=ideps.begin();p!=ideps.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
       }
     }
@@ -1449,23 +1433,15 @@ namespace mfront{
   ModelDSLCommon::getGeneratedSources(void)
   {
     using namespace std;
-    typedef map<string,vector<string> > Map;
-    typedef ModelInterfaceFactory MMIF;
-    auto& mmif = MMIF::getModelInterfaceFactory();
-    Map osources;
-    vector<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    vector<string>::const_iterator p2;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      auto interface = mmif.getInterfacePtr(*i);
-      const auto& isources = interface->getGeneratedSources(*this);
-      for(p=isources.begin();p!=isources.end();++p){
+    auto osources = map<string,vector<string>>{};
+    for(const auto& i : this->interfaces){
+      const auto& isources = i.second->getGeneratedSources(*this);
+      for(auto p=isources.begin();p!=isources.end();++p){
 	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
       }
     }
-    for(p=osources.begin();p!=osources.end();++p){
-      for(p2=this->librariesDependencies.begin();
+    for(auto p=osources.begin();p!=osources.end();++p){
+      for(auto p2=this->librariesDependencies.begin();
 	  p2!=this->librariesDependencies.end();++p2){
 	  if("-l"+p->first!=*p2){
 	    this->sourcesLibrairiesDependencies[p->first].push_back(*p2);
@@ -1479,14 +1455,9 @@ namespace mfront{
   ModelDSLCommon::getGeneratedIncludes(void)
   {
     using namespace std;
-    typedef ModelInterfaceFactory MMIF;
-    auto& mmif = MMIF::getModelInterfaceFactory();
-    vector<string> incs;
-    vector<string>::const_iterator i;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      auto interface = mmif.getInterfacePtr(*i);
-      const auto& iincs = interface->getGeneratedIncludes(*this);
+    auto incs = vector<string>{};
+    for(const auto& i : this->interfaces){
+      const auto& iincs = i.second->getGeneratedIncludes(*this);
       copy(iincs.begin(),iincs.end(),back_inserter(incs));
     }
     return incs;
@@ -1496,17 +1467,10 @@ namespace mfront{
   ModelDSLCommon::getLibrariesDependencies(void)
   {
     using namespace std;
-    typedef ModelInterfaceFactory MMIF;
-    auto& mmif = MMIF::getModelInterfaceFactory();
-    vector<string>::const_iterator i;
-    map<string,vector<string> >::const_iterator p;
-    vector<string>::const_iterator p2;
-    for(i  = this->interfaces.begin();
-	i != this->interfaces.end();++i){
-      auto interface = mmif.getInterfacePtr(*i);
-      const auto& ideps = interface->getLibrariesDependencies(*this);
-      for(p=ideps.begin();p!=ideps.end();++p){
-	for(p2=p->second.begin();p2!=p->second.end();++p2){
+    for(const auto& i : this->interfaces){
+      const auto& ideps = i.second->getLibrariesDependencies(*this);
+      for(auto p=ideps.begin();p!=ideps.end();++p){
+	for(auto p2=p->second.begin();p2!=p->second.end();++p2){
 	  if(find(this->sourcesLibrairiesDependencies[p->first].begin(),
 		  this->sourcesLibrairiesDependencies[p->first].end(),
 		  *p2)==this->sourcesLibrairiesDependencies[p->first].end()){
@@ -1522,12 +1486,9 @@ namespace mfront{
   ModelDSLCommon::getGeneratedEntryPoints(void)
   {
     using namespace std;
-    typedef ModelInterfaceFactory MMIF;
-    auto& mmif = MMIF::getModelInterfaceFactory();
     auto r = map<string,vector<string>>{};
     for(const auto& i : this->interfaces){
-      auto interface = mmif.getInterfacePtr(i);
-      const auto& epts = interface->getGeneratedEntryPoints(*this);
+      const auto& epts = i.second->getGeneratedEntryPoints(*this);
       for(auto l:epts){
 	auto& lepts = r[l.first];
 	for(auto p: l.second){
@@ -1545,8 +1506,7 @@ namespace mfront{
 		     std::vector<std::string> > >
   ModelDSLCommon::getSpecificTargets(void)
   {
-    using namespace std;
-    return map<string,pair<vector<string>,vector<string> > >();
+    return {};
   } // end of ModelDSLCommon::getSpecificTargets(void)
 
   void

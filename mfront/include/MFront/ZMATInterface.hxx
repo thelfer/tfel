@@ -161,9 +161,7 @@ namespace mfront{
      */
     virtual std::map<std::string,std::vector<std::string> >
     getGeneratedEntryPoints(const BehaviourDescription&) const override;
-
-    virtual void reset(void) override;
-    
+    //! destructor
     virtual ~ZMATInterface();
 
   protected:

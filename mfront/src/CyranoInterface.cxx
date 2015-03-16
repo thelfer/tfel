@@ -107,18 +107,7 @@ namespace mfront{
   } // end of CyranoInterface::getUmatFunctionName
 
   CyranoInterface::CyranoInterface()
-  {
-    this->reset();
-  }
-
-  void
-  CyranoInterface::reset(void)
-  {
-    UMATInterfaceBase::reset();
-    this->useTimeSubStepping            = false;
-    this->maximumSubStepping            = 0u;
-    this->doSubSteppingOnInvalidResults = false;
-  }
+  {}
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CyranoInterface::treatKeyword(const std::string& key,

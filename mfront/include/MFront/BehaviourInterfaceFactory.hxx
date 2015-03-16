@@ -32,7 +32,18 @@ namespace mfront{
     getBehaviourInterfaceFactory();
 
     std::vector<std::string>
-    getRegistredInterfaces(void);
+    getRegistredInterfaces(void) const;
+    /*!
+     * \return true if the given interface exists
+     * \param[in] n : interface name
+     */
+    bool exists(const std::string&) const; 
+    /*!
+     * \return a newly created interface
+     * \param[in] n : interface name
+     */
+    std::shared_ptr<AbstractBehaviourInterface>
+    getInterface(const std::string&);
 
     void registerInterfaceCreator(const std::string&,
 				  InterfaceCreator);
@@ -41,10 +52,6 @@ namespace mfront{
     registerInterfaceAlias(const std::string&,
 			   const std::string&);
  
-    std::shared_ptr<AbstractBehaviourInterface>
-    getInterfacePtr(const std::string&);
-    
-    void reset(void);
 
     ~BehaviourInterfaceFactory();
     
@@ -52,22 +59,20 @@ namespace mfront{
 
     typedef std::map<std::string,std::string> AliasContainer;
     typedef std::map<std::string,InterfaceCreator> InterfaceCreatorsContainer;
-    typedef std::map<std::string,std::shared_ptr<AbstractBehaviourInterface>> InterfaceContainer;
 
-    TFEL_VISIBILITY_LOCAL
-    BehaviourInterfaceFactory();
+    TFEL_VISIBILITY_LOCAL BehaviourInterfaceFactory() = default;
+    BehaviourInterfaceFactory(const BehaviourInterfaceFactory&) = delete;
+    BehaviourInterfaceFactory(BehaviourInterfaceFactory&&) = delete;
+    BehaviourInterfaceFactory& operator = (const BehaviourInterfaceFactory&) = delete;
+    BehaviourInterfaceFactory& operator = (BehaviourInterfaceFactory&&) = delete;
 
     TFEL_VISIBILITY_LOCAL
     InterfaceCreatorsContainer&
-    getInterfaceCreatorsMap(void);
-
-    TFEL_VISIBILITY_LOCAL
-    InterfaceContainer&
-    getInterfacesMap(void);
+    getInterfaceCreatorsMap(void) const;
 
     TFEL_VISIBILITY_LOCAL
     AliasContainer&
-    getAliasesMap(void);
+    getAliasesMap(void) const;
 
   };
 

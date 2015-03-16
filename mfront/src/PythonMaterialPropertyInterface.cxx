@@ -42,10 +42,6 @@ namespace mfront
   PythonMaterialPropertyInterface::PythonMaterialPropertyInterface()
   {}
 
-  void
-  PythonMaterialPropertyInterface::reset(void)
-  {} // end of PythonMaterialPropertyInterface::reset(void)
-
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   PythonMaterialPropertyInterface::treatKeyword(const std::string&,
 					 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,

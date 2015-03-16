@@ -32,17 +32,6 @@ namespace mfront
 
   CastemMaterialPropertyInterface::CastemMaterialPropertyInterface()
   {}
-
-  void
-  CastemMaterialPropertyInterface::reset(void)
-  {
-    if(this->headerFile.is_open()){
-      this->headerFile.close();
-    }
-    if(this->srcFile.is_open()){
-      this->srcFile.close();
-    }
-  } // end of CastemMaterialPropertyInterface::reset(void)
   
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CastemMaterialPropertyInterface::treatKeyword(const std::string&,
