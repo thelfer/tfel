@@ -228,7 +228,7 @@ AC_DEFUN([AC_GCC_LINUX_OPTIMISATIONS],[
 
 AC_DEFUN([AC_GCC_DEFAULT_OPTIMISATIONS],
     [
-	OPTIMISATION_FLAGS="-O2 $OPTIMISATION_FLAGS"
+	OPTIMISATION_FLAGS0="-O2 $OPTIMISATION_FLAGS0"
 	CXXFLAGS="-O2 $CXXFLAGS"
 	CFLAGS="-O2 $CFLAGS"
 ])
@@ -355,7 +355,7 @@ EOF
     $CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test-fvisibility-inlines-hidden.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
 	    if test x"$?" == "x0" ; then
 		    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
-		    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
+		    OPTIMISATION_FLAGS0="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS0"
 		    rm libtest-fvisibility-inlines-hidden.so
 		    AC_MSG_NOTICE([-fvisibility-inlines-hidden enabled])
 		else
@@ -371,7 +371,7 @@ fi
 	    AC_GCC_CHECK_FLAG(-fvisibility=hidden,GCC_SYMBOL_VISIBILITY)
 	    CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
 	    CFLAGS="$CFLAGS $GCC_SYMBOL_VISIBILITY"
-	    OPTIMISATION_FLAGS="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS"
+	    OPTIMISATION_FLAGS0="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS0"
 
 	    if test "x$enable_debug" != "xyes"; then
 		dnl g++  no debug options
@@ -386,5 +386,7 @@ fi
 	    dnl g++ debug options
 	    CXXFLAGS="-g $CXXFLAGS"
 	fi
+
+        OPTIMISATION_FLAGS2="-ffast-math"
 	
 	]) dnl end of AC_CHECK GXX
