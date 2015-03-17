@@ -649,6 +649,7 @@ namespace mfront
     this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithmParameter",
 			    p,this->fileTokens.end());
     const string& v = p->value;
+    ++p;
     this->readSpecifiedToken("MTestParser::handleAccelerationAlgorithmParameter",";",
 			     p,this->fileTokens.end());
     t.setAccelerationAlgorithmParameter(pn,v);
