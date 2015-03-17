@@ -39,6 +39,7 @@
 #include"MFront/PerformanceProfiling.hxx"
 #include"MFront/BehaviourInterfaceFactory.hxx"
 #include"MFront/BehaviourAnalyserFactory.hxx"
+#include"MFront/BehaviourAnalyser.hxx"
 #include"MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx"
 #include"MFront/BehaviourBrick.hxx"
 #include"MFront/BehaviourBrickFactory.hxx"
@@ -555,8 +556,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
-    typedef BehaviourAnalyserFactory  MBAF;
-    auto& mbaf = MBAF::getBehaviourAnalyserFactory();
     systemCall::mkdir("src");
     systemCall::mkdir("include");
     systemCall::mkdir("include/TFEL/");
@@ -689,16 +688,13 @@ namespace mfront{
       i.second->endTreatement(this->mb,*this);
     }
     // calling the analysers
-    vector<string>::const_iterator pa;
-    for(pa  = this->analysers.begin();
-	pa != this->analysers.end();++pa){
-      BehaviourAnalyser& a = *(mbaf.getAnalyserPtr(*pa));
+    for(const auto& a : this->analysers){
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : "
-	    << "calling analyser '" << *pa << "'" << endl;
+	    << "calling analyser '" << a.first << "'" << endl;
       }
-      a.endTreatement(this->mb,*this);
+      a.second->endTreatement(this->mb,*this);
     }
   }
 
@@ -1116,8 +1112,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef BehaviourAnalyserFactory  MBAF;
-    auto& mbaf = MBAF::getBehaviourAnalyserFactory();
     pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
     bool treated = false;
@@ -1141,7 +1135,7 @@ namespace mfront{
 	if(this->interfaces.find(t)!=this->interfaces.end()){
 	  s.insert(t);
 	}
-	if(find(this->analysers.begin(),this->analysers.end(),t)!=this->analysers.end()){
+	if(this->analysers.find(t)!=this->analysers.end()){
 	  s2.insert(t);
 	}
 	++(this->current);
@@ -1176,9 +1170,8 @@ namespace mfront{
 	  treated = true;
 	}
 	for(const auto & elem : s2){
-	  BehaviourAnalyser *analyser = mbaf.getAnalyserPtr(elem);
-	  p = analyser->treatKeyword(key,this->current,
-				     this->fileTokens.end());
+	  p = this->analysers.at(elem)->treatKeyword(key,this->current,
+						     this->fileTokens.end());
 	  if(!p.first){
 	    string msg("BehaviourDSLCommon::treatUnknownKeyword : the keyword '");
 	    msg += key;
@@ -1218,8 +1211,7 @@ namespace mfront{
 	}
       }
       for(const auto& a : this->analysers){
-	BehaviourAnalyser *analyser = mbaf.getAnalyserPtr(a);
-	p = analyser->treatKeyword(key,this->current,
+	p = a.second->treatKeyword(key,this->current,
 				   this->fileTokens.end());
 	if(p.first){
 	  if(treated){
@@ -1523,10 +1515,16 @@ namespace mfront{
   } // end of BehaviourDSLCommon::setInterfaces
 
   void
-  BehaviourDSLCommon::setAnalysers(const std::set<std::string>& i)
+  BehaviourDSLCommon::setAnalysers(const std::set<std::string>& anames)
   {
     using namespace std;
-    copy(i.begin(),i.end(),back_inserter(this->analysers));
+    typedef BehaviourAnalyserFactory  MBAF;
+    auto& mbaf = MBAF::getBehaviourAnalyserFactory();
+    for(const auto& a : anames){
+      if(this->analysers.count(a)==0){
+	this->analysers.insert({a,mbaf.getAnalyser(a)});
+      }
+    }
   } // end of BehaviourDSLCommon::setAnalysers
 
   void

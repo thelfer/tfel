@@ -42,19 +42,18 @@ namespace mfront{
   {
     typedef BehaviourAnalyserFactory MBAF;
     auto& mbaf = MBAF::getBehaviourAnalyserFactory();
-    InputIterator p;
     mbaf.registerAnalyserCreator(Analyser::getName(),&createAnalyser);
-    for(p=b;p!=e;++p){
+    for(auto p=b;p!=e;++p){
       mbaf.registerAnalyserAlias(Analyser::getName(),*p);
     }
   } // end of BehaviourAnalyserProxy<Analyser>::BehaviourAnalyserProxy
 
   template<typename Analyser>
-  BehaviourAnalyser* 
+  std::shared_ptr<BehaviourAnalyser>
   BehaviourAnalyserProxy<Analyser>::createAnalyser()
   {
-    return new Analyser;
-  }
+    return std::make_shared<Analyser>();
+  } // end of BehaviourAnalyserProxy<Analyser>::createAnalyser
 
 } // end of namespace mfront
 

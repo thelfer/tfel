@@ -33,13 +33,6 @@ namespace mfront{
     return map;
   } // end of BehaviourAnalyserFactory::getAnalyserCreatorsMap
 
-  BehaviourAnalyserFactory::AnalyserContainer&
-  BehaviourAnalyserFactory::getAnalysersMap(void)
-  {
-    static AnalyserContainer map;
-    return map;
-  } // end of BehaviourAnalyserFactory::getAnalysersMap
-
   BehaviourAnalyserFactory::BehaviourAnalyserFactory()
   {}
 
@@ -84,36 +77,27 @@ namespace mfront{
     amap.insert(make_pair(a,i));
   }
 
-  BehaviourAnalyser* 
-  BehaviourAnalyserFactory::getAnalyserPtr(const std::string& analyserName)
+  std::shared_ptr<BehaviourAnalyser>
+  BehaviourAnalyserFactory::getAnalyser(const std::string& a)
   {
     using namespace std;
     AnalyserCreatorsContainer::iterator p;
     AliasContainer::iterator p2;
-    AnalyserContainer::iterator m;
-    BehaviourAnalyser *i;
-    m = this->getAnalysersMap().find(analyserName);
-    if(m==this->getAnalysersMap().end()){
-      p2 = this->getAliasesMap().find(analyserName);
-      if(p2==this->getAliasesMap().end()){
-	string msg = "BehaviourAnalyserFactory::createNewAnalyser : no analyser named '";
-	msg += analyserName+"'.\n";
-	msg += "Available analyser are : \n";
-	for(p2  = this->getAliasesMap().begin();
-	    p2 != this->getAliasesMap().end();++p2){
+    p2 = this->getAliasesMap().find(a);
+    if(p2==this->getAliasesMap().end()){
+      string msg = "BehaviourAnalyserFactory::createNewAnalyser : no analyser named '";
+      msg += a+"'.\n";
+      msg += "Available analyser are : \n";
+      for(p2  = this->getAliasesMap().begin();
+	  p2 != this->getAliasesMap().end();++p2){
 	  msg += p2->first + " ";
-	}
-	throw(runtime_error(msg));
       }
-      p = this->getAnalyserCreatorsMap().find(p2->second);
-      assert(p!=this->getAnalyserCreatorsMap().end());
-      AnalyserCreator c = p->second;
-      i = c();
-      this->getAnalysersMap().insert(make_pair(analyserName,i));
-    } else {
-      i = m->second;
+      throw(runtime_error(msg));
     }
-    return i;
+    p = this->getAnalyserCreatorsMap().find(p2->second);
+    assert(p!=this->getAnalyserCreatorsMap().end());
+    AnalyserCreator c = p->second;
+    return c();
   }
 
   BehaviourAnalyserFactory::~BehaviourAnalyserFactory()

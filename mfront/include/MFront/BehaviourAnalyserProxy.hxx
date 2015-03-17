@@ -15,11 +15,14 @@
 #define LIB_MFRONTBEHAVIOURANALYSERPROXY_HXX_ 
 
 #include<string>
+#include<memory>
 
 #include"MFront/BehaviourAnalyserFactory.hxx"
-#include"MFront/BehaviourAnalyser.hxx"
 
 namespace mfront{
+
+  // forward declaration
+  struct BehaviourAnalyser;
 
   template<typename Analyser>
   struct BehaviourAnalyserProxy
@@ -32,7 +35,7 @@ namespace mfront{
     BehaviourAnalyserProxy(const InputIterator,
 				 const InputIterator);
 
-    static BehaviourAnalyser* createAnalyser();
+    static std::shared_ptr<BehaviourAnalyser> createAnalyser();
   };
 
 } // end of namespace mfront

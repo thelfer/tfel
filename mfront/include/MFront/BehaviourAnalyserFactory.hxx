@@ -14,18 +14,21 @@
 #ifndef LIB_MFRONBEHAVIOURTANALYSERFACTORY_HXX_
 #define LIB_MFRONBEHAVIOURTANALYSERFACTORY_HXX_ 
 
+#include<map>
 #include<vector>
 #include<string>
-#include<map>
+#include<memory>
 
 #include"MFront/MFrontConfig.hxx"
-#include"MFront/BehaviourAnalyser.hxx"
 
 namespace mfront{
 
+  // forward declaration
+  struct BehaviourAnalyser;
+
   struct MFRONT_VISIBILITY_EXPORT BehaviourAnalyserFactory
   {
-    typedef BehaviourAnalyser* (*AnalyserCreator)(void);
+    typedef std::shared_ptr<BehaviourAnalyser> (*AnalyserCreator)(void);
     
     static BehaviourAnalyserFactory&
     getBehaviourAnalyserFactory();
@@ -39,17 +42,16 @@ namespace mfront{
     void
     registerAnalyserAlias(const std::string&,
 			  const std::string&);
-
-    BehaviourAnalyser* 
-    getAnalyserPtr(const std::string&);
+    
+    std::shared_ptr<BehaviourAnalyser>
+    getAnalyser(const std::string&);
     //! destructor
     ~BehaviourAnalyserFactory();
     
   private:
 
-    typedef std::map<std::string,std::string> AliasContainer;
     typedef std::map<std::string,AnalyserCreator> AnalyserCreatorsContainer;
-    typedef std::map<std::string,BehaviourAnalyser *> AnalyserContainer;
+    typedef std::map<std::string,std::string> AliasContainer;
 
     TFEL_VISIBILITY_LOCAL
     BehaviourAnalyserFactory();
@@ -57,10 +59,6 @@ namespace mfront{
     TFEL_VISIBILITY_LOCAL
     AnalyserCreatorsContainer&
     getAnalyserCreatorsMap(void);
-
-    TFEL_VISIBILITY_LOCAL
-    AnalyserContainer&
-    getAnalysersMap(void);
 
     TFEL_VISIBILITY_LOCAL
     AliasContainer&
