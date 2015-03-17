@@ -18,6 +18,8 @@
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/FileDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CppMaterialPropertyInterface.hxx"
 
 namespace mfront
@@ -133,61 +135,40 @@ namespace mfront
   }
 
   void
-  CppMaterialPropertyInterface::writeOutputFiles(const std::string& file,
-						 const std::string& ,
-						 const std::string& material,
-						 const std::string& className,
-						 const std::string& author,
-						 const std::string& date,
-						 const std::string& description,
-						 const std::string& includes,
-						 const std::string& output,
-					  const VariableDescriptionContainer& inputs,
-					  const std::vector<std::string>& materialLaws,
-					  const std::map<std::string,std::string>&,
-					  const std::map<std::string,std::string>&,
-					  const StaticVariableDescriptionContainer& staticVars,
-					  const std::vector<std::string>& params,
-					  const std::map<std::string,double>& paramValues,
-					  const LawFunction& function,
-					  const std::vector<VariableBoundsDescription>& bounds,
-					  const std::vector<VariableBoundsDescription>& physicalBounds,
-					  const bool useTemplate,
-					  const std::vector<std::string>& namespaces)
+  CppMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
+						 const FileDescription& fd)
   {
     using namespace std;
     using namespace tfel::system;
+    const auto& file=fd.fileName;
+    const auto& author=fd.authorName;
+    const auto& description=fd.description;
+    const auto& date=fd.date;
+    const auto& material=mpd.material;
+    const auto& className=mpd.className;
+    const auto& includes=mpd.includes;
+    const auto& output=mpd.output;
+    const auto& inputs=mpd.inputs;
+    const auto& materialLaws=mpd.materialLaws;
+    const auto& staticVars=mpd.staticVars;
+    const auto& params=mpd.parameters;
+    const auto& paramValues=mpd.parametersValues;
+    const auto& function=mpd.f;
+    const auto& bounds=mpd.boundsDescriptions;
+    const auto& physicalBounds=mpd.physicalBoundsDescriptions;
     string dir;
     string name;
-    vector<string>::const_iterator p;
     if(!material.empty()){
       name = material+"_"+className;
     } else {
       name = className;
     }
     dir="include/";
-    for(p=namespaces.begin();p!=namespaces.end();++p){
-      dir += *p+"/";
-      systemCall::mkdir(dir);
-    }
     this->headerFileName  = "include/";
-    for(p=namespaces.begin();p!=namespaces.end();++p){
-      this->headerFileName += *p + "/";
-    }
     this->headerFileName += name;
     this->headerFileName += "-cxx.hxx";
-
-    if(useTemplate){
-      this->srcFileName = "include/";
-      for(p=namespaces.begin();p!=namespaces.end();++p){
-	this->srcFileName  += *p + "/";
-      }
-      this->srcFileName  += name;
-      this->srcFileName += "-cxx.ixx";
-    } else {
-      this->srcFileName  = "src/" + name;
-      this->srcFileName += "-cxx.cxx";
-    }
+    this->srcFileName  = "src/" + name;
+    this->srcFileName += "-cxx.cxx";
     this->headerFile.open(this->headerFileName.c_str());
     if(!this->headerFile){
       string msg("MaterialPropertyDSL::writeOutputFiles : ");
@@ -207,24 +188,22 @@ namespace mfront
     }
     this->srcFile.exceptions(ios::badbit|ios::failbit);
     this->writeHeaderFile(name,author,date,description,includes,inputs,
-			  params,bounds,physicalBounds,useTemplate,namespaces);
+			  params,bounds,physicalBounds);
     this->writeSrcFile(file,name,author,date,output,
 		       inputs,materialLaws,staticVars,params,paramValues,
-		       function,bounds,physicalBounds,useTemplate,namespaces);
+		       function,bounds,physicalBounds);
   } // end of CppMaterialPropertyInterface::writeOutputFiles
 
   void
   CppMaterialPropertyInterface::writeHeaderFile(const std::string& name,
-					 const std::string& author,
-					 const std::string& date,
-					 const std::string& description,
-					 const std::string& includes,
-					 const VariableDescriptionContainer& inputs,
-					 const std::vector<std::string>& params,
-					 const std::vector<VariableBoundsDescription>& bounds,
-					 const std::vector<VariableBoundsDescription>& physicalBounds,
-					 const bool useTemplate,
-					 const std::vector<std::string>& namespaces)
+						const std::string& author,
+						const std::string& date,
+						const std::string& description,
+						const std::string& includes,
+						const VariableDescriptionContainer& inputs,
+						const std::vector<std::string>& params,
+						const std::vector<VariableBoundsDescription>& bounds,
+						const std::vector<VariableBoundsDescription>& physicalBounds)
   {
     using namespace std;
     vector<string>::const_iterator p3;
@@ -252,26 +231,8 @@ namespace mfront
     }
     this->headerFile << " */\n\n";
 
-    if(!namespaces.empty()){
-      this->headerFile << "#ifndef LIB_";
-      for(p3=namespaces.begin();p3!=namespaces.end();++p3){
-	this->headerFile << makeUpperCase(*p3) << "_";
-      }
-      this->headerFile << makeUpperCase(name) << "_HXX\n";
-      this->headerFile << "#define LIB_";
-      for(p3=namespaces.begin();p3!=namespaces.end();++p3){
-	this->headerFile << makeUpperCase(*p3) << "_";
-      }
-      this->headerFile << makeUpperCase(name) << "_HXX\n";
-    } else {
-      this->headerFile << "#ifndef LIB_MFRONT_" 
-		       << makeUpperCase(name)
-		       << "_HXX\n";
-      this->headerFile << "#define LIB_MFRONT_"
-		       << makeUpperCase(name)
-		       << "_HXX\n\n";
-    }
-
+    this->headerFile << "#ifndef LIB_MFRONT_" << makeUpperCase(name) << "_HXX\n";
+    this->headerFile << "#define LIB_MFRONT_" << makeUpperCase(name) << "_HXX\n\n";
     this->headerFile << "#include<ostream>\n";
     this->headerFile << "#include<cmath>\n";
     this->headerFile << "#include<algorithm>\n";
@@ -281,41 +242,19 @@ namespace mfront
       this->headerFile << includes << endl;
     }
     writeExportDirectives(this->headerFile);    
-    if(namespaces.empty()){
-      this->headerFile << "namespace mfront\n{\n\n";
-    } else {
-      for(p3=namespaces.begin();p3!=namespaces.end();++p3){
-	this->headerFile << "namespace " << *p3 << "\n{\n";
-      }
-      this->headerFile << "\n";
-    }
-    if(useTemplate){
-      this->headerFile << "template<typename real>\n";
-    }
+    this->headerFile << "namespace mfront\n{\n\n";
     this->headerFile << "struct MFRONT_SHAREDOBJ " << name << endl;
     if(!inputs.empty()){
       if(inputs.size()==1){
-	if(useTemplate){
-	  this->headerFile << ": std::unary_function<real,real>\n";
-	} else {
-	  this->headerFile << ": std::unary_function<double,double>\n";
-	}
+	this->headerFile << ": std::unary_function<double,double>\n";
       } else if(inputs.size()==2){
-	if(useTemplate){
-	  this->headerFile << ": std::binary_function<real,real,real>\n";
-	} else {
-	  this->headerFile << ": std::binary_function<double,double,double>\n";
-	}
+	this->headerFile << ": std::binary_function<double,double,double>\n";
       }
     }
     this->headerFile << "{\n\n";
     if(inputs.empty()){
       this->headerFile << "//! nested typedef to make " << name << " model an adaptable generator (STL compliance)\n\n";
-      if(useTemplate){
-	this->headerFile << "typedef real result_type;\n\n";
-      } else {
-	this->headerFile << "typedef double result_type;\n\n";
-      }
+      this->headerFile << "typedef double result_type;\n\n";
     } 
     this->headerFile << "//! Default constructor\n";
     this->headerFile << name << "();\n\n";
@@ -325,18 +264,10 @@ namespace mfront
     this->headerFile << "//! Assignement operator\n";
     this->headerFile << name << "&\n";
     this->headerFile << "operator=(const " << name << "&);\n\n";
-    if(useTemplate){
-      this->headerFile << "static real\ndefaultCompute(";
-    } else {
-      this->headerFile << "static double\ndefaultCompute(";
-    }
+    this->headerFile << "static double\ndefaultCompute(";
     if(!inputs.empty()){
       for(p4=inputs.begin();p4!=inputs.end();){
-	if(useTemplate){
-	  this->headerFile << "const real";
-	} else {
-	  this->headerFile << "const double";
-	}
+	this->headerFile << "const double";
 	if((++p4)!=inputs.end()){
 	  this->headerFile << ",";
 	}
@@ -345,33 +276,17 @@ namespace mfront
       this->headerFile << "void";
     }
     this->headerFile << ");\n\n";
-    if(useTemplate){
-      this->headerFile << "real\ncompute(";
-    } else {
-      this->headerFile << "double\ncompute(";
-    }
+    this->headerFile << "double\ncompute(";
     for(p4=inputs.begin();p4!=inputs.end();){
-      if(useTemplate){
-	this->headerFile << "const real";
-      } else {
-	this->headerFile << "const double";
-      }
+      this->headerFile << "const double";
       if((++p4)!=inputs.end()){
 	this->headerFile << ",";
       }
     }
     this->headerFile << ");\n\n";
-    if(useTemplate){
-      this->headerFile << "real\noperator()(";
-    } else {
-      this->headerFile << "double\noperator()(";
-    }
+    this->headerFile << "double\noperator()(";
     for(p4=inputs.begin();p4!=inputs.end();){
-      if(useTemplate){
-	this->headerFile << "const real";
-      } else {
-	this->headerFile << "const double";
-      }
+      this->headerFile << "const double";
       if((++p4)!=inputs.end()){
 	this->headerFile << ",";
       }
@@ -381,11 +296,7 @@ namespace mfront
        (!physicalBounds.empty())){
       this->headerFile << "static void\ncheckBounds(";
       for(p4=inputs.begin();p4!=inputs.end();){
-	if(useTemplate){
-	  this->headerFile << "const real";
-	} else {
-	  this->headerFile << "const double";
-	}
+	this->headerFile << "const double";
 	if((++p4)!=inputs.end()){
 	  this->headerFile << ",";
 	}
@@ -393,98 +304,43 @@ namespace mfront
       this->headerFile << ")\nthrow(std::range_error);\n\n";
     }
     for(p3=params.begin();p3!=params.end();++p3){
-      if(useTemplate){
-	this->headerFile << "const real& get" << *p3 << "(void) const;\n";
-      } else {
-	this->headerFile << "const double& get" << *p3 << "(void) const;\n";
-      }
+      this->headerFile << "const double& get" << *p3 << "(void) const;\n";
     }
     for(p3=params.begin();p3!=params.end();++p3){
-      if(useTemplate){
-	this->headerFile << "real& get" << *p3 << "(void);\n";
-      } else {
-	this->headerFile << "double& get" << *p3 << "(void);\n";
-      }
+      this->headerFile << "double& get" << *p3 << "(void);\n";
     }
     for(p3=params.begin();p3!=params.end();++p3){
-      if(useTemplate){
-	this->headerFile << "void set" << *p3 << "(const real);\n";
-      } else {
-	this->headerFile << "void set" << *p3 << "(const double);\n";
-      }
+      this->headerFile << "void set" << *p3 << "(const double);\n";
     }
     if(!params.empty()){
       this->headerFile << "private:\n";
       for(p3=params.begin();p3!=params.end();++p3){
-	if(useTemplate){
-	  this->headerFile << "real " << *p3 << ";\n";
-	} else {
-	  this->headerFile << "double " << *p3 << ";\n";
-	}
+	this->headerFile << "double " << *p3 << ";\n";
       }
     }
     this->headerFile << "}; // end of class " << name << endl << endl;
-    
-    if(useTemplate){
-      this->headerFile << "template<typename real>\n";
-    }
     this->headerFile << "std::ostream&\n";
     this->headerFile << "operator<<(std::ostream&,const " << name;
-    if(useTemplate){
-      this->headerFile << "<real>";
-    }
     this->headerFile << "&);\n\n";
-
-    if(namespaces.empty()){
-      this->headerFile << "} // end of namespace mfront\n\n";
-    } else {
-      p5e=namespaces.rend();
-      for(p5=namespaces.rbegin();p5!=p5e;++p5){
-	this->headerFile << "} // end of namespace " << *p5 << "\n\n";
-      }
-    }
-
-    if(useTemplate){
-      this->headerFile << "#include\"";
-      for(p3=namespaces.begin();p3!=namespaces.end();++p3){
-	this->headerFile << *p3 << "/";
-      }
-      this->headerFile <<name;
-      this->headerFile << "-cxx.ixx";
-      this->headerFile << "\"\n\n";
-    }
-
-    if(!namespaces.empty()){
-      this->headerFile << "#endif /* LIB_";
-      for(p3=namespaces.begin();p3!=namespaces.end();++p3){
-	this->headerFile << makeUpperCase(*p3) << "_";
-      }
-      this->headerFile << makeUpperCase(name) << "_HXX */\n";
-    } else {
-      this->headerFile << "#endif /* LIB_MFRONT_"
-		       << makeUpperCase(name)
-		       << "_HXX */\n";
-    }
-
+    this->headerFile << "} // end of namespace mfront\n\n";
+    this->headerFile << "#endif /* LIB_MFRONT_" << makeUpperCase(name) << "_HXX */\n";
     this->headerFile.close();
   } // end of CppMaterialPropertyInterface::writeHeaderFile(void)
 
   void
   CppMaterialPropertyInterface::writeSrcFile(const std::string& file,
-				      const std::string& name,
-				      const std::string& author,
-				      const std::string& date,
-				      const std::string& output,
-				      const VariableDescriptionContainer& inputs,
-				      const std::vector<std::string>& materialLaws,
-				      const StaticVariableDescriptionContainer& staticVars,
-				      const std::vector<std::string>& params,
-				      const std::map<std::string,double>& paramValues,
-				      const LawFunction& function,
-				      const std::vector<VariableBoundsDescription>& bounds,
-				      const std::vector<VariableBoundsDescription>& physicalBounds,
-				      const bool useTemplate,
-				      const std::vector<std::string>& namespaces)
+					     const std::string& name,
+					     const std::string& author,
+					     const std::string& date,
+					     const std::string& output,
+					     const VariableDescriptionContainer& inputs,
+					     const std::vector<std::string>& materialLaws,
+					     const StaticVariableDescriptionContainer& staticVars,
+					     const std::vector<std::string>& params,
+					     const std::map<std::string,double>& paramValues,
+					     const LawFunction& function,
+					     const std::vector<VariableBoundsDescription>& bounds,
+					     const std::vector<VariableBoundsDescription>& physicalBounds)
   {
     using namespace std;
     vector<string>::const_iterator p;
@@ -516,33 +372,9 @@ namespace mfront
     this->srcFile << "#include<cstdlib>\n";
     this->srcFile << "#include<sstream>\n";
     this->srcFile << "#include<cstring>\n";
-    if(namespaces.empty()){
-      this->srcFile << "#include\"" << name << "-cxx.hxx\"\n\n";
-    } else {
-      this->srcFile << "#include\"";
-      for(p=namespaces.begin();p!=namespaces.end();++p){
-	this->srcFile << *p << "/";
-      }
-      this->srcFile <<name;
-      this->srcFile << "-cxx.hxx";
-      this->srcFile << "\"\n\n";
-    }
-
-    if(namespaces.empty()){
-      this->srcFile << "namespace mfront\n{\n\n";
-    } else {
-      for(p=namespaces.begin();p!=namespaces.end();++p){
-	this->srcFile << "namespace " << *p << "\n{\n";
-      }
-      this->srcFile << "\n";
-    }
-    if(useTemplate){
-      this->srcFile << "template<typename real>\n";
-    }
+    this->srcFile << "#include\"" << name << "-cxx.hxx\"\n\n";
+    this->srcFile << "namespace mfront\n{\n\n";
     this->srcFile << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    }
     this->srcFile << "::" << name << "()\n";
     if(!params.empty()){
       this->srcFile << ": ";
@@ -561,18 +393,9 @@ namespace mfront
       this->srcFile << "\n";
     }
     this->srcFile << "{} // end of " << name << "::" << name << "\n\n";
-    if(useTemplate){
-      this->srcFile << "template<typename real>\n";
-    }
     this->srcFile << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    }
     this->srcFile << "::" << name << "(const ";
     this->srcFile << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    } 
     this->srcFile << "&";
     if(!params.empty()){
       this->srcFile << " src)\n: ";
@@ -588,22 +411,10 @@ namespace mfront
     }
     this->srcFile << "{} // end of " << name << "::" << name << "\n\n";
 
-    if(useTemplate){
-      this->srcFile << "template<typename real>\n";
-    }
     this->srcFile << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    }
     this->srcFile << "&\n";
     this->srcFile << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    }
     this->srcFile << "::operator=(const " << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    }
     this->srcFile << "&";
     if(!params.empty()){
       this->srcFile << "src)\n{\n";
@@ -616,71 +427,33 @@ namespace mfront
     this->srcFile << "return *this;\n";
     this->srcFile << "} // end of " << name << "::operator=\n\n";
     for(p=params.begin();p!=params.end();++p){
-      if(useTemplate){
-	this->srcFile << "template<typename real>\n";
-	this->srcFile << "const real& ";
-      } else {
-	this->srcFile << "const double& ";
-      }
+      this->srcFile << "const double& ";
       this->srcFile << name;
-      if(useTemplate){
-	this->srcFile << "<real>";
-      }
       this->srcFile << "::get"
 		    << *p << "(void) const{\nreturn " << *p 
 		    << ";\n} // end of " << name << "::get\n\n";
     }
     for(p=params.begin();p!=params.end();++p){
-      if(useTemplate){
-	this->srcFile << "template<typename real>\n";
-	this->srcFile << "real& ";
-      } else {
-	this->srcFile << "double& ";
-      }
+      this->srcFile << "double& ";
       this->srcFile << name;
-      if(useTemplate){
-	this->srcFile << "<real>";
-      }
       this->srcFile << "::get"
 		    << *p << "(void){\nreturn " << *p 
 		    << ";\n} // end of " << name << "::get\n\n";
     }
     for(p=params.begin();p!=params.end();++p){
-      if(useTemplate){
-	this->srcFile << "template<typename real>\n";
-      }
       this->srcFile << "void " << name;
-      if(useTemplate){
-	this->srcFile  << "<real>";	  
-      }
       this->srcFile  << "::set" << *p;
-      if(useTemplate){
-	this->srcFile << "(const real value)";
-      } else {
-	this->srcFile << "(const double value)";
-      }
+      this->srcFile << "(const double value)";
       this->srcFile << "{\n" << "" << *p << " = value;\n"
 		    << "} // end of " << name << "::set\n\n";
     }
     // Compute
-    if(useTemplate){
-      this->srcFile << "template<typename real>\n";
-      this->srcFile << "real\n";
-    } else {
-      this->srcFile << "double\n";
-    }
+    this->srcFile << "double\n";
     this->srcFile << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    }
     this->srcFile << "::defaultCompute(";      
     if(!inputs.empty()){
       for(p3=inputs.begin();p3!=inputs.end();){
-	if(useTemplate){
-	  this->srcFile << "const real " << p3->name;
-	} else {
-	  this->srcFile << "const double " << p3->name;
-	}
+	this->srcFile << "const double " << p3->name;
 	if((++p3)!=inputs.end()){
 	  this->srcFile << ",";
 	}
@@ -706,20 +479,11 @@ namespace mfront
 	  msg += "internal error (can't find value of parameter '" + *p + "')";
 	  throw(runtime_error(msg));
 	}
-	if(useTemplate){
-	  this->srcFile << "static constexpr real " << *p
-			<< " = " << p7->second << ";\n";
-	} else {
-	  this->srcFile << "static constexpr double " << *p
-			<< " = " << p7->second << ";\n";
-	}
+	this->srcFile << "static constexpr double " << *p
+		      << " = " << p7->second << ";\n";
       }
     }
-    if(useTemplate){
-      this->srcFile << "real " << output << ";\n";
-    } else {
-      this->srcFile << "double " << output << ";\n";
-    }
+    this->srcFile << "double " << output << ";\n";
     if((!bounds.empty())||
        (!physicalBounds.empty())){
       this->srcFile << "#ifndef NO_BOUNDS_CHECK\n";
@@ -736,40 +500,20 @@ namespace mfront
     this->srcFile << function.body;
     this->srcFile << "return " << output << ";\n";
     this->srcFile << "} // end of " << name << "::defaultCompute\n\n";
-
-    if(useTemplate){
-      this->srcFile << "template<typename real>\n";
-      this->srcFile << "real\n";
-    } else {
-      this->srcFile << "double\n";
-    }
+    this->srcFile << "double\n";
     this->srcFile << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    }
     this->srcFile << "::compute(";
     for(p3=inputs.begin();p3!=inputs.end();){
-      if(useTemplate){
-	this->srcFile << "const real " << p3->name;
-      } else {
-	this->srcFile << "const double " << p3->name;
-      }
+      this->srcFile << "const double " << p3->name;
       if(++p3!=inputs.end()){
 	this->srcFile << ",";
       }
     }
     this->srcFile << ")\n{\n";
     this->srcFile << "using namespace std;" << endl;
-    if(!useTemplate){
-      this->srcFile << "typedef double real;\n";
-    }
     writeStaticVariables("MaterialPropertyDSL::writeSrcFile",
 			 srcFile,staticVars,file);
-    if(useTemplate){
-      this->srcFile << "real " << output << ";\n";
-    } else {
-      this->srcFile << "double " << output << ";\n";
-    }
+    this->srcFile << "double " << output << ";\n";
     if((!bounds.empty())||
        (!physicalBounds.empty())){
       this->srcFile << "#ifndef NO_BOUNDS_CHECK\n";	
@@ -786,40 +530,20 @@ namespace mfront
     this->srcFile << function.body;
     this->srcFile << "return " << output << ";\n";
     this->srcFile << "} // end of " << name << "::compute\n\n";
-
-    if(useTemplate){
-      this->srcFile << "template<typename real>\n";
-      this->srcFile << "real\n";
-    } else {
-      this->srcFile << "double\n";
-    }
+    this->srcFile << "double\n";
     this->srcFile << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    }
     this->srcFile << "::operator()(";
     for(p3=inputs.begin();p3!=inputs.end();){
-      if(useTemplate){
-	this->srcFile << "const real " << p3->name;
-      } else {
-	this->srcFile << "const double " << p3->name;
-      }
+      this->srcFile << "const double " << p3->name;
       if(++p3!=inputs.end()){
 	this->srcFile << ",";
       }
     }
     this->srcFile << ")\n{\n";
     this->srcFile << "using namespace std;" << endl;
-    if(!useTemplate){
-      this->srcFile << "typedef double real;\n";
-    }
     writeStaticVariables("MaterialPropertyDSL::writeSrcFile",
 			 srcFile,staticVars,file);
-    if(useTemplate){
-      this->srcFile << "real " << output << ";\n";
-    } else {
-      this->srcFile << "double " << output << ";\n";
-    }
+    this->srcFile << "double " << output << ";\n";
     if((!bounds.empty())||
        (!physicalBounds.empty())){
       this->srcFile << "#ifndef NO_BOUNDS_CHECK\n";	
@@ -836,25 +560,14 @@ namespace mfront
     this->srcFile << function.body;
     this->srcFile << "return " << output << ";\n";
     this->srcFile << "} // end of " << name << "::operator()\n\n";
-
     if((!bounds.empty())||
        (!physicalBounds.empty())){
-      if(useTemplate){
-	this->srcFile << "template<typename real>\n";
-      }
       this->srcFile << "void\n";
       this->srcFile << name;
-      if(useTemplate){
-	this->srcFile << "<real>\n";
-      }
       this->srcFile << "::checkBounds(";
       if(!inputs.empty()){
 	for(p3=inputs.begin();p3!=inputs.end();){
-	  if(useTemplate){
-	    this->srcFile << "const real " << p3->name;
-	  } else {
-	    this->srcFile << "const double " << p3->name;
-	  }
+	  this->srcFile << "const double " << p3->name;
 	  if((++p3)!=inputs.end()){
 	    this->srcFile << ",";
 	  }
@@ -982,15 +695,9 @@ namespace mfront
       }
       this->srcFile << "} // end of " << name << "::checkBounds\n\n";
     }
-    if(useTemplate){
-      this->srcFile << "template<typename real>\n";
-    }
     this->srcFile << "std::ostream&\n";
     this->srcFile << "operator<<(std::ostream& os,const "
 		  << name;
-    if(useTemplate){
-      this->srcFile << "<real>";
-    }
     if(!params.empty()){
       this->srcFile << "& src){\n";
     } else {
@@ -1001,14 +708,7 @@ namespace mfront
     }
     this->srcFile << "return os;\n}// end of operator(std::ostream& os," 
 		  << name << "\n\n";
-    if(namespaces.empty()){
-      this->srcFile << "} // end of namespace mfront\n\n";
-    } else {
-      p5e=namespaces.rend();
-      for(p5=namespaces.rbegin();p5!=p5e;++p5){
-	this->srcFile << "} // end of namespace " << *p5 << "\n\n";
-      }
-    }
+    this->srcFile << "} // end of namespace mfront\n\n";
     this->srcFile.close();
   } // end of CppMaterialPropertyInterface::writeSrcFile(void)
 

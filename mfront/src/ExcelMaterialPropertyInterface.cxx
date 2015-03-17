@@ -28,6 +28,8 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLock.hxx"
+#include"MFront/FileDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CMaterialPropertyInterface.hxx"
 #include"MFront/ExcelMaterialPropertyInterface.hxx"
 
@@ -163,30 +165,15 @@ namespace mfront
   } // end of ExcelMaterialPropertyInterface::getSpecificTargets
 
   void
-  ExcelMaterialPropertyInterface::writeOutputFiles(const std::string&,
-					    const std::string& library,
-					    const std::string& material,
-					    const std::string& className,
-					    const std::string&,
-					    const std::string&,
-					    const std::string&,
-					    const std::string&,
-					    const std::string&,
-					    const VariableDescriptionContainer& vars,
-					    const std::vector<std::string>&,
-					    const std::map<std::string,std::string>&,
-					    const std::map<std::string,std::string>&,
-					    const StaticVariableDescriptionContainer&,
-					    const std::vector<std::string>&,
-					    const std::map<std::string,double>&,
-					    const LawFunction&,
-					    const std::vector<VariableBoundsDescription>&,
-					    const std::vector<VariableBoundsDescription>&,
-					    const bool,
-					    const std::vector<std::string>&)
+  ExcelMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
+						   const FileDescription&)
   {
     using namespace std;
     using namespace tfel::system;
+    const auto& library=mpd.library;
+    const auto& material=mpd.material;
+    const auto& className=mpd.className;
+    const auto& vars=mpd.inputs;
     // writing excel interface
     auto& lock = MFrontLock::getMFrontLock();
     lock.lock();

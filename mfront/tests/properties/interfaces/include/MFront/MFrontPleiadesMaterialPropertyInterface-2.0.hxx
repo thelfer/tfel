@@ -118,53 +118,13 @@ namespace mfront{
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
-
-    /*
-     * \param const std::string&, name of the original file
-     * \param const std::string&, name of the output library
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
-     * \param const std::string&, author
-     * \param const std::string&, date
-     * \param const std::string&, description
-     * \param const std::string&, includes
-     * \param const std::string&, output name
-     * \param const VarContainer&, inputs
-     * \param const std::vector<std::string>&, material laws
-     * \param const std::map<std::string,std::string>&, glossary names,
-     * \param const std::map<std::string,std::string>&, entry names,
-     * \param const StaticVarContainer&, static variables
-     * \param const std::vector<std::string>&, parameters
-     * \param const std::map<std::string,double>&, parameters values
-     * \param const LawFunction&, function definition
-     * \param const std::vector<VariableBoundsDescription>&, bounds of the law
-     * \param const std::vector<VariableBoundsDescription>&, physical bounds of the law
-     * \param const bool, use template
-     * \param const std::vector<std::string>&, namespaces
+    /*!
+     * \brief generate the output files
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
      */
-    void writeOutputFiles(const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const std::string&,
-			  const VarContainer&,
-			  const std::vector<std::string>&,
-			  const std::map<std::string,std::string>&,
-			  const std::map<std::string,std::string>&,
-			  const StaticVarContainer& staticVars,
-			  const std::vector<std::string>&,
-			  const std::map<std::string,double>&,
-			  const LawFunction&,
-			  const std::vector<VariableBoundsDescription>&,
-			  const std::vector<VariableBoundsDescription>&,
-			  const bool,
-			  const std::vector<std::string>&);
-
-    void reset(void);
+    void writeOutputFiles(const MaterialPropertyDescription&,
+			  const FileDescription&) override;
 
   private:
 

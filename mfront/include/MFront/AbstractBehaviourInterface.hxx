@@ -121,8 +121,8 @@ namespace mfront{
 					     const BehaviourDescription&) const = 0;
     /*!
      * \brief write output files
-     * \param[in] mb        : mechanical behaviour description
-     * \param[in] fd        : mfront file description
+     * \param[in] mb : mechanical behaviour description
+     * \param[in] fd : mfront file description
      */
     virtual void
     endTreatement(const BehaviourDescription&,

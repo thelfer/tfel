@@ -36,7 +36,6 @@
 namespace mfront{
 
   MaterialPropertyDSL::MaterialPropertyDSL(void)
-    : useTemplate(false)
   {
     // Call Back
     this->registerNewCallBack("@Link",
@@ -59,7 +58,6 @@ namespace mfront{
     this->registerNewCallBack("@Description",&MaterialPropertyDSL::treatDescription);
     this->registerNewCallBack("@Input",&MaterialPropertyDSL::treatInput);
     this->registerNewCallBack("@Output",&MaterialPropertyDSL::treatOutput);
-    this->registerNewCallBack("@Namespace",&MaterialPropertyDSL::treatNamespace);
     this->registerNewCallBack("@Function",&MaterialPropertyDSL::treatFunction);
     this->registerNewCallBack("@Import",&MaterialPropertyDSL::treatImport);
     this->registerNewCallBack("@Interface",
@@ -68,8 +66,6 @@ namespace mfront{
 			      &MaterialPropertyDSL::treatBounds);
     this->registerNewCallBack("@PhysicalBounds",
 			      &MaterialPropertyDSL::treatPhysicalBounds);
-    this->registerNewCallBack("@UseTemplate",
-			      &MaterialPropertyDSL::treatUseTemplate);
     this->reserveName("params",false);
   } // end of MaterialPropertyDSL::MaterialPropertyDSL()
 
@@ -171,47 +167,6 @@ namespace mfront{
     }
     this->library = l;
   } // end of MFrontLibraryLawParser::treatLibrary
-
-  void
-  MaterialPropertyDSL::treatUseTemplate(void)
-  {
-    using namespace std;
-    this->readSpecifiedToken("MaterialPropertyDSL::treatUseTemplate",";");
-    this->useTemplate = true;
-  } // end of MaterialPropertyDSL::treatUseTemplate
-
-  void
-  MaterialPropertyDSL::treatNamespace(void)
-  {
-    using namespace std;
-    string name;
-    bool bend;
-    if(!this->namespaces.empty()){
-      --(this->current);
-      this->throwRuntimeError("MaterialPropertyDSL::treatNamespace",
-			      "Namespace already specified.");
-    }
-    bend = false;
-    while(!bend){
-      this->checkNotEndOfFile("MaterialPropertyDSL::treatNamespace");
-      name = this->current->value;
-      if(!isValidIdentifier(name)){
-	this->throwRuntimeError("MaterialPropertyDSL::treatNamespace",
-				"Namespace '"+name+"' is not valid.");
-      }
-      this->namespaces.push_back(name);
-      ++(this->current);
-      this->checkNotEndOfFile("MaterialPropertyDSL::treatNamespace",
-			      "Expected ';' or '::'.");
-      if(this->current->value==";"){
-	bend = true;
-      } else if (this->current->value!="::"){
-	this->throwRuntimeError("MaterialPropertyDSL::treatNamespace",
-				"Unexpected token '"+this->current->value+"' (expected ';' or '::').");
-      }
-      ++(this->current);
-    }
-  } // end of MaterialPropertyDSL::treatNamespace(void)
 
   void
   MaterialPropertyDSL::treatConstant(void)
@@ -746,24 +701,7 @@ namespace mfront{
       if(getVerboseMode()>=VERBOSE_LEVEL2){
 	getLogStream() << "calling interface " << i.first << endl;
       }
-      i.second->writeOutputFiles(this->fileName,
-				 this->library,
-				 this->material,
-				 this->className,
-				 this->authorName,this->date,
-				 this->description,
-				 this->includes,
-				 this->output,this->inputs,
-				 this->materialLaws,
-				 this->glossaryNames,
-				 this->entryNames,
-				 MaterialPropertyDescription::staticVars,
-				 this->parameters,
-				 this->parametersValues,this->f,
-				 this->boundsDescriptions,
-				 this->physicalBoundsDescriptions,
-				 this->useTemplate,
-				 this->namespaces);
+      i.second->writeOutputFiles(*this,*this);
     }
   } // end of MaterialPropertyDSL::generateOutputFiles
 

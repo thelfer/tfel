@@ -16,6 +16,8 @@
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/FileDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CMaterialPropertyInterfaceBase.hxx"
 
 namespace mfront
@@ -37,29 +39,26 @@ namespace mfront
   {}
 
   void
-  CMaterialPropertyInterfaceBase::writeOutputFiles(const std::string& file,
-					    const std::string& ,
-					    const std::string& material,
-					    const std::string& className,
-					    const std::string& author,
-					    const std::string& date,
-					    const std::string& description,
-					    const std::string& includes,
-					    const std::string& output,
-					    const VariableDescriptionContainer& inputs,
-					    const std::vector<std::string>& materialLaws,
-					    const std::map<std::string,std::string>&,
-					    const std::map<std::string,std::string>&,
-					    const StaticVariableDescriptionContainer& staticVars,
-					    const std::vector<std::string>& params,
-					    const std::map<std::string,double>& paramValues,
-					    const LawFunction& function,
-					    const std::vector<VariableBoundsDescription>& bounds,
-					    const std::vector<VariableBoundsDescription>& physicalBounds,
-					    const bool,
-					    const std::vector<std::string>&)
+  CMaterialPropertyInterfaceBase::writeOutputFiles(const MaterialPropertyDescription& mpd,
+						   const FileDescription& fd)
   {
     using namespace std;
+    const auto& file=fd.fileName;
+    const auto& author=fd.authorName;
+    const auto& description=fd.description;
+    const auto& date=fd.date;
+    const auto& material=mpd.material;
+    const auto& className=mpd.className;
+    const auto& includes=mpd.includes;
+    const auto& output=mpd.output;
+    const auto& inputs=mpd.inputs;
+    const auto& materialLaws=mpd.materialLaws;
+    const auto& staticVars=mpd.staticVars;
+    const auto& params=mpd.parameters;
+    const auto& paramValues=mpd.parametersValues;
+    const auto& function=mpd.f;
+    const auto& bounds=mpd.boundsDescriptions;
+    const auto& physicalBounds=mpd.physicalBoundsDescriptions;
     string header = this->getHeaderFileName(material,className);
     this->srcFileName     = "src/"     + this->getSrcFileName(material,className)+".cxx";
     // the fortran interface does not need any header...

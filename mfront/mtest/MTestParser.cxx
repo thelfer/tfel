@@ -187,7 +187,6 @@ namespace mfront
     if(path!=nullptr){
       return handleSpace(path);
     }
-    
 #if defined _WIN32 || defined _WIN64
     string msg("tfel-config getTFELHOME: "
 	       "no TFELHOME registry key defined and no TFEHOME "
@@ -639,14 +638,12 @@ namespace mfront
   void
   MTestParser::handleAccelerationAlgorithmParameter(MTest& t,TokensContainer::const_iterator& p)
   {
-    
-    using namespace std;
     this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithmParameter",
 			    p,this->fileTokens.end());
     const auto& pn = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithmParameter",
 			    p,this->fileTokens.end());
-    const auto& v = this->readString(p,this->fileTokens.end());
+    const auto& v = p->value;
     this->readSpecifiedToken("MTestParser::handleAccelerationAlgorithmParameter",";",
 			     p,this->fileTokens.end());
     t.setAccelerationAlgorithmParameter(pn,v);

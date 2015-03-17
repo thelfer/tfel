@@ -24,8 +24,8 @@
 #include"MFront/MFrontConfig.hxx"
 
 #include"MFront/DSLBase.hxx"
-#include"MFront/AbstractBehaviourDSL.hxx"
 #include"MFront/SupportedTypes.hxx"
+#include"MFront/AbstractBehaviourDSL.hxx"
 #include"MFront/BehaviourDescription.hxx"
 
 namespace mfront{

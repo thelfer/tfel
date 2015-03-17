@@ -168,12 +168,6 @@ namespace mfront{
     treatLibrary(void);
 
     void
-    treatNamespace(void);
-
-    void
-    treatUseTemplate(void);
-
-    void
     treatOutput(void);
 
     void
@@ -233,8 +227,6 @@ namespace mfront{
      */
     CallBackContainer callBacks;
 
-    std::vector<std::string> namespaces;
-    bool useTemplate;
     /*!
      * a temporary object used to store the name of the variable on
      * which a method is called

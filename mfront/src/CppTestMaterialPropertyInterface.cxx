@@ -16,6 +16,8 @@
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/FileDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CppMaterialPropertyInterface.hxx"
 #include"MFront/CppTestMaterialPropertyInterface.hxx"
 
@@ -242,35 +244,16 @@ namespace mfront
   }
 
   void
-  CppTestMaterialPropertyInterface::writeOutputFiles(const std::string& file,
-					      const std::string& ,
-					      const std::string& material,
-					      const std::string& className,
-					      const std::string& author,
-					      const std::string& date,
-					      const std::string&,
-					      const std::string&,
-					      const std::string& output,
-					      const VariableDescriptionContainer& inputs,
-					      const std::vector<std::string>&,
-					      const std::map<std::string,std::string>&,
-					      const std::map<std::string,std::string>&,
-					      const StaticVariableDescriptionContainer& staticVars,
-					      const std::vector<std::string>& params,
-					      const std::map<std::string,double>& paramValues,
-					      const LawFunction& function,
-					      const std::vector<VariableBoundsDescription>& bounds,
-					      const std::vector<VariableBoundsDescription>& physicalBounds,
-					      const bool useTemplate,
-					      const std::vector<std::string>& namespaces)
+  CppTestMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
+						     const FileDescription& fd)
   {
     using namespace std;
-    string name;
-    if(material.empty()){
-      name = className;
-    } else {
-      name = material+"_"+className;
-    }
+    const auto& file=fd.fileName;
+    const auto& className=mpd.className;
+    const auto& material=mpd.material;
+    const auto& inputs=mpd.inputs;
+    const auto& bounds=mpd.boundsDescriptions;
+    const auto name = (material.empty()) ? className : material+"_"+className;
     this->srcFileName  = "src/" + name;
     this->srcFileName += "-CppTest.cxx";
     this->srcFile.open(this->srcFileName.c_str());
@@ -282,33 +265,6 @@ namespace mfront
       throw(runtime_error(msg));
     }
     this->srcFile.exceptions(ios::badbit|ios::failbit);
-    this->writeSrcFile(file,name,author,date,output,
-		       inputs,staticVars,params,paramValues,
-		       function,bounds,physicalBounds,useTemplate,namespaces);
-    this->srcFile.close();
-  } // end of CppTestMaterialPropertyInterface::writeOutputFiles
-
-  void
-  CppTestMaterialPropertyInterface::writeSrcFile(const std::string& file,
-					  const std::string& name,
-					  const std::string&,
-					  const std::string&,
-					  const std::string&,
-					  const VariableDescriptionContainer& inputs,
-					  const StaticVariableDescriptionContainer&,
-					  const std::vector<std::string>&,
-					  const std::map<std::string,double>&,
-					  const LawFunction&,
-					  const std::vector<VariableBoundsDescription>& bounds,
-					  const std::vector<VariableBoundsDescription>&,
-					  const bool useTemplate,
-					  const std::vector<std::string>& namespaces)
-  {
-    using namespace std;
-    vector<string>::const_iterator p;
-    vector<VariableBoundsDescription>::const_iterator p6;
-    VariableDescriptionContainer::const_iterator p3;
-    VariableDescriptionContainer::const_iterator p4;
     // on initialise avec bounds
     std::vector<VariableBoundsDescription> tests(bounds);
     // nombre de point de calcul
@@ -318,34 +274,11 @@ namespace mfront
 		 <<"#include <iostream>\n"
 		 <<"#include <sstream>\n"
 		 <<"#include <fstream>\n" << endl ;
-    if(namespaces.empty()){
-      this->srcFile << "#include\"" << name << "-cxx.hxx\"\n\n";
-    } else {
-      this->srcFile << "#include\"";
-      for(p=namespaces.begin();p!=namespaces.end();++p){
-	this->srcFile << *p << "/";
-      }
-      this->srcFile <<name;
-      this->srcFile << "-cxx.hxx";
-      this->srcFile << "\"\n\n";
-    }
-
-    this->srcFile<<"int\n main(const int argc, const char * const * const argv)\n{\n";
-    this->srcFile<<"using namespace std;\n";
-    if(namespaces.empty()){
-      this->srcFile << "using namespace mfront;\n";
-    } else {
-      this->srcFile << "using namespace " << *namespaces.begin() ;
-      for(p=namespaces.begin()+1;p!=namespaces.end();++p){
-	this->srcFile << "::" << *p ;
-      }
-      this->srcFile << ";\n";
-    }
-    if(useTemplate){
-      this->srcFile<<"  " << name <<"<double> my"<<name<<" ;"<<endl;
-    } else {
-      this->srcFile<<"  " << name <<" my"<<name<<" ;"<<endl;
-    }
+    this->srcFile << "#include\"" << name << "-cxx.hxx\"\n\n";
+    this->srcFile <<"int\n main(const int argc, const char * const * const argv)\n{\n";
+    this->srcFile <<"using namespace std;\n";
+    this->srcFile << "using namespace mfront;\n";
+    this->srcFile <<"  " << name <<" my"<<name<<" ;"<<endl;
     this->srcFile<<"  int nb="<<numberOfLines<<" ;"<<endl<<endl;
     // on boucle sur toutes les variables pour recuperer les bornes
     if(testBounds.empty()){
@@ -354,7 +287,7 @@ namespace mfront
 	throw runtime_error("MaterialPropertyDSL::writeTestFile:\nNo bounds defined to draw graph !") ;
     }else tests=testBounds;
     
-    for(p6=tests.begin();p6!=tests.end();++p6){
+    for(auto p6=tests.begin();p6!=tests.end();++p6){
       if(p6->boundsType==VariableBoundsDescription::Lower){
 	throw runtime_error("MaterialPropertyDSL::writeTestFile:\nNo upper bound defined to draw graph !") ;
       }
@@ -377,16 +310,15 @@ namespace mfront
 		 <<"  }" << endl ;
     // on boucle sur toutes les variables pour generer le fichier csv
     if(!inputs.empty()){
-      for(p3=inputs.begin();p3!=inputs.end();++p3){
+      for(auto p3=inputs.begin();p3!=inputs.end();++p3){
 	this->srcFile<< "  double "<<p3->name<<"_interval = ("<<p3->name<<"_max - "<<p3->name<<"_min)/nb;"<<endl;
       }
-
       this->srcFile<< "  for(int i=0; i<nb; i++) {" <<endl ;
-      for(p3=inputs.begin();p3!=inputs.end();++p3){
+      for(auto p3=inputs.begin();p3!=inputs.end();++p3){
 	this->srcFile<< "    file<<"<<p3->name<<"_min+i*"<<p3->name<<"_interval<<\" \""<<endl;
 	// all min
 	this->srcFile<< "        <<my"<<name<<".defaultCompute(";
-	for(p4=inputs.begin();p4!=inputs.end();){
+	for(auto p4=inputs.begin();p4!=inputs.end();){
 	  if (p3 != p4)
 	    this->srcFile<< p4->name<<"_min" ;
 	  if (p3 == p4)
@@ -397,7 +329,7 @@ namespace mfront
 	this->srcFile<< ") << \" \""<<endl;
 	// all moy
 	this->srcFile<< "        <<my"<<name<<".defaultCompute(";
-	for(p4=inputs.begin();p4!=inputs.end();){
+	for(auto p4=inputs.begin();p4!=inputs.end();){
 	  if (p3 != p4)
 	    this->srcFile<< p4->name<<"_moy" ;
 	  else
@@ -408,7 +340,7 @@ namespace mfront
 	this->srcFile<< ") << \" \""<<endl;
 	// all max
 	this->srcFile<< "        <<my"<<name<<".defaultCompute(";
-	for(p4=inputs.begin();p4!=inputs.end();){
+	for(auto p4=inputs.begin();p4!=inputs.end();){
 	  if (p3 != p4)
 	    this->srcFile<< p4->name<<"_max" ;
 	  else
@@ -424,6 +356,7 @@ namespace mfront
 
     this->srcFile<<"  return 0;" << endl
 		 << "}" << endl ;
+    this->srcFile.close();
   } // end of CppTestMaterialPropertyInterface::writeSrcFile
 
 } // end of namespace mfront

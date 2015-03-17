@@ -27,6 +27,8 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLock.hxx"
+#include"MFront/FileDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CMaterialPropertyInterface.hxx"
 #include"MFront/PythonMaterialPropertyInterface.hxx"
 
@@ -158,43 +160,30 @@ namespace mfront
   }
 
   void
-  PythonMaterialPropertyInterface::writeOutputFiles(const std::string& file,
-						    const std::string& lib,
-						    const std::string& material,
-						    const std::string& law,
-						    const std::string& author,
-						    const std::string& date,
-						    const std::string& description,
-						    const std::string& includes,
-						    const std::string& output,
-						    const VariableDescriptionContainer& inputs,
-						    const std::vector<std::string>& materialLaws,
-						    const std::map<std::string,std::string>&,
-						    const std::map<std::string,std::string>&,
-						    const StaticVariableDescriptionContainer& staticVars,
-						    const std::vector<std::string>& params,
-						    const std::map<std::string,double>& paramValues,
-						    const LawFunction& function,
-						    const std::vector<VariableBoundsDescription>& bounds,
-						    const std::vector<VariableBoundsDescription>& physicalBounds,
-						    const bool,
-						    const std::vector<std::string>&)
+  PythonMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
+						    const FileDescription& fd)
   {
     using namespace std;
     using namespace tfel::system;
-    vector<string>::const_iterator p;
-    VariableDescriptionContainer::const_iterator p3;
-    map<string,string>::const_iterator p4;
-    vector<VariableBoundsDescription>::const_iterator p5;
-    map<string,double>::const_iterator p6;
-    set<string>::const_iterator p7;
+    const auto& file=fd.fileName;
+    const auto& author=fd.authorName;
+    const auto& description=fd.description;
+    const auto& date=fd.date;
+    const auto& material=mpd.material;
+    const auto& library=mpd.library;
+    const auto& law=mpd.law;
+    const auto& includes=mpd.includes;
+    const auto& output=mpd.output;
+    const auto& inputs=mpd.inputs;
+    const auto& materialLaws=mpd.materialLaws;
+    const auto& staticVars=mpd.staticVars;
+    const auto& params=mpd.parameters;
+    const auto& paramValues=mpd.parametersValues;
+    const auto& function=mpd.f;
+    const auto& bounds=mpd.boundsDescriptions;
+    const auto& physicalBounds=mpd.physicalBoundsDescriptions;
     string dir;
-    string name;
-    if(!material.empty()){
-      name = material+"_"+law;
-    } else {
-      name = law;
-    }
+    const auto name = (!material.empty()) ? material+"_"+law : law;
     this->headerFileName  = "include/" + name;
     this->headerFileName += "-python.hxx";
     this->headerFile.open(this->headerFileName.c_str());
@@ -300,8 +289,8 @@ namespace mfront
 			 this->srcFile,staticVars,file);
     // parameters
     if(!params.empty()){
-      for(p=params.begin();p!=params.end();++p){
-	p6 = paramValues.find(*p);
+      for(auto p=params.begin();p!=params.end();++p){
+	auto p6 = paramValues.find(*p);
 	if(p6==paramValues.end()){
 	  string msg("PythonMaterialPropertyInterface::writeOutputFile : ");
 	  msg += "internal error (can't find value of parameter " + *p + ")";
@@ -312,7 +301,7 @@ namespace mfront
     }
     if(!inputs.empty()){
       unsigned short i;
-      for(p3=inputs.begin();p3!=inputs.end();++p3){
+      for(auto p3=inputs.begin();p3!=inputs.end();++p3){
 	this->srcFile << "double " << p3->name << ";\n";
       }
       if(!bounds.empty()){
@@ -320,13 +309,12 @@ namespace mfront
 	this->srcFile << "const char * policy;\n";
 	this->srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
       }
-
       this->srcFile << "if(!PyArg_ParseTuple(py_args_,\"";
       for(i=0;i!=inputs.size();++i){
 	this->srcFile << "d";
       }
       this->srcFile << "\",";
-      for(p3=inputs.begin();p3!=inputs.end();){
+      for(auto p3=inputs.begin();p3!=inputs.end();){
 	this->srcFile << "&" << p3->name;
 	if(++p3!=inputs.end()){
 	  this->srcFile << ",";
@@ -338,8 +326,7 @@ namespace mfront
 	this->srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
 	if(!physicalBounds.empty()){
 	  this->srcFile << "// treating physical bounds\n";
-	  for(p5=physicalBounds.begin();
-	      p5!=physicalBounds.end();++p5){
+	  for(auto p5=physicalBounds.begin();p5!=physicalBounds.end();++p5){
 	    if(p5->boundsType==VariableBoundsDescription::Lower){
 	      this->srcFile << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
@@ -378,8 +365,7 @@ namespace mfront
 	}
 	if(!bounds.empty()){
 	  this->srcFile << "// treating standard bounds\n";
-	  for(p5=bounds.begin();
-	      p5!=bounds.end();++p5){
+	  for(auto p5=bounds.begin();p5!=bounds.end();++p5){
 	    if((p5->boundsType==VariableBoundsDescription::Lower)||
 	       (p5->boundsType==VariableBoundsDescription::LowerAndUpper)){
 	      this->srcFile << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
@@ -441,14 +427,14 @@ namespace mfront
     auto& lock = MFrontLock::getMFrontLock();
     lock.lock();
     string fname;
-    if(lib.empty()){
+    if(library.empty()){
       if(!material.empty()){
 	fname = "src/python"+material+"wrapper.lst";
       } else {
 	fname = "src/pythonmaterialwrapper.lst";
       }
     } else {
-      fname = "src/python"+lib+"wrapper.lst";
+      fname = "src/python"+library+"wrapper.lst";
     }
     set<string> interfaces;
     struct stat buffer; // for call to stat
@@ -471,14 +457,14 @@ namespace mfront
     }
     interfaces.insert(name);
     ofstream wrapper;
-    if(lib.empty()){
+    if(library.empty()){
       if(!material.empty()){
 	wrapper.open(("src/"+material+"lawwrapper.cxx").c_str());
       } else {
 	wrapper.open("src/materiallawwrapper.cxx");
       }
     } else {
-      wrapper.open(("src/"+lib+"wrapper.cxx").c_str());
+      wrapper.open(("src/"+library+"wrapper.cxx").c_str());
     }
     wrapper.exceptions(ios::badbit|ios::failbit);
     if(!wrapper){
@@ -487,14 +473,14 @@ namespace mfront
       throw(runtime_error(msg));
     }
     wrapper << "/*!" << endl;
-    if(lib.empty()){
+    if(library.empty()){
       if(!material.empty()){
 	wrapper << "* \\file   src/"+material+"lawwrapper.cxx" << endl;
       } else {
 	wrapper << "* \\file   src/materiallawwrapper.cxx" << endl;
       }
     } else {
-      wrapper << "* \\file   src/" << lib << "wrapper.cxx" << endl;
+      wrapper << "* \\file   src/" << library << "wrapper.cxx" << endl;
     }
     wrapper << "*         File generated by ";
     wrapper << MFrontHeader::getVersionName() << " ";
@@ -510,7 +496,7 @@ namespace mfront
       wrapper << description << endl;
     }
     wrapper << " */\n\n";
-    for(p7=interfaces.begin();p7!=interfaces.end();++p7){
+    for(auto p7=interfaces.begin();p7!=interfaces.end();++p7){
       wrapper << "#include\"" << *p7 << "-python.hxx\"\n";
     }
     writeExportDirectives(wrapper);
@@ -520,18 +506,18 @@ namespace mfront
     } else {
       wrapper << "static PyMethodDef MaterialLawMethods[] = {\n";
     }
-    for(p7=interfaces.begin();p7!=interfaces.end();++p7){
+    for(auto p7=interfaces.begin();p7!=interfaces.end();++p7){
       wrapper << "{\"" << *p7 << "\"," << *p7 << "_wrapper,METH_VARARGS,\n"
 	      << "\"compute the " << *p7 <<  " law.\"},\n";
     }
     wrapper << "{NULL, NULL, 0, NULL} /* Sentinel */\n};\n\n";
     wrapper << "PyMODINIT_FUNC MFRONT_SHAREDOBJ\ninit"
-	    << makeLowerCase(getMaterialLawLibraryNameBase(lib,material))
+	    << makeLowerCase(getMaterialLawLibraryNameBase(library,material))
 	    << "(void)\n";
     wrapper << "{\n";
     if(!material.empty()){
       wrapper << "(void) Py_InitModule(\""
-	      << makeLowerCase(getMaterialLawLibraryNameBase(lib,material))
+	      << makeLowerCase(getMaterialLawLibraryNameBase(library,material))
 	      << "\"," << material << "LawMethods);\n";
     } else {
       wrapper << "(void) Py_InitModule(\"materiallaw\",MaterialLawMethods);\n";

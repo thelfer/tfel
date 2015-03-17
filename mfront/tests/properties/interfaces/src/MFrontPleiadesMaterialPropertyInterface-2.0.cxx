@@ -18,8 +18,10 @@
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
-#include"MFront/MFrontPleiadesMaterialPropertyInterface-2.0.hxx"
+#include"MFront/FileDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/MaterialPropertyInterfaceProxy.hxx"
+#include"MFront/MFrontPleiadesMaterialPropertyInterface-2.0.hxx"
 
 namespace mfront {
 
@@ -31,9 +33,6 @@ namespace mfront {
   MFrontPleiadesMaterialPropertyInterface::MFrontPleiadesMaterialPropertyInterface() :
     verboseMode(false), debugMode(false), warningMode(false) {
   }
-
-  void MFrontPleiadesMaterialPropertyInterface::reset(void) {
-  } // end of MFrontPleiadesMaterialPropertyInterface::reset(void)
 
   void MFrontPleiadesMaterialPropertyInterface::setVerboseMode(void) {
     this->verboseMode = true;
@@ -133,39 +132,33 @@ namespace mfront {
     return map<string,pair<vector<string>,vector<string> > >();
   } // end of MFrontPleiadesMaterialPropertyInterface::getSpecificTargets
 
-  void MFrontPleiadesMaterialPropertyInterface::writeOutputFiles(const std::string& file,
-								 const std::string& ,
-								 const std::string& material,
-								 const std::string& className,
-								 const std::string& author,
-								 const std::string& date,
-								 const std::string& description,
-								 const std::string& includes,
-								 const std::string& output,
-								 const VarContainer& inputs,
-								 const std::vector<std::string>& materialLaws,
-								 const std::map<std::string,std::string>& glossaryNames,
-								 const std::map<std::string,std::string>& entryNames,
-								 const StaticVarContainer& staticVars,
-								 const std::vector<std::string>& params,
-								 const std::map<std::string,double>& paramValues,
-								 const LawFunction& function,
-								 const std::vector<VariableBoundsDescription>& bounds,
-								 const std::vector<VariableBoundsDescription>& physicalBounds,
-								 const bool,
-								 const std::vector<std::string>&) {
+  void MFrontPleiadesMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
+								 const FileDescription& fd){
     using namespace std;
     using namespace tfel::system;
+    const auto& file=fd.fileName;
+    const auto& author=fd.authorName;
+    const auto& description=fd.description;
+    const auto& date=fd.date;
+    const auto& material=mpd.material;
+    const auto& className=mpd.className;
+    const auto& includes=mpd.includes;
+    const auto& output=mpd.output;
+    const auto& inputs=mpd.inputs;
+    const auto& materialLaws=mpd.materialLaws;
+    const auto& glossaryNames=mpd.glossaryNames;
+    const auto& entryNames=mpd.entryNames;
+    const auto& staticVars=mpd.staticVars;
+    const auto& params=mpd.parameters;
+    const auto& paramValues=mpd.parametersValues;
+    const auto& function=mpd.f;
+    const auto& bounds=mpd.boundsDescriptions;
+    const auto& physicalBounds=mpd.physicalBoundsDescriptions;
     string dir;
     systemCall::mkdir("include/Pleiades");
     systemCall::mkdir("include/Pleiades/Metier");
     systemCall::mkdir("include/Pleiades/Metier/MaterialProperty");
-    string name;
-    if(material.empty()){
-      name = className;
-    } else {
-      name = material+"_"+className;
-    }
+    const auto name = (material.empty()) ? className : material+"_"+className;
     this->headerFileName  = "include/Pleiades/Metier/MaterialProperty/"+name;
     this->headerFileName += "-pleiades.hh";
     this->srcFileName  = "src/" + name;
