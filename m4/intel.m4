@@ -23,7 +23,7 @@ AC_DEFUN([AC_CHECK_INTEL],
 		fi
 		dnl icpc optimization options
 		CXXFLAGS="-O2 -ipo $CXXFLAGS"
-		OPTIMISATION_FLAGS="-O2 -ipo $OPTIMISATION_FLAGS"
+		OPTIMISATION_FLAGS0="-O2 -ipo $OPTIMISATION_FLAGS0"
 		if test "x$enable_portable_build" != "xyes";
 		then	       	    
 		  CXXFLAGS="-xHost $CXXFLAGS"

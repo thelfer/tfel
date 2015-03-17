@@ -323,18 +323,23 @@ namespace mfront{
   MFront::treatOMake(void)
   {
     using namespace std;
-    this->oflags  = true;
     this->genMake = true;
     string level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
 	this->oflags2   = true;
+      } else if(level=="level0"){
+	this->oflags0   = true;
+      } else if(level=="level1"){
+	this->oflags    = true;
       } else if(level!="level1"){
 	string msg("MFront::treatOBuild : ");
 	msg += "unsupported value '"+level+
 	  "' for the --obuild option";
 	throw(runtime_error(msg));
       }
+    } else {
+      this->oflags  = true;
     }
   } // end of MFront::treatOMake
 
@@ -342,19 +347,24 @@ namespace mfront{
   MFront::treatOBuild(void)
   {
     using namespace std;
-    this->oflags    = true;
     this->genMake   = true;
     this->buildLibs = true;
     string level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
 	this->oflags2   = true;
+      } else if(level=="level0"){
+	this->oflags0   = true;
+      } else if(level=="level1"){
+	this->oflags    = true;
       } else if(level!="level1"){
 	string msg("MFront::treatOBuild : ");
 	msg += "unsupported value '"+level+
 	  "' for the --obuild option";
 	throw(runtime_error(msg));
       }
+    } else {
+      this->oflags    = true;
     }
   } // end of MFront::treatOBuild
 
@@ -589,6 +599,7 @@ namespace mfront{
 #endif /* __CYGWIN__ */
       warningMode(false),
       debugMode(false),
+      oflags0(false),
       oflags(false),
       oflags2(false),
       genMake(false),
@@ -1713,11 +1724,13 @@ namespace mfront{
 #endif /* __CYGWIN__ */
 	if(cxxflags!=0){
 	  this->makeFile << cxxflags << " ";
-	} else if(this->oflags){
+	} else if(this->oflags0||this->oflags||this->oflags2){
 	  if(this->oflags2){
 	    this->makeFile << "`tfel-config --compiler-flags --oflags --oflags2` ";
-	  } else {
+	  } else if(this->oflags){
 	    this->makeFile << "`tfel-config --compiler-flags --oflags` ";
+	  } else {
+	    this->makeFile << "`tfel-config --compiler-flags --oflags0` ";
 	  }
 	} else {
 	  this->makeFile << "-O2 `tfel-config --compiler-flags`";
@@ -1736,11 +1749,13 @@ namespace mfront{
 #endif /* __CYGWIN__ */
 	if(cflags!=0){
 	  this->makeFile << cflags << " ";
-	} else if(this->oflags){
+	} else if(this->oflags0||this->oflags||this->oflags2){
 	  if(this->oflags2){
 	    this->makeFile << "`tfel-config --oflags --oflags2` ";
+	  } else if(this->oflags){
+	    this->makeFile << "`tfel-config --compiler-flags --oflags` ";
 	  } else {
-	    this->makeFile << "`tfel-config --oflags` ";
+	    this->makeFile << "`tfel-config --compiler-flags --oflags0` ";
 	  }
 	} else {
 	  this->makeFile << "-O2 ";

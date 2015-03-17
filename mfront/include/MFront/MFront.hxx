@@ -182,6 +182,8 @@ namespace mfront{
 
     bool debugMode;
 
+    bool oflags0;
+
     bool oflags;
 
     bool oflags2;

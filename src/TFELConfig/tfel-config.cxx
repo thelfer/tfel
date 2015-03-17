@@ -62,6 +62,9 @@ static void
 treatCompilerFlags(void);
 
 static void
+treatOFlags0(void);
+
+static void
 treatOFlags(void);
 
 static void
@@ -130,6 +133,7 @@ treatLicences(void);
 
 static CallBacksContainer callBacksContainer;
 static bool compilerflags   = false;
+static bool oflags0         = false;
 static bool oflags          = false;
 static bool oflags2         = false;
 static bool warning         = false;
@@ -267,12 +271,19 @@ static void
 treatCompilerFlags(void)
 {
   compilerflags = true;
+} // end of treatCompilerFlags
+
+static void
+treatOFlags0(void)
+{
+  oflags0 = true;
 } // end of treatOFlags
 
 static void
 treatOFlags(void)
 {
-  oflags = true;
+  oflags0 = true;
+  oflags  = true;
 } // end of treatOFlags
 
 static void
@@ -505,8 +516,9 @@ main(const int argc,
 #endif /* __CYGWIN__ */
 
   registerCallBack("--compiler-flags",&treatCompilerFlags,"return tfel recommended compiler flags.");
-  registerCallBack("--oflags",&treatOFlags,"return tfel recommended optimisation flags.");
-  registerCallBack("--oflags2",&treatOFlags2,"return some aggressive optimisation flags, possibly at the expense of precision.");
+  registerCallBack("--oflags0",&treatOFlags0,"return tfel recommended optimisation flags without architecture specific flags.");
+  registerCallBack("--oflags",&treatOFlags,"return tfel recommended optimisation flags with architecture specific flags.");
+  registerCallBack("--oflags2",&treatOFlags2,"return some aggressive optimisation flags, possibly at the expense of numerical precision. This shall be added to `--oflags` results.");
   registerCallBack("--warning",&treatWarning,"return tfel recommended warnings.");
   registerCallBack("--includes",&treatIncludes,"return tfel include path.");
   registerCallBack("--cppflags",&treatCppFlags,"return preprocessor flags.");
@@ -651,6 +663,10 @@ main(const int argc,
     cout << COMPILER_FLAGS << " ";
   }
 
+  if(oflags0){
+    cout << OPTIMISATION_FLAGS0 << " ";
+  }
+
   if(oflags){
     cout << OPTIMISATION_FLAGS << " ";
   }
@@ -664,11 +680,11 @@ main(const int argc,
   }
 
 #ifdef HAVE_CASTEM
-  if(cppflags||incs||libs||oflags||warning||castem){
+  if(cppflags||incs||libs||oflags0||oflags||oflags2||warning||castem){
     cout << endl;
   }
 #else
-  if(cppflags||incs||libs||oflags||warning){
+  if(cppflags||incs||libs||oflags0||oflags||oflags2||warning){
     cout << endl;
   }
 #endif /* HAVE_CASTEM */
