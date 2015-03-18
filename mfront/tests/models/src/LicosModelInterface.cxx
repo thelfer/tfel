@@ -598,7 +598,7 @@ namespace mfront{
     this->srcFile << "#include<cmath>\n\n";
     this->srcFile << "#include\"Pleiades/Global.hxx\"\n";
     this->srcFile << "#include\"Pleiades/OutOfBoundsPolicy.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Parser/Mdata.hxx\"\n";
+    this->srcFile << "#include\"Pleiades/Parser/Data.hxx\"\n";
     this->srcFile << "#include\"Pleiades/Parser/DataManager.hxx\"\n";
     this->srcFile << "#include\"Pleiades/Glossary/Glossary.hxx\"\n";
     this->srcFile << "#include\"Pleiades/Time/SClock.hxx\"\n";
