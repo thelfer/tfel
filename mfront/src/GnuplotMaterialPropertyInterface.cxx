@@ -17,6 +17,7 @@
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/GnuplotMaterialPropertyInterface.hxx"
 
@@ -247,85 +248,19 @@ namespace mfront
     return make_pair(true,++current);
   } // end of registerGraph
 
-  std::map<std::string,std::vector<std::string> >
-  GnuplotMaterialPropertyInterface::getGlobalDependencies(const std::string&,
-						   const std::string&,
-						   const std::string&)
+  void
+  GnuplotMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
+				       const MaterialPropertyDescription& mpd)
   {
-    using namespace std;
-    map<string,vector<string> > libs;
-    return libs;
-  } // end of GnuplotMaterialPropertyInterface::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  GnuplotMaterialPropertyInterface::getGlobalIncludes(const std::string&,
-					       const std::string&,
-					       const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of GnuplotMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  GnuplotMaterialPropertyInterface::getGeneratedSources(const std::string&,
-						 const std::string&,
-						 const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of GnuplotMaterialPropertyInterface::getGeneratedSources
-
-  std::vector<std::string>
-  GnuplotMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-						  const std::string&,
-						  const std::string&)
-  {
-    using namespace std;
-    vector<string> incs;
-    return incs;
-  } // end of GnuplotMaterialPropertyInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  GnuplotMaterialPropertyInterface::getLibrariesDependencies(const std::string&,
-						      const std::string&,
-						      const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of GnuplotMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  GnuplotMaterialPropertyInterface::getSpecificTargets(const std::string&,
-						const std::string& material,
-						const std::string& className,
-						const std::vector<std::string>&)
-  {
-    using namespace std;
-    map<string,pair<vector<string>,vector<string> > > res;
-    string name;
-    if(material.empty()){
-      name = className;
-    } else {
-      name = material+"_"+className;
-    }
-    string target = name+"GnuplotGraph";
-    res[target].first.push_back(name+"CppTest");
-    res[target].second.push_back("@./"+name+"CppTest");
-    res[target].second.push_back(string("@")+string(GNUPLOT_PATH)+" "+name+".gp");
-    res["graph"].first.push_back(target);
-    res["check"].first.push_back(target);
-    return res;
-  } // end of GnuplotMaterialPropertyInterface::getSpecificTargets
-  
-  std::map<std::string,std::vector<std::string> >
-  GnuplotMaterialPropertyInterface::getGeneratedEntryPoints(const std::string&,
-							    const std::string&,
-							    const std::string&)
-  {
-    return {};
-  } // end of GnuplotMaterialPropertyInterface::getGeneratedEntryPoints
+    using std::string;
+    const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
+    const auto target = name+"GnuplotGraph";
+    d.specific_targets[target].first.push_back(name+"CppTest");
+    d.specific_targets[target].second.push_back("@./"+name+"CppTest");
+    d.specific_targets[target].second.push_back(string("@")+string(GNUPLOT_PATH)+" "+name+".gp");
+    d.specific_targets["graph"].first.push_back(target);
+    d.specific_targets["check"].first.push_back(target);
+  }
 
   void
   GnuplotMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,

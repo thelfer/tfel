@@ -24,6 +24,7 @@
 
 #include"MFront/DSLBase.hxx"
 #include"MFront/AbstractDSL.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/ModelData.hxx"
 
 namespace mfront{
@@ -35,6 +36,10 @@ namespace mfront{
     : public DSLBase,
       protected ModelData
   {
+    static bool
+    is(const ModelData&,
+       const VariableDescriptionContainer&,
+       const std::string&);
     //! \return the target of the dsl
     virtual DSLTarget getTargetType(void) const final;
     /*!
@@ -44,45 +49,20 @@ namespace mfront{
     virtual void generateOutputFiles(void) override;
 
     virtual void
-    setInterfaces(const std::set<std::string>&);
+    setInterfaces(const std::set<std::string>&) override;
 
     /*!
      * set the analysers to be used
      */
     virtual void
-    setAnalysers(const std::set<std::string>&);
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(void);
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(void);
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(void);
-
-    virtual std::vector<std::string>
-    getGeneratedIncludes(void);
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(void);
-
-    virtual std::map<std::string,
-		     std::pair<std::vector<std::string>,
-			       std::vector<std::string> > >
-    getSpecificTargets(void);
+    setAnalysers(const std::set<std::string>&) override;
     /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
+     * \return the target description
+     * \note This method shall be called *after* the analyseFile method
      */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(void) override;
-
-    static bool
-    is(const ModelData&,
-       const VariableDescriptionContainer&,
-       const std::string&);
-
+    virtual const TargetsDescription&
+    getTargetsDescription(void) const override;
+    //! destructor
     virtual ~ModelDSLCommon();
 
   protected:
@@ -197,12 +177,10 @@ namespace mfront{
 
     std::map<std::string,
 	     std::shared_ptr<AbstractModelInterface>> interfaces;
-    
-    std::map<std::string,
-	     std::vector<std::string> > sourcesLibrairiesDependencies;
 
     std::string currentVar;
 
+    TargetsDescription td;
   }; // end of class ModelDSLCommon
 
 } // end of namespace mfront  

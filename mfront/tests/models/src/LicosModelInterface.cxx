@@ -27,6 +27,9 @@
 #include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 #include"MFront/ModelDSLCommon.hxx"
+#include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
+#include"MFront/ModelData.hxx"
 #include"MFront/ModelInterfaceProxy.hxx"
 #include"MFront/LicosModelInterface.hxx"
 
@@ -1722,56 +1725,17 @@ namespace mfront{
     return "@application@";
   } // end of MFrontModelInterface::getName(void)
 
-  std::map<std::string,std::vector<std::string> >
-  MFrontModelInterface::getGeneratedSources(const ModelData& mdata)
+  void
+  MFrontModelInterface::getTargetsDescription(TargetsDescription& td,
+					      const ModelData& md)
   {
-    using namespace std;
-    map<string,vector<string> > src;
-    const auto& lib = getLibraryName(mdata);
-    src[lib].push_back(mdata.className+"-@application@.cxx");
-    return src;
-  } // end of MFrontModelInterface::getGeneratedSources
-  
-  std::vector<std::string>
-  MFrontModelInterface::getGeneratedIncludes(const ModelData& mdata)
-  {
-    using namespace std;
-    vector<string> inc;
-    inc.push_back("Pleiades/Model/"+mdata.className+"-@application@.hxx");
-    return inc;
-  } // end of MFrontModelInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontModelInterface::getGlobalIncludes(const ModelData& mdata)
-  {
-    using namespace std;
-    map<string,vector<string> > incs;
-    const auto& lib = getLibraryName(mdata);
-    incs[lib].push_back("`@application@-config --includes`\n");
-    return incs;
-  } // end of MFrontModelInterface::getGlobalIncludes
-  
-  std::map<std::string,std::vector<std::string> >
-  MFrontModelInterface::getGlobalDependencies(const ModelData& mdata)
-  {
-    using namespace std;
-    map<string,vector<string> > libs;
-    const auto& lib = getLibraryName(mdata);
-    libs[lib].push_back("`@application@-config --libs` -lm");
-    return libs;
-  } // end of MFrontModelInterface::getGlobalDependencies
-    
-  std::map<std::string,std::vector<std::string> >
-  MFrontModelInterface::getLibrariesDependencies(const ModelData&)
-  {
-    return {};
-  } // end of MFrontModelInterface::getLibrariesDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontModelInterface::getGeneratedEntryPoints(const ModelData& mdata) const{
-    const auto& lib = getLibraryName(mdata);
-    return {{lib,{mdata.className}}};
-  } // end of MFrontModelInterface::getGeneratedEntryPoints
+    const auto lib = getLibraryName(md);
+    td.sources[lib].push_back(md.className+"-@application@.cxx");
+    td.headers.push_back("Pleiades/Model/"+md.className+"-@application@.hxx");
+    td.cppflags[lib].push_back("`@application@-config --includes`\n");
+    td.dependencies[lib].push_back("`@application@-config --libs` -lm");
+    td.epts[lib].push_back(md.className);
+  } // end of MFrontModelInterface::getTargetsDescription
 
   MFrontModelInterface::~MFrontModelInterface()
   {} // end of MFrontModelInterface::~MFrontModelInterface

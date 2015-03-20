@@ -84,32 +84,23 @@ namespace mfront{
      */
     UMATInterface();
     /*!
-     * \param[in] mb : mechanical behaviour description
+     * \param[in] k  : keyword treated
+     * \param[in] p  : iterator to the current token
+     * \param[in] pe : iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
      */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const BehaviourDescription&) const;
+    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    treatKeyword(const std::string&,
+		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
+		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
     /*!
-     * \param[in] mb : mechanical behaviour description
+     * \param[out] d  : target description
+     * \param[out] bd : behaviour description
      */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const BehaviourDescription&) const;
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::vector<std::string>
-    getGeneratedIncludes(const BehaviourDescription&) const;
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const BehaviourDescription&) const;
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const BehaviourDescription&) const override;
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const BehaviourDescription&) override;
     /*!
      * write interface specific includes
      * \param[in] out : output file
@@ -119,10 +110,6 @@ namespace mfront{
     writeInterfaceSpecificIncludes(std::ofstream&,
 				   const BehaviourDescription&) const;
     
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-    treatKeyword(const std::string&,
-		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description

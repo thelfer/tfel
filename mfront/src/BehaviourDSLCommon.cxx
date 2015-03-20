@@ -33,7 +33,6 @@
 #include"MFront/PedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/SearchFile.hxx"
-#include"MFront/MaterialPropertyDSL.hxx"
 #include"MFront/AbstractBehaviourInterface.hxx"
 #include"MFront/MFrontMaterialPropertyInterface.hxx"
 #include"MFront/PerformanceProfiling.hxx"
@@ -43,6 +42,7 @@
 #include"MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx"
 #include"MFront/BehaviourBrick.hxx"
 #include"MFront/BehaviourBrickFactory.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/BehaviourDSLCommon.hxx"
 
 namespace mfront{
@@ -266,7 +266,7 @@ namespace mfront{
 
   void
   BehaviourDSLCommon::analyseMaterialProperty(const Hypothesis h,
-						 const MaterialPropertyDescription& a)
+					      const MaterialPropertyDescription& a)
   {
     using namespace std;
     for(VariableDescriptionContainer::const_iterator p = a.inputs.begin();p!=a.inputs.end();++p){
@@ -311,6 +311,49 @@ namespace mfront{
       }
     }
   } // end of BehaviourDSLCommon::analyseMaterialProperty
+
+  void
+  BehaviourDSLCommon::analyseFile(const std::string& fileName_,
+				  const std::vector<std::string>& ecmds)
+  {
+    this->importFile(fileName_,ecmds);
+    // Adding some stuff
+    this->endsInputFileProcessing();
+    // setting the name of the output files
+    this->behaviourFileName = "TFEL/Material/";
+    this->behaviourFileName += this->mb.getClassName();
+    this->behaviourFileName += ".hxx";
+    this->behaviourDataFileName  = "TFEL/Material/";
+    this->behaviourDataFileName += this->mb.getClassName();
+    this->behaviourDataFileName += "BehaviourData.hxx";
+    this->integrationDataFileName  = "TFEL/Material/";
+    this->integrationDataFileName += this->mb.getClassName();
+    this->integrationDataFileName += "IntegrationData.hxx";
+    this->srcFileName  = this->mb.getClassName();
+    this->srcFileName += ".cxx";
+    // targets description
+    for(const auto & i : this->interfaces){
+      i.second->getTargetsDescription(this->td,this->mb);
+    }
+    for(const auto& s : this->td.sources){
+      for(const auto& ld : this->librariesDependencies){
+	if("-l"+s.first!=ld){
+	  this->td.dependencies[s.first].push_back(ld);
+	}
+      }
+      this->td.sources[s.first].push_back(this->srcFileName);
+    }
+    for(const auto& ld : this->td.dependencies){
+      for(const auto& deps : this->librariesDependencies){
+	if("-l"+ld.first!=deps){
+	  this->td.dependencies[ld.first].push_back(deps);
+	}
+      }
+    }
+    this->td.headers.push_back(this->behaviourFileName);
+    this->td.headers.push_back(this->behaviourDataFileName);
+    this->td.headers.push_back(this->integrationDataFileName);
+  }
 
   void
   BehaviourDSLCommon::endsInputFileProcessing()
@@ -5111,108 +5154,11 @@ namespace mfront{
     this->writeNamespaceEnd(this->srcFile);
   } // end of BehaviourDSLCommon::writeSrcFile(void)
 
-  std::map<std::string,std::vector<std::string> >
-  BehaviourDSLCommon::getGlobalIncludes(void)
+  const TargetsDescription&
+  BehaviourDSLCommon::getTargetsDescription(void) const
   {
-    using namespace std;
-    map<string,vector<string> > incs;
-    for(const auto & i : this->interfaces){
-      const auto& iincs = i.second->getGlobalIncludes(this->mb);
-      for(const auto& v : iincs){
-	copy(v.second.begin(),v.second.end(),back_inserter(incs[v.first]));
-      }
-    }
-    return incs;
+    return this->td;
   } // end of BehaviourDSLCommon::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  BehaviourDSLCommon::getGlobalDependencies(void)
-  {
-    using namespace std;
-    map<string,vector<string> > deps;
-    for(const auto& i : this->interfaces){
-      const auto& ideps = i.second->getGlobalDependencies(this->mb);
-      for(const auto& v : ideps){
-	copy(v.second.begin(),v.second.end(),back_inserter(deps[v.first]));
-      }
-    }
-    return deps;
-  } // end of BehaviourDSLCommon::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  BehaviourDSLCommon::getGeneratedSources(void)
-  {
-    using namespace std;
-    auto osources = map<string,vector<string> >{};
-    for(const auto& i : this->interfaces){
-      const auto& isources = i.second->getGeneratedSources(this->mb);
-      for(auto p=isources.begin();p!=isources.end();++p){
-	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
-	osources[p->first].push_back(this->srcFileName);
-      }
-    }
-    for(auto p=osources.begin();p!=osources.end();++p){
-      for(auto p2=this->librariesDependencies.begin();
-	  p2!=this->librariesDependencies.end();++p2){
-	if("-l"+p->first!=*p2){
-	  this->sourcesLibrairiesDependencies[p->first].push_back(*p2);
-	}
-      }
-    }
-    return osources;
-  } // end of BehaviourDSLCommon::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  BehaviourDSLCommon::getGeneratedEntryPoints(void)
-  {
-    using namespace std;
-    auto r = map<string,vector<string>>{};
-    for(const auto& i : this->interfaces){
-      const auto& epts = i.second->getGeneratedEntryPoints(this->mb);
-      for(auto l:epts){
-	auto& lepts = r[l.first];
-	for(auto p: l.second){
-	  if(find(lepts.begin(),lepts.end(),p)==lepts.end()){
-	    lepts.push_back(p);
-	  }
-	}
-      }
-    }
-    return r;
-  } // end of BehaviourDSLCommon::getLibrariesDependencies
-
-  std::vector<std::string>
-  BehaviourDSLCommon::getGeneratedIncludes(void)
-  {
-    using namespace std;
-    auto incs = vector<string>{};
-    for(const auto& i : this->interfaces){
-      const auto& iincs = i.second->getGeneratedIncludes(this->mb);
-      copy(iincs.begin(),iincs.end(),back_inserter(incs));
-    }
-    incs.push_back(this->behaviourFileName);
-    incs.push_back(this->behaviourDataFileName);
-    incs.push_back(this->integrationDataFileName);
-    return incs;
-  } // end of BehaviourDSLCommon::getGeneratedIncludes(void)
-
-  std::map<std::string,std::vector<std::string> >
-  BehaviourDSLCommon::getLibrariesDependencies(void)
-  {
-    for(const auto& i : this->interfaces){
-      const auto& ideps = i.second->getLibrariesDependencies(this->mb);
-      for(auto p=ideps.begin();p!=ideps.end();++p){
-	for(auto p2=p->second.begin();p2!=p->second.end();++p2){
-	  if(find(this->sourcesLibrairiesDependencies[p->first].begin(),
-		  this->sourcesLibrairiesDependencies[p->first].end(),
-		  *p2)==this->sourcesLibrairiesDependencies[p->first].end()){
-	    this->sourcesLibrairiesDependencies[p->first].push_back(*p2);
-	  }
-	}
-      }
-    }
-    return this->sourcesLibrairiesDependencies;
-  } // end of BehaviourDSLCommon::getLibrariesDependencies
 
   std::string
   BehaviourDSLCommon::predictionOperatorVariableModifier(const Hypothesis h,
@@ -5325,15 +5271,6 @@ namespace mfront{
     this->readCodeBlock(*this,BehaviourData::InitializeLocalVariables,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon:treatInitLocalVariables
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  BehaviourDSLCommon::getSpecificTargets(void)
-  {
-    using namespace std;
-    return map<string,pair<vector<string>,vector<string> > >();
-  } // end of BehaviourDSLCommon::getSpecificTargets(void)
 
   void
   BehaviourDSLCommon::disableVariableDeclaration(const Hypothesis h)

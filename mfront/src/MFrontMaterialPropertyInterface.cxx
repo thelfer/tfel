@@ -16,6 +16,8 @@
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/TargetsDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/MFrontMaterialPropertyInterface.hxx"
 
 namespace mfront
@@ -31,84 +33,21 @@ namespace mfront
     : CMaterialPropertyInterfaceBase()
   {}
 
-  std::map<std::string,std::vector<std::string> >
-  MFrontMaterialPropertyInterface::getGlobalDependencies(const std::string&,
-						  const std::string&,
-						  const std::string&)
+  void
+  MFrontMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
+							 const MaterialPropertyDescription& mpd)
   {
-    using namespace std;
-    map<string,vector<string> > libs;
-    libs["libMFrontMaterialLaw"].push_back("-lm");
-    return libs;
-  } // end of MFrontMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontMaterialPropertyInterface::getGlobalIncludes(const std::string&,
-					      const std::string&,
-					      const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of MFrontMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontMaterialPropertyInterface::getGeneratedSources(const std::string&,
-						const std::string& material,
-						const std::string& className)
-  {
-    using namespace std;
-    map<string,vector<string> > src;
-    string name = this->getSrcFileName(material,className);
-    src["libMFrontMaterialLaw"].push_back(name+".cxx");
-    return src;
-  } // end of MFrontMaterialPropertyInterface::getGeneratedSources
-
-  std::vector<std::string>
-  MFrontMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-						 const std::string& material,
-						 const std::string& className)
-  {
-    using namespace std;
-    vector<string> incs;
-    string header = this->getHeaderFileName(material,className);
+    const auto lib   = "libMFrontMaterialLaw";
+    const auto  name = this->getSrcFileName(mpd.material,mpd.className);
+    const auto f = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
+    const auto header = this->getHeaderFileName(mpd.material,mpd.className);
+    d.dependencies[lib].push_back("-lm");
+    d.sources[lib].push_back(name+".cxx");
     if(!header.empty()){
-      incs.push_back(header+".hxx");
+      d.headers.push_back(header+".hxx");
     }
-    return incs;
-  } // end of MFrontMaterialPropertyInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontMaterialPropertyInterface::getLibrariesDependencies(const std::string&,
-						     const std::string&,
-						     const std::string&)
-  {
-    using namespace std;
-    map<string,vector<string> > libs;
-    libs["libMFrontMaterialLaw"].push_back("-lm");
-    return libs;
-  } // end of MFrontMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
-							   const std::string& material,
-							   const std::string& className)
-  {
-    const auto f = material.empty() ? className : material+"_"+className;
-    const auto l = "libMFrontMaterialLaw";
-    return {{l,{f,f+"_checkBounds"}}};
-  }
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  MFrontMaterialPropertyInterface::getSpecificTargets(const std::string&,
-					       const std::string&,
-					       const std::string&,
-					       const std::vector<std::string>&)
-  {
-    using namespace std;
-    return map<string,pair<vector<string>,vector<string> > >();
-  } // end of MFrontMaterialPropertyInterface::getSpecificTargets
+    d.epts[lib].insert(d.epts[lib].end(),{f,f+"_checkBounds"});
+  } // end of MFrontMaterialPropertyInterface::getTargetsDescription
 
   std::string
   MFrontMaterialPropertyInterface::getHeaderFileName(const std::string& material,

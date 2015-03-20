@@ -84,8 +84,6 @@ namespace mfront{
     virtual void treatGeneratedSources(void) final;
     //! treat the "--cppflags" query
     virtual void treatCppFlags(void) final;
-    //! treat the "--global-dependencies" query
-    virtual void treatGlobalDependencies(void) final;
     //! treat the "--generated-headers" query
     virtual void treatGeneratedHeaders(void) final;
     //! treat the "--libraries-dependencies" query

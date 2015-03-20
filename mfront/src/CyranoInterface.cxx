@@ -24,6 +24,7 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/CyranoInterface.hxx"
 
 namespace mfront{
@@ -443,67 +444,25 @@ namespace mfront{
   CyranoInterface::~CyranoInterface()
   {}
 
-  std::map<std::string,std::vector<std::string> >
-  CyranoInterface::getGlobalIncludes(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > incs;
-    string lib = CyranoInterface::getLibraryName(mb);
-    incs[lib].push_back("`tfel-config --includes`");
+  void
+  CyranoInterface::getTargetsDescription(TargetsDescription& d,
+				       const BehaviourDescription& bd){
+    const auto lib  = CyranoInterface::getLibraryName(bd);
+    const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
+    d.cppflags[lib].push_back("`tfel-config --includes`");
 #if CYRANO_ARCH == 64
-    incs[lib].push_back("-DCYRANO_ARCH=64");
+    d.cppflags[lib].push_back("-DCYRANO_ARCH=64");
 #elif CYRANO_ARCH == 32
-    incs[lib].push_back("-DCYRANO_ARCH=32");
+    d.cppflags[lib].push_back("-DCYRANO_ARCH=32");
 #else
 #error "CyranoInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    return incs;
-  } // end of CyranoInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  CyranoInterface::getGeneratedSources(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > src;
-    string lib = CyranoInterface::getLibraryName(mb);
-    if(!mb.getLibrary().empty()){
-      src[lib].push_back("cyrano"+mb.getLibrary()+mb.getClassName()+".cxx");
-    } else {
-      src[lib].push_back("cyrano"+mb.getClassName()+".cxx");
-    }
-    return src;
-  } // end of CyranoInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  CyranoInterface::getGeneratedEntryPoints(const BehaviourDescription& mb) const
-  {
-    const auto name = ((!mb.getLibrary().empty()) ? mb.getLibrary() : "") + mb.getClassName();
-    return {{this->getLibraryName(mb),{this->getFunctionName(name)}}};
-  } // end of 
-
-  std::vector<std::string>
-  CyranoInterface::getGeneratedIncludes(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    vector<string> incs;
-    if(!mb.getLibrary().empty()){
-      incs.push_back("MFront/Cyrano/cyrano"+mb.getLibrary()+mb.getClassName()+".hxx");
-    } else {
-      incs.push_back("MFront/Cyrano/cyrano"+mb.getClassName()+".hxx");
-    }
-    return incs;
-  } // end of CyranoInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  CyranoInterface::getLibrariesDependencies(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > deps;
-    string lib = CyranoInterface::getLibraryName(mb);
-    deps[lib].push_back("-lCyranoInterface");
-    deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
-    return deps;
-  } // end of CyranoInterface::getLibrariesDependencies()
+    d.sources[lib].push_back("cyrano"+name+".cxx");
+    d.epts[lib].push_back(this->getFunctionName(name));
+    d.headers.push_back("MFront/Cyrano/cyrano"+name+".hxx");
+    d.dependencies[lib].push_back("-lCyranoInterface");
+    d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
+  } // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
 
   void 
   CyranoInterface::writeInterfaceSpecificIncludes(std::ofstream& out,

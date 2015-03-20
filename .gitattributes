@@ -1550,6 +1550,7 @@ mfront/include/MFront/SecondBroydenSolver.hxx -text
 mfront/include/MFront/StaticVarHandler.hxx -text
 mfront/include/MFront/StaticVariableDescription.hxx -text
 mfront/include/MFront/SupportedTypes.hxx -text
+mfront/include/MFront/TargetsDescription.hxx -text
 mfront/include/MFront/ThermodynamicForce.hxx -text
 mfront/include/MFront/UMAT/UMAT.hxx -text
 mfront/include/MFront/UMAT/UMATBehaviourHandler.hxx -text

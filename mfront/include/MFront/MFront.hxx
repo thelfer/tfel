@@ -93,7 +93,7 @@ namespace mfront{
 
     virtual void analyseMakefileSpecificTargets(void);
 
-    virtual void analyseGlobalIncludes(void);
+    virtual void analyseCppFlags(void);
 
     virtual void writeSourcesLists(void);
 
@@ -103,7 +103,7 @@ namespace mfront{
 
     virtual void writeSpecificTargets(void);
 
-    virtual void writeGlobalIncludes(void);
+    virtual void writeCppFlags(void);
 
     virtual std::pair<bool,std::pair<std::string,std::string> >
     getLibraryDependencies(const std::string&);
@@ -141,7 +141,7 @@ namespace mfront{
 
     std::set<std::string> analysers;
 
-    std::set<std::string> globalIncludes;
+    std::set<std::string> cppflags;
 
     std::set<std::string> specifiedTargets;
 

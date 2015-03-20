@@ -16,6 +16,8 @@
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/TargetsDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CMaterialPropertyInterface.hxx"
 
 namespace mfront
@@ -38,84 +40,21 @@ namespace mfront
     return "lib"+getMaterialLawLibraryNameBase(l,m);
   } // end of CMaterialPropertyInterface::getGeneratedLibraryName
 
-  std::map<std::string,std::vector<std::string> >
-  CMaterialPropertyInterface::getGlobalDependencies(const std::string& library,
-					     const std::string& material,
-					     const std::string&)
+  void
+  CMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
+						    const MaterialPropertyDescription& mpd)
   {
-    using namespace std;
-    map<string,vector<string> > libs;
-    libs[this->getGeneratedLibraryName(library,material)].push_back("-lm");
-    return libs;
-  } // end of CMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  CMaterialPropertyInterface::getGlobalIncludes(const std::string&,
-					 const std::string&,
-					 const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of CMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  CMaterialPropertyInterface::getGeneratedSources(const std::string& library,
-						  const std::string& material,
-						  const std::string& className)
-  {
-    using namespace std;
-    map<string,vector<string> > src;
-    string name = this->getSrcFileName(material,className);
-    src[this->getGeneratedLibraryName(library,material)].push_back(name+".cxx");
-    return src;
-  } // end of CMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  CMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
-						      const std::string& material,
-						      const std::string& className)
-  {
-    const auto f = material.empty() ? className : material+"_"+className;
-    const auto l = this->getGeneratedLibraryName(library,material);
-    return {{l,{f,f+"_checkBounds"}}};
-  } // end of CMaterialPropertyInterface::getGeneratedEntryPoints
-
-  std::vector<std::string>
-  CMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-						   const std::string& material,
-						   const std::string& className)
-  {
-    using namespace std;
-    vector<string> incs;
-    string header = this->getHeaderFileName(material,className);
+    const auto lib  = this->getGeneratedLibraryName(mpd.library,mpd.material);
+    const auto name = this->getSrcFileName(mpd.material,mpd.className);
+    const auto f    = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
+    const auto header = this->getHeaderFileName(mpd.material,mpd.className);
+    d.dependencies[lib].push_back("-lm");
+    d.sources[lib].push_back(name+".cxx");
+    d.epts[lib].insert(d.epts[lib].end(),{f,f+"_checkBounds"});
     if(!header.empty()){
-      incs.push_back(header+".hxx");
+      d.headers.push_back(header+".hxx");
     }
-    return incs;
-  } // end of CMaterialPropertyInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  CMaterialPropertyInterface::getLibrariesDependencies(const std::string& library,
-						const std::string& material,
-						const std::string&)
-  {
-    using namespace std;
-    map<string,vector<string> > libs;
-    libs[this->getGeneratedLibraryName(library,material)].push_back("-lm");
-    return libs;
-  } // end of CMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  CMaterialPropertyInterface::getSpecificTargets(const std::string&,
-					  const std::string&,
-					  const std::string&,
-					  const std::vector<std::string>&)
-  {
-    using namespace std;
-    return map<string,pair<vector<string>,vector<string> > >();
-  } // end of CMaterialPropertyInterface::getSpecificTargets
+  } // end of CMaterialPropertyInterface::getTargetsDescription
 
   std::string
   CMaterialPropertyInterface::getHeaderFileName(const std::string& material,

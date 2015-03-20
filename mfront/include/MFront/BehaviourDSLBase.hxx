@@ -24,16 +24,6 @@ namespace mfront{
     : public BehaviourDSLCommon
   {
     /*!
-     * \brief import a file
-     * \param[in] f     : file name
-     * \param[in] ecmds : additionnal commands inserted treated before
-     * the input file commands (those commands are given through the
-     * `--@??` option of the command line
-     */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&) override;
-    /*!
      * \brief analyse a file
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before

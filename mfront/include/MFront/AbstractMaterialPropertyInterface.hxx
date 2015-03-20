@@ -29,10 +29,19 @@ namespace mfront{
   struct MaterialPropertyDescription;
   // forward declartion
   struct FileDescription;
+  // forward declartion
+  struct TargetsDescription;
 
   struct MFRONT_VISIBILITY_EXPORT AbstractMaterialPropertyInterface
   {
-
+    /*!
+     * \param[in] k  : keyword treated
+     * \param[in] p  : iterator to the current token
+     * \param[in] pe : iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
@@ -45,81 +54,14 @@ namespace mfront{
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
 				  const FileDescription&) = 0;
     /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
+     * \brief : fill the target descripton
+     * \param[out] d   : target description
+     * \param[in]  mpd : material property description
      */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const std::string&,
-		      const std::string&,
-		      const std::string&) = 0;
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const std::string&,
-			    const std::string&,
-			    const std::string&) = 0;
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const std::string&,
-			  const std::string&,
-			  const std::string&) = 0;
-
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const std::string&,
-			const std::string&,
-			const std::string&) = 0;
-
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    virtual std::vector<std::string>
-    getGeneratedIncludes(const std::string&,
-			 const std::string&,
-			 const std::string&) = 0;
-
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const std::string&,
-			     const std::string&,
-			     const std::string&) = 0;
-
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     * \param const std::vector<std::string>&, library links
-     */
-    virtual std::map<std::string,
-		     std::pair<std::vector<std::string>,
-			       std::vector<std::string> > >
-    getSpecificTargets(const std::string&,
-		       const std::string&,
-		       const std::string&,
-		       const std::vector<std::string>&) = 0;
-
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const MaterialPropertyDescription&) = 0;
+    //! destructor
     virtual ~AbstractMaterialPropertyInterface();
-
   }; // end of AbstractMaterialPropertyInterface
 
 } // end of namespace mfront  

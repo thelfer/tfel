@@ -17,6 +17,7 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CppMaterialPropertyInterface.hxx"
 #include"MFront/CppTestMaterialPropertyInterface.hxx"
@@ -158,90 +159,22 @@ namespace mfront
     return make_pair(true,++current);
   } // end of registerTestBounds
 
-  std::map<std::string,std::vector<std::string> >
-  CppTestMaterialPropertyInterface::getGlobalDependencies(const std::string&,
-						   const std::string&,
-						   const std::string&)
+  void
+  CppTestMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
+							  const MaterialPropertyDescription& mpd)
   {
-    using namespace std;
-    map<string,vector<string> > libs;
-    return libs;
-  } // end of CppTestMaterialPropertyInterface::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  CppTestMaterialPropertyInterface::getGlobalIncludes(const std::string&,
-					       const std::string&,
-					       const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of CppTestMaterialPropertyInterface::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  CppTestMaterialPropertyInterface::getGeneratedSources(const std::string&,
-						 const std::string&,
-						 const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of CppTestMaterialPropertyInterface::getGeneratedSources
-
-  std::vector<std::string>
-  CppTestMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-						  const std::string&,
-						  const std::string&)
-  {
-    using namespace std;
-    vector<string> incs;
-    return incs;
-  } // end of CppTestMaterialPropertyInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  CppTestMaterialPropertyInterface::getLibrariesDependencies(const std::string&,
-						      const std::string&,
-						      const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of CppTestMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  CppTestMaterialPropertyInterface::getSpecificTargets(const std::string& lib,
-						const std::string& mat,
-						const std::string& className,
-						const std::vector<std::string>&)
-  {
-    using namespace std;
-    map<string,pair<vector<string>,vector<string> > > res;
-    string target;
-    string cpplib = "Cpp"+getMaterialLawLibraryNameBase(lib,mat);
-    string name;
-    if(mat.empty()){
-      name = className;
-    } else {
-      name = mat+"_"+className;
-    }
-    target = name+"CppTest";
+    const auto lib = "Cpp"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+    const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
+    const auto target = name+"CppTest";
 #if defined _WIN32 || defined _WIN64
-    res[target].first.push_back("lib"+cpplib+".dll");
+    d.specific_targets[target].first.push_back("lib"+lib+".dll");
 #else
-    res[target].first.push_back("lib"+cpplib+".so");
+    d.specific_targets[target].first.push_back("lib"+lib+".so");
 #endif
-    res[target].first.push_back(name+"-CppTest.o");
-    res[target].second.push_back("@$(CXX) $(LDFLAGS) -L. -l"+cpplib+" $^ -o $@");
-    res["check"].first.push_back(target);
-    return res;
+    d.specific_targets[target].first.push_back(name+"-CppTest.o");
+    d.specific_targets[target].second.push_back("@$(CXX) $(LDFLAGS) -L. -l"+lib+" $^ -o $@");
+    d.specific_targets["check"].first.push_back(target);
   } // end of CppMaterialPropertyInterface::getSpecificTargets
-
-  std::map<std::string,std::vector<std::string> >
-  CppTestMaterialPropertyInterface::getGeneratedEntryPoints(const std::string&,
-							    const std::string&,
-							    const std::string&)
-  {
-    return {};
-  }
 
   void
   CppTestMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,

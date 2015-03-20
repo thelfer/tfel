@@ -21,6 +21,7 @@
 #include"MFront/DSLBase.hxx"
 #include"MFront/LawFunction.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/AbstractDSL.hxx"
 
@@ -64,32 +65,6 @@ namespace mfront{
      */
     virtual void
     setAnalysers(const std::set<std::string>&);
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(void);
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(void);
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(void);
-
-    virtual std::vector<std::string>
-    getGeneratedIncludes(void);
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(void);
-
-    virtual std::map<std::string,
-		     std::pair<std::vector<std::string>,
-			       std::vector<std::string> > >
-    getSpecificTargets(void);
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(void) override;
     /*!
      * \brief analyse a file without generating any output
      * \param[in] f     : file name
@@ -98,6 +73,12 @@ namespace mfront{
     virtual void
     analyseFile(const std::string&,
 		const std::vector<std::string>& = std::vector<std::string>()) override;
+    /*!
+     * \return the target description
+     * \note This method shall be called *after* the analyseFile method
+     */
+    virtual const TargetsDescription&
+    getTargetsDescription(void) const override;
     /*!
      * \brief import a file
      * \param[in] f     : file name
@@ -219,10 +200,6 @@ namespace mfront{
      */
     std::set<std::string> registredKeyWords;
     /*!
-     * list of dependencies
-     */
-    std::map<std::string,std::vector<std::string> > sourcesLibrairiesDependencies;
-    /*!
      * map of callbacks used during the file interpretation
      */
     CallBackContainer callBacks;
@@ -233,6 +210,7 @@ namespace mfront{
      */
     std::string currentVar;
 
+    TargetsDescription td;
   }; // end of class MaterialPropertyDSL
 
 } // end of namespace mfront  

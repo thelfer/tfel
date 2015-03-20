@@ -22,6 +22,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/AsterInterface.hxx"
 
 namespace mfront{
@@ -700,68 +701,26 @@ namespace mfront{
   AsterInterface::~AsterInterface()
   {}
 
-  std::map<std::string,std::vector<std::string> >
-  AsterInterface::getGlobalIncludes(const BehaviourDescription& mb) const
+  void
+  AsterInterface::getTargetsDescription(TargetsDescription& d,
+					const BehaviourDescription& bd)
   {
-    using namespace std;
-    map<string,vector<string> > incs;
-    string lib = AsterInterface::getLibraryName(mb);
-    incs[lib].push_back("`tfel-config --includes`");
+    const auto lib  = AsterInterface::getLibraryName(bd);
+    const auto name = bd.getLibrary()+bd.getClassName(); 
+    d.cppflags[lib].push_back("`tfel-config --includes`");
 #if ASTER_ARCH == 64
-    incs[lib].push_back("-DASTER_ARCH=64");
+    d.cppflags[lib].push_back("-DASTER_ARCH=64");
 #elif ASTER_ARCH == 32
-    incs[lib].push_back("-DASTER_ARCH=32");
+    d.cppflags[lib].push_back("-DASTER_ARCH=32");
 #else
 #error "AsterInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    return incs;
-  } // end of AsterInterface::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  AsterInterface::getGeneratedSources(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > src;
-    string lib = AsterInterface::getLibraryName(mb);
-    if(!mb.getLibrary().empty()){
-      src[lib].push_back("aster"+mb.getLibrary()+mb.getClassName()+".cxx");
-    } else {
-      src[lib].push_back("aster"+mb.getClassName()+".cxx");
-    }
-    return src;
+    d.sources[lib].push_back("aster"+name+".cxx");
+    d.headers.push_back("MFront/Aster/aster"+name+".hxx");
+    d.dependencies[lib].push_back("-lAsterInterface");
+    d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
+    d.epts[lib].push_back("aster"+makeLowerCase(name));
   } // end of AsterInterface::getGeneratedSources
-
-  std::vector<std::string>
-  AsterInterface::getGeneratedIncludes(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    vector<string> incs;
-    if(!mb.getLibrary().empty()){
-      incs.push_back("MFront/Aster/aster"+mb.getLibrary()+mb.getClassName()+".hxx");
-    } else {
-      incs.push_back("MFront/Aster/aster"+mb.getClassName()+".hxx");
-    }
-    return incs;
-  } // end of AsterInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  AsterInterface::getLibrariesDependencies(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > deps;
-    string lib = AsterInterface::getLibraryName(mb);
-    deps[lib].push_back("-lAsterInterface");
-    deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
-    return deps;
-  } // end of AsterInterface::getLibrariesDependencies()
-
-  std::map<std::string,std::vector<std::string> >
-  AsterInterface::getGeneratedEntryPoints(const BehaviourDescription& mb) const
-  {
-    const auto name = ((!mb.getLibrary().empty()) ? mb.getLibrary() : "") + mb.getClassName();
-    return {{AsterInterface::getLibraryName(mb),{"aster"+makeLowerCase(name)}}};
-  } // end of AsterInterface::getGeneratedSources
-
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
 	    SupportedTypes::TypeSize>

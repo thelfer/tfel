@@ -24,20 +24,40 @@
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/ModelData.hxx"
-#include"MFront/FileDescription.hxx"
+
 
 namespace mfront{
+
+  // forward declartion
+  struct FileDescription;
+  // forward declartion
+  struct TargetsDescription;
+  // forward declartion
+  struct ModelData;
   
   struct MFRONT_VISIBILITY_EXPORT AbstractModelInterface
   {
-
+    virtual
+    void declareReservedNames(std::set<std::string>&) = 0;
+    /*!
+     * \param[in] k  : keyword treated
+     * \param[in] p  : iterator to the current token
+     * \param[in] pe : iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) = 0;
-    virtual
-    void declareReservedNames(std::set<std::string>&) = 0;
-
+    /*!
+     * \brief : fill the target descripton
+     * \param[out] d  : target description
+     * \param[in]  md : model description
+     */
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const ModelData&) = 0;
     /*!
      * \param pdata : generic data
      * \param data  : model data
@@ -45,42 +65,6 @@ namespace mfront{
     virtual
     void writeOutputFiles(const FileDescription&,
 			  const ModelData&) = 0;
-
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const ModelData&) = 0;
-
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const ModelData&) = 0;
-
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const ModelData&) = 0;
-
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::vector<std::string>
-    getGeneratedIncludes(const ModelData&) = 0;
-
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const ModelData&) = 0;
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const ModelData&) const = 0;
     //! desctructor
     virtual ~AbstractModelInterface();
 

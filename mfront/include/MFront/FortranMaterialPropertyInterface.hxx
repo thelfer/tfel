@@ -26,74 +26,12 @@ namespace mfront{
     
     FortranMaterialPropertyInterface();
     /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
+     * \brief : fill the target descripton
+     * \param[out] d   : target description
+     * \param[in]  mpd : material property description
      */
-    std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const std::string&,
-		      const std::string&,
-		      const std::string&) override;
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const std::string&,
-			  const std::string&,
-			  const std::string&) override;
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const std::string&,
-			const std::string&,
-			const std::string&) override;
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    std::vector<std::string>
-    getGeneratedIncludes(const std::string&,
-			 const std::string&,
-			 const std::string&) override;
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const std::string&,
-			     const std::string&,
-			     const std::string&) override;
-    /*!
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     * \param const std::vector<std::string>&, library links
-     */
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
-    getSpecificTargets(const std::string&,
-		       const std::string&,
-		       const std::string&,
-		       const std::vector<std::string>&) override;
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const std::string&,
-			    const std::string&,
-			    const std::string&) override;
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const MaterialPropertyDescription&) override;
     //! destructor
     virtual ~FortranMaterialPropertyInterface();
         

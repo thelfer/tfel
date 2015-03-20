@@ -26,6 +26,7 @@
 #include"MFront/DSLBase.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/BehaviourDescription.hxx"
 
 namespace mfront{
@@ -48,32 +49,22 @@ namespace mfront{
     //! \return the behaviour description
     virtual const BehaviourDescription&
     getBehaviourDescription(void) const final;
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(void) override;
-	
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(void) override;
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(void) override;
-
-    virtual std::vector<std::string>
-    getGeneratedIncludes(void) override;
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(void) override;
-    
-    virtual std::map<std::string,
-		     std::pair<std::vector<std::string>,
-			       std::vector<std::string> > >
-    getSpecificTargets(void) override;
     /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
+     * \brief import a file
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commands (those commands are given through the
+     * `--@??` option of the command line
      */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(void) override;
+    virtual void
+    analyseFile(const std::string&,
+		const std::vector<std::string>&) override;
+    /*!
+     * \return the target description
+     * \note This method shall be called *after* the analyseFile method
+     */
+    virtual const TargetsDescription&
+    getTargetsDescription(void) const override;
   protected:
     /*!
      * create a variable modifier from a method
@@ -1032,8 +1023,6 @@ namespace mfront{
      */
     BehaviourDSLCommon();
 
-    std::map<std::string,std::vector<std::string> > sourcesLibrairiesDependencies;
-
     std::set<std::string> registredKeyWords;
 
     //! list of registred interfaces
@@ -1063,6 +1052,7 @@ namespace mfront{
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
 
     BehaviourDescription mb;
+    TargetsDescription   td;
 
   }; // end of struct BehaviourDSLCommon
 

@@ -30,11 +30,18 @@ namespace mfront{
   {
     
     CMaterialPropertyInterfaceBase();
-    
-    std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    /*!
+     * \param[in] k  : keyword treated
+     * \param[in] p  : iterator to the current token
+     * \param[in] pe : iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
+    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
+		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description

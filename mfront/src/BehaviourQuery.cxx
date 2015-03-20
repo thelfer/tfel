@@ -24,6 +24,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/BehaviourDescription.hxx"
 #include"MFront/BehaviourQuery.hxx"
 
@@ -118,8 +119,6 @@ namespace mfront{
 				"show all the generated headers");
     Parser::registerNewCallBack("--cppflags",&BehaviourQuery::treatCppFlags,
 				"show all the global headers");
-    Parser::registerNewCallBack("--global-dependencies",&BehaviourQuery::treatGlobalDependencies,
-				"show all the global dependencies");
     Parser::registerNewCallBack("--libraries-dependencies",&BehaviourQuery::treatLibrariesDependencies,
 				"show all the libraries dependencies");
     Parser::registerNewCallBack("--specific-targets",&BehaviourQuery::treatSpecificTargets,
@@ -357,7 +356,7 @@ const Hypothesis){
     auto l = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
-      const auto sources = ldsl->getGeneratedSources();
+      const auto& sources = ldsl->getTargetsDescription().sources;
       for(const auto& src : sources){
 	cout << src.first << " : "; //< library
 	copy(src.second.begin(),src.second.end(),
@@ -376,7 +375,7 @@ const Hypothesis){
     auto l = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
-      const auto headers = ldsl->getGeneratedIncludes();
+      const auto headers = ldsl->getTargetsDescription().headers;
       copy(headers.begin(),headers.end(),
 	   ostream_iterator<string>(cout," "));
       cout << endl;
@@ -392,7 +391,7 @@ const Hypothesis){
     auto l = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
-      const auto flags = ldsl->getGlobalIncludes();
+      const auto flags = ldsl->getTargetsDescription().cppflags;
       for(const auto& f : flags){
 	cout << f.first << " : "; //< library
 	copy(f.second.begin(),f.second.end(),
@@ -411,7 +410,7 @@ const Hypothesis){
     auto l = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
-      const auto deps = ldsl->getLibrariesDependencies();
+      const auto deps = ldsl->getTargetsDescription().dependencies;
       for(const auto& d : deps){
 	cout << d.first << " : "; //< library
 	copy(d.second.begin(),d.second.end(),
@@ -423,25 +422,6 @@ const Hypothesis){
   } // end of BehaviourQuery::treatLibrariesDependencies
 
   void
-  BehaviourQuery::treatGlobalDependencies(void)
-  {
-    using namespace std;
-    auto ldsl = this->dsl;
-    auto l = [ldsl](const FileDescription&,
-		    const BehaviourDescription&,
-		    const Hypothesis){
-      const auto deps = ldsl->getGlobalDependencies();
-      for(const auto& d : deps){
-	cout << d.first << " : "; //< library
-	copy(d.second.begin(),d.second.end(),
-	     ostream_iterator<string>(cout," "));
-	cout << endl;
-      }
-    };
-    this->queries.push_back({"global-dependencies",l});
-  } // end of BehaviourQuery::treatGlobalDependencies
-
-  void
   BehaviourQuery::treatSpecificTargets(void)
   {
     using namespace std;
@@ -449,7 +429,7 @@ const Hypothesis){
     auto l = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
-      const auto targets = ldsl->getSpecificTargets();
+      const auto targets = ldsl->getTargetsDescription().specific_targets;
       for(const auto t : targets){
 	cout << t.first << " : ";
 	copy(t.second.first.begin(),t.second.first.end(),

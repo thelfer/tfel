@@ -25,101 +25,29 @@ namespace mfront{
     getName(void);
     
     MFrontMaterialPropertyInterface();
-
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \brief : fill the target descripton
+     * \param[out] d   : target description
+     * \param[in]  mpd : material property description
      */
-    std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const std::string&,
-		      const std::string&,
-		      const std::string&) override;
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const std::string&,
-			  const std::string&,
-			  const std::string&) override;
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const std::string&,
-			const std::string&,
-			const std::string&) override;
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    std::vector<std::string>
-    getGeneratedIncludes(const std::string&,
-			 const std::string&,
-			 const std::string&) override;
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const std::string&,
-			     const std::string&,
-			     const std::string&) override;
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     * \param const std::vector<std::string>&, library links
-     */
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
-    getSpecificTargets(const std::string&,
-		       const std::string&,
-		       const std::string&,
-		       const std::vector<std::string>&) override;
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const std::string&,
-			    const std::string&,
-			    const std::string&) override;
-    /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
-     */
-    std::string
-    getHeaderFileName(const std::string&,
-		      const std::string&) override;
-
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const MaterialPropertyDescription&) override;
     /*!
      * \param[in] m : name of the material
      * \param[in] l : name of the law
      */
-    std::string
+    virtual std::string
     getFunctionName(const std::string&,
 		    const std::string&) const;
     /*!
-     * destructor
+     * \param const std::string&, name of the material
+     * \param const std::string&, name of the class
      */
+    virtual std::string
+    getHeaderFileName(const std::string&,
+		      const std::string&) override;
+    //! destructor
     virtual ~MFrontMaterialPropertyInterface();
-        
   private:
 
     void

@@ -46,42 +46,13 @@ namespace mfront{
     virtual
     void writeOutputFiles(const FileDescription&,
 			  const ModelData&) ;
-
     /*!
-     * \param pdata : processing data
+     * \brief : fill the target descripton
+     * \param[out] d  : target description
+     * \param[in]  md : model description
      */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const ModelData&);
-
-    /*!
-     * \param pdata : processing data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const ModelData&);
-
-    /*!
-     * \param pdata : processing data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const ModelData&);
-
-    /*!
-     * \param pdata : processing data
-     */
-    virtual std::vector<std::string>
-    getGeneratedIncludes(const ModelData&);
-
-    /*!
-     * \param pdata : processing data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const ModelData&);
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const ModelData&) const override;
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const ModelData&) override;
 
   private:
 

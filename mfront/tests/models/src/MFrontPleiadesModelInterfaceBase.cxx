@@ -18,33 +18,19 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/MFrontPleiadesModelInterfaceBase.hxx"
 
 namespace mfront{
 
   MFrontPleiadesModelInterfaceBase::MFrontPleiadesModelInterfaceBase()
   {
-    this->reset();
+    this->hasDefaultConstructor = false;
+    this->hasSpecializedDomain  = false;
   } // end of MFrontPleiadesModelInterfaceBase::MFrontPleiadesModelInterfaceBase
-
-  void 
-  MFrontPleiadesModelInterfaceBase::setVerboseMode()
-  {
-    this->verboseMode = true;
-  } // end of MFrontPleiadesModelInterfaceBase::setVerboseMode
-
-  void 
-  MFrontPleiadesModelInterfaceBase::setDebugMode()
-  {
-    this->debugMode = true;
-  } // end of MFrontPleiadesModelInterfaceBase::setDebugMode
-
-  void 
-  MFrontPleiadesModelInterfaceBase::setWarningMode()
-  {
-    this->warningMode = true;
-  } // end of MFrontPleiadesModelInterfaceBase::setWarningMode
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontPleiadesModelInterfaceBase::treatKeyword(const std::string&,
@@ -79,19 +65,6 @@ namespace mfront{
     v.insert("initializeParameter");
     v.insert("initializeInputIFieldDouble");
   } // end of MFrontPleiadesModelInterfaceBase::declareReservedNames
-
-  void
-  MFrontPleiadesModelInterfaceBase::reset(void)
-  {
-    this->headerFileName.clear();
-    this->srcFileName.clear();
-    this->domains.clear();
-    this->hasDefaultConstructor = false;
-    this->hasSpecializedDomain  = false;
-    this->verboseMode = false;
-    this->debugMode   = false;
-    this->warningMode = false;
-  } // end of MFrontPleiadesModelInterfaceBase::reset
 
   void
   MFrontPleiadesModelInterfaceBase::openOutputFiles(void)
@@ -132,7 +105,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::closeOutputFiles()
 
   void
-  MFrontPleiadesModelInterfaceBase::writeOutputFiles(const GenericData& pdata,
+  MFrontPleiadesModelInterfaceBase::writeOutputFiles(const FileDescription& pdata,
 						     const ModelData& mdata)
   {
     using namespace std;
@@ -149,7 +122,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::writeOutputFiles
 
   void
-  MFrontPleiadesModelInterfaceBase::generateOutputFiles(const GenericData& pdata,
+  MFrontPleiadesModelInterfaceBase::generateOutputFiles(const FileDescription& pdata,
 							const ModelData& data)
   {
     using namespace std;
@@ -171,7 +144,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::generateOutputFiles
 
   void
-  MFrontPleiadesModelInterfaceBase::writeHeaderFile(const GenericData& pdata,
+  MFrontPleiadesModelInterfaceBase::writeHeaderFile(const FileDescription& pdata,
 						    const ModelData& mdata)
   {
     using namespace std;
@@ -266,7 +239,7 @@ namespace mfront{
 	msg+="function " + p3->name + " does not modify any variable (internal error, this shall have been verified long ago).";
 	throw(runtime_error(msg));
       }
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p3->line << " \"" 
 			 << pdata.fileName << "\"\n";
       }
@@ -310,7 +283,7 @@ namespace mfront{
 
     if(!mdata.staticVars.empty()){
       for(p2=mdata.staticVars.begin();p2!=mdata.staticVars.end();++p2){
-	if(this->debugMode){
+	if(getDebugMode()){
 	  this->headerFile << "#line " << p2->lineNumber << " \"" 
 			   << pdata.fileName << "\"\n";
 	}
@@ -319,7 +292,7 @@ namespace mfront{
       this->headerFile << endl;
     }
     for(p=mdata.outputs.begin();p!=mdata.outputs.end();++p){
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << pdata.fileName << "\"\n";
       }
@@ -327,7 +300,7 @@ namespace mfront{
     }
     this->headerFile << endl;
     for(p=mdata.inputs.begin();p!=mdata.inputs.end();++p){
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << pdata.fileName << "\"\n";
       }
@@ -337,7 +310,7 @@ namespace mfront{
     this->headerFile << "private:"<< endl;
     this->headerFile << endl;
     for(p=mdata.globalParameters.begin();p!=mdata.globalParameters.end();++p){
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << pdata.fileName << "\"\n";
       }
@@ -345,7 +318,7 @@ namespace mfront{
     }
     for(p=mdata.constantMaterialProperties.begin();
 	p!=mdata.constantMaterialProperties.end();++p){
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << pdata.fileName << "\"\n";
       }
@@ -353,7 +326,7 @@ namespace mfront{
     }
     for(p=mdata.localParameters.begin();
 	p!=mdata.localParameters.end();++p){
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << pdata.fileName << "\"\n";
       }
@@ -430,7 +403,7 @@ namespace mfront{
   } // end of getFieldAndDepthFromFieldName
 
   void
-  MFrontPleiadesModelInterfaceBase::writeSrcFile(const GenericData& pdata,
+  MFrontPleiadesModelInterfaceBase::writeSrcFile(const FileDescription& pdata,
 						 const ModelData& mdata)
   {
     using namespace std;
@@ -472,7 +445,7 @@ namespace mfront{
     // static variables
     if(!mdata.staticVars.empty()){
       for(p10=mdata.staticVars.begin();p10!=mdata.staticVars.end();++p10){
-	if(this->debugMode){
+	if(getDebugMode()){
 	  this->srcFile << "#line " << p10->lineNumber << " \"" 
 			<< pdata.fileName << "\"\n";
 	}
@@ -646,7 +619,7 @@ namespace mfront{
 	msg+="function " + p11->name + " does not modify any variable (internal error, this shall have been verified long ago).";
 	throw(runtime_error(msg));
       }
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->srcFile << "#line " << p11->line << " \"" 
 		      << pdata.fileName << "\"\n";
       }
@@ -808,94 +781,27 @@ namespace mfront{
     this->srcFile << "} // end of namespace Pleiades\n";
   } // end of MFrontPleiadesModelInterfaceBase::writeSrcFile(void)
 
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesModelInterfaceBase::getGeneratedSources(const ModelData& mdata)
+  void
+  MFrontPleiadesModelInterfaceBase::getTargetsDescription(TargetsDescription& td,
+							  const ModelData&  md)
   {
-    using namespace std;
-    map<string,vector<string> > src;
-    string lib;
-    if(mdata.library.empty()){
-      if(!mdata.material.empty()){
-	lib = "lib"+this->getApplicationName()+mdata.material+"Models";
-      } else {
-	lib = "lib"+this->getApplicationName()+"MaterialModels";
-      }
-    } else {
-      lib = mdata.library;
-    }
-    src[lib].push_back(this->srcFileName);
-    return src;
-  } // end of MFrontPleiadesModelInterfaceBase::getGeneratedSources
-  
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesModelInterfaceBase::getGeneratedEntryPoints(const ModelData& mdata) const{
     std::string lib;
-    if(mdata.library.empty()){
-      if(!mdata.material.empty()){
-	lib = "lib"+this->getApplicationName()+mdata.material+"Models";
+    if(md.library.empty()){
+      if(!md.material.empty()){
+	lib = "lib"+this->getApplicationName()+md.material+"Models";
       } else {
 	lib = "lib"+this->getApplicationName()+"MaterialModels";
       }
     } else {
-      lib = mdata.library;
+      lib = md.library;
     }
-    return {{lib,{mdata.className}}};
-  } // end of MFrontPleiadesModelInterfaceBase::getGeneratedEntryPoints
-
-  std::vector<std::string>
-  MFrontPleiadesModelInterfaceBase::getGeneratedIncludes(const ModelData&)
-  {
-    using namespace std;
-    vector<string> inc;
-    inc.push_back(this->headerFileName);
-    return inc;
-  } // end of MFrontPleiadesModelInterfaceBase::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesModelInterfaceBase::getGlobalIncludes(const ModelData& mdata)
-  {
-    using namespace std;
-    map<string,vector<string> > incs;
-    string lib;
-    if(mdata.library.empty()){
-      if(!mdata.material.empty()){
-	lib = "lib"+this->getApplicationName()+mdata.material+"Models";
-      } else {
-	lib = "lib"+this->getApplicationName()+"MaterialModels";
-      }
-    } else {
-      lib = mdata.library;
-    }
-    incs[lib].push_back("`pleiades-config --includes`\n");
-    return incs;
-  } // end of MFrontPleiadesModelInterfaceBase::getGlobalIncludes
+    td.sources[lib].push_back(this->srcFileName);
+    td.epts[lib].push_back(md.className);
+    td.headers.push_back(this->headerFileName);
+    td.cppflags[lib].push_back("`pleiades-config --includes`\n");
+    td.dependencies[lib].push_back("`pleiades-config --libs` -lm");
+  } // end of MFrontPleiadesModelInterfaceBase::getTargetsDescription
   
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesModelInterfaceBase::getGlobalDependencies(const ModelData& mdata)
-  {
-    using namespace std;
-    map<string,vector<string> > libs;
-    string lib;
-    if(mdata.library.empty()){
-      if(!mdata.material.empty()){
-	lib = "lib"+this->getApplicationName()+mdata.material+"Models";
-      } else {
-	lib = "lib"+this->getApplicationName()+"MaterialModels";
-      }
-    } else {
-      lib = mdata.library;
-    }
-    libs[lib].push_back("`pleiades-config --libs` -lm");
-    return libs;
-  } // end of MFrontPleiadesModelInterfaceBase::getGlobalDependencies
-    
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesModelInterfaceBase::getLibrariesDependencies(const ModelData&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of MFrontPleiadesModelInterfaceBase::getLibrariesDependencies
-
   void
   MFrontPleiadesModelInterfaceBase::writeAssignDefaultValue(const VarContainer::const_iterator p,
 							    const std::map<std::string,std::string>::const_iterator p4)
@@ -1216,7 +1122,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::writeInitializeInputMethod
 
   void
-  MFrontPleiadesModelInterfaceBase::writeSpecificPrivateMethodDeclaration(const GenericData&,
+  MFrontPleiadesModelInterfaceBase::writeSpecificPrivateMethodDeclaration(const FileDescription&,
 									  const ModelData&)
   {} // end of MFrontPleiadesModelInterfaceBase::writeSpecificPrivateMethodDeclaration
 

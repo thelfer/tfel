@@ -17,6 +17,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"MFront/AbstractBehaviourInterface.hxx"
 #include"MFront/MFrontLogStream.hxx"
 
 namespace mfront{
@@ -218,28 +219,6 @@ namespace mfront{
       }
     }
   } // end of BehaviourDSLBase<Child>::importFile
-
-  template<typename Child>
-  void
-  BehaviourDSLBase<Child>::analyseFile(const std::string& fileName_,
-				       const std::vector<std::string>& ecmds)
-  {
-    this->importFile(fileName_,ecmds);
-    // Adding some stuff
-    this->endsInputFileProcessing();
-    // setting the name of the output files
-    this->behaviourFileName = "TFEL/Material/";
-    this->behaviourFileName += this->mb.getClassName();
-    this->behaviourFileName += ".hxx";
-    this->behaviourDataFileName  = "TFEL/Material/";
-    this->behaviourDataFileName += this->mb.getClassName();
-    this->behaviourDataFileName += "BehaviourData.hxx";
-    this->integrationDataFileName  = "TFEL/Material/";
-    this->integrationDataFileName += this->mb.getClassName();
-    this->integrationDataFileName += "IntegrationData.hxx";
-    this->srcFileName  = this->mb.getClassName();
-    this->srcFileName += ".cxx";
-  }
 
   template<typename Child>
   BehaviourDSLBase<Child>::~BehaviourDSLBase()

@@ -28,6 +28,7 @@
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLock.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CMaterialPropertyInterface.hxx"
 #include"MFront/PythonMaterialPropertyInterface.hxx"
@@ -56,108 +57,31 @@ namespace mfront
   PythonMaterialPropertyInterface::~PythonMaterialPropertyInterface()
   {}
 
-  std::map<std::string,std::vector<std::string> >
-  PythonMaterialPropertyInterface::getGlobalDependencies(const std::string& lib,
-						  const std::string& mat,
-						  const std::string&)
+  void
+  PythonMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
+							 const MaterialPropertyDescription& mpd)
   {
-    using namespace std;
-    map<string,vector<string> > libs;
-    string pylib;
-    pylib = makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
-    libs[pylib].push_back("-lm");
-    return libs;
-  } // end of PythonMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  PythonMaterialPropertyInterface::getGlobalIncludes(const std::string& lib,
-					      const std::string& mat,
-					      const std::string&)
-  {
-    using namespace std;
-    map<string,vector<string> > inc;
-    string pylib;
-    pylib = makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
-    inc[pylib].push_back(TFEL_PYTHON_INCLUDES);
-    return inc;
-  } // end of PythonMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  PythonMaterialPropertyInterface::getGeneratedSources(const std::string& lib,
-						       const std::string& mat,
-						       const std::string& law)
-  {
-    using namespace std;
-    map<string,vector<string> > src;
-    string pylib;
-    string pysrc;
-    pylib = makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
-    if(lib.empty()){
-      if(!mat.empty()){
-	pysrc = mat+"lawwrapper.cxx";
+    using std::string;
+    const auto lib = makeLowerCase(getMaterialLawLibraryNameBase(mpd.library,mpd.material));
+    const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
+    auto src = string{};
+    if(mpd.library.empty()){
+      if(!mpd.material.empty()){
+	src = mpd.material+"lawwrapper.cxx";
       } else {
-	pysrc = "materiallawwrapper.cxx";
+	src = "materiallawwrapper.cxx";
       }
     } else {
-      pysrc = lib+"wrapper.cxx";
+      src = mpd.library+"wrapper.cxx";
     }
-    if(!mat.empty()){
-      src[pylib].push_back(mat+"_"+law+"-python.cxx");
-    } else {
-      src[pylib].push_back(law+"-python.cxx");
-    }
-    src[pylib].push_back(pysrc);
-    return src;
-  } // end of PythonMaterialPropertyInterface::getGeneratedSources
-
-  std::vector<std::string>
-  PythonMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-						 const std::string&,
-						 const std::string&)
-  {
-    using namespace std;
-    vector<string> incs;
-    incs.push_back(this->headerFileName);
-    return incs;
-  } // end of PythonMaterialPropertyInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  PythonMaterialPropertyInterface::getLibrariesDependencies(const std::string& lib,
-							    const std::string& mat,
-							    const std::string&)
-  {
-    using namespace std;
-    map<string,vector<string> > libs;
-    string pylib;
-    pylib = makeLowerCase(getMaterialLawLibraryNameBase(lib,mat));
-    libs[pylib].push_back(TFEL_PYTHON_LIBS);
-    return libs;
-  } // end of PythonMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  PythonMaterialPropertyInterface::getSpecificTargets(const std::string&,
-					       const std::string&,
-					       const std::string&,
-					       const std::vector<std::string>&)
-  {
-    using namespace std;
-    return map<string,pair<vector<string>,vector<string> > >();
-  } // end of PythonMaterialPropertyInterface::getSpecificTargets
-
-  std::map<std::string,std::vector<std::string> >
-  PythonMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
-							   const std::string& material,
-							   const std::string& className)
-  {
-    using namespace std;
-    auto r = map<string,vector<string>>{};
-    const auto l = makeLowerCase(getMaterialLawLibraryNameBase(library,material));
-    const auto n = (!material.empty()) ? material+"_"+className : className;
-    r[l].push_back(n);
-    return r;
-  }
+    d.dependencies[lib].push_back("-lm");    
+    d.dependencies[lib].push_back(TFEL_PYTHON_LIBS);
+    d.cppflags[lib].push_back(TFEL_PYTHON_INCLUDES);
+    d.sources[lib].push_back(name+"-python.cxx");
+    d.sources[lib].push_back(src);
+    d.headers.push_back(this->headerFileName);    
+    d.epts[lib].push_back(name);
+  } // end of PythonMaterialPropertyInterface::getTargetsDescription
 
   void
   PythonMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,

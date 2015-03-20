@@ -20,6 +20,7 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/ModelDSLCommon.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/ModelInterfaceFactory.hxx"
 
 namespace mfront{
@@ -1401,113 +1402,11 @@ namespace mfront{
     container.push_back(boundsDescription);
   } // end of ModelDSLCommon::registerBounds
 
-  std::map<std::string,std::vector<std::string> >
-  ModelDSLCommon::getGlobalIncludes(void)
+  const TargetsDescription&
+  ModelDSLCommon::getTargetsDescription(void) const
   {
-    using namespace std;
-    auto incs = map<string,vector<string>>{};
-    for(const auto& i : this->interfaces){
-      const auto& iincs = i.second->getGlobalIncludes(*this);
-      for(auto p=iincs.begin();p!=iincs.end();++p){
-	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
-      }
-    }
-    return incs;
-  } // end of ModelDSLCommon::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  ModelDSLCommon::getGlobalDependencies(void)
-  {
-    using namespace std;
-    auto deps = map<string,vector<string>>{};
-    for(const auto& i : this->interfaces){
-      const auto& ideps = i.second->getGlobalDependencies(*this);
-      for(auto p=ideps.begin();p!=ideps.end();++p){
-	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
-      }
-    }
-    return deps;
-  } // end of ModelDSLCommon::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  ModelDSLCommon::getGeneratedSources(void)
-  {
-    using namespace std;
-    auto osources = map<string,vector<string>>{};
-    for(const auto& i : this->interfaces){
-      const auto& isources = i.second->getGeneratedSources(*this);
-      for(auto p=isources.begin();p!=isources.end();++p){
-	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
-      }
-    }
-    for(auto p=osources.begin();p!=osources.end();++p){
-      for(auto p2=this->librariesDependencies.begin();
-	  p2!=this->librariesDependencies.end();++p2){
-	  if("-l"+p->first!=*p2){
-	    this->sourcesLibrairiesDependencies[p->first].push_back(*p2);
-	}
-      }
-    }
-    return osources;
-  } // end of ModelDSLCommonCommon::getGeneratedSources
-
-  std::vector<std::string>
-  ModelDSLCommon::getGeneratedIncludes(void)
-  {
-    using namespace std;
-    auto incs = vector<string>{};
-    for(const auto& i : this->interfaces){
-      const auto& iincs = i.second->getGeneratedIncludes(*this);
-      copy(iincs.begin(),iincs.end(),back_inserter(incs));
-    }
-    return incs;
-  } // end of ModelDSLCommon::getGeneratedIncludes(void)
-
-  std::map<std::string,std::vector<std::string> >
-  ModelDSLCommon::getLibrariesDependencies(void)
-  {
-    using namespace std;
-    for(const auto& i : this->interfaces){
-      const auto& ideps = i.second->getLibrariesDependencies(*this);
-      for(auto p=ideps.begin();p!=ideps.end();++p){
-	for(auto p2=p->second.begin();p2!=p->second.end();++p2){
-	  if(find(this->sourcesLibrairiesDependencies[p->first].begin(),
-		  this->sourcesLibrairiesDependencies[p->first].end(),
-		  *p2)==this->sourcesLibrairiesDependencies[p->first].end()){
-	    this->sourcesLibrairiesDependencies[p->first].push_back(*p2);
-	  }
-	}
-      }
-    }
-    return this->sourcesLibrairiesDependencies;
-  } // end of ModelDSLCommon::getLibrariesDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  ModelDSLCommon::getGeneratedEntryPoints(void)
-  {
-    using namespace std;
-    auto r = map<string,vector<string>>{};
-    for(const auto& i : this->interfaces){
-      const auto& epts = i.second->getGeneratedEntryPoints(*this);
-      for(auto l:epts){
-	auto& lepts = r[l.first];
-	for(auto p: l.second){
-	  if(find(lepts.begin(),lepts.end(),p)==lepts.end()){
-	    lepts.push_back(p);
-	  }
-	}
-      }
-    }
-    return r;
-  } // end of ModelDSLCommon::getLibrariesDependencies
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  ModelDSLCommon::getSpecificTargets(void)
-  {
-    return {};
-  } // end of ModelDSLCommon::getSpecificTargets(void)
+    return this->td;
+  }
 
   void
   ModelDSLCommon::addMaterialLaw(const std::string& m)

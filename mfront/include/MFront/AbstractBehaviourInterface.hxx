@@ -30,9 +30,10 @@ namespace mfront{
   
   // forward declaration
   struct BehaviourDescription;
-
   // forward declaration
   struct FileDescription;
+  // forward declartion
+  struct TargetsDescription;
 
   /*!
    * This is the abstract base class of all behaviour interfaces
@@ -128,40 +129,11 @@ namespace mfront{
     endTreatement(const BehaviourDescription&,
 		  const FileDescription&) const = 0;
     /*!
-     * \param[in] mb : mechanical behaviour description
+     * \param[out] d  : target description
+     * \param[out] bd : behaviour description
      */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const BehaviourDescription&) const = 0;
-
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const BehaviourDescription&) const = 0;
-
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const BehaviourDescription&) const = 0;
-
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::vector<std::string>
-    getGeneratedIncludes(const BehaviourDescription&) const = 0;
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const BehaviourDescription&) const = 0;
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const BehaviourDescription&) const = 0;
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const BehaviourDescription&) = 0;
     //! destructor
     virtual ~AbstractBehaviourInterface();
 

@@ -47,6 +47,7 @@
 #include"MFront/MFrontExecutableName.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/SearchFile.hxx"
 #include"MFront/DSLFactory.hxx"
 #include"MFront/MaterialPropertyInterfaceFactory.hxx"
@@ -606,30 +607,31 @@ namespace mfront{
       auto& log = getLogStream();
       log << "Treating file : '" << f << "'" <<  endl;
     }
-    shared_ptr<AbstractDSL> parser = MFrontBase::getDSL(f);
+    shared_ptr<AbstractDSL> dsl = MFrontBase::getDSL(f);
     if(!this->interfaces.empty()){
-      parser->setInterfaces(this->interfaces);
+      dsl->setInterfaces(this->interfaces);
     }
     if(!this->analysers.empty()){
-      parser->setAnalysers(this->analysers);
+      dsl->setAnalysers(this->analysers);
     }
-    parser->analyseFile(f,this->ecmds);
-    parser->generateOutputFiles();
+    dsl->analyseFile(f,this->ecmds);
+    dsl->generateOutputFiles();
     // getting generated sources
-    const auto& src = parser->getGeneratedSources();
+    const TargetsDescription& d = dsl->getTargetsDescription();
+    const auto& src = d.sources;
     for(p=src.begin();p!=src.end();++p){
       auto& tmp = this->sources[p->first];
       copy(p->second.begin(),p->second.end(),insert_iterator<set<string> >(tmp,tmp.begin()));
     }
     // getting generated entry points
-    const auto& nepts = parser->getGeneratedEntryPoints();
+    const auto& nepts = d.epts;
     for(const auto& e: nepts){
       auto& pts = this->epts[e.first];
       copy(e.second.begin(),e.second.end(),
 	   insert_iterator<set<string> >(pts,pts.begin()));
     }
     // getting generated dependencies
-    const auto& deps = parser->getLibrariesDependencies();
+    const auto& deps = d.dependencies;
     for(p=deps.begin();p!=deps.end();++p){
       auto& tmp = this->dependencies[p->first];
       for(p2=p->second.begin();p2!=p->second.end();++p2){
@@ -648,7 +650,7 @@ namespace mfront{
       }
     }
     // getting specific targets
-    const auto& t = parser->getSpecificTargets();
+    const auto& t = d.specific_targets;
     for(p3=t.begin();p3!=t.end();++p3){
       for(p4=p3->second.first.begin();p4!=p3->second.first.end();++p4){
 	if(find(this->targets[p3->first].first.begin(),
@@ -664,10 +666,10 @@ namespace mfront{
       }
     }
     // getting includes
-    const auto& incs = parser->getGlobalIncludes();
+    const auto& incs = d.cppflags;
     for(p=incs.begin();p!=incs.end();++p){
       copy(p->second.begin(),p->second.end(),
-	   insert_iterator<set<string> >(this->globalIncludes,this->globalIncludes.begin()));
+	   insert_iterator<set<string> >(this->cppflags,this->cppflags.begin()));
     }
   } // end of MFront::treatFile(void)
 
@@ -871,7 +873,7 @@ namespace mfront{
   } // end of MFront::analyseEntryPoints
 
   void
-  MFront::analyseGlobalIncludes()
+  MFront::analyseCppFlags()
   {
     using namespace std;
     using namespace tfel::system;
@@ -882,17 +884,17 @@ namespace mfront{
     checkIfFileIsRegularAndReadable(name);
     file.open(name);
     if(!file){
-      string msg("MFront::analyseGlobalIncludes : can't open file '"+name+"'");
+      string msg("MFront::analyseCppFlags : can't open file '"+name+"'");
       throw(runtime_error(msg));
     }
     while(!file.eof()){
       getline(file,line);
       if(!line.empty()){
-	this->globalIncludes.insert(line);
+	this->cppflags.insert(line);
       }
     }
     file.close();
-  } // end of MFront::analyseGlobalIncludes
+  } // end of MFront::analyseCppFlags
 
   void
   MFront::analyseMakefileSpecificTargets()
@@ -1028,7 +1030,7 @@ namespace mfront{
 	  this->analyseMakefileSpecificTargets();
 	}
 	if(*p=="Makefile.incs"){
-	  this->analyseGlobalIncludes();
+	  this->analyseCppFlags();
 	}
       }
       // we treat dependencies separetly because some file might had been
@@ -1122,7 +1124,7 @@ namespace mfront{
 	  this->analyseMakefileSpecificTargets();
 	}
 	if(*p=="Makefile.incs"){
-	  this->analyseGlobalIncludes();
+	  this->analyseCppFlags();
 	}
       }
       // we treat dependencies separetly because some file might had been
@@ -1307,7 +1309,7 @@ namespace mfront{
   } // end of MFront::writeSpecificTargets
 
   void
-  MFront::writeGlobalIncludes(void)
+  MFront::writeCppFlags(void)
   {
     using namespace std;
     using namespace tfel::system;
@@ -1316,15 +1318,15 @@ namespace mfront{
     auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
-      if(!this->globalIncludes.empty()){
+      if(!this->cppflags.empty()){
 	file.open(("src"+dirStringSeparator()+"Makefile.incs").c_str());
 	if(!file){
-	  string msg("MFront::writeGlobalIncludes : can't open file 'src"+
+	  string msg("MFront::writeCppFlags : can't open file 'src"+
 		     dirStringSeparator()+"Makefile.incs'");
 	  throw(runtime_error(msg));
 	}
-	copy(this->globalIncludes.begin(),
-	     this->globalIncludes.end(),ostream_iterator<string>(file,"\n"));
+	copy(this->cppflags.begin(),
+	     this->cppflags.end(),ostream_iterator<string>(file,"\n"));
       }
     }
     catch(...){
@@ -1332,7 +1334,7 @@ namespace mfront{
       throw;
     }
     l.unlock();
-  } // end of MFront::writeGlobalIncludes
+  } // end of MFront::writeCppFlags
 
   std::pair<bool,std::pair<std::string,std::string> >
   MFront::getLibraryDependencies(const std::string& name)
@@ -1539,12 +1541,12 @@ namespace mfront{
 	this->makeFile << inc << " ";
       }
       this->makeFile << "-I../include `tfel-config --includes`";
-      if(!this->globalIncludes.empty()){
+      if(!this->cppflags.empty()){
 	this->makeFile << " \\\n";
-	for(p7=this->globalIncludes.begin();
-	    p7!=this->globalIncludes.end();){
+	for(p7=this->cppflags.begin();
+	    p7!=this->cppflags.end();){
 	  this->makeFile << "\t     " << *p7;
-	  if(++p7!=this->globalIncludes.end()){
+	  if(++p7!=this->cppflags.end()){
 	    this->makeFile << " \\\n";
 	  }
 	}
@@ -1940,7 +1942,7 @@ namespace mfront{
       this->writeEntryPointsLists();
       this->writeDependenciesLists();
       this->writeSpecificTargets();
-      this->writeGlobalIncludes();
+      this->writeCppFlags();
     }
     if(!errors.empty()){
       string msg;

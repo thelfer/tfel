@@ -5,7 +5,7 @@ include_directories(
 link_directories("${PROJECT_BINARY_DIR}/mfront/src")
 
 if(NOT WIN32)
-  add_library(LicosMFrontModel SHARED LicosModelInterface)
+  add_library(LicosMFrontModel MODULE LicosModelInterface)
   target_link_libraries(LicosMFrontModel
     MFrontLogStream)
   add_library(GerminalMFrontModel SHARED

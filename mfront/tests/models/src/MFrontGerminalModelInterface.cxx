@@ -193,7 +193,7 @@ namespace mfront{
   }
 
   void
-  MFrontGerminalModelInterface::writeSpecificPrivateMethodDeclaration(const GenericData&,
+  MFrontGerminalModelInterface::writeSpecificPrivateMethodDeclaration(const FileDescription&,
 								      const ModelData&)
   {
     using namespace std;

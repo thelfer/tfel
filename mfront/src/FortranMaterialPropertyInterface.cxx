@@ -17,6 +17,8 @@
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/TargetsDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/FortranMaterialPropertyInterface.hxx"
 
 namespace mfront
@@ -32,81 +34,18 @@ namespace mfront
     : CMaterialPropertyInterfaceBase()
   {}
 
-  std::map<std::string,std::vector<std::string> >
-  FortranMaterialPropertyInterface::getGlobalDependencies(const std::string& library,
-						   const std::string& material,
-						   const std::string&)
-  {
-    using namespace std;
-    map<string,vector<string> > libs;
-    libs["libFortran"+getMaterialLawLibraryNameBase(library,material)].push_back("-lm");
-    return libs;
-  } // end of FortranMaterialPropertyInterface::getGeneratedSources
+  void
+  FortranMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
+							  const MaterialPropertyDescription& mpd)
 
-  std::map<std::string,std::vector<std::string> >
-  FortranMaterialPropertyInterface::getGlobalIncludes(const std::string&,
-					       const std::string&,
-					       const std::string&)
   {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of FortranMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  FortranMaterialPropertyInterface::getGeneratedSources(const std::string& library,
-						 const std::string& material,
-						 const std::string& className)
-  {
-    using namespace std;
-    map<string,vector<string> > src;
-    string name = this->getSrcFileName(material,className);
-    src["libFortran"+getMaterialLawLibraryNameBase(library,material)].push_back(name+".cxx");
-    return src;
-  } // end of FortranMaterialPropertyInterface::getGeneratedSources
-
-  std::vector<std::string>
-  FortranMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-						  const std::string&,
-						  const std::string&)
-  {
-    using namespace std;
-    return vector<string>();
-  } // end of FortranMaterialPropertyInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  FortranMaterialPropertyInterface::getLibrariesDependencies(const std::string& library,
-						      const std::string& material,
-						      const std::string&)
-  {
-    using namespace std;
-    map<string,vector<string> > libs;
-    libs["libFortran"+getMaterialLawLibraryNameBase(library,material)].push_back("-lm");
-    return libs;
-  } // end of FortranMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  FortranMaterialPropertyInterface::getSpecificTargets(const std::string&,
-						       const std::string&,
-						       const std::string&,
-						       const std::vector<std::string>&)
-  {
-    using namespace std;
-    return map<string,pair<vector<string>,vector<string> > >();
-  } // end of FortranMaterialPropertyInterface::getSpecificTargets
-
-  std::map<std::string,std::vector<std::string> >
-  FortranMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
-							    const std::string& material,
-							    const std::string& className){
-    using namespace std;
-    auto epts = map<string,vector<string>>{};
-    const auto f = makeLowerCase(material.empty() ? className : material+"_"+className);
-    const auto l = "libFortran"+getMaterialLawLibraryNameBase(library,material);
-    epts[l] = {f,f+"_checkBounds"};
-    return epts;
-  } // end of FortranMaterialPropertyInterface::getGeneratedEntryPoints
+    const auto lib  = "libFortran"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+    const auto name = this->getSrcFileName(mpd.material,mpd.className);
+    const auto f = makeLowerCase(mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className);
+    d.dependencies[lib].push_back("-lm");
+    d.sources[lib].push_back(name+".cxx");
+    d.epts[lib].insert(d.epts[lib].end(),{f,f+"_checkBounds"});
+  } // end of FortranMaterialPropertyInterface::getTargetsDescription
 
   std::string
   FortranMaterialPropertyInterface::getHeaderFileName(const std::string&,

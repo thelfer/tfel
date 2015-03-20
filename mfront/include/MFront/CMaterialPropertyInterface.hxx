@@ -25,75 +25,13 @@ namespace mfront{
     getName(void);
     
     CMaterialPropertyInterface();
-
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \brief : fill the target descripton
+     * \param[out] d   : target description
+     * \param[in]  mpd : material property description
      */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const std::string&,
-		      const std::string&,
-		      const std::string&);
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const std::string&,
-			  const std::string&,
-			  const std::string&);
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const std::string&,
-			const std::string&,
-			const std::string&);
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    virtual std::vector<std::string>
-    getGeneratedIncludes(const std::string&,
-			 const std::string&,
-			 const std::string&);
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const std::string&,
-			     const std::string&,
-			     const std::string&);
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     * \param const std::vector<std::string>&, library links
-     */
-    virtual std::map<std::string,
-		     std::pair<std::vector<std::string>,
-			       std::vector<std::string> > >
-    getSpecificTargets(const std::string&,
-		       const std::string&,
-		       const std::string&,
-		       const std::vector<std::string>&);
-    
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const std::string&,
-			    const std::string&,
-			    const std::string&) override;
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const MaterialPropertyDescription&) override;
     //! destructor
     virtual ~CMaterialPropertyInterface();
         

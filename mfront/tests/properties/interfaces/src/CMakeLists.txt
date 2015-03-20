@@ -5,7 +5,7 @@ include_directories(
 link_directories("${PROJECT_BINARY_DIR}/mfront/src")
 
 if(NOT WIN32)
-  add_library(libPleiadesMaterialProperties-2.0 SHARED
+  add_library(libPleiadesMaterialProperties-2.0 MODULE
     MFrontPleiadesMaterialPropertyInterface-2.0.cxx)
   target_link_libraries(libPleiadesMaterialProperties-2.0
     MFrontLogStream)

@@ -34,81 +34,25 @@ namespace mfront{
     getName(void);
     
     GnuplotMaterialPropertyInterface();
-    
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \param[in] k  : keyword treated
+     * \param[in] p  : iterator to the current token
+     * \param[in] pe : iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
      */
-    std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const std::string&,
-		      const std::string&,
-		      const std::string&) override;
-
+    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    treatKeyword(const std::string&,
+		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
+		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
     /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
+     * \brief : fill the target descripton
+     * \param[out] d   : target description
+     * \param[in]  mpd : material property description
      */
-    std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const std::string&,
-			  const std::string&,
-			  const std::string&) override;
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const std::string&,
-			const std::string&,
-			const std::string&) override;
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    std::vector<std::string>
-    getGeneratedIncludes(const std::string&,
-			 const std::string&,
-			 const std::string&) override;
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     */
-    std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const std::string&,
-			     const std::string&,
-			     const std::string&) override;
-
-    /*!
-     * \param const std::string&, library
-     * \param const std::string&, material
-     * \param const std::string&, class
-     * \param const std::vector<std::string>&, library links
-     */
-    std::map<std::string,
-	     std::pair<std::vector<std::string>,
-		       std::vector<std::string> > >
-    getSpecificTargets(const std::string&,
-		       const std::string&,
-		       const std::string&,
-		       const std::vector<std::string>&) override;
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     * \param[in] library   : libary name
-     * \param[in] material  : material name
-     * \param[in] className : className
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const std::string&,
-			    const std::string&,
-			    const std::string&) override;
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const MaterialPropertyDescription&) override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
@@ -117,17 +61,12 @@ namespace mfront{
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
 				  const FileDescription&) override;
     //! destructor
-    virtual ~GnuplotMaterialPropertyInterface() override;
+    virtual ~GnuplotMaterialPropertyInterface();
     
   private:
 
     std::string
     eraseQuote(const std::string&);
-
-    std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-    treatKeyword(const std::string&,
-		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
     
     std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     registerTestBounds(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,

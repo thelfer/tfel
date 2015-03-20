@@ -23,6 +23,7 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/ZMATInterface.hxx"
 
 namespace mfront
@@ -1567,57 +1568,19 @@ namespace mfront
 	<< "::callMFrontBehaviour" << getSpaceDimensionSuffix(h) << endl << endl;
   }
 
-  std::map<std::string,std::vector<std::string> >
-  ZMATInterface::getGlobalIncludes(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > incs;
-    incs[getLibraryName(mb)].push_back("`tfel-config --includes --zmat`");
+  void
+  ZMATInterface::getTargetsDescription(TargetsDescription& d,
+				       const BehaviourDescription& bd){
+    const auto lib  = getLibraryName(bd);
+    const auto name = bd.getLibrary()+bd.getClassName();
+    d.cppflags[lib].push_back("`tfel-config --includes --zmat`");
 #warning "HERE"
-    incs[getLibraryName(mb)].push_back("-DLinux");
-    return incs;
-  } // end of ZMATInterface::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  ZMATInterface::getGlobalDependencies(const BehaviourDescription&) const
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of ZMATInterface::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  ZMATInterface::getGeneratedSources(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > src;
-    src[getLibraryName(mb)].push_back("ZMAT"+mb.getLibrary()+mb.getClassName()+".cxx");
-    return src;
-  } // end of ZMATInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  ZMATInterface::getGeneratedEntryPoints(const BehaviourDescription& mb) const
-  {
-    return {{getLibraryName(mb),{mb.getClassName()}}};
-  } // end of ZMATInterface::getGeneratedEntryPoints
-
-  std::vector<std::string>
-  ZMATInterface::getGeneratedIncludes(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    vector<string> incs;
-    incs.push_back("MFront/ZMAT/ZMAT"+mb.getLibrary()+mb.getClassName()+".hxx");
-    return incs;
-  } // end of ZMATInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  ZMATInterface::getLibrariesDependencies(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > deps;
-    const string lib = getLibraryName(mb);
-    deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
-    return deps;
-  } // end of ZMATInterface::getLibrariesDependencies
+    d.cppflags[lib].push_back("-DLinux");
+    d.headers.push_back("MFront/ZMAT/ZMAT"+name+".hxx");
+    d.sources[lib].push_back("ZMAT"+name+".cxx");
+    d.epts[lib].push_back(bd.getClassName());
+    d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
+  } // end of ZMATInterface::getTargetsDescription
 
   ZMATInterface::~ZMATInterface()
   {}

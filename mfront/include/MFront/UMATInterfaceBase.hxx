@@ -44,12 +44,6 @@ namespace mfront{
     virtual void
     allowDynamicallyAllocatedArrays(const bool);
 
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const BehaviourDescription&) const;
-
     virtual void
     exportMechanicalData(std::ofstream&,
 			 const Hypothesis,

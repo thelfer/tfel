@@ -31,6 +31,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/DSLFactory.hxx"
 #include"MFront/MaterialPropertyDSL.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyInterfaceFactory.hxx"
 
 namespace mfront{
@@ -668,9 +669,26 @@ namespace mfront{
 
   void
   MaterialPropertyDSL::analyseFile(const std::string& fileName_,
-				       const std::vector<std::string>& ecmds) 
+				   const std::vector<std::string>& ecmds) 
   {
     this->importFile(fileName_,ecmds);
+    for(const auto & i : this->interfaces){
+      i.second->getTargetsDescription(this->td,*this);
+    }
+    for(const auto& s : this->td.sources){
+      for(const auto& ld : this->librariesDependencies){
+	if("-l"+s.first!=ld){
+	  this->td.dependencies[s.first].push_back(ld);
+	}
+      }
+    }
+    for(const auto& ld : this->td.dependencies){
+      for(const auto& deps : this->librariesDependencies){
+	if("-l"+ld.first!=deps){
+	  this->td.dependencies[ld.first].push_back(deps);
+	}
+      }
+    }
   }
 
   void
@@ -724,121 +742,11 @@ namespace mfront{
     this->registerVariable(this->output,false);
   } // end of MaterialPropertyDSL::treatOutput
 
-  std::map<std::string,std::vector<std::string> >
-  MaterialPropertyDSL::getGeneratedSources(void)
+  const TargetsDescription&
+  MaterialPropertyDSL::getTargetsDescription(void) const
   {
-    using namespace std;
-    typedef map<string,vector<string> > Map;
-    Map osources;
-    map<string,vector<string> >::const_iterator p;
-    vector<string>::const_iterator p2;
-    for(const auto& i : this->interfaces){
-      const auto& isources = i.second->getGeneratedSources(this->library,
-							   this->material,
-							   this->className);
-      for(p=isources.begin();p!=isources.end();++p){
-	copy(p->second.begin(),p->second.end(),back_inserter(osources[p->first]));
-      }
-    }
-    for(p=osources.begin();p!=osources.end();++p){
-      for(p2=this->librariesDependencies.begin();
-	  p2!=this->librariesDependencies.end();++p2){
-	if("-l"+p->first!=*p2){
-	  this->sourcesLibrairiesDependencies[p->first].push_back(*p2);
-	}
-      }
-    }
-    return osources;
-  } // end of MaterialPropertyDSL::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  MaterialPropertyDSL::getGeneratedEntryPoints(void)
-  {
-    using namespace std;
-    auto r = map<string,vector<string>>{};
-    for(const auto& i : this->interfaces){
-      const auto& epts = i.second->getGeneratedEntryPoints(this->library,
-							   this->material,
-							   this->className);
-      for(auto l:epts){
-	auto& lepts = r[l.first];
-	for(auto p: l.second){
-	  if(find(lepts.begin(),lepts.end(),p)==lepts.end()){
-	    lepts.push_back(p);
-	  }
-	}
-      }
-    }
-    return r;
-  } // end of MaterialPropertyDSL::getLibrariesDependencies
-
-  std::vector<std::string>
-  MaterialPropertyDSL::getGeneratedIncludes(void)
-  {
-    using namespace std;
-    vector<string> incs;
-    for(const auto& i : this->interfaces){
-      const auto& iincs = i.second->getGeneratedIncludes(this->library,
-							 this->material,
-							 this->className);
-      copy(iincs.begin(),iincs.end(),back_inserter(incs));
-    }
-    return incs;
-  } // end of MaterialPropertyDSL::getGeneratedIncludes(void)
-
-  std::map<std::string,std::vector<std::string> >
-  MaterialPropertyDSL::getGlobalIncludes(void)
-  {
-    using namespace std;
-    auto incs = map<string,vector<string>>{};
-    for(const auto& i : this->interfaces){
-      const auto& iincs = i.second->getGlobalIncludes(this->library,
-						      this->material,
-						      this->className);
-      for(auto p=iincs.begin();p!=iincs.end();++p){
-	copy(p->second.begin(),p->second.end(),back_inserter(incs[p->first]));
-      }
-    }
-    return incs;
-  } // end of MaterialPropertyDSL::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  MaterialPropertyDSL::getGlobalDependencies(void)
-  {
-    using namespace std;
-    auto deps = map<string,vector<string>>{};
-    for(const auto& i : this->interfaces){
-      const auto& ideps = i.second->getGlobalDependencies(this->library,
-							  this->material,
-							  this->className);
-      for(auto p=ideps.begin();p!=ideps.end();++p){
-	copy(p->second.begin(),p->second.end(),back_inserter(deps[p->first]));
-      }
-    }
-    return deps;
-  } // end of MaterialPropertyDSL::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  MaterialPropertyDSL::getLibrariesDependencies(void)
-  {
-    using namespace std;
-    auto deps = map<string,vector<string>>{};
-    for(const auto& i : this->interfaces){
-      const auto& ideps = i.second->getLibrariesDependencies(this->library,
-							     this->material,
-							     this->className);
-      for(auto p=ideps.begin();p!=ideps.end();++p){
-	for(auto p2=p->second.begin();p2!=p->second.end();++p2){
-	  if(find(this->sourcesLibrairiesDependencies[p->first].begin(),
-		  this->sourcesLibrairiesDependencies[p->first].end(),
-		  *p2)!=this->sourcesLibrairiesDependencies[p->first].end()){
-	    this->sourcesLibrairiesDependencies[p->first].push_back(*p2);
-	  }
-	}
-      }
-    }
-    return this->sourcesLibrairiesDependencies;
-  } // end of MaterialPropertyDSL::getLibrariesDependencies
+    return this->td;
+  } // end of MaterialPropertyDSL::getTargetsDescription
 
   void
   MaterialPropertyDSL::treatBounds(void)
@@ -959,30 +867,6 @@ namespace mfront{
     this->readSpecifiedToken("MaterialPropertyDSL::registerBounds",";");
     container.push_back(boundsDescription);
   } // end of MaterialPropertyDSL::registerBounds
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  MaterialPropertyDSL::getSpecificTargets(void)
-  {
-    using namespace std;
-    auto res = map<string,pair<vector<string>,vector<string> > >{};
-    for(const auto& i : this->interfaces){
-      const auto& targets = i.second->getSpecificTargets(this->library,
-							 this->material,
-							 this->className,
-							 this->librariesDependencies);
-      for(auto p2=targets.begin();p2!=targets.end();++p2){
-	copy(p2->second.first.begin(),
-	     p2->second.first.end(),
-	     back_inserter(res[p2->first].first));
-	copy(p2->second.second.begin(),
-	     p2->second.second.end(),
-	     back_inserter(res[p2->first].second));
-      }
-    }
-    return res;
-  } // end of MaterialPropertyDSL::getSpecificTargets(void)
   
   void
   MaterialPropertyDSL::treatUnknownKeyword(void)

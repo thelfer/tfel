@@ -16,6 +16,21 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
+# MFrontLogStream
+
+mfront_library(MFrontLogStream
+  MFrontLogStream.cxx)
+
+# MFrontLogProfiling
+
+mfront_library(MFrontProfiling
+  BehaviourProfiler.cxx)
+if(UNIX)
+  target_link_libraries(MFrontProfiling rt)
+endif(UNIX)
+
+# TFELMFront
+
 set(TFELMFront_SOURCES
     MFrontBase.cxx
     CodeBlock.cxx
@@ -119,25 +134,6 @@ if(HAVE_FORTRAN)
 	${TFELMFront_SOURCES})
 endif(HAVE_FORTRAN)
 
-mfront_library(MFrontLogStream
-  MFrontLogStream.cxx)
-
-mfront_library(MFrontProfiling
-  BehaviourProfiler.cxx)
-if(UNIX)
-  target_link_libraries(MFrontProfiling rt)
-endif(UNIX)
-
-mfront_library(MTestFileGenerator
-  MTestFileGeneratorBase.cxx
-  UMATSmallStrainMTestFileGenerator.cxx
-  UMATFiniteStrainMTestFileGenerator.cxx)
-target_link_libraries(MTestFileGenerator
-  TFELMaterial
-  TFELMath
-  TFELUtilities
-  TFELException)
-
 if(HAVE_CASTEM)
     set(TFELMFront_SOURCES
 	UMATInterface.cxx
@@ -223,19 +219,35 @@ else(UNIX)
     TFELGlossary TFELException)
 endif(UNIX)
 
+# MTestFileGenerator
+
+mfront_library(MTestFileGenerator
+  MTestFileGeneratorBase.cxx
+  UMATSmallStrainMTestFileGenerator.cxx
+  UMATFiniteStrainMTestFileGenerator.cxx)
+target_link_libraries(MTestFileGenerator
+  TFELMaterial
+  TFELMath
+  TFELUtilities
+  TFELException)
+
+# MFront
+
 add_executable(mfront main.cxx MFront.cxx)
-add_executable(mfront-query mfront-query.cxx
-  BehaviourQuery.cxx)
-
 target_link_libraries(mfront
-  TFELMFront MFrontLogStream
+  TFELMFront 
+  MFrontLogStream
   TFELSystem TFELUtilities)
-
-target_link_libraries(mfront-query
-  TFELMFront MFrontLogStream
-  TFELSystem TFELUtilities)
-
 install(TARGETS mfront DESTINATION bin
   COMPONENT mfront)
+
+# mfront-query
+
+add_executable(mfront-query mfront-query.cxx
+  BehaviourQuery.cxx)
+target_link_libraries(mfront-query
+  TFELMFront 
+  MFrontLogStream
+  TFELSystem TFELUtilities)
 install(TARGETS mfront-query DESTINATION bin
   COMPONENT mfront)

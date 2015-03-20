@@ -26,6 +26,8 @@ namespace mfront{
 
   // forward declaration
   struct FileDescription;
+  // forward declaration
+  struct TargetsDescription;
 
   /*!
    * Interface class for all domain specific languages.
@@ -88,61 +90,34 @@ namespace mfront{
     analyseFile(const std::string&,
 		const std::vector<std::string>&) = 0;
     /*!
+     * \return the target description
+     * \note This method shall be called *after* the analyseFile method
+     */
+    virtual const TargetsDescription&
+    getTargetsDescription(void) const = 0;
+    /*!
      * \brief treat the specified file.
      * \note This method shall be called *after* the analyseFile method
      */
     virtual void generateOutputFiles() = 0;
-
+    /*!
+     * \brief set list of interfaces
+     * \param[in] inames : list of interfaces
+     */
     virtual void
     setInterfaces(const std::set<std::string>&) = 0;
-
+    /*!
+     * \set a list of analysers
+     * \param[in] anames : list of analysers
+     */
     virtual void
     setAnalysers(const std::set<std::string>&) = 0;
-
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
      */
     virtual void
     getKeywordsList(std::vector<std::string>&) const = 0;
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(void) = 0;
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(void) = 0;
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(void) = 0;
-
-    virtual std::vector<std::string>
-    getGeneratedIncludes(void) = 0;
-
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(void) = 0;
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(void) = 0;
-    /*!
-     * An abstract dsl can define its own targets (something which is
-     * not a library)
-     * \return a map associating a target and a list of dependencies
-     * and a list of command to build the target.
-     * This will define the following Makefile rule:
-     * \code{.txt}
-     * target : dep1 dep2 ...
-     *    cmd1
-     *    cmd2
-     *    ....
-     * \endcode
-     */
-    virtual std::map<std::string,                           //< target name
-		     std::pair<std::vector<std::string>,    //< dependencies to other targets
-			       std::vector<std::string> > > //< commands
-    getSpecificTargets(void) = 0;
     //! destructor
     virtual ~AbstractDSL();
   };

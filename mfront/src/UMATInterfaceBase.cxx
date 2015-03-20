@@ -94,12 +94,6 @@ namespace mfront
     this->areDynamicallyAllocatedVectorsAllowed_ = b;
   } // end of UMATInterfaceBase::allowDynamicallyAllocatedArrays
 
-  std::map<std::string,std::vector<std::string> >
-  UMATInterfaceBase::getGlobalDependencies(const BehaviourDescription&) const
-  {
-    return {};
-  } // end of UMATInterfaceBase::getGlobalDependencies
-
   void
   UMATInterfaceBase::appendToMaterialPropertiesList(std::vector<UMATMaterialProperty>& l,
 						    const std::string& t,

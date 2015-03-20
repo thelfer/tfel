@@ -24,62 +24,33 @@ namespace mfront{
 
     MFrontPleiadesModelInterfaceBase();
 
-    virtual void setVerboseMode();
-
-    virtual void setDebugMode();
-
-    virtual void setWarningMode();
-
+    virtual void declareReservedNames(std::set<std::string>&)  override;
+    /*!
+     * \param[in] k  : keyword treated
+     * \param[in] p  : iterator to the current token
+     * \param[in] pe : iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
-
-    virtual void
-    reset(void);
-
-    virtual
-    void declareReservedNames(std::set<std::string>&);
-
+		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
+    /*!
+     * \brief : fill the target descripton
+     * \param[out] d  : target description
+     * \param[in]  md : model description
+     */
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const ModelData&) override;
     /*!
      * \param pdata : processing data
      * \param data  : model data
      */
-    virtual
-    void writeOutputFiles(const GenericData&,
-			  const ModelData&);
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const ModelData&);
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalDependencies(const ModelData&);
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const ModelData&);
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::vector<std::string>
-    getGeneratedIncludes(const ModelData&);
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const ModelData&) const override;
-    /*!
-     * \param pdata : generic data
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const ModelData&);
-
+    virtual void writeOutputFiles(const FileDescription&,
+				  const ModelData&) override;
+    
   protected:
 
     virtual void
@@ -89,19 +60,19 @@ namespace mfront{
     closeOutputFiles(void);
 
     virtual void
-    generateOutputFiles(const GenericData&,
+    generateOutputFiles(const FileDescription&,
 			const ModelData&);
     
     virtual void
-    writeHeaderFile(const GenericData&,
+    writeHeaderFile(const FileDescription&,
 		    const ModelData&);
 
     virtual void
-    writeSpecificPrivateMethodDeclaration(const GenericData&,
+    writeSpecificPrivateMethodDeclaration(const FileDescription&,
 					  const ModelData&);
     
     virtual void
-    writeSrcFile(const GenericData&,
+    writeSrcFile(const FileDescription&,
 		 const ModelData&);
 
     virtual void
@@ -159,9 +130,6 @@ namespace mfront{
 
     bool hasDefaultConstructor;
     bool hasSpecializedDomain;
-    bool verboseMode;
-    bool debugMode;
-    bool warningMode;
   }; // end of class MFrontPleiadesModelInterface
 
 } // end of namespace mfront  

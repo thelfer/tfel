@@ -19,6 +19,7 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/MaterialPropertyInterfaceProxy.hxx"
 #include"MFront/MFrontPleiadesMaterialPropertyInterface-2.0.hxx"
@@ -57,80 +58,18 @@ namespace mfront {
   MFrontPleiadesMaterialPropertyInterface::~MFrontPleiadesMaterialPropertyInterface() {
   }
 
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesMaterialPropertyInterface::getGlobalDependencies(const std::string& lib,
-								 const std::string& mat,
-								 const std::string&) {
-    using namespace std;
-    map<string,vector<string> > libs;
-    libs["libPleiades"+getMaterialLawLibraryNameBase(lib,mat)].push_back("-lm");
-    return libs;
-  } // end of MFrontPleiadesMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesMaterialPropertyInterface::getGlobalIncludes(const std::string& lib,
-							     const std::string& mat,
-							     const std::string&) {
-    using namespace std;
-    map<string,vector<string> > incs;
-    incs["libPleiades"+getMaterialLawLibraryNameBase(lib,mat)].push_back("`pleiades-config --includes`\n");
-    return incs;
-  } // end of MFrontPleiadesMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesMaterialPropertyInterface::getGeneratedSources(const std::string& lib,
-							       const std::string& mat,
-							       const std::string& className) {
-    using namespace std;
-    map<string,vector<string> > src;
-    string pleiadeslib = "libPleiades"+getMaterialLawLibraryNameBase(lib,mat);
-    if(!mat.empty()){
-      src[pleiadeslib].push_back(mat+"_"+className+"-pleiades.cpp");
-    } else {
-      src[pleiadeslib].push_back(className+"-pleiades.cpp");
-    }
-    return src;
-  } // end of MFrontPleiadesMaterialPropertyInterface::getGeneratedSources
-
-  std::vector<std::string>
-  MFrontPleiadesMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-								const std::string&,
-								const std::string&) {
-    using namespace std;
-    vector<string> incs;
-    incs.push_back(this->headerFileName.substr(8));
-    return incs;
-  } // end of MFrontPleiadesMaterialPropertyInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesMaterialPropertyInterface::getLibrariesDependencies(const std::string& lib,
-								    const std::string& mat,
-								    const std::string&) {
-    using namespace std;
-    map<string,vector<string> > libs;
-    string pleiadeslib = "libPleiades"+getMaterialLawLibraryNameBase(lib,mat);
-    libs[pleiadeslib].push_back("-lm");
-    return libs;
-  } // end of MFrontPleiadesMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,std::vector<std::string> >
-  MFrontPleiadesMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
-								   const std::string& material,
-								   const std::string& className){
-    const std::string name = (!material.empty()) ? material+"_"+className : className;
-    return {{"libPleiades"+getMaterialLawLibraryNameBase(library,material),{name}}};
-  } // end of MFrontPleiadesMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  MFrontPleiadesMaterialPropertyInterface::getSpecificTargets(const std::string&,
-							      const std::string&,
-							      const std::string&,
-							      const std::vector<std::string>&) {
-    using namespace std;
-    return map<string,pair<vector<string>,vector<string> > >();
-  } // end of MFrontPleiadesMaterialPropertyInterface::getSpecificTargets
+  void
+  MFrontPleiadesMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
+								 const MaterialPropertyDescription& mpd)
+  {
+    const auto lib    = "libPleiades"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+    const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
+    d.dependencies[lib].push_back("-lm");
+    d.cppflags[lib].push_back("`pleiades-config --includes`\n");
+    d.sources[lib].push_back(name+"-pleiades.cpp");
+    d.epts[lib].push_back(name);
+    d.headers.push_back(this->headerFileName.substr(8));
+  } // end of MFrontPleiadesMaterialPropertyInterface::getTargetsDescription
 
   void MFrontPleiadesMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
 								 const FileDescription& fd){

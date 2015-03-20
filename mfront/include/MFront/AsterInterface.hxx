@@ -29,35 +29,14 @@ namespace mfront{
     getName(void);
     
     AsterInterface();
-    
     /*!
-     * \param[in] mb : mechanical behaviour description
+     * \param[in] k  : keyword treated
+     * \param[in] p  : iterator to the current token
+     * \param[in] pe : iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
      */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGlobalIncludes(const BehaviourDescription&) const override;
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedSources(const BehaviourDescription&) const override;
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::vector<std::string>
-    getGeneratedIncludes(const BehaviourDescription&) const override;
-    /*!
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getLibrariesDependencies(const BehaviourDescription&) const override;
-    /*!
-     * \return a map associating to each library a list of entry
-     * points (function or classes)
-     * \param[in] mb : mechanical behaviour description
-     */
-    virtual std::map<std::string,std::vector<std::string> >
-    getGeneratedEntryPoints(const BehaviourDescription&) const override;
-
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
@@ -70,6 +49,12 @@ namespace mfront{
     virtual void
     endTreatement(const BehaviourDescription&,
 		  const FileDescription&) const override;
+    /*!
+     * \param[out] d  : target description
+     * \param[out] bd : behaviour description
+     */
+    virtual void getTargetsDescription(TargetsDescription&,
+				       const BehaviourDescription&) override;
     //! destructor
     virtual ~AsterInterface();
     

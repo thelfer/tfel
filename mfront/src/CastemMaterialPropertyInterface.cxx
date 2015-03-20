@@ -20,6 +20,7 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CastemMaterialPropertyInterface.hxx"
 
@@ -47,90 +48,20 @@ namespace mfront
   CastemMaterialPropertyInterface::~CastemMaterialPropertyInterface()
   {}
 
-  std::map<std::string,std::vector<std::string> >
-  CastemMaterialPropertyInterface::getGlobalDependencies(const std::string& lib,
-						  const std::string& mat,
-						  const std::string&)
+  void
+  CastemMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
+							 const MaterialPropertyDescription& mpd)
   {
-    using namespace std;
-    map<string,vector<string> > libs;
-    string castlib = "libCastem"+getMaterialLawLibraryNameBase(lib,mat);
-    libs[castlib].push_back("-lm");
-    return libs;
-  } // end of CastemMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  CastemMaterialPropertyInterface::getGlobalIncludes(const std::string& lib,
-					      const std::string& mat,
-					      const std::string&)
-  {
-    using namespace std;
-    map<string,vector<string> > incs;
-    string castlib = "libCastem"+getMaterialLawLibraryNameBase(lib,mat);
-    incs[castlib].push_back(CASTEM_CPPFLAGS);
-    return incs;
-  } // end of CastemMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  CastemMaterialPropertyInterface::getGeneratedSources(const std::string& lib,
-						const std::string& mat,
-						const std::string& className)
-  {
-    using namespace std;
-    map<string,vector<string> > src;
-    string castlib = "libCastem"+getMaterialLawLibraryNameBase(lib,mat);
-    string name          = this->getCastemFunctionName(mat,className);
-    src[castlib].push_back(this->getSourceFileName(name));
-    return src;
-  } // end of CastemMaterialPropertyInterface::getGeneratedSources
-
-  std::vector<std::string>
-  CastemMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-						 const std::string&,
-						 const std::string&)
-  {
-    using namespace std;
-    vector<string> incs;
-    incs.push_back(this->headerFileName);
-    return incs;
-  } // end of CastemMaterialPropertyInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  CastemMaterialPropertyInterface::getLibrariesDependencies(const std::string& lib,
-						     const std::string& mat,
-						     const std::string&)
-  {
-    using namespace std;
-    map<string,vector<string> > libs;
-    string castlib = "libCastem"+getMaterialLawLibraryNameBase(lib,mat);
-    libs[castlib].push_back("-lm");
-    return libs;
-  } // end of CastemMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  CastemMaterialPropertyInterface::getSpecificTargets(const std::string&,
-					       const std::string&,
-					       const std::string&,
-					       const std::vector<std::string>&)
-  {
-    using namespace std;
-    return map<string,pair<vector<string>,vector<string> > >();
-  } // end of CastemMaterialPropertyInterface::getSpecificTargets
-
-  std::map<std::string,std::vector<std::string> >
-  CastemMaterialPropertyInterface::getGeneratedEntryPoints(const std::string& library,
-							   const std::string& material,
-							   const std::string& className)
-  {
-    using namespace std;
-    auto r = map<string,vector<string>>{};
-    const auto l = "libCastem"+getMaterialLawLibraryNameBase(library,material);
-    const auto n = this->getCastemFunctionName(material,className);
-    r[l].push_back(n);
-    return r;
-  }
+    const auto castlib = "libCastem"+getMaterialLawLibraryNameBase(mpd.library,
+								   mpd.material);
+    const auto name    = this->getCastemFunctionName(mpd.material,
+						     mpd.className);
+    d.dependencies[castlib].push_back("-lm");
+    d.cppflags[castlib].push_back(CASTEM_CPPFLAGS);
+    d.sources[castlib].push_back(this->getSourceFileName(name));
+    d.headers.push_back(this->headerFileName);    
+    d.epts[castlib].push_back(name);
+  } // end of CastemMaterialPropertyInterface::getTargetsDescription
 
   std::string
   CastemMaterialPropertyInterface::getCastemFunctionName(const std::string& material,

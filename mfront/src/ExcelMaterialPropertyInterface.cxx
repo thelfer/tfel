@@ -99,70 +99,10 @@ namespace mfront
   ExcelMaterialPropertyInterface::~ExcelMaterialPropertyInterface()
   {}
 
-  std::map<std::string,std::vector<std::string> >
-  ExcelMaterialPropertyInterface::getGlobalDependencies(const std::string&,
-						 const std::string&,
-						 const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of ExcelMaterialPropertyInterface::getGlobalDependencies
-
-  std::map<std::string,std::vector<std::string> >
-  ExcelMaterialPropertyInterface::getGlobalIncludes(const std::string&,
-						    const std::string&,
-						    const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of ExcelMaterialPropertyInterface::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  ExcelMaterialPropertyInterface::getGeneratedSources(const std::string&,
-						      const std::string&,
-						      const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of ExcelMaterialPropertyInterface::getGeneratedSources
-
-  std::map<std::string,std::vector<std::string> >
-  ExcelMaterialPropertyInterface::getGeneratedEntryPoints(const std::string&,
-							  const std::string&,
-							  const std::string&)
-  {
-    return {};
-  } // end of ExcelMaterialPropertyInterface::getGeneratedEntryPoints
-
-  std::vector<std::string>
-  ExcelMaterialPropertyInterface::getGeneratedIncludes(const std::string&,
-						const std::string&,
-						const std::string&)
-  {
-    using namespace std;
-    return vector<string>();
-  } // end of ExcelMaterialPropertyInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  ExcelMaterialPropertyInterface::getLibrariesDependencies(const std::string&,
-						    const std::string&,
-						    const std::string&)
-  {
-    using namespace std;
-    return map<string,vector<string> >();
-  } // end of ExcelMaterialPropertyInterface::getLibrariesDependencies()
-
-  std::map<std::string,
-	   std::pair<std::vector<std::string>,
-		     std::vector<std::string> > >
-  ExcelMaterialPropertyInterface::getSpecificTargets(const std::string&,
-					      const std::string&,
-					      const std::string&,
-					      const std::vector<std::string>&)
-  {
-    using namespace std;
-    return map<string,pair<vector<string>,vector<string> > >();
-  } // end of ExcelMaterialPropertyInterface::getSpecificTargets
+  void
+  ExcelMaterialPropertyInterface::getTargetsDescription(TargetsDescription&,
+							const MaterialPropertyDescription&)
+  {} // end of ExcelMaterialPropertyInterface::getTargetsDescription
 
   void
   ExcelMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,

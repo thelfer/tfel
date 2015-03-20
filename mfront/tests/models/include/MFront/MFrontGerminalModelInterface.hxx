@@ -41,7 +41,7 @@ namespace mfront{
     writeInitializeMethod(const ModelData&);
 
     virtual void
-    writeSpecificPrivateMethodDeclaration(const GenericData&,
+    writeSpecificPrivateMethodDeclaration(const FileDescription&,
 					  const ModelData&);
 
     virtual void

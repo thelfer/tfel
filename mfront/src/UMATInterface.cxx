@@ -24,6 +24,7 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/FileDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
 #include"MFront/UMATInterface.hxx"
 
 namespace mfront{
@@ -1259,79 +1260,39 @@ namespace mfront{
   UMATInterface::~UMATInterface()
   {}
 
-  std::map<std::string,std::vector<std::string> >
-  UMATInterface::getGlobalIncludes(const BehaviourDescription& mb) const
+  void
+  UMATInterface::getTargetsDescription(TargetsDescription& d,
+				       const BehaviourDescription& bd)
   {
     using namespace std;
-    map<string,vector<string> > incs;
-    string lib = UMATInterface::getLibraryName(mb);
-    incs[lib].push_back("`tfel-config --includes`");
+    const auto lib  = UMATInterface::getLibraryName(bd);
+    const auto name = this->getBehaviourName(bd);
+    d.cppflags[lib].push_back("`tfel-config --includes`");
 #ifdef CASTEM_CPPFLAGS
-    incs[lib].push_back(CASTEM_CPPFLAGS);
+    d.cppflags[lib].push_back(CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
 #ifndef LOCAL_CASTEM_HEADER
 #ifdef CASTEM_ROOT
     char * castem_root = ::getenv("CASTEM_ROOT");
     if(castem_root!=nullptr){
-      incs[lib].push_back("-I"+string(castem_root)+"/include");
+      d.cppflags[lib].push_back("-I"+string(castem_root)+"/include");
     } else {
-      incs[lib].push_back("-I"+string(CASTEM_ROOT)+"/include");
+      d.cppflags[lib].push_back("-I"+string(CASTEM_ROOT)+"/include");
     }
 #else /* CASTEM_ROOT */
     if(castem_root!=0){
-      incs[lib].push_back("-I"+string(castem_root)+"/include");
+      d.cppflags[lib].push_back("-I"+string(castem_root)+"/include");
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
-    return incs;
-  } // end of UMATInterface::getGlobalIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  UMATInterface::getGeneratedSources(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > src;
-    const string lib = UMATInterface::getLibraryName(mb);
-    if(!mb.getLibrary().empty()){
-      src[lib].push_back("umat"+mb.getLibrary()+mb.getClassName()+".cxx");
-    } else {
-      src[lib].push_back("umat"+mb.getClassName()+".cxx");
-    }
-    return src;
-  } // end of UMATInterface::getGeneratedSources
-
-  std::vector<std::string>
-  UMATInterface::getGeneratedIncludes(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    vector<string> incs;
-    if(!mb.getLibrary().empty()){
-      incs.push_back("MFront/UMAT/umat"+mb.getLibrary()+mb.getClassName()+".hxx");
-    } else {
-      incs.push_back("MFront/UMAT/umat"+mb.getClassName()+".hxx");
-    }
-    return incs;
-  } // end of UMATInterface::getGeneratedIncludes
-
-  std::map<std::string,std::vector<std::string> >
-  UMATInterface::getLibrariesDependencies(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    map<string,vector<string> > deps;
-    string lib = UMATInterface::getLibraryName(mb);
-    deps[lib].push_back("-lUMATInterface");
-    deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
-    return deps;
-  } // end of UMATInterface::getLibrariesDependencies()
-
-  std::map<std::string,std::vector<std::string> >
-  UMATInterface::getGeneratedEntryPoints(const BehaviourDescription& mb) const
-  {
-    using namespace std;
-    const auto l = UMATInterface::getLibraryName(mb);
+    d.sources[lib].push_back("umat"+name+".cxx");    
+    d.headers.push_back("MFront/UMAT/umat"+name+".hxx");
+    d.dependencies[lib].push_back("-lUMATInterface");
+    d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
+    // entry points
     auto b = vector<string>{};
-    const auto base = "umat"+makeLowerCase(UMATInterface::getBehaviourName(mb));
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    const auto base = this->getUmatFunctionName(bd);
+    if(bd.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
 	b.push_back(base);
       } else {
@@ -1371,8 +1332,8 @@ namespace mfront{
     } else {
       b.push_back(base);
     }
-    return {{l,b}};
-  } // end of UMATInterface::getGeneratedSources
+    d.epts[lib].insert(d.epts[lib].end(),b.begin(),b.end());
+  } // end of UMATInterface::getTargetsDescription
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
 	    SupportedTypes::TypeSize>
