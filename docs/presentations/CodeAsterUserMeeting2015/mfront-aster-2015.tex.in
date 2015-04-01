@@ -1,0 +1,360 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%	Fichier	   : ces
+%%	Auteur     : th202608@pleiades043.intra.cea.fr
+%%	Date       : 26 mai 2009
+%%	Répertoire : /home/th202608/documents/presentations/2009/CES/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\documentclass{beamer}
+
+\usepackage{beamerthemecea2012}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{pstricks}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{couleurs}
+\usepackage{hyperref}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{gnuplot}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\python}{\href{https://www.python.org/}{\texttt{python}}}
+
+\newcommand{\unix}{\texttt{Unix}}
+\newcommand{\linux}{\texttt{LiNuX}}
+\newcommand{\freebsd}{\href{https://www.freebsd.org/}{\texttt{FreeBSD}}}
+\newcommand{\opensolaris}{\texttt{OpenSolaris}}
+
+\newcommand{\windows}{\texttt{Windows}}
+
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\umat}{\texttt{umat}}
+
+\newcommand{\adao}{\texttt{adao}}
+\newcommand{\tfel}{\href{http://www.tfel.sourceforge.net}{\texttt{TFEL}}}
+\newcommand{\mfront}{\href{http://www.tfel.sourceforge.net}{\texttt{MFront}}}
+\newcommand{\sirius}{\texttt{Sirius}}
+\newcommand{\pleiades}{\texttt{PLEIADES}}
+\newcommand{\salome}{\href{http://www.salome-platform.org}{\texttt{salome}}}
+
+\newcommand{\cea}{\href{http://www.cea.fr}{CEA}}
+\newcommand{\edf}{\href{http://www.edf.com}{EDF}}
+\newcommand{\inria}{\href{http://www.inria.fr}{INRIA}}
+\newcommand{\castem}{\href{http://www-cast3m.cea.fr}{\texttt{Cast3M}}}
+\newcommand{\cyrano}{Cyrano3} 
+\newcommand{\aster}{\href{http://www.code-aster.org}{Code-Aster}} 
+\newcommand{\zebulon}{\href{http://www.zset-software.com/products/zebulon}{\texttt{ZeBuLoN}}}
+\newcommand{\europlexus}{\href{http://europlexus.jrc.ec.europa.eu/}{\texttt{EuroPlexus}}}
+\newcommand{\amitex}{\href{http://www.maisondelasimulation.fr/projects/amitex/html}{\texttt{AMITEX\_FFT}}}
+\newcommand{\craft}{\href{http://craft.lma.cnrs-mrs.fr/spip}{\texttt{CraFT}}}
+\newcommand{\abaqus}{\href{http://www.3ds.com/products-services/simulia/products/abaqus}{\texttt{Abaqus}}}
+\newcommand{\ansys}{\href{http://www.ansys.com}{\texttt{Ansys}}}
+\newcommand{\galileo}{\texttt{Galileo}}
+\newcommand{\gpl}{\href{http://www.gnu.org/licenses/gpl-3.0.txt}{GNU Public License}}
+
+\newcommand{\pandoc}{\href{http://johnmacfarlane.net/pandoc}{pandoc}}
+\newcommand{\gcc}{\href{https://gcc.gnu.org/}{gcc}}
+\newcommand{\clang}{\href{clang.llvm.org}{clang}}
+\newcommand{\icc}{\href{https://software.intel.com/en-us/c-compilers}{icc}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{MSYS}}
+\newcommand{\jenkins}{\href{http://jenkins-ci.org}{\texttt{Jenkins}}}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\tiny,       % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{red},        % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C++,                    % the language of the code
+  morekeywords={Output Author Input Date},            % if you want to add more keywords to the set
+  numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
+  rulecolor=\color{orange},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{green},       % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+}
+
+\Titre{\mfront{} for the \aster{}'users and beyond}
+
+\Auteur{Thomas Helfer\(\mbox{}^{1}\), Jean-Michel Proix
+  \(\mbox{}^{2}\), Olivier Fandeur\(\mbox{}^{3,4}\), François
+  Curtit\(\mbox{}^{5}\), Charles Toulemonde\(\mbox{}^{5}\), François
+  Hamon\(\mbox{}^{2}\), Vincent Faucher \(\mbox{}^{3,4}\), Michel Casella\(\mbox{}^{1}\)}
+\Complement{
+  \tiny
+  \(\mbox{}^{1}\) CEA, Département d'Études des Combustibles\\
+  \(\mbox{}^{2}\) EDF R\&D, Département Analyses
+  Mécaniques et Acoustique\\
+  \(\mbox{}^{3}\) CEA, Département de Modélisation des Systèmes et des Structures\\
+  \(\mbox{}^{4}\) IMSIA, UMR 8193, CNRS-EDF-CEA-ENSTA \\
+  \(\mbox{}^{5}\) EDF R\&D, Département des Matériaux et Mécanique
+  des Composants}
+
+\Evenement{\aster{} users meeting}
+\Date{26 March 2015}
+\ImagePageTitre{
+  \rput[l](-0.44,0.4){
+    \includegraphics[width=0.3622\paperwidth]{@abs_top_srcdir@/docs/presentations/CodeAsterUserMeeting2015/img/CEATitleBanner2012.eps}
+  }
+}
+
+\begin{document}
+
+\PageTitre{}
+
+\section{Forewords}
+
+\titre{Table of contents}
+\begin{frame}
+  \begin{flushleft}
+    \tableofcontents[hideallsubsections]      
+  \end{flushleft}
+\end{frame}
+
+\titre{Pleiades}
+\frame{
+  \begin{center}
+    \includegraphics[width=0.7\linewidth]{Pleiades.eps}    
+  \end{center}
+}
+
+\intercalaire{A brief tour of \mfront{}}
+
+\titre{MFront}
+\frame{
+  \begin{itemize}
+  \item \mfront{} is an {\bf open-source} code generator based on C++
+    developed within the \pleiades{} platform for:
+    \begin{itemize}
+    \item material properties
+    \item \alt<1>{mechanical behaviours}{\fbox{mechanical behaviours} \textcolor{ceaorange}{of particular interest for \aster{}}}
+    \item models
+    \end{itemize}
+  \item<3-> \mfront{} provides several {\em domain specific languages}:
+    \begin{itemize}
+    \item ease of use, expressivness, etc..
+      \begin{itemize}
+      \item focus on physical content
+      \item low programming skills requirements
+      \end{itemize}
+    \end{itemize}
+  \item<4-> \mfront{} tries to comply with Éric Lorentz's rule of three:
+    \begin{itemize}
+    \item reliability (gives the correct result)
+    \item robustness (gives a result)
+    \item numerical efficiency (is as fast as possible).
+    \end{itemize}
+  \item<5-> Interoperability (rule of four ? See "Intefaces" below).
+  \item<6-> {\bf Strong emphasis on {\em Quality Assurance}} (rule of five ? See "Material knowledge management" below).
+    \visible<7->{
+      \begin{center}
+        {\bf \pleiades{} goals: building high quality fuels performance codes}
+      \end{center}
+    }
+  \end{itemize}
+}
+
+\titre{A first example: material property}
+\begin{frame}<1-2>
+  \begin{center}
+    \alt<1>{
+      \lstinputlisting[lastline=9,language=C++]{@abs_top_srcdir@/docs/presentations/mfront-user-meeting-2015/img/UO2_YoungModulus_Martin1989.mfront}
+    }{
+      \lstinputlisting[language=C++]{@abs_top_srcdir@/docs/presentations/mfront-user-meeting-2015/img/UO2_YoungModulus_Martin1989-2.mfront}
+    }
+    \(E\paren{T,f}=2.2693\,10^{11}\,(1-2.5\,f)\,(1-6.786\,10^{-5}\,T-4.23\,10^{-8}\,T^{2})\)
+  \end{center}
+  \visible<1>{
+    \begin{itemize}
+    \item usable in \aster{} through the \python{} interface.
+    \item also in {\tt C}, {\tt C++}, {\tt fortran}, {\tt excel}, \castem{}, etc..
+    \item usable in \mfront{}'s mechanical behaviours !
+    \end{itemize}
+  }
+\end{frame}
+
+\titre{Mechanical behaviours}
+\begin{frame}
+  \begin{center}
+    \lstinputlisting[language=C++]{@abs_top_srcdir@/docs/presentations/mfront-user-meeting-2015/img/plasticity.mfront}
+  \end{center}
+  \begin{itemize}
+  \item A simple \(J_{2}\) (isotropic) plastic behaviour:
+    \begin{itemize}
+    \item \(f\paren{\sigmaeq,p}=\sigmaeq-H\,p \leq 0\)
+    \item example of specific behaviour implementation
+    \item automatic computation of the consistent tangent operator
+    \end{itemize}
+  \item<2-> various domain specific languages are available to cope with:
+    \begin{itemize}
+    \item general small strain behaviours, general finite strain
+      behaviours, cohesive zone models
+    \item any mechanical behaviour, including plasticity,
+        viscoplacity, damage, etc...
+      \begin{itemize}
+      \item explicit or implicit integration schemes are available
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\titre{Code generation and interfaces}
+\begin{frame}<1-2>
+  \begin{center}
+    \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/presentations/mfront-user-meeting-2015/img/MFrontPrinciple.eps}
+  \end{center}
+  \begin{itemize}
+  \item Finite elements solvers:
+    \begin{itemize}
+    \item \textcolor{red}{\underline{\textcolor{black}{\aster{}}}}, \castem{}, \zebulon{}\alt<2>{, \textcolor{blue}{\europlexus{}}}{}\alt<2>{, \textcolor{green}{\abaqus}}{}\alt<2>{, \textcolor{green}{\ansys}}{}.
+    \end{itemize}
+  \item Fast Fourier transform solvers~:
+    \begin{itemize}
+    \item \texttt{TMFFT}, \amitex{}\alt<2>{, \textcolor{green}{\craft}}{}
+    \end{itemize}
+  \item Fuel performance codes:
+    \begin{itemize}
+    \item \cyrano{}\alt<2>{, \textcolor{green}{\galileo}}{}
+    \end{itemize}
+  \end{itemize}
+  \visible<2>{
+    \rput[l](8,1){
+      \fbox{
+        \begin{minipage}[htbp]{0.3\linewidth}
+          \begin{itemize}
+          \item working
+          \item \textcolor{blue}{planned}
+          \item \textcolor{green}{signs of interest}
+          \end{itemize}
+        \end{minipage}
+      }
+    }
+  }
+\end{frame}
+
+\intercalaire{Material knowledge management}
+
+\titre{Studies quality assurance}
+\frame{
+  \begin{itemize}
+  \item One of the main benefits of \mfront{} is to make the link
+    between~:
+    \begin{itemize}
+    \item Solvers:
+      \begin{itemize}
+      \item Finite elements solvers (\aster{}, \castem{},
+      etc..)
+      \item Fuel performances codes (\pleiades{} applications, etc...)
+      \end{itemize}
+    \item Material knowledge management projects
+    \end{itemize}
+  \item<2-> With those projects, users are/will be granted access to:
+    \begin{itemize}
+    \item {\bf Checked implementations} (expert judgement, unit tests)
+    \item {\bf Technical notes, experimental data, etc...}
+    \item {\bf Material knowledge versionning}
+    \end{itemize}
+  \item<3-> Those projects allow {\bf much deeper
+      interactions/\-discussion/\-feed-backs between simulation and
+      experimental people.}
+  \end{itemize}
+  \visible<4->{
+    \begin{center}
+      {\bf Stronger quality assurance for the end user studies}
+    \end{center}
+  }
+}
+
+\titre{Sirius and Cadeex: some unformalised perspectives}
+\frame<1-4>{
+  \begin{center}
+  \alt<1>{
+    \includegraphics[height=3cm]{@abs_top_srcdir@/docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex.eps}
+  }{		
+    \includegraphics[height=3cm]{@abs_top_srcdir@/docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex-v3.eps}
+  }
+  \end{center}
+  \begin{itemize}
+  \item Two material knowledge management tools: \sirius{} database
+    in \pleiades{}, {\tt Cadeex} at {\tt EDF}.
+    \begin{itemize}
+    \item Those projects have followed complementary paths.
+      \begin{itemize}
+      \item many experience to share
+      \item would benefit from a standard file exchange: MADNEX ?
+      \end{itemize}
+    \end{itemize}
+  \item<3-> End-user would greatly benefit from a {\bf Salome interface}
+  \item<4-> Solver inputs files would greatly benefit from {\bf allowing
+      access to the underlying material data (Salome again)}
+  \end{itemize}
+}
+
+\intercalaire{Conclusions}
+
+\titre{Acknowledgements}
+\frame{
+  \begin{itemize}
+  \item J. M. Proix, J. Hure, F. Hamon, I. Ramière, , É. Castelier
+    O. Fandeur, V. Blanc, J. Julien, B. Michel, B. Bary,
+    F. Milliard, A. Courcelle, and all the others for various contributions.
+  \item all the persons who contributed to the open-source release of
+    \tfel{}: J. P. Defain, D. Banner, T. De Soza, V. Marelle, É. Lorentz,
+    C. Toulemonde, F. Curtit, R. Masson, and all the others.
+  \item the authors are grateful to J. Besson and S. Quilici for their
+    valuable help in building the \zebulon{} interface.
+  \end{itemize}
+  \begin{center}
+    This research was conducted in the framework of the PLEIADES
+    project, which was supported financially by the CEA (Commissariat
+    à l’Énergie Atomique et aux Énergies Alternatives), EDF
+    (Électricité de France) and AREVA and in the framework of the
+    Simu-Meca2015 project hold within EDF R\&D.
+  \end{center}
+}
+
+\titre{Thanks your for your attention. Questions ?}
+\frame{
+  \begin{center}
+    \includegraphics[width=0.6\linewidth]{@abs_top_srcdir@/docs/presentations/mfront-user-meeting-2015/img/website.eps}    
+  \end{center}
+  \begin{center}
+    New users/contributors are welcomed!\\
+    \textcolor{blue}{\url{http://tfel.sourceforge.net}}
+  \end{center}
+}
+
+\intercalaire{Appendix}
+
+\titre{Licences}
+\frame{
+  \begin{itemize}
+  \item To meet \cea{} and \edf{} needs, TFEL \(2.0\) is released
+    under a multi-licensing scheme:
+    \begin{itemize}
+    \item open-source licences~:
+      \begin{itemize}
+      \item \gpl{}: This licence is used by the \aster{} finite element solver.
+      \item \href{http://www.cecill.info/}{CECILL-A}: License
+        developped by \cea{}, \edf{} and \inria{}, compatible with the
+        \gpl{} and designed for conformity with the French law.
+      \end{itemize}
+    \item \cea{} and \edf{} are free to distribute \tfel{} under
+      custom licences: Mandatory for the \pleiades{} plateform.
+    \end{itemize}
+  \end{itemize}
+}
+
+\end{document}

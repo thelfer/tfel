@@ -3621,6 +3621,10 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/BoundsCheck.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Material/Lame.hxx\"" << endl;
+    if(this->mb.getSymmetryType()==ORTHOTROPIC){
+      this->behaviourFile << "#include\"TFEL/Material/Hill.hxx\"" << endl;
+    }
     this->behaviourFile << "#include\"TFEL/Material/";
     this->behaviourFile << this->behaviourDataFileName << "\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/";

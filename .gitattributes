@@ -405,6 +405,14 @@ docs/presentations/Chaboche.tex.in -text
 docs/presentations/ClubCast3M2014/CMakeLists.txt -text
 docs/presentations/ClubCast3M2014/HureCast3M14.pdf -text
 docs/presentations/ClubCast3M2014/Makefile.am -text
+docs/presentations/CodeAsterUserMeeting2015/CMakeLists.txt -text
+docs/presentations/CodeAsterUserMeeting2015/Makefile.am -text
+docs/presentations/CodeAsterUserMeeting2015/img/CEATitleBanner2012.eps -text
+docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex-v3.eps -text
+docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex-v3.svg -text
+docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex.eps -text
+docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex.svg -text
+docs/presentations/CodeAsterUserMeeting2015/mfront-aster-2015.tex.in -text
 docs/presentations/Makefile.am -text
 docs/presentations/Makefile.doc.in -text
 docs/presentations/Materiaux2014/CMakeLists.txt -text

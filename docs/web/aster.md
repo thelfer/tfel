@@ -15,7 +15,7 @@ The following instruction will compile the `MFront` behaviour using
 the `aster` interface :
 
 ~~~~ {.bash}
-$ mfront --obuild -interface=aster Chaboche.mfront
+$ mfront --obuild --interface=aster Chaboche.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 This will generate a shared library usually called

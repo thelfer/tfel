@@ -68,7 +68,7 @@ The following instruction will compile the `MFront` behaviour using
 the `umat` interface :
 
 ~~~~ {.bash}
-$ mfront --obuild -interface=umat norton.mfront
+$ mfront --obuild --interface=umat norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 Three directories are created, respectively called `include`, `src`,
