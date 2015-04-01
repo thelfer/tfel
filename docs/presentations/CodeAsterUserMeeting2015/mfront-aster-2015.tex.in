@@ -105,7 +105,7 @@
 \Evenement{\aster{} users meeting}
 \Date{26 March 2015}
 \ImagePageTitre{
-  \rput[l](-0.44,0.5){
+  \rput[l](-0.44,0.4){
     \includegraphics[width=0.3622\paperwidth]{@abs_top_srcdir@/docs/presentations/CodeAsterUserMeeting2015/img/CEATitleBanner2012.eps}
   }
 }
@@ -135,7 +135,7 @@
 \titre{MFront}
 \frame{
   \begin{itemize}
-  \item \mfront{} is a {\bf open-source} code generator based on C++
+  \item \mfront{} is an {\bf open-source} code generator based on C++
     developed within the \pleiades{} platform for:
     \begin{itemize}
     \item material properties
@@ -201,9 +201,10 @@
     \begin{itemize}
     \item general small strain behaviours, general finite strain
       behaviours, cohesive zone models
-    \item explicit or implicit integration schemes
+    \item any mechanical behaviour, including plasticity,
+        viscoplacity, damage, etc...
       \begin{itemize}
-      \item various algorithms available
+      \item explicit or implicit integration schemes are available
       \end{itemize}
     \end{itemize}
   \end{itemize}
@@ -255,7 +256,7 @@
       \begin{itemize}
       \item Finite elements solvers (\aster{}, \castem{},
       etc..)
-      \item Fuel performances codes (\pleiades), etc...)
+      \item Fuel performances codes (\pleiades{} applications, etc...)
       \end{itemize}
     \item Material knowledge management projects
     \end{itemize}
@@ -277,7 +278,7 @@
 }
 
 \titre{Sirius and Cadeex: some unformalised perspectives}
-\frame<1,2>{
+\frame<1-4>{
   \begin{center}
   \alt<1>{
     \includegraphics[height=3cm]{@abs_top_srcdir@/docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex.eps}
@@ -295,6 +296,9 @@
       \item would benefit from a standard file exchange: MADNEX ?
       \end{itemize}
     \end{itemize}
+  \item<3-> End-user would greatly benefit from a {\bf Salome interface}
+  \item<4-> Solver inputs files would greatly benefit from {\bf allowing
+      access to the underlying material data (Salome again)}
   \end{itemize}
 }
 

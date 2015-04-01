@@ -66,7 +66,7 @@ MFront gère la compilation de la loi, il suffit de taper dans un
 terminal :
 
 ~~~~ {.bash}
-$ mfront --obuild -interface=umat norton.mfront
+$ mfront --obuild --interface=umat norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 Ceci génère trois répertoires : `src`, `include` et `castem`.

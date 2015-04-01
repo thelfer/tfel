@@ -17,7 +17,7 @@ The following instruction will compile the `MFront` behaviour using
 the `zmat` interface :
 
 ~~~~ {.bash}
-$ mfront --obuild -interface=zmat norton.mfront
+$ mfront --obuild --interface=zmat norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 # Usage in [ZeBuLoN](http://www.zset-software.com/products/zebulon)
