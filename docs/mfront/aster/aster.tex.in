@@ -51,17 +51,17 @@
 \newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
 \newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
 
-\newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
-\newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
+\newcommand{\mkey}[1]{\index{amkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
+\newcommand{\mkeyb}[2]{\index{amkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
 
-\newcommand{\header}[1]{\index{headers}{#1}{\texttt{#1}}}
-\newcommand{\headerb}[2]{\index{headers}{#1}{\texttt{#2}}}
+\newcommand{\header}[1]{\index{aheaders}{#1}{\texttt{#1}}}
+\newcommand{\headerb}[2]{\index{aheaders}{#1}{\texttt{#2}}}
 
-\newcommand{\tfel}[1]{\index{tfel}{#1}{\texttt{#1}}}
-\newcommand{\tfelb}[2]{\index{tfel}{#1}{\texttt{#2}}}
+\newcommand{\tfel}[1]{\index{atfel}{#1}{\texttt{#1}}}
+\newcommand{\tfelb}[2]{\index{atfel}{#1}{\texttt{#2}}}
 
-\newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
-\newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
+\newcommand{\env}[1]{\index{aenv}{#1}{\texttt{#1}}}
+\newcommand{\envb}[2]{\index{aenv}{#1}{\texttt{#2}}}
 
 \newcommand{\moption}[1]{\texttt{-{}-#1}}
 
@@ -175,10 +175,10 @@
 
 \resumecea{}
 
-\makeindex{env}
-\makeindex{tfel}
-\makeindex{headers}
-\makeindex{mkeys}
+\makeindex{aenv}
+\makeindex{atfel}
+\makeindex{aheaders}
+\makeindex{amkeys}
 
 \begin{document}
 

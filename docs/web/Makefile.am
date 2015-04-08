@@ -60,6 +60,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/AMITEX_FFTP_sig1.png				   \
 	   ./img/AMITEX_FFTP_website.png			   \
 	   ./img/HureCast3M2014.png			           \
+	   ./img/CodeAster2015Flyer.png			           \
 	   ./img/mingw-get1.png			                   \
 	   ./img/mingw-get1.xcf			                   \
 	   ./img/mingw-get2.png			                   \

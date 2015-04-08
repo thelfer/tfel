@@ -12,18 +12,20 @@ doc-install: doc
 	mkdir -p @docdir@/mfront
 	mkdir -p @docdir@/mtest
 	mkdir -p @docdir@/release-notes-2.0
+	mkdir -p @docdir@/release-notes-3.0
 	mkdir -p @docdir@/presentations
 	cp -R docs/html @docdir@
 	cp    docs/tfel/reference-guide.pdf              @docdir@/reference-guide
-	cp    docs/mfront/mfront.pdf                     @docdir@/mfront
-	cp    docs/mfront/behaviours.pdf                 @docdir@/mfront
-	cp    docs/mfront/finitestrain.pdf               @docdir@/mfront
-	cp    docs/mfront/planestress.pdf                @docdir@/mfront
-	cp    docs/mfront/umat.pdf                       @docdir@/mfront
-	cp    docs/mfront/zmat.pdf                       @docdir@/mfront
-	cp    docs/mfront/aster.pdf                      @docdir@/mfront
+	cp    docs/mfront/general/mfront.pdf             @docdir@/mfront
+	cp    docs/mfront/behaviours/behaviours.pdf      @docdir@/mfront
+	cp    docs/mfront/finitestrain/finitestrain.pdf  @docdir@/mfront
+	cp    docs/mfront/planestress/planestress.pdf    @docdir@/mfront
+	cp    docs/mfront/umat/umat.pdf                  @docdir@/mfront
+	cp    docs/mfront/aster/aster.pdf                @docdir@/mfront
+	cp    docs/mfront/zmat/zmat.pdf                  @docdir@/mfront
 	cp    docs/mtest/mtest.pdf                       @docdir@/mtest
 	cp    docs/release-notes-2.0/tfel-2.0.pdf        @docdir@/release-notes-2.0
+	cp    docs/release-notes-3.0/tfel-3.0.pdf        @docdir@/release-notes-3.0
 	cp    docs/presentations/mfront-presentation.pdf @docdir@/presentations
 
 doc: doc-pdf doc-html
@@ -31,7 +33,7 @@ doc: doc-pdf doc-html
 doc-html: tfel-doc-html
 
 doc-pdf: tfel-doc-pdf mfront-doc-pdf mtest-doc-pdf presentations-doc-pdf \
-	 release-notes-2.0-doc-pdf
+	 release-notes-2.0-doc-pdf release-notes-3.0-doc-pdf
 
 tfel-doc-html:
 	cd @top_srcdir@ && doxygen @abs_top_builddir@/Doxyfile && cd -
@@ -45,18 +47,16 @@ mtest-doc-pdf:
 	make -f Makefile.doc
 
 release-notes-2.0-doc-pdf:
-	cd docs/release-notes-2.0 ;                                            \
+	cd docs/release-notes-2.0 ;                                  \
+	make -f Makefile.doc
+
+release-notes-3.0-doc-pdf:
+	cd docs/release-notes-3.0 ;                                            \
 	make -f Makefile.doc
 
 mfront-doc-pdf:
 	cd docs/mfront ;                                            \
-	make -f Makefile.doc mfront ;				    \
-	make -f Makefile.doc behaviours ;			    \
-	make -f Makefile.doc finitestrain ;			    \
-	make -f Makefile.doc planestress ;			    \
-	make -f Makefile.doc aster ;				    \
-	make -f Makefile.doc umat  ;				    \
-	make -f Makefile.doc zmat
+	make -f Makefile.doc all
 
 presentations-doc-pdf:
 	cd docs/presentations ;                                     \

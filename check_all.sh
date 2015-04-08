@@ -82,7 +82,6 @@ mkdir install-cmake-debug
 mkdir build-cmake-debug
 pushd build-cmake
 cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake
-make doc-pdf
 $make_exec 
 if [ test "x$pbuild" == "xyes" ];
 then
@@ -95,7 +94,6 @@ $make_exec tests-install
 popd #from build-cmake
 pushd build-cmake-release
 cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
-make doc-pdf
 $make_exec
 if [ test "x$pbuild" == "xyes" ];
 then
@@ -108,7 +106,6 @@ $make_exec tests-install
 popd #from build-cmake-release
 pushd build-cmake-debug
 cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
-make doc-pdf
 $make_exec
 if [ test "x$pbuild" == "xyes" ];
 then
@@ -127,7 +124,6 @@ then
 	mkdir build-cmake-i686-w64-mingw32
 	pushd build-cmake-i686-w64-mingw32
 	cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
-	make doc-pdf
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then
@@ -148,7 +144,6 @@ then
 	mkdir build-cmake-i586-mingw32msvc
 	pushd build-cmake-i586-mingw32msvc
 	cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
-	make doc-pdf
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then

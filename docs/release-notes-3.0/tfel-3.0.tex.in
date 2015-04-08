@@ -20,7 +20,7 @@
 \usepackage[frenchb]{babel}
 
 \newcommand{\pleiades}{\texttt{pleiades}}
-\newcommand{\tfel}{\texttt{tfel}}
+\newcommand{\tfel}{\texttt{TFEL}}
 \newcommand{\mfront}{\texttt{mfront}}
 \newcommand{\mtest}{\texttt{mtest}}
 \newcommand{\licos}{\texttt{licos}}
@@ -30,7 +30,6 @@
 \newcommand{\gibiane}{\texttt{gibiane}}
 \newcommand{\tmfft}{\texttt{TMFFT}}
 \newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
-\newcommand{\zebulon}{\texttt{ZeBuLoN}}
 \newcommand{\pycastem}{\texttt{pyCast3M}}
 \newcommand{\umat}{\texttt{umat}}
 \newcommand{\sirius}{\texttt{sirius}}
@@ -83,49 +82,36 @@
 \include{Champs}
 
 \resumecea{ Ce document décrit les principales nouveautés de la
-  version \(2.0\) de \tfel{}, et plus particulièrement sur \mfront{}.
+  version \(3.0\) de \tfel{}, et plus particulièrement sur \mfront{}.
 }
 
 \begin{document}
 
 \section{Nouveautés \mfront{}}
 
-\subsection{Nouvelles interfaces}
+\subsection{L'interface {\tt Europlexus}}
 
-\begin{itemize}
-\item interface \aster{}~;
-\item interface \cyrano{}~;
-\item interface \zebulon{}~;
-\end{itemize}
+\subsection{Support des déformations logarithmiques pour les codes
+  combustibles $1D$ écrits en petites déformations}
 
-\subsection{Amélioration de l'interface \umat{}}
+\subsection{L'utilitaire {\tt mfront-doc}}
 
-\subsubsection{Déformations logarithmiques}
+L'utilitaire {\tt mfront-doc} permet de générer un fichier au format
+{\tt Markdown} à partir des commentaires écrits dans un fichier
+\mfront{}. Ce fichier peut ensuite être converti en différents formats
+(pdf, docx, tex, html) par l'utilitaire {\tt pandoc}.
 
-\subsubsection{Grandes rotations, petites déformations.}
+\subsection{L'utilitaire {\tt mfront-query}}
 
-\subsection{Support des lois en grandes transformations}
-
-\cite{miehe_anisotropic_2002}
-
-\subsection{Support des modèles de zones cohésives}
-
-\subsection{Support des contraintes planes}
-
-\subsection{Amélioration de la robustesse}
-
-\begin{itemize}
-\item algorithme de Powell
-\item limitation de l'incrément de solution
-\end{itemize}
+L'utilitaire {\tt mfront-query} permet d'obtenir en ligne commande des
+informations sur un fichier \mfront{}.
 
 \section{Nouveautés \mtest{}}
 
+\subsection{Nouvelles méthodes d'accélération de convergence}
+
 \section{Nouveautés \tfel{}}
 
-Nouvelles classes {\tt tensor}, {\tt t2tot2}, {\tt st2tot2} et {\tt
-  t2tost2}.
-
-\referencecea{}
+\subsection{Passage au standard C++-11}
 
 \end{document}

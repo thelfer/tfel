@@ -1,4 +1,11 @@
 EXTRA_DIST=CMakeLists.txt                                           \
+	   general/CMakeLists.txt                                   \
+	   behaviours/CMakeLists.txt                                \
+	   finitestrain/CMakeLists.txt                              \
+	   planestress/CMakeLists.txt                               \
+	   umat/CMakeLists.txt                                      \
+	   zmat/CMakeLists.txt                                      \
+	   zmat/CMakeLists.txt                                      \
 	   Images/ConfigurationIsocline.eps			    \
 	   Images/Polar_decomposition_of_F.png			    \
 	   Images/Polar_decomposition_of_F.eps			    \
@@ -43,7 +50,6 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   Images/OrthotropicSaintVenantKirchhoffElasticity.mfront  \
 	   Images/code-barre-planestress.eps                        \
 	   Images/ImplicitDSL.eps          		            \
-	   annexe-orthotropie.tex		                    \
 	   style.ist				                    \
 	   mfront/SaintVenantKirchhoffElasticity.tex                \
 	   mfront/ImplicitSimoMieheElastoPlasticity.tex             \

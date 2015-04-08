@@ -7,14 +7,13 @@
 
 \input{LSC}
 
-\auteurs{T.~Helfer, J.M.~Proix\(\mbox{}^{(a)}\)}
-\affiliation{\(\mbox{}^{(a)}\) Électricité de France, R\&D - Département Analyses Mécaniques et Acoustique}
+\auteurs{T.~Helfer}
 \redacteur{T.~Helfer}
 \verificateur{}
 \approbateur{R.~Masson}
 \emetteur{E.~Touron}
 
-\titre{Nouveautés de la version \(2.0\) de \tfel{}}
+\titre{Nouveautés de la version \(3.0\) de \tfel{}}
 
 \date{2013}
 % \numero{12-014}
