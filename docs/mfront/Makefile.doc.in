@@ -1,86 +1,17 @@
-mfront:
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
-	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex mfront
-	-makeindex -s @srcdir@/style.ist env.idx
-	-makeindex -s @srcdir@/style.ist mkeys.idx
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 mfront.dvi -o
-	ps2pdf mfront.ps
-
-behaviours:
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
-	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex behaviours
-	-makeindex -s @srcdir@/style.ist env.idx
-	-makeindex -s @srcdir@/style.ist headers.idx
-	-makeindex -s @srcdir@/style.ist tfel.idx
-	-makeindex -s @srcdir@/style.ist mkeys.idx
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 behaviours.dvi -o
-	ps2pdf behaviours.ps
-
-finitestrain:
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  finitestrain.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  finitestrain.tex
-	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex finitestrain
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  finitestrain.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  finitestrain.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 finitestrain.dvi -o
-	ps2pdf finitestrain.ps
-
-planestress:
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  planestress.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  planestress.tex
-	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex planestress
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  planestress.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  planestress.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 planestress.dvi -o
-	ps2pdf planestress.ps
-
-aster:
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
-#	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex aster
-	-makeindex -s @srcdir@/style.ist env.idx
-	-makeindex -s @srcdir@/style.ist headers.idx
-	-makeindex -s @srcdir@/style.ist tfel.idx
-	-makeindex -s @srcdir@/style.ist mkeys.idx
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 aster.dvi -o
-	ps2pdf aster.ps
-
-umat:
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
-	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex umat
-	-makeindex -s @srcdir@/style.ist env.idx
-	-makeindex -s @srcdir@/style.ist headers.idx
-	-makeindex -s @srcdir@/style.ist tfel.idx
-	-makeindex -s @srcdir@/style.ist mkeys.idx
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  umat.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 umat.dvi -o
-	ps2pdf umat.ps
-
-zmat:
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  zmat.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  zmat.tex
-	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex zmat
-	-makeindex -s @srcdir@/style.ist env.idx
-	-makeindex -s @srcdir@/style.ist headers.idx
-	-makeindex -s @srcdir@/style.ist tfel.idx
-	-makeindex -s @srcdir@/style.ist mkeys.idx
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  zmat.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  zmat.tex
-	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 zmat.dvi -o
-	ps2pdf zmat.ps
+all:
+	make -C general      -f Makefile.doc mfront
+	make -C behaviours   -f Makefile.doc behaviours
+	make -C finitestrain -f Makefile.doc finitestrain
+	make -C planestress  -f Makefile.doc planestress
+	make -C umat         -f Makefile.doc umat
+	make -C aster        -f Makefile.doc aster
+	make -C zmat         -f Makefile.doc zmat
 
 clean:
-	-$(RM) *.aux *.log
-	-$(RM) *.out *.toc
-	-$(RM) *.dvi *.ps
-	-$(RM) *.pdf
+	make -C general      -f Makefile.doc clean
+	make -C behaviours   -f Makefile.doc clean
+	make -C finitestrain -f Makefile.doc clean
+	make -C planestress  -f Makefile.doc clean
+	make -C umat         -f Makefile.doc clean
+	make -C aster        -f Makefile.doc clean
+	make -C zmat         -f Makefile.doc clean

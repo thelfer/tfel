@@ -428,17 +428,24 @@ AC_OUTPUT([debug.sh
 	   docs/mtest/Champs.tex
 	   docs/mfront/Makefile
 	   docs/mfront/Makefile.doc
-	   docs/mfront/mfront.tex
-	   docs/mfront/behaviours.tex
-	   docs/mfront/finitestrain.tex
-	   docs/mfront/planestress.tex
-	   docs/mfront/aster.tex
-	   docs/mfront/umat.tex
-	   docs/mfront/zmat.tex
+	   docs/mfront/general/mfront.tex
+	   docs/mfront/general/Champs.tex
+	   docs/mfront/general/Makefile.doc
+	   docs/mfront/behaviours/behaviours.tex
+	   docs/mfront/behaviours/InternalNames.tex
+           docs/mfront/behaviours/annexe-orthotropie.tex
+           docs/mfront/behaviours/Makefile.doc
+	   docs/mfront/finitestrain/finitestrain.tex
+	   docs/mfront/finitestrain/Makefile.doc
+	   docs/mfront/planestress/planestress.tex
+	   docs/mfront/planestress/Makefile.doc
+	   docs/mfront/aster/aster.tex
+	   docs/mfront/aster/Makefile.doc
+	   docs/mfront/umat/umat.tex
+	   docs/mfront/umat/Makefile.doc
+	   docs/mfront/zmat/zmat.tex
+	   docs/mfront/zmat/Makefile.doc
 	   docs/mfront/glossary.tex
-	   docs/mfront/InternalNames.tex
-	   docs/mfront/Champs.tex
-           docs/mfront/annexe-orthotropie.tex
 	   docs/presentations/Makefile
 	   docs/presentations/Makefile.doc
 	   docs/presentations/mtest-presentation.tex

@@ -1,0 +1,16 @@
+mfront:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex mfront
+	-makeindex -s @srcdir@/style.ist env.idx
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  mfront.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 mfront.dvi -o
+	ps2pdf mfront.ps
+
+clean:
+	-$(RM) *.aux *.log
+	-$(RM) *.out *.toc
+	-$(RM) *.dvi *.ps
+	-$(RM) *.pdf

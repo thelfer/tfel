@@ -20,7 +20,7 @@
 \usepackage[frenchb]{babel}
 
 \newcommand{\pleiades}{\texttt{pleiades}}
-\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\tfel}{\texttt{tfel}}
 \newcommand{\mfront}{\texttt{mfront}}
 \newcommand{\mtest}{\texttt{mtest}}
 \newcommand{\licos}{\texttt{licos}}
@@ -30,6 +30,7 @@
 \newcommand{\gibiane}{\texttt{gibiane}}
 \newcommand{\tmfft}{\texttt{TMFFT}}
 \newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\zebulon}{\texttt{ZeBuLoN}}
 \newcommand{\pycastem}{\texttt{pyCast3M}}
 \newcommand{\umat}{\texttt{umat}}
 \newcommand{\sirius}{\texttt{sirius}}
@@ -81,33 +82,49 @@
 
 \include{Champs}
 
-\resumecea{
-  jfkdqm
+\resumecea{ Ce document décrit les principales nouveautés de la
+  version \(2.0\) de \tfel{}, et plus particulièrement sur \mfront{}.
 }
 
 \begin{document}
 
-\cite{michel_etude_2009}
+\section{Nouveautés \mfront{}}
+
+\subsection{Nouvelles interfaces}
 
 \begin{itemize}
-\item modèles de zones cohésives
-\item lois en grandes transformations. Déformations
-  logarithmiques. Grandes rotations, petites déformations.
-\item documentation~;
-\item cas tests~;
 \item interface \aster{}~;
 \item interface \cyrano{}~;
-\item amélioration de la robustesse~:
-  \begin{itemize}
-  \item algorithme de Powell
-  \item limitation de l'incrément de solution
-  \end{itemize}
-\item résolution implicite avec jacobienne par perturbation
-\item introduction des hypothèses de modélisation
-\item \mtest{}
-\item nouvelles classes {\tt tensor}, {\tt t2tot2}, {\tt st2tot2} et
-  {\tt t2tost2}
+\item interface \zebulon{}~;
 \end{itemize}
+
+\subsection{Amélioration de l'interface \umat{}}
+
+\subsubsection{Déformations logarithmiques}
+
+\subsubsection{Grandes rotations, petites déformations.}
+
+\subsection{Support des lois en grandes transformations}
+
+\cite{miehe_anisotropic_2002}
+
+\subsection{Support des modèles de zones cohésives}
+
+\subsection{Support des contraintes planes}
+
+\subsection{Amélioration de la robustesse}
+
+\begin{itemize}
+\item algorithme de Powell
+\item limitation de l'incrément de solution
+\end{itemize}
+
+\section{Nouveautés \mtest{}}
+
+\section{Nouveautés \tfel{}}
+
+Nouvelles classes {\tt tensor}, {\tt t2tot2}, {\tt st2tot2} et {\tt
+  t2tost2}.
 
 \referencecea{}
 

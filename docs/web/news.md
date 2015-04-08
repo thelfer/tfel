@@ -1,6 +1,15 @@
 % News
 % Helfer Thomas
-% December 12, 2014
+% April 1, 2015
+
+# `Salome-Meca` and `Code_Aster` Users Day (26 March 2015)
+
+![](img/CodeAster2015Flyer.png "")
+
+A presentation of `MFront` was done during the `Salome-Meca` and
+`Code_Aster` Users Day 2015 user meeting at EDF Lab Clamart.
+
+Slides can be found [here](documents/CodeAsterUserMeeting2015/mfront-aster-2015.pdf).
 
 # `MFront` user meeting (6 Februar 2015)
 

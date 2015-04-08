@@ -19,30 +19,48 @@
     </output>
 
     <\unfolded-io>
-      <with|color|red|(<with|math-font-family|rm|%i>43) >
+      <with|color|red|(<with|math-font-family|rm|%i>1) >
     <|unfolded-io>
       F:matrix([F0,F3,F5],[F4,F1,F7],[F6,F8,F2])
     <|unfolded-io>
-      <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o43>)
+      <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o1>)
       >><matrix|<tformat|<table|<row|<cell|<with|math-font-family|rm|F0>>|<cell|<with|math-font-family|rm|F3>>|<cell|<with|math-font-family|rm|F5>>>|<row|<cell|<with|math-font-family|rm|F4>>|<cell|<with|math-font-family|rm|F1>>|<cell|<with|math-font-family|rm|F7>>>|<row|<cell|<with|math-font-family|rm|F6>>|<cell|<with|math-font-family|rm|F8>>|<cell|<with|math-font-family|rm|F2>>>>>>>>
     </unfolded-io>
 
     <\unfolded-io>
-      <with|color|red|(<with|math-font-family|rm|%i>44) >
+      <with|color|red|(<with|math-font-family|rm|%i>2) >
     <|unfolded-io>
       G:matrix([G0,G3,G5],[G4,G1,G7],[G6,G8,G2])
     <|unfolded-io>
-      <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o44>)
+      <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o2>)
       >><matrix|<tformat|<table|<row|<cell|<with|math-font-family|rm|G0>>|<cell|<with|math-font-family|rm|G3>>|<cell|<with|math-font-family|rm|G5>>>|<row|<cell|<with|math-font-family|rm|G4>>|<cell|<with|math-font-family|rm|G1>>|<cell|<with|math-font-family|rm|G7>>>|<row|<cell|<with|math-font-family|rm|G6>>|<cell|<with|math-font-family|rm|G8>>|<cell|<with|math-font-family|rm|G2>>>>>>>>
     </unfolded-io>
 
     <\unfolded-io>
-      <with|color|red|(<with|math-font-family|rm|%i>45) >
+      <with|color|red|(<with|math-font-family|rm|%i>3) >
     <|unfolded-io>
       prod:F.G
     <|unfolded-io>
-      <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o45>)
+      <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o3>)
       >><matrix|<tformat|<table|<row|<cell|<with|math-font-family|rm|F5>*<with|math-font-family|rm|G6>+<with|math-font-family|rm|F3>*<with|math-font-family|rm|G4>+<with|math-font-family|rm|F0>*<with|math-font-family|rm|G0>>|<cell|<with|math-font-family|rm|F5>*<with|math-font-family|rm|G8>+<with|math-font-family|rm|F0>*<with|math-font-family|rm|G3>+<with|math-font-family|rm|F3>*<with|math-font-family|rm|G1>>|<cell|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G7>+<with|math-font-family|rm|F0>*<with|math-font-family|rm|G5>+<with|math-font-family|rm|F5>*<with|math-font-family|rm|G2>>>|<row|<cell|<with|math-font-family|rm|F7>*<with|math-font-family|rm|G6>+<with|math-font-family|rm|F1>*<with|math-font-family|rm|G4>+<with|math-font-family|rm|F4>*<with|math-font-family|rm|G0>>|<cell|<with|math-font-family|rm|F7>*<with|math-font-family|rm|G8>+<with|math-font-family|rm|F4>*<with|math-font-family|rm|G3>+<with|math-font-family|rm|F1>*<with|math-font-family|rm|G1>>|<cell|<with|math-font-family|rm|F1>*<with|math-font-family|rm|G7>+<with|math-font-family|rm|F4>*<with|math-font-family|rm|G5>+<with|math-font-family|rm|F7>*<with|math-font-family|rm|G2>>>|<row|<cell|<with|math-font-family|rm|F2>*<with|math-font-family|rm|G6>+<with|math-font-family|rm|F8>*<with|math-font-family|rm|G4>+<with|math-font-family|rm|F6>*<with|math-font-family|rm|G0>>|<cell|<with|math-font-family|rm|F2>*<with|math-font-family|rm|G8>+<with|math-font-family|rm|F6>*<with|math-font-family|rm|G3>+<with|math-font-family|rm|F8>*<with|math-font-family|rm|G1>>|<cell|<with|math-font-family|rm|F8>*<with|math-font-family|rm|G7>+<with|math-font-family|rm|F6>*<with|math-font-family|rm|G5>+<with|math-font-family|rm|F2>*<with|math-font-family|rm|G2>>>>>>>>
+    </unfolded-io>
+
+    <\unfolded-io>
+      <with|color|red|(<with|math-font-family|rm|%i>5) >
+    <|unfolded-io>
+      mat_trace(prod)
+    <|unfolded-io>
+      <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o5>)
+      >><with|math-font-family|rm|F7>*<with|math-font-family|rm|G8>+<with|math-font-family|rm|F8>*<with|math-font-family|rm|G7>+<with|math-font-family|rm|F5>*<with|math-font-family|rm|G6>+<with|math-font-family|rm|F6>*<with|math-font-family|rm|G5>+<with|math-font-family|rm|F3>*<with|math-font-family|rm|G4>+<with|math-font-family|rm|F4>*<with|math-font-family|rm|G3>+<with|math-font-family|rm|F2>*<with|math-font-family|rm|G2>+<with|math-font-family|rm|F1>*<with|math-font-family|rm|G1>+<with|math-font-family|rm|F0>*<with|math-font-family|rm|G0>>>
+    </unfolded-io>
+
+    <\unfolded-io>
+      <with|color|red|(<with|math-font-family|rm|%i>7) >
+    <|unfolded-io>
+      mat_trace(G.F)
+    <|unfolded-io>
+      <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o7>)
+      >><with|math-font-family|rm|F7>*<with|math-font-family|rm|G8>+<with|math-font-family|rm|F8>*<with|math-font-family|rm|G7>+<with|math-font-family|rm|F5>*<with|math-font-family|rm|G6>+<with|math-font-family|rm|F6>*<with|math-font-family|rm|G5>+<with|math-font-family|rm|F3>*<with|math-font-family|rm|G4>+<with|math-font-family|rm|F4>*<with|math-font-family|rm|G3>+<with|math-font-family|rm|F2>*<with|math-font-family|rm|G2>+<with|math-font-family|rm|F1>*<with|math-font-family|rm|G1>+<with|math-font-family|rm|F0>*<with|math-font-family|rm|G0>>>
     </unfolded-io>
 
     <\unfolded-io>

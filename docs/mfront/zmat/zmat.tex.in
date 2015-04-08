@@ -20,13 +20,6 @@
 \usepackage{relsize}
 \usepackage{multind}
 
-% one column index
-\makeatletter
-\def\printindex#1#2{\section*{#2}
-\addcontentsline{toc}{section}{#2}
-\@input{#1.ind}}
-\makeatother
-
 \usepackage[frenchb]{babel}
 
 \newcommand{\pleiades}{\texttt{pleiades}}
@@ -55,18 +48,6 @@
 \newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
 \newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
 \newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
-
-\newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
-\newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
-
-\newcommand{\header}[1]{\index{headers}{#1}{\texttt{#1}}}
-\newcommand{\headerb}[2]{\index{headers}{#1}{\texttt{#2}}}
-
-\newcommand{\tfel}[1]{\index{tfel}{#1}{\texttt{#1}}}
-\newcommand{\tfelb}[2]{\index{tfel}{#1}{\texttt{#2}}}
-
-\newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
-\newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
 
 \newcommand{\moption}[1]{\texttt{-{}-#1}}
 
@@ -271,7 +252,7 @@ Nous décrivons ici quelques spécificités du codes aux éléments finis
 
 Les conventions de rangement des tenseurs adoptés dans \mfront{} et
 \zmat{} diffèrent. Les variables internes sont converties en entrée
-vers la convention utilisée dans \tfel{} et en sortie vers la
+vers la convention utilisée dans \TFEL{} et en sortie vers la
 convention utilisée par \zebulon{}.
 
 \subsubsection{Tenseurs d'ordre $2$ symétriques} Dans \zmat{}, un

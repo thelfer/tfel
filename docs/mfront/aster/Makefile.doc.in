@@ -1,0 +1,18 @@
+aster:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+#	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex aster
+	-makeindex -s @srcdir@/style.ist aenv.idx
+	-makeindex -s @srcdir@/style.ist aheaders.idx
+	-makeindex -s @srcdir@/style.ist atfel.idx
+	-makeindex -s @srcdir@/style.ist amkeys.idx
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  aster.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 aster.dvi -o
+	ps2pdf aster.ps
+
+clean:
+	-$(RM) *.aux *.log
+	-$(RM) *.out *.toc
+	-$(RM) *.dvi *.ps
+	-$(RM) *.pdf
