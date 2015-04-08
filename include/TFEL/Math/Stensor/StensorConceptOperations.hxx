@@ -22,19 +22,11 @@
 #include"TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include"TFEL/Math/ExpressionTemplates/StandardOperations.hxx"
 #include"TFEL/Math/Stensor/StensorProduct.hxx"
+#include"TFEL/Math/Tensor/TensorConcept.hxx"
 
 namespace tfel{
 
   namespace math{
-
-    template<typename T1,typename T2>
-    class StensorDotProductHandle
-    {
-      struct DummyHandle
-      {};
-    public:
-      typedef DummyHandle type;
-    };
 
     template<typename T_type, typename Operation>
     struct StensorType<Expr<T_type,Operation>>
@@ -157,7 +149,7 @@ namespace tfel{
       typedef typename StensorType<typename std::decay<B>::type>::type StensorB;
     public:
       typedef typename ResultType<StensorA,StensorB,OpDotProduct>::type Result;
-      typedef typename StensorDotProductHandle<StensorA,StensorB>::type Handle;
+      typedef typename ResultType<StensorA,StensorB,OpDotProduct>::type Handle;
     };
 
     /*!
@@ -173,11 +165,51 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
+      StensorTraits<T1>::dime==1u&&
+      StensorTraits<T2>::dime==1u&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
       typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
     >::type
     operator | (const T1&, const T2&);
-    
+    /*!
+     * \return the inner product of a stensor
+     * \param const T1&, the left  stensor.
+     * \param const T2&, the right stensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename std::enable_if<
+      tfel::meta::Implements<T1,StensorConcept>::cond&&
+      tfel::meta::Implements<T2,StensorConcept>::cond&&
+      StensorTraits<T1>::dime==2u&&
+      StensorTraits<T2>::dime==2u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
+    /*!
+     * \return the inner product of a stensor
+     * \param const T1&, the left  stensor.
+     * \param const T2&, the right stensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename std::enable_if<
+      tfel::meta::Implements<T1,StensorConcept>::cond&&
+      tfel::meta::Implements<T2,StensorConcept>::cond&&
+      StensorTraits<T1>::dime==3u&&
+      StensorTraits<T2>::dime==3u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
+
   } // end of namespace math
 
 } // end of namespace tfel

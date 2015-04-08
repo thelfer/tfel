@@ -17,7 +17,6 @@
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/Math/General/DotProduct.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/t2tot2.hxx"
 
@@ -169,31 +168,6 @@ namespace tfel{
     				      t2tot2<N,ResBase_> >::type type;
     };
 
-    // /*!
-    //  * \brief Partial specialisation for tensor
-    //  * \see   ResultType
-    //  */
-    // template<unsigned short N,typename T,typename T2>
-    // class ResultType<tensor<N,T>,
-    // 		     tensor<N,T2>,OpDotProduct>
-    // {
-    //   typedef typename ResultType<T,T2,OpMult>::type ResBase_;
-    //   static constexpr bool isValid = tfel::typetraits::IsScalar<T>::cond  &&
-    // 	                          tfel::typetraits::IsScalar<T2>::cond &&
-    // 	                          tfel::typetraits::IsInvalid<ResBase_>::cond;
-    // public:
-    // 	typedef typename std::conditional<isValid,
-    // 					tfel::meta::InvalidType,
-    // 					ResBase_>::type type;
-    // }; // end of class ResultType<tensor<N,T>,tensor<M,T2>,OpDotProduct>
-
-    // template<unsigned short N,typename T,typename T2>
-    // struct TensorDotProductHandle<tensor<N,T>,
-    // 				   tensor<N,T2> >
-    // {
-    //   typedef DotProduct<TensorDimeToSize<N>::value,0u> type;
-    // };
-
     /*!
      * \brief Partial specialisation for tensor
      * \see   ResultType
@@ -249,6 +223,22 @@ namespace tfel{
 				      tfel::meta::InvalidType,
 				      tensor<N,ResBase_> >::type type;
     };
+
+    /*!
+     * \brief Partial specialisation for tensor
+     * \see   ResultType
+     */
+    template<unsigned short N,typename T,typename T2>
+    class ResultType<tensor<N,T>,tensor<N,T2>,OpDotProduct>
+    {
+      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      static const bool isValid = tfel::typetraits::IsScalar<T>::cond  &&
+    	                          tfel::typetraits::IsScalar<T2>::cond &&
+    	                          tfel::typetraits::IsInvalid<ResBase_>::cond;
+    public:
+      typedef typename std::conditional<isValid,tfel::meta::InvalidType,
+    					ResBase_>::type type;
+    }; // end of class ResultType<tensor<N,T>,tensor<M,T2>,OpDotProduct>
 
   } // end of namespace math
 

@@ -19,19 +19,50 @@ namespace tfel{
 
   namespace math{
 
-    // template<typename T1,typename T2>
-    // typename std::enable_if<
-    //   tfel::meta::Implements<T1,TensorConcept>::cond&&
-    //   tfel::meta::Implements<T2,TensorConcept>::cond&&
-    //   !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
-    //   typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
-    // >::type
-    // operator | (const T1& a, const T2& b)
-    // {
-    //   typedef typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result Result;
-    //   typedef typename ComputeBinaryResult<T1,T2,OpDotProduct>::Handle Handle;
-    //   return Handle::template exe<Result,T1,T2>(a,b);
-    // }
+    template<typename T1,typename T2>
+    typename std::enable_if<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      TensorTraits<T1>::dime==1u&&
+      TensorTraits<T2>::dime==1u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1& a, const T2& b)
+    {
+      return a(0)*b(0)+a(1)*b(1)+a(2)*b(2);
+    }
+
+    template<typename T1,typename T2>
+    typename std::enable_if<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      TensorTraits<T1>::dime==2u&&
+      TensorTraits<T2>::dime==2u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1& a, const T2& b)
+    {
+      return a(0)*b(0)+a(1)*b(1)+a(2)*b(2)+a(3)*b(4)+a(4)*b(3);
+    }
+
+    template<typename T1,typename T2>
+    typename std::enable_if<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      TensorTraits<T1>::dime==3u&&
+      TensorTraits<T2>::dime==3u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1& a, const T2& b)
+    {
+      return a(0)*b(0)+a(1)*b(1)+a(2)*b(2)
+	+a(3)*b(4)+a(4)*b(3)
+	+a(5)*b(6)+a(6)*b(5)
+	+a(7)*b(8)+a(8)*b(7);
+    }
 
   } // end of namespace math
 

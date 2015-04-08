@@ -21,6 +21,8 @@
 
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/Stensor/StensorConceptIO.hxx"
+#include"TFEL/Math/Tensor/TensorConceptIO.hxx"
 
 struct Tensor4Test1D
   : public tfel::tests::TestCase
@@ -51,7 +53,6 @@ struct Tensor4Test1D
     TFEL_TESTS_ASSERT(abs(R(1)-1.)<eps);
     TFEL_TESTS_ASSERT(abs(R(1)-1.)<eps);
     // check that we can get back F
-    std::cout << "&U : " << &U << endl;
     tensor<1u,double> F1 = R*U;
     TFEL_TESTS_ASSERT(abs(F(0)-F1(0))<eps);
     TFEL_TESTS_ASSERT(abs(F(1)-F1(1))<eps);
@@ -127,6 +128,9 @@ struct Tensor4Test3D
     polar_decomposition(R,U,F);
     // check that Rt is a rotation
     tensor<3u,double> Id = transpose(R)*R;
+    cout << "Id : " << Id << endl;
+    cout << "R  : " << R  << endl;
+    cout << "U  : " << U  << endl;
     TFEL_TESTS_ASSERT(abs(Id(0)-1.)<eps);
     TFEL_TESTS_ASSERT(abs(Id(1)-1.)<eps);
     TFEL_TESTS_ASSERT(abs(Id(2)-1.)<eps);

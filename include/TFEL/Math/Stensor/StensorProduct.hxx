@@ -24,6 +24,7 @@
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include"TFEL/Math/Tensor/TensorConcept.hxx"
 
 namespace tfel{
 
@@ -38,13 +39,14 @@ namespace tfel{
       TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<B>::type,
 						 StensorConcept>::cond));
       
-      typedef typename ComputeBinaryResult<A,B,OpMult>::Result Result;
+      typedef typename ComputeBinaryResult<typename std::decay<A>::type,
+					   typename std::decay<B>::type,OpMult>::Result Result;
 
     public:
 
       typedef EmptyRunTimeProperties RunTimeProperties; 
-      typedef typename StensorTraits<Result>::IndexType IndexType;
-      typedef typename StensorTraits<Result>::NumType   NumType;
+      typedef typename TensorTraits<Result>::IndexType IndexType;
+      typedef typename TensorTraits<Result>::NumType   NumType;
       typedef NumType        value_type;                                                
       typedef NumType*       pointer;	    						
       typedef const NumType* const_pointer; 						
@@ -116,18 +118,24 @@ namespace tfel{
       operator()(const size_type i) const 
       {
 	typedef typename StensorProductExprBase<A,B>::NumType T;
+	typedef typename tfel::typetraits::BaseType<T>::type base;
+	using constexpr_fct::sqrt;
+	constexpr base cste = base(1)/sqrt(base(2));
 	switch(i){
 	case 0:
-	  return ((this->a(3))*(this->b(3))+2*(this->a(0)*this->b(0)))/2;
+	  return (this->a(3)*this->b(3))/2+this->a(0)*this->b(0);
 	  break;
 	case 1:
-	  return ((this->a(3))*(this->b(3))+2*(this->a(1))*(this->b(1)))/2;
+	  return (this->a(3)*this->b(3))/2+this->a(1)*this->b(1);
 	  break;
 	case 2:
-	  return (this->a(2))*(this->b(2));
+	  return this->a(2)*this->b(2);
 	  break;
 	case 3:
-	  return (this->a(0))*(this->b(3))+(this->a(3))*(this->b(1));
+	  return ((this->a(0)*this->b(3))+(this->a(3)*this->b(1)))*cste;
+	  break;
+	case 4:
+	  return ((this->a(1)*this->b(3))+(this->a(3)*this->b(0)))*cste;
 	  break;
 	default:
 	  return T(0);
@@ -159,29 +167,38 @@ namespace tfel{
       operator()(const size_type i) const 
       {
 	typedef typename StensorProductExprBase<A,B>::NumType T;
-	typedef typename tfel::typetraits::BaseType<T>::type real;
+	typedef typename tfel::typetraits::BaseType<T>::type base;
 	using constexpr_fct::sqrt;
-	constexpr real cste = real(1)/sqrt(real(2));
+	constexpr base cste = base(1)/sqrt(base(2));
 	switch(i){
+	default:
 	case 0:
-	  return ((this->a(4))*(this->b(4))+(this->a(3))*(this->b(3))+2*(this->a(0))*(this->b(0)))/2;
+	  return (this->a(4)*this->b(4))/2+(this->a(3)*this->b(3))/2+this->a(0)*this->b(0);
 	  break;
-	case 1:  
-	  return ((this->a(5))*(this->b(5))+(this->a(3))*(this->b(3))+2*(this->a(1))*(this->b(1)))/2;
+	case 1:
+	  return (this->a(5)*this->b(5))/2+(this->a(3)*this->b(3))/2+this->a(1)*this->b(1);
 	  break;
 	case 2:
-	  return ((this->a(5))*(this->b(5))+(this->a(4))*(this->b(4))+2*(this->a(2))*(this->b(2)))/2; 
+	  return (this->a(5)*this->b(5))/2+(this->a(4)*this->b(4))/2+this->a(2)*this->b(2);
 	  break;
 	case 3:
-	  return cste*(this->a(4))*(this->b(5))+(this->a(0))*(this->b(3))+(this->a(3))*(this->b(1));
+	  return (this->a(4)*this->b(5))/2+(this->a(0)*this->b(3)+this->a(3)*this->b(1))*cste;
 	  break;
 	case 4:
-	  return cste*(this->a(3))*(this->b(5))+(this->a(0))*(this->b(4))+(this->a(4))*(this->b(2)); 
+	  return (this->a(5)*this->b(4))/2+(this->a(1)*this->b(3)+this->a(3)*this->b(0))*cste;
 	  break;
 	case 5:
-	  return cste*(this->a(4))*(this->b(3))+(this->a(2))*(this->b(5))+(this->a(5))*(this->b(1));
+	  return (this->a(3)*this->b(5))/2+(this->a(0)*this->b(4)+this->a(4)*this->b(2))*cste;
 	  break;
-	default:
+	case 6:
+	  return (this->a(5)*this->b(3))/2+(this->a(2)*this->b(4)+this->a(4)*this->b(0))*cste;
+	  break;
+	case 7:
+	  return (this->a(3)*this->b(4))/2+(this->a(1)*this->b(5)+this->a(5)*this->b(2))*cste;
+	  break;
+	case 8:
+	  return (this->a(4)*this->b(3))/2+(this->a(2)*this->b(5)+this->a(5)*this->b(1))*cste;
+	  break;
 	  return T(0);
 	}
 	return T(0);

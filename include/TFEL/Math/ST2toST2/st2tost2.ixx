@@ -27,8 +27,6 @@
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include"TFEL/Math/TinyMatrixInvert.hxx"
-#include"TFEL/Math/ST2toST2/StensorProductLeftDerivativeExpr.hxx"
-#include"TFEL/Math/ST2toST2/StensorProductRightDerivativeExpr.hxx"
 #include"TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx"
 
 namespace tfel{
@@ -131,40 +129,10 @@ namespace tfel{
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime==N&&
       tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
-      Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
-    st2tost2<N,T>::tpld(const StensorType& B)
+      Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> > >::type
+    st2tost2<N,T>::dsquare(const StensorType& s)
     {
-      return Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(B);
-    } // end of st2tost2<N,T>
-
-    template<unsigned short N, typename T>
-    template<typename StensorType,
-	     typename ST2toST2Type>
-    typename std::enable_if<
-      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
-      StensorTraits<StensorType>::dime==N&&
-      ST2toST2Traits<ST2toST2Type>::dime==N&&
-      tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
-								    typename ST2toST2Traits<ST2toST2Type>::NumType,
-								    OpMult>::Result,T>::cond,
-      Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
-    st2tost2<N,T>::tpld(const StensorType&  B,
-			const ST2toST2Type& C)
-    {
-      return Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(B,C);
-    }
-
-    template<unsigned short N, typename T>
-    template<typename StensorType>
-    typename std::enable_if<
-      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-      StensorTraits<StensorType>::dime==N&&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
-      Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
-    st2tost2<N,T>::tprd(const StensorType& A)
-    {
-      return Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> >(A);
+      return Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> >(s);
     }
 
     template<unsigned short N, typename T>
@@ -178,11 +146,11 @@ namespace tfel{
       tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
 								    typename ST2toST2Traits<ST2toST2Type>::NumType,
 								    OpMult>::Result,T>::cond,
-      Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
-    st2tost2<N,T>::tprd(const StensorType&  A,
-			const ST2toST2Type& C)
+      Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> > >::type
+    st2tost2<N,T>::dsquare(const StensorType&  s,
+			   const ST2toST2Type& C)
     {
-      return Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> >(A,C);
+      return Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> >(s,C);
     }
 
     template<unsigned short N, typename T>

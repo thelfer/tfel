@@ -713,6 +713,42 @@ namespace tfel{
     >::type
     negative_part(const StensorType&,
 		  const bool = false);
+    /*!
+     * \return the square of a symmetric stensor
+     * \param[in] s : squared tensor
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==1u,
+      stensor<1u,typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+					      typename StensorTraits<StensorType>::NumType,OpMult>::Result>
+      >::type
+    square(const StensorType&);
+    /*!
+     * \return the square of a symmetric stensor
+     * \param[in] s : squared tensor
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==2u,
+      stensor<2u,typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+					      typename StensorTraits<StensorType>::NumType,OpMult>::Result>
+      >::type
+    square(const StensorType&);
+    /*!
+     * \return the square of a symmetric stensor
+     * \param[in] s : squared tensor
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==3u,
+      stensor<3u,typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+					      typename StensorTraits<StensorType>::NumType,OpMult>::Result>
+      >::type
+    square(const StensorType&);
     
   } // end of namespace math
 

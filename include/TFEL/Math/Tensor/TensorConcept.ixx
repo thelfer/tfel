@@ -16,9 +16,9 @@
 #include"TFEL/FSAlgorithm/copy.hxx"
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
-#include"TFEL/Math/Forward/stensor.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/Forward/tensor.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include"TFEL/Math/Tensor/MatrixViewFromTensor.hxx"
 
@@ -197,7 +197,11 @@ namespace tfel{
       >::type
     syme(const T& t)
     {
-      return stensor<1u,typename TensorTraits<T>::NumType>(t.begin());
+      stensor<1u,typename TensorTraits<T>::NumType> s;
+      s[0] = t[0];
+      s[1] = t[1];
+      s[2] = t[2];
+      return s;
     }
 
     template<class T>
@@ -852,16 +856,16 @@ namespace tfel{
       typedef typename ComputeBinaryResult<T,T,OpMult>::Result   T2;
       typedef typename ComputeBinaryResult<T2,T,OpMult>::Result  T3;
       T (*sqrt_ptr)(const T2) = std::sqrt;
-      stensor<TensorTraits<TensorType>::dime,T> C   = computeRightCauchyGreenTensor(F);
       tvector<3u,T2> vp_C;
       tvector<3u,T> vp_U;
+      const auto C = computeRightCauchyGreenTensor(F);
       C.computeEigenValues(vp_C);
       transform<3u>::exe(vp_C.begin(),vp_U.begin(),ptr_fun(sqrt_ptr));
-      const T  i1 = vp_U[0]+vp_U[1]+vp_U[2];
-      const T2 i2 = vp_U[0]*vp_U[1]+vp_U[0]*vp_U[2]+vp_U[1]*vp_U[2];
-      const T3 i3 = vp_U[0]*vp_U[1]*vp_U[2];
-      const T3 D  = i1*i2-i3;
-      U = 1/D*(-C*C+(i1*i1-i2)*C+i1*i3*stensor<TensorTraits<TensorType>::dime,base>::Id());
+      const auto i1 = vp_U[0]+vp_U[1]+vp_U[2];
+      const auto i2 = vp_U[0]*vp_U[1]+vp_U[0]*vp_U[2]+vp_U[1]*vp_U[2];
+      const auto i3 = vp_U[0]*vp_U[1]*vp_U[2];
+      const auto D  = i1*i2-i3;
+      U = 1/D*(-square(C)+(i1*i1-i2)*C+i1*i3*stensor<TensorTraits<TensorType>::dime,base>::Id());
       stensor<TensorTraits<TensorType>::dime,inv_T> U_1 =
 	(C-i1*U+i2*stensor<TensorTraits<TensorType>::dime,base>::Id())*(1/i3);
       R = F * U_1;

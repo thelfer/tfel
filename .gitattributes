@@ -1194,9 +1194,8 @@ include/TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2StensorProductExpr.hxx -text
-include/TFEL/Math/ST2toST2/StensorProductLeftDerivativeExpr.hxx -text
-include/TFEL/Math/ST2toST2/StensorProductRightDerivativeExpr.hxx -text
 include/TFEL/Math/ST2toST2/StensorST2toST2ProductExpr.hxx -text
+include/TFEL/Math/ST2toST2/StensorSquareDerivative.hxx -text
 include/TFEL/Math/ST2toST2/st2tost2.ixx -text
 include/TFEL/Math/ST2toST2/st2tost2ResultType.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2Concept.hxx -text
@@ -1208,6 +1207,8 @@ include/TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx -text
+include/TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx -text
+include/TFEL/Math/ST2toT2/StensorProductRightDerivativeExpr.hxx -text
 include/TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx -text
@@ -2716,12 +2717,14 @@ tests/Math/st2tost2/CMakeLists.txt -text
 tests/Math/st2tost2/Makefile.am -text
 tests/Math/st2tost2/ST2toST2FromTinyMatrixView.cxx -text
 tests/Math/st2tost2/ST2toST2FromTinyMatrixView2.cxx -text
-tests/Math/st2tost2/StensorProductDerivative.cxx -text
+tests/Math/st2tost2/StensorSquareDerivative.cxx -text
 tests/Math/st2tost2/st2tost2-2.cxx -text
 tests/Math/st2tost2/st2tost2-3.cxx -text
 tests/Math/st2tost2/st2tost2.cxx -text
 tests/Math/st2tot2/CMakeLists.txt -text
 tests/Math/st2tot2/Makefile.am -text
+tests/Math/st2tot2/StensorProductDerivative.cxx -text
+tests/Math/st2tot2/StensorProductDerivative2.cxx -text
 tests/Math/st2tot2/st2tot2.cxx -text
 tests/Math/stensor.cxx -text
 tests/Math/stensor10.cxx -text

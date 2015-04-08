@@ -195,7 +195,7 @@ namespace tfel
     };
 
     /*
-     * Partial Specialisation of ComputeBinaryResult_ for stensor-st2tot2 operations
+     * Partial Specialisation of ComputeBinaryResult_ for tensor-st2tot2 operations
      */
     template<typename A, typename B>
     class ComputeBinaryResult_<TensorTag,ST2toT2Tag,A,B,OpMult>

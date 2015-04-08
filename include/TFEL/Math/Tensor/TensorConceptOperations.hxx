@@ -222,6 +222,63 @@ namespace tfel{
 					DummyHandle,
 					Expr<Result,UnaryOperation<A,OpNeg>>>::type Handle;
     };
+    /*!
+     * \return the inner product of a tensor
+     * \param const T1&, the left  tensor.
+     * \param const T2&, the right tensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename std::enable_if<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      TensorTraits<T1>::dime==1u&&
+      TensorTraits<T2>::dime==1u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
+    /*!
+     * \return the inner product of a tensor
+     * \param const T1&, the left  tensor.
+     * \param const T2&, the right tensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename std::enable_if<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      TensorTraits<T1>::dime==2u&&
+      TensorTraits<T2>::dime==2u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
+    /*!
+     * \return the inner product of a tensor
+     * \param const T1&, the left  tensor.
+     * \param const T2&, the right tensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename std::enable_if<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      TensorTraits<T1>::dime==3u&&
+      TensorTraits<T2>::dime==3u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
     
   } // end of namespace math
 

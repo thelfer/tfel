@@ -1352,7 +1352,58 @@ namespace tfel{
 						     std::min(vp(1),NumType(0)),
 						     std::min(vp(2),NumType(0)),m);
     }
-    
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==1u,
+      stensor<1u,typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+					      typename StensorTraits<StensorType>::NumType,OpMult>::Result>
+      >::type
+    square(const StensorType& s)
+    {
+      return {s(0)*s(0),s(1)*s(1),s(2)*s(2)};
+    }
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==2u,
+      stensor<2u,typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+					      typename StensorTraits<StensorType>::NumType,OpMult>::Result>
+      >::type
+    square(const StensorType& s)
+    {
+      typedef typename StensorTraits<StensorType>::NumType T;
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      constexpr base one_half = 1/base(2);
+      return {(s(3)*s(3)+2*s(0)*s(0))*one_half,
+	      (s(3)*s(3)+2*s(1)*s(1))*one_half,
+	      s(2)*s(2),(s(1)+s(0))*s(3)};
+    }
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==3u,
+      stensor<3u,typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+					      typename StensorTraits<StensorType>::NumType,OpMult>::Result>
+      >::type
+    square(const StensorType& s)
+    {
+      typedef typename StensorTraits<StensorType>::NumType T;
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      using constexpr_fct::sqrt;
+      constexpr base cste     = sqrt(base(2));
+      constexpr base one_half = 1/(base(2));
+      return {(s(4)*s(4)+s(3)*s(3)+2*s(0)*s(0))*one_half,
+	  (s(5)*s(5)+s(3)*s(3)+2*s(1)*s(1))*one_half,
+	  (s(5)*s(5)+s(4)*s(4)+2*s(2)*s(2))*one_half,
+	  (cste*s(4)*s(5)+2*(s(1)+s(0))*s(3))*one_half,
+	  (cste*s(3)*s(5)+2*(s(2)+s(0))*s(4))*one_half,
+	  (2*(s(2)+s(1))*s(5)+cste*s(3)*s(4))*one_half};
+    }
+
 #endif /* LIB_TFEL_STENSOR_IXX_ */
 
   } //end of namespace math

@@ -162,10 +162,10 @@
    */
   // Mandel stress tensor
   const StrainStensor tmp(StrainStensor::Id() + 2*(eel+deel));
-  const StressStensor M = tmp*S;
+  const StressTensor M = tmp*S;
   // Mandel stress tensor derivative
-  const st2tost2<N,real> dM_ddeel(2*st2tost2<N,real>::tpld(S)+
-				  st2tost2<N,real>::tprd(tmp,D));
+  const st2tot2<N,real> dM_ddeel(2*st2tot2<N,real>::tpld(S)+
+				 st2tot2<N,real>::tprd(tmp,D));
   /*!
    * Nous calculons (une approximation) de l'inverse de l'incrément de
    * la partie plastique du gradient de la transformation~:
@@ -272,7 +272,7 @@
     for(unsigned short j=0;j!=Nss;++j){
       Rp += mh(i,j)*pei[j] ;
     }
-    const real tau = ss.mus[i] | M ;
+    const real tau = ss.mu[i] | M ;
     const real va  = (dg[i]-d1*a[i]*agi[i])/(1.+d1*agi[i]);
     const real tma = tau-C*(a[i]+va) ;
     const real tmR = abs(tma)-Rp;
@@ -293,7 +293,7 @@
       const real dalfaidgi = (1-d1*a[i]*sgn[i])/(1+d1*agi[i])/(1+d1*agi[i]) ;
       const real dgsdRi    = -Hsi*sgn[i];
       // terme du jacobien
-      dfg_ddeel(i)  = -Hsi*(ss.mus[i]|dM_ddeel);
+      dfg_ddeel(i)  = -Hsi*(ss.mu[i]|dM_ddeel);
       dfg_ddg(i,i) -= dgsdalfai*dalfaidgi ;
       for(unsigned short j=0;j!=Nss;++j){
 	const real dRsdpj = b*Q*mh(i,j)*expi[j] ;    

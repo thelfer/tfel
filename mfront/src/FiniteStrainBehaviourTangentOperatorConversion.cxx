@@ -97,10 +97,10 @@ namespace mfront
 				   "this->Dt = 2*tangentOperator_DS_DC;"));
     converters.push_back(Converter(TangentOperator::DTAU_DF,TangentOperator::DSIG_DD,
 				   "const real J = det(this->F1);\n"
-				   "const st2tost2<N,stress> Cstar=st2tost2<N,real>::tpld(this->sig)+st2tost2<N,real>::tprd(this->sig)-((this->sig)^Stensor::Id());\n"
+				   "const st2tost2<N,stress> Cstar=st2tost2<N,real>::dsquare(this->sig)-((this->sig)^Stensor::Id());\n"
 				   "const st2tost2<N,stress> tangentOperator_DSIG_DD = st2tost2<N,real>::convert((1/J)*tangentOperator_DTAU_DF*t2tot2<N,real>::tprd(transpose(this->F1))) - Cstar;\n",
 				   "const real J = det(this->F1);\n"
-				   "const st2tost2<N,stress> Cstar=st2tost2<N,real>::tpld(this->sig)+st2tost2<N,real>::tprd(this->sig)-((this->sig)^Stensor::Id());\n"
+				   "const st2tost2<N,stress> Cstar=st2tost2<N,real>::dsquare(this->sig)-((this->sig)^Stensor::Id());\n"
 				   "this->Dt = st2tost2<N,real>::convert((1/J)*tangentOperator_DTAU_DF*t2tot2<N,real>::tprd(transpose(this->F1))) - Cstar;"));
     return converters;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions

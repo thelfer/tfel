@@ -122,10 +122,10 @@ namespace tfel{
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 					tfel::meta::InvalidType,
-					stensor<N,ResBase_> >::type type;
-  };
-  
-  /*!
+					tensor<N,ResBase_> >::type type;
+    };
+
+    /*!
      * \brief Partial specialisation for stensor
      * \see   ResultType
      */
@@ -156,13 +156,6 @@ namespace tfel{
 					  tfel::meta::InvalidType,
 					  ResBase_>::type type;
     }; // end of class ResultType<stensor<N,T>,stensor<M,T2>,OpDotProduct>
-
-    template<unsigned short N,typename T,typename T2>
-    struct StensorDotProductHandle<stensor<N,T>,
-				   stensor<N,T2> >
-    {
-      typedef DotProduct<StensorDimeToSize<N>::value,0u> type;
-    };
 
   } // end of namespace math
 
