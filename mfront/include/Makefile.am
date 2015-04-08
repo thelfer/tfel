@@ -2,6 +2,7 @@
 
 nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/BehaviourQuery.hxx                     \
+			MFront/BehaviourDocumentationGenerator.hxx    \
 			MFront/MFrontBase.hxx                         \
 			MFront/MFrontExecutableName.hxx               \
 			MFront/CodeBlock.hxx                          \
@@ -16,7 +17,6 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/MFrontLock.hxx                         \
 			MFront/InitDSLs.hxx                           \
 			MFront/InitInterfaces.hxx                     \
-			MFront/InitAnalysers.hxx                      \
 			MFront/MFrontHeader.hxx                       \
 			MFront/AbstractDSL.hxx                        \
 			MFront/DSLBase.hxx                            \
@@ -37,10 +37,6 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/BehaviourInterfaceProxy.hxx            \
 			MFront/BehaviourInterfaceProxy.ixx            \
 			MFront/BehaviourInterfaceFactory.hxx          \
-			MFront/BehaviourAnalyser.hxx                  \
-			MFront/BehaviourAnalyserProxy.hxx             \
-			MFront/BehaviourAnalyserProxy.ixx             \
-			MFront/BehaviourAnalyserFactory.hxx           \
 			MFront/AbstractModelInterface.hxx             \
 			MFront/ModelData.hxx                          \
 			MFront/ModelInterfaceProxy.hxx                \
@@ -116,8 +112,6 @@ nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 			 MFront/GnuplotMaterialPropertyInterface.hxx        \
 			 MFront/ExcelMaterialPropertyInterface.hxx          \
 			 MFront/ExcelMaterialPropertyInternalInterface.hxx  \
-			 MFront/LaTeXBehaviourAnalyser.hxx     \
-			 MFront/MarkdownBehaviourAnalyser.hxx  \
 			 MFront/PythonMaterialPropertyInterface.hxx
 
 nobase_include_HEADERS += MFront/BehaviourProfiler.hxx

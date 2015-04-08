@@ -51,21 +51,6 @@ nu.setGlossaryName("PoissonRatio");
   sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
 } 
 
-@TangentOperator{
-  using namespace tfel::material::lame;
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    StiffnessTensor De;
-    Stensor4 Je;
-    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
-    getPartialJacobianInvert(Je);
-    Dt = De*Je;
-  } else {
-    return false;
-  }
-}
-
 @Integrator{
   const real eps           = 1.e-12;
   // Les variables post-fixee par un _ sont exprimees les valeurs en
@@ -99,3 +84,18 @@ nu.setGlossaryName("PoissonRatio");
   }
   feel -= deto;
 } 
+
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

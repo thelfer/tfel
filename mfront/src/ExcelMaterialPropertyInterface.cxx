@@ -140,7 +140,7 @@ namespace mfront
 	string msg("ExcelMaterialPropertyInterface::writeOutputFiles : '"+fname+"' is not a regular file");
 	throw(runtime_error(msg));
       }
-      fstream iwrapper(fname.c_str());
+      fstream iwrapper(fname);
       if(!iwrapper){
 	string msg("ExcelMaterialPropertyInterface::writeOutputFiles : ");
 	msg += "unable to open '"+fname+"'";
@@ -177,7 +177,7 @@ namespace mfront
     for(p3=vars.begin();p3!=vars.end();++p3){
       p2->variables.push_back(p3->name);
     }
-    ofstream wrapper(fname.c_str());
+    ofstream wrapper(fname);
     for(p=interfaces.begin();p!=interfaces.end();++p){
       wrapper << p->function << " " << p->library << " ";
       copy(p->variables.begin(),p->variables.end(),
@@ -187,7 +187,7 @@ namespace mfront
     }
     for(p4=interfaces2.begin();p4!=interfaces2.end();++p4){
       string libName = p4->first;
-      ofstream file(("src/"+libName+".bas").c_str());
+      ofstream file("src/"+libName+".bas");
       if(!file){
 	string msg("ExcelMaterialPropertyInterface::writeOutputFiles : ");
 	msg += "";

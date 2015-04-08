@@ -110,7 +110,7 @@ namespace mfront
     const auto name = (!material.empty()) ? material+"_"+law : law;
     this->headerFileName  = "include/" + name;
     this->headerFileName += "-python.hxx";
-    this->headerFile.open(this->headerFileName.c_str());
+    this->headerFile.open(this->headerFileName);
     if(!this->headerFile){
       string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
       msg += "unable to open ";
@@ -121,7 +121,7 @@ namespace mfront
     this->headerFile.exceptions(ios::badbit|ios::failbit);
     this->srcFileName     = "src/" + name;
     this->srcFileName    += "-python.cxx";
-    this->srcFile.open(this->srcFileName.c_str());
+    this->srcFile.open(this->srcFileName);
     if(!this->srcFile){
       string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
       msg += "unable to open ";
@@ -368,7 +368,7 @@ namespace mfront
 	string msg("PythonMaterialPropertyInterface::writeOutputFiles : '"+fname+"' is not a regular file");
 	throw(runtime_error(msg));
       }
-      ifstream iwrapper(fname.c_str());
+      ifstream iwrapper(fname);
       if(!iwrapper){
 	string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
 	msg += "unable to open '"+fname+"'";
@@ -448,7 +448,7 @@ namespace mfront
     }
     wrapper << "} /* end of initmateriallaw */\n";
     wrapper.close();
-    wrapper.open(fname.c_str());
+    wrapper.open(fname);
     if(!wrapper){
       string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
       msg += "unable to open file '"+fname+"'";

@@ -60,7 +60,7 @@ namespace mfront
     if(this->ps.get()!=nullptr){
       this->ps->close();
     }
-    this->ps = shared_ptr<ofstream>(new ofstream(f.c_str()));
+    this->ps = shared_ptr<ofstream>(new ofstream(f));
     if(this->ps.get()==nullptr){
       string msg("LogStream::setLogStream : ");
       msg += "can't allocate ofstream obect";

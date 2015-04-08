@@ -59,12 +59,6 @@ namespace mfront{
 
     virtual void
     setInterfaces(const std::set<std::string>&);
-
-    /*!
-     * set the analysers to be used
-     */
-    virtual void
-    setAnalysers(const std::set<std::string>&);
     /*!
      * \brief analyse a file without generating any output
      * \param[in] f     : file name

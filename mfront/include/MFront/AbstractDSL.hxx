@@ -107,12 +107,6 @@ namespace mfront{
     virtual void
     setInterfaces(const std::set<std::string>&) = 0;
     /*!
-     * \set a list of analysers
-     * \param[in] anames : list of analysers
-     */
-    virtual void
-    setAnalysers(const std::set<std::string>&) = 0;
-    /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
      */

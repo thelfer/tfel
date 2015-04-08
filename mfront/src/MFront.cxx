@@ -41,9 +41,6 @@
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
-#include"MFront/InitDSLs.hxx"
-#include"MFront/InitInterfaces.hxx"
-#include"MFront/InitAnalysers.hxx"
 #include"MFront/MFrontExecutableName.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -283,50 +280,6 @@ namespace mfront{
   } // end of MFront::treatOBuild
 
   void
-  MFront::treatAnalyser(void)
-  {
-    using namespace std;
-    string nanalyser;
-    string tmp;
-    string::size_type n;
-    string::size_type n2;
-    nanalyser = this->currentArgument->getOption();
-    if(nanalyser.empty()){
-      string msg("MFront::treatAnalyser : ");
-      msg += "no option given to the --analyser argument";
-      throw(runtime_error(msg));
-    }
-    n = 0u;
-    n2=nanalyser.find(',',n);
-    while(n2!=string::npos){
-      tmp = nanalyser.substr(n,n2-n);
-      if(tmp.empty()){
-	string msg("MFront::treatAnalyser : ");
-	msg += "empty analyser specified.";
-	throw(runtime_error(msg));
-      }
-      if(!this->analysers.insert(tmp).second){
-	string msg("MFront::treatAnalyser : ");
-	msg += "the analyser "+tmp+" has already been specified";
-	throw(runtime_error(msg));
-      }
-      n=n2+1;
-      n2=nanalyser.find(',',n);
-    }
-    tmp = nanalyser.substr(n,n2-n);
-    if(tmp.empty()){
-      string msg("MFront::treatAnalyser : ");
-      msg += "empty analyser specified.";
-      throw(runtime_error(msg));
-    }
-    if(!this->analysers.insert(tmp).second){
-      string msg("MFront::treatAnalyser : ");
-      msg += "the analyser "+tmp+" has already been specified";
-      throw(runtime_error(msg));
-    }
-  } // end of MFront::treatAnalyser
-
-  void
   MFront::treatListParsers(void)
   {
     using namespace std;
@@ -445,8 +398,6 @@ namespace mfront{
 			      "generate MakeFile and clean libraries");
     this->registerNewCallBack("--interface","-i",&MFront::treatInterface,
 			      "specify which interface to use",true);
-    this->registerNewCallBack("--analyser","-i",&MFront::treatAnalyser,
-			      "specify which analyser to use",true);
     this->registerNewCallBack("--silent-build",&MFront::treatSilentBuild,
 			      "active or desactivate silent build",true);
 #if (not defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -610,9 +561,6 @@ namespace mfront{
     shared_ptr<AbstractDSL> dsl = MFrontBase::getDSL(f);
     if(!this->interfaces.empty()){
       dsl->setInterfaces(this->interfaces);
-    }
-    if(!this->analysers.empty()){
-      dsl->setAnalysers(this->analysers);
     }
     dsl->analyseFile(f,this->ecmds);
     dsl->generateOutputFiles();
@@ -1501,7 +1449,7 @@ namespace mfront{
     auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
-      this->makeFile.open(("src"+dirStringSeparator()+"Makefile.mfront").c_str());
+      this->makeFile.open("src"+dirStringSeparator()+"Makefile.mfront");
       this->makeFile.exceptions(ios::badbit|ios::failbit);
       if(!this->makeFile){
 	string msg("MFront::generateMakeFile : can't open file Makefile.mfront");

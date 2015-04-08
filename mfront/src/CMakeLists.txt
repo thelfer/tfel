@@ -2,7 +2,9 @@ include_directories("${PROJECT_BINARY_DIR}/src/TFELConfig"
                     "${PROJECT_SOURCE_DIR}/include"
                     "${PROJECT_SOURCE_DIR}/mfront/include")
 if(HAVE_CASTEM)
-include_directories("${CASTEMHOME}/include")
+  if(CASTEHOME)
+    include_directories("${CASTEMHOME}/include")
+  endif(CASTEHOME)
 endif(HAVE_CASTEM)
 
 link_directories("${PROJECT_BINARY_DIR}/mfront/src"
@@ -42,7 +44,6 @@ set(TFELMFront_SOURCES
     SearchFile.cxx
     InitInterfaces.cxx
     InitDSLs.cxx
-    InitAnalysers.cxx
     DSLFactory.cxx
     DrivingVariable.cxx
     ThermodynamicForce.cxx
@@ -69,13 +70,9 @@ set(TFELMFront_SOURCES
     DSLUtilities.cxx
     FiniteStrainBehaviourTangentOperatorConversion.cxx
     FiniteStrainBehaviourTangentOperatorConversionPath.cxx
-    BehaviourAnalyser.cxx
-    BehaviourAnalyserFactory.cxx
     MaterialPropertyInterfaceFactory.cxx
     BehaviourInterfaceFactory.cxx
     ModelInterfaceFactory.cxx
-    BehaviourAnalyser.cxx
-    BehaviourAnalyserFactory.cxx
     DefaultDSLBase.cxx
     DefaultDSL.cxx
     DefaultCZMDSL.cxx
@@ -111,8 +108,6 @@ set(TFELMFront_SOURCES
     CppTestMaterialPropertyInterface.cxx
     ExcelMaterialPropertyInterface.cxx
     ExcelMaterialPropertyInternalInterface.cxx
-    LaTeXBehaviourAnalyser.cxx
-    MarkdownBehaviourAnalyser.cxx
     UMATInterfaceBase.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -242,7 +237,6 @@ install(TARGETS mfront DESTINATION bin
   COMPONENT mfront)
 
 # mfront-query
-
 add_executable(mfront-query mfront-query.cxx
   BehaviourQuery.cxx)
 target_link_libraries(mfront-query
@@ -251,3 +245,14 @@ target_link_libraries(mfront-query
   TFELSystem TFELUtilities)
 install(TARGETS mfront-query DESTINATION bin
   COMPONENT mfront)
+
+# mfront-doc
+add_executable(mfront-doc mfront-doc.cxx
+  BehaviourDocumentationGenerator.cxx)
+target_link_libraries(mfront-doc
+  TFELMFront 
+  MFrontLogStream
+  TFELSystem TFELUtilities)
+install(TARGETS mfront-doc DESTINATION bin
+  COMPONENT mfront)
+

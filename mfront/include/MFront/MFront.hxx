@@ -55,8 +55,6 @@ namespace mfront{
 
     virtual void treatHelpCommand(void);
 
-    virtual void treatAnalyser(void);
-
     virtual void treatSilentBuild(void);
 
     virtual void treatNoDeps(void);

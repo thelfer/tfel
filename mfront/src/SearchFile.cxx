@@ -47,9 +47,8 @@ namespace mfront
 	return file;
       }
     }
-    string msg("SearchFile::search : '"+
-	       f + "' has not been found.");
-    throw(runtime_error(msg));
+    throw(runtime_error("SearchFile::search : '"+f+
+			"' has not been found."));
     return "";
   }
 

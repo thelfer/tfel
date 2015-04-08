@@ -101,7 +101,7 @@ namespace mfront
     this->headerFileName += "-cxx.hxx";
     this->srcFileName  = "src/" + name;
     this->srcFileName += "-cxx.cxx";
-    this->headerFile.open(this->headerFileName.c_str());
+    this->headerFile.open(this->headerFileName);
     if(!this->headerFile){
       string msg("MaterialPropertyDSL::writeOutputFiles : ");
       msg += "unable to open ";
@@ -110,7 +110,7 @@ namespace mfront
       throw(runtime_error(msg));
     }
     this->headerFile.exceptions(ios::badbit|ios::failbit);
-    this->srcFile.open(this->srcFileName.c_str());
+    this->srcFile.open(this->srcFileName);
     if(!this->srcFile){
       string msg("MaterialPropertyDSL::writeOutputFiles : ");
       msg += "unable to open ";

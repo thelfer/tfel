@@ -145,7 +145,7 @@ namespace mfront{
   MTestFileGeneratorBase::generate(const std::string& n) const
   {
     using namespace std;
-    ofstream file((n+"-"+to_string(getIdentifier())+".mtest").c_str());
+    ofstream file(n+"-"+to_string(getIdentifier())+".mtest");
     if(!file){
       string msg("MTestFileGeneratorBase::generate : "
 		 "can't open file '"+n+".mtest'");

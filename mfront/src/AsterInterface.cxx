@@ -309,7 +309,7 @@ namespace mfront{
     string fileName("aster");
     fileName += name;
     fileName += ".hxx";
-    ofstream out(("include/MFront/Aster/"+fileName).c_str());
+    ofstream out("include/MFront/Aster/"+fileName);
     if(!out){
       string msg("AsterInterface::endTreatement : ");
       msg += "could not open file ";
@@ -410,7 +410,7 @@ namespace mfront{
     fileName += name;
     fileName += ".cxx";
 
-    out.open(("src/"+fileName).c_str());
+    out.open("src/"+fileName);
     if(!out){
       string msg("AsterInterface::endTreatement : ");
       msg += "could not open file ";

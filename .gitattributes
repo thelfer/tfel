@@ -1451,10 +1451,6 @@ mfront/include/MFront/Aster/AsterTangentOperator.hxx -text
 mfront/include/MFront/Aster/AsterTraits.hxx -text
 mfront/include/MFront/Aster/aster.doxygen -text
 mfront/include/MFront/AsterInterface.hxx -text
-mfront/include/MFront/BehaviourAnalyser.hxx -text
-mfront/include/MFront/BehaviourAnalyserFactory.hxx -text
-mfront/include/MFront/BehaviourAnalyserProxy.hxx -text
-mfront/include/MFront/BehaviourAnalyserProxy.ixx -text
 mfront/include/MFront/BehaviourAttribute.hxx -text
 mfront/include/MFront/BehaviourBrick.hxx -text
 mfront/include/MFront/BehaviourBrickBase.hxx -text
@@ -1467,6 +1463,7 @@ mfront/include/MFront/BehaviourData.hxx -text
 mfront/include/MFront/BehaviourData.ixx -text
 mfront/include/MFront/BehaviourDescription.hxx -text
 mfront/include/MFront/BehaviourDescription.ixx -text
+mfront/include/MFront/BehaviourDocumentationGenerator.hxx -text
 mfront/include/MFront/BehaviourInterfaceFactory.hxx -text
 mfront/include/MFront/BehaviourInterfaceProxy.hxx -text
 mfront/include/MFront/BehaviourInterfaceProxy.ixx -text
@@ -1523,7 +1520,6 @@ mfront/include/MFront/ImplicitDSL.hxx -text
 mfront/include/MFront/ImplicitDSLBase.hxx -text
 mfront/include/MFront/ImplicitDSLII.hxx -text
 mfront/include/MFront/ImplicitFiniteStrainDSL.hxx -text
-mfront/include/MFront/InitAnalysers.hxx -text
 mfront/include/MFront/InitDSLs.hxx -text
 mfront/include/MFront/InitInterfaces.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
@@ -1531,7 +1527,6 @@ mfront/include/MFront/IsotropicBehaviourDSLBase.hxx -text
 mfront/include/MFront/IsotropicMisesCreepDSL.hxx -text
 mfront/include/MFront/IsotropicMisesPlasticFlowDSL.hxx -text
 mfront/include/MFront/IsotropicStrainHardeningMisesCreepDSL.hxx -text
-mfront/include/MFront/LaTeXBehaviourAnalyser.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
 mfront/include/MFront/LevenbergMarquardtSolvers.hxx -text
 mfront/include/MFront/MFront.hxx -text
@@ -1544,7 +1539,6 @@ mfront/include/MFront/MFrontLock.hxx -text
 mfront/include/MFront/MFrontLogStream.hxx -text
 mfront/include/MFront/MFrontMaterialPropertyInterface.hxx -text
 mfront/include/MFront/MTestFileGeneratorBase.hxx -text
-mfront/include/MFront/MarkdownBehaviourAnalyser.hxx -text
 mfront/include/MFront/MaterialPropertyDSL.hxx -text
 mfront/include/MFront/MaterialPropertyDescription.hxx -text
 mfront/include/MFront/MaterialPropertyInterfaceFactory.hxx -text
@@ -1691,14 +1685,13 @@ mfront/src/AsterInterfaceExceptions.cxx -text
 mfront/src/AsterRotationMatrix.cxx -text
 mfront/src/AsterStressFreeExpansionHandler.cxx -text
 mfront/src/AsterTangentOperator.cxx -text
-mfront/src/BehaviourAnalyser.cxx -text
-mfront/src/BehaviourAnalyserFactory.cxx -text
 mfront/src/BehaviourBrick.cxx -text
 mfront/src/BehaviourBrickBase.cxx -text
 mfront/src/BehaviourBrickFactory.cxx -text
 mfront/src/BehaviourDSLCommon.cxx -text
 mfront/src/BehaviourData.cxx -text
 mfront/src/BehaviourDescription.cxx -text
+mfront/src/BehaviourDocumentationGenerator.cxx -text
 mfront/src/BehaviourInterfaceFactory.cxx -text
 mfront/src/BehaviourProfiler.cxx -text
 mfront/src/BehaviourQuery.cxx -text
@@ -1738,7 +1731,6 @@ mfront/src/ImplicitDSL.cxx -text
 mfront/src/ImplicitDSLBase.cxx -text
 mfront/src/ImplicitDSLII.cxx -text
 mfront/src/ImplicitFiniteStrainDSL.cxx -text
-mfront/src/InitAnalysers.cxx -text
 mfront/src/InitDSLs.cxx -text
 mfront/src/InitInterfaces.cxx -text
 mfront/src/InterfaceBase.cxx -text
@@ -1746,7 +1738,6 @@ mfront/src/IsotropicBehaviourDSLBase.cxx -text
 mfront/src/IsotropicMisesCreepDSL.cxx -text
 mfront/src/IsotropicMisesPlasticFlowDSL.cxx -text
 mfront/src/IsotropicStrainHardeningMisesCreepDSL.cxx -text
-mfront/src/LaTeXBehaviourAnalyser.cxx -text
 mfront/src/LawFunction.cxx -text
 mfront/src/LevenbergMarquardtSolvers.cxx -text
 mfront/src/MFront.cxx -text
@@ -1759,7 +1750,6 @@ mfront/src/MFrontLogStream.cxx -text
 mfront/src/MFrontMaterialPropertyInterface.cxx -text
 mfront/src/MTestFileGeneratorBase.cxx -text
 mfront/src/Makefile.am -text
-mfront/src/MarkdownBehaviourAnalyser.cxx -text
 mfront/src/MaterialPropertyDSL.cxx -text
 mfront/src/MaterialPropertyDescription.cxx -text
 mfront/src/MaterialPropertyInterfaceFactory.cxx -text
@@ -1801,6 +1791,7 @@ mfront/src/VariableBoundsDescription.cxx -text
 mfront/src/VariableDescription.cxx -text
 mfront/src/ZMATInterface.cxx -text
 mfront/src/main.cxx -text
+mfront/src/mfront-doc.cxx -text
 mfront/src/mfront-query.cxx -text
 mfront/tests/CMakeLists.txt -text
 mfront/tests/Makefile.am -text

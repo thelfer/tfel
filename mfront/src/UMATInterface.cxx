@@ -703,7 +703,7 @@ namespace mfront{
     fileName += name;
     fileName += ".hxx";
 
-    ofstream out(("include/MFront/UMAT/"+fileName).c_str());
+    ofstream out("include/MFront/UMAT/"+fileName);
     if(!out){
       string msg("UMATInterface::endTreatement : ");
       msg += "could not open file ";
@@ -902,7 +902,7 @@ namespace mfront{
     fileName += name;
     fileName += ".cxx";
 
-    out.open(("src/"+fileName).c_str());
+    out.open("src/"+fileName);
     if(!out){
       string msg("UMATInterface::endTreatement : ");
       msg += "could not open file ";
@@ -2020,7 +2020,7 @@ namespace mfront{
     // opening output file
     systemCall::mkdir("castem");
     ofstream out;
-    out.open(fileName.c_str());
+    out.open(fileName);
     if(!out){
       string msg("UMATInterface::generateGibianeDeclaration : ");
       msg += "could not open file ";

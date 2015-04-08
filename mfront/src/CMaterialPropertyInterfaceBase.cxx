@@ -64,7 +64,7 @@ namespace mfront
     // the fortran interface does not need any header...
     if(!header.empty()){
       this->headerFileName  = "include/" + header +".hxx";
-      this->headerFile.open(this->headerFileName.c_str());
+      this->headerFile.open(this->headerFileName);
       if(!this->headerFile){
 	string msg("MaterialPropertyDSL::writeOutputFiles : ");
 	msg += "unable to open ";
@@ -76,7 +76,7 @@ namespace mfront
       this->writeHeaderFile(material,className,author,date,
 			    description,inputs,bounds,physicalBounds);
     }
-    this->srcFile.open(this->srcFileName.c_str());
+    this->srcFile.open(this->srcFileName);
     if(!this->srcFile){
       string msg("MaterialPropertyDSL::writeOutputFiles : ");
       msg += "unable to open ";

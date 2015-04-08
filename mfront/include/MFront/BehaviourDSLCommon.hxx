@@ -33,8 +33,6 @@ namespace mfront{
 
   // forward declaration
   struct AbstractBehaviourInterface;
-  // forward declaration
-  struct BehaviourAnalyser;
 
   /*!
    * This class provides most functionnalities used by mechanical
@@ -466,11 +464,6 @@ namespace mfront{
      */
     virtual void
     setInterfaces(const std::set<std::string>&) override;
-    /*!
-     * set the analysers to be used
-     */
-    virtual void
-    setAnalysers(const std::set<std::string>&) override;
     /*!
      * register the default variable names
      */
@@ -1028,9 +1021,6 @@ namespace mfront{
     //! list of registred interfaces
     std::map<std::string,
 	     std::shared_ptr<AbstractBehaviourInterface>> interfaces;
-    //! list of registred analysers
-    std::map<std::string,
-	     std::shared_ptr<BehaviourAnalyser>> analysers;
     /*!
      * local variables initalizers. This variable to initialize local
      * variables defined by domains specific languages and shall not

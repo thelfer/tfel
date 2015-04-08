@@ -37,8 +37,6 @@
 #include"MFront/MFrontMaterialPropertyInterface.hxx"
 #include"MFront/PerformanceProfiling.hxx"
 #include"MFront/BehaviourInterfaceFactory.hxx"
-#include"MFront/BehaviourAnalyserFactory.hxx"
-#include"MFront/BehaviourAnalyser.hxx"
 #include"MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx"
 #include"MFront/BehaviourBrick.hxx"
 #include"MFront/BehaviourBrickFactory.hxx"
@@ -730,15 +728,6 @@ namespace mfront{
       }
       i.second->endTreatement(this->mb,*this);
     }
-    // calling the analysers
-    for(const auto& a : this->analysers){
-      if(getVerboseMode()>=VERBOSE_DEBUG){
-	auto& log = getLogStream();
-	log << "BehaviourDSLCommon::writeOutputFiles : "
-	    << "calling analyser '" << a.first << "'" << endl;
-      }
-      a.second->endTreatement(this->mb,*this);
-    }
   }
 
   void
@@ -1178,9 +1167,6 @@ namespace mfront{
 	if(this->interfaces.find(t)!=this->interfaces.end()){
 	  s.insert(t);
 	}
-	if(this->analysers.find(t)!=this->analysers.end()){
-	  s2.insert(t);
-	}
 	++(this->current);
 	if((this->current->value!="]")&&(this->current->value!=",")){
 	  this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
@@ -1212,28 +1198,6 @@ namespace mfront{
 	  p2 = p.second;
 	  treated = true;
 	}
-	for(const auto & elem : s2){
-	  p = this->analysers.at(elem)->treatKeyword(key,this->current,
-						     this->fileTokens.end());
-	  if(!p.first){
-	    string msg("BehaviourDSLCommon::treatUnknownKeyword : the keyword '");
-	    msg += key;
-	    msg += " has not been treated by analyser '"+elem+"'";
-	    throw(runtime_error(msg));
-	  }
-	  if(treated){
-	    if(p2!=p.second){
-	      string msg("BehaviourDSLCommon::treatUnknownKeyword : the keyword '");
-	      msg += key;
-	      msg += "' has been treated by two interfaces/analysers but";
-	      msg += " results were differents";
-	      throw(runtime_error(msg));
-	    }
-	  }
-	  p2 = p.second;
-	  treated = true;
-	}
-	this->current = p2;
       }
     } else {
       for(const auto&i : this->interfaces){
@@ -1253,27 +1217,6 @@ namespace mfront{
 	  treated = true;
 	}
       }
-      for(const auto& a : this->analysers){
-	p = a.second->treatKeyword(key,this->current,
-				   this->fileTokens.end());
-	if(p.first){
-	  if(treated){
-	    if(p2!=p.second){
-	      string msg("BehaviourDSLCommon::treatUnknownKeyword : the keyword '");
-	      msg += key;
-	      msg += "' has been treated by two interfaces/analysers but";
-	      msg += " results were differents";
-	      throw(runtime_error(msg));
-	    }
-	  }
-	  p2 = p.second;
-	  treated = true;
-	}
-      }
-      if(!treated){
-	DSLBase::treatUnknownKeyword();
-      }
-      this->current = p2;
     }
   } // end of BehaviourDSLCommon::treatUnknownKeyword
 
@@ -1556,19 +1499,6 @@ namespace mfront{
       }
     }
   } // end of BehaviourDSLCommon::setInterfaces
-
-  void
-  BehaviourDSLCommon::setAnalysers(const std::set<std::string>& anames)
-  {
-    using namespace std;
-    typedef BehaviourAnalyserFactory  MBAF;
-    auto& mbaf = MBAF::getBehaviourAnalyserFactory();
-    for(const auto& a : anames){
-      if(this->analysers.count(a)==0){
-	this->analysers.insert({a,mbaf.getAnalyser(a)});
-      }
-    }
-  } // end of BehaviourDSLCommon::setAnalysers
 
   void
   BehaviourDSLCommon::treatIntegrator(void)
@@ -3599,6 +3529,10 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/BoundsCheck.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Material/Lame.hxx\"" << endl;
+    if(this->mb.getSymmetryType()==ORTHOTROPIC){
+      this->behaviourFile << "#include\"TFEL/Material/Hill.hxx\"" << endl;
+    }
     this->behaviourFile << "#include\"" << this->behaviourDataFileName << "\"" << endl;
     this->behaviourFile << "#include\"" << this->integrationDataFileName << "\"" << endl;
     if(this->mb.getAttribute<bool>(BehaviourData::profiling,false)){

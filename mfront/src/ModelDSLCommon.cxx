@@ -136,15 +136,6 @@ namespace mfront{
   } // end of ModelDSLCommon::setInterfaces
 
   void
-  ModelDSLCommon::setAnalysers(const std::set<std::string>&)
-  {
-    using namespace std;
-    string msg("ModelDSLCommon::setAnalysers : ");
-    msg += "analysers are not supported for models";
-    throw(runtime_error(msg));
-  } // end of ModelDSLCommon::setAnalysers
-
-  void
   ModelDSLCommon::generateOutputFiles(void)
   {
     using namespace std;

@@ -118,7 +118,7 @@ const char* Glossary::names[94] = {
 "YoungModulus3"};
 const GlossaryEntry Glossary::AxialStrain("AxialStrain","AxialStrain",
 "","scalar",
-"la déformation axiale (cette grandeur n'a de sens que pour les calculs plan généralisé)",
+"la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes)",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -806,7 +806,7 @@ const GlossaryEntry&
 Glossary::getGlossaryEntry(const std::string& n) const
 {
 using namespace std;
-auto p=this->findGlossaryEntry(n);
+set<GlossaryEntry>::const_iterator p=this->findGlossaryEntry(n);
 if(p==this->entries.end()){
 string msg("Glossary::getGlossaryEntry : no glossary entry matching '"+n+"'");
 throw(runtime_error(msg));
@@ -829,8 +829,8 @@ for(p=this->entries.begin();p!=this->entries.end();++p){
 if(p->getKey()==n){
 return p;
 }
-const auto& enames = p->getNames();
-if(find(enames.begin(),enames.end(),n)!=enames.end()){
+const auto& names = p->getNames();
+if(find(names.begin(),names.end(),n)!=names.end()){
 return p;
 }
 }

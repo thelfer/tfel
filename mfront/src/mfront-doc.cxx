@@ -1,8 +1,8 @@
 /*! 
- * \file  mfront-query.cxx
+ * \file  mfront-doc.cxx
  * \brief
  * \author Helfer Thomas
- * \date   04 mars 2015
+ * \date   22 mars 2015
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -23,7 +23,7 @@
 #include"MFront/InitInterfaces.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontBase.hxx"
-#include"MFront/BehaviourQuery.hxx"
+#include"MFront/BehaviourDocumentationGenerator.hxx"
 #include"MFront/AbstractDSL.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
 
@@ -31,9 +31,10 @@ int main(const int argc, const char *const *const argv)
 {
   using namespace std;
   using namespace mfront;
+  using BGen = BehaviourDocumentationGenerator;
   initParsers();
   initInterfaces();
-  vector<shared_ptr<BehaviourQuery>> bqueries;
+  vector<shared_ptr<BGen>> bgens;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{
 #endif /* __CYGWIN__ */
@@ -44,20 +45,19 @@ int main(const int argc, const char *const *const argv)
 	if(dsl->getTargetType()==AbstractDSL::BEHAVIOURDSL){
 	  auto b = dynamic_pointer_cast<AbstractBehaviourDSL>(dsl);
 	  if(!b){
-	    throw(runtime_error("mfront-query : invalid dsl implementation"));
+	    throw(runtime_error("mfront-doc : invalid dsl implementation"));
 	  }
-	  bqueries.push_back(make_shared<BehaviourQuery>(argc,argv,b,f));
+	  bgens.push_back(make_shared<BGen>(argc,argv,b,f));
 	} else {
 	  if(dsl->getTargetType()==AbstractDSL::BEHAVIOURDSL){
-	    throw(runtime_error("mfront-query : unsupported dsl type"));
+	    throw(runtime_error("mfront-doc : unsupported dsl type"));
 	  }
 	}
       } else if ((strcmp(*a,"--help")==0)||(strcmp(*a,"-h")==0)){
 	cout << "Usage : " << argv[0] << " [options] [files]" << endl;
 	cout << "Available options are :" << endl
-	     << "--help,-h                     : print this message" << endl
-	     << "--usage                       : show how to use " << argv[0] << endl
-	     << "--help-behaviour-queries-list : list all queries avaiable for mfront behaviour files" << endl;
+	     << "--help,-h : print this message" << endl
+	     << "--usage   : show how to use " << argv[0] << endl;
 	exit(EXIT_SUCCESS);
       } else if ((strcmp(*a,"--version")==0)||(strcmp(*a,"-v")==0)){
 	cout << MFrontHeader::getHeader();
@@ -65,14 +65,9 @@ int main(const int argc, const char *const *const argv)
       } else if (strcmp(*a,"--usage")==0){
 	cout << "Usage : " << argv[0] << " [options] [files]" << endl;
 	exit(EXIT_SUCCESS);
-      } else if (strcmp(*a,"--help-behaviour-queries-list")==0){
-	const char* args[2] = {argv[0],"--help"};
-	shared_ptr<AbstractBehaviourDSL> b;
-	auto bq = make_shared<BehaviourQuery>(2,args,b,"");
-	exit(EXIT_SUCCESS);
       }
     }
-    for(auto q : bqueries){
+    for(auto q : bgens){
       q->exe();
     }
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__

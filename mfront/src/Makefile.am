@@ -11,7 +11,7 @@ endif
 INCLUDES += $(CASTEM_CPPFLAGS)
 endif
 
-bin_PROGRAMS = mfront mfront-query
+bin_PROGRAMS = mfront mfront-query mfront-doc
 lib_LTLIBRARIES = libMFrontLogStream.la libTFELMFront.la libMTestFileGenerator.la
 
 libMFrontLogStream_la_SOURCES  = MFrontLogStream.cxx
@@ -29,7 +29,6 @@ libTFELMFront_la_SOURCES = MFrontBase.cxx                                       
 		           MFrontDebugMode.cxx                                    \
 		           PedanticMode.cxx                                       \
 		           MFrontLock.cxx                                         \
-		           InitAnalysers.cxx                                      \
 		           InitInterfaces.cxx                                     \
 		           InitDSLs.cxx                                           \
 		           DSLFactory.cxx                                         \
@@ -51,7 +50,6 @@ libTFELMFront_la_SOURCES = MFrontBase.cxx                                       
 		           AbstractBehaviourInterface.cxx                         \
 		           AbstractMaterialPropertyInterface.cxx                  \
 		           AbstractModelInterface.cxx                             \
-		           BehaviourAnalyser.cxx                                  \
 		           SupportedTypes.cxx                                     \
 		           MFrontHeader.cxx                                       \
 		           DSLBase.cxx                                            \
@@ -60,7 +58,6 @@ libTFELMFront_la_SOURCES = MFrontBase.cxx                                       
 		           SearchFile.cxx                                         \
 		           MaterialPropertyInterfaceFactory.cxx                   \
 		           BehaviourInterfaceFactory.cxx                          \
-		           BehaviourAnalyserFactory.cxx                           \
 		           ModelInterfaceFactory.cxx                              \
 		           DefaultDSLBase.cxx                                     \
 		           DefaultDSL.cxx                                         \
@@ -94,8 +91,6 @@ libTFELMFront_la_SOURCES = MFrontBase.cxx                                       
 		           CppTestMaterialPropertyInterface.cxx                   \
 		           ExcelMaterialPropertyInterface.cxx                     \
 		           ExcelMaterialPropertyInternalInterface.cxx             \
-		           LaTeXBehaviourAnalyser.cxx                             \
-		           MarkdownBehaviourAnalyser.cxx                          \
 		           BehaviourBrick.cxx                                     \
 		           BehaviourBrickBase.cxx                                 \
 		           ElasticityBehaviourBrick.cxx                           \
@@ -261,6 +256,19 @@ mfront_query_DEPENDENCIES = libTFELMFront.la libMFrontLogStream.la
 
 if !TFEL_WIN
 mfront_query_LDFLAGS  = -export-dynamic
+endif # TFEL_WIN
+
+mfront_doc_SOURCES = mfront-doc.cxx BehaviourDocumentationGenerator.cxx
+mfront_doc_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \
+                     -L$(top_builddir)/src/Glossary -lTFELGlossary   \
+                     -L$(top_builddir)/src/Material -lTFELMaterial   \
+                     -L$(top_builddir)/src/Math -lTFELMath           \
+                     -L$(top_builddir)/src/Utilities -lTFELUtilities \
+                     -L$(top_builddir)/src/System -lTFELSystem
+mfront_doc_DEPENDENCIES = libTFELMFront.la libMFrontLogStream.la
+
+if !TFEL_WIN
+mfront_doc_LDFLAGS  = -export-dynamic
 endif # TFEL_WIN
 
 EXTRA_DIST = CMakeLists.txt

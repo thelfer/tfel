@@ -18,7 +18,6 @@
 #include<cstdlib>
 #include"MFront/InitDSLs.hxx"
 #include"MFront/InitInterfaces.hxx"
-#include"MFront/InitAnalysers.hxx"
 #include"MFront/MFront.hxx"
 
 int main(const int argc, const char *const *const argv)
@@ -26,7 +25,6 @@ int main(const int argc, const char *const *const argv)
   using namespace mfront;
   initParsers();
   initInterfaces();
-  initAnalysers();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{
 #endif /* __CYGWIN__ */

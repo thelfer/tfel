@@ -259,15 +259,6 @@ namespace mfront{
   } // end of MaterialPropertyDSL::setInterface
 
   void
-  MaterialPropertyDSL::setAnalysers(const std::set<std::string>&)
-  {
-    using namespace std;
-    string msg("MaterialPropertyDSL::setAnalysers : ");
-    msg += "analysers are not supported for models";
-    throw(runtime_error(msg));
-  } // end of MaterialPropertyDSL::setAnalysers
-
-  void
   MaterialPropertyDSL::treatInterface(void) 
   {
     using namespace std;

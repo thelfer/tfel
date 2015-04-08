@@ -275,7 +275,7 @@ namespace mfront
     const auto name = (material.empty()) ? className : material+"_"+className;
     this->srcFileName  = "src/" + name;
     this->srcFileName += ".gp";
-    this->srcFile.open(this->srcFileName.c_str());
+    this->srcFile.open(this->srcFileName);
     if(!this->srcFile){
       string msg("MaterialPropertyDSL::writeOutputFiles : ");
       msg += "unable to open ";

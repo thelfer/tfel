@@ -50,12 +50,6 @@ namespace mfront{
 
     virtual void
     setInterfaces(const std::set<std::string>&) override;
-
-    /*!
-     * set the analysers to be used
-     */
-    virtual void
-    setAnalysers(const std::set<std::string>&) override;
     /*!
      * \return the target description
      * \note This method shall be called *after* the analyseFile method

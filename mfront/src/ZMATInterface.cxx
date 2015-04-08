@@ -863,7 +863,7 @@ namespace mfront
 		 "no suitable modelling hypothesis supported");
       throw(runtime_error(msg));
     }
-    ofstream out(("include/MFront/ZMAT/"+headerFileName).c_str());
+    ofstream out("include/MFront/ZMAT/"+headerFileName);
     if(!out){
       string msg("UMATInterface::endTreatement : "
 		 "could not open header file '"+
@@ -1029,7 +1029,7 @@ namespace mfront
     out << "Z_END_NAMESPACE;" << endl << endl;
     out << "#endif /* MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX*/" << endl;
     out.close();
-    out.open(("src/"+srcFileName).c_str());
+    out.open("src/"+srcFileName);
     if(!out){
       string msg("UMATInterface::endTreatement : "
 		 "could not open src file '"+

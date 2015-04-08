@@ -316,7 +316,7 @@ namespace mfront{
     fileName += name;
     fileName += ".hxx";
 
-    ofstream out(("include/MFront/Cyrano/"+fileName).c_str());
+    ofstream out("include/MFront/Cyrano/"+fileName);
     if(!out){
       string msg("CyranoInterface::endTreatement : ");
       msg += "could not open file ";
@@ -384,7 +384,7 @@ namespace mfront{
     fileName += name;
     fileName += ".cxx";
 
-    out.open(("src/"+fileName).c_str());
+    out.open("src/"+fileName);
     if(!out){
       string msg("CyranoInterface::endTreatement : ");
       msg += "could not open file ";
