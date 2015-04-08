@@ -2,7 +2,9 @@ include_directories("${PROJECT_BINARY_DIR}/src/TFELConfig"
                     "${PROJECT_SOURCE_DIR}/include"
                     "${PROJECT_SOURCE_DIR}/mfront/include")
 if(HAVE_CASTEM)
-include_directories("${CASTEMHOME}/include")
+  if(CASTEHOME)
+    include_directories("${CASTEMHOME}/include")
+  endif(CASTEHOME)
 endif(HAVE_CASTEM)
 
 link_directories("${PROJECT_BINARY_DIR}/mfront/src"
