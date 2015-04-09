@@ -24,6 +24,7 @@
 #include"TFEL/TypeTraits/IsTemporary.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include"TFEL/Math/Tensor/TensorConcept.hxx"
 
 namespace tfel{
 
@@ -51,7 +52,7 @@ namespace tfel{
     public:
 
       typedef EmptyRunTimeProperties RunTimeProperties; 
-      typedef typename StensorTraits<Result>::IndexType IndexType;
+      typedef typename TensorTraits<Result>::IndexType IndexType;
       typedef typename ComputeBinaryResult<NumTypeA,NumTypeB,OpMult>::Handle NumType;
     protected:
 
