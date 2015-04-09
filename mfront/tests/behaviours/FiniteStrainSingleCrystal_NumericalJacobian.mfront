@@ -25,7 +25,7 @@
 @StateVariable strain g[12];
 
 // Mandel stress tensor
-@LocalVariable StressStensor M;
+@LocalVariable StressTensor M;
 // multiplicative increment fo the deformation gradient
 @LocalVariable Tensor dF;
 /*!
@@ -133,7 +133,7 @@
     for(unsigned short j=0;j!=Nss;++j){
       Rp += mh(i,j)*pe[j] ;
     }
-    const real tau = syme(ss.mu[i]) | M ;
+    const real tau = ss.mu[i] | M ;
     const real va  = (dg[i]-d1*a[i]*ag[i])/(1.+d1*theta*ag[i]);
     const real tma = tau-C*(a[i]+theta*va) ;
     const real tmR = abs(tma)-Rp;

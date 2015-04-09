@@ -13,3 +13,5 @@ macro(tests_st2tot2 test_arg)
 endmacro(tests_st2tot2)
 
 tests_st2tot2(st2tot2)
+tests_st2tot2(StensorProductDerivative) 
+tests_st2tot2(StensorProductDerivative2) 

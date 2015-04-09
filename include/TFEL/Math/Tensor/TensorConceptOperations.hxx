@@ -269,16 +269,16 @@ namespace tfel{
 				      TensorExpr<Result,Expr> >::type Handle;
     };
 
-    // template<typename A, typename B>
-    // class ComputeBinaryResult_<TensorTag,TensorTag,A,B,OpDotProduct>
-    // {
-    //   struct DummyHandle{};
-    //   typedef typename TensorType<A>::type TensorA;
-    //   typedef typename TensorType<B>::type TensorB;
-    // public:
-    //   typedef typename ResultType<TensorA,TensorB,OpDotProduct>::type Result;
-    //   typedef typename TensorDotProductHandle<TensorA,TensorB>::type Handle;
-    // };
+    template<typename A, typename B>
+    class ComputeBinaryResult_<TensorTag,TensorTag,A,B,OpDotProduct>
+    {
+      struct DummyHandle{};
+      typedef typename TensorType<A>::type TensorA;
+      typedef typename TensorType<B>::type TensorB;
+    public:
+      typedef typename ResultType<TensorA,TensorB,OpDotProduct>::type Result;
+      typedef typename ResultType<TensorA,TensorB,OpDotProduct>::type Handle;
+    };
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 
@@ -357,23 +357,63 @@ namespace tfel{
     >::type
     operator - (const T1&);
 
-    // /*!
-    //  * \return the inner product of a tensor
-    //  * \param const T1&, the left  tensor.
-    //  * \param const T2&, the right tensor.
-    //  * \return const typename ResultType<T,T2,OpMult>::type, the
-    //  * result.
-    //  * \warning the operator| has not the priority expected for such
-    //  * an operation : use of parenthesis is required.
-    //  */
-    // template<typename T1,typename T2>
-    // typename tfel::meta::EnableIf<
-    //   tfel::meta::Implements<T1,TensorConcept>::cond&&
-    //   tfel::meta::Implements<T2,TensorConcept>::cond&&
-    //   !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
-    //   typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
-    // >::type
-    // operator | (const T1&, const T2&);
+    /*!
+     * \return the inner product of a tensor
+     * \param const T1&, the left  tensor.
+     * \param const T2&, the right tensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      TensorTraits<T1>::dime==1u&&
+      TensorTraits<T2>::dime==1u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
+    /*!
+     * \return the inner product of a tensor
+     * \param const T1&, the left  tensor.
+     * \param const T2&, the right tensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      TensorTraits<T1>::dime==2u&&
+      TensorTraits<T2>::dime==2u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
+    /*!
+     * \return the inner product of a tensor
+     * \param const T1&, the left  tensor.
+     * \param const T2&, the right tensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,TensorConcept>::cond&&
+      tfel::meta::Implements<T2,TensorConcept>::cond&&
+      TensorTraits<T1>::dime==3u&&
+      TensorTraits<T2>::dime==3u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
 
     template<typename T1,typename T2>
     TFEL_MATH_INLINE 

@@ -38,6 +38,7 @@
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
+#include"TFEL/Math/ST2toST2/StensorSquareDerivative.hxx"
 
 namespace tfel{
   
@@ -139,8 +140,8 @@ namespace tfel{
 	public st2tost2_base<st2tost2<N,T> >
     {
       /*!
-       * \param[in] B : second tensor of the product
-       * \return the left part of the derivative of a tensor product
+       * \param[in] s : tensor squared
+       * \return the derivative of the square of a symmetric tensor
        */
       template<typename StensorType>
       static TFEL_MATH_INLINE 
@@ -148,12 +149,12 @@ namespace tfel{
 	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
 	StensorTraits<StensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
-	ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
-      tpld(const StensorType&);
+	ST2toST2Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> > >::type
+      dsquare(const StensorType&);
       /*!
-       * \param[in] B : second tensor of the product
-       * \param[in] C : derivative of the first tensor
-       * \return the left part of the derivative of a tensor product
+       * \param[in] s : tensor squared
+       * \param[in] C : derivative of s
+       * \return the derivative of the square of a symmetric tensor
        */
       template<typename StensorType,
 	       typename ST2toST2Type>
@@ -166,40 +167,9 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
 								      typename ST2toST2Traits<ST2toST2Type>::NumType,
 								      OpMult>::Result,T>::cond,
-	ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
-      tpld(const StensorType&,
-	   const ST2toST2Type&);
-      /*!
-       * \param[in] A : first tensor of the product
-       * \return the right part of the derivative of a tensor product
-       */
-      template<typename StensorType>
-      static TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-	StensorTraits<StensorType>::dime==N&&
-	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
-	ST2toST2Expr<st2tost2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
-      tprd(const StensorType&);
-      /*!
-       * \param[in] A : first tensor of the product
-       * \param[in] C : derivative of the first tensor
-       * \return the right part of the derivative of a tensor product
-       */
-      template<typename StensorType,
-	       typename ST2toST2Type>
-      static TFEL_MATH_INLINE 
-      typename tfel::meta::EnableIf<
-	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-	tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
-	StensorTraits<StensorType>::dime==N&&
-	ST2toST2Traits<ST2toST2Type>::dime==N&&
-	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
-								      typename ST2toST2Traits<ST2toST2Type>::NumType,
-								      OpMult>::Result,T>::cond,
-	ST2toST2Expr<st2tost2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
-      tprd(const StensorType&,
-	   const ST2toST2Type&);
+	ST2toST2Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> > >::type
+      dsquare(const StensorType&,
+	      const ST2toST2Type&);
       /*!
        * convert a T2toST2 to a ST2toST2
        * \param[in] src : T2toST2 to be converted

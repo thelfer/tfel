@@ -20,7 +20,8 @@
 #include<cassert>
 
 #include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/st2tot2.hxx"
 #include"TFEL/Utilities/ToString.hxx"
 
 #include"TFEL/Tests/TestCase.hxx"
@@ -51,41 +52,41 @@ struct StensorProductDerivative
     for(typename stensor<N>::size_type i=0;i!=t2.size();++i){
       t2[i] = -0.45+i;
     }
-    st2tost2<N> ld = st2tost2<N>::tpld(t2);
-    st2tost2<N> rd = st2tost2<N>::tprd(t1);
-    st2tost2<N> nld;
-    st2tost2<N> nrd;
-    stensor<N> t3(t1*t2);
+    st2tot2<N> ld = st2tot2<N>::tpld(t2);
+    st2tot2<N> rd = st2tot2<N>::tprd(t1);
+    st2tot2<N> nld;
+    st2tot2<N> nrd;
+    tensor<N> t3(t1*t2);
     for(typename stensor<N>::size_type i=0;i!=t1.size();++i){
       stensor<N> t1e(t1);
       stensor<N> t2e(t2);
       t1e[i] += eps;
       t2e[i] += eps;
-      stensor<N> t3l_f(t1e*t2);
-      stensor<N> t3r_f(t1*t2e);
+      tensor<N> t3l_f(t1e*t2);
+      tensor<N> t3r_f(t1*t2e);
       t1e[i] -= 2*eps;
       t2e[i] -= 2*eps;
-      stensor<N> t3l_b(t1e*t2);
-      stensor<N> t3r_b(t1*t2e);
-      for(typename stensor<N>::size_type j=0;j!=t1.size();++j){
+      tensor<N> t3l_b(t1e*t2);
+      tensor<N> t3r_b(t1*t2e);
+      for(typename tensor<N>::size_type j=0;j!=t3.size();++j){
 	nld(j,i) = (t3l_f(j)-t3l_b(j))/(2*eps);
 	nrd(j,i) = (t3r_f(j)-t3r_b(j))/(2*eps);
       }
     }
-    for(typename stensor<N>::size_type i=0;i!=t1.size();++i){
+    for(typename tensor<N>::size_type i=0;i!=t3.size();++i){
       for(typename stensor<N>::size_type j=0;j!=t1.size();++j){
 	TFEL_TESTS_ASSERT(abs(nld(i,j)-ld(i,j))<prec);
-	if(abs(nld(i,j)-ld(i,j))>1.e-7){
-	  cout << "Error nld (" << N << "): " << i << " " << j << " "
+	if(abs(nld(i,j)-ld(i,j))>prec){
+	  cout << "Error " << N << " nld (" << i << ", " << j << ") " << "[" << i*StensorDimeToSize<N>::value+j << "]: "
 	       << nld(i,j) << " vs " << ld(i,j) << " " << abs(nld(i,j)-ld(i,j)) << endl;
 	}
       }
     }
-    for(typename stensor<N>::size_type i=0;i!=t1.size();++i){
+    for(typename tensor<N>::size_type i=0;i!=t3.size();++i){
       for(typename stensor<N>::size_type j=0;j!=t1.size();++j){
 	TFEL_TESTS_ASSERT(abs(nrd(i,j)-rd(i,j))<prec);
-	if(abs(nrd(i,j)-rd(i,j))>1.e-7){
-	  cout << "Error nrd (" << N << "): " << i << " " << j << " "
+	if(abs(nrd(i,j)-rd(i,j))>prec){
+	  cout << "Error " << N << " nrd (" << i << ", " << j << ") " << "[" << i*StensorDimeToSize<N>::value+j << "]: "
 	       << nrd(i,j) << " vs " << rd(i,j) << " " << abs(nrd(i,j)-rd(i,j)) << endl;
 	}
       }

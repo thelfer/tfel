@@ -21,7 +21,7 @@ return_value_policy<reference_existing_object>())
 .staticmethod("getGlossary")
 .def("contains",&Glossary::contains)
 .def_readonly("AxialStrain",&Glossary::AxialStrain,
-"la déformation axiale (cette grandeur n'a de sens que pour les calculs plan généralisé)")
+"la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes)")
 .def_readonly("AxialStress",&Glossary::AxialStress,
 "la contrainte axiale")
 .def_readonly("B10BurnUp",&Glossary::B10BurnUp,

@@ -9,7 +9,7 @@
 
 # L'entrée AxialStrain
 
-Cette entrée décrit la déformation axiale (cette grandeur n'a de sens que pour les calculs plan généralisé).
+Cette entrée décrit la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes).
 
 * noms  : AxialStrain
 * unité : sans unité

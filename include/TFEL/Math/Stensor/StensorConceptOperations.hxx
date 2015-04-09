@@ -39,20 +39,14 @@
 
 #include"TFEL/Math/Stensor/StensorExpr.hxx"
 #include"TFEL/Math/Stensor/StensorProduct.hxx"
+#include"TFEL/Math/Stensor/StensorSquare.hxx"
+#include"TFEL/Math/Tensor/TensorConcept.hxx"
+#include"TFEL/Math/Tensor/TensorExpr.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Expr.hxx"
 
 namespace tfel{
 
   namespace math{
-
-    template<typename T1,typename T2>
-    class StensorDotProductHandle
-    {
-      struct DummyHandle
-      {};
-    public:
-      typedef DummyHandle type;
-    };
 
     /*
      * Partial Specialisation of ComputeBinaryResult_ for stensor's operation
@@ -97,7 +91,7 @@ namespace tfel{
       typedef typename ResultType<StensA,StensB,OpMult>::type Result;
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<Result>::cond,
 				      DummyHandle,
-				      StensorExpr<Result,Expr> >::type Handle;
+				      TensorExpr<Result,Expr> >::type Handle;
     };
 
     /*
@@ -188,7 +182,7 @@ namespace tfel{
       typedef typename StensorType<B>::type StensorB;
     public:
       typedef typename ResultType<StensorA,StensorB,OpDotProduct>::type Result;
-      typedef typename StensorDotProductHandle<StensorA,StensorB>::type Handle;
+      typedef typename ResultType<StensorA,StensorB,OpDotProduct>::type Handle;
     };
 
     template<typename T1,typename T2>
@@ -281,11 +275,90 @@ namespace tfel{
     typename tfel::meta::EnableIf<
       tfel::meta::Implements<T1,StensorConcept>::cond&&
       tfel::meta::Implements<T2,StensorConcept>::cond&&
+      StensorTraits<T1>::dime==1u&&
+      StensorTraits<T2>::dime==1u&&
       !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
       typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
     >::type
     operator | (const T1&, const T2&);
-    
+    /*!
+     * \return the inner product of a stensor
+     * \param const T1&, the left  stensor.
+     * \param const T2&, the right stensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,StensorConcept>::cond&&
+      tfel::meta::Implements<T2,StensorConcept>::cond&&
+      StensorTraits<T1>::dime==2u&&
+      StensorTraits<T2>::dime==2u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
+    /*!
+     * \return the inner product of a stensor
+     * \param const T1&, the left  stensor.
+     * \param const T2&, the right stensor.
+     * \return const typename ResultType<T,T2,OpMult>::type, the
+     * result.
+     * \warning the operator| has not the priority expected for such
+     * an operation : use of parenthesis is required.
+     */
+    template<typename T1,typename T2>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<T1,StensorConcept>::cond&&
+      tfel::meta::Implements<T2,StensorConcept>::cond&&
+      StensorTraits<T1>::dime==3u&&
+      StensorTraits<T2>::dime==3u&&
+      !tfel::typetraits::IsInvalid<typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result>::cond,
+      typename ComputeBinaryResult<T1,T2,OpDotProduct>::Result
+    >::type
+    operator | (const T1&, const T2&);
+    /*!
+     * \return the square of a symmetric stensor
+     * \param[in] s : squared tensor
+     */
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==1u,
+      StensorExpr<stensor<1u,typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+							  typename StensorTraits<StensorType>::NumType,OpMult>::Result>,
+		  StensorSquareExpr1D<StensorType> >
+      >::type
+    square(const StensorType&);
+    /*!
+     * \return the square of a symmetric stensor
+     * \param[in] s : squared tensor
+     */
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==2u,
+      StensorExpr<stensor<2u,typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+							  typename StensorTraits<StensorType>::NumType,OpMult>::Result>,
+		  StensorSquareExpr2D<StensorType> >
+      >::type
+    square(const StensorType&);
+    /*!
+     * \return the square of a symmetric stensor
+     * \param[in] s : squared tensor
+     */
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==3u,
+      StensorExpr<stensor<3u,typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+							  typename StensorTraits<StensorType>::NumType,OpMult>::Result>,
+		  StensorSquareExpr3D<StensorType> >
+      >::type
+    square(const StensorType&);
+
   } // end of namespace math
 
 } // end of namespace tfel

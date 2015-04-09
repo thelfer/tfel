@@ -112,7 +112,7 @@ const char* Glossary::names[94] = {
 "YoungModulus3"};
 const GlossaryEntry Glossary::AxialStrain("AxialStrain","AxialStrain",
 "","scalar",
-"la déformation axiale (cette grandeur n'a de sens que pour les calculs plan généralisé)",
+"la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes)",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 

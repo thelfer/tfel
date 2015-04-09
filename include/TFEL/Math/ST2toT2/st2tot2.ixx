@@ -26,6 +26,8 @@
 #include"TFEL/Math/General/StorageTraits.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
+#include"TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx"
+#include"TFEL/Math/ST2toT2/StensorProductRightDerivativeExpr.hxx"
 
 namespace tfel{
 
@@ -118,6 +120,66 @@ namespace tfel{
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
 		       StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::divByScalar(child,s);
       return child;
+    }
+
+    template<unsigned short N, typename T>
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+      ST2toT2Expr<st2tot2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
+    st2tot2<N,T>::tpld(const StensorType& b)
+    {
+      return ST2toT2Expr<st2tot2<N,T>,StensorProductLeftDerivativeExpr<N> >(b);
+    } // end of st2tot2<N,T>
+
+    template<unsigned short N, typename T>
+    template<typename StensorType,
+	     typename ST2toST2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
+      StensorTraits<StensorType>::dime==N&&
+      ST2toST2Traits<ST2toST2Type>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+								    typename ST2toST2Traits<ST2toST2Type>::NumType,
+								    OpMult>::Result,T>::cond,
+      ST2toT2Expr<st2tot2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
+    st2tot2<N,T>::tpld(const StensorType& b,
+			const ST2toST2Type& C)
+    {
+      return ST2toT2Expr<st2tot2<N,T>,StensorProductLeftDerivativeExpr<N> >(b,C);
+    }
+
+    template<unsigned short N, typename T>
+    template<typename StensorType>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+      ST2toT2Expr<st2tot2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
+    st2tot2<N,T>::tprd(const StensorType& a)
+    {
+      return ST2toT2Expr<st2tot2<N,T>,StensorProductRightDerivativeExpr<N> >(a);
+    }
+
+    template<unsigned short N, typename T>
+    template<typename StensorType,
+	     typename ST2toST2Type>
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
+      StensorTraits<StensorType>::dime==N&&
+      ST2toST2Traits<ST2toST2Type>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
+								    typename ST2toST2Traits<ST2toST2Type>::NumType,
+								    OpMult>::Result,T>::cond,
+      ST2toT2Expr<st2tot2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
+    st2tot2<N,T>::tprd(const StensorType&  a,
+		       const ST2toST2Type& C)
+    {
+      return ST2toT2Expr<st2tot2<N,T>,StensorProductRightDerivativeExpr<N> >(a,C);
     }
 
     template<unsigned short N, typename T>

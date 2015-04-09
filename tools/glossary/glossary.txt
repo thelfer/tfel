@@ -313,7 +313,8 @@
 
 "AxialStrain"{
  type : "scalar";
- short_description : "la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes)"};
+ short_description : "la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes)";
+};
 
 "VolumetricStrain"{
  type : "scalar";

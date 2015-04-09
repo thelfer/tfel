@@ -18,7 +18,7 @@
   // I1 = J^{-2/3}*trace(c)
   const real i1 = (1/cbrt(J2))*trace(c);
   // square of the Cauchy Green Tensor
-  Stensor c2 = c*c;
+  Stensor c2 = square(c);
   const stress Gam1 = C1+C2*i1;
   const stress Gam2 = C2;
   const stress pr   = 2*(J-1)/D1;

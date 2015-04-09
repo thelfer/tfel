@@ -50,5 +50,5 @@
 
 @Times {0., 2.e-1 in 10};
 
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/finitestrainsinglecrystal-012.ref' {'SXX':11} 1.e-1; 
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/finitestrainsinglecrystal-012.ref' {'g[0]':23,'g[1]':24,'g[2]':25,'g[3]':26,'g[4]':27,'g[5]':28,'g[5]':29,'g[7]':30,'g[8]':31,'g[9]':32,'g[10]':33,'g[11]':34} 1.e-6; 
+// @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/finitestrainsinglecrystal-012.ref' {'SXX':11} 1.e-1; 
+// @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/finitestrainsinglecrystal-012.ref' {'g[0]':23,'g[1]':24,'g[2]':25,'g[3]':26,'g[4]':27,'g[5]':28,'g[5]':29,'g[7]':30,'g[8]':31,'g[9]':32,'g[10]':33,'g[11]':34} 1.e-6; 

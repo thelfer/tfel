@@ -134,7 +134,7 @@ namespace tfel{
     public:
       typedef typename tfel::meta::IF<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
-				      stensor<N,ResBase_,StensorStatic> >::type type;
+				      tensor<N,ResBase_> >::type type;
     };
 
     /*!
@@ -172,15 +172,6 @@ namespace tfel{
 					tfel::meta::InvalidType,
 					ResBase_>::type type;
     }; // end of class ResultType<stensor<N,T>,stensor<M,T2>,OpDotProduct>
-
-    template<unsigned short N,typename T,typename T2,
-	     template<unsigned short,typename> class Storage,
-	     template<unsigned short,typename> class Storage2>
-    struct StensorDotProductHandle<stensor<N,T,Storage>,
-				   stensor<N,T2,Storage2> >
-    {
-      typedef DotProduct<StensorDimeToSize<N>::value,0u> type;
-    };
 
   } // end of namespace math
 
