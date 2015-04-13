@@ -1282,12 +1282,15 @@ namespace mfront{
     char * castem_root = ::getenv("CASTEM_ROOT");
     if(castem_root!=0){
       incs[lib].push_back("-I"+string(castem_root)+"/include");
+      incs[lib].push_back("-I"+string(castem_root)+"/include/c");
     } else {
       incs[lib].push_back("-I"+string(CASTEM_ROOT)+"/include");
+      incs[lib].push_back("-I"+string(CASTEM_ROOT)+"/include/c");
     }
 #else /* CASTEM_ROOT */
     if(castem_root!=0){
       incs[lib].push_back("-I"+string(castem_root)+"/include");
+      incs[lib].push_back("-I"+string(castem_root)+"/include/c");
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */

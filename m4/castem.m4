@@ -27,9 +27,17 @@ then
   
   if test -n $DCHK -o -d ${DCHK};
   then
-    if [ test ! -e $CASTEM_ROOT/include/castem.h ];
+    CASTEM_OK=no
+    if [ test -e $CASTEM_ROOT/include/castem.h ];
     then
-	CASTEM_OK=no
+        CASTEM_OK=yes
+    fi
+    if [ test -e $CASTEM_ROOT/include/c/castem.h ];
+    then
+        CASTEM_OK=yes
+    fi
+    if [ test "x$CASTEM_OK" == "xno" ];
+    then
 	AC_MSG_ERROR(header castem.h not found in ${DCHK})
     fi
     CASTEM_OK=yes
@@ -42,7 +50,7 @@ then
     do
 	AC_MSG_NOTICE("Looking for Cast3M $year")
 	subYear=$(echo $year | cut -c3-4)
-	castString="castem2*${subYear}*"
+	castString="castem**${subYear}*"
 	castem_version_name="castem20${subYear}"
 	CASTEM_VERSION_NAME=$(echo $castem_version_name | tr [:lower:] [:upper:])
 	eval $castem_version_name=

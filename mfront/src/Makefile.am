@@ -7,6 +7,7 @@ INCLUDES = -I$(top_builddir)/src/TFELConfig \
 if HAVE_CASTEM
 if !LOCAL_CASTEM_HEADER
 INCLUDES += -I$(CASTEM_ROOT)/include
+INCLUDES += -I$(CASTEM_ROOT)/include/c
 endif
 INCLUDES += $(CASTEM_CPPFLAGS)
 endif
