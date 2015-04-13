@@ -49,8 +49,9 @@ following the `Abaqus` standard.
 
 A french version of this document is available [here](castem-fr.html).
 
-This document has been written using `Cast3M` 2014. We will assume
-working in a standard `POSIX` environment. The shell used is `bash`.
+This document has been written using `Cast3M` greater than 2014. We
+will assume working in a standard `POSIX` environment. The shell used
+is `bash`.
 
 We will use the Norton behaviour described in the
 [tutorial](tutorial.html). All the files used can be downloaded
@@ -92,9 +93,10 @@ finite element solver:
 ### Call to shared libraries
 
 [A patch](downloads/patchs-Cast3M-2014.tar.bz2) must be applied to
-`Cast3M` 2014 to be able to call shared libraries directly.
+`Cast3M` 2014 to be able to call shared libraries directly. This patch
+is not mandatory for version greater than 2015.
 
-This patch allows the following syntax of the `MODELISER` operator:
+The `MODELISER` operator can be called as follows:
 
 ~~~~{.python}
 mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
@@ -275,8 +277,11 @@ $ mfront --obuild --interface=castem UPuCThermalConductivity.mfront
 
 ## Usage in `Cast3M`
 
-[A patch](downloads/patchs-Cast3M-2014.tar.bz2) must be applied to
-`Cast3M` 2014 to be able to call shared libraries directly.
+A patch must be applied to be
+able to call shared libraries directly from the `MATERIAU` operator:
+
+-|Cast3M 2014](downloads/patchs-Cast3M-2014.tar.bz2)
+-|Cast3M 2015](downloads/patchs-Cast3M-2015.tar.bz2)
 
 The `MATERIAU` can accept a table as parameter.
 

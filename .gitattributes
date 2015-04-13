@@ -878,6 +878,7 @@ docs/web/documentations.md -text
 docs/web/downloads/example-castem2014.tar.bz2 -text
 docs/web/downloads/example-zset8.5.tar.bz2 -text
 docs/web/downloads/patchs-Cast3M-2014.tar.bz2 -text
+docs/web/downloads/patchs-Cast3M-2015.tar.bz2 -text
 docs/web/faq.md -text
 docs/web/favicon.ico -text
 docs/web/glossary.md -text
@@ -906,10 +907,12 @@ docs/web/img/FuelRod-ddif2.png -text
 docs/web/img/FuelRod-ddif2.xcf -text
 docs/web/img/HureCast3M2014.png -text
 docs/web/img/HureCast3M2014.xcf -text
+docs/web/img/IconeCast3M_verte.png -text
 docs/web/img/ImplicitDSL.svg -text
 docs/web/img/Interfaces.svg -text
 docs/web/img/LogarithmicStrainPlasticity-ssna303.svg -text
 docs/web/img/NortonCreepUniaxialTesting.svg -text
+docs/web/img/SalomeMeca2015.png -text
 docs/web/img/VoidsGrowth.png -text
 docs/web/img/VoidsGrowth.xcf -text
 docs/web/img/Win64.png -text

@@ -91,7 +91,8 @@ est disponible dans la version client 2014).
 
 Il est possible d'utiliser un appel direct à la librairie `MFront`
 générée. Pour la version \(2014\), il est nécessaire d'appliquer les
-[certains patchs](downloads/patchs-Cast3M-2014.tar.bz2).
+[certains patchs](downloads/patchs-Cast3M-2014.tar.bz2). Ce patch
+n'est plus nécessaire depuis la version 2015.
 
 Pour utiliser la librairie générée via les appels dynamiques, l'appel
 à l'opérateur `MODELISER` se fait ainsi :
@@ -111,16 +112,20 @@ Nous avons explicitement indiqué le chemin vers la librairie. En
 pratique, il est préférable de ne pas le faire et de modifier la
 variable `LD_LIBRARY_PATH`.
 
-### Méthode standard
+### Méthode standard (dépréciée depuis `Cast3M` 2015)
 
-Pour l'utilisation d'une loi `MFront` de la méthode standard, il nous faut:
+Pour les version antérieures de `Cast3M` 2015, en l'absence du patch
+présenté plus haut, il est nécessaire de faire de passer par des
+étapes plus complexes:
 
 - créer une sous-routine `umat` qui surchargera la version par défaut
   livrée avec `Cast3M` ;
 - compiler cette sous-routine ;
 - compiler un nouvel exécutable `Cast3M`.
 
-Seule la dernière étape nécessitera un effort particulier.
+Seule la dernière étape nécessitera un effort particulier. Insistons:
+depuis `Cast3M` 2015, cette façon de procéder est inutilement
+complexe.
 
 #### La sous-routine `umat`
 
@@ -449,11 +454,13 @@ $ mfront --obuild --interface=castem UPuCThermalConductivity.mfront
 
 # Utilisation dans `Cast3M`
 
-Pour la version 2014, [un patch](downloads/patchs-Cast3M-2014.tar.bz2)
-doit être appliqué à `Cast3M` pour que celui-ci soit capable d'appeler
-des librairies dynamiques.
+L'appel à des librairies dynamiques depuis l'opérateur `MATERIAU` nécessite
+l'application d'un patch~:
 
-La directive `MATERIAU` accepte une table comme paramètre:
+-|Cast3M 2014](downloads/patchs-Cast3M-2014.tar.bz2)
+-|Cast3M 2015](downloads/patchs-Cast3M-2015.tar.bz2)
+
+La directive `MATERIAU` accepte alors une table comme paramètre:
 
 ~~~~{#UPuCThermalConductivity-castem .python .numberLines}
 * Création d un modèle thermique isotrope
