@@ -5,6 +5,11 @@
 The latest version of this document is always available at
 <http://tfel.sourceforge.net/install.html>.
 
+* Note : `TFEL` is a part of the
+[`Code-Aster`](http://www.code-aster.org/) (>12.03) and
+[`Salome-Meca`](www.code-aster.org/) (> 2015.1) packages: no extra
+installation is required if you use one of these products*
+
 It refers to the **current development sources**, instructions for
 specific released versions are included with the sources and detailled
 in the `INSTALL` and the `INSTALL-cmake` files located at the root

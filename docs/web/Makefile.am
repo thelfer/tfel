@@ -71,6 +71,8 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/Win64.png			                   \
 	   ./img/materiaux2014.jpg		                   \
 	   ./img/Interfaces.svg			                   \
+	   ./img/SalomeMeca2015.png 				   \
+	   ./img/IconeCast3M_verte.png 				   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \
@@ -86,4 +88,5 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./tex/lcmd_utf8.tex                                     \
 	   ./downloads/example-castem2014.tar.bz2                  \
 	   ./downloads/patchs-Cast3M-2014.tar.bz2                  \
+	   ./downloads/patchs-Cast3M-2015.tar.bz2                  \
 	   ./downloads/example-zset8.5.tar.bz2

@@ -1,6 +1,39 @@
 % News
 % Helfer Thomas
-% April 1, 2015
+% April 12, 2015
+
+# Castem 2015 is out (12 April 2015)
+
+![](img/IconeCast3M_verte.png "")
+
+[`Cast3M`](http://www-cast3m.cea.fr) 2015 has been released.
+
+This release allow direct call to `MFront` libraries for mechanical
+behaviours. The following syntax of the `MODELISER` operator is now
+officially supported:
+
+~~~~{.python}
+mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
+   'NON_LINEAIRE' 'UTILISATEUR'
+   'LIB_LOI' 'src/libUmatBehaviour.so'
+   'FCT_LOI' 'umatnorton'
+   'C_MATERIAU' coel2D
+   'C_VARINTER' stav2D
+   'PARA_LOI'   para2D
+   'CONS' M;
+~~~~
+
+See the [dedicated page](castem.html) for more information.
+
+# `Salome-Meca` 2015.1 is out (1O April 2015)
+
+![](img/SalomeMeca2015.png "")
+
+`Salome-Meca` 2015.1, which combines the
+ [`Salome` platform](http://www.salome-platform.org/) and
+ [`Code-Aster`](http://www.code-aster.org/), has been released on 1O
+ April 2015. This version is the first to include a pre-packaged
+ version of `TFEL` (version 2.0.1).
 
 # `Salome-Meca` and `Code_Aster` Users Day (26 March 2015)
 
@@ -200,3 +233,5 @@ Here is the official announcement by Jean-Paul DEFFAIN (in French):
   > Chef du programme SIMU
   > 
   > Commissariat à l'Énergie Atomique
+
+<!-- Local IspellDict: english -->
