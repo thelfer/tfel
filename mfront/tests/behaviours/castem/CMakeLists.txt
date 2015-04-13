@@ -1,13 +1,16 @@
 add_subdirectory(dgibi)
 
+if(CASTEMHOME)
+  include_directories(
+    "${CASTEMHOME}/include"
+    "${CASTEMHOME}/include/c")
+endif(CASTEMHOME)
+
 include_directories(
+  "${CASTEMHOME}/include"
   "${PROJECT_SOURCE_DIR}/include"
   "${PROJECT_SOURCE_DIR}/mfront/include"
   "${CMAKE_CURRENT_BINARY_DIR}/include")
-if(CASTEMHOME)
-  include_directories("${CASTEMHOME}/include")
-endif(CASTEMHOME)
-
 link_directories("${PROJECT_BINARY_DIR}/mfront/src"
                  "${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Math"

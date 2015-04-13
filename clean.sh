@@ -32,3 +32,5 @@ rm -f tools/glossary/Glossary.cxx
 rm -f tools/glossary/PythonGlossary.cxx
 rm -f tools/glossary/Glossary.hxx
 rm -f tools/glossary/generate_glossary
+rm -f mfront/tests/behaviours/castem/dgibi/*.trace
+

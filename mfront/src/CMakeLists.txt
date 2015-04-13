@@ -4,6 +4,7 @@ include_directories("${PROJECT_BINARY_DIR}/src/TFELConfig"
 if(HAVE_CASTEM)
   if(CASTEHOME)
     include_directories("${CASTEMHOME}/include")
+    include_directories("${CASTEMHOME}/include/c")
   endif(CASTEHOME)
 endif(HAVE_CASTEM)
 
