@@ -111,15 +111,12 @@ namespace mfront{
   void
   ImplicitDSLBase::treatUnknownKeyword()
   {
-    using namespace std;
-    using namespace tfel::utilities;
     --(this->current);
-    const string key = this->current->value;
+    const auto& key = this->current->value;
     ++(this->current);
     if(this->solver.get()!=nullptr){
-      pair<bool,CxxTokenizer::TokensContainer::const_iterator> r = 
-	this->solver->treatSpecificKeywords(this->mb,key,this->current,
-					    this->fileTokens.end());
+      const auto r =  this->solver->treatSpecificKeywords(this->mb,key,this->current,
+							  this->fileTokens.end());
       if(r.first){
 	this->current = r.second;
 	return;

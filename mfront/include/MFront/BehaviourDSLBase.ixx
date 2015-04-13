@@ -11,8 +11,10 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTPARSERBASE_IXX_
-#define LIB_MFRONTPARSERBASE_IXX_ 
+#ifndef LIB_MFRONT_BEHAVIOURDSLBASE_IXX_
+#define LIB_MFRONT_BEHAVIOURDSLBASE_IXX_ 
+
+#include<iostream>
 
 #include<stdexcept>
 #include<algorithm>
@@ -226,5 +228,5 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* LIB_MFRONTPARSERBASE_IXX_ */
+#endif /* LIB_MFRONT_BEHAVIOURDSLBASE_IXX_ */
 

@@ -77,7 +77,7 @@ namespace mfront{
     treatSpecificKeywords(BehaviourDescription&,
 			  const std::string&,
 			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) const;
+			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
     /*!
      * \brief method called at the end of the input file processing.
      * Solver can use it to declared additional parameters

@@ -98,10 +98,9 @@ namespace mfront{
   MFrontLevenbergMarquartSolverBase::treatSpecificKeywords(BehaviourDescription&,
 							   const std::string&,
 							   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator p,
-							   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) const
+							   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
-    using namespace std;
-    return make_pair(false,p);
+    return {false,p};
   } // end of MFrontLevenbergMarquartSolverBase::treatSpecificKeywords
 
   void

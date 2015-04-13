@@ -23,15 +23,17 @@ namespace tfel{
   namespace math{
 
     template<unsigned short N,typename T>
-    std::ostream &
-    operator << (std::ostream &, const tvector<N,T>&);
+    std::ostream&
+    operator << (std::ostream&,
+		 const tvector<N,T>&);
 
     template<unsigned short N,typename T>
-    std::ostream &
-    operator << (std::ostream & os, const tvector<N,T>& s)
+    std::ostream&
+    operator << (std::ostream& os, const tvector<N,T>& s)
     {
+      using copy = tfel::fsalgo::copy<N>;
       os << "( ";
-      tfel::fsalgo::copy<N>::exe(s.begin(),std::ostream_iterator<T>(os," "));
+      copy::exe(s.begin(),std::ostream_iterator<T>(os," "));
       os << ")";
       return os;
     }

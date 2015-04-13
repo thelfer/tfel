@@ -80,13 +80,12 @@ namespace mfront{
   MFrontBroydenSolverBase::treatSpecificKeywords(BehaviourDescription& mb,
 						 const std::string& key,
 						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator p,
-						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator pe) const
+						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator pe)
   {
-    using namespace std;
     if(this->usesPowellDogLegAlgorithm()){
       return PowellDogLegAlgorithmBase::treatSpecificKeywords(mb,key,p,pe);
     }
-    return make_pair(false,p);
+    return {false,p};
   } // end of MFrontBroydenSolverBase::treatSpecificKeywords
 
   void

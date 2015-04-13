@@ -106,6 +106,20 @@ namespace tfel{
       LUDecomp::exe(m,p,eps);
     } // end of TinyMatrixSolve<N,T>::exe
 
+    // Partial specialisation for 1*1 matrix
+    template<typename T>
+    void
+    TinyMatrixSolve<1u,T>::exe(const tmatrix<1u,1u,T>& m,
+			       tvector<1u,T>& b,
+			       const T eps)
+    {
+      using namespace std;
+      if(abs(m(0,0))<eps){
+	throw(LUNullDeterminant());
+      }
+      b(0) /= m(0,0);
+    } // end of TinyMatrixSolve<2u,T>::exe
+
     // Partial specialisation for 2*2 matrix
     template<typename T>
     void

@@ -1218,6 +1218,9 @@ namespace mfront{
 	}
       }
     }
+    if(!treated){
+      DSLBase::treatUnknownKeyword();
+    }
   } // end of BehaviourDSLCommon::treatUnknownKeyword
 
   void

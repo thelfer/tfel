@@ -80,19 +80,18 @@ namespace mfront
 
   void
   DSLBase::openFile(const std::string& f,
-		       const std::vector<std::string>& ecmds)
+		    const std::vector<std::string>& ecmds)
   {
     using namespace std;
     CxxTokenizer::openFile(f);
-    vector<string>::const_reverse_iterator p;
-    for(p=ecmds.rbegin();p!=ecmds.rend();++p){
+    for(const auto& c : ecmds){
       CxxTokenizer t;
       try{
-	t.parseString(*p);
+	t.parseString(c);
       } catch(exception& e){
 	string msg("DSLBase::openFile : ");
 	msg += "error while parsing external command "
-	  "'"+*p+"' ('"+e.what()+"')";
+	  "'"+c+"' ('"+e.what()+"')";
 	throw(runtime_error(msg));
       }
       this->fileTokens.insert(this->fileTokens.begin(),
