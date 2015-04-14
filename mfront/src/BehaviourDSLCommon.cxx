@@ -1154,7 +1154,6 @@ namespace mfront{
     this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
     if(this->current->value=="["){
       set<string> s;
-      set<string> s2;
       while(this->current->value!="]"){
 	++(this->current);
 	this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
@@ -1174,35 +1173,35 @@ namespace mfront{
 	}
       }
       ++(this->current);
-      if((s.empty())&&(s2.empty())){
+      if(s.empty()){
 	this->ignoreKeyWord(key);
-      } else {
-	for(const auto & elem : s){
-	  p = this->interfaces.at(elem)->treatKeyword(key,this->current,
-						      this->fileTokens.end());
-	  if(!p.first){
+	return;
+      }
+      for(const auto & elem : s){
+	p = this->interfaces.at(elem)->treatKeyword(key,this->current,
+						    this->fileTokens.end());
+	if(!p.first){
+	  string msg("BehaviourDSLCommon::treatUnknownKeyword : the keyword '");
+	  msg += key;
+	  msg += " has not been treated by interface '"+elem+"'";
+	  throw(runtime_error(msg));
+	  }
+	if(treated){
+	  if(p2!=p.second){
 	    string msg("BehaviourDSLCommon::treatUnknownKeyword : the keyword '");
 	    msg += key;
-	    msg += " has not been treated by interface '"+elem+"'";
+	    msg += "' has been treated by two interfaces/analysers but";
+	    msg += " results were differents";
 	    throw(runtime_error(msg));
 	  }
-	  if(treated){
-	    if(p2!=p.second){
-	      string msg("BehaviourDSLCommon::treatUnknownKeyword : the keyword '");
-	      msg += key;
-	      msg += "' has been treated by two interfaces/analysers but";
-	      msg += " results were differents";
-	      throw(runtime_error(msg));
-	    }
-	  }
-	  p2 = p.second;
-	  treated = true;
 	}
+	p2 = p.second;
+	treated = true;
       }
     } else {
       for(const auto&i : this->interfaces){
 	p = i.second->treatKeyword(key,this->current,
-				   this->fileTokens.end());
+				 this->fileTokens.end());
 	if(p.first){
 	  if(treated){
 	    if(p2!=p.second){
@@ -1221,6 +1220,7 @@ namespace mfront{
     if(!treated){
       DSLBase::treatUnknownKeyword();
     }
+    this->current = p2;
   } // end of BehaviourDSLCommon::treatUnknownKeyword
 
   void
