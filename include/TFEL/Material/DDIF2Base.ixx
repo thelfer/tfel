@@ -39,11 +39,12 @@ namespace tfel
 			     const real Rp,
 			     const real young,
 			     const real lambda,
-			     const real mu)
+			     const real mu,
+			     const real pint)
     {
       using namespace std;
       const real em   = max(em_1,e+de); 
-      const real sigm = max(sigr+Rp*em,0.); 
+      const real sigm = sigr+Rp*em < 0 ? -1.*pint : sigr+Rp*em;
       // loading surface
       const real s = (sig|n);
       const real r = (s-sigm)/young;

@@ -44,7 +44,8 @@ namespace tfel
 		    const real Rp,
 		    const real young,
 		    const real lambda,
-		    const real mu);
+		    const real mu,
+		    const real pint = real(0));
 
       template<typename real>
       static TFEL_VISIBILITY_LOCAL void
