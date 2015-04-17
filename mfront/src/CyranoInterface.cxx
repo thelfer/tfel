@@ -108,7 +108,10 @@ namespace mfront{
   } // end of CyranoInterface::getUmatFunctionName
 
   CyranoInterface::CyranoInterface()
-  {}
+    : useTimeSubStepping(false),
+      doSubSteppingOnInvalidResults(false),
+      maximumSubStepping(0u)
+  {} // end of CyranoInterface::CyranoInterface
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CyranoInterface::treatKeyword(const std::string& key,

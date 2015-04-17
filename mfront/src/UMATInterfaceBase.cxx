@@ -50,10 +50,9 @@ namespace mfront
 						    const std::string& n)
   {
     using namespace std;
-    vector<UMATMaterialProperty>::const_iterator pm;
-    for(pm=mprops.begin();pm!=mprops.end();++pm){
-      if((pm->name==n)&&(!pm->dummy)){
-	return *pm;
+    for(const auto& m : mprops){
+      if((m.name==n)&&(!m.dummy)){
+	return m;
       }
     }
     string msg("UMATInterfaceBase::findUMATMaterialProperty : "
@@ -64,14 +63,14 @@ namespace mfront
 
 
   UMATInterfaceBase::UMATInterfaceBase()
+    : generateMTestFile(false)
   {} // end of UMATInterfaceBase::UMATInterfaceBase
 
   bool
   UMATInterfaceBase::isModellingHypothesisHandled(const Hypothesis h,
 							const BehaviourDescription& mb) const
   {
-    using namespace std;
-    set<Hypothesis> ih(this->getModellingHypothesesToBeTreated(mb));
+    const auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       return !mb.areAllMechanicalDataSpecialised(ih);
     }
@@ -1260,19 +1259,18 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
-    set<Hypothesis> ih(this->getModellingHypothesesToBeTreated(mb));
+    auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(ih.empty()){
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
 	  << "_nModellingHypotheses = 0u;" << endl << endl;
       out << "MFRONT_SHAREDOBJ const char * const * "  << this->getFunctionName(name)
 	  << "_ModellingHypotheses = 0;" << endl << endl;
     } else {
-      set<Hypothesis>::const_iterator ph;
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
 	  << "_nModellingHypotheses = " << ih.size() << "u;" << endl << endl;
       out << "MFRONT_SHAREDOBJ const char * " << endl
 	  << this->getFunctionName(name) << "_ModellingHypotheses[" << ih.size() << "u] = {";
-      for(ph=ih.begin();ph!=ih.end();){
+      for(auto ph=ih.begin();ph!=ih.end();){
 	out << "\"" << ModellingHypothesis::toString(*ph) << "\"";
 	if(++ph!=ih.end()){
 	  out << "," << endl;
@@ -1289,13 +1287,12 @@ namespace mfront
 								const BehaviourDescription& mb) const
   {
     using namespace std;
-    pair<vector<UMATMaterialProperty>,
-	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
+    const auto mprops = this->buildMaterialPropertiesList(mb,h);
     if(mprops.first.empty()){
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
 	  << "_nMaterialProperties = 0u;" << endl << endl;
       out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
-	  << "_MaterialProperties = 0;" << endl << endl;
+	  << "_MaterialProperties = nullptr;" << endl << endl;
     } else {
       const auto& last = mprops.first.back();
       SupportedTypes::TypeSize s;
@@ -1321,7 +1318,7 @@ namespace mfront
       vector<UMATMaterialProperty>::size_type ib=0; /* index of the first element which
 						     * is not imposed by the material properties */
       bool found = false;
-      for(vector<UMATMaterialProperty>::size_type i=0;(i!=mprops.first.size())&&(!found);++i){
+      for(auto i=0;(i!=mprops.first.size())&&(!found);++i){
 	if(mprops.first[i].offset==mprops.second){
 	  ib = i;
 	  found = true;
@@ -1336,13 +1333,13 @@ namespace mfront
 	out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
 	    << "_nMaterialProperties = 0u;" << endl << endl;
 	out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
-	    << "_MaterialProperties = 0;" << endl << endl;
+	    << "_MaterialProperties = nullptr;" << endl << endl;
       } else {
 	out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
 	    << "_nMaterialProperties = " << s.getScalarSize() << "u;" << endl << endl;
 	out << "MFRONT_SHAREDOBJ const char *"  << this->getSymbolName(name,h)
 	    << "_MaterialProperties[" <<  s.getScalarSize() << "u] = {";
-        for(vector<UMATMaterialProperty>::size_type i=ib;i!=mprops.first.size();){
+        for(auto i=ib;i!=mprops.first.size();){
 	  const auto& m = mprops.first[i];
 	  if(m.arraySize==1u){
 	    out << "\"" << m.name << "\"";
@@ -1415,7 +1412,7 @@ namespace mfront
       out << "};" << endl << endl;
     } else {
       out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(name,h)
-  	  << "_InternalStateVariablesTypes = 0;" << endl << endl;
+  	  << "_InternalStateVariablesTypes = nullptr;" << endl << endl;
     }
   } // end of UMATInterfaceBase::writeUMATxxStateVariablesSymbols
   
@@ -1536,10 +1533,10 @@ namespace mfront
   UMATInterfaceBase::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
   {
     using namespace std;
-    map<Hypothesis,string> res;
-    auto h = this->getModellingHypothesesToBeTreated(mb);
-    set<Hypothesis> h1;
-    set<Hypothesis> h2;
+    const auto h = this->getModellingHypothesesToBeTreated(mb);
+    auto res = map<Hypothesis,string>{};
+    auto h1 = set<Hypothesis>{};
+    auto h2 = set<Hypothesis>{};
     for(const auto & elem : h){
       if(!mb.hasSpecialisedMechanicalData(elem)){
 	h1.insert(elem);

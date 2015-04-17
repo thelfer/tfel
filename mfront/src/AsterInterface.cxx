@@ -63,6 +63,11 @@ namespace mfront{
   } // end of AsterInterface::getLibraryName
 
   AsterInterface::AsterInterface()
+    : compareToNumericalTangentOperator(false),
+      strainPerturbationValue(1.e-6),
+      tangentOperatorComparisonCriterium(1.e7),
+      savesTangentOperator(false),
+      errorReport(true)
   {} // end of AsterInterface::AsterInterface()
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>

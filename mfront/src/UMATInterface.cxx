@@ -281,6 +281,9 @@ namespace mfront{
   } // end of UMATInterface::getUmatFunctionName
 
   UMATInterface::UMATInterface()
+    : useTimeSubStepping(false),
+      doSubSteppingOnInvalidResults(false),
+      maximumSubStepping(0u)
   {}
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
@@ -925,7 +928,7 @@ namespace mfront{
     if(this->generateMTestFile){
       if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 	 (mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-     	string msg("UMATInterface::treatKeyword : "
+     	string msg("UMATInterface::endTreatement : "
 		   "unsupported behaviour type");
 	throw(runtime_error(msg));
       }
