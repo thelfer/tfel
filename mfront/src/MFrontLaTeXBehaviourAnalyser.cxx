@@ -31,9 +31,9 @@ namespace mfront
   }
 
   void
-  MFrontLaTeXBehaviourAnalyser::endTreatement(const MechanicalBehaviourDescription&,
+  MFrontLaTeXBehaviourAnalyser::endTreatment(const MechanicalBehaviourDescription&,
 					      const MFrontFileDescription&)
-  {} // end of MFrontLaTeXBehaviourAnalyser::endTreatement
+  {} // end of MFrontLaTeXBehaviourAnalyser::endTreatment
 
   void
   MFrontLaTeXBehaviourAnalyser::reset(void)

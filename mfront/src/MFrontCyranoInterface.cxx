@@ -269,7 +269,7 @@ namespace mfront{
   } // end of MFrontCyranoInterface::getModellingHypothesesToBeTreated
 
   void
-  MFrontCyranoInterface::endTreatement(const MechanicalBehaviourDescription& mb,
+  MFrontCyranoInterface::endTreatment(const MechanicalBehaviourDescription& mb,
 				       const MFrontFileDescription& fd) const
   {
     using namespace std;
@@ -279,7 +279,7 @@ namespace mfront{
     typedef ModellingHypothesis::Hypothesis Hypothesis;
     // check
     if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MFrontCyranoInterface::endTreatement : "
+      string msg("MFrontCyranoInterface::endTreatment : "
 		 "the aster interface only supports small strain behaviours");
       throw(runtime_error(msg));
     }
@@ -294,13 +294,13 @@ namespace mfront{
 
     // some checks
     if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MFrontCyranoInterface::endTreatement : ");
+      string msg("MFrontCyranoInterface::endTreatment : ");
       msg += "only small strain behaviours are supported.\n";
       throw(runtime_error(msg));
     }
 
     if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){
-      string msg("MFrontCyranoInterface::endTreatement : ");
+      string msg("MFrontCyranoInterface::endTreatment : ");
       msg += "the type of the behaviour (isotropic or orthotropic) does not ";
       msg += "match the the type of its elastic behaviour.\n";
       msg += "This is not allowed here :\n";
@@ -310,7 +310,7 @@ namespace mfront{
     }
     if(this->useTimeSubStepping){
       if(this->maximumSubStepping==0u){
-	string msg("MFrontCyranoInterface::endTreatement : ");
+	string msg("MFrontCyranoInterface::endTreatment : ");
 	msg += "use of time sub stepping requested but MaximumSubStepping is zero.\n";
 	msg += "Please use the @CyranoMaximumSubStepping directive";
 	throw(runtime_error(msg));
@@ -328,7 +328,7 @@ namespace mfront{
 
     ofstream out(("include/MFront/Cyrano/"+fileName).c_str());
     if(!out){
-      string msg("MFrontCyranoInterface::endTreatement : ");
+      string msg("MFrontCyranoInterface::endTreatment : ");
       msg += "could not open file ";
       msg += fileName;
       throw(runtime_error(msg));
@@ -396,7 +396,7 @@ namespace mfront{
 
     out.open(("src/"+fileName).c_str());
     if(!out){
-      string msg("MFrontCyranoInterface::endTreatement : ");
+      string msg("MFrontCyranoInterface::endTreatment : ");
       msg += "could not open file ";
       msg += fileName;
       throw(runtime_error(msg));
@@ -443,7 +443,7 @@ namespace mfront{
 
     out << "} // end of extern \"C\"\n";
     out.close();
-  } // end of MFrontCyranoInterface::endTreatement
+  } // end of MFrontCyranoInterface::endTreatment
 
   void
   MFrontCyranoInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const

@@ -68,7 +68,7 @@ namespace mfront
   }
 
   void
-  MFrontMarkdownBehaviourAnalyser::endTreatement(const MechanicalBehaviourDescription& mb,
+  MFrontMarkdownBehaviourAnalyser::endTreatment(const MechanicalBehaviourDescription& mb,
 						 const MFrontFileDescription& fd)
   {
     using namespace std;
@@ -76,7 +76,7 @@ namespace mfront
     using namespace tfel::utilities;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       ostream& log = getLogStream();
-      log << "MFrontMarkdownBehaviourAnalyser::endTreatement : begin" << endl;
+      log << "MFrontMarkdownBehaviourAnalyser::endTreatment : begin" << endl;
     }
     string name;
     if(!mb.getLibrary().empty()){
@@ -85,7 +85,7 @@ namespace mfront
     name += mb.getClassName();
     ofstream out(("src/"+name+".txt").c_str());
     if(!out){
-      string msg("MFrontMarkdownBehaviourAnalyser::endTreatement : ");
+      string msg("MFrontMarkdownBehaviourAnalyser::endTreatment : ");
       msg += "could not open file ";
       msg += "'src/"+name+".txt'";
       throw(runtime_error(msg));
@@ -98,16 +98,16 @@ namespace mfront
     } else if(this->language=="french"){
       this->treatFrenchOutput(out,mb,fd);
     } else {
-      string msg("MFrontMarkdownBehaviourAnalyser::endTreatement : ");
+      string msg("MFrontMarkdownBehaviourAnalyser::endTreatment : ");
       msg += "unsupported language '"+this->language+"'";
       throw(runtime_error(msg));
     }
     out.close();
     if(getVerboseMode()>=VERBOSE_DEBUG){
       ostream& log = getLogStream();
-      log << "MFrontMarkdownBehaviourAnalyser::endTreatement : end" << endl;
+      log << "MFrontMarkdownBehaviourAnalyser::endTreatment : end" << endl;
     }
-  } // end of MFrontMarkdownBehaviourAnalyser::endTreatement
+  } // end of MFrontMarkdownBehaviourAnalyser::endTreatment
 
   void
   MFrontMarkdownBehaviourAnalyser::treatEnglishOutput(std::ostream& out,

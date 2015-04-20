@@ -46,7 +46,7 @@ namespace mfront{
      * \param[in] fd        : mfront file description
      */
     virtual void
-    endTreatement(const MechanicalBehaviourDescription&,
+    endTreatment(const MechanicalBehaviourDescription&,
 		  const MFrontFileDescription&) = 0;
     /*!
      * \brief reset the interface

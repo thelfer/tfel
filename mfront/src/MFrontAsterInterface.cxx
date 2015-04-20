@@ -277,7 +277,7 @@ namespace mfront{
   } // end of MFrontAsterInterface::getModellingHypothesesToBeTreated
 
   void
-  MFrontAsterInterface::endTreatement(const MechanicalBehaviourDescription& mb,
+  MFrontAsterInterface::endTreatment(const MechanicalBehaviourDescription& mb,
 				      const MFrontFileDescription& fd) const
   {
     using namespace std;
@@ -290,14 +290,14 @@ namespace mfront{
     if(!((mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==MechanicalBehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL))){
-      string msg("MFrontAsterInterface::endTreatement : "
+      string msg("MFrontAsterInterface::endTreatment : "
 		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
       throw(runtime_error(msg));
     }
     if((this->compareToNumericalTangentOperator)||
        (this->savesTangentOperator)){
       if(mb.getBehaviourType()!=MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	string msg("MFrontAsterInterface::endTreatement : "
+	string msg("MFrontAsterInterface::endTreatment : "
 		   "unsupported feature @AsterSaveTangentOperator "
 		   "and @AsterCompareToNumericalTangentOperator : "
 		   "those are only valid for small strain beahviours");
@@ -323,7 +323,7 @@ namespace mfront{
     fileName += ".hxx";
     ofstream out(("include/MFront/Aster/"+fileName).c_str());
     if(!out){
-      string msg("MFrontAsterInterface::endTreatement : ");
+      string msg("MFrontAsterInterface::endTreatment : ");
       msg += "could not open file ";
       msg += fileName;
       throw(runtime_error(msg));
@@ -424,7 +424,7 @@ namespace mfront{
 
     out.open(("src/"+fileName).c_str());
     if(!out){
-      string msg("MFrontAsterInterface::endTreatement : ");
+      string msg("MFrontAsterInterface::endTreatment : ");
       msg += "could not open file ";
       msg += fileName;
       throw(runtime_error(msg));
@@ -438,7 +438,7 @@ namespace mfront{
     } else if (mb.getBehaviourType()==MechanicalBehaviourDescription::COHESIVEZONEMODEL){
       sfeh = "0";
     } else {
-      string msg("MFrontAsterInterface::endTreatement : "
+      string msg("MFrontAsterInterface::endTreatment : "
 		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
       throw(runtime_error(msg));
     }
@@ -507,7 +507,7 @@ namespace mfront{
       dv0 = "U0";
       dv1 = "DU";
     } else {
-      string msg("MFrontAsterInterface::endTreatement : "
+      string msg("MFrontAsterInterface::endTreatment : "
 		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
       throw(runtime_error(msg));
     }
@@ -679,7 +679,7 @@ namespace mfront{
     out << "}\n\n";
     out << "} // end of extern \"C\"\n";
     out.close();
-  } // end of MFrontAsterInterface::endTreatement
+  } // end of MFrontAsterInterface::endTreatment
 
   void
   MFrontAsterInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
@@ -787,7 +787,7 @@ namespace mfront{
 	}
       }
       if(uh.empty()){
-	string msg("MFrontUMATInterface::endTreatement : ");
+	string msg("MFrontUMATInterface::endTreatment : ");
 	msg += "internal error : the mechanical behaviour says that not "
 	  "all handled mechanical data are specialised, but we found none.";
 	throw(runtime_error(msg));
@@ -1016,7 +1016,7 @@ namespace mfront{
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "static const AsterSymmetryType type = aster::ORTHOTROPIC;\n";
     } else {
-      string msg("MFrontAsterInterface::endTreatement : ");
+      string msg("MFrontAsterInterface::endTreatment : ");
       msg += "unsupported behaviour type.\n";
       msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
       throw(runtime_error(msg));
@@ -1056,7 +1056,7 @@ namespace mfront{
 	out << "static const unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
       }
     } else {
-      string msg("MFrontAsterInterface::endTreatement : ");
+      string msg("MFrontAsterInterface::endTreatment : ");
       msg += "unsupported behaviour type.\n";
       msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
       throw(runtime_error(msg));

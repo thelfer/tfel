@@ -486,9 +486,9 @@ namespace mfront
     unsigned short lineNumber;
     unsigned short asize;
     string endComment;
-    bool endOfTreatement=false;
+    bool endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
-	  (!endOfTreatement)){
+	  (!endOfTreatment)){
       varName = this->current->value;
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("ParserBase::readVarList : ",
@@ -542,7 +542,7 @@ namespace mfront
       if(this->current->value==","){
 	++(this->current);
       } else if (this->current->value==";"){
-	endOfTreatement=true;
+	endOfTreatment=true;
 	endComment = this->current->comment;
 	++(this->current);
       } else {
@@ -568,7 +568,7 @@ namespace mfront
 	p->description += endComment;
       }
     }
-    if(!endOfTreatement){
+    if(!endOfTreatment){
       --(this->current);
       this->throwRuntimeError("ParserBase::readVarList",
 			      "Expected ';' before end of file");
@@ -1227,9 +1227,9 @@ namespace mfront
   {
     using namespace std;
     typedef map<string,double>::value_type MVType;
-    bool endOfTreatement=false;
+    bool endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
-	  (!endOfTreatement)){
+	  (!endOfTreatment)){
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("ParserBase::handleParameter : ",
 				"variable given is not valid (read '"+this->current->value+"').");
@@ -1270,7 +1270,7 @@ namespace mfront
       if(this->current->value==","){
 	++(this->current);
       } else if (this->current->value==";"){
-	endOfTreatement=true;
+	endOfTreatment=true;
 	++(this->current);
       } else {
 	this->throwRuntimeError("ParserBase::handleParameter",
@@ -1279,7 +1279,7 @@ namespace mfront
       this->registerVariable(n,false);
       c.push_back(VariableDescription("real",n,1u,lineNumber));
     }
-    if(!endOfTreatement){
+    if(!endOfTreatment){
       --(this->current);
       this->throwRuntimeError("ParserBase::handleParameter",
 			      "Expected ';' before end of file");

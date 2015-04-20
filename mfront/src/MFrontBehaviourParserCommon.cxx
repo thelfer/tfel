@@ -703,7 +703,7 @@ namespace mfront{
 	log << "MFrontBehaviourParserCommon::writeOutputFiles : "
 	    << "calling interface '" << *pi << "'" << endl;
       }
-      i.endTreatement(this->mb,*this);
+      i.endTreatment(this->mb,*this);
     }
     // calling the analysers
     vector<string>::const_iterator pa;
@@ -715,7 +715,7 @@ namespace mfront{
 	log << "MFrontBehaviourParserCommon::writeOutputFiles : "
 	    << "calling analyser '" << *pa << "'" << endl;
       }
-      a.endTreatement(this->mb,*this);
+      a.endTreatment(this->mb,*this);
     }
   }
 
@@ -1348,13 +1348,13 @@ namespace mfront{
     using namespace std;
     string type;
     string s;
-    bool endOfTreatement;
+    bool endOfTreatment;
     vector<string>::iterator p;
     this->checkNotEndOfFile("MFrontBehaviourParserCommon::readStringList",
 			    "Cannot read interface name.");
-    endOfTreatement=false;
+    endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
-	  (!endOfTreatement)){
+	  (!endOfTreatment)){
       s = this->current->value;
       if(!isValidIdentifier(s)){
 	--(this->current);
@@ -1366,7 +1366,7 @@ namespace mfront{
       if(this->current->value==","){
 	++(this->current);
       } else if (this->current->value==";"){
-	endOfTreatement=true;
+	endOfTreatment=true;
 	++(this->current);
       } else {
 	this->throwRuntimeError("MFrontBehaviourParserCommon::readStringList",
@@ -1378,7 +1378,7 @@ namespace mfront{
       } 
       cont.push_back(s);
     }
-    if(!endOfTreatement){
+    if(!endOfTreatment){
       --(this->current);
       this->throwRuntimeError("MFrontBehaviourParserCommon::readStringList",
 			      "Expected ';' before end of file.");
@@ -5450,9 +5450,9 @@ namespace mfront{
     using namespace std;
     set<Hypothesis> h;
     this->readHypothesesList(h);
-    bool endOfTreatement=false;
+    bool endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
-	  (!endOfTreatement)){
+	  (!endOfTreatment)){
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("ParserBase::handleParameter : ",
 				"variable given is not valid (read '"+this->current->value+"').");
@@ -5499,14 +5499,14 @@ namespace mfront{
       if(this->current->value==","){
 	++(this->current);
       } else if (this->current->value==";"){
-	endOfTreatement=true;
+	endOfTreatment=true;
 	++(this->current);
       } else {
 	this->throwRuntimeError("ParserBase::handleParameter",
 				", or ; expected afer '"+n+"'");
       }
     }
-    if(!endOfTreatement){
+    if(!endOfTreatment){
       --(this->current);
       this->throwRuntimeError("ParserBase::handleParameter",
 			      "Expected ';' before end of file");

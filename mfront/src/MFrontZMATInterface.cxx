@@ -846,7 +846,7 @@ namespace mfront
   }
 
   void
-  MFrontZMATInterface::endTreatement(const MechanicalBehaviourDescription& mb,
+  MFrontZMATInterface::endTreatment(const MechanicalBehaviourDescription& mb,
 				     const MFrontFileDescription& fd) const
   {
     using namespace std;
@@ -866,13 +866,13 @@ namespace mfront
       (mb.isModellingHypothesisSupported(ModellingHypothesis::GENERALISEDPLANESTRAIN) ? 1 : 0) +
       (mb.isModellingHypothesisSupported(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ? 1 : 0);
     if(nbh==0){
-      string msg("MFrontZMATInterface::endTreatement : "
+      string msg("MFrontZMATInterface::endTreatment : "
 		 "no suitable modelling hypothesis supported");
       throw(runtime_error(msg));
     }
     ofstream out(("include/MFront/ZMAT/"+headerFileName).c_str());
     if(!out){
-      string msg("MFrontUMATInterface::endTreatement : "
+      string msg("MFrontUMATInterface::endTreatment : "
 		 "could not open header file '"+
 		 headerFileName+"'");
       throw(runtime_error(msg));
@@ -1015,7 +1015,7 @@ namespace mfront
 	    out << "ARRAY<TENSOR2_VINT> " << pv->name << ";" << endl; 
 	  }
 	} else {
-	  string msg("MFrontZMATInterface::endTreatement : "
+	  string msg("MFrontZMATInterface::endTreatment : "
 		     "unsupported state variable type");
 	  throw(runtime_error(msg));
 	}
@@ -1038,7 +1038,7 @@ namespace mfront
     out.close();
     out.open(("src/"+srcFileName).c_str());
     if(!out){
-      string msg("MFrontUMATInterface::endTreatement : "
+      string msg("MFrontUMATInterface::endTreatment : "
 		 "could not open src file '"+
 		 srcFileName+"'");
       throw(runtime_error(msg));
@@ -1233,7 +1233,7 @@ namespace mfront
     out << "} // end of ZMAT" << mb.getClassName() << "::~ZMAT" << mb.getClassName() << endl << endl;
     out << "BEHAVIOR_READER(ZMAT" << mb.getClassName() << "," << mb.getClassName() << ")" << endl << endl;
     out << "Z_END_NAMESPACE;" << endl;
-  } // end of MFrontZMATInterface::endTreatement
+  } // end of MFrontZMATInterface::endTreatment
 
   void
   MFrontZMATInterface::writeBehaviourInitialisation(std::ostream& out,
@@ -1279,7 +1279,7 @@ namespace mfront
 		<< "\"," << pv->arraySize << "*(this->uts()),1);" << endl; 
 	  }
 	} else {
-	  string msg("MFrontZMATInterface::endTreatement : "
+	  string msg("MFrontZMATInterface::endTreatment : "
 		     "unsupported state variable type");
 	  throw(runtime_error(msg));
 	}

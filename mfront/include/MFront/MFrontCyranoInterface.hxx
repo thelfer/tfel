@@ -79,7 +79,7 @@ namespace mfront{
      * \param[in] fd        : mfront file description
      */
     virtual void
-    endTreatement(const MechanicalBehaviourDescription&,
+    endTreatment(const MechanicalBehaviourDescription&,
 		  const MFrontFileDescription&) const;
     /*!
      * \brief write output files
