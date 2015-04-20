@@ -14,7 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICKBASE_H_
 #define LIB_MFRONT_BEHAVIOURBRICKBASE_H_ 
 
-#include"MFront/BehaviourBrick.hxx"
+#include"MFront/AbstractBehaviourBrick.hxx"
 
 namespace mfront{
 
@@ -29,10 +29,11 @@ namespace mfront{
   struct BehaviourDescription;
 
   /*!
-   * an helper class providing a set of helper method to build BehaviourBricks.
+   * an helper class providing a set of helper method to build
+   * BehaviourBricks.
    */
   struct BehaviourBrickBase
-    : public BehaviourBrick
+    : public AbstractBehaviourBrick
   {
     /*!
      * constructor

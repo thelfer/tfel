@@ -20,6 +20,7 @@
 #include<vector>
 #include<string>
 #include<fstream>
+#include<memory>
 
 #include"MFront/MFrontConfig.hxx"
 
@@ -33,6 +34,8 @@ namespace mfront{
 
   // forward declaration
   struct AbstractBehaviourInterface;
+  // forward declaration
+  struct AbstractBehaviourBrick;
 
   /*!
    * This class provides most functionnalities used by mechanical
@@ -1011,14 +1014,17 @@ namespace mfront{
      */
     virtual bool
     hasUserDefinedTangentOperatorCode(const Hypothesis) const;
-    /*!
-     * constructor
-     */
+    //! constructor
     BehaviourDSLCommon();
-
+    //! behaviour description
+    BehaviourDescription mb;
+    //! target description
+    TargetsDescription   td;
+    //! registred bricks
+    std::vector<std::shared_ptr<AbstractBehaviourBrick>> bricks;
+    //! the list of registred keywords
     std::set<std::string> registredKeyWords;
-
-    //! list of registred interfaces
+    //! list of registred interfaces, indexed by their name
     std::map<std::string,
 	     std::shared_ptr<AbstractBehaviourInterface>> interfaces;
     /*!
@@ -1040,10 +1046,6 @@ namespace mfront{
     
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
-
-    BehaviourDescription mb;
-    TargetsDescription   td;
-
   }; // end of struct BehaviourDSLCommon
 
 } // end of namespace mfront  

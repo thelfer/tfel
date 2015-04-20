@@ -412,12 +412,10 @@ namespace mfront{
   {
     using namespace std;
     typedef unsigned short ushort;
-    this->mb.setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			  BehaviourData::algorithm,
-			  string("RungeKutta5/4"));
-    this->mb.setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			  BehaviourData::numberOfEvaluations,
-			  ushort(6u));
+    this->mb.setAttribute(BehaviourData::algorithm,
+			  string("RungeKutta5/4"),false);
+    this->mb.setAttribute(BehaviourData::numberOfEvaluations,
+			  ushort(6u),false);
   } // end of RungeKuttaDSL::setDefaultAlgorithm
 
   void RungeKuttaDSL::treatAlgorithm(void)
@@ -427,7 +425,7 @@ namespace mfront{
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("RungeKuttaDSL::treatAlgorithm",
 			    "Cannot read algorithm name.");
-    if(this->mb.hasAttribute(h,BehaviourData::algorithm)){
+    if(this->mb.hasAttribute(BehaviourData::algorithm)){
       this->throwRuntimeError("RungeKuttaDSL::treatAlgorithm",
 			      "algorith already specified. This may be the second "
 			      "time that the @Algorithm keyword is used, or the default "
@@ -435,17 +433,17 @@ namespace mfront{
 			      "(keyword @StateVariable)");
     }
     if(this->current->value=="euler"){
-      this->mb.setAttribute(h,BehaviourData::algorithm,string("Euler"));
-      this->mb.setAttribute(h,BehaviourData::numberOfEvaluations,ushort(0u));
+      this->mb.setAttribute(BehaviourData::algorithm,string("Euler"),false);
+      this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(0u),false);
     } else if(this->current->value=="rk2"){
-      this->mb.setAttribute(h,BehaviourData::algorithm,string("RungeKutta2"));
-      this->mb.setAttribute(h,BehaviourData::numberOfEvaluations,ushort(1u));
+      this->mb.setAttribute(BehaviourData::algorithm,string("RungeKutta2"),false);
+      this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(1u),false);
     } else if(this->current->value=="rk4"){
-      this->mb.setAttribute(h,BehaviourData::algorithm,string("RungeKutta4"));
-      this->mb.setAttribute(h,BehaviourData::numberOfEvaluations,ushort(4u));
+      this->mb.setAttribute(BehaviourData::algorithm,string("RungeKutta4"),false);
+      this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(4u),false);
     } else if(this->current->value=="rk42"){
-      this->mb.setAttribute(h,BehaviourData::algorithm,string("RungeKutta4/2"));
-      this->mb.setAttribute(h,BehaviourData::numberOfEvaluations,ushort(4u));
+      this->mb.setAttribute(BehaviourData::algorithm,string("RungeKutta4/2"),false);
+      this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(4u),false);
     } else if(this->current->value=="rk54"){
       this->setDefaultAlgorithm();
     } else if(this->current->value=="rkCastem"){
@@ -464,8 +462,8 @@ namespace mfront{
       this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_rmax",0u,1.3));
       this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_fac",0u,3.));
       this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_borne",0u,2.));
-      this->mb.setAttribute(h,BehaviourData::algorithm,string("RungeKuttaCastem"));
-      this->mb.setAttribute(h,BehaviourData::numberOfEvaluations,ushort(5u));
+      this->mb.setAttribute(BehaviourData::algorithm,string("RungeKuttaCastem"),false);
+      this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(5u),false);
     } else {
       this->throwRuntimeError("RungeKuttaDSL::treatAlgorithm",
 			      this->current->value+" is not a valid algorithm name"
@@ -500,13 +498,13 @@ namespace mfront{
 	ThermodynamicForce>::const_iterator pm;
     CodeBlock ib; // code inserted at before of the local variable initialisation
     CodeBlock ie; // code inserted at the end of the local variable initialisation
-    if(!this->mb.hasAttribute(h,BehaviourData::algorithm)){
+    if(!this->mb.hasAttribute(BehaviourData::algorithm)){
       this->setDefaultAlgorithm();
     }
     const string& algorithm =
-      this->mb.getAttribute<string>(h,BehaviourData::algorithm);
+      this->mb.getAttribute<string>(BehaviourData::algorithm);
     const unsigned short n =
-	  this->mb.getAttribute<unsigned short>(h,BehaviourData::numberOfEvaluations);
+	  this->mb.getAttribute<unsigned short>(BehaviourData::numberOfEvaluations);
     // some checks
     const auto& bh = this->mb.getDistinctModellingHypotheses();
     for(const auto & elem : bh){
@@ -1982,8 +1980,7 @@ namespace mfront{
   {
     using namespace std;
     const string btype = this->mb.getBehaviourTypeFlag();
-    const auto& algorithm = this->mb.getAttribute<string>(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-							    BehaviourData::algorithm);
+    const auto& algorithm = this->mb.getAttribute<string>(BehaviourData::algorithm);
     const auto& d = this->mb.getBehaviourData(h);
     std::vector<BoundsDescription>::const_iterator p2;
     this->checkBehaviourFile();

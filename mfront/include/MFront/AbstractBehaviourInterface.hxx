@@ -126,7 +126,7 @@ namespace mfront{
      * \param[in] fd : mfront file description
      */
     virtual void
-    endTreatement(const BehaviourDescription&,
+    endTreatment(const BehaviourDescription&,
 		  const FileDescription&) const = 0;
     /*!
      * \param[out] d  : target description

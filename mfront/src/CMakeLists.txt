@@ -95,8 +95,8 @@ set(TFELMFront_SOURCES
     BroydenSolvers.cxx
     SecondBroydenSolver.cxx
     LevenbergMarquardtSolvers.cxx
-    BehaviourBrick.cxx
-    BehaviourBrickFactory.cxx
+    AbstractBehaviourBrick.cxx
+    AbstractBehaviourBrickFactory.cxx
     BehaviourBrickBase.cxx
     ElasticityBehaviourBrick.cxx
     PerformanceProfiling.cxx

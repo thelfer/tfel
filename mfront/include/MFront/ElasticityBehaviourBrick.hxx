@@ -59,9 +59,10 @@ namespace mfront{
     ElasticityBehaviourBrick(AbstractBehaviourDSL&,
 			     BehaviourDescription&,
 			     const Parameters&);
-    /*!
-     * destructor
-     */
+    //! ends the file treatment
+    virtual void 
+    endTreatment(BehaviourDescription&) const override;
+    //! destructor
     virtual ~ElasticityBehaviourBrick();
   protected:
     /*!

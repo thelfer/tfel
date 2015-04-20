@@ -487,9 +487,9 @@ namespace mfront
     unsigned int lineNumber;
     unsigned short asize;
     string endComment;
-    bool endOfTreatement=false;
+    bool endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
-	  (!endOfTreatement)){
+	  (!endOfTreatment)){
       const auto& varName = this->current->value;
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("DSLBase::readVarList : ",
@@ -544,7 +544,7 @@ namespace mfront
       if(this->current->value==","){
 	++(this->current);
       } else if (this->current->value==";"){
-	endOfTreatement=true;
+	endOfTreatment=true;
 	endComment = this->current->comment;
 	++(this->current);
       } else {
@@ -570,7 +570,7 @@ namespace mfront
 	elem.description += endComment;
       }
     }
-    if(!endOfTreatement){
+    if(!endOfTreatment){
       --(this->current);
       this->throwRuntimeError("DSLBase::readVarList",
 			      "Expected ';' before end of file");
@@ -1227,9 +1227,9 @@ namespace mfront
 			      std::map<std::string,double>& v)
   {
     using namespace std;
-    bool endOfTreatement=false;
+    bool endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
-	  (!endOfTreatement)){
+	  (!endOfTreatment)){
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("DSLBase::handleParameter : ",
 				"variable given is not valid (read '"+this->current->value+"').");
@@ -1270,7 +1270,7 @@ namespace mfront
       if(this->current->value==","){
 	++(this->current);
       } else if (this->current->value==";"){
-	endOfTreatement=true;
+	endOfTreatment=true;
 	++(this->current);
       } else {
 	this->throwRuntimeError("DSLBase::handleParameter",
@@ -1279,7 +1279,7 @@ namespace mfront
       this->registerVariable(n,false);
       c.push_back(VariableDescription("real",n,1u,lineNumber));
     }
-    if(!endOfTreatement){
+    if(!endOfTreatment){
       --(this->current);
       this->throwRuntimeError("DSLBase::handleParameter",
 			      "Expected ';' before end of file");

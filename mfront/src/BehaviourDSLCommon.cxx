@@ -38,8 +38,8 @@
 #include"MFront/PerformanceProfiling.hxx"
 #include"MFront/BehaviourInterfaceFactory.hxx"
 #include"MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx"
-#include"MFront/BehaviourBrick.hxx"
-#include"MFront/BehaviourBrickFactory.hxx"
+#include"MFront/AbstractBehaviourBrick.hxx"
+#include"MFront/AbstractBehaviourBrickFactory.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/BehaviourDSLCommon.hxx"
 
@@ -360,6 +360,9 @@ namespace mfront{
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
       log << "BehaviourDSLCommon::endsInputFileProcessing : begin" << endl;
+    }
+    for(const auto& pb : this->bricks){
+      pb->endTreatment(this->mb);
     }
     if(!this->mb.areModellingHypothesesDefined()){
       this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());
@@ -726,7 +729,7 @@ namespace mfront{
 	log << "BehaviourDSLCommon::writeOutputFiles : "
 	    << "calling interface '" << i.first << "'" << endl;
       }
-      i.second->endTreatement(this->mb,*this);
+      i.second->endTreatment(this->mb,*this);
     }
   }
 
@@ -766,9 +769,9 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    typedef BehaviourBrick::Parameters::value_type MType;
-    auto& f = BehaviourBrickFactory::getFactory();
-    BehaviourBrick::Parameters parameters;
+    typedef AbstractBehaviourBrick::Parameters::value_type MType;
+    auto& f = AbstractBehaviourBrickFactory::getFactory();
+    AbstractBehaviourBrick::Parameters parameters;
     if(this->current->value=="<"){
       vector<Token> tokens;
       this->readList(tokens,"BehaviourDSLCommon::treatBehaviourBrick",
@@ -1344,13 +1347,13 @@ namespace mfront{
     using namespace std;
     string type;
     string s;
-    bool endOfTreatement;
+    bool endOfTreatment;
     vector<string>::iterator p;
     this->checkNotEndOfFile("BehaviourDSLCommon::readStringList",
 			    "Cannot read interface name.");
-    endOfTreatement=false;
+    endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
-	  (!endOfTreatement)){
+	  (!endOfTreatment)){
       s = this->current->value;
       if(!isValidIdentifier(s)){
 	--(this->current);
@@ -1362,7 +1365,7 @@ namespace mfront{
       if(this->current->value==","){
 	++(this->current);
       } else if (this->current->value==";"){
-	endOfTreatement=true;
+	endOfTreatment=true;
 	++(this->current);
       } else {
 	this->throwRuntimeError("BehaviourDSLCommon::readStringList",
@@ -1374,7 +1377,7 @@ namespace mfront{
       } 
       cont.push_back(s);
     }
-    if(!endOfTreatement){
+    if(!endOfTreatment){
       --(this->current);
       this->throwRuntimeError("BehaviourDSLCommon::readStringList",
 			      "Expected ';' before end of file.");
@@ -5139,9 +5142,9 @@ namespace mfront{
     using namespace std;
     set<Hypothesis> h;
     this->readHypothesesList(h);
-    bool endOfTreatement=false;
+    bool endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
-	  (!endOfTreatement)){
+	  (!endOfTreatment)){
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("DSLBase::handleParameter : ",
 				"variable given is not valid (read '"+this->current->value+"').");
@@ -5188,14 +5191,14 @@ namespace mfront{
       if(this->current->value==","){
 	++(this->current);
       } else if (this->current->value==";"){
-	endOfTreatement=true;
+	endOfTreatment=true;
 	++(this->current);
       } else {
 	this->throwRuntimeError("DSLBase::handleParameter",
 				", or ; expected afer '"+n+"'");
       }
     }
-    if(!endOfTreatement){
+    if(!endOfTreatment){
       --(this->current);
       this->throwRuntimeError("DSLBase::handleParameter",
 			      "Expected ';' before end of file");

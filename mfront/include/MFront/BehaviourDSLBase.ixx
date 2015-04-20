@@ -14,9 +14,8 @@
 #ifndef LIB_MFRONT_BEHAVIOURDSLBASE_IXX_
 #define LIB_MFRONT_BEHAVIOURDSLBASE_IXX_ 
 
-#include<iostream>
-
 #include<stdexcept>
+#include<sstream>
 #include<algorithm>
 
 #include"MFront/AbstractBehaviourInterface.hxx"
@@ -194,7 +193,9 @@ namespace mfront{
 	    this->treatVariableMethod(h);
 	  }
 	} else {
-	  p = this->callBacks.find(this->current->value);
+	  string k       = this->current->value;
+	  unsigned int l = this->current->line;
+	  p = this->callBacks.find(k);
 	  if(p==this->callBacks.end()){
 	    if(getVerboseMode()>=VERBOSE_DEBUG){
 	      auto& log = getLogStream();
@@ -212,7 +213,15 @@ namespace mfront{
 	  ++(this->current);
 	  try{
 	    ((static_cast<Child *>(this))->*handler)();
-	  } catch(...){
+	  }
+	  catch (exception& e){
+	    ostringstream msg;
+	    msg << "BehaviourDSLBase::analyseFile: " << endl
+		<< "error while treating keyword '" << k << "' at line '" << l
+		<< "' of file '" << this->fileName << "'. " << endl << e.what();
+	    throw(runtime_error(msg.str()));
+	  }
+	  catch(...){
 	    this->currentComment.clear();
 	    throw;
 	  }

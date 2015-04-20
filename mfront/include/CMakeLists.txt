@@ -71,7 +71,9 @@ install_mfront_header(MFront UMATInterfaceBase.hxx)
 install_mfront_header(MFront MTestFileGeneratorBase.hxx)
 install_mfront_header(MFront UMATSmallStrainMTestFileGenerator.hxx)
 install_mfront_header(MFront UMATFiniteStrainMTestFileGenerator.hxx)
-
+install_mfront_header(MFront AbstractBehaviourBrick.hxx)
+install_mfront_header(MFront BehaviourBrickBase.hxx)
+install_mfront_header(MFront AbstractBehaviourBrickFactory.hxx)
 install_mfront_header(MFront BehaviourProfiler.hxx)
 
 install_mtest_header(MTest MTest.hxx)

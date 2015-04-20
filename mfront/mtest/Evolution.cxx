@@ -54,19 +54,16 @@ namespace mfront
 			     const std::vector<real>& v)
   {
     using namespace std;
-    typedef map<real,real>::value_type MVType;
-    vector<real>::const_iterator pt;
-    vector<real>::const_iterator pv;
     if(t.size()!=v.size()){
       string msg("LPIEvolution::LPIEvolution : "
 		 "the number of values of the times don't match "
 		 "the number of values of the evolution");
       throw(runtime_error(msg));
     }
-    pt = t.begin();
-    pv = v.begin();
+    auto pt = t.begin();
+    auto pv = v.begin();
     while(pt!=t.end()){
-      this->values.insert(MVType(*pt,*pv));
+      this->values.insert({*pt,*pv});
       ++pt;
       ++pv;
     }

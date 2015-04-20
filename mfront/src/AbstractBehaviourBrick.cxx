@@ -1,5 +1,5 @@
 /*! 
- * \file  BehaviourBrick.cxx
+ * \file  AbstractBehaviourBrick.cxx
  * \brief
  * \author Helfer Thomas
  * \date   October 20, 2014
@@ -12,11 +12,11 @@
  */
 
 
-#include"MFront/BehaviourBrick.hxx"
+#include"MFront/AbstractBehaviourBrick.hxx"
 
 namespace mfront {
 
-  BehaviourBrick::~BehaviourBrick()
-  {} // end of BehaviourBrick::~BehaviourBrick
+  AbstractBehaviourBrick::~AbstractBehaviourBrick()
+  {} // end of AbstractBehaviourBrick::~AbstractBehaviourBrick
 
 } // end of namespace mfront

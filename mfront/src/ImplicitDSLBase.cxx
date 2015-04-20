@@ -329,6 +329,7 @@ namespace mfront{
     ++this->current;
     this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm",";");
     this->solver = f.getSolver(s);
+    this->mb.setAttribute(BehaviourData::algorithm,s,false);
   } // end of ImplicitDSLBase::treatAlgorithm
 
   void

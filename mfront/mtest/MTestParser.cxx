@@ -94,7 +94,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using std::shared_ptr;
     map<string,CallBack>::const_iterator pc;
     this->file = f;
     this->treatCharAsString(true);
@@ -344,8 +343,7 @@ namespace mfront
 				const MTestParser::CallBack& p)
   {
     using namespace std;
-    typedef map<string,CallBack>::value_type MVType;
-    this->callbacks.insert(MVType(k,p));
+    this->callbacks.insert({k,p});
   }
 
   void
@@ -678,9 +676,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using std::shared_ptr;
-    typedef map<string,string>::value_type MVType;
-    typedef map<string,unsigned int>::value_type MVType2;
     this->readSpecifiedToken("MTestParser::handleTest","<",
 			     p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleTest",p,
@@ -702,7 +697,7 @@ namespace mfront
       if(p->flag==Token::String){
 	const auto& v = this->readString(p,this->fileTokens.end());
 	const auto& f = this->readString(p,this->fileTokens.end());
-	functions.insert(MVType(v,f));
+	functions.insert({v,f});
       } else {
 	this->readSpecifiedToken("MTestParser::handleTest","{",
 				 p,this->fileTokens.end());
@@ -713,7 +708,7 @@ namespace mfront
 	  this->readSpecifiedToken("MTestParser::handleTest",":",
 				   p,this->fileTokens.end());
 	  const auto& f = this->readString(p,this->fileTokens.end());
-	  functions.insert(MVType(v,f));
+	  functions.insert({v,f});
 	  this->checkNotEndOfLine("MTestParser::handleTest",p,
 				  this->fileTokens.end());
 	  if(p->value!="}"){
@@ -755,7 +750,7 @@ namespace mfront
       if(p->flag==Token::String){
 	const auto& v = this->readString(p,this->fileTokens.end());
 	const unsigned int c = this->readUnsignedInt(p,this->fileTokens.end());
-	columns.insert(MVType2(v,c));
+	columns.insert({v,c});
       } else {
 	this->readSpecifiedToken("MTestParser::handleTest","{",
 				 p,this->fileTokens.end());
@@ -766,7 +761,7 @@ namespace mfront
 	  this->readSpecifiedToken("MTestParser::handleTest",":",
 				   p,this->fileTokens.end());
 	  const unsigned int c = this->readUnsignedInt(p,this->fileTokens.end());
-	  columns.insert(MVType2(v,c));
+	  columns.insert({v,c});
 	  this->checkNotEndOfLine("MTestParser::handleTest",p,
 				  this->fileTokens.end());
 	  if(p->value!="}"){
@@ -816,7 +811,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using std::shared_ptr;
     const auto& v = this->readString(p,this->fileTokens.end());
     if(!this->isValidIdentifier(v)){
       string msg("MTestParser::handleReal : '"+
@@ -1170,7 +1164,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using std::shared_ptr;
     const auto& evt = this->readEvolutionType(p);
     const auto& c = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedThermodynamicForce",p,
@@ -1233,7 +1226,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using std::shared_ptr;
     const auto& evt = this->readEvolutionType(p);
     const auto& c = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedDrivingVariable",p,
@@ -1254,7 +1246,6 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::system;
-    using std::shared_ptr;
     string i;
     this->readSpecifiedToken("MTestParser::handleBehaviour","<",p,
 			     this->fileTokens.end());
@@ -1295,7 +1286,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using std::shared_ptr;
     string i;
     this->readSpecifiedToken("MTestParser::handleMaterialProperty","<",p,
 			     this->fileTokens.end());
@@ -1503,7 +1493,6 @@ namespace mfront
   {
     using namespace std;
     using tfel::utilities::Token;
-    using std::shared_ptr;
     using tfel::math::Evaluator;
     this->checkNotEndOfLine("MTestParser::readDouble",p,
 			    this->fileTokens.end());
@@ -1573,7 +1562,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    using std::shared_ptr;
     shared_ptr<Evolution> ev;
     this->checkNotEndOfLine("MTestParser::parseEvolution",p,
 			    this->fileTokens.end());

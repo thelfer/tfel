@@ -74,7 +74,11 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/UMATInterfaceBase.hxx                  \
 			MFront/MTestFileGeneratorBase.hxx             \
 			MFront/UMATSmallStrainMTestFileGenerator.hxx  \
-			MFront/UMATFiniteStrainMTestFileGenerator.hxx
+			MFront/UMATFiniteStrainMTestFileGenerator.hxx \
+			MFront/AbstractBehaviourBrick.hxx             \
+			MFront/BehaviourBrickBase.hxx                 \
+			MFront/AbstractBehaviourBrickFactory.hxx
+
 
 nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                          \
 			MFront/IsotropicMisesCreepDSL.hxx                             \
@@ -83,10 +87,7 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/MultipleIsotropicMisesFlowsDSL.hxx                     \
 			MFront/RungeKuttaDSL.hxx                                      \
 			MFront/PerformanceProfiling.hxx			              \
-			MFront/BehaviourBrick.hxx                                     \
-			MFront/BehaviourBrickBase.hxx                                 \
 			MFront/ElasticityBehaviourBrick.hxx                           \
-			MFront/BehaviourBrickFactory.hxx                              \
 			MFront/NonLinearSystemSolver.hxx                              \
 			MFront/NonLinearSystemSolverBase.hxx                          \
 			MFront/NonLinearSystemSolverFactory.hxx                       \

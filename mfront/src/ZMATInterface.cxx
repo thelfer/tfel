@@ -839,7 +839,7 @@ namespace mfront
   }
 
   void
-  ZMATInterface::endTreatement(const BehaviourDescription& mb,
+  ZMATInterface::endTreatment(const BehaviourDescription& mb,
 				     const FileDescription& fd) const
   {
     using namespace std;
@@ -859,13 +859,13 @@ namespace mfront
       (mb.isModellingHypothesisSupported(ModellingHypothesis::GENERALISEDPLANESTRAIN) ? 1 : 0) +
       (mb.isModellingHypothesisSupported(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ? 1 : 0);
     if(nbh==0){
-      string msg("ZMATInterface::endTreatement : "
+      string msg("ZMATInterface::endTreatment : "
 		 "no suitable modelling hypothesis supported");
       throw(runtime_error(msg));
     }
     ofstream out("include/MFront/ZMAT/"+headerFileName);
     if(!out){
-      string msg("UMATInterface::endTreatement : "
+      string msg("UMATInterface::endTreatment : "
 		 "could not open header file '"+
 		 headerFileName+"'");
       throw(runtime_error(msg));
@@ -1008,7 +1008,7 @@ namespace mfront
 	    out << "ARRAY<TENSOR2_VINT> " << sv.name << ";" << endl; 
 	  }
 	} else {
-	  string msg("ZMATInterface::endTreatement : "
+	  string msg("ZMATInterface::endTreatment : "
 		     "unsupported state variable type");
 	  throw(runtime_error(msg));
 	}
@@ -1031,7 +1031,7 @@ namespace mfront
     out.close();
     out.open("src/"+srcFileName);
     if(!out){
-      string msg("UMATInterface::endTreatement : "
+      string msg("UMATInterface::endTreatment : "
 		 "could not open src file '"+
 		 srcFileName+"'");
       throw(runtime_error(msg));
@@ -1226,7 +1226,7 @@ namespace mfront
     out << "} // end of ZMAT" << mb.getClassName() << "::~ZMAT" << mb.getClassName() << endl << endl;
     out << "BEHAVIOR_READER(ZMAT" << mb.getClassName() << "," << mb.getClassName() << ")" << endl << endl;
     out << "Z_END_NAMESPACE;" << endl;
-  } // end of ZMATInterface::endTreatement
+  } // end of ZMATInterface::endTreatment
 
   void
   ZMATInterface::writeBehaviourInitialisation(std::ostream& out,
@@ -1272,7 +1272,7 @@ namespace mfront
 		<< "\"," << isv.arraySize << "*(this->uts()),1);" << endl; 
 	  }
 	} else {
-	  string msg("ZMATInterface::endTreatement : "
+	  string msg("ZMATInterface::endTreatment : "
 		     "unsupported state variable type");
 	  throw(runtime_error(msg));
 	}

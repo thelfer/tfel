@@ -270,7 +270,7 @@ namespace mfront{
   } // end of AsterInterface::getModellingHypothesesToBeTreated
 
   void
-  AsterInterface::endTreatement(const BehaviourDescription& mb,
+  AsterInterface::endTreatment(const BehaviourDescription& mb,
 				      const FileDescription& fd) const
   {
     using namespace std;
@@ -283,14 +283,14 @@ namespace mfront{
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL))){
-      string msg("AsterInterface::endTreatement : "
+      string msg("AsterInterface::endTreatment : "
 		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
       throw(runtime_error(msg));
     }
     if((this->compareToNumericalTangentOperator)||
        (this->savesTangentOperator)){
       if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	string msg("AsterInterface::endTreatement : "
+	string msg("AsterInterface::endTreatment : "
 		   "unsupported feature @AsterSaveTangentOperator "
 		   "and @AsterCompareToNumericalTangentOperator : "
 		   "those are only valid for small strain beahviours");
@@ -316,7 +316,7 @@ namespace mfront{
     fileName += ".hxx";
     ofstream out("include/MFront/Aster/"+fileName);
     if(!out){
-      string msg("AsterInterface::endTreatement : ");
+      string msg("AsterInterface::endTreatment : ");
       msg += "could not open file ";
       msg += fileName;
       throw(runtime_error(msg));
@@ -417,7 +417,7 @@ namespace mfront{
 
     out.open("src/"+fileName);
     if(!out){
-      string msg("AsterInterface::endTreatement : ");
+      string msg("AsterInterface::endTreatment : ");
       msg += "could not open file ";
       msg += fileName;
       throw(runtime_error(msg));
@@ -431,7 +431,7 @@ namespace mfront{
     } else if (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       sfeh = "0";
     } else {
-      string msg("AsterInterface::endTreatement : "
+      string msg("AsterInterface::endTreatment : "
 		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
       throw(runtime_error(msg));
     }
@@ -500,7 +500,7 @@ namespace mfront{
       dv0 = "U0";
       dv1 = "DU";
     } else {
-      string msg("AsterInterface::endTreatement : "
+      string msg("AsterInterface::endTreatment : "
 		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
       throw(runtime_error(msg));
     }
@@ -672,7 +672,7 @@ namespace mfront{
     out << "}\n\n";
     out << "} // end of extern \"C\"\n";
     out.close();
-  } // end of AsterInterface::endTreatement
+  } // end of AsterInterface::endTreatment
 
   void
   AsterInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
@@ -742,7 +742,7 @@ namespace mfront{
 	}
       }
       if(uh.empty()){
-	string msg("UMATInterface::endTreatement : ");
+	string msg("UMATInterface::endTreatment : ");
 	msg += "internal error : the mechanical behaviour says that not "
 	  "all handled mechanical data are specialised, but we found none.";
 	throw(runtime_error(msg));
@@ -967,7 +967,7 @@ namespace mfront{
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "static constexpr AsterSymmetryType type = aster::ORTHOTROPIC;\n";
     } else {
-      string msg("AsterInterface::endTreatement : ");
+      string msg("AsterInterface::endTreatment : ");
       msg += "unsupported behaviour type.\n";
       msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
       throw(runtime_error(msg));
@@ -1007,7 +1007,7 @@ namespace mfront{
 	out << "static constexpr unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
       }
     } else {
-      string msg("AsterInterface::endTreatement : ");
+      string msg("AsterInterface::endTreatment : ");
       msg += "unsupported behaviour type.\n";
       msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
       throw(runtime_error(msg));

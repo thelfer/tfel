@@ -75,8 +75,7 @@ namespace mfront
 		  const std::string& type)
   {
     using namespace std;
-    vector<string>::const_iterator p;
-    for(p=n.begin();p!=n.end();++p){
+    for(auto p=n.cbegin();p!=n.cend();++p){
       if(m.find(*p)==m.end()){
 	string msg("no '"+type+"' named '"+*p+"' declared");
 	throw(runtime_error(msg));
@@ -91,8 +90,7 @@ namespace mfront
 		  const std::string& type)
   {
     using namespace std;
-    vector<string>::const_iterator p;
-    for(p=n.begin();p!=n.end();++p){
+    for(auto p=n.begin();p!=n.end();++p){
       if(evm1.find(*p)==evm1.end()){
 	if(evm2.find(*p)==evm2.end()){
 	  string msg("no '"+type+"' named '"+*p+"' declared");
@@ -186,13 +184,12 @@ namespace mfront
   MTest::setAccelerationAlgorithm(const std::string& a)
   {
     using namespace std;
-    AccelerationAlgorithmFactory& f =
-      AccelerationAlgorithmFactory::getAccelerationAlgorithmFactory();
     if(this->aa.get()!=nullptr){
       string msg("MTest::setAccelerationAlgorithm : "
 		 "acceleration algorithm already set");
       throw(runtime_error(msg));
     }
+    auto& f = AccelerationAlgorithmFactory::getAccelerationAlgorithmFactory();
     this->aa = f.getAlgorithm(a);
   }
 
@@ -215,8 +212,7 @@ namespace mfront
 			   const real v)
   {
     using namespace std;
-    EvolutionManager::iterator pev;
-    pev = this->evm->find(n);
+    const auto pev = this->evm->find(n);
     if(pev==this->evm->end()){
       string msg("MTest::setEvolutionValue : no evolution '"+
 		 n+"' declared");
@@ -302,7 +298,6 @@ namespace mfront
   MTest::setUseCastemAccelerationAlgorithm(const bool ucaa)
   {
     using namespace std;
-    using std::shared_ptr;
     if(ucaa){
       if(this->aa.get()!=nullptr){
 	string msg("MTest::setUseCastemAccelerationAlgorithm : "
@@ -999,7 +994,6 @@ namespace mfront
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::system;
-    using std::shared_ptr;
     typedef ExternalLibraryManager ELM;
     typedef tfel::material::ModellingHypothesis MH;
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
@@ -1069,7 +1063,7 @@ namespace mfront
 	//! suffixes of stensor components
 	vector<string> sexts;
 	this->b->getStensorComponentsSuffixes(sexts,this->hypothesis);
-	for(vector<string>::size_type s=0;s!=sexts.size();++s){
+	for(auto s=0;s!=sexts.size();++s){
 	  const string& vn = *pn+sexts[s];
 	  this->declareVariable(vn,true);
 	  this->ivfullnames.push_back(vn);
@@ -1078,7 +1072,7 @@ namespace mfront
 	//! suffixes f stensor components
 	vector<string> sexts;
 	this->b->getTensorComponentsSuffixes(sexts,this->hypothesis);
-	for(vector<string>::size_type s=0;s!=sexts.size();++s){
+	for(auto s=0;s!=sexts.size();++s){
 	  const string& vn = *pn+sexts[s];
 	  this->declareVariable(vn,true);
 	  this->ivfullnames.push_back(vn);
@@ -1103,7 +1097,6 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
-    using std::shared_ptr;
     typedef tfel::material::ModellingHypothesis MH;
     EvolutionManager::const_iterator pev;
     if(this->initialisationFinished){
@@ -1313,7 +1306,6 @@ namespace mfront
   MTest::initializeCurrentState(MTestCurrentState& s) const
   {
     using namespace std;
-    using std::shared_ptr;
     // getting the names of the materials properties
     const auto mpnames(this->b->getMaterialPropertiesNames());
     const auto esvnames(this->b->getExternalStateVariablesNames());
@@ -1425,16 +1417,13 @@ namespace mfront
   size_t
   MTest::getNumberOfUnknowns() const
   {
-    using std::shared_ptr;
     using tfel::math::vector;
-    vector<shared_ptr<Constraint> >::const_iterator pc;
     // number of components of the driving variables
     const unsigned short N = this->b->getDrivingVariablesSize(this->hypothesis);
     // getting the total number of unknowns
     size_t s = N;
-    for(pc =this->constraints.begin();
-	pc!=this->constraints.end();++pc){
-      const Constraint& c = *(*pc);
+    for(const auto& pc : this->constraints){
+      const Constraint& c = *pc;
       s += c.getNumberOfLagrangeMultipliers();
     }
     return s;
@@ -1446,7 +1435,6 @@ namespace mfront
     using namespace std;
     using namespace tfel::tests;
     using tfel::math::vector;
-    using std::shared_ptr;
     TestResult tr;
     vector<real>::const_iterator pt;
     vector<real>::const_iterator pt2;
@@ -1527,7 +1515,6 @@ namespace mfront
     using namespace tfel::utilities;
     using namespace tfel::math;
     using namespace tfel::material;
-    using std::shared_ptr;
     using tfel::tests::TestResult;
     using tfel::math::vector;
     vector<string>::const_iterator p;

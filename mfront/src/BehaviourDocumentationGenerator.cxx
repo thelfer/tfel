@@ -122,7 +122,7 @@ namespace mfront{
 	const auto& e = glossary.getGlossaryEntry(d.externalName);
 	ostringstream os;
 	os << e.getShortDescription();
-	const auto& cd = e.getDescription();
+	// const auto& cd = e.getDescription();
 	// for(const auto & cd_pcd : cd){
 	//   if(!cd_pcd.empty()){
 	//     os << cd_pcd << endl;	    
@@ -329,7 +329,8 @@ namespace mfront{
     : tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>(argc,argv),
       MFrontBase(argc,argv),
       dsl(d),
-      file(f)
+      file(f),
+      otype(BehaviourDocumentationGenerator::FULL)
   {
     this->registerCommandLineCallBacks();
     this->parseArguments();
@@ -349,6 +350,8 @@ namespace mfront{
 				"add a new path at the beginning of the search paths",true);
     Parser::registerNewCallBack("--search-path",&BehaviourDocumentationGenerator::treatSearchPath,
 				"add a new path at the beginning of the search paths",true);
+    Parser::registerNewCallBack("--web",&BehaviourDocumentationGenerator::treatWeb,
+				"output a web version of the file");
   } // end of BehaviourDocumentationGenerator::registerCommandLineCallBacks
   
   void BehaviourDocumentationGenerator::treatUnknownArgument(void)
@@ -384,11 +387,22 @@ namespace mfront{
   } // end of BehaviourDocumentationGenerator::getUsageDescription
 
   void
+  BehaviourDocumentationGenerator::treatWeb(void)
+  {
+    using namespace std;
+    if(this->otype!=FULL){
+      throw(runtime_error("BehaviourDocumentationGenerator::treatWeb: "
+			  "output type already specified"));
+    }
+    this->otype=WEB;
+  } // end of BehaviourDocumentationGenerator::treatWeb
+
+  
+
+  void
   BehaviourDocumentationGenerator::exe(void)
   {
     using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::material;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "Treating file '" << this->file << "'" << endl;
     }
@@ -409,6 +423,84 @@ namespace mfront{
       msg += "'src/"+name+".txt'";
       throw(runtime_error(msg));
     }
+    if(this->otype==FULL){
+      this->writeFullOutput(out,mb,fd);
+    } else if(this->otype==WEB){
+      this->writeWebOutput(out,mb,fd);
+    } else {
+      throw(runtime_error("BehaviourDocumentationGenerator::exe: "
+			  "unsupported output type"));
+    }
+    out.close();
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      auto& log = getLogStream();
+      log << "BehaviourDocumentationGenerator::exe : end" << endl;
+    }
+  } // end of BehaviourDocumentationGenerator::exe
+
+  void
+  BehaviourDocumentationGenerator::writeWebOutput(std::ostream& out,
+						  const BehaviourDescription& mb,
+						  const FileDescription& fd) const
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    ifstream f(this->file);
+    if(!f){
+      string msg("BehaviourDocumentationGenerator::writeWebOutput: "
+		 "can't open file '"+this->file+"'");
+    }
+    out << "# " << mb.getClassName() << " behaviour description" << endl << endl;
+    out << "* file   : " << fd.fileName   << endl;
+    out << "* author : ";
+    if(!fd.authorName.empty()){
+      out << fd.authorName << endl;
+    } else {
+      out << "(unspecified)" << endl;
+    }
+    out << "* date   : ";
+    if(!fd.date.empty()){
+      out << fd.date;
+    } else {
+      out << "(unspecified)";
+    }
+    if(mb.hasAttribute(BehaviourData::algorithm)){
+      out << "* algorithme: " << mb.getAttribute<string>(BehaviourData::algorithm) << endl;
+    }
+    out << endl << endl;
+    if(!fd.description.empty()){
+      const auto d = tokenize(fd.description,'\n');
+      for(const auto& l : d){
+	if((l.size()>=2)&&((l)[0]=='*')&&((l)[1]==' ')){
+	  out << l.substr(2) << endl;
+	} else {
+	  out << l << endl;
+	}
+      }
+    } else {
+      out << "No description specified";
+    }
+    out << endl;
+    out << endl;
+    out << "~~~~ {#" << mb.getClassName() << " .cpp .numberLines}" << endl;
+    while(!f.eof()){
+      string line;
+      getline(f,line);
+      out << line << endl;
+    }
+    out << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+    out << endl;
+
+  } // end of BehaviourDocumentationGenerator::writeWebOutput
+
+  void
+  BehaviourDocumentationGenerator::writeFullOutput(std::ostream& out,
+						   const BehaviourDescription& mb,
+						   const FileDescription& fd) const
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    using namespace tfel::material;
     out << "# " << mb.getClassName() << " behaviour description" << endl << endl;
     out << "## Source file" << endl << endl;
     out << "* file   : " << fd.fileName   << endl;
@@ -517,12 +609,7 @@ namespace mfront{
 	}
       }
     }
-    out.close();
-    if(getVerboseMode()>=VERBOSE_DEBUG){
-      auto& log = getLogStream();
-      log << "BehaviourDocumentationGenerator::exe : end" << endl;
-    }
-  } // end of BehaviourDocumentationGenerator::exe
+  } // end of BehaviourDocumentationGenerator::writeFullOutput
 
   BehaviourDocumentationGenerator::~BehaviourDocumentationGenerator()
   {} // end of BehaviourDocumentationGenerator::~BehaviourDocumentationGenerator

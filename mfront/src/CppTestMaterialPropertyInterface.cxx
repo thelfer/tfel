@@ -241,6 +241,7 @@ namespace mfront
 		 <<"    cerr << \"Could not open file "<<csvFileName<<"\" << endl;" << endl
 		 <<"    return 1;" << endl
 		 <<"  }" << endl ;
+    this->srcFile<<"  file.precision(14);" << endl;
     // on boucle sur toutes les variables pour generer le fichier csv
     if(!inputs.empty()){
       for(auto p3=inputs.begin();p3!=inputs.end();++p3){

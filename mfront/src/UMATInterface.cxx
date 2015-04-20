@@ -662,7 +662,7 @@ namespace mfront{
   } // end of UMATInterfaceModellingHypothesesToBeTreated
 
   void
-  UMATInterface::endTreatement(const BehaviourDescription& mb,
+  UMATInterface::endTreatment(const BehaviourDescription& mb,
 				     const FileDescription& fd) const
   {
     using namespace std;
@@ -674,7 +674,7 @@ namespace mfront{
 
     // some consistency checks
     if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){
-      string msg("UMATInterface::endTreatement : ");
+      string msg("UMATInterface::endTreatment : ");
       msg += "the type of the behaviour (isotropic or orthotropic) does not ";
       msg += "match the the type of its elastic behaviour.\n";
       msg += "This is not allowed here :\n";
@@ -684,7 +684,7 @@ namespace mfront{
     }
     if(this->useTimeSubStepping){
       if(this->maximumSubStepping==0u){
-	string msg("UMATInterface::endTreatement : ");
+	string msg("UMATInterface::endTreatment : ");
 	msg += "use of time sub stepping requested but MaximumSubStepping is zero.\n";
 	msg += "Please use the @UMATMaximumSubStepping directive";
 	throw(runtime_error(msg));
@@ -708,7 +708,7 @@ namespace mfront{
 
     ofstream out("include/MFront/UMAT/"+fileName);
     if(!out){
-      string msg("UMATInterface::endTreatement : ");
+      string msg("UMATInterface::endTreatment : ");
       msg += "could not open file ";
       msg += fileName;
       throw(runtime_error(msg));
@@ -775,7 +775,7 @@ namespace mfront{
 	      this->writeUmatFortranFunctionDefine(out,name);
 	    }
 	  } else {
-	    string msg("UMATInterface::endTreatement : "
+	    string msg("UMATInterface::endTreatment : "
 		       "internal error, unsupported finite strain strategy");
 	    throw(runtime_error(msg));
 	  }
@@ -837,7 +837,7 @@ namespace mfront{
 	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
 	    }
 	  } else {
-	    string msg("UMATInterface::endTreatement : "
+	    string msg("UMATInterface::endTreatment : "
 		       "internal error, unsupported finite strain strategy");
 	    throw(runtime_error(msg));
 	  }
@@ -878,7 +878,7 @@ namespace mfront{
 	      this->writeUmatFunctionDeclaration(out,name);
 	    }
 	  } else {
-	    string msg("UMATInterface::endTreatement : "
+	    string msg("UMATInterface::endTreatment : "
 		       "internal error, unsupported finite strain strategy");
 	    throw(runtime_error(msg));
 	  }
@@ -907,7 +907,7 @@ namespace mfront{
 
     out.open("src/"+fileName);
     if(!out){
-      string msg("UMATInterface::endTreatement : ");
+      string msg("UMATInterface::endTreatment : ");
       msg += "could not open file ";
       msg += fileName;
       throw(runtime_error(msg));
@@ -928,7 +928,7 @@ namespace mfront{
     if(this->generateMTestFile){
       if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 	 (mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-     	string msg("UMATInterface::endTreatement : "
+     	string msg("UMATInterface::endTreatment : "
 		   "unsupported behaviour type");
 	throw(runtime_error(msg));
       }
@@ -1090,7 +1090,7 @@ namespace mfront{
 		  << makeLowerCase(name) << "_Interface = 1u;\n\n";
 	    }
 	  } else {
-	    string msg("UMATInterface::endTreatement : "
+	    string msg("UMATInterface::endTreatment : "
 		       "internal error, unsupported finite strain strategy");
 	    throw(runtime_error(msg));
 	  }
@@ -1164,7 +1164,7 @@ namespace mfront{
 	      this->writeSetParametersFunctionsImplementations(out,name,mb);
 	    }
 	  } else {
-	    string msg("UMATInterface::endTreatement : "
+	    string msg("UMATInterface::endTreatment : "
 		       "internal error, unsupported finite strain strategy");
 	    throw(runtime_error(msg));
 	  }
@@ -1224,7 +1224,7 @@ namespace mfront{
 	      this->writeStandardUmatFunction(out,name,"",mb);
 	    }
 	  } else {
-	    string msg("UMATInterface::endTreatement : "
+	    string msg("UMATInterface::endTreatment : "
 		       "internal error, unsupported finite strain strategy");
 	    throw(runtime_error(msg));
 	  }
@@ -1244,7 +1244,7 @@ namespace mfront{
        (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       this->generateGibianeDeclaration(mb,fd);
     }
-  } // end of UMATInterface::endTreatement
+  } // end of UMATInterface::endTreatment
 
   void
   UMATInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
@@ -1353,7 +1353,7 @@ namespace mfront{
 	}
       }
       if(uh.empty()){
-	string msg("UMATInterface::endTreatement : ");
+	string msg("UMATInterface::endTreatment : ");
 	msg += "internal error : the mechanical behaviour says that not "
 	  "all handled mechanical data are specialised, but we found none.";
 	throw(runtime_error(msg));

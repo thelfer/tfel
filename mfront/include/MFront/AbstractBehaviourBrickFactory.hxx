@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/include/MFront/BehaviourBrickFactory.hxx
+ * \file   mfront/include/MFront/AbstractBehaviourBrickFactory.hxx
  * \brief
  * \author Helfer Thomas
  * \date   October 20, 2014
@@ -18,7 +18,7 @@
 #include<string>
 
 #include<memory>
-#include"MFront/BehaviourBrick.hxx"
+#include"MFront/AbstractBehaviourBrick.hxx"
 
 namespace mfront
 {
@@ -29,56 +29,56 @@ namespace mfront
   struct BehaviourDescription;
 
   /*!
-   * register the non linear BehaviourBrick used by the implicit parser
+   * register the non linear AbstractBehaviourBrick used by the implicit parser
    */
-  struct BehaviourBrickFactory
+  struct AbstractBehaviourBrickFactory
   {
     //! a simple alias
-    typedef std::shared_ptr<BehaviourBrick> (* constructor)(AbstractBehaviourDSL&,
+    typedef std::shared_ptr<AbstractBehaviourBrick> (* constructor)(AbstractBehaviourDSL&,
 									BehaviourDescription&,
-									const BehaviourBrick::Parameters&);
+									const AbstractBehaviourBrick::Parameters&);
     /*!
-     * \return the uniq instance of the BehaviourBrick factory
+     * \return the uniq instance of the AbstractBehaviourBrick factory
      */
-    static BehaviourBrickFactory&
+    static AbstractBehaviourBrickFactory&
     getFactory();
     /*!
-     * \return the requested BehaviourBrick
-     * \param[in]     a   : BehaviourBrick name
+     * \return the requested AbstractBehaviourBrick
+     * \param[in]     a   : AbstractBehaviourBrick name
      * \param[in,out] dsl : calling domain specific language
      * \param[in,out] mb  : mechanical behaviour description to be
      * treated
      * \param[out]    p   : parameters
      */
-    std::shared_ptr<BehaviourBrick>
+    std::shared_ptr<AbstractBehaviourBrick>
     get(const std::string&,
 	AbstractBehaviourDSL&,
 	BehaviourDescription&,
-	const BehaviourBrick::Parameters&) const;
+	const AbstractBehaviourBrick::Parameters&) const;
     /*!
-     * \param[in] a : BehaviourBrick name 
-     * \param[in] c : BehaviourBrick constructor 
+     * \param[in] a : AbstractBehaviourBrick name 
+     * \param[in] c : AbstractBehaviourBrick constructor 
      */
     void
-    registerBehaviourBrick(const std::string&,
+    registerAbstractBehaviourBrick(const std::string&,
 		  const constructor);
   private:
     /*!
      * default constructor
      */
-    BehaviourBrickFactory();
+    AbstractBehaviourBrickFactory();
     /*!
      * copy constructor (disabled)
      */
-    BehaviourBrickFactory(const BehaviourBrickFactory&);
+    AbstractBehaviourBrickFactory(const AbstractBehaviourBrickFactory&);
     /*!
      * assignement operator (disabled)
      */
-    BehaviourBrickFactory&
-    operator=(const BehaviourBrickFactory&);
+    AbstractBehaviourBrickFactory&
+    operator=(const AbstractBehaviourBrickFactory&);
     //! all registred constructors
     std::map<std::string,constructor> constructors;
-  }; // end of struct BehaviourBrickFactory
+  }; // end of struct AbstractBehaviourBrickFactory
 
 } // end of namespace mfront
 

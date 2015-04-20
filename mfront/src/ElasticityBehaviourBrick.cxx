@@ -24,7 +24,7 @@ namespace mfront{
 
   ElasticityBehaviourBrick::ElasticityBehaviourBrick(AbstractBehaviourDSL& dsl_,
 						     BehaviourDescription& mb_,
-						     const BehaviourBrick::Parameters& p)
+						     const AbstractBehaviourBrick::Parameters& p)
     : BehaviourBrickBase(dsl_,mb_)
   {
     using namespace std;
@@ -252,6 +252,10 @@ namespace mfront{
       throw(runtime_error(msg));
     }
   } // end of ElasticityBehaviourBrick::treatOrthotropicBehaviour
+
+  void 
+  ElasticityBehaviourBrick::endTreatment(BehaviourDescription&) const
+  {} // end of ElasticityBehaviourBrick::endTreatment
 
   ElasticityBehaviourBrick::~ElasticityBehaviourBrick()
   {} // end of ElasticityBehaviourBrick::~ElasticityBehaviourBrick

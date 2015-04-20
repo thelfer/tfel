@@ -1432,6 +1432,8 @@ mfront/Examples/rungekutta54.mfront -text
 mfront/Examples/win32.txt -text
 mfront/Makefile.am -text
 mfront/include/CMakeLists.txt -text
+mfront/include/MFront/AbstractBehaviourBrick.hxx -text
+mfront/include/MFront/AbstractBehaviourBrickFactory.hxx -text
 mfront/include/MFront/AbstractBehaviourDSL.hxx -text
 mfront/include/MFront/AbstractBehaviourInterface.hxx -text
 mfront/include/MFront/AbstractDSL.hxx -text
@@ -1456,9 +1458,7 @@ mfront/include/MFront/Aster/AsterTraits.hxx -text
 mfront/include/MFront/Aster/aster.doxygen -text
 mfront/include/MFront/AsterInterface.hxx -text
 mfront/include/MFront/BehaviourAttribute.hxx -text
-mfront/include/MFront/BehaviourBrick.hxx -text
 mfront/include/MFront/BehaviourBrickBase.hxx -text
-mfront/include/MFront/BehaviourBrickFactory.hxx -text
 mfront/include/MFront/BehaviourDSLBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.ixx -text
 mfront/include/MFront/BehaviourDSLCommon.hxx -text
@@ -1675,6 +1675,8 @@ mfront/mtest/UmatFiniteStrainBehaviour.cxx -text
 mfront/mtest/UmatNormaliseTangentOperator.cxx -text
 mfront/mtest/UmatSmallStrainBehaviour.cxx -text
 mfront/mtest/UmatStandardBehaviour.cxx -text
+mfront/src/AbstractBehaviourBrick.cxx -text
+mfront/src/AbstractBehaviourBrickFactory.cxx -text
 mfront/src/AbstractBehaviourDSL.cxx -text
 mfront/src/AbstractBehaviourInterface.cxx -text
 mfront/src/AbstractDSL.cxx -text
@@ -1689,9 +1691,7 @@ mfront/src/AsterInterfaceExceptions.cxx -text
 mfront/src/AsterRotationMatrix.cxx -text
 mfront/src/AsterStressFreeExpansionHandler.cxx -text
 mfront/src/AsterTangentOperator.cxx -text
-mfront/src/BehaviourBrick.cxx -text
 mfront/src/BehaviourBrickBase.cxx -text
-mfront/src/BehaviourBrickFactory.cxx -text
 mfront/src/BehaviourDSLCommon.cxx -text
 mfront/src/BehaviourData.cxx -text
 mfront/src/BehaviourDescription.cxx -text

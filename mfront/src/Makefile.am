@@ -92,10 +92,10 @@ libTFELMFront_la_SOURCES = MFrontBase.cxx                                       
 		           CppTestMaterialPropertyInterface.cxx                   \
 		           ExcelMaterialPropertyInterface.cxx                     \
 		           ExcelMaterialPropertyInternalInterface.cxx             \
-		           BehaviourBrick.cxx                                     \
+		           AbstractBehaviourBrick.cxx                             \
 		           BehaviourBrickBase.cxx                                 \
 		           ElasticityBehaviourBrick.cxx                           \
-		           BehaviourBrickFactory.cxx                              \
+		           AbstractBehaviourBrickFactory.cxx                      \
 		           UMATInterfaceBase.cxx
 
 

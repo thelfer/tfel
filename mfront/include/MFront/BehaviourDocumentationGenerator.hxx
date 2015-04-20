@@ -28,6 +28,10 @@ namespace mfront{
 
   // forward declaration
   struct AbstractBehaviourDSL;
+  // forward declaration
+  struct BehaviourDescription;
+  // forward declaration
+  struct FileDescription;
 
   /*!
    * Class used by the mfront-query tool to extract information from
@@ -37,6 +41,13 @@ namespace mfront{
     : public tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>,
       public MFrontBase
   {
+    /*!
+     * type of documentation to be generated 
+     */
+    enum OutputType{
+      FULL,
+      WEB
+    };
     /*!
      * build a BehaviourDocumentationGenerator object based on command line arguments
      * \param[in] argc : number of command line arguments
@@ -55,10 +66,12 @@ namespace mfront{
     //! ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>;
     //! \brief register call-backs associated with command line arguments
-    void registerCommandLineCallBacks(void);
+    virtual void registerCommandLineCallBacks(void);
     //! return the current argument
     virtual const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const final;
+    //! treat an unknown argument
+    virtual void treatWeb(void);
     //! treat an unknown argument
     virtual void treatUnknownArgument(void) final;
     //! get the version description
@@ -67,10 +80,18 @@ namespace mfront{
     //! get the usage description
     virtual std::string
     getUsageDescription(void) const final;
+    virtual void writeWebOutput(std::ostream&,
+				const BehaviourDescription&,
+				const FileDescription&) const;
+    virtual void writeFullOutput(std::ostream&,
+				 const BehaviourDescription&,
+				 const FileDescription&) const;
     //! abstract behaviour dsl
     std::shared_ptr<AbstractBehaviourDSL> dsl;
     //! file name
     std::string file;    
+    //! type of ouput
+    OutputType otype;
   }; // end of struct BehaviourDocumentationGenerator
 
 } // end of namespace mfront

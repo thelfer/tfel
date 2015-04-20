@@ -27,15 +27,13 @@ namespace mfront
 							  const real v)
   {
     using namespace std;
-    using std::shared_ptr;
-    typedef EvolutionManager::value_type MVType;
     if(evm.find(n)==evm.end()){
       if(getVerboseMode()>=VERBOSE_LEVEL2){
 	auto& log = getLogStream();
 	log << "MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues : "
 	    << "set material property '" << n << "' to default value" << endl;
       }
-      if(!mp.insert(MVType(n,shared_ptr<Evolution>(new ConstantEvolution(v)))).second){
+      if(!mp.insert({n,shared_ptr<Evolution>(new ConstantEvolution(v))}).second){
 	string msg("MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues : "
 		   "default value for material property '"+n+"' already declared");
 	throw(runtime_error(msg));

@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/include/MFront/BehaviourBrick.hxx
+ * \file   mfront/include/MFront/AbstractBehaviourBrick.hxx
  * \brief
  * \author Helfer Thomas
  * \date   October 20, 2014
@@ -20,24 +20,28 @@
 namespace mfront
 {
 
+  // forward declaration
+  struct BehaviourDescription;
+
   /*!
-   * BehaviourBrick are ready-to use block used to build a complex behaviour.
+   * AbstractBehaviourBrick are ready-to use block used to build a complex behaviour.
    */
-  struct BehaviourBrick
+  struct AbstractBehaviourBrick
   {
     /*!
-     * Object used to pass parameters to BehaviourBricks constructor
+     * Object used to pass parameters to AbstractBehaviourBricks constructor
      * The key   is the parameter name.
      * The value is the parameter value.
      */
-    typedef std::map<std::string,std::string> Parameters;
+    using Parameters = std::map<std::string,std::string>;
     //! a simple alias
-    typedef Parameters::value_type Parameter;
-    /*!
-     * destructor
-     */
-    virtual ~BehaviourBrick();
-  }; // end of struct BehaviourBrick
+    using Parameter  = Parameters::value_type;
+    //! ends the file treatment
+    virtual void 
+    endTreatment(BehaviourDescription&) const = 0;
+    //! destructor
+    virtual ~AbstractBehaviourBrick();
+  }; // end of struct AbstractBehaviourBrick
 
 } // end of namespace mfront
 
