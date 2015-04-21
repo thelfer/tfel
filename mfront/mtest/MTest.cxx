@@ -1155,13 +1155,28 @@ namespace mfront
     }
     // post-processing
     unsigned short cnbr = 2;
+    const char* dvn;
+    const char* thn;
     this->out << "# first column : time" << endl;
+    if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      dvn = "strain";
+      thn = "stress";
+    } else if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+      dvn = "deformation gradient";
+      thn = "Cauchy stress";
+    } else if(this->b->getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL){
+      dvn = "opening displacement";
+      thn = "cohesive force";
+    } else {
+      dvn = "driving variables";
+      thn = "thermodynamic forces";
+    }
     for(unsigned short i=0;i!=ndv;++i){
-      this->out << "# " << cnbr << " column : " << i+1 << "th component of the driving variables" << endl;
+      this->out << "# " << cnbr << " column : " << i+1 << "th component of the " << dvn << endl;
       ++cnbr;
     }
     for(unsigned short i=0;i!=nth;++i){
-      this->out << "# " << cnbr << " column : " << i+1 << "th component of the thermodynamic forces" << endl;
+      this->out << "# " << cnbr << " column : " << i+1 << "th component of the " << thn << endl;
       ++cnbr;
     }
     const std::vector<string>& ivdes =

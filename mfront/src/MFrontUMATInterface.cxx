@@ -1331,6 +1331,9 @@ namespace mfront{
     map<string,vector<string> > deps;
     string lib = MFrontUMATInterface::getLibraryName(mb);
     deps[lib].push_back("-lUMATInterface");
+    if(this->generateMTestFile){
+      deps[lib].push_back("-lMTestFileGenerator");
+    }
 #ifdef HAVE_CXX11
       deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
 #else 
