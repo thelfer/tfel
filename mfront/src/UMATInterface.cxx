@@ -1291,6 +1291,9 @@ namespace mfront{
     d.sources[lib].push_back("umat"+name+".cxx");    
     d.headers.push_back("MFront/UMAT/umat"+name+".hxx");
     d.dependencies[lib].push_back("-lUMATInterface");
+    if(this->generateMTestFile){
+      d.dependencies[lib].push_back("-lMTestFileGenerator");
+    }
     d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
     // entry points
     auto b = vector<string>{};

@@ -847,27 +847,25 @@ namespace tfel{
 			StensorType& U,
 			const TensorType2& F)
     {
-      using namespace std;
       using namespace tfel::typetraits;
       using tfel::fsalgo::transform;
-      typedef typename TensorTraits<TensorType2>::NumType T;
-      typedef typename BaseType<T>::type base;
-      typedef typename ComputeBinaryResult<base,T,OpDiv>::Result inv_T;
-      typedef typename ComputeBinaryResult<T,T,OpMult>::Result   T2;
-      typedef typename ComputeBinaryResult<T2,T,OpMult>::Result  T3;
+      using T    = typename TensorTraits<TensorType2>::NumType;
+      using base = typename BaseType<T>::type;
+      using T2   = typename ComputeBinaryResult<T,T,OpMult>::Result;
+      constexpr auto dime = TensorTraits<TensorType>::dime; 
+      const auto id = stensor<dime,base>::Id();
       T (*sqrt_ptr)(const T2) = std::sqrt;
       tvector<3u,T2> vp_C;
       tvector<3u,T> vp_U;
       const auto C = computeRightCauchyGreenTensor(F);
       C.computeEigenValues(vp_C);
-      transform<3u>::exe(vp_C.begin(),vp_U.begin(),ptr_fun(sqrt_ptr));
+      transform<3u>::exe(vp_C.begin(),vp_U.begin(),std::ptr_fun(sqrt_ptr));
       const auto i1 = vp_U[0]+vp_U[1]+vp_U[2];
       const auto i2 = vp_U[0]*vp_U[1]+vp_U[0]*vp_U[2]+vp_U[1]*vp_U[2];
       const auto i3 = vp_U[0]*vp_U[1]*vp_U[2];
       const auto D  = i1*i2-i3;
-      U = 1/D*(-square(C)+(i1*i1-i2)*C+i1*i3*stensor<TensorTraits<TensorType>::dime,base>::Id());
-      stensor<TensorTraits<TensorType>::dime,inv_T> U_1 =
-	(C-i1*U+i2*stensor<TensorTraits<TensorType>::dime,base>::Id())*(1/i3);
+      U = 1/D*(-square(C)+(i1*i1-i2)*C+i1*i3*id);
+      const auto U_1 =(C-i1*U+i2*id)*(1/i3);
       R = F * U_1;
     } // end of polar_decomposition
 

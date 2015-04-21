@@ -464,6 +464,9 @@ namespace mfront{
     d.epts[lib].push_back(this->getFunctionName(name));
     d.headers.push_back("MFront/Cyrano/cyrano"+name+".hxx");
     d.dependencies[lib].push_back("-lCyranoInterface");
+    if(this->generateMTestFile){
+      d.dependencies[lib].push_back("-lMTestFileGenerator");
+    }
     d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
   } // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
 

@@ -723,6 +723,9 @@ namespace mfront{
     d.sources[lib].push_back("aster"+name+".cxx");
     d.headers.push_back("MFront/Aster/aster"+name+".hxx");
     d.dependencies[lib].push_back("-lAsterInterface");
+    if(this->generateMTestFile){
+      d.dependencies[lib].push_back("-lMTestFileGenerator");
+    }
     d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
     d.epts[lib].push_back("aster"+makeLowerCase(name));
   } // end of AsterInterface::getGeneratedSources
