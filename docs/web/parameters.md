@@ -107,3 +107,5 @@ This functionality is illustrated below:
 
 ![Defintion of parameters through an external file](img/parameters.svg
  "Defintion of parameters through an external file")
+
+<!-- Local IspellDict: english -->

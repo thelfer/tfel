@@ -482,3 +482,5 @@ MatT1 = 'MATERIAU' ModT1 'K' Tmat;
 
 Pour une utilisation dans `PASAPAS`, deux chargements `PORO` et `FIMA`
 doivent être définis.
+
+<!-- Local IspellDict: english -->

@@ -46,6 +46,7 @@ pandoc_html(material-properties)
 pandoc_html(behaviours)
 pandoc_html(models)
 pandoc_html(parameters)
+pandoc_html(release-notes)
 
 install(DIRECTORY js css doc img downloads
     DESTINATION share/doc/tfel/web

@@ -83,3 +83,5 @@ may be used when using the `Implicit` domain specific language:
 
 ![Use order of the code blocks defined by the user](img/ImplicitDSL.svg
  "Use order of the code blocks defined by the user")
+
+<!-- Local IspellDict: english -->

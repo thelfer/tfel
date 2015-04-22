@@ -831,8 +831,8 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer)
     for(vector<string>::const_iterator p2=notes.begin();p2!=notes.end();++p2){
       doc << *p2 << endl;
     }
-
   }
+  doc << "<!-- Local IspellDict: english -->" << endl;
 }
 
 int main(int argc, char* argv[])

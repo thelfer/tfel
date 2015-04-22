@@ -47,3 +47,4 @@ is allowed to run simultaneously.
 **Committing to `trunk` is only allowed if the `check_all` script runs
   successfully**
 
+<!-- Local IspellDict: english -->

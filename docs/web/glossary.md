@@ -851,3 +851,5 @@ Cette entrée décrit le module d'Young d'un matériau orthotrope suivant la tro
 * noms  : YoungModulus3
 * unité : \(Pa\)
 * type : scalaire 
+
+<!-- Local IspellDict: english -->

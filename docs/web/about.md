@@ -21,3 +21,6 @@ The MFront web site was build using the following tools:
 - [HTML5 Boilerplate](http://html5boilerplate.com)
 - tutorials from [AlsaCreations](http://www.alsacreations.com) and
   [Tutorialzine](http://tutorialzine.com)
+
+<!-- Local IspellDict: english -->
+

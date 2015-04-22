@@ -51,3 +51,5 @@ COMPORTEMENT=_F ( RELATION    = 'MFRONT',
 ~~~~~~~~~~~~~~~~
 
 #References
+
+<!-- Local IspellDict: english -->

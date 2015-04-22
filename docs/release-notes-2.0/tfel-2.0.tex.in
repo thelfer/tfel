@@ -126,6 +126,35 @@
 Nouvelles classes {\tt tensor}, {\tt t2tot2}, {\tt st2tot2} et {\tt
   t2tost2}.
 
+\section{Version 2.0.2}
+
+La version 2.0.2 propose un certain nombre de corrections et
+améliorations mineures~:
+\begin{itemize}
+\item la multiplication de deux tenseurs symétriques a été
+  corrigée. Dans les versions précédentes, on a faussement supposé que
+  le résultat de cette opération était en tenseur symétrique, ce qui
+  n'est pas le cas. Les méthodes statiques {\tt tpld} et {\tt tprd}
+  ont été supprimés de la classe {\tt st2tost2} et ajoutés à la classe
+  {\tt st2tot2}. Cette modification conduit à des écarts limités dans
+  le cas des lois de plasticité cristalline en grandes
+  transformations.
+\item cette version peut être compilée en parallèle avec \cmake{}. Les
+  versions précédentes pouvaient échouer lors de la génération de la
+  documentation {\tt pdf} pour une raison qui n'a pas été
+  identifiée. Les différences documentations ont été déplacées dans un
+  répertoire qui leur est propre, ce qui a permis de contourner le
+  problème.
+\item dans les fichiers de résultats de \mtest{}, les noms des
+  variables de pilotages et des forces thermodynamiques est
+  spécialisée dans le cas des lois en petites et grandes
+  transformations ainsi que pour les modèles de zones cohésives, pour
+  plus de clarté.
+\end{itemize}
+
+\section{Version 2.1.x (en cours de développement)}
+
+
 \referencecea{}
 
 \end{document}
