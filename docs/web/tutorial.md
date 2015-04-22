@@ -259,3 +259,5 @@ représentée ci-dessous:
 traction-cisaillement](img/tutorielch12-img1.png)
 
 # Références
+
+<!-- Local IspellDict: english -->

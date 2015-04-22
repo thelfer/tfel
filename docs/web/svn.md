@@ -41,3 +41,4 @@ http-proxy-username = XXXXX
 http-proxy-password = XXXXX
 ~~~~~~~~~~~
 
+<!-- Local IspellDict: english -->

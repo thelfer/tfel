@@ -65,3 +65,5 @@ f.setDepth(1);
   s = s_1 + coef1*exp(coef2-f_)*(Bu-Bu_1);
 } // end of function compute
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<!-- Local IspellDict: english -->

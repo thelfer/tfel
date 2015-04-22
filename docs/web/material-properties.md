@@ -45,3 +45,5 @@ expression of the material property:
 \[
 E(T,f)=2.2693\,10^{11}\,(1-2.5\,f)\,(1-6.786\,10^{-5}\,T-4.23\,10^{-8}\,T^{2})
 \]
+
+<!-- Local IspellDict: english -->

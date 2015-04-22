@@ -20,3 +20,5 @@ interfaces.
 <!-- # Interfaces for material properties -->
 
 <!-- # Interfaces for mechanical behaviours -->
+
+<!-- Local IspellDict: english -->

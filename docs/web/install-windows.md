@@ -145,4 +145,6 @@ C:\MinGW\msys\1.0\home\[user name]\.profile
 # Usage
 
 Once done, mfront can be used as "usual" (like in Posix environments)
-in 
+in [MSYS](http://www.mingw.org/wiki/MSYS).
+
+<!-- Local IspellDict: english -->

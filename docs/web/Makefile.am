@@ -30,6 +30,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./glossary.md					   \
 	   ./parameters.md					   \
 	   ./CONTRIBUTING.md					   \
+	   ./release-notes.md					   \
 	   ./TODO.md						   \
 	   ./robots.txt						   \
 	   ./crossdomain.xml					   \

@@ -352,3 +352,5 @@ build system.
 
 # Windows MINGW
 
+<!-- Local IspellDict: english -->
+

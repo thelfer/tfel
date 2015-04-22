@@ -305,3 +305,5 @@ MatT1 = 'MATERIAU' ModT1 'K' Tmat;
 
 When using `PASAPAS`, loadings named `PORO` and `FIMA` must be
 declared for the material properties to be evaluated.
+
+<!-- Local IspellDict: english -->
