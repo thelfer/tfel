@@ -1871,6 +1871,90 @@ plus larges et est utilisé dans de nombreuses situations où le recours
 \listefigures
 
 \appendix
+\clearpage
+\newpage
+\section{Algorithmes d'accélération}
+Les algorithmes d'accélération suivants sont disponibles. Ils sont
+définis pour accélérer des itérations de point fixe
+$X_{n+1}=G(X_n)$. La résolution de l'équilibre à l'aide de l'opérateur
+élastique $K$ rentre dans ce cadre avec
+\begin{equation}
+  \label{eq:MTestFixedPoint}
+  G\left(X\right)=X-K^{-1}\,R\left(X\right)
+\end{equation}
+Ces algorithmes sont détaillés dans~\cite{ramiere_helfer_2015}.\\
+Dans la suite on utilisera l'opérateur de différence $\Delta$ tel
+que $\Delta X_n = G(X_n) - X_n$, $\Delta G(X_n) = G(G(X_n)) - G(X_n)$ and $\Delta^2 X_n = \Delta G(X_n) -
+\Delta X_n$
+\begin{itemize}
+\item La \og crossed secant method\fg{} ou \og crossed 1-$\delta$
+  method\fg{} (souvent appelée relaxation d'Aitken ou relaxation dynamique
+  dans la litterature)
+\begin{equation}
+  \label{eq:secant}
+  X_{n+1} =G(X_n) - \frac{(G(X_n) -G(X_{n-1})).(\Delta X_n - \Delta X_{n-1})}{\|\Delta X_n - \Delta X_{n-1}\|^2}\Delta X_n
+\end{equation}
+\item La \og alternate secant method\fg{} ou \og alternate 1-$\delta$
+  method\fg{} (aussi appelée méthodes d'extrapolation d'Anderson avec $M=1$)
+  \begin{equation}
+   X_{n+1} = G(X_n)
+   - \dfrac{(\Delta X_n - \Delta
+     X_{n-1}).\Delta X_n}{\|\Delta X_n - \Delta X_{n-1}\|^2}(G(X_{n}) - G(X_{n-1}))
+  \end{equation}
+\item La méthode de Irons and Tuck à laquelle reviennent les 2
+  méthodes précédentes si elles ne sont appelées qu'une itération de
+  point fixe sur 2. 
+\begin{equation}
+  \begin{split}
+X_n &= G(X_{n-1})\\
+X_{n+1}&= G(X_n)
+- \frac{\Delta X_n.\Delta^2 X_{n-1}}{\|\Delta^2 X_{n-1}\|^2}\Delta X_n 
+  \end{split}
+  \end{equation} 
+\item La \og crossed $\delta^2$ method\fg{}
+  \begin{equation} \label{eq:crossed-delta2}
+  X_{n+1} =G(X_n) - \frac{(G(X_n) -G(X_{n-1})).(\Delta X_n - 2\Delta
+    X_{n-1}+\Delta X_{n-2})}{\|\Delta X_n - 2\Delta X_{n-1}+\Delta
+    X_{n-2}\|^2}(\Delta X_n- \Delta X_{n-1}) 
+  \end{equation}
+\item La \og alternate $\delta^2$ method \og 
+  \begin{equation} \label{eq:alternate-delta2}
+   X_{n+1} = G(X_n)
+   - \dfrac{(\Delta X_n - 2\Delta
+     X_{n-1} + \Delta X_{n-2}).\Delta X_n}{\|\Delta X_n - 2\Delta X_{n-1}+\Delta
+    X_{n-2}\|^2}(G(X_{n}) - 2G(X_{n-1}) + G(X_{n-2}))
+  \end{equation}
+\item La \og crossed 2-$\delta$ method\fg{}
+  \begin{equation} \label{eq:crossed-2delta} 
+    \begin{split}
+   X_{n+1} &= G(X_n) - \lambda^1_n \Delta X_n - \lambda^2_n \Delta X_{n-1}\\
+      & \mbox{avec $\lambda^1_n, \lambda^2_n$ minimisant}\\
+ \delta Y_n & = (G(X_n) -G(X_{n-1}))-\lambda^1_n(\Delta X_n - \Delta X_{n-1}) - \lambda^2_n(\Delta X_{n-1} - \Delta X_{n-2})
+    \end{split}
+  \end{equation}
+\item La \og alternate 2-$\delta$ method\fg{} (équivalente à la
+  méthode d'extrapolation d'Anderson avec $M=2$)
+\begin{equation} \label{eq:alternate-2delta}
+  \begin{split}
+   X_{n+1} &= G(X_n) - \lambda^1_n (G(X_n) -G(X_{n-1})) - \lambda^2_n (G(X_{n-1}) -G(X_{n-2})) \\
+      & \mbox{avec $\lambda^1_n, \lambda^2_n$ minimisant}\\
+ \delta Y_n & = \Delta X_n-\lambda^1_n(\Delta X_n - \Delta X_{n-1}) - \lambda^2_n(\Delta X_{n-1} - \Delta X_{n-2})
+  \end{split}
+\end{equation}
+\item La \og crossed 2-$\delta$ bis method\fg{} \footnote{Attention,
+    dans~\cite{ramiere_helfer_2015}, il est montré que cette approche
+    pouvait ne pas converger vers la solution de l'équation de point
+    fixe} 
+  \begin{equation} \label{eq:crossed-2deltabis} 
+    \begin{split}
+   X_{n+1} &= G(X_n) - \lambda^1_n (G(X_n) - X_n) - \lambda^2_n (G(X_n) - X_{n-1})\\
+      & \mbox{avec $\lambda^1_n, \lambda^2_n$ minimisant}\\
+ \delta Y_n & = (G(X_n) -G(X_{n-1}))-\lambda^1_n(\Delta X_n - \Delta
+ X_{n-1}) - \lambda^2_n(G(X_n) - G(X_{n-1}) - X_{n-1} + X_{n-2})
+    \end{split}
+  \end{equation}
+\end{itemize}
+
 
 \clearpage
 \newpage

@@ -27,6 +27,13 @@ set(TFELMTest_SOURCES
     AccelerationAlgorithmFactory.cxx
     AccelerationAlgorithm.cxx
     CastemAccelerationAlgorithm.cxx
+    AlternateSecantAccelerationAlgorithm.cxx
+    AlternateDelta2AccelerationAlgorithm.cxx
+    Alternate2DeltaAccelerationAlgorithm.cxx
+    CrossedSecantAccelerationAlgorithm.cxx
+    CrossedDelta2AccelerationAlgorithm.cxx
+    Crossed2DeltaAccelerationAlgorithm.cxx
+    Crossed2DeltabisAccelerationAlgorithm.cxx
     SecantAccelerationAlgorithm.cxx
     SteffensenAccelerationAlgorithm.cxx
     IronsTuckAccelerationAlgorithm.cxx)

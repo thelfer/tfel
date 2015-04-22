@@ -18,6 +18,13 @@
 #include"MTest/IronsTuckAccelerationAlgorithm.hxx"
 #include"MTest/SteffensenAccelerationAlgorithm.hxx"
 #include"MTest/SecantAccelerationAlgorithm.hxx"
+#include"MTest/AlternateSecantAccelerationAlgorithm.hxx"
+#include"MTest/AlternateDelta2AccelerationAlgorithm.hxx"
+#include"MTest/Alternate2DeltaAccelerationAlgorithm.hxx"
+#include"MTest/CrossedSecantAccelerationAlgorithm.hxx"
+#include"MTest/CrossedDelta2AccelerationAlgorithm.hxx"
+#include"MTest/Crossed2DeltaAccelerationAlgorithm.hxx"
+#include"MTest/Crossed2DeltabisAccelerationAlgorithm.hxx"
 #include"MTest/AccelerationAlgorithmFactory.hxx"
 
 namespace mfront
@@ -55,8 +62,15 @@ namespace mfront
   {
     this->registerAlgorithm("Cast3M",buildAlgorithmConstructor<CastemAccelerationAlgorithm>);
     this->registerAlgorithm("Secant",buildAlgorithmConstructor<SecantAccelerationAlgorithm>);
+    this->registerAlgorithm("AlternateSecant",buildAlgorithmConstructor<AlternateSecantAccelerationAlgorithm>);
+    this->registerAlgorithm("AlternateDelta2",buildAlgorithmConstructor<AlternateDelta2AccelerationAlgorithm>);
+    this->registerAlgorithm("Alternate2Delta",buildAlgorithmConstructor<Alternate2DeltaAccelerationAlgorithm>);
+    this->registerAlgorithm("CrossedSecant",buildAlgorithmConstructor<CrossedSecantAccelerationAlgorithm>);
+    this->registerAlgorithm("CrossedDelta2",buildAlgorithmConstructor<CrossedDelta2AccelerationAlgorithm>);
+    this->registerAlgorithm("Crossed2Delta",buildAlgorithmConstructor<Crossed2DeltaAccelerationAlgorithm>);
+    this->registerAlgorithm("Crossed2Deltabis",buildAlgorithmConstructor<Crossed2DeltabisAccelerationAlgorithm>);
     this->registerAlgorithm("Steffensen",buildAlgorithmConstructor<SteffensenAccelerationAlgorithm>);
-    this->registerAlgorithm("Irons-Tuck",buildAlgorithmConstructor<IronsTuckAccelerationAlgorithm>);
+    this->registerAlgorithm("IronsTuck",buildAlgorithmConstructor<IronsTuckAccelerationAlgorithm>);
   } // end of AccelerationAlgorithmFactory::AccelerationAlgorithmFactory
 
   void

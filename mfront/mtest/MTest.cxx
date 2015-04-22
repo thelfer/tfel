@@ -1335,6 +1335,7 @@ namespace mfront
     s.u_1.clear();
     s.u0.clear();
     s.u1.clear();
+    s.u10.clear();
     s.mprops0.clear();
     s.mprops1.clear();
     s.iv_1.clear();
@@ -1355,6 +1356,7 @@ namespace mfront
     s.u_1.resize(psz,0.);
     s.u0.resize(psz,0.);
     s.u1.resize(psz,0.);
+    s.u10.resize(psz,0.);
     s.mprops0.resize(mpnames.size());
     s.mprops1.resize(mpnames.size());
     s.iv_1.resize(this->b->getInternalStateVariablesSize(this->hypothesis),0.);
@@ -1839,7 +1841,7 @@ namespace mfront
 	    }
 	    if(merr>this->toeps){
 	      auto& log = getLogStream();
-	      log << "Compaison to numerical jacobian failed (error : " << merr << ", criterium " << this->toeps << ")." << endl;
+	      log << "Comparison to numerical jacobian failed (error : " << merr << ", criterium " << this->toeps << ")." << endl;
 	      log << "Tangent operator returned by the behaviour : " << endl;
 	      for(i=0;i!=nth;++i){
 		for(j=0;j!=ndv;){
@@ -1901,11 +1903,11 @@ namespace mfront
 	  state.u1 -= wk.du;
 	  real nr = 0.;
 	  for(i=0;i!=nth;++i){
-	    nr += abs(wk.r(i));
+	    nr = max(nr,abs(wk.r(i)));
 	  }
 	  ne = 0;
 	  for(i=0;i!=ndv;++i){
-	    ne += abs(wk.du(i));
+	    ne = max(ne,abs(wk.du(i)));
 	  }
 	  if(getVerboseMode()>=VERBOSE_LEVEL1){
 	    auto& log = getLogStream();
@@ -1931,13 +1933,21 @@ namespace mfront
 	    this->residual << endl;
 	  }
 	  converged = (ne<this->eeps)&&(nr<this->seps);
+	  // BEGIN : to have convergence only with respect to driving variable
+          // uncomment following lines
+	  // converged = (ne<this->eeps);
+          // END
+
+	  // BEGIN : to have convergence only with respect to driving variable
+          // comment following lines
 	  for(pc =this->constraints.begin();
 	      (pc!=this->constraints.end())&&(converged);++pc){
 	    const Constraint& c = *(*pc);
 	    converged = c.checkConvergence(state.u1,state.s1,
-					   this->eeps,this->seps,
-					   t,dt);
+	  				   this->eeps,this->seps,
+	  				   t,dt);
 	  }
+          // END
 	  if((!converged)&&(iter==this->iterMax)){
 	    if(ne>this->eeps){
 	      ostringstream msg;
@@ -1951,26 +1961,46 @@ namespace mfront
 		  << ", criteria : " << this->seps << ")";
 	      failed_criteria.push_back(msg.str());
 	    }
+	    // BEGIN : to have convergence only with respect to driving variable
+	    // comment following lines
 	    for(pc =this->constraints.begin();
-		pc!=this->constraints.end();++pc){
+	    	pc!=this->constraints.end();++pc){
 	      const Constraint& c = *(*pc);
 	      bool bc = c.checkConvergence(state.u1,state.s1,
-					   this->eeps,this->seps,
-					   t,dt);
+	    				   this->eeps,this->seps,
+	    				   t,dt);
 	      if(!bc){
-		failed_criteria.push_back(c.getFailedCriteriaDiagnostic(state.u1,state.s1,
-									this->eeps,this->seps,
-									t,dt));
+	    	failed_criteria.push_back(c.getFailedCriteriaDiagnostic(state.u1,state.s1,
+	    								this->eeps,this->seps,
+	    								t,dt));
 	      }
 	    }
+	    // END
 	  }
 	  if(this->ppolicy == NOPREDICTION){
 	    converged = (converged) && (iter>1);
 	  }
 	  if(!converged){
 	    if(this->aa.get()!=nullptr){
-	      this->aa->execute(state.u1,state.u0,wk.r,this->eeps,this->seps,iter);
+	      this->aa->execute(state.u1,wk.du,wk.r,this->eeps,this->seps,iter);
+	      if(getVerboseMode()>=VERBOSE_LEVEL2){
+		real nit = 0;
+		for(i=0;i!=ndv;++i){
+		  nit = max(nit,abs(state.u1(i)-state.u10(i)));
+		}
+		//ne = nit ; // for order of convergence??
+		auto& log = getLogStream();
+		log << "accelerated-sequence-convergence "<<iter<<" "<<nit << " (";
+		for(i=0;i!=ndv;){
+		  log << state.u1(i);
+		  if(++i!=ndv){
+		    log << " ";
+		  }
+		}
+		log << ")" << endl;
+	      }
 	    }
+	    state.u10 = state.u1;
 	  }
 	} else {
 	  if(getVerboseMode()>VERBOSE_QUIET){

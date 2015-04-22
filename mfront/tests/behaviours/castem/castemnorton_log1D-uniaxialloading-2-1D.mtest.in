@@ -10,7 +10,7 @@
 @MaximumNumberOfSubSteps 1;
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatnorton_log1d';
-@StrainEpsilon 2.e-8;
+@StrainEpsilon 1.e-10;
 @StressEpsilon 2.e3;
 
 @MaterialProperty<constant> 'YoungModulus'      80.e9;

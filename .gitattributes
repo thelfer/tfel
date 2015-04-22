@@ -1611,6 +1611,9 @@ mfront/include/MFront/mfront.doxygen -text
 mfront/include/MTest/AccelerationAlgorithm.hxx -text
 mfront/include/MTest/AccelerationAlgorithmFactory.hxx -text
 mfront/include/MTest/AlgorithmFactory.hxx -text
+mfront/include/MTest/Alternate2DeltaAccelerationAlgorithm.hxx -text
+mfront/include/MTest/AlternateDelta2AccelerationAlgorithm.hxx -text
+mfront/include/MTest/AlternateSecantAccelerationAlgorithm.hxx -text
 mfront/include/MTest/AnalyticalTest.hxx -text
 mfront/include/MTest/AsterCohesiveZoneModel.hxx -text
 mfront/include/MTest/AsterFiniteStrainBehaviour.hxx -text
@@ -1620,6 +1623,10 @@ mfront/include/MTest/Behaviour.hxx -text
 mfront/include/MTest/CastemAccelerationAlgorithm.hxx -text
 mfront/include/MTest/CastemEvolution.hxx -text
 mfront/include/MTest/Constraint.hxx -text
+mfront/include/MTest/Crossed2DeltaAccelerationAlgorithm.hxx -text
+mfront/include/MTest/Crossed2DeltabisAccelerationAlgorithm.hxx -text
+mfront/include/MTest/CrossedDelta2AccelerationAlgorithm.hxx -text
+mfront/include/MTest/CrossedSecantAccelerationAlgorithm.hxx -text
 mfront/include/MTest/CyranoBehaviour.hxx -text
 mfront/include/MTest/Evolution.hxx -text
 mfront/include/MTest/FunctionEvolution.hxx -text
@@ -1646,6 +1653,9 @@ mfront/lisp/Makefile.am -text
 mfront/lisp/mfront.el -text
 mfront/mtest/AccelerationAlgorithm.cxx -text
 mfront/mtest/AccelerationAlgorithmFactory.cxx -text
+mfront/mtest/Alternate2DeltaAccelerationAlgorithm.cxx -text
+mfront/mtest/AlternateDelta2AccelerationAlgorithm.cxx -text
+mfront/mtest/AlternateSecantAccelerationAlgorithm.cxx -text
 mfront/mtest/AnalyticalTest.cxx -text
 mfront/mtest/AsterCohesiveZoneModel.cxx -text
 mfront/mtest/AsterFiniteStrainBehaviour.cxx -text
@@ -1656,6 +1666,10 @@ mfront/mtest/CMakeLists.txt -text
 mfront/mtest/CastemAccelerationAlgorithm.cxx -text
 mfront/mtest/CastemEvolution.cxx -text
 mfront/mtest/Constraint.cxx -text
+mfront/mtest/Crossed2DeltaAccelerationAlgorithm.cxx -text
+mfront/mtest/Crossed2DeltabisAccelerationAlgorithm.cxx -text
+mfront/mtest/CrossedDelta2AccelerationAlgorithm.cxx -text
+mfront/mtest/CrossedSecantAccelerationAlgorithm.cxx -text
 mfront/mtest/CyranoBehaviour.cxx -text
 mfront/mtest/Evolution.cxx -text
 mfront/mtest/FunctionEvolution.cxx -text

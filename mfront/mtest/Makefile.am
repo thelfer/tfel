@@ -23,6 +23,13 @@ libTFELMTest_la_SOURCES = MTest.cxx                                \
 			  ImposedThermodynamicForce.cxx       \
 			  AccelerationAlgorithmFactory.cxx    \
 			  AccelerationAlgorithm.cxx           \
+			  AlternateSecantAccelerationAlgorithm.cxx     \
+			  AlternateDelta2AccelerationAlgorithm.cxx     \
+			  Alternate2DeltaAccelerationAlgorithm.cxx     \
+			  CrossedSecantAccelerationAlgorithm.cxx     \
+			  CrossedDelta2AccelerationAlgorithm.cxx     \
+			  Crossed2DeltaAccelerationAlgorithm.cxx     \
+			  Crossed2DeltabisAccelerationAlgorithm.cxx     \
 			  SecantAccelerationAlgorithm.cxx     \
 			  CastemAccelerationAlgorithm.cxx     \
 			  IronsTuckAccelerationAlgorithm.cxx  \

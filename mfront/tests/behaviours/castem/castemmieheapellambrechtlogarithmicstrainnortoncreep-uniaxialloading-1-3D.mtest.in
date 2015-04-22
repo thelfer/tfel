@@ -9,7 +9,7 @@
 @MaximumNumberOfSubSteps 1;
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainnortoncreep';
-@DrivingVariableEpsilon 2.e-8;
+@DrivingVariableEpsilon 5.e-8;
 @StressEpsilon          2.e3;
 
 @MaterialProperty<constant> 'YoungModulus'      80.e9;

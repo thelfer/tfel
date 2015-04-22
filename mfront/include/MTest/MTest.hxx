@@ -75,6 +75,9 @@ namespace mfront
       // vector of unknows at the end of the
       // time step
       tfel::math::vector<real> u1;
+      // vector of unknows at the preivous iteration (end of the
+      // time step)
+      tfel::math::vector<real> u10;
       // thermodynamic forces at the beginning of the previous of the time step
       tfel::math::vector<real> s_1;
       // thermodynamic forces at the beginning of the time step

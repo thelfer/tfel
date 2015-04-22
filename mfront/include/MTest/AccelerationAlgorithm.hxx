@@ -59,9 +59,9 @@ namespace mfront{
     virtual void
     preExecuteTasks() = 0;
     /*!
-     * \param[in,out] u1   : current estimate of the unknowns
-     * \param[in]     u0   : previous estimate of the unknowns
-     * \param[in]     r    : Newton residual
+     * \param[in,out] u1   : current estimate of the unknowns (after incrementation)
+     * \param[in]     ru   : fixed point residual on the unknowns
+     * \param[in]     rf   : Newton residual
      * \param[in]     ueps : criterium on the unknowns
      * \param[in]     seps : criterium on the thermodynamic forces
      * \param[in]     iter : current iteration number

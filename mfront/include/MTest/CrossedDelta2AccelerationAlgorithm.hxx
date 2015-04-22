@@ -1,8 +1,8 @@
 /*! 
- * \file  mfront/include/MTest/IronsTuckAccelerationAlgorithm.hxx
+ * \file  mfront/include/MTest/CrossedDelta2AccelerationAlgorithm.hxx
  * \brief
- * \author Helfer Thomas
- * \brief 10 juin 2014
+ * \author RAMIERE Isabelle
+ * \brief 16 mars 2015
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_H_
-#define LIB_MFRONT_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MFRONT_MTEST_MTESTCROSSEDDELTA2ACCELERATIONALGORITHM_H_
+#define LIB_MFRONT_MTEST_MTESTCROSSEDDELTA2ACCELERATIONALGORITHM_H_ 
 
 #include"MTest/MTestConfig.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
@@ -21,13 +21,13 @@ namespace mfront
 {
 
   /*!
-   * \brief This class implements the Irons-Tuck acceleration algorithm.
+   * \brief This class implements the secant acceleration algorithm.
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT IronsTuckAccelerationAlgorithm
+  struct MFRONT_MTEST_VISIBILITY_EXPORT CrossedDelta2AccelerationAlgorithm
     : public AccelerationAlgorithm
   {
     //! default constructor
-    IronsTuckAccelerationAlgorithm();
+    CrossedDelta2AccelerationAlgorithm();
     /*!
      * \return the name of the acceleration algorithm
      */
@@ -73,17 +73,21 @@ namespace mfront
     virtual void
     postExecuteTasks(void);
     //! destructor
-    virtual ~IronsTuckAccelerationAlgorithm();
+    virtual ~CrossedDelta2AccelerationAlgorithm();
   protected:
-    // Irons and Tuck acceleration algorithm
-    tfel::math::vector<real> ita_r0;
-    tfel::math::vector<real> ita_r1;
-    tfel::math::vector<real> ita_dr;
-    //! IronsTuck acceleration trigger
-    int itat;
-  }; // end of struct IronsTuckAccelerationAlgorithm
+    tfel::math::vector<real> csa_u0;
+    tfel::math::vector<real> csa_u1;
+    tfel::math::vector<real> csa_du;
+    tfel::math::vector<real> csa_r0;
+    tfel::math::vector<real> csa_r1;
+    tfel::math::vector<real> csa_dr0;
+    tfel::math::vector<real> csa_dr1;
+    tfel::math::vector<real> csa_d2r;
+    //! trigger
+    int csat;
+  }; // end of struct CrossedDelta2AccelerationAlgorithm
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_H_ */
+#endif /* LIB_MFRONT_MTEST_MTESTCROSSEDDELTA2ACCELERATIONALGORITHM_H_ */
 
