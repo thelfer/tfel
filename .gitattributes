@@ -942,6 +942,7 @@ docs/web/mtest.md -text
 docs/web/news.md -text
 docs/web/packages.md -text
 docs/web/parameters.md -text
+docs/web/release-notes.md -text
 docs/web/robots.txt -text
 docs/web/svn.md -text
 docs/web/tex/lcmd_utf8.tex -text
