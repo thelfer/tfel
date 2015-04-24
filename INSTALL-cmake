@@ -44,10 +44,8 @@ Options
 			    version are the same
 
   enable-doxygen-doc    : generate doxygen documentation (disabled by default)
-  disable-reference-doc : disallow the generation of the reference documentation
-                          (enabled by default if latex or pandoc is found)
-  disable-website       : do not generate the TFEL website
-                          (enabled by default if pandoc is found)
+  enable-reference-doc  : allow the generation of the reference documentation (disabled by default)
+  enable-website        : generate the TFEL website (disabled by default)
 
 cmake usefull variables
 =======================
@@ -82,7 +80,7 @@ cmake ../trunk -DCMAKE_BUILD_TYPE=Coverage -Dlocal-castem-header=ON -Denable-for
 cmake for PLEIADES users
 ========================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
 main targets:
 =============

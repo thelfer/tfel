@@ -718,6 +718,7 @@ docs/tex/texmf/tex/latex/gnuplot.sty -text
 docs/tex/texmf/tex/latex/helvetCEA.sty -text
 docs/tex/texmf/tex/latex/mathematiques.sty -text
 docs/tex/texmf/tex/latex/mecanique.sty -text
+docs/tex/texmf/tex/latex/multind.sty -text
 docs/tex/texmf/tex/latex/presentation.sty -text
 docs/texmacs/FiniteRotationSmallStrain1D.tm -text
 docs/texmacs/FiniteRotationSmallStrain2D.tm -text
