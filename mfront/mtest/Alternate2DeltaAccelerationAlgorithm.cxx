@@ -12,7 +12,7 @@
  */
 
 #include<limits>
-#include<iostream>
+#include<ostream>
 #include<stdexcept>
 
 #include"MFront/MFrontLogStream.hxx"
@@ -35,9 +35,6 @@ namespace mfront
 						    const std::string& v)
   {
     using namespace std;
-    std::cout<<p<<endl;
-    std::cout<<v<<endl;
-
     const string m = "Alternate2DeltaAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
       const unsigned short i =
@@ -118,7 +115,6 @@ namespace mfront
 	const real nr2_dr0 = this->asa_dr0|this->asa_dr0;
 	const real dr1_dr0 = this->asa_dr1|this->asa_dr0;
 	const real det = nr2_dr1*nr2_dr0 - dr1_dr0 * dr1_dr0 ;
-	cout<<"(dr1_dr0*dr1_dr0)/(nr2_dr1*nr2_dr0)"<<(dr1_dr0*dr1_dr0)/(nr2_dr1*nr2_dr0)<<endl;
 	if ((dr1_dr0*dr1_dr0)/(nr2_dr1*nr2_dr0) < 0.99){
 	//if(abs(det/(nr2_dr0*b1))>(1e-3)){
 	  if(getVerboseMode()>=VERBOSE_LEVEL1){

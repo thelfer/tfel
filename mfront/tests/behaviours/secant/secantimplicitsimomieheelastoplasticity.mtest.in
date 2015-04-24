@@ -10,6 +10,7 @@
 @ModellingHypothesis 'Axisymmetrical';
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitsimomieheelastoplasticity';
+@StressEpsilon 1.e-4;
 @MaterialProperty<constant> 'YoungModulus'     200.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 's_y' 200e6;

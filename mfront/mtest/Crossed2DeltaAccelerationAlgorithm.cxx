@@ -12,7 +12,7 @@
  */
 
 #include<limits>
-#include<iostream>
+#include<ostream>
 #include<stdexcept>
 
 #include"MFront/MFrontLogStream.hxx"
@@ -35,9 +35,6 @@ namespace mfront
 						    const std::string& v)
   {
     using namespace std;
-    std::cout<<p<<endl;
-    std::cout<<v<<endl;
-
     const string m = "Crossed2DeltaAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
       const unsigned short i =

@@ -12,7 +12,7 @@
  */
 
 #include<limits>
-#include<iostream>
+#include<ostream>
 #include<stdexcept>
 
 #include"MFront/MFrontLogStream.hxx"
@@ -35,9 +35,6 @@ namespace mfront
 						    const std::string& v)
   {
     using namespace std;
-    std::cout<<p<<endl;
-    std::cout<<v<<endl;
-
     const string m = "Crossed2DeltabisAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
       const unsigned short i =
@@ -127,8 +124,6 @@ namespace mfront
 	const real mc = this->csa_dudx|this->csa_dudx;
 	const real mb = this->csa_dr|this->csa_dudx;
 	const real det = ma*mc - mb*mb;
-	
-	//cout<<"(mb*mb)/(ma*mc)"<<(mb*mb)/(ma*mc)<<endl;
 	if ((mb*mb)/(ma*mc) < 0.99){
 	  if(getVerboseMode()>=VERBOSE_LEVEL1){
 	    ostream& log = getLogStream();

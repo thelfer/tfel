@@ -20,9 +20,9 @@ namespace mfront
 {
 
   ImposedThermodynamicForce::ImposedThermodynamicForce(const Behaviour& b,
-								 const tfel::material::ModellingHypothesis::Hypothesis h,
-								 const std::string& cname,
-								 const std::shared_ptr<Evolution> s_)
+						       const tfel::material::ModellingHypothesis::Hypothesis h,
+						       const std::string& cname,
+						       const std::shared_ptr<Evolution> s_)
     : sev(s_)
   {
     this->c = b.getThermodynamicForceComponentPosition(h,cname);

@@ -1870,10 +1870,29 @@ namespace mfront
 	}
 	if(bi){
 	  // behaviour integration is a success
-	  for(i=0;i!=nth;++i){
-	    wk.r(i) += state.s1(i);
-	    for(j=0;j!=ndv;++j){
-	      wk.K(i,j) += wk.Kt(i,j);
+	  if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+	    for(i=0;i!=3u;++i){
+	      wk.r(i) += state.s1(i);
+	      for(j=0;j!=ndv;++j){
+		wk.K(i,j) += wk.Kt(i,j);
+	      }
+	    }
+	    if(this->dimension>1u){
+	      for(i=0;i!=nth-3u;++i){
+		wk.r(2*i+3u)   += state.s1(i);
+		wk.r(2*i+3u+1) += state.s1(i);
+		for(j=0;j!=ndv;++j){
+		  wk.K(2*i+3u,j)   += wk.Kt(i+3u,j);
+		  wk.K(2*i+3u+1,j) += wk.Kt(i+3u,j);
+		}
+	      }
+	    }
+	  } else {
+	    for(i=0;i!=nth;++i){
+	      wk.r(i) += state.s1(i);
+	      for(j=0;j!=ndv;++j){
+		wk.K(i,j) += wk.Kt(i,j);
+	      }
 	    }
 	  }
 	  if(wk.first){

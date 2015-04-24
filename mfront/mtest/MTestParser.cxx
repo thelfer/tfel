@@ -1232,8 +1232,8 @@ namespace mfront
 			    this->fileTokens.end());
     shared_ptr<Evolution> sev = this->parseEvolution(evt,t,p);
     shared_ptr<Constraint> sc(new ImposedDrivingVariable(*(t.getBehaviour()),
-								   t.getModellingHypothesis(),
-								   c,sev));
+							 t.getModellingHypothesis(),
+							 c,sev));
     this->readSpecifiedToken("MTestParser::handleImposedDrivingVariable",";",
 			     p,this->fileTokens.end());
     t.addEvolution(c,sev,false,true);

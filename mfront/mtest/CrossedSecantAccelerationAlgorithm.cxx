@@ -12,7 +12,7 @@
  */
 
 #include<limits>
-#include<iostream>
+#include<ostream>
 #include<stdexcept>
 
 #include"MFront/MFrontLogStream.hxx"
@@ -35,9 +35,6 @@ namespace mfront
 						    const std::string& v)
   {
     using namespace std;
-    std::cout<<p<<endl;
-    std::cout<<v<<endl;
-
     const string m = "CrossedSecantAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
       const unsigned short i =
@@ -83,7 +80,7 @@ namespace mfront
   void
   CrossedSecantAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
 					    const tfel::math::vector<real>& rx,
-					    const tfel::math::vector<real>& rf,
+					    const tfel::math::vector<real>&,
 					    const real eeps,
 					    const real ,
 					    const unsigned short iter)
