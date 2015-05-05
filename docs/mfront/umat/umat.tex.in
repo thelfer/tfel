@@ -581,6 +581,20 @@ Si la variable
 \envb{CASTEM\_OUT\_OF\_BOUND\_POLICY}{CASTEM\_\-OUT\_\-OF\_\-BOUND\_\-POLICY}
 n'est pas définie, les dépassements sont ignorés.
 
+\subsection{Modification des paramètres}
+
+Les valeurs des paramètres peuvent être lus dans un fichier texte. Ce
+fichier texte doit~:
+\begin{enumerate}
+\item se nommer {\tt XX-parameters.txt} où {\tt XX} est le nom de la
+  loi de comportement~;
+\item se trouver dans le répertoire courant.
+\end{enumerate}
+
+Chaque ligne de ce fichier doit commencer par le nom d'appel du
+paramètre (c'est à dire le nom de glossaire si il est défini, le nom
+de la variable associé, etc...), suivi du nom de la valeur à associer.
+
 \subsection{Génération de la mise en donnée \castem{}}
 
 Dans le cas de l'interface \texttt{umat}, \mfront{} génère
