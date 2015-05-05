@@ -74,6 +74,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/materiaux2014.jpg		                   \
 	   ./img/SalomeMeca2015.png 				   \
 	   ./img/IconeCast3M_verte.png 				   \
+	   ./img/poster-giens2015.svg 				   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

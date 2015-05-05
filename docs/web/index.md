@@ -24,18 +24,18 @@ atomique") and [EDF](http://www.edf.com/ "Électricité de France").
 
 `MFront` is a code generator which translates a set of closely related
 domain specific languages into plain [C++](http://isocpp.org/) on top
-of the `TFEL` library. Those languages covers three kind of material
+of the `TFEL` library. Those languages cover three kinds of material
 knowledge:
 
 - [material properties](material-properties.html) (for instance the
   Young modulus, the thermal conductivity, etc.)
 - [mechanical behaviours](behaviours.html). Numerical performances of
-  generated mechanical behaviours was given a particular
-  attention. [Various benchmarks](benchmarks.html) shows that `MFront`
+  generated mechanical behaviours were given a particular
+  attention. [Various benchmarks](benchmarks.html) show that `MFront`
   implementations are competitive with native implementations
   available in the `Cast3M`, `Code-Aster` and `Cyrano3` solvers.
 - [simple point-wise models](models.html), such as material swelling
-used in fuel performance codes.
+  used in fuel performance codes.
 
 A set of interfaces are provided for various solvers:
 

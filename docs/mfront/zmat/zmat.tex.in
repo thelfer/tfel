@@ -277,7 +277,7 @@ deux dernières composantes.
 tenseur \(\tns{a}\) est stocké ainsi~:
 \[
 \begin{pmatrix}
-  a_{xx} & a_{yy} & a_{zz} & a_{xy} & a_{yz} &  a_{xz} & a_{yx} & a_{zy} & a_{zx}
+  a_{xx} & a_{yy} & a_{zz} & a_{xy} & a_{yz} &  a_{zx} & a_{yx} & a_{zy} & a_{xz}
 \end{pmatrix}
 \]
 

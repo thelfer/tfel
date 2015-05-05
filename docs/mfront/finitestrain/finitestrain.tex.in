@@ -57,6 +57,10 @@
 
 \newcommand{\egl}[0]{\ensuremath{\tepsilonto_{GL}}}
 \newcommand{\degl}[0]{\ensuremath{\tdepsilonto_{GL}}}
+\newcommand{\egle}[0]{\ensuremath{\tepsilon^{e}_{GL}}}
+\newcommand{\degle}[0]{\ensuremath{\tdepsilon^{e}_{GL}}}
+\newcommand{\inv}[1]{\ensuremath{#1^{-1}}}
+\newcommand{\invT}[1]{\ensuremath{#1^{-T}}}
 
 \newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
 
@@ -118,10 +122,10 @@
 
 \input{LSC}
 
-\auteurs{T.~Helfer}
+\auteurs{T.~Helfer, C.~Ling}
 \redacteur{T.~Helfer}
-\verificateur{J.-M.~Proix}
-\approbateur{R.~Masson}
+\verificateur{B.~Michel}
+\approbateur{B.~Collard}
 \emetteur{M.~Baueur}
 
 \titre{Écriture de lois de comportement mécanique en grandes
@@ -765,10 +769,10 @@ tende vers \(\tepsilonto_{\text{HPP}}\).
 
 Citons deux exemples classiques~:
 \begin{itemize}
-\item le tenseur de \nom{Green-Lagrange} \(\tepsilonto_{\text{GL}}\)~:
+\item le tenseur de \nom{Green-Lagrange} \(\egl\)~:
   \begin{equation}
     \label{eq:EGL}
-    \tepsilonto_{\text{GL}}=\Frac{1}{2}\paren{\tenseur{U}^{2}-\tenseur{I}}=\Frac{1}{2}\paren{\tenseur{C}-\tenseur{I}}    
+    \egl=\Frac{1}{2}\paren{\tenseur{U}^{2}-\tenseur{I}}=\Frac{1}{2}\paren{\tenseur{C}-\tenseur{I}}    
   \end{equation}
 \item le tenseur de \nom{Hencky} \(\tepsilonto_{\log}\)~:
   \begin{equation}
@@ -1370,6 +1374,234 @@ sélectionner la stratégie présentée dans cette section.
 % chargement à la solution \aster{}, prise comme référence~: l'écart est
 % de l'ordre du pourcent.
 
+\section{La décomposition FeFp}
+
+Une grande partie de la littérature sur l'élastoplasticité en grandes
+transformations a été consacrée à ce que l'on appelle la décomposition
+\(\tns{F}_{e}\,.\,\tns{F}_{p}\).%~\cite{Lee1969,Mandel73}.
+
+La décomposition \(\tns{F}_{e}\,.\,\tns{F}_{p}\) est essentiellement
+une hypothèse cinématique. Nous commencerons par décrire cette
+cinématique, puis nous introduirons un nouveau tenseur, le tenseur de
+\nom{Mandel}, par dualité énergétique, ce qui nous permettra de
+d'introduire des premières notions de thermodynamique. Enfin, nous
+décrirons le cadre, actuellement standard, permettant de décrire les
+lois de plasticité en grandes transformations.
+
+\subsection{Aspects cinématiques}
+
+Il s'agit de postuler l'existence d'une configuration intermédiaire
+\(\tns{F}_{p}\), résultant de l'écoulement plastique. Cette
+configuration définie une configuration du matériau \og{}~au
+repos~\fg{} après déformation, c'est à dire à contrainte nulle. Cette
+configuration permet de définir la transformation élastique
+\(\tns{F}_{e}\) qui permet au matériau d'accommoder le gradient de
+déformation total~:
+\begin{equation}
+  \label{eq:FeFp}
+  \tns{F} = \tns{F}_{e}\,.\,\tns{F}_{p}
+\end{equation}
+
+Notons que 
+
+Compte tenu de la décomposition multiplicative~\eqref{eq:FeFp} du
+gradient de transformation, le gradient du vecteur vitesse \(\tns{L}\)
+s'exprime, défini par l'équation~\eqref{eq:L}, s'écrit~:
+\begin{equation}
+  \label{eq:LeLp}
+  \tns{L} = \tns{\dot{F}}\,.\,\inv{\tns{F}} =
+  \tns{\dot{F}}_{e}\,.\,\inv{\tns{F}_{e}} +  \tns{F}_{e}\,.\,\tns{\dot{F}}_{p}\,.\,\inv{\tns{F}_{p}}\,.\,\inv{\tns{F}_{e}} =
+  \tns{L}_e + \tns{F}_{e}\,.\,\tns{L}_{p}\,.\,\inv{\tns{F}_{e}}
+\end{equation}
+avec \(\tns{L}_e=\tns{\dot{F}}_{e}\,.\,\inv{\tns{F}_{e}}\) et \(\tns{L}^p=\tns{\dot{F}}_{p}\,.\,\inv{\tns{F}_{p}}\).
+
+\subsection{Le tenseur de \nom{Mandel}}
+
+Nous avons déjà rencontré différents tenseurs des contraintes dont
+l'utilisation va s'avérer utile~:
+\begin{enumerate}
+\item le tenseur des contraintes de \nom{Cauchy} \(\tsigma\), défini dans la
+  configuration actuelle, symétrique ;
+\item le second tenseur de Piola-Kirchhoff \(\tns{S}_e\), défini dans
+  la configuration intermédiaire, symétrique~:
+\begin{equation}
+\tns{S}_e=J_E \inv{\tns{F}_{e}}\,.\,\tsigma\,.\,\invT{\tns{F}_{e}} \rm{, avec} \ J_E = \det{\tns{F}_{e}}=\Frac{\rho_i}{\rho}
+\end{equation}
+où \(\rho\) la masse volumique du matériau dans la configuration
+actuelle et \(\rho_i\) la masse volumique dans la configuration
+intermédiaire.
+\end{enumerate}
+
+Nous allons utiliser la décomposition~\eqref{eq:LeLp} pour introduire
+un nouveau tenseur de contraintes, par dualité.
+
+La puissance des efforts intérieurs est~:
+\begin{eqnarray}
+\Frac{1}{\rho} \tsigma\,\colon\, \tns{D} &=&
+\Frac 1 \rho \tsigma\,\colon\, \tns{L} = \Frac 1 \rho \tsigma\,\colon\, \tns{\dot{F}} \inv{\tns{F}} \label{eq:power_internal_forces_0} \\
+&=& \Frac 1 \rho \tsigma\,\colon\, (\tns{\dot{F}}_{e} \inv{\tns{F}_{e}}+\tns{F}_{e} \tns{\dot{F}}_{p} \inv{\tns{F}_{p}} \inv{\tns{F}_{e}}) \\ 
+&=& \Frac 1 \rho \tsigma\,\colon\, (\tns{\dot{F}}_{e} \inv{\tns{F}_{e}}) + \Frac 1 \rho \tsigma\,\colon\, (\tns{F}_{e} \tns{\dot{F}}_{p} \inv{\tns{F}_{p}} \inv{\tns{F}_{e}}) \label{eq:power_internal_forces_1}
+\end{eqnarray}
+Dans l'équation~\eqref{eq:power_internal_forces_0}, comme \(\tsigma\) est
+un tenseur symétrique, on peut donc remplacer \(\tns{D}\) par \(\tns{L}\).
+Dans l'équation~\eqref{eq:power_internal_forces_1}, tenant compte de la
+relation entre le second tenseur de Piola-Kirchhoff \(\tns{S}_e\) et le
+tenseur de \nom{Cauchy} \(\tsigma\), on a~:
+\begin{eqnarray*}
+\Frac{1}{\rho} \tsigma\,\colon\, \tns{D} &=& \Frac{1}{\rho_i} (\tns{F}_{e} \tns{S}_e \transpose{\tns{F}_{e}})\,\colon\, (\tns{\dot{F}}_{e} \inv{\tns{F}_{e}}) + \Frac {1}{\rho_i} (\tns{F}_{e} \tns{S}_e \transpose{\tns{F}_{e}})\,\colon\, (\tns{F}_{e} \tns{\dot{F}}_{p} \inv{\tns{F}_{p}} \inv{\tns{F}_{e}}) \\
+                                    &=& \frac{1}{\rho_i} \paren{F_{e}}_{ik} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{lj} \paren{\dot{F}_{e}}_{im} \paren{\inv{F}_{e}}_{mj}+ \\
+                                    && \frac{1}{\rho_i} \paren{F_{e}}_{ik} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{lj} \paren{F_{e}}_{im} \paren{\dot{F}_{p}}_{mn} \paren{\inv{F}_{p}}_{np} \paren{\inv{F}_{e}}_{pj} \\
+                                    &=& \frac{1}{\rho_i} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{ki} \paren{\dot{F}_{e}}_{im} \paren{\inv{F}_{e}}_{mj} \paren{F_{e}}_{jl} +\\
+                                    && \frac{1}{\rho_i} \paren{\transpose{F}_{e}}_{mi} \paren{F_{e}}_{ik} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{lj} \paren{F_{e}}_{jp}^{-T} \paren{\dot{F}_{p}}_{mn} \paren{\inv{F}_{p}}_{np} \\
+                                    &=& \frac{1}{\rho_i} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{ki} \paren{\dot{F}_{e}}_{il} + \frac{1}{\rho_i} \paren{\transpose{F}_{e}}_{mi} \paren{F_{e}}_{ik} \paren{S_{e}}_{kp} \paren{\dot{F}_{p}}_{mn} \paren{\inv{F}_{p}}_{np} \\
+&=& \Frac{1}{\rho_i} \tns{S}_e\,\colon\, (\transpose{\tns{F}_{e}} \tns{\dot{F}}_{e}) + \Frac{1}{\rho_i} (\transpose{\tns{F}_{e}} \tns{F}_{e} \tns{S}_e)\,\colon\, (\tns{\dot{F}}_{p} \inv{\tns{F}_{p}})
+\end{eqnarray*}
+
+Comme le second tenseur de Piola-Kirchhoff est symétrique, on a~:
+\begin{eqnarray}
+  \Frac{1}{\rho} \tsigma\,\colon\, \tns{D} &=& \Frac{1}{\rho_i} \tns{S}_e\,\colon\, \Frac 1 2 \left( \transpose{\tns{F}_{e}} \tns{\dot{F}}_{e} + \transpose{\tns{\dot{F}}_{e}} \tns{F}_{e}\right)+ \Frac{1}{\rho_i} (\transpose{\tns{F}_{e}} \tns{F}_{e} \tns{S}_e)\,\colon\, (\tns{\dot{F}}_{p} \inv{\tns{F}_{p}}) \\
+  &=& \Frac{1}{\rho_i} \tns{S}_e\,\colon\, \degle{}+ \Frac{1}{\rho_i} \tns{M}\,\colon\, (\tns{\dot{F}}_{p} \inv{\tns{F}_{p}})
+  =  \Frac{1}{\rho_i} \tns{S}_e\,\colon\, \degle{}+ \Frac{1}{\rho_i} \tns{M}\,\colon\, \tns{L}_{p} \label{eq:power_internal_forces}
+ \label{eq:power_internal_forces}
+\end{eqnarray}
+où nous avons introduit le tenseur des contraintes de \nom{Mandel},
+noté \(\tns{M}\), non symétrique, et définit par~:
+\begin{equation}
+  \label{eq:M}
+  \tns{M} = J_E \transpose{\tns{F}_{e}}\,.\,\tsigma\,.\,\invT{\tns{F}_{e}} = \transpose{\tns{F}_{e}}\,.\,\tns{F}_{e}\,.\,\tenseur{S}^{e}= \tenseur{C}_e\,.\,\tenseur{S}^{e}
+\end{equation}
+avec \(\tenseur{C}_e\) le tenseur des dilatations élastiques
+\nom{Cauchy-Green} droit.
+
+\subsection{Thermodynamique}
+
+Le deuxième principe de la thermodynamique dans sa forme locale, connu
+sous le nom d'inégalité de \nom{Clausius-Duhem} s'écrit~:
+\begin{equation}
+  \label{eq:Clausius-Duhem}
+-\rho (\dot e - T \dot s) + \tsigma\,\colon\, \tns{D} - \Frac{\vec{q}}{T} \cdot \grad T \geqslant 0
+\end{equation}
+avec \(\rho\) la masse volumique dans la configuration actuelle, \(e\) la
+densité d'énergie interne, \(T\) la température, \(s\) la densité
+d'entropie, et \(\vec{q}\) le flux de chaleur.
+
+Pour un matériau sans écrouissage, la densité d'énergie interne \(e\)
+est une fonction de la déformation élastique de Green-Lagrange
+\(\egle{}\) et de la densité d'entropie \(s\)~:
+\begin{equation}
+e=e \left( \egle{},s \right)
+\end{equation}
+la densité d'énergie libre \(\psi\) est une fonction de \(\egle\) et de la température \(T\)~:
+\begin{equation}
+\psi=\psi \left( \egle{},T \right)
+\end{equation}
+On sait que la relation entre la densité d'énergie libre \(\psi\) et
+la densité d'énergie interne \(e\) s'écrit~:
+\begin{equation} \label{eq:internal_and_free_E}
+\psi=e-Ts
+\end{equation}
+
+Compte tenu des équations~\eqref{eq:power_internal_forces} et
+\eqref{eq:internal_and_free_E}, l'inégalité de Clausisu-Duhem devient~:
+\begin{equation}
+  \label{eq:Clausius-Duhem_crystal}
+  \rho \left(  \Frac{\tns{S}_e}{\rho_i} - \Frac{\partial \psi}{\partial \egle{}} \right)\,\colon\, \dot\egle - \rho \left( s + \Frac{\partial \psi}{\partial T}\right) \dot T +\Frac{\rho}{\rho_i} \tns{M}\,\colon\, \tns{L}_{p} - \Frac{\vec{q}}{T} \cdot \grad T \geqslant 0
+\end{equation}
+où on a la dissipation thermique \(D^{t\!h}\)~:
+\begin{equation}
+D^{t\!h} = - \Frac{\vec{q}}{T} \cdot \grad T
+\end{equation}
+et la dissipation intrinsèque \(D^i\):
+\begin{equation}
+D^i = \rho \left(  \Frac{\tns{S}_e}{\rho_i} - \Frac{\partial \psi}{\partial \egle{}} \right)\,\colon\, \dot\egle - \rho \left( s + \Frac{\partial \psi}{\partial T}\right) \dot T +\Frac{\rho}{\rho_i} \tns{M}\,\colon\, \tns{L}_{p}
+\end{equation}
+
+Considérons un processus réversible tel que \(\dot T = 0\),
+\(\tns{\dot{F}}_{p} \inv{\tns{F}_{p}}=0\) et \(\grad T = 0\). Pour le
+processus réversible, l'inégalité~\eqref{eq:Clausius-Duhem_crystal}
+réduit à l'égalité, puisqu'il n'y a pas de dissipation. Par
+conséquent, on obtient
+\begin{equation}
+\tns{S}_e = \rho_i \Frac{\partial \psi}{\partial \egle{}}
+\end{equation}
+De même, considérons un autre processus réversible tel que \(\dot\egle=0\),  \(\tns{\dot{F}}_{p} \inv{\tns{F}_{p}}=0\) et \(\grad T = 0\), on a
+\begin{equation}
+s=-\Frac{\partial \psi}{\partial T}
+\end{equation}
+Enfin, la dissipation intrinsèque se réduit à 
+\begin{equation} \label{eq:intrinsic_dissipation}
+D^i = \Frac{\rho}{\rho_i} \tns{M}\,\colon\, \tns{L}_{p}
+\end{equation}
+
+\subsection{Application à la plasticité cristalline}
+
+Pour la plasticité cristalline, \(\tns{L}_{p}\) peut être déterminé sur
+les \(N_{g}\) systèmes de glissement par~:
+\begin{equation}
+  \label{eq:PP}
+  \tns{L}_{p} = \sum \limits_{s=1}^{N_{g}} \dot{\gamma}^s \tns{N}^s
+\end{equation}
+avec le tenseur d'orientation \(\tns{N}^s\) pour le système de
+glissement \(s\) et le taux de glissement \(\dot{\gamma}^s\) pour le
+système de glissement \(s\).
+
+Selon les équations~\eqref{eq:power_internal_forces} et
+\eqref{eq:intrinsic_dissipation}, le second tenseur de Piola-Kirchhoff
+\(\tns{S}_e\) est utilisé pour la loi d'élasticité et le tenseur de
+\nom{Mandel} \(\tns{M}\) pour la loi d'écoulement. Vu que la dissipation
+décrite par \(\tns{M}\,\colon\,\tns{L}_{p}\) est liée au glissement des
+dislocations dans le monocristal, on a~:
+\begin{equation}
+  \label{eq:plastic_power_1}
+  \tns{M}\,\colon\,\tns{L}_{p} = \sum_{s=1}^{N_{g}} \dot \gamma^s \tau^s
+\end{equation}
+où \(\tau^s\) est la cission résolue du système de glissement
+\(s\). Compte tenu l'équation~\eqref{eq:PP}, on a~:
+\begin{equation}
+  \label{eq:plastic_power_2}
+  \tns{M}\,\colon\,\tns{L}_{p} = \tns{M} : \left(\sum_{s=1}^{N_{g}} \dot \gamma^s \tns{N}^s \right) = \sum_{s=1}^{N_{g}} \dot \gamma^s \tns{M} : \tns{N}^s
+\end{equation}
+Si on compare l'équation~\eqref{eq:plastic_power_1} et
+l'équation~\eqref{eq:plastic_power_2}, la cission résolue \(\tau^s\)
+du système de glissement \(s\) s'écrit donc :
+\begin{equation}
+\tau^s = \tns{M} : \tns{N}^s
+\end{equation}
+
+Les différentes lois de plasticité cristalline se différencient par la
+relation entre la cission résolue \(\tau^s\) et la vitesse de
+glissement \(\gamma^s\).
+
+% Cette approche a eu un grand succès et a partagé la communauté entre
+% les partisans de cette décomposition et ceux d'une approche
+% lagrangienne~: c'est dans le cadre de cette opposition que
+% \nom{Naghdi} propose une vision très critique de ce
+% postulat~\cite{naghdi_critical_1990} et que nous avons trouvé
+% extrêmement instructive\footnote{Le principal défaut de cet article,
+%   qui sert de base à la plupart des détracteurs des approches
+%   lagrangiennes, est de ne présenter que la seule déformation de
+%   \nom{Green-Lagrange}, dont on a vu qu'elle n'exprime pas simplement
+%   le caractère isochore de l'écoulement plastique~: il suffit, pour
+%   rendre le papier de \nom{Naghdi} pleinement actuel, de
+%   \og{}~remplacer~\fg{} la seule déformation de \nom{Green-Lagrange}
+%   par la déformation de \nom{Hencky} pour le rendre pleinement
+%   actuel.}. Notre point de vue est plus pragmatique. Si nous avons
+% largement souligné les avantages d'une approche lagrangienne basée sur
+% les déformations logarithmiques, il y a deux situations pour
+% lesquelles une décomposition \(\tns{F}_{e}\,.\,\tns{F}_{p}\) est
+% particulièrement intéressante~:
+% \begin{itemize}
+% \item dans le cas d'une élasto-(visco)plasticité isotrope à
+%   écrouissage isotrope, \nom{Simo} et \nom{Miehe} ont proposé une loi
+%   de comportement extrêmement intéressante du point de vue de son
+%   efficacité numérique~\cite{simo_associative_1992}~;
+% \item dans le cas de la description de la plasticité cristalline,
+%   cette décomposition a une signification physique extrêmement
+%   plaisante et constitue le cadre le plus utilisé.
+% \end{itemize}
+
+% \paragraph{}
+
 \subsection{Formulations hypoélastiques}
 
 L'idée essentielle des formulations hypoélastiques est d'écrire la loi
@@ -1380,8 +1612,7 @@ l'élasticité qui s'écrit~:
 \]
 
 
- Le terme hypoélastique provient du fait
-que si l'on écrit la 
+% Le terme hypoélastique provient du fait que si l'on écrit la
 
 % La plupart des lois fournies par les expérimentateurs sont aujourd'hui
 % écrites dans l'hypothèse des petites perturbations (HPP). Dans cette
@@ -1970,89 +2201,89 @@ qu'au paragraphe~\ref{sec:coeff-de-dilat-vol}~:
 \alpha\paren{T} = \Frac{1}{T-T^{\alpha}}\left[\exp\paren{\int_{T^{\alpha}}^{T}\alpha_{l}\paren{u}\,\dtot\,u}-1\right]
 \]
 
-\newpage
-\clearpage
-\section{La décomposition multiplicative $F_{e}F_{p}$}
+% \newpage
+% \clearpage
+% \section{La décomposition multiplicative $F_{e}F_{p}$}
 
-\begin{equation}
-  \label{eq:finitestrain:FeFp}
-  \tns{F}=\tns{F}_{e}\tns{F}_{p}
-\end{equation}
-
-
-\paragraph{Critique}
-
-he most serious shortcoming of this scheme lies in the fact that the stress
-at a point in an elastic-plastic material can be reduced to zero without
-changing plastic strain only if the origin in stress space remains in the region
-enclosed by the yield surface. This implies a definite limitation on the
-usefulness of the above-mentioned definition: Indeed, except for special
-hardening rules (such as isotropic hardening), the yield surface may move
-about in stress space in a general manner as a consequence of deformation
-of the material.
+% \begin{equation}
+%   \label{eq:finitestrain:FeFp}
+%   \tns{F}=\tns{F}_{e}\tns{F}_{p}
+% \end{equation}
 
 
-\cite{naghdi_critical_1990}
-\begin{quotation}
-  Before ending this subsection, it may be observed once more that the
-  notion of deformation gradient in the context of classical continuum
-  mechanics is a purely kinematical concept. It then seems that there
-  is no reason for expecting the same (or similar) structure as (2.2)
-  for plastic deformation (plastic strain), which is not entirely a
-  kinematical quantity; and, its identification, involves the notion
-  of unloading from an existing elastic-plastic state.  Indeed,
-  instead of introducing F, through~\eqref{eq:finitestrain:FeFp}, for
-  the present it appears to be preferable to introduce the notion of
-  plastic strain as a primitive variable represented by a symmetric
-  second order tensor such as \(\tenseur{\varepsilon}_{p}\). This will
-  avoid the restriction regarding~\eqref{eq:finitestrain:FeFp} noted
-  in the preceding paragraph and (at least for the present) allows a
-  more flexible setting for the identification of
-  \(\tenseur{\varepsilon}_{p}\), albeit a posteriori. In light of
-  these remarks and until further progress on the nature of its
-  identification, [...], we regard plastic strain as a primitive
-  variable represented by a second order tensor
-  \(\tenseur{\varepsilon}_{p}\) and defined by its rate through an
-  appropriate constitutive equation.
-\end{quotation}
+% \paragraph{Critique}
 
-\newpage
-\clearpage
-\clearpage
-\newpage
-\section{Formulations hypoélastiques~: lagrangien réactualisé,
-  dérivées objectives et descriptions corotationnelles}
-
-Recent and current literature representing efforts of the majority of the
-various schools of plasticity are directed toward an Eulerian formulation of
-the theory constructed in a stress-space setting. The preference for the
-Eulerian formulation is evidently based on one or both of the following
-presuppositions: (i) the belief, founded perhaps in analogy with viscous fluid
-flow, that such formulations are more relevant to large elastic-plastic
-deformations; and (ii) the view that the construction of the theory in terms
-of the Cauchy stress and its rate is more fundamental. Most workers who
-share the preference for the Eulerian version of the theory, begin by
-considering the decomposition of the velocity gradient L or rate of the
-deformation tensor D into additive "elastic" and "'plastic" parts L, and L.
-or D, and D., respectively, so that 7
-L = L, + LP,
-D = D, + Dp.
-(4.23)
-Subsequently, they prescribe a constitutive equation for D. in terms of a rate
-of Cauchy stress; the rate operator here is not the usual material derivative
-but an objective rate such as the corotational (or Jaumann) rate' which
-renders the stress rate properly invariant under s.r.b.m. Thus, the constitutive
-equation for D. will have the form
-Dp x an objective rate of T,
+% he most serious shortcoming of this scheme lies in the fact that the stress
+% at a point in an elastic-plastic material can be reduced to zero without
+% changing plastic strain only if the origin in stress space remains in the region
+% enclosed by the yield surface. This implies a definite limitation on the
+% usefulness of the above-mentioned definition: Indeed, except for special
+% hardening rules (such as isotropic hardening), the yield surface may move
+% about in stress space in a general manner as a consequence of deformation
+% of the material.
 
 
-....
+% \cite{naghdi_critical_1990}
+% \begin{quotation}
+%   Before ending this subsection, it may be observed once more that the
+%   notion of deformation gradient in the context of classical continuum
+%   mechanics is a purely kinematical concept. It then seems that there
+%   is no reason for expecting the same (or similar) structure as (2.2)
+%   for plastic deformation (plastic strain), which is not entirely a
+%   kinematical quantity; and, its identification, involves the notion
+%   of unloading from an existing elastic-plastic state.  Indeed,
+%   instead of introducing F, through~\eqref{eq:finitestrain:FeFp}, for
+%   the present it appears to be preferable to introduce the notion of
+%   plastic strain as a primitive variable represented by a symmetric
+%   second order tensor such as \(\tenseur{\varepsilon}_{p}\). This will
+%   avoid the restriction regarding~\eqref{eq:finitestrain:FeFp} noted
+%   in the preceding paragraph and (at least for the present) allows a
+%   more flexible setting for the identification of
+%   \(\tenseur{\varepsilon}_{p}\), albeit a posteriori. In light of
+%   these remarks and until further progress on the nature of its
+%   identification, [...], we regard plastic strain as a primitive
+%   variable represented by a second order tensor
+%   \(\tenseur{\varepsilon}_{p}\) and defined by its rate through an
+%   appropriate constitutive equation.
+% \end{quotation}
+
+% \newpage
+% \clearpage
+% \clearpage
+% \newpage
+% \section{Formulations hypoélastiques~: lagrangien réactualisé,
+%   dérivées objectives et descriptions corotationnelles}
+
+% Recent and current literature representing efforts of the majority of the
+% various schools of plasticity are directed toward an Eulerian formulation of
+% the theory constructed in a stress-space setting. The preference for the
+% Eulerian formulation is evidently based on one or both of the following
+% presuppositions: (i) the belief, founded perhaps in analogy with viscous fluid
+% flow, that such formulations are more relevant to large elastic-plastic
+% deformations; and (ii) the view that the construction of the theory in terms
+% of the Cauchy stress and its rate is more fundamental. Most workers who
+% share the preference for the Eulerian version of the theory, begin by
+% considering the decomposition of the velocity gradient L or rate of the
+% deformation tensor D into additive "elastic" and "'plastic" parts L, and L.
+% or D, and D., respectively, so that 7
+% L = L, + LP,
+% D = D, + Dp.
+% (4.23)
+% Subsequently, they prescribe a constitutive equation for D. in terms of a rate
+% of Cauchy stress; the rate operator here is not the usual material derivative
+% but an objective rate such as the corotational (or Jaumann) rate' which
+% renders the stress rate properly invariant under s.r.b.m. Thus, the constitutive
+% equation for D. will have the form
+% Dp x an objective rate of T,
 
 
-At best it seems that the decompositions (4.23)1,2 are a generaliza-
-tion of corresponding expressions in infinitesimal plasticity, since (to the
-order of approximation) in the linear theory the expression (4.23)2 would be
-identical to the rate of strain = rate of (elastic part + plastic part).
+% ....
+
+
+% At best it seems that the decompositions (4.23)1,2 are a generaliza-
+% tion of corresponding expressions in infinitesimal plasticity, since (to the
+% order of approximation) in the linear theory the expression (4.23)2 would be
+% identical to the rate of strain = rate of (elastic part + plastic part).
 
 \section{Représentation vectorielle des tenseurs d'ordre $2$ non
   symétriques}
