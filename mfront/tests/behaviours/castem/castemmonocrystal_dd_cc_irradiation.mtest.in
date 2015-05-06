@@ -48,30 +48,10 @@
 
 // Internal state variables
 @InternalStateVariable 'ElasticStrain' {0,0,0,0,0,0};
-@InternalStateVariable 'omega[0]' 6.1504e-09;
-@InternalStateVariable 'omega[1]' 6.1504e-09;
-@InternalStateVariable 'omega[2]' 6.1504e-09;
-@InternalStateVariable 'omega[3]' 6.1504e-09;
-@InternalStateVariable 'omega[4]' 6.1504e-09;
-@InternalStateVariable 'omega[5]' 6.1504e-09;
-@InternalStateVariable 'omega[6]' 6.1504e-09;
-@InternalStateVariable 'omega[7]' 6.1504e-09;
-@InternalStateVariable 'omega[8]' 6.1504e-09;
-@InternalStateVariable 'omega[9]' 6.1504e-09;
-@InternalStateVariable 'omega[10]' 6.1504e-09;
-@InternalStateVariable 'omega[11]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[0]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[1]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[2]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[3]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[4]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[5]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[6]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[7]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[8]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[9]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[10]' 6.1504e-09;
-@InternalStateVariable 'omega_irr[11]' 6.1504e-09;
+@InternalStateVariable 'omega' 6.1504e-09;
+@InternalStateVariable 'omega_irr' {6.1504e-09,6.1504e-09,6.1504e-09,6.1504e-09,
+                                    6.1504e-09,6.1504e-09,6.1504e-09,6.1504e-09,
+                                    6.1504e-09,6.1504e-09,6.1504e-09,6.1504e-09};
 
 // External state variables
 @ExternalStateVariable<evolution> 'Temperature' {0 : 250, 1.0 : 250};
