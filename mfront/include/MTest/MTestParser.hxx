@@ -414,6 +414,15 @@ namespace mfront
     readArrayOfSpecifiedSize(std::vector<real>&,
 			     const MTest&,
 			     TokensContainer::const_iterator&);
+    /*!
+     * \param[in]     t : MTest object
+     * \param[in,out] p : position in the input file
+     * \param[out]    n : name of the variable
+     */
+    void
+    setInternalStateVariableValue(MTest&,
+				  TokensContainer::const_iterator&,
+				  const std::string&);
     //! callbacks
     std::map<std::string,CallBack> callbacks;
     //! input file

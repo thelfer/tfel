@@ -1427,21 +1427,50 @@ namespace mfront
 			     ";",p,this->fileTokens.end());
     t.setThermodynamicForcesInitialValues(s_t0);
   } // end of MTestParser::handleThermodynamicForce
-  
-  void
-  MTestParser::handleInternalStateVariable(MTest& t,TokensContainer::const_iterator& p)
+
+  static void
+  selectVariables(std::vector<std::string>& r,
+		  const std::vector<std::string>& names,
+		  const std::string& n)
   {
     using namespace std;
-    std::shared_ptr<Behaviour> b(t.getBehaviour());
-    const auto& n = this->readString(p,this->fileTokens.end());
-    const auto& ivsnames = b->getInternalStateVariablesNames();
-    if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
-      string msg("MTestParser::handleInternalStateVariable : ");
-      msg += "the behaviour don't declare an internal state variable named '";
-      msg += n+"'";
-      throw(runtime_error(msg));
+    r.clear();    
+    if(find(names.begin(),names.end(),n)!=names.end()){
+      r.push_back(n);
+    } else {
+      // checking for an array of internal state variables
+      vector<string>::const_iterator p;
+      for(p=names.begin();p!=names.end();++p){
+	const string& vn = *p;
+	if(vn.compare(0,n.length(),n)==0){
+	  if(!vn.size()>=n.length()+3u){
+	    continue;
+	  }
+	  string::const_reverse_iterator pn  = vn.rbegin();
+	  const string::const_reverse_iterator pne = vn.rbegin()+(vn.size()-n.size()-1);
+	  if((vn[n.size()]!='[')||(*pn!=']')){
+	    continue;
+	  }
+	  ++pn;
+	  bool ok = true;
+	  while((pn!=pne)&&(ok)){
+	    ok = ::isdigit(*pn);
+	    ++pn;
+	  }
+	  if(ok){
+	    r.push_back(vn);
+	  }
+	}
+      }
     }
-    const int type           = b->getInternalStateVariableType(n);
+  } // end of selectVariables
+    
+  void
+  MTestParser::setInternalStateVariableValue(MTest& t,
+					     TokensContainer::const_iterator& p,
+					     const std::string& n){
+    using namespace std;
+    const int type = t.getBehaviour()->getInternalStateVariableType(n);
     if(type==0){
       t.setScalarInternalStateVariableInitialValue(n,this->readDouble(t,p));
     } else if(type==1){
@@ -1455,10 +1484,68 @@ namespace mfront
       this->readArrayOfSpecifiedSize(v,t,p);
       t.setTensorInternalStateVariableInitialValues(n,v);
     } else {
-      string msg("MTestParser::handleInternalStateVariable : "
+      string msg("MTestParser::setInternalStateVariableValue : "
 		 "unsupported state variable type for "
 		 "internal state variable '"+n+"'");
       throw(runtime_error(msg));
+    }
+  }
+
+  void
+  MTestParser::handleInternalStateVariable(MTest& t,TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    shared_ptr<Behaviour> b(t.getBehaviour());
+    const string& n = this->readString(p,this->fileTokens.end());
+    const vector<string>& ivsnames = b->getInternalStateVariablesNames();
+    vector<string> ivs;
+    selectVariables(ivs,ivsnames,n);
+    if(ivs.empty()){
+      string msg("MTestParser::handleInternalStateVariable : ");
+      msg += "the behaviour don't declare an internal state variable named '";
+      msg += n+"'";
+      throw(runtime_error(msg));
+    }
+    if(ivs.size()==1){
+      this->setInternalStateVariableValue(t,p,ivs[0]);
+    } else {
+      const int type = b->getInternalStateVariableType(ivs[0]);
+      bool uniform = false;
+      if(type==0){
+	uniform = p->value!="{";
+      } else {
+	if(p->value!="{"){
+	  string msg("MTestParser::handleInternalStateVariable : ");
+	  msg += "unexpected token '"+n+"'";
+	  throw(runtime_error(msg));
+	}
+	++p;
+	this->checkNotEndOfLine("MTestParser::handleInternalStateVariable",p,
+				this->fileTokens.end());
+	uniform = p->value!="{";
+	--p;
+      }
+      if(uniform){
+	vector<string>::const_iterator pn;
+	const TokensContainer::const_iterator p2 = p;
+	for(pn=ivs.begin();pn!=ivs.end();++pn){
+	  p=p2;
+	  this->setInternalStateVariableValue(t,p,*pn);
+	}
+      } else {
+	this->readSpecifiedToken("MTestParser::handleInternalStateVariable",
+				 "{",p,this->fileTokens.end());
+	vector<string>::const_iterator pn;
+	for(pn=ivs.begin();pn!=ivs.end();){
+	  this->setInternalStateVariableValue(t,p,*pn);
+	  if(++pn!=ivs.end()){
+	    this->readSpecifiedToken("MTestParser::handleInternalStateVariable",
+				     ",",p,this->fileTokens.end());
+	  }
+	}
+	this->readSpecifiedToken("MTestParser::handleInternalStateVariable",
+				 "}",p,this->fileTokens.end());
+      }
     }
     this->readSpecifiedToken("MTestParser::handleInternalStateVariable",
 			     ";",p,this->fileTokens.end());
