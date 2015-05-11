@@ -24,7 +24,6 @@
 
 #include"MFront/DSLBase.hxx"
 #include"MFront/AbstractDSL.hxx"
-#include"MFront/TargetsDescription.hxx"
 #include"MFront/ModelData.hxx"
 
 namespace mfront{
@@ -50,12 +49,6 @@ namespace mfront{
 
     virtual void
     setInterfaces(const std::set<std::string>&) override;
-    /*!
-     * \return the target description
-     * \note This method shall be called *after* the analyseFile method
-     */
-    virtual const TargetsDescription&
-    getTargetsDescription(void) const override;
     //! destructor
     virtual ~ModelDSLCommon();
 
@@ -173,8 +166,6 @@ namespace mfront{
 	     std::shared_ptr<AbstractModelInterface>> interfaces;
 
     std::string currentVar;
-
-    TargetsDescription td;
   }; // end of class ModelDSLCommon
 
 } // end of namespace mfront  

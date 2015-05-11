@@ -28,17 +28,18 @@ mfront_library(MFrontLogStream
 
 mfront_library(MFrontProfiling
   BehaviourProfiler.cxx)
-if(UNIX)
+if(UNIX AND (NOT APPLE))
   target_link_libraries(MFrontProfiling rt)
-endif(UNIX)
+endif(UNIX AND (NOT APPLE))
 
 # TFELMFront
 
 set(TFELMFront_SOURCES
+    MFront.cxx
     MFrontBase.cxx
     CodeBlock.cxx
     FileDescription.cxx
-    MFrontExecutableName.cxx
+    TargetsDescription.cxx
     MFrontDebugMode.cxx
     PedanticMode.cxx
     MFrontLock.cxx
@@ -108,6 +109,7 @@ set(TFELMFront_SOURCES
     CppMaterialPropertyInterface.cxx
     CppTestMaterialPropertyInterface.cxx
     ExcelMaterialPropertyInterface.cxx
+    OctaveMaterialPropertyInterface.cxx
     ExcelMaterialPropertyInternalInterface.cxx
     UMATInterfaceBase.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
@@ -229,7 +231,7 @@ target_link_libraries(MTestFileGenerator
 
 # MFront
 
-add_executable(mfront main.cxx MFront.cxx)
+add_executable(mfront main.cxx)
 target_link_libraries(mfront
   TFELMFront 
   MFrontLogStream

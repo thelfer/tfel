@@ -11,8 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/PerformanceProfiling.hxx"

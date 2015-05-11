@@ -1393,12 +1393,6 @@ namespace mfront{
     container.push_back(boundsDescription);
   } // end of ModelDSLCommon::registerBounds
 
-  const TargetsDescription&
-  ModelDSLCommon::getTargetsDescription(void) const
-  {
-    return this->td;
-  }
-
   void
   ModelDSLCommon::addMaterialLaw(const std::string& m)
   {

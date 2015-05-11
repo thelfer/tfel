@@ -327,7 +327,6 @@ namespace mfront{
 								   std::shared_ptr<AbstractBehaviourDSL> d,
 								   const std::string& f)
     : tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>(argc,argv),
-      MFrontBase(argc,argv),
       dsl(d),
       file(f),
       otype(BehaviourDocumentationGenerator::FULL)

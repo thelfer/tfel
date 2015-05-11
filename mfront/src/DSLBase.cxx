@@ -17,16 +17,12 @@
 #include<stdexcept>
 #include<algorithm>
 
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-#include"TFEL/System/ProcessManager.hxx"
-#endif
 #include"TFEL/Math/IntegerEvaluator.hxx"
 
 #include"MFront/MFront.hxx"
-#include"MFront/MFrontExecutableName.hxx"
 #include"MFront/DSLBase.hxx"
-#include"MFront/DSLUtilities.hxx"
 #include"MFront/SearchFile.hxx"
+#include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontMaterialPropertyInterface.hxx"
@@ -104,6 +100,11 @@ namespace mfront
   {
     return *this;
   } // end of DSLBase::getFileDescription
+
+  const TargetsDescription&
+  DSLBase::getTargetsDescription(void) const{
+    return this->td;
+  } // end of DSLBase::getTargetsDescription
 
   DSLBase::~DSLBase()
   {} // end of DSLBase::~DSLBase
@@ -773,30 +774,15 @@ namespace mfront
 
   void
   DSLBase::callMFront(const std::vector<std::string>& interfaces,
-			 const std::vector<std::string>& files) const
+		      const std::vector<std::string>& files)
   {
-    using namespace std;
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-    using namespace tfel::system;
-    ProcessManager m;
-    ostringstream cmd;
-    vector<string>::const_iterator p;
-    cmd << getMFrontExecutableName();
-    cmd << " --interface=";
-    for(p=interfaces.begin();p!=interfaces.end();){
-      cmd << *p;
-      if((++p)!=interfaces.end()){
-	cmd << ",";
-      }
+    MFront m;
+    for(const auto& i : interfaces){
+      m.setInterface(i);
     }
-    cmd << " ";
-    copy(files.begin(),files.end(),ostream_iterator<string>(cmd," "));
-    m.execute(cmd.str());
-#else
-    string msg("DSLBase::callMFront : ");
-    msg += "unsupported keyword on windows plate-form";
-    throw(runtime_error(msg));
-#endif
+    for(const auto& f : files){
+      this->td.tds.push_back(m.treatFile(f));
+    }
   } // end of DSLBase::callMFront
 
   void
@@ -972,9 +958,6 @@ namespace mfront
   DSLBase::handleMaterialLaw(const std::string& f)
   {
     using namespace std;
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-    using namespace tfel::system;
-    ProcessManager m;
     // getting informations the source files
     MaterialPropertyDSL mp;
     try{
@@ -1007,12 +990,6 @@ namespace mfront
       this->librariesDependencies.push_back("-lMFrontMaterialLaw");
     }
     return mp.getMaterialPropertyDescription();
-#else
-    string msg("DSLBase::handleMaterialLaw : ");
-    msg += "unsupported keyword on windows plate-form";
-    throw(runtime_error(msg));
-    return MaterialPropertyDescription();
-#endif
   } // end of DSLBase::handleMaterialLaw
 
   void

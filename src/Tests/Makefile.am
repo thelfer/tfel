@@ -17,8 +17,4 @@ libTFELTests_la_SOURCES =   Test.cxx                 \
 			    TestManager.cxx	     \
 			    TestCase.cxx
 
-if ! TFEL_WIN
-libTFELTests_la_LIBADD       = -lrt
-endif
-
 EXTRA_DIST = CMakeLists.txt

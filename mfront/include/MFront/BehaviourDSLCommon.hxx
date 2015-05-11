@@ -27,7 +27,6 @@
 #include"MFront/DSLBase.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
-#include"MFront/TargetsDescription.hxx"
 #include"MFront/BehaviourDescription.hxx"
 
 namespace mfront{
@@ -60,12 +59,6 @@ namespace mfront{
     virtual void
     analyseFile(const std::string&,
 		const std::vector<std::string>&) override;
-    /*!
-     * \return the target description
-     * \note This method shall be called *after* the analyseFile method
-     */
-    virtual const TargetsDescription&
-    getTargetsDescription(void) const override;
   protected:
     /*!
      * create a variable modifier from a method
@@ -1018,8 +1011,6 @@ namespace mfront{
     BehaviourDSLCommon();
     //! behaviour description
     BehaviourDescription mb;
-    //! target description
-    TargetsDescription   td;
     //! registred bricks
     std::vector<std::shared_ptr<AbstractBehaviourBrick>> bricks;
     //! the list of registred keywords

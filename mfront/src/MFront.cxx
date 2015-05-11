@@ -41,7 +41,6 @@
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
-#include"MFront/MFrontExecutableName.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/TargetsDescription.hxx"
@@ -244,9 +243,9 @@ namespace mfront{
       } else if(level=="level1"){
 	this->oflags    = true;
       } else if(level!="level1"){
-	string msg("MFront::treatOBuild : ");
+	string msg("MFront::treatOMake : ");
 	msg += "unsupported value '"+level+
-	  "' for the --obuild option";
+	  "' for the --omake option";
 	throw(runtime_error(msg));
       }
     } else {
@@ -349,7 +348,7 @@ namespace mfront{
     this->treatTarget();
   } // end of MFront::treatTarget
 
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
   void
   MFront::treatWin32(void)
   {
@@ -406,17 +405,18 @@ namespace mfront{
 #endif /* __CYGWIN__ */
     this->registerNewCallBack("--nomelt",&MFront::treatNoMelt,
 			      "don't melt librairies sources");
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
     this->registerNewCallBack("--win32",&MFront::treatWin32,
 			      "specify that the target system is win32");
 #endif /* __CYGWIN__ */
   } // end of MFront::registerArgumentCallBacks
 
-  MFront::MFront(const int argc, const char *const *const argv)
-    : tfel::utilities::ArgumentParserBase<MFront>(argc,argv),
-      MFrontBase(argc,argv),
+  MFront::MFront()
+    : tfel::utilities::ArgumentParserBase<MFront>(),
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       sys("win32"),
+#elif defined __APPLE__
+      sys("apple"),
 #else
       sys("default"),
 #endif /* __CYGWIN__ */
@@ -433,7 +433,12 @@ namespace mfront{
       nodeps(true),
 #endif /* __CYGWIN__ */
       melt(true)
+  {} // end of MFront::MFront
+
+  MFront::MFront(const int argc, const char *const *const argv)
+    : MFront()
   {
+    this->setArguments(argc,argv);
     this->registerArgumentCallBacks();
     this->parseArguments();
   } // end of MFront::MFront
@@ -545,29 +550,11 @@ namespace mfront{
   } // end of MFront::treatNoMelt
 
   void
-  MFront::treatFile(const std::string& f)
+  MFront::mergeTargetsDescription(const TargetsDescription& d)
   {
     using namespace std;
-    using namespace tfel::system;
-    typedef map<string,pair<vector<string>,vector<string> > > Target;
-    map<string,vector<string> >::const_iterator p;
-    vector<string>::const_iterator p2;
-    Target::const_iterator p3;
-    vector<string>::const_iterator p4;
-    if(getVerboseMode()>=VERBOSE_LEVEL2){
-      auto& log = getLogStream();
-      log << "Treating file : '" << f << "'" <<  endl;
-    }
-    shared_ptr<AbstractDSL> dsl = MFrontBase::getDSL(f);
-    if(!this->interfaces.empty()){
-      dsl->setInterfaces(this->interfaces);
-    }
-    dsl->analyseFile(f,this->ecmds);
-    dsl->generateOutputFiles();
-    // getting generated sources
-    const TargetsDescription& d = dsl->getTargetsDescription();
     const auto& src = d.sources;
-    for(p=src.begin();p!=src.end();++p){
+    for(auto p=src.begin();p!=src.end();++p){
       auto& tmp = this->sources[p->first];
       copy(p->second.begin(),p->second.end(),insert_iterator<set<string> >(tmp,tmp.begin()));
     }
@@ -580,14 +567,14 @@ namespace mfront{
     }
     // getting generated dependencies
     const auto& deps = d.dependencies;
-    for(p=deps.begin();p!=deps.end();++p){
+    for(auto p=deps.begin();p!=deps.end();++p){
       auto& tmp = this->dependencies[p->first];
-      for(p2=p->second.begin();p2!=p->second.end();++p2){
+      for(auto p2=p->second.begin();p2!=p->second.end();++p2){
 	if(find(tmp.begin(),tmp.end(),*p2)==tmp.end()){
 	  // treat a very special case where a library can be declared
 	  // as depending on itself (this may arise for material properties)
 	  if(p2->substr(0,2)=="-l"){
-	    string lib = "lib"+p2->substr(2);
+	    auto lib = "lib"+p2->substr(2);
 	    if(lib!=p->first){
 	      tmp.push_back(*p2);
 	    }
@@ -599,14 +586,14 @@ namespace mfront{
     }
     // getting specific targets
     const auto& t = d.specific_targets;
-    for(p3=t.begin();p3!=t.end();++p3){
-      for(p4=p3->second.first.begin();p4!=p3->second.first.end();++p4){
+    for(auto p3=t.begin();p3!=t.end();++p3){
+      for(auto p4=p3->second.first.begin();p4!=p3->second.first.end();++p4){
 	if(find(this->targets[p3->first].first.begin(),
 		this->targets[p3->first].first.end(),*p4)==this->targets[p3->first].first.end()){
 	  this->targets[p3->first].first.push_back(*p4);
 	}
       }
-      for(p4=p3->second.second.begin();p4!=p3->second.second.end();++p4){
+      for(auto p4=p3->second.second.begin();p4!=p3->second.second.end();++p4){
 	if(find(this->targets[p3->first].second.begin(),
 		this->targets[p3->first].second.end(),*p4)==this->targets[p3->first].second.end()){
 	  this->targets[p3->first].second.push_back(*p4);
@@ -615,10 +602,31 @@ namespace mfront{
     }
     // getting includes
     const auto& incs = d.cppflags;
-    for(p=incs.begin();p!=incs.end();++p){
+    for(auto p=incs.begin();p!=incs.end();++p){
       copy(p->second.begin(),p->second.end(),
 	   insert_iterator<set<string> >(this->cppflags,this->cppflags.begin()));
     }
+    // treating dependendenices
+    for(const auto& td:d.tds){
+      this->mergeTargetsDescription(td);
+    }
+  }
+
+  TargetsDescription
+  MFront::treatFile(const std::string& f) const
+  {
+    using namespace std;
+    if(getVerboseMode()>=VERBOSE_LEVEL2){
+      auto& log = getLogStream();
+      log << "Treating file : '" << f << "'" <<  endl;
+    }
+    shared_ptr<AbstractDSL> dsl = MFrontBase::getDSL(f);
+    if(!this->interfaces.empty()){
+      dsl->setInterfaces(this->interfaces);
+    }
+    dsl->analyseFile(f,this->ecmds);
+    dsl->generateOutputFiles();
+    return dsl->getTargetsDescription();
   } // end of MFront::treatFile(void)
 
   void
@@ -1046,18 +1054,18 @@ namespace mfront{
       }
       closedir(directory);
       for(p=files.begin();p!=files.end();++p){
-	if(p->size()>4){
-	  if(p->substr(p->size()-4)==".src"){
-	    if(getVerboseMode()>=VERBOSE_LEVEL2){
-	      auto& log = getLogStream();
-	      if(this->sys=="win32"){
-		log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
-	      } else {
-		log << "treating library " << p->substr(0,p->size()-4) << ".so sources.\n";
-	      }
+	if(p->substr(p->size()-4)==".src"){
+	  if(getVerboseMode()>=VERBOSE_LEVEL2){
+	    auto& log = getLogStream();
+	    if(this->sys=="win32"){
+	      log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
+	    } else if(this->sys=="apple"){
+	      log << "treating library " << p->substr(0,p->size()-4) << ".bundle sources.\n";
+	    } else {
+	      log << "treating library " << p->substr(0,p->size()-4) << ".so sources.\n";
 	    }
-	    this->analyseSources(*p);
 	  }
+	  this->analyseSources(*p);
 	}
 	if(p->size()>5){
 	  if(p->substr(p->size()-5)==".epts"){
@@ -1133,6 +1141,8 @@ namespace mfront{
 	  auto& log = getLogStream();
 	  if(this->sys=="win32"){
 	    log << "writing sources list for library '" << p->first << ".dll'\n";
+	  } else if(this->sys=="apple"){
+	    log << "writing sources list for library " << p->first << ".bundle\n";
 	  } else {
 	    log << "writing sources list for library '" << p->first << ".so'\n";
 	  }
@@ -1204,6 +1214,8 @@ namespace mfront{
 	  auto& log = getLogStream();
 	  if(this->sys=="win32"){
 	    log << "writing dependencies list for library " << p->first << ".dll\n";
+	  } else if(this->sys=="apple"){
+	    log << "writing dependencies list for library " << p->first << ".bundle\n";
 	  } else {
 	    log << "writing dependencies list for library " << p->first << ".so\n";
 	  }
@@ -1336,6 +1348,8 @@ namespace mfront{
 		  res.second.second += lib;
 		  if(this->sys=="win32"){
 		    res.second.second +=  + ".dll ";
+		  } else if(this->sys=="apple"){
+		    res.second.second +=  + ".bundle ";
 		  } else {
 		    res.second.second +=  + ".so ";
 		  }
@@ -1609,6 +1623,8 @@ namespace mfront{
       for(p2=this->sources.begin();p2!=this->sources.end();++p2){
 	if(this->sys=="win32"){
 	  this->makeFile << p2->first << ".dll ";
+	} else if(this->sys=="apple"){
+	  this->makeFile << p2->first << ".bundle ";
 	} else {
 	  this->makeFile << p2->first << ".so ";
 	}
@@ -1623,6 +1639,8 @@ namespace mfront{
       for(p2=this->sources.begin();p2!=this->sources.end();++p2){
 	if(this->sys=="win32"){
 	  this->makeFile << p2->first << ".dll";
+	} else if(this->sys=="apple"){
+	  this->makeFile << p2->first << ".bundle";
 	} else {
 	  this->makeFile << p2->first << ".so";
 	}
@@ -1657,6 +1675,8 @@ namespace mfront{
 	pair<bool,pair<string,string> > dep = this->getLibraryDependencies(p2->first);
 	if(this->sys=="win32"){
 	  this->makeFile << p2->first << ".dll : ";
+	} else if(this->sys=="apple"){
+	  this->makeFile << p2->first << ".bundle : ";
 	} else {
 	  this->makeFile << p2->first << ".so : ";
 	}
@@ -1676,9 +1696,12 @@ namespace mfront{
 	if(ldflags!=nullptr){
 	  this->makeFile << "$(LDFLAGS) ";
 	}
-	this->makeFile << "-shared ";
 	if(this->sys=="win32"){
-	  this->makeFile << "-Wl,--add-stdcall-alias,--out-implib," << p2->first << "_dll.a,-no-undefined ";
+	  this->makeFile << "-shared -Wl,--add-stdcall-alias,--out-implib," << p2->first << "_dll.a,-no-undefined ";
+	} else if(this->sys=="apple"){
+	  this->makeFile << "-bundle ";
+	} else {
+	  this->makeFile << "-shared ";
 	}
 	this->makeFile << "$^  -o $@ ";
 	this->makeFile << this->getLibraryLinkDependencies(p2->first);
@@ -1693,6 +1716,8 @@ namespace mfront{
       this->makeFile << "\n";
       if(this->sys=="win32"){
 	this->makeFile << "\t"+sb+"rm -f *.o *.dll *.d\n";
+      } else if(this->sys=="apple"){
+	this->makeFile << "\t"+sb+"rm -f *.o *.bundle *.d\n";
       } else {
 	this->makeFile << "\t"+sb+"rm -f *.o *.so *.d\n";
       }
@@ -1860,7 +1885,7 @@ namespace mfront{
     if(!this->inputs.empty()){
       for(p=this->inputs.begin();p!=this->inputs.end();++p){
 	try{
-	  this->treatFile(*p);
+	  this->mergeTargetsDescription(this->treatFile(*p));
 	} catch(exception& e){
 	  errors.push_back(pair<string,string>(*p,e.what()));
 	}
@@ -1904,13 +1929,13 @@ namespace mfront{
       }
       throw(runtime_error(msg));
     }
-    if((this->genMake)&&(!this->sources.empty())){
+    if((this->genMake)&&((!this->sources.empty())||(!this->targets.empty()))){
       this->generateMakeFile();
     }
     if(this->cleanLibs){
       this->cleanLibraries();
     }
-    if((this->buildLibs)&&(!this->sources.empty())){
+    if((this->buildLibs)&&((!this->sources.empty())||(!this->targets.empty()))){
       map<string,set<string> >::const_iterator pt;
       map<string,pair<vector<string>,vector<string> > >::const_iterator pt2;
       vector<string>::const_iterator pt3;
@@ -1928,6 +1953,8 @@ namespace mfront{
 	for(const auto& l:this->sources){
 	  if(this->sys=="win32"){
 	    cout << "- " << l.first << ".dll :";
+	  } else if(this->sys=="apple"){
+	    cout << "- " << pt->first << ".bundle\n";
 	  } else {
 	    cout << "- " << l.first << ".so :";
 	  }

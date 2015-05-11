@@ -27,6 +27,7 @@
 
 #include"MFront/CppMaterialPropertyInterface.hxx"
 #include"MFront/CppTestMaterialPropertyInterface.hxx"
+#include"MFront/OctaveMaterialPropertyInterface.hxx"
 
 #ifdef HAVE_PYTHON
 #include"MFront/PythonMaterialPropertyInterface.hxx"
@@ -84,6 +85,8 @@ namespace mfront
     MaterialPropertyInterfaceProxy<GnuplotMaterialPropertyInterface> gnuplotLawProxy(GnuplotMaterialPropertyInterface::getName(),
 							   CppTestMaterialPropertyInterface::getName());
 #endif /* HAVE_GNUPLOT */
+
+    MaterialPropertyInterfaceProxy<OctaveMaterialPropertyInterface> octaveLawProxy;
 
 #ifdef HAVE_PYTHON
     constexpr const char * pythonProxyNames[2] = {"python","Python"};

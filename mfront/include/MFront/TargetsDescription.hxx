@@ -14,6 +14,12 @@
 #ifndef LIB_MFRONT_TARGETSDESCRIPTION_H
 #define LIB_MFRONT_TARGETSDESCRIPTION_H 
 
+#include<map>
+#include<string>
+#include<vector>
+
+#include"MFront/MFrontConfig.hxx"
+
 namespace mfront{
 
   /*!
@@ -54,7 +60,19 @@ namespace mfront{
 	     std::pair<std::vector<std::string>,    //< dependencies to other targets
 		       std::vector<std::string>     //< commands
 		       >> specific_targets; 
+    //! targets description of mfront dependencies (material properties)
+    std::vector<TargetsDescription> tds;
   }; // end of struct TargetsDescription
+
+  /*!
+   * \brief merge two targets description
+   * \param[out] d : destination
+   * \param[in]  s : source
+   * \note the targets description shall not
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void mergeTargetsDescription(TargetsDescription&,
+			       const TargetsDescription&);
 
 } // end of namespace mfront
 

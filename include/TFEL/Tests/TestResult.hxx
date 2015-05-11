@@ -47,27 +47,19 @@ namespace tfel
        * \param b : tells if the test is a success
        * \param c : detail
        */
-      TestResult(const bool,
-		 const char* const);
+      TestResult(const bool,const char* const);
       /*! 
        * Constructor
        * \param b : tells if the test is a success
        * \param c : detail
        */
-      TestResult(const bool,
-		 const std::string&);
-      /*!
-       * copy constructor
-       * \param src : object to be copied
-       */
-      TestResult(const TestResult&);
-      /*!
-       * assignement operator
-       * \param src : object to be assigned
-       * \return a reference to this object
-       */
-      TestResult&
-      operator = (const TestResult&);
+      TestResult(const bool,const std::string&);
+      //! copy constructor
+      TestResult(const TestResult&) = default;
+      //! assignement operator
+      TestResult& operator = (const TestResult&) = default;
+      //! assignement operator
+      TestResult& operator = (TestResult&&) = default;
       /*! 
        * report success
        */

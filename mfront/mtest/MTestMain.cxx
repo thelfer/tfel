@@ -144,7 +144,7 @@ namespace mfront
   MTestMain::treatEnableFloatingPointExceptions(void)
   {
     // mathematical
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
 #ifdef HAVE_FENV
     ::feclearexcept(FE_ALL_EXCEPT);
     ::feenableexcept(FE_DIVBYZERO); // division by zero
@@ -162,7 +162,7 @@ namespace mfront
     auto& sm = SignalManager::getSignalManager();
     // blocking all signals during treatment of signals SIGSEGV, SIGFPE
     struct sigaction action;
-    ::sigfillset(&(action.sa_mask));
+    sigfillset(&(action.sa_mask));
     action.sa_flags = 0;
     sm.registerHandler(SIGSEGV,sigPtrFun(SignalManager::printBackTrace),action);
     sm.registerHandler(SIGFPE,sigPtrFun(SignalManager::printBackTrace),action);

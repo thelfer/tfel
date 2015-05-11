@@ -22,20 +22,41 @@
 
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"MFront/MFrontBase.hxx"
+#include"MFront/MFrontConfig.hxx"
+#include"MFront/TargetsDescription.hxx"
 
 namespace mfront{
 
-  struct MFront
+  /*!
+   * \brief the main class of MFront
+   */
+  struct MFRONT_VISIBILITY_EXPORT MFront
     : public tfel::utilities::ArgumentParserBase<MFront>,
       public MFrontBase
   {
+    //! constructor
+    MFront();
+    /*!
+     * constructor
+     * \param[in] argc : number of command line arguments
+     * \param[in] argv : command line arguments
+     */
     MFront(const int, const char *const *const);
-
+    /*!
+     * \brief treat a file (analyse and generate output files)
+     * \param[in] f : file name
+     * \return the target's description
+     */
+    virtual TargetsDescription
+    treatFile(const std::string&) const;
+    /*!
+     * \brief execute MFront process
+     */
     virtual void exe(void);
+    //! destructor
+    virtual ~MFront();
 
-    ~MFront();
-
-  private :
+  protected :
 
     friend struct tfel::utilities::ArgumentParserBase<MFront>;
 
@@ -50,6 +71,12 @@ namespace mfront{
     //! get the usage description
     virtual std::string
     getUsageDescription(void) const final;
+
+    /*!
+     * \brief merge the given target's description with the internal
+     * structure used to generate Makefiles
+     */
+    virtual void mergeTargetsDescription(const TargetsDescription&);
 
     virtual void treatHelpCommandsList(void);
 
@@ -74,8 +101,6 @@ namespace mfront{
     virtual void treatTarget(void);
 
     virtual void treatOTarget(void);
-
-    virtual void treatFile(const std::string&);
 
     virtual void treatListParsers(void);
 

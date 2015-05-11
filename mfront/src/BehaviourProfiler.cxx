@@ -24,7 +24,7 @@
 namespace mfront
 {
 
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ ||defined __APPLE__)
   /*!
    * add a new measure
    * t     : measure to which the new measure is added
@@ -169,18 +169,18 @@ namespace mfront
   }
   
   BehaviourProfiler::Timer::Timer(BehaviourProfiler& t,
-					const unsigned short cn)
+				  const unsigned short cn)
     : gtimer(t),
       c(cn)
   {
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
     ::clock_gettime(CLOCK_THREAD_CPUTIME_ID,&(this->start));
 #endif
   } // end of BehaviourProfiler::Timer
 
   BehaviourProfiler::Timer::~Timer()
   {
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
     ::clock_gettime(CLOCK_THREAD_CPUTIME_ID,&(this->end));
     add_measure(this->gtimer.measures[this->c],this->start,this->end);
 #endif    

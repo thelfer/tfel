@@ -21,9 +21,10 @@ if TFEL_WIN
 libMFrontLogStream_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 
-libTFELMFront_la_SOURCES = MFrontBase.cxx                                         \
-			   MFrontExecutableName.cxx                               \
+libTFELMFront_la_SOURCES = MFront.cxx                                             \
+			   MFrontBase.cxx                                         \
 		           FileDescription.cxx                                    \
+		           TargetsDescription.cxx                                 \
 		           CodeBlock.cxx                                          \
 		           FiniteStrainBehaviourTangentOperatorConversion.cxx     \
 		           FiniteStrainBehaviourTangentOperatorConversionPath.cxx \
@@ -92,6 +93,7 @@ libTFELMFront_la_SOURCES = MFrontBase.cxx                                       
 		           CppTestMaterialPropertyInterface.cxx                   \
 		           ExcelMaterialPropertyInterface.cxx                     \
 		           ExcelMaterialPropertyInternalInterface.cxx             \
+			   OctaveMaterialPropertyInterface.cxx                    \
 		           AbstractBehaviourBrick.cxx                             \
 		           BehaviourBrickBase.cxx                                 \
 		           ElasticityBehaviourBrick.cxx                           \
@@ -151,7 +153,7 @@ libTFELMFront_la_DEPENDENCIES = libMFrontLogStream.la
 
 lib_LTLIBRARIES += libMFrontProfiling.la
 libMFrontProfiling_la_SOURCES = BehaviourProfiler.cxx
-if ! TFEL_WIN
+if TFEL_LINUX
 libMFrontProfiling_la_LIBADD   = -lrt
 endif
 libMFrontProfiling_la_CPPFLAGS = -DMFrontProfiling_EXPORTS
@@ -236,7 +238,7 @@ libAsterInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-a
 endif # TFEL_WIN
 endif # HAVE_ASTER
 
-mfront_SOURCES = main.cxx MFront.cxx
+mfront_SOURCES = main.cxx
 mfront_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \
                -L$(top_builddir)/src/Utilities -lTFELUtilities             \
                -L$(top_builddir)/src/System -lTFELSystem

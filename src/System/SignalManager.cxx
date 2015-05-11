@@ -200,14 +200,12 @@ namespace tfel
 				   SignalHandler* const f,
 				   struct sigaction& action)
     {
-      using namespace std;
-      typedef map<unsigned short,SignalHandler *>::value_type MVType;
       unsigned short handler;
       action.sa_handler = &SignalManager::treatAction;
       handler = SignalManager::handlerNbr;
-      SignalManager::callBacks[sig].insert(MVType(handler,f));
+      SignalManager::callBacks[sig].insert({handler,f});
       ++SignalManager::handlerNbr;
-      ::sigaction(sig,&action,nullptr);
+      sigaction(sig,&action,0);
       return handler;
     } // end of SignalManager::registerHandler
     
@@ -216,7 +214,7 @@ namespace tfel
 				   SignalHandler* const f)
     {
       struct sigaction action;
-      ::sigemptyset(&(action.sa_mask));
+      sigemptyset(&(action.sa_mask));
       if((sig==SIGSEGV)||(sig==SIGFPE)){
 	action.sa_flags = SA_RESETHAND;
       } else {
@@ -236,8 +234,8 @@ namespace tfel
       sigset_t nSigSet;
       sigset_t oSigSet;
       // blocking all signals
-      ::sigfillset(&nSigSet);
-      ::sigprocmask(SIG_BLOCK,&nSigSet,&oSigSet);
+      sigfillset(&nSigSet);
+      sigprocmask(SIG_BLOCK,&nSigSet,&oSigSet);
       // removing the handle
       for(p=SignalManager::callBacks.begin();
 	  (p!=SignalManager::callBacks.end())&&(!found);++p){
@@ -255,7 +253,7 @@ namespace tfel
 	}
       }
       // restoring the previous signal mask
-      ::sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
+      sigprocmask(SIG_SETMASK,&oSigSet,0);
       if(!found){
 	cerr << "SignalManager::removeHandler : "
 	     << "unknown handler " << id << endl;

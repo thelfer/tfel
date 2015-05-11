@@ -10,7 +10,3 @@ tfel_library(TFELTests
              MultipleTestOutputs.cxx
              TestManager.cxx
              TestCase.cxx)
-
-if(UNIX)
-target_link_libraries(TFELTests rt)
-endif(UNIX)

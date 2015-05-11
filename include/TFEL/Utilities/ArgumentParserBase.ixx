@@ -101,20 +101,32 @@ namespace tfel
     }
 
     template<typename Child>
+    ArgumentParserBase<Child>::ArgumentParserBase()
+    {
+      this->registerDefaultCallBacks();
+    } // end of ArgumentParserBase<Child>::ArgumentParserBase
+
+    template<typename Child>
     ArgumentParserBase<Child>::ArgumentParserBase(const int argc,
 						  const char * const * const argv)
+      : ArgumentParserBase()
+    {
+      this->setArguments(argc,argv);;
+    }
+
+    template<typename Child>
+    void
+    ArgumentParserBase<Child>::setArguments(const int argc,
+					    const char * const * const argv)
     {
       using namespace std;
-
-      this->registerDefaultCallBacks();
-
       if(argc<1){
 	throw(runtime_error("argc value not valid"));
       }
-
       this->programName = argv[0];
-      copy(argv+1,argv+argc,back_inserter(args));
-    }
+      this->args.clear();
+      copy(argv+1,argv+argc,back_inserter(this->args));
+    } // end of ArgumentParserBase<Child>::setArguments
 
     template<typename Child>
     void ArgumentParserBase<Child>::replaceAliases(void)
@@ -201,21 +213,17 @@ namespace tfel
     {
       this->stripArguments();
       this->replaceAliases();
-
       this->currentArgument=this->args.begin();
       typename CallBacksContainer::iterator pf;
       typename ArgsContainer::iterator pa;
-
       if((pa=find(args.begin(),args.end(),"--help"))!=args.end()){
 	static_cast<Child *>(this)->treatHelp();
 	this->args.erase(pa);
       }
-
       if((pa=find(args.begin(),args.end(),"--version"))!=args.end()){
 	static_cast<Child *>(this)->treatVersion();
 	this->args.erase(pa);
       }
-
       while(this->currentArgument!=this->args.end()){
 	pf = this->callBacksContainer.find(*(this->currentArgument));
 	if(pf!=this->callBacksContainer.end()){

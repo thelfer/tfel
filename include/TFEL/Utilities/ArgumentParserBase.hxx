@@ -161,7 +161,6 @@ namespace tfel
        * method.
        */
       void treatHelp(void);
-
       /*!
        * \brief method associated with the '--version' command line
        * argument
@@ -172,14 +171,20 @@ namespace tfel
        * \brief parse arguments using registred methods.
        */
       void parseArguments(void);
-
+      //! default constructor
+      ArgumentParserBase();
       /*!
        * \brief constructor
        * \param argc : number of arguments given at command line
        * \param argv : arguments list
        */
       ArgumentParserBase(const int,const char* const* const);
-
+      /*!
+       * \brief set the arguments to be parsed
+       * \param argc : number of arguments given at command line
+       * \param argv : arguments list
+       */
+      void setArguments(const int,const char* const* const);
       /*!
        * Destructor
        */
@@ -187,26 +192,14 @@ namespace tfel
 
     private:
 
-      /*!
-       * \brief default constructor (disabled)
-       */
-      ArgumentParserBase();
-
-      /*!
-       * \brief copy constructor (disabled)
-       */
-      ArgumentParserBase(const ArgumentParserBase&);
-
-      /*!
-       * \brief assignement operator (disabled)
-       */
-      ArgumentParserBase& operator=(const ArgumentParserBase&);
-
+      ArgumentParserBase(const ArgumentParserBase&) = delete;
+      ArgumentParserBase(ArgumentParserBase&&) = delete;
+      ArgumentParserBase& operator=(const ArgumentParserBase&) = delete;
+      ArgumentParserBase& operator=(ArgumentParserBase&&) = delete;
       /*!
        * \brief replaces aliases by their usual names
        */
       void replaceAliases(void);
-
       /*!
        * \brief slip arguments and options
        */

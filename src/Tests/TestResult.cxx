@@ -11,6 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include"TFEL/Tests/TestResult.hxx"
 
 namespace tfel
@@ -45,26 +47,6 @@ namespace tfel
 	s(b)
     {} // end of TestResult::TestResult
     
-    TestResult::TestResult(const TestResult& src)
-      : std::vector<TestResult>(src),
-	d(src.d),
-	test_duration(src.test_duration),
-	s(src.s)
-    {} // end of TestResult::TestResult
-
-    TestResult&
-    TestResult::operator = (const TestResult& src)
-    {
-      using namespace std;
-      if(&src!=this){
-	this->d = src.d;
-	this->s = src.s;
-	this->test_duration = src.test_duration;
-	vector<TestResult>::operator=(src);
-      }
-      return *this;
-    } // end of TestResult::operator = 
-
     bool
     TestResult::success() const
     {
@@ -104,7 +86,6 @@ namespace tfel
     void
     TestResult::setTestDuration(const double td)
     {
-      using namespace std;
       this->test_duration = td;
     }
 
@@ -112,8 +93,7 @@ namespace tfel
     TestResult::duration(void) const
     {
       double r(this->test_duration);
-      const_iterator p;
-      for(p=this->begin();p!=this->end();++p){
+      for(auto p=this->begin();p!=this->end();++p){
 	r += p->duration();
       }
       return r;

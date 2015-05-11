@@ -21,9 +21,7 @@
 #include"MFront/DSLBase.hxx"
 #include"MFront/LawFunction.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
-#include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
-#include"MFront/AbstractDSL.hxx"
 
 namespace mfront{
 
@@ -67,12 +65,6 @@ namespace mfront{
     virtual void
     analyseFile(const std::string&,
 		const std::vector<std::string>& = std::vector<std::string>()) override;
-    /*!
-     * \return the target description
-     * \note This method shall be called *after* the analyseFile method
-     */
-    virtual const TargetsDescription&
-    getTargetsDescription(void) const override;
     /*!
      * \brief import a file
      * \param[in] f     : file name
@@ -203,8 +195,6 @@ namespace mfront{
      * which a method is called
      */
     std::string currentVar;
-
-    TargetsDescription td;
   }; // end of class MaterialPropertyDSL
 
 } // end of namespace mfront  

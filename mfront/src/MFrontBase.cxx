@@ -18,7 +18,6 @@
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
-#include"MFront/MFrontExecutableName.hxx"
 #include"MFront/SearchFile.hxx"
 #include"MFront/PedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -126,8 +125,7 @@ namespace mfront{
     return dsl;
   } // end of MFrontBase::getAbstractDSL
 
-  MFrontBase::MFrontBase(const int,
-			 const char *const *const argv)
+  MFrontBase::MFrontBase()
   {
     using namespace tfel::system;
     using namespace tfel::utilities;
@@ -139,8 +137,7 @@ namespace mfront{
 	lm.loadLibrary(l);
       }
     }
-    setMFrontExecutableName(argv[0]);
-  } // end of MFrontBase::MFrontBase
+  } // end of MFrontBase
 
   void
   MFrontBase::treatSearchPath(void)
@@ -224,6 +221,16 @@ namespace mfront{
   {}
 
   void
+  MFrontBase::setInterface(const std::string& i){
+    using std::runtime_error;
+    if(!this->interfaces.insert(i).second){
+      throw(runtime_error("MFrontBase::treatInterface : "
+			  "the interface '"+i+"' has "
+			  "already been specified"));
+    }
+  } // end of MFrontBase::setInterface
+  
+  void
   MFrontBase::treatInterface(void)
   {
     using std::runtime_error;
@@ -238,11 +245,7 @@ namespace mfront{
 	throw(runtime_error("MFrontBase::treatInterface : "
 			    "empty interface specified."));
       }
-      if(!this->interfaces.insert(i).second){
-	throw(runtime_error("MFrontBase::treatInterface : "
-			    "the interface '"+i+"' has "
-			    "already been specified"));
-      }
+      this->setInterface(i);
     }
   } // end of MFrontBase::treatInterface
 

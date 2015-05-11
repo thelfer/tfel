@@ -147,7 +147,7 @@ macro(mfront_behaviour_check_library lib interface)
   foreach(source ${ARGN})
     add_mfront_behaviour_generated_source(${lib} ${interface} ${source})
   endforeach(source)
-  add_library(${lib} SHARED EXCLUDE_FROM_ALL
+  add_library(${lib} MODULE EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
     ${${lib}_ADDITIONAL_SOURCES})
   add_dependencies(check ${lib})
@@ -157,7 +157,7 @@ macro(python_lib_module name package)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "python_lib_module : no source specified")
   endif(${ARGC} LESS 1)
-  add_library(py_${package}_${name} SHARED ${ARGN})
+  add_library(py_${package}_${name} MODULE ${ARGN})
   install(TARGETS py_${package}_${name}
     DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
     COMPONENT python_bindings)

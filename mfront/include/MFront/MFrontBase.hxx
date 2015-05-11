@@ -21,6 +21,7 @@
 
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"MFront/MFrontConfig.hxx"
+#include"MFront/TargetsDescription.hxx"
 
 namespace mfront{
 
@@ -38,13 +39,10 @@ namespace mfront{
      */
     static std::shared_ptr<AbstractDSL>
     getDSL(const std::string&);
-    /*!
-     * constructor
-     * \param[in] argc : number of command line arguments
-     * \param[in] argv : command line arguments
-     */
-    MFrontBase(const int,
-	       const char* const *const);
+    //! constructor
+    MFrontBase();
+    //! add a new interaface
+    void setInterface(const std::string&);
     //! desctructor
     virtual ~MFrontBase();
   protected:
@@ -71,7 +69,8 @@ namespace mfront{
     std::vector<std::string> ecmds;
     //! list of all input files
     std::set<std::string> inputs;
-    //! list of interfaces declared on the command line
+    //! list of interfaces declared on the command line or explicitely
+    //! added through the set interface method
     std::set<std::string> interfaces;
   }; // end of struct MFrontBase
 

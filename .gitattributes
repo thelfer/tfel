@@ -1541,7 +1541,6 @@ mfront/include/MFront/MFront.hxx -text
 mfront/include/MFront/MFrontBase.hxx -text
 mfront/include/MFront/MFrontConfig.hxx -text
 mfront/include/MFront/MFrontDebugMode.hxx -text
-mfront/include/MFront/MFrontExecutableName.hxx -text
 mfront/include/MFront/MFrontHeader.hxx -text
 mfront/include/MFront/MFrontLock.hxx -text
 mfront/include/MFront/MFrontLogStream.hxx -text
@@ -1765,7 +1764,6 @@ mfront/src/LevenbergMarquardtSolvers.cxx -text
 mfront/src/MFront.cxx -text
 mfront/src/MFrontBase.cxx -text
 mfront/src/MFrontDebugMode.cxx -text
-mfront/src/MFrontExecutableName.cxx -text
 mfront/src/MFrontHeader.cxx.in -text
 mfront/src/MFrontLock.cxx -text
 mfront/src/MFrontLogStream.cxx -text

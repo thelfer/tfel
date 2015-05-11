@@ -23,12 +23,13 @@
 #include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/AbstractDSL.hxx"
 #include"MFront/CodeBlock.hxx"
-#include"MFront/VariableDescription.hxx"
+#include"MFront/AbstractDSL.hxx"
 #include"MFront/FileDescription.hxx"
-#include"MFront/MaterialPropertyDescription.hxx"
+#include"MFront/TargetsDescription.hxx"
+#include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 
 namespace mfront
 {
@@ -43,6 +44,12 @@ namespace mfront
   {
     //! \return the file description associated with the treated file
     virtual const FileDescription& getFileDescription() const final;
+    /*!
+     * \return the target description
+     * \note This method shall be called *after* the analyseFile method
+     */
+    virtual const TargetsDescription&
+    getTargetsDescription(void) const override;
     /*!
      * \brief open a file and add given external instructions at the
      * beginning
@@ -369,7 +376,7 @@ namespace mfront
      */
     virtual void
     callMFront(const std::vector<std::string>&,
-	       const std::vector<std::string>&) const;
+	       const std::vector<std::string>&);
     /*!
      * \brief This function handles a material property treated as a
      * dependency of the current file.
@@ -438,6 +445,9 @@ namespace mfront
     handleParameter(VariableDescriptionContainer&,
 		    std::map<std::string,double>&);
     
+    //! targets description
+    TargetsDescription td;
+
     std::vector<std::string> librariesDependencies;
     std::map<std::string,int> integerConstants;
     std::set<std::string> varNames;

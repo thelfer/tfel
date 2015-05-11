@@ -11,14 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
+#include<chrono>
 #include<stdexcept>
-
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-#include <sys/time.h> 
-#include <unistd.h> 
-#include <time.h>
-#endif
 
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/XMLTestOutput.hxx"
@@ -124,13 +118,12 @@ namespace tfel
     TestManager::execute(void)
     {
       using namespace std;
-      map<string,TestSuitePtr>::iterator p;
-      map<string,MultipleTestOutputsPtr>::iterator p2;
+      using namespace std::chrono;
       TestResult r;
-      for(p=this->tests.begin();p!=this->tests.end();++p){
+      for(auto p=this->tests.begin();p!=this->tests.end();++p){
 	MultipleTestOutputsPtr output;
 	const auto& n = p->first;
-	p2 = this->outputs.find(n);
+	auto p2 = this->outputs.find(n);
 	if(p2!=this->outputs.end()){
 	  output = p2->second;
 	} else{
@@ -141,27 +134,11 @@ namespace tfel
 	  }
 	  output = this->default_outputs;
 	}
-#ifdef _POSIX_TIMERS
-#if _POSIX_TIMERS != 0
-	timespec start;
-	timespec stop;
-	if (clock_gettime(CLOCK_MONOTONIC,&start) == -1){
-	  throw(runtime_error("TestManager::execute : "
-			      "invalid call to 'clock_gettime'"));
-	}
-#endif
-#endif
+	const auto start = high_resolution_clock::now();
 	r.append(p->second->execute(*output));
-#ifdef _POSIX_TIMERS
-#if _POSIX_TIMERS != 0
-	if (clock_gettime(CLOCK_MONOTONIC,&stop) == -1){
-	  throw(runtime_error("TestManager::execute : "
-			      "invalid call to 'clock_gettime'"));
-	}
-	r.setTestDuration((stop.tv_sec+1.e-9*stop.tv_nsec)-
-			  (start.tv_sec+1.e-9*start.tv_nsec));
-#endif
-#endif
+	const auto stop = high_resolution_clock::now();
+	const auto nsec = duration_cast<nanoseconds>(stop-start).count();
+	r.setTestDuration(1.e-9*nsec);
       }
       return r;
     } // end of TestManager::execute()

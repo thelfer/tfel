@@ -11,10 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-#include<sys/time.h>
-#endif
 
+#include<chrono>
 #include<iostream>
 #include<stdexcept>
 
@@ -57,20 +55,12 @@ namespace tfel
     TestSuite::execute(void)
     {
       using namespace std;
+      using namespace std::chrono;
       vector<TestPtr>::iterator p;
       TestResult r;
       for(p=this->tests.begin();p!=tests.end();++p){
 	TestResult r1;
-#ifdef _POSIX_TIMERS
-#if _POSIX_TIMERS != 0
-	timespec start;
-	timespec stop;
-	if (clock_gettime(CLOCK_MONOTONIC,&start) == -1){
-	  throw(runtime_error("TestManager::execute : "
-			      "invalid call to 'clock_gettime'"));
-	}
-#endif
-#endif
+	const auto start = high_resolution_clock::now();
 	try{
 	  r1 = (*p)->execute();
 	} catch(exception& e){
@@ -86,16 +76,9 @@ namespace tfel
 	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
 	}
-#ifdef _POSIX_TIMERS
-#if _POSIX_TIMERS != 0
-	if (clock_gettime(CLOCK_MONOTONIC,&stop) == -1){
-	  throw(runtime_error("TestManager::execute : "
-			      "invalid call to 'clock_gettime'"));
-	}
-	r1.setTestDuration((stop.tv_sec+1.e-9*stop.tv_nsec)-
-			   (start.tv_sec+1.e-9*start.tv_nsec));
-#endif
-#endif
+	const auto stop = high_resolution_clock::now();
+	const auto nsec = duration_cast<nanoseconds>(stop-start).count();
+	r1.setTestDuration(1.e-9*nsec);
 	r.append(r1);
       }	
       return r;
@@ -105,22 +88,14 @@ namespace tfel
     TestSuite::execute(TestOutput& o)
     {
       using namespace std;
+      using namespace std::chrono;
       vector<TestPtr>::iterator p;
       o.beginTestSuite(this->name());
       TestResult r;
       bool success =true;
       for(p=this->tests.begin();p!=tests.end();++p){
 	TestResult r1;
-#ifdef _POSIX_TIMERS
-#if _POSIX_TIMERS != 0
-	timespec start;
-	timespec stop;
-	if (clock_gettime(CLOCK_MONOTONIC,&start) == -1){
-	  throw(runtime_error("TestManager::execute : "
-			      "invalid call to 'clock_gettime'"));
-	}
-#endif
-#endif
+	const auto start = high_resolution_clock::now();
 	try{
 	  r1 = (*p)->execute();
 	  if(!r1.success()){
@@ -141,16 +116,9 @@ namespace tfel
 	  r1 = TestResult(false,msg);
 	  success = false;
 	}
-#ifdef _POSIX_TIMERS
-#if _POSIX_TIMERS != 0
-	if (clock_gettime(CLOCK_MONOTONIC,&stop) == -1){
-	  throw(runtime_error("TestManager::execute : "
-			      "invalid call to 'clock_gettime'"));
-	}
-	r1.setTestDuration((stop.tv_sec+1.e-9*stop.tv_nsec)-
-			   (start.tv_sec+1.e-9*start.tv_nsec));
-#endif
-#endif
+	const auto stop = high_resolution_clock::now();
+	const auto nsec = duration_cast<nanoseconds>(stop-start).count();
+	r1.setTestDuration(1.e-9*nsec);
 	o.addTest((*p)->classname(),(*p)->name(),r1);
 	r.append(r1);
       }

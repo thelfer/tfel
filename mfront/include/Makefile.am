@@ -4,7 +4,6 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/BehaviourQuery.hxx                     \
 			MFront/BehaviourDocumentationGenerator.hxx    \
 			MFront/MFrontBase.hxx                         \
-			MFront/MFrontExecutableName.hxx               \
 			MFront/CodeBlock.hxx                          \
 			MFront/MFrontConfig.hxx	                      \
 			MFront/MFrontDebugMode.hxx	              \
@@ -112,6 +111,7 @@ nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 			 MFront/CppTestMaterialPropertyInterface.hxx        \
 			 MFront/GnuplotMaterialPropertyInterface.hxx        \
 			 MFront/ExcelMaterialPropertyInterface.hxx          \
+			 MFront/OctaveMaterialPropertyInterface.hxx         \
 			 MFront/ExcelMaterialPropertyInternalInterface.hxx  \
 			 MFront/PythonMaterialPropertyInterface.hxx
 

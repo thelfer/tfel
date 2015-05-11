@@ -733,12 +733,6 @@ namespace mfront{
     this->registerVariable(this->output,false);
   } // end of MaterialPropertyDSL::treatOutput
 
-  const TargetsDescription&
-  MaterialPropertyDSL::getTargetsDescription(void) const
-  {
-    return this->td;
-  } // end of MaterialPropertyDSL::getTargetsDescription
-
   void
   MaterialPropertyDSL::treatBounds(void)
   {

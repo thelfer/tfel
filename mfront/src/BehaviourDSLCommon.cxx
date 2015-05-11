@@ -5094,12 +5094,6 @@ namespace mfront{
     this->writeNamespaceEnd(this->srcFile);
   } // end of BehaviourDSLCommon::writeSrcFile(void)
 
-  const TargetsDescription&
-  BehaviourDSLCommon::getTargetsDescription(void) const
-  {
-    return this->td;
-  } // end of BehaviourDSLCommon::getGlobalIncludes
-
   std::string
   BehaviourDSLCommon::predictionOperatorVariableModifier(const Hypothesis h,
 							    const std::string& var,
