@@ -48,7 +48,7 @@ namespace tfel
       struct sigaction action;
       MemberSignalHandler<ProcessManager>::Fct f = &ProcessManager::sigChildHandler;
       // blocking all signals during treatment of sigChildHandler
-      ::sigfillset(&(action.sa_mask));
+      sigfillset(&(action.sa_mask));
       action.sa_flags = 0;
       this->sHandler=signalManager.registerHandler(SIGCHLD,sigMemFun(*this,f),action);
       this->stopOnSignals(true);
@@ -66,7 +66,7 @@ namespace tfel
 	struct sigaction action;
 	this->shallStopOnSignals = true;
 	// blocking all signals during treatment of terminateHandler
-	::sigfillset(&(action.sa_mask));
+	sigfillset(&(action.sa_mask));
 	action.sa_flags = SA_RESETHAND;
 	MemberSignalHandler<ProcessManager>::Fct f = &ProcessManager::terminateHandler;
 	this->sHandlerSIGBUS  = signalManager.registerHandler(SIGBUS,sigMemFun(*this,f),action);
@@ -223,8 +223,8 @@ namespace tfel
 	systemCall::throwSystemError(msg,errno);
       }
       // entering a critical section, dont want to be disturbed by signals
-      ::sigfillset(&nSigSet);
-      ::sigprocmask(SIG_BLOCK,&nSigSet,&oSigSet);
+      sigfillset(&nSigSet);
+      sigprocmask(SIG_BLOCK,&nSigSet,&oSigSet);
       // forking
       pid=fork();
       if(pid==-1){
@@ -245,7 +245,7 @@ namespace tfel
 	// we are in the child
 	this->cleanUp();
 	// restoring the previous signal mask
-	::sigprocmask(SIG_SETMASK,&oSigSet,0);
+	sigprocmask(SIG_SETMASK,&oSigSet,0);
 	// wait that the father has made its administrative job
 	while((readChar=read(cfd[0],buf,2u))==-1){
 	  if(errno!=EINTR)
@@ -270,7 +270,7 @@ namespace tfel
       // registering is made, tell the child
       write(cfd[1],"OK",2u);
       // the pipe was broken, which means that exec succeed
-      ::sigprocmask(SIG_SETMASK,&oSigSet,0);
+      sigprocmask(SIG_SETMASK,&oSigSet,0);
       return pid;
     } // end of ProcessManager::createProcess
 
@@ -313,8 +313,8 @@ namespace tfel
 	systemCall::throwSystemError(msg,errno);
       }
       // entering a critical section, dont want to be disturbed by signals
-      ::sigfillset(&nSigSet);
-      ::sigprocmask(SIG_BLOCK,&nSigSet,&oSigSet);
+      sigfillset(&nSigSet);
+      sigprocmask(SIG_BLOCK,&nSigSet,&oSigSet);
       // forking
       pid=fork();
       if(pid==-1){
@@ -360,7 +360,7 @@ namespace tfel
 	assert(readChar==2);
 	close(cfd[0]);
 	// restoring the previous signal mask
-	::sigprocmask(SIG_SETMASK,&oSigSet,0);
+	sigprocmask(SIG_SETMASK,&oSigSet,0);
 	// calling the command
 	execvp(argv[0],argv);
 	// called failed, tells the father, free memory and quit
@@ -407,13 +407,13 @@ namespace tfel
 	}
 	this->processes.pop_back();
 	waitpid(pid,&status,0);
-	::sigprocmask(SIG_SETMASK,&oSigSet,0);
+	sigprocmask(SIG_SETMASK,&oSigSet,0);
 	string msg("ProcessManager::createProcess : call to execvp failed ");
 	msg += "(can't execute command '"+cmd+"')";
 	throw(SystemError(msg));
       }
       // the pipe was broken, which means that exec succeed
-      ::sigprocmask(SIG_SETMASK,&oSigSet,0);
+      sigprocmask(SIG_SETMASK,&oSigSet,0);
       return pid;
     } // end of ProcessManager::createProces
 
@@ -589,8 +589,8 @@ namespace tfel
       sigset_t nSigSet;
       sigset_t oSigSet;
       // blocking all signals
-      ::sigfillset(&nSigSet);
-      ::sigprocmask(SIG_BLOCK,&nSigSet,&oSigSet);
+      sigfillset(&nSigSet);
+      sigprocmask(SIG_BLOCK,&nSigSet,&oSigSet);
       // killing all remaining processes
       for(p=this->processes.begin();p!=this->processes.end();++p){
 	if(p->isRunning){
@@ -656,7 +656,7 @@ namespace tfel
 	signalManager.removeHandler(this->sHandlerSIGQUIT);
       }
       // restoring the previous signal mask
-      ::sigprocmask(SIG_SETMASK,&oSigSet,0);
+      sigprocmask(SIG_SETMASK,&oSigSet,0);
     } // end of ProcessManager::~ProcessManager
 
     ProcessManager::wstream

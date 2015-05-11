@@ -44,9 +44,9 @@ Options
 			    version are the same
 
   enable-doxygen-doc    : generate doxygen documentation (disabled by default)
-  disable-reference-doc : disallow the generation of the reference documentation
-                          (enabled by default if latex or pandoc is found)
-  disable-website       : do not generate the TFEL website
+  enable-reference-doc  : enable the generation of the reference documentation
+                          (requires a valid latex engine)
+  enable-website        : generate the TFEL website
                           (enabled by default if pandoc is found)
 
 cmake usefull variables
@@ -61,28 +61,28 @@ cmake usefull variables
 cmake typical usage
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
 debug and valgrind
 ==================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Debug -DCTEST_MEMORYCHECK_COMMAND=valgrind -DCTEST_MEMORYCHECK_COMMAND_OPTIONS="--trace-children=yes --leak-check=full" -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-debug
+cmake ../trunk -DCMAKE_BUILD_TYPE=Debug -DCTEST_MEMORYCHECK_COMMAND=valgrind -DCTEST_MEMORYCHECK_COMMAND_OPTIONS="--trace-children=yes --leak-check=full" -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-debug
 
 profiling (gcc only) 
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Profiling -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
+cmake ../trunk -DCMAKE_BUILD_TYPE=Profiling -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
 
 coverage (gcc only) 
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Coverage -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
+cmake ../trunk -DCMAKE_BUILD_TYPE=Coverage -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
 
 
 cmake for PLEIADES users
 ========================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
 main targets:
 =============

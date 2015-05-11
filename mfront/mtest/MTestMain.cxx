@@ -162,7 +162,7 @@ namespace mfront
     SignalManager& sm = SignalManager::getSignalManager();
     // blocking all signals during treatment of signals SIGSEGV, SIGFPE
     struct sigaction action;
-    ::sigfillset(&(action.sa_mask));
+    sigfillset(&(action.sa_mask));
     action.sa_flags = 0;
     sm.registerHandler(SIGSEGV,sigPtrFun(SignalManager::printBackTrace),action);
     sm.registerHandler(SIGFPE,sigPtrFun(SignalManager::printBackTrace),action);

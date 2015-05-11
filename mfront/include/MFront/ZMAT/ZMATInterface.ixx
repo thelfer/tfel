@@ -350,11 +350,11 @@ namespace zmat
     dest[1] = src[1];
     dest[2] = src[2];
     dest[3] = src[3];
-    dest[7] = src[4];
-    dest[6] = src[5];
-    dest[4] = src[6];
-    dest[8] = src[7];
-    dest[5] = src[8];
+    dest[4] = src[7];
+    dest[5] = src[6];
+    dest[6] = src[4];
+    dest[7] = src[8];
+    dest[8] = src[5];
   } // end of ZMATInterface::convert
 
 } // end of namespace zmat
