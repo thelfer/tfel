@@ -72,6 +72,14 @@ check_PROGRAMS = test-c
 test_c_SOURCES = test-c.c
 test_c_LDFLAGS = -L@builddir@ -lMFrontMaterialProperties
 test_c_DEPENDENCIES = libMFrontMaterialProperties.la
+
+test-c.c : include/VanadiumAlloy_YoungModulus_SRMA.hxx        \
+	   include/VanadiumAlloy_PoissonRatio_SRMA.hxx        \
+	   include/VanadiumAlloy_SpecificHeat_SRMA.hxx        \
+	   include/VanadiumAlloy_ThermalExpansion_SRMA.hxx    \
+	   include/VanadiumAlloy_ThermalConductivity_SRMA.hxx
+
+
 if ! TFEL_WIN
 test_c_LDFLAGS += -lstdc++
 endif
@@ -85,7 +93,7 @@ endif
 
 TESTS=$(check_PROGRAMS)
 
-src/%.cxx : %.mfront
+include/%.hxx src/%.cxx : %.mfront
 if !TFEL_WIN
 	@top_builddir@/mfront/src/mfront --interface=c $<
 else
