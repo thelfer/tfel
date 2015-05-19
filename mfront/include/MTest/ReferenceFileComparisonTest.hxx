@@ -55,20 +55,20 @@ namespace mfront{
      * \param[in] dt : time increment
      * \param[in] p  : period
      */
-    void
+    virtual void
     check(const tfel::math::vector<real>&,
 	  const tfel::math::vector<real>&,
 	  const tfel::math::vector<real>&,
 	  const real,
 	  const real,
-	  const unsigned int);
+	  const unsigned int) override;
     /*!
      * \return the results of the test
      */
-    tfel::tests::TestResult
-    getResults() const;
+    virtual tfel::tests::TestResult
+    getResults() const override;
     //! destructor
-    ~ReferenceFileComparisonTest();
+    virtual ~ReferenceFileComparisonTest();
   protected:
     //! reference values
     const std::vector<real> values;

@@ -46,23 +46,23 @@ namespace mfront
      */
     virtual tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
-		      const tfel::math::tmatrix<3u,3u,real>&) const;
+		      const tfel::math::tmatrix<3u,3u,real>&) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual MTestStiffnessMatrixType::mtype
-    getDefaultStiffnessMatrixType(void) const;
+    getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief allocate internal workspace
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis);
+    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
     /*!
      * \param[out] v : initial values of the driving variables
      */
     virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const;
+    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -78,15 +78,15 @@ namespace mfront
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual bool
-      computePredictionOperator(tfel::math::matrix<real>&,
-				const tfel::math::tmatrix<3u,3u,real>&,
-				const tfel::math::vector<real>&,
-				const tfel::math::vector<real>&,
-				const tfel::math::vector<real>&,
-				const tfel::math::vector<real>&,
-				const tfel::math::vector<real>&,
-				const tfel::material::ModellingHypothesis::Hypothesis,
-				const MTestStiffnessMatrixType::mtype) const;
+    computePredictionOperator(tfel::math::matrix<real>&,
+			      const tfel::math::tmatrix<3u,3u,real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::math::vector<real>&,
+			      const tfel::material::ModellingHypothesis::Hypothesis,
+			      const MTestStiffnessMatrixType::mtype) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -106,20 +106,20 @@ namespace mfront
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual bool
-      integrate(tfel::math::matrix<real>&,
-		tfel::math::vector<real>&,
-		tfel::math::vector<real>&,
-		const tfel::math::tmatrix<3u,3u,real>&,
-		const tfel::math::vector<real>&,
-		const tfel::math::vector<real>&,
-		const tfel::math::vector<real>&,
-		const tfel::math::vector<real>&,
-		const tfel::math::vector<real>&,
-		const tfel::math::vector<real>&,
-		const tfel::math::vector<real>&,
-		const tfel::material::ModellingHypothesis::Hypothesis,
-		const real,
-		const MTestStiffnessMatrixType::mtype) const;
+    integrate(tfel::math::matrix<real>&,
+	      tfel::math::vector<real>&,
+	      tfel::math::vector<real>&,
+	      const tfel::math::tmatrix<3u,3u,real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::math::vector<real>&,
+	      const tfel::material::ModellingHypothesis::Hypothesis,
+	      const real,
+	      const MTestStiffnessMatrixType::mtype) const override;
     //! destructor
     virtual ~CyranoBehaviour();
   protected:

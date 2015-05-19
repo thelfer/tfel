@@ -2858,7 +2858,7 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour  over the time step" << endl;
     this->behaviourFile << "*/" << endl;
     this->behaviourFile << "IntegrationResult" << endl;
-    this->behaviourFile << "integrate(const SMFlag smflag, const SMType smt){" << endl;
+    this->behaviourFile << "integrate(const SMFlag smflag, const SMType smt) override{" << endl;
     this->behaviourFile << "using namespace std;" << endl;
     this->behaviourFile << "using namespace tfel::math;" << endl;
     writeMaterialLaws("BehaviourDSLCommon::writeBehaviourIntegrator",
@@ -4038,7 +4038,7 @@ namespace mfront{
     }
     if(this->mb.hasCode(h,BehaviourData::ComputePredictionOperator)){
       this->behaviourFile << "IntegrationResult" << endl
-			  << "computePredictionOperator(const SMFlag smflag,const SMType smt){" << endl;
+			  << "computePredictionOperator(const SMFlag smflag,const SMType smt) override{" << endl;
       this->behaviourFile << "using namespace std;" << endl;
       this->behaviourFile << "using namespace tfel::math;" << endl;
       writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputePredictionOperator",
@@ -4061,7 +4061,7 @@ namespace mfront{
       this->behaviourFile << "return SUCCESS;" << endl;
       this->behaviourFile << "}" << endl << endl;
     } else {
-      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag,const SMType){" << endl;
+      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag,const SMType) override{" << endl;
       this->behaviourFile << "using namespace std;" << endl;
       this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::computePredictionOperator : \");" << endl;
       this->behaviourFile << "msg +=\"unimplemented feature\";" << endl;
@@ -4195,7 +4195,7 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     this->behaviourFile << "constexpr real" << endl;
-    this->behaviourFile << "getTimeStepScalingFactor(void) const{" << endl;
+    this->behaviourFile << "getTimeStepScalingFactor(void) const override{" << endl;
     this->behaviourFile << "return real(1);" << endl;
     this->behaviourFile << "}" << endl << endl;
   } // end of BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor(void)

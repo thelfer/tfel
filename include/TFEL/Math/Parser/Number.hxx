@@ -25,28 +25,28 @@ namespace tfel
     namespace parser
     {
 
-      struct Number
+      struct Number final
 	: public Expr
       {
 	Number(const double);
-	void
-	checkCyclicDependency(std::vector<std::string>&) const;
-	std::shared_ptr<Expr>
+	virtual void
+	checkCyclicDependency(std::vector<std::string>&) const override;
+	virtual std::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
-		      const std::vector<double>&) const;
-	std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const;
-	std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const;
-	void
-	getParametersNames(std::set<std::string>&) const;
-	std::shared_ptr<Expr>
+		      const std::vector<double>&) const override;
+	virtual std::shared_ptr<Expr>
+	clone(const std::vector<double>&) const override;
+	virtual std::shared_ptr<Expr>
+	resolveDependencies(const std::vector<double>&) const override;
+	virtual void
+	getParametersNames(std::set<std::string>&) const override;
+	virtual std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
-							std::vector<double>::size_type>&) const;
-	double
-	getValue(void) const;
+							std::vector<double>::size_type>&) const override;
+	virtual double
+	getValue(void) const override;
       private:
 	const double value;
       }; // end of struct Number

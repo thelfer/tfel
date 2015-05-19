@@ -31,21 +31,7 @@ namespace mfront {
     // TODO: make a MFrontPleiadesMaterialPropertyInterface.cxx.in and use @PACKAGE_VERSION@
   }
 
-  MFrontPleiadesMaterialPropertyInterface::MFrontPleiadesMaterialPropertyInterface() :
-    verboseMode(false), debugMode(false), warningMode(false) {
-  }
-
-  void MFrontPleiadesMaterialPropertyInterface::setVerboseMode(void) {
-    this->verboseMode = true;
-  }
-
-  void MFrontPleiadesMaterialPropertyInterface::setWarningMode(void) {
-    this->warningMode = true;
-  }
-
-  void MFrontPleiadesMaterialPropertyInterface::setDebugMode(void) {
-    this->debugMode = true;
-  }
+  MFrontPleiadesMaterialPropertyInterface::MFrontPleiadesMaterialPropertyInterface() = default;
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontPleiadesMaterialPropertyInterface::treatKeyword(const std::string&,
@@ -55,8 +41,7 @@ namespace mfront {
     return make_pair(false,current);
   } // end of treatKeyword
 
-  MFrontPleiadesMaterialPropertyInterface::~MFrontPleiadesMaterialPropertyInterface() {
-  }
+  MFrontPleiadesMaterialPropertyInterface::~MFrontPleiadesMaterialPropertyInterface() = default;
 
   void
   MFrontPleiadesMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,

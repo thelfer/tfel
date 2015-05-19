@@ -23,7 +23,7 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-struct StringAlgorithmsTest
+struct StringAlgorithmsTest final
   : public tfel::tests::TestCase
 {
   StringAlgorithmsTest()
@@ -31,7 +31,7 @@ struct StringAlgorithmsTest
 			    "StringAlgorithmsTest")
   {} // end of MyTest
   tfel::tests::TestResult
-  execute()
+  execute() override
   {
     using namespace std;
     using namespace tfel::utilities;

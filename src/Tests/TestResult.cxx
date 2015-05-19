@@ -47,6 +47,11 @@ namespace tfel
 	s(b)
     {} // end of TestResult::TestResult
     
+    TestResult::TestResult(const TestResult&)  = default;
+    TestResult::TestResult(TestResult&&)  = default;
+    TestResult& TestResult::operator = (const TestResult&) = default;
+    TestResult& TestResult::operator = (TestResult&&) = default;
+
     bool
     TestResult::success() const
     {

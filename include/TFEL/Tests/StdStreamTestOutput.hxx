@@ -32,7 +32,7 @@ namespace tfel
     /*!
      *  Test Output using a standard stream
      */
-    struct TFELTESTS_VISIBILITY_EXPORT StdStreamTestOutput
+    struct TFELTESTS_VISIBILITY_EXPORT StdStreamTestOutput final
       : public TestOutput
     {
       /*!
@@ -59,7 +59,7 @@ namespace tfel
        * \param n : name of the test suite
        */
       virtual void
-      beginTestSuite(const std::string&);
+      beginTestSuite(const std::string&) override;
       /*!
        *  Add a new test
        * \param g : group  of the test
@@ -69,13 +69,13 @@ namespace tfel
       virtual void
       addTest(const std::string&,
 	      const std::string&,
-	      const TestResult&);
+	      const TestResult&) override;
       /*!
        * End a test suite
        * \param r : (global) result of the test suite
        */
       virtual void
-      endTestSuite(const TestResult&);
+      endTestSuite(const TestResult&) override;
       /*!
        * Destructor
        */

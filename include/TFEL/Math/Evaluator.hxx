@@ -179,42 +179,42 @@ namespace tfel
       setFunction(const std::vector<std::string>&,
 		  const std::string&,
 		  std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
-      double
-      getValue(void) const;
-      std::vector<std::string>
+      virtual double
+      getValue(void) const override;
+      virtual std::vector<std::string>
       getVariablesNames(void) const;
-      std::vector<double>::size_type
-      getNumberOfVariables(void) const;
-      void
+      virtual std::vector<double>::size_type
+      getNumberOfVariables(void) const override;
+      virtual void
       checkCyclicDependency(void) const;
-      void
-      checkCyclicDependency(const std::string&) const;
-      void
-      checkCyclicDependency(std::vector<std::string>&) const;
-      std::shared_ptr<tfel::math::parser::ExternalFunction>
-      differentiate(const std::vector<double>::size_type) const;
-      std::shared_ptr<tfel::math::parser::ExternalFunction>
-      differentiate(const std::string&) const;
-      std::shared_ptr<tfel::math::parser::ExternalFunction>
-      resolveDependencies(void) const;
-      void
+      virtual void
+      checkCyclicDependency(const std::string&) const override;
+      virtual void
+      checkCyclicDependency(std::vector<std::string>&) const override;
+      virtual std::shared_ptr<tfel::math::parser::ExternalFunction>
+      differentiate(const std::vector<double>::size_type) const override;
+      virtual std::shared_ptr<tfel::math::parser::ExternalFunction>
+      differentiate(const std::string&) const override;
+      virtual std::shared_ptr<tfel::math::parser::ExternalFunction>
+      resolveDependencies(void) const override;
+      virtual void
       removeDependencies(void);
-      void
+      virtual void
       setVariableValue(const std::vector<double>::size_type,
-		       const double);
-      void
+		       const double) override;
+      virtual void
       setVariableValue(const std::string&,const double);
-      std::shared_ptr<ExternalFunction>
-      createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
-      std::shared_ptr<ExternalFunction>
+      virtual std::shared_ptr<ExternalFunction>
+      createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const override;
+      virtual std::shared_ptr<ExternalFunction>
       createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 						      const std::vector<double>&,
 						      const std::vector<std::string>&,
 						      const std::map<std::string,
-						      std::vector<double>::size_type>&) const;
-      void
-      getParametersNames(std::set<std::string>&) const;
-      ~Evaluator();
+						      std::vector<double>::size_type>&) const override;
+      virtual void
+      getParametersNames(std::set<std::string>&) const override;
+      virtual ~Evaluator();
     private:
       static ExternalFunctionRegister externalFunctionRegister TFEL_VISIBILITY_LOCAL;
       std::vector<double> variables;

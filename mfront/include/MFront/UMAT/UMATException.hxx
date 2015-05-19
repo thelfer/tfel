@@ -28,7 +28,7 @@ namespace umat {
     UMATException(const std::string&);
     UMATException(const UMATException&) = default;
     UMATException(UMATException&&)      = default;
-    virtual const char* what (void) const noexcept final;
+    virtual const char* what (void) const noexcept override final;
     virtual ~UMATException() noexcept;
   private:
     const std::string msg;

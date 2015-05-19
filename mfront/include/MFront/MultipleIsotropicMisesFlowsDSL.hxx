@@ -33,19 +33,19 @@ namespace mfront{
     getDescription(void);
 
     virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
+    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis) override;
 
     virtual void
-    writeBehaviourParserSpecificMembers(const Hypothesis);
+    writeBehaviourParserSpecificMembers(const Hypothesis) override;
 
     virtual void
-    writeBehaviourParserSpecificIncludes(void);
+    writeBehaviourParserSpecificIncludes(void) override;
 
     virtual void
-    writeBehaviourIntegrator(const Hypothesis);
+    writeBehaviourIntegrator(const Hypothesis) override;
 
     virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis);
+    writeBehaviourComputeTangentOperator(const Hypothesis) override;
 
     MultipleIsotropicMisesFlowsDSL();
 
@@ -53,8 +53,8 @@ namespace mfront{
 
   private:
 
-    void
-    treatFlowRule(void);
+    virtual void
+    treatFlowRule(void) override;
 
     struct FlowHandler
     {

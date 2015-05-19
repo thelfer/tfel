@@ -46,7 +46,7 @@ namespace tfel{
       InvalidTimeStepException() = default;
       InvalidTimeStepException(InvalidTimeStepException&&) = default;
       InvalidTimeStepException(const InvalidTimeStepException&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~InvalidTimeStepException() noexcept;
     }; // end of struct InvalidTimeStepException
 
@@ -65,7 +65,7 @@ namespace tfel{
       MaximumNumberOfIterationsReachedException() = default;
       MaximumNumberOfIterationsReachedException(MaximumNumberOfIterationsReachedException&&) = default;
       MaximumNumberOfIterationsReachedException(const MaximumNumberOfIterationsReachedException&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~MaximumNumberOfIterationsReachedException() noexcept;
     }; // end of struct MaximumNumberOfIterationsReachedException
 
@@ -75,7 +75,7 @@ namespace tfel{
       SingularJacobianException() = default;
       SingularJacobianException(SingularJacobianException&&) = default;
       SingularJacobianException(const SingularJacobianException&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~SingularJacobianException() noexcept;
     }; // end of struct SingularJacobianException
 

@@ -16,14 +16,14 @@
 #include<type_traits>
 #include"TFEL/Math/tensor.hxx"
 
-struct Expr9Test
+struct Expr9Test final
   : public tfel::tests::TestCase
 {
   Expr9Test()
     : tfel::tests::TestCase("TFEL/Math","Expr9Test")
   {} // end of Expr9Test()
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::meta;
@@ -41,11 +41,8 @@ struct Expr9Test
     expr2 e(t1,t2);
     return this->result;
   }
-  virtual ~Expr9Test();
+  virtual ~Expr9Test() = default;
 };
-
-Expr9Test::~Expr9Test()
-{}
 
 TFEL_TESTS_GENERATE_PROXY(Expr9Test,"Expr9Test");
 

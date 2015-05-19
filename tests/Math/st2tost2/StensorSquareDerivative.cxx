@@ -29,7 +29,7 @@
 #include"TFEL/Tests/TestManager.hxx"
 
 template<unsigned short N>
-struct StensorSquareDerivative
+struct StensorSquareDerivative final
   : public tfel::tests::TestCase
 {
   StensorSquareDerivative()
@@ -37,8 +37,8 @@ struct StensorSquareDerivative
 			    "StensorSquareDerivative"+
 			    std::to_string(N))
   {} // end of StensorSquareDerivative
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

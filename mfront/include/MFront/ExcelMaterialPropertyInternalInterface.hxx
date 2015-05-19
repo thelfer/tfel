@@ -48,7 +48,7 @@ namespace mfront{
      */
     virtual std::string
     getGeneratedLibraryName(const std::string&,
-			    const std::string&) const;
+			    const std::string&) const override;
     /*!
      * \brief write the header preprocessor directives
      * \param[in] m: material name
@@ -56,7 +56,7 @@ namespace mfront{
      */
     virtual void
     writeHeaderPreprocessorDirectives(const std::string&,
-				      const std::string&);
+				      const std::string&) override;
   }; // end of MfrontExcelLawInternalInterface
 
 } // end of namespace mfront

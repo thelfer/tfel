@@ -1564,6 +1564,7 @@ mfront/include/MFront/NewtonRaphsonSolvers.hxx -text
 mfront/include/MFront/NonLinearSystemSolver.hxx -text
 mfront/include/MFront/NonLinearSystemSolverBase.hxx -text
 mfront/include/MFront/NonLinearSystemSolverFactory.hxx -text
+mfront/include/MFront/OctaveMaterialPropertyInterface.hxx -text
 mfront/include/MFront/PedanticMode.hxx -text
 mfront/include/MFront/PerformanceProfiling.hxx -text
 mfront/include/MFront/PowellDogLegAlgorithmBase.hxx -text
@@ -1782,6 +1783,7 @@ mfront/src/NewtonRaphsonSolvers.cxx -text
 mfront/src/NonLinearSystemSolver.cxx -text
 mfront/src/NonLinearSystemSolverBase.cxx -text
 mfront/src/NonLinearSystemSolverFactory.cxx -text
+mfront/src/OctaveMaterialPropertyInterface.cxx -text
 mfront/src/PedanticMode.cxx -text
 mfront/src/PerformanceProfiling.cxx -text
 mfront/src/PowellDogLegAlgorithmBase.cxx -text
@@ -1791,6 +1793,8 @@ mfront/src/SearchFile.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
 mfront/src/SupportedTypes.cxx -text
+mfront/src/TargetsDescription.cxx -text
+mfront/src/TargetsDescription.hxx -text
 mfront/src/ThermodynamicForce.cxx -text
 mfront/src/UMATComputeStiffnessTensor.cxx -text
 mfront/src/UMATComputeThermalExpansionCoefficientTensor.cxx -text

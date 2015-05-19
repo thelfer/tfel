@@ -48,7 +48,7 @@ namespace tfel
       LUUnmatchedSize(LUUnmatchedSize&&) = default;
       LUUnmatchedSize(const LUUnmatchedSize&) = default;
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~LUUnmatchedSize() noexcept;
     }; // end of struct LUException
@@ -64,7 +64,7 @@ namespace tfel
       LUMatrixNotSquare(LUMatrixNotSquare&&) = default;
       LUMatrixNotSquare(const LUMatrixNotSquare&) = default;
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~LUMatrixNotSquare() noexcept;
     }; // end of struct LUException
@@ -80,7 +80,7 @@ namespace tfel
       LUInvalidMatrixSize(LUInvalidMatrixSize&&) = default;
       LUInvalidMatrixSize(const LUInvalidMatrixSize&) = default;
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~LUInvalidMatrixSize() noexcept;
     }; // end of struct LUException
@@ -96,7 +96,7 @@ namespace tfel
       LUNullPivot(LUNullPivot&&) = default;
       LUNullPivot(const LUNullPivot&) = default;
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~LUNullPivot() noexcept;
     }; // end of struct LUException
@@ -112,7 +112,7 @@ namespace tfel
       LUNullDeterminant(LUNullDeterminant&&) = default;
       LUNullDeterminant(const LUNullDeterminant&) = default;
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~LUNullDeterminant() noexcept;
     }; // end of struct LUException

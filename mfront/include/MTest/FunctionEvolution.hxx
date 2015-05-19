@@ -32,25 +32,25 @@ namespace mfront
      */
     FunctionEvolution(const std::string&,
 			   const std::shared_ptr<std::map<std::string,
-								      std::shared_ptr<Evolution> > >&);
+							  std::shared_ptr<Evolution> > >&);
     /*!
      * \return the value of the evolution
      * at the given time
      */
     virtual real
-    operator()(const real) const;
+    operator()(const real) const override;
     /*!
      * \return true if the evolution is constant
      */
     virtual bool
-    isConstant(void) const;
+    isConstant(void) const override;
     /*!
      * \brief set the evolution value for a given date
      * \param[in] t  : time
      * \param[in] v  : value
      */
     virtual void setValue(const real,
-			  const real);
+			  const real) override;
     //! destructor
     virtual ~FunctionEvolution();
   private:

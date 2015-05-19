@@ -24,12 +24,12 @@ namespace mfront{
 
     DefaultDSLBase();
 
-    ~DefaultDSLBase();
+    virtual ~DefaultDSLBase();
 
   protected:
 
     virtual void
-    writeBehaviourParserSpecificIncludes(void);
+    writeBehaviourParserSpecificIncludes(void) override;
     
     virtual void
     treatProvidesTangentOperator(void);

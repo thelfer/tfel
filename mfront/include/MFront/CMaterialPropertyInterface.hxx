@@ -48,23 +48,23 @@ namespace mfront{
 
     virtual void
     writeHeaderPreprocessorDirectives(const std::string&,
-				      const std::string&);
+				      const std::string&) override;
 
     virtual void
     writeSrcPreprocessorDirectives(const std::string&,
-				   const std::string&);
+				   const std::string&) override;
 
     virtual void
-    writeBeginHeaderNamespace(void);
+    writeBeginHeaderNamespace(void) override;
 
     virtual void
-    writeEndHeaderNamespace(void);
+    writeEndHeaderNamespace(void) override;
 
     virtual void
-    writeBeginSrcNamespace(void);
+    writeBeginSrcNamespace(void) override;
 
     virtual void
-    writeEndSrcNamespace(void);
+    writeEndSrcNamespace(void) override;
 
     /*!
      * \param const std::string&, name of the material
@@ -72,7 +72,7 @@ namespace mfront{
      */
     virtual std::string
     getHeaderFileName(const std::string&,
-		      const std::string&);
+		      const std::string&) override;
 
     /*!
      * \param const std::string&, name of the material
@@ -80,7 +80,7 @@ namespace mfront{
      */
     virtual std::string
     getSrcFileName(const std::string&,
-		   const std::string&);
+		   const std::string&) override;
 
     /*!
      * \param const std::string&, name of the material
@@ -88,7 +88,7 @@ namespace mfront{
      */
     virtual std::string
     getFunctionDeclaration(const std::string&,
-			   const std::string&);
+			   const std::string&) override;
 
     /*!
      * \param const std::string&, name of the material
@@ -96,10 +96,10 @@ namespace mfront{
      */
     virtual std::string
     getCheckBoundsFunctionDeclaration(const std::string&,
-				      const std::string&);
+				      const std::string&) override;
 
     virtual bool
-    requiresCheckBoundsFunction(void) const;
+    requiresCheckBoundsFunction(void) const override;
 
 
   }; // end of CMaterialPropertyInterface

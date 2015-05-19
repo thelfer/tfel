@@ -56,7 +56,7 @@ namespace mfront
 
   std::string
   FortranMaterialPropertyInterface::getSrcFileName(const std::string& material,
-					    const std::string& className)
+						   const std::string& className)
   {
     if(material.empty()){
       return className+"-fortran";

@@ -29,15 +29,15 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx"
 
-struct ComputePositivePartAndDerivativeTest1D
+struct ComputePositivePartAndDerivativeTest1D final
   : public tfel::tests::TestCase
 {
    ComputePositivePartAndDerivativeTest1D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "ComputePositivePartAndDerivativeTest1D")
   {} // end of ComputePositivePartAndDerivativeTest1D
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -100,15 +100,15 @@ private:
   }
 };
 
-struct ComputePositivePartAndDerivativeTest2D
+struct ComputePositivePartAndDerivativeTest2D final
   : public tfel::tests::TestCase
 {
    ComputePositivePartAndDerivativeTest2D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "ComputePositivePartAndDerivativeTest2D")
   {} // end of ComputePositivePartAndDerivativeTest2D
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -172,15 +172,15 @@ private:
   }
 };
 
-struct ComputePositivePartAndDerivativeTest3D
+struct ComputePositivePartAndDerivativeTest3D final
   : public tfel::tests::TestCase
 {
    ComputePositivePartAndDerivativeTest3D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "ComputePositivePartAndDerivativeTest3D")
   {} // end of ComputePositivePartAndDerivativeTest3D
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -247,15 +247,15 @@ private:
   }
 };
 
-struct DecompositionInPositiveAndNegativePartsTest1D
+struct DecompositionInPositiveAndNegativePartsTest1D final
   : public tfel::tests::TestCase
 {
    DecompositionInPositiveAndNegativePartsTest1D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "DecompositionInPositiveAndNegativePartsTest1D")
   {} // end of DecompositionInPositiveAndNegativePartsTest1D
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -328,15 +328,15 @@ private:
   }
 };
 
-struct DecompositionInPositiveAndNegativePartsTest2D
+struct DecompositionInPositiveAndNegativePartsTest2D final
   : public tfel::tests::TestCase
 {
    DecompositionInPositiveAndNegativePartsTest2D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "DecompositionInPositiveAndNegativePartsTest2D")
   {} // end of DecompositionInPositiveAndNegativePartsTest2D
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -410,15 +410,15 @@ private:
   }
 };
 
-struct DecompositionInPositiveAndNegativePartsTest3D
+struct DecompositionInPositiveAndNegativePartsTest3D final
   : public tfel::tests::TestCase
 {
    DecompositionInPositiveAndNegativePartsTest3D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "DecompositionInPositiveAndNegativePartsTest3D")
   {} // end of DecompositionInPositiveAndNegativePartsTest3D
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

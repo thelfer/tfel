@@ -29,20 +29,20 @@ namespace aster {
 
     AsterException(const AsterException&);
 
-    const char* 
-    what (void) const noexcept;
+    virtual const char* 
+    what (void) const noexcept override final;
 
-    std::string 
-    getMsg(void) const noexcept;
+    virtual std::string 
+    getMsg(void) const noexcept final;
     
     virtual ~AsterException() noexcept;
 
   private:
     
-    AsterException();
+    AsterException() = delete;
 
     AsterException&
-    operator=(const AsterException&);
+    operator=(const AsterException&) = delete;
 
     const std::string msg;
     

@@ -62,7 +62,7 @@ struct my_function2
 };
 
 
-struct GenTypeTest2
+struct GenTypeTest2 final
   : public tfel::tests::TestCase
 {
   GenTypeTest2()
@@ -70,7 +70,7 @@ struct GenTypeTest2
 			    "GenTypeTest2")
   {} // end of GenTypeTest2
   tfel::tests::TestResult
-  execute()
+  execute() override final
   {
     using namespace std;
     using namespace tfel::meta;

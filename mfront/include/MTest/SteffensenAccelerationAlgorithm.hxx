@@ -32,12 +32,12 @@ namespace mfront
      * \param[in] psz : total number of unknowns (problem size)
      */
     virtual void
-    initialize(const unsigned short);
+    initialize(const unsigned short) override;
     /*!
      * \return the name of the acceleration algorithm
      */
     virtual std::string
-    getName(void) const;
+    getName(void) const override;
     /*!
      * set a parameter of the acceleration algorithm
      * \param[in] p : parameter name
@@ -45,13 +45,13 @@ namespace mfront
      */
     virtual void
     setParameter(const std::string&,
-		 const std::string&);
+		 const std::string&) override;
     /*!
      * called at each time step, before the beginning of the Newton
      * algorithm
      */
     virtual void
-    preExecuteTasks(void);
+    preExecuteTasks(void) override;
     /*!
      * \param[in,out] u1   : current estimate of the unknowns
      * \param[in]     u0   : current estimate of the unknowns
@@ -66,12 +66,12 @@ namespace mfront
 	    const tfel::math::vector<real>&,
 	    const real,
 	    const real,
-	    const unsigned short);
+	    const unsigned short) override;
     /*!
      * called at each time step, once convergence is reached
      */
     virtual void
-    postExecuteTasks(void);
+    postExecuteTasks(void) override;
     //! destructor
     virtual ~SteffensenAccelerationAlgorithm();
   protected:

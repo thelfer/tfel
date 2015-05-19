@@ -97,77 +97,77 @@ namespace tfel
       using LogicalExprPtr = std::shared_ptr<LogicalExpr>;
 
       template<typename Op>
-      struct TFEL_VISIBILITY_LOCAL LogicalOperation
+      struct TFEL_VISIBILITY_LOCAL LogicalOperation final
 	: public LogicalExpr
       {
 	LogicalOperation(const ExprPtr,
 			 const ExprPtr);
-	bool
-	getValue(void) const;
-	void
-	checkCyclicDependency(std::vector<std::string>&) const;
-	LogicalExprPtr
-	resolveDependencies(const std::vector<double>&) const;
-	LogicalExprPtr
-	clone(const std::vector<double>&) const;
-	void
-	getParametersNames(std::set<std::string>&) const;
-	LogicalExprPtr
+	virtual bool
+	getValue(void) const override;
+	virtual void
+	checkCyclicDependency(std::vector<std::string>&) const override;
+	virtual LogicalExprPtr
+	resolveDependencies(const std::vector<double>&) const override;
+	virtual LogicalExprPtr
+	clone(const std::vector<double>&) const override;
+	virtual void
+	getParametersNames(std::set<std::string>&) const override;
+	virtual LogicalExprPtr
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
-							std::vector<double>::size_type>&) const;
-	~LogicalOperation();
+							std::vector<double>::size_type>&) const override;
+	virtual ~LogicalOperation();
       private:
 	const ExprPtr a;
 	const ExprPtr b;
       }; // end of struct LogicalOperation
 
       template<typename Op>
-      struct TFEL_VISIBILITY_LOCAL LogicalBinaryOperation
+      struct TFEL_VISIBILITY_LOCAL LogicalBinaryOperation final
 	: public LogicalExpr
       {
 	LogicalBinaryOperation(LogicalExprPtr,
 			       LogicalExprPtr);
-	bool
-	getValue(void) const;
-	void
-	checkCyclicDependency(std::vector<std::string>&) const;
-	LogicalExprPtr
-	resolveDependencies(const std::vector<double>&) const;
-	LogicalExprPtr
-	clone(const std::vector<double>&) const;
-	void
-	getParametersNames(std::set<std::string>&) const;
-	LogicalExprPtr
+	virtual bool
+	getValue(void) const override;
+	virtual void
+	checkCyclicDependency(std::vector<std::string>&) const override;
+	virtual LogicalExprPtr
+	resolveDependencies(const std::vector<double>&) const override;
+	virtual LogicalExprPtr
+	clone(const std::vector<double>&) const override;
+	virtual void
+	getParametersNames(std::set<std::string>&) const override;
+	virtual LogicalExprPtr
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
-							std::vector<double>::size_type>&) const;
-	~LogicalBinaryOperation();
+							std::vector<double>::size_type>&) const override;
+	virtual ~LogicalBinaryOperation();
       private:
 	LogicalExprPtr a;
 	LogicalExprPtr b;
       }; // end of struct LogicalBinaryOperation
 
-      struct TFEL_VISIBILITY_LOCAL NegLogicalExpression
+      struct TFEL_VISIBILITY_LOCAL NegLogicalExpression final
 	: public LogicalExpr
       {
 	NegLogicalExpression(LogicalExprPtr);
-	virtual bool getValue(void) const final;
+	virtual bool getValue(void) const override;
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const final;
+	checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual LogicalExprPtr
-	resolveDependencies(const std::vector<double>&) const final;
+	resolveDependencies(const std::vector<double>&) const override;
 	virtual LogicalExprPtr
-	clone(const std::vector<double>&) const final;
+	clone(const std::vector<double>&) const override;
 	virtual void
-	getParametersNames(std::set<std::string>&) const final;
+	getParametersNames(std::set<std::string>&) const override;
 	virtual LogicalExprPtr
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
-							std::vector<double>::size_type>&) const final;
+							std::vector<double>::size_type>&) const override;
 	~NegLogicalExpression();
       private:
 	LogicalExprPtr a;

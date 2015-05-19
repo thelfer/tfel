@@ -33,8 +33,8 @@ namespace tfel
     {
       typedef void (*Fct)(const int);
       FctSignalHandler(const Fct);
-      void execute(const int);
-      ~FctSignalHandler();
+      virtual void execute(const int) override final;
+      virtual ~FctSignalHandler();
     private:
       const Fct f;
     }; // end of struct FctSignalHandler
@@ -45,7 +45,7 @@ namespace tfel
     {
       typedef void (Class:: *Fct)(const int);
       MemberSignalHandler(Class&,const Fct);
-      void execute(const int);
+      virtual void execute(const int) override final;
       ~MemberSignalHandler();
     private:
       Class &c;

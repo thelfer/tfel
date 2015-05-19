@@ -144,13 +144,13 @@ namespace tfel
        * \return the name of the test
        */
       virtual std::string
-      name(void) const;
+      name(void) const override;
       /*! 
        * return the group of the test
        * \return the group of the test
        */
       virtual std::string
-      classname(void) const;
+      classname(void) const override;
     protected:
       /*!
        * Constructor
@@ -164,9 +164,7 @@ namespace tfel
        */
       TestCase(const std::string&,
 	       const std::string&);
-      /*!
-       * Destructor
-       */
+      //! destructor
       virtual ~TestCase();
       /*!
        * \param n : description of the test
@@ -176,18 +174,11 @@ namespace tfel
       registerResult(const std::string&,
 		     const bool);
     private:
-      /*!
-       * copy constructor (disabled)
-       * \param src : object to be copied
-       */
-      TFEL_VISIBILITY_LOCAL TestCase(const TestCase&);
-      /*!
-       * assignement operator (disabled)
-       * \param src : object to be assigned
-       * \return a reference to this object
-       */
-      TFEL_VISIBILITY_LOCAL TestCase&
-      operator=(const TestCase&);
+      //! copy constructor (disabled)
+      TestCase(const TestCase&) = delete;
+      //!assignement operator (disabled)
+      TestCase&
+      operator=(const TestCase&) = delete;
     protected:
       //! result of the test
       TestResult result;

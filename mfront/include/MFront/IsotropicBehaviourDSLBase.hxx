@@ -49,35 +49,26 @@ namespace mfront{
      * @ModellingHypothesis or @ModellingHypotheses keywords.
      */
     virtual bool
-    isModellingHypothesisSupported(const Hypothesis) const;
+    isModellingHypothesisSupported(const Hypothesis) const override;
 
     virtual void
-    writeBehaviourParserSpecificIncludes(void);
+    writeBehaviourParserSpecificIncludes(void) override;
 
     virtual void
-    writeBehaviourParserSpecificTypedefs(void);
+    writeBehaviourParserSpecificTypedefs(void) override;
 
     virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis) = 0;
+    writeBehaviourComputePredictionOperator(const Hypothesis) override;
 
     virtual void
-    writeBehaviourParserSpecificMembers(const Hypothesis) = 0;
-
-    virtual void
-    writeBehaviourIntegrator(const Hypothesis) = 0;
-
-    virtual void
-    writeBehaviourComputePredictionOperator(const Hypothesis);
-
-    virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis);
+    writeBehaviourComputeTangentOperator(const Hypothesis) override;
 
     virtual std::string
     flowRuleVariableModifier(const Hypothesis,
 			     const std::string&,const bool);
 
     virtual void
-    treatExternalStateVariable(void);
+    treatExternalStateVariable(void) override;
 
     virtual void
     treatFlowRule(void);
@@ -92,7 +83,7 @@ namespace mfront{
     treatIterMax(void);
 
     virtual void
-    endsInputFileProcessing(void);
+    endsInputFileProcessing(void) override;
 
     //! default value
     double theta;

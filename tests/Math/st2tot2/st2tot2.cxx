@@ -25,15 +25,15 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-struct ST2toT2Test_1D
+struct ST2toT2Test_1D final
   : public tfel::tests::TestCase
 {
   ST2toT2Test_1D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "ST2toT2Test-1D")
   {} // end of STensorTest8
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

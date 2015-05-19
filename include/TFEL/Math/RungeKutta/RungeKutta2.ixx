@@ -22,25 +22,9 @@ namespace tfel{
   namespace math{
 
     template<unsigned int N,typename T, typename Func>
-    class RungeKutta2
+    struct RungeKutta2
     {
-
-      T h;
-      T t;
-      tvector<N,T> y;
-      tvector<N,T> k1;
-
-      RungeKutta2(const RungeKutta2&);
-      RungeKutta2& operator=(const RungeKutta2&);
-
-    protected:
-
-      tvector<N,T> f;
-
-    public:
-
-      RungeKutta2()
-      {}
+      RungeKutta2() = default;
       
       TFEL_MATH_INLINE2 void set_y(const tvector<N,T>& y_){
 	this->y = y_;
@@ -55,9 +39,10 @@ namespace tfel{
       }
 
       TFEL_MATH_INLINE2 void increm(void){
+	constexpr auto one_half = T{1}/T{2};
 	static_cast<Func &>(*this).computeF(t,y);
-	k1 = y+0.5f*h*f;
-	static_cast<Func &>(*this).computeF(t+0.5f*h,k1);
+	k1 = y+one_half*h*f;
+	static_cast<Func &>(*this).computeF(t+one_half*h,k1);
 	t += h;
 	y += h*f;
       }
@@ -80,6 +65,20 @@ namespace tfel{
       TFEL_MATH_INLINE2 T get_h(void) const {
 	return this->h;
       }
+
+    protected:
+
+      tvector<N,T> f;
+
+    private:
+
+      T h;
+      T t;
+      tvector<N,T> y;
+      tvector<N,T> k1;
+
+      RungeKutta2(const RungeKutta2&) = delete;
+      RungeKutta2& operator=(const RungeKutta2&) = delete;
 
     };
     

@@ -274,7 +274,7 @@ namespace mfront{
     const string btype = this->mb.getBehaviourTypeFlag();
     if(!this->mb.hasCode(h,BehaviourData::ComputePredictionOperator)){
       this->behaviourFile << "IntegrationResult" << endl
-			  << "computePredictionOperator(const SMFlag smflag, const SMType smt){\n";
+			  << "computePredictionOperator(const SMFlag smflag, const SMType smt) override{\n";
       this->behaviourFile << "using namespace std;\n";
       if(this->mb.useQt()){
 	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 

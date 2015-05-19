@@ -41,11 +41,11 @@ namespace tfel{
       
       void registerArgumentCallBacks(void);    
 
-      std::string
-      getVersionDescription(void) const;
+      virtual std::string
+      getVersionDescription(void) const override;
       
-      std::string
-      getUsageDescription(void) const;
+      virtual std::string
+      getUsageDescription(void) const override;
 
       void treatSplit(void);
 

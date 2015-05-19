@@ -31,7 +31,7 @@ namespace tfel
     /*!
      *  Test Output using a standard stream
      */
-    struct TFELTESTS_VISIBILITY_EXPORT XMLTestOutput
+    struct TFELTESTS_VISIBILITY_EXPORT XMLTestOutput final
       : public TestOutput
     {
       /*!
@@ -44,7 +44,7 @@ namespace tfel
        * \param n : name of the test suite
        */
       virtual void
-      beginTestSuite(const std::string&);
+      beginTestSuite(const std::string&) override;
       /*!
        *  Add a new test
        * \param g : group  of the test
@@ -54,16 +54,14 @@ namespace tfel
       virtual void
       addTest(const std::string&,
 	      const std::string&,
-	      const TestResult&);
+	      const TestResult&) override;
       /*!
        * End a test suite
        * \param r : (global) result of the test suite
        */
       virtual void
-      endTestSuite(const TestResult&);
-      /*!
-       * Destructor
-       */
+      endTestSuite(const TestResult&) override;
+      //! Destructor
       virtual ~XMLTestOutput();
     private:
       /*!
@@ -71,18 +69,11 @@ namespace tfel
        */
       TFEL_VISIBILITY_LOCAL void
       treatTest(const TestResult&);
-      /*!
-       * copy constructor (disabled)
-       * \param src : object to be copied
-       */
-      TFEL_VISIBILITY_LOCAL XMLTestOutput(const XMLTestOutput&);
-      /*!
-       * assignement operator (disabled)
-       * \param src : object to be assigned
-       * \return a reference to this object
-       */
-      TFEL_VISIBILITY_LOCAL XMLTestOutput&
-      operator=(const XMLTestOutput&);
+      //! copy constructor (disabled)
+      XMLTestOutput(const XMLTestOutput&) = delete;
+      //! assignement operator (disabled)
+      XMLTestOutput&
+      operator=(const XMLTestOutput&) = delete;
       //! output stream
       std::ofstream os;
       //! output file name

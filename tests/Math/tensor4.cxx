@@ -24,15 +24,15 @@
 #include"TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include"TFEL/Math/Tensor/TensorConceptIO.hxx"
 
-struct Tensor4Test1D
+struct Tensor4Test1D final
   : public tfel::tests::TestCase
 {
   Tensor4Test1D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "Tensor4Test1D")
   {} // end of Tensor4Test1D
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -64,15 +64,15 @@ struct Tensor4Test1D
   } // end of execute
 };
 
-struct Tensor4Test2D
+struct Tensor4Test2D final
   : public tfel::tests::TestCase
 {
   Tensor4Test2D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "Tensor4Test2D")
   {} // end of Tensor4Test2D
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -100,15 +100,15 @@ struct Tensor4Test2D
   } // end of execute
 };
 
-struct Tensor4Test3D
+struct Tensor4Test3D final
   : public tfel::tests::TestCase
 {
   Tensor4Test3D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "Tensor4Test3D")
   {} // end of Tensor4Test3D
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

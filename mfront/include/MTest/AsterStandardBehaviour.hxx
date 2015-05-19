@@ -45,24 +45,24 @@ namespace mfront
      */
     virtual tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
-		      const tfel::math::tmatrix<3u,3u,real>&) const;
+		      const tfel::math::tmatrix<3u,3u,real>&) const override;
     /*!
      * \return the size of the array of internal variables
      * \param[in] d : space dimension
      */
-    size_t
-    getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const;
+    virtual size_t
+    getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const override;
     /*!
      * \return the descriptions the internal variables
      * \param[in] d : space dimension
      */
-    std::vector<std::string>
-    getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis) const;
+    virtual std::vector<std::string>
+    getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual MTestStiffnessMatrixType::mtype
-    getDefaultStiffnessMatrixType(void) const;
+    getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -86,7 +86,7 @@ namespace mfront
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::material::ModellingHypothesis::Hypothesis,
-			      const MTestStiffnessMatrixType::mtype) const;
+			      const MTestStiffnessMatrixType::mtype) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -119,13 +119,13 @@ namespace mfront
 	      const tfel::math::vector<real>&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
-	      const MTestStiffnessMatrixType::mtype) const;
+	      const MTestStiffnessMatrixType::mtype) const override;
     /*!
      * \brief allocate internal workspace
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis);
+    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
     //! destructor
     virtual ~AsterStandardBehaviour();
   protected:

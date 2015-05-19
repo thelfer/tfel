@@ -52,7 +52,7 @@ namespace mfront{
 
     virtual void
     treatUnknownVariableMethod(const Hypothesis,
-			       const std::string&);
+			       const std::string&) override;
 
     virtual void treatEpsilon(void);
 
@@ -63,15 +63,15 @@ namespace mfront{
     virtual void treatComputeStress(void);
 
     virtual void
-    treatUpdateAuxiliaryStateVariables(void);
+    treatUpdateAuxiliaryStateVariables(void) override;
 
     virtual void treatDerivative(void);
 
-    virtual void writeBehaviourParserSpecificIncludes(void);
+    virtual void writeBehaviourParserSpecificIncludes(void) override;
 
-    virtual void writeBehaviourParserSpecificTypedefs(void);
+    virtual void writeBehaviourParserSpecificTypedefs(void) override;
 
-    virtual void writeBehaviourParserSpecificMembers(const Hypothesis);
+    virtual void writeBehaviourParserSpecificMembers(const Hypothesis) override;
 
     virtual void writeBehaviourEulerIntegrator(const Hypothesis);
 
@@ -85,16 +85,16 @@ namespace mfront{
 
     virtual void writeBehaviourRKCastemIntegrator(const Hypothesis);
 
-    virtual void writeBehaviourUpdateStateVariables(const Hypothesis);
+    virtual void writeBehaviourUpdateStateVariables(const Hypothesis) override;
 
     virtual void
-    writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis);
+    writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis) override;
 
     virtual void
-    writeBehaviourIntegrator(const Hypothesis);
+    writeBehaviourIntegrator(const Hypothesis) override;
 
     virtual void
-    endsInputFileProcessing(void);
+    endsInputFileProcessing(void) override;
 
     virtual void
     setDefaultAlgorithm(void);

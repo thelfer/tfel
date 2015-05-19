@@ -77,14 +77,14 @@ namespace tfel{
 
 } // end of namespace tfel
 
-struct ExprTest
+struct ExprTest final
   : public tfel::tests::TestCase
 {
   ExprTest()
     : tfel::tests::TestCase("TFEL/Math","ExprTest")
   {} // end of ExprTest()
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

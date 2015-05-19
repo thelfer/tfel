@@ -1439,15 +1439,14 @@ namespace mfront
       r.push_back(n);
     } else {
       // checking for an array of internal state variables
-      vector<string>::const_iterator p;
-      for(p=names.begin();p!=names.end();++p){
+      for(auto p=names.cbegin();p!=names.cend();++p){
 	const string& vn = *p;
 	if(vn.compare(0,n.length(),n)==0){
-	  if(!vn.size()>=n.length()+3u){
+	  if(!(vn.size()>=n.length()+3u)){
 	    continue;
 	  }
-	  string::const_reverse_iterator pn  = vn.rbegin();
-	  const string::const_reverse_iterator pne = vn.rbegin()+(vn.size()-n.size()-1);
+	  auto pn  = vn.crbegin();
+	  const auto pne = vn.crbegin()+(vn.size()-n.size()-1);
 	  if((vn[n.size()]!='[')||(*pn!=']')){
 	    continue;
 	  }

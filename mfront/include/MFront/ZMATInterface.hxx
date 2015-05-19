@@ -51,7 +51,7 @@ namespace mfront{
      * \param[in] b : boolean
      */
     virtual void
-    allowDynamicallyAllocatedArrays(const bool);
+    allowDynamicallyAllocatedArrays(const bool) override;
     /*!
      * \param[in] k  : keyword treated
      * \param[in] p  : iterator to the current token

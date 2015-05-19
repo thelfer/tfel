@@ -136,14 +136,14 @@ GenType::load(const std::string& t,
   return apply(l,*this);
 }
 
-struct GenTypeTest3
+struct GenTypeTest3 final
   : public tfel::tests::TestCase
 {
   GenTypeTest3()
      : tfel::tests::TestCase("TFEL/Utilities","GenTypeTest3")
   {} // end of MyTest
   tfel::tests::TestResult
-  execute()
+  execute() override
   {
     using namespace std;
     GenType g;

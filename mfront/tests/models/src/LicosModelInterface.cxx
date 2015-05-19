@@ -24,6 +24,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 #include"MFront/ModelDSLCommon.hxx"
@@ -112,9 +113,8 @@ namespace mfront{
   } // end of MFrontModelInterface::getVariableName(const std::string& v)
 
   MFrontModelInterface::MFrontModelInterface(void)
-  {
-    this->reset();
-  } // end of MFrontModelInterface::MFrontModelInterface
+    : hasDefaultConstructor(false)
+  {} // end of MFrontModelInterface::MFrontModelInterface
 
   void
   MFrontModelInterface::declareReservedNames(std::set<std::string>& v)
@@ -362,7 +362,7 @@ namespace mfront{
 	msg+="function " + p3->name + " does not modify any variable (internal error, this shall have been verified long ago).";
 	throw(runtime_error(msg));
       }
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p3->line << " \"" 
 			 << fdata.fileName << "\"\n";
       }
@@ -409,7 +409,7 @@ namespace mfront{
       this->headerFile << "friend class " << mdata.className <<";\n\n";
       for(p4=p3->globalParameters.begin();p4!=p3->globalParameters.end();++p4){
 	p = MFrontModelInterface::findVariableDescription(mdata.globalParameters,*p4);
-	if(this->debugMode){
+	if(getDebugMode()){
 	  this->headerFile << "#line " << p->lineNumber << " \"" 
 			   << fdata.fileName << "\"\n";
 	}
@@ -417,7 +417,7 @@ namespace mfront{
       }
       for(p4=p3->localParameters.begin();p4!=p3->localParameters.end();++p4){
 	p = MFrontModelInterface::findVariableDescription(mdata.localParameters,*p4);
-	if(this->debugMode){
+	if(getDebugMode()){
 	  this->headerFile << "#line " << p->lineNumber << " \"" 
 			   << fdata.fileName << "\"\n";
 	}
@@ -425,7 +425,7 @@ namespace mfront{
       }
       for(p4=p3->constantMaterialProperties.begin();p4!=p3->constantMaterialProperties.end();++p4){
 	p = MFrontModelInterface::findVariableDescription(mdata.constantMaterialProperties,*p4);
-	if(this->debugMode){
+	if(getDebugMode()){
 	  this->headerFile << "#line " << p->lineNumber << " \"" 
 			   << fdata.fileName << "\"\n";
 	}
@@ -438,7 +438,7 @@ namespace mfront{
     }
     if(!mdata.staticVars.empty()){
       for(p2=mdata.staticVars.begin();p2!=mdata.staticVars.end();++p2){
-	if(this->debugMode){
+	if(getDebugMode()){
 	  this->headerFile << "#line " << p2->lineNumber << " \"" 
 			   << fdata.fileName << "\"\n";
 	}
@@ -448,14 +448,14 @@ namespace mfront{
     }
     this->headerFile << "std::vector<std::string> domains;\n";
     for(p=mdata.globalParameters.begin();p!=mdata.globalParameters.end();++p){
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << fdata.fileName << "\"\n";
       }
       this->headerFile << getVariableType(p->type) << " " << p->name << ";\n";
     }
     for(p=mdata.localParameters.begin();p!=mdata.localParameters.end();++p){
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << fdata.fileName << "\"\n";
       }
@@ -476,7 +476,7 @@ namespace mfront{
 	msg += "(internal error, this shall have been verified long ago).";
 	throw(runtime_error(msg));
       }
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->headerFile << "#line " << p3->line << " \"" 
 			 << fdata.fileName << "\"\n";
       }
@@ -634,7 +634,7 @@ namespace mfront{
     // Functors
     for(p11=mdata.functions.begin();p11!=mdata.functions.end();++p11){
       // operator()
-      if(this->debugMode){
+      if(getDebugMode()){
 	this->srcFile << "#line " << p11->line << " \"" 
 		      << fdata.fileName << "\"\n";
       }
@@ -1616,7 +1616,7 @@ namespace mfront{
 							  const StaticVariableDescription& v)
   {
     using namespace std;
-    if(this->debugMode){
+    if(getDebugMode()){
       this->srcFile << "#line " << v.lineNumber << " \"" 
 		    << fdata.fileName << "\"\n";
     }
@@ -1704,20 +1704,6 @@ namespace mfront{
     typedef CxxTokenizer::TokensContainer::const_iterator TokenConstIterator;
     return pair<bool,TokenConstIterator>(false,c);
   } // end of MFrontModelInterface::treatKeyword
-
-  void
-  MFrontModelInterface::reset(void)
-  {
-    this->headerFileName.clear();
-    this->srcFileName.clear();
-    this->hasDefaultConstructor = false;
-    if(this->headerFile.is_open()){
-      this->headerFile.close();
-    }
-    if(this->srcFile.is_open()){
-      this->srcFile.close();
-    }
-  } // end of MFrontModelInterface::reset
 
   std::string
   MFrontModelInterface::getName(void)

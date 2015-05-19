@@ -20,7 +20,7 @@
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include"TFEL/Math/tvector.hxx"
 
-struct TVector6
+struct TVector6 final
   : public tfel::tests::TestCase
 {
   TVector6()
@@ -28,8 +28,8 @@ struct TVector6
 			    "TVector6")
   {} // end of TVector6
 
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace tfel::fsalgo;
     using namespace tfel::math;

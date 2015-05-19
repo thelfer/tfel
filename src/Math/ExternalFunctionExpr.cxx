@@ -281,6 +281,9 @@ namespace tfel
 	}
         return shared_ptr<Expr>(new ExternalFunctionExpr2(p3->second->resolveDependencies(),nargs));	
       } // end of ExternalFunctionExpr::resolveDependencies
+
+      ExternalFunctionExpr::~ExternalFunctionExpr()
+      {} // end of ExternalFunctionExpr::~ExternalFunctionExpr
       
     } // end of namespace parser
 

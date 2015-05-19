@@ -39,13 +39,13 @@ namespace mfront
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual MTestStiffnessMatrixType::mtype
-    getDefaultStiffnessMatrixType(void) const;
+    getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief allocate internal workspace
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis);
+    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -55,7 +55,7 @@ namespace mfront
      */
     virtual tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
-		      const tfel::math::tmatrix<3u,3u,real>&) const;
+		      const tfel::math::tmatrix<3u,3u,real>&) const override;
     /*!
      * \brief some interfaces requires dummy material properties to be
      * declared. For example, the Cast3M finite element solver
@@ -68,7 +68,7 @@ namespace mfront
      */
     virtual void
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const;
+					       const EvolutionManager&) const override;
     /*!
      * destructor
      */

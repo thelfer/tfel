@@ -45,28 +45,28 @@ namespace tfel
       }; // end of struct StandardFunctionBase
 
       template<StandardFunctionPtr f>
-      struct TFEL_VISIBILITY_LOCAL StandardFunction
+      struct TFEL_VISIBILITY_LOCAL StandardFunction final
 	: public Function
       {
 	StandardFunction(const std::shared_ptr<Expr>);
-	double getValue(void) const;
-	void
-	checkCyclicDependency(std::vector<std::string>&) const;
-	std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const;
-	std::shared_ptr<Expr>
+	virtual double getValue(void) const override;
+	virtual void
+	checkCyclicDependency(std::vector<std::string>&) const override;
+	virtual std::shared_ptr<Expr>
+	resolveDependencies(const std::vector<double>&) const override;
+	virtual std::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
-		      const std::vector<double>&) const;
-	std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const;
-	std::shared_ptr<Expr>
+		      const std::vector<double>&) const override;
+	virtual std::shared_ptr<Expr>
+	clone(const std::vector<double>&) const override;
+	virtual std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
-							               std::vector<double>::size_type>&) const;
-	void
-	getParametersNames(std::set<std::string>&) const;
-	~StandardFunction();
+							std::vector<double>::size_type>&) const override;
+	virtual void
+	getParametersNames(std::set<std::string>&) const override;
+	virtual ~StandardFunction();
       private:
 	const std::shared_ptr<Expr> expr;
       }; // end of struct StandardFunction

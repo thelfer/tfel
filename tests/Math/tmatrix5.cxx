@@ -21,7 +21,7 @@
 
 #include"TFEL/Math/tmatrix.hxx"
 
-struct TMatrixRowViewTest
+struct TMatrixRowViewTest final
   : public tfel::tests::TestCase
 {
   TMatrixRowViewTest()
@@ -29,8 +29,8 @@ struct TMatrixRowViewTest
 			    "TMatrixRowViewTest")
   {} // end of TMatrixRowViewTest
 
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

@@ -51,7 +51,7 @@ namespace tfel{
     void
     Permutation<T>::reset()
     {
-      for(auto i=0;i!=this->size();++i){
+      for(decltype(this->size()) i=0;i!=this->size();++i){
 	vector<T>::operator[](i) = i;
       }
       this->is_identity = true;

@@ -29,7 +29,7 @@ namespace mfront{
     getDescription(void);
 
     virtual void
-    setInterfaces(const std::set<std::string>&);
+    setInterfaces(const std::set<std::string>&) override;
   }; // end of ModelDSL
 
 } // end of namespace mfront

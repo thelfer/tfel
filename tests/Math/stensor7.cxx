@@ -27,15 +27,15 @@
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/stensor.hxx"
 
-struct STensorTest7
+struct STensorTest7 final
   : public tfel::tests::TestCase
 {
   STensorTest7()
     : tfel::tests::TestCase("TFEL/Math",
 			    "STensorTest7")
   {} // end of STensorTest7
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;  
     using namespace tfel::math;

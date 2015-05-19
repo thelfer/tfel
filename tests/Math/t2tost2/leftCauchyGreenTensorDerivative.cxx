@@ -27,8 +27,8 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-template<unsigned short N>
-struct LeftCauchyGreenTensorDerivative
+template<unsigned short N> 
+struct LeftCauchyGreenTensorDerivative final
   : public tfel::tests::TestCase
 {
   LeftCauchyGreenTensorDerivative()
@@ -36,8 +36,8 @@ struct LeftCauchyGreenTensorDerivative
 			    "LeftCauchyGreenTensorDerivative"+
 			    std::to_string(static_cast<unsigned int>(N)))
   {} // end of LeftCauchyGreenTensorDerivative
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

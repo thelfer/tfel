@@ -36,7 +36,7 @@ namespace mfront{
     //! a simple alias
     typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType(void) const final;
+    virtual DSLTarget getTargetType(void) const override final;
     //! \return the behaviour description
     virtual const BehaviourDescription&
     getBehaviourDescription(void) const = 0;

@@ -28,7 +28,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 
-struct StensorComputeEigenvectors
+struct StensorComputeEigenvectors final
   : public tfel::tests::TestCase
 {
   StensorComputeEigenvectors()
@@ -36,8 +36,8 @@ struct StensorComputeEigenvectors
 			    "StensorComputeEigenvectors")
   {} // end of StensorComputeEigenvectors
 
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     this->test<float>();
     this->test<double>();

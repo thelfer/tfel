@@ -44,23 +44,23 @@ namespace mfront
      */
     virtual tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
-		      const tfel::math::tmatrix<3u,3u,real>&) const;
+		      const tfel::math::tmatrix<3u,3u,real>&) const override;
     /*!
      * \param[out] v : initial values of the driving variables
      */
     virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const;
+    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief allocate internal workspace
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis);
+    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual MTestStiffnessMatrixType::mtype
-    getDefaultStiffnessMatrixType(void) const;
+    getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -84,7 +84,7 @@ namespace mfront
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::material::ModellingHypothesis::Hypothesis,
-			      const MTestStiffnessMatrixType::mtype) const;
+			      const MTestStiffnessMatrixType::mtype) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -117,7 +117,7 @@ namespace mfront
 	      const tfel::math::vector<real>&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
-	      const MTestStiffnessMatrixType::mtype) const;
+	      const MTestStiffnessMatrixType::mtype) const override;
     /*!
      * \brief some interfaces requires dummy material properties to be
      * declared. For example, the Cast3M finite element solver
@@ -130,7 +130,7 @@ namespace mfront
      */
     virtual void
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const;
+					       const EvolutionManager&) const override;
     //! destructor
     virtual ~AsterCohesiveZoneModel();
   protected:

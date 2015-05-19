@@ -74,7 +74,7 @@ namespace mfront{
     void registerCommandLineCallBacks(void);
     //! return the current argument
     virtual const tfel::utilities::Argument&
-    getCurrentCommandLineArgument() const final;
+    getCurrentCommandLineArgument() const override final;
     //! treat a standard query
     virtual void treatStandardQuery(void) final;
     //! treat a standard query (an option to the command line
@@ -96,10 +96,10 @@ namespace mfront{
     virtual void treatUnknownArgument(void) final;
     //! get the version description
     virtual std::string
-    getVersionDescription(void) const final;
+    getVersionDescription(void) const override final;
     //! get the usage description
     virtual std::string
-    getUsageDescription(void) const final;
+    getUsageDescription(void) const override final;
     //! \return a query that show a list of variables
     template<const VariableDescriptionContainer& (BehaviourData::* m)(void) const>
     query generateVariablesListQuery(void);

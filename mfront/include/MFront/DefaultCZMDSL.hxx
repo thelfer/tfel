@@ -36,7 +36,7 @@ namespace mfront{
   protected:
 
     virtual void
-    writeBehaviourParserSpecificIncludes(void);
+    writeBehaviourParserSpecificIncludes(void) override;
 
   }; // end of struct DefaultCZMDSL
 

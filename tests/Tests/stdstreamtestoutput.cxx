@@ -22,14 +22,12 @@
 #include"TFEL/Tests/TestFunctionWrapper.hxx"
 #include"TFEL/Tests/StdStreamTestOutput.hxx"
 
-bool
-test1(void)
+static bool test1(void)
 {
   return true;
 }
 
-bool
-test2(void)
+static bool test2(void)
 {
   return false;
 }

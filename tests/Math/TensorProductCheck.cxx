@@ -27,15 +27,15 @@
 #include"TFEL/Math/st2tost2.hxx"
 
 template<unsigned short N>
-struct TensorProductCheck
+struct TensorProductCheck final
   : public tfel::tests::TestCase
 {
   TensorProductCheck()
     : tfel::tests::TestCase("TFEL/Math",
 			    "TensorProductCheck")
   {} // end of TensorProductCheck
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

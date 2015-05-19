@@ -1989,13 +1989,13 @@ namespace mfront{
     this->behaviourFile << "*/" << endl;
     this->behaviourFile << "IntegrationResult" << endl;
     if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
-      this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){" << endl;
+      this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{" << endl;
     } else {
       if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
-	this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){" << endl;
+	this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{" << endl;
       } else {
-	this->behaviourFile << "integrate(const SMFlag,const SMType smt){" << endl;
+	this->behaviourFile << "integrate(const SMFlag,const SMType smt) override{" << endl;
       }
     }
     this->behaviourFile << "using namespace std;" << endl;

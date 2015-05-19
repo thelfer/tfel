@@ -21,14 +21,14 @@
 
 #include"TFEL/Math/stensor.hxx"
 
-struct Expr8Test
+struct Expr8Test final
   : public tfel::tests::TestCase
 {
   Expr8Test()
     : tfel::tests::TestCase("TFEL/Math","Expr8Test")
   {} // end of Expr8Test()
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::meta;
@@ -69,11 +69,8 @@ struct Expr8Test
     TFEL_TESTS_ASSERT(std::abs(s3(3)-0)<eps);
     return this->result;
   }
-  virtual ~Expr8Test();
+  virtual ~Expr8Test() = default;
 };
-
-Expr8Test::~Expr8Test()
-{}
 
 TFEL_TESTS_GENERATE_PROXY(Expr8Test,"Expr8Test");
 

@@ -24,13 +24,13 @@
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/TestFunctionWrapper.hxx"
 
-bool
+static bool
 test1(void)
 {
   return true;
 }
 
-bool
+static bool
 test2(void)
 {
   return false;

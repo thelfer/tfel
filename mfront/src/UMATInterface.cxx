@@ -1992,7 +1992,7 @@ namespace mfront{
 
   void
   UMATInterface::writeGibianeInstruction(std::ostream& out,
-					       const std::string& i) const
+					 const std::string& i) const
   {
     using namespace std;
     istringstream in(i);
@@ -2096,12 +2096,14 @@ namespace mfront{
       mcoel << ";";
       writeGibianeInstruction(out,mcoel.str());
       out << endl;
-      ostringstream mstatev;
-      mstatev << "statev = 'MOTS' ";
-      this->writeVariableDescriptionContainerToGibiane(mstatev,elem,persistentVarsHolder);
-      mstatev << ";";
-      writeGibianeInstruction(out,mstatev.str());
-      out << endl;
+      if(!persistentVarsHolder.empty()){
+	ostringstream mstatev;
+	mstatev << "statev = 'MOTS' ";
+	this->writeVariableDescriptionContainerToGibiane(mstatev,elem,persistentVarsHolder);
+	mstatev << ";";
+	writeGibianeInstruction(out,mstatev.str());
+	out << endl;
+      }
       ostringstream mparam;
       mparam << "params = 'MOTS' 'T'";
       if(!externalStateVarsHolder.empty()){
@@ -2115,7 +2117,9 @@ namespace mfront{
       mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
       mmod << nonlin << " 'NUME_LOI' 1 ";
       mmod << "'C_MATERIAU' coel ";
-      mmod << "'C_VARINTER' statev ";
+      if(!persistentVarsHolder.empty()){
+	mmod << "'C_VARINTER' statev ";
+      }
       mmod << "'PARA_LOI'   params 'CONS' M;";
       writeGibianeInstruction(out,mmod.str());
       out << endl;

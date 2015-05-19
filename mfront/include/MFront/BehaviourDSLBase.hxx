@@ -37,7 +37,7 @@ namespace mfront{
      * \param[out] k : the list of keywords registred for this parser
      */
     virtual void
-    getKeywordsList(std::vector<std::string>&) const;
+    getKeywordsList(std::vector<std::string>&) const override;
 
   protected:
     

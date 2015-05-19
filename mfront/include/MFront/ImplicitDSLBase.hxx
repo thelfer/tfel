@@ -59,7 +59,7 @@ namespace mfront{
     virtual std::string
     tangentOperatorVariableModifier(const Hypothesis,
 				    const std::string&,
-				    const bool);
+				    const bool) override;
 
     virtual std::string
     integratorVariableModifier(const Hypothesis,
@@ -80,19 +80,19 @@ namespace mfront{
      * solver may have specific keywords
      */
     virtual void
-    treatUnknownKeyword(void);
+    treatUnknownKeyword(void) override;
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : variable name
      */
     virtual void
     treatUnknownVariableMethod(const Hypothesis,
-			       const std::string&);
+			       const std::string&) override;
     /*!
      *
      */
     virtual void
-    treatStateVariable(void);
+    treatStateVariable(void) override;
     /*!
      *
      */
@@ -100,33 +100,33 @@ namespace mfront{
     treatIntegrationVariable(void);
 
     virtual void
-    treatIntegrator(void);
+    treatIntegrator(void) override;
 
     virtual void
     treatComputeFinalStress(void);
 
-    virtual void endsInputFileProcessing(void);
+    virtual void endsInputFileProcessing(void) override;
 
-    virtual void writeBehaviourIntegrator(const Hypothesis);
+    virtual void writeBehaviourIntegrator(const Hypothesis) override;
 
     virtual void writeComputeFdF(const Hypothesis);
 
-    virtual void writeBehaviourParserSpecificIncludes(void);
+    virtual void writeBehaviourParserSpecificIncludes(void) override;
 
-    virtual void writeBehaviourParserSpecificTypedefs(void);
+    virtual void writeBehaviourParserSpecificTypedefs(void) override;
 
-    virtual void writeBehaviourParserSpecificMembers(const Hypothesis);
+    virtual void writeBehaviourParserSpecificMembers(const Hypothesis) override;
 
-    virtual void writeBehaviourIntegrationVariablesIncrements(const Hypothesis);
+    virtual void writeBehaviourIntegrationVariablesIncrements(const Hypothesis) override;
     
     virtual std::string
-    getBehaviourConstructorsInitializers(const Hypothesis);
+    getBehaviourConstructorsInitializers(const Hypothesis) override;
 
     virtual std::string
     getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer&,
-						  const bool) const;
+						  const bool) const override;
 
-    virtual void writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
+    virtual void writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis) override;
 
     virtual void writeComputeNumericalJacobian(const Hypothesis);
 
@@ -162,7 +162,7 @@ namespace mfront{
      */
     virtual bool
     isCallableVariable(const Hypothesis,
-		       const std::string&) const;
+		       const std::string&) const override;
     /*!
      * \return a type able to do the mapping of a variable with the
      * vector used by the root-finding algorithm.

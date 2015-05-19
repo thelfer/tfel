@@ -61,8 +61,8 @@ namespace mfront
       //! default constructor
       MTestCurrentState();
       //! copy constructor
-      MTestCurrentState(const MTestCurrentState&) = default;
-      MTestCurrentState(MTestCurrentState&&)      = default;
+      MTestCurrentState(const MTestCurrentState&);
+      MTestCurrentState(MTestCurrentState&&);
       //! destructor
       ~MTestCurrentState() noexcept;
       // vector of unknows at 
@@ -259,12 +259,12 @@ namespace mfront
      * \return the name of the test
      */
     virtual std::string
-    name(void) const;
+    name(void) const override;
     /*! 
      * \return the group of the test
      */
     virtual std::string
-    classname(void) const;
+    classname(void) const override;
     /*!
      * complete the initialisation. This method must be called once.
      * \note this method is called automatically by the execute method.
@@ -288,7 +288,7 @@ namespace mfront
      * along the loading path
      */ 
     virtual tfel::tests::TestResult
-    execute(void);
+    execute(void) override;
     /*!
      * integrate the behaviour over one step
      */ 

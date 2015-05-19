@@ -30,19 +30,19 @@ namespace mfront{
     getDescription(void);
 
     virtual void
-    endsInputFileProcessing(void);
+    endsInputFileProcessing(void) override;
 
     virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
+    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis) override;
 
     virtual void
-    writeBehaviourParserSpecificMembers(const Hypothesis);
+    writeBehaviourParserSpecificMembers(const Hypothesis) override;
 
     virtual void
-    writeBehaviourIntegrator(const Hypothesis);
+    writeBehaviourIntegrator(const Hypothesis) override;
 
     virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis);
+    writeBehaviourComputeTangentOperator(const Hypothesis) override;
 
     IsotropicMisesCreepDSL();
 

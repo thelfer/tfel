@@ -1318,7 +1318,8 @@ namespace mfront
       vector<UMATMaterialProperty>::size_type ib=0; /* index of the first element which
 						     * is not imposed by the material properties */
       bool found = false;
-      for(auto i=0;(i!=mprops.first.size())&&(!found);++i){
+      for(decltype(mprops.first.size()) i=0;
+	  (i!=mprops.first.size())&&(!found);++i){
 	if(mprops.first[i].offset==mprops.second){
 	  ib = i;
 	  found = true;

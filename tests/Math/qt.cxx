@@ -27,14 +27,14 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-struct qtTest
+struct qtTest final
   : public tfel::tests::TestCase
 {
   qtTest()
     : tfel::tests::TestCase("TFEL/Math","qt")
   {} // end of qtTest
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace tfel::math; 
     constexpr qt<Mass> m1(100.);

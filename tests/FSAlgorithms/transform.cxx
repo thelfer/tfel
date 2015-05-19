@@ -28,7 +28,9 @@
 int main(void)
 {
   using namespace std;
-  using namespace tfel::fsalgo;
+  using tfel::fsalgo::iota;
+  using tfel::fsalgo::fill;
+  using tfel::fsalgo::transform;
 
   constexpr unsigned short N = 10;
   vector<int> V1(N);
@@ -36,29 +38,28 @@ int main(void)
   vector<int> V3(N);
   double A[N];
 
-  tfel::fsalgo::iota<N>::exe(A, 1);
+  iota<N>::exe(A, 1);
   for(int i=0;i!=N;++i){
     assert(abs(A[i]-i-1)<1.e-14);
   }
 
-  tfel::fsalgo::transform<N>::exe(A, A, negate<double>());
+  transform<N>::exe(A, A, negate<double>());
   for(int i=0;i!=N;++i){
     assert(abs(A[i]+i+1)<1.e-14);
   }
 
-  tfel::fsalgo::iota<N>::exe(V1.begin(), 1);
+  iota<N>::exe(V1.begin(), 1);
   int v=0;
   for(vector<int>::size_type i=0;i!=N;++i){
     assert(V1[i]==++v);
   }
 
-  tfel::fsalgo::fill<N>::exe(V2.begin(), 75);
+  fill<N>::exe(V2.begin(), 75);
   for(vector<int>::size_type i=0;i!=N;++i){
     assert(V2[i]==75);
   }
   
-  tfel::fsalgo::transform<N>::exe(V1.begin(), V2.begin(),V3.begin(),plus<int>());
-  v=0;
+  transform<N>::exe(V1.begin(), V2.begin(),V3.begin(),plus<int>());
   for(vector<int>::size_type i=0;i!=N;++i){
     assert(V3[i]==V1[i]+V2[i]);
   }

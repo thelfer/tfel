@@ -39,96 +39,96 @@ namespace mfront
      * \return the type of the behaviour
      */
     virtual tfel::material::MechanicalBehaviourBase::BehaviourType
-    getBehaviourType(void) const;
+    getBehaviourType(void) const override;
     /*!
      * \return the size of a vector able to contain all the components of the driving variables
      * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getDrivingVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const;
+    getDrivingVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \return the size of a vector able to contain all the components of the thermodynamic forces
      * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getThermodynamicForcesSize(const tfel::material::ModellingHypothesis::Hypothesis) const;
+    getThermodynamicForcesSize(const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \param[in] c : components
      * \param[in] h : modelling hypothesis
      */
     virtual void
     getStensorComponentsSuffixes(std::vector<std::string>&,
-				 const tfel::material::ModellingHypothesis::Hypothesis) const;
+				 const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \param[in] c : components
      * \param[in] h : modelling hypothesis
      */
     virtual void
     getTensorComponentsSuffixes(std::vector<std::string>&,
-				const tfel::material::ModellingHypothesis::Hypothesis) const;
+				const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \param[in] c : components
      * \param[in] h : modelling hypothesis
      */
     virtual void
     getDrivingVariablesComponents(std::vector<std::string>&,
-				  const tfel::material::ModellingHypothesis::Hypothesis) const;
+				  const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \param[in] c : components
      * \param[in] h : modelling hypothesis
      */
     virtual void
     getThermodynamicForcesComponents(std::vector<std::string>&,
-				     const tfel::material::ModellingHypothesis::Hypothesis) const;
+				     const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \param[in] h     : modelling hypothesis
      * \param[in] cname : component name
      */
     virtual unsigned short
     getDrivingVariableComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
-					const std::string&) const;
+					const std::string&) const override;
     /*!
      * \param[in] h     : modelling hypothesis
      * \param[in] cname : component name
      */
     virtual unsigned short
     getThermodynamicForceComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
-					   const std::string&) const;
+					   const std::string&) const override;
     /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
      * 1 means that the behaviour is orthotropic.
      */
     virtual unsigned short
-    getSymmetryType(void) const;
+    getSymmetryType(void) const override;
     /*!
      * \return the names of material properties
      */
     virtual std::vector<std::string>
-    getMaterialPropertiesNames(void) const;
+    getMaterialPropertiesNames(void) const override;
     /*!
      * \return the names of internal variables
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesNames(void) const;
+    getInternalStateVariablesNames(void) const override;
     /*!
      * \return the size of the array of internal variables
      * \param[in] h : modelling hypothesis
      */
     virtual size_t
-    getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const;
+    getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \return the descriptions the internal variables
      * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis) const;
+    getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \return the type of an internal variable
      * \param[in] n : internal variable name
      */
     virtual unsigned short
-    getInternalStateVariableType(const std::string&) const;
+    getInternalStateVariableType(const std::string&) const override;
     /*!
      * \return the position of an internal variable
      * \param[in] h : modelling hypothesis
@@ -136,12 +136,12 @@ namespace mfront
      */
     virtual unsigned short
     getInternalStateVariablePosition(const tfel::material::ModellingHypothesis::Hypothesis,
-				     const std::string&) const;
+				     const std::string&) const override;
     /*!
      * \return the names of external variables
      */
     virtual std::vector<std::string>
-    getExternalStateVariablesNames(void) const;
+    getExternalStateVariablesNames(void) const override;
     /*!
      * \brief set the value of a parameter
      * \param[in] n : name of the parameter
@@ -149,7 +149,7 @@ namespace mfront
      */
     virtual void
     setParameter(const std::string&,
-		 const real) const;
+		 const real) const override;
     /*!
      * \brief set the value of a parameter
      * \param[in] n : name of the parameter
@@ -157,7 +157,7 @@ namespace mfront
      */
     virtual void
     setIntegerParameter(const std::string&,
-			const int) const;
+			const int) const override;
     /*!
      * \brief set the value of a parameter
      * \param[in] n : name of the parameter
@@ -165,7 +165,7 @@ namespace mfront
      */
     virtual void
     setUnsignedIntegerParameter(const std::string&,
-				const unsigned short) const;
+				const unsigned short) const override;
     /*!
      * \brief some interfaces requires dummy material properties to be
      * declared. For example, the Cast3M finite element solver
@@ -178,7 +178,7 @@ namespace mfront
      */
     virtual void
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const;
+					       const EvolutionManager&) const override;
     //! destructor
     virtual ~UmatBehaviourBase();
   protected:

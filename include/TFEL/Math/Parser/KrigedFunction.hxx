@@ -34,7 +34,7 @@ namespace tfel
     namespace parser
     {
 
-      struct TFELMATHPARSER_VISIBILITY_EXPORT KrigedFunctionBase
+      struct TFELMATHPARSER_VISIBILITY_EXPORT KrigedFunctionBase final
       {
 	static void
 	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
@@ -59,51 +59,51 @@ namespace tfel
 	KrigedFunction(const KrigedFunction&);
 
 	virtual double
-	getValue(void) const;
+	getValue(void) const override;
 
 	virtual void
 	setVariableValue(const std::vector<double>::size_type,
-			 const double);
+			 const double) override;
 
 	virtual std::vector<double>::size_type
-	getNumberOfVariables(void) const;
+	getNumberOfVariables(void) const override;
 
 	virtual void
-	checkCyclicDependency(const std::string&) const;
+	checkCyclicDependency(const std::string&) const override;
 
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const;
+	checkCyclicDependency(std::vector<std::string>&) const override;
 
 	virtual std::shared_ptr<ExternalFunction>
-	differentiate(const std::vector<double>::size_type) const;
+	differentiate(const std::vector<double>::size_type) const override;
 
 	virtual	std::shared_ptr<ExternalFunction>
-	differentiate(const std::string&) const;
+	differentiate(const std::string&) const override;
 
 	virtual	std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const;
+	resolveDependencies(void) const override;
 
 	virtual std::shared_ptr<ExternalFunction>
-	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const;
+	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const override;
 
 	virtual std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 							const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
-							std::vector<double>::size_type>&) const;
+							std::vector<double>::size_type>&) const override;
 
 	virtual void
-	getParametersNames(std::set<std::string>&) const;
+	getParametersNames(std::set<std::string>&) const override;
 
 	virtual ~KrigedFunction();
 
       private:
 
-	TFEL_VISIBILITY_LOCAL KrigedFunction();
+	TFEL_VISIBILITY_LOCAL KrigedFunction() = delete;
 	
 	TFEL_VISIBILITY_LOCAL KrigedFunction&
-	operator = (const KrigedFunction&);
+	operator = (const KrigedFunction&) = delete;
 
 	std::shared_ptr<tfel::math::Kriging<N> > k;
 

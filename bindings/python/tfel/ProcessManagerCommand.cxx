@@ -15,16 +15,17 @@
 
 #include<TFEL/System/ProcessManager.hxx>
 
-struct ProcessManagerCommandWrapper
+struct ProcessManagerCommandWrapper final
   : tfel::system::ProcessManager::Command,
     boost::python::wrapper<tfel::system::ProcessManager::Command>
 {
-  bool execute(const tfel::system::ProcessManager::StreamId i,
-	       const tfel::system::ProcessManager::StreamId o)
+  virtual bool
+  execute(const tfel::system::ProcessManager::StreamId i,
+	  const tfel::system::ProcessManager::StreamId o) override final
   {
     return this->get_override("execute")(i,o);
   } // end of execute
-  ~ProcessManagerCommandWrapper()
+  virtual ~ProcessManagerCommandWrapper()
   {} // end of ~ProcessManagerCommandWrapper
 }; // end of struct Command
 

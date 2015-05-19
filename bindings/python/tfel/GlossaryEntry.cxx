@@ -15,6 +15,8 @@
 
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 
+void declareGlossaryEntry(void);
+
 void
 declareGlossaryEntry(void)
 {

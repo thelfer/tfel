@@ -22,15 +22,15 @@
 
 #include"TFEL/Math/tensor.hxx"
 
-struct Tensor3Test
+struct Tensor3Test final
   : public tfel::tests::TestCase
 {
   Tensor3Test()
     : tfel::tests::TestCase("TFEL/Math",
 			    "Tensor3Test")
   {} // end of Tensor3Test
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

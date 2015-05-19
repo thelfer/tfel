@@ -32,15 +32,15 @@
 
 #include"TFEL/Math/Evaluator.hxx"
 
-struct ParserTest
+struct ParserTest final
   : public tfel::tests::TestCase
 {
   ParserTest()
     : tfel::tests::TestCase("TFEL/Math",
 			    "Parser8")
   {} // end of MyTest
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

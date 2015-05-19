@@ -58,16 +58,15 @@ struct Name<float>
   }
 };
 
-
-struct TensorTest
+struct TensorTest final
   : public tfel::tests::TestCase
 {
   TensorTest()
     : tfel::tests::TestCase("TFEL/Math",
 			    "TensorTest")
   {} // end of TensorTest
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;  
     using namespace tfel::math;  
@@ -90,15 +89,15 @@ struct TensorTest
   } // end of execute
 };
 
-struct TensorTest2
+struct TensorTest2 final
   : public tfel::tests::TestCase
 {
   TensorTest2()
     : tfel::tests::TestCase("TFEL/Math",
 			    "TensorTest2")
   {} // end of TensorTest2
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -120,7 +119,7 @@ struct TensorTest2
 };
 
 template<typename real>
-struct TensorTest3_1D
+struct TensorTest3_1D final
   : public tfel::tests::TestCase
 {
   TensorTest3_1D()
@@ -128,8 +127,8 @@ struct TensorTest3_1D
 			    "TensorTest3<1D,"+
 			    Name<real>::getName()+">")
   {} // end of TensorTest3
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -148,7 +147,7 @@ struct TensorTest3_1D
 };
 
 template<typename real>
-struct TensorTest3_2D
+struct TensorTest3_2D final
   : public tfel::tests::TestCase
 {
   TensorTest3_2D()
@@ -156,8 +155,8 @@ struct TensorTest3_2D
 			    "TensorTest3<2D,"+
 			    Name<real>::getName()+">")
   {} // end of TensorTest3
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -178,7 +177,7 @@ struct TensorTest3_2D
 };
 
 template<typename real>
-struct TensorTest3_3D
+struct TensorTest3_3D final
   : public tfel::tests::TestCase
 {
   TensorTest3_3D()
@@ -186,8 +185,8 @@ struct TensorTest3_3D
 			    "TensorTest3<3D,"+
 			    Name<real>::getName()+">")
   {} // end of TensorTest3
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -209,14 +208,14 @@ struct TensorTest3_3D
   } // end of execute
 };
 
-struct TensorTest4
+struct TensorTest4 final
   : public tfel::tests::TestCase
 {
   TensorTest4()
     : tfel::tests::TestCase("TFEL/Math","TensorTest4")
   {} // end of TensorTest4
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -232,14 +231,14 @@ struct TensorTest4
   } // end of execute
 };
 
-struct TensorTest5_1D
+struct TensorTest5_1D final
   : public tfel::tests::TestCase
 {
   TensorTest5_1D()
     : tfel::tests::TestCase("TFEL/Math","TensorTest5_3D")
   {} // end of TensorTest5
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -263,14 +262,14 @@ struct TensorTest5_1D
   } // end of execute
 };
 
-struct TensorTest5_2D
+struct TensorTest5_2D final
   : public tfel::tests::TestCase
 {
   TensorTest5_2D()
     : tfel::tests::TestCase("TFEL/Math","TensorTest5_2D")
   {} // end of TensorTest5
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -294,14 +293,14 @@ struct TensorTest5_2D
   } // end of execute
 };
 
-struct TensorTest5_3D
+struct TensorTest5_3D final
   : public tfel::tests::TestCase
 {
   TensorTest5_3D()
     : tfel::tests::TestCase("TFEL/Math","TensorTest5_3D")
   {} // end of TensorTest5
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -325,14 +324,14 @@ struct TensorTest5_3D
   } // end of execute
 };
 
-struct TensorTest6
+struct TensorTest6 final
   : public tfel::tests::TestCase
 {
   TensorTest6()
     : tfel::tests::TestCase("TFEL/Math","TensorTest6")
   {} // end of TensorTest5
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -362,8 +361,8 @@ struct TensorTest7
   TensorTest7()
     : tfel::tests::TestCase("TFEL/Math","TensorTest7")
   {} // end of TensorTest7
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -393,14 +392,14 @@ template<unsigned short N>
 struct TensorTest8;
 
 template<>
-struct TensorTest8<1u>
+struct TensorTest8<1u> final
   : public tfel::tests::TestCase
 {
   TensorTest8()
     : tfel::tests::TestCase("TFEL/Math","TensorTest8<1>")
   {} // end of TensorTest8
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -423,14 +422,14 @@ struct TensorTest8<1u>
 };
 
 template<>
-struct TensorTest8<2u>
+struct TensorTest8<2u> final
   : public tfel::tests::TestCase
 {
   TensorTest8()
     : tfel::tests::TestCase("TFEL/Math","TensorTest8<2>")
   {} // end of TensorTest8
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -456,14 +455,14 @@ struct TensorTest8<2u>
 };
 
 template<>
-struct TensorTest8<3u>
+struct TensorTest8<3u> final
   : public tfel::tests::TestCase
 {
   TensorTest8()
     : tfel::tests::TestCase("TFEL/Math","TensorTest8<3>")
   {} // end of TensorTest8
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -497,14 +496,14 @@ template<unsigned short N>
 struct TensorTest9;
 
 template<>
-struct TensorTest9<1u>
+struct TensorTest9<1u> final
   : public tfel::tests::TestCase
 {
   TensorTest9()
     : tfel::tests::TestCase("TFEL/Math","TensorTest9<1>")
   {} // end of TensorTest9
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -527,14 +526,14 @@ struct TensorTest9<1u>
 };
 
 template<>
-struct TensorTest9<2u>
+struct TensorTest9<2u> final
   : public tfel::tests::TestCase
 {
   TensorTest9()
     : tfel::tests::TestCase("TFEL/Math","TensorTest9<2>")
   {} // end of TensorTest9
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;
@@ -566,8 +565,8 @@ struct TensorTest9<3u>
   TensorTest9()
     : tfel::tests::TestCase("TFEL/Math","TensorTest9<3>")
   {} // end of TensorTest9
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;

@@ -26,15 +26,15 @@ struct structify
   static constexpr int value = N; 
 };
 
-struct FSArrayTest
+struct FSArrayTest final
   : public tfel::tests::TestCase
 {
   FSArrayTest()
     : tfel::tests::TestCase("TFEL/Math",
 			    "FSArrayTest")
   {} // end of FSArrayTest
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     this->test1();
     this->test2();

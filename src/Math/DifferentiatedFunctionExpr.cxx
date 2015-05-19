@@ -203,6 +203,9 @@ namespace tfel
         return shared_ptr<Expr>(new ExternalFunctionExpr2(this->getDerivative(),nargs));	
       } // end of DifferentiatedFunctionExpr::resolveDependencies
 
+      DifferentiatedFunctionExpr::~DifferentiatedFunctionExpr()
+      {} // end of DifferentiatedFunctionExpr::~DifferentiatedFunctionExpr()
+
     } // end of namespace parser
 
   } // end of namespace math

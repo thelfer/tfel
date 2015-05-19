@@ -113,7 +113,7 @@ namespace mfront{
      * - converged : boolean stating that convergence is reached
      */
     virtual std::vector<std::string>
-    getReservedNames(void) const;
+    getReservedNames(void) const override;
   protected:
     /*!
      * destructor

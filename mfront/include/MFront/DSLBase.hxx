@@ -43,7 +43,7 @@ namespace mfront
       public FileDescription
   {
     //! \return the file description associated with the treated file
-    virtual const FileDescription& getFileDescription() const final;
+    virtual const FileDescription& getFileDescription() const override final;
     /*!
      * \return the target description
      * \note This method shall be called *after* the analyseFile method
@@ -69,7 +69,7 @@ namespace mfront
      */
     virtual void
     registerVariable(const std::string&,
-		     const bool);
+		     const bool) override;
     /*!
      * \brief register a static variable name.
      * \param[in] v : variable name
@@ -79,7 +79,7 @@ namespace mfront
      * otherwise
      */
     virtual void
-    registerStaticVariable(const std::string&);
+    registerStaticVariable(const std::string&) override;
     /*!
      * \brief register a name.
      * \param[in] w : name
@@ -92,7 +92,7 @@ namespace mfront
      */
     virtual void
     reserveName(const std::string&,
-		const bool);
+		const bool) override;
   protected:
     /*!
      * \brief An helper structure used by the
@@ -195,18 +195,6 @@ namespace mfront
      * \brief append the given code to the sources
      */
     virtual void appendToSources(const std::string&) = 0;
-    /*!
-     * \brief analyse a file. This method is called only once, for the
-     * main mfront file. The imported files are treated by the import
-     * method.
-     * \param[in] f     : file name
-     * \param[in] ecmds : additionnal commands inserted treated before
-     * the input file commande (those commands are given through the
-     * --@?? option of the command line)
-     */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&) = 0;
     /*!
      * \brief import a file
      * \param[in] f     : file name

@@ -64,31 +64,31 @@ namespace tfel
       }; // end of struct BinaryOperationBase
 
       template<typename Op>
-      struct TFEL_VISIBILITY_LOCAL BinaryOperation
+      struct TFEL_VISIBILITY_LOCAL BinaryOperation final
 	: public Expr,
 	  protected BinaryOperationBase
       {
 	BinaryOperation(const std::shared_ptr<Expr>,
 			const std::shared_ptr<Expr>);
-	double
-	getValue(void) const;
-	void
-        checkCyclicDependency(std::vector<std::string>&) const;
-	std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const;
- 	std::shared_ptr<Expr>
+	virtual double
+	getValue(void) const override final;
+	virtual void
+        checkCyclicDependency(std::vector<std::string>&) const override final;
+	virtual std::shared_ptr<Expr>
+	resolveDependencies(const std::vector<double>&) const override final;
+ 	virtual std::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
-		      const std::vector<double>&) const;
-	std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const;
-	void
-	getParametersNames(std::set<std::string>&) const;
-	std::shared_ptr<Expr>
+		      const std::vector<double>&) const  override final;
+	virtual std::shared_ptr<Expr>
+	clone(const std::vector<double>&) const override final;
+	virtual void
+	getParametersNames(std::set<std::string>&) const override final;
+	virtual std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
-							std::vector<double>::size_type>&) const;
-	~BinaryOperation();
+							std::vector<double>::size_type>&) const override final;
+	virtual ~BinaryOperation();
       private:
 	const std::shared_ptr<Expr> a;
 	const std::shared_ptr<Expr> b;

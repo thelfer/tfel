@@ -27,17 +27,13 @@
 
 namespace mfront{
 
-  struct MFrontPleiadesMaterialPropertyInterface
-    : public AbstractMaterialPropertyInterface {
+  struct MFrontPleiadesMaterialPropertyInterface final
+    : public AbstractMaterialPropertyInterface
+  {
 
     MFrontPleiadesMaterialPropertyInterface();
-    ~MFrontPleiadesMaterialPropertyInterface();
 
     static std::string getName(void);
-
-    void setVerboseMode(void);
-    void setDebugMode(void);
-    void setWarningMode(void);
     /*!
      * \param[in] k  : keyword treated
      * \param[in] p  : iterator to the current token
@@ -64,6 +60,8 @@ namespace mfront{
      */
     void writeOutputFiles(const MaterialPropertyDescription&,
 			  const FileDescription&) override;
+
+    virtual ~MFrontPleiadesMaterialPropertyInterface();
 
   private:
 
@@ -121,9 +119,6 @@ namespace mfront{
     std::ofstream srcFile;
     std::string headerFileName;
     std::string srcFileName;
-    bool verboseMode;
-    bool debugMode;
-    bool warningMode;
   }; // end of MfrontPleiadesMaterialPropertyInterface
 
 } // end of namespace mfront

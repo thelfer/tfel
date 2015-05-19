@@ -46,7 +46,7 @@ namespace mfront{
 			const MTest::UTest::TestedVariable,
 			const unsigned short,
 			std::shared_ptr<std::map<std::string,
-							     std::shared_ptr<Evolution> > >,
+						 std::shared_ptr<Evolution> > >,
 			const real);
     /*!
      * \param[in] e  : strains
@@ -56,20 +56,20 @@ namespace mfront{
      * \param[in] dt : time increment
      * \param[in] p  : period
      */
-    void
+    virtual void
     check(const tfel::math::vector<real>&,
 	  const tfel::math::vector<real>&,
 	  const tfel::math::vector<real>&,
 	  const real,
 	  const real,
-	  const unsigned int);
+	  const unsigned int) override;
     /*!
      * \return the results of the test
      */
-    tfel::tests::TestResult
-    getResults() const;
+    virtual tfel::tests::TestResult
+    getResults() const override;
     //! destructor
-    ~AnalyticalTest();
+    virtual ~AnalyticalTest();
   protected:
     //! analytical solution 
     tfel::math::Evaluator f;

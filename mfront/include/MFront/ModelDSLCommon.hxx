@@ -40,7 +40,7 @@ namespace mfront{
        const VariableDescriptionContainer&,
        const std::string&);
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType(void) const final;
+    virtual DSLTarget getTargetType(void) const override final;
     /*!
      * \brief write the output files.
      * \note this shall be called after the analyseFile method.
@@ -57,34 +57,34 @@ namespace mfront{
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName(void) const;
+    virtual std::string getClassName(void) const override;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
      */
-    virtual void addMaterialLaw(const std::string&);
+    virtual void addMaterialLaw(const std::string&) override;
     /*!
      * \brief append the given code to the includes
      */
-    virtual void appendToIncludes(const std::string&);
+    virtual void appendToIncludes(const std::string&) override;
     /*!
      * \brief append the given code to the members
      */
-    virtual void appendToMembers(const std::string&);
+    virtual void appendToMembers(const std::string&) override;
     /*!
      * \brief append the given code to the private code
      */
-    virtual void appendToPrivateCode(const std::string&);
+    virtual void appendToPrivateCode(const std::string&) override;
     /*!
      * \brief append the given code to the sources
      */
-    virtual void appendToSources(const std::string&);
+    virtual void appendToSources(const std::string&) override;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
      */
     virtual void
-    addStaticVariableDescription(const StaticVariableDescription&);
+    addStaticVariableDescription(const StaticVariableDescription&) override;
     /*!
      * treat the material keyword
      */
@@ -105,8 +105,8 @@ namespace mfront{
     void
     treatDomains(void);
 
-    void
-    treatUnknownKeyword(void);
+    virtual void
+    treatUnknownKeyword(void) override;
 
     void
     treatBounds(void);

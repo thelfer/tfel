@@ -3,8 +3,10 @@
 set -e
 
 pbuild=no
-wbuild=no # cross compilation using mingw
-while getopts ":j:" opt; do
+# cross compilation using mingw
+wbuild=no
+while getopts ":wj:" opt;
+do
   case $opt in
     j) pbuild=yes;
        nbproc="$OPTARG";
@@ -117,7 +119,7 @@ $make_exec install
 $make_exec tests-install
 popd #from build-cmake-debug
 
-if [ test "x$wbuild" == "xyes" ];
+if test "x$wbuild" == "xyes" ;
 then
     if [ "x$(which i686-w64-mingw32-gcc)" != "x" ];
     then

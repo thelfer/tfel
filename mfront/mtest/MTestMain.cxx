@@ -70,10 +70,10 @@ namespace mfront
     void
     treatBacktrace();
 #endif
-    std::string 
-    getVersionDescription(void) const;
-    std::string 
-    getUsageDescription(void) const;
+    virtual std::string 
+    getVersionDescription(void) const override;
+    virtual std::string 
+    getUsageDescription(void) const override;
     void 
     registerArgumentCallBacks(void);
     // input files

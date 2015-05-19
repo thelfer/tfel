@@ -20,7 +20,7 @@
 namespace mfront
 {
 
-  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT UMATFiniteStrainMTestFileGenerator
+  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT UMATFiniteStrainMTestFileGenerator final
     : public mfront::MTestFileGeneratorBase
   {
     /*!
@@ -57,13 +57,13 @@ namespace mfront
      * \param[in] os : output stream
      */
     virtual void
-    writeBehaviourDeclaration(std::ostream&) const;
+    writeBehaviourDeclaration(std::ostream&) const override;
     /*!
      * write driving variables
      * \param[in] os : output stream
      */
     virtual void
-    writeDrivingVariables(std::ostream&) const;
+    writeDrivingVariables(std::ostream&) const override;
     //! interface name
     std::string interface;
     //! library name

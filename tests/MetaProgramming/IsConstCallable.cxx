@@ -16,15 +16,15 @@ struct ConstCallableType
   void operator()(double) const;
 };
 
-struct IsConstCallableTest
+struct IsConstCallableTest final
   : public tfel::tests::TestCase
 {
   IsConstCallableTest()
     : tfel::tests::TestCase("TFEL/Math",
 			    "IsConstCallableTest")
   {} // end of IsConstCallableTest
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace tfel::meta;
     TFEL_TESTS_STATIC_ASSERT((!IsConstCallable<std::string,double>::cond));

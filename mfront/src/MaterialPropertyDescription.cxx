@@ -23,7 +23,13 @@ namespace mfront
 					 this->entryNames);
   } // end of MaterialPropertyDescription::getInputVariablesExternalNames
 
-  MaterialPropertyDescription::~MaterialPropertyDescription()
-  {} // end of MaterialPropertyDescription::~MaterialPropertyDescription()
+  MaterialPropertyDescription::MaterialPropertyDescription() = default;
+  MaterialPropertyDescription::MaterialPropertyDescription(const MaterialPropertyDescription&) = default;
+  MaterialPropertyDescription::MaterialPropertyDescription(MaterialPropertyDescription&&) = default;
+  MaterialPropertyDescription&
+  MaterialPropertyDescription::operator=(const MaterialPropertyDescription&) = default;
+  MaterialPropertyDescription&
+  MaterialPropertyDescription::operator=(MaterialPropertyDescription&&) = default;
+  MaterialPropertyDescription::~MaterialPropertyDescription() = default;
 
 } // end of namespace mfront

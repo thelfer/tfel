@@ -34,7 +34,7 @@ namespace tfel
       CubicSplineUninitialised() = default;
       CubicSplineUninitialised(const CubicSplineUninitialised&) = default;
       CubicSplineUninitialised(CubicSplineUninitialised&&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~CubicSplineUninitialised() noexcept;
     }; // end of struct CubicSplineUninitialised
 
@@ -48,7 +48,7 @@ namespace tfel
       CubicSplineInvalidAbscissaVectorSize() = default;
       CubicSplineInvalidAbscissaVectorSize(const CubicSplineInvalidAbscissaVectorSize&) = default;
       CubicSplineInvalidAbscissaVectorSize(CubicSplineInvalidAbscissaVectorSize&&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~CubicSplineInvalidAbscissaVectorSize() noexcept;
     }; // end of struct CubicSplineInvalidAbscissaVectorSize
 
@@ -61,7 +61,7 @@ namespace tfel
       CubicSplineNullPivot() = default;
       CubicSplineNullPivot(const CubicSplineNullPivot&) = default;
       CubicSplineNullPivot(CubicSplineNullPivot&&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~CubicSplineNullPivot() noexcept;
     }; // end of struct CubicSplineInvalidAbscissaVectorSize
 
@@ -75,7 +75,7 @@ namespace tfel
       CubicSplineInvalidOrdinateVectorSize() = default;
       CubicSplineInvalidOrdinateVectorSize(const CubicSplineInvalidOrdinateVectorSize&) = default;
       CubicSplineInvalidOrdinateVectorSize(CubicSplineInvalidOrdinateVectorSize&&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~CubicSplineInvalidOrdinateVectorSize() noexcept;
     }; // end of struct CubicSplineInvalidOrdinateVectorSize
 
@@ -89,7 +89,7 @@ namespace tfel
       CubicSplineInvalidInputs() = default;
       CubicSplineInvalidInputs(const CubicSplineInvalidInputs&) = default;
       CubicSplineInvalidInputs(CubicSplineInvalidInputs&&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~CubicSplineInvalidInputs() noexcept;
     }; // end of struct CubicSplineInvalidInputs
 
@@ -102,7 +102,7 @@ namespace tfel
       CubicSplineUnorderedAbscissaVector() = default;
       CubicSplineUnorderedAbscissaVector(const CubicSplineUnorderedAbscissaVector&) = default;
       CubicSplineUnorderedAbscissaVector(CubicSplineUnorderedAbscissaVector&&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~CubicSplineUnorderedAbscissaVector() noexcept;
     }; // end of struct CubicSplineUnorderedAbscissaVector
 

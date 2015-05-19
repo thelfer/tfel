@@ -37,7 +37,7 @@ namespace tfel{
       DivergenceException() = default;
       DivergenceException(DivergenceException&&)      = default;
       DivergenceException(const DivergenceException&) = default;
-      const char * what() const noexcept final;
+      virtual const char * what() const noexcept override final;
       virtual ~DivergenceException() noexcept;
     };
     
@@ -47,7 +47,7 @@ namespace tfel{
       OutOfBoundsException(std::string);
       OutOfBoundsException(OutOfBoundsException&&)      = default;
       OutOfBoundsException(const OutOfBoundsException&) = default;
-      const char * what() const noexcept final;
+      virtual const char * what() const noexcept override final;
       virtual ~OutOfBoundsException() noexcept;
     private:
       std::string msg;

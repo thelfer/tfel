@@ -40,7 +40,7 @@ namespace mfront
      * \param[out] v : initial values of the driving variables
      */
     virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const;
+    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     //! destructor
     virtual ~AsterSmallStrainBehaviour();
   protected:
@@ -77,7 +77,7 @@ namespace mfront
 		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
 		   const MTestStiffnessMatrixType::mtype,
-		   const bool) const;
+		   const bool) const override;
   }; // end of struct Behaviour
   
 } // end of namespace mfront

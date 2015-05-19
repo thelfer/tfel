@@ -30,11 +30,11 @@ namespace cyrano {
 
     CyranoException(const CyranoException&);
 
-    const char* 
-    what (void) const noexcept;
+    virtual const char* 
+    what (void) const noexcept override final;
 
-    std::string 
-    getMsg(void) const noexcept;
+    virtual std::string 
+    getMsg(void) const noexcept final;
     
     virtual ~CyranoException() noexcept;
 

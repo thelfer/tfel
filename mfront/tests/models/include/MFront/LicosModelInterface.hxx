@@ -18,7 +18,7 @@
 
 namespace mfront{
 
-  struct MFrontModelInterface
+  struct MFrontModelInterface final
     : public AbstractModelInterface
   {
     static std::string 
@@ -31,13 +31,10 @@ namespace mfront{
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
+		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
 
-    virtual
-    void reset(void);
-
-    virtual
-    void declareReservedNames(std::set<std::string>&);
+    virtual void
+    declareReservedNames(std::set<std::string>&) override;
 
     /*!
      * \param pdata : processing data
@@ -45,7 +42,7 @@ namespace mfront{
      */
     virtual
     void writeOutputFiles(const FileDescription&,
-			  const ModelData&) ;
+			  const ModelData&) override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d  : target description
@@ -132,9 +129,6 @@ namespace mfront{
     std::string srcFileName;
 
     bool hasDefaultConstructor;
-    bool verboseMode;
-    bool debugMode;
-    bool warningMode;
   }; // end of class MFrontModelInterface
 
 } // end of namespace mfront  

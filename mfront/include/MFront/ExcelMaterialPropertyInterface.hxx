@@ -59,7 +59,7 @@ namespace mfront{
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
 				  const FileDescription&) override;
     //! destructor
-    virtual ~ExcelMaterialPropertyInterface() override;
+    virtual ~ExcelMaterialPropertyInterface();
     
   private:
 

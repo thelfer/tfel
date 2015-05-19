@@ -48,7 +48,7 @@ namespace mfront{
   {
     //! \return the behaviour description
     virtual const BehaviourDescription&
-    getBehaviourDescription(void) const final;
+    getBehaviourDescription(void) const override final;
     /*!
      * \brief import a file
      * \param[in] f     : file name
@@ -64,7 +64,7 @@ namespace mfront{
      * create a variable modifier from a method
      */
     template<typename T,typename T2>
-    struct TFEL_VISIBILITY_LOCAL StandardVariableModifier
+    struct TFEL_VISIBILITY_LOCAL StandardVariableModifier final
       : public VariableModifier
     {
       //! a simple alias
@@ -81,13 +81,13 @@ namespace mfront{
        * \param[in] v : the variable name
        * \param[in] b : true if "this" shall be added
        */
-      std::string
+      virtual std::string
 	exe(const std::string&,
-	    const bool);
+	    const bool) override;
       /*!
        * destructor
        */
-      ~StandardVariableModifier();
+      virtual ~StandardVariableModifier();
       
     private:
       
@@ -107,7 +107,7 @@ namespace mfront{
 					     const std::string&,
 					     const bool));
     template<typename T,typename T2>
-    struct TFEL_VISIBILITY_LOCAL StandardWordAnalyser
+    struct TFEL_VISIBILITY_LOCAL StandardWordAnalyser final
       : public WordAnalyser
     {
       //! a simple alias
@@ -121,12 +121,12 @@ namespace mfront{
       /*!
        * \param[in] k : the current word
        */
-      void
-      exe(const std::string&);
+      virtual void
+      exe(const std::string&) override;
       /*!
        * destructor
        */
-      ~StandardWordAnalyser();
+      virtual ~StandardWordAnalyser();
       
     private:
       
@@ -171,28 +171,28 @@ namespace mfront{
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName(void) const;
+    virtual std::string getClassName(void) const override;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
      */
-    virtual void addMaterialLaw(const std::string&);
+    virtual void addMaterialLaw(const std::string&) override;
     /*!
      * \brief append the given code to the includes
      */
-    virtual void appendToIncludes(const std::string&);
+    virtual void appendToIncludes(const std::string&) override;
     /*!
      * \brief append the given code to the members
      */
-    virtual void appendToMembers(const std::string&);
+    virtual void appendToMembers(const std::string&) override;
     /*!
      * \brief append the given code to the private code
      */
-    virtual void appendToPrivateCode(const std::string&);
+    virtual void appendToPrivateCode(const std::string&) override;
     /*!
      * \brief append the given code to the sources
      */
-    virtual void appendToSources(const std::string&);
+    virtual void appendToSources(const std::string&) override;
     /*!
      * \param[out] o : options to be read
      * \param[in]  s : allow specialisation
@@ -338,7 +338,7 @@ namespace mfront{
      * \param[in] v : variable description
      */
     virtual void
-    addStaticVariableDescription(const StaticVariableDescription&);
+    addStaticVariableDescription(const StaticVariableDescription&) override;
     /*!
      * disable the declaration of new variables
      * \param[in] h : modelling hypothesis
@@ -358,7 +358,7 @@ namespace mfront{
      * `@ModellingHypotheses` keywords.
      */
     virtual std::set<Hypothesis>
-    getDefaultModellingHypotheses(void) const;
+    getDefaultModellingHypotheses(void) const override;
     /*!
      * \return true if the given modelling hypothesis is handled by
      * the parser
@@ -377,7 +377,7 @@ namespace mfront{
      * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
     virtual bool
-    isModellingHypothesisSupported(const Hypothesis) const;
+    isModellingHypothesisSupported(const Hypothesis) const override;
     /*!
      *
      */
@@ -500,7 +500,7 @@ namespace mfront{
     treatModellingHypotheses(void);
     
     virtual void
-      treatUnknownKeyword(void);
+    treatUnknownKeyword(void) override;
     
     virtual void
       treatUpdateAuxiliaryStateVariables(void);

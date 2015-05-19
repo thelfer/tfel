@@ -138,17 +138,13 @@ namespace mfront
     return s;
   }
 
-  MTest::MTestCurrentState::MTestCurrentState()
-  {}
+  MTest::MTestCurrentState::MTestCurrentState() = default;
+  MTest::MTestCurrentState::MTestCurrentState(const MTestCurrentState&) = default;
+  MTest::MTestCurrentState::MTestCurrentState(MTestCurrentState&&)      = default;
+  MTest::MTestCurrentState::~MTestCurrentState() noexcept = default;
 
-  MTest::MTestCurrentState::~MTestCurrentState() noexcept
-  {}
-
-  MTest::MTestWorkSpace::MTestWorkSpace()
-  {}
-
-  MTest::MTestWorkSpace::~MTestWorkSpace() noexcept
-  {}
+  MTest::MTestWorkSpace::MTestWorkSpace() = default;
+  MTest::MTestWorkSpace::~MTestWorkSpace() noexcept =  default;
 
   MTest::UTest::~UTest()
   {}

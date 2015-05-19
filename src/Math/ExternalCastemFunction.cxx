@@ -114,6 +114,8 @@ namespace tfel
 	throw(runtime_error(msg));
       } // end of ExternalCastemFunction::differentiate
 
+      ExternalCastemFunction::~ExternalCastemFunction() = default;
+
     } // end of namespace parser
 
   } // end of namespace math

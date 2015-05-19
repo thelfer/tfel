@@ -22,7 +22,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 
-struct StensorChangeBasis3Test
+struct StensorChangeBasis3Test final
   : public tfel::tests::TestCase
 {
   StensorChangeBasis3Test()
@@ -30,8 +30,8 @@ struct StensorChangeBasis3Test
 			    "StensorChangeBasis3Test")
   {} // end of StensorChangeBasis3Test
 
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

@@ -18,7 +18,7 @@
 
 namespace mfront{
 
-  struct MFrontGerminalModelInterface
+  struct MFrontGerminalModelInterface final
     : public MFrontPleiadesModelInterfaceBase
   {
 
@@ -28,33 +28,33 @@ namespace mfront{
   private:
 
     virtual void
-    setOutputFileNames(const ModelData&);
+    setOutputFileNames(const ModelData&) override;
 
     virtual void
     writeGetConstantMaterialProperty(const VarHandler&,
-				     const ModelData&);
+				     const ModelData&) override;
 
     virtual std::string
-    getApplicationName(void) const;
+    getApplicationName(void) const override;
 
     virtual void
-    writeInitializeMethod(const ModelData&);
+    writeInitializeMethod(const ModelData&) override;
 
     virtual void
     writeSpecificPrivateMethodDeclaration(const FileDescription&,
-					  const ModelData&);
+					  const ModelData&) override;
 
     virtual void
-    generateDomainsList(const ModelData&);
+    generateDomainsList(const ModelData&) override;
 
     virtual void
-    buildDomainName();
+    buildDomainName() override;
 
     virtual bool
-    initializeDefaultDomainListInConstrutor(const ModelData&) const;
+    initializeDefaultDomainListInConstrutor(const ModelData&) const override;
 
-    void
-    writeInitializeParametersMethod(const ModelData&);
+    virtual void
+    writeInitializeParametersMethod(const ModelData&) override;
 
   }; // end of class MFrontGerminalModelInterface
 

@@ -24,15 +24,15 @@
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
 
-struct RightCauchyGreenTensorTest
+struct RightCauchyGreenTensorTest final
   : public tfel::tests::TestCase
 {
   RightCauchyGreenTensorTest()
     : tfel::tests::TestCase("TFEL/Math",
 			    "RightCauchyGreenTensorTest")
   {} // end of RightCauchyGreenTensorTest
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;  
     using namespace tfel::math;  
@@ -48,15 +48,15 @@ struct RightCauchyGreenTensorTest
   } // end of execute
 };
 
-struct RightCauchyGreenTensorTest2
+struct RightCauchyGreenTensorTest2 final
   : public tfel::tests::TestCase
 {
   RightCauchyGreenTensorTest2()
     : tfel::tests::TestCase("TFEL/Math",
 			    "RightCauchyGreenTensorTest2")
   {} // end of RightCauchyGreenTensorTest2
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;  
     using namespace tfel::math;  

@@ -33,7 +33,7 @@ namespace tfel{
 	StensorEigenValuesComputationFailureException() = default;
 	StensorEigenValuesComputationFailureException(StensorEigenValuesComputationFailureException&&) = default;
 	StensorEigenValuesComputationFailureException(const StensorEigenValuesComputationFailureException&) = default;
-	virtual const char* what() const noexcept final;
+	virtual const char* what() const noexcept override final;
 	virtual ~StensorEigenValuesComputationFailureException() noexcept;
       }; // end of struct StensorEigenValuesComputationFailureException
 	

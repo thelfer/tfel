@@ -26,7 +26,7 @@
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/CubicSpline.hxx"
 
-struct CubicSplineTest
+struct CubicSplineTest final
   : public tfel::tests::TestCase
 {
   CubicSplineTest()
@@ -69,8 +69,8 @@ struct CubicSplineTest
     return -cos(x);
   }
 
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

@@ -23,7 +23,7 @@
 
 #include"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx"
 
-struct TinyVectorOfStensorFromTinyVectorViewTest
+struct TinyVectorOfStensorFromTinyVectorViewTest final
   : public tfel::tests::TestCase
 {
   
@@ -32,8 +32,8 @@ struct TinyVectorOfStensorFromTinyVectorViewTest
 			    "TinyVectorOfStensorFromTinyVectorView")
   {} // end of TinyVectorOfStensorFromTinyVectorViewTest
   
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

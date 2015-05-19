@@ -31,7 +31,7 @@ namespace mfront
 	   typename T2>
   std::string
   BehaviourDSLCommon::StandardVariableModifier<T,T2>::exe(const std::string& v,
-								   const bool b)
+							  const bool b)
   {
     return (this->instance.*mptr)(this->hypothesis,v,b);
   } // end of StandardVariableModifier<T,T2>::exe

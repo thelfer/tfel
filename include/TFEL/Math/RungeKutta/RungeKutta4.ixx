@@ -60,19 +60,20 @@ namespace tfel{
       }
 
       void increm(void){
-	static constexpr T Cste_1_3 = static_cast<T>(1.f)/static_cast<T>(3.f);
-	static constexpr T Cste_1_6 = static_cast<T>(1.f)/static_cast<T>(6.f);
+	constexpr T Cste_1_2 = T{1}/T{2};
+	constexpr T Cste_1_3 = T{1}/T{3};
+	constexpr T Cste_1_6 = T{1}/T{6};
 	static_cast<Func&>(*this).computeF(t,y);
 	k1  = h*f;
-	tmp = y+0.5f*k1;
-	t  += 0.5f*h;
+	tmp = y+Cste_1_2*k1;
+	t  += Cste_1_2*h;
 	static_cast<Func&>(*this).computeF(t,tmp);
 	k2  = h*f;
-	tmp = y+0.5f*k2;
+	tmp = y+Cste_1_2*k2;
 	static_cast<Func&>(*this).computeF(t,tmp);
 	k3  = h*f;
 	tmp = y+k3;
-	t  += 0.5f*h;
+	t  += Cste_1_2*h;
 	static_cast<Func&>(*this).computeF(t,tmp);
 	k4  = h*f;
 	y+=Cste_1_6*(k1+k4)+Cste_1_3*(k2+k3);

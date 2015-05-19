@@ -40,13 +40,13 @@ namespace mfront
      * \param[out] v : initial values of the driving variables
      */
     virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const;
+    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief allocate internal workspace
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis);
+    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
     //! destructor
     virtual ~AsterFiniteStrainBehaviour();
   protected:
@@ -83,7 +83,7 @@ namespace mfront
 		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
 		   const MTestStiffnessMatrixType::mtype,
-		   const bool) const;
+		   const bool) const override;
   }; // end of struct Behaviour
   
 } // end of namespace mfront

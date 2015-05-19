@@ -35,26 +35,26 @@ namespace mfront{
      * \return the reserved names
      */
     virtual std::vector<std::string>
-    getReservedNames(void) const;
+    getReservedNames(void) const override;
     /*!
      * \return true if the solver uses the jacobian of the system
      * (Newton-Raphson solvers) or an approximation of it (Broyden
      * method).
      */
     virtual bool
-    usesJacobian(void) const;
+    usesJacobian(void) const override;
     /*!
      * \return true if the solver uses the invert of the jacobian of
      * the system or an approximation of it (second Broyden method).
      */
     virtual bool
-    usesJacobianInvert(void) const;
+    usesJacobianInvert(void) const override;
     /*!
      * \return true if the solver allows the user to initialize the
      * jacobian
      */
     virtual bool
-    allowsJacobianInitialisation(void) const;
+    allowsJacobianInitialisation(void) const override;
     /*!
      * \return true if the solver allows the user to initialize the
      * invert of the jacobian.
@@ -63,14 +63,14 @@ namespace mfront{
      * identity in the behaviour constructor.
      */
     virtual bool
-    allowsJacobianInvertInitialisation(void) const;
+    allowsJacobianInvertInitialisation(void) const override;
     /*!
      * \return true if the solver requires the jacobian to be
      * initialized to the identity matrix at the beginning of the
      * computeFdF method.
      */
     virtual bool
-    requiresJacobianToBeReinitialisedToIdentityAtEachIterations(void) const;
+    requiresJacobianToBeReinitialisedToIdentityAtEachIterations(void) const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in,out] md  : mechanical description
@@ -82,14 +82,14 @@ namespace mfront{
     treatSpecificKeywords(BehaviourDescription&,
 			  const std::string&,
 			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
+			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
     /*!
      * \brief method called at the end of the input file processing.
      * Solver can use it to declared additional parameters
      * \param[in,out] md  : mechanical description
      */
     virtual void
-    endsInputFileProcessing(BehaviourDescription&) const;
+    endsInputFileProcessing(BehaviourDescription&) const override;
     /*!
      * \brief write algorithm specific initialisations
      * This method may be used to initialise the jacobian to identity
@@ -102,7 +102,7 @@ namespace mfront{
     virtual void
     writeSpecificInitializeMethodPart(std::ostream&,
 				      const BehaviourDescription&,
-				      const tfel::material::ModellingHypothesis::Hypothesis) const;
+				      const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in] out : output file
@@ -112,7 +112,7 @@ namespace mfront{
     virtual void
     writeSpecificMembers(std::ostream&,
 			 const BehaviourDescription&,
-			 const tfel::material::ModellingHypothesis::Hypothesis) const;
+			 const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \brief write the resolution algorithm
      * \param[in] out : output file
@@ -122,7 +122,7 @@ namespace mfront{
     virtual void
     writeResolutionAlgorithm(std::ostream&,
 			     const BehaviourDescription&,
-			     const tfel::material::ModellingHypothesis::Hypothesis) const;
+			     const tfel::material::ModellingHypothesis::Hypothesis) const override;
   protected:
     /*!
      * destructor
@@ -148,7 +148,7 @@ namespace mfront{
      * \return true if the solver requires a numerical jacobian
      */
     virtual bool
-    requiresNumericalJacobian(void) const;
+    requiresNumericalJacobian(void) const override;
     /*!
      * destructor
      */
@@ -159,7 +159,7 @@ namespace mfront{
      * shall be combined with the powell dog leg algorithm
      */
     virtual bool
-    usesPowellDogLegAlgorithm(void) const;
+    usesPowellDogLegAlgorithm(void) const override;
   };
 
   /*!
@@ -172,7 +172,7 @@ namespace mfront{
      * \return true if the solver requires a numerical jacobian
      */
     virtual bool
-    requiresNumericalJacobian(void) const;
+    requiresNumericalJacobian(void) const override;
     /*!
      * destructor
      */
@@ -183,7 +183,7 @@ namespace mfront{
      * shall be combined with the powell dog leg algorithm
      */
     virtual bool
-    usesPowellDogLegAlgorithm(void) const;
+    usesPowellDogLegAlgorithm(void) const override;
   };
 
   /*!
@@ -196,7 +196,7 @@ namespace mfront{
      * \return true if the solver requires a numerical jacobian
      */
     virtual bool
-    requiresNumericalJacobian(void) const;
+    requiresNumericalJacobian(void) const override;
     /*!
      * destructor
      */
@@ -207,7 +207,7 @@ namespace mfront{
      * shall be combined with the powell dog leg algorithm
      */
     virtual bool
-    usesPowellDogLegAlgorithm(void) const;
+    usesPowellDogLegAlgorithm(void) const override;
   };
 
   /*!
@@ -220,7 +220,7 @@ namespace mfront{
      * \return true if the solver requires a numerical jacobian
      */
     virtual bool
-    requiresNumericalJacobian(void) const;
+    requiresNumericalJacobian(void) const override;
     /*!
      * destructor
      */
@@ -231,7 +231,7 @@ namespace mfront{
      * shall be combined with the powell dog leg algorithm
      */
     virtual bool
-    usesPowellDogLegAlgorithm(void) const;
+    usesPowellDogLegAlgorithm(void) const override;
   };
 
 } // end of namespace mfront

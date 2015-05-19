@@ -32,30 +32,31 @@ namespace tfel
     namespace parser
     {
 
-      struct DifferentiatedFunctionExpr
+      struct DifferentiatedFunctionExpr final
 	: public Expr
       {
 	DifferentiatedFunctionExpr(std::shared_ptr<ExternalFunction>,
 				   std::vector<std::shared_ptr<Expr> >&,
 				   const std::vector<std::vector<double>::size_type>&);
-	double
-	getValue(void) const;
-	void
-	checkCyclicDependency(std::vector<std::string>&) const;
-	std::shared_ptr<Expr>
+	virtual double
+	getValue(void) const override;
+	virtual void
+	checkCyclicDependency(std::vector<std::string>&) const override;
+	virtual std::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
-		      const std::vector<double>&) const;
-	std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const;
-	std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const;
-	void
-	getParametersNames(std::set<std::string>&) const;
-	std::shared_ptr<Expr>
+		      const std::vector<double>&) const override;
+	virtual std::shared_ptr<Expr>
+	resolveDependencies(const std::vector<double>&) const override;
+	virtual std::shared_ptr<Expr>
+	clone(const std::vector<double>&) const override;
+	virtual void
+	getParametersNames(std::set<std::string>&) const override;
+	virtual std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
-							               std::vector<double>::size_type>&) const;
+							               std::vector<double>::size_type>&) const override;
+	virtual ~DifferentiatedFunctionExpr();
       private:
 	std::shared_ptr<ExternalFunction> TFEL_VISIBILITY_LOCAL
 	getDerivative(void) const;

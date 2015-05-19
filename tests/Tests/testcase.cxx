@@ -25,14 +25,14 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-struct MyTest
+struct MyTest final
   : public tfel::tests::TestCase
 {
   MyTest()
     : TestCase("TFEL/Tests","MyTest")
   {} // end of MyTest
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     TFEL_TESTS_ASSERT(1==1);
     TFEL_TESTS_ASSERT(1!=2);

@@ -31,7 +31,7 @@ namespace tfel
     /*!
      * Helper class for gathering multiple outputs
      */
-    struct TFELTESTS_VISIBILITY_EXPORT MultipleTestOutputs
+    struct TFELTESTS_VISIBILITY_EXPORT MultipleTestOutputs final
       : public TestOutput
     {
       //! a simple alias
@@ -51,7 +51,7 @@ namespace tfel
        * \param n : name of the test suite
        */
       virtual void
-      beginTestSuite(const std::string&);
+      beginTestSuite(const std::string&) override;
       /*!
        *  Add a new test
        * \param g : group  of the test
@@ -61,30 +61,24 @@ namespace tfel
       virtual void
       addTest(const std::string&,
 	      const std::string&,
-	      const TestResult&);
+	      const TestResult&) override;
       /*!
        * End a test suite
        * \param r : (global) result of the test suite
        */
       virtual void
-      endTestSuite(const TestResult&);
-      /*!
-       * Destructor
-       */
+      endTestSuite(const TestResult&) override;
+      //! destructor
       virtual ~MultipleTestOutputs();
     private:
       /*!
        * copy constructor (disabled)
        * \param src : object to be copied
        */
-      TFEL_VISIBILITY_LOCAL MultipleTestOutputs(const MultipleTestOutputs&);
-      /*!
-       * assignement operator (disabled)
-       * \param src : object to be assigned
-       * \return a reference to this object
-       */
-      TFEL_VISIBILITY_LOCAL MultipleTestOutputs&
-      operator=(const MultipleTestOutputs&);
+      MultipleTestOutputs(const MultipleTestOutputs&) = delete;
+      //! assignement operator (disabled)
+      MultipleTestOutputs&
+      operator=(const MultipleTestOutputs&) = delete;
       //! registred outputs
       std::vector<TestOutputPtr> outputs;
     }; // end of struct MultipleTestOutputs

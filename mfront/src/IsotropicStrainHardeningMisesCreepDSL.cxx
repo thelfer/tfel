@@ -169,7 +169,7 @@ namespace mfront{
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
     this->behaviourFile << "IntegrationResult" << endl;
-    this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){\n";
+    this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     this->behaviourFile << "using namespace std;" << endl;
     if(this->mb.useQt()){
       this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 

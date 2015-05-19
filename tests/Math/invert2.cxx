@@ -56,7 +56,7 @@ struct Name<float>
 };
 
 template<typename T>
-struct TinyMatrixInvertTest2D
+struct TinyMatrixInvertTest2D final
   : public tfel::tests::TestCase
 {
   
@@ -65,8 +65,8 @@ struct TinyMatrixInvertTest2D
 			    "TinyMatrixInvertTest2D<"+Name<T>::getName()+">")
   {} // end of TinyMatrixInvertTest2D
   
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -87,7 +87,7 @@ struct TinyMatrixInvertTest2D
 }; // end of TinyMatrixInvertTest2D
 
 template<typename T>
-struct TinyMatrixInvertTest3D
+struct TinyMatrixInvertTest3D final
   : public tfel::tests::TestCase
 {
   
@@ -96,8 +96,8 @@ struct TinyMatrixInvertTest3D
 			    "TinyMatrixInvertTest3D<"+Name<T>::getName()+">")
   {} // end of TinyMatrixInvertTest3D
   
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

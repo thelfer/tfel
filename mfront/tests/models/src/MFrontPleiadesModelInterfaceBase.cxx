@@ -884,7 +884,6 @@ namespace mfront{
 						      const std::vector<ModelData::Function>& functions)
   {
     using namespace std;
-    typedef unsigned short ushort;
     set<string> usedVariables;
     set<string> modifiedVariables;
     vector<ModelData::Function>::const_iterator p;

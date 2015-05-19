@@ -106,6 +106,8 @@ namespace tfel
       return std::shared_ptr<IntegerExpr>();
     } // end of IntegerEvaluator::TOperator::analyse(void)
 
+    IntegerEvaluator::TOperator::~TOperator() = default;
+
     int
     IntegerEvaluator::TBinaryOperation::IntegerOpPlus::apply(const int a,
 							     const int b)

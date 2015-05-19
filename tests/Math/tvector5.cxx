@@ -25,7 +25,7 @@
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/Vector/tvectorIO.hxx"
 
-struct TVectorTest5
+struct TVectorTest5 final
   : public tfel::tests::TestCase
 {
 
@@ -34,8 +34,8 @@ struct TVectorTest5
 			    "TVectorTesT5")
   {} // end of TVectorTest
 
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;

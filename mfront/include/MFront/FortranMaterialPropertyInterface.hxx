@@ -37,67 +37,67 @@ namespace mfront{
         
   private:
 
-    void
+    virtual void
     writeParameterList(std::ostream&,
-		       const VariableDescriptionContainer&);
+		       const VariableDescriptionContainer&) override;
 
-    void
-    writeInterfaceSpecificVariables(const VariableDescriptionContainer&);
+    virtual void
+    writeInterfaceSpecificVariables(const VariableDescriptionContainer&) override;
 
-    void
+    virtual void
     writeHeaderPreprocessorDirectives(const std::string&,
-				      const std::string&);
+				      const std::string&) override;
 
-    void
+    virtual void
     writeSrcPreprocessorDirectives(const std::string&,
-				   const std::string&);
+				   const std::string&) override;
 
-    void
-    writeBeginHeaderNamespace(void);
+    virtual void
+    writeBeginHeaderNamespace(void) override;
 
-    void
-    writeEndHeaderNamespace(void);
+    virtual void
+    writeEndHeaderNamespace(void) override;
 
-    void
-    writeBeginSrcNamespace(void);
+    virtual void
+    writeBeginSrcNamespace(void) override;
 
-    void
-    writeEndSrcNamespace(void);
+    virtual void
+    writeEndSrcNamespace(void) override;
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
+    virtual std::string
     getHeaderFileName(const std::string&,
-		      const std::string&);
+		      const std::string&) override;
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
+    virtual std::string
     getSrcFileName(const std::string&,
-		   const std::string&);
+		   const std::string&) override;
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
+    virtual std::string
     getFunctionDeclaration(const std::string&,
-			   const std::string&);
+			   const std::string&) override;
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
+    virtual std::string
     getCheckBoundsFunctionDeclaration(const std::string&,
-				      const std::string&);
+				      const std::string&) override;
 
-    bool
-    requiresCheckBoundsFunction(void) const;
+    virtual bool
+    requiresCheckBoundsFunction(void) const override;
 
   }; // end of MfrontFortranMaterialPropertyInterface
 

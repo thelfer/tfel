@@ -55,7 +55,7 @@ namespace mfront
   /*!
    * a constant evolution
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT ConstantEvolution
+  struct MFRONT_MTEST_VISIBILITY_EXPORT ConstantEvolution final
     : public Evolution
   {
     /*!
@@ -68,12 +68,12 @@ namespace mfront
      * at the given time
      */
     virtual real
-    operator()(const real) const;
+    operator()(const real) const override;
     /*!
      * \return true if the evolution
      * is constant
      */
-    virtual bool isConstant(void) const;
+    virtual bool isConstant(void) const override;
     /*!
      * \brief set the evolution value for a given date
      * \param[in] t  : time
@@ -81,7 +81,7 @@ namespace mfront
      */
     virtual void
     setValue(const real,
-	     const real);
+	     const real) override;
     //! destructor
     virtual ~ConstantEvolution();
   protected:
@@ -91,7 +91,7 @@ namespace mfront
   /*!
    * a linear per interval evolution
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT LPIEvolution
+  struct MFRONT_MTEST_VISIBILITY_EXPORT LPIEvolution final
     : public Evolution
   {
     /*!
@@ -106,19 +106,19 @@ namespace mfront
      * at the given time
      */
     virtual real
-    operator()(const real) const;
+    operator()(const real) const override;
     /*!
      * \return true if the evolution
      * is constant
      */
-    virtual bool isConstant(void) const;
+    virtual bool isConstant(void) const override;
     /*!
      * \brief set the evolution value for a given date
      * \param[in] t  : time
      * \param[in] v  : value
      */
     virtual void setValue(const real,
-			  const real);
+			  const real) override;
     //! destructor
     virtual ~LPIEvolution();
   private:

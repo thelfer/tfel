@@ -42,7 +42,7 @@ namespace tfel
       : public QRException
     {
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~QRUnmatchedSize() noexcept;
     }; // end of struct QRException
@@ -55,7 +55,7 @@ namespace tfel
       : public QRException
     {
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~QRInvalidMatrixSize() noexcept;
     }; // end of struct QRException
@@ -68,7 +68,7 @@ namespace tfel
       : public QRException
     {
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~QRNullPivot() noexcept;
     }; // end of struct QRException

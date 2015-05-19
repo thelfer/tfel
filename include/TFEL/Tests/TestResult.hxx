@@ -55,11 +55,13 @@ namespace tfel
        */
       TestResult(const bool,const std::string&);
       //! copy constructor
-      TestResult(const TestResult&) = default;
+      TestResult(const TestResult&);
+      //! copy constructor
+      TestResult(TestResult&&);
       //! assignement operator
-      TestResult& operator = (const TestResult&) = default;
+      TestResult& operator = (const TestResult&);
       //! assignement operator
-      TestResult& operator = (TestResult&&) = default;
+      TestResult& operator = (TestResult&&);
       /*! 
        * report success
        */
@@ -102,7 +104,7 @@ namespace tfel
        */
       double duration(void) const;
       //! destructor
-      virtual ~TestResult();
+      ~TestResult();
     private:
       //! detail
       std::string d;

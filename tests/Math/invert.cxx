@@ -56,7 +56,7 @@ struct Name<float>
 };
 
 template<typename T>
-struct InvertTest2D
+struct InvertTest2D final
   : public tfel::tests::TestCase
 {
   
@@ -65,8 +65,8 @@ struct InvertTest2D
 			    "InvertTest2D<"+Name<T>::getName()+">")
   {} // end of InvertTest2D
   
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -104,7 +104,7 @@ struct InvertTest2D
 }; // end of InvertTest2D
 
 template<typename T>
-struct InvertTest3D
+struct InvertTest3D final
   : public tfel::tests::TestCase
 {
   
@@ -113,8 +113,8 @@ struct InvertTest3D
 			    "InvertTest3D<"+Name<T>::getName()+">")
   {} // end of InvertTest3D
   
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

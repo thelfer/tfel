@@ -22,15 +22,15 @@
 
 #include"TFEL/Math/tmatrix.hxx"
 
-struct TMatrix4Test
+struct TMatrix4Test final
   : public tfel::tests::TestCase
 {
   TMatrix4Test()
     : tfel::tests::TestCase("TFEL/Math",
 			    "TMatrix4Test")
   {} // end of TMatrix4Test
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

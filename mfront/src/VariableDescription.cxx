@@ -36,6 +36,13 @@ namespace mfront{
     }
   } // end of VariableDescription::VariableDescription
 
+  VariableDescription::VariableDescription(const VariableDescription&) = default;
+  VariableDescription::VariableDescription(VariableDescription&&) = default;
+  VariableDescription&
+  VariableDescription::operator=(VariableDescription&&) = default;
+  VariableDescription&
+  VariableDescription::operator=(const VariableDescription&) = default;
+
   const std::string&
   VariableDescription::getExternalName(const std::map<std::string,std::string>& glossaryNames,
 				       const std::map<std::string,std::string>& entryNames) const

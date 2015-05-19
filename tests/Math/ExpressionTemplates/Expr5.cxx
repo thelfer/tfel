@@ -24,14 +24,14 @@
 #include"TFEL/Math/ExpressionTemplates/StandardOperations.hxx"
 #include"TFEL/Math/tvector.hxx"
 
-struct Expr5Test
+struct Expr5Test final
   : public tfel::tests::TestCase
 {
   Expr5Test()
     : tfel::tests::TestCase("TFEL/Math","Expr5Test")
   {} // end of Expr5Test()
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -70,11 +70,8 @@ struct Expr5Test
     TFEL_TESTS_ASSERT(abs(v4(2)-8)==0);
     return this->result;
   }
-  virtual ~Expr5Test();
+  virtual ~Expr5Test() = default;
 };
-
-Expr5Test::~Expr5Test()
-{}
 
 TFEL_TESTS_GENERATE_PROXY(Expr5Test,"Expr5Test");
 

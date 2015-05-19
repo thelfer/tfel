@@ -32,7 +32,7 @@ namespace tfel
       SystemError(const std::string&);
       SystemError(SystemError&&) = default;
       SystemError(const SystemError&) = default;
-      virtual const char* what(void) const noexcept;
+      virtual const char* what(void) const  noexcept override;
       virtual ~SystemError() noexcept;
     private:
       std::string msg;

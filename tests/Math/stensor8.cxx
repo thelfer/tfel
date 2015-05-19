@@ -28,15 +28,15 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 
-struct STensorTest8_2D
+struct STensorTest8_2D final
   : public tfel::tests::TestCase
 {
   STensorTest8_2D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "STensorTest8-2D")
   {} // end of STensorTest8
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -109,15 +109,15 @@ struct STensorTest8_2D
   } // end of execute
 };
 
-struct STensorTest8_3D
+struct STensorTest8_3D final
   : public tfel::tests::TestCase
 {
   STensorTest8_3D()
     : tfel::tests::TestCase("TFEL/Math",
 			    "STensorTest8-3D")
   {} // end of STensorTest8
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

@@ -26,14 +26,14 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/vector.hxx"
 
-struct Expr3Test
+struct Expr3Test final
   : public tfel::tests::TestCase
 {
   Expr3Test()
     : tfel::tests::TestCase("TFEL/Math","Expr3Test")
   {} // end of Expr3Test()
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -66,11 +66,8 @@ struct Expr3Test
 
     return this->result;
   }
-  virtual ~Expr3Test();
+  virtual ~Expr3Test() = default;
 };
-
-Expr3Test::~Expr3Test()
-{}
 
 TFEL_TESTS_GENERATE_PROXY(Expr3Test,"Expr3Test");
 

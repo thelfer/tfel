@@ -33,6 +33,12 @@ namespace mfront{
    * - the specific targets
    */
   struct TargetsDescription{
+    TargetsDescription();
+    TargetsDescription(const TargetsDescription&);
+    TargetsDescription(TargetsDescription&&);
+    TargetsDescription& operator=(const TargetsDescription&);
+    TargetsDescription& operator=(TargetsDescription&&);
+    ~TargetsDescription();
     //! generated sources, sorted by library
     std::map<std::string,std::vector<std::string>> sources;
     //! generated headers

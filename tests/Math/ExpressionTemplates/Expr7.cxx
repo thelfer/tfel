@@ -25,14 +25,14 @@
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/vector.hxx"
 
-struct Expr7Test
+struct Expr7Test final
   : public tfel::tests::TestCase
 {
   Expr7Test()
     : tfel::tests::TestCase("TFEL/Math","Expr7Test")
   {} // end of Expr7Test()
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -77,11 +77,8 @@ struct Expr7Test
     TFEL_TESTS_ASSERT(abs(v4(2)-10)==0);
     return this->result;
   }
-  virtual ~Expr7Test();
+  virtual ~Expr7Test() = default;
 };
-
-Expr7Test::~Expr7Test()
-{}
 
 TFEL_TESTS_GENERATE_PROXY(Expr7Test,"Expr7Test");
 

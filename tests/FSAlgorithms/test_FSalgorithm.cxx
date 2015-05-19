@@ -24,23 +24,23 @@
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
-double add(double a,double b)
+static double add(double a,double b)
 {
   return a+b;
 }
 
 
-double mult(double a,double b)
+static double mult(double a,double b)
 {
   return a*b;
 }
 
-double times2(double a)
+static double times2(double a)
 {
   return 2*a;
 }
 
-double null_mult(double,double)
+static double null_mult(double,double)
 {
   return 0.;
 }

@@ -1368,13 +1368,13 @@ namespace mfront{
     this->behaviourFile << "*/\n";
     this->behaviourFile << "IntegrationResult" << endl;
     if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
-      this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){\n";
+      this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
       if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
-	this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt){\n";
+	this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
       } else {
-	this->behaviourFile << "integrate(const SMFlag,const SMType smt){\n";
+	this->behaviourFile << "integrate(const SMFlag,const SMType smt) override{\n";
       }
     }
     this->behaviourFile << "using namespace std;\n";

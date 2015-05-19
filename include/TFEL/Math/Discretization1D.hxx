@@ -34,7 +34,7 @@ namespace tfel
       GeometricDiscretizationInvalidDensity(GeometricDiscretizationInvalidDensity&&) = default;
       GeometricDiscretizationInvalidDensity(const GeometricDiscretizationInvalidDensity&) = default;
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~GeometricDiscretizationInvalidDensity() noexcept;
     }; // end of struct GeometricDiscretizationInvalidDensity
@@ -50,7 +50,7 @@ namespace tfel
       GeometricDiscretizationInvalidLength(GeometricDiscretizationInvalidLength&&) = default;
       GeometricDiscretizationInvalidLength(const GeometricDiscretizationInvalidLength&) = default;
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~GeometricDiscretizationInvalidLength() noexcept;
     }; // end of struct GeometricDiscretizationInvalidLength
@@ -66,7 +66,7 @@ namespace tfel
       GeometricDiscretizationInvalidNumberOfElements(GeometricDiscretizationInvalidNumberOfElements&&) = default;
       GeometricDiscretizationInvalidNumberOfElements(const GeometricDiscretizationInvalidNumberOfElements&) = default;
       //! \return a string describing the error
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~GeometricDiscretizationInvalidNumberOfElements() noexcept;
     }; // end of struct GeometricDiscretizationInvalidNumberOfElements

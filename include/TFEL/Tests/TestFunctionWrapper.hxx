@@ -30,7 +30,7 @@ namespace tfel
      * \param f : function to be wrapped
      */ 
    template<bool (*f)(void)>
-   struct TestFunctionWrapper
+   struct TestFunctionWrapper final
      : public Test
    {
      /*!
@@ -49,37 +49,25 @@ namespace tfel
       * return the name of the test function
       * \return the name of the test function
       */
-     std::string
-     name() const;
+     virtual std::string name() const override;
      /*! 
       * return the name of the test function
       * \return the name of the test function
       */
-     std::string
-     classname() const;
+     virtual std::string classname() const override;
      /*! 
       * execute test
       * \return the results of the test
       */
-     TestResult
-     execute(void);
-     /*! 
-      * destructor
-      */
-     ~TestFunctionWrapper();
+     virtual TestResult execute(void) override;
+     //! destructor
+     virtual ~TestFunctionWrapper();
    private:
-     /*!
-      * copy constructor (disabled)
-      * \param src : object to be copied
-      */
-     TestFunctionWrapper(const TestFunctionWrapper&);
-     /*!
-      * assignement operator (disabled)
-      * \param src : object to be assigned
-      * \return a reference to this object
-      */
+     //! copy constructor (disabled)
+     TestFunctionWrapper(const TestFunctionWrapper&) = delete;
+     //! assignement operator (disabled)
      TestFunctionWrapper&
-     operator=(const TestFunctionWrapper&);
+     operator=(const TestFunctionWrapper&) = delete;
      //! name of test group
      const std::string gname;
      //! name of function

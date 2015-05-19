@@ -61,7 +61,7 @@ namespace tfel{
       TensorInvalidIndexException()=default;
       TensorInvalidIndexException(const TensorInvalidIndexException&)=default;
       TensorInvalidIndexException(TensorInvalidIndexException&&)=default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~TensorInvalidIndexException() noexcept;
     }; // end of struct TensorInvalidIndexException
     
@@ -74,7 +74,7 @@ namespace tfel{
       TensorInvalidIndexesException() = default;
       TensorInvalidIndexesException(const TensorInvalidIndexesException&) = default;
       TensorInvalidIndexesException(TensorInvalidIndexesException&&) = default;
-      virtual const char* what() const noexcept final;
+      virtual const char* what() const noexcept override final;
       virtual ~TensorInvalidIndexesException() noexcept;
     }; // end of struct TensorInvalidIndexesException
 

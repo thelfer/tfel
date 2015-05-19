@@ -80,7 +80,7 @@ namespace tfel{
 	static constexpr array_container<sizeof...(Tn),T>
 	buildArray(Tn... vs)
 	{
-	  return array_container<sizeof...(vs),T>{{vs...}};
+	  return array_container<sizeof...(vs),T>{{static_cast<T>(vs)...}};
 	}
       }; // end of struct fsarray_initializer<1>
     } // end of namespace internals

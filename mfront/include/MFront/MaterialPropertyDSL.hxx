@@ -36,7 +36,7 @@ namespace mfront{
       protected MaterialPropertyDescription
   {
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType(void) const final;
+    virtual DSLTarget getTargetType(void) const override final;
     /*!
      * return the name of the parser
      */
@@ -53,10 +53,10 @@ namespace mfront{
     MaterialPropertyDSL();
 
     virtual void
-    getKeywordsList(std::vector<std::string>&) const;
+    getKeywordsList(std::vector<std::string>&) const override;
 
     virtual void
-    setInterfaces(const std::set<std::string>&);
+    setInterfaces(const std::set<std::string>&) override;
     /*!
      * \brief analyse a file without generating any output
      * \param[in] f     : file name
@@ -87,28 +87,28 @@ namespace mfront{
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName(void) const;
+    virtual std::string getClassName(void) const override;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
      */
-    virtual void addMaterialLaw(const std::string&);
+    virtual void addMaterialLaw(const std::string&) override;
     /*!
      * \brief append the given code to the includes
      */
-    virtual void appendToIncludes(const std::string&);
+    virtual void appendToIncludes(const std::string&) override;
     /*!
      * \brief append the given code to the members
      */
-    virtual void appendToMembers(const std::string&);
+    virtual void appendToMembers(const std::string&) override;
     /*!
      * \brief append the given code to the private code
      */
-    virtual void appendToPrivateCode(const std::string&);
+    virtual void appendToPrivateCode(const std::string&) override;
     /*!
      * \brief append the given code to the sources
      */
-    virtual void appendToSources(const std::string&);
+    virtual void appendToSources(const std::string&) override;
     /*!
      * \brief write the output files.
      * \note this shall be called after the analyseFile method.
@@ -119,7 +119,7 @@ namespace mfront{
      * \param[in] v : variable description
      */
     virtual void
-    addStaticVariableDescription(const StaticVariableDescription&);
+    addStaticVariableDescription(const StaticVariableDescription&) override;
 
     void
     addInterface(const std::string&);
@@ -169,7 +169,7 @@ namespace mfront{
     treatPhysicalBounds(void);
 
     void
-    treatUnknownKeyword(void);
+    treatUnknownKeyword(void) override;
 
     void
     registerBounds(std::vector<VariableBoundsDescription>&);

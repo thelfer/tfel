@@ -44,10 +44,10 @@ namespace mfront{
 			      const std::string&,
 			      const unsigned int,
 			      const StaticVariableValueType);
-    StaticVariableDescription(StaticVariableDescription&&) = default;    
-    StaticVariableDescription(const StaticVariableDescription&) = default;
-    StaticVariableDescription& operator=(StaticVariableDescription&&) = default;    
-    StaticVariableDescription& operator=(const StaticVariableDescription&) = default;
+    StaticVariableDescription(StaticVariableDescription&&);    
+    StaticVariableDescription(const StaticVariableDescription&);
+    StaticVariableDescription& operator=(StaticVariableDescription&&);    
+    StaticVariableDescription& operator=(const StaticVariableDescription&);
     ~StaticVariableDescription();
     //! value of the static variable
     StaticVariableValueType value;

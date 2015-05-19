@@ -30,12 +30,12 @@ namespace mfront
    */
   struct MFRONT_VISIBILITY_EXPORT VariableDescription
   {
-    VariableDescription(const VariableDescription&) = default;
-    VariableDescription(VariableDescription&&) = default;
+    VariableDescription(const VariableDescription&);
+    VariableDescription(VariableDescription&&);
     VariableDescription&
-    operator=(VariableDescription&&) = default;
+    operator=(VariableDescription&&);
     VariableDescription&
-    operator=(const VariableDescription&) = default;
+    operator=(const VariableDescription&);
     /*!
      * Constructor
      * \param[in] t : variable type

@@ -30,7 +30,7 @@
 #include"TFEL/Math/Evaluator.hxx"
 
 template<double (*fct)(double)>
-struct TestFunction
+struct TestFunction final
   : public tfel::tests::Test
 {
   
@@ -51,20 +51,20 @@ struct TestFunction
     assert(e>0);
   } // end of TestFunction
 
-  std::string
-  name(void) const
+  virtual std::string
+  name(void) const override
   {
     return fn;
   }
 
-  std::string
-  classname(void) const
+  virtual std::string
+  classname(void) const override
   {
     return "TFEL/Math";
   }
 
-  tfel::tests::TestResult
-  execute(void)
+  virtual tfel::tests::TestResult
+  execute(void) override
   {
     using namespace std;
     using namespace tfel::math;

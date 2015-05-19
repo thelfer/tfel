@@ -33,7 +33,7 @@ namespace mfront
   /*!
    * Impose the value of a driving variable component
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT ImposedDrivingVariable
+  struct MFRONT_MTEST_VISIBILITY_EXPORT ImposedDrivingVariable final
     : public Constraint
   {
     /*!
@@ -59,7 +59,7 @@ namespace mfront
      * associated with this contraint
      */
     virtual unsigned short
-    getNumberOfLagrangeMultipliers(void) const;
+    getNumberOfLagrangeMultipliers(void) const override;
     /*!
      * \brief builds up the stiffness matrix and the residual
      * \param[out] K  : stiffness matrix
@@ -83,7 +83,7 @@ namespace mfront
 	      const unsigned short,
 	      const real,
 	      const real,
-	      const real) const;
+	      const real) const override;
     /*!
      * \param[in]  e    : driving variables
      * \param[in]  s    : stresses
@@ -98,7 +98,7 @@ namespace mfront
 		     const real,
 		     const real,
 		     const real,
-		     const real) const;
+		     const real) const override;
     /*!
      * \param[in]  e    : driving variables
      * \param[in]  s    : thermodynamic forces
@@ -113,7 +113,7 @@ namespace mfront
 				const real,
 				const real,
 				const real,
-				const real) const;
+				const real) const override;
     //! destructor
     virtual ~ImposedDrivingVariable();
   protected:

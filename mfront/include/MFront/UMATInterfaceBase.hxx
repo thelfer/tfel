@@ -42,12 +42,12 @@ namespace mfront{
      * \param[in] b : boolean
      */
     virtual void
-    allowDynamicallyAllocatedArrays(const bool);
+    allowDynamicallyAllocatedArrays(const bool) override;
 
     virtual void
     exportMechanicalData(std::ofstream&,
 			 const Hypothesis,
-			 const BehaviourDescription&) const;
+			 const BehaviourDescription&) const override;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
@@ -59,12 +59,12 @@ namespace mfront{
     virtual void
     writeBehaviourConstructor(std::ofstream&,
 			      const BehaviourDescription&,
-			      const std::string&) const;
+			      const std::string&) const override;
 
     virtual void
     writeBehaviourDataConstructor(std::ofstream&,
 				  const Hypothesis,
-				  const BehaviourDescription&) const;
+				  const BehaviourDescription&) const override;
 
     /*!
      * write the initialisation of the driving variables
@@ -73,12 +73,12 @@ namespace mfront{
      */
     virtual void 
     writeBehaviourDataMainVariablesSetters(std::ofstream&,
-					   const BehaviourDescription&) const;
+					   const BehaviourDescription&) const override;
     
     virtual void
     writeIntegrationDataConstructor(std::ofstream&,
 				    const Hypothesis,
-				    const BehaviourDescription&) const;
+				    const BehaviourDescription&) const override;
     /*!
      * write the initialisation of the driving variables
      * \param[in] behaviourFile : output file
@@ -86,7 +86,7 @@ namespace mfront{
      */
     virtual void 
     writeIntegrationDataMainVariablesSetters(std::ofstream&,
-					     const BehaviourDescription&) const;
+					     const BehaviourDescription&) const override;
     //! destructor
     virtual ~UMATInterfaceBase();
 
@@ -526,7 +526,7 @@ namespace mfront{
      */
     virtual bool
     isModellingHypothesisHandled(const Hypothesis,
-				 const BehaviourDescription&) const;
+				 const BehaviourDescription&) const override;
     
     virtual std::string
     getModellingHypothesisTest(const Hypothesis) const = 0;

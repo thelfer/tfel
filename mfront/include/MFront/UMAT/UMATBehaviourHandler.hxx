@@ -210,7 +210,7 @@ namespace umat
 	copy<UMATTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
 	copy<UMATTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
-	if(sfeh==0){
+	if(sfeh==nullptr){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
 	}
 	pair<StressFreeExpansionType,StressFreeExpansionType> s;

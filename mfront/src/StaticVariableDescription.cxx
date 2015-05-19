@@ -27,9 +27,14 @@ namespace mfront{
       value(value_)
   {}
 
-  StaticVariableDescription::~StaticVariableDescription()
-  {}
-
+  StaticVariableDescription::StaticVariableDescription(StaticVariableDescription&&) = default;    
+  StaticVariableDescription::StaticVariableDescription(const StaticVariableDescription&) = default;
+  StaticVariableDescription&
+  StaticVariableDescription::operator=(StaticVariableDescription&&) = default;    
+  StaticVariableDescription&
+  StaticVariableDescription::operator=(const StaticVariableDescription&) = default;
+  StaticVariableDescription::~StaticVariableDescription() = default;
+  
   bool
   StaticVariableDescriptionContainer::contains(const std::string& n) const
   {

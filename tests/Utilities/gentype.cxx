@@ -27,7 +27,7 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-struct GenTypeTest
+struct GenTypeTest final
   : public tfel::tests::TestCase
 {
   GenTypeTest()
@@ -35,7 +35,7 @@ struct GenTypeTest
 			    "GenTypeTest")
   {} // end of MyTest
   tfel::tests::TestResult
-  execute()
+  execute() override
   {
     using namespace std;
     using namespace tfel::meta;

@@ -22,7 +22,7 @@
 #include"TFEL/Tests/TestManager.hxx"
 
 
-struct Discretization1DTest
+struct Discretization1DTest final
   : public tfel::tests::TestCase
 {
   Discretization1DTest()
@@ -30,8 +30,8 @@ struct Discretization1DTest
 			    "Discretization1DTest")
   {} // end of Discretization1DTest
 
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

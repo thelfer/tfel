@@ -159,6 +159,9 @@ namespace tfel
         return shared_ptr<Expr>(new ExternalFunctionExpr2(this->f->resolveDependencies(),nargs));	
       } // end of ExternalFunctionExpr2::resolveDependencies
 
+      ExternalFunctionExpr2::~ExternalFunctionExpr2()
+      {} // end of ExternalFunctionExpr2::~ExternalFunctionExpr2
+
     } // end of namespace parser
 
   } // end of namespace math

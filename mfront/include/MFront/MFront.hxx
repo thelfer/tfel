@@ -64,14 +64,13 @@ namespace mfront{
     virtual void treatUnknownArgument(void) final;
     //! return the current argument
     virtual const tfel::utilities::Argument&
-    getCurrentCommandLineArgument() const final;
+    getCurrentCommandLineArgument() const override final;
     //! get the version description
     virtual std::string
-    getVersionDescription(void) const final;
+    getVersionDescription(void) const override final;
     //! get the usage description
     virtual std::string
-    getUsageDescription(void) const final;
-
+    getUsageDescription(void) const override final;
     /*!
      * \brief merge the given target's description with the internal
      * structure used to generate Makefiles

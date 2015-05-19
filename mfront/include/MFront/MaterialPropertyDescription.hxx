@@ -31,13 +31,17 @@ namespace mfront
    */
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDescription
   {
+    MaterialPropertyDescription();
+    MaterialPropertyDescription(const MaterialPropertyDescription&);
+    MaterialPropertyDescription(MaterialPropertyDescription&&);
+    MaterialPropertyDescription& operator=(const MaterialPropertyDescription&);
+    MaterialPropertyDescription& operator=(MaterialPropertyDescription&&);
+    ~MaterialPropertyDescription();
     /*!
      * \return the external names of each input variables.
      */
     std::vector<std::string>
     getInputVariablesExternalNames(void);
-    //! destructor
-    ~MaterialPropertyDescription();
     /*!
      * body of the material property
      */

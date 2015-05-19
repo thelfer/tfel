@@ -21,7 +21,7 @@
 
 #include"TFEL/Math/tmatrix.hxx"
 
-struct TMatrixSubMatrixViewTest
+struct TMatrixSubMatrixViewTest final
   : public tfel::tests::TestCase
 {
   TMatrixSubMatrixViewTest()
@@ -29,8 +29,8 @@ struct TMatrixSubMatrixViewTest
 			    "TMatrixSubMatrixViewTest")
   {} // end of TMatrixSubMatrixViewTest
 
-  tfel::tests::TestResult
-  execute()
+  virtual tfel::tests::TestResult
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;

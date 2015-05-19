@@ -37,34 +37,34 @@ namespace tfel
       virtual ~TExpr();
     }; // end of IntegerEvaluator::TExpr
   
-    struct IntegerEvaluator::TNegation
+    struct IntegerEvaluator::TNegation final
       : public IntegerEvaluator::TExpr
     {
       //! expression returned
-      struct Negation
+      struct Negation final
 	: public tfel::math::parser::IntegerExpr
       {
 	Negation(const parser::IntegerExprPtr);
-	int getValue(void) const;
-	parser::IntegerExprPtr
-	clone(const std::vector<int>&) const;
-	~Negation();
+	virtual int getValue(void) const override;
+	virtual parser::IntegerExprPtr
+	clone(const std::vector<int>&) const override;
+	virtual ~Negation();
       private:
 	const parser::IntegerExprPtr expr;
       };
       TNegation(std::shared_ptr<IntegerEvaluator::TExpr>);
-      bool
-      isOperator(void) const;
-      parser::IntegerExprPtr
-      analyse(void);
-      void
-      reduce(void);
-      ~TNegation();
+      virtual bool
+      isOperator(void) const override;
+      virtual parser::IntegerExprPtr
+      analyse(void) override;
+      virtual void
+      reduce(void) override;
+      virtual ~TNegation();
     private:
       std::shared_ptr<IntegerEvaluator::TExpr> expr;
     }; // end of struct IntegerEvaluator::TNegation
 
-    struct IntegerEvaluator::TBinaryOperation
+    struct IntegerEvaluator::TBinaryOperation final
       : public IntegerEvaluator::TExpr
     {
       struct IntegerOpPlus
@@ -91,16 +91,16 @@ namespace tfel
       * Expression generated
       */
       template<typename Op>
-      struct TFEL_VISIBILITY_LOCAL BinaryOperation
+      struct TFEL_VISIBILITY_LOCAL BinaryOperation final
 	: public tfel::math::parser::IntegerExpr
       {
 	BinaryOperation(const parser::IntegerExprPtr,
 			const parser::IntegerExprPtr);
-	int
-	getValue(void) const;
-	parser::IntegerExprPtr
-	clone(const std::vector<int>&) const;
-	~BinaryOperation();
+	virtual int
+	getValue(void) const override;
+	virtual parser::IntegerExprPtr
+	clone(const std::vector<int>&) const override;
+	virtual ~BinaryOperation();
       private:
 	const parser::IntegerExprPtr a;
 	const parser::IntegerExprPtr b;
@@ -111,31 +111,31 @@ namespace tfel
       TBinaryOperation(std::shared_ptr<IntegerEvaluator::TExpr>,
 		       const std::shared_ptr<TOperator>,
 		       std::shared_ptr<IntegerEvaluator::TExpr>);
-      bool
-      isOperator(void) const;
-      void
-      reduce(void);
-      parser::IntegerExprPtr
-      analyse(void);
-      ~TBinaryOperation();
+      virtual bool
+      isOperator(void) const override;
+      virtual void
+      reduce(void) override;
+      virtual parser::IntegerExprPtr
+      analyse(void) override;
+      virtual ~TBinaryOperation();
     private:
       std::shared_ptr<IntegerEvaluator::TExpr> a;
       const std::shared_ptr<TOperator>op;
       std::shared_ptr<IntegerEvaluator::TExpr> b;
     }; // end of struct IntegerEvaluator::TBinaryOperation
 
-    struct IntegerEvaluator::TVariable
+    struct IntegerEvaluator::TVariable final
       : public IntegerEvaluator::TExpr
     {
-      struct Variable
+      struct Variable final
 	: public tfel::math::parser::IntegerExpr
       {
 	Variable(const std::vector<int>&,
 		 const std::vector<int>::size_type);
-	int
-	getValue(void) const;
-	parser::IntegerExprPtr
-	clone(const std::vector<int>&) const;
+	virtual int
+	getValue(void) const override;
+	virtual parser::IntegerExprPtr
+	clone(const std::vector<int>&) const override;
       private:
 	const std::vector<int>& v;
 	const std::vector<int>::size_type pos;
@@ -144,71 +144,72 @@ namespace tfel
 		IntegerEvaluator &);
       TVariable(const std::vector<int>::size_type,
 		std::vector<int>&);
-      bool
-      isOperator(void) const;
-      void reduce(void);
-      parser::IntegerExprPtr
-      analyse(void);
+      virtual bool
+      isOperator(void) const override;
+      virtual void reduce(void) override;
+      virtual parser::IntegerExprPtr
+      analyse(void) override;
     private:
       std::vector<int>& vars;
       std::vector<int>::size_type pos;
     };
 
-    struct IntegerEvaluator::TOperator
+    struct IntegerEvaluator::TOperator final
       : public IntegerEvaluator::TExpr
     {
       TOperator(const std::string&);
-      std::string
+      virtual std::string
       getOperatorType(void) const;
-      bool
-      isOperator(void) const;
-      void
-      reduce(void);
-      parser::IntegerExprPtr
-      analyse(void);
+      virtual bool
+      isOperator(void) const override;
+      virtual void
+      reduce(void) override;
+      virtual parser::IntegerExprPtr
+      analyse(void) override;
+      virtual ~TOperator();
     private:
       const std::string type;
     }; // end of struct IntegerEvaluator::TOperator
 
-    struct IntegerEvaluator::TGroup
+    struct IntegerEvaluator::TGroup final
       : public IntegerEvaluator::TExpr
     {
-      bool
-      isOperator(void) const;
-      void
+      virtual bool
+      isOperator(void) const override;
+      virtual void
       add(std::shared_ptr<IntegerEvaluator::TExpr>const);
-      void
-      reduce(void);
-      parser::IntegerExprPtr
-      analyse(void);
-      ~TGroup();
+      virtual void
+      reduce(void) override;
+      virtual parser::IntegerExprPtr
+      analyse(void) override;
+      virtual ~TGroup();
     private:
       void
       reduce(const std::string&);
       std::vector<std::shared_ptr<IntegerEvaluator::TExpr> > subExpr;
     }; // end of struct IntegerEvaluator::TGroup
 
-    struct IntegerEvaluator::TNumber
+    struct IntegerEvaluator::TNumber final
       : public IntegerEvaluator::TExpr
     {
-      struct Number
+      struct Number final
 	: public tfel::math::parser::IntegerExpr
       {
 	Number(const int);
-	parser::IntegerExprPtr
-	clone(const std::vector<int>&) const;
-	int
-	getValue(void) const;
+	virtual parser::IntegerExprPtr
+	clone(const std::vector<int>&) const override;
+	virtual int
+	getValue(void) const override;
       private:
 	const int value;
       }; // end of struct Number
       TNumber(const int v);
-      bool
-      isOperator(void) const;
-      parser::IntegerExprPtr
-      analyse(void);
-      void
-      reduce(void);
+      virtual bool
+      isOperator(void) const override;
+      virtual parser::IntegerExprPtr
+      analyse(void) override;
+      virtual void
+      reduce(void) override;
     private:
       const int value;
     }; // end of struct IntegerEvaluator::TNumber
