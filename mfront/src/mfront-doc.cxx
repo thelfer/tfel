@@ -49,9 +49,7 @@ int main(const int argc, const char *const *const argv)
 	  }
 	  bgens.push_back(make_shared<BGen>(argc,argv,b,f));
 	} else {
-	  if(dsl->getTargetType()==AbstractDSL::BEHAVIOURDSL){
-	    throw(runtime_error("mfront-doc : unsupported dsl type"));
-	  }
+	  throw(runtime_error("mfront-doc : unsupported dsl type"));
 	}
       } else if ((strcmp(*a,"--help")==0)||(strcmp(*a,"-h")==0)){
 	cout << "Usage : " << argv[0] << " [options] [files]" << endl;

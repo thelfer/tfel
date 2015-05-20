@@ -61,6 +61,7 @@ set(mfront_tests_SOURCES
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC
+  Gurson
   GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian
   GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian
   Hayhurst

@@ -428,8 +428,6 @@ namespace tfel
       map<string,vector<string> >::const_iterator p;
       vector<string>::const_iterator p2;
       map<string,vector<TestDocumentation> > tests;
-      string currentDirectory;
-
       if(realpath(".",cpath)==nullptr){
 	*(this->log) << "main : can't get real path of current directory, aborting\n";
 	exit(EXIT_FAILURE);

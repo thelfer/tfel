@@ -143,9 +143,8 @@ namespace tfel
       using namespace std;
       vector<shared_ptr<IntegerEvaluator::TExpr> > res;
       unsigned short nbr = this->countNumberOfArguments(p,pe);
-      unsigned short i;
       if(nbr>0){
-	for(i=0;i!=nbr-1u;++i){
+	for(unsigned short i=0;i!=nbr-1u;++i){
 	  res.push_back(this->treatGroup(p,pe,b,","));
 	  ++p;
 	}
@@ -278,7 +277,6 @@ namespace tfel
 	    if(b){
 	      // variable name is fixed
 	      if(this->positions.find(*p)==this->positions.end()){
-		vector<shared_ptr<IntegerEvaluator::TExpr> > args;
 		string msg("IntegerEvaluator::treatGroup2 : ");
 		msg += "unknown variable '"+*p+"'";
 		throw(runtime_error(msg));
@@ -351,7 +349,7 @@ namespace tfel
 	msg << "IntegerEvaluator::setVariableValue : position '" << pos << "' is invalid ";
 	if(this->variables.size()==0){
 	  msg << "(function has no variable).";
-	} else if(this->variables.size()==0){
+	} else if(this->variables.size()==1){
 	  msg << "(function has one variable).";
 	} else {
 	  msg << "(function has only '" <<  this->variables.size() << "' variable(s)).";

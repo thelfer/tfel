@@ -1172,7 +1172,6 @@ namespace mfront{
     VariableDescriptionContainer::const_iterator p;
     string res;
     bool found;
-    bool bend;
     found=false;
     for(p=this->localParameters.begin();(p!=this->localParameters.end())&&(!found);){
       if(p->name==this->currentVar){
@@ -1211,7 +1210,7 @@ namespace mfront{
     if((p->type=="DoubleArray")||
        (p->type=="StringArray")){
       unsigned int nbr=0u;
-      bend = false;
+      auto bend = false;
       while(bend==false){
 	if(p->type=="DoubleArray"){
 	  istringstream converter(this->current->value);

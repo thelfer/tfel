@@ -88,7 +88,6 @@ namespace mfront{
     vector<FlowHandler>::const_iterator p2;
     bool found;
     unsigned short n;
-    unsigned short n2;
     bool genericTheta;
     this->checkBehaviourFile();
     if(this->flows.empty()){
@@ -172,12 +171,11 @@ namespace mfront{
 	otheta << "mu_3_theta" << n << "*(";
 	this->behaviourFile << otheta.str();
       } else {
-	ostringstream otheta;
 	this->behaviourFile << "this->seq = std::max(this->seq_e-";
 	this->behaviourFile << "mu_3_theta*(";
       }
       p2=this->flows.begin();
-      n2=0;
+      unsigned short n2 = 0u;
       while(p2!=this->flows.end()){
 	this->behaviourFile << "vdp(" << n2 << ")";
 	++p2;

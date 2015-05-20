@@ -638,10 +638,8 @@ namespace mfront{
     ofstream f;
     set<string> files; // list of files contained in the file
     string fName;
-    string object;
     set<string>::iterator p;
     set<string>::iterator p2;
-    bool hasValidExtension;
     bool erased = false;
     fName = "src"+dirStringSeparator()+ name;
     checkIfFileIsRegularAndReadable(fName);
@@ -664,9 +662,8 @@ namespace mfront{
       return;
     }
     for(p=files.begin();p!=files.end();++p){
-      object = p->substr(0,p->rfind("."))+".o";
       // check that the source has a valid extension
-      hasValidExtension = false;
+      auto hasValidExtension = false;
       if(p->size()>4){
 	if((p->substr(p->size()-4)==".cpp")||
 	   (p->substr(p->size()-4)==".cxx")){
@@ -751,7 +748,6 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     ifstream file;
-    ofstream f;
     vector<string> libs; // list of libraries contained in the file
     string fName;
     string line;
@@ -1027,17 +1023,15 @@ namespace mfront{
     using namespace tfel::system;
     vector<string> files;
     vector<string>::const_iterator p;
-    DIR *directory = nullptr;
-    struct dirent* dir;
     struct stat buf;
     auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
-      directory = opendir("src");
+      auto directory = opendir("src");
       if(!directory){
 	throw(runtime_error("MFront::analyseSourceDirectory : can't open directory 'src'"));
       }
-      dir=readdir(directory);
+      auto dir=readdir(directory);
       while(dir!=nullptr){
 	string file = "src/";
 	file += dir->d_name;
@@ -1273,13 +1267,12 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
-    ofstream file;
-    set<string>::const_iterator p;
     auto& l = MFrontLock::getMFrontLock();
     l.lock();
     try{
       if(!this->cppflags.empty()){
-	file.open(("src"+dirStringSeparator()+"Makefile.incs").c_str());
+	ofstream file;
+	file.open("src"+dirStringSeparator()+"Makefile.incs");
 	if(!file){
 	  string msg("MFront::writeCppFlags : can't open file 'src"+
 		     dirStringSeparator()+"Makefile.incs'");
@@ -1303,7 +1296,6 @@ namespace mfront{
     map<string,set<string> >::const_iterator p2;
     map<string,vector<string> >::const_iterator p3;
     set<string>::const_iterator p4;
-    map<string,pair<vector<string>,vector<string> > >::const_iterator p5;
     vector<string>::const_iterator p6;
     pair<bool,pair<string,string> > res;
     p2 = this->sources.find(name);
@@ -1428,12 +1420,10 @@ namespace mfront{
     set<string> cppSources;
     set<string> cSources;
     map<string,set<string> >::const_iterator p2;
-    map<string,set<string> >::const_iterator p3;
     set<string>::const_iterator p4;
     map<string,pair<vector<string>,vector<string> > >::const_iterator p5;
     vector<string>::const_iterator p6;
     set<string>::const_iterator p7;
-    set<string>::const_iterator p8;
     string sb;
     string cc;
     string cxx;
@@ -1453,12 +1443,12 @@ namespace mfront{
     if(env_cxx==nullptr){
       cxx = "$(CXX)";
     } else {
-      cxx = "$(CXX)";
+      cxx = env_cxx;
     }
     if(env_cc==nullptr){
       cc = "$(CC)";
     } else {
-      cc = "$(CC)";
+      cc = env_cc;
     }
     auto& l = MFrontLock::getMFrontLock();
     l.lock();
@@ -1830,7 +1820,6 @@ namespace mfront{
     const char *const argv[] = {"make","-f",
 				"Makefile.mfront",
 				"clean",nullptr};
-    map<string,set<string> >::const_iterator p;
     pid_t child_pid;
     int status;
     child_pid = fork();

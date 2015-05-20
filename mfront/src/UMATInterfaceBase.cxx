@@ -988,7 +988,6 @@ namespace mfront
   {
     using namespace std;
     if(this->generateMTestFile){
-      set<Hypothesis> h = mb.getDistinctModellingHypotheses();
       string fname = name;
       if(!suffix.empty()){
     	fname += "_"+suffix;

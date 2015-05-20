@@ -87,7 +87,6 @@ namespace mfront{
       } else {
 	if((pd->name         != pv->name)||
 	   (pd->type         != pv->type)||
-	   (pd->type         != pv->type)||
 	   (pd->externalName != d.getExternalName(pv->name))||
 	   (pd->arraySize    != pv->arraySize)){
 	  string msg("getData : ");
@@ -448,6 +447,7 @@ namespace mfront{
     if(!f){
       string msg("BehaviourDocumentationGenerator::writeWebOutput: "
 		 "can't open file '"+this->file+"'");
+      throw(runtime_error(msg));
     }
     out << "# " << mb.getClassName() << " behaviour description" << endl << endl;
     out << "* file   : " << fd.fileName   << endl;

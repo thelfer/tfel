@@ -48,9 +48,7 @@ int main(const int argc, const char *const *const argv)
 	  }
 	  bqueries.push_back(make_shared<BehaviourQuery>(argc,argv,b,f));
 	} else {
-	  if(dsl->getTargetType()==AbstractDSL::BEHAVIOURDSL){
-	    throw(runtime_error("mfront-query : unsupported dsl type"));
-	  }
+	  throw(runtime_error("mfront-query : unsupported dsl type"));
 	}
       } else if ((strcmp(*a,"--help")==0)||(strcmp(*a,"-h")==0)){
 	cout << "Usage : " << argv[0] << " [options] [files]" << endl;

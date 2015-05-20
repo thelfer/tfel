@@ -88,14 +88,12 @@ namespace mfront
     const auto& function=mpd.f;
     const auto& bounds=mpd.boundsDescriptions;
     const auto& physicalBounds=mpd.physicalBoundsDescriptions;
-    string dir;
     string name;
     if(!material.empty()){
       name = material+"_"+className;
     } else {
       name = className;
     }
-    dir="include/";
     this->headerFileName  = "include/";
     this->headerFileName += name;
     this->headerFileName += "-cxx.hxx";
@@ -140,10 +138,6 @@ namespace mfront
     using namespace std;
     vector<string>::const_iterator p3;
     VariableDescriptionContainer::const_iterator p4;
-    vector<string>::const_reverse_iterator p5;
-    vector<string>::const_reverse_iterator p5e;
-    map<string,double>::const_iterator p6;
-
     this->headerFile << "/*!" << endl;
     this->headerFile << "* \\file   " << this->headerFileName  << endl;
     this->headerFile << "* \\brief  " << "this file declares the " 
@@ -277,10 +271,6 @@ namespace mfront
     using namespace std;
     vector<string>::const_iterator p;
     VariableDescriptionContainer::const_iterator p3;
-    map<string,string>::const_iterator p4;
-    vector<string>::const_reverse_iterator p5;
-    vector<string>::const_reverse_iterator p5e;
-    vector<VariableBoundsDescription>::const_iterator p6;
     map<string,double>::const_iterator p7;
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
@@ -510,8 +500,8 @@ namespace mfront
       if(!physicalBounds.empty()){
 	this->srcFile << "using namespace std;\n";	
 	this->srcFile << "// treating physical bounds\n";
-	for(p6=physicalBounds.begin();
-	    p6!=physicalBounds.end();++p6){
+	for(auto p6=physicalBounds.cbegin();
+	    p6!=physicalBounds.cend();++p6){
 	  if(p6->boundsType==VariableBoundsDescription::Lower){
 	    this->srcFile << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
 	    this->srcFile << "ostringstream msg;\n";
@@ -548,8 +538,7 @@ namespace mfront
       }
       if(!bounds.empty()){
 	this->srcFile << "// treating standard bounds\n";
-	for(p6=bounds.begin();
-	    p6!=bounds.end();++p6){
+	for(auto p6=bounds.cbegin();p6!=bounds.cend();++p6){
 	  if(p6->boundsType==VariableBoundsDescription::Lower){
 	    this->srcFile << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
 	    this->srcFile << "const char * const policy = "

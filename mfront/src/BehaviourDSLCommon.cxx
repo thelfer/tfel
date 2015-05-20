@@ -1080,7 +1080,6 @@ namespace mfront{
     using namespace tfel::utilities;
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
-    map<string,string>::const_iterator p;
     const auto& n = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
@@ -1344,17 +1343,12 @@ namespace mfront{
   void 
   BehaviourDSLCommon::readStringList(std::vector<std::string>& cont)
   {
-    using namespace std;
-    string type;
-    string s;
-    bool endOfTreatment;
-    vector<string>::iterator p;
     this->checkNotEndOfFile("BehaviourDSLCommon::readStringList",
 			    "Cannot read interface name.");
-    endOfTreatment=false;
+    auto endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
 	  (!endOfTreatment)){
-      s = this->current->value;
+      const auto s = this->current->value;
       if(!isValidIdentifier(s)){
 	--(this->current);
 	this->throwRuntimeError("BehaviourDSLCommon::readStringList",
@@ -1371,7 +1365,7 @@ namespace mfront{
 	this->throwRuntimeError("BehaviourDSLCommon::readStringList",
 				"',' or ';' expected afer '"+s+"'");
       }
-      if((p = std::find(cont.begin(),cont.end(),s))!=cont.end()){
+      if(find(cont.begin(),cont.end(),s)!=cont.end()){
 	this->throwRuntimeError("BehaviourDSLCommon::readStringList",
 				"'"+s+"' has already been registred.\n");
       } 
@@ -2057,6 +2051,7 @@ namespace mfront{
     }
     this->behaviourDataFile << "#include\"TFEL/Math/stensor.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Math/st2tost2.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"" << endl;
     if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
@@ -2826,16 +2821,13 @@ namespace mfront{
   bool
   BehaviourDSLCommon::hasUserDefinedTangentOperatorCode(const Hypothesis h) const
   {
-    using namespace std;
-    using namespace tfel::material;
+    using tfel::material::getFiniteStrainBehaviourTangentOperatorFlags;
     if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       // all available tangent operators for finite strain behaviours
-      const vector<FiniteStrainBehaviourTangentOperatorBase::Flag> tos(getFiniteStrainBehaviourTangentOperatorFlags());
-      vector<FiniteStrainBehaviourTangentOperatorBase::Flag>::const_iterator pt;
+      const auto tos = getFiniteStrainBehaviourTangentOperatorFlags();
       // search tangent operators defined by the user
-      vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
-      for(pt=tos.begin();pt!=tos.end();++pt){
-	const string ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
+      for(auto pt=tos.cbegin();pt!=tos.cend();++pt){
+	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
 	if(this->mb.hasCode(h,BehaviourData::ComputeTangentOperator+'-'+ktype)){
 	  return true;
 	}

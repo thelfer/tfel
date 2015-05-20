@@ -32,11 +32,11 @@ namespace tfel
       const char * start = static_cast<const char *>(buf); //< some strange
 							   //  warning of gcc
       size_t  r = count;       //< remaining block to be written
-      ssize_t w = 0;           //< number of written blocks
       if(count>static_cast<size_t>(numeric_limits<ssize_t>::max())){
 	throw(SystemError("BlockingStreamReader::write : number of bytes to write too high"));
       }
       while(r>0){
+	ssize_t w = 0;           //< number of written blocks
 	while((w=::write(fd,start,r))==-1){
 	  if(errno==EINTR)
 	    continue;

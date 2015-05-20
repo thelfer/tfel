@@ -532,7 +532,6 @@ namespace tfel{
 			      std::string s, const std::string delim)
     {
       using namespace std;
-      string tmp;
       string::size_type posb = 0;
       while((!s.empty())&&(posb!=string::npos)){
 	posb = s.find(delim);
@@ -552,7 +551,6 @@ namespace tfel{
     CxxTokenizer::splitString2(std::vector<std::string>& res,std::string s)
     {
       using namespace std;
-      string tmp;
       string::size_type posb = 0;
       while((!s.empty())&&(posb!=string::npos)){
 	posb = s.find(">");
@@ -578,7 +576,6 @@ namespace tfel{
     CxxTokenizer::splitString3(std::vector<std::string>& res,std::string s)
     {
       using namespace std;
-      string tmp;
       string::size_type posb = 0;
       while((!s.empty())&&(posb!=string::npos)){
 	posb = s.find("<");

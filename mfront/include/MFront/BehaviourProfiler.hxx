@@ -62,7 +62,7 @@ namespace mfront{
      * constructor
      * \param[in] n : behaviour name
      */
-    BehaviourProfiler(const std::string&);
+    explicit BehaviourProfiler(const std::string&);
     /*
      * \see MechanialBehaviourData for a description
      */

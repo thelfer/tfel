@@ -301,9 +301,7 @@ namespace mfront
       this->srcFile<< "set ylabel '" << yLabel << "'" << endl;
     
     // on boucle sur toutes les variables pour generer les plot
-    string csvFileName = name ;
-    csvFileName+="_test.csv";
-    int column = 0 ;
+    const auto csvFileName = name + "_test.csv";
     if(!inputs.empty()){
       if (inputs.size() == 1) {
 	this->srcFile<< "set xlabel '"<< inputs.begin()->name <<"'"<<endl;
@@ -317,6 +315,7 @@ namespace mfront
 	}
 	this->srcFile<<endl;
       } else {
+	int column = 0 ;
 	for(auto p3=inputs.begin();p3!=inputs.end();p3++){
 	  this->srcFile<< "set xlabel '"<< p3->name <<"'"<<endl;
 	  this->srcFile<< "set output '"<< name << "_" << p3->name << ".eps'" << endl ;

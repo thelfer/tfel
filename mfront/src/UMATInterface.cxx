@@ -759,11 +759,6 @@ namespace mfront{
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeUmatFortranFunctionDefine(out,name);
 	    }
-	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-	    this->writeUmatFortranFunctionDefine(out,name+"_malls");
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeUmatFortranFunctionDefine(out,name);
-	    }
 	  } else if(*pfss==LOGARITHMICSTRAIN1D){
 	    this->writeUmatFortranFunctionDefine(out,name+"_log1D");
 	    if(this->finiteStrainStrategies.size()==1u){

@@ -623,9 +623,8 @@ namespace tfel
       using namespace std;
       vector<shared_ptr<Evaluator::TExpr> > res;
       unsigned short nbr = this->countNumberOfArguments(p,pe);
-      unsigned short i;
       if(nbr>0){
-	for(i=0;i!=nbr-1u;++i){
+	for(unsigned short i=0;i!=nbr-1u;++i){
 	  res.push_back(this->treatGroup(p,pe,b,","));
 	  ++p;
 	}
@@ -1130,7 +1129,7 @@ namespace tfel
 	msg << "Evaluator::setVariableValue : position '" << pos << "' is invalid ";
 	if(this->variables.size()==0){
 	  msg << "(function has no variable).";
-	} else if(this->variables.size()==0){
+	} else if(this->variables.size()==1){
 	  msg << "(function has one variable).";
 	} else {
 	  msg << "(function has only '" <<  this->variables.size() << "' variable(s)).";
@@ -1376,7 +1375,7 @@ namespace tfel
 	  msg << "Evaluator::differentiate : position '" << pos << "' is invalid ";
 	  if(this->variables.size()==0){
 	    msg << "(function has no variable).";
-	  } else if(this->variables.size()==0){
+	  } else if(this->variables.size()==1){
 	    msg << "(function has one variable).";
 	  } else {
 	    msg << "(function has only '" <<  this->variables.size() << "' variable(s)).";
@@ -1464,7 +1463,6 @@ namespace tfel
       using namespace tfel::math::parser;
       typedef map<string,vector<double>::size_type>::value_type MVType;
       set<string> ev_params;
-      map<string,vector<double>::size_type>::const_iterator pv;
       vector<string>::const_iterator pp;
       vector<double>::size_type i;
       assert(this->variables.size()==this->positions.size());

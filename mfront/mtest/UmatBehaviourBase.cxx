@@ -75,6 +75,7 @@ namespace mfront
     }
     string msg("UmatBehaviourBase::getBehaviourType : ");
     msg += "unsupported behaviour type";
+    throw(runtime_error(msg));
     return MechanicalBehaviourBase::GENERALBEHAVIOUR;
   } // end of UmatBehaviourBase::getBehaviourType
 

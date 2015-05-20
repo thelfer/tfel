@@ -165,7 +165,6 @@ namespace mfront
     vector<string>::const_iterator p;
     StaticVarContainer::const_iterator p2;
     VarContainer::const_iterator p3;
-    map<string,string>::const_iterator p4;
     vector<VariableBoundsDescription>::const_iterator p5;
     map<string,double>::const_iterator p6;
     VarContainer::size_type i;

@@ -83,6 +83,7 @@ set(mfront_tests_SOURCES
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC
+  Gurson
   GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian
   GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian
   Hayhurst
@@ -255,6 +256,7 @@ test_castem(polycrystals_dd_cc)
 test_castem(polycrystals_dd_cfc)
 test_castem(hayhurst)
 test_castem(implicithayhurst)
+test_castem(gurson)
 test_castem(gursontvergaardneedlemanplasticflow)
 test_castem(gursontvergaardneedlemanviscoplasticflow)
 test_castem(ellipticcreep)

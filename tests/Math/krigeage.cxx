@@ -34,7 +34,6 @@ int main () {
   FactorizedKriging<1,1> k;
   double x;
   double t;
-  double f;
   unsigned int i;
   ofstream data("data.txt");
   ofstream out("out.txt");
@@ -44,7 +43,7 @@ int main () {
   for(i=0;i!=100;++i){
     x = rand(0.,1.);
     t = rand(0.,1.);
-    f = cos(x+t)*exp(x);
+    double f = cos(x+t)*exp(x);
     k.addValue(x,t,f);
     data << x << " " << t << " " << f << endl;
   }

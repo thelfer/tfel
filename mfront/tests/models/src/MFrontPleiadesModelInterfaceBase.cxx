@@ -152,7 +152,6 @@ namespace mfront{
     StaticVarContainer::const_iterator p2;
     ModelData::FunctionContainer::const_iterator p3;
     set<string>::iterator p4;
-    set<string>::iterator p5;
     this->headerFile << "/*!" << endl;
     this->headerFile << "* \\file   " << this->headerFileName  << endl;
     this->headerFile << "* \\brief  " << "this file declares the " 
@@ -408,15 +407,10 @@ namespace mfront{
   {
     using namespace std;
     VarContainer::const_iterator p;
-    map<string,string>::const_iterator p2;
-    map<string,double>::const_iterator p3;
     map<string,string>::const_iterator p4;
-    map<string,unsigned short>::const_iterator p5;
     StaticVarContainer::const_iterator p10;
     ModelData::FunctionContainer::const_iterator p11;
     set<string>::const_iterator p12;
-    std::map<std::string,std::vector<ModelData::Function> >::iterator p13;
-    set<string>::const_iterator p16;
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
     this->srcFile << "* \\brief  " << "this file implements the " 
@@ -533,14 +527,6 @@ namespace mfront{
       this->srcFile << mdata.className << "::" 
 		    << mdata.className << "()\n{\n";
       for(p=mdata.localParameters.begin();p!=mdata.localParameters.end();++p){
-	string name;
-	if((p4=mdata.glossaryNames.find(p->name))!=mdata.glossaryNames.end()){
-	  name = "GlossaireParam::" + p4->second;
-	} else if((p4=mdata.entryNames.find(p->name))!=mdata.entryNames.end()){
-	  name = "\""+p4->second+"\"";
-	} else {
-	  name = "\""+p->name+"\"";
-	}
 	p4=mdata.defaultValues.find(p->name);
 	assert(p4!=mdata.defaultValues.end());
 	this->writeAssignDefaultValue(p,p4);
@@ -853,7 +839,6 @@ namespace mfront{
   {
     using namespace std;
     string name;
-    string name2;
     map<string,string>::const_iterator p;
     if((p=mdata.glossaryNames.find(v.name))!=mdata.glossaryNames.end()){
       name  = "GlossaireParam::" + p->second;
@@ -889,7 +874,6 @@ namespace mfront{
     vector<ModelData::Function>::const_iterator p;
     set<string>::const_iterator p2;
     set<string>::const_iterator p3;
-    map<string,unsigned short>::const_iterator p4;
     usedVariables.clear();
     modifiedVariables.clear();
     // generating temporaries for variables of thoses fields
@@ -1019,10 +1003,6 @@ namespace mfront{
   void
   MFrontPleiadesModelInterfaceBase::writeInitializeParametersMethod(const ModelData& mdata)
   {
-    using namespace std;
-    VarContainer::const_iterator p;
-    map<string,string>::const_iterator p2;
-    map<string,double>::const_iterator p3;
     this->srcFile << "bool\n"
 		  << mdata.className 
 		  << "::initializeParameters(const Pleiades::PMetier::IArgumentMetier& arg)";
@@ -1031,10 +1011,10 @@ namespace mfront{
     this->srcFile << "using namespace Pleiades::PUtilitaires;\n";
     this->srcFile << "using namespace Pleiades::PExceptions;\n";
     this->srcFile << "using namespace Pleiades::PMetier::PGlossaire;\n";
-    for(p=mdata.globalParameters.begin();p!=mdata.globalParameters.end();++p){
+    for(auto p=mdata.globalParameters.cbegin();p!=mdata.globalParameters.cend();++p){
       this->writeGetGlobalParameter(*p,mdata);
     }
-    for(p=mdata.constantMaterialProperties.begin();p!=mdata.constantMaterialProperties.end();++p){
+    for(auto p=mdata.constantMaterialProperties.cbegin();p!=mdata.constantMaterialProperties.cend();++p){
       this->writeGetConstantMaterialProperty(*p,mdata);
     }
     this->srcFile << "return true;\n";

@@ -96,6 +96,8 @@ namespace mfront
     using std::vector<VariableDescription>::push_back;
     using std::vector<VariableDescription>::begin;
     using std::vector<VariableDescription>::end;
+    using std::vector<VariableDescription>::cbegin;
+    using std::vector<VariableDescription>::cend;
     using std::vector<VariableDescription>::empty;
     using std::vector<VariableDescription>::insert;
     using std::vector<VariableDescription>::front;

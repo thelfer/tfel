@@ -205,9 +205,6 @@ namespace tfel
     {
       using namespace std;
       typedef StreamMap::value_type MVType;
-      vector<string> tmp;
-      map<ProcessId,StreamId>::iterator p2;
-      char buf[3];
       int  cfd[2]; //< pipe to the child
       int  ffd[2]; //< pipe to the father
       pid_t pid;
@@ -238,6 +235,7 @@ namespace tfel
 	systemCall::throwSystemError(msg,errno);
       }
       if(pid==0){
+	char buf[3];
 	ssize_t readChar;
 	// the child 
 	close(ffd[0]);

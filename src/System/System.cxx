@@ -362,12 +362,12 @@ namespace tfel
       using namespace std;
       const unsigned char * b = static_cast<const unsigned char*>(v);
       size_t  r = s;
-      ssize_t w;
       if(s>=SSIZE_MAX){
 	string msg("systemCall::write : invalid size (s>=SSIZE_MAX)");
 	throw(SystemError(msg));
       }
       while(r>0){
+	ssize_t w;
 	while((w=::write(f,b,r))==-1){
 	  if(errno==EINTR){
 	    continue;

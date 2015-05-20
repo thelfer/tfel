@@ -25,6 +25,8 @@ struct VanDerPol
 {
   typedef tfel::math::tvector<2,double> vector;
 
+  VanDerPol() = default;
+
   void setMu(const double mu_)
   {
     this->mu=mu_;

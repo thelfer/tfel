@@ -82,6 +82,7 @@ cmake/modules/zset.cmake -text
 cmake/pyc-compile.py -text
 cmake/pyo-compile.py -text
 /configure.ac -text
+/cppcheck.sh -text
 /debug.sh.in -text
 docs/CMakeLists.txt -text
 docs/Makefile.am -text
@@ -1840,6 +1841,7 @@ mfront/tests/behaviours/FiniteStrainSingleCrystal.mfront -text
 mfront/tests/behaviours/FiniteStrainSingleCrystal2.mfront -text
 mfront/tests/behaviours/FiniteStrainSingleCrystal_NumericalJacobian.mfront -text
 mfront/tests/behaviours/GeneralizedMaxwell.mfront -text
+mfront/tests/behaviours/Gurson.mfront -text
 mfront/tests/behaviours/GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian.mfront -text
 mfront/tests/behaviours/GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian.mfront -text
 mfront/tests/behaviours/Hayhurst.mfront -text
@@ -2451,6 +2453,7 @@ mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian
 mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-012.mtest.in -text
 mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-159.mtest.in -text
 mfront/tests/behaviours/castem/castemgeneralizedmaxwell.mtest.in -text
+mfront/tests/behaviours/castem/castemgurson.mtest.in -text
 mfront/tests/behaviours/castem/castemgursontvergaardneedlemanplasticflow.mtest.in -text
 mfront/tests/behaviours/castem/castemgursontvergaardneedlemanviscoplasticflow.mtest.in -text
 mfront/tests/behaviours/castem/castemhayhurst.mtest.in -text

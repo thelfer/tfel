@@ -214,8 +214,6 @@ namespace mfront
     map<string,string>::const_iterator p4;
     vector<VariableBoundsDescription>::const_iterator p5;
     map<string,double>::const_iterator p6;
-    map<string,string>::const_iterator p7;
-
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
     this->srcFile << "* \\brief  " << "this file implements the " 

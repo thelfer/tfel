@@ -277,9 +277,6 @@ namespace mfront{
     using namespace tfel::system;
     using namespace tfel::utilities;
     string name;
-    string asterFctName;
-    string tmp;
-
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL))){
@@ -297,15 +294,12 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     }
-
     // get the modelling hypotheses to be treated
     const auto& h = this->getModellingHypothesesToBeTreated(mb);
-
     if(!mb.getLibrary().empty()){
       name += mb.getLibrary();
     }
     name += mb.getClassName();
-    
     // output directories
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Aster");
@@ -353,8 +347,6 @@ namespace mfront{
 	<< "        F77_FUNC(aster"
 	<< makeLowerCase(name) << ",Aster"
 	<< makeUpperCase(name) << ")\n\n";
-
-    asterFctName = "aster"+makeUpperCase(name)+"_F77";
 
     out << "#ifdef __cplusplus\n\n";
 

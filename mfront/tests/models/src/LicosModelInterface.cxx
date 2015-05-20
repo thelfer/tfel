@@ -215,7 +215,6 @@ namespace mfront{
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
     ModelData::FunctionContainer::const_iterator p2;
-    bool found;
     this->hasDefaultConstructor=true;
     if(mdata.domains.empty()){
       this->hasDefaultConstructor=false;
@@ -237,7 +236,7 @@ namespace mfront{
       }
     }
     for(p=mdata.outputs.begin();p!=mdata.outputs.end();++p){
-      found = false;
+      auto found = false;
       for(p2=mdata.functions.begin();
 	  (p2!=mdata.functions.end())&&(!found);++p2){
 	if(p2->modifiedVariables.find(p->name)!=p2->modifiedVariables.end()){
@@ -265,7 +264,6 @@ namespace mfront{
     StaticVariableDescriptionContainer::const_iterator p2;
     ModelData::FunctionContainer::const_iterator p3;
     set<string>::iterator p4;
-    set<string>::iterator p5;
     set<unsigned short> applyHeaders;
     set<unsigned short>::const_iterator p18;
     unsigned short i;
@@ -559,16 +557,11 @@ namespace mfront{
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
-    map<string,string>::const_iterator p2;
-    map<string,double>::const_iterator p3;
     map<string,string>::const_iterator p4;
-    map<string,unsigned short>::const_iterator p5;
     StaticVariableDescriptionContainer::const_iterator p10;
     ModelData::FunctionContainer::const_iterator p11;
     set<string>::const_iterator p12;
-    std::map<std::string,std::vector<ModelData::Function> >::iterator p13;
     set<string>::const_iterator p15;
-    set<string>::const_iterator p16;
     set<unsigned short> applyHeaders;
     set<unsigned short>::const_iterator p18;
     vector<VariableBoundsDescription>::const_iterator p19;
@@ -810,8 +803,6 @@ namespace mfront{
       this->srcFile << "vector<string>::const_iterator ptr;\n";
       this->srcFile << "vector<string>::const_iterator ptr2;\n";
       for(p=mdata.localParameters.begin();p!=mdata.localParameters.end();++p){
-	string name;
-	name = this->getVariableName(p->name,mdata);
 	p4=mdata.defaultValues.find(p->name);
 	assert(p4!=mdata.defaultValues.end());
 	this->writeAssignDefaultValue(p,p4);
@@ -1399,7 +1390,6 @@ namespace mfront{
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     for(i=0,p=mdata.functions.begin();p!=mdata.functions.end();++p,++i){
       for(p2=p->constantMaterialProperties.begin();p2!=p->constantMaterialProperties.end();++p2){
-	string functor = "functor"+to_string(i);
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
 	this->srcFile << "if(!mdata.hasMaterialDescription(*ptr)){\n";
@@ -1465,7 +1455,6 @@ namespace mfront{
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     for(i=0,p=mdata.functions.begin();p!=mdata.functions.end();++p,++i){
       for(p2=p->modifiedVariables.begin();p2!=p->modifiedVariables.end();++p2){
-	string functor = "functor"+to_string(i);
 	p3=mdata.initialValues.find(*p2);
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
@@ -1564,7 +1553,6 @@ namespace mfront{
 	  if(isInputVariable(mdata,*p2)){
 	    const auto& v = decomposeVariableName(mdata,*p2).first;
 	    if(treatedVars.find(v)==treatedVars.end()){
-	      string functor = "functor"+to_string(i);
 	      p3 = p->depths.find(v);
 	      if(p3==p->depths.end()){
 		string msg("MFrontModelInterface::writeInitializeInputsVariablesDepths : ");

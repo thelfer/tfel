@@ -186,7 +186,6 @@ namespace tfel{
       using namespace std;
       using namespace tfel::utilities;
       const auto& k = getKeysMap("english");
-      map<string,string>::const_iterator pk;
       this->checkNotEndOfFile(p);
       this->readSpecifiedToken("{",p);
       this->checkNotEndOfFile(p);

@@ -65,6 +65,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 PolyCrystals_DD_CFC.mfront                                        \
 	 PolyCrystals_DD_CC.mfront                                         \
 	 SlidingSystemsCC.mfront                                           \
+	 Gurson.mfront                                                     \
 	 GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian.mfront      \
 	 GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian.mfront \
 	 Hayhurst.mfront                                                   \

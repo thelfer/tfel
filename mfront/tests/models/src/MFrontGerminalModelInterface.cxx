@@ -157,10 +157,6 @@ namespace mfront{
   void
   MFrontGerminalModelInterface::writeInitializeParametersMethod(const ModelData& mdata)
   {
-    using namespace std;
-    VarContainer::const_iterator p;
-    map<string,string>::const_iterator p2;
-    map<string,double>::const_iterator p3;
     this->srcFile << "bool\n"
 		  << mdata.className
 		  << "::initializeParameters(const Pleiades::PMetier::IArgumentMetier& arg)";
@@ -170,10 +166,10 @@ namespace mfront{
     this->srcFile << "using namespace Pleiades::PExceptions;\n";
     this->srcFile << "using namespace Pleiades::PMetier::PGlossaire;\n";
     this->srcFile << "this->domains.insert(this->getMeshZoneName());\n";
-    for(p=mdata.globalParameters.begin();p!=mdata.globalParameters.end();++p){
+    for(auto p=mdata.globalParameters.cbegin();p!=mdata.globalParameters.cend();++p){
       this->writeGetGlobalParameter(*p,mdata);
     }
-    for(p=mdata.constantMaterialProperties.begin();p!=mdata.constantMaterialProperties.end();++p){
+    for(auto p=mdata.constantMaterialProperties.cbegin();p!=mdata.constantMaterialProperties.cend();++p){
       this->writeGetConstantMaterialProperty(*p,mdata);
     }
     this->srcFile << "return true;\n";

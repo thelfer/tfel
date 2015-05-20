@@ -121,18 +121,17 @@ namespace mfront
 	auto& log = getLogStream();
 	log << "Cast3M acceleration convergence" << endl;
       }
-      bool c  = true;
       this->ca_tmp0 = this->ca_r1-this->ca_r0;
       this->ca_tmp1 = this->ca_r2-this->ca_r0;
       const real nr0 = norm(this->ca_tmp0);
-      c = nr0>ca_eps;
+      const bool c = nr0>ca_eps;
       if(c){
 	this->ca_n0   = this->ca_tmp0/nr0;
 	const real ntmp1  = this->ca_tmp1|this->ca_n0;
 	this->ca_tmp1       -= ntmp1*this->ca_n0;
 	const real nr1    = norm(this->ca_tmp1);
-	c = nr1>0.1*abs(ntmp1);
-	if(c){
+	const bool c2 = nr1>0.1*abs(ntmp1);
+	if(c2){
 	  this->ca_n1      =   this->ca_tmp1/nr1;
 	  const real ca_p0 = -(this->ca_r0|this->ca_n0);
 	  const real ca_p1 = -(this->ca_r0|this->ca_n1);

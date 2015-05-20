@@ -266,13 +266,9 @@ namespace tfel
       {
 	using namespace std;
 	istringstream tokenizer(expr);
-	vector<string>::iterator p;
-	vector<string>::iterator pe;
 	copy(istream_iterator<string>(tokenizer),
 	     istream_iterator<string>(),back_inserter(this->tokens));
 	EvaluatorBase::splitAtTokenSeperator(this->tokens);
-	p  = this->tokens.begin();
-	pe = this->tokens.end();
       } // end of EvaluatorBase::analyse
 
       EvaluatorBase::~EvaluatorBase()

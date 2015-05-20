@@ -22,7 +22,7 @@
 #include"TFEL/Math/Kriging.hxx"
 #include"TFEL/Math/FactorizedKriging1D1D.hxx"
 
-double
+static double
 rand(const double min,
      const double max)
 {
@@ -38,20 +38,16 @@ int main () {
   vector<double> vx;
   vector<double> vy;
   vector<double> vz;
-  double x;
-  double y;
-  double z;
-  unsigned int i;
   ofstream data("data.txt");
   ofstream out("out2D.txt");
   ofstream out2("out2D-2.txt");
 
   init_floating_point_exceptions();
 
-  for(i=0;i!=100;++i){
+  for(unsigned int i=0;i!=100;++i){
     v(0) = rand(0.,1.);
     v(1) = rand(0.,1.);
-    z = cos(v(0)+v(1))*exp(v(0));
+    double z = cos(v(0)+v(1))*exp(v(0));
     k.addValue(v,z);
     vx.push_back(v(0));
     vy.push_back(v(1));
@@ -60,8 +56,8 @@ int main () {
   }
   FactorizedKriging1D1D k2(vx,vy,vz);
   k.buildInterpolation();
-  for(x=-0.5;x<1.5;x+=0.05){
-    for(y=-0.5;y<1.5;y+=0.05){
+  for(double x=-0.5;x<1.5;x+=0.05){
+    for(double y=-0.5;y<1.5;y+=0.05){
       v(0) = x;
       v(1) = y;
       out  << x << " " << y << " " << k(v) << endl;

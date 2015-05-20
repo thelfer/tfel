@@ -271,7 +271,6 @@ writeFileTrailer(std::ostream& out,
 int main(void)
 {
   using namespace std;
-  set<string> treated;
   // all fouth order tensor
   const FourthOrderTensor t4[4u] = {make_pair(ST2,ST2),
 				    make_pair(ST2,T2),

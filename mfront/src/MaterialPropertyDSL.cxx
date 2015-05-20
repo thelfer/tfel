@@ -261,9 +261,7 @@ namespace mfront{
   void
   MaterialPropertyDSL::treatInterface(void) 
   {
-    using namespace std;
     using namespace tfel::utilities;
-    string interface;
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInterface",
 			    "Expected interface name.");
     if(this->current->flag==Token::String){
@@ -279,8 +277,6 @@ namespace mfront{
   MaterialPropertyDSL::treatFunction(void)
   {
     using namespace std;
-    set<string>::const_iterator p2;
-    set<string>::iterator p3;
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
     unsigned int currentLine;

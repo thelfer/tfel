@@ -210,7 +210,6 @@ namespace mfront{
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : begin" << endl;
     }
     BehaviourDSLCommon::endsInputFileProcessing();
-    string currentVarName;
     if(!this->mb.hasParameter(h,"theta")){
       this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));
       this->mb.setParameterDefaultValue(h,"theta",this->theta);
@@ -246,7 +245,7 @@ namespace mfront{
     for(const auto & elem : h){
       CodeBlock ib;
       for(VariableDescriptionContainer::const_iterator p=ev.begin();p!=ev.end();++p){
-	string currentVarName = p->name + "_";
+	const auto currentVarName = p->name + "_";
 	this->registerVariable(currentVarName,false);
 	this->mb.addLocalVariable(elem,VariableDescription(p->type,currentVarName,p->arraySize,0u));
 	ib.code = "this->" + currentVarName + " = this->" + p->name +

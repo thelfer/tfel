@@ -106,7 +106,6 @@ namespace mfront
     const auto& function=mpd.f;
     const auto& bounds=mpd.boundsDescriptions;
     const auto& physicalBounds=mpd.physicalBoundsDescriptions;
-    string dir;
     const auto name = (!material.empty()) ? material+"_"+law : law;
     this->headerFileName  = "include/" + name;
     this->headerFileName += "-python.hxx";

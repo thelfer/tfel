@@ -485,10 +485,8 @@ namespace mfront
     using namespace std;
     using namespace tfel::math;
     using namespace tfel::utilities;
-    unsigned int lineNumber;
-    unsigned short asize;
     string endComment;
-    bool endOfTreatment=false;
+    auto endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
 	  (!endOfTreatment)){
       const auto& varName = this->current->value;
@@ -496,8 +494,8 @@ namespace mfront
 	this->throwRuntimeError("DSLBase::readVarList : ",
 				"variable given is not valid (read '"+this->current->value+"').");
       }
-      lineNumber = this->current->line;
-      asize = 1u;
+      auto lineNumber = this->current->line;
+      unsigned int asize = 1u;
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readVarList");
       if(this->current->value=="["){
@@ -583,12 +581,9 @@ namespace mfront
 			       const bool addIncrementVar,
 			       const bool b)
   {
-    using namespace std;
-    string type;
-    set<string>::iterator p;
     this->checkNotEndOfFile("DSLBase::readVarList",
 			    "Cannot read type of varName.\n");
-    type=this->current->value;
+    auto type=this->current->value;
     if(!isValidIdentifier(type,false)){
       --(this->current);
       this->throwRuntimeError("DSLBase::readVarList",
@@ -599,7 +594,7 @@ namespace mfront
     while(this->current->value=="::"){
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readVarList");
-      string t = this->current->value;
+      const auto t = this->current->value;
       if(!isValidIdentifier(t,false)){
 	--(this->current);
 	this->throwRuntimeError("DSLBase::readVarList",
@@ -615,7 +610,7 @@ namespace mfront
       this->checkNotEndOfFile("DSLBase::readVarList");
       type += "<";
       while(openBrackets!=0){
-	string t = this->current->value;
+	const auto t = this->current->value;
 	if((!isValidIdentifier(t,false))&&
 	   (!isInteger(t))){
 	  this->throwRuntimeError("DSLBase::readVarList",
@@ -627,7 +622,7 @@ namespace mfront
 	if(this->current->value==","){
 	  ++(this->current);
 	  this->checkNotEndOfFile("DSLBase::readVarList");
-	  string t2 = this->current->value;
+	  const auto t2 = this->current->value;
 	  if((!isValidIdentifier(t2,false))&&
 	     (!isInteger(t2))){
 	    --(this->current);

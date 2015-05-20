@@ -699,6 +699,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castempolycrystals_dd_cfc.mtest
            mfront/tests/behaviours/castem/castemhayhurst.mtest
            mfront/tests/behaviours/castem/castemimplicithayhurst.mtest
+	   mfront/tests/behaviours/castem/castemgurson.mtest
 	   mfront/tests/behaviours/castem/castemgursontvergaardneedlemanplasticflow.mtest
 	   mfront/tests/behaviours/castem/castemgursontvergaardneedlemanviscoplasticflow.mtest
            mfront/tests/behaviours/castem/castemburger.mtest

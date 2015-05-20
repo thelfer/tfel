@@ -78,7 +78,6 @@ namespace mfront {
     const auto& function=mpd.f;
     const auto& bounds=mpd.boundsDescriptions;
     const auto& physicalBounds=mpd.physicalBoundsDescriptions;
-    string dir;
     systemCall::mkdir("include/Pleiades");
     systemCall::mkdir("include/Pleiades/Metier");
     systemCall::mkdir("include/Pleiades/Metier/MaterialProperty");
@@ -121,9 +120,6 @@ namespace mfront {
 								const VarContainer& inputs) {
     using namespace std;
     VarContainer::const_iterator p4;
-    vector<string>::const_reverse_iterator p5;
-    vector<string>::const_reverse_iterator p5e;
-    map<string,double>::const_iterator p6;
     this->headerFile << "/*!" << endl;
     this->headerFile << "* \\file   " << this->headerFileName  << endl;
     this->headerFile << "* \\brief  " << "this file declares the "
@@ -217,9 +213,6 @@ namespace mfront {
     vector<string>::const_iterator p;
     VarContainer::const_iterator p3;
     map<string,string>::const_iterator p4;
-    vector<string>::const_reverse_iterator p5;
-    vector<string>::const_reverse_iterator p5e;
-    vector<VariableBoundsDescription>::const_iterator p6;
     map<string,double>::const_iterator p7;
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
@@ -331,8 +324,7 @@ namespace mfront {
     }
     if(!physicalBounds.empty()){
       this->srcFile << "// treating physical bounds\n";
-      for(p6=physicalBounds.begin();
-	  p6!=physicalBounds.end();++p6){
+      for(auto p6=physicalBounds.cbegin();p6!=physicalBounds.cend();++p6){
 	string fname;
 	if((p4=glossaryNames.find(p6->varName))!=glossaryNames.end()){
 	  fname = "GlossaireField::"+p4->second;
@@ -375,8 +367,7 @@ namespace mfront {
     }
     if(!bounds.empty()){
       this->srcFile << "// treating standard bounds\n";
-      for(p6=bounds.begin();
-	  p6!=bounds.end();++p6){
+      for(auto p6=bounds.cbegin();p6!=bounds.cend();++p6){
 	string fname;
 	if((p4=glossaryNames.find(p6->varName))!=glossaryNames.end()){
 	  fname = "GlossaireField::"+p4->second;

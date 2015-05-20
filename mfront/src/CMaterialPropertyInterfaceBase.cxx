@@ -206,7 +206,6 @@ namespace mfront
     using namespace std;
     string header;
     vector<string>::const_iterator p;
-    map<string,string>::const_iterator p4;
     std::vector<VariableBoundsDescription>::const_iterator p5;
     map<string,double>::const_iterator p6;
     VariableDescriptionContainer::const_iterator pv;
