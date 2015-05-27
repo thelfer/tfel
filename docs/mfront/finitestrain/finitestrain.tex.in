@@ -1058,6 +1058,17 @@ et qui fournit~:
 \item la valeur de la contrainte de \nom{Cauchy} \(\ets{\tsigma}\)
   définie en fin de pas sur la configuration en fin de pas~;
 \item la valeur des variables internes \(\ets{Y}\) en fin de pas~;
+\item une matrice tangente cohérente. Le problème est ici que la
+  définition de l'opérateur tangent dépend du code considéré, et,
+  parfois au sein d'un même code, du choix du formalisme utilisé pour
+  traiter les grandes transformations\footnote{À titre d'exemple,
+    \zebulon{} propose trois formalismes
+    différents~\cite{han_implantation_2010}.}. Dans \mfront{},
+  l'utilisateur peut donner, parmi un nombre fini de possibilité, un
+  ou plusieurs opérateurs tangents. En général, il choisira
+  l'opérateur \og{}~le plus naturel~\fg{} pour la loi considérée (voir
+  ci-dessous). Nous effectuons alors un ensemble de conversions pour
+  calculer l'opérateur tangent effectivement attendu par le code.
 \end{enumerate}
 
 Certaines formulations hypoélastiques, définies plus loin, des grandes
@@ -1098,19 +1109,6 @@ simples d'emploi~:
   la définition énergétique de la contrainte duale.
 \end{itemize}
 
-\paragraph{Hyperélasticité} Le dernier point est important. On notera
-en particulier que toute généralisation de la loi de Hooke de la
-forme~:
-\[
-\tenseur{S}_{\varepsilon}=\tenseurq{D}\,\colon\,\tenseur{\varepsilon}
-\]
-où \(\tenseur{\varepsilon}\) est un tenseur de déformation lagrangien,
-\(\tenseur{S}_{\varepsilon}\) son tenseur dual et \(\tenseurq{D}\) un tenseur
-d'élasticité possédant les bonnes propriétés\footnote{On se rappellera
-  par exemple que, dans le cas isotrope, le coefficient de
-  \nom{Poisson} ne peut pas prendre n'importe quelle valeur.},
-conduira à une loi hyperélastique.
-
 \paragraph{Calcul de la contrainte de \nom{Cauchy}} La dernière étape
 de la loi de comportement consiste à calculer la contrainte de
 \nom{Cauchy}. Supposons avoir choisi un tenseur des déformations
@@ -1128,8 +1126,27 @@ Cette relation étant valide pour tous les valeurs de
 La relation~\eqref{eq:Cauchy_S} permet alors de calculer la contrainte
 de \nom{Cauchy}.
 
-\subsubsection{Loi hyperélastique de \nom{Saint-Venant Kirchhoff}}
+\paragraph{Opérateur tangent} L'opérateur tangent naturel est la
+dérivée de la contrainte duale en fin de pas par rapport à l'incrément
+du tenseur de déformation choisi.
+
+\subsubsection{Lois lagrangiennes hyperélastiques}
 \label{sec:loi-hyper-de-1}
+
+Toute généralisation de la loi de \nom{Hooke} de la forme~:
+\[
+\tenseur{S}_{\varepsilon}=\tenseurq{D}\,\colon\,\tenseur{\varepsilon}
+\]
+où \(\tenseur{\varepsilon}\) est un tenseur de déformation lagrangien,
+\(\tenseur{S}_{\varepsilon}\) son tenseur dual et \(\tenseurq{D}\) un tenseur
+d'élasticité possédant les bonnes propriétés\footnote{On se rappellera
+  par exemple que, dans le cas isotrope, le coefficient de
+  \nom{Poisson} ne peut pas prendre n'importe quelle valeur.},
+conduira à une loi hyperélastique.
+
+Dans ce l'opérateur tangent naturel est évidemment \(\tenseurq{D}\).
+
+\paragraph{Loi hyperélastique de \nom{Saint-Venant Kirchhoff}}
 
 \begin{figure}[htbp]
   \centering
@@ -1147,8 +1164,8 @@ de \nom{Cauchy}.
 \end{figure}
 
 La loi de \nom{Saint-Venant Kirchhoff} est la loi hyperélastique la
-plus simple. Elle généralise la loi de \nom{Hooke} isotrope en reliant
-le tenseur de \nom{Green-Lagrange} au second tenseur de
+plus classique. Elle généralise la loi de \nom{Hooke} isotrope en
+reliant le tenseur de \nom{Green-Lagrange} au second tenseur de
 \nom{Piola-Kirchhoff} \(\tenseur{S}\)~:
 \[
 \tenseur{S}=\lambda\,\trace{\egl}\,\tenseur{I}+2\,\mu\egl
@@ -1157,7 +1174,12 @@ où \(\lambda\) et \(\mu\) sont les premier et second coefficients de
 \nom{Lame}.
 
 L'implantation de cette loi en \mfront{} est donnée en
-figure~\ref{fig:finitestrain:saintvenantkirchhoff}.
+figure~\ref{fig:finitestrain:saintvenantkirchhoff}. Nous avons montré
+comment il était possible de définir l'opérateur tangent de deux
+manières différentes. La première, la plus simple, est donnée par la
+dérivée de la seconde contrainte de \nom{Piola-Kirchhoff} par rapport
+à l'incrément du tenseur de \nom{Green-Lagrange}. La seconde est
+directement l'opérateur tangent attendu par \aster{}.
 
 \subsubsection{Grandes rotations, petites déformations}
 \label{sec:grand-rotat-petit}
@@ -1378,7 +1400,7 @@ sélectionner la stratégie présentée dans cette section.
 
 Une grande partie de la littérature sur l'élastoplasticité en grandes
 transformations a été consacrée à ce que l'on appelle la décomposition
-\(\tns{F}_{e}\,.\,\tns{F}_{p}\).%~\cite{Lee1969,Mandel73}.
+\(\tns{F}_{e}\,.\,\tns{F}_{p}\)~\cite{lee69:_elast_defor_finit_strain,mandel73:_equat_const_direc_milieux_plast_viscop}.
 
 La décomposition \(\tns{F}_{e}\,.\,\tns{F}_{p}\) est essentiellement
 une hypothèse cinématique. Nous commencerons par décrire cette
@@ -1571,36 +1593,6 @@ du système de glissement \(s\) s'écrit donc :
 Les différentes lois de plasticité cristalline se différencient par la
 relation entre la cission résolue \(\tau^s\) et la vitesse de
 glissement \(\gamma^s\).
-
-% Cette approche a eu un grand succès et a partagé la communauté entre
-% les partisans de cette décomposition et ceux d'une approche
-% lagrangienne~: c'est dans le cadre de cette opposition que
-% \nom{Naghdi} propose une vision très critique de ce
-% postulat~\cite{naghdi_critical_1990} et que nous avons trouvé
-% extrêmement instructive\footnote{Le principal défaut de cet article,
-%   qui sert de base à la plupart des détracteurs des approches
-%   lagrangiennes, est de ne présenter que la seule déformation de
-%   \nom{Green-Lagrange}, dont on a vu qu'elle n'exprime pas simplement
-%   le caractère isochore de l'écoulement plastique~: il suffit, pour
-%   rendre le papier de \nom{Naghdi} pleinement actuel, de
-%   \og{}~remplacer~\fg{} la seule déformation de \nom{Green-Lagrange}
-%   par la déformation de \nom{Hencky} pour le rendre pleinement
-%   actuel.}. Notre point de vue est plus pragmatique. Si nous avons
-% largement souligné les avantages d'une approche lagrangienne basée sur
-% les déformations logarithmiques, il y a deux situations pour
-% lesquelles une décomposition \(\tns{F}_{e}\,.\,\tns{F}_{p}\) est
-% particulièrement intéressante~:
-% \begin{itemize}
-% \item dans le cas d'une élasto-(visco)plasticité isotrope à
-%   écrouissage isotrope, \nom{Simo} et \nom{Miehe} ont proposé une loi
-%   de comportement extrêmement intéressante du point de vue de son
-%   efficacité numérique~\cite{simo_associative_1992}~;
-% \item dans le cas de la description de la plasticité cristalline,
-%   cette décomposition a une signification physique extrêmement
-%   plaisante et constitue le cadre le plus utilisé.
-% \end{itemize}
-
-% \paragraph{}
 
 \subsection{Formulations hypoélastiques}
 
