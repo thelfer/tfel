@@ -300,6 +300,8 @@ namespace mfront{
     this->glossaryNames.insert({"T","Temperature"});
   } // end of BehaviourData::BehaviourData()
 
+  BehaviourData::BehaviourData(const BehaviourData&) = default;
+
   void
   BehaviourData::addStaticVariable(const StaticVariableDescription& v)
   {

@@ -461,6 +461,7 @@ namespace mfront{
 #error "CyranoInterface::getGlobalIncludes : unsuported architecture"
 #endif
     d.sources[lib].push_back("cyrano"+name+".cxx");
+    d.epts[lib].push_back(name);
     d.epts[lib].push_back(this->getFunctionName(name));
     d.headers.push_back("MFront/Cyrano/cyrano"+name+".hxx");
     d.dependencies[lib].push_back("-lCyranoInterface");
@@ -490,16 +491,38 @@ namespace mfront{
   CyranoInterface::writeCyranoFortranFunctionDefine(std::ostream& out,
 							  const std::string& name) const
   {
+    out << "#define " << makeUpperCase(name) <<"_F77" << " F77_FUNC("
+	<< makeLowerCase(name) << "," << makeUpperCase(name) << ")\n";
     out << "#define cyrano" << makeUpperCase(name) <<"_F77" << " F77_FUNC(cyrano"
-	<< makeLowerCase(name) << ",Cyrano"
+	<< makeLowerCase(name) << ",CYRANO"
 	<< makeUpperCase(name) << ")\n\n";
   } // end of CyranoInterface::writeCyranoFortranFunctionDefine
 
   void
   CyranoInterface::writeCyranoFunctionDeclaration(std::ostream& out,
-							const std::string& name) const
+						  const std::string& name) const
   {
     using namespace std;
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n" << name
+    	<< "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
+    	<< "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"
+    	<< "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
+    	<< "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
+    	<< "const cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
+    	<< "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
+    	<< "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
+    	<< "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
+    	<< "      cyrano::CyranoInt *const);\n\n";
+    out << "MFRONT_SHAREDOBJ void\n" << makeUpperCase(name) <<"_F77"
+    	<< "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
+    	<< "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"
+    	<< "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
+    	<< "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
+    	<< "const cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
+    	<< "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
+    	<< "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
+    	<< "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
+    	<< "      cyrano::CyranoInt *const);\n\n";
     out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\ncyrano"
     	<< makeLowerCase(name)
     	<< "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
@@ -523,16 +546,38 @@ namespace mfront{
     	<< "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
     	<< "      cyrano::CyranoInt *const);\n\n";
   } // end of CyranoInterface::writeCyranoFunctionDeclaration
+  
+  static void
+  writeSecondaryStandardCyranoFunction(std::ostream& out,
+				       const std::string& fname,
+				       const std::string& n){
+    out << "MFRONT_SHAREDOBJ void\n" << fname
+	<< "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
+	<< "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"
+	<< "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
+	<< "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal *const DTEMP,\n"
+	<< "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    *const NPROPS,\n"
+	<< "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal *const DPRED,\n"
+	<< "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const NSTATV,\n"
+	<< "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
+	<< "cyrano::CyranoInt    *const KINC)\n"
+	<< "{\n"
+	<< n << "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
+	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+	<< "STRESS,NDI,KINC);\n";
+    out << "}\n\n";
+  }
 
   void
   CyranoInterface::writeStandardCyranoFunction(std::ostream& out,
-						     const std::string& n,
-						     const BehaviourDescription& mb) const
+					       const std::string& n,
+					       const BehaviourDescription& mb) const
   {
     using namespace std;
-    const string cyranoFortranFunctionName = this->getFunctionName(n)+"_F77";
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
-	<< this->getFunctionName(n)
+    const string uname = makeUpperCase(n)+"_F77";
+    const string fname2 = this->getFunctionName(n);
+    const string uname2 = "cyrano"+makeUpperCase(n)+"_F77";
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n" << n
 	<< "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
 	<< "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"
 	<< "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
@@ -560,22 +605,9 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
-    out << "MFRONT_SHAREDOBJ void\n" << cyranoFortranFunctionName
-	<< "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
-	<< "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"
-	<< "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
-	<< "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal *const DTEMP,\n"
-	<< "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    *const NPROPS,\n"
-	<< "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal *const DPRED,\n"
-	<< "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const NSTATV,\n"
-	<< "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
-	<< "cyrano::CyranoInt    *const KINC)\n"
-	<< "{\n"
-	<< this->getFunctionName(n)
-	<< "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
-	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC);\n";
-    out << "}\n\n";
+    writeSecondaryStandardCyranoFunction(out,uname,n);
+    writeSecondaryStandardCyranoFunction(out,fname2,n);
+    writeSecondaryStandardCyranoFunction(out,uname2,n);
   }
 
   void

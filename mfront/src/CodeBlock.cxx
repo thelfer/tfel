@@ -15,8 +15,12 @@
 
 namespace mfront{
 
-  CodeBlock::~CodeBlock()
-  {}
+  CodeBlock::CodeBlock() = default;
+  CodeBlock::CodeBlock(CodeBlock&&) = default;
+  CodeBlock::CodeBlock(const CodeBlock&) = default;
+  CodeBlock& CodeBlock::operator=(CodeBlock&&) = default;
+  CodeBlock& CodeBlock::operator=(const CodeBlock&) = default;
+  CodeBlock::~CodeBlock() = default;
 
 }
 

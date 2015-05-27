@@ -146,8 +146,8 @@ namespace mfront{
     }; // end of enum Mode
     //! constructor
     BehaviourData();
-    //! copy constructor (disabled)
-    BehaviourData(const BehaviourData&) = default;
+    //! copy constructor
+    explicit BehaviourData(const BehaviourData&);
     //! move constructor (disabled)
     BehaviourData(BehaviourData&&) = delete;
     //! assignement operator (disabled)

@@ -255,8 +255,29 @@ namespace mfront{
     writeUmatFunctionDeclaration(std::ostream&,
 				 const std::string&) const;
     /*!
+     * \brief an helper function
      * \param[out] out     : output file
      * \param[in]  name    : name of law
+     * \param[in]  suffix  : suffix library
+     * \param[in]  mb      : mechanical behaviour description
+     * \param[in]  m       : méthod called to write the function
+     */
+    virtual void
+    writeUmatFunction(std::ostream&,
+		      const std::string&,
+		      const std::string&,
+		      const BehaviourDescription&,
+		      void  (UMATInterface:: *)(std::ostream&,
+						const std::string&,
+						const std::string&,
+						const std::string&,
+						const std::string&,
+						const BehaviourDescription&) const) const;
+    /*!
+     * \param[out] out     : output file
+     * \param[in]  name    : name of law
+     * \param[in]  fname   : function name
+     * \param[in]  uname   : fortran function name
      * \param[in]  suffix  : suffix library
      * \param[in]  mb      : mechanical behaviourd description
      */
@@ -264,15 +285,21 @@ namespace mfront{
     writeFiniteRotationSmallStrainUmatFunction(std::ostream&,
 					       const std::string&,
 					       const std::string&,
+					       const std::string&,
+					       const std::string&,
 					       const BehaviourDescription&) const;
     /*!
      * \param[out] out     : output file
      * \param[in]  name    : name of law
+     * \param[in]  fname   : function name
+     * \param[in]  uname   : fortran function name
      * \param[in]  suffix  : suffix library
      * \param[in]  mb      : mechanical behaviourd description
      */
     virtual void
     writeMieheApelLambrechtLogarithmicStrainUmatFunction(std::ostream&,
+							 const std::string&,
+							 const std::string&,
 							 const std::string&,
 							 const std::string&,
 							 const BehaviourDescription&) const;
@@ -281,6 +308,8 @@ namespace mfront{
      * corresponding to the LOGARITHMICSTRAIN1D finite strain strategy
      * \param[out] out     : output file
      * \param[in]  name    : name of law
+     * \param[in]  fname   : function name
+     * \param[in]  uname   : fortran function name
      * \param[in]  suffix  : suffix library
      * \param[in]  mb      : mechanical behaviourd description
      */
@@ -288,15 +317,21 @@ namespace mfront{
     writeLogarithmicStrain1DUmatFunction(std::ostream&,
 					 const std::string&,
 					 const std::string&,
+					 const std::string&,
+					 const std::string&,
 					 const BehaviourDescription&) const;
     /*!
      * \param[out] out     : output file
      * \param[in]  name    : name of law
+     * \param[in]  fname   : function name
+     * \param[in]  uname   : fortran function name
      * \param[in]  suffix  : suffix library
      * \param[in]  mb      : mechanical behaviourd description
      */
     virtual void
     writeStandardUmatFunction(std::ostream&,
+			      const std::string&,
+			      const std::string&,
 			      const std::string&,
 			      const std::string&,
 			      const BehaviourDescription&) const;

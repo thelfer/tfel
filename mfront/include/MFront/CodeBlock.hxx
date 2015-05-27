@@ -26,11 +26,11 @@ namespace mfront{
    */
   struct MFRONT_VISIBILITY_EXPORT CodeBlock
   {
-    CodeBlock() = default;
-    CodeBlock(CodeBlock&&) = default;
-    CodeBlock(const CodeBlock&) = default;
-    CodeBlock& operator=(CodeBlock&&) = default;
-    CodeBlock& operator=(const CodeBlock&) = default;
+    CodeBlock();
+    CodeBlock(CodeBlock&&);
+    CodeBlock(const CodeBlock&);
+    CodeBlock& operator=(CodeBlock&&);
+    CodeBlock& operator=(const CodeBlock&);
     //! destructor
     ~CodeBlock();
     //! code

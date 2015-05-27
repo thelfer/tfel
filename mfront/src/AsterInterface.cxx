@@ -345,7 +345,7 @@ namespace mfront{
 	<< makeUpperCase(name)
 	<< "_F77 \\\n"
 	<< "        F77_FUNC(aster"
-	<< makeLowerCase(name) << ",Aster"
+	<< makeLowerCase(name) << ",ASTER"
 	<< makeUpperCase(name) << ")\n\n";
 
     out << "#ifdef __cplusplus\n\n";
@@ -370,6 +370,30 @@ namespace mfront{
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
+
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
+	<< name << "("
+	<< "aster::AsterReal *const,"       /*< tenseur des contraintes */
+	<< "aster::AsterReal *const,"       /*< variables internes */
+	<< "aster::AsterReal *const,"       /*< matrice jacobienne du modèle */
+	<< "const aster::AsterReal *const," /*< tenseur des déformations totales au début du pas */
+	<< "const aster::AsterReal *const," /*< tenseur des incréments de déformation totale */
+	<< "const aster::AsterReal *const," /*< incrément de temps */
+	<< "const aster::AsterReal *const," /*< température au début du pas */
+	<< "const aster::AsterReal *const," /*< incrément de température */
+	<< "const aster::AsterReal *const," /*< variables externes au début du pas */
+	<< "const aster::AsterReal *const," /*< incréments des variables externes */
+	<< "const aster::AsterInt  *const," /*< nombre de composantes du tenseur des contraintes */
+	<< "const aster::AsterInt  *const," /*< nombre de variables internes */
+	<< "const aster::AsterReal *const," /*< propriétés du matériaux */
+	<< "const aster::AsterInt  *const," /*< nombre de propriétés matériaux */
+	<< "const aster::AsterReal *const," /*< matrice de passage du repère local  
+					      de l'élement fini massif au repère géneral
+					      du maillage */
+	<< "aster::AsterReal *const," /*< rapport entre le nouveau pas de temps 
+					suggeré et le pas de temps donné en entrée */
+        << "const aster::AsterInt  *const" /*< type de modélisation */
+	<< ");\n\n";
 
     out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\naster"
 	<< makeLowerCase(name) << "("
@@ -469,26 +493,15 @@ namespace mfront{
     
     this->writeSetParametersFunctionsImplementations(out,name,mb);
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
-	<< this->getFunctionName(name) << "("
-	<< "aster::AsterReal *const STRESS,"       /*< tenseur des contraintes */
-	<< "aster::AsterReal *const STATEV,"       /*< variables internes */
-	<< "aster::AsterReal *const DDSOE,"       /*< matrice jacobienne du modèle */;
     string dv0;
     string dv1;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "const aster::AsterReal *const STRAN," /*< tenseur des déformations totales au début du pas */
-	  << "const aster::AsterReal *const DSTRAN,"; /*< tenseur des incréments de déformation totale */
       dv0 = "STRAN";
       dv1 = "DSTRAN";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "const aster::AsterReal *const F0,"  /*< gradient de la déformation au début du pas */
-	  << "const aster::AsterReal *const F1,"; /*< gradient de la déformation en fin   de pas */
       dv0 = "F0";
       dv1 = "F1";
     } else if (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
-      out << "const aster::AsterReal *const U0,"  /*< saut de déplacement au début du pas */
-	  << "const aster::AsterReal *const DU,"; /*< saut de déplacement en fin   de pas */
       dv0 = "U0";
       dv1 = "DU";
     } else {
@@ -496,7 +509,15 @@ namespace mfront{
 		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
       throw(runtime_error(msg));
     }
-    out << "const aster::AsterReal *const DTIME," /*< incrément de temps */
+
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
+	<< name << "("
+	<< "aster::AsterReal *const STRESS,"       /*< tenseur des contraintes */
+	<< "aster::AsterReal *const STATEV,"       /*< variables internes */
+	<< "aster::AsterReal *const DDSOE,"       /*< matrice jacobienne du modèle */
+	<< "const aster::AsterReal *const " << dv0 << "," /*< tenseur des déformations totales au début du pas */
+	<< "const aster::AsterReal *const " << dv1 << "," /*< tenseur des incréments de déformation totale */
+	<< "const aster::AsterReal *const DTIME," /*< incrément de temps */
 	<< "const aster::AsterReal *const TEMP," /*< température au début du pas */
 	<< "const aster::AsterReal *const DTEMP," /*< incrément de température */
 	<< "const aster::AsterReal *const PREDEF," /*< variables externes au début du pas */
@@ -662,6 +683,33 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
+    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
+	<< this->getFunctionName(name) << "("
+	<< "aster::AsterReal *const STRESS,"       /*< tenseur des contraintes */
+	<< "aster::AsterReal *const STATEV,"       /*< variables internes */
+	<< "aster::AsterReal *const DDSOE,"       /*< matrice jacobienne du modèle */
+	<< "const aster::AsterReal *const " << dv0 << "," /*< tenseur des déformations totales au début du pas */
+	<< "const aster::AsterReal *const " << dv1 << "," /*< tenseur des incréments de déformation totale */
+	<< "const aster::AsterReal *const DTIME," /*< incrément de temps */
+	<< "const aster::AsterReal *const TEMP," /*< température au début du pas */
+	<< "const aster::AsterReal *const DTEMP," /*< incrément de température */
+	<< "const aster::AsterReal *const PREDEF," /*< variables externes au début du pas */
+	<< "const aster::AsterReal *const DPRED," /*< incréments des variables externes */
+	<< "const aster::AsterInt  *const NTENS," /*< nombre de composantes du tenseur des contraintes */
+	<< "const aster::AsterInt  *const NSTATV," /*< nombre de variables internes */
+	<< "const aster::AsterReal *const PROPS," /*< propriétés du matériaux */
+	<< "const aster::AsterInt  *const NPROPS," /*< nombre de propriétés matériaux */
+	<< "const aster::AsterReal *const DROT," /*< matrice de passage du repère local  
+						   de l'élement fini massif au repère géneral
+						   du maillage */
+	<< "aster::AsterReal *const PNEWDT," /*< rapport entre le nouveau pas de temps 
+					       suggeré et le pas de temps donné en entrée */
+        << "const aster::AsterInt *const NUMMOD" /*< type de modélisation */
+	<< ")\n"
+	<< "{\n"
+	<< name << "(STRESS,STATEV,DDSOE," << dv0 << "," << dv1 << ",DTIME,TEMP,DTEMP,\n"
+	<< "PREDEF,DPRED,NTENS,NSTATV,PROPS,NPROPS,DROT,PNEWDT,NUMMOD);\n"
+	<< "}\n\n";
     out << "} // end of extern \"C\"\n";
     out.close();
   } // end of AsterInterface::endTreatment
@@ -719,7 +767,8 @@ namespace mfront{
       d.dependencies[lib].push_back("-lMTestFileGenerator");
     }
     d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
-    d.epts[lib].push_back("aster"+makeLowerCase(name));
+    d.epts[lib].push_back(name);
+    d.epts[lib].push_back(this->getFunctionName(name));
   } // end of AsterInterface::getGeneratedSources
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
