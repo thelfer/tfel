@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_H_
-#define LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_H_ 
+#ifndef _LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_H_
+#define _LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_H_ 
 
 #include "MFront/BehaviourBrickBase.hxx"
 
@@ -59,24 +59,35 @@ namespace mfront{
     ElasticityBehaviourBrick(AbstractBehaviourDSL&,
 			     BehaviourDescription&,
 			     const Parameters&);
+    //! \return the name of the brick
+    virtual std::string getName() const override;
+    /*!
+     * \return the list of supported modelling hypotheses.
+     */
+    virtual std::vector<Hypothesis> 
+    getSupportedModellingHypotheses(void) const override;
     //! ends the file treatment
     virtual void 
-    endTreatment(BehaviourDescription&) const override;
-    //! destructor
+    endTreatment(void) const override;
+    /*!
+     * destructor
+     */
     virtual ~ElasticityBehaviourBrick();
   protected:
     /*!
      * treat the case of isotropic behaviours
      */
     virtual void
-    treatIsotropicBehaviour(void);
+    treatIsotropicBehaviour(void) const;
     /*!
      * treat the case of isotropic behaviours
      */
     virtual void
-    treatOrthotropicBehaviour(void);
+    treatOrthotropicBehaviour(void) const;
+    bool pss; //!< plane stress support
+    bool gto; //!< generic tangent operator support support
   }; // end of struct ElasticityBehaviourBrick
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_H_ */
+#endif /* _LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_H */

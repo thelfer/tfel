@@ -362,7 +362,7 @@ namespace mfront{
       log << "BehaviourDSLCommon::endsInputFileProcessing : begin" << endl;
     }
     for(const auto& pb : this->bricks){
-      pb->endTreatment(this->mb);
+      pb->endTreatment();
     }
     if(!this->mb.areModellingHypothesesDefined()){
       this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());

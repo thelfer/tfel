@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICKBASE_H_
-#define LIB_MFRONT_BEHAVIOURBRICKBASE_H_ 
+#ifndef _LIB_MFRONT_BEHAVIOURBRICKBASE_H_
+#define _LIB_MFRONT_BEHAVIOURBRICKBASE_H_ 
 
 #include"MFront/AbstractBehaviourBrick.hxx"
 
@@ -29,8 +29,7 @@ namespace mfront{
   struct BehaviourDescription;
 
   /*!
-   * an helper class providing a set of helper method to build
-   * BehaviourBricks.
+   * an helper class providing a set of helper method to build BehaviourBricks.
    */
   struct BehaviourBrickBase
     : public AbstractBehaviourBrick
@@ -51,6 +50,14 @@ namespace mfront{
      */
     virtual void
     checkThatParameterHasNoValue(const Parameter&) const;
+    // /*!
+    //  * Check if a local variable (L), a paramater (P), a material
+    //  * property (M), a material law (ML) with the given glossary name
+    //  * has been defined.
+    //  * \return the type of the variable and 
+    //  */
+    // virtual std::pair<bool,std::string>
+    // isLVPMMLDefined(const std::string&);
     /*!
      * \brief add a new material property
      * \param[in] t: type of the material property
@@ -77,5 +84,5 @@ namespace mfront{
 
 }
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICKBASE_H_ */
+#endif /* _LIB_MFRONT_BEHAVIOURBRICKBASE_H */
 

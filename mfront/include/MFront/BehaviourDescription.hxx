@@ -47,6 +47,18 @@ namespace mfront
       public SupportedTypes  
   {
     /*!
+     * \brief variable type
+     */
+    enum VariableType{
+      MATERIALPROPERTY,
+      STATEVARIABLE,
+      AUXILIARYSTATEVARIABLE,
+      INTEGRATIONVARIABLE,
+      LOCALVARIABLE,
+      PARAMETER,
+      MATERIALLAW
+    }; // end of struct variable type
+    /*!
      * \brief Available integration schemes.
      * One of the first thing a parser shall do is to set the
      * integration scheme it uses.
@@ -263,11 +275,17 @@ namespace mfront
     void
     setSymmetryType(const BehaviourSymmetryType);
 
+    bool
+    isSymmetryTypeDefined() const;
+
     BehaviourSymmetryType
     getElasticSymmetryType() const;
 
     void
     setElasticSymmetryType(const BehaviourSymmetryType);
+    
+    bool
+    isElasticSymmetryTypeDefined() const;
     /*!
      * \return a mechanical behaviour data associated with the
      * given modelling hypothesis
@@ -308,10 +326,18 @@ namespace mfront
     isModellingHypothesisSupported(const Hypothesis) const;
     /*!
      * \brief set the list of supported modelling hypotheses
-     * \param[in] h : supported modelling hypothesis
+     * \param[in] h : supported modelling hypotheses
+     * \param[in] b : parameter used if some modelling hypotheses are
+     * already defined. In this case:
+     * - if b is true, the resulting modelling hypotheses
+     *   will be the intersection of the given modelling hypotheses and
+     *   the already declared ones. If such intersection is empty, an
+     *   exception is thrown.
+     * - if b is false, an exception is thrown.
      */
     void
-    setModellingHypotheses(const std::set<Hypothesis>&);
+    setModellingHypotheses(const std::set<Hypothesis>&,
+			   const bool b = false);
     /*!
      * \brief add material properties
      * \param[in] h : modelling hypothesis

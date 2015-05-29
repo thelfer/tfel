@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/include/MFront/AbstractBehaviourBrick.hxx
+ * \file   mfront/include/MFront/BehaviourBrick.hxx
  * \brief
  * \author Helfer Thomas
  * \date   October 20, 2014
@@ -10,12 +10,15 @@
  * with the sources of TFEL. CEA or EDF may also distribute this 
  * project under specific licensing conditions. 
  */
+/* <!-- Local IspellDict: english --> */
 
-#ifndef LIB_MFRONT_MFRONTBEHAVIOURBRICK_H_
-#define LIB_MFRONT_MFRONTBEHAVIOURBRICK_H_ 
+#ifndef _LIB_MFRONT_MFRONTBEHAVIOURBRICK_H_
+#define _LIB_MFRONT_MFRONTBEHAVIOURBRICK_H_ 
 
 #include<map>
 #include<string>
+#include<vector>
+#include"TFEL/Material/ModellingHypothesis.hxx"
 
 namespace mfront
 {
@@ -24,26 +27,53 @@ namespace mfront
   struct BehaviourDescription;
 
   /*!
-   * AbstractBehaviourBrick are ready-to use block used to build a complex behaviour.
+   * BehaviourBrick are ready-to use block used to build a complex
+   * behaviour.
    */
   struct AbstractBehaviourBrick
   {
+    //! a simple alias
+    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
     /*!
-     * Object used to pass parameters to AbstractBehaviourBricks constructor
+     * Object used to pass parameters to BehaviourBricks constructor
      * The key   is the parameter name.
      * The value is the parameter value.
      */
-    using Parameters = std::map<std::string,std::string>;
+    typedef std::map<std::string,std::string> Parameters;
     //! a simple alias
-    using Parameter  = Parameters::value_type;
+    typedef Parameters::value_type Parameter;
+    /*!
+     * \brief return the name of the brick
+     */
+    virtual std::string
+    getName() const = 0;
+    /*!
+     * \brief This method returns the list of supported modelling
+     * hypotheses that are supported by the brick.
+     *
+     * This method is called after the input file processing. Two
+     * cases may arise:
+     * - if the user has specified a list of supported modelling
+     *   hypotheses, this list is used to check if the user's request
+     *   can be fulfilled. If the brick returns an empty list, it
+     *   means that the brick does not have any restriction.
+     * - if the user has not specified the list of supported modelling
+     *   hypotheses, this method is used to select a list of supported
+     *   modelling hypotheses. If the brick returns an empty list, it
+     *   means that the brick does not participate to the modelling
+     *   hypotheses selection. If all the bricks returns an empty
+     *   list, a set of default modelling hypotheses is selected.
+     */
+    virtual std::vector<Hypothesis> 
+    getSupportedModellingHypotheses(void) const =0;
     //! ends the file treatment
     virtual void 
-    endTreatment(BehaviourDescription&) const = 0;
-    //! destructor
+    endTreatment() const = 0;
+    //! descructor
     virtual ~AbstractBehaviourBrick();
   }; // end of struct AbstractBehaviourBrick
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTBEHAVIOURBRICK_H_ */
+#endif /* _LIB_MFRONT_MFRONTBEHAVIOURBRICK_H */
 

@@ -52,12 +52,20 @@ q3.setEntryName("ThirdGursonParameter");
 @LocalVariable ushort nbroken; // number of times the material has been considered broken during the time step
 @LocalVariable bool broken;
 @LocalVariable real Phi_el;
+@LocalVariable real delta;
+@LocalVariable real flim;
 
 @InitLocalVariables{
   using namespace tfel::material::lame;
+  delta = ((ffb-fc)/(fmax-fc));
   const temperature T_ = T+theta*dT;
-  const real feq = (f<fc ? f : fc+((ffb-fc)/(fmax-fc))*(f-fc));
-  broken = (feq>=0.95/q1);
+  const real feq = (f<fc ? f : fc+delta*(f-fc));
+  if(q3>q1){
+    string msg("gurson : q3 is greater than q1 !");
+    throw(runtime_error(msg));
+  }
+  flim   = min(fc+delta*(fmax-fc),0.95*(q1-sqrt(q1*q1-q3*q3))/(q3*q3));
+  broken = (feq>=flim);
   if(!broken){
     //Calcul des coefficients d'élasticité et du tenseur d'élasticité
     young         = 209999.e6;
@@ -74,7 +82,6 @@ q3.setEntryName("ThirdGursonParameter");
     const real sigeq_r = seq_el/sm;
     const real pr_r    = pr_el/sm;
     const real exp_pr_r   = exp((3*q2/2.)*pr_r);
-    const real sinh_pr_r  = 0.5*(exp_pr_r-1/exp_pr_r);
     const real cosh_pr_r  = 0.5*(exp_pr_r+1/exp_pr_r);
     Phi_el = sigeq_r*sigeq_r+2*q1*feq*cosh_pr_r-1-q3*feq*feq;
   }
@@ -93,13 +100,13 @@ q3.setEntryName("ThirdGursonParameter");
   const real fs      = (ffb-fc)/(fmax-fc);
   const real feq_    = (f_<fc) ? f_ : fc+fs*(f_-fc);
   const real dfeq_df = (f_<fc) ? real(1) : fs;
-  if(feq_>0.95/q1){
+  if(feq_>flim){
     ++nbroken;
     if(nbroken>4){
       broken=true;
     }
   }
-  if(!(broken || (feq_>0.95/q1))){
+  if(!(broken || (feq_>flim))){
     const Stensor4 H     = Stensor4::M();
     const StrainStensor id = StrainStensor::Id();
     const real em_       = max(em+theta*dem,real(0));
@@ -181,8 +188,8 @@ q3.setEntryName("ThirdGursonParameter");
 @ComputeFinalStress{
   if(!broken){
     const real f_  = max(f,real(0));
-    const real feq_ = ((f_<fc) ? f_ : fc+((ffb-fc)/(fmax-fc))*(f_-fc));
-    broken = feq_>0.95/q1;
+    const real feq_ = ((f_<fc) ? f_ : fc+delta*(f_-fc));
+    broken = feq_>flim;
   }
   if(!broken){
     sig = lambda*trace(eel)*StrainStensor::Id()+2*mu*eel;

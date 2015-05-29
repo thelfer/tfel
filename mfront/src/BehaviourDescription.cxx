@@ -443,6 +443,12 @@ namespace mfront
     this->estypeIsDefined=true;
   } // end of BehaviourDescription::setElasticSymmetryType
 
+  bool
+  BehaviourDescription::isElasticSymmetryTypeDefined() const
+  {
+    return this->estypeIsDefined;
+  } // end of BehaviourDescription::setSymmetryType
+
   BehaviourSymmetryType
   BehaviourDescription::getSymmetryType() const
   {
@@ -464,6 +470,12 @@ namespace mfront
     }
     this->stype = t;
     this->stypeIsDefined=true;
+  } // end of BehaviourDescription::setSymmetryType
+  
+  bool
+  BehaviourDescription::isSymmetryTypeDefined() const
+  {
+    return this->stypeIsDefined;
   } // end of BehaviourDescription::setSymmetryType
   
   void
@@ -779,7 +791,8 @@ namespace mfront
   }
 
   void
-  BehaviourDescription::setModellingHypotheses(const std::set<Hypothesis>& h)
+  BehaviourDescription::setModellingHypotheses(const std::set<Hypothesis>& h,
+					       const bool b)
   {
     using namespace std;
     // never ever trust a user
@@ -821,7 +834,32 @@ namespace mfront
 	throw(runtime_error(msg));
       }
     }
-    this->hypotheses.insert(h.begin(),h.end());
+    if(this->hypotheses.empty()){
+      this->hypotheses.insert(h.begin(),h.end());
+    } else {
+      if(b){
+	// find the intersection of the given hypotheses and the
+	// existing one
+	set<Hypothesis> nh;
+	for(set<Hypothesis>::const_iterator ph=this->hypotheses.begin();
+	    ph!=this->hypotheses.end();++ph){
+	  if(h.find(*ph)!=h.end()){
+	    nh.insert(*ph);
+	  }
+	}
+	if(nh.empty()){
+	  string msg("BehaviourDescription::setHypotheses : "
+		     "intersection of previously modelling hypotheses "
+		     "with the new ones is empty");
+	  throw(runtime_error(msg));
+	}
+	this->hypotheses.swap(nh);
+      } else {
+	string msg("BehaviourDescription::setHypotheses : "
+		   "supported modelling hypotheses have already been declared");
+	throw(runtime_error(msg));
+      }
+    }
   } // end of BehaviourDescription::setModellingHypotheses
 
   void

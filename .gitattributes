@@ -3072,6 +3072,9 @@ mfront/tests/properties/interfaces/src/MFrontPleiadesMaterialPropertyInterface-2
 mfront/tests/properties/interfaces/src/Makefile.am -text
 mfront/tests/properties/test-c.c -text
 mfront/tests/properties/test-f.c -text
+mfront/tests/unit-tests/BehaviourDescriptionTest.cxx -text
+mfront/tests/unit-tests/CMakeLists.txt -text
+mfront/tests/unit-tests/Makefile.am -text
 src/CMakeLists.txt -text
 src/Exception/CMakeLists.txt -text
 src/Exception/Makefile.am -text

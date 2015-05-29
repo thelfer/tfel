@@ -22,19 +22,33 @@
 
 namespace mfront{
 
+  static void
+  setElasticSymmetryType(BehaviourDescription& bd,
+			 const BehaviourSymmetryType s)
+  {
+    using namespace std;
+    if(bd.isElasticSymmetryTypeDefined()){
+      if(bd.getElasticSymmetryType()!=s){
+	string msg("setElasticSymmetryType : "
+		   "the elastic symmetry type defined for "
+		   "the behaviour is inconsistent with the option "
+		   "passed to the 'Elasticity' brick.");
+	throw(runtime_error(msg));
+      }
+    } else {
+      bd.setElasticSymmetryType(s);
+    }
+  } // end of setElasticSymmetryType
+
   ElasticityBehaviourBrick::ElasticityBehaviourBrick(AbstractBehaviourDSL& dsl_,
 						     BehaviourDescription& mb_,
 						     const AbstractBehaviourBrick::Parameters& p)
-    : BehaviourBrickBase(dsl_,mb_)
+    : BehaviourBrickBase(dsl_,mb_),
+      pss(true),
+      gto(true)
   {
     using namespace std;
-    using namespace tfel::glossary;
-    typedef tfel::material::ModellingHypothesis MH;
-    typedef MH::Hypothesis Hypothesis;
-    const Hypothesis h = MH::UNDEFINEDHYPOTHESIS;
-    bool pss = true; //< plane stress support
-    bool gto = true; //< generic tangent operator support support
-    // checks
+    // reserve some specific variables
     this->dsl.reserveName("Je",false);
     // basic checks
     if(this->bd.getBehaviourType()!=
@@ -50,57 +64,49 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     // parameters
-    for(const auto & elem : p){
-      if(elem.first=="NoPlaneStressSupport"){
-	this->checkThatParameterHasNoValue(elem);
-	pss = false;
-      } else if(elem.first=="Isotropic"){
-	this->checkThatParameterHasNoValue(elem);
-	this->bd.setElasticSymmetryType(mfront::ISOTROPIC);
-      } else if(elem.first=="Orthotropic"){
-	this->checkThatParameterHasNoValue(elem);
-	this->bd.setElasticSymmetryType(mfront::ORTHOTROPIC);
-      } else if(elem.first=="NoGenericTangentOperator"){
-	this->checkThatParameterHasNoValue(elem);
-	gto = false;
-	throw(runtime_error("ElasticityBehaviourBrick: unimplemented parameter handling"));
+    for(AbstractBehaviourBrick::Parameters::const_iterator pp=p.begin();pp!=p.end();++pp){
+      if(pp->first=="Isotropic"){
+	this->checkThatParameterHasNoValue(*pp);
+	setElasticSymmetryType(this->bd,mfront::ISOTROPIC);
+      } else if(pp->first=="Orthotropic"){
+	this->checkThatParameterHasNoValue(*pp);
+	setElasticSymmetryType(this->bd,mfront::ORTHOTROPIC);
+      } else if(pp->first=="NoPlaneStressSupport"){
+	this->checkThatParameterHasNoValue(*pp);
+	this->pss = false;
+      } else if(pp->first=="NoGenericTangentOperator"){
+	this->checkThatParameterHasNoValue(*pp);
+	this->gto = false;
       } else {
 	string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		   "unsupported parameter '"+elem.first+"'");
+		   "unsupported parameter '"+pp->first+"'");
 	throw(runtime_error(msg));
       }
     }
-    // modelling hypothesis
-    if(!this->bd.areModellingHypothesesDefined()){
-      set<Hypothesis> mh = this->dsl.getDefaultModellingHypotheses();
-      if(pss){
-	if(mh.count(MH::PLANESTRESS)==0){
-	  if(this->dsl.isModellingHypothesisSupported(MH::PLANESTRESS)){
-	    mh.insert(MH::PLANESTRESS);
-	  }
-	}
-	if(mh.count(MH::PLANESTRESS)==0){
-	  if(this->dsl.isModellingHypothesisSupported(MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
-	    mh.insert(MH::AXISYMMETRICALGENERALISEDPLANESTRESS);
-	  }
-	}
-      }
-      this->bd.setModellingHypotheses(mh);
+    if(this->pss){
+      this->dsl.registerVariable("etozz",false);
+      this->dsl.registerVariable("detozz",false);
     }
-    const auto& bmh = this->bd.getModellingHypotheses();
-    if(((bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0)||
-	(bmh.count(MH::PLANESTRESS)!=0))&&(!pss)){
-      string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : ");
-      msg += "support for plane stress must be provided by the brick";
-      throw(runtime_error(msg));
-    }
+   } // end of ElasticityBehaviourBrick::ElasticityBehaviourBrick
+
+  
+  void 
+  ElasticityBehaviourBrick::endTreatment(void) const
+  {
+    using namespace std;
+    using tfel::glossary::Glossary; 
+    typedef tfel::material::ModellingHypothesis MH; 
+    typedef MH::Hypothesis Hypothesis; 
+    const Hypothesis h = MH::UNDEFINEDHYPOTHESIS;
+    // modelling hypotheses supported by the behaviour
+    const set<Hypothesis> bmh = bd.getModellingHypotheses();
     // deformation strain
-    pair<bool,bool> b = this->bd.checkVariableExistence("eel");
+    const pair<bool,bool> b = this->bd.checkVariableExistence("eel");
     if(b.first){
       if(!b.second){
-	string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		   "'eel' is not declared for all specialisation of the behaviour");
-	throw(runtime_error(msg));
+    	string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
+    		   "'eel' is not declared for all specialisation of the behaviour");
+    	throw(runtime_error(msg));
       }
       this->bd.checkVariableExistence("eel","StateVariable");
       this->bd.checkVariablePosition("eel","StateVariable",0u);
@@ -121,34 +127,71 @@ namespace mfront{
       smts.code = "this->sig=(this->D)*(this->eel+theta*(this->deel));\n";
       sets.code = "this->sig=(this->D)*(this->eel);\n";
       this->bd.setCode(h,BehaviourData::ComputeStress,
-		       smts,BehaviourData::CREATE,
-		       BehaviourData::AT_BEGINNING,false);
+    		       smts,BehaviourData::CREATE,
+    		       BehaviourData::AT_BEGINNING,false);
       this->bd.setCode(h,BehaviourData::ComputeFinalStress,
-		       sets,BehaviourData::CREATE,
-		       BehaviourData::AT_BEGINNING,false);
+    		       sets,BehaviourData::CREATE,
+    		       BehaviourData::AT_BEGINNING,false);
     } else {
       if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	this->treatIsotropicBehaviour();	
+    	this->treatIsotropicBehaviour();	
       } else if(this->bd.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-	this->treatOrthotropicBehaviour();
+    	this->treatOrthotropicBehaviour();
       } else {
-	string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		   "unsupported elastic symmetry type");
-	throw(runtime_error(msg));
+    	string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
+    		   "unsupported elastic symmetry type");
+    	throw(runtime_error(msg));
       }
     }
     // consistency checks
-    if((bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0)||
-       (bmh.count(MH::PLANESTRESS)!=0)){
-      if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-	if(!this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	  this->bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,true,false);
-	}
-	if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	  string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		     "support for plane stress requires the use of an unaltered stiffness tensor");
-	  throw(runtime_error(msg));
-	}
+    // plane stress support
+    if(this->pss){
+      const bool agps = bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS);
+      const bool ps   = bmh.count(MH::PLANESTRESS);
+      VariableDescription etozz("strain","etozz",1u,0u);
+      etozz.description = "axial strain";
+      if(agps){
+	this->bd.addStateVariable(MH::AXISYMMETRICALGENERALISEDPLANESTRESS,etozz);
+	this->bd.setGlossaryName(MH::AXISYMMETRICALGENERALISEDPLANESTRESS,
+				 "etozz",Glossary::AxialStrain);
+	CodeBlock integrator;
+	integrator.code += "// the plane stress equation is satisfied at the end of the time\n";
+	integrator.code += "// step\n";
+	integrator.code += "const stress szz = (lambda+2*mu)*(this->eel(1)+this->deel(1))+lambda*(this->eel(0)+this->deel(0)+this->eel(2)+this->deel(2));\n";
+	integrator.code += "fetozz   = (szz-this->sigzz-this->dsigzz)/this->young;\n";
+	integrator.code += "// modification of the partition of strain\n";
+	integrator.code += "feel(1) -= this->detozz;\n";
+	integrator.code += "// jacobian\n";
+	integrator.code += "dfeel_ddetozz(1)=-1;\n";
+	integrator.code += "dfetozz_ddetozz  = real(0);\n";
+	integrator.code += "dfetozz_ddeel(1) = (this->lambda+2*(this->mu))/this->young;\n";
+	integrator.code += "dfetozz_ddeel(0) = this->lambda/this->young;\n";
+	integrator.code += "dfetozz_ddeel(2) = this->lambda/this->young;\n";
+	this->bd.setCode(MH::AXISYMMETRICALGENERALISEDPLANESTRESS,
+			 BehaviourData::Integrator,
+			 integrator,BehaviourData::CREATEORAPPEND,
+			 BehaviourData::AT_END);
+      }
+      if(ps){
+	this->bd.addStateVariable(MH::PLANESTRESS,etozz);
+	this->bd.setGlossaryName(MH::PLANESTRESS,
+				 "etozz",Glossary::AxialStrain);
+	CodeBlock integrator;
+	integrator.code += "// the plane stress equation is satisfied at the end of the time\n";
+	integrator.code += "// step\n";
+	integrator.code += "const stress szz = (this->lambda+2*(this->mu))*(this->eel(2)+this->deel(2))+this->lambda*(this->eel(0)+this->deel(0)+this->eel(1)+this->deel(1));\n";
+	integrator.code += "fetozz   = szz/(this->young);\n";
+	integrator.code += "// modification of the partition of strain\n";
+	integrator.code += "feel(2) -= detozz;\n";
+	integrator.code += "// jacobian\n";
+	integrator.code += "dfeel_ddetozz(2)=-1;\n";
+	integrator.code += "dfetozz_ddetozz  = real(0);\n";
+	integrator.code += "dfetozz_ddeel(2) = (this->lambda+2*(this->mu))/this->young;\n";
+	integrator.code += "dfetozz_ddeel(0) = this->lambda/this->young;\n";
+	integrator.code += "dfetozz_ddeel(1) = this->lambda/this->young;\n";
+	this->bd.setCode(MH::PLANESTRESS,BehaviourData::Integrator,
+			 integrator,BehaviourData::CREATEORAPPEND,
+			 BehaviourData::AT_END);
       }
     }
     // tangent operator
@@ -156,54 +199,68 @@ namespace mfront{
       CodeBlock tangentOperator;
       ostringstream to;
       if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-	to << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl
-	   << "  computeAlteredStiffnessTensor<hypothesis>::exe(this->Dt,this->D);" << endl
-	   << "} else if (smt==CONSISTENTTANGENTOPERATOR){" << endl
-	   << "  Stensor4 Je;" << endl
-	   << "  getPartialJacobianInvert(Je);" << endl
-	   << "  this->Dt = (this->D)*Je;" << endl
-	   << "} else {" << endl
-	   << "  return false;" << endl
-	   << "}";
-	tangentOperator.code = to.str();
-	this->bd.setCode(h,BehaviourData::ComputeTangentOperator,
-			 tangentOperator,BehaviourData::CREATEORAPPEND,
-			 BehaviourData::AT_BEGINNING);
-      } else {
-	if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	  to << "using namespace tfel::material::lame;" << endl
-	     << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl
-	     << "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);" << endl
-	     << "} else if (smt==CONSISTENTTANGENTOPERATOR){" << endl
-	     << "  StiffnessTensor Hooke;" << endl
-	     << "  Stensor4 Je;" << endl
-	     << "  computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);" << endl
-	     << "  getPartialJacobianInvert(Je);" << endl
-	     << "  Dt = Hooke*Je;" << endl
-	     << "} else {" << endl
-	     << "  return false;" << endl
-	     << "}";
-	} else if(this->bd.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-	  string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		     "orthotropic behaviour shall require the stiffness tensor");
-	  throw(runtime_error(msg));
-	} else {
-	  string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		     "unsupported elastic symmetry type");
-	  throw(runtime_error(msg));
+	const bool agps = bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS);
+	const bool ps   = bmh.count(MH::PLANESTRESS);
+	if(agps or ps){
+	  if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
+	    if(!this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
+	      this->bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,true,false);
+	    }
+	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
+	      string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
+			 "support for plane stress requires the use of an unaltered stiffness tensor");
+	      throw(runtime_error(msg));
+	    }
+	  }
 	}
+    	to << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl
+    	   << "  this->Dt = this->D;" << endl
+    	   << "} else if (smt==CONSISTENTTANGENTOPERATOR){" << endl
+    	   << "  Stensor4 Je;" << endl
+    	   << "  getPartialJacobianInvert(Je);" << endl
+    	   << "  this->Dt = (this->D)*Je;" << endl
+    	   << "} else {" << endl
+    	   << "  return false;" << endl
+    	   << "}";
+    	tangentOperator.code = to.str();
+    	this->bd.setCode(h,BehaviourData::ComputeTangentOperator,
+    			 tangentOperator,BehaviourData::CREATEORAPPEND,
+    			 BehaviourData::AT_BEGINNING);
+      } else {
+    	if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
+    	  to << "using namespace tfel::material::lame;" << endl
+    	     << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl
+    	     << "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);" << endl
+    	     << "} else if (smt==CONSISTENTTANGENTOPERATOR){" << endl
+    	     << "  StiffnessTensor Hooke;" << endl
+    	     << "  Stensor4 Je;" << endl
+    	     << "  computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);" << endl
+    	     << "  getPartialJacobianInvert(Je);" << endl
+    	     << "  Dt = Hooke*Je;" << endl
+    	     << "} else {" << endl
+    	     << "  return false;" << endl
+    	     << "}";
+    	} else if(this->bd.getElasticSymmetryType()==mfront::ORTHOTROPIC){
+    	  string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
+    		     "orthotropic behaviour shall require the stiffness tensor");
+    	  throw(runtime_error(msg));
+    	} else {
+    	  string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
+    		     "unsupported elastic symmetry type");
+    	  throw(runtime_error(msg));
+    	}
       }
     }
     // implicit equation associated with the elastic strain
     CodeBlock integrator;
     integrator.code = "feel -= this->deto;\n";
     this->bd.setCode(h,BehaviourData::Integrator,
-		     integrator,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_BEGINNING);
-   } // end of ElasticityBehaviourBrick::ElasticityBehaviourBrick
+    		     integrator,BehaviourData::CREATEORAPPEND,
+    		     BehaviourData::AT_BEGINNING);
+} // end of ElasticityBehaviourBrick::endTreatment
 
   void
-  ElasticityBehaviourBrick::treatIsotropicBehaviour()
+  ElasticityBehaviourBrick::treatIsotropicBehaviour(void) const
   {
     using tfel::glossary::Glossary; 
     typedef tfel::material::ModellingHypothesis MH; 
@@ -237,7 +294,7 @@ namespace mfront{
   } // end of ElasticityBehaviourBrick::treatIsotropicBehaviour
 
   void
-  ElasticityBehaviourBrick::treatOrthotropicBehaviour()
+  ElasticityBehaviourBrick::treatOrthotropicBehaviour(void) const
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH; 
@@ -253,9 +310,28 @@ namespace mfront{
     }
   } // end of ElasticityBehaviourBrick::treatOrthotropicBehaviour
 
-  void 
-  ElasticityBehaviourBrick::endTreatment(BehaviourDescription&) const
-  {} // end of ElasticityBehaviourBrick::endTreatment
+  std::string
+  ElasticityBehaviourBrick::getName() const{
+    return "Elasticity";
+  }
+  
+  std::vector<tfel::material::ModellingHypothesis::Hypothesis> 
+  ElasticityBehaviourBrick::getSupportedModellingHypotheses(void) const
+  {
+    using namespace std;
+    typedef tfel::material::ModellingHypothesis MH;
+    set<MH::Hypothesis> dmh = this->dsl.getDefaultModellingHypotheses();
+    vector<MH::Hypothesis> mh(dmh.begin(),dmh.end());
+    if(this->pss){
+      if(this->dsl.isModellingHypothesisSupported(MH::PLANESTRESS)){
+	mh.push_back(MH::PLANESTRESS);
+      }
+      if(this->dsl.isModellingHypothesisSupported(MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	mh.push_back(MH::AXISYMMETRICALGENERALISEDPLANESTRESS);
+      }
+    }
+    return mh;
+  } // end of ElasticityBehaviourBrick::getSupportedModellingHypothesis
 
   ElasticityBehaviourBrick::~ElasticityBehaviourBrick()
   {} // end of ElasticityBehaviourBrick::~ElasticityBehaviourBrick

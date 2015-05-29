@@ -485,6 +485,7 @@ AC_OUTPUT([debug.sh
 	   mfront/include/Makefile
 	   mfront/src/Makefile
            mfront/src/MFrontHeader.cxx
+           mfront/tests/unit-tests/Makefile
            mfront/mtest/Makefile
            mfront/tests/Makefile
            mfront/tests/properties/Makefile
