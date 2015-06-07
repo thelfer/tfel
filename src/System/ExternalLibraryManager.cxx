@@ -13,10 +13,13 @@
 
 #include<stdexcept>
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#define NOMINMAX
 #include <windows.h>
 #else
 #include<dlfcn.h>
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+
+#include<iterator>
 
 #include"TFEL/System/getFunction.h"
 #include"TFEL/System/ExternalLibraryManager.hxx"

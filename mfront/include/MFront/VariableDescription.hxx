@@ -17,6 +17,7 @@
 #include<map>
 #include<vector>
 #include<string>
+#include<initializer_list>
 
 #include"MFront/MFrontConfig.hxx"
 
@@ -30,6 +31,7 @@ namespace mfront
    */
   struct MFRONT_VISIBILITY_EXPORT VariableDescription
   {
+    VariableDescription();
     VariableDescription(const VariableDescription&);
     VariableDescription(VariableDescription&&);
     VariableDescription&
@@ -78,14 +80,15 @@ namespace mfront
   typedef VariableDescription  VarHandler;
 
   //! a simple wrapper around the std::vector class
-  struct VariableDescriptionContainer
+  struct MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
     : private std::vector<VariableDescription>
   {
-    VariableDescriptionContainer() = default;
-    VariableDescriptionContainer(VariableDescriptionContainer&&) = default;
-    VariableDescriptionContainer(const VariableDescriptionContainer&) = default;
-    VariableDescriptionContainer& operator=(VariableDescriptionContainer&&) = default;
-    VariableDescriptionContainer& operator=(const VariableDescriptionContainer&) = default;
+    VariableDescriptionContainer();
+    VariableDescriptionContainer(const std::initializer_list<VariableDescription>&);    
+    VariableDescriptionContainer(VariableDescriptionContainer&&);
+    VariableDescriptionContainer(const VariableDescriptionContainer&);
+    VariableDescriptionContainer& operator=(VariableDescriptionContainer&&);
+    VariableDescriptionContainer& operator=(const VariableDescriptionContainer&);
     // resusing method from std::vector
     using std::vector<VariableDescription>::size_type;
     using std::vector<VariableDescription>::value_type;
@@ -149,7 +152,7 @@ namespace mfront
      */
     const VariableDescription&
     getVariable(const std::string&);
-    //! destrocut
+    //! destructor
     ~VariableDescriptionContainer();
   }; // end of struct VariableDescription
 

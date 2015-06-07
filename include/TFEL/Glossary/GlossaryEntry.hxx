@@ -137,6 +137,10 @@ namespace tfel
 		    const std::string&,
 		    const std::string&,
 		    const std::string&);
+      //! copy constructor
+      GlossaryEntry(const GlossaryEntry&);
+      //! move constructor
+      GlossaryEntry(GlossaryEntry&&);
       /*!
        * \return the key
        */
@@ -179,39 +183,33 @@ namespace tfel
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator<(const GlossaryEntry&,
-		  const GlossaryEntry&);
+      friend bool operator<(const GlossaryEntry&,
+			    const GlossaryEntry&);
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator != (const std::string&,
-		     const GlossaryEntry&);
+      friend bool operator != (const std::string&,
+			      const GlossaryEntry&);
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator != (const GlossaryEntry&,
-		     const std::string&);
+      friend bool operator != (const GlossaryEntry&,
+			       const std::string&);
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator == (const std::string&,
-		     const GlossaryEntry&);
+      friend bool operator == (const std::string&,
+			       const GlossaryEntry&);
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator == (const GlossaryEntry&,
-		     const std::string&);
+      friend bool operator == (const GlossaryEntry&,
+			       const std::string&);
     private:
+      //! assignement operator
+      GlossaryEntry& operator=(const GlossaryEntry&) = delete;
+      //! move assignement
+      GlossaryEntry& operator=(GlossaryEntry&&) = delete;
       /*!
        * \brief check if this entry is valid.
        * Called by constructors

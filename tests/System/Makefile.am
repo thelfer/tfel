@@ -1,7 +1,9 @@
+AUTOMAKE_OPTIONS = subdir-objects serial-tests
+
 if WITH_TESTS
 
-INCLUDES = -I$(top_srcdir)/include \
-           -I@builddir@/include
+AM_CPPFLAGS = -I$(top_srcdir)/include \
+              -I@builddir@/include
 
 mfronts = Test.mfront
 
@@ -49,4 +51,3 @@ clean-local:
 
 EXTRA_DIST = CMakeLists.txt \
 	     $(mfronts)
-

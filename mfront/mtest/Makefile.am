@@ -1,7 +1,7 @@
-INCLUDES = -I$(top_builddir)/src/TFELConfig \
-	   -I$(top_srcdir)/include          \
-	   -I$(top_srcdir)/mfront/include   \
-	   -I$(top_srcdir)/mtest/include
+AM_CPPFLAGS = -I$(top_builddir)/src/TFELConfig \
+	      -I$(top_srcdir)/include          \
+	      -I$(top_srcdir)/mfront/include   \
+	      -I$(top_srcdir)/mtest/include
 
 lib_LTLIBRARIES = libTFELMTest.la
 
@@ -43,7 +43,7 @@ libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Utilities -lTFELUtilities \
 			  -L$(top_builddir)/src/Exception -lTFELException \
 			  -L$(top_builddir)/src/Tests     -lTFELTests
-libTFELMTest_la_CPPFLAGS = -DTFELMTest_EXPORTS
+libTFELMTest_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMTest_EXPORTS
 if TFEL_WIN
 libTFELMTest_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN

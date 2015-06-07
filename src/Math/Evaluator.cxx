@@ -188,6 +188,7 @@ namespace tfel
 
     Evaluator::ExternalFunctionRegister Evaluator::externalFunctionRegister;
 
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     template<unsigned short N>
     static std::shared_ptr<tfel::math::parser::Expr>
     EvaluatorPowerFunctionGenerator(const std::shared_ptr<tfel::math::parser::Expr> e)
@@ -196,6 +197,7 @@ namespace tfel
       using namespace tfel::math::stdfunctions;
       return std::shared_ptr<Expr>(new StandardFunction<power<N> >(e));
     } // end of EvaluatorPowerFunctionGenerator
+#endif
 
     static std::shared_ptr<tfel::math::parser::Expr>
     EvaluatorTreatPower(const std::vector<std::string>& params,
@@ -211,7 +213,8 @@ namespace tfel
       switch (nbr){
       case 0:
 	return shared_ptr<Expr>(new Number(1.));
-      case 1:
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+	  case 1:
 	return EvaluatorPowerFunctionGenerator<1>(args[0]);
       case 2:
 	return EvaluatorPowerFunctionGenerator<2>(args[0]);
@@ -243,6 +246,7 @@ namespace tfel
 	return EvaluatorPowerFunctionGenerator<15>(args[0]);
       case 16:
 	return EvaluatorPowerFunctionGenerator<16>(args[0]);
+#endif
       default:
 	string msg("EvaluatorTreatPower : only exponent below 16 are supported");
 	throw(runtime_error(msg));

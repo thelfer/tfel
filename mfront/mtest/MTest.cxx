@@ -16,6 +16,7 @@
 #include<cmath>
 #include<string>
 #include<vector>
+#include<memory>
 #include<sstream>
 #include<cstdlib>
 #include<iterator>
@@ -23,8 +24,6 @@
 #include<stdexcept>
 
 #include"tfel-config.hxx"
-
-#include<memory>
 #include"TFEL/Utilities/TextData.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"

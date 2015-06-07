@@ -31,7 +31,7 @@ namespace tfel
     template<unsigned short N,
 	     unsigned short M,
 	     typename T>
-    FSLevenbergMarquardt<N,M,T>::FSLevenbergMarquardt(const FSLevenbergMarquardt::PtrFun f_)
+    FSLevenbergMarquardt<N,M,T>::FSLevenbergMarquardt(const typename FSLevenbergMarquardt::PtrFun f_)
       : lambda0(T(1.e-3)),
 	factor(T(2)),
 	eps1(1.e-10),
@@ -80,7 +80,7 @@ namespace tfel
 	     unsigned short M,
 	     typename T>
     void
-    FSLevenbergMarquardt<N,M,T>::addData(const FSLevenbergMarquardt<N,M,T>::Variable& x,
+    FSLevenbergMarquardt<N,M,T>::addData(const typename FSLevenbergMarquardt<N,M,T>::Variable& x,
 					 const T y)
     {
       using namespace std;
@@ -91,7 +91,7 @@ namespace tfel
 	     unsigned short M,
 	     typename T>
     void
-    FSLevenbergMarquardt<N,M,T>::setInitialGuess(const FSLevenbergMarquardt<N,M,T>::Parameter& p_)
+    FSLevenbergMarquardt<N,M,T>::setInitialGuess(const typename FSLevenbergMarquardt<N,M,T>::Parameter& p_)
     {
       this->p = p_;
     } // end of FSLevenbergMarquardt::setInitialGuess

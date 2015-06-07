@@ -21,9 +21,9 @@ namespace tfel
   {
 
     template<typename T>
-    LevenbergMarquardtFunctionWrapper<T>::LevenbergMarquardtFunctionWrapper(const LevenbergMarquardtFunctionWrapper<T>::size_type nv_,
-									    const LevenbergMarquardtFunctionWrapper<T>::size_type np_,
-									    const LevenbergMarquardtFunctionWrapper<T>::PtrFun f_)
+    LevenbergMarquardtFunctionWrapper<T>::LevenbergMarquardtFunctionWrapper(const typename LevenbergMarquardtFunctionWrapper<T>::size_type nv_,
+									    const typename LevenbergMarquardtFunctionWrapper<T>::size_type np_,
+									    const typename LevenbergMarquardtFunctionWrapper<T>::PtrFun f_)
       : nv(nv_),
 	np(np_),
 	f(f_)

@@ -117,6 +117,8 @@ namespace mfront
     //! destructor
     virtual ~ImposedDrivingVariable();
   protected:
+    ImposedDrivingVariable& operator=(const ImposedDrivingVariable&) = delete;
+    ImposedDrivingVariable& operator=(ImposedDrivingVariable&&) = delete;
     //! driving variable evolution
     const std::shared_ptr<Evolution> eev;
     //! component value

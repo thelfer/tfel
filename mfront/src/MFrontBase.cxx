@@ -154,12 +154,13 @@ namespace mfront{
   bool
   MFrontBase::treatUnknownArgumentBase(void){
     const auto& a = this->getCurrentCommandLineArgument();
-    if(a[0]=='-'){
+	auto an = static_cast<const std::string&>(a);
+    if(an[0]=='-'){
       bool ok = false;
-      if(a.size()>=4){
-	if((a[1]=='-')&&(a[2]=='@')){
+      if(an.size()>=4){
+	if((an[1]=='-')&&(an[2]=='@')){
 	  const auto& o = a.getOption();
-	  auto cmd = a.substr(2);
+	  auto cmd = an.substr(2);
 	  if(!o.empty()){
 	    cmd += ' '+o;
 	  }
@@ -170,7 +171,7 @@ namespace mfront{
       }
       return ok;
     }
-    this->inputs.insert(a);
+    this->inputs.insert(an);
     return true;
   } // end of MFrontBase::treatUnknownArgument
 

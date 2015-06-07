@@ -132,6 +132,9 @@ namespace tfel
       this->check();
     }
 
+    GlossaryEntry::GlossaryEntry(const GlossaryEntry&) = default;
+    GlossaryEntry::GlossaryEntry(GlossaryEntry&&) = default;
+
     void
     GlossaryEntry::check(void) const
     {

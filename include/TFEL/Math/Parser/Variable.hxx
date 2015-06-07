@@ -51,6 +51,8 @@ namespace tfel
 	virtual std::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const override;
       private:
+	Variable& operator=(const Variable&) = delete;
+	Variable& operator=(Variable&&) = delete;
 	const std::vector<double>& v;
 	const std::vector<double>::size_type pos;
       }; // end of struct Variable

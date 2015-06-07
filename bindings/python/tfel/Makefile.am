@@ -1,7 +1,7 @@
-INCLUDES= -I@top_srcdir@/include/                       \
-	  -I@top_srcdir@/bindings/python/include/       \
-	  @BOOST_CPPFLAGS@                              \
-	  -I@PYTHONPATH@/include/python@PYTHON_VERSION@
+AM_CPPFLAGS = -I@top_srcdir@/include/                       \
+	      -I@top_srcdir@/bindings/python/include/       \
+	      @BOOST_CPPFLAGS@                              \
+	      -I@PYTHONPATH@/include/python@PYTHON_VERSION@
 
 tfeldir = @pythondir@/tfel
 tfel_PYTHON = __init__.py

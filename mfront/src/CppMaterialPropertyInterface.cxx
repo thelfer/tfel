@@ -58,7 +58,7 @@ namespace mfront
     d.sources[lib].push_back(name+"-cxx.cxx");
     d.headers.push_back(this->headerFileName);
     auto cn = string{};
-#warning "HERE"
+#pragma message("HERE")
     // for(const auto& ns : this->namespaces){
     //   cc += ns + "::"
     // }

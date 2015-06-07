@@ -34,18 +34,21 @@ namespace tfel
      *cases. Here its does not harm.
      */
     struct TFELUTILITIES_VISIBILITY_EXPORT Argument
-      : public std::string
     {
       //! \param s : argument name
-      Argument(std::string s);
+      Argument(std::string);
       //! \param s : argument name
       Argument(const char* const s);
-      Argument(Argument&&) = default;
-      Argument(const Argument&) = default;
-      Argument& operator=(Argument&&) = default;
-      Argument& operator=(const Argument&) = default;
+      Argument(Argument&&);
+      Argument(const Argument&);
+      Argument& operator=(Argument&&);
+      Argument& operator=(const Argument&);
       //! \return true if an option was given for this argument
       bool hasOption(void) const noexcept;
+      //! convertion to string
+      explicit operator std::string& () noexcept;
+      //! implicit convertion to string
+      operator const std::string& () const noexcept;
       /*!
        * \brief set argument option
        * \param o : option
@@ -56,6 +59,8 @@ namespace tfel
       //! destructor
       ~Argument() noexcept;
     private:
+      //! argument name
+      std::string name;
       //! argument option
       std::string option;
       bool isOptionSet;

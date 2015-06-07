@@ -14,6 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
+#include<algorithm>
 
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/SecantAccelerationAlgorithm.hxx"

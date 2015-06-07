@@ -201,7 +201,7 @@ namespace mfront{
       if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	const bool agps = bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS);
 	const bool ps   = bmh.count(MH::PLANESTRESS);
-	if(agps or ps){
+	if(agps || ps){
 	  if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	    if(!this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
 	      this->bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,true,false);

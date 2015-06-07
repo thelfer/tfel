@@ -12,7 +12,9 @@
  */
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-#include<iostream>
+#define NOMINMAX
+#include<windows.h>
+#include<cstdlib>
 #endif
 #include<sstream>
 #include<algorithm>
@@ -130,14 +132,15 @@ namespace mfront{
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
     const auto& q = this->getCurrentCommandLineArgument();
-    if(q=="--author"){
+	const auto& qn = static_cast<const string&>(q);
+    if(qn=="--author"){
       this->queries.push_back({"author",[](const FileDescription& fd,
 					   const BehaviourDescription&,
 					   const Hypothesis){
 	    const auto& a = fd.authorName;
 	    cout << (!a.empty() ? a : "(undefined)") << endl;
 	  }});
-    } else if(q=="--description"){
+    } else if(qn=="--description"){
       this->queries.push_back({"description",[](const FileDescription& fd,
 						const BehaviourDescription&,
 						const Hypothesis){
@@ -154,28 +157,28 @@ namespace mfront{
 	      cout << "(undefined)" << endl;
 	    }
 	  }});
-    } else if(q=="--date"){
+    } else if(qn=="--date"){
       this->queries.push_back({"date",[](const FileDescription& fd,
 					 const BehaviourDescription&,
 					 const Hypothesis){
 	    const auto& d = fd.date;
 	    cout << (!d.empty() ? d : "(undefined)") << endl;
 	  }});
-    } else if(q=="--material"){
+    } else if(qn=="--material"){
       this->queries.push_back({"material",[](const FileDescription&,
 					     const BehaviourDescription& d,
 const Hypothesis){
 	    const auto& m = d.getMaterialName();
 	    cout << (!m.empty() ? m : "(undefined)") << endl;
 	  }});
-    } else if(q=="--library"){
+    } else if(qn=="--library"){
       this->queries.push_back({"library",[](const FileDescription&,
 					    const BehaviourDescription& d,
 					    const Hypothesis){
 	    const auto& l = d.getLibrary();
 	    cout << (!l.empty() ? l : "(undefined)") << endl;
 	  }});
-    } else if(q=="--supported-modelling-hypotheses"){
+    } else if(qn=="--supported-modelling-hypotheses"){
       this->queries.push_back({"supported-modelling-hypotheses",[](const FileDescription&,
 								   const BehaviourDescription& d,
 								   const Hypothesis){
@@ -185,31 +188,31 @@ const Hypothesis){
 	    }
 	    cout << endl;
 	  }});
-    } else if (q=="--material-properties"){
+    } else if (qn=="--material-properties"){
       this->queries.emplace_back("material-properties",
 				 this->generateVariablesListQuery<&BehaviourData::getMaterialProperties>());
-    } else if (q=="--state-variables"){
+    } else if (qn=="--state-variables"){
       this->queries.emplace_back("state-variables",
 				 this->generateVariablesListQuery<&BehaviourData::getStateVariables>());
-    } else if (q=="--auxiliary-state-variables"){
+    } else if (qn=="--auxiliary-state-variables"){
       this->queries.emplace_back("auxiliary-state-variables",
 				 this->generateVariablesListQuery<&BehaviourData::getAuxiliaryStateVariables>());
-    } else if (q=="--external-state-variables"){
+    } else if (qn=="--external-state-variables"){
       this->queries.emplace_back("external-state-variables",
 				 this->generateVariablesListQuery<&BehaviourData::getExternalStateVariables>());
-    } else if (q=="--integration-variables"){
+    } else if (qn=="--integration-variables"){
       this->queries.emplace_back("integration-state-variables",
 				 this->generateVariablesListQuery<&BehaviourData::getIntegrationVariables>());
-    } else if (q=="--persistent-variables"){
+    } else if (qn=="--persistent-variables"){
       this->queries.emplace_back("persistent-state-variables",
 				 this->generateVariablesListQuery<&BehaviourData::getPersistentVariables>());
-    } else if (q=="--local-variables"){
+    } else if (qn=="--local-variables"){
       this->queries.emplace_back("local-state-variables",
 				 this->generateVariablesListQuery<&BehaviourData::getLocalVariables>());
-    } else if (q=="--parameters"){
+    } else if (qn=="--parameters"){
       this->queries.emplace_back("parameters",
 				 this->generateVariablesListQuery<&BehaviourData::getParameters>());
-    } else if (q=="--attributes"){
+    } else if (qn=="--attributes"){
       this->queries.push_back({"attributes",[](const FileDescription&,
 					       const BehaviourDescription& d,
 					       const Hypothesis h){
@@ -225,7 +228,7 @@ const Hypothesis){
 	    }
 	    cout << endl;
 	  }});
-    } else if (q=="--code-blocks"){
+    } else if (qn=="--code-blocks"){
       this->queries.push_back({"attributes",[](const FileDescription&,
 					       const BehaviourDescription& d,
 					       const Hypothesis h){
@@ -236,7 +239,7 @@ const Hypothesis){
 	  }});
     } else {
       throw(runtime_error("Behaviour::treatStandardQuery : "
-			  "unsupported query '"+q+"'"));
+			  "unsupported query '"+qn+"'"));
     }
   }
 
@@ -245,12 +248,13 @@ const Hypothesis){
     using namespace std;
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
-    const auto& q = this->getCurrentCommandLineArgument();
-    const auto& o = q.getOption();
+    const auto& q  = this->getCurrentCommandLineArgument();
+	const auto& qn = static_cast<const string&>(q);
+	const auto& o  = q.getOption();
     if(o.empty()){
       throw(runtime_error("Behaviour::treatStandardQuery2 : "
-			  "no option given to the '"+q+"' query"));
-    } else if (q=="--attribute-type"){
+			  "no option given to the '"+qn+"' query"));
+    } else if (qn=="--attribute-type"){
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
@@ -267,7 +271,7 @@ const Hypothesis){
 	}
       };
       this->queries.push_back({"attribute-type",l});
-    } else if (q=="--attribute-value"){
+    } else if (qn=="--attribute-value"){
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
@@ -288,7 +292,7 @@ const Hypothesis){
 	}
       };
       this->queries.push_back({"attributes-value",l});
-    } else if (q=="--parameter-type"){
+    } else if (qn=="--parameter-type"){
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
@@ -297,7 +301,7 @@ const Hypothesis){
 	cout << p.type << endl;
       };
       this->queries.push_back({"parameter-type",l});
-    } else if (q=="--parameter-default-value"){
+    } else if (qn=="--parameter-default-value"){
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
@@ -316,8 +320,8 @@ const Hypothesis){
       };
       this->queries.push_back({"parameter-default-value",l});
     } else {
-      throw(runtime_error("Behaviour::treatStandardQuery : "
-			  "unsupported query '"+q+"'"));
+	  throw(runtime_error("Behaviour::treatStandardQuery : "
+			  "unsupported query '"+qn+"'"));
     }
   }
 
@@ -513,11 +517,12 @@ const Hypothesis){
   void BehaviourQuery::treatUnknownArgument(void)
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<BehaviourQuery>::treatUnknownArgument();
 #else
-      cerr << "mfront : unsupported option '" << a << "'\n";
-      exit(EXIT_FAILURE);
+      const auto& a = static_cast<const std::string&>(this->getCurrentCommandLineArgument());
+      std::cerr << "mfront : unsupported option '" << a << "'\n";
+      ::exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
     }
   }

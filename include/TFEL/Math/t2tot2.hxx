@@ -69,7 +69,7 @@ namespace tfel{
       template<typename T2toT2Type>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
+	tfel::meta::Implements<T2toT2Type,tfel::math::T2toT2Concept>::cond &&
 	T2toT2Traits<Child>::dime==T2toT2Traits<T2toT2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename T2toT2Traits<T2toT2Type>::NumType,
 					 typename T2toT2Traits<Child>::NumType>::cond,
@@ -79,7 +79,7 @@ namespace tfel{
       template<typename T2toT2Type>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
+	tfel::meta::Implements<T2toT2Type,tfel::math::T2toT2Concept>::cond &&
 	T2toT2Traits<Child>::dime==T2toT2Traits<T2toT2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename T2toT2Traits<T2toT2Type>::NumType,
 					 typename T2toT2Traits<Child>::NumType>::cond,
@@ -89,7 +89,7 @@ namespace tfel{
       template<typename T2toT2Type>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
+	tfel::meta::Implements<T2toT2Type,tfel::math::T2toT2Concept>::cond &&
 	T2toT2Traits<Child>::dime==T2toT2Traits<T2toT2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename T2toT2Traits<T2toT2Type>::NumType,
 					 typename T2toT2Traits<Child>::NumType>::cond,
@@ -134,7 +134,7 @@ namespace tfel{
       template<typename TensorType>
       static TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
 	Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
@@ -148,8 +148,8 @@ namespace tfel{
 	       typename T2toT2Type>
       static TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
-	tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
+	tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond &&
+	tfel::meta::Implements<T2toT2Type,tfel::math::T2toT2Concept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	T2toT2Traits<T2toT2Type>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
@@ -165,7 +165,7 @@ namespace tfel{
       template<typename TensorType>
       static TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
+	tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
 	Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
@@ -179,8 +179,8 @@ namespace tfel{
 	       typename T2toT2Type>
       static TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<TensorType,TensorConcept>::cond &&
-	tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
+	tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond &&
+	tfel::meta::Implements<T2toT2Type,tfel::math::T2toT2Concept>::cond &&
 	TensorTraits<TensorType>::dime==N&&
 	T2toT2Traits<T2toT2Type>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,

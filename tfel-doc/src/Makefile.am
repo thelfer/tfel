@@ -1,6 +1,6 @@
-INCLUDES=-I@top_srcdir@/tfel-doc/include \
-	 -I@top_srcdir@/mfront/include   \
-	 -I@top_srcdir@/include
+AM_CPPFLAGS = -I@top_srcdir@/tfel-doc/include \
+	      -I@top_srcdir@/mfront/include   \
+	      -I@top_srcdir@/include
 
 bin_PROGRAMS =  tfel-doc
 

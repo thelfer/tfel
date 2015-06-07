@@ -1,16 +1,14 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(srcdir)
 if TFEL_WIN
-AM_CPPFLAGS = -DTFELSystem_EXPORTS
-AM_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+AM_LDFLAGS   = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif
 
-INCLUDES = -I$(top_srcdir)/include -I$(srcdir)
-
 lib_LTLIBRARIES = libTFELSystem.la 
-libTFELSystem_la_SOURCES = ExternalLibraryManager.cxx \
-			   System.cxx                 \
-			   SystemError.cxx
-
+libTFELSystem_la_SOURCES  = ExternalLibraryManager.cxx \
+			    System.cxx                 \
+			    SystemError.cxx
+libTFELSystem_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELSystem_EXPORTS
 
 if TFEL_WIN
 libTFELSystem_la_SOURCES += getFunction-win.cxx

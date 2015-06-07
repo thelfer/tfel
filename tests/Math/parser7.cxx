@@ -91,7 +91,7 @@ private:
 }; // end of struct TestFunction
 
 #define TFEL_MATH_PARSER7_TESTFUNCTION(F,XA,XB,DX) \
-  manager.addTest("parser7",shared_ptr<Test>(new TestFunction<F>(#F,XA,XB,DX)))
+  manager.addTest("parser7",shared_ptr<Test>(new TestFunction<::F>(#F,XA,XB,DX)))
 
 
 int main(void)

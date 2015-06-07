@@ -90,6 +90,7 @@ namespace tfel{
        */
       TFEL_MATH_INLINE constexpr
       qt() noexcept(T())
+		  : value(T())
       {}
 
       /*!

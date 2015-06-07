@@ -28,7 +28,12 @@ namespace mfront
   struct MFRONT_VISIBILITY_EXPORT SupportedTypes
   {
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+    static const int ArraySizeLimit = 10u;
+#else 
     static constexpr int ArraySizeLimit = 10u;
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+
 
     enum TypeFlag{Scalar,TVector,Stensor,Tensor};
 

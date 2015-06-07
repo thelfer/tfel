@@ -71,6 +71,8 @@ namespace mfront{
     //! destructor
     virtual ~AnalyticalTest();
   protected:
+    AnalyticalTest& operator=(const AnalyticalTest&) = delete;
+    AnalyticalTest& operator=(AnalyticalTest&&) = delete;
     //! analytical solution 
     tfel::math::Evaluator f;
     //! results of the test
@@ -85,7 +87,7 @@ namespace mfront{
     const unsigned short pos;
     //! external evolution
     const std::shared_ptr<std::map<std::string,
-					       std::shared_ptr<Evolution> > > evm;
+				   std::shared_ptr<Evolution> > > evm;
     //! criterium value
     const real eps;
   }; 

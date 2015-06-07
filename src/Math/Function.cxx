@@ -76,7 +76,7 @@ namespace tfel
 	using namespace std;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> expe(new StandardFunction<exp>(ce));
+	shared_ptr<Expr> expe(new StandardFunction<::exp>(ce));
 	return shared_ptr<Expr>(new BinaryOperation<OpMult>(expe,de));
       } // end of differentiateFunction
 
@@ -85,7 +85,7 @@ namespace tfel
 	using namespace std;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> cose(new StandardFunction<cos>(ce));
+	shared_ptr<Expr> cose(new StandardFunction<::cos>(ce));
 	return shared_ptr<Expr>(new BinaryOperation<OpMult>(cose,de));
       } // end of differentiateFunction
 
@@ -94,7 +94,7 @@ namespace tfel
 	using namespace std;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> sine(new StandardFunction<sin>(ce));
+	shared_ptr<Expr> sine(new StandardFunction<::sin>(ce));
 	return shared_ptr<Expr>(new BinaryOperation<OpMult>(shared_ptr<Expr>(new Negation(sine)),de));
       } // end of differentiateFunction
 
@@ -103,7 +103,7 @@ namespace tfel
 	using namespace std;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> tane(new StandardFunction<tan>(ce));
+	shared_ptr<Expr> tane(new StandardFunction<::tan>(ce));
 	shared_ptr<Expr> tan2e(new BinaryOperation<OpMult>(tane,tane));
 	shared_ptr<Expr> tan2e_(new BinaryOperation<OpPlus>(shared_ptr<Expr>(new Number(1.)),tan2e));
 	return shared_ptr<Expr>(new BinaryOperation<OpMult>(tan2e_,de));
@@ -114,7 +114,7 @@ namespace tfel
 	using namespace std;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> sqrte(new StandardFunction<sqrt>(ce));
+	shared_ptr<Expr> sqrte(new StandardFunction<::sqrt>(ce));
 	shared_ptr<Expr> sqrte_(new BinaryOperation<OpDiv>(shared_ptr<Expr>(new Number(0.5)),
 							 sqrte));
 	return shared_ptr<Expr>(new BinaryOperation<OpMult>(sqrte_,de));
@@ -146,7 +146,7 @@ namespace tfel
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
 	shared_ptr<Expr> den1(new BinaryOperation<OpMult>(ce,ce));
 	shared_ptr<Expr> den2(new BinaryOperation<OpMinus>(shared_ptr<Expr>(new Number(1.)),den1));
-	shared_ptr<Expr> den3(new StandardFunction<sqrt>(den2));
+	shared_ptr<Expr> den3(new StandardFunction<::sqrt>(den2));
 	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(de,den3));
       } // end of differentiateFunction
 
@@ -159,7 +159,7 @@ namespace tfel
 	shared_ptr<Expr> num2(new BinaryOperation<OpMult>(num1,de));
 	shared_ptr<Expr> den1(new BinaryOperation<OpMult>(ce,ce));
 	shared_ptr<Expr> den2(new BinaryOperation<OpMinus>(shared_ptr<Expr>(new Number(1.)),den1));
-	shared_ptr<Expr> den3(new StandardFunction<sqrt>(den2));
+	shared_ptr<Expr> den3(new StandardFunction<::sqrt>(den2));
 	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(num2,den3));
       } // end of differentiateFunction
 
@@ -178,7 +178,7 @@ namespace tfel
 	using namespace std;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> coshe(new StandardFunction<cosh>(ce));
+	shared_ptr<Expr> coshe(new StandardFunction<::cosh>(ce));
 	return shared_ptr<Expr>(new BinaryOperation<OpMult>(coshe,de));
       } // end of differentiateFunction
 
@@ -187,7 +187,7 @@ namespace tfel
 	using namespace std;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> sinhe(new StandardFunction<sinh>(ce));
+	shared_ptr<Expr> sinhe(new StandardFunction<::sinh>(ce));
 	return shared_ptr<Expr>(new BinaryOperation<OpMult>(sinhe,de));
       } // end of differentiateFunction
 
@@ -196,7 +196,7 @@ namespace tfel
 	using namespace std;
 	shared_ptr<Expr> ce(expr->clone(v));
 	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> coshe(new StandardFunction<cosh>(ce));
+	shared_ptr<Expr> coshe(new StandardFunction<::cosh>(ce));
 	shared_ptr<Expr> coshe2(new BinaryOperation<OpMult>(coshe,coshe));
 	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(de,coshe2));
       } // end of differentiateFunction

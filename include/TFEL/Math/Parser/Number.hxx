@@ -48,6 +48,8 @@ namespace tfel
 	virtual double
 	getValue(void) const override;
       private:
+	Number& operator=(const Number&) = delete;
+	Number& operator=(Number&&) = delete;
 	const double value;
       }; // end of struct Number
 

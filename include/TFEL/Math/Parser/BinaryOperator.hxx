@@ -90,6 +90,8 @@ namespace tfel
 							std::vector<double>::size_type>&) const override final;
 	virtual ~BinaryOperation();
       private:
+	BinaryOperation& operator=(const BinaryOperation&) = delete;
+	BinaryOperation& operator=(BinaryOperation&&) = delete;
 	const std::shared_ptr<Expr> a;
 	const std::shared_ptr<Expr> b;
       }; // end of struct BinaryOperation

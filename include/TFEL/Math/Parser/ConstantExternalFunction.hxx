@@ -61,6 +61,8 @@ namespace tfel
 	getParametersNames(std::set<std::string>&) const override;
 	virtual ~ConstantExternalFunction();
       protected:
+	ConstantExternalFunction& operator=(const ConstantExternalFunction&) = delete;
+	ConstantExternalFunction& operator=(ConstantExternalFunction&&) = delete;
 	const double value;
       }; // end of struct ConstantExternalFunction
       

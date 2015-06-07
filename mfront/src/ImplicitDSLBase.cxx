@@ -28,7 +28,7 @@
 #include"MFront/PerformanceProfiling.hxx"
 #include"MFront/ImplicitDSLBase.hxx"
 
-#warning"HERE"
+#pragma message("HERE")
   // if(this->varNames.find(p+"df"+v1.name+"_dd"+v2.name)!=this->varNames.end()){
   //   string msg("NonLinearSystemSolverBase::getJacobianPart : ");
   //   msg += "variable name 'df"+v1.name+"_dd"+v2.name;
@@ -1765,7 +1765,7 @@ namespace mfront{
 	NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
       this->solver = f.getSolver("NewtonRaphson");
     }
-#warning "shall be done earlier"
+#pragma message("shall be done earlier")
     // reserved names
     const auto& n = this->solver->getReservedNames();
     for(const auto & elem : n){

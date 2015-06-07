@@ -147,17 +147,20 @@ namespace tfel
 	  if(pf->second.second.first){
 	    typename ArgsContainer::iterator p2 = p+1;
 	    if(p2==args.end()){
-	      string msg("ArgumentParserBase<Child>::replaceAliases : '");
-	      msg += "no argument given to option '"+*p+"'";
+		  const auto& pn = static_cast<const string&>(*p);
+	      string msg("ArgumentParserBase<Child>::replaceAliases : '"
+	                 "no argument given to option '"+pn+"'");
 	      throw(runtime_error(msg));
 	    }
-	    if((*p2)[0]=='-'){
-	      string msg("ArgumentParserBase<Child>::replaceAliases : '");
-	      msg += "no argument given to option '"+*p+"'";
+		const auto& p2n = static_cast<const string&>(*p2);
+	    if(p2n[0]=='-'){
+	      const auto& pn = static_cast<const string&>(*p);
+	      string msg("ArgumentParserBase<Child>::replaceAliases : '"
+		             "no argument given to option '"+pn+"'");
 	      throw(runtime_error(msg));
 	    }
 	    *p = pa->second;
-	    p->setOption(*p2);
+	    p->setOption(p2n);
 	    p = this->args.erase(p2);
 	  } else {
 	    *p = pa->second;
@@ -178,16 +181,16 @@ namespace tfel
       typename CallBacksContainer::iterator pf;
       typename string::size_type pos;
       for(p=this->args.begin();p!=this->args.end();++p){
-	if((pos=p->find("="))!=string::npos){
+	auto& pn = static_cast<string&>(*p);
+	if((pos=pn.find("="))!=string::npos){
 	  if(pos!=std::string::npos){
 	    string option(*p,pos+1,string::npos);
-	    p->erase(pos,string::npos);
+	    pn.erase(pos,string::npos);
 	    pf = this->callBacksContainer.find(*p);
 	    if(pf!=this->callBacksContainer.end()){
 	      if(!(pf->second.second.first)){
-		string msg("ArgumentParserBase<Child>::stripArguments : argument '");
-		msg += *p;
-		msg += "' does not have any option";
+		string msg("ArgumentParserBase<Child>::stripArguments : argument '"+
+		           pn+"' does not have any option");
 		throw(runtime_error(msg));
 	      }
 	    }
@@ -211,21 +214,32 @@ namespace tfel
     template<typename Child>
     void ArgumentParserBase<Child>::parseArguments(void)
     {
+      auto comp = [](const Argument& a,
+		     const char* const s){
+	return static_cast<const std::string&>(a)==s;
+      };
       this->stripArguments();
       this->replaceAliases();
+      for(auto pa = args.begin();pa!=args.end();){
+	if(comp(*pa,"--help")){
+	  static_cast<Child *>(this)->treatHelp();
+	  pa = this->args.erase(pa);
+	} else {
+	  ++pa;
+	}
+      }
+      for(auto pa = args.begin();pa!=args.end();){
+	if(comp(*pa,"--version")){
+	  static_cast<Child *>(this)->treatVersion();
+	  pa = this->args.erase(pa);
+	} else {
+	  ++pa;
+	}
+      }
       this->currentArgument=this->args.begin();
-      typename CallBacksContainer::iterator pf;
-      typename ArgsContainer::iterator pa;
-      if((pa=find(args.begin(),args.end(),"--help"))!=args.end()){
-	static_cast<Child *>(this)->treatHelp();
-	this->args.erase(pa);
-      }
-      if((pa=find(args.begin(),args.end(),"--version"))!=args.end()){
-	static_cast<Child *>(this)->treatVersion();
-	this->args.erase(pa);
-      }
       while(this->currentArgument!=this->args.end()){
-	pf = this->callBacksContainer.find(*(this->currentArgument));
+	  auto a  = static_cast<const std::string&>(*(this->currentArgument));
+	  auto pf = this->callBacksContainer.find(a);
 	if(pf!=this->callBacksContainer.end()){
 	  (static_cast<Child *>(this)->*(pf->second.first))();
 	} else {

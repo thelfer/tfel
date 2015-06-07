@@ -75,6 +75,7 @@ cmake/modules/cyrano.cmake -text
 cmake/modules/gcc.cmake -text
 cmake/modules/gnu-fortran-compiler.cmake -text
 cmake/modules/intel.cmake -text
+cmake/modules/latex.cmake -text
 cmake/modules/pandoc.cmake -text
 cmake/modules/pathscale.cmake -text
 cmake/modules/tfel.cmake -text
@@ -218,7 +219,6 @@ docs/mfront/Images/norton.inp -text
 docs/mfront/Images/polybz.eps -text
 docs/mfront/Images/polybz.png -text
 docs/mfront/Images/saint_venant_elas.inp -text
-docs/mfront/Images/signatures-planestress.eps -text
 docs/mfront/Images/sirius8.eps -text
 docs/mfront/Images/sirius8.png -text
 docs/mfront/Images/tubeaxi.eps -text
@@ -416,7 +416,6 @@ docs/mtest/images/zy4-2.eps -text
 docs/mtest/mtest.tex.in -text
 docs/mtest/style.ist -text
 docs/presentations/CMakeLists.txt -text
-docs/presentations/Chaboche.tex.in -text
 docs/presentations/ClubCast3M2014/CMakeLists.txt -text
 docs/presentations/ClubCast3M2014/HureCast3M14.pdf -text
 docs/presentations/ClubCast3M2014/Makefile.am -text
@@ -429,7 +428,6 @@ docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex.eps -text
 docs/presentations/CodeAsterUserMeeting2015/img/SiriusCadeex.svg -text
 docs/presentations/CodeAsterUserMeeting2015/mfront-aster-2015.tex.in -text
 docs/presentations/Makefile.am -text
-docs/presentations/Makefile.doc.in -text
 docs/presentations/Materiaux2014/CMakeLists.txt -text
 docs/presentations/Materiaux2014/Makefile.am -text
 docs/presentations/Materiaux2014/bibliography.bib -text
@@ -461,7 +459,6 @@ docs/presentations/Materiaux2014/img/formule.svg -text
 docs/presentations/Materiaux2014/materiaux2014.md -text
 docs/presentations/Materiaux2014/mysettings.css -text
 docs/presentations/Materiaux2014/reveal-config.html -text
-docs/presentations/appendix.tex.in -text
 docs/presentations/images/172g.png -text
 docs/presentations/images/172gv30pg.png -text
 docs/presentations/images/CourbeExpBurger.png -text
@@ -523,11 +520,25 @@ docs/presentations/images/tutorielch12-img20.png -text
 docs/presentations/images/tutorielch12-img3.pdf -text
 docs/presentations/images/tutorielch12-img9.png -text
 docs/presentations/images/tvergaard.eps -text
-docs/presentations/lemaitre.tex.in -text
-docs/presentations/mfront-behaviours.tex.in -text
-docs/presentations/mfront-finitestrain.tex.in -text
-docs/presentations/mfront-formation.tex.in -text
-docs/presentations/mfront-presentation.tex.in -text
+docs/presentations/mfront-behaviours/CMakeLists.txt -text
+docs/presentations/mfront-behaviours/Makefile.am -text
+docs/presentations/mfront-behaviours/mfront-behaviours.tex.in -text
+docs/presentations/mfront-finitestrain/CMakeLists.txt -text
+docs/presentations/mfront-finitestrain/Makefile.am -text
+docs/presentations/mfront-finitestrain/mfront-finitestrain.tex.in -text
+docs/presentations/mfront-formation-tp/CMakeLists.txt -text
+docs/presentations/mfront-formation-tp/Chaboche.tex.in -text
+docs/presentations/mfront-formation-tp/Makefile.am -text
+docs/presentations/mfront-formation-tp/appendix.tex.in -text
+docs/presentations/mfront-formation-tp/lemaitre.tex.in -text
+docs/presentations/mfront-formation-tp/norton.tex.in -text
+docs/presentations/mfront-formation-tp/tp.tex.in -text
+docs/presentations/mfront-formation/CMakeLists.txt -text
+docs/presentations/mfront-formation/Makefile.am -text
+docs/presentations/mfront-formation/mfront-formation.tex.in -text
+docs/presentations/mfront-presentation/CMakeLists.txt -text
+docs/presentations/mfront-presentation/Makefile.am -text
+docs/presentations/mfront-presentation/mfront-presentation.tex.in -text
 docs/presentations/mfront-user-meeting-2015/CMakeLists.txt -text
 docs/presentations/mfront-user-meeting-2015/Contributions/2015-ClubU-MFront-REX-Aster.pdf -text
 docs/presentations/mfront-user-meeting-2015/Contributions/VM-ClubU_MFront_6-2-2015.pdf -text
@@ -616,7 +627,9 @@ docs/presentations/mfront/norton_rk.mfront -text
 docs/presentations/mfront/norton_spec.mfront -text
 docs/presentations/mfront/sliding.mfront -text
 docs/presentations/mfront/viscochab.mfront -text
-docs/presentations/mtest-presentation.tex.in -text
+docs/presentations/mtest-presentation/CMakeLists.txt -text
+docs/presentations/mtest-presentation/Makefile.am -text
+docs/presentations/mtest-presentation/mtest-presentation.tex.in -text
 docs/presentations/mtest/burger.mtest -text
 docs/presentations/mtest/chaboche.mtest -text
 docs/presentations/mtest/cyclique.mtest -text
@@ -627,7 +640,6 @@ docs/presentations/mtest/norton-rk.mtest -text
 docs/presentations/mtest/norton.mtest -text
 docs/presentations/mtest/norton.res -text
 docs/presentations/mtest/viscochab.mtest -text
-docs/presentations/norton.tex.in -text
 docs/presentations/portable-behaviour/CMakeLists.txt -text
 docs/presentations/portable-behaviour/Makefile.am -text
 docs/presentations/portable-behaviour/bibliography.bib -text
@@ -640,7 +652,6 @@ docs/presentations/portable-behaviour/img/tubeaxi.eps -text
 docs/presentations/portable-behaviour/img/tubeaxi2.eps -text
 docs/presentations/portable-behaviour/mysettings.css -text
 docs/presentations/portable-behaviour/portability.md -text
-docs/presentations/tp.tex.in -text
 docs/references/matrixcookbook.pdf -text svneol=unset#unset
 docs/release-notes-2.0/CMakeLists.txt -text
 docs/release-notes-2.0/Champs.tex.in -text
@@ -1479,7 +1490,6 @@ mfront/include/MFront/BehaviourInterfaceProxy.ixx -text
 mfront/include/MFront/BehaviourProfiler.hxx -text
 mfront/include/MFront/BehaviourQuery.hxx -text
 mfront/include/MFront/BehaviourSymmetryType.hxx -text
-mfront/include/MFront/BehaviourTimer.hxx -text
 mfront/include/MFront/BoundsDescription.hxx -text
 mfront/include/MFront/BroydenSolvers.hxx -text
 mfront/include/MFront/CMaterialPropertyInterface.hxx -text
@@ -1615,7 +1625,6 @@ mfront/include/MFront/ZMATInterface.hxx -text
 mfront/include/MFront/mfront.doxygen -text
 mfront/include/MTest/AccelerationAlgorithm.hxx -text
 mfront/include/MTest/AccelerationAlgorithmFactory.hxx -text
-mfront/include/MTest/AlgorithmFactory.hxx -text
 mfront/include/MTest/Alternate2DeltaAccelerationAlgorithm.hxx -text
 mfront/include/MTest/AlternateDelta2AccelerationAlgorithm.hxx -text
 mfront/include/MTest/AlternateSecantAccelerationAlgorithm.hxx -text
@@ -1795,7 +1804,6 @@ mfront/src/SecondBroydenSolver.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
 mfront/src/SupportedTypes.cxx -text
 mfront/src/TargetsDescription.cxx -text
-mfront/src/TargetsDescription.hxx -text
 mfront/src/ThermodynamicForce.cxx -text
 mfront/src/UMATComputeStiffnessTensor.cxx -text
 mfront/src/UMATComputeThermalExpansionCoefficientTensor.cxx -text

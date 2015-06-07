@@ -2,7 +2,7 @@
 SUBDIRS = include ExpressionTemplates RungeKutta \
 	   st2tost2 t2tost2 st2tot2 t2tot2
 
-INCLUDES = -I$(top_srcdir)/include -I$(srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(srcdir)/include
 
 if WITH_TESTS
 

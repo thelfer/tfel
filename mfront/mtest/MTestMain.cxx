@@ -17,12 +17,13 @@
 #include<fenv.h>
 
 #if defined _WIN32 || defined _WIN64
+#define NOMINMAX
 #include<windows.h>
 #endif
 
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #include"TFEL/System/SignalManager.hxx"
 #endif
 
@@ -66,7 +67,7 @@ namespace mfront
     treatHelpCommand(void);
     void
     treatEnableFloatingPointExceptions(void);
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     void
     treatBacktrace();
 #endif
@@ -134,7 +135,7 @@ namespace mfront
     this->registerNewCallBack("--floating-point-exceptions","-fpe",
 			      &MTestMain::treatEnableFloatingPointExceptions,
 			      "handle floating point exceptions through SIGFPE signals");
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--backtrace","-bt",&MTestMain::treatBacktrace,
 			      "print process stack when getting SIGSEGV or SIGFPE signals");
 #endif
@@ -144,7 +145,7 @@ namespace mfront
   MTestMain::treatEnableFloatingPointExceptions(void)
   {
     // mathematical
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
 #ifdef HAVE_FENV
     ::feclearexcept(FE_ALL_EXCEPT);
     ::feenableexcept(FE_DIVBYZERO); // division by zero
@@ -153,7 +154,7 @@ namespace mfront
 #endif
   } // end of MTestMain::treatEnableFloatingPointExceptions
 
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void
   MTestMain::treatBacktrace(void)
   {
@@ -287,11 +288,12 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::utilities;
-    if((*(this->currentArgument))[0]=='-'){
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+    const auto& a = static_cast<const string&>(*(this->currentArgument));
+    if(a[0]=='-'){
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<MTestMain>::treatUnknownArgument();
 #else
-      cerr << "mfront : unsupported option '" << *(this->currentArgument) << "'\n";
+      cerr << "mtest : unsupported option '" << a << "'\n";
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
     }

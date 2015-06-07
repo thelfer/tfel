@@ -12,6 +12,7 @@
  */
 
 #include<fstream>
+#include<iterator>
 #include<stdexcept>
 
 #include"MFront/MTestFileGeneratorBase.hxx"

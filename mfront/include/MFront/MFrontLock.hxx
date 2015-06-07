@@ -15,6 +15,7 @@
 #define   _LIB_MFRONT_MFRONTLOCK_H_ 
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#define NOMINMAX
 #include <windows.h>
 #else
 #include<semaphore.h>
@@ -32,12 +33,12 @@ namespace mfront{
     void lock();
     void unlock();
   private:
-    MFRONT_VISIBILITY_EXPORT MFrontLock();
+    MFrontLock();
     MFrontLock(const MFrontLock&) = delete;
     MFrontLock(MFrontLock&&) = delete;
     MFrontLock& operator = (const MFrontLock&) = delete;
     MFrontLock& operator = (MFrontLock&&) = delete;
-    MFRONT_VISIBILITY_EXPORT ~MFrontLock();
+    ~MFrontLock();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     HANDLE ghMutex;
 #else

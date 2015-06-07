@@ -14,7 +14,11 @@
 #ifndef LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_
 #define LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_ 
 
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
+#include"TFEL/Config/TFELConfig.hxx"
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#define MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER const
+#else 
+#define MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER constexpr
 #include<time.h>
 #endif
 
@@ -47,6 +51,10 @@ namespace mfront{
       //! destructor
       ~Timer();
     protected:
+      Timer(const Timer&) = default;
+      Timer(Timer&&) = default;
+      Timer& operator=(const Timer&) = delete;
+      Timer& operator=(Timer&&) = delete;
       //! timer to which the results are reported
       BehaviourProfiler& gtimer;
       //! code block associated with the timer
@@ -67,45 +75,65 @@ namespace mfront{
      * \see MechanialBehaviourData for a description
      */
     //! code block index in the measures array
-    static constexpr unsigned short FLOWRULE = 0;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short FLOWRULE = 0;
     //! code block index in the measures array
-    static constexpr unsigned short BEFOREINITIALIZELOCALVARIABLES = 1;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short BEFOREINITIALIZELOCALVARIABLES = 1;
     //! code block index in the measures array
-    static constexpr unsigned short INITIALIZELOCALVARIABLES = 2;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short INITIALIZELOCALVARIABLES = 2;
     //! code block index in the measures array
-    static constexpr unsigned short AFTERINITIALIZELOCALVARIABLES = 3;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short AFTERINITIALIZELOCALVARIABLES = 3;
     //! code block index in the measures array
-    static constexpr unsigned short COMPUTEPREDICTOR = 4;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short COMPUTEPREDICTOR = 4;
     //! code block index in the measures array
-    static constexpr unsigned short COMPUTEPREDICTIONOPERATOR = 5;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short COMPUTEPREDICTIONOPERATOR = 5;
     //! code block index in the measures array
-    static constexpr unsigned short INTEGRATOR = 6;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short INTEGRATOR = 6;
     //! code block index in the measures array
-    static constexpr unsigned short COMPUTESTRESS = 7;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short COMPUTESTRESS = 7;
     //! code block index in the measures array
-    static constexpr unsigned short COMPUTEDERIVATIVE = 8;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short COMPUTEDERIVATIVE = 8;
     //! code block index in the measures array
-    static constexpr unsigned short INITIALIZEJACOBIAN = 9;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short INITIALIZEJACOBIAN = 9;
     //! code block index in the measures array
-    static constexpr unsigned short COMPUTEFDF = 10;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short COMPUTEFDF = 10;
     //! code block index in the measures array
-    static constexpr unsigned short TINYMATRIXSOLVE = 11;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short TINYMATRIXSOLVE = 11;
     //! code block index in the measures array
-    static constexpr unsigned short COMPUTEFINALSTRESS = 12;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short COMPUTEFINALSTRESS = 12;
     //! code block index in the measures array
-    static constexpr unsigned short COMPUTETANGENTOPERATOR = 13;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short COMPUTETANGENTOPERATOR = 13;
     //! code block index in the measures array
-    static constexpr unsigned short UPDATEAUXILIARYSTATEVARIABLES = 14;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short UPDATEAUXILIARYSTATEVARIABLES = 14;
     //! code block index in the measures array
-    static constexpr unsigned short FINITESTRAINPREPROCESSING  = 15;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short FINITESTRAINPREPROCESSING  = 15;
     //! code block index in the measures array
-    static constexpr unsigned short FINITESTRAINPOSTPROCESSING = 16;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short FINITESTRAINPOSTPROCESSING = 16;
     //! code block index in the measures array
-    static constexpr unsigned short USERDEFINEDCODE1 = 17;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short USERDEFINEDCODE1 = 17;
     //! code block index in the measures array
-    static constexpr unsigned short USERDEFINEDCODE2 = 18;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short USERDEFINEDCODE2 = 18;
     //! code block index in the measures array
-    static constexpr unsigned short TOTALTIME  = 19;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short TOTALTIME  = 19;
     //! destructor
     ~BehaviourProfiler();
   protected:

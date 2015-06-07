@@ -68,6 +68,8 @@ namespace tfel
 	getParametersNames(std::set<std::string>&) const override;
 	virtual ~StandardFunction();
       private:
+	StandardFunction& operator=(const StandardFunction&) = delete;
+	StandardFunction& operator=(StandardFunction&&) = delete;
 	const std::shared_ptr<Expr> expr;
       }; // end of struct StandardFunction
 

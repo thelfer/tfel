@@ -70,7 +70,7 @@ namespace tfel{
       template<typename T2toST2Type>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
+	tfel::meta::Implements<T2toST2Type,tfel::math::T2toST2Concept>::cond &&
 	T2toST2Traits<Child>::dime==T2toST2Traits<T2toST2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
 					 typename T2toST2Traits<Child>::NumType>::cond,
@@ -80,7 +80,7 @@ namespace tfel{
       template<typename T2toST2Type>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
+	tfel::meta::Implements<T2toST2Type,tfel::math::T2toST2Concept>::cond &&
 	T2toST2Traits<Child>::dime==T2toST2Traits<T2toST2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
 					 typename T2toST2Traits<Child>::NumType>::cond,
@@ -90,7 +90,7 @@ namespace tfel{
       template<typename T2toST2Type>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond &&
+	tfel::meta::Implements<T2toST2Type,tfel::math::T2toST2Concept>::cond &&
 	T2toST2Traits<Child>::dime==T2toST2Traits<T2toST2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
 					 typename T2toST2Traits<Child>::NumType>::cond,

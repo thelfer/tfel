@@ -194,8 +194,8 @@ namespace tfel{
       Expr() = delete;
       Expr(const Expr&) = default;
       Expr(Expr&&) = default;
-      Expr& operator=(const Expr&) = default;
-      Expr& operator=(Expr&&) = default;
+      Expr& operator=(const Expr&) = delete;
+      Expr& operator=(Expr&&) = delete;
       //! type return by the access operator(s)
       using value_type = typename ResultType::value_type;
       //! type used by access operator(s)
@@ -248,8 +248,8 @@ namespace tfel{
       Expr() = delete;
       Expr(const Expr&) = default;
       Expr(Expr&&) = default;
-      Expr& operator=(const Expr&) = default;
-      Expr& operator=(Expr&&) = default;
+      Expr& operator=(const Expr&) = delete;
+      Expr& operator=(Expr&&) = delete;
       //! type return by the access operator(s)
       using value_type = typename ResultType::value_type;
       //! type used by access operator(s)
@@ -323,8 +323,8 @@ namespace tfel{
       Expr() = delete;
       Expr(const Expr&) = default;
       Expr(Expr&&) = default;
-      Expr& operator=(const Expr&) = default;
-      Expr& operator=(Expr&&) = default;
+      Expr& operator=(const Expr&) = delete;
+      Expr& operator=(Expr&&) = delete;
       //! type return by the access operator(s)
       using value_type = typename ResultType::value_type;
       //! type used by access operator(s)
@@ -396,8 +396,8 @@ namespace tfel{
       Expr() = delete;
       Expr(const Expr&) = default;
       Expr(Expr&&) = default;
-      Expr& operator=(const Expr&) = default;
-      Expr& operator=(Expr&&) = default;
+      Expr& operator=(const Expr&) = delete;
+      Expr& operator=(Expr&&) = delete;
       //! type return by the access operator(s)
       using value_type = typename ResultType::value_type;
       //! type used by access operator(s)
@@ -466,8 +466,8 @@ namespace tfel{
       Expr() = delete;
       Expr(const Expr&) = default;
       Expr(Expr&&) = default;
-      Expr& operator=(const Expr&) = default;
-      Expr& operator=(Expr&&) = default;
+      Expr& operator=(const Expr&) = delete;
+      Expr& operator=(Expr&&) = delete;
       //! type return by the access operator(s)
       using value_type = typename ResultType::value_type;
       //! type used by access operator(s)

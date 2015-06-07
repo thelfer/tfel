@@ -20,8 +20,8 @@ namespace tfel
   namespace math
   {
 
-    template<class T>
-    class StensorConcept;
+    template<typename T>
+    struct StensorConcept;
 
   } // end of namespace math
 

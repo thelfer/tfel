@@ -26,7 +26,7 @@ doc-install: doc
 	cp    docs/mtest/mtest.pdf                       @docdir@/mtest
 	cp    docs/release-notes-2.0/tfel-2.0.pdf        @docdir@/release-notes-2.0
 	cp    docs/release-notes-3.0/tfel-3.0.pdf        @docdir@/release-notes-3.0
-	cp    docs/presentations/mfront-presentation.pdf @docdir@/presentations
+#	cp    docs/presentations/mfront-presentation.pdf @docdir@/presentations
 
 doc: doc-pdf doc-html
 
@@ -59,8 +59,8 @@ mfront-doc-pdf:
 	make -f Makefile.doc all
 
 presentations-doc-pdf:
-	cd docs/presentations ;                                     \
-	make -f Makefile.doc
+# cd docs/presentations ;                                     \
+# make -f Makefile.doc
 
 EXTRA_DIST = bootstrap.sh   \
 	     CMakeLists.txt \

@@ -252,14 +252,15 @@ namespace tfel
     TestDocMain::treatUnknownArgument(void)
     {
       using namespace std;
-      if((*(this->currentArgument))[0]=='-'){
+      const auto& s = static_cast<const string&>(*(this->currentArgument));
+      if(s[0]=='-'){
 	ArgumentParserBase<TestDocMain>::treatUnknownArgument();
-	cerr << "TestDocMain : unsupported option '" << *(this->currentArgument) << "'\n";
+	cerr << "TestDocMain : unsupported option '" << s << "'\n";
 	cerr << this->getUsageDescription() << endl;
 	exit(EXIT_FAILURE);
       }
       if(this->outputFile.empty()){
-	this->outputFile = *(this->currentArgument);
+	this->outputFile = s;
       } else {
 	cerr << "TestDocMain : output file already specified" << endl;
 	cerr << this->getUsageDescription() << endl;

@@ -21,6 +21,7 @@
 #include"tfel-config.hxx"
 
 #if defined _WIN32 || defined _WIN64
+#define NOMINMAX
 #include<windows.h>
 #endif
 

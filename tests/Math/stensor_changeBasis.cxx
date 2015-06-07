@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#define _USE_MATH_DEFINES
 #include<cmath>
 #include<fstream>
 #include<cstdlib>

@@ -155,9 +155,6 @@ commandes globales de calcul ({\tt STAT\_NON\_LINE},
 
 Le comportement a pour nom « MFRONT ». On spécifie donc dans ces commandes :
 
-\begin{flushleft}
-  \lstinputlisting{Python/comportement.comm}
-\end{flushleft}
 
 \end{itemize}
 

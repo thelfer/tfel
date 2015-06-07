@@ -348,7 +348,7 @@ namespace tfel{
     }
 
     template<unsigned short N,typename T>
-    st2tost2<N,T>::st2tost2(const st2tost2<N,T>::ParticularSt2toSt2 id){
+    st2tost2<N,T>::st2tost2(const ParticularSt2toSt2 id){
       using namespace std;
       unsigned short i,j;
       std::fill(this->v,this->v+StensorDimeToSize<N>::value*StensorDimeToSize<N>::value,T(0));

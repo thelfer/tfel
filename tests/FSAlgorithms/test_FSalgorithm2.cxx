@@ -28,9 +28,10 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::fsalgo;
-  vector<unsigned short> v(10);
-  vector<unsigned short> v2(10);
-  vector<unsigned short>::size_type i;
+  using ushort = unsigned short;
+  vector<ushort> v(10);
+  vector<ushort> v2(10);
+  vector<ushort>::size_type i;
   tfel::fsalgo::iota<10u>::exe(v.begin(),ushort{0});
   tfel::fsalgo::copy<10u>::exe(v.begin(),v2.begin());
   for(i=0;i!=10;++i){

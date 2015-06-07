@@ -92,7 +92,7 @@ namespace mfront
       } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
 	return 4u;
-      } else if(MH::TRIDIMENSIONAL){
+      } else if(h==MH::TRIDIMENSIONAL){
 	return 6u;
       } else {
 	string msg("UmatBehaviourBase::getDrivingVariablesSize : "
@@ -107,7 +107,7 @@ namespace mfront
       } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
 	return 5u;
-      } else if(MH::TRIDIMENSIONAL){
+      } else if(h==MH::TRIDIMENSIONAL){
 	return 9u;
       } else {
 	string msg("UmatBehaviourBase::getDrivingVariablesSize : "
@@ -119,7 +119,7 @@ namespace mfront
       if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 	 (h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
 	return 2u;
-      } else if(MH::TRIDIMENSIONAL){
+      } else if(h==MH::TRIDIMENSIONAL){
 	return 3u;
       } else {
 	string msg("UmatBehaviourBase::getDrivingVariablesSize : "
@@ -147,7 +147,7 @@ namespace mfront
       } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
 	return 4u;
-      } else if(MH::TRIDIMENSIONAL){
+      } else if(h==MH::TRIDIMENSIONAL){
 	return 6u;
       } else {
 	string msg("UmatBehaviourBase::getThermodynamicForcesSize : "
@@ -162,7 +162,7 @@ namespace mfront
       } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
 	return 4u;
-      } else if(MH::TRIDIMENSIONAL){
+      } else if(h==MH::TRIDIMENSIONAL){
 	return 6u;
       } else {
 	string msg("UmatBehaviourBase::getThermodynamicForcesSize : "
@@ -174,7 +174,7 @@ namespace mfront
       if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
 	 (h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
 	return 2u;
-      } else if(MH::TRIDIMENSIONAL){
+      } else if(h==MH::TRIDIMENSIONAL){
 	return 3u;
       } else {
 	string msg("UmatBehaviourBase::getThermodynamicForcesSize : "

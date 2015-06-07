@@ -1,82 +1,9 @@
-macro(latex_presentation doc)
-  configure_file(${doc}.tex.in ${doc}.tex @ONLY)
-  ADD_CUSTOM_COMMAND(
-    OUTPUT    ${doc}.pdf
-    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/${doc}.tex.in
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/beamer/themes
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
-    ARGS      -interaction=batchmode
-    ARGS      ${doc}.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/beamer/themes
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
-    ARGS      -interaction=batchmode
-    ARGS      ${doc}.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/beamer/themes
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
-    ARGS      -interaction=batchmode
-    ARGS      ${doc}.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
-    ARGS      -R0 ${doc}.dvi
-    COMMAND   ${PS2PDF_CONVERTER}
-    ARGS      ${doc}.ps
-    COMMENT   "${doc}.pdf")
-  add_custom_target(${doc}-doc-pdf ALL DEPENDS ${doc}.pdf)
-  add_dependencies(doc-pdf
-    ${doc}-doc-pdf)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
-    DESTINATION share/doc/mfront/${doc}
-    COMPONENT docs)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
-    DESTINATION share/doc/tfel/web/documents/${doc}
-    COMPONENT website)
-endmacro(latex_presentation doc)
-
-macro(pdflatex_presentation doc)
-  configure_file(${doc}.tex.in ${doc}.tex @ONLY)
-  ADD_CUSTOM_COMMAND(
-    OUTPUT    ${doc}.pdf
-    DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/${doc}.tex.in
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
-    ARGS      -interaction=batchmode
-    ARGS      ${doc}.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
-    ARGS      -interaction=batchmode
-    ARGS      ${doc}.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
-    ARGS      -interaction=batchmode
-    ARGS      ${doc}.tex
-    COMMENT   "${doc}.pdf")
-  add_custom_target(${doc}-doc-pdf ALL DEPENDS ${doc}.pdf)
-  add_dependencies(doc-pdf
-    ${doc}-doc-pdf)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
-    DESTINATION share/doc/mfront/${doc}
-    COMPONENT docs)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
-    DESTINATION share/doc/tfel/web/documents/${doc}
-    COMPONENT website)
-endmacro(pdflatex_presentation doc)
-
-if(HAVE_LATEX)
-  latex_presentation(mfront-presentation)
-  latex_presentation(mfront-behaviours)
-  latex_presentation(mfront-finitestrain)
-  latex_presentation(mtest-presentation)
-  pdflatex_presentation(mfront-formation)
-  pdflatex_presentation(tp)
-endif(HAVE_LATEX)
+add_subdirectory(mfront-behaviours)
+add_subdirectory(mfront-finitestrain)
+add_subdirectory(mfront-formation)
+add_subdirectory(mfront-formation-tp)
+add_subdirectory(mfront-presentation)
+add_subdirectory(mtest-presentation)
 
 if(HAVE_PANDOC)
   add_subdirectory(mfront-user-meeting-2015)

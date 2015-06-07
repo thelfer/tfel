@@ -112,7 +112,7 @@ namespace tfel
     //! a simple alias
     typedef PosixError<ERANGE>  ERANGEError;
   
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     //! a simple alias
     typedef PosixError<ENOTBLK> ENOTBLKError;
     //! a simple alias

@@ -36,7 +36,7 @@ namespace tfel
 	typedef double (*EvaluatorProxyFunctionPtr2P1V)(int,int,double);
 	typedef double (*EvaluatorProxyFunctionPtr2P2V)(int,int,double,double);
 #ifdef __SUNPRO_CC
-     }
+      }
 #endif /* __SUNPRO_CC */
 
       struct EvaluatorFunctionBase
@@ -57,6 +57,8 @@ namespace tfel
 	checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual ~EvaluatorFunction1VBase();
       protected:
+	EvaluatorFunction1VBase& operator=(const EvaluatorFunction1VBase&) = delete;
+	EvaluatorFunction1VBase& operator=(EvaluatorFunction1VBase&&) = delete;
 	const std::shared_ptr<Expr> expr;
       }; // end of struct EvaluatorFunction1V
 
@@ -69,6 +71,8 @@ namespace tfel
 	checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual ~EvaluatorFunction2VBase();
       protected:
+	EvaluatorFunction2VBase& operator=(const EvaluatorFunction2VBase&) = delete;
+	EvaluatorFunction2VBase& operator=(EvaluatorFunction2VBase&&) = delete;
 	const std::shared_ptr<Expr> e1;
 	const std::shared_ptr<Expr> e2;
       }; // end of struct EvaluatorFunction2V
@@ -81,18 +85,20 @@ namespace tfel
 			      const std::shared_ptr<Expr>);
 	virtual double getValue(void) const override;
 	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;	
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;	
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual ~EvaluatorFunction1P1V();
       private:
+	EvaluatorFunction1P1V& operator=(const EvaluatorFunction1P1V&) = delete;
+	EvaluatorFunction1P1V& operator=(EvaluatorFunction1P1V&&) = delete;
 	EvaluatorProxyFunctionPtr1P1V f;
 	const int n;
       }; // end of struct EvaluatorFunction1P1V
@@ -106,18 +112,20 @@ namespace tfel
 			      const std::shared_ptr<Expr>);
 	virtual double getValue(void) const override;
 	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual ~EvaluatorFunction2P1V();
       private:
+	EvaluatorFunction2P1V& operator=(const EvaluatorFunction2P1V&) = delete;
+	EvaluatorFunction2P1V& operator=(EvaluatorFunction2P1V&&) = delete;
 	EvaluatorProxyFunctionPtr2P1V f;
 	const int n;
 	const int m;
@@ -132,18 +140,20 @@ namespace tfel
 			      const std::shared_ptr<Expr>);
 	virtual double getValue(void) const override;
 	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;	
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;	
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual ~EvaluatorFunction1P2V();
       private:
+	EvaluatorFunction1P2V& operator=(const EvaluatorFunction1P2V&) = delete;
+	EvaluatorFunction1P2V& operator=(EvaluatorFunction1P2V&&) = delete;
 	EvaluatorProxyFunctionPtr1P2V f;
 	const int n;
       }; // end of struct EvaluatorFunction1P2V
@@ -158,18 +168,20 @@ namespace tfel
 			      const std::shared_ptr<Expr>);
 	virtual double getValue(void) const override;
 	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;	
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;	
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual ~EvaluatorFunction2P2V();
       private:
+	EvaluatorFunction2P2V& operator=(const EvaluatorFunction2P2V&) = delete;
+	EvaluatorFunction2P2V& operator=(EvaluatorFunction2P2V&&) = delete;
 	EvaluatorProxyFunctionPtr2P2V f;
 	const int n;
 	const int m;
@@ -186,20 +198,22 @@ namespace tfel
 			    const std::vector<std::shared_ptr<Expr> >&);
 	virtual double getValue(void) const override;
 	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;	
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;	
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
+	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual ~EvaluatorFunctionNV();
       protected:
+	EvaluatorFunctionNV& operator=(const EvaluatorFunctionNV&) = delete;
+	EvaluatorFunctionNV& operator=(EvaluatorFunctionNV&&) = delete;
 	typename EvaluatorFunctionWrapper<N>::type f;
 	const std::vector<std::shared_ptr<Expr> > args;
       }; // end of struct EvaluatorFunctionNV
@@ -213,20 +227,22 @@ namespace tfel
 			      const std::vector<std::shared_ptr<Expr> >&);
 	virtual double getValue(void) const override;
 	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;	
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;	
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
+	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual ~EvaluatorFunction1PNV();
       protected:
+	EvaluatorFunction1PNV& operator=(const EvaluatorFunction1PNV&) = delete;
+	EvaluatorFunction1PNV& operator=(EvaluatorFunction1PNV&&) = delete;
 	typename EvaluatorFunctionWrapper<N>::type1P f;
 	const int n;
 	const std::vector<std::shared_ptr<Expr> > args;
@@ -241,18 +257,20 @@ namespace tfel
 			      const std::vector<std::shared_ptr<Expr> >&);
 	virtual double getValue(void) const override;
 	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
+	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual ~EvaluatorFunction2PNV();
       protected:
+	EvaluatorFunction2PNV& operator=(const EvaluatorFunction2PNV&) = delete;
+	EvaluatorFunction2PNV& operator=(EvaluatorFunction2PNV&&) = delete;
 	typename EvaluatorFunctionWrapper<N>::type2P f;
 	const int n;
 	const int m;
@@ -268,20 +286,22 @@ namespace tfel
 			       const std::vector<std::shared_ptr<Expr> >&);
 	virtual double getValue(void) const override;
 	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;	
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;	
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
+	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual ~EvaluatorFunction1UPNV();
       protected:
+	EvaluatorFunction1UPNV& operator=(const EvaluatorFunction1UPNV&) = delete;
+	EvaluatorFunction1UPNV& operator=(EvaluatorFunction1UPNV&&) = delete;
 	typename EvaluatorFunctionWrapper<N>::type1UP f;
 	const unsigned int n;
 	const std::vector<std::shared_ptr<Expr> > args;
@@ -297,20 +317,22 @@ namespace tfel
 			       const std::vector<std::shared_ptr<Expr> >&);
 	virtual double getValue(void) const override;
 	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;	
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;	
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
+	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual ~EvaluatorFunction2UPNV();
       protected:
+	EvaluatorFunction2UPNV& operator=(const EvaluatorFunction2UPNV&) = delete;
+	EvaluatorFunction2UPNV& operator=(EvaluatorFunction2UPNV&&) = delete;
 	typename EvaluatorFunctionWrapper<N>::type2UP f;
 	const unsigned int n;
 	const unsigned int m;

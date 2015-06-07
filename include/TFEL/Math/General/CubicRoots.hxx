@@ -36,7 +36,7 @@ namespace tfel{
     struct CubicRoots
     {
 
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if  ! ((defined _WIN32) || (defined _WIN64) || (defined __CYGWIN__))
 #if defined _BSD_SOURCE || defined _SVID_SOURCE || defined _ISOC99_SOURCE || ((defined _XOPEN_SOURCE) && (_XOPEN_SOURCE >= 600))  || ((defined _POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200112L))
       /*!
        * \return the cubic root of a real number of type float

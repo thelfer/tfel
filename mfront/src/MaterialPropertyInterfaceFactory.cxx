@@ -14,6 +14,7 @@
 
 #include<stdexcept>
 #include<algorithm>
+#include<iterator>
 #include<cassert>
 
 #include"MFront/MaterialPropertyInterfaceFactory.hxx"

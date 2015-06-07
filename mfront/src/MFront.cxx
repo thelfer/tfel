@@ -22,14 +22,16 @@
 #include<memory>
 #include<cassert>
 
+#include<sys/types.h>
+#include<sys/stat.h>
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#include <windows.h>
+#define NOMINMAX
+#include <io.h>
 #include <conio.h>
+#include <windows.h>
 #include <process.h>
 #else
 #include<dlfcn.h> 
-#include<sys/types.h>
-#include<sys/stat.h>
 #include<sys/wait.h>
 #include<dirent.h>
 #include<unistd.h>
@@ -200,10 +202,12 @@ namespace mfront{
   MFront::treatUnknownArgument(void)
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<MFront>::treatUnknownArgument();
 #else
-      cerr << "mfront : unsupported option '" << a << "'\n";
+		auto a = static_cast<const std::string&>(this->getCurrentCommandLineArgument());
+		std::cerr << "mfront : unsupported option '" 
+				<< a << '\'' << std::endl;
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
     }
@@ -348,7 +352,7 @@ namespace mfront{
     this->treatTarget();
   } // end of MFront::treatTarget
 
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
   void
   MFront::treatWin32(void)
   {
@@ -399,13 +403,13 @@ namespace mfront{
 			      "specify which interface to use",true);
     this->registerNewCallBack("--silent-build",&MFront::treatSilentBuild,
 			      "active or desactivate silent build",true);
-#if (not defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--nodeps",&MFront::treatNoDeps,
 			      "don't generate compilation dependencies");
 #endif /* __CYGWIN__ */
     this->registerNewCallBack("--nomelt",&MFront::treatNoMelt,
 			      "don't melt librairies sources");
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
     this->registerNewCallBack("--win32",&MFront::treatWin32,
 			      "specify that the target system is win32");
 #endif /* __CYGWIN__ */
@@ -427,7 +431,7 @@ namespace mfront{
       buildLibs(false),
       cleanLibs(false),
       silentBuild(true),
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       nodeps(false),
 #else /* __CYGWIN__ */
       nodeps(true),
@@ -960,7 +964,7 @@ namespace mfront{
       // Close handle
       ::FindClose(hFile);
       for(p=files.begin();p!=files.end();++p){
-	if(p->size>4){
+	if(p->size()>4){
 	  if(p->substr(p->size()-4)==".src"){
 	    if(getVerboseMode()>=VERBOSE_LEVEL2){
 	      auto& log = getLogStream();
@@ -969,7 +973,7 @@ namespace mfront{
 	    this->analyseSources(*p);
 	  }
 	}
-	if(p->size>5){
+	if(p->size()>5){
 	  if(p->substr(p->size()-5)==".epts"){
 	    if(getVerboseMode()>=VERBOSE_LEVEL2){
 	      auto& log = getLogStream();
@@ -1519,7 +1523,7 @@ namespace mfront{
       // CXXFLAGS
       if(!cppSources.empty()){
 	this->makeFile << "CXXFLAGS := -Wall -Wfatal-errors ";
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 	this->makeFile << "-ansi ";
 #endif /* __CYGWIN__ */
 	if(cxxflags!=nullptr){
@@ -1544,7 +1548,7 @@ namespace mfront{
       // CFLAGS
       if(!cSources.empty()){
 	this->makeFile << "CFLAGS := -W -Wall -Wfatal-errors ";
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 	this->makeFile << "-ansi -std=c99 ";
 #endif /* __CYGWIN__ */
 	if(cflags!=nullptr){

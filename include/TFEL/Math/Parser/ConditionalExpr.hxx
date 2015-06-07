@@ -56,6 +56,8 @@ namespace tfel
 							std::vector<double>::size_type>&) const override;
 	virtual ~ConditionalExpr();
       private:
+	ConditionalExpr& operator=(const ConditionalExpr&) = delete;
+	ConditionalExpr& operator=(ConditionalExpr&&) = delete;
 	const std::shared_ptr<LogicalExpr> c;
 	const std::shared_ptr<Expr> a;
 	const std::shared_ptr<Expr> b;

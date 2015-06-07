@@ -306,8 +306,8 @@ namespace tfel
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator previous;
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator next;
       while(p!=this->subExpr.end()){
-	if((*p)->isOperator()){
-	  shared_ptr<TOperator> o = shared_ptr<TOperator>(new TOperator(static_cast<const TOperator &>(*(p->get()))));
+	if ((*p)->isOperator()) {
+	  auto o = make_shared<TOperator>(static_cast<const TOperator &>(*(p->get())));
 	  if(o->getOperatorType()==op){
 	    previous = p-1;
 	    next     = p+1;

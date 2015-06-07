@@ -25,8 +25,13 @@
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/TestFunctionWrapper.hxx"
 
-bool
-test1(void)
+#if !( defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#define TFEL_TESTS_STATIC static
+#else
+#define TFEL_TESTS_STATIC
+#endif
+
+TFEL_TESTS_STATIC bool test1(void)
 {
   return true;
 }

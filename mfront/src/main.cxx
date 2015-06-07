@@ -12,6 +12,7 @@
  */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#define NOMINMAX
 #include<windows.h>
 #endif /* __CYGWIN__ */
 
@@ -32,7 +33,7 @@ int main(const int argc, const char *const *const argv)
   mfront.exe();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   }
-  catch(exception& e){
+  catch(std::exception& e){
     MessageBox(0,e.what(),
 	       "mfront",0);
     return EXIT_FAILURE;

@@ -67,6 +67,8 @@ namespace tfel
 	getParametersNames(std::set<std::string>&) const override;
 	virtual ~StandardBinaryFunction();
       private:
+        StandardBinaryFunction& operator=(const StandardBinaryFunction&) = delete;
+	StandardBinaryFunction& operator=(StandardBinaryFunction&&) = delete;
 	const std::shared_ptr<Expr> expr1;
 	const std::shared_ptr<Expr> expr2;
       }; // end of struct StandardBinaryFunction

@@ -70,6 +70,8 @@ namespace mfront{
     //! destructor
     virtual ~ReferenceFileComparisonTest();
   protected:
+    ReferenceFileComparisonTest& operator=(const ReferenceFileComparisonTest&) = delete;
+    ReferenceFileComparisonTest& operator=(ReferenceFileComparisonTest&&) = delete;
     //! reference values
     const std::vector<real> values;
     //! results of the test

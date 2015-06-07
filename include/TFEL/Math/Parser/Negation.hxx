@@ -49,7 +49,9 @@ namespace tfel
 	getParametersNames(std::set<std::string>&) const override;
 	virtual ~Negation();
       private:
-	const std::shared_ptr<Expr> expr;
+		  Negation& operator=(const Negation&) = delete;
+		  Negation& operator=(Negation&&) = delete;
+		  const std::shared_ptr<Expr> expr;
       };
 
     } // end of namespace parser

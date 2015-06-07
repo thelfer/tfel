@@ -30,6 +30,7 @@ p.setGlossaryName("EquivalentPlasticStrain");
 @LocalVariable stress K;
 @LocalVariable stress lambda;
 @LocalVariable stress mu;
+@LocalVariable bool b;
 
 @Includes{
 #include"TFEL/Material/Lame.hxx"
@@ -43,6 +44,11 @@ p.setGlossaryName("EquivalentPlasticStrain");
   K      = lambda+(2*mu)/3;
   a      = -3*(tau-1)/(tau+1); 
   k      = 2*sigc*tau/(tau+1); 
+  const StrainStensor e  =  eel+deto;
+  const StressStensor se = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  const stress seq_e = sigmaeq(se);
+  const stress pr_e  = trace(se)/3.;
+  b =  a*pr_e+seq_e-k > 0;
 } 
 
 @ComputeStress{
@@ -50,25 +56,26 @@ p.setGlossaryName("EquivalentPlasticStrain");
 }
 
 @Integrator{
-  const stress seq_ = sigmaeq(sig);
-  const stress pr_  = trace(sig)/3.;
-  StrainStensor n_(real(0));
-  if(seq_>1.e-8*young){
-    n_ = 3/(2*seq_)*deviator(sig);
-  }
-  // elasticity
-  StrainStensor np_ = a*StrainStensor::Id()+n_;
-  feel = deel+dp*np_-deto;
-  if(seq_>1.e-8*young){
-    dfeel_ddeel += (2*mu*theta*dp/seq_)*(Stensor4::M()-(n_^n_));
-  }
-  dfeel_ddp = np_;
-  // plasticity
-  const strain f = (a*pr_+seq_-k)/young;
-  if((f>0)||(dp>epsilon)){
-    fp = f;
+  if(b){
+    const stress seq_ = sigmaeq(sig);
+    const stress pr_  = trace(sig)/3.;
+    StrainStensor n_(real(0));
+    if(seq_>1.e-8*young){
+      n_ = 3/(2*seq_)*deviator(sig);
+    }
+    // elasticity
+    StrainStensor np_ = a*StrainStensor::Id()+n_;
+    feel = deel+dp*np_-deto;
+    if(seq_>1.e-8*young){
+      dfeel_ddeel += (2*mu*theta*dp/seq_)*(Stensor4::M()-(n_^n_));
+    }
+    dfeel_ddp = np_;
+    // plasticity
+    fp = (a*pr_+seq_-k)/young;
     dfp_ddp   = 0;
     dfp_ddeel = (a*K*StrainStensor::Id()+2*mu*n_)*theta/young;
+  } else {
+    feel -= deto;
   }
 }
 

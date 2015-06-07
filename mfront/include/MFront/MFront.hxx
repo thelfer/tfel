@@ -145,7 +145,7 @@ namespace mfront{
     virtual void
     cleanLibraries(void);
 
-#ifndef __CYGWIN
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
     virtual void
     treatWin32(void);
 #endif /* LIB_MFRONT_H_ */

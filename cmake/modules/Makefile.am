@@ -12,4 +12,5 @@ EXTRA_DIST = autotools.cmake             \
 	     common-compiler-flags.cmake \
 	     gnu-fortran-compiler.cmake  \
 	     tfel.cmake                  \
+	     latex.cmake                 \
 	     pandoc.cmake

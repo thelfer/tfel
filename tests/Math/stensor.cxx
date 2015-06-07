@@ -25,8 +25,8 @@ int main(void){
   using namespace tfel::math;  
   typedef stensor<1> stensor1;
   typedef stensor<1,int> stensor2;
-  constexpr stensor1 v1 = {4.,1.,25.};
-  constexpr stensor2 v2 = {2,1,5};
+  const stensor1 v1 = {4.,1.,25.};
+  const stensor2 v2 = {2,1,5};
   stensor1 v3;
   v3 = v1 + v2;
   assert(abs(v3(0)-6)<1.e-14);

@@ -113,6 +113,7 @@ namespace mfront
 			const std::string& c)
   {
     file << "#ifdef WIN32\n";
+    file << "#define NOMINMAX\n";
     file << "#include <windows.h>\n";
     file << "#ifndef MFRONT_SHAREDOBJ\n";
     file << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"; 

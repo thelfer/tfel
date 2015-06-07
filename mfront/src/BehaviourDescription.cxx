@@ -201,11 +201,9 @@ namespace mfront
   void
   BehaviourDescription::setBehaviourName(const std::string& m)
   {
-    using namespace std;
     if(!this->behaviour.empty()){
-      string msg("BehaviourDescription::setBehaviourName : ");
-      msg += "behaviour name already defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setBehaviourName : "
+			       "behaviour name already defined"));
     }
     this->behaviour = m;
     this->updateClassName();
@@ -214,17 +212,19 @@ namespace mfront
   const std::string&
   BehaviourDescription::getBehaviourName(void) const
   {
+    if(this->behaviour.empty()){
+      throw(std::runtime_error("BehaviourDescription::getBehaviourName : "
+			       "behaviour name not defined"));
+    }
     return this->behaviour;
   } // end of BehaviourDescription::getBehaviourName
 
   void
   BehaviourDescription::setParserName(const std::string& m)
   {
-    using namespace std;
     if(!this->parser.empty()){
-      string msg("BehaviourDescription::setParserName : ");
-      msg += "parser name already defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setParserName : "
+			       "parser name already defined"));
     }
     this->parser = m;
     this->updateClassName();
@@ -233,17 +233,19 @@ namespace mfront
   const std::string&
   BehaviourDescription::getParserName(void) const
   {
+    if(this->parser.empty()){
+      throw(std::runtime_error("BehaviourDescription::getParserName : "
+			       "parser name not defined"));
+    }
     return this->parser;
   } // end of BehaviourDescription::getParserName
 
   void
   BehaviourDescription::setIntegrationScheme(const BehaviourDescription::IntegrationScheme s)
   {
-    using namespace std;
     if(this->ischeme!=UNDEFINEDINTEGRATIONSCHEME){
-      string msg("BehaviourDescription::setIntegrationScheme : ");
-      msg += "integration scheme already defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setIntegrationScheme : "
+			       "integration scheme already defined"));
     }
     this->ischeme = s;
   } // end of BehaviourDescription::setIntegrationScheme
@@ -251,11 +253,9 @@ namespace mfront
   BehaviourDescription::IntegrationScheme
   BehaviourDescription::getIntegrationScheme(void) const
   {
-    using namespace std;
     if(this->ischeme==UNDEFINEDINTEGRATIONSCHEME){
-      string msg("BehaviourDescription::getIntegrationScheme : "
-		 "the integration scheme is undefined");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::getIntegrationScheme : "
+			       "the integration scheme is undefined"));
     }
     return this->ischeme;
   } // end of BehaviourDescription::getIntegrationScheme
@@ -662,11 +662,9 @@ namespace mfront
   const std::vector<std::shared_ptr<MaterialPropertyDescription> >&
   BehaviourDescription::getThermalExpansionCoefficients(void) const
   {
-    using namespace std;
     if(!this->areThermalExpansionCoefficientsDefined()){
-      string msg("BehaviourDescription::getThermalExpansionCoefficients : "
-		 "no thermal expansion coefficients defined");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::getThermalExpansionCoefficients : "
+					   		   "no thermal expansion coefficients defined"));
     }
     return this->thermalExpansionCoefficients;
   }
@@ -674,7 +672,11 @@ namespace mfront
   void
   BehaviourDescription::setUseQt(const bool b)
   {
-    this->use_qt = b;
+	  if (this->use_qt) {
+		  throw(std::runtime_error("BehaviourDescription::setUseQt : "
+								   "setUseQt already called"));
+	  }
+	  this->use_qt = b;
   } // end of BehaviourDescription::setUseQt
 
   bool
@@ -1291,9 +1293,9 @@ namespace mfront
   void
   BehaviourDescription::updateClassName(void)
   {
-    if((!this->getBehaviourName().empty())||
-       (!this->getMaterialName().empty())){
-      this->className = this->getMaterialName()+this->getBehaviourName();
+    if((!this->behaviour.empty())||
+       (!this->material.empty())){
+      this->className = this->material+this->behaviour;
     }
   } // end of BehaviourDescription::updateClassName
   

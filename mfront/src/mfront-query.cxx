@@ -12,6 +12,7 @@
  */
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#define NOMINMAX
 #include<windows.h>
 #endif /* __CYGWIN__ */
 

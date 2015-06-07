@@ -45,7 +45,7 @@ namespace tfel{
       typedef T type;
     };
 
-    template<class T>
+    template<typename T>
     struct StensorConcept 
     {
       typedef StensorTag ConceptTag;

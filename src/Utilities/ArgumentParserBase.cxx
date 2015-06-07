@@ -20,13 +20,26 @@ namespace tfel
   {
 
     Argument::Argument(std::string s)
-      : std::string(std::forward<std::string>(s))
+      : name(std::forward<std::string>(s))
     {}
 
     Argument::Argument(const char* const s)
-      : std::string(s)
+      : name(s)
     {}
+
+    Argument::Argument(Argument&&) = default;
+    Argument::Argument(const Argument&) = default;
+    Argument& Argument::operator=(Argument&&) = default;
+    Argument& Argument::operator=(const Argument&) = default;
     
+    Argument::operator std::string& () noexcept {
+      return this->name;
+    }
+    
+    Argument::operator const std::string& () const noexcept{
+      return this->name;
+    }
+
     bool Argument::hasOption(void) const noexcept
     {
       return this->isOptionSet;

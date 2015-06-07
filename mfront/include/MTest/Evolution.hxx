@@ -85,6 +85,8 @@ namespace mfront
     //! destructor
     virtual ~ConstantEvolution();
   protected:
+    ConstantEvolution& operator=(const ConstantEvolution&) = delete;
+    ConstantEvolution& operator=(ConstantEvolution&&) = delete;
     const real value;
   };
 

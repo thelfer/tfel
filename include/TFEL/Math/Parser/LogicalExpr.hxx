@@ -103,22 +103,24 @@ namespace tfel
 	LogicalOperation(const ExprPtr,
 			 const ExprPtr);
 	virtual bool
-	getValue(void) const override;
+	  getValue(void) const override;
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
+	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual LogicalExprPtr
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual LogicalExprPtr
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual LogicalExprPtr
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;
 	virtual ~LogicalOperation();
       private:
+	LogicalOperation& operator=(const LogicalOperation&) = delete;
+	LogicalOperation& operator=(LogicalOperation&&) = delete;
 	const ExprPtr a;
 	const ExprPtr b;
       }; // end of struct LogicalOperation
@@ -130,22 +132,24 @@ namespace tfel
 	LogicalBinaryOperation(LogicalExprPtr,
 			       LogicalExprPtr);
 	virtual bool
-	getValue(void) const override;
+	  getValue(void) const override;
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
+	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual LogicalExprPtr
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual LogicalExprPtr
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual LogicalExprPtr
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;
 	virtual ~LogicalBinaryOperation();
       private:
+	LogicalBinaryOperation& operator=(const LogicalBinaryOperation&) = delete;
+	LogicalBinaryOperation& operator=(LogicalBinaryOperation&&) = delete;
 	LogicalExprPtr a;
 	LogicalExprPtr b;
       }; // end of struct LogicalBinaryOperation
@@ -156,20 +160,22 @@ namespace tfel
 	NegLogicalExpression(LogicalExprPtr);
 	virtual bool getValue(void) const override;
 	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
+	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual LogicalExprPtr
-	resolveDependencies(const std::vector<double>&) const override;
+	  resolveDependencies(const std::vector<double>&) const override;
 	virtual LogicalExprPtr
-	clone(const std::vector<double>&) const override;
+	  clone(const std::vector<double>&) const override;
 	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	  getParametersNames(std::set<std::string>&) const override;
 	virtual LogicalExprPtr
-	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							const std::vector<std::string>&,
-							const std::map<std::string,
-							std::vector<double>::size_type>&) const override;
+	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							  const std::vector<std::string>&,
+							  const std::map<std::string,
+							  std::vector<double>::size_type>&) const override;
 	~NegLogicalExpression();
       private:
+	NegLogicalExpression& operator=(const NegLogicalExpression&) = delete;
+	NegLogicalExpression& operator=(NegLogicalExpression&&) = delete;
 	LogicalExprPtr a;
       }; // end of struct LogicalBinaryOperation
 

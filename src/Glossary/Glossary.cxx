@@ -829,8 +829,8 @@ for(p=this->entries.begin();p!=this->entries.end();++p){
 if(p->getKey()==n){
 return p;
 }
-const auto& names = p->getNames();
-if(find(names.begin(),names.end(),n)!=names.end()){
+const auto& enames = p->getNames();
+if(find(enames.begin(),enames.end(),n)!=enames.end()){
 return p;
 }
 }

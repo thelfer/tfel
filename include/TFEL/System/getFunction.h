@@ -10,6 +10,7 @@
 #define LIB_TFEL_GETFUNCTION_H_
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#define NOMINMAX
 #include <windows.h>
 typedef HINSTANCE__* LibraryHandlerPtr;
 #else

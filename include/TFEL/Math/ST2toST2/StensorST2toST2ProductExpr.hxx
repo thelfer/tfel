@@ -173,7 +173,7 @@ namespace tfel
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::meta::Implements<StensorType,StensorConcept>::cond));
+	TFEL_STATIC_ASSERT((tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond));
 	//! a simple check
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2Type>::dime==3u));
 	//! a simple check

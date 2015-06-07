@@ -1,3 +1,4 @@
+# AUTOMAKE_OPTIONS = subdir-objects
 SUBDIRS = interfaces
 
 mfronts = VanadiumAlloy_YoungModulus_SRMA.mfront               \
@@ -37,7 +38,7 @@ EXTRA_DIST = $(mfronts)      \
 
 if WITH_TESTS
 
-INCLUDES = -I@builddir@/include
+AM_CPPFLAGS = -I@builddir@/include
 
 check_LTLIBRARIES = libMFrontMaterialProperties.la
 nodist_libMFrontMaterialProperties_la_SOURCES = src/VanadiumAlloy_YoungModulus_SRMA.cxx        \

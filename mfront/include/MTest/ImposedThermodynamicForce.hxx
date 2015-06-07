@@ -117,6 +117,8 @@ namespace mfront
     //! destructor
     virtual ~ImposedThermodynamicForce();
   protected:
+    ImposedThermodynamicForce& operator=(const ImposedThermodynamicForce&) = delete;
+    ImposedThermodynamicForce& operator=(ImposedThermodynamicForce&&) = delete;
     //! thermodynamic force evolution
     const std::shared_ptr<Evolution> sev;
     //! component value

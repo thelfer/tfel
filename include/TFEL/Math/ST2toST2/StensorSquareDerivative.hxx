@@ -76,7 +76,7 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<StensorType,StensorConcept>::cond));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond));
+	TFEL_STATIC_ASSERT((tfel::meta::Implements<ST2toST2Type,tfel::math::ST2toST2Concept>::cond));
 	//! a simple check
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==StensorTraits<StensorType>::dime));
 	//! a simple check
@@ -179,7 +179,7 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<StensorType,StensorConcept>::cond));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond));
+	TFEL_STATIC_ASSERT((tfel::meta::Implements<ST2toST2Type,tfel::math::ST2toST2Concept>::cond));
 	//! a simple check
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==StensorTraits<StensorType>::dime));
 	//! a simple check

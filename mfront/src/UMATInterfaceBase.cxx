@@ -770,6 +770,7 @@ namespace mfront
   {
     using namespace std;
     out << "#ifdef WIN32" << endl;
+    out << "#define NOMINMAX" << endl;
     out << "#include <windows.h>" << endl;
     out << "#ifndef MFRONT_CALLING_CONVENTION" << endl;
     out << "#define MFRONT_CALLING_CONVENTION __cdecl" << endl; 

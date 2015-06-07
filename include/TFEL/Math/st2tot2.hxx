@@ -64,7 +64,7 @@ namespace tfel{
       template<typename St2tot2Type>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<St2tot2Type,ST2toT2Concept>::cond &&
+	tfel::meta::Implements<St2tot2Type,tfel::math::ST2toT2Concept>::cond &&
 	ST2toT2Traits<Child>::dime==ST2toT2Traits<St2tot2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename ST2toT2Traits<St2tot2Type>::NumType,
 					 typename ST2toT2Traits<Child>::NumType>::cond,
@@ -74,7 +74,7 @@ namespace tfel{
       template<typename St2tot2Type>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<St2tot2Type,ST2toT2Concept>::cond &&
+	tfel::meta::Implements<St2tot2Type,tfel::math::ST2toT2Concept>::cond &&
 	ST2toT2Traits<Child>::dime==ST2toT2Traits<St2tot2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename ST2toT2Traits<St2tot2Type>::NumType,
 					 typename ST2toT2Traits<Child>::NumType>::cond,
@@ -84,7 +84,7 @@ namespace tfel{
       template<typename St2tot2Type>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<St2tot2Type,ST2toT2Concept>::cond &&
+	tfel::meta::Implements<St2tot2Type,tfel::math::ST2toT2Concept>::cond &&
 	ST2toT2Traits<Child>::dime==ST2toT2Traits<St2tot2Type>::dime &&
 	tfel::typetraits::IsAssignableTo<typename ST2toT2Traits<St2tot2Type>::NumType,
 					 typename ST2toT2Traits<Child>::NumType>::cond,
@@ -129,7 +129,7 @@ namespace tfel{
       template<typename StensorType>
       static TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
 	StensorTraits<StensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
 	Expr<st2tot2<N,T>,StensorProductLeftDerivativeExpr<N> > >::type
@@ -143,7 +143,7 @@ namespace tfel{
 	       typename ST2toST2Type>
       static TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
 	tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
 	StensorTraits<StensorType>::dime==N&&
 	ST2toST2Traits<ST2toST2Type>::dime==N&&
@@ -160,7 +160,7 @@ namespace tfel{
       template<typename StensorType>
       static TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
 	StensorTraits<StensorType>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
 	Expr<st2tot2<N,T>,StensorProductRightDerivativeExpr<N> > >::type
@@ -174,8 +174,8 @@ namespace tfel{
 	       typename ST2toST2Type>
       static TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-	tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
+	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
+        tfel::meta::Implements<ST2toST2Type,tfel::math::ST2toST2Concept>::cond &&
 	StensorTraits<StensorType>::dime==N&&
 	ST2toST2Traits<ST2toST2Type>::dime==N&&
 	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,

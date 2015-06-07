@@ -11,7 +11,14 @@
  * project under specific licensing conditions. 
  */
 
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #include<unistd.h>
+#else
+#define NOMINMAX
+#include<io.h>
+#define R_OK    4       /* Test for read permission.  */
+#define F_OK    0       /* Test for existence.  */
+#endif
 #include<cstdlib>
 
 #include"TFEL/Utilities/StringAlgorithms.hxx"

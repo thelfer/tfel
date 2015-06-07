@@ -55,6 +55,7 @@ namespace mfront
       AUXILIARYSTATEVARIABLE,
       INTEGRATIONVARIABLE,
       LOCALVARIABLE,
+      STATICVARIABLE,
       PARAMETER,
       MATERIALLAW
     }; // end of struct variable type

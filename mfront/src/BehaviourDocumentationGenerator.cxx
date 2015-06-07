@@ -355,10 +355,11 @@ namespace mfront{
   void BehaviourDocumentationGenerator::treatUnknownArgument(void)
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
-#if not (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<BehaviourDocumentationGenerator>::treatUnknownArgument();
 #else
-      cerr << "mfront : unsupported option '" << a << "'\n";
+		auto a = static_cast<const std::string&>(this->getCurrentCommandLineArgument());
+      std::cerr << "mfront : unsupported option '" << a << '\'' << std::endl;
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
     }

@@ -1,6 +1,6 @@
 if WITH_TESTS
 
-INCLUDES = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include
 
 testdir = $(pkgdatadir)/tests/Material
 test_PROGRAMS = boundsCheck \

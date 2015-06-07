@@ -19,6 +19,8 @@
 
 namespace mfront{
 
+  VariableDescription::VariableDescription() = default;
+
   VariableDescription::VariableDescription(const std::string& t,
 					   const std::string& n,
 					   const unsigned short s,
@@ -60,6 +62,20 @@ namespace mfront{
 
   VariableDescription::~VariableDescription()
   {} // end of VariableDescription::~VariableDescription
+
+  VariableDescriptionContainer::VariableDescriptionContainer() = default;
+  
+  VariableDescriptionContainer::VariableDescriptionContainer(const std::initializer_list<VariableDescription>& l)
+	  : std::vector<VariableDescription>(l)
+  {}
+
+  VariableDescriptionContainer::VariableDescriptionContainer(VariableDescriptionContainer&&) = default;
+  VariableDescriptionContainer::VariableDescriptionContainer(const VariableDescriptionContainer&) = default;
+  VariableDescriptionContainer&
+  VariableDescriptionContainer::operator=(VariableDescriptionContainer&&) = default;
+  VariableDescriptionContainer&
+  VariableDescriptionContainer::operator=(const VariableDescriptionContainer&) = default;
+
 
   bool
   VariableDescriptionContainer::contains(const std::string& n) const

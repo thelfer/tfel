@@ -1,22 +1,22 @@
 # Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-INCLUDES = -I$(top_builddir)/src/TFELConfig \
-	   -I$(top_srcdir)/include          \
-	   -I$(top_srcdir)/mfront/include
+AM_CPPFLAGS = -I$(top_builddir)/src/TFELConfig \
+	      -I$(top_srcdir)/include          \
+	      -I$(top_srcdir)/mfront/include
 
 if HAVE_CASTEM
 if !LOCAL_CASTEM_HEADER
-INCLUDES += -I$(CASTEM_ROOT)/include
-INCLUDES += -I$(CASTEM_ROOT)/include/c
+AM_CPPFLAGS += -I$(CASTEM_ROOT)/include
+AM_CPPFLAGS += -I$(CASTEM_ROOT)/include/c
 endif
-INCLUDES += $(CASTEM_CPPFLAGS)
+AM_CPPFLAGS += $(CASTEM_CPPFLAGS)
 endif
 
 bin_PROGRAMS = mfront mfront-query mfront-doc
 lib_LTLIBRARIES = libMFrontLogStream.la libTFELMFront.la libMTestFileGenerator.la
 
 libMFrontLogStream_la_SOURCES  = MFrontLogStream.cxx
-libMFrontLogStream_la_CPPFLAGS = -DMFrontLogStream_EXPORTS
+libMFrontLogStream_la_CPPFLAGS = $(AM_CPPFLAGS) -DMFrontLogStream_EXPORTS
 if TFEL_WIN
 libMFrontLogStream_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
@@ -129,7 +129,7 @@ endif
 if HAVE_CYRANO
 libTFELMFront_la_SOURCES += CyranoInterface.cxx
 endif
-libTFELMFront_la_CPPFLAGS = -DTFELMTest_EXPORTS
+libTFELMFront_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMTest_EXPORTS
 
 libTFELMFront_la_LIBADD  = -L$(top_builddir)/mfront/src    -lMFrontLogStream \
 	   	           -L$(top_builddir)/src/Material  -lTFELMaterial    \
@@ -156,7 +156,7 @@ libMFrontProfiling_la_SOURCES = BehaviourProfiler.cxx
 if TFEL_LINUX
 libMFrontProfiling_la_LIBADD   = -lrt
 endif
-libMFrontProfiling_la_CPPFLAGS = -DMFrontProfiling_EXPORTS
+libMFrontProfiling_la_CPPFLAGS = $(AM_CPPFLAGS) -DMFrontProfiling_EXPORTS
 if TFEL_WIN
 libMFrontProfiling_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
@@ -169,7 +169,7 @@ libMTestFileGenerator_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtiliti
 				   -L$(top_builddir)/src/Material  -lTFELMaterial  \
 				   -L$(top_builddir)/src/Math      -lTFELMath      \
 				   -L$(top_builddir)/src/Exception -lTFELException
-libMTestFileGenerator_la_CPPFLAGS = -DMTestFileGenerator_EXPORTS
+libMTestFileGenerator_la_CPPFLAGS = $(AM_CPPFLAGS) -DMTestFileGenerator_EXPORTS
 if TFEL_WIN
 libMTestFileGenerator_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
@@ -192,7 +192,7 @@ libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities   
 			      -L$(top_builddir)/src/Exception -lTFELException          \
 			      -L$(top_builddir)/mfront/src    -lMTestFileGenerator
 libUMATInterface_la_DEPENDENCIES = libMTestFileGenerator.la
-libUMATInterface_la_CPPFLAGS = -DUMATInterface_EXPORTS
+libUMATInterface_la_CPPFLAGS = $(AM_CPPFLAGS) -DUMATInterface_EXPORTS
 if TFEL_WIN
 libUMATInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
@@ -210,7 +210,7 @@ libCyranoInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities 
 			        -L$(top_builddir)/src/Exception -lTFELException          \
 			        -L$(top_builddir)/mfront/src    -lMTestFileGenerator
 libCyranoInterface_la_DEPENDENCIES = libMTestFileGenerator.la
-libCyranoInterface_la_CPPFLAGS = -DCyranoInterface_EXPORTS
+libCyranoInterface_la_CPPFLAGS = $(AM_CPPFLAGS) -DCyranoInterface_EXPORTS
 if TFEL_WIN
 libCyranoInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
@@ -232,7 +232,7 @@ libAsterInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities  
 			       -L$(top_builddir)/src/Exception -lTFELException          \
 			       -L$(top_builddir)/mfront/src    -lMTestFileGenerator
 libAsterInterface_la_DEPENDENCIES = libMTestFileGenerator.la
-libAsterInterface_la_CPPFLAGS     = -DAsterInterface_EXPORTS
+libAsterInterface_la_CPPFLAGS     = $(AM_CPPFLAGS) -DAsterInterface_EXPORTS
 if TFEL_WIN
 libAsterInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN

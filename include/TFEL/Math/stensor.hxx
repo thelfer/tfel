@@ -64,7 +64,7 @@ namespace tfel{
       template<typename StensorType>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
 	StensorTraits<Child>::dime==StensorTraits<StensorType>::dime &&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
 					 typename StensorTraits<Child>::NumType>::cond,
@@ -74,7 +74,7 @@ namespace tfel{
       template<typename StensorType>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
 	StensorTraits<Child>::dime==StensorTraits<StensorType>::dime &&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
 					 typename StensorTraits<Child>::NumType>::cond,
@@ -84,7 +84,7 @@ namespace tfel{
       template<typename StensorType>
       TFEL_MATH_INLINE 
       typename std::enable_if<
-	tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
 	StensorTraits<Child>::dime==StensorTraits<StensorType>::dime &&
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
 					 typename StensorTraits<Child>::NumType>::cond,
@@ -465,7 +465,7 @@ namespace tfel{
       template<typename StensorType>
       static TFEL_MATH_INLINE2
       typename std::enable_if<
-	  (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+	  (tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond)&&
 	(StensorTraits<StensorType>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
 					  typename StensorTraits<StensorType>::NumType>::cond),
@@ -484,7 +484,7 @@ namespace tfel{
       template<typename StensorType>
       static TFEL_MATH_INLINE2
       typename std::enable_if<
-	(tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
+	(tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond)&&
 	(StensorTraits<StensorType>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
 					  typename StensorTraits<StensorType>::NumType>::cond),

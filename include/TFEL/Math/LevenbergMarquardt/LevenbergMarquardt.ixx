@@ -68,7 +68,7 @@ namespace tfel
 
     template<typename F>
     void
-    LevenbergMarquardt<F>::addData(const LevenbergMarquardt<F>::Variable& x,
+    LevenbergMarquardt<F>::addData(const typename LevenbergMarquardt<F>::Variable& x,
 				   const T y)
     {
       using namespace std;
@@ -77,7 +77,7 @@ namespace tfel
 
     template<typename F>
     void
-    LevenbergMarquardt<F>::setInitialGuess(const LevenbergMarquardt<F>::Parameter& p_)
+    LevenbergMarquardt<F>::setInitialGuess(const typename LevenbergMarquardt<F>::Parameter& p_)
     {
       this->p = p_;
     } // end of LevenbergMarquardt::setInitialGuess
