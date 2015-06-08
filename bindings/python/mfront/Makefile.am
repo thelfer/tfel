@@ -1,9 +1,9 @@
 SUBDIRS = umatxx
 
-INCLUDES= -I@top_srcdir@/include/                       \
-	  -I@top_srcdir@/mfront/include/                \
-	  @BOOST_CPPFLAGS@                              \
-	  -I@PYTHONPATH@/include/python@PYTHON_VERSION@
+AM_CPPFLAGS = -I@top_srcdir@/include/                       \
+	      -I@top_srcdir@/mfront/include/                \
+	      @BOOST_CPPFLAGS@                              \
+	      -I@PYTHONPATH@/include/python@PYTHON_VERSION@
 
 mfrontdir = @pythondir@/mfront
 mfront_PYTHON = __init__.py

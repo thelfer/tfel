@@ -3,7 +3,7 @@ if TFEL_WIN
 AM_LDFLAGS=-no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif
 
-INCLUDES = -I@top_srcdir@/include
+AM_CPPFLAGS = -I@top_srcdir@/include
 
 lib_LTLIBRARIES  = libTFELMath.la 
 lib_LTLIBRARIES += libTFELMathCubicSpline.la
@@ -31,14 +31,10 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 		         TensorTag.cxx                  \
 		         TensorConcept.cxx              \
 			 StandardFunctions.cxx
-if TFEL_WIN
-libTFELMath_la_CPPFLAGS = -DTFELMath_EXPORTS
-endif
+libTFELMath_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMath_EXPORTS
 
 libTFELMathCubicSpline_la_SOURCES = CubicSpline.cxx
-if TFEL_WIN
-libTFELMathCubicSpline_la_CPPFLAGS = -DTFELMathCubicSpline_EXPORTS
-endif
+libTFELMathCubicSpline_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMathCubicSpline_EXPORTS
 
 libTFELMathKriging_la_SOURCES = KrigingErrors.cxx         \
 				KrigingUtilities.cxx      \
@@ -48,9 +44,7 @@ libTFELMathKriging_la_SOURCES = KrigingErrors.cxx         \
 				FactorizedKriging1D1D.cxx \
 				FactorizedKriging1D2D.cxx \
 				FactorizedKriging1D3D.cxx
-if TFEL_WIN
-libTFELMathKriging_la_CPPFLAGS = -DTFELMathKriging_EXPORTS
-endif
+libTFELMathKriging_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMathKriging_EXPORTS
 
 libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
 			       ExternalCastemFunction.cxx                    \
@@ -77,11 +71,7 @@ libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
 			       Variable.cxx                                  \
 			       IntegerEvaluator.cxx                          \
 			       IntegerEvaluatorTExpr.cxx
-
-
-if TFEL_WIN
-libTFELMathParser_la_CPPFLAGS = -DTFELMathParser_EXPORTS
-endif
+libTFELMathParser_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMathParser_EXPORTS
 
 libTFELMathCubicSpline_la_DEPENDENCIES = libTFELMath.la
 libTFELMathKriging_la_DEPENDENCIES     = libTFELMath.la

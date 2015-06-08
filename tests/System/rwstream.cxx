@@ -1,5 +1,5 @@
 /*!
- * \file   tests/System/wstream.cxx
+ * \file   tests/System/rwstream.cxx
  * \brief  
  * 
  * \author Helfer Thomas
@@ -12,20 +12,44 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
 #include<cstdlib>
+#include<cassert>
+#include<cstring>
+
 #include"TFEL/System/wfstream.hxx"
 #include"TFEL/System/rfstream.hxx"
 
-int
-main(void)
-{
-  using namespace std;
-
+static void write(void){
   tfel::system::wfstream f("test.bin");
   f << "toto" << 12.;
   f << "tutu";
   f.close();
+}
 
+static void read (void)
+{
+  tfel::system::rfstream r("test.bin");
+  char c[5];
+  double t;
+  r.read(c,4u);
+  c[4]='\0';
+  assert(strcmp(c,"toto")==0);
+  r >> t;
+  assert(abs(t-12.)<1.e-14);
+  r.read(c,4u);
+  c[4]='\0';
+  assert(strcmp(c,"tutu")==0);
+  r.close();
+} // end of main
+
+int
+main(void)
+{
+  write();
+  read();
   return EXIT_SUCCESS;
 }

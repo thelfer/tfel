@@ -1,6 +1,6 @@
-INCLUDES = -I$(top_srcdir)/include                     \
-	   -I$(top_srcdir)/mfront/include              \
-	   -I$(top_srcdir)/mfront/tests/models/include
+AM_CPPFLAGS = -I$(top_srcdir)/include                     \
+	      -I$(top_srcdir)/mfront/include              \
+	      -I$(top_srcdir)/mfront/tests/models/include
 
 check_LTLIBRARIES = libLicosMFrontModel.la    \
 		    libGerminalMFrontModel.la

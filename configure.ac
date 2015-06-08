@@ -447,17 +447,22 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/zmat/Makefile.doc
 	   docs/mfront/glossary.tex
 	   docs/presentations/Makefile
-	   docs/presentations/Makefile.doc
-	   docs/presentations/mtest-presentation.tex
-	   docs/presentations/mfront-presentation.tex
-	   docs/presentations/mfront-behaviours.tex
-	   docs/presentations/mfront-finitestrain.tex
-	   docs/presentations/tp.tex
-	   docs/presentations/mfront-formation.tex
-	   docs/presentations/norton.tex
-	   docs/presentations/Chaboche.tex
-	   docs/presentations/lemaitre.tex
-	   docs/presentations/appendix.tex
+	   docs/presentations/mfront-presentation/Makefile
+	   docs/presentations/mfront-presentation/mfront-presentation.tex
+	   docs/presentations/mfront-behaviours/Makefile
+   	   docs/presentations/mfront-behaviours/mfront-behaviours.tex
+	   docs/presentations/mfront-finitestrain/Makefile
+	   docs/presentations/mfront-finitestrain/mfront-finitestrain.tex
+	   docs/presentations/mfront-formation/Makefile
+	   docs/presentations/mfront-formation/mfront-formation.tex
+           docs/presentations/mfront-formation-tp/Makefile
+           docs/presentations/mfront-formation-tp/tp.tex
+	   docs/presentations/mfront-formation-tp/norton.tex
+	   docs/presentations/mfront-formation-tp/Chaboche.tex
+	   docs/presentations/mfront-formation-tp/lemaitre.tex
+	   docs/presentations/mfront-formation-tp/appendix.tex
+           docs/presentations/mtest-presentation/Makefile
+	   docs/presentations/mtest-presentation/mtest-presentation.tex
 	   docs/presentations/mfront-user-meeting-2015/Makefile
 	   docs/presentations/mfront-user-meeting-2015/mfront-cea.tex
 	   docs/presentations/mfront-user-meeting-2015/tfel-3.0.tex
@@ -465,6 +470,8 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/portable-behaviour/Makefile
 	   docs/presentations/Materiaux2014/Makefile
 	   docs/presentations/ClubCast3M2014/Makefile
+   	   docs/presentations/CodeAsterUserMeeting2015/Makefile
+     	   docs/presentations/CodeAsterUserMeeting2015/mfront-aster-2015.tex
 	   docs/tutorial/Makefile
 	   docs/tutorial/introduction.tex
 	   docs/tutorial/Conclusions.tex

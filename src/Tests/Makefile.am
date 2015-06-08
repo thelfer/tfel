@@ -1,10 +1,9 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
+AM_CPPFLAGS  = -I$(top_srcdir)/include
 if TFEL_WIN
-AM_CPPFLAGS = -DTFELTests_EXPORTS
-AM_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+AM_CPPFLAGS += -DTFELTests_EXPORTS
+AM_LDFLAGS   = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif
-
-INCLUDES = -I$(top_srcdir)/include
 
 lib_LTLIBRARIES = libTFELTests.la 
 libTFELTests_la_SOURCES =   Test.cxx                 \

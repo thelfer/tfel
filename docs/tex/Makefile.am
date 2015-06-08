@@ -62,4 +62,5 @@ EXTRA_DIST = texmf/bibtex/fr-insa.bst			                  \
 	     texmf/tex/latex/beamer/themes/beamerthemepleiades.sty	  \
 	     texmf/tex/latex/beamer/themes/beamerthemecea2012.sty	  \
 	     texmf/tex/latex/helvetCEA.sty				  \
+	     texmf/tex/latex/multind.sty				  \
 	     texmf/ls-R

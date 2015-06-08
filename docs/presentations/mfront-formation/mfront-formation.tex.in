@@ -1,4 +1,3 @@
-
 \documentclass[slidetop,11pt, mathserif]{beamer}
 \usepackage[frenchb]{babel}
 \usepackage[T1]{fontenc} 
@@ -311,7 +310,7 @@ en intégrant le système d'équations régissant la loi de comportement locale 
     \item {\bf rien d'autre} n'est possible (grand nombre de variables)~;
     \end{itemize}
   \item<4-> exemple sur le petit test de Norton~:
-    \begin{columns}[h]
+    \begin{columns}
       \begin{column}{7cm}
 %         \begin{tabular}{l!{\vrule}cccc}
         \begin{tabular}{cccc}
@@ -389,7 +388,7 @@ en intégrant le système d'équations régissant la loi de comportement locale 
 \begin{frame}[plain]
 \frametitle{{\small Loi de Norton avec Runge\_Kutta}}
 
-  \begin{columns}[h]
+  \begin{columns}
   
   \begin{column}{8.5cm}
   
@@ -623,7 +622,7 @@ soit programmée, soit estimée numériquement par  \mfront
 
 \frametitle{exemples de simulations mtest}
 
-  \begin{columns}[h]
+  \begin{columns}
   
   \begin{column}{7cm}
   
@@ -663,7 +662,7 @@ soit programmée, soit estimée numériquement par  \mfront
 \begin{frame}[plain]
 \frametitle{Hayhurst}
 \label{Hayhurst}
- \begin{columns}[h]
+ \begin{columns}
     \begin{column}{3cm}
       \includegraphics[width=3cm]{@abs_top_srcdir@/docs/presentations/images/Hayhurst.png}
     \end{column} 
@@ -680,7 +679,7 @@ soit programmée, soit estimée numériquement par  \mfront
 \begin{frame}[plain]
 \frametitle{Mazars}
 \label{Mazars}
- \begin{columns}[h]
+ \begin{columns}
   \begin{column}{5cm}
      \includegraphics[width=5cm]{@abs_top_srcdir@/docs/presentations/images/MazarsCourbe.png}
   \end{column} 
@@ -696,7 +695,7 @@ soit programmée, soit estimée numériquement par  \mfront
 \begin{frame}[plain]
 \frametitle{lois monocristallines - MC---DD-CFC---DD-CC}
 \label{Monocristal}
- \begin{columns}[h]
+ \begin{columns}
   \begin{column}{7cm}
      \includegraphics[width=6cm]{@abs_top_srcdir@/docs/presentations/images/172g.png}
   \end{column} 
@@ -815,7 +814,7 @@ où $\Delta\,\tepsilonp=\Delta\, p\,\ets{\tenseur{n}}$
 
 \begin{frame} 
 \frametitle{petit test : cycles de traction-compression}
-  \begin{columns}[h]
+  \begin{columns}
   \begin{column}{8.cm}
   
     \lstinputlisting[firstline=1,lastline=17]{@abs_top_srcdir@/docs/presentations/mtest/cyclique.mtest}
@@ -990,7 +989,7 @@ Les propriétés matériau ajoutées~:
 
 \begin{frame}[plain]
 \frametitle{ANNEXES : algorithme global}
-\tableofcontents[currentsection,hideothersection]    
+\tableofcontents[currentsection]    
 \end{frame}
 
 \begin{frame}[plain] 
@@ -1028,7 +1027,7 @@ Les propriétés matériau ajoutées~:
 \begin{frame}
 \label{KtgtFromJ}
 \frametitle{ANNEXES : matrice tangente}
-\tableofcontents[currentsection,hideothersection]    
+\tableofcontents[currentsection]    
 \end{frame}
 
 
@@ -1085,7 +1084,7 @@ Finalement, nous obtenons~:
 
 \begin{frame}
 \frametitle{ANNEXES : quelques lois en \mfront}
-\tableofcontents[currentsection,hideothersection]    
+\tableofcontents[currentsection]    
 \end{frame}
 
 
@@ -1233,7 +1232,7 @@ $ {\sigma_v}_i =  a_i \left( e^{Q_i/T} \right)^{1/n_i} \left( p^{-} + \Delta p \
 
 \begin{frame}
 \frametitle{gestion des propriétés matériau}
-\tableofcontents[currentsection,hideothersection]    
+\tableofcontents[currentsection]    
 \end{frame}
 
 
@@ -1264,7 +1263,7 @@ $ {\sigma_v}_i =  a_i \left( e^{Q_i/T} \right)^{1/n_i} \left( p^{-} + \Delta p \
 
 \begin{frame}
 \frametitle{gestion des contraintes planes}
-\tableofcontents[currentsection,hideothersection]    
+\tableofcontents[currentsection]    
 \end{frame}
 
 \label{contraintes planes}
@@ -1298,7 +1297,7 @@ Partie spécifique aux contraintes planes généralisées~:
 
 \begin{frame}
 \frametitle{adao}
-\tableofcontents[currentsection,hideothersection]    
+\tableofcontents[currentsection]    
 \end{frame}
 
 \begin{frame}

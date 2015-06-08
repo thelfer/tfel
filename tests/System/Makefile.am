@@ -1,7 +1,7 @@
 if WITH_TESTS
 
-INCLUDES = -I$(top_srcdir)/include \
-           -I@builddir@/include
+AM_CPPFLAGS = -I$(top_srcdir)/include \
+              -I@builddir@/include
 
 mfronts = Test.mfront
 
@@ -15,13 +15,11 @@ LDADD = -lTFELSystem -lTFELException -lTFELTests \
 if !TFEL_WIN
 test_PROGRAMS   = process_test_target \
 		  process             \
-		  wstream             \
-		  rstream
+		  rwstream
 
 process_test_target_SOURCES = process_test_target.cxx
 process_SOURCES             = process.cxx
-rstream_SOURCES             = rstream.cxx
-wstream_SOURCES             = wstream.cxx
+rwstream_SOURCES            = rwstream.cxx
 
 if HAVE_CASTEM
 test_PROGRAMS               += CastemParameterTest \

@@ -231,20 +231,7 @@ endif(enable-doxygen-doc)
 # Looking for LaTeX
 option(enable-reference-doc "enable generation of the reference documentation" OFF)
 if(enable-reference-doc)
-  find_package(LATEX)
-  if(LATEX_COMPILER)
-    if((NOT PS2PDF_CONVERTER) AND WIN32)
-      # fixes cmake bug #0015198
-      find_program(PS2PDF_CONVERTER
-	NAMES ps2pdf14.bat ps2pdf14 ps2pdf
-	PATHS ${GHOSTSCRIPT_LIBRARY_PATH}
-        ${MIKTEX_BINARY_PATH})
-    endif((NOT PS2PDF_CONVERTER) AND WIN32)
-    add_custom_target(doc-pdf)
-    add_dependencies(doc doc-pdf)
-    message(STATUS "latex compiler found : ${LATEX_COMPILER}")
-    set(HAVE_LATEX ON)
-  endif(LATEX_COMPILER)
+  include(cmake/modules/latex.cmake)
 endif(enable-reference-doc)
 
 option(enable-website "enable generation of the website" ON)
