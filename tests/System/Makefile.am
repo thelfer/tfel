@@ -1,5 +1,3 @@
-AUTOMAKE_OPTIONS = subdir-objects serial-tests
-
 if WITH_TESTS
 
 AM_CPPFLAGS = -I$(top_srcdir)/include \
@@ -17,13 +15,11 @@ LDADD = -lTFELSystem -lTFELException -lTFELTests \
 if !TFEL_WIN
 test_PROGRAMS   = process_test_target \
 		  process             \
-		  wstream             \
-		  rstream
+		  rwstream
 
 process_test_target_SOURCES = process_test_target.cxx
 process_SOURCES             = process.cxx
-rstream_SOURCES             = rstream.cxx
-wstream_SOURCES             = wstream.cxx
+rwstream_SOURCES            = rwstream.cxx
 
 if HAVE_CASTEM
 test_PROGRAMS               += CastemParameterTest \

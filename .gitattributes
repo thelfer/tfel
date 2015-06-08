@@ -3351,8 +3351,7 @@ tests/System/Makefile.am -text
 tests/System/Test.mfront -text
 tests/System/process.cxx -text
 tests/System/process_test_target.cxx -text
-tests/System/rstream.cxx -text
-tests/System/wstream.cxx -text
+tests/System/rwstream.cxx -text
 tests/Tests/CMakeLists.txt -text
 tests/Tests/Makefile.am -text
 tests/Tests/multipletestoutputs.cxx -text
