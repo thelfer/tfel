@@ -769,8 +769,10 @@ namespace mfront
   UMATInterfaceBase::writeVisibilityDefines(std::ostream& out) const
   {
     using namespace std;
-    out << "#ifdef WIN32" << endl;
+    out << "#ifdef _WIN32" << endl;
+    out << "#ifndef NOMINMAX" << endl;
     out << "#define NOMINMAX" << endl;
+    out << "#endif" << endl;
     out << "#include <windows.h>" << endl;
     out << "#ifndef MFRONT_CALLING_CONVENTION" << endl;
     out << "#define MFRONT_CALLING_CONVENTION __cdecl" << endl; 
@@ -779,7 +781,7 @@ namespace mfront
     out << "#ifndef MFRONT_CALLING_CONVENTION" << endl;
     out << "#define MFRONT_CALLING_CONVENTION" << endl; 
     out << "#endif /* MFRONT_CALLING_CONVENTION */" << endl; 
-    out << "#endif /* WIN32 */" << endl << endl;
+    out << "#endif /* _WIN32 */" << endl << endl;
     out << "#ifndef MFRONT_SHAREDOBJ" << endl;
     out << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT" << endl; 
     out << "#endif /* MFRONT_SHAREDOBJ */" << endl << endl; 

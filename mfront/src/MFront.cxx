@@ -25,7 +25,9 @@
 #include<sys/types.h>
 #include<sys/stat.h>
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include <io.h>
 #include <conio.h>
 #include <windows.h>

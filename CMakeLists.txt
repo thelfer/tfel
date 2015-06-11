@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 2.4)
+cmake_policy(SET CMP0005 OLD)
+cmake_policy(SET CMP0026 OLD)
 # tfel specific macros
 include(cmake/modules/tfel.cmake)
 # some variables for compatibility with autotools
@@ -73,7 +75,6 @@ else(enable-fortran)
 endif(enable-fortran)
 
 #compiler options
-cmake_policy(SET CMP0005 OLD)
 include(cmake/modules/compiler.cmake)
 
 #aster

@@ -4,6 +4,7 @@ EXTRA_DIST = autotools.cmake             \
 	     gcc.cmake                   \
 	     intel.cmake                 \
 	     pathscale.cmake             \
+	     msvc.cmake                  \
 	     aster.cmake                 \
 	     zset.cmake                  \
 	     castem.cmake                \
@@ -13,4 +14,5 @@ EXTRA_DIST = autotools.cmake             \
 	     gnu-fortran-compiler.cmake  \
 	     tfel.cmake                  \
 	     latex.cmake                 \
+	     default-fortran.cmake       \
 	     pandoc.cmake

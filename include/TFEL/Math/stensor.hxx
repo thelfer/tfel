@@ -410,8 +410,7 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildPositivePartFromEigenValuesAndVectors(const T&,const T&,const T&,
 						 const tmatrix<3u,3u,
 						 typename tfel::typetraits::BaseType<T>::type>&);
@@ -421,8 +420,7 @@ namespace tfel{
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildPositivePartFromEigenValuesAndVectors(const tvector<3u,T>&,
 						 const tmatrix<3u,3u,
 						 typename tfel::typetraits::BaseType<T>::type>&);
@@ -434,8 +432,7 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildNegativePartFromEigenValuesAndVectors(const T&,const T&,const T&,
 						 const tmatrix<3u,3u,
 						 typename tfel::typetraits::BaseType<T>::type>&);
@@ -445,8 +442,7 @@ namespace tfel{
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildNegativePartFromEigenValuesAndVectors(const tvector<3u,T>&,
 						 const tmatrix<3u,3u,
 						 typename tfel::typetraits::BaseType<T>::type>&);

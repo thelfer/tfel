@@ -131,19 +131,10 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "SunPro")
   if(enable-cxx-11)
     message(FATAL_ERROR "TFEL C++11 support is not availabable with the SunPro compiler")
   endif(enable-cxx-11)
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+  include(cmake/modules/msvc.cmake)
 else(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-if(MSVC)
-  add_definitions("-DMICROSOFT_COMPILER_MSC_=1")
-#4251 : warning about export of STL classes
-#4710 : warning function not being inlined
-#4514 : warning inline function was not used and was removed
-  add_definitions("/W4 /MD /O2 /wd4251 /wd4710 /wd4514 /wd4275 /EHsc")
-  set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
-else(MSVC)
-  if(enable-cxx-11)
-    message(FATAL_ERROR "TFEL C++11 support is not availabable for your compiler")
-  endif(enable-cxx-11)
-endif(MSVC)  
+  message(FATAL_ERROR "unsupported compiler id")
 endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 
 add_definitions("-DOPTIMISATION_FLAGS0=\\\"\"${VISIBILITY_FLAGS} ${OPTIMISATION_FLAGS}\"\\\"")

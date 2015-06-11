@@ -25,7 +25,9 @@
 #include<unistd.h>
 #include<dirent.h>
 #else
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include<windows.h>
 #include<direct.h>
 #ifndef S_ISDIR

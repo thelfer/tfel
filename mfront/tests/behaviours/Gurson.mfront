@@ -90,6 +90,7 @@ q3.setEntryName("ThirdGursonParameter");
 /*La directive @Integrator permet de définir le système implicite à résoudre
   ainsi que la matrice jacobienne.*/
 @Integrator{
+  constexpr const double pi = 3.14159265359;
   feel -= deto;
   if(Phi_el<=0){
     return true;
@@ -176,7 +177,7 @@ q3.setEntryName("ThirdGursonParameter");
     dffg_ddeel = -theta*(1-f_)*(1-f_)*dp*dtrn_deel;
     // Évolution de la porosité due à la germination de cavités
     const real peq     = (em_-en)/sn;
-    const real cste    = 1/(sn*sqrt(2*M_PI)); 
+    const real cste    = 1/(sn*sqrt(2*pi)); 
     const real cste2   = -cste*fNH*exp(-0.5*peq*peq);
     ffn       +=  cste2*dem;
     dffn_ddem  =  cste2*(1-peq*theta*dem/sn);

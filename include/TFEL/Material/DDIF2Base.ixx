@@ -16,6 +16,7 @@
 
 #include<cmath>
 #include<algorithm>
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace tfel
 {
@@ -91,7 +92,8 @@ namespace tfel
 			const real theta)
     {
       using namespace std;
-      const real a[4]  = {s(0),s(1),s(2),s(3)*M_SQRT1_2};
+      constexpr real cste = tfel::math::constexpr_fct::sqrt(real(2));
+      const real a[4]  = {s(0),s(1),s(2),s(3)*cste};
       const real cost  = cos(theta);
       const real sint  = sin(theta);
       const real alpha = cost*a[0]+sint*a[3];
@@ -99,7 +101,7 @@ namespace tfel
       s(0) = cost*alpha+sint*beta;
       s(1) = sint*(sint*a[0]-cost*a[3])+cost*(cost*a[1]-sint*a[3]);
       s(2) = a[2];
-      s(3) = (cost*beta-sint*alpha)*M_SQRT2;
+      s(3) = (cost*beta-sint*alpha)*cste;
     } // end of DDIF2Base::cart2cyl
       
     template<typename real>
@@ -108,8 +110,10 @@ namespace tfel
 			const real theta)
     {
       using namespace std;
-      const real a[6]  = {s(0),s(1),s(2),s(3)*M_SQRT1_2,
-			  s(4)*M_SQRT1_2,s(5)*M_SQRT1_2};
+      constexpr real cste  = tfel::math::constexpr_fct::sqrt(real(2));
+      constexpr real cste2 = 1/cste;
+      const real a[6]  = {s(0),s(1),s(2),s(3)*cste2,
+			  s(4)*cste2,s(5)*cste2};
       const real cost  = cos(theta);
       const real sint  = sin(theta);
       const real alpha = cost*a[0]+sint*a[3];
@@ -117,9 +121,9 @@ namespace tfel
       s(0) = cost*alpha+sint*beta;
       s(1) = sint*(sint*a[0]-cost*a[3])+cost*(cost*a[1]-sint*a[3]);
       s(2) = a[2];
-      s(3) = (cost*beta-sint*alpha)*M_SQRT2;
-      s(4) = (cost*a[4]+sint*a[5])*M_SQRT2;
-      s(5) = (cost*a[5]-sint*a[4])*M_SQRT2;
+      s(3) = (cost*beta-sint*alpha)*cste;
+      s(4) = (cost*a[4]+sint*a[5])*cste;
+      s(5) = (cost*a[5]-sint*a[4])*cste;
     } // end of DDIF2Base::cart2cyl
 
     template<typename real>
@@ -134,7 +138,9 @@ namespace tfel
 			const real theta)
     {
       using namespace std;
-      const real a[4]  = {s(0),s(1),s(2),s(3)*M_SQRT1_2};
+      constexpr real cste  = tfel::math::constexpr_fct::sqrt(real(2));
+      constexpr real cste2 = 1/cste;
+      const real a[4]  = {s(0),s(1),s(2),s(3)*cste2};
       const real cost  = cos(theta);
       const real sint  = sin(theta);
       const real alpha = cost*a[0]-sint*a[3];
@@ -142,7 +148,7 @@ namespace tfel
       s(0) = cost*alpha-sint*beta;
       s(1) = sint*(sint*a[0]+cost*a[3])+cost*(sint*a[3]+cost*a[1]);
       s(2) = a[2];
-      s(3) = (sint*alpha+cost*beta)*M_SQRT2;
+      s(3) = (sint*alpha+cost*beta)*cste;
     } // end of DDIF2Base::cyl2cart
       
     template<typename real>
@@ -151,9 +157,10 @@ namespace tfel
 			const real theta)
     {
       using namespace std;
-      using namespace std;
-      const real a[6]  = {s(0),s(1),s(2),s(3)*M_SQRT1_2,
-			  s(4)*M_SQRT1_2,s(5)*M_SQRT1_2};
+      constexpr real cste  = tfel::math::constexpr_fct::sqrt(real(2));
+      constexpr real cste2 = 1/cste;
+      const real a[6]  = {s(0),s(1),s(2),s(3)*cste2,
+			  s(4)*cste2,s(5)*cste2};
       const real cost  = cos(theta);
       const real sint  = sin(theta);
       const real alpha = cost*a[0]-sint*a[3];
@@ -161,9 +168,9 @@ namespace tfel
       s(0) = cost*alpha-sint*beta;
       s(1) = sint*(sint*a[0]+cost*a[3])+cost*(sint*a[3]+cost*a[1]);
       s(2) = a[2];
-      s(3) = (sint*alpha+cost*beta)*M_SQRT2;
-      s(4) = (cost*a[4]-sint*a[5])*M_SQRT2;
-      s(5) = (sint*a[4]+cost*a[5])*M_SQRT2;
+      s(3) = (sint*alpha+cost*beta)*cste;
+      s(4) = (cost*a[4]-sint*a[5])*cste;
+      s(5) = (sint*a[4]+cost*a[5])*cste;
     } // end of DDIF2Base::cyl2cart
 
     template<typename real>

@@ -52,20 +52,20 @@
   #define LIMIT 1
 #endif
 
-#ifdef UNIX32
+#if (defined UNIX32) || (defined _WIN32)
 typedef int cast_int;
 typedef float cast_float;
 typedef long cast_long;
 typedef double cast_double;
 #endif
-#ifdef UNIX64
-#ifndef WIN64
+
+#if (defined UNIX64) || (defined _WIN64)
+#ifdef _WIN64
+ typedef long long cast_int;
+#else
  typedef long cast_int;
 #endif
 typedef double cast_float;
 typedef long cast_long;
 typedef double cast_double;
-#endif
-#ifdef WIN64
-typedef long long cast_int;
 #endif

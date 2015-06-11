@@ -36,8 +36,9 @@ struct StensorChangeBasisTest final
   {
     using namespace tfel::math;
     typedef double real;
+    constexpr real pi = 3.14159265359;
     const real eps = 1.e-4;
-    const real phi = M_PI/7.;
+    const real phi = pi/7.;
     const real co = cos(phi);
     const real si = sin(phi);
     {

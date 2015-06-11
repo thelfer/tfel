@@ -24,7 +24,9 @@
 #include<stdexcept>
 
 #if defined _WIN32 || defined _WIN64
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include<windows.h>
 #endif
 

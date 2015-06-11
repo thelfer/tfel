@@ -17,7 +17,6 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
-
 namespace tfel{
 
   namespace math{
