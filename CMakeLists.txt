@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.4)
 cmake_policy(SET CMP0005 OLD)
-cmake_policy(SET CMP0026 OLD)
+if(CMAKE_MAJOR_VERSION VERSION_GREATER 2.8.12)
+  cmake_policy(SET CMP0026 OLD)
+endif(CMAKE_MAJOR_VERSION VERSION_GREATER 2.8.12)
 # tfel specific macros
 include(cmake/modules/tfel.cmake)
 # some variables for compatibility with autotools
@@ -21,6 +23,8 @@ if(UNIX)
   # This is used in mtest tests files
   set(TFEL_LOCAL_LIBRARY_PREFIX "./")
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(TFEL_DL_LIBRARY "dl")
+  elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(TFEL_DL_LIBRARY "dl")
   else(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(TFEL_DL_LIBRARY "")
