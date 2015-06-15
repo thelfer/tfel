@@ -14,6 +14,8 @@
 
 #include<sstream>
 #include<stdexcept>
+#include<iostream>
+#include<iterator>
 
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
@@ -700,8 +702,8 @@ namespace mfront{
 
   void
   BehaviourData::addVariable(VariableDescriptionContainer& c,
-				       const VariableDescription& v,
-				       const bool b)
+			     const VariableDescription& v,
+			     const bool b)
   {
     if(b){
       this->registerVariable(v.name);
@@ -713,10 +715,24 @@ namespace mfront{
   BehaviourData::registerVariable(const std::string& n)
   {
     using namespace std;
+    using namespace tfel::glossary;
+    const auto& glossary = Glossary::getGlossary();
+    for(auto& e : entryNames){
+      if(e.second==n){
+	throw(runtime_error("BehaviourData::registerVariable : "
+			    "the name '"+n+"' is already been used for an entry name"));
+      }
+    }
+    if(glossary.contains(n)){
+      ostringstream msg;
+      msg << "BehaviourData::registerVariable : "
+	  << "the name '" << n << "' is a registred as a glossary name." << endl;
+      displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(n));
+      throw(runtime_error(msg.str()));
+    }
     if(!this->vnames.insert(n).second){
-      string msg("BehaviourData::registerVariable : "
-		 "a variable named '"+n+"' has already been registred");
-      throw(runtime_error(msg));
+      throw(runtime_error("BehaviourData::registerVariable : "
+			  "a variable named '"+n+"' has already been registred"));
     }
   } // end of BehaviourData::registerVariable
 
@@ -1077,7 +1093,7 @@ namespace mfront{
   
   void
   BehaviourData::setEntryName(const std::string& n,
-					const std::string& e)
+			      const std::string& e)
   {
     using namespace std;
     using namespace tfel::glossary;

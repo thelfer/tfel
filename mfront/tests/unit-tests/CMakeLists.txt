@@ -20,4 +20,5 @@ macro(tests_mfront test_arg)
     TFELUtilities TFELException TFELTests)
 endmacro(tests_mfront)
 
+tests_mfront(BehaviourDataTest)
 tests_mfront(BehaviourDescriptionTest)

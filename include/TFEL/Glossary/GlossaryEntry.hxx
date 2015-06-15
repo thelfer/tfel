@@ -245,6 +245,37 @@ namespace tfel
       const std::vector<std::string> notes;
     }; // end of struct GlossaryEntry
 
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator<(const GlossaryEntry&,
+	      const GlossaryEntry&);
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator != (const std::string&,
+		 const GlossaryEntry&);
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator != (const GlossaryEntry&,
+		 const std::string&);
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator == (const std::string&,
+		 const GlossaryEntry&);
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator == (const GlossaryEntry&,
+		 const std::string&);
+    
   } // end of namespace glossary
 
 } // end of namespace tfel

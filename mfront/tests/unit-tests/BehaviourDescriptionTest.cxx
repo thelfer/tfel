@@ -24,7 +24,7 @@
 
 #include"MFront/BehaviourDescription.hxx"
 
-struct BehaviourDescriptionTest
+struct BehaviourDescriptionTest final
   : public tfel::tests::TestCase
 {
   BehaviourDescriptionTest()
@@ -33,7 +33,7 @@ struct BehaviourDescriptionTest
   {} // end of BehaviourDescriptionTest
 
   tfel::tests::TestResult
-  execute()
+  execute() override
   {
     using namespace mfront;
     this->test1();

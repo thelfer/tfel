@@ -219,14 +219,14 @@ namespace tfel
       return e1.key != e2;
     }
 
-    bool
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
     operator == (const std::string& e1,
 		 const GlossaryEntry& e2)
     {
       return e1 == e2.key;
     }
 
-    bool
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
     operator == (const GlossaryEntry& e1,
 		 const std::string& e2)
     {
