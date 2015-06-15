@@ -179,38 +179,28 @@ namespace tfel
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator<(const GlossaryEntry&,
-		  const GlossaryEntry&);
+      friend bool operator<(const GlossaryEntry&,
+			    const GlossaryEntry&);
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator != (const std::string&,
-		     const GlossaryEntry&);
+      friend bool operator != (const std::string&,
+			      const GlossaryEntry&);
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator != (const GlossaryEntry&,
-		     const std::string&);
+      friend bool operator != (const GlossaryEntry&,
+			       const std::string&);
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator == (const std::string&,
-		     const GlossaryEntry&);
+      friend bool operator == (const std::string&,
+			       const GlossaryEntry&);
       /*!
        * comparison operator
        */
-      TFELGLOSSARY_VISIBILITY_EXPORT
-	friend bool
-	operator == (const GlossaryEntry&,
-		     const std::string&);
+      friend bool operator == (const GlossaryEntry&,
+			       const std::string&);
     private:
       /*!
        * \brief check if this entry is valid.
@@ -247,6 +237,37 @@ namespace tfel
       const std::vector<std::string> notes;
     }; // end of struct GlossaryEntry
 
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator<(const GlossaryEntry&,
+	      const GlossaryEntry&);
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator != (const std::string&,
+		 const GlossaryEntry&);
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator != (const GlossaryEntry&,
+		 const std::string&);
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator == (const std::string&,
+		 const GlossaryEntry&);
+    /*!
+     * comparison operator
+     */
+    TFELGLOSSARY_VISIBILITY_EXPORT bool
+    operator == (const GlossaryEntry&,
+		 const std::string&);
+    
   } // end of namespace glossary
 
 } // end of namespace tfel
