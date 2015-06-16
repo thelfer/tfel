@@ -158,7 +158,7 @@ namespace tfel
        * \param[in] s : name of function or mechanical behaviour
        * This function looks for the symbol s+'_ModellingHypotheses'
        * in the library and expect it to a pointer to characters. If
-       * the symbol is not found, an empty string is returned.
+       * the symbol is not found, an empty vector is returned.
        */
       std::vector<std::string>
       getSupportedModellingHypotheses(const std::string&,

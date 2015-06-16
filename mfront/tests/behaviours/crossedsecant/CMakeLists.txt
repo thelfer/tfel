@@ -24,11 +24,9 @@ macro(test_crossedsecant test_arg)
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(crossedsecant${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
-  add_custom_target(crossedsecant${test_arg}.mtest-install
-    ${CMAKE_COMMAND} -E copy crossedsecant${test_arg}.mtest
-    ${CMAKE_INSTALL_PREFIX}/share/mfront/tests/behaviours/crossedsecant/crossedsecant${test_arg}.mtest)
-  add_dependencies(tests-install
-    crossedsecant${test_arg}.mtest-install)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crossedsecant${test_arg}.mtest
+          DESTINATION "share/mfront/tests/behaviours/crossedsecant"
+	  COMPONENT mtest)
 endmacro(test_crossedsecant)
 
 test_crossedsecant(chaboche2)

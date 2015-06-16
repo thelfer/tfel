@@ -37,7 +37,8 @@ tfel_python_module(material
 
 tfel_python_module(system system.cxx
   ProcessManagerCommand.cxx
-  ExternalLibraryManager.cxx)
+  ExternalLibraryManager.cxx
+  ExternalBehaviourDescription.cxx)
 target_link_libraries(py_tfel_system
   TFELSystem)
 

@@ -24,11 +24,9 @@ macro(test_crossed2deltabis test_arg)
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(crossed2deltabis${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
-  add_custom_target(crossed2deltabis${test_arg}.mtest-install
-    ${CMAKE_COMMAND} -E copy crossed2deltabis${test_arg}.mtest
-    ${CMAKE_INSTALL_PREFIX}/share/mfront/tests/behaviours/crossed2deltabis/crossed2deltabis${test_arg}.mtest)
-  add_dependencies(tests-install
-    crossed2deltabis${test_arg}.mtest-install)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crossed2deltabis${test_arg}.mtest
+          DESTINATION "share/mfront/tests/behaviours/crossed2deltabis"
+	  COMPONENT mtest)
 endmacro(test_crossed2deltabis)
 
 test_crossed2deltabis(ddif2-2)

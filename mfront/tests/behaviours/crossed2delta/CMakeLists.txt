@@ -24,11 +24,9 @@ macro(test_crossed2delta test_arg)
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(crossed2delta${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
-  add_custom_target(crossed2delta${test_arg}.mtest-install
-    ${CMAKE_COMMAND} -E copy crossed2delta${test_arg}.mtest
-    ${CMAKE_INSTALL_PREFIX}/share/mfront/tests/behaviours/crossed2delta/crossed2delta${test_arg}.mtest)
-  add_dependencies(tests-install
-    crossed2delta${test_arg}.mtest-install)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crossed2delta${test_arg}.mtest
+          DESTINATION "share/mfront/tests/behaviours/crossed2delta"
+	  COMPONENT mtest)
 endmacro(test_crossed2delta)
 
 test_crossed2delta(chaboche)

@@ -92,7 +92,6 @@ else
     $make_exec check 
 fi
 $make_exec install
-$make_exec tests-install
 popd #from build-cmake
 pushd build-cmake-release
 cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-reference-doc=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
@@ -104,7 +103,6 @@ else
     $make_exec check 
 fi
 $make_exec install
-$make_exec tests-install
 popd #from build-cmake-release
 pushd build-cmake-debug
 cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-reference-doc=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
@@ -116,7 +114,6 @@ else
     $make_exec check 
 fi
 $make_exec install
-$make_exec tests-install
 popd #from build-cmake-debug
 
 if test "x$wbuild" == "xyes" ;
@@ -137,7 +134,6 @@ then
 	    fi
 	fi
 	$make_exec install
-	$make_exec tests-install
 	popd #from build-cmake-i686-w64-mingw32
     fi
     
@@ -157,7 +153,6 @@ then
 	    fi
 	fi
 	$make_exec install
-	$make_exec tests-install
 	popd #from build-cmake-i586-mingw32msvc
     fi
 fi

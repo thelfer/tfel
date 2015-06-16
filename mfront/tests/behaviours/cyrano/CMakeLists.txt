@@ -56,11 +56,9 @@ macro(test_cyrano test_arg)
     PROPERTIES DEPENDS MFrontCyranoBehaviours)
   set_tests_properties(cyrano${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
-  add_custom_target(cyrano${test_arg}.mtest-install
-    ${CMAKE_COMMAND} -E copy cyrano${test_arg}.mtest
-    ${CMAKE_INSTALL_PREFIX}/share/mfront/tests/behaviours/cyrano/cyrano${test_arg}.mtest)
-  add_dependencies(tests-install
-    cyrano${test_arg}.mtest-install)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cyrano${test_arg}.mtest
+          DESTINATION "share/mfront/tests/behaviours/cyrano"
+	  COMPONENT mtest)
 endmacro(test_cyrano)
 
 test_cyrano(elasticity)

@@ -24,11 +24,9 @@ macro(test_alternatedelta2 test_arg)
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(alternatedelta2${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
-  add_custom_target(alternatedelta2${test_arg}.mtest-install
-    ${CMAKE_COMMAND} -E copy alternatedelta2${test_arg}.mtest
-    ${CMAKE_INSTALL_PREFIX}/share/mfront/tests/behaviours/alternatedelta2/alternatedelta2${test_arg}.mtest)
-  add_dependencies(tests-install
-    alternatedelta2${test_arg}.mtest-install)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/alternatedelta2${test_arg}.mtest
+          DESTINATION "share/mfront/tests/behaviours/alternatedelta2"
+	  COMPONENT mtest)
 endmacro(test_alternatedelta2)
 
 test_alternatedelta2(chaboche2)

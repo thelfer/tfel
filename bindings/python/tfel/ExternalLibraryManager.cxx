@@ -15,6 +15,8 @@
 
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
+void declareExternalLibraryManager(void);
+
 static void
 ELM_loadLibrary(tfel::system::ExternalLibraryManager& elm,
 				   const std::string& n)

@@ -56,7 +56,6 @@ set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
 enable_testing()
 add_custom_target(check COMMAND 
   ${CMAKE_CTEST_COMMAND} -T test)
-add_custom_target(tests-install)
 
 # floatting point exceptions (TODO)
 

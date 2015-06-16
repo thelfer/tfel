@@ -620,6 +620,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/castem/Makefile
+	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
            mfront/tests/behaviours/castem/castemelasticity.mtest
            mfront/tests/behaviours/castem/castemelasticity2.mtest
            mfront/tests/behaviours/castem/castemelasticity3.mtest

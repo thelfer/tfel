@@ -24,11 +24,9 @@ macro(test_crosseddelta2 test_arg)
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(crosseddelta2${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
-  add_custom_target(crosseddelta2${test_arg}.mtest-install
-    ${CMAKE_COMMAND} -E copy crosseddelta2${test_arg}.mtest
-    ${CMAKE_INSTALL_PREFIX}/share/mfront/tests/behaviours/crosseddelta2/crosseddelta2${test_arg}.mtest)
-  add_dependencies(tests-install
-    crosseddelta2${test_arg}.mtest-install)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crosseddelta2${test_arg}.mtest
+          DESTINATION "share/mfront/tests/behaviours/crosseddelta2"
+	  COMPONENT mtest)
 endmacro(test_crosseddelta2)
 
 test_crosseddelta2(ddif2-2)

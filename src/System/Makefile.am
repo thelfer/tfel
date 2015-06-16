@@ -5,8 +5,9 @@ AM_LDFLAGS   = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-a
 endif
 
 lib_LTLIBRARIES = libTFELSystem.la 
-libTFELSystem_la_SOURCES  = ExternalLibraryManager.cxx \
-			    System.cxx                 \
+libTFELSystem_la_SOURCES  = ExternalLibraryManager.cxx       \
+			    ExternalBehaviourDescription.cxx \
+			    System.cxx                       \
 			    SystemError.cxx
 libTFELSystem_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELSystem_EXPORTS
 

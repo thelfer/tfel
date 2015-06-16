@@ -1,0 +1,138 @@
+/*!
+ * \file   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
+ * \brief    
+ * \author Helfer Thomas
+ * \date   15 June 2015
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+// a small trick so that the compiler refers to the original while for
+// error reports
+#line 21 "@abs_top_srcdir@/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
+
+#include<cstdlib>
+#include<iostream>
+#include<algorithm>
+#include<stdexcept>
+
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"TFEL/System/ExternalBehaviourDescription.hxx"
+
+struct UMATBehaviourDescriptionTest final
+  : public tfel::tests::TestCase
+{
+  UMATBehaviourDescriptionTest()
+    : tfel::tests::TestCase("TFEL/System","UMATBehaviourDescriptionTest")
+  {} // end of UMATBehaviourDescriptionTest
+
+  tfel::tests::TestResult
+  execute() override
+  {
+    this->test1();
+    this->test2();
+    this->test3();
+    return this->result;
+  }
+ private:
+  using ExternalBehaviourDescription = tfel::system::ExternalBehaviourDescription;
+  void test1(){
+    using namespace std;
+    using namespace tfel::glossary;
+    const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+						"umatnorton","PlaneStrain"};
+    // should small strain behaviour
+    TFEL_TESTS_ASSERT(b.btype==1u);
+    // behaviour shall be isotropic
+    TFEL_TESTS_ASSERT(b.stype==0u);
+    // elastic behaviour shall be isotropic
+    TFEL_TESTS_ASSERT(b.etype==0u);
+    // material properties
+    TFEL_TESTS_ASSERT(b.mpnames.size()==2u);
+    for(const auto& m : {"A","E"}){
+      TFEL_TESTS_ASSERT(find(b.mpnames.begin(),b.mpnames.end(),m)!=b.mpnames.end());
+    }
+    // state variables
+    TFEL_TESTS_ASSERT(b.ivnames.size()==2u);
+    TFEL_TESTS_ASSERT(b.ivnames[0]==Glossary::ElasticStrain);
+    TFEL_TESTS_ASSERT(b.ivnames[1]==Glossary::EquivalentViscoplasticStrain);
+  }
+  void test2(){
+    using namespace std;
+    {
+      bool ok = false;
+      try{
+	const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+						    "unknown","PlaneStrain"};
+      } catch(runtime_error&){
+	ok = true;
+      }
+      this->registerResult("check throw on undefined behaviour",ok);
+    }
+    {
+      bool ok = false;
+      try{
+	const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+						    "umatnorton","PlaneStress"};
+      } catch(runtime_error&){
+	ok = true;
+      }
+      this->registerResult("check throw on unsupported hypothesis",ok);
+    }
+  }
+  void test3(){
+    using namespace std;
+    using namespace tfel::glossary;
+    const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+						"umatnorton_log1d","AxisymmetricalGeneralisedPlaneStrain"};
+    // should small strain behaviour
+    TFEL_TESTS_ASSERT(b.btype==1u);
+    // behaviour shall be isotropic
+    TFEL_TESTS_ASSERT(b.stype==0u);
+    // elastic behaviour shall be isotropic
+    TFEL_TESTS_ASSERT(b.etype==0u);
+    // material properties
+    TFEL_TESTS_ASSERT(b.mpnames.size()==2u);
+    for(const auto& m : {"A","E"}){
+      TFEL_TESTS_ASSERT(find(b.mpnames.begin(),b.mpnames.end(),m)!=b.mpnames.end());
+    }
+    // state variables
+    TFEL_TESTS_ASSERT(b.ivnames.size()==2u);
+    TFEL_TESTS_ASSERT(b.ivnames[0]==Glossary::ElasticStrain);
+    TFEL_TESTS_ASSERT(b.ivnames[1]==Glossary::EquivalentViscoplasticStrain);
+    // external state variables
+    TFEL_TESTS_ASSERT(b.evnames.empty());
+    // additional attributes
+    TFEL_TESTS_ASSERT(!b.requiresStiffnessTensor);
+    TFEL_TESTS_ASSERT(!b.requiresThermalExpansionCoefficientTensor);
+  }
+
+};
+  
+TFEL_TESTS_GENERATE_PROXY(UMATBehaviourDescriptionTest,
+			  "UMATBehaviourDescriptionTest");
+
+int main(void){
+  using namespace std;
+  using namespace tfel::tests;
+  TestManager& manager = TestManager::getTestManager();
+  manager.addTestOutput(cout);
+  manager.addXMLTestOutput("UMATBehaviourDescription.xml");
+  TestResult r = manager.execute();
+  if(!r.success()){
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+}

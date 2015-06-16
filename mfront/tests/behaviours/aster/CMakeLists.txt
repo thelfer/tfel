@@ -116,11 +116,9 @@ macro(test_aster test_arg)
     PROPERTIES DEPENDS mtest)
   set_tests_properties(aster${test_arg}_mtest
     PROPERTIES DEPENDS mtest)
-  add_custom_target(aster${test_arg}.mtest-install
-    ${CMAKE_COMMAND} -E copy aster${test_arg}.mtest
-    ${CMAKE_INSTALL_PREFIX}/share/mfront/tests/behaviours/aster/aster${test_arg}.mtest)
-  add_dependencies(tests-install
-    aster${test_arg}.mtest-install)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/aster${test_arg}.mtest
+          DESTINATION "share/mfront/tests/behaviours/aster"
+	  COMPONENT mtest)
 endmacro(test_aster)
 
 macro(test_aster_python test)
