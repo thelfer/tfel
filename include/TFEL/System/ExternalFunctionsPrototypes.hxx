@@ -30,7 +30,7 @@ extern "C" {
   typedef int    AsterIntegerType;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 #ifdef TFEL_ARCH64
-#ifdef WIN64
+#ifdef _WIN64
   typedef long long   CyranoIntegerType;
   typedef long long   UMATIntegerType;
   typedef long long   AsterIntegerType;

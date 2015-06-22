@@ -58,7 +58,7 @@ namespace umat
 						    tfel::config::Types<2u,UMATReal,false>::ThermalExpansionCoefficientTensor&)
   {
     using namespace std;
-#warning "something needs to be done HERE"
+#pragma message("something needs to be done HERE")
     string msg("UMATComputeThermalExpansionCoefficientTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
 	       "tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>::exe : ");
     msg += "unimplemented feature";
@@ -124,7 +124,7 @@ namespace umat
 						      tfel::config::Types<2u,UMATReal,false>::ThermalExpansionCoefficientTensor&)
   {
     using namespace std;
-#warning "something needs to be done HERE"
+#pragma message("something needs to be done HERE")
     string msg("UMATComputeThermalExpansionCoefficientTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
 	       "tfel::material::ModellingHypothesis::PLANESTRESS,"
 	       "ORTHOTROPIC>::exe : ");

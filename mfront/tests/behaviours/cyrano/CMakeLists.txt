@@ -44,21 +44,38 @@ if(WIN32)
   endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif(WIN32)
 
-get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION)
-get_property(MFrontMaterialPropertiesCyranoBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
-
 macro(test_cyrano test_arg)
-  configure_file(cyrano${test_arg}.mtest.in
-    cyrano${test_arg}.mtest @ONLY)
-  add_test(NAME cyrano${test_arg}_mtest
-    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false cyrano${test_arg}.mtest)
-  set_tests_properties(cyrano${test_arg}_mtest
-    PROPERTIES DEPENDS MFrontCyranoBehaviours)
-  set_tests_properties(cyrano${test_arg}_mtest
-    PROPERTIES DEPENDS mtest)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cyrano${test_arg}.mtest
-          DESTINATION "share/mfront/tests/behaviours/cyrano"
-	  COMPONENT mtest)
+  if(CMAKE_CONFIGURATION_TYPES)
+    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+      set(file "cyrano${test_arg}-${conf}.mtest")
+      get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
+      configure_file(cyrano${test_arg}.mtest.in
+	${file} @ONLY)
+      add_test(NAME cyrano${test_arg}_${conf}_mtest
+	CONFIGURATIONS ${conf}
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
+      set_tests_properties(cyrano${test_arg}_${conf}_mtest
+	PROPERTIES DEPENDS MFrontCyranoBehaviours)
+      set_tests_properties(cyrano${test_arg}_${conf}_mtest
+	PROPERTIES DEPENDS mtest)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	DESTINATION "share/mfront/tests/behaviours/cyrano"
+	COMPONENT mtest)
+    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+  else(CMAKE_CONFIGURATION_TYPES)
+    get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
+    configure_file(cyrano${test_arg}.mtest.in
+      cyrano${test_arg}.mtest @ONLY)
+    add_test(NAME cyrano${test_arg}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false cyrano${test_arg}.mtest)
+    set_tests_properties(cyrano${test_arg}_mtest
+      PROPERTIES DEPENDS MFrontCyranoBehaviours)
+    set_tests_properties(cyrano${test_arg}_mtest
+      PROPERTIES DEPENDS mtest)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cyrano${test_arg}.mtest
+      DESTINATION "share/mfront/tests/behaviours/cyrano"
+      COMPONENT mtest)
+  endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_cyrano)
 
 test_cyrano(elasticity)

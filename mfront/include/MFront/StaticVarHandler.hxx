@@ -14,7 +14,7 @@
 #ifndef LIB_MFRONT_STATICVARHANDLER_H_
 #define LIB_MFRONT_STATICVARHANDLER_H_ 
 
-#warning "This header is deprected, one shall use MFront/StaticVariableDescription instead"
+#pragma message("This header is deprected, one shall use MFront/StaticVariableDescription instead")
 #include"MFront/StaticVariableDescription.hxx"
 
 #endif /* LIB_MFRONT_STATICVARHANDLER_H_ */

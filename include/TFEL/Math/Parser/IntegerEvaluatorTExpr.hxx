@@ -138,11 +138,12 @@ namespace tfel
       {
 	Variable(const std::vector<int>&,
 		 const std::vector<int>::size_type);
-	virtual int
-	  getValue(void) const override;
+	virtual int getValue(void) const override;
 	virtual parser::IntegerExprPtr
 	  clone(const std::vector<int>&) const override;
       private:
+	Variable& operator=(const Variable&) = delete;
+	Variable& operator=(Variable&&) = delete;
 	const std::vector<int>& v;
 	const std::vector<int>::size_type pos;
       }; // end of struct Variable
@@ -150,12 +151,13 @@ namespace tfel
 		IntegerEvaluator &);
       TVariable(const std::vector<int>::size_type,
 		std::vector<int>&);
-      virtual bool
-	isOperator(void) const override;
+      virtual bool isOperator(void) const override;
       virtual void reduce(void) override;
       virtual parser::IntegerExprPtr
 	analyse(void) override;
     private:
+      TVariable& operator=(const TVariable&) = delete;
+      TVariable& operator=(TVariable&&) = delete;
       std::vector<int>& vars;
       std::vector<int>::size_type pos;
     };
@@ -164,6 +166,8 @@ namespace tfel
       : public IntegerEvaluator::TExpr
     {
       TOperator(const std::string&);
+      TOperator(const TOperator&);
+      TOperator(TOperator&&);
       virtual std::string
 	getOperatorType(void) const;
       virtual bool
@@ -174,6 +178,8 @@ namespace tfel
 	analyse(void) override;
       virtual ~TOperator();
     private:
+      TOperator& operator=(const TOperator&) = delete;
+      TOperator& operator=(TOperator&&) = delete;
       const std::string type;
     }; // end of struct IntegerEvaluator::TOperator
 
@@ -190,8 +196,7 @@ namespace tfel
 	analyse(void) override;
       virtual ~TGroup();
     private:
-      void
-	reduce(const std::string&);
+      void reduce(const std::string&);
       std::vector<std::shared_ptr<IntegerEvaluator::TExpr> > subExpr;
     }; // end of struct IntegerEvaluator::TGroup
 
@@ -207,6 +212,8 @@ namespace tfel
 	virtual int
 	  getValue(void) const override;
       private:
+	Number& operator=(const Number&);
+	Number& operator=(Number&&);
 	const int value;
       }; // end of struct Number
       TNumber(const int v);
@@ -217,6 +224,8 @@ namespace tfel
       virtual void
 	reduce(void) override;
     private:
+      TNumber& operator=(const TNumber&);
+      TNumber& operator=(TNumber&&);
       const int value;
     }; // end of struct IntegerEvaluator::TNumber
 

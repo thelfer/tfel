@@ -1,5 +1,5 @@
 /*  declarations dependantes machines de Cast3M  */
-#ifdef WIN32
+#if ((defined WIN32) && (! defined _WIN64))
   #define SUN 1
   #define UNIX32 1
   #undef UNIX64
@@ -52,7 +52,7 @@
   #define LIMIT 1
 #endif
 
-#if (defined UNIX32) || (defined _WIN32)
+#if (defined UNIX32) || ((defined _WIN32) && (!defined _WIN64))
 typedef int cast_int;
 typedef float cast_float;
 typedef long cast_long;

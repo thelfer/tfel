@@ -36,11 +36,14 @@ struct FSArrayTest final
   virtual tfel::tests::TestResult
   execute() override
   {
+#ifndef _MSC_VER
     this->test1();
     this->test2();
     this->test3();
+#endif
     return this->result;
   } // end of execute
+#ifndef _MSC_VER
   void test1(void)
   {
     using namespace std;
@@ -96,6 +99,7 @@ struct FSArrayTest final
     constexpr fsarray<3u,unsigned short> a1{{usint(2),usint(3),usint(4)}};
     constexpr fsarray<3u,int> a2{a1};
   }  
+#endif
 };
 
 TFEL_TESTS_GENERATE_PROXY(FSArrayTest,"FSArrayTest");

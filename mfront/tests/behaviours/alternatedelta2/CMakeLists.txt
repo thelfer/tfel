@@ -9,24 +9,46 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
-get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION)
-get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
-
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
     PolyCrystalsAngles.txt @ONLY)
 
 macro(test_alternatedelta2 test_arg)
-  configure_file(alternatedelta2${test_arg}.mtest.in
-    alternatedelta2${test_arg}.mtest @ONLY)
-  add_test(NAME alternatedelta2${test_arg}_mtest
-    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false alternatedelta2${test_arg}.mtest)
-  set_tests_properties(alternatedelta2${test_arg}_mtest
-    PROPERTIES DEPENDS MFrontCastemBehaviours)
-  set_tests_properties(alternatedelta2${test_arg}_mtest
-    PROPERTIES DEPENDS mtest)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/alternatedelta2${test_arg}.mtest
-          DESTINATION "share/mfront/tests/behaviours/alternatedelta2"
-	  COMPONENT mtest)
+  if(CMAKE_CONFIGURATION_TYPES)
+    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+      set(file "alternatedelta2${test_arg}-${conf}.mtest")
+      get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+      get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
+      configure_file(alternatedelta2${test_arg}.mtest.in
+	${file} @ONLY)
+      add_test(NAME alternatedelta2${test_arg}_${conf}_mtest
+	CONFIGURATIONS ${conf}
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
+      set_tests_properties(alternatedelta2${test_arg}_${conf}_mtest
+	PROPERTIES DEPENDS MFrontCastemBehaviours)
+      set_tests_properties(alternatedelta2${test_arg}_${conf}_mtest
+	PROPERTIES DEPENDS MFrontMaterialProperties-castem)
+      set_tests_properties(alternatedelta2${test_arg}_${conf}_mtest
+	PROPERTIES DEPENDS mtest)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	DESTINATION "share/mfront/tests/behaviours/alternatedelta2"
+	COMPONENT mtest)
+    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+  else(CMAKE_CONFIGURATION_TYPES)
+    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+    configure_file(alternatedelta2${test_arg}.mtest.in
+      alternatedelta2${test_arg}.mtest @ONLY)
+    add_test(NAME alternatedelta2${test_arg}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false alternatedelta2${test_arg}.mtest)
+    set_tests_properties(alternatedelta2${test_arg}_mtest
+      PROPERTIES DEPENDS MFrontCastemBehaviours)
+    set_tests_properties(alternatedelta2${test_arg}_mtest
+      PROPERTIES DEPENDS MFrontMaterialProperties-castem)
+    set_tests_properties(alternatedelta2${test_arg}_mtest
+      PROPERTIES DEPENDS mtest)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/alternatedelta2${test_arg}.mtest
+      DESTINATION "share/mfront/tests/behaviours/alternatedelta2"
+      COMPONENT mtest)
+  endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_alternatedelta2)
 
 test_alternatedelta2(chaboche2)

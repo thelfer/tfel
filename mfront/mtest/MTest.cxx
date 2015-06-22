@@ -65,6 +65,10 @@
 #include"MTest/AccelerationAlgorithmFactory.hxx"
 #include"MTest/CastemAccelerationAlgorithm.hxx"
 
+#ifdef min
+#undef min
+#endif
+
 namespace mfront
 {
 

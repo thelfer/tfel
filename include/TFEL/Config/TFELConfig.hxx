@@ -249,4 +249,18 @@
 #  define TFELMATERIAL_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #endif /* LIB_TFEL_CONFIG_HXX_ */
 
+// mitigate infamous windows macros effects
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
 #endif /* LIB_TFEL_CONFIG_HXX_ */

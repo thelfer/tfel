@@ -22,7 +22,7 @@
 #include"TFEL/Tests/TestFunctionWrapper.hxx"
 #include"TFEL/Tests/StdStreamTestOutput.hxx"
 
-#if !( defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !( defined _MSC_VER )
 #define TFEL_TESTS_STATIC static
 #else
 #define TFEL_TESTS_STATIC

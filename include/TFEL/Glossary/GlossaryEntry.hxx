@@ -183,28 +183,35 @@ namespace tfel
       /*!
        * comparison operator
        */
-      friend bool operator<(const GlossaryEntry&,
-			    const GlossaryEntry&);
+      friend TFELGLOSSARY_VISIBILITY_EXPORT
+      bool operator<(const GlossaryEntry&,
+		     const GlossaryEntry&);
       /*!
        * comparison operator
        */
-      friend bool operator != (const std::string&,
-			      const GlossaryEntry&);
+      friend TFELGLOSSARY_VISIBILITY_EXPORT
+      bool operator != (const std::string&,
+			const GlossaryEntry&);
       /*!
        * comparison operator
        */
-      friend bool operator != (const GlossaryEntry&,
-			       const std::string&);
+      friend TFELGLOSSARY_VISIBILITY_EXPORT
+      bool operator != (const GlossaryEntry&,
+			const std::string&);
       /*!
        * comparison operator
        */
-      friend bool operator == (const std::string&,
-			       const GlossaryEntry&);
+      friend TFELGLOSSARY_VISIBILITY_EXPORT
+      bool operator == (const std::string&,
+			const GlossaryEntry&);
       /*!
        * comparison operator
        */
-      friend bool operator == (const GlossaryEntry&,
-			       const std::string&);
+      friend TFELGLOSSARY_VISIBILITY_EXPORT
+      bool operator == (const GlossaryEntry&,
+			const std::string&);
+      //! destructor
+      ~GlossaryEntry();
     private:
       //! assignement operator
       GlossaryEntry& operator=(const GlossaryEntry&) = delete;

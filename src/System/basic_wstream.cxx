@@ -43,7 +43,7 @@ namespace tfel
 	  if(errno!=EAGAIN)
 	    systemCall::throwSystemError("BlockingStreamWriter::write : write failed",errno);
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#warning "windows port"
+#pragma message("windows port")
 #else
 	  sleep(1);
 #endif

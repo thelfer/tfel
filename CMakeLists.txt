@@ -300,6 +300,14 @@ if(install-system-libraries)
 
 endif(install-system-libraries)
 
+# install licences
+install (FILES LICENCE-GNU-GPL DESTINATION "share/doc/tfel"
+  COMPONENT core)
+install (FILES LICENCE-CECILL-A-EN DESTINATION "share/doc/tfel"
+  COMPONENT core)
+install (FILES LICENCE-CECILL-A-FR DESTINATION "share/doc/tfel"
+  COMPONENT core)
+
 set(CPACK_PACKAGE_VERSION   "${CMAKE_PROJECT_NAME}-${TFEL_VERSION}")
 if(${CMAKE_SYSTEM_PROCESSOR})
   set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
@@ -356,11 +364,3 @@ set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
 
 # packaging
 include(CPack)
-
-# install licences
-install (FILES LICENCE-GNU-GPL DESTINATION "share/doc/tfel"
-  COMPONENT core)
-install (FILES LICENCE-CECILL-A-EN DESTINATION "share/doc/tfel"
-  COMPONENT core)
-install (FILES LICENCE-CECILL-A-FR DESTINATION "share/doc/tfel"
-  COMPONENT core)

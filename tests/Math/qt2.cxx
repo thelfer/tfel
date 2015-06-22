@@ -23,11 +23,13 @@
 #include"TFEL/Math/qt.hxx"
 
 int main(void){
+#ifndef _MSC_VER
   using namespace std;
   using namespace tfel::math;
   typedef PowUnit_<1,2,Mass>::type SquareMass;
   constexpr qt<SquareMass> v1(1.5);
   constexpr qt<Mass>       v2 = v1 * v1;
   assert(std::abs(v2.getValue()-2.25)<1.e-14);
+#endif
   return EXIT_SUCCESS;
 }

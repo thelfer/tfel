@@ -59,7 +59,7 @@ namespace tfel
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
+	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond));
 	//! a simple check
 	TFEL_STATIC_ASSERT((T2toT2Traits<T2toT2Type>::dime==1u));
 	//! a simple check
@@ -115,7 +115,7 @@ namespace tfel
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
+	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond));
 	//! a simple check
 	TFEL_STATIC_ASSERT((T2toT2Traits<T2toT2Type>::dime==2u));
 	//! a simple check
@@ -173,7 +173,7 @@ namespace tfel
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
+	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond));
 	//! a simple check
 	TFEL_STATIC_ASSERT((T2toT2Traits<T2toT2Type>::dime==3u));
 	//! a simple check

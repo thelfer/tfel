@@ -1574,7 +1574,7 @@ namespace mfront
     const auto lib  = getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName();
     d.cppflags[lib].push_back("`tfel-config --includes --zmat`");
-#warning "HERE"
+#pragma message("Linux specific")
     d.cppflags[lib].push_back("-DLinux");
     d.headers.push_back("MFront/ZMAT/ZMAT"+name+".hxx");
     d.sources[lib].push_back("ZMAT"+name+".cxx");

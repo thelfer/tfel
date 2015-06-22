@@ -151,6 +151,18 @@ namespace tfel
 	v(l) = t/d(l);
       }
     }
+
+    template<typename VectorType,
+	     typename MatrixType>
+    void
+    QRDecomp::back_substitute(VectorType& v,
+			      const MatrixType& a,
+			      const VectorType& d)
+    {
+      using real = typename MatrixTraits<MatrixType>::NumType;
+      constexpr real eps = 100*std::numeric_limits<real>::min();
+      QRDecomp::back_substitute(v,a,d,eps);
+    }
     
     template<typename MatrixType>
     typename MatrixTraits<MatrixType>::NumType

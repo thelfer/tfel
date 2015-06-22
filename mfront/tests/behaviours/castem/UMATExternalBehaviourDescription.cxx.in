@@ -44,10 +44,14 @@ struct UMATBehaviourDescriptionTest final
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }
  private:
   using ExternalBehaviourDescription = tfel::system::ExternalBehaviourDescription;
+  /*!
+   * \brief test of the standard norton behaviour in PlaneStrain
+   */
   void test1(){
     using namespace std;
     using namespace tfel::glossary;
@@ -69,6 +73,10 @@ struct UMATBehaviourDescriptionTest final
     TFEL_TESTS_ASSERT(b.ivnames[0]==Glossary::ElasticStrain);
     TFEL_TESTS_ASSERT(b.ivnames[1]==Glossary::EquivalentViscoplasticStrain);
   }
+  /*!
+   * \brief test of failure to build an ExternalBehaviourDescription
+   * for unknown behaviour or unsupported modelling hypothesis
+   */
   void test2(){
     using namespace std;
     {
@@ -92,6 +100,9 @@ struct UMATBehaviourDescriptionTest final
       this->registerResult("check throw on unsupported hypothesis",ok);
     }
   }
+  /*!
+   * \brief test of the log1D strategy
+   */
   void test3(){
     using namespace std;
     using namespace tfel::glossary;
@@ -110,15 +121,56 @@ struct UMATBehaviourDescriptionTest final
     }
     // state variables
     TFEL_TESTS_ASSERT(b.ivnames.size()==2u);
+    TFEL_TESTS_ASSERT(b.ivtypes.size()==2u);
     TFEL_TESTS_ASSERT(b.ivnames[0]==Glossary::ElasticStrain);
+    TFEL_TESTS_ASSERT(b.ivtypes[0]==1u);
     TFEL_TESTS_ASSERT(b.ivnames[1]==Glossary::EquivalentViscoplasticStrain);
+    TFEL_TESTS_ASSERT(b.ivtypes[1]==0u);
     // external state variables
     TFEL_TESTS_ASSERT(b.evnames.empty());
     // additional attributes
     TFEL_TESTS_ASSERT(!b.requiresStiffnessTensor);
     TFEL_TESTS_ASSERT(!b.requiresThermalExpansionCoefficientTensor);
   }
-
+  /*!
+   * orthotropic finite strain behaviour with arrays of internal state variables
+   */
+  void test4(){
+    using namespace std;
+    using namespace tfel::glossary;
+    const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+						"umatfinitestrainsinglecrystal","Tridimensional"};
+    // should finite strain behaviour
+    TFEL_TESTS_ASSERT(b.btype==2u);
+    // behaviour shall be orthotropic
+    TFEL_TESTS_ASSERT(b.stype==1u);
+    // elastic behaviour shall be orthotropic
+    TFEL_TESTS_ASSERT(b.etype==1u);
+    // material properties
+    TFEL_TESTS_ASSERT(b.mpnames.size()==7u);
+    for(const auto& m : {"m","K","C","R0","Q","b","d1"}){
+      TFEL_TESTS_ASSERT(find(b.mpnames.begin(),b.mpnames.end(),m)!=b.mpnames.end());
+    }
+    //    state variables
+    TFEL_TESTS_ASSERT(b.ivnames.size()==37u);
+    TFEL_TESTS_ASSERT(b.ivtypes.size()==37u);
+    for(unsigned int i=0;i!=12;++i){
+      const auto s = to_string(i);
+      TFEL_TESTS_ASSERT(b.ivnames[i]=="g["+s+"]");
+      TFEL_TESTS_ASSERT(b.ivtypes[i]==0u);
+      TFEL_TESTS_ASSERT(b.ivnames[13+i]=="p["+s+"]");
+      TFEL_TESTS_ASSERT(b.ivtypes[13+i]==0u);
+      TFEL_TESTS_ASSERT(b.ivnames[25+i]=="a["+s+"]");
+      TFEL_TESTS_ASSERT(b.ivtypes[25+i]==0u);
+    }
+    TFEL_TESTS_ASSERT(b.ivnames[12]=="Fe");
+    TFEL_TESTS_ASSERT(b.ivtypes[12]==3u);
+    // external state variables
+    TFEL_TESTS_ASSERT(b.evnames.empty());
+    // additional attributes
+    TFEL_TESTS_ASSERT(b.requiresStiffnessTensor);
+    TFEL_TESTS_ASSERT(!b.requiresThermalExpansionCoefficientTensor);
+  }
 };
   
 TFEL_TESTS_GENERATE_PROXY(UMATBehaviourDescriptionTest,

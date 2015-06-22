@@ -59,7 +59,7 @@ namespace tfel
 	 const T2toT2Type2& b)
   {
     //! a simple check
-    TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond));
+    TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toST2Type,tfel::math::T2toST2Concept>::cond));
     //! a simple check
     TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toT2Type2,T2toT2Concept>::cond));
     //! a simple check
@@ -124,7 +124,7 @@ namespace tfel
 	 const T2toT2Type2& b)
   {
     //! a simple check
-    TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond));
+    TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toST2Type,tfel::math::T2toST2Concept>::cond));
     //! a simple check
     TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toT2Type2,T2toT2Concept>::cond));
     //! a simple check
@@ -200,7 +200,7 @@ struct TFEL_VISIBILITY_LOCAL Expr<T2toST2ResultType,T2toST2T2toT2ProductExpr<3u>
 	 const T2toT2Type2& b)
     {
       //! a simple check
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toST2Type,tfel::math::T2toST2Concept>::cond));
       //! a simple check
       TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toT2Type2,T2toT2Concept>::cond));
       //! a simple check

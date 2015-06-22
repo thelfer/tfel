@@ -152,30 +152,49 @@ if(WIN32)
   endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif(WIN32)
 
-get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION)
-get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
-
 macro(test_castem test_arg)
-  configure_file(castem${test_arg}.mtest.in
-    castem${test_arg}.mtest @ONLY)
-  add_test(NAME castem${test_arg}_mtest
-    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false castem${test_arg}.mtest)
-  set_tests_properties(castem${test_arg}_mtest
-    PROPERTIES DEPENDS MFrontCastemBehaviours)
-  set_tests_properties(castem${test_arg}_mtest
-    PROPERTIES DEPENDS mtest)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/castem${test_arg}.mtest
-          DESTINATION "share/mfront/tests/behaviours/castem"
-	  COMPONENT mtest)
+  if(CMAKE_CONFIGURATION_TYPES)
+    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+      set(file "castem${test_arg}-${conf}.mtest")
+      get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+      get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
+      configure_file(castem${test_arg}.mtest.in
+	${file} @ONLY)
+      add_test(NAME castem${test_arg}_${conf}_mtest
+	CONFIGURATIONS ${conf}
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
+      set_tests_properties(castem${test_arg}_${conf}_mtest
+	PROPERTIES DEPENDS MFrontCastemBehaviours)
+      set_tests_properties(castem${test_arg}_${conf}_mtest
+	PROPERTIES DEPENDS MFrontMaterialProperties-castem)
+      set_tests_properties(castem${test_arg}_${conf}_mtest
+	PROPERTIES DEPENDS mtest)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	DESTINATION "share/mfront/tests/behaviours/castem"
+	COMPONENT mtest)
+    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+  else(CMAKE_CONFIGURATION_TYPES)
+    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+    get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
+    configure_file(castem${test_arg}.mtest.in
+      castem${test_arg}.mtest @ONLY)
+    add_test(NAME castem${test_arg}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false castem${test_arg}.mtest)
+    set_tests_properties(castem${test_arg}_mtest
+      PROPERTIES DEPENDS MFrontCastemBehaviours)
+    set_tests_properties(castem${test_arg}_mtest
+      PROPERTIES DEPENDS MFrontMaterialProperties-castem)
+    set_tests_properties(castem${test_arg}_mtest
+      PROPERTIES DEPENDS mtest)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/castem${test_arg}.mtest
+      DESTINATION "share/mfront/tests/behaviours/castem"
+      COMPONENT mtest)
+  endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_castem)
 
 test_castem(elasticity)
 test_castem(elasticity2)
-if(HAVE_CASTEM)
-  test_castem(elasticity3)
-  set_tests_properties(castemelasticity3_mtest
-    PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-endif(HAVE_CASTEM)
+test_castem(elasticity3)
 test_castem(elasticity4)
 test_castem(elasticity5)
 test_castem(elasticity6)

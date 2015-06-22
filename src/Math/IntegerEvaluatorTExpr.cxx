@@ -79,6 +79,10 @@ namespace tfel
     IntegerEvaluator::TOperator::TOperator(const std::string& t_)
       : type(t_)
     {} // end of IntegerEvaluator::TOperator::TOperator(const std::string& t_)
+
+    IntegerEvaluator::TOperator::TOperator(const TOperator&) = default;
+    IntegerEvaluator::TOperator::TOperator(TOperator&&) = default;
+
     
     std::string
     IntegerEvaluator::TOperator::getOperatorType(void) const

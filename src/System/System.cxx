@@ -64,63 +64,59 @@ namespace tfel
   {
 
 #if (defined _WIN32) || (defined _WIN64) || (defined __CYGWIN__)
-
-	  static int
-	  System_rmdir(const std::string & d)
-	  {
-		  bool            bSubdirectory = false;       // Flag, indicating whether
-		                      						   // subdirectories have been found
-		  HANDLE          hFile;                       // Handle to directory
-		  std::string     strFilePath;                 // Filepath
-		  std::string     strPattern;                  // Pattern
-		  WIN32_FIND_DATA FileInformation;             // File information
-		  strPattern = d + "\\*.*";
-		  hFile = ::FindFirstFile(strPattern.c_str(), &FileInformation);
-		  if (hFile != INVALID_HANDLE_VALUE)
-		  {
-			  do {
-				  if (FileInformation.cFileName[0] != '.')
-				  {
-					  strFilePath.erase();
-					  strFilePath = d + "\\" + FileInformation.cFileName;
-					  if (FileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY){
-						  // Delete subdirectory
-						  System_rmdir(strFilePath);
-					  } else {
-						  // Set file attributes
-						  if (::SetFileAttributes(strFilePath.c_str(),
-							  FILE_ATTRIBUTE_NORMAL) == FALSE) {
-							  return ::GetLastError();
-						  }
-						  // Delete file
-						  if (::DeleteFile(strFilePath.c_str()) == FALSE) {
-							  return ::GetLastError();
-						  }
-					  }
-				  }
-			  } while (::FindNextFile(hFile, &FileInformation) == TRUE);
-			  // Close handle
-			  ::FindClose(hFile);
-			  DWORD dwError = ::GetLastError();
-			  if (dwError != ERROR_NO_MORE_FILES){
-				  return dwError;
-		      } else {
-				  if (!bSubdirectory)
-				  {
-					  // Set directory attributes
-					  if (::SetFileAttributes(d.c_str(),
-						  FILE_ATTRIBUTE_NORMAL) == FALSE) {
-						  return ::GetLastError();
-					  }
-					  // Delete directory
-					  if (::RemoveDirectory(d.c_str()) == FALSE) {
-					  return ::GetLastError();
-				  }
-				  }
-			  }
-		  }
-		  return 0;
+    static int
+    System_rmdir(const std::string & d)
+    {
+      bool            bSubdirectory = false;       // Flag, indicating whether
+      // subdirectories have been found
+      HANDLE          hFile;                       // Handle to directory
+      std::string     strFilePath;                 // Filepath
+      std::string     strPattern;                  // Pattern
+      WIN32_FIND_DATA FileInformation;             // File information
+      strPattern = d + "\\*.*";
+      hFile = ::FindFirstFile(strPattern.c_str(), &FileInformation);
+      if (hFile != INVALID_HANDLE_VALUE){
+	do {
+	  if (FileInformation.cFileName[0] != '.'){
+	    strFilePath.erase();
+	    strFilePath = d + "\\" + FileInformation.cFileName;
+	    if (FileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY){
+	      // Delete subdirectory
+	      System_rmdir(strFilePath);
+	    } else {
+	      // Set file attributes
+	      if (::SetFileAttributes(strFilePath.c_str(),
+				      FILE_ATTRIBUTE_NORMAL) == FALSE) {
+		return ::GetLastError();
+	      }
+	      // Delete file
+	      if (::DeleteFile(strFilePath.c_str()) == FALSE) {
+		return ::GetLastError();
+	      }
+	    }
 	  }
+	} while (::FindNextFile(hFile, &FileInformation) == TRUE);
+	// Close handle
+	::FindClose(hFile);
+	DWORD dwError = ::GetLastError();
+	if (dwError != ERROR_NO_MORE_FILES){
+	  return dwError;
+	} else {
+	  if (!bSubdirectory){
+	    // Set directory attributes
+	    if (::SetFileAttributes(d.c_str(),
+				    FILE_ATTRIBUTE_NORMAL) == FALSE) {
+	      return ::GetLastError();
+	    }
+	    // Delete directory
+	    if (::RemoveDirectory(d.c_str()) == FALSE) {
+	      return ::GetLastError();
+	    }
+	  }
+	}
+      }
+      return 0;
+    }
 #endif /* (defined _WIN32) || (defined _WIN64) || (defined __CYGWIN__) */
 
     char
@@ -293,28 +289,27 @@ namespace tfel
 	  systemCall::copyDirectory(src,dest,false);
 	  return;
 	}
+      } else if (S_ISREG(srcInfos.st_mode)) {
+	// copying a file, the destination
+	// shall be a file or a directory
+	if (destStatus) {
+	  if (S_ISDIR(destInfos.st_mode)) {
+	    // destination is a directory
+	    const auto& tmp = systemCall::tokenize(src, '/');
+	    systemCall::copyFile(src, dest + '/' + tmp.back());
+	    return;
 	  }
-	  else if (S_ISREG(srcInfos.st_mode)) {
-		  // copying a file, the destination
-		  // shall be a file or a directory
-		  if (destStatus) {
-			  if (S_ISDIR(destInfos.st_mode)) {
-				  // destination is a directory
-				  const auto& tmp = systemCall::tokenize(src, '/');
-				  systemCall::copyFile(src, dest + '/' + tmp.back());
-				  return;
-			  }
-			  else if (S_ISREG(destInfos.st_mode)) {
-				  // destination is a file
-				  systemCall::copyFile(src, dest);
-				  return;
-			  }
-			  throw(SystemError("systemCall::copy : can't copy file '" + src + "' on " +
-				  systemCall::fileType(destInfos.st_mode) + " '" + dest + "'."));
-		  }
-		  // destination don't exist, trying to copy to it
-		  systemCall::copyFile(src, dest);
-		  return;
+	  else if (S_ISREG(destInfos.st_mode)) {
+	    // destination is a file
+	    systemCall::copyFile(src, dest);
+	    return;
+	  }
+	  throw(SystemError("systemCall::copy : can't copy file '" + src + "' on " +
+			    systemCall::fileType(destInfos.st_mode) + " '" + dest + "'."));
+	}
+	// destination don't exist, trying to copy to it
+	systemCall::copyFile(src, dest);
+	return;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 	  }
 #else

@@ -913,7 +913,7 @@ namespace mfront
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::AXISYMMETRICAL,
 						    ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestUmatfiniteStrainRotationMatrix2D m(&drot(0,0));
-#warning "to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));"
+#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=4u;++i){
       	  for(j=0;j!=5u;++j){
       	    Kt(i,j) = De(i,j);
@@ -924,7 +924,7 @@ namespace mfront
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::PLANESTRESS,
 						    ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestUmatfiniteStrainRotationMatrix2D m(&drot(0,0));
-#warning "to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));"
+#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=4u;++i){
       	  for(j=0;j!=5u;++j){
       	    Kt(i,j) = De(i,j);
@@ -935,7 +935,7 @@ namespace mfront
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::PLANESTRAIN,
 						    ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestUmatfiniteStrainRotationMatrix2D m(&drot(0,0));
-#warning "to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));"
+#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=4u;++i){
       	  for(j=0;j!=5u;++j){
       	    Kt(i,j) = De(i,j);
@@ -946,7 +946,7 @@ namespace mfront
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::GENERALISEDPLANESTRAIN,
 						    ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestUmatfiniteStrainRotationMatrix2D m(&drot(0,0));
-#warning "to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));"
+#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=4u;++i){
       	  for(j=0;j!=5u;++j){
       	    Kt(i,j) = De(i,j);
@@ -957,7 +957,7 @@ namespace mfront
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::TRIDIMENSIONAL,
 						    ORTHOTROPIC>::exe(&mp(0),De);
 	//      	MTestUmatfiniteStrainRotationMatrix3D m(&drot(0,0));
-#warning "to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));"
+#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=6u;++i){
       	  for(j=0;j!=9u;++j){
       	    Kt(i,j) = De(i,j);

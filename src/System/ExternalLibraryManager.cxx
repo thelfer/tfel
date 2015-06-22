@@ -31,6 +31,31 @@ namespace tfel
   namespace system
   {
 
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+    // code retrieved from
+    // http://www.codeproject.com/Tips/479880/GetLastError-as-std-string
+    static std::string getLastWin32Error(void)
+    {
+      const DWORD error = GetLastError();
+      if (error){
+	LPVOID lpMsgBuf;
+	DWORD bufLen = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+				     FORMAT_MESSAGE_FROM_SYSTEM |
+				     FORMAT_MESSAGE_IGNORE_INSERTS,
+				     nullptr,error,
+				     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+				     (LPTSTR) &lpMsgBuf,0, nullptr );
+	if (bufLen){
+	  LPCSTR lpMsgStr = (LPTSTR) lpMsgBuf;
+	  std::string result(lpMsgStr, lpMsgStr+bufLen);
+	  LocalFree(lpMsgBuf);
+	  return result;
+	}
+      }
+      return std::string();
+    }
+#endif /*  defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
+    
     static void
     ExternalLibraryManagerCheckModellingHypothesisName(const std::string& h)
     {
@@ -96,7 +121,7 @@ namespace tfel
 	  msg += name;
 	  msg += "' could not be loaded, (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -166,7 +191,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getSupportedModellingHypotheses : ");
 	msg += " number of modelling hypotheses could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -178,7 +203,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getSupportedModellingHypotheses : ");
 	msg += "modelling hypotheses could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -207,7 +232,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -239,7 +264,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -271,7 +296,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -307,7 +332,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -343,7 +368,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -379,7 +404,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -410,7 +435,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCastemFunctionNumberOfVariables : ");
 	msg += " number of variables could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -441,7 +466,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATRequiresStiffnessTensor : ");
 	msg += "information could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -480,7 +505,7 @@ namespace tfel
        string msg("ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor : ");
        msg += "information could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-       msg += ::GetLastError();
+       msg += getLastWin32Error();
 #else
        msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -514,7 +539,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::checkIfAsterBehaviourSaveTangentOperator : ");
 	msg += "information could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -561,7 +586,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCastemFunctionNumberOfVariables : ");
 	msg += " variables names could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -588,7 +613,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCyranoFunction : ");
 	msg += " could not load Cyrano function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -613,7 +638,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATFunction : ");
 	msg += " could not load UMAT function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -638,7 +663,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getAsterFunction : ");
 	msg += " could not load Aster function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -672,7 +697,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATNames : ");
 	msg += " number of variables names could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -687,7 +712,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATNames : ");
 	msg += "variables names could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -755,13 +780,12 @@ namespace tfel
 #else
       void * lib = this->loadLibrary(l);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
-
       int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATBehaviourType : ");
 	msg += " behavour type could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -787,7 +811,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATSymmetryType : ");
 	msg += " behavour type could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -813,7 +837,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATElasticSymmetryType : ");
 	msg += " behavour type could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -846,7 +870,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATInternalStateVariablesTypes : ");
 	msg += " number of variables names could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -861,7 +885,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATInternalStateVariablesTypes : ");
 	msg += "internal state variables types could not be read (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -922,7 +946,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCastemFunction : ");
 	msg += " could not load castem function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -948,7 +972,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction0 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -974,7 +998,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction1 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1000,7 +1024,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction2 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1026,7 +1050,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction3 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1052,7 +1076,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction4 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1078,7 +1102,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction5 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1104,7 +1128,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction6 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1130,7 +1154,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction7 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1156,7 +1180,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction8 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1182,7 +1206,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction9 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1208,7 +1232,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction10 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1234,7 +1258,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction11 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1260,7 +1284,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction12 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1286,7 +1310,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction13 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1312,7 +1336,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction14 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1338,7 +1362,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCFunction15 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1364,7 +1388,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction0 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1390,7 +1414,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction1 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1416,7 +1440,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction2 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1442,7 +1466,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction3 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1468,7 +1492,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction4 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1494,7 +1518,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction5 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1520,7 +1544,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction6 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1546,7 +1570,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction7 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1572,7 +1596,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction8 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1598,7 +1622,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction9 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1624,7 +1648,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction10 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1650,7 +1674,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction11 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1676,7 +1700,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction12 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1702,7 +1726,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction13 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1728,7 +1752,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction14 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
@@ -1753,7 +1777,7 @@ namespace tfel
 	string msg("ExternalLibraryManager::getFortranFunction15 : ");
 	msg += " could not load function '"+f+"' (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += ::GetLastError();
+	  msg += getLastWin32Error();
 #else
 	  msg += ::dlerror();
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */

@@ -22,7 +22,9 @@
 #if !((defined _WIN32) || (defined _WIN64) || (defined __CYGWIN__))
 #include<unistd.h>
 #else
-// using mode_t = int;
+#ifdef _MSC_VER
+using mode_t = int;
+#endif
 #endif
 
 #include"TFEL/Config/TFELConfig.hxx"

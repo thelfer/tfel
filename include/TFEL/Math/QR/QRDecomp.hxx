@@ -80,6 +80,7 @@ namespace tfel
        * \param[in] v : vector
        * \param[in] a : decomposed matrix 
        * \param[in] d : diagonal element of the matrix
+       * \param[in] e : precision
        */
       template<typename VectorType,
 	       typename MatrixType>
@@ -87,9 +88,19 @@ namespace tfel
       void back_substitute(VectorType&,
 			   const MatrixType&,
 			   const VectorType&,
-			   const typename MatrixTraits<MatrixType>::NumType =
-			   100*std::numeric_limits<typename MatrixTraits<MatrixType>::NumType>::min());
-
+			   const typename MatrixTraits<MatrixType>::NumType);
+      /*!
+       * \param[in] v : vector
+       * \param[in] a : decomposed matrix 
+       * \param[in] d : diagonal element of the matrix
+       */
+      template<typename VectorType,
+	       typename MatrixType>
+      static TFEL_MATH_INLINE2
+      void back_substitute(VectorType&,
+			   const MatrixType&,
+			   const VectorType&);
+	
     protected:
 
       /*!

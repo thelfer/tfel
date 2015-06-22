@@ -33,6 +33,7 @@ struct StensorChangeBasis3Test final
   virtual tfel::tests::TestResult
   execute() override
   {
+#ifndef _MSC_VER
     using namespace std;
     using namespace tfel::math;
     typedef double real;
@@ -88,6 +89,7 @@ struct StensorChangeBasis3Test final
       }
       TFEL_TESTS_ASSERT(abs(st(3)-sm2(0,1)*sqrt(real(2)))<eps);
     }
+#endif
     return this->result;
   } // end of execute
 };

@@ -4,23 +4,38 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 
 macro(add_mfront_generated_source lib interface ext file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
-  if(WIN32)
-    set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-  else(WIN32)
-    set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-  endif(WIN32)
+  set(mfront_executable "$<TARGET_FILE:mfront>")
   if("${ext}" STREQUAL "")
     set(mfront_output "src/${file}.cxx")
   else("${ext}" STREQUAL "")
     set(mfront_output "src/${file}-${ext}.cxx")
   endif("${ext}" STREQUAL "")
-  add_custom_command(
-    OUTPUT  "${mfront_output}"
-    COMMAND "${mfront_executable}"
-    ARGS    "--interface=${interface}" "${mfront_file}"
-    DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
-    DEPENDS "${mfront_file}"
-    COMMENT "mfront source ${mfront_file}")
+  if(CMAKE_HOST_WIN32)
+    set(MFRONT_PATH "$<TARGET_FILE_DIR:TFELMFront>")
+    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:MFrontLogStream>")
+    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELMaterial>")
+    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELMathParser>")
+    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELGlossary>")
+    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELSystem>")
+    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELUtilities>")
+    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELException>")
+    add_custom_command(
+      OUTPUT  "${mfront_output}"
+      COMMAND "set PATH=${MFRONT_PATH};%PATH%"
+      COMMAND "${mfront_executable}"
+      ARGS    "--interface=${interface}" "${mfront_file}"
+      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS "${mfront_file}"
+      COMMENT "mfront source ${mfront_file}")
+  else(CMAKE_HOST_WIN32)
+    add_custom_command(
+      OUTPUT  "${mfront_output}"
+      COMMAND "${mfront_executable}"
+      ARGS    "--interface=${interface}" "${mfront_file}"
+      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS "${mfront_file}"
+      COMMENT "mfront source ${mfront_file}")
+  endif(CMAKE_HOST_WIN32)
   set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES})
 endmacro(add_mfront_generated_source)
 

@@ -105,11 +105,7 @@ endmacro(mtest_library)
 
 macro(add_mfront_behaviour_generated_source lib interface file)
   set(mfront_file   "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${file}.mfront")
-  if(WIN32)
-    set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-  else(WIN32)
-    set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-  endif(WIN32)
+  set(mfront_executable "$<TARGET_FILE:mfront>")
   add_custom_command(
     OUTPUT  "src/${file}.cxx"
     OUTPUT  "src/${interface}${file}.cxx"
@@ -129,6 +125,7 @@ macro(mfront_dependencies lib)
     message(FATAL_ERROR "mfront_dependencies : no source specified")
   endif(${ARGC} LESS 1)
   foreach(source ${ARGN})
+    set(mfront_executable "$<TARGET_FILE:mfront>")
     add_custom_command(
       OUTPUT  "src/${source}-mfront.cxx"
       COMMAND "${mfront_executable}"

@@ -37,6 +37,7 @@ struct qtTest final
   execute() override
   {
     using namespace tfel::math; 
+#ifndef _MSC_VER
     constexpr qt<Mass> m1(100.);
     constexpr qt<Mass> m2(100.);
     constexpr qt<Mass> m3 = m1+0.5*m2;
@@ -45,6 +46,7 @@ struct qtTest final
     TFEL_TESTS_ASSERT(std::abs(m3.getValue()-150.)<1.e-14);
     TFEL_TESTS_ASSERT(std::abs(f.getValue()-200.)<1.e-14);
     TFEL_TESTS_ASSERT((std::abs(std::cos(qt<NoUnit>(12.))-std::cos(12.))<1.e-14));
+#endif
     return this->result;
   } // end of execute
 };

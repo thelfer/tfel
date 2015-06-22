@@ -77,6 +77,9 @@ struct GenType::Dump
 
 private:
   
+	Dump& operator=(const Dump&) = delete;
+	Dump& operator=(Dump&&) = delete;
+
   std::ostream& stream;
 
 };
