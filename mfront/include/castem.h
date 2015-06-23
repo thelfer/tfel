@@ -8,7 +8,7 @@
   #define THREAD 1
   #undef LIMIT
 #endif
-#ifdef WIN64
+#ifdef _WIN64
   #define SUN 1
   #define UNIX64 1
   #undef UNIX32  
