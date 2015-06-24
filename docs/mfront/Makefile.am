@@ -4,7 +4,7 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   finitestrain/CMakeLists.txt                              \
 	   planestress/CMakeLists.txt                               \
 	   umat/CMakeLists.txt                                      \
-	   zmat/CMakeLists.txt                                      \
+	   aster/CMakeLists.txt                                     \
 	   zmat/CMakeLists.txt                                      \
 	   Images/ConfigurationIsocline.eps			    \
 	   Images/Polar_decomposition_of_F.png			    \
