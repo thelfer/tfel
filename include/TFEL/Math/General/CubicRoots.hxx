@@ -75,9 +75,12 @@ namespace tfel{
       template<typename T>
       static TFEL_MATH_INLINE T
       cbrt(const T x){
-	return ::pow(x,T(1)/T(3));
+	const T one_third = T(1)/T(3);
+	if(x<0){
+	  return -::pow(-x,one_third);
+	}
+	return ::pow(x,one_third);
       }
-
       /*!
        * find the real roots of a cubic polynomial by Cardan's method
        * \return the number of real roots.

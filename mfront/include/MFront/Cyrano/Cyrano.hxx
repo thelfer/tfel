@@ -25,7 +25,7 @@
 namespace cyrano{
 
 #if CYRANO_ARCH == 64
-#ifdef WIN64
+#ifdef _WIN64
   typedef long long   CyranoInt;
 #else
   typedef long   CyranoInt;
