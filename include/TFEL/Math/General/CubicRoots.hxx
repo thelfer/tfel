@@ -73,9 +73,9 @@ namespace tfel{
       cbrt(const T x){
 	constexpr T one_third = T(1)/T(3);
 	if(x<0){
-	  return -::pow(-x,one_third);
+	  return -std::pow(-x,one_third);
 	}
-	return ::pow(x,one_third);
+	return std::pow(x,one_third);
       }
 
       /*!

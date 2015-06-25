@@ -337,8 +337,7 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildFromEigenValuesAndVectors(const T&,const T&,const T&,
 				     const tmatrix<3u,3u,
 				     typename tfel::typetraits::BaseType<T>::type>&);
@@ -348,8 +347,7 @@ namespace tfel{
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildFromEigenValuesAndVectors(const tvector<3u,T>&,
 				     const tmatrix<3u,3u,
 				     typename tfel::typetraits::BaseType<T>::type>&);
@@ -362,8 +360,7 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildLogarithmFromEigenValuesAndVectors(const T&,const T&,const T&,
 					      const tmatrix<3u,3u,
 					      typename tfel::typetraits::BaseType<T>::type>&);
@@ -373,8 +370,7 @@ namespace tfel{
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildLogarithmFromEigenValuesAndVectors(const tvector<3u,T>&,
 					      const tmatrix<3u,3u,
 					      typename tfel::typetraits::BaseType<T>::type>&);
@@ -386,8 +382,7 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildAbsoluteValueFromEigenValuesAndVectors(const T&,const T&,const T&,
 						  const tmatrix<3u,3u,
 						  typename tfel::typetraits::BaseType<T>::type>&);
@@ -397,8 +392,7 @@ namespace tfel{
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static TFEL_MATH_INLINE2
-      stensor<N,T>
+      static stensor<N,T>
       buildAbsoluteValueFromEigenValuesAndVectors(const tvector<3u,T>&,
 						  const tmatrix<3u,3u,
 						  typename tfel::typetraits::BaseType<T>::type>&);
@@ -410,11 +404,10 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
+      static  stensor<N,T>
       buildPositivePartFromEigenValuesAndVectors(const T&,const T&,const T&,
 						 const tmatrix<3u,3u,
 						 typename tfel::typetraits::BaseType<T>::type>&);
-
       /*!
        * build the positive part of a symmetric tensor given through its eigen values and vectors
        * \param[in] vp : eigen values
@@ -424,7 +417,6 @@ namespace tfel{
       buildPositivePartFromEigenValuesAndVectors(const tvector<3u,T>&,
 						 const tmatrix<3u,3u,
 						 typename tfel::typetraits::BaseType<T>::type>&);
-
       /*!
        * build the positive part of a symmetric tensor given through its eigen values and vectors
        * \param[in] v1 : first  eigen value
@@ -459,12 +451,11 @@ namespace tfel{
        * \(\underbrace{n}_{i}\) are the eigen tensors associated to the given tensor.
        */
       template<typename StensorType>
-      static TFEL_MATH_INLINE2
-      typename std::enable_if<
-	  (tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond)&&
+      static typename std::enable_if<
+	(tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond)&&
 	(StensorTraits<StensorType>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
-					  typename StensorTraits<StensorType>::NumType>::cond),
+	 typename StensorTraits<StensorType>::NumType>::cond),
 	void>::type
       computeEigenValuesDerivatives(StensorType&,
 				    StensorType&,
@@ -478,8 +469,7 @@ namespace tfel{
        * \param[in]  m   : eigenvectors
        */
       template<typename StensorType>
-      static TFEL_MATH_INLINE2
-      typename std::enable_if<
+      static typename std::enable_if<
 	(tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond)&&
 	(StensorTraits<StensorType>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<T>::type,
@@ -499,8 +489,7 @@ namespace tfel{
        * \param[in]  eps    : numerical parameter for regularisation
        */
       template<typename ST2toST2Type>
-      static TFEL_MATH_INLINE2
-      typename std::enable_if<
+      static typename std::enable_if<
 	(tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
 	(ST2toST2Traits<ST2toST2Type>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename tfel::typetraits::BaseType<T>::type,
@@ -584,7 +573,6 @@ namespace tfel{
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        (StensorTraits<StensorType>::dime==1u) &&
@@ -600,7 +588,6 @@ namespace tfel{
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        ((StensorTraits<StensorType>::dime==2u)||
@@ -617,7 +604,6 @@ namespace tfel{
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        (StensorTraits<StensorType>::dime==1u) &&
@@ -633,7 +619,6 @@ namespace tfel{
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        ((StensorTraits<StensorType>::dime==2u)||
@@ -650,7 +635,6 @@ namespace tfel{
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        (StensorTraits<StensorType>::dime==1u) &&
@@ -666,7 +650,6 @@ namespace tfel{
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        ((StensorTraits<StensorType>::dime==2u)||
@@ -683,7 +666,6 @@ namespace tfel{
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        (StensorTraits<StensorType>::dime==1u) &&
@@ -699,7 +681,6 @@ namespace tfel{
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    TFEL_MATH_INLINE2
     typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        ((StensorTraits<StensorType>::dime==2u)||

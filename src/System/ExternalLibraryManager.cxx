@@ -783,13 +783,15 @@ namespace tfel
       int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATBehaviourType : ");
-	msg += " behavour type could not be read (";
+	msg += " behavour type could not be read";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-	  msg += getLastWin32Error();
+	msg += "\n";
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += "(";
+	msg += ::dlerror();
 	msg += ")";
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 	throw(runtime_error(msg));
       }
       return static_cast<unsigned short>(u);

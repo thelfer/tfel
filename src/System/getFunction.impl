@@ -6,12 +6,15 @@
  * \date   18 december 2008
  */
 
-#include<stdlib.h>
-#include<string.h>
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#include<cstdlib>
+#include<cstring>
 #define dlsym(handle, func) GetProcAddress (handle, func)
 #else
+#include<stdlib.h>
+#include<string.h>
 #include<dlfcn.h>
+#define nullptr NULL
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
 #include"TFEL/System/getFunction.h"
@@ -25,7 +28,7 @@ extern "C" {
     unsigned short * n;
     size_t len = strlen(name);
     char *myname = (char *) malloc((len+7u)*sizeof(char));
-    if(myname==0){
+    if(myname==nullptr){
       return -1;
     }
     strncpy(myname,name,len);
@@ -38,7 +41,7 @@ extern "C" {
     myname[len+6u]='\0';
     n= (unsigned short *) dlsym(lib,myname);
     free(myname);
-    if(n==0){
+    if(n==nullptr){
       return -1;
     }  
     return *n;
@@ -50,14 +53,14 @@ extern "C" {
     unsigned short * n;
     size_t len = strlen(f);
     char *myname = (char *) malloc((len+25u)*sizeof(char));
-    if(myname==0){
+    if(myname==nullptr){
       return -1;
     }
     strncpy(myname,f,len+1);
     strncat(myname,"_requiresStiffnessTensor",24u);
     n= (unsigned short *) dlsym(l,myname);
     free(myname);
-    if(n==0){
+    if(n==nullptr){
       return -1;
     }  
     return *n;
@@ -69,14 +72,14 @@ extern "C" {
     unsigned short * n;
     size_t len = strlen(f);
     char *myname = (char *) malloc((len+43u)*sizeof(char));
-    if(myname==0){
+    if(myname==nullptr){
       return -1;
     }
     strncpy(myname,f,len+1);
     strncat(myname,"_requiresThermalExpansionCoefficientTensor",42u);
     n= (unsigned short *) dlsym(l,myname);
     free(myname);
-    if(n==0){
+    if(n==nullptr){
       return -1;
     }  
     return *n;
@@ -88,7 +91,7 @@ extern "C" {
     unsigned short * n;
     size_t len = strlen(f);
     char *myname = (char *) malloc((len+22u)*sizeof(char));
-    if(myname==0){
+    if(myname==nullptr){
       return -1;
     }
     strncpy(myname,f,len);
@@ -116,7 +119,7 @@ extern "C" {
     myname[len+21u]='\0';
     n= (unsigned short *) dlsym(l,myname);
     free(myname);
-    if(n==0){
+    if(n==nullptr){
       return -1;
     }
     return *n;
@@ -127,7 +130,7 @@ extern "C" {
 			    const char * const name){
     unsigned short * n;
     n= (unsigned short *) dlsym(lib,name);
-    if(n==0){
+    if(n==nullptr){
       return -1;
     }  
     return *n;
@@ -137,7 +140,7 @@ extern "C" {
 		   const char * const name){
     unsigned short * n;
     n= (unsigned short *) dlsym(lib,name);
-    if(n==0){
+    if(n==nullptr){
       return -1;
     }  
     return (int) *n;
@@ -168,8 +171,8 @@ extern "C" {
     char ** v;
     size_t len = strlen(name);
     char *myname = (char *) malloc((len+6u)*sizeof(char));
-    if(myname==0){
-      return 0;
+    if(myname==nullptr){
+      return nullptr;
     }
     strncpy(myname,name,len);
     myname[len]='_';

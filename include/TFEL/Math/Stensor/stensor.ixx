@@ -1140,8 +1140,8 @@ namespace tfel{
     template<unsigned short N,typename T>
     stensor<N,T>
     stensor<N,T>::buildPositivePartFromEigenValuesAndVectors(const T& v1,const T& v2,const T& v3,
-								  const tmatrix<3u,3u,
-								  typename tfel::typetraits::BaseType<T>::type>& m)
+							     const tmatrix<3u,3u,
+							     typename tfel::typetraits::BaseType<T>::type>& m)
     {
       stensor<N,T> s;
       tfel::math::internals::BuildStensorFromEigenValuesAndVectors<N>::exe(s,std::max(T(0),v1),

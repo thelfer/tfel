@@ -443,9 +443,9 @@ namespace mfront{
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       sfeh = "aster::AsterStandardSmallStrainStressFreeExpansionHandler";
     } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      sfeh = "0";
+      sfeh = "nullptr";
     } else if (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
-      sfeh = "0";
+      sfeh = "nullptr";
     } else {
       string msg("AsterInterface::endTreatment : "
 		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
