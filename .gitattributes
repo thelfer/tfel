@@ -973,6 +973,7 @@ docs/web/svn.md -text
 docs/web/tex/lcmd_utf8.tex -text
 docs/web/tutorial.md -text
 docs/web/zmat.md -text
+/env.sh.in -text
 include/CMakeLists.txt -text
 include/Makefile.am -text
 include/TFEL/Config/Internals/HeatFluxVectorType.hxx -text
