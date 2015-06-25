@@ -77,9 +77,9 @@ namespace tfel{
       cbrt(const T x){
 	const T one_third = T(1)/T(3);
 	if(x<0){
-	  return -::pow(-x,one_third);
+	  return -std::pow(-x,one_third);
 	}
-	return ::pow(x,one_third);
+	return std::pow(x,one_third);
       }
       /*!
        * find the real roots of a cubic polynomial by Cardan's method
