@@ -250,7 +250,6 @@
 #endif /* LIB_TFEL_CONFIG_HXX_ */
 
 // mitigate infamous windows macros effects
-
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif

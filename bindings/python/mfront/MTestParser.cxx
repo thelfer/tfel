@@ -16,6 +16,8 @@
 #include"MTest/MTest.hxx"
 #include"MTest/MTestParser.hxx"
 
+void declareMTestParser(void);
+
 void declareMTestParser(void)
 {
   using namespace boost;

@@ -15,8 +15,9 @@
 
 #include<TFEL/Utilities/TextData.hxx>
 
-void
-declareTextData()
+void declareTextData(void);
+
+void declareTextData()
 {
   using namespace std;
   using namespace boost;

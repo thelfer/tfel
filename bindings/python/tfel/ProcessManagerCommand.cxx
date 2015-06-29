@@ -30,8 +30,9 @@ struct ProcessManagerCommandWrapper final
 }; // end of struct Command
 
 
-void
-declareProcessManagerCommand()
+void declareProcessManagerCommand();
+
+void declareProcessManagerCommand()
 {
   using namespace std;
   using namespace boost;

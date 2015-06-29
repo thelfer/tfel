@@ -268,7 +268,7 @@ add_subdirectory(docs)
 
 ## environment under msys
 if (MSYS)
-  configure_file(env.sh.in env.sh @ONLY)
+  configure_file(env-msys.sh.in env-msys.sh @ONLY)
 endif(MSYS)
 
 ## Packaging

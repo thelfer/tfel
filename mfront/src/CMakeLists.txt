@@ -98,6 +98,9 @@ set(TFELMFront_SOURCES
     LevenbergMarquardtSolvers.cxx
     AbstractBehaviourBrick.cxx
     AbstractBehaviourBrickFactory.cxx
+    BehaviourBrickProviderIdentifier.cxx
+    BehaviourBrickProvider.cxx
+    BehaviourBrickRequirement.cxx
     BehaviourBrickBase.cxx
     ElasticityBehaviourBrick.cxx
     PerformanceProfiling.cxx

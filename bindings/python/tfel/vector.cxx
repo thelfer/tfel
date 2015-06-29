@@ -16,6 +16,8 @@
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Python/VectorConverter.hxx"
 
+void declareTFELMathVector(void);
+
 void declareTFELMathVector(void)
 {
   using namespace tfel::python;

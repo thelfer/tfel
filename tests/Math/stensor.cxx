@@ -27,8 +27,7 @@ int main(void){
   typedef stensor<1,int> stensor2;
   const stensor1 v1 = {4.,1.,25.};
   const stensor2 v2 = {2,1,5};
-  stensor1 v3;
-  v3 = v1 + v2;
+  const auto v3 = v1 + v2;
   assert(abs(v3(0)-6)<1.e-14);
   assert(abs(v3(1)-2)<1.e-14);
   assert(abs(v3(2)-30)<1.e-14);

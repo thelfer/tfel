@@ -65,8 +65,9 @@ static void declaretvector(const char * const n)
 
 }
 
-void
-declaretvector()
+void declaretvector();
+
+void declaretvector()
 {
   declaretvector<1u>("TVector1D");
   declaretvector<2u>("TVector2D");

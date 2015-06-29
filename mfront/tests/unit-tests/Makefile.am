@@ -6,11 +6,13 @@ AM_CPPFLAGS = -I$(top_srcdir)/include        \
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/mfront/tests/unit-tests
-test_PROGRAMS = BehaviourDataTest        \
-		BehaviourDescriptionTest
+test_PROGRAMS = BehaviourDataTest          \
+		BehaviourDescriptionTest   \
+		BehaviourBrickProviderTest
 
-BehaviourDataTest_SOURCES = BehaviourDataTest.cxx
-BehaviourDescriptionTest_SOURCES = BehaviourDescriptionTest.cxx
+BehaviourDataTest_SOURCES          = BehaviourDataTest.cxx
+BehaviourDescriptionTest_SOURCES   = BehaviourDescriptionTest.cxx
+BehaviourBrickProviderTest_SOURCES = BehaviourBrickProviderTest.cxx
 
 LDADD = -L$(top_builddir)/mfront/src    \
 	-L$(top_builddir)/src/Material  \

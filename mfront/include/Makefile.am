@@ -76,7 +76,10 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/UMATFiniteStrainMTestFileGenerator.hxx \
 			MFront/AbstractBehaviourBrick.hxx             \
 			MFront/BehaviourBrickBase.hxx                 \
-			MFront/AbstractBehaviourBrickFactory.hxx
+			MFront/AbstractBehaviourBrickFactory.hxx      \
+			MFront/BehaviourBrick/ProviderIdentifier.hxx  \
+			MFront/BehaviourBrick/Requirement.hxx         \
+			MFront/BehaviourBrick/Provider.hxx
 
 
 nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                          \

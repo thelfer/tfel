@@ -9,8 +9,8 @@
  * or the CECILL-A licence. A copy of thoses licences are delivered 
  * with the sources of TFEL. CEA or EDF may also distribute this 
  * project under specific licensing conditions. 
+ * <!-- Local IspellDict: english -->
  */
-/* <!-- Local IspellDict: english --> */
 
 #ifndef _LIB_MFRONT_MFRONTBEHAVIOURBRICK_H_
 #define _LIB_MFRONT_MFRONTBEHAVIOURBRICK_H_ 

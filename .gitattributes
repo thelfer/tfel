@@ -1479,6 +1479,10 @@ mfront/include/MFront/Aster/AsterTraits.hxx -text
 mfront/include/MFront/Aster/aster.doxygen -text
 mfront/include/MFront/AsterInterface.hxx -text
 mfront/include/MFront/BehaviourAttribute.hxx -text
+mfront/include/MFront/BehaviourBrick/Provider.hxx -text
+mfront/include/MFront/BehaviourBrick/ProviderIdentifier.hxx -text
+mfront/include/MFront/BehaviourBrick/Requirement.hxx -text
+mfront/include/MFront/BehaviourBrick/RequirementManager.hxx -text
 mfront/include/MFront/BehaviourBrickBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.ixx -text
@@ -1725,6 +1729,9 @@ mfront/src/AsterRotationMatrix.cxx -text
 mfront/src/AsterStressFreeExpansionHandler.cxx -text
 mfront/src/AsterTangentOperator.cxx -text
 mfront/src/BehaviourBrickBase.cxx -text
+mfront/src/BehaviourBrickProvider.cxx -text
+mfront/src/BehaviourBrickProviderIdentifier.cxx -text
+mfront/src/BehaviourBrickRequirement.cxx -text
 mfront/src/BehaviourDSLCommon.cxx -text
 mfront/src/BehaviourData.cxx -text
 mfront/src/BehaviourDescription.cxx -text
@@ -3086,6 +3093,7 @@ mfront/tests/properties/interfaces/src/MFrontPleiadesMaterialPropertyInterface-2
 mfront/tests/properties/interfaces/src/Makefile.am -text
 mfront/tests/properties/test-c.c -text
 mfront/tests/properties/test-f.c -text
+mfront/tests/unit-tests/BehaviourBrickProviderTest.cxx -text
 mfront/tests/unit-tests/BehaviourDataTest.cxx -text
 mfront/tests/unit-tests/BehaviourDescriptionTest.cxx -text
 mfront/tests/unit-tests/CMakeLists.txt -text

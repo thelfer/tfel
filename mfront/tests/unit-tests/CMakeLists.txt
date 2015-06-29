@@ -22,3 +22,4 @@ endmacro(tests_mfront)
 
 tests_mfront(BehaviourDataTest)
 tests_mfront(BehaviourDescriptionTest)
+tests_mfront(BehaviourBrickProviderTest)

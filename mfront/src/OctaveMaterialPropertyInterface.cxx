@@ -203,13 +203,17 @@ namespace mfront
 
     if(inputs.size()>1){
       this->srcFile << "static double\n";
-      this->srcFile << "get_scalar_value(const octave_value& value,const int,const int){\n";
+      this->srcFile << "get_scalar_value(const octave_value& value,const octave_idx_type,const octave_idx_type){\n";
       this->srcFile << "return value.scalar_value();\n";
       this->srcFile << "} // end of get_scalar_value\n\n";
       this->srcFile << "static double\n";
-      this->srcFile << "get_matrix_value(const octave_value& value,const int i,const int j){\n";
+      this->srcFile << "get_matrix_value(const octave_value& value,const octave_idx_type i,const octave_idx_type j){\n";
       this->srcFile << "return (value.matrix_value())(i,j);\n";
       this->srcFile << "} // end of get_matrix_value\n\n";
+      this->srcFile << "static double\n";
+      this->srcFile << "get_range_value(const octave_value& value,const octave_idx_type,const octave_idx_type j){\n";
+      this->srcFile << "return value.range_value().elem(j);\n";
+      this->srcFile << "} // end of get_range_value\n\n";
     }
     this->srcFile << "static double " << name <<"_compute(";
     if(!inputs.empty()){
@@ -390,16 +394,16 @@ namespace mfront
     if(inputs.size()>1){
       //*      this->srcFile << name << "OctaveVarType varTypes["
       //*      << inputs.size() << "];\n";
-      this->srcFile << "typedef double (*PtrGetFunction)(const octave_value&,const int,const int);\n";
+      this->srcFile << "typedef double (*PtrGetFunction)(const octave_value&,const octave_idx_type,const octave_idx_type);\n";
       this->srcFile << "PtrGetFunction getfunction[" << inputs.size() << "];\n";
     }
     if(inputs.size()>=1){
-      this->srcFile << "int i,j;\n";
-      this->srcFile << "int  row,col;\n";
-    }
-    if(inputs.size()>1){
-      this->srcFile << "bool areAllVarMatrices;\n";
-      this->srcFile << "bool areAllVarScalars;\n";
+      this->srcFile << "// local variables used to convert ranges to matrices\n";
+      this->srcFile << "octave_idx_type i,j;\n";
+      this->srcFile << "octave_idx_type row = -1;\n";
+      this->srcFile << "octave_idx_type col = -1;\n";
+      this->srcFile << "bool areAllVariablesMatrices = true;\n";
+      this->srcFile << "bool areAllVariablesScalars  = true;\n";
     }
     this->srcFile << "octave_value retval;\n";
     this->srcFile << "if(args.length()!=" << inputs.size() << "){\n";
@@ -426,8 +430,8 @@ namespace mfront
       }
       this->srcFile << "retval = " << name << "_compute(";
       this->srcFile << "args(0).scalar_value());\n";
-      this->srcFile << "} else if(args(0).is_real_matrix()){\n";
-      this->srcFile << "Matrix xin0(args(0).matrix_value());\n";
+      this->srcFile << "} else if(args(0).is_real_matrix()||args(0).is_range()){\n";
+      this->srcFile << "Matrix xin0(args(0).is_range() ? args(0).range_value().matrix_value() : args(0).matrix_value());\n";
       this->srcFile << "Matrix xout(xin0.rows(),xin0.cols());\n";
       this->srcFile << "for(i=0;i!=xin0.rows();++i){\n";
       this->srcFile << "for(j=0;j!=xin0.cols();++j){\n";
@@ -448,33 +452,47 @@ namespace mfront
       this->srcFile << "return retval;\n";
       this->srcFile << "}\n";
     } else {
-      this->srcFile << "areAllVarMatrices = true;\n";
-      this->srcFile << "areAllVarScalars = true;\n";
-      this->srcFile << "row=-1;\n";
-      this->srcFile << "col=-1;\n";
-      this->srcFile << "for(i=0;i!=" << inputs.size() << ";++i){\n";
-      this->srcFile << "if(args(i).is_real_scalar()){\n";
-      this->srcFile << "areAllVarMatrices = false;\n";
-      this->srcFile << "getfunction[i] = &get_scalar_value;\n";
-      this->srcFile << "} else if(args(i).is_real_matrix()){\n";
-      this->srcFile << "areAllVarScalars  = false;\n";
-      this->srcFile << "getfunction[i] = &get_matrix_value;\n";
-      this->srcFile << "if(row==-1){\n";
-      this->srcFile << "row = args(i).matrix_value().rows();\n";
-      this->srcFile << "col = args(i).matrix_value().cols();\n";
-      this->srcFile << "} else {\n";
-      this->srcFile << "if((row!=args(i).matrix_value().rows())||\n";
-      this->srcFile << "(col!=args(i).matrix_value().cols())){\n";
-      this->srcFile << "error(\"" << name << " : all arguments shall have the same size\");\n";
-      this->srcFile << "return retval;\n";
-      this->srcFile << "}\n";
-      this->srcFile << "}\n";
-      this->srcFile << "} else {\n";
-      this->srcFile << "error(\"" << name << " : arguments must be either a matrix or scalar\");\n";
-      this->srcFile << "return retval;\n";
-      this->srcFile << "}\n";
-      this->srcFile << "}\n";
-      this->srcFile << "if(areAllVarScalars){\n";
+      // scalars
+      this->srcFile << "for(i=0;i!=" << inputs.size() << ";++i){\n"
+		    << "if(args(i).is_real_scalar()){\n"
+		    << "areAllVariablesMatrices = false;\n"
+		    << "getfunction[i] = &get_scalar_value;\n";
+	// matrices
+      this->srcFile << "} else if(args(i).is_real_matrix()){\n"
+		    << "areAllVariablesScalars  = false;\n"
+		    << "getfunction[i] = &get_matrix_value;\n"
+		    << "if(row==-1){\n"
+		    << "row = args(i).matrix_value().rows();\n"
+		    << "col = args(i).matrix_value().cols();\n"
+		    << "} else {\n"
+		    << "if((row!=args(i).matrix_value().rows())||\n"
+		    << "(col!=args(i).matrix_value().cols())){\n"
+		    << "error(\"" << name << " : all arguments shall have the same size\");\n"
+		    << "return retval;\n"
+		    << "}\n"
+		    << "}\n";
+      //ranges
+      this->srcFile << "} else if(args(i).is_range()){\n"
+		    << "areAllVariablesScalars   = false;\n"
+		    << "areAllVariablesMatrices = false;\n"
+		    << "getfunction[i] = &get_range_value;\n"
+		    << "if(row==-1){\n"
+		    << "row = 1;\n"
+		    << "col = args(i).range_value().nelem();\n"
+		    << "} else {\n"
+		    << "if((row!=1)||(col!=args(i).range_value().nelem())){\n"
+		    << "error(\"" << name << " : all arguments shall have the same size\");\n"
+		    << "return retval;\n"
+		    << "}\n"
+		    << "}\n";
+      // unsupported type
+      this->srcFile << "} else {\n"
+		    << "error(\"" << name << " : arguments must be either a matrix or scalar\");\n"
+		    << "return retval;\n"
+		    << "}\n"
+		    << "}\n";
+      // all scalar case
+      this->srcFile << "if(areAllVariablesScalars){\n";
       if((!bounds.empty())||
 	 (!physicalBounds.empty())){
 	this->srcFile << "if("<< name << "_checkBounds(";
@@ -490,7 +508,8 @@ namespace mfront
 	this->srcFile << "args(" << i << ").scalar_value(),";
       }
       this->srcFile << "args(" << i << ").scalar_value());\n";
-      this->srcFile << "} else if(areAllVarMatrices){\n";
+      // all matrices case
+      this->srcFile << "} else if(areAllVariablesMatrices){\n";
       for(i=0;i!=inputs.size();++i){
 	this->srcFile << "Matrix xin" << i<< "(args(" << i << ").matrix_value());\n"; 
       }
@@ -515,6 +534,7 @@ namespace mfront
       this->srcFile << "}\n";
       this->srcFile << "}\n";
       this->srcFile << "retval = xout;\n";
+      // general case
       this->srcFile << "} else {\n";
       this->srcFile << "Matrix xout(row,col);\n";
       this->srcFile << "for(i=0;i!=row;++i){\n";

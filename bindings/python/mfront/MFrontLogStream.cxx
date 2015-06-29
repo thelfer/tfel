@@ -15,6 +15,8 @@
 
 #include"MFront/MFrontLogStream.hxx"
 
+void declareMFrontLogStream(void);
+
 void declareMFrontLogStream(void)
 {
   using namespace boost;

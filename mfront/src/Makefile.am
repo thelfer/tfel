@@ -96,6 +96,9 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   OctaveMaterialPropertyInterface.cxx                    \
 		           AbstractBehaviourBrick.cxx                             \
 		           BehaviourBrickBase.cxx                                 \
+			   BehaviourBrickProviderIdentifier.cxx                   \
+			   BehaviourBrickRequirement.cxx                          \
+			   BehaviourBrickProvider.cxx                             \
 		           ElasticityBehaviourBrick.cxx                           \
 		           AbstractBehaviourBrickFactory.cxx                      \
 		           UMATInterfaceBase.cxx

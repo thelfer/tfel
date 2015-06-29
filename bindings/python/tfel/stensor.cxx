@@ -72,8 +72,9 @@ stensor_tresca(const tfel::math::stensor<N,double>& s)
   return tresca(s);
 }
 
-void
-declarestensor()
+void declarestensor();
+
+void declarestensor()
 {
   using namespace boost::python;
   using namespace tfel::math;

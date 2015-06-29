@@ -451,6 +451,8 @@ TFEL_PYTHON_MTESTCURRENTSTATEGETTER(desv)
 TFEL_PYTHON_MTESTCURRENTSTATEGETTER2(dt_1)
 TFEL_PYTHON_MTESTCURRENTSTATEGETTER2(Tref)
 
+void declareMTest(void);
+
 void declareMTest(void)
 {
   using namespace boost;

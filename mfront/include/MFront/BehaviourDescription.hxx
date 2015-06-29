@@ -47,19 +47,6 @@ namespace mfront
       public SupportedTypes  
   {
     /*!
-     * \brief variable type
-     */
-    enum VariableType{
-      MATERIALPROPERTY,
-      STATEVARIABLE,
-      AUXILIARYSTATEVARIABLE,
-      INTEGRATIONVARIABLE,
-      LOCALVARIABLE,
-      STATICVARIABLE,
-      PARAMETER,
-      MATERIALLAW
-    }; // end of struct variable type
-    /*!
      * \brief Available integration schemes.
      * One of the first thing a parser shall do is to set the
      * integration scheme it uses.

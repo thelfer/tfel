@@ -15,6 +15,8 @@
 
 #include"TFEL/Tests/TestResult.hxx"
 
+void declareTestResult(void);
+
 void declareTestResult(void)
 {
   using namespace boost;

@@ -4,7 +4,17 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 
 macro(add_mfront_generated_source lib interface ext file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
-  set(mfront_executable "$<TARGET_FILE:mfront>")
+  if(${CMAKE_VERSION} GREATER "2.8.2")
+    set(mfront_executable "$<TARGET_FILE:mfront>")
+  else(${CMAKE_VERSION} GREATER "2.8.2")
+    # retrieve the old behaviour for debian squeeze's version of cmake
+    # does not work with configurations
+    if(WIN32)
+      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
+    else(WIN32)
+      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
+    endif(WIN32)
+  endif(${CMAKE_VERSION} GREATER "2.8.2")
   if("${ext}" STREQUAL "")
     set(mfront_output "src/${file}.cxx")
   else("${ext}" STREQUAL "")
