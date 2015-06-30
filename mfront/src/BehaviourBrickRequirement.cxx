@@ -31,6 +31,8 @@ namespace mfront{
 	aproviders(a)
     {} // end of Requirement::Requirement
 
+    Requirement::~Requirement() = default;
+    
   } // end of namespace bbrick
   
 } // end of namespace mfront

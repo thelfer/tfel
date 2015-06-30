@@ -23,6 +23,8 @@
 #include"TFEL/Tests/TestManager.hxx"
 
 #include"MFront/BehaviourBrick/Provider.hxx"
+#include"MFront/BehaviourBrick/Requirement.hxx"
+#include"MFront/BehaviourBrick/RequirementManager.hxx"
 
 struct BehaviourBrickProviderTest final
   : public tfel::tests::TestCase
@@ -45,6 +47,8 @@ struct BehaviourBrickProviderTest final
     this->test2<StaticVariableProvider>(ProviderIdentifier::STATICVARIABLE);
     this->test2<ParameterProvider>(ProviderIdentifier::PARAMETER);
     //    this->test3();
+    this->test4();
+    this->test5();
     return this->result;
   } // end of execute
  private:
@@ -77,6 +81,44 @@ struct BehaviourBrickProviderTest final
   //   const auto p = MaterialLawProvider{};
   //   TFEL_TESTS_ASSERT(p.getIdentifier()==ProviderIdentifier::MATERIALLAW);
   // } // end of test3
+  void test4(void){
+    using namespace mfront::bbrick;
+    auto p  = MaterialPropertyProvider{"stress","young","YoungModulus",1u};
+    TFEL_TESTS_ASSERT(p.name=="young");
+    TFEL_TESTS_ASSERT(p.ename=="YoungModulus");
+    TFEL_TESTS_ASSERT(p.type=="stress");
+    // unsupported type
+    TFEL_TESTS_CHECK_THROW((MaterialPropertyProvider{"invalid_type","young","YoungModulus",1u}.name=="young"),
+			    std::runtime_error);
+    // everything is okay
+    TFEL_TESTS_ASSERT((p.handleRequirement(Requirement{"stress","YoungModulus",1u,
+	      {ProviderIdentifier::MATERIALPROPERTY,ProviderIdentifier::STATEVARIABLE}},false)));
+    // the array size does not match
+    TFEL_TESTS_CHECK_THROW(p.handleRequirement(Requirement{"stress","YoungModulus",2u,
+	    {ProviderIdentifier::MATERIALPROPERTY}},false),std::runtime_error);
+    // requirement does not allow a MaterialProperty provider
+    TFEL_TESTS_CHECK_THROW(p.handleRequirement(Requirement{"stress","YoungModulus",1u,
+	    {ProviderIdentifier::STATEVARIABLE}},false),std::runtime_error);
+    // type does not match
+    TFEL_TESTS_CHECK_THROW(p.handleRequirement(Requirement{"StressStensor","YoungModulus",1u,
+	    {ProviderIdentifier::MATERIALPROPERTY}},false),std::runtime_error);
+    // units does not match, but this is allowed
+    TFEL_TESTS_ASSERT((p.handleRequirement(Requirement{"real","YoungModulus",1u,
+	      {ProviderIdentifier::MATERIALPROPERTY}},false)));
+    // units does not match, but this is not allowed
+    TFEL_TESTS_CHECK_THROW(p.handleRequirement(Requirement{"real","YoungModulus",1u,
+	    {ProviderIdentifier::MATERIALPROPERTY}},true),std::runtime_error);
+  }
+  void test5(void){
+    using namespace mfront::bbrick;
+    auto m = RequirementManager{};
+    m.addMaterialPropertyProvider("real","young","YoungModulus",1u);
+    TFEL_TESTS_ASSERT(m.getProvider("YoungModulus").getIdentifier()==ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_CHECK_THROW(m.getProvider("unknown"),std::runtime_error);
+    // young modulus has already been used
+    TFEL_TESTS_CHECK_THROW(m.addStateVariableProvider("real","young","YoungModulus",1u),
+			   std::runtime_error);
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(BehaviourBrickProviderTest,

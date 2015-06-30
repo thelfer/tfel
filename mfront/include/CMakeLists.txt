@@ -76,6 +76,7 @@ install_mfront_header(MFront AbstractBehaviourBrickFactory.hxx)
 install_mfront_header(MFront BehaviourProfiler.hxx)
 install_mfront_header(MFront/BehaviourBrick ProviderIdentifier.hxx)
 install_mfront_header(MFront/BehaviourBrick Requirement.hxx)
+install_mfront_header(MFront/BehaviourBrick RequirementManager.hxx)
 install_mfront_header(MFront/BehaviourBrick Provider.hxx)
 
 install_mtest_header(MTest MTest.hxx)

@@ -98,6 +98,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           BehaviourBrickBase.cxx                                 \
 			   BehaviourBrickProviderIdentifier.cxx                   \
 			   BehaviourBrickRequirement.cxx                          \
+			   BehaviourBrickRequirementManager.cxx                   \
 			   BehaviourBrickProvider.cxx                             \
 		           ElasticityBehaviourBrick.cxx                           \
 		           AbstractBehaviourBrickFactory.cxx                      \

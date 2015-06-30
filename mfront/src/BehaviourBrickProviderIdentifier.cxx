@@ -29,6 +29,9 @@ namespace mfront{
       case ProviderIdentifier::AUXILIARYSTATEVARIABLE:
 	n = "AuxiliaryStateVariable";
 	break;
+      case ProviderIdentifier::EXTERNALSTATEVARIABLE:
+	n = "ExternalStateVariable";
+	break;
       case ProviderIdentifier::INTEGRATIONVARIABLE:
 	n = "IntegrationVariable";
 	break;

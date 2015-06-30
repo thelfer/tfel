@@ -186,12 +186,17 @@ namespace mfront{
     this->areDynamicallyAllocatedVectorsAllowed_ = true;
   } // end of SupportedTypes::reset
 
+  bool
+  SupportedTypes::isSupportedType(const std::string& t) const
+  {
+    return this->flags.find(t)!=this->flags.end();
+  } // end of SupportedTypes::isSupportedType
+  
   SupportedTypes::TypeFlag
   SupportedTypes::getTypeFlag(const std::string& name) const
   {
     using namespace std;
-    map<string,TypeFlag>::const_iterator p;
-    p = flags.find(name);
+    const auto p = this->flags.find(name);
     if(p==flags.end()){
       string msg("SupportedTypes::getTypeTag ");
       msg += name;

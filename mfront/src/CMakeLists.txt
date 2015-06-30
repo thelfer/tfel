@@ -101,6 +101,7 @@ set(TFELMFront_SOURCES
     BehaviourBrickProviderIdentifier.cxx
     BehaviourBrickProvider.cxx
     BehaviourBrickRequirement.cxx
+    BehaviourBrickRequirementManager.cxx
     BehaviourBrickBase.cxx
     ElasticityBehaviourBrick.cxx
     PerformanceProfiling.cxx

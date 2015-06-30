@@ -61,6 +61,8 @@ namespace mfront{
        * \brief list of allowed variable types vor this requirement
        */
       const std::vector<ProviderIdentifier> aproviders;
+      //! destructor
+      ~Requirement();
     private:
       Requirement() = delete;
       Requirement& operator=(const Requirement&) = delete;

@@ -1089,18 +1089,13 @@ namespace tfel
     std::vector<double>::size_type
     Evaluator::registerVariable(const std::string& vname)
     {
-      using namespace std;
-      typedef map<string,vector<double>::size_type>::value_type MVType;
-      map<string,vector<double>::size_type>::const_iterator p;
-      map<string,vector<double>::size_type>::const_iterator pe;
-      vector<double>::size_type pos;
-      p  = this->positions.find(vname); 
-      pe = this->positions.end();
+      const auto p  = this->positions.find(vname); 
+      const auto pe = this->positions.end();
       if(p!=pe){
 	return p->second;
       }
-      pos = this->variables.size();
-      this->positions.insert(MVType(vname,pos));
+      const auto pos = this->variables.size();
+      this->positions.insert({vname,pos});
       this->variables.resize(pos+1u);
       return pos;
     } // end of Evaluator::registerVariable
@@ -1113,8 +1108,7 @@ namespace tfel
 				const double value)
     {
       using namespace std;
-      map<string,vector<double>::size_type>::iterator p;
-      p = this->positions.find(vname);
+      auto p = this->positions.find(vname);
       if(p==this->positions.end()){
 	string msg("Evaluator::setVariableValue : variable '");
 	msg += vname + "' does not exist";

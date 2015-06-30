@@ -20,7 +20,7 @@ macro(add_mfront_generated_source lib interface ext file)
   else("${ext}" STREQUAL "")
     set(mfront_output "src/${file}-${ext}.cxx")
   endif("${ext}" STREQUAL "")
-  if(CMAKE_HOST_WIN32)
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set(MFRONT_PATH "$<TARGET_FILE_DIR:TFELMFront>")
     set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:MFrontLogStream>")
     set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELMaterial>")
@@ -37,7 +37,7 @@ macro(add_mfront_generated_source lib interface ext file)
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
-  else(CMAKE_HOST_WIN32)
+    else((CMAKE_HOST_WIN32) AND (NOT MSYS))
     add_custom_command(
       OUTPUT  "${mfront_output}"
       COMMAND "${mfront_executable}"
@@ -45,7 +45,7 @@ macro(add_mfront_generated_source lib interface ext file)
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
-  endif(CMAKE_HOST_WIN32)
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES})
 endmacro(add_mfront_generated_source)
 

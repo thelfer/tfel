@@ -15,6 +15,9 @@
 #include<sstream>
 #include<algorithm>
 #include<stdexcept>
+#include"MFront/SupportedTypes.hxx"
+#include"MFront/VariableDescription.hxx"
+#include"MFront/StaticVariableDescription.hxx"
 #include"MFront/BehaviourBrick/Requirement.hxx"
 #include"MFront/BehaviourBrick/Provider.hxx"
 
@@ -24,7 +27,8 @@ namespace mfront{
   
     Provider::~Provider() = default;
 
-    bool ProviderBase::handleRequirement(const Requirement& r) const
+    bool ProviderBase::handleRequirement(const Requirement& r,
+					 const bool b) const
     {
       using namespace std;
       if(this->getExternalName()!=r.name){
@@ -41,7 +45,19 @@ namespace mfront{
 	throw(runtime_error(msg.str()));
       }
       // check for type
-      
+      if(this->getVariableType()!=r.type){
+	const auto s = SupportedTypes{};
+	const auto f1 = s.getTypeFlag(r.type);
+	const auto f2 = s.getTypeFlag(this->getVariableType());
+	const bool b1 = f1==f2;
+	if((!b1)||(b)){
+	  throw(runtime_error("ProviderBase::handleRequirement : "
+			      "provided value of type '"+
+			      this->getVariableType()+
+			      "' does not math requirement '"+
+			      r.name+"' type ('"+r.type+"""')"));
+	}
+      }
       // check if provider is allowed
       const auto id = this->getIdentifier();
       if(find(r.aproviders.begin(),r.aproviders.end(),id)==
@@ -65,8 +81,28 @@ namespace mfront{
 	name(n),
 	ename(e),
 	asize(s)
-    {} // end of StandardProvider::StandardProvider
+    {
+      const auto st = SupportedTypes{};
+      if(!st.isSupportedType(this->type)){
+	throw(std::runtime_error("StandardProvider::StandardProvider : "
+				 "unsupported type '"+this->type+"'"));
+      }
+    } // end of StandardProvider::StandardProvider
 
+    StandardProvider::StandardProvider(const mfront::VariableDescription& v,
+				       const std::string& e)
+      : type(v.type),
+	name(v.name),
+	ename(e),
+	asize(v.arraySize)
+    {
+      const auto st = SupportedTypes{};
+      if(!st.isSupportedType(this->type)){
+	throw(std::runtime_error("StandardProvider::StandardProvider : "
+				 "unsupported type '"+this->type+"'"));
+      }
+    } // end of StandardProvider::StandardProvider
+    
     std::string StandardProvider::getVariableType(void) const {
       return this->type;
     }
@@ -123,6 +159,13 @@ namespace mfront{
     } // end of AuxiliaryStateVariableProvider::getIdentifier
 
     AuxiliaryStateVariableProvider::~AuxiliaryStateVariableProvider() = default;
+
+    ProviderIdentifier
+    ExternalStateVariableProvider::getIdentifier(void) const{
+      return ProviderIdentifier::EXTERNALSTATEVARIABLE;
+    } // end of ExternalStateVariableProvider::getIdentifier
+
+    ExternalStateVariableProvider::~ExternalStateVariableProvider() = default;
     
     ProviderIdentifier
     IntegrationVariableProvider::getIdentifier(void) const{
@@ -139,13 +182,32 @@ namespace mfront{
     LocalVariableProvider::~LocalVariableProvider() = default;
 
     StaticVariableProvider::StaticVariableProvider(const std::string& t,
-					 const std::string& n,
-					 const std::string& e)
+						   const std::string& n,
+						   const std::string& e)
       : type(t),
 	name(n),
 	ename(e)
-    {} // end of StaticVariableProvider::StaticVariableProvider
+    {
+      const auto s = SupportedTypes{};
+      if(!s.isSupportedType(this->type)){
+	throw(std::runtime_error("StaticVariableProvider::StaticVariableProvider : "
+				 "unsupported type '"+this->type+"'"));
+      }
+    } // end of StaticVariableProvider::StaticVariableProvider
 
+    StaticVariableProvider::StaticVariableProvider(const mfront::StaticVariableDescription& v,
+						   const std::string& e)
+      : type(v.type),
+	name(v.name),
+	ename(e)
+    {
+      const auto s = SupportedTypes{};
+      if(!s.isSupportedType(this->type)){
+	throw(std::runtime_error("StaticVariableProvider::StaticVariableProvider : "
+				 "unsupported type '"+this->type+"'"));
+      }
+    } // end of StaticVariableProvider::StaticVariableProvider
+    
     
     std::string StaticVariableProvider::getVariableType(void) const {
       return this->type;
@@ -172,8 +234,27 @@ namespace mfront{
       : type(t),
 	name(n),
 	ename(e)
-    {} // end of ParameterProvider::ParameterProvider
+    {
+      const auto s = SupportedTypes{};
+      if(!s.isSupportedType(this->type)){
+	throw(std::runtime_error("ParameterProvider::ParameterProvider : "
+				 "unsupported type '"+this->type+"'"));
+      }
+    } // end of ParameterProvider::ParameterProvider
 
+    ParameterProvider::ParameterProvider(const mfront::VariableDescription& v,
+					 const std::string& e)
+      : type(v.type),
+	name(v.name),
+	ename(e)
+    {
+      const auto s = SupportedTypes{};
+      if(!s.isSupportedType(this->type)){
+	throw(std::runtime_error("ParameterProvider::ParameterProvider : "
+				 "unsupported type '"+this->type+"'"));
+      }
+    } // end of ParameterProvider::ParameterProvider
+    
     std::string ParameterProvider::getVariableType(void) const {
       return this->type;
     }

@@ -22,6 +22,11 @@
 
 namespace mfront{
 
+  // forward declaration
+  struct VariableDescription;
+  // forward declaration
+  struct StaticVariableDescription;
+  
   namespace bbrick{
 
     // forward declaration
@@ -44,8 +49,10 @@ namespace mfront{
       /*!
        * \return true if the given requirement can be handled by the provider
        * \param[in] r : requirement
+       * \param[in] b : check if units match
        */
-      virtual bool handleRequirement(const Requirement&) const = 0;
+      virtual bool handleRequirement(const Requirement&,
+				     const bool) const = 0;
       //! \return the identifier of the provider
       virtual ProviderIdentifier getIdentifier(void) const = 0;
       //! destructor
@@ -61,8 +68,10 @@ namespace mfront{
       /*!
        * \return true if the given requirement can be handled by the provider
        * \param[in] r : requirement
+       * \param[in] b : check if units match
        */
-      virtual bool handleRequirement(const Requirement&) const override;
+      virtual bool handleRequirement(const Requirement&,
+				     const bool) const override;
       //! destructor
       virtual ~ProviderBase();
     }; // end of struct ProviderBase
@@ -84,7 +93,14 @@ namespace mfront{
       StandardProvider(const std::string&,
 		       const std::string&,
 		       const std::string&,
-		       const unsigned short a);
+		       const unsigned short);
+      /*!
+       * constructor
+       * \param[in] v : variable description
+       * \param[in] e : external name
+       */
+      StandardProvider(const mfront::VariableDescription&,
+		       const std::string&);
       //! \return the type of the variable that can be produced
       virtual std::string getVariableType(void) const override final;
       //! \return the external name of the variable that can be produced
@@ -155,6 +171,23 @@ namespace mfront{
     }; // end of struct AuxiliaryStateVariableProvider
 
     /*!
+     * Provider standing for an external state variable
+     */    
+    struct MFRONT_VISIBILITY_EXPORT ExternalStateVariableProvider
+      : public StandardProvider
+    {
+      /*!
+       * constructor
+       * \param[in] n : variable name
+       */
+      using StandardProvider::StandardProvider;
+      //! \return the identifier of the provider
+      virtual ProviderIdentifier getIdentifier(void) const override final;
+      //! destructor
+      virtual ~ExternalStateVariableProvider();
+    }; // end of struct ExternalStateVariableProvider
+    
+    /*!
      * Provider standing for an integration variable
      */    
     struct MFRONT_VISIBILITY_EXPORT IntegrationVariableProvider
@@ -203,6 +236,13 @@ namespace mfront{
       StaticVariableProvider(const std::string&,
 			     const std::string&,
 			     const std::string&);
+      /*!
+       * constructor
+       * \param[in] v : variable description
+       * \param[in] e : external name
+       */
+      StaticVariableProvider(const mfront::StaticVariableDescription&,
+			     const std::string&);
       //! \return the type of the variable that can be produced
       virtual std::string getVariableType(void) const override final;
       //! \return the external name of the variable that can be produced
@@ -235,6 +275,13 @@ namespace mfront{
        */
       ParameterProvider(const std::string&,
 			const std::string&,
+			const std::string&);
+      /*!
+       * constructor
+       * \param[in] v : variable description
+       * \param[in] e : external name
+       */
+      ParameterProvider(const mfront::VariableDescription&,
 			const std::string&);
       //! \return the type of the variable that can be produced
       virtual std::string getVariableType(void) const override final;

@@ -90,16 +90,26 @@ namespace mfront
       int tensorSize;
 
     }; // end of class SupportedTypes::TypeSize
-
+    //! default constructorx
     SupportedTypes();
+    //! move constructor
     SupportedTypes(SupportedTypes&&) = default;
+    //! copy constructor
     SupportedTypes(const SupportedTypes&) = default;
+    //! move assignement
     SupportedTypes& operator=(SupportedTypes&&) = default;
+    //! copy assignement
     SupportedTypes& operator=(const SupportedTypes&) = default;
-
-    TypeFlag
-    getTypeFlag(const std::string&) const;
-
+    /*!
+     * \return true if the given type is supported
+     * \param[in] t : type
+     */
+    bool isSupportedType(const std::string&) const;
+    /*!
+     * \return the flag associated with the given type
+     * \param[in] t : type
+     */
+    TypeFlag getTypeFlag(const std::string&) const;
     /*!
      * \param[in] t : variable type
      * \param[in] a : array size

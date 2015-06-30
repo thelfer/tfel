@@ -79,6 +79,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                             \
 			MFront/AbstractBehaviourBrickFactory.hxx      \
 			MFront/BehaviourBrick/ProviderIdentifier.hxx  \
 			MFront/BehaviourBrick/Requirement.hxx         \
+			MFront/BehaviourBrick/RequirementManager.hxx  \
 			MFront/BehaviourBrick/Provider.hxx
 
 
