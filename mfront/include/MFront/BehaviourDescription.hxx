@@ -741,6 +741,24 @@ namespace mfront
     isGlossaryNameUsed(const Hypothesis,
 		       const std::string&) const;
     /*!
+     * \return true if the given variable name is associated with a
+     * glossary name
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : name
+     */
+    bool
+    hasGlossaryName(const Hypothesis,
+		    const std::string&) const;
+    /*!
+     * \return true if the given variable name is associated with a
+     * entry name
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : name
+     */
+    bool
+    hasEntryName(const Hypothesis,
+		 const std::string&) const;
+    /*!
      * associate an entry name to a variable
      * \param[in] h : modelling Hypothesis
      * \param[in] n : variable name

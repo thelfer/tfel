@@ -982,6 +982,20 @@ namespace mfront
   }
 
   bool
+  BehaviourDescription::hasGlossaryName(const Hypothesis h,
+					const std::string& v) const
+  {
+    return this->getData(h,&BehaviourData::hasGlossaryName,v);
+  } // end of BehaviourDescription::hasGlossaryName
+  
+  bool
+  BehaviourDescription::hasEntryName(const Hypothesis h,
+				     const std::string& v) const
+  {
+    return this->getData(h,&BehaviourData::hasEntryName,v);
+  } // end of BehaviourDescription::hasEntryName
+  
+  bool
   BehaviourDescription::hasParameter(const Hypothesis h,
 				     const std::string& v) const
   {

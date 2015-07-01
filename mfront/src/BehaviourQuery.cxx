@@ -299,7 +299,7 @@ const Hypothesis){
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getVariableHandler(bd.getParameters(),o);
+	const auto& p  = bd.getParameters().getVariable(o);
 	cout << p.type << endl;
       };
       this->queries.push_back({"parameter-type",l});
@@ -308,7 +308,7 @@ const Hypothesis){
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getVariableHandler(bd.getParameters(),o);
+	const auto& p  = bd.getParameters().getVariable(o);
 	if(p.type=="real"){
 	  cout << bd.getFloattingPointParameterDefaultValue(o) << endl;
 	} else if(p.type=="int"){

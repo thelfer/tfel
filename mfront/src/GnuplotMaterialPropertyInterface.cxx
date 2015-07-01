@@ -24,6 +24,15 @@
 namespace mfront
 {
 
+  GnuplotMaterialPropertyInterface::dataFile::dataFile() = default;
+  GnuplotMaterialPropertyInterface::dataFile::dataFile(const GnuplotMaterialPropertyInterface::dataFile&) = default;
+  GnuplotMaterialPropertyInterface::dataFile::dataFile(GnuplotMaterialPropertyInterface::dataFile&&) = default;
+  GnuplotMaterialPropertyInterface::dataFile&
+  GnuplotMaterialPropertyInterface::dataFile::operator=(const GnuplotMaterialPropertyInterface::dataFile&) = default;
+  GnuplotMaterialPropertyInterface::dataFile&
+  GnuplotMaterialPropertyInterface::dataFile::operator=(GnuplotMaterialPropertyInterface::dataFile&&) = default;
+  GnuplotMaterialPropertyInterface::dataFile::~dataFile() = default;
+  
   tfel::utilities::CxxTokenizer::TokensContainer::const_iterator
   GnuplotMaterialPropertyInterface::nextToken(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 				       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens,

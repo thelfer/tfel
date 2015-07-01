@@ -1070,6 +1070,8 @@ namespace mfront{
 	    (this->mb.isStateVariableName(h,n))||
 	    (this->mb.isAuxiliaryStateVariableName(h,n))||
 	    (this->mb.isExternalStateVariableName(h,n))||
+	    (this->mb.isLocalVariableName(h,n))||
+	    (this->mb.isStaticVariableName(h,n))||
 	    (this->mb.isParameterName(h,n)));
   } // end of BehaviourDSLCommon::isCallableVariable
 

@@ -15,7 +15,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-// a small trick so that the compiler refers to the original while for
+// a small trick so that the compiler refers to the original file for
 // error reports
 #line 21 "@abs_top_srcdir@/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
 

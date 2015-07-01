@@ -242,8 +242,7 @@ namespace mfront{
     }
     if(this->mb.isExternalStateVariableIncrementName(h,var)){
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
-      const auto& v = d.getVariableHandler(d.getExternalStateVariables(),
-							  var.substr(1));
+      const auto& v = d.getExternalStateVariables().getVariable(var.substr(1));
       if(v.arraySize>1){
 	if(addThisPtr){
 	  return "(real(1)/(this->dt)) * (this->"+var+")";

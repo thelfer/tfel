@@ -151,7 +151,7 @@ namespace mfront
      * \param[in] n : name
      */
     const VariableDescription&
-    getVariable(const std::string&);
+    getVariable(const std::string&) const;
     //! destructor
     ~VariableDescriptionContainer();
   }; // end of struct VariableDescription

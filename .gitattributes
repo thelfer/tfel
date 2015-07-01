@@ -3098,7 +3098,9 @@ mfront/tests/unit-tests/BehaviourBrickProviderTest.cxx -text
 mfront/tests/unit-tests/BehaviourDataTest.cxx -text
 mfront/tests/unit-tests/BehaviourDescriptionTest.cxx -text
 mfront/tests/unit-tests/CMakeLists.txt -text
+mfront/tests/unit-tests/MFrontTest.cxx.in -text
 mfront/tests/unit-tests/Makefile.am -text
+mfront/tests/unit-tests/mfront/test1.mfront -text
 src/CMakeLists.txt -text
 src/Exception/CMakeLists.txt -text
 src/Exception/Makefile.am -text

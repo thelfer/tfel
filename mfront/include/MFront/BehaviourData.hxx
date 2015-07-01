@@ -250,63 +250,46 @@ namespace mfront{
     getParameters(void) const;
 
     const VariableDescription&
-    getPersistentVariableHandler(const std::string&) const;
+    getPersistentVariableDescription(const std::string&) const;
 
     const VariableDescription&
-    getIntegrationVariableHandler(const std::string&) const;
+    getIntegrationVariableDescription(const std::string&) const;
 
     const VariableDescription&
-    getStateVariableHandler(const std::string&) const;
-
-    const VariableDescription&
-    getVariableHandler(const VariableDescriptionContainer&,
-		       const std::string&) const;
+    getStateVariableDescription(const std::string&) const;
     /*!
      * \return true if the given variable is used in a code block
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isVariableUsedInCodeBlocks(const std::string&) const;
+    bool isVariableUsedInCodeBlocks(const std::string&) const;
 
-    bool
-    isMaterialPropertyName(const std::string&) const;
+    bool isMaterialPropertyName(const std::string&) const;
 
-    bool
-    isLocalVariableName(const std::string&) const;
+    bool isLocalVariableName(const std::string&) const;
 
-    bool
-    isPersistentVariableName(const std::string&) const;
+    bool isPersistentVariableName(const std::string&) const;
 
-    bool
-    isIntegrationVariableName(const std::string&) const;
+    bool isIntegrationVariableName(const std::string&) const;
 
-    bool
-    isIntegrationVariableIncrementName(const std::string&) const;
+    bool isIntegrationVariableIncrementName(const std::string&) const;
 
-    bool
-    isStateVariableName(const std::string&) const;
+    bool isStateVariableName(const std::string&) const;
 
-    bool
-    isStateVariableIncrementName(const std::string&) const;
+    bool isStateVariableIncrementName(const std::string&) const;
 
-    bool
-    isAuxiliaryStateVariableName(const std::string&) const;
+    bool isAuxiliaryStateVariableName(const std::string&) const;
 
-    bool
-    isExternalStateVariableName(const std::string&) const;
+    bool isExternalStateVariableName(const std::string&) const;
 
-    bool
-    isExternalStateVariableIncrementName(const std::string&) const;
+    bool isExternalStateVariableIncrementName(const std::string&) const;
 
-    bool
-    isParameterName(const std::string&) const;
+    bool isParameterName(const std::string&) const;
     /*!
      * \return true if the given name is the one of a static variable
      * \param[in] n : name
      */
-    bool
-    isStaticVariableName(const std::string& n) const;
+    bool isStaticVariableName(const std::string& n) const;
 
     const std::vector<BoundsDescription>&
     getBounds(void) const;
@@ -367,13 +350,11 @@ namespace mfront{
      * \return true if a parameter with the given name exists
      * \param[in] n : name
      */
-    bool
-    hasParameter(const std::string&) const;
+    bool hasParameter(const std::string&) const;
     /*!
      * \return true if at least one parameter is defined
      */
-    bool
-    hasParameters() const;
+    bool hasParameters() const;
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
@@ -461,8 +442,7 @@ namespace mfront{
      * been defined
      * \param[in] n : name
      */
-    bool
-    hasCode(const std::string&) const;
+    bool hasCode(const std::string&) const;
     /*!
      * \brief insert a new attribute
      * \param[in] n : name
@@ -480,22 +460,19 @@ namespace mfront{
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
      */
-    bool
-    hasAttribute(const std::string&) const;
+    bool hasAttribute(const std::string&) const;
     /*!
      * \return true a glossary was associated with the given
      * variable.
      * \param[in] v  : variable name
      */
-    bool
-    hasGlossaryName(const std::string&) const;
+    bool hasGlossaryName(const std::string&) const;
     /*!
      * \return true if an entry name was associated with the given
      * variable.
      * \param[in] v  : variable name
      */
-    bool
-    hasEntryName(const std::string&) const;
+    bool hasEntryName(const std::string&) const;
     /*!
      * \return the glossary or the entry name associated with the
      * given variable. If none was defined, return the variable name.
@@ -545,8 +522,7 @@ namespace mfront{
      * TFEL glossary.
      * \param[in] n : glossary name
      */
-    bool
-    isGlossaryNameUsed(const std::string&) const;
+    bool isGlossaryNameUsed(const std::string&) const;
     /*!
      * associate an entry name to a variable
      * \param[in] n : variable name
@@ -559,8 +535,7 @@ namespace mfront{
      * look if the given name is used as an entry name
      * \param[in] n : name
      */
-    bool
-    isUsedAsEntryName(const std::string&) const;
+    bool isUsedAsEntryName(const std::string&) const;
     /*!
      * \return the name of the variable associated with the given
      * glossary or entry name

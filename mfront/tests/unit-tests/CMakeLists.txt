@@ -20,6 +20,20 @@ macro(tests_mfront test_arg)
     TFELUtilities TFELException TFELTests)
 endmacro(tests_mfront)
 
+macro(tests_mfront2 test_arg)
+  configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/unit-tests/${test_arg}.cxx.in"
+    "${PROJECT_BINARY_DIR}/mfront/tests/unit-tests/${test_arg}.cxx" @ONLY)
+  add_executable(${test_arg} EXCLUDE_FROM_ALL
+    "${PROJECT_BINARY_DIR}/mfront/tests/unit-tests/${test_arg}.cxx")
+  add_test(NAME ${test_arg} COMMAND ${test_arg})
+  add_dependencies(check ${test_arg})
+  target_link_libraries(${test_arg}
+    TFELMFront TFELMaterial TFELMath
+    TFELSystem  TFELGlossary
+    TFELUtilities TFELException TFELTests)
+endmacro(tests_mfront2)
+
 tests_mfront(BehaviourDataTest)
 tests_mfront(BehaviourDescriptionTest)
 tests_mfront(BehaviourBrickProviderTest)
+tests_mfront2(MFrontTest)

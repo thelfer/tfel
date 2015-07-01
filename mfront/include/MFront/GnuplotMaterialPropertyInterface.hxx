@@ -91,6 +91,18 @@ namespace mfront{
     std::string yLabel ;
     //map : variable,datafile
     struct dataFile {
+      //! constructor
+      dataFile();
+      //! copy constructor
+      dataFile(const dataFile&);
+      //! move constructor
+      dataFile(dataFile&&);
+      //! copy assignement operator
+      dataFile& operator=(const dataFile&);
+      //! move assignement operator
+      dataFile& operator=(dataFile&&);
+      //! destructor
+      ~dataFile();
       std::string name;
       std::string legend;
     };

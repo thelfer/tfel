@@ -21,6 +21,41 @@
 
 namespace mfront{
 
+  /*!
+   * \return a map between type names and Supported::TypeFlags
+   */
+  static std::map<std::string,SupportedTypes::TypeFlag> &
+  SupportedTypes_getFlags(void)
+  {
+    using namespace std;
+    typedef SupportedTypes::TypeFlag TypeFlag;
+    static map<string,TypeFlag> flags = {{"real",SupportedTypes::Scalar},
+					 {"frequency",SupportedTypes::Scalar},
+					 {"stress",SupportedTypes::Scalar},
+					 {"length",SupportedTypes::Scalar},
+					 {"time",SupportedTypes::Scalar},
+					 //    {"stressrate",SupportedTypes::Scalar},
+					 {"strain",SupportedTypes::Scalar},
+					 {"strainrate",SupportedTypes::Scalar},
+					 {"temperature",SupportedTypes::Scalar},
+					 {"energy_density",SupportedTypes::Scalar},
+					 {"thermalexpansion",SupportedTypes::Scalar},
+					 {"massdensity",SupportedTypes::Scalar},
+					 {"TVector",SupportedTypes::TVector},
+					 {"Stensor",SupportedTypes::Stensor},
+					 {"Tensor",SupportedTypes::Tensor},
+					 {"StressStensor",SupportedTypes::Stensor},
+					 {"StressRateStensor",SupportedTypes::Stensor},
+					 {"StrainStensor",SupportedTypes::Stensor},
+					 {"StrainRateStensor",SupportedTypes::Stensor},
+					 // CZM
+					 {"DisplacementTVector",SupportedTypes::TVector},
+					 {"ForceTVector",SupportedTypes::TVector},
+					 // Finite Strain
+					 {"DeformationGradientTensor",SupportedTypes::Tensor}};
+    return flags;
+  } // end of SupportedTypes_getFlags
+  
   SupportedTypes::TypeSize::TypeSize()
     : scalarSize(0),
       tvectorSize(0),
@@ -145,40 +180,9 @@ namespace mfront{
     return os;
   }
   
-  void
-  SupportedTypes::registerTypes(void)
-  {
-    this->flags.insert({"real",Scalar});
-    this->flags.insert({"frequency",Scalar});
-    this->flags.insert({"stress",Scalar});
-    this->flags.insert({"length",Scalar});
-    this->flags.insert({"time",Scalar});
-    //    this->flags.insert({"stressrate",Scalar});
-    this->flags.insert({"strain",Scalar});
-    this->flags.insert({"strainrate",Scalar});
-    this->flags.insert({"temperature",Scalar});
-    this->flags.insert({"energy_density",Scalar});
-    this->flags.insert({"thermalexpansion",Scalar});
-    this->flags.insert({"massdensity",Scalar});
-    this->flags.insert({"TVector",TVector});
-    this->flags.insert({"Stensor",Stensor});
-    this->flags.insert({"Tensor",Tensor});
-    this->flags.insert({"StressStensor",Stensor});
-    this->flags.insert({"StressRateStensor",Stensor});
-    this->flags.insert({"StrainStensor",Stensor});
-    this->flags.insert({"StrainRateStensor",Stensor});
-    // CZM
-    this->flags.insert({"DisplacementTVector",TVector});
-    this->flags.insert({"ForceTVector",TVector});
-    // Finite Strain
-    this->flags.insert({"DeformationGradientTensor",Tensor});
-  }
-
   SupportedTypes::SupportedTypes()
     : areDynamicallyAllocatedVectorsAllowed_(true)
-  {
-    this->registerTypes();
-  }
+  {}
 
   void
   SupportedTypes::reset(void)
@@ -189,19 +193,18 @@ namespace mfront{
   bool
   SupportedTypes::isSupportedType(const std::string& t) const
   {
-    return this->flags.find(t)!=this->flags.end();
+    const auto& flags = SupportedTypes_getFlags();
+    return flags.find(t)!=flags.end();
   } // end of SupportedTypes::isSupportedType
   
   SupportedTypes::TypeFlag
   SupportedTypes::getTypeFlag(const std::string& name) const
   {
-    using namespace std;
-    const auto p = this->flags.find(name);
+    const auto& flags = SupportedTypes_getFlags();
+    const auto p = flags.find(name);
     if(p==flags.end()){
-      string msg("SupportedTypes::getTypeTag ");
-      msg += name;
-      msg += " is not a supported type.";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("SupportedTypes::getTypeTag : "
+			       "'"+name+"' is not a supported type."));
     }
     return p->second;
   }

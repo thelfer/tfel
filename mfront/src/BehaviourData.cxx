@@ -324,39 +324,22 @@ namespace mfront{
   } // end of BehaviourData::getBoundsDescriptions
 
   const VariableDescription&
-  BehaviourData::getPersistentVariableHandler(const std::string& v) const
+  BehaviourData::getPersistentVariableDescription(const std::string& v) const
   {
-    return this->getVariableHandler(this->getPersistentVariables(),v);
-  } // end of BehaviourData::getPersistentVariableHandler
+    return this->getPersistentVariables().getVariable(v);
+  } // end of BehaviourData::getPersistentVariableDescription
 
   const VariableDescription&
-  BehaviourData::getIntegrationVariableHandler(const std::string& v) const
+  BehaviourData::getIntegrationVariableDescription(const std::string& v) const
   {
-    return this->getVariableHandler(this->getIntegrationVariables(),v);
-  } // end of BehaviourData::getIntegrationVariableHandler
+    return this->getIntegrationVariables().getVariable(v);
+  } // end of BehaviourData::getIntegrationVariableDescription
 
   const VariableDescription&
-  BehaviourData::getStateVariableHandler(const std::string& v) const
+  BehaviourData::getStateVariableDescription(const std::string& v) const
   {
-    return this->getVariableHandler(this->getStateVariables(),v);
-  } // end of BehaviourData::getStateVariableHandler
-
-  const VariableDescription&
-  BehaviourData::getVariableHandler(const VariableDescriptionContainer& cont,
-					      const std::string& v) const
-  {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
-    for(p=cont.begin();p!=cont.end();++p){
-      if(p->name==v){
-	return *p;
-      }
-    }
-    string msg("BehaviourData::getVariableHandler : ");
-    msg += "no state variable '"+v+"'";
-    throw(runtime_error(msg));
-    return *(static_cast<VariableDescription*>(nullptr));
-  } // end of BehaviourData::getVariableHandler
+    return this->getStateVariables().getVariable(v);
+  } // end of BehaviourData::getStateVariableDescription
 
   void
   BehaviourData::addMaterialProperty(const VariableDescription& v)
@@ -839,7 +822,7 @@ namespace mfront{
 		 "no parameter '"+n+"' defined");
       throw(runtime_error(msg));
     }
-    const auto& p = this->getVariableHandler(this->parameters,n);
+    const auto& p = this->parameters.getVariable(n);
     if(p.type!="real"){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "parameter '"+n+"' is not a floatting point");
@@ -862,7 +845,7 @@ namespace mfront{
 		 "no parameter '"+n+"' defined");
       throw(runtime_error(msg));
     }
-    const auto& p = this->getVariableHandler(this->parameters,n);
+    const auto& p = this->parameters.getVariable(n);
     if(p.type!="int"){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "parameter '"+n+"' is not an integer");
@@ -877,7 +860,7 @@ namespace mfront{
 
   void
   BehaviourData::setParameterDefaultValue(const std::string& n,
-						    const unsigned short v)
+					  const unsigned short v)
   {
     using namespace std;
     if(!this->parameters.contains(n)){
@@ -885,7 +868,7 @@ namespace mfront{
 		 "no parameter '"+n+"' defined");
       throw(runtime_error(msg));
     }
-    const auto& p = this->getVariableHandler(this->parameters,n);
+    const auto& p = this->parameters.getVariable(n);
     if(p.type!="ushort"){
       string msg("BehaviourData::setParameterDefaultValue : "
 		 "parameter '"+n+"' is not an unsigned short integer");

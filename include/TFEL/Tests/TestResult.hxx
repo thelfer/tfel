@@ -92,8 +92,7 @@ namespace tfel
        * available.
        * \param r : result to be appended
        */
-      void
-      append(const TestResult&);
+      void append(const TestResult&);
       /*!
        * \brief set test duration
        * \param d test duration

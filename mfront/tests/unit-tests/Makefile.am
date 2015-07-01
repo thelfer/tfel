@@ -8,8 +8,10 @@ if WITH_TESTS
 testdir = $(pkgdatadir)/mfront/tests/unit-tests
 test_PROGRAMS = BehaviourDataTest          \
 		BehaviourDescriptionTest   \
-		BehaviourBrickProviderTest
+		BehaviourBrickProviderTest \
+		MFrontTest
 
+MFrontTest_SOURCES                 = MFrontTest.cxx
 BehaviourDataTest_SOURCES          = BehaviourDataTest.cxx
 BehaviourDescriptionTest_SOURCES   = BehaviourDescriptionTest.cxx
 BehaviourBrickProviderTest_SOURCES = BehaviourBrickProviderTest.cxx
@@ -27,6 +29,7 @@ LDADD = -L$(top_builddir)/mfront/src    \
 	-lTFELUtilities -lTFELGlossary  \
 	-lTFELException -lTFELTests
 
-EXTRA_DIST=CMakeLists.txt
+EXTRA_DIST=CMakeLists.txt      \
+	   mfront/test1.mfront 
 
 endif

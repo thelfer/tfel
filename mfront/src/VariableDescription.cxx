@@ -130,7 +130,7 @@ namespace mfront{
   } // end of VariableDescriptionContainer::appendExternalNames
 
   const VariableDescription&
-  VariableDescriptionContainer::getVariable(const std::string& n)
+  VariableDescriptionContainer::getVariable(const std::string& n) const
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;

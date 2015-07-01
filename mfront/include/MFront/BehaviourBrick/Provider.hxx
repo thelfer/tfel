@@ -127,9 +127,22 @@ namespace mfront{
     {
       /*!
        * constructor
+       * \param[in] t : variable type
        * \param[in] n : variable name
+       * \param[in] e : external name
+       * \param[in] s : array size
        */
-      using StandardProvider::StandardProvider;
+      MaterialPropertyProvider(const std::string&,
+			       const std::string&,
+			       const std::string&,
+			       const unsigned short);
+      /*!
+       * constructor
+       * \param[in] v : variable description
+       * \param[in] e : external name
+       */
+      MaterialPropertyProvider(const mfront::VariableDescription&,
+			       const std::string&);
       //! \return the identifier of the provider
       virtual ProviderIdentifier getIdentifier(void) const override final;
       //! destructor
@@ -144,9 +157,22 @@ namespace mfront{
     {
       /*!
        * constructor
+       * \param[in] t : variable type
        * \param[in] n : variable name
+       * \param[in] e : external name
+       * \param[in] s : array size
        */
-      using StandardProvider::StandardProvider;
+      StateVariableProvider(const std::string&,
+			    const std::string&,
+			    const std::string&,
+			    const unsigned short);
+      /*!
+       * constructor
+       * \param[in] v : variable description
+       * \param[in] e : external name
+       */
+      StateVariableProvider(const mfront::VariableDescription&,
+			    const std::string&);
       //! \return the identifier of the provider
       virtual ProviderIdentifier getIdentifier(void) const override final;
       //! destructor
@@ -161,9 +187,22 @@ namespace mfront{
     {
       /*!
        * constructor
+       * \param[in] t : variable type
        * \param[in] n : variable name
+       * \param[in] e : external name
+       * \param[in] s : array size
        */
-      using StandardProvider::StandardProvider;
+      AuxiliaryStateVariableProvider(const std::string&,
+				     const std::string&,
+				     const std::string&,
+				     const unsigned short);
+      /*!
+       * constructor
+       * \param[in] v : variable description
+       * \param[in] e : external name
+       */
+      AuxiliaryStateVariableProvider(const mfront::VariableDescription&,
+				     const std::string&);
       //! \return the identifier of the provider
       virtual ProviderIdentifier getIdentifier(void) const override final;
       //! destructor
@@ -178,9 +217,22 @@ namespace mfront{
     {
       /*!
        * constructor
+       * \param[in] t : variable type
        * \param[in] n : variable name
+       * \param[in] e : external name
+       * \param[in] s : array size
        */
-      using StandardProvider::StandardProvider;
+      ExternalStateVariableProvider(const std::string&,
+				    const std::string&,
+				    const std::string&,
+				    const unsigned short);
+      /*!
+       * constructor
+       * \param[in] v : variable description
+       * \param[in] e : external name
+       */
+      ExternalStateVariableProvider(const mfront::VariableDescription&,
+				    const std::string&);
       //! \return the identifier of the provider
       virtual ProviderIdentifier getIdentifier(void) const override final;
       //! destructor
@@ -195,9 +247,22 @@ namespace mfront{
     {
       /*!
        * constructor
+       * \param[in] t : variable type
        * \param[in] n : variable name
+       * \param[in] e : external name
+       * \param[in] s : array size
        */
-      using StandardProvider::StandardProvider;
+      IntegrationVariableProvider(const std::string&,
+				  const std::string&,
+				  const std::string&,
+				  const unsigned short);
+      /*!
+       * constructor
+       * \param[in] v : variable description
+       * \param[in] e : external name
+       */
+      IntegrationVariableProvider(const mfront::VariableDescription&,
+				  const std::string&);
       //! \return the identifier of the provider
       virtual ProviderIdentifier getIdentifier(void) const override final;
       //! destructor
@@ -212,9 +277,22 @@ namespace mfront{
     {
       /*!
        * constructor
+       * \param[in] t : variable type
        * \param[in] n : variable name
+       * \param[in] e : external name
+       * \param[in] s : array size
        */
-      using StandardProvider::StandardProvider;
+      LocalVariableProvider(const std::string&,
+			    const std::string&,
+			    const std::string&,
+			    const unsigned short);
+      /*!
+       * constructor
+       * \param[in] v : variable description
+       * \param[in] e : external name
+       */
+      LocalVariableProvider(const mfront::VariableDescription&,
+			    const std::string&);
       //! \return the identifier of the provider
       virtual ProviderIdentifier getIdentifier(void) const override final;
       //! destructor

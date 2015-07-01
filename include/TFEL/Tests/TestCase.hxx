@@ -140,13 +140,11 @@ namespace tfel
       : public Test
     {
       /*! 
-       * return the name of the test
        * \return the name of the test
        */
       virtual std::string
       name(void) const override;
       /*! 
-       * return the group of the test
        * \return the group of the test
        */
       virtual std::string
@@ -154,35 +152,37 @@ namespace tfel
     protected:
       /*!
        * Constructor
-       * \param n : name  of the test
+       * \param[in] n : name  of the test
        */
       TestCase(const std::string&);
       /*!
        * Constructor
-       * \param g : group of the test
-       * \param n : name  of the test
+       * \param[in] g : group of the test
+       * \param[in] n : name  of the test
        */
       TestCase(const std::string&,
 	       const std::string&);
-      //! destructor
-      virtual ~TestCase();
       /*!
-       * \param n : description of the test
-       * \param b : result
+       * \param[in] n : description of the test
+       * \param[in] b : result
        */
-      void
+      virtual void
       registerResult(const std::string&,
 		     const bool);
-    private:
-      //! copy constructor (disabled)
-      TestCase(const TestCase&) = delete;
-      //!assignement operator (disabled)
-      TestCase&
-      operator=(const TestCase&) = delete;
+      //! destructor
+      virtual ~TestCase();
     protected:
       //! result of the test
       TestResult result;
     private:
+      //! copy constructor (disabled)
+      TestCase(const TestCase&) = delete;
+      //! move constructor (disabled)
+      TestCase(TestCase&&) = delete;
+      //! assignement operator (disabled)
+      TestCase& operator=(const TestCase&) = delete;
+      //! move assignement operator (disabled)
+      TestCase& operator=(TestCase&&) = delete;
       //! group of the test
       const std::string gname;
       //! name of the test

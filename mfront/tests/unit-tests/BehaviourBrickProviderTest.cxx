@@ -113,7 +113,8 @@ struct BehaviourBrickProviderTest final
     using namespace mfront::bbrick;
     auto m = RequirementManager{};
     m.addMaterialPropertyProvider("real","young","YoungModulus",1u);
-    TFEL_TESTS_ASSERT(m.getProvider("YoungModulus").getIdentifier()==ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(m.getProvider("YoungModulus").getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
     TFEL_TESTS_CHECK_THROW(m.getProvider("unknown"),std::runtime_error);
     // young modulus has already been used
     TFEL_TESTS_CHECK_THROW(m.addStateVariableProvider("real","young","YoungModulus",1u),

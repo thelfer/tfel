@@ -90,7 +90,7 @@ namespace mfront
       int tensorSize;
 
     }; // end of class SupportedTypes::TypeSize
-    //! default constructorx
+    //! default constructor
     SupportedTypes();
     //! move constructor
     SupportedTypes(SupportedTypes&&) = default;
@@ -249,14 +249,6 @@ namespace mfront
      * dynamically allocated vectors
      */
     bool areDynamicallyAllocatedVectorsAllowed_;
-
-  private:
-    
-    std::map<std::string,TypeFlag> flags;
-    
-    TFEL_VISIBILITY_LOCAL
-    void registerTypes(void);
-
   }; // end of class SupportedTypes
 
 } // end of namespace mfront
