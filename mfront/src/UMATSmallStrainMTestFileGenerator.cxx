@@ -69,6 +69,7 @@ namespace mfront
   UMATSmallStrainMTestFileGenerator::writeDrivingVariables(std::ostream& os) const
   {
     using namespace std;
+    using namespace tfel::material;
     const vector<string>& n = this->getStrainComponentsNames();
     vector<string>::const_iterator p;
     unsigned short i;
@@ -94,10 +95,12 @@ namespace mfront
     os << "};\n\n";
     for(p=n.begin(),i=0;p!=n.end();++p,++i){
       os.precision(14);
-      if(i<=3){
-	os << "@ImposedStrain<evolution> '" << *p << "' {" 
-	   << t0 << ":" << this->eto[i]<< ","
-	   << t1 << ":" << this->eto[i]+this->deto[i]<< "};\n";
+      if(i<3){
+	if(!((i==2)&&(this->hypothesis==ModellingHypothesis::PLANESTRAIN))){
+	  os << "@ImposedStrain<evolution> '" << *p << "' {" 
+	     << t0 << ":" << this->eto[i]<< ","
+	     << t1 << ":" << this->eto[i]+this->deto[i]<< "};\n";
+	}
       } else {
 	os << "@ImposedStrain<evolution> '" << *p << "' {" 
 	   << t0 << ":" << this->eto[i]/sqrt(2.) << ","

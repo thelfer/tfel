@@ -227,10 +227,11 @@ MTest_setImposedStress(mfront::MTest& t,
 {
   using namespace std;
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-    string msg("MTestParser::handleImposedStress : "
+  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+     (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+    string msg("MTest::handleImposedStress : "
 	       "the setImposedStress method is only valid "
-	       "for small strain behaviours");
+	       "for small and finite strain behaviours");
     throw(runtime_error(msg));
   }
   MTest_setImposedThermodynamicForce(t,n,v);
@@ -244,10 +245,11 @@ MTest_setImposedStress2(mfront::MTest& t,
 {
   using namespace std;
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+     (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
     string msg("MTestParser::handleImposedStress : "
 	       "the setImposedStress method is only valid "
-	       "for small strain behaviours");
+	       "for small and finite strain behaviours");
     throw(runtime_error(msg));
   }
   MTest_setImposedThermodynamicForce2(t,n,v);
@@ -364,9 +366,42 @@ MTest_setImposedStrain2(mfront::MTest& t,
 }
 
 static void
+MTest_setImposedDeformationGradient(mfront::MTest& t,
+		       const std::string&  n,
+		       const mfront::real& v)
+{
+  using namespace std;
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    string msg("MTestParser::handleImposedDeformationGradient : "
+	       "the setImposedDeformationGradient method is only valid "
+	       "for finite strain behaviours");
+    throw(runtime_error(msg));
+  }
+  MTest_setImposedDrivingVariable(t,n,v);
+}
+
+static void
+MTest_setImposedDeformationGradient2(mfront::MTest& t,
+			const std::string&  n,
+			const std::map<mfront::real,
+			mfront::real>& v)
+{
+  using namespace std;
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    string msg("MTestParser::handleImposedDeformationGradient : "
+	       "the setImposedDeformationGradient method is only valid "
+	       "for finite strain behaviours");
+    throw(runtime_error(msg));
+  }
+  MTest_setImposedDrivingVariable2(t,n,v);
+}
+
+static void
 MTest_setImposedOpeningDisplacement(mfront::MTest& t,
-			      const std::string&  n,
-			      const mfront::real& v)
+				    const std::string&  n,
+				    const mfront::real& v)
 {
   using namespace std;
   using namespace tfel::material;
