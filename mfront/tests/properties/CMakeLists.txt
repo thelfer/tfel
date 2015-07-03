@@ -21,17 +21,24 @@ macro(add_mfront_generated_source lib interface ext file)
     set(mfront_output "src/${file}-${ext}.cxx")
   endif("${ext}" STREQUAL "")
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    set(MFRONT_PATH "$<TARGET_FILE_DIR:TFELMFront>")
-    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:MFrontLogStream>")
-    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELMaterial>")
-    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELMathParser>")
-    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELGlossary>")
-    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELSystem>")
-    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELUtilities>")
-    set(MFRONT_PATH "${MFRONT_PATH}:$<TARGET_FILE_DIR:TFELException>")
     add_custom_command(
       OUTPUT  "${mfront_output}"
-      COMMAND "set PATH=${MFRONT_PATH};%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
       COMMAND "${mfront_executable}"
       ARGS    "--interface=${interface}" "${mfront_file}"
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"

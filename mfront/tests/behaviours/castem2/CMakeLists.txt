@@ -61,7 +61,7 @@ if(HAVE_CASTEM)
   test_castem2(elasticity3)
   if(CMAKE_CONFIGURATION_TYPES)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set_tests_properties(castem2elasticity3_mtest
+      set_tests_properties(castem2elasticity3_${conf}_mtest
 	PROPERTIES DEPENDS MFrontMaterialProperties-castem)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)

@@ -201,13 +201,13 @@ namespace mfront{
        * \return an iterator to the provider with the matching external name
        * \param[in] e : external name (glossary name or entry name)
        */
-      typename  std::vector<std::shared_ptr<Provider>>::const_iterator
+      std::vector<std::shared_ptr<Provider>>::const_iterator
       getProviderIterator(const std::string&) const;
       /*!
        * \return an iterator to the provider with the matching external name
        * \param[in] e : external name (glossary name or entry name)
        */
-      typename  std::vector<std::shared_ptr<Provider>>::iterator
+      std::vector<std::shared_ptr<Provider>>::iterator
       getProviderIterator(const std::string&);
     };
     

@@ -46,7 +46,7 @@ namespace mfront{
       }
     }
     
-    typename  std::vector<std::shared_ptr<Provider>>::const_iterator
+    std::vector<std::shared_ptr<Provider>>::const_iterator
     RequirementManager::getProviderIterator(const std::string& e) const{
       return std::find_if(this->providers.begin(),
 			  this->providers.end(),[&e](const std::shared_ptr<Provider> p){
@@ -54,7 +54,7 @@ namespace mfront{
 			  });
     }
 
-    typename  std::vector<std::shared_ptr<Provider>>::iterator
+    std::vector<std::shared_ptr<Provider>>::iterator
     RequirementManager::getProviderIterator(const std::string& e){
       return std::find_if(this->providers.begin(),
 			  this->providers.end(),[&e](const std::shared_ptr<Provider> p){

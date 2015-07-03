@@ -112,7 +112,7 @@ namespace mfront
   writeExportDirectives(std::ofstream& file,
 			const std::string& c)
   {
-    file << "#ifdef WIN32\n";
+    file << "#ifdef _WIN32\n";
     file << "#ifndef NOMINMAX\n";
     file << "#define NOMINMAX\n";
     file << "#endif /* NOMINMAX */\n";
@@ -134,7 +134,7 @@ namespace mfront
     file << "#ifndef MFRONT_CALLING_CONVENTION\n";
     file << "#define MFRONT_CALLING_CONVENTION\n"; 
     file << "#endif /* MFRONT_CALLING_CONVENTION */\n"; 
-    file << "#endif /* WIN32 */\n\n";
+    file << "#endif /* _WIN32 */\n\n";
   } // end of writeExportDirectives
 
   std::string 
