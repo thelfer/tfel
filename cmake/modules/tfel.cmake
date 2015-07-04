@@ -105,17 +105,56 @@ endmacro(mtest_library)
 
 macro(add_mfront_behaviour_generated_source lib interface file)
   set(mfront_file   "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${file}.mfront")
-  set(mfront_executable "$<TARGET_FILE:mfront>")
-  add_custom_command(
-    OUTPUT  "src/${file}.cxx"
-    OUTPUT  "src/${interface}${file}.cxx"
-    COMMAND "${mfront_executable}"
-    ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
-    ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
-    ARGS    "--interface=${interface}" "${mfront_file}"
-    DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
-    DEPENDS "${mfront_file}"
-    COMMENT "treating mfront source ${file}.mfront")
+  if(${CMAKE_VERSION} GREATER "2.8.2")
+    set(mfront_executable "$<TARGET_FILE:mfront>")
+  else(${CMAKE_VERSION} GREATER "2.8.2")
+    # retrieve the old behaviour for debian squeeze's version of cmake
+    # does not work with configurations
+    if(WIN32)
+      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
+    else(WIN32)
+      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
+    endif(WIN32)
+  endif(${CMAKE_VERSION} GREATER "2.8.2")
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    add_custom_command(
+      OUTPUT  "src/${file}.cxx"
+      OUTPUT  "src/${interface}${file}.cxx"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
+      COMMAND "${mfront_executable}"
+      ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
+      ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
+      ARGS    "--interface=${interface}" "${mfront_file}"
+      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS "${mfront_file}"
+      COMMENT "treating mfront source ${file}.mfront")
+    else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      add_custom_command(
+	OUTPUT  "src/${file}.cxx"
+	OUTPUT  "src/${interface}${file}.cxx"
+	COMMAND "${mfront_executable}"
+	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
+	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
+	ARGS    "--interface=${interface}" "${mfront_file}"
+	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS "${mfront_file}"
+	COMMENT "treating mfront source ${file}.mfront")
+    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set(${lib}_SOURCES "src/${file}.cxx" "src/${interface}${file}.cxx"
     ${${lib}_SOURCES})
 endmacro(add_mfront_behaviour_generated_source)
@@ -125,14 +164,50 @@ macro(mfront_dependencies lib)
     message(FATAL_ERROR "mfront_dependencies : no source specified")
   endif(${ARGC} LESS 1)
   foreach(source ${ARGN})
-    set(mfront_executable "$<TARGET_FILE:mfront>")
-    add_custom_command(
-      OUTPUT  "src/${source}-mfront.cxx"
-      COMMAND "${mfront_executable}"
-      ARGS    "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
-      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
-      DEPENDS "${mfront_file}"
-      COMMENT "treating mfront source ${source}.mfront")
+    if(${CMAKE_VERSION} GREATER "2.8.2")
+      set(mfront_executable "$<TARGET_FILE:mfront>")
+    else(${CMAKE_VERSION} GREATER "2.8.2")
+      # retrieve the old behaviour for debian squeeze's version of cmake
+      # does not work with configurations
+      if(WIN32)
+	set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
+      else(WIN32)
+	set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
+      endif(WIN32)
+    endif(${CMAKE_VERSION} GREATER "2.8.2")
+    if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      add_custom_command(
+	OUTPUT  "src/${source}-mfront.cxx"
+	COMMAND "set"
+	ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
+	COMMAND "set"
+	ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
+	COMMAND "set"
+	ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
+	COMMAND "set"
+	ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
+	COMMAND "set"
+	ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
+	COMMAND "set"
+	ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
+	COMMAND "set"
+	ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
+	COMMAND "set"
+	ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
+	COMMAND "${mfront_executable}"
+	ARGS    "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
+	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS "${mfront_file}"
+	COMMENT "treating mfront source ${source}.mfront")
+    else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      add_custom_command(
+	OUTPUT  "src/${source}-mfront.cxx"
+	COMMAND "${mfront_executable}"
+	ARGS    "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
+	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS "${mfront_file}"
+	COMMENT "treating mfront source ${source}.mfront")
+    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set(${lib}_ADDITIONAL_SOURCES "src/${source}-mfront.cxx" ${${lib}_ADDITIONAL_SOURCES})
   endforeach(source)
 endmacro(mfront_dependencies)

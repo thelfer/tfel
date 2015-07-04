@@ -52,7 +52,6 @@ EXTRA_DIST=CMakeLists.txt                                                   \
 	   images/traction-torsion-nrad.png				    \
 	   images/tutorielch12-img12.png				    \
 	   images/traction-torsion-eps.png				    \
-	   images/Hayhurst.png						    \
 	   images/tutorielch12-img18.png				    \
 	   images/tutorielch12-img19.png				    \
 	   images/Kel.png						    \

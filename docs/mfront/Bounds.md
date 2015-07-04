@@ -1,9 +1,13 @@
-The @Bounds keyword let the use define the domain of validity of the
+The `@Bounds` keyword let the use define the domain of validity of the
 law.
 
 The bounds keywords is followed by a variable name, the keyword in and
 an interval. The interval may contain the infinity, represented by the
 '*' character.
 
-Example:
+### Example
+
+~~~~{.cpp}
 @Bounds T in [293.15:873.15];
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+

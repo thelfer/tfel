@@ -39,8 +39,8 @@ namespace mfront{
        */
       Requirement(const std::string&,
 		  const std::string&,
-		  const unsigned short = 1u,
-		  const std::vector<ProviderIdentifier>& = std::vector<ProviderIdentifier>{});
+		  const unsigned short,
+		  const std::vector<ProviderIdentifier>&);
       //! copy constructor
       Requirement(const Requirement&);
       //! move constructor

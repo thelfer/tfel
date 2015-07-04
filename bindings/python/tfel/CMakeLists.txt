@@ -21,7 +21,7 @@ tfel_python_module(utilities utilities.cxx
 target_link_libraries(py_tfel_utilities TFELUtilities)
 
 tfel_python_module(glossary
-  glossary.cxx
+  pyglossary.cxx
   Glossary.cxx
   GlossaryEntry.cxx)
 target_link_libraries(py_tfel_glossary TFELGlossary)

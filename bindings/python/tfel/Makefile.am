@@ -36,8 +36,8 @@ utilities_la_LIBADD  = -L@top_builddir@/src/Utilities -lTFELUtilities         \
 		  -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 utilities_la_LDFLAGS = -module
 
-glossary_la_SOURCES = glossary.cxx \
-		      Glossary.cxx \
+glossary_la_SOURCES = pyglossary.cxx \
+		      Glossary.cxx   \
 		      GlossaryEntry.cxx
 glossary_la_LIBADD  = -L@top_builddir@/src/Glossary -lTFELGlossary         \
 		      @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \

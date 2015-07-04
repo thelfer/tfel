@@ -6,15 +6,17 @@ AM_CPPFLAGS = -I$(top_srcdir)/include        \
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/mfront/tests/unit-tests
-test_PROGRAMS = BehaviourDataTest          \
-		BehaviourDescriptionTest   \
-		BehaviourBrickProviderTest \
+test_PROGRAMS = BehaviourDataTest                    \
+		BehaviourDescriptionTest             \
+		BehaviourBrickProviderTest           \
+		BehaviourBrickRequirementManagerTest \
 		MFrontTest
 
 MFrontTest_SOURCES                 = MFrontTest.cxx
 BehaviourDataTest_SOURCES          = BehaviourDataTest.cxx
 BehaviourDescriptionTest_SOURCES   = BehaviourDescriptionTest.cxx
 BehaviourBrickProviderTest_SOURCES = BehaviourBrickProviderTest.cxx
+BehaviourBrickRequirementManagerTest_SOURCES = BehaviourBrickRequirementManagerTest.cxx
 
 LDADD = -L$(top_builddir)/mfront/src    \
 	-L$(top_builddir)/src/Material  \
@@ -30,6 +32,7 @@ LDADD = -L$(top_builddir)/mfront/src    \
 	-lTFELException -lTFELTests
 
 EXTRA_DIST=CMakeLists.txt      \
-	   mfront/test1.mfront 
+	   mfront/test1.mfront \
+	   mfront/test2.mfront 
 
 endif

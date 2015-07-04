@@ -1,0 +1,129 @@
+/*!
+ * \file   BehaviourBrickRequirementManagerTest.cxx
+ * \brief    
+ * \author THOMAS HELFER
+ * \date   26 juin 2015
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+// a small trick so that the compiler refers to the original file for
+// error reports
+#line 21 "@abs_top_srcdir@/mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx.in"
+
+#include<cstdlib>
+#include<stdexcept>
+
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
+
+#include"MFront/InitDSLs.hxx"
+#include"MFront/MFrontBase.hxx"
+#include"MFront/AbstractDSL.hxx"
+#include"MFront/AbstractBehaviourDSL.hxx"
+#include"MFront/BehaviourDescription.hxx"
+#include"MFront/BehaviourBrick/Provider.hxx"
+#include"MFront/BehaviourBrick/Requirement.hxx"
+#include"MFront/BehaviourBrick/RequirementManager.hxx"
+
+static std::shared_ptr<mfront::AbstractBehaviourDSL>
+getBehaviourDSL(const std::string& f){
+  using namespace std;
+  using namespace mfront;
+  auto dsl = MFrontBase::getDSL(f);
+  auto bdsl = shared_ptr<AbstractBehaviourDSL>{};
+  if(dsl->getTargetType()==AbstractDSL::BEHAVIOURDSL){
+    bdsl = dynamic_pointer_cast<AbstractBehaviourDSL>(dsl);
+    if(!bdsl){
+      throw(runtime_error("getBehaviourDSL : invalid dsl implementation"));
+    }
+  } else {
+    throw(runtime_error("getBehaviourDSL : unsupported dsl type"));
+  }
+  return bdsl;
+} // end of getBehaviourDSL
+
+struct BehaviourBrickRequirementManagerTest final
+  : public tfel::tests::TestCase
+{
+  BehaviourBrickRequirementManagerTest()
+    : tfel::tests::TestCase("MFront",
+			    "BehaviourBrickRequirementManagerTest")
+  {} // end of BehaviourBrickRequirementManagerTest
+
+  tfel::tests::TestResult
+  execute() override
+  {
+    this->test();
+    return this->result;
+  } // end of execute
+ private:
+  void test(void){
+    using namespace tfel::glossary;
+    using namespace mfront::bbrick;
+    const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test2.mfront"};
+    auto dsl = getBehaviourDSL(f);
+    dsl->analyseFile(f,{});
+    const auto r = RequirementManager{dsl->getBehaviourDescription().getBehaviourData(mh)};
+    TFEL_TESTS_ASSERT(r.getProvider(Glossary::YoungModulus).getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(r.getProvider(Glossary::PoissonRatio).getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(r.getProvider("Rinf").getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(r.getProvider("R0").getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(r.getProvider("b").getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(r.getProvider("C").getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(r.getProvider("g").getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(r.getProvider("m").getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(r.getProvider("UNsurK").getIdentifier()==
+		      ProviderIdentifier::MATERIALPROPERTY);
+    TFEL_TESTS_ASSERT(r.getProvider(Glossary::FirstLameCoefficient).getIdentifier()==
+		      ProviderIdentifier::LOCALVARIABLE);
+    TFEL_TESTS_ASSERT(r.getProvider(Glossary::ShearModulus).getIdentifier()==
+		      ProviderIdentifier::LOCALVARIABLE);
+    const auto& C = dynamic_cast<const MaterialPropertyProvider&>(r.getProvider("C"));
+    TFEL_TESTS_ASSERT(C.type=="stress");
+    TFEL_TESTS_ASSERT(C.asize==2u);
+    const auto& g = dynamic_cast<const MaterialPropertyProvider&>(r.getProvider("g"));
+    TFEL_TESTS_ASSERT(g.type=="real");
+    TFEL_TESTS_ASSERT(g.asize==2u);
+  }
+};
+
+TFEL_TESTS_GENERATE_PROXY(BehaviourBrickRequirementManagerTest,
+			  "BehaviourBrickRequirementManagerTest");
+
+int main(void)
+{
+  using namespace std;
+  using namespace mfront;
+  using namespace tfel::tests;
+  initParsers();
+  TestManager& manager = TestManager::getTestManager();
+  manager.addTestOutput(cout);
+  manager.addXMLTestOutput("BehaviourBrickRequirementManager.xml");
+  TestResult r = manager.execute();
+  if(!r.success()){
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+} // end of main

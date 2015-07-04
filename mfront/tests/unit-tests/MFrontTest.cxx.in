@@ -73,11 +73,9 @@ struct MFrontTest final
    * the analysis of the 'test1.mfront' file
    */
   void test(void){
-    using namespace std;
-    using namespace tfel::material;
     using namespace tfel::glossary;
-    const auto mh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    const auto f  = string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
+    const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
     auto dsl = getBehaviourDSL(f);
     dsl->analyseFile(f,{});
     const auto& bd = dsl->getBehaviourDescription();
@@ -111,11 +109,9 @@ struct MFrontTest final
    * analysis of the 'test1.mfront' file
    */
   void test2(void){
-    using namespace std;
-    using namespace tfel::material;
     using namespace tfel::glossary;
-    const auto mh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    const auto f  = string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
+    const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
     auto dsl = getBehaviourDSL(f);
     dsl->analyseFile(f,{});
     const auto& bd = dsl->getBehaviourDescription().getBehaviourData(mh);

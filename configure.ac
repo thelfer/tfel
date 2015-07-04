@@ -492,6 +492,7 @@ AC_OUTPUT([debug.sh
            mfront/src/MFrontHeader.cxx
            mfront/tests/unit-tests/Makefile
            mfront/tests/unit-tests/MFrontTest.cxx
+	   mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx
            mfront/mtest/Makefile
            mfront/tests/Makefile
            mfront/tests/properties/Makefile

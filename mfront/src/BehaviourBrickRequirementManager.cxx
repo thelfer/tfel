@@ -5,12 +5,14 @@
  * \date   29 juin 2015
  */
 
+#include<utility>
 #include<algorithm>
 #include<stdexcept>
 #include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 #include"MFront/BehaviourData.hxx"
 #include"MFront/BehaviourBrick/Provider.hxx"
+#include"MFront/BehaviourBrick/Requirement.hxx"
 #include"MFront/BehaviourBrick/RequirementManager.hxx"
 
 namespace mfront{
@@ -23,8 +25,8 @@ namespace mfront{
       for(const auto& v: bd.getMaterialProperties()){
 	this->addMaterialPropertyProvider(v,bd.getExternalName(v.name));
       }
-      for(const auto& v: bd.getStateVariables()){
-	this->addStateVariableProvider(v,bd.getExternalName(v.name));
+      for(const auto& v: bd.getIntegrationVariables()){
+	this->addIntegrationVariableProvider(v,bd.getExternalName(v.name));
       }
       for(const auto& v: bd.getAuxiliaryStateVariables()){
 	this->addAuxiliaryStateVariableProvider(v,bd.getExternalName(v.name));
@@ -32,18 +34,40 @@ namespace mfront{
       for(const auto& v: bd.getExternalStateVariables()){
 	this->addExternalStateVariableProvider(v,bd.getExternalName(v.name));
       }
-      for(const auto& v: bd.getIntegrationVariables()){
-	this->addIntegrationVariableProvider(v,bd.getExternalName(v.name));
+      for(const auto& v: bd.getLocalVariables()){
+	this->addLocalVariableProvider(v,bd.getExternalName(v.name));
       }
       for(const auto& v: bd.getStaticVariables()){
 	this->addStaticVariableProvider(v,bd.getExternalName(v.name));
       }
       for(const auto& v: bd.getParameters()){
-	this->addParameterProvider(v,bd.getExternalName(v.name));
+	if(v.type=="real"){
+	  this->addParameterProvider(v,bd.getExternalName(v.name));
+	}
       }
-      for(const auto& v: bd.getLocalVariables()){
-	this->addLocalVariableProvider(v,bd.getExternalName(v.name));
+    }
+
+    static void
+    throwIfRequirementIsAlreadyDefined(const std::vector<std::shared_ptr<Requirement>>& rqs,
+				       const Requirement& r)
+    {
+      auto test = [&r](const std::shared_ptr<Requirement>& rr){
+	return rr->name == r.name;
+      };
+      if(std::find_if(rqs.begin(),rqs.end(),test)!=rqs.end()){
+	throw(std::runtime_error("RequirementManager::addRequirement : "
+				 "requirement '"+r.name+"' already registred"));
       }
+    }
+    
+    void RequirementManager::addRequirement(const Requirement& r){
+      throwIfRequirementIsAlreadyDefined(this->requirements,r);
+      this->requirements.push_back(std::shared_ptr<Requirement>(new Requirement(r)));
+    }
+
+    void RequirementManager::addRequirement(Requirement&& r){
+      throwIfRequirementIsAlreadyDefined(this->requirements,r);
+      this->requirements.push_back(std::shared_ptr<Requirement>(new Requirement(std::move(r))));
     }
     
     std::vector<std::shared_ptr<Provider>>::const_iterator
@@ -97,22 +121,6 @@ namespace mfront{
       this->check(e);
       this->providers.push_back(std::make_shared<MaterialPropertyProvider>(t,n,e,s));
     } // end of RequirementManager::addMaterialPropertyProvider
-
-    void
-    RequirementManager::addStateVariableProvider(const mfront::VariableDescription& v,
-						 const std::string& e){
-      this->check(e);
-      this->providers.push_back(std::make_shared<StateVariableProvider>(v,e));
-    }
-    
-    void
-    RequirementManager::addStateVariableProvider(const std::string& t,
-						 const std::string& n,
-						 const std::string& e,
-						 const unsigned short s){
-      this->check(e);
-      this->providers.push_back(std::make_shared<StateVariableProvider>(t,n,e,s));
-    } // end of RequirementManager::addStateVariableProvider
 
     void
     RequirementManager::addAuxiliaryStateVariableProvider(const VariableDescription& v,

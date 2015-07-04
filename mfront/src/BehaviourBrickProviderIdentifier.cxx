@@ -23,17 +23,14 @@ namespace mfront{
       // case ProviderIdentifier::MATERIALLAW:
       // 	break;
       // 	n = "MaterialLaw";
-      case ProviderIdentifier::STATEVARIABLE:
-	n = "StateVariable";
+      case ProviderIdentifier::INTEGRATIONVARIABLE:
+	n = "IntegrationVariable";
 	break;
       case ProviderIdentifier::AUXILIARYSTATEVARIABLE:
 	n = "AuxiliaryStateVariable";
 	break;
       case ProviderIdentifier::EXTERNALSTATEVARIABLE:
 	n = "ExternalStateVariable";
-	break;
-      case ProviderIdentifier::INTEGRATIONVARIABLE:
-	n = "IntegrationVariable";
 	break;
       case ProviderIdentifier::LOCALVARIABLE:
 	n = "LocalVariable";

@@ -155,4 +155,3 @@ PlaneStress::etozz.setGlossaryName("AxialStrain");
     }
   }
 }
-

@@ -122,10 +122,31 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   mfront/ImplicitNorton.mfront		                    \
            mfront/ImplicitNorton2.mfront		            \
 	   mtest/cyranonorton.mtest                                 \
-           Author.txt				                    \
-	   Bounds.txt				                    \
-	   Date.txt				                    \
-	   Description.txt                                          \
-	   Parameter.txt                                            \
-	   MaterialLaw/Constant.txt                                 \
-	   MaterialLaw/Function.txt
+           Algorithm.md				                    \
+	   Author.md				                    \
+	   AuxiliaryStateVar.md				            \
+	   AuxiliaryStateVariable.md			            \
+	   Behaviour.md			                            \
+	   Bounds.md				                    \
+	   Brick.md				                    \
+	   Coef.md				                    \
+	   Date.md				                    \
+	   Description.md                                           \
+	   DSL.md				                    \
+	   ExternalStateVar.md                                      \
+	   InitLocalVars.md                                         \
+	   LocalVar.md                                              \
+	   Parameter.md                                             \
+	   Parser.md                                                \
+	   StateVar.md				                    \
+	   StateVariable.md			                    \
+	   StaticVar.md			                            \
+	   StaticVariable.md		                            \
+	   TangentOperator.md		                            \
+	   Theta.md		                                    \
+	   UpdateAuxiliaryStateVars.md                              \
+	   UpdateAuxiliaryStateVariables.md                         \
+	   UsableInPurelyImplicitResolution.md                      \
+	   UseQt.md                                                 \
+	   MaterialLaw/Constant.md                                  \
+	   MaterialLaw/Function.md

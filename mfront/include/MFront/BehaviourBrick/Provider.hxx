@@ -117,6 +117,9 @@ namespace mfront{
       const unsigned short asize;
       //! destructor
       virtual ~StandardProvider();
+    private:
+      StandardProvider& operator=(StandardProvider&&) = delete;
+      StandardProvider& operator=(const StandardProvider&) = delete;
     }; // end of struct StandardProvider
     
     /*!
@@ -148,36 +151,6 @@ namespace mfront{
       //! destructor
       virtual ~MaterialPropertyProvider();
     }; // end of struct MaterialPropertyProvider
-
-    /*!
-     * Provider standing for a state variable
-     */    
-    struct MFRONT_VISIBILITY_EXPORT StateVariableProvider
-      : public StandardProvider
-    {
-      /*!
-       * constructor
-       * \param[in] t : variable type
-       * \param[in] n : variable name
-       * \param[in] e : external name
-       * \param[in] s : array size
-       */
-      StateVariableProvider(const std::string&,
-			    const std::string&,
-			    const std::string&,
-			    const unsigned short);
-      /*!
-       * constructor
-       * \param[in] v : variable description
-       * \param[in] e : external name
-       */
-      StateVariableProvider(const mfront::VariableDescription&,
-			    const std::string&);
-      //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier(void) const override final;
-      //! destructor
-      virtual ~StateVariableProvider();
-    }; // end of struct StateVariableProvider
 
     /*!
      * Provider standing for an auxiliary state variable
@@ -337,6 +310,9 @@ namespace mfront{
       const std::string ename;
       //! destructor
       virtual ~StaticVariableProvider();
+    private:
+      StaticVariableProvider& operator=(StaticVariableProvider&&) = delete;
+      StaticVariableProvider& operator=(const StaticVariableProvider&) = delete;
     }; // end of struct StaticVariableProvider
     
     /*!
@@ -377,6 +353,9 @@ namespace mfront{
       const std::string ename;
       //! destructor
       virtual ~ParameterProvider();
+    private:
+      ParameterProvider& operator=(ParameterProvider&&) = delete;
+      ParameterProvider& operator=(const ParameterProvider&) = delete;
     }; // end of struct ParameterProvider
 
     // /*!

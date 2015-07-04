@@ -165,12 +165,12 @@ namespace mfront{
     if(root.empty()){
       root = PREFIXDIR;
     }
-    string fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".txt";
+    string fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".md";
     ifstream desc(fn);
     if(desc){
       return fn;
     }
-    fn = root+"/share/doc/mfront/"+k.substr(1)+".txt";
+    fn = root+"/share/doc/mfront/"+k.substr(1)+".md";
     desc.open(fn);
     if(desc){
       return fn;
@@ -288,13 +288,12 @@ namespace mfront{
   MFront::treatListParsers(void)
   {
     using namespace std;
-    cout << "available parsers : " << endl;
+    cout << "available dsl : " << endl;
     auto& parserFactory = DSLFactory::getDSLFactory();
     const auto& parsers = parserFactory.getRegistredParsers();
-    vector<string>::const_iterator p = parsers.begin();
+    auto p = parsers.begin();
     while(p!=parsers.end()){
-      string tmp;
-      tmp = "- " + *p;
+      auto tmp = "- " + *p;
       if(tmp.size()<=32){
 	tmp.insert(tmp.size(),32-tmp.size(),' ');
       }
@@ -367,21 +366,20 @@ namespace mfront{
   {
     this->registerNewCallBack("--verbose",&MFront::treatVerbose,
 			      "set verbose output",true);
-    this->registerNewCallBack("--list-parsers",&MFront::treatListParsers,"list all available parsers");
+    this->registerNewCallBack("--list-parsers",&MFront::treatListParsers,"list all available domain specific languages (deprecated)");
+    this->registerNewCallBack("--list-dsl",&MFront::treatListParsers,"list all available domain specific languages");
     this->registerNewCallBack("--help-commands-list",&MFront::treatHelpCommandsList,
-			      "list all keywords for the given parser and exits",true);
+			      "list all keywords for the given domain specific language and exits",true);
     this->registerNewCallBack("--help-keywords-list",&MFront::treatHelpCommandsList,
-			      "list all keywords for the given parser and exits",true);
+			      "list all keywords for the given domain specific language and exits",true);
     this->registerNewCallBack("--include","-I",&MFront::treatSearchPath,
 			      "add a new path at the beginning of the search paths",true);
     this->registerNewCallBack("--search-path",&MFront::treatSearchPath,
 			      "add a new path at the beginning of the search paths",true);
     this->registerNewCallBack("--help-keyword",&MFront::treatHelpCommand,
-			      "display the help associated for given parser "
-			      "and the given parser and exits",true);
+			      "display the help associated for the given domain specific language and exits",true);
     this->registerNewCallBack("--help-command",&MFront::treatHelpCommand,
-			      "display the help associated for given parser "
-			      "and the given parser and exits",true);
+			      "display the help associated for the given domain specific language and exits",true);
     this->registerNewCallBack("--debug",&MFront::treatDebug,
 			      "set debug mode (remove references to initial file)");
     this->registerNewCallBack("--warning","-W",&MFront::treatWarning,"print warnings");

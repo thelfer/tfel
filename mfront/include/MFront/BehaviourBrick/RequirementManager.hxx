@@ -27,6 +27,8 @@ namespace mfront{
 
     // forward declaration
     struct Provider;
+    // forward declaration
+    struct Requirement;
 
     /*!
      * structure used to gather and solve all the behaviour brick
@@ -41,6 +43,16 @@ namespace mfront{
        * \param[in] bd : behaviour data
        */
       RequirementManager(const mfront::BehaviourData&);
+      /*!
+       * add a requirement
+       * \param[in] r : requirement
+       */
+      void addRequirement(const Requirement&);
+      /*!
+       * add a requirement
+       * \param[in] r : requirement
+       */
+      void addRequirement(Requirement&&);
       /*!
        * \brief add a material property provider
        * \param[in] v : variable description
@@ -59,24 +71,6 @@ namespace mfront{
 				       const std::string&,
 				       const std::string&,
 				       const unsigned short);
-      /*!
-       * \brief add a state variable provider
-       * \param[in] v : variable description
-       * \param[in] e : external name (glossary name or entry name)
-       */
-      void addStateVariableProvider(const mfront::VariableDescription&,
-				    const std::string&);
-      /*!
-       * \brief add a state variable provider
-       * \param[in] t : variable type
-       * \param[in] n : variable name 
-       * \param[in] e : external name (glossary name or entry name)
-       * \param[in] s : array size
-       */
-      void addStateVariableProvider(const std::string&,
-				    const std::string&,
-				    const std::string&,
-				    const unsigned short);
       /*!
        * \brief add an auxiliary state variable provider
        * \param[in] v : variable description
@@ -195,6 +189,8 @@ namespace mfront{
        * \param[in] e : external name
        */
       void check(const std::string&) const;
+      //! all registred requirements
+      std::vector<std::shared_ptr<Requirement>> requirements;
       //! all registred providers
       std::vector<std::shared_ptr<Provider>> providers;
       /*!

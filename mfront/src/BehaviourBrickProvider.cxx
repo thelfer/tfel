@@ -158,25 +158,6 @@ namespace mfront{
 
     // MaterialLawProvider::~MaterialLawProvider() = default;
 
-    StateVariableProvider::StateVariableProvider(const std::string& t,
-						       const std::string& n,
-						       const std::string& e,
-						       const unsigned short s)
-      : StandardProvider(t,n,e,s)
-    {} // end of StateVariableProvider::StateVariableProvider
-
-    StateVariableProvider::StateVariableProvider(const mfront::VariableDescription& v,
-						       const std::string& e)
-      : StandardProvider(v,e)
-    {} // end of StateVariableProvider::StateVariableProvider
-    
-    ProviderIdentifier
-    StateVariableProvider::getIdentifier(void) const{
-      return ProviderIdentifier::STATEVARIABLE;
-    }
-    
-    StateVariableProvider::~StateVariableProvider() = default;
-
     AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider(const std::string& t,
 								   const std::string& n,
 								   const std::string& e,

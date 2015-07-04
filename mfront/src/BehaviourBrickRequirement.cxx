@@ -12,6 +12,7 @@
  * <!-- Local IspellDict: english -->
  */
 
+#include<stdexcept>
 #include"MFront/BehaviourBrick/Requirement.hxx"
 
 namespace mfront{
@@ -29,7 +30,13 @@ namespace mfront{
 	name(n),
 	asize(s),
 	aproviders(a)
-    {} // end of Requirement::Requirement
+    {
+      if(this->aproviders.empty()){
+	throw(std::runtime_error("Requirement::Requirement : "
+				 "empty list of providers specified for "
+				 "requirement '"+this->name+"'"));
+      }
+    } // end of Requirement::Requirement
 
     Requirement::~Requirement() = default;
     

@@ -10,7 +10,7 @@ behaviour or model shall be given in the description section (see the
 
 ## Example
 
-~~~~ {#Author .cpp .numberLines}
+~~~~ {#Author .cpp}
 @Author Éric Brunon;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

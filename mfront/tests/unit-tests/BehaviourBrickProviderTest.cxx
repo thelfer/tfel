@@ -40,7 +40,7 @@ struct BehaviourBrickProviderTest final
     using namespace mfront;
     using namespace mfront::bbrick;
     this->test<MaterialPropertyProvider>(ProviderIdentifier::MATERIALPROPERTY);
-    this->test<StateVariableProvider>(ProviderIdentifier::STATEVARIABLE);
+    this->test<IntegrationVariableProvider>(ProviderIdentifier::INTEGRATIONVARIABLE);
     this->test<AuxiliaryStateVariableProvider>(ProviderIdentifier::AUXILIARYSTATEVARIABLE);
     this->test<IntegrationVariableProvider>(ProviderIdentifier::INTEGRATIONVARIABLE);
     this->test<LocalVariableProvider>(ProviderIdentifier::LOCALVARIABLE);
@@ -59,7 +59,7 @@ struct BehaviourBrickProviderTest final
    */
   template<typename ProviderType>
   void test(const ProviderIdentifier i){
-    const auto p  = ProviderType{"real","test","test",1u};
+    const ProviderType p{"real","test","test",1u};
     TFEL_TESTS_ASSERT(p.getIdentifier()==i);
   } // end of test
   /*!
@@ -68,7 +68,7 @@ struct BehaviourBrickProviderTest final
    */
   template<typename ProviderType>
   void test2(const ProviderIdentifier i){
-    const auto p  = ProviderType{"real","test","test"};
+    const ProviderType p{"real","test","test"};
     TFEL_TESTS_ASSERT(p.getIdentifier()==i);
   } // end of test
   // /*!
@@ -83,7 +83,7 @@ struct BehaviourBrickProviderTest final
   // } // end of test3
   void test4(void){
     using namespace mfront::bbrick;
-    auto p  = MaterialPropertyProvider{"stress","young","YoungModulus",1u};
+    const MaterialPropertyProvider p{"stress","young","YoungModulus",1u};
     TFEL_TESTS_ASSERT(p.name=="young");
     TFEL_TESTS_ASSERT(p.ename=="YoungModulus");
     TFEL_TESTS_ASSERT(p.type=="stress");
@@ -92,13 +92,13 @@ struct BehaviourBrickProviderTest final
 			    std::runtime_error);
     // everything is okay
     TFEL_TESTS_ASSERT((p.handleRequirement(Requirement{"stress","YoungModulus",1u,
-	      {ProviderIdentifier::MATERIALPROPERTY,ProviderIdentifier::STATEVARIABLE}},false)));
+	      {ProviderIdentifier::MATERIALPROPERTY,ProviderIdentifier::INTEGRATIONVARIABLE}},false)));
     // the array size does not match
     TFEL_TESTS_CHECK_THROW(p.handleRequirement(Requirement{"stress","YoungModulus",2u,
 	    {ProviderIdentifier::MATERIALPROPERTY}},false),std::runtime_error);
     // requirement does not allow a MaterialProperty provider
     TFEL_TESTS_CHECK_THROW(p.handleRequirement(Requirement{"stress","YoungModulus",1u,
-	    {ProviderIdentifier::STATEVARIABLE}},false),std::runtime_error);
+	    {ProviderIdentifier::INTEGRATIONVARIABLE}},false),std::runtime_error);
     // type does not match
     TFEL_TESTS_CHECK_THROW(p.handleRequirement(Requirement{"StressStensor","YoungModulus",1u,
 	    {ProviderIdentifier::MATERIALPROPERTY}},false),std::runtime_error);
@@ -117,7 +117,7 @@ struct BehaviourBrickProviderTest final
 		      ProviderIdentifier::MATERIALPROPERTY);
     TFEL_TESTS_CHECK_THROW(m.getProvider("unknown"),std::runtime_error);
     // young modulus has already been used
-    TFEL_TESTS_CHECK_THROW(m.addStateVariableProvider("real","young","YoungModulus",1u),
+    TFEL_TESTS_CHECK_THROW(m.addIntegrationVariableProvider("real","young","YoungModulus",1u),
 			   std::runtime_error);
   }
 };
