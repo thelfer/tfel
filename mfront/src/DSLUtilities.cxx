@@ -21,6 +21,12 @@
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/DSLUtilities.hxx"
 
+#ifndef _MSC_VER
+static const char * const constexpr_c = "constexpr";
+#else
+static const char * const constexpr_c = "const";
+#endif
+
 namespace mfront
 {
 
@@ -53,31 +59,31 @@ namespace mfront
 		  << file << "\"\n";
 	}
 	if(p->type=="short"){
-	  srcFile << "static constexpr  short " << p->name 
+	  srcFile << "static " << constexpr_c << "  short " << p->name 
 		  << " = " << static_cast<short>(p->value) << ";" << endl;
 	} else if(p->type=="ushort"){
-	  srcFile << "static constexpr  unsigned short "  << p->name 
+	  srcFile << "static " << constexpr_c << "  unsigned short "  << p->name 
 		  << " = " << static_cast<unsigned short>(p->value) << ";" << endl;
 	} else if(p->type=="int"){
-	  srcFile << "static constexpr  int " << p->name 
+	  srcFile << "static " << constexpr_c << "  int " << p->name 
 		  << " = " << static_cast<int>(p->value) << ";" << endl;
 	} else if(p->type=="uint"){
-	  srcFile << "static constexpr  unsigned int " << p->name 
+	  srcFile << "static " << constexpr_c << "  unsigned int " << p->name 
 		  << " = " << static_cast<unsigned int>(p->value) << ";" << endl;
 	} else if(p->type=="long"){
-	  srcFile << "static constexpr  long " << p->name 
+	  srcFile << "static " << constexpr_c << "  long " << p->name 
 		  << " = " << static_cast<long>(p->value) << ";" << endl;
 	} else if(p->type=="ulong"){
-	  srcFile << "static constexpr  unsigned long " << p->name 
+	  srcFile << "static " << constexpr_c << "  unsigned long " << p->name 
 		  << " = " << static_cast<unsigned long>(p->value) << ";" << endl;
 	} else if(p->type=="float"){
-	  srcFile << "static constexpr  float " << p->name 
+	  srcFile << "static " << constexpr_c << "  float " << p->name 
 		  << " = " << static_cast<float>(p->value) << ";" << endl;
 	} else if((p->type=="double")||(p->type=="real")){
-	  srcFile << "static constexpr  double " << p->name 
+	  srcFile << "static " << constexpr_c << "  double " << p->name 
 		  << " = " << static_cast<double>(p->value) << ";" << endl;
 	} else if(p->type=="ldouble"){
-	  srcFile << "static constexpr  long double " << p->name 
+	  srcFile << "static " << constexpr_c << "  long double " << p->name 
 		  << " = " << static_cast<long double>(p->value) << ";" << endl;
 	} else {
 	  ostringstream msg;

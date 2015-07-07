@@ -46,7 +46,7 @@ seq.setGlossaryName("HillStress");
   if(sigeq>1e9){
     return false;
   }
-  Stensor  n(0.);
+  Stensor  n(real(0));
   if(sigeq > 10.e-7){
     n    = H*sig/sigeq;
   }

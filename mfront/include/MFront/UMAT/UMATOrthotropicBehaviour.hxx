@@ -17,6 +17,12 @@
 #include"MFront/UMAT/UMATConfig.hxx"
 #include"MFront/UMAT/UMATTraits.hxx"
 
+#ifndef _MSC_VER
+#define UMATORTHOTROPICBEHAVIOUR_CONSTEXPR constexpr
+#else
+#define UMATORTHOTROPICBEHAVIOUR_CONSTEXPR const
+#endif
+
 namespace umat
 {
 
@@ -36,7 +42,7 @@ namespace umat
     // 6 elastic coefficients
     //   mass density
     // 3 thermal expansion coefficients
-    static constexpr unsigned short value = 10u;
+    static UMATORTHOTROPICBEHAVIOUR_CONSTEXPR unsigned short value = 10u;
   }; // end of struct UMATOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,1u>
 
   template<>
@@ -47,7 +53,7 @@ namespace umat
     // 2 components of direction
     //   mass density
     // 3 thermal expansion coefficients
-    static constexpr unsigned short value = 13u;
+    static UMATORTHOTROPICBEHAVIOUR_CONSTEXPR unsigned short value = 13u;
   }; // end of struct UMATOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,2u>
 
   template<>
@@ -58,7 +64,7 @@ namespace umat
     // 6 components of direction
     //   mass density
     // 3 thermal expansion coefficients
-    static constexpr unsigned short value = 19u;
+    static UMATORTHOTROPICBEHAVIOUR_CONSTEXPR unsigned short value = 19u;
   }; // end of struct UMATOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,3u>
 
 } // end of namespace umat

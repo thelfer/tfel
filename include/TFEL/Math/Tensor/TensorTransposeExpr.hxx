@@ -116,7 +116,7 @@ namespace tfel{
 	  return this->a(3);
 	  break;
 	default:
-	  return NumType(0);
+	  break;
 	}
 	return NumType(0);
       } // end of operator()
@@ -168,7 +168,7 @@ namespace tfel{
 	  return this->a(7);
 	  break;
 	default:
-	  return NumType(0);
+	  break;
 	}
 	return NumType(0);
       } // end of operator()

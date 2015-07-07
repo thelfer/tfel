@@ -300,7 +300,7 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond));
+	TFEL_STATIC_ASSERT((tfel::meta::Implements<T2toT2Type,tfel::math::T2toT2Concept>::cond));
 	//! a simple check
 	TFEL_STATIC_ASSERT((T2toT2Traits<T2toT2ResultType>::dime==TensorTraits<TensorType>::dime));
 	//! a simple check

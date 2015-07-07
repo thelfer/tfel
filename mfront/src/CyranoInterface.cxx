@@ -27,6 +27,12 @@
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/CyranoInterface.hxx"
 
+#ifndef _MSC_VER
+static const char * const constexpr_c = "constexpr";
+#else
+static const char * const constexpr_c = "const";
+#endif
+
 namespace mfront{
 
   std::string
@@ -647,54 +653,54 @@ namespace mfront{
     out << "> >{\n";
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       out << "// modelling hypothesis\n";
-      out << "static constexpr tfel::material::ModellingHypothesis::Hypothesis H = "
+      out << "static " << constexpr_c << " tfel::material::ModellingHypothesis::Hypothesis H = "
 	  << "tfel::material::ModellingHypothesis::"
 	  << ModellingHypothesis::toUpperCaseString(h) << ";" << endl;
     }
     out << "// space dimension\n";
-    out << "static constexpr unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
+    out << "static " << constexpr_c << " unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
     out << "// tiny vector size\n";
-    out << "static constexpr unsigned short TVectorSize = N;\n";
+    out << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
     out << "// symmetric tensor size\n";
-    out << "static constexpr unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
+    out << "static " << constexpr_c << " unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
     out << "// tensor size\n";
-    out << "static constexpr unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
+    out << "static " << constexpr_c << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
     out << "// size of the driving variable array (STRAN)\n";
-    out << "static constexpr unsigned short DrivingVariableSize  = " << mvs.first <<  ";\n";
+    out << "static " << constexpr_c << " unsigned short DrivingVariableSize  = " << mvs.first <<  ";\n";
     out << "// size of the thermodynamic force variable array (STRAN)\n";
-    out << "static constexpr unsigned short ThermodynamicForceVariableSize  = " << mvs.second <<  ";\n";
-    out << "static constexpr bool useTimeSubStepping = ";
+    out << "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize  = " << mvs.second <<  ";\n";
+    out << "static " << constexpr_c << " bool useTimeSubStepping = ";
     if(this->useTimeSubStepping){
       out << "true;\n";
     } else {
       out << "false;\n";
     }
-    out << "static constexpr bool doSubSteppingOnInvalidResults = ";
+    out << "static " << constexpr_c << " bool doSubSteppingOnInvalidResults = ";
     if(this->doSubSteppingOnInvalidResults){
       out << "true;\n";
     } else {
       out << "false;\n";
     }
-    out << "static constexpr unsigned short maximumSubStepping = ";
+    out << "static " << constexpr_c << " unsigned short maximumSubStepping = ";
     if(this->useTimeSubStepping){
       out << this->maximumSubStepping << ";\n";
     } else {
       out << "0u;\n";
     }
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      out << "static constexpr bool requiresStiffnessTensor = true;\n";
+      out << "static " << constexpr_c << " bool requiresStiffnessTensor = true;\n";
       if(mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
-	out << "static constexpr bool requiresUnAlteredStiffnessTensor = true;\n";
+	out << "static " << constexpr_c << " bool requiresUnAlteredStiffnessTensor = true;\n";
       } else {
-	out << "static constexpr bool requiresUnAlteredStiffnessTensor = false;\n";
+	out << "static " << constexpr_c << " bool requiresUnAlteredStiffnessTensor = false;\n";
       }
     } else {
-      out << "static constexpr bool requiresStiffnessTensor = false;\n";
+      out << "static " << constexpr_c << " bool requiresStiffnessTensor = false;\n";
     }
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      out << "static constexpr bool requiresThermalExpansionCoefficientTensor = true;\n";
+      out << "static " << constexpr_c << " bool requiresThermalExpansionCoefficientTensor = true;\n";
     } else {
-      out << "static constexpr bool requiresThermalExpansionCoefficientTensor = false;\n";
+      out << "static " << constexpr_c << " bool requiresThermalExpansionCoefficientTensor = false;\n";
     }
     // computing material properties size
     SupportedTypes::TypeSize msize;
@@ -704,41 +710,41 @@ namespace mfront{
       msize += this->getTypeSize(m.type,m.arraySize);
       msize -= mprops.second;
     }
-    out << "static constexpr unsigned short material_properties_nb = " << msize << ";\n";
+    out << "static " << constexpr_c << " unsigned short material_properties_nb = " << msize << ";\n";
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
       if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-	  out << "static constexpr unsigned short propertiesOffset        = 3u;\n";
-	  out << "static constexpr unsigned short elasticPropertiesOffset = 2u;\n";
+	  out << "static " << constexpr_c << " unsigned short propertiesOffset        = 3u;\n";
+	  out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 2u;\n";
 	} else {
-	  out << "static constexpr unsigned short propertiesOffset        = 2u;\n";
-	  out << "static constexpr unsigned short elasticPropertiesOffset = 2u;\n";
+	  out << "static " << constexpr_c << " unsigned short propertiesOffset        = 2u;\n";
+	  out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 2u;\n";
 	}
       } else {
 	if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-	  out << "static constexpr unsigned short propertiesOffset        = 1u;\n";
-	  out << "static constexpr unsigned short elasticPropertiesOffset = 0u;\n";
+	  out << "static " << constexpr_c << " unsigned short propertiesOffset        = 1u;\n";
+	  out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
 	} else {
-	  out << "static constexpr unsigned short propertiesOffset        = 0u;\n";
-	  out << "static constexpr unsigned short elasticPropertiesOffset = 0u;\n";
+	  out << "static " << constexpr_c << " unsigned short propertiesOffset        = 0u;\n";
+	  out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
 	}
       }
     } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-	  out << "static constexpr unsigned short propertiesOffset        = 9u;\n";
-	  out << "static constexpr unsigned short elasticPropertiesOffset = 6u;\n";
+	  out << "static " << constexpr_c << " unsigned short propertiesOffset        = 9u;\n";
+	  out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 6u;\n";
 	} else {
-	  out << "static constexpr unsigned short propertiesOffset        = 6u;\n";
-	  out << "static constexpr unsigned short elasticPropertiesOffset = 6u;\n";
+	  out << "static " << constexpr_c << " unsigned short propertiesOffset        = 6u;\n";
+	  out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 6u;\n";
 	}
       } else {
 	if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-	  out << "static constexpr unsigned short propertiesOffset        = 3u;\n";
-	  out << "static constexpr unsigned short elasticPropertiesOffset = 0u;\n";
+	  out << "static " << constexpr_c << " unsigned short propertiesOffset        = 3u;\n";
+	  out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
 	} else {
-	  out << "static constexpr unsigned short propertiesOffset = 0u;\n";
-	  out << "static constexpr unsigned short elasticPropertiesOffset = 0u;\n";
+	  out << "static " << constexpr_c << " unsigned short propertiesOffset = 0u;\n";
+	  out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
 	}
       }
     } else {
@@ -748,9 +754,9 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "static constexpr CyranoSymmetryType stype = cyrano::ISOTROPIC;\n";
+      out << "static " << constexpr_c << " CyranoSymmetryType stype = cyrano::ISOTROPIC;\n";
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "static constexpr CyranoSymmetryType stype = cyrano::ORTHOTROPIC;\n";
+      out << "static " << constexpr_c << " CyranoSymmetryType stype = cyrano::ORTHOTROPIC;\n";
     } else {
       string msg("CyranoInterface::writeCyranoBehaviourTraits : ");
       msg += "unsupported behaviour symmetry type.\n";

@@ -99,12 +99,21 @@ namespace tfel
              tfel::math::tmatrix<3,3,real>&,
 	     tfel::math::tvector<3,real>&);
 
+#ifndef _MSC_VER
       //! small parameter which guarantees that Ef is finite
       static constexpr double emin1    = 1.e-7;
       //! small parameter which guarantees that Ef is finite
       static constexpr double emin_rk1 = 1.e-5;
       //! small numerical parameter
       static constexpr double eps      = 1.e-10;
+#else
+      //! small parameter which guarantees that Ef is finite
+      static const double emin1;
+      //! small parameter which guarantees that Ef is finite
+      static const double emin_rk1;
+      //! small numerical parameter
+      static const double eps;
+#endif
 
     }; // end of struct DDIF2Base
     

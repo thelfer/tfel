@@ -23,6 +23,12 @@
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CppMaterialPropertyInterface.hxx"
 
+#ifndef _MSC_VER
+static const char * const constexpr_c = "constexpr";
+#else
+static const char * const constexpr_c = "const";
+#endif
+
 namespace mfront
 {
 
@@ -398,7 +404,7 @@ namespace mfront
 	  msg += "internal error (can't find value of parameter '" + *p + "')";
 	  throw(runtime_error(msg));
 	}
-	this->srcFile << "static constexpr double " << *p
+	this->srcFile << "static " << constexpr_c << " double " << *p
 		      << " = " << p7->second << ";\n";
       }
     }
