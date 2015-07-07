@@ -664,7 +664,7 @@ soit programmée, soit estimée numériquement par  \mfront
 \label{Hayhurst}
  \begin{columns}
     \begin{column}{3cm}
-      \includegraphics[width=3cm]{@abs_top_srcdir@/docs/presentations/images/Hayhurst.png}
+      \includegraphics[width=3cm]{@abs_top_srcdir@/docs/presentations/images/hayhurst-2.png}
     \end{column} 
     \begin{column}{5cm}
       \includegraphics[width=5cm]{@abs_top_srcdir@/docs/presentations/images/hayhurst.png}

@@ -148,6 +148,7 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   RequireThermalExpansionCoefficientTensor.md              \
 	   StaticVariable.md		                            \
 	   Sources.md				                    \
+	   StateVar.md			                            \
 	   StateVariable.md			                    \
 	   StaticVar.md			                            \
 	   StaticVariable.md		                            \

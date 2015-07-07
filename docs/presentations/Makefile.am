@@ -69,6 +69,7 @@ EXTRA_DIST=CMakeLists.txt                                                   \
 	   images/tutorielch12-img2.pdf					    \
 	   images/tutorielch12-img3.pdf					    \
 	   images/hayhurst.png						    \
+	   images/hayhurst-2.png				            \
 	   images/adao-chaboche-ref.png					    \
 	   images/Ktgt.png						    \
 	   mfront/interactionmatrix.mfront				    \

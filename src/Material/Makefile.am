@@ -5,7 +5,8 @@ AM_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif
 
 lib_LTLIBRARIES = libTFELMaterial.la
-libTFELMaterial_la_SOURCES = BoundsCheck.cxx                           \
+libTFELMaterial_la_SOURCES = DDIF2Base.cxx                             \
+			     BoundsCheck.cxx                           \
 			     MaterialException.cxx                     \
 			     ModellingHypothesis.cxx                   \
 			     FiniteStrainBehaviourTangentOperator.cxx
