@@ -261,6 +261,8 @@ add_subdirectory(docs)
 
 ## environment under msys
 if (MSYS)
+  string(REGEX REPLACE "(.*):(.*)" "/\\1\\2"
+     MSYS_BINARY_DIR "${PROJECT_BINARY_DIR}")
   configure_file(env-msys.sh.in env-msys.sh @ONLY)
 endif(MSYS)
 
