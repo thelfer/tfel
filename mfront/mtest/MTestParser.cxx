@@ -145,7 +145,7 @@ namespace mfront
     if(ERROR_SUCCESS != lRes){
       return false;
     }
-    nError = RegQueryValueEx(hKey,"", 0,NULL,
+    nError = RegQueryValueEx(hKey,"",nullptr,nullptr,
 			     reinterpret_cast<LPBYTE>(szBuffer),
 			     &dwBufferSize);
     RegCloseKey(hKey);

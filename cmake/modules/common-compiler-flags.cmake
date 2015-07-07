@@ -37,7 +37,7 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wswitch-bool")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wlogical-not-parentheses")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wsizeof-array-argument")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wbool-compare")
-tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Winline")
+# tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Winline")
 
 if(NOT (WIN32 AND ( CMAKE_SIZEOF_VOID_P EQUAL 8 )))
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wlong-long")

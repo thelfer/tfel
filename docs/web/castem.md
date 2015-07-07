@@ -83,15 +83,6 @@ the end-user:
 
 ## Usage in `Cast3M`
 
-There are two ways to use `MFront` generated libraries in the `Cas3M`
-finite element solver:
-
-- using direct call to the generated library
-- modifying the `UMAT` subroutine. This is method is the only one
-  available in the standard version of `Cast3M` 2014.
-
-### Call to shared libraries
-
 [A patch](downloads/patchs-Cast3M-2014.tar.bz2) must be applied to
 `Cast3M` 2014 to be able to call shared libraries directly. This patch
 is not mandatory for version greater than 2015.
@@ -111,12 +102,6 @@ mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
 
 Here, we have explicitly given the path to the library. In practice,
 it is better to modify the `LD_LIBRARY_PATH` environment variable.
-
-### Standard method
-
-The standard method to integrate a `MFront` behaviour through the
-`UMAT` subroutine is described in depth in the
-[french version](castem-fr.html) of this document.
 
 ## Test
 

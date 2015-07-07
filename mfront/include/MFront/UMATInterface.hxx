@@ -248,10 +248,6 @@ namespace mfront{
 			    const std::string&) const;
 
     virtual void
-    writeUmatFortranFunctionDefine(std::ostream&,
-				   const std::string&) const;
-
-    virtual void
     writeUmatFunctionDeclaration(std::ostream&,
 				 const std::string&) const;
     /*!
@@ -271,13 +267,11 @@ namespace mfront{
 						const std::string&,
 						const std::string&,
 						const std::string&,
-						const std::string&,
 						const BehaviourDescription&) const) const;
     /*!
      * \param[out] out     : output file
      * \param[in]  name    : name of law
      * \param[in]  fname   : function name
-     * \param[in]  uname   : fortran function name
      * \param[in]  suffix  : suffix library
      * \param[in]  mb      : mechanical behaviourd description
      */
@@ -286,19 +280,16 @@ namespace mfront{
 					       const std::string&,
 					       const std::string&,
 					       const std::string&,
-					       const std::string&,
 					       const BehaviourDescription&) const;
     /*!
      * \param[out] out     : output file
      * \param[in]  name    : name of law
      * \param[in]  fname   : function name
-     * \param[in]  uname   : fortran function name
      * \param[in]  suffix  : suffix library
      * \param[in]  mb      : mechanical behaviourd description
      */
     virtual void
     writeMieheApelLambrechtLogarithmicStrainUmatFunction(std::ostream&,
-							 const std::string&,
 							 const std::string&,
 							 const std::string&,
 							 const std::string&,
@@ -309,7 +300,6 @@ namespace mfront{
      * \param[out] out     : output file
      * \param[in]  name    : name of law
      * \param[in]  fname   : function name
-     * \param[in]  uname   : fortran function name
      * \param[in]  suffix  : suffix library
      * \param[in]  mb      : mechanical behaviourd description
      */
@@ -318,19 +308,16 @@ namespace mfront{
 					 const std::string&,
 					 const std::string&,
 					 const std::string&,
-					 const std::string&,
 					 const BehaviourDescription&) const;
     /*!
      * \param[out] out     : output file
      * \param[in]  name    : name of law
      * \param[in]  fname   : function name
-     * \param[in]  uname   : fortran function name
      * \param[in]  suffix  : suffix library
      * \param[in]  mb      : mechanical behaviourd description
      */
     virtual void
     writeStandardUmatFunction(std::ostream&,
-			      const std::string&,
 			      const std::string&,
 			      const std::string&,
 			      const std::string&,

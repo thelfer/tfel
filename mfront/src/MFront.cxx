@@ -96,7 +96,7 @@ namespace mfront{
     if(ERROR_SUCCESS != lRes){
       return false;
     }
-    nError = RegQueryValueEx(hKey,"", 0,NULL,
+    nError = RegQueryValueEx(hKey,"",nullptr,nullptr,
 			     reinterpret_cast<LPBYTE>(szBuffer),
 			     &dwBufferSize);
     RegCloseKey(hKey);
@@ -1772,7 +1772,7 @@ namespace mfront{
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     const char *const argv[] = {"make.exe","-C","src",
 				"-f","Makefile.mfront",
-				target.c_str(),0};
+				target.c_str(),nullptr};
     if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
       string msg("MFront::buildLibraries : ");
       msg += "can't build target '"+target+"'";

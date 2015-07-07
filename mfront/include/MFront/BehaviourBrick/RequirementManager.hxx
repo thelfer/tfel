@@ -36,13 +36,18 @@ namespace mfront{
      */
     struct MFRONT_VISIBILITY_EXPORT RequirementManager
     {
-      //! constructor
-      RequirementManager();
+      /*!
+       * constructor
+       * \param[in] b : check units
+       */
+      RequirementManager(const bool = false);
       /*!
        * \brief constructor from a behaviour data
        * \param[in] bd : behaviour data
+       * \param[in] b : check units
        */
-      RequirementManager(const mfront::BehaviourData&);
+      RequirementManager(const mfront::BehaviourData&,
+			 const bool);
       /*!
        * add a requirement
        * \param[in] r : requirement
@@ -180,15 +185,44 @@ namespace mfront{
        * \param[in] e : external name (glossary name or entry name)
        */
       const Provider& getProvider(const std::string&) const;
+      /*!
+       * \return all unresolved requirements
+       */
+      std::vector<std::string>
+      getUnresolvedRequirements(void) const;
+      /*!
+       * \param[in] n : external name of a requirement
+       * \return true if the given requirement has a provider
+       */      
+      bool hasProvider(const std::string&) const;
       //! destructor
       ~RequirementManager();
     private:
+      // copy assignement
+      RequirementManager& operator=(const RequirementManager&) = delete;
+      // move assignement
+      RequirementManager& operator=(RequirementManager&&) = delete;
+      /*!
+       * \param[in] r : requirement
+       * \return true if the given requirement has a provider
+       */      
+      bool hasProvider(const Requirement&) const;
+      /*!
+       * \param[in] n : external name of the requirement
+       * \return the requirement
+       */      
+      const Requirement& getRequirement(const std::string&) const;
+      /*!
+       * \brief add a requirement
+       * \param[in] r : requirement
+       */
+      void addRequirement(const std::shared_ptr<Requirement>&);
       /*!  
        * \brief check if a provider with the same external name has
        * not been declared
-       * \param[in] e : external name
+       * \param[in] p : provider
        */
-      void check(const std::string&) const;
+      void check(const Provider&) const;
       //! all registred requirements
       std::vector<std::shared_ptr<Requirement>> requirements;
       //! all registred providers
@@ -205,6 +239,8 @@ namespace mfront{
        */
       std::vector<std::shared_ptr<Provider>>::iterator
       getProviderIterator(const std::string&);
+      //! check units
+      const bool checkUnits;
     };
     
   } // end of namespace bbrick

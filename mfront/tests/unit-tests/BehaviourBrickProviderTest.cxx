@@ -111,7 +111,7 @@ struct BehaviourBrickProviderTest final
   }
   void test5(void){
     using namespace mfront::bbrick;
-    auto m = RequirementManager{};
+    RequirementManager m;
     m.addMaterialPropertyProvider("real","young","YoungModulus",1u);
     TFEL_TESTS_ASSERT(m.getProvider("YoungModulus").getIdentifier()==
 		      ProviderIdentifier::MATERIALPROPERTY);

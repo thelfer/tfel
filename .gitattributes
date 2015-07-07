@@ -241,8 +241,17 @@ docs/mfront/Makefile.am -text
 docs/mfront/Makefile.doc.in -text
 docs/mfront/MaterialLaw/Constant.md -text
 docs/mfront/MaterialLaw/Function.md -text
+docs/mfront/OrthotropicBehaviour.md -text
 docs/mfront/Parameter.md -text
 docs/mfront/Parser.md -text
+docs/mfront/PerturbationValueForNumericalJacobianComputation.md -text
+docs/mfront/PhysicalBounds.md -text
+docs/mfront/Private.md -text
+docs/mfront/Profiling.md -text
+docs/mfront/RequireStiffnessOperator.md -text
+docs/mfront/RequireStiffnessTensor.md -text
+docs/mfront/RequireThermalExpansionCoefficientTensor.md -text
+docs/mfront/Sources.md -text
 docs/mfront/StateVar.md -text
 docs/mfront/StateVariable.md -text
 docs/mfront/StaticVar.md -text

@@ -39,7 +39,7 @@ namespace mfront{
   {
     using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    this->ghMutex = CreateMutex(NULL,      // default security attributes
+    this->ghMutex = CreateMutex(nullptr,   // default security attributes
 				FALSE,     // initially not owned
 				"mfront"); // named mutex
     if (this->ghMutex == NULL){

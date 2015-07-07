@@ -21,9 +21,15 @@
 #include"TFEL/Math/General/floating_point_exceptions.hxx"
 #include"TFEL/Math/FactorizedKriging.hxx"
 
-double
-rand(const double min,
-     const double max)
+#ifndef _MSC_VER
+#define KRIGING_STATIC static
+#else
+#define KRIGING_STATIC
+#endif
+
+
+KRIGING_STATIC double rand(const double min,
+			   const double max)
 {
   return min+((max-min)*rand())/RAND_MAX;
 }

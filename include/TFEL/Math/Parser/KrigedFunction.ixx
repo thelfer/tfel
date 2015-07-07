@@ -96,7 +96,7 @@ namespace tfel
       KrigedFunction<N>::differentiate(const std::vector<double>::size_type) const
       {
 	KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return std::shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return {};
       } // end of KrigedFunction<N>::differentiate
 
       template<unsigned short N>
@@ -104,7 +104,7 @@ namespace tfel
       KrigedFunction<N>::differentiate(const std::string&) const
       {
 	KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return std::shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return {};
       } // end of KrigedFunction<N>::differentiate
 
       template<unsigned short N>
@@ -119,7 +119,7 @@ namespace tfel
       KrigedFunction<N>::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
 	KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables();
-	return std::shared_ptr<ExternalFunction>(static_cast<ExternalFunction*>(0));
+	return {};
       } // end of KrigedFunction<N>::createFunctionByChangingParametersIntoVariables
 
       template<unsigned short N>

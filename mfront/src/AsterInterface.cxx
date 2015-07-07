@@ -341,13 +341,6 @@ namespace mfront{
 
     this->writeVisibilityDefines(out);
 
-    out << "#define aster" 
-	<< makeUpperCase(name)
-	<< "_F77 \\\n"
-	<< "        F77_FUNC(aster"
-	<< makeLowerCase(name) << ",ASTER"
-	<< makeUpperCase(name) << ")\n\n";
-
     out << "#ifdef __cplusplus\n\n";
 
     out << "namespace aster{\n\n";

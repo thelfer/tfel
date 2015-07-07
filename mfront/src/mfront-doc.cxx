@@ -74,7 +74,7 @@ int main(const int argc, const char *const *const argv)
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   }
   catch(exception& e){
-    MessageBox(0,e.what(),
+    MessageBox(nullptr,e.what(),
 	       "mfront",0);
     return EXIT_FAILURE;
   }

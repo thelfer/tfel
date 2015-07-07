@@ -21,7 +21,13 @@
 
 #include"TFEL/Math/Broyden.hxx"
 
-const tfel::math::tvector<2,double>
+#ifndef _MSC_VER
+#define BROYDEN_STATIC static
+#else
+#define BROYDEN_STATIC
+#endif
+
+BROYDEN_STATIC const tfel::math::tvector<2,double>
 f(const tfel::math::tvector<2,double>& x)
 {
   using namespace tfel::math;
@@ -31,8 +37,7 @@ f(const tfel::math::tvector<2,double>& x)
   return y;
 }
 
-void
-test(void)
+BROYDEN_STATIC void test(void)
 {
   using namespace std;
   using namespace tfel::math;
@@ -54,8 +59,7 @@ test(void)
   A(1,1) = 4*(4*res(1)*res(1)*res(1)+1);
 }
 
-void
-test2(void)
+BROYDEN_STATIC void test2(void)
 {
   using namespace std;
   using namespace tfel::math;
@@ -68,8 +72,7 @@ test2(void)
   vf = f(res);
 }
 
-int
-main(void)
+int main(void)
 {
   test();
   test2();

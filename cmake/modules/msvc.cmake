@@ -13,7 +13,3 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "wd4275")
 
 set(OPTIMISATION_FLAGS "/O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
-
-if(HAVE_FORTRAN)
-  include(cmake/modules/default-fortran.cmake)
-endif(HAVE_FORTRAN)

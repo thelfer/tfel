@@ -67,9 +67,15 @@ struct BehaviourBrickRequirementManagerTest final
   execute() override
   {
     this->test();
+    this->test2();
+    this->test3();
     return this->result;
   } // end of execute
  private:
+  /*!
+   * \brief check that all providers are correctly extracted from the
+   * BehaviourData from the RequirementManager constructor
+   */
   void test(void){
     using namespace tfel::glossary;
     using namespace mfront::bbrick;
@@ -77,7 +83,7 @@ struct BehaviourBrickRequirementManagerTest final
     const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test2.mfront"};
     auto dsl = getBehaviourDSL(f);
     dsl->analyseFile(f,{});
-    const auto r = RequirementManager{dsl->getBehaviourDescription().getBehaviourData(mh)};
+    const RequirementManager r{dsl->getBehaviourDescription().getBehaviourData(mh),false};
     TFEL_TESTS_ASSERT(r.getProvider(Glossary::YoungModulus).getIdentifier()==
 		      ProviderIdentifier::MATERIALPROPERTY);
     TFEL_TESTS_ASSERT(r.getProvider(Glossary::PoissonRatio).getIdentifier()==
@@ -106,6 +112,98 @@ struct BehaviourBrickRequirementManagerTest final
     const auto& g = dynamic_cast<const MaterialPropertyProvider&>(r.getProvider("g"));
     TFEL_TESTS_ASSERT(g.type=="real");
     TFEL_TESTS_ASSERT(g.asize==2u);
+  }
+  /*!
+   * \brief some test on requirements handling
+   */
+  void test2(void){
+    using namespace tfel::glossary;
+    using namespace mfront::bbrick;
+    const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test2.mfront"};
+    const auto mp = ProviderIdentifier::MATERIALPROPERTY;
+    const auto ip = ProviderIdentifier::INTEGRATIONVARIABLE;
+    auto dsl = getBehaviourDSL(f);
+    dsl->analyseFile(f,{});
+    RequirementManager r{dsl->getBehaviourDescription().getBehaviourData(mh),false};
+    r.addRequirement(Requirement{"real","r1",1u,{mp}});
+    r.addMaterialPropertyProvider("real","ir2","r2",1u);
+    // invalid array size for the new provider
+    TFEL_TESTS_CHECK_THROW(r.addMaterialPropertyProvider("real","ir1","r1",2u),
+			   std::runtime_error);
+    // invalid type for the new provider
+    TFEL_TESTS_CHECK_THROW(r.addMaterialPropertyProvider("StrainStensor","ir1","r1",1u),
+			   std::runtime_error);
+    // invalid provider type
+    TFEL_TESTS_CHECK_THROW(r.addIntegrationVariableProvider("real","ir1","r1",1u),
+			   std::runtime_error);
+    // invalid provider type for the new requirement
+    TFEL_TESTS_CHECK_THROW(r.addRequirement(Requirement{"real","r2",1u,{ip}}),
+			   std::runtime_error);
+    // invalid array size for the new requirement
+    TFEL_TESTS_CHECK_THROW(r.addRequirement(Requirement{"real","r2",2u,{mp}}),
+			   std::runtime_error);
+    // invalid type for the new requirement
+    TFEL_TESTS_CHECK_THROW(r.addRequirement(Requirement{"StrainStensor","r2",1u,{mp}}),
+			   std::runtime_error);
+    TFEL_TESTS_ASSERT(!r.hasProvider("r1"));
+    const auto urqs = r.getUnresolvedRequirements();
+    TFEL_TESTS_ASSERT(urqs.size()==1u);
+    TFEL_TESTS_ASSERT(urqs[0]=="r1");
+    r.addMaterialPropertyProvider("real","ir1","r1",1u);
+    TFEL_TESTS_ASSERT(r.hasProvider("r1"));
+    TFEL_TESTS_ASSERT(r.getUnresolvedRequirements().empty());
+    TFEL_TESTS_CHECK_THROW(r.addMaterialPropertyProvider("real","ir1","r1",1u),
+			   std::runtime_error);
+  }
+  /*!
+   * \brief some test on requirements handling when units are considered
+   */
+  void test3(void){
+    using namespace tfel::glossary;
+    using namespace mfront::bbrick;
+    const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test2.mfront"};
+    const auto mp = ProviderIdentifier::MATERIALPROPERTY;
+    const auto ip = ProviderIdentifier::INTEGRATIONVARIABLE;
+    auto dsl = getBehaviourDSL(f);
+    dsl->analyseFile(f,{});
+    RequirementManager r{dsl->getBehaviourDescription().getBehaviourData(mh),true};
+    r.addRequirement(Requirement{"real","r1",1u,{mp}});
+    r.addMaterialPropertyProvider("real","ir2","r2",1u);
+    // invalid array size for the new provider
+    TFEL_TESTS_CHECK_THROW(r.addMaterialPropertyProvider("real","ir1","r1",2u),
+			   std::runtime_error);
+    // invalid type for the new provider
+    TFEL_TESTS_CHECK_THROW(r.addMaterialPropertyProvider("StrainStensor","ir1","r1",1u),
+			   std::runtime_error);
+    // invalid provider type
+    TFEL_TESTS_CHECK_THROW(r.addIntegrationVariableProvider("real","ir1","r1",1u),
+			   std::runtime_error);
+    // invalid unit for the new provider
+    TFEL_TESTS_CHECK_THROW(r.addMaterialPropertyProvider("stress","ir1","r1",1u),
+			   std::runtime_error);
+    // invalid provider type for the new requirement
+    TFEL_TESTS_CHECK_THROW(r.addRequirement(Requirement{"real","r2",1u,{ip}}),
+			   std::runtime_error);
+    // invalid array size for the new requirement
+    TFEL_TESTS_CHECK_THROW(r.addRequirement(Requirement{"real","r2",2u,{mp}}),
+			   std::runtime_error);
+    // invalid type for the new requirement
+    TFEL_TESTS_CHECK_THROW(r.addRequirement(Requirement{"StrainStensor","r2",1u,{mp}}),
+			   std::runtime_error);
+    // invalid unit the new requirement
+    TFEL_TESTS_CHECK_THROW(r.addRequirement(Requirement{"stress","r2",1u,{mp}}),
+			   std::runtime_error);
+    TFEL_TESTS_ASSERT(!r.hasProvider("r1"));
+    const auto urqs = r.getUnresolvedRequirements();
+    TFEL_TESTS_ASSERT(urqs.size()==1u);
+    TFEL_TESTS_ASSERT(urqs[0]=="r1");
+    r.addMaterialPropertyProvider("real","ir1","r1",1u);
+    TFEL_TESTS_ASSERT(r.hasProvider("r1"));
+    TFEL_TESTS_ASSERT(r.getUnresolvedRequirements().empty());
+    TFEL_TESTS_CHECK_THROW(r.addMaterialPropertyProvider("real","ir1","r1",1u),
+			   std::runtime_error);
   }
 };
 

@@ -26,7 +26,13 @@
 #include"TFEL/Math/Vector/tvectorIO.hxx"
 #include"TFEL/Math/FSLevenbergMarquardt.hxx"
 
-std::pair<double,tfel::math::tvector<2u,double> >
+#ifndef _MSC_VER
+#define LM_STATIC static
+#else
+#define LM_STATIC
+#endif
+
+LM_STATIC std::pair<double,tfel::math::tvector<2u,double> >
 test(const double& x,
      const tfel::math::tvector<2u,double>& p)
 {

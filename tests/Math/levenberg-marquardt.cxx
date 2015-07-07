@@ -29,11 +29,16 @@
 
 #include"TFEL/Math/LevenbergMarquardt.hxx"
 
-void
-test(double & v,
-     tfel::math::vector<double>& g,
-     const tfel::math::vector<double>& x,
-     const tfel::math::vector<double>& p)
+#ifndef _MSC_VER
+#define LM_STATIC static
+#else
+#define LM_STATIC
+#endif
+
+LM_STATIC void test(double & v,
+		    tfel::math::vector<double>& g,
+		    const tfel::math::vector<double>& x,
+		    const tfel::math::vector<double>& p)
 {
   using namespace std;
   using namespace tfel::math;

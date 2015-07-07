@@ -176,7 +176,7 @@ getValueInRegistry(std::string &value)
   if(ERROR_SUCCESS != lRes){
     return false;
   }
-  nError = RegQueryValueEx(hKey,"", 0,NULL,
+  nError = RegQueryValueEx(hKey,"",nullptr,nullptr,
 			   reinterpret_cast<LPBYTE>(szBuffer),
 			   &dwBufferSize);
   RegCloseKey(hKey);
@@ -695,7 +695,7 @@ main(const int argc,
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   }
   catch(exception& e){
-    MessageBox(0,e.what(),
+    MessageBox(nullptr,e.what(),
 	       "mfront",0);
     return EXIT_FAILURE;
   }

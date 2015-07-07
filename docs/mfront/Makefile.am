@@ -136,9 +136,18 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   ExternalStateVar.md                                      \
 	   InitLocalVars.md                                         \
 	   LocalVar.md                                              \
+	   OrthotropicBehaviour.md                                  \
 	   Parameter.md                                             \
 	   Parser.md                                                \
-	   StateVar.md				                    \
+	   PerturbationValueForNumericalJacobianComputation.md      \
+	   PhysicalBounds.md                                        \
+	   Private.md                                               \
+	   Profiling.md                                             \
+	   RequireStiffnessOperator.md                              \
+	   RequireStiffnessTensor.md                                \
+	   RequireThermalExpansionCoefficientTensor.md              \
+	   StaticVariable.md		                            \
+	   Sources.md				                    \
 	   StateVariable.md			                    \
 	   StaticVar.md			                            \
 	   StaticVariable.md		                            \

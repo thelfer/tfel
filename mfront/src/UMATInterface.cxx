@@ -744,47 +744,6 @@ namespace mfront{
 
     this->writeVisibilityDefines(out);
     
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategies.empty()){
-	this->writeUmatFortranFunctionDefine(out,name);
-      } else {
-	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
-	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
-	    this->writeUmatFortranFunctionDefine(out,name+"_frst");
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeUmatFortranFunctionDefine(out,name);
-	    }
-	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-	    this->writeUmatFortranFunctionDefine(out,name+"_malls");
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeUmatFortranFunctionDefine(out,name);
-	    }
-	  } else if(*pfss==LOGARITHMICSTRAIN1D){
-	    this->writeUmatFortranFunctionDefine(out,name+"_log1D");
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeUmatFortranFunctionDefine(out,name);
-	    }
-	  } else if(*pfss==NONE){
-	    this->writeUmatFortranFunctionDefine(out,name+"_ss");
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeUmatFortranFunctionDefine(out,name);
-	    }
-	  } else {
-	    string msg("UMATInterface::endTreatment : "
-		       "internal error, unsupported finite strain strategy");
-	    throw(runtime_error(msg));
-	  }
-	}
-	if((this->finiteStrainStrategies.size()!=1u)&&
-	   (find(this->finiteStrainStrategies.begin(),
-		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
-	  this->writeUmatFortranFunctionDefine(out,name);
-	}
-      }
-    } else {
-      this->writeUmatFortranFunctionDefine(out,name);
-    }
-
     out << "#ifdef __cplusplus\n\n";
 
     out << "namespace umat{\n\n";
@@ -1544,29 +1503,16 @@ namespace mfront{
   }
 
   void
-  UMATInterface::writeUmatFortranFunctionDefine(std::ostream& out,
-						const std::string& name) const
-  {
-    out << "#define umat" << makeUpperCase(name) <<"_F77" << " F77_FUNC(umat"
-	<< makeLowerCase(name) << ",UMAT"
-	<< makeUpperCase(name) << ")\n\n";
-  } // end of UMATInterface::writeUmatFortranFunctionDefine
-
-  void
   UMATInterface::writeUmatFunctionDeclaration(std::ostream& out,
 					      const std::string& name) const
   {
     using namespace std;
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
-    	<< name;
-    writeUMATArguments(out);
-    out << ";" << endl << endl;
+    // out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
+    // 	<< name;
+    // writeUMATArguments(out);
+    //    out << ";" << endl << endl;
     out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\numat"
     	<< makeLowerCase(name);
-    writeUMATArguments(out);
-    out << ";" << endl << endl;
-    out << "MFRONT_SHAREDOBJ void\n" 
-	<< "umat" << makeUpperCase(name) <<"_F77";
     writeUMATArguments(out);
     out << ";" << endl << endl;
   } // end of UMATInterface::writeUmatFunctionDeclaration
@@ -1643,23 +1589,19 @@ namespace mfront{
 							      const std::string&,
 							      const std::string&,
 							      const std::string&,
-							      const std::string&,
 							      const BehaviourDescription&) const) const
   {
     using namespace std;
     const string base  = suffix.empty() ? name : name+"_"+suffix;
-    const string uname1 = makeUpperCase(base)+"_F77";
     const string fname2 = "umat"+makeLowerCase(base);
-    const string uname2 = makeUpperCase(fname2)+"_F77";
-    (this->*m)(out,name,base,uname1,suffix,mb);
-    (this->*m)(out,name,fname2,uname2,suffix,mb);
+    //    (this->*m)(out,name,base,suffix,mb);
+    (this->*m)(out,name,fname2,suffix,mb);
   }
 
   void
   UMATInterface::writeFiniteRotationSmallStrainUmatFunction(std::ostream& out,
 							    const std::string& name,
 							    const std::string& fname,
-							    const std::string& uname,
 							    const std::string& suffix,
 							    const BehaviourDescription& mb) const
   {
@@ -1721,24 +1663,12 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
-    out << "MFRONT_SHAREDOBJ void\n" << uname;
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
-    out << endl;
-    out << "{\n";
-    out << fname
-	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,"
-	<< "DRPLDT,STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,"
-	<< "CMNAME,NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,"
-	<< "PNEWDT,CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,"
-	<< "KINC,size);" << endl;
-    out << "}" << endl << endl;
   }
   
   void
   UMATInterface::writeMieheApelLambrechtLogarithmicStrainUmatFunction(std::ostream& out,
 								      const std::string& name,
 								      const std::string& fname,
-								      const std::string& uname,
 								      const std::string& suffix,
 								      const BehaviourDescription& mb) const
   {
@@ -1802,23 +1732,12 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
-    out << "MFRONT_SHAREDOBJ void\n" << uname;
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
-    out << endl;
-    out << "{\n" << fname
-	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,"
-	<< "DRPLDT,STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,"
-	<< "CMNAME,NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,"
-	<< "PNEWDT,CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,"
-	<< "KINC,size);" << endl;
-    out << "}\n\n";
   }
 
   void
   UMATInterface::writeLogarithmicStrain1DUmatFunction(std::ostream& out,
 						      const std::string& name,
 						      const std::string& fname,
-						      const std::string& uname,
 						      const std::string& suffix,
 						      const BehaviourDescription& mb) const
   {
@@ -1886,23 +1805,12 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
-    out << "MFRONT_SHAREDOBJ void\n" << uname;
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
-    out << endl;
-    out << "{\n" <<  fname
-    	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,"
-    	<< "DRPLDT,STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,"
-    	<< "CMNAME,NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,"
-    	<< "PNEWDT,CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,"
-    	<< "KINC,size);" << endl;
-    out << "}\n\n";
   }
 
   void
   UMATInterface::writeStandardUmatFunction(std::ostream& out,
 					   const std::string& name,
 					   const std::string& fname,
-					   const std::string& uname,
 					   const std::string& suffix,
 					   const BehaviourDescription& mb) const
   {
@@ -1937,16 +1845,6 @@ namespace mfront{
        			       name,suffix,mb);
       out << "}\n";
     }
-    out << "}\n\n";
-    out << "MFRONT_SHAREDOBJ void\n" << uname;
-    writeUMATArguments(out,mb.getBehaviourType(),true);
-    out << endl;
-    out << "{\n" << fname
-	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,"
-	<< "DRPLDT,STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,"
-	<< "CMNAME,NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,"
-	<< "PNEWDT,CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,"
-	<< "KINC,size);" << endl;
     out << "}\n\n";
   }
 

@@ -143,7 +143,7 @@ namespace tfel
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
       HINSTANCE__* lib = this->loadLibrary(l);
       int (*p)(void)   = (int (*)(void)) ::GetProcAddress(lib,s.c_str());
-      return p!=static_cast<int (*)(void)>(0);
+      return p!=static_cast<int (*)(void)>(nullptr);
 #else
       void * lib = this->loadLibrary(l);
       void * p   = ::dlsym(lib,s.c_str());

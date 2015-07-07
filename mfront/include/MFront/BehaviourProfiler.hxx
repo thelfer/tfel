@@ -15,7 +15,7 @@
 #define LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _MSC_VER
 #define MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER const
 #else 
 #define MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER constexpr
@@ -34,7 +34,7 @@ namespace mfront{
    * structure in charge of performance measurements in mechanical
    * behaviour
    */
-  struct MFRONTTIMER_VISIBILITY_EXPORT BehaviourProfiler
+  struct MFRONTPROFILING_VISIBILITY_EXPORT BehaviourProfiler
   {
     /*!
      * a timer for a specicied code block.
