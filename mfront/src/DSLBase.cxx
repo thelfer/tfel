@@ -36,8 +36,7 @@ namespace mfront
   isInteger(const std::string& s){
     using namespace std;
     bool b = true;
-    string::const_iterator p;
-    for(p=s.begin();(p!=s.end()&&(b));++p){
+    for(auto p=s.begin();(p!=s.end()&&(b));++p){
       b = static_cast<bool>(isdigit(*p));
     }
     return b;

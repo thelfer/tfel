@@ -2051,14 +2051,15 @@ namespace mfront{
     }
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
-      this->behaviourDataFile << "#include\"TFEL/Math/tvector.hxx\"" << endl;
-      this->behaviourDataFile << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"" << endl;
+      this->behaviourDataFile << "#include\"TFEL/Math/tvector.hxx\"\n";
+      this->behaviourDataFile << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
     }
     if(b2){
       this->behaviourDataFile << "#include\"TFEL/Math/vector.hxx\"" << endl;
     }
     this->behaviourDataFile << "#include\"TFEL/Math/stensor.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"" << endl;
+    this->behaviourDataFile << "#include\"TFEL/Math/tmatrix.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Math/st2tost2.hxx\"" << endl;
     this->behaviourDataFile << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"" << endl;
@@ -4281,6 +4282,7 @@ namespace mfront{
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
       this->integrationDataFile << "#include\"TFEL/Math/tvector.hxx\"" << endl;
+      this->integrationDataFile << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"" << endl;
     }
     if(b2){
       this->integrationDataFile << "#include\"TFEL/Math/vector.hxx\"" << endl;

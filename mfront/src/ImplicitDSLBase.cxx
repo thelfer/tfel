@@ -728,9 +728,12 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Math/st2tost2.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"" << endl;
-    this->behaviourFile << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"" << endl;
     if(has_scalar_array){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx\"\n"
+			  << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx\"" << endl;
     }
     // tiny vectors
     if(has_tvector){
@@ -745,7 +748,8 @@ namespace mfront{
       this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyVectorView.hxx\"" << endl;
     }
     if(has_tvector_array){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx\"\n"
+			  << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx\"" << endl;
     }
     // symmetric tensors
     if(has_stensor){
@@ -760,7 +764,8 @@ namespace mfront{
       this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"" << endl;
     }
     if(has_stensor_array){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"" << endl;
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"\n"
+			  << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorViewIO.hxx\"" << endl;
     }
   } // end of ImplicitDSLBase::writeBehaviourParserSpecificIncludes(void)
   

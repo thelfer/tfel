@@ -262,4 +262,3 @@ target_link_libraries(mfront-doc
   TFELSystem TFELUtilities)
 install(TARGETS mfront-doc DESTINATION bin
   COMPONENT mfront)
-

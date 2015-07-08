@@ -74,6 +74,8 @@ namespace mfront{
     DefaultDSLBase::writeBehaviourParserSpecificIncludes();
     this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
     this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
   } // end of DefaultCZMDSL::writeBehaviourParserSpecificIncludes
 
   DefaultCZMDSL::~DefaultCZMDSL()
