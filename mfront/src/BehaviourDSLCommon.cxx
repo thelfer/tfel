@@ -42,6 +42,8 @@
 #include"MFront/AbstractBehaviourBrickFactory.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/BehaviourDSLCommon.hxx"
+#include"MFront/BehaviourBrick/Requirement.hxx"
+#include"MFront/BehaviourBrick/RequirementManager.hxx"
 
 #ifndef _MSC_VER
 static const char * const constexpr_c = "constexpr";
@@ -360,16 +362,16 @@ namespace mfront{
   }
 
   void
-  BehaviourDSLCommon::endsInputFileProcessing()
+  BehaviourDSLCommon::endsInputFileProcessing(void)
   {
     using namespace std;
+    using namespace mfront::bbrick;
+    const auto& g = tfel::glossary::Glossary::getGlossary();
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
       log << "BehaviourDSLCommon::endsInputFileProcessing : begin" << endl;
     }
-    for(const auto& pb : this->bricks){
-      pb->endTreatment();
-    }
+    // defining modelling hypotheses
     if(!this->mb.areModellingHypothesesDefined()){
       this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());
     }
@@ -385,6 +387,55 @@ namespace mfront{
 	}
 	log << endl;	    
       }
+    }
+    // treating bricks
+    if(!this->bricks.empty()){
+      if(getVerboseMode()>=VERBOSE_DEBUG){
+	auto& log = getLogStream();
+	log << "BehaviourDSLCommon::endsInputFileProcessing : "
+	    << "treating bricks" << endl;
+      }
+      for(const auto mh: h){
+	auto& d = this->mb.getBehaviourData(mh);
+	RequirementManager r{d,this->mb.useQt()};
+	// for(const auto& pb : this->bricks){
+	//   pb->declareProviders(r,mh);
+	// }
+	for(const auto& pb : this->bricks){
+	  pb->addRequirements(r,mh);
+	}
+	// unmatched requirements
+	auto umrqs = vector<string>{};
+	const auto& urs = r.getUnresolvedRequirements();
+	for(const auto& n : urs){
+	  const auto s = SupportedTypes{};
+	  const auto ur = r.getRequirement(n);
+	  if((s.getTypeFlag(ur.type)!=SupportedTypes::Scalar)||
+	     (find(ur.aproviders.begin(),ur.aproviders.end(),
+		   ProviderIdentifier::MATERIALPROPERTY)==ur.aproviders.end())){
+	    umrqs.push_back(ur.name);	    
+	  }
+	}
+	if(!umrqs.empty()){
+	  auto msg = string{};
+	  msg = "BehaviourDSLCommon::endsInputFileProcessing : "
+	    "the following requirements can't be met : ";
+	  for(const auto& umrq : umrqs){
+	    msg += "\n- "+umrq;
+	  }
+	  throw(runtime_error(msg));
+	}
+	for(const auto& n : urs){
+	  const auto ur = r.getRequirement(n);
+	  this->mb.addMaterialProperty(mh,{ur.type,ur.name,ur.asize,0u});
+	  if(!g.contains(ur.name)){
+	    this->mb.setEntryName(mh,ur.name,ur.name);
+	  }
+	}
+      }
+    }
+    for(const auto& pb : this->bricks){
+      pb->endTreatment();
     }
     // check of stiffness tensor requirement
     if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||

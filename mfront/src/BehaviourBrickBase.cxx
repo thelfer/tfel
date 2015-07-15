@@ -27,6 +27,11 @@ namespace mfront{
   {} // end of BehaviourBrickBase::BehaviourBrickBase
 
   void
+  BehaviourBrickBase::addRequirements(bbrick::RequirementManager&,
+				      const Hypothesis) const
+  {} // end of BehaviourBrickBase::addRequirements
+  
+  void
   BehaviourBrickBase::checkThatParameterHasNoValue(const Parameter& p) const
   {
     using namespace std;

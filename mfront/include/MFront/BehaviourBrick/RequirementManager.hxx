@@ -191,6 +191,11 @@ namespace mfront{
       std::vector<std::string>
       getUnresolvedRequirements(void) const;
       /*!
+       * \param[in] n : external name of the requirement
+       * \return the requirement
+       */      
+      const Requirement& getRequirement(const std::string&) const;
+      /*!
        * \param[in] n : external name of a requirement
        * \return true if the given requirement has a provider
        */      
@@ -207,11 +212,6 @@ namespace mfront{
        * \return true if the given requirement has a provider
        */      
       bool hasProvider(const Requirement&) const;
-      /*!
-       * \param[in] n : external name of the requirement
-       * \return the requirement
-       */      
-      const Requirement& getRequirement(const std::string&) const;
       /*!
        * \brief add a requirement
        * \param[in] r : requirement

@@ -116,6 +116,11 @@ macro(add_mfront_behaviour_generated_source lib interface file)
       set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
     endif(WIN32)
   endif(${CMAKE_VERSION} GREATER "2.8.2")
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(mfront_flags "--debug")
+  else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(mfront_flags "")
+  endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     add_custom_command(
       OUTPUT  "src/${file}.cxx"
@@ -139,7 +144,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
-      ARGS    "--interface=${interface}" "${mfront_file}"
+      ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
       COMMENT "treating mfront source ${file}.mfront")
@@ -150,7 +155,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
 	COMMAND "${mfront_executable}"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
-	ARGS    "--interface=${interface}" "${mfront_file}"
+	ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
 	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${file}.mfront")
@@ -175,6 +180,11 @@ macro(mfront_dependencies lib)
 	set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
       endif(WIN32)
     endif(${CMAKE_VERSION} GREATER "2.8.2")
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+      set(mfront_flags "--debug")
+    else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+      set(mfront_flags "")
+    endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
     if((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
 	OUTPUT  "src/${source}-mfront.cxx"
@@ -195,7 +205,7 @@ macro(mfront_dependencies lib)
 	COMMAND "set"
 	ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
 	COMMAND "${mfront_executable}"
-	ARGS    "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
+	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${source}.mfront")
@@ -203,7 +213,7 @@ macro(mfront_dependencies lib)
       add_custom_command(
 	OUTPUT  "src/${source}-mfront.cxx"
 	COMMAND "${mfront_executable}"
-	ARGS    "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
+	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${source}.mfront")

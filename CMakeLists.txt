@@ -260,11 +260,19 @@ endif(enable-website)
 add_subdirectory(docs)
 
 ## environment under msys
-if (MSYS)
+if(CMAKE_HOST_WIN32)
   string(REGEX REPLACE "(.*):(.*)" "/\\1\\2"
      MSYS_BINARY_DIR "${PROJECT_BINARY_DIR}")
-  configure_file(env-msys.sh.in env-msys.sh @ONLY)
-endif(MSYS)
+  if(CMAKE_CONFIGURATION_TYPES)
+    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+      set(TFEL_CONF_DIR "/${conf}")
+      configure_file(env-win32.sh.in env-${conf}.sh @ONLY)
+    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+  else(CMAKE_CONFIGURATION_TYPES)
+    set(TFEL_CONF_DIR "")
+    configure_file(env-win32.sh.in env.sh @ONLY)
+  endif(CMAKE_CONFIGURATION_TYPES)
+endif(CMAKE_HOST_WIN32)
 
 ## Packaging
 option(install-system-libraries "install system libraries" OFF)

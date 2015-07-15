@@ -35,7 +35,7 @@ namespace mfront{
     //! destructor
     virtual ~CMaterialPropertyInterface();
         
-  private:
+  protected:
 
     /*!
      * \return the name of the generated library
@@ -45,7 +45,11 @@ namespace mfront{
     virtual std::string
     getGeneratedLibraryName(const std::string&,
 			    const std::string&) const;
-
+    /*!
+     * \brief write the header preprocessor directives
+     * \param[in] m: material name
+     * \param[in] c: class name
+     */
     virtual void
     writeHeaderPreprocessorDirectives(const std::string&,
 				      const std::string&) override;
@@ -65,43 +69,40 @@ namespace mfront{
 
     virtual void
     writeEndSrcNamespace(void) override;
-
     /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
+     * \param[in] m: material name
+     * \param[in] c: class name
      */
     virtual std::string
     getHeaderFileName(const std::string&,
 		      const std::string&) override;
-
     /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
+     * \param[in] m: material name
+     * \param[in] c: class name
      */
     virtual std::string
     getSrcFileName(const std::string&,
 		   const std::string&) override;
-
     /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
+     * \param[in] m: material name
+     * \param[in] c: class name
      */
     virtual std::string
     getFunctionDeclaration(const std::string&,
 			   const std::string&) override;
 
     /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
+     * \param[in] m: material name
+     * \param[in] c: class name
      */
     virtual std::string
     getCheckBoundsFunctionDeclaration(const std::string&,
 				      const std::string&) override;
-
+    /*!
+     * \return true if a check bounds function is required
+     */
     virtual bool
     requiresCheckBoundsFunction(void) const override;
-
-
   }; // end of CMaterialPropertyInterface
 
 } // end of namespace mfront

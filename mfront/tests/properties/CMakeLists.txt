@@ -20,6 +20,11 @@ macro(add_mfront_generated_source lib interface ext file)
   else("${ext}" STREQUAL "")
     set(mfront_output "src/${file}-${ext}.cxx")
   endif("${ext}" STREQUAL "")
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(mfront_flags "--debug")
+  else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(mfront_flags "")
+  endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     add_custom_command(
       OUTPUT  "${mfront_output}"
@@ -40,7 +45,7 @@ macro(add_mfront_generated_source lib interface ext file)
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
       COMMAND "${mfront_executable}"
-      ARGS    "--interface=${interface}" "${mfront_file}"
+      ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
@@ -48,7 +53,7 @@ macro(add_mfront_generated_source lib interface ext file)
     add_custom_command(
       OUTPUT  "${mfront_output}"
       COMMAND "${mfront_executable}"
-      ARGS    "--interface=${interface}" "${mfront_file}"
+      ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")

@@ -49,7 +49,7 @@ namespace mfront{
     this->registerVariable("theta",false);
     this->registerVariable("numerical_jacobian_epsilon",false);
     this->registerVariable("maximum_increment_value_per_iteration",false);
-    this->registerVariable("jacobianComparisonCriterium",false);
+    this->registerVariable("jacobianComparisonCriterion",false);
     this->registerVariable("epsilon",false);
     this->registerVariable("vect_e",false);
     this->registerVariable("zeros",false);
@@ -95,8 +95,10 @@ namespace mfront{
 			      &ImplicitDSLBase::treatInitJacobianInvert);
     this->registerNewCallBack("@CompareToNumericalJacobian",
 			      &ImplicitDSLBase::treatCompareToNumericalJacobian);
+    this->registerNewCallBack("@JacobianComparisonCriterion",
+			      &ImplicitDSLBase::treatJacobianComparisonCriterion);
     this->registerNewCallBack("@JacobianComparisonCriterium",
-			      &ImplicitDSLBase::treatJacobianComparisonCriterium);
+			      &ImplicitDSLBase::treatJacobianComparisonCriterion);
     this->registerNewCallBack("@RequireStiffnessTensor",
 			      &ImplicitDSLBase::treatRequireStiffnessOperator);
     this->registerNewCallBack("@MaximumIncrementValuePerIteration",
@@ -274,33 +276,33 @@ namespace mfront{
   } // end of ImplicitDSLBase::treatCompareToNumericalJacobian
   
   void
-  ImplicitDSLBase::treatJacobianComparisonCriterium(void)
+  ImplicitDSLBase::treatJacobianComparisonCriterion(void)
   {
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
-      this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterium",
+      this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
 			      "must call '@CompareToNumericalJacobian' first");
     }
-    double jacobianComparisonCriterium;
-    this->checkNotEndOfFile("ImplicitDSLBase::treatJacobianComparisonCriterium",
-			    "Cannot read jacobianComparisonCriterium value.");
+    double jacobianComparisonCriterion;
+    this->checkNotEndOfFile("ImplicitDSLBase::treatJacobianComparisonCriterion",
+			    "Cannot read jacobianComparisonCriterion value.");
     istringstream flux(current->value);
-    flux >> jacobianComparisonCriterium;
+    flux >> jacobianComparisonCriterion;
     if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterium",
-			      "Failed to read jacobianComparisonCriterium value.");
+      this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
+			      "Failed to read jacobianComparisonCriterion value.");
     }
-    if(jacobianComparisonCriterium<0){
-      this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterium",
-			      "JacobianComparisonCriterium value must be positive.");
+    if(jacobianComparisonCriterion<0){
+      this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
+			      "JacobianComparisonCriterion value must be positive.");
     }
     ++(this->current);
-    this->readSpecifiedToken("ImplicitDSLBase::treatJacobianComparisonCriterium",";");
-    this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterium",1u,0u));
-    this->mb.setParameterDefaultValue(h,"jacobianComparisonCriterium",
-				      jacobianComparisonCriterium);
-  } // ImplicitDSLBase::treatJacobianComparisonCriterium
+    this->readSpecifiedToken("ImplicitDSLBase::treatJacobianComparisonCriterion",";");
+    this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterion",1u,0u));
+    this->mb.setParameterDefaultValue(h,"jacobianComparisonCriterion",
+				      jacobianComparisonCriterion);
+  } // ImplicitDSLBase::treatJacobianComparisonCriterion
 
   void ImplicitDSLBase::treatAlgorithm(void)
   {
@@ -1818,9 +1820,9 @@ namespace mfront{
       this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
     }
     if(this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
-      if(!this->mb.hasParameter(h,"jacobianComparisonCriterium")){
-	this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterium",1u,0u));
-	this->mb.setParameterDefaultValue(h,"jacobianComparisonCriterium",
+      if(!this->mb.hasParameter(h,"jacobianComparisonCriterion")){
+	this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterion",1u,0u));
+	this->mb.setParameterDefaultValue(h,"jacobianComparisonCriterion",
 					  this->mb.getFloattingPointParameterDefaultValue(h,"epsilon"));
       }
     }

@@ -128,7 +128,7 @@ namespace mfront{
 	  SupportedTypes::TypeSize nv1 = mb.getTypeSize(v1.type,1u);
 	  SupportedTypes::TypeSize nv2 = mb.getTypeSize(v2.type,1u);
 	  out << "error=" << nv1 << "*" << nv2 << "*"
-	      << "(this->jacobianComparisonCriterium)" <<";\n";
+	      << "(this->jacobianComparisonCriterion)" <<";\n";
 	  if((v1.arraySize==1u)&&(v2.arraySize==1u)){
 	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
 		<< "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 

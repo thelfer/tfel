@@ -71,7 +71,7 @@ namespace mfront{
   AsterInterface::AsterInterface()
     : compareToNumericalTangentOperator(false),
       strainPerturbationValue(1.e-6),
-      tangentOperatorComparisonCriterium(1.e7),
+      tangentOperatorComparisonCriterion(1.e7),
       savesTangentOperator(false),
       errorReport(true)
   {} // end of AsterInterface::AsterInterface()
@@ -113,29 +113,30 @@ namespace mfront{
       }
       ++(current);
       return make_pair(true,current);      
-    } else if (key=="@AsterTangentOperatorComparisonCriterium"){
+    } else if ((key=="@AsterTangentOperatorComparisonCriterium")||
+	       (key=="@AsterTangentOperatorComparisonCriterion")){
       if(!this->compareToNumericalTangentOperator){
-	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : "
+	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterion) : "
 		   "comparison to tangent operator is not enabled at this stage.\n"
 		   "Use the @AsterCompareToNumericalTangentOperator directive before "
-		   "@AsterTangentOperatorComparisonCriterium");
+		   "@AsterTangentOperatorComparisonCriterion");
 	throw(runtime_error(msg));
       }
       if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : ");
+	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterion) : ");
 	msg += "unexpected end of file";
 	throw(runtime_error(msg));
       }
       istringstream flux(current->value);
-      flux >> this->tangentOperatorComparisonCriterium;
+      flux >> this->tangentOperatorComparisonCriterion;
       if(flux.fail()){
-	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : ");
+	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterion) : ");
 	msg+="failed to read criterium value.\n";
 	throw(runtime_error(msg));
       }
       ++(current);    
       if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterium) : ");
+	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterion) : ");
 	msg += "unexpected end of file";
 	throw(runtime_error(msg));
       }  
@@ -661,7 +662,7 @@ namespace mfront{
       out << "mnDt=max(mnDt,nD[i]);\n";
       out << "m=max(m,abs(nD[i]-*(DDSOE+i)));\n";
       out << "}\n";
-      out << "if(m>" << this->tangentOperatorComparisonCriterium << "){\n";
+      out << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n";
       out << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< endl;\n";
       out << "cout << \"Dt :\" << endl;\n";
       out << "for(i=0;i!=*NTENS;++i){\n";

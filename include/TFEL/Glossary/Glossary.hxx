@@ -134,8 +134,7 @@ namespace tfel
        * \return true if the glossary contains the given name or key
        * \param[in] n : name
        */
-      bool
-	contains(const std::string&) const;
+      bool contains(const std::string&) const;
       /*!
        * \return the glossary entry associated with the given name or key
        * \param[in] n : name

@@ -67,7 +67,7 @@ EXTRA_DIST = bootstrap.sh   \
 	     tfel.doxygen   \
 	     INSTALL        \
              INSTALL-cmake  \
-	     env-msys.sh.in
+	     env-win32.sh.in
 
 licencesdir = $(pkgdatadir)
 dist_licences_DATA = LICENCE-GNU-GPL \

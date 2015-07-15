@@ -65,7 +65,7 @@ namespace mfront
 
   void
   ExcelMaterialPropertyInterface::readExcelInterface(std::vector<ExcelMaterialPropertyInterface::ExcelInterface>& interfaces,
-					      const std::string& line)
+						     const std::string& line)
   {
     using namespace std;
     if(!line.empty()){
@@ -100,8 +100,8 @@ namespace mfront
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   ExcelMaterialPropertyInterface::treatKeyword(const std::string&,
-					 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+					       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+					       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
     using namespace std;
     return make_pair(false,current);
@@ -169,7 +169,7 @@ namespace mfront
       }
       iwrapper.close();
     }
-    lib = "lib"+getMaterialLawLibraryNameBase(library,material);
+    lib = "libExcel"+getMaterialLawLibraryNameBase(library,material);
     p2 = interfaces.end();
     for(p=interfaces.begin();p!=interfaces.end();++p){
       if((p->function==name)&&

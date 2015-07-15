@@ -148,7 +148,7 @@ namespace mfront{
 
     virtual void treatCompareToNumericalJacobian(void);
 
-    virtual void treatJacobianComparisonCriterium(void);
+    virtual void treatJacobianComparisonCriterion(void);
 
     virtual void treatInitJacobian(void);
 

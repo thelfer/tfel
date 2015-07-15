@@ -41,6 +41,14 @@ namespace mfront{
      */
     BehaviourBrickBase(AbstractBehaviourDSL&,
 		       BehaviourDescription&);
+    /*!
+     * \brief add requirements for the given modelling hypothesis
+     * \param[in] r : requirement manager
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    addRequirements(bbrick::RequirementManager&,
+		    const Hypothesis) const override;
     //! destructor
     virtual ~BehaviourBrickBase();
   protected:

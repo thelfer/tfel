@@ -57,6 +57,20 @@ namespace mfront{
     virtual void
     writeHeaderPreprocessorDirectives(const std::string&,
 				      const std::string&) override;
+    /*!
+     * \param[in] m: material name
+     * \param[in] c: class name
+     */
+    virtual std::string
+    getHeaderFileName(const std::string&,
+		      const std::string&) override;
+    /*!
+     * \param[in] m: material name
+     * \param[in] c: class name
+     */
+    virtual std::string
+    getSrcFileName(const std::string&,
+		   const std::string&) override;
   }; // end of MfrontExcelLawInternalInterface
 
 } // end of namespace mfront

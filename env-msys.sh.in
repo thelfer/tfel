@@ -1,9 +1,0 @@
-export PATH=@MSYS_BINARY_DIR@/mfront/mtest:$PATH
-export PATH=@MSYS_BINARY_DIR@/mfront/src:$PATH
-export PATH=@MSYS_BINARY_DIR@/src/Material:$PATH
-export PATH=@MSYS_BINARY_DIR@/src/Tests:$PATH
-export PATH=@MSYS_BINARY_DIR@/src/Math:$PATH
-export PATH=@MSYS_BINARY_DIR@/src/Utilities:$PATH
-export PATH=@MSYS_BINARY_DIR@/src/Exception:$PATH
-export PATH=@MSYS_BINARY_DIR@/src/Glossary:$PATH
-export PATH=@MSYS_BINARY_DIR@/src/System:$PATH

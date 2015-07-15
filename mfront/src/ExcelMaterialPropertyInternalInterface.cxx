@@ -29,14 +29,28 @@ namespace mfront
 
   std::string
   ExcelMaterialPropertyInternalInterface::getGeneratedLibraryName(const std::string& l,
-							   const std::string& m) const
+								  const std::string& m) const
   {
     return "libExcel"+getMaterialLawLibraryNameBase(l,m);
   } // end of ExcelMaterialPropertyInternalInterface::getGeneratedLibraryName
+
+  std::string
+  ExcelMaterialPropertyInternalInterface::getHeaderFileName(const std::string& m,
+						    const std::string& c)
+  {
+    return CMaterialPropertyInterface::getHeaderFileName(m,c)+"-Excel";
+  } // end of ExcelMaterialPropertyInternalInterface::getHeaderFileName
+
+  std::string
+  ExcelMaterialPropertyInternalInterface::getSrcFileName(const std::string& m,
+						 const std::string& c)
+  {
+    return CMaterialPropertyInterface::getSrcFileName(m,c)+"-Excel";
+  } // end of ExcelMaterialPropertyInternalInterface::getSrcFileName
   
   void
   ExcelMaterialPropertyInternalInterface::writeHeaderPreprocessorDirectives(const std::string&,
-								     const std::string&)
+									    const std::string&)
   {
 #ifdef TFEL_ARCH32
     writeExportDirectives(this->headerFile,"__stdcall");

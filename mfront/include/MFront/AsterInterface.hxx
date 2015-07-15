@@ -150,7 +150,7 @@ namespace mfront{
 
     double strainPerturbationValue;
 
-    double tangentOperatorComparisonCriterium;
+    double tangentOperatorComparisonCriterion;
 
     bool savesTangentOperator;
 

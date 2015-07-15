@@ -74,6 +74,8 @@ namespace mfront{
 			      &Child::treatInitLocalVariables);
     this->registerNewCallBack("@InitLocalVariables",
 			      &Child::treatInitLocalVariables);
+    this->registerNewCallBack("@InitializeLocalVariables",
+			      &Child::treatInitLocalVariables);
     this->registerNewCallBack("@Integrator",&Child::treatIntegrator);
     this->registerNewCallBack("@Interface",&Child::treatInterface);
     this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);

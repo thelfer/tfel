@@ -130,12 +130,32 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   Bounds.md				                    \
 	   Brick.md				                    \
 	   Coef.md				                    \
+	   CompareToNumericalJacobian.md		            \
+	   ComputeStress.md				            \
+	   ComputeFinalStress.md				    \
 	   Date.md				                    \
 	   Description.md                                           \
 	   DSL.md				                    \
+	   Epsilon.md                                               \
 	   ExternalStateVar.md                                      \
+	   ExternalStateVariable.md                                 \
+	   Import.md                                                \
+	   InitJacobian.md                                          \
+	   InitJacobianInvert.md                                    \
+	   Includes.md                                              \
 	   InitLocalVars.md                                         \
+	   IntegrationVariable.md                                   \
+	   Interface.md                                             \
+	   IsotropicBehaviour.md                                    \
+	   IsotropicElasticBehaviour.md                             \
+	   IterMax.md                                               \
+	   Library.md                                               \
+	   Link.md                                                  \
 	   LocalVar.md                                              \
+	   Material.md                                              \
+	   MaterialLaw.md                                           \
+	   MaterialProperty.md                                      \
+	   MaximumNumberOfIterations.md                             \
 	   OrthotropicBehaviour.md                                  \
 	   Parameter.md                                             \
 	   Parser.md                                                \
@@ -159,4 +179,17 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   UsableInPurelyImplicitResolution.md                      \
 	   UseQt.md                                                 \
 	   MaterialLaw/Constant.md                                  \
-	   MaterialLaw/Function.md
+	   MaterialLaw/Function.md                                  \
+	   MaterialLaw/Input.md                                     \
+	   MaterialLaw/Law.md                                       \
+	   MaterialLaw/MFront.md                                    \
+	   MaterialLaw/Output.md                                    \
+	   Model/ConstantMaterialProperty.md                        \
+	   Model/Domain.md                                          \
+	   Model/Domains.md                                         \
+	   Model/Function.md                                        \
+	   Model/Input.md                                           \
+	   Model/GlobalParameter.md                                 \
+	   Model/LocalParameter.md				    \
+	   Model/Model.md				            \
+	   Model/Output.md

@@ -779,8 +779,7 @@ namespace mfront
     }
   } // end of DSLBase::callMFront
 
-  void
-  DSLBase::treatMFront(void){
+  void DSLBase::treatMFront(void){
     using namespace std;
     vector<string> vfiles;
     vector<string> vinterfaces;
@@ -988,13 +987,10 @@ namespace mfront
 
   void
   DSLBase::treatMaterialLaw(void){
-    using namespace std;
-    vector<string> vfiles;
-    vector<string>::const_iterator p;
-    vfiles = this->readStringOrArrayOfString("DSLBase::treatMfront");
+    const auto vfiles = this->readStringOrArrayOfString("DSLBase::treatMfront");
     this->readSpecifiedToken("DSLBase::treatMfront",";");
-    for(p=vfiles.begin();p!=vfiles.end();++p){
-      this->handleMaterialLaw(*p);
+    for(const auto& f : vfiles){
+      this->handleMaterialLaw(f);
     }
   } // end of DSLBase::treatMaterialLaw
 

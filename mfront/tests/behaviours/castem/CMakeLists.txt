@@ -415,13 +415,32 @@ test_castem(finitestrainsinglecrystal_numericaljacobian-159)
 test_castem(finitestrainsinglecrystal2-001)
 test_castem(anistropiclemaitreviscoplasticbehaviour)
 
-configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
-  ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx @ONLY)
-add_executable(UMATExternalBehaviourDescription EXCLUDE_FROM_ALL
-  ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx)
-add_test(NAME UMATExternalBehaviourDescription COMMAND UMATExternalBehaviourDescription)
-target_link_libraries(UMATExternalBehaviourDescription
-  TFELGlossary TFELSystem TFELTests TFELException)
-set_tests_properties(UMATExternalBehaviourDescription
-  PROPERTIES DEPENDS MFrontCastemBehaviours)
-add_dependencies(check UMATExternalBehaviourDescription)
+if(CMAKE_CONFIGURATION_TYPES)
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription_${conf}.cxx.in"
+      ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx @ONLY)
+    add_executable(UMATExternalBehaviourDescription_${conf} EXCLUDE_FROM_ALL
+      ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription_${conf}.cxx)
+    add_test(NAME UMATExternalBehaviourDescription_${conf}
+      COMMAND UMATExternalBehaviourDescription_${conf}
+      CONFIGURATIONS ${conf})
+    target_link_libraries(UMATExternalBehaviourDescription_${conf}
+      TFELGlossary TFELSystem TFELTests TFELException)
+    set_tests_properties(UMATExternalBehaviourDescription_${conf}
+      PROPERTIES DEPENDS MFrontCastemBehaviours)
+    add_dependencies(check UMATExternalBehaviourDescription_${conf})
+  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+else(CMAKE_CONFIGURATION_TYPES)
+  get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+  configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
+    ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx @ONLY)
+  add_executable(UMATExternalBehaviourDescription EXCLUDE_FROM_ALL
+    ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx)
+  add_test(NAME UMATExternalBehaviourDescription COMMAND UMATExternalBehaviourDescription)
+  target_link_libraries(UMATExternalBehaviourDescription
+    TFELGlossary TFELSystem TFELTests TFELException)
+  set_tests_properties(UMATExternalBehaviourDescription
+    PROPERTIES DEPENDS MFrontCastemBehaviours)
+  add_dependencies(check UMATExternalBehaviourDescription)
+endif(CMAKE_CONFIGURATION_TYPES)

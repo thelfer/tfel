@@ -25,7 +25,15 @@ namespace mfront
 
   // forward declaration
   struct BehaviourDescription;
+    // forward declaration
+  struct BehaviourData;
 
+  namespace bbrick{
+    // forward declaration
+    struct RequirementManager;
+  } // end of namespace bbrick
+  
+  
   /*!
    * BehaviourBrick are ready-to use block used to build a complex
    * behaviour.
@@ -66,6 +74,14 @@ namespace mfront
      */
     virtual std::vector<Hypothesis> 
     getSupportedModellingHypotheses(void) const =0;
+    /*!
+     * \brief add requirements for the given modelling hypothesis
+     * \param[in] r : requirement manager
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    addRequirements(bbrick::RequirementManager&,
+		    const Hypothesis) const = 0;
     //! ends the file treatment
     virtual void 
     endTreatment() const = 0;
