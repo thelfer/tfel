@@ -116,7 +116,8 @@ namespace mfront
 
   void
   writeExportDirectives(std::ofstream& file,
-			const std::string& c)
+			const std::string& c32,
+			const std::string& c64)
   {
     file << "#ifdef _WIN32\n";
     file << "#ifndef NOMINMAX\n";
@@ -127,7 +128,11 @@ namespace mfront
     file << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"; 
     file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
     file << "#ifndef MFRONT_CALLING_CONVENTION\n";
-    file << "#define MFRONT_CALLING_CONVENTION " << c << "\n"; 
+    file << "#ifndef _WIN64\n";
+    file << "#define MFRONT_CALLING_CONVENTION " << c32 << "\n";
+    file << "#else /* _WIN64 */\n";
+    file << "#define MFRONT_CALLING_CONVENTION " << c64 << "\n";
+    file << "#endif /* _WIN64 */\n";
     file << "#endif /* MFRONT_CALLING_CONVENTION */\n"; 
     file << "#else\n";
     file << "#ifndef MFRONT_SHAREDOBJ\n";

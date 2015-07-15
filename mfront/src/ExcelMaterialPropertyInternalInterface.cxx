@@ -52,11 +52,7 @@ namespace mfront
   ExcelMaterialPropertyInternalInterface::writeHeaderPreprocessorDirectives(const std::string&,
 									    const std::string&)
   {
-#ifdef TFEL_ARCH32
     writeExportDirectives(this->headerFile,"__stdcall");
-#else
-    writeExportDirectives(this->headerFile,"");
-#endif
   } // end of ExcelMaterialPropertyInternalInterface::writePreprocessorDirectives
   
   ExcelMaterialPropertyInternalInterface::~ExcelMaterialPropertyInternalInterface()

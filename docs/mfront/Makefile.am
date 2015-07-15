@@ -141,15 +141,21 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   ExternalStateVariable.md                                 \
 	   Import.md                                                \
 	   InitJacobian.md                                          \
+	   InitializeJacobian.md                                    \
 	   InitJacobianInvert.md                                    \
+	   InitializeJacobianInvert.md                              \
 	   Includes.md                                              \
 	   InitLocalVars.md                                         \
+	   InitLocalVariables.md                                    \
+	   InitializeLocalVariables.md                              \
 	   IntegrationVariable.md                                   \
 	   Interface.md                                             \
 	   IsotropicBehaviour.md                                    \
 	   IsotropicElasticBehaviour.md                             \
 	   IterMax.md                                               \
-	   Library.md                                               \
+	   JacobianComparisonCriterion.md                           \
+	   JacobianComparisonCriterium.md                           \
+           Library.md                                               \
 	   Link.md                                                  \
 	   LocalVar.md                                              \
 	   Material.md                                              \

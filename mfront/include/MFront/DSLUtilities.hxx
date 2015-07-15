@@ -42,11 +42,13 @@ namespace mfront{
    * \brief define export directives (visibility attributes) and
    * calling conventions through the MFRONT_SHAREDOBJ and the
    * MFRONT_CALLING_CONVENTION macros
-   * \param[out] f : output file
-   * \param[in]  c : calling convention
+   * \param[out] f   : output file
+   * \param[in]  c32 : calling convention for 32 bits architectures
+   * \param[in]  c64 : calling convention for 64 bits architectures
    */
   MFRONT_VISIBILITY_EXPORT void
   writeExportDirectives(std::ofstream&,
+			const std::string& = "__cdecl",
 			const std::string& = "__cdecl");
 
   MFRONT_VISIBILITY_EXPORT std::string
