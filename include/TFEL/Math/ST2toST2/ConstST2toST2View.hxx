@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Math/Stensor/ConstStensorView.hxx
+ * \file   include/TFEL/Math/ST2toST2/ConstST2toST2View.hxx
  * \author Helfer Thomas
  * \date   16 July 2015
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
@@ -10,16 +10,16 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_CONSTSTENSORVIEW_HXX_
-#define LIB_TFEL_MATH_CONSTSTENSORVIEW_HXX_ 
+#ifndef LIB_TFEL_MATH_CONSTST2TOST2VIEW_HXX_
+#define LIB_TFEL_MATH_CONSTST2TOST2VIEW_HXX_ 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
-#include"TFEL/Math/Stensor/StensorConcept.hxx"
-#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
+#include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
 namespace tfel
@@ -29,31 +29,32 @@ namespace tfel
   {
 
     /*!
-     *  Stensor From Tiny Vector
+     *  ST2toST2 From Tiny Vector
      * \param N  : space dimension
      * \param T  : value type
      */
     template<unsigned short N,typename T>
-    struct ConstStensorViewExpr
-    {}; // end of struct StensorFromTinyMatrixColumnViewExpr
+    struct ConstST2toST2ViewExpr
+    {}; // end of struct ST2toST2FromTinyMatrixColumnViewExpr
 
     /*!
-     *  Stensor From Tiny Vector expression
+     *  ST2toST2 From Tiny Vector expression
      * \param N  : space dimension
      * \param T  : value type
      */
     template<unsigned short N,typename T>
-    struct Expr<stensor<N,T>,ConstStensorViewExpr<N,T> >
-      : public StensorConcept<Expr<stensor<N,T>,ConstStensorViewExpr<N,T> > >
+    struct Expr<st2tost2<N,T>,ConstST2toST2ViewExpr<N,T> >
+      : public ST2toST2Concept<Expr<st2tost2<N,T>,ConstST2toST2ViewExpr<N,T> > >,
+	public st2tost2_base<Expr<st2tost2<N,T>,ConstST2toST2ViewExpr<N,T> > >
     {
       typedef EmptyRunTimeProperties RunTimeProperties;
-      typedef typename stensor<N,T>::value_type      value_type;      
-      typedef typename stensor<N,T>::pointer	   pointer;	    
-      typedef typename stensor<N,T>::const_pointer   const_pointer; 
-      typedef typename stensor<N,T>::reference	   reference;	    
-      typedef typename stensor<N,T>::const_reference const_reference;
-      typedef typename stensor<N,T>::size_type 	   size_type;	    
-      typedef typename stensor<N,T>::difference_type difference_type;
+      typedef typename st2tost2<N,T>::value_type      value_type;      
+      typedef typename st2tost2<N,T>::pointer	   pointer;	    
+      typedef typename st2tost2<N,T>::const_pointer   const_pointer; 
+      typedef typename st2tost2<N,T>::reference	   reference;	    
+      typedef typename st2tost2<N,T>::const_reference const_reference;
+      typedef typename st2tost2<N,T>::size_type 	   size_type;	    
+      typedef typename st2tost2<N,T>::difference_type difference_type;
 
       RunTimeProperties
       getRunTimeProperties() const
@@ -73,16 +74,11 @@ namespace tfel
       Expr(const Expr&)  noexcept = default;
       
       const T&
-      operator()(const unsigned short i) const noexcept
+      operator()(const unsigned short i,
+		 const unsigned short j) const noexcept
       {
-	return this->v[i];
+	return this->v[StensorDimeToSize<N>::value*i+j];
       } // end of operator() const
-
-      const T&
-      operator[](const unsigned short i) const noexcept
-      {
-	return this->v[i];
-      } // end of operator[] const
 
       /*!
        * size of the symmetric tensor
@@ -90,7 +86,7 @@ namespace tfel
        */
       constexpr TFEL_MATH_INLINE size_type
       size(void) const noexcept{
-	return StensorDimeToSize<N>::value;
+	return StensorDimeToSize<N>::value*StensorDimeToSize<N>::value;
       }      
       
     protected:
@@ -108,11 +104,11 @@ namespace tfel
     }; // end of struct Expr
 
     template<unsigned short N,typename T = double>
-    using ConstStensorView = Expr<stensor<N,T>,ConstStensorViewExpr<N,T>>;
+    using ConstST2toST2View = Expr<st2tost2<N,T>,ConstST2toST2ViewExpr<N,T>>;
     
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_CONSTSTENSORVIEW_HXX_ */
+#endif /* LIB_TFEL_MATH_CONSTST2TOST2VIEW_HXX_ */
 

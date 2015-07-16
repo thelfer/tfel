@@ -336,6 +336,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/StensorST2toST2ProductExpr.hxx					     \
 			TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx					     \
 			TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx                                          \
+			TFEL/Math/ST2toST2/ST2toST2View.hxx			        			     \
+			TFEL/Math/ST2toST2/ConstST2toST2View.hxx			        		     \
 			TFEL/Math/ST2toST2/StensorSquareDerivative.hxx                                               \
 			TFEL/Math/t2tost2.hxx                                                                        \
 			TFEL/Math/T2toST2/t2tost2.ixx                                                                \

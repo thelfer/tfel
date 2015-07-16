@@ -179,7 +179,7 @@ macro(test_castem test_arg)
     configure_file(castem${test_arg}.mtest.in
       castem${test_arg}.mtest @ONLY)
     add_test(NAME castem${test_arg}_mtest
-	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false castem${test_arg}.mtest)
     set_property(TEST castem${test_arg}_mtest
       PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/castem${test_arg}.mtest

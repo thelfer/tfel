@@ -1,9 +1,7 @@
 /*!
  * \file   include/TFEL/Math/Stensor/StensorView.hxx
- * \brief  StensorFromTVectorView
- * 
  * \author Helfer Thomas
- * \date   16 oct 2008
+ * \date   16 July 2015
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
