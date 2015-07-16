@@ -21,6 +21,8 @@
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/tvector.hxx"
+#include"TFEL/Math/Vector/TVectorView.hxx"
+#include"TFEL/Math/Vector/ConstTVectorView.hxx"
 
 namespace tfel
 {
@@ -36,10 +38,8 @@ namespace tfel
      * \param[in] Nn : number of tvector holed
      * \param[in] T  : underlying type
      */
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     unsigned short Nn,
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short In,unsigned short Nn,
 	     typename T>
     struct TinyVectorOfTinyVectorFromTinyVectorViewExpr
     {
@@ -56,17 +56,16 @@ namespace tfel
      * \param[in] Nn : number of tvector holed
      * \param[in] T  : underlying type
      */
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     unsigned short Nn,
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short In,unsigned short Nn,
 	     typename T>
     struct Expr<tvector<Nn,tvector<N,T> >,TinyVectorOfTinyVectorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >
-      : public VectorConcept<Expr<tvector<Nn,tvector<N,T> >,TinyVectorOfTinyVectorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >
+      : public VectorConcept<Expr<tvector<Nn,tvector<N,T> >,TinyVectorOfTinyVectorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >,
+	public tvector_base<Expr<tvector<Nn,tvector<N,T> >,TinyVectorOfTinyVectorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >,N,T>
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
-
+      
       Expr(tvector<Mn,T>& v_)
 	: v(v_)
       {} // end of Expr
@@ -75,174 +74,55 @@ namespace tfel
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
-      const RunTimeProperties
+      RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RunTimeProperties();
       }
 
-      const tvector<N,T>&
+      ConstTVectorView<N,T>
       operator[](const unsigned short i) const
       {
-	union{
-	  const T * t_ptr;
-	  const tvector<N,T> * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i*N;
-	return *(ptr.s_ptr);
+	return ConstTVectorView<N,T>{this->v.begin()+In+i*N};
       } // end of operator[] const
 
-      tvector<N,T>&
+      TVectorView<N,T>
       operator[](const unsigned short i)
       {
-	union{
-	  T * t_ptr;
-	  tvector<N,T> * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i*N;
-	return *(ptr.s_ptr);
+	return TVectorView<N,T>{this->v.begin()+In+i*N};
       } // end of operator[]
 
-      const tvector<N,T>&
+      ConstTVectorView<N,T>
       operator()(const unsigned short i) const
       {
-	union{
-	  const T * t_ptr;
-	  const tvector<N,T> * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i*N;
-	return *(ptr.s_ptr);
+	return ConstTVectorView<N,T>{this->v.begin()+In+i*N};
       } // end of operator() const
 
-      tvector<N,T>&
+      TVectorView<N,T>
       operator()(const unsigned short i)
       {
-	union{
-	  T * t_ptr;
-	  tvector<N,T> * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i*N;
-	return *(ptr.s_ptr);
+	return TVectorView<N,T>{this->v.begin()+In+i*N};
       } // end of operator()
 
-      /*!
-       * Assignement operator
-       */
-      template<typename T2>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&>::type
-      operator=(const tvector<Nn,tvector<N,T2> >& s){
-	VectorUtilities<N>::copy(s,*this);
-	return *this;
-      }
-      
-      /*!
-       * Assignement operator
-       */
-      template<typename T2,typename Op>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator=(const Expr<tvector<Nn,tvector<N,T2> >,Op>& s)
-      {
-	VectorUtilities<N>::copy(s,*this);
-	return *this;
-      }
-
-      // Assignement operator
-      template<typename T2>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator+=(const tvector<Nn,tvector<N,T2> >& s){
-	VectorUtilities<N>::PlusEqual(*this,s);
-	return *this;
-      }
-    
-      // Assignement operator
-      template<typename T2,typename Op>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator+=(const Expr<tvector<Nn,tvector<N,T2> >,Op>& s){
-	VectorUtilities<N>::PlusEqual(*this,s);
-	return *this;
-      }
-
-      // Assignement operator
-      template<typename T2>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator-=(const tvector<Nn,tvector<N,T2> >& s){
-	VectorUtilities<N>::MinusEqual(*this,s);
-	return *this;
-      }
-    
-      // Assignement operator
-      template<typename T2,typename Op>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator-=(const Expr<tvector<Nn,tvector<N,T2> >,Op>& s){
-	VectorUtilities<N>::MinusEqual(*this,s);
-	return *this;
-      }
-
-      /*!
-       * operator*=
-       */
-      template<typename T2>
-      typename std::enable_if<
-	tfel::typetraits::IsScalar<T2>::cond&&
-      std::is_same<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	Expr&
-      >::type
-      operator*=(const T2 a){
-	VectorUtilities<N>::scale(*this,a);
-	return *this;
-      }
-
-      /*!
-       * operator/=
-       */
-      template<typename T2>
-      typename std::enable_if<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      std::is_same<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	Expr&
-	>::type
-	operator/=(const T2 a){
-	VectorUtilities<N>::scale(*this,1/a);
-	return *this;
-      }
+      using tvector_base<Expr,N,T>::operator=;
       
     protected:
 	
       tvector<Mn,T>& v;
-
-      private:
-	
-	/*!
+      
+    private:
+      
+      /*!
        * Simple checks
        */
-	TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
-	TFEL_STATIC_ASSERT((In<Mn));
-	TFEL_STATIC_ASSERT((Nn*N<=Mn-In));
-
+      TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
+      TFEL_STATIC_ASSERT((In<Mn));
+      TFEL_STATIC_ASSERT((Nn*N<=Mn-In));
+      
     }; // end of struct Expr
 
-
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     unsigned short Nn,
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short In,unsigned short Nn,
 	     typename T = double>
     struct TinyVectorOfTinyVectorFromTinyVectorView
     {

@@ -22,6 +22,8 @@
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/Stensor/StensorView.hxx"
+#include"TFEL/Math/Stensor/ConstStensorView.hxx"
 
 namespace tfel
 {
@@ -37,10 +39,8 @@ namespace tfel
      * \param[in] Nn : number of stensor holed
      * \param[in] T  : underlying type
      */
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     unsigned short Nn,
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short In,unsigned short Nn,
 	     typename T>
     struct TinyVectorOfStensorFromTinyVectorViewExpr
     {
@@ -57,13 +57,12 @@ namespace tfel
      * \param[in] Nn : number of stensor holed
      * \param[in] T  : underlying type
      */
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     unsigned short Nn,
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short In,unsigned short Nn,
 	     typename T>
     struct Expr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >
-      : public VectorConcept<Expr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >
+      : public VectorConcept<Expr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> > >,
+	public tvector_base<Expr<tvector<Nn,stensor<N,T> >,TinyVectorOfStensorFromTinyVectorViewExpr<N,Mn,In,Nn,T> >,N,T>
     {
 
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -76,174 +75,51 @@ namespace tfel
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
-      const RunTimeProperties
+      RunTimeProperties
       getRunTimeProperties(void) const
       {
 	return RunTimeProperties();
       }
 
-      const stensor<N,T>&
+      ConstStensorView<N,T>
       operator[](const unsigned short i) const
       {
-	union{
-	  const T * t_ptr;
-	  const stensor<N,T> * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i*StensorDimeToSize<N>::value;
-	return *(ptr.s_ptr);
+	return ConstStensorView<N,T>(this->v.begin()+In+i*StensorDimeToSize<N>::value);
       } // end of operator[] const
 
-      stensor<N,T>&
+      StensorView<N,T>
       operator[](const unsigned short i)
       {
-	union{
-	  T * t_ptr;
-	  stensor<N,T> * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i*StensorDimeToSize<N>::value;
-	return *(ptr.s_ptr);
+	return StensorView<N,T>(this->v.begin()+In+i*StensorDimeToSize<N>::value);
       } // end of operator[]
 
-      const stensor<N,T>&
+      ConstStensorView<N,T>
       operator()(const unsigned short i) const
       {
-	union{
-	  const T * t_ptr;
-	  const stensor<N,T> * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i*StensorDimeToSize<N>::value;
-	return *(ptr.s_ptr);
+	return ConstStensorView<N,T>(this->v.begin()+In+i*StensorDimeToSize<N>::value);
       } // end of operator() const
 
-      stensor<N,T>&
+      StensorView<N,T>
       operator()(const unsigned short i)
       {
-	union{
-	  T * t_ptr;
-	  stensor<N,T> * s_ptr;
-	} ptr;
-	ptr.t_ptr = this->v.begin()+In+i*StensorDimeToSize<N>::value;
-	return *(ptr.s_ptr);
+	return StensorView<N,T>(this->v.begin()+In+i*StensorDimeToSize<N>::value);
       } // end of operator()
 
-      /*!
-       * Assignement operator
-       */
-      template<typename T2>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&>::type
-      operator=(const tvector<Nn,stensor<N,T2> >& s){
-	VectorUtilities<N>::copy(s,*this);
-	return *this;
-      }
-      
-      /*!
-       * Assignement operator
-       */
-      template<typename T2,typename Op>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator=(const Expr<tvector<Nn,stensor<N,T2> >,Op>& s)
-      {
-	VectorUtilities<N>::copy(s,*this);
-	return *this;
-      }
-
-      // Assignement operator
-      template<typename T2>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator+=(const tvector<Nn,stensor<N,T2> >& s){
-	VectorUtilities<N>::PlusEqual(*this,s);
-	return *this;
-      }
-    
-      // Assignement operator
-      template<typename T2,typename Op>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator+=(const Expr<tvector<Nn,stensor<N,T2> >,Op>& s){
-	VectorUtilities<N>::PlusEqual(*this,s);
-	return *this;
-      }
-
-      // Assignement operator
-      template<typename T2>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator-=(const tvector<Nn,stensor<N,T2> >& s){
-	VectorUtilities<N>::MinusEqual(*this,s);
-	return *this;
-      }
-    
-      // Assignement operator
-      template<typename T2,typename Op>
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	Expr&
-      >::type
-      operator-=(const Expr<tvector<Nn,stensor<N,T2> >,Op>& s){
-	VectorUtilities<N>::MinusEqual(*this,s);
-	return *this;
-      }
-
-      /*!
-       * operator*=
-       */
-      template<typename T2>
-      typename std::enable_if<
-	tfel::typetraits::IsScalar<T2>::cond&&
-      std::is_same<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	Expr&
-      >::type
-      operator*=(const T2 a){
-	VectorUtilities<N>::scale(*this,a);
-	return *this;
-      }
-
-      /*!
-       * operator/=
-       */
-      template<typename T2>
-      typename std::enable_if<
-      tfel::typetraits::IsScalar<T2>::cond&&
-      std::is_same<typename ResultType<T,T2,OpMult>::type,T>::cond,
-	Expr&
-	>::type
-	operator/=(const T2 a){
-	VectorUtilities<N>::scale(*this,1/a);
-	return *this;
-      }
+      using tvector_base<Expr,N,T>::operator =;
       
     protected:
 	
       tvector<Mn,T>& v;
 
-      private:
-	
-	/*!
-       * Simple checks
-       */
-	TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
-	TFEL_STATIC_ASSERT((In<Mn));
-	TFEL_STATIC_ASSERT((Nn*StensorDimeToSize<N>::value<=Mn-In));
-
+    private:
+      
+      //! simple check
+      TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
+      
     }; // end of struct Expr
 
-
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     unsigned short Nn,
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short In,unsigned short Nn,
 	     typename T = double>
     struct TinyVectorOfStensorFromTinyVectorView
     {

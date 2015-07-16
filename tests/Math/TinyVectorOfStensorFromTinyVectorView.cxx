@@ -38,17 +38,14 @@ struct TinyVectorOfStensorFromTinyVectorViewTest final
     using namespace std;
     using namespace tfel::math;
     const double eps = 100*std::numeric_limits<double>::epsilon();
-    
-    double values[10] = {1.1,10.1,
-			 2.9,9.2,3.8,8.3,
-			 4.7,7.4,5.6,6.5};
+    const tvector<10,double> values = {1.1,10.1,
+				       2.9,9.2,3.8,8.3,
+				       4.7,7.4,5.6,6.5};
     tvector<10,double> v(values);
     TinyVectorOfStensorFromTinyVectorView<2,10,2,2,double>::type tsftv(v);
     const auto& s1 = tsftv(0);
-    auto& s2 = tsftv(1);
-    stensor<2,double>::size_type i;
-
-    for(i=0;i!=4u;++i){
+    auto s2 = tsftv(1);
+    for(stensor<2,double>::size_type i=0;i!=4u;++i){
       unsigned short idx;
       idx = static_cast<unsigned short>(i+2u);
       TFEL_TESTS_ASSERT(abs(s1(i)-v(idx))<eps);
@@ -56,16 +53,14 @@ struct TinyVectorOfStensorFromTinyVectorViewTest final
       TFEL_TESTS_ASSERT(abs(s2(i)-v(idx))<eps);
     }
     s2 += stensor<2,double>::Id();
-    for(i=0;i!=3u;++i){
+    for(stensor<2,double>::size_type i=0;i!=3u;++i){
       unsigned short idx;
       idx = static_cast<unsigned short>(i+6u);
       TFEL_TESTS_ASSERT(abs(s2(i)-values[idx]-1)<eps);
       TFEL_TESTS_ASSERT(abs(v(idx)-values[idx]-1)<eps);
     }
     TFEL_TESTS_ASSERT(abs(s2(3)-values[9u])<eps);
-
     return this->result;
-
   } // end of execute
 
 }; // end of TinyVectorOfStensorFromTinyVectorViewTest

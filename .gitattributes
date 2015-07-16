@@ -1305,6 +1305,7 @@ include/TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/st2tot2.ixx -text
 include/TFEL/Math/ST2toT2/st2tot2ResultType.hxx -text
+include/TFEL/Math/Stensor/ConstStensorView.hxx -text
 include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx -text
 include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx -text
 include/TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx -text
@@ -1325,6 +1326,7 @@ include/TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Stensor/StensorFromTinyVectorView.hxx -text
 include/TFEL/Math/Stensor/StensorProduct.hxx -text
 include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
+include/TFEL/Math/Stensor/StensorView.hxx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
 include/TFEL/Math/T2toST2/LeftCauchyGreenTensorDerivativeExpr.hxx -text
@@ -1375,11 +1377,13 @@ include/TFEL/Math/Tensor/tensorResultType.hxx -text
 include/TFEL/Math/TinyMatrixInvert.hxx -text
 include/TFEL/Math/TinyMatrixSolve.hxx -text
 include/TFEL/Math/TinyNewtonRaphson.hxx -text
+include/TFEL/Math/Vector/ConstTVectorView.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyVectorView.hxx -text
+include/TFEL/Math/Vector/TVectorView.hxx -text
 include/TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx -text
 include/TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx -text
 include/TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx -text

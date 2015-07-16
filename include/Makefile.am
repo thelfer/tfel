@@ -207,6 +207,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx                                           \
 			TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx                                          \
 			TFEL/Math/Stensor/StensorFromTinyVectorView.hxx                                              \
+			TFEL/Math/Stensor/StensorView.hxx			        			     \
+			TFEL/Math/Stensor/ConstStensorView.hxx			        			     \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx                                \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx                                \
 			TFEL/Math/Vector/tvectorResultType.hxx	                                                     \
@@ -226,6 +228,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx                              \
 			TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx                                   \
 			TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorViewIO.hxx                                 \
+			TFEL/Math/Vector/TVectorView.hxx			        			     \
+			TFEL/Math/Vector/ConstTVectorView.hxx			        			     \
 			TFEL/Math/Vector/TVectorFromTinyVectorView.hxx						     \
 			TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx					     \
 			TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx					     \

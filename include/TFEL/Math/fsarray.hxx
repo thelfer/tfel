@@ -52,7 +52,7 @@ namespace tfel
       : protected array_container<N,T>
     {
       /*!
-       * type of the tvector's values.
+       * type of the fsarray's values.
        * (this is a stl requirement).
        */
       typedef T value_type;
@@ -87,22 +87,22 @@ namespace tfel
        */
       typedef ptrdiff_t difference_type;
       /*!
-       * type of the tvector's iterator.
+       * type of the fsarray's iterator.
        * (provided for stl compatibility).
        */
       typedef pointer iterator;
       /*!
-       * type of the tvector's const iterator.
+       * type of the fsarray's const iterator.
        * (provided for stl compatibility).
        */
       typedef const_pointer const_iterator;
       /*!
-       * type of the tvector's reverse iterator.
+       * type of the fsarray's reverse iterator.
        * (provided for stl compatibility).
        */
       typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
       /*!
-       * type of the tvector's const reverse iterator.
+       * type of the fsarray's const reverse iterator.
        * (provided for stl compatibility).
        */
       typedef std::reverse_iterator<iterator> reverse_iterator;
@@ -205,8 +205,8 @@ namespace tfel
       TFEL_MATH_INLINE const_reverse_iterator
       rend(void) const noexcept;
       /*!
-       * size of the tiny vector
-       * (compatibility with vector)
+       * size of the finite size array
+       * (compatibility with array)
        */
       constexpr TFEL_MATH_INLINE unsigned short
       size(void) const noexcept;

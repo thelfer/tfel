@@ -38,14 +38,13 @@ struct TinyVectorOfTinyVectorFromTinyVectorViewTest final
     using namespace std;
     using namespace tfel::math;
     const double eps = 100*std::numeric_limits<double>::epsilon();
-    
-    double values[10] = {1.1,10.1,
-			 2.9,9.2,3.8,8.3,
-			 4.7,7.4,5.6,6.5};
+    const tvector<10,double> values = {1.1,10.1,
+				       2.9,9.2,3.8,8.3,
+				       4.7,7.4,5.6,6.5};
     tvector<10,double> v(values);
     TinyVectorOfTinyVectorFromTinyVectorView<2,10,2,2,double>::type view(v);
     const auto& s1 = view(0);
-    auto& s2 = view(1);
+    auto s2 = view(1);
     tvector<2,double>::size_type i;
     for(i=0;i!=s1.size();++i){
       unsigned short idx;
