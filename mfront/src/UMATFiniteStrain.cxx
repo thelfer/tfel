@@ -288,12 +288,9 @@ namespace umat
     using namespace tfel::math;
     using std::log;
     static const UMATReal cste = sqrt(UMATReal(2));
-    tvector<3u,UMATReal>    vp;
-    tvector<3u,UMATReal>    log_vp;
+    tvector<3u,UMATReal>    vp,log_vp;
+    stensor<3u,UMATReal>    n0,n1,n2;
     tmatrix<3u,3u,UMATReal> m;
-    stensor<3u,UMATReal>  n0;
-    stensor<3u,UMATReal>  n1;
-    stensor<3u,UMATReal>  n2;
     tensor<3u,UMATReal>  f;
     tensor<3u,UMATReal>::buildFromFortranMatrix(f,F);
     const stensor<3u,UMATReal> C = computeRightCauchyGreenTensor(f);
@@ -303,8 +300,7 @@ namespace umat
     log_vp(2) = log(vp(2));
     stensor<3u,UMATReal>::computeEigenTensors(n0,n1,n2,m);
     // logarithmic strain
-    
-    *(reinterpret_cast<stensor<3u,UMATReal>*>(E)) = (log_vp(0)*n0+log_vp(1)*n1+log_vp(2)*n2)/2;
+    StensorView<3u,UMATReal>{E} = (log_vp(0)*n0+log_vp(1)*n1+log_vp(2)*n2)/2;
     E[3] *= cste;
     E[4] *= cste;
     E[5] *= cste;
