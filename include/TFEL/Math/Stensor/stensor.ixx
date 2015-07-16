@@ -1362,7 +1362,9 @@ namespace tfel{
       >::type
     square(const StensorType& s)
     {
-      return {s(0)*s(0),s(1)*s(1),s(2)*s(2)};
+      using T  = typename StensorTraits<StensorType>::NumType;
+      using T2 = typename ComputeBinaryResult<T,T,OpMult>::Result;
+      return stensor<1u,T2>{s(0)*s(0),s(1)*s(1),s(2)*s(2)};
     }
 
     template<typename StensorType>
@@ -1374,12 +1376,13 @@ namespace tfel{
       >::type
     square(const StensorType& s)
     {
-      typedef typename StensorTraits<StensorType>::NumType T;
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      using T    =  typename StensorTraits<StensorType>::NumType;
+      using T2   = typename ComputeBinaryResult<T,T,OpMult>::Result;
+      using base = typename tfel::typetraits::BaseType<T>::type;
       constexpr base one_half = 1/base(2);
-      return {(s(3)*s(3)+2*s(0)*s(0))*one_half,
-	      (s(3)*s(3)+2*s(1)*s(1))*one_half,
-	      s(2)*s(2),(s(1)+s(0))*s(3)};
+      return stensor<2u,T2>{(s(3)*s(3)+2*s(0)*s(0))*one_half,
+	  (s(3)*s(3)+2*s(1)*s(1))*one_half,
+	  s(2)*s(2),(s(1)+s(0))*s(3)};
     }
 
     template<typename StensorType>
@@ -1391,12 +1394,13 @@ namespace tfel{
       >::type
     square(const StensorType& s)
     {
-      typedef typename StensorTraits<StensorType>::NumType T;
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      using T    =  typename StensorTraits<StensorType>::NumType;
+      using T2   = typename ComputeBinaryResult<T,T,OpMult>::Result;
+      using base = typename tfel::typetraits::BaseType<T>::type;
       using constexpr_fct::sqrt;
       constexpr base cste     = sqrt(base(2));
       constexpr base one_half = 1/(base(2));
-      return {(s(4)*s(4)+s(3)*s(3)+2*s(0)*s(0))*one_half,
+      return stensor<3u,T2>{(s(4)*s(4)+s(3)*s(3)+2*s(0)*s(0))*one_half,
 	  (s(5)*s(5)+s(3)*s(3)+2*s(1)*s(1))*one_half,
 	  (s(5)*s(5)+s(4)*s(4)+2*s(2)*s(2))*one_half,
 	  (cste*s(4)*s(5)+2*(s(1)+s(0))*s(3))*one_half,
