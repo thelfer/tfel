@@ -31,6 +31,7 @@ macro(test_crossedsecant test_arg)
 	PROPERTIES DEPENDS mtest)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	DESTINATION "share/mfront/tests/behaviours/crossedsecant"
+	CONFIGURATIONS ${conf}
 	COMPONENT mtest)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)

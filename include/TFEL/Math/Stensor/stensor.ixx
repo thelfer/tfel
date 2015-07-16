@@ -1379,6 +1379,7 @@ namespace tfel{
       using T    =  typename StensorTraits<StensorType>::NumType;
       using T2   = typename ComputeBinaryResult<T,T,OpMult>::Result;
       using base = typename tfel::typetraits::BaseType<T>::type;
+      typedef stensor<2u,typename ComputeBinaryResult<T,T,OpMult>::Result> Result;
       constexpr base one_half = 1/base(2);
       return stensor<2u,T2>{(s(3)*s(3)+2*s(0)*s(0))*one_half,
 	  (s(3)*s(3)+2*s(1)*s(1))*one_half,
@@ -1397,6 +1398,8 @@ namespace tfel{
       using T    =  typename StensorTraits<StensorType>::NumType;
       using T2   = typename ComputeBinaryResult<T,T,OpMult>::Result;
       using base = typename tfel::typetraits::BaseType<T>::type;
+      typedef typename StensorTraits<StensorType>::NumType T;
+      typedef stensor<3u,typename ComputeBinaryResult<T,T,OpMult>::Result> Result;
       using constexpr_fct::sqrt;
       constexpr base cste     = sqrt(base(2));
       constexpr base one_half = 1/(base(2));

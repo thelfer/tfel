@@ -128,9 +128,6 @@ struct Tensor4Test3D final
     polar_decomposition(R,U,F);
     // check that Rt is a rotation
     tensor<3u,double> Id = transpose(R)*R;
-    cout << "Id : " << Id << endl;
-    cout << "R  : " << R  << endl;
-    cout << "U  : " << U  << endl;
     TFEL_TESTS_ASSERT(abs(Id(0)-1.)<eps);
     TFEL_TESTS_ASSERT(abs(Id(1)-1.)<eps);
     TFEL_TESTS_ASSERT(abs(Id(2)-1.)<eps);

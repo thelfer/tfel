@@ -31,6 +31,7 @@ macro(test_secant test_arg)
 	PROPERTIES DEPENDS mtest)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	DESTINATION "share/mfront/tests/behaviours/secant"
+	CONFIGURATIONS ${conf}
 	COMPONENT mtest)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)

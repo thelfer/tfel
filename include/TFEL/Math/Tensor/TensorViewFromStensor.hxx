@@ -107,6 +107,7 @@ namespace tfel
 
       using stype  = typename std::decay<T>::type;
       using traits = StensorTraits<stype>;
+      
       /*!
        * Simple checks
        */

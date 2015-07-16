@@ -109,6 +109,9 @@ namespace tfel
 
     private:
 
+      Expr& operator=(Expr&&)      = delete;
+      Expr& operator=(const Expr&) = delete;
+
       /*!
        * Simple checks
        */

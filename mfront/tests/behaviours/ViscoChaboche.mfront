@@ -10,8 +10,8 @@
 @Behaviour ViscoChaboche;
 
 @Theta 1.;
-@Epsilon 1.e-12;
-@IterMax 200 ;
+@Epsilon 1.e-13;
+@IterMax 50;
 
 @StateVariable strain    p;
 @StateVariable StrainStensor a[2];
@@ -37,35 +37,18 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable stress mu;
 
 /* Initialize Lame coefficients */
-@InitLocalVars{
+@InitializeLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
 } 
 
-@TangentOperator{
-  using namespace tfel::material::lame;
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    StiffnessTensor De;
-    Stensor4 Je;
-    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
-    getPartialJacobianInvert(Je);
-    Dt = De*Je;
-  } else {
-    return false;
-  }
-}
-
 @ComputeStress{
   sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
 } 
 
-
 @Integrator{
-  Stensor n(real(0));
-  const real eps           = 1.e-12;
+  constexpr const real eps           = 1.e-12;
   // Les variables post-fixee par un _ sont exprimees en t+theta*dt
   const strain p_           = p +theta*dp ;
   StressStensor scin         = sig ;
@@ -78,11 +61,11 @@ nu.setGlossaryName("PoissonRatio");
   const stress seq = sigmaeq(scin);
   const stress Rp = Rinf + (R0-Rinf)*exp(-b*p_) ;  
   const real F = seq - Rp ;
-  real vp=0.;  
-  real inv_seq = 0. ;
-  
   if(F > 0){
     const real Fexp   = UNsurK*pow(F*UNsurK,m-1) ;
+    Stensor n(real(0));
+    real vp=0.;  
+    real inv_seq = 0. ;
     if(seq>eps*young){
       inv_seq=1./seq ;
       n = 1.5*deviator(scin)*inv_seq;
@@ -100,11 +83,11 @@ nu.setGlossaryName("PoissonRatio");
     dfp_ddeel    = - Fexp*m*dt* 2.*mu*theta*(n| Stensor4::M() )/1.5;
     dfp_ddp      = 1 + theta* Fexp *m *dt*b*(Rinf-Rp);
     for(unsigned short i=0;i!=2;++i){
-       dfeel_dda(i)   = -C[i]*dp*theta* inv_seq/1.5*Jmn ;
-       dfp_dda(i)     =  Fexp*m*dt*C[i]*theta/1.5*n;  
-       dfa_ddeel(i)   = -2.*mu*theta*dp*Jmn *inv_seq;
-       dfa_ddp(i)     = -n + g[i]*a_[i];
-       dfa_dda(i,i)   =  (1+dp*g[i]*theta)*Stensor4::Id()+C[i]*dp*theta*inv_seq/1.5*Jmn;
+      dfeel_dda(i)   = -C[i]*dp*theta* inv_seq/1.5*Jmn ;
+      dfp_dda(i)     =  Fexp*m*dt*C[i]*theta/1.5*n;  
+      dfa_ddeel(i)   = -2.*mu*theta*dp*Jmn *inv_seq;
+      dfa_ddp(i)     = -n + g[i]*a_[i];
+      dfa_dda(i,i)   =  (1+dp*g[i]*theta)*Stensor4::Id()+C[i]*dp*theta*inv_seq/1.5*Jmn;
     }
     dfa_dda(0,1)   =  C[1]*dp*theta*inv_seq/1.5*Jmn;
     dfa_dda(1,0)   =  C[0]*dp*theta*inv_seq/1.5*Jmn;
@@ -112,3 +95,18 @@ nu.setGlossaryName("PoissonRatio");
     feel = deel - deto;    
   }
 } 
+
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

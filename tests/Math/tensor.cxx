@@ -370,12 +370,13 @@ struct TensorTest7
     const real cste = real(1)/sqrt(real(2));
     const real eps  = 10.*numeric_limits<real>::epsilon();
     typedef TensorViewFromStensor<stensor<3u,real> >::type TensorView;
-    stensor<3u,real> s;
+    auto s = stensor<3u,real>{};
     for(unsigned short i=0;i!=s.size();++i){
       s[i] = exp(cos(real(i)));
     }
-    const TensorView t(s);
-    TFEL_TESTS_ASSERT((abs(t(0)-exp(cos(real(0))))<eps));
+    const auto t = TensorView{s};
+    const auto v = t(0)-exp(cos(real(0)));
+    TFEL_TESTS_ASSERT((abs(v)<eps));
     TFEL_TESTS_ASSERT((abs(t(1)-exp(cos(real(1))))<eps));
     TFEL_TESTS_ASSERT((abs(t(2)-exp(cos(real(2))))<eps));
     TFEL_TESTS_ASSERT((abs(t(3)-cste*exp(cos(real(3))))<eps));

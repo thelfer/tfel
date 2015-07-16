@@ -161,16 +161,16 @@ macro(test_castem test_arg)
       configure_file(castem${test_arg}.mtest.in
 	${file} @ONLY)
       add_test(NAME castem${test_arg}_${conf}_mtest
-	CONFIGURATIONS ${conf}
-	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
-      set_tests_properties(castem${test_arg}_${conf}_mtest
-	PROPERTIES DEPENDS MFrontCastemBehaviours)
-      set_tests_properties(castem${test_arg}_${conf}_mtest
-	PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-      set_tests_properties(castem${test_arg}_${conf}_mtest
-	PROPERTIES DEPENDS mtest)
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file}
+	CONFIGURATIONS ${conf})
+      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+        set_property(TEST castem${test_arg}_${conf}_mtest
+          PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
+	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
+      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	DESTINATION "share/mfront/tests/behaviours/castem"
+	CONFIGURATIONS ${conf}
 	COMPONENT mtest)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
@@ -179,13 +179,9 @@ macro(test_castem test_arg)
     configure_file(castem${test_arg}.mtest.in
       castem${test_arg}.mtest @ONLY)
     add_test(NAME castem${test_arg}_mtest
-      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false castem${test_arg}.mtest)
-    set_tests_properties(castem${test_arg}_mtest
-      PROPERTIES DEPENDS MFrontCastemBehaviours)
-    set_tests_properties(castem${test_arg}_mtest
-      PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-    set_tests_properties(castem${test_arg}_mtest
-      PROPERTIES DEPENDS mtest)
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
+    set_property(TEST castem${test_arg}_mtest
+      PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/castem${test_arg}.mtest
       DESTINATION "share/mfront/tests/behaviours/castem"
       COMPONENT mtest)
@@ -418,8 +414,8 @@ test_castem(anistropiclemaitreviscoplasticbehaviour)
 if(CMAKE_CONFIGURATION_TYPES)
   foreach(conf ${CMAKE_CONFIGURATION_TYPES})
     get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription_${conf}.cxx.in"
-      ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx @ONLY)
+    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
+      ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription_${conf}.cxx @ONLY)
     add_executable(UMATExternalBehaviourDescription_${conf} EXCLUDE_FROM_ALL
       ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription_${conf}.cxx)
     add_test(NAME UMATExternalBehaviourDescription_${conf}
