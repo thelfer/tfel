@@ -74,7 +74,7 @@ namespace aster
   }
 
   void
-  AsterTangentOperator::normalize(tfel::math::t2tost2<1u,AsterReal>& Dt)
+  AsterTangentOperator::normalize(tfel::math::T2toST2View<1u,AsterReal>& Dt)
   {
     using namespace std;
     using namespace tfel::math;
@@ -82,7 +82,7 @@ namespace aster
     const unsigned short n1 = 3u; // stensor size
     const unsigned short n2 = 3u; // tensor  size
     // values as a continous array
-    AsterReal *v = Dt.begin();
+    AsterReal *v = &Dt(0,0);
     // initializing v to 0
     // we explicitely don't use the size member, but the size of real
     // underlying array provided by Aster
@@ -97,7 +97,7 @@ namespace aster
   } // end of AsterTangentOperator::normalize
   
   void
-  AsterTangentOperator::normalize(tfel::math::t2tost2<2u,AsterReal>& Dt)
+  AsterTangentOperator::normalize(tfel::math::T2toST2View<2u,AsterReal>& Dt)
   {
     using namespace std;
     using namespace tfel::math;
@@ -105,7 +105,7 @@ namespace aster
     const unsigned short n1 = 4u; // stensor size
     const unsigned short n2 = 5u; // tensor  size
     // values as a continous array
-    AsterReal *v = Dt.begin();
+    AsterReal *v = &Dt(0,0);
     // initializing v to 0
     // we explicitely don't use the size member, but the size of real
     // underlying array provided by Aster
@@ -120,14 +120,14 @@ namespace aster
   } // end of AsterTangentOperator::normalize
   
   void
-  AsterTangentOperator::normalize(tfel::math::t2tost2<3u,AsterReal>& Dt)
+  AsterTangentOperator::normalize(tfel::math::T2toST2View<3u,AsterReal>& Dt)
   {
     using namespace tfel::math;
     t2tost2<3u,AsterReal> k(Dt);
     const unsigned short n1 = 6u; // stensor size
     const unsigned short n2 = 9u; // tensor  size
     // values as a continous array
-    AsterReal *v = Dt.begin();
+    AsterReal *v = &Dt(0,0);
     for(unsigned short i=0;i!=n1;++i){    // boucle sur tau
       for(unsigned short j=0;j!=n2;++j){  // boucle sur F
 	const unsigned short mi = getRowIndex(j);
@@ -138,23 +138,23 @@ namespace aster
   } // end of struct AsterTangentOperator
 
   void
-  AsterTangentOperator::transpose(tfel::math::t2tost2<1u,AsterReal>&)
+  AsterTangentOperator::transpose(tfel::math::T2toST2View<1u,AsterReal>&)
   {}
 
   void
-  AsterTangentOperator::transpose(tfel::math::t2tost2<2u,AsterReal>&)
+  AsterTangentOperator::transpose(tfel::math::T2toST2View<2u,AsterReal>&)
   {}
 
   void
-  AsterTangentOperator::transpose(tfel::math::t2tost2<3u,AsterReal>&)
+  AsterTangentOperator::transpose(tfel::math::T2toST2View<3u,AsterReal>&)
   {}
 
   void
-  AsterTangentOperator::normalize(tfel::math::st2tost2<1u,AsterReal>&)
+  AsterTangentOperator::normalize(tfel::math::ST2toST2View<1u,AsterReal>&)
   {} // end of AsterTangentOperator::normalize
 
   void
-  AsterTangentOperator::normalize(tfel::math::st2tost2<2u,AsterReal>& Dt)
+  AsterTangentOperator::normalize(tfel::math::ST2toST2View<2u,AsterReal>& Dt)
   {
     using namespace std;
     static const AsterReal inv_sqrt2 = AsterReal(1)/std::sqrt(AsterReal(2));
@@ -168,7 +168,7 @@ namespace aster
   } // end of AsterTangentOperator::normalize
   
   void
-  AsterTangentOperator::normalize(tfel::math::st2tost2<3u,AsterReal>& Dt)
+  AsterTangentOperator::normalize(tfel::math::ST2toST2View<3u,AsterReal>& Dt)
   {
     using namespace std;
     static const AsterReal inv_sqrt2 = AsterReal(1)/std::sqrt(AsterReal(2));
@@ -202,7 +202,7 @@ namespace aster
   } // end of struct AsterTangentOperator
 
   void
-  AsterTangentOperator::transpose(tfel::math::st2tost2<1u,AsterReal>& Dt)
+  AsterTangentOperator::transpose(tfel::math::ST2toST2View<1u,AsterReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));
@@ -210,7 +210,7 @@ namespace aster
   }
 
   void
-  AsterTangentOperator::transpose(tfel::math::st2tost2<2u,AsterReal>& Dt)
+  AsterTangentOperator::transpose(tfel::math::ST2toST2View<2u,AsterReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));
@@ -221,7 +221,7 @@ namespace aster
   }
 
   void
-  AsterTangentOperator::transpose(tfel::math::st2tost2<3u,AsterReal>& Dt)
+  AsterTangentOperator::transpose(tfel::math::ST2toST2View<3u,AsterReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));
@@ -241,29 +241,29 @@ namespace aster
   }
 
   void
-  AsterTangentOperator::normalize(tfel::math::tmatrix<1u,1u,AsterReal>&)
+  AsterTangentOperator::normalize(tfel::math::TMatrixView<1u,1u,AsterReal>&)
   {} // end of AsterTangentOperator::normalize
 
   void
-  AsterTangentOperator::normalize(tfel::math::tmatrix<2u,2u,AsterReal>&)
+  AsterTangentOperator::normalize(tfel::math::TMatrixView<2u,2u,AsterReal>&)
   {} // end of AsterTangentOperator::normalize
   
   void
-  AsterTangentOperator::normalize(tfel::math::tmatrix<3u,3u,AsterReal>&)
+  AsterTangentOperator::normalize(tfel::math::TMatrixView<3u,3u,AsterReal>&)
   {} // end of struct AsterTangentOperator
 
   void
-  AsterTangentOperator::transpose(tfel::math::tmatrix<1u,1u,AsterReal>&)
+  AsterTangentOperator::transpose(tfel::math::TMatrixView<1u,1u,AsterReal>&)
   {}
 
   void
-  AsterTangentOperator::transpose(tfel::math::tmatrix<2u,2u,AsterReal>& Dt)
+  AsterTangentOperator::transpose(tfel::math::TMatrixView<2u,2u,AsterReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
   }
 
   void
-  AsterTangentOperator::transpose(tfel::math::tmatrix<3u,3u,AsterReal>& Dt)
+  AsterTangentOperator::transpose(tfel::math::TMatrixView<3u,3u,AsterReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));

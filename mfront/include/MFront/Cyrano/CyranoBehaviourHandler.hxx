@@ -20,6 +20,7 @@
 
 #include<algorithm>
 #include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
@@ -593,7 +594,7 @@ ELASTIC);
       static void exe(const BV& bv,CyranoReal *const DDSOE)
       {
 	using namespace tfel::math;
-	st2tost2<1u,CyranoReal>& Kt = *(reinterpret_cast<st2tost2<1u,CyranoReal>*>(DDSOE));
+	ST2toST2View<1u,CyranoReal> Kt{DDSOE};
 	const auto& Dt = bv.getTangentOperator();
 	// conversion vers les conventions cyrano
 	Kt(0,0)=Dt(0,0);
@@ -614,7 +615,7 @@ ELASTIC);
       static void exe(const BV& bv,CyranoReal *const DDSOE)
       {
 	using namespace tfel::math;
-	st2tost2<1u,CyranoReal>& Kt = *(reinterpret_cast<st2tost2<1u,CyranoReal>*>(DDSOE));
+	ST2toST2View<1u,CyranoReal> Kt{DDSOE};
 	const auto& Dt = bv.getTangentOperator();
 	// conversion vers les conventions cyrano
 	Kt(0,0)=Dt(0,0);

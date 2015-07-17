@@ -259,6 +259,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/MatrixConceptOperations.hxx                                                 \
 			TFEL/Math/Matrix/TMatrixTVectorExpr.hxx                                                      \
 			TFEL/Math/Matrix/TVectorTMatrixExpr.hxx                                                      \
+			TFEL/Math/Matrix/TMatrixView.hxx                                                             \
+			TFEL/Math/Matrix/ConstTMatrixView.hxx                                                        \
 	                TFEL/Math/General/ConceptRebind.hxx                                                          \
 	                TFEL/Math/General/ConstExprMathFunctions.hxx                                                 \
 			TFEL/Math/General/LogicalOperations.hxx                                                      \
@@ -354,6 +356,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toST2/StensorT2toST2ProductExpr.hxx						     \
 			TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx                                               \
 			TFEL/Math/T2toST2/ST2toST2T2toST2ProductExpr.hxx					     \
+			TFEL/Math/T2toST2/T2toST2View.hxx                                                            \
+			TFEL/Math/T2toST2/ConstT2toST2View.hxx                                                       \
 			TFEL/Math/st2tot2.hxx                                                                        \
 			TFEL/Math/ST2toT2/st2tot2.ixx                                                                \
 			TFEL/Math/ST2toT2/st2tot2ResultType.hxx                                                      \

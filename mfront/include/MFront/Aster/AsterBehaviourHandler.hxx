@@ -18,6 +18,9 @@
 #error "This header shall not be called directly"
 #endif /* LIB_MFRONT_ASTER_CALL_H_ */
 
+#include"TFEL/Math/Matrix/TMatrixView.hxx"
+#include"TFEL/Math/T2toST2/T2toST2View.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
 #include"MFront/Aster/AsterTangentOperator.hxx"
@@ -64,19 +67,22 @@ namespace aster
   template<unsigned short N>
   struct AsterTangentOperatorType<aster::SMALLSTRAINSTANDARDBEHAVIOUR,N>
   {
-    typedef tfel::math::st2tost2<N,AsterReal> type;
+    using type      = tfel::math::st2tost2<N,AsterReal>;
+    using view_type = tfel::math::ST2toST2View<N,AsterReal>;
   };
 
   template<unsigned short N>
   struct AsterTangentOperatorType<aster::FINITESTRAINSTANDARDBEHAVIOUR,N>
   {
-    typedef tfel::math::t2tost2<N,AsterReal> type;
+    using type      = tfel::math::t2tost2<N,AsterReal>;
+    using view_type = tfel::math::T2toST2View<N,AsterReal>;
   };
 
   template<unsigned short N>
   struct AsterTangentOperatorType<aster::COHESIVEZONEMODEL,N>
   {
-    typedef tfel::math::tmatrix<N,N,AsterReal> type;
+    using type      = tfel::math::tmatrix<N,N,AsterReal>;
+    using view_type = tfel::math::TMatrixView<N,N,AsterReal>;
   };
 
   template<tfel::material::ModellingHypothesis::Hypothesis H,
@@ -376,9 +382,10 @@ namespace aster
 	{
 	  using tfel::material::ModellingHypothesisToSpaceDimension;
 	  const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
-	  typedef typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type TangentOperatorType;
-	  TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
-	  Dt = bv.getTangentOperator();
+	  using  TangentOperatorType     = typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type;
+	  using  TangentOperatorViewType = typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::view_type;
+	  TangentOperatorViewType Dt{DDSOE};
+	  Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
 	  // l'opérateur tangent contient des sqrt(2) en petites déformations...
 	  AsterTangentOperator::normalize(Dt);
 	} // end of exe	  
@@ -400,10 +407,12 @@ namespace aster
 	{
 	  using tfel::material::ModellingHypothesisToSpaceDimension;
 	  const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
-	  typedef typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type TangentOperatorType;
+	  using  TangentOperatorType     = typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type;
+	  using  TangentOperatorViewType = typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::view_type;
 	  ConsistentTangentOperatorComputer::exe(bv,DDSOE);
 	  // les conventions fortran.... (petites déformations et modèles de zones cohésives)
-	  TangentOperatorType&  Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
+	  TangentOperatorViewType Dt{DDSOE};
+	  Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
 	  AsterTangentOperator::transpose(Dt);
 	} // end of exe	  
       };

@@ -1198,11 +1198,13 @@ include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtExternalFunctionWrapper.h
 include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.hxx -text
 include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.ixx -text
 include/TFEL/Math/MathException.hxx -text
+include/TFEL/Math/Matrix/ConstTMatrixView.hxx -text
 include/TFEL/Math/Matrix/MatrixConcept.hxx -text
 include/TFEL/Math/Matrix/MatrixConcept.ixx -text
 include/TFEL/Math/Matrix/MatrixConceptOperations.hxx -text
 include/TFEL/Math/Matrix/MatrixUtilities.hxx -text
 include/TFEL/Math/Matrix/TMatrixTVectorExpr.hxx -text
+include/TFEL/Math/Matrix/TMatrixView.hxx -text
 include/TFEL/Math/Matrix/TVectorTMatrixExpr.hxx -text
 include/TFEL/Math/Matrix/TinyMatrixInvert.ixx -text
 include/TFEL/Math/Matrix/matrix.ixx -text
@@ -1331,6 +1333,7 @@ include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
 include/TFEL/Math/Stensor/StensorView.hxx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
+include/TFEL/Math/T2toST2/ConstT2toST2View.hxx -text
 include/TFEL/Math/T2toST2/LeftCauchyGreenTensorDerivativeExpr.hxx -text
 include/TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx -text
 include/TFEL/Math/T2toST2/ST2toST2T2toST2ProductExpr.hxx -text
@@ -1343,6 +1346,7 @@ include/TFEL/Math/T2toST2/T2toST2FromTinyMatrixView.hxx -text
 include/TFEL/Math/T2toST2/T2toST2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx -text
 include/TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx -text
+include/TFEL/Math/T2toST2/T2toST2View.hxx -text
 include/TFEL/Math/T2toST2/t2tost2.ixx -text
 include/TFEL/Math/T2toST2/t2tost2ResultType.hxx -text
 include/TFEL/Math/T2toT2/T2toT2Concept.hxx -text
