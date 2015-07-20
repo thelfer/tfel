@@ -188,34 +188,16 @@ namespace mfront
       this->headerFile << "//! nested typedef to make " << name << " model an adaptable generator (STL compliance)\n\n";
       this->headerFile << "typedef double result_type;\n\n";
     } 
-    this->headerFile << "//! Default constructor\n";
-    this->headerFile << name << "();\n\n";
-    this->headerFile << "//! Copy constructor\n";
-    this->headerFile << name << "(const "
-		     << name<< "&);\n\n";
-    this->headerFile << "//! Assignement operator\n";
-    this->headerFile << name << "&\n";
-    this->headerFile << "operator=(const " << name << "&);\n\n";
-    this->headerFile << "static double\ndefaultCompute(";
-    if(!inputs.empty()){
-      for(p4=inputs.begin();p4!=inputs.end();){
-	this->headerFile << "const double";
-	if((++p4)!=inputs.end()){
-	  this->headerFile << ",";
-	}
-      }
-    } else {
-      this->headerFile << "void";
-    }
-    this->headerFile << ");\n\n";
-    this->headerFile << "double\ncompute(";
-    for(p4=inputs.begin();p4!=inputs.end();){
-      this->headerFile << "const double";
-      if((++p4)!=inputs.end()){
-	this->headerFile << ",";
-      }
-    }
-    this->headerFile << ");\n\n";
+    this->headerFile << "//! default constructor\n";
+    this->headerFile << name << "() noexcept;\n\n";
+    this->headerFile << "//! move constructor\n";
+    this->headerFile << name << "(" << name << "&&) noexcept = default;\n";
+    this->headerFile << "//! copy constructor\n";
+    this->headerFile << name << "(const " << name << "&) noexcept = default;\n";
+    this->headerFile << "//! move assignement operator\n";
+    this->headerFile << name << "& operator=(" << name << "&&) noexcept = default;\n";
+    this->headerFile << "//! assignement operator\n";
+    this->headerFile << name << "& operator=(const " << name << "&) noexcept = default;\n\n";
     this->headerFile << "double\noperator()(";
     for(p4=inputs.begin();p4!=inputs.end();){
       this->headerFile << "const double";
@@ -223,7 +205,7 @@ namespace mfront
 	this->headerFile << ",";
       }
     }
-    this->headerFile << ");\n\n";
+    this->headerFile << ") const;\n\n";
     if((!bounds.empty())||
        (!physicalBounds.empty())){
       this->headerFile << "static void\ncheckBounds(";
@@ -299,8 +281,7 @@ namespace mfront
     this->srcFile << "#include<cstring>\n";
     this->srcFile << "#include\"" << name << "-cxx.hxx\"\n\n";
     this->srcFile << "namespace mfront\n{\n\n";
-    this->srcFile << name;
-    this->srcFile << "::" << name << "()\n";
+    this->srcFile << name << "::" << name << "() noexcept\n";
     if(!params.empty()){
       this->srcFile << ": ";
     }
@@ -318,144 +299,29 @@ namespace mfront
       this->srcFile << "\n";
     }
     this->srcFile << "{} // end of " << name << "::" << name << "\n\n";
-    this->srcFile << name;
-    this->srcFile << "::" << name << "(const ";
-    this->srcFile << name;
-    this->srcFile << "&";
-    if(!params.empty()){
-      this->srcFile << " src)\n: ";
-    } else {
-      this->srcFile << ")\n";
-    }
-    for(p=params.begin();p!=params.end();){
-      this->srcFile << *p << "(src." << *p << ")";
-      if(++p!=params.end()){
-	this->srcFile << ",";
-      }
-      this->srcFile << "\n";
-    }
-    this->srcFile << "{} // end of " << name << "::" << name << "\n\n";
-
-    this->srcFile << name;
-    this->srcFile << "&\n";
-    this->srcFile << name;
-    this->srcFile << "::operator=(const " << name;
-    this->srcFile << "&";
-    if(!params.empty()){
-      this->srcFile << "src)\n{\n";
-    } else {
-      this->srcFile << ")\n{\n";
-    }
-    for(p=params.begin();p!=params.end();++p){
-      this->srcFile << "" << *p << " = src." << *p << ";\n";
-    }
-    this->srcFile << "return *this;\n";
-    this->srcFile << "} // end of " << name << "::operator=\n\n";
     for(p=params.begin();p!=params.end();++p){
       this->srcFile << "const double& ";
       this->srcFile << name;
       this->srcFile << "::get"
-		    << *p << "(void) const{\nreturn " << *p 
-		    << ";\n} // end of " << name << "::get\n\n";
+		    << *p << "(void) const{\n"
+		    << "return this->" << *p << ";\n"
+		    << "} // end of " << name << "::get\n\n";
     }
     for(p=params.begin();p!=params.end();++p){
       this->srcFile << "double& ";
       this->srcFile << name;
-      this->srcFile << "::get"
-		    << *p << "(void){\nreturn " << *p 
-		    << ";\n} // end of " << name << "::get\n\n";
+      this->srcFile << "::get" << *p << "(void){\n"
+		    << "return " << *p << ";\n"
+		    << "} // end of " << name << "::get\n\n";
     }
     for(p=params.begin();p!=params.end();++p){
       this->srcFile << "void " << name;
       this->srcFile  << "::set" << *p;
-      this->srcFile << "(const double value)";
-      this->srcFile << "{\n" << "" << *p << " = value;\n"
+      this->srcFile << "(const double " << name << "_value_)";
+      this->srcFile << "{\n"
+		    << "this->" << *p << " = " << name << "_value_;\n"
 		    << "} // end of " << name << "::set\n\n";
     }
-    // Compute
-    this->srcFile << "double\n";
-    this->srcFile << name;
-    this->srcFile << "::defaultCompute(";      
-    if(!inputs.empty()){
-      for(p3=inputs.begin();p3!=inputs.end();){
-	this->srcFile << "const double " << p3->name;
-	if((++p3)!=inputs.end()){
-	  this->srcFile << ",";
-	}
-      }
-    } else {
-      this->srcFile << "void";
-    }
-    this->srcFile << ")\n{\n";
-    this->srcFile << "using namespace std;" << endl;
-    this->srcFile << "using real = double;" << endl;
-    // material laws
-    writeMaterialLaws("MaterialPropertyDSL::writeCppSrcFile",
-		      this->srcFile,materialLaws);
-    // static variables
-    writeStaticVariables("MaterialPropertyDSL::writeCppSrcFile",
-			 srcFile,staticVars,file);
-    // parameters
-    if(!params.empty()){
-      for(p=params.begin();p!=params.end();++p){
-	p7 = paramValues.find(*p);
-	if(p7==paramValues.end()){
-	  string msg("MaterialPropertyDSL::writeCppSrcFile : ");
-	  msg += "internal error (can't find value of parameter '" + *p + "')";
-	  throw(runtime_error(msg));
-	}
-	this->srcFile << "static " << constexpr_c << " double " << *p
-		      << " = " << p7->second << ";\n";
-      }
-    }
-    this->srcFile << "double " << output << ";\n";
-    if((!bounds.empty())||
-       (!physicalBounds.empty())){
-      this->srcFile << "#ifndef NO_BOUNDS_CHECK\n";
-      this->srcFile << name << "::checkBounds(";
-      for(p3=inputs.begin();p3!=inputs.end();){
-	this->srcFile << p3->name;
-	if((++p3)!=inputs.end()){
-	  this->srcFile << ",";
-	}
-      }
-      this->srcFile << ");\n";
-      this->srcFile << "#endif /* NO_BOUNDS_CHECK */\n";
-    }
-    this->srcFile << function.body;
-    this->srcFile << "return " << output << ";\n";
-    this->srcFile << "} // end of " << name << "::defaultCompute\n\n";
-    this->srcFile << "double\n";
-    this->srcFile << name;
-    this->srcFile << "::compute(";
-    for(p3=inputs.begin();p3!=inputs.end();){
-      this->srcFile << "const double " << p3->name;
-      if(++p3!=inputs.end()){
-	this->srcFile << ",";
-      }
-    }
-    this->srcFile << ")\n{\n";
-    this->srcFile << "using namespace std;" << endl;
-    this->srcFile << "using real = double;" << endl;
-    writeStaticVariables("MaterialPropertyDSL::writeSrcFile",
-			 srcFile,staticVars,file);
-    this->srcFile << "real " << output << ";\n";
-    if((!bounds.empty())||
-       (!physicalBounds.empty())){
-      this->srcFile << "#ifndef NO_BOUNDS_CHECK\n";	
-      this->srcFile << name << "::checkBounds(";
-      for(p3=inputs.begin();p3!=inputs.end();){
-	this->srcFile << p3->name;
-	if((++p3)!=inputs.end()){
-	  this->srcFile << ",";
-	}
-      }
-      this->srcFile << ");\n";
-      this->srcFile << "#endif /* NO_BOUNDS_CHECK */\n";	
-    }
-    this->srcFile << function.body;
-    this->srcFile << "return " << output << ";\n";
-    this->srcFile << "} // end of " << name << "::compute\n\n";
     this->srcFile << "double\n";
     this->srcFile << name;
     this->srcFile << "::operator()(";
@@ -465,15 +331,20 @@ namespace mfront
 	this->srcFile << ",";
       }
     }
-    this->srcFile << ")\n{\n";
+    this->srcFile << ") const\n{\n";
     this->srcFile << "using namespace std;" << endl;
     this->srcFile << "using real = double;" << endl;
+    // material laws
+    writeMaterialLaws("CMaterialPropertyInterfaceBase::writeSrcFile",
+		      this->srcFile,materialLaws);
+    // static variables
     writeStaticVariables("MaterialPropertyDSL::writeSrcFile",
 			 srcFile,staticVars,file);
-    this->srcFile << "double " << output << ";\n";
+    // body
+    this->srcFile << "real " << output << ";\n";
     if((!bounds.empty())||
        (!physicalBounds.empty())){
-      this->srcFile << "#ifndef NO_BOUNDS_CHECK\n";	
+      this->srcFile << "#ifndef MFRONT_NO_BOUNDS_CHECK\n";	
       this->srcFile << name << "::checkBounds(";
       for(p3=inputs.begin();p3!=inputs.end();){
 	this->srcFile << p3->name;
@@ -482,7 +353,7 @@ namespace mfront
 	}
       }
       this->srcFile << ");\n";
-      this->srcFile << "#endif /* NO_BOUNDS_CHECK */\n";	
+      this->srcFile << "#endif /* MFRONT_NO_BOUNDS_CHECK */\n";	
     }
     this->srcFile << function.body;
     this->srcFile << "return " << output << ";\n";
