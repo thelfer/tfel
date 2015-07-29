@@ -117,6 +117,10 @@ if HAVE_PYTHON
 libTFELMFront_la_SOURCES += PythonMaterialPropertyInterface.cxx
 endif
 
+if HAVE_JAVA
+libTFELMFront_la_SOURCES += JavaMaterialPropertyInterface.cxx
+endif
+
 if HAVE_CASTEM
 libTFELMFront_la_SOURCES += UMATInterface.cxx      \
 		  CastemMaterialPropertyInterface.cxx

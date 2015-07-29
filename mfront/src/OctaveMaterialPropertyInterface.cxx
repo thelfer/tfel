@@ -251,9 +251,7 @@ namespace mfront
     this->srcFile << function.body;
     this->srcFile << "return " << output << ";\n";
     this->srcFile << "} // end of " << name << "_compute\n\n";
-
-    if((!bounds.empty())||
-       (!physicalBounds.empty())){
+    if((!bounds.empty())||(!physicalBounds.empty())){
       this->srcFile << "static double " << name <<"_checkBounds(";
       for(p3=inputs.begin();p3!=inputs.end();){
 	this->srcFile << "const double " << p3->name;

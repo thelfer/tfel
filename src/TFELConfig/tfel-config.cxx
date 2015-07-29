@@ -663,7 +663,7 @@ main(const int argc,
   }
 
   if(compilerflags){
-    cout << COMPILER_FLAGS << " ";
+    cout << COMPILER_FLAGS << " " << COMPILER_CXXFLAGS << " ";
   }
 
   if(oflags0){

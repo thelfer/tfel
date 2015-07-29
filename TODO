@@ -20,6 +20,11 @@
   (IsotropicMisesPlasticFlow, etc..)
     - reduction to a *scalar* equation
 
+# Interfaces
+
+- catch c++ exceptions
+- catch c error
+
 <!-- - matrice tangente cohérente pour l'analyseur MultipleIsotropicMisesFlows -->
 <!-- - matrice de prédiction pour l'analyseur MultipleIsotropicMisesFlows -->
 <!-- - matrice de prédiction pour l'analyseur IsotropicMisesPlasticFlow -->

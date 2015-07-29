@@ -130,6 +130,12 @@ if(HAVE_PYTHON)
 	${TFELMFront_SOURCES})
 endif(HAVE_PYTHON)
 
+if(HAVE_JAVA)
+    set(TFELMFront_SOURCES
+	JavaMaterialPropertyInterface.cxx
+	${TFELMFront_SOURCES})
+endif(HAVE_JAVA)
+
 if(HAVE_FORTRAN)
     set(TFELMFront_SOURCES
 	FortranMaterialPropertyInterface.cxx

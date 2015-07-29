@@ -55,16 +55,18 @@ add_definitions("-DTFEL_SVN_REVISION=\\\"\"${TFEL_SVN_REVISION}\"\\\"")
 set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
 # (must be placed *before* any add_subdirectory, cmake bug ?)
 enable_testing()
-add_custom_target(check COMMAND 
-  ${CMAKE_CTEST_COMMAND} -T test)
+if(CMAKE_CONFIGURATION_TYPES)
+  add_custom_target(check COMMAND 
+    ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
+else(CMAKE_CONFIGURATION_TYPES)
+  add_custom_target(check COMMAND 
+    ${CMAKE_CTEST_COMMAND} -T test )
+endif(CMAKE_CONFIGURATION_TYPES)
 
 # floatting point exceptions (TODO)
 
 # portable-build
 option(enable-portable-build "produce binary that can be shared between various machine (same architecture, same gcc version, different processors" OFF)
-
-# C++-11 (placed before compiler detection)
-set(enable-cxx-11 ON)
 
 # fortran (placed before compiler detection)
 option(enable-fortran "enable fortran support")
@@ -182,6 +184,31 @@ if(enable-python-bindings)
     "Contains the python bindings for TFEL, MFront and MTest")
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS  core mfront mtest)
 endif(enable-python-bindings)
+
+# java
+option(enable-java "enable java support" OFF)
+if(enable-java)
+  find_package(Java)
+  if(NOT Java_JAVA_EXECUTABLE)
+    message(FATAL_ERROR "java not found. java is mandatory for java suppot.")
+  endif(NOT Java_JAVA_EXECUTABLE)
+  if(NOT Java_JAVAC_EXECUTABLE)
+    message(FATAL_ERROR "javac not found. javac is mandatory for java suppot.")
+  endif(NOT Java_JAVAC_EXECUTABLE)
+  find_package(JNI)
+  if(NOT JNI_FOUND)
+    message(FATAL_ERROR "Java native interface not found. Java native interface is mandatory for java suppot.")
+  endif(NOT JNI_FOUND)
+  message(STATUS "java  path       : ${Java_JAVA_EXECUTABLE}")
+  message(STATUS "javac path       : ${Java_JAVAC_EXECUTABLE}")
+  message(STATUS "jni include path : ${JNI_INCLUDE_DIRS}")
+  set(HAVE_JAVA ON)
+  add_definitions("-DHAVE_JAVA=1")
+  foreach(jni_include ${JNI_INCLUDE_DIRS})
+    set(JNI_INCLUDES_FLAGS "${JNI_INCLUDES_FLAGS} -I${jni_include}")
+  endforeach(jni_include ${JNI_INCLUDE_DIRS})
+  add_definitions("-DTFEL_JAVA_INCLUDES=\\\"\"${JNI_INCLUDES_FLAGS}\"\\\"")
+endif(enable-java)
 
 # sub directories
 add_subdirectory(include) 

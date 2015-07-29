@@ -1,6 +1,6 @@
 /*!
- * \file   mfront/include/MFront/PythonMaterialPropertyInterface.hxx
- * \brief  This file declares the PythonMaterialPropertyInterface class
+ * \file   mfront/include/MFront/JavaMaterialPropertyInterface.hxx
+ * \brief  This file declares the JavaMaterialPropertyInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_PYTHONMATERIALPROPERTYINTERFACE_H_
-#define LIB_MFRONT_PYTHONMATERIALPROPERTYINTERFACE_H_ 
+#ifndef LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_
+#define LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_ 
 
 #include<string>
 #include<fstream>
@@ -22,13 +22,14 @@
 
 namespace mfront{
 
-  struct PythonMaterialPropertyInterface
+  struct JavaMaterialPropertyInterface
     : public AbstractMaterialPropertyInterface
   {
+    //! \return the interface name
     static std::string 
     getName(void);
-    
-    PythonMaterialPropertyInterface();
+    //! constructor
+    JavaMaterialPropertyInterface();
     /*!
      * \param[in] k  : keyword treated
      * \param[in] p  : iterator to the current token
@@ -56,21 +57,10 @@ namespace mfront{
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
 				  const FileDescription&) override;
     //! destructor
-    virtual ~PythonMaterialPropertyInterface();
-    
-  private:
-
-    std::ofstream headerFile;
-
-    std::ofstream srcFile;
-
-    std::string headerFileName;
-
-    std::string srcFileName;
-    
-  }; // end of PythonMaterialPropertyInterface
+    virtual ~JavaMaterialPropertyInterface();
+  }; // end of JavaMaterialPropertyInterface
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_PYTHONMATERIALPROPERTYINTERFACE_H_ */
+#endif /* LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_ */
 

@@ -221,7 +221,7 @@ MTest_setImposedStress(mfront::MTest& t,
 {
   using namespace std;
   using namespace tfel::material;
-  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
      (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
     string msg("MTest::handleImposedStress : "
 	       "the setImposedStress method is only valid "
@@ -239,7 +239,7 @@ MTest_setImposedStress2(mfront::MTest& t,
 {
   using namespace std;
   using namespace tfel::material;
-  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
      (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
     string msg("MTestParser::handleImposedStress : "
 	       "the setImposedStress method is only valid "

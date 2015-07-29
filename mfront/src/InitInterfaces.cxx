@@ -33,6 +33,10 @@
 #include"MFront/PythonMaterialPropertyInterface.hxx"
 #endif /* HAVE_PYTHON */
 
+#ifdef HAVE_JAVA
+#include"MFront/JavaMaterialPropertyInterface.hxx"
+#endif /* HAVE_JAVA */
+
 #ifdef HAVE_GNUPLOT
 #include"MFront/GnuplotMaterialPropertyInterface.hxx"
 #endif
@@ -93,6 +97,11 @@ namespace mfront
     MaterialPropertyInterfaceProxy<PythonMaterialPropertyInterface> pythonLawProxy(pythonProxyNames,pythonProxyNames+2);
 #endif /* HAVE_PYTHON */
 
+#ifdef HAVE_JAVA
+    constexpr const char * javaProxyNames[2] = {"java","Java"};
+    MaterialPropertyInterfaceProxy<JavaMaterialPropertyInterface> javaLawProxy(javaProxyNames,javaProxyNames+2);
+#endif /* HAVE_JAVA */
+    
 #ifdef HAVE_CASTEM
     constexpr const char * castemProxyNames[3] = {"castem","Castem","Cast3M"};
     MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface> castemLawProxy(castemProxyNames,castemProxyNames+3);

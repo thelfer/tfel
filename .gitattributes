@@ -1517,6 +1517,8 @@ m4/cyrano-machine-type.m4 -text
 m4/enable_pthreads.m4 -text
 m4/gxx.m4 -text
 m4/intel.m4 -text
+m4/m4-ax_jni_include_dir.m4 -text
+m4/m4-ax_prog_java_cc.m4 -text
 m4/mp_with_curses.m4 -text
 m4/vl_lib_readline.m4 -text
 m4/zset.m4 -text
@@ -1633,6 +1635,7 @@ mfront/include/MFront/IsotropicBehaviourDSLBase.hxx -text
 mfront/include/MFront/IsotropicMisesCreepDSL.hxx -text
 mfront/include/MFront/IsotropicMisesPlasticFlowDSL.hxx -text
 mfront/include/MFront/IsotropicStrainHardeningMisesCreepDSL.hxx -text
+mfront/include/MFront/JavaMaterialPropertyInterface.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
 mfront/include/MFront/LevenbergMarquardtSolvers.hxx -text
 mfront/include/MFront/MFront.hxx -text
@@ -1861,6 +1864,7 @@ mfront/src/IsotropicBehaviourDSLBase.cxx -text
 mfront/src/IsotropicMisesCreepDSL.cxx -text
 mfront/src/IsotropicMisesPlasticFlowDSL.cxx -text
 mfront/src/IsotropicStrainHardeningMisesCreepDSL.cxx -text
+mfront/src/JavaMaterialPropertyInterface.cxx -text
 mfront/src/LawFunction.cxx -text
 mfront/src/LevenbergMarquardtSolvers.cxx -text
 mfront/src/MFront.cxx -text

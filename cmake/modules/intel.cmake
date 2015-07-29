@@ -1,3 +1,4 @@
+set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++11")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wall")
 
 # 383 : value copied to temporary, reference to temporary used
@@ -41,4 +42,3 @@ if(HAVE_FORTRAN)
   endif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Intel")
 endif(HAVE_FORTRAN)
 
-message(FATAL_ERROR "TFEL C++11 support is not availabable with the intel compiler")

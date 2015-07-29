@@ -117,7 +117,8 @@ nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 			 MFront/ExcelMaterialPropertyInterface.hxx          \
 			 MFront/OctaveMaterialPropertyInterface.hxx         \
 			 MFront/ExcelMaterialPropertyInternalInterface.hxx  \
-			 MFront/PythonMaterialPropertyInterface.hxx
+			 MFront/PythonMaterialPropertyInterface.hxx         \
+			 MFront/JavaMaterialPropertyInterface.hxx
 
 nobase_include_HEADERS += MFront/BehaviourProfiler.hxx
 

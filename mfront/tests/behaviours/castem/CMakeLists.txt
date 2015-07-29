@@ -136,14 +136,11 @@ mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURC
 
 target_link_libraries(MFrontCastemBehaviours
   UMATInterface
+  MFrontProfiling
   TFELMaterial
   TFELMath
   TFELUtilities
   TFELException)
-if(enable-cxx-11)
-  target_link_libraries(MFrontCastemBehaviours
-    MFrontProfiling)
-endif(enable-cxx-11)
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

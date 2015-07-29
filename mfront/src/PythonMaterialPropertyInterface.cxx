@@ -56,8 +56,7 @@ namespace mfront
 					 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 					 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
-    using namespace std;
-    return make_pair(false,current);
+    return {false,current};
   } // end of treatKeyword
 
   PythonMaterialPropertyInterface::~PythonMaterialPropertyInterface()
@@ -67,10 +66,9 @@ namespace mfront
   PythonMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 							 const MaterialPropertyDescription& mpd)
   {
-    using std::string;
     const auto lib = makeLowerCase(getMaterialLawLibraryNameBase(mpd.library,mpd.material));
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
-    auto src = string{};
+    auto src = std::string{};
     if(mpd.library.empty()){
       if(!mpd.material.empty()){
 	src = mpd.material+"lawwrapper.cxx";
@@ -216,6 +214,10 @@ namespace mfront
     // static variables
     writeStaticVariables("PythonMaterialPropertyInterface::writeOutputFile",
 			 this->srcFile,staticVars,file);
+    this->srcFile << "auto throwPythonRuntimeException = [](const string& msg){\n"
+		  << "  PyErr_SetString(PyExc_RuntimeError,msg.c_str());\n"
+		  << "  return nullptr;\n"
+		  << "};";
     // parameters
     if(!params.empty()){
       for(auto p=params.begin();p!=params.end();++p){
@@ -261,16 +263,14 @@ namespace mfront
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
 			    << p5->varName << " is below its physical lower bound (\"\n << "
 			    << p5->varName << " << \"<" << p5->lowerBound << ").\";\n";
-	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
-	      this->srcFile << "return NULL;\n";
+	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "}\n";
 	    } else if(p5->boundsType==VariableBoundsDescription::Upper){
 	      this->srcFile << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
 			    << p5->varName << " is beyond its physical upper bound (\"\n << "
 			    << p5->varName << " << \">" << p5->upperBound << ").\";\n";
-	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
-	      this->srcFile << "return NULL;\n";
+	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "}\n";
 	    } else {
 	      this->srcFile << "if((" << p5->varName<< " < "<< p5->lowerBound << ")||"
@@ -279,14 +279,12 @@ namespace mfront
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
 			    << p5->varName << " is below its physical lower bound (\"\n << "
 			    << p5->varName << " << \"<" << p5->lowerBound << ").\";\n";
-	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
-	      this->srcFile << "return NULL;\n";
+	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "} else {\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
 			    << p5->varName << " is beyond its physical upper bound (\"\n << "
 			    << p5->varName << " << \">" << p5->upperBound << ").\";\n";
-	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
-	      this->srcFile << "return NULL;\n";
+	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "}\n";
 	      this->srcFile << "}\n";
 	    }
@@ -308,8 +306,7 @@ namespace mfront
 			    << p5->varName << " is below its lower bound (\"\n << "
 			    << p5->varName << " << \"<" << p5->lowerBound << ").\";\n";
 	      this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
-	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
-	      this->srcFile << "return NULL;\n";
+	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "} else {\n";
 	      this->srcFile << "fprintf(stderr,\"%s\\n\",msg.str().c_str());\n";
 	      this->srcFile << "}\n";
@@ -330,8 +327,7 @@ namespace mfront
 			    << p5->varName << " is over its upper bound (\"\n << "
 			    << p5->varName << " << \">" << p5->upperBound << ").\";\n";
 	      this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
-	      this->srcFile << "PyErr_SetString(PyExc_RuntimeError,msg.str().c_str());\n";
-	      this->srcFile << "return NULL;\n";
+	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "} else {\n";
 	      this->srcFile << "fprintf(stderr,\"%s\\n\",msg.str().c_str());\n";
 	      this->srcFile << "}\n";
@@ -344,9 +340,15 @@ namespace mfront
 	this->srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
       }
     }
-    this->srcFile << "double " << output << ";\n";
-    this->srcFile << function.body;
-    this->srcFile << "return Py_BuildValue(\"d\"," << output << ");\n";
+    this->srcFile << "double " << output << ";\n"
+		  << "try{\n"
+		  << function.body
+		  << "} catch(exception& cpp_except){\n"
+		  << "  return throwPythonRuntimeException(cpp_except.what());\n"
+		  << "} catch(...){\n"
+		  << "  return throwPythonRuntimeException(\"unknown C++ exception\");\n"
+		  << "}\n"
+		  << "return Py_BuildValue(\"d\"," << output << ");\n";
     this->srcFile << "} // end of " << name << "\n\n";
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "} // end of extern \"C\"\n";

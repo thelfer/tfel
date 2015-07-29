@@ -81,7 +81,7 @@ endif(enable-sanitize-options)
 if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
   message(FATAL_ERROR "TFEL C++11 support is only available for gcc version >= 4.7")
 endif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
-set(COMPILER_FLAGS "${COMPILER_FLAGS} -std=c++11")
+set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++11")
 
 if(HAVE_FORTRAN)
   include(cmake/modules/gnu-fortran-compiler.cmake)
