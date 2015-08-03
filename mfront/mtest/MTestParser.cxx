@@ -1456,7 +1456,7 @@ namespace mfront
 	  ++pn;
 	  bool ok = true;
 	  while((pn!=pne)&&(ok)){
-	    ok = ::isdigit(*pn);
+	    ok = ::isdigit(*pn)!=0;
 	    ++pn;
 	  }
 	  if(ok){

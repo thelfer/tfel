@@ -125,7 +125,11 @@ namespace mfront
     file << "#endif /* NOMINMAX */\n";
     file << "#include <windows.h>\n";
     file << "#ifndef MFRONT_SHAREDOBJ\n";
+    file << "#ifdef  MFRONT_COMPILING\n";
     file << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"; 
+    file << "#else /* MFRONT_COMPILING */\n";
+    file << "#define MFRONT_SHAREDOBJ __declspec(dllimport)\n"; 
+    file << "#endif /* MFRONT_COMPILING */\n";
     file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
     file << "#ifndef MFRONT_CALLING_CONVENTION\n";
     file << "#ifndef _WIN64\n";

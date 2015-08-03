@@ -72,9 +72,7 @@ namespace mfront
   void
   MFrontMaterialPropertyInterface::writeHeaderPreprocessorDirectives(const std::string&,
 							      const std::string&)
-  {
-    writeExportDirectives(this->headerFile);
-  } // end of MFrontMaterialPropertyInterface::writePreprocessorDirectives
+  {} // end of MFrontMaterialPropertyInterface::writePreprocessorDirectives
 
   void
   MFrontMaterialPropertyInterface::writeSrcPreprocessorDirectives(const std::string&,
@@ -109,7 +107,7 @@ namespace mfront
   MFrontMaterialPropertyInterface::getFunctionDeclaration(const std::string& material,
 						   const std::string& law)
   {
-    return "MFRONT_SHAREDOBJ double MFRONT_CALLING_CONVENTION\n"+this->getFunctionName(material,law);
+    return "double "+this->getFunctionName(material,law);
   } // end of MFrontMaterialPropertyInterface::getFunctionDeclaration
 
   std::string
@@ -133,9 +131,9 @@ namespace mfront
 								     const std::string& className)
   {
     if(material.empty()){
-      return  "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+className+"_checkBounds";
+      return  "int "+className+"_checkBounds";
     }
-    return  "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+material+"_"+className+"_checkBounds";
+    return  "int "+material+"_"+className+"_checkBounds";
   } // end of MFrontMaterialPropertyInterface::getCheckBoundsFunctionDeclaration
   
   MFrontMaterialPropertyInterface::~MFrontMaterialPropertyInterface()

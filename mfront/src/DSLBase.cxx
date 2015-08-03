@@ -37,7 +37,7 @@ namespace mfront
     using namespace std;
     bool b = true;
     for(auto p=s.begin();(p!=s.end()&&(b));++p){
-      b = static_cast<bool>(isdigit(*p));
+      b = isdigit(*p)!=0;
     }
     return b;
   }
@@ -63,6 +63,7 @@ namespace mfront
   {} // end of DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions()
 
   DSLBase::DSLBase()
+	  : AbstractDSL()
   {
     this->reserveName("std",false);
     this->reserveName("tfel",false);

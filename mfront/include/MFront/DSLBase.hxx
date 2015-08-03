@@ -35,7 +35,7 @@ namespace mfront
 {
 
   /*!
-   * base structure for parsers
+   * base structure for domain specific languages
    */
   struct MFRONT_VISIBILITY_EXPORT DSLBase
     : public virtual AbstractDSL,

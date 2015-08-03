@@ -31,6 +31,8 @@ namespace mfront{
   struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourDSL
     : public virtual AbstractDSL
   {
+    //! constructor
+	AbstractBehaviourDSL() = default;
     //! a simple alias
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
     //! a simple alias

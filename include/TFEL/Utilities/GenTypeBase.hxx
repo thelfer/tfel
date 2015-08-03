@@ -98,8 +98,8 @@ namespace tfel{
 	static void
 	exe(void *const p)
 	{
-	  T& tmp = *(static_cast<T *>(p)); 
-	  tmp.~T();
+		static_cast<void>(p);
+	  static_cast<T *>(p)->~T();
 	}
       };
 

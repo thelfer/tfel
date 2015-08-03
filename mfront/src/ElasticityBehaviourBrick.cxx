@@ -146,8 +146,8 @@ namespace mfront{
     // consistency checks
     // plane stress support
     if(this->pss){
-      const bool agps = bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS);
-      const bool ps   = bmh.count(MH::PLANESTRESS);
+      const bool agps = bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
+      const bool ps   = bmh.count(MH::PLANESTRESS)!=0;
       VariableDescription etozz("strain","etozz",1u,0u);
       etozz.description = "axial strain";
       if(agps){
@@ -199,8 +199,8 @@ namespace mfront{
       CodeBlock tangentOperator;
       ostringstream to;
       if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-	const bool agps = bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS);
-	const bool ps   = bmh.count(MH::PLANESTRESS);
+	const bool agps = bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
+	const bool ps   = bmh.count(MH::PLANESTRESS)!=0;
 	if(agps || ps){
 	  if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	    if(!this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){

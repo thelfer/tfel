@@ -20,7 +20,18 @@
 
 #include<sys/types.h>
 #include<sys/stat.h>
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 #include<unistd.h>
+#else
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include<io.h>
+#define F_OK    0       /* Test for existence.  */
+#ifndef S_ISREG
+#define S_ISREG(mode)  (((mode) & S_IFMT) == S_IFREG)
+#endif
+#endif
 
 #include"TFEL/System/System.hxx"
 
