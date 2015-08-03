@@ -80,10 +80,8 @@ namespace mfront
   {
     const unsigned short nstatev = this->getInternalStateVariablesSize(h);
     this->D.resize(3u,3u);
-    this->iv.resize(nstatev);
-    if(iv.size()==0){
-      iv.push_back(0.);
-    }
+    this->mps.resize(this->mpnames.size() ==0 ? 1u : this->mpnames.size(),real(0));
+    this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
   }
 
   tfel::math::tmatrix<3u,3u,real>
@@ -118,17 +116,16 @@ namespace mfront
 						  const MTestStiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
-    if(ktype!=MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-      vector<real> s1(s0);
-      vector<real> e1(e0);
-      vector<real> iv1(iv0);
-      vector<real> desv(esv0.size(),real(0));
-      return this->call_behaviour(Kt,s1,iv1,e0,e1,s0,
-				  mp,iv0,esv0,desv,
-				  h,real(1),ktype,false);
+    if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+      return false;
     }
-    this->computeElasticStiffness(Kt,mp,h);
-    return true;
+    vector<real> s1(s0);
+    vector<real> e1(e0);
+    vector<real> iv1(iv0);
+    vector<real> desv(esv0.size(),real(0));
+    return this->call_behaviour(Kt,s1,iv1,e0,e1,s0,
+				mp,iv0,esv0,desv,
+				h,real(1),ktype,false);
   } // end of MTestCyranoBehaviour::computePredictionOperator
 
   bool
@@ -159,7 +156,7 @@ namespace mfront
 						const tfel::math::vector<real>& e0,
 						const tfel::math::vector<real>& e1,
 						const tfel::math::vector<real>& s0,
-						const tfel::math::vector<real>& mp,
+						const tfel::math::vector<real>& mp0,
 						const tfel::math::vector<real>& iv0,
 						const tfel::math::vector<real>& ev0,
 						const tfel::math::vector<real>& dev,
@@ -176,7 +173,7 @@ namespace mfront
     using cyrano::CyranoComputeStiffnessTensor;
     CyranoInt ntens;
     CyranoInt ndi;
-    CyranoInt nprops = static_cast<CyranoInt>(mp.size());
+    CyranoInt nprops = mp0.size() == 0 ? 1 : static_cast<CyranoInt>(mp0.size());
     CyranoInt nstatv;
     if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       ndi   = 1;
@@ -195,8 +192,8 @@ namespace mfront
       msg += "invalid tangent operator size";
       throw(runtime_error(msg));
     }
-    if(((iv0.size()==0)&&(this->iv.size()!=1u))||
-       ((iv0.size()!=0)&&(iv0.size()!=this->iv.size()))){
+    if(((iv0.size()==0)&&(this->ivs.size()!=1u))||
+       ((iv0.size()!=0)&&(iv0.size()!=this->ivs.size()))){
       string msg("MTestCyranoBehaviour::integrate : ");
       msg += "the memory has not been allocated correctly";
       throw(runtime_error(msg));
@@ -204,12 +201,18 @@ namespace mfront
     fill(this->D.begin(),this->D.end(),0.);
     // choosing the type of stiffness matrix
     MTestUmatBehaviourBase::initializeTangentOperator(ktype,b);
-    // state variable initial values
-    if(iv0.size()!=0){
-      copy(iv0.begin(),iv0.end(),
-	   this->iv.begin());
+    // using a local copy of material properties to handle the
+    // case where mp0 is empty
+    copy(mp0.begin(),mp0.end(),this->mps.begin());
+    if(mp0.empty()){
+      this->mps[0] = real(0);
     }
-    nstatv = static_cast<CyranoInt>(iv.size());
+    // state variable initial values
+    copy(iv0.begin(),iv0.end(),this->ivs.begin());
+    if(iv0.empty()){
+      this->ivs[0]=real(0);
+    }
+    nstatv = static_cast<CyranoInt>(this->ivs.size());
     // rotation matrix
     tmatrix<3u,3u,real> drot(0.);
     tmatrix<3u,3u,real>::size_type i,j;
@@ -238,111 +241,40 @@ namespace mfront
     (this->fct)(&ntens,&dt,&drot(0,0),
 		&D(0,0),&ue0(0),&ude(0),
 		&ev0(0),&dev(0),
-		&mp(0),&nprops,
+		&this->mps(0),&nprops,
 		&ev0(0)+1,&dev(0)+1,
-		&iv(0),&nstatv,&s1(0),
+		&this->ivs(0),&nstatv,&s1(0),
 		&ndi,&kinc);
     if(kinc!=1){
       return false;
     }
     if(!iv1.empty()){
-      copy(iv.begin(),iv.end(),iv1.begin());
+      copy(this->ivs.begin(),this->ivs.begin()+iv1.size(),iv1.begin());
     }
     // turning back to MFront conventions
     swap(s1(1),s1(2));
     // tangent operator (...)
     if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 
-      if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-	this->computeElasticStiffness(Kt,mp,h);
-      } else {
-	// transpose (fortran -> c++)
+        // transpose (fortran -> c++)
 	tmatrix<3u,3u,real> D2;
 	for(unsigned short mi=0;mi!=3u;++mi){
 	  for(unsigned short mj=0;mj!=3u;++mj){
 	    D2(mi,mj)=D(mj,mi);
-	  }
 	}
-	// change to MTest conventions
-	Kt(0,0)=D2(0,0);
-	Kt(1,0)=D2(2,0);
-	Kt(2,0)=D2(1,0);
-	Kt(0,1)=D2(0,2);
-	Kt(1,1)=D2(2,2);
-	Kt(2,1)=D2(1,2);
-	Kt(0,2)=D2(0,1);
-	Kt(1,2)=D2(2,1);
-	Kt(2,2)=D2(1,1);
       }
+      // change to MTest conventions
+      Kt(0,0)=D2(0,0);
+      Kt(1,0)=D2(2,0);
+      Kt(2,0)=D2(1,0);
+      Kt(0,1)=D2(0,2);
+      Kt(1,1)=D2(2,2);
+      Kt(2,1)=D2(1,2);
+      Kt(0,2)=D2(0,1);
+      Kt(1,2)=D2(2,1);
+      Kt(2,2)=D2(1,1);
     }
     return true;
   } // end of MTestCyranoBehaviour::integrate
-
-  void
-  MTestCyranoBehaviour::computeElasticStiffness(tfel::math::matrix<real>& Kt,
-						const tfel::math::vector<real>& mp,
-						const tfel::material::ModellingHypothesis::Hypothesis h) const
-  {
-    using namespace std;
-    using namespace tfel::math;
-    using cyrano::CyranoComputeStiffnessTensor;
-    typedef tfel::material::ModellingHypothesis MH;
-    tmatrix<3u,3u,real>::size_type i,j;
-    if(this->stype==0u){
-      if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-	st2tost2<1u,real> De;
-	CyranoComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-				     cyrano::ISOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=3u;++i){
-	  for(j=0;j!=3u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
-      } else if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS){
-	st2tost2<1u,real> De;
-	CyranoComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRESS,
-				     cyrano::ISOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=3u;++i){
-	  for(j=0;j!=3u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
-      } else {
-	string msg("MTestCyranoBehaviour::integrate : ");
-	msg += "unsupported hypothesis";
-	throw(runtime_error(msg));
-      }
-    } else if(this->stype==1u){
-      if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-	st2tost2<1u,real> De;
-	CyranoComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-				     cyrano::ORTHOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=3u;++i){
-	  for(j=0;j!=3u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
-      } else if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS){
-	st2tost2<1u,real> De;
-	CyranoComputeStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRESS,
-				     cyrano::ORTHOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=3u;++i){
-	  for(j=0;j!=3u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
-      } else {
-	string msg("MTestCyranoBehaviour::integrate : ");
-	msg += "unsupported hypothesis";
-	throw(runtime_error(msg));
-      }
-    } else {
-      string msg("MTestCyranoBehaviour::integrate : ");
-      msg += "invalid behaviour type (neither "
-	"isotropic or orthotropic)";
-      throw(runtime_error(msg));
-    }
-
-  }
       
   MTestCyranoBehaviour::~MTestCyranoBehaviour()
   {}

@@ -165,10 +165,7 @@ namespace mfront
     const unsigned short nth     = this->getThermodynamicForcesSize(h);
     const unsigned short nstatev = this->getInternalStateVariablesSize(h);
     this->D.resize(nth,ndv);
-    this->iv.resize(nstatev);
-    if(iv.size()==0){
-      iv.push_back(0.);
-    }
+    this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
   }
 
   MTestStiffnessMatrixType::mtype

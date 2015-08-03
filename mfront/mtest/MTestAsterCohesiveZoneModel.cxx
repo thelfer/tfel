@@ -70,10 +70,8 @@ namespace mfront
   MTestAsterCohesiveZoneModel::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
     const unsigned short nstatev = this->getInternalStateVariablesSize(h);
-    this->iv.resize(nstatev);
-    if(iv.size()==0){
-      iv.push_back(0.);
-    }
+    this->mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
+    this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
   }
 
   void
@@ -139,7 +137,7 @@ namespace mfront
 					      const tfel::math::vector<real>& e0,
 					      const tfel::math::vector<real>& e1,
 					      const tfel::math::vector<real>& s0,
-					      const tfel::math::vector<real>& mp,
+					      const tfel::math::vector<real>& mp0,
 					      const tfel::math::vector<real>& iv0,
 					      const tfel::math::vector<real>& ev0,
 					      const tfel::math::vector<real>& dev,
@@ -154,7 +152,7 @@ namespace mfront
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     AsterInt ntens;
-    AsterInt nprops = static_cast<AsterInt>(mp.size());
+    AsterInt nprops = mp0.size() == 0 ? 1 : static_cast<AsterInt>(mp0.size());
     AsterInt nstatv;
     AsterInt nummod;
     if (h==MH::AXISYMMETRICAL){
@@ -205,13 +203,19 @@ namespace mfront
 	throw(runtime_error(msg));
       }
     }
+    // using a local copy of material properties to handle the
+    // case where mp0 is empty
+    copy(mp0.begin(),mp0.end(),this->mps.begin());
+    if(mp0.empty()){
+      this->mps[0] = real(0);
+    }
     // using a local copy of internal state variables to handle the
     // case where iv0 is empty
-    copy(iv0.begin(),iv0.end(),this->iv.begin());
+    copy(iv0.begin(),iv0.end(),this->ivs.begin());
     if(iv0.empty()){
-      iv[0] = real(0.);
+      ivs[0] = real(0);
     }
-    nstatv = static_cast<AsterInt>(iv.size());
+    nstatv = static_cast<AsterInt>(ivs.size());
     // rotation matrix
     tmatrix<3u,3u,real> drot;
     tmatrix<3u,3u,real>::size_type i,j;
@@ -228,18 +232,18 @@ namespace mfront
     }
     copy(s0.begin(),s0.end(),s1.begin());
     AsterReal ndt(1.);
-    (this->fct)(&s1(0),&iv(0),&Kt(0,0),
+    (this->fct)(&s1(0),&ivs(0),&Kt(0,0),
 		&ue0(0),&ude(0),&dt,
 		&ev0(0),&dev(0),
 		&ev0(0)+1,&dev(0)+1,
-		&ntens,&nstatv,&mp(0),
+		&ntens,&nstatv,&(this->mps(0)),
 		&nprops,&drot(0,0),&ndt,&nummod);
     if(ndt<0.){
       return false;
     }
     if(b){
       if(!iv0.empty()){
-	copy(iv.begin(),iv.end(),iv1.begin());
+	copy(this->ivs.begin(),this->ivs.begin()+iv1.size(),iv1.begin());
       }
     }
     return true;

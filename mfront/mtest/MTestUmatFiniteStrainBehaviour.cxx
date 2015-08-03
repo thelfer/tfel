@@ -736,8 +736,8 @@ namespace mfront
       msg += "the memory has not been allocated correctly";
       throw(runtime_error(msg));
     }
-    if(((iv0.size()==0)&&(this->iv.size()!=1u))||
-       ((iv0.size()!=0)&&(iv0.size()!=this->iv.size()))){
+    if(((iv0.size()==0)&&(this->ivs.size()!=1u))||
+       ((iv0.size()!=0)&&(iv0.size()!=this->ivs.size()))){
       string msg("MTestUmatFiniteStrainBehaviour::integrate : ");
       msg += "the memory has not been allocated correctly";
       throw(runtime_error(msg));
@@ -745,9 +745,9 @@ namespace mfront
     fill(this->D.begin(),this->D.end(),0.);
     if(iv0.size()!=0){
       copy(iv0.begin(),iv0.end(),
-	   this->iv.begin());
+	   this->ivs.begin());
     }
-    nstatv = static_cast<UMATInt>(iv.size());
+    nstatv = static_cast<UMATInt>(this->ivs.size());
     // rotation matrix
     tmatrix<3u,3u,real> drot(0.);
     tmatrix<3u,3u,real>::size_type i,j;
@@ -796,7 +796,7 @@ namespace mfront
       s1(i)  /= sqrt2;
     }
     UMATReal ndt(1.);
-    (this->fct)(&s1(0),&iv(0),&D(0,0),
+    (this->fct)(&s1(0),&this->ivs(0),&D(0,0),
 		0,0,0,0,0,0,0,
 		0,0,0,&dt,
 		&ev0(0),&dev(0),
@@ -808,7 +808,7 @@ namespace mfront
       return false;
     }
     if(!iv1.empty()){
-      copy(iv.begin(),iv.end(),iv1.begin());
+      copy(this->ivs.begin(),this->ivs.begin()+iv1.size(),iv1.begin());
     }
     // tangent operator (...)
     if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 

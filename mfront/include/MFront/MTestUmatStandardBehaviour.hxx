@@ -76,9 +76,11 @@ namespace mfront
   protected:
     //! the umat fonction
     tfel::system::UMATFctPtr fct;
-    //! temporary vector
-    mutable tfel::math::vector<real> iv;
-  }; // end of struct MTestBehaviour
+    //! temporary vector for material properties
+    mutable tfel::math::vector<real> mps;
+    //! temporary vector for internal variables
+    mutable tfel::math::vector<real> ivs;
+  }; // end of struct MTestUmatStandardBehaviour
   
 } // end of namespace mfront
 
