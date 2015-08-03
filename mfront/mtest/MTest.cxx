@@ -96,7 +96,7 @@ namespace mfront
     for(auto p=n.begin();p!=n.end();++p){
       if(evm1.find(*p)==evm1.end()){
 	if(evm2.find(*p)==evm2.end()){
-	  string msg("no '"+type+"' named '"+*p+"' declared");
+	  string msg("no "+type+" named '"+*p+"' declared");
 	  throw(runtime_error(msg));
 	}
       }
@@ -1118,7 +1118,8 @@ namespace mfront
     vector<string> mpnames(this->b->getMaterialPropertiesNames());
     vector<string> esvnames(this->b->getExternalStateVariablesNames());
     this->b->setOptionalMaterialPropertiesDefaultValues(*(this->defaultMaterialPropertiesValues),*(this->evm));
-    checkIfDeclared(mpnames,*(this->evm),*(this->defaultMaterialPropertiesValues),"material property");
+    checkIfDeclared(mpnames,*(this->evm),*(this->defaultMaterialPropertiesValues),
+		    "material property");
     checkIfDeclared(esvnames,*(this->evm),"external state variable");
     // output
     if(!this->output.empty()){

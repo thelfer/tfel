@@ -797,18 +797,18 @@ namespace mfront
 	const SupportedTypes::TypeFlag flag = this->getTypeFlag(ev.type);
 	if(flag==SupportedTypes::Scalar){
 	  if(ev.arraySize==1u){
-	    out << "this->" << ev.name << " = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
+	    out << "this->d" << ev.name << " = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
 	    o+=this->getTypeSize(ev.type,1u);
 	  } else {
 	    if(this->useDynamicallyAllocatedVector(ev.arraySize)){
-	      out << "this->" << ev.name << ".resize(" << ev.arraySize << ");" << endl;
+	      out << "this->d" << ev.name << ".resize(" << ev.arraySize << ");" << endl;
 	      out << "for(unsigned short idx=0;idx!=" << ev.arraySize << ";++idx){" << endl;
-	      out << "this->" << ev.name << "[idx] = ZMATextvars_td-[ZMATevs_pos[" << o << "+idx]]-ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];" << endl;
+	      out << "this->d" << ev.name << "[idx] = ZMATextvars_td-[ZMATevs_pos[" << o << "+idx]]-ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];" << endl;
 	      out << "}" << endl;
 	      o+=this->getTypeSize(ev.type,ev.arraySize);
 	    } else {
 	      for(unsigned short i=0;i!=ev.arraySize;++i){
-		out << "this->" << ev.name << "[" << i << "] = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
+		out << "this->d" << ev.name << "[" << i << "] = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];" << endl;
 		o+=this->getTypeSize(ev.type,1u);
 	      }
 	    }

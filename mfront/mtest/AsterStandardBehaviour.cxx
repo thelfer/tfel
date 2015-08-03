@@ -120,7 +120,7 @@ namespace mfront
 
   tfel::math::tmatrix<3u,3u,real>
   AsterStandardBehaviour::getRotationMatrix(const tfel::math::vector<real>&,
-						    const tfel::math::tmatrix<3u,3u,real>& r) const
+					    const tfel::math::tmatrix<3u,3u,real>& r) const
   {
     return r;
   } // end of AsterStandardBehaviour::getRotationMatrix
@@ -186,11 +186,8 @@ namespace mfront
     const auto nth     = this->getThermodynamicForcesSize(h);
     const auto nstatev = this->getInternalStateVariablesSize(h);
     this->D.resize(nth,ndv);
-    if(nstatev==0){
-      this->iv.resize(1u,real(0));
-    } else {
-      this->iv.resize(nstatev);
-    }
+    this->mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
+    this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
   } // end of AsterStandardBehaviour::allocate
 
   MTestStiffnessMatrixType::mtype

@@ -58,6 +58,9 @@ namespace mfront{
 				  const FileDescription&) override;
     //! destructor
     virtual ~JavaMaterialPropertyInterface();
+  private:
+    //! package name
+    std::string package;
   }; // end of JavaMaterialPropertyInterface
 
 } // end of namespace mfront

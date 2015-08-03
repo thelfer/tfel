@@ -420,7 +420,7 @@ namespace mfront
 	    this->srcFile << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
 	    this->srcFile << "const char * const policy = "
 			  << "::getenv(\"OUT_OF_BOUND_POLICY\");\n";
-	    this->srcFile << "if(policy!=0){\n";
+	    this->srcFile << "if(policy!=nullptr){\n";
 	    this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    this->srcFile << "ostringstream msg;\n";
 	    this->srcFile << "msg << \"" << name << " : "  << p6->varName << " is below its lower bound\";\n";
@@ -438,7 +438,7 @@ namespace mfront
 	    this->srcFile << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
 	    this->srcFile << "const char * const policy = "
 			  << "::getenv(\"OUT_OF_BOUND_POLICY\");\n";
-	    this->srcFile << "if(policy!=0){\n";
+	    this->srcFile << "if(policy!=nullptr){\n";
 	    this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    this->srcFile << "ostringstream msg;\n";
 	    this->srcFile << "msg << \"" << name << " : "  << p6->varName << " is beyond its upper bound\";\n";
@@ -456,7 +456,7 @@ namespace mfront
 	    this->srcFile << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
 	    this->srcFile << "const char * const policy = "
 			  << "::getenv(\"OUT_OF_BOUND_POLICY\");\n";
-	    this->srcFile << "if(policy!=0){\n";
+	    this->srcFile << "if(policy!=nullptr){\n";
 	    this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    this->srcFile << "ostringstream msg;\n";
 	    this->srcFile << "msg << \"" << name << " : "  << p6->varName << " is below its lower bound\";\n";
@@ -473,7 +473,7 @@ namespace mfront
 	    this->srcFile << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
 	    this->srcFile << "const char * const policy = "
 			  << "::getenv(\"OUT_OF_BOUND_POLICY\");\n";
-	    this->srcFile << "if(policy!=0){\n";
+	    this->srcFile << "if(policy!=nullptr){\n";
 	    this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    this->srcFile << "ostringstream msg;\n";
 	    this->srcFile << "msg << \"" << name << " : "  << p6->varName << " is beyond its upper bound\";\n";

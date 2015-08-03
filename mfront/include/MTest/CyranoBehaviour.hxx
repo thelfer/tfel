@@ -156,21 +156,13 @@ namespace mfront
 		     const real,
 		     const MTestStiffnessMatrixType::mtype,
 		     const bool) const;
-    /*!
-     * \brief compute the elastic stiffness
-     * \param[out] Kt   : tangent operator
-     * \param[in]  mp   : material properties
-     * \param[in]  h    : modelling hypothesis
-     */
-    virtual void
-      computeElasticStiffness(tfel::math::matrix<real>&,
-			      const tfel::math::vector<real>&,
-			      const tfel::material::ModellingHypothesis::Hypothesis) const;
   protected:
     //! the umat fonction
     tfel::system::CyranoFctPtr fct;
-    //! temporary vector
-    mutable tfel::math::vector<real> iv;
+    //! temporary vector for material properties
+    mutable tfel::math::vector<real> mps;
+    //! temporary vector for internal variables
+    mutable tfel::math::vector<real> ivs;
   }; // end of struct Behaviour
   
 } // end of namespace mfront

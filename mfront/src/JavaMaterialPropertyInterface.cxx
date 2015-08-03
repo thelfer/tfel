@@ -23,6 +23,7 @@
 #include<unistd.h>
 
 #include"TFEL/System/System.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -52,8 +53,16 @@ namespace mfront
       }
     }
     return mpd.library;
-  }
+  } // end of getJavaClassName
 
+  static std::string
+  getJavaClassFileName(const MaterialPropertyDescription& mpd,
+		       const std::string& package){
+    if(package.empty()){
+      return getJavaClassName(mpd);
+    }
+    return package+"/"+getJavaClassName(mpd);
+  } // end of getJavaClassFileName
   
   std::string
   JavaMaterialPropertyInterface::getName(void)
@@ -65,10 +74,46 @@ namespace mfront
   {}
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  JavaMaterialPropertyInterface::treatKeyword(const std::string&,
-					 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+  JavaMaterialPropertyInterface::treatKeyword(const std::string& key,
+					      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+					      const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
+    using namespace std;
+    if(key=="@Package"){
+      if(!this->package.empty()){
+	throw(runtime_error("JavaMaterialPropertyInterface::treatKeyword : "
+			    "package name already defined"));
+      }
+      if(current==end){
+	throw(runtime_error("JavaMaterialPropertyInterface::treatKeyword : "
+			    "unexpected end of file"));
+      }
+      auto p = current->value;
+      if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p,true)){
+	throw(runtime_error("JavaMaterialPropertyInterface::treatKeyword : "
+			    "invalid package name '"+p+"'"));
+      }
+      for(const auto c : p){
+	if(isalpha(c)){
+	  if(!islower(c)){	
+	    throw(runtime_error("JavaMaterialPropertyInterface::treatKeyword : "
+				"invalid package name '"+p+"'"));
+    	  }
+	}
+      }
+      ++(current);
+      if(current==end){
+	throw(runtime_error("JavaMaterialPropertyInterface::treatKeyword : "
+			    "unexpected end of file"));
+      }  
+      if(current->value!=";"){
+	throw(runtime_error("JavaMaterialPropertyInterface::treatKeyword : "
+			    "expected ';', read '"+current->value+"'"));
+      }
+      ++(current);
+      this->package = p;
+      return make_pair(true,current);      
+    }
     return {false,current};
   } // end of treatKeyword
 
@@ -79,28 +124,33 @@ namespace mfront
   JavaMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 						       const MaterialPropertyDescription& mpd)
   {
-    const auto lib = getMaterialLawLibraryNameBase(mpd.library,mpd.material)+"-java";
+    const auto lib = "lib"+getMaterialLawLibraryNameBase(mpd.library,mpd.material)+"-java";
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     d.dependencies[lib].push_back("-lm");    
     // the jni part
     d.cppflags[lib].push_back(TFEL_JAVA_INCLUDES);
     d.sources[lib].push_back(name+"-java.cxx");
-    d.epts[lib].push_back(getJavaClassName(mpd)+"::"+mpd.law);
+    if(this->package.empty()){
+      d.epts[lib].push_back(getJavaClassName(mpd)+"."+mpd.law);
+    } else {
+      d.epts[lib].push_back(this->package+"."+getJavaClassName(mpd)+"."+mpd.law);
+    }
     // the java class
+    const auto jfname = getJavaClassFileName(mpd,this->package);
+    const auto src    = "../java/"+jfname+".java";
+    const auto target = "../java/"+jfname+".class";
+    auto cmd = std::string{};
     const char * java = ::getenv("JAVAC");
-    const auto jcname = getJavaClassName(mpd);
-    const auto target="../java/"+jcname+".class";
-    std::string cmd = "@cd ../java/ && ";
     if(java==nullptr){
       cmd += "javac";
     } else {
       cmd += java;
     }
-    cmd += " "+jcname+".java";
+    cmd += " "+src;
     auto& res = d.specific_targets;
-    res[target].first.push_back("../java/"+jcname+".java");
+    res[target].first.push_back(src);
     res[target].second.push_back(cmd);
-    res["all"].first.push_back("../java/"+jcname+".class");
+    res["all"].first.push_back(target);
   } // end of JavaMaterialPropertyInterface::getTargetsDescription
 
   void
@@ -108,7 +158,11 @@ namespace mfront
 						  const FileDescription& fd)
   {
     using namespace std;
+    using tfel::utilities::replace_all;
     tfel::system::systemCall::mkdir("java");
+    if(!this->package.empty()){
+      tfel::system::systemCall::mkdir("java/"+this->package);
+    }
     const auto lib   = getMaterialLawLibraryNameBase(mpd.library,mpd.material)+"-java";
     const auto cname = (!mpd.material.empty()) ? mpd.material : "UnknowMaterial";
     const auto name  = (!mpd.material.empty()) ? mpd.material+"_"+mpd.law : mpd.law;
@@ -150,14 +204,15 @@ namespace mfront
     srcFile << "#ifdef __cplusplus\n";
     srcFile << "extern \"C\"{\n";
     srcFile << "#endif /* __cplusplus */\n\n";
-    srcFile << "JNIEXPORT jdouble JNICALL\n"
-	    << "Java_" << getJavaClassName(mpd)
-	    << "_" <<  mpd.law << "(";
-    if((!mpd.physicalBoundsDescriptions.empty())||(!mpd.boundsDescriptions.empty())){
-      srcFile << "JNIEnv *java_env,jobject";
+    srcFile << "JNIEXPORT jdouble JNICALL\n";
+    if(this->package.empty()){
+      srcFile << "Java_" << replace_all(getJavaClassName(mpd),"_","_1");
     } else {
-      srcFile << "JNIEnv *,jobject";
+      srcFile << "Java_" << replace_all(this->package,"_","_1") << "_"
+	      << replace_all(getJavaClassName(mpd),"_","_1");
     }
+    srcFile << "_" <<  replace_all(mpd.law,"_","_1") << "(";
+    srcFile << "JNIEnv *java_env,jclass";
     for(const auto i:mpd.inputs){
       srcFile << ", const jdouble " << i.name;
     }
@@ -167,7 +222,7 @@ namespace mfront
     // handle java exceptions
     srcFile << "auto throwJavaRuntimeException = [java_env](const string& msg){\n"
 	    << "  auto jexcept = java_env->FindClass(\"java/lang/RuntimeException\");\n"
-	    << "  if (jexcept==0){\n"
+	    << "  if (jexcept==nullptr){\n"
 	    << "    cerr << \"Internal error : can't find the java \"\n"
 	    << "         << \"RuntimeException class\" << endl;\n"
 	    << "    ::exit(EXIT_FAILURE);\n"
@@ -175,7 +230,7 @@ namespace mfront
 	    << "  java_env->ThrowNew(jexcept,msg.c_str());\n"
 	    << "  java_env->DeleteLocalRef(jexcept);\n"
 	    << "  return jdouble{};\n"
-	    << "};";
+	    << "};\n";
     // material laws
     writeMaterialLaws("JavaMaterialPropertyInterface::writeOutputFile",
 		      srcFile,mpd.materialLaws);
@@ -310,6 +365,11 @@ namespace mfront
 			    "unable to open '"+jcmlst+"'"));
       }
       auto line = string();
+      getline(f,line);
+      if(line!=this->package){
+    	throw(runtime_error("JavaMaterialPropertyInterface::writeOutputFiles : "
+			    "inconsistent package name for class '"+jcname+"'"));
+      }
       while (getline(f, line)){
 	istringstream iss{line};
 	iss.exceptions(ios::badbit|ios::failbit);
@@ -327,16 +387,20 @@ namespace mfront
 			  "unable to open '"+jcmlst+"'"));
     }
     mf.exceptions(ios::badbit|ios::failbit);
+    mf << this->package << endl;
     for(const auto& m:methods){
       mf << m.first << " " << m.second << "\n";
     }
     mf.close();
-    ofstream jc{"java/"+jcname+".java"};
+    ofstream jc{"java/"+getJavaClassFileName(mpd,this->package)+".java"};
     if(!jc){
       throw(runtime_error("JavaMaterialPropertyInterface::writeOutputFiles : "
 			  "unable to open '"+jcname+".java'"));
     }
     jc.exceptions(ios::badbit|ios::failbit);
+    if(!this->package.empty()){
+      jc << "package " << this->package << ";\n\n";
+    }
     jc << "public class " << jcname <<"{\n"
        << "static {System.loadLibrary(\"" << lib  << "\");}\n";
     for(const auto& m:methods){

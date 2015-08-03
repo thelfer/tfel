@@ -14,12 +14,15 @@
 #ifndef LIB_MFRONT_ZMAT_ZMATINTERFACE_H_
 #define LIB_MFRONT_ZMAT_ZMATINTERFACE_H_ 
 
-#include<Matrix.h>
-#include"MFront/ZMAT/ZMATUndefs.hxx"
+#include<type_traits>
 
+#include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
+
+#include<Matrix.h>
+#include"MFront/ZMAT/ZMATUndefs.hxx"
 
 namespace zmat
 {
