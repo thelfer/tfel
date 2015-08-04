@@ -74,6 +74,8 @@ macro(mfront_check_library lib interface ext)
   endforeach(source)
   add_library(${lib} SHARED EXCLUDE_FROM_ALL
     ${${lib}_SOURCES})
+  set_target_properties(${lib} PROPERTIES
+      COMPILE_FLAGS "-DMFRONT_COMPILING")
   add_dependencies(check ${lib})
 endmacro(mfront_check_library)
 

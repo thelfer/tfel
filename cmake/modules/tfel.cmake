@@ -232,6 +232,8 @@ macro(mfront_behaviour_check_library lib interface)
   add_library(${lib} MODULE EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
     ${${lib}_ADDITIONAL_SOURCES})
+  set_target_properties(${lib} PROPERTIES
+      COMPILE_FLAGS "-DMFRONT_COMPILING")
   add_dependencies(check ${lib})
 endmacro(mfront_behaviour_check_library)
 

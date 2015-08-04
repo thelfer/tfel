@@ -441,8 +441,11 @@ namespace mfront
     for(auto p7=interfaces.begin();p7!=interfaces.end();++p7){
       wrapper << "#include\"" << *p7 << "-python.hxx\"\n";
     }
+    wrapper << endl;
+#ifndef _WIN32
     writeExportDirectives(wrapper);
     wrapper << endl;
+#endif _WIN32
     if(!material.empty()){
       wrapper << "static PyMethodDef " << material << "LawMethods[] = {\n";
     } else {
@@ -453,8 +456,12 @@ namespace mfront
 	      << "\"compute the " << *p7 <<  " law.\"},\n";
     }
     wrapper << "{NULL, NULL, 0, NULL} /* Sentinel */\n};\n\n";
-    wrapper << "PyMODINIT_FUNC MFRONT_SHAREDOBJ\ninit"
-	    << makeLowerCase(getMaterialLawLibraryNameBase(library,material))
+#ifndef _WIN32
+    wrapper << "PyMODINIT_FUNC MFRONT_SHAREDOBJ\n"
+#else _WIN32
+    wrapper << "PyMODINIT_FUNC\n"
+#endif _WIN32
+	    << "init" << makeLowerCase(getMaterialLawLibraryNameBase(library,material))
 	    << "(void)\n";
     wrapper << "{\n";
     if(!material.empty()){

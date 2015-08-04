@@ -362,7 +362,7 @@ namespace mfront
     lock.lock();
     auto methods = map<string,decltype(mpd.inputs.size())>{};
     auto jcname = getJavaClassName(mpd);
-    auto jcmlst = "src/"+jcname+".lst";
+    auto jcmlst = "src/"+jcname+"-java.lst";
     struct stat buffer; // for call to stat
     if(access(jcmlst.c_str(),F_OK)==0){
       stat(jcmlst.c_str(),&buffer);
@@ -379,7 +379,8 @@ namespace mfront
       getline(f,line);
       if(line!=this->package){
     	throw(runtime_error("JavaMaterialPropertyInterface::writeOutputFiles : "
-			    "inconsistent package name for class '"+jcname+"'"));
+			    "inconsistent package name for class '"+jcname+"' "
+			    "(read '"+line+"')"));
       }
       while (getline(f, line)){
 	istringstream iss{line};
