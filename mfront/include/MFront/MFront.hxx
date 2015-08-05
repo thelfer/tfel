@@ -25,6 +25,10 @@
 #include"MFront/MFrontConfig.hxx"
 #include"MFront/TargetsDescription.hxx"
 
+#if (!(defined _WIN32 || defined _WIN64)) || ((defined __CYGWIN__)|| (defined __MINGW32__)) || defined(__MINGW64__) 
+#define MFRONT_MAKE_SUPPORT
+#endif /* (!(defined _WIN32 || defined _WIN64)) || ((defined __CYGWIN__)|| (defined __MINGW32__)) || defined(__MINGW64__)  */
+
 namespace mfront{
 
   /*!
@@ -81,11 +85,13 @@ namespace mfront{
 
     virtual void treatHelpCommand(void);
 
+    virtual void treatNoMelt(void);
+
+#ifdef MFRONT_MAKE_SUPPORT
+
     virtual void treatSilentBuild(void);
 
     virtual void treatNoDeps(void);
-
-    virtual void treatNoMelt(void);
 
     virtual void treatOMake(void);
 
@@ -101,6 +107,8 @@ namespace mfront{
 
     virtual void treatOTarget(void);
 
+#endif /* MFRONT_MAKE_SUPPORT */
+    
     virtual void treatListParsers(void);
 
     virtual void registerArgumentCallBacks(void);
@@ -127,15 +135,19 @@ namespace mfront{
 
     virtual void writeCppFlags(void);
 
+
     virtual std::pair<bool,std::pair<std::string,std::string> >
     getLibraryDependencies(const std::string&);
-
+    
+#ifdef MFRONT_MAKE_SUPPORT
     virtual std::string
     getLibraryLinkDependencies(const std::string&);
+#endif /* MFRONT_MAKE_SUPPORT */
 
     virtual std::string
     sortLibraryList(const std::string&);
 
+#ifdef MFRONT_MAKE_SUPPORT
     virtual void
     generateMakeFile(void);
 
@@ -144,14 +156,17 @@ namespace mfront{
 
     virtual void
     cleanLibraries(void);
+#endif /* MFRONT_MAKE_SUPPORT */
 
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
     virtual void
     treatWin32(void);
 #endif /* LIB_MFRONT_H_ */
 
+#ifdef MFRONT_MAKE_SUPPORT
     std::ofstream makeFile;
-
+#endif /* MFRONT_MAKE_SUPPORT */
+    
     std::map<std::string,std::pair<std::vector<std::string>,
 				   std::vector<std::string> > > targets;
 
@@ -169,23 +184,30 @@ namespace mfront{
 
     std::string sys;
 
-    bool oflags0;
+#ifdef MFRONT_MAKE_SUPPORT
+    bool oflags0 = false;
 
-    bool oflags;
+    bool oflags  = false;
 
-    bool oflags2;
+    bool oflags2 = false;
 
-    bool genMake;
+    bool genMake = false;
 
-    bool buildLibs;
+    bool buildLibs = false;
 
-    bool cleanLibs;
+    bool cleanLibs = false;
 
-    bool silentBuild;
+    bool silentBuild = true;
 
-    bool nodeps;
-
-    bool melt;
+#if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+    bool nodeps = true;
+#else  /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+    bool nodeps = false;
+#endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+    
+#endif /* MFRONT_MAKE_SUPPORT */
+    
+    bool melt = true;
 
   }; // end of class MFront
 
