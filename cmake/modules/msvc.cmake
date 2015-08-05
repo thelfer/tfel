@@ -28,4 +28,4 @@ set(OPTIMISATION_FLAGS "/O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
 # optimise build
-OptimiseForArchitecture()
+OptimizeForArchitecture()

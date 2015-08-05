@@ -151,7 +151,7 @@ macro(test_aster_python test)
   if(CMAKE_CONFIGURATION_TYPES)
     set_tests_properties(aster${test}_py
       PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_std__stl_vector>;$<TARGET_FILE_DIR:py_tfel_tests>")
-  elseif(CMAKE_CONFIGURATION_TYPES)
+  else(CMAKE_CONFIGURATION_TYPES)
     set_tests_properties(aster${test}_py
       PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
   endif(CMAKE_CONFIGURATION_TYPES)
