@@ -158,9 +158,15 @@ namespace mfront{
     cleanLibraries(void);
 #endif /* MFRONT_MAKE_SUPPORT */
 
+#if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+    //! treat the --def-file command line option
+    virtual void treatDefFile(void);
+    //! generate def files
+    virtual void generateDefsFiles(void);
+#endif
+    
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
-    virtual void
-    treatWin32(void);
+    virtual void treatWin32(void);
 #endif /* LIB_MFRONT_H_ */
 
 #ifdef MFRONT_MAKE_SUPPORT
@@ -182,6 +188,11 @@ namespace mfront{
 
     std::set<std::string> specifiedTargets;
 
+#if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+    // libraries for which a def file must be generated
+    std::set<std::string> defs;
+#endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+    
     std::string sys;
 
 #ifdef MFRONT_MAKE_SUPPORT
