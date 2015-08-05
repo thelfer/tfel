@@ -35,10 +35,16 @@ target_link_libraries(py_tfel_math TFELMath)
 tfel_python_module(material
   ModellingHypothesis.cxx)
 
-tfel_python_module(system system.cxx
-  ProcessManagerCommand.cxx
-  ExternalLibraryManager.cxx
-  ExternalBehaviourDescription.cxx)
+if(NOT WIN32)
+  tfel_python_module(system system.cxx
+    ProcessManagerCommand.cxx
+    ExternalLibraryManager.cxx
+    ExternalBehaviourDescription.cxx)
+else(NOT WIN32)
+  tfel_python_module(system system.cxx
+    ExternalLibraryManager.cxx
+    ExternalBehaviourDescription.cxx)
+endif(NOT WIN32)
 target_link_libraries(py_tfel_system
   TFELSystem)
 

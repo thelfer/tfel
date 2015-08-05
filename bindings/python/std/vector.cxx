@@ -16,10 +16,12 @@
 #include<type_traits>
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tvector.hxx"
+#ifndef _WIN32
 #include"TFEL/System/ProcessManager.hxx"
-
+#endif /* _WIN32 */
 #include"TFEL/Python/VectorConverter.hxx"
 
+#ifndef _WIN32
 struct DontDeclareAnyThing
 {
   static void
@@ -37,13 +39,15 @@ struct DeclareProcessIdVector
     initializeVectorConverter<std::vector<ProcessManager::ProcessId> >();
   }
 };
-
+#endif /* _WIN32 */
 BOOST_PYTHON_MODULE(_stl_vector)
 {
   using namespace std;
   using namespace tfel::meta;
   using namespace tfel::math;
+#ifndef _WIN32
   using namespace tfel::system;
+#endif /* _WIN32 */
   using namespace tfel::python;
   using std::vector;
 
@@ -63,10 +67,11 @@ BOOST_PYTHON_MODULE(_stl_vector)
   initializeVectorConverter<vector<vector<string> > >();
   initializeVectorConverter<vector<pair<string,string> > >();
   
+#ifndef _WIN32
   conditional<is_same<ProcessManager::ProcessId,
 		      int>::value,
 	      DontDeclareAnyThing,
 	      DeclareProcessIdVector>::type::declare();
-
+#endif /* _WIN32 */
 }
 

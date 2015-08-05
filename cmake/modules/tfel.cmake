@@ -242,13 +242,18 @@ macro(python_lib_module name package)
     message(FATAL_ERROR "python_lib_module : no source specified")
   endif(${ARGC} LESS 1)
   add_library(py_${package}_${name} MODULE ${ARGN})
-  install(TARGETS py_${package}_${name}
-    DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
-    COMPONENT python_bindings)
+  if(WIN32)
+    set_target_properties(py_${package}_${name} PROPERTIES
+      COMPILE_FLAGS "-DHAVE_ROUND")
+  endif(WIN32)
   set_target_properties(py_${package}_${name} PROPERTIES PREFIX "")
+  set_target_properties(py_${package}_${name} PROPERTIES SUFFIX ".pyd")
   set_target_properties(py_${package}_${name} PROPERTIES OUTPUT_NAME ${name})
   target_link_libraries(py_${package}_${name}
     ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARY})
+  install(TARGETS py_${package}_${name}
+    DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
+    COMPONENT python_bindings)
 endmacro(python_lib_module)
 
 macro(std_python_module name)

@@ -56,7 +56,7 @@ namespace mfront
      * for the python bindings. In particular, the description of the
      * variables given here is only valid during the computations.
      */
-    struct MTestCurrentState
+    struct MFRONT_MTEST_VISIBILITY_EXPORT MTestCurrentState
     {
       //! default constructor
       MTestCurrentState();
@@ -138,7 +138,7 @@ namespace mfront
      * This structure is used internally and is declared
      * public only for the python bindings.
      */
-    struct MTestWorkSpace
+    struct MFRONT_MTEST_VISIBILITY_EXPORT MTestWorkSpace
     {
       MTestWorkSpace();
       ~MTestWorkSpace() noexcept;
