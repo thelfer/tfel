@@ -1,3 +1,5 @@
+include(cmake/modules/OptimizeForArchitecture.cmake)
+
 add_definitions("-DMICROSOFT_COMPILER_MSC_=1")
 tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "MD")
 tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "EHsc")
@@ -20,8 +22,10 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "wd4244")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "wd4996")
 
 # remove a warning about deprecated symbol
-add_definitions("-D_CRT_SECURE_NO_WARNINGS")
-add_definitions("-D_SCL_SECURE_NO_WARNINGS")
-
+set(COMPILER_FLAGS "-D_CRT_SECURE_NO_WARNINGS ${COMPILER_FLAGS}")
+set(COMPILER_FLAGS "-D_SCL_SECURE_NO_WARNINGS ${COMPILER_FLAGS}")
 set(OPTIMISATION_FLAGS "/O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
+
+# optimise build
+OptimiseForArchitecture()
