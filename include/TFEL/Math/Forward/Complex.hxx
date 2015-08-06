@@ -22,7 +22,7 @@
 namespace std
 {
 
-#ifndef MICROSOFT_COMPILER_MSC_
+#ifndef _MSC_VER
   template<typename T>
   struct complex;
 #else

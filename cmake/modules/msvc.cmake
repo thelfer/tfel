@@ -1,6 +1,5 @@
 include(cmake/modules/OptimizeForArchitecture.cmake)
 
-add_definitions("-DMICROSOFT_COMPILER_MSC_=1")
 tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "MD")
 tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "EHsc")
 
