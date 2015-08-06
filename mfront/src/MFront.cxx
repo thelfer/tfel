@@ -392,6 +392,8 @@ namespace mfront{
     this->registerNewCallBack("--warning","-W",&MFront::treatWarning,"print warnings");
     this->registerNewCallBack("--pedantic",&MFront::treatPedantic,
 			      "print pedantic warning message");
+    this->registerNewCallBack("--interface","-i",&MFront::treatInterface,
+			      "specify which interface to use",true);
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--def-file",&MFront::treatDefFile,
 			      "outputs def file associated with the libraries given in arguments (separated by commas)",true);
@@ -411,8 +413,6 @@ namespace mfront{
 			      "generate MakeFile with optimized compilations flags and build the specified target",true);
     this->registerNewCallBack("--clean",&MFront::treatClean,
 			      "generate MakeFile and clean libraries");
-    this->registerNewCallBack("--interface","-i",&MFront::treatInterface,
-			      "specify which interface to use",true);
     this->registerNewCallBack("--silent-build",&MFront::treatSilentBuild,
 			      "active or desactivate silent build",true);
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
