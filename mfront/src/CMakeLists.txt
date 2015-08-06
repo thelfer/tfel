@@ -218,7 +218,7 @@ if(UNIX)
     TFELMaterial TFELMathParser
     TFELSystem   TFELUtilities
     TFELGlossary TFELException
-    -pthread @TFEL_DL_LIBRARY@)
+    -pthread ${TFEL_DL_LIBRARY})
 else(UNIX)
   target_link_libraries(TFELMFront
     MFrontLogStream

@@ -36,14 +36,14 @@ struct FSArrayTest final
   virtual tfel::tests::TestResult
   execute() override
   {
-#ifndef _MSC_VER
+#if (!defined _MSC_VER) && (!((defined __APPLE__) && (defined __MACH__)))
     this->test1();
     this->test2();
     this->test3();
 #endif
     return this->result;
   } // end of execute
-#ifndef _MSC_VER
+#if (!defined _MSC_VER) && (!((defined __APPLE__) && (defined __MACH__)))
   void test1(void)
   {
     using namespace std;

@@ -23,13 +23,19 @@ endif(HAVE_FENV_H)
 if(UNIX)
   # This is used in mtest tests files
   set(TFEL_LOCAL_LIBRARY_PREFIX "./")
-  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(TFEL_DL_LIBRARY "dl")
-  elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(TFEL_DL_LIBRARY "dl")
-  else(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  # Looking for libdl...
+  if((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
+     (${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
+   find_library(TFEL_DL_LIBRARY
+     NAMES dl)
+   if(NOT TFEL_DL_LIBRARY)
+     MESSAGE(FATAL_ERROR "the libdl library not found")
+   endif(NOT TFEL_DL_LIBRARY)
+  else((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
+      (${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
     set(TFEL_DL_LIBRARY "")
-  endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  endif((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
+    (${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
 else(UNIX)
   set(TFEL_LOCAL_LIBRARY_PREFIX "")
   set(TFEL_DL_LIBRARY "")

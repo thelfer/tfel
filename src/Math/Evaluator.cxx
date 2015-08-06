@@ -35,14 +35,12 @@ namespace tfel
 				       const std::vector<std::string>::const_iterator p,
 				       const std::vector<std::string>::const_iterator pe)
     {
-      using namespace std;
       if(p==pe){
-	string msg(method);
-	msg += " : unexpected end of line";
+	auto msg = method + " : unexpected end of line";
 	if(!error.empty()){
 	  msg += " ("+error+")";
 	}
-	throw(runtime_error(msg));
+	throw(std::runtime_error(msg));
       }
     } // end of Evaluator::checkNotEndOfExpression
 
@@ -60,13 +58,12 @@ namespace tfel
 				  std::vector<std::string>::const_iterator& p,
 				  const std::vector<std::string>::const_iterator pe)
     {
-      using namespace std;
       Evaluator::checkNotEndOfExpression(method,"expected '"+value+"'",p,pe);
       if(*p!=value){
-	string msg(method);
+	auto msg = method;
 	msg += " : unexpected token '"+*p+"'";
 	msg += " (expected '"+value+"')";
-	throw(runtime_error(msg));
+	throw(std::runtime_error(msg));
       }
       ++p;
     } // end of Evaluator::readSpecifiedToken
@@ -545,14 +542,10 @@ namespace tfel
     bool
     Evaluator::convert(const std::string& value)
     {
-      using namespace std;
-      T res;
       std::istringstream is(value);
-      if((value=="+")||(value=="-")||(value=="*")||(value=="/")||(value==".")){
-	return false;
-      }
+      T res;
       is >> res;
-      if(!is&&(!is.eof())){
+      if(!is||(!is.eof())){
 	return false;
       }
       return true;
@@ -997,22 +990,22 @@ namespace tfel
 	    ++p;
 	    const auto& params = this->analyseParameters(p,pe);
 	    Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
-	    vector<shared_ptr<Evaluator::TExpr> > args   = this->analyseArguments(p,pe,b);
+	    auto args   = this->analyseArguments(p,pe,b);
 	    g->add(shared_ptr<Evaluator::TExpr>(new TExternalOperator(p4->second,
-								    params,args)));
+								      params,args)));
 	  } else {
 	    Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
 	    vector<string> params;
-	    vector<shared_ptr<Evaluator::TExpr> > args   = this->analyseArguments(p,pe,b);
+	    auto args = this->analyseArguments(p,pe,b);
 	    g->add(shared_ptr<Evaluator::TExpr>(new TExternalOperator(p4->second,
-								    params,args)));
+								      params,args)));
 	  }
 	} else if((p3=Evaluator::getFunctionGeneratorManager().bFctGenerators.find(*p))!=
 		  Evaluator::getFunctionGeneratorManager().bFctGenerators.end()){
 	  // call to binary function
 	  ++p;
 	  Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
-	  vector<shared_ptr<Evaluator::TExpr> > args = this->analyseArguments(2,p,pe,b);
+	  const auto args = this->analyseArguments(2,p,pe,b);
 	  g->add(shared_ptr<Evaluator::TExpr>(new TBinaryFunction(p3->second,args[0],args[1])));
 	} else if((p2=Evaluator::getFunctionGeneratorManager().fctGenerators.find(*p))!=
 		  Evaluator::getFunctionGeneratorManager().fctGenerators.end()){

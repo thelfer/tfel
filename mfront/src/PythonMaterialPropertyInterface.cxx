@@ -445,7 +445,7 @@ namespace mfront
 #ifndef _WIN32
     writeExportDirectives(wrapper);
     wrapper << endl;
-#endif _WIN32
+#endif /* _WIN32 */
     if(!material.empty()){
       wrapper << "static PyMethodDef " << material << "LawMethods[] = {\n";
     } else {
@@ -458,9 +458,9 @@ namespace mfront
     wrapper << "{NULL, NULL, 0, NULL} /* Sentinel */\n};\n\n";
 #ifndef _WIN32
     wrapper << "PyMODINIT_FUNC MFRONT_SHAREDOBJ\n"
-#else _WIN32
+#else /* _WIN32 */
     wrapper << "PyMODINIT_FUNC\n"
-#endif _WIN32
+#endif /* _WIN32 */
 	    << "init" << makeLowerCase(getMaterialLawLibraryNameBase(library,material))
 	    << "(void)\n";
     wrapper << "{\n";

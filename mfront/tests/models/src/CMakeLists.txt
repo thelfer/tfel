@@ -7,10 +7,14 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src")
 if(NOT WIN32)
   add_library(LicosMFrontModel MODULE LicosModelInterface)
   target_link_libraries(LicosMFrontModel
-    MFrontLogStream)
+    TFELMFront
+    MFrontLogStream
+    TFELSystem)
   add_library(GerminalMFrontModel SHARED
     MFrontPleiadesModelInterfaceBase
     MFrontGerminalModelInterface)
   target_link_libraries(GerminalMFrontModel
-    MFrontLogStream)
+    TFELMFront
+    MFrontLogStream
+    TFELSystem)
 endif(NOT WIN32)

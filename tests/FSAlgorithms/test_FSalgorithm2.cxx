@@ -26,17 +26,13 @@
 
 int main(void)
 {
-  using namespace std;
-  using namespace tfel::fsalgo;
-  using ushort = unsigned short;
-  vector<ushort> v(10);
-  vector<ushort> v2(10);
-  vector<ushort>::size_type i;
+  using uishort = unsigned short;
+  std::vector<uishort> v(10);
+  std::vector<uishort> v2(10);
   tfel::fsalgo::iota<10u>::exe(v.begin(),ushort{0});
   tfel::fsalgo::copy<10u>::exe(v.begin(),v2.begin());
-  for(i=0;i!=10;++i){
+  for(std::vector<uishort>::size_type i=0;i!=10;++i){
     assert(v2[i]==i);
   }
-    
   return EXIT_SUCCESS;
 }

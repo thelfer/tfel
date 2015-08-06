@@ -15,6 +15,10 @@
 #ifndef LIB_TFEL_MATH_FORWARD_COMPLEX_H_
 #define LIB_TFEL_MATH_FORWARD_COMPLEX_H_ 
 
+#if (defined __APPLE__) && (defined __MACH__)
+#include<complex>
+#else
+
 namespace std
 {
 
@@ -27,6 +31,8 @@ namespace std
 #endif /* LIB_TFEL_MATH_FORWARD_COMPLEX_H_ */
 
 } // end of namespace std
+
+#endif
 
 namespace tfel
 {
