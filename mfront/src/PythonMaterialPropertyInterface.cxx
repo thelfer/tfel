@@ -89,13 +89,13 @@ namespace mfront
     } else {
       src = mpd.library+"wrapper.cxx";
     }
-    d.dependencies[lib].push_back("-lm");    
-    d.dependencies[lib].push_back(TFEL_PYTHON_LIBS);
-    d.cppflags[lib].push_back(TFEL_PYTHON_INCLUDES);
-    d.sources[lib].push_back(name+"-python.cxx");
-    d.sources[lib].push_back(src);
+    d[lib].dependencies.push_back("-lm");    
+    d[lib].dependencies.push_back(TFEL_PYTHON_LIBS);
+    d[lib].cppflags.push_back(TFEL_PYTHON_INCLUDES);
+    d[lib].sources.push_back(name+"-python.cxx");
+    d[lib].sources.push_back(src);
     d.headers.push_back(this->headerFileName);    
-    d.epts[lib].push_back(name);
+    d[lib].epts.push_back(name);
   } // end of PythonMaterialPropertyInterface::getTargetsDescription
 
   void

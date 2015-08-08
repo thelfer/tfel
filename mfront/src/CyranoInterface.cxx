@@ -458,23 +458,23 @@ namespace mfront{
 				       const BehaviourDescription& bd){
     const auto lib  = CyranoInterface::getLibraryName(bd);
     const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
-    d.cppflags[lib].push_back("`tfel-config --includes`");
+    d[lib].cppflags.push_back("`tfel-config --includes`");
 #if CYRANO_ARCH == 64
-    d.cppflags[lib].push_back("-DCYRANO_ARCH=64");
+    d[lib].cppflags.push_back("-DCYRANO_ARCH=64");
 #elif CYRANO_ARCH == 32
-    d.cppflags[lib].push_back("-DCYRANO_ARCH=32");
+    d[lib].cppflags.push_back("-DCYRANO_ARCH=32");
 #else
 #error "CyranoInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    d.sources[lib].push_back("cyrano"+name+".cxx");
-    d.epts[lib].push_back(name);
-    d.epts[lib].push_back(this->getFunctionName(name));
+    d[lib].sources.push_back("cyrano"+name+".cxx");
+    d[lib].epts.push_back(name);
+    d[lib].epts.push_back(this->getFunctionName(name));
     d.headers.push_back("MFront/Cyrano/cyrano"+name+".hxx");
-    d.dependencies[lib].push_back("-lCyranoInterface");
+    d[lib].dependencies.push_back("-lCyranoInterface");
     if(this->generateMTestFile){
-      d.dependencies[lib].push_back("-lMTestFileGenerator");
+      d[lib].dependencies.push_back("-lMTestFileGenerator");
     }
-    d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
+    d[lib].dependencies.push_back("`tfel-config --libs --material --mfront-profiling`");
   } // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
 
   void 

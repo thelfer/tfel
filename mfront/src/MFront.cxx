@@ -56,6 +56,16 @@
 #include"MFront/MFrontLock.hxx"
 #include"MFront/MFront.hxx"
 
+template<typename Container>
+static void insert_if(std::vector<std::string>& dest,
+		      const Container& src){
+  for(const auto& v : src){
+    if(std::find(dest.begin(),dest.end(),v)==dest.end()){
+      dest.push_back(v);
+    }
+  }
+}
+
 namespace mfront{
 
   static void
@@ -360,7 +370,7 @@ namespace mfront{
 
 #endif /* MFRONT_MAKE_SUPPORT */
   
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void
   MFront::treatWin32(void)
   {
@@ -422,7 +432,7 @@ namespace mfront{
 #endif /* MFRONT_MAKE_SUPPORT */    
     this->registerNewCallBack("--nomelt",&MFront::treatNoMelt,
 			      "don't melt librairies sources");
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--win32",&MFront::treatWin32,
 			      "specify that the target system is win32");
 #endif /* __CYGWIN__ */
@@ -572,69 +582,6 @@ namespace mfront{
   } // end of void MFront::treatDefFile
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
   
-  void
-  MFront::mergeTargetsDescription(const TargetsDescription& d)
-  {
-    using namespace std;
-    const auto& src = d.sources;
-    for(auto p=src.begin();p!=src.end();++p){
-      auto& tmp = this->sources[p->first];
-      copy(p->second.begin(),p->second.end(),insert_iterator<set<string> >(tmp,tmp.begin()));
-    }
-    // getting generated entry points
-    const auto& nepts = d.epts;
-    for(const auto& e: nepts){
-      auto& pts = this->epts[e.first];
-      copy(e.second.begin(),e.second.end(),
-	   insert_iterator<set<string> >(pts,pts.begin()));
-    }
-    // getting generated dependencies
-    const auto& deps = d.dependencies;
-    for(auto p=deps.begin();p!=deps.end();++p){
-      auto& tmp = this->dependencies[p->first];
-      for(auto p2=p->second.begin();p2!=p->second.end();++p2){
-	if(find(tmp.begin(),tmp.end(),*p2)==tmp.end()){
-	  // treat a very special case where a library can be declared
-	  // as depending on itself (this may arise for material properties)
-	  if(p2->substr(0,2)=="-l"){
-	    auto lib = "lib"+p2->substr(2);
-	    if(lib!=p->first){
-	      tmp.push_back(*p2);
-	    }
-	  } else {
-	    tmp.push_back(*p2);
-	  }
-	}
-      }
-    }
-    // getting specific targets
-    const auto& t = d.specific_targets;
-    for(auto p3=t.begin();p3!=t.end();++p3){
-      for(auto p4=p3->second.first.begin();p4!=p3->second.first.end();++p4){
-	if(find(this->targets[p3->first].first.begin(),
-		this->targets[p3->first].first.end(),*p4)==this->targets[p3->first].first.end()){
-	  this->targets[p3->first].first.push_back(*p4);
-	}
-      }
-      for(auto p4=p3->second.second.begin();p4!=p3->second.second.end();++p4){
-	if(find(this->targets[p3->first].second.begin(),
-		this->targets[p3->first].second.end(),*p4)==this->targets[p3->first].second.end()){
-	  this->targets[p3->first].second.push_back(*p4);
-	}
-      }
-    }
-    // getting includes
-    const auto& incs = d.cppflags;
-    for(auto p=incs.begin();p!=incs.end();++p){
-      copy(p->second.begin(),p->second.end(),
-	   insert_iterator<set<string> >(this->cppflags,this->cppflags.begin()));
-    }
-    // treating dependendenices
-    for(const auto& td:d.tds){
-      this->mergeTargetsDescription(td);
-    }
-  }
-
   TargetsDescription
   MFront::treatFile(const std::string& f) const
   {
@@ -761,7 +708,7 @@ namespace mfront{
 	copy(files.begin(),files.end(),ostream_iterator<string>(log," "));
 	log << endl;
       }
-      this->sources[name.substr(0,name.size()-4)].insert(files.begin(),files.end());
+      insert_if(this->targets[name.substr(0,name.size()-4)].sources,files);
     }
   } // end of MFront::analyseSources
 
@@ -804,7 +751,7 @@ namespace mfront{
 	copy(libs.begin(),libs.end(),ostream_iterator<string>(log," "));
 	log << endl;
       }
-      this->dependencies.insert({name.substr(0,name.size()-5),libs});
+      insert_if(this->targets[name.substr(0,name.size()-5)].dependencies,libs);
     }
   } // end of MFront::analyseDependencies
 
@@ -821,11 +768,11 @@ namespace mfront{
       msg += fName + "'";
       throw(runtime_error(msg));
     }
-    auto nepts = set<string>{}; // list of entry points contained in the file
+    auto nepts = vector<string>{}; // list of entry points contained in the file
     while(!file.eof()){
       string line;
       getline(file,line);
-      nepts.insert(line);
+      nepts.push_back(line);
     }
     file.close();
     if(nepts.empty()){
@@ -843,7 +790,7 @@ namespace mfront{
 	copy(nepts.begin(),nepts.end(),ostream_iterator<string>(log," "));
 	log << endl;
       }
-      this->epts.insert({name.substr(0,name.size()-5),nepts});
+      insert_if(this->targets[name.substr(0,name.size()-5)].epts,nepts);
     }
   } // end of MFront::analyseEntryPoints
 
@@ -885,75 +832,76 @@ namespace mfront{
     checkIfFileIsRegularAndReadable(name);
     file.open(name);
     lineNbr = 0u;
-    if(!file.eof()){
-      getline(file,line);
-      ++lineNbr;
-      while(!file.eof()){
-	vector<string> words;
-	if(!line.empty()){
-	  if(line[0]!='#'){
-	    istringstream tokenizer(line);
-	    copy(istream_iterator<string>(tokenizer),
-		 istream_iterator<string>(),back_inserter(words));
-	    if(!words.empty()){
-	      if(words.size()<2){
-		ostringstream msg;
-		msg << "MFront::analyseMakefileSpecificTargets : "
-		    << "invalid line " << lineNbr << ".\n"
-		    << "Expected to read something like 'target : [dependencies]'.";
-		throw(runtime_error(msg.str()));
-	      }
-	      if(words[1]!=":"){
-		ostringstream msg;
-		msg << "MFront::analyseMakefileSpecificTargets : "
-		    << "invalid token '" << words[1] << "' (expected ':').\n"
-		    << "Error at line " << lineNbr;
-		throw(runtime_error(msg.str()));
-	      }
-	      for(p=words.begin()+2;p!=words.end();++p){
-		if(find(this->targets[words[0]].first.begin(),
-			this->targets[words[0]].first.end(),*p)==this->targets[words[0]].first.end()){
-		  this->targets[words[0]].first.push_back(*p);
-		}
-	      }
-	      if(!file.eof()){
-		getline(file,line);
-		++lineNbr;
-		while((!file.eof())&&(!line.empty())){
-		  if(find(this->targets[words[0]].second.begin(),
-			  this->targets[words[0]].second.end(),line)==this->targets[words[0]].second.end()){
-		    this->targets[words[0]].second.push_back(line);
-		  }
-		  getline(file,line);
-		  ++lineNbr;
-		}
-	      }
-	      if(!file.eof()){
-		getline(file,line);
-		++lineNbr;
-	      }
-	    } else {
-	      if(!file.eof()){
-		getline(file,line);
-		++lineNbr;
+    if(file.eof()){
+      return;
+    }
+    getline(file,line);
+    ++lineNbr;
+    auto& st = this->targets.specific_targets;
+    while(!file.eof()){
+      vector<string> words;
+      if(!line.empty()){
+	if(line[0]!='#'){
+	  istringstream tokenizer(line);
+	  copy(istream_iterator<string>(tokenizer),
+	       istream_iterator<string>(),back_inserter(words));
+	  if(!words.empty()){
+	    if(words.size()<2){
+	      ostringstream msg;
+	      msg << "MFront::analyseMakefileSpecificTargets : "
+		  << "invalid line " << lineNbr << ".\n"
+		  << "Expected to read something like 'target : [dependencies]'.";
+	      throw(runtime_error(msg.str()));
+	    }
+	    if(words[1]!=":"){
+	      ostringstream msg;
+	      msg << "MFront::analyseMakefileSpecificTargets : "
+		  << "invalid token '" << words[1] << "' (expected ':').\n"
+		  << "Error at line " << lineNbr;
+	      throw(runtime_error(msg.str()));
+	    }
+	    for(p=words.begin()+2;p!=words.end();++p){
+	      if(find(st[words[0]].first.begin(),
+		      st[words[0]].first.end(),*p)==st[words[0]].first.end()){
+		st[words[0]].first.push_back(*p);
 	      }
 	    }
-	    words.clear();
+	    if(!file.eof()){
+	      getline(file,line);
+	      ++lineNbr;
+	      while((!file.eof())&&(!line.empty())){
+		if(find(st[words[0]].second.begin(),
+			st[words[0]].second.end(),line)==st[words[0]].second.end()){
+		  st[words[0]].second.push_back(line);
+		}
+		getline(file,line);
+		++lineNbr;
+		}
+	    }
+	    if(!file.eof()){
+	      getline(file,line);
+	      ++lineNbr;
+	    }
 	  } else {
 	    if(!file.eof()){
 	      getline(file,line);
 	      ++lineNbr;
 	    }
 	  }
+	  words.clear();
 	} else {
 	  if(!file.eof()){
 	    getline(file,line);
 	    ++lineNbr;
 	  }
 	}
+      } else {
+	if(!file.eof()){
+	  getline(file,line);
+	  ++lineNbr;
+	}
       }
     }
-    file.close();
   } // end of Mfront::analyseMakefileSpecificTargets
 
   void
@@ -967,7 +915,7 @@ namespace mfront{
     HANDLE          hFile;                // Handle to file
     WIN32_FIND_DATA FileInformation;      // File information
     auto& l = MFrontLock::getMFrontLock();
-    l.lock();
+    mlock.lock();
     try{
       hFile = ::FindFirstFile("src/*", &FileInformation);
       if(hFile == INVALID_HANDLE_VALUE){
@@ -1037,18 +985,18 @@ namespace mfront{
       }
     }
     catch(...){
-      l.unlock();
+      mlock.unlock();
       throw;
     }
-    l.unlock();
+    mlock.unlock();
 #else
     using namespace std;
     using namespace tfel::system;
     vector<string> files;
     vector<string>::const_iterator p;
     struct stat buf;
-    auto& l = MFrontLock::getMFrontLock();
-    l.lock();
+    auto& mlock = MFrontLock::getMFrontLock();
+    mlock.lock();
     try{
       auto directory = opendir("src");
       if(!directory){
@@ -1074,13 +1022,7 @@ namespace mfront{
 	if(p->substr(p->size()-4)==".src"){
 	  if(getVerboseMode()>=VERBOSE_LEVEL2){
 	    auto& log = getLogStream();
-	    if(this->sys=="win32"){
-	      log << "treating library " << p->substr(0,p->size()-4) << ".dll sources.\n";
-	    } else if(this->sys=="apple"){
-	      log << "treating library " << p->substr(0,p->size()-4) << ".bundle sources.\n";
-	    } else {
-	      log << "treating library " << p->substr(0,p->size()-4) << ".so sources.\n";
-	    }
+	    log << "treating library " << p->substr(0,p->size()-4) << " sources.\n";
 	  }
 	  this->analyseSources(*p);
 	}
@@ -1136,137 +1078,123 @@ namespace mfront{
       }
     }
     catch(...){
-      l.unlock();
+      mlock.unlock();
       throw;
     }
-    l.unlock();
+    mlock.unlock();
 #endif
   } // end of MFront::analyseSourceDirectory
   
   void
-  MFront::writeSourcesLists(void)
+  MFront::writeSourcesLists(void) const
   {
     using namespace std;
     using namespace tfel::system;
     ofstream file;
-    auto& l = MFrontLock::getMFrontLock();
-    l.lock();
+    auto& mlock = MFrontLock::getMFrontLock();
+    mlock.lock();
     try{
-      map<string,set<string> >::const_iterator p;
-      for(p=this->sources.begin();p!=this->sources.end();++p){
+      for(const auto& l : this->targets){
 	if(getVerboseMode()>=VERBOSE_LEVEL2){
 	  auto& log = getLogStream();
-	  if(this->sys=="win32"){
-	    log << "writing sources list for library '" << p->first << ".dll'\n";
-	  } else if(this->sys=="apple"){
-	    log << "writing sources list for library " << p->first << ".bundle\n";
-	  } else {
-	    log << "writing sources list for library '" << p->first << ".so'\n";
-	  }
+	  log << "writing sources list for library '"
+	      << l.name << "." << l.suffix << "'\n";
 	}
-	file.open("src"+dirStringSeparator()+p->first+".src");
+	file.open("src"+dirStringSeparator()+l.name+".src");
 	if(!file){
 	  string msg("MFront::writeSourcesLists : ");
-	  msg += "can't open file 'src"+dirStringSeparator()+p->first+".src";
+	  msg += "can't open file 'src"+dirStringSeparator()+l.name+".src";
 	  throw(runtime_error(msg));
 	}
-	copy(p->second.begin(),p->second.end(),ostream_iterator<string>(file,"\n"));
-	file.close();
-      }
-    }
-    catch(...){
-      l.unlock();
-      throw;
-    }
-    l.unlock();
-  } // end of MFront::writeSourceLists
-
-  void
-  MFront::writeEntryPointsLists(void)
-  {
-    using namespace std;
-    using namespace tfel::system;
-    auto& l = MFrontLock::getMFrontLock();
-    l.lock();
-    try{
-      for(const auto& e : this->epts){
-	if(getVerboseMode()>=VERBOSE_LEVEL2){
-	  auto& log = getLogStream();
-	  if(this->sys=="win32"){
-	    log << "writing entry points list for library '" << e.first << ".dll'\n";
-	  } else {
-	    log << "writing entry points list for library '" << e.first << ".so'\n";
-	  }
-	}
-	ofstream file("src"+dirStringSeparator()+e.first+".epts");
-	if(!file){
-	  string msg("MFront::writeEntryPointsLists : ");
-	  msg += "can't open file 'src"+dirStringSeparator()+e.first+".epts'";
-	  throw(runtime_error(msg));
-	}
-	copy(e.second.begin(),e.second.end(),
+	copy(l.sources.begin(),l.sources.end(),
 	     ostream_iterator<string>(file,"\n"));
 	file.close();
       }
     }
     catch(...){
-      l.unlock();
+      mlock.unlock();
       throw;
     }
-    l.unlock();
-  } // end of MFront::writeEntryPointsLists
-  
+    mlock.unlock();
+  } // end of MFront::writeSourceLists
+
   void
-  MFront::writeDependenciesLists(void)
+  MFront::writeEntryPointsLists(void) const
   {
     using namespace std;
     using namespace tfel::system;
-    ofstream file;
-    auto& l = MFrontLock::getMFrontLock();
-    l.lock();
+    auto& mlock = MFrontLock::getMFrontLock();
+    mlock.lock();
     try{
-      map<string,vector<string> >::const_iterator p;
-      for(p=this->dependencies.begin();p!=this->dependencies.end();++p){
+      for(const auto& l : this->targets){
 	if(getVerboseMode()>=VERBOSE_LEVEL2){
 	  auto& log = getLogStream();
-	  if(this->sys=="win32"){
-	    log << "writing dependencies list for library " << p->first << ".dll\n";
-	  } else if(this->sys=="apple"){
-	    log << "writing dependencies list for library " << p->first << ".bundle\n";
-	  } else {
-	    log << "writing dependencies list for library " << p->first << ".so\n";
-	  }
+	  log << "writing entry points list for library '"
+	      << l.name << "." << l.suffix << "'\n";
 	}
-	file.open(("src"+dirStringSeparator()+p->first+".deps").c_str());
-	copy(p->second.begin(),p->second.end(),ostream_iterator<string>(file,"\n"));
+	ofstream file("src"+dirStringSeparator()+l.name+".epts");
+	if(!file){
+	  string msg("MFront::writeEntryPointsLists : ");
+	  msg += "can't open file 'src"+dirStringSeparator()+l.name+".epts'";
+	  throw(runtime_error(msg));
+	}
+	copy(l.epts.begin(),l.epts.end(),ostream_iterator<string>(file,"\n"));
 	file.close();
       }
     }
     catch(...){
-      l.unlock();
+      mlock.unlock();
       throw;
     }
-    l.unlock();
+    mlock.unlock();
+  } // end of MFront::writeEntryPointsLists
+  
+  void
+  MFront::writeDependenciesLists(void) const
+  {
+    using namespace std;
+    using namespace tfel::system;
+    ofstream file;
+    auto& mlock = MFrontLock::getMFrontLock();
+    mlock.lock();
+    try{
+      for(const auto& l : this->targets){
+	if(getVerboseMode()>=VERBOSE_LEVEL2){
+	  auto& log = getLogStream();
+	  log << "writing dependencies list for library "
+	      << l.name << "." << l.suffix << "\n";
+	}
+	file.open(("src"+dirStringSeparator()+l.name+".deps").c_str());
+	copy(l.dependencies.begin(),l.dependencies.end(),ostream_iterator<string>(file,"\n"));
+	file.close();
+      }
+    }
+    catch(...){
+      mlock.unlock();
+      throw;
+    }
+    mlock.unlock();
   } // end of MFront::writeDependenciesLists
 
   void
-  MFront::writeSpecificTargets(void)
+  MFront::writeSpecificTargets(void) const
   {
     using namespace std;
     using namespace tfel::system;
     typedef map<string,pair<vector<string>,vector<string> > > Target;
     ofstream file;
     Target::const_iterator p;
-    auto& l = MFrontLock::getMFrontLock();
-    l.lock();
+    auto& mlock = MFrontLock::getMFrontLock();
+    mlock.lock();
     try{
-      if(!this->targets.empty()){
+      const auto& st = this->targets.specific_targets;
+      if(!st.empty()){
 	file.open(("src"+dirStringSeparator()+"Makefile.spec").c_str());
 	if(!file){
 	  string msg("MFront::writeSpecificTargets : can't open file 'src"+dirStringSeparator()+"Makefile.spec'");
 	  throw(runtime_error(msg));
 	}
-	for(p=this->targets.begin();p!=this->targets.end();++p){
+	for(p=st.begin();p!=st.end();++p){
 	  file << p->first << " : ";
 	  copy(p->second.first.begin(),
 	       p->second.first.end(),ostream_iterator<string>(file," "));
@@ -1279,23 +1207,22 @@ namespace mfront{
       }
     }
     catch(...){
-      l.unlock();
+      mlock.unlock();
       throw;
     }
-    l.unlock();
+    mlock.unlock();
   } // end of MFront::writeSpecificTargets
 
   void
-  MFront::writeCppFlags(void)
+  MFront::writeCppFlags(void) const
   {
     using namespace std;
     using namespace tfel::system;
-    auto& l = MFrontLock::getMFrontLock();
-    l.lock();
+    auto& mlock = MFrontLock::getMFrontLock();
+    mlock.lock();
     try{
       if(!this->cppflags.empty()){
-	ofstream file;
-	file.open("src"+dirStringSeparator()+"Makefile.incs");
+	ofstream file{"src"+dirStringSeparator()+"Makefile.incs"};
 	if(!file){
 	  string msg("MFront::writeCppFlags : can't open file 'src"+
 		     dirStringSeparator()+"Makefile.incs'");
@@ -1306,70 +1233,47 @@ namespace mfront{
       }
     }
     catch(...){
-      l.unlock();
+      mlock.unlock();
       throw;
     }
-    l.unlock();
+    mlock.unlock();
   } // end of MFront::writeCppFlags
 
   std::pair<bool,std::pair<std::string,std::string> >
-  MFront::getLibraryDependencies(const std::string& name)
+  MFront::getLibraryDependencies(const std::string& name) const
   {
     using namespace std;
-    map<string,set<string> >::const_iterator p2;
-    map<string,vector<string> >::const_iterator p3;
-    set<string>::const_iterator p4;
-    vector<string>::const_iterator p6;
-    pair<bool,pair<string,string> > res;
-    p2 = this->sources.find(name);
-    p3 = this->dependencies.find(name);
+    const auto& l = this->targets[name];
+    auto res = pair<bool,pair<string,string> >{};
     res.first = false;
-    if(p2==this->sources.end()){
-      string msg("MFront::getLibraryDependencies : no library named '"+name+"'.\n");
-      msg += "Internal Error.";
-      throw(runtime_error(msg));
-    }
-    for(p4 = p2->second.begin();p4 != p2->second.end();++p4){
-      if(p4->size()>4){
-	if(p4->substr(p4->size()-4)==".cpp"){
+    for(const auto& s : l.sources){
+      if(s.size()>4){
+	const auto ext = s.substr(s.size()-4);
+	if((ext==".cpp")||(ext==".cxx")){
 	  res.first = true;
-	  res.second.first += p4->substr(0,p4->size()-4)+".o ";
+	  res.second.first += s.substr(0,s.size()-4)+".o ";
 	}
-	if(p4->substr(p4->size()-4)==".cxx"){
-	  res.first = true;
-	  res.second.first += p4->substr(0,p4->size()-4)+".o ";
-	}
-      } 
-      if(p4->size()>2){
-	if(p4->substr(p4->size()-2)==".c"){
-	  res.second.first += p4->substr(0,p4->size()-2)+".o ";
+      }
+      if(s.size()>2){
+	if(s.substr(s.size()-2)==".c"){
+	  res.second.first += s.substr(0,s.size()-2)+".o ";
 	}
       }
     }
-    if(p3!=this->dependencies.end()){
-      for(p6 = p3->second.begin();p6!=p3->second.end();++p6){
-	if(!p6->empty()){
-	  if(p6->size()>2){
-	    if(p6->substr(0,2)=="-l"){
-	      string lib = p6->substr(2);
-	      if(this->sources.find("lib"+lib)!=this->sources.end()){
-		if(this->melt){
-		  pair<bool,pair<string,string> > dep = this->getLibraryDependencies("lib"+lib);
-		  res.first = res.first || dep.first;
-		  res.second.first  += dep.second.first;
-		  res.second.second += dep.second.second;
-		} else {
-		  res.second.second += "lib";
-		  res.second.second += lib;
-		  if(this->sys=="win32"){
-		    res.second.second +=  + ".dll ";
-		  } else if(this->sys=="apple"){
-		    res.second.second +=  + ".bundle ";
-		  } else {
-		    res.second.second +=  + ".so ";
-		  }
-		}
-	      }
+    for(const auto& d : l.dependencies){
+      if(d.size()>2){
+	if(d.substr(0,2)=="-l"){
+	  auto lib = d.substr(2);
+	  if(describes(this->targets,lib)){
+	    if(this->melt){
+	      auto dep = this->getLibraryDependencies("lib"+lib);
+	      res.first = res.first || dep.first;
+	      res.second.first  += dep.second.first;
+	      res.second.second += dep.second.second;
+	    } else {
+	      res.second.second += "lib";
+	      res.second.second += lib;
+	      res.second.second +=  + "."+l.suffix+" ";
 	    }
 	  }
 	}
@@ -1382,30 +1286,32 @@ namespace mfront{
   std::string
   MFront::getLibraryLinkDependencies(const std::string& name)
   {
-    using namespace std;
-    map<string,vector<string> >::const_iterator p3;
-    vector<string>::const_iterator p4;
-    string res;
-    p3 = this->dependencies.find(name);
-    if(p3!=this->dependencies.end()){
-      this->makeFile << "-L. ";
-      for(p4 = p3->second.begin();p4!=p3->second.end();++p4){
-	if(!p4->empty()){
-	  if(p4->size()>2){
-	    if(p4->substr(0,2)=="-l"){
-	      if(this->sources.find("lib"+p4->substr(2))!=this->sources.end()){
-		if(!this->melt){
-		  res += this->getLibraryLinkDependencies(*p4) + " " + *p4 + " ";
-		}
-	      } else {
-		res += *p4 + " ";
+    if(!describes(this->targets,name)){
+      throw(std::runtime_error("MFront::getLibraryDependencies : no library named '"+name+"'.\n"
+			       "Internal Error."));
+    }
+    const auto& l = this->targets[name];
+    if(l.dependencies.empty()){
+      return {};
+    }
+    auto res = std::string{};
+    this->makeFile << "-L. ";
+    for(const auto& d : l.dependencies){
+      if(!d.empty()){
+	if(d.size()>2){
+	  if(d.substr(0,2)=="-l"){
+	    if(describes(this->targets,"lib"+d.substr(2))){
+	      if(!this->melt){
+		res += this->getLibraryLinkDependencies(d) + " " + d + " ";
 	      }
 	    } else {
-	      res += *p4 + " ";
+	      res += d + " ";
 	    }
 	  } else {
-	    res += *p4 + " ";
+	    res += d + " ";
 	  }
+	} else {
+	  res += d + " ";
 	}
       }
     }
@@ -1414,19 +1320,16 @@ namespace mfront{
 #endif /* MFRONT_MAKE_SUPPORT */
   
   std::string
-  MFront::sortLibraryList(const std::string& lib)
+  MFront::sortLibraryList(const std::string& lib) const
   {
-    using namespace std;
-    istringstream tokenizer(lib);
-    vector<string> libs;
-    vector<string> vres;
-    string res;
-    vector<string>::const_reverse_iterator p;
-    vector<string>::const_reverse_iterator pe;
-    copy(istream_iterator<string>(tokenizer),
-	 istream_iterator<string>(),back_inserter(libs));
-    p  = static_cast<const vector<string>&>(libs).rbegin();
-    pe = static_cast<const vector<string>&>(libs).rend();
+    std::istringstream tokenizer{lib};
+    auto libs = std::vector<std::string>{};
+    auto vres = std::vector<std::string>{};
+    copy(std::istream_iterator<std::string>(tokenizer),
+	 std::istream_iterator<std::string>(),back_inserter(libs));
+    auto p  = libs.crbegin();
+    const auto pe = libs.crend();
+    auto res = std::string{};
     while(p!=pe){
       if(find(vres.begin(),vres.end(),*p)==vres.end()){
 	vres.push_back(*p);
@@ -1445,11 +1348,6 @@ namespace mfront{
     using namespace tfel::system;
     set<string> cppSources;
     set<string> cSources;
-    map<string,set<string> >::const_iterator p2;
-    set<string>::const_iterator p4;
-    map<string,pair<vector<string>,vector<string> > >::const_iterator p5;
-    vector<string>::const_iterator p6;
-    set<string>::const_iterator p7;
     string sb;
     string cc;
     string cxx;
@@ -1476,26 +1374,25 @@ namespace mfront{
     } else {
       cc = env_cc;
     }
-    auto& l = MFrontLock::getMFrontLock();
-    l.lock();
+    auto& mlock = MFrontLock::getMFrontLock();
+    mlock.lock();
     try{
       this->makeFile.open("src"+dirStringSeparator()+"Makefile.mfront");
       this->makeFile.exceptions(ios::badbit|ios::failbit);
       if(!this->makeFile){
-	string msg("MFront::generateMakeFile : can't open file Makefile.mfront");
-	throw(runtime_error(msg));
+	throw(runtime_error("MFront::generateMakeFile : can't open file Makefile.mfront"));
       }
-      for(p2=this->sources.begin();p2!=this->sources.end();++p2){
-	for(p4 = p2->second.begin();p4 != p2->second.end();++p4){
-	  if(p4->size()>4){
-	    if((p4->substr(p4->size()-4)==".cpp")||
-	       (p4->substr(p4->size()-4)==".cxx")){
-	      cppSources.insert(*p4);
+      for(const auto& l : this->targets){
+	for(const auto& s : l.sources){
+	  if(s.size()>4){
+	    if((s.substr(s.size()-4)==".cpp")||
+	       (s.substr(s.size()-4)==".cxx")){
+	      cppSources.insert(s);
 	    }
 	  }
-	  if(p4->size()>2){
-	    if(p4->substr(p4->size()-2)==".c"){
-	      cSources.insert(*p4);
+	  if(s.size()>2){
+	    if(s.substr(s.size()-2)==".c"){
+	      cSources.insert(s);
 	    }
 	  }
 	}
@@ -1521,8 +1418,7 @@ namespace mfront{
       this->makeFile << "-I../include `tfel-config --includes`";
       if(!this->cppflags.empty()){
 	this->makeFile << " \\\n";
-	for(p7=this->cppflags.begin();
-	    p7!=this->cppflags.end();){
+	for(auto p7=this->cppflags.begin();p7!=this->cppflags.end();){
 	  this->makeFile << "\t     " << *p7;
 	  if(++p7!=this->cppflags.end()){
 	    this->makeFile << " \\\n";
@@ -1532,8 +1428,8 @@ namespace mfront{
       // adding the mfront search path to the include files
       if(!SearchFile::getSearchPaths().empty()){
 	const auto& paths = SearchFile::getSearchPaths();
-	for(p6=paths.begin();p6!=paths.end();++p6){
-	  this->makeFile << "\\\n\t     -I" << *p6;
+	for(const auto& path : paths){
+	  this->makeFile << "\\\n\t     -I" << path;
 	}
       }
       //
@@ -1595,11 +1491,10 @@ namespace mfront{
       // sources list
       if(!cppSources.empty()){
 	this->makeFile << "SRCCXX = ";
-	p4=cppSources.begin();
+	auto p4=cppSources.begin();
 	while(p4!=cppSources.end()){
 	  this->makeFile << *p4;
-	  ++p4;
-	  if(p4!=cppSources.end()){
+	  if(++p4!=cppSources.end()){
 	    this->makeFile << " ";
 	  }
 	}
@@ -1607,11 +1502,10 @@ namespace mfront{
       }
       if(!cSources.empty()){
 	this->makeFile << "SRC = ";
-	p4=cSources.begin();
+	auto p4=cSources.begin();
 	while(p4!=cSources.end()){
 	  this->makeFile << *p4;
-	  ++p4;
-	  if(p4!=cSources.end()){
+	  if(++p4!=cSources.end()){
 	    this->makeFile << " ";
 	  }
 	}
@@ -1636,67 +1530,45 @@ namespace mfront{
       this->makeFile << "\n\n";
       this->makeFile << ".PHONY = ";
       this->makeFile << "all clean ";
-      for(p2=this->sources.begin();p2!=this->sources.end();++p2){
-	if(this->sys=="win32"){
-	  this->makeFile << p2->first << ".dll ";
-	} else if(this->sys=="apple"){
-	  this->makeFile << p2->first << ".bundle ";
-	} else {
-	  this->makeFile << p2->first << ".so ";
-	}
+      for(const auto& l : this->targets){
+	this->makeFile << l.name << "." << l.suffix << " ";
       }
-      for(p5=this->targets.begin();p5!=this->targets.end();++p5){
-	if((p5->first!="all")&&(p5->first!="clean")){
-	  this->makeFile << p5->first << " ";
+      for(const auto& t : this->targets.specific_targets){
+	if((t.first!="all")&&(t.first!="clean")){
+	  this->makeFile << t.first << " ";
 	}
       }
       this->makeFile << "\n\n";
       this->makeFile << "all : ";
-      for(p2=this->sources.begin();p2!=this->sources.end();++p2){
-	if(this->sys=="win32"){
-	  this->makeFile << p2->first << ".dll";
-	} else if(this->sys=="apple"){
-	  this->makeFile << p2->first << ".bundle";
-	} else {
-	  this->makeFile << p2->first << ".so";
-	}
-	this->makeFile << " ";
-      }    
-      p5=this->targets.find("all");
-      if(p5!=this->targets.end()){
-	copy(p5->second.first.begin(),
-	     p5->second.first.end(),ostream_iterator<string>(this->makeFile," "));
+      for(const auto& l : this->targets){
+	this->makeFile << l.name << "." << l.suffix << " ";
       }
-      this->makeFile << "\n";
-      if(p5!=this->targets.end()){
-	for(p6=p5->second.second.begin();p6!=p5->second.second.end();++p6){
-	  this->makeFile << "\t" << *p6 << endl;
+      auto p5=this->targets.specific_targets.find("all");
+      if(p5!=this->targets.specific_targets.end()){
+	copy(p5->second.first.begin(),p5->second.first.end(),
+	     ostream_iterator<string>(this->makeFile," "));
+	this->makeFile << "\n";
+	for(const auto& cmd : p5->second.second){
+	  this->makeFile << "\t" << cmd << "\n";
 	}
       }
       this->makeFile << "\n";
-      for(p5=this->targets.begin();p5!=this->targets.end();++p5){
-	if((p5->first!="all")&&(p5->first!="clean")){
-	  this->makeFile << p5->first << " : ";
-	  copy(p5->second.first.begin(),
-	       p5->second.first.end(),ostream_iterator<string>(this->makeFile," "));
+      for(const auto& t : this->targets.specific_targets){
+	if((t.first!="all")&&(t.first!="clean")){
+	  this->makeFile << t.first << " : ";
+	  copy(t.second.first.begin(),t.second.first.end(),
+	       ostream_iterator<string>(this->makeFile," "));
 	  this->makeFile << endl;
-	  for(p6=p5->second.second.begin();p6!=p5->second.second.end();++p6){
-	    this->makeFile << "\t" << *p6 << endl;
+	  for(const auto& cmd : t.second.second){
+	    this->makeFile << "\t" << cmd << endl;
 	  }
 	  this->makeFile << "\n";
 	}
       }
-      for(p2=this->sources.begin();p2!=this->sources.end();++p2){
-	bool hasCxxSources = false;
-	pair<bool,pair<string,string> > dep = this->getLibraryDependencies(p2->first);
-	if(this->sys=="win32"){
-	  this->makeFile << p2->first << ".dll : ";
-	} else if(this->sys=="apple"){
-	  this->makeFile << p2->first << ".bundle : ";
-	} else {
-	  this->makeFile << p2->first << ".so : ";
-	}
-	hasCxxSources = dep.first;
+      for(const auto& l : this->targets){
+	this->makeFile << l.name << "." << l.suffix << " : ";
+	auto dep = this->getLibraryDependencies(l.name);
+	const auto hasCxxSources = dep.first;
 	if(!dep.second.first.empty()){
 	  this->makeFile << dep.second.first;
 	} 
@@ -1713,19 +1585,19 @@ namespace mfront{
 	  this->makeFile << "$(LDFLAGS) ";
 	}
 	if(this->sys=="win32"){
-	  this->makeFile << "-shared -Wl,--add-stdcall-alias,--out-implib," << p2->first << "_dll.a,-no-undefined ";
+	  this->makeFile << "-shared -Wl,--add-stdcall-alias,--out-implib," << l.name << "_dll.a,-no-undefined ";
 	} else if(this->sys=="apple"){
 	  this->makeFile << "-bundle ";
 	} else {
 	  this->makeFile << "-shared ";
 	}
 	this->makeFile << "$^  -o $@ ";
-	this->makeFile << this->getLibraryLinkDependencies(p2->first);
+	this->makeFile << this->getLibraryLinkDependencies(l.name);
 	this->makeFile << "\n\n";
       }
       this->makeFile << "clean : ";
-      p5=this->targets.find("clean");
-      if(p5!=this->targets.end()){
+      p5=this->targets.specific_targets.find("clean");
+      if(p5!=this->targets.specific_targets.end()){
 	copy(p5->second.first.begin(),
 	     p5->second.first.end(),ostream_iterator<string>(this->makeFile," "));
       }
@@ -1737,9 +1609,9 @@ namespace mfront{
       } else {
 	this->makeFile << "\t"+sb+"rm -f *.o *.so *.d\n";
       }
-      if(p5!=this->targets.end()){
-	for(p6=p5->second.second.begin();p6!=p5->second.second.end();++p6){
-	  this->makeFile << "\t" << *p6 << endl;
+      if(p5!=this->targets.specific_targets.end()){
+	for(const auto& cmd : p5->second.second){
+	  this->makeFile << "\t" << cmd << endl;
 	}
       }
       this->makeFile << "\n";
@@ -1781,10 +1653,10 @@ namespace mfront{
       this->makeFile.close();
     }
     catch(...){
-      l.unlock();
+      mlock.unlock();
       throw;
     }
-    l.unlock();
+    mlock.unlock();
   } // end of MFront::generateMakeFile
   
   void
@@ -1874,8 +1746,8 @@ namespace mfront{
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void MFront::generateDefsFiles(void){
-    auto& l = MFrontLock::getMFrontLock();
-    l.lock();
+    auto& mlock = MFrontLock::getMFrontLock();
+    mlock.lock();
     try{
       for(const auto& d:this->defs){
 	const auto p = this->epts.find(d);
@@ -1898,10 +1770,10 @@ namespace mfront{
       }
     }
     catch(...){
-      l.unlock();
+      mlock.unlock();
       throw;
     }
-    l.unlock();
+    mlock.unlock();
   } // end of MFront::generateDefsFile
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
   
@@ -1933,13 +1805,18 @@ namespace mfront{
     if(!this->inputs.empty()){
       for(const auto& i : this->inputs){
 	try{
-	  this->mergeTargetsDescription(this->treatFile(i));
+	  const auto td = this->treatFile(i);
+	  mergeTargetsDescription(this->targets,td);
+#pragma message("HERE : cppflags must be wiped out !")
+	  for(const auto& l : td){
+	    this->cppflags.insert(l.cppflags.begin(),l.cppflags.end());
+	  }
 	} catch(exception& e){
 	  errors.push_back({i,e.what()});
 	}
       }
-      auto tmp = vector<string>{};
-      for(auto& t : this->targets){
+      for(auto& t : this->targets.specific_targets){
+	auto tmp = vector<string>{};
 	for(auto p2=t.second.first.cbegin();p2!=t.second.first.cend();++p2){
 	  const auto p4 = p2+1;
 	  if(find(p4,t.second.first.cend(),*p2)==t.second.first.cend()){
@@ -1982,44 +1859,35 @@ namespace mfront{
     this->generateDefsFiles();
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 #ifdef MFRONT_MAKE_SUPPORT
-    if((this->genMake)&&((!this->sources.empty())||(!this->targets.empty()))){
+    const auto has_libs = this->targets.begin()!=this->targets.end();
+    if((this->genMake)&&((has_libs)||(!this->targets.specific_targets.empty()))){
       this->generateMakeFile();
     }
     if(this->cleanLibs){
       this->cleanLibraries();
     }
-    if((this->buildLibs)&&((!this->sources.empty())||(!this->targets.empty()))){
+    if((this->buildLibs)&&((has_libs)||(!this->targets.specific_targets.empty()))){
       for(const auto t : this->specifiedTargets){
 	cout << "Treating target : " << t << endl;
 	this->buildLibraries(t);
       }
-      if(!this->sources.empty()){
-	if(this->sources.size()==1){
+      if(has_libs){
+	if(this->targets.end()-this->targets.begin()==1){
 	  cout << "The following library has been built :\n";
 	} else {
 	  cout << "The following libraries have been built :\n";
 	}
-	for(const auto& l:this->sources){
-	  if(this->sys=="win32"){
-	    cout << "- " << l.first << ".dll :";
-	  } else if(this->sys=="apple"){
-	    cout << "- " << l.first << ".bundle\n";
-	  } else {
-	    cout << "- " << l.first << ".so :";
-	  }
-	  const auto pepts = epts.find(l.first);
-	  if(pepts!=epts.end()){
-	    const auto& lepts = pepts->second;
-	    for(const auto& pts:lepts){
-	      cout << " " << pts;
-	    }
+	for(const auto& l:this->targets){
+	  cout << "- " << l.name << "." << l.suffix << " : ";
+	  for(const auto& pts:l.epts){
+	    cout << " " << pts;
 	  }
 	  cout << endl;
 	}
       }
-      if(!this->targets.empty()){
-	auto pt2=this->targets.find("all");
-	if(pt2!=this->targets.end()){	      
+      if(!this->targets.specific_targets.empty()){
+	auto pt2=this->targets.specific_targets.find("all");
+	if(pt2!=this->targets.specific_targets.end()){	      
 	  if(pt2->second.first.size()==1){
 	    cout << "The following main target has been build :\n";
 	  } else {

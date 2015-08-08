@@ -75,11 +75,6 @@ namespace mfront{
     //! get the usage description
     virtual std::string
     getUsageDescription(void) const override final;
-    /*!
-     * \brief merge the given target's description with the internal
-     * structure used to generate Makefiles
-     */
-    virtual void mergeTargetsDescription(const TargetsDescription&);
 
     virtual void treatHelpCommandsList(void);
 
@@ -125,19 +120,18 @@ namespace mfront{
 
     virtual void analyseCppFlags(void);
 
-    virtual void writeSourcesLists(void);
+    virtual void writeSourcesLists(void) const;
 
-    virtual void writeEntryPointsLists(void);
+    virtual void writeEntryPointsLists(void) const;
 
-    virtual void writeDependenciesLists(void);
+    virtual void writeDependenciesLists(void) const;
 
-    virtual void writeSpecificTargets(void);
+    virtual void writeSpecificTargets(void) const;
 
-    virtual void writeCppFlags(void);
-
+    virtual void writeCppFlags(void) const;
 
     virtual std::pair<bool,std::pair<std::string,std::string> >
-    getLibraryDependencies(const std::string&);
+    getLibraryDependencies(const std::string&) const;
     
 #ifdef MFRONT_MAKE_SUPPORT
     virtual std::string
@@ -145,7 +139,7 @@ namespace mfront{
 #endif /* MFRONT_MAKE_SUPPORT */
 
     virtual std::string
-    sortLibraryList(const std::string&);
+    sortLibraryList(const std::string&) const;
 
 #ifdef MFRONT_MAKE_SUPPORT
     virtual void
@@ -165,29 +159,22 @@ namespace mfront{
     virtual void generateDefsFiles(void);
 #endif
     
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     virtual void treatWin32(void);
 #endif /* LIB_MFRONT_H_ */
 
 #ifdef MFRONT_MAKE_SUPPORT
     std::ofstream makeFile;
 #endif /* MFRONT_MAKE_SUPPORT */
-    
-    std::map<std::string,std::pair<std::vector<std::string>,
-				   std::vector<std::string> > > targets;
 
-    std::map<std::string,std::set<std::string> > sources;
+    //! description of the targets that can be build
+    TargetsDescription targets;
 
-    std::map<std::string,std::set<std::string> > epts;
-
-    std::map<std::string,std::vector<std::string> > dependencies;
-
-    std::set<std::string> analysers;
-
-    std::set<std::string> cppflags;
-
+    //! targets to be build as specified by the user
     std::set<std::string> specifiedTargets;
 
+    std::set<std::string> cppflags;
+    
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     // libraries for which a def file must be generated
     std::set<std::string> defs;

@@ -52,15 +52,15 @@ namespace mfront
   CastemMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 							 const MaterialPropertyDescription& mpd)
   {
-    const auto castlib = "libCastem"+getMaterialLawLibraryNameBase(mpd.library,
-								   mpd.material);
+    const auto lib = "libCastem"+getMaterialLawLibraryNameBase(mpd.library,
+							       mpd.material);
     const auto name    = this->getCastemFunctionName(mpd.material,
 						     mpd.className);
-    d.dependencies[castlib].push_back("-lm");
-    d.cppflags[castlib].push_back(CASTEM_CPPFLAGS);
-    d.sources[castlib].push_back(this->getSourceFileName(name));
+    d[lib].dependencies.push_back("-lm");
+    d[lib].cppflags.push_back(CASTEM_CPPFLAGS);
+    d[lib].sources.push_back(this->getSourceFileName(name));
     d.headers.push_back(this->headerFileName);    
-    d.epts[castlib].push_back(name);
+    d[lib].epts.push_back(name);
   } // end of CastemMaterialPropertyInterface::getTargetsDescription
 
   std::string

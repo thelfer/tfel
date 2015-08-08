@@ -48,9 +48,9 @@ namespace mfront
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f    = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     const auto header = this->getHeaderFileName(mpd.material,mpd.className);
-    d.dependencies[lib].push_back("-lm");
-    d.sources[lib].push_back(name+".cxx");
-    d.epts[lib].insert(d.epts[lib].end(),{f,f+"_checkBounds"});
+    d[lib].dependencies.push_back("-lm");
+    d[lib].sources.push_back(name+".cxx");
+    d[lib].epts.insert(d[lib].epts.end(),{f,f+"_checkBounds"});
     if(!header.empty()){
       d.headers.push_back(header+".hxx");
     }

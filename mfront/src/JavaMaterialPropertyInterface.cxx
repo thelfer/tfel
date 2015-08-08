@@ -137,14 +137,14 @@ namespace mfront
   {
     const auto lib = "lib"+getMaterialLawLibraryNameBase(mpd.library,mpd.material)+"-java";
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
-    d.dependencies[lib].push_back("-lm");    
+    d[lib].dependencies.push_back("-lm");    
     // the jni part
-    d.cppflags[lib].push_back(TFEL_JAVA_INCLUDES);
-    d.sources[lib].push_back(name+"-java.cxx");
+    d[lib].cppflags.push_back(TFEL_JAVA_INCLUDES);
+    d[lib].sources.push_back(name+"-java.cxx");
     if(this->package.empty()){
-      d.epts[lib].push_back(getJavaClassName(mpd)+"."+mpd.law);
+      d[lib].epts.push_back(getJavaClassName(mpd)+"."+mpd.law);
     } else {
-      d.epts[lib].push_back(this->package+"."+getJavaClassName(mpd)+"."+mpd.law);
+      d[lib].epts.push_back(this->package+"."+getJavaClassName(mpd)+"."+mpd.law);
     }
     // the java class
     const auto jfname = getJavaClassFileName(mpd,this->package);
@@ -158,10 +158,9 @@ namespace mfront
       cmd += java;
     }
     cmd += " "+src;
-    auto& res = d.specific_targets;
-    res[target].first.push_back(src);
-    res[target].second.push_back(cmd);
-    res["all"].first.push_back(target);
+    d.specific_targets[target].first.push_back(src);
+    d.specific_targets[target].second.push_back(cmd);
+    d.specific_targets["all"].first.push_back(target);
   } // end of JavaMaterialPropertyInterface::getTargetsDescription
 
   void

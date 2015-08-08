@@ -60,8 +60,8 @@ namespace mfront
     using std::string;
     const auto lib  = "libCpp"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
-    d.dependencies[lib].push_back("-lm");
-    d.sources[lib].push_back(name+"-cxx.cxx");
+    d[lib].dependencies.push_back("-lm");
+    d[lib].sources.push_back(name+"-cxx.cxx");
     d.headers.push_back(this->headerFileName);
     auto cn = string{};
 #pragma message("HERE")
@@ -69,7 +69,7 @@ namespace mfront
     //   cc += ns + "::"
     // }
     cn += name;    
-    d.epts[lib].push_back(cn);
+    d[lib].epts.push_back(cn);
   } // end of CMaterialPropertyInterface::getTargetsDescription
 
   void

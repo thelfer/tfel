@@ -358,18 +358,17 @@ const Hypothesis){
   {
     using namespace std;
     auto ldsl = this->dsl;
-    auto l = [ldsl](const FileDescription&,
+    auto q = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
-      const auto& sources = ldsl->getTargetsDescription().sources;
-      for(const auto& src : sources){
-	cout << src.first << " : "; //< library
-	copy(src.second.begin(),src.second.end(),
+      for(const auto& l : ldsl->getTargetsDescription()){
+	cout << l.name << " : "; //< library
+	copy(l.sources.begin(),l.sources.end(),
 	     ostream_iterator<string>(cout," "));
 	cout << endl;
       }
     };
-    this->queries.push_back({"generated-sources",l});
+    this->queries.push_back({"generated-sources",q});
   } // end of BehaviourQuery::treatGeneratedSources
 
   void
@@ -377,7 +376,7 @@ const Hypothesis){
   {
     using namespace std;
     auto ldsl = this->dsl;
-    auto l = [ldsl](const FileDescription&,
+    auto q = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
       const auto headers = ldsl->getTargetsDescription().headers;
@@ -385,7 +384,7 @@ const Hypothesis){
 	   ostream_iterator<string>(cout," "));
       cout << endl;
     };
-    this->queries.push_back({"generated-headers",l});
+    this->queries.push_back({"generated-headers",q});
   } // end of BehaviourQuery::treatGeneratedHeaders
 
   void
@@ -393,18 +392,17 @@ const Hypothesis){
   {
     using namespace std;
     auto ldsl = this->dsl;
-    auto l = [ldsl](const FileDescription&,
+    auto q = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
-      const auto flags = ldsl->getTargetsDescription().cppflags;
-      for(const auto& f : flags){
-	cout << f.first << " : "; //< library
-	copy(f.second.begin(),f.second.end(),
+      for(const auto& l : ldsl->getTargetsDescription()){
+	cout << l.name << " : ";
+	copy(l.cppflags.begin(),l.cppflags.end(),
 	     ostream_iterator<string>(cout," "));
 	cout << endl;
       }
     };
-    this->queries.push_back({"cppflags",l});
+    this->queries.push_back({"cppflags",q});
   } // end of BehaviourQuery::treatCppFlags
 
   void
@@ -412,18 +410,17 @@ const Hypothesis){
   {
     using namespace std;
     auto ldsl = this->dsl;
-    auto l = [ldsl](const FileDescription&,
+    auto q = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
-      const auto deps = ldsl->getTargetsDescription().dependencies;
-      for(const auto& d : deps){
-	cout << d.first << " : "; //< library
-	copy(d.second.begin(),d.second.end(),
+      for(const auto& l : ldsl->getTargetsDescription()){
+	cout << l.name << " : ";
+	copy(l.dependencies.begin(),l.dependencies.end(),
 	     ostream_iterator<string>(cout," "));
 	cout << endl;
       }
     };
-    this->queries.push_back({"libraries-dependencies",l});
+    this->queries.push_back({"libraries-dependencies",q});
   } // end of BehaviourQuery::treatLibrariesDependencies
 
   void

@@ -7,12 +7,6 @@
 <!-- pandoc -s --mathjax -i -t revealjs TODO -o TODO.html -->
 <!-- pandoc -t beamer -V theme:Warsow beamercea TODO -o TODO.pdf -->
 
-# Transition to [C++-11](https://isocpp.org)
-
-- transition
-- add noexcept
-- add constexpr
-
 # Plane stress
 
 - currently only supported by Implicit Parser
@@ -23,7 +17,12 @@
 # Interfaces
 
 - catch c++ exceptions
-- catch c error
+- catch c errno
+
+# Mac Os
+
+- let interfaces specify between modules and shared libraries, or undefined
+- let the user choose whether he wants to build a bundle or a shared library
 
 <!-- - matrice tangente cohérente pour l'analyseur MultipleIsotropicMisesFlows -->
 <!-- - matrice de prédiction pour l'analyseur MultipleIsotropicMisesFlows -->

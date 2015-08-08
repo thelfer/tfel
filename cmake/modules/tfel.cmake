@@ -245,9 +245,11 @@ macro(python_lib_module name package)
   if(WIN32)
     set_target_properties(py_${package}_${name} PROPERTIES
       COMPILE_FLAGS "-DHAVE_ROUND")
+    set_target_properties(py_${package}_${name} PROPERTIES SUFFIX ".pyd")
+  elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set_target_properties(py_${package}_${name} PROPERTIES SUFFIX ".so")
   endif(WIN32)
   set_target_properties(py_${package}_${name} PROPERTIES PREFIX "")
-  set_target_properties(py_${package}_${name} PROPERTIES SUFFIX ".pyd")
   set_target_properties(py_${package}_${name} PROPERTIES OUTPUT_NAME ${name})
   target_link_libraries(py_${package}_${name}
     ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARY})

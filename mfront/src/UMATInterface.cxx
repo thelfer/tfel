@@ -1241,31 +1241,31 @@ namespace mfront{
     using namespace std;
     const auto lib  = UMATInterface::getLibraryName(bd);
     const auto name = this->getBehaviourName(bd);
-    d.cppflags[lib].push_back("`tfel-config --includes`");
+    d[lib].cppflags.push_back("`tfel-config --includes`");
 #ifdef CASTEM_CPPFLAGS
-    d.cppflags[lib].push_back(CASTEM_CPPFLAGS);
+    d[lib].cppflags.push_back(CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
 #ifndef LOCAL_CASTEM_HEADER
 #ifdef CASTEM_ROOT
     char * castem_root = ::getenv("CASTEM_ROOT");
     if(castem_root!=nullptr){
-      d.cppflags[lib].push_back("-I"+string(castem_root)+"/include");
+      d[lib].cppflags.push_back("-I"+string(castem_root)+"/include");
     } else {
-      d.cppflags[lib].push_back("-I"+string(CASTEM_ROOT)+"/include");
+      d[lib].cppflags.push_back("-I"+string(CASTEM_ROOT)+"/include");
     }
 #else /* CASTEM_ROOT */
     if(castem_root!=0){
-      d.cppflags[lib].push_back("-I"+string(castem_root)+"/include");
+      d[lib].cppflags.push_back("-I"+string(castem_root)+"/include");
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
-    d.sources[lib].push_back("umat"+name+".cxx");    
+    d[lib].sources.push_back("umat"+name+".cxx");    
     d.headers.push_back("MFront/UMAT/umat"+name+".hxx");
-    d.dependencies[lib].push_back("-lUMATInterface");
+    d[lib].dependencies.push_back("-lUMATInterface");
     if(this->generateMTestFile){
-      d.dependencies[lib].push_back("-lMTestFileGenerator");
+      d[lib].dependencies.push_back("-lMTestFileGenerator");
     }
-    d.dependencies[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
+    d[lib].dependencies.push_back("`tfel-config --libs --material --mfront-profiling`");
     // entry points
     auto b = vector<string>{};
     const auto base = this->getUmatFunctionName(bd);
@@ -1308,7 +1308,7 @@ namespace mfront{
       b.push_back(base);
       b.push_back(name);
     }
-    d.epts[lib].insert(d.epts[lib].end(),b.begin(),b.end());
+    d[lib].epts.insert(d[lib].epts.end(),b.begin(),b.end());
   } // end of UMATInterface::getTargetsDescription
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,

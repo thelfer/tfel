@@ -19,36 +19,65 @@
 #include<vector>
 
 #include"MFront/MFrontConfig.hxx"
+#include"MFront/LibraryDescription.hxx"
 
 namespace mfront{
 
   /*!
    * \brief structure containing the results of the analysis of a
    * MFront file. This structure is used to build the compilation
-   * rules for the libraryies and specific targets defined by MFront
+   * rules for the libraries and specific targets defined by MFront
    * interfaces.
-   * - the generated sources and headers, sorted by libraries
-   * - the dependencies of the generated libraries
-   * - the generated entry points (function or class names), sorted by library
-   * - the specific targets
    */
-  struct TargetsDescription{
+  struct MFRONT_VISIBILITY_EXPORT TargetsDescription{
     TargetsDescription();
     TargetsDescription(const TargetsDescription&);
     TargetsDescription(TargetsDescription&&);
-    TargetsDescription& operator=(const TargetsDescription&);
-    TargetsDescription& operator=(TargetsDescription&&);
     ~TargetsDescription();
-    //! generated sources, sorted by library
-    std::map<std::string,std::vector<std::string>> sources;
+    //! a simple alias
+    using const_iterator = std::vector<LibraryDescription>::const_iterator;
+    /*!
+     * \return the library description associated with the given
+     * library name or a newly created one if non existed.
+     * \param[in] n : name of the library searched
+     * \param[in] s : library suffix
+     * \note If the the library already exists and the suffix does
+     * not match, an exception is thrown
+     */
+    LibraryDescription& operator()(const std::string&,
+				   const std::string&);
+    /*!
+     * \return the library description associated with the given
+     * library name or a newly created one if non existed
+     * \param[in] n : name of the library searched
+     */
+    LibraryDescription& operator[](const std::string&);
+    /*!
+     * \return the library description associated with the given
+     * library name or a newly created one if non existed
+     * \param[in] n : name of the library searched
+     */
+    const LibraryDescription& operator[](const std::string&) const;
+    //! \return an iterator to the first library description
+    const_iterator begin() const;
+    //! \return an iterator to the first library description
+    const_iterator cbegin() const;
+    //! \return an iterator past the last library description
+    const_iterator end() const;
+    //! \return an iterator past the last library description
+    const_iterator cend() const;
     //! generated headers
     std::vector<std::string> headers;
-    //! additional preprocessor flags, sorted by library
-    std::map<std::string,std::vector<std::string>> cppflags;
-    //! the dependencies of libraries on mfront generated libraries, sorted by library
-    std::map<std::string,std::vector<std::string>> dependencies;
-    //! generated entry points, sorted by library
-    std::map<std::string,std::vector<std::string> > epts;
+    //! target system
+#if defined __APPLE__
+    LibraryDescription::TargetSystem system = LibraryDescription::MACOSX;
+#elseif (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+    LibraryDescription::TargetSystem system = LibraryDescription::WINDOWS;
+#else
+    LibraryDescription::TargetSystem system = LibraryDescription::UNIX;
+#endif
+    //! default library type
+    LibraryDescription::LibraryType libraryType = LibraryDescription::SHARED_LIBRARY;
     /*!
      * Specific targets and associated dependencies to other targets
      * (for example, mfront generated library) and commands required
@@ -66,10 +95,21 @@ namespace mfront{
 	     std::pair<std::vector<std::string>,    //< dependencies to other targets
 		       std::vector<std::string>     //< commands
 		       >> specific_targets; 
-    //! targets description of mfront dependencies (material properties)
-    std::vector<TargetsDescription> tds;
+  private:
+    //! list of libraries to be generated
+    std::vector<LibraryDescription> libraries;
   }; // end of struct TargetsDescription
 
+  /*!
+   * \return true if the target description describes a library with
+   * the given name
+   * \param[in] t : target description
+   * \param[in] n : library name
+   */
+  MFRONT_VISIBILITY_EXPORT bool
+  describes(const TargetsDescription&,
+	    const std::string&);
+  
   /*!
    * \brief merge two targets description
    * \param[out] d : destination

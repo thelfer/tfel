@@ -40,6 +40,7 @@ set(TFELMFront_SOURCES
     CodeBlock.cxx
     FileDescription.cxx
     TargetsDescription.cxx
+    LibraryDescription.cxx
     MFrontDebugMode.cxx
     PedanticMode.cxx
     MFrontLock.cxx

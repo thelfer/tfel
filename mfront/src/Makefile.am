@@ -25,6 +25,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   MFrontBase.cxx                                         \
 		           FileDescription.cxx                                    \
 		           TargetsDescription.cxx                                 \
+		           LibraryDescription.cxx                                 \
 		           CodeBlock.cxx                                          \
 		           FiniteStrainBehaviourTangentOperatorConversion.cxx     \
 		           FiniteStrainBehaviourTangentOperatorConversionPath.cxx \

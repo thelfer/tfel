@@ -662,17 +662,10 @@ namespace mfront{
     for(const auto & i : this->interfaces){
       i.second->getTargetsDescription(this->td,*this);
     }
-    for(const auto& s : this->td.sources){
+    for(const auto& s : this->td){
       for(const auto& ld : this->librariesDependencies){
-	if("-l"+s.first!=ld){
-	  this->td.dependencies[s.first].push_back(ld);
-	}
-      }
-    }
-    for(const auto& ld : this->td.dependencies){
-      for(const auto& deps : this->librariesDependencies){
-	if("-l"+ld.first!=deps){
-	  this->td.dependencies[ld.first].push_back(deps);
+	if("-l"+s.name!=ld){
+	  this->td[s.name].dependencies.push_back(ld);
 	}
       }
     }

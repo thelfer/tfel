@@ -1,0 +1,102 @@
+/*! 
+ * \file  LibraryDescription.hxx
+ * \brief
+ * \author Helfer Thomas
+ * \date   17 mars 2015
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifndef LIB_MFRONT_LIBRARYDESCRIPTION_H
+#define LIB_MFRONT_LIBRARYDESCRIPTION_H 
+
+#include<string>
+#include<vector>
+
+#include"MFront/MFrontConfig.hxx"
+
+namespace mfront{
+
+  /*!
+   * \brief This structure is used to build the compilation
+   * rules for the library.
+   * - the library name
+   * - the generated sources
+   * - the required preprocessor flags
+   * - the dependencies of the generated library
+   * - the generated entry points (function or class names)
+   */
+  struct MFRONT_VISIBILITY_EXPORT LibraryDescription{
+    /*!
+     * Supported target systems
+     */
+    enum TargetSystem{
+      WINDOWS,//<! Microsoft windows system
+      MACOSX, //<! Apple Mac Os
+      UNIX,   //<! General unix flavor (Linux, FreeBSD, Solaris, ...)
+    };
+    /*!
+     * Types of library supported.
+     * This difference is only relevant on Mac Os
+     */
+    enum LibraryType {
+      SHARED_LIBRARY, //<! a shared library meant to be used for linking
+      MODULE          //<! a module is meant to be used as a plugin 
+    };
+   /*!
+     * \return the default library suffix for the given target system
+     * and library type
+     * \param[in] s : target system
+     * \param[in] t : library type
+     */
+    static const char*
+    getDefaultLibrarySuffix(const TargetSystem,
+			    const LibraryType) noexcept;
+    /*!
+     * Constructor
+     * \param[in] n : name   of the library
+     * \param[in] s : suffix of the library
+     * \param[in] t : type   of the library
+     */
+    LibraryDescription(const std::string&,
+		       const std::string&,
+		       const LibraryType);
+    LibraryDescription(const LibraryDescription&);
+    LibraryDescription(LibraryDescription&&);
+    LibraryDescription& operator=(const LibraryDescription&) = delete;
+    LibraryDescription& operator=(LibraryDescription&&) = delete;
+    //! destructor
+    ~LibraryDescription();
+    //! library name
+    const std::string name;
+    //! libray suffix
+    const std::string suffix;
+    //! libray type
+    const LibraryType type;
+    //! generated sources
+    std::vector<std::string> sources;
+    //! additional preprocessor flags
+    std::vector<std::string> cppflags;
+    //! the dependencies of libraries on mfront generated libraries
+    std::vector<std::string> dependencies;
+    //! generated entry points
+    std::vector<std::string> epts;
+  }; // end of struct LibraryDescription
+
+  /*!
+   * \brief merge two library description
+   * \param[out] d : destination
+   * \param[in]  s : source
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void mergeLibraryDescription(LibraryDescription&,
+			       const LibraryDescription&);
+
+} // end of namespace mfront
+
+#endif /* LIB_MFRONT_LIBRARYDESCRIPTION_H */
+
