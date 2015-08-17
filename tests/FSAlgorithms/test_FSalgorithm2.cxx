@@ -29,7 +29,7 @@ int main(void)
   using uishort = unsigned short;
   std::vector<uishort> v(10);
   std::vector<uishort> v2(10);
-  tfel::fsalgo::iota<10u>::exe(v.begin(),ushort{0});
+  tfel::fsalgo::iota<10u>::exe(v.begin(),uishort{0});
   tfel::fsalgo::copy<10u>::exe(v.begin(),v2.begin());
   for(std::vector<uishort>::size_type i=0;i!=10;++i){
     assert(v2[i]==i);

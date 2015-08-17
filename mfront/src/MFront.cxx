@@ -692,7 +692,7 @@ namespace mfront{
     mlock.lock();
     try{
       for(const auto& d:this->defs){
-	if(!describes(t,d)){
+	if(!describes(this->targets,d)){
 	  throw(std::runtime_error("MFront::generateDefsFile : "
 				   "libray '"+d+"' is not handled"));
 	}
@@ -705,7 +705,7 @@ namespace mfront{
 	}
 	def << "LIBRARY " << d << "\n"
 	    << "EXPORTS\n";
-	std::copy(t[d].epts.begin(),t[d].epts.end(),
+	std::copy(this->targets[d].epts.begin(),this->targets[d].epts.end(),
 		  std::ostream_iterator<std::string>(def,"\n"));
       }
     }
