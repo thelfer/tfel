@@ -36,6 +36,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLock.hxx"
 #include"MFront/FileDescription.hxx"
@@ -89,13 +90,13 @@ namespace mfront
     } else {
       src = mpd.library+"wrapper.cxx";
     }
-    d[lib].dependencies.push_back("-lm");    
-    d[lib].dependencies.push_back(TFEL_PYTHON_LIBS);
-    d[lib].cppflags.push_back(TFEL_PYTHON_INCLUDES);
-    d[lib].sources.push_back(name+"-python.cxx");
-    d[lib].sources.push_back(src);
-    d.headers.push_back(this->headerFileName);    
-    d[lib].epts.push_back(name);
+    insert_if(d[lib].ldflags,"-lm");    
+    insert_if(d[lib].ldflags,TFEL_PYTHON_LIBS);
+    insert_if(d[lib].cppflags,TFEL_PYTHON_INCLUDES);
+    insert_if(d[lib].sources,name+"-python.cxx");
+    insert_if(d[lib].sources,src);
+    insert_if(d.headers,this->headerFileName);    
+    insert_if(d[lib].epts,name);
   } // end of PythonMaterialPropertyInterface::getTargetsDescription
 
   void

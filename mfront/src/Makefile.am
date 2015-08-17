@@ -23,6 +23,8 @@ endif # TFEL_WIN
 
 libTFELMFront_la_SOURCES = MFront.cxx                                             \
 			   MFrontBase.cxx                                         \
+			   MFrontUtilities.cxx                                    \
+			   MakefileGenerator.cxx                                  \
 		           FileDescription.cxx                                    \
 		           TargetsDescription.cxx                                 \
 		           LibraryDescription.cxx                                 \

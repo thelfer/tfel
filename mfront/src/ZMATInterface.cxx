@@ -21,6 +21,7 @@
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
@@ -1573,13 +1574,13 @@ namespace mfront
 				       const BehaviourDescription& bd){
     const auto lib  = getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName();
-    d[lib].cppflags.push_back("`tfel-config --includes --zmat`");
+    insert_if(d[lib].cppflags,"`tfel-config --includes --zmat`");
 #pragma message("Linux specific")
-    d[lib].cppflags.push_back("-DLinux");
-    d.headers.push_back("MFront/ZMAT/ZMAT"+name+".hxx");
-    d[lib].sources.push_back("ZMAT"+name+".cxx");
-    d[lib].epts.push_back(bd.getClassName());
-    d[lib].dependencies.push_back("`tfel-config --libs --material --mfront-profiling`");
+    insert_if(d[lib].cppflags,"-DLinux");
+    insert_if(d.headers,"MFront/ZMAT/ZMAT"+name+".hxx");
+    insert_if(d[lib].sources,"ZMAT"+name+".cxx");
+    insert_if(d[lib].epts,bd.getClassName());
+    insert_if(d[lib].ldflags,"`tfel-config --libs --material --mfront-profiling`");
   } // end of ZMATInterface::getTargetsDescription
 
   ZMATInterface::~ZMATInterface()

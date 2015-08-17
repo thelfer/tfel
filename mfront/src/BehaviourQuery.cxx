@@ -415,7 +415,7 @@ const Hypothesis){
 		    const Hypothesis){
       for(const auto& l : ldsl->getTargetsDescription()){
 	cout << l.name << " : ";
-	copy(l.dependencies.begin(),l.dependencies.end(),
+	copy(l.ldflags.begin(),l.ldflags.end(),
 	     ostream_iterator<string>(cout," "));
 	cout << endl;
       }

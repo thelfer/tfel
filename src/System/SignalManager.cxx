@@ -205,7 +205,7 @@ namespace tfel
       handler = SignalManager::handlerNbr;
       SignalManager::callBacks[sig].insert({handler,f});
       ++SignalManager::handlerNbr;
-      sigaction(sig,&action,0);
+      sigaction(sig,&action,nullptr);
       return handler;
     } // end of SignalManager::registerHandler
     
@@ -253,7 +253,7 @@ namespace tfel
 	}
       }
       // restoring the previous signal mask
-      sigprocmask(SIG_SETMASK,&oSigSet,0);
+      sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
       if(!found){
 	cerr << "SignalManager::removeHandler : "
 	     << "unknown handler " << id << endl;

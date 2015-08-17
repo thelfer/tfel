@@ -785,7 +785,7 @@ namespace mfront{
     td[lib].epts.push_back(md.className);
     td.headers.push_back(this->headerFileName);
     td[lib].cppflags.push_back("`pleiades-config --includes`\n");
-    td[lib].dependencies.push_back("`pleiades-config --libs` -lm");
+    td[lib].ldflags.push_back("`pleiades-config --libs` -lm");
   } // end of MFrontPleiadesModelInterfaceBase::getTargetsDescription
   
   void

@@ -1,9 +1,13 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
 nobase_include_HEADERS= MFront/MFront.hxx                             \
+			MFront/MFrontBase.hxx                         \
+			MFront/MFrontUtilities.hxx                    \
+			MFront/MFrontUtilities.ixx                    \
+			MFront/GeneratorOptions.hxx                   \
+			MFront/MakefileGenerator.hxx                  \
 			MFront/BehaviourQuery.hxx                     \
 			MFront/BehaviourDocumentationGenerator.hxx    \
-			MFront/MFrontBase.hxx                         \
 			MFront/CodeBlock.hxx                          \
 			MFront/MFrontConfig.hxx	                      \
 			MFront/MFrontDebugMode.hxx	              \

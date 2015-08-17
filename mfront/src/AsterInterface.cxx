@@ -19,6 +19,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/FileDescription.hxx"
@@ -752,23 +753,23 @@ namespace mfront{
   {
     const auto lib  = AsterInterface::getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName(); 
-    d[lib].cppflags.push_back("`tfel-config --includes`");
+    insert_if(d[lib].cppflags,"`tfel-config --includes`");
 #if ASTER_ARCH == 64
-    d[lib].cppflags.push_back("-DASTER_ARCH=64");
+    insert_if(d[lib].cppflags,"-DASTER_ARCH=64");
 #elif ASTER_ARCH == 32
-    d[lib].cppflags.push_back("-DASTER_ARCH=32");
+    insert_if(d[lib].cppflags,"-DASTER_ARCH=32");
 #else
 #error "AsterInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    d[lib].sources.push_back("aster"+name+".cxx");
+    insert_if(d[lib].sources,"aster"+name+".cxx");
     d.headers.push_back("MFront/Aster/aster"+name+".hxx");
-    d[lib].dependencies.push_back("-lAsterInterface");
+    insert_if(d[lib].ldflags,"-lAsterInterface");
     if(this->generateMTestFile){
-      d[lib].dependencies.push_back("-lMTestFileGenerator");
+      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
     }
-    d[lib].dependencies.push_back("`tfel-config --libs --material --mfront-profiling`");
-    d[lib].epts.push_back(name);
-    d[lib].epts.push_back(this->getFunctionName(name));
+    insert_if(d[lib].ldflags,"`tfel-config --libs --material --mfront-profiling`");
+    // insert_if(d[lib].epts,name);
+    insert_if(d[lib].epts,this->getFunctionName(name));
   } // end of AsterInterface::getGeneratedSources
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,

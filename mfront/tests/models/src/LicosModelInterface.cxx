@@ -1707,7 +1707,7 @@ namespace mfront{
     td[lib].sources.push_back(md.className+"-@application@.cxx");
     td.headers.push_back("Pleiades/Model/"+md.className+"-@application@.hxx");
     td[lib].cppflags.push_back("`@application@-config --includes`\n");
-    td[lib].dependencies.push_back("`@application@-config --libs` -lm");
+    td[lib].ldflags.push_back("`@application@-config --libs` -lm");
     td[lib].epts.push_back(md.className);
   } // end of MFrontModelInterface::getTargetsDescription
 

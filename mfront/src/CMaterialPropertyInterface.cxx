@@ -15,6 +15,7 @@
 #include<stdexcept>
 
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
@@ -48,11 +49,11 @@ namespace mfront
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f    = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     const auto header = this->getHeaderFileName(mpd.material,mpd.className);
-    d[lib].dependencies.push_back("-lm");
-    d[lib].sources.push_back(name+".cxx");
-    d[lib].epts.insert(d[lib].epts.end(),{f,f+"_checkBounds"});
+    insert_if(d[lib].ldflags,"-lm");
+    insert_if(d[lib].sources,name+".cxx");
+    insert_if(d[lib].epts,{f,f+"_checkBounds"});
     if(!header.empty()){
-      d.headers.push_back(header+".hxx");
+      insert_if(d.headers,header+".hxx");
     }
   } // end of CMaterialPropertyInterface::getTargetsDescription
 

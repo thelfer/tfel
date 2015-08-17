@@ -27,7 +27,7 @@ namespace mfront{
    * - the library name
    * - the generated sources
    * - the required preprocessor flags
-   * - the dependencies of the generated library
+   * - the linker flags of the generated library
    * - the generated entry points (function or class names)
    */
   struct MFRONT_VISIBILITY_EXPORT LibraryDescription{
@@ -81,20 +81,47 @@ namespace mfront{
     std::vector<std::string> sources;
     //! additional preprocessor flags
     std::vector<std::string> cppflags;
-    //! the dependencies of libraries on mfront generated libraries
-    std::vector<std::string> dependencies;
+    //! the linker flags
+    std::vector<std::string> ldflags;
     //! generated entry points
     std::vector<std::string> epts;
   }; // end of struct LibraryDescription
 
   /*!
+   * \return a string describing the library type
+   * \param[in] t : library type
+   */
+  MFRONT_VISIBILITY_EXPORT std::string
+  convert(const LibraryDescription::LibraryType);
+  /*!
    * \brief merge two library description
    * \param[out] d : destination
    * \param[in]  s : source
    */
-  MFRONT_VISIBILITY_EXPORT
-  void mergeLibraryDescription(LibraryDescription&,
-			       const LibraryDescription&);
+  MFRONT_VISIBILITY_EXPORT void
+  mergeLibraryDescription(LibraryDescription&,
+			  const LibraryDescription&);
+  /*!
+   * \brief write a library description to a stream
+   * \param[out] os : output stream
+   * \param[in]  t  : library description
+   */
+  MFRONT_VISIBILITY_EXPORT std::ostream&
+  operator << (std::ostream&,
+	       const LibraryDescription&);
+  /*!
+   * \brief read a LibraryDescription from a stream created by the
+   * CxxTokenizer class
+   * \param[in,out] p  : current position in the stream
+   * \param[in]     pe : end of the stream
+   * \return the library description read.
+   * If this function succeed, p points past the last token treated.
+   * If this function fails,   p is unchanged.
+   */
+  template<>
+  MFRONT_VISIBILITY_EXPORT LibraryDescription
+  read(tfel::utilities::CxxTokenizer::const_iterator&,
+       const tfel::utilities::CxxTokenizer::const_iterator);
 
 } // end of namespace mfront
 

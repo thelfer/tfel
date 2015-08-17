@@ -1552,7 +1552,7 @@ namespace mfront{
     uvs.insert(uvs2.begin(),uvs2.end());
     VariableDescriptionContainer::const_iterator p;
     ErrorEvaluation eev;
-    SupportedTypes::TypeSize svsize = this->getTotalSize(d.getStateVariables());
+    auto svsize = this->getTotalSize(d.getStateVariables());
     if(svsize.getScalarSize()+svsize.getTVectorSize()+
        3u*svsize.getStensorSize()+3u*svsize.getTensorSize()>=20){
       eev = MAXIMUMVALUEERROREVALUATION;

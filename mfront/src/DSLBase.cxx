@@ -776,7 +776,7 @@ namespace mfront
       m.setInterface(i);
     }
     for(const auto& f : files){
-      mergeTargetsDescription(this->td,m.treatFile(f));
+      mergeTargetsDescription(this->td,m.treatFile(f),true);
     }
   } // end of DSLBase::callMFront
 

@@ -22,6 +22,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
@@ -1241,31 +1242,31 @@ namespace mfront{
     using namespace std;
     const auto lib  = UMATInterface::getLibraryName(bd);
     const auto name = this->getBehaviourName(bd);
-    d[lib].cppflags.push_back("`tfel-config --includes`");
+    insert_if(d[lib].cppflags,"`tfel-config --includes`");
 #ifdef CASTEM_CPPFLAGS
-    d[lib].cppflags.push_back(CASTEM_CPPFLAGS);
+    insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
 #ifndef LOCAL_CASTEM_HEADER
 #ifdef CASTEM_ROOT
     char * castem_root = ::getenv("CASTEM_ROOT");
     if(castem_root!=nullptr){
-      d[lib].cppflags.push_back("-I"+string(castem_root)+"/include");
+      insert_if(d[lib].cppflags,"-I"+string(castem_root)+"/include");
     } else {
-      d[lib].cppflags.push_back("-I"+string(CASTEM_ROOT)+"/include");
+      insert_if(d[lib].cppflags,"-I"+string(CASTEM_ROOT)+"/include");
     }
 #else /* CASTEM_ROOT */
     if(castem_root!=0){
-      d[lib].cppflags.push_back("-I"+string(castem_root)+"/include");
+      insert_if(d[lib].cppflags,"-I"+string(castem_root)+"/include");
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
-    d[lib].sources.push_back("umat"+name+".cxx");    
-    d.headers.push_back("MFront/UMAT/umat"+name+".hxx");
-    d[lib].dependencies.push_back("-lUMATInterface");
+    insert_if(d[lib].sources,"umat"+name+".cxx");    
+    insert_if(d.headers,"MFront/UMAT/umat"+name+".hxx");
+    insert_if(d[lib].ldflags,"-lUMATInterface");
     if(this->generateMTestFile){
-      d[lib].dependencies.push_back("-lMTestFileGenerator");
+      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
     }
-    d[lib].dependencies.push_back("`tfel-config --libs --material --mfront-profiling`");
+    insert_if(d[lib].ldflags,"`tfel-config --libs --material --mfront-profiling`");
     // entry points
     auto b = vector<string>{};
     const auto base = this->getUmatFunctionName(bd);
@@ -1308,7 +1309,7 @@ namespace mfront{
       b.push_back(base);
       b.push_back(name);
     }
-    d[lib].epts.insert(d[lib].epts.end(),b.begin(),b.end());
+    insert_if(d[lib].epts,b);
   } // end of UMATInterface::getTargetsDescription
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,

@@ -18,6 +18,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
@@ -56,11 +57,11 @@ namespace mfront
 							       mpd.material);
     const auto name    = this->getCastemFunctionName(mpd.material,
 						     mpd.className);
-    d[lib].dependencies.push_back("-lm");
-    d[lib].cppflags.push_back(CASTEM_CPPFLAGS);
-    d[lib].sources.push_back(this->getSourceFileName(name));
+    insert_if(d[lib].ldflags,"-lm");
+    insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
+    insert_if(d[lib].sources,this->getSourceFileName(name));
     d.headers.push_back(this->headerFileName);    
-    d[lib].epts.push_back(name);
+    insert_if(d[lib].epts,name);
   } // end of CastemMaterialPropertyInterface::getTargetsDescription
 
   std::string

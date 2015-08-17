@@ -22,6 +22,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
@@ -458,23 +459,23 @@ namespace mfront{
 				       const BehaviourDescription& bd){
     const auto lib  = CyranoInterface::getLibraryName(bd);
     const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
-    d[lib].cppflags.push_back("`tfel-config --includes`");
+    insert_if(d[lib].cppflags,"`tfel-config --includes`");
 #if CYRANO_ARCH == 64
-    d[lib].cppflags.push_back("-DCYRANO_ARCH=64");
+    insert_if(d[lib].cppflags,"-DCYRANO_ARCH=64");
 #elif CYRANO_ARCH == 32
-    d[lib].cppflags.push_back("-DCYRANO_ARCH=32");
+    insert_if(d[lib].cppflags,"-DCYRANO_ARCH=32");
 #else
 #error "CyranoInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    d[lib].sources.push_back("cyrano"+name+".cxx");
-    d[lib].epts.push_back(name);
-    d[lib].epts.push_back(this->getFunctionName(name));
-    d.headers.push_back("MFront/Cyrano/cyrano"+name+".hxx");
-    d[lib].dependencies.push_back("-lCyranoInterface");
+    insert_if(d[lib].sources,"cyrano"+name+".cxx");
+    insert_if(d[lib].epts,name);
+    insert_if(d[lib].epts,this->getFunctionName(name));
+    insert_if(d.headers,"MFront/Cyrano/cyrano"+name+".hxx");
+    insert_if(d[lib].ldflags,"-lCyranoInterface");
     if(this->generateMTestFile){
-      d[lib].dependencies.push_back("-lMTestFileGenerator");
+      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
     }
-    d[lib].dependencies.push_back("`tfel-config --libs --material --mfront-profiling`");
+    insert_if(d[lib].ldflags,"`tfel-config --libs --material --mfront-profiling`");
   } // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
 
   void 

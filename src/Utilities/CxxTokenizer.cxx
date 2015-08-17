@@ -13,6 +13,7 @@
 
 #include<cctype>
 #include<sstream>
+#include<fstream>
 #include<iterator>
 #include<stdexcept>
 #include<algorithm>
@@ -359,10 +360,8 @@ namespace tfel{
 	    }
 	  }
 	} else {
-	  vector<string> tmp = splitStringAtSpaces(line);
-	  vector<string>::const_iterator p;
-	  for(p=tmp.begin();p!=tmp.end();++p){
-	    this->fileTokens.push_back(Token(lineNumber,*p));
+	  for(const auto&t :splitStringAtSpaces(line)){
+	    this->fileTokens.push_back(Token(lineNumber,t));
 	  }
 	  line.clear();
 	}
@@ -375,7 +374,7 @@ namespace tfel{
     {
       using namespace std;
       string word;
-      string::const_iterator b=p;
+      auto b=p;
       if((*p=='-')||(*p=='+')){
 	++p;
       }
@@ -495,9 +494,9 @@ namespace tfel{
 	} else if(isdigit(*p)){
 	  res.push_back(CxxTokenizer::readNumber(p,pe));
 	} else {
-	  string::const_iterator pp = find(p,pe,'+');
-	  string::const_iterator pm = find(p,pe,'-');
-	  string::const_iterator pd = find(p,pe,'.');
+	  auto pp = find(p,pe,'+');
+	  auto pm = find(p,pe,'-');
+	  auto pd = find(p,pe,'.');
 	  string word;
 	  if((pp==pe)&&(pm==pe)&&(pd==pe)){
 	    // this is the end
@@ -576,7 +575,7 @@ namespace tfel{
     CxxTokenizer::splitString3(std::vector<std::string>& res,std::string s)
     {
       using namespace std;
-      string::size_type posb = 0;
+      auto posb = string::size_type{0};
       while((!s.empty())&&(posb!=string::npos)){
 	posb = s.find("<");
 	if(posb!=0){
@@ -602,15 +601,11 @@ namespace tfel{
 		       const std::string& s1,
 		       const std::string& s2)
     {
-      using namespace std;
-      vector<string> res;
-      vector<string>::iterator p;
-
       if(src.empty()){
 	return;
       }
-    
-      p=src.begin();
+      auto res = std::vector<std::string>{};
+      auto p=src.begin();
       res.push_back(*p);
       ++p;
       for(;p!=src.end();++p){
@@ -620,9 +615,7 @@ namespace tfel{
 	  res.push_back(*p);
 	}
       }
-
       src.swap(res);
-
     } // end of CxxTokenizer::join
 
     void
@@ -796,33 +789,26 @@ namespace tfel{
     CxxTokenizer::openFile(const std::string& f)
     {
       using namespace std;
-
       this->fileTokens.clear();
-
-      string line;
-      ifstream file(f.c_str());
-      unsigned int lineNumber;
-
+      ifstream file{f};
       if(!file){
-	string msg("CxxTokenizer::openFile : ");
-	msg += "unable to open file '"+f+"'";
-	throw(runtime_error(msg));
+	throw(runtime_error("CxxTokenizer::openFile : "
+			    "unable to open file '"+f+"'"));
       }
-
-      lineNumber=0;
+      unsigned int lineNumber{0};
       while(!file.eof()){
 	if(!file.good()){
 	  string msg("CxxTokenizer::openFile : ");
 	  msg+="error while reading file '"+f+"'";
 	  throw(runtime_error(msg));
 	}
+	auto line = string{};
 	getline(file,line);
 	++lineNumber;
 	if(!line.empty()){
 	  this->splitLine(line,lineNumber);
 	}
       }
-
       this->treatPreprocessorDirectives();
       this->splitTokens();
       file.close();
@@ -844,9 +830,7 @@ namespace tfel{
     {}
   
     CxxTokenizer::CxxTokenizer(const std::string& f)
-      : cStyleCommentOpened(false),
-	bExtractNumbers(true),
-	charAsString(false)
+      : CxxTokenizer()
     {
       this->openFile(f);
     }
@@ -1058,72 +1042,6 @@ namespace tfel{
       return p;    
     } // end of CxxTokenizer::joinPreviousCurrentNext
 
-    void 
-    CxxTokenizer::beautifyCode(void)
-    {
-      using namespace std;
-      TokensContainer res;
-      unsigned int indent=0;
-      unsigned int current_line=0;
-      for(auto p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
-	if(p->flag==Token::Standard){
-	  if(p->value=="}"){
-	    if(indent<2){
-	      string msg("CxxTokenizer::beautifyCode : ");
-	      msg += "Found unmatched closing bracket \"}\"\n";
-	      msg += "Error at line : ";
-	      msg += to_string(p->line);
-	      msg += "\n";
-	      msg += "indent = ";
-	      msg += to_string(indent);
-	      throw(runtime_error(msg));
-	    } else{
-	      --indent;
-	      --indent;
-	    }
-	  }
-	  if(p->value=="{"){
-	    ++indent;
-	    ++indent;
-	  }
-	  if((p->line!=current_line)){
-	    if(indent!=0){
-	      if(p->value=="{"){
-		p->value.insert(0u,indent-2,' ');
-		current_line = p->line;
-	      } else {
-		p->value.insert(0u,indent,' ');
-		current_line = p->line;
-	      }
-	    }
-	  }
-	  if(p->value=="::"){
-	    p=joinPreviousCurrentNext(res,this->fileTokens,p);
-	  } else if(p->value=="->"){
-	    p=joinPreviousCurrentNext(res,this->fileTokens,p);
-	  } else if(p->value=="."){
-	    p=joinPreviousCurrentNext(res,this->fileTokens,p);
-	  } else if(p->value=="<"){
-	    p=joinPreviousCurrentNext(res,this->fileTokens,p);
-	  } else {
-	    res.push_back(*p);
-	  }
-	} else {
-	  res.push_back(*p);
-	}
-      }
-      if(indent!=0){
-	string msg("CxxTokenizer::beautifyCode : ");
-	msg += "File ended with unmatched closing bracket \"}\"\n";
-	msg += "indent : ";
-	msg += to_string(indent);
-	throw(runtime_error(msg));
-      }
-    
-      this->fileTokens.swap(res);
-
-    } // end of CxxTokenizer::beautifyCode
-
     CxxTokenizer::const_iterator
     CxxTokenizer::begin(void) const
     {
@@ -1194,20 +1112,16 @@ namespace tfel{
     CxxTokenizer::readString(CxxTokenizer::const_iterator& p, 
 			     const CxxTokenizer::const_iterator pe)
     {
-      using namespace std;
-      using namespace tfel::utilities;
       CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readString","",p,pe);
       if(p->flag!=Token::String){
-	string msg("CxxTokenizer::readString : ");
-	msg += "expected to read a string (read '"+p->value+"').\n";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("CxxTokenizer::readString : "
+				 "expected to read a string (read '"+p->value+"')."));
       }
       if(p->value.size()<2){
-	string msg("CxxTokenizer::readString : ");
-	msg += "internal error (invalid string size)";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("CxxTokenizer::readString : "
+				 "internal error (invalid string size)"));
       }
-      string value = p->value.substr(1,p->value.size()-2);
+      auto value = p->value.substr(1,p->value.size()-2);
       ++p;
       return value;
     } // end of CxxTokenizer::readString
@@ -1219,14 +1133,13 @@ namespace tfel{
     {
       using namespace std;
       double res;
-      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readDouble","expected number",p,pe);
+      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readDouble",
+				      "expected number",p,pe);
       istringstream is(p->value);
       is >> res;
       if(!is&&(!is.eof())){
-	ostringstream msg;
-	msg << "CxxTokenizer::readDouble : ";
-	msg << "could not read value from token '"+p->value+"'.\n";
-	throw(runtime_error(msg.str()));
+	throw(runtime_error("CxxTokenizer::readDouble : "
+			    "could not read value from token '"+p->value+"'."));
       }
       ++p;
       return res;
@@ -1243,10 +1156,8 @@ namespace tfel{
       istringstream is(p->value);
       is >> res;
       if(!is&&(!is.eof())){
-	ostringstream msg;
-	msg << "CxxTokenizer::readInt : ";
-	msg << "could not read value from token '"+p->value+"'.\n";
-	throw(runtime_error(msg.str()));
+	throw(runtime_error("CxxTokenizer::readInt : "
+			    "could not read value from token '"+p->value+"'."));
       }
       ++p;
       return res;
@@ -1301,6 +1212,31 @@ namespace tfel{
       CxxTokenizer::readSpecifiedToken(m,"}",p,pe);
     } // end of CxxTokenizer::readArray
 
+    std::vector<std::string>
+    CxxTokenizer::readStringArray(const_iterator& p, 
+				  const const_iterator pe)
+    {
+      const std::string m = "CxxTokenizer::readStringArray";
+      CxxTokenizer::readSpecifiedToken(m,"{",p,pe);
+      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      auto r = std::vector<std::string>{};
+      while(p->value!="}"){
+	CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	r.push_back(CxxTokenizer::readString(p,pe));
+	CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	if(p->value!="}"){
+	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
+	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	  if(p->value=="}"){
+	    throw(std::runtime_error("CxxTokenizer::readStringArray : "
+				     "unexpected token '}'"));
+	  }
+	}
+      }
+      CxxTokenizer::readSpecifiedToken(m,"}",p,pe);
+      return r;
+    } // end of CxxTokenizer::readStringArray
+    
     CxxTokenizer::size_type
     CxxTokenizer::size() const
     {

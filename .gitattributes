@@ -1623,6 +1623,7 @@ mfront/include/MFront/FileDescription.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx -text
 mfront/include/MFront/FortranMaterialPropertyInterface.hxx -text
+mfront/include/MFront/GeneratorOptions.hxx -text
 mfront/include/MFront/GenericData.hxx -text
 mfront/include/MFront/GnuplotMaterialPropertyInterface.hxx -text
 mfront/include/MFront/ImplicitDSL.hxx -text
@@ -1648,7 +1649,10 @@ mfront/include/MFront/MFrontHeader.hxx -text
 mfront/include/MFront/MFrontLock.hxx -text
 mfront/include/MFront/MFrontLogStream.hxx -text
 mfront/include/MFront/MFrontMaterialPropertyInterface.hxx -text
+mfront/include/MFront/MFrontUtilities.hxx -text
+mfront/include/MFront/MFrontUtilities.ixx -text
 mfront/include/MFront/MTestFileGeneratorBase.hxx -text
+mfront/include/MFront/MakefileGenerator.hxx -text
 mfront/include/MFront/MaterialPropertyDSL.hxx -text
 mfront/include/MFront/MaterialPropertyDescription.hxx -text
 mfront/include/MFront/MaterialPropertyInterfaceFactory.hxx -text
@@ -1877,8 +1881,10 @@ mfront/src/MFrontHeader.cxx.in -text
 mfront/src/MFrontLock.cxx -text
 mfront/src/MFrontLogStream.cxx -text
 mfront/src/MFrontMaterialPropertyInterface.cxx -text
+mfront/src/MFrontUtilities.cxx -text
 mfront/src/MTestFileGeneratorBase.cxx -text
 mfront/src/Makefile.am -text
+mfront/src/MakefileGenerator.cxx -text
 mfront/src/MaterialPropertyDSL.cxx -text
 mfront/src/MaterialPropertyDescription.cxx -text
 mfront/src/MaterialPropertyInterfaceFactory.cxx -text

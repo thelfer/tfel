@@ -27,6 +27,7 @@
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/DSLFactory.hxx"
@@ -665,7 +666,7 @@ namespace mfront{
     for(const auto& s : this->td){
       for(const auto& ld : this->librariesDependencies){
 	if("-l"+s.name!=ld){
-	  this->td[s.name].dependencies.push_back(ld);
+	  insert_if(this->td[s.name].ldflags,ld);
 	}
       }
     }

@@ -49,7 +49,7 @@ namespace mfront {
   {
     const auto lib    = "libPleiades"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
-    d[lib].dependencies.push_back("-lm");
+    d[lib].ldflags.push_back("-lm");
     d[lib].cppflags.push_back("`pleiades-config --includes`\n");
     d[lib].sources.push_back(name+"-pleiades.cpp");
     d[lib].epts.push_back(name);

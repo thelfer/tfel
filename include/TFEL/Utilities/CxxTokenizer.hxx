@@ -19,8 +19,7 @@
 #include<list>
 #include<string>
 #include<vector>
-#include<ostream>
-#include<fstream>
+#include<iosfwd>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/Token.hxx"
@@ -90,12 +89,6 @@ namespace tfel{
        * \param[out] out : output stream
        */ 
       void printFileTokens(std::ostream&) const;
-
-      /*!
-       * \brief print the stored tokens to the specified stream
-       * \param[out] out : output stream
-       */ 
-      void beautifyCode(void);
 
       /*!
        * \brief remove all comment tokens
@@ -201,7 +194,6 @@ namespace tfel{
       static std::string
       readString(const_iterator&, 
 		 const const_iterator);
-
       /*!
        * \brief an helper method to extract a set of values from the
        * given as an array
@@ -218,7 +210,19 @@ namespace tfel{
 		std::vector<std::string>&,
 		const_iterator&, 
 		const const_iterator);
-      
+      /*!
+       * \brief an helper method to extract a set of values from the
+       * given as an array
+       * \param[out] v  : the extracted array
+       * \param[in]  p  : iterator to the current token
+       * \param[in]  pe : iterator pointing after the last token of the
+       * line
+       * \throw std::runtime_error if the given iterator is egal to
+       * the second argument or if the given token is not a string
+       */ 
+      static std::vector<std::string>
+      readStringArray(const_iterator&, 
+		      const const_iterator);
       /*!
        * \brief an helper method to extract a double from the given
        * token

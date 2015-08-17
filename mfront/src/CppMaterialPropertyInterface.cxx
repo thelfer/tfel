@@ -17,6 +17,7 @@
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
@@ -60,16 +61,16 @@ namespace mfront
     using std::string;
     const auto lib  = "libCpp"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
-    d[lib].dependencies.push_back("-lm");
-    d[lib].sources.push_back(name+"-cxx.cxx");
-    d.headers.push_back(this->headerFileName);
+    insert_if(d[lib].ldflags,"-lm");
+    insert_if(d[lib].sources,name+"-cxx.cxx");
+    insert_if(d.headers,this->headerFileName);
     auto cn = string{};
 #pragma message("HERE")
     // for(const auto& ns : this->namespaces){
     //   cc += ns + "::"
     // }
     cn += name;    
-    d[lib].epts.push_back(cn);
+    insert_if(d[lib].epts,cn);
   } // end of CMaterialPropertyInterface::getTargetsDescription
 
   void

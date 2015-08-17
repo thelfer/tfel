@@ -23,6 +23,7 @@
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"MFront/MFrontBase.hxx"
 #include"MFront/MFrontConfig.hxx"
+#include"MFront/GeneratorOptions.hxx"
 #include"MFront/TargetsDescription.hxx"
 
 #if (!(defined _WIN32 || defined _WIN64)) || ((defined __CYGWIN__)|| (defined __MINGW32__)) || defined(__MINGW64__) 
@@ -108,43 +109,11 @@ namespace mfront{
 
     virtual void registerArgumentCallBacks(void);
 
-    virtual void analyseSourceDirectory(void);
+    virtual void analyseTargetsFile(void);
 
-    virtual void analyseSources(const std::string&);
-
-    virtual void analyseEntryPoints(const std::string&);
-
-    virtual void analyseDependencies(const std::string&);
-
-    virtual void analyseMakefileSpecificTargets(void);
-
-    virtual void analyseCppFlags(void);
-
-    virtual void writeSourcesLists(void) const;
-
-    virtual void writeEntryPointsLists(void) const;
-
-    virtual void writeDependenciesLists(void) const;
-
-    virtual void writeSpecificTargets(void) const;
-
-    virtual void writeCppFlags(void) const;
-
-    virtual std::pair<bool,std::pair<std::string,std::string> >
-    getLibraryDependencies(const std::string&) const;
-    
-#ifdef MFRONT_MAKE_SUPPORT
-    virtual std::string
-    getLibraryLinkDependencies(const std::string&);
-#endif /* MFRONT_MAKE_SUPPORT */
-
-    virtual std::string
-    sortLibraryList(const std::string&) const;
+    virtual void writeTargetsDescription(void) const;
 
 #ifdef MFRONT_MAKE_SUPPORT
-    virtual void
-    generateMakeFile(void);
-
     virtual void
     buildLibraries(const std::string&);
 
@@ -163,31 +132,21 @@ namespace mfront{
     virtual void treatWin32(void);
 #endif /* LIB_MFRONT_H_ */
 
-#ifdef MFRONT_MAKE_SUPPORT
-    std::ofstream makeFile;
-#endif /* MFRONT_MAKE_SUPPORT */
-
     //! description of the targets that can be build
     TargetsDescription targets;
 
+    //! generator options
+    GeneratorOptions opts;
+    
     //! targets to be build as specified by the user
     std::set<std::string> specifiedTargets;
 
-    std::set<std::string> cppflags;
-    
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     // libraries for which a def file must be generated
     std::set<std::string> defs;
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
     
-    std::string sys;
-
 #ifdef MFRONT_MAKE_SUPPORT
-    bool oflags0 = false;
-
-    bool oflags  = false;
-
-    bool oflags2 = false;
 
     bool genMake = false;
 
@@ -195,17 +154,7 @@ namespace mfront{
 
     bool cleanLibs = false;
 
-    bool silentBuild = true;
-
-#if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-    bool nodeps = true;
-#else  /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
-    bool nodeps = false;
-#endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
-    
 #endif /* MFRONT_MAKE_SUPPORT */
-    
-    bool melt = true;
 
   }; // end of class MFront
 

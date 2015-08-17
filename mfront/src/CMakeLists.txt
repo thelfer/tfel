@@ -37,6 +37,8 @@ endif(UNIX AND (NOT APPLE))
 set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
+    MFrontUtilities.cxx
+    MakefileGenerator.cxx
     CodeBlock.cxx
     FileDescription.cxx
     TargetsDescription.cxx

@@ -160,7 +160,7 @@ namespace mfront{
     for(const auto& l : this->td){
       for(const auto& deps : this->librariesDependencies){
 	if("-l"+l.name!=deps){
-	  this->td[l.name].dependencies.push_back(deps);
+	  this->td[l.name].ldflags.push_back(deps);
 	}
       }
     }

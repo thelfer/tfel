@@ -17,8 +17,10 @@
 #include<map>
 #include<string>
 #include<vector>
+#include<iosfwd>
 
 #include"MFront/MFrontConfig.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/LibraryDescription.hxx"
 
 namespace mfront{
@@ -41,11 +43,23 @@ namespace mfront{
      * library name or a newly created one if non existed.
      * \param[in] n : name of the library searched
      * \param[in] s : library suffix
-     * \note If the the library already exists and the suffix does
-     * not match, an exception is thrown
+     * \param[in] t : library type
+     * \note If the the library already exists and the suffix and/or
+     * the type does not match, an exception is thrown
      */
-    LibraryDescription& operator()(const std::string&,
-				   const std::string&);
+    LibraryDescription&
+    operator()(const std::string&,
+	       const std::string&,
+	       const LibraryDescription::LibraryType);
+    /*!
+     * \return the library description associated with the given
+     * library name or a newly created one if non existed.
+     * \param[in] n : name of the library searched
+     * \param[in] s : library suffix
+     */
+    LibraryDescription&
+    operator()(const std::string&,
+	       const std::string&);
     /*!
      * \return the library description associated with the given
      * library name or a newly created one if non existed
@@ -114,12 +128,35 @@ namespace mfront{
    * \brief merge two targets description
    * \param[out] d : destination
    * \param[in]  s : source
-   * \note the targets description shall not
+   * \param[in]  b : override targets
    */
-  MFRONT_VISIBILITY_EXPORT
-  void mergeTargetsDescription(TargetsDescription&,
-			       const TargetsDescription&);
+  MFRONT_VISIBILITY_EXPORT void
+  mergeTargetsDescription(TargetsDescription&,
+			  const TargetsDescription&,
+			  const bool b);
 
+  /*!
+   * \brief write a target description to a stream
+   * \param[out] os : output stream
+   * \param[in]  t  : target description
+   */
+  MFRONT_VISIBILITY_EXPORT std::ostream&
+  operator << (std::ostream&,
+	       const TargetsDescription&);
+  /*!
+   * \brief read a TargetDescription from a stream created by the
+   * CxxTokenizer class
+   * \param[in,out] p  : current position in the stream
+   * \param[in]     pe : end of the stream
+   * \return the target description read.
+   * If this function succeed, p points past the last token treated.
+   * If this function fails,   p is unchanged.
+   */
+  template<>
+  MFRONT_VISIBILITY_EXPORT TargetsDescription
+  read(tfel::utilities::CxxTokenizer::const_iterator&,
+       const tfel::utilities::CxxTokenizer::const_iterator);
+  
 } // end of namespace mfront
 
 #endif /* LIB_MFRONT_TARGETSDESCRIPTION_H */

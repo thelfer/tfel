@@ -15,8 +15,9 @@
 #include<sstream>
 #include<stdexcept>
 
-#include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/FortranMaterialPropertyInterface.hxx"
@@ -42,9 +43,9 @@ namespace mfront
     const auto lib  = "libFortran"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f = makeLowerCase(mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className);
-    d[lib].dependencies.push_back("-lm");
-    d[lib].sources.push_back(name+".cxx");
-    d[lib].epts.insert(d[lib].epts.end(),{f,f+"_checkBounds"});
+    insert_if(d[lib].ldflags,"-lm");
+    insert_if(d[lib].sources,name+".cxx");
+    insert_if(d[lib].epts,{f,f+"_checkBounds"});
   } // end of FortranMaterialPropertyInterface::getTargetsDescription
 
   std::string

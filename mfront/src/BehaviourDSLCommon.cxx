@@ -27,8 +27,9 @@
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
-#include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/PedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -344,14 +345,14 @@ namespace mfront{
     for(const auto& l : this->td){
       for(const auto& ld : this->librariesDependencies){
 	if("-l"+l.name!=ld){
-	  this->td[l.name].dependencies.push_back(ld);
+	  insert_if(this->td[l.name].ldflags,ld);
 	}
       }
-      this->td[l.name].sources.push_back(this->srcFileName);
+      insert_if(this->td[l.name].sources,this->srcFileName);
     }
-    this->td.headers.push_back(this->behaviourFileName);
-    this->td.headers.push_back(this->behaviourDataFileName);
-    this->td.headers.push_back(this->integrationDataFileName);
+    insert_if(this->td.headers,this->behaviourFileName);
+    insert_if(this->td.headers,this->behaviourDataFileName);
+    insert_if(this->td.headers,this->integrationDataFileName);
   }
 
   void
