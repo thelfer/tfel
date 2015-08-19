@@ -24,14 +24,13 @@
 #include<cstdlib>
 #include<cerrno>
 #include<cstring>
+#include<memory>
 
 #include <sys/param.h>
 
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/RecursiveFind.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
-#include<memory>
-
 #include"TFEL/Utilities/Global.hxx"
 #include"TFEL/Utilities/LaTeXConvertion.hxx"
 #include"TFEL/Utilities/TestDocumentation.hxx"

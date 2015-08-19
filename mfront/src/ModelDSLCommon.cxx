@@ -23,6 +23,19 @@
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/ModelInterfaceFactory.hxx"
 
+// fixing a bug on current glibc++ cygwin versions (19/08/2015)
+#if defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99)
+#include<sstream>
+namespace std{
+  template<typename T>
+  std::string to_string(const T& v){
+    std::ostringstream s;
+    s << v;
+    return s.str();
+  }
+}
+#endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
+
 namespace mfront{
 
   AbstractDSL::DSLTarget

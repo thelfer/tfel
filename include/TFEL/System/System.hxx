@@ -19,7 +19,7 @@
 
 #include<sys/types.h>
 #include<sys/stat.h>
-#if !((defined _WIN32) || (defined _WIN64) || (defined __CYGWIN__))
+#if !((defined _WIN32) || (defined _WIN64))
 #include<unistd.h>
 #else
 #ifdef _MSC_VER
@@ -71,7 +71,7 @@ namespace tfel
        * \param const std::string&, path to be created.
        * \param const mode_t, opening mode.
        */
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64
       static void
       mkdir(const std::string&);
 #else 

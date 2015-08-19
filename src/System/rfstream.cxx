@@ -12,7 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
+#include<cstdlib>
+#include<unistd.h>
 
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/rfstream.hxx"

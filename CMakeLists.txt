@@ -1,6 +1,8 @@
+# Remove when CMake >= 2.8.4 is required
+set(CMAKE_LEGACY_CYGWIN_WIN32 0) 
 cmake_minimum_required(VERSION 2.4)
-
 cmake_policy(SET CMP0005 OLD)
+
 if(CMAKE_MAJOR_VERSION VERSION_GREATER 2.8.12)
   cmake_policy(SET CMP0026 OLD)
 endif(CMAKE_MAJOR_VERSION VERSION_GREATER 2.8.12)
@@ -217,9 +219,9 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(bindings)
 
-if(UNIX)
+if(UNIX AND (NOT CYGWIN))
 add_subdirectory(tfel-doc)
-endif(UNIX)
+endif(UNIX AND (NOT CYGWIN))
 
 add_subdirectory(mfront)
 add_subdirectory(tests)

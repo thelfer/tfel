@@ -24,7 +24,7 @@
 
 #include<sys/types.h>
 #include<sys/stat.h>
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -639,7 +639,7 @@ namespace mfront{
   MFront::buildLibraries(const std::string& target)
   {
     using namespace std;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     const char *const argv[] = {"make.exe","-C","src",
 				"-f","Makefile.mfront",
 				target.c_str(),nullptr};
@@ -681,7 +681,7 @@ namespace mfront{
   MFront::cleanLibraries(void)
   {
     using namespace std;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     const char *const argv[] = {"make.exe","-C","src",
 				"-f","Makefile.mfront",
 				"clean",nullptr};

@@ -20,7 +20,7 @@
 
 #include"tfel-config.hxx"
 
-#if defined _WIN32 || defined _WIN64
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif

@@ -21,7 +21,7 @@
 #include<cstdlib>
 #include<climits>
 
-#if !((defined _WIN32) || (defined _WIN64) || (defined __CYGWIN__))
+#if !((defined _WIN32) || (defined _WIN64))
 #include<unistd.h>
 #include<dirent.h>
 #else
@@ -63,7 +63,7 @@ namespace tfel
   namespace system
   {
 
-#if (defined _WIN32) || (defined _WIN64) || (defined __CYGWIN__)
+#if (defined _WIN32) || (defined _WIN64)
     static int
     System_rmdir(const std::string & d)
     {
@@ -117,7 +117,7 @@ namespace tfel
       }
       return 0;
     }
-#endif /* (defined _WIN32) || (defined _WIN64) || (defined __CYGWIN__) */
+#endif /* (defined _WIN32) || (defined _WIN64) */
 
     char
     dirSeparator(void)
@@ -319,16 +319,16 @@ namespace tfel
 		   systemCall::fileType(destInfos.st_mode));	
 	throw(SystemError(msg));
       }
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+#endif /* defined _WIN32 || _WIN64 */      
 	} // end of systemCall::copy
 
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64
     void
     systemCall::mkdir(const std::string& dir)
 #else 
     void
     systemCall::mkdir(const std::string& dir,const mode_t mode)
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+#endif /* defined _WIN32 || _WIN64 */      
     {
       using namespace std;
       string path;
@@ -344,11 +344,11 @@ namespace tfel
 	if(::stat(path.c_str(),&infos)==-1){
 	  if(errno==ENOENT){
 	    // the file does not exist, create the directory
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 
 	    if(::CreateDirectoryA(path.c_str(),nullptr)==0){
 #else 
 	    if(::mkdir(path.c_str(),mode)!=0){
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+#endif /* defined _WIN32 || _WIN64 */      
 	      if(errno==EEXIST){
 		// this may happen if many processes are
 		// used in the same time
@@ -387,7 +387,7 @@ namespace tfel
     void
     systemCall::rmdir(const std::string& d)
     {
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 
 		System_rmdir(d);
 #else
 		using namespace std;
@@ -432,7 +432,7 @@ namespace tfel
 #endif
     } // end of systemCall::rmdir
 
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 )
     void
     systemCall::write(const int f,
 		      const void* const v,
@@ -466,7 +466,7 @@ namespace tfel
 	b += w;
       }
     } // end of systemCall::write
-#endif /* !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+#endif /* !(defined _WIN32 || defined _WIN64 ) */
 
     std::string
     systemCall::fileType(const mode_t mode)
@@ -478,7 +478,7 @@ namespace tfel
 	return "regular file";
       } else if(S_ISCHR(mode)){
 	return "character device";
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 )
 	  }
 	  else if (S_ISBLK(mode)) {
 		  return "block device";
@@ -489,7 +489,7 @@ namespace tfel
 	return "symbolic link";
       } else if(S_ISSOCK(mode)){
 	return "socket";
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
+#endif /* defined _WIN32 || _WIN64 */      
       }
       return "unknown";
     } // end of systemCall::fileType
@@ -508,7 +508,7 @@ namespace tfel
 	rdest=dest;
       }
       systemCall::mkdir(rdest);
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 
 #pragma message("windows port")
 #else
 	  DIR *dir = opendir(src.c_str());
@@ -576,7 +576,7 @@ namespace tfel
 	  throw(SystemError("systemCall::getCurrentWorkingDirectory : out of memory"));
 	}
 	
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 
 	if (_getcwd(name, size) != nullptr) {
 #else
 		if(::getcwd(name,size)!=nullptr){
@@ -593,7 +593,7 @@ namespace tfel
       return res;
     } // end of systemCall::getCurrentWorkingDirectory
 
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 )
     std::string
     systemCall::getHostName(void)
     {
@@ -627,13 +627,13 @@ namespace tfel
       }
       return "";
     } // end of systemCall::getUserName
-#endif /* !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+#endif /* !(defined _WIN32 || defined _WIN64 ) */
 
     void
     systemCall::changeCurrentWorkingDirectory(const std::string& name)
     {
       using namespace std;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 
 	  if(_chdir(name.c_str())==-1){
 #else
 	  if (::chdir(name.c_str()) == -1) {

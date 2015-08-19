@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_SYSTEM_BINARYWRITE_H_
 #define LIB_TFEL_SYSTEM_BINARYWRITE_H_ 
 
+#include <unistd.h>
+
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/System.hxx"
 
