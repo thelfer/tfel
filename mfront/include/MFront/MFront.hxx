@@ -84,10 +84,10 @@ namespace mfront{
     virtual void treatHelpCommand(void);
     //! treat the --no-melt command line option
     virtual void treatNoMelt(void);
+    //! treat the --silent-build command line option
+    virtual void treatSilentBuild(void);
 
 #ifdef MFRONT_MAKE_SUPPORT
-
-    virtual void treatSilentBuild(void);
 
     virtual void treatNoDeps(void);
 
