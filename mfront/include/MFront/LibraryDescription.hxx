@@ -37,7 +37,7 @@ namespace mfront{
     enum TargetSystem{
       WINDOWS,//<! Microsoft windows system
       MACOSX, //<! Apple Mac Os
-      UNIX,   //<! General unix flavor (Linux, FreeBSD, Solaris, ...)
+      UNIX    //<! General unix flavor (Linux, FreeBSD, Solaris, ...)
     };
     /*!
      * Types of library supported.

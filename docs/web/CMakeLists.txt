@@ -48,6 +48,9 @@ pandoc_html(models)
 pandoc_html(parameters)
 pandoc_html(publications)
 pandoc_html(release-notes "--toc" "--toc-depth=1")
+pandoc_html(mfront-doc)
+pandoc_html(Norton-web)
+pandoc_html(Norton-full)
 
 # mfront keywords
 

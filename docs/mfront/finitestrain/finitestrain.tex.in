@@ -1679,16 +1679,11 @@ cas \(1D\), une dilatation pure s'écrit~:
 F=1+\eta
 \]
 
-La dilatation pure d'un barreau conduit le fait passer d'une longueur
-initiale \(l_{i}\) à une longueur finale \(l\) telle que~:
-\[
-l=\int_{0}^{l_{i}}F\paren{X}\,\dtot\,X=\paren{1+\eta}\,l_{i}
-\]
-ce qui permet d'identifier \(\eta\) à la variation relative du corps
-entre son état initial et son état final~:
-\[
-\eta=\Frac{\Delta l}{l_{i}}
-\]
+La dilatation pure d'un barreau le fait passer d'une longueur initiale
+\(l_{i}\) à une longueur finale \(l\) telle que~: \[
+l=\int_{0}^{l_{i}}F\paren{X}\,\dtot\,X=\paren{1+\eta}\,l_{i} \] ce qui
+permet d'identifier \(\eta\) à la variation relative du corps entre
+son état initial et son état final~: \[ \eta=\Frac{\Delta l}{l_{i}} \]
 
 Ainsi, la description de la dilatation thermique pure est très simple
 en grandes transformations, tant que d'autres effets ne sont pas pris
@@ -1847,9 +1842,9 @@ Dans le cas anisotrope, \(F^{e}\) et \(F_{T^{i}}^{\theta}\) ne
 commutent {\em a priori} plus.
 
 Si aucun autre phénomène ne contribue à la déformation du corps, ou
-que le corps est élastique et au repose, la
-formule~\eqref{eq:umat:eps_log_th} s'étendre au cas anisotrope. Dans
-le repère du matériau, le tenseur des déformations thermiques
+que le corps est élastique et au repos, la
+formule~\eqref{eq:umat:eps_log_th} s'étend au cas anisotrope. Dans le
+repère du matériau, le tenseur des déformations thermiques
 logarithmiques s'écrit, en notation vectorielle~:
 \[
 \tenseur{\varepsilon}_{\ln{}}^{th}=

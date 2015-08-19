@@ -188,7 +188,6 @@ namespace mfront{
       }
       if(!pv->description.empty()){
 	pd->descriptions[h] = pv->description;
-	cout << pv->name << " : " << pv->description << endl;
       }
       pd->hypotheses.push_back(h);
     }
@@ -266,11 +265,15 @@ namespace mfront{
   static void
   printData(std::ostream& os,
 	    const BehaviourDescription& mb,
+	    const std::string& title,
 	    const std::vector<Data>& data,
 	    const std::string& language = "english")
   {
     using namespace std;
     using namespace tfel::material;
+    if(data.empty()){
+      return;
+    }
     auto translations = map<string,map<string,string> >{};
     auto& en = translations["english"]; 
     auto& fr = translations["french"]; 
@@ -301,6 +304,7 @@ namespace mfront{
       const auto& cn = d.getCodeBlockNames();
       cbnames.insert(cn.begin(),cn.end());
     }
+    os << "###  " << title << endl << endl;
     for(const auto& d : data){
       os << "* " << d.externalName << ":" << endl;
       if(d.externalName!=d.name){
@@ -485,8 +489,6 @@ namespace mfront{
     this->otype=WEB;
   } // end of BehaviourDocumentationGenerator::treatWeb
 
-  
-
   void
   BehaviourDocumentationGenerator::exe(void)
   {
@@ -628,22 +630,22 @@ namespace mfront{
     out << endl;
     out << "## Variables" << endl << endl;
     out << endl;
-    out << "### Material properties" << endl << endl;
-    printData(out,mb,getData(mb,&BehaviourData::getMaterialProperties));
+    printData(out,mb,"Material properties",
+	      getData(mb,&BehaviourData::getMaterialProperties));
     out << endl;
-    out << "### State variables " << endl << endl;
-    printData(out,mb,getData(mb,&BehaviourData::getPersistentVariables));
+    printData(out,mb,"State variables",
+	      getData(mb,&BehaviourData::getPersistentVariables));
     out << endl;
-    out << "### External state variables " << endl << endl;
-    printData(out,mb,getData(mb,&BehaviourData::getExternalStateVariables));
-    out << endl;
-    out << "### Local variables " << endl << endl;
-    printData(out,mb,getData(mb,&BehaviourData::getLocalVariables));
+    printData(out,mb,"External state variables",
+	      getData(mb,&BehaviourData::getExternalStateVariables));
     out << endl;
     if(mb.hasParameters()){
-      out << "### Parameters " << endl << endl;
-      printData(out,mb,getData(mb,&BehaviourData::getParameters));
+      printData(out,mb,"Parameters",
+		getData(mb,&BehaviourData::getParameters));
     }
+    out << endl;
+    printData(out,mb,"Local variables",
+	      getData(mb,&BehaviourData::getLocalVariables));
     out << endl;
     const auto code = getCodeBlocksDocumentation(mb);
     if(!code.empty()!=0){

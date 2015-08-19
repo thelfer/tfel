@@ -47,6 +47,9 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./Model-keywords.md					   \
 	   ./MultipleIsotropicMisesFlows-keywords.md		   \
 	   ./RungeKutta-keywords.md				   \
+	   ./mfront-doc.md				           \
+	   ./Norton-web.md				           \
+	   ./Norton-full.md				           \
 	   ./robots.txt						   \
 	   ./crossdomain.xml					   \
 	   ./js/vendor						   \
@@ -90,6 +93,13 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/SalomeMeca2015.png 				   \
 	   ./img/IconeCast3M_verte.png 				   \
 	   ./img/poster-giens2015.svg 				   \
+	   ./img/Norton.mfront  				   \
+	   ./img/Norton-web.docx				   \
+	   ./img/Norton-web.odt				           \
+	   ./img/Norton-web.pdf				           \
+	   ./img/Norton-full.docx				   \
+	   ./img/Norton-full.odt				   \
+	   ./img/Norton-full.pdf				   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

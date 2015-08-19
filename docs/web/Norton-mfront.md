@@ -1,3 +1,4 @@
+~~~~ {#Norton .cpp .numberLines}
 @Parser IsotropicMisesCreep;
 @Behaviour Norton;
 @Author Helfer Thomas;
@@ -41,3 +42,4 @@ E.setEntryName("NortonExponent");
   f       = tmp*seq;
   df_dseq = E*tmp;
 }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

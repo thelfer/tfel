@@ -136,7 +136,7 @@ const GlossaryEntry Glossary::B10BurnUp("B10BurnUp","B10BurnUp",
 
 const GlossaryEntry Glossary::BulkModulus("BulkModulus","BulkModulus",
 "Pa","scalar",
-"le module de compressibilité d'un matériau isotrope",
+"the bulk modulus of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -425,7 +425,7 @@ const GlossaryEntry Glossary::PlateWidth("PlateWidth","PlateWidth",
 
 const GlossaryEntry Glossary::PoissonRatio("PoissonRatio","PoissonRatio",
 "","scalar",
-"le coefficient de Poisson d'un matériau isotrope",
+"the Poisson ratio of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -491,7 +491,7 @@ const GlossaryEntry Glossary::SecondAxisSecondMomentArea("SecondAxisSecondMoment
 
 const GlossaryEntry Glossary::ShearModulus("ShearModulus","ShearModulus",
 "Pa","scalar",
-"le module de cisaillement d'un matériau isotrope",
+"the shear modulus of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -659,7 +659,7 @@ const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+88,G
 
 const GlossaryEntry Glossary::YoungModulus("YoungModulus","YoungModulus",
 "Pa","scalar",
-"le module d'Young d'un matériau isotrope",
+"the Young modulus of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -829,8 +829,8 @@ for(p=this->entries.begin();p!=this->entries.end();++p){
 if(p->getKey()==n){
 return p;
 }
-const auto& enames = p->getNames();
-if(find(enames.begin(),enames.end(),n)!=enames.end()){
+const auto& names = p->getNames();
+if(find(names.begin(),names.end(),n)!=names.end()){
 return p;
 }
 }

@@ -41,7 +41,7 @@ Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) consommé par unité d
 
 # L'entrée BulkModulus
 
-Cette entrée décrit le module de compressibilité d'un matériau isotrope.
+Cette entrée décrit the bulk modulus of an isotropic material.
 
 * noms  : BulkModulus
 * unité : \(Pa\)
@@ -490,7 +490,7 @@ Cette entrée décrit ??.
 
 # L'entrée PoissonRatio
 
-Cette entrée décrit le coefficient de Poisson d'un matériau isotrope.
+Cette entrée décrit the Poisson ratio of an isotropic material.
 
 * noms  : PoissonRatio
 * unité : sans unité
@@ -590,7 +590,7 @@ Cette entrée décrit ??.
 
 # L'entrée ShearModulus
 
-Cette entrée décrit le module de cisaillement d'un matériau isotrope.
+Cette entrée décrit the shear modulus of an isotropic material.
 
 * noms  : ShearModulus
 * unité : \(Pa\)
@@ -822,7 +822,7 @@ Cette entrée décrit la limite d'élasticité.
 
 # L'entrée YoungModulus
 
-Cette entrée décrit le module d'Young d'un matériau isotrope.
+Cette entrée décrit the Young modulus of an isotropic material.
 
 * noms  : YoungModulus
 * unité : \(Pa\)
@@ -851,5 +851,4 @@ Cette entrée décrit le module d'Young d'un matériau orthotrope suivant la tro
 * noms  : YoungModulus3
 * unité : \(Pa\)
 * type : scalaire 
-
 <!-- Local IspellDict: english -->

@@ -2,6 +2,24 @@
 % Helfer Thomas
 % August 18, 2015
 
+# Introducting `mfront-doc` (19 August 2015)
+
+`mfront-doc` allows the user to extract the documentation out of
+`MFront` file. `mfront-doc` generates files in `pandoc`
+[markdown format](http://pandoc.org/demo/example9/pandocs-markdown.html). Those
+files can be processed using [`pandoc`](http://pandoc.org/) and be
+converted to one of the many file format supported by
+[`pandoc`](http://pandoc.org/), including
+[`LaTeX`](www.latex-project.org), `html` or various Word processor
+formats: Microsoft Word
+[docx](http://www.microsoft.com/interop/openup/openxml/default.aspx),
+OpenOffice/LibreOffice
+[ODT](http://en.wikipedia.org/wiki/OpenDocument).
+
+`mfront-doc` is developped in the 3.0.x branche of `TFEL`. A overview
+of the `mfront-doc` functionalities can be found
+[here](mfront-doc.html).
+
 # New documentations pages (18 August 2015)
 
 New documentation pages were added to describe the `MTest` and

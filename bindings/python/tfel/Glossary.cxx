@@ -15,8 +15,6 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 
-void declareGlossary(void);
-
 void
 declareGlossary(void)
 {
@@ -35,7 +33,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("B10BurnUp",&Glossary::B10BurnUp,
 "le taux d'usure en \\(\\mbox{}^{10}B\\)")
 .def_readonly("BulkModulus",&Glossary::BulkModulus,
-"le module de compressibilité d'un matériau isotrope")
+"the bulk modulus of an isotropic material")
 .def_readonly("BurnUp_AtPercent",&Glossary::BurnUp_AtPercent,
 "le taux de combustion en atome pour cent")
 .def_readonly("BurnUp_MWJperTm",&Glossary::BurnUp_MWJperTm,
@@ -127,7 +125,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("PlateWidth",&Glossary::PlateWidth,
 "??")
 .def_readonly("PoissonRatio",&Glossary::PoissonRatio,
-"le coefficient de Poisson d'un matériau isotrope")
+"the Poisson ratio of an isotropic material")
 .def_readonly("PoissonRatio12",&Glossary::PoissonRatio12,
 "le coefficient de Poisson d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie")
 .def_readonly("PoissonRatio13",&Glossary::PoissonRatio13,
@@ -149,7 +147,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("SecondAxisSecondMomentArea",&Glossary::SecondAxisSecondMomentArea,
 "??")
 .def_readonly("ShearModulus",&Glossary::ShearModulus,
-"le module de cisaillement d'un matériau isotrope")
+"the shear modulus of an isotropic material")
 .def_readonly("ShearModulus12",&Glossary::ShearModulus12,
 "le module de cisaillement d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie")
 .def_readonly("ShearModulus13",&Glossary::ShearModulus13,
@@ -205,7 +203,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("YieldStrength",&Glossary::YieldStrength,
 "la limite d'élasticité")
 .def_readonly("YoungModulus",&Glossary::YoungModulus,
-"le module d'Young d'un matériau isotrope")
+"the Young modulus of an isotropic material")
 .def_readonly("YoungModulus1",&Glossary::YoungModulus1,
 "le module d'Young d'un matériau orthotrope suivant la première direction d'orthotropie")
 .def_readonly("YoungModulus2",&Glossary::YoungModulus2,
