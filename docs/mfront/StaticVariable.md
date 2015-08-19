@@ -5,7 +5,7 @@ variables' values can't be changed after compilation.
 This keyword must be followed by the type of the constant, its name,
 an equal sign and its value.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @StaticVariable real A = 1.234e56;

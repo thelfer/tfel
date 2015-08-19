@@ -12,13 +12,13 @@ algorithms are available:
   `PowellDogLeg_Broyden`, `Broyden2`, `LevenbergMarquardt`,
   `LevenbergMarquardt_NumericalJacobian` for implicit dsls.
 
-### Example (Runge-Kutta dsl)
+## Example (Runge-Kutta dsl)
 
 ~~~~{.cpp}
 @Algorithm rk54;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-### Example (Implicit dsl)
+## Example (Implicit dsl)
 
 ~~~~{.cpp}
 @Algorithm NewtonRaphson;

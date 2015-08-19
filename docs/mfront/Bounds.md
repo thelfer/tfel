@@ -5,7 +5,7 @@ The `@Bounds` keyword is followed by a variable name, the keyword in
 and an interval. The interval may contain the infinity, represented by
 the '*' character.
 
-### Effect
+## Effect
 
 What happens if a variable if found to be out of its bounds depends on
 the interface used. Most interfaces let the user choose one of three
@@ -17,7 +17,7 @@ following policies:
 - `Strict`, which means that computations are stopped with an error
   message.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Bounds T in [293.15:873.15];

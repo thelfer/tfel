@@ -225,11 +225,11 @@ namespace mfront{
     string level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
-	opts.oflags2   = true;
+	this->opts.oflags2   = true;
       } else if(level=="level0"){
-	opts.oflags0   = true;
+	this->opts.oflags0   = true;
       } else if(level=="level1"){
-	opts.oflags    = true;
+	this->opts.oflags    = true;
       } else if(level!="level1"){
 	string msg("MFront::treatOMake : ");
 	msg += "unsupported value '"+level+
@@ -237,7 +237,7 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     } else {
-      opts.oflags  = true;
+      this->opts.oflags  = true;
     }
   } // end of MFront::treatOMake
 
@@ -250,11 +250,11 @@ namespace mfront{
     string level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
-	opts.oflags2   = true;
+	this->opts.oflags2   = true;
       } else if(level=="level0"){
-	opts.oflags0   = true;
+	this->opts.oflags0   = true;
       } else if(level=="level1"){
-	opts.oflags    = true;
+	this->opts.oflags    = true;
       } else if(level!="level1"){
 	string msg("MFront::treatOBuild : ");
 	msg += "unsupported value '"+level+
@@ -262,7 +262,7 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     } else {
-      opts.oflags    = true;
+      this->opts.oflags    = true;
     }
   } // end of MFront::treatOBuild
 
@@ -287,29 +287,28 @@ namespace mfront{
     exit(EXIT_SUCCESS);
   } // end of MFront::treatListParsers
 
-#ifdef MFRONT_MAKE_SUPPORT
-  
   void
   MFront::treatSilentBuild(void)
   {
-    using namespace std;
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
-      string msg("MFront::treatSilentBuild : ");
-      msg += "no argument given to the --silentBuild option";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MFront::treatSilentBuild : "
+			       "no argument given to the --silentBuild option"));
     }
     if(o=="on"){
-      opts.silentBuild=true;
+      this->opts.silentBuild=true;
     } else if(o=="off"){
-      opts.silentBuild=false;
+      this->opts.silentBuild=false;
     } else {
-      string msg("MFront::treatSilentBuild : ");
-      msg += "unsupported argument '"+o+"' given to the --silentBuild option";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MFront::treatSilentBuild : "
+			       "unsupported argument '"+o+
+			       "' given to the --silentBuild option"));
     }
   } // end of MFront::treatSilentBuild
 
+  
+#ifdef MFRONT_MAKE_SUPPORT
+  
   void
   MFront::treatTarget(void)
   {
@@ -317,9 +316,8 @@ namespace mfront{
     using tfel::utilities::tokenize;
     const auto& t = tokenize(this->currentArgument->getOption(),',');
     if(t.empty()){
-      string msg("MFront::treatTarget : ");
-      msg += "no argument given to the --target option";
-      throw(runtime_error(msg));
+      throw(runtime_error("MFront::treatTarget : "
+			  "no argument given to the --target option"));
     }
     this->specifiedTargets.insert(t.begin(),t.end());
     this->genMake   = true;
@@ -335,7 +333,7 @@ namespace mfront{
       msg += "no argument given to the --otarget option";
       throw(runtime_error(msg));
     }
-    opts.oflags    = true;
+    this->opts.oflags    = true;
     this->treatTarget();
   } // end of MFront::treatTarget
 
@@ -345,7 +343,7 @@ namespace mfront{
   void
   MFront::treatWin32(void)
   {
-    opts.sys = "win32";
+    this->opts.sys = "win32";
   } // end of MFront::treatWin32
 #endif /* __CYGWIN__ */
 
@@ -356,6 +354,10 @@ namespace mfront{
 			      "set verbose output",true);
     this->registerNewCallBack("--list-parsers",&MFront::treatListParsers,"list all available domain specific languages (deprecated)");
     this->registerNewCallBack("--list-dsl",&MFront::treatListParsers,"list all available domain specific languages");
+    this->registerNewCallBack("--help-commands",&MFront::treatHelpCommands,
+			      "display the help associated with all the keywords for the given domain specific language and exits",true);
+    this->registerNewCallBack("--help-keywords",&MFront::treatHelpCommands,
+			      "display the help associated with all the keywords for the given domain specific language and exits",true);
     this->registerNewCallBack("--help-commands-list",&MFront::treatHelpCommandsList,
 			      "list all keywords for the given domain specific language and exits",true);
     this->registerNewCallBack("--help-keywords-list",&MFront::treatHelpCommandsList,
@@ -379,6 +381,8 @@ namespace mfront{
     this->registerNewCallBack("--def-file",&MFront::treatDefFile,
 			      "outputs def file associated with the libraries given in arguments (separated by commas)",true);
 #endif    
+    this->registerNewCallBack("--silent-build",&MFront::treatSilentBuild,
+			      "active or desactivate silent build",true);
 #ifdef MFRONT_MAKE_SUPPORT
     this->registerNewCallBack("--make",&MFront::treatMake,
 			      "generate MakeFile (see also --build)");
@@ -394,8 +398,6 @@ namespace mfront{
 			      "generate MakeFile with optimized compilations flags and build the specified target",true);
     this->registerNewCallBack("--clean",&MFront::treatClean,
 			      "generate MakeFile and clean libraries");
-    this->registerNewCallBack("--silent-build",&MFront::treatSilentBuild,
-			      "active or desactivate silent build",true);
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--nodeps",&MFront::treatNoDeps,
 			      "don't generate compilation dependencies");
@@ -413,11 +415,11 @@ namespace mfront{
     : tfel::utilities::ArgumentParserBase<MFront>()
   {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    opts.sys = "win32";
+    this->opts.sys = "win32";
 #elif defined __APPLE__
-    opts.sys = "apple";
+    this->opts.sys = "apple";
 #else
-    opts.sys = "default";
+    this->opts.sys = "default";
 #endif /* __CYGWIN__ */
   } // end of MFront::MFront
 
@@ -467,6 +469,38 @@ namespace mfront{
     exit(EXIT_SUCCESS);
   } // end of MFront::treatHelpCommandsList
 
+  void
+  MFront::treatHelpCommands(void)
+  {
+    using namespace std;
+    auto& f = DSLFactory::getDSLFactory();
+    const auto& o = this->currentArgument->getOption();
+    if(o.empty()){
+      throw(runtime_error("MFront::treatHelpCommandsList : "
+			  "no parser name given"));
+    }
+    auto keys = vector<string>{};
+    f.createNewParser(o)->getKeywordsList(keys);
+    cout << "% `" << o << "` keywords\n\n";
+    for(const auto& k : keys){
+      const auto fp = getDocumentationFilePath(o,k);
+      cout << "\n# The `" <<  k << "` keyword\n\n";
+      if(!fp.empty()){
+	std::ifstream desc{fp};
+	if(!desc){
+	  // note, this shall never append...
+	  cout << "Internal error : can't access to the description of keyword '"
+	       << k << '\n';
+	} else {
+	  cout << desc.rdbuf();
+	}
+      } else {
+	cout << "The keyword `" <<  k << "` is not documented yet\n";
+      }
+    }
+    exit(EXIT_SUCCESS);
+  } // end of MFront::treatHelpCommands
+  
   void
   MFront::treatHelpCommand(void)
   {
@@ -527,13 +561,13 @@ namespace mfront{
   void
   MFront::treatNoDeps(void)
   {
-    opts.nodeps = true;
+    this->opts.nodeps = true;
   } // end of MFront::treatNoDeps
 #endif /* MFRONT_MAKE_SUPPORT */
 
   void MFront::treatNoMelt(void)
   {
-    opts.melt = false;
+    this->opts.melt = false;
   } // end of MFront::treatNoMelt
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -745,8 +779,7 @@ namespace mfront{
     if(this->specifiedTargets.empty()){
       this->specifiedTargets.insert("all");
     }
-    bool w = false; // something to be done 
-    w = w || (!this->inputs.empty());
+    bool w = !this->inputs.empty(); //< something to be done 
 #ifdef MFRONT_MAKE_SUPPORT
     w = w || this->genMake;
 #endif /* MFRONT_MAKE_SUPPORT */

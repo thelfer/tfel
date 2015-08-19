@@ -6,7 +6,7 @@ in every standard code blocks.
 The `@MaterialLaw` keyword is followed by a string or an array of
 string identifying `mfront` files. 
 
-### Search paths
+## Search paths
 
 Files to be imported are searched, in that order:
 
@@ -16,14 +16,14 @@ Files to be imported are searched, in that order:
 - staring from directories specified through the `MFRONT_INCLUDE_PATH`
   environment variable.
 
-### Note
+## Note
 
 The `mfront` interface has been created to avoid names conflict.
 
 For internal reasons, `mfront` reports the creation of an auxiliary
 library which is of no use.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @MaterialLaw "UO2_YoungModulus.mfront";

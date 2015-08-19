@@ -2,7 +2,7 @@ The `@Function` keyword defines a computational part of the
 model. This keyword is followed by a string defining the name of this
 part of the computation.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Function compute

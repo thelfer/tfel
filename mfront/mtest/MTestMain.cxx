@@ -64,7 +64,9 @@ namespace mfront
     void
     treatResidualFileOutput(void);
     void
-    treatHelpCommandList(void);
+    treatHelpCommandsList(void);
+    void
+    treatHelpCommands(void);
     void
     treatHelpCommand(void);
     void
@@ -116,14 +118,20 @@ namespace mfront
 			      "control result output (default yes)",true);
     this->registerNewCallBack("--residual-file-output",&MTestMain::treatResidualFileOutput,
 			      "control residual output (default no)",true);
+    this->registerNewCallBack("--help-keywords",
+			      &MTestMain::treatHelpCommands,
+			      "display the help of all available commands and exit.");
+    this->registerNewCallBack("--help-commands",
+			      &MTestMain::treatHelpCommands,
+			      "display the help of all available commands and exit."
+			      "(this is equivalent to --help-keywords option).");
     this->registerNewCallBack("--help-keywords-list",
-			      &MTestMain::treatHelpCommandList,
+			      &MTestMain::treatHelpCommandsList,
 			      "list available commands and exit.");
     this->registerNewCallBack("--help-commands-list",
-			      &MTestMain::treatHelpCommandList,
+			      &MTestMain::treatHelpCommandsList,
 			      "list available commands and exit "
-			      "(this is equivalent to "
-			      "--help-keywords-list option).");
+			      "(this is equivalent to --help-keywords-list option).");
     this->registerNewCallBack("--help-keyword",
 			      &MTestMain::treatHelpCommand,
 			      "display the help associated with a "
@@ -245,7 +253,6 @@ namespace mfront
   void
   MTestMain::treatResidualFileOutput(void)
   {
-    using namespace std;
     if(this->currentArgument->getOption().empty()){
       this->residual_file_output = true;
     } else {
@@ -255,21 +262,26 @@ namespace mfront
       } else if(option=="false"){
 	this->residual_file_output = false;
       } else {
-	string msg("MTestMain::treatResidualFileOutput : ");
-	msg += "unknown option '"+option+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MTestMain::treatResidualFileOutput : "
+				 "unknown option '"+option+"'"));
       }
     }
   } // end of MTestMain::treatResidualFileOutput
 
   void
-  MTestMain::treatHelpCommandList(void)
+  MTestMain::treatHelpCommandsList(void)
   {
-    MTestParser p;
-    p.displayKeyWordsList();
+    MTestParser().displayKeyWordsList();
     ::exit(EXIT_SUCCESS);
-  } // end of MTestMain::treatHelpCommandList
+  } // end of MTestMain::treatHelpCommandsList
 
+  void
+  MTestMain::treatHelpCommands(void)
+  {
+    MTestParser().displayKeyWordsHelp();
+    ::exit(EXIT_SUCCESS);
+  } // end of MTestMain::treatHelpCommands
+  
   void
   MTestMain::treatHelpCommand()
   {

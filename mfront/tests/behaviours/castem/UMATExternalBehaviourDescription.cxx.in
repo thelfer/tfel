@@ -65,7 +65,7 @@ struct UMATBehaviourDescriptionTest final
     TFEL_TESTS_ASSERT(b.etype==0u);
     // material properties
     TFEL_TESTS_ASSERT(b.mpnames.size()==2u);
-    for(const auto& m : {"A","E"}){
+    for(const auto& m : {"NortonCoefficient","NortonExponent"}){
       TFEL_TESTS_ASSERT(find(b.mpnames.begin(),b.mpnames.end(),m)!=b.mpnames.end());
     }
     // state variables
@@ -116,7 +116,7 @@ struct UMATBehaviourDescriptionTest final
     TFEL_TESTS_ASSERT(b.etype==0u);
     // material properties
     TFEL_TESTS_ASSERT(b.mpnames.size()==2u);
-    for(const auto& m : {"A","E"}){
+    for(const auto& m : {"NortonCoefficient","NortonExponent"}){
       TFEL_TESTS_ASSERT(find(b.mpnames.begin(),b.mpnames.end(),m)!=b.mpnames.end());
     }
     // state variables

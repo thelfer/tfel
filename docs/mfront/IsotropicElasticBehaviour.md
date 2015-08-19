@@ -3,7 +3,7 @@ behaviour is isotropic even though the material as been declared
 orthotropic. This declaration affects the `@RequireStiffnessTensor`
 behaviour.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @IsotropicElasticBehaviour;

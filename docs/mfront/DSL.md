@@ -47,7 +47,7 @@ As the time of writting this notice, the following dsl's are available:
 - `RungeKutta`: this parser provides a generic integrator based on one
   of the many Runge-Kutta algorithm.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @DSL Implicit;

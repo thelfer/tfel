@@ -4,7 +4,7 @@ keyword is a synonym of `@StaticVariable` for a real variable.
 This keyword must be followed by the name of the constant and its
 value.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Constant A 1.234e56;

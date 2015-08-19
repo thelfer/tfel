@@ -17,7 +17,7 @@ lower than the total time step increment `dt` if substeppings is
 performed, gives the current time increment. The external state
 variables are set to their values at the current date.
 
-# Example (Implicit dsl)
+## Example (Implicit dsl)
 
 ~~~~{.cpp}
 @UpdateAuxiliaryStateVariables{
@@ -29,7 +29,7 @@ variables are set to their values at the current date.
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Example (Runge-Kutta dsl)
+## Example (Runge-Kutta dsl)
 
 ~~~~{.cpp}
 @UpdateAuxiliaryStateVariables{

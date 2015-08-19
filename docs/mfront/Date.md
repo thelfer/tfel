@@ -4,7 +4,7 @@ was written.
 All the following words are appended to the date up to a final
 semi-colon.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Date 2008-11-17;

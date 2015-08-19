@@ -110,6 +110,11 @@ body {
 /*    background-width: 800px */
 }
 
+body p{
+   text-align: justify;
+   text-justify: inter-word;    
+}
+
 h1{
     width:100%;
     color: blue;
@@ -185,6 +190,8 @@ table, th, td {
 }
 
 blockquote {
+   text-align: justify;
+    text-justify: inter-word;    
     background:lightyellow;
     padding-left: 20px;
     padding-right: 20px;

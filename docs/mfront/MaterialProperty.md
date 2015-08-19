@@ -18,18 +18,18 @@ except the first:
 
 `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
 
-### Arrays
+## Arrays
 
 One may declare an array of material properties by specifying the
 array size after the material property name.
 
-### External names
+## External names
 
 It is recommended to associate to a material property a glossary or an
 entry name through the methods `setGlossaryName` or `setEntryName`
 respectively.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 // scalar material property

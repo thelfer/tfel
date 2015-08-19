@@ -43,8 +43,19 @@ macro(tests_mfront2 test_arg)
     TFELUtilities TFELException TFELTests)
 endmacro(tests_mfront2)
 
+macro(tests_mfront3 test_arg)
+  add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
+  add_test(NAME ${test_arg} COMMAND ${test_arg})
+  add_dependencies(check ${test_arg})
+  target_link_libraries(${test_arg}
+    TFELMFront TFELMaterial TFELMath
+    TFELSystem  TFELGlossary
+    TFELUtilities TFELException TFELTests)
+endmacro(tests_mfront3)
+
 tests_mfront(BehaviourDataTest)
 tests_mfront(BehaviourDescriptionTest)
 tests_mfront(BehaviourBrickProviderTest)
 tests_mfront2(MFrontTest)
 tests_mfront2(BehaviourBrickRequirementManagerTest)
+tests_mfront3(TargetsDescriptionTest)

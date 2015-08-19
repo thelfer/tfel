@@ -5,7 +5,7 @@ The code block is called after the update of the state variables. The
 auxiliary state variable and the external state variables are not
 updated yet.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @ComputeFinalStress{

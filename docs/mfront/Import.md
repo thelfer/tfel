@@ -6,7 +6,7 @@ meant to be imported.
 This instruction interrupts the treatment of the current file and
 starts the sequential treatment of each file to be imported.
 
-### Search paths
+## Search paths
 
 Files to be imported are searched, in that order:
 
@@ -16,7 +16,7 @@ Files to be imported are searched, in that order:
 - staring from directories specified through the `MFRONT_INCLUDE_PATH`
   environment variable.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Import "SlidingSystemsCC.mfront";

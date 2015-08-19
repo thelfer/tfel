@@ -11,7 +11,7 @@ characteristic. If true, the `Licos` code will simplify the definition
 of the external state variables (called material loadings in this
 context) which may result in some gain in time and memory space.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @UsableInPurelyImplicitResolution true;

@@ -1,7 +1,7 @@
 The `@Private` keyword let the user define private methods or members
 of in the generated behaviour class.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Private{

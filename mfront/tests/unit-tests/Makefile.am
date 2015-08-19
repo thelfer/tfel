@@ -10,6 +10,7 @@ test_PROGRAMS = BehaviourDataTest                    \
 		BehaviourDescriptionTest             \
 		BehaviourBrickProviderTest           \
 		BehaviourBrickRequirementManagerTest \
+		TargetsDescriptionTest               \
 		MFrontTest
 
 MFrontTest_SOURCES                 = MFrontTest.cxx
@@ -17,6 +18,7 @@ BehaviourDataTest_SOURCES          = BehaviourDataTest.cxx
 BehaviourDescriptionTest_SOURCES   = BehaviourDescriptionTest.cxx
 BehaviourBrickProviderTest_SOURCES = BehaviourBrickProviderTest.cxx
 BehaviourBrickRequirementManagerTest_SOURCES = BehaviourBrickRequirementManagerTest.cxx
+TargetsDescriptionTest_SOURCES     = TargetsDescriptionTest.cxx
 
 LDADD = -L$(top_builddir)/mfront/src    \
 	-L$(top_builddir)/src/Material  \

@@ -26,15 +26,100 @@ namespace mfront{
   map_at(const Map& m,
 	 const typename Map::key_type& k)
   {
-    using namespace std;
     const auto p = m.find(k);
     if(p==m.end()){
-      string msg("map_at : unknown key '"+k+"'");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("map_at : unknown key '"+k+"'"));
     }
     return p->second;
   }
 
+  static std::string
+  getCodeBlocksDocumentation(const BehaviourDescription& mb){
+    using namespace std;
+    using tfel::material::ModellingHypothesis;
+    ostringstream out;
+    const auto& h = mb.getModellingHypotheses();
+    const auto& dh = mb.getDistinctModellingHypotheses();
+    if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
+      const BehaviourData& d =
+	mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      const auto& cn = d.getCodeBlockNames();
+      for(const auto & elem : cn){
+	const auto& c = d.getCodeBlock(elem);
+	if(!c.description.empty()){
+	  out <<"### " << elem << " description" << endl;
+	  out << c.description << endl << endl;
+	}
+	if(getVerboseMode()>=VERBOSE_DEBUG){
+	  out <<"### " << elem << " listing" << endl;
+	  out << endl;
+	  out << "~~~~~~~ {.cpp}" << endl;
+	  out << c.code << endl;
+	  out << "~~~~~~~ " << endl;
+	}
+      }
+    }
+    for(const auto & elem : h){
+      if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	const BehaviourData& d = mb.getBehaviourData(elem);
+	const auto& cn = d.getCodeBlockNames();
+	for(const auto & cn_pcn : cn){
+	  bool print = true;
+	  const auto& c = d.getCodeBlock(cn_pcn);
+	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
+	    const BehaviourData& duh =
+	      mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+	    if(duh.hasCode(cn_pcn)){
+	      const auto& cuh = duh.getCodeBlock(cn_pcn).code;
+	      print = c.code!=cuh;
+	    }
+	  }
+	  if(print){
+	    if(!c.description.empty()){
+	      out <<"### " << cn_pcn << " description(" << ModellingHypothesis::toString(elem) << ")" << endl;
+	      out << c.description << endl << endl;
+	    }
+	    if(getVerboseMode()>=VERBOSE_DEBUG){
+	      out <<"### " << cn_pcn << " listing (" << ModellingHypothesis::toString(elem) << ")" << endl;
+	      out << endl;
+	      out << "~~~~~~~ {.cpp} "<< endl;
+	      out << c.code << endl;
+	      out << "~~~~~~~ "<< endl;
+	    }
+	  }
+	}
+      }
+    }
+    return out.str();
+  }
+
+  static void
+  writeStandardLatexMacros(std::ostream& os){
+    os << "\\newcommand{\\tensor}[1]{\\underline{#1}}\n"
+       << "\\newcommand{\\tensorq}[1]{\\underline{\\mathbf{#1}}}\n"
+       << "\\newcommand{\\ust}[1]{\\underset{\\tilde{}}{\\mathbf{#1}}}\n"
+       << "\\newcommand{\\transpose}[1]{#1^{\\mathop{T}}}\n"
+       << "\\newcommand{\\tsigma}{\\underline{\\sigma}}\n"
+       << "\\newcommand{\\sigmaeq}{\\sigma_{\\mathrm{eq}}}\n"
+       << "\\newcommand{\\epsilonth}{\\epsilon^{\\mathrm{th}}}\n"
+       << "\\newcommand{\\tepsilonto}{\\underline{\\epsilon}^{\\mathrm{to}}}\n"
+       << "\\newcommand{\\tepsilonel}{\\underline{\\epsilon}^{\\mathrm{el}}}\n"
+       << "\\newcommand{\\tepsilonth}{\\underline{\\epsilon}^{\\mathrm{th}}}\n"
+       << "\\newcommand{\\tepsilonvis}{\\underline{\\epsilon}^{\\mathrm{vis}}}\n"
+       << "\\newcommand{\\tdepsilonvis}{\\underline{\\dot{\\epsilon}}^{\\mathrm{vis}}}\n"
+       << "\\newcommand{\\tepsilonp}{\\underline{\\epsilon}^{\\mathrm{p}}}\n"
+       << "\\newcommand{\\tdepsilonp}{\\underline{\\dot{\\epsilon}}^{\\mathrm{p}}}\n"
+       << "\\newcommand{\\trace}[1]{\\mathrm{tr}\\paren{#1}}\n"
+       << "\\newcommand{\\Frac}[2]{{\\displaystyle \\frac{\\displaystyle #1}{\\displaystyle #2}}}\n"
+       << "\\newcommand{\\deriv}[2]{{\\displaystyle \\frac{\\displaystyle \\partial #1}{\\displaystyle \\partial #2}}}\n"
+       << "\\newcommand{\\dtot}{\\mathrm{d}}\n"
+       << "\\newcommand{\\paren}[1]{\\left(#1\\right)}\n"
+       << "\\newcommand{\\bts}[1]{\\left.#1\\right|_{t}}\n"
+       << "\\newcommand{\\mts}[1]{\\left.#1\\right|_{t+\\theta\\,\\Delta\\,t}}\n"
+       << "\\newcommand{\\ets}[1]{\\left.#1\\right|_{t+\\Delta\\,t}}\n\n";    
+  } // end of writeStandardLatexMacros
+
+  
   /*!
    * internal structure gathering data from mechanical behaviour
    * description
@@ -42,11 +127,11 @@ namespace mfront{
   struct Data
   {
     using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
-    Data() = default;
-    Data(Data&&) = default;
-    Data(const Data&) = default;
-    Data& operator=(Data&&) = default;
-    Data& operator=(const Data&) = default;
+    Data();
+    Data(Data&&);
+    Data(const Data&);
+    Data& operator=(Data&&);
+    Data& operator=(const Data&);
     ~Data() noexcept;
     std::string name;
     std::string type;
@@ -58,6 +143,13 @@ namespace mfront{
     unsigned short arraySize;
   };
 
+  Data::Data() = default;
+  Data::Data(Data&&) = default;
+  Data::Data(const Data&) = default;
+  Data& Data::operator=(Data&&) = default;
+  Data& Data::operator=(const Data&) = default;
+  Data::~Data() noexcept = default;
+  
   static void
   getData(std::vector<Data>& data,
 	  const BehaviourDescription& mb,
@@ -318,9 +410,6 @@ namespace mfront{
     }
   }
   
-  Data::~Data() noexcept
-  {} // end of MarkdownBehaviourAnalyser::Data::~Data
-
   BehaviourDocumentationGenerator::BehaviourDocumentationGenerator(const int argc,
 								   const char *const *const argv,
 								   std::shared_ptr<AbstractBehaviourDSL> d,
@@ -358,7 +447,7 @@ namespace mfront{
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<BehaviourDocumentationGenerator>::treatUnknownArgument();
 #else
-		auto a = static_cast<const std::string&>(this->getCurrentCommandLineArgument());
+      auto a = static_cast<const std::string&>(this->getCurrentCommandLineArgument());
       std::cerr << "mfront : unsupported option '" << a << '\'' << std::endl;
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
@@ -422,6 +511,7 @@ namespace mfront{
       msg += "'src/"+name+".txt'";
       throw(runtime_error(msg));
     }
+    writeStandardLatexMacros(out);
     if(this->otype==FULL){
       this->writeFullOutput(out,mb,fd);
     } else if(this->otype==WEB){
@@ -481,16 +571,12 @@ namespace mfront{
       out << "No description specified";
     }
     out << endl;
+    out << "## Source code"<< endl;
     out << endl;
     out << "~~~~ {#" << mb.getClassName() << " .cpp .numberLines}" << endl;
-    while(!f.eof()){
-      string line;
-      getline(f,line);
-      out << line << endl;
-    }
+    out << f.rdbuf() << endl;
     out << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
     out << endl;
-
   } // end of BehaviourDocumentationGenerator::writeWebOutput
 
   void
@@ -502,7 +588,6 @@ namespace mfront{
     using namespace tfel::utilities;
     using namespace tfel::material;
     out << "# " << mb.getClassName() << " behaviour description" << endl << endl;
-    out << "## Source file" << endl << endl;
     out << "* file   : " << fd.fileName   << endl;
     out << "* author : ";
     if(!fd.authorName.empty()){
@@ -530,7 +615,6 @@ namespace mfront{
       out << "No description specified";
     }
     out << endl << endl;
-    out << "## Mechanical behaviour description" << endl << endl;
     out << "### List of supported Hypotheses" << endl << endl;
     const auto& h = mb.getModellingHypotheses();
     const auto& dh = mb.getDistinctModellingHypotheses();
@@ -541,6 +625,8 @@ namespace mfront{
       }
       out << endl;
     }
+    out << endl;
+    out << "## Variables" << endl << endl;
     out << endl;
     out << "### Material properties" << endl << endl;
     printData(out,mb,getData(mb,&BehaviourData::getMaterialProperties));
@@ -559,56 +645,12 @@ namespace mfront{
       printData(out,mb,getData(mb,&BehaviourData::getParameters));
     }
     out << endl;
-    out << "## Code blocks" << endl << endl;
-    if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
-      const BehaviourData& d =
-	mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-      const auto& cn = d.getCodeBlockNames();
-      for(const auto & elem : cn){
-	const auto& c = d.getCodeBlock(elem);
-	if(!c.description.empty()){
-	  out <<"### " << elem << " description" << endl;
-	  out << c.description << endl << endl;
-	}
-	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  out <<"### " << elem << " listing" << endl;
-	  out << endl;
-	  out << "~~~~~~~ {.cpp}" << endl;
-	  out << c.code << endl;
-	  out << "~~~~~~~ " << endl;
-	}
-      }
+    const auto code = getCodeBlocksDocumentation(mb);
+    if(!code.empty()!=0){
+      out << "## Code documentation" << endl << endl;
+      out <<  code << endl;
     }
-    for(const auto & elem : h){
-      if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	const BehaviourData& d =
-	  mb.getBehaviourData(elem);
-	const auto& cn = d.getCodeBlockNames();
-	for(const auto & cn_pcn : cn){
-	  bool print = true;
-	  const auto& c = d.getCodeBlock(cn_pcn);
-	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
-	    const BehaviourData& duh =
-	      mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-	    if(duh.hasCode(cn_pcn)){
-	      const auto& cuh = duh.getCodeBlock(cn_pcn).code;
-	      print = c.code!=cuh;
-	    }
-	  }
-	  if(print){
-	    if(!c.description.empty()){
-	      out <<"### " << cn_pcn << " description(" << ModellingHypothesis::toString(elem) << ")" << endl;
-	      out << c.description << endl << endl;
-	    }
-	    out <<"### " << cn_pcn << " listing (" << ModellingHypothesis::toString(elem) << ")" << endl;
-	    out << endl;
-	    out << "~~~~~~~ {.cpp} "<< endl;
-	    out << c.code << endl;
-	    out << "~~~~~~~ "<< endl;
-	  }
-	}
-      }
-    }
+    
   } // end of BehaviourDocumentationGenerator::writeFullOutput
 
   BehaviourDocumentationGenerator::~BehaviourDocumentationGenerator()

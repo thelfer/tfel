@@ -9,7 +9,7 @@ of information including:
 - the name of the authors
 - the modifications made
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Description

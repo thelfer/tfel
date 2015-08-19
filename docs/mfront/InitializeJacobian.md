@@ -2,7 +2,7 @@ The `@InitializeJacobian` keyword let the user introduce an initial
 estimate for the jacobian matrix used by quasi-newton methods, such as
 the first Broyden method.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @InitializeJacobian{

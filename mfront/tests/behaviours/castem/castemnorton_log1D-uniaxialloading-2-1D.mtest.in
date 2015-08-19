@@ -15,8 +15,10 @@
 
 @MaterialProperty<constant> 'YoungModulus'      80.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.35;
-@MaterialProperty<constant> 'A'   '0.003944e-6**4.39';
-@MaterialProperty<constant> 'E'   4.39;
+@Real 'A'   '0.003944e-6**4.39';
+@Real 'E'   4.39;
+@MaterialProperty<constant> 'NortonCoefficient' 'A';
+@MaterialProperty<constant> 'NortonExponent' 'E';
 
 @ImposedDrivingVariable 'ETT' {0:0.,1.:3.5};
 

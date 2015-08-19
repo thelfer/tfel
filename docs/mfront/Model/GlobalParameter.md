@@ -16,12 +16,12 @@ except the first:
 
 `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
 
-### Default values
+## Default values
 
 The user may attribute a default value to a global parameter through
 the `setDefaultValue` method.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @GlobalParameter real a;

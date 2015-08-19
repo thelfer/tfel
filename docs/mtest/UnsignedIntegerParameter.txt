@@ -1,6 +1,0 @@
-The @UnsignedIntegerParameter keywords specifies the value of a parameter of
-the behaviour.
-
-Example:
-@UnsignedIntegerParameter 'iterMax' 12;
-

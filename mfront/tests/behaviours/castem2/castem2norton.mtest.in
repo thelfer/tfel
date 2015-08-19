@@ -14,8 +14,10 @@
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;
-@MaterialProperty<constant> 'A' 8.e-67;
-@MaterialProperty<constant> 'E' 8.2;
+@Real 'A' 8.e-67;
+@Real 'E' 8.2;
+@MaterialProperty<constant> 'NortonCoefficient' 'A';
+@MaterialProperty<constant> 'NortonExponent' 'E';
 
 @Real 'srr' 20.e6;
 @ImposedStress 'SRR' 'srr';

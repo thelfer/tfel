@@ -1,7 +1,7 @@
 The `@InitializeLocalVariables` introduces a code block meant to
 initialize the local variables (see the `@LocalVariable` keyword).
 
-### Example
+## Example
 
 ~~~~{.cpp}
 //! volumic fraction of each phase

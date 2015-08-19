@@ -17,13 +17,13 @@ except the first:
 
 `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
 
-### External name
+## External name
 
 It is recommended to associate to a constant material property a
 glossary or an entry name through the methods `setGlossaryName` or
 `setEntryName` respectively.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @ConstantMaterialProperty E;

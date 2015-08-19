@@ -20,7 +20,7 @@ Y_{i}^{+\epsilon}(j)=
 \right.
 \]
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @PerturbationValueForNumericalJacobianComputation 1.e-7;

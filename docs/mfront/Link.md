@@ -6,7 +6,7 @@ Usage of the `@Link` keyword is deprecated a linker flags are not
 portable. The user may prefer using the `LDFLAGS` environment
 variable.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 // explicit link with libm.so

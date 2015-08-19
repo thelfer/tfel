@@ -15,8 +15,10 @@
 @MaterialProperty<constant> 'PoissonRatio'      'nu';
 @MaterialProperty<constant> 'MassDensity'        0.;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;
-@MaterialProperty<constant> 'A' 8.e-67;
-@MaterialProperty<constant> 'E' 8.2;
+@Real 'A' 8.e-67;
+@Real 'E' 8.2;
+@MaterialProperty<constant> 'NortonCoefficient' 'A';
+@MaterialProperty<constant> 'NortonExponent' 'E';
 
 @Real 'err' 1.5e-4;
 @Real 'srr' 'YoungModulus*err';

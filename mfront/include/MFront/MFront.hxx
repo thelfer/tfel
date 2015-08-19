@@ -76,11 +76,13 @@ namespace mfront{
     //! get the usage description
     virtual std::string
     getUsageDescription(void) const override final;
-
+    //! treat the --help-commands-list command line option
     virtual void treatHelpCommandsList(void);
-
+    //! treat the --help-commands command line option
+    virtual void treatHelpCommands(void);
+    //! treat the --help-command
     virtual void treatHelpCommand(void);
-
+    //! treat the --no-melt command line option
     virtual void treatNoMelt(void);
 
 #ifdef MFRONT_MAKE_SUPPORT

@@ -214,7 +214,7 @@ namespace mfront
       if(root.empty()){
 	root = PREFIXDIR;
       }
-      const string f = root+"/share/doc/mtest/"+pk->first.substr(1)+".txt";
+      const string f = root+"/share/doc/mtest/"+pk->first.substr(1)+".md";
       ifstream desc(f.c_str());
       bool exists(true);
       if(!desc){
@@ -235,6 +235,26 @@ namespace mfront
     }
   } // end of MTestParser::displayKeywordsList
 
+  void
+  MTestParser::displayKeyWordsHelp(void) const
+  {
+    std::cout << "% `MTest` keywords\n\n";
+    for(const auto& c  : this->callbacks){
+      const auto& k  = c.first; 
+      auto root = getTFELHOME();
+      if(root.empty()){
+	root = PREFIXDIR;
+      }
+      std::cout << "\n# The `" <<  k << "` keyword\n\n";
+      std::ifstream desc{root+"/share/doc/mtest/"+k.substr(1)+".md"};
+      if(desc){
+	std::cout << desc.rdbuf();
+      } else {
+	std::cout << "The keyword `" <<  k << "` is not documented yet\n";
+      }
+    }
+  } // end of MTestParser::displayKeywordsHelp
+  
   void
   MTestParser::registerCallBacks()
   {
@@ -345,7 +365,6 @@ namespace mfront
   MTestParser::registerCallBack(const std::string& k,
 				const MTestParser::CallBack& p)
   {
-    using namespace std;
     this->callbacks.insert({k,p});
   }
 
@@ -358,18 +377,14 @@ namespace mfront
 		 "unknowns keyword '"+k+"'");
       throw(runtime_error(msg));
     }
-    string root;
     const char * const path = getenv("TFELHOME");
-    if(path!=nullptr){
-      root = string(path);
-    } else {
-      root = PREFIXDIR;
-    }
-    const string f = root+"/share/doc/mtest/"+k.substr(1)+".txt";
-    ifstream desc(f.c_str());
+    const auto root = (path!=nullptr) ? string(path) : PREFIXDIR;
+    const auto f = root+"/share/doc/mtest/"+k.substr(1)+".md";
+    ifstream desc{f};
     if(!desc){
       cout << "no description available for keyword '"
 	   << k << "'" << endl;
+      return;
     }
     cout << desc.rdbuf();
   }

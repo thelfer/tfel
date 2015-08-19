@@ -15,13 +15,13 @@ except the first:
 
 `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
 
-### Name of the generated functions or classes
+## Name of the generated functions or classes
 
 The names of the generated functions or classes depend on the law name
 as specifified with the `@Law` keyword but may also include the
 material name, as specified by the `@MaterialLaw` keyword.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Law ThermalExansionCoefficient_SRMA;

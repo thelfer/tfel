@@ -29,9 +29,24 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./LICENSE.md						   \
 	   ./glossary.md					   \
 	   ./parameters.md					   \
+	   ./publications.md					   \
 	   ./CONTRIBUTING.md					   \
 	   ./release-notes.md					   \
 	   ./TODO.md						   \
+	   ./DefaultCZMDSL-keywords.md				   \
+	   ./DefaultDSL-keywords.md				   \
+	   ./DefaultFiniteStrainDSL-keywords.md			   \
+	   ./Implicit-keywords.md				   \
+	   ./ImplicitFiniteStrain-keywords.md			   \
+	   ./ImplicitII-keywords.md				   \
+	   ./IsotropicMisesCreep-keywords.md			   \
+	   ./IsotropicPlasticMisesFlow-keywords.md		   \
+	   ./IsotropicStrainHardeningMisesCreep-keywords.md	   \
+	   ./MTest-keywords.md					   \
+	   ./MaterialLaw-keywords.md				   \
+	   ./Model-keywords.md					   \
+	   ./MultipleIsotropicMisesFlows-keywords.md		   \
+	   ./RungeKutta-keywords.md				   \
 	   ./robots.txt						   \
 	   ./crossdomain.xml					   \
 	   ./js/vendor						   \

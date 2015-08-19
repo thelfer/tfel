@@ -9,7 +9,7 @@ failed are reported on the standard output.
 The comparison criterion value can be changed used the
 `@JacobianComparisonCriterion` keyword.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @CompareToNumericalJacobian true;

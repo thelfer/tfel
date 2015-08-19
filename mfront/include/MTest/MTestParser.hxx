@@ -58,6 +58,11 @@ namespace mfront
     virtual void
     displayKeyWordsList() const;
     /*!
+     * display the list of keywords
+     */
+    virtual void
+    displayKeyWordsHelp() const;
+    /*!
      * display the description of a keyword
      */
     virtual void

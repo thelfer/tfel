@@ -6,7 +6,7 @@ Using this keyword is considered a bad pratice. The user shall use the
 `--interface` command line argument to specify which interface shall
 be used.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Interface umat;

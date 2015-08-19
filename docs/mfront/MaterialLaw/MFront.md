@@ -4,7 +4,7 @@ keyword is followed by a pair of strings or array of strings. The
 first member of the pair describes which a list of files to be
 treated. The second member of the pair describes a list of interfaces.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @MFront {"YoungModulus.mfront",{"c","excel"}};

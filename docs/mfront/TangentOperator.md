@@ -21,7 +21,7 @@ the possible values for `smt` are the following:
   the implicit system, see the mfront behaviours documentation for
   details.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @TangentOperator{

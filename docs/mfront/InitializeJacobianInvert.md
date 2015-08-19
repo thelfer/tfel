@@ -2,7 +2,7 @@ The `@InitializeJacobianInvert` keyword let the user introduce an
 initial estimate for the jacobian matrix used by quasi-newton methods,
 such as the second Broyden method.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @InitializeJacobianInvert{

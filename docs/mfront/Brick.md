@@ -1,6 +1,6 @@
 The `@Brick` keyword introduces a behaviour brick.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Brick "StandardElasticity";

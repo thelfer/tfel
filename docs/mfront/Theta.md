@@ -8,7 +8,7 @@ The value given to \(\theta\) must be in the range \(]0:1]).
 The value of \(\theta\) can be changed at runtime by modifying the
 `theta` parameter (see the `@Parameter` keyword).
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Theta 0.5;

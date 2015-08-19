@@ -1,6 +1,120 @@
 % News
 % Helfer Thomas
-% April 12, 2015
+% August 18, 2015
+
+# New documentations pages (18 August 2015)
+
+New documentation pages were added to describe the `MTest` and
+`MFront` keywords~:
+
+- `MFront` keywords, sorted by domain specific languages:
+    + [DefaultDSL](DefaultDSL-keywords.html) 
+    + [DefaultCZMDSL](DefaultCZMDSL-keywords.html) 
+    + [DefaultFiniteStrainDSL](DefaultFiniteStrainDSL-keywords.html) 
+    + [Implicit](Implicit-keywords.html) 
+    + [ImplicitFiniteStrain](ImplicitFiniteStrain-keywords.html) 
+    + [ImplicitII](ImplicitII-keywords.html) 
+    + [IsotropicMisesCreep](IsotropicMisesCreep-keywords.html) 
+    + [IsotropicPlasticMisesFlow](IsotropicPlasticMisesFlow-keywords.html) 
+    + [IsotropicStrainHardeningMisesCreep](IsotropicStrainHardeningMisesCreep-keywords.html) 
+    + [MaterialLaw](MaterialLaw-keywords.html) 
+    + [Model](Model-keywords.html) 
+    + [MultipleIsotropicMisesFlows](MultipleIsotropicMisesFlows-keywords.html) 
+    + [RungeKutta](RungeKutta-keywords.html) 
+- [`MTest` keywords](MTest-keywords.html)
+
+# New interfaces for material properties (July 2015)
+
+The current development version of `MFront` includes two new
+interfaces for material properties:
+
+- `java` designed for the
+  [`java` language](http://www.oracle.com/fr/java/overview/index.html).
+- `octave` designed for
+  [`GNU Octave`](https://www.gnu.org/software/octave/) which is a
+  high-level interpreted language, primarily intended for numerical
+  computations.
+
+Here is an example of a
+[`GNU Octave`](https://www.gnu.org/software/octave/) session used to
+compute the Young Modulus of uranium-plutonium carbide \(UPuC\) for
+various porosities over a range of temperatures:
+
+~~~~ {.octave}
+octave:1> T=[300:100:1500]
+T =
+    300    400    500    600    700    800    900   1000   1100   1200   1300   1400   1500
+octave:2> y01=UPuC_YoungModulus(T,0.1)
+y01 =
+   1.7025e+11   1.6888e+11   1.6752e+11   1.6616e+11   1.6480e+11   1.6344e+11   1.6207e+11   1.6071e+11   1.5935e+11   1.5799e+11   1.5662e+11   1.5526e+11   1.5390e+11
+octave:3> y02=UPuC_YoungModulus(T,0.2)
+y02 =
+   1.1853e+11   1.1758e+11   1.1663e+11   1.1568e+11   1.1474e+11   1.1379e+11   1.1284e+11   1.1189e+11   1.1094e+11   1.0999e+11   1.0905e+11   1.0810e+11   1.0715e+11
+~~~~~~~~
+
+# A "publications" page has been added to the website (July 2015)
+
+The number of papers in which `MFront` is used is increasing. A
+dedicated page has been added [here](publications.html).
+
+If you publish papers which refers to `MFront`, please consider
+contributing to this page.
+
+# The paper entitled "Introducing the open-source MFront code generator ..." has been accepted for publication in Computers and Mathematics with Applications (24 june 2015)
+
+The first paper dedicated to `MFront`, written by Thomas Helfer, Bruno
+Michel, Jean-Michel Proix, Maxime Salvo, Jérôme Sercombe, and Michel
+Casella, has been accepted Computers and Mathematics with
+Applications. The paper is available online on the sciencedirect
+website:
+
+<http://www.sciencedirect.com/science/article/pii/S0898122115003132>
+
+ > The PLEIADES software environment is devoted to the
+ > thermomechanical simulation of nuclear fuel elements behaviour
+ > under irradiation. This platform is co-developed in the framework
+ > of a research cooperative program between Électricité de France
+ > (EDF), AREVA and the French Atomic Energy Commission
+ > (CEA). As many thermomechanical solvers are used within the
+ > platform, one of the PLEAIADES’s main challenge is to propose a
+ > unified software environment for capitalisation of material
+ > knowledge coming from research and development programs on various
+ > nuclear systems.
+ >
+ > This paper introduces a tool called mfront which is basically a
+ > code generator based on C++ (Stroustrup and Eberhardt,
+ > 2004). Domain specific languages are provided which were designed
+ > to simplify the implementations of new material properties,
+ > mechanical behaviours and simple material models. mfront was
+ > recently released under the GPL open-source licence and is
+ > available on its web site: http://tfel.sourceforge.net/.
+ >
+ > The authors hope that it will prove useful for researchers and
+ > engineers, in particular in the field of solid mechanics. mfront
+ > interfaces generate code specific to each solver and language
+ > considered.
+ > 
+ > In this paper, after a general overview of mfront functionalities,
+ > a particular focus is made on mechanical behaviours which are by
+ > essence more complex and may have significant impact on the
+ > numerical performances of mechanical simulations. mfront users can
+ > describe all kinds of mechanical phenomena, such as
+ > viscoplasticity, plasticity and damage, for various types of
+ > mechanical behaviour (small strain or finite strain behaviour,
+ > cohesive zone models). Performance benchmarks, performed using the
+ > Code-Aster finite element solver, show that the code generated
+ > using mfront is in most cases on par or better than the behaviour
+ > implementations written in fortran natively available in this
+ > solver. The material knowledge management strategy that was set up
+ > within the PLEIADES platform is briefly discussed. A material
+ > database named sirius proposes a rigorous material verification
+ > workflow.
+ > 
+ > We illustrate the use of mfront through two case of studies: a
+ > simple FFC single crystal viscoplastic behaviour and the
+ > implementation of a recent behaviour for the fuel material which
+ > describes various phenomena: fuel cracking, plasticity and
+ > viscoplasticity.
 
 # Castem 2015 is out (12 April 2015)
 

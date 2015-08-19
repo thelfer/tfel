@@ -15,7 +15,7 @@ except the first:
 
 `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
 
-### Variable depth
+## Variable depth
 
 The depth of a variable is the number of preceedings values of this
 variable needed to perform the computations. A depth of \(0\) means
@@ -28,12 +28,12 @@ The depth of a variable is set using the `setDepth` method.
 If `p` is the variable of interest, `p` is its value at the end of the
 time step, `p_1` is the value at the beginning of the time step.
 
-### External name
+## External name
 
 It is recommended to associate to an input a glossary or an entry name
 through the methods `setGlossaryName` or `setEntryName` respectively.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Input T,p;

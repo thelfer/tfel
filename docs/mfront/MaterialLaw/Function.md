@@ -4,14 +4,14 @@ the material property.
 Note: the default output is called `res`. This is changed by the
 `@Output` keyword.
 
-### Note
+## Note
 
 Although most interfaces use double for floatting point operations,
 this may not be always the case. A special `typedef` named `real` is
 thus introduced by the interfaces. We advice the user to use this
 `typedef` to define their local variables.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Function

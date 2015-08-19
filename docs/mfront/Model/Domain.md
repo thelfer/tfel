@@ -4,7 +4,7 @@ shall be applied. This keyword is followed by the name of the domain.
 This keyword is deprecated as domains shall be explicitely specified
 by specialisation.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @Domain "Fuel";

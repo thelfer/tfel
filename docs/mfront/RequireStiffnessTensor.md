@@ -4,7 +4,7 @@ material properties will be introduced and handled by the interface
 before the behaviour integration.
 
 By default, the stiffness tensor will have the same symmetry than the
-behaviour (see @IsotropicElasticBehaviour to change this in the case
+behaviour (see `@IsotropicElasticBehaviour` to change this in the case
 of an orthotropic behaviour).
 
 ~~~~{.cpp}

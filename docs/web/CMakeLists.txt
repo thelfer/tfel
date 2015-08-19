@@ -1,6 +1,6 @@
 macro(pandoc_html file)
   ADD_CUSTOM_COMMAND(
-    OUTPUT    ${file}.html
+    OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md
     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/mfront-template.html
     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/css/main.css
@@ -46,7 +46,28 @@ pandoc_html(material-properties)
 pandoc_html(behaviours)
 pandoc_html(models)
 pandoc_html(parameters)
-pandoc_html(release-notes)
+pandoc_html(publications)
+pandoc_html(release-notes "--toc" "--toc-depth=1")
+
+# mfront keywords
+
+pandoc_html(DefaultDSL-keywords "--toc" "--toc-depth=1")
+pandoc_html(DefaultFiniteStrainDSL-keywords "--toc" "--toc-depth=1")
+pandoc_html(DefaultCZMDSL-keywords "--toc" "--toc-depth=1")
+pandoc_html(Implicit-keywords "--toc" "--toc-depth=1")
+pandoc_html(ImplicitFiniteStrain-keywords "--toc" "--toc-depth=1")
+pandoc_html(ImplicitII-keywords "--toc" "--toc-depth=1")
+pandoc_html(IsotropicMisesCreep-keywords "--toc" "--toc-depth=1")
+pandoc_html(IsotropicPlasticMisesFlow-keywords "--toc" "--toc-depth=1")
+pandoc_html(IsotropicStrainHardeningMisesCreep-keywords "--toc" "--toc-depth=1")
+pandoc_html(MaterialLaw-keywords "--toc" "--toc-depth=1")
+pandoc_html(Model-keywords "--toc" "--toc-depth=1")
+pandoc_html(MultipleIsotropicMisesFlows-keywords "--toc" "--toc-depth=1")
+pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
+
+# mtest keywords
+
+pandoc_html(MTest-keywords "--toc" "--toc-depth=1")
 
 install(DIRECTORY js css doc img downloads
     DESTINATION share/doc/tfel/web

@@ -10,14 +10,14 @@ This keyword interprets the code block to generate two methods:
   not provide an appropriate way of computing the stress at the end of
   the time step using the `@ComputeFinalStress` keyword.
 
-### Note
+## Note
 
 If the user provide a way of computing the stress at the end of the
 time step through the `@ComputeFinalStress` keyword, we consider that
-the use of @ComputeStress is meaningless and advice the user to rather
-compute explicitly the stress as part of the integration step.
+the use of `@ComputeStress` is meaningless and advice the user to
+rather compute explicitly the stress as part of the integration step.
 
-### Example
+## Example
 
 ~~~~{.cpp}
 @ComputeStress{
