@@ -568,7 +568,7 @@ namespace tfel
 	return false;
       }
       is >> res;
-      if(!is&&(!is.eof())){
+      if((!is)||(!is.eof())){
 	return false;
       }
       return true;

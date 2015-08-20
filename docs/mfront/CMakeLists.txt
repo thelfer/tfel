@@ -1,10 +1,10 @@
 macro(install_mfront_desc file)
-  install(FILES ${file} DESTINATION share/doc/mfront
+  install(FILES ${file}.md DESTINATION share/doc/mfront
     COMPONENT mfront)
 endmacro(install_mfront_desc file)
 
 macro(install_mfront_desc2 parser file)
-  install(FILES ${parser}/${file} DESTINATION share/doc/mfront/${parser}
+  install(FILES ${parser}/${file}.md DESTINATION share/doc/mfront/${parser}
     COMPONENT mfront)
 endmacro(install_mfront_desc2 parser file)
 
