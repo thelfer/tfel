@@ -37,6 +37,15 @@
 \hlstd{}\hlstd{\ \ \ \ }\hlstd{string\ }\hlkwd{msg}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"tangent\ operator\ not\ yet\ available"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
 \hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{throw}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{runtime\textunderscore error}\hlstd{}\hlopt{(}\hlstd{msg}\hlopt{));}\hspace*{\fill}\\
 \hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}}\hlstd{\hspace*{\fill}\\
+@TangentOperator}\hlopt{$<$}\hlstd{DTAU\textunderscore DF}\hlopt{$>$\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{static\textunderscore cast}\hlstd{}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{$>$(}\hlstd{smt}\hlopt{);\ }\hlstd{}\hlslc{//\ suppression\ d'un\ warning\ :\ la\ matrice}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{}\hlslc{//\ tangente\ est\ toujours\ l'élastique}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{StiffnessTensor\ De\ }\hlopt{=\ }\hlstd{lambda}\hlopt{{*}}\hlstd{Stensor4}\hlopt{::}\hlstd{}\hlkwd{IxI}\hlstd{}\hlopt{()+}\hlstd{}\hlnum{2}\hlstd{}\hlopt{{*}}\hlstd{mu}\hlopt{{*}}\hlstd{Stensor4}\hlopt{::}\hlstd{}\hlkwd{Id}\hlstd{}\hlopt{();}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{t2tost2}\hlopt{$<$}\hlstd{N}\hlopt{,}\hlstd{stress}\hlopt{$>$\ }\hlstd{dS\ }\hlopt{=\ }\hlstd{}\hlnum{0.5}\hlstd{}\hlopt{{*}}\hlstd{De}\hlopt{{*}}\hlstd{t2tost2}\hlopt{$<$}\hlstd{N}\hlopt{,}\hlstd{strain}\hlopt{$>$::}\hlstd{}\hlkwd{dCdF}\hlstd{}\hlopt{(}\hlstd{F1}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{t2tost2}\hlopt{$<$}\hlstd{N}\hlopt{,}\hlstd{stress}\hlopt{$>$\ }\hlstd{dtau}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwd{computePushForwardDerivative}\hlstd{}\hlopt{(}\hlstd{dtau}\hlopt{,}\hlstd{dS}\hlopt{,}\hlstd{s}\hlopt{,}\hlstd{F1}\hlopt{);\ }\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Dt\ }\hlopt{=\ }\hlstd{dtau}\hlopt{;}\hspace*{\fill}\\
 \hlstd{}\hlopt{\}}\hlstd{}\hspace*{\fill}\\
 \mbox{}
 \normalfont

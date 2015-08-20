@@ -452,6 +452,7 @@ docs/mtest/images/Zy4/simexp_Zy4_Relax_Helfer-2.txt.prn -text
 docs/mtest/images/Zy4/zy4.tplot -text
 docs/mtest/images/acceleration.eps -text
 docs/mtest/images/acceleration.tplot -text
+docs/mtest/images/cb.eps -text
 docs/mtest/images/chaboche2-aster.ref -text
 docs/mtest/images/chaboche2-comp.eps -text
 docs/mtest/images/chaboche2-mfront.tex -text
@@ -476,6 +477,8 @@ docs/mtest/images/mtest-l3f.eps -text
 docs/mtest/images/norton-acc.txt -text
 docs/mtest/images/norton-elas.txt -text
 docs/mtest/images/norton-tc.txt -text
+docs/mtest/images/signatures_mtest.eps -text
+docs/mtest/images/signatures_mtest.xcf -text
 docs/mtest/images/strainhardeningcreep.eps -text
 docs/mtest/images/strainhardeningcreep.mtest -text
 docs/mtest/images/strainhardeningcreep.res -text

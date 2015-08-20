@@ -39,12 +39,43 @@
 #include"TFEL/Utilities/ConfigParser.hxx"
 #include"TFEL/Utilities/TestDocMain.hxx"
 
+
 namespace tfel
 {
 
   namespace utilities
   {
 
+    template<typename Parser>
+    static void
+    parse_files(std::ostream& log,
+		std::map<std::string,std::vector<TestDocumentation>>& tests,
+		const std::string& ext){
+      auto files = std::map<std::string,std::vector<std::string>>{};
+      char path[MAXPATHLEN];
+      tfel::system::recursiveFind(files,".*\\."+ext,".");
+      for(const auto& d : files){
+	if(realpath(d.first.c_str(),path)==nullptr){
+	  log << "entering directory " << d.first << '\n';
+	} else {
+	  log << "entering directory " << path << '\n';
+	} 
+	for(const auto& f : d.second){
+	  auto name = d.first+'/'+f;
+	  try{
+	    Parser{name}.addDocumentation(tests);
+	  }
+	  catch(std::exception& e){
+	    log << TerminalColors::Reset;
+	    log << "treatment of file '"+f+"' failed : "
+		<< e.what() << '\n';
+	    log << TerminalColors::Reset;
+	  }
+	}
+      }
+    }
+
+    
     static std::string
     replace_all(const std::string& c,
 		const char c1,
@@ -406,7 +437,7 @@ namespace tfel
     TestDocMain::getVersionDescription(void) const
     {
       using namespace std;
-      return "1.0";
+      return "1.1";
     }
     
     std::string 
@@ -422,89 +453,40 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::utilities;
-      using namespace tfel::system;
-      char path[MAXPATHLEN];
       char cpath[MAXPATHLEN];
-      map<string,vector<string> >::const_iterator p;
-      vector<string>::const_iterator p2;
-      map<string,vector<TestDocumentation> > tests;
       if(realpath(".",cpath)==nullptr){
-	*(this->log) << "main : can't get real path of current directory, aborting\n";
-	exit(EXIT_FAILURE);
+	throw(runtime_error("TestDocMain::execute : can't get real path of current directory, aborting"));
       }
-
       if(!this->srcdir.empty()){
 	if(chdir(this->srcdir.c_str())==-1){
-	  *(this->log) << "can't move to directory " << this->srcdir << endl;
-	  exit(EXIT_FAILURE);
+	  throw(runtime_error("TestDocMain::execute : "
+			      "can't move to directory '"+this->srcdir+'\''));
 	}
       }
-
+      // all the tests, sorted by category
+      auto tests = map<string,vector<TestDocumentation>>{};
       // testdoc files
-      map<string,vector<string> > files;
-      recursiveFind(files,".*\\.testdoc$",".");
-      for(p=files.begin();p!=files.end();++p){
-	if(realpath(p->first.c_str(),path)==nullptr){
-	  *(this->log) << "entering directory " << p->first << endl;
-	} else {
-	  *(this->log) << "entering directory " << path << endl;
-	} 
-	for(p2=p->second.begin();p2!=p->second.end();++p2){
-	  string name = p->first+'/'+*p2;
-	  try{
-	    TestDocParser parser(name);
-	    parser.addDocumentation(tests);
-	  }
-	  catch(std::exception& e){
-	    *(this->log) << TerminalColors::Reset;
-	    *(this->log) << "treatment of file '"+*p2+"' failed : "
-			 << e.what() << endl;
-	    *(this->log) << TerminalColors::Reset;
-	  }
-	}
+      parse_files<MTestDocParser>(*(this->log),tests,"testdoc");
+      if(this->mtest){
+	parse_files<MTestDocParser>(*(this->log),tests,"mtest");
       }
-      
-      // mtest files
-      recursiveFind(files,".*\\.mtest",".");
-      for(p=files.begin();p!=files.end();++p){
-	if(realpath(p->first.c_str(),path)==nullptr){
-	  *(this->log) << "entering directory " << p->first << endl;
-	} else {
-	  *(this->log) << "entering directory " << path << endl;
-	} 
-	for(p2=p->second.begin();p2!=p->second.end();++p2){
-	  string name = p->first+'/'+*p2;
-	  try{
-	    MTestDocParser parser(name);
-	    parser.addDocumentation(tests);
-	  }
-	  catch(std::exception& e){
-	    *(this->log) << TerminalColors::Reset;
-	    *(this->log) << "treatment of file '"+*p2+"' failed : "
-			 << e.what() << endl;
-	    *(this->log) << TerminalColors::Reset;
-	  }
-	}
-      }
-
       if(!this->srcdir.empty()){
 	if(chdir(cpath)==-1){
-	  *(this->log) << "can't move to directory " << cpath << endl;
-	  exit(EXIT_FAILURE);
+	  throw(runtime_error("TestDocMain::execute : "
+			      "can't move to directory '"+string(cpath)+'\''));
 	}
       }
-
+      // output
       printLaTeXFile(this->output,tests,
 		     this->outputDirectory,
 		     this->prefix,this->lang,
 		     this->fragment,this->split);
-
-      map<string,vector<TestDocumentation> >::const_iterator p3;
-      map<string,vector<TestDocumentation> >::size_type count = 0u;
-      for(p3=tests.begin();p3!=tests.end();++p3){
-	count += p3->second.size();
+      // a short summary
+      auto count = map<string,vector<TestDocumentation>>::size_type{0u};
+      for(const auto& t : tests){
+	count += t.second.size();
       }
-      cout << count << " tests treated in " <<  tests.size() << " categories" << endl;
+      *(this->log) << count << " tests treated in " <<  tests.size() << " categories" << endl;
       return EXIT_SUCCESS;
     }
 

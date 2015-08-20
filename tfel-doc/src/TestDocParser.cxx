@@ -36,8 +36,8 @@ namespace tfel{
       using namespace std;
       using namespace tfel::utilities;
       this->stripComments();
-      const_iterator p  = this->begin();
-      const_iterator pe = this->end();
+      auto p  = this->begin();
+      auto pe = this->end();
       try{
 	while(p!=pe){
 	  if(p->flag!=Token::String){
@@ -46,12 +46,9 @@ namespace tfel{
 	    throw(runtime_error(msg));
 	  }
 	  TestDocumentation t;
-	  string c;
 	  this->readString(t.name,p);
-	  map<string,vector<TestDocumentation> >::const_iterator p2;
-	  for(p2=tests.begin();p2!=tests.end();++p2){
-	    vector<TestDocumentation>::const_iterator p3;
-	    for(p3=p2->second.begin();p3!=p2->second.end();++p3){
+	  for(const auto& td : tests){
+	    for(auto p3=td.second.begin();p3!=td.second.end();++p3){
 	      if(t.name==p3->name){
 		string msg("TestDocParser::addDocumentation : ");
 		msg += "test '"+t.name+"' already described";
@@ -61,6 +58,7 @@ namespace tfel{
 	  }
 	  this->checkNotEndOfFile(p);
 	  this->readSpecifiedToken("{",p);
+	  string c;
 	  this->treatTest(t,c,p);
 	  this->checkNotEndOfFile(p);
 	  this->readSpecifiedToken("}",p);
@@ -190,9 +188,7 @@ namespace tfel{
       this->readSpecifiedToken("{",p);
       this->checkNotEndOfFile(p);
       while(p->value!="}"){
-	string key1;
-	string key2;
-	map<string,vector<string> >::iterator p2;
+	auto key1 = string{};
 	this->readString(key1,p);
 	if(b){
 	  if(!key1.empty()){
@@ -210,6 +206,7 @@ namespace tfel{
 	if(p->value=="@"){
 	  ++p;
 	  this->checkNotEndOfFile(p);
+	  auto key2 = string{};
 	  this->readString(key2,p);
 	  if(b){
 	    if(!key2.empty()){
@@ -224,7 +221,7 @@ namespace tfel{
 	    }
 	  }
 	  this->checkNotEndOfFile(p);
-	  p2 = i.find(key2);
+	  auto p2 = i.find(key2);
 	  if(p2==i.end()){
 	    p2 = i.insert(make_pair(key2,vector<string>())).first;
 	  }
@@ -236,7 +233,7 @@ namespace tfel{
 	  }
 	  keys.push_back(key1);
 	} else {
-	  p2 = i.find(key1);
+	  auto p2 = i.find(key1);
 	  if(p2==i.end()){	
 	    i.insert(make_pair(key1,vector<string>()));
 	  }

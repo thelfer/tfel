@@ -259,11 +259,11 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
   écrire des lois de comportement en grandes transformations.
 
   Nous commençons par introduire les principaux concepts cinématiques
-  et sthéniquesnécessaires à l'exposé.
-  
+  et sthéniques nécessaires à l'exposé.
 }
 
-
+\newboolean{pleiades}
+\setboolean{pleiades}{false}
 
 \begin{document}
 
@@ -271,44 +271,47 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 \newpage
 \section{Introduction}
 
-Les applications combustible couvrent un nombre croissant de situations
-mécaniques. Dans un certain nombre de cas, il devient nécessaire de
-quitter le cadre habituel des transformations infinitésimales pour traiter la
-mécanique de manière plus rigoureuse. Citons quelques exemples, parmi
-de nombreux autres~:
-\begin{itemize}
-\item description du ballonnement de la gaine en APRP~;
-\item rupture ductile de la gaine en APRP~;
-\item analyse de la rupture ductile de la gaine en RIA, par exemple
-  dans le cas REP-NA8~;
-\item analyse des résultats d'essais de compression des pastilles
-  \(UO_{2}\)~: les déformations rationnelles macroscopiques sont de
-  l'ordre de \(20\,\%\), voir \(30\,\%\) localement dans la plupart
-  des essais. Au niveau du grain, une approche micro-mécanique de ces
-  essais conduirait probablement à des effets typiques des
-  transformations finies~: rotation du réseau cristallin, déformations
-  locales aux joints très élevées. 
-\end{itemize}
-Notons dès à présent que les grandes transformations ne se limitent
-pas aux grandes déformations~: l'effet des rotations, trop souvent
-négligé, peut être crucial.
-
-Au delà de l'aspect physique, notons que le code \castem{} oblige
-l'emploi des transformations finies dès qu'il est nécessaire de gérer
-le contact entre différents objets (situation assez
-\og{}~commune~\fg{} dans nos calculs)~: la compréhension {\tt a
-  minima} des algorithmes de résolutions mécaniques à la base de nos
-applications combustible demande une certaine familiarité avec les
-transformations finies. Nous verrons dans cette note que le traitement
-par défaut fait dans \castem{} est critiquable et incompatible en
-théorie avec la plupart des lois de comportement utilisées dans la
-plateforme (qu'elles soient écrites en \mfront{} ou pas). Relativisons
-tout de suite~: en pratique, tant que l'on reste dans des conditions
-proches des transformations infinitésimales, les approximations
-commises auront un impact assez faible. Par contre, dès que les effets
-de transformations finies seront importants, en termes de déformation
-ou de rotation, il ne sera plus possible de se reposer sur \castem{}
-pour faire \og{}~magiquement~\fg{} le travail.
+\ifthenelse{\boolean{pleiades}}{
+  Les applications combustible couvrent un nombre croissant de situations
+  mécaniques. Dans un certain nombre de cas, il devient nécessaire de
+  quitter le cadre habituel des transformations infinitésimales pour traiter la
+  mécanique de manière plus rigoureuse. Citons quelques exemples, parmi
+  de nombreux autres~:
+  \begin{itemize}
+  \item description du ballonnement et de larupture ductile de la
+    gaine en APRP~;
+  \item analyse de la rupture ductile de la gaine en RIA, par exemple
+    dans le cas REP-NA8~;
+  \item analyse des résultats d'essais de compression des pastilles
+    \(UO_{2}\)~: les déformations rationnelles macroscopiques sont de
+    l'ordre de \(20\,\%\), voir \(30\,\%\) localement dans la plupart
+    des essais. Au niveau du grain, une approche micro-mécanique de ces
+    essais conduirait probablement à des effets typiques des
+    transformations finies~: rotation du réseau cristallin, déformations
+    locales aux joints très élevées. 
+  \end{itemize}
+  Notons dès à présent que les grandes transformations ne se limitent
+  pas aux grandes déformations~: l'effet des rotations, trop souvent
+  négligé, peut être crucial.
+  
+  Au delà de l'aspect physique, notons que le code \castem{} oblige
+  l'emploi des transformations finies dès qu'il est nécessaire de
+  gérer le contact entre différents objets (situation assez
+  \og{}~commune~\fg{} dans nos calculs)~: la compréhension {\tt a
+    minima} des algorithmes de résolutions mécaniques à la base de nos
+  applications combustible demande une certaine familiarité avec les
+  transformations finies. Nous verrons dans cette note que le
+  traitement par défaut fait dans \castem{} est critiquable et
+  incompatible en théorie avec la plupart des lois de comportement
+  utilisées dans la plateforme (qu'elles soient écrites en \mfront{}
+  ou pas). Relativisons tout de suite~: en pratique, tant que l'on
+  reste dans des conditions proches des transformations
+  infinitésimales, les approximations commises avaient sans doute un
+  impact assez faible. Par contre, dès que les effets de
+  transformations finies deviennent importants, en termes de
+  déformation ou de rotation, il ne nous semble plus possible de se
+  reposer sur \castem{} pour faire \og{}~magiquement~\fg{} le travail.
+}{}
 
 Les transformations finies sont considérées comme difficiles d'accès,
 en particulier par les étudiants et les ingénieurs en mécanique. Pour
@@ -363,11 +366,13 @@ pourrons juger à l'aune de ces critères.
 Au lecteur pressé, donnons déjà une des conclusions~: l'approche la
 plus adaptée pour décrire des comportements macroscopiques est
 aujourd'hui celle des déformations logarithmiques, introduites par
-Miehe en 2002~\cite{miehe_anisotropic_2002} et dont nous avons appris
-l'existence lors de notre travail avec l'équipe \aster{} qui nous l'a
-chaudement recommandé~: nous les en remercions. Les déformations
+Miehe en 2002~\cite{miehe_anisotropic_2002}\footnote{Nous avons appris
+  l'existence lors de notre travail avec l'équipe \aster{} qui nous
+  l'a chaudement recommandé~: nous les en
+  remercions~\cite{bargellini_modeles_2013}.}. Les déformations
 logarithmiques ont des caractéristiques qui en font, pour reprendre la
-métaphore de F. Sidoroff, la meilleure sauce que l'on connaisse~:
+métaphore de F. Sidoroff, la meilleure sauce que l'on connaisse
+actuellement~:
 \begin{itemize}
 \item les lois s'écrivent comme en \og{}~petites pertubations~\fg{},
   c'est à dire que l'on peut, sans état d'âme, décomposer les
@@ -393,7 +398,7 @@ métaphore de F. Sidoroff, la meilleure sauce que l'on connaisse~:
 \item à la limite des petites perturbations, on retrouvera les mêmes
   résultats que la loi \og{}~petites déformations~\fg{} de départ.
 \item le formalisme se base sur une mesure logarithmique des
-  déformations, le tenseur de \(Hencky\). Ce choix est très naturel
+  déformations, le tenseur de \nom{Hencky}. Ce choix est très naturel
   aux expérimentateurs, dans les cas des métaux notamment, qui parlent
   parfois de \og{}~déformation vraie~\fg{}.
 \item il s'agit d'un formalisme portable entre les différents codes
@@ -662,8 +667,8 @@ On montre que cette décomposition est là aussi unique et que la
 rotation \(\tns{R}\) est la même que celle définie par la première
 décomposition~\eqref{eq:finitestrain:decomposition_polaire}.
 
-Le tenseur \(\tenseur{V}\) étant mesuré à partir de la configuration
-initiale, il est dit {\em eulérien}.
+Le tenseur \(\tenseur{V}\) étant mesuré à partir d'un référentiel
+donné par rotation \(\tns{R}\), il est dit {\em eulérien}.
 
 \begin{figure}[htbp]
   \centering
@@ -1085,9 +1090,12 @@ tenseur dual par la définition d'une densité d'énergie \(\Psi\)~:
 \tenseur{S}_{\varepsilon}=\deriv{\Psi}{\tenseur{\varepsilon}}
 \]
 
-La propriété essentielle des lois hyperélastiques est que la
-dissipation mécanique est nulle pour tout trajet fermé dans l'espace
-des déformations.
+Une propriété essentielle des lois hyperélastiques est la dissipation
+mécanique est nulle pour tout trajet fermé dans l'espace des
+déformations.
+
+Une autre propriété intéressante en pratique est qu'on peut montrer
+que l'opérateur tangent cohérent est symétrique.
 
 \subsection{Approches lagrangiennes}
 
@@ -1304,7 +1312,7 @@ déformations.
 Il s'agit néanmoins d'un avantage considérable~: l'écriture de lois de
 comportement capables de décrire de très grandes déformations dans un
 cadre théorique solide devient accessible aux ingénieurs puisque
-ceux-ci n'ont pas à apprendre un formalisme nouveau. Tous les concepts
+ceux-ci n'ont pas à apprendre de formalisme nouveau. Tous les concepts
 qui leurs sont devenus classiques (écrouissages, endommagement,
 etc...)  sont utilisables tels quels.
 
@@ -1679,11 +1687,16 @@ cas \(1D\), une dilatation pure s'écrit~:
 F=1+\eta
 \]
 
-La dilatation pure d'un barreau le fait passer d'une longueur initiale
-\(l_{i}\) à une longueur finale \(l\) telle que~: \[
-l=\int_{0}^{l_{i}}F\paren{X}\,\dtot\,X=\paren{1+\eta}\,l_{i} \] ce qui
-permet d'identifier \(\eta\) à la variation relative du corps entre
-son état initial et son état final~: \[ \eta=\Frac{\Delta l}{l_{i}} \]
+La dilatation pure d'un barreau le fait passer d'une longueur
+initiale \(l_{i}\) à une longueur finale \(l\) telle que~:
+\[
+l=\int_{0}^{l_{i}}F\paren{X}\,\dtot\,X=\paren{1+\eta}\,l_{i}
+\]
+ce qui permet d'identifier \(\eta\) à la variation relative du corps
+entre son état initial et son état final~:
+\[
+\eta=\Frac{\Delta l}{l_{i}}
+\]
 
 Ainsi, la description de la dilatation thermique pure est très simple
 en grandes transformations, tant que d'autres effets ne sont pas pris
@@ -1843,8 +1856,8 @@ commutent {\em a priori} plus.
 
 Si aucun autre phénomène ne contribue à la déformation du corps, ou
 que le corps est élastique et au repos, la
-formule~\eqref{eq:umat:eps_log_th} s'étend au cas anisotrope. Dans le
-repère du matériau, le tenseur des déformations thermiques
+formule~\eqref{eq:umat:eps_log_th} s'étendre au cas anisotrope. Dans
+le repère du matériau, le tenseur des déformations thermiques
 logarithmiques s'écrit, en notation vectorielle~:
 \[
 \tenseur{\varepsilon}_{\ln{}}^{th}=
@@ -2034,9 +2047,6 @@ suivante~:
   \deriv{}{\tns{X}}\paren{\tns{A}\paren{\tns{X}}\,\star\,\tns{B}\paren{\tns{X}}}  
 \end{equation}
 
-\subsection{Définition des tenseurs d'ordre $4$}
-%% $\partial^{l}_{\star}\paren{\tns{B}}$ et $\partial^{l}_{\star}\paren{\tns{A}}$}
-
 La multiplication matricielle étant bilinéaire, il existe deux
 tenseurs d'ordre \(4\) linéaires tels que~:
 \[
@@ -2057,9 +2067,6 @@ dérivée~\eqref{eq:mfront:finitestrain:dAB} ainsi~:
 
 Cette expression est extrêmement utile en pratique, car elle simplifie
 les expressions de toutes les opérations de dérivation. 
-
-\subsection{Représentation matricielle des tenseurs d'ordre $4$}
-%% $\partial^{l}_{\star}(\tns{B})$ et $\partial^{l}_{\star}(\tns{A})$}
 
 L'expression des tenseurs d'ordre \(4\) \(\partial^{l}_{\star}\paren{\tns{B}}\) et
 \(\partial^{l}_{\star}\paren{\tns{A}}\) est assez complexe, d'autant plus que l'on
@@ -2111,7 +2118,7 @@ On constate que cette expression est~:
   paragraphe~\ref{sec:optimisation}.
 \end{enumerate}
 
-\subsection{Calcul des tenseurs d'ordre $4$}
+\paragraph{Calcul de la dérivée d'un produit matriciel}
 
 La classe {\tt t2tot2}, qui représente les opérations linéaires entre
 tenseurs d'ordre \(2\) non symétriques (elle représente donc des
@@ -2121,9 +2128,7 @@ respectivement {\tt tpld} (tensor product left derivative) et {\tt
 d'ordre \(4\) $\partial^{l}_{\star}(\tns{B})$ et
 $\partial^{l}_{\star}(\tns{A})$.
 
-\subsection{Optimisation}
-\label{sec:optimisation}
-
+\paragraph{Optimisation}
 La formule~\eqref{eq:mfront:finitestrain:dAB-b} montre que les
 tenseurs $\partial^{l}_{\star}(\tns{B})$ et
 $\partial^{l}_{\star}(\tns{A})$ sont souvent amenés à être composés
@@ -2132,7 +2137,6 @@ avec d'autres tenseurs d'ordre \(4\). En \(3D\), cette composition est
 est intéressant de l'optimiser en tenant compte de la nature creuse de
 $\partial^{l}_{\star}(\tns{B})$ et $\partial^{l}_{\star}(\tns{A})$.
 
-
 La classe {\tt t2tot2} fournit donc également deux méthodes statiques,
 également nomées {\tt tpld} et {\tt tprd}. La première prend en
 argument le tenseur \(\tns{B}\) et le tenseur d'ordre \(4\)
@@ -2140,299 +2144,12 @@ argument le tenseur \(\tns{B}\) et le tenseur d'ordre \(4\)
 à \(\partial^{l}_{\star}(\tns{B})\,\deriv{\tns{A}}{\tns{X}}\). La
 seconde méthode réalise un travail symétrique.
 
-\subsection{Cas des tenseurs symétriques}
-
-La classe {\tt st2tost2}, qui représente les opérations linéaires
+La classe {\tt st2tot2}, qui représente les opérations linéaires
 entre tenseurs d'ordre \(2\) symétriques (qui représente donc aussi
 des tenseurs d'ordre \(4\)), fournit également quatre méthodes
 statiques nommées respectivement {\tt tpld} (tensor product left
 derivative) et {\tt tprd} (tensor product right derivative) dont le
 rôle est similaire à celui des leurs homologues du cas non symétrique.
-
-\section{Formulations hypoélastiques}
-
-Un des points de départ des différentes formulations hypoélastiques
-est dans l'équation~\eqref{eq:LeLp} de décomposition du gradient de la
-vitesse en un terme lié à la configuration élastique et un terme lié à
-la configuration plastique~:
-\[
-\tns{L} = \tns{L}_e + \tns{F}_{e}\,.\,\tns{L}_{p}\,.\,\inv{\tns{F}_{e}}
-\]
-
-Dans les cas usuels, \(\tns{F}_{e}\) est supposé proche de l'identité,
-ce qui conduit à une décomposition additive des vitesses~:
-\[
-\tns{L} \approx \tns{L}_e + \tns{L}_{p}
-\]
-
-
-% L'idée essentielle des formulations hypoélastiques est d'écrire la loi
-% de comportement en vitesse. Leur nom vient du traitement de
-% l'élasticité qui s'écrit~:
-% \[
-% \tenseur{\tdsigma}=\tenseurq{D}\paren{\tsigma}\,\colon\,\tns{\dot{F}}
-% \]
-
-
-% Le terme hypoélastique provient du fait que si l'on écrit la
-
-% La plupart des lois fournies par les expérimentateurs sont aujourd'hui
-% écrites dans l'hypothèse des petites perturbations (HPP). Dans cette
-% section, nous examinons comment ce formalisme peut être réutilisé dans
-% le cas des grandes transformations.
-
-% De manière générale, la réutilisation du formalisme HPP procède de
-% trois étapes~:
-% \begin{enumerate}[-]
-% \item un pré-traitement permettant le calcul d'un incrément de
-%   déformation~;
-% \item l'appel à la loi HPP~;
-% \item un post-traitement permettant de déduire de la réponse de loi
-%   HPP le tenseur des contraintes (généralement celui de \nom{Cauchy})
-%   utilisé pour le calcul de l'équilibre.
-% \end{enumerate}
-
-% Le paragraphe~\ref{sec:bibl-meth-class} décrit certaines méthodes
-% classiques issues de la littérature que l'on retrouve dans la plupart
-% des codes éléments finis.
-
-% Le paragraphe~\ref{sec:grand-rotat-petit} décrit le formalisme
-% \og~grandes rotations, petites déformations~\fg{} qui a été introduit
-% dans l'interface \umat{} de \mfront{} et que nous avons reprise
-% d'\aster{}~\cite{proix_loi_2013}. Ce formalisme semble
-% particulièrement intéressant pour les applications combustibles car il
-% permet d'étendre une loi HPP (sans nécessité une ré-identification des
-% paramètres de la loi !) au cas des grandes transformations. La
-% démarche suivie sert également d'introduction au paragraphe suivant.
-
-% Le paragraphe~\ref{sec:deform-lagr-et} décrit une famille de
-% déformations lagrangiennes auxquelles on associe des tenseurs de
-% contraintes par dualité~\cite{curnier_mecanique_2005}. Cette méthode
-% est appliquée au cas des déformations logarithmiques qui ont été
-% introduites dans l'interface \umat{} de
-% \mfront{}~\cite{miehe_anisotropic_2002}. L'utilisation des
-% déformations logarithmiques nous a été vivement recommandée par
-% l'équipe \aster{} (formalisme {\tt
-%   GDEF\_LOG}~\cite{bargellini_modeles_2013}).
-
-% \subsection{Éléments de bibliographie, méthodes classiques}
-% \label{sec:bibl-meth-class}
-
-% Il nous a paru intéressant faire une revue bibliographique des
-% méthodes classique permettant de réutiliser les lois HPP. Nous nous
-% sommes surtout intéressé à ce que propose le code \castem{}.
-
-% \subsubsection{Formulation lagrangienne réactualisée}
-
-% La formulation lagrangienne réactualisée est une méthode dans laquelle
-% l'équilibre est calculé sur une géométrie évoluant en cours de
-% calcul~\cite{besson_mecanique_2001}. Cette méthode est disponible dans
-% la plupart des codes éléments finis sous des formes plus ou moins
-% sophistiquées.
-
-% L'incrément des déformations est calculé sur la géométrie en début de
-% pas de temps (ou sur une géométrie intermédiaire, généralement celle
-% de milieu de pas).
-
-% Les contraintes sont calculées de manière incrémentale par
-% l'utilisation d'une simple dérivée temporelle. La dérivée temporelle
-% des contraintes de \nom{Cauchy} n'étant pas objective, elle est
-% sensible aux rotations rigides (apparition de contraintes parasites
-% non physiques lorsque l'on tourne de manière rigide l'ensemble du
-% système). Il est généralement considéré que ces méthodes sont limités
-% à des chargements proportionnels monotones où les rotations sont
-% faibles~\cite{chaboche_mecanique_2009,bargellini_modeles_2013}.
-
-% Dans \castem{}, cette formulation est adoptée par l'option \og~grands
-% déplacements~\fg{} des algorithmes de résolution {\tt PASAPAS} et {\tt
-%   INCREPL}~\cite{pascal_notice_2005}. Pour traiter le contact en
-% \(2D\) ou \(3D\), l'option \og~grands déplacements~\og{} doit être
-% activée. La plupart des codes combustible de la plate-forme utilisent
-% donc ce formalisme.  Il est donc intéressant d'examiner comment se
-% traite une loi HPP dans ce cas\footnote{Nous décrivons ici l'option
-%   {\tt 'EPSILON'}{\tt 'LINEAIRE'} ou {\tt 'EPSILON'}{\tt
-%     'QUADRATIQUE'}. Les cas {\tt 'EPSILON'}{\tt 'JAUMANN'} ou {\tt
-%     'EPSILON'}{\tt 'TRUESDELL'} sont traitées plus loin.}~:
-% \begin{enumerate}[-]
-% \item \castem{} calcule un incrément de déformation sur la
-%   configuration initiale (procédure {\tt INCREPL}) ou celle en milieu
-%   de pas (procédure {\tt PASAPAS}). Dans {\tt PASAPAS}, deux choix
-%   sont disponibles. Dans le cas {\tt LINEAIRE}, on calcule la
-%   déformation linéarisée classique. Le cas {\tt QUADRATIQUE}
-%   correspond à la déformation de \nom{Green-Lagrange}. Dans {\tt
-%     INCREPL}, on calcule toujours la déformation linéarisée.
-% \item on appelle la loi HPP. La contrainte en sortie est interprétée
-%   comme la seconde contrainte de \nom{Piola-Kirchhoff}. Elle est
-%   portée sur la configuration finale par l'opérateur {\tt PICA}.
-% \item notons que ces procédures retourne une déformation (indice {\tt
-%     'DEFORMATIONS'} de la procédure {\tt PASAPAS} ou {\tt 'EPST\_FIN'}
-%   de la procédure {\tt 'INCREPL'}) qui est la somme d'incréments de
-%   déformations calculées sur des configurations différentes et dont la
-%   signification physique est pour le moins discutable\footnote{Il
-%     s'agit au mieux d'un indicateur du niveau de déformation atteint,
-%     mais on pourra lui préférer la déformation calculée sur la
-%     configuration initiale à partir du champs de déplacement
-%     final.}...
-% \end{enumerate}
-
-% Pour les lois externes, nous pouvons noter un changement dans la
-% manière de gérer la mise à jour des contraintes avec la version
-% \(2012\) de \castem{}~:
-% \begin{enumerate}[-]
-% \item avec \(2012\), la documentation de \castem{} précisait que la
-%   loi de comportement devait renvoyer la contrainte de \nom{Cauchy}
-%   sur la configuration déformée, mais aucune loi de comportement (à
-%   notre connaissance) ne faisait cette transformation~;
-% \item avec la version \(2012\), si la loi de comportement déclare
-%   utiliser une déformation linéaire ou quadratique, le code prend en
-%   charge le transport des contraintes.
-% \end{enumerate}
-
-% Le choix fait avec \castem{} \(2012\) nous paraît être préférable~: en
-% effet, la loi de comportement peut être utilisée sans modification
-% pour des transformations infinitésimales ou pour des transformations
-% finies. Il n'est reste pas moins que toutes les applications
-% \pleiades{}, basées sur la version \(2010\) commettent une erreur
-% qu'il est difficile d'évaluer. {\em A priori}, on se rapproche de la
-% formulation {\tt PETIT REAC} d'\aster{} qui est maintenant décrite et
-% dont les limites peuvent nous éclairer.
-
-% Dans \aster{}, l'option {\tt PETIT\ REAC} est celle qui s'en approche
-% le plus~\cite{bargellini_modeles_2013}. Il s'agit d'utiliser
-% directement la loi en transformations infinitésimales en calculant les
-% incréments de déformations sur la configuration en début de pas. La
-% documentation en note les limites~:
-% \begin{quote}
-%   {\em \og{}~En conséquence, l’emploi de {\tt PETIT\_REAC} n’est donc
-%     pas approprié aux grandes rotations mais il l’est aux grandes
-%     déformations, sous certaines conditions~:
-%   \begin{enumerate}[-]
-%   \item très petits incréments [de temps]~;
-%   \item très petites rotations (ce qui implique un chargement
-%     quasi-radial\footnote{Un chargement radial est un chargement
-%       proportionnel~: la direction du chargement est constante au
-%       cours du temps.})~;
-%   \item déformation élastiques petites devant les déformations
-%     plastiques~;
-%   \item comportement isotrope.~\fg{}
-%   \end{enumerate}}
-% \end{quote}
-
-% La limitation aux comportements isotropes est discutée dans le
-% paragraphe suivant.
-
-% \subsubsection{Approches incrémentales eulériennes basée sur une dérivée
-%   objective des contraintes}
-% \label{sec:appr-incr-euler}
-
-% Pour éliminer problèmes liés à la non objectivité de la dérivée
-% temporelle du tenseur des contraintes, une approche classique est
-% d'utilisation d'une dérivée temporelle objective des contraintes.
-
-% L'élasticité s'écrit sous forme incrémentale. Pour l'élastoplasticité,
-% cela se traduit par une relation du type~:
-% \[
-% \overset{\triangledown}{\tsigma}=\tenseurq{D}\paren{\tsigma}\,\left(\dot{\tenseur{d}}-\dot{\tenseur{d}}^{p}\right)
-% \]
-% où~:
-% \begin{minipage}[t]{0.9\linewidth}
-%   \begin{enumerate}[-]
-%   \item \(D\paren{\tsigma}\) est le tenseur d'élasticité instantané
-%     d'ordre \(4\). Certains auteurs considèrent que le principe
-%     d'indifférence matériel implique que \(D\) doit être fonction
-%     isotrope des contraintes (ce qui exclut normalement le traitement
-%     des lois orthotropes)~\cite{simo_formulations_1992}.
-%   \item \(\dot{\tenseur{d}}\) est la partie symétrique du tenseur
-%     eulérien des vitesses~;
-%   \item  \(\dot{\tenseur{d}}^{p}\) est la vitesse
-%     d'écoulement plastique.
-%   \end{enumerate}
-% \end{minipage}
-
-% Une telle loi est dite hypoélastique car les contraintes ne dérivent
-% généralement pas d'un potentiel.
-
-% Ces approches ont reçu des nombreuses critiques dans la
-% littérature~\cite{simo_computational_1998,doghri_mechanics_2000,chaboche_mecanique_2009}~:
-% \begin{enumerate}[-]
-% \item le choix de la dérivée objective à utiliser. Une infinité de
-%   dérivées objectives existent. Les plus utilisées sont introduites
-%   \nom{Jaumann}, \nom{Green-Naghdi} et \nom{Truesdell}. Les deux
-%   premières sont dites corotationnelles car elles décrivent la
-%   réaction du matériau dans un repère en rotation par rapport au
-%   référentiel du calcul.
-% \item les lois hypoélastiques peuvent conduire à un travail mécanique
-%   dissipé non nul après d'un cycle de charge-décharge, ce qui ne
-%   correspond pas à l'idée que l'on se fait d'un comportement
-%   élastique~\cite{bargellini_modeles_2013,forest_mecanique_2013}.
-% \item la plasticité est incohérente au sens donné par \nom{Xiao} et
-%   \nom{Bruhns}~\cite{xiao_choice_2000}~;
-% \item L'utilisation des dérivées objectives conduit à un algorithme
-%   coûteux qui doit respecter la notion d'objectivité incrémentale. De
-%   plus, la matrice tangente est non
-%   symétrique~\cite{simo_computational_1998,bargellini_modeles_2013}.
-% \end{enumerate}
-
-% D'un point de vue pratique, \nom{Doghri} note que pour un chargement
-% monotone une loi hyperélastique (dérivant d'un potentiel) et une loi
-% hypoélastique conduisent à des résultats
-% proches~\cite{doghri_mechanics_2000}.
-
-% \paragraph{Dérivées objectives fournies par \castem{}}
-
-% \castem{} propose les dérivées objectives de \nom{Jaumann} et
-% \nom{Green-Naghdi}\footnote{La documentation du code indique que la
-%   dérivée de \nom{Truesdell} est disponible mais il pourrait y avoir
-%   eu une confusion avec celle de \nom{Green-Naghdi} (communication
-%   avec \nom{Olivier Fandeur}.). Ce point mériterait d'être
-%   éclairci.}.
-
-
-% \paragraph{La formulation {\tt GDEF\_HYPO\_ELAS}
-%   d'\aster{}~\cite{bargellini_modeles_2013}} La formulation {\tt
-%   GDEF\_HYPO\_ELAS} d'\aster{} implémente la méthode proposée par
-% \nom{Simo} et
-% \nom{Hughes}~\cite{simo_computational_1998,bargellini_modeles_2013}. Cette
-% formulation permet de réutiliser de nombreuses lois {\em isotropes}.
-
-% \paragraph{Cas du code {\tt Bison}} Le code {\tt Bison} utilise une
-% également formulation
-% hypoélastique~\cite{williamson_multidimensional_2012} pour la
-% gaine. La vitesse de déformation eulérienne est évaluée ainsi~:
-% \[
-% \tenseur{d} =
-% \Frac{1}{2\Delta\,t}\ln\paren{\transpose{\tns{F}^{n}}\,.\,\tns{F}^{n}}
-% \]
-% où \(\tns{F}^{n}\) désigne le gradient de la transformation entre la
-% configuration de début de pas de temps et la configuration de fin de
-% pas de temps. On reconnaît dans cette expression le tenseur de
-% \nom{Hencky} par rapport à la configuration de début de pas divisé par
-% l'incrément de temps. Par décomposition polaire de \(\tns{F}^{n}\), on
-% obtient une matrice de rotation qui permet de tourner les contraintes
-% dans le repère en fin de pas de temps\footnote{La manière de procéder
-%   n'est pas précisée, mais on peut imaginer une relation proche de
-%   l'équation~\eqref{eq:finitestrain:sk2tochauchy:2} que nous décrirons
-%   au paragraphe~\ref{sec:grand-rotat-petit}.}.
-
-% \subsubsection{Repères locaux objectifs}
-
-% Cette restriction est levée par l'utilisation de repères locaux
-% objectifs.
-
-% Notons que \nom{Xiao} et \nom{Bruhns} ont démontré, dans le cas
-% isotherme, que leur dérivée corotationnelle logarithmique est l'unique
-% dérivée objective évitant certains des défauts précédemment
-% cités~\cite{xiao_choice_2000}~: la loi élasticité incrémentale est
-% notamment intégrable permettant de retrouver une loi hyperélastique et
-% la description de la plasticité était cohérente.
-
-% L'intégration de ces lois est décrite par exemple
-% dans~\cite{zhu_logarithmic_2014}.
-
-
-% \paragraph{Traitement des dilatations thermiques} À faire.
-
-% \subsubsection{Cas tests}
 
 \end{document}
 
