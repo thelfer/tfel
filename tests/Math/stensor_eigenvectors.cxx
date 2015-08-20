@@ -43,7 +43,9 @@ struct StensorComputeEigenvectors final
     this->test<double>();
     this->test2<float>();
     this->test2<double>();
+#ifndef __CYGWIN__
     this->test2<long double>();
+#endif /* __CYGWIN__ */
     this->test3<float>();
     this->test3<double>();
     return this->result;
@@ -142,6 +144,7 @@ private:
     }
 
     TFEL_TESTS_ASSERT(failure==0);
+    std::cout << "stat : " << (static_cast<double>(unprecised_results)/static_cast<double>(nb_boucles)) << std::endl;
     TFEL_TESTS_ASSERT((static_cast<double>(unprecised_results)/static_cast<double>(nb_boucles)<0.003));
   }
 
@@ -169,6 +172,7 @@ private:
       }
     }
     TFEL_TESTS_ASSERT(failure==0);
+    std::cout << "stat : " << (static_cast<double>(failure)/static_cast<double>(nb_boucles)) << std::endl;
     TFEL_TESTS_ASSERT((static_cast<double>(failure)/static_cast<double>(nb_boucles)<0.003));
   }
 
