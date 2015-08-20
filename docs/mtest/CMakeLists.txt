@@ -1,5 +1,5 @@
 macro(install_mtest_desc file)
-  install(FILES ${file}.txt DESTINATION share/doc/mtest
+  install(FILES ${file}.md DESTINATION share/doc/mtest
     COMPONENT mtest)
 endmacro(install_mtest_desc file)
 
