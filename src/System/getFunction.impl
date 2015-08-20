@@ -6,7 +6,7 @@
  * \date   18 december 2008
  */
 
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #include<cstdlib>
 #include<cstring>
 #define dlsym(handle, func) GetProcAddress (handle, func)
@@ -15,7 +15,7 @@
 #include<string.h>
 #include<dlfcn.h>
 #define nullptr NULL
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
 #include"TFEL/System/getFunction.h"
 

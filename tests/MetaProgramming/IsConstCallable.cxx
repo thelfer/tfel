@@ -4,7 +4,9 @@
  * \author Helfer Thomas
  * \date   15 févr. 2015
  */
-    
+
+#include<cstdlib>
+
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"

@@ -9,7 +9,7 @@
 #ifndef LIB_TFEL_GETFUNCTION_H_
 #define LIB_TFEL_GETFUNCTION_H_
 
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -17,7 +17,7 @@
 typedef HINSTANCE__* LibraryHandlerPtr;
 #else
 typedef void*        LibraryHandlerPtr;
-#endif /* LIB_TFEL_GETFUNCTION_H_ */
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 

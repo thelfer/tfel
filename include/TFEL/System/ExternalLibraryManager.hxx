@@ -18,7 +18,7 @@
 #include<vector>
 #include<string>
 
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #include <windows.h>
 #endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */
 
@@ -47,7 +47,7 @@ namespace tfel
        * \note on success, the pointer is registred in a map using its
        * name as a key. This name is used in the methods of this call 
        */
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       HINSTANCE__*
       loadLibrary(const std::string&,
 		  const bool = false);
@@ -686,12 +686,11 @@ namespace tfel
 		   const std::string&,
 		   const std::string&);
 
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       std::map<std::string,HINSTANCE__*> librairies;
 #else 
       std::map<std::string,void *> librairies;
 #endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */
-
 
     }; // end of struct LibraryManager
     
