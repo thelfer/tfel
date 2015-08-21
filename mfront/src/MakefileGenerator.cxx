@@ -246,7 +246,7 @@ namespace mfront{
 	  m << "-O2 `tfel-config --compiler-flags`";
 	}
 	if(o.sys=="win32"){
-	  m << "-D'F77_FUNC(X,Y)=X\\#\\#_' -D'F77_FUNC_(X,Y)=X\\#\\#__' -DWIN32 $(INCLUDES) \n\n";
+	  m << "-D'F77_FUNC(X,Y)=X\\#\\#_' -D'F77_FUNC_(X,Y)=X\\#\\#__' -DWIN32 -DMFRONT_COMPILING $(INCLUDES) \n\n";
 	} else {
 	  m << "-D'F77_FUNC(X,Y)=X\\#\\#_' -D'F77_FUNC_(X,Y)=X\\#\\#_' -fPIC $(INCLUDES) \n\n";
 	}
@@ -271,7 +271,7 @@ namespace mfront{
 	  m << "-O2 ";
 	}
 	if(o.sys=="win32"){
-	  m << "-D'F77_FUNC(X,Y)=X' -DWIN32 $(INCLUDES)\n\n";
+	  m << "-D'F77_FUNC(X,Y)=X' -DWIN32 -DMFRONT_COMPILING $(INCLUDES)\n\n";
 	} else {
 	  m << "-D'F77_FUNC(X,Y)=X' -fPIC $(INCLUDES)\n\n";
 	}

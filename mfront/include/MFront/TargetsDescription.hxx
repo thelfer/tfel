@@ -85,7 +85,7 @@ namespace mfront{
     //! target system
 #if defined __APPLE__
     LibraryDescription::TargetSystem system = LibraryDescription::MACOSX;
-#elseif (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#elif (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     LibraryDescription::TargetSystem system = LibraryDescription::WINDOWS;
 #else
     LibraryDescription::TargetSystem system = LibraryDescription::UNIX;
@@ -123,7 +123,6 @@ namespace mfront{
   MFRONT_VISIBILITY_EXPORT bool
   describes(const TargetsDescription&,
 	    const std::string&);
-  
   /*!
    * \brief merge two targets description
    * \param[out] d : destination
@@ -134,7 +133,6 @@ namespace mfront{
   mergeTargetsDescription(TargetsDescription&,
 			  const TargetsDescription&,
 			  const bool b);
-
   /*!
    * \brief write a target description to a stream
    * \param[out] os : output stream
