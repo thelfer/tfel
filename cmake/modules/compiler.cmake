@@ -14,7 +14,6 @@
 # This macro is a copy of CheckCXXSourceCompiles.cmake
 # Copyright 2005-2009 Kitware, Inc.
 MACRO(TFEL_CHECK_CXX_SOURCE_COMPILES SOURCE VAR)
-  IF("${VAR}" MATCHES "^${VAR}$")
     SET(_FAIL_REGEX)
     SET(_key)
     FOREACH(arg ${ARGN})
@@ -72,7 +71,6 @@ MACRO(TFEL_CHECK_CXX_SOURCE_COMPILES SOURCE VAR)
         "${OUTPUT}\n"
         "Source file was:\n${SOURCE}\n")
     ENDIF(${VAR})
-  ENDIF("${VAR}" MATCHES "^${VAR}$")
 ENDMACRO(TFEL_CHECK_CXX_SOURCE_COMPILES)
 
 MACRO (TFEL_CHECK_CXX_COMPILER_FLAG _FLAG _RESULT)

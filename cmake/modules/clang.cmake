@@ -26,6 +26,11 @@ if(HAVE_FORTRAN)
   include(cmake/modules/gnu-fortran-compiler.cmake)
 endif(HAVE_FORTRAN)
 
+option(enable-libcxx "use LLVM C++ Standard library" OFF)
+if(enable-libcxx)
+  tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "stdlib=libc++")
+endif(enable-libcxx)
+
 if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 3.4)
   message(FATAL_ERROR "TFEL C++11 support is only available for clang version >= 3.4")
 endif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 3.4)

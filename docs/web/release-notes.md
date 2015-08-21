@@ -49,28 +49,6 @@ was greatly simplified and is now much more liable and maintainable.
 
 ## New features
 
-- behaviour bricks
-- support of thermal expansion computations in behaviours
-- support of calling models from behaviours
-- add the '--help-commands' command to `MFront`. This option displays
-  the documentation of all the keywords of a given domain specific
-  language. This option was used to generate the following pages:
-    + [DefaultDSL](DefaultDSL-keywords.html) 
-    + [DefaultCZMDSL](DefaultCZMDSL-keywords.html) 
-    + [DefaultFiniteStrainDSL](DefaultFiniteStrainDSL-keywords.html) 
-    + [Implicit](Implicit-keywords.html) 
-    + [ImplicitFiniteStrain](ImplicitFiniteStrain-keywords.html) 
-    + [ImplicitII](ImplicitII-keywords.html) 
-    + [IsotropicMisesCreep](IsotropicMisesCreep-keywords.html) 
-    + [IsotropicPlasticMisesFlow](IsotropicPlasticMisesFlow-keywords.html) 
-    + [IsotropicStrainHardeningMisesCreep](IsotropicStrainHardeningMisesCreep-keywords.html) 
-    + [MaterialLaw](MaterialLaw-keywords.html) 
-    + [Model](Model-keywords.html) 
-    + [MultipleIsotropicMisesFlows](MultipleIsotropicMisesFlows-keywords.html) 
-    + [RungeKutta](RungeKutta-keywords.html) 
-- add the '--help-commands' command to `MTest`. This option displays
-  the documentation of all the keywords. This option was used to
-  generate this [page](MTest-keywords.html).
 - new applications:
     + `mfront-query` can be used to extract various information from
       a `MFront` file
@@ -92,6 +70,38 @@ was greatly simplified and is now much more liable and maintainable.
 	  [`GNU Octave`](https://www.gnu.org/software/octave/) which is
       a high-level interpreted language, primarily intended for
       numerical computations.
+- `MFront` new features
+	+ behaviour bricks
+	+ support of thermal expansion computations in behaviours
+	+ support of calling models from behaviours
+	+ add the '--help-commands' command to `MFront`. This option displays
+	  the documentation of all the keywords of a given domain specific
+	  language. This option was used to generate the following pages:
+	    * [DefaultDSL](DefaultDSL-keywords.html) 
+	    * [DefaultCZMDSL](DefaultCZMDSL-keywords.html) 
+	    * [DefaultFiniteStrainDSL](DefaultFiniteStrainDSL-keywords.html) 
+	    * [Implicit](Implicit-keywords.html) 
+	    * [ImplicitFiniteStrain](ImplicitFiniteStrain-keywords.html) 
+	    * [ImplicitII](ImplicitII-keywords.html) 
+	    * [IsotropicMisesCreep](IsotropicMisesCreep-keywords.html) 
+	    * [IsotropicPlasticMisesFlow](IsotropicPlasticMisesFlow-keywords.html) 
+	    * [IsotropicStrainHardeningMisesCreep](IsotropicStrainHardeningMisesCreep-keywords.html) 
+	    * [MaterialLaw](MaterialLaw-keywords.html) 
+	    * [Model](Model-keywords.html) 
+	    * [MultipleIsotropicMisesFlows](MultipleIsotropicMisesFlows-keywords.html) 
+	    * [RungeKutta](RungeKutta-keywords.html)
+- `MTest` new features
+	+ new acceleration algorithms by I. Ramière. This work has been
+      described in a dedicated paper, see @ramiere_iterative_2015.
+	+ add the '--help-commands' command to `MTest`. This option displays
+	  the documentation of all the keywords. This option was used to
+	  generate this [page](MTest-keywords.html).
+- `TFEL/Math` library
+    + add a bunch of view classes (`StensorView` for example) to avoid
+      some `reinterpret_cast` that relied on the empty base
+      optimization performed by all compilers, except Visual
+      C++. `TFEL` and `MFront` are now even more standard compliant
+      and portable.
 
 ## Systems supported
 

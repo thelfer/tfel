@@ -33,11 +33,10 @@ struct StensorChangeBasis3Test final
   virtual tfel::tests::TestResult
   execute() override
   {
-    // The current version of Visual Studio (2015) and Clang compiler
-    // on Mac OS 10.6 does not support the uniform_real_distribution
-    // function, so we disable this test with this compiler and on Mac
-    // OS
-#if (!defined _MSC_VER) && (!((defined __APPLE__) && (defined __MACH__)))
+    // The current version of Visual Studio (2015) and LLVM libc++
+    // does not support the uniform_real_distribution function, so we
+    // disable this test with this compiler and on Mac OS
+#if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION)
     using namespace std;
     using namespace tfel::math;
     typedef double real;

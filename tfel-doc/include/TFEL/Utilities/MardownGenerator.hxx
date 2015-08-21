@@ -1,5 +1,5 @@
 /*! 
- * \file  tfel-doc/include/TFEL/Utilities/LaTeXConvertion.hxx
+ * \file  tfel-doc/include/TFEL/Utilities/MarkdownConvertion.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_UTILITIES_LATEXCONVERTION_H_
-#define _LIB_TFEL_UTILITIES_LATEXCONVERTION_H_ 
+#ifndef _LIB_TFEL_UTILITIES_MARKDOWNCONVERTION_H_
+#define _LIB_TFEL_UTILITIES_MARKDOWNCONVERTION_H_ 
 
 #include<map>
 #include<vector>
@@ -29,20 +29,20 @@ namespace tfel
     struct TestDocumentation;
 
     /*!
-     * generate a LaTeX documentation
+     * generate a Markdown documentation
      */
     void
-    printLaTeXFile(std::ostream&,
-		   const std::map<std::string,std::vector<TestDocumentation>>&,
-		   const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const bool,
-		   const bool);
+    printMarkdownFile(std::ostream&,
+		      const std::map<std::string,std::vector<TestDocumentation>>&,
+		      const std::string&,
+		      const std::string&,
+		      const std::string&,
+		      const bool,
+		      const bool);
 
   } // end of namespace utilities
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_UTILITIES_LATEXCONVERTION_H */
+#endif /* _LIB_TFEL_UTILITIES_MARKDOWNCONVERTION_H */
 

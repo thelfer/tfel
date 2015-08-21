@@ -3521,6 +3521,7 @@ tfel-doc/include/TFEL/Utilities/ConfigParser.hxx -text
 tfel-doc/include/TFEL/Utilities/Global.hxx -text
 tfel-doc/include/TFEL/Utilities/LaTeXGenerator.hxx -text
 tfel-doc/include/TFEL/Utilities/MTestDocParser.hxx -text
+tfel-doc/include/TFEL/Utilities/MardownGenerator.hxx -text
 tfel-doc/include/TFEL/Utilities/ParserBase.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocMain.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocParser.hxx -text
@@ -3531,6 +3532,7 @@ tfel-doc/src/Global.cxx -text
 tfel-doc/src/LaTeXGenerator.cxx -text
 tfel-doc/src/MTestDocParser.cxx -text
 tfel-doc/src/Makefile.am -text
+tfel-doc/src/MarkdownGenerator.cxx -text
 tfel-doc/src/ParserBase.cxx -text
 tfel-doc/src/TestDocMain.cxx -text
 tfel-doc/src/TestDocParser.cxx -text
