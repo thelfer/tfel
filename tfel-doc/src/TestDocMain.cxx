@@ -32,13 +32,12 @@
 #include"TFEL/System/RecursiveFind.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/Utilities/Global.hxx"
-#include"TFEL/Utilities/LaTeXConvertion.hxx"
+#include"TFEL/Utilities/LaTeXGenerator.hxx"
 #include"TFEL/Utilities/TestDocumentation.hxx"
 #include"TFEL/Utilities/TestDocParser.hxx"
 #include"TFEL/Utilities/MTestDocParser.hxx"
 #include"TFEL/Utilities/ConfigParser.hxx"
 #include"TFEL/Utilities/TestDocMain.hxx"
-
 
 namespace tfel
 {
@@ -51,9 +50,8 @@ namespace tfel
     parse_files(std::ostream& log,
 		std::map<std::string,std::vector<TestDocumentation>>& tests,
 		const std::string& ext){
-      auto files = std::map<std::string,std::vector<std::string>>{};
       char path[MAXPATHLEN];
-      tfel::system::recursiveFind(files,".*\\."+ext,".");
+      auto files = tfel::system::recursiveFind(".*\\."+ext,".");
       for(const auto& d : files){
 	if(realpath(d.first.c_str(),path)==nullptr){
 	  log << "entering directory " << d.first << '\n';
@@ -75,25 +73,6 @@ namespace tfel
       }
     }
 
-    
-    static std::string
-    replace_all(const std::string& c,
-		const char c1,
-		const char c2)
-    {
-      using namespace std;
-      string s(c);
-      string::size_type p  = 0u;
-      if(s.size()==0){
-	return "";
-      }
-      while((p=s.find(c1,p))!=string::npos){
-	s[p] = c2;
-	p+=1u;
-      }
-      return s;
-    } // end of replace_all
-
     static std::string
     getOutputDirectory(const std::string& f)
     {
@@ -105,117 +84,6 @@ namespace tfel
       return f.substr(0,pos);
     } // end of getOutputDirectory
    
-    static std::string
-    getSectionHeaderTranslation(const std::string& s,
-				const std::string& l)
-    {
-      using namespace std;
-      using namespace tfel::utilities;
-      if(l=="french"){
-	return "Test de la catégorie \\og~"+getCategory(s,l)+"~\\fg{}";
-      }
-      if(l!="english"){
-	cerr << TerminalColors::Red;
-	cerr << "getSectionHeaderTranslation : unsupported language'"+l
-	     << "', using default" << endl;
-	cerr << TerminalColors::Reset;
-      }
-      return s;
-    }
-
-    static std::string
-    getBabelPackage(const std::string& l)
-    {
-      using namespace std;
-      using namespace tfel::utilities;
-      if(l!="french"){
-	cerr << TerminalColors::Red;
-	cerr << "getBabelPackage : unsupported language '" << l << 
-	  "', using default" << endl;
-	cerr << TerminalColors::Reset;
-	return "";
-      }
-      return "\\usepackage[frenchb]{babel}";
-    }
-
-    static void
-    printLaTeXFile(std::ostream& log,
-		   const std::map<std::string,std::vector<TestDocumentation> >& tests,
-		   const std::string& d,
-		   const std::string& prefix,
-		   const std::string& l,
-		   const bool fragment,
-		   const bool split)
-    {
-      using namespace std;
-      map<string,vector<TestDocumentation> >::const_iterator p;
-      vector<TestDocumentation>::const_iterator p2;
-      if(!fragment){
-	log << "\\documentclass[a4paper,12pt]{article}" << endl;
-	log << endl;
-	log << "\\usepackage[utf8]{inputenc}" << endl;
-	log << "\\usepackage{multind}" << endl;
-	log << "\\usepackage{amsmath}" << endl;
-	log << "\\usepackage{color}" << endl;
-	log << endl;
-	log << "\\newcommand{\\Frac}[2]{\\displaystyle\\frac{\\displaystyle #1}{\\displaystyle #2}}" << endl;
-	log << "\\newcommand{\\paren}[1]{\\ensuremath\\left(#1\\right)}" << endl;
-	log << "\\newcommand{\\tenseur}[1]{\\ensuremath\\underline{#1}}" << endl;
-	log << "\\newcommand{\\tenseurq}[1]{\\ensuremath\\underline{\\underline{#1}}}" << endl;
-	log << "\\newcommand{\\nom}[1]{\\textsc{#1}}" << endl;
-	log << endl;
-	log << "% one column index" << endl;
-	log << "\\makeatletter" << endl;
-	log << "\\def\\printindex#1#2{\\section*{#2}" << endl;
-	log << "\\addcontentsline{toc}{section}{#2}" << endl;
-	log << "\\@input{#1.ind}}"  << endl;
-	log << "\\makeatother" << endl;
-	log << endl;
-	if(l!="english"){
-	  log << getBabelPackage(l) << endl;
-	}
-	log << "\\makeindex{general}" << endl;
-	log << "\\makeindex{models}" << endl;
-	log << endl;
-	log << "\\begin{document}"<< endl;
-	log << endl;
-      }
-      for(p=tests.begin();p!=tests.end();++p){
-	log << "\\clearpage" << endl;
-	log << "\\newpage" << endl;
-	if(split){
-	  const auto& tf = replace_all(p->first,' ','_')+".tex";
-	  const auto& file = d+"/"+tf;
-	  ofstream f(file.c_str());
-	  if(!f){
-	    string msg("printLaTeXFile : can't open file '"+file+"'");
-	    throw(runtime_error(msg));
-	  }
-	  f << "\\section{" << getSectionHeaderTranslation(p->first,l) << "}" << endl;
-	  f << endl; 
-	  for(p2=p->second.begin();p2!=p->second.end();++p2){
-	    p2->writeLaTexDescription(f,prefix,l);
-	  }
-	  log << "\\input{" << tf << "}" << endl << endl;
-	} else {
-	  log << "\\section{" << getSectionHeaderTranslation(p->first,l) << "}" << endl;
-	  log << endl; 
-	  for(p2=p->second.begin();p2!=p->second.end();++p2){
-	    p2->writeLaTexDescription(log,prefix,l);
-	  }
-	}
-      }
-      if(!fragment){
-	log << "\\clearpage" << endl;
-	log << "\\newpage" << endl;
-	log << "\\printindex{general}{" << LaTeXConvertion::capitalize(getTranslation("general index",l)) << "}" << endl  << endl;
-	log << "\\clearpage" << endl;
-	log << "\\newpage" << endl;
-	log << "\\printindex{models}{" << LaTeXConvertion::capitalize(getTranslation("models index",l)) << "}" << endl << endl;
-	log << "\\end{document}"<< endl;
-      }
-    }
-
     static void
     declareKeys(const std::string& f)
     {

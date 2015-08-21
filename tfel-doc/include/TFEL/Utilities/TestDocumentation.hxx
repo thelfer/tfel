@@ -25,17 +25,13 @@ namespace tfel{
 
     struct TestDocumentation
     {
-      TestDocumentation() = default;
-      TestDocumentation(const TestDocumentation&) = default;
-      TestDocumentation(TestDocumentation&&) = default;
+      TestDocumentation();
+      TestDocumentation(const TestDocumentation&);
+      TestDocumentation(TestDocumentation&&);
       TestDocumentation&
-      operator=(const TestDocumentation& ) = default;
+      operator=(const TestDocumentation& );
       TestDocumentation&
-      operator=(TestDocumentation&&) = default;
-
-      void writeLaTexDescription(std::ostream&,
-				 const std::string&, 
-				 const std::string&) const;
+      operator=(TestDocumentation&&);
       //! destructor
       ~TestDocumentation();
       

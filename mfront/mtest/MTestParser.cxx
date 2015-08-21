@@ -1180,16 +1180,14 @@ namespace mfront
   void
   MTestParser::handleImposedThermodynamicForce(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    using namespace tfel::utilities;
     const auto& evt = this->readEvolutionType(p);
     const auto& c = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedThermodynamicForce",p,
 			    this->fileTokens.end());
-    shared_ptr<Evolution> sev = this->parseEvolution(evt,t,p);
-    shared_ptr<Constraint> sc(new ImposedThermodynamicForce(*(t.getBehaviour()),
-								      t.getModellingHypothesis(),
-								      c,sev));
+    auto sev = this->parseEvolution(evt,t,p);
+    auto sc  = std::make_shared<ImposedThermodynamicForce>(*(t.getBehaviour()),
+							   t.getModellingHypothesis(),
+							   c,sev);
     t.addEvolution(c,sev,false,true);
     t.addConstraint(sc);
     this->readSpecifiedToken("MTestParser::handleImposedThermodynamicForce",";",
@@ -1199,13 +1197,11 @@ namespace mfront
   void
   MTestParser::handleImposedStrain(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MTestParser::handleImposedStrain : "
-		 "the @ImposedStrain keyword is only valid "
-		 "for small strain behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestParser::handleImposedStrain : "
+			       "the @ImposedStrain keyword is only valid "
+			       "for small strain behaviours"));
     }
     this->handleImposedDrivingVariable(t,p);
   }
@@ -1213,13 +1209,11 @@ namespace mfront
   void
   MTestParser::handleImposedDeformationGradient(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
-      string msg("MTestParser::handleImposedDeformationGradient : "
-		 "the @ImposedDeformationGradient keyword is only valid "
-		 "for finite strain behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestParser::handleImposedDeformationGradient : "
+			       "the @ImposedDeformationGradient keyword is only valid "
+			       "for finite strain behaviours"));
     }
     this->handleImposedDrivingVariable(t,p);
   }
@@ -1227,14 +1221,11 @@ namespace mfront
   void
   MTestParser::handleImposedOpeningDisplacement(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    using namespace tfel::utilities;
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      string msg("MTestParser::ImposedOpeningDisplacement : "
-		 "the @ImposedOpeningDisplacement keyword is only valid "
-		 "for cohesive zone model behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestParser::ImposedOpeningDisplacement : "
+			       "the @ImposedOpeningDisplacement keyword is only valid "
+			       "for cohesive zone model behaviours"));
     }
     this->handleImposedDrivingVariable(t,p);
   }
@@ -1242,16 +1233,14 @@ namespace mfront
   void
   MTestParser::handleImposedDrivingVariable(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    using namespace tfel::utilities;
     const auto& evt = this->readEvolutionType(p);
     const auto& c = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedDrivingVariable",p,
 			    this->fileTokens.end());
-    shared_ptr<Evolution> sev = this->parseEvolution(evt,t,p);
-    shared_ptr<Constraint> sc(new ImposedDrivingVariable(*(t.getBehaviour()),
-							 t.getModellingHypothesis(),
-							 c,sev));
+    auto sev = this->parseEvolution(evt,t,p);
+    auto sc  = std::make_shared<ImposedDrivingVariable>(*(t.getBehaviour()),
+							t.getModellingHypothesis(),
+							c,sev);
     this->readSpecifiedToken("MTestParser::handleImposedDrivingVariable",";",
 			     p,this->fileTokens.end());
     t.addEvolution(c,sev,false,true);

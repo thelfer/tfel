@@ -3519,7 +3519,7 @@ tfel-doc/include/Makefile.am -text
 tfel-doc/include/TFEL/Utilities/Config.hxx -text
 tfel-doc/include/TFEL/Utilities/ConfigParser.hxx -text
 tfel-doc/include/TFEL/Utilities/Global.hxx -text
-tfel-doc/include/TFEL/Utilities/LaTeXConvertion.hxx -text
+tfel-doc/include/TFEL/Utilities/LaTeXGenerator.hxx -text
 tfel-doc/include/TFEL/Utilities/MTestDocParser.hxx -text
 tfel-doc/include/TFEL/Utilities/ParserBase.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocMain.hxx -text
@@ -3528,7 +3528,7 @@ tfel-doc/include/TFEL/Utilities/TestDocumentation.hxx -text
 tfel-doc/src/CMakeLists.txt -text
 tfel-doc/src/ConfigParser.cxx -text
 tfel-doc/src/Global.cxx -text
-tfel-doc/src/LaTeXConvertion.cxx -text
+tfel-doc/src/LaTeXGenerator.cxx -text
 tfel-doc/src/MTestDocParser.cxx -text
 tfel-doc/src/Makefile.am -text
 tfel-doc/src/ParserBase.cxx -text

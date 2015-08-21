@@ -19,7 +19,7 @@ set(tfel-doc_SOURCES tfel-doc.cxx
 		     TestDocumentation.cxx
 		     TestDocParser.cxx
 		     MTestDocParser.cxx
-		     LaTeXConvertion.cxx)
+		     LaTeXGenerator.cxx)
 
 add_executable(tfel-doc ${tfel-doc_SOURCES})
 target_link_libraries(tfel-doc

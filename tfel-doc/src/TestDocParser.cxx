@@ -41,30 +41,27 @@ namespace tfel{
       try{
 	while(p!=pe){
 	  if(p->flag!=Token::String){
-	    string msg("TestDocParser::addDocumentation : ");
-	    msg += "expected to read a string";
-	    throw(runtime_error(msg));
+	    throw(runtime_error("TestDocParser::addDocumentation : "
+				"expected to read a string"));
 	  }
 	  TestDocumentation t;
 	  this->readString(t.name,p);
 	  for(const auto& td : tests){
 	    for(auto p3=td.second.begin();p3!=td.second.end();++p3){
 	      if(t.name==p3->name){
-		string msg("TestDocParser::addDocumentation : ");
-		msg += "test '"+t.name+"' already described";
-		throw(runtime_error(msg));	  
+		throw(runtime_error("TestDocParser::addDocumentation : "
+				    "test '"+t.name+"' already described"));	  
 	      }
 	    }
 	  }
 	  this->checkNotEndOfFile(p);
 	  this->readSpecifiedToken("{",p);
-	  string c;
+	  auto c = string{};
 	  this->treatTest(t,c,p);
 	  this->checkNotEndOfFile(p);
 	  this->readSpecifiedToken("}",p);
 	  if(c.empty()){
-	    string msg("no category defined for test '"+t.name+"'");
-	    throw(runtime_error(msg));
+	    throw(runtime_error("no category defined for test '"+t.name+"'"));
 	  }
 	  tests[c].push_back(t);
 	}
@@ -88,7 +85,7 @@ namespace tfel{
       using namespace tfel::utilities;
       this->checkNotEndOfFile(p);
       while(p->value!="}"){
-	string key = p->value;
+	auto key = p->value;
 	++p;
 	this->readSpecifiedToken(":",p);
 	if(key=="author"){
@@ -117,9 +114,8 @@ namespace tfel{
 	} else if(key=="keys"){
 	  this->treatIndex(t.keys,t.name,p,true);
 	} else {
-	  string msg("TestDocParser::treatTest : ");
-	  msg += "unsupported keyword '"+key+"'";
-	  throw(runtime_error(msg));
+	  throw(runtime_error("TestDocParser::treatTest : "
+			      "unsupported keyword '"+key+"'"));
 	}
 	this->readSpecifiedToken(";",p);
 	this->checkNotEndOfFile(p);
@@ -132,12 +128,10 @@ namespace tfel{
 				  const std::string& v,
 				  const_iterator& p)
     {
-      using namespace std;
       this->checkNotEndOfFile(p);
       if(!s.empty()){
-	string msg("TestDocParser::getStringValue : ");
-	msg += v+" already defined for test '"+name+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("TestDocParser::getStringValue : '"+
+				 v+"' already defined for test '"+name+"'"));
       }
       this->readString(s,p);
     }
@@ -147,19 +141,12 @@ namespace tfel{
 				    std::string& n,
 				    const_iterator& p)
     {
-      using namespace std;
-      string l;
       this->checkNotEndOfFile(p);
-      if(p->value!="{"){
-	l = this->readString(p);
-      } else {
-	l = "english";
-      }
+      const auto l = (p->value!="{") ? this->readString(p) : "english";
       if(dm.find(l)!=dm.end()){
-	string msg("TestDocParser::treatDescription : ");
-	msg += "description already defined for language '"+l;
-	msg += " 'for test '"+n+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("TestDocParser::treatDescription : "
+				 "description already defined for language '"+l+
+				 " 'for test '"+n+"'"));
       }
       auto& d = dm[l];
       this->readSpecifiedToken("{",p);
@@ -182,7 +169,6 @@ namespace tfel{
 			      const bool b)
     {
       using namespace std;
-      using namespace tfel::utilities;
       const auto& k = getKeysMap("english");
       this->checkNotEndOfFile(p);
       this->readSpecifiedToken("{",p);

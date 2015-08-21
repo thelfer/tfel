@@ -1,5 +1,5 @@
 nobase_include_HEADERS = ./TFEL/Utilities/Global.hxx            \
-                         ./TFEL/Utilities/LaTeXConvertion.hxx   \
+                         ./TFEL/Utilities/LaTeXGenerator.hxx    \
                          ./TFEL/Utilities/TestDocumentation.hxx \
                          ./TFEL/Utilities/TestDocParser.hxx     \
                          ./TFEL/Utilities/MTestDocParser.hxx    \

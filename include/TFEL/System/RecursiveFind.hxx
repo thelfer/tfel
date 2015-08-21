@@ -34,6 +34,7 @@ namespace tfel
      * expression from the given directory.
      * \param re     : a regular expression
      * \param name   : name of the directory from which the search starts
+     * \param b      : throw an exception if something wrong happens
      * \param depth  : depth reached in the recursive search
      * \param mdepth : maximum depth allowed
      * \return the matching files, ordered by directories
@@ -42,54 +43,61 @@ namespace tfel
     std::map<std::string,std::vector<std::string> >
     recursiveFind(const std::string&,
 		  const std::string&,
+		  const bool b = true,
 		  const unsigned short = 0u,
 		  const unsigned short = 100u);
 
     /*!
      * \brief recursively search files matching a given regular
      * expression from the given directory.
-     * \param r      : the matching files, ordered by directories
-     * \param re     : a regular expression
-     * \param name   : name of the directory from which the search starts
-     * \param depth  : depth reached in the recursive search
-     * \param mdepth : maximum depth allowed
+     * \param[out] r     : the matching files, ordered by directories
+     * \param[in] re     : a regular expression
+     * \param[in] b      : throw an exception if something wrong happens.
+     * \param[in] name   : name of the directory from which the search starts
+     * \param[in] depth  : depth reached in the recursive search
+     * \param[in] mdepth : maximum depth allowed
      */
     TFELSYSTEM_VISIBILITY_EXPORT void
     recursiveFind(std::map<std::string,std::vector<std::string> >&,
 		  const std::string&,
 		  const std::string&,
+		  const bool = true,
 		  const unsigned short = 0u,
 		  const unsigned short = 100u);
 
     /*!
      * \brief recursively search files matching a given regular
      * expression from the given directory.
-     * \param re     : a regular expression
-     * \param name   : name of the directory from which the search starts
-     * \param depth  : depth reached in the recursive search
-     * \param mdepth : maximum depth allowed
+     * \param[in] re     : a regular expression
+     * \param[in] name   : name of the directory from which the search starts
+     * \param[in] b      : throw an exception if something wrong happens.
+     * \param[in] depth  : depth reached in the recursive search
+     * \param[in] mdepth : maximum depth allowed
      * \return the matching files, ordered by directories
      */
     TFELSYSTEM_VISIBILITY_EXPORT
     std::map<std::string,std::vector<std::string> >
     recursiveFind(const regex_t&,
 		  const std::string&,
+		  const bool = true,
 		  const unsigned short = 0u,
 		  const unsigned short = 100u);
 
     /*!
      * \brief recursively search files matching a given regular
      * expression from the given directory.
-     * \param r      : the matching files, ordered by directories
-     * \param re     : a regular expression
-     * \param name   : name of the directory from which the search starts
-     * \param depth  : depth reached in the recursive search
-     * \param mdepth : maximum depth allowed
+     * \param[out] r      : the matching files, ordered by directories
+     * \param[in]  re     : a regular expression
+     * \param[in]  b      : throw an exception if something wrong happens.
+     * \param[in]  name   : name of the directory from which the search starts
+     * \param[in]  depth  : depth reached in the recursive search
+     * \param[in]  mdepth : maximum depth allowed
      */
     TFELSYSTEM_VISIBILITY_EXPORT void
     recursiveFind(std::map<std::string,std::vector<std::string> >&,
 		  const regex_t&,
 		  const std::string&,
+		  const bool = true,
 		  const unsigned short = 0u,
 		  const unsigned short = 100u);
  

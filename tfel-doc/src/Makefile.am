@@ -12,7 +12,7 @@ tfel_doc_SOURCES = tfel-doc.cxx          \
 		   TestDocumentation.cxx \
 		   TestDocParser.cxx     \
 		   MTestDocParser.cxx    \
-		   LaTeXConvertion.cxx
+		   LaTeXGenerator.cxx
 
 tfel_doc_LDADD   = -L@top_builddir@/mfront/mtest/ \
 		   -L@top_builddir@/src/System    \

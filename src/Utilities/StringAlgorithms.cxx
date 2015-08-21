@@ -98,7 +98,40 @@ namespace tfel
       copy(&s[0]+pos,&s[0]+s.size(),
 	   &r[0]+rs);
     }
+    
+    std::string
+    replace_all(const std::string& c,
+		const char c1,
+		const char c2){
+      using namespace std;
+      string s(c);
+      string::size_type p  = 0u;
+      if(s.size()==0){
+	return "";
+      }
+      while((p=s.find(c1,p))!=string::npos){
+	s[p] = c2;
+	p+=1u;
+      }
+      return s;
+    }
 
+    void
+    replace_all(std::string& s,
+		const char c,
+		const std::string& n){
+      using namespace std;
+      string::size_type p  = 0u;
+      string::size_type ns = n.size();
+      if((s.size()==0)||(ns==0)){
+	return;
+      }
+      while((p=s.find(c,p))!=string::npos){
+	s.replace(p,1u,n);
+	p+=ns;
+      }
+    }
+    
   } // end of namespace utilities
 
 } // end of namespace tfel

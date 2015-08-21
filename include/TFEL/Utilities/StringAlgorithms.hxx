@@ -74,6 +74,32 @@ namespace tfel{
 		const std::string&,
 		const std::string::size_type = 0u);
 
+    /*!
+     * \brief replace all occurences of character c1 by c2
+     * \param c  : original string
+     * \param c1 : character to be changed
+     * \param c2 : replacement character
+     * \return a copy of c where all occurences of c1 have
+     * been replaced by c2
+     */
+    TFELUTILITIES_VISIBILITY_EXPORT std::string
+    replace_all(const std::string&,
+		const char,
+		const char);
+
+    /*!
+     * \brief replace all occurences of character c by n
+     * \param[in/out] s : original string
+     * \param[in]     c : character to be changed
+     * \param[in]     n : replacement character
+     * \return a copy of c where all occurences of c have
+     * been replaced by n
+     */
+    TFELUTILITIES_VISIBILITY_EXPORT void
+    replace_all(std::string&,
+		const char,
+		const std::string&);
+        
   } // end of namespace utilities
 
 } // end of namespace tfel
