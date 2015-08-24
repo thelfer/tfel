@@ -45,12 +45,7 @@ namespace mfront{
     writeInterfaceSpecificVariables(const VariableDescriptionContainer&) override;
 
     virtual void
-    writeHeaderPreprocessorDirectives(const std::string&,
-				      const std::string&) override;
-
-    virtual void
-    writeSrcPreprocessorDirectives(const std::string&,
-				   const std::string&) override;
+    writeSrcPreprocessorDirectives(const MaterialPropertyDescription&) override;
 
     virtual void
     writeBeginHeaderNamespace(void) override;
@@ -70,7 +65,7 @@ namespace mfront{
      */
     virtual std::string
     getHeaderFileName(const std::string&,
-		      const std::string&) override;
+		      const std::string&) const override;
 
     /*!
      * \param const std::string&, name of the material
@@ -78,23 +73,23 @@ namespace mfront{
      */
     virtual std::string
     getSrcFileName(const std::string&,
-		   const std::string&) override;
+		   const std::string&) const override;
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
     virtual std::string
-    getFunctionDeclaration(const std::string&,
-			   const std::string&) override;
+    getFunctionName(const std::string&,
+		    const std::string&) const override;
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
     virtual std::string
-    getCheckBoundsFunctionDeclaration(const std::string&,
-				      const std::string&) override;
+    getCheckBoundsFunctionName(const std::string&,
+			       const std::string&) const override;
 
     virtual bool
     requiresCheckBoundsFunction(void) const override;

@@ -17,9 +17,10 @@
 #include<string>
 #include<ostream>
 #include<fstream>
-
 #include<memory>
+
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
+#include"TFEL/Utilities/GeneratorOptions.hxx"
 
 namespace tfel{
 
@@ -47,6 +48,10 @@ namespace tfel{
       virtual std::string
       getUsageDescription(void) const override;
 
+      void treatLaTeX(void);
+
+      void treatMarkdown(void);
+      
       void treatSplit(void);
 
       void treatFragment(void);
@@ -67,8 +72,6 @@ namespace tfel{
 
       void treatMTest(void);
 
-      std::string lang;
-
       std::string srcdir;
 
       std::string outputDirectory;
@@ -77,20 +80,20 @@ namespace tfel{
 
       std::string logFile;
 
-      std::string prefix;
-
       std::ofstream  output;
 
       std::ostream* log;
 
-      bool mtest;
-
-      bool fragment;
-
-      bool split;
-
       std::shared_ptr<std::ostream> logptr;
 
+      GeneratorOptions opts;
+      
+      bool latex    = false;
+
+      bool markdown = false;
+
+      bool mtest    = false;
+      
     }; // end of struct TestDocMain
     
   } // end of namespace utilities

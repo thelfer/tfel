@@ -12,10 +12,13 @@ endif(enable-castem-pleiades AND (NOT UNIX))
 
 if(CASTEMHOME)
     find_path(CASTEM_INCLUDE_DIR castem.h
-              HINTS ${CASTEMHOME}/include
-	      ${CASTEMHOME}/include/c)
+      HINTS ${CASTEMHOME}/include/c)
     if(CASTEM_INCLUDE_DIR STREQUAL "CASTEM_INCLUDE_DIR-NOTFOUND")
-    	message(FATAL_ERROR "castem.h not found")
+      find_path(CASTEM_INCLUDE_DIR castem.h
+	HINTS ${CASTEMHOME}/include)
+    endif(CASTEM_INCLUDE_DIR STREQUAL "CASTEM_INCLUDE_DIR-NOTFOUND")
+    if(CASTEM_INCLUDE_DIR STREQUAL "CASTEM_INCLUDE_DIR-NOTFOUND")
+      message(FATAL_ERROR "castem.h not found")
     endif(CASTEM_INCLUDE_DIR STREQUAL "CASTEM_INCLUDE_DIR-NOTFOUND")
     message(STATUS "Cast3M include files path detected: [${CASTEM_INCLUDE_DIR}].")
     set(CASTEM_ROOT "${CASTEMHOME}")

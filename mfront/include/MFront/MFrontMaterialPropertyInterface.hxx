@@ -38,62 +38,46 @@ namespace mfront{
      */
     virtual std::string
     getFunctionName(const std::string&,
-		    const std::string&) const;
+		    const std::string&) const override;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
     virtual std::string
     getHeaderFileName(const std::string&,
-		      const std::string&) override;
+		      const std::string&) const override;
     //! destructor
     virtual ~MFrontMaterialPropertyInterface();
   private:
 
-    void
-    writeHeaderPreprocessorDirectives(const std::string&,
-				      const std::string&) override;
-
-    void
-    writeSrcPreprocessorDirectives(const std::string&,
-				   const std::string&) override;
-
-    void
+    virtual void
     writeBeginHeaderNamespace(void) override;
 
-    void
+    virtual void
     writeEndHeaderNamespace(void) override;
 
-    void
+    virtual void
     writeBeginSrcNamespace(void) override;
 
-    void
+    virtual void
     writeEndSrcNamespace(void) override;
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
+    virtual std::string
     getSrcFileName(const std::string&,
-		   const std::string&) override;
-
+		   const std::string&) const override;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    std::string
-    getFunctionDeclaration(const std::string&,
-			   const std::string&) override;
-    /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
-     */
-    std::string
-    getCheckBoundsFunctionDeclaration(const std::string&,
-				      const std::string&) override;
+    virtual std::string
+    getCheckBoundsFunctionName(const std::string&,
+			       const std::string&) const override;
 
-    bool
+    virtual bool
     requiresCheckBoundsFunction(void) const override;
 
   }; // end of MFrontMaterialPropertyInterface

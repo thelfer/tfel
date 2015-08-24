@@ -1,5 +1,5 @@
 /*  declarations dependantes machines de Cast3M  */
-#if ((defined WIN32) && (! defined _WIN64))
+#if ((defined _WIN32) && (! defined _WIN64))
   #define SUN 1
   #define UNIX32 1
   #undef UNIX64

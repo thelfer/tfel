@@ -1,0 +1,44 @@
+/*!
+ * \file   GeneratorOptions.hxx
+ * \brief    
+ * \author THOMAS HELFER
+ * \date   21 août 2015
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifndef _LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX_
+#define _LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX_
+
+namespace tfel
+{
+
+  namespace utilities
+  {
+
+    /*!
+     * a structure holding generator options
+     */
+    struct GeneratorOptions
+    {
+      //! install path (i.e. where to find the tests files)
+      std::string prefix;
+      //! basename where individual files shall be created (used if
+      //! split is true)
+      std::string outputDirectory;
+      //! output language
+      std::string lang;
+      //! build a stand-alone document
+      bool standAlone = true;
+      //! generate one output file by category
+      bool split = false;
+    }; // end of struct GeneratorOptions
+    
+  } // end of namespace utilities
+
+} // end of namespace tfel
+
+
+#endif /* _LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX_ */

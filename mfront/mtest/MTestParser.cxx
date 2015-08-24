@@ -1446,8 +1446,7 @@ namespace mfront
       r.push_back(n);
     } else {
       // checking for an array of internal state variables
-      for(auto p=names.cbegin();p!=names.cend();++p){
-	const string& vn = *p;
+      for(const auto& vn : names){
 	if(vn.compare(0,n.length(),n)==0){
 	  if(!(vn.size()>=n.length()+3u)){
 	    continue;

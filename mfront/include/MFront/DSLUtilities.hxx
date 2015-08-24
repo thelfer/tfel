@@ -37,19 +37,36 @@ namespace mfront{
   MFRONT_VISIBILITY_EXPORT std::string
   getMaterialLawLibraryNameBase(const std::string&,
 				const std::string&);
-
+  /*!
+   * \brief define the F77_FUNC and F77_FUNC_ macros. We support the
+   * GNU (gfortran) and the intel compilers. By default, the GNU
+   * fortran naming scheme is used. This can be changed when compiling
+   * mfront generated sources by defining the INTEL_FORTRAN_COMPILER
+   * flag.
+   * \param[out] f   : output file
+   *
+   * https://en.wikipedia.org/wiki/Name_mangling :
+   *
+   * Many compilers, including SGI's IRIX compilers, GNU Fortran, and
+   * Intel's Fortran compiler (except on Microsoft Windows), convert
+   * all identifiers to lower case plus an underscore ("foo_" and
+   * "foo_bar_"). On Microsoft Windows, the Intel Fortran compiler
+   * defaults to uppercase without an underscore.[2]
+   * 
+   * [2] User and Reference Guide for the Intel Fortran Compiler
+   * 15.0, Intel Corporation (2014), Summary of Mixed-Language
+   * Issues. Accessed 17 Nov. 2014.
+   */
+  MFRONT_VISIBILITY_EXPORT void
+  writeF77FUNCMacros(std::ostream&);
   /*!
    * \brief define export directives (visibility attributes) and
    * calling conventions through the MFRONT_SHAREDOBJ and the
    * MFRONT_CALLING_CONVENTION macros
    * \param[out] f   : output file
-   * \param[in]  c32 : calling convention for 32 bits architectures
-   * \param[in]  c64 : calling convention for 64 bits architectures
    */
   MFRONT_VISIBILITY_EXPORT void
-  writeExportDirectives(std::ofstream&,
-			const std::string& = "__cdecl",
-			const std::string& = "__cdecl");
+  writeExportDirectives(std::ostream&);
 
   MFRONT_VISIBILITY_EXPORT std::string
   makeUpperCase(const std::string&);

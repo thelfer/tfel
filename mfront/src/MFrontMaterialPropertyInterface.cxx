@@ -52,7 +52,7 @@ namespace mfront
 
   std::string
   MFrontMaterialPropertyInterface::getHeaderFileName(const std::string& material,
-						     const std::string& className)
+						     const std::string& className) const
   {
     if(material.empty()){
       return className+"-mfront";
@@ -62,7 +62,7 @@ namespace mfront
 
   std::string
   MFrontMaterialPropertyInterface::getSrcFileName(const std::string& material,
-					   const std::string& className)
+						  const std::string& className) const
   {
     if(material.empty()){
       return className+"-mfront";
@@ -71,25 +71,15 @@ namespace mfront
   } // end of MFrontMaterialPropertyInterface::getSrcFileName
   
   void
-  MFrontMaterialPropertyInterface::writeHeaderPreprocessorDirectives(const std::string&,
-							      const std::string&)
-  {} // end of MFrontMaterialPropertyInterface::writePreprocessorDirectives
-
-  void
-  MFrontMaterialPropertyInterface::writeSrcPreprocessorDirectives(const std::string&,
-							   const std::string&)
-  {} // end of MFrontMaterialPropertyInterface::writeSrcPreprocessorDirectives
-
-  void
   MFrontMaterialPropertyInterface::writeBeginHeaderNamespace(void)
   {
-    this->headerFile << "namespace mfront{\n";
+    this->headerFile << "namespace mfront{\n\n";
   } // end of MFrontMaterialPropertyInterface::writeBeginHeaderNamespace
   
   void
   MFrontMaterialPropertyInterface::writeEndHeaderNamespace(void)
   {
-    this->headerFile << "} // end of namespace mfront\n";
+    this->headerFile << "} // end of namespace mfront\n\n";
   } // end of MFrontMaterialPropertyInterface::writeEndHeaderNamespace(void)
 
   void
@@ -105,21 +95,11 @@ namespace mfront
   } // end of MFrontMaterialPropertyInterface::writeEndSrcNamespace(void)
 
   std::string
-  MFrontMaterialPropertyInterface::getFunctionDeclaration(const std::string& material,
-						   const std::string& law)
-  {
-    return "double "+this->getFunctionName(material,law);
-  } // end of MFrontMaterialPropertyInterface::getFunctionDeclaration
-
-  std::string
   MFrontMaterialPropertyInterface::getFunctionName(const std::string& material,
 						   const std::string& law) const
   {
-    if(material.empty()){
-      return law;
-    }
-    return material+'_'+law;
-  }
+    return material.empty() ? law : material+'_'+law;
+  } // end of MFrontMaterialPropertyInterface::getFunctionName
   
   bool
   MFrontMaterialPropertyInterface::requiresCheckBoundsFunction(void) const
@@ -128,14 +108,11 @@ namespace mfront
   }
 
   std::string
-  MFrontMaterialPropertyInterface::getCheckBoundsFunctionDeclaration(const std::string& material,
-								     const std::string& className)
+  MFrontMaterialPropertyInterface::getCheckBoundsFunctionName(const std::string& material,
+							      const std::string& className) const
   {
-    if(material.empty()){
-      return  "int "+className+"_checkBounds";
-    }
-    return  "int "+material+"_"+className+"_checkBounds";
-  } // end of MFrontMaterialPropertyInterface::getCheckBoundsFunctionDeclaration
+    return this->getFunctionName(material,className)+"_checkBounds";
+  } // end of MFrontMaterialPropertyInterface::getCheckBoundsFunctionName
   
   MFrontMaterialPropertyInterface::~MFrontMaterialPropertyInterface()
   {} // end of MFrontMaterialPropertyInterface::~MFrontMaterialPropertyInterface

@@ -33,6 +33,7 @@
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/Utilities/Global.hxx"
 #include"TFEL/Utilities/LaTeXGenerator.hxx"
+#include"TFEL/Utilities/MarkdownGenerator.hxx"
 #include"TFEL/Utilities/TestDocumentation.hxx"
 #include"TFEL/Utilities/TestDocParser.hxx"
 #include"TFEL/Utilities/MTestDocParser.hxx"
@@ -51,7 +52,7 @@ namespace tfel
 		std::map<std::string,std::vector<TestDocumentation>>& tests,
 		const std::string& ext){
       char path[MAXPATHLEN];
-      auto files = tfel::system::recursiveFind(".*\\."+ext,".");
+      auto files = tfel::system::recursiveFind(".*\\."+ext,".",false);
       for(const auto& d : files){
 	if(realpath(d.first.c_str(),path)==nullptr){
 	  log << "entering directory " << d.first << '\n';
@@ -107,10 +108,7 @@ namespace tfel
 
     TestDocMain::TestDocMain(const int argc,
 			     const char*const* argv)
-      : ArgumentParserBase<TestDocMain>(argc,argv),
-	mtest(false),
-	fragment(false),
-	split(false)
+      : ArgumentParserBase<TestDocMain>(argc,argv)
     {
       using namespace std;
       using namespace tfel::utilities;
@@ -121,7 +119,7 @@ namespace tfel
 	cerr << this->getUsageDescription() << endl;
 	exit(EXIT_FAILURE);
       }
-      this->outputDirectory = getOutputDirectory(this->outputFile);
+      this->opts.outputDirectory = getOutputDirectory(this->outputFile);
       this->output.open(this->outputFile.c_str());
       if(!this->output){
 	string msg("TestDocMain : can't open output file '");
@@ -141,8 +139,16 @@ namespace tfel
       } else{ 
 	this->log = &cerr;
       }
-      if(this->lang.empty()){
-	lang = "english";
+      if(this->opts.lang.empty()){
+	this->opts.lang = "english";
+      }
+      if((this->latex)&&(this->markdown)){
+	throw(runtime_error("TestDocMain::TestDocMain : "
+			    "can't choose both latex and markdown "
+			    "generator at the same time"));
+      }
+      if((!this->latex)&&(!this->markdown)){
+	this->latex = true;
       }
     } // end of TestDocMain::TestDocMain
 
@@ -189,28 +195,40 @@ namespace tfel
 				"specify a translation file",true);
       this->registerNewCallBack("--mtest",&TestDocMain::treatMTest,
 				"add mtest files");
+      this->registerNewCallBack("--md",&TestDocMain::treatMarkdown,
+				"generate markdown file");
+      this->registerNewCallBack("--markdown",&TestDocMain::treatMarkdown,
+				"generate markdown file");
+      this->registerNewCallBack("--latex",&TestDocMain::treatLaTeX,
+				"generate latex file");
     } // end of TestDocMain::registerArgumentCallBacks
 
-    void
-    TestDocMain::treatMTest(void)
+    void TestDocMain::treatLaTeX(void)
+    {
+      this->latex=true;
+    }
+
+    void TestDocMain::treatMarkdown(void)
+    {
+      this->markdown=true;
+    }
+    
+    void TestDocMain::treatMTest(void)
     {
       this->mtest=true;
     }
 
-    void
-    TestDocMain::treatFragment(void)
+    void TestDocMain::treatFragment(void)
     {
-      this->fragment=true;
+      this->opts.standAlone=false;
     }
 
-    void
-    TestDocMain::treatSplit(void)
+    void TestDocMain::treatSplit(void)
     {
-      this->split=true;
+      this->opts.split=true;
     }
 
-    void
-    TestDocMain::treatLogFile(void)
+    void TestDocMain::treatLogFile(void)
     {
       using namespace std;
       if(!this->logFile.empty()){
@@ -230,13 +248,13 @@ namespace tfel
     TestDocMain::treatPrefix(void)
     {
       using namespace std;
-      if(!this->prefix.empty()){
-	cerr << "TestDocMain : log file already specified" << endl;
+      if(!this->opts.prefix.empty()){
+	cerr << "TestDocMain : prefix already specified" << endl;
 	cerr << this->getUsageDescription() << endl;
 	exit(EXIT_FAILURE);
       }
-      this->prefix = this->currentArgument->getOption();
-      if(this->prefix.empty()){
+      this->opts.prefix = this->currentArgument->getOption();
+      if(this->opts.prefix.empty()){
 	string msg("TestDocMain::treatprefix : ");
 	msg += "no option given to the --prefix argument";
 	throw(runtime_error(msg));
@@ -264,13 +282,13 @@ namespace tfel
     TestDocMain::treatLang(void)
     {
       using namespace std;
-      if(!this->lang.empty()){
+      if(!this->opts.lang.empty()){
 	cerr << "TestDocMain : lang file already specified" << endl;
 	cerr << this->getUsageDescription() << endl;
 	exit(EXIT_FAILURE);
       }
-      this->lang = this->currentArgument->getOption();
-      if(this->lang.empty()){
+      this->opts.lang = this->currentArgument->getOption();
+      if(this->opts.lang.empty()){
 	string msg("TestDocMain::treatLang : ");
 	msg += "no option given to the --lang argument";
 	throw(runtime_error(msg));
@@ -334,7 +352,7 @@ namespace tfel
       // all the tests, sorted by category
       auto tests = map<string,vector<TestDocumentation>>{};
       // testdoc files
-      parse_files<MTestDocParser>(*(this->log),tests,"testdoc");
+      parse_files<TestDocParser>(*(this->log),tests,"testdoc");
       if(this->mtest){
 	parse_files<MTestDocParser>(*(this->log),tests,"mtest");
       }
@@ -345,10 +363,12 @@ namespace tfel
 	}
       }
       // output
-      printLaTeXFile(this->output,tests,
-		     this->outputDirectory,
-		     this->prefix,this->lang,
-		     this->fragment,this->split);
+      if(this->latex){
+	writeLaTeXFile(this->output,tests,this->opts);
+      }
+      if(this->markdown){
+	writeMarkdownFile(this->output,tests,this->opts);
+      }
       // a short summary
       auto count = map<string,vector<TestDocumentation>>::size_type{0u};
       for(const auto& t : tests){

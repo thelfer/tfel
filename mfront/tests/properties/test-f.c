@@ -13,6 +13,13 @@
 #include<stdlib.h>
 #include<assert.h>
 
+#ifndef F77_FUNC
+#define F77_FUNC(X,Y) X##_
+#endif
+#ifndef F77_FUNC_
+#define F77_FUNC_(X,Y) X##_
+#endif
+
 double F77_FUNC(computeyoung,COMPUTEYOUNG)(const double*);
 double F77_FUNC(computenu,COMPUTENU)(const double*);
 

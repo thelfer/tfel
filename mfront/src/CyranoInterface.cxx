@@ -356,8 +356,6 @@ namespace mfront{
 
     this->writeVisibilityDefines(out);
     
-    this->writeCyranoFortranFunctionDefine(out,name);
-
     out << "#ifdef __cplusplus\n\n";
 
     out << "namespace cyrano{\n\n";
@@ -495,22 +493,11 @@ namespace mfront{
   {} // end of CyranoInterface::writeUMATxxAdditionalSymbols
 
   void
-  CyranoInterface::writeCyranoFortranFunctionDefine(std::ostream& out,
-							  const std::string& name) const
-  {
-    out << "#define " << makeUpperCase(name) <<"_F77" << " F77_FUNC("
-	<< makeLowerCase(name) << "," << makeUpperCase(name) << ")\n";
-    out << "#define cyrano" << makeUpperCase(name) <<"_F77" << " F77_FUNC(cyrano"
-	<< makeLowerCase(name) << ",CYRANO"
-	<< makeUpperCase(name) << ")\n\n";
-  } // end of CyranoInterface::writeCyranoFortranFunctionDefine
-
-  void
   CyranoInterface::writeCyranoFunctionDeclaration(std::ostream& out,
 						  const std::string& name) const
   {
     using namespace std;
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n" << name
+    out << "MFRONT_SHAREDOBJ void\n" << name
     	<< "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
     	<< "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"
     	<< "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
@@ -530,7 +517,7 @@ namespace mfront{
     	<< "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
     	<< "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
     	<< "      cyrano::CyranoInt *const);\n\n";
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\ncyrano"
+    out << "MFRONT_SHAREDOBJ void\ncyrano"
     	<< makeLowerCase(name)
     	<< "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
     	<< "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"
@@ -580,11 +567,7 @@ namespace mfront{
 					       const std::string& n,
 					       const BehaviourDescription& mb) const
   {
-    using namespace std;
-    const string uname = makeUpperCase(n)+"_F77";
-    const string fname2 = this->getFunctionName(n);
-    const string uname2 = "cyrano"+makeUpperCase(n)+"_F77";
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n" << n
+    out << "MFRONT_SHAREDOBJ void\n" << n
 	<< "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
 	<< "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"
 	<< "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
@@ -612,9 +595,7 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
-    writeSecondaryStandardCyranoFunction(out,uname,n);
-    writeSecondaryStandardCyranoFunction(out,fname2,n);
-    writeSecondaryStandardCyranoFunction(out,uname2,n);
+    writeSecondaryStandardCyranoFunction(out,this->getFunctionName(n),n);
   }
 
   void

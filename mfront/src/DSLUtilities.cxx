@@ -115,9 +115,36 @@ namespace mfront
   } // end of getLibraryNameBase
 
   void
-  writeExportDirectives(std::ofstream& file,
-			const std::string& c32,
-			const std::string& c64)
+  writeF77FUNCMacros(std::ostream& f)
+  {
+    auto def = [&f](void){
+    f << "#ifndef F77_FUNC\n"
+      << "#define F77_FUNC(X,Y) X##_\n"
+      << "#endif\n"
+      << "#ifndef F77_FUNC_\n"
+      << "#define F77_FUNC_(X,Y) X##_\n"
+      << "#endif\n";
+    };
+    f << "#if (defined GNU_FORTRAN_COMPILER)\n";
+    def();
+    f << "#elif (defined INTEL_FORTRAN_COMPILER)\n";
+    f << "#ifdef _WIN32\n";
+    f << "#ifndef F77_FUNC\n"
+      << "#define F77_FUNC(X,Y) Y\n"
+      << "#endif\n"
+      << "#ifndef F77_FUNC_\n"
+      << "#define F77_FUNC_(X,Y) Y\n"
+      << "#endif\n";
+    f << "#else\n";
+    def();
+    f << "#endif /* _WIN32 */\n";
+    f << "#else\n";
+    def();
+    f << "#endif\n\n";
+  } // end of writeF77FuncMacros
+  
+  void
+  writeExportDirectives(std::ostream& file)
   {
     file << "#ifdef _WIN32\n";
     file << "#ifndef NOMINMAX\n";
@@ -131,13 +158,6 @@ namespace mfront
     file << "#define MFRONT_SHAREDOBJ __declspec(dllimport)\n"; 
     file << "#endif /* MFRONT_COMPILING */\n";
     file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    file << "#ifndef MFRONT_CALLING_CONVENTION\n";
-    file << "#ifndef _WIN64\n";
-    file << "#define MFRONT_CALLING_CONVENTION " << c32 << "\n";
-    file << "#else /* _WIN64 */\n";
-    file << "#define MFRONT_CALLING_CONVENTION " << c64 << "\n";
-    file << "#endif /* _WIN64 */\n";
-    file << "#endif /* MFRONT_CALLING_CONVENTION */\n"; 
     file << "#else\n";
     file << "#ifndef MFRONT_SHAREDOBJ\n";
     file << "#ifdef __GNUC__\n";
@@ -146,9 +166,6 @@ namespace mfront
     file << "#define MFRONT_SHAREDOBJ\n";
     file << "#endif /* __GNUC__ */\n";
     file << "#endif /* MFRONT_SHAREDOBJ */\n"; 
-    file << "#ifndef MFRONT_CALLING_CONVENTION\n";
-    file << "#define MFRONT_CALLING_CONVENTION\n"; 
-    file << "#endif /* MFRONT_CALLING_CONVENTION */\n"; 
     file << "#endif /* _WIN32 */\n\n";
   } // end of writeExportDirectives
 

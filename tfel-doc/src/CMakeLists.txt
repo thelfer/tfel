@@ -19,6 +19,7 @@ set(tfel-doc_SOURCES tfel-doc.cxx
 		     TestDocumentation.cxx
 		     TestDocParser.cxx
 		     MTestDocParser.cxx
+		     LaTeXGenerator.cxx
 		     MarkdownGenerator.cxx)
 
 add_executable(tfel-doc ${tfel-doc_SOURCES})

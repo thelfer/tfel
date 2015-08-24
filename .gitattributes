@@ -3518,10 +3518,11 @@ tfel-doc/include/CMakeLists.txt -text
 tfel-doc/include/Makefile.am -text
 tfel-doc/include/TFEL/Utilities/Config.hxx -text
 tfel-doc/include/TFEL/Utilities/ConfigParser.hxx -text
+tfel-doc/include/TFEL/Utilities/GeneratorOptions.hxx -text
 tfel-doc/include/TFEL/Utilities/Global.hxx -text
 tfel-doc/include/TFEL/Utilities/LaTeXGenerator.hxx -text
 tfel-doc/include/TFEL/Utilities/MTestDocParser.hxx -text
-tfel-doc/include/TFEL/Utilities/MardownGenerator.hxx -text
+tfel-doc/include/TFEL/Utilities/MarkdownGenerator.hxx -text
 tfel-doc/include/TFEL/Utilities/ParserBase.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocMain.hxx -text
 tfel-doc/include/TFEL/Utilities/TestDocParser.hxx -text

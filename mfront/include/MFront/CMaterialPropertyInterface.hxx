@@ -45,18 +45,6 @@ namespace mfront{
     virtual std::string
     getGeneratedLibraryName(const std::string&,
 			    const std::string&) const;
-    /*!
-     * \brief write the header preprocessor directives
-     * \param[in] m: material name
-     * \param[in] c: class name
-     */
-    virtual void
-    writeHeaderPreprocessorDirectives(const std::string&,
-				      const std::string&) override;
-
-    virtual void
-    writeSrcPreprocessorDirectives(const std::string&,
-				   const std::string&) override;
 
     virtual void
     writeBeginHeaderNamespace(void) override;
@@ -75,29 +63,29 @@ namespace mfront{
      */
     virtual std::string
     getHeaderFileName(const std::string&,
-		      const std::string&) override;
+		      const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
     virtual std::string
     getSrcFileName(const std::string&,
-		   const std::string&) override;
+		   const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
     virtual std::string
-    getFunctionDeclaration(const std::string&,
-			   const std::string&) override;
+    getFunctionName(const std::string&,
+		    const std::string&) const override;
 
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
     virtual std::string
-    getCheckBoundsFunctionDeclaration(const std::string&,
-				      const std::string&) override;
+    getCheckBoundsFunctionName(const std::string&,
+			       const std::string&) const override;
     /*!
      * \return true if a check bounds function is required
      */

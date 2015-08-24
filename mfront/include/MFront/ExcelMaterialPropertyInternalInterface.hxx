@@ -41,6 +41,9 @@ namespace mfront{
     //! destructor
     virtual ~ExcelMaterialPropertyInternalInterface();
   private:
+
+    virtual std::string
+    getCallingConvention(void) const override;
     /*!
      * \return the name of the generated library
      * \param[in] l: library name (given by the `@Library` keyword)
@@ -51,26 +54,23 @@ namespace mfront{
 			    const std::string&) const override;
     /*!
      * \brief write the header preprocessor directives
-     * \param[in] m: material name
-     * \param[in] c: class name
      */
     virtual void
-    writeHeaderPreprocessorDirectives(const std::string&,
-				      const std::string&) override;
+    writeHeaderPreprocessorDirectives(const MaterialPropertyDescription&) override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
     virtual std::string
     getHeaderFileName(const std::string&,
-		      const std::string&) override;
+		      const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
     virtual std::string
     getSrcFileName(const std::string&,
-		   const std::string&) override;
+		   const std::string&) const override;
   }; // end of MfrontExcelLawInternalInterface
 
 } // end of namespace mfront

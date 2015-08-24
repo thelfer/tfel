@@ -1,10 +1,9 @@
 add_subdirectory(dgibi)
 
-if(CASTEMHOME)
+if(CASTEM_INCLUDE_DIR)
   include_directories(
-    "${CASTEMHOME}/include"
-    "${CASTEMHOME}/include/c")
-endif(CASTEMHOME)
+    "${CASTEM_INCLUDE_DIR}")
+endif(CASTEM_INCLUDE_DIR)
 
 include_directories(
   "${PROJECT_SOURCE_DIR}/include"

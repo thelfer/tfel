@@ -26,19 +26,20 @@ namespace tfel
   {
 
     // forward declaration
+    struct GeneratorOptions;
+    // forward declaration
     struct TestDocumentation;
 
     /*!
      * generate a LaTeX documentation
+     * \param[out] out      : output stream
+     * \param[in]  tests    : tests, sorted by category
+     * \param[in]  o        : options
      */
     void
-    printLaTeXFile(std::ostream&,
+    writeLaTeXFile(std::ostream&,
 		   const std::map<std::string,std::vector<TestDocumentation>>&,
-		   const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const bool,
-		   const bool);
+		   const GeneratorOptions&);
 
   } // end of namespace utilities
 

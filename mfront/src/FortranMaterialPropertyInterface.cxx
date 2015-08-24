@@ -50,14 +50,14 @@ namespace mfront
 
   std::string
   FortranMaterialPropertyInterface::getHeaderFileName(const std::string&,
-					       const std::string&)
+						      const std::string&) const
   {
     return "";
   } // end of FortranMaterialPropertyInterface::getHeaderFileName
 
   std::string
   FortranMaterialPropertyInterface::getSrcFileName(const std::string& material,
-						   const std::string& className)
+						   const std::string& className) const
   {
     if(material.empty()){
       return className+"-fortran";
@@ -68,18 +68,16 @@ namespace mfront
   void
   FortranMaterialPropertyInterface::writeInterfaceSpecificVariables(const VariableDescriptionContainer& inputs)
   {
-    VariableDescriptionContainer::const_iterator p;
-    for(p=inputs.begin();p!=inputs.end();++p){
+    for(auto p=inputs.begin();p!=inputs.end();++p){
       this->srcFile << "const mfront_fortran_real8 " << p->name << " =  *(_mfront_var_" << p->name << ");\n";
     }
   } // end of FortranMaterialPropertyInterface::writeInterfaceSpecificVariables
 
   void
   FortranMaterialPropertyInterface::writeParameterList(std::ostream& file,
-					      const VariableDescriptionContainer& inputs){
-    VariableDescriptionContainer::const_iterator p;
+						       const VariableDescriptionContainer& inputs){
     if(!inputs.empty()){
-      for(p=inputs.begin();p!=inputs.end();){
+      for(auto p=inputs.begin();p!=inputs.end();){
 	file << "const mfront_fortran_real8 * const _mfront_var_" << p->name;
 	if((++p)!=inputs.end()){
 	  file << ",\n";
@@ -89,46 +87,36 @@ namespace mfront
       file << "void";
     }
   } // end of FortranMaterialPropertyInterface::writeParameterList
-  
-  void
-  FortranMaterialPropertyInterface::writeHeaderPreprocessorDirectives(const std::string&,
-							       const std::string&)
-  {} // end of FortranMaterialPropertyInterface::writePreprocessorDirectives
 
   void
-  FortranMaterialPropertyInterface::writeSrcPreprocessorDirectives(const std::string& material,
-							    const std::string& className)
+  FortranMaterialPropertyInterface::writeSrcPreprocessorDirectives(const MaterialPropertyDescription& mpd)
   {
-    using namespace std;
-    string name;
-    string f77_func;
-    if(!material.empty()){
-      name = material+"_"+className;
-    } else {
-      name = className;
-    }
-    if(name.find('_')!=string::npos){
-      f77_func = "F77_FUNC_";
-    } else {
-      f77_func = "F77_FUNC";
-    }
-    this->srcFile << "#define " 
-		  << makeUpperCase(name)
-		  << "_F77 \\\n"
-		  << "        "<< f77_func << "("
-		  << makeLowerCase(name) << ","
-		  << makeUpperCase(name) << ")\n\n";
-    this->srcFile << "#define " 
-		  << makeUpperCase(name)
-		  << "_CHECKBOUNDS_F77 \\\n"
-		  << "        "<< f77_func << "("
-		  << makeLowerCase(name) 
-		  << "_checkbounds,\\\n        "
-		  << makeUpperCase(name) 
-		  << "_CHECKBOUNDS)\n\n";
+    const auto name = (!mpd.material.empty()) ? mpd.material+"_"+mpd.className : mpd.className;
+    const auto f77_func = (name.find('_')!=std::string::npos) ? "F77_FUNC_" : "F77_FUNC";
     writeExportDirectives(this->srcFile);
-    this->srcFile << "typedef double mfront_fortran_real8;" << endl;
-    this->srcFile << "typedef int    mfront_fortran_integer4;" << endl << endl;
+    writeF77FUNCMacros(this->srcFile);
+    this->srcFile << "#define " << this->getFunctionName(mpd.material,mpd.className)
+		  << " " << f77_func << "("
+		  << makeLowerCase(name) << ","
+		  << makeUpperCase(name) << ")\n"
+		  << "#define " << this->getCheckBoundsFunctionName(mpd.material,mpd.className)
+		  << " F77_FUNC_(" << makeLowerCase(name) << "_checkbounds,"
+		  << makeUpperCase(name) << "_CHECKBOUNDS)\n\n"
+		  << "#ifdef __cplusplus\n"
+		  << "extern \"C\"{\n"
+		  << "#endif /* __cplusplus */\n\n"
+		  << "typedef double mfront_fortran_real8;\n\n"
+		  << "\nMFRONT_SHAREDOBJ double "
+		  << this->getFunctionName(mpd.material,mpd.className) << "(";
+    this->writeParameterList(this->srcFile,mpd.inputs);
+    this->srcFile << ");\n"
+		  << "MFRONT_SHAREDOBJ int "
+		  << this->getCheckBoundsFunctionName(mpd.material,mpd.className) << "(";
+    this->writeParameterList(this->srcFile,mpd.inputs);
+    this->srcFile << ");\n\n"
+		  << "#ifdef __cplusplus\n"
+		  << "}\n"
+		  << "#endif /* __cplusplus */\n\n";
   } // end of FortranMaterialPropertyInterface::writeSrcPreprocessorDirectives
 
   void
@@ -156,15 +144,13 @@ namespace mfront
   } // end of FortranMaterialPropertyInterface::writeEndSrcNamespace(void)
 
   std::string
-  FortranMaterialPropertyInterface::getFunctionDeclaration(const std::string& material,
-						    const std::string& className)
+  FortranMaterialPropertyInterface::getFunctionName(const std::string& material,
+						    const std::string& className) const
   {
-    if(material.empty()){
-      return "MFRONT_SHAREDOBJ mfront_fortran_real8\n"+ makeUpperCase(className) + "_F77";
-    }
-    return "MFRONT_SHAREDOBJ mfront_fortran_real8\n"+ makeUpperCase(material+"_"+className) + "_F77";
-  } // end of FortranMaterialPropertyInterface::getFunctionDeclaration
-  
+    return (material.empty() ? makeUpperCase(className) :
+	    makeUpperCase(material+"_"+className)) + "_F77";
+  } // end of FortranMaterialPropertyInterface::getFunctionName
+
   bool
   FortranMaterialPropertyInterface::requiresCheckBoundsFunction(void) const
   {
@@ -172,14 +158,12 @@ namespace mfront
   }
 
   std::string
-  FortranMaterialPropertyInterface::getCheckBoundsFunctionDeclaration(const std::string& material,
-							       const std::string& className)
+  FortranMaterialPropertyInterface::getCheckBoundsFunctionName(const std::string& material,
+							       const std::string& className) const
   {
-    if(material.empty()){
-      return "MFRONT_SHAREDOBJ mfront_fortran_integer4\n" + makeUpperCase(className) + "_CHECKBOUNDS_F77";
-    }
-    return "MFRONT_SHAREDOBJ mfront_fortran_integer4\n" + makeUpperCase(material+"_"+className) + "_CHECKBOUNDS_F77";
-  } // end of FortranMaterialPropertyInterface::getCheckBoundsFunctionDeclaration
+    return (material.empty() ? makeUpperCase(className) :
+	    makeUpperCase(material+"_"+className)) + "_CHECKBOUNDS_F77";
+  } // end of FortranMaterialPropertyInterface::getCheckBoundsFunctionName
   
   FortranMaterialPropertyInterface::~FortranMaterialPropertyInterface()
   {} // end of FortranMaterialPropertyInterface::~FortranMaterialPropertyInterface

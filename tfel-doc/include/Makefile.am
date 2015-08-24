@@ -1,5 +1,6 @@
 nobase_include_HEADERS = ./TFEL/Utilities/Global.hxx            \
                          ./TFEL/Utilities/LaTeXGenerator.hxx    \
+                         ./TFEL/Utilities/GeneratorOptions.hxx  \
                          ./TFEL/Utilities/MarkdownGenerator.hxx \
                          ./TFEL/Utilities/TestDocumentation.hxx \
                          ./TFEL/Utilities/TestDocParser.hxx     \

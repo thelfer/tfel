@@ -26,19 +26,17 @@ namespace tfel
   {
 
     // forward declaration
+    struct GeneratorOptions;
+    // forward declaration
     struct TestDocumentation;
 
     /*!
      * generate a Markdown documentation
      */
     void
-    printMarkdownFile(std::ostream&,
+    writeMarkdownFile(std::ostream&,
 		      const std::map<std::string,std::vector<TestDocumentation>>&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const bool,
-		      const bool);
+		      const GeneratorOptions&);
 
   } // end of namespace utilities
 

@@ -29,18 +29,45 @@ static const char * const constexpr_c = "const";
 namespace mfront
 {
 
+  static std::string
+  transformHeaderName(const std::string& h)
+  {
+    auto replace = [](std::string& s,
+		      const std::string::value_type a,
+		      const std::string::value_type b){
+      std::string::size_type p = 0;
+      while((p=s.find(a))!=std::string::npos){
+	s[p]=b;
+      }
+    };
+    auto header = makeUpperCase(h);
+    replace(header,'.','_');
+    replace(header,'-','_');
+    replace(header,'/','_');
+    return header;
+  } // end of transformHeaderName
+  
   CMaterialPropertyInterfaceBase::CMaterialPropertyInterfaceBase()
   {}
   
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CMaterialPropertyInterfaceBase::treatKeyword(const std::string&,
-					tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+					       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+					       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
-    using namespace std;
-    return make_pair(false,current);
+    return {false,current};
   } // end of treatKeyword
 
+  void
+  CMaterialPropertyInterfaceBase::writeHeaderPreprocessorDirectives(const MaterialPropertyDescription&)
+  {
+    writeExportDirectives(this->headerFile);
+  } // end of CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives
+
+  void
+  CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives(const MaterialPropertyDescription&)
+  {} // end of CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives
+  
   CMaterialPropertyInterfaceBase::~CMaterialPropertyInterfaceBase()
   {}
 
@@ -48,128 +75,85 @@ namespace mfront
   CMaterialPropertyInterfaceBase::writeOutputFiles(const MaterialPropertyDescription& mpd,
 						   const FileDescription& fd)
   {
-    using namespace std;
-    const auto& file=fd.fileName;
-    const auto& author=fd.authorName;
-    const auto& description=fd.description;
-    const auto& date=fd.date;
-    const auto& material=mpd.material;
-    const auto& className=mpd.className;
-    const auto& includes=mpd.includes;
-    const auto& output=mpd.output;
-    const auto& inputs=mpd.inputs;
-    const auto& materialLaws=mpd.materialLaws;
-    const auto& staticVars=mpd.staticVars;
-    const auto& params=mpd.parameters;
-    const auto& paramValues=mpd.parametersValues;
-    const auto& function=mpd.f;
-    const auto& bounds=mpd.boundsDescriptions;
-    const auto& physicalBounds=mpd.physicalBoundsDescriptions;
-    string header = this->getHeaderFileName(material,className);
-    this->srcFileName     = "src/"     + this->getSrcFileName(material,className)+".cxx";
+    const auto header = this->getHeaderFileName(mpd.material,mpd.className);
+    const auto src    = this->getSrcFileName(mpd.material,mpd.className);
     // the fortran interface does not need any header...
     if(!header.empty()){
       this->headerFileName  = "include/" + header +".hxx";
       this->headerFile.open(this->headerFileName);
       if(!this->headerFile){
-	string msg("MaterialPropertyDSL::writeOutputFiles : ");
-	msg += "unable to open ";
-	msg += this->headerFileName;
-	msg += " for writing output file.";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("CMaterialPropertyInterfaceBase::writeOutputFiles : "
+				 "unable to open '"+this->headerFileName+
+				 "' for writing output file."));
       }
-      this->headerFile.exceptions(ios::badbit|ios::failbit);
-      this->writeHeaderFile(material,className,author,date,
-			    description,inputs,bounds,physicalBounds);
+      this->headerFile.exceptions(std::ios::badbit|std::ios::failbit);
+      this->writeHeaderFile(mpd,fd);
+      this->headerFile.close();
     }
+    // opening the source file
+    this->srcFileName  = "src/" + src +".cxx";
     this->srcFile.open(this->srcFileName);
     if(!this->srcFile){
-      string msg("MaterialPropertyDSL::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->srcFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("CMaterialPropertyInterfaceBase::writeOutputFiles : "
+			       "unable to open '"+this->srcFileName+
+			       "' for writing output file."));
     }
-    this->srcFile.exceptions(ios::badbit|ios::failbit);
-    this->writeSrcFile(file,material,className,author,
-		       date,includes,output,
-		       inputs,materialLaws,staticVars,
-		       params,paramValues,function,
-		       bounds,physicalBounds);
+    this->srcFile.exceptions(std::ios::badbit|std::ios::failbit);
+    this->writeSrcFile(mpd,fd);
+    this->srcFile.close();
   } // end of CMaterialPropertyInterfaceBase::writeOutputFiles
 
-  void
-  CMaterialPropertyInterfaceBase::replace(std::string& s,
-				   const std::string::value_type a,
-				   const std::string::value_type b)
-  {
-    using namespace std;
-    string::size_type p = 0;
-    while((p=s.find(a))!=string::npos){
-      s[p]=b;
-    }
-  } // end of CMaterialPropertyInterfaceBase::replace
-
   std::string
-  CMaterialPropertyInterfaceBase::transformHeaderName(const std::string& material,
-					       const std::string& className)
-  {
-    using namespace std;
-    string header;
-    header = makeUpperCase(this->getHeaderFileName(material,className));
-    CMaterialPropertyInterfaceBase::replace(header,'.','_');
-    CMaterialPropertyInterfaceBase::replace(header,'-','_');
-    CMaterialPropertyInterfaceBase::replace(header,'/','_');
-    return header;
-  } // end of CMaterialPropertyInterfaceBase::transformHeaderName
-
+  CMaterialPropertyInterfaceBase::getCallingConvention(void) const{
+    return "";
+  }
+  
   void
-  CMaterialPropertyInterfaceBase::writeHeaderFile(const std::string& material,
-					   const std::string& className,
-					   const std::string& author,
-					   const std::string& date,
-					   const std::string& description,
-					   const VariableDescriptionContainer& inputs,
-					   const std::vector<VariableBoundsDescription>& bounds,
-					   const std::vector<VariableBoundsDescription>& physicalBounds)
+  CMaterialPropertyInterfaceBase::writeHeaderFile(const MaterialPropertyDescription& mpd,
+						  const FileDescription& fd)
   {
-    using namespace std;
-    this->headerFile << "/*!" << endl;
-    this->headerFile << "* \\file   " << this->headerFileName  << endl;
-    this->headerFile << "* \\brief  " << "this file declares the " 
-		     << className << " MaterialLaw.\n";
-    this->headerFile << "*         File generated by ";
-    this->headerFile << MFrontHeader::getVersionName() << " ";
-    this->headerFile << "version " << MFrontHeader::getVersionNumber();
-    this->headerFile << endl;
-    if(!author.empty()){
-      this->headerFile << "* \\author " << author << endl;
+    const auto header = this->getHeaderFileName(mpd.material,mpd.className);
+    const auto headerGard = transformHeaderName(header)+"_HH";
+    this->headerFile << "/*!\n"
+		     << "* \\file   " << this->headerFileName  << "\n"
+		     << "* \\brief  " << "this file declares the " 
+		     << mpd.className << " MaterialLaw.\n"
+		     << "*         File generated by "
+		     << MFrontHeader::getVersionName() << " "
+		     << "version " << MFrontHeader::getVersionNumber()
+		     << "\n";
+    if(!fd.authorName.empty()){
+      this->headerFile << "* \\author " << fd.authorName << "\n";
     }
-    if(!date.empty()){
-      this->headerFile << "* \\date   " << date       << endl;
+    if(!fd.date.empty()){
+      this->headerFile << "* \\date   " << fd.date       << "\n";
     }
-    if(!description.empty()){
-      this->headerFile << description << endl;
+    if(!fd.description.empty()){
+      this->headerFile << fd.description << "\n";
     }
-    this->headerFile << " */\n\n";
-    this->headerFile << "#ifndef " << this->transformHeaderName(material,className) << "_HH\n";
-    this->headerFile << "#define " << this->transformHeaderName(material,className) << "_HH\n\n";
-    this->writeHeaderPreprocessorDirectives(material,className);
+    this->headerFile << " */\n\n"
+		     << "#ifndef " << headerGard << "\n"
+		     << "#define " << headerGard << "\n\n";
+    writeExportDirectives(this->srcFile);
+    this->writeHeaderPreprocessorDirectives(mpd);
     this->writeBeginHeaderNamespace();
-    this->headerFile << this->getFunctionDeclaration(material,className);
+    this->headerFile << "MFRONT_SHAREDOBJ double "
+		     << this->getCallingConvention() << '\n'
+		     << this->getFunctionName(mpd.material,mpd.className);
     this->headerFile << "(";
-    this->writeParameterList(this->headerFile,inputs);
+    this->writeParameterList(this->headerFile,mpd.inputs);
     this->headerFile << ");\n\n";
-    if(((!bounds.empty())||(!physicalBounds.empty()))||
+    if(((!mpd.boundsDescriptions.empty())||(!mpd.physicalBoundsDescriptions.empty()))||
        (this->requiresCheckBoundsFunction())){
-      this->headerFile << this->getCheckBoundsFunctionDeclaration(material,className);
+      this->headerFile << "MFRONT_SHAREDOBJ int "
+		       << this->getCallingConvention() << '\n'
+		       << this->getCheckBoundsFunctionName(mpd.material,mpd.className);
       this->headerFile << "(";
-      this->writeParameterList(this->headerFile,inputs);
+      this->writeParameterList(this->headerFile,mpd.inputs);
       this->headerFile << ");\n\n";
     }
     this->writeEndHeaderNamespace();
-    this->headerFile << "#endif /* " << this->transformHeaderName(material,className) << "_HH */\n";
-    this->headerFile.close();
+    this->headerFile << "#endif /* " << headerGard << " */\n";
   } // end of CMaterialPropertyInterfaceBase::writeHeaderFile(void)
 
   void
@@ -178,10 +162,9 @@ namespace mfront
 
   void
   CMaterialPropertyInterfaceBase::writeParameterList(std::ostream& file,
-					      const VariableDescriptionContainer& inputs){
-    VariableDescriptionContainer::const_iterator p;
+						     const VariableDescriptionContainer& inputs){
     if(!inputs.empty()){
-      for(p=inputs.begin();p!=inputs.end();){
+      for(auto p=inputs.begin();p!=inputs.end();){
 	file << "const double " << p->name;
 	if((++p)!=inputs.end()){
 	  file << ",";
@@ -192,138 +175,107 @@ namespace mfront
     }
   } // end of CMaterialPropertyInterfaceBase::writeParameterList
 
+  static void writeBounds(std::ostream& out,
+			  const std::vector<VariableBoundsDescription>& bounds,
+			  const char * const s){
+    for(const auto& b : bounds){
+      if(b.boundsType==VariableBoundsDescription::Lower){
+	out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
+	out << "return " << s << b.varNbr << ";\n";
+	out << "}\n";
+      } else if(b.boundsType==VariableBoundsDescription::Upper){
+	out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
+	out << "return " << s << b.varNbr << ";\n";
+	out << "}\n";
+      } else {
+	out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
+	    << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
+	out << "return " << s << b.varNbr << ";\n";
+	out << "}\n";
+      }
+    }
+  }
+  
   void
-  CMaterialPropertyInterfaceBase::writeSrcFile(const std::string& file,
-					const std::string& material,
-					const std::string& className,
-					const std::string& author,
-					const std::string& date,
-					const std::string& includes,
-					const std::string& output,
-					const VariableDescriptionContainer& inputs,
-					const std::vector<std::string>& materialLaws,
-					const StaticVariableDescriptionContainer& staticVars,
-					const std::vector<std::string>& params,
-					const std::map<std::string,double>& paramValues,
-					const LawFunction& function,
-					const std::vector<VariableBoundsDescription>& bounds,
-					const std::vector<VariableBoundsDescription>& physicalBounds)
+  CMaterialPropertyInterfaceBase::writeSrcFile(const MaterialPropertyDescription& mpd,
+					       const FileDescription& fd)
   {
-    using namespace std;
-    string header;
-    vector<string>::const_iterator p;
-    std::vector<VariableBoundsDescription>::const_iterator p5;
-    map<string,double>::const_iterator p6;
-    VariableDescriptionContainer::const_iterator pv;
-    this->srcFile << "/*!" << endl;
-    this->srcFile << "* \\file   " << this->srcFileName  << endl;
-    this->srcFile << "* \\brief  " << "this file implements the " 
-		  << className << " MaterialLaw.\n";
-    this->srcFile << "*         File generated by ";
-    this->srcFile << MFrontHeader::getVersionName() << " ";
-    this->srcFile << "version " << MFrontHeader::getVersionNumber();
-    this->srcFile << endl;
-    if(!author.empty()){
-      this->srcFile << "* \\author " << author << endl;
+    this->srcFile << "/*!\n"
+		  << " * \\file   " << this->srcFileName  << '\n'
+		  << " * \\brief  " << "this file implements the " 
+		  << mpd.className << " MaterialLaw.\n"
+		  << " *         File generated by "
+		  << MFrontHeader::getVersionName() << " "
+		  << "version " << MFrontHeader::getVersionNumber()
+		  << '\n';
+    if(!fd.authorName.empty()){
+      this->srcFile << "* \\fd.author " << fd.authorName << '\n';
     }
-    if(!date.empty()){
-      this->srcFile << "* \\date   " << date       << endl;
+    if(!fd.date.empty()){
+      this->srcFile << "* \\date   " << fd.date       << '\n';
     }
-    this->srcFile << " */\n\n";
-    this->srcFile << "#include<cmath>\n\n";
-    this->srcFile << "#include<algorithm>\n\n";
-    if(!includes.empty()){
-      this->srcFile << includes << endl << endl;
+    this->srcFile << " */\n\n"
+		  << "#include<cmath>\n\n"
+		  << "#include<algorithm>\n\n";
+    if(!mpd.includes.empty()){
+      this->srcFile << mpd.includes << "\n\n";
     }
-    header = this->getHeaderFileName(material,className);
+    const auto header = this->getHeaderFileName(mpd.material,mpd.className);
     if(!header.empty()){
       this->srcFile << "#include\""+header+".hxx\"\n\n";
     }
-    this->writeSrcPreprocessorDirectives(material,className);
+    this->writeSrcPreprocessorDirectives(mpd);
     this->writeBeginSrcNamespace();
-    this->srcFile << this->getFunctionDeclaration(material,className);
+    this->srcFile << "double " << this->getFunctionName(mpd.material,mpd.className);
     this->srcFile << "(";
-    this->writeParameterList(this->srcFile,inputs);
+    this->writeParameterList(this->srcFile,mpd.inputs);
     this->srcFile << ")\n{\n";
     this->srcFile << "using namespace std;\n";
     this->srcFile << "typedef double real;\n";
     // material laws
     writeMaterialLaws("CMaterialPropertyInterfaceBase::writeSrcFile",
-		      this->srcFile,materialLaws);
+		      this->srcFile,mpd.materialLaws);
     // static variables
     writeStaticVariables("CMaterialPropertyInterfaceBase::writeSrcFile",
-			 srcFile,staticVars,file);
+			 this->srcFile,mpd.staticVars,fd.fileName);
     // parameters
-    if(!params.empty()){
-      for(p=params.begin();p!=params.end();++p){
-	p6 = paramValues.find(*p);
-	if(p6==paramValues.end()){
-	  string msg("CMaterialPropertyInterfaceBase::writeSrcFile : ");
-	  msg += "internal error (can't find value of parameter " + *p + ")";
-	  throw(runtime_error(msg));
+    if(!mpd.parameters.empty()){
+      for(const auto& p : mpd.parameters){
+	const auto p6 = mpd.parametersValues.find(p);
+	if(p6==mpd.parametersValues.end()){
+	  throw(std::runtime_error("CMaterialPropertyInterfaceBase::writeSrcFile : "
+				   "internal error (can't find value of parameter '"+p+"')"));
 	}
-	this->srcFile << "static " << constexpr_c << " double " << *p << " = " << p6->second << ";\n";
+	this->srcFile << "static " << constexpr_c << " double " << p << " = " << p6->second << ";\n";
       }
     }
-    this->writeInterfaceSpecificVariables(inputs);
-    this->srcFile << "double " << output << ";\n";
-    this->srcFile << function.body;
-    this->srcFile << "return " << output << ";\n";
-    this->srcFile << "} /* end of " << className << " */\n\n";
-    if(((!bounds.empty())||(!physicalBounds.empty()))||
+    this->writeInterfaceSpecificVariables(mpd.inputs);
+    this->srcFile << "double " << mpd.output << ";\n";
+    this->srcFile << mpd.f.body;
+    this->srcFile << "return " << mpd.output << ";\n";
+    this->srcFile << "} /* end of " << mpd.className << " */\n\n";
+    if(((!mpd.boundsDescriptions.empty())||(!mpd.physicalBoundsDescriptions.empty()))||
        (this->requiresCheckBoundsFunction())){
-      this->srcFile << this->getCheckBoundsFunctionDeclaration(material,className);
+      this->srcFile << "int "
+		    << this->getCheckBoundsFunctionName(mpd.material,mpd.className);
       this->srcFile << "(";
-      this->writeParameterList(this->srcFile,inputs);
+      this->writeParameterList(this->srcFile,mpd.inputs);
       this->srcFile << ")\n{\n";
-      this->writeInterfaceSpecificVariables(inputs);
-      for(pv=inputs.begin();pv!=inputs.end();++pv){
-	this->srcFile << "static_cast<void>(" << pv->name << ");\n";
+      this->writeInterfaceSpecificVariables(mpd.inputs);
+      for(const auto& i : mpd.inputs){
+	this->srcFile << "static_cast<void>(" << i.name << ");\n";
       }
-      if(!physicalBounds.empty()){
-	this->srcFile << "/* treating physical bounds */\n";
-	for(p5=physicalBounds.begin();
-	    p5!=physicalBounds.end();++p5){
-	  if(p5->boundsType==VariableBoundsDescription::Lower){
-	    this->srcFile << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
-	    this->srcFile << "return -" << p5->varNbr << ";\n";
-	    this->srcFile << "}\n";
-	  } else if(p5->boundsType==VariableBoundsDescription::Upper){
-	    this->srcFile << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
-	    this->srcFile << "return -" << p5->varNbr << ";\n";
-	    this->srcFile << "}\n";
-	  } else {
-	    this->srcFile << "if((" << p5->varName<< " < "<< p5->lowerBound << ")||"
-			  << "(" << p5->varName<< " > "<< p5->upperBound << ")){\n";
-	    this->srcFile << "return -" << p5->varNbr << ";\n";
-	    this->srcFile << "}\n";
-	  }
-	}
+      if(!mpd.physicalBoundsDescriptions.empty()){
+	this->srcFile << "/* treating mpd.physical bounds */\n";
+	writeBounds(this->srcFile,mpd.physicalBoundsDescriptions,"-");
       }
-      if(!bounds.empty()){
+      if(!mpd.boundsDescriptions.empty()){
 	this->srcFile << "/* treating standard bounds */\n";
-	for(p5=bounds.begin();
-	    p5!=bounds.end();++p5){
-	  if(p5->boundsType==VariableBoundsDescription::Lower){
-	    this->srcFile << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
-	    this->srcFile << "return " << p5->varNbr << ";\n";
-	    this->srcFile << "}\n";
-	  } else if(p5->boundsType==VariableBoundsDescription::Upper){
-	    this->srcFile << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
-	    this->srcFile << "return " << p5->varNbr << ";\n";
-	    this->srcFile << "}\n";
-	  } else {
-	    this->srcFile << "if((" << p5->varName<< " < "<< p5->lowerBound << ")||"
-			  << "(" << p5->varName<< " > "<< p5->upperBound << ")){\n";
-	    this->srcFile << "return " << p5->varNbr << ";\n";
-	    this->srcFile << "}\n";
-	  }
-	}
+	writeBounds(this->srcFile,mpd.physicalBoundsDescriptions,"");
       }
-      this->srcFile << "return 0;\n} /* end of " << className << "_checkBounds */\n\n";
+      this->srcFile << "return 0;\n} /* end of " << mpd.className << "_checkBounds */\n\n";
     }
     this->writeEndSrcNamespace();
-    this->srcFile.close();
   } // end of CMaterialPropertyInterfaceBase::writeSrcFile(void)
 
 } // end of namespace mfront

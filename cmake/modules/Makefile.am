@@ -15,5 +15,4 @@ EXTRA_DIST = autotools.cmake               \
 	     OptimizeForArchitecture.cmake \
 	     tfel.cmake                    \
 	     latex.cmake                   \
-	     default-fortran.cmake         \
 	     pandoc.cmake

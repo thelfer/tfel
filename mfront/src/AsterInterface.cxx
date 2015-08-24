@@ -372,7 +372,7 @@ namespace mfront{
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
+    out << "MFRONT_SHAREDOBJ void\n"
 	<< name << "("
 	<< "aster::AsterReal *const,"       /*< tenseur des contraintes */
 	<< "aster::AsterReal *const,"       /*< variables internes */
@@ -396,7 +396,7 @@ namespace mfront{
         << "const aster::AsterInt  *const" /*< type de modélisation */
 	<< ");\n\n";
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\naster"
+    out << "MFRONT_SHAREDOBJ void\naster"
 	<< makeLowerCase(name) << "("
 	<< "aster::AsterReal *const,"       /*< tenseur des contraintes */
 	<< "aster::AsterReal *const,"       /*< variables internes */
@@ -511,7 +511,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
 
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
+    out << "MFRONT_SHAREDOBJ void\n"
 	<< name << "("
 	<< "aster::AsterReal *const STRESS,"       /*< tenseur des contraintes */
 	<< "aster::AsterReal *const STATEV,"       /*< variables internes */
@@ -684,7 +684,7 @@ namespace mfront{
       out << "}\n";
     }
     out << "}\n\n";
-    out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
+    out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionName(name) << "("
 	<< "aster::AsterReal *const STRESS,"       /*< tenseur des contraintes */
 	<< "aster::AsterReal *const STATEV,"       /*< variables internes */

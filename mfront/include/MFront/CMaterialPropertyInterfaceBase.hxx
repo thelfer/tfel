@@ -54,15 +54,6 @@ namespace mfront{
     
   protected:
 
-    static void
-    replace(std::string&,
-	    const std::string::value_type,
-	    const std::string::value_type);
-
-    std::string
-    transformHeaderName(const std::string&,
-			const std::string&);
-
     virtual void
     writeParameterList(std::ostream&,
 		       const VariableDescriptionContainer&);
@@ -83,13 +74,14 @@ namespace mfront{
     writeEndSrcNamespace(void) = 0;
 
     virtual void
-    writeHeaderPreprocessorDirectives(const std::string&,
-				      const std::string&) = 0;
+    writeHeaderPreprocessorDirectives(const MaterialPropertyDescription&);
 
     virtual void
-    writeSrcPreprocessorDirectives(const std::string&,
-				   const std::string&) = 0;
+    writeSrcPreprocessorDirectives(const MaterialPropertyDescription&);
 
+    virtual std::string
+    getCallingConvention(void) const;
+    
     virtual bool
     requiresCheckBoundsFunction(void) const = 0;
 
@@ -98,16 +90,16 @@ namespace mfront{
      * \param const std::string&, name of the class
      */
     virtual std::string
-    getFunctionDeclaration(const std::string&,
-			   const std::string&) = 0;
+    getFunctionName(const std::string&,
+		    const std::string&) const = 0;
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
     virtual std::string
-    getCheckBoundsFunctionDeclaration(const std::string&,
-				      const std::string&) = 0;
+    getCheckBoundsFunctionName(const std::string&,
+			       const std::string&) const = 0;
 
     /*!
      * \param const std::string&, name of the material
@@ -115,7 +107,7 @@ namespace mfront{
      */
     virtual std::string
     getHeaderFileName(const std::string&,
-		      const std::string&) = 0;
+		      const std::string&) const = 0;
 
     /*!
      * \param const std::string&, name of the material
@@ -123,59 +115,18 @@ namespace mfront{
      */
     virtual std::string
     getSrcFileName(const std::string&,
-		   const std::string&) = 0;
+		   const std::string&) const = 0;
 
     /*
-     * \param const std::string&, material
-     * \param const std::string&, className
-     * \param const std::string&, author
-     * \param const std::string&, date
-     * \param const std::string&, description
-     * \param const VariableDescriptionContainer&, inputs
-     * \param const std::vector<VariableBoundsDescription>&, bounds of the law
-     * \param const std::vector<VariableBoundsDescription>&, physical bounds of the law
      */
-    void writeHeaderFile(const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const VariableDescriptionContainer&,
-			 const std::vector<VariableBoundsDescription>&,
-			 const std::vector<VariableBoundsDescription>&);
-
+    virtual void
+    writeHeaderFile(const MaterialPropertyDescription&,
+		    const FileDescription&);
+    
     /*
-     * \param const std::string&, name of the original file
-     * \param const std::string&, material
-     * \param const std::string&, className
-     * \param const std::string&, author
-     * \param const std::string&, date
-     * \param const std::string&, includes
-     * \param const std::string&, output name
-     * \param const VariableDescriptionContainer&, inputs
-     * \param const std::vector<std::string>&, material laws
-     * \param const StaticVariableDescriptionContainer&, static variables
-     * \param const std::vector<std::string>&, parameters
-     * \param const std::map<std::string,double>&, parameters values
-     * \param const LawFunction&, function definition
-     * \param const std::vector<VariableBoundsDescription>&, bounds of the law
-     * \param const std::vector<VariableBoundsDescription>&, physical bounds of the law
      */
-    void writeSrcFile(const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const VariableDescriptionContainer&,
-		      const std::vector<std::string>&,
-		      const StaticVariableDescriptionContainer&,
-		      const std::vector<std::string>&,
-		      const std::map<std::string,double>&,
-		      const LawFunction&,
-		      const std::vector<VariableBoundsDescription>&,
-		      const std::vector<VariableBoundsDescription>&);
+    void writeSrcFile(const MaterialPropertyDescription&,
+		      const FileDescription&);
 
     std::ofstream headerFile;
 

@@ -134,10 +134,6 @@ namespace mfront{
 				 const FileDescription&) const override;
 
     virtual void
-    writeCyranoFortranFunctionDefine(std::ostream&,
-				     const std::string&) const;
-
-    virtual void
     writeCyranoFunctionDeclaration(std::ostream&,
 				   const std::string&) const;
 

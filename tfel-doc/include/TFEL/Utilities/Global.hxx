@@ -57,6 +57,9 @@ namespace tfel{
     getCategory(const std::string&,
 		const std::string&);
 
+    std::string
+    capitalize(const std::string&);
+    
   } // end of namespace utilities
 
 } // end of namespace tfel

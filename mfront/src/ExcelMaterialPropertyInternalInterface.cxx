@@ -36,24 +36,36 @@ namespace mfront
 
   std::string
   ExcelMaterialPropertyInternalInterface::getHeaderFileName(const std::string& m,
-						    const std::string& c)
+							    const std::string& c) const
   {
     return CMaterialPropertyInterface::getHeaderFileName(m,c)+"-Excel";
   } // end of ExcelMaterialPropertyInternalInterface::getHeaderFileName
 
   std::string
   ExcelMaterialPropertyInternalInterface::getSrcFileName(const std::string& m,
-						 const std::string& c)
+							 const std::string& c) const
   {
     return CMaterialPropertyInterface::getSrcFileName(m,c)+"-Excel";
   } // end of ExcelMaterialPropertyInternalInterface::getSrcFileName
   
   void
-  ExcelMaterialPropertyInternalInterface::writeHeaderPreprocessorDirectives(const std::string&,
-									    const std::string&)
+  ExcelMaterialPropertyInternalInterface::writeHeaderPreprocessorDirectives(const MaterialPropertyDescription&)
   {
-    writeExportDirectives(this->headerFile,"__stdcall");
+    this->headerFile << "#ifndef MFRONT_EXCEL_CALLING_CONVENTION\n"
+		     << "#ifdef _WIN32\n"
+		     << "#define MFRONT_EXCEL_CALLING_CONVENTION __stdcall\n"
+		     << "#else /* _WIN32 */\n"
+		     << "#define MFRONT_EXCEL_CALLING_CONVENTION\n"
+		     << "#endif /* _WIN32 */\n"
+		     << "#endif /* MFRONT_EXCEL_CALLING_CONVENTION */\n"; 
   } // end of ExcelMaterialPropertyInternalInterface::writePreprocessorDirectives
+
+  std::string
+  ExcelMaterialPropertyInternalInterface::getCallingConvention(void) const{
+    return "MFRONT_EXCEL_CALLING_CONVENTION";
+  }
+  
+
   
   ExcelMaterialPropertyInternalInterface::~ExcelMaterialPropertyInternalInterface()
   {} // end of ExcelMaterialPropertyInternalInterface::~ExcelMaterialPropertyInternalInterface

@@ -768,23 +768,15 @@ namespace mfront
   void
   UMATInterfaceBase::writeVisibilityDefines(std::ostream& out) const
   {
-    using namespace std;
-    out << "#ifdef _WIN32" << endl;
-    out << "#ifndef NOMINMAX" << endl;
-    out << "#define NOMINMAX" << endl;
-    out << "#endif" << endl;
-    out << "#include <windows.h>" << endl;
-    out << "#ifndef MFRONT_CALLING_CONVENTION" << endl;
-    out << "#define MFRONT_CALLING_CONVENTION __cdecl" << endl; 
-    out << "#endif /* MFRONT_CALLING_CONVENTION */" << endl; 
-    out << "#else" << endl;
-    out << "#ifndef MFRONT_CALLING_CONVENTION" << endl;
-    out << "#define MFRONT_CALLING_CONVENTION" << endl; 
-    out << "#endif /* MFRONT_CALLING_CONVENTION */" << endl; 
-    out << "#endif /* _WIN32 */" << endl << endl;
-    out << "#ifndef MFRONT_SHAREDOBJ" << endl;
-    out << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT" << endl; 
-    out << "#endif /* MFRONT_SHAREDOBJ */" << endl << endl; 
+    out << "#ifdef _WIN32\n"
+	<< "#ifndef NOMINMAX\n"
+	<< "#define NOMINMAX\n"
+	<< "#endif /* NOMINMAX */\n"
+	<< "#include <windows.h>\n"
+	<< "#endif /* _WIN32 */\n\n"
+	<< "#ifndef MFRONT_SHAREDOBJ\n"
+	<< "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT\n" 
+	<< "#endif /* MFRONT_SHAREDOBJ */\n\n"; 
   } // end of UMATInterfaceBase::writeVisibilityDefines
 
   void
@@ -836,15 +828,15 @@ namespace mfront
 	  fctName += "_"+suffix;
 	}
 	if(rp){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION" << endl
+	  out << "MFRONT_SHAREDOBJ int" << endl
 	      << fctName << "_setParameter(const char *const,const double);" << endl << endl;
 	}
 	if(ip){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION" << endl
+	  out << "MFRONT_SHAREDOBJ int" << endl
 	      << fctName << "_setIntegerParameter(const char *const,const int);" << endl << endl;
 	}
 	if(up){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION" << endl
+	  out << "MFRONT_SHAREDOBJ int" << endl
 	      << fctName << "_setUnsignedShortParameter(const char *const,const unsigned short);" << endl << endl;
 	}
       }
@@ -875,7 +867,7 @@ namespace mfront
 	}
 	string cname = mb.getClassName() + suffix + "ParametersInitializer";
 	if(rp){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION" << endl
+	  out << "MFRONT_SHAREDOBJ int" << endl
 	      << fctName << "_setParameter(const char *const key,const double value){" << endl
 	      << "using namespace std;" << endl
 	      << "using namespace tfel::material;" << endl
@@ -890,7 +882,7 @@ namespace mfront
 	      << "}" << endl << endl;
 	}
 	if(ip){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION" << endl
+	  out << "MFRONT_SHAREDOBJ int" << endl
 	      << fctName << "_setIntegerParameter(const char *const key,const int value){" << endl
 	      << "using namespace std;" << endl
 	      << "using namespace tfel::material;" << endl
@@ -905,7 +897,7 @@ namespace mfront
 	      << "}" << endl << endl;
 	}
 	if(up){
-	  out << "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION" << endl
+	  out << "MFRONT_SHAREDOBJ int" << endl
 	      << fctName << "_setUnsignedShortParameter(const char *const key,const unsigned short value){" << endl
 	      << "using namespace std;" << endl
 	      << "using namespace tfel::material;" << endl

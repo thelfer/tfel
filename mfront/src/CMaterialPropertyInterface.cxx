@@ -59,36 +59,18 @@ namespace mfront
 
   std::string
   CMaterialPropertyInterface::getHeaderFileName(const std::string& material,
-						const std::string& className)
+						const std::string& className) const
   {
-    if(material.empty()){
-      return className;
-    }
-    return material+"_"+className;
+    return material.empty() ? className : material+"_"+className;
   } // end of CMaterialPropertyInterface::getHeaderFileName
 
   std::string
   CMaterialPropertyInterface::getSrcFileName(const std::string& material,
-					     const std::string& className)
+					     const std::string& className) const
   {
-    if(material.empty()){
-      return className;
-    }
-    return material+"_"+className;
+    return material.empty() ? className : material+"_"+className;
   } // end of CMaterialPropertyInterface::getSrcFileName
   
-  void
-  CMaterialPropertyInterface::writeHeaderPreprocessorDirectives(const std::string&,
-							 const std::string&)
-  {
-    writeExportDirectives(this->headerFile);
-  } // end of CMaterialPropertyInterface::writePreprocessorDirectives
-
-  void
-  CMaterialPropertyInterface::writeSrcPreprocessorDirectives(const std::string&,
-						      const std::string&)
-  {} // end of CMaterialPropertyInterface::writeSrcPreprocessorDirectives
-
   void
   CMaterialPropertyInterface::writeBeginHeaderNamespace(void)
   {
@@ -122,14 +104,11 @@ namespace mfront
   } // end of CMaterialPropertyInterface::writeEndSrcNamespace(void)
 
   std::string
-  CMaterialPropertyInterface::getFunctionDeclaration(const std::string& material,
-						     const std::string& className)
+  CMaterialPropertyInterface::getFunctionName(const std::string& material,
+					      const std::string& className) const
   {
-    if(material.empty()){
-      return "MFRONT_SHAREDOBJ double MFRONT_CALLING_CONVENTION\n"+className;
-    }
-    return "MFRONT_SHAREDOBJ double MFRONT_CALLING_CONVENTION\n"+material+"_"+className;
-  } // end of CMaterialPropertyInterface::getFunctionDeclaration
+    return material.empty() ? className : material+"_"+className;
+  } // end of CMaterialPropertyInterface::getFunctionName
   
   bool
   CMaterialPropertyInterface::requiresCheckBoundsFunction(void) const
@@ -138,14 +117,14 @@ namespace mfront
   }
 
   std::string
-  CMaterialPropertyInterface::getCheckBoundsFunctionDeclaration(const std::string& material,
-								const std::string& className)
+  CMaterialPropertyInterface::getCheckBoundsFunctionName(const std::string& material,
+							 const std::string& className) const
   {
     if(material.empty()){
-      return "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+className+"_checkBounds";
+      return className+"_checkBounds";
     }
-    return "MFRONT_SHAREDOBJ int MFRONT_CALLING_CONVENTION\n"+material+"_"+className+"_checkBounds";
-  } // end of CMaterialPropertyInterface::getCheckBoundsFunctionDeclaration
+    return material+"_"+className+"_checkBounds";
+  } // end of CMaterialPropertyInterface::getCheckBoundsFunctionName
   
   CMaterialPropertyInterface::~CMaterialPropertyInterface()
   {} // end of CMaterialPropertyInterface::~CMaterialPropertyInterface
