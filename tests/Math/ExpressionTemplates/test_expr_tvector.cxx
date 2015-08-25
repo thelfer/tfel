@@ -126,7 +126,7 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
+  using tfel::utilities::shared_ptr;
   typedef TestFunctionWrapper<test1<float> >       Wrapper1;
   typedef TestFunctionWrapper<test1<double> >      Wrapper2;
   typedef TestFunctionWrapper<test1<long double> > Wrapper3;

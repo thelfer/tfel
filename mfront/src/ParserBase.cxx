@@ -121,7 +121,7 @@ namespace mfront
   ParserBase::readNextBlock(const CodeBlockParserOptions& options)
   {
     using namespace std;
-    using namespace tfel::utilities;
+    using tfel::utilities::shared_ptr;
     const bool addThisPtr     = options.qualifyMemberVariables;
     const bool addClassName   = options.qualifyStaticVariables;
     const bool allowSemiColon = options.allowSemiColon;

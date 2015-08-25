@@ -25,9 +25,9 @@ int
 main(void)
 {
   using namespace std;
-  using namespace tfel::utilities;
   using namespace tfel::math;
   using namespace tfel::math::parser;
+  using tfel::utilities::shared_ptr;
   vector<string> var(1,"x");
   Evaluator f(var,"exp(cos(x))");
 

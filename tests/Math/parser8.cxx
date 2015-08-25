@@ -44,8 +44,8 @@ struct ParserTest
   {
     using namespace std;
     using namespace tfel::math;
-    using namespace tfel::utilities;
     using namespace tfel::math::parser;
+    using tfel::utilities::shared_ptr;
     const double eps = 1.e-14;
     const std::string f("12*x*y*cos(u)*sin(v)");
     map<string,double> values;

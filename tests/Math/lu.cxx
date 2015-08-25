@@ -92,7 +92,7 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
+  using tfel::utilities::shared_ptr;
   typedef TestFunctionWrapper<LUSolveTest<long double> >  Wrapper1;
   typedef TestFunctionWrapper<LUSolveTest<double> >       Wrapper2;
   typedef TestFunctionWrapper<LUSolveTest<float> >        Wrapper3;

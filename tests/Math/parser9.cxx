@@ -35,9 +35,9 @@ struct ParserTest
   execute()
   {
     using namespace std;
-    using namespace tfel::utilities;
     using namespace tfel::math;
     using namespace tfel::math::parser;
+    using tfel::utilities::shared_ptr;
     vector<string> var(1,"x");
     shared_ptr<ExternalFunctionManager> manager(new ExternalFunctionManager());
     manager->operator[]("u") = shared_ptr<ExternalFunction>(new Evaluator(var,"cos(x)",manager));

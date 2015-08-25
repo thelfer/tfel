@@ -99,6 +99,7 @@ int main(void)
   using namespace std;
   using namespace tfel::tests;
   using namespace tfel::utilities;
+  using tfel::utilities::shared_ptr;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("parser7.xml");

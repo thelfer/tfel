@@ -40,7 +40,7 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
+  using tfel::utilities::shared_ptr;
   typedef TestFunctionWrapper<test1> Wrapper1;
   typedef TestFunctionWrapper<test2> Wrapper2;
   TestManager& manager = TestManager::getTestManager();

@@ -44,8 +44,6 @@ namespace tfel{
 
       StensorSquareExprBase();
 
-      struct invalid_argument;
-
     public:
 
       typedef EmptyRunTimeProperties RunTimeProperties; 

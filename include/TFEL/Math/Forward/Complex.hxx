@@ -15,18 +15,27 @@
 #ifndef _LIB_TFEL_MATH_FORWARD_COMPLEX_H_
 #define _LIB_TFEL_MATH_FORWARD_COMPLEX_H_ 
 
+// August 2015 : a simple trick: including this header has not effect
+// in c++ other than defining some macros specific to the standard
+// library implementation: here we wan't to detect if we use libc++
+// which is a bit touchy with std::complex
+#include<ciso646>
+
+#if (defined _LIBCPP_VERSION)
+#include<complex>
+#else
 namespace std
 {
-
-#ifndef MICROSOFT_COMPILER_MSC_
+  // forward declaration of std::complex
+#ifndef _MSC_VER
   template<typename T>
   struct complex;
 #else
   template<typename T>
   class complex;
-#endif
-
+#endif /* LIB_TFEL_MATH_FORWARD_COMPLEX_H_ */
 } // end of namespace std
+#endif /* defined _LIBCPP_VERSION */
 
 namespace tfel
 {

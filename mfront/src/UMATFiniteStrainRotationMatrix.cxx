@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<string>
 #include<stdexcept>
 
 #include"MFront/UMAT/UMATFiniteStrainRotationMatrix.hxx"

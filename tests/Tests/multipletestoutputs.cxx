@@ -39,7 +39,7 @@ int main(void)
 {
   using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
+  using tfel::utilities::shared_ptr;
   typedef TestFunctionWrapper<test1> Wrapper1;
   typedef TestFunctionWrapper<test2> Wrapper2;
   shared_ptr<Test> a(new Wrapper1("test1"));

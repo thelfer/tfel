@@ -36,8 +36,8 @@ int main(void)
 {
 #if  __GNUC__ != 3
   using namespace std;
-  using namespace tfel::utilities;
   using namespace tfel::math;
+  using tfel::utilities::shared_ptr;
   using tfel::math::vector;
   typedef LevenbergMarquardtEvaluatorWrapper EvaluatorWrapper;
   const double x_data[] = {0.840188,
