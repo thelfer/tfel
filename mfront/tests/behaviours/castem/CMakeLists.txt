@@ -11,10 +11,13 @@ include_directories(
   "${PROJECT_SOURCE_DIR}/mfront/include"
   "${CMAKE_CURRENT_BINARY_DIR}/include")
 link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
+  "${PROJECT_BINARY_DIR}/src/Glossary"
+  "${PROJECT_BINARY_DIR}/src/Material"
+  "${PROJECT_BINARY_DIR}/src/Math"
+  "${PROJECT_BINARY_DIR}/src/Utilities"
+  "${PROJECT_BINARY_DIR}/src/System"
+  "${PROJECT_BINARY_DIR}/src/Tests"
+  "${PROJECT_BINARY_DIR}/src/Exception")
 
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
     PolyCrystalsAngles.txt @ONLY)
@@ -392,3 +395,15 @@ test_castem(finitestrainsinglecrystal_numericaljacobian-012-2)
 test_castem(finitestrainsinglecrystal_numericaljacobian-159)
 test_castem(finitestrainsinglecrystal2-001)
 test_castem(anistropiclemaitreviscoplasticbehaviour)
+
+get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
+  ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx @ONLY)
+add_executable(UMATExternalBehaviourDescription EXCLUDE_FROM_ALL
+  ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx)
+add_test(NAME UMATExternalBehaviourDescription COMMAND UMATExternalBehaviourDescription)
+target_link_libraries(UMATExternalBehaviourDescription
+  TFELGlossary TFELSystem TFELTests TFELException)
+set_tests_properties(UMATExternalBehaviourDescription
+  PROPERTIES DEPENDS MFrontCastemBehaviours)
+add_dependencies(check UMATExternalBehaviourDescription)

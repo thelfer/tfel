@@ -1547,6 +1547,7 @@ include/TFEL/Metaprogramming/TypeList.ixx -text
 include/TFEL/System/BinaryRead.hxx -text
 include/TFEL/System/BinaryWrite.hxx -text
 include/TFEL/System/ChildProcess.hxx -text
+include/TFEL/System/ExternalBehaviourDescription.hxx -text
 include/TFEL/System/ExternalFunctionsPrototypes.hxx -text
 include/TFEL/System/ExternalLibraryManager.hxx -text
 include/TFEL/System/ProcessManager.h -text
@@ -2234,6 +2235,7 @@ mfront/tests/behaviours/aster/castemimplicitnorton-planestress2.mtest.in -text
 mfront/tests/behaviours/aster/strainhardeningcreep.gnuplot -text
 mfront/tests/behaviours/castem/CMakeLists.txt -text
 mfront/tests/behaviours/castem/Makefile.am -text
+mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in -text
 mfront/tests/behaviours/castem/castemT91-satohtest.mtest.in -text
 mfront/tests/behaviours/castem/castemT91-viscositytest.mtest.in -text
 mfront/tests/behaviours/castem/castemageingburger.mtest.in -text
@@ -2808,6 +2810,7 @@ src/System/BinaryRead.cxx -text
 src/System/BinaryWrite.cxx -text
 src/System/CMakeLists.txt -text
 src/System/ChildProcess.cxx -text
+src/System/ExternalBehaviourDescription.cxx -text
 src/System/ExternalLibraryManager.cxx -text
 src/System/Makefile.am -text
 src/System/ProcessManager-c.c -text

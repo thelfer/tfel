@@ -492,6 +492,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/System/RecursiveFind.hxx                                                                \
 			TFEL/System/ExternalFunctionsPrototypes.hxx                                                  \
 			TFEL/System/ExternalLibraryManager.hxx                                                       \
+			TFEL/System/ExternalBehaviourDescription.hxx                                                 \
 			TFEL/System/ProcessManager.h                                                                 \
 			TFEL/System/ProcessManager.hxx                                                               \
 			TFEL/System/SignalHandler.ixx                                                                \
