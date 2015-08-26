@@ -1160,6 +1160,7 @@ namespace tfel{
     {
       this->cStyleCommentOpened = false;
       this->fileTokens.clear();
+      this->comments.clear();
     } // end of CxxTokenizer::end
 
     void
@@ -1167,11 +1168,8 @@ namespace tfel{
 				    CxxTokenizer::const_iterator& p, 
 				    const CxxTokenizer::const_iterator pe)
     {
-      using namespace std;
       if(p==pe){
-	string msg(method);
-	msg += " : unexpected end of line";
-	throw(runtime_error(msg));
+	throw(std::runtime_error(method+" : unexpected end of line");
       }
     } // end of CxxTokenizer::checkNotEndOfLine
     
