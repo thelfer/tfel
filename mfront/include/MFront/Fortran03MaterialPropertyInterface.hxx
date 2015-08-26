@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/include/MFront/Fortran03MaterialPropertyInterface.hxx
- * \brief  This file declares the Fortran03MaterialPropertyInterface class
+ * \brief  This file declares the Fortran03MaterialPropertyInterface class.
  * \author Helfer Thomas
  * \date   1 décembre 2008
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
