@@ -2,6 +2,17 @@
 % Helfer Thomas
 % August 18, 2015
 
+# New interface to fortran 2003 (24 August 2015)
+
+The current development version of `MFront` includes a new interface
+for the `Fortran 2003` standard. This interface automatically generates
+an include file defining a module with interfaces to the `MFront`
+generated library.
+
+This mechanism is much more portable and maintainable than the
+standard `Fortran 77` interface which relies on a compiler specific
+definition of the `F77_FUNC` and `F77_FUNC_` macros.
+
 # Introducting `mfront-doc` (19 August 2015)
 
 `mfront-doc` allows the user to extract the documentation out of

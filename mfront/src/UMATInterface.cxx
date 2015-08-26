@@ -298,68 +298,40 @@ namespace mfront{
 				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
-    using namespace std;
-    using namespace tfel::utilities;
+    using tfel::utilities::CxxTokenizer;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("UMATInterface::treatKeyword : "+m));}
+    };
     if (key=="@UMATGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
-      return make_pair(true,current);      
+      return {true,current};      
     } else if(key=="@UMATUseTimeSubStepping"){
       this->useTimeSubStepping = this->readBooleanValue(key,current,end);
-      return make_pair(true,current);      
+      return {true,current};
     } else if (key=="@UMATMaximumSubStepping"){
-      if(!this->useTimeSubStepping){
-	string msg("UmatInterface::treatKeyword (@UMATMaximumSubStepping) : ");
-	msg += "time sub stepping is not enabled at this stage.\n";
-	msg += "Use the @UMATUseTimeSubStepping directive before ";
-	msg += "@UMATMaximumSubStepping";
-	throw(runtime_error(msg));
-      }
-      if(current==end){
-	string msg("UmatInterface::treatKeyword (@UMATMaximumSubStepping) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      istringstream flux(current->value);
+      throw_if(!this->useTimeSubStepping,
+	       "time sub stepping is not enabled at this stage.\n"
+	       "Use the @UMATUseTimeSubStepping directive before "
+	       "@UMATMaximumSubStepping");
+      throw_if(current==end,"unexpected end of file");
+      std::istringstream flux(current->value);
       flux >> this->maximumSubStepping;
-      if(flux.fail()){
-	string msg("UmatInterface::treatKeyword (@UMATMaximumSubStepping) : ");
-	msg+="failed to read maximum substepping value.\n";
-	throw(runtime_error(msg));
-      }
+      throw_if(flux.fail(),"failed to read maximum substepping value.");
+      throw_if(++current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
-      if(current==end){
-	string msg("UmatInterface::treatKeyword (@UMATMaximumSubStepping) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }      
-      if(current->value!=";"){
-	string msg("UmatInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      return make_pair(true,current);      
+      return {true,current};
     } else if (key=="@UMATDoSubSteppingOnInvalidResults"){
-      if(!this->useTimeSubStepping){
-	string msg("UmatInterface::treatKeyword (@UMATDoSubSteppingOnInvalidResults) : ");
-	msg += "time sub stepping is not enabled at this stage.\n";
-	msg += "Use the @UMATUseTimeSubStepping directive before ";
-	msg += "@UMATMaximumSubStepping";
-	throw(runtime_error(msg));
-      }
+      throw_if(!this->useTimeSubStepping,
+	       "time sub stepping is not enabled at this stage.\n"
+	       "Use the @UMATUseTimeSubStepping directive before "
+	       "@UMATMaximumSubStepping");
       this->doSubSteppingOnInvalidResults = this->readBooleanValue(key,current,end);
-      return make_pair(true,current);      
+      return {true,current};
     } else if (key=="@UMATFiniteStrainStrategy"){
-      if(!this->finiteStrainStrategies.empty()){
-	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
-	msg += "at least one strategy has already been defined.\n";
-	throw(runtime_error(msg));
-      }
-      if(current==end){
-	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
+      throw_if(!this->finiteStrainStrategies.empty(),
+	       "at least one strategy has already been defined");
+      throw_if(current==end,"unexpected end of file");
       const auto& fss = current->value;
       if(fss=="FiniteRotationSmallStrain"){
 	this->finiteStrainStrategies.push_back(FINITEROTATIONSMALLSTRAIN);
@@ -368,92 +340,61 @@ namespace mfront{
       } else if(fss=="LogarithmicStrain1D"){
 	this->finiteStrainStrategies.push_back(LOGARITHMICSTRAIN1D);
       } else {
-	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
-	msg += "unsupported strategy '"+fss+"'\n";
-	msg += "The only supported strategies are "
-	  "'FiniteRotationSmallStrain', 'MieheApelLambrechtLogarithmicStrain' and "
-	  "'LogarithmicStrain1D'";
-	throw(runtime_error(msg));
+	throw_if(true,"unsupported strategy '"+fss+"'\n"
+		 "The only supported strategies are "
+		 "'FiniteRotationSmallStrain', "
+		 "'MieheApelLambrechtLogarithmicStrain' and "
+		 "'LogarithmicStrain1D'");
       }
+      throw_if(++current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
-      if(current==end){
-	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategy) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      if(current->value!=";"){
-	string msg("UmatInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      return make_pair(true,current);      
+      return {true,current};
     } else if (key=="@UMATFiniteStrainStrategies"){
-      if(!this->finiteStrainStrategies.empty()){
-	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
-	msg += "at least one strategy has already been defined.\n";
-	throw(runtime_error(msg));
-      }
-      vector<string> fss;
+      throw_if(!this->finiteStrainStrategies.empty(),
+	       "at least one strategy has already been defined");
+      auto fss = std::vector<std::string>{};
       CxxTokenizer::readArray("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies)",
 			      fss,current,end);
       CxxTokenizer::readSpecifiedToken("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies)",
 				       ";",current,end);
-      if(fss.empty()){
-	string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
-	msg += "no strategy defined.\n";
-	throw(runtime_error(msg));
-      }
-      vector<string>::const_iterator pfss;
-      for(pfss=fss.begin();pfss!=fss.end();++pfss){
-	if(*pfss=="None"){
-	  if(find(this->finiteStrainStrategies.begin(),
-		  this->finiteStrainStrategies.end(),NONE)!=
-	     this->finiteStrainStrategies.end()){
-	    string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
-	    msg += "strategy 'None' multiply defined.\n";
-	    throw(runtime_error(msg));
-	  }
+      throw_if(fss.empty(),"no strategy defined");
+      for(const auto& fs : fss){
+	if(fs=="None"){
+	  throw_if(find(this->finiteStrainStrategies.begin(),
+			this->finiteStrainStrategies.end(),NONE)!=
+		   this->finiteStrainStrategies.end(),
+		   "strategy 'None' multiply defined");
 	  this->finiteStrainStrategies.push_back(NONE);
-	} else if(*pfss=="FiniteRotationSmallStrain"){
-	  if(find(this->finiteStrainStrategies.begin(),
-		  this->finiteStrainStrategies.end(),FINITEROTATIONSMALLSTRAIN)!=
-	     this->finiteStrainStrategies.end()){
-	    string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
-	    msg += "strategy 'FiniteRotationSmallStrain' multiply defined.\n";
-	    throw(runtime_error(msg));
-	  }
+	} else if(fs=="FiniteRotationSmallStrain"){
+	  throw_if(find(this->finiteStrainStrategies.begin(),
+			this->finiteStrainStrategies.end(),FINITEROTATIONSMALLSTRAIN)!=
+		   this->finiteStrainStrategies.end(),
+		   "strategy 'FiniteRotationSmallStrain' multiply defined");
 	  this->finiteStrainStrategies.push_back(FINITEROTATIONSMALLSTRAIN);
-	} else if(*pfss=="MieheApelLambrechtLogarithmicStrain"){
-	  if(find(this->finiteStrainStrategies.begin(),
-		  this->finiteStrainStrategies.end(),MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=
-	     this->finiteStrainStrategies.end()){
-	    string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
-	    msg += "strategy 'MieheApelLambrechtLogarithmicStrain' multiply defined.\n";
-	    throw(runtime_error(msg));
-	  }
+	} else if(fs=="MieheApelLambrechtLogarithmicStrain"){
+	  throw_if(find(this->finiteStrainStrategies.begin(),
+			this->finiteStrainStrategies.end(),MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=
+		   this->finiteStrainStrategies.end(),
+		   "strategy 'MieheApelLambrechtLogarithmicStrain' multiply defined");
 	  this->finiteStrainStrategies.push_back(MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN);
-	} else if(*pfss=="LogarithmicStrain1D"){
-	  if(find(this->finiteStrainStrategies.begin(),
-		  this->finiteStrainStrategies.end(),LOGARITHMICSTRAIN1D)!=
-	     this->finiteStrainStrategies.end()){
-	    string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
-	    msg += "strategy 'LogarithmicStrain1D' multiply defined.\n";
-	    throw(runtime_error(msg));
-	  }
+	} else if(fs=="LogarithmicStrain1D"){
+	  throw_if(find(this->finiteStrainStrategies.begin(),
+			this->finiteStrainStrategies.end(),LOGARITHMICSTRAIN1D)!=
+		   this->finiteStrainStrategies.end(),
+		   "strategy 'LogarithmicStrain1D' multiply defined");
 	  this->finiteStrainStrategies.push_back(LOGARITHMICSTRAIN1D);
 	} else {
-	  string msg("UmatInterface::treatKeyword (@UMATFiniteStrainStrategies) : ");
-	  msg += "unsupported strategy '"+*pfss+"'\n";
-	  msg += "The only supported strategies are "
-	    "'None', 'FiniteRotationSmallStrain', 'MieheApelLambrechtLogarithmicStrain' and "
-	    "'LogarithmicStrain1D'";
-	  throw(runtime_error(msg));
+	  throw_if(true,"unsupported strategy '"+fs+"'\n"
+		   "The only supported strategies are "
+		   "'None', 'FiniteRotationSmallStrain', "
+		   "'MieheApelLambrechtLogarithmicStrain' and "
+		   "'LogarithmicStrain1D'");
 	}
       }
-      return make_pair(true,current);      
+      return {true,current};      
     }
-    return make_pair(false,current);
+    return {false,current};
   } // end of treatKeyword
 
   bool
@@ -462,28 +403,20 @@ namespace mfront{
     if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
       return false;
     }
-    if(mb.isModellingHypothesisSupported(ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-      return true;
-    }
-    return false;
+    return mb.isModellingHypothesisSupported(ModellingHypothesis::GENERALISEDPLANESTRAIN);
   }
 
   std::string
   UMATInterface::treatScalar(const std::string& s)
   {
-    using namespace std;
-    string res("'");
-    res += makeUpperCase(s.substr(0,4));
-    res += "'";
-    return res;
+    return "'"+makeUpperCase(s.substr(0,4))+"'";
   }
 
   std::string
   UMATInterface::treatScalar(const std::string& s,
 				   const unsigned short a)
   {
-    using namespace std;
-    ostringstream res;
+    std::ostringstream res;
     if(a<9){
       res << "'" << makeUpperCase(s.substr(0,3)) << a << "'";
     } else {
@@ -658,12 +591,11 @@ namespace mfront{
       }
     }
     if(h.empty()){
-      string msg("UMATInterface::getModellingHypothesesToBeTreated : "
-		 "no hypotheses selected. This means that the given beahviour "
-		 "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-		 "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-		 "make sense to use the UMAT interface");
-      throw(runtime_error(msg));
+      throw(runtime_error("UMATInterface::getModellingHypothesesToBeTreated : "
+			  "no hypotheses selected. This means that the given beahviour "
+			  "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+			  "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+			  "make sense to use the UMAT interface"));
     }
     return h;
   } // end of UMATInterfaceModellingHypothesesToBeTreated
@@ -925,8 +857,8 @@ namespace mfront{
 	out << "MFRONT_SHAREDOBJ unsigned short umat"
 	    << makeLowerCase(name) << "_Interface = 1u;\n\n";
       } else {
-	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
-	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	for(const auto fss : this->finiteStrainStrategies){
+	  if(fss==FINITEROTATIONSMALLSTRAIN){
 	    this->generateUMATxxGeneralSymbols(out,name+"_frst",mb,fd);
 	    if(!mb.areAllMechanicalDataSpecialised(h)){
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -957,7 +889,7 @@ namespace mfront{
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
-	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	  } else if(fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
 	      this->generateUMATxxGeneralSymbols(out,name+"_malls",mb,fd);
 	    if(!mb.areAllMechanicalDataSpecialised(h)){
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -988,7 +920,7 @@ namespace mfront{
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
-	  } else if(*pfss==LOGARITHMICSTRAIN1D){
+	  } else if(fss==LOGARITHMICSTRAIN1D){
 	      this->generateUMATxxGeneralSymbols(out,name+"_log1D",mb,fd);
 	    if(!mb.areAllMechanicalDataSpecialised(h)){
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -1019,7 +951,7 @@ namespace mfront{
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 1u;\n\n";
 	    }
-	  } else if(*pfss==NONE){
+	  } else if(fss==NONE){
 	    this->generateUMATxxGeneralSymbols(out,name+"_ss",mb,fd);
 	    if(!mb.areAllMechanicalDataSpecialised(h)){
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;

@@ -55,8 +55,7 @@ namespace mfront
 					 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 					 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
-    using namespace std;
-    return make_pair(false,current);
+    return {false,current};
   } // end of treatKeyword
 
   CastemMaterialPropertyInterface::~CastemMaterialPropertyInterface()

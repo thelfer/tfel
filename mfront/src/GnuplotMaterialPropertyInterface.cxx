@@ -90,13 +90,12 @@ namespace mfront
 					  tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 					  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
   {
-    using namespace std;
-    if ( key == "@TestBounds" )
+    if ( key == "@TestBounds" ){
       return registerTestBounds(current,endTokens);
-    if ( key == "@Graph" )
+    } else if ( key == "@Graph"){
       return registerGraph(current,endTokens);
-    else
-      return make_pair(false,current);
+    }
+    return {false,current};
   } // end of treatKeyword
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>

@@ -89,31 +89,26 @@ namespace tfel{
        * \param[out] out : output stream
        */ 
       void printFileTokens(std::ostream&) const;
-
       /*!
        * \brief remove all comment tokens
        */ 
       void stripComments(void);
-
       /*!
        * \brief clear the object
        */ 
       void clear(void);
-
       /*!
        * \brief set if char tokens shall be treated as string tokens
        * \param[in] b : boolean telling if char tokens shall be
        * treated as string tokens
        */ 
       void treatCharAsString(const bool);
-
       /*!
        * \brief set if tokens shall be split to extract numbers
        * \param[in] b : boolean telling numbers shall be extracted
        * from tokens
        */ 
       void extractNumbers(const bool);
-
       /*!
        * \brief an helper method throwing an exception if the given
        * iterator is egal to the third argument (which shall point
@@ -253,6 +248,12 @@ namespace tfel{
       const_iterator begin(void) const;
       //! \return an iterator past the last token
       const_iterator end(void) const;
+      /*!
+       * \return the ith token
+       * \param[in] i : index
+       * \throw an exception if i>=this->size()
+       */
+      const Token& operator[](const size_type) const;
       //! \return the number of token
       size_type size() const;
       //! destructor
@@ -273,9 +274,6 @@ namespace tfel{
 
       static void TFEL_VISIBILITY_LOCAL
       join(std::vector<std::string>&,const std::string&,const std::string&);
-
-      static std::vector<std::string> TFEL_VISIBILITY_LOCAL
-      splitStringAtSpaces(const std::string&);
 
       void TFEL_VISIBILITY_LOCAL
       splitAtCxxTokenSperator(std::vector<std::string>&);
@@ -314,11 +312,11 @@ namespace tfel{
       std::map<unsigned int,
 	       std::string> comments;
 
-      bool cStyleCommentOpened;
+      bool cStyleCommentOpened = false;
 
-      bool bExtractNumbers;
+      bool bExtractNumbers = true;
 
-      bool charAsString;
+      bool charAsString = false;
 
     }; // end of struct CxxTokenizer
 

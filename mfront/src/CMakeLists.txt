@@ -141,8 +141,9 @@ endif(HAVE_JAVA)
 
 if(HAVE_FORTRAN)
     set(TFELMFront_SOURCES
-	FortranMaterialPropertyInterface.cxx
-	${TFELMFront_SOURCES})
+      FortranMaterialPropertyInterface.cxx
+      Fortran03MaterialPropertyInterface.cxx
+      ${TFELMFront_SOURCES})
 endif(HAVE_FORTRAN)
 
 if(HAVE_CASTEM)

@@ -28,5 +28,4 @@ E.setGlossaryName("YoungModulus");
   const real ym2 = 175000.;
   const real ym3 = 127000.;
   E = 1.e6* ( max(ym1+((ym2-ym1)/(xm2-xm1))*(max(TC,xm1)-xm1), ym2) + max( ((ym3-ym2)/(xm3-xm2))*(max(TC,xm2)-xm2) , ym3-ym2 )) ;
-
 } // end of Function

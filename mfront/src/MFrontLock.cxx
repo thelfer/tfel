@@ -101,5 +101,16 @@ namespace mfront{
 #endif
   } // end of MFrontLock::~MFrontLock()
 
+  MFrontLockGuard::MFrontLockGuard()
+    : lock(MFrontLock::getMFrontLock())
+  {
+    this->lock.lock();
+  } // end of MFrontLockGuard::MFrontLockGuard
+
+  MFrontLockGuard::~MFrontLockGuard()
+  {
+    this->lock.unlock();
+  } // end of MFrontLockGuard::~MFrontLockGuard
+  
 } // end of namespace mfront
 

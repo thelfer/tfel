@@ -79,166 +79,50 @@ namespace mfront{
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   AsterInterface::treatKeyword(const std::string& key,
-				     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+			       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+			       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
-    using namespace std;
+    using tfel::utilities::CxxTokenizer;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AsterInterface::treatKeyword : "+m));}
+    };
     if (key=="@AsterGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
-      return make_pair(true,current);      
+      return {true,current};      
     } else if(key=="@AsterCompareToNumericalTangentOperator"){
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterCompareToNumericalTangentOperator) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      if(current->value=="true"){
-	this->compareToNumericalTangentOperator = true;
-      } else if(current->value=="false"){
-	this->compareToNumericalTangentOperator = false;
-      } else {
-	string msg("AsterInterface::treatKeyword (@AsterCompareToNumericalTangentOperator) :");
-	msg += "expected 'true' or 'false'";
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterCompareToNumericalTangentOperator) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }     
-      if(current->value!=";"){
-	string msg("AsterInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      return make_pair(true,current);      
+      this->compareToNumericalTangentOperator  = this->readBooleanValue(key,current,end);
+      return make_pair(true,current);
     } else if ((key=="@AsterTangentOperatorComparisonCriterium")||
 	       (key=="@AsterTangentOperatorComparisonCriterion")){
-      if(!this->compareToNumericalTangentOperator){
-	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterion) : "
-		   "comparison to tangent operator is not enabled at this stage.\n"
-		   "Use the @AsterCompareToNumericalTangentOperator directive before "
-		   "@AsterTangentOperatorComparisonCriterion");
-	throw(runtime_error(msg));
-      }
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterion) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      istringstream flux(current->value);
-      flux >> this->tangentOperatorComparisonCriterion;
-      if(flux.fail()){
-	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterion) : ");
-	msg+="failed to read criterium value.\n";
-	throw(runtime_error(msg));
-      }
-      ++(current);    
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterTangentOperatorComparisonCriterion) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }  
-      if(current->value!=";"){
-	string msg("AsterInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
-      }
+      throw_if(!this->compareToNumericalTangentOperator,
+	       "comparison to tangent operator is not enabled at this stage.\n"
+	       "Use the @AsterCompareToNumericalTangentOperator directive before "
+	       "@AsterTangentOperatorComparisonCriterion");
+      throw_if(current==end,"unexpected end of file");
+      this->tangentOperatorComparisonCriterion = CxxTokenizer::readDouble(current,end);
+      throw_if(current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+"'");
       ++(current);
-      return make_pair(true,current);      
+      return {true,current};
     } else if (key=="@AsterStrainPerturbationValue"){
-      if(!this->compareToNumericalTangentOperator){
-	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
-	msg += "time stepping is not enabled at this stage.\n";
-	msg += "Use the @AsterUseTimeSubStepping directive before ";
-	msg += "@AsterStrainPerturbationValue";
-	throw(runtime_error(msg));
-      }
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      istringstream flux(current->value);
-      flux >> this->strainPerturbationValue;
-      if(flux.fail()){
-	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
-	msg+="failed to read string perturbation value.\n";
-	throw(runtime_error(msg));
-      }
+      throw_if(!this->compareToNumericalTangentOperator,
+	       "time stepping is not enabled at this stage.\n"
+	       "Use the @AsterUseTimeSubStepping directive before "
+	       "@AsterStrainPerturbationValue");
+      throw_if(current==end,"unexpected end of file");
+      this->strainPerturbationValue = CxxTokenizer::readDouble(current,end);
+      throw_if(current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+"'");
       ++(current);
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterStrainPerturbationValue) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }      
-      if(current->value!=";"){
-	string msg("AsterInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      return make_pair(true,current);      
+      return {true,current};
     } else if(key=="@AsterSaveTangentOperator"){
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterSaveTangentOperator) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      if(current->value=="true"){
-	this->savesTangentOperator = true;
-      } else if(current->value=="false"){
-	this->savesTangentOperator = false;
-      } else {
-	string msg("AsterInterface::treatKeyword (@AsterSaveTangentOperator) :");
-	msg += "expected 'true' or 'false'";
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterSaveTangentOperator) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }      
-      if(current->value!=";"){
-	string msg("AsterInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      return make_pair(true,current);      
+      this->savesTangentOperator = this->readBooleanValue(key,current,end);
+      return {true,current};
     } else if(key=="@AsterErrorReport"){
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterErrorReport) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }
-      if(current->value=="true"){
-	this->errorReport = true;
-      } else if(current->value=="false"){
-	this->errorReport = false;
-      } else {
-	string msg("AsterInterface::treatKeyword (@AsterErrorReport) :");
-	msg += "expected 'true' or 'false'";
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      if(current==end){
-	string msg("AsterInterface::treatKeyword (@AsterErrorReport) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
-      }      
-      if(current->value!=";"){
-	string msg("AsterInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
-      }
-      ++(current);
-      return make_pair(true,current);      
+      this->errorReport = this->readBooleanValue(key,current,end);
+      return {true,current};
     }
-    return make_pair(false,current);
+    return {false,current};
   } // end of treatKeyword
 
   std::set<tfel::material::ModellingHypothesis::Hypothesis>

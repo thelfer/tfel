@@ -44,11 +44,10 @@ namespace mfront
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppMaterialPropertyInterface::treatKeyword(const std::string&,
-				      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				      const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+					     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+					     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
-    using namespace std;
-    return make_pair(false,current);
+    return {false,current};
   } // end of treatKeyword
 
   CppMaterialPropertyInterface::~CppMaterialPropertyInterface()

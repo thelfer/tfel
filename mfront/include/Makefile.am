@@ -116,6 +116,7 @@ nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 			 MFront/CMaterialPropertyInterface.hxx              \
 			 MFront/MFrontMaterialPropertyInterface.hxx         \
 			 MFront/FortranMaterialPropertyInterface.hxx        \
+			 MFront/Fortran03MaterialPropertyInterface.hxx      \
 			 MFront/CppMaterialPropertyInterface.hxx            \
 			 MFront/CppTestMaterialPropertyInterface.hxx        \
 			 MFront/GnuplotMaterialPropertyInterface.hxx        \

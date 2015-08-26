@@ -117,13 +117,20 @@ namespace mfront{
     getSrcFileName(const std::string&,
 		   const std::string&) const = 0;
 
-    /*
+    /*!
+     * \brief : write the source file. The headerFile member has been
+     * opened appropriately and will be closed after the call.
+     * \param[in] mpd : material property description
+     * \param[in] fd  : file description
      */
     virtual void
     writeHeaderFile(const MaterialPropertyDescription&,
 		    const FileDescription&);
-    
-    /*
+    /*!
+     * \brief : write the source file. The srcFile member has been
+     * opened appropriately and will be closed after the call.
+     * \param[in] mpd : material property description
+     * \param[in] fd  : file description
      */
     void writeSrcFile(const MaterialPropertyDescription&,
 		      const FileDescription&);

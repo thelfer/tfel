@@ -609,29 +609,20 @@ namespace mfront{
   MFront::analyseTargetsFile(void){
     using tfel::utilities::CxxTokenizer;
     using tfel::system::dirStringSeparator;
-    auto& mlock = MFrontLock::getMFrontLock();
-    mlock.lock();
-    try{
-      const auto file = "src"+dirStringSeparator()+"targets.lst";
-      const std::ifstream test{file};
-      if(!test){
-	mlock.unlock();
-	return;
-      }
-      CxxTokenizer tokenizer{file};
-      auto c = tokenizer.begin();
-      auto t = read<TargetsDescription>(c,tokenizer.end());
-      if(getVerboseMode()>=VERBOSE_LEVEL2){
-	auto& log = getLogStream();
-	log << t << std::endl;
-      }
-      mergeTargetsDescription(this->targets,t,false);
+    MFrontLockGuard lock;
+    const auto file = "src"+dirStringSeparator()+"targets.lst";
+    const std::ifstream test{file};
+    if(!test){
+      return;
     }
-    catch(...){
-      mlock.unlock();
-      throw;
+    CxxTokenizer tokenizer{file};
+    auto c = tokenizer.begin();
+    auto t = read<TargetsDescription>(c,tokenizer.end());
+    if(getVerboseMode()>=VERBOSE_LEVEL2){
+      auto& log = getLogStream();
+      log << t << std::endl;
     }
-    mlock.unlock();
+    mergeTargetsDescription(this->targets,t,false);
   }
   
 #ifdef MFRONT_MAKE_SUPPORT

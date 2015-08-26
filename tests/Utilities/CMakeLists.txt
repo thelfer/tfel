@@ -18,4 +18,5 @@ tests_utilities(gentype)
 tests_utilities(gentype2)
 tests_utilities(gentype3)
 tests_utilities(StringAlgorithms)
+tests_utilities(CxxTokenizerTest)
 

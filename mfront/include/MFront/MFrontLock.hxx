@@ -48,6 +48,24 @@ namespace mfront{
 #endif
   }; // end of struct MFrontLock
 
+  /*!
+   * structure performing RAII on MFrontLock objects.
+   */
+  struct MFRONT_VISIBILITY_EXPORT MFrontLockGuard
+  {
+    //! constructor
+    MFrontLockGuard();
+    //! destructor
+    ~MFrontLockGuard();
+  private:
+    MFrontLockGuard(MFrontLockGuard&&) = delete;
+    MFrontLockGuard(const MFrontLockGuard&) = delete;
+    MFrontLockGuard& operator=(MFrontLockGuard&&) = delete;
+    MFrontLockGuard& operator=(const MFrontLockGuard&) = delete;
+    // the lock
+    MFrontLock& lock;
+  };
+  
 } // end of namespace mfront
 
 #endif /* _LIB_MFRONT_MFRONTLOCK_H */

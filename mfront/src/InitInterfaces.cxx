@@ -23,6 +23,7 @@
 
 #ifdef HAVE_FORTRAN
 #include"MFront/FortranMaterialPropertyInterface.hxx"
+#include"MFront/Fortran03MaterialPropertyInterface.hxx"
 #endif /* HAVE_FORTRAN */
 
 #include"MFront/CppMaterialPropertyInterface.hxx"
@@ -67,7 +68,8 @@ namespace mfront
     MaterialPropertyInterfaceProxy<CMaterialPropertyInterface> cLawProxy;
 
 #ifdef HAVE_FORTRAN
-    MaterialPropertyInterfaceProxy<FortranMaterialPropertyInterface> fLawProxy;
+    MaterialPropertyInterfaceProxy<FortranMaterialPropertyInterface>   fLawProxy;
+    MaterialPropertyInterfaceProxy<Fortran03MaterialPropertyInterface> f03LawProxy;
 #endif /* HAVE_FORTRAN */
 
     MaterialPropertyInterfaceProxy<MFrontMaterialPropertyInterface>  mLawProxy;

@@ -103,8 +103,7 @@ namespace mfront
 					       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 					       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
-    using namespace std;
-    return make_pair(false,current);
+    return {false,current};
   } // end of treatKeyword
 
   ExcelMaterialPropertyInterface::~ExcelMaterialPropertyInterface()
@@ -126,8 +125,7 @@ namespace mfront
     const auto& className=mpd.className;
     const auto& vars=mpd.inputs;
     // writing excel interface
-    auto& lock = MFrontLock::getMFrontLock();
-    lock.lock();
+    MFrontLockGuard lock;
     vector<ExcelInterface> interfaces;
     map<string,vector<ExcelInterface> > interfaces2;
     vector<ExcelInterface>::iterator p;
@@ -218,7 +216,6 @@ namespace mfront
       }
     }
     wrapper.close();
-    lock.unlock();
   } // end of ExcelMaterialPropertyInterface::writeSrcFile(void)
 
 } // end of namespace mfront

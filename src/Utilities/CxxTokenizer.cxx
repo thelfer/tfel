@@ -39,46 +39,41 @@ namespace tfel{
 
   namespace utilities{
 
-    std::vector<std::string>
-    CxxTokenizer::splitStringAtSpaces(const std::string& str)
+    static std::vector<std::string>
+    splitStringAtSpaces(const std::string& str)
     {
-      using namespace std;
-      istringstream s(str);
-      vector<string> res;
-      copy(istream_iterator<string>(s),istream_iterator<string>(),
-	   back_inserter(res));
-      return res;
-    }  
+      std::istringstream s(str);
+      return std::vector<std::string>(std::istream_iterator<std::string>(s),
+				      std::istream_iterator<std::string>());
+    } // end of CxxTokenizer::splitStringAtSpaces
 
     static std::string::size_type
     findStringBeginning(const std::string& s,
 			const char b)
     {
-      using namespace std;
-      string::size_type p;
+      std::string::size_type p;
       if(s.empty()){
-	return string::npos;
+	return std::string::npos;
       }
       if(s[0]==b){
 	return 0u;
       }
       p = s.find(b);
-      while(p!=string::npos){
+      while(p!=std::string::npos){
 	if(s[p-1]!='\\'){
 	  return p;
 	}
 	p = s.find(b,p+1);
       }
-      return string::npos;
+      return std::string::npos;
     } // end of findStringBeginning
 
     static std::string
     stripSpaceAndStarAtBeginningOfCommentLine(const std::string& l)
     {
-      using namespace std;
       if(!l.empty()){
-	string::size_type pc = 0;
-	bool found = false;
+	std::string::size_type pc = 0;
+	auto found = false;
 	while((pc!=l.size())&&!(found)){
 	  if(!(isspace(l[pc]))){
 	    found = true;
@@ -113,6 +108,9 @@ namespace tfel{
     CxxTokenizer::splitLine(std::string line, const unsigned int lineNumber)
     {
       using namespace std;
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error("CxxTokenizer::splitLine : "+m));}
+      };
       if(this->cStyleCommentOpened){
 	string::size_type pos3;
 	pos3 = line.find("*/");
@@ -137,12 +135,11 @@ namespace tfel{
 	line.erase(0,pos3+2);
 	this->cStyleCommentOpened=false;
       }
-
       while(!line.empty()){
-	bool treatString=false;
-	bool treatCppComment=false;
-	bool treatCComment=false;
-	bool treatChar=false;
+	auto treatString=false;
+	auto treatCppComment=false;
+	auto treatCComment=false;
+	auto treatChar=false;
 	string::size_type pos[4];
 	const string::size_type * min_pos;
 
@@ -154,31 +151,21 @@ namespace tfel{
 	min_pos=min_element(pos,pos+4);
 
 	if(*min_pos!=string::npos){
-	  ptrdiff_t diff = min_pos-pos;
-	  if(diff==0){
-	    treatString=true;
-	  }
-	  if(diff==1){
-	    treatCppComment=true;
-	  }
-	  if(diff==2){
-	    treatCComment=true;
-	  }
-	  if(diff==3){
-	    treatChar = true;
-	  }
+	  const auto diff = min_pos-pos;
+	  treatString=(diff==0);
+	  treatCppComment=(diff==1);
+	  treatCComment=(diff==2);
+	  treatChar = (diff==3);
 	}
 
 	if(treatString){
 	  if(pos[0]!=0){
-	    vector<string> tmp=splitStringAtSpaces(line.substr(0,pos[0]));
-	    vector<string>::const_iterator p;
-	    for(p=tmp.begin();p!=tmp.end();++p){
-	      this->fileTokens.push_back(Token(lineNumber,*p));
+	    for(const auto& t : splitStringAtSpaces(line.substr(0,pos[0]))){
+	      this->fileTokens.push_back(Token(lineNumber,t));
 	    }
 	  }
 	  line.erase(0,pos[0]);
-	  string::iterator ps = line.begin();
+	  auto ps = line.begin();
 	  ++ps;
 	  bool found=false;
 	  for(;(ps!=line.end())&&(!found);++ps){
@@ -192,17 +179,12 @@ namespace tfel{
 	      }
 	    }
 	  }
-	  if(!found){
-	    string msg("CxxTokenizer::splitLine : ");
-	    msg += "found no matching \" to close string\n";
-	    msg += "Error at line : ";
-	    msg += to_string(lineNumber);
-	    throw(runtime_error(msg));
-	  }
+	  throw_if(!found,"found no matching \" to close string\n"
+		   "Error at line : "+to_string(lineNumber));
 	  if(!this->fileTokens.empty()){
 	    if(this->fileTokens.back().flag==Token::String){
-	      const string old_value = this->fileTokens.back().value.substr(0,this->fileTokens.back().value.size()-1);
-	      const string new_value = string(line.begin()+1,ps);
+	      const auto old_value = this->fileTokens.back().value.substr(0,this->fileTokens.back().value.size()-1);
+	      const auto new_value = string(line.begin()+1,ps);
 	      this->fileTokens.back().value = old_value+new_value;
 	    } else {
 	      this->fileTokens.push_back(Token(lineNumber,string(line.begin(),ps),Token::String));
@@ -213,24 +195,17 @@ namespace tfel{
 	  line.erase(line.begin(),ps);
 	} else if (treatCppComment){
 	  if(pos[1]!=0){
-	    vector<string> tmp=splitStringAtSpaces(line.substr(0,pos[1]));
-	    vector<string>::const_iterator p;
-	    for(p=tmp.begin();p!=tmp.end();++p){
-	      this->fileTokens.push_back(Token(lineNumber,*p));
+	    for(const auto&t : splitStringAtSpaces(line.substr(0,pos[1]))){
+	      this->fileTokens.push_back(Token(lineNumber,t));
 	    }
 	  }
 	  line.erase(0,pos[1]);
-	  if((line.size()>=3u)&&((line[2]=='/')||(line[2]=='!'))){
+	  if((line.size()>=3u)&&((line[1]=='/')&&(line[2]=='!'))){
 	    // doxygen comment
 	    if((line.size()>=4u)&&(line[3]=='<')){
 	      // doxygen backward comment
 	      if(this->fileTokens.empty()){
-		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line),
-						 Token::Comment));
-	      } else if((this->fileTokens.back().line!=lineNumber)||
-			((this->fileTokens.back().flag!=Token::Standard)||
-			 (*(this->fileTokens.back().value.rbegin())!=';'))){
-		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(3)),
+		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(4)),
 						 Token::Comment));
 	      } else {
 		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(4)),
@@ -250,21 +225,19 @@ namespace tfel{
 	    }
 	  } else {
 	    // standard C++ comment
-	    this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line),
+	    this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(2)),
 					     Token::Comment));
 	  }
 	  line.clear();
 	} else if(treatCComment){
 	  if(pos[2]!=0){
-	    vector<string> tmp = splitStringAtSpaces(line.substr(0,pos[2]));
-	    vector<string>::const_iterator p;
-	    for(p=tmp.begin();p!=tmp.end();++p){
-	      this->fileTokens.push_back(Token(lineNumber,*p));
+	    for(const auto& t : splitStringAtSpaces(line.substr(0,pos[2]))){
+	      this->fileTokens.push_back(Token(lineNumber,t));
 	    }
 	  }
 	  line.erase(0,pos[2]);
 	  pos[2]=line.find("*/");
-	  string comment;
+	  auto comment = string{};
 	  if(pos[2]==string::npos){
 	    comment = line.substr(2);
 	    line.clear();
@@ -273,18 +246,13 @@ namespace tfel{
 	    comment = line.substr(2,pos[2]-2);
 	    line.erase(0,pos[2]+2);
 	  }
-	  if((comment.size()>=1)&&((comment[0]=='*')||(comment[0]=='!'))){
+	  if((comment.size()>=1)&&(comment[0]=='!')){
 	    // doxygen comment
-	    if((comment.size()>=2)&&((comment[1]=='<'))){
+	    if((comment.size()>=2)&&(comment[1]=='<')){
 	      // backward doxygen comment
 	      if(this->fileTokens.empty()){
 		this->fileTokens.push_back(Token(lineNumber,
 						 stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
-						 Token::Comment));
-	      } else if((this->fileTokens.back().line!=lineNumber)||
-			((this->fileTokens.back().flag!=Token::Standard)||
-			 (*(this->fileTokens.back().value.rbegin())!=';'))){
-		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
 						 Token::Comment));
 	      } else {
 		this->fileTokens.push_back(Token(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
@@ -302,14 +270,12 @@ namespace tfel{
 	} else if(treatChar){
 	  if(this->charAsString){
 	    if(pos[3]!=0){
-	      vector<string> tmp=splitStringAtSpaces(line.substr(0,pos[3]));
-	      vector<string>::const_iterator p;
-	      for(p=tmp.begin();p!=tmp.end();++p){
-		this->fileTokens.push_back(Token(lineNumber,*p));
+	      for(const auto& t : splitStringAtSpaces(line.substr(0,pos[3]))){
+		this->fileTokens.push_back(Token(lineNumber,t));
 	      }
 	    }
 	    line.erase(0,pos[3]);
-	    string::iterator ps = line.begin();
+	    auto ps = line.begin();
 	    ++ps;
 	    bool found=false;
 	    for(;(ps!=line.end())&&(!found);++ps){
@@ -317,64 +283,37 @@ namespace tfel{
 		found=true;
 	      }
 	    }
-	    if(!found){
-	      string msg("CxxTokenizer::splitLine : ");
-	      msg += "found no matching \' to close string\n";
-	      msg += "Error at line : ";
-	      msg += to_string(lineNumber);
-	      throw(runtime_error(msg));
-	    }
+	    throw_if(!found,"found no matching \' to close string.\n"
+		     "Error at line : "+to_string(lineNumber));
 	    this->fileTokens.push_back(Token(lineNumber,string(line.begin(),ps),Token::String));
 	    line.erase(line.begin(),ps);
 	  } else {
 	    if(pos[3]!=0){
-	      vector<string> tmp = splitStringAtSpaces(line.substr(0,pos[3]));
-	      vector<string>::const_iterator p;
-	      for(p=tmp.begin();p!=tmp.end();++p){
-		this->fileTokens.push_back(Token(lineNumber,*p));
+	      for(const auto& t : splitStringAtSpaces(line.substr(0,pos[3]))){
+		this->fileTokens.push_back(Token(lineNumber,t));
 	      }
 	    }
 	    line.erase(0,pos[3]);
-	    if(line.length()<3){
-	      string msg("CxxTokenizer::splitString : ");
-	      msg += "error while reading char (1)\n";
-	      msg += "Error at line : ";
-	      msg += to_string(lineNumber);
-	      throw(runtime_error(msg));
-	    }
+	    throw_if(line.length()<3,"error while reading char (1)."
+		     "Error at line : "+to_string(lineNumber));
 	    if(line[1]=='\\'){
-	      if(line.length()<4){
-		string msg("CxxTokenizer::splitString : ");
-		msg += "error while reading char (2)\n";
-		msg += "Error at line : ";
-		msg += to_string(lineNumber);
-		throw(runtime_error(msg));
-	      }
-	      if(line[3]!='\''){
-		string msg("CxxTokenizer::splitString : ");
-		msg += "error while reading char (3)\n";
-		msg += "Error at line : ";
-		msg += to_string(lineNumber);
-		throw(runtime_error(msg));	      
-	      }
+	      throw_if(line.length()<4,"error while reading char (2).\n"
+		       "Error at line : "+to_string(lineNumber));
+	      throw_if(line[3]!='\'',"error while reading char (3).\n"
+		       "Error at line : "+to_string(lineNumber));
 	      this->fileTokens.push_back(Token(lineNumber,line.substr(0,4),Token::Char));
 	      line.erase(0,4);
 	    } else {
-	      if(line[2]!='\''){
-		string msg("CxxTokenizer::splitString : ");
-		msg += "error while reading char (expected to read ', read '";
-		msg += line[2];
-		msg += "')\n";
-		msg += "Error at line : ";
-		msg += to_string(lineNumber);
-		throw(runtime_error(msg));
-	      }
+	      throw_if(line[2]!='\'',
+		       string("error while reading char ""(expected to read ', read '")+
+		       line[2]+"').\n"
+		       "Error at line : "+to_string(lineNumber));
 	      this->fileTokens.push_back(Token(lineNumber,line.substr(0,3),Token::Char));
 	      line.erase(0,3);
 	    }
 	  }
 	} else {
-	  for(const auto&t :splitStringAtSpaces(line)){
+	  for(const auto&t : splitStringAtSpaces(line)){
 	    this->fileTokens.push_back(Token(lineNumber,t));
 	  }
 	  line.clear();
@@ -384,69 +323,187 @@ namespace tfel{
 
     std::string
     CxxTokenizer::readNumber(std::string::const_iterator& p,
-			     const std::string::const_iterator  pe)
+			     const std::string::const_iterator pe)
     {
-      using namespace std;
-      string word;
-      auto b=p;
+      auto throw_if = [](const bool b,const std::string& m){
+	if(b){throw(std::runtime_error("CxxTokenizer::readNumber : "+m));}
+      };
+      auto is_binary = [](const char c){
+	return (c=='0')||(c=='1');
+      };
+      auto is_hex = [](const char c){
+	return (((c>='0')&&(c<='7'))||
+		((c>='a')&&(c<='f'))||
+		((c>='A')&&(c<='F')));
+      };
+      const auto b=p;
+      // if true, reading a float, otherwise
+      // could be a float or an integer
+      auto is_float  = false;
+      auto is_signed = false;
+      auto is_binary_integer = false;
+      // auto is_octal_integer  = false;
+      auto is_hex_integer    = false;
+      auto starts_with_zero  = false;
+      auto has_exponent      = false; 
       if((*p=='-')||(*p=='+')){
+	if(*p=='-'){
+	  is_signed = true;
+	}
+	//reading decimal part
+	throw_if(++p==pe,"invalid number");
+      }
+      throw_if((!(isdigit(*p)))&&(*p!='.'),"expected digit, read '"+*p+'\'');
+      if(*p=='.'){
+	is_float = true;
+	throw_if(++p==pe,"invalid number");
+	throw_if(!isdigit(*p),"expected digit, read '"+*p+'\'');
+      } else if (*p=='0'){
+	starts_with_zero=true;
+	if(++p!=pe){
+	  if(*p=='b'){
+	    // reading binary integer
+	    is_binary_integer=true;
+	    throw_if(++p==pe,"invalid binary integer");
+	    throw_if(!is_binary(*p),"invalid binary integer");
+	    while((p!=pe)&&(isdigit(*p))){
+	      throw_if(!is_binary(*p),"invalid binary integer");
+	      ++p;
+	    }
+	  } else if(*p=='x'){
+	    // reading hex integer
+	    is_hex_integer=true;
+	    throw_if(++p==pe,"invalid hexadecimal integer");
+	    throw_if(!is_hex(*p),"invalid hexadecimal integer");
+	    while((p!=pe)&&(isdigit(*p))){
+	      throw_if(!is_hex(*p),"invalid hexadecimal integer");
+	      ++p;
+	    }
+	  } else {
+	    --p;
+	  }
+	}
+      }
+      while((p!=pe)&&((isdigit(*p))||(*p=='\''))){
+	if(*p=='\''){
+	  throw_if(++p==pe,"invalid number");
+	  throw_if(!isdigit(*p),"expected digit, read '"+*p+'\'');
+	}
 	++p;
       }
-      //reading decimal part
-      while((isdigit(*p))&&(p!=pe)){
+      if((p!=pe)&&(*p=='.')){
+	throw_if(is_hex_integer,"invalid hexadecimal integer");
+	throw_if(is_binary_integer,"invalid binary integer");
+	throw_if(is_float,"decimal sign multiply defined");
+	is_float=true;
+	// the decimal part
 	++p;
-      }
-      if(p!=pe){
-	if(*p=='.'){
+	while((p!=pe)&&((isdigit(*p))||(*p=='\''))){
+	  if(*p=='\''){
+	    // C++14 digit separator
+	    throw_if(++p==pe,"invalid number");
+	    throw_if(!isdigit(*p),"expected digit, read '"+*p+'\'');
+	  }
 	  ++p;
-	  while((isdigit(*p))&&(p!=pe)){
+	}
+      }
+      throw_if((p!=pe)&&(*p=='.'),"invalid number");
+      if(p!=pe){
+	throw_if(is_hex_integer,"invalid hexadecimal integer");
+	throw_if(is_binary_integer,"invalid binary integer");
+	if((*p=='e')||(*p=='E')){
+	  has_exponent=true;
+	  throw_if(++p==pe,"invalid number");
+	  if((*p=='+')||(*p=='-')){
+	    if(*p=='-'){
+	      is_float = true;
+	    }
+	    throw_if(++p==pe,"invalid number");
+	  }
+	  throw_if(!(isdigit(*p)),"invalid number");
+	  ++p;
+	  while((p!=pe)&&((isdigit(*p))||(*p=='\''))){
+	    if(*p=='\''){
+	      throw_if(++p==pe,"invalid number");
+	      throw_if(!isdigit(*p),"expected digit, read '"+*p+'\'');
+	    }
 	    ++p;
 	  }
 	}
       }
+      throw_if((p!=pe)&&(*p=='.'),"invalid number");
+      // checking  octal integer
+      if((!is_float)&&(!is_hex_integer)&&(!is_binary_integer)&&
+	 (starts_with_zero)&&(!has_exponent)){
+	// we may an octal integer
+	for(auto c=b;c!=p;++c){
+	  throw_if(!((*p>='0')||(*p<='7')),"invalid octal number");
+	}
+	// is_octal_integer=true;
+      }
       if(p!=pe){
-	if((*p=='e')||(*p=='E')){
-	  ++p;
-	  if(p==pe){
-	    --p;
-	  } else {
-	    if((*p=='+')||(*p=='-')){
+	if((( is_float)&&((*p=='l')||(*p=='f')||(*p=='L')||(*p=='F')))||
+	   ((!is_float)&&((*p=='u')||(*p=='U')||(*p=='l')||(*p=='L')))){
+	  throw_if(((*p=='u')||(*p=='U'))&&(is_signed),
+		   "invalid number (unsigned can't be signed)");
+	  if((*p=='f')||(*p=='F')){
+	    ++p;
+	  } else if((*p=='l')||(*p=='L')){
+	    // long suffix
+	    ++p;
+	    if((p!=pe)&&((*p=='l')||(*p=='L'))){
+	      throw_if(is_float,"invalid float suffix");
+	      // long long suffix
 	      ++p;
-	      if(p==pe){
-		--(--p);
-	      } else if (isdigit(*p)){
-		while((isdigit(*p))&&(p!=pe)){
-		  ++p;
-		}
-	      } else {
-		--(--p);
-	      }
-	    } else if (isdigit(*p)){
-	      while((isdigit(*p))&&(p!=pe)){
+	      if((p!=pe)&&((*p=='u')||(*p=='U'))){
+		throw_if(is_float,"invalid number (floating points can't be unsigned)");
+		throw_if(is_signed,"invalid number (unsigned can't be signed)");
 		++p;
 	      }
-	    } else {
-	      --p;
+	    } else if((p!=pe)&&((*p=='u')||(*p=='U'))){
+	      // long unsigned 
+	      throw_if(is_float,"invalid number (floating points can't be unsigned)");
+	      throw_if(is_signed,"invalid number (unsigned can't be signed)");
+	      ++p;
 	    }
+	  } else if((*p=='u')||(*p=='U')){
+	    // usigned integer
+	    throw_if(is_signed,"invalid number (unsigned can't be signed)");
+	    ++p;
+	    if((p!=pe)&&((*p=='l')||(*p=='L'))){
+	      // long usigned integer
+	      ++p;
+	      if((p!=pe)&&((*p=='l')||(*p=='L'))){
+		// long long usigned integer
+		++p;
+	      };
+	    }
+	  } else {
+	    ++p;
 	  }
 	}
       }
-      if(p!=pe){
-	if(*p=='f'){
+      throw_if((p!=pe)&&(*p=='.'),"invalid number");
+      // C++11 user defined litterals
+      if((p!=pe)&&(*p=='_')){
+	throw_if(++p==pe,"invalid user litteral");
+	while(p!=pe){
+	  if(!((isalpha(*p))||isdigit(*p)||(*p=='_'))){
+	    break;
+	  }
 	  ++p;
 	}
       }
-      copy(b,p,back_inserter(word));
-      return word;
+      throw_if((p!=pe)&&(*p=='.'),"invalid number");
+      return std::string{b,p};
     } // end of CxxTokenizer::readNumber
-
+  
     void
     CxxTokenizer::extractNumbers(std::vector<std::string>& res,
 				 const std::string& s)
     {
-      using namespace std;
-      string::const_iterator p = s.begin();
-      const string::const_iterator pe = s.end();
+      auto p = s.begin();
+      const auto pe = s.end();
       char buf[3];
       buf[1] = '\0';
       buf[2] = '\0';
@@ -511,7 +568,7 @@ namespace tfel{
 	  auto pp = find(p,pe,'+');
 	  auto pm = find(p,pe,'-');
 	  auto pd = find(p,pe,'.');
-	  string word;
+	  auto word = std::string{};
 	  if((pp==pe)&&(pm==pe)&&(pd==pe)){
 	    // this is the end
 	    copy(p,pe,back_inserter(word));
@@ -544,14 +601,13 @@ namespace tfel{
     CxxTokenizer::splitString(std::vector<std::string>& res,
 			      std::string s, const std::string delim)
     {
-      using namespace std;
-      string::size_type posb = 0;
-      while((!s.empty())&&(posb!=string::npos)){
+      auto posb = std::string::size_type{0};
+      while((!s.empty())&&(posb!=std::string::npos)){
 	posb = s.find(delim);
 	if(posb!=0){
-	  res.push_back(string(s,0,posb));
+	  res.push_back(std::string(s,0,posb));
 	}
-	if(posb!=string::npos){
+	if(posb!=std::string::npos){
 	  res.push_back(delim);
 	  s.erase(0,posb+delim.length());
 	} else {
@@ -563,14 +619,13 @@ namespace tfel{
     void
     CxxTokenizer::splitString2(std::vector<std::string>& res,std::string s)
     {
-      using namespace std;
-      string::size_type posb = 0;
-      while((!s.empty())&&(posb!=string::npos)){
+      auto posb = std::string::size_type{0};
+      while((!s.empty())&&(posb!=std::string::npos)){
 	posb = s.find(">");
 	if(posb!=0){
-	  res.push_back(string(s,0,posb));
+	  res.push_back(std::string(s,0,posb));
 	}
-	if(posb!=string::npos){
+	if(posb!=std::string::npos){
 	  if((posb+1<s.length())&&(s[posb+1]=='>')){
 	    res.push_back(">>");
 	    s.erase(0,posb+2);
@@ -588,14 +643,13 @@ namespace tfel{
     void
     CxxTokenizer::splitString3(std::vector<std::string>& res,std::string s)
     {
-      using namespace std;
-      auto posb = string::size_type{0};
-      while((!s.empty())&&(posb!=string::npos)){
+      auto posb = std::string::size_type{0};
+      while((!s.empty())&&(posb!=std::string::npos)){
 	posb = s.find("<");
 	if(posb!=0){
-	  res.push_back(string(s,0,posb));
+	  res.push_back(std::string(s,0,posb));
 	}
-	if(posb!=string::npos){
+	if(posb!=std::string::npos){
 	  if((posb+1<s.length())&&(s[posb+1]=='<')){
 	    res.push_back("<<");
 	    s.erase(0,posb+2);
@@ -697,16 +751,10 @@ namespace tfel{
       if(this->bExtractNumbers){
 	init.swap(res);
 	res.clear();
-	for(p=init.begin();p!=init.end();++p){
-	  if((p->find("+")!=string::npos)||
-	     (p->find("-")!=string::npos)||
-	     (p->find(".")!=string::npos)){
-	    vector<string> v;
-	    CxxTokenizer::extractNumbers(v,*p);
-	    res.insert(res.end(),v.begin(),v.end());
-	  } else {
-	    res.push_back(*p);
-	  }
+	for(const auto& t : init){
+	  auto v = std::vector<std::string>{};
+	  CxxTokenizer::extractNumbers(v,t);
+	  res.insert(res.end(),v.begin(),v.end());
 	}
       }
 
@@ -803,45 +851,51 @@ namespace tfel{
     CxxTokenizer::openFile(const std::string& f)
     {
       using namespace std;
-      this->fileTokens.clear();
-      ifstream file{f};
-      if(!file){
-	throw(runtime_error("CxxTokenizer::openFile : "
-			    "unable to open file '"+f+"'"));
-      }
-      unsigned int lineNumber{0};
-      while(!file.eof()){
-	if(!file.good()){
-	  string msg("CxxTokenizer::openFile : ");
-	  msg+="error while reading file '"+f+"'";
-	  throw(runtime_error(msg));
+      this->clear();
+      try{
+	ifstream file{f};
+	if(!file){
+	  throw(runtime_error("CxxTokenizer::openFile : "
+			      "unable to open file '"+f+"'"));
 	}
-	auto line = string{};
-	getline(file,line);
-	++lineNumber;
-	if(!line.empty()){
-	  this->splitLine(line,lineNumber);
+	unsigned int lineNumber{0};
+	while(!file.eof()){
+	  if(!file.good()){
+	    string msg("CxxTokenizer::openFile : ");
+	    msg+="error while reading file '"+f+"'";
+	    throw(runtime_error(msg));
+	  }
+	  auto line = string{};
+	  getline(file,line);
+	  ++lineNumber;
+	  if(!line.empty()){
+	    this->splitLine(line,lineNumber);
+	  }
 	}
+	this->treatPreprocessorDirectives();
+	this->splitTokens();
+	file.close();
+      } catch(...){
+	this->clear();
+	throw;
       }
-      this->treatPreprocessorDirectives();
-      this->splitTokens();
-      file.close();
     }
 
     void
     CxxTokenizer::parseString(const std::string& s)
     {
-      this->fileTokens.clear();
-      this->splitLine(s,0u);
-      this->treatPreprocessorDirectives();
-      this->splitTokens();
+      this->clear();
+      try{
+	this->splitLine(s,0u);
+	this->treatPreprocessorDirectives();
+	this->splitTokens();
+      } catch(...){
+	this->clear();
+	throw;
+      }
     } // end of CxxTokenizer::parseOneString
 
-    CxxTokenizer::CxxTokenizer()
-      : cStyleCommentOpened(false),
-	bExtractNumbers(true),
-	charAsString(false)
-    {}
+    CxxTokenizer::CxxTokenizer() = default;
   
     CxxTokenizer::CxxTokenizer(const std::string& f)
       : CxxTokenizer()
@@ -908,43 +962,37 @@ namespace tfel{
     void 
     CxxTokenizer::printFileTokens(std::ostream& out) const
     {
-      using namespace std;
-      const_iterator p;
-      p=this->fileTokens.begin();
-      unsigned int line = p->line;
+      auto p    = this->fileTokens.begin();
+      auto line = p->line;
       for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
 	if(p->line!=line){
-	  out << endl;
+	  out << '\n';
 	  line = p->line;
 	}
 	out << p->value << " ";
       }
-      out << endl;
+      out << '\n';
     }
 
     bool
     CxxTokenizer::isValidIdentifier(const std::string& s, 
 				    const bool b)
     {
-      using namespace std;
       if(s.empty()){
 	return false;
       }
-      string::const_iterator p = s.begin();
+      auto p = s.begin();
       if(isdigit(*p)){
 	return false;
       }
       for(;p!=s.end();++p){
-	if((!isalpha(*p))&&
-	   (!(isdigit(*p)))&&
-	   (*p!='_')){
+	if((!isalpha(*p))&&(!(isdigit(*p)))&&(*p!='_')){
 	  return false;
 	}
 	if(isspace(*p)){
 	  return false;
 	}
       }
-
       if(b){
 	if(isReservedCxxKeywords(s)){
 	  return false;
@@ -957,51 +1005,41 @@ namespace tfel{
     CxxTokenizer::isValidFunctionIdentifier(const std::string& s, 
 					    const bool checkCxxKeywords)
     {
-      using namespace std;
       if(s.empty()){
 	return false;
       }
-      string::const_iterator p = s.begin();
+      auto p = s.begin();
       if(isdigit(*p)){
 	return false;
       }
       for(;p!=s.end();++p){
-	if((!isalpha(*p))&&
-	   (!(isdigit(*p)))&&
-	   (*p!='_')&&(*p!=':')){
+	if((!isalpha(*p))&&(!(isdigit(*p)))&&(*p!='_')&&(*p!=':')){
 	  return false;
 	}
 	if(isspace(*p)){
 	  return false;
 	}
 	if(*p==':'){
-	  ++p;
-	  if(p==s.end()){
+	  if(++p==s.end()){
 	    return false;
 	  }
 	  if(*p!=':'){
 	    return false;
 	  }
-	  ++p;
-	  if(p==s.end()){
+	  if(++p==s.end()){
 	    return false;
 	  }
-	  if((!isalpha(*p))&&
-	     (!(isdigit(*p)))&&
-	     (*p!='_')){
+	  if((!isalpha(*p))&&(!(isdigit(*p)))&&(*p!='_')){
 	    return false;
 	  }
 	}
       }
-
       if(checkCxxKeywords){
 	if(isReservedCxxKeywords(s)){
 	  return false;
 	}
       }
-
       return true;
-
     } // end of CxxTokenizer::isValidFunctionIdentifier
 
     CxxTokenizer::TokensContainer::iterator
@@ -1012,13 +1050,12 @@ namespace tfel{
       using namespace std;
       TokensContainer::iterator p2;
       TokensContainer::iterator a;
-      TokensContainer::iterator b;
       bool previous=false;
       bool next=false;
       if(p==src.end()){
 	return p;
       }
-      b=p;
+      auto b=p;
       ++b;
       if(p!=src.begin()){
 	a=p;
@@ -1056,6 +1093,18 @@ namespace tfel{
       return p;    
     } // end of CxxTokenizer::joinPreviousCurrentNext
 
+    const Token&
+    CxxTokenizer::operator[](const size_type i) const
+    {
+      if(i>=this->size()){
+	throw(std::out_of_range("CxxTokenizer::operator[]"));
+      }
+      auto p = this->begin();
+      std::advance(p,i);
+      return *p;
+    } // end of CxxTokenizer::begin
+
+    
     CxxTokenizer::const_iterator
     CxxTokenizer::begin(void) const
     {
@@ -1073,6 +1122,7 @@ namespace tfel{
     {
       this->cStyleCommentOpened = false;
       this->fileTokens.clear();
+      this->comments.clear();
     } // end of CxxTokenizer::end
 
     void
@@ -1080,11 +1130,8 @@ namespace tfel{
 				    CxxTokenizer::const_iterator& p, 
 				    const CxxTokenizer::const_iterator pe)
     {
-      using namespace std;
       if(p==pe){
-	string msg(method);
-	msg += " : unexpected end of line";
-	throw(runtime_error(msg));
+	throw(std::runtime_error(method+" : unexpected end of line"));
       }
     } // end of CxxTokenizer::checkNotEndOfLine
     

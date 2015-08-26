@@ -4,6 +4,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 
 testdir = $(pkgdatadir)/tests/Material
 test_PROGRAMS = boundsCheck \
+		OrthotropicAxesConventionTest        \
 		FiniteStrainBehaviourTangentOperator
 
 LDADD = -lTFELMaterial -lTFELMath       \
@@ -16,6 +17,7 @@ LDADD = -lTFELMaterial -lTFELMath       \
 	-L$(top_builddir)/src/Exception
 
 boundsCheck_SOURCES = boundsCheck.cxx               
+OrthotropicAxesConventionTest_SOURCES        = OrthotropicAxesConventionTest.cxx
 FiniteStrainBehaviourTangentOperator_SOURCES = FiniteStrainBehaviourTangentOperator.cxx               
 
 TESTS=$(test_PROGRAMS)

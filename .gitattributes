@@ -1123,6 +1123,8 @@ include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx -tex
 include/TFEL/Material/MetallicCFCSlidingSystems.hxx -text
 include/TFEL/Material/MetallicCFCSlidingSystems.ixx -text
 include/TFEL/Material/ModellingHypothesis.hxx -text
+include/TFEL/Material/OrthotropicAxesConvention.hxx -text
+include/TFEL/Material/OrthotropicAxesConvention.ixx -text
 include/TFEL/Material/OutOfBoundsPolicy.hxx -text
 include/TFEL/Material/PolyCrystalsSlidingSystems.hxx -text
 include/TFEL/Material/PolyCrystalsSlidingSystems.ixx -text
@@ -1653,6 +1655,7 @@ mfront/include/MFront/ExcelMaterialPropertyInternalInterface.hxx -text
 mfront/include/MFront/FileDescription.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx -text
+mfront/include/MFront/Fortran03MaterialPropertyInterface.hxx -text
 mfront/include/MFront/FortranMaterialPropertyInterface.hxx -text
 mfront/include/MFront/GeneratorOptions.hxx -text
 mfront/include/MFront/GenericData.hxx -text
@@ -1888,6 +1891,7 @@ mfront/src/ExcelMaterialPropertyInternalInterface.cxx -text
 mfront/src/FileDescription.cxx -text
 mfront/src/FiniteStrainBehaviourTangentOperatorConversion.cxx -text
 mfront/src/FiniteStrainBehaviourTangentOperatorConversionPath.cxx -text
+mfront/src/Fortran03MaterialPropertyInterface.cxx -text
 mfront/src/FortranMaterialPropertyInterface.cxx -text
 mfront/src/GnuplotMaterialPropertyInterface.cxx -text
 mfront/src/ImplicitDSL.cxx -text
@@ -3347,6 +3351,7 @@ tests/Makefile.am -text
 tests/Material/CMakeLists.txt -text
 tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 tests/Material/Makefile.am -text
+tests/Material/OrthotropicAxesConventionTest.cxx -text
 tests/Material/boundsCheck.cxx -text
 tests/Math/CMakeLists.txt -text
 tests/Math/CubicRoots.cxx -text
@@ -3507,6 +3512,7 @@ tests/Tests/testproxy.cxx -text
 tests/Tests/testproxy2.cxx -text
 tests/Tests/testsuite.cxx -text
 tests/Utilities/CMakeLists.txt -text
+tests/Utilities/CxxTokenizerTest.cxx -text
 tests/Utilities/Makefile.am -text
 tests/Utilities/StringAlgorithms.cxx -text
 tests/Utilities/gentype.cxx -text

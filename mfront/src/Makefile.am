@@ -113,7 +113,8 @@ libTFELMFront_la_SOURCES += GnuplotMaterialPropertyInterface.cxx
 endif
 
 if HAVE_FORTRAN
-libTFELMFront_la_SOURCES += FortranMaterialPropertyInterface.cxx
+libTFELMFront_la_SOURCES += FortranMaterialPropertyInterface.cxx   \
+			 += Fortran03MaterialPropertyInterface.cxx
 endif
 
 if HAVE_PYTHON

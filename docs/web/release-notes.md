@@ -32,10 +32,19 @@ Minor fixes.
 
 ## Version 2.0.3
 
+- Introduction of the `ExternalBehaviourDescription` structure which
+  loads information about a `MFront` behaviour from a library
+  generated using either the `umat`, the `cyrano` or the `aster`
+  interface.
+- [LLVM `libc++`](http://libcxx.llvm.org/) can now be enabled from
+  `cmake` using `-Denable-libcxx=ON`. This is useful on `LiNuX`
+  systems where `clang` defaults to
+  [GNU `libstdc++`](https://gcc.gnu.org/libstdc++/).
 - Fix a minor bug in the `CxxTokenizer` class which was appears when
   using the [`clang` `libc++`](http://libcxx.llvm.org/) standard
   library. This prevented many `MTest` tests to work on
   [Mac OS X](http://www.apple.com/fr/osx/).
+- Fix [Ticket #10](https://sourceforge.net/p/tfel/tickets/10/)
 
 # Versions 2.1.x
 
@@ -64,6 +73,11 @@ was greatly simplified and is now much more liable and maintainable.
       OpenOffice/LibreOffice
       [ODT](http://en.wikipedia.org/wiki/OpenDocument).
 - new material properties interfaces:
+	+ `fortran03` which relies on several features of the 2003 Fortran
+      standard:
+	  * include files and interfaces which leads to a much safer
+        language
+	  * standard bindings to `C` functions
 	+ `java` designed for the
       [`java` language](http://www.oracle.com/fr/java/overview/index.html).
   	+ `octave` designed for
@@ -117,10 +131,7 @@ systems:
   management project based on `cmake` to build material librairies.
 
 Various Unix-based systems have been tested and shall work out of the
-box :
-
-- `FreeBSD`
-- `PCBSD`
+box, including `FreeBSD` and `PCBSD`.
 
 ## Compiler support
 

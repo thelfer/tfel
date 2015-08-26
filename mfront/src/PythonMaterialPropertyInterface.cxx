@@ -367,8 +367,7 @@ namespace mfront
     this->srcFile << "#endif /* __cplusplus */\n\n";
     this->srcFile.close();
     // writing python interface
-    auto& lock = MFrontLock::getMFrontLock();
-    lock.lock();
+    MFrontLockGuard lock;
     string fname;
     if(library.empty()){
       if(!material.empty()){
@@ -483,7 +482,6 @@ namespace mfront
     copy(interfaces.begin(),interfaces.end(),
 	 ostream_iterator<string>(wrapper,"\n"));
     wrapper.close();
-    lock.unlock();
   } // end of PythonMaterialPropertyInterface::writeSrcFile(void)
 
 } // end of namespace mfront
