@@ -1169,7 +1169,7 @@ namespace tfel{
 				    const CxxTokenizer::const_iterator pe)
     {
       if(p==pe){
-	throw(std::runtime_error(method+" : unexpected end of line");
+	throw(std::runtime_error(method+" : unexpected end of line"));
       }
     } // end of CxxTokenizer::checkNotEndOfLine
     

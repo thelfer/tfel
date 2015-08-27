@@ -135,16 +135,14 @@ namespace tfel
     void
     GlossaryEntry::check(void) const
     {
-      using namespace std;
       if(this->names.empty()){
-	string msg("GlossaryEntry::check : "
-		   "no name specified for key '"+this->getKey()+"'");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("GlossaryEntry::check : "
+				 "no name specified for key '"+this->getKey()+"'"));
       }
-      if(!(this->type=="scalar")&&(this->type=="vector")&&(this->type=="symmetric tensor")){
-	string msg("GlossaryEntry::check : "
-		   "unsupported type '"+this->type+"'");
-	throw(runtime_error(msg));
+      if(!((this->type=="scalar")||(this->type=="vector")||
+	   (this->type=="symmetric tensor")||(this->type=="tensor"))){
+	throw(std::runtime_error("GlossaryEntry::check : "
+				 "unsupported type '"+this->type+"'"));
       }
     } // end of GlossaryEntry::check
 
