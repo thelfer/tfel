@@ -273,7 +273,7 @@ namespace aster
 	    this->behaviour.initialize();
 	    // 22/03/2012 : la gestion des bornes sera implantée plus tard
 	    // const auto& up = AsterOutOfBoundsPolicy::getAsterOutOfBoundsPolicy();
-	    // this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	    this->behaviour.setOutOfBoundsPolicy(OutOfBoundsPolicy::None);
 	  } // end of Integrator::Integrator
 	
       TFEL_ASTER_INLINE2
