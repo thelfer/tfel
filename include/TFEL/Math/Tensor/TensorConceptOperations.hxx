@@ -89,7 +89,7 @@ namespace tfel{
       struct DummyHandle{};
       typedef typename TensorType <typename std::decay<A>::type>::type TensA;
       typedef typename StensorType<typename std::decay<B>::type>::type STensB;
-      typedef typename TensorViewFromStensor<B>::type        TensB;
+      typedef typename TensorViewFromStensor<B>::type TensB;
     public:
       typedef typename ResultType<TensA,STensB,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,

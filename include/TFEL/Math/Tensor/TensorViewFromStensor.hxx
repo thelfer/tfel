@@ -91,11 +91,8 @@ namespace tfel
 	    throw(TensorInvalidIndexException());
 	  }
 	  return this->s(5)*cste;
-	default:
-	  ;
 	}
 	throw(TensorInvalidIndexException());
-	return ValueType(0);
       } // end of operator() const
 
     protected:

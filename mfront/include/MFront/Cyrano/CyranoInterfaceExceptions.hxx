@@ -37,7 +37,7 @@ namespace cyrano{
     /*!
      * \brief throw an exception
      */
-    static void
+    TFEL_NORETURN static void
     exe(const CyranoReal *const ,
 	const CyranoReal *const,
 	const CyranoReal *const,
@@ -71,7 +71,7 @@ namespace cyrano{
      * \param[in] n1 : number of material properties declared by the behaviour
      * \param[in] n2 : number of material properties declared by the interface
      */
-    static void
+    TFEL_NORETURN static void
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
 					     const CyranoInt n2);
@@ -85,7 +85,7 @@ namespace cyrano{
      * \param[in] n1 : number of state variables declared by the behaviour
      * \param[in] n2 : number of state variables declared by the interface
      */
-    static void
+    TFEL_NORETURN static void
     throwUnMatchedNumberOfStateVariables(const std::string&,
 					 const unsigned short n1,
 					 const CyranoInt n2);
@@ -141,7 +141,7 @@ namespace cyrano{
      * \brief throw an CyranoException if the time step is negative
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwNegativeTimeStepException(const std::string&);
 
     /*!
@@ -149,7 +149,7 @@ namespace cyrano{
      * failed
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwBehaviourIntegrationFailedException(const std::string&);
 
     /*!
@@ -157,7 +157,7 @@ namespace cyrano{
      * stepping has been reached
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwMaximumNumberOfSubSteppingReachedException(const std::string&);
 
     /*!
@@ -165,14 +165,14 @@ namespace cyrano{
      * stepping has been reached
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string&);
     /*!
      * \brief throw an CyranoException if the DDSOE parameter is invalid
      * \param[in] b : behaviour name
      * \param[in] v : DDSOE value
      */
-    static void
+    TFEL_NORETURN static void
     throwInvalidDDSOEException(const std::string&,
 			       const CyranoReal);
     /*!
@@ -180,7 +180,7 @@ namespace cyrano{
      * failed
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwPredictionComputationFailedException(const std::string&);
     /*!
      * \brief throw an CyranoException if the a consistent tangent
@@ -188,28 +188,28 @@ namespace cyrano{
      * provide one.
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwConsistentTangentOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an CyranoException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief display an error message if the behaviour shall handle
      * stress free expansion and that the cyrano interface can't
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwUnsupportedStressFreeExpansionException(const std::string&);
     /*!
      * \brief display an error message if the thermal expansion is not
      * null
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwThermalExpansionCoefficientShallBeNull(const std::string&);
     /*!
      * \brief throw an error message if the value of the NTENS
@@ -223,7 +223,7 @@ namespace cyrano{
      * \brief throw an error message if the behaviour type is not supported for the given hypothesis
      * \param[in] H    : hypothesis
      */
-    static void
+    TFEL_NORETURN static void
     throwInvalidBehaviourTypeAndModellingHypothesis(const std::string&);
     /*!
      * \brief display an error message if the value of the NDI

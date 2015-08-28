@@ -359,17 +359,13 @@ namespace mfront{
   std::string
   MFrontPleiadesModelInterfaceBase::getGenTypeMethod(const std::string& type) const
   {
-    using namespace std;
     if((type=="double")||(type=="real")){
       return "getDouble";
     } else if(type=="string"){
       return "getString";
-    } else {
-      string msg("MFrontPleiadesModelInterfaceBase::getGenTypeMethod : ");
-      msg += "no method associated with type " + type;
-      throw(runtime_error(msg));
     }
-    return "";
+    throw(std::runtime_error("MFrontPleiadesModelInterfaceBase::getGenTypeMethod : "
+			     "no method associated with type " + type));
   } // end of MFrontPleiadesModelInterfaceBase::getGenTypeMethod
 
   static std::pair<std::string,unsigned short>
@@ -408,10 +404,8 @@ namespace mfront{
 	}
       }
     }
-    string msg("getFieldAndDepthFromFieldName : ");
-    msg += "field name '"+n+"' has not been found";
-    throw(runtime_error(msg));
-    return pair<string,unsigned short>("",0u);
+    throw(runtime_error("getFieldAndDepthFromFieldName : "
+			"field name '"+n+"' has not been found"));
   } // end of getFieldAndDepthFromFieldName
 
   void

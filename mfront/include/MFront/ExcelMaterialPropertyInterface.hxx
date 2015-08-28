@@ -30,8 +30,6 @@ namespace mfront{
   {
     static std::string 
     getName(void);
-    
-    ExcelMaterialPropertyInterface();
     /*!
      * \param[in] k  : keyword treated
      * \param[in] p  : iterator to the current token
@@ -60,15 +58,6 @@ namespace mfront{
 				  const FileDescription&) override;
     //! destructor
     virtual ~ExcelMaterialPropertyInterface();
-    
-  private:
-
-    struct ExcelInterface;
-
-    void
-    readExcelInterface(std::vector<ExcelInterface>&,
-		       const std::string&);
-
   }; // end of MfrontExcelMaterialPropertyInterface
 
 } // end of namespace mfront

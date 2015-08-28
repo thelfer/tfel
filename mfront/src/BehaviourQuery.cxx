@@ -134,7 +134,7 @@ namespace mfront{
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
     const auto& q = this->getCurrentCommandLineArgument();
-	const auto& qn = static_cast<const string&>(q);
+    const auto& qn = q.as_string();
     if(qn=="--author"){
       this->queries.push_back({"author",[](const FileDescription& fd,
 					   const BehaviourDescription&,
@@ -251,8 +251,8 @@ const Hypothesis){
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
     const auto& q  = this->getCurrentCommandLineArgument();
-	const auto& qn = static_cast<const string&>(q);
-	const auto& o  = q.getOption();
+    const auto& qn = q.as_string();
+    const auto& o  = q.getOption();
     if(o.empty()){
       throw(runtime_error("Behaviour::treatStandardQuery2 : "
 			  "no option given to the '"+qn+"' query"));

@@ -79,7 +79,7 @@ namespace tfel{
 	TFEL_MATH_INLINE NumType
 	operator *(void) const
 	{
-	  return m(i,j);
+	  return this->m(this->i,this->j);
 	}
       private:
 	const MType& m;         //! reference to the underlying matrix
@@ -103,7 +103,7 @@ namespace tfel{
 	TFEL_MATH_INLINE const NumType &
 	operator *(void) const
 	{
-	  return v(i);
+	  return this->v(this->i);
 	}
       private:
 	const VType& v;

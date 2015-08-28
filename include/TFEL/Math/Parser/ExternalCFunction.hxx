@@ -32,11 +32,11 @@ namespace tfel
 
       struct ExternalCFunctionException
       {
-	static void
+	TFEL_NORETURN static void
 	throwUnimplementedDifferentiateFunctionException(void);
-	static void
+	TFEL_NORETURN static void
 	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
-	static void
+	TFEL_NORETURN static void
 	throwInvalidVariableIndex(const std::vector<double>::size_type,
 				  const unsigned short);
       }; // end of struct ExternalCFunctionException

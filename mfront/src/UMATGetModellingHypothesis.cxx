@@ -45,7 +45,6 @@ namespace umat
     msg << "umat::getModellingHypothesis : "
 	<< "invalid argument ('" << ndi << "')";
     throw(UMATException(msg.str()));
-    return ModellingHypothesis::UNDEFINEDHYPOTHESIS;
   }
 
 } // end of namespace umat

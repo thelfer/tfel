@@ -40,7 +40,7 @@ namespace umat
     void rotateDeformationGradientForward(const UMATReal *const,
 					  UMATReal *const);
     // compute the stiffness matrix in the global space
-    void rotateTangentOperatorBackward(UMATReal *const) const;
+    TFEL_NORETURN void rotateTangentOperatorBackward(UMATReal *const) const;
   private:
 
     UMATReal a[4];
@@ -71,7 +71,7 @@ namespace umat
     void rotateDeformationGradientBackward(const UMATReal *const,
 					   UMATReal *const);
     // compute the stiffness matrix in the global space
-    void rotateTangentOperatorBackward(UMATReal *const) const;
+    TFEL_NORETURN void rotateTangentOperatorBackward(UMATReal *const) const;
   private:
 
     UMATReal a [9];

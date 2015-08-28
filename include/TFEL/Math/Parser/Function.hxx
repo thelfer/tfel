@@ -37,11 +37,10 @@ namespace tfel
 
       struct StandardFunctionBase
       {
-	static void
+	TFEL_NORETURN static void
 	throwUnimplementedDifferentiateFunctionException(void);
-	static void
-	throwInvalidCallException(const double,
-				  const int);
+	TFEL_NORETURN static void
+	throwInvalidCallException(const double,const int);
       }; // end of struct StandardFunctionBase
 
       template<StandardFunctionPtr f>

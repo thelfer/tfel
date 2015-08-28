@@ -63,11 +63,11 @@ namespace mfront
     treatResultFileOutput(void);
     void
     treatResidualFileOutput(void);
-    void
+    TFEL_NORETURN void
     treatHelpCommandsList(void);
-    void
+    TFEL_NORETURN void
     treatHelpCommands(void);
-    void
+    TFEL_NORETURN void
     treatHelpCommand(void);
     void
     treatEnableFloatingPointExceptions(void);
@@ -285,12 +285,10 @@ namespace mfront
   void
   MTestMain::treatHelpCommand()
   {
-    using namespace std;
     const auto& k = this->currentArgument->getOption();
     if(k.empty()){
-      string msg("MTestMain::treatHelpCommand : ");
-      msg += "no command specified";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestMain::treatHelpCommand : "
+			       "no command specified"));
     }
     MTestParser p;
     p.displayKeyWordDescription(k);
@@ -300,18 +298,17 @@ namespace mfront
   void
   MTestMain::treatUnknownArgument(void)
   {
-    using namespace std;
     using namespace tfel::utilities;
-    const auto& a = static_cast<const string&>(*(this->currentArgument));
+    const auto& a = this->currentArgument->as_string();
     if(a[0]=='-'){
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<MTestMain>::treatUnknownArgument();
 #else
-      cerr << "mtest : unsupported option '" << a << "'\n";
+      std::cerr << "mtest : unsupported option '" << a << "'\n";
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
     }
-    this->inputs.push_back(*(this->currentArgument));
+    this->inputs.push_back(this->currentArgument->as_string());
     return;
   } // end of MTestMain::treatUnknownArgument()
 
@@ -376,6 +373,7 @@ namespace mfront
 
 } // end of namespace mfront
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc,
 	 const char * const * const argv)
 {

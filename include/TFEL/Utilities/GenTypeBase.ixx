@@ -21,8 +21,7 @@ namespace tfel{
 
     namespace internals{
 
-      template<typename T,
-	       typename List,
+      template<typename T,typename List,
 	       unsigned short N = 0>
       struct GenTypeBaseApply
       {
@@ -35,53 +34,48 @@ namespace tfel{
 
 	struct EndRecursion
 	{
-	  static return_type
+	  TFEL_NORETURN static return_type
 	  apply(const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
-	    return return_type();
 	  }
-	  static return_type
+	  TFEL_NORETURN static return_type
 	  apply(T&,
 		const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
-	    return return_type();
 	  }
-
-	  static return_type
+	  TFEL_NORETURN static return_type
 	  apply(GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
-	    return return_type();
 	  }
-	  static return_type
+	  TFEL_NORETURN static return_type
 	  apply(T&,GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
-	    return return_type();
 	  }
 	}; // end of struct EndRecursion
       
 	struct EndRecursionII
 	{
-	  static void
+	  TFEL_NORETURN static void
 	  apply(const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
-	  static void
+	  TFEL_NORETURN static void
 	  apply(T&,
 		const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
-	  static void
+	  TFEL_NORETURN static void
 	  apply(GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
-	  static void
+	  TFEL_NORETURN static void
 	  apply(T&,GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());

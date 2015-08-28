@@ -119,9 +119,8 @@ namespace tfel
     ArgumentParserBase<Child>::setArguments(const int argc,
 					    const char * const * const argv)
     {
-      using namespace std;
       if(argc<1){
-	throw(runtime_error("argc value not valid"));
+	throw(std::runtime_error("argc value not valid"));
       }
       this->programName = argv[0];
       this->args.clear();
@@ -131,33 +130,25 @@ namespace tfel
     template<typename Child>
     void ArgumentParserBase<Child>::replaceAliases(void)
     {
-      using namespace std;
-      typename ArgsContainer::iterator p;
-      typename AliasContainer::const_iterator pa;
-      typename CallBacksContainer::iterator pf;
-      for(p=args.begin();p!=args.end();){
-	if((pa=alias.find(*p))!=alias.end()){
-	  pf = this->callBacksContainer.find(pa->second);
+      for(auto p=args.begin();p!=args.end();){
+	const auto& pn = p->as_string();
+	const auto pa=alias.find(pn);
+	if(pa!=alias.end()){
+	  const auto pf = this->callBacksContainer.find(pa->second);
 	  if(pf==this->callBacksContainer.end()){
-	    string msg("ArgumentParserBase<Child>::replaceAliases : '");
-	    msg += *p;
-	    msg += "' is not a known argument";
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("ArgumentParserBase<Child>::replaceAliases: '"
+				     +pn+"' is not a known argument"));
 	  }
 	  if(pf->second.second.first){
-	    typename ArgsContainer::iterator p2 = p+1;
+	    const auto p2 = p+1;
 	    if(p2==args.end()){
-		  const auto& pn = static_cast<const string&>(*p);
-	      string msg("ArgumentParserBase<Child>::replaceAliases : '"
-	                 "no argument given to option '"+pn+"'");
-	      throw(runtime_error(msg));
+	      throw(std::runtime_error("ArgumentParserBase<Child>::replaceAliases : '"
+				       "no argument given to option '"+pn+"'"));
 	    }
-		const auto& p2n = static_cast<const string&>(*p2);
+	    const auto& p2n = p2->as_string();
 	    if(p2n[0]=='-'){
-	      const auto& pn = static_cast<const string&>(*p);
-	      string msg("ArgumentParserBase<Child>::replaceAliases : '"
-		             "no argument given to option '"+pn+"'");
-	      throw(runtime_error(msg));
+	      throw(std::runtime_error("ArgumentParserBase<Child>::replaceAliases : '"
+				       "no argument given to option '"+pn+"'"));
 	    }
 	    *p = pa->second;
 	    p->setOption(p2n);
@@ -176,25 +167,21 @@ namespace tfel
     void
     ArgumentParserBase<Child>::stripArguments(void)
     {
-      using namespace std;
-      typename ArgsContainer::iterator p;
-      typename CallBacksContainer::iterator pf;
-      typename string::size_type pos;
-      for(p=this->args.begin();p!=this->args.end();++p){
-	auto& pn = static_cast<string&>(*p);
-	if((pos=pn.find("="))!=string::npos){
+      for(auto& a : this->args){
+	auto& an = a.as_string();
+	const auto pos = an.find("=");
+	if(pos!=std::string::npos){
 	  if(pos!=std::string::npos){
-	    string option(*p,pos+1,string::npos);
-	    pn.erase(pos,string::npos);
-	    pf = this->callBacksContainer.find(*p);
+	    const auto option = an.substr(pos+1,std::string::npos);
+	    an.erase(pos,std::string::npos);
+	    const auto pf = this->callBacksContainer.find(an);
 	    if(pf!=this->callBacksContainer.end()){
 	      if(!(pf->second.second.first)){
-		string msg("ArgumentParserBase<Child>::stripArguments : argument '"+
-		           pn+"' does not have any option");
-		throw(runtime_error(msg));
+		throw(std::runtime_error("ArgumentParserBase<Child>::stripArguments: "
+					 "argument '"+an+"' does not have any option"));
 	      }
 	    }
-	    p->setOption(option);
+	    a.setOption(option);
 	  }
 	}
       }
@@ -206,7 +193,7 @@ namespace tfel
     {
       using namespace std;
       string msg("ArgumentParserBase<Child>::treatUnknownArg : ");
-      msg += *(this->currentArgument);
+      msg += this->currentArgument->as_string();
       msg += " is not a valid argument";
       throw(runtime_error(msg));
     } // end of ArgumentParserBase<Child>::treatUnknownArgument
@@ -216,7 +203,7 @@ namespace tfel
     {
       auto comp = [](const Argument& a,
 		     const char* const s){
-	return static_cast<const std::string&>(a)==s;
+	return a.as_string()==s;
       };
       this->stripArguments();
       this->replaceAliases();
@@ -238,7 +225,7 @@ namespace tfel
       }
       this->currentArgument=this->args.begin();
       while(this->currentArgument!=this->args.end()){
-	  auto a  = static_cast<const std::string&>(*(this->currentArgument));
+	  auto a  = this->currentArgument->as_string();
 	  auto pf = this->callBacksContainer.find(a);
 	if(pf!=this->callBacksContainer.end()){
 	  (static_cast<Child *>(this)->*(pf->second.first))();

@@ -40,13 +40,10 @@ namespace mfront
   std::shared_ptr<NonLinearSystemSolver>
   NonLinearSystemSolverFactory::getSolver(const std::string& a) const
   {
-    using namespace std;
-    map<string,constructor>::const_iterator p;
-    p = this->constructors.find(a);
+    const auto p = this->constructors.find(a);
     if(p==this->constructors.end()){
-      string msg("NonLinearSystemSolverFactory::getSolver : "
-		 "no solver '"+a+"' registred");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("NonLinearSystemSolverFactory::getSolver : "
+			       "no solver '"+a+"' registred"));
     }
     return (*(p->second))();
   }
@@ -77,12 +74,9 @@ namespace mfront
   NonLinearSystemSolverFactory::registerSolver(const std::string& a,
 						       const constructor c)
   {
-    using namespace std;
-    typedef map<string,constructor>::value_type value_type;
-    if(!this->constructors.insert(value_type(a,c)).second){
-      string msg("NonLinearSystemSolverFactory::registerSolver : "
-		 "solver '"+a+"' already declared");
-      throw(runtime_error(msg));
+    if(!this->constructors.insert({a,c}).second){
+      throw(std::runtime_error("NonLinearSystemSolverFactory::registerSolver : "
+			       "solver '"+a+"' already declared"));
     }
   } // end of NonLinearSystemSolverFactory::registerSolver
 

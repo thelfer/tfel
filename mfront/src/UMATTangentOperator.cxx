@@ -22,31 +22,25 @@
 namespace umat
 {
 
-  void
+  TFEL_NORETURN void
   UMATTangentOperator::normalize(tfel::math::t2tost2<1u,UMATReal>&)
   {
-    using namespace std;
-    string msg("UMATTangentOperator::normalize : "
-	       "unsupported feature");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("UMATTangentOperator::normalize : "
+			     "unsupported feature"));
   } // end of UMATTangentOperator::normalize
   
   void
   UMATTangentOperator::normalize(tfel::math::t2tost2<2u,UMATReal>&)
   {
-    using namespace std;
-    string msg("UMATTangentOperator::normalize : "
-	       "unsupported feature");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("UMATTangentOperator::normalize : "
+			     "unsupported feature"));
   } // end of UMATTangentOperator::normalize
   
   void
   UMATTangentOperator::normalize(tfel::math::t2tost2<3u,UMATReal>&)
   {
-    using namespace std;
-    string msg("UMATTangentOperator::normalize : "
-	       "unsupported feature");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("UMATTangentOperator::normalize : "
+			     "unsupported feature"));
   } // end of struct UMATTangentOperator
 
   void

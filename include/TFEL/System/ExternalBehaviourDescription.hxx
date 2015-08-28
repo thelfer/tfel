@@ -81,28 +81,28 @@ namespace tfel
        * 2 : finite strain behaviourDescription
        * 3 : cohesive zone model
        */
-      unsigned short btype;
+      unsigned short btype = 0;
       /*!
        * symmetry type:
        * - If stype is equal to 0, the behaviour is isotropic.
        * - If stype is equal to 1, the behaviour is orthotropic.
        */
-      unsigned short stype;
+      unsigned short stype = 0;
       /*!
        * elastic symmetry type:
        * - If etype is equal to 0, the behaviour elastic behaviour is isotropic.
        * - If etype is equal to 1, the behaviour elastic behaviour is orthotropic.
        */
-      unsigned short etype;
+      unsigned short etype = 0;
       //! If isUPUIR is true, the behaviour is usable in purely implicit resolution
-      bool isUPUIR;
+      bool isUPUIR = false;
       //! If requiresStiffnessTensor is true, the caller must provide the stiffness tensor
-      bool requiresStiffnessTensor;
+      bool requiresStiffnessTensor = false;
       /*!
        * If requiresThermalExpansionCoefficientTensor is true, the
        * caller must provide the thermal expansion coefficients tensor
        */
-      bool requiresThermalExpansionCoefficientTensor;
+      bool requiresThermalExpansionCoefficientTensor = false;
       //! destructor
       TFELSYSTEM_VISIBILITY_EXPORT ~ExternalBehaviourDescription();
     };

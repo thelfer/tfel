@@ -70,11 +70,9 @@ namespace tfel
       void
       BinaryOperationBase::throwUnimplementedDifferentiateFunctionException(void)
       {
-	using namespace std;
-	string msg("BinaryOperationBase::");
-	msg += "throwUnimplementedDifferentiateFunctionException : ";
-	msg += "unimplemented feature";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("BinaryOperationBase::"
+				 "throwUnimplementedDifferentiateFunctionException : "
+				 "unimplemented feature"));
       }  // end of BinaryOperationBase::throwUnimplementedDifferentiateFunctionException()
 
       template<>

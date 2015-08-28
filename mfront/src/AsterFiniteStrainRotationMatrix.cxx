@@ -97,10 +97,8 @@ namespace aster
   void
   AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward(AsterReal *const) const
   {
-    using namespace std;
-    string msg("AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward : "
-	       "unimplemented feature");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward : "
+			     "unimplemented feature"));
   } // end of AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward
 
   AsterFiniteStrainRotationMatrix3D::AsterFiniteStrainRotationMatrix3D(const AsterReal *const drot)

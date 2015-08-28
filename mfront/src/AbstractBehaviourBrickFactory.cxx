@@ -42,13 +42,10 @@ namespace mfront
 			     BehaviourDescription& mb,
 			     const AbstractBehaviourBrick::Parameters& p) const
   {
-    using namespace std;
-    map<string,constructor>::const_iterator pc;
-    pc = this->constructors.find(a);
+    auto pc = this->constructors.find(a);
     if(pc==this->constructors.end()){
-      string msg("AbstractBehaviourBrickFactory::getAbstractBehaviourBrick : "
-		 "no AbstractBehaviourBrick '"+a+"' registred");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("AbstractBehaviourBrickFactory::getAbstractBehaviourBrick : "
+			       "no AbstractBehaviourBrick '"+a+"' registred"));
     }
     return (*(pc->second))(dsl,mb,p);
   }
@@ -63,12 +60,9 @@ namespace mfront
   AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick(const std::string& a,
 			       const constructor c)
   {
-    using namespace std;
-    typedef map<string,constructor>::value_type value_type;
-    if(!this->constructors.insert(value_type(a,c)).second){
-      string msg("AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick : "
-		 "BehaviourBrick '"+a+"' already declared");
-      throw(runtime_error(msg));
+    if(!this->constructors.insert({a,c}).second){
+      throw(std::runtime_error("AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick : "
+			       "BehaviourBrick '"+a+"' already declared"));
     }
   } // end of AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick
 

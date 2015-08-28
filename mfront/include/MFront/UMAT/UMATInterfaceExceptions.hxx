@@ -37,7 +37,7 @@ namespace umat{
     /*!
      * \brief throw an exception
      */
-    static void
+    TFEL_NORETURN static void
     exe(const UMATReal *const,
 	const UMATReal *const,
 	UMATReal *const,
@@ -72,7 +72,7 @@ namespace umat{
      * \param[in] n1 : number of material properties declared by the behaviour
      * \param[in] n2 : number of material properties declared by the interface
      */
-    static void
+    TFEL_NORETURN static void
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
 					     const UMATInt n2);
@@ -86,7 +86,7 @@ namespace umat{
      * \param[in] n1 : number of state variables declared by the behaviour
      * \param[in] n2 : number of state variables declared by the interface
      */
-    static void
+    TFEL_NORETURN static void
     throwUnMatchedNumberOfStateVariables(const std::string&,
 					 const unsigned short n1,
 					 const UMATInt n2);
@@ -97,7 +97,7 @@ namespace umat{
      * \param[in] b : behaviour name
      * \param[in] e : the UMATException to be treated
      */
-    static void
+    TFEL_NORETURN static void
     treatUmatException(const std::string&,
 		       const UMATException&);
 
@@ -107,7 +107,7 @@ namespace umat{
      * \param[in] b : behaviour name
      * \param[in] e : the material exception to be treated
      */
-    static void
+    TFEL_NORETURN static void
     treatMaterialException(const std::string&,
 			   const tfel::material::MaterialException&);
     
@@ -142,7 +142,7 @@ namespace umat{
      * \brief throw an UMATException if the time step is negative
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwNegativeTimeStepException(const std::string&);
 
     /*!
@@ -150,7 +150,7 @@ namespace umat{
      * failed
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwBehaviourIntegrationFailedException(const std::string&);
 
     /*!
@@ -158,7 +158,7 @@ namespace umat{
      * stepping has been reached
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwMaximumNumberOfSubSteppingReachedException(const std::string&);
 
     /*!
@@ -166,14 +166,14 @@ namespace umat{
      * stepping has been reached
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string&);
     /*!
      * \brief throw an UMATException if the DDSOE parameter is invalid
      * \param[in] b : behaviour name
      * \param[in] v : DDSOE value
      */
-    static void
+    TFEL_NORETURN static void
     throwInvalidDDSOEException(const std::string&,
 			       const UMATReal);
     /*!
@@ -181,7 +181,7 @@ namespace umat{
      * failed
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwPredictionComputationFailedException(const std::string&);
     /*!
      * \brief throw an AsterException if the a consistent tangent
@@ -189,14 +189,14 @@ namespace umat{
      * provide one.
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwConsistentTangentOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an AsterException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an error message if the value of the NTENS
@@ -211,7 +211,7 @@ namespace umat{
      * \param[in] type : behaviour type
      * \param[in] H    : hypothesis
      */
-    static void
+    TFEL_NORETURN static void
     throwInvalidBehaviourTypeAndModellingHypothesis(const UMATBehaviourType,
 						    const std::string&);
     /*!
@@ -219,14 +219,14 @@ namespace umat{
      * stress free expansion and that the umat interface can't
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwUnsupportedStressFreeExpansionException(const std::string&);
     /*!
      * \brief display an error message if the thermal expansion is not
      * null
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwThermalExpansionCoefficientShallBeNull(const std::string&);
     /*!
      * \brief display an error message if the value of the NDI

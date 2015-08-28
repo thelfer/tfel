@@ -194,7 +194,6 @@ namespace tfel
 	    << opened << " parenthesis were still opened";
       }
       throw(runtime_error(msg.str()));
-      return 0;
     } // end of IntegerEvaluator::analyseArguments
 
     std::pair<bool,std::vector<std::string>::const_iterator>

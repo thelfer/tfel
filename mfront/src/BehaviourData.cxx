@@ -151,10 +151,8 @@ namespace mfront{
   void
   BehaviourData::throwUndefinedAttribute(const std::string& n)
   {
-    using namespace std;
-    string msg("BehaviourData::getAttribute : "
-	       "no attribute named '"+n+"'");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("BehaviourData::getAttribute : "
+			     "no attribute named '"+n+"'"));
   } // end of BehaviourData::throwUndefinedAttribute
   
   BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator()
@@ -953,9 +951,8 @@ namespace mfront{
       }
     }
     if(!this->attributes.insert({n,a}).second){
-      string msg("BehaviourData::setAttribute : "
-		 "attribute '"+n+"' already declared");
-      throw(runtime_error(msg));
+      throw(runtime_error("BehaviourData::setAttribute : "
+			  "attribute '"+n+"' already declared"));
     }
   } // end of BehaviourData::setAttribute
 
@@ -974,8 +971,7 @@ namespace mfront{
   std::vector<std::string>
   BehaviourData::getCodeBlockNames() const
   {
-    using namespace std;
-    vector<string> names;
+    auto names = std::vector<std::string>{};
     for(const auto c : this->cblocks){
       names.push_back(c.first);
     }
@@ -1014,17 +1010,14 @@ namespace mfront{
   std::vector<std::string>
   BehaviourData::getExternalNames(const VarContainer& v) const
   {
-    using namespace std;
-    return v.getExternalNames(this->glossaryNames,
-			      this->entryNames);
+    return v.getExternalNames(this->glossaryNames,this->entryNames);
   } // end of BehaviourData::getExternalNames
   
   void
   BehaviourData::getExternalNames(std::vector<std::string>& names,
 				  const VarContainer& v) const
   {
-    v.getExternalNames(names,this->glossaryNames,
-		       this->entryNames);
+    v.getExternalNames(names,this->glossaryNames,this->entryNames);
   } // end of BehaviourData::getExternalNames
   
   void
@@ -1039,14 +1032,12 @@ namespace mfront{
   BehaviourData::setGlossaryName(const std::string& n,
 				 const std::string& g)
   {
-    using namespace std;
     using tfel::glossary::Glossary;
     const auto& glossary = Glossary::getGlossary();
     this->checkVariableName(n);
     if(!glossary.contains(g)){
-      string msg("BehaviourData::setGlossaryName : "
-		 "'"+g+"' is not a glossary name");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourData::setGlossaryName : "
+			       "'"+g+"' is not a glossary name"));
     }
     BehaviourDataAddToGlossaryOrEntryNames(this->glossaryNames,
 					   this->glossaryNames,
@@ -1058,13 +1049,11 @@ namespace mfront{
   bool
   BehaviourData::isGlossaryNameUsed(const std::string& n) const
   {
-    using namespace std;
     using namespace tfel::glossary;
     const auto& g = Glossary::getGlossary();
     if(!g.contains(n)){
-      string msg("BehaviourData::isGlossaryNameUsed : "
-		 "'"+n+"' is not a glossary name");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourData::isGlossaryNameUsed: "
+			       "'"+n+"' is not a glossary name"));
     }
     for(const auto& gn : this->glossaryNames){
       if(gn.second==n){
@@ -1078,17 +1067,16 @@ namespace mfront{
   BehaviourData::setEntryName(const std::string& n,
 			      const std::string& e)
   {
-    using namespace std;
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
     this->checkVariableName(n);
     if(glossary.contains(e)){
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "BehaviourData::setEntryName : "
-	  << "'" << e << "' is a glossary name. " << endl
+	  << "'" << e << "' is a glossary name. " << std::endl
 	  << "Please use 'setGlossaryName' method instead or choose another entry name.";
       displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(e));
-      throw(runtime_error(msg.str()));
+      throw(std::runtime_error(msg.str()));
     }
     BehaviourDataAddToGlossaryOrEntryNames(this->entryNames,
 					   this->glossaryNames,
@@ -1110,7 +1098,6 @@ namespace mfront{
   std::string
   BehaviourData::getVariableNameFromGlossaryNameOrEntryName(const std::string& n) const
   {
-    using namespace std;
     for(const auto& e : this->glossaryNames){
       if(e.second==n){
 	return e.first;
@@ -1121,10 +1108,8 @@ namespace mfront{
 	return e.first;
       }
     }
-    string msg("BehaviourData::getVariableNameFromGlossaryNameOrEntryName : "
-	       "no variable with glossary or entry name '"+n+"'");
-    throw(runtime_error(msg));
-    return "";
+    throw(std::runtime_error("BehaviourData::getVariableNameFromGlossaryNameOrEntryName : "
+			     "no variable with glossary or entry name '"+n+"'"));
   } // end of BehaviourData::getVariableNameFromGlossaryNameOrEntryName
 
   const VariableDescriptionContainer&

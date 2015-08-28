@@ -223,7 +223,7 @@ namespace mfront
     readSpecifiedToken(const std::string&,
 		       const std::string&);
 
-    void
+    TFEL_NORETURN void
     throwRuntimeError(const std::string&,
 		      const std::string&) const;
 

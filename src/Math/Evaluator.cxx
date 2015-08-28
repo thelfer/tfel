@@ -671,7 +671,6 @@ namespace tfel
 	    << opened << " parenthesis were still opened";
       }
       throw(runtime_error(msg.str()));
-      return 0;
     } // end of Evaluator::analyseArguments
 
     std::pair<bool,std::vector<std::string>::const_iterator>
@@ -885,10 +884,10 @@ namespace tfel
       using namespace std;
       using namespace tfel::math::parser;
       auto plo = this->searchComparisonOperator(p,pe);
-      vector<string>::const_iterator tmp2 = p;
-      shared_ptr<Evaluator::TExpr> loexpr = this->treatGroup(tmp2,plo,b,"");
+      auto tmp2 = p;
+      auto loexpr = this->treatGroup(tmp2,plo,b,"");
       auto tmp3 = plo+1;
-      shared_ptr<Evaluator::TExpr> roexpr = this->treatGroup(tmp3,pe,b,"");
+      auto roexpr = this->treatGroup(tmp3,pe,b,"");
       if(*plo=="=="){
 	return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpEqual>(loexpr,roexpr));
       } else if(*plo==">"){
@@ -899,12 +898,9 @@ namespace tfel
 	return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpLesser>(loexpr,roexpr));
       } else if(*plo=="<="){
 	return shared_ptr<Evaluator::TLogicalExpr>(new TLogicalOperation<OpLesserOrEqual>(loexpr,roexpr));
-      } else {
-	string msg("Evaluator::treatGroup : ");
-	msg += "unsupported logical operator '"+*plo+"'";
-	throw(runtime_error(msg));
       }
-      return shared_ptr<Evaluator::TLogicalExpr>();
+      throw(runtime_error("Evaluator::treatLogicalExpression2 : "
+			  "unsupported logical operator '"+*plo+"'"));
     } // end of Evaluator::treatLogicalExpression2
 
     std::shared_ptr<Evaluator::TExpr>
@@ -1387,11 +1383,7 @@ namespace tfel
     std::shared_ptr<tfel::math::parser::ExternalFunction>
     Evaluator::differentiate(const std::string&) const
     {
-      using namespace std;
-      using namespace tfel::math::parser;
-      string msg("Evaluator::differentiate : unimplemented feature");
-      throw(runtime_error(msg));
-      return shared_ptr<ExternalFunction>();
+      throw(std::runtime_error("Evaluator::differentiate : unimplemented feature"));
     } // end of std::shared_ptr<ExternalFunction>
 
     std::shared_ptr<tfel::math::parser::ExternalFunction>

@@ -59,11 +59,8 @@ namespace mfront
   AsterCohesiveZoneModel::getRotationMatrix(const tfel::math::vector<real>&,
 							 const tfel::math::tmatrix<3u,3u,real>& r) const
   {
-    using namespace std;
-    string msg("AsterCohesiveZoneModel::getRotationMatrix : "
-	       "invalid call");
-    throw(runtime_error(msg));
-    return r;
+    throw(std::runtime_error("AsterCohesiveZoneModel::getRotationMatrix : "
+			     "invalid call"));
   } // end of AsterCohesiveZoneModel::getRotationMatrix
 
   void

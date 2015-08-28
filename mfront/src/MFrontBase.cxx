@@ -154,9 +154,9 @@ namespace mfront{
   bool
   MFrontBase::treatUnknownArgumentBase(void){
     const auto& a = this->getCurrentCommandLineArgument();
-	auto an = static_cast<const std::string&>(a);
+    const auto& an = a.as_string();
     if(an[0]=='-'){
-      bool ok = false;
+      auto ok = false;
       if(an.size()>=4){
 	if((an[1]=='-')&&(an[2]=='@')){
 	  const auto& o = a.getOption();

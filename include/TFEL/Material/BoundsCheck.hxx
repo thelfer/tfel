@@ -49,7 +49,7 @@ namespace tfel{
        * \param[in] v : value
        * \param[in] b : lower bound value
        */
-      TFEL_VISIBILITY_EXPORT static void
+      TFEL_NORETURN TFEL_VISIBILITY_EXPORT static void
       throwOutOfLowerBoundsException(const std::string&,
 				     const std::string&,
 				     const std::string&);
@@ -58,7 +58,7 @@ namespace tfel{
        * \param[in] v : value
        * \param[in] b : upper bound value
        */
-      TFEL_VISIBILITY_EXPORT static void
+      TFEL_NORETURN TFEL_VISIBILITY_EXPORT static void
       throwOutOfUpperBoundsException(const std::string&,
 				     const std::string&,
 				     const std::string&);
@@ -68,7 +68,7 @@ namespace tfel{
        * \param[in] lb : lower bound value
        * \param[in] ub : upper bound value
        */
-      TFEL_VISIBILITY_EXPORT static void
+      TFEL_NORETURN TFEL_VISIBILITY_EXPORT static void
       throwOutOfBoundsException(const std::string&,
 				const std::string&,
 				const std::string&,

@@ -91,10 +91,10 @@ namespace tfel{
 	  ++i;
 	  return *this;
 	} // end of operator++
-	TFEL_MATH_INLINE const NumType &
+	TFEL_MATH_INLINE NumType
 	operator *(void) const
 	{
-	  return v(i);
+	  return this->v(this->i);
 	}
       private:
 	const VType& v;

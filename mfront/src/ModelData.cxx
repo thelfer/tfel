@@ -16,13 +16,22 @@
 namespace mfront
 {
 
-  ModelData::Function::Function()
-  {} // end of ModelData::Function::Function()
+  ModelData::Function::Function() = default;
+  ModelData::Function::Function(const ModelData::Function&) = default;
+  ModelData::Function::Function(ModelData::Function&&) = default;
+  ModelData::Function&
+  ModelData::Function::operator=(const ModelData::Function&) = default;
+  ModelData::Function&
+  ModelData::Function::operator=(ModelData::Function&&) = default;
+  ModelData::Function::~Function() = default;
 
-  ModelData::Function::~Function()
-  {} // end of ModelData::Function::~Function
-
-  ModelData::~ModelData()
-  {} // end of ModelData::~ModelData
-
+  ModelData::ModelData() = default;
+  ModelData::ModelData(const ModelData&) = default;
+  ModelData::ModelData(ModelData&&) = default;
+  ModelData&
+  ModelData::operator=(const ModelData&) = default;
+  ModelData&
+  ModelData::operator=(ModelData&&) = default;
+  ModelData::~ModelData() = default;
+  
 } // end of namespace mfront

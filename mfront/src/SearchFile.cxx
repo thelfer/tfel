@@ -33,44 +33,38 @@ namespace mfront
   std::string
   SearchFile::search(const std::string& f)
   {
-    using namespace std;
     using namespace tfel::system;
     auto& msf = SearchFile::getSearchFile();
-    string file(f);
-    if(::access(file.c_str(),F_OK)==0){
-      if(::access(file.c_str(),R_OK)!=0){
-	string msg("SearchFile::search : '"+
-		   file + "' is not readable");
-	throw(runtime_error(msg));
+    if(::access(f.c_str(),F_OK)==0){
+      if(::access(f.c_str(),R_OK)!=0){
+	throw(std::runtime_error("SearchFile::search : '"+
+				 f + "' is not readable"));
       }
-      return file;
+      return f;
     }
-    for(auto p=msf.paths.begin();p!=msf.paths.end();++p){
-      file = *p+dirSeparator()+f;
+    for(const auto& p : msf.paths){
+      const auto file = p+dirSeparator()+f;
       if(::access(file.c_str(),F_OK)==0){
 	if(::access(file.c_str(),R_OK)!=0){
-	  string msg("SearchFile::search : '"+
-		     file + "' is not readable");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("SearchFile::search : '"+
+				   file + "' is not readable"));
 	}
 	return file;
       }
     }
-    throw(runtime_error("SearchFile::search : '"+f+
-			"' has not been found."));
-    return "";
+    throw(std::runtime_error("SearchFile::search : '"+f+
+			     "' has not been found."));
   }
 
   void
   SearchFile::addSearchPaths(const std::string& p)
   {
-    using namespace std;
     using namespace tfel::utilities;
     auto& msf = SearchFile::getSearchFile();
 #if defined _WIN32 || defined _WIN64
-    vector<string> npaths(tokenize(p,';'));
+    const auto npaths = tokenize(p,';');
 #else
-    vector<string> npaths(tokenize(p,':'));
+    const auto npaths = tokenize(p,':');
 #endif
     msf.paths.insert(msf.paths.begin(),
 		     npaths.begin(),npaths.end());
@@ -84,14 +78,13 @@ namespace mfront
 
   SearchFile::SearchFile()
   {
-    using namespace std;
     using namespace tfel::utilities;
     const char * const p = ::getenv("MFRONT_INCLUDE_PATH");
     if(p!=nullptr){
 #if defined _WIN32 || defined _WIN64
-    vector<string> npaths(tokenize(p,';'));
+    const auto npaths = tokenize(p,';');
 #else
-    vector<string> npaths(tokenize(p,':'));
+    const auto npaths = tokenize(p,':');
 #endif
       this->paths.insert(this->paths.begin(),
 			 npaths.begin(),npaths.end());

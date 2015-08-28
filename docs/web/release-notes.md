@@ -45,6 +45,7 @@ Minor fixes.
   library. This prevented many `MTest` tests to work on
   [Mac OS X](http://www.apple.com/fr/osx/).
 - Fix [Ticket #10](https://sourceforge.net/p/tfel/tickets/10/)
+- Fix [Ticket #11](https://sourceforge.net/p/tfel/tickets/11/)
 
 # Versions 2.1.x
 

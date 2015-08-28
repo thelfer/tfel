@@ -36,7 +36,7 @@ namespace aster{
     /*!
      * \brief throw an exception
      */
-    static void
+    TFEL_NORETURN static void
     exe(const AsterReal *const,
 	const AsterReal *const,
 	AsterReal *const,
@@ -72,7 +72,7 @@ namespace aster{
      * \param[in] n1 : number of material properties declared by the behaviour
      * \param[in] n2 : number of material properties declared by the interface
      */
-    static void
+    TFEL_NORETURN static void
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
 					     const AsterInt n2);
@@ -86,7 +86,7 @@ namespace aster{
      * \param[in] n1 : number of state variables declared by the behaviour
      * \param[in] n2 : number of state variables declared by the interface
      */
-    static void
+    TFEL_NORETURN static void
     throwUnMatchedNumberOfStateVariables(const std::string&,
 					 const unsigned short n1,
 					 const AsterInt n2);
@@ -100,7 +100,6 @@ namespace aster{
     static void
     treatAsterException(const std::string&,
 			const AsterException&);
-
     /*!
      * \brief display the error message out of a material exception to the
      * standard output.
@@ -110,7 +109,6 @@ namespace aster{
     static void
     treatMaterialException(const std::string&,
 			   const tfel::material::MaterialException&);
-    
     /*!
      * \brief display the error message out of a generic tfel
      * exception to the standard output.
@@ -120,7 +118,6 @@ namespace aster{
     static void
     treatTFELException(const std::string&,
 		       const tfel::exception::TFELException&);
-
     /*!
      * \brief display the error message out of a generic standard
      * exception to the standard output.
@@ -130,26 +127,24 @@ namespace aster{
     static void
     treatStandardException(const std::string&,
 			   const std::exception&);
-
     /*!
      * \brief display the error message when an unknown exception is caught
      * \param[in] b : behaviour name
      */
     static void
     treatUnknownException(const std::string&);
-
     /*!
      * \brief throw an AsterException if the time step is negative
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwNegativeTimeStepException(const std::string&);
     /*!
      * \brief throw an AsterException if the DDSOE parameter is invalid
      * \param[in] b : behaviour name
      * \param[in] v : DDSOE value
      */
-    static void
+    TFEL_NORETURN static void
     throwInvalidDDSOEException(const std::string&,
 			       const AsterReal);
     /*!
@@ -157,37 +152,36 @@ namespace aster{
      * failed
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwPredictionComputationFailedException(const std::string&);
     /*!
      * \brief throw an AsterException if the behaviour integration
      * failed
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwBehaviourIntegrationFailedException(const std::string&);
-
     /*!
      * \brief throw an AsterException if the a consistent tangent
      * operator has to been requested and that the behaviour does not
      * provide one.
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwConsistentTangentOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an AsterException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief display an error message if the behaviour shall handle
      * stress free expansion and that the umat interface can't
      * \param[in] b : behaviour name
      */
-    static void
+    TFEL_NORETURN static void
     throwUnsupportedStressFreeExpansionException(const std::string&);
     /*!
      * \brief display an error message if the value of the NTENS

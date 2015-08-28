@@ -72,12 +72,14 @@ namespace mfront{
       switch(l){
       case SHARED_LIBRARY:
 	p = "dylib";
+	break;
       case MODULE:
 	p = "bundle";
 	break;
       default:
 	error();
       }
+      break;
     default:
       error();
     }

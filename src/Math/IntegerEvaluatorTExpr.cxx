@@ -103,11 +103,7 @@ namespace tfel
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TOperator::analyse(void)
     {
-      using namespace std;
-      using namespace tfel::math::parser;
-      string msg("IntegerEvaluator::TOperator : invalid call");
-      throw(runtime_error(msg));
-      return std::shared_ptr<IntegerExpr>();
+      throw(std::runtime_error("IntegerEvaluator::TOperator : invalid call"));
     } // end of IntegerEvaluator::TOperator::analyse(void)
 
     IntegerEvaluator::TOperator::~TOperator() = default;
@@ -198,12 +194,9 @@ namespace tfel
 	return shared_ptr<IntegerExpr>(new BinaryOperation<IntegerOpMult>(a->analyse(),b->analyse()));
       } else if(op->getOperatorType()=="/"){
 	return shared_ptr<IntegerExpr>(new BinaryOperation<IntegerOpDiv>(a->analyse(),b->analyse()));
-      } else {
-	string msg("IntegerEvaluator::TBinaryOperation : ");
-	msg += "invalid operation type  '"+op->getOperatorType()+"'";
-	throw(runtime_error(msg));
       }
-      return shared_ptr<IntegerExpr>();
+      throw(runtime_error("IntegerEvaluator::TBinaryOperation : "
+			  "invalid operation type  '"+op->getOperatorType()+"'"));
     } // end of IntegerEvaluator::TBinaryOperation::analyse(void)
     
     IntegerEvaluator::TBinaryOperation::~TBinaryOperation()

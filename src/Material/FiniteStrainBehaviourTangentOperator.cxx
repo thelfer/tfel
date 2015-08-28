@@ -21,25 +21,21 @@ namespace tfel{
     std::vector<FiniteStrainBehaviourTangentOperatorBase::Flag>
     getFiniteStrainBehaviourTangentOperatorFlags(void)
     {
-      using namespace std;
-      vector<FiniteStrainBehaviourTangentOperatorBase::Flag> res;
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DSIG_DF); 
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF);
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DSIG_DD); 
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE);
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DTAU_DF); 
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DTAU_DDF);
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DS_DF);   
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DS_DDF);  
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DS_DC);   
-      res.push_back(FiniteStrainBehaviourTangentOperatorBase::DS_DEGL);   
-      return res;
+      return {FiniteStrainBehaviourTangentOperatorBase::DSIG_DF, 
+	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,
+	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DD, 
+	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE,
+	  FiniteStrainBehaviourTangentOperatorBase::DTAU_DF, 
+	  FiniteStrainBehaviourTangentOperatorBase::DTAU_DDF,
+	  FiniteStrainBehaviourTangentOperatorBase::DS_DF,   
+	  FiniteStrainBehaviourTangentOperatorBase::DS_DDF,  
+	  FiniteStrainBehaviourTangentOperatorBase::DS_DC,   
+	  FiniteStrainBehaviourTangentOperatorBase::DS_DEGL};
     }
 
     std::string
     getFiniteStrainBehaviourTangentOperatorFlagType(const FiniteStrainBehaviourTangentOperatorBase::Flag f)
     {
-      using namespace std;
       switch(f){
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DF:
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF:
@@ -54,16 +50,13 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DS_DEGL:
 	return "st2tost2";
       }
-      string msg("getFiniteStrainBehaviourTangentOperatorFlagType : "
-		 "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
-      throw(runtime_error(msg));
-      return "";
+      throw(std::runtime_error("getFiniteStrainBehaviourTangentOperatorFlagType : "
+			       "unsupported FiniteStrainBehaviourTangentOperatorBase flag "));
     }
     
     std::string
     convertFiniteStrainBehaviourTangentOperatorFlagToString(const FiniteStrainBehaviourTangentOperatorBase::Flag f)
     {
-      using namespace std;
       switch(f){
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DF:
 	return "DSIG_DF";
@@ -86,16 +79,13 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DS_DEGL:
 	return "DS_DEGL";
       }
-      string msg("convertFiniteStrainBehaviourTangentOperatorFlagToString : "
-		 "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
-      throw(runtime_error(msg));
-      return "";
+      throw(std::runtime_error("convertFiniteStrainBehaviourTangentOperatorFlagToString : "
+			       "unsupported FiniteStrainBehaviourTangentOperatorBase flag "));
     }
 
     std::string
     getFiniteStrainBehaviourTangentOperatorDescription(const FiniteStrainBehaviourTangentOperatorBase::Flag t)
     {
-      using namespace std;
       switch(t){
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DF:
 	return "derivative of the Cauchy stress with respect to "
@@ -128,10 +118,8 @@ namespace tfel{
 	return "derivative of the second Piola-Kirchoff stress "
 	  "with respect to the Green-Lagrange strain tensor";
       }
-      string msg("getFiniteStrainBehaviourTangentOperatorDescription : "
-		 "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
-      throw(runtime_error(msg));
-      return "";
+      throw(std::runtime_error("getFiniteStrainBehaviourTangentOperatorDescription : "
+			       "unsupported FiniteStrainBehaviourTangentOperatorBase flag "));
     }
 
   } // end of namespace material

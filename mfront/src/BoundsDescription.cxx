@@ -14,27 +14,30 @@
 
 #include<limits>
 #include<string>
+#include<fstream>
 #include<sstream>
 #include<stdexcept>
 #include"MFront/BoundsDescription.hxx"
 
-namespace mfront{
+namespace mfront{ 
 
-  BoundsDescription::BoundsDescription()
-    : category(Standard),
-      lowerBound(std::numeric_limits<long double>::min()),
-      upperBound(std::numeric_limits<long double>::max())
-  {}
-
+  BoundsDescription::BoundsDescription() = default;
+  BoundsDescription::BoundsDescription(const BoundsDescription&) = default;
+  BoundsDescription::BoundsDescription(BoundsDescription&&) = default;
+  BoundsDescription&
+  BoundsDescription::operator=(const BoundsDescription&) = default;
+  BoundsDescription&
+  BoundsDescription::operator=(BoundsDescription&&) = default;
+  BoundsDescription::~BoundsDescription() = default;
+  
   void
   BoundsDescription::writeBoundsChecks(std::ofstream& file) const
   {
-    using namespace std;
     if(this->arraySize==1u){
       this->writeBoundsChecks(file,this->varName);
     } else {
       for(unsigned short i=0;i!=this->arraySize;++i){
-	ostringstream n;
+	std::ostringstream n;
 	n << this->varName;
 	n << '[' << i << ']';
 	this->writeBoundsChecks(file,n.str());
@@ -46,7 +49,6 @@ namespace mfront{
   BoundsDescription::writeBoundsChecks(std::ofstream& file,
 				       const std::string& n) const
   {
-    using namespace std;
     if(this->category==Standard){
       if(this->boundsType==Lower){
 	if(this->varCategory==ExternalStateVariableII){
@@ -174,11 +176,8 @@ namespace mfront{
 	}
       }
     } else {
-      throw(runtime_error("BoundsDescription::writeBoundsChecks : internal error"));
+      throw(std::runtime_error("BoundsDescription::writeBoundsChecks : internal error"));
     }
   } // end of BoundsDescription::writeBoundsChecks
-
-  BoundsDescription::~BoundsDescription() noexcept
-  {} // end of BoundsDescription::BoundsDescription
   
 } // end of namespace mfront

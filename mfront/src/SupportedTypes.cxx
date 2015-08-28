@@ -113,24 +113,16 @@ namespace mfront{
   int
   SupportedTypes::TypeSize::getValueForDimension(const unsigned short d) const
   {
-    using namespace std;
     switch(d){
     case 1:
       return scalarSize+tvectorSize+3*(stensorSize+tensorSize);
-      break;
     case 2:
       return scalarSize+2*tvectorSize+4*stensorSize+5*tensorSize;
-      break;
     case 3:
       return scalarSize+3*tvectorSize+6*stensorSize+9*tensorSize;
-      break;
-    default:
-      break;
     }
-    string msg("SupportedTypes::TypeSize::getValueForDimension : "
-	       "invalid type size");
-    throw(runtime_error(msg));
-    return 0;
+    throw(std::runtime_error("SupportedTypes::TypeSize::getValueForDimension : "
+			     "invalid type size"));
   } // end of SupportedTypes::TypeSize::getValueForDimension
 
   std::ostream&

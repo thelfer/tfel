@@ -26,33 +26,28 @@ namespace tfel
       void
       ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException(void)
       {
-	using namespace std;
-	string msg("ExternalCFunctionException::");
-	msg += "throwUnimplementedDifferentiateFunctionException : ";
-	msg += "unimplemented feature";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("ExternalCFunctionException::"
+				 "throwUnimplementedDifferentiateFunctionException: "
+				 "unimplemented feature"));
       } // end of ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException(void)
 
       void
       ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
       {
-	using namespace std;
-	string msg("ExternalCFunctionException::");
-	msg += "throwInvalidCreateFunctionByChangingParametersIntoVariables : ";
-	msg += "invalid call";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("ExternalCFunctionException::"
+				 "throwInvalidCreateFunctionByChangingParametersIntoVariables : "
+				 "invalid call"));
       } // end of ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
 
       void
       ExternalCFunctionException::throwInvalidVariableIndex(const std::vector<double>::size_type pos,
 							    const unsigned short N)
       {
-	using namespace std;
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "ExternalCFunctionBase::setVariableValue : "
 	    << "invalid index " << pos 
 	    << " (function has only " << N << " variables).";
-	throw(runtime_error(msg.str()));
+	throw(std::runtime_error(msg.str()));
       } // end of ExternalCFunctionException::throwInvalidVariableIndex
 
       std::shared_ptr<ExternalFunction>

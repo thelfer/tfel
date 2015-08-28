@@ -28,13 +28,12 @@ namespace umat
   UMATOutOfBoundsPolicy::UMATOutOfBoundsPolicy()
     : policy(tfel::material::None)
   {
-    using namespace tfel::material;
     const char * const p = ::getenv("CASTEM_OUT_OF_BOUND_POLICY");
     if(p!=nullptr){
       if(strcmp(p,"STRICT")==0){
-	this->policy = Strict;
+	this->policy = tfel::material::Strict;
       } else if (strcmp(p,"WARNING")==0){
-	this->policy = Warning;
+	this->policy = tfel::material::Warning;
       }
     }
   } // end of UMATOutOfBoundsPolicy::UMATOutOfBoundsPolicy

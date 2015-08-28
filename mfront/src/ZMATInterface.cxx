@@ -11,9 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<sstream>
+#include<fstream>
 #include<stdexcept>
 #include<algorithm>
 
@@ -33,8 +32,7 @@ namespace mfront
   static void
   writeZMATUndefs(std::ostream& out)
   {
-    using std::endl;
-    out << "#include\"MFront/ZMAT/ZMATUndefs.hxx\"" << endl;
+    out << "#include\"MFront/ZMAT/ZMATUndefs.hxx\"\n";
   } // end of writeZMATUndefs
 
   template<typename ArrayType>
@@ -42,13 +40,11 @@ namespace mfront
   writeArray(std::ostream& out,
 	     const ArrayType& a)
   {
-    using namespace std;
     std::string buffer;
     out << "{";
-    for(typename ArrayType::const_iterator pn=a.begin();
-	pn!=a.end();){
+    for(auto pn=a.begin();pn!=a.end();){
       if(buffer.size()+pn->size()+3>15){
-	out << buffer << endl;
+	out << buffer << '\n';
 	buffer.clear();
       }
       buffer += "\"" + *pn + "\"";
@@ -59,16 +55,15 @@ namespace mfront
     if(!buffer.empty()){
       out << buffer;
     }
-    out << "};" << endl;
+    out << "};\n";
   }
 
   static std::set<std::string>
   getAllMaterialPropertiesNames(const BehaviourDescription& mb)
   {
-    using namespace std;
     typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
     typedef ZMATInterface::Hypothesis Hypothesis;
-    set<string> mp_names;
+    std::set<std::string> mp_names;
     const Hypothesis hypotheses[3u] = {ModellingHypothesis::TRIDIMENSIONAL,
 				       ModellingHypothesis::GENERALISEDPLANESTRAIN,
 				       ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN};
@@ -84,7 +79,7 @@ namespace mfront
 	    mp_names.insert(name);
 	  } else {
 	    for(unsigned short n=0;n!=v.arraySize;++n){
-	      ostringstream str;
+	      std::ostringstream str;
 	      str << name << '[' << n << ']';
 	      mp_names.insert(str.str());
 	    }
@@ -101,7 +96,7 @@ namespace mfront
     using namespace std;
     typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
     typedef ZMATInterface::Hypothesis Hypothesis;
-    VariableDescriptionContainer s;
+    auto s = VariableDescriptionContainer{};
     const Hypothesis hypotheses[3u] = {ModellingHypothesis::TRIDIMENSIONAL,
 				       ModellingHypothesis::GENERALISEDPLANESTRAIN,
 				       ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN};
@@ -114,9 +109,8 @@ namespace mfront
 	  if(s.contains(sv.name)){
 	    const auto& v = s.getVariable(sv.name);
 	    if((sv.type!=v.type)||(sv.arraySize!=v.arraySize)){
-	      string msg("getAllStateVariables : "
-			 "inconsistent type for variable '"+sv.name+"'");
-	      throw(runtime_error(msg));
+	      throw(std::runtime_error("getAllStateVariables : "
+				       "inconsistent type for variable '"+sv.name+"'"));
 	    }
 	  } else {
 	    s.push_back(sv);
@@ -130,86 +124,86 @@ namespace mfront
   static unsigned short
   getSpaceDimension(const ZMATInterface::Hypothesis h)
   {
-    using namespace std;
     typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
+    unsigned short d = 0u;
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      return 3u;
+      d=3u;
     } else if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      return 2u;
+      d=2u;
     } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      return 1u;
+      d=1u;
     }
-    string msg("getSpaceDimension: unsupported hypothesis");
-    throw(runtime_error(msg));
-    return 0;
+    if(d==0u){
+      throw(std::runtime_error("getSpaceDimension: unsupported hypothesis"));
+    }
+    return d;
   }
 
   static unsigned short
   getStensorSize(const ZMATInterface::Hypothesis h)
   {
-    using namespace std;
     typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
+    unsigned short s = 0u;
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      return 6u;
+      s=6u;
     } else if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      return 4u;
+      s=4u;
     } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      return 3u;
+      s=3u;
     }
-    string msg("getSpaceDimension: unsupported hypothesis");
-    throw(runtime_error(msg));
-    return 0;
+    if(s==0u){
+      throw(std::runtime_error("getStensorSize: unsupported hypothesis"));
+    }
+    return s;
   }
 
   static unsigned short
   getTensorSize(const ZMATInterface::Hypothesis h)
   {
-    using namespace std;
     typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
+    unsigned short s = 0u;
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      return 9u;
+      s=9u;
     } else if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      return 5u;
+      s=5u;
     } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      return 3u;
+      s=3u;
     }
-    string msg("getSpaceDimension: unsupported hypothesis");
-    throw(runtime_error(msg));
-    return 0;
+    if(s==0u){
+      throw(std::runtime_error("getTensorSize: unsupported hypothesis"));
+    }
+    return s;
   }
 
   static std::string
   getSpaceDimensionSuffix(const ZMATInterface::Hypothesis h)
   {
-    using namespace std;
     typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
+    const char * s = nullptr;
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      return "3D";
+      s = "3D";
     } else if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      return "2D";
+      s = "2D";
     } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      return "1D";
+      s = "1D";
     }
-    string msg("getSpaceDimension: unsupported hypothesis");
-    throw(runtime_error(msg));
-    return "";
+    if(s==nullptr){
+      throw(std::runtime_error("getSpaceDimension: unsupported hypothesis"));
+    }
+    return s;
   }
 
   static std::string
   getLibraryName(const BehaviourDescription& mb)
   {
-    using namespace std;
-    string lib;
     if(mb.getLibrary().empty()){
       if(!mb.getMaterialName().empty()){
-	lib = "libZMAT"+mb.getMaterialName();
+	return "libZMAT"+mb.getMaterialName();
       } else {
-	lib = "libZMATBehaviour";
+	return "libZMATBehaviour";
       }
-    } else {
-      lib = "libZMAT"+mb.getLibrary();
     }
-    return lib;
+    return "libZMAT"+mb.getLibrary();
   } // end of UMATInterface::getLibraryName
 
   std::string
@@ -240,8 +234,7 @@ namespace mfront
   ZMATInterface::isModellingHypothesisHandled(const Hypothesis h,
 						    const BehaviourDescription& mb) const
   {
-    using namespace std;
-    set<Hypothesis> ih(this->getModellingHypothesesToBeTreated(mb));
+    const auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       return !mb.areAllMechanicalDataSpecialised(ih);
     }
@@ -251,11 +244,8 @@ namespace mfront
   std::set<ZMATInterface::Hypothesis>
   ZMATInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
-    using namespace std;
-    using tfel::material::ModellingHypothesis;
-    typedef ModellingHypothesis::Hypothesis Hypothesis;
     // treatment 
-    set<Hypothesis> h;
+    std::set<ModellingHypothesis::Hypothesis> h;
     // modelling hypotheses handled by the behaviour
     const auto& bh = mb.getModellingHypotheses();
     if(bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)!=bh.end()){
@@ -268,20 +258,19 @@ namespace mfront
       h.insert(ModellingHypothesis::TRIDIMENSIONAL);
     }
     if(h.empty()){
-      string msg("ZMATInterfaceModellingHypothesesToBeTreated : "
-		 "no hypotheses selected. This means that the given beahviour "
-		 "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-		 "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-		 "make sense to use the ZMAT interface");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("ZMATInterfaceModellingHypothesesToBeTreated : "
+			       "no hypotheses selected. This means that the given beahviour "
+			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+			       "make sense to use the ZMAT interface"));
     }
     return h;
   } // edn of ZMATInterface::getModellingHypothesesToBeTreated
 
   void 
   ZMATInterface::exportMechanicalData(std::ofstream& behaviourDataFile,
-					    const Hypothesis h,
-					    const BehaviourDescription& mb) const
+				      const Hypothesis h,
+				      const BehaviourDescription& mb) const
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);

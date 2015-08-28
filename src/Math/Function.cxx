@@ -50,11 +50,9 @@ namespace tfel
       void
       StandardFunctionBase::throwUnimplementedDifferentiateFunctionException(void)
       {
-	using namespace std;
-	string msg("StandardFunctionBase::");
-	msg += "throwUnimplementedDifferentiateFunctionException : ";
-	msg += "unimplemented feature";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("StandardFunctionBase::"
+				 "throwUnimplementedDifferentiateFunctionException : "
+				 "unimplemented feature"));
       } // end of StandardFunctionBase::throwUnimplementedDifferentiateFunctionException()
 
       void

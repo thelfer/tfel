@@ -18,6 +18,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"tfel-config.hxx"
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
@@ -125,13 +126,13 @@ treatLibs(void);
 static void
 listOptions(std::ostream&);
 
-static void
+TFEL_NORETURN static void
 treatUnknownOption(const std::string&);
 
-static void
+TFEL_NORETURN static void
 treatHelp(void);
 
-static void
+TFEL_NORETURN static void
 treatLicences(void);
 
 static CallBacksContainer callBacksContainer;
@@ -460,7 +461,7 @@ listOptions(std::ostream& os)
   }
 } // end of listOptions
 
-static void
+TFEL_NORETURN static void
 treatVersion(void)
 {
   using namespace std;
@@ -470,7 +471,7 @@ treatVersion(void)
   exit(EXIT_SUCCESS);
 } // end of treatHelp
 
-static void
+TFEL_NORETURN static void
 treatHelp(void)
 {
   using namespace std;
@@ -479,7 +480,7 @@ treatHelp(void)
   exit(EXIT_SUCCESS);
 } // end of treatHelp
 
-static void
+TFEL_NORETURN static void
 treatUnknownOption(const std::string& o)
 {
   using namespace std;
@@ -488,7 +489,7 @@ treatUnknownOption(const std::string& o)
   exit(EXIT_FAILURE);
 } // end of treatUnknownOption
 
-static void
+TFEL_NORETURN static void
 treatLicences(void)
 {
   using namespace std;

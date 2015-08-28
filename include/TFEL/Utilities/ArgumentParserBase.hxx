@@ -46,9 +46,11 @@ namespace tfel
       //! \return true if an option was given for this argument
       bool hasOption(void) const noexcept;
       //! convertion to string
-      explicit operator std::string& () noexcept;
-      //! implicit convertion to string
-      operator const std::string& () const noexcept;
+      std::string& as_string() noexcept;
+      //! convertion to string
+      const std::string& as_string() const noexcept;
+      //! convertion to string (return argument's name)
+      explicit operator const std::string& () const noexcept;
       /*!
        * \brief set argument option
        * \param o : option
@@ -63,7 +65,7 @@ namespace tfel
       std::string name;
       //! argument option
       std::string option;
-      bool isOptionSet;
+      bool isOptionSet = false;
     }; // end of struct Argument
 
     /*!

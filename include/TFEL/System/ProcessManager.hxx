@@ -166,8 +166,8 @@ namespace tfel
       TFEL_VISIBILITY_LOCAL
       void sigChildHandler(const int);
 
-      TFEL_VISIBILITY_LOCAL
-      void terminateHandler(const int);
+      TFEL_NORETURN TFEL_VISIBILITY_LOCAL
+      void terminateHandler(const int) ;
 
       TFEL_VISIBILITY_LOCAL void
       setProcessExitStatus(Process&,

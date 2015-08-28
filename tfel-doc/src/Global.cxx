@@ -151,16 +151,16 @@ namespace tfel{
     capitalize(const std::string& s)
     {
       std::string r{s};
-      if(r[0]=='Ã©'){
-	r[0]='Ã‰';
-      } else if(r[0]=='Ã¨'){
-	r[0]='Ãˆ';
-      } else if(r[0]=='Ãª'){
-	r[0]='ÃŠ';
-      } else if(r[0]=='Ã '){
-	r[0]='Ã€';
-      } else if(r[0]=='Ã§'){
-	r[0]='Ã‡';
+      if(r[0]=='é'){
+	r[0]='É';
+      } else if(r[0]=='è'){
+	r[0]='È';
+      } else if(r[0]=='ê'){
+	r[0]='Ê';
+      } else if(r[0]=='à'){
+	r[0]='À';
+      } else if(r[0]=='ç'){
+	r[0]='Ç';
       } else {
 	r[0] = static_cast<char>(toupper(r[0]));
       }

@@ -1099,7 +1099,7 @@ namespace mfront{
     this->behaviourFile << "// function\n";
     this->behaviourFile << "tfel::math::tvector<" << n << ",Type> fzeros;\n\n";
     this->behaviourFile << "// number of iterations\n";
-    this->behaviourFile << "unsigned int iter;\n\n";
+    this->behaviourFile << "unsigned int iter = 0u;\n\n";
     if(this->solver->usesJacobian()){
       // compute the numerical part of the jacobian.  This method is
       // used to compute a numerical approximation of the jacobian for
@@ -1165,6 +1165,8 @@ namespace mfront{
 	  case SupportedTypes::Stensor :
 	    this->behaviourFile << "Stensor4& ";
 	    break;
+	  case SupportedTypes::TVector:
+	  case SupportedTypes::Tensor:
 	  default :
 	    string msg("ImplicitDSLBase::writeGetPartialJacobianInvert : ");
 	    msg += "internal error, tag unsupported";
@@ -1178,6 +1180,8 @@ namespace mfront{
 	  case SupportedTypes::Stensor :
 	    this->behaviourFile << "tfel::math::tvector<" << p2->arraySize << "u,Stensor4>& ";
 	    break;
+	  case SupportedTypes::TVector:
+	  case SupportedTypes::Tensor:
 	  default :
 	    string msg("ImplicitDSLBase::writeGetPartialJacobianInvert : ");
 	    msg += "internal error, tag unsupported";
@@ -1311,8 +1315,7 @@ namespace mfront{
   std::string
   ImplicitDSLBase::getVectorMappingClass(const VariableDescription& v) const
   {
-    using namespace std;
-    const SupportedTypes::TypeFlag f = this->getTypeFlag(v.type);
+    const auto f = this->getTypeFlag(v.type);
     if(f==SupportedTypes::Stensor){
       if(v.arraySize==1u){
 	return "StensorFromTinyVectorView";
@@ -1320,10 +1323,8 @@ namespace mfront{
 	return "TinyVectorOfStensorFromTinyVectorView";
       }
     }
-    string msg("ImplicitDSLBase::getVectorMappingClass : "
-	       "unsupported type for variable '"+v.name+"'");
-    throw(runtime_error(msg));
-    return "";
+    throw(std::runtime_error("ImplicitDSLBase::getVectorMappingClass : "
+			     "unsupported type for variable '"+v.name+"'"));
   } // end of ImplicitDSLBase::getVectorMappingClass
 
   void ImplicitDSLBase::writeBehaviourIntegrator(const Hypothesis h){

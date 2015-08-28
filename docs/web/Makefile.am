@@ -50,6 +50,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./mfront-doc.md				           \
 	   ./Norton-web.md				           \
 	   ./Norton-full.md				           \
+	   ./coverity-scan.md                                      \
 	   ./robots.txt						   \
 	   ./crossdomain.xml					   \
 	   ./js/vendor						   \

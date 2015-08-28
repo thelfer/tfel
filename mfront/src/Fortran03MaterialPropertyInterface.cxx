@@ -206,7 +206,7 @@ namespace mfront
     MFrontLockGuard lock;
     struct function{
       std::string name;
-      decltype(mpd.inputs.size()) n_args;
+      size_t n_args;
     };    
     auto fcts = std::map<std::string,function>{};
     auto fmname = !this->module.empty() ? this->module : 

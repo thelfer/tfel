@@ -120,10 +120,6 @@ namespace mfront{
     this->behaviourFile << "bool NewtonIntegration(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "real error;\n";
-    this->behaviourFile << "unsigned int iter;\n";
-    this->behaviourFile << "bool converge=false;\n";
-
     this->behaviourFile << "tvector<" << this->flows.size() << ",strain> vdp(strain(real(0.)));\n";
     this->behaviourFile << "tvector<" << this->flows.size() << ",strain> newton_f;\n";
     this->behaviourFile << "tmatrix<" << this->flows.size() 
@@ -154,7 +150,8 @@ namespace mfront{
 	found = true;
       }
     }
-    this->behaviourFile << "iter=0;\n";
+    this->behaviourFile << "unsigned int iter=0u;\n";
+    this->behaviourFile << "bool converge=false;\n";
     this->behaviourFile << "while((converge==false)&&\n";
     this->behaviourFile << "(iter<(" << this->mb.getClassName() << "::iterMax))){\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
@@ -278,7 +275,7 @@ namespace mfront{
 	}
       }
     }
-    this->behaviourFile << "error=static_cast<real>(0.);\n";
+    this->behaviourFile << "real error=static_cast<real>(0.);\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
       this->behaviourFile << "error+=std::abs(tfel::math::base_cast(newton_f(" << n << ")));\n";
     }

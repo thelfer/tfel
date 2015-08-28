@@ -39,7 +39,7 @@ namespace aster
     void rotateDeformationGradientForward(const AsterReal *const,
 					  AsterReal *const);
     // compute the stiffness matrix in the global space
-    void rotateTangentOperatorBackward(AsterReal *const) const;
+    TFEL_NORETURN void rotateTangentOperatorBackward(AsterReal *const) const;
   private:
 
     AsterReal a[4];

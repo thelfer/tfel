@@ -95,10 +95,7 @@ namespace tfel
     parser::ExprPtr
     Evaluator::TOperator::analyse(void)
     {
-      using namespace std;
-      string msg("Evaluator::TOperator : invalid call");
-      throw(runtime_error(msg));
-      return parser::ExprPtr();
+      throw(std::runtime_error("Evaluator::TOperator : invalid call"));
     } // end of Evaluator::TOperator::analyse(void)
 
     Evaluator::TOperator::~TOperator() noexcept
@@ -126,7 +123,6 @@ namespace tfel
     parser::ExprPtr
     Evaluator::TBinaryOperation::analyse(void)
     {
-      using namespace std;
       using namespace tfel::math::parser;
       if(op->getOperatorType()=="+"){
 	return ExprPtr(new BinaryOperation<OpPlus>(a->analyse(),b->analyse()));
@@ -138,12 +134,9 @@ namespace tfel
 	return ExprPtr(new BinaryOperation<OpDiv>(a->analyse(),b->analyse()));
       } else if(op->getOperatorType()=="**"){
 	return ExprPtr(new BinaryOperation<OpPower>(a->analyse(),b->analyse()));
-      } else {
-	string msg("Evaluator::TBinaryOperation : ");
-	msg += "invalid operation type  '"+op->getOperatorType()+"'";
-	throw(runtime_error(msg));
       }
-      return ExprPtr();
+      throw(std::runtime_error("Evaluator::TBinaryOperation : "
+			       "invalid operation type  '"+op->getOperatorType()+"'"));
     } // end of Evaluator::TBinaryOperation::analyse(void)
     
     Evaluator::TBinaryOperation::~TBinaryOperation()

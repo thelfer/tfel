@@ -59,11 +59,8 @@ namespace mfront
   UmatCohesiveZoneModel::getRotationMatrix(const tfel::math::vector<real>&,
 					   const tfel::math::tmatrix<3u,3u,real>& r) const
   {
-    using namespace std;
-    string msg("UmatCohesiveZoneModel::getRotationMatrix : "
-	       "invalid call");
-    throw(runtime_error(msg));
-    return r;
+    throw(std::runtime_error("UmatCohesiveZoneModel::getRotationMatrix : "
+			     "invalid call"));
   } // end of UmatCohesiveZoneModel::getRotationMatrix
 
   void
@@ -100,7 +97,6 @@ namespace mfront
 								 const tfel::material::ModellingHypothesis::Hypothesis h,
 								 const MTestStiffnessMatrixType::mtype ktype) const
   {
-    using namespace std;
     using namespace tfel::math;
     if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       // rotation matrix
@@ -113,13 +109,10 @@ namespace mfront
       }
       this->computeElasticStiffness(Kt,mp,drot,h);
       return true;
-    } else {
-      string msg("UmatCohesiveZoneModel::computePredictionOperator : "
-		 "computation of the tangent operator "
-		 "is not supported");
-      throw(runtime_error(msg));
     }
-    return false;
+    throw(std::runtime_error("UmatCohesiveZoneModel::computePredictionOperator : "
+			     "computation of the tangent operator "
+			     "is not supported"));
   } // end of UmatCohesiveZoneModel::computePredictionOperator
 
   bool

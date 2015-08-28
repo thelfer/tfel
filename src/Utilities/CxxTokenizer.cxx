@@ -353,11 +353,13 @@ namespace tfel{
 	//reading decimal part
 	throw_if(++p==pe,"invalid number");
       }
-      throw_if((!(isdigit(*p)))&&(*p!='.'),"expected digit, read '"+*p+'\'');
+      throw_if((!(isdigit(*p)))&&(*p!='.'),
+	       std::string("expected digit, read '")+*p+'\'');
       if(*p=='.'){
 	is_float = true;
 	throw_if(++p==pe,"invalid number");
-	throw_if(!isdigit(*p),"expected digit, read '"+*p+'\'');
+	throw_if(!isdigit(*p),std::string("expected digit, read '")+
+		 *p+'\'');
       } else if (*p=='0'){
 	starts_with_zero=true;
 	if(++p!=pe){
@@ -387,7 +389,8 @@ namespace tfel{
       while((p!=pe)&&((isdigit(*p))||(*p=='\''))){
 	if(*p=='\''){
 	  throw_if(++p==pe,"invalid number");
-	  throw_if(!isdigit(*p),"expected digit, read '"+*p+'\'');
+	  throw_if(!isdigit(*p),
+		   std::string("expected digit, read '")+*p+'\'');
 	}
 	++p;
       }
@@ -402,7 +405,8 @@ namespace tfel{
 	  if(*p=='\''){
 	    // C++14 digit separator
 	    throw_if(++p==pe,"invalid number");
-	    throw_if(!isdigit(*p),"expected digit, read '"+*p+'\'');
+	    throw_if(!isdigit(*p),
+		     std::string("expected digit, read '")+*p+'\'');
 	  }
 	  ++p;
 	}
@@ -425,7 +429,8 @@ namespace tfel{
 	  while((p!=pe)&&((isdigit(*p))||(*p=='\''))){
 	    if(*p=='\''){
 	      throw_if(++p==pe,"invalid number");
-	      throw_if(!isdigit(*p),"expected digit, read '"+*p+'\'');
+	      throw_if(!isdigit(*p),
+		       std::string("expected digit, read '")+*p+'\'');
 	    }
 	    ++p;
 	  }

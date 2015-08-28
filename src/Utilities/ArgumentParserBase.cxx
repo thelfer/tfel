@@ -32,14 +32,18 @@ namespace tfel
     Argument& Argument::operator=(Argument&&) = default;
     Argument& Argument::operator=(const Argument&) = default;
     
-    Argument::operator std::string& () noexcept {
+    std::string& Argument::as_string() noexcept {
       return this->name;
     }
     
-    Argument::operator const std::string& () const noexcept{
+    const std::string& Argument::as_string() const noexcept {
       return this->name;
     }
 
+    Argument::operator const std::string& () const noexcept{
+      return this->as_string();
+    }
+    
     bool Argument::hasOption(void) const noexcept
     {
       return this->isOptionSet;

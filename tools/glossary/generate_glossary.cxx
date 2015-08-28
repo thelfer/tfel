@@ -487,8 +487,8 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
       << "if(p->getKey()==n){" << endl
       << "return p;" << endl
       << "}" << endl
-      << "const auto& names = p->getNames();" << endl
-      << "if(find(names.begin(),names.end(),n)!=names.end()){" << endl
+      << "const auto& enames = p->getNames();" << endl
+      << "if(find(enames.begin(),enames.end(),n)!=enames.end()){" << endl
       << "return p;" << endl
       << "}" << endl
       << "}" << endl

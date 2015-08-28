@@ -363,10 +363,8 @@ namespace mfront{
 	}
       }
     }
-    string msg("ModelDSLCommon::decomposeVariableName : ");
-    msg += "no decomposition found  for variable '"+v+"'";
-    throw(runtime_error(msg));
-    return pair<string,unsigned short>("",0u);
+    throw(std::runtime_error("ModelDSLCommon::decomposeVariableName : "
+			     "no decomposition found  for variable '"+v+"'"));
   } // end of ModelDSLCommon::getPleiadesVariableName(const std::string& v)
 
   bool

@@ -437,10 +437,8 @@ namespace mfront{
     } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
       return 3u;
     }
-    string msg("MTestFileGeneratorBase::getTVectorSize : ");
-    msg += "unsupported modelling hypothesis";
-    throw(runtime_error(msg));
-    return 0u;
+    throw(std::runtime_error("MTestFileGeneratorBase::getTVectorSize : "
+			     "unsupported modelling hypothesis"));
   } // end of MTestFileGeneratorBase::getTVectorSize
 
   unsigned short
@@ -464,10 +462,8 @@ namespace mfront{
     } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
       return 6u;
     }
-    string msg("MTestFileGeneratorBase::getStensorSize : ");
-    msg += "unsupported modelling hypothesis";
-    throw(runtime_error(msg));
-    return 0u;
+    throw(std::runtime_error("MTestFileGeneratorBase::getStensorSize : "
+			     "unsupported modelling hypothesis"));
   } // end of MTestFileGeneratorBase::getStensorSize
 
   unsigned short
@@ -491,10 +487,8 @@ namespace mfront{
     } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
       return 9u;
     }
-    string msg("MTestFileGeneratorBase::getTensorSize : ");
-    msg += "unsupported modelling hypothesis";
-    throw(runtime_error(msg));
-    return 0u;
+    throw(std::runtime_error("MTestFileGeneratorBase::getTensorSize : "
+			     "unsupported modelling hypothesis"));
   } // end of MTestFileGeneratorBase::getTensorSize
 
   MTestFileGeneratorBase::~MTestFileGeneratorBase()

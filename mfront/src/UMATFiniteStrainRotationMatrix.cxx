@@ -97,10 +97,8 @@ namespace umat
   void
   UMATFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward(UMATReal *const) const
   {
-    using namespace std;
-    string msg("UMATFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward : "
-	       "unimplemented feature");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("UMATFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward : "
+			     "unimplemented feature"));
   } // end of UMATFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward
 
   UMATFiniteStrainRotationMatrix3D::UMATFiniteStrainRotationMatrix3D(const UMATReal *const V,
@@ -206,10 +204,8 @@ namespace umat
   void
   UMATFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward(UMATReal *const) const
   {
-    using namespace std;
-    string msg("UMATFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward : "
-	       "unimplemented feature");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("UMATFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward : "
+			     "unimplemented feature"));
   } // end of UMATFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward
 
 } // end of namespace umat

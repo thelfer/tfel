@@ -671,11 +671,9 @@ namespace mfront
       this->computeElasticStiffness(Kt,mp,drot,h);
       return true;
     }
-    string msg("UmatFiniteStrainBehaviour::computePredictionOperator : "
-	       "computation of the tangent operator "
-	       "is not supported");
-    throw(runtime_error(msg));
-    return false;
+    throw(std::runtime_error("UmatFiniteStrainBehaviour::computePredictionOperator : "
+			     "computation of the tangent operator "
+			     "is not supported"));
   } // end of UmatFiniteStrainBehaviour::computePredictionOperator
 
   bool

@@ -61,7 +61,7 @@ namespace tfel
        * \param const std::string&, a description of the error.
        * \param const int, value of errno.
        */
-      static void
+      TFEL_NORETURN static void
       throwSystemError(const std::string&,
 		       const int);
 

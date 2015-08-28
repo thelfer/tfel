@@ -40,7 +40,6 @@ f(const tfel::math::tvector<2,double>& x)
 
 BROYDEN_STATIC void test(void)
 {
-  using namespace std;
   using namespace tfel::math;
   tvector<2,double> res;
   tvector<2,double> x0;
@@ -58,7 +57,6 @@ BROYDEN_STATIC void test(void)
 
 BROYDEN_STATIC void test2(void)
 {
-  using namespace std;
   using namespace tfel::math;
   tvector<2,double> res;
   tvector<2,double> x0;
@@ -78,8 +76,7 @@ BROYDEN_STATIC void test2(void)
   A(1,1) = 4*(4*res(1)*res(1)*res(1)+1);
 }
 
-int
-main(void)
+int main(void)
 {
   test();
   test2();

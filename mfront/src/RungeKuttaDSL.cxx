@@ -223,7 +223,6 @@ namespace mfront{
   void
   RungeKuttaDSL::treatUpdateAuxiliaryStateVariables(void)
   {
-    using std::shared_ptr;
     this->readCodeBlock(*this,BehaviourData::UpdateAuxiliaryStateVariables,
 			&RungeKuttaDSL::standardModifier,true,true);
   } // end of RungeKuttaDSL::treatUpdateAuxiliaryStateVarBase

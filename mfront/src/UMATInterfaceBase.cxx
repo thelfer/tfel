@@ -11,9 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<sstream>
+#include<fstream>
 #include<stdexcept>
 #include<algorithm>
 
@@ -42,23 +41,20 @@ namespace mfront
       dummy(d)
   {} // end olf UMATMaterialProperty::UMATMaterialProperty
   
-  UMATInterfaceBase::UMATMaterialProperty::~UMATMaterialProperty()
-  {} // end of UMATInterfaceBase::~UMATMaterialProperty()
+  UMATInterfaceBase::UMATMaterialProperty::~UMATMaterialProperty() = default;
 
   const UMATInterfaceBase::UMATMaterialProperty&
   UMATInterfaceBase::findUMATMaterialProperty(const std::vector<UMATMaterialProperty>& mprops,
 						    const std::string& n)
   {
-    using namespace std;
     for(const auto& m : mprops){
       if((m.name==n)&&(!m.dummy)){
 	return m;
       }
     }
-    string msg("UMATInterfaceBase::findUMATMaterialProperty : "
-	       "no material property associated with the glossary name '"+n+"'");
-    throw(runtime_error(msg));
-    return *(static_cast<const UMATMaterialProperty*>(nullptr));
+    throw(std::runtime_error("UMATInterfaceBase::findUMATMaterialProperty : "
+			     "no material property associated with the "
+			     "glossary name '"+n+"'"));
   } // end of UMATInterfaceBase::findUMATMaterialProperty
 
 

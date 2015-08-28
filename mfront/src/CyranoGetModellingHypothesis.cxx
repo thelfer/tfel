@@ -37,7 +37,6 @@ namespace cyrano
     msg << "cyrano::getModellingHypothesis : "
 	<< "invalid argument ('" << ndi << "')";
     throw(CyranoException(msg.str()));
-    return ModellingHypothesis::UNDEFINEDHYPOTHESIS;
   }
 
 } // end of namespace cyrano

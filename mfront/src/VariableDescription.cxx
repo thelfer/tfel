@@ -113,15 +113,13 @@ namespace mfront{
 						    const std::map<std::string,std::string>& glossaryNames,
 						    const std::map<std::string,std::string>& entryNames) const
   {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
-    for(p=this->begin();p!=this->end();++p){
-      const string name = p->getExternalName(glossaryNames,entryNames);
-      if(p->arraySize==1u){
+    for(const auto& v : *this){
+      const auto name = v.getExternalName(glossaryNames,entryNames);
+      if(v.arraySize==1u){
 	n.push_back(name);
       } else {
-	for(unsigned short i=0;i!=p->arraySize;++i){
-	  ostringstream nb;
+	for(unsigned short i=0;i!=v.arraySize;++i){
+	  std::ostringstream nb;
 	  nb << '[' << i << ']';
 	  n.push_back(name+nb.str());
 	}
@@ -132,17 +130,13 @@ namespace mfront{
   const VariableDescription&
   VariableDescriptionContainer::getVariable(const std::string& n) const
   {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
-    for(p=this->begin();p!=this->end();++p){
-      if(p->name==n){
-	return *p;
+    for(const auto& v : *this){
+      if(v.name==n){
+	return v;
       }
     }
-    string msg("VariableDescriptionContainer::getVariable : "
-	       "no variable named '"+n+"'");
-    throw(runtime_error(msg));
-    return *(this->end());
+    throw(std::runtime_error("VariableDescriptionContainer::getVariable : "
+			"no variable named '"+n+"'"));
   }
 
   VariableDescriptionContainer::~VariableDescriptionContainer()

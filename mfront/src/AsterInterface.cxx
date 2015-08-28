@@ -964,7 +964,6 @@ namespace mfront{
   std::string
   AsterInterface::getModellingHypothesisTest(const Hypothesis h) const
   {
-    using namespace std;
     if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
       return  "*NUMMOD == 2u";
     } else if(h==ModellingHypothesis::AXISYMMETRICAL){
@@ -976,10 +975,8 @@ namespace mfront{
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       return "*NUMMOD==3";
     }
-    string msg("AsterInterface::getModellingHypothesisTest : "
-	       "unsupported modelling hypothesis");
-    throw(runtime_error(msg));
-    return "";
+    throw(std::runtime_error("AsterInterface::getModellingHypothesisTest : "
+			     "unsupported modelling hypothesis"));
   } // end of UMATInterface::gatherModellingHypothesesAndTests
 
 } // end of namespace mfront

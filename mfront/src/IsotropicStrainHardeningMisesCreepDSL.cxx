@@ -73,13 +73,11 @@ namespace mfront{
   void
   IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing(void)
   {
-    using namespace std;
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->mb.hasCode(h,BehaviourData::FlowRule)){
-      string msg("IsotropicMisesCreepDSL::endsInputFileProcessing : ");
-      msg += "no flow rule defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("IsotropicMisesCreepDSL::endsInputFileProcessing : "
+			       "no flow rule defined"));
     }
   } // end of IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing
 
@@ -100,33 +98,32 @@ namespace mfront{
     this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("IsotropicStrainHardeningMisesCreepDSL::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());
-    this->behaviourFile << this->mb.getCode(h,BehaviourData::FlowRule) << endl;
-    this->behaviourFile << "}\n\n";
-    this->behaviourFile << "bool NewtonIntegration(void){\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "unsigned int iter;\n";
-    this->behaviourFile << "bool converge=false;\n";
-    this->behaviourFile << "bool inversible=true;\n";
-    this->behaviourFile << "strain newton_f;\n";
-    this->behaviourFile << "strain newton_df;\n";
-    this->behaviourFile << "real newton_epsilon = 100*std::numeric_limits<real>::epsilon();\n";
-    this->behaviourFile << "stress mu_3 = 3*(this->mu);\n";
-    this->behaviourFile << "";
-    this->behaviourFile << "iter=0;\n";    
-    this->behaviourFile << "this->p_=this->p+this->dp;\n"; 
-    this->behaviourFile << "while((converge==false)&&\n";
-    this->behaviourFile << "(iter<(this->iterMax))&&\n";
-    this->behaviourFile << "(inversible==true)){\n";
-    this->behaviourFile << "this->seq=std::max(this->seq_e-mu_3*(this->theta)*(this->dp),real(0.f));\n";
-    this->behaviourFile << "this->computeFlow();\n";
-    this->behaviourFile << "newton_f  = this->dp - (this->f)*(this->dt);\n";
-    this->behaviourFile << "newton_df = 1-(this->theta)*(this->dt)*((this->df_dp)-mu_3*(this->df_dseq));\n";
-    this->behaviourFile << "if(std::abs(base_cast(newton_df))";
-    this->behaviourFile << ">newton_epsilon){\n";
-    this->behaviourFile << "this->dp -= newton_f/newton_df;\n";
-    this->behaviourFile << "this->p_=this->p + (this->theta)*(this->dp);\n";    
-    this->behaviourFile << "iter+=1;\n";
+    this->behaviourFile << this->mb.getCode(h,BehaviourData::FlowRule) << endl
+			<< "}\n\n"
+			<< "bool NewtonIntegration(void){\n"
+			<< "using namespace std;\n"
+			<< "using namespace tfel::math;\n"
+			<< "bool converge=false;\n"
+			<< "bool inversible=true;\n"
+			<< "strain newton_f;\n"
+			<< "strain newton_df;\n"
+			<< "real newton_epsilon = 100*std::numeric_limits<real>::epsilon();\n"
+			<< "stress mu_3 = 3*(this->mu);\n"
+			<< ""
+			<< "unsigned int iter = 0u;\n"
+			<< "this->p_=this->p+this->dp;\n"
+			<< "while((converge==false)&&\n"
+			<< "(iter<(this->iterMax))&&\n"
+			<< "(inversible==true)){\n"
+			<< "this->seq=std::max(this->seq_e-mu_3*(this->theta)*(this->dp),real(0.f));\n"
+			<< "this->computeFlow();\n"
+			<< "newton_f  = this->dp - (this->f)*(this->dt);\n"
+			<< "newton_df = 1-(this->theta)*(this->dt)*((this->df_dp)-mu_3*(this->df_dseq));\n"
+			<< "if(std::abs(base_cast(newton_df))"
+			<< ">newton_epsilon){\n"
+			<< "this->dp -= newton_f/newton_df;\n"
+			<< "this->p_=this->p + (this->theta)*(this->dp);\n"
+			<< "iter+=1;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::NewtonIntegration() : iteration \" "
@@ -161,26 +158,25 @@ namespace mfront{
 
   void IsotropicStrainHardeningMisesCreepDSL::writeBehaviourIntegrator(const Hypothesis h)
   {
-    using namespace std;
-    const string btype = this->mb.getBehaviourTypeFlag();
+    const auto  btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "IntegrationResult" << endl;
+    this->behaviourFile << "IntegrationResult\n";
     this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
-    this->behaviourFile << "using namespace std;" << endl;
+    this->behaviourFile << "using namespace std;\n";
     if(this->mb.useQt()){
       this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			  << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
-			  << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-			  << "}" << endl;
+			  << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+			  << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+			  << "}\n";
     } else {
       this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			  << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
-			  << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-			  << "}" << endl;
+			  << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+			  << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+			  << "}\n";
     }
     this->behaviourFile << "if(!this->NewtonIntegration()){\n";
     if(this->mb.useQt()){        

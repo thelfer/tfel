@@ -39,12 +39,11 @@ TFEL_TESTS_STATIC bool test2(void)
 
 int main(void)
 {
-  using namespace std;
   using namespace tfel::tests;
   typedef TestFunctionWrapper<test1> Wrapper1;
   typedef TestFunctionWrapper<test2> Wrapper2;
-  auto_ptr<Test> a(new Wrapper1("test1"));
-  auto_ptr<Test> b(new Wrapper2("test2"));
+  std::unique_ptr<Test> a(new Wrapper1("test1"));
+  std::unique_ptr<Test> b(new Wrapper2("test2"));
   // first test
   assert(a->name()=="test1");
   assert(a->execute().success());

@@ -82,11 +82,9 @@ namespace tfel
       std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
-	using namespace std;
-	string msg("ConstantExternalFunction::createFunctionByChangingParametersIntoVariables : ");
-	msg += "invalid call";
-	throw(runtime_error(msg));
-	return shared_ptr<ExternalFunction>();
+	throw(std::runtime_error("ConstantExternalFunction::"
+				 "createFunctionByChangingParametersIntoVariables : "
+				 "invalid call"));
       } // end of ConstantExternalFunction::createFunctionByChangingParametersIntoVariables
 
       

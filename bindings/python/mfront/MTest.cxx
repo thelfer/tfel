@@ -438,8 +438,8 @@ MTest_setRotationMatrix1(mfront::MTest& t,
   using namespace std;
   typedef tfel::math::tmatrix<3u,3u,mfront::real> matrix;
   matrix r;
-  for(int i = 0; i!=3;++i){
-    for(int j = 0; j!=3;++j){
+  for(matrix::size_type i = 0; i!=3;++i){
+    for(matrix::size_type j = 0; j!=3;++j){
       r(i,j) = m[i][j];
     }
   }

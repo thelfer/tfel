@@ -6,6 +6,7 @@
  */
 
 #include<sstream>
+#include<fstream>
 
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"

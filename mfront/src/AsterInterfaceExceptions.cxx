@@ -57,7 +57,7 @@ namespace aster{
     cout << "The behaviour '" << b 
 	 << "' has thrown an AsterException : "
 	 << e.what() << endl;
-  } // end of treatUmatException
+  } // end of AsterInterfaceExceptions::treatAsterException
 
   void
   AsterInterfaceExceptions::treatMaterialException(const std::string& b,

@@ -657,7 +657,8 @@ namespace mfront{
     /*!
      * \brief throw an exception saying that no attribute with the given name exists
      */
-    static void throwUndefinedAttribute(const std::string&);
+    TFEL_NORETURN static void
+    throwUndefinedAttribute(const std::string&);
     /*!
      * check that the given name has been registred as a variable name
      * \param[in] n : variable name

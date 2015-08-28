@@ -22,7 +22,7 @@ namespace mfront{
   StaticVariableDescription::StaticVariableDescription(const std::string& type_,
 						       const std::string& name_,
 						       const unsigned int line_,
-						       const StaticVariableDescription::StaticVariableValueType value_)
+						       const StaticVariableValueType value_)
     : VariableDescription(type_,name_,1u,line_),
       value(value_)
   {}
@@ -38,9 +38,8 @@ namespace mfront{
   bool
   StaticVariableDescriptionContainer::contains(const std::string& n) const
   {
-    StaticVariableDescriptionContainer::const_iterator p;
-    for(p=this->begin();p!=this->end();++p){
-      if(p->name==n){
+    for(const auto& v : *this){
+      if(v.name==n){
 	return true;
       }
     }
@@ -50,17 +49,13 @@ namespace mfront{
   const StaticVariableDescription&
   StaticVariableDescriptionContainer::get(const std::string& n) const
   {
-    using namespace std;
-    StaticVariableDescriptionContainer::const_iterator p;
-    for(p=this->begin();p!=this->end();++p){
-      if(p->name==n){
-	return *p;
+    for(const auto& v : *this){
+      if(v.name==n){
+	return v;
       }
     }
-    string msg("StaticVariableDescriptionContainer::get : "
-	       "no static variable named '"+n+"'");
-    throw(runtime_error(msg));
-    return *(static_cast<StaticVariableDescription*>(nullptr));
+    throw(std::runtime_error("StaticVariableDescriptionContainer::get : "
+			     "no static variable named '"+n+"'"));
   } // end of StaticVariableDescriptionContainer::get
 
 } // end of namespace mfront

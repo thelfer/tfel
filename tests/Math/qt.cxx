@@ -27,6 +27,12 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
+#if (!defined _MSC_VER) && (!defined __INTEL_COMPILER)
+#define TFEL_CONSTEXPR constexpr
+#else
+#define TFEL_CONSTEXPR const
+#endif
+
 struct qtTest final
   : public tfel::tests::TestCase
 {
@@ -37,16 +43,14 @@ struct qtTest final
   execute() override
   {
     using namespace tfel::math; 
-#ifndef _MSC_VER
-    constexpr qt<Mass> m1(100.);
-    constexpr qt<Mass> m2(100.);
-    constexpr qt<Mass> m3 = m1+0.5*m2;
-    constexpr qt<Acceleration,unsigned short> a(2);
-    constexpr qt<Force> f = m1*a;
+    TFEL_CONSTEXPR qt<Mass> m1(100.);
+    TFEL_CONSTEXPR qt<Mass> m2(100.);
+    TFEL_CONSTEXPR qt<Mass> m3 = m1+0.5*m2;
+    TFEL_CONSTEXPR qt<Acceleration,unsigned short> a(2);
+    TFEL_CONSTEXPR qt<Force> f = m1*a;
     TFEL_TESTS_ASSERT(std::abs(m3.getValue()-150.)<1.e-14);
     TFEL_TESTS_ASSERT(std::abs(f.getValue()-200.)<1.e-14);
     TFEL_TESTS_ASSERT((std::abs(std::cos(qt<NoUnit>(12.))-std::cos(12.))<1.e-14));
-#endif
     return this->result;
   } // end of execute
 };
@@ -55,10 +59,9 @@ TFEL_TESTS_GENERATE_PROXY(qtTest,"qtTest");
 
 int main(void)
 {
-  using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("qt.xml");
   TestResult r = manager.execute();
   if(!r.success()){

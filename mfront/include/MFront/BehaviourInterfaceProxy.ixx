@@ -31,6 +31,7 @@ namespace mfront{
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
     mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
+    mbif.registerInterfaceAlias(Interface::getName(),name);
   }
   
   template<typename Interface>

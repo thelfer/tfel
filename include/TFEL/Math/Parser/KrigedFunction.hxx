@@ -36,13 +36,13 @@ namespace tfel
 
       struct TFELMATHPARSER_VISIBILITY_EXPORT KrigedFunctionBase final
       {
-	static void
+	TFEL_NORETURN static void
 	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
 
-	static void
+	TFEL_NORETURN static void
 	throwInvalidIndexException(const std::vector<double>::size_type i,
 				   const unsigned short N);
-	static void
+	TFEL_NORETURN static void
 	throwUnimplementedDifferentiateFunctionException();
       }; // end of KrigedFunctionBase
 

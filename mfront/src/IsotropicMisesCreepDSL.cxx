@@ -103,7 +103,6 @@ namespace mfront{
     this->behaviourFile << "bool NewtonIntegration(void){\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "unsigned int iter;\n";
     this->behaviourFile << "bool converge=false;\n";
     this->behaviourFile << "bool inversible=true;\n";
     this->behaviourFile << "strain newton_f;\n";
@@ -111,7 +110,7 @@ namespace mfront{
     this->behaviourFile << "real newton_epsilon = 100.*std::numeric_limits<real>::epsilon();\n";
     this->behaviourFile << "stress mu_3_theta = 3*(this->theta)*(this->mu);\n";
     this->behaviourFile << "";
-    this->behaviourFile << "iter=0;\n";    
+    this->behaviourFile << "unsigned int iter=0;\n";    
     this->behaviourFile << "while((converge==false)&&\n";
     this->behaviourFile << "(iter<(this->iterMax))&&\n";
     this->behaviourFile << "(inversible==true)){\n";

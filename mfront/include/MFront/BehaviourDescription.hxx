@@ -16,10 +16,11 @@
 
 #include<set>
 #include<map>
-
 #include<memory>
+
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Material/OrthotropicAxesConvention.hxx"
 
 #include"MFront/MFrontConfig.hxx"
 #include"MFront/CodeBlock.hxx"
@@ -262,7 +263,22 @@ namespace mfront
 
     void
     setSymmetryType(const BehaviourSymmetryType);
-
+    /*!
+     * \brief set the orthotropic axes convention.
+     * \param[in] c : new value for the orthotropic axes convention.
+     * \note this method can be only call once.
+     */
+    void
+    setOrthotropicAxesConvention(const tfel::material::OrthotropicAxesConvention);
+    /*!
+     * \return the orthotropic axes convention.
+     * \note if the orthotropic axes convention has not been defined,
+     * the UNDEFINED convention is assumed and oacIsDefined is set to
+     * true.
+     */
+    tfel::material::OrthotropicAxesConvention
+    getOrthotropicAxesConvention(void) const;
+    
     bool
     isSymmetryTypeDefined() const;
 
@@ -1266,18 +1282,17 @@ namespace mfront
      * For orthotropic behaviours, three thermal expansions coefficient must be defined.
      */
     std::vector<std::shared_ptr<MaterialPropertyDescription> > thermalExpansionCoefficients;
-    /*!
-     * use units
-     */
+    //! use units
     bool use_qt;
-    /*!
-     * type of behaviour
-     */
+    //! type of behaviour
     BehaviourType type;
-    /*!
-     * symmetry of behaviour (isotropic or orthotropic)
-     */
+    //! symmetry of behaviour (isotropic or orthotropic)
     mutable BehaviourSymmetryType stype;
+    //! orthotropic axes convention
+    tfel::material::OrthotropicAxesConvention oac =
+      tfel::material::OrthotropicAxesConvention::UNDEFINED;
+    //!flag telling if the orthotropic axes convention has been defined
+    mutable bool oacIsDefined = false;
     //! flag telling the behaviour symmetry has been defined
     mutable bool stypeIsDefined;
     /*!

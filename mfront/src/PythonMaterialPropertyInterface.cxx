@@ -381,10 +381,13 @@ namespace mfront
     set<string> interfaces;
     struct stat buffer; // for call to stat
     if(access(fname.c_str(),F_OK)==0){
-      stat(fname.c_str(),&buffer);
+      if(stat(fname.c_str(),&buffer)==-1){
+	throw(runtime_error("PythonMaterialPropertyInterface::writeOutputFiles : "
+			    "can't stat file '"+fname+"'"));
+      }
       if(!S_ISREG(buffer.st_mode)){
-	string msg("PythonMaterialPropertyInterface::writeOutputFiles : '"+fname+"' is not a regular file");
-	throw(runtime_error(msg));
+	throw(runtime_error("PythonMaterialPropertyInterface::writeOutputFiles : "
+			    "'"+fname+"' is not a regular file"));
       }
       ifstream iwrapper(fname);
       if(!iwrapper){

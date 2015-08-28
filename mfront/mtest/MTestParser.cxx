@@ -55,7 +55,6 @@ namespace mfront
   static unsigned short
   getSTensorSize(const unsigned short d)
   {
-    using namespace std;
     if(d==1){
       return 3;
     } else if(d==2){
@@ -63,16 +62,13 @@ namespace mfront
     } else if(d==3){
       return 6;
     }
-    string msg("mfront::getTensorSize : ");
-    msg += "";
-    throw(runtime_error(msg));
-    return 0;
+    throw(std::runtime_error("mfront::getSTensorSize : "
+			     "invalid dimension"));
   }
 
   static unsigned short
   getTensorSize(const unsigned short d)
   {
-    using namespace std;
     if(d==1){
       return 3;
     } else if(d==2){
@@ -80,10 +76,8 @@ namespace mfront
     } else if(d==3){
       return 9;
     }
-    string msg("mfront::getTensorSize : ");
-    msg += "";
-    throw(runtime_error(msg));
-    return 0;
+    throw(std::runtime_error("mfront::getTensorSize : "
+			     "invalid dimension"));
   }
 
   MTestParser::MTestParser()

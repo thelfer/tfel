@@ -447,7 +447,7 @@ namespace mfront
   BehaviourDescription::isElasticSymmetryTypeDefined() const
   {
     return this->estypeIsDefined;
-  } // end of BehaviourDescription::setSymmetryType
+  } // end of BehaviourDescription::isElasticSymmetryTypeDefined
 
   BehaviourSymmetryType
   BehaviourDescription::getSymmetryType() const
@@ -690,9 +690,8 @@ namespace mfront
   {
     using namespace std;
     if(this->type==GENERALBEHAVIOUR){
-      pair<SupportedTypes::TypeSize,
-	SupportedTypes::TypeSize> msizes = this->getMainVariablesSize();
-      ostringstream t;
+      auto msizes = this->getMainVariablesSize();
+      std::ostringstream t;
       t << "tfel::math::tmatrix<"
 	<< msizes.first  << "," 
 	<< msizes.second << ",real>";
@@ -704,24 +703,19 @@ namespace mfront
     } else if(this->type==COHESIVEZONEMODEL){
       return "tfel::math::tmatrix<N,N,stress>";
     }
-    string msg("BehaviourDescription::getStiffnessOperatorType : "
-	       "internal error (unsupported behaviour type)");
-    throw(runtime_error(msg));
-    return "";
+    throw(std::runtime_error("BehaviourDescription::getStiffnessOperatorType : "
+			     "internal error (unsupported behaviour type)"));
   } // end of BehaviourDescription::getStiffnessOperatorType
 
   std::string
   BehaviourDescription::getStressFreeExpansionType(void) const
   {
-    using namespace std;
     if((this->type==SMALLSTRAINSTANDARDBEHAVIOUR)||
        (this->type==FINITESTRAINSTANDARDBEHAVIOUR)){
       return "StrainStensor";
     }
-    string msg("BehaviourDescription::getStressFreeExpansionType : "
-	       "internal error (unsupported behaviour type)");
-    throw(runtime_error(msg));
-    return "";
+    throw(std::runtime_error("BehaviourDescription::getStressFreeExpansionType : "
+			     "internal error (unsupported behaviour type)"));
   } // end of BehaviourDescription::getStressFreeExpansionType
 
   void
@@ -1635,6 +1629,34 @@ namespace mfront
       }
     }
   } // end of BehaviourDescription::checkVariablePosition
+
+  void
+  BehaviourDescription::setOrthotropicAxesConvention(const tfel::material::OrthotropicAxesConvention c)
+  {
+    if(this->oacIsDefined){
+      throw(std::runtime_error("BehaviourDescription::setOrthotropicAxesConvention : "
+			       "orthotropic axes convention already defined"));
+    }
+    if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
+      throw(std::runtime_error("BehaviourDescription::setOrthotropicAxesConvention : "
+			       "the mechanical behaviour is not orthotropic."));
+    }
+    this->oacIsDefined = true;
+    this->oac = c;
+  }
+
+  tfel::material::OrthotropicAxesConvention
+  BehaviourDescription::getOrthotropicAxesConvention(void) const
+  {
+    if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
+      throw(std::runtime_error("BehaviourDescription::getOrthotropicAxesConvention : "
+			       "the mechanical behaviour is not orthotropic."));
+    }
+    if(!this->oacIsDefined){
+      this->oacIsDefined = true;
+    }
+    return this->oac;
+  }
   
   BehaviourDescription::~BehaviourDescription()
   {}

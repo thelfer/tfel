@@ -35,21 +35,21 @@ namespace umat
      * in 1D
      * \param[in] Dt : finite strain behaviour tangent operator
      */
-    static void
+    TFEL_NORETURN static void
     normalize(tfel::math::t2tost2<1u,UMATReal>&);
     /*!
      * \brief normalize the finite strain behaviour tangent operator
      * in 2D
      * \param[in] Dt : finite strain behaviour tangent operator
      */
-    static void
+    TFEL_NORETURN static void
     normalize(tfel::math::t2tost2<2u,UMATReal>&);
     /*!
      * \brief normalize the finite strain behaviour tangent operator
      * in 3D
      * \param[in] Dt : finite strain behaviour tangent operator
      */
-    static void
+    TFEL_NORETURN static void
     normalize(tfel::math::t2tost2<3u,UMATReal>&);
     /*!
      * \brief transpose the finite strain behaviour tangent operator

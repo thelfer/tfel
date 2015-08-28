@@ -142,16 +142,14 @@ namespace tfel
     void
     ProcessManager::terminateHandler(const int)
     {
-      using namespace std;
-      vector<Process>::iterator p;
       // treating handled processes
       auto& signalManager = SignalManager::getSignalManager();
       signalManager.removeHandler(this->sHandler);
-      for(p=this->processes.begin();p!=this->processes.end();++p){
-	if(p->isRunning){
-	  this->sendSignal(p->id);
-	  ::waitpid(p->id,nullptr,0);
-	  this->closeProcessFiles(p->id);
+      for(const auto& p : this->processes){
+	if(p.isRunning){
+	  this->sendSignal(p.id);
+	  ::waitpid(p.id,nullptr,0);
+	  this->closeProcessFiles(p.id);
 	}
       }
       exit(-1);
@@ -161,7 +159,6 @@ namespace tfel
     ProcessManager::setProcessExitStatus(ProcessManager::Process& p,
 					 const int status)
     {
-      using namespace std;
       if((::processManager_wifexited(status))||(::processManager_wifsignaled(status))){
 	if((::processManager_wifexited(status))){
 	  // process died normally
@@ -175,7 +172,7 @@ namespace tfel
 	this->closeProcessFiles(p.id);
 	p.isRunning = false;
       } else if(!::processManager_wifstopped(status)){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "ProcessManager::sigChildHandler : "
 	    << "unknown status for child " << p.id;
 	systemCall::throwSystemError(msg.str(),errno);
@@ -185,16 +182,13 @@ namespace tfel
     void
     ProcessManager::sigChildHandler(const int)
     {
-      using namespace std;
-      int ret;
-      int status;
-      vector<Process>::iterator p;
       // treating handled processes
-      for(p=this->processes.begin();p!=this->processes.end();++p){
-	if(p->isRunning){
-	  ret = waitpid(p->id,&status,WNOHANG);
-	  if(ret==p->id){
-	    this->setProcessExitStatus(*p,status);
+      for(auto& t : this->processes){
+	if(t.isRunning){
+	  int status;
+	  int ret = waitpid(t.id,&status,WNOHANG);
+	  if(ret==t.id){
+	    this->setProcessExitStatus(t,status);
 	  }
 	}
       }
@@ -661,11 +655,8 @@ namespace tfel
     ProcessManager::getInputStream(const ProcessManager::ProcessId id) const
     {
       using namespace std;
-      vector<Process>::const_reverse_iterator p;
-      vector<Process>::const_reverse_iterator pe;
-      map<ProcessId,StreamId>::const_iterator p2;
-      p  = this->findProcess(id);
-      pe = this->processes.rend();
+      const auto p  = this->findProcess(id);
+      const auto pe = this->processes.rend();
       if(p==pe){
 	ostringstream msg;
 	msg << "ProcessManager::getInputStream : "
@@ -678,7 +669,7 @@ namespace tfel
 	    << "process associated with pid " << id << " is not running";
 	throw(runtime_error(msg.str()));
       }
-      p2 = this->inputs.find(id);
+      const auto p2 = this->inputs.find(id);
       if(p2==this->inputs.end()){
 	ostringstream msg;
 	msg << "ProcessManager::getInputStream : "
@@ -692,11 +683,8 @@ namespace tfel
     ProcessManager::getOutputStream(const ProcessManager::ProcessId id) const
     {
       using namespace std;
-      vector<Process>::const_reverse_iterator p;
-      vector<Process>::const_reverse_iterator pe;
-      map<ProcessId,StreamId>::const_iterator p2;
-      p  = this->findProcess(id);
-      pe = this->processes.rend();
+      const auto p  = this->findProcess(id);
+      const auto pe = this->processes.rend();
       if(p==pe){
 	ostringstream msg;
 	msg << "ProcessManager::getInputStream : "
@@ -709,7 +697,7 @@ namespace tfel
 	    << "process associated with pid " << id << " is not running";
 	throw(runtime_error(msg.str()));
       }
-      p2 = this->outputs.find(id);
+      const auto p2 = this->outputs.find(id);
       if(p2==this->outputs.end()){
 	ostringstream msg;
 	msg << "ProcessManager::getOutputStream : "
@@ -724,16 +712,10 @@ namespace tfel
 			    const std::string& in,
 			    const std::string& out)
     {
-      using namespace std;
-      ProcessId pid;
-      vector<Process>::const_reverse_iterator p;
-      vector<Process>::const_reverse_iterator pe;
-      bool cond;
-      pid = this->createProcess(cmd,in,out);
-      p  = static_cast<const ProcessManager&>(*this).findProcess(pid);
-      pe = static_cast<const vector<Process>&>(this->processes).rend();
-      assert(p!=pe);
-      cond = p->isRunning;
+      auto pid = this->createProcess(cmd,in,out);
+      const auto p  = static_cast<const ProcessManager&>(*this).findProcess(pid);
+      assert(p!=this->processes.rcend());
+      auto cond = p->isRunning;
       while(cond){
 	cond = p->isRunning;
 	if(cond){
@@ -741,12 +723,11 @@ namespace tfel
 	}
       }
       if(!p->exitStatus){
-	string msg("ProcessManager::execute : '");
-	msg += cmd + "' exited du to a signal";
-	throw(SystemError(msg));
+	throw(SystemError("ProcessManager::execute : '"
+			  "' exited du to a signal"));
       }
       if(p->exitValue!=EXIT_SUCCESS){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "ProcessManager::execute : '" << cmd 
 	    << "' exited abnormally with value " << p->exitValue;
 	throw(SystemError(msg.str()));
@@ -756,16 +737,13 @@ namespace tfel
     std::vector<ProcessManager::Process>::reverse_iterator
     ProcessManager::findProcess(const ProcessId pid)
     {
-      using namespace std;
       auto p  = this->processes.rbegin();
       auto pe = this->processes.rend();
-      bool found = false;
-      while((p!=pe)&&(!found)){
+      while(p!=pe){
 	if(p->id==pid){
-	  found = true;
-	} else {
-	  ++p;
+	  break;
 	}
+	++p;
       }
       return p;
     } // end of ProcessManager::findProcess
@@ -773,16 +751,13 @@ namespace tfel
     std::vector<ProcessManager::Process>::const_reverse_iterator
     ProcessManager::findProcess(const ProcessId pid) const
     {
-      using namespace std;
       auto p  = this->processes.rbegin();
       auto pe = this->processes.rend();
-      bool found = false;
-      while((p!=pe)&&(!found)){
+      while(p!=pe){
 	if(p->id==pid){
-	  found = true;
-	} else {
-	  ++p;
+	  break;
 	}
+	++p;
       }
       return p;
     } // end of ProcessManager::findProcess

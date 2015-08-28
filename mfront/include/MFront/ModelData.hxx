@@ -32,10 +32,10 @@ namespace mfront
     struct MFRONT_VISIBILITY_EXPORT Function
     {
       Function();
-      Function(const Function&) = default;
-      Function(Function&&) = default;
-      Function& operator=(const Function&) = default;
-      Function& operator=(Function&&) = default;
+      Function(const Function&);
+      Function(Function&&);
+      Function& operator=(const Function&);
+      Function& operator=(Function&&);
       ~Function();
       std::set<std::string> usedVariables;
       std::set<std::string> modifiedVariables;
@@ -45,17 +45,17 @@ namespace mfront
       std::map<std::string,unsigned short> depths;
       std::string name;
       std::string body;
-      unsigned int line;
-      bool useTimeIncrement;
+      unsigned int line = 0u;
+      bool useTimeIncrement = false;
     }; // end of struct MFrontData::Function
 
-    typedef std::vector<Function> FunctionContainer;
+    using FunctionContainer=std::vector<Function> ;
 
-    ModelData() = default;
-    ModelData(const ModelData&) = default;
-    ModelData(ModelData&&) = default;
-    ModelData& operator=(const ModelData&) = default;
-    ModelData& operator=(ModelData&&) = default;
+    ModelData();
+    ModelData(const ModelData&);
+    ModelData(ModelData&&);
+    ModelData& operator=(const ModelData&);
+    ModelData& operator=(ModelData&&);
     ~ModelData();
 
     FunctionContainer functions;
@@ -64,28 +64,17 @@ namespace mfront
     VariableDescriptionContainer globalParameters;
     VariableDescriptionContainer localParameters;
     VariableDescriptionContainer constantMaterialProperties;
-    /*!
-     * static variables
-     */
+    //!static variables
     StaticVariableDescriptionContainer staticVars;
-
-    /*!
-     * material name
-     */
+    //! material name
     std::string material;
     std::string library;
     std::string className;
-    /*!
-     * included header files
-     */
+    //! additionnal header files
     std::string includes;
-    /*!
-     * specific sources
-     */
+    //!specific sources
     std::string sources;
-    /*!
-     * private code
-     */
+    //! private code
     std::string privateCode;
     /*!
      * class member
@@ -101,9 +90,7 @@ namespace mfront
     std::vector<VariableBoundsDescription> boundsDescriptions;
     std::vector<VariableBoundsDescription> physicalBoundsDescriptions;
     std::map<std::string,unsigned short> depths;
-    /*!
-     * list of material laws used
-     */
+    //! list of material laws used
     std::vector<std::string> materialLaws;
   }; // end of struct ModelData
 

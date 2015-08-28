@@ -119,10 +119,8 @@ namespace mfront{
 	}
       }
     }
-    string msg("ModelDSLCommon::decomposeVariableName : ");
-    msg += "no decomposition found  for variable '"+v+"'";
-    throw(runtime_error(msg));
-    return {"",0u};
+    throw(std::runtime_error("ModelDSLCommon::decomposeVariableName : "
+			     "no decomposition found  for variable '"+v+"'"));
   } // end of MFrontModelInterface::getVariableName(const std::string& v)
 
   MFrontModelInterface::MFrontModelInterface(void)
@@ -510,7 +508,6 @@ namespace mfront{
   std::string
   MFrontModelInterface::getGenTypeGetMethod(const std::string& type) const
   {
-    using namespace std;
     if(type=="bool"){
       return "get<bool>";
     } else if(type=="real"){
@@ -519,18 +516,14 @@ namespace mfront{
       return "get<double>";
     } else if(type=="string"){
       return "get<string>";
-    } else {
-      string msg("MFrontModelInterface::getGenTypeGetMethod : ");
-      msg += "no method associated with type " + type;
-      throw(runtime_error(msg));
-    }
-    return "";
+    } 
+    throw(std::runtime_error("MFrontModelInterface::getGenTypeGetMethod : "
+			     "no method associated with type '"+type+'\''));
   } // end of MFrontModelInterface::getGenTypeGetMethod
 
   std::string
   MFrontModelInterface::getGenTypeIsMethod(const std::string& type) const
   {
-    using namespace std;
     if(type=="real"){
       return "is<real>";
     } else if(type=="bool"){
@@ -539,12 +532,9 @@ namespace mfront{
       return "is<double>";
     } else if(type=="string"){
       return "is<string>";
-    } else {
-      string msg("MFrontModelInterface::getGenTypeIsMethod : ");
-      msg += "no method associated with type " + type;
-      throw(runtime_error(msg));
     }
-    return "";
+    throw(std::runtime_error("MFrontModelInterface::getGenTypeIsMethod : "
+			     "no method associated with type '"+type+'\''));
   } // end of MFrontModelInterface::isGenTypeMethod
 
   VariableDescriptionContainer::const_iterator
@@ -558,10 +548,8 @@ namespace mfront{
 	return p;
       }
     }
-    string msg("MFrontModelInterface::findVariableDescription : ");
-    msg += "no variable named '"+n+"' found";
-    throw(runtime_error(msg));
-    return v.end();
+    throw(std::runtime_error("MFrontModelInterface::findVariableDescription : "
+			     "no variable named '"+n+"' found"));
   } // MFrontModelInterface::findVariableDescription
 
   void

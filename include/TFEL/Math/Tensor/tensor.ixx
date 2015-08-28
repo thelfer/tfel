@@ -119,7 +119,6 @@ namespace tfel{
 	    return t(i);
 	  }
 	  throw(TensorInvalidIndexesException());
-	  return t(0);
 	}
 	template<typename T>
 	TFEL_MATH_INLINE
@@ -156,7 +155,6 @@ namespace tfel{
 	    return t(4);
 	  }
 	  throw(TensorInvalidIndexesException());
-	  return t(0);
 	}
 	template<typename T>
 	TFEL_MATH_INLINE
@@ -205,7 +203,6 @@ namespace tfel{
 	    return t(8);
 	  }
 	  throw(TensorInvalidIndexesException());
-	  return t(0);
 	}
 
 	template<typename T>
@@ -231,7 +228,6 @@ namespace tfel{
 	    return t(8);
 	  }
 	  throw(TensorInvalidIndexesException());
-	  return T(0);
 	}
       };
 

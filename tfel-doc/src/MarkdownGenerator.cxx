@@ -114,7 +114,7 @@ namespace tfel
 	      << '`' << m.first << "`.\n\n";
 	} else {
 	  out << "### " << getTranslation("List of tested models",l) << "\n\n"
-	      << " " << getTranslation("The models tested are:",l) << '\n\n';
+	      << " " << getTranslation("The models tested are:",l) << "\n\n";
 	  for(const auto& m : t.models){
 	    out << "- `" << m.first.front() << "`\n";
 	  }

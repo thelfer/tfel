@@ -61,7 +61,6 @@ namespace mfront
   tfel::material::MechanicalBehaviourBase::BehaviourType
   UmatBehaviourBase::getBehaviourType(void) const
   {
-    using namespace std;
     using namespace tfel::material;
     switch(this->type){
     case 0:
@@ -73,16 +72,13 @@ namespace mfront
     case 3:
       return MechanicalBehaviourBase::COHESIVEZONEMODEL;
     }
-    string msg("UmatBehaviourBase::getBehaviourType : ");
-    msg += "unsupported behaviour type";
-    throw(runtime_error(msg));
-    return MechanicalBehaviourBase::GENERALBEHAVIOUR;
+    throw(std::runtime_error("UmatBehaviourBase::getBehaviourType : "
+			     "unsupported behaviour type"));
   } // end of UmatBehaviourBase::getBehaviourType
 
   unsigned short
   UmatBehaviourBase::getDrivingVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
-    using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
     if(this->type==1){
       // small strain behaviours
@@ -95,9 +91,8 @@ namespace mfront
       } else if(h==MH::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	string msg("UmatBehaviourBase::getDrivingVariablesSize : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
+				 "unsupported modelling hypothesis"));
       }
     } else if(this->type==2){
       // finite strain behaviours
@@ -110,9 +105,8 @@ namespace mfront
       } else if(h==MH::TRIDIMENSIONAL){
 	return 9u;
       } else {
-	string msg("UmatBehaviourBase::getDrivingVariablesSize : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
+				 "unsupported modelling hypothesis"));
       }
     } else if(this->type==3){
       // cohesive zone models
@@ -122,22 +116,17 @@ namespace mfront
       } else if(h==MH::TRIDIMENSIONAL){
 	return 3u;
       } else {
-	string msg("UmatBehaviourBase::getDrivingVariablesSize : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
+				 "unsupported modelling hypothesis"));
       }      
-    } else {
-      string msg("UmatBehaviourBase::getDrivingVariablesSize : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
-    }
-    return 0u;
+    } 
+    throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
+			     "unsupported behaviour type"));
   } // end of UmatBehaviourBase::getDrivingVariablesSize
 
   unsigned short
   UmatBehaviourBase::getThermodynamicForcesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
-    using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
     if(this->type==1){
       // small strain behaviours
@@ -150,9 +139,8 @@ namespace mfront
       } else if(h==MH::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	string msg("UmatBehaviourBase::getThermodynamicForcesSize : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
+				 "unsupported modelling hypothesis"));
       }
     } else if(this->type==2){
       // finite strain behaviours
@@ -165,9 +153,8 @@ namespace mfront
       } else if(h==MH::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	string msg("UmatBehaviourBase::getThermodynamicForcesSize : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
+				 "unsupported modelling hypothesis"));
       }
     } else if(this->type==3){
       // cohesive zone models
@@ -177,16 +164,12 @@ namespace mfront
       } else if(h==MH::TRIDIMENSIONAL){
 	return 3u;
       } else {
-	string msg("UmatBehaviourBase::getThermodynamicForcesSize : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
+				 "unsupported modelling hypothesis"));
       }      
-    } else {
-      string msg("UmatBehaviourBase::getThermodynamicForcesSize : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
     }
-    return 0u;
+    throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
+			     "unsupported behaviour type"));
   } // end of UmatBehaviourBase::getThermodynamicForcesSize
 
   void
@@ -388,17 +371,14 @@ namespace mfront
   unsigned short
   UmatBehaviourBase::getSymmetryType(void) const
   {
-    using namespace std;
     if(this->stype==0){
       return 0u;
     } else if(this->stype==1){
       return 1u;
     }
-    string msg("UmatBehaviourBase::UmatBehaviourBase : "
-	       "unsupported behaviour type "
-	       "(neither isotropic nor orthotropic)");
-    throw(runtime_error(msg));
-    return 0u;
+    throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "
+			     "unsupported behaviour type "
+			     "(neither isotropic nor orthotropic)"));
   } // end of UmatBehaviourBase::getSymmetryType
 
   std::vector<std::string>
@@ -540,33 +520,26 @@ namespace mfront
   unsigned short
   UmatBehaviourBase::getInternalStateVariableType(const std::string& n) const
   {
-    using namespace std;
-    vector<string>::const_iterator p;
-    p=find(this->ivnames.begin(),this->ivnames.end(),n);
+    auto p=find(this->ivnames.begin(),this->ivnames.end(),n);
     if(p==this->ivnames.end()){
-      string msg("UmatBehaviourBase::getInternalStateVariableType : ");
-      msg += "no internal variable named '"+n+"' declared";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariableType: "
+			       "no internal variable named '"+n+"' declared"));
     }
     if(this->ivnames.size()!=this->ivtypes.size()){
-      string msg("UmatBehaviourBase::getInternalStateVariableType : "
-		 "the number of internal variables names and "
-		 "the number of internal variables types do not match");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariableType: "
+			       "the number of internal variables names and "
+			       "the number of internal variables types do not match"));
     }
-    int t = this->ivtypes[p-this->ivnames.begin()];
+    const auto t = this->ivtypes[p-this->ivnames.begin()];
     if(t==0){
       return 0u;
     } else if(t==1){
       return 1u;
     } else if(t==3){
       return 3u;
-    } else {
-      string msg("UmatBehaviourBase::getInternalStateVariableType : ");
-      msg += "unsupported internal variable type";
-      throw(runtime_error(msg));
     }
-    return 0u;
+    throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariableType : "
+			     "unsupported internal variable type"));
   }
   
   unsigned short

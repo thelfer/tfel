@@ -156,7 +156,7 @@ namespace tfel
     TestDocMain::treatUnknownArgument(void)
     {
       using namespace std;
-      const auto& s = static_cast<const string&>(*(this->currentArgument));
+      const auto& s = this->currentArgument->as_string();
       if(s[0]=='-'){
 	ArgumentParserBase<TestDocMain>::treatUnknownArgument();
 	cerr << "TestDocMain : unsupported option '" << s << "'\n";

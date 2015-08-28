@@ -35,9 +35,9 @@ namespace tfel
 
       struct StandardBinaryFunctionBase
       {
-	static void
+	TFEL_NORETURN static void
 	throwUnimplementedDifferentiateFunctionException(void);
-	static void
+	TFEL_NORETURN static void
 	throwInvalidCallException(const int);
       }; // end of struct StandardBinaryFunctionBase
 
