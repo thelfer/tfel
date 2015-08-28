@@ -57,6 +57,7 @@ struct abs_compare{
   }
 };
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
 

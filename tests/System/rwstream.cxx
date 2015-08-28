@@ -47,8 +47,8 @@ static void read (void)
   r.close();
 } // end of main
 
-int
-main(void)
+/* coverity [UNCAUGHT_EXCEPT]*/
+int main(void)
 {
   write();
   read();

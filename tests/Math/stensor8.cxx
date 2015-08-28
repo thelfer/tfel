@@ -193,6 +193,7 @@ struct STensorTest8_3D final
 TFEL_TESTS_GENERATE_PROXY(STensorTest8_2D,"STensorTest8-2D");
 TFEL_TESTS_GENERATE_PROXY(STensorTest8_3D,"STensorTest8-3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::tests;

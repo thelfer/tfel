@@ -36,6 +36,7 @@ struct Expr
 			  DoNothing>::type
 {};
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   Expr<std::vector<double> >::const_iterator p;
   static_cast<void>(p);

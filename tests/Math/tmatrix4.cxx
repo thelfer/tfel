@@ -53,6 +53,7 @@ struct TMatrix4Test final
 TFEL_TESTS_GENERATE_PROXY(TMatrix4Test,
 			  "TMatrix4Test");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

@@ -53,6 +53,7 @@ struct Expr2Test final
 
 TFEL_TESTS_GENERATE_PROXY(Expr2Test,"Expr2Test");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

@@ -80,6 +80,7 @@ struct Expr6Test final
 
 TFEL_TESTS_GENERATE_PROXY(Expr6Test,"Expr6Test");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

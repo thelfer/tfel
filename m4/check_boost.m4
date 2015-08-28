@@ -29,7 +29,6 @@ AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
 
 BOOST_CPPFLAGS=""
-BOOST_LIBSUFFIX="-mt"
 BOOST_LIBS=""
 
 AC_CHECKING(for BOOST location)
@@ -39,14 +38,11 @@ AC_ARG_WITH(boost,
              AC_MSG_RESULT("select $withval as path to BOOST library")
             ])
 
-AC_MSG_RESULT(\$BOOSTDIR = ${BOOSTDIR})
-
 CPPFLAGS_old="${CPPFLAGS}"
 LIBS_old=$LIBS
 
 if test "x${BOOSTDIR}" != "x" ; then
   BOOST_CPPFLAGS="-isystem${BOOSTDIR}/include"
-  BOOST_LIBS="-L${BOOSTDIR}/lib"
 fi
 
 boost_ok=no
@@ -83,31 +79,81 @@ if test "x${boost_headers_ok}" = "xyes" ; then
   dnl BOOST binaries
   AC_CHECKING(for BOOST binaries)
   boost_lib_dir_ok=yes
-  if test "x${BOOSTDIR}" != "x" ; then
+  BOOST_LIBSUFFIX="-mt"
+  if test "x${BOOSTDIR}" != "x" ;
+  then
     AC_CHECK_FILE(${BOOSTDIR}/lib/libboost_thread${BOOST_LIBSUFFIX}.so,
                   boost_lib_dir_ok=yes,
                   boost_lib_dir_ok=no)
-    if test "x${boost_lib_dir_ok}" = "xno" ; then
-      BOOST_LIBSUFFIX=""
-      AC_CHECK_FILE(${BOOSTDIR}/lib/libboost_thread${BOOST_LIBSUFFIX}.so,
-                    boost_lib_dir_ok=yes,
-                    boost_lib_dir_ok=no)
+    if test "x${boost_lib_dir_ok}" = "xyes" ;
+    then
+	BOOST_LIBS="-L${BOOSTDIR}/lib"	
+    else
+	if test "x$TFEL_LINUX" = "xyes" ;
+	then
+	    if test "x$TFEL_ARCH32" = "xyes" ;
+	    then
+		AC_CHECK_FILE(${BOOSTDIR}/lib/i386-linux-gnu/libboost_thread${BOOST_LIBSUFFIX}.so,
+			      boost_lib_dir_ok=yes,
+			      boost_lib_dir_ok=no)
+		BOOST_LIBS="-L${BOOSTDIR}/lib/i386-linux-gnu"
+	    else
+		AC_CHECK_FILE(${BOOSTDIR}/lib/x86_64-linux-gnu/libboost_thread${BOOST_LIBSUFFIX}.so,
+			      boost_lib_dir_ok=yes,
+			      boost_lib_dir_ok=no)
+		BOOST_LIBS="-L${BOOSTDIR}/lib/x86_64-linux-gnu"
+	    fi
+	fi
     fi
-  fi
-  if test "x${boost_lib_dir_ok}" = "xyes" ; then
-    LIBS="${LIBS_old} ${BOOST_LIBS} -lboost_thread${BOOST_LIBSUFFIX}"
-    AC_TRY_LINK([#include <boost/thread/thread.hpp>],
-                [struct TBody{ void operator()(){} }; boost::thread(TBody())],
-                boost_binaries_ok=yes,
-                boost_binaries_ok=no)
-    if test "x${boost_binaries_ok}" = "xno" ; then
-      BOOST_LIBSUFFIX=""
-      LIBS="${LIBS_old} ${BOOST_LIBS} -lboost_thread${BOOST_LIBSUFFIX}"
+    if test "x${boost_lib_dir_ok}" = "xno" ;
+    then
+       BOOST_LIBSUFFIX=""
+       AC_CHECK_FILE(${BOOSTDIR}/lib/libboost_thread.so,
+                     boost_lib_dir_ok=yes,
+                     boost_lib_dir_ok=no)
+       if test "x${boost_lib_dir_ok}" = "xyes" ;
+       then
+       	   BOOST_LIBS="-L${BOOSTDIR}/lib"	
+       else
+       	   if test "x$TFEL_LINUX" = "xyes" ;
+       	   then
+       	       if test "x$TFEL_ARCH32" = "xyes" ;
+       	       then
+       		   AC_CHECK_FILE(${BOOSTDIR}/lib/i386-linux-gnu/libboost_thread.so,
+       				 boost_lib_dir_ok=yes,
+       				 boost_lib_dir_ok=no)
+       		   BOOST_LIBS="-L${BOOSTDIR}/lib/i386-linux-gnu"
+       	       else
+       		   AC_CHECK_FILE(${BOOSTDIR}/lib/x86_64-linux-gnu/libboost_thread.so,
+       				 boost_lib_dir_ok=yes,
+       				 boost_lib_dir_ok=no)
+       		   BOOST_LIBS="-L${BOOSTDIR}/lib/x86_64-linux-gnu"
+       	       fi
+       	   fi
+       fi
+    fi
+    if test "x${boost_lib_dir_ok}" = "xyes" ; then
+	LIBS="${LIBS_old} ${BOOST_LIBS} -lboost_thread${BOOST_LIBSUFFIX}"
+	AC_TRY_LINK([#include <boost/thread/thread.hpp>],
+                    [struct TBody{ void operator()(){} }; boost::thread(TBody())],
+                    boost_binaries_ok=yes,
+                    boost_binaries_ok=no)
+    fi
+  else
+      LIBS="${LIBS_old} -lboost_thread${BOOST_LIBSUFFIX}"
       AC_TRY_LINK([#include <boost/thread/thread.hpp>],
                   [struct TBody{ void operator()(){} }; boost::thread(TBody())],
                   boost_binaries_ok=yes,
                   boost_binaries_ok=no)
-    fi
+      if test "x${boost_binaries_ok}" = "xno" ;
+      then
+	  BOOST_LIBSUFFIX=""
+	  LIBS="${LIBS_old} -lboost_thread"
+	  AC_TRY_LINK([#include <boost/thread/thread.hpp>],
+                      [struct TBody{ void operator()(){} }; boost::thread(TBody())],
+                      boost_binaries_ok=yes,
+                      boost_binaries_ok=no)
+      fi
   fi
 fi
 

@@ -64,6 +64,7 @@ struct STensorTest5 final
 
 TFEL_TESTS_GENERATE_PROXY(STensorTest5,"STensorTest5");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::tests;

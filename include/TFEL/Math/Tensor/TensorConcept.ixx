@@ -83,11 +83,10 @@ namespace tfel{
 	    const unsigned short i,
 	    const unsigned short j)
 	{
-	  typedef typename TensorTraits<TensorType>::NumType NumType;
 	  if((i==j)&&(i<3)){
 	    return t(i);
 	  }
-	  return NumType(0);
+	  throw(TensorInvalidIndexesException());
 	}
       };
       
@@ -101,7 +100,6 @@ namespace tfel{
 	    const unsigned short i,
 	    const unsigned short j)
 	{
-	  typedef typename TensorTraits<TensorType>::NumType NumType;
 	  if((i==j)&&(i<3)){
 	    return t(i);
 	  } else if((i==0)&&(j==1)){
@@ -109,7 +107,7 @@ namespace tfel{
 	  } else if((i==1)&&(j==0)){
 	    return t(4);
 	  }
-	  return NumType(0);
+	  throw(TensorInvalidIndexesException());
 	}
       };
 
@@ -123,7 +121,6 @@ namespace tfel{
 	    const unsigned short i,
 	    const unsigned short j)
 	{
-	  typedef typename TensorTraits<TensorType>::NumType NumType;
 	  if((i==j)&&(i<3)){
 	    return t(i);
 	  } else if((i==0)&&(j==1)){
@@ -140,7 +137,6 @@ namespace tfel{
 	    return t(8);
 	  }
 	  throw(TensorInvalidIndexesException());
-	  return NumType(0);
 	}
       };
 

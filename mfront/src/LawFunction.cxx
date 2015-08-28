@@ -15,6 +15,12 @@
 
 namespace mfront{
 
+  LawFunction::LawFunction() = default;
+  LawFunction::LawFunction(LawFunction&&) = default;
+  LawFunction::LawFunction(const LawFunction&) = default;
+  LawFunction& LawFunction::operator=(LawFunction&&) = default;
+  LawFunction& LawFunction::operator=(const LawFunction&) = default;
+  
   LawFunction::~LawFunction()
   {} // end of LawFunction::~LawFunction
 

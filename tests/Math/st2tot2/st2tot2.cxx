@@ -63,6 +63,7 @@ struct ST2toT2Test_1D final
 
 TFEL_TESTS_GENERATE_PROXY(ST2toT2Test_1D,"ST2toT2Test-1D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace std;

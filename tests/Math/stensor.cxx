@@ -20,6 +20,7 @@
 
 #include"TFEL/Math/stensor.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;  
   using namespace tfel::math;  

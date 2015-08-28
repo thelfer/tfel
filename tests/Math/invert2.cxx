@@ -152,6 +152,7 @@ TFEL_TESTS_GENERATE_PROXY(LongDoubleTinyMatrixInvertTest3D,
 			  "TinyMatrixInvertTest3D<long double>");
 
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

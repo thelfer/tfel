@@ -302,6 +302,7 @@ TFEL_TESTS_GENERATE_PROXY(TensorProductCheck2D,
 TFEL_TESTS_GENERATE_PROXY(TensorProductCheck3D,
 			  "TensorProductCheck3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

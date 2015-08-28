@@ -107,6 +107,7 @@ struct STensorTest9_3D final
 
 TFEL_TESTS_GENERATE_PROXY(STensorTest9_3D,"STensorTest9-3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::tests;

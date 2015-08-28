@@ -49,6 +49,7 @@ LM_STATIC void test(double & v,
   g(1) = v1;
 } // end of test
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

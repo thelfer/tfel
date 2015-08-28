@@ -507,9 +507,9 @@ treatLicences(void)
   exit(EXIT_SUCCESS);
 } // end of treatLicences
 
-int
-main(const int argc,
-     const char *const *const argv)
+/* coverity [UNCAUGHT_EXCEPT]*/
+int main(const int argc,
+	 const char *const *const argv)
 {
   using namespace std;
   CallBacksContainer::const_iterator p;

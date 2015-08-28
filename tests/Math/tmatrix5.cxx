@@ -59,6 +59,7 @@ struct TMatrixRowViewTest final
 TFEL_TESTS_GENERATE_PROXY(TMatrixRowViewTest,
 			  "TMatrixRowViewTest");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

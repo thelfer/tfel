@@ -629,6 +629,7 @@ TFEL_TESTS_GENERATE_PROXY(TensorTest9_1D,"TensorTest9_1D");
 TFEL_TESTS_GENERATE_PROXY(TensorTest9_2D,"TensorTest9_2D");
 TFEL_TESTS_GENERATE_PROXY(TensorTest9_3D,"TensorTest9_3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::tests;

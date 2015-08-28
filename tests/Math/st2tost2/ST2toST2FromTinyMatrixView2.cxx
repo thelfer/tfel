@@ -109,6 +109,7 @@ struct ST2toST2FromTinyMatrixView2Test
 TFEL_TESTS_GENERATE_PROXY(ST2toST2FromTinyMatrixView2Test,
 			  "ST2toST2FromTinyMatrixView2Test");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

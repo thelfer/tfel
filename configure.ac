@@ -197,7 +197,8 @@ if test "x$GXX" == "xyes"; then
 fi
 
 # intel icc specific treatement
-if test "x$INTEL" == "xyes"; then
+if test "x$INTEL" == "xyes";
+then
     COMPILER_FLAGS="";
     COMPILER_CXXFLAGS="-std=c++11";
     COMPILER_WARNINGS="";
@@ -211,6 +212,20 @@ CFLAGS="$CFLAGS $COMPILER_FLAGS"
 CXXFLAGS="$CXXFLAGS $COMPILER_FLAGS"
 CXXFLAGS="$CXXFLAGS $COMPILER_CXXFLAGS"
 CXXFLAGS="$CXXFLAGS $COMPILER_WARNINGS"
+
+AC_MSG_CHECKING([C++11 noreturn attribute])
+noreturn=yes
+AC_TRY_COMPILE([
+	[[noreturn]] void f();
+	], [],
+	noreturn=no)
+AC_MSG_RESULT($noreturn)
+
+if test "x$noreturn" == "xyes";
+then
+   COMPILER_CXXFLAGS="$COMPILER_CXXFLAGS -DTFEL_HAVE_NORETURN_ATTRIBUTE";
+   CXXFLAGS="$CXXFLAGS -DTFEL_HAVE_NORETURN_ATTRIBUTE";
+fi
 
 AC_DEFINE_UNQUOTED(COMPILER_FLAGS,"$COMPILER_FLAGS")
 AC_DEFINE_UNQUOTED(COMPILER_CXXFLAGS,"$COMPILER_CXXFLAGS")

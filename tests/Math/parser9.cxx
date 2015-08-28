@@ -60,6 +60,7 @@ struct ParserTest final
 TFEL_TESTS_GENERATE_PROXY(ParserTest,
 			  "ParserTest9");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

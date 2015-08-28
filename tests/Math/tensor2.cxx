@@ -78,6 +78,7 @@ struct RightCauchyGreenTensorTest2 final
 TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorTest,"RightCauchyGreenTensorTest");
 TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorTest2,"RightCauchyGreenTensorTest2");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::tests;

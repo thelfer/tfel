@@ -63,6 +63,7 @@ struct Tensor3Test final
 TFEL_TESTS_GENERATE_PROXY(Tensor3Test,
 			  "Tensor3Test");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

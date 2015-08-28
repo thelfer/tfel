@@ -22,15 +22,15 @@ namespace mfront
 
   struct MFRONT_VISIBILITY_EXPORT LawFunction
   {
-    LawFunction() = default;
-    LawFunction(LawFunction&&) = default;
-    LawFunction(const LawFunction&) = default;
-    LawFunction& operator=(LawFunction&&) = default;
-    LawFunction& operator=(const LawFunction&) = default;
+    LawFunction();
+    LawFunction(LawFunction&&);
+    LawFunction(const LawFunction&);
+    LawFunction& operator=(LawFunction&&);
+    LawFunction& operator=(const LawFunction&);
     ~LawFunction();
     std::string body;
-    unsigned int line;
-    bool modified;
+    unsigned int line = 0u;
+    bool modified     = false;
   }; // end of struct LawFunction
 
 } // end of namespace mfront

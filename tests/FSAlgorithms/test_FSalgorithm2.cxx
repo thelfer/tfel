@@ -24,6 +24,7 @@
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using uishort = unsigned short;

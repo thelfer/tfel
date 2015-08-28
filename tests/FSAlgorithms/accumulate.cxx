@@ -22,6 +22,7 @@
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main()
 {
   using namespace std;

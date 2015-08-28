@@ -180,6 +180,7 @@ struct TargetsDescriptionTest final
 TFEL_TESTS_GENERATE_PROXY(TargetsDescriptionTest,
 			  "TargetsDescriptionTest");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace tfel::tests;

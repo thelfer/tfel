@@ -509,6 +509,7 @@ TFEL_TESTS_GENERATE_PROXY(DecompositionInPositiveAndNegativePartsTest2D,
 TFEL_TESTS_GENERATE_PROXY(DecompositionInPositiveAndNegativePartsTest3D,
 			  "DecompositionInPositiveAndNegativePartsTest3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

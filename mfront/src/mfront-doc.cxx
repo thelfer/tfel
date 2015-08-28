@@ -30,6 +30,7 @@
 #include"MFront/AbstractDSL.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char *const *const argv)
 {
   using namespace std;

@@ -25,6 +25,7 @@
 #include"TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

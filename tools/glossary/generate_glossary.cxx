@@ -853,6 +853,7 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer)
   doc << "<!-- Local IspellDict: english -->" << endl;
 }
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(int argc, char* argv[])
 {
   using namespace std;

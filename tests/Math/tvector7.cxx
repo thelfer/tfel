@@ -58,6 +58,7 @@ struct TVector7
 TFEL_TESTS_GENERATE_PROXY(TVector7,
 			  "TVector7");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

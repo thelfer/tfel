@@ -102,6 +102,7 @@ public:
 
 };
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
 
   using namespace tfel::meta;

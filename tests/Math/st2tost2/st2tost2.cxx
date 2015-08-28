@@ -21,6 +21,7 @@
 
 #include"TFEL/Math/st2tost2.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace tfel::math;

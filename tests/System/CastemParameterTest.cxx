@@ -51,6 +51,7 @@ struct CastemParameterTest
 TFEL_TESTS_GENERATE_PROXY(CastemParameterTest,
 			  "CastemParameterTest");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

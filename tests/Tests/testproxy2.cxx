@@ -30,6 +30,7 @@ TFEL_TESTS_FUNCTION(test1,"TFEL/Tests","suite1")
   return true;
 }
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

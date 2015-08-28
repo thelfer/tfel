@@ -37,6 +37,7 @@ TFEL_TESTS_STATIC bool test2(void)
   return false;
 }
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace tfel::tests;

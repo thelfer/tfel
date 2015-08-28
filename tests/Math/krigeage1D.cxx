@@ -28,6 +28,7 @@ rand(const double min,
   return min+((max-min)*rand())/RAND_MAX;
 }
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main () {
   using namespace std;
   using namespace tfel::math;

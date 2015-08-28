@@ -23,6 +23,7 @@
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/tvector.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

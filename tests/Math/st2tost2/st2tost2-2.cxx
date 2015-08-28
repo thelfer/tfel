@@ -23,8 +23,8 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/stensor.hxx"
 
-int
-main(void)
+/* coverity [UNCAUGHT_EXCEPT]*/
+int main(void)
 {
   using namespace tfel::math;
   using namespace std;

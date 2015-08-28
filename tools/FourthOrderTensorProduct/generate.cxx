@@ -268,6 +268,7 @@ writeFileTrailer(std::ostream& out,
   out << "#endif /* _LIB_TFEL_MATH_" << toupper(getName(p)) << "PRODUCTEXPR_H */" << endl;
 } // end of writeFileTrailer
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

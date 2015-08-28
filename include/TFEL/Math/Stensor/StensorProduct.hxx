@@ -124,21 +124,14 @@ namespace tfel{
 	switch(i){
 	case 0:
 	  return (this->a(3)*this->b(3))/2+this->a(0)*this->b(0);
-	  break;
 	case 1:
 	  return (this->a(3)*this->b(3))/2+this->a(1)*this->b(1);
-	  break;
 	case 2:
 	  return this->a(2)*this->b(2);
-	  break;
 	case 3:
 	  return ((this->a(0)*this->b(3))+(this->a(3)*this->b(1)))*cste;
-	  break;
 	case 4:
 	  return ((this->a(1)*this->b(3))+(this->a(3)*this->b(0)))*cste;
-	  break;
-	default:
-	  return T(0);
 	}
 	return T(0);
       } // end of operator()
@@ -171,35 +164,24 @@ namespace tfel{
 	using constexpr_fct::sqrt;
 	constexpr base cste = base(1)/sqrt(base(2));
 	switch(i){
-	default:
 	case 0:
 	  return (this->a(4)*this->b(4))/2+(this->a(3)*this->b(3))/2+this->a(0)*this->b(0);
-	  break;
 	case 1:
 	  return (this->a(5)*this->b(5))/2+(this->a(3)*this->b(3))/2+this->a(1)*this->b(1);
-	  break;
 	case 2:
 	  return (this->a(5)*this->b(5))/2+(this->a(4)*this->b(4))/2+this->a(2)*this->b(2);
-	  break;
 	case 3:
 	  return (this->a(4)*this->b(5))/2+(this->a(0)*this->b(3)+this->a(3)*this->b(1))*cste;
-	  break;
 	case 4:
 	  return (this->a(5)*this->b(4))/2+(this->a(1)*this->b(3)+this->a(3)*this->b(0))*cste;
-	  break;
 	case 5:
 	  return (this->a(3)*this->b(5))/2+(this->a(0)*this->b(4)+this->a(4)*this->b(2))*cste;
-	  break;
 	case 6:
 	  return (this->a(5)*this->b(3))/2+(this->a(2)*this->b(4)+this->a(4)*this->b(0))*cste;
-	  break;
 	case 7:
 	  return (this->a(3)*this->b(4))/2+(this->a(1)*this->b(5)+this->a(5)*this->b(2))*cste;
-	  break;
 	case 8:
 	  return (this->a(4)*this->b(3))/2+(this->a(2)*this->b(5)+this->a(5)*this->b(1))*cste;
-	  break;
-	  return T(0);
 	}
 	return T(0);
       } // end of operator()

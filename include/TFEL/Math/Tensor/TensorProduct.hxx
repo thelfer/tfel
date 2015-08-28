@@ -106,21 +106,14 @@ namespace tfel{
 	switch(i){
 	case 0:
 	  return (this->a(3))*(this->b(4))+(this->a(0))*(this->b(0));
-	  break;
 	case 1:
 	  return (this->a(4))*(this->b(3))+(this->a(1))*(this->b(1));
-	  break;
 	case 2:
 	  return (this->a(2))*(this->b(2));
-	  break;
 	case 3:
 	  return (this->a(0))*(this->b(3))+(this->a(3))*(this->b(1));
-	  break;
 	case 4:
 	  return (this->a(1))*(this->b(4))+(this->a(4))*(this->b(0));
-	  break;
-	default:
-	  return T(0);
 	}
 	return T(0);
       } // end of operator()
@@ -148,33 +141,22 @@ namespace tfel{
 	switch(i){
 	case 0: /* a5*b6+a3*b4+a0*b0 */
 	  return (this->a(5))*(this->b(6))+(this->a(3))*(this->b(4))+(this->a(0))*(this->b(0));
-	  break;
 	case 1: /* a7*b8+a4*b3+a1*b1 */
 	  return (this->a(7))*(this->b(8))+(this->a(4))*(this->b(3))+(this->a(1))*(this->b(1)); 
-	  break;
 	case 2: /* a8*b7+a6*b5+a2*b2 */
 	  return (this->a(8))*(this->b(7))+(this->a(6))*(this->b(5))+(this->a(2))*(this->b(2)); 
-	  break;
 	case 3: /* a5*b8+a0*b3+a3*b1 */
 	  return (this->a(5))*(this->b(8))+(this->a(0))*(this->b(3))+(this->a(3))*(this->b(1)); 
-	  break;
 	case 4: /* a7*b6+a1*b4+a4*b0 */
 	  return  (this->a(7))*(this->b(6))+(this->a(1))*(this->b(4))+(this->a(4))*(this->b(0)); 
-	  break;
 	case 5: /* a3*b7+a0*b5+a5*b2 */
 	  return (this->a(3))*(this->b(7))+(this->a(0))*(this->b(5))+(this->a(5))*(this->b(2));
-	  break;
 	case 6: /* a2*b6+a8*b4+a6*b0 */
 	  return (this->a(2))*(this->b(6))+(this->a(8))*(this->b(4))+(this->a(6))*(this->b(0));
-	  break;
 	case 7: /* a1*b7+a4*b5+a7*b2 */
 	  return (this->a(1))*(this->b(7))+(this->a(4))*(this->b(5))+(this->a(7))*(this->b(2)); 
-	  break;
 	case 8: /* a2*b8+a6*b3+a8*b1 */
 	  return (this->a(2))*(this->b(8))+(this->a(6))*(this->b(3))+(this->a(8))*(this->b(1));
-	  break;
-	default:
-	  return T(0);
 	}
 	return T(0);
       } // end of operator()

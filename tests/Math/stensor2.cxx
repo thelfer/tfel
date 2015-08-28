@@ -22,6 +22,7 @@
 #include"TFEL/Math/General/Complex.hxx"
 #include"TFEL/Math/stensor.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
 
   using namespace tfel::math;

@@ -112,6 +112,7 @@ struct StensorChangeBasis2Test final
 TFEL_TESTS_GENERATE_PROXY(StensorChangeBasis2Test,
 			  "StensorChangeBasis2Test");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

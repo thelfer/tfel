@@ -26,6 +26,7 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::math;

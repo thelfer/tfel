@@ -98,6 +98,7 @@ struct GenTypeTest2 final
 
 TFEL_TESTS_GENERATE_PROXY(GenTypeTest2,"GenType");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

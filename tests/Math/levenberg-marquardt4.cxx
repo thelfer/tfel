@@ -32,6 +32,7 @@
 #include"TFEL/Math/LevenbergMarquardt.hxx"
 #include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardtEvaluatorWrapper.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
 #if  __GNUC__ != 3

@@ -21,6 +21,7 @@
 #include"TFEL/Math/qt.hxx"
 #include"TFEL/Math/tvector.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::math;

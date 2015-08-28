@@ -16,8 +16,8 @@
 
 #include"TFEL/System/ProcessManager.hxx"
 
-int
-main(void)
+/* coverity [UNCAUGHT_EXCEPT]*/
+int main(void)
 {
   using namespace tfel::system;
   ProcessManager m;

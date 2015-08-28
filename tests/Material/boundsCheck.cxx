@@ -22,6 +22,7 @@
 #include"TFEL/Material/BoundsCheck.hxx"
 #include"TFEL/Material/MaterialException.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

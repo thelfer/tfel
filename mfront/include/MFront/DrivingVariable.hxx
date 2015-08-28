@@ -39,7 +39,7 @@ namespace mfront
     //! This flags tells which of the driving variable increment or of
     //! the value of driving variable at the end of the time step is
     //! given.
-    bool increment_known;
+    bool increment_known = false;
     /*!
      * comparison operator
      * \param[in] o : the other driving variable

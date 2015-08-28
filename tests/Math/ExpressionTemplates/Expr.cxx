@@ -122,6 +122,7 @@ ExprTest::~ExprTest()
 
 TFEL_TESTS_GENERATE_PROXY(ExprTest,"ExprTest");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

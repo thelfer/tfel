@@ -84,6 +84,7 @@ void test(void)
 
 }
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace tfel::math;

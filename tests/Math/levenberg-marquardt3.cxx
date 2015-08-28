@@ -46,12 +46,12 @@ test(const double& x,
   return res;
 } // end of test
 
-double
-f(const double x)
+LM_STATIC double f(const double x)
 {
   return 2.1033*exp(-403.02/x);
 }
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

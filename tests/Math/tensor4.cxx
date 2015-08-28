@@ -160,6 +160,7 @@ TFEL_TESTS_GENERATE_PROXY(Tensor4Test2D,
 TFEL_TESTS_GENERATE_PROXY(Tensor4Test3D,
 			  "Tensor4Test3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

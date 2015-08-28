@@ -59,6 +59,7 @@ struct Discretization1DTest final
 TFEL_TESTS_GENERATE_PROXY(Discretization1DTest,
 			  "Discretization1DTest");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

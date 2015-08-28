@@ -72,6 +72,7 @@ BROYDEN_STATIC void test2(void)
   vf = f(res);
 }
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   test();

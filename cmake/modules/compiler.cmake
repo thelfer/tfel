@@ -141,6 +141,21 @@ else(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   message(FATAL_ERROR "unsupported compiler id")
 endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
+file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx"
+  "[[ noreturn ]] void f(void);
+   int main(){return 0;}")
+try_compile(HAVE_NORETURN_ATTRIBUTE
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
+      COMPILE_DEFINITIONS ${COMPILER_CXXFLAGS})
+if(HAVE_NORETURN_ATTRIBUTE)
+  MESSAGE(STATUS "enabling [[ noreturn ]] attribute")
+  set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -DTFEL_HAVE_NORETURN_ATTRIBUTE")
+else(HAVE_NORETURN_ATTRIBUTE)
+  MESSAGE(STATUS "disabling [[ noreturn ]] attribute")
+endif(HAVE_NORETURN_ATTRIBUTE)
+			  
+
 add_definitions("-DOPTIMISATION_FLAGS0=\\\"\"${VISIBILITY_FLAGS} ${OPTIMISATION_FLAGS}\"\\\"")
 add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS_MARCH}\"\\\"")
 add_definitions("-DOPTIMISATION_FLAGS2=\\\"\"${OPTIMISATION_FLAGS2}\"\\\"")

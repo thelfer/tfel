@@ -22,6 +22,7 @@
 
 #include"TFEL/Math/qt.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
 #ifndef _MSC_VER
   using namespace std;

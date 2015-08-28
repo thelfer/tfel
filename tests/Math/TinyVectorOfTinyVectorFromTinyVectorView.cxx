@@ -69,6 +69,7 @@ struct TinyVectorOfTinyVectorFromTinyVectorViewTest final
 TFEL_TESTS_GENERATE_PROXY(TinyVectorOfTinyVectorFromTinyVectorViewTest,"TinyVectorOfTinyVectorFromTinyVectorViewTest");
 
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

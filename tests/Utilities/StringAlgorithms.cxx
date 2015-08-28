@@ -50,6 +50,7 @@ struct StringAlgorithmsTest final
 
 TFEL_TESTS_GENERATE_PROXY(StringAlgorithmsTest,"StringAlgorithms");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

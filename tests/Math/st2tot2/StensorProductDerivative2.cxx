@@ -109,6 +109,7 @@ TFEL_TESTS_GENERATE_PROXY(StensorProductDerivative2_1D,"StensorProductDerivative
 TFEL_TESTS_GENERATE_PROXY(StensorProductDerivative2_2D,"StensorProductDerivative2-2D");
 TFEL_TESTS_GENERATE_PROXY(StensorProductDerivative2_3D,"StensorProductDerivative2-3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::tests;

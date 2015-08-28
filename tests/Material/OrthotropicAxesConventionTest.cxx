@@ -85,6 +85,7 @@ struct OrthotropicAxesConventionTest final
 
 TFEL_TESTS_GENERATE_PROXY(OrthotropicAxesConventionTest,"OrthotropicAxesConvention");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace tfel::tests;

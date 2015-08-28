@@ -20,6 +20,7 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Material/Hill.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

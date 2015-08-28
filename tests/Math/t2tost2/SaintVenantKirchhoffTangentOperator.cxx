@@ -146,6 +146,7 @@ TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchoffTangentOperator_1D,"SaintVenantKirc
 TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchoffTangentOperator_2D,"SaintVenantKirchoffTangentOperator-2D");
 TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchoffTangentOperator_3D,"SaintVenantKirchoffTangentOperator-3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

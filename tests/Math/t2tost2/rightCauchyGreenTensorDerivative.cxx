@@ -96,6 +96,7 @@ TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorDerivative_1D,"RightCauchyGreenT
 TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorDerivative_2D,"RightCauchyGreenTensorDerivative-2D");
 TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorDerivative_3D,"RightCauchyGreenTensorDerivative-3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::tests;

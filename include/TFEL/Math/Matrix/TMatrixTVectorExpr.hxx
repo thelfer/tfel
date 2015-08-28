@@ -67,7 +67,7 @@ namespace tfel{
 	//! default constructor
 	TFEL_MATH_INLINE RowConstIterator(const MType& m_,
 					  const unsigned short i_)
-	  : m(m_),i(i_),j(0)
+	  : m(m_),i(i_)
 	{}
 	//! go to the next column
 	TFEL_MATH_INLINE RowConstIterator& operator++ ()
@@ -84,7 +84,7 @@ namespace tfel{
       private:
 	const MType& m;         //! reference to the underlying matrix
 	const unsigned short i; //! row index
-	unsigned short j;       //! current column 
+	unsigned short j = 0;       //! current column 
       }; // end of struc RowConstIterator
       //! a pseudo iterator for the vector. This iterator works even if
       // VType does not provide an iterator
@@ -93,21 +93,21 @@ namespace tfel{
 	using VType   = typename std::decay<B>::type;
 	using NumType = typename VectorTraits<VType>::NumType;
 	TFEL_MATH_INLINE VectorConstIterator(const VType& v_)
-	  : v(v_),i(0)
+	  : v(v_)
 	{}
 	TFEL_MATH_INLINE VectorConstIterator& operator++ ()
 	{
 	  ++i;
 	  return *this;
 	} // end of operator++
-	TFEL_MATH_INLINE const NumType &
+	TFEL_MATH_INLINE NumType
 	operator *(void) const
 	{
 	  return this->v(this->i);
 	}
       private:
-	const VType& v;
-	unsigned short i;
+	VType v;
+	unsigned short i = 0;
       }; // end of struc VectorConstIterator
 
     protected:

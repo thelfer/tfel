@@ -34,6 +34,7 @@ struct count
   int c;
 };
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main()
 {
   using namespace tfel::fsalgo;

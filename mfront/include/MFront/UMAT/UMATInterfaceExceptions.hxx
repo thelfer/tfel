@@ -97,7 +97,7 @@ namespace umat{
      * \param[in] b : behaviour name
      * \param[in] e : the UMATException to be treated
      */
-    TFEL_NORETURN static void
+    static void
     treatUmatException(const std::string&,
 		       const UMATException&);
 
@@ -107,7 +107,7 @@ namespace umat{
      * \param[in] b : behaviour name
      * \param[in] e : the material exception to be treated
      */
-    TFEL_NORETURN static void
+    static void
     treatMaterialException(const std::string&,
 			   const tfel::material::MaterialException&);
     

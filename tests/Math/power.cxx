@@ -21,7 +21,7 @@
 
 #include"TFEL/Math/power.hxx"
 
-
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

@@ -70,9 +70,9 @@ namespace mfront{
       FlowHandler& operator=(const FlowHandler&) = default;
       ~FlowHandler() noexcept;
       std::string flowRule;
-      FlowType flow;
-      double theta;
-      bool hasSpecificTheta;
+      FlowType flow = PlasticFlow;
+      double theta  = 1.;
+      bool hasSpecificTheta = false;
     }; // end of struct LawHandler
     
     std::vector<FlowHandler> flows;

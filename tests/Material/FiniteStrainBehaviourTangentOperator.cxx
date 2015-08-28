@@ -42,6 +42,7 @@ struct FiniteStrainBehaviourTangentOperator final
 TFEL_TESTS_GENERATE_PROXY(FiniteStrainBehaviourTangentOperator,
 			  "FiniteStrainBehaviourTangentOperator");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

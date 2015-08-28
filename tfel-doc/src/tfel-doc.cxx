@@ -15,9 +15,9 @@
 
 #include"TFEL/Utilities/TestDocMain.hxx"
 
-int
-main(const int argc,
-     const char* const * const argv)
+/* coverity [UNCAUGHT_EXCEPT]*/
+int main(const int argc,
+	 const char* const * const argv)
 {
   using namespace tfel::utilities;
   TestDocMain m(argc,argv);

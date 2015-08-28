@@ -39,6 +39,7 @@ TFEL_TESTS_STATIC bool test1(void)
 TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<test1>,
 			   Test1FunctionWrapper,"TFEL/Tests","suite1");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

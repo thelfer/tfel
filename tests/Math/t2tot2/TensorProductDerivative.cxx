@@ -110,6 +110,7 @@ TFEL_TESTS_GENERATE_PROXY(TensorProductDerivative_1D,"TensorProductDerivative-1D
 TFEL_TESTS_GENERATE_PROXY(TensorProductDerivative_2D,"TensorProductDerivative-2D");
 TFEL_TESTS_GENERATE_PROXY(TensorProductDerivative_3D,"TensorProductDerivative-3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

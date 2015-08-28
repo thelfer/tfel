@@ -22,8 +22,8 @@
 #include"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx"
 #include"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx"
 
-int
-main(void)
+/* coverity [UNCAUGHT_EXCEPT]*/
+int main(void)
 {
   using namespace std;
   using namespace tfel::math;

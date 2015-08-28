@@ -123,6 +123,7 @@ struct CubicSplineTest final
 TFEL_TESTS_GENERATE_PROXY(CubicSplineTest,
 			  "CubicSplineTest");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

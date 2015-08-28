@@ -92,6 +92,7 @@ std::string Test(const tfel::math::Complex<long double>&){
 
 struct A{};
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::typetraits;

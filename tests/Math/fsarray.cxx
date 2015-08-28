@@ -104,6 +104,7 @@ struct FSArrayTest final
 
 TFEL_TESTS_GENERATE_PROXY(FSArrayTest,"FSArrayTest");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::tests;

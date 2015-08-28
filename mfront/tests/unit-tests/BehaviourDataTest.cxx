@@ -268,6 +268,7 @@ private:
 TFEL_TESTS_GENERATE_PROXY(BehaviourDataTest,
 			  "BehaviourDataTest");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

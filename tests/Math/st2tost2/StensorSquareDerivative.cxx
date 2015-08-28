@@ -109,6 +109,7 @@ TFEL_TESTS_GENERATE_PROXY(StensorSquareDerivative_1D,"StensorSquareDerivative-1D
 TFEL_TESTS_GENERATE_PROXY(StensorSquareDerivative_2D,"StensorSquareDerivative-2D");
 TFEL_TESTS_GENERATE_PROXY(StensorSquareDerivative_3D,"StensorSquareDerivative-3D");
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace std;
   using namespace tfel::tests;

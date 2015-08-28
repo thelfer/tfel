@@ -58,6 +58,7 @@ bool QRDecompTest()
 	  (abs(b(2)-1)<10*numeric_limits<T>::epsilon()));
 } // end of QRDecompTest
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;

@@ -23,6 +23,7 @@
 #include"MFront/InitInterfaces.hxx"
 #include"MFront/MFront.hxx"
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char *const *const argv)
 {
   using namespace mfront;

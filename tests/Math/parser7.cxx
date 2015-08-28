@@ -94,6 +94,7 @@ private:
   manager.addTest("parser7",shared_ptr<Test>(new TestFunction< ::F >(#F,XA,XB,DX)))
 
 
+/* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   using namespace std;
