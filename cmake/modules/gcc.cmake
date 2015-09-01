@@ -6,7 +6,7 @@ set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wdisabled-optimization")
 if(NOT i586-mingw32msvc_COMPILER)
   tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
-  tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibilxity-inlines-hidden")
+  tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
 endif(NOT i586-mingw32msvc_COMPILER)
 
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "march=native")

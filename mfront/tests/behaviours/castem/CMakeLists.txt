@@ -134,7 +134,6 @@ if(NOT WIN32)
       T91MartensiticSteel_ThermalExpansion_ROUX2007
       T91MartensiticSteel_YieldStress_ROUX2007
       T91MartensiticSteel_YoungModulus_ROUX2007)
-
 endif(NOT WIN32)
 
   
@@ -198,10 +197,6 @@ test_castem(elasticity14)
 test_castem(elasticity15)
 test_castem(elasticity16)
 test_castem(elasticity17)
-test_castem(elasticity18)
-test_castem(elasticity19)
-test_castem(elasticity20)
-test_castem(elasticity21)
 test_castem(elasticity22)
 test_castem(elasticity23)
 test_castem(elasticity24)
@@ -390,8 +385,6 @@ test_castem(compressibleneohookeanbehaviour)
 test_castem(incompressibleplanestressmooneyrivlinbehaviouruniaxialtesting)
 test_castem(incompressibleplanestressgornetdesmoratbehaviourbiaxialtesting)
 test_castem(implicitsimomieheelastoplasticity)
-test_castem(T91-satohtest)
-test_castem(T91-viscositytest)
 test_castem(finitestrainsinglecrystal-001)
 test_castem(finitestrainsinglecrystal-012)
 test_castem(finitestrainsinglecrystal-012-2)
@@ -402,6 +395,15 @@ test_castem(finitestrainsinglecrystal_numericaljacobian-012-2)
 test_castem(finitestrainsinglecrystal_numericaljacobian-159)
 test_castem(finitestrainsinglecrystal2-001)
 test_castem(anistropiclemaitreviscoplasticbehaviour)
+
+if(NOT WIN32)
+test_castem(T91-satohtest)
+test_castem(T91-viscositytest)
+test_castem(elasticity18)
+test_castem(elasticity19)
+test_castem(elasticity20)
+test_castem(elasticity21)
+endif(NOT WIN32)
 
 get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
