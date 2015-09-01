@@ -16,10 +16,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
 set(mfront_tests_SOURCES
   Tvergaard
   Elasticity
-  Elasticity2
-  Elasticity3
   OrthotropicElastic
-  OrthotropicElastic2
   OrthotropicCreep
   OrthotropicCreep_rk42
   OrthotropicCreep_rkCastem
@@ -73,12 +70,21 @@ set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity3
   FiniteStrainSingleCrystal
   FiniteStrainSingleCrystal_NumericalJacobian)
+
+if(NOT WIN32)
+  set(mfront_tests_SOURCES
+      Elasticity2
+      Elasticity3
+      OrthotropicElastic2
+      ${mfront_tests_SOURCES})
+
 mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
   ThermalExpansionCoefficientTest_1
   ThermalExpansionCoefficientTest_2
   ThermalExpansionCoefficientTest_3)
+endif(NOT WIN32)
 
 mfront_behaviour_check_library(MFrontAsterBehaviours  aster ${mfront_tests_SOURCES})
 target_link_libraries(MFrontAsterBehaviours

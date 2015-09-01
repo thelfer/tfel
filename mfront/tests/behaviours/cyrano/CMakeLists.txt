@@ -10,20 +10,26 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 
 set(mfront_tests_SOURCES
   Elasticity
-  Elasticity2
-  Elasticity3
   OrthotropicElastic
-  OrthotropicElastic2
   Norton
   ImplicitNorton
   OrthotropicCreep
   EllipticCreep)
+
+if(NOT WIN32)
+  set(mfront_tests_SOURCES
+      Elasticity2
+      Elasticity3
+      OrthotropicElastic2
+      ${mfront_tests_SOURCES})
+
 mfront_dependencies(MFrontCyranoBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
   ThermalExpansionCoefficientTest_1
   ThermalExpansionCoefficientTest_2
   ThermalExpansionCoefficientTest_3)
+endif(NOT WIN32)
 
 mfront_behaviour_check_library(MFrontCyranoBehaviours cyrano  ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCyranoBehaviours

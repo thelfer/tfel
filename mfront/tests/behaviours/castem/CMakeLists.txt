@@ -26,10 +26,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
 
 set(mfront_tests_SOURCES
   OrthotropicElastic
-  OrthotropicElastic2
   Elasticity
-  Elasticity2
-  Elasticity3
   GeneralizedMaxwell
   FiniteRotationSmallStrainElasticity
   FiniteRotationSmallStrainElasticity2
@@ -100,36 +97,46 @@ set(mfront_tests_SOURCES
   IncompressiblePlaneStressMooneyRivlinBehaviour
   IncompressiblePlaneStressGornetDesmoratBehaviour
   ImplicitSimoMieheElastoPlasticity
-  T91ViscoplasticBehaviour
   AnistropicLemaitreViscoplasticBehaviour)
 
-mfront_dependencies(MFrontCastemBehaviours
-  ThermalExpansionCoefficientTest
-  ThermalExpansionCoefficientTest2
-  ThermalExpansionCoefficientTest_1
-  ThermalExpansionCoefficientTest_2
-  ThermalExpansionCoefficientTest_3
-  T91AusteniticSteel_ThermalExpansion_ROUX2007
-  T91AusteniticSteel_b_ROUX2007
-  T91AusteniticSteel_F_ROUX2007
-  T91AusteniticSteel_Kvisc_ROUX2007
-  T91AusteniticSteel_Nexp_ROUX2007
-  T91AusteniticSteel_Rinf_ROUX2007
-  T91AusteniticSteel_ThermalExpansion_ROUX2007
-  T91AusteniticSteel_YieldStress_ROUX2007
-  T91AusteniticSteel_YoungModulus_ROUX2007
-  T91MartensiticSteel_b_ROUX2007
-  T91MartensiticSteel_C1_ROUX2007
-  T91MartensiticSteel_C2_ROUX2007
-  T91MartensiticSteel_F_ROUX2007
-  T91MartensiticSteel_gamma1_ROUX2007
-  T91MartensiticSteel_growth_ROUX2007
-  T91MartensiticSteel_Kvisc_ROUX2007
-  T91MartensiticSteel_Nexp_ROUX2007
-  T91MartensiticSteel_Rinf_ROUX2007
-  T91MartensiticSteel_ThermalExpansion_ROUX2007
-  T91MartensiticSteel_YieldStress_ROUX2007
-  T91MartensiticSteel_YoungModulus_ROUX2007)
+if(NOT WIN32)
+  set(mfront_tests_SOURCES
+      Elasticity2
+      Elasticity3
+      OrthotropicElastic2
+      T91ViscoplasticBehaviour
+      ${mfront_tests_SOURCES})
+
+  mfront_dependencies(MFrontCastemBehaviours
+      ThermalExpansionCoefficientTest
+      ThermalExpansionCoefficientTest2
+      ThermalExpansionCoefficientTest_1
+      ThermalExpansionCoefficientTest_2
+      ThermalExpansionCoefficientTest_3
+      T91AusteniticSteel_ThermalExpansion_ROUX2007
+      T91AusteniticSteel_b_ROUX2007
+      T91AusteniticSteel_F_ROUX2007
+      T91AusteniticSteel_Kvisc_ROUX2007
+      T91AusteniticSteel_Nexp_ROUX2007
+      T91AusteniticSteel_Rinf_ROUX2007
+      T91AusteniticSteel_ThermalExpansion_ROUX2007
+      T91AusteniticSteel_YieldStress_ROUX2007
+      T91AusteniticSteel_YoungModulus_ROUX2007
+      T91MartensiticSteel_b_ROUX2007
+      T91MartensiticSteel_C1_ROUX2007
+      T91MartensiticSteel_C2_ROUX2007
+      T91MartensiticSteel_F_ROUX2007
+      T91MartensiticSteel_gamma1_ROUX2007
+      T91MartensiticSteel_growth_ROUX2007
+      T91MartensiticSteel_Kvisc_ROUX2007
+      T91MartensiticSteel_Nexp_ROUX2007
+      T91MartensiticSteel_Rinf_ROUX2007
+      T91MartensiticSteel_ThermalExpansion_ROUX2007
+      T91MartensiticSteel_YieldStress_ROUX2007
+      T91MartensiticSteel_YoungModulus_ROUX2007)
+
+endif(NOT WIN32)
+
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 

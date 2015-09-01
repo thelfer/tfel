@@ -1143,7 +1143,7 @@ namespace mfront{
       msg += "internal error, unsupported error evaluation.";
       throw(runtime_error(msg));
     }
-    this->behaviourFile << "if(::isnan(error)){" << endl;
+    this->behaviourFile << "if(std::isnan(error)){" << endl;
     this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : nan decteted\");" << endl;
     if(getDebugMode()){
       this->behaviourFile << "cout << msg << endl;" << endl;
@@ -1527,7 +1527,7 @@ namespace mfront{
     this->behaviourFile << "ra = sqrt(((sigf)-(this->sig))|((sigf)-(this->sig)))/errabs;" << endl;
     this->behaviourFile << "sqra = sqrt(ra);" << endl;
     this->behaviourFile << "// test for convergence" << endl;
-    this->behaviourFile << "if ((sqra>"  << this->mb.getClassName() << "::rkcastem_div)||(::isnan(ra))){" << endl;
+    this->behaviourFile << "if ((sqra>"  << this->mb.getClassName() << "::rkcastem_div)||(std::isnan(ra))){" << endl;
     this->behaviourFile << "dt_ /= "  << this->mb.getClassName() << "::rkcastem_div;" << endl;
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
@@ -1914,7 +1914,7 @@ namespace mfront{
       msg += "internal error, unsupported error evaluation.";
       throw(runtime_error(msg));
     }
-    this->behaviourFile << "if(::isnan(error)){" << endl;
+    this->behaviourFile << "if(std::isnan(error)){" << endl;
     this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : nan decteted\");" << endl;
     if(getDebugMode()){
       this->behaviourFile << "cout << msg << endl;" << endl;
