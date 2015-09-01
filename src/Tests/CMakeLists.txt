@@ -11,6 +11,6 @@ tfel_library(TFELTests
              TestManager.cxx
              TestCase.cxx)
 
-if(UNIX)
+if(UNIX AND (NOT APPLE))
 target_link_libraries(TFELTests rt)
-endif(UNIX)
+endif(UNIX AND (NOT APPLE))

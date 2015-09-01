@@ -118,9 +118,9 @@ mfront_library(MFrontLogStream
 if(enable-cxx-11)
   mfront_library(MFrontProfiling
     MFrontBehaviourProfiler.cxx)
-  if(UNIX)
+  if(UNIX AND (NOT APPLE))
     target_link_libraries(MFrontProfiling rt)
-  endif(UNIX)
+  endif(UNIX AND (NOT APPLE))
 endif(enable-cxx-11)
 
 mfront_library(MTestFileGenerator

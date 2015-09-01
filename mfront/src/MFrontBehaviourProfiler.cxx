@@ -173,14 +173,14 @@ namespace mfront
     : gtimer(t),
       c(cn)
   {
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ ||defined __APPLE__)
     ::clock_gettime(CLOCK_THREAD_CPUTIME_ID,&(this->start));
 #endif
   } // end of MFrontBehaviourProfiler::Timer
 
   MFrontBehaviourProfiler::Timer::~Timer()
   {
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ ||defined __APPLE__)
     ::clock_gettime(CLOCK_THREAD_CPUTIME_ID,&(this->end));
     add_measure(this->gtimer.measures[this->c],this->start,this->end);
 #endif    

@@ -1,5 +1,7 @@
-add_subdirectory(interfaces)
-
+if(NOT APPLE)
+  add_subdirectory(interfaces)
+endif(NOT APPLE)
+  
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 
 macro(add_mfront_generated_source lib interface ext file)

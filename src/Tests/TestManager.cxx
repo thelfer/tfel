@@ -142,7 +142,7 @@ namespace tfel
 	  output = this->default_outputs;
 	}
 #ifdef _POSIX_TIMERS
-#if _POSIX_TIMERS != 0
+#if (_POSIX_TIMERS != 0) && (! defined __APPLE__)
 	timespec start;
 	timespec stop;
 	if (clock_gettime(CLOCK_MONOTONIC,&start) == -1){
@@ -153,7 +153,7 @@ namespace tfel
 #endif
 	r.append(p->second->execute(*output));
 #ifdef _POSIX_TIMERS
-#if _POSIX_TIMERS != 0
+#if (_POSIX_TIMERS != 0) && (! defined __APPLE__)
 	if (clock_gettime(CLOCK_MONOTONIC,&stop) == -1){
 	  throw(runtime_error("TestManager::execute : "
 			      "invalid call to 'clock_gettime'"));
