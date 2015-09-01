@@ -22,6 +22,10 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 
+#ifndef M_PI
+#define M_PI		3.14159265358979323846
+#endif
+
 struct StensorChangeBasisTest
   : public tfel::tests::TestCase
 {
