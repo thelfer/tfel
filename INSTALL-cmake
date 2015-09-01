@@ -37,6 +37,7 @@ Options
   enable-zmat    : enables zmat support
   enable-cyrano  : enables cyrano support (cyrano is eDF fuel performance code)
   enable-cxx-11  : enable C++-11 support (currently supported in clang (>=3.4) and g++ (>= 4.7))
+  enable-libcxx  : enable libc++ on Linux
 
   enable-sanitize-options : additional compiler flags (gcc specific)
   enable-portable-build   : do not use processor specific flags. The generated binaries can be

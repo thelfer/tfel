@@ -16,7 +16,6 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
-#include"MFront/UMAT/UMAT.hxx"
 #include"MFront/MTestUmatBehaviourBase.hxx"
 
 namespace mfront

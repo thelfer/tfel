@@ -121,6 +121,10 @@ then
 	AC_DEFINE(TFEL_ARCH64)
 fi
 
+AM_CONDITIONAL([TFEL_WIN],[test x"$TFEL_WIN" = "xyes"])
+AM_CONDITIONAL([TFEL_LINUX],[test x"$TFEL_LINUX" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN32],[test x"$TFEL_WIN" = "xyes" -a x"$TFEL_ARCH32" = "xyes"])
+AM_CONDITIONAL([TFEL_WIN64],[test x"$TFEL_WIN" = "xyes" -a x"$TFEL_ARCH64" = "xyes"])
 
 # Macro for lisp
 # AM_PATH_LISPDIR
@@ -404,11 +408,6 @@ AC_ARG_ENABLE([tests],
   *) AC_MSG_ERROR(bad value ${enableval} for --enable_tests) ;;
 esac],[enable_tests=false])
 AM_CONDITIONAL(WITH_TESTS, test x"$enable_tests" = "xtrue")
-
-AM_CONDITIONAL([TFEL_WIN],[test x"$TFEL_WIN" = "xyes"])
-AM_CONDITIONAL([TFEL_LINUX],[test x"$TFEL_LINUX" = "xyes"])
-AM_CONDITIONAL([TFEL_WIN32],[test x"$TFEL_WIN" = "xyes" -a x"$TFEL_ARCH32" = "xyes"])
-AM_CONDITIONAL([TFEL_WIN64],[test x"$TFEL_WIN" = "xyes" -a x"$TFEL_ARCH64" = "xyes"])
 
 AC_OUTPUT([debug.sh
 	   Makefile
