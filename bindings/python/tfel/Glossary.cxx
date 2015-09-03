@@ -26,6 +26,8 @@ class_<Glossary,noncopyable>("Glossary",no_init)
 return_value_policy<reference_existing_object>())
 .staticmethod("getGlossary")
 .def("contains",&Glossary::contains)
+.def_readonly("AxialGrowth",&Glossary::AxialGrowth,
+"axial growth under irradiation")
 .def_readonly("AxialStrain",&Glossary::AxialStrain,
 "la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes)")
 .def_readonly("AxialStress",&Glossary::AxialStress,

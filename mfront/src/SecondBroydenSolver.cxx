@@ -21,17 +21,16 @@ namespace mfront{
   std::vector<std::string>
   SecondBroydenSolver::getReservedNames(void) const
   {
-    using namespace std;
-    vector<string> n;
-    n.push_back("fzeros2");
-    n.push_back("Dzeros");
-    n.push_back("Dfzeros");
-    n.push_back("inv_jacobian");
-    n.push_back("inv_jacobian2");
-    n.push_back("broyden_inv");
-    n.push_back("integrate_one_half");
-    n.push_back("computeFdF_ok");
-    return n;
+    return {"fzeros2",
+	"fzeros3",
+	"fzeros4",
+	"Dzeros",
+	"Dfzeros",
+	"inv_jacobian",
+	"inv_jacobian2",
+	"broyden_inv",
+	"integrate_one_half",
+	"computeFdF_ok"};
   } // end of SecondBroydenSolver::getReservedNames
 
   bool
@@ -184,8 +183,15 @@ namespace mfront{
     out << "broyden_inv = Dzeros|((this->inv_jacobian)*Dfzeros);\n";
     out << "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n";
     out << "inv_jacobian2 = this->inv_jacobian;\n";
+    out << "#if (!defined __INTEL_COMPILER)\n";
     out << "this->inv_jacobian += "
 	<< "((Dzeros-inv_jacobian2*Dfzeros)^(Dzeros*inv_jacobian2))/(broyden_inv);\n";
+    out << "#else\n";
+    out << "const tvector<" << n2 <<  ",real> fzeros3 = inv_jacobian2*Dfzeros;\n";
+    out << "const tvector<" << n2 <<  ",real> fzeros4 = Dzeros*inv_jacobian2;\n";
+    out << "this->inv_jacobian += "
+	<< "((Dzeros-fzeros3)^(fzeros4))/(broyden_inv);\n";
+    out << "#endif  /* __INTEL_COMPILER */\n";
     out << "}\n";
     out << "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out,mb,h);

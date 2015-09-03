@@ -23,6 +23,7 @@
 #endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Material/OutOfBoundsPolicy.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 
 namespace tfel
@@ -57,6 +58,15 @@ namespace tfel
 		  const bool = false);
 #endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */
 
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : name of function or mechanical behaviour
+       * \param[in] p : out of bounds policy value
+       */
+      void setOutOfBoundsPolicy(const std::string&,
+				const std::string&,
+				const tfel::material::OutOfBoundsPolicy);
+      
       /*!
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour

@@ -253,6 +253,7 @@ namespace aster
 				   const AsterReal *const DPRED,
 				   const AsterReal *const STATEV,
 				   const AsterReal *const STRESS,
+				   const tfel::material::OutOfBoundsPolicy op,
 				   const StressFreeExpansionHandler& sfeh)
 	: behaviour(DTIME,TEMP,DTEMP,
 		    PROPS+AsterTraits<BV>::elasticPropertiesOffset+
@@ -270,10 +271,8 @@ namespace aster
 	    AInitializer::exe(this->behaviour,PROPS);
 	    DVInitializer::exe(this->behaviour,STRAN,DSTRAN,sfeh);
 	    this->behaviour.setASTERBehaviourDataThermodynamicForces(STRESS);
+	    this->behaviour.setOutOfBoundsPolicy(op);
 	    this->behaviour.initialize();
-	    // 22/03/2012 : la gestion des bornes sera implantée plus tard
-	    // const auto& up = AsterOutOfBoundsPolicy::getAsterOutOfBoundsPolicy();
-	    this->behaviour.setOutOfBoundsPolicy(OutOfBoundsPolicy::None);
 	  } // end of Integrator::Integrator
 	
       TFEL_ASTER_INLINE2

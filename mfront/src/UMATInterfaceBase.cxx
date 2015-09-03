@@ -800,6 +800,45 @@ namespace mfront
       } 
     }
   }
+
+  void
+  UMATInterfaceBase::writeSetOutOfBoundsPolicyFunctionDeclaration(std::ostream& out,
+									const std::string& name) const
+  {
+    out << "MFRONT_SHAREDOBJ void\n"
+	<< getFunctionName(name) << "_setOutOfBoundsPolicy(const int);\n\n";
+  }
+
+  void
+  UMATInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream& out,
+									   const std::string& name) const
+  {
+    out << "static tfel::material::OutOfBoundsPolicy&\n"
+	<< getFunctionName(name) << "_getOutOfBoundsPolicy(void){\n"
+	<< "using namespace tfel::material;\n"
+	<< "static OutOfBoundsPolicy policy = None;\n"
+	<< "return policy;\n"
+	<< "}\n\n";
+  } // end of UMATInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation    
+  
+  void
+  UMATInterfaceBase::writeSetOutOfBoundsPolicyFunctionImplementation(std::ostream& out,
+							             const std::string& name) const
+  {
+    out << "MFRONT_SHAREDOBJ void\n"
+	<< getFunctionName(name) << "_setOutOfBoundsPolicy(const int p){\n"
+	<< "if(p==0){\n"
+	<< getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::None;\n"
+	<< "} else if(p==1){\n"
+	<< getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::Warning;\n"
+	<< "} else if(p==2){\n"
+	<< getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::Strict;\n"
+	<< "} else {\n"
+      	<< "std::cerr << \"" << getFunctionName(name)
+	<< "_setOutOfBoundsPolicy : invalid argument\\n\";\n"
+	<< "}\n"
+	<< "}\n\n";
+  }
   
   void
   UMATInterfaceBase::writeSetParametersFunctionsDeclarations(std::ostream& out,

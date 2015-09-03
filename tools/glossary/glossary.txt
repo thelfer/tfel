@@ -407,6 +407,11 @@
   "obligatoire."};
 };
 
+"AxialGrowth"{
+ type : "scalar";
+ short_description : "axial growth under irradiation";
+};
+
 "SolidSwelling"{
  type : "scalar";
  short_description : "un gonflement imposé dû à des produits de fission solides";

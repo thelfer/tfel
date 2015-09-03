@@ -300,6 +300,38 @@ présenter~:
   \item etc...
 \end{itemize}
 
+Plus précisément, nous avons les correspondances suivantes~:
+\begin{itemize}
+\item \(-2\)~: exception de type {\tt AsterException}. Cette exception
+  est lancée par l'interface \aster{} à la loi de comportement. Elle
+  peut signifier de nombreuses choses~: par exemple, elle est lancée
+  quand le nombre de propriétés matériau n'est pas celui attendu,
+\item \(-3\)~: exception de type {\tt OutOfBoundsException}. Cette
+  exception est lancée quand~:
+  \begin{itemize}
+  \item une variable est hors des bornes physiques~;
+  \item une variable est hors des bornes de corrélation de la loi et
+    que la politique de dépassement des bornes est égale à {\tt
+      'Strict'}.
+  \end{itemize}
+\item \(-4\)~: exception de type {\tt DivergenceException}. Cette
+  exception est lancée quand l'algorithme d'intégration de la loi a
+  échoué.
+\item \(-5\)~: exception de type {\tt MaterialException}. Il s'agit
+  d'une exception issue d'une fonction de la librairie {\tt
+    TFEL/Material}.
+\item \(-6\)~: exception de type {\tt TFELException}. Il s'agit du
+  plus haut niveau dans la hiérarchie des exceptions de {\tt TFEL}.
+\item \(-7\)~: exception de type {\tt exception}. Il s'agit d'une
+  exception de la librairie standard.
+\item \(-8\)~: exception de type inconnu.
+\end{itemize}
+
+Par défaut, un message d'erreur est affiché quand une exception est
+captée. Ce comportement est modifiable à l'aide du mot clé
+\mkey{AsterErrorReport}, décrit au
+paragraphe~\ref{sec:affich-des-erre}.
+
 \subsection{Mots clés spécifiques}
 
 \subsubsection{Vérification de la matrice tangente calculée par perturbation}
@@ -351,6 +383,7 @@ matrice de raideur soit stockée à la suite des variables internes (ou
 pas).
 
 \subsubsection{Affichage des erreurs d'intégration}
+\label{sec:affich-des-erre}
 
 Par défaut, \mfront{} affiche sur la sortie standard des messages en
 cas d'erreur d'intégration.

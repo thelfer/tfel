@@ -17,7 +17,6 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
-#include"MFront/UMAT/UMAT.hxx"
 #include"MTest/UmatBehaviourBase.hxx"
 
 namespace mfront
@@ -58,6 +57,14 @@ namespace mfront
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
+  void
+  UmatBehaviourBase::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const
+  {
+    typedef tfel::system::ExternalLibraryManager ELM;    
+    ELM& elm = ELM::getExternalLibraryManager();
+    elm.setOutOfBoundsPolicy(this->library,this->behaviour,p);
+  } // end of UmatBehaviourBase::setOutOfBoundsPolicy
+  
   tfel::material::MechanicalBehaviourBase::BehaviourType
   UmatBehaviourBase::getBehaviourType(void) const
   {

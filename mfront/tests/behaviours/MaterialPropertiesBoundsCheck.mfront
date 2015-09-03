@@ -1,0 +1,27 @@
+@Behaviour MaterialPropertiesBoundsCheck;
+@Author Helfer Thomas;
+@Date 2/09/2015;
+@Description{
+ Test of the bounds on material properties.
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real   nu;
+nu.setGlossaryName("PoissonRatio");
+
+@PhysicalBounds young in [0:*[;
+@Bounds         young in [100e9:200e9];
+@PhysicalBounds nu in [-1:0.5];
+				      
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  using namespace tfel::material::lame;
+  static_cast<void>(smt); // remove compiler warning
+  const stress lambda = computeLambda(young,nu);
+  const stress mu     = computeMu(young,nu);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

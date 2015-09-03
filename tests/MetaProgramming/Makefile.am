@@ -6,10 +6,12 @@ if WITH_TESTS
 testdir = $(pkgdatadir)/tests/Metaprogramming
 test_PROGRAMS = HasConstIterator \
 		IsConstCallable  \
+		ResultOf         \
 		typelist2
 
 HasConstIterator_SOURCES = HasConstIterator.cxx 
-typelist2_SOURCES        = typelist2.cxx         
+typelist2_SOURCES        = typelist2.cxx
+ResultOf_SOURCES         = ResultOf.cxx         
 IsConstCallable_SOURCES  = IsConstCallable.cxx         
 
 LDADD = -L$(top_builddir)/src/Tests \

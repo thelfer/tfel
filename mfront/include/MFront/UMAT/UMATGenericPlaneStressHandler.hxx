@@ -52,6 +52,7 @@ namespace umat
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	     UMATReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -65,7 +66,7 @@ namespace umat
       UMATInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS,sfeh);
+		   STRESS,op,sfeh);
     } // end of exe
     
   private:
@@ -98,6 +99,7 @@ namespace umat
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	     UMATReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
@@ -131,7 +133,7 @@ namespace umat
 										    STATEV,STRESS,
 										    STRAN,DSTRAN,dez,
 										    &v[0],s,eto,deto,
-										    sfeh);
+										    op,sfeh);
       x[1] = dez;
       f[1] = s[2];
 	
@@ -143,7 +145,7 @@ namespace umat
 										      STATEV,STRESS,
 										      STRAN,DSTRAN,dez,
 										      &v[0],s,eto,deto,
-										      sfeh);
+										      op,sfeh);
       }	    
 	
       iter = 2;
@@ -160,7 +162,7 @@ namespace umat
 										      STATEV,STRESS,
 										      STRAN,DSTRAN,dez,
 										      &v[0],s,eto,deto,
-										      sfeh);
+										      op,sfeh);
 	++iter;
       }
       if(iter==iterMax){
@@ -206,6 +208,7 @@ namespace umat
 	      UMATReal *const s,
 	      UMATReal *const eto,
 	      UMATReal *const deto,
+	      const tfel::material::OutOfBoundsPolicy op,
 	      const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::material;
@@ -224,7 +227,7 @@ namespace umat
       std::copy(STATEV,STATEV+NSTATV_,v);
       GeneralisedPlaneStrainBehaviour::exe(DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,
 					   PROPS,NPROPS,PREDEF,DPRED,v,
-					   &nNSTATV,s,sfeh);
+					   &nNSTATV,s,op,sfeh);
     }
     
     struct TreatPlaneStressIsotropicBehaviour
@@ -239,6 +242,7 @@ namespace umat
 	       const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	       UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
       {
 	using namespace tfel::material;
@@ -253,7 +257,7 @@ namespace umat
 								      STRAN,DSTRAN,TEMP,
 								      DTEMP,PROPS,NPROPS,
 								      PREDEF,DPRED,STATEV,
-								      NSTATV,STRESS,sfeh);
+								      NSTATV,STRESS,op,sfeh);
       } // end of exe
     }; // end of struct TreatPlanStressIsotropicBehaviour
 
@@ -268,6 +272,7 @@ namespace umat
 	       const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	       UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
       {
 	using namespace tfel::meta;
@@ -322,7 +327,7 @@ namespace umat
 								      STRAN,DSTRAN,TEMP,
 								      DTEMP,nPROPS,NPROPS,
 								      PREDEF,DPRED,STATEV,
-								      NSTATV,STRESS,sfeh);
+								      NSTATV,STRESS,op,sfeh);
       } // end of exe
     }; // end of struct TreatPlanStressOrthotropicBehaviour
 

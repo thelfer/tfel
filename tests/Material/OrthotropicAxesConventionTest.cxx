@@ -30,27 +30,27 @@ struct OrthotropicAxesConventionTest final
   execute() override
   {
     this->test1<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-		OrthotropicAxesConvention::UNDEFINED>();
+		OrthotropicAxesConvention::DEFAULT>();
     this->test1<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
 		OrthotropicAxesConvention::PIPE>();
     this->test1<ModellingHypothesis::AXISYMMETRICAL,
-		OrthotropicAxesConvention::UNDEFINED>();
+		OrthotropicAxesConvention::DEFAULT>();
     this->test1<ModellingHypothesis::AXISYMMETRICAL,
 		OrthotropicAxesConvention::PIPE>();
     this->test1<ModellingHypothesis::GENERALISEDPLANESTRAIN,
-		OrthotropicAxesConvention::UNDEFINED>();
+		OrthotropicAxesConvention::DEFAULT>();
     this->test2<ModellingHypothesis::GENERALISEDPLANESTRAIN,
 		OrthotropicAxesConvention::PIPE>();
     this->test1<ModellingHypothesis::PLANESTRAIN,
-		OrthotropicAxesConvention::UNDEFINED>();
+		OrthotropicAxesConvention::DEFAULT>();
     this->test2<ModellingHypothesis::PLANESTRAIN,
 		OrthotropicAxesConvention::PIPE>();
     this->test1<ModellingHypothesis::PLANESTRESS,
-		OrthotropicAxesConvention::UNDEFINED>();
+		OrthotropicAxesConvention::DEFAULT>();
     this->test2<ModellingHypothesis::PLANESTRESS,
 		OrthotropicAxesConvention::PIPE>();
     this->test1<ModellingHypothesis::TRIDIMENSIONAL,
-		OrthotropicAxesConvention::UNDEFINED>();
+		OrthotropicAxesConvention::DEFAULT>();
     this->test1<ModellingHypothesis::TRIDIMENSIONAL,
 		OrthotropicAxesConvention::PIPE>();
     return this->result;

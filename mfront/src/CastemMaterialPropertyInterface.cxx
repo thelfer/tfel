@@ -405,7 +405,7 @@ namespace mfront
 	if(p5->boundsType==VariableBoundsDescription::Lower){
 	  this->srcFile << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
 	  this->srcFile << "const char * const policy = "
-			      << "::getenv(\"CASTEM_OUT_OF_BOUND_POLICY\");\n";
+			      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
 	  this->srcFile << "if(policy!=nullptr){\n";
 	  this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	  this->srcFile << "return nan(\""
@@ -421,7 +421,7 @@ namespace mfront
 	} else if(p5->boundsType==VariableBoundsDescription::Upper){
 	  this->srcFile << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
 	  this->srcFile << "const char * const policy = "
-			      << "::getenv(\"CASTEM_OUT_OF_BOUND_POLICY\");\n";
+			      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
 	  this->srcFile << "if(policy!=nullptr){\n";
 	  this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	  this->srcFile << "cerr << \"" << name << " : "
@@ -441,7 +441,7 @@ namespace mfront
 	  this->srcFile << "if((" << p5->varName<< " < "<< p5->lowerBound << ")||"
 			      << "(" << p5->varName<< " > "<< p5->upperBound << ")){\n";
 	  this->srcFile << "const char * const policy = "
-			      << "::getenv(\"CASTEM_OUT_OF_BOUND_POLICY\");\n";
+			      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
 	  this->srcFile << "if(policy!=nullptr){\n";
 	  this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	  this->srcFile << "if(" << p5->varName<< " < " << p5->lowerBound << "){\n";

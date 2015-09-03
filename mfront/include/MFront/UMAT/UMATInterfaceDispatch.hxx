@@ -54,6 +54,7 @@ namespace umat{
 	     const UMATReal *const, const UMATReal *const,
 	     UMATReal *const,const UMATInt  *const,
 	     UMATReal *const,
+	     const tfel::material::OutOfBoundsPolicy,
 	     const StressFreeExpansionHandler&)
     {
       typedef tfel::material::ModellingHypothesis MH;
@@ -82,6 +83,7 @@ namespace umat{
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	     UMATReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
@@ -98,7 +100,7 @@ namespace umat{
       UMATInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS,sfeh);
+		   STRESS,op,sfeh);
     } // end of exe
   }; // end of struct UMATInterfaceDispatch
 
@@ -124,6 +126,7 @@ namespace umat{
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	     UMATReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
@@ -140,11 +143,11 @@ namespace umat{
 	UMATInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
 	Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		     STRESS,sfeh);
+		     STRESS,op,sfeh);
       } else { 
 	UMATGenericPlaneStressHandler<Behaviour>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 						      TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-						      STATEV,NSTATV,STRESS,sfeh);
+						      STATEV,NSTATV,STRESS,op,sfeh);
       }
     }
   };
@@ -170,6 +173,7 @@ namespace umat{
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	     UMATReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
@@ -186,7 +190,7 @@ namespace umat{
       UMATInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS,sfeh);
+		   STRESS,op,sfeh);
     } // end of exe
   }; // end of struct UMATInterfaceDispatch
 
@@ -205,6 +209,7 @@ namespace umat{
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	     UMATReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
@@ -225,7 +230,7 @@ namespace umat{
       du[0] = DSTRAN[1]; du[1] = DSTRAN[0];
       t[0]  = STRESS[1]; t[1]  = STRESS[0];
       Handler::exe(DTIME,DROT,DDSOE,u,du,TEMP,DTEMP,
-		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,sfeh);
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,op,sfeh);
       D[0] = DDSOE[0]; D[1] = DDSOE[1];
       D[2] = DDSOE[2]; D[3] = DDSOE[3];
       DDSOE[0] = D[3]; DDSOE[1] = D[2];
@@ -249,6 +254,7 @@ namespace umat{
 	     const UMATReal *const PREDEF,const UMATReal *const DPRED,
 	     UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	     UMATReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace std;
@@ -269,7 +275,7 @@ namespace umat{
       du[0] = DSTRAN[2]; du[1] = DSTRAN[0]; du[2] = DSTRAN[1];
       t[0]  = STRESS[2]; t[1]  = STRESS[0]; t[2]  = STRESS[1];
       Handler::exe(DTIME,DROT,DDSOE,u,du,TEMP,DTEMP,
-		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,sfeh);
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,op,sfeh);
       D[0] = DDSOE[0]; D[1] = DDSOE[1]; D[2] = DDSOE[2];
       D[3] = DDSOE[3]; D[4] = DDSOE[4]; D[5] = DDSOE[5]; 
       D[6] = DDSOE[6]; D[7] = DDSOE[7]; D[8] = DDSOE[8]; 

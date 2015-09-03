@@ -48,11 +48,13 @@ namespace tfel
 #endif /* LIB_TFEL_BROYDEN2_IXX_ */
 	const auto J = A;
 	const auto vf2 = vf;
-	const auto s = -A*vf;
-	const auto y = vf-vf2;
+	const tvector<N,T> s = -A*vf;
+	const tvector<N,T> y = vf-vf2;
 	x  += s;
 	vf  = f(x);
-	A  += ((s-J*y)^(s*J))/(s|J*y);
+	const tvector<N,T> t  = J*y;
+	const tvector<N,T> t2 = s*J;
+	A  += ((s-t)^t2)/(s|t);
 	++i;
       }
       return {i!=n,x};

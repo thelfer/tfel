@@ -42,6 +42,7 @@ namespace aster
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
 	       AsterReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
@@ -60,7 +61,7 @@ namespace aster
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,sfeh);
+		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of AsterIsotropicBehaviourHandler::exe
     

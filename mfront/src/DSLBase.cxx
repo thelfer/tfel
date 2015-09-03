@@ -76,7 +76,7 @@ namespace mfront
   {} // end of DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions()
 
   DSLBase::DSLBase()
-	  : AbstractDSL()
+    : AbstractDSL()
   {
     this->reserveName("std",false);
     this->reserveName("tfel",false);
@@ -930,9 +930,6 @@ namespace mfront
       this->callMFront(vector<string>(1u,"mfront"),
 		       vector<string>(1u,path));
     } catch(exception& e){
-      string msg("Error while treating file '"+f+"'\n");
-      msg += e.what();
-      msg += "\n\n";
       throw(std::runtime_error("DSLBase::handleMaterialLaw: "
 			       "error while treating file '"+f+"'\n"+
 			       std::string(e.what())));

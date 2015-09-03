@@ -37,7 +37,7 @@ namespace tfel{
      * axis. This is the PIPE (orthotropic axes) convention.
      */
     enum class OrthotropicAxesConvention{
-      UNDEFINED,
+      DEFAULT,
       PIPE
     }; // end of enum class OrthotropicAxesConvention
 

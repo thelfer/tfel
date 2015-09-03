@@ -39,31 +39,25 @@ namespace tfel
     {
       using namespace std;
       using namespace tfel::math;
-      tmatrix<N,N,T> J;
-      tvector<N,T> x;
-      tvector<N,T> s;
-      tvector<N,T> y;
-      tvector<N,T> vf;
-      tvector<N,T> vf2;
-      unsigned short i;
-      x  = x0;
-      vf = f(x);
-      i  = 0;
+      tvector<N,T> x  = x0;
+      tvector<N,T> vf = f(x);
+      unsigned short i = 0;
       while((i<n)&&(norm(vf)/N>e)){
 #ifdef TFEL_BROYDEN_VERBOSE_MODE
 	cout << "iteration : " << i <<  endl;	
 	cout << "x         : " << x <<  endl;	
 	cout << "||f||     : " << norm(vf) <<  endl;	
 #endif /* LIB_TFEL_MATH_BROYDEN_IXX_ */
-	s = -vf;
-	J = A;
+	tvector<N,T> s = -vf;
+	tmatrix<N,N,T> J = A;
 	TinyMatrixSolve<N,T>::exe(J,s);
 	x  += s;
-	vf2 = vf;
+	const tvector<N,T> vf2 = vf;
 	vf  = f(x);
-	y   = vf-vf2;
+	const tvector<N,T> y = vf-vf2;
 	J   = A;
-	A  += ((y-J*s)^s)/(s|s);
+	const tvector<N,T> t = -J*s;
+	A  += ((y-t)^s)/(s|s);
 	++i;
       }
       return pair<bool,tvector<N,T> >(i!=n,x);

@@ -282,7 +282,7 @@ namespace mfront
 	       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
 	      srcFile << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	      srcFile << "auto policy = "
-		      << "::getenv(\"JAVA_OUT_OF_BOUND_POLICY\");\n";
+		      << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n";
 	      srcFile << "if(policy!=nullptr){\n";
 	      srcFile << "if((strcmp(policy,\"STRICT\")==0)||"
 		      << "(strcmp(policy,\"WARNING\")==0)){\n";
@@ -303,7 +303,7 @@ namespace mfront
 	       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
 	      srcFile << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
 	      srcFile << "auto policy = "
-		      << "::getenv(\"JAVA_OUT_OF_BOUND_POLICY\");\n";
+		      << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n";
 	      srcFile << "if(policy!=nullptr){\n";
 	      srcFile << "if((strcmp(policy,\"STRICT\")==0)||"
 		      << "(strcmp(policy,\"WARNING\")==0)){\n";

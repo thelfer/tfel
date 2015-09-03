@@ -1,3 +1,4 @@
+
 /*!
  * \file   getFunction.impl
  * \brief  ths file implements some C wrappers around the dlsym
@@ -185,6 +186,11 @@ extern "C" {
     free(myname);
     return v;
   }
+
+  int (TFEL_ADDCALL_PTR tfel_getSetOutOfBoundsPolicyFunction(LibraryHandlerPtr lib,
+							     const char * const name))(const int){
+    return (int (TFEL_ADDCALL_PTR)(const int)) dlsym(lib,name);
+  } 
 
   int (TFEL_ADDCALL_PTR tfel_getSetParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
 												     const double){

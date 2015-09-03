@@ -29,7 +29,7 @@ namespace cyrano
     : policy(tfel::material::None)
   {
     using namespace tfel::material;
-    const char * const p = ::getenv("CYRANO_OUT_OF_BOUND_POLICY");
+    const char * const p = ::getenv("CYRANO_OUT_OF_BOUNDS_POLICY");
     if(p!=nullptr){
       if(strcmp(p,"STRICT")==0){
 	this->policy = Strict;

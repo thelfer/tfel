@@ -308,6 +308,11 @@ namespace mfront
      */
     virtual void setAuthor(const std::string&);
     /*!
+     * \brief set the out of bounds policy
+     * \param[in] a : out of bounds policy
+     */
+    virtual void setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy);
+    /*!
      * \brief set the date
      * \param[in] d : date
      */

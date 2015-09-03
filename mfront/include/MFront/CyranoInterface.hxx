@@ -40,6 +40,10 @@ namespace mfront{
     getName(void);
 
     CyranoInterface();
+
+    virtual void
+    writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream&,
+						    const std::string&) const;
     /*!
      * write interface specific includes
      * \param[in] out : output file

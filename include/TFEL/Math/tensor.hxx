@@ -216,9 +216,6 @@ namespace tfel{
       TFEL_MATH_INLINE T
       operator()(const unsigned short,
 		 const unsigned short) const;      
-      TFEL_MATH_INLINE       T&
-      operator()(const unsigned short,
-		 const unsigned short);
       /*!
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties

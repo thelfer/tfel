@@ -389,7 +389,7 @@ int main(const int argc,
   }
   catch(exception& e){
     cerr << e.what() << endl;
-    return EXIT_FAILURE;
+    return r;
   }
 #endif /* __CYGWIN__ */
   return r;

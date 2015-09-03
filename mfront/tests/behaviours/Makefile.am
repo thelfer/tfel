@@ -3,7 +3,8 @@ SUBDIRS = aster castem castem2 cyrano secant alternatesecant \
 	  crosseddelta2 crossed2delta crossed2deltabis
 
 MFRONTS= DDIF2.mfront                                                      \
-         Elasticity.mfront                                                 \
+         MaterialPropertiesBoundsCheck.mfront                              \
+	 Elasticity.mfront                                                 \
          Elasticity2.mfront                                                \
          Elasticity3.mfront                                                \
          OrthotropicElastic.mfront                                         \

@@ -46,7 +46,7 @@ namespace mfront
      */
     MTestFileGeneratorBase();
     /*!
-     * \set the modelling hypothesis
+     * \see the modelling hypothesis class
      * \param[in] h : modelling hypothesis
      */
     virtual void

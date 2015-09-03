@@ -248,7 +248,7 @@ struct TensorTest5_1D final
     for(unsigned short i=0;i!=t.size();++i){
       t[i] = exp(cos(real(i)));
     }
-    const TensorConcept<tensor<1u,real>>& t_c = t;
+    const tensor<1u,real> t_c = t;
     TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
@@ -279,7 +279,7 @@ struct TensorTest5_2D final
     for(unsigned short i=0;i!=t.size();++i){
       t[i] = exp(cos(real(i)));
     }
-    const TensorConcept<tensor<2u,real>>& t_c = t;
+    const tensor<2u,real> t_c = t;
     TFEL_TESTS_ASSERT((abs(t_c(0,0)-exp(cos(real(0))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(1,1)-exp(cos(real(1))))<eps));
     TFEL_TESTS_ASSERT((abs(t_c(2,2)-exp(cos(real(2))))<eps));
@@ -440,7 +440,7 @@ struct TensorTest8<2u> final
     stensor<2u,real> s;
     tensor<2u,real> t;
     for(unsigned short i=0;i!=s.size();++i){
-      s[i] = exp(real(i*i)/(s.size()/s.size()));
+      s[i] = exp(real(i*i)/(s.size()*s.size()));
     }
     for(unsigned short i=0;i!=t.size();++i){
       t[i] = exp(sin(real(i*i+1)));
@@ -544,7 +544,7 @@ struct TensorTest9<2u> final
     stensor<2u,real> s;
     tensor<2u,real> t;
     for(unsigned short i=0;i!=s.size();++i){
-      s[i] = exp(real(i*i)/(s.size()/s.size()));
+      s[i] = exp(real(i*i)/(s.size()*s.size()));
     }
     for(unsigned short i=0;i!=t.size();++i){
       t[i] = exp(sin(real(i*i+1)));

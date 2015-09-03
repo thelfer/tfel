@@ -311,6 +311,18 @@ namespace mfront{
     writeVisibilityDefines(std::ostream&) const;
 
     virtual void
+    writeSetOutOfBoundsPolicyFunctionDeclaration(std::ostream&,
+						 const std::string&) const;
+
+    virtual void
+    writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream&,
+						    const std::string&) const;
+    
+    virtual void
+    writeSetOutOfBoundsPolicyFunctionImplementation(std::ostream&,
+						    const std::string&) const;
+    
+    virtual void
     writeSetParametersFunctionsDeclarations(std::ostream&,
 					    const std::string&,
 					    const BehaviourDescription&) const;

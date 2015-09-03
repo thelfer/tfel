@@ -1305,7 +1305,7 @@ namespace mfront{
   BehaviourDSLCommon::treatOrthotropicBehaviour(void)
   {
     using namespace tfel::material;
-    OrthotropicAxesConvention c = OrthotropicAxesConvention::UNDEFINED;
+    OrthotropicAxesConvention c = OrthotropicAxesConvention::DEFAULT;
     this->checkNotEndOfFile("BehaviourDSLCommon::treatOrthotropicBehaviour");
     if(this->current->value=="<"){
       this->readSpecifiedToken("BehaviourDSLCommon::treatOrthotropicBehaviour","<");
@@ -1359,7 +1359,7 @@ namespace mfront{
   void
   BehaviourDSLCommon::treatRequireStiffnessTensor(void)
   {
-    using namespace std;
+    using tfel::material::OrthotropicAxesConvention;
     this->checkNotEndOfFile("BehaviourDSLCommon::treatRequireStiffnessTensor");
     if(this->current->value=="<"){
       this->readSpecifiedToken("BehaviourDSLCommon::treatRequireStiffnessTensor","<");
@@ -1377,6 +1377,13 @@ namespace mfront{
       this->readSpecifiedToken("BehaviourDSLCommon::treatRequireStiffnessTensor",">");
     }
     this->readSpecifiedToken("BehaviourDSLCommon::treatRequireStiffnessTensor",";");
+    if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if(this->mb.getOrthotropicAxesConvention()!=OrthotropicAxesConvention::DEFAULT){
+	this->throwRuntimeError("BehaviourDSLCommon::treatRequireStiffnessTensor : ",
+				"RequireStiffnessTensor can only be used with the 'Default' "
+				"orthotropic axes convention");
+      }
+    }
     this->mb.setAttribute(BehaviourDescription::requiresStiffnessTensor,true,false);
   } // end of BehaviourDSLCommon::treatRequireStiffnessTensor
 
@@ -3767,9 +3774,9 @@ namespace mfront{
     }
     if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
       this->behaviourFile << "//! orthotropic axes convention\n";
-      if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::UNDEFINED){
+      if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::DEFAULT){
 	this->behaviourFile << "static " << constexpr_c
-			    << " OrthotropicAxesConvention oac = OrthotropicAxesConvention::UNDEFINED;\n";
+			    << " OrthotropicAxesConvention oac = OrthotropicAxesConvention::DEFAULT;\n";
       } else if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::PIPE){
 	this->behaviourFile << "static " << constexpr_c
 			    << " OrthotropicAxesConvention oac = OrthotropicAxesConvention::PIPE;\n";

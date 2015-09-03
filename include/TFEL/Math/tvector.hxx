@@ -77,7 +77,7 @@ namespace tfel{
       /*!
        * \param src: a vector expression.
        * \return a reference to this.
-       * \rec T2 must be assignable to a T.
+       * \pre T2 must be assignable to a T.
        */
       template<typename T2,typename Operation>
       TFEL_MATH_INLINE
@@ -194,7 +194,7 @@ namespace tfel{
       /*!
        * \param src: a vector expression.
        * \return tvector<N,T>& a reference to this.
-       * \rec T2 must be assignable to a T.
+       * \pre T2 must be assignable to a T.
        */
       template<typename T2,typename Operation>
       TFEL_MATH_INLINE tvector(const Expr<tvector<N,T2>,Operation>&);

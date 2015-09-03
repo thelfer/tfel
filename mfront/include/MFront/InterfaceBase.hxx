@@ -42,7 +42,7 @@ namespace mfront
 		       const std::string&,
 		       const std::string&);
 
-    static void
+    TFEL_NORETURN static void
     throwRuntimeError(TokensContainer::const_iterator&,
 		      const TokensContainer::const_iterator,
 		      const std::string&,

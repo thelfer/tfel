@@ -90,6 +90,8 @@ extern "C" {
   tfel_getCastemFunctionVariables(LibraryHandlerPtr,
 				  const char * const);
 
+  int (TFEL_ADDCALL_PTR tfel_getSetOutOfBoundsPolicyFunction(LibraryHandlerPtr lib,
+							     const char * const name))(const int);
 
   int (TFEL_ADDCALL_PTR tfel_getSetParameterFunction(LibraryHandlerPtr lib,
 						     const char * const name))(const char* const,

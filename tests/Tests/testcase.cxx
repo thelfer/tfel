@@ -34,7 +34,7 @@ struct MyTest final
   virtual tfel::tests::TestResult
   execute() override
   {
-    TFEL_TESTS_ASSERT(1==1);
+    TFEL_TESTS_ASSERT(true);
     TFEL_TESTS_ASSERT(1!=2);
     TFEL_TESTS_CALLMETHOD(test);
     TFEL_TESTS_CHECK_THROW(throw(std::runtime_error("test")),

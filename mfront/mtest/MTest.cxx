@@ -246,6 +246,16 @@ namespace mfront
   } // end of MTest::setAuthor
 
   void
+  MTest::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p)
+  {
+    if(this->b.get()==0){
+      throw(std::runtime_error("MTest::setOutOfBoundsPolicy: "
+			       "no behaviour defined"));
+    }
+    this->b->setOutOfBoundsPolicy(p);
+  }
+  
+  void
   MTest::setDate(const std::string& d)
   {
     using namespace std;

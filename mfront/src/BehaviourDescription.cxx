@@ -142,10 +142,8 @@ namespace mfront
   void
   BehaviourDescription::throwUndefinedAttribute(const std::string& n)
   {
-    using namespace std;
-    string msg("BehaviourDescription::getAttribute : "
-	       "no attribute named '"+n+"'");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("BehaviourDescription::getAttribute : "
+			     "no attribute named '"+n+"'"));
   } // end of BehaviourDescription::throwUndefinedAttribute
 
   BehaviourDescription::BehaviourDescription()
@@ -614,16 +612,13 @@ namespace mfront
   void
   BehaviourDescription::setThermalExpansionCoefficient(const std::shared_ptr<MaterialPropertyDescription>& a)
   {
-    using namespace std;
     if(this->areThermalExpansionCoefficientsDefined()){
-      string msg("BehaviourDescription::setThermalExpansionCoefficient : "
-		 "thermal expansion coefficient already defined");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient : "
+			       "thermal expansion coefficient already defined"));
     }
     if(this->getSymmetryType()!=mfront::ISOTROPIC){
-      string msg("BehaviourDescription::setThermalExpansionCoefficient : "
-		 "the mechanical behaviour is not isotropic.");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient : "
+			       "the mechanical behaviour is not isotropic"));
     }
     BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a);
     this->thermalExpansionCoefficients.push_back(a);
@@ -634,16 +629,13 @@ namespace mfront
 							const std::shared_ptr<MaterialPropertyDescription>& a2,
 							const std::shared_ptr<MaterialPropertyDescription>& a3)
   {
-    using namespace std;
     if(this->areThermalExpansionCoefficientsDefined()){
-      string msg("BehaviourDescription::setThermalExpansionCoefficient : "
-		 "thermal expansion coefficient already defined");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient : "
+			       "thermal expansion coefficient already defined"));
     }
     if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
-      string msg("BehaviourDescription::setThermalExpansionCoefficient : "
-		 "the mechanical behaviour is not orthotropic.");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient : "
+			       "the mechanical behaviour is not orthotropic."));
     }
     BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a1);
     BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a2);
@@ -664,7 +656,7 @@ namespace mfront
   {
     if(!this->areThermalExpansionCoefficientsDefined()){
       throw(std::runtime_error("BehaviourDescription::getThermalExpansionCoefficients : "
-					   		   "no thermal expansion coefficients defined"));
+			       "no thermal expansion coefficients defined"));
     }
     return this->thermalExpansionCoefficients;
   }
@@ -672,11 +664,11 @@ namespace mfront
   void
   BehaviourDescription::setUseQt(const bool b)
   {
-	  if (this->use_qt) {
-		  throw(std::runtime_error("BehaviourDescription::setUseQt : "
-								   "setUseQt already called"));
-	  }
-	  this->use_qt = b;
+    if (this->use_qt) {
+      throw(std::runtime_error("BehaviourDescription::setUseQt : "
+			       "setUseQt already called"));
+    }
+    this->use_qt = b;
   } // end of BehaviourDescription::setUseQt
 
   bool
@@ -688,7 +680,6 @@ namespace mfront
   std::string
   BehaviourDescription::getTangentOperatorType(void) const
   {
-    using namespace std;
     if(this->type==GENERALBEHAVIOUR){
       auto msizes = this->getMainVariablesSize();
       std::ostringstream t;

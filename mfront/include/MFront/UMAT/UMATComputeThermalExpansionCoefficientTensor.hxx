@@ -55,9 +55,9 @@ namespace umat
   UMATComputeThermalExpansionCoefficientTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
   {
-    static void
-      exe(const UMATReal* const,
-	  tfel::config::Types<2u,UMATReal,false>::ThermalExpansionCoefficientTensor&);
+    TFEL_NORETURN static void
+    exe(const UMATReal* const,
+	tfel::config::Types<2u,UMATReal,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct UMATComputeThermalExpansionCoefficientTensor
 
 
@@ -116,7 +116,7 @@ namespace umat
   UMATComputeThermalExpansionCoefficientTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
   {
-    static void
+    TFEL_NORETURN static void
       exe(const UMATReal* const,
 	  tfel::config::Types<2u,UMATReal,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct UMATComputeThermalExpansionCoefficientTensor

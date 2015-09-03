@@ -114,7 +114,7 @@ endif
 
 if HAVE_FORTRAN
 libTFELMFront_la_SOURCES += FortranMaterialPropertyInterface.cxx   \
-			 += Fortran03MaterialPropertyInterface.cxx
+			    Fortran03MaterialPropertyInterface.cxx
 endif
 
 if HAVE_PYTHON

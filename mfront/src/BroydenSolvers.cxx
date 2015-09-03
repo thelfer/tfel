@@ -212,8 +212,14 @@ namespace mfront{
     out << "if(this->iter>1){\n";
     out << "broyden_inv = (Dzeros|Dzeros);\n";
     out << "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n";
+    out << "#if (!defined __INTEL_COMPILER)\n";
     out << "this->jacobian += "
-	<< "(((this->fzeros-fzeros2)-(jacobian2)*(Dzeros))^Dzeros)/broyden_inv;\n";
+	<< "(((this->fzeros-fzeros2)-jacobian2*Dzeros)^Dzeros)/broyden_inv;\n";
+    out << "#else\n";
+    out << "const tvector<" << n2 <<  ",real> fzeros3 = jacobian2*Dzeros;\n";
+    out << "this->jacobian += "
+	<< "(((this->fzeros-fzeros2)-fzeros3)^Dzeros)/broyden_inv;\n";
+    out << "#endif  /* __INTEL_COMPILER */\n";
     out << "}\n";
     out << "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out,mb,h);

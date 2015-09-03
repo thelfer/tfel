@@ -206,7 +206,7 @@ namespace mfront
 	  const bool bv2z = evm.find("V2Z")!=evm.end();
 	  const bool b = bv1x&&bv1y&&bv1z&&bv2x&&bv2y&&bv2z;
 	  if(((bv1x)&&(!b))||((bv1y)&&(!b))||((bv1z)&&(!b))||
-	     ((bv2x)&&(!b))||((bv2y)&&(!b))||((bv1z)&&(!b))){
+	     ((bv2x)&&(!b))||((bv2y)&&(!b))||((bv2z)&&(!b))){
 	    string msg("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
 		       "if on component of the orthotropic basis is defined, all "
 		       "the components must be defined.");

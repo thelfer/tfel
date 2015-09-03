@@ -57,12 +57,12 @@ namespace umat
 				    ISOTROPIC>::exe(const UMATReal* const,
 						    tfel::config::Types<2u,UMATReal,false>::ThermalExpansionCoefficientTensor&)
   {
-    using namespace std;
 #pragma message("something needs to be done HERE")
-    string msg("UMATComputeThermalExpansionCoefficientTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
-	       "tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>::exe : ");
-    msg += "unimplemented feature";
-    throw(runtime_error(msg));
+    throw(std::runtime_error("UMATComputeThermalExpansionCoefficientTensor"
+			     "<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
+			     "tfel::material::ModellingHypothesis::PLANESTRESS,"
+			     "ISOTROPIC>::exe : "
+			     "unimplemented feature"));
   } // end of struct UMATComputeThermalExpansionCoefficientTensor
 
   void
@@ -123,13 +123,12 @@ namespace umat
 				    ORTHOTROPIC>::exe(const UMATReal* const,
 						      tfel::config::Types<2u,UMATReal,false>::ThermalExpansionCoefficientTensor&)
   {
-    using namespace std;
 #pragma message("something needs to be done HERE")
-    string msg("UMATComputeThermalExpansionCoefficientTensor<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
-	       "tfel::material::ModellingHypothesis::PLANESTRESS,"
-	       "ORTHOTROPIC>::exe : ");
-    msg += "unimplemented feature";
-    throw(runtime_error(msg));
+    throw(std::runtime_error("UMATComputeThermalExpansionCoefficientTensor"
+			     "<umat::SMALLSTRAINSTANDARDBEHAVIOUR,"
+			     "tfel::material::ModellingHypothesis::PLANESTRESS,"
+			     "ORTHOTROPIC>::exe: "
+			     "unimplemented feature"));
   } // end of struct UMATComputeThermalExpansionCoefficientTensor
 
   void

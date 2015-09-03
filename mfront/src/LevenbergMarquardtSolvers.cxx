@@ -25,6 +25,7 @@ namespace mfront{
     vector<string> n;
     n.push_back("levmar_jacobian_1");
     n.push_back("levmar_fzeros_1");
+    n.push_back("levmar_error");
     n.push_back("levmar_m");
     n.push_back("levmar_sm");
     n.push_back("levmar_mu");
@@ -33,7 +34,6 @@ namespace mfront{
     n.push_back("levmar_p0");
     n.push_back("levmar_p1");
     n.push_back("levmar_p2");
-    n.push_back("levmaor_m");
     return n;
   } // end of MFrontLevenbergMarquartSolverBase::getReservedNames
 
@@ -128,131 +128,137 @@ namespace mfront{
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
       n2 += mb.getTypeSize(p->type,p->arraySize);
     }
-    out << "// dumping parameter" << endl;
-    out << "real levmar_mu = this->levmar_mu0;" << endl;
-    out << "real error;" << endl;
-    out << "bool converged=false;" << endl;
-    out << "this->iter=0;" << endl;
+    out << "// dumping parameter\n";
+    out << "real levmar_mu = this->levmar_mu0;\n";
+    out << "real error;\n";
+    out << "bool converged=false;\n";
+    out << "this->iter=0;\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
-	  << "::integrate() : beginning of resolution\" << endl;" << endl;
+	  << "::integrate() : beginning of resolution\"\n;\n";
     }
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();" << endl;
+      out << "this->computeStress();\n";
     }
-    out << "if(!this->computeFdF()){" << endl;
+    out << "if(!this->computeFdF()){\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
-	  << "::integrate() : computFdF returned false on first call, abording...\" << endl;" << endl;
+	  << "::integrate() : computFdF returned false on first call, abording...\\n\";\n";
     }
     if(mb.useQt()){        
-      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;" << endl;
+      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;" << endl;
+      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    out << "}" << endl;
+    out << "}\n";
     if(this->requiresNumericalJacobian()){
-      out << "this->computeNumericalJacobian(this->jacobian);" << endl;
+      out << "this->computeNumericalJacobian(this->jacobian);\n";
     }
-    out << "error=norm(this->fzeros);" << endl;
-    out << "while((converged==false)&&" << endl;
-    out << "(this->iter<" << mb.getClassName() << "::iterMax)){" << endl;
-    out << "++(this->iter);" << endl;
-    out << "this->zeros_1  = this->zeros;" << endl;
+    out << "error=norm(this->fzeros);\n";
+    out << "while((converged==false)&&\n";
+    out << "(this->iter<" << mb.getClassName() << "::iterMax)){\n";
+    out << "++(this->iter);\n";
+    out << "this->zeros_1  = this->zeros;\n";
     NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"jacobian");
     out << "converged = ((error)/(real(" << n2 << "))<";
-    out << "(this->epsilon));" << endl;
+    out << "(this->epsilon));\n";
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
 	  << "::integrate() : iteration \" "
-	  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << \", dumping parameter : \" << levmar_mu << endl;" << endl;
+	  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << \", dumping parameter : \" << levmar_mu << endl;\n";
     }
-    out << "if(!converged){" << endl;
-    out << "// matrix containing tJJ+levmar_mu*I" << endl;
-    out << "tmatrix<" << n2 << "," << n2 << ",real> levmar_tJJ;" << endl;
-    out << "// vector containing tJ*F" << endl;
-    out << "tvector<" << n2 << ",real> levmar_sm;" << endl;
-    out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl
+    out << "if(!converged){\n";
+    out << "// matrix containing tJJ+levmar_mu*I\n";
+    out << "tmatrix<" << n2 << "," << n2 << ",real> levmar_tJJ;\n";
+    out << "// vector containing tJ*F\n";
+    out << "tvector<" << n2 << ",real> levmar_sm;\n";
+    out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){\n"
 	<< "levmar_sm(idx)=real(0);"
-	<< "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl
+	<< "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){\n"
 	<< "levmar_sm(idx)+=(this->jacobian(idx2,idx))*(this->fzeros(idx2));"
-	<< "levmar_tJJ(idx,idx2)=real(0);" << endl
-	<< "for(unsigned short idx3=0;idx3!=" << n2 << ";++idx3){" << endl
-	<< "levmar_tJJ(idx,idx2)+=(this->jacobian(idx3,idx))*(this->jacobian(idx3,idx2));" << endl
-	<< "}" << endl
-	<< "}" << endl
-	<< "}" << endl
-	<< "const real levmar_muF = (levmar_mu)*norm(this->fzeros);" << endl
-	<< "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl
-	<< "levmar_tJJ(idx,idx)+=levmar_muF;" << endl
-	<< "}" << endl;
-    out << "try{" << endl;
+	<< "levmar_tJJ(idx,idx2)=real(0);\n"
+	<< "for(unsigned short idx3=0;idx3!=" << n2 << ";++idx3){\n"
+	<< "levmar_tJJ(idx,idx2)+=(this->jacobian(idx3,idx))*(this->jacobian(idx3,idx2));\n"
+	<< "}\n"
+	<< "}\n"
+	<< "}\n"
+	<< "const real levmar_muF = (levmar_mu)*norm(this->fzeros);\n"
+	<< "for(unsigned short idx=0;idx!=" << n2 << ";++idx){\n"
+	<< "levmar_tJJ(idx,idx)+=levmar_muF;\n"
+	<< "}\n";
+    out << "try{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       writeStandardPerformanceProfilingBegin(out,mb.getClassName(),
 					     "TinyMatrixSolve","lu");
     }
     out << "TinyMatrixSolve<" << n2
-	<< "," << "real>::exe(levmar_tJJ,levmar_sm);" << endl;
+	<< "," << "real>::exe(levmar_tJJ,levmar_sm);\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       writeStandardPerformanceProfilingEnd(out);
     }
-    out << "}" << endl;
-    out << "catch(LUException&){" << endl;
+    out << "}\n";
+    out << "catch(LUException&){\n";
     if(mb.useQt()){        
-      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;" << endl;
+      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;" << endl;
+      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    out << "}" << endl;
+    out << "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out,mb,h,"levmar_sm");
     // levmar_sm contains the step
-    out << "this->zeros -= levmar_sm;" << endl; 
-    out << "tvector<" << n2 <<  ",real> levmar_fzeros_1 = this->fzeros;" << endl; 
-    out << "tmatrix<" << n2 << "," << n2 <<  ",real> levmar_jacobian_1 = this->jacobian;" << endl; 
+    out << "this->zeros -= levmar_sm;\n"; 
+    out << "tvector<" << n2 <<  ",real> levmar_fzeros_1 = this->fzeros;\n"; 
+    out << "tmatrix<" << n2 << "," << n2 <<  ",real> levmar_jacobian_1 = this->jacobian;\n"; 
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();" << endl;
+      out << "this->computeStress();\n";
     }
-    out << "if(!this->computeFdF()){" << endl;
-    out << "// rejecting the step" << endl;
-    out << "this->zeros     = this->zeros_1;" << endl; 
-    out << "this->fzeros    = levmar_fzeros_1;" << endl; 
-    out << "this->jacobian  = levmar_jacobian_1;" << endl; 
+    out << "if(!this->computeFdF()){\n";
+    out << "// rejecting the step\n";
+    out << "this->zeros     = this->zeros_1;\n"; 
+    out << "this->fzeros    = levmar_fzeros_1;\n"; 
+    out << "this->jacobian  = levmar_jacobian_1;\n"; 
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();" << endl;
+      out << "this->computeStress();\n";
     }
-    out << "// updating mu" << endl;
-    out << "levmar_mu *= 4;" << endl;
-    out << "} else {" << endl;
-    out << "const real error_1=error;" << endl;
-    out << "const real error_p=norm(levmar_fzeros_1-levmar_jacobian_1*levmar_sm);" << endl;
-    out << "error=norm(this->fzeros);" << endl;
-    out << "const real levmar_r = (error*error-error_1*error_1)/(error_p*error_p-error_1*error_1);" << endl;
-    out << "if(levmar_r<this->levmar_p0){" << endl;
-    out << "// rejecting the step" << endl;
-    out << "this->zeros     = this->zeros_1;" << endl; 
-    out << "this->fzeros    = levmar_fzeros_1;" << endl; 
-    out << "this->jacobian  = levmar_jacobian_1;" << endl; 
-    out << "error = error_1;" << endl;
+    out << "// updating mu\n";
+    out << "levmar_mu *= 4;\n";
+    out << "} else {\n";
+    out << "const real error_1=error;\n";
+    out << "#if (!defined __INTEL_COMPILER)\n";
+    out << "const real error_p=norm(levmar_fzeros_1-levmar_jacobian_1*levmar_sm);\n";
+    out << "#else\n";
+    out << "tvector<" << n2 <<  ",real> levmar_error = "
+      "levmar_jacobian_1*levmar_sm\n;";
+    out << "const real error_p=norm(levmar_fzeros_1-levmar_error);\n";
+    out << "#endif  /* __INTEL_COMPILER */\n";
+    out << "error=norm(this->fzeros);\n";
+    out << "const real levmar_r = (error*error-error_1*error_1)/(error_p*error_p-error_1*error_1);\n";
+    out << "if(levmar_r<this->levmar_p0){\n";
+    out << "// rejecting the step\n";
+    out << "this->zeros     = this->zeros_1;\n"; 
+    out << "this->fzeros    = levmar_fzeros_1;\n"; 
+    out << "this->jacobian  = levmar_jacobian_1;\n"; 
+    out << "error = error_1;\n";
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();" << endl;
+      out << "this->computeStress();\n";
     }
-    out << "levmar_mu *= 4;" << endl;
-    out << "} else {" << endl;
-    out << "// accepting the step and updating mu" << endl;
+    out << "levmar_mu *= 4;\n";
+    out << "} else {\n";
+    out << "// accepting the step and updating mu\n";
     if(this->requiresNumericalJacobian()){
-      out << "this->computeNumericalJacobian(this->jacobian);" << endl;
+      out << "this->computeNumericalJacobian(this->jacobian);\n";
     }
-    out << "if(levmar_r<this->levmar_p1){" << endl;
-    out << "levmar_mu *= 4;" << endl;
-    out << "} else if(levmar_r>this->levmar_p2){" << endl;
-    out << "levmar_mu  = max(levmar_mu/4,this->levmar_m);" << endl;
-    out << "}" << endl;
-    out << "}" << endl;
-    out << "}" << endl;
+    out << "if(levmar_r<this->levmar_p1){\n";
+    out << "levmar_mu *= 4;\n";
+    out << "} else if(levmar_r>this->levmar_p2){\n";
+    out << "levmar_mu  = max(levmar_mu/4,this->levmar_m);\n";
+    out << "}\n";
+    out << "}\n";
+    out << "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out,mb,h);
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(out,mb,h);
-    out << "}" << endl;
-    out << "}" << endl;
+    out << "}\n";
+    out << "}\n";
   } // end of MFrontLevenbergMarquartSolverBase::writeResolutionAlgorithm
 
   MFrontLevenbergMarquartSolverBase::~MFrontLevenbergMarquartSolverBase()

@@ -215,6 +215,42 @@ namespace tfel
     } // end of ExternalLibraryManager::getSupportedModellingHypotheses
 
     void
+    ExternalLibraryManager::setOutOfBoundsPolicy(const std::string& l,
+						 const std::string& f,
+						 const tfel::material::OutOfBoundsPolicy p)
+    {
+      using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      int (TFEL_ADDCALL_PTR fct)(int);
+      fct = ::tfel_getSetOutOfBoundsPolicyFunction(lib,(f+"_setOutOfBoundsPolicy").c_str());
+      if(fct==0){
+	string msg("ExternalLibraryManager::setOutOfBoundsPolicy : ");
+	msg += " can't get the '"+f+"_setOutOfBoundsPolicy' function (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(p==tfel::material::None){
+	fct(0);
+      } else if(p==tfel::material::Warning){
+	fct(1);
+      } else if(p==tfel::material::Strict){
+	fct(2);
+      } else {
+	throw(runtime_error("ExternalLibraryManager::setOutOfBoundsPolicy: "
+			    "unsupported policy"));
+      }
+    } // end of ExternalLibraryManager::setParameter
+    
+    void
     ExternalLibraryManager::setParameter(const std::string& l,
 					 const std::string& f,
 					 const std::string& p,

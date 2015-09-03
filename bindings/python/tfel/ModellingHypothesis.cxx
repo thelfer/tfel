@@ -15,7 +15,9 @@
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
-BOOST_PYTHON_MODULE(material)
+void declareModellingHypothesis(void);
+
+void declareModellingHypothesis(void)
 {
   using namespace boost::python;
   using namespace tfel::material;

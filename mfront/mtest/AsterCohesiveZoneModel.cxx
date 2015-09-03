@@ -57,7 +57,7 @@ namespace mfront
 
   tfel::math::tmatrix<3u,3u,real>
   AsterCohesiveZoneModel::getRotationMatrix(const tfel::math::vector<real>&,
-							 const tfel::math::tmatrix<3u,3u,real>& r) const
+					    const tfel::math::tmatrix<3u,3u,real>&) const
   {
     throw(std::runtime_error("AsterCohesiveZoneModel::getRotationMatrix : "
 			     "invalid call"));

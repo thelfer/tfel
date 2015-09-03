@@ -43,7 +43,8 @@ namespace cyrano
 	       const CyranoReal *const DPRED,
 	       CyranoReal *const STATEV,
 	       const CyranoInt  *const NSTATV,
-	       CyranoReal *const STRESS)
+	       CyranoReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op)
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -65,7 +66,7 @@ namespace cyrano
       CyranoBehaviourHandler::checkNPROPS(*NPROPS);
       CyranoBehaviourHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS);
+		      PREDEF,DPRED,STATEV,STRESS,op);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of CyranoOrthotropicBehaviourHander<1u,Behaviour>::exe
 

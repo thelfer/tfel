@@ -154,6 +154,7 @@ namespace umat
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -184,7 +185,7 @@ namespace umat
       ThermalExpansionCoefficientCheck::exe(PROPS[8]);
       ThermalExpansionCoefficientCheck::exe(PROPS[9]);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,sfeh);
+		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of UMATOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct UMATOrthotropicBehaviourHander<1u,Behaviour>
@@ -210,7 +211,8 @@ namespace umat
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
-	     const StressFreeExpansionHandler& sfeh) 
+	       const tfel::material::OutOfBoundsPolicy op,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -248,7 +250,7 @@ namespace umat
       m.rotateStrainsForward(DSTRAN,de);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -281,7 +283,8 @@ namespace umat
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
-	     const StressFreeExpansionHandler& sfeh) 
+	       const tfel::material::OutOfBoundsPolicy op,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -320,7 +323,7 @@ namespace umat
       m.rotateStrainsForward(DSTRAN,de);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -350,6 +353,7 @@ namespace umat
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -389,7 +393,7 @@ namespace umat
       ThermalExpansionCoefficientCheck::exe(PROPS[18]);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -431,6 +435,7 @@ namespace umat
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -461,7 +466,7 @@ namespace umat
       ThermalExpansionCoefficientCheck::exe(PROPS[8]);
       ThermalExpansionCoefficientCheck::exe(PROPS[9]);
       Handler handler(DTIME,F0,F1,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,sfeh);
+		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of UMATOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct UMATOrthotropicBehaviourHander<1u,Behaviour>
@@ -487,7 +492,8 @@ namespace umat
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
-	     const StressFreeExpansionHandler& sfeh) 
+	       const tfel::material::OutOfBoundsPolicy op,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -525,7 +531,7 @@ namespace umat
       m.rotateDeformationGradientForward(F1,F1m);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -558,7 +564,8 @@ namespace umat
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
-	     const StressFreeExpansionHandler& sfeh) 
+	       const tfel::material::OutOfBoundsPolicy op,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -597,7 +604,7 @@ namespace umat
       m.rotateDeformationGradientForward(F1,F1m);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -627,6 +634,7 @@ namespace umat
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -666,7 +674,7 @@ namespace umat
       ThermalExpansionCoefficientCheck::exe(PROPS[18]);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,sm,sfeh);
+		      PREDEF,DPRED,STATEV,sm,op,sfeh);
       handler.exe(DDSOE,sm,STATEV);
       m.rotateStressesBackward(sm,STRESS);
       if(bDDSOE){

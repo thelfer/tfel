@@ -1073,9 +1073,11 @@ namespace mfront
     ~BehaviourDescription();
   private:
     /*!
-     * \brief throw an exception saying that no attribute with the given name exists
+     * \brief throw an exception saying that no attribute with the
+     * given name exists
      */
-    static void throwUndefinedAttribute(const std::string&);
+    TFEL_NORETURN static void
+    throwUndefinedAttribute(const std::string&);
     /*!
      * update the class name
      */
@@ -1290,7 +1292,7 @@ namespace mfront
     mutable BehaviourSymmetryType stype;
     //! orthotropic axes convention
     tfel::material::OrthotropicAxesConvention oac =
-      tfel::material::OrthotropicAxesConvention::UNDEFINED;
+      tfel::material::OrthotropicAxesConvention::DEFAULT;
     //!flag telling if the orthotropic axes convention has been defined
     mutable bool oacIsDefined = false;
     //! flag telling the behaviour symmetry has been defined

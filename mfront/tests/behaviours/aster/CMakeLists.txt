@@ -14,6 +14,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
     PolyCrystalsAngles-30.txt @ONLY)
 
 set(mfront_tests_SOURCES
+  MaterialPropertiesBoundsCheck
   Tvergaard
   Elasticity
   Elasticity2
@@ -157,6 +158,18 @@ macro(test_aster_python test)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_aster_python)
 
+test_aster(materialpropertiesboundscheck)
+test_aster(materialpropertiesboundscheck2)
+test_aster(materialpropertiesboundscheck3)
+test_aster(materialpropertiesboundscheck4)
+test_aster(materialpropertiesboundscheck5)
+test_aster(materialpropertiesboundscheck6)
+set_tests_properties(astermaterialpropertiesboundscheck_mtest
+  astermaterialpropertiesboundscheck2_mtest
+  astermaterialpropertiesboundscheck5_mtest
+  PROPERTIES WILL_FAIL true)
+
+
 test_aster(elasticity)
 test_aster(elasticity2)
 if(HAVE_CASTEM)
@@ -190,6 +203,8 @@ test_aster(elasticity20)
 test_aster(elasticity21)
 test_aster(elasticity22)
 test_aster(elasticity23)
+test_aster(druckerprager)
+test_aster(druckerprager2)
 test_aster(mazars)
 test_aster(mazars2)
 test_aster(lorentz)

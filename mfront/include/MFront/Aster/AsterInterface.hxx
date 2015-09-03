@@ -87,6 +87,7 @@ namespace aster
 	     const AsterReal *const PREDEF,const AsterReal *const DPRED,
 	     AsterReal *const STATEV,const AsterInt  *const NSTATV,
 	     AsterReal *const STRESS, const AsterInt  *const NUMMOD,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -108,7 +109,7 @@ namespace aster
                             Behaviour2DWrapper<Traits::btype,ModellingHypothesis::GENERALISEDPLANESTRAIN> >::type Handler;
         return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
                             TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-                            STATEV,NSTATV,STRESS,sfeh);
+                            STATEV,NSTATV,STRESS,op,sfeh);
       } else if( *NUMMOD == 4u ){
         typedef Behaviour<ModellingHypothesis::AXISYMMETRICAL,AsterReal,false> BV;
         typedef MechanicalBehaviourTraits<BV> MTraits;
@@ -119,18 +120,18 @@ namespace aster
                             Behaviour2DWrapper<Traits::btype,ModellingHypothesis::AXISYMMETRICAL> >::type Handler;
         return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
                             TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-                            STATEV,NSTATV,STRESS,sfeh);
+                            STATEV,NSTATV,STRESS,op,sfeh);
       } else if( *NUMMOD == 5u ){
         typedef Behaviour<ModellingHypothesis::PLANESTRESS,AsterReal,false> BV;
         typedef MechanicalBehaviourTraits<BV> MTraits;
         typedef AsterTraits<BV> Traits;
         const bool is_defined_ = MTraits::is_defined;
         typedef typename std::conditional<is_defined_,
-                            CallBehaviour<ModellingHypothesis::PLANESTRESS>,
-                            Behaviour2DWrapper<Traits::btype,ModellingHypothesis::PLANESTRESS> >::type Handler;
+					  CallBehaviour<ModellingHypothesis::PLANESTRESS>,
+					  Behaviour2DWrapper<Traits::btype,ModellingHypothesis::PLANESTRESS> >::type Handler;
         return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
                             TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-                            STATEV,NSTATV,STRESS,sfeh);
+                            STATEV,NSTATV,STRESS,op,sfeh);
       } else if( *NUMMOD == 6u ){
         typedef Behaviour<ModellingHypothesis::PLANESTRAIN,AsterReal,false> BV;
         typedef MechanicalBehaviourTraits<BV> MTraits;
@@ -141,11 +142,11 @@ namespace aster
                             Behaviour2DWrapper<Traits::btype,ModellingHypothesis::PLANESTRAIN> >::type Handler;
         return Handler::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
                             TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-                            STATEV,NSTATV,STRESS,sfeh);
+                            STATEV,NSTATV,STRESS,op,sfeh);
       } else if( *NUMMOD == 3u ){
         return CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 								       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								       STATEV,NSTATV,STRESS,sfeh);
+								       STATEV,NSTATV,STRESS,op,sfeh);
       } else {
         AsterInterfaceExceptions::displayUnsupportedHypothesisMessage();
         return -2;
@@ -170,6 +171,7 @@ namespace aster
 	      const AsterReal *const PREDEF,const AsterReal *const DPRED,
 	      AsterReal *const STATEV,const AsterInt  *const NSTATV,
 	      AsterReal *const STRESS,
+	      const tfel::material::OutOfBoundsPolicy op,
 	      const StressFreeExpansionHandler& sfeh)
       {
 	using namespace tfel::meta;
@@ -193,7 +195,7 @@ namespace aster
 	copy<StensorDimeToSize<N>::value>::exe(DSTRAN,de);
 	int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(&NTENS,DTIME,DROT,K,e,de,
 									TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									STATEV,NSTATV,s,sfeh);
+									STATEV,NSTATV,s,op,sfeh);
 	if(r==0){
 	  AsterReduceTangentOperator<N>::exe(DDSOE,K);
 	  copy<StensorDimeToSize<N>::value>::exe(s,STRESS);
@@ -214,6 +216,7 @@ namespace aster
 	      const AsterReal *const PREDEF,const AsterReal *const DPRED,
 	      AsterReal *const STATEV,const AsterInt  *const NSTATV,
 	      AsterReal *const STRESS,
+	      const tfel::material::OutOfBoundsPolicy op,
 	      const StressFreeExpansionHandler& sfeh)
       {
 	using namespace std;
@@ -231,7 +234,7 @@ namespace aster
 	copy<9u>::exe(DSTRAN,F1);
 	int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(&NTENS,DTIME,DROT,DDSOE,F0,F1,
 									TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									STATEV,NSTATV,s,sfeh);
+									STATEV,NSTATV,s,op,sfeh);
 	if(r==0){
 	  copy<StensorDimeToSize<N>::value>::exe(s,STRESS);
 	}
@@ -251,6 +254,7 @@ namespace aster
 	      const AsterReal *const PREDEF,const AsterReal *const DPRED,
 	      AsterReal *const STATEV,const AsterInt  *const NSTATV,
 	      AsterReal *const STRESS,
+	      const tfel::material::OutOfBoundsPolicy op,
 	      const StressFreeExpansionHandler& sfeh)
       {
 	using tfel::material::ModellingHypothesis;
@@ -268,7 +272,7 @@ namespace aster
 	copy<2u>::exe(DSTRAN,du);
 	int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(&NTENS,DTIME,DROT,DDSOE,u0,du,
 									TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									STATEV,NSTATV,s,sfeh);
+									STATEV,NSTATV,s,op,sfeh);
 	if(r==0){
 	  copy<2u>::exe(s,STRESS);
 	  DDSOE[0]=K[0];
@@ -292,6 +296,7 @@ namespace aster
 	      const AsterReal *const PREDEF,const AsterReal *const DPRED,
 	      AsterReal *const STATEV,const AsterInt  *const NSTATV,
 	      AsterReal *const STRESS,
+	      const tfel::material::OutOfBoundsPolicy op,
 	      const StressFreeExpansionHandler& sfeh)
       {
 	using namespace std;
@@ -305,7 +310,7 @@ namespace aster
 				       AsterOrthotropicBehaviourHandler<AsterTraits::btype,H,Behaviour> >::type Handler;
 	  Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		       PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		       STRESS,sfeh);
+		       STRESS,op,sfeh);
 	} 
 	catch(const AsterException& e){
 	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
@@ -313,29 +318,41 @@ namespace aster
 	  }
 	  return -2;
 	}
-	catch(const tfel::material::MaterialException& e){
+	catch(const tfel::material::OutOfBoundsException& e){
 	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceExceptions::treatMaterialException(Traits::getName(),e);
 	  }
 	  return -3;
 	}
-	catch(const tfel::exception::TFELException& e){
+	catch(const tfel::material::DivergenceException& e){
 	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceExceptions::treatTFELException(Traits::getName(),e);
 	  }
 	  return -4;
 	}
-	catch(const std::exception& e){
+	catch(const tfel::material::MaterialException& e){
 	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceExceptions::treatStandardException(Traits::getName(),e);
 	  }
 	  return -5;
 	}
+	catch(const tfel::exception::TFELException& e){
+	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceExceptions::treatTFELException(Traits::getName(),e);
+	  }
+	  return -6;
+	}
+	catch(const std::exception& e){
+	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
+	    AsterInterfaceExceptions::treatStandardException(Traits::getName(),e);
+	  }
+	  return -7;
+	}
 	catch(...){
 	  if(AsterTraits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceExceptions::treatUnknownException(Traits::getName());
 	  }
-	  return -6;
+	  return -8;
 	}
 	return 0;
       } // end of CallBehaviour::exe

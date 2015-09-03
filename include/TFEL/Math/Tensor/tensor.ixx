@@ -109,20 +109,7 @@ namespace tfel{
       struct TensorMatrixAccessOperator<1u>
       {
 	template<typename T>
-	TFEL_MATH_INLINE
-	static T&
-	exe(tfel::math::tensor<1u,T>& t,
-	    const unsigned short i,
-	    const unsigned short j)
-	{
-	  if((i==j)&&(i<3)){
-	    return t(i);
-	  }
-	  throw(TensorInvalidIndexesException());
-	}
-	template<typename T>
-	TFEL_MATH_INLINE
-	static T
+	TFEL_MATH_INLINE static T
 	exe(const tfel::math::tensor<1u,T>& t,
 	    const unsigned short i,
 	    const unsigned short j)
@@ -130,10 +117,7 @@ namespace tfel{
 	  if((i>2)||(j>2)){
 	    throw(TensorInvalidIndexesException());
 	  }
-	  if(i==j){
-	    return t(i);
-	  }
-	  return T(0);
+	  return (i==j) ? t(i) : T(0);
 	}
       };
       
@@ -141,24 +125,7 @@ namespace tfel{
       struct TensorMatrixAccessOperator<2u>
       {
 	template<typename T>
-	TFEL_MATH_INLINE
-	static T&
-	exe(tfel::math::tensor<2u,T>& t,
-	    const unsigned short i,
-	    const unsigned short j)
-	{
-	  if((i==j)&&(i<3)){
-	    return t(i);
-	  } else if((i==0)&&(j==1)){
-	    return t(3);
-	  } else if((i==1)&&(j==0)){
-	    return t(4);
-	  }
-	  throw(TensorInvalidIndexesException());
-	}
-	template<typename T>
-	TFEL_MATH_INLINE
-	static T
+	TFEL_MATH_INLINE static T
 	exe(const tfel::math::tensor<2u,T>& t,
 	    const unsigned short i,
 	    const unsigned short j)
@@ -181,33 +148,7 @@ namespace tfel{
       struct TensorMatrixAccessOperator<3u>
       {
 	template<typename T>
-	TFEL_MATH_INLINE
-	static T&
-	exe(tfel::math::tensor<3u,T>& t,
-	    const unsigned short i,
-	    const unsigned short j)
-	{
-	  if((i==j)&&(i<3)){
-	    return t(i);
-	  } else if((i==0)&&(j==1)){
-	    return t(3);
-	  } else if((i==1)&&(j==0)){
-	    return t(4);
-	  } else if((i==0)&&(j==2)){
-	    return t(5);
-	  } else if((i==2)&&(j==0)){
-	    return t(6);
-	  } else if((i==1)&&(j==2)){
-	    return t(7);
-	  } else if((i==2)&&(j==1)){
-	    return t(8);
-	  }
-	  throw(TensorInvalidIndexesException());
-	}
-
-	template<typename T>
-	TFEL_MATH_INLINE
-	static T
+	TFEL_MATH_INLINE static T
 	exe(const tfel::math::tensor<3u,T>& t,
 	    const unsigned short i,
 	    const unsigned short j)
@@ -340,15 +281,6 @@ namespace tfel{
     T
     tensor<N,T>::operator()(const unsigned short i,
 			    const unsigned short j) const
-    {
-      using tfel::math::internals::TensorMatrixAccessOperator;
-      return TensorMatrixAccessOperator<N>::exe(*this,i,j);
-    }
-
-    template<unsigned short N, typename T>
-    T&
-    tensor<N,T>::operator()(const unsigned short i,
-			    const unsigned short j)
     {
       using tfel::math::internals::TensorMatrixAccessOperator;
       return TensorMatrixAccessOperator<N>::exe(*this,i,j);

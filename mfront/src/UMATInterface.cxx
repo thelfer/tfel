@@ -180,7 +180,6 @@ namespace mfront{
   static int
   getUMATModellingHypothesisIndex(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    using namespace std;
     using namespace tfel::material;
     switch(h){
     case ModellingHypothesis::TRIDIMENSIONAL:
@@ -196,21 +195,20 @@ namespace mfront{
     case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
       return 14;
     default:
-      ostringstream msg;
-      msg << "mfront::getUMATModellingHypothesisIndex : "
-	  << "unsupported hypothesis";
-      if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	msg << " ('" << ModellingHypothesis::toString(h) << "')";
-      }
-      throw(runtime_error(msg.str()));
+      break;
     }
-    return 0;
+    std::ostringstream msg;
+    msg << "mfront::getUMATModellingHypothesisIndex : "
+	<< "unsupported hypothesis";
+    if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      msg << " ('" << ModellingHypothesis::toString(h) << "')";
+    }
+    throw(std::runtime_error(msg.str()));
   } // end of getUMATModellingHypothesisIndex
 
   unsigned short
   UMATInterface::getStensorSize(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    using namespace std;
     using namespace tfel::material;
     switch(h){
     case ModellingHypothesis::TRIDIMENSIONAL:
@@ -223,15 +221,15 @@ namespace mfront{
     case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
       return 3u;
     default:
-      ostringstream msg;
-      msg << "UMATInterface::getStensorSize : "
-	  << "unsupported hypothesis";
-      if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	msg << " ('" << ModellingHypothesis::toString(h) << "')";
-      }
-      throw(runtime_error(msg.str()));
+      break;
     }
-    return 0;
+    std::ostringstream msg;
+    msg << "UMATInterface::getStensorSize : "
+	<< "unsupported hypothesis";
+    if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      msg << " ('" << ModellingHypothesis::toString(h) << "')";
+    }
+    throw(std::runtime_error(msg.str()));
   } // end of UMATInterface::getStensorSize
 
   std::string
@@ -601,6 +599,31 @@ namespace mfront{
   } // end of UMATInterfaceModellingHypothesesToBeTreated
 
   void
+  UMATInterface::writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream& out,
+								 const std::string& name) const
+  {
+    out << "static tfel::material::OutOfBoundsPolicy&\n"
+	<< getFunctionName(name) << "_getOutOfBoundsPolicy(void){\n"
+	<< "using namespace umat;\n"
+	<< "using namespace tfel::material;\n"
+	<< "static OutOfBoundsPolicy policy = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy().getOutOfBoundsPolicy();\n"
+	<< "return policy;\n"
+	<< "}\n\n";
+  } // end of MFrontUMATInterface::writeGetOutOfBoundsPolicyFunctionImplementation    
+  
+  void
+  UMATInterface::writeSetOutOfBoundsPolicyFunctionImplementation2(std::ostream& out,
+								  const std::string& name,
+								  const std::string& name2) const
+  {
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
+    out << "MFRONT_SHAREDOBJ void\n"
+	<< this->getFunctionName(name2) << "_setOutOfBoundsPolicy(const int p){\n"
+	<< this->getFunctionName(name) << "_setOutOfBoundsPolicy(p);\n"
+	<< "}\n\n";
+  }
+  
+  void
   UMATInterface::endTreatment(const BehaviourDescription& mb,
 			      const FileDescription& fd) const
   {
@@ -682,7 +705,7 @@ namespace mfront{
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
-    
+
     out << "#ifdef __cplusplus\n\n";
 
     out << "namespace umat{\n\n";
@@ -707,27 +730,36 @@ namespace mfront{
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
 	this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
       } else {
 	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
 	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
 	    this->writeSetParametersFunctionsDeclarations(out,name+"_frst",mb);
+	    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_frst");
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
 	    }
 	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
 	    this->writeSetParametersFunctionsDeclarations(out,name+"_malls",mb);
+	    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_malls");
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
 	    }
 	  } else if(*pfss==LOGARITHMICSTRAIN1D){
 	    this->writeSetParametersFunctionsDeclarations(out,name+"_log1D",mb);
+	    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_log1D");
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
 	    }
 	  } else if(*pfss==NONE){
 	    this->writeSetParametersFunctionsDeclarations(out,name+"_ss",mb);
+	    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_ss");
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
 	    }
 	  } else {
 	    string msg("UMATInterface::endTreatment : "
@@ -739,10 +771,12 @@ namespace mfront{
 	   (find(this->finiteStrainStrategies.begin(),
 		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
 	  this->writeSetParametersFunctionsDeclarations(out,name,mb);
+	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
 	}
       }
     } else {
       this->writeSetParametersFunctionsDeclarations(out,name,mb);
+      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     }
 
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -833,11 +867,56 @@ namespace mfront{
 	     MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=this->finiteStrainStrategies.end())){
       out << "#include\"MFront/UMAT/UMATFiniteStrain.hxx\"\n\n";
     }
+    out << "#include\"MFront/UMAT/UMATOutOfBoundsPolicy.hxx\"\n";
     out << "#include\"MFront/UMAT/UMATInterface.hxx\"\n\n";
     out << "#include\"MFront/UMAT/UMATStressFreeExpansionHandler.hxx\"\n\n";
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
-  
+
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->finiteStrainStrategies.empty()){
+	this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
+      } else {
+	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
+	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	    if(this->finiteStrainStrategies.size()==1){
+	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
+	    } else {
+	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name+"_frst");
+	    }
+	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	    if(this->finiteStrainStrategies.size()==1){
+	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
+	    } else {
+	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name+"_malls");
+	    }
+	  } else if(*pfss==LOGARITHMICSTRAIN1D){
+	    if(this->finiteStrainStrategies.size()==1){
+	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
+	    } else {
+	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name+"_log1D");
+	    }
+	  } else if(*pfss==NONE){
+	    if(this->finiteStrainStrategies.size()==1){
+	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
+	    } else {
+	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name+"_ss");
+	    }
+	  } else {
+	    throw(std::runtime_error("MFrontUMATInterface::endTreatment : "
+				     "internal error, unsupported finite strain strategy"));
+	  }
+	}
+	if((this->finiteStrainStrategies.size()!=1u)&&
+	   (find(this->finiteStrainStrategies.begin(),
+		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	  this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
+	}
+      }
+    } else {
+      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
+    }
+    
     out << "extern \"C\"{\n\n";
 
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -1034,27 +1113,40 @@ namespace mfront{
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
 	this->writeSetParametersFunctionsImplementations(out,name,mb);
+	this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
       } else {
 	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
 	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
 	    this->writeSetParametersFunctionsImplementations(out,name+"_frst",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsImplementations(out,name,mb);
+	      this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_frst");
+	    } else {
+	      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name+"_frst");
 	    }
 	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
 	    this->writeSetParametersFunctionsImplementations(out,name+"_malls",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsImplementations(out,name,mb);
+	      this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_malls");
+	    } else {
+	      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name+"_malls");
 	    }
 	  } else if(*pfss==LOGARITHMICSTRAIN1D){
 	    this->writeSetParametersFunctionsImplementations(out,name+"_log1D",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsImplementations(out,name,mb);
+	      this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_log1D");
+	    } else {
+	      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name+"_log1D");
 	    }
 	  } else if(*pfss==NONE){
 	    this->writeSetParametersFunctionsImplementations(out,name+"_ss",mb);
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->writeSetParametersFunctionsImplementations(out,name,mb);
+	      this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_ss");
+	    } else {
+	      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name+"_ss");
 	    }
 	  } else {
 	    string msg("UMATInterface::endTreatment : "
@@ -1066,10 +1158,12 @@ namespace mfront{
 	   (find(this->finiteStrainStrategies.begin(),
 		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
 	  this->writeSetParametersFunctionsImplementations(out,name,mb);
+	  this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 	}
       }
     } else {
       this->writeSetParametersFunctionsImplementations(out,name,mb);
+      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
     }
 
     out << "static void \numat"
@@ -1085,9 +1179,13 @@ namespace mfront{
 	<< "umat::UMATInt  *const KINC,\n"
 	<< "const umat::StressFreeExpansionHandler& sfeh)\n";
     out << "{\n";
+    out << "tfel::material::OutOfBoundsPolicy op = "
+	<< this->getFunctionName(name) << "_getOutOfBoundsPolicy();\n";
     out << "umat::UMATInterface<tfel::material::" << mb.getClassName()
-	<< ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,sfeh);\n";
+	<< ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,\n"
+	<< "TEMP,DTEMP,PROPS,NPROPS,\n"
+	<< "PREDEF,DPRED,STATEV,NSTATV,\n"
+	<< "STRESS,NDI,KINC,op,sfeh);\n";
     out << "}\n\n";
 
     

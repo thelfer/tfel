@@ -7,6 +7,14 @@
 \newcommand{\Frac}[2]{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# L'entrée AxialGrowth
+
+Cette entrée décrit axial growth under irradiation.
+
+* noms  : AxialGrowth
+* unité : sans unité
+* type : scalaire 
+
 # L'entrée AxialStrain
 
 Cette entrée décrit la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes).

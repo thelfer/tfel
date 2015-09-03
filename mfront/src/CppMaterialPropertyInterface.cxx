@@ -24,12 +24,6 @@
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CppMaterialPropertyInterface.hxx"
 
-#ifndef _MSC_VER
-static const char * const constexpr_c = "constexpr";
-#else
-static const char * const constexpr_c = "const";
-#endif
-
 namespace mfront
 {
 
@@ -419,7 +413,7 @@ namespace mfront
 	  if(p6->boundsType==VariableBoundsDescription::Lower){
 	    this->srcFile << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
 	    this->srcFile << "const char * const policy = "
-			  << "::getenv(\"OUT_OF_BOUND_POLICY\");\n";
+			  << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
 	    this->srcFile << "if(policy!=nullptr){\n";
 	    this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    this->srcFile << "ostringstream msg;\n";
@@ -437,7 +431,7 @@ namespace mfront
 	  } else if(p6->boundsType==VariableBoundsDescription::Upper){
 	    this->srcFile << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
 	    this->srcFile << "const char * const policy = "
-			  << "::getenv(\"OUT_OF_BOUND_POLICY\");\n";
+			  << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
 	    this->srcFile << "if(policy!=nullptr){\n";
 	    this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    this->srcFile << "ostringstream msg;\n";
@@ -455,7 +449,7 @@ namespace mfront
 	  } else {
 	    this->srcFile << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
 	    this->srcFile << "const char * const policy = "
-			  << "::getenv(\"OUT_OF_BOUND_POLICY\");\n";
+			  << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
 	    this->srcFile << "if(policy!=nullptr){\n";
 	    this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    this->srcFile << "ostringstream msg;\n";
@@ -472,7 +466,7 @@ namespace mfront
 	    this->srcFile << "}\n";
 	    this->srcFile << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
 	    this->srcFile << "const char * const policy = "
-			  << "::getenv(\"OUT_OF_BOUND_POLICY\");\n";
+			  << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
 	    this->srcFile << "if(policy!=nullptr){\n";
 	    this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    this->srcFile << "ostringstream msg;\n";

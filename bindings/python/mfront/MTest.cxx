@@ -657,6 +657,10 @@ void declareMTest(void)
 	 (arg("name"),"values"))
     .def("setImposedDrivingVariable",MTest_setImposedDrivingVariable2,
 	 (arg("name"),"values"))
+    .def("setOutOfBoundsPolicy",
+	 &MTest::setOutOfBoundsPolicy)
+    .def("setScalarInternalStateVariableInitialValue",
+	 &MTest::setScalarInternalStateVariableInitialValue)
     .def("setRotationMatrix",
 	 &MTest_setRotationMatrix1)
     .def("setRotationMatrix",
