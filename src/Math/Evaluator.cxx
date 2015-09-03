@@ -591,7 +591,7 @@ namespace tfel
       while(*p!=">"){
 	// check parameter validity
 	for(ps=p->begin();ps!=p->end();++ps){
-	  if(!(isascii(*ps)||isdigit(*ps))||(*ps=='_')||(*ps=='-')){
+	  if(!(isalpha(*ps)||isdigit(*ps))||(*ps=='_')||(*ps=='-')){
 	    string msg("Evaluator::analyseParameters : ");
 	    msg += "invalid parameter '"+*p+"'";
 	    throw(runtime_error(msg));

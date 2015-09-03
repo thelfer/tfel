@@ -337,6 +337,7 @@ namespace umat
 			     const UMATReal *const,
 			     const UMATReal *const,
 			     const UMATReal *const,
+			     const tfel::material::OutOfBoundsPolicy,
 			     const StressFreeExpansionHandler&)
       {} // end of Error
       
@@ -344,12 +345,10 @@ namespace umat
 				UMATReal *const,
 				UMATReal *const)
       {
-	using namespace std;
 	using namespace tfel::material;
 	using namespace tfel::utilities;
 	throw(UMATInvalidDimension(Name<Behaviour<H,UMATReal,false> >::getName(),
 				   ModellingHypothesisToSpaceDimension<H>::value));
-	return;
       } // end of Error::exe
       
     }; // end of struct Error
@@ -378,11 +377,13 @@ namespace umat
 				 const UMATReal *const DPRED_,
 				 UMATReal *const STATEV_,
 				 UMATReal *const STRESS_,
+				 const tfel::material::OutOfBoundsPolicy op,
 				 const StressFreeExpansionHandler& sfeh_)
 	: DTIME(DTIME_),STRAN(STRAN_), DSTRAN(DSTRAN_),
 	TEMP(TEMP_),DTEMP(DTEMP_),PROPS(PROPS_),
 	PREDEF(PREDEF_),DPRED(DPRED_),
 	STATEV(STATEV_),STRESS(STRESS_),
+	policy(op),
 	sfeh(sfeh_)
        {} // end of IntegratorWithTimeStepping
       
@@ -433,7 +434,6 @@ namespace umat
 	} else {
 	  throwInvalidDDSOEException(Name<BV>::getName(),*DDSOE);
 	}
-	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
 		     this->PROPS+UMATTraits<BV>::propertiesOffset,
 		     this->STATEV,this->PREDEF,this->DPRED);
@@ -442,7 +442,7 @@ namespace umat
 	DVInitializer::exe(behaviour,STRAN,DSTRAN,sfeh);
 	behaviour.setUMATBehaviourDataThermodynamicForces(STRESS);
 	behaviour.initialize();
-	behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	behaviour.setOutOfBoundsPolicy(this->policy);
 	behaviour.checkBounds();
 	const typename BV::IntegrationResult r =
 	  PredictionOperatorComputer::exe(behaviour,smflag,smtype);
@@ -486,7 +486,6 @@ namespace umat
 	} else {
 	  throwInvalidDDSOEException(Name<BV>::getName(),*ddsoe);
 	}
-	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
 		     this->PROPS+UMATTraits<BV>::propertiesOffset,
 		     this->STATEV,this->PREDEF,this->DPRED);
@@ -497,7 +496,7 @@ namespace umat
 	  DVInitializer::exe(behaviour,STRAN,DSTRAN,sfeh);
 	  behaviour.setUMATBehaviourDataThermodynamicForces(STRESS);
 	  behaviour.initialize();
-	  behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	  behaviour.setOutOfBoundsPolicy(this->policy);
 	  behaviour.checkBounds();
 	  r = behaviour.integrate(smflag,smtype);
 	  behaviour.checkBounds();
@@ -542,7 +541,6 @@ namespace umat
 	  GeneralConsistentTangentOperatorComputer>::type,
 	  ConsistentTangentOperatorIsNotAvalaible
 	  >::type ConsistentTangentOperatorHandler;
-	const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	BData bData(this->TEMP,this->PROPS+UMATTraits<BV>::propertiesOffset,
 		    this->STATEV,this->PREDEF);
 	IData iData(this->DTIME,this->DTEMP,this->DPRED);
@@ -560,7 +558,7 @@ namespace umat
 	  BV behaviour(bData,iData);
 	  try{
 	    behaviour.initialize();
-	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	    behaviour.setOutOfBoundsPolicy(this->policy);
 	    behaviour.checkBounds();
 	    if(iterations==1u){
 	      result = behaviour.integrate(smflag,smtype);
@@ -619,6 +617,7 @@ namespace umat
       const UMATReal *const DPRED;
       const UMATReal *const STATEV;
       const UMATReal *const STRESS;
+      const tfel::material::OutOfBoundsPolicy policy;
       const StressFreeExpansionHandler sfeh;
 	
     }; // end of struct IntegratorWithTimeStepping
@@ -645,6 +644,7 @@ namespace umat
 				  const UMATReal *const DPRED,
 				  const UMATReal *const STATEV,
 				  const UMATReal *const STRESS,
+				  const tfel::material::OutOfBoundsPolicy op,
 				  const StressFreeExpansionHandler& sfeh)
 	: behaviour(DTIME,TEMP,DTEMP,
 		    PROPS+UMATTraits<BV>::propertiesOffset,
@@ -657,13 +657,12 @@ namespace umat
 	      Traits::hasStressFreeExpansion,
 	      DrivingVariableInitialiserWithStressFreeExpansion,
 	      DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	    const UMATOutOfBoundsPolicy& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	    SInitializer::exe(this->behaviour,PROPS);
 	    AInitializer::exe(this->behaviour,PROPS);
 	    DVInitializer::exe(this->behaviour,STRAN,DSTRAN,sfeh);
 	    this->behaviour.setUMATBehaviourDataThermodynamicForces(STRESS);
 	    this->behaviour.initialize();
-	    this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	    this->behaviour.setOutOfBoundsPolicy(op);
 	  } // end of Integrator::Integrator
 	
       TFEL_UMAT_INLINE2

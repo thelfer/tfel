@@ -116,7 +116,7 @@ namespace mfront
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
-
+  
   tfel::math::tmatrix<3u,3u,real>
   MTestAsterStandardBehaviour::getRotationMatrix(const tfel::math::vector<real>&,
 						    const tfel::math::tmatrix<3u,3u,real>& r) const

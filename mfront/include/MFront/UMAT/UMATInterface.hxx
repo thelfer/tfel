@@ -18,6 +18,7 @@
 #include"TFEL/Exception/TFELException.hxx"
 #include"TFEL/Utilities/Name.hxx"
 #include"TFEL/Material/MaterialException.hxx"
+#include"TFEL/Material/OutOfBoundsPolicy.hxx"
 
 #include"MFront/UMAT/UMAT.hxx"
 #include"MFront/UMAT/UMATException.hxx"
@@ -62,6 +63,7 @@ namespace umat{
 	       UMATReal *const STATEV,const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,const UMATInt  *const NDI,
 	       UMATInt  *const KINC,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::material;
@@ -70,27 +72,27 @@ namespace umat{
       if(*NDI==2){
 	UMATInterface::template callBehaviour<MH::TRIDIMENSIONAL>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,KINC,sfeh);
+								  STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==0){
 	UMATInterface::template callBehaviour<MH::AXISYMMETRICAL>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,KINC,sfeh);
+								  STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==-1){
 	UMATInterface::template callBehaviour<MH::PLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,KINC,sfeh);
+							       STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==-2){
 	UMATInterface::template callBehaviour<MH::PLANESTRESS>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,KINC,sfeh);
+							       STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==-3){
 	UMATInterface::template callBehaviour<MH::GENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 									  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									  STATEV,NSTATV,STRESS,KINC,sfeh);
+									  STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==14){
 	UMATInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 											TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-											STATEV,NSTATV,STRESS,KINC,sfeh);
+											STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else {
 	UMATInterfaceBase::displayInvalidModellingHypothesisErrorMessage();
 	*KINC = -7;
@@ -107,6 +109,7 @@ namespace umat{
 		  const UMATReal *const PREDEF,const UMATReal *const DPRED,
 		  UMATReal *const STATEV,const UMATInt  *const NSTATV,
 		  UMATReal *const STRESS,UMATInt  *const KINC,
+		  const tfel::material::OutOfBoundsPolicy op,
 		  const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::utilities;
@@ -116,7 +119,7 @@ namespace umat{
 	UMATInterfaceDispatch<Traits::btype,H,
 			      Behaviour>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
 					      TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					      STATEV,NSTATV,STRESS,sfeh);
+					      STATEV,NSTATV,STRESS,op,sfeh);
       }
       catch(const UMATIntegrationFailed& e){
 	UMATInterfaceBase::treatUmatException(Name<BV>::getName(),e);

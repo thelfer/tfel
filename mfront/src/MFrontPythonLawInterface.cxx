@@ -381,7 +381,7 @@ namespace mfront
 	       (p5->boundsType==VariableBoundsDescription::LowerAndUpper)){
 	      this->srcFile << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
 	      this->srcFile << "policy = "
-			    << "::getenv(\"PYTHON_OUT_OF_BOUND_POLICY\");\n";
+			    << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n";
 	      this->srcFile << "if(policy!=0){\n";
 	      this->srcFile << "if((strcmp(policy,\"STRICT\")==0)||"
 			    << "(strcmp(policy,\"WARNING\")==0)){\n";
@@ -403,7 +403,7 @@ namespace mfront
 	       (p5->boundsType==VariableBoundsDescription::LowerAndUpper)){
 	      this->srcFile << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
 	      this->srcFile << "policy = "
-			    << "::getenv(\"PYTHON_OUT_OF_BOUND_POLICY\");\n";
+			    << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n";
 	      this->srcFile << "if(policy!=0){\n";
 	      this->srcFile << "if((strcmp(policy,\"STRICT\")==0)||"
 			    << "(strcmp(policy,\"WARNING\")==0)){\n";

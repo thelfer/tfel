@@ -126,8 +126,8 @@ test_secant(viscochaboche)
 test_secant(viscoplasisocin)
 
 if(NOT WIN32)
-test_secant(T91-satohtest)
-test_secant(T91-viscositytest)
+  test_secant(T91-satohtest)
+  test_secant(T91-viscositytest)
 endif(NOT WIN32)
 
 # test_secant(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D)

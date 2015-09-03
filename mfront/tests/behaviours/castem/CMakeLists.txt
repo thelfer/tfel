@@ -25,6 +25,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
     PolyCrystalsAngles-30.txt @ONLY)
 
 set(mfront_tests_SOURCES
+  MaterialPropertiesBoundsCheck
   OrthotropicElastic
   Elasticity
   GeneralizedMaxwell
@@ -175,6 +176,26 @@ macro(test_castem test_arg)
   add_dependencies(tests-install
     castem${test_arg}.mtest-install)
 endmacro(test_castem)
+
+test_castem(materialpropertiesboundscheck)
+test_castem(materialpropertiesboundscheck2)
+test_castem(materialpropertiesboundscheck3)
+test_castem(materialpropertiesboundscheck4)
+test_castem(materialpropertiesboundscheck5)
+test_castem(materialpropertiesboundscheck6)
+set_tests_properties(castemmaterialpropertiesboundscheck6_mtest
+  PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
+test_castem(materialpropertiesboundscheck7)
+set_tests_properties(castemmaterialpropertiesboundscheck7_mtest
+  PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
+test_castem(materialpropertiesboundscheck8)
+set_tests_properties(castemmaterialpropertiesboundscheck8_mtest
+  PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
+set_tests_properties(castemmaterialpropertiesboundscheck_mtest
+  castemmaterialpropertiesboundscheck2_mtest
+  castemmaterialpropertiesboundscheck5_mtest
+  castemmaterialpropertiesboundscheck8_mtest
+  PROPERTIES WILL_FAIL true)
 
 test_castem(elasticity)
 test_castem(elasticity2)

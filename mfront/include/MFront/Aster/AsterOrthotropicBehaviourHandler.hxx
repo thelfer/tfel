@@ -133,6 +133,7 @@ namespace aster
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
 	       AsterReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -151,7 +152,7 @@ namespace aster
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,sfeh);
+		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
@@ -177,6 +178,7 @@ namespace aster
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
 	       AsterReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
@@ -203,7 +205,7 @@ namespace aster
       m.rotateStrainsForward(DSTRAN,de);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -235,6 +237,7 @@ namespace aster
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
 	       AsterReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
@@ -262,7 +265,7 @@ namespace aster
       m.rotateStrainsForward(DSTRAN,de);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -292,6 +295,7 @@ namespace aster
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
 	       AsterReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -319,7 +323,7 @@ namespace aster
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -361,6 +365,7 @@ namespace aster
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
 	       AsterReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -379,7 +384,7 @@ namespace aster
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,F0,F1,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,sfeh);
+		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
@@ -405,7 +410,8 @@ namespace aster
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
 	       AsterReal *const STRESS,
-	     const StressFreeExpansionHandler& sfeh) 
+	       const tfel::material::OutOfBoundsPolicy op,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -431,7 +437,7 @@ namespace aster
       m.rotateDeformationGradientForward(F1,F1m);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -464,7 +470,8 @@ namespace aster
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
 	       AsterReal *const STRESS,
-	     const StressFreeExpansionHandler& sfeh) 
+	       const tfel::material::OutOfBoundsPolicy op,
+	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -491,7 +498,7 @@ namespace aster
       m.rotateDeformationGradientForward(F1,F1m);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,sfeh);
+		      PREDEF,DPRED,STATEV,s,op,sfeh);
       handler.exe(DDSOE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
@@ -521,6 +528,7 @@ namespace aster
 	       AsterReal *const STATEV,
 	       const AsterInt  *const NSTATV,
 	       AsterReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
       using namespace tfel::meta;
@@ -548,7 +556,7 @@ namespace aster
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,sm,sfeh);
+		      PREDEF,DPRED,STATEV,sm,op,sfeh);
       handler.exe(DDSOE,sm,STATEV);
       m.rotateStressesBackward(sm,STRESS);
       if(bDDSOE){

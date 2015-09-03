@@ -14,6 +14,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
     PolyCrystalsAngles-30.txt @ONLY)
 
 set(mfront_tests_SOURCES
+  MaterialPropertiesBoundsCheck
   Tvergaard
   Elasticity
   OrthotropicElastic
@@ -139,6 +140,18 @@ macro(test_aster_python test)
     PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
 endmacro(test_aster_python)
 
+test_aster(materialpropertiesboundscheck)
+test_aster(materialpropertiesboundscheck2)
+test_aster(materialpropertiesboundscheck3)
+test_aster(materialpropertiesboundscheck4)
+test_aster(materialpropertiesboundscheck5)
+test_aster(materialpropertiesboundscheck6)
+set_tests_properties(astermaterialpropertiesboundscheck_mtest
+  astermaterialpropertiesboundscheck2_mtest
+  astermaterialpropertiesboundscheck5_mtest
+  PROPERTIES WILL_FAIL true)
+
+
 test_aster(elasticity)
 test_aster(elasticity2)
 if(HAVE_CASTEM)
@@ -260,12 +273,16 @@ test_aster(finitestrainsinglecrystal_numericaljacobian-012-2)
 test_aster(finitestrainsinglecrystal_numericaljacobian-159)
 
 if(NOT WIN32)
-test_aster(elasticity18)
-test_aster(elasticity19)
-test_aster(elasticity20)
-test_aster(elasticity21)
-test_aster(elasticity22)
-test_aster(elasticity23)
+  test_aster(elasticity18)
+  test_aster(elasticity19)
+  test_aster(elasticity20)
+  test_aster(elasticity21)
+  test_aster(elasticity22)
+  test_aster(elasticity23)
+  test_aster(elasticity24)
+  test_aster(elasticity25)
+  test_aster(elasticity26)
+  test_aster(elasticity27)
 endif(NOT WIN32)
 
 if(enable-python-bindings)

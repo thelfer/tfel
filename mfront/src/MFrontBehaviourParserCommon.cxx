@@ -1700,11 +1700,12 @@ namespace mfront{
 			      "expected to read lower bound value for variable "+d.varName);
       istringstream converter(this->current->value);
       converter >> d.lowerBound;
-      d.boundsType = BoundsDescription::LowerAndUpper;
       if(!converter||(!converter.eof())){
 	this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
-				"could not read lower bound value for variable '"+d.varName+"'");
+				"could not read lower bound value for variable '"+d.varName+
+				"' (read '"+this->current->value+"')");
       }
+      d.boundsType = BoundsDescription::LowerAndUpper;
     } else {
       this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds : ",
 			      "Expected ']' or '[' (read '"+this->current->value+"')");
@@ -1731,7 +1732,8 @@ namespace mfront{
       converter >> d.upperBound;
       if(!converter||(!converter.eof())){
 	this->throwRuntimeError("MFrontBehaviourParserCommon::treatBounds",
-				"could not read upper bound value for variable '"+d.varName+"'");
+				"could not read upper bound value for variable '"+d.varName+
+				"' (read '"+this->current->value+"')");
       }
       if(d.boundsType==BoundsDescription::LowerAndUpper){
 	if(d.lowerBound>d.upperBound){

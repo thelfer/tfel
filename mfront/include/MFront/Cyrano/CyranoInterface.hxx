@@ -51,7 +51,8 @@ namespace cyrano{
 	       const CyranoReal *const PREDEF,const CyranoReal *const DPRED,
 	       CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
 	       CyranoReal *const STRESS,const CyranoInt  *const NDI,
-	       CyranoInt  *const KINC)
+	       CyranoInt  *const KINC,
+	       const tfel::material::OutOfBoundsPolicy op)
     {
       using namespace tfel::material;
       using namespace tfel::utilities;
@@ -60,11 +61,11 @@ namespace cyrano{
       if(*NDI==1){
 	CyranoInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 											  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-											  STATEV,NSTATV,STRESS,KINC);
+											  STATEV,NSTATV,STRESS,KINC,op);
       } else if (*NDI==2){
 	  CyranoInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRESS>(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 											    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-											    STATEV,NSTATV,STRESS,KINC);
+											    STATEV,NSTATV,STRESS,KINC,op);
       } else {
 	CyranoInterfaceBase::displayInvalidModellingHypothesisErrorMessage();
 	*KINC = -7;
@@ -80,14 +81,15 @@ namespace cyrano{
 		  const CyranoReal *const PROPS, const CyranoInt  *const NPROPS,
 		  const CyranoReal *const PREDEF,const CyranoReal *const DPRED,
 		  CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
-		  CyranoReal *const STRESS,CyranoInt  *const KINC)
+		  CyranoReal *const STRESS,CyranoInt  *const KINC,
+		  const tfel::material::OutOfBoundsPolicy op)
     {
       using namespace tfel::utilities;
       typedef Behaviour<H,CyranoReal,false> BV;
       try {
 	CyranoInterfaceDispatch<H,Behaviour>::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 						  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-						  STATEV,NSTATV,STRESS);
+						  STATEV,NSTATV,STRESS,op);
       }
       catch(const CyranoIntegrationFailed& e){
 	CyranoInterfaceBase::treatCyranoException(Name<BV>::getName(),e);

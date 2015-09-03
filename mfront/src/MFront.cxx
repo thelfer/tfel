@@ -165,12 +165,12 @@ namespace mfront{
     if(root.empty()){
       root = PREFIXDIR;
     }
-    string fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".txt";
+    string fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".md";
     ifstream desc(fn.c_str());
     if(desc){
       return fn;
     }
-    fn = root+"/share/doc/mfront/"+k.substr(1)+".txt";
+    fn = root+"/share/doc/mfront/"+k.substr(1)+".md";
     desc.open(fn.c_str());
     if(desc){
       return fn;

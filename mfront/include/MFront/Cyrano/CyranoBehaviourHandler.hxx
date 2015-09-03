@@ -255,7 +255,8 @@ namespace cyrano
 			       const CyranoReal *const,
 			       const CyranoReal *const,
 			       const CyranoReal *const,
-			       const CyranoReal *const)
+			       const CyranoReal *const,
+			       const tfel::material::OutOfBoundsPolicy)
       {} // end of Error
       
       TFEL_CYRANO_INLINE void exe(CyranoReal *const,
@@ -295,11 +296,13 @@ namespace cyrano
 				   const CyranoReal *const PREDEF,
 				   const CyranoReal *const DPRED,
 				   CyranoReal *const STATEV,
-				   CyranoReal *const STRESS)
+				   CyranoReal *const STRESS,
+				   const tfel::material::OutOfBoundsPolicy op)
 	: bData(TEMP,PROPS+CyranoTraits<BV>::propertiesOffset,
 		STATEV,PREDEF),
-	iData(DTIME,DTEMP,DPRED),
-	dt(*DTIME)
+	  iData(DTIME,DTEMP,DPRED),
+	  dt(*DTIME),
+	  policy(op)
 	{
 	  using namespace tfel::material;
 	  typedef MechanicalBehaviourTraits<BV> Traits;
@@ -342,7 +345,6 @@ namespace cyrano
 	    StandardPredictionOperatorComputer,
 	    PredictionOperatorIsNotAvalaible
 	    >::type PredictionOperatorComputer;
-	  const CyranoOutOfBoundsPolicy& up = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy();
 	  CyranoReal sig[3];
 	  unsigned short subSteps   = 0u;
 	  unsigned short iterations = 1u;
@@ -353,7 +355,7 @@ namespace cyrano
 		(subSteps!=CyranoTraits<BV>::maximumSubStepping)){
 	    BV behaviour(this->bData,this->iData);
 	    behaviour.initialize();
-	    behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	    behaviour.setOutOfBoundsPolicy(this->policy);
 	    behaviour.checkBounds();
 	    typename BV::IntegrationResult r = BV::SUCCESS;
 	    const typename BV::SMFlag smflag = 
@@ -429,6 +431,7 @@ namespace cyrano
       IData iData;
       CyranoReal dt;
       tfel::material::ModellingHypothesis::Hypothesis hypothesis;
+      tfel::material::OutOfBoundsPolicy policy;
 	
     }; // end of struct IntegratorWithTimeStepping
 
@@ -453,7 +456,8 @@ namespace cyrano
 				    const CyranoReal *const PREDEF,
 				    const CyranoReal *const DPRED,
 				    const CyranoReal *const STATEV,
-				    const CyranoReal *const STRESS)
+				    const CyranoReal *const STRESS,
+				    const tfel::material::OutOfBoundsPolicy op)
 	: behaviour(DTIME,TEMP,DTEMP,
 		    PROPS+CyranoTraits<BV>::propertiesOffset,
 		    STATEV,PREDEF,DPRED),
@@ -465,8 +469,7 @@ namespace cyrano
 	    Traits::hasStressFreeExpansion,
 	    DrivingVariableInitialiserWithStressFreeExpansion,
 	    DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	  const CyranoOutOfBoundsPolicy& up = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy();
-	  this->behaviour.setOutOfBoundsPolicy(up.getOutOfBoundsPolicy());
+	  this->behaviour.setOutOfBoundsPolicy(op);
 	  // elastic tensor
 	  SInitializer::exe(this->behaviour,PROPS);
 	  // thermal expansion coefficient

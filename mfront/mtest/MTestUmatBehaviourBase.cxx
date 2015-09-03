@@ -58,6 +58,14 @@ namespace mfront
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
+  void
+  MTestUmatBehaviourBase::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const
+  {
+    typedef tfel::system::ExternalLibraryManager ELM;    
+    ELM& elm = ELM::getExternalLibraryManager();
+    elm.setOutOfBoundsPolicy(this->library,this->behaviour,p);
+  } // end of MTestUmatBehaviourBase::setOutOfBoundsPolicy
+  
   tfel::material::MechanicalBehaviourBase::BehaviourType
   MTestUmatBehaviourBase::getBehaviourType(void) const
   {
@@ -631,7 +639,7 @@ namespace mfront
     }
     return s;
   }
-
+  
   void
   MTestUmatBehaviourBase::setParameter(const std::string& n,
 				       const real v) const

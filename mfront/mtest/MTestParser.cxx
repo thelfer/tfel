@@ -31,6 +31,7 @@
 
 #include"TFEL/Utilities/SmartPtr.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
+#include"TFEL/Material/OutOfBoundsPolicy.hxx"
 
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MTestParser.hxx"
@@ -213,7 +214,7 @@ namespace mfront
       if(root.empty()){
 	root = PREFIXDIR;
       }
-      const string f = root+"/share/doc/mtest/"+pk->first.substr(1)+".txt";
+      const string f = root+"/share/doc/mtest/"+pk->first.substr(1)+".md";
       ifstream desc(f.c_str());
       bool exists(true);
       if(!desc){
@@ -255,6 +256,8 @@ namespace mfront
 			   &MTestParser::handlePredictionPolicy);
     this->registerCallBack("@Author",
 			   &MTestParser::handleAuthor);
+    this->registerCallBack("@OutOfBoundsPolicy",
+			   &MTestParser::handleOutOfBoundsPolicy);
     this->registerCallBack("@Date",
 			   &MTestParser::handleDate);
     this->registerCallBack("@Description",
@@ -365,7 +368,7 @@ namespace mfront
     } else {
       root = PREFIXDIR;
     }
-    const string f = root+"/share/doc/mtest/"+k.substr(1)+".txt";
+    const string f = root+"/share/doc/mtest/"+k.substr(1)+".md";
     ifstream desc(f.c_str());
     if(!desc){
       cout << "no description available for keyword '"
@@ -504,6 +507,23 @@ namespace mfront
     t.setAuthor(this->readUntilEndOfInstruction(p));
   } // end of MTestParser::handleAuthor
 
+  void MTestParser::handleOutOfBoundsPolicy(MTest& t,TokensContainer::const_iterator& p)
+  {
+    const std::string& s = this->readString(p,this->fileTokens.end());
+    this->readSpecifiedToken("MTestParser::handlePredictionPolicy",";",
+			     p,this->fileTokens.end());
+    if(s=="None"){
+      t.setOutOfBoundsPolicy(tfel::material::None);
+    } else if(s=="Warning"){
+      t.setOutOfBoundsPolicy(tfel::material::Warning);
+    } else if(s=="Strict"){
+      t.setOutOfBoundsPolicy(tfel::material::Strict);
+    } else {
+      throw(std::runtime_error("MTestParser::handleOutOfBoundsPolicy: "
+			       "unsupported policy '"+s+"'"));
+    }
+  } // end of MTestParser::handleOutOfBoundsPolicy
+  
   void MTestParser::handlePredictionPolicy(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;

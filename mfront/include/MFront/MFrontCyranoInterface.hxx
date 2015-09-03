@@ -60,6 +60,10 @@ namespace mfront{
      */
     virtual std::map<std::string,std::vector<std::string> >
     getLibrariesDependencies(const MechanicalBehaviourDescription&) const;
+
+    virtual void
+    writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream&,
+						    const std::string&) const;
     /*!
      * write interface specific includes
      * \param[in] out : output file

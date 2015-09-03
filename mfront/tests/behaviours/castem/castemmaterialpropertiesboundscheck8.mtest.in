@@ -1,0 +1,18 @@
+@Author Helfer Thomas;
+@Date   2/09/2015;
+@Description{
+  This test checks that the out of bounds policy
+  can be set to \'Strict\' through the
+  CASTEM_OUT_OF_BOUND_POLICY environment variable.
+  This does not lead to throwing an exception
+  when a material property is out its bounds.
+};
+
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatmaterialpropertiesboundscheck';
+@MaterialProperty<constant> 'YoungModulus'   50.e9;
+@MaterialProperty<constant> 'PoissonRatio'    0.3;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,1};

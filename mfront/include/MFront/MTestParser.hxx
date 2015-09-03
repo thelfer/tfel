@@ -338,6 +338,11 @@ namespace mfront
      */
     void handleAuthor(MTest&,TokensContainer::const_iterator&);
     /*!
+     * handle the @OutOfBoundsPolicy keyword
+     * \param[in,out] p : position in the input file
+     */
+    void handleOutOfBoundsPolicy(MTest&,TokensContainer::const_iterator&);
+    /*!
      * handle the @Date keyword
      * \param[in,out] p : position in the input file
      */

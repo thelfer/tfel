@@ -203,6 +203,20 @@ namespace mfront{
 
     virtual void
     writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const;
+
+    virtual void
+    writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream&,
+						    const std::string&) const;
+    /*!
+     * \brief write the set out of bounds policy function for an alias behaviour 
+     * \param[out] out   : output stream
+     * \param[out] name  : name of the alias
+     * \param[out] name2 : name of the original behaviour
+     */
+    virtual void
+    writeSetOutOfBoundsPolicyFunctionImplementation2(std::ostream&,
+						     const std::string&,
+						     const std::string&) const;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface

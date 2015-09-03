@@ -507,6 +507,12 @@ AC_OUTPUT([debug.sh
            mfront/tests/properties/interfaces/src/Makefile
            mfront/tests/behaviours/Makefile
            mfront/tests/behaviours/aster/Makefile
+	   mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck.mtest
+           mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck2.mtest
+           mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck3.mtest
+           mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck4.mtest
+           mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck5.mtest
+           mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck6.mtest
            mfront/tests/behaviours/aster/asterelasticity.mtest
            mfront/tests/behaviours/aster/asterelasticity2.mtest
            mfront/tests/behaviours/aster/asterelasticity3.mtest
@@ -529,6 +535,10 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterelasticity21.mtest
            mfront/tests/behaviours/aster/asterelasticity22.mtest
            mfront/tests/behaviours/aster/asterelasticity23.mtest
+           mfront/tests/behaviours/aster/asterelasticity24.mtest
+           mfront/tests/behaviours/aster/asterelasticity25.mtest
+           mfront/tests/behaviours/aster/asterelasticity26.mtest
+           mfront/tests/behaviours/aster/asterelasticity27.mtest	   
            mfront/tests/behaviours/aster/astermazars.mtest
            mfront/tests/behaviours/aster/astermazars2.mtest
            mfront/tests/behaviours/aster/asterlorentz.mtest
@@ -629,6 +639,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
+           mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck.mtest
+           mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck2.mtest
+           mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck3.mtest
+           mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck4.mtest
+           mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck5.mtest
+           mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck6.mtest
+           mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck7.mtest
+           mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck8.mtest
            mfront/tests/behaviours/castem/castemelasticity.mtest
            mfront/tests/behaviours/castem/castemelasticity2.mtest
            mfront/tests/behaviours/castem/castemelasticity3.mtest
@@ -992,6 +1010,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/secant/secantviscochaboche.mtest
            mfront/tests/behaviours/secant/secantviscoplasisocin.mtest
            mfront/tests/behaviours/cyrano/Makefile
+           mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck.mtest
+           mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck2.mtest
+           mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck3.mtest
+           mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck4.mtest
+           mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck5.mtest
+           mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck6.mtest
+           mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck7.mtest
+           mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck8.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity18.mtest

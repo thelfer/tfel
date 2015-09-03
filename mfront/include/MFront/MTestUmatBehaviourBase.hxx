@@ -143,6 +143,12 @@ namespace mfront
     virtual std::vector<std::string>
     getExternalStateVariablesNames(void) const;
     /*!
+     * \brief set the out of bounds policy
+     * \param[in] p : policy selected
+     */
+    virtual void
+    setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy) const;
+    /*!
      * \brief set the value of a parameter
      * \param[in] n : name of the parameter
      * \param[in] v : value

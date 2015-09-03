@@ -9,6 +9,7 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
 set(mfront_tests_SOURCES
+  MaterialPropertiesBoundsCheck
   Elasticity
   OrthotropicElastic
   Norton
@@ -68,6 +69,26 @@ macro(test_cyrano test_arg)
   add_dependencies(tests-install
     cyrano${test_arg}.mtest-install)
 endmacro(test_cyrano)
+
+test_cyrano(materialpropertiesboundscheck)
+test_cyrano(materialpropertiesboundscheck2)
+test_cyrano(materialpropertiesboundscheck3)
+test_cyrano(materialpropertiesboundscheck4)
+test_cyrano(materialpropertiesboundscheck5)
+test_cyrano(materialpropertiesboundscheck6)
+set_tests_properties(cyranomaterialpropertiesboundscheck6_mtest
+  PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
+test_cyrano(materialpropertiesboundscheck7)
+set_tests_properties(cyranomaterialpropertiesboundscheck7_mtest
+  PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=WARNING")
+test_cyrano(materialpropertiesboundscheck8)
+set_tests_properties(cyranomaterialpropertiesboundscheck8_mtest
+  PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
+set_tests_properties(cyranomaterialpropertiesboundscheck_mtest
+  cyranomaterialpropertiesboundscheck2_mtest
+  cyranomaterialpropertiesboundscheck5_mtest
+  cyranomaterialpropertiesboundscheck8_mtest
+  PROPERTIES WILL_FAIL true)
 
 test_cyrano(elasticity)
 test_cyrano(elasticity10)

@@ -57,13 +57,10 @@ namespace mfront
 
   tfel::math::tmatrix<3u,3u,real>
   MTestAsterCohesiveZoneModel::getRotationMatrix(const tfel::math::vector<real>&,
-							 const tfel::math::tmatrix<3u,3u,real>& r) const
+						 const tfel::math::tmatrix<3u,3u,real>&) const
   {
-    using namespace std;
-    string msg("MTestAsterCohesiveZoneModel::getRotationMatrix : "
-	       "invalid call");
-    throw(runtime_error(msg));
-    return r;
+    throw(std::runtime_error("MTestAsterCohesiveZoneModel::getRotationMatrix : "
+			     "invalid call"));
   } // end of MTestAsterCohesiveZoneModel::getRotationMatrix
 
   void
@@ -73,7 +70,7 @@ namespace mfront
     this->mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
     this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
   }
-
+  
   void
   MTestAsterCohesiveZoneModel::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {

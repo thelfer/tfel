@@ -26,8 +26,9 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/LUSolve.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Utilities/SmartPtr.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Material/OutOfBoundsPolicy.hxx"
 
 #include"MFront/MTestConfig.hxx"
 #include"MFront/MTestTypes.hxx"
@@ -302,6 +303,11 @@ namespace mfront
      * \param[in] a : author
      */
     virtual void setAuthor(const std::string&);
+    /*!
+     * \brief set the out of bounds policy
+     * \param[in] a : out of bounds policy
+     */
+    virtual void setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy);
     /*!
      * \brief set the date
      * \param[in] d : date

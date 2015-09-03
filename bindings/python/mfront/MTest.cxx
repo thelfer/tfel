@@ -367,8 +367,8 @@ MTest_setImposedStrain2(mfront::MTest& t,
 
 static void
 MTest_setImposedDeformationGradient(mfront::MTest& t,
-		       const std::string&  n,
-		       const mfront::real& v)
+				    const std::string&  n,
+				    const mfront::real& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -383,9 +383,9 @@ MTest_setImposedDeformationGradient(mfront::MTest& t,
 
 static void
 MTest_setImposedDeformationGradient2(mfront::MTest& t,
-			const std::string&  n,
-			const std::map<mfront::real,
-			mfront::real>& v)
+				     const std::string&  n,
+				     const std::map<mfront::real,
+				                    mfront::real>& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -642,6 +642,10 @@ void declareMTest(void)
 	 (arg("name"),"values"))
     .def("setImposedStrain",MTest_setImposedStrain2,
 	 (arg("name"),"values"))
+    .def("setImposedDeformationGradient",MTest_setImposedDeformationGradient,
+	 (arg("name"),"values"))
+    .def("setImposedDeformationGradient",MTest_setImposedDeformationGradient2,
+	 (arg("name"),"values"))
     .def("setImposedOpeningDisplacement",MTest_setImposedOpeningDisplacement,
 	 (arg("name"),"values"))
     .def("setImposedOpeningDisplacement",MTest_setImposedOpeningDisplacement2,
@@ -652,6 +656,10 @@ void declareMTest(void)
 	 (arg("name"),"values"))
     .def("setRotationMatrix",
 	 &MTest_setRotationMatrix)
+    .def("setOutOfBoundsPolicy",
+	 &MTest::setOutOfBoundsPolicy)
+    .def("setScalarInternalStateVariableInitialValue",
+	 &MTest::setScalarInternalStateVariableInitialValue)
     .def("setScalarInternalStateVariableInitialValue",
 	 &MTest::setScalarInternalStateVariableInitialValue)
     .def("setStensorInternalStateVariableInitialValues",

@@ -39,6 +39,7 @@ install_mtest_desc(CohesiveForceEpsilon)
 install_mtest_desc(Test)
 install_mtest_desc(Times)
 install_mtest_desc(UseCastemAccelerationAlgorithm)
+install_mtest_desc(OutOfBoundsPolicy)
 
 install_mtest_desc(AccelerationAlgorithm)
 install_mtest_desc(AccelerationAlgorithmParameter)

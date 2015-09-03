@@ -888,7 +888,7 @@ MACRO {oct} {"Octobre"}
 
 MACRO {nov} {"Novembre"}
 
-MACRO {dec} {"Decembre"}
+MACRO {dec} {"D\'{e}cembre"}
 
 READ
 

@@ -51,7 +51,8 @@ namespace cyrano
 	     const CyranoReal *const PROPS, const CyranoInt  *const NPROPS,
 	     const CyranoReal *const PREDEF,const CyranoReal *const DPRED,
 	     CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
-	     CyranoReal *const STRESS)
+	     CyranoReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op)
     {
       using namespace tfel::meta;
       using namespace tfel::utilities;
@@ -65,7 +66,7 @@ namespace cyrano
       CyranoInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS);
+		   STRESS,op);
     } // end of exe
     
   private:
@@ -98,7 +99,8 @@ namespace cyrano
 	     const CyranoReal *const PROPS, const CyranoInt  *const NPROPS,
 	     const CyranoReal *const PREDEF,const CyranoReal *const DPRED,
 	     CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
-	     CyranoReal *const STRESS)
+	     CyranoReal *const STRESS,
+	     const tfel::material::OutOfBoundsPolicy op)
     {
       using namespace std;
       using namespace tfel::meta;
@@ -127,22 +129,22 @@ namespace cyrano
 
       dez = c1*DSTRAN[0]+c2*DSTRAN[1];
       CyranoGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSOE,
-										    TEMP,DTEMP,PROPS,
-										    NPROPS,PREDEF,DPRED,
-										    STATEV,STRESS,
-										    STRAN,DSTRAN,dez,
-										    &v[0],s,eto,deto);
+										      TEMP,DTEMP,PROPS,
+										      NPROPS,PREDEF,DPRED,
+										      STATEV,STRESS,
+										      STRAN,DSTRAN,dez,
+										      &v[0],s,eto,deto,op);
       x[1] = dez;
       f[1] = s[2];
 	
       if(abs(c3*s[2]) > 1.e-12){
 	dez -= c3*s[2];
 	CyranoGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSOE,
-										      TEMP,DTEMP,PROPS,
-										      NPROPS,PREDEF,DPRED,
-										      STATEV,STRESS,
-										      STRAN,DSTRAN,dez,
-										      &v[0],s,eto,deto);
+											TEMP,DTEMP,PROPS,
+											NPROPS,PREDEF,DPRED,
+											STATEV,STRESS,
+											STRAN,DSTRAN,dez,
+											&v[0],s,eto,deto,op);
       }	    
 	
       iter = 2;
@@ -154,11 +156,11 @@ namespace cyrano
 	f[1] = s[2];
 	dez -= (x[1]-x[0])/(f[1]-f[0])*s[2];
 	CyranoGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSOE,
-								       TEMP,DTEMP,PROPS,
-								       NPROPS,PREDEF,DPRED,
-								       STATEV,STRESS,
-								       STRAN,DSTRAN,dez,
-								       &v[0],s,eto,deto);
+											TEMP,DTEMP,PROPS,
+											NPROPS,PREDEF,DPRED,
+											STATEV,STRESS,
+											STRAN,DSTRAN,dez,
+											&v[0],s,eto,deto,op);
 	++iter;
       }
       if(iter==iterMax){
@@ -203,7 +205,8 @@ namespace cyrano
 	      CyranoReal *const v,
 	      CyranoReal *const s,
 	      CyranoReal *const eto,
-	      CyranoReal *const deto)
+	      CyranoReal *const deto,
+	      const tfel::material::OutOfBoundsPolicy op)
     {
       using namespace tfel::material;
       using tfel::fsalgo::copy;
@@ -222,7 +225,7 @@ namespace cyrano
 	
       GeneralisedPlaneStrainBehaviour::exe(DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,
 					   PROPS,NPROPS,PREDEF,DPRED,v,
-					   &nNSTATV,s);
+					   &nNSTATV,s,op);
     }
     
     struct TreatPlaneStressIsotropicBehaviour
@@ -236,7 +239,8 @@ namespace cyrano
 	       const CyranoReal *const PROPS, const CyranoInt  *const NPROPS,
 	       const CyranoReal *const PREDEF,const CyranoReal *const DPRED,
 	       CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
-	       CyranoReal *const STRESS)
+	       CyranoReal *const STRESS,
+	      const tfel::material::OutOfBoundsPolicy op)
       {
 	using namespace tfel::material;
 	const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
@@ -246,11 +250,11 @@ namespace cyrano
 	const CyranoReal c1 = -n/(1-n);
 	const CyranoReal c3 = 1/y;
 	CyranoGenericPlaneStressHandler::template exe<BehaviourHandler>(c1,c1,c3,
-								      DTIME,DROT,DDSOE,
-								      STRAN,DSTRAN,TEMP,
-								      DTEMP,PROPS,NPROPS,
-								      PREDEF,DPRED,STATEV,
-								      NSTATV,STRESS);
+									DTIME,DROT,DDSOE,
+									STRAN,DSTRAN,TEMP,
+									DTEMP,PROPS,NPROPS,
+									PREDEF,DPRED,STATEV,
+									NSTATV,STRESS,op);
       } // end of exe
     }; // end of struct TreatPlanStressIsotropicBehaviour
 
@@ -264,7 +268,8 @@ namespace cyrano
 	       const CyranoReal *const PROPS, const CyranoInt  *const NPROPS,
 	       const CyranoReal *const PREDEF,const CyranoReal *const DPRED,
 	       CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
-	       CyranoReal *const STRESS)
+	       CyranoReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op)
       {
 	using namespace tfel::meta;
 	using namespace tfel::material;
@@ -318,7 +323,7 @@ namespace cyrano
 									STRAN,DSTRAN,TEMP,
 									DTEMP,nPROPS,NPROPS,
 									PREDEF,DPRED,STATEV,
-									NSTATV,STRESS);
+									NSTATV,STRESS,op);
       } // end of exe
     }; // end of struct TreatPlanStressOrthotropicBehaviour
 

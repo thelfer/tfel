@@ -45,6 +45,7 @@ namespace umat
 	       UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	       UMATReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh) 
     {
       using namespace tfel::meta;
@@ -72,7 +73,7 @@ namespace umat
       UMATBehaviourHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[3]);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,sfeh);
+		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of UMATIsotropicBehaviourHandlerBase::exe
 
@@ -107,6 +108,7 @@ namespace umat
 	             UMATReal *const STATEV,
 	       const UMATInt  *const NSTATV,
 	             UMATReal *const STRESS,
+	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh) 
     {
       // local material properties to match castem conventions
@@ -126,7 +128,7 @@ namespace umat
       mp[1] = PROPS[0];
       UMATIsotropicBehaviourHandlerBase<COHESIVEZONEMODEL,H,Behaviour>::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,
 									    TEMP,DTEMP,mp,NPROPS,PREDEF,
-									    DPRED,STATEV,NSTATV,STRESS,sfeh);
+									    DPRED,STATEV,NSTATV,STRESS,op,sfeh);
     }
   };
 

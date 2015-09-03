@@ -51,7 +51,8 @@ namespace cyrano{
 	     const CyranoReal *const PROPS, const CyranoInt  *const NPROPS,
 	     const CyranoReal *const PREDEF,const CyranoReal *const DPRED,
 	     CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
-	     CyranoReal *const STRESS)
+	     CyranoReal *const STRESS,
+	      const tfel::material::OutOfBoundsPolicy op)
     {
       using namespace std;
       using namespace tfel::meta;
@@ -64,52 +65,9 @@ namespace cyrano{
 			  CyranoOrthotropicBehaviourHandler<H,Behaviour> >::type Handler;
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS);
+		   STRESS,op);
     } // end of exe
   }; // end of struct CyranoInterfaceDispatch
-
-  // /*!
-  //  * \class  CyranoInterfaceDispatch
-  //  * \brief  partial specialisation for small strain behaviours
-  //  * \author Helfer Thomas
-  //  * \date   24 Jul 2013
-  //  */
-  // template<template<tfel::material::ModellingHypothesis::Hypothesis,
-  // 		    typename,bool> class Behaviour>
-  // struct CyranoInterfaceDispatch<tfel::material::ModellingHypothesis::PLANESTRESS,
-  // 				 Behaviour>
-  //   : public CyranoInterfaceBase
-  // {
-  //   TFEL_CYRANO_INLINE2 static
-  //   void exe(const CyranoInt  *const NTENS, const CyranoReal *const DTIME,
-  // 	     const CyranoReal *const DROT,  CyranoReal *const DDSOE,
-  // 	     const CyranoReal *const STRAN, const CyranoReal *const DSTRAN,
-  // 	     const CyranoReal *const TEMP,  const CyranoReal *const DTEMP,
-  // 	     const CyranoReal *const PROPS, const CyranoInt  *const NPROPS,
-  // 	     const CyranoReal *const PREDEF,const CyranoReal *const DPRED,
-  // 	     CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
-  // 	     CyranoReal *const STRESS)
-  //   {
-  //     using namespace std;
-  //     using namespace tfel::meta;
-  //     typedef tfel::material::ModellingHypothesis MH;
-  //     typedef Behaviour<MH::PLANESTRESS,CyranoReal,false> BV;
-  //     typedef CyranoTraits<BV> Traits;
-  //     if(tfel::material::MechanicalBehaviourTraits<BV>::is_defined){
-  // 	typedef typename IF<Traits::stype==cyrano::ISOTROPIC,
-  // 			    CyranoIsotropicBehaviourHandler<MH::PLANESTRESS,Behaviour>,
-  // 			    CyranoOrthotropicBehaviourHandler<MH::PLANESTRESS,Behaviour> >::type Handler;
-  // 	CyranoInterfaceBase::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
-  // 	Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
-  // 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-  // 		     STRESS);
-  //     } else { 
-  // 	CyranoGenericPlaneStressHandler<Behaviour>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-  // 							TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-  // 							STATEV,NSTATV,STRESS);
-  //     }
-  //   }
-  // };
 
 } // end of namespace cyrano
 

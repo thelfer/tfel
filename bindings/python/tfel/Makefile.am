@@ -44,7 +44,9 @@ glossary_la_LIBADD  = -L@top_builddir@/src/Glossary -lTFELGlossary         \
 		      -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 glossary_la_LDFLAGS = -module
 
-material_la_SOURCES = ModellingHypothesis.cxx
+material_la_SOURCES = material.cxx            \
+		      ModellingHypothesis.cxx \
+		      OutOfBoundsPolicy.cxx
 material_la_LIBADD  = -L@top_builddir@/src/Material -lTFELMaterial \
 		      @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
 		      -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@

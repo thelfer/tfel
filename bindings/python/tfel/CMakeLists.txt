@@ -33,7 +33,9 @@ tfel_python_module(math math.cxx
 target_link_libraries(py_tfel_math TFELMath)
 
 tfel_python_module(material
-  ModellingHypothesis.cxx)
+  material.cxx
+  ModellingHypothesis.cxx
+  OutOfBoundsPolicy.cxx)
 
 tfel_python_module(system system.cxx
   ProcessManagerCommand.cxx

@@ -21,6 +21,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/vector.hxx"
 
+#include"TFEL/Material/OutOfBoundsPolicy.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
@@ -172,6 +173,12 @@ namespace mfront
      */
     virtual std::vector<std::string>
     getExternalStateVariablesNames(void) const  = 0;
+    /*!
+     * \brief set the out of bounds policy
+     * \param[in] p : policy selected
+     */
+    virtual void
+    setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy) const  = 0;
     /*!
      * \brief set the value of a parameter
      * \param[in] n : name of the parameter

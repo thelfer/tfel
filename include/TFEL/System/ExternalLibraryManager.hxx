@@ -23,6 +23,7 @@
 #endif
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Material/OutOfBoundsPolicy.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 
 namespace tfel
@@ -57,6 +58,15 @@ namespace tfel
 		  const bool = false);
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
 
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : name of function or mechanical behaviour
+       * \param[in] p : out of bounds policy value
+       */
+      void setOutOfBoundsPolicy(const std::string&,
+				const std::string&,
+				const tfel::material::OutOfBoundsPolicy);
+      
       /*!
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour

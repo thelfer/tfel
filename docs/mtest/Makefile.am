@@ -37,7 +37,8 @@ MTEST_DOCS = Author.md                                    \
 	     AccelerationAlgorithm.md		          \
 	     AccelerationAlgorithmParameter.md	          \
 	     CompareToNumericalTangentOperator.md         \
-	     NumericalTangentOperatorPerturbationValue.md
+	     NumericalTangentOperatorPerturbationValue.md \
+	     OutOfBoundsPolicy.md
 
 mtestdocdir   = $(docdir)
 mtestdoc_DATA = $(MTEST_DOCS)

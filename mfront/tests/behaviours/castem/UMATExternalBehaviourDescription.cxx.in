@@ -20,6 +20,7 @@
 #line 21 "@abs_top_srcdir@/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
 
 #include<cstdlib>
+#include<sstream>
 #include<iostream>
 #include<algorithm>
 #include<stdexcept>
@@ -30,19 +31,6 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/System/ExternalBehaviourDescription.hxx"
-
-// fixing a bug on current glibc++ cygwin versions (19/08/2015)
-#if (defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99)) || (__cplusplus <= 199711L)
-#include<sstream>
-namespace std{
-  template<typename T>
-  std::string to_string(const T& v){
-    std::ostringstream s;
-    s << v;
-    return s.str();
-  }
-}
-#endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) || (__cplusplus <= 199711L) */
 
 struct UMATBehaviourDescriptionTest
   : public tfel::tests::TestCase
@@ -170,7 +158,9 @@ struct UMATBehaviourDescriptionTest
     TFEL_TESTS_ASSERT(b.ivnames.size()==37u);
     TFEL_TESTS_ASSERT(b.ivtypes.size()==37u);
     for(unsigned int i=0;i!=12;++i){
-      const std::string s = to_string(i);
+      ostringstream nb;
+      nb << i;
+      const std::string s = nb.str();
       TFEL_TESTS_ASSERT(b.ivnames[i]=="g["+s+"]");
       TFEL_TESTS_ASSERT(b.ivtypes[i]==0u);
       TFEL_TESTS_ASSERT(b.ivnames[13+i]=="p["+s+"]");

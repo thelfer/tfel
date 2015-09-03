@@ -385,7 +385,8 @@ namespace mfront{
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
-
+    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
+    
     out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\naster"
 	<< makeLowerCase(name) << "("
 	<< "aster::AsterReal *const,"       /*< tenseur des contraintes */
@@ -461,6 +462,7 @@ namespace mfront{
        (this->savesTangentOperator)){
       out << "#include<algorithm>\n";
     }
+    out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
       out << "#include\"MFront/MFrontBehaviourProfiler.hxx\"\n\n";
@@ -469,6 +471,8 @@ namespace mfront{
     out << "#include\"MFront/Aster/AsterInterface.hxx\"\n\n";
     out << "#include\"MFront/Aster/aster" << name << ".hxx\"\n\n";
 
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
+    
     out << "extern \"C\"{\n\n";
  
     this->generateUMATxxGeneralSymbols(out,name,mb,fd);
@@ -483,7 +487,8 @@ namespace mfront{
     }
     
     this->writeSetParametersFunctionsImplementations(out,name,mb);
-
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
+    
     out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"
 	<< this->getFunctionName(name) << "("
 	<< "aster::AsterReal *const STRESS,"       /*< tenseur des contraintes */
@@ -554,6 +559,7 @@ namespace mfront{
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NUMMOD,"
+	  << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
 	  << sfeh << ")!=0){\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
        			       name,"",mb);
@@ -570,6 +576,7 @@ namespace mfront{
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,NUMMOD,"
+	  << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
 	  << sfeh << ")!=0){\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
 			       name,"",mb);
@@ -616,11 +623,13 @@ namespace mfront{
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
 	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],NUMMOD,"
+	    << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
 	    << sfeh << ")!=0){\n";
       } else {
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
 	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],NUMMOD,"
+	    << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
 	    << sfeh << ")!=0){\n";
       }
       out << "return;\n";
@@ -634,11 +643,13 @@ namespace mfront{
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
 	    << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],NUMMOD,"
+	    << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
 	    << sfeh << ")!=0){\n";
       } else {
 	out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	    << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
 	    << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],NUMMOD,"
+	    << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
 	    << sfeh << ")!=0){\n";
       }
       out << "return;\n";

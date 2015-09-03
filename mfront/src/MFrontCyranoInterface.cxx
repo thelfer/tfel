@@ -269,6 +269,19 @@ namespace mfront{
   } // end of MFrontCyranoInterface::getModellingHypothesesToBeTreated
 
   void
+  MFrontCyranoInterface::writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream& out,
+									 const std::string& name) const
+  {
+    out << "static tfel::material::OutOfBoundsPolicy&\n"
+	<< getFunctionName(name) << "_getOutOfBoundsPolicy(void){\n"
+	<< "using namespace cyrano;\n"
+      	<< "using namespace tfel::material;\n"
+	<< "static OutOfBoundsPolicy policy = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy().getOutOfBoundsPolicy();\n"
+	<< "return policy;\n"
+	<< "}\n\n";
+  } // end of MFrontCyranoInterface::writeGetOutOfBoundsPolicyFunctionImplementation    
+  
+  void
   MFrontCyranoInterface::endTreatment(const MechanicalBehaviourDescription& mb,
 				       const MFrontFileDescription& fd) const
   {
@@ -380,6 +393,8 @@ namespace mfront{
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
+    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
+    
     this->writeCyranoFunctionDeclaration(out,name);
 
     out << "#ifdef __cplusplus\n";
@@ -411,6 +426,7 @@ namespace mfront{
     out << "*/\n\n";
 
     this->getExtraSrcIncludes(out,mb);
+    out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
       out << "#include\"MFront/MFrontBehaviourProfiler.hxx\"\n\n";
     }
@@ -419,8 +435,11 @@ namespace mfront{
     }
     out << "#include\"MFront/Cyrano/CyranoInterface.hxx\"\n\n";
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
+    out << "#include\"MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx\"\n";
     out << "#include\"MFront/Cyrano/cyrano" << name << ".hxx\"\n\n";
 
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
+    
     out << "extern \"C\"{\n\n";
 
     this->generateUMATxxGeneralSymbols(out,name,mb,fd);
@@ -438,6 +457,7 @@ namespace mfront{
 	<< makeLowerCase(name) << "_Interface = 1u;\n\n";
 
     this->writeSetParametersFunctionsImplementations(out,name,mb);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
     this->writeStandardCyranoFunction(out,name,mb);
 
@@ -610,6 +630,8 @@ namespace mfront{
 	<< "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
 	<< "cyrano::CyranoInt    *const KINC)\n";
     out << "{\n";
+    out << "tfel::material::OutOfBoundsPolicy op = " << getFunctionName(n)
+	<< "_getOutOfBoundsPolicy();\n";
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
       out << "using mfront::MFrontBehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
@@ -619,7 +641,7 @@ namespace mfront{
     this->generateMTestFile1(out);
     out << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName() 
 	<< ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC);\n";
+	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,op);\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
