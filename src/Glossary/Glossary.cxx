@@ -15,7 +15,8 @@ namespace tfel
 namespace glossary
 {
 
-const char* Glossary::names[94] = {
+const char* Glossary::names[95] = {
+"AxialGrowth",
 "AxialStrain",
 "AxialStress",
 "B10BurnUp",
@@ -110,6 +111,12 @@ const char* Glossary::names[94] = {
 "YoungModulus1",
 "YoungModulus2",
 "YoungModulus3"};
+const GlossaryEntry Glossary::AxialGrowth("AxialGrowth","AxialGrowth",
+"","scalar",
+"axial growth under irradiation",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
 const GlossaryEntry Glossary::AxialStrain("AxialStrain","AxialStrain",
 "","scalar",
 "la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes)",
@@ -130,7 +137,7 @@ const GlossaryEntry Glossary::B10BurnUp("B10BurnUp","B10BurnUp",
 
 const GlossaryEntry Glossary::BulkModulus("BulkModulus","BulkModulus",
 "Pa","scalar",
-"le module de compressibilité d'un matériau isotrope",
+"the bulk modulus of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -419,7 +426,7 @@ const GlossaryEntry Glossary::PlateWidth("PlateWidth","PlateWidth",
 
 const GlossaryEntry Glossary::PoissonRatio("PoissonRatio","PoissonRatio",
 "","scalar",
-"le coefficient de Poisson d'un matériau isotrope",
+"the Poisson ratio of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -485,7 +492,7 @@ const GlossaryEntry Glossary::SecondAxisSecondMomentArea("SecondAxisSecondMoment
 
 const GlossaryEntry Glossary::ShearModulus("ShearModulus","ShearModulus",
 "Pa","scalar",
-"le module de cisaillement d'un matériau isotrope",
+"the shear modulus of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -621,7 +628,7 @@ const GlossaryEntry Glossary::TrescaStress("TrescaStress","TrescaStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+83,Glossary::names+85,
+const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+84,Glossary::names+86,
 "Pa","scalar",
 "la valeur maximale de la contrainte qu'un materiau peut supporter",
 "" /* no 'description' defined */,
@@ -645,7 +652,7 @@ const GlossaryEntry Glossary::VonMisesStress("VonMisesStress","VonMisesStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+88,Glossary::names+90,
+const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+89,Glossary::names+91,
 "Pa","scalar",
 "la limite d'élasticité",
 "" /* no 'description' defined */,
@@ -653,7 +660,7 @@ const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+88,G
 
 const GlossaryEntry Glossary::YoungModulus("YoungModulus","YoungModulus",
 "Pa","scalar",
-"le module d'Young d'un matériau isotrope",
+"the Young modulus of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -683,7 +690,8 @@ return glossary;
 } // end of Glossary::getGlossary
 
 Glossary::Glossary(){
-this->keys.reserve(92);
+this->keys.reserve(93);
+this->insert(Glossary::AxialGrowth);
 this->insert(Glossary::AxialStrain);
 this->insert(Glossary::AxialStress);
 this->insert(Glossary::B10BurnUp);

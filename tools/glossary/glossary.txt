@@ -167,19 +167,19 @@
 "YoungModulus"{
  unit : "Pa";
  type : "scalar";
- short_description : "le module d'Young d'un matériau isotrope";
+ short_description : "the Young modulus of an isotropic material";
 };
 
 "ShearModulus"{
  unit : "Pa";
  type : "scalar";
- short_description : "le module de cisaillement d'un matériau isotrope";
+ short_description : "the shear modulus of an isotropic material";
 };
 
 "BulkModulus"{
  unit : "Pa";
  type : "scalar";
- short_description : "le module de compressibilité d'un matériau isotrope";
+ short_description : "the bulk modulus of an isotropic material";
 };
 
 "FirstLameCoefficient"{
@@ -208,7 +208,7 @@
 
 "PoissonRatio"{
  type : "scalar";
- short_description : "le coefficient de Poisson d'un matériau isotrope";
+ short_description : "the Poisson ratio of an isotropic material";
 };
 
 "PoissonRatio12"{
@@ -405,6 +405,11 @@
  short_description : "un gonflement imposé";
  notes : {"l'utilisation de ce nom pour imposer un gonflement n'est pas"
   "obligatoire."};
+};
+
+"AxialGrowth"{
+ type : "scalar";
+ short_description : "axial growth under irradiation";
 };
 
 "SolidSwelling"{

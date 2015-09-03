@@ -7,6 +7,14 @@
 \newcommand{\Frac}[2]{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# L'entrée AxialGrowth
+
+Cette entrée décrit axial growth under irradiation.
+
+* noms  : AxialGrowth
+* unité : sans unité
+* type : scalaire 
+
 # L'entrée AxialStrain
 
 Cette entrée décrit la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes).
@@ -41,7 +49,7 @@ Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) consommé par unité d
 
 # L'entrée BulkModulus
 
-Cette entrée décrit le module de compressibilité d'un matériau isotrope.
+Cette entrée décrit the bulk modulus of an isotropic material.
 
 * noms  : BulkModulus
 * unité : \(Pa\)
@@ -490,7 +498,7 @@ Cette entrée décrit ??.
 
 # L'entrée PoissonRatio
 
-Cette entrée décrit le coefficient de Poisson d'un matériau isotrope.
+Cette entrée décrit the Poisson ratio of an isotropic material.
 
 * noms  : PoissonRatio
 * unité : sans unité
@@ -590,7 +598,7 @@ Cette entrée décrit ??.
 
 # L'entrée ShearModulus
 
-Cette entrée décrit le module de cisaillement d'un matériau isotrope.
+Cette entrée décrit the shear modulus of an isotropic material.
 
 * noms  : ShearModulus
 * unité : \(Pa\)
@@ -822,7 +830,7 @@ Cette entrée décrit la limite d'élasticité.
 
 # L'entrée YoungModulus
 
-Cette entrée décrit le module d'Young d'un matériau isotrope.
+Cette entrée décrit the Young modulus of an isotropic material.
 
 * noms  : YoungModulus
 * unité : \(Pa\)
@@ -851,5 +859,4 @@ Cette entrée décrit le module d'Young d'un matériau orthotrope suivant la tro
 * noms  : YoungModulus3
 * unité : \(Pa\)
 * type : scalaire 
-
 <!-- Local IspellDict: english -->

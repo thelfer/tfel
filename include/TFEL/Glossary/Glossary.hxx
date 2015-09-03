@@ -31,6 +31,7 @@ struct TFELGLOSSARY_VISIBILITY_EXPORT Glossary
 static Glossary&
 getGlossary();
 
+static const GlossaryEntry AxialGrowth;
 static const GlossaryEntry AxialStrain;
 static const GlossaryEntry AxialStress;
 static const GlossaryEntry B10BurnUp;
@@ -144,7 +145,7 @@ getKeys(void) const;
 
 protected :
 //! all glossary names (to initialise glossary entries)
-static const char * names[94];
+static const char * names[95];
 /*!
  * \brief insert a new entry
  */
