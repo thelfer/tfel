@@ -155,16 +155,10 @@ namespace mfront{
     treatInputMethod(void);
 
     void
-    treatGlobalParameter(void);
+    treatParameter(void);
 
     void
-    treatGlobalParameterMethod(void);
-
-    void
-    treatLocalParameter(void);
-
-    void
-    treatLocalParameterMethod(void);
+    treatParameterMethod(void);
 
     void
     readDefaultValue(void);

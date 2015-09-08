@@ -513,6 +513,11 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck4.mtest
            mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck5.mtest
            mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck6.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck2.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck3.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck4.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck5.mtest
            mfront/tests/behaviours/aster/asterelasticity.mtest
            mfront/tests/behaviours/aster/asterelasticity2.mtest
            mfront/tests/behaviours/aster/asterelasticity3.mtest
@@ -647,6 +652,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck6.mtest
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck7.mtest
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck8.mtest
+           mfront/tests/behaviours/castem/castemstatevariablesboundscheck.mtest
+           mfront/tests/behaviours/castem/castemstatevariablesboundscheck2.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck2.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck3.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck4.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck5.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck6.mtest
            mfront/tests/behaviours/castem/castemelasticity.mtest
            mfront/tests/behaviours/castem/castemelasticity2.mtest
            mfront/tests/behaviours/castem/castemelasticity3.mtest
@@ -1018,6 +1031,11 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck6.mtest
            mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck7.mtest
            mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck8.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck2.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck3.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck4.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck5.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity18.mtest

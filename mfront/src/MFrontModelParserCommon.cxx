@@ -527,15 +527,6 @@ namespace mfront{
 	    }
 	  }
 	  if(!treated){
-	    // treating the case of global parameters
-	    for(p =this->globalParameters.begin();
-		(p!=this->globalParameters.end())&&(!treated);++p){
-	      if(p->name==this->current->value){
-		treated = true;
-		f.globalParameters.insert(this->current->value);
-		f.body  += "(this->" + this->current->value + ")";
-	      }
-	    }
 	    // treating the case of local parameters
 	    for(p =this->localParameters.begin();
 		(p!=this->localParameters.end())&&(!treated);++p){
@@ -964,150 +955,77 @@ namespace mfront{
   } // end of MFrontModelParserCommon::treatInputMethod
 
   void
-  MFrontModelParserCommon::treatGlobalParameter(void)
-  {
-    this->readVarList(this->globalParameters,false,false,false);
-  } // end of MFrontModelParserCommon::treatGlobalParameter(void)
-
-  void
-  MFrontModelParserCommon::treatGlobalParameterMethod(void) 
-  {
-    using namespace std; 
-    using namespace tfel::utilities;
-    typedef map<string,string>::value_type MVType;
-    string methodName;
-    this->readSpecifiedToken("MFrontModelParserCommon::treatGlobalParameterMethod",".");
-    this->checkNotEndOfFile("MFrontModelParserCommon::treatGlobalParameterMethod",
-			    "Expected method name.");
-    methodName = this->current->value;
-    if((methodName!="setGlossaryName")&&
-       (methodName!="setEntryName")&&
-       (methodName!="setDefaultValue")){
-      this->throwRuntimeError("MFrontModelParserCommon::treatGlobalParameterMethod",
-			      "Unknown method (valid methods for global parameters are "
-			      "setGlossaryName, setEntryName and setDefaultValue"
-			      ", read '"+methodName+"')");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MFrontModelParserCommon::treatGlobalParameterMethod","(");
-    if(methodName=="setGlossaryName"){
-      this->checkNotEndOfFile("MFrontModelParserCommon::treatGlobalParameterMethod",
-			      "Expected glossary name.");
-      if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
-	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
-	this->throwRuntimeError("MFrontModelParserCommon::treatGlobalParameterMethod",
-				"A glossary or an entry name has already been defined for field '"+
-				this->currentVar+"'");
-      }
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("MFrontModelParserCommon::treatGlobalParameterMethod",
-				"Expected a string as glossary name.");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("MFrontModelParserCommon::treatGlobalParameterMethod",
-				"Glossary name too short.");
-      }
-      string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
-	this->throwRuntimeError("MFrontModelParserCommon::treatGlobalParameterMethod",
-				"Glossary name for field '"+ this->currentVar +"' already defined.");
-      }
-    } else if(methodName=="setEntryName"){
-      this->checkNotEndOfFile("MFrontModelParserCommon::treatGlobalParameterMethod"
-			      "Expected entry file name.");
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("MFrontModelParserCommon::treatGlobalParameterMethod",
-				"Expected a string as entry file name.");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("MFrontModelParserCommon::treatGlobalParameterMethod",
-				"Entry file name too short.");
-      }
-      string entryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
-	this->throwRuntimeError("MFrontModelParserCommon::treatGlobalParameterMethod",
-				"Entry file name for field '"+ this->currentVar +"' already defined.");
-      }
-    } else if (methodName=="setDefaultValue"){
-      this->readDefaultValue();
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MFrontModelParserCommon::treatGlobalParameterMethod",")");
-    this->readSpecifiedToken("MFrontModelParserCommon::treatGlobalParameterMethod",";");
-  } // end of MFrontModelParserCommon::treatGlobalParameterMethod
-
-  void
-  MFrontModelParserCommon::treatLocalParameter(void)
+  MFrontModelParserCommon::treatParameter(void)
   {
     this->readVarList(this->localParameters,false,false,false);
-  } // end of MFrontModelParserCommon::treatLocalParameter(void)
+  } // end of MFrontModelParserCommon::treatParameter(void)
 
   void
-  MFrontModelParserCommon::treatLocalParameterMethod(void) 
+  MFrontModelParserCommon::treatParameterMethod(void) 
   {
     using namespace std;
     using namespace tfel::utilities;
     typedef map<string,string>::value_type MVType;
     string methodName;
-    this->readSpecifiedToken("MFrontModelParserCommon::treatLocalParameterMethod",".");
-    this->checkNotEndOfFile("MFrontModelParserCommon::treatLocalParameterMethod",
+    this->readSpecifiedToken("MFrontModelParserCommon::treatParameterMethod",".");
+    this->checkNotEndOfFile("MFrontModelParserCommon::treatParameterMethod",
 			    "Expected method name.");
     methodName = this->current->value;
     if((methodName!="setGlossaryName")&&
        (methodName!="setEntryName")&&
        (methodName!="setDefaultValue")){
-      this->throwRuntimeError("MFrontModelParserCommon::treatLocalParameterMethod",
+      this->throwRuntimeError("MFrontModelParserCommon::treatParameterMethod",
 			      "Unknown method (valid methods for local parameters are "
 			      "setGlossaryName, setEntryName and setDefaultValue"
 			      ", read "+methodName+").");
     }
     ++(this->current);
-    this->readSpecifiedToken("MFrontModelParserCommon::treatLocalParameterMethod","(");
+    this->readSpecifiedToken("MFrontModelParserCommon::treatParameterMethod","(");
     if(methodName=="setGlossaryName"){
-      this->checkNotEndOfFile("MFrontModelParserCommon::treatLocalParameterMethod",
+      this->checkNotEndOfFile("MFrontModelParserCommon::treatParameterMethod",
 			      "Expected glossary name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
 	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
-	this->throwRuntimeError("MFrontModelParserCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("MFrontModelParserCommon::treatParameterMethod",
 				"A glossary or an entry name has already been defined for field '"
 				+this->currentVar+"'.");
       }
       if(this->current->flag!=Token::String){
-	this->throwRuntimeError("MFrontModelParserCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("MFrontModelParserCommon::treatParameterMethod",
 				"Expected a string as glossary name.");
       }
       if(this->current->value.size()<3){
-	this->throwRuntimeError("MFrontModelParserCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("MFrontModelParserCommon::treatParameterMethod",
 				"Glossary name too short.");
       }
       string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
       if(!this->glossaryNames.insert(MVType(this->currentVar,glossaryName)).second){
-	this->throwRuntimeError("MFrontModelParserCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("MFrontModelParserCommon::treatParameterMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
     } else if(methodName=="setEntryName"){
-      this->checkNotEndOfFile("MFrontModelParserCommon::treatLocalParameterMethod",
+      this->checkNotEndOfFile("MFrontModelParserCommon::treatParameterMethod",
 			      "Expected entry file name.");
       if(this->current->flag!=Token::String){
-	this->throwRuntimeError("MFrontModelParserCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("MFrontModelParserCommon::treatParameterMethod",
 				"Expected a string as entry file name.");
       }
       if(this->current->value.size()<3){
-	this->throwRuntimeError("MFrontModelParserCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("MFrontModelParserCommon::treatParameterMethod",
 				"Entry file name too short.");
       }
       string entryName = this->current->value.substr(1,this->current->value.size()-2);
       if(!this->entryNames.insert(MVType(this->currentVar,entryName)).second){
-	this->throwRuntimeError("MFrontModelParserCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("MFrontModelParserCommon::treatParameterMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
     } else if (methodName=="setDefaultValue"){
       this->readDefaultValue();
     }
     ++(this->current);
-    this->readSpecifiedToken("MFrontModelParserCommon::treatLocalParameterMethod",")");
-    this->readSpecifiedToken("MFrontModelParserCommon::treatLocalParameterMethod",";");
-  } // end of MFrontModelParserCommon::treatLocalParameterMethod
+    this->readSpecifiedToken("MFrontModelParserCommon::treatParameterMethod",")");
+    this->readSpecifiedToken("MFrontModelParserCommon::treatParameterMethod",";");
+  } // end of MFrontModelParserCommon::treatParameterMethod
 
   void
   MFrontModelParserCommon::treatConstantMaterialProperty(void)
@@ -1127,11 +1045,10 @@ namespace mfront{
 			    "Expected method name.");
     methodName = this->current->value;
     if((methodName!="setGlossaryName")&&
-       (methodName!="setEntryName")&&
-       (methodName!="setDefaultValue")){
+       (methodName!="setEntryName")){
       this->throwRuntimeError("MFrontModelParserCommon::treatConstantMaterialPropertyMethod",
 			      "Unknown method (valid methods for local parameters are "
-			      "setGlossaryName, setEntryName and setDefaultValue"
+			      "setGlossaryName and setEntryName"
 			      ", read "+methodName+").");
     }
     ++(this->current);
@@ -1174,8 +1091,6 @@ namespace mfront{
 	this->throwRuntimeError("MFrontModelParserCommon::treatConstantMaterialPropertyMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
-    } else if (methodName=="setDefaultValue"){
-      this->readDefaultValue();
     }
     ++(this->current);
     this->readSpecifiedToken("MFrontModelParserCommon::treatConstantMaterialPropertyMethod",")");
@@ -1202,29 +1117,9 @@ namespace mfront{
       }
     }    
     if(!found){
-      for(p=this->globalParameters.begin();(p!=this->globalParameters.end())&&(!found);){
-	if(p->name==this->currentVar){
-	  found=true;
-	} else {
-	  ++p;
-	}
-      } 
-    }
-    if(!found){
-      for(p=this->constantMaterialProperties.begin();
-	  (p!=this->constantMaterialProperties.end())&&(!found);){
-	if(p->name==this->currentVar){
-	  found=true;
-	} else {
-	  ++p;
-	}
-      } 
-    }
-    if(!found){
       this->throwRuntimeError("MFrontModelParserCommon::readDefaultValue",
-			      "variable '"+this->currentVar+"' is neither a "
-			      "constant material properties, "
-			      "a local parameter or a global parameter");
+			      "variable '"+this->currentVar+"' is not "
+			      "a parameter");
     }
     this->checkNotEndOfFile("MFrontModelParserCommon::readDefaultValue",
 			    "Expected default value.");

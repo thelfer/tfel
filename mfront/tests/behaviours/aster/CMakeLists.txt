@@ -15,6 +15,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
 
 set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
+  ExternalStateVariablesBoundsCheck
   Tvergaard
   Elasticity
   OrthotropicElastic
@@ -151,6 +152,15 @@ set_tests_properties(astermaterialpropertiesboundscheck_mtest
   astermaterialpropertiesboundscheck5_mtest
   PROPERTIES WILL_FAIL true)
 
+test_aster(externalstatevariablesboundscheck)
+test_aster(externalstatevariablesboundscheck2)
+test_aster(externalstatevariablesboundscheck3)
+test_aster(externalstatevariablesboundscheck4)
+test_aster(externalstatevariablesboundscheck5)
+set_tests_properties(asterexternalstatevariablesboundscheck_mtest
+  asterexternalstatevariablesboundscheck2_mtest
+  asterexternalstatevariablesboundscheck5_mtest
+  PROPERTIES WILL_FAIL true)
 
 test_aster(elasticity)
 test_aster(elasticity2)

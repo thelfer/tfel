@@ -11,8 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<cstdlib>
 #include<cstring>
 #include"MFront/UMAT/UMATOutOfBoundsPolicy.hxx"
@@ -32,9 +30,7 @@ namespace umat
   {
     using namespace tfel::material;
     const char * const p = ::getenv("CASTEM_OUT_OF_BOUNDS_POLICY");
-    std::cout << "HERE" << std::endl;
     if(p!=0){
-      std::cout << "p : " << p << std::endl;
       if(strcmp(p,"STRICT")==0){
 	this->policy = Strict;
       } else if (strcmp(p,"WARNING")==0){

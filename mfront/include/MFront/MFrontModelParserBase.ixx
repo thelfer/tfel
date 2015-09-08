@@ -41,10 +41,10 @@ namespace mfront{
 			      &Child::treatPhysicalBounds);
     this->registerNewCallBack("@ConstantMaterialProperty",
 			      &Child::treatConstantMaterialProperty);
-    this->registerNewCallBack("@GlobalParameter",
-			      &Child::treatGlobalParameter);
+    this->registerNewCallBack("@Parameter",
+			      &Child::treatParameter);
     this->registerNewCallBack("@LocalParameter",
-			      &Child::treatLocalParameter);
+			      &Child::treatParameter);
     this->registerNewCallBack("@ConstantMaterialProperty",
 			      &Child::treatConstantMaterialProperty);
     this->registerNewCallBack("@Domain",&Child::treatDomain);
@@ -113,20 +113,11 @@ namespace mfront{
 	    ++p2;
 	  }
 	}
-	for(p2=this->globalParameters.begin();(p2!=this->globalParameters.end())&&(!found);){
-	  if(p2->name==this->current->value){
-	    found = true;
-	    this->currentVar = this->current->value;
-	    handler = &Child::treatGlobalParameterMethod;
-	  } else {
-	    ++p2;
-	  }
-	}
 	for(p2=this->localParameters.begin();(p2!=this->localParameters.end())&&(!found);){
 	  if(p2->name==this->current->value){
 	    found = true;
 	    this->currentVar = this->current->value;
-	    handler = &Child::treatLocalParameterMethod;
+	    handler = &Child::treatParameterMethod;
 	  } else {
 	    ++p2;
 	  }

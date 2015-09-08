@@ -1,0 +1,17 @@
+@Author Helfer Thomas;
+@Date   2/09/2015;
+@Description{
+  This test checks that the \'None\' out of bounds
+  policy does not lead to throwing an exception
+  when a material property is out its bounds.
+};
+
+@MaximumNumberOfSubSteps 1;
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoexternalstatevariablesboundscheck';
+@OutOfBoundsPolicy 'None';
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ExternalStateVariable 'ExternalStateVariable' 50;
+
+@Times {0.,1};

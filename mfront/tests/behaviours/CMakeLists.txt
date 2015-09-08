@@ -14,6 +14,9 @@ endif(HAVE_CYRANO)
 
 configure_file(PolyCrystals_DD_CC.mfront PolyCrystals_DD_CC.mfront.in @ONLY)
 
+install_mfront_data(tests/behaviours MaterialPropertiesBoundsCheck.mfront)
+install_mfront_data(tests/behaviours StateVariablesBoundsCheck.mfront)
+install_mfront_data(tests/behaviours ExternalStateVariablesBoundsCheck.mfront)
 install_mfront_data(tests/behaviours Elasticity.mfront)
 install_mfront_data(tests/behaviours Elasticity2.mfront)
 install_mfront_data(tests/behaviours Elasticity3.mfront)

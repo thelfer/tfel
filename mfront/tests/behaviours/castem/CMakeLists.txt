@@ -26,6 +26,8 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
 
 set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
+  StateVariablesBoundsCheck
+  ExternalStateVariablesBoundsCheck
   OrthotropicElastic
   Elasticity
   GeneralizedMaxwell
@@ -195,6 +197,24 @@ set_tests_properties(castemmaterialpropertiesboundscheck_mtest
   castemmaterialpropertiesboundscheck2_mtest
   castemmaterialpropertiesboundscheck5_mtest
   castemmaterialpropertiesboundscheck8_mtest
+  PROPERTIES WILL_FAIL true)
+
+test_castem(statevariablesboundscheck)
+test_castem(statevariablesboundscheck2)
+set_tests_properties(castemstatevariablesboundscheck_mtest
+  castemstatevariablesboundscheck2_mtest
+  PROPERTIES WILL_FAIL true)
+
+test_castem(externalstatevariablesboundscheck)
+test_castem(externalstatevariablesboundscheck2)
+test_castem(externalstatevariablesboundscheck3)
+test_castem(externalstatevariablesboundscheck4)
+test_castem(externalstatevariablesboundscheck5)
+test_castem(externalstatevariablesboundscheck6)
+set_tests_properties(castemexternalstatevariablesboundscheck_mtest
+  castemexternalstatevariablesboundscheck2_mtest
+  castemexternalstatevariablesboundscheck5_mtest
+  castemexternalstatevariablesboundscheck6_mtest
   PROPERTIES WILL_FAIL true)
 
 test_castem(elasticity)
