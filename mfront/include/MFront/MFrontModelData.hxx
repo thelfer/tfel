@@ -81,6 +81,7 @@ namespace mfront
     std::set<std::string> domains;
     std::set<std::string> fieldNames;
     std::set<std::string> functionNames;
+    std::map<std::string,std::string> glossaryNames;
     std::map<std::string,std::string> entryNames;
     std::map<std::string,double>      initialValues;
     std::map<std::string,std::string> defaultValues;
