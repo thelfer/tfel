@@ -9,7 +9,7 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-tfel_project(2 0 "3")
+tfel_project(2 0 "4-dev")
 set(PACKAGE_BUGREPORT "thomas.helfer@cea.fr")
 
 # check for the fenv package
