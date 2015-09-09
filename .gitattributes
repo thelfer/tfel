@@ -726,6 +726,11 @@ docs/presentations/portable-behaviour/img/tubeaxi2.eps -text
 docs/presentations/portable-behaviour/mysettings.css -text
 docs/presentations/portable-behaviour/portability.md -text
 docs/references/matrixcookbook.pdf -text svneol=unset#unset
+docs/release-notes-2.0.3/CMakeLists.txt -text
+docs/release-notes-2.0.3/Makefile.am -text
+docs/release-notes-2.0.3/Makefile.doc.in -text
+docs/release-notes-2.0.3/bibliographie.bib -text
+docs/release-notes-2.0.3/tfel-2.0.3.tex.in -text
 docs/release-notes-2.0/CMakeLists.txt -text
 docs/release-notes-2.0/Champs.tex.in -text
 docs/release-notes-2.0/Makefile.am -text

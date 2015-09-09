@@ -30,17 +30,20 @@ Minor fixes.
   formalism in mono-dimensional fuel performance codes. See
   @helfer_extension_2015 for details.
 
-## Version 2.0.3
+## Version 2.0.3 (9/09/2015)
 
-- Fix a minor bug in the `CxxTokenizer` class which was appears when
-  using the [`clang` `libc++`](http://libcxx.llvm.org/) standard
+- Fix of a minor bug in the `CxxTokenizer` class which was appears
+  when using the [`clang` `libc++`](http://libcxx.llvm.org/) standard
   library. This prevented many `MTest` tests to work on
   [Mac OS X](http://www.apple.com/fr/osx/).
-- Fix [Ticket #9](https://sourceforge.net/p/tfel/tickets/9/)
-- Fix [Ticket #10](https://sourceforge.net/p/tfel/tickets/10/)
-- Fix [Ticket #11](https://sourceforge.net/p/tfel/tickets/11/)
+- Fix of [Ticket #9](https://sourceforge.net/p/tfel/tickets/9/)
+- Fix of [Ticket #10](https://sourceforge.net/p/tfel/tickets/10/)
+- Fix of [Ticket #11](https://sourceforge.net/p/tfel/tickets/11/)
 - The class `ExternalBehaviourDescription` was introduced
 - The `AxialGrowth` entry was added to the glossary
+
+A full description of the 2.0.3 release can be found
+[here](documents/tfel/tfel-2.0.3.pdf) (in french).
 
 # Versions 2.1.x
 

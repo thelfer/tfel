@@ -421,6 +421,9 @@ AC_OUTPUT([debug.sh
 	   docs/release-notes-2.0/tfel-2.0.tex
 	   docs/release-notes-2.0/Makefile.doc
 	   docs/release-notes-2.0/Makefile
+	   docs/release-notes-2.0.3/tfel-2.0.3.tex
+	   docs/release-notes-2.0.3/Makefile.doc
+	   docs/release-notes-2.0.3/Makefile
 	   docs/mtest/Makefile
 	   docs/mtest/Makefile.doc
 	   docs/mtest/mtest.tex
@@ -469,8 +472,8 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/portable-behaviour/Makefile
 	   docs/presentations/Materiaux2014/Makefile
 	   docs/presentations/ClubCast3M2014/Makefile
-   	   docs/presentations/CodeAsterUserMeeting2015/Makefile
-     	   docs/presentations/CodeAsterUserMeeting2015/mfront-aster-2015.tex
+	   docs/presentations/CodeAsterUserMeeting2015/Makefile
+	   docs/presentations/CodeAsterUserMeeting2015/mfront-aster-2015.tex
 	   docs/tutorial/Makefile
 	   docs/tutorial/introduction.tex
 	   docs/tutorial/Conclusions.tex

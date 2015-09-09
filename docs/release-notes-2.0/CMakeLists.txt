@@ -32,6 +32,6 @@ if(HAVE_LATEX)
     DESTINATION share/doc/tfel/references
     COMPONENT docs)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.pdf
-    DESTINATION share/doc/tfel/web/documents/tfel/tfel
+    DESTINATION share/doc/tfel/web/documents/tfel
     COMPONENT website)
 endif(HAVE_LATEX)

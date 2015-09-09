@@ -1,6 +1,23 @@
 % News
 % Helfer Thomas
-% August 18, 2015
+% September 9, 2015
+
+# Release of version 2.0.3 (9 September 2015)
+
+Version 2.0.3 is mostly a bug-fix release:
+
+- Fix of a minor bug in the `CxxTokenizer` class which was appears
+  when using the [`clang` `libc++`](http://libcxx.llvm.org/) standard
+  library. This prevented many `MTest` tests to work on
+  [Mac OS X](http://www.apple.com/fr/osx/).
+- Fix of [Ticket #9](https://sourceforge.net/p/tfel/tickets/9/)
+- Fix of [Ticket #10](https://sourceforge.net/p/tfel/tickets/10/)
+- Fix of [Ticket #11](https://sourceforge.net/p/tfel/tickets/11/)
+- The class `ExternalBehaviourDescription` was introduced
+- The `AxialGrowth` entry was added to the glossary
+
+A full description of the 2.0.3 release can be found
+[here](documents/tfel/tfel-2.0.3.pdf) (in french).
 
 # Introducting `mfront-doc` (19 August 2015)
 
