@@ -15,6 +15,7 @@ images
 latex
 
 ./tex/images:
+Pleiades.eps
 9001_2000-DEC.eps
 barre_verte.eps
 barre_verte.pdf

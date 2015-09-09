@@ -101,81 +101,80 @@
 
 \include{Champs}
 
-\resumecea{
+\resumecea{ {\small \mfront{} peut générer des lois de comportement
+    mécanique pour différents codes cibles~: \castem{} (code aux
+    éléments finis généraliste développé par le \cea{} utilisé comme
+    composant mécanique dans \pleiades{}), \aster{} (code aux éléments
+    finis généraliste développé par \edf{}), \cyrano{} (code
+    combustible développé par
+    \edf{})~\cite{helfer_generateur_2013}. Chacun de ces codes
+    présente des spécificités que \mfront{} doit prendre en compte
+    pour des performances optimales.
 
-  \mfront{} peut générer des lois de comportement mécanique pour
-  différents codes cibles~: \castem{} (code aux éléments finis
-  généraliste développé par le \cea{} utilisé comme composant
-  mécanique dans \pleiades{}), \aster{} (code aux éléments finis
-  généraliste développé par \edf{}), \cyrano{} (code combustible
-  développé par \edf{})~\cite{helfer_generateur_2013}. Chacun de ces
-  codes présentent des spécificités que \mfront{} doit prendre en
-  compte pour des performances optimales.
+    Ce document présente un outil de simulation du comportement
+    mécanique d'un point matériel nommé \mtest{}. La motivation
+    initiale du développement de \mtest{} était de disposer d'un outil
+    {\em autonome} permettant de maîtriser le développement de
+    \mfront{}~: \mtest{} peut se comporter comme chacun des différents
+    codes, c'est à dire adopter les mêmes conventions ou utiliser les
+    mêmes algorithmes numériques.
 
-  Ce document présente un outil de simulation du comportement
-  mécanique d'un point matériel nommé \mtest{}. La motivation initiale
-  du développement de \mtest{} était de disposer d'un outil {\em
-  autonome} permettant de maîtriser le développement de \mfront{}~:
-  \mtest{} peut se comporter comme chacun des différents codes, c'est
-  à dire adopter les mêmes conventions ou utiliser les mêmes
-  algorithmes numériques.
+    \mtest{} permet de piloter le chargement mécanique d'un point
+    matériel dont le comportement est décrit en petites ou en grandes
+    transformations ou par un modèle de zones cohésives. Il est
+    possible d'imposer certaines composantes des contraintes et/ou
+    certaines composantes des déformations (ou le gradient de la
+    déformation en grandes transformations, ou le saut de déplacement
+    pour les modèles de zones cohésives) au cours d'un historique (de
+    contraintes, de température, de fluence, etc.).
 
-  \mtest{} permet de piloter le chargement mécanique d'un point
-  matériel dont le comportement est décrit en petites ou en grandes
-  transformations ou par un modèle de zones cohésives. Il est possible
-  d'imposer certaines composantes des contraintes et/ou certaines
-  composantes des déformations (ou le gradient de la déformation en
-  grandes transformations, ou le saut de déplacement pour les modèles
-  de zones cohésives) au cours d'un historique (de contraintes, de
-  température, de fluence, etc.).
+    \mtest{} permet de simuler de nombreux essais mécaniques simples
+    (sans effet de structure)~:
+    \begin{itemize}
+    \item essais de traction/compression de type fluage (charge
+      constante), écrouissage (vitesse de déformation imposée) ou
+      relaxation (déformation totale constante) et les essais de
+      \nom{Satoh} (pièce chauffée dont la dilatation est empêchée). Ces
+      essais peuvent présenter des cycles ou des variations de
+      chargement~;
+    \item essais en pression interne sur tube présentant les mêmes
+      variantes que les essais de traction/compression.
+    \end{itemize}
+    
+    Du fait de sa restriction à un unique point matériel, \mtest{} se
+    distingue par ses temps d'exécution, généralement d'un à plusieurs
+    ordres de grandeurs inférieur à ceux des codes mentionnés. La part
+    relative prise par l'intégration de la loi de comportement est
+    très significative, ce qui implique que toute régression des lois
+    générées en termes de performances peut être automatiquement
+    détectée.
+    
+    Les résultats obtenus par \mtest{} peuvent être comparés à des
+    solutions analytiques ou à des résultats de référence contenus
+    dans un fichier externe. Ces tests génèrent des fichiers qui
+    peuvent être interprétés par l'automate \jenkins{}, au centre de
+    la politique d'intégration continue mise en place par la
+    plate-forme \pleiades{}. Plus de \(600\) cas tests unitaires ont
+    été écrits à l'aide de \mtest{}.
 
-  \mtest{} permet de simuler de nombreux essais mécaniques simples
-  (sans effet de structure)~:
-  \begin{itemize}
-  \item essais de traction/compression de type fluage (charge
-    constante), écrouissage (vitesse de déformation imposée) ou
-    relaxation (déformation totale constante) et les essais de
-    \nom{Satoh} (pièce chauffée dont la dilatation est empêchée). Ces
-    essais peuvent présenter des cycles ou des variations de
-    chargement~;
-  \item essais en pression interne sur tube présentant les mêmes
-    variantes que les essais de traction/compression.
-  \end{itemize}
-
-  Du fait de sa restriction à un unique point matériel, \mtest{} se
-  distingue par ses temps d'exécution, généralement d'un à plusieurs
-  ordres de grandeurs inférieur à ceux des codes mentionnés. La part
-  relative prise par l'intégration de la loi de comportement est très
-  significative, ce qui implique que toute régression des lois
-  générées en termes de performances peut être automatiquement
-  détectée.
-
-  Les résultats obtenus par \mtest{} peuvent être comparés à des
-  solutions analytiques ou à des résultats de référence contenus dans
-  un fichier externe. Ces tests génèrent des fichiers qui peuvent être
-  interprétés par l'automate \jenkins{}, au centre de la politique
-  d'intégration continue mise en place par la plate-forme
-  \pleiades{}. Plus de \(600\) cas tests unitaires ont été écrits à
-  l'aide de \mtest{}.
-
-  Au delà de l'aspect test unitaire, cet outil s'est aussi avéré
-  très utile et apprécié des utilisateurs de \mfront{} qui l'emploient
-  pour~:
-  \begin{itemize}
-  \item  valider le développement d'une
-    nouvelle loi de comportement~;
-  \item recaler ses paramètres, notamment avec \adao{}, un module
-    \salome{} pour l’Assimilation de Données et l’Aide à
-    l’Optimisation~;
-  \item tester son comportement numérique, en particulier lorsque
-    l'algorithme d'intégration local échoue.
-  \end{itemize}
-  
-  Ce document présente tout d'abord les principales fonctionnalités de
-  cet outil. Son utilisation en ligne de commande et l'ensemble des
-  commandes disponibles sont alors décrits. Nous détaillons ensuite
-  quelques tests intégrés à la gestion de configuration de \mfront{},
-  dont certains sont des contributions externes.
+    Au delà de l'aspect test unitaire, cet outil s'est aussi avéré
+    très utile et apprécié des utilisateurs de \mfront{} qui
+    l'emploient pour~:
+    \begin{itemize}
+    \item  valider le développement d'une
+      nouvelle loi de comportement~;
+    \item recaler ses paramètres, notamment avec \adao{}, un module
+      \salome{} pour l’Assimilation de Données et l’Aide à
+      l’Optimisation~;
+    \item tester son comportement numérique, en particulier lorsque
+      l'algorithme d'intégration local échoue.
+    \end{itemize}
+    
+    Ce document présente tout d'abord les principales fonctionnalités
+    de cet outil. Son utilisation en ligne de commande et l'ensemble
+    des commandes disponibles sont alors décrits. Nous détaillons
+    ensuite quelques tests intégrés à la gestion de configuration de
+    \mfront{}, dont certains sont des contributions externes.}
 }
 
 \makeindex{env}
@@ -290,12 +289,12 @@ sont créés~:
     {\tt jenkins}. Le nombre de cas tests unitaires est actuellement
     supérieur à $400$. Les chiffres présentés par {\tt jenkins}
     correspondent à la somme des exécutions sur plusieurs
-    plate-forme.}
+    plate-formes.}
   \label{fig:mtest:nb_castests}
 \end{figure}
 
 Cet outil a permis de tester de nombreuses lois de comportement
-mécaniques (plus de 60 actuellement) dans diverses situations avec
+mécanique (plus de 60 actuellement) dans diverses situations avec
 l'ensemble des interfaces, ce qui conduit à plus de 400 tests
 unitaires. L'évolution du nombre de cas-tests peut être visualisée sur
 la figure~\ref{fig:mtest:nb_castests}. Notons qu'une part
@@ -391,7 +390,7 @@ travers d'une bibliothèque {\tt C++}~\cite{stroustrup_langage_2004} ou
 d'une bibliothèque {\tt python}~\cite{von_rossum_python_2007}. Cette
 possibilité permet~:
 \begin{itemize}
-\item de intégrer simplement \mtest{} dans des chaînes de calculs
+\item d'intégrer simplement \mtest{} dans des chaînes de calculs
   complexes, incluant le recalage de paramètres par rapport à des
   données expérimentales~;
 \item de permettre de réaliser rapidement des essais paramétriques. À
@@ -444,7 +443,7 @@ cohésives.
 Pour simplifier la présentation, nous avons restreint la présentation
 faite ici au cas des petites déformations. Les cas des lois écrites en
 grandes déformations ou des modèles de zones cohésives s'en déduisent
-sans difficultés majeures\footnote{Tout au plus pouvons nous signaler
+sans difficulté majeure\footnote{Tout au plus pouvons nous signaler
   une difficulté inhérente aux lois écrites en grandes
   transformations. Ces lois relient le gradient de la déformation, qui
   a \(9\) composantes en \(3D\) au tenseur de \nom{Cauchy} qui en a
@@ -457,7 +456,7 @@ sans difficultés majeures\footnote{Tout au plus pouvons nous signaler
 
 Comme nous l'avons décrit en introduction, la motivation initiale de
 \mtest{} était de permettre de tester les différentes interfaces des
-lois de comportements sans recourir à des codes tiers. \mtest{} doit
+lois de comportement sans recourir à des codes tiers. \mtest{} doit
 donc permettre de tester tous les aspects liés à une loi de
 comportement. De ce fait, l'algorithme de résolution de \mtest{},
 restreint à un point matériel et décrit dans la section suivante, doit
@@ -465,7 +464,7 @@ offrir la même richesse que les algorithmes des codes de calcul de
 structure. Il nous est donc apparu utile de rappeler comment se place
 la loi de comportement dans un calcul d'équilibre mécanique d'un
 calcul de structure. Cette approche nous permet de rappeler des
-notions importantes, telles que celle de matrice de raideur ou de
+notions importantes, telles que celles de matrice de raideur ou de
 matrice de prédiction.
 
 Les lois de comportement mécanique décrites dans ce document
@@ -884,7 +883,7 @@ multiplicateurs de \nom{Lagrange}\footnote{En particulier, nous
 prise en compte pour les lois en petites déformations, de manière
 similaire à ce que font la plupart des codes. Pour cela, l'incrément
 des dilatations thermiques est tout simplement déduit de l'incrément
-de déformation fournie à la loi de comportement.
+de déformation fourni à la loi de comportement.
 
 Pour définir une dilatation thermique orthotrope, il est nécessaire de
 définir les coefficients de dilatation thermique associés à chacune
@@ -907,7 +906,7 @@ dilatation thermique s'écrit alors~:
 \]
 où \(T_{\text{ref}}\) est la température de référence. Ce tenseur est
 exprimé dans le repère du calcul par un changement
-repère\footnote{Voir le mot clé \mkey{RotationMatrix}.}.
+de repère\footnote{Voir le mot clé \mkey{RotationMatrix}.}.
 
 Pour définir une dilatation thermique isotrope, il est nécessaire de
 définir un coefficient de dilatation thermique, noté \(\alpha\), par
@@ -937,7 +936,7 @@ nommée {\tt Thermal\-Expansion\-Reference\-Temperature}\footnote{Voir
 de temps précédent est utilisée comme estimation initiale de la
 solution en fin de pas de temps.
 
-D'autres stratégies peuvent cependant être utilisée\footnote{Voir le
+D'autres stratégies peuvent cependant être utilisées\footnote{Voir le
   mot-clé \mkey{PredictionPolicy}.}~:
 \begin{itemize}
 \item utiliser une extrapolation linéaire des précédents pas de
@@ -1062,8 +1061,9 @@ La structure des fichiers d'entrée ainsi que l'ensemble des mots clés
 sont décrits au paragraphe~\ref{sec:descr-du-fich}.
 
 \mtest{} s'inspire de l'utilitaire \cmake{} et permet de consulter sa
-documentation en ligne de commandes. Par exemple, la documentation
-associée au mot clé \mkey{Behaviour} est accessible ainsi~:
+documentation depuis la ligne de commandes. Par exemple, la
+documentation associée au mot clé \mkey{Behaviour} est accessible
+ainsi~:
 \begin{flushleft}
   \tt\noindent
   \$ mtest --help-keyword=@Behaviour
@@ -1121,11 +1121,11 @@ compatibilité avec \cmake{}.
 que certaines exceptions mathématiques ne soient plus ignorées. Par
 défaut, les opérations mathématiques invalides conduisent à
 l'apparition de nombres particuliers nommés {\tt NaN} ou {\tt Inf} et
-n'arrête pas l'exécution du programme. Si l'option
+n'arrêtent pas l'exécution du programme. Si l'option
 \moption{floating-\-point-\-exceptions} est utilisée, une opération
 mathématique invalide conduit le système d'exploitation à envoyer à
 \mtest{} le signal {\tt SIGFPE} qui finit son exécution (sauf si
-l'option \moption{backtrace} est utilisée.
+l'option \moption{backtrace} est utilisée).
 
 \paragraph{L'option \moption{backtrace}} affiche la pile d'appel en
 cas d'erreur de segmentation (signal {\tt SIGSEGV}) ou en cas
@@ -1431,6 +1431,17 @@ Ce mot clé prend deux arguments~:
   \(\sqrt{2}\)~;
 \end{itemize}
 
+Dans le cas de tableau de variables internes, il y trois
+possibilités~:
+\begin{itemize}
+\item \texttt{@InternalStateVariable 'omega' 6.1504e-09;} affecte à
+  chacune des entrées du tableau la même valeur.
+\item \texttt{@InternalStateVariable 'omega[0]' 6.1504e-09;} affecte
+  spécifiquement à la première entrée du tableau la valeur spécifiée.
+\item \texttt{@InternalStateVariable 'omega' {6.1504e-09,6.1504e-09};}
+  affecte des valeurs distinctes à chacune des entrées du tableau.
+\end{itemize}
+
 \paragraph{Le mot clé \mkey{MaterialProperty}} permet de définir une
 des propriétés matériau.
 
@@ -1480,10 +1491,10 @@ Les hypothèses de modélisation valides sont listées au
 tableau~\ref{tab:mtest:modellinghypothesis}.
 
 Ce mot clé doit être l'un des premiers du fichier, car d'autres mots
-clés peuvent avoir besoin d'avoir d'accéder à l'hypothèse de
-modélisation et si celle-ci n'est pas encore spécifiée, l'hypothèse
-par défaut sera déclarée. Dans ce cas, le traitement du mot
-\mkey{ModellingHypothesis} conduira à une erreur.
+clés peuvent avoir besoin d'accéder à l'hypothèse de modélisation et
+si celle-ci n'est pas encore spécifiée, l'hypothèse par défaut sera
+déclarée. Dans ce cas, le traitement du mot \mkey{ModellingHypothesis}
+conduira à une erreur.
 
 \paragraph{Le mot clé \mkey{OutputFile}} permet de spécifier la base
 de noms des fichiers de sortie. \mtest{} ajoute à cette base les
@@ -1492,7 +1503,7 @@ contenant le résultat des tests (voir à ce sujet le
 paragraphe~\ref{sec:fichiers-generes}).
 
 \paragraph{Le mot clé \mkey{OutputFilePrecision}} permet de préciser
-le nombre de chiffres significatifs utilisées pour l'affichage des
+le nombre de chiffres significatifs utilisés pour l'affichage des
 résultats. Ce nombre est l'unique argument attendu.
 
 \paragraph{Le mot clé \mkey{PredictionPolicy}} permet de choisir
@@ -1500,7 +1511,7 @@ comment est prédite l'estimation de la solution (voir le
 paragraphe~\ref{sec:algor-de-resol}).
 
 Ce mot clé est suivi d'une chaîne de caractères. Les valeurs suivantes
-son admises~:
+sont admises~:
 \begin{itemize}
 \item {\tt NoPrediction}, qui est le choix par défaut~;
 \item {\tt LinearPrediction}, qui demande à ce que la prédiction se
@@ -1654,7 +1665,7 @@ traction. L'équilibre imposera que les autres composantes des
 contraintes soient nulles.
 
 Il est possible de se ramener à des données expérimentales de type
-\og~force-déplacement~\og{} par les équivalences classiques~:
+\og~force-déplacement~\fg{} par les équivalences classiques~:
 \begin{itemize}
 \item le déplacement est égal à la déformation multipliée par la
   longueur de l'éprouvette dans l'axe de traction~;
@@ -1666,7 +1677,7 @@ Nous avons déjà recontré en figure~\ref{fig:mtest:firstexample} un
 exemple de simulation d'un essai de traction uniaxiale en déplacement
 imposé.
 
-\subsubsection{Essai de traction uniaxiale en force imposé}
+\subsubsection{Essai de traction uniaxiale en force imposée}
 
 Il est possible de simuler un essai de traction uniaxiale en force
 imposée en ne spécifiant que la contrainte dans l'axe de
@@ -1847,22 +1858,41 @@ figure~\ref{fig:mtest:chaboche2:mtest}.
   \caption{Comparaison de la solution obtenue au cours de l'essai {\tt
       HSNV125}~\cite{proix_hsnv125_2011} à la solution obtenue par la
     macro-commande {\tt SIMU\_POINT\_MAT}
-    d'\aster{}~\cite{proix_macro-commande_2013}.}
+    d'\aster{}~\cite{edf_macro-commande_2013}.}
   \label{fig:hsnv125:res}
 \end{figure}
 
-La figure~\ref{fig:hsnv125:res} compare la solution obtenue à la une
+La figure~\ref{fig:hsnv125:res} compare la solution obtenue à une
 simulation effectuée avec la macro-commande {\tt SIMU\_POINT\_MAT}
-d'\aster{}~\cite{proix_macro-commande_2013}.
+d'\aster{}~\cite{edf_macro-commande_2013}.
 
 \section{Conclusions}
 
-Ce document a présenté un outil de simulation du comportement
-mécanique d'un point matériel nommé \mtest{}. Initialement développé
-pour des besoins internes permettant d'assurer la qualité du
-développement de \mfront{}, cet outil a su trouver des applications
-plus larges et est utilisé dans de nombreuses situations où le recours
-à un calcul de structure n'est pas nécessaire.
+Ce document présente un outil de simulation du comportement mécanique
+d'un point matériel nommé \mtest{}. Initialement développé pour des
+besoins internes permettant d'assurer la qualité du développement de
+\mfront{}, cet outil a su trouver des applications plus larges et est
+utilisé dans de nombreuses situations où le recours à un calcul de
+structure n'est pas nécessaire.
+
+Si \mtest{} a été initialement développé pour des besoins internes au
+développement de \mfront{}, \mtest{} semble apprécié des utilisateurs
+de \mfront{}, au sein du projet \pleiades{} ou à l'extérieur. Il est
+utilisé~:
+\begin{itemize}
+\item comme un outil de validation unitaire des lois de comportement~;
+\item comme un outil d'optimisation des lois de
+  comportement\footnote{Il est notamment possible de demander à une
+    loi \mfront{} de générer automatiquement un fichier \mtest{} en
+    cas de non convergence de l'intégration sur un pas de temps. Il
+    est ainsi possible d'analyser les causes de divergence sans avoir
+    à relancer un calcul éléments finis beaucoup plus coûteux.}~;
+\item comme un outil de recalage des paramètres du
+  comportement. \mtest{} a notamment été couplé avec le code {\tt
+    Matlab} pour l'interprétation d'essais sur un acier
+  EM10~\cite{milliard_mechanical_2014} et avec le module \adao{} de la
+  plate-forme \salome{}.
+\end{itemize}
 
 \clearpage
 \newpage

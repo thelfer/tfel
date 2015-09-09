@@ -46,7 +46,7 @@ provides a high level language to write mechanical behaviours.
 
 It can be compared to the `ZebFront` tool developped by the Centre des
 Matériaux de Mines ParisTech as part of the Zset software
-[see @foerch_polymorphic_1997;@besson_object-oriented_1998-1;@numerics14:_zebfr]. One
+[see @foerch_polymorphic_1997;@besson_object-oriented_1998-1;@northwest_numerics_and_modeling_inc._zebfront_2014]. One
 major difference between `ZebFront` and `MFront` is the programming
 techniques used: `ZebFront` mostly relies on object oriented
 techniques where `MFront` relies on generic programming leading to

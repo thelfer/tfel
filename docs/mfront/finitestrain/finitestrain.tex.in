@@ -260,10 +260,10 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 
   Nous commençons par introduire les principaux concepts cinématiques
   et sthéniques nécessaires à l'exposé.
-  
 }
 
-
+\newboolean{pleiades}
+\setboolean{pleiades}{false}
 
 \begin{document}
 
@@ -271,44 +271,47 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
 \newpage
 \section{Introduction}
 
-Les applications combustible couvrent un nombre croissant de situations
-mécaniques. Dans un certain nombre de cas, il devient nécessaire de
-quitter le cadre habituel des transformations infinitésimales pour traiter la
-mécanique de manière plus rigoureuse. Citons quelques exemples, parmi
-de nombreux autres~:
-\begin{itemize}
-\item description du ballonnement de la gaine en APRP~;
-\item rupture ductile de la gaine en APRP~;
-\item analyse de la rupture ductile de la gaine en RIA, par exemple
-  dans le cas REP-NA8~;
-\item analyse des résultats d'essais de compression des pastilles
-  \(UO_{2}\)~: les déformations rationnelles macroscopiques sont de
-  l'ordre de \(20\,\%\), voir \(30\,\%\) localement dans la plupart
-  des essais. Au niveau du grain, une approche micro-mécanique de ces
-  essais conduirait probablement à des effets typiques des
-  transformations finies~: rotation du réseau cristallin, déformations
-  locales aux joints très élevées. 
-\end{itemize}
-Notons dès à présent que les grandes transformations ne se limitent
-pas aux grandes déformations~: l'effet des rotations, trop souvent
-négligé, peut être crucial.
-
-Au delà de l'aspect physique, notons que le code \castem{} oblige
-l'emploi des transformations finies dès qu'il est nécessaire de gérer
-le contact entre différents objets (situation assez
-\og{}~commune~\fg{} dans nos calculs)~: la compréhension {\tt a
-  minima} des algorithmes de résolutions mécaniques à la base de nos
-applications combustible demande une certaine familiarité avec les
-transformations finies. Nous verrons dans cette note que le traitement
-par défaut fait dans \castem{} est critiquable et incompatible en
-théorie avec la plupart des lois de comportement utilisées dans la
-plateforme (qu'elles soient écrites en \mfront{} ou pas). Relativisons
-tout de suite~: en pratique, tant que l'on reste dans des conditions
-proches des transformations infinitésimales, les approximations
-commises auront un impact assez faible. Par contre, dès que les effets
-de transformations finies seront importants, en termes de déformation
-ou de rotation, il ne sera plus possible de se reposer sur \castem{}
-pour faire \og{}~magiquement~\fg{} le travail.
+\ifthenelse{\boolean{pleiades}}{
+  Les applications combustible couvrent un nombre croissant de situations
+  mécaniques. Dans un certain nombre de cas, il devient nécessaire de
+  quitter le cadre habituel des transformations infinitésimales pour traiter la
+  mécanique de manière plus rigoureuse. Citons quelques exemples, parmi
+  de nombreux autres~:
+  \begin{itemize}
+  \item description du ballonnement et de larupture ductile de la
+    gaine en APRP~;
+  \item analyse de la rupture ductile de la gaine en RIA, par exemple
+    dans le cas REP-NA8~;
+  \item analyse des résultats d'essais de compression des pastilles
+    \(UO_{2}\)~: les déformations rationnelles macroscopiques sont de
+    l'ordre de \(20\,\%\), voir \(30\,\%\) localement dans la plupart
+    des essais. Au niveau du grain, une approche micro-mécanique de ces
+    essais conduirait probablement à des effets typiques des
+    transformations finies~: rotation du réseau cristallin, déformations
+    locales aux joints très élevées. 
+  \end{itemize}
+  Notons dès à présent que les grandes transformations ne se limitent
+  pas aux grandes déformations~: l'effet des rotations, trop souvent
+  négligé, peut être crucial.
+  
+  Au delà de l'aspect physique, notons que le code \castem{} oblige
+  l'emploi des transformations finies dès qu'il est nécessaire de
+  gérer le contact entre différents objets (situation assez
+  \og{}~commune~\fg{} dans nos calculs)~: la compréhension {\tt a
+    minima} des algorithmes de résolutions mécaniques à la base de nos
+  applications combustible demande une certaine familiarité avec les
+  transformations finies. Nous verrons dans cette note que le
+  traitement par défaut fait dans \castem{} est critiquable et
+  incompatible en théorie avec la plupart des lois de comportement
+  utilisées dans la plateforme (qu'elles soient écrites en \mfront{}
+  ou pas). Relativisons tout de suite~: en pratique, tant que l'on
+  reste dans des conditions proches des transformations
+  infinitésimales, les approximations commises avaient sans doute un
+  impact assez faible. Par contre, dès que les effets de
+  transformations finies deviennent importants, en termes de
+  déformation ou de rotation, il ne nous semble plus possible de se
+  reposer sur \castem{} pour faire \og{}~magiquement~\fg{} le travail.
+}{}
 
 Les transformations finies sont considérées comme difficiles d'accès,
 en particulier par les étudiants et les ingénieurs en mécanique. Pour
@@ -363,11 +366,13 @@ pourrons juger à l'aune de ces critères.
 Au lecteur pressé, donnons déjà une des conclusions~: l'approche la
 plus adaptée pour décrire des comportements macroscopiques est
 aujourd'hui celle des déformations logarithmiques, introduites par
-Miehe en 2002~\cite{miehe_anisotropic_2002} et dont nous avons appris
-l'existence lors de notre travail avec l'équipe \aster{} qui nous l'a
-chaudement recommandé~: nous les en remercions. Les déformations
+Miehe en 2002~\cite{miehe_anisotropic_2002}\footnote{Nous avons appris
+  l'existence lors de notre travail avec l'équipe \aster{} qui nous
+  l'a chaudement recommandé~: nous les en
+  remercions~\cite{bargellini_modeles_2013}.}. Les déformations
 logarithmiques ont des caractéristiques qui en font, pour reprendre la
-métaphore de F. Sidoroff, la meilleure sauce que l'on connaisse~:
+métaphore de F. Sidoroff, la meilleure sauce que l'on connaisse
+actuellement~:
 \begin{itemize}
 \item les lois s'écrivent comme en \og{}~petites pertubations~\fg{},
   c'est à dire que l'on peut, sans état d'âme, décomposer les
@@ -393,7 +398,7 @@ métaphore de F. Sidoroff, la meilleure sauce que l'on connaisse~:
 \item à la limite des petites perturbations, on retrouvera les mêmes
   résultats que la loi \og{}~petites déformations~\fg{} de départ.
 \item le formalisme se base sur une mesure logarithmique des
-  déformations, le tenseur de \(Hencky\). Ce choix est très naturel
+  déformations, le tenseur de \nom{Hencky}. Ce choix est très naturel
   aux expérimentateurs, dans les cas des métaux notamment, qui parlent
   parfois de \og{}~déformation vraie~\fg{}.
 \item il s'agit d'un formalisme portable entre les différents codes
@@ -662,8 +667,8 @@ On montre que cette décomposition est là aussi unique et que la
 rotation \(\tns{R}\) est la même que celle définie par la première
 décomposition~\eqref{eq:finitestrain:decomposition_polaire}.
 
-Le tenseur \(\tenseur{V}\) étant mesuré à partir de la configuration
-initiale, il est dit {\em eulérien}.
+Le tenseur \(\tenseur{V}\) étant mesuré à partir d'un référentiel
+donné par rotation \(\tns{R}\), il est dit {\em eulérien}.
 
 \begin{figure}[htbp]
   \centering
@@ -1307,7 +1312,7 @@ déformations.
 Il s'agit néanmoins d'un avantage considérable~: l'écriture de lois de
 comportement capables de décrire de très grandes déformations dans un
 cadre théorique solide devient accessible aux ingénieurs puisque
-ceux-ci n'ont pas à apprendre un formalisme nouveau. Tous les concepts
+ceux-ci n'ont pas à apprendre de formalisme nouveau. Tous les concepts
 qui leurs sont devenus classiques (écrouissages, endommagement,
 etc...)  sont utilisables tels quels.
 
@@ -2042,9 +2047,6 @@ suivante~:
   \deriv{}{\tns{X}}\paren{\tns{A}\paren{\tns{X}}\,\star\,\tns{B}\paren{\tns{X}}}  
 \end{equation}
 
-\subsection{Définition des tenseurs d'ordre $4$}
-%% $\partial^{l}_{\star}\paren{\tns{B}}$ et $\partial^{l}_{\star}\paren{\tns{A}}$}
-
 La multiplication matricielle étant bilinéaire, il existe deux
 tenseurs d'ordre \(4\) linéaires tels que~:
 \[
@@ -2065,9 +2067,6 @@ dérivée~\eqref{eq:mfront:finitestrain:dAB} ainsi~:
 
 Cette expression est extrêmement utile en pratique, car elle simplifie
 les expressions de toutes les opérations de dérivation. 
-
-\subsection{Représentation matricielle des tenseurs d'ordre $4$}
-%% $\partial^{l}_{\star}(\tns{B})$ et $\partial^{l}_{\star}(\tns{A})$}
 
 L'expression des tenseurs d'ordre \(4\) \(\partial^{l}_{\star}\paren{\tns{B}}\) et
 \(\partial^{l}_{\star}\paren{\tns{A}}\) est assez complexe, d'autant plus que l'on
@@ -2119,7 +2118,7 @@ On constate que cette expression est~:
   paragraphe~\ref{sec:optimisation}.
 \end{enumerate}
 
-\subsection{Calcul des tenseurs d'ordre $4$}
+\paragraph{Calcul de la dérivée d'un produit matriciel}
 
 La classe {\tt t2tot2}, qui représente les opérations linéaires entre
 tenseurs d'ordre \(2\) non symétriques (elle représente donc des
@@ -2129,9 +2128,7 @@ respectivement {\tt tpld} (tensor product left derivative) et {\tt
 d'ordre \(4\) $\partial^{l}_{\star}(\tns{B})$ et
 $\partial^{l}_{\star}(\tns{A})$.
 
-\subsection{Optimisation}
-\label{sec:optimisation}
-
+\paragraph{Optimisation}
 La formule~\eqref{eq:mfront:finitestrain:dAB-b} montre que les
 tenseurs $\partial^{l}_{\star}(\tns{B})$ et
 $\partial^{l}_{\star}(\tns{A})$ sont souvent amenés à être composés
@@ -2140,7 +2137,6 @@ avec d'autres tenseurs d'ordre \(4\). En \(3D\), cette composition est
 est intéressant de l'optimiser en tenant compte de la nature creuse de
 $\partial^{l}_{\star}(\tns{B})$ et $\partial^{l}_{\star}(\tns{A})$.
 
-
 La classe {\tt t2tot2} fournit donc également deux méthodes statiques,
 également nomées {\tt tpld} et {\tt tprd}. La première prend en
 argument le tenseur \(\tns{B}\) et le tenseur d'ordre \(4\)
@@ -2148,9 +2144,7 @@ argument le tenseur \(\tns{B}\) et le tenseur d'ordre \(4\)
 à \(\partial^{l}_{\star}(\tns{B})\,\deriv{\tns{A}}{\tns{X}}\). La
 seconde méthode réalise un travail symétrique.
 
-\subsection{Cas des tenseurs symétriques}
-
-La classe {\tt st2tost2}, qui représente les opérations linéaires
+La classe {\tt st2tot2}, qui représente les opérations linéaires
 entre tenseurs d'ordre \(2\) symétriques (qui représente donc aussi
 des tenseurs d'ordre \(4\)), fournit également quatre méthodes
 statiques nommées respectivement {\tt tpld} (tensor product left

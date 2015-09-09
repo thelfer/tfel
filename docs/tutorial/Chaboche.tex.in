@@ -641,7 +641,7 @@ Introduisons ces équations dans notre comportement \mfront{}~:
   \end{flushleft}
   En fin d'intégration, on trouvera donc~:
   \begin{flushleft}
-    \lstinputlisting[firstline=118,lastline=121,firstnumber=118]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+    \lstinputlisting[firstline=118,lastline=124,firstnumber=118]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
   \end{flushleft}
 \item il reste à ajouter les équations (\texttt{fq} et \texttt{fksi})
   relatives à l'effet de mémoire~:

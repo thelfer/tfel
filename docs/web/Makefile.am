@@ -29,6 +29,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./LICENSE.md						   \
 	   ./glossary.md					   \
 	   ./parameters.md					   \
+	   ./publications.md					   \
 	   ./CONTRIBUTING.md					   \
 	   ./release-notes.md					   \
 	   ./TODO.md						   \

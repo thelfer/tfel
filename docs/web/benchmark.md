@@ -52,7 +52,7 @@ Visco-plastic and damaging for steel                                     `Implic
 implying large deformation						                         			                      
 												                         			                      
 Damaging for concrete                                                    `Default`                        \(45mn\) vs \(63mn\)           ![](img/Behaviour-img3.png)
-[see @mazars_new;@edf_modeendommagement_2013],	                         			                      
+[see @mazars_new_2014;@edf_modeendommagement_2013],	                         			                      
 3D beam bending									                         			                      
 												                         			                      
 Generic Single crystal viscoplasticity                                   `Implicit`                       \(28mn\) vs \(24mn\)           ![](img/Behaviour-img5.png)
@@ -85,7 +85,7 @@ of each test performed, several general conclusions can be drawn:
 
 - native implementations offers superior performances in the case of
   simple explicit behaviours (Mazars damaging behaviour
-  [see @mazars_new]) in the case of isotropic behaviours that can be
+  [see @mazars_new_2014]) in the case of isotropic behaviours that can be
   reduce to one scalar equations [see @chaboche_integration_1996]. For
   explicit behaviours, the difference will be reduced by the
   development of an optimised treatment of `MFront` behaviours. In the

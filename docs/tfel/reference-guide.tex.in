@@ -1600,7 +1600,7 @@ ensemble de fichiers de tests \mfront{} qui peut servir d'exemple.
 \newpage
 \clearpage
 \section{Calculs des dérivées des valeurs et vecteurs propres d'un
-  tenseur symétriques}
+  tenseur symétrique}
 
 Un tenseur symétrique \(\tenseur{s}\) peut toujours être
 diagonalisé. Soit \(\lambda_{1},\lambda_{2},\lambda_{3}\) ses trois

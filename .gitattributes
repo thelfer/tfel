@@ -450,6 +450,7 @@ docs/mtest/images/Zy4/simexp_Zy4_Relax_Helfer-2.txt.prn -text
 docs/mtest/images/Zy4/zy4.tplot -text
 docs/mtest/images/acceleration.eps -text
 docs/mtest/images/acceleration.tplot -text
+docs/mtest/images/cb.eps -text
 docs/mtest/images/chaboche2-aster.ref -text
 docs/mtest/images/chaboche2-comp.eps -text
 docs/mtest/images/chaboche2-mfront.tex -text
@@ -474,6 +475,8 @@ docs/mtest/images/mtest-l3f.eps -text
 docs/mtest/images/norton-acc.txt -text
 docs/mtest/images/norton-elas.txt -text
 docs/mtest/images/norton-tc.txt -text
+docs/mtest/images/signatures_mtest.eps -text
+docs/mtest/images/signatures_mtest.xcf -text
 docs/mtest/images/strainhardeningcreep.eps -text
 docs/mtest/images/strainhardeningcreep.mtest -text
 docs/mtest/images/strainhardeningcreep.res -text
@@ -753,10 +756,12 @@ docs/tex/texmf/tex/images/CEA_puces.svg -text
 docs/tex/texmf/tex/images/CEA_web_quadri-sur-fond-rouge.eps -text
 docs/tex/texmf/tex/images/CEA_web_quadri-sur-fond-rouge.pdf -text
 docs/tex/texmf/tex/images/CEA_web_quadri-sur-fond-rouge.svg -text
+docs/tex/texmf/tex/images/CodeAster.eps -text
 docs/tex/texmf/tex/images/Energie.eps -text
 docs/tex/texmf/tex/images/Energie2010.eps -text
 docs/tex/texmf/tex/images/Energie2010.pdf -text
 docs/tex/texmf/tex/images/Energie_pleiades.eps -text
+docs/tex/texmf/tex/images/Pleiades.eps -text
 docs/tex/texmf/tex/images/barre_verte.eps -text
 docs/tex/texmf/tex/images/barre_verte.pdf -text
 docs/tex/texmf/tex/images/barre_verte.svg -text
@@ -1054,6 +1059,7 @@ docs/web/mtest.md -text
 docs/web/news.md -text
 docs/web/packages.md -text
 docs/web/parameters.md -text
+docs/web/publications.md -text
 docs/web/release-notes.md -text
 docs/web/robots.txt -text
 docs/web/svn.md -text

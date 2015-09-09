@@ -4,14 +4,22 @@
 
 # Contributors
 
-- Helfer Thomas
+- Thomas Helfer
 - Jean-Michel Proix
 - Bruno Michel
-- Éric Brunon
-- Nicolas Sellenet
 - Jérémy Hure
+- Chao Ling
+- Nicolas Sellenet
+- Éric Brunon
+- François Hamon
+- Benoît Bary
+- Nicolas Sellenet
 - Arnaud Courcelle
+- Victor Blanc
+- Jérôme Julien
 - Olivier Fandeur
+- Sébastien Melin
+- Thierry Thomas
 
 # Tools
 

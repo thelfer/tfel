@@ -152,6 +152,13 @@ améliorations mineures~:
   plus de clarté.
 \end{itemize}
 
+\section{Version 2.0.2}
+
+\begin{itemize}
+\item correction d'un bug dans {\tt BuildStensorFromMatrix}, la
+  matrice n'était pas symétrisée...
+\end{itemize}
+
 \section{Version 2.1.x (en cours de développement)}
 
 
