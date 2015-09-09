@@ -1,11 +1,11 @@
 AC_DEFUN([CHECK_CASTEM_UNIX_TYPE],[
     AC_REQUIRE([AC_CANONICAL_HOST])dnl
     AC_CHECKING("castem unix type")
-    if x"$TFEL_WIN32" = "xyes";
+    if test "x$TFEL_WIN32" = "xyes";
     then
 	CASTEM_UNIX_TYPE=WIN32
 	CASTEM_CPPFLAGS="-DWIN32"
-    elif x"$TFEL_WIN64" = "xyes";
+    elif test "x$TFEL_WIN64" = "xyes";
     then
 	CASTEM_UNIX_TYPE=WIN64
 	CASTEM_CPPFLAGS="-DWIN64"
