@@ -65,6 +65,7 @@ struct BehaviourDescriptionTest final
   
 private:
   
+  using BehaviourData             = mfront::BehaviourData;
   using BehaviourDescription      = mfront::BehaviourDescription;
   using VariableDescription       = mfront::VariableDescription;
   using StaticVariableDescription = mfront::StaticVariableDescription;
@@ -105,14 +106,15 @@ private:
 			   std::runtime_error);
   } // end of test2
   
-  void test3(void (BehaviourDescription::* m)(const Hypothesis,const VariableDescription&)) {
+  void test3(void (BehaviourDescription::* m)(const Hypothesis,const VariableDescription&,
+					      const BehaviourData::RegistrationStatus)) {
     using std::runtime_error;
     BehaviourDescription bd;
     const auto v  = VariableDescription{"real","p",1,0u};
     const auto v2 = VariableDescription{"real","p2",1,0u };
     const auto v3 = StaticVariableDescription{ "real","p",0u,1.e-4};
     const auto h  = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    (bd.*m)(h, v);
+    (bd.*m)(h, v,BehaviourData::UNREGISTRED);
     TFEL_TESTS_CHECK_THROW(bd.addMaterialProperty(h, v), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd.addStateVariable(h, v), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd.addAuxiliaryStateVariable(h, v), runtime_error);
@@ -193,14 +195,16 @@ private:
     TFEL_TESTS_CHECK_THROW(bd4.getStressFreeExpansionType(),runtime_error);
   }
   
-  void test6(void (BehaviourDescription::* m)(const Hypothesis,const VariableDescription&)) {
+  void test6(void (BehaviourDescription::* m)(const Hypothesis,const VariableDescription&,
+					      const BehaviourData::RegistrationStatus)) {
     using std::runtime_error;
     BehaviourDescription bd;
     const auto v = VariableDescription{ "real","p",1,0u };
     const auto h  = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto h2 = ModellingHypothesis::PLANESTRESS;
-    (bd.*m)(h2, v);
-    TFEL_TESTS_CHECK_THROW((bd.*m)(h, v),runtime_error);
+    (bd.*m)(h2, v,BehaviourData::UNREGISTRED);
+    TFEL_TESTS_CHECK_THROW((bd.*m)(h, v,BehaviourData::UNREGISTRED),
+			   runtime_error);
   }
 };
 

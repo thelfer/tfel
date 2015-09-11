@@ -19,6 +19,10 @@
 - catch c++ exceptions
 - catch c errno
 
+# Fallback
+
+Fall back behaviour if the default one fails
+
 # Mac Os
 
 - let interfaces specify between modules and shared libraries, or undefined

@@ -15,6 +15,7 @@
 #define LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_H_ 
 
 #include<map>
+#include<set>
 #include<vector>
 #include<string>
 
@@ -94,6 +95,14 @@ namespace mfront
      * physical bounds description
      */
     std::vector<VariableBoundsDescription> physicalBoundsDescriptions;
+    //! external library dependencies
+    std::vector<std::string> librariesDependencies;
+    //! list of reserved names
+    std::set<std::string> reservedNames;
+    //! list of variables names
+    std::set<std::string> memberNames;
+    //! list of variables names
+    std::set<std::string> staticMemberNames;
     /*!
      * glossary names
      */
@@ -114,9 +123,7 @@ namespace mfront
      * list of material laws used
      */
     std::vector<std::string> materialLaws;
-    /*!
-     * static variables
-     */
+    //! static variables
     StaticVariableDescriptionContainer staticVars;
   }; // end of MaterialProopertyDescription
 

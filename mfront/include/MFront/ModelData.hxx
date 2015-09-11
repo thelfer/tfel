@@ -40,8 +40,7 @@ namespace mfront
       std::set<std::string> usedVariables;
       std::set<std::string> modifiedVariables;
       std::set<std::string> constantMaterialProperties;
-      std::set<std::string> localParameters;
-      std::set<std::string> globalParameters;
+      std::set<std::string> parameters;
       std::map<std::string,unsigned short> depths;
       std::string name;
       std::string body;
@@ -61,11 +60,18 @@ namespace mfront
     FunctionContainer functions;
     VariableDescriptionContainer outputs;
     VariableDescriptionContainer inputs;
-    VariableDescriptionContainer globalParameters;
-    VariableDescriptionContainer localParameters;
+    VariableDescriptionContainer parameters;
     VariableDescriptionContainer constantMaterialProperties;
     //!static variables
     StaticVariableDescriptionContainer staticVars;
+    //! external library dependencies
+    std::vector<std::string> librariesDependencies;
+    //! list of reserved names
+    std::set<std::string> reservedNames;
+    //! list of variables names
+    std::set<std::string> memberNames;
+    //! list of variables names
+    std::set<std::string> staticMemberNames;
     //! material name
     std::string material;
     std::string library;

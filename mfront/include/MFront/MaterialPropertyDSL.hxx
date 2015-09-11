@@ -66,6 +66,12 @@ namespace mfront{
     analyseFile(const std::string&,
 		const std::vector<std::string>& = std::vector<std::string>()) override;
     /*!
+     * \brief analyse the specified string.
+     * \param[in] s : analyse a string
+     */
+    virtual void
+    analyseString(const std::string&) override;
+    /*!
      * \brief import a file
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before
@@ -84,6 +90,20 @@ namespace mfront{
 
     typedef void (MaterialPropertyDSL::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
+    /*!
+     * \brief : add a new library dependency
+     * \param[in] l : library dependency
+     */
+    virtual void addLibraryDependency(const std::string&) override;
+    /*!
+     * \brief register a name.
+     * \param[in] n : name
+     */
+    virtual void reserveName(const std::string&) override;
+    /*!
+     * method called by the analyseFile and analyseString method
+     */
+    virtual void analyse(void);
     /*!
      * \return the name of the generated class
      */

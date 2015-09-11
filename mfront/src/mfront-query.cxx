@@ -37,7 +37,7 @@ int main(const int argc, const char *const *const argv)
   using namespace mfront;
   initParsers();
   initInterfaces();
-  vector<shared_ptr<BehaviourQuery>> bqueries;
+  auto bqueries = vector<shared_ptr<BehaviourQuery>>{};
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{
 #endif /* __CYGWIN__ */

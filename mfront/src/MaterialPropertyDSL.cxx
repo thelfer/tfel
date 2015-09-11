@@ -81,7 +81,11 @@ namespace mfront{
 			      &MaterialPropertyDSL::treatBounds);
     this->registerNewCallBack("@PhysicalBounds",
 			      &MaterialPropertyDSL::treatPhysicalBounds);
-    this->reserveName("params",false);
+    // reverse names
+    for(const auto& v : DSLBase::getDefaultReservedNames()){
+      this->reserveName(v);
+    }
+    this->reserveName("params");
   } // end of MaterialPropertyDSL::MaterialPropertyDSL()
 
   
@@ -117,6 +121,7 @@ namespace mfront{
   void
   MaterialPropertyDSL::addStaticVariableDescription(const StaticVariableDescription& v)
   {
+    this->reserveName(v.name);
     this->staticVars.push_back(v);
   } // end of MaterialPropertyDSL::addStaticVariableDescription
 
@@ -127,8 +132,8 @@ namespace mfront{
     typedef MaterialPropertyInterfaceFactory MLIF;
     auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     const auto& ai = mlif.getRegistredInterfaces();
-    vector<string>::const_iterator p2  = ai.begin();
-    vector<string>::const_iterator p2e = ai.end();
+    auto p2  = ai.cbegin();
+    const auto p2e = ai.cend();
     string msg ("this parser is used to define material properties. ");
     msg += "Available interfaces are ";
     while(p2!=p2e){
@@ -151,17 +156,14 @@ namespace mfront{
   void
   MaterialPropertyDSL::treatMaterial(void)
   {
-    using namespace std;
     if(!this->material.empty()){
-      string msg("MaterialPropertyDSL::treatMaterial : ");
-      msg += "material name alreay defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MaterialPropertyDSL::treatMaterial: "
+			       "material name alreay defined"));
     }
     this->material = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(this->material,true)){
-      string msg("MaterialPropertyDSL::treatMaterial : ");
-      msg += "invalid material name '"+this->material+"'";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MaterialPropertyDSL::treatMaterial : "
+			       "invalid material name '"+this->material+"'"));
     }
   } // end of MaterialPropertyDSL::treatMaterial
 
@@ -186,7 +188,6 @@ namespace mfront{
   void
   MaterialPropertyDSL::treatConstant(void)
   {
-    using namespace std;
     this->checkNotEndOfFile("MaterialPropertyDSL::treatConstant",
 			    "Cannot read variable name.");
     const auto name = this->current->value;
@@ -196,9 +197,8 @@ namespace mfront{
     }
     const auto line = this->current->line;
     ++(this->current);
-    const pair<bool,long double> value = this->readInitialisationValue<long double>(name,true);
+    const auto value = this->readInitialisationValue<long double>(name,true);
     this->readSpecifiedToken("MaterialPropertyDSL::treatConstant",";");
-    this->registerStaticVariable(name);
     this->addStaticVariableDescription(StaticVariableDescription("real",name,line,value.second));
   } // end of MaterialPropertyDSL::treatConstant
 
@@ -221,7 +221,7 @@ namespace mfront{
       this->parametersValues.insert(make_pair(parameter,value.second));
     }
     this->readSpecifiedToken("MaterialPropertyDSL::treatParameter",";");
-    this->registerVariable(parameter,false);
+    this->reserveName(parameter);
     this->parameters.push_back(parameter);
   } // MaterialPropertyDSL::treatParameter
 
@@ -303,7 +303,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     if(this->output.empty()){
-      this->registerVariable("res",false);
+      this->reserveName("res");
       this->output = "res";
     }
     this->f.modified = false;
@@ -362,42 +362,28 @@ namespace mfront{
 	if(!newLine){
 	  this->f.body  += " ";
 	}
-	if(this->varNames.find(this->current->value)!=this->varNames.end()){
+	if((this->current->value==output)||
+	   (this->inputs.contains(this->current->value))){
 	  treated = false;
 	  if(newInstruction){
-	    string var = this->current->value;
-	    string op;
-	    bool modifier;
+	    const auto var = this->current->value;
 	    ++(this->current);
 	    if(this->current==fileTokens.end()){
 	      string msg("MaterialPropertyDSL::treatFunction : ");
 	      msg+="unexpected end of file while reading body of function ";
 	      throw(runtime_error(msg));
 	    }
-	    modifier = false;
-	    if(this->current->value=="="){
-	      op = "=";
-	      modifier = true;
-	    } else if(this->current->value=="+="){
-	      op = "+=";
-	      modifier = true;
-	    } else if(this->current->value=="-="){
-	      op = "-=";
-	      modifier = true;
-	    } else if(this->current->value=="*="){
-	      op = "*=";
-	      modifier = true;
-	    } else if(this->current->value=="/="){
-	      op = "/=";
-	      modifier = true;
-	    }
-	    if(modifier){
+	    if((this->current->value=="=")||
+	       (this->current->value=="+=")||
+	       (this->current->value=="-=")||
+	       (this->current->value=="*=")||
+	       (this->current->value=="/=")){
 	      if(var != this->output){
 		this->throwRuntimeError("MaterialPropertyDSL::treatFunction",
 					"Trying to modify variable '"+var+"'.\n");
 	      }
 	      this->f.modified = true;
-	      this->f.body  += var + " " + op + " ";
+	      this->f.body  += var + " " + this->current->value + " ";
 	      treated = true;
 	    } else {
 	      --(this->current);
@@ -439,20 +425,16 @@ namespace mfront{
 							 const std::map<std::string,std::string>& e,
 							 const std::string& n)
   {
-    using namespace std;
-    map<string,string>::const_iterator p;
-    for(p=g.begin();p!=g.end();++p){
-      if(p->second==n){
-	string msg("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : ");
-	msg += "name '"+n+"' is already used as a glossary name";
-	throw(runtime_error(msg));
+    for(const auto& gn : g){
+      if(gn.second==n){
+	throw(std::runtime_error("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : "
+				 "name '"+n+"' is already used as a glossary name"));
       }
     }
-    for(p=e.begin();p!=e.end();++p){
-      if(p->second==n){
-	string msg("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : ");
-	msg += "name '"+n+"' is already used as an entry name";
-	throw(runtime_error(msg));
+    for(const auto& en : e){
+      if(en.second==n){
+	throw(std::runtime_error("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : "
+				 "name '"+n+"' is already used as a entry name"));
       }
     }
   }
@@ -463,11 +445,10 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::glossary;
-    string methodName;
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod",".");
     this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
 			    "Expected method name.");
-    methodName = this->current->value;
+    const auto methodName = this->current->value;
     if((methodName!="setGlossaryName")&&
        (methodName!="setEntryName")&&
        (methodName!="setDefaultValue")){
@@ -485,8 +466,8 @@ namespace mfront{
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
 	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
-				"A glossary or an entry name has already been defined for field '"
-				+this->currentVar + "'");
+				"A glossary or an entry name has already "
+				"been defined for field '"+this->currentVar+"'");
       }
       if(this->current->flag!=Token::String){
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
@@ -496,19 +477,18 @@ namespace mfront{
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
 				"Glossary name too short.");
       }
-      const string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
+      const auto glossaryName = this->current->value.substr(1,this->current->value.size()-2);
       MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 							     this->entryNames,
 							     glossaryName);
       if(!glossary.contains(glossaryName)){
-	string msg("MaterialPropertyDSL::treatMethod : "
-		   "'"+glossaryName+"' is not a valid glossary name");
-	throw(runtime_error(msg));
+	throw(runtime_error("MaterialPropertyDSL::treatMethod : "
+			    "'"+glossaryName+"' is not a valid glossary name"));
       }
       const auto& k = glossary.getGlossaryEntry(glossaryName).getKey();
       if(!this->glossaryNames.insert({this->currentVar,k}).second){
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
-				"Glossary name for field '"+ this->currentVar +"' already defined.");
+				"glossary name for field '"+this->currentVar+"' already defined.");
       }
     } else if (methodName=="setEntryName"){
       const auto& glossary = Glossary::getGlossary();
@@ -517,8 +497,8 @@ namespace mfront{
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
 	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
-				"A glossary or an entry name has already been defined for field '"
-				+this->currentVar+"'");
+				"A glossary or an entry name has already been "
+				"defined for field '"+this->currentVar+"'");
       }
       if(this->current->flag!=Token::String){
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
@@ -528,7 +508,7 @@ namespace mfront{
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
 				"Entry file name too short.");
       }
-      const string entryName = this->current->value.substr(1,this->current->value.size()-2);
+      const auto entryName = this->current->value.substr(1,this->current->value.size()-2);
       MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 							     this->entryNames,
 							     entryName);
@@ -540,9 +520,16 @@ namespace mfront{
 	displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(entryName));
 	throw(runtime_error(msg.str()));
       }
+      if(!CxxTokenizer::isValidIdentifier(entryName)){
+	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
+				"Invalid entry name '"+entryName+"'");
+      }
+      if(entryName!=this->currentVar){
+	this->reserveName(entryName);
+      }
       if(!this->entryNames.insert({this->currentVar,entryName}).second){
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
-				"Entry file name for field '"+ this->currentVar +"' already defined.");
+				"Entry file name for field '"+this->currentVar+"' already defined.");
       }
     } else if(methodName=="setDefaultValue"){
       if(find(this->parameters.begin(),this->parameters.end(),this->currentVar)==this->parameters.end()){
@@ -575,11 +562,22 @@ namespace mfront{
   MaterialPropertyDSL::importFile(const std::string& fileName_,
 				  const std::vector<std::string>& ecmds) 
   {
-    using namespace std;
-    string key;
-    MemberFuncPtr handler = nullptr;
     this->fileName = fileName_;
     this->openFile(this->fileName,ecmds);
+    this->analyse();
+  }
+
+  void
+  MaterialPropertyDSL::analyseString(const std::string& s)
+  {
+    this->fileName = "user defined string";
+    this->parseString(s);
+    this->analyse();
+  }
+  
+  void
+  MaterialPropertyDSL::analyse(void)
+  {
     // strip comments from file
     this->stripComments();
     // begin treatement
@@ -587,15 +585,14 @@ namespace mfront{
     while(this->current != this->fileTokens.end()){
       const auto p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
-	VariableDescriptionContainer::const_iterator   p2;
-	vector<string>::const_iterator p3;
-	bool found = false;
+	auto found = false;
+	MemberFuncPtr handler;
 	if(this->output==this->current->value){
 	  found = true;
 	  this->currentVar = this->output;
 	  handler = &MaterialPropertyDSL::treatMethod;
 	}
-	for(p2=this->inputs.begin();(p2!=this->inputs.end())&&(!found);){
+	for(auto p2=this->inputs.begin();(p2!=this->inputs.end())&&(!found);){
 	  if(p2->name==this->current->value){
 	    found = true;
 	    this->currentVar = this->current->value;
@@ -604,7 +601,7 @@ namespace mfront{
 	    ++p2;
 	  }
 	}
-	for(p3=this->parameters.begin();(p3!=this->parameters.end())&&(!found);){
+	for(auto p3=this->parameters.begin();(p3!=this->parameters.end())&&(!found);){
 	  if(*p3==this->current->value){
 	    found = true;
 	    this->currentVar = this->current->value;
@@ -619,47 +616,39 @@ namespace mfront{
 	++(this->current);
 	(this->*handler)();
       } else {
-	pair<bool,CxxTokenizer::TokensContainer::const_iterator> p2;
-	TokensContainer::const_iterator b;
-	handler = p->second;
-	key = this->current->value;
+	auto handler = p->second;
+	auto key = this->current->value;
 	this->currentComment = this->current->comment;
 	++(this->current);
-	b = this->current;
+	auto b = this->current;
 	try {
 	  (this->*handler)();
-       	} catch(const exception& e){
-	  ostringstream msg;
-	  msg << "MaterialPropertyDSL::treatFile : error while treating keyword '" 
-	      << key << "'.\n" ;
-	  msg << e.what() << endl;
+       	} catch(const std::exception& e){
 	  this->currentComment.clear();
-	  throw(runtime_error(msg.str()));
+	  throw(std::runtime_error("MaterialPropertyDSL::analyse: "
+				   "error while treating keyword '"+key+"'.\n"
+				   +std::string(e.what())));
 	} catch (...){
-	  ostringstream msg;
-	  msg << "MaterialPropertyDSL::treatFile : error while treating keyword '" 
-	      << key << "'.\n" ;
 	  this->currentComment.clear();
-	  throw(runtime_error(msg.str()));
+	  throw(std::runtime_error("MaterialPropertyDSL::analyse: "
+				   "error while treating keyword '"+key+'\''));
 	}
 	for(const auto& i : this->interfaces){
+	  std::pair<bool,CxxTokenizer::TokensContainer::const_iterator> p2;
 	  try{
 	    p2 = i.second->treatKeyword(key,b,this->fileTokens.end());
 	  }
-	  catch(const runtime_error& e){
-	    ostringstream msg;
-	    msg << "MaterialPropertyDSL::treatFile : error while treating keyword '" 
-		 << key << "'.\n" ;
-	    msg << e.what() << endl;
-	    throw(runtime_error(msg.str()));
+	  catch(const std::runtime_error& e){
+	    throw(std::runtime_error("MaterialPropertyDSL::analyse: "
+				     "error while treating keyword '"+key+"'.\n"
+				     +std::string(e.what())));
 	  }
 	  if(p2.first){
 	    if(this->current!=p2.second){
-	      string msg("MaterialPropertyDSL::treatUnknownKeyword : the keyword '");
-	      msg += key;
-	      msg += "' has been treated by an interface but";
-	      msg += " results were differents than from the parser.";
-	      throw(runtime_error(msg));
+	      throw(std::runtime_error("MaterialPropertyDSL::treatUnknownKeyword: "
+				       "the keyword '"+key+"' has been treated "
+				       "by an interface but results were differents "
+				       "than from the parser."));
 	    }
 	  }
 	}
@@ -686,24 +675,36 @@ namespace mfront{
   }
 
   void
+  MaterialPropertyDSL::addLibraryDependency(const std::string& l){
+    if(std::find(this->librariesDependencies.begin(),
+		 this->librariesDependencies.end(),l)==this->librariesDependencies.end()){
+      this->librariesDependencies.push_back(l);
+    }
+  } // end of MaterialPropertyDSL::addLibraryDependency
+
+  void
+  MaterialPropertyDSL::reserveName(const std::string& n){
+    if(!this->reservedNames.insert(n).second){
+      throw(std::runtime_error("MaterialPropertyDSL::reserveName: "
+			       "name '"+n+"' already reserved"));
+    }
+  }
+      
+  void
   MaterialPropertyDSL::generateOutputFiles(void)
   {
-    using namespace std;
     using namespace tfel::system;
     if(this->className.empty()){
-      string msg("MaterialPropertyDSL::generateOutputFiles : ");
-      msg += "no behaviour name defined.";
-      throw(runtime_error(msg));      
+      throw(std::runtime_error("MaterialPropertyDSL::generateOutputFiles: "
+			       "no behaviour name defined."));      
     }
     if(this->f.body.empty()){
-      string msg("MaterialPropertyDSL::generateOutputFiles : ");
-      msg += "no function defined.";
-      throw(runtime_error(msg));      
+      throw(std::runtime_error("MaterialPropertyDSL::generateOutputFiles: "
+			       "no function defined."));      
     }
     if(this->interfaces.empty()){
-      string msg("MaterialPropertyDSL::generateOutputFiles : ");
-      msg += "no interface specified.";
-      throw(runtime_error(msg));      
+      throw(std::runtime_error("MaterialPropertyDSL::generateOutputFiles: "
+			       "no interface defined."));      
     }
     // creating directories
     systemCall::mkdir("include");
@@ -711,7 +712,7 @@ namespace mfront{
     // calling interfaces
     for(const auto& i : this->interfaces){
       if(getVerboseMode()>=VERBOSE_LEVEL2){
-	getLogStream() << "calling interface " << i.first << endl;
+	getLogStream() << "calling interface " << i.first << '\n';
       }
       i.second->writeOutputFiles(*this,*this);
     }
@@ -720,20 +721,23 @@ namespace mfront{
   void
   MaterialPropertyDSL::treatInput(void)
   {
-    this->readVarList(this->inputs,"real",
-		      false,false,false);
+    VariableDescriptionContainer ninputs;
+    this->readVarList(ninputs,"real",false);
+    for(const auto& i : ninputs){
+      this->reserveName(i.name);
+      this->inputs.push_back(i);
+    }
   } // end of MaterialPropertyDSL::treatInput
 
   void
   MaterialPropertyDSL::treatOutput(void)
   {
-    using namespace std;
     if(!this->output.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
 			      "Output already defined.");
     }
     this->output = this->readOnlyOneToken();
-    this->registerVariable(this->output,false);
+    this->reserveName(this->output);
   } // end of MaterialPropertyDSL::treatOutput
 
   void

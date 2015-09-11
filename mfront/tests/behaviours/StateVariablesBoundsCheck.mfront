@@ -1,0 +1,26 @@
+@Behaviour StateVariablesBoundsCheck;
+@Author Helfer Thomas;
+@Date 2/09/2015;
+@Description{
+ Test of the bounds on state variables.
+}
+
+@StateVariable real iv;
+iv.setEntryName("StateVariable");
+
+@PhysicalBounds iv in [0:0.5];
+@Bounds iv in [0.2:0.8];
+			      
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  static_cast<void>(smt); // remove compiler warning
+  const stress young  = 150e9;
+  const real    nu    = 0.3;
+  const stress lambda = lame::computeLambda(young,nu);
+  const stress mu     = lame::computeMu(young,nu);
+  iv += dt;
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

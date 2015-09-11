@@ -46,6 +46,12 @@ namespace mfront{
     analyseFile(const std::string&,
 		const std::vector<std::string>&) override;
     /*!
+     * \brief analyse the specified string.
+     * \param[in] s : analyse a string
+     */
+    virtual void
+    analyseString(const std::string&) override;
+    /*!
      * \brief import a file
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before
@@ -60,10 +66,12 @@ namespace mfront{
 
     ModelDSLBase();
 
-    void
+    virtual void analyse(void);
+    
+    virtual void
     registerDefaultCallBacks(void);
 
-    void
+    virtual void
     registerNewCallBack(const std::string&,const MemberFuncPtr);
     
     CallBackContainer callBacks;

@@ -1,17 +1,23 @@
 % News
 % Helfer Thomas
-% August 18, 2015
+% September 9, 2015
 
-# New interface to fortran 2003 (24 August 2015)
+# Release of version 2.0.3 (9 September 2015)
 
-The current development version of `MFront` includes a new interface
-for the `Fortran 2003` standard. This interface automatically generates
-an include file defining a module with interfaces to the `MFront`
-generated library.
+Version 2.0.3 is mostly a bug-fix release:
 
-This mechanism is much more portable and maintainable than the
-standard `Fortran 77` interface which relies on a compiler specific
-definition of the `F77_FUNC` and `F77_FUNC_` macros.
+- Fix of a minor bug in the `CxxTokenizer` class which was appears
+  when using the [`clang` `libc++`](http://libcxx.llvm.org/) standard
+  library. This prevented many `MTest` tests to work on
+  [Mac OS X](http://www.apple.com/fr/osx/).
+- Fix of [Ticket #9](https://sourceforge.net/p/tfel/tickets/9/)
+- Fix of [Ticket #10](https://sourceforge.net/p/tfel/tickets/10/)
+- Fix of [Ticket #11](https://sourceforge.net/p/tfel/tickets/11/)
+- The class `ExternalBehaviourDescription` was introduced
+- The `AxialGrowth` entry was added to the glossary
+
+A full description of the 2.0.3 release can be found
+[here](documents/tfel/tfel-2.0.3.pdf) (in french).
 
 # Introducting `mfront-doc` (19 August 2015)
 

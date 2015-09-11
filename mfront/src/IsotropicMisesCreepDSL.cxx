@@ -26,24 +26,14 @@ namespace mfront{
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setParserName("IsotropicMisesCreepDSL");
     // Default state vars
-    this->reserveName("ccto_tmp_1",false);
-    this->reserveName("inv_sqrt2",false);
-    this->registerVariable("p",false);
-    this->registerVariable("dp",false);
-    this->registerVariable("eel",false);
-    this->registerVariable("deel",false);
+    this->reserveName("ccto_tmp_1");
+    this->reserveName("inv_sqrt2");
+    this->reserveName("mu_3_theta");
     this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
     this->mb.addStateVariable(h,VariableDescription("strain","p",1u,0u));
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
     this->mb.setGlossaryName(h,"p","EquivalentViscoplasticStrain");
     // default local vars
-    this->registerVariable("f",false);
-    this->registerVariable("df_dseq",false);
-    this->registerVariable("se",false);
-    this->registerVariable("seq",false);
-    this->registerVariable("seq_e",false);
-    this->registerVariable("n",false);
-    this->registerVariable("mu_3_theta",false);
     this->mb.addLocalVariable(h,VariableDescription("DstrainDt","f",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE","df_dseq",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("StressStensor","se",1u,0u));
@@ -236,20 +226,7 @@ namespace mfront{
   void
   IsotropicMisesCreepDSL::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis)
   {
-    using namespace std;
     this->checkBehaviourFile();
-    if(this->varNames.find("young")==this->varNames.end()){
-      string msg("IsotropicMisesCreepDSL");
-      msg+="::writeBehaviourParserSpecificInitializeMethodPart : ";
-      msg += "young (the young modulus) has not been defined.";
-      throw(runtime_error(msg));
-    }
-    if(this->varNames.find("nu")==this->varNames.end()){
-      string msg("IsotropicMisesCreepDSL");
-      msg += "::writeBehaviourParserSpecificInitializeMethodPart : ";
-      msg += "nu (the poisson ratio) has not been defined.";
-      throw(runtime_error(msg));
-    }
     this->behaviourFile << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+(this->theta)*(this->deto)));\n";
     this->behaviourFile << "this->seq_e = sigmaeq(this->se);\n";
     this->behaviourFile << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::epsilon()){\n";

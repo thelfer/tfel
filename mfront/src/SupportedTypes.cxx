@@ -55,6 +55,11 @@ namespace mfront{
 					 {"DeformationGradientTensor",SupportedTypes::Tensor}};
     return flags;
   } // end of SupportedTypes_getFlags
+
+  const std::map<std::string,SupportedTypes::TypeFlag>&
+  SupportedTypes::getTypeFlags(void){
+    return SupportedTypes_getFlags();
+  } // end of SupportedTypes::getTypeFlags
   
   SupportedTypes::TypeSize::TypeSize()
     : scalarSize(0),

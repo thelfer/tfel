@@ -425,10 +425,8 @@ namespace mfront{
      * \param[out] v  : the declared variables
      * \param[out] h  : modelling hypothesis on which the variables were declared
      * \param[in]  m  : method used to assign the variables
-     * \param[in]  b1 : allow arrays of variables to be defined
-     * \param[in]  b2 : for each variable read, add another variable
-     *                  standing for the first variable increment
-     * \param[in]  b3 : if true, allows variable declaration after that
+     * \param[in]  b1 : allows variables to be declared as array
+     * \param[in]  b2 : if true, allows variable declaration after that
      *                  a code block has been defined (this is a
      *                  priori only valid for local variables)
      */
@@ -436,8 +434,9 @@ namespace mfront{
     readVariableList(VariableDescriptionContainer&,
 		     std::set<Hypothesis>&,
 		     void (BehaviourDescription::*)(const Hypothesis,
-							      const VariableDescriptionContainer&),
-		     const bool,const bool,const bool);
+						    const VariableDescriptionContainer&,
+						    const BehaviourData::RegistrationStatus),
+		     const bool,const bool);
 
     /*!
      * Assign a list variables to mechanical data associated with the given hypotheses.
@@ -452,7 +451,8 @@ namespace mfront{
     addVariableList(const std::set<Hypothesis>&,
 		    const VariableDescriptionContainer&,
 		    void (BehaviourDescription::*)(const Hypothesis,
-							     const VariableDescriptionContainer&),
+						   const VariableDescriptionContainer&,
+						   const BehaviourData::RegistrationStatus),
 		    const bool);
 
     /*!
@@ -460,6 +460,16 @@ namespace mfront{
      */
     virtual void
     setInterfaces(const std::set<std::string>&) override;
+    /*!
+     * \brief : add a new library dependency
+     * \param[in] l : library dependency
+     */
+    virtual void addLibraryDependency(const std::string&) override;
+    /*!
+     * \brief register a name.
+     * \param[in] n : name
+     */
+    virtual void reserveName(const std::string&) override;
     /*!
      * register the default variable names
      */
@@ -586,9 +596,6 @@ namespace mfront{
     
     virtual void
     writeNamespaceEnd(std::ofstream&);
-
-    virtual void
-    writeIntegerConstants(std::ofstream&);
     
     virtual void
     writeStandardTFELTypedefs(std::ofstream&); 

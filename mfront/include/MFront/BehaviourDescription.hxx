@@ -346,155 +346,183 @@ namespace mfront
      * \brief add material properties
      * \param[in] h : modelling hypothesis
      * \param[in] v : material properties added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
      * to the default data and to all the specialisations
      */
     void
     addMaterialProperties(const Hypothesis,
-			  const VariableDescriptionContainer&);
+			  const VariableDescriptionContainer&,
+			  const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a material property
      * \param[in] h : modelling hypothesis
      * \param[in] v : material property added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
      * to the default data and to all the specialisations
      */
     void
     addMaterialProperty(const Hypothesis,
-			const VariableDescription&);
+			const VariableDescription&,
+			const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a state variables
      * \param[in] h : modelling hypothesis
      * \param[in] v : state variable added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
      * to the default data and to all the specialisations
      */
     void
     addIntegrationVariable(const Hypothesis,
-			   const VariableDescription&);
+			   const VariableDescription&,
+			   const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add state variables
      * \param[in] h : modelling hypothesis
      * \param[in] v : state variables added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
      * to the default data and to all the specialisations
      */
     void
     addIntegrationVariables(const Hypothesis,
-			    const VariableDescriptionContainer&);
+			    const VariableDescriptionContainer&,
+			    const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a state variables
      * \param[in] h : modelling hypothesis
      * \param[in] v : state variable added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
      * to the default data and to all the specialisations
      */
     void
     addStateVariable(const Hypothesis,
-		     const VariableDescription&);
+		     const VariableDescription&,
+		     const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add state variables
      * \param[in] h : modelling hypothesis
      * \param[in] v : state variables added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
      * to the default data and to all the specialisations
      */
     void
     addStateVariables(const Hypothesis,
-		      const VariableDescriptionContainer&);
+		      const VariableDescriptionContainer&,
+		      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add auxiliary state variables
      * \param[in] h : modelling hypothesis
      * \param[in] v : auxiliary state variables added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the auxiliary state
      * variables to the default data and to all the specialisations
      */
     void
     addAuxiliaryStateVariables(const Hypothesis,
-			       const VariableDescriptionContainer&);
+			       const VariableDescriptionContainer&,
+			       const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add an auxiliary state variable
      * \param[in] h : modelling hypothesis
      * \param[in] v : auxiliary state variable added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the auxiliary state
      * variables to the default data and to all the specialisations
      */
     void
     addAuxiliaryStateVariable(const Hypothesis,
-			      const VariableDescription&);
+			      const VariableDescription&,
+			      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add external state variables
      * \param[in] h : modelling hypothesis
      * \param[in] v : external state variables added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the external state
      * variables to the default data and to all the specialisations
      */
     void
     addExternalStateVariables(const Hypothesis,
-			      const VariableDescriptionContainer&);
+			      const VariableDescriptionContainer&,
+			      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add external state variable
      * \param[in] h : modelling hypothesis
      * \param[in] v : external state variable added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the external state
      * variables to the default data and to all the specialisations
      */
     void
     addExternalStateVariable(const Hypothesis,
-			     const VariableDescription&);
+			     const VariableDescription&,
+			     const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a local variable
      * \param[in] h : modelling hypothesis
      * \param[in] v : local variable added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the local variables to
      * the default data and to all the specialisations
      */
     void
     addLocalVariable(const Hypothesis,
-		     const VariableDescription&);
+		     const VariableDescription&,
+		     const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add local variables
      * \param[in] h : modelling hypothesis
      * \param[in] v : local variables added
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the local variables to
      * the default data and to all the specialisations
      */
     void
     addLocalVariables(const Hypothesis,
-		      const VariableDescriptionContainer&);
+		      const VariableDescriptionContainer&,
+		      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a static variable
      * \param[in] h : modelling hypothesis
      * \param[in] v : static variable
+     * \param[in] s : registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the local variable to
      * the default data and to all the specialisations
      */
     void
     addStaticVariable(const Hypothesis,
-		      const StaticVariableDescription&);
+		      const StaticVariableDescription&,
+		      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a material property
      * \param[in] h : modelling hypothesis
      * \param[in] v : parameter
+     * \param[in] s : registration status
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
      * to the default data and to all the specialisations
      */
     void
     addParameter(const Hypothesis,
-		 const VariableDescription&);
+		 const VariableDescription&,
+		 const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \return true if the given name is the one of a material
      * property.
@@ -1012,12 +1040,26 @@ namespace mfront
     const std::map<std::string,BehaviourAttribute>&
     getAttributes(void) const;
     /*!
-     * \brief explicitely register a variable
-     * \param[in] h : modelling hypothesis
-     * \param[in] v : variable name
+     * reserve the given name
+     * \param[in] h : hypothesis
+     * \param[in] n : variable name
      */
-    void registerVariable(const Hypothesis,
-			  const std::string&);
+    void reserveName(const Hypothesis,
+		     const std::string&);
+    /*!
+     * register the given member name
+     * \param[in] h : hypothesis
+     * \param[in] n : variable name
+     */
+    void registerMemberName(const Hypothesis,
+			    const std::string&);
+    /*!
+     * register the given static member name
+     * \param[in] h : hypothesis
+     * \param[in] n : variable name
+     */
+    void registerStaticMemberName(const Hypothesis,
+				  const std::string&);
     /*!
      * \brief check variable existence
      * \return a pair of iterator. The first part tells if the
@@ -1028,7 +1070,7 @@ namespace mfront
      * integration variable, static variable, ...)
      * \param[in] v  : variable name
      */
-    virtual std::pair<bool,bool>
+    std::pair<bool,bool>
     checkVariableExistence(const std::string&) const;
     /*!
      * \brief check variable existence for a particular sort of variable.
@@ -1040,7 +1082,7 @@ namespace mfront
      * \param[in] c: variable category
      * \param[in] b: if true, an exception if thrown if the variable is not found
      */
-    virtual std::pair<bool,bool>
+    std::pair<bool,bool>
     checkVariableExistence(const std::string&,
 			   const std::string&,
 			   const bool = true) const;
@@ -1053,7 +1095,7 @@ namespace mfront
      * \param[in] v: variable name
      * \param[in] g: glossary name
      */
-    virtual void
+    void
     checkVariableGlossaryName(const std::string&,
 			      const std::string&) const;
     /*!
@@ -1065,10 +1107,19 @@ namespace mfront
      * \pre The number of variables of the given type must be greater
      * than the position given, otherwise an exception is thrown
      */
-    virtual void
+    void
     checkVariablePosition(const std::string&,
 			  const std::string&,
 			  const size_t);
+    /*!
+     * \brief : add a new library dependency
+     * \param[in] l : library dependency
+     */
+    void
+    addLibraryDependency(const std::string&);
+    //! external library dependencies
+    const std::vector<std::string>&
+    getLibrariesDependencies(void) const;
     //! destructor
     ~BehaviourDescription();
   private:
@@ -1128,7 +1179,7 @@ namespace mfront
     void
     callBehaviourData(const Hypothesis,
     				void (BehaviourData:: *)(const Arg1&,
-								   const Arg2),
+							 const Arg2),
     				const Arg1&,const Arg2);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
@@ -1143,9 +1194,9 @@ namespace mfront
 	     typename Arg2>
     void
     callBehaviourData(const Hypothesis,
-    				void (BehaviourData:: *)(const Arg1&,
-								   const Arg2&),
-    				const Arg1&,const Arg2&);
+		      void (BehaviourData:: *)(const Arg1&,
+					       const Arg2&),
+		      const Arg1&,const Arg2&);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
@@ -1157,12 +1208,13 @@ namespace mfront
     template<typename Arg1>
     void
     callBehaviourData(const Hypothesis,
-				void (BehaviourData:: *)(const Arg1),
-				const Arg1);
+		      void (BehaviourData:: *)(const Arg1),
+		      const Arg1);
     /*!
      * \brief add variables to the behaviour data
      * \param[in] h : modelling hypothesis
      * \param[in] v : variables to be added
+     * \param[in] s : registration status
      * \param[in] m : method retrieving the variable container     
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
@@ -1171,11 +1223,14 @@ namespace mfront
     void
     addVariables(const Hypothesis,
 		 const VariableDescriptionContainer&,
-		 void (BehaviourData::*)(const VariableDescription&));
+		 const BehaviourData::RegistrationStatus,
+		 void (BehaviourData::*)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus));
     /*!
      * \brief add a variable to the behaviour data
      * \param[in] h : modelling hypothesis
      * \param[in] v : variable to be added
+     * \param[in] s : registration status
      * \param[in] m : method retrieving the variable container     
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
@@ -1184,27 +1239,35 @@ namespace mfront
     void
     addVariable(const Hypothesis,
 		const VariableDescription&,
-		void (BehaviourData::*)(const VariableDescription&));
+		const BehaviourData::RegistrationStatus,
+		void (BehaviourData::*)(const VariableDescription&,
+					const BehaviourData::RegistrationStatus));
     /*!
      * \brief add variables to the behaviour data
      * \param[out] b : behaviour data
      * \param[in]  v : variables to be added
+     * \param[in]  s : registration status
      * \param[in]  m : method retrieving the variable container     
      */
     void
     addVariables(BehaviourData&,
 		 const VariableDescriptionContainer&,
-		 void (BehaviourData::*)(const VariableDescription&));
+		 const BehaviourData::RegistrationStatus,
+		 void (BehaviourData::*)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus));
     /*!
      * \brief add a variable to the behaviour data
      * \param[out] b : behaviour data
      * \param[in]  v : variable to be added
+     * \param[in]  s : registration status
      * \param[in]  m : method retrieving the variable container     
      */
     void
     addVariable(BehaviourData&,
 		const VariableDescription&,
-		void (BehaviourData::*)(const VariableDescription&));
+		const BehaviourData::RegistrationStatus,
+		void (BehaviourData::*)(const VariableDescription&,
+					const BehaviourData::RegistrationStatus));
     /*!
      * \brief check that the given hypothesis is supported
      * \param[in] h : modelling hypothesis
@@ -1213,6 +1276,8 @@ namespace mfront
     checkModellingHypothesis(const Hypothesis&) const;
     //! a simple alias
     typedef std::shared_ptr<BehaviourData> MBDPtr;
+    //! external library dependencies
+    std::vector<std::string> librariesDependencies;
     /*!
      * behaviour attributes
      */

@@ -126,60 +126,50 @@ namespace mfront{
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->useStateVarTimeDerivative=true;
-    this->registerVariable("epsilon",false);
-    this->registerVariable("dtmin",false);
+    // parameters
+    this->reserveName("dtmin");
+    this->reserveName("epsilon");
     // main variables
-    this->registerVariable("eto",false);
-    this->registerVariable("deto",false);
-    this->registerVariable("sig",false);
     this->mb.declareAsASmallStrainStandardBehaviour();
     // driving variables
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
-    for(pm=this->mb.getMainVariables().begin();
-	pm!=this->mb.getMainVariables().end();++pm){
-      const auto& dv = pm->first;
-      this->registerVariable(dv.name+"_",false);
-      this->registerVariable("d"+dv.name+"_",false);
+    for(const auto& v: this->mb.getMainVariables()){
+      const auto& dv = v.first;
       this->mb.addLocalVariable(h,VariableDescription(dv.type,dv.name+"_",1u,0u));
       this->mb.addLocalVariable(h,VariableDescription(SupportedTypes::getTimeDerivativeType(dv.type),
 						 "d"+dv.name+"_",1u,0u));
     }
     // Default state vars
-    this->registerVariable("eel",false);
-    this->registerVariable("deel",false);
-    this->registerVariable("t",false);
-    this->registerVariable("T_",false);
-    this->reserveName("dt_",false);
-    this->reserveName("corrector",false);
-    this->reserveName("dtprec",false);
-    this->reserveName("converged",false);
-    this->reserveName("error",false);
-    this->reserveName("failed",false);
-    this->reserveName("cste1_2",false);
-    this->reserveName("cste1_4",false);
-    this->reserveName("cste3_8",false);
-    this->reserveName("cste3_32",false);
-    this->reserveName("cste12_13",false);
-    this->reserveName("cste1932_2197",false);
-    this->reserveName("cste7200_2197",false);
-    this->reserveName("cste7296_2197",false);
-    this->reserveName("cste439_216",false);
-    this->reserveName("cste3680_513",false);
-    this->reserveName("cste845_4104",false);
-    this->reserveName("cste8_27",false);
-    this->reserveName("cste3544_2565",false);
-    this->reserveName("cste1859_4104",false);
-    this->reserveName("cste11_40",false);
-    this->reserveName("cste16_135",false);
-    this->reserveName("cste6656_12825",false);
-    this->reserveName("cste28561_56430",false);
-    this->reserveName("cste9_50",false);
-    this->reserveName("cste2_55",false);
-    this->reserveName("cste1_360",false);
-    this->reserveName("cste128_4275",false);
-    this->reserveName("cste2197_75240",false);
-    this->reserveName("cste1_50",false);
+    this->reserveName("dt_");
+    this->reserveName("corrector");
+    this->reserveName("dtprec");
+    this->reserveName("converged");
+    this->reserveName("error");
+    this->reserveName("failed");
+    this->reserveName("cste1_2");
+    this->reserveName("cste1_4");
+    this->reserveName("cste3_8");
+    this->reserveName("cste3_32");
+    this->reserveName("cste12_13");
+    this->reserveName("cste1932_2197");
+    this->reserveName("cste7200_2197");
+    this->reserveName("cste7296_2197");
+    this->reserveName("cste439_216");
+    this->reserveName("cste3680_513");
+    this->reserveName("cste845_4104");
+    this->reserveName("cste8_27");
+    this->reserveName("cste3544_2565");
+    this->reserveName("cste1859_4104");
+    this->reserveName("cste11_40");
+    this->reserveName("cste16_135");
+    this->reserveName("cste6656_12825");
+    this->reserveName("cste28561_56430");
+    this->reserveName("cste9_50");
+    this->reserveName("cste2_55");
+    this->reserveName("cste1_360");
+    this->reserveName("cste128_4275");
+    this->reserveName("cste2197_75240");
+    this->reserveName("cste1_50");
+    this->reserveName("t");
     this->mb.addLocalVariable(h,VariableDescription("temperature","T_",1u,0u));
     this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
@@ -366,7 +356,6 @@ namespace mfront{
   void
   RungeKuttaDSL::treatEpsilon(void)
   {
-    using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(this->mb.hasParameter(h,"epsilon")){
       this->throwRuntimeError("RungeKuttaDSL::treatEpsilon",
@@ -375,7 +364,7 @@ namespace mfront{
     double epsilon;
     this->checkNotEndOfFile("RungeKuttaDSL::treatEpsilon",
 			    "Cannot read epsilon value.");
-    istringstream flux(current->value);
+    std::istringstream flux(current->value);
     flux >> epsilon;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("RungeKuttaDSL::treatEpsilon",
@@ -387,14 +376,14 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("RungeKuttaDSL::treatEpsilon",";");
-    this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+    this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u),
+			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"epsilon",epsilon);
   } // end of RungeKuttaDSL::treatEpsilon
 
   void
   RungeKuttaDSL::treatMinimalTimeStep(void)
   {
-    using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(this->mb.hasParameter(h,"dtmin")){
       this->throwRuntimeError("RungeKuttaDSL::treatMinimalTimeStep",
@@ -403,7 +392,7 @@ namespace mfront{
     double dtmin;
     this->checkNotEndOfFile("RungeKuttaDSL::treatMinimalTimeStep",
 			    "Cannot read dtmin value.");
-    istringstream flux(current->value);
+    std::istringstream flux(current->value);
     flux >> dtmin;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("RungeKuttaDSL::treatMinimalTimeStep",
@@ -415,23 +404,22 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("RungeKuttaDSL::treatMinimalTimeStep",";");
-    this->mb.addParameter(h,VariableDescription("real","dtmin",1u,0u));
+    this->mb.addParameter(h,VariableDescription("real","dtmin",1u,0u),
+			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"dtmin",dtmin);
   } // end of RungeKuttaDSL::treatEpsilon
 
   void RungeKuttaDSL::setDefaultAlgorithm(void)
   {
-    using namespace std;
     typedef unsigned short ushort;
     this->mb.setAttribute(BehaviourData::algorithm,
-			  string("RungeKutta5/4"),false);
+			  std::string("RungeKutta5/4"),false);
     this->mb.setAttribute(BehaviourData::numberOfEvaluations,
 			  ushort(6u),false);
   } // end of RungeKuttaDSL::setDefaultAlgorithm
 
   void RungeKuttaDSL::treatAlgorithm(void)
   {
-    using namespace std;
     typedef unsigned short ushort;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("RungeKuttaDSL::treatAlgorithm",
@@ -444,36 +432,31 @@ namespace mfront{
 			      "(keyword @StateVariable)");
     }
     if(this->current->value=="euler"){
-      this->mb.setAttribute(BehaviourData::algorithm,string("Euler"),false);
+      this->mb.setAttribute(BehaviourData::algorithm,std::string("Euler"),false);
       this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(0u),false);
     } else if(this->current->value=="rk2"){
-      this->mb.setAttribute(BehaviourData::algorithm,string("RungeKutta2"),false);
+      this->mb.setAttribute(BehaviourData::algorithm,std::string("RungeKutta2"),false);
       this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(1u),false);
     } else if(this->current->value=="rk4"){
-      this->mb.setAttribute(BehaviourData::algorithm,string("RungeKutta4"),false);
+      this->mb.setAttribute(BehaviourData::algorithm,std::string("RungeKutta4"),false);
       this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(4u),false);
     } else if(this->current->value=="rk42"){
-      this->mb.setAttribute(BehaviourData::algorithm,string("RungeKutta4/2"),false);
+      this->mb.setAttribute(BehaviourData::algorithm,std::string("RungeKutta4/2"),false);
       this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(4u),false);
     } else if(this->current->value=="rk54"){
       this->setDefaultAlgorithm();
     } else if(this->current->value=="rkCastem"){
-      this->reserveName("ra",false);
-      this->reserveName("sqra",false);
-      this->reserveName("errabs",false);
-      this->reserveName("asig",false);
-      this->reserveName("sigf",false);
-      this->registerStaticVariable("rkcastem_div");
-      this->registerStaticVariable("rkcastem_rmin");
-      this->registerStaticVariable("rkcastem_rmax");
-      this->registerStaticVariable("rkcastem_fac");
-      this->registerStaticVariable("rkcastem_borne");
+      this->reserveName("ra");
+      this->reserveName("sqra");
+      this->reserveName("errabs");
+      this->reserveName("asig");
+      this->reserveName("sigf");
       this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_div",0u,7.));
       this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_rmin",0u,0.7));
       this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_rmax",0u,1.3));
       this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_fac",0u,3.));
       this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_borne",0u,2.));
-      this->mb.setAttribute(BehaviourData::algorithm,string("RungeKuttaCastem"),false);
+      this->mb.setAttribute(BehaviourData::algorithm,std::string("RungeKuttaCastem"),false);
       this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(5u),false);
     } else {
       this->throwRuntimeError("RungeKuttaDSL::treatAlgorithm",
@@ -550,7 +533,6 @@ namespace mfront{
 		  << "' hypothesis" << endl;
 	    }
 	  }
-	  this->registerVariable(currentVarName,false);
 	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
 	}
 	if(uvs.find(iv.name)!=uvs.end()){
@@ -565,7 +547,6 @@ namespace mfront{
 		  << "' hypothesis" << endl;
 	    }
 	  }
-	  this->registerVariable(currentVarName,false);
 	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
 	  if(this->useDynamicallyAllocatedVector(iv.arraySize)){
 	    icb.code += "this->"+currentVarName +".resize("+to_string(iv.arraySize)+");\n";
@@ -600,7 +581,6 @@ namespace mfront{
 		  << "' hypothesis" << endl;
 	    }
 	  }
-	  this->registerVariable(currentVarName,false);
 	  this->mb.addLocalVariable(elem,VariableDescription(ev.type,currentVarName,ev.arraySize,0u));
 	  if(this->useDynamicallyAllocatedVector(ev.arraySize)){
 	    icb.code += "this->"+currentVarName +".resize("+to_string(ev.arraySize)+");\n";
@@ -618,7 +598,8 @@ namespace mfront{
     this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
     // declare the precision used by the algorithm
     if(!this->mb.hasParameter(h,"epsilon")){
-      this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+      this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u),
+			    BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h,"epsilon",1.e-8);
     }
     // minimal time step

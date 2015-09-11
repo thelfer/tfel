@@ -25,9 +25,6 @@ namespace mfront{
     : DefaultDSLBase()
   {
     this->mb.setParserName("DefaultFiniteStrain");
-    this->registerVariable("F0",false);
-    this->registerVariable("F1",false);
-    this->registerVariable("sig",false);
     this->mb.declareAsAFiniteStrainStandardBehaviour();
   }
 

@@ -148,38 +148,29 @@ namespace mfront{
   } // end of BehaviourDSLBase<Child>::BehaviourDSLBase
 
   template<typename Child>
-  void
-  BehaviourDSLBase<Child>::importFile(const std::string& fileName_,
-				      const std::vector<std::string>& ecmds)
+  void BehaviourDSLBase<Child>::analyse()
   {
-    using namespace std;
-    typename CallBackContainer::const_iterator p;
     const auto& mh = ModellingHypothesis::getModellingHypotheses();
-    vector<string> hn(mh.size());
-    vector<Hypothesis>::const_iterator pmh;
-    vector<string>::iterator phn;      
+    std::vector<std::string> hn(mh.size());
+    std::vector<Hypothesis>::const_iterator pmh;
+    std::vector<std::string>::iterator phn;      
     for(pmh=mh.begin(),phn=hn.begin();pmh!=mh.end();++pmh,++phn){
       *phn = ModellingHypothesis::toString(*pmh);
     }
-    MemberFuncPtr handler;
-    // opening file
-    this->fileName = fileName_;
-    this->openFile(this->fileName,ecmds);
     // strip comments from file
     this->stripComments();
     // begin treatement
     this->current = this->fileTokens.begin();
     while(this->current != this->fileTokens.end()){
       if(find(hn.begin(),hn.end(),this->current->value)!=hn.end()){
-	const Hypothesis h = ModellingHypothesis::fromString(this->current->value);
+	const auto h = ModellingHypothesis::fromString(this->current->value);
 	++(this->current);
-	this->checkNotEndOfFile("BehaviourDSLBase<Child>::analyseFile");
-	this->readSpecifiedToken("BehaviourDSLBase<Child>::analyseFile","::");
+	this->checkNotEndOfFile("BehaviourDSLBase<Child>::analyse");
+	this->readSpecifiedToken("BehaviourDSLBase<Child>::analyse","::");
 	if(!this->isCallableVariable(h,this->current->value)){
-	  string msg("BehaviourDSLBase<Child>::analyseFile : "
-		     "no variable named '"+this->current->value+"' "
-		     "for hypothesis '"+ModellingHypothesis::toString(h)+"'");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("BehaviourDSLBase<Child>::analyse : "
+				   "no variable named '"+this->current->value+"' "
+				   "for hypothesis '"+ModellingHypothesis::toString(h)+"'"));
 	}
 	if(this->mb.isParameterName(h,this->current->value)){
 	  this->treatParameterMethod(h);
@@ -187,7 +178,7 @@ namespace mfront{
 	  this->treatVariableMethod(h);
 	}
       } else { 
-	const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	if(this->isCallableVariable(h,this->current->value)){
 	  if(this->mb.isParameterName(h,this->current->value)){
 	    this->treatParameterMethod(h);
@@ -195,19 +186,20 @@ namespace mfront{
 	    this->treatVariableMethod(h);
 	  }
 	} else {
-	  string k       = this->current->value;
-	  unsigned int l = this->current->line;
-	  p = this->callBacks.find(k);
+	  auto k       = this->current->value;
+	  auto l = this->current->line;
+	  MemberFuncPtr handler;
+	  auto p = this->callBacks.find(k);
 	  if(p==this->callBacks.end()){
 	    if(getVerboseMode()>=VERBOSE_DEBUG){
 	      auto& log = getLogStream();
-	      log << "treating unknown keyword" << endl;
+	      log << "treating unknown keyword\n";
 	    }
 	    handler = &Child::treatUnknownKeyword;
 	  } else {
 	    if(getVerboseMode()>=VERBOSE_DEBUG){
 	      auto& log = getLogStream();
-	      log << "treating keyword : " << this->current->value << endl;
+	      log << "treating keyword : " << this->current->value << '\n';
 	    }
 	    handler = p->second;
 	  }
@@ -216,12 +208,12 @@ namespace mfront{
 	  try{
 	    ((static_cast<Child *>(this))->*handler)();
 	  }
-	  catch (exception& e){
-	    ostringstream msg;
-	    msg << "BehaviourDSLBase::analyseFile: " << endl
+	  catch (std::exception& e){
+	    std::ostringstream msg;
+	    msg << "BehaviourDSLBase::analyse: "
 		<< "error while treating keyword '" << k << "' at line '" << l
-		<< "' of file '" << this->fileName << "'. " << endl << e.what();
-	    throw(runtime_error(msg.str()));
+		<< "' of file '" << this->fileName << "'.\n" << e.what();
+	    throw(std::runtime_error(msg.str()));
 	  }
 	  catch(...){
 	    this->currentComment.clear();
@@ -231,8 +223,25 @@ namespace mfront{
 	}
       }
     }
+  }
+  
+  template<typename Child>
+  void BehaviourDSLBase<Child>::importFile(const std::string& fileName_,
+					   const std::vector<std::string>& ecmds)
+  {
+    this->fileName = fileName_;
+    this->openFile(this->fileName,ecmds);
+    this->analyse();
   } // end of BehaviourDSLBase<Child>::importFile
 
+  template<typename Child>
+  void BehaviourDSLBase<Child>::analyseString(const std::string& s)
+  {
+    this->fileName = "user defined string";
+    this->parseString(s);
+    this->analyse();
+  } // end of BehaviourDSLCommon::analyseString
+  
   template<typename Child>
   BehaviourDSLBase<Child>::~BehaviourDSLBase()
   {} // end of BehaviourDSLBase<Child>::~BehaviourDSLBase

@@ -230,9 +230,9 @@ namespace mfront{
     if(mdata.domains.empty()){
       this->hasDefaultConstructor=false;
     }
-    if(!mdata.localParameters.empty()){
-      for(p=mdata.localParameters.begin();
-	  (p!=mdata.localParameters.end())&&(this->hasDefaultConstructor);++p){
+    if(!mdata.parameters.empty()){
+      for(p=mdata.parameters.begin();
+	  (p!=mdata.parameters.end())&&(this->hasDefaultConstructor);++p){
 	if(mdata.defaultValues.find(p->name)==mdata.defaultValues.end()){
 	  this->hasDefaultConstructor = false;
 	}
@@ -416,16 +416,8 @@ namespace mfront{
       this->headerFile << ") const;\n\n";
       this->headerFile << "private:\n\n";
       this->headerFile << "friend class " << mdata.className <<";\n\n";
-      for(p4=p3->globalParameters.begin();p4!=p3->globalParameters.end();++p4){
-	p = MFrontModelInterface::findVariableDescription(mdata.globalParameters,*p4);
-	if(getDebugMode()){
-	  this->headerFile << "#line " << p->lineNumber << " \"" 
-			   << fdata.fileName << "\"\n";
-	}
-	this->headerFile << getVariableType(p->type) << " " << p->name << ";\n";
-      }
-      for(p4=p3->localParameters.begin();p4!=p3->localParameters.end();++p4){
-	p = MFrontModelInterface::findVariableDescription(mdata.localParameters,*p4);
+      for(p4=p3->parameters.begin();p4!=p3->parameters.end();++p4){
+	p = MFrontModelInterface::findVariableDescription(mdata.parameters,*p4);
 	if(getDebugMode()){
 	  this->headerFile << "#line " << p->lineNumber << " \"" 
 			   << fdata.fileName << "\"\n";
@@ -456,14 +448,7 @@ namespace mfront{
       this->headerFile << endl;
     }
     this->headerFile << "std::vector<std::string> domains;\n";
-    for(p=mdata.globalParameters.begin();p!=mdata.globalParameters.end();++p){
-      if(getDebugMode()){
-	this->headerFile << "#line " << p->lineNumber << " \"" 
-			 << fdata.fileName << "\"\n";
-      }
-      this->headerFile << getVariableType(p->type) << " " << p->name << ";\n";
-    }
-    for(p=mdata.localParameters.begin();p!=mdata.localParameters.end();++p){
+    for(p=mdata.parameters.begin();p!=mdata.parameters.end();++p){
       if(getDebugMode()){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << fdata.fileName << "\"\n";
@@ -803,7 +788,7 @@ namespace mfront{
       this->srcFile << "vector<string> tmp;\n";
       this->srcFile << "vector<string>::const_iterator ptr;\n";
       this->srcFile << "vector<string>::const_iterator ptr2;\n";
-      for(p=mdata.localParameters.begin();p!=mdata.localParameters.end();++p){
+      for(p=mdata.parameters.begin();p!=mdata.parameters.end();++p){
 	p4=mdata.defaultValues.find(p->name);
 	assert(p4!=mdata.defaultValues.end());
 	this->writeAssignDefaultValue(p,p4);
@@ -865,7 +850,7 @@ namespace mfront{
     this->srcFile << "\"domain\",\"domains\",\"Active\",\n"
 		  << "\"ActivatingEvents\",\"DesactivatingEvents\"";
     specializedParametersNumber=5u;
-    for(p=mdata.localParameters.begin();p!=mdata.localParameters.end();++p){
+    for(p=mdata.parameters.begin();p!=mdata.parameters.end();++p){
       string name;
       name = this->getVariableName(p->name,mdata);
       this->srcFile << ",\n";
@@ -889,7 +874,7 @@ namespace mfront{
     this->srcFile << "}\n";
     this->srcFile << "}\n";
     this->srcFile << "ActivableObjectBase::handleSpecialisationData(data);\n";
-    for(p=mdata.localParameters.begin();p!=mdata.localParameters.end();++p){
+    for(p=mdata.parameters.begin();p!=mdata.parameters.end();++p){
       string name;
       name = this->getVariableName(p->name,mdata);
       this->srcFile << "ptr = mdata.find(" << name << ");\n";
@@ -989,27 +974,6 @@ namespace mfront{
     this->srcFile << "using namespace std;\n";
     this->srcFile << "using namespace pleiades::field;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
-    for(p=mdata.globalParameters.begin();p!=mdata.globalParameters.end();++p){
-      string name = this->getVariableName(p->name,mdata);
-      this->srcFile << "if(!mdata.contains(" << name << ")){\n";
-      if((p4=mdata.defaultValues.find(p->name))!=mdata.defaultValues.end()){
-	this->srcFile << "this->" << p->name << " = " << p4->second << ";" << endl;
-	this->srcFile << "} else {\n";
-      } else {
-	this->srcFile << "string msg(\"" << mdata.className << "::initialize : \");\n";
-	this->srcFile << "msg += \"can't initialize parameter '" << p->name << "'\";\n";
-	this->srcFile << "throw(runtime_error(msg));\n";
-	this->srcFile << "} else {\n";
-      }
-      this->srcFile << "if(!mdata." << this->getGenTypeIsMethod(p->type) << "(" << name << ")){\n";
-      this->srcFile << "string msg(\"" << mdata.className << "::" << mdata.className << " : \");\n";
-      this->srcFile << "msg += \"wrong type for parameter '" << p->name << "' (expected a '"+p->type+"')\";\n";
-      this->srcFile << "throw(runtime_error(msg));\n";
-      this->srcFile << "}\n";
-      this->srcFile << "this->" << p->name << " = mdata." 
-		    << this->getGenTypeGetMethod(p->type) << "(" << name << ");\n";
-      this->srcFile << "}\n";
-    }
     this->srcFile << "this->initializeOutputsVariablesInitialValues(data);\n";
     if(!mdata.constantMaterialProperties.empty()){
       this->srcFile << "this->initializeConstantMaterialProperties(data);\n";
@@ -1017,11 +981,7 @@ namespace mfront{
     // initializing functor members
     for(i=0,p11=mdata.functions.begin();p11!=mdata.functions.end();++p11,++i){
       string functor = "functor"+to_string(i);
-      for(p15=p11->localParameters.begin();
-	  p15!=p11->localParameters.end();++p15){
-	this->srcFile << "this->" << functor << '.' << *p15 << " = this->" << *p15 << ";\n";
-      }
-      for(p15=p11->globalParameters.begin();p15!=p11->globalParameters.end();++p15){
+      for(p15=p11->parameters.begin();p15!=p11->parameters.end();++p15){
 	this->srcFile << "this->" << functor << '.' << *p15 << " = this->" << *p15 << ";\n";
       }
     }

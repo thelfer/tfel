@@ -25,22 +25,13 @@ namespace mfront{
   {
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->reserveName("NewtonIntegration",false);
+    this->reserveName("NewtonIntegration");
     // main variables
-    this->registerVariable("eto",false);
-    this->registerVariable("deto",false);
-    this->registerVariable("sig",false);
     this->mb.declareAsASmallStrainStandardBehaviour();
     // parameters
-    this->registerVariable("theta",false);
-    this->registerVariable("epsilon",false);
-    this->registerVariable("iterMax",false);
-    this->registerVariable("young",false);
-    this->registerVariable("nu",false);
-    this->registerVariable("rho",false);
-    this->registerVariable("alpha",false);
-    this->registerVariable("lambda",false);
-    this->registerVariable("mu",false);
+    this->reserveName("theta");
+    this->reserveName("epsilon");
+    this->reserveName("iterMax");
     this->mb.addMaterialProperty(h,VariableDescription("stress","young",1u,0u));
     this->mb.setGlossaryName(h,"young","YoungModulus");
     this->mb.addMaterialProperty(h,VariableDescription("real","nu",1u,0u));
@@ -49,7 +40,6 @@ namespace mfront{
     this->mb.addLocalVariable(h,VariableDescription("stress","lambda",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("stress","mu",1u,0u));
     // intermediate temperature
-    this->registerVariable("T_",false);
     this->mb.addLocalVariable(h,VariableDescription("temperature","T_",1u,0u));
     // local variable initialisation
     CodeBlock initLocalVars;
@@ -101,12 +91,11 @@ namespace mfront{
   void
   IsotropicBehaviourDSLBase::treatTheta(void)
   {
-    using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double v;
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatTheta",
 			    "Cannot read theta value.");
-    istringstream flux(current->value);
+    std::istringstream flux(current->value);
     flux >> v;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("IsotropicBehaviourDSLBase::treatTheta",
@@ -118,19 +107,19 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("IsotropicBehaviourDSLBase::treatTheta",";");
-    this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));
+    this->mb.addParameter(h,VariableDescription("real","theta",1u,0u),
+			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"theta",v);
   } // end of IsotropicBehaviourDSLBase::treatTheta
 
   void
   IsotropicBehaviourDSLBase::treatEpsilon(void)
   {
-    using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatEpsilon",
 			    "Cannot read epsilon value.");
-    istringstream flux(current->value);
+    std::istringstream flux(current->value);
     flux >> epsilon;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("IsotropicBehaviourDSLBase::treatEpsilon",
@@ -142,14 +131,14 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("IsotropicBehaviourDSLBase::treatEpsilon",";");
-    this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+    this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u),
+			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"epsilon",epsilon);
   } // IsotropicBehaviourDSLBase::treatEpsilon
 
   void
   IsotropicBehaviourDSLBase::treatIterMax(void)
   {
-    using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     unsigned short iterMax;
     iterMax = this->readUnsignedShort("IsotropicBehaviourDSLBase::treatIterMax");
@@ -158,7 +147,8 @@ namespace mfront{
 			      "invalid value for parameter 'iterMax'");
     }
     this->readSpecifiedToken("IsotropicBehaviourDSLBase::treatIterMax",";");
-    this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u));
+    this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u),
+			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
   } // end of IsotropicBehaviourDSLBase::treatIterMax
 
@@ -195,7 +185,6 @@ namespace mfront{
   void
   IsotropicBehaviourDSLBase::treatFlowRule(void)
   {
-    using namespace std;
     this->readCodeBlock(*this,BehaviourData::FlowRule,
 			&IsotropicBehaviourDSLBase::flowRuleVariableModifier,true,false);
   } // end of IsotropicBehaviourDSLBase::treatFlowRule
@@ -211,16 +200,19 @@ namespace mfront{
     }
     BehaviourDSLCommon::endsInputFileProcessing();
     if(!this->mb.hasParameter(h,"theta")){
-      this->mb.addParameter(h,VariableDescription("real","theta",1u,0u));
+      this->mb.addParameter(h,VariableDescription("real","theta",1u,0u),
+			    BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h,"theta",this->theta);
     }
     if(!this->mb.hasParameter(h,"epsilon")){
-      this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u));
+      this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u),
+			    BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h,"epsilon",1.e-8);
     }
     if(!this->mb.hasParameter(h,"iterMax")){
       unsigned short iterMax = 100u;
-      this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u));
+      this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u),
+			    BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
     }
     // temperature at the midle of the time step
@@ -238,18 +230,16 @@ namespace mfront{
 
   void IsotropicBehaviourDSLBase::treatExternalStateVariable(void)
   {
-    using namespace std;
     VariableDescriptionContainer ev;
-    set<Hypothesis> h;
-    this->readVariableList(ev,h,&BehaviourDescription::addExternalStateVariables,true,true,false);
+    std::set<Hypothesis> h;
+    this->readVariableList(ev,h,&BehaviourDescription::addExternalStateVariables,true,false);
     for(const auto & elem : h){
       CodeBlock ib;
-      for(VariableDescriptionContainer::const_iterator p=ev.begin();p!=ev.end();++p){
-	const auto currentVarName = p->name + "_";
-	this->registerVariable(currentVarName,false);
-	this->mb.addLocalVariable(elem,VariableDescription(p->type,currentVarName,p->arraySize,0u));
-	ib.code = "this->" + currentVarName + " = this->" + p->name +
-	  "+(" + this->mb.getClassName() + "::theta)*(this->d" + p->name + ");\n";
+      for(const auto& v : ev){
+	const auto currentVarName = v.name + "_";
+	this->mb.addLocalVariable(elem,VariableDescription(v.type,currentVarName,v.arraySize,0u));
+	ib.code = "this->" + currentVarName + " = this->" + v.name +
+	  "+(" + this->mb.getClassName() + "::theta)*(this->d" + v.name + ");\n";
       }
       this->mb.setCode(elem,BehaviourData::BeforeInitializeLocalVariables,ib,
 		       BehaviourData::CREATEORAPPEND,

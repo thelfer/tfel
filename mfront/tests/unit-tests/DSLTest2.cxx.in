@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontTest.cxx
+ * \file   DSLTest2.cxx
  * \brief    
  * \author THOMAS HELFER
  * \date   30 juin 2015
@@ -17,7 +17,7 @@
 
 // a small trick so that the compiler refers to the original file for
 // error reports
-#line 21 "@abs_top_srcdir@/mfront/tests/unit-tests/MFrontTest.cxx.in"
+#line 21 "@abs_top_srcdir@/mfront/tests/unit-tests/DSLTest2.cxx.in"
 
 #include<memory>
 #include<cstdlib>
@@ -53,12 +53,12 @@ getBehaviourDSL(const std::string& f){
   return bdsl;
 } // end of getBehaviourDSL
 
-struct MFrontTest final
+struct DSLTest2 final
   : public tfel::tests::TestCase
 {
-  MFrontTest()
-    : tfel::tests::TestCase("MFront","MFrontTest")
-  {} // end of MFrontTest
+  DSLTest2()
+    : tfel::tests::TestCase("MFront","DSLTest2")
+  {} // end of DSLTest2
 
   tfel::tests::TestResult
   execute(void) override
@@ -156,18 +156,16 @@ struct MFrontTest final
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(MFrontTest,"MFrontTest");
+TFEL_TESTS_GENERATE_PROXY(DSLTest2,"DSLTest2");
 
 int main(void)
 {
-  using namespace std;
-  using namespace mfront;
   using namespace tfel::tests;
-  initParsers();
-  TestManager& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
-  manager.addXMLTestOutput("MFront.xml");
-  TestResult r = manager.execute();
+  mfront::initParsers();
+  auto& m = TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("MFront.xml");
+  const auto r = m.execute();
   if(!r.success()){
     return EXIT_FAILURE;
   }

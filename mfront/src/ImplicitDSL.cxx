@@ -20,13 +20,8 @@ namespace mfront{
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setParserName("Implicit");
     // input variables
-    this->registerVariable("eto",false);
-    this->registerVariable("deto",false);
-    this->registerVariable("sig",false);
     this->mb.declareAsASmallStrainStandardBehaviour();
     // Default state variable
-    this->registerVariable("eel",false);
-    this->registerVariable("deel",false);
     VariableDescription eel("StrainStensor","eel",1u,0u);
     eel.description = "elastic strain";
     this->mb.addStateVariable(h,eel);

@@ -84,7 +84,6 @@ namespace mfront{
     static const std::string InitializeJacobian;
     //! standard code name
     static const std::string InitializeJacobianInvert;
-
     /*
      * normalised attribute names
      * \note properties name begins with a lower case
@@ -144,6 +143,16 @@ namespace mfront{
       BODY,
       AT_END   
     }; // end of enum Mode
+    /*!
+     * Some dsl may want to avoid the user to declare a variable with
+     * a given name. To avoid this, they shall reserve the name. Once
+     * the variable is finally declare, they shall pass the
+     * ALREADYREGISTRED flag to the addXXXVariables methods
+     */
+    enum RegistrationStatus{
+      UNREGISTRED,
+      ALREADYREGISTRED
+    };
     //! constructor
     BehaviourData();
     //! copy constructor
@@ -307,45 +316,59 @@ namespace mfront{
     /*!
      * \brief add a material property
      * \param[in] v : variable description
+     * \param[in] s : registration status
      */
     void
-    addMaterialProperty(const VariableDescription&);
+    addMaterialProperty(const VariableDescription&,
+			const RegistrationStatus);
     /*!
      * \brief add a integration variable
      * \param[in] v : variable description
+     * \param[in] s : registration status
      */
     void
-    addIntegrationVariable(const VariableDescription&);
+    addIntegrationVariable(const VariableDescription&,
+			   const RegistrationStatus);
     /*!
      * \brief add a state variable
      * \param[in] v : variable description
+     * \param[in] s : registration status
      */
     void
-    addStateVariable(const VariableDescription&);
+    addStateVariable(const VariableDescription&,
+		     const RegistrationStatus);
     /*!
      * \brief add an auxiliary state variable
      * \param[in] v : variable description
+     * \param[in] s : registration status
      */
     void
-    addAuxiliaryStateVariable(const VariableDescription&);
+    addAuxiliaryStateVariable(const VariableDescription&,
+			      const RegistrationStatus);
     /*!
      * \brief add an external state variable
      * \param[in] v : variable description
+     * \param[in] s : registration status
      */
     void
-    addExternalStateVariable(const VariableDescription&);
+    addExternalStateVariable(const VariableDescription&,
+			     const RegistrationStatus);
     /*!
      * \brief add a : variable
      * \param[in] v : variable description
+     * \param[in] s : registration status
      */
     void
-    addLocalVariable(const VariableDescription&);
+    addLocalVariable(const VariableDescription&,
+		     const RegistrationStatus);
     /*!
      * \brief add a parameter
      * \param[in] v : variable description
+     * \param[in] s : registration status
      */
     void
-    addParameter(const VariableDescription&);
+    addParameter(const VariableDescription&,
+		 const RegistrationStatus);
     /*!
      * \return true if a parameter with the given name exists
      * \param[in] n : name
@@ -391,9 +414,11 @@ namespace mfront{
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
+     * \param[in] s : registration status
      */
     void
-    addStaticVariable(const StaticVariableDescription&);
+    addStaticVariable(const StaticVariableDescription&,
+		      const RegistrationStatus);
     /*!
      * \brief check if one has to include tvector.hxx or vector.hxx
      * \param[in] b1 : requires true if one has to include tvector.hxx
@@ -568,19 +593,42 @@ namespace mfront{
     const std::map<std::string,BehaviourAttribute>&
     getAttributes(void) const;
     /*!
-     * register a new variable name
+     * reserve the given name
      * \param[in] n : variable name
      * \note an exception is thrown is the given name has already been
      * registred
      */
-    void registerVariable(const std::string&);
+    void reserveName(const std::string&);
     /*!
-     * \return all the registred variable names
+     * register a member name
+     * \param[in] n : member name
+     * \note an exception is thrown is the given name has already been
+     * registred
+     * \note : this method automatically calls the reserveName method
      */
+    void registerMemberName(const std::string&);
+    /*!
+     * register a static member name
+     * \param[in] n : static member name
+     * \note an exception is thrown is the given name has already been
+     * registred
+     * \note : this method automatically calls the reserveName method
+     */
+    void registerStaticMemberName(const std::string&);
+    //! \return all the registred member names
     const std::set<std::string>&
-    getRegistredVariableNames(void) const;
+    getRegistredMembersNames(void) const;
+    //! \return all the registred static member names
+    const std::set<std::string>&
+    getRegistredStaticMembersNames(void) const;
+    /*!
+     * \return the name of all the variables (material properties,
+     * state variables, auxiliary state variables, external state
+     * variables, parameters)
+     */
+    std::set<std::string> getVariablesNames(void) const;
     //! destructor
-    virtual ~BehaviourData() noexcept;
+    virtual ~BehaviourData();
   private:
     /*!
      * structure used to handle a blocks of code
@@ -667,18 +715,16 @@ namespace mfront{
     void checkVariableName(const std::string&) const;
     /*!
      * \brief add a variable to a container
-     * \param[in] c : container
-     * \param[in] v : variable to be added
-     * \param[in] b : if false, don't register variable name
+     * \param[in] c  : container
+     * \param[in] v  : variable to be added
+     * \param[in] s  : registration status
+     * \param[in] bi : if true, register variable increment name
      */
     void
     addVariable(VariableDescriptionContainer& v,
 		const VariableDescription&,
-		const bool = true);
-    /*!
-     * variables names
-     */
-    std::set<std::string> vnames;
+		const RegistrationStatus,
+		const bool);
     /*!
      * variables flagged as probably unusable in purely implicit
      * resolutions
@@ -691,41 +737,23 @@ namespace mfront{
      * purely implicit resolution.
      */
     bool usableInPurelyImplicitResolution;
-    /*!
-     * registred code blocks
-     */
+    //! registred code blocks
     std::map<std::string,CodeBlocksAggregator> cblocks;
-    /*!
-     * registred material properties
-     */
+    //! registred material properties
     VariableDescriptionContainer materialProperties;
-    /*!
-     * registred persistent variables
-     */
+    //! registred persistent variables
     VariableDescriptionContainer persistentVariables;
-    /*!
-     * registred integration variables
-     */
+    //! registred integration variables
     VariableDescriptionContainer integrationVariables;
-    /*!
-     * registred state variables
-     */
+    //! registred state variables
     VariableDescriptionContainer stateVariables;
-    /*!
-     * registred auxiliary state variables
-     */
+    //! registred auxiliary state variables
     VariableDescriptionContainer auxiliaryStateVariables;
-    /*!
-     * registred external state variables
-     */
+    //! registred external state variables
     VariableDescriptionContainer externalStateVariables;
-    /*!
-     * registred local variables
-     */
+    //! registred local variables
     VariableDescriptionContainer localVariables;
-    /*!
-     * parameters of the behaviour
-     */
+    //! parameters of the behaviour
     VariableDescriptionContainer parameters;
     //! default value for floatting point paramerters
     std::map<std::string,double>         parametersDefaultValues;
@@ -733,27 +761,23 @@ namespace mfront{
     std::map<std::string,int>            iParametersDefaultValues;
     //! default value for short unsigned integer paramerters
     std::map<std::string,unsigned short> uParametersDefaultValues;
-    /*!
-     * static variables
-     */
-    StaticVariableDescriptionContainer staticVars;
-    /*!
-     * bounds of the registred variables
-     */
+    //! static variables
+    StaticVariableDescriptionContainer staticVariables;
+    //! bounds of the registred variables
     std::vector<BoundsDescription> bounds;
-    /*!
-     * behaviour attributes
-     */
+    //! behaviour attributes
     std::map<std::string,
 	     BehaviourAttribute> attributes;
-    /*!
-     * list of glossary names used by the behaviour
-     */
+    //! list of glossary names used by the behaviour
     std::map<std::string,std::string> glossaryNames;
-    /*!
-     * list of entry names used by the behaviour
-     */
+    //! list of entry names used by the behaviour
     std::map<std::string,std::string> entryNames;
+    //! list of reserved names
+    std::set<std::string> reservedNames;
+    //! list of variables names
+    std::set<std::string> membersNames;
+    //! list of variables names
+    std::set<std::string> staticMembersNames;
   }; // end of struct BehaviourData
 
 } // end of namespace mfront

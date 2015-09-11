@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # ok, this is ugly, but is sufficient for our needs
@@ -452,6 +452,9 @@ AC_OUTPUT([debug.sh
 	   docs/release-notes-2.0/tfel-2.0.tex
 	   docs/release-notes-2.0/Makefile.doc
 	   docs/release-notes-2.0/Makefile
+	   docs/release-notes-2.0.3/tfel-2.0.3.tex
+	   docs/release-notes-2.0.3/Makefile.doc
+	   docs/release-notes-2.0.3/Makefile
 	   docs/release-notes-3.0/Champs.tex
 	   docs/release-notes-3.0/tfel-3.0.tex
 	   docs/release-notes-3.0/Makefile.doc
@@ -535,7 +538,7 @@ AC_OUTPUT([debug.sh
 	   mfront/src/Makefile
            mfront/src/MFrontHeader.cxx
            mfront/tests/unit-tests/Makefile
-           mfront/tests/unit-tests/MFrontTest.cxx
+           mfront/tests/unit-tests/DSLTest2.cxx
 	   mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx
            mfront/mtest/Makefile
            mfront/tests/Makefile
@@ -551,6 +554,11 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck4.mtest
            mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck5.mtest
            mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck6.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck2.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck3.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck4.mtest
+           mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck5.mtest
            mfront/tests/behaviours/aster/asterelasticity.mtest
            mfront/tests/behaviours/aster/asterelasticity2.mtest
            mfront/tests/behaviours/aster/asterelasticity3.mtest
@@ -675,6 +683,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-012.mtest
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-159.mtest
+           mfront/tests/behaviours/aster/asterdruckerprager.mtest
+           mfront/tests/behaviours/aster/asterdruckerprager2.mtest	  
            mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck.mtest
@@ -685,6 +695,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck6.mtest
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck7.mtest
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck8.mtest
+           mfront/tests/behaviours/castem/castemstatevariablesboundscheck.mtest
+           mfront/tests/behaviours/castem/castemstatevariablesboundscheck2.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck2.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck3.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck4.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck5.mtest
+           mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck6.mtest
            mfront/tests/behaviours/castem/castemelasticity.mtest
            mfront/tests/behaviours/castem/castemelasticity2.mtest
            mfront/tests/behaviours/castem/castemelasticity3.mtest
@@ -1564,6 +1582,11 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck6.mtest
            mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck7.mtest
            mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck8.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck2.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck3.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck4.mtest
+           mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck5.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest
            mfront/tests/behaviours/cyrano/cyranoelasticity18.mtest

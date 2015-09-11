@@ -313,15 +313,8 @@ namespace mfront{
     	} else {
     	  // trying to declared a new variable
     	  const auto nn = a.law+"_"+v.name;
-    	  this->registerVariable(nn,false);
     	  this->mb.addExternalStateVariable(h,VariableDescription("real",nn,1u,0u));
-#pragma message("coverity identical branches : something needs to be done")
 	  this->mb.setGlossaryName(h,nn,in);
-    	  // if(!this->mb.isGlossaryNameUsed(h,v.name)){
-    	  //   this->mb.setGlossaryName(h,nn,in);
-    	  // } else {
-    	  //   this->mb.setGlossaryName(h,nn,in);
-    	  // }
     	}
       }
     }
@@ -351,7 +344,7 @@ namespace mfront{
       i.second->getTargetsDescription(this->td,this->mb);
     }
     for(const auto& l : this->td){
-      for(const auto& ld : this->librariesDependencies){
+      for(const auto& ld : this->mb.getLibrariesDependencies()){
 	if("-l"+l.name!=ld){
 	  insert_if(this->td[l.name].ldflags,ld);
 	}
@@ -481,7 +474,6 @@ namespace mfront{
       }
       // check if the reference temperature is defined
       if(!this->mb.isParameterName(uh,"referenceTemperatureForThermalExpansion")){
-	this->registerVariable("referenceTemperatureForThermalExpansion",false);
 	this->mb.addParameter(uh,VariableDescription("real","referenceTemperatureForThermalExpansion",
 						     1u,0u));
       	this->mb.setParameterDefaultValue(uh,"referenceTemperatureForThermalExpansion",293.15);
@@ -1448,8 +1440,6 @@ namespace mfront{
   void
   BehaviourDSLCommon::readHypothesesList(std::set<Hypothesis>& h)
   {
-    using namespace std;
-    using namespace tfel::utilities;
     h.clear();
     if(this->current==this->fileTokens.end()){
       h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
@@ -1459,13 +1449,13 @@ namespace mfront{
       h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       return;
     }
-    vector<Token> tokens;
+    auto tokens = std::vector<tfel::utilities::Token>{};
     this->readList(tokens,"BehaviourDSLCommon::readHypothesesList","<",">",true);
-    for(vector<Token>::const_iterator p=tokens.begin();p!=tokens.end();++p){
-      if(p->flag==Token::String){
-	this->appendToHypothesesList(h,p->value.substr(1,p->value.size()-2));
+    for(const auto& t : tokens){
+      if(t.flag==tfel::utilities::Token::String){
+	this->appendToHypothesesList(h,t.value.substr(1,t.value.size()-2));
       } else {
-	this->appendToHypothesesList(h,p->value);
+	this->appendToHypothesesList(h,t.value);
       }
     }
     if(h.empty()){
@@ -1475,41 +1465,40 @@ namespace mfront{
 
   void
   BehaviourDSLCommon::readVariableList(VariableDescriptionContainer& v,
-					  std::set<Hypothesis>& h,
-					  void (BehaviourDescription::* m)(const Hypothesis,
-										     const VariableDescriptionContainer&),
-					  const bool b1,
-					  const bool b2,
-					  const bool b3)
+				       std::set<Hypothesis>& h,
+				       void (BehaviourDescription::* m)(const Hypothesis,
+									const VariableDescriptionContainer&,
+									const BehaviourData::RegistrationStatus),
+				       const bool b1,
+				       const bool b2)
   {
-    using namespace std;
     h.clear();
     v.clear();
     this->readHypothesesList(h);
-    this->readVarList(v,b1,b2,true);
-    this->addVariableList(h,v,m,b3);
+    this->readVarList(v,b1);
+    this->addVariableList(h,v,m,b2);
   } // end of BehaviourDSLCommon::readVariableList
 
   void
   BehaviourDSLCommon::addVariableList(const std::set<Hypothesis>& h,
-					 const VariableDescriptionContainer& v,
-					 void (BehaviourDescription::* m)(const Hypothesis,
-										    const VariableDescriptionContainer&),
-					 const bool b)
+				      const VariableDescriptionContainer& v,
+				      void (BehaviourDescription::* m)(const Hypothesis,
+								       const VariableDescriptionContainer&,
+								       const BehaviourData::RegistrationStatus),
+				      const bool b)
   {
-    using namespace std;						
     for(const auto & elem : h){
       if(!b){
 	if(!this->mb.getAttribute<bool>(elem,BehaviourData::allowsNewUserDefinedVariables,true)){
-	  vector<string> cbn(this->mb.getCodeBlockNames(elem));
+	  const auto cbn = this->mb.getCodeBlockNames(elem);
 	  if(cbn.empty()){
 	    this->throwRuntimeError("BehaviourDSLCommon::readVariableList : ",
 				    "no more variable can be defined. This may mean that "
 				    "the parser does not expect you to add variables");
 	  } else {
-	    string cbs;
-	    for(vector<string>::const_iterator pn=cbn.begin();pn!=cbn.end();++pn){
-	      cbs += "\n- "+*pn;
+	    auto cbs = std::string{};
+	    for(const auto& n : cbn){
+	      cbs += "\n- "+n;
 	    }
 	    this->throwRuntimeError("BehaviourDSLCommon::readVariableList : ",
 				    "no more variable can be defined. This may mean that "
@@ -1519,33 +1508,30 @@ namespace mfront{
 	  }
 	}
       }
-      (this->mb.*m)(elem,v);
+      (this->mb.*m)(elem,v,BehaviourData::UNREGISTRED);
     }
   } // end of BehaviourDSLCommon::addVariableList
 
   void BehaviourDSLCommon::treatCoef(void)
   {
-    using namespace std;
     VarContainer v;
-    set<Hypothesis> h;
-    this->readVariableList(v,h,&BehaviourDescription::addMaterialProperties,true,false,false);
+    auto h = std::set<Hypothesis>{};
+    this->readVariableList(v,h,&BehaviourDescription::addMaterialProperties,true,false);
   } // end of BehaviourDSLCommon::treatCoef
 
   void
   BehaviourDSLCommon::treatLocalVar(void)
   {
-    using namespace std;
     VarContainer v;
-    set<Hypothesis> h;
-    this->readVariableList(v,h,&BehaviourDescription::addLocalVariables,true,false,true);
+    auto h = std::set<Hypothesis>{};
+    this->readVariableList(v,h,&BehaviourDescription::addLocalVariables,true,true);
   } // end of BehaviourDSLCommon::treatLocalVar
 
   void BehaviourDSLCommon::treatInterface(void)
   {
-    using namespace std;
     typedef BehaviourInterfaceFactory MBIF;
     auto& mbif = MBIF::getBehaviourInterfaceFactory();
-    auto inames = vector<string>{};
+    auto inames = std::vector<std::string>{};
     this->readStringList(inames);
     for(const auto& i : inames){
       if(this->interfaces.count(i)==0){
@@ -1576,57 +1562,52 @@ namespace mfront{
 
   void BehaviourDSLCommon::treatStateVariable(void)
   {
-    using namespace std;
     VarContainer v;
-    set<Hypothesis> h;
-    this->readVariableList(v,h,&BehaviourDescription::addStateVariables,true,false,false);
+    auto h = std::set<Hypothesis>{};
+    this->readVariableList(v,h,&BehaviourDescription::addStateVariables,true,false);
   }
 
   void BehaviourDSLCommon::treatAuxiliaryStateVariable(void)
   {
-    using namespace std;
     VarContainer v;
-    set<Hypothesis> h;
-    this->readVariableList(v,h,&BehaviourDescription::addAuxiliaryStateVariables,true,false,false);
+    auto h = std::set<Hypothesis>{};
+    this->readVariableList(v,h,&BehaviourDescription::addAuxiliaryStateVariables,true,false);
   }
 
   void BehaviourDSLCommon::treatExternalStateVariable(void)
   {
-    using namespace std;
     VarContainer v;
-    set<Hypothesis> h;
-    this->readVariableList(v,h,&BehaviourDescription::addExternalStateVariables,true,true,false);
+    auto h = std::set<Hypothesis>{};
+    this->readVariableList(v,h,&BehaviourDescription::addExternalStateVariables,true,false);
   }
 
   void
   BehaviourDSLCommon::treatBounds(void)
   {
-    using namespace std;
-    set<Hypothesis> h;
-    this->readHypothesesList(h);
-    TokensContainer::const_iterator b = current;
-    for(const auto & elem : h){
+    auto hs = std::set<Hypothesis>{};
+    this->readHypothesesList(hs);
+    auto b = current;
+    for(const auto & h : hs){
       current = b;
       BoundsDescription d;
       d.category = BoundsDescription::Standard;
-      this->treatBounds(d,elem);
-      this->mb.setBounds(elem,d);
+      this->treatBounds(d,h);
+      this->mb.setBounds(h,d);
     }
   } // end of BehaviourDSLCommon::treatBounds
 
   void
   BehaviourDSLCommon::treatPhysicalBounds(void)
   {
-    using namespace std;
-    set<Hypothesis> h;
-    this->readHypothesesList(h);
-    TokensContainer::const_iterator b = current;
-    for(const auto & elem : h){
+    auto hs = std::set<Hypothesis>{};
+    this->readHypothesesList(hs);
+    auto b = current;
+    for(const auto & h : hs){
       current = b;
       BoundsDescription d;
       d.category = BoundsDescription::Physical;
-      this->treatBounds(d,elem);
-      this->mb.setBounds(elem,d);
+      this->treatBounds(d,h);
+      this->mb.setBounds(h,d);
     }
   } // end of BehaviourDSLCommon::treatPhysicalBounds
 
@@ -1784,7 +1765,8 @@ namespace mfront{
     if(this->current->value=="*"){
       if(d.boundsType==BoundsDescription::Upper){
 	this->throwRuntimeError("BehaviourDSLCommon::treatBounds",
-				"upper and lower values bounds are both infinity. This is inconsistent.");
+				"upper and lower values bounds are both infinity. "
+				"This is inconsistent.");
       }
       d.boundsType=BoundsDescription::Lower;
       ++(this->current);
@@ -1799,12 +1781,14 @@ namespace mfront{
       converter >> d.upperBound;
       if(!converter||(!converter.eof())){
 	this->throwRuntimeError("BehaviourDSLCommon::treatBounds",
-				"could not read upper bound value for variable '"+d.varName+"'");
+				"could not read upper bound value "
+				"for variable '"+d.varName+"'");
       }
       if(d.boundsType==BoundsDescription::LowerAndUpper){
 	if(d.lowerBound>d.upperBound){
 	  this->throwRuntimeError("BehaviourDSLCommon::treatBounds",
-				  "lower bound value is greater than upper bound value for variable '"+
+				  "lower bound value is greater than upper "
+				  "bound value for variable '"+
 				  d.varName+"'");
 	}
       }
@@ -1820,91 +1804,68 @@ namespace mfront{
     this->readSpecifiedToken("BehaviourDSLCommon::treatBounds",";");
   } // end of BehaviourDSLCommon::treatBounds
 
-  void
-  BehaviourDSLCommon::registerDefaultVarNames(void)
+  void BehaviourDSLCommon::addLibraryDependency(const std::string& l){
+    this->mb.addLibraryDependency(l);
+  }
+  
+  void BehaviourDSLCommon::registerDefaultVarNames(void)
   {
     using namespace std;
     using namespace tfel::material;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // all available tangent operators for finite strain behaviours
-    const vector<FiniteStrainBehaviourTangentOperatorBase::Flag> tos(getFiniteStrainBehaviourTangentOperatorFlags());
-    vector<FiniteStrainBehaviourTangentOperatorBase::Flag>::const_iterator pt;
-    this->registerVariable("D",false);
-    this->registerVariable("Dt",false);
-    this->registerVariable("T",false);
-    this->registerVariable("dT",false);
-    this->registerVariable("dt",false);
-    this->reserveName("N",false);
-    this->reserveName("Type",false);
-    this->reserveName("use_qt",false);
-    this->reserveName("src1",false);
-    this->reserveName("src2",false);
-    this->reserveName("policy_value",false);
-    this->reserveName("integrate",false);
-    this->reserveName("computeStress",false);
-    this->reserveName("computeFinalStress",false);
-    this->reserveName("computeStressFreeExpansion",false);
-    this->reserveName("computeFdF",false);
-    this->reserveName("updateIntegrationVariables",false);
-    this->reserveName("updateStateVariables",false);
-    this->reserveName("updateAuxiliaryStateVariables",false);
-    this->reserveName("getTangentOperator",false);
-    this->reserveName("getTimeStepScalingFactor",false);
-    this->reserveName("computeConsistentTangentOperator",false);
-    for(pt=tos.begin();pt!=tos.end();++pt){
-      const string ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
-      this->reserveName(ktype,false);
-      this->reserveName("computeConsistentTangentOperator_"+ktype,false);
-      this->reserveName("tangentOperator_"+ktype,false);
+    const auto tos = getFiniteStrainBehaviourTangentOperatorFlags();
+
+    this->mb.registerMemberName(h,"D");
+    this->mb.registerMemberName(h,"Dt");
+
+    this->reserveName("N");
+    this->reserveName("Type");
+    this->reserveName("use_qt");
+    this->reserveName("src1");
+    this->reserveName("src2");
+    this->reserveName("policy_value");
+    this->reserveName("integrate");
+    this->mb.registerMemberName(h,"computeStress");
+    this->mb.registerMemberName(h,"computeFinalStress");
+    this->mb.registerMemberName(h,"computeStressFreeExpansion");
+    this->mb.registerMemberName(h,"computeFdF");
+    this->mb.registerMemberName(h,"updateIntegrationVariables");
+    this->mb.registerMemberName(h,"updateStateVariables");
+    this->mb.registerMemberName(h,"updateAuxiliaryStateVariables");
+    this->mb.registerMemberName(h,"getTangentOperator");
+    this->mb.registerMemberName(h,"getTimeStepScalingFactor");
+    this->mb.registerMemberName(h,"computeConsistentTangentOperator");
+    for(const auto& to : tos){
+      const auto ktype = convertFiniteStrainBehaviourTangentOperatorFlagToString(to);
+      this->mb.registerMemberName(h,ktype);
+      this->mb.registerMemberName(h,"computeConsistentTangentOperator_"+ktype);
+      this->mb.registerMemberName(h,"tangentOperator_"+ktype);
     }
-    this->reserveName("tangentOperator_sk2",false);
-    this->reserveName("computePredictionOperator",false);
-    this->reserveName("computeTangentOperator_",false);
-    this->reserveName("smt",false);
-    this->reserveName("smflag",false);
-    this->reserveName("dl_l0",false);
-    this->reserveName("dl_l1",false);
-    this->reserveName("dl_l01",false);
-    this->reserveName("alpha_Ti",false);
-    this->reserveName("alpha0_Ti",false);
-    this->reserveName("alpha1_Ti",false);
-    this->reserveName("alpha2_Ti",false);
-    this->reserveName("alpha_T_t",false);
-    this->reserveName("alpha_T_t_dt",false);
-    this->reserveName("alpha0_T_t",false);
-    this->reserveName("alpha0_T_t_dt",false);
-    this->reserveName("alpha1_T_t",false);
-    this->reserveName("alpha1_T_t_dt",false);
-    this->reserveName("alpha2_T_t",false);
-    this->reserveName("alpha2_T_t_dt",false);
-    this->reserveName("time",false);
-    this->reserveName("frequency",false);
-    this->reserveName("stress",false);
-    this->reserveName("length",false);
-    this->reserveName("strain",false);
-    this->reserveName("strainrate",false);
-    this->reserveName("stressrate",false);
-    this->reserveName("temperature",false);
-    this->reserveName("thermalexpansion",false);
-    this->reserveName("massdensity",false);
-    this->reserveName("TVector",false);
-    this->reserveName("Stensor",false);
-    this->reserveName("Stensor4",false);
-    this->reserveName("FrequencyStensor",false);
-    this->reserveName("ForceTVector",false);
-    this->reserveName("StressTensor",false);
-    this->reserveName("StressStensor",false);
-    this->reserveName("StressRateStensor",false);
-    this->reserveName("DisplacementTVector",false);
-    this->reserveName("StrainStensor",false);
-    this->reserveName("StrainRateStensor",false);
-    this->reserveName("StiffnessTensor",false);
-    this->reserveName("Tensor",false);
-    this->reserveName("ThermalExpansionCoefficientTensor",false);
-    this->reserveName("DeformationGradientTensor",false);
-    this->reserveName("TangentOperator",false);
-    this->reserveName("StressFreeExpansionType",false);
-    this->reserveName("behaviourData",false);
-    this->reserveName("time_scaling_factor",false);
+    this->reserveName("tangentOperator_sk2");
+    this->reserveName("computePredictionOperator");
+    this->reserveName("computeTangentOperator_");
+    this->reserveName("smt");
+    this->reserveName("smflag");
+    this->reserveName("dl_l0");
+    this->reserveName("dl_l1");
+    this->reserveName("dl_l01");
+    this->reserveName("alpha_Ti");
+    this->reserveName("alpha0_Ti");
+    this->reserveName("alpha1_Ti");
+    this->reserveName("alpha2_Ti");
+    this->reserveName("alpha_T_t");
+    this->reserveName("alpha_T_t_dt");
+    this->reserveName("alpha0_T_t");
+    this->reserveName("alpha0_T_t_dt");
+    this->reserveName("alpha1_T_t");
+    this->reserveName("alpha1_T_t_dt");
+    this->reserveName("alpha2_T_t");
+    this->reserveName("alpha2_T_t_dt");
+    this->reserveName("TangentOperator");
+    this->reserveName("StressFreeExpansionType");
+    this->reserveName("behaviourData");
+    this->reserveName("time_scaling_factor");
   } // end of BehaviourDSLCommon::registerDefaultVarNames
 
   BehaviourDSLCommon::BehaviourDSLCommon()
@@ -1912,15 +1873,23 @@ namespace mfront{
       useStateVarTimeDerivative(false),
       explicitlyDeclaredUsableInPurelyImplicitResolution(false)
   {
-    // Register var names
-    this->registerDefaultVarNames();
     // By default disable use of quantities
     this->mb.setUseQt(false);
     // By default, a behaviour can be used in a purely implicit resolution
     const Hypothesis h=ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setUsableInPurelyImplicitResolution(h,true);
+    // reserve names
+    for(const auto& v : DSLBase::getDefaultReservedNames()){
+      this->mb.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v);
+    }
+    // register behaviours specific names
+    this->registerDefaultVarNames();
   } // end of BehaviourDSLCommon::MFrontParserCommon
 
+  void BehaviourDSLCommon::reserveName(const std::string& n){
+    this->mb.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,n);
+  }
+  
   void BehaviourDSLCommon::writeIncludes(std::ofstream& file) {
     using namespace std;
     if((!file)||
@@ -1962,23 +1931,6 @@ namespace mfront{
     file << "} // end of namespace tfel\n";
     file << endl;
   }
-
-  void BehaviourDSLCommon::writeIntegerConstants(std::ofstream& file)
-  {
-    using namespace std;
-    map<string,int>::const_iterator p;
-    if((!file)||(!file.good())){
-      string msg("BehaviourDSLCommon::writeIntegerConstants : ");
-      msg += "ouput file is not valid";
-      throw(runtime_error(msg));
-    }
-    if(!this->integerConstants.empty()){
-      file << endl;
-    }
-    for(p=this->integerConstants.begin();p!=this->integerConstants.end();++p){
-      file << "static " << constexpr_c << " int " << p->first << " = " << p->second << ";\n";
-    }
-  } // end of BehaviourDSLCommon::writeIntegerConstants
 
   void BehaviourDSLCommon::writeStandardTFELTypedefs(std::ofstream& file) 
   {
@@ -2443,7 +2395,6 @@ namespace mfront{
     } else {
       this->behaviourDataFile << "friend class " << this->mb.getClassName() << "IntegrationData<hypothesis,Type,false>;\n\n";
     }
-    this->writeIntegerConstants(this->behaviourDataFile);    
   }
 
   void BehaviourDSLCommon::writeBehaviourDataClassEnd() {    
@@ -2750,7 +2701,6 @@ namespace mfront{
     this->behaviourFile << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
     this->behaviourFile << "friend std::ostream& operator<< <>(std::ostream&,const ";
     this->behaviourFile << this->mb.getClassName() << "&);\n\n";
-    this->writeIntegerConstants(this->behaviourFile);
   }
 
   void BehaviourDSLCommon::writeBehaviourFileHeader(){
@@ -3425,20 +3375,23 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourStaticVariables(const Hypothesis h)
   {    
-    using namespace std;
     const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
-    StaticVariableDescriptionContainer::const_iterator p;
-    for(p=md.getStaticVariables().begin();p!=md.getStaticVariables().end();++p){
+    for(const auto& v : md.getStaticVariables()){
       if(!getDebugMode()){
-	if(p->lineNumber!=0u){
-	  this->behaviourFile << "#line " << p->lineNumber << " \"" 
+	if(v.lineNumber!=0u){
+	  this->behaviourFile << "#line " << v.lineNumber << " \"" 
 			      << this->fileName << "\"\n";
 	}
       }
-      this->behaviourFile << "static " << p->type << " " << p->name << ";\n";  
+      if(v.type=="int"){
+	this->behaviourFile << "static constexpr " << v.type << " " << v.name
+			    << " = " << v.value << ";\n";
+      } else {
+	this->behaviourFile << "static const " << v.type << " " << v.name << ";\n";
+      }
     }
-    this->behaviourFile << endl;
+    this->behaviourFile << '\n';
   }
 
   void BehaviourDSLCommon::writeBehaviourIntegrationVariablesIncrements(const Hypothesis h)
@@ -4610,7 +4563,6 @@ namespace mfront{
     this->integrationDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
     this->integrationDataFile << "friend std::ostream& operator<< <>(std::ostream&,const ";
     this->integrationDataFile << this->mb.getClassName() << "IntegrationData&);\n\n";
-    this->writeIntegerConstants(this->integrationDataFile);
   }
 
   void BehaviourDSLCommon::writeIntegrationDataOutputOperator(const Hypothesis h)
@@ -4773,9 +4725,12 @@ namespace mfront{
       ModellingHypothesis::toUpperCaseString(h);
     this->checkSrcFile();
     for(const auto& v : md.getStaticVariables()){
+      if(v.type=="int"){
+	continue;
+      }
       if(this->mb.useQt()){
 	this->srcFile << "template<>\n";
-	this->srcFile << this->mb.getClassName() << "<" << m << ",float,true>::" 
+	this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",float,true>::" 
 		      << v.type << '\n' << this->mb.getClassName() 
 		      << "<" << m << ",float,true>::" 
 		      << v.name << " = " << this->mb.getClassName() 
@@ -4783,7 +4738,7 @@ namespace mfront{
 		      << "(static_cast<float>(" << v.value <<"));\n\n";
       }
       this->srcFile << "template<>\n";
-      this->srcFile << this->mb.getClassName() << "<" << m << ",float,false>::" 
+      this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",float,false>::" 
 		    << v.type << '\n' << this->mb.getClassName() 
 		    << "<" << m << ",float,false>::" 
 		    << v.name << " = " << this->mb.getClassName() 
@@ -4791,7 +4746,7 @@ namespace mfront{
 		    << "(static_cast<float>(" << v.value <<"));\n\n";
       if(this->mb.useQt()){
 	this->srcFile << "template<>\n";
-	this->srcFile << this->mb.getClassName() << "<" << m << ",double,true>::" 
+	this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",double,true>::" 
 		      << v.type << '\n' << this->mb.getClassName() 
 		      << "<" << m << ",double,true>::" 
 		      << v.name << " = " << this->mb.getClassName() 
@@ -4799,7 +4754,7 @@ namespace mfront{
 		      << "(static_cast<double>(" << v.value <<"));\n\n";
       }
       this->srcFile << "template<>\n";
-      this->srcFile << this->mb.getClassName() << "<" << m << ",double,false>::" 
+      this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",double,false>::" 
 		    << v.type << '\n' << this->mb.getClassName() 
 		    << "<" << m << ",double,false>::" 
 		    << v.name << " = " << this->mb.getClassName() 
@@ -4807,7 +4762,7 @@ namespace mfront{
 		    << "(static_cast<double>(" << v.value <<"));\n\n";
       if(this->mb.useQt()){
 	this->srcFile << "template<>\n";
-	this->srcFile << this->mb.getClassName() << "<" << m << ",long double,true>::" 
+	this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",long double,true>::" 
 		      << v.type << '\n' << this->mb.getClassName() 
 		      << "<" << m << ",long double,true>::" 
 		      << v.name << " = " << this->mb.getClassName() << "<" 
@@ -4815,7 +4770,7 @@ namespace mfront{
 		      << "(static_cast<long double>(" << v.value <<"));\n\n";
       }
       this->srcFile << "template<>\n";
-      this->srcFile << this->mb.getClassName() << "<" << m << ",long double,false>::" 
+      this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",long double,false>::" 
 		    << v.type << '\n' << this->mb.getClassName() 
 		    << "<" << m << ",long double,false>::" 
 		    << v.name << " = " << this->mb.getClassName() 
@@ -5228,13 +5183,11 @@ namespace mfront{
 	if(!ci.empty()){
 	  this->readSpecifiedToken("DSLBase::handleParameter",ci);
 	}
-	this->registerVariable(n,true);
 	for(const auto & elem : h){
 	  this->mb.addParameter(elem,VariableDescription("real",n,1u,lineNumber));
 	  this->mb.setParameterDefaultValue(elem,n,value);
 	}
       } else {
-	this->registerVariable(n,true);
 	for(const auto & elem : h){
 	  this->mb.addParameter(elem,VariableDescription("real",n,1u,lineNumber));
 	}

@@ -4,6 +4,8 @@ SUBDIRS = aster castem castem2 cyrano secant alternatesecant \
 
 MFRONTS= DDIF2.mfront                                                      \
          MaterialPropertiesBoundsCheck.mfront                              \
+	 StateVariablesBoundsCheck.mfront                                  \
+	 ExternalStateVariablesBoundsCheck.mfront                          \
 	 Elasticity.mfront                                                 \
          Elasticity2.mfront                                                \
          Elasticity3.mfront                                                \

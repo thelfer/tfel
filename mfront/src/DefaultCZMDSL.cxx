@@ -26,19 +26,6 @@ namespace mfront{
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setParserName("DefaultCZM");
-    this->registerVariable("u",false);
-    this->registerVariable("du",false);
-    this->registerVariable("t",false);
-    this->registerVariable("Dt_nn",false);
-    this->registerVariable("Dt_tt",false);
-    this->registerVariable("Dt_tn",false);
-    this->registerVariable("Dt_nt",false);
-    this->registerVariable("u_n",false);
-    this->registerVariable("du_n",false);
-    this->registerVariable("t_n",false);
-    this->registerVariable("u_t",false);
-    this->registerVariable("du_t",false);
-    this->registerVariable("t_t",false);
     this->mb.declareAsACohesiveZoneModel();
     this->mb.addLocalVariable(h,VariableDescription("real&","u_n",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("real&","du_n",1u,0u));

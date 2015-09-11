@@ -45,40 +45,6 @@ namespace mfront{
     //! \return the file description associated with the treated file
     virtual const FileDescription& getFileDescription() const = 0;
     /*!
-     * \brief register a name.
-     * \param[in] w : name
-     * \param[in] b : if false, don't check if variable has already
-     * been reserved yet. If true, check if the variable has alredy
-     * been registred and throws an exception if it does, register it
-     * otherwise
-     * \note this method is called internally by the registerVariable
-     * and registerStaticVariable methods.
-     */
-    virtual void
-    reserveName(const std::string&,
-		const bool) = 0;
-    /*!
-     * \brief register a variable name.
-     * \param[in] v : variable name
-     * \param[in] b : if false, don't check if variable has already
-     * been reserved yet. If true, check if the variable has alredy
-     * been registred and throws an exception if it does, register it
-     * otherwise
-     */
-    virtual void
-    registerVariable(const std::string&,
-		     const bool) = 0;
-    /*!
-     * \brief register a static variable.
-     * \param[in] v : variable name
-     * \param[in] b : if false, don't check if variable has already
-     * been reserved yet. If true, check if the variable has alredy
-     * been registred and throws an exception if it does, register it
-     * otherwise
-     */
-    virtual void
-    registerStaticVariable(const std::string&) = 0;
-    /*!
      * \brief analyse the specified file.
      * \param[in] f : file name
      * \param[in] c : keywords and arguments specificed on the command
@@ -89,6 +55,12 @@ namespace mfront{
     virtual void
     analyseFile(const std::string&,
 		const std::vector<std::string>&) = 0;
+    /*!
+     * \brief analyse the specified string.
+     * \param[in] s : analyse a string
+     */
+    virtual void
+    analyseString(const std::string&) = 0;
     /*!
      * \return the target description
      * \note This method shall be called *after* the analyseFile method

@@ -17,10 +17,6 @@ namespace mfront{
 
   ImplicitDSLII::ImplicitDSLII()
   {
-    // input variables
-    this->registerVariable("eto",false);
-    this->registerVariable("deto",false);
-    this->registerVariable("sig",false);
     this->mb.declareAsASmallStrainStandardBehaviour();
   } // end of ImplicitDSLII::ImplicitDSLII
 

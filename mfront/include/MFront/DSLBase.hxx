@@ -59,40 +59,6 @@ namespace mfront
     virtual void
     openFile(const std::string&,
 	     const std::vector<std::string>&);
-    /*!
-     * \brief register a variable name.
-     * \param[in] v : variable name
-     * \param[in] b : if false, don't check if variable has already
-     * been reserved yet. If true, check if the variable has alredy
-     * been registred and throws an exception if it does, register it
-     * otherwise
-     */
-    virtual void
-    registerVariable(const std::string&,
-		     const bool) override;
-    /*!
-     * \brief register a static variable name.
-     * \param[in] v : variable name
-     * \param[in] b : if false, don't check if variable has already
-     * been reserved yet. If true, check if the variable has alredy
-     * been registred and throws an exception if it does, register it
-     * otherwise
-     */
-    virtual void
-    registerStaticVariable(const std::string&) override;
-    /*!
-     * \brief register a name.
-     * \param[in] w : name
-     * \param[in] b : if false, don't check if variable has already
-     * been reserved yet. If true, check if the variable has alredy
-     * been registred and throws an exception if it does, register it
-     * otherwise
-     * \note this method is called internally by the registerVariable
-     * and registerStaticVariable methods.
-     */
-    virtual void
-    reserveName(const std::string&,
-		const bool) override;
   protected:
     /*!
      * \brief An helper structure used by the
@@ -147,6 +113,10 @@ namespace mfront
       CodeBlockParserOptions& operator=(const CodeBlockParserOptions&) = default;
       //! destructor
       ~CodeBlockParserOptions() noexcept;
+      //! member names
+      std::set<std::string> mn;
+      //! static member names
+      std::set<std::string> smn;
       //! modifier applied to variables
       std::shared_ptr<VariableModifier> modifier;
       //! analyser applied to variables
@@ -166,10 +136,29 @@ namespace mfront
       //! if true, line number will be registred
       bool registerLine;
     }; // end of CodeBlockParserOptions
+    //! \return a list of names that shall be reserved
+    static std::vector<std::string>
+    getDefaultReservedNames();
     /*!
      * constructor
      */
     DSLBase();
+    /*!
+     * \brief register a name.
+     * \param[in] n : name
+     */
+    virtual void reserveName(const std::string&) = 0;
+    /*!
+     * \brief add a static variable description
+     * \param[in] v : variable description
+     */
+    virtual void
+    addStaticVariableDescription(const StaticVariableDescription&) = 0;
+    /*!
+     * \brief : add a new library dependency
+     * \param[in] l : library dependency
+     */
+    virtual void addLibraryDependency(const std::string&) = 0;
     /*!
      * \return the name of the generated class
      */
@@ -203,13 +192,6 @@ namespace mfront
      */
     virtual void importFile(const std::string&,
 			    const std::vector<std::string>&) = 0;
-    /*!
-     * \brief add a static variable description
-     * \param[in] v : variable description
-     */
-    virtual void
-    addStaticVariableDescription(const StaticVariableDescription&) = 0;
-
     /*!
      * destructor
      */
@@ -270,31 +252,19 @@ namespace mfront
      * \param[in] cont : variable container to wich variables are
      * added
      * \param[in] type : type of the variable
-     * \param[in] allowArray      : allow arrays of variables to be defined
-     * \param[in] addIncrementVar : for each variable read, add
-     * another variable standing for the first variable increment
-     * \param[in] b : accept that a variable with the same name was
-     * already declared
+     * \param[in] allowArray : allow arrays of variables to be defined
      */
     void
     readVarList(VariableDescriptionContainer&,
 		const std::string&,
-		const bool,
-		const bool,
 		const bool);
     /*!
      * \param[in] cont : variable container to wich variables are
      * added
-     * \param[in] allowArray      : allow arrays of variables to be defined
-     * \param[in] addIncrementVar : for each variable read, add
-     * another variable standing for the first variable increment
-     * \param[in] b : accept that a variable with the same name was
-     * already declared
+     * \param[in] allowArray : allow arrays of variables to be defined
      */
     void
     readVarList(VariableDescriptionContainer&,
-		const bool,
-		const bool,
 		const bool);
     /*!
      * extract a boolean value from the current token and go the next
@@ -416,12 +386,6 @@ namespace mfront
     treatDescription(void);
     virtual void
     ignoreKeyWord(const std::string&);
-    /*!
-     * \return true if the given name has been reserved
-     * \param[in] n : name 
-     */
-    virtual bool
-    isNameReserved(const std::string&) const;
     double
     readDouble(void);
     /*!
@@ -435,13 +399,9 @@ namespace mfront
     
     //! targets description
     TargetsDescription td;
-
-    std::vector<std::string> librariesDependencies;
+    //! integer constants
     std::map<std::string,int> integerConstants;
-    std::set<std::string> varNames;
-    std::set<std::string> staticVarNames;
-    std::set<std::string> reservedNames;
-
+    //! current position in the input stream
     TokensContainer::const_iterator current;
     /*!
      * \brief current comment

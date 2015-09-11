@@ -90,6 +90,9 @@ namespace mfront
       int tensorSize;
 
     }; // end of class SupportedTypes::TypeSize
+    //! \return a list of type names associated with type flags
+    static const std::map<std::string,TypeFlag>&
+    getTypeFlags(void);
     //! default constructor
     SupportedTypes();
     //! move constructor
@@ -110,6 +113,7 @@ namespace mfront
      * \param[in] t : type
      */
     TypeFlag getTypeFlag(const std::string&) const;
+    //! return a map associating a supported type to is type flag
     /*!
      * \param[in] t : variable type
      * \param[in] a : array size

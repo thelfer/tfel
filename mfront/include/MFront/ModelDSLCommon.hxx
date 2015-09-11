@@ -39,6 +39,8 @@ namespace mfront{
     is(const ModelData&,
        const VariableDescriptionContainer&,
        const std::string&);
+    //! constructor
+    ModelDSLCommon();
     //! \return the target of the dsl
     virtual DSLTarget getTargetType(void) const override final;
     /*!
@@ -53,11 +55,36 @@ namespace mfront{
     virtual ~ModelDSLCommon();
 
   protected:
-
+    /*!
+     * \brief : add a new library dependency
+     * \param[in] l : library dependency
+     */
+    virtual void addLibraryDependency(const std::string&) override;
+    /*!
+     * \brief register a name.
+     * \param[in] n : name
+     * \param[in] b : if false, don't check if variable has already
+     * been reserved yet. If true, check if the variable has alredy
+     * been registred and throws an exception if it does, register it
+     * otherwise
+     * \note this method is called internally by the registerVariable
+     * and registerStaticVariable methods.
+     */
+    virtual void reserveName(const std::string&) override;
+    /*!
+     * \brief register a static member name
+     * \param[in] n : name
+     */
+    virtual void registerMemberName(const std::string&);
+    /*!
+     * \brief register a static member name
+     * \param[in] n : name
+     */
+    virtual void registerStaticMemberName(const std::string&);
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName(void) const override;
+    virtual std::string getClassName(void) const override ;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
@@ -136,16 +163,10 @@ namespace mfront{
     treatInputMethod(void);
 
     void
-    treatGlobalParameter(void);
+    treatParameter(void);
 
     void
-    treatGlobalParameterMethod(void);
-
-    void
-    treatLocalParameter(void);
-
-    void
-    treatLocalParameterMethod(void);
+    treatParameterMethod(void);
 
     void
     readDefaultValue(void);

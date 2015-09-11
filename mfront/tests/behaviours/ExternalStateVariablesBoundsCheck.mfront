@@ -1,0 +1,25 @@
+@Behaviour ExternalStateVariablesBoundsCheck;
+@Author Helfer Thomas;
+@Date 2/09/2015;
+@Description{
+ Test of the bounds on external state variables.
+}
+
+@ExternalStateVariable real ev;
+ev.setEntryName("ExternalStateVariable");
+
+@PhysicalBounds ev in [0:500];
+@Bounds ev in [200:400];
+			      
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  static_cast<void>(smt); // remove compiler warning
+  const stress young  = 150e9;
+  const real    nu    = 0.3;
+  const stress lambda = lame::computeLambda(young,nu);
+  const stress mu     = lame::computeMu(young,nu);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

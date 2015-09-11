@@ -1,0 +1,14 @@
+note=tfel-2.0.3
+
+all:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        pdflatex  $(note).tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        pdflatex  $(note).tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex $(note)
+	-makeindex -s @srcdir@/style.ist mkeys.idx
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        pdflatex  $(note).tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        pdflatex  $(note).tex
+
+clean:
+	-$(RM) $(note).aux $(note).log
+	-$(RM) $(note).out $(note).toc
+	-$(RM) $(note).pdf

@@ -161,17 +161,7 @@ namespace mfront{
 		  << mdata.className
 		  << "::initializeParameters(const Pleiades::PMetier::IArgumentMetier& arg)";
     this->srcFile << "{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace Pleiades::PUtilitaires;\n";
-    this->srcFile << "using namespace Pleiades::PExceptions;\n";
-    this->srcFile << "using namespace Pleiades::PMetier::PGlossaire;\n";
     this->srcFile << "this->domains.insert(this->getMeshZoneName());\n";
-    for(auto p=mdata.globalParameters.cbegin();p!=mdata.globalParameters.cend();++p){
-      this->writeGetGlobalParameter(*p,mdata);
-    }
-    for(auto p=mdata.constantMaterialProperties.cbegin();p!=mdata.constantMaterialProperties.cend();++p){
-      this->writeGetConstantMaterialProperty(*p,mdata);
-    }
     this->srcFile << "return true;\n";
     this->srcFile << "} // end of " << mdata.className << "::initializeParameters\n\n";
   } // end of MFrontGerminalModelInterface::writeInitializeParametersMethod

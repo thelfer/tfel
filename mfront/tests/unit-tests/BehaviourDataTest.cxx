@@ -38,17 +38,18 @@ struct BehaviourDataTest final
   execute() override
   {
     using namespace mfront;
-    for (const auto& m : { &BehaviourData::addMaterialProperty,
+    for (const auto& m : {&BehaviourData::addMaterialProperty,
 	  &BehaviourData::addStateVariable,
 	  &BehaviourData::addAuxiliaryStateVariable,
 	  &BehaviourData::addIntegrationVariable,
 	  &BehaviourData::addExternalStateVariable,
 	  &BehaviourData::addLocalVariable,
-	  &BehaviourData::addParameter }) {
+	  &BehaviourData::addParameter}) {
       this->test(m);
     }
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   } // end of execute
   
@@ -58,21 +59,22 @@ private:
   using VariableDescription       = mfront::VariableDescription;
   using StaticVariableDescription = mfront::StaticVariableDescription;
   
-  void test(void (BehaviourData::* m)(const VariableDescription&)) {
+  void test(void (BehaviourData::* m)(const VariableDescription&,
+				      const BehaviourData::RegistrationStatus)) {
     using std::runtime_error;
     BehaviourData bd;
     const auto v  = VariableDescription{"real","p",1,0u};
     const auto v2 = VariableDescription{"real","p2",1,0u };
     const auto v3 = StaticVariableDescription{ "real","p",0u,1.e-4};
-    (bd.*m)( v);
-    TFEL_TESTS_CHECK_THROW(bd.addMaterialProperty(v), runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd.addStateVariable(v), runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd.addAuxiliaryStateVariable(v), runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd.addIntegrationVariable(v), runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd.addLocalVariable(v), runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd.addParameter(v), runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd.addExternalStateVariable(v),runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd.addStaticVariable(v3), runtime_error);
+    (bd.*m)(v,BehaviourData::UNREGISTRED);
+    TFEL_TESTS_CHECK_THROW(bd.addMaterialProperty(v,BehaviourData::UNREGISTRED), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.addStateVariable(v,BehaviourData::UNREGISTRED), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.addAuxiliaryStateVariable(v,BehaviourData::UNREGISTRED), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.addIntegrationVariable(v,BehaviourData::UNREGISTRED), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.addLocalVariable(v,BehaviourData::UNREGISTRED), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.addParameter(v,BehaviourData::UNREGISTRED), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.addExternalStateVariable(v,BehaviourData::UNREGISTRED),runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.addStaticVariable(v3,BehaviourData::UNREGISTRED), runtime_error);
   } // end of test
 
   void test2(){
@@ -91,7 +93,7 @@ private:
       TFEL_TESTS_CHECK_THROW(bd.setGlossaryName("young",Glossary::YoungModulus),runtime_error);
       TFEL_TESTS_CHECK_THROW(bd.setEntryName("young",Glossary::YoungModulus),runtime_error);
     }
-    bd.addMaterialProperty(v);
+    bd.addMaterialProperty(v,BehaviourData::UNREGISTRED);
     TFEL_TESTS_ASSERT(bd.getExternalNames(bd.getMaterialProperties()).size()==1u);
     TFEL_TESTS_ASSERT(bd.getExternalName("young")=="young");
     TFEL_TESTS_ASSERT(!bd.hasGlossaryName("young"));
@@ -105,7 +107,7 @@ private:
     TFEL_TESTS_CHECK_THROW(bd.setEntryName("young",Glossary::YoungModulus), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd.setGlossaryName("young",Glossary::PoissonRatio), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd.setGlossaryName("nu",Glossary::YoungModulus), runtime_error);
-    bd.addMaterialProperty(v2);
+    bd.addMaterialProperty(v2,BehaviourData::UNREGISTRED);
     TFEL_TESTS_ASSERT(bd.getExternalNames(bd.getMaterialProperties()).size()==2u);
     {
       // Softening slople can't be used as a glossary name
@@ -123,7 +125,7 @@ private:
     TFEL_TESTS_ASSERT(bd.hasGlossaryName("nu"));
     TFEL_TESTS_ASSERT(!bd.hasEntryName("nu"));
     TFEL_TESTS_ASSERT(bd.getExternalName("nu")==Glossary::PoissonRatio);
-    bd.addStateVariable(v3);
+    bd.addStateVariable(v3,BehaviourData::UNREGISTRED);
     TFEL_TESTS_ASSERT(!bd.hasGlossaryName("p"));
     TFEL_TESTS_ASSERT(!bd.hasEntryName("p"));
     TFEL_TESTS_ASSERT(bd.getExternalName("p")=="p");
@@ -147,7 +149,7 @@ private:
       TFEL_TESTS_ASSERT(enames.size()==1u);
       TFEL_TESTS_ASSERT(find(enames.begin(),enames.end(),"AStateVariable")!=enames.end());
     }
-    bd.addAuxiliaryStateVariable(v4);
+    bd.addAuxiliaryStateVariable(v4,BehaviourData::UNREGISTRED);
     TFEL_TESTS_ASSERT(!bd.hasGlossaryName("seq"));
     TFEL_TESTS_ASSERT(!bd.hasEntryName("seq"));
     TFEL_TESTS_ASSERT(bd.getExternalName("seq")=="seq");
@@ -180,9 +182,9 @@ private:
       TFEL_TESTS_ASSERT(find(enames.begin(),enames.end(),"SomeStressNorm")!=enames.end());
     }
     // will throw since v5 name is a glossary name
-    TFEL_TESTS_CHECK_THROW(bd.addLocalVariable(v5),runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.addLocalVariable(v5,BehaviourData::UNREGISTRED),runtime_error);
     // will throw since v6 name as already been used as an entry name
-    TFEL_TESTS_CHECK_THROW(bd.addLocalVariable(v6),runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.addLocalVariable(v6,BehaviourData::UNREGISTRED),runtime_error);
     {
       TFEL_TESTS_ASSERT(!bd.isUsedAsEntryName(v.name));
       TFEL_TESTS_ASSERT(!bd.isUsedAsEntryName(v2.name));
@@ -226,7 +228,7 @@ private:
     TFEL_TESTS_ASSERT(bd.isPersistentVariableName("seq"));
     TFEL_TESTS_ASSERT(bd.isStateVariableName("p"));
     TFEL_TESTS_ASSERT(bd.isStateVariableIncrementName("dp"));
-    const auto r = bd.getRegistredVariableNames();
+    const auto r = bd.getVariablesNames();
     TFEL_TESTS_ASSERT(r.size()==4);
     TFEL_TESTS_ASSERT(r.find("young")!=r.end());
     TFEL_TESTS_ASSERT(r.find("nu")!=r.end());
@@ -262,7 +264,14 @@ private:
     TFEL_TESTS_ASSERT(a2.is<bool>());
     TFEL_TESTS_ASSERT(a3.is<unsigned short>());
   } // end of test3
-  
+  void test4(void){
+    BehaviourData bd;
+    bd.reserveName("young");
+    const auto v  = VariableDescription{"real","young",1,0u};
+    TFEL_TESTS_CHECK_THROW(bd.addMaterialProperty(v,BehaviourData::UNREGISTRED),
+			   std::runtime_error);
+    bd.addMaterialProperty(v,BehaviourData::ALREADYREGISTRED);
+  } // end of test4
 };
 
 TFEL_TESTS_GENERATE_PROXY(BehaviourDataTest,

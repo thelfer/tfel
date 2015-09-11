@@ -16,8 +16,6 @@
 #include<stdexcept>
 #include<algorithm>
 
-#include<iostream>
-
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/BehaviourDescription.hxx"
 
@@ -33,10 +31,8 @@ namespace mfront
     using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a);
-      typename map<Hypothesis,MBDPtr>::iterator p;
-      for(p=this->sd.begin();p!=this->sd.end();++p){
-  	BehaviourData& bdata = *(p->second);
-  	(bdata.*m)(a);
+      for(auto md : this->sd){
+  	(md.second.get()->*m)(a);
       }
     } else {
       (this->getBehaviourData2(h).*m)(a);
@@ -113,19 +109,16 @@ namespace mfront
   static void
   BehaviourDescriptionCheckThermalExpansionCoefficientArgument(const MaterialPropertyDescription& a)
   {
-    using namespace std;
     if(!((a.inputs.size())||(a.inputs.size()!=1u))){
-      string msg("BehaviourDescriptionCheckThermalExpansionCoefficientArgument : "
-		 "thermal expansion shall only depend on temperature or be constant");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescriptionCheckThermalExpansionCoefficientArgument : "
+			       "thermal expansion shall only depend on temperature or be constant"));
     }
     if(a.inputs.size()==1u){
       const auto& v = a.inputs.front();
       const auto& vn = v.getExternalName(a.glossaryNames,a.entryNames);
       if(vn!="Temperature"){
-	string msg("BehaviourDescriptionCheckThermalExpansionCoefficientArgument : "
-		   "thermal expansion shall only depend on temperature");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("BehaviourDescriptionCheckThermalExpansionCoefficientArgument : "
+				 "thermal expansion shall only depend on temperature"));
       }
     }
   } // end of BehaviourDescriptionCheckThermalExpansionCoefficientArgument
@@ -479,11 +472,9 @@ namespace mfront
   void
   BehaviourDescription::declareAsASmallStrainStandardBehaviour(void)
   {
-    using namespace std;
     if(!this->mvariables.empty()){
-      string msg("BehaviourDescription::declareAsASmallStrainStandardBehaviour : ");
-      msg += "some driving variables are already declared";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
+			       "some driving variables are already declared"));
     }
     DrivingVariable eto;
     eto.name = "eto";
@@ -494,16 +485,17 @@ namespace mfront
     sig.type = "StressStensor";
     this->mvariables.insert({eto,sig});
     this->type = BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR;
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"eto");
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"deto");
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sig");
   }
 
   void
   BehaviourDescription::declareAsAFiniteStrainStandardBehaviour(void)
   {
-    using namespace std;
     if(!this->mvariables.empty()){
-      string msg("BehaviourDescription::declareAsAFiniteStrainStandardBehaviour : ");
-      msg += "some driving variables are already declared";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
+			       "some driving variables are already declared"));
     }
     DrivingVariable F;
     F.name = "F";
@@ -514,8 +506,25 @@ namespace mfront
     sig.type = "StressStensor";
     this->mvariables.insert({F,sig});
     this->type = BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR;
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"F0");
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"F1");
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sig");
   }
-    
+
+  void
+  BehaviourDescription::addLibraryDependency(const std::string& l){
+    if(std::find(this->librariesDependencies.begin(),
+		 this->librariesDependencies.end(),l)==this->librariesDependencies.end()){
+      this->librariesDependencies.push_back(l);
+    }
+  } // end of BehaviourDescription::addLibraryDependency
+
+  const std::vector<std::string>&
+  BehaviourDescription::getLibrariesDependencies(void) const
+  {
+    return this->librariesDependencies;
+  }
+  
   void
   BehaviourDescription::declareAsACohesiveZoneModel(void)
   {
@@ -534,23 +543,24 @@ namespace mfront
     t.type = "ForceTVector";
     this->mvariables.insert({u,t});
     this->type = BehaviourDescription::COHESIVEZONEMODEL;
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"u");
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"du");
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"t");
   }
 
   void
   BehaviourDescription::addMainVariable(const DrivingVariable&    v,
 					const ThermodynamicForce& f)
   {
-    using namespace std;
     if(this->type!=BehaviourDescription::GENERALBEHAVIOUR){
-      string msg("BehaviourDescription::addMainVariables : "
-		 "one can not add a main variable if the behaviour "
-		 "don't have a general behaviour type");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::addMainVariables : "
+			       "one can not add a main variable if the behaviour "
+			       "don't have a general behaviour type"));
     }
     if(!this->mvariables.insert({v,f}).second){
-      string msg("BehaviourDescription::addMainVariables : "
-		 "a driving variable '"+v.name+"' has already been declared");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::addMainVariables : "
+			       "a driving variable '"+v.name+"' has "
+			       "already been declared"));
     }
   } // end of BehaviourDescription::addMainVariables
 
@@ -564,12 +574,8 @@ namespace mfront
   bool
   BehaviourDescription::isDrivingVariableName(const std::string& n) const
   {
-    using namespace std;
-    map<DrivingVariable,
-      ThermodynamicForce>::const_iterator pm;
-    for(pm=this->getMainVariables().begin();pm!=this->getMainVariables().end();++pm){
-      const auto& dv = pm->first;
-      if(dv.name==n){
+    for(const auto& v : this->getMainVariables()){
+      if(v.first.name==n){
 	return true;
       }
     }
@@ -579,11 +585,8 @@ namespace mfront
   bool
   BehaviourDescription::isDrivingVariableIncrementName(const std::string& n) const
   {
-    using namespace std;
-    map<DrivingVariable,
-      ThermodynamicForce>::const_iterator pm;
-    for(pm=this->getMainVariables().begin();pm!=this->getMainVariables().end();++pm){
-      const auto& dv = pm->first;
+    for(const auto& v : this->getMainVariables()){
+      const auto& dv = v.first;
       if(dv.increment_known){
 	if("d"+dv.name==n){
 	  return true;
@@ -597,16 +600,13 @@ namespace mfront
 	    SupportedTypes::TypeSize>
   BehaviourDescription::getMainVariablesSize(void) const
   {
-    using namespace std;
-    map<DrivingVariable,
-      ThermodynamicForce>::const_iterator pm;
-    SupportedTypes::TypeSize ov;
-    SupportedTypes::TypeSize of;
-    for(pm=this->getMainVariables().begin();pm!=this->getMainVariables().end();++pm){
-      ov += this->getTypeSize(pm->first.type,1u);
-      of += this->getTypeSize(pm->second.type,1u);
+    auto ov = SupportedTypes::TypeSize{};
+    auto of = SupportedTypes::TypeSize{};
+    for(const auto& v : this->getMainVariables()){
+      ov += this->getTypeSize(v.first.type,1u);
+      of += this->getTypeSize(v.second.type,1u);
     }
-    return make_pair(ov,of);
+    return {ov,of};
   } // end of BehaviourDescription::getMainVariablesSize
 
   void
@@ -712,9 +712,8 @@ namespace mfront
   void
   BehaviourDescription::checkModellingHypothesis(const Hypothesis& h) const
   {
-    using namespace std;
     if(this->getModellingHypotheses().find(h)==this->getModellingHypotheses().end()){
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "BehaviourDescription::checkModellingHypothesis : "
 	  << "modelling hypothesis '" << ModellingHypothesis::toString(h) 
 	  << "' is not supported. Refer to the documentation of "
@@ -724,7 +723,7 @@ namespace mfront
       for(const auto & elem : this->hypotheses){
 	msg << "\n- '" << ModellingHypothesis::toString(elem) << "'";
       }
-      throw(runtime_error(msg.str()));
+      throw(std::runtime_error(msg.str()));
     }
   } // end of BehaviourDescription::checkModellingHypothesis
 
@@ -737,11 +736,9 @@ namespace mfront
   const std::set<BehaviourDescription::Hypothesis>&
   BehaviourDescription::getModellingHypotheses(void) const
   {
-    using namespace std;
     if(this->hypotheses.empty()){
-      string msg("BehaviourDescription::getModellingHypotheses : "
-		 "hypothesis undefined yet");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::getModellingHypotheses : "
+			       "hypothesis undefined yet"));
     }
     return this->hypotheses;
   } // end of BehaviourDescription::getModellingHypotheses
@@ -784,9 +781,9 @@ namespace mfront
     using namespace std;
     // never ever trust a user
     if(h.empty()){
-      string msg("BehaviourDescription::setHypotheses : "
-		 "empty set of modelling hypotheses specificied");
-      throw(runtime_error(msg));
+      string msg();
+      throw(runtime_error("BehaviourDescription::setHypotheses : "
+			  "empty set of modelling hypotheses specificied"));
     }
     // check that the user did not already set the modelling hypotheses
     if(!this->hypotheses.empty()){
@@ -851,119 +848,145 @@ namespace mfront
 
   void
   BehaviourDescription::addMaterialProperties(const Hypothesis h,
-					      const VariableDescriptionContainer& v)
+					      const VariableDescriptionContainer& v,
+					      const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addMaterialProperty;
-    this->addVariables(h,v,f);
+    this->addVariables(h,v,s,f);
   }
 
   void
   BehaviourDescription::addMaterialProperty(const Hypothesis h,
-					    const VariableDescription& v)
+					    const VariableDescription& v,
+					    const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addMaterialProperty;
-    this->addVariable(h,v,f);
+    this->addVariable(h,v,s,f);
   }
 
   void
   BehaviourDescription::addIntegrationVariables(const Hypothesis h,
-						const VariableDescriptionContainer& v)
+						const VariableDescriptionContainer& v,
+						const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addIntegrationVariable;
-    this->addVariables(h,v,f);
+    this->addVariables(h,v,s,f);
   }
 
   void
   BehaviourDescription::addStateVariables(const Hypothesis h,
-					  const VariableDescriptionContainer& v)
+					  const VariableDescriptionContainer& v,
+					  const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addStateVariable;
-    this->addVariables(h,v,f);
+    this->addVariables(h,v,s,f);
   }
 
   void
   BehaviourDescription::addIntegrationVariable(const Hypothesis h,
-					       const VariableDescription& v)
+					       const VariableDescription& v,
+					       const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addIntegrationVariable;
-    this->addVariable(h,v,f);
+    this->addVariable(h,v,s,f);
   }
 
   void
   BehaviourDescription::addStateVariable(const Hypothesis h,
-					 const VariableDescription& v)
+					 const VariableDescription& v,
+					 const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addStateVariable;
-    this->addVariable(h,v,f);
+    this->addVariable(h,v,s,f);
   }
 
   void
   BehaviourDescription::addAuxiliaryStateVariables(const Hypothesis h,
-						   const VariableDescriptionContainer& v)
+						   const VariableDescriptionContainer& v,
+						   const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addAuxiliaryStateVariable;
-    this->addVariables(h,v,f);
+    this->addVariables(h,v,s,f);
   }
 
   void
   BehaviourDescription::addAuxiliaryStateVariable(const Hypothesis h,
-						  const VariableDescription& v)
+						  const VariableDescription& v,
+						  const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addAuxiliaryStateVariable;
-    this->addVariable(h,v,f);
+    this->addVariable(h,v,s,f);
   }
 
   void
   BehaviourDescription::addExternalStateVariables(const Hypothesis h,
-						  const VariableDescriptionContainer& v)
+						  const VariableDescriptionContainer& v,
+						  const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addExternalStateVariable;
-    this->addVariables(h,v,f);
+    this->addVariables(h,v,s,f);
   }
 
   void
   BehaviourDescription::addExternalStateVariable(const Hypothesis h,
-						 const VariableDescription& v)
+						 const VariableDescription& v,
+						 const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addExternalStateVariable;
-    this->addVariable(h,v,f);
+    this->addVariable(h,v,s,f);
   }
 
   void
   BehaviourDescription::addLocalVariables(const Hypothesis h,
-					  const VariableDescriptionContainer& v)
+					  const VariableDescriptionContainer& v,
+					  const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addLocalVariable;
-    this->addVariables(h,v,f);
+    this->addVariables(h,v,s,f);
   }
 
   void
   BehaviourDescription::addLocalVariable(const Hypothesis h,
-					 const VariableDescription& v)
+					 const VariableDescription& v,
+					 const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addLocalVariable;
-    this->addVariable(h,v,f);
+    this->addVariable(h,v,s,f);
   }
 
   void
   BehaviourDescription::addParameter(const Hypothesis h,
-				     const VariableDescription& v)
+				     const VariableDescription& v,
+				     const BehaviourData::RegistrationStatus s)
   {
-    typedef void (BehaviourData::* mptr)(const VariableDescription&);
+    typedef void (BehaviourData::* mptr)(const VariableDescription&,
+					 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addParameter;
-    this->addVariable(h,v,f);
+    this->addVariable(h,v,s,f);
   }
 
   bool
@@ -1065,70 +1088,79 @@ namespace mfront
 
   void
   BehaviourDescription::addStaticVariable(const Hypothesis h,
-					  const StaticVariableDescription& v)
+					  const StaticVariableDescription& v,
+					  const BehaviourData::RegistrationStatus s)
   {
     using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->d.addStaticVariable(v);
+      this->d.addStaticVariable(v,s);
       map<Hypothesis,MBDPtr>::iterator p;
       for(p=this->sd.begin();p!=this->sd.end();++p){
-	p->second->addStaticVariable(v);
+	p->second->addStaticVariable(v,s);
       }
     } else {
-      this->getBehaviourData2(h).addStaticVariable(v);
+      this->getBehaviourData2(h).addStaticVariable(v,s);
     }
   } // end of BehaviourDescription::addStaticVariable
 
   void
   BehaviourDescription::addVariables(const Hypothesis h,
 				     const VariableDescriptionContainer& v,
-				     void (BehaviourData::* m)(const VariableDescription&))
+				     const BehaviourData::RegistrationStatus s,
+				     void (BehaviourData::* m)(const VariableDescription&,
+							       const BehaviourData::RegistrationStatus))
   {
     using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->addVariables(this->d,v,m);
+      this->addVariables(this->d,v,s,m);
       map<Hypothesis,MBDPtr>::iterator p;
       for(p=this->sd.begin();p!=this->sd.end();++p){
-	this->addVariables(*(p->second),v,m);
+	this->addVariables(*(p->second),v,s,m);
       }
     } else {
-      this->addVariables(this->getBehaviourData2(h),v,m);
+      this->addVariables(this->getBehaviourData2(h),v,s,m);
     }
   }
 
   void
   BehaviourDescription::addVariable(const Hypothesis h,
 				    const VariableDescription& v,
-				    void (BehaviourData::* m)(const VariableDescription&))
+				    const BehaviourData::RegistrationStatus s,
+				    void (BehaviourData::* m)(const VariableDescription&,
+							      const BehaviourData::RegistrationStatus))
   {
     using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->addVariable(this->d,v,m);
+      this->addVariable(this->d,v,s,m);
       map<Hypothesis,MBDPtr>::iterator p;
       for(p=this->sd.begin();p!=this->sd.end();++p){
-	this->addVariable(*(p->second),v,m);
+	this->addVariable(*(p->second),v,s,m);
       }
     } else {
-      this->addVariable(this->getBehaviourData2(h),v,m);
+      this->addVariable(this->getBehaviourData2(h),v,s,m);
     }
   }
 
   void
   BehaviourDescription::addVariables(BehaviourData& b,
 				     const VariableDescriptionContainer& v,
-				     void (BehaviourData::* m)(const VariableDescription&))
+				     const BehaviourData::RegistrationStatus s,
+				     void (BehaviourData::* m)(const VariableDescription&,
+							       const BehaviourData::RegistrationStatus))
   {
     for(const auto & elem : v){
-      this->addVariable(b,elem,m);
+      this->addVariable(b,elem,s,m);
     }
   }
 
   void
   BehaviourDescription::addVariable(BehaviourData& b,
 				    const VariableDescription& v,
-				    void (BehaviourData::* m)(const VariableDescription&))
+				    const BehaviourData::RegistrationStatus s,
+				    void (BehaviourData::* m)(const VariableDescription&,
+							      const BehaviourData::RegistrationStatus))
   {
-    (b.*m)(v);
+    (b.*m)(v,s);
   }
 
   bool BehaviourDescription::areAllMechanicalDataSpecialised(void) const
@@ -1508,12 +1540,26 @@ namespace mfront
   } // end of BehaviourDescription::getAttributes
 
   void
-  BehaviourDescription::registerVariable(const Hypothesis h,
-					 const std::string& n)
+  BehaviourDescription::reserveName(const Hypothesis h,
+				    const std::string& n)
   {
-    this->callBehaviourData(h,&BehaviourData::registerVariable,n);
-  } // end of BehaviourDescription::registerVariableName
+    this->callBehaviourData(h,&BehaviourData::reserveName,n);
+  }
+  
+  void
+  BehaviourDescription::registerMemberName(const Hypothesis h,
+					   const std::string& n)
+  {
+    this->callBehaviourData(h,&BehaviourData::registerMemberName,n);
+  } // end of BehaviourDescription::registerMemberName
 
+  void
+  BehaviourDescription::registerStaticMemberName(const Hypothesis h,
+						 const std::string& n)
+  {
+    this->callBehaviourData(h,&BehaviourData::registerStaticMemberName,n);
+  } // end of BehaviourDescription::registerMemberName
+  
   void
   BehaviourDescription::addMaterialLaw(const std::string& m)
   {
@@ -1536,7 +1582,7 @@ namespace mfront
     std::pair<bool,bool> r{true,false};
     for(const auto & elem : h){
       const auto& bdata = this->getBehaviourData(elem);
-      const auto& vn = bdata.getRegistredVariableNames();
+      const auto& vn = bdata.getVariablesNames();
       const bool b = vn.find(v)!=vn.end();
       r.first  = r.first  && b;
       r.second = r.second || b;

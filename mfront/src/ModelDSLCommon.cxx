@@ -38,6 +38,48 @@ namespace std{
 
 namespace mfront{
 
+  ModelDSLCommon::ModelDSLCommon(){
+    for(const auto& v : DSLBase::getDefaultReservedNames()){
+      this->reserveName(v);
+    }
+  }
+  
+  void
+  ModelDSLCommon::addLibraryDependency(const std::string& l){
+    if(std::find(this->librariesDependencies.begin(),
+		 this->librariesDependencies.end(),l)==this->librariesDependencies.end()){
+      this->librariesDependencies.push_back(l);
+    }
+  } // end of ModelDSLCommon::addLibraryDependency
+  
+  void
+  ModelDSLCommon::reserveName(const std::string& n){
+    if(!this->reservedNames.insert(n).second){
+      throw(std::runtime_error("ModelDSLCommon::reserveName: "
+			       "name '"+n+"' already reserved"));
+    }
+  }
+  
+  void
+  ModelDSLCommon::registerMemberName(const std::string& n)
+  {
+    this->reserveName(n);
+    if(!this->memberNames.insert(n).second){
+      throw(std::runtime_error("ModelDSLCommon::registerMemberName: "
+			       "name '"+n+"' already reserved"));
+    }
+  } // end of ModelDSLCommon::registerMemberName
+
+  void
+  ModelDSLCommon::registerStaticMemberName(const std::string& n)
+  {
+    this->reserveName(n);
+    if(!this->staticMemberNames.insert(n).second){
+      throw(std::runtime_error("ModelDSLCommon::registerStaticMemberName: "
+			       "name '"+n+"' already reserved"));
+    }
+  } // end of ModelDSLCommon::registerStaticMemberName
+  
   AbstractDSL::DSLTarget
   ModelDSLCommon::getTargetType(void) const{
     return MODELDSL;
@@ -383,21 +425,29 @@ namespace mfront{
   ModelDSLCommon::treatFunction(void)
   {
     using namespace std;
+    auto isStaticMemberName = [](const ModelData& d,
+				 const std::string& n){
+      for(const auto& v : d.staticMemberNames){
+	if(v==n){
+	  return true;
+	}
+      }
+      return false;
+    };
+    auto isMemberName = [](const ModelData& d,
+			   const std::string& n){
+      for(const auto& v : d.memberNames){
+	if(v==n){
+	  return true;
+	}
+      }
+      return false;
+    };
     Function f;
-    pair<string,unsigned short> dv;
-    VariableDescriptionContainer::iterator p;
-    set<string>::const_iterator p2;
-    set<string>::iterator p3;
-    StaticVariableDescriptionContainer::const_iterator p5;
-    map<string,unsigned short>::const_iterator p6;
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
-    unsigned int currentLine;
-    bool newLine;
-    bool newInstruction;
-    bool found = false;
     f.useTimeIncrement = false;
-    this->registerVariable("functor"+to_string(this->functions.size()),false);
+    this->registerMemberName("functor"+to_string(this->functions.size()));
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
     f.name = this->current->value;
     if(!this->isValidIdentifier(f.name)){
@@ -405,18 +455,18 @@ namespace mfront{
       msg += "function name '"+f.name+"' is not valid";
       throw(runtime_error(msg));
     }
-    this->registerVariable(f.name,false);
-    this->reserveName(f.name+".Domain",false);
-    this->reserveName(f.name+".Domains",false);
+    this->registerMemberName(f.name);
+    this->reserveName(f.name+".Domain");
+    this->reserveName(f.name+".Domains");
     f.line = this->current->line;
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatFunction","{");
     ++openedBrackets;
-    newInstruction = true;
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction",
 			    "Expected body of function '"+f.name+"'.");
-    currentLine = this->current->line;
-    newLine=true;
+    auto currentLine    = this->current->line;
+    auto newInstruction = true;
+    auto newLine        = true;
     if(getDebugMode()){
       f.body  +="#line " + to_string(currentLine) + " \"" + this->fileName + "\"\n";
     }
@@ -456,36 +506,20 @@ namespace mfront{
 	if(!newLine){
 	  f.body  += " ";
 	}
-	if(this->staticVarNames.find(this->current->value)!=this->staticVarNames.end()){
-	  // treating the case of static variables
-	  found=false;
-	  for(p5=ModelData::staticVars.begin();(p5!=ModelData::staticVars.end())&&(!found);){
-	    if(p5->name==this->current->value){
-	      found = true;
-	    } else {
-	      ++p5;
-	    }
-	  }
-	  if(!found){
-	    this->throwRuntimeError("ModelDSLCommon::treatFunction",
-				    "Internal error while treating static var '"+
-				    this->current->value+"' in the body of function "+
-				    f.name+"'");
-	  }
+	if(isStaticMemberName(*this,this->current->value)){
 	  f.body  += "(" + this->className + ":: "+ this->current->value + ")";
-	} else if(this->varNames.find(this->current->value)!=this->varNames.end()){
+	} else if(isMemberName(*this,this->current->value)){
 	  bool treated = false;
 	  if(newInstruction){
 	    string var = this->current->value;
 	    string op;
-	    bool modifier;
 	    ++(this->current);
 	    if(this->current==fileTokens.end()){
 	      string msg("ModelDSLCommon::treatFunction : ");
 	      msg+="unexpected end of file while reading body of function " + f.name;
 	      throw(runtime_error(msg));
 	    }
-	    modifier = false;
+	    auto modifier = false;
 	    if(this->current->value=="="){
 	      op = "=";
 	      modifier = true;
@@ -503,8 +537,8 @@ namespace mfront{
 	      modifier = true;
 	    }
 	    if(modifier){
-	      found = false;
-	      for(p=this->outputs.begin();(p!=this->outputs.end())&&(!found);){
+	      bool found = false;
+	      for(auto p=this->outputs.begin();(p!=this->outputs.end())&&(!found);){
 		if(p->name==var){
 		  found = true;
 		} else {
@@ -518,7 +552,7 @@ namespace mfront{
 	      }
 	      f.body  += var + " " + op + " ";
 	      f.modifiedVariables.insert(var);
-	      p6 = f.depths.find(var);
+	      auto p6 = f.depths.find(var);
 	      if(p6==f.depths.end()){
 		f.depths[var] = 0;
 	      }	      
@@ -528,26 +562,17 @@ namespace mfront{
 	    }
 	  }
 	  if(!treated){
-	    // treating the case of global parameters
-	    for(p =this->globalParameters.begin();
-		(p!=this->globalParameters.end())&&(!treated);++p){
+	    // treating the case of local parameters
+	    for(auto p =this->parameters.begin();
+		(p!=this->parameters.end())&&(!treated);++p){
 	      if(p->name==this->current->value){
 		treated = true;
-		f.globalParameters.insert(this->current->value);
+		f.parameters.insert(this->current->value);
 		f.body  += "(this->" + this->current->value + ")";
 	      }
 	    }
 	    // treating the case of local parameters
-	    for(p =this->localParameters.begin();
-		(p!=this->localParameters.end())&&(!treated);++p){
-	      if(p->name==this->current->value){
-		treated = true;
-		f.localParameters.insert(this->current->value);
-		f.body  += "(this->" + this->current->value + ")";
-	      }
-	    }
-	    // treating the case of local parameters
-	    for(p =this->constantMaterialProperties.begin();
+	    for(auto p =this->constantMaterialProperties.begin();
 		(p!=this->constantMaterialProperties.end())&&(!treated);++p){
 	      if(p->name==this->current->value){
 		treated = true;
@@ -558,8 +583,8 @@ namespace mfront{
 	    if(!treated){
 	      if(this->isInputVariable(this->current->value)){
 		f.usedVariables.insert(this->current->value);
-		dv = this->decomposeVariableName(this->current->value);
-		p6 = f.depths.find(dv.first);
+		auto dv = this->decomposeVariableName(this->current->value);
+		auto p6 = f.depths.find(dv.first);
 		if(p6!=f.depths.end()){
 		  if(dv.second>p6->second){
 		    f.depths[dv.first] = dv.second;
@@ -570,8 +595,8 @@ namespace mfront{
 		f.body  += this->current->value;
 	      } else if(this->isOutputVariable(this->current->value)){
 		f.usedVariables.insert(this->current->value);
-		dv = this->decomposeVariableName(this->current->value);
-		p6 = f.depths.find(dv.first);
+		auto dv = this->decomposeVariableName(this->current->value);
+		auto p6 = f.depths.find(dv.first);
 		if(p6!=f.depths.end()){
 		  if(dv.second>p6->second){
 		    f.depths[dv.first] = dv.second;
@@ -616,8 +641,9 @@ namespace mfront{
       throw(runtime_error(msg));
     }
 
-    for(p2=f.modifiedVariables.begin();p2!=f.modifiedVariables.end();++p2){
-      if((p3=f.usedVariables.find(*p2))!=f.usedVariables.end()){
+    for(auto p2=f.modifiedVariables.begin();p2!=f.modifiedVariables.end();++p2){
+      auto p3=f.usedVariables.find(*p2);
+      if(p3!=f.usedVariables.end()){
 	f.usedVariables.erase(*p3);
       }
     }
@@ -629,52 +655,50 @@ namespace mfront{
   {
     using namespace std;
     if(!this->functions.empty()){
-      string msg("ModelDSLCommon::treatInput : ");
-      msg += "outputs must be declared before declaring functions";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("ModelDSLCommon::treatInput : "
+			       "outputs must be declared before "
+			       "declaring functions"));
     }
-    VariableDescriptionContainer::const_iterator p;
-    this->readVarList(this->outputs,string("Field"),false,false,false);
-    for(p=this->outputs.begin();p!=this->outputs.end();++p){
-      this->fieldNames.insert(p->name);
+    VariableDescriptionContainer noutputs;
+    this->readVarList(noutputs,"Field",false);
+    for(const auto& v : noutputs){
+      this->registerMemberName(v.name);
+      this->fieldNames.insert(v.name);
+      this->outputs.push_back(v);
     }
   } // end of ModelDSLCommon::treatOutput(void)
 
   void
   ModelDSLCommon::treatInput(void)
   {
-    using namespace std;
     if(!this->functions.empty()){
-      string msg("ModelDSLCommon::treatInput : ");
-      msg += "inputs must be declared before declaring functions";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("ModelDSLCommon::treatInput : "
+			       "inputs must be declared before declaring functions"));
     }
-    VariableDescriptionContainer::const_iterator p;
-    this->readVarList(this->inputs,string("Field"),false,false,false);
-    for(p=this->inputs.begin();p!=this->inputs.end();++p){
-      this->fieldNames.insert(p->name);
+    VariableDescriptionContainer ninputs;
+    this->readVarList(ninputs,"Field",false);
+    for(const auto& v : ninputs){
+      this->registerMemberName(v.name);
+      this->fieldNames.insert(v.name);
+      this->inputs.push_back(v);
     }
   } // end of ModelDSLCommon::treatInput(void)
 
   static void
   ModelDSLCommonCheckIfNameIsAnEntryNameOrAGlossaryName(const std::map<std::string,std::string>& g,
-								 const std::map<std::string,std::string>& e,
-								 const std::string& n)
+							const std::map<std::string,std::string>& e,
+							const std::string& n)
   {
-    using namespace std;
-    map<string,string>::const_iterator p;
-    for(p=g.begin();p!=g.end();++p){
-      if(p->second==n){
-	string msg("ModelDSLCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
-	msg += "name '"+n+"' is already used as a glossary name";
-	throw(runtime_error(msg));
+    for(const auto& gn : g){
+      if(gn.second==n){
+	throw(std::runtime_error("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : "
+				 "name '"+n+"' is already used as a glossary name"));
       }
     }
-    for(p=e.begin();p!=e.end();++p){
-      if(p->second==n){
-	string msg("ModelDSLCommonCheckIfNameIsAnEntryNameOrAGlossaryName : ");
-	msg += "name '"+n+"' is already used as an entry name";
-	throw(runtime_error(msg));
+    for(const auto& en : e){
+      if(en.second==n){
+	throw(std::runtime_error("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : "
+				 "name '"+n+"' is already used as a entry name"));
       }
     }
   }
@@ -725,19 +749,15 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Glossary name too short.");
       }
-      string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
+      const auto glossaryName = this->current->value.substr(1,this->current->value.size()-2);
       ModelDSLCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 								     this->entryNames,
 								     glossaryName);
       if(!glossary.contains(glossaryName)){
-	string msg("MaterialPropertyDSL::treatMethod : "
-		   "'"+glossaryName+"' is not a valid glossary name");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MaterialPropertyDSL::treatMethod : "
+				 "'"+glossaryName+"' is not a valid glossary name"));
       }
       const auto& k = glossary.getGlossaryEntry(glossaryName).getKey();
-      if(k!=this->currentVar){
-	this->reserveName(k,false);
-      }
       if(!this->glossaryNames.insert({this->currentVar,k}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
@@ -760,7 +780,7 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Entry file name too short.");
       }
-      const string entryName = this->current->value.substr(1,this->current->value.size()-2);
+      const auto entryName = this->current->value.substr(1,this->current->value.size()-2);
       ModelDSLCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 								     this->entryNames,
 								     entryName);
@@ -773,7 +793,11 @@ namespace mfront{
 	throw(runtime_error(msg.str()));
       }
       if(entryName!=this->currentVar){
-	this->reserveName(entryName,false);
+	this->reserveName(entryName);
+      }
+      if(!CxxTokenizer::isValidIdentifier(entryName)){
+	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
+				"Invalid entry name '"+entryName+"'");
       }
       if(!this->entryNames.insert({this->currentVar,entryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
@@ -809,9 +833,9 @@ namespace mfront{
       }
       for(unsigned int i=1;i<=value;++i){
 	const auto vn = this->currentVar+"_"+to_string(i);
-	this->registerVariable(vn,false);
-	this->registerVariable("f_"+vn,false);
-	this->registerVariable("ff_"+vn,false);
+	this->registerMemberName(vn);
+	this->registerMemberName("f_"+vn);
+	this->registerMemberName("ff_"+vn);
 	if(!this->fieldNames.insert(vn).second){
 	  this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				  "Field '"+vn+"' has already been declared "
@@ -833,7 +857,6 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::glossary;
-    string methodName;
     if(!this->functions.empty()){
       string msg("ModelDSLCommon::treatInputMethod : ");
       msg += "input method must be called before declaring functions";
@@ -842,7 +865,7 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatInputMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
 			    "Expected method name.");
-    methodName = this->current->value;
+    const auto methodName = this->current->value;
     if((methodName!="setGlossaryName")&&
        (methodName!="setEntryName") &&
        (methodName!="setDepth")){
@@ -871,7 +894,7 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Glossary name too short.");
       }
-      string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
+      const auto glossaryName = this->current->value.substr(1,this->current->value.size()-2);
       ModelDSLCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 								     this->entryNames,
 								     glossaryName);
@@ -881,9 +904,6 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
       const auto& k = glossary.getGlossaryEntry(glossaryName).getKey();
-      if(k!=this->currentVar){
-	this->reserveName(k,false);
-      }
       if(!this->glossaryNames.insert({this->currentVar,k}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Glossary name for field '"+this->currentVar+"' already defined.");
@@ -906,7 +926,7 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Entry file name too short.");
       }
-      string entryName = this->current->value.substr(1,this->current->value.size()-2);
+      const auto entryName = this->current->value.substr(1,this->current->value.size()-2);
       ModelDSLCommonCheckIfNameIsAnEntryNameOrAGlossaryName(this->glossaryNames,
 								     this->entryNames,
 								     entryName);
@@ -919,7 +939,11 @@ namespace mfront{
 	throw(runtime_error(msg.str()));
       }
       if(entryName!=this->currentVar){
-	this->reserveName(entryName,false);
+	this->reserveName(entryName);
+      }
+      if(!CxxTokenizer::isValidIdentifier(entryName)){
+	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
+				"Invalid entry name '"+entryName+"'");
       }
       if(!this->entryNames.insert({this->currentVar,entryName}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
@@ -941,9 +965,9 @@ namespace mfront{
       }
       for(unsigned int i=1;i<=value;++i){
 	const auto vn = this->currentVar+"_"+to_string(i);
-	this->registerVariable(vn,false);
-	this->registerVariable("f_"+vn,false);
-	this->registerVariable("ff_"+vn,false);
+	this->registerMemberName(vn);
+	this->registerMemberName("f_"+vn);
+	this->registerMemberName("ff_"+vn);
 	if(!this->fieldNames.insert(this->currentVar+"_"+to_string(i)).second){
 	  this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				  "Field '"+vn+"' has already been declared "
@@ -960,153 +984,92 @@ namespace mfront{
   } // end of ModelDSLCommon::treatInputMethod
 
   void
-  ModelDSLCommon::treatGlobalParameter(void)
+  ModelDSLCommon::treatParameter(void)
   {
-    this->readVarList(this->globalParameters,false,false,false);
-  } // end of ModelDSLCommon::treatGlobalParameter(void)
-
-  void
-  ModelDSLCommon::treatGlobalParameterMethod(void) 
-  {
-    using namespace std; 
-    using namespace tfel::utilities;
-    string methodName;
-    this->readSpecifiedToken("ModelDSLCommon::treatGlobalParameterMethod",".");
-    this->checkNotEndOfFile("ModelDSLCommon::treatGlobalParameterMethod",
-			    "Expected method name.");
-    methodName = this->current->value;
-    if((methodName!="setGlossaryName")&&
-       (methodName!="setEntryName")&&
-       (methodName!="setDefaultValue")){
-      this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
-			      "Unknown method (valid methods for global parameters are "
-			      "setGlossaryName, setEntryName and setDefaultValue"
-			      ", read '"+methodName+"')");
+    VariableDescriptionContainer gp;
+    this->readVarList(gp,false);
+    for(const auto& p : gp){
+      this->registerMemberName(p.name);
+      this->parameters.push_back(p);
     }
-    ++(this->current);
-    this->readSpecifiedToken("ModelDSLCommon::treatGlobalParameterMethod","(");
-    if(methodName=="setGlossaryName"){
-      this->checkNotEndOfFile("ModelDSLCommon::treatGlobalParameterMethod",
-			      "Expected glossary name.");
-      if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
-	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
-	this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
-				"A glossary or an entry name has already been defined for field '"+
-				this->currentVar+"'");
-      }
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
-				"Expected a string as glossary name.");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
-				"Glossary name too short.");
-      }
-      string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->glossaryNames.insert({this->currentVar,glossaryName}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
-				"Glossary name for field '"+ this->currentVar +"' already defined.");
-      }
-    } else if(methodName=="setEntryName"){
-      this->checkNotEndOfFile("ModelDSLCommon::treatGlobalParameterMethod"
-			      "Expected entry file name.");
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
-				"Expected a string as entry file name.");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
-				"Entry file name too short.");
-      }
-      string entryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->entryNames.insert({this->currentVar,entryName}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatGlobalParameterMethod",
-				"Entry file name for field '"+ this->currentVar +"' already defined.");
-      }
-    } else if (methodName=="setDefaultValue"){
-      this->readDefaultValue();
-    }
-    ++(this->current);
-    this->readSpecifiedToken("ModelDSLCommon::treatGlobalParameterMethod",")");
-    this->readSpecifiedToken("ModelDSLCommon::treatGlobalParameterMethod",";");
-  } // end of ModelDSLCommon::treatGlobalParameterMethod
+  } // end of ModelDSLCommon::treatParameter(void)
+  
 
   void
-  ModelDSLCommon::treatLocalParameter(void)
-  {
-    this->readVarList(this->localParameters,false,false,false);
-  } // end of ModelDSLCommon::treatLocalParameter(void)
-
-  void
-  ModelDSLCommon::treatLocalParameterMethod(void) 
+  ModelDSLCommon::treatParameterMethod(void) 
   {
     using namespace std;
     using namespace tfel::utilities;
     string methodName;
-    this->readSpecifiedToken("ModelDSLCommon::treatLocalParameterMethod",".");
-    this->checkNotEndOfFile("ModelDSLCommon::treatLocalParameterMethod",
+    this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod",".");
+    this->checkNotEndOfFile("ModelDSLCommon::treatParameterMethod",
 			    "Expected method name.");
     methodName = this->current->value;
     if((methodName!="setGlossaryName")&&
        (methodName!="setEntryName")&&
        (methodName!="setDefaultValue")){
-      this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
+      this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
 			      "Unknown method (valid methods for local parameters are "
 			      "setGlossaryName, setEntryName and setDefaultValue"
 			      ", read "+methodName+").");
     }
     ++(this->current);
-    this->readSpecifiedToken("ModelDSLCommon::treatLocalParameterMethod","(");
+    this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod","(");
     if(methodName=="setGlossaryName"){
-      this->checkNotEndOfFile("ModelDSLCommon::treatLocalParameterMethod",
+      this->checkNotEndOfFile("ModelDSLCommon::treatParameterMethod",
 			      "Expected glossary name.");
       if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
 	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
-	this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
 				"A glossary or an entry name has already been defined for field '"
 				+this->currentVar+"'.");
       }
       if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
 				"Expected a string as glossary name.");
       }
       if(this->current->value.size()<3){
-	this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
 				"Glossary name too short.");
       }
       string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
       if(!this->glossaryNames.insert({this->currentVar,glossaryName}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
 				"Glossary name for field '"+ this->currentVar +"' already defined.");
       }
     } else if(methodName=="setEntryName"){
-      this->checkNotEndOfFile("ModelDSLCommon::treatLocalParameterMethod",
+      this->checkNotEndOfFile("ModelDSLCommon::treatParameterMethod",
 			      "Expected entry file name.");
       if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
 				"Expected a string as entry file name.");
       }
       if(this->current->value.size()<3){
-	this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
 				"Entry file name too short.");
       }
       string entryName = this->current->value.substr(1,this->current->value.size()-2);
       if(!this->entryNames.insert({this->currentVar,entryName}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatLocalParameterMethod",
+	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
     } else if (methodName=="setDefaultValue"){
       this->readDefaultValue();
     }
     ++(this->current);
-    this->readSpecifiedToken("ModelDSLCommon::treatLocalParameterMethod",")");
-    this->readSpecifiedToken("ModelDSLCommon::treatLocalParameterMethod",";");
-  } // end of ModelDSLCommon::treatLocalParameterMethod
+    this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod",")");
+    this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod",";");
+  } // end of ModelDSLCommon::treatParameterMethod
 
   void
   ModelDSLCommon::treatConstantMaterialProperty(void)
   {
-    this->readVarList(this->constantMaterialProperties,"real",false,false,false);
+    VariableDescriptionContainer cmp;
+    this->readVarList(cmp,"real",false);
+    for(const auto& mp : cmp){
+      this->registerMemberName(mp.name);
+      this->constantMaterialProperties.push_back(mp);
+    }
   } // end of ModelDSLCommon::treatConstantMaterialProperty(void)
 
   void
@@ -1120,11 +1083,10 @@ namespace mfront{
 			    "Expected method name.");
     methodName = this->current->value;
     if((methodName!="setGlossaryName")&&
-       (methodName!="setEntryName")&&
-       (methodName!="setDefaultValue")){
+       (methodName!="setEntryName")){
       this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
 			      "Unknown method (valid methods for local parameters are "
-			      "setGlossaryName, setEntryName and setDefaultValue"
+			      "setGlossaryName and setEntryName"
 			      ", read "+methodName+").");
     }
     ++(this->current);
@@ -1167,8 +1129,6 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
 				"Entry file name for field '"+ this->currentVar +"' already defined.");
       }
-    } else if (methodName=="setDefaultValue"){
-      this->readDefaultValue();
     }
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod",")");
@@ -1184,7 +1144,7 @@ namespace mfront{
     string res;
     bool found;
     found=false;
-    for(p=this->localParameters.begin();(p!=this->localParameters.end())&&(!found);){
+    for(p=this->parameters.begin();(p!=this->parameters.end())&&(!found);){
       if(p->name==this->currentVar){
 	found=true;
       } else {
@@ -1192,29 +1152,9 @@ namespace mfront{
       }
     }    
     if(!found){
-      for(p=this->globalParameters.begin();(p!=this->globalParameters.end())&&(!found);){
-	if(p->name==this->currentVar){
-	  found=true;
-	} else {
-	  ++p;
-	}
-      } 
-    }
-    if(!found){
-      for(p=this->constantMaterialProperties.begin();
-	  (p!=this->constantMaterialProperties.end())&&(!found);){
-	if(p->name==this->currentVar){
-	  found=true;
-	} else {
-	  ++p;
-	}
-      } 
-    }
-    if(!found){
       this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-			      "variable '"+this->currentVar+"' is neither a "
-			      "constant material properties, "
-			      "a local parameter or a global parameter");
+			      "variable '"+this->currentVar+"' is not "
+			      "a parameter");
     }
     this->checkNotEndOfFile("ModelDSLCommon::readDefaultValue",
 			    "Expected default value.");

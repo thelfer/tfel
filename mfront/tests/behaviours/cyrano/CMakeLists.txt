@@ -10,6 +10,7 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 
 set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
+  ExternalStateVariablesBoundsCheck
   Elasticity
   Elasticity2
   Elasticity3
@@ -94,6 +95,16 @@ set_tests_properties(cyranomaterialpropertiesboundscheck_mtest
   cyranomaterialpropertiesboundscheck2_mtest
   cyranomaterialpropertiesboundscheck5_mtest
   cyranomaterialpropertiesboundscheck8_mtest
+  PROPERTIES WILL_FAIL true)
+
+test_cyrano(externalstatevariablesboundscheck)
+test_cyrano(externalstatevariablesboundscheck2)
+test_cyrano(externalstatevariablesboundscheck3)
+test_cyrano(externalstatevariablesboundscheck4)
+test_cyrano(externalstatevariablesboundscheck5)
+set_tests_properties(cyranoexternalstatevariablesboundscheck_mtest
+  cyranoexternalstatevariablesboundscheck2_mtest
+  cyranoexternalstatevariablesboundscheck5_mtest
   PROPERTIES WILL_FAIL true)
 
 test_cyrano(elasticity)

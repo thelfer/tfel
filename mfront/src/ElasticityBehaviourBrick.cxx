@@ -47,21 +47,21 @@ namespace mfront{
       pss(true),
       gto(true)
   {
-    using namespace std;
+    typedef tfel::material::ModellingHypothesis MH; 
     // reserve some specific variables
-    this->dsl.reserveName("Je",false);
+    this->bd.reserveName(MH::UNDEFINEDHYPOTHESIS,"Je");
     // basic checks
     if(this->bd.getBehaviourType()!=
        BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		 "this BehaviourBrick is only usable for small strain behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
+			       "this BehaviourBrick is only usable for "
+			       "small strain behaviours"));
     }
     if(this->bd.getIntegrationScheme()!=
        BehaviourDescription::IMPLICITSCHEME){
-      string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		 "this BehaviourBrick is only usable in implicit schemes");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
+			       "this BehaviourBrick is only usable in "
+			       "implicit schemes"));
     }
     // parameters
     for(AbstractBehaviourBrick::Parameters::const_iterator pp=p.begin();pp!=p.end();++pp){
@@ -78,14 +78,13 @@ namespace mfront{
 	this->checkThatParameterHasNoValue(*pp);
 	this->gto = false;
       } else {
-	string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-		   "unsupported parameter '"+pp->first+"'");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
+				 "unsupported parameter '"+pp->first+"'"));
       }
     }
     if(this->pss){
-      this->dsl.registerVariable("etozz",false);
-      this->dsl.registerVariable("detozz",false);
+      this->bd.registerMemberName(MH::UNDEFINEDHYPOTHESIS,"etozz");
+      this->bd.registerMemberName(MH::UNDEFINEDHYPOTHESIS,"detozz");
     }
    } // end of ElasticityBehaviourBrick::ElasticityBehaviourBrick
 
@@ -112,8 +111,6 @@ namespace mfront{
       this->bd.checkVariablePosition("eel","StateVariable",0u);
       this->bd.checkVariableGlossaryName("eel",Glossary::ElasticStrain);
     } else {
-      this->dsl.registerVariable("eel",false);
-      this->dsl.registerVariable("deel",false);
       VariableDescription eel("StrainStensor","eel",1u,0u);
       eel.description = "elastic strain";
       this->bd.addStateVariable(h,eel);

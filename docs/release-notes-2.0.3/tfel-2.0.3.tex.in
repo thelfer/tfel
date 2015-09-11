@@ -1,0 +1,838 @@
+\documentclass[anti,projet]{note_technique_2010}
+
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\aster}{\texttt{Code\_\-Aster}}
+\newcommand{\alcyone}{\texttt{Alcyone}}
+\newcommand{\mfront}{\texttt{MFront}}
+\newcommand{\mtest}{\texttt{MTest}}
+\newcommand{\pleiades}{\texttt{Pleiades}}
+\newcommand{\licos}{\texttt{Licos}}
+
+\input{LSC}
+\auteurs{T. Helfer}
+\redacteur{T.~Helfer}
+\verificateur{V.~Marelle}
+\approbateur{B.~Collard}
+\emetteur{M.~Bauer}
+
+\titre{TFEL/MFront 2.0.3~: note de version}
+\dateversion{09/2015}
+%\dateredac{08/2015}
+\date{Septembre 2015}
+\indice{0}
+\typeaction{BE}
+\numero{} % 15-024}
+\numeroaffaire{A-SICOM-A1-07}
+\domaine{DEN/DISN/SIMU}
+\jalon{MFront open-source}
+\programmerecherche{SICOM}
+\accords{---}
+\clients{}
+\classification{DO}
+\motsclefs{
+  \pleiades{} - \castem{} - \aster{} - \mfront{}
+}
+
+% \codebarre{images/code_barre}
+\diffusionexterne{
+{EDF/R\&D}              & D. Banner       & 1 & Diffusion par\\
+                        & P. Barbrault    & 1 & courriel     \\
+                        & O. Marchand     & 1 & \\
+{EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
+                        & T. de Soza      & 1 & \\
+                        & E. Julan        & 1 & \\
+                        & J.-P. Lefèbre   & 1 & \\
+                        & I. Nestor       & 1 & \\
+                        & L. Flandi       & 1 & \\
+                        & M. Abbas        & 1 & \\
+                        & J. Delmas       & 1 & \\
+                        & D. Haboussa     & 1 & \\
+                        & M. Courtois     & 1 & \\
+                        & F. Hamon        & 1 & \\
+                        & N. Sellenet     & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+{EDF/R\&D/MMC/T20}      & C. Toulemonde   & 1 & \\
+{EDF/R\&D/MMC/T24}      & N. Rupin        & 1 & \\
+                        & É. Bosso        & 1 & \\
+                        & F. Latourte     & 1 & \\
+                        & M. Berveiller   & 1 & \\
+                        & A. Guéry        & 1 & \\
+                        & F. Curtit       & 1 & \\
+                        & Q. Shi          & 1 & \\
+{EDF/R\&D/MMC/T25}      & H. Wong         & 1 & \\
+                        & É. Pouiller     & 1 & \\
+                        & F. Douchin      & 1 & \\
+                        & C. Petry        & 1 & \\
+                        & R. Largenton    & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & V. Garat        & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & F. Arnoux       & 1 & \\
+                        & V. Rebeyrolle   & 1 & \\
+                        & J. Roland       & 1 & \\
+                        & B. Perrin       & 1 & \\
+}
+
+\diffusioninterne{
+  DEN/DISN/SIMU           & J.P. Deffain       & 1 & Diffusion par\\ 
+                          & D. Caruge          & 1 & courriel     \\ 
+  DEN/DM2S/SEMT           & X. Averty          & 1 & \\
+  DEN/DM2S/SEMT/DYN       & O. Jamond          & 1 & \\
+                          & F. Bliard          & 1 & \\
+                          & H. Bung            & 1 & \\
+  DEN/DM2S/SEMT/LM2S      & S. Pascal          & 1 & \\
+                          & P. Verpeaux        & 1 & \\
+                          & A. Millard         & 1 & \\
+                          & O. Fandeur         & 1 & \\
+  DEN/DPIE/SA2P           & A. Soniak          & 1 & \\
+  DEN/DMN                 & P. Yvon            & 1 & \\
+                          & P. Bossis          & 1 & \\
+  DEN/DMN/SRMA            & L. Portier         & 1 & \\
+                          & S. Carassou        & 1 & \\
+                          & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M       & L. Nicolas         & 1 & \\
+                          & L. Gelebart        & 1 & \\
+                          & M. Le Saux         & 1 & \\
+  DEN/DMN/SRMA/LA2M       & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX      & L. Chaffron        & 1 & \\
+                          & D. Sornin          & 1 & \\
+  DEN/DMN/SEMI            & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LM2E       & P. Gavoille        & 1 & \\
+  DEN/DMN/SEMI/LCMI       & V. Vandenberghe    & 1 & \\
+                          & A. Courcelle       & 1 & \\
+                          & F. Hure            & 1 & \\
+                          & D. Leboulch        & 1 & \\
+                          & Y. Robert          & 1 & \\
+                          & C. Ling            & 1 & \\
+  DEN/DER/SESI/LE2S       & P. Lamagnère       & 1 & \\
+                          & D. Gentet          & 1 & \\
+                          & Y. Lejeail         & 1 & \\
+  DEN/DPC/SECR/LECBA      & B. Bary            & 1 & \\
+                          & F. Bernachy-Barbe  & 1 & \\ 
+                          &                    &  & \\
+  DEN/DEC                 & P. Brossard        &  & Document disponible\\
+  DEN/DEC/PROJETS         & P. Obry            &  & sur intradec\\
+  DEN/DEC/SESC            & M. Bauer           &  & \\
+                          & C. Valot           &  & \\
+                          & M. Agard           &  & \\
+  DEN/DEC/SESC/LIPA       & C. Nonon-Solaro    &  & \\
+                          & R. Masson          &  & \\
+  DEN/DEC/SESC/LLCC       & G. Jomard          &  & \\
+  DEN/DEC/SESC/LC2I       & F. Delage          &  & \\
+                          & V. Blanc           &  & \\
+  DEN/DEC/SESC/LSC        & Tous               &  & \\
+
+}
+
+\stylebib{fr-insa}
+\fichierbib{@top_srcdir@/docs/release-notes-2.0.3/bibliographie}
+
+\resumecea{
+  La version 2.0.3 de {\tt TFEL} est une version de maintenance de la
+  branche \(2.0.x\). Par rapport à la version \(2.0.2\), il s'agit
+  essentiellement~:
+  \begin{itemize}
+  \item d'un ajout mineur visant à améliorer la gestion des lois de
+    comportement \mfront{} dans l'architecture \(2.0\) (jalon SICOM
+    \og~MFront ++~\fg n\(^{\circ}\)71)~;
+  \item de corrections d'anomalies mineures.
+  \end{itemize}
+  Ces évolutions sont détaillées dans cette note.
+ 
+  Nous donnons également différents éléments sur l'état du projet~:
+  \begin{itemize}
+  \item plates-formes supportées~;
+  \item indicateurs de qualité du développement~;
+  \item documentation disponible.
+  \end{itemize}
+}
+
+\begin{document}
+
+\section{Introduction}
+
+{\tt TFEL} est un projet qui fournit entre autres le générateur de
+code {\tt MFront}. Il s'agit d'un composant central de la plate-forme
+\pleiades{} utilisé par l'architecture \pleiades{} et par différents
+composants (ramses, thermo-hydraulique, TMFFT).
+
+{\tt TFEL} est également utilisé hors de la plate-forme \pleiades{} au
+sein de différents départements de la {\tt DEN} dans des codes tels
+que \castem{}~\cite{cea_cast3m_2014} ou {\tt
+  AMITEX\_FFT}~\cite{cea_amitex_fft_2014} et par EDF-R\&D via le code
+aux éléments finis \aster{}~\cite{edf_code_aster_2013} et le projet
+{\tt MAP} (Material ageing platform).
+
+Le développement de {\tt TFEL} se poursuit suivant trois branches~:
+\begin{itemize}
+\item la branche {\tt rliv-2.0} qui est une branche de maintenance de
+  la version \(2.0\) utilisée en production. Il s'agit de corrections
+  d'anomalies et éventuellement d'ajouts mineurs~;
+\item la branche {\tt trunk} est une version de développement toujours
+  basée sur le standard {\tt C++-98} dans laquelle différents ajouts
+  sont apportés. Cette branche donnerait naissance à la série des
+  versions \(2.1.x\), si cela s'avérait nécessaire~;
+\item la branche {\tt rdev-3.0} est une version de développement basée
+  sur le standard {\tt C++-11}, ce qui implique une part significative
+  de réécriture du code. Cette branche donnera naissance à la série
+  des versions \(3.0.x\).
+\end{itemize}
+
+Aucun planning de livraison de version n'est actuellement défini.
+
+\subsection{Objet et plan de cette note}
+
+Nous décrivons ici la version \(2.0.3\) de {\tt TFEL}. Il s'agit d'une
+version de maintenance corrigeant les quelques anomalies
+détectées. Elle introduit également une nouvelle fonctionnalité
+nécessaire au développement de l'architecture \(2.0\) (jalon SICOM
+\og~MFront ++~\fg n\(^{\circ}\)71). Ces évolutions sont décrites dans
+la section~\ref{sec:descr-des-evol}. Nous donnons dans la
+section~\ref{sec:plate-form-supp} la liste des plates-formes, c'est à
+dire des couples système d'exploitation/compilateur, supportées. La
+section~\ref{sec:indicateurs-de-la} donne quelques indicateurs sur la
+qualité du projet. La section~\ref{sec:documentation} fait le point
+sur la documentation disponible.  Enfin, la
+section~\ref{sec:disp-du-code} décrit comment accéder à cette version.
+
+\section{Description des évolutions}
+\label{sec:descr-des-evol}
+
+\subsection{Corrections d'anomalies}
+
+Les numéros de ticket correspondent au forum public de {\tt tfel}
+consultable à l'adresse suivante~:
+\begin{center}
+  \url{http://sourceforge.net/p/tfel/tickets}
+\end{center}
+
+\subsubsection{Gestion de lois sans propriété matériau dans MTest pour
+  les interfaces aster et cyrano (Ticket \#9)}
+
+L'appel depuis \mtest{} des lois de comportement générées par les
+interfaces {\tt aster} et {\tt cyrano} ne gérait pas le cas d'une loi
+sans propriété matériau.
+
+Le ticket peut être consulté à l'adresse~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/10/}  
+\end{center}
+
+\subsubsection{Portage sur la libc++ (Ticket \#10)}
+
+Chaque compilateur repose sur une implantation de la bibliothèque
+standard du {\tt C++}. Le passage d'une implantation de la bibliothèque
+standard à une autre peut conduire à différents soucis de portabilité~:
+\begin{itemize}
+\item on peut détecter l'oubli de certains fichiers d'entête qui sont
+  inclus de manière indirecte par les autres implantations~;
+\item on peut détecter des erreurs dans l'utilisation de la bibliothèque
+  standard (voir paragraphe suivant).
+\end{itemize}
+
+Le compilateur {\tt clang} utilise sur {\tt Mac Os} ou {\tt FreeBSD}
+une bibliothèque nommée {\tt libc++}. Cette bibliothèque peut également être
+utilisée de manière optionnelle sous {\tt Linux}.
+
+Le portage sur cette bibliothèque est une contribution de Thierry Thomas,
+le mainteneur du portage de \aster{} sur {\tt FreeBSD}. Plus de
+détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/10/}  
+\end{center}
+
+\subsubsection{Correction d'une anomalie dans la classe CxxTokenizer}
+
+Nous avons trouvé une anomalie importante dans la classe {\tt
+  CxxTokenizer} lors du portage vers la bibliothèque standard {\tt
+  libc++} qui affecte la lecture d'un nombre réel dans les jeux de
+données. Ceci conduit à l'échec de la plupart des cas tests sur {\tt
+  Mac Os} ou {\tt FreeBSD}.
+
+\subsubsection{Anomalie dans l'interface \aster{}  (Ticket \#11)}
+\label{sec:anom-dans-lint}
+
+La gestion du dépassement des bornes par une des variables n'est pas
+correctement gérée par l'interface \aster{}. Plus précisément, la
+politique décrivant le comportement à suivre n'était pas initialisée
+\footnote{{\tt TFEL} distingue aujourd'hui trois politiques en cas de
+  dépassement des bornes~:
+\begin{itemize}
+\item {\tt None} qui ignore le dépassement~;
+\item {\tt Warning} qui signale le dépassement par un message sur la
+  sortie standard~;
+\item {\tt Strict} qui arrête le calcul.
+\end{itemize}
+}.
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/11/}  
+\end{center}
+
+\subsection{Évolution dans la génération des modèles}
+
+\subsubsection{Paramètres}
+
+La classe {\tt MFrontModelParser} gère l'analyse des modèles. La
+syntaxe des modèles a peu évolué depuis quelques années, ce qui a
+conduit à une sémantique obsolète qui peut être incohérente avec les
+évolutions récentes de la plate-forme \pleiades{}~:
+\begin{itemize}
+\item un paramètre local, défini par le mot clé {\tt
+    \@LocalParameter}, désigne un paramètre dont la valeur peut être
+  définie par spécialisation du modèle. L'idée est que ce paramètre
+  est propre au modèle et n'est pas partagé avec d'autres modèles.
+\item un paramètre global, défini par le mot clé {\tt
+    \@GlobalParameter}, désigne un paramètre dont la valeur est
+  définie dans le jeu de données par l'un des mots clés {\tt Var},
+  {\tt Double}, {\tt String} ou {\tt Int}. L'idée est que ce paramètre
+  puisse être partagé entre différents modèles. En pratique, les
+  paramètres globaux ne sont pas utilisés.
+\end{itemize}
+
+L'adjectif \og~local~\fg{} a aujourd'hui tendance à désigner une
+quantité propre à une tranche (un système physique dans le vocable
+\licos{}), tandis que \og~global~\fg{} se rattache à une quantité
+utilisée pour le couplage entre les différentes tranches (les
+différents systèmes physiques).
+
+Nous avons donc introduit les évolutions suivantes dans la classe {\tt
+  MFrontModelParser}~:
+\begin{itemize}
+\item nous avons supprimé le mot clé {\tt \@GlobalParameter} dans
+  cette version~;
+\item par cohérence avec les propriétés matériau et les lois de
+  comportement, nous avons introduit le mot clé {\tt \@Parameter} en
+  tant que synonyme de {\tt \@LocalParameter}.
+\end{itemize}
+
+L'utilisation de {\tt \@LocalParameter} est considérée comme obsolète
+et ce mot clé sera supprimé des versions futures au profit du mot clé
+{\tt \@Parameter}.
+
+\subsubsection{Une correction mineure}
+
+D'un point de vue fonctionnel, les modèles utilisent un certain nombre
+des variables d'état du matériau (représentés par des champs) pour
+calculer les évolutions d'autres variables internes.
+
+Le calcul de ces évolutions nécessite une certaine connaissance du
+matériau que l'on peut définir de deux manière~:
+\begin{itemize}
+\item par des paramètres (voir paragraphes précédents)~;
+\item par des propriétés matériau constantes (et uniformes).
+\end{itemize}
+
+Les paramètres sont rattachés au modèle en tant que tel, tandis que
+les propriétés matériau constantes sont rattachés aux matériaux
+traités.
+
+L'utilisation d'une propriété matériau constante, représentée par un
+scalaire, permet d'optimiser le code, par rapport au cas d'une
+propriété matériau standard, représentée par un champ.
+
+La classe {\tt MFrontModelParser} acceptait que l'on définisse une
+valeur par défaut à une propriété matériau constante. Ceci est
+incohérent~: une propriété matériau constante est précisément une
+quantité qu'il faut fournir au modèle et qui lui est extérieure. 
+
+Cette possibilité a donc été éliminée. En pratique, les interfaces des
+modèles n'utilisaient pas cette information.
+
+\subsection{Introduction de la classe {\tt External\-Behaviour\-Description}}
+
+En plus des lois de comportement, \mfront{} enregistre pour chaque loi
+de comportement un ensemble d'informations. Ces informations
+permettent de déclarer de manière automatique les lois de comportement
+et sont déjà utilisées par les applications \licos{}, {\tt cyrano} et
+\aster{}.
+
+Pour simplifier l'implantation d'une fonctionnalité similaire dans
+l'architecture V2 de \pleiades{} (jalon SICOM \og~MFront ++~\fg{}
+n\(^{\circ}\)71), nous avons introduit une classe nommée {\tt
+  External\-Behaviour\-Description} qui permet de récupérer toutes ces
+informations par un appel unique.
+
+\subsection{Amélioration de la gestion des bornes dans les lois de
+  comportement}
+
+Rappelons que l'on distingue dans \mfront{}, pour une variable donnée~:
+\begin{itemize}
+\item ses bornes physiques (une déformation plastique cumulée ne peut
+  être négative, une porosité plus grande que \(1\)). Ces bornes sont
+  précisées par le mot clé {\tt PhysicalBounds}~;
+\item la plage de valeurs sur laquelle la loi de comportement/la
+  propriété matériau/le modèle a été établi(e).  Ces bornes sont
+  précisées par le mot clé {\tt Bounds}.
+\end{itemize}
+
+La violation d'une borne physique conduit toujours à une erreur.
+
+La résolution du ticket \#11 (voir paragraphe
+\ref{sec:anom-dans-lint}) a conduit à revoir la manière de préciser
+comment traiter un dépassement de bornes (de corrélation) par une
+variable. Pour rappel, il y a aujourd'hui trois possibilités~:
+\begin{itemize}
+\item ne rien faire (choix par défaut, nommé {\tt None} en interne)~;
+\item afficher un message ({\tt Warning})~;
+\item générer une erreur ({\tt Strict}).
+\end{itemize}
+
+Les interfaces {\tt cyrano} et {\tt castem} reposaient sur la
+définition éventuelle d'une variable d'environnement ({\tt
+  CYRANO\_OUT\_OF\_BOUNDS\_POLICY} et {\tt
+  CASTEM\_OUT\_OF\_BOUNDS\_POLICY}) qui pouvait prendre les valeurs
+{\tt WARNING} ou {\tt STRICT} suivant ce que  l'on voulait faire.
+
+L'utilisation d'une variable d'environnement s'avère une solution peu
+pratique.
+
+Pour améliorer cela, les interfaces {\tt aster}, {\tt cyrano} et {\tt
+  castem} génèrent dorénavant une fonction auxiliaire qui permet de
+modifier ce choix de manière plus souple. Le nom de cette fonction est
+le nom de la loi suffixé de {\tt \_setOutOfBoundsPolicy}. Cette
+fonction prend un entier en argument~:
+\begin{itemize}
+\item une valeur de \(0\) correspond à {\tt None}~;
+\item une valeur de \(1\) correspond à {\tt Warning}~;
+\item une valeur de \(2\) correspond à {\tt Strict}.
+\end{itemize}
+
+Ces fonctions n'ont pas vocation à être appelées directement~: une
+méthode supplémentaire, nommée {\tt set\-Out\-Of\-Bounds\-Policy}, a
+été ajoutée à la classe {\tt External\-Library\-Manager} pour
+simplifier leurs utilisations.
+
+\paragraph{Choix de traitement des dépassement de bornes dans
+  Code\_Aster} La version de développement de \aster{} permet à
+l'utilisateur de choisir le comportement à adopter en cas de
+dépassement des bornes de la corrélation à l'aide du mot-clé {\tt
+  VERI\_BORNE}. Ce mot clé a trois options~: {\tt SANS}, {\tt MESSAGE}
+et {\tt ARRET} correspondant respectivement à {\tt None}, {\tt
+  Warning} et {\tt Strict}. Par défaut, cette option est à {\tt ARRET}
+({\tt Strict}).
+
+\subsection{Ajout dans le glossaire}
+
+L'entrée {\tt AxialGrowth} a été ajoutée le glossaire. Elle correspond
+à la croissance axiale sous flux (grandissement) que l'on rencontre
+dans les crayons combustibles.
+
+\section{Plates-formes supportées}
+\label{sec:plate-form-supp}
+
+\begin{table}
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    Plate-forme & Versions testées & Versions fonctionnant a priori \\
+    \hline
+    \hline
+    {\tt gcc}   sous LiNuX & \(4.4\), \(4.9\) & \(\geq\quad 3.4\)   \\
+    \hline
+    {\tt clang} sous LiNuX ({\tt libstdc++}) & \(3.4\), \(3.5\), \(3.6\) & \(\geq\quad 3.2\)   \\
+    \hline
+    {\tt clang} sous LiNuX ({\tt libc++}) & \(3.5\) & \(\geq\quad 3.5\)   \\
+    \hline
+    {\tt intel} sous LiNuX                & \(15\), \(16\) & \(\geq\quad 10\)   \\
+    \hline
+    {\tt clang} sous FreeBSD ({\tt libc++}) & \(3.4\) & \(\geq\quad 3.4\)   \\
+    \hline
+    {\tt mingw64} sous Windows   & \(5.1\), \(4.6.3\) & \(\geq\quad 4.6\)   \\
+    \hline
+  \end{tabular}
+  \caption{Plates-formes supportées. Nous indiquons les versions des 
+    compilateurs utilisés pour réaliser les tests de cette version. Nous indiquons aussi,
+    à titre indicatif, les versions que nous pensons être compatibles {\tt a priori}. Ce sont
+    généralement des versions utilisées dans le passé pour les versions précédentes de {\tt TFEL}.}
+  \label{tab:plates-formes}
+\end{table}
+
+Le tableau~\ref{tab:plates-formes} donne la liste des combinaisons de
+compilateur et de système d'exploitation supportées.
+
+Accroître le nombre de plate-formes supportées présente
+essentiellement deux intérêts~:
+\begin{itemize}
+\item cela accroît le nombre d'utilisateurs potentiels, c'est à dire,
+  de testeurs des différentes fonctionnalités proposées. Il s'agit de
+  l'effet de bord le plus positif de la mise en open-source~;
+\item c'est un signe indirect de la qualité du code, d'autant que
+  chaque compilateur peut émettre des avertissements qui lui sont
+  spécifiques (voir paragraphe~\ref{sec:un-niveau-eleve} ci-dessous).
+\end{itemize}
+
+Soulignons tout l'intérêt de l'atelier logiciel
+\pleiades{}\footnote{\url{https://www-pleiades.intra.cea.fr/jenkins/}},
+et notamment l'application {\tt
+  jenkins}\footnote{\url{https://jenkins-ci.org/}},
+qui est très utile, voire indispensable, pour gérer autant de
+combinaisons.
+
+\paragraph{Notes générales sur les différents compilateurs}
+
+{\tt gcc} et {\tt clang} sont les compilateurs de référence lors du
+développement {\tt TFEL}. Les versions récentes de {\tt clang} offrent
+des performances comparables à celle de {\tt gcc} si l'on utilise
+l'implantation {\tt libstdc++} de la bibliothèque standard. Le temps
+d'exécution des cas tests est sensiblement réduit si l'on utilise
+l'implantation {\tt libc++}. Ceci est essentiellement dû à une
+réduction du temps d'exécution de quelques cas tests particulièrement
+consommateurs de ressources~: il s'agit de lois à plusieurs milliers de
+variables internes qui font appel à une gestion dynamique de la
+mémoire.
+
+Le compilateur {\tt intel} est le compilateur offrant les meilleures
+performances. Par exemple, le temps d'exécution de l'ensemble des cas
+tests est \(20\%\) plus court avec ce compilateur par rapport aux
+temps obtenus avec les compilateurs {\tt gcc} et {\tt clang}.
+
+Notons que nous avons accès sans frais à ce compilateur grâce à une
+offre d'{\tt Intel} faite aux projets {\tt open-source}.
+
+\paragraph{Le compilateur MinGW}
+
+Nous avons malheureusement pu constater que le compilateur {\tt
+  MinGW}, qui est le portage sous la plate-forme {\tt Windows} du
+compilateur {\tt gcc}, est de qualité variable d'une version à
+l'autre. Donnons quelques exemples~:
+\begin{itemize}
+\item la version {\tt 4.8.3} ne définit pas la constante symbolique
+  {\tt SSIZE\_MAX}, définie par les versions précédentes et
+  suivantes~;
+\item la version {\tt 5.1.0} ne définit pas les constantes symboliques
+  {\tt M\_PI}, {\tt M\_SQRT2} ou {\tt M\_SQRT2\_2}.
+\end{itemize}
+
+La version livrée avec les version \(14\) et \(15\) de \castem{} a un
+bug gênant lors de la conversion d'une chaîne de caractère en double~:
+'0' n'est pas égal au nombre \(0\) mais vaut \(1.e-317\). Ceci conduit
+à l'échec de certains tests qui posent des bornes sur les valeurs des
+variables internes~: nous déclarons que la déformation plastique
+cumulée ne peut être négative. Or, en début de calcul, la déformation
+plastique est nulle et nous avons un échec dû au fait que \(0\) est
+inférieur à \(1.e-317\).
+
+\paragraph{Le compilateur  Visual C++ de Microsoft}
+
+Le support de la plate-forme {\tt Windows} est considéré comme
+partiel. En effet, {\tt mingw} n'est pas le compilateur officiel de
+cette plate-forme qui est le compilateur {\tt Microsoft}. Or, le
+support de ce compilateur demande un portage important. Ce portage a
+été effectué pour la version \(3.0\)~: cette version, basée sur la
+norme {\tt C++11}, est allégée de quelques morceaux de codes
+particulièrement pointus qui font maintenant partie du standard et qui
+auraient été particulièrement difficiles à implanter.
+
+\paragraph{Mac Os}
+
+Il est possible de compiler cette version sous {\tt Mac OS}. Ce
+système présente cependant des subtilités\footnote{{\tt Mac OS} est
+  l'un des rares systèmes faisant la distinction entre bibliothèques
+  partagées et modules chargés dynamiquement.} qui ne seront
+pleinement prises en charge qu'à la version \(3.0\) de {\tt TFEL}. Le
+support de ce système, bien qu'{\tt a priori} fonctionnel (l'ensemble
+des cas tests passent), est donc considéré comme
+expérimental. D'éventuels testeurs sont les bienvenus.
+
+\section{Indicateurs de la qualité du développement}
+\label{sec:indicateurs-de-la}
+
+\subsection{Cas tests}
+
+Cette version est livrée avec \(709\) cas tests.
+
+\(548\) cas tests sont des cas tests {\tt mtest} qui couvrent une
+grande partie des fonctionnalités de {\tt mfront} associées aux lois
+de comportement.
+
+Les cas tests restant permettent de tester de manière unitaire
+différentes fonctionnalités de {\tt TFEL}. La plupart des cas tests
+visent la partie {\tt TFEL/Math} qui regroupe les objets mathématiques
+(vecteurs, matrices, tenseurs) ainsi que différents algorithmes
+numériques.
+
+Les cas tests unitaires sont aujourd'hui insuffisants pour assurer une
+couverture de l'ensemble des fonctionnalités du code et un effort dans
+ce sens nous apparaît nécessaire.
+
+\subsection{Un niveau élevé d'avertissements}
+\label{sec:un-niveau-eleve}
+
+Les compilateurs modernes permettent de détecter des erreurs de
+programmation ou des mauvaises pratiques en activant des flags de
+compilations spécifiques. Ceux utilisés pour la compilation de {\tt
+  TFEL} sont particulièrement exigeants~:
+
+\begin{center} 
+  \begin{minipage}[htbp]{0.8\linewidth}
+    {\tt -Wdisabled-optimization -Wlong-long -Wreorder -Wundef
+      -Wunknown-pragmas -Wredundant-decls -Wpacked
+      -Wno-deprecated-declarations -Wno-multichar
+      -Wmissing-format-attribute -Wsign-compare -Wno-endif-labels
+      -Wfloat-equal -Wreturn-type -Woverloaded-virtual
+      -Wnon-virtual-dtor -Wctor-dtor-privacy -Wwrite-strings
+      -Wcast-align -Wcast-qual -Wpointer-arith -Wshadow -pedantic
+      -Wextra -W -Wall}
+  \end{minipage}
+\end{center}
+
+La plupart des avertissements générés sont corrigés.
+
+\subsection{Analyse statique du code avec l'outil {\tt Coverity}}
+
+Nous avons utilisé lors du développement de {\tt TFEL} différents
+outils d'analyse statique open-source~: {\tt
+  scan-build}\footnote{\url{http://clang-analyzer.llvm.org/scan-build.html}}
+ou {\tt cppcheck}\footnote{\url{http://cppcheck.sourceforge.net/}} par
+exemple. Bien qu'ils soient utiles, ces outils ne sont pas au niveau
+de certains outils propriétaires.
+
+{\tt Coverity} est une société spécialisée dans l'analyse statique de
+code. Cette société propose aux codes diffusés sous une licence libre
+de profiter de leur outil\footnote{\url{http://www.coverity.com/}}.
+
+L'analyse statique permet de révéler la présence de défauts qui
+peuvent être soit des erreurs de programmation, soit des mauvaises
+pratiques. Le taux de défauts est le nombre de défauts pour \(1000\)
+lignes de code.  {\tt Coverity} indique qu'un logiciel dont le taux de
+défauts est inférieur à \(1\) est considéré de qualité industrielle.
+
+L'analyse statique de {\tt TFEL} (hors tests) révèle une \og~densité
+de défauts~\fg{} de l'ordre de \(0,3\). {\tt Coverity} a permis de
+trouver une erreur \og~réelle~\fg, sans incidence sur les applications
+ou les utilisateurs. Cette erreur a depuis été corrigée.
+
+Les autres défauts détectés sont essentiellement des \og~fautes de
+styles~\fg{} sans incidence sur le comportement du code ou le fait que
+des données membre de structure n'ont pas de valeurs par
+défaut\footnote{Nous utilisons beaucoup de structures qui sont
+  renseignées par une fonction spécifique. Nous accédons à ces données
+  en lecture seule dans d'autres parties du code. Une telle pratique
+  est saine et génère moins de code que l'emploi d'un
+  constructeur. L'outil {\tt Coverity}, ne pouvant comprendre la
+  logique du développeur, émet un avertissement de principe. Il faut
+  également noter que l'utilisation de variables non initialisées est
+  souvent détectée par le compilateur ou les outils d'analyse
+  statique. Par ailleurs, un outil de type {\tt valgrind} permet
+  également de détecter ces erreurs à l'exécution.}. Ces fautes de
+style seront corrigées dans les futures versions.
+
+Lorsque l'on inclut les tests, on trouve essentiellement des défauts
+supplémentaires liés au fait que~:
+\begin{itemize}
+\item les fonctions principales des tests ne captent pas les
+  exceptions potentiellement lancées par les fonctions appelées, ce
+  qui est volontaire. En effet, une exception non traitée peut être
+  analysée à l'aide d'un débogueur~: on peut remonter au point
+  d'émission de l'exception.
+\item les variables locales des lois de comportement ne sont pas
+  initialisées dans les constructeurs de la loi mais dans une fonction
+  membre dédiée, pour des raisons qu'il serait trop long d'exposer
+  ici. Nous pourrions donner une valeur par défaut à ces variables,
+  mais cela pose au moins deux problèmes~:
+  \begin{itemize}
+  \item cette initialisation a un coût, particulièrement si des
+    tableaux de grandes tailles sont utilisées (certaines lois ont
+    plusieurs milliers de variables internes).
+  \item l'utilisation d'une variable non initialisée est souvent plus
+    facile à détecter, surtout si l'on utilise un outil de type {\tt
+      valgrind}\footnote{\url{http://valgrind.org/}}.
+  \end{itemize}
+  Néanmoins, il nous semble possible d'analyser l'initialisation des
+  variables locales et de la déporter dans le constructeur quand cela
+  est possible (ce qui correspond à la majorité des cas).
+\end{itemize}
+
+Dans l'ensemble, on peut raisonnablement être satisfait de la qualité
+du code de {\tt TFEL} telle que mesurée par cet indicateur.
+
+\section{Documentation}
+\label{sec:documentation}
+
+Le code est livré avec une documentation assez riche~:
+\begin{itemize}
+\item notes de référence
+  \mfront{}~\cite{helfer_generateur_2013-1,helfer_generateur_2013,helfer_pris_2014}~;
+\item notes de référence \mtest{}~\cite{helfer_mtest_2015}~;
+\item un tutoriel~\cite{helfer_ecriture_2014}.
+\end{itemize}
+
+On pourra également trouver des cours de formation ainsi qu'un support
+de travaux dirigés.
+
+Ces documents sont accessibles à la page suivante~:
+\begin{center}
+  \url{http://tfel.sourceforge.net/documentations.html}
+\end{center}
+
+À l'heure actuelle, il n'existe pas encore de guide de référence du
+code (qui permettrait d'en comprendre la structuration) ni de guide
+des cas tests.
+
+Concernant les cas tests, nous avions développé l'utilitaire {\tt
+  tfel-doc} qui a été utilisé pour décrire les cas tests de
+l'application \licos{}~\cite{helfer_cas_2012}. Nous pensons développer
+dans la version \(3.0.x\) une extension à l'utilitaire {\tt tfel-doc}
+pour extraire une documentation des fichiers \mtest{}. Cependant, nous
+pensons qu'une version papier de cette documentation n'a que peu
+d'intérêt. Il serait intéressant de réfléchir à une forme plus adaptée
+au besoin des utilisateurs. Par exemple, il semble facile de concevoir
+une application graphique qui permettrait une recherche par mots clés
+à partir d'une base de données générée par {\tt tfel-doc}.
+
+Enfin, le code source est documenté au format {\tt
+  doxygen}. Cependant, cette documentation est loin de couvrir
+l'intégralité des fonctions et des classes.
+
+\subsection{Documentation des mots clés MFront et MTest}
+
+\subsubsection{Documentation en ligne de commande}
+
+S'inspirant de l'outil {\tt
+  cmake}\footnote{\url{http://www.cmake.org/}}, la documentation des
+mots clés de \mfront{} et de \mtest{} est accessible en ligne de
+commande à l'aide des options suivantes~:
+\begin{itemize}
+\item {\tt -{}-help-keywords-list}. Cette option affiche la liste des
+  mots clés suivi de la mention {\tt documented} ou {\tt undocumented}
+  suivant les cas. Pour \mfront{}, il faut préciser le nom de
+  l'analyseur pour lequel on veut avoir la liste des mots clés.
+\item {\tt -{}-help-keyword}. Cette option permet d'afficher l'aide
+  associée à un mot clé spécifique. Pour \mfront{}, il faut là aussi
+  préciser le nom de l'analyseur.
+\end{itemize}
+
+La documentation des mots clés est écrite en anglais, au format {\tt
+  Markdown}\footnote{\url{http://pandoc.org/README.html\#pandocs-markdown}}. Ce
+format est clair et lisible. Il présente l'avantage de pouvoir être
+analysé par l'utilitaire {\tt
+  pandoc}\footnote{\url{http://pandoc.org/}} et transformé dans
+différents formats, dont le format {\tt html}. Ceci a été utilisé pour
+générer la documentation en ligne de ces mots clés.
+
+\subsubsection{Documentation en ligne}
+
+La documentation des mots clés de \mfront{} accessible aux pages suivantes~:
+\begin{itemize}
+\item \url{http://tfel.sourceforge.net/DefaultDSL-keywords.html}
+\item \url{http://tfel.sourceforge.net/DefaultFiniteStrainDSL-keywords.html}
+\item \url{http://tfel.sourceforge.net/DefaultCZMDSL-keywords.html}
+\item \url{http://tfel.sourceforge.net/Implicit-keywords.html}
+\item \url{http://tfel.sourceforge.net/ImplicitFiniteStrain-keywords.html}
+\item \url{http://tfel.sourceforge.net/ImplicitII-keywords.html}
+\item \url{http://tfel.sourceforge.net/IsotropicMisesCreep-keywords.html}
+\item \url{http://tfel.sourceforge.net/IsotropicPlasticMisesFlow-keywords.html}
+\item \url{http://tfel.sourceforge.net/IsotropicStrainHardeningMisesCreep-keywords.html}
+\item \url{http://tfel.sourceforge.net/MaterialLaw-keywords.html}
+\item \url{http://tfel.sourceforge.net/Model-keywords.html}
+\item \url{http://tfel.sourceforge.net/MultipleIsotropicMisesFlows-keywords.html}
+\item \url{http://tfel.sourceforge.net/RungeKutta-keywords.html}
+\end{itemize}
+
+La documentation des mots clés \mtest{} est accessible à la page~:
+\begin{center}
+  \url{http://tfel.sourceforge.net/MTest-keywords.html}
+\end{center}
+
+\subsection{Publications}
+
+Une liste des publications mentionnant {\tt TFEL} ou \mfront{} peut
+être trouvée à la page~:
+\begin{center}
+  \url{http://tfel.sourceforge.net/publications.html}
+\end{center}
+
+\section{Disponibilité du code}
+\label{sec:disp-du-code}
+
+\subsection{Téléchargement depuis le site internet}
+
+Le code source de {\tt TFEL} est disponible sur le site internet du
+projet~:
+\begin{center}
+  \url{http://tfel.sourceforge.net}
+\end{center}
+
+Les instructions pour compiler cette version sont disponibles à
+l'adresse~:
+\begin{center}
+  \url{http://tfel.sourceforge.net/install.html}
+\end{center}
+
+\subsection{Accès aux sources depuis le dépôt svn}
+
+Les utilisateurs autorisés peuvent accéder au dépôt {\tt SVN} du
+projet à l'adresse suivante~:
+\begin{center}
+  \url{https://svn-pleiades.cea.fr/SVN/TFEL/tags/TFEL-2.0.3}
+\end{center}
+
+\subsection{Pour les membres du projet {\tt PLEIADES}}
+
+Les membres du projet {\tt PLEIADES} peuvent accéder aux binaires de
+cette version dans le répertoire des prérequis de développement de la
+version \(2.0\) de la plate-forme\footnote{Voir
+  \url{https://www-pleiades.intra.cea.fr/trac/wiki/ArchSoft}.}~:
+\begin{center}
+  {\tt source /soft/pleiades/testing/BUILDS/PLEIADES-trunk/PleiadesEnv.sh}
+\end{center}
+
+\section{Conclusions}
+
+Pour les besoins de l'architecture V2, une version \(2.0.3\) du projet
+{\tt TFEL/MFront} a été produite. Cette note a présenté les évolutions
+qui ont conduit à cette nouvelle version.
+
+Cette version est disponible sur la majorité des systèmes et peut être
+compilée avec la plupart des compilateurs, à l'exception notable du
+compilateur {\tt Visual C++} de {\tt Microsoft}. La version \(3.0\) de
+{\tt TFEL/MFront} prendra également ce compilateur en charge. Le
+support de {\tt Mac OS} est aujourd'hui considéré comme
+expérimental et sera pleinement supporté par la version \(3.0\).
+
+Cette note a également mis en avant les efforts faits dans le domaine
+de la qualité du code, que ce soit via les cas tests, ou via
+l'utilisation d'outils de développement tels que les analyseurs
+statiques de code. Le nombre de défauts trouvés par {\tt Coverity}, si
+l'on exclut les erreurs de style, classe {\tt TFEL} parmi des produits
+de très bonne qualité.
+
+Des efforts sont cependant encore nécessaires~:
+\begin{itemize}
+\item le taux de couverture des tests unitaires est insuffisant~;
+\item la documentation du code est encore trop partielle pour être
+  jugée satisfaisante.
+\end{itemize}
+
+Nous avons également évoqué la question de la documentation des cas
+tests. Une évolution de {\tt tfel-doc} permettrait de générer
+automatiquement la documentation de la plupart des cas tests basés sur
+\mtest{}. Cependant, un document papier nous semble n'avoir que peu
+d'utilité. D'un point de vue, il serait plus intéressant de disposer
+d'une application graphique permettant une recherche par mots clés à
+partir d'une base de données générée par {\tt tfel-doc}.
+
+\subsection{Remerciements}
+
+La page suivante donne les noms des principaux contributeurs à {\tt
+  TFEL}~:
+\begin{center}
+  \url{http://tfel.sourceforge.net/about.html}
+\end{center}
+
+\referencecea
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

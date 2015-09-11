@@ -31,23 +31,13 @@ namespace mfront{
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setParserName("MultipleIsotropicMisesFlows");
     // Default state vars
-    this->registerVariable("eel",false);
-    this->registerVariable("deel",false);
-    this->registerVariable("p",false);
     this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
     this->mb.addStateVariable(h,VariableDescription("strain","p",1u,0u));
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
     this->mb.setGlossaryName(h,"p","EquivalentStrain");
     // default local vars
-    this->registerVariable("se",false);
-    this->registerVariable("seq",false);
-    this->registerVariable("seq_e",false);
-    this->registerVariable("n",false);
-    this->registerVariable("mu_3_theta",false);
-    this->registerVariable("surf",false);
-    this->registerVariable("error",false);
-    this->registerVariable("iter",false);
-    this->registerVariable("p_",false);
+    this->reserveName("mu_3_theta");
+    this->reserveName("surf");
     this->mb.addLocalVariable(h,VariableDescription("StressStensor","se",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("stress","seq",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("stress","seq_e",1u,0u));
@@ -404,11 +394,6 @@ namespace mfront{
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp   << "df_dp"   << this->flows.size();
-      this->registerVariable(p.str(),false);
-      this->registerVariable("d"+p.str(),false);
-      this->registerVariable(f.str(),false);
-      this->registerVariable(df_dseq.str(),false);
-      this->registerVariable(df_dp.str(),false);
       this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("stress",f.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("real",df_dseq.str(),1u,0u));
@@ -424,9 +409,6 @@ namespace mfront{
       this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("DstrainDt",f.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
-      this->registerVariable(p.str(),false);
-      this->registerVariable(f.str(),false);
-      this->registerVariable(df_dseq.str(),false);
       flow.flow = FlowHandler::CreepFlow;
     } else if(this->current->value=="StrainHardeningCreep"){
       ostringstream p;
@@ -441,10 +423,6 @@ namespace mfront{
       this->mb.addLocalVariable(h,VariableDescription("DstrainDt",f.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("DstrainDt",df_dp.str(),1u,0u));
-      this->registerVariable(p.str(),false);
-      this->registerVariable(f.str(),false);
-      this->registerVariable(df_dseq.str(),false);
-      this->registerVariable(df_dp.str(),false);
       flow.flow = FlowHandler::StrainHardeningCreepFlow;
     } else {
       this->throwRuntimeError("MultipleIsotropicMisesFlowsDSL::treatFlowRule",
@@ -468,9 +446,7 @@ namespace mfront{
       otheta << "mu_3_theta" << this->flows.size();
       ose    << "se"         << this->flows.size();
       oseq_e << "seq_e"      << this->flows.size();
-      this->reserveName(ose.str(),false);
-      this->registerVariable(otheta.str(),false);
-      this->registerVariable(oseq_e.str(),false);
+      this->reserveName(ose.str());
       this->mb.addLocalVariable(h,VariableDescription("stress",oseq_e.str(),1u,0u));
       ++(this->current);
     } else {
@@ -487,32 +463,19 @@ namespace mfront{
   void
   MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis)
   {
-    using namespace std;
     this->checkBehaviourFile();
-    vector<FlowHandler>::const_iterator p;
-    unsigned short n;
-    if(this->varNames.find("young")==this->varNames.end()){
-      string msg("MultipleIsotropicMisesFlowsDSL");
-      msg+="::writeBehaviourParserSpecificInitializeMethodPart : ";
-      msg += "young (the young modulus) has not been defined.";
-      throw(runtime_error(msg));
-    }
-    if(this->varNames.find("nu")==this->varNames.end()){
-      string msg("MultipleIsotropicMisesFlowsDSL");
-      msg += "::writeBehaviourParserSpecificInitializeMethodPart : ";
-      msg += "nu (the poisson ratio) has not been defined.";
-      throw(runtime_error(msg));
-    }
     this->behaviourFile << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+(";
     this->behaviourFile << this->mb.getClassName();
     this->behaviourFile << "::theta)*(this->deto)));\n";
     this->behaviourFile << "this->seq_e = sigmaeq(this->se);\n";
-    for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
-      if(p->hasSpecificTheta){
+    unsigned short n = 0;
+    for(const auto& f : this->flows){
+      if(f.hasSpecificTheta){
 	this->behaviourFile << "StressStensor se" << n << "=2*(this->mu)*(tfel::math::deviator(this->eel+(";
-	this->behaviourFile << p->theta << ")*(this->deto)));\n";
+	this->behaviourFile << f.theta << ")*(this->deto)));\n";
 	this->behaviourFile << "this->seq_e" << n << " = sigmaeq(se" << n << ");\n";
       }
+      ++n;
     }
     this->behaviourFile << "if(this->seq_e>100*std::numeric_limits<stress>::epsilon()){\n";
     this->behaviourFile << "this->n = 1.5f*(this->se)/(this->seq_e);\n";

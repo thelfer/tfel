@@ -41,10 +41,8 @@ namespace mfront{
 			      &Child::treatPhysicalBounds);
     this->registerNewCallBack("@ConstantMaterialProperty",
 			      &Child::treatConstantMaterialProperty);
-    this->registerNewCallBack("@GlobalParameter",
-			      &Child::treatGlobalParameter);
-    this->registerNewCallBack("@LocalParameter",
-			      &Child::treatLocalParameter);
+    this->registerNewCallBack("@Parameter",
+			      &Child::treatParameter);
     this->registerNewCallBack("@ConstantMaterialProperty",
 			      &Child::treatConstantMaterialProperty);
     this->registerNewCallBack("@Domain",&Child::treatDomain);
@@ -60,9 +58,8 @@ namespace mfront{
   void
   ModelDSLBase<Child>::getKeywordsList(std::vector<std::string>& k) const
   {
-    typename CallBackContainer::const_iterator p;
-    for(p=this->callBacks.begin();p!=this->callBacks.end();++p){
-      k.push_back(p->first);
+    for(auto c :this->callBacks){
+      k.push_back(c.first);
     }
   } // end of ModelDSLBase<Child>::getKeywordsList
 
@@ -71,12 +68,28 @@ namespace mfront{
   ModelDSLBase<Child>::importFile(const std::string& fileName_,
 				   const std::vector<std::string>& ecmds)
   {
+    this->fileName = fileName_;
+    this->openFile(this->fileName,ecmds);
+    this->analyse();
+  } // end of ModelDSLBase<Child>::importFile
+    
+  template<typename Child>
+  void
+  ModelDSLBase<Child>::analyseString(const std::string& s)
+  {
+    this->fileName = "user defined string";
+    this->parseString(s);
+    this->analyse();
+  } // end of ModelDSLBase<Child>::analyseString
+
+  template<typename Child>
+  void
+  ModelDSLBase<Child>::analyse()
+  {
     using namespace std;
     typename CallBackContainer::const_iterator p;
     typename VariableDescriptionContainer::const_iterator p2;
     MemberFuncPtr handler = nullptr;
-    this->fileName = fileName_;
-    this->openFile(this->fileName,ecmds);
     // strip comments from file
     this->stripComments();
     // begin treatement
@@ -103,20 +116,11 @@ namespace mfront{
 	    ++p2;
 	  }
 	}
-	for(p2=this->globalParameters.begin();(p2!=this->globalParameters.end())&&(!found);){
+	for(p2=this->parameters.begin();(p2!=this->parameters.end())&&(!found);){
 	  if(p2->name==this->current->value){
 	    found = true;
 	    this->currentVar = this->current->value;
-	    handler = &Child::treatGlobalParameterMethod;
-	  } else {
-	    ++p2;
-	  }
-	}
-	for(p2=this->localParameters.begin();(p2!=this->localParameters.end())&&(!found);){
-	  if(p2->name==this->current->value){
-	    found = true;
-	    this->currentVar = this->current->value;
-	    handler = &Child::treatLocalParameterMethod;
+	    handler = &Child::treatParameterMethod;
 	  } else {
 	    ++p2;
 	  }
@@ -146,7 +150,7 @@ namespace mfront{
       }
       this->currentComment.clear();
     }
-  } // end of ModelDSLBase<Child>::analyseFile
+  } // end of ModelDSLBase<Child>::analyse
 
   template<typename Child>
   void

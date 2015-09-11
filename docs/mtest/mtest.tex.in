@@ -1431,6 +1431,17 @@ Ce mot clé prend deux arguments~:
   \(\sqrt{2}\)~;
 \end{itemize}
 
+Dans le cas de tableau de variables internes, il y trois
+possibilités~:
+\begin{itemize}
+\item \texttt{@InternalStateVariable 'omega' 6.1504e-09;} affecte à
+  chacune des entrées du tableau la même valeur.
+\item \texttt{@InternalStateVariable 'omega[0]' 6.1504e-09;} affecte
+  spécifiquement à la première entrée du tableau la valeur spécifiée.
+\item \texttt{@InternalStateVariable 'omega' {6.1504e-09,6.1504e-09};}
+  affecte des valeurs distinctes à chacune des entrées du tableau.
+\end{itemize}
+
 \paragraph{Le mot clé \mkey{MaterialProperty}} permet de définir une
 des propriétés matériau.
 

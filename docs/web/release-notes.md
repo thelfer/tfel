@@ -14,38 +14,36 @@ Minor fixes.
 
 ## Version 2.0.2
 
-- the multiplication of two symmetric tensors has been corrected. In
+- The multiplication of two symmetric tensors has been corrected. In
   previous versions, the result was though to be symmetric, which is
   obviously wrong. The static methods `tpld` et `tprd` were removed
   from the `st2tost2` class and added to the `st2tot2` class. Such
   modification leads to small changes in the results of finite strain
   single crystal behaviours.
-- the parallel compilation could fail on the documentation generation
+- The parallel compilation could fail on the documentation generation
   [`cmake`](http://www.cmake.org/): this is now fixed.
-- in the results files of [`mtest`](mtest.html), the name of the
+- In the results files of [`mtest`](mtest.html), the name of the
   driving variables and the thermodynamic forces are appropriately
   changed for more clarity.
-- a new finite strain strategy named `log1D` was added to the `umat`
+- A new finite strain strategy named `log1D` was added to the `umat`
   interface. This interface allow the use of the logarithmic strain
   formalism in mono-dimensional fuel performance codes. See
   @helfer_extension_2015 for details.
 
-## Version 2.0.3
+## Version 2.0.3 (9/09/2015)
 
-- Introduction of the `ExternalBehaviourDescription` structure which
-  loads information about a `MFront` behaviour from a library
-  generated using either the `umat`, the `cyrano` or the `aster`
-  interface.
-- [LLVM `libc++`](http://libcxx.llvm.org/) can now be enabled from
-  `cmake` using `-Denable-libcxx=ON`. This is useful on `LiNuX`
-  systems where `clang` defaults to
-  [GNU `libstdc++`](https://gcc.gnu.org/libstdc++/).
-- Fix a minor bug in the `CxxTokenizer` class which was appears when
-  using the [`clang` `libc++`](http://libcxx.llvm.org/) standard
+- Fix of a minor bug in the `CxxTokenizer` class which was appears
+  when using the [`clang` `libc++`](http://libcxx.llvm.org/) standard
   library. This prevented many `MTest` tests to work on
   [Mac OS X](http://www.apple.com/fr/osx/).
-- Fix [Ticket #10](https://sourceforge.net/p/tfel/tickets/10/)
-- Fix [Ticket #11](https://sourceforge.net/p/tfel/tickets/11/)
+- Fix of [Ticket #9](https://sourceforge.net/p/tfel/tickets/9/)
+- Fix of [Ticket #10](https://sourceforge.net/p/tfel/tickets/10/)
+- Fix of [Ticket #11](https://sourceforge.net/p/tfel/tickets/11/)
+- The class `ExternalBehaviourDescription` was introduced
+- The `AxialGrowth` entry was added to the glossary
+
+A full description of the 2.0.3 release can be found
+[here](documents/tfel/tfel-2.0.3.pdf) (in french).
 
 # Versions 2.1.x
 

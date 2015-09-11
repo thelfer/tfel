@@ -62,7 +62,6 @@ namespace mfront{
       this->bd.checkVariableGlossaryName(n,g);
     } else {
       const Hypothesis h = MH::UNDEFINEDHYPOTHESIS;
-      this->dsl.registerVariable(n,false);
       VariableDescription v(t,n,1u,0u);
       this->bd.addMaterialProperty(h,v);
       this->bd.setGlossaryName(h,n,g);
@@ -76,7 +75,6 @@ namespace mfront{
     typedef tfel::material::ModellingHypothesis MH; 
     typedef MH::Hypothesis Hypothesis; 
     const Hypothesis h = MH::UNDEFINEDHYPOTHESIS;
-    this->dsl.registerVariable(n,false);
     VariableDescription v(t,n,1u,0u);
     this->bd.addLocalVariable(h,v);
   } // end of BehaviourBrickBase::addLocalVariable

@@ -33,6 +33,12 @@ namespace mfront{
     importFile(const std::string&,
 	       const std::vector<std::string>&) override;
     /*!
+     * \brief analyse the specified string.
+     * \param[in] s : analyse a string
+     */
+    virtual void
+    analyseString(const std::string&) override;
+    /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
      */
@@ -46,6 +52,8 @@ namespace mfront{
 
     BehaviourDSLBase();
 
+    virtual void analyse(void);
+    
     void registerDefaultCallBacks(void);
 
     void treatDisabledCallBack(void);

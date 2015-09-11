@@ -21,20 +21,10 @@ namespace mfront{
   std::vector<std::string>
   MFrontLevenbergMarquartSolverBase::getReservedNames(void) const
   {
-    using namespace std;
-    vector<string> n;
-    n.push_back("levmar_jacobian_1");
-    n.push_back("levmar_fzeros_1");
-    n.push_back("levmar_error");
-    n.push_back("levmar_m");
-    n.push_back("levmar_sm");
-    n.push_back("levmar_mu");
-    n.push_back("levmar_muF");
-    n.push_back("levmar_r");
-    n.push_back("levmar_p0");
-    n.push_back("levmar_p1");
-    n.push_back("levmar_p2");
-    return n;
+    return {"levmar_jacobian_1","levmar_fzeros_1",
+	"levmar_error","levmar_m","levmar_sm",
+	"levmar_mu","levmar_mu0","levmar_muF",
+	"levmar_r","levmar_p0","levmar_p1","levmar_p2"};
   } // end of MFrontLevenbergMarquartSolverBase::getReservedNames
 
   void
@@ -43,23 +33,28 @@ namespace mfront{
     using namespace tfel::material;
     const ModellingHypothesis::Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!mb.hasParameter(h,"levmar_mu0")){
-      mb.addParameter(h,VariableDescription("real","levmar_mu0",1u,0u));
+      mb.addParameter(h,VariableDescription("real","levmar_mu0",1u,0u),
+		      BehaviourData::ALREADYREGISTRED);
       mb.setParameterDefaultValue(h,"levmar_mu0",1.e-6);
     }
     if(!mb.hasParameter(h,"levmar_p0")){
-      mb.addParameter(h,VariableDescription("real","levmar_p0",1u,0u));
+      mb.addParameter(h,VariableDescription("real","levmar_p0",1u,0u),
+		      BehaviourData::ALREADYREGISTRED);
       mb.setParameterDefaultValue(h,"levmar_p0",1.e-4);
     }
     if(!mb.hasParameter(h,"levmar_p1")){
-      mb.addParameter(h,VariableDescription("real","levmar_p1",1u,0u));
+      mb.addParameter(h,VariableDescription("real","levmar_p1",1u,0u),
+		      BehaviourData::ALREADYREGISTRED);
       mb.setParameterDefaultValue(h,"levmar_p1",0.25);
     }
     if(!mb.hasParameter(h,"levmar_p2")){
-      mb.addParameter(h,VariableDescription("real","levmar_p2",1u,0u));
+      mb.addParameter(h,VariableDescription("real","levmar_p2",1u,0u),
+		      BehaviourData::ALREADYREGISTRED);
       mb.setParameterDefaultValue(h,"levmar_p2",0.75);
     }
     if(!mb.hasParameter(h,"levmar_m")){
-      mb.addParameter(h,VariableDescription("real","levmar_m",1u,0u));
+      mb.addParameter(h,VariableDescription("real","levmar_m",1u,0u),
+		      BehaviourData::ALREADYREGISTRED);
       mb.setParameterDefaultValue(h,"levmar_m",1.e-8);
     }
   }

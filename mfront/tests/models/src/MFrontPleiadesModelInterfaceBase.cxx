@@ -144,9 +144,9 @@ namespace mfront{
     if(this->domains.empty()){
       this->hasDefaultConstructor=false;
     }
-    if(!data.localParameters.empty()){
-      for(p=data.localParameters.begin();
-	  (p!=data.localParameters.end())&&(this->hasDefaultConstructor);++p){
+    if(!data.parameters.empty()){
+      for(p=data.parameters.begin();
+	  (p!=data.parameters.end())&&(this->hasDefaultConstructor);++p){
 	if(data.defaultValues.find(p->name)==data.defaultValues.end()){
 	  this->hasDefaultConstructor = false;
 	}
@@ -207,7 +207,7 @@ namespace mfront{
     //    this->headerFile << "protected MEDModel\n";
     this->headerFile << "{\n\n";
     this->headerFile << "public:\n";
-    if((!mdata.localParameters.empty())||(this->hasSpecializedDomain)){
+    if((!mdata.parameters.empty())||(this->hasSpecializedDomain)){
       this->headerFile << "//! Constructor to initialize local parameters\n";
       this->headerFile << mdata.className
 		       << "(const Pleiades::PMetier::IArgumentMetier&);\n\n";
@@ -321,13 +321,6 @@ namespace mfront{
     this->headerFile << endl;
     this->headerFile << "private:"<< endl;
     this->headerFile << endl;
-    for(p=mdata.globalParameters.begin();p!=mdata.globalParameters.end();++p){
-      if(getDebugMode()){
-	this->headerFile << "#line " << p->lineNumber << " \"" 
-			 << pdata.fileName << "\"\n";
-      }
-      this->headerFile << p->type << " " << p->name << ";\n\n";
-    }
     for(p=mdata.constantMaterialProperties.begin();
 	p!=mdata.constantMaterialProperties.end();++p){
       if(getDebugMode()){
@@ -336,8 +329,8 @@ namespace mfront{
       }
       this->headerFile << p->type << " " << p->name << ";\n\n";
     }
-    for(p=mdata.localParameters.begin();
-	p!=mdata.localParameters.end();++p){
+    for(p=mdata.parameters.begin();
+	p!=mdata.parameters.end();++p){
       if(getDebugMode()){
 	this->headerFile << "#line " << p->lineNumber << " \"" 
 			 << pdata.fileName << "\"\n";
@@ -533,7 +526,7 @@ namespace mfront{
     if(this->hasDefaultConstructor){
       this->srcFile << mdata.className << "::" 
 		    << mdata.className << "()\n{\n";
-      for(p=mdata.localParameters.begin();p!=mdata.localParameters.end();++p){
+      for(p=mdata.parameters.begin();p!=mdata.parameters.end();++p){
 	p4=mdata.defaultValues.find(p->name);
 	assert(p4!=mdata.defaultValues.end());
 	this->writeAssignDefaultValue(p,p4);
@@ -547,7 +540,7 @@ namespace mfront{
 		    << mdata.className << "::" 
 		    << mdata.className <<"\n\n";
     }
-    if((!mdata.localParameters.empty())||(this->hasSpecializedDomain)){
+    if((!mdata.parameters.empty())||(this->hasSpecializedDomain)){
       this->srcFile << "//! Constructor to initialize local parameters\n";
       this->srcFile << mdata.className << "::" 
 		    << mdata.className 
@@ -555,7 +548,7 @@ namespace mfront{
       this->srcFile << "using namespace std;\n";
       this->srcFile << "using namespace Pleiades::PUtilitaires;\n";
       this->srcFile << "using namespace Pleiades::PExceptions;\n";
-      for(p=mdata.localParameters.begin();p!=mdata.localParameters.end();++p){
+      for(p=mdata.parameters.begin();p!=mdata.parameters.end();++p){
 	string name;
 	if((p4=mdata.glossaryNames.find(p->name))!=mdata.glossaryNames.end()){
 	  name = "GlossaireParam::" + p4->second;
@@ -759,7 +752,7 @@ namespace mfront{
 		  << "::executePostProcessingTasks(const bool)\n{} // end of " << mdata.className 
 		  << "::executePostProcessingTasks\n\n";
 
-    if(!mdata.localParameters.empty()){
+    if(!mdata.parameters.empty()){
       this->srcFile << "using Pleiades::PExamplars::TemplateModelClassProxy;\n";
       this->srcFile << "TemplateModelClassProxy<"
 		    << mdata.className
@@ -1018,9 +1011,6 @@ namespace mfront{
     this->srcFile << "using namespace Pleiades::PUtilitaires;\n";
     this->srcFile << "using namespace Pleiades::PExceptions;\n";
     this->srcFile << "using namespace Pleiades::PMetier::PGlossaire;\n";
-    for(auto p=mdata.globalParameters.cbegin();p!=mdata.globalParameters.cend();++p){
-      this->writeGetGlobalParameter(*p,mdata);
-    }
     for(auto p=mdata.constantMaterialProperties.cbegin();p!=mdata.constantMaterialProperties.cend();++p){
       this->writeGetConstantMaterialProperty(*p,mdata);
     }

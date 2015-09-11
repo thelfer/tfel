@@ -46,27 +46,30 @@ namespace mfront{
     // parsers
     this->areDynamicallyAllocatedVectorsAllowed_ = false;
     // parameters
-    this->registerVariable("theta",false);
-    this->registerVariable("numerical_jacobian_epsilon",false);
-    this->registerVariable("maximum_increment_value_per_iteration",false);
-    this->registerVariable("jacobianComparisonCriterion",false);
-    this->registerVariable("epsilon",false);
-    this->registerVariable("vect_e",false);
-    this->registerVariable("zeros",false);
-    this->registerVariable("tzeros",false);
-    this->registerVariable("zeros_1",false);
-    this->registerVariable("fzeros",false);
-    this->registerVariable("jacobian",false);
-    this->registerVariable("njacobian",false);
-    this->registerVariable("partial_jacobian",false);
-    this->registerVariable("t",false);
-    this->registerVariable("error_1",false);
-    this->registerVariable("error_p",false);
-    this->registerVariable("idx",false);
-    this->registerVariable("idx2",false);
-    this->registerVariable("idx3",false);
-    this->reserveName("computeNumericalJacobian",false);
-    this->reserveName("TinyMatrixSolve",false);
+    this->reserveName("epsilon");
+    this->reserveName("theta");
+    this->reserveName("iterMax");
+    this->reserveName("numerical_jacobian_epsilon");
+    this->reserveName("maximum_increment_value_per_iteration");
+    this->reserveName("jacobianComparisonCriterion");
+    // additional reserve name    
+    this->reserveName("vect_e");
+    this->reserveName("zeros");
+    this->reserveName("tzeros");
+    this->reserveName("zeros_1");
+    this->reserveName("fzeros");
+    this->reserveName("jacobian");
+    this->reserveName("njacobian");
+    this->reserveName("partial_jacobian");
+    this->reserveName("t");
+    this->reserveName("error_1");
+    this->reserveName("error_p");
+    this->reserveName("idx");
+    this->reserveName("idx2");
+    this->reserveName("idx3");
+    this->mb.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+				"computeNumericalJacobian");
+    this->reserveName("TinyMatrixSolve");
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
 			      &ImplicitDSLBase::treatUsableInPurelyImplicitResolution);
@@ -129,18 +132,26 @@ namespace mfront{
 
   void ImplicitDSLBase::treatStateVariable(void)
   {
-    using namespace std;
     VarContainer v;
-    set<Hypothesis> h;
-    this->readVariableList(v,h,&BehaviourDescription::addStateVariables,true,true,false);
+    auto hs = std::set<Hypothesis>{};
+    this->readVariableList(v,hs,&BehaviourDescription::addStateVariables,true,false);
+    for(const auto h : hs){
+      for(const auto& iv : v){
+	this->mb.reserveName(h,"f"+iv.name);
+      }
+    }
   }
 
   void ImplicitDSLBase::treatIntegrationVariable(void)
   {
-    using namespace std;
     VarContainer v;
-    set<Hypothesis> h;
-    this->readVariableList(v,h,&BehaviourDescription::addIntegrationVariables,true,true,false);
+    auto hs = std::set<Hypothesis>{};
+    this->readVariableList(v,hs,&BehaviourDescription::addIntegrationVariables,true,false);
+    for(const auto h : hs){
+      for(const auto& iv : v){
+	this->mb.reserveName(h,"f"+iv.name);
+      }
+    }
   }
 
   void ImplicitDSLBase::treatInitJacobian(void)
@@ -227,7 +238,6 @@ namespace mfront{
     	  this->throwRuntimeError("ImplicitDSLBase::treatUnknowVariableMethod",
     				  "invalid maximum increment value per iteration.");
     	}
-	this->registerVariable(n+"_maximum_increment_value_per_iteration",false);
 	VariableDescription miv("real",n+"_maximum_increment_value_per_iteration",1u,0u);
 	miv.description = "maximum increment allowed per iteration for variable '"+n+"'";
     	this->mb.addParameter(h,miv);
@@ -259,7 +269,6 @@ namespace mfront{
   void
   ImplicitDSLBase::treatCompareToNumericalJacobian(void)
   {
-    using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("ImplicitDSLBase::treatCompareToNumericalJacobian : ",
 			    "Expected 'true' or 'false'.");
@@ -299,7 +308,8 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("ImplicitDSLBase::treatJacobianComparisonCriterion",";");
-    this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterion",1u,0u));
+    this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterion",1u,0u),
+			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"jacobianComparisonCriterion",
 				      jacobianComparisonCriterion);
   } // ImplicitDSLBase::treatJacobianComparisonCriterion
@@ -319,18 +329,20 @@ namespace mfront{
     ++this->current;
     this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm",";");
     this->solver = f.getSolver(s);
+    for(const auto & n : this->solver->getReservedNames()){
+      this->reserveName(n);
+    }
     this->mb.setAttribute(BehaviourData::algorithm,s,false);
   } // end of ImplicitDSLBase::treatAlgorithm
 
   void
   ImplicitDSLBase::treatTheta(void)
   {
-    using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double theta;
     this->checkNotEndOfFile("ImplicitDSLBase::treatTheta",
 			    "Cannot read theta value.");
-    istringstream flux(current->value);
+    std::istringstream flux(current->value);
     flux >> theta;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("ImplicitDSLBase::treatTheta",
@@ -344,7 +356,7 @@ namespace mfront{
     this->readSpecifiedToken("ImplicitDSLBase::treatTheta",";");
     VariableDescription tv("real","theta",1u,0u);
     tv.description = "theta value used by the implicit scheme";
-    this->mb.addParameter(h,tv);
+    this->mb.addParameter(h,tv,BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"theta",theta);
     this->mb.setEntryName(h,"theta","theta");
   } // end of ImplicitDSLBase::treatTheta
@@ -352,12 +364,11 @@ namespace mfront{
   void
   ImplicitDSLBase::treatEpsilon(void)
   {
-    using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
     this->checkNotEndOfFile("ImplicitDSLBase::treatEpsilon",
 			    "Cannot read epsilon value.");
-    istringstream flux(current->value);
+    std::istringstream flux(current->value);
     flux >> epsilon;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("ImplicitDSLBase::treatEpsilon",
@@ -371,7 +382,7 @@ namespace mfront{
     this->readSpecifiedToken("ImplicitDSLBase::treatEpsilon",";");
     VariableDescription e("real","epsilon",1u,0u);
     e.description = "value used to stop the iteration of the implicit algorithm";
-    this->mb.addParameter(h,e);
+    this->mb.addParameter(h,e,BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"epsilon",epsilon);
     this->mb.setEntryName(h,"epsilon","epsilon");
   } // ImplicitDSLBase::treatEpsilon
@@ -379,12 +390,11 @@ namespace mfront{
   void
   ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation(void)
   {
-    using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
     this->checkNotEndOfFile("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation",
 			    "Cannot read epsilon value.");
-    istringstream flux(current->value);
+    std::istringstream flux(current->value);
     flux >> epsilon;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation",
@@ -398,7 +408,7 @@ namespace mfront{
     this->readSpecifiedToken("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation",";");
     VariableDescription e("real","numerical_jacobian_epsilon",1u,0u);
     e.description = "perturbation value used to compute a finite difference approximation of the jacobian";
-    this->mb.addParameter(h,e);
+    this->mb.addParameter(h,e,BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"numerical_jacobian_epsilon",epsilon);
   } // ImplicitDSLBase::treatEpsilon
 
@@ -414,7 +424,8 @@ namespace mfront{
 			      "invalid value for parameter 'iterMax'");
     }
     this->readSpecifiedToken("ImplicitDSLBase::treatIterMax",";");
-    this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u));
+    this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u),
+			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
   } // end of ImplicitDSLBase::treatIterMax
 
@@ -684,7 +695,8 @@ namespace mfront{
     }
     ++(this->current);
     this->readSpecifiedToken("ImplicitDSLBase::MaximumIncrementValuePerIteration",";");
-    this->mb.addParameter(h,VariableDescription("real","maximum_increment_value_per_iteration",1u,0u));
+    this->mb.addParameter(h,VariableDescription("real","maximum_increment_value_per_iteration",1u,0u),
+			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"maximum_increment_value_per_iteration",value);
   } // end of ImplicitDSLBase::treatMaximumIncrementValuePerIteration
 
@@ -1473,12 +1485,6 @@ namespace mfront{
 		      this->behaviourFile,this->mb.getMaterialLaws());
     n = SupportedTypes::TypeSize();
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      if(this->varNames.find("f"+p->name)!=this->varNames.end()){
-	string msg("ImplicitDSLBase::writeBehaviourIntegrator : ");
-	msg += "variable name 'f"+p->name;
-	msg += "' is reserved.\n";
-	throw(runtime_error(msg));
-      }
       if(this->getTypeFlag(p->type)==SupportedTypes::Scalar){
 	if(p->arraySize==1u){
 	  this->behaviourFile << "real& f" << p->name << "(this->fzeros(" << n << "));\n";
@@ -1773,12 +1779,6 @@ namespace mfront{
 	NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
       this->solver = f.getSolver("NewtonRaphson");
     }
-#pragma message("shall be done earlier")
-    // reserved names
-    const auto& n = this->solver->getReservedNames();
-    for(const auto & elem : n){
-      this->reserveName(elem,false);
-    }
     if(this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
       if((!this->solver->usesJacobian())||(this->solver->requiresNumericalJacobian())){
 	string msg("ImplicitDSLBase::endsInputFileProcessing :");
@@ -1794,14 +1794,14 @@ namespace mfront{
     if(!this->mb.hasParameter(h,"epsilon")){
       VariableDescription e("real","epsilon",1u,0u);
       e.description = "value used to stop the iteration of the implicit algorithm";
-      this->mb.addParameter(h,e);
+      this->mb.addParameter(h,e,BehaviourData::ALREADYREGISTRED);
       this->mb.setEntryName(h,"epsilon","epsilon");
       this->mb.setParameterDefaultValue(h,"epsilon",1.e-8);
     }
     if(!this->mb.hasParameter(h,"theta")){
       VariableDescription tv("real","theta",1u,0u);
       tv.description = "theta value used by the implicit scheme";
-      this->mb.addParameter(h,tv);
+      this->mb.addParameter(h,tv,BehaviourData::ALREADYREGISTRED);
       this->mb.setEntryName(h,"theta","theta");
       this->mb.setParameterDefaultValue(h,"theta",0.5);
     }
@@ -1811,18 +1811,21 @@ namespace mfront{
       const string nje = "numerical_jacobian_epsilon";
       if(!this->mb.hasParameter(h,nje)){
 	const double eps = 0.1*this->mb.getFloattingPointParameterDefaultValue(h,"epsilon");
-	this->mb.addParameter(h,VariableDescription("real",nje,1u,0u));
+	this->mb.addParameter(h,VariableDescription("real",nje,1u,0u),
+			      BehaviourData::ALREADYREGISTRED);
 	this->mb.setParameterDefaultValue(h,nje,eps);
       }
     }
     if(!this->mb.hasParameter(h,"iterMax")){
       unsigned short iterMax = 100u;
-      this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u));
+      this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u),
+			    BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
     }
     if(this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
       if(!this->mb.hasParameter(h,"jacobianComparisonCriterion")){
-	this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterion",1u,0u));
+	this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterion",1u,0u),
+			      BehaviourData::ALREADYREGISTRED);
 	this->mb.setParameterDefaultValue(h,"jacobianComparisonCriterion",
 					  this->mb.getFloattingPointParameterDefaultValue(h,"epsilon"));
       }

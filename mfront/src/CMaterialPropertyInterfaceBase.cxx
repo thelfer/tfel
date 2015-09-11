@@ -134,7 +134,7 @@ namespace mfront
     this->headerFile << " */\n\n"
 		     << "#ifndef " << headerGard << "\n"
 		     << "#define " << headerGard << "\n\n";
-    writeExportDirectives(this->srcFile);
+    writeExportDirectives(this->headerFile);
     this->writeHeaderPreprocessorDirectives(mpd);
     this->writeBeginHeaderNamespace();
     this->headerFile << "MFRONT_SHAREDOBJ double "
