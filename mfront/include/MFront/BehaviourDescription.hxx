@@ -700,13 +700,13 @@ namespace mfront
 			const Hypothesis,
 			const VarContainer&) const;
     /*!
-     * \return true if the given variable is used in a code block
+     * \return true if the given member is used in a code block
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
     bool
-    isVariableUsedInCodeBlocks(const Hypothesis,
-			       const std::string&) const;
+    isMemberUsedInCodeBlocks(const Hypothesis,
+			     const std::string&) const;
     /*!
      * \return true if the given name is a parameter name
      * \param[in] h : modelling hypothesis

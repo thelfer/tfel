@@ -267,11 +267,11 @@ namespace mfront{
     const VariableDescription&
     getStateVariableDescription(const std::string&) const;
     /*!
-     * \return true if the given variable is used in a code block
+     * \return true if the given member is used in a code block
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool isVariableUsedInCodeBlocks(const std::string&) const;
+    bool isMemberUsedInCodeBlocks(const std::string&) const;
 
     bool isMaterialPropertyName(const std::string&) const;
 

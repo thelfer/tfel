@@ -529,13 +529,12 @@ namespace mfront{
 			const bool b3 = true,
 			const bool b4 = false)
   {
-    using namespace std;
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
     auto& log = getLogStream();
     for(const auto & elem : v){
       if(b1){
-	const map<std::string,unsigned short>::const_iterator p = uv.find(elem.name);
+	const auto p = uv.find(elem.name);
 	if(p==uv.end()){
 	  log << "- " << t << " '" << elem.name << "' is unused.\n";
 	} else {
@@ -556,7 +555,7 @@ namespace mfront{
 	}
       }
       if(elem.description.empty()){
-	bool hasDoc = false;
+	auto hasDoc = false;
 	if(md.hasGlossaryName(elem.name)){
 	  const auto& e = glossary.getGlossaryEntry(md.getExternalName(elem.name));
 	  hasDoc = (!e.getShortDescription().empty()) || (!e.getDescription().empty());
@@ -575,10 +574,8 @@ namespace mfront{
    */
   static void
   performPedanticChecks(const StaticVarContainer& v,
-			const std::map<std::string,
-			unsigned short>& uv)
+			const std::map<std::string,unsigned short>& uv)
   {
-    using namespace std;
     auto& log = getLogStream();
     for(const auto & elem : v){
       if(uv.find(elem.name)==uv.end()){
@@ -604,37 +601,41 @@ namespace mfront{
       }
       // getting all used variables
       const auto& cbs = md.getCodeBlockNames();
-      auto vars  = std::map<std::string,unsigned short>{}; // variable names and counts
-      auto svars = std::map<std::string,unsigned short>{}; // static variable nanes and counts
+      auto members  = std::map<std::string,unsigned short>{}; // variable names and counts
+      auto smembers = std::map<std::string,unsigned short>{}; // static variable nanes and counts
       for(const auto & cbs_pcbs : cbs){
 	const auto& cb = md.getCodeBlock(cbs_pcbs);
 	if(cb.description.empty()){
 	  log << "- code block '" << cbs_pcbs << "' has no description\n";
 	}
-	for(const auto & elem : cb.variables){
-	  if(vars.count(elem)==0){
-	    vars[elem] = 1;
+	for(const auto & v : cb.members){
+	  if(members.count(v)==0){
+	    members[v] = 1;
 	  } else{
-	    ++(vars[elem]);
+	    ++(members[v]);
 	  }
 	}
-	for(const auto & elem : cb.static_variables){
-	  if(svars.count(elem)==0){
-	    svars[elem] = 1;
+	for(const auto & v : cb.staticMembers){
+	  if(smembers.count(v)==0){
+	    smembers[v] = 1;
 	  } else{
-	    ++(svars[elem]);
+	    ++(smembers[v]);
 	  }
 	}
       }
-      performPedanticChecks(md,md.getMaterialProperties(),"material property",vars,true,false,true);
+      performPedanticChecks(md,md.getMaterialProperties(),
+			    "material property",members,true,false,true);
       const auto& ivs = getIntegrationVariables(md);
-      performPedanticChecks(md,ivs,"integration variable",vars,false,true,false);
-      performPedanticChecks(md,md.getStateVariables(),"state variable",vars);
-      performPedanticChecks(md,md.getAuxiliaryStateVariables(),"auxiliary state variable",vars,true,false);
-      performPedanticChecks(md,md.getExternalStateVariables(),"external state variable",vars);
-      performPedanticChecks(md,md.getLocalVariables(),"local variable",vars,true,false,false,true);
-      performPedanticChecks(md,md.getParameters(),"parameter",vars,true,false);
-      performPedanticChecks(md.getStaticVariables(),svars);
+      performPedanticChecks(md,ivs,"integration variable",
+			    members,false,true,false);
+      performPedanticChecks(md,md.getStateVariables(),"state variable",members);
+      performPedanticChecks(md,md.getAuxiliaryStateVariables(),
+			    "auxiliary state variable",members,true,false);
+      performPedanticChecks(md,md.getExternalStateVariables(),"external state variable",members);
+      performPedanticChecks(md,md.getLocalVariables(),"local variable",members,true,
+			    false,false,true);
+      performPedanticChecks(md,md.getParameters(),"parameter",members,true,false);
+      performPedanticChecks(md.getStaticVariables(),smembers);
     }
     log << "\n# End of pedantic checks\n";
   } // end of BehaviourDSLCommon::pedanticChecks
@@ -2778,7 +2779,7 @@ namespace mfront{
       this->behaviourFile << "{\n";
       for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
 	if(!d.isStateVariableName(p->name)){
-	  if(d.isVariableUsedInCodeBlocks(p->name)){
+	  if(d.isMemberUsedInCodeBlocks(p->name)){
 	    this->behaviourFile << "this->"  << p->name << " += ";
 	    this->behaviourFile << "this->d" << p->name << ";\n";
 	  }
@@ -3317,51 +3318,44 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourLocalVariables(const Hypothesis h)
   {    
-    using namespace std;
-    const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
+    const auto& md = this->mb.getBehaviourData(h);
     this->writeVariablesDeclarations(this->behaviourFile,
 				     md.getLocalVariables(),
 				     "","",this->fileName,false);
-    this->behaviourFile << endl;
+    this->behaviourFile << '\n';
   }
 
   void
   BehaviourDSLCommon::writeBehaviourIntegrationVariables(const Hypothesis h)
   {
-    using namespace std;
-    const auto& md = this->mb.getBehaviourData(h);
-    const auto& v = md.getIntegrationVariables();
     this->checkBehaviourFile();
-    VariableDescriptionContainer::const_iterator p;
-    for(p=v.begin();p!=v.end();++p){
-      if(!md.isStateVariableName(p->name)){
-	if(md.isVariableUsedInCodeBlocks(p->name)){
+    const auto& md = this->mb.getBehaviourData(h);
+    for(const auto& v : md.getIntegrationVariables()){
+      if(!md.isStateVariableName(v.name)){
+	if(md.isMemberUsedInCodeBlocks(v.name)){
 	  this->writeVariableDeclaration(this->behaviourFile,
-					 *p,"","",this->fileName,false);
+					 v,"","",this->fileName,false);
 	}
       }
     }
-    this->behaviourFile << endl;
+    this->behaviourFile << '\n';
   } // end od BehaviourDSLCommon::writeBehaviourIntegrationVariables
 
   void BehaviourDSLCommon::writeBehaviourParameters(const Hypothesis h)
   {    
-    using namespace std;
     this->checkBehaviourFile();
     const auto& d = this->mb.getBehaviourData(h);
-    const auto& params = d.getParameters();
-    VariableDescriptionContainer::const_iterator p;
-    for(p=params.begin();p!=params.end();++p){
+    for(const auto& v : d.getParameters()){
       if(!getDebugMode()){
-	if(p->lineNumber!=0u){
-	  this->behaviourFile << "#line " << p->lineNumber << " \"" 
+	if(v.lineNumber!=0u){
+	  this->behaviourFile << "#line " << v.lineNumber << " \"" 
 			      << this->fileName << "\"\n";
 	}
       }
-      this->behaviourFile << p->type << " " << p->name << ";\n";  
+      this->behaviourFile << v.type << " " << v.name << ";\n";  
     }
-    this->behaviourFile << endl;
+    this->behaviourFile << '\n';
   }
 
   

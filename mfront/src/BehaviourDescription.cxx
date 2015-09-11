@@ -1231,10 +1231,10 @@ namespace mfront
   } // end of BehaviourDescription::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   bool
-  BehaviourDescription::isVariableUsedInCodeBlocks(const Hypothesis h,
+  BehaviourDescription::isMemberUsedInCodeBlocks(const Hypothesis h,
 						   const std::string& v) const
   {
-    return this->getData(h,&BehaviourData::isVariableUsedInCodeBlocks,v);
+    return this->getData(h,&BehaviourData::isMemberUsedInCodeBlocks,v);
   } // end of BehaviourDescription::isMaterialPropertyName
 
   bool

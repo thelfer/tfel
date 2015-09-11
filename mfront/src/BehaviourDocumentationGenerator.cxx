@@ -354,11 +354,11 @@ namespace mfront{
 	  const bool b = bd.isIntegrationVariableName(d.name)||bd.isExternalStateVariableName(d.name);
 	  if(bd.hasCode(cbname)){
 	    const auto& cb = bd.getCodeBlock(cbname);
-	    if(cb.variables.find(d.name)!=cb.variables.end()){
+	    if(cb.members.find(d.name)!=cb.members.end()){
 	      vcb[cbname].push_back(elem);
 	    }
 	    if(b){
-	      if(cb.variables.find("d"+d.name)!=cb.variables.end()){
+	      if(cb.members.find("d"+d.name)!=cb.members.end()){
 		dvcb[cbname].push_back(elem);
 	      }
 	    }

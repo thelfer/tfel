@@ -43,32 +43,30 @@ namespace mfront{
 				      const RungeKuttaDSL::Hypothesis h,
 				      const std::string& p)
   {
-    using namespace std;
-    const string t = ((p=="0") ? "(t/this->dt)" :
-		      ((p=="1") ? "((t+dt_)/this->dt)" : "((t+"+p+"*dt_)/this->dt)"));
+    const auto t = ((p=="0") ? "(t/this->dt)" :
+		    ((p=="1") ? "((t+dt_)/this->dt)" : "((t+"+p+"*dt_)/this->dt)"));
     const auto& d = mb.getBehaviourData(h);
-    //! all registred variables used in this block
-    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
-    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    //! all registred members used in this block
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
     for(const auto& mv : mb.getMainVariables()){
       const auto& dv = mv.first;
       if(!dv.increment_known){
-	string msg("writeExternalVariablesCurrentValues : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("writeExternalVariablesCurrentValues : "
+				 "unsupported driving variable '"+dv.name+"'"));
       }
       if(uvs.find(dv.name)!=uvs.end()){
 	f << "this->"+dv.name+"_ = this->"+dv.name+"+(this->d"+dv.name+")*" << t << ";\n";
       }
     }
     if(uvs.find("T")!=uvs.end()){
-      f << "this->T_   = this->T+(this->dT)*" << t << ";" << endl;
+      f << "this->T_   = this->T+(this->dT)*" << t << ";\n";
     }
     for(const auto& v : d.getExternalStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	f << "this->" << v.name << "_ = this->" << v.name
-	  << "+(this->d" << v.name << ")*" << t << ";" << endl;
+	  << "+(this->d" << v.name << ")*" << t << ";\n";
       }
     }
   }
@@ -93,18 +91,16 @@ namespace mfront{
 				       const RungeKuttaDSL::Hypothesis h,
 				       const std::string& p)
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
     //! all registred variables used in this block
-    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
-    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
     for(const auto& mv : mb.getMainVariables()){
       const auto& dv = mv.first;
       if(!dv.increment_known){
-	string msg("writeExternalVariablesCurrentValues2 : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("writeExternalVariablesCurrentValues2 : "
+				 "unsupported driving variable '"+dv.name+"'"));
       }
       if(uvs.find(dv.name)!=uvs.end()){
 	writeExternalVariableCurrentValue2(f,dv.name,p);
@@ -513,8 +509,8 @@ namespace mfront{
 	msg += "@Derivative was not defined.";
 	throw(runtime_error(msg));
       }
-      auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
-      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+      auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
+      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
       uvs.insert(uvs2.begin(),uvs2.end());
       CodeBlock icb; // code inserted at the beginning of the local variable initialisation
       // creating local variables
@@ -717,8 +713,8 @@ namespace mfront{
   {
     using std::endl;
     const auto& d = this->mb.getBehaviourData(h);
-    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
-    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
     this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;
@@ -753,8 +749,8 @@ namespace mfront{
     using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     //! all registred variables used in ComputeDerivatives and ComputeStress blocks
-    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
-    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
     VariableDescriptionContainer::const_iterator p;
     ErrorEvaluation eev;
@@ -1228,8 +1224,8 @@ namespace mfront{
     using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     //! all registred variables used in ComputeDerivatives and ComputeStress blocks
-    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
-    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize stateVarsSize;
@@ -1540,8 +1536,8 @@ namespace mfront{
   {
     using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
-    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
-    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
     VariableDescriptionContainer::const_iterator p;
     ErrorEvaluation eev;
@@ -1900,8 +1896,8 @@ namespace mfront{
     using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
-    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).variables;
-    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).variables;
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
     this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
     this->behaviourFile << "// Compute K1's values" << endl;

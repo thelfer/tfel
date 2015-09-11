@@ -206,10 +206,10 @@ namespace mfront{
 					   const bool b)
   {
     this->check();
-    this->cblock.static_variables.insert(c.static_variables.begin(),
-					 c.static_variables.end());
-    this->cblock.variables.insert(c.variables.begin(),
-				  c.variables.end());
+    this->cblock.staticMembers.insert(c.staticMembers.begin(),
+				      c.staticMembers.end());
+    this->cblock.members.insert(c.members.begin(),
+				c.members.end());
     switch(p){
     case AT_BEGINNING:
       if(!this->cblock_begin.empty()){
@@ -262,8 +262,8 @@ namespace mfront{
     this->cblock_body.clear();
     this->cblock_end.clear();
     this->cblock.code.clear();
-    this->cblock.variables.clear();
-    this->cblock.static_variables.clear();
+    this->cblock.members.clear();
+    this->cblock.staticMembers.clear();
     this->set(c,p,b);
   } // end of BehaviourData::CodeBlocksAggregator::set
 
@@ -433,16 +433,16 @@ namespace mfront{
   }
 
   bool
-  BehaviourData::isVariableUsedInCodeBlocks(const std::string& v) const
+  BehaviourData::isMemberUsedInCodeBlocks(const std::string& v) const
   {
     for(const auto& c : this->cblocks){
-      const auto& variables = c.second.get().variables;
-      if(variables.find(v)!=variables.end()){
+      const auto& members = c.second.get().members;
+      if(members.find(v)!=members.end()){
 	return true;
       }
     }
     return false;
-  } // end of BehaviourData::isVariableUsedInCodeBlocks
+  } // end of BehaviourData::isMemberUsedInCodeBlocks
 
   bool
   BehaviourData::isMaterialPropertyName(const std::string& n) const

@@ -202,7 +202,7 @@ namespace mfront
       analyser->exe(this->current->value);
     }
     if(smn.find(this->current->value)!=smn.end()){
-      b.static_variables.insert(this->current->value);
+      b.staticMembers.insert(this->current->value);
       auto previous = this->current;
       --previous;
       if((previous->value!="->")&&
@@ -215,7 +215,7 @@ namespace mfront
       }
       res += this->current->value;
     } else if(mn.find(this->current->value)!=mn.end()){
-      b.variables.insert(this->current->value);
+      b.members.insert(this->current->value);
       string currentValue;
       auto previous = this->current;
       --previous;
@@ -278,7 +278,7 @@ namespace mfront
 	analyser->exe(this->current->value);
       }
       if(smn.find(this->current->value)!=smn.end()){
-	b.static_variables.insert(this->current->value);
+	b.staticMembers.insert(this->current->value);
 	auto previous = this->current;
 	--previous;
 	if((previous->value!="->")&&
@@ -291,7 +291,7 @@ namespace mfront
 	}
 	res += this->current->value;
       } else if(mn.find(this->current->value)!=mn.end()){
-	b.variables.insert(this->current->value);
+	b.members.insert(this->current->value);
 	string currentValue;
 	auto previous = this->current;
 	--previous;
