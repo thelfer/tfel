@@ -1330,7 +1330,7 @@ namespace mfront
 	if(v.arraySize==1u){
 	  out << "this->evs_positions[" << i << "] = " 
 	      << "EXTERNAL_PARAM::rank_of_nodal_ip(\"" << name << "\");" << endl;
-	  out << "if(this->evs_positions[" << i << "]=-1){;" << endl;
+	  out << "if(this->evs_positions[" << i << "]==-1){;" << endl;
 	  out << "INPUT_ERROR(\"'" << name << "' is not defined\");" << endl;
 	  out << "}" << endl;
 	  ++i;
@@ -1339,7 +1339,7 @@ namespace mfront
 	    out << "this->evs_positions[" << i << "] = " 
 		<< "EXTERNAL_PARAM::rank_of_nodal_ip(\"" << name
 		<< "[" << n << "]\");" << endl;
-	    out << "if(this->evs_positions[" << i << "]=-1){;" << endl;
+	    out << "if(this->evs_positions[" << i << "]==-1){;" << endl;
 	    out << "INPUT_ERROR(\"'" << name << "[" << n << "]' is not defined\");" << endl;
 	    out << "}" << endl;
 	  }
