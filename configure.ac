@@ -424,6 +424,9 @@ AC_OUTPUT([debug.sh
 	   docs/release-notes-2.0.3/tfel-2.0.3.tex
 	   docs/release-notes-2.0.3/Makefile.doc
 	   docs/release-notes-2.0.3/Makefile
+	   docs/release-notes-2.0.4/tfel-2.0.4.tex
+	   docs/release-notes-2.0.4/Makefile.doc
+	   docs/release-notes-2.0.4/Makefile
 	   docs/mtest/Makefile
 	   docs/mtest/Makefile.doc
 	   docs/mtest/mtest.tex

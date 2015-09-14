@@ -1,0 +1,192 @@
+\documentclass[anti,projet]{note_technique_2010}
+
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\aster}{\texttt{Code\_\-Aster}}
+\newcommand{\alcyone}{\texttt{Alcyone}}
+\newcommand{\mfront}{\texttt{MFront}}
+\newcommand{\mtest}{\texttt{MTest}}
+\newcommand{\pleiades}{\texttt{Pleiades}}
+\newcommand{\licos}{\texttt{Licos}}
+
+\input{LSC}
+\auteurs{T. Helfer}
+\redacteur{T.~Helfer}
+\verificateur{V.~Marelle}
+\approbateur{B.~Collard}
+\emetteur{M.~Bauer}
+
+\titre{TFEL/MFront 2.0.4~: note de version}
+%\dateversion{09/2015}
+%\dateredac{08/2015}
+% \date{Septembre 2015}
+\indice{0}
+\typeaction{BE}
+\numero{} % 15-024}
+\numeroaffaire{A-SICOM-A1-07}
+\domaine{DEN/DISN/SIMU}
+\jalon{MFront open-source}
+\programmerecherche{SICOM}
+\accords{---}
+\clients{}
+\classification{DO}
+\motsclefs{
+  \pleiades{} - \castem{} - \aster{} - \mfront{}
+}
+
+% \codebarre{images/code_barre}
+\diffusionexterne{
+{EDF/R\&D}              & D. Banner       & 1 & Diffusion par\\
+                        & P. Barbrault    & 1 & courriel     \\
+                        & O. Marchand     & 1 & \\
+{EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
+                        & T. de Soza      & 1 & \\
+                        & E. Julan        & 1 & \\
+                        & J.-P. Lefèbre   & 1 & \\
+                        & I. Nestor       & 1 & \\
+                        & L. Flandi       & 1 & \\
+                        & M. Abbas        & 1 & \\
+                        & J. Delmas       & 1 & \\
+                        & D. Haboussa     & 1 & \\
+                        & M. Courtois     & 1 & \\
+                        & F. Hamon        & 1 & \\
+                        & N. Sellenet     & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+{EDF/R\&D/MMC/T20}      & C. Toulemonde   & 1 & \\
+{EDF/R\&D/MMC/T24}      & N. Rupin        & 1 & \\
+                        & É. Bosso        & 1 & \\
+                        & F. Latourte     & 1 & \\
+                        & M. Berveiller   & 1 & \\
+                        & A. Guéry        & 1 & \\
+                        & F. Curtit       & 1 & \\
+                        & Q. Shi          & 1 & \\
+{EDF/R\&D/MMC/T25}      & H. Wong         & 1 & \\
+                        & É. Pouiller     & 1 & \\
+                        & F. Douchin      & 1 & \\
+                        & C. Petry        & 1 & \\
+                        & R. Largenton    & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & V. Garat        & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & F. Arnoux       & 1 & \\
+                        & V. Rebeyrolle   & 1 & \\
+                        & J. Roland       & 1 & \\
+                        & B. Perrin       & 1 & \\
+}
+
+\diffusioninterne{
+  DEN/DISN/SIMU           & J.P. Deffain       & 1 & Diffusion par\\ 
+                          & D. Caruge          & 1 & courriel     \\ 
+  DEN/DM2S/SEMT           & X. Averty          & 1 & \\
+  DEN/DM2S/SEMT/DYN       & O. Jamond          & 1 & \\
+                          & F. Bliard          & 1 & \\
+                          & H. Bung            & 1 & \\
+  DEN/DM2S/SEMT/LM2S      & S. Pascal          & 1 & \\
+                          & P. Verpeaux        & 1 & \\
+                          & A. Millard         & 1 & \\
+                          & O. Fandeur         & 1 & \\
+  DEN/DPIE/SA2P           & A. Soniak          & 1 & \\
+  DEN/DMN                 & P. Yvon            & 1 & \\
+                          & P. Bossis          & 1 & \\
+  DEN/DMN/SRMA            & L. Portier         & 1 & \\
+                          & S. Carassou        & 1 & \\
+                          & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M       & L. Nicolas         & 1 & \\
+                          & L. Gelebart        & 1 & \\
+                          & M. Le Saux         & 1 & \\
+  DEN/DMN/SRMA/LA2M       & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX      & L. Chaffron        & 1 & \\
+                          & D. Sornin          & 1 & \\
+  DEN/DMN/SEMI            & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LM2E       & P. Gavoille        & 1 & \\
+  DEN/DMN/SEMI/LCMI       & V. Vandenberghe    & 1 & \\
+                          & A. Courcelle       & 1 & \\
+                          & F. Hure            & 1 & \\
+                          & D. Leboulch        & 1 & \\
+                          & Y. Robert          & 1 & \\
+                          & C. Ling            & 1 & \\
+  DEN/DER/SESI/LE2S       & P. Lamagnère       & 1 & \\
+                          & D. Gentet          & 1 & \\
+                          & Y. Lejeail         & 1 & \\
+  DEN/DPC/SECR/LECBA      & B. Bary            & 1 & \\
+                          & F. Bernachy-Barbe  & 1 & \\ 
+                          &                    &  & \\
+  DEN/DEC                 & P. Brossard        &  & Document disponible\\
+  DEN/DEC/PROJETS         & P. Obry            &  & sur intradec\\
+  DEN/DEC/SESC            & M. Bauer           &  & \\
+                          & C. Valot           &  & \\
+                          & M. Agard           &  & \\
+  DEN/DEC/SESC/LIPA       & C. Nonon-Solaro    &  & \\
+                          & R. Masson          &  & \\
+  DEN/DEC/SESC/LLCC       & G. Jomard          &  & \\
+  DEN/DEC/SESC/LC2I       & F. Delage          &  & \\
+                          & V. Blanc           &  & \\
+  DEN/DEC/SESC/LSC        & Tous               &  & \\
+
+}
+
+\stylebib{fr-insa}
+\fichierbib{@top_srcdir@/docs/release-notes-2.0.4/bibliographie}
+
+\resumecea{
+
+}
+
+\begin{document}
+
+\section{Description des évolutions}
+\label{sec:descr-des-evol}
+
+\subsection{Corrections d'anomalies}
+
+Les numéros de ticket correspondent au forum public de {\tt tfel}
+consultable à l'adresse suivante~:
+\begin{center}
+  \url{http://sourceforge.net/p/tfel/tickets}
+\end{center}
+
+\subsubsection{Opérateur tangent cohérent mal calculé par MTest en
+  grandes transformations pour les lois compilées avec l'interface
+  aster (Ticket \#12)}
+
+L'opérateur tangent cohérent était mal calculé par \mtest{} en grandes
+transformations pour les lois compilées avec l'interface {\tt aster}.
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/12/}  
+\end{center}
+
+\subsubsection{Convention de rangement des tenseurs non symétriques
+  (Ticket \#13)}
+
+La convention de rangement des tenseurs non symétriques était
+détaillée dans une annexe de la documentation \mfront{} sur les lois
+en grandes transformations et était donc peu accessible. Ce point a
+été corrigé et cette convention est maintenant également décrite dans
+la documentation du mot clé {\tt @Imposed\-Deformation\-Gradient} de
+\mtest{}.
+
+\section{Conclusions}
+
+\subsection{Remerciements}
+
+La page suivante donne les noms des principaux contributeurs à {\tt
+  TFEL}~:
+\begin{center}
+  \url{http://tfel.sourceforge.net/about.html}
+\end{center}
+
+\referencecea
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

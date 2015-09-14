@@ -7,6 +7,7 @@ MTEST_DOCS = Author.md                                    \
 	     Evolution.md                                 \
 	     ExternalStateVariable.md                     \
 	     ImposedStrain.md                             \
+	     ImposedDeformationGradient.md                \
 	     ImposedStress.md                             \
 	     InternalStateVariable.md                     \
 	     MaterialProperty.md                          \
