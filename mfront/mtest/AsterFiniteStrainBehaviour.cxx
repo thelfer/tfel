@@ -18,6 +18,7 @@
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/t2tost2.hxx"
+#include"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
@@ -83,13 +84,11 @@ namespace mfront
   template<unsigned short N>
   static void
   convertTangentOperator(tfel::math::matrix<real>& Kt,
-			 tfel::math::matrix<aster::AsterReal>& D,
+			 const tfel::math::matrix<aster::AsterReal>& D,
 			 const tfel::math::vector<real>& sv,
 			 const tfel::math::vector<real>& Fv0,
 			 const tfel::math::vector<real>& Fv1)
   {
-    using namespace std;
-    using namespace aster;
     using namespace tfel::math;
     t2tost2<N,real> dtau_ddF;
     t2tost2<N,real> dtau;
@@ -99,17 +98,21 @@ namespace mfront
     tensor<N,real>  F1(&Fv1[0]);
     tensor<N,real>  inv_F0 = invert(F0);
     // reverting things
-    AsterReal *v = &D(0,0);
+    const aster::AsterReal *v = &D(0,0);
     for(unsigned short i=0;i!=StensorDimeToSize<N>::value;++i){  // boucle sur tau
       for(unsigned short j=0;j!=TensorDimeToSize<N>::value;++j){  // boucle sur F
 	const unsigned short mi = getRowIndex(j);
-	const unsigned short mj = getColumnIndex(j);
-	dtau_ddF(i,j) = v[i+(mi+3*mj)*StensorDimeToSize<N>::value];
+	const unsigned short mj = getColumnIndex(j);	
+	dtau_ddF(i,j) = v[i+6*(mi+3*mj)];
       }
     }
     dtau = dtau_ddF*t2tot2<N,real>::tpld(inv_F0);
     computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F1);
-    copy(dsig.begin(),dsig.end(),Kt.begin());
+    for(unsigned short i=0;i!=StensorDimeToSize<N>::value;++i){  // boucle sur tau
+      for(unsigned short j=0;j!=TensorDimeToSize<N>::value;++j){  // boucle sur F
+    	Kt(i,j)=dsig(i,j);
+      }
+    }
   }
 
   AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -137,20 +140,20 @@ namespace mfront
 
   bool
   AsterFiniteStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
-						 tfel::math::vector<real>& s1,
-						 tfel::math::vector<real>& iv1,
-						 const tfel::math::tmatrix<3u,3u,real>& r,
-						 const tfel::math::vector<real>& u0,
-						 const tfel::math::vector<real>& u1,
-						 const tfel::math::vector<real>& s0,
-						 const tfel::math::vector<real>& mp0,
-						 const tfel::math::vector<real>& iv0,
-						 const tfel::math::vector<real>& ev0,
-						 const tfel::math::vector<real>& dev,
-						 const tfel::material::ModellingHypothesis::Hypothesis h,
-						 const real dt,
-						 const MTestStiffnessMatrixType::mtype ktype,
-						 const bool b) const
+					     tfel::math::vector<real>& s1,
+					     tfel::math::vector<real>& iv1,
+					     const tfel::math::tmatrix<3u,3u,real>& r,
+					     const tfel::math::vector<real>& u0,
+					     const tfel::math::vector<real>& u1,
+					     const tfel::math::vector<real>& s0,
+					     const tfel::math::vector<real>& mp0,
+					     const tfel::math::vector<real>& iv0,
+					     const tfel::math::vector<real>& ev0,
+					     const tfel::math::vector<real>& dev,
+					     const tfel::material::ModellingHypothesis::Hypothesis h,
+					     const real dt,
+					     const MTestStiffnessMatrixType::mtype ktype,
+					     const bool b) const
   {
     using namespace std;
     using namespace tfel::math;

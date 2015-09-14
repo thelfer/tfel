@@ -405,12 +405,10 @@ namespace aster
 	{
 	  using tfel::material::ModellingHypothesisToSpaceDimension;
 	  const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
-	  using  TangentOperatorType     = typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type;
 	  using  TangentOperatorViewType = typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::view_type;
 	  ConsistentTangentOperatorComputer::exe(bv,DDSOE);
 	  // les conventions fortran.... (petites déformations et modèles de zones cohésives)
 	  TangentOperatorViewType Dt{DDSOE};
-	  Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
 	  AsterTangentOperator::transpose(Dt);
 	} // end of exe	  
       };
