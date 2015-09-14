@@ -27,7 +27,7 @@ doc-install: doc
 	cp    docs/mtest/mtest.pdf                       @docdir@/mtest
 	cp    docs/release-notes-2.0/tfel-2.0.pdf        @docdir@/release-notes-2.0
 	cp    docs/release-notes-2.0.3/tfel-2.0.3.pdf    @docdir@/release-notes-2.0.3
-	cp    docs/release-notes-2.0.3/tfel-2.0.4.pdf    @docdir@/release-notes-2.0.4
+	cp    docs/release-notes-2.0.4/tfel-2.0.4.pdf    @docdir@/release-notes-2.0.4
 #	cp    docs/presentations/mfront-presentation.pdf @docdir@/presentations
 
 doc: doc-pdf doc-html
