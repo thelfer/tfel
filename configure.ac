@@ -598,6 +598,12 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanviscoplasticflow.mtest
            mfront/tests/behaviours/aster/asteranistropiclemaitreviscoplasticbehaviour.mtest
            mfront/tests/behaviours/aster/astertvergaard.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig11-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig22-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-2-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-3-2D.mtest
@@ -756,7 +762,16 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemburger.mtest
            mfront/tests/behaviours/castem/castemageingburger.mtest
            mfront/tests/behaviours/castem/castemtvergaard.mtest
-           mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-1-1D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig11-1D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig22-1D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig33-1D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig11-3D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig22-3D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest
+	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-2-1D.mtest
            mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
