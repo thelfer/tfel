@@ -66,6 +66,7 @@ cmake/Makefile.am -text
 cmake/ToolChain-i586-mingw32msvc.cmake -text
 cmake/ToolChain-i686-w64-mingw32.cmake -text
 cmake/ctest2junix.xsl -text
+cmake/modules/CodeCoverage.cmake -text
 cmake/modules/Makefile.am -text
 cmake/modules/OptimizeForArchitecture.cmake -text
 cmake/modules/aster.cmake -text
