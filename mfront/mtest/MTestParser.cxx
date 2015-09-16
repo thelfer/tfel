@@ -87,42 +87,55 @@ namespace mfront
   }
 
   void
-  MTestParser::execute(MTest& t,
-		       const std::string& f)
+  MTestParser::parseString(MTest& t,
+			   const std::string& f)
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    map<string,CallBack>::const_iterator pc;
+    this->file = "user defined string";
+    this->treatCharAsString(true);
+    CxxTokenizer::parseString(f);
+    this->stripComments();
+    this->execute(t);
+  } // end of MTestParser::parseString
+
+  void
+  MTestParser::execute(MTest& t,const std::string& f)
+  {
     this->file = f;
     this->treatCharAsString(true);
     this->openFile(f);
     this->stripComments();
-    TokensContainer::const_iterator p;
-    p = this->fileTokens.begin();
+    this->execute(t);
+  }
+  
+  void
+  MTestParser::execute(MTest& t)
+  {
+    using tfel::utilities::CxxTokenizer;
+    CxxTokenizer::const_iterator p = this->fileTokens.begin();
     while(p!=fileTokens.end()){
-      pc=this->callbacks.find(p->value);
+      auto pc=this->callbacks.find(p->value);
       if(pc==this->callbacks.end()){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "MTestParser::execute : invalid keyword '"
 	    << p->value << "'. Error at line " 
 	    << p->line<< ".";
-	throw(runtime_error(msg.str()));
+	throw(std::runtime_error(msg.str()));
       }
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
 	log << "MTestParser::execute : treating keyword '" << p->value
-	    << "' at line '" << p->line << "'" << endl;
+	    << "' at line '" << p->line << "'\n";
       }
       ++p;
-      unsigned int line = p->line;
+      auto line = p->line;
       try{
 	(this->*(pc->second))(t,p);
-      } catch(exception& e){
-	ostringstream msg;
+      } catch(std::exception& e){
+	std::ostringstream msg;
 	msg << "MTestParser::MTest : error while "
-	    << "parsing file '" << f << "' at line '"
+	    << "parsing file '" << this->file << "' at line '"
 	    << line << "'.\n" << e.what();
-	throw(runtime_error(msg.str()));
+	throw(std::runtime_error(msg.str()));
       }
     }
   } // end of MTestParser::execute

@@ -368,8 +368,8 @@ struct TensorTest7
     using namespace tfel::math;
     typedef double real;
     const real cste = real(1)/sqrt(real(2));
-    const real eps  = 10.*numeric_limits<real>::epsilon();
-    typedef TensorViewFromStensor<stensor<3u,real> >::type TensorView;
+    const real eps  = 100.*numeric_limits<real>::epsilon();
+    typedef TensorViewFromStensor<const stensor<3u,real>&>::type TensorView;
     auto s = stensor<3u,real>{};
     for(unsigned short i=0;i!=s.size();++i){
       s[i] = exp(cos(real(i)));

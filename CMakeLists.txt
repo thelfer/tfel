@@ -90,6 +90,10 @@ endif(enable-fortran)
 
 #compiler options
 include(cmake/modules/compiler.cmake)
+if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+  include(cmake/modules/CodeCoverage.cmake)
+  SETUP_TARGET_FOR_COVERAGE(coverage ctest coverage)
+endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 
 #aster
 option(enable-aster "build aster interface for mechanical behaviours" OFF)

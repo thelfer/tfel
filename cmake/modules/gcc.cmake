@@ -44,10 +44,10 @@ SET(CMAKE_C_FLAGS_DEBUG "-g" CACHE STRING
     FORCE)
 
 # coverage
-SET(CMAKE_CXX_FLAGS_COVERAGE "-O0 -fprofile-arcs -ftest-coverage" CACHE STRING
+SET(CMAKE_CXX_FLAGS_COVERAGE "-O0 -g -DNDEBUG -fprofile-arcs -ftest-coverage" CACHE STRING
     "Flags used by the C++ compiler during builds with tests coverage checks."
     FORCE)
-SET(CMAKE_C_FLAGS_COVERAGE "-O0 -fprofile-arcs -ftest-coverage" CACHE STRING
+SET(CMAKE_C_FLAGS_COVERAGE "-O0 -g -DNDEBUG -fprofile-arcs -ftest-coverage" CACHE STRING
     "Flags used by the C compiler during builds with tests coverage checks."
     FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_COVERAGE

@@ -46,12 +46,17 @@ namespace mfront
      */
     MTestParser();
     /*!
-     * default constructor
+     * execute mtest parser on a file
      * \param[in] t : MTest object to be filled
      * \param[in] f : file name
      */
-    void
-    execute(MTest&,const std::string&);
+    void execute(MTest&,const std::string&);
+    /*!
+     * execute mtest parser on a string
+     * \param[in] t : MTest object to be filled
+     * \param[in] s : string
+     */
+    void parseString(MTest&,const std::string&);
     /*!
      * display the list of keywords
      */
@@ -74,6 +79,11 @@ namespace mfront
   protected:
     //! a simple alias
     typedef void (MTestParser::* CallBack)(MTest&,TokensContainer::const_iterator&);
+    /*!
+     * execute mtest parser after reading a file or parsing a string
+     * \param[in] t : MTest object to be filled
+     */
+    void execute(MTest&);
     /*!
      * register a call back
      * \param[in] k : key word

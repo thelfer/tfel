@@ -57,6 +57,10 @@ macro(add_mfront_generated_source lib interface ext file)
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
+    add_test(NAME mfront-${file}-${interface}
+      COMMAND ${mfront_executable} ${mfront_flags} --interface=${interface} ${mfront_file}
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES})
 endmacro(add_mfront_generated_source)
@@ -97,7 +101,6 @@ set(mfront_SOURCES
     T91AusteniticSteel_Kvisc_ROUX2007
     T91AusteniticSteel_Nexp_ROUX2007
     T91AusteniticSteel_Rinf_ROUX2007
-    T91AusteniticSteel_ThermalExpansion_ROUX2007
     T91AusteniticSteel_YieldStress_ROUX2007
     T91AusteniticSteel_YoungModulus_ROUX2007
     T91MartensiticSteel_b_ROUX2007
@@ -146,5 +149,8 @@ if(HAVE_FORTRAN)
     add_dependencies(check test-f)
     add_dependencies(test-f MFrontMaterialProperties-fortran)
     target_link_libraries(test-f MFrontMaterialProperties-fortran)
+    if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+      target_link_libraries(test-f "-lgcov")
+    endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
   endif(GNU_FORTRAN_COMPILER)
 endif(HAVE_FORTRAN)

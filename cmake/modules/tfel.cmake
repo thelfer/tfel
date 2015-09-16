@@ -159,6 +159,14 @@ macro(add_mfront_behaviour_generated_source lib interface file)
 	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${file}.mfront")
+      file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generation-test)
+      add_test(NAME mfront-${file}-${interface}
+	COMMAND ${mfront_executable}
+	--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
+	--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties
+	${mfront_flags}
+	--interface=${interface} ${mfront_file}
+	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set(${lib}_SOURCES "src/${file}.cxx" "src/${interface}${file}.cxx"
     ${${lib}_SOURCES})
@@ -217,6 +225,10 @@ macro(mfront_dependencies lib)
 	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${source}.mfront")
+      # add_test(NAME mfront-${source}-mfront COMMAND
+      # 	COMMAND "${mfront_executable}"
+      # 	"${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
+      # 	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set(${lib}_ADDITIONAL_SOURCES "src/${source}-mfront.cxx" ${${lib}_ADDITIONAL_SOURCES})
   endforeach(source)
