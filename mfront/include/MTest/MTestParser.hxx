@@ -17,10 +17,10 @@
 #include<map>
 #include<string>
 #include<vector>
+#include<memory>
 #include<fstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MTest/MTestConfig.hxx"

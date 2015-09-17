@@ -1586,8 +1586,6 @@ namespace mfront
   void
   MTestParser::handleExternalStateVariable(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    using namespace tfel::utilities;
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p,this->fileTokens.end());
     t.setExternalStateVariable(n,this->parseEvolution(evt,t,p),true);
@@ -1598,8 +1596,6 @@ namespace mfront
   void
   MTestParser::handleEvolution(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    using namespace tfel::utilities;
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p,this->fileTokens.end());
     t.addEvolution(n,this->parseEvolution(evt,t,p),true,true);
@@ -1650,7 +1646,6 @@ namespace mfront
   real
   MTestParser::readTime(const MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     return this->readDouble(t,p);
   } // end of MTestParser::readTime
 
@@ -1659,10 +1654,9 @@ namespace mfront
 					const MTest& t,
 					TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    vector<real>::size_type i = 0;
     this->readSpecifiedToken("MTestParser::readArrayOfSpecifiedSize","{",p,
 			     this->fileTokens.end());
+    std::vector<real>::size_type i = 0;
     while(i!=v.size()){
       v[i] = this->readDouble(t,p);
       if(++i!=v.size()){

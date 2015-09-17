@@ -1,5 +1,6 @@
-SUBDIRS = aster castem castem2 cyrano secant alternatesecant \
-	  alternatedelta2 alternate2delta crossedsecant      \
+SUBDIRS = aster castem castem2 cyrano secant             \
+	  steffensen ironstuck  alternatesecant          \
+	  alternatedelta2 alternate2delta crossedsecant  \
 	  crosseddelta2 crossed2delta crossed2deltabis
 
 MFRONTS= DDIF2.mfront                                                      \

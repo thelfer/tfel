@@ -17,6 +17,7 @@
 #include<map>
 #include<string>
 #include<vector>
+#include<memory>
 #include<fstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -27,7 +28,6 @@
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/LUSolve.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
-#include<memory>
 
 #include"MTest/MTestConfig.hxx"
 #include"MTest/MTestTypes.hxx"
