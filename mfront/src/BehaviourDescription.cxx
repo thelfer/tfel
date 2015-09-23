@@ -781,7 +781,6 @@ namespace mfront
     using namespace std;
     // never ever trust a user
     if(h.empty()){
-      string msg();
       throw(runtime_error("BehaviourDescription::setHypotheses : "
 			  "empty set of modelling hypotheses specificied"));
     }

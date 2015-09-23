@@ -260,7 +260,6 @@ namespace cyrano
       TFEL_CYRANO_INLINE void exe(CyranoReal *const,
 				  CyranoReal *const,
 				  CyranoReal *const)
-	throw(CyranoException)
 	{
 	  typedef tfel::material::MechanicalBehaviourTraits<Behaviour<H,CyranoReal,false>> Traits;
 	  throw(CyranoInvalidDimension(Traits::getName(),1u));

@@ -110,7 +110,7 @@ namespace mfront
   void
   MTestParser::execute(MTest& t)
   {
-    using tfel::utilities::CxxTokenizer;
+    using CxxTokenizer = tfel::utilities::CxxTokenizer;
     CxxTokenizer::const_iterator p = this->fileTokens.begin();
     while(p!=fileTokens.end()){
       auto pc=this->callbacks.find(p->value);

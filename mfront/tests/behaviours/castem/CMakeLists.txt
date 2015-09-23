@@ -159,15 +159,15 @@ macro(test_castem test_arg)
       get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
       configure_file(castem${test_arg}.mtest.in
 	${file} @ONLY)
-      add_test(NAME castem${test_arg}_${conf}_mtest
+      add_test(NAME castem${test_arg}_mtest_${conf}
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file}
 	CONFIGURATIONS ${conf})
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST castem${test_arg}_${conf}_mtest
+        set_property(TEST castem${test_arg}_mtest_${conf}
           PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
 	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
       elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST castem${test_arg}_${conf}_mtest
+        set_property(TEST castem${test_arg}_mtest_${conf}
           PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
@@ -196,25 +196,49 @@ test_castem(materialpropertiesboundscheck3)
 test_castem(materialpropertiesboundscheck4)
 test_castem(materialpropertiesboundscheck5)
 test_castem(materialpropertiesboundscheck6)
-set_tests_properties(castemmaterialpropertiesboundscheck6_mtest
-  PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
 test_castem(materialpropertiesboundscheck7)
-set_tests_properties(castemmaterialpropertiesboundscheck7_mtest
-  PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
 test_castem(materialpropertiesboundscheck8)
-set_tests_properties(castemmaterialpropertiesboundscheck8_mtest
-  PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
-set_tests_properties(castemmaterialpropertiesboundscheck_mtest
-  castemmaterialpropertiesboundscheck2_mtest
-  castemmaterialpropertiesboundscheck5_mtest
-  castemmaterialpropertiesboundscheck8_mtest
-  PROPERTIES WILL_FAIL true)
+if(CMAKE_CONFIGURATION_TYPES)
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    set_tests_properties(castemmaterialpropertiesboundscheck6_mtest_${conf}
+      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
+    set_tests_properties(castemmaterialpropertiesboundscheck7_mtest_${conf}
+      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
+    set_tests_properties(castemmaterialpropertiesboundscheck8_mtest_${conf}
+      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
+    set_tests_properties(castemmaterialpropertiesboundscheck_mtest_${conf}
+      castemmaterialpropertiesboundscheck2_mtest_${conf}
+      castemmaterialpropertiesboundscheck5_mtest_${conf}
+      castemmaterialpropertiesboundscheck8_mtest_${conf}
+      PROPERTIES WILL_FAIL true)
+    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+else(CMAKE_CONFIGURATION_TYPES)
+  set_tests_properties(castemmaterialpropertiesboundscheck6_mtest
+    PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
+  set_tests_properties(castemmaterialpropertiesboundscheck7_mtest
+    PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
+  set_tests_properties(castemmaterialpropertiesboundscheck8_mtest
+    PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
+  set_tests_properties(castemmaterialpropertiesboundscheck_mtest
+    castemmaterialpropertiesboundscheck2_mtest
+    castemmaterialpropertiesboundscheck5_mtest
+    castemmaterialpropertiesboundscheck8_mtest
+    PROPERTIES WILL_FAIL true)
+endif(CMAKE_CONFIGURATION_TYPES)
 
 test_castem(statevariablesboundscheck)
 test_castem(statevariablesboundscheck2)
-set_tests_properties(castemstatevariablesboundscheck_mtest
-  castemstatevariablesboundscheck2_mtest
-  PROPERTIES WILL_FAIL true)
+if(CMAKE_CONFIGURATION_TYPES)
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    set_tests_properties(castemstatevariablesboundscheck_mtest_${conf}
+      castemstatevariablesboundscheck2_mtest_${conf}
+      PROPERTIES WILL_FAIL true)
+  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+else(CMAKE_CONFIGURATION_TYPES)
+  set_tests_properties(castemstatevariablesboundscheck_mtest
+    castemstatevariablesboundscheck2_mtest
+    PROPERTIES WILL_FAIL true)
+endif(CMAKE_CONFIGURATION_TYPES)
 
 test_castem(externalstatevariablesboundscheck)
 test_castem(externalstatevariablesboundscheck2)
@@ -222,11 +246,23 @@ test_castem(externalstatevariablesboundscheck3)
 test_castem(externalstatevariablesboundscheck4)
 test_castem(externalstatevariablesboundscheck5)
 test_castem(externalstatevariablesboundscheck6)
-set_tests_properties(castemexternalstatevariablesboundscheck_mtest
-  castemexternalstatevariablesboundscheck2_mtest
-  castemexternalstatevariablesboundscheck5_mtest
-  castemexternalstatevariablesboundscheck6_mtest
-  PROPERTIES WILL_FAIL true)
+
+if(CMAKE_CONFIGURATION_TYPES)
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    set_tests_properties(castemexternalstatevariablesboundscheck_mtest_${conf}
+      castemexternalstatevariablesboundscheck2_mtest_${conf}
+      castemexternalstatevariablesboundscheck5_mtest_${conf}
+      castemexternalstatevariablesboundscheck6_mtest_${conf}
+      PROPERTIES WILL_FAIL true)
+  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+else(CMAKE_CONFIGURATION_TYPES)
+  set_tests_properties(castemexternalstatevariablesboundscheck_mtest
+    castemexternalstatevariablesboundscheck2_mtest
+    castemexternalstatevariablesboundscheck5_mtest
+    castemexternalstatevariablesboundscheck6_mtest
+    PROPERTIES WILL_FAIL true)
+      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+endif(CMAKE_CONFIGURATION_TYPES)
 
 test_castem(elasticity)
 test_castem(elasticity2)

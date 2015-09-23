@@ -27,7 +27,7 @@ mfront_dependencies(MFrontCyranoBehaviours
   ThermalExpansionCoefficientTest_2
   ThermalExpansionCoefficientTest_3)
 
-mfront_behaviour_check_library(MFrontCyranoBehaviours cyrano  ${mfront_tests_SOURCES})
+mfront_behaviour_check_library(MFrontCyranoBehaviours cyrano ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCyranoBehaviours
   CyranoInterface
   MFrontProfiling
@@ -50,12 +50,12 @@ macro(test_cyrano test_arg)
       get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
       configure_file(cyrano${test_arg}.mtest.in
 	${file} @ONLY)
-      add_test(NAME cyrano${test_arg}_${conf}_mtest
+      add_test(NAME cyrano${test_arg}_mtest_${conf}
 	CONFIGURATIONS ${conf}
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
-      set_tests_properties(cyrano${test_arg}_${conf}_mtest
+      set_tests_properties(cyrano${test_arg}_mtest_${conf}
 	PROPERTIES DEPENDS MFrontCyranoBehaviours)
-      set_tests_properties(cyrano${test_arg}_${conf}_mtest
+      set_tests_properties(cyrano${test_arg}_mtest_${conf}
 	PROPERTIES DEPENDS mtest)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	DESTINATION "share/mfront/tests/behaviours/cyrano"
@@ -83,29 +83,56 @@ test_cyrano(materialpropertiesboundscheck3)
 test_cyrano(materialpropertiesboundscheck4)
 test_cyrano(materialpropertiesboundscheck5)
 test_cyrano(materialpropertiesboundscheck6)
-set_tests_properties(cyranomaterialpropertiesboundscheck6_mtest
-  PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
 test_cyrano(materialpropertiesboundscheck7)
-set_tests_properties(cyranomaterialpropertiesboundscheck7_mtest
-  PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=WARNING")
 test_cyrano(materialpropertiesboundscheck8)
-set_tests_properties(cyranomaterialpropertiesboundscheck8_mtest
-  PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
-set_tests_properties(cyranomaterialpropertiesboundscheck_mtest
-  cyranomaterialpropertiesboundscheck2_mtest
-  cyranomaterialpropertiesboundscheck5_mtest
-  cyranomaterialpropertiesboundscheck8_mtest
-  PROPERTIES WILL_FAIL true)
+
+if(CMAKE_CONFIGURATION_TYPES)
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    set_tests_properties(cyranomaterialpropertiesboundscheck6_mtest_${conf}
+      PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
+    set_tests_properties(cyranomaterialpropertiesboundscheck7_mtest_${conf}
+      PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=WARNING")
+    set_tests_properties(cyranomaterialpropertiesboundscheck8_mtest_${conf}
+      PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
+    set_tests_properties(cyranomaterialpropertiesboundscheck_mtest_${conf}
+      cyranomaterialpropertiesboundscheck2_mtest_${conf}
+      cyranomaterialpropertiesboundscheck5_mtest_${conf}
+      cyranomaterialpropertiesboundscheck8_mtest_${conf}
+      PROPERTIES WILL_FAIL true)
+  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+else(CMAKE_CONFIGURATION_TYPES)
+  set_tests_properties(cyranomaterialpropertiesboundscheck6_mtest
+    PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
+  set_tests_properties(cyranomaterialpropertiesboundscheck7_mtest
+    PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=WARNING")
+  set_tests_properties(cyranomaterialpropertiesboundscheck8_mtest
+    PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
+  set_tests_properties(cyranomaterialpropertiesboundscheck_mtest
+    cyranomaterialpropertiesboundscheck2_mtest
+    cyranomaterialpropertiesboundscheck5_mtest
+    cyranomaterialpropertiesboundscheck8_mtest
+    PROPERTIES WILL_FAIL true)
+endif(CMAKE_CONFIGURATION_TYPES)
 
 test_cyrano(externalstatevariablesboundscheck)
 test_cyrano(externalstatevariablesboundscheck2)
 test_cyrano(externalstatevariablesboundscheck3)
 test_cyrano(externalstatevariablesboundscheck4)
 test_cyrano(externalstatevariablesboundscheck5)
-set_tests_properties(cyranoexternalstatevariablesboundscheck_mtest
-  cyranoexternalstatevariablesboundscheck2_mtest
-  cyranoexternalstatevariablesboundscheck5_mtest
-  PROPERTIES WILL_FAIL true)
+
+if(CMAKE_CONFIGURATION_TYPES)
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    set_tests_properties(cyranoexternalstatevariablesboundscheck_mtest_${conf}
+      cyranoexternalstatevariablesboundscheck2_mtest_${conf}
+      cyranoexternalstatevariablesboundscheck5_mtest_${conf}
+      PROPERTIES WILL_FAIL true)
+  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+else(CMAKE_CONFIGURATION_TYPES)
+  set_tests_properties(cyranoexternalstatevariablesboundscheck_mtest_${conf}
+    cyranoexternalstatevariablesboundscheck2_mtest_${conf}
+    cyranoexternalstatevariablesboundscheck5_mtest_${conf}
+    PROPERTIES WILL_FAIL true)
+endif(CMAKE_CONFIGURATION_TYPES)
 
 test_cyrano(elasticity)
 test_cyrano(elasticity10)

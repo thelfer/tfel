@@ -109,15 +109,15 @@ macro(test_aster test_arg)
       endif(HAVE_CASTEM)
       configure_file(aster${test_arg}.mtest.in
 	${file} @ONLY)
-      add_test(NAME aster${test_arg}_${conf}_mtest
+      add_test(NAME aster${test_arg}_mtest_${conf}
 	CONFIGURATIONS ${conf}
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST aster${test_arg}_${conf}_mtest
+        set_property(TEST aster${test_arg}_mtest_${conf}
           PROPERTY DEPENDS "MFrontAsterBehaviours MFrontMaterialProperties-aster mtest"
 	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
       elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST aster${test_arg}_${conf}_mtest
+        set_property(TEST aster${test_arg}_mtest_${conf}
           PROPERTY DEPENDS "MFrontAsterBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
@@ -165,20 +165,40 @@ test_aster(materialpropertiesboundscheck3)
 test_aster(materialpropertiesboundscheck4)
 test_aster(materialpropertiesboundscheck5)
 test_aster(materialpropertiesboundscheck6)
-set_tests_properties(astermaterialpropertiesboundscheck_mtest
-  astermaterialpropertiesboundscheck2_mtest
-  astermaterialpropertiesboundscheck5_mtest
-  PROPERTIES WILL_FAIL true)
+
+if(CMAKE_CONFIGURATION_TYPES)
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    set_tests_properties(astermaterialpropertiesboundscheck_mtest_${conf}
+      astermaterialpropertiesboundscheck2_mtest_${conf}
+      astermaterialpropertiesboundscheck5_mtest_${conf}
+      PROPERTIES WILL_FAIL true)
+  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+else(CMAKE_CONFIGURATION_TYPES)
+  set_tests_properties(astermaterialpropertiesboundscheck_mtest
+    astermaterialpropertiesboundscheck2_mtest
+    astermaterialpropertiesboundscheck5_mtest
+    PROPERTIES WILL_FAIL true)
+endif(CMAKE_CONFIGURATION_TYPES)
 
 test_aster(externalstatevariablesboundscheck)
 test_aster(externalstatevariablesboundscheck2)
 test_aster(externalstatevariablesboundscheck3)
 test_aster(externalstatevariablesboundscheck4)
 test_aster(externalstatevariablesboundscheck5)
-set_tests_properties(asterexternalstatevariablesboundscheck_mtest
-  asterexternalstatevariablesboundscheck2_mtest
-  asterexternalstatevariablesboundscheck5_mtest
-  PROPERTIES WILL_FAIL true)
+
+if(CMAKE_CONFIGURATION_TYPES)
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    set_tests_properties(asterexternalstatevariablesboundscheck_mtest_${conf}
+      asterexternalstatevariablesboundscheck2_mtest_${conf}
+      asterexternalstatevariablesboundscheck5_mtest_${conf}
+      PROPERTIES WILL_FAIL true)
+  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+else(CMAKE_CONFIGURATION_TYPES)
+  set_tests_properties(asterexternalstatevariablesboundscheck_mtest
+    asterexternalstatevariablesboundscheck2_mtest
+    asterexternalstatevariablesboundscheck5_mtest
+    PROPERTIES WILL_FAIL true)
+endif(CMAKE_CONFIGURATION_TYPES)
 
 test_aster(elasticity)
 test_aster(elasticity2)
@@ -186,7 +206,7 @@ if(HAVE_CASTEM)
   test_aster(elasticity3)
   if(CMAKE_CONFIGURATION_TYPES)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set_tests_properties(asterelasticity3_${conf}_mtest
+      set_tests_properties(asterelasticity3_mtest_${conf}
 	PROPERTIES DEPENDS MFrontMaterialProperties-castem)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
