@@ -486,7 +486,6 @@ namespace umat
 	} else {
 	  throwInvalidDDSOEException(Traits::getName(),*ddsoe);
 	}
-	const auto& up = UMATOutOfBoundsPolicy::getUMATOutOfBoundsPolicy();
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
 		     this->PROPS+UMATTraits<BV>::propertiesOffset,
 		     this->STATEV,this->PREDEF,this->DPRED);
