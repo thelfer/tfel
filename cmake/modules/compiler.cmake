@@ -79,6 +79,8 @@ MACRO (TFEL_CHECK_CXX_COMPILER_FLAG _FLAG _RESULT)
    TFEL_CHECK_CXX_SOURCE_COMPILES("int main() { return 0;}" ${_RESULT}
      # Some compilers do not fail with a bad flag
      FAIL_REGEX "unrecognized .*option"                     # GNU
+     FAIL_REGEX "unknown warning option"                    # CLANG
+     FAIL_REGEX "warning: optimization flag"                # CLANG
      FAIL_REGEX "ignoring unknown option"                   # MSVC
      FAIL_REGEX "[Uu]nknown option"                         # HP
      FAIL_REGEX "[Ww]arning: [Oo]ption"                     # SunPro

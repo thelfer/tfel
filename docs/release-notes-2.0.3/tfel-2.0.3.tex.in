@@ -21,7 +21,7 @@
 \date{Septembre 2015}
 \indice{0}
 \typeaction{BE}
-\numero{} % 15-024}
+\numero{15-026}
 \numeroaffaire{A-SICOM-A1-07}
 \domaine{DEN/DISN/SIMU}
 \jalon{MFront open-source}
@@ -30,7 +30,7 @@
 \clients{}
 \classification{DO}
 \motsclefs{
-  \pleiades{} - \castem{} - \aster{} - \mfront{}
+  \pleiades{} - \mfront{} - {\tt cyrano} - \castem{} - \aster{}
 }
 
 % \codebarre{images/code_barre}
@@ -91,7 +91,7 @@ AREVA NP/LYON           & P. Melin        & 1 & \\
                           & A. Millard         & 1 & \\
                           & O. Fandeur         & 1 & \\
   DEN/DPIE/SA2P           & A. Soniak          & 1 & \\
-  DEN/DMN                 & P. Yvon            & 1 & \\
+  DEN/DMN                 & P. Chapelot        & 1 & \\
                           & P. Bossis          & 1 & \\
   DEN/DMN/SRMA            & L. Portier         & 1 & \\
                           & S. Carassou        & 1 & \\
@@ -331,7 +331,7 @@ matériau que l'on peut définir de deux manière~:
 \end{itemize}
 
 Les paramètres sont rattachés au modèle en tant que tel, tandis que
-les propriétés matériau constantes sont rattachés aux matériaux
+les propriétés matériau constantes sont rattachées aux matériaux
 traités.
 
 L'utilisation d'une propriété matériau constante, représentée par un
@@ -421,9 +421,9 @@ et {\tt ARRET} correspondant respectivement à {\tt None}, {\tt
 
 \subsection{Ajout dans le glossaire}
 
-L'entrée {\tt AxialGrowth} a été ajoutée le glossaire. Elle correspond
-à la croissance axiale sous flux (grandissement) que l'on rencontre
-dans les crayons combustibles.
+L'entrée {\tt AxialGrowth} a été ajoutée dans le glossaire. Elle
+correspond à la croissance axiale sous flux (grandissement) que l'on
+rencontre dans les crayons combustibles.
 
 \section{Plates-formes supportées}
 \label{sec:plate-form-supp}
@@ -553,7 +553,7 @@ Cette version est livrée avec \(709\) cas tests.
 grande partie des fonctionnalités de {\tt mfront} associées aux lois
 de comportement.
 
-Les cas tests restant permettent de tester de manière unitaire
+Les cas tests restants permettent de tester de manière unitaire
 différentes fonctionnalités de {\tt TFEL}. La plupart des cas tests
 visent la partie {\tt TFEL/Math} qui regroupe les objets mathématiques
 (vecteurs, matrices, tenseurs) ainsi que différents algorithmes
@@ -561,7 +561,16 @@ numériques.
 
 Les cas tests unitaires sont aujourd'hui insuffisants pour assurer une
 couverture de l'ensemble des fonctionnalités du code et un effort dans
-ce sens nous apparaît nécessaire.
+ce sens nous apparaît nécessaire. Cela est en grande partie dû au fait
+qu'une partie non négligeable du code de \mfront{} est liée au
+traitement des erreurs dans les fichiers d'entrée et à la vérification
+de la cohérence des données fournies par l'utilisateur~: il faudrait,
+pour tester ces parties de codes, créer des cas tests spécifiques. Une
+première analyse de la couverture du code, qui sera affinée dans les
+versions futures montre cependant que les parties numériques sont
+couvertes de manière assez satisfaisante~: à grosse maille, on peut
+estimer que le taux de couverture pour ces parties au moins supérieur
+à \(80\,\%\).
 
 \subsection{Un niveau élevé d'avertissements}
 \label{sec:un-niveau-eleve}
@@ -640,7 +649,7 @@ supplémentaires liés au fait que~:
   mais cela pose au moins deux problèmes~:
   \begin{itemize}
   \item cette initialisation a un coût, particulièrement si des
-    tableaux de grandes tailles sont utilisées (certaines lois ont
+    tableaux de grandes tailles sont utilisés (certaines lois ont
     plusieurs milliers de variables internes).
   \item l'utilisation d'une variable non initialisée est souvent plus
     facile à détecter, surtout si l'on utilise un outil de type {\tt
@@ -720,7 +729,8 @@ générer la documentation en ligne de ces mots clés.
 
 \subsubsection{Documentation en ligne}
 
-La documentation des mots clés de \mfront{} accessible aux pages suivantes~:
+La documentation des mots clés de \mfront{} est accessible aux pages
+suivantes~:
 \begin{itemize}
 \item \url{http://tfel.sourceforge.net/DefaultDSL-keywords.html}
 \item \url{http://tfel.sourceforge.net/DefaultFiniteStrainDSL-keywords.html}
@@ -816,9 +826,9 @@ Nous avons également évoqué la question de la documentation des cas
 tests. Une évolution de {\tt tfel-doc} permettrait de générer
 automatiquement la documentation de la plupart des cas tests basés sur
 \mtest{}. Cependant, un document papier nous semble n'avoir que peu
-d'utilité. D'un point de vue, il serait plus intéressant de disposer
-d'une application graphique permettant une recherche par mots clés à
-partir d'une base de données générée par {\tt tfel-doc}.
+d'utilité. D'un point de vue utilisateur, il serait plus intéressant
+de disposer d'une application graphique permettant une recherche par
+mots clés à partir d'une base de données générée par {\tt tfel-doc}.
 
 \subsection{Remerciements}
 

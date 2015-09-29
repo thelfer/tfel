@@ -138,6 +138,7 @@ Version 3.0.x were tested using:
 
 - [`gcc`](https://gcc.gnu.org/)
 - [`clang`](http://clang.llvm.org/)
+- [`intel`](https://software.intel.com/en-us/intel-compilers)
 - [`Visual Studio`](https://www.visualstudio.com/)
 - [`mingw`](http://www.mingw.org/)
 - [`cygwin`](https://www.visualstudio.com)

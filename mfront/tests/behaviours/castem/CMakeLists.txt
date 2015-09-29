@@ -152,6 +152,17 @@ if(WIN32)
 endif(WIN32)
 
 macro(test_castem test_arg)
+  set(_NO_XML_OUTPUT )
+  set(_WILL_FAIL )
+  foreach(_ARG ${ARGN})
+    if ( ${_ARG} MATCHES NO_XML_OUTPUT )
+      set ( _NO_XML_OUTPUT ON)
+    elseif ( ${_ARG} MATCHES WILL_FAIL)
+      set ( _WILL_FAIL ON)
+    else()
+      message(FATAL_ERROR "test_castem: unsupported option '${_ARG}'")
+    endif()
+  endforeach(_ARG ${ARGN})
   if(CMAKE_CONFIGURATION_TYPES)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
       set(file "castem${test_arg}-${conf}.mtest")
@@ -159,9 +170,19 @@ macro(test_castem test_arg)
       get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
       configure_file(castem${test_arg}.mtest.in
 	${file} @ONLY)
-      add_test(NAME castem${test_arg}_mtest_${conf}
-	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file}
-	CONFIGURATIONS ${conf})
+      if(_NO_XML_OUTPUT)
+	add_test(NAME castem${test_arg}_${conf}_mtest
+	  COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false ${file}
+	  CONFIGURATIONS ${conf})
+      else(_NO_XML_OUTPUT)
+	add_test(NAME castem${test_arg}_${conf}_mtest
+	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file}
+	  CONFIGURATIONS ${conf})
+      endif(_NO_XML_OUTPUT)
+      if(_WILL_FAIL)
+	set_tests_properties(castem${test_arg}_${conf}_mtest
+	  PROPERTIES WILL_FAIL true)
+      endif(_WILL_FAIL)
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
         set_property(TEST castem${test_arg}_mtest_${conf}
           PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
@@ -180,8 +201,17 @@ macro(test_castem test_arg)
     get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
     configure_file(castem${test_arg}.mtest.in
       castem${test_arg}.mtest @ONLY)
-    add_test(NAME castem${test_arg}_mtest
+    if(_NO_XML_OUTPUT)
+      add_test(NAME castem${test_arg}_mtest
+	COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false castem${test_arg}.mtest)
+    else(_NO_XML_OUTPUT)
+      add_test(NAME castem${test_arg}_mtest
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false castem${test_arg}.mtest)
+    endif(_NO_XML_OUTPUT)
+    if(_WILL_FAIL)
+      set_tests_properties(castem${test_arg}_mtest
+	PROPERTIES WILL_FAIL true)
+    endif(_WILL_FAIL)
     set_property(TEST castem${test_arg}_mtest
       PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/castem${test_arg}.mtest
@@ -190,14 +220,19 @@ macro(test_castem test_arg)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_castem)
 
-test_castem(materialpropertiesboundscheck)
-test_castem(materialpropertiesboundscheck2)
+test_castem(materialpropertiesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_castem(materialpropertiesboundscheck2 
+  NO_XML_OUTPUT WILL_FAIL)
 test_castem(materialpropertiesboundscheck3)
 test_castem(materialpropertiesboundscheck4)
-test_castem(materialpropertiesboundscheck5)
+test_castem(materialpropertiesboundscheck5 
+  NO_XML_OUTPUT WILL_FAIL)
 test_castem(materialpropertiesboundscheck6)
 test_castem(materialpropertiesboundscheck7)
-test_castem(materialpropertiesboundscheck8)
+test_castem(materialpropertiesboundscheck8 
+  NO_XML_OUTPUT WILL_FAIL)
+
 if(CMAKE_CONFIGURATION_TYPES)
   foreach(conf ${CMAKE_CONFIGURATION_TYPES})
     set_tests_properties(castemmaterialpropertiesboundscheck6_mtest_${conf}
@@ -226,43 +261,21 @@ else(CMAKE_CONFIGURATION_TYPES)
     PROPERTIES WILL_FAIL true)
 endif(CMAKE_CONFIGURATION_TYPES)
 
-test_castem(statevariablesboundscheck)
-test_castem(statevariablesboundscheck2)
-if(CMAKE_CONFIGURATION_TYPES)
-  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-    set_tests_properties(castemstatevariablesboundscheck_mtest_${conf}
-      castemstatevariablesboundscheck2_mtest_${conf}
-      PROPERTIES WILL_FAIL true)
-  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-else(CMAKE_CONFIGURATION_TYPES)
-  set_tests_properties(castemstatevariablesboundscheck_mtest
-    castemstatevariablesboundscheck2_mtest
-    PROPERTIES WILL_FAIL true)
-endif(CMAKE_CONFIGURATION_TYPES)
+test_castem(statevariablesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_castem(statevariablesboundscheck2 
+  NO_XML_OUTPUT WILL_FAIL)
 
-test_castem(externalstatevariablesboundscheck)
-test_castem(externalstatevariablesboundscheck2)
+test_castem(externalstatevariablesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_castem(externalstatevariablesboundscheck2 
+  NO_XML_OUTPUT WILL_FAIL)
 test_castem(externalstatevariablesboundscheck3)
 test_castem(externalstatevariablesboundscheck4)
-test_castem(externalstatevariablesboundscheck5)
-test_castem(externalstatevariablesboundscheck6)
-
-if(CMAKE_CONFIGURATION_TYPES)
-  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-    set_tests_properties(castemexternalstatevariablesboundscheck_mtest_${conf}
-      castemexternalstatevariablesboundscheck2_mtest_${conf}
-      castemexternalstatevariablesboundscheck5_mtest_${conf}
-      castemexternalstatevariablesboundscheck6_mtest_${conf}
-      PROPERTIES WILL_FAIL true)
-  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-else(CMAKE_CONFIGURATION_TYPES)
-  set_tests_properties(castemexternalstatevariablesboundscheck_mtest
-    castemexternalstatevariablesboundscheck2_mtest
-    castemexternalstatevariablesboundscheck5_mtest
-    castemexternalstatevariablesboundscheck6_mtest
-    PROPERTIES WILL_FAIL true)
-      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-endif(CMAKE_CONFIGURATION_TYPES)
+test_castem(externalstatevariablesboundscheck5 
+  NO_XML_OUTPUT WILL_FAIL)
+test_castem(externalstatevariablesboundscheck6 
+  NO_XML_OUTPUT WILL_FAIL)
 
 test_castem(elasticity)
 test_castem(elasticity2)

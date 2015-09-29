@@ -71,12 +71,11 @@ namespace tfel
       ExternalCFunctionBase<0u>::setVariableValue(const std::vector<double>::size_type pos,
 						  const double)
       {
-	using namespace std;
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "ExternalCFunctionBase::setVariableValue : "
 	    << "invalid index " << pos 
 	    << " (function has no variable).";
-	throw(runtime_error(msg.str()));
+	throw(std::runtime_error(msg.str()));
       } // end of ExternalCFunctionBase<0u>::setVariableValue
 
       void
@@ -100,19 +99,15 @@ namespace tfel
       std::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<0>::differentiate(const std::vector<double>::size_type) const
       {
-	using namespace std;
-	string msg("ExternalCFunctionBase<0>::differentiate : ");
-	msg += "can't differentiate external function";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("ExternalCFunctionBase<0>::differentiate : "
+				 "can't differentiate external function"));
       } // end of ExternalCFunctionBase<0>::differentiate
 
       std::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<0>::differentiate(const std::string&) const
       {
-	using namespace std;
-	string msg("ExternalCFunctionBase<0>::differentiate : ");
-	msg += "can't differentiate external function";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("ExternalCFunctionBase<0>::differentiate : "
+				 "can't differentiate external function"));
       } // end of ExternalCFunctionBase<0>::differentiate
 
       ExternalCFunction<0u>::ExternalCFunction(ExternalCFunction<0u>::FunctionPtr f_)

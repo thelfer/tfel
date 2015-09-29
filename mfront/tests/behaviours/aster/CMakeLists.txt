@@ -100,6 +100,17 @@ if(WIN32)
 endif(WIN32)
 
 macro(test_aster test_arg)
+  set(_NO_XML_OUTPUT )
+  set(_WILL_FAIL )
+  foreach(_ARG ${ARGN})
+    if ( ${_ARG} MATCHES NO_XML_OUTPUT )
+      set ( _NO_XML_OUTPUT ON)
+    elseif ( ${_ARG} MATCHES WILL_FAIL)
+      set ( _WILL_FAIL ON)
+    else()
+      message(FATAL_ERROR "test_aster: unsupported option '${_ARG}'")
+    endif()
+  endforeach(_ARG ${ARGN})
   if(CMAKE_CONFIGURATION_TYPES)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
       set(file "aster${test_arg}-${conf}.mtest")
@@ -109,9 +120,19 @@ macro(test_aster test_arg)
       endif(HAVE_CASTEM)
       configure_file(aster${test_arg}.mtest.in
 	${file} @ONLY)
-      add_test(NAME aster${test_arg}_mtest_${conf}
-	CONFIGURATIONS ${conf}
-	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
+      if(_NO_XML_OUTPUT)
+	add_test(NAME aster${test_arg}_${conf}_mtest
+	  CONFIGURATIONS ${conf}
+	  COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false ${file})
+      else(_NO_XML_OUTPUT)
+	add_test(NAME aster${test_arg}_${conf}_mtest
+	  CONFIGURATIONS ${conf}
+	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
+      endif(_NO_XML_OUTPUT)
+      if(_WILL_FAIL)
+	set_tests_properties(aster${test_arg}_${conf}_mtest
+	  PROPERTIES WILL_FAIL true)
+      endif(_WILL_FAIL)
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
         set_property(TEST aster${test_arg}_mtest_${conf}
           PROPERTY DEPENDS "MFrontAsterBehaviours MFrontMaterialProperties-aster mtest"
@@ -131,8 +152,17 @@ macro(test_aster test_arg)
     endif(HAVE_CASTEM)
     configure_file(aster${test_arg}.mtest.in
       aster${test_arg}.mtest @ONLY)
-    add_test(NAME aster${test_arg}_mtest
-      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false aster${test_arg}.mtest)
+    if(_NO_XML_OUTPUT)
+      add_test(NAME aster${test_arg}_mtest
+	COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false aster${test_arg}.mtest)
+    else(_NO_XML_OUTPUT)
+      add_test(NAME aster${test_arg}_mtest
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false aster${test_arg}.mtest)
+    endif(_NO_XML_OUTPUT)
+    if(_WILL_FAIL)
+      set_tests_properties(aster${test_arg}_mtest
+	PROPERTIES WILL_FAIL true)
+    endif(_WILL_FAIL)
     set_tests_properties(aster${test_arg}_mtest
       PROPERTIES DEPENDS MFrontAsterBehaviours)
     set_tests_properties(aster${test_arg}_mtest
@@ -159,46 +189,24 @@ macro(test_aster_python test)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_aster_python)
 
-test_aster(materialpropertiesboundscheck)
-test_aster(materialpropertiesboundscheck2)
+test_aster(materialpropertiesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_aster(materialpropertiesboundscheck2 
+  NO_XML_OUTPUT WILL_FAIL)
 test_aster(materialpropertiesboundscheck3)
 test_aster(materialpropertiesboundscheck4)
-test_aster(materialpropertiesboundscheck5)
+test_aster(materialpropertiesboundscheck5 
+  NO_XML_OUTPUT WILL_FAIL)
 test_aster(materialpropertiesboundscheck6)
 
-if(CMAKE_CONFIGURATION_TYPES)
-  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-    set_tests_properties(astermaterialpropertiesboundscheck_mtest_${conf}
-      astermaterialpropertiesboundscheck2_mtest_${conf}
-      astermaterialpropertiesboundscheck5_mtest_${conf}
-      PROPERTIES WILL_FAIL true)
-  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-else(CMAKE_CONFIGURATION_TYPES)
-  set_tests_properties(astermaterialpropertiesboundscheck_mtest
-    astermaterialpropertiesboundscheck2_mtest
-    astermaterialpropertiesboundscheck5_mtest
-    PROPERTIES WILL_FAIL true)
-endif(CMAKE_CONFIGURATION_TYPES)
-
-test_aster(externalstatevariablesboundscheck)
-test_aster(externalstatevariablesboundscheck2)
+test_aster(externalstatevariablesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_aster(externalstatevariablesboundscheck2 
+  NO_XML_OUTPUT WILL_FAIL)
 test_aster(externalstatevariablesboundscheck3)
 test_aster(externalstatevariablesboundscheck4)
-test_aster(externalstatevariablesboundscheck5)
-
-if(CMAKE_CONFIGURATION_TYPES)
-  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-    set_tests_properties(asterexternalstatevariablesboundscheck_mtest_${conf}
-      asterexternalstatevariablesboundscheck2_mtest_${conf}
-      asterexternalstatevariablesboundscheck5_mtest_${conf}
-      PROPERTIES WILL_FAIL true)
-  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-else(CMAKE_CONFIGURATION_TYPES)
-  set_tests_properties(asterexternalstatevariablesboundscheck_mtest
-    asterexternalstatevariablesboundscheck2_mtest
-    asterexternalstatevariablesboundscheck5_mtest
-    PROPERTIES WILL_FAIL true)
-endif(CMAKE_CONFIGURATION_TYPES)
+test_aster(externalstatevariablesboundscheck5 
+  NO_XML_OUTPUT WILL_FAIL)
 
 test_aster(elasticity)
 test_aster(elasticity2)
