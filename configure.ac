@@ -221,8 +221,9 @@ AC_MSG_CHECKING([C++11 noreturn attribute])
 noreturn=yes
 AC_TRY_COMPILE([
 	[[noreturn]] void f();
-	], [],
-	noreturn=no)
+	],
+	[noreturn=yes],
+	[noreturn=no])
 AC_MSG_RESULT($noreturn)
 
 if test "x$noreturn" == "xyes";
