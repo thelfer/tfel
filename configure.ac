@@ -218,7 +218,7 @@ CXXFLAGS="$CXXFLAGS $COMPILER_CXXFLAGS"
 CXXFLAGS="$CXXFLAGS $COMPILER_WARNINGS"
 
 AC_MSG_CHECKING([C++11 noreturn attribute])
-noreturn=yes
+noreturn=no
 AC_TRY_COMPILE([
 	[[noreturn]] void f();
 	],

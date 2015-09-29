@@ -1204,7 +1204,7 @@ namespace mfront{
     return this->parameters;
   } // end of BehaviourData::getParameters
 
-  BehaviourData::~BehaviourData() noexcept
+  BehaviourData::~BehaviourData()
   {} // end of BehaviourData::~BehaviourData
 
 } // end of namespace mfront
