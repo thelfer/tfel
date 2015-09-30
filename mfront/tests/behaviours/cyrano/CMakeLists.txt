@@ -135,7 +135,6 @@ else(CMAKE_CONFIGURATION_TYPES)
     PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
   set_tests_properties(cyranomaterialpropertiesboundscheck8_mtest
     PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
-      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
 endif(CMAKE_CONFIGURATION_TYPES)
 
 test_cyrano(externalstatevariablesboundscheck
