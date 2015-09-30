@@ -30,9 +30,9 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT LUException
       : public MathRunTimeException
     {
-      LUException() = default;
-      LUException(LUException&&) = default;
-      LUException(const LUException&) = default;
+      LUException();
+      LUException(LUException&&);
+      LUException(const LUException&);
       //! destructor
       virtual ~LUException() noexcept;
     }; // end of struct LUException
@@ -44,9 +44,9 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT LUUnmatchedSize
       : public LUException
     {
-      LUUnmatchedSize() = default;
-      LUUnmatchedSize(LUUnmatchedSize&&) = default;
-      LUUnmatchedSize(const LUUnmatchedSize&) = default;
+      LUUnmatchedSize();
+      LUUnmatchedSize(LUUnmatchedSize&&);
+      LUUnmatchedSize(const LUUnmatchedSize&);
       //! \return a string describing the error
       virtual const char* what() const noexcept override final;
       //! destructor
@@ -60,9 +60,9 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT LUMatrixNotSquare
       : public LUException
     {
-      LUMatrixNotSquare() = default;
-      LUMatrixNotSquare(LUMatrixNotSquare&&) = default;
-      LUMatrixNotSquare(const LUMatrixNotSquare&) = default;
+      LUMatrixNotSquare();
+      LUMatrixNotSquare(LUMatrixNotSquare&&);
+      LUMatrixNotSquare(const LUMatrixNotSquare&);
       //! \return a string describing the error
       virtual const char* what() const noexcept override final;
       //! destructor
@@ -76,9 +76,9 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT LUInvalidMatrixSize
       : public LUException
     {
-      LUInvalidMatrixSize() = default;
-      LUInvalidMatrixSize(LUInvalidMatrixSize&&) = default;
-      LUInvalidMatrixSize(const LUInvalidMatrixSize&) = default;
+      LUInvalidMatrixSize();
+      LUInvalidMatrixSize(LUInvalidMatrixSize&&);
+      LUInvalidMatrixSize(const LUInvalidMatrixSize&);
       //! \return a string describing the error
       virtual const char* what() const noexcept override final;
       //! destructor
@@ -92,9 +92,9 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT LUNullPivot
       : public LUException
     {
-      LUNullPivot() = default;
-      LUNullPivot(LUNullPivot&&) = default;
-      LUNullPivot(const LUNullPivot&) = default;
+      LUNullPivot();
+      LUNullPivot(LUNullPivot&&);
+      LUNullPivot(const LUNullPivot&);
       //! \return a string describing the error
       virtual const char* what() const noexcept override final;
       //! destructor
@@ -108,9 +108,9 @@ namespace tfel
     struct TFELMATH_VISIBILITY_EXPORT LUNullDeterminant
       : public LUException
     {
-      LUNullDeterminant() = default;
-      LUNullDeterminant(LUNullDeterminant&&) = default;
-      LUNullDeterminant(const LUNullDeterminant&) = default;
+      LUNullDeterminant();
+      LUNullDeterminant(LUNullDeterminant&&);
+      LUNullDeterminant(const LUNullDeterminant&);
       //! \return a string describing the error
       virtual const char* what() const noexcept override final;
       //! destructor

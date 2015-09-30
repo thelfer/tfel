@@ -13,6 +13,7 @@
 
 #include<fstream>
 #include<iostream>
+#include<stdexcept>
 
 #include"TFEL/Utilities/Global.hxx"
 #include"TFEL/Utilities/GeneratorOptions.hxx"

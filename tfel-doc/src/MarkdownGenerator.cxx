@@ -15,6 +15,7 @@
 #include<ctime>
 #include<chrono>
 #include<fstream>
+#include<stdexcept>
 
 #include"TFEL/Utilities/Global.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
