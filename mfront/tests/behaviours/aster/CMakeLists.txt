@@ -134,12 +134,12 @@ macro(test_aster test_arg)
 	  PROPERTIES WILL_FAIL true)
       endif(_WILL_FAIL)
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST aster${test_arg}_mtest_${conf}
-          PROPERTY DEPENDS "MFrontAsterBehaviours MFrontMaterialProperties-aster mtest"
+        set_property(TEST aster${test_arg}_${conf}_mtest
+          PROPERTY DEPENDS MFrontAsterBehaviours MFrontMaterialProperties-aster mtest
 	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
       elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST aster${test_arg}_mtest_${conf}
-          PROPERTY DEPENDS "MFrontAsterBehaviours MFrontMaterialProperties-castem mtest")
+        set_property(TEST aster${test_arg}_${conf}_mtest
+          PROPERTY DEPENDS MFrontAsterBehaviours MFrontMaterialProperties-castem mtest)
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	DESTINATION "share/mfront/tests/behaviours/aster"
@@ -214,7 +214,7 @@ if(HAVE_CASTEM)
   test_aster(elasticity3)
   if(CMAKE_CONFIGURATION_TYPES)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set_tests_properties(asterelasticity3_mtest_${conf}
+      set_tests_properties(asterelasticity3_${conf}_mtest
 	PROPERTIES DEPENDS MFrontMaterialProperties-castem)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)

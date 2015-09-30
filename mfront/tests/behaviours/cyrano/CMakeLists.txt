@@ -74,10 +74,14 @@ macro(test_cyrano test_arg)
 	set_tests_properties(cyrano${test_arg}_${conf}_mtest
 	  PROPERTIES WILL_FAIL true)
       endif(_WILL_FAIL)
-      set_tests_properties(cyrano${test_arg}_mtest_${conf}
-	PROPERTIES DEPENDS MFrontCyranoBehaviours)
-      set_tests_properties(cyrano${test_arg}_mtest_${conf}
-	PROPERTIES DEPENDS mtest)
+      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+        set_property(TEST cyrano${test_arg}_${conf}_mtest
+          PROPERTY DEPENDS MFrontCyranoBehaviours mtest
+	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
+      elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+        set_property(TEST cyrano${test_arg}_${conf}_mtest
+          PROPERTY DEPENDS MFrontCyranBehaviours mtest)
+      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	DESTINATION "share/mfront/tests/behaviours/cyrano"
 	COMPONENT mtest)
@@ -119,10 +123,20 @@ test_cyrano(materialpropertiesboundscheck6)
 test_cyrano(materialpropertiesboundscheck7)
 test_cyrano(materialpropertiesboundscheck8 
   NO_XML_OUTPUT WILL_FAIL)
-set_tests_properties(cyranomaterialpropertiesboundscheck6_mtest
-  PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
-set_tests_properties(cyranomaterialpropertiesboundscheck8_mtest
-  PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
+if(CMAKE_CONFIGURATION_TYPES)
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    set_tests_properties(cyranomaterialpropertiesboundscheck6_${conf}_mtest
+      PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
+    set_tests_properties(cyranomaterialpropertiesboundscheck8_${conf}_mtest
+      PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
+    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+else(CMAKE_CONFIGURATION_TYPES)
+  set_tests_properties(cyranomaterialpropertiesboundscheck6_mtest
+    PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
+  set_tests_properties(cyranomaterialpropertiesboundscheck8_mtest
+    PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
+      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+endif(CMAKE_CONFIGURATION_TYPES)
 
 test_cyrano(externalstatevariablesboundscheck
   NO_XML_OUTPUT WILL_FAIL)

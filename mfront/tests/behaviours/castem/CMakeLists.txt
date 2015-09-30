@@ -184,11 +184,11 @@ macro(test_castem test_arg)
 	  PROPERTIES WILL_FAIL true)
       endif(_WILL_FAIL)
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST castem${test_arg}_mtest_${conf}
+        set_property(TEST castem${test_arg}_${conf}_mtest
           PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
 	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
       elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST castem${test_arg}_mtest_${conf}
+        set_property(TEST castem${test_arg}_${conf}_mtest
           PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
@@ -235,16 +235,16 @@ test_castem(materialpropertiesboundscheck8
 
 if(CMAKE_CONFIGURATION_TYPES)
   foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-    set_tests_properties(castemmaterialpropertiesboundscheck6_mtest_${conf}
+    set_tests_properties(castemmaterialpropertiesboundscheck6_${conf}_mtest
       PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
-    set_tests_properties(castemmaterialpropertiesboundscheck7_mtest_${conf}
+    set_tests_properties(castemmaterialpropertiesboundscheck7_${conf}_mtest
       PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
-    set_tests_properties(castemmaterialpropertiesboundscheck8_mtest_${conf}
+    set_tests_properties(castemmaterialpropertiesboundscheck8_${conf}_mtest
       PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
-    set_tests_properties(castemmaterialpropertiesboundscheck_mtest_${conf}
-      castemmaterialpropertiesboundscheck2_mtest_${conf}
-      castemmaterialpropertiesboundscheck5_mtest_${conf}
-      castemmaterialpropertiesboundscheck8_mtest_${conf}
+    set_tests_properties(castemmaterialpropertiesboundscheck_${conf}_mtest
+      castemmaterialpropertiesboundscheck2_${conf}_mtest
+      castemmaterialpropertiesboundscheck5_${conf}_mtest
+      castemmaterialpropertiesboundscheck8_${conf}_mtest
       PROPERTIES WILL_FAIL true)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
 else(CMAKE_CONFIGURATION_TYPES)

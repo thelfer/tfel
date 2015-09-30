@@ -184,12 +184,9 @@ TFEL_TESTS_GENERATE_PROXY(TargetsDescriptionTest,
 int main(void)
 {
   using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(std::cout);
-  manager.addXMLTestOutput("TargetsDescription.xml");
-  auto r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  auto& m = TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("TargetsDescription.xml");
+  const auto r = m.execute();
+  return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main
