@@ -15,6 +15,7 @@
 #undef NDEBUG
 #endif
 
+#include<stdexcept>
 #include<iostream>
 #include<cstdlib>
 
