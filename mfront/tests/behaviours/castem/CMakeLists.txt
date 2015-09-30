@@ -164,10 +164,30 @@ get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPE
 get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
 
 macro(test_castem test_arg)
+  set(_NO_XML_OUTPUT )
+  set(_WILL_FAIL )
+  foreach(_ARG ${ARGN})
+    if ( ${_ARG} MATCHES NO_XML_OUTPUT )
+      set ( _NO_XML_OUTPUT ON)
+    elseif ( ${_ARG} MATCHES WILL_FAIL)
+      set ( _WILL_FAIL ON)
+    else()
+      message(FATAL_ERROR "test_castem: unsupported option '${_ARG}'")
+    endif()
+  endforeach(_ARG ${ARGN})
   configure_file(castem${test_arg}.mtest.in
     castem${test_arg}.mtest @ONLY)
-  add_test(NAME castem${test_arg}_mtest
-    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false castem${test_arg}.mtest)
+  if(_NO_XML_OUTPUT)
+    add_test(NAME castem${test_arg}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false castem${test_arg}.mtest)
+  else(_NO_XML_OUTPUT)
+    add_test(NAME castem${test_arg}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false castem${test_arg}.mtest)
+  endif(_NO_XML_OUTPUT)
+  if(_WILL_FAIL)
+    set_tests_properties(castem${test_arg}_mtest
+      PROPERTIES WILL_FAIL true)
+  endif(_WILL_FAIL)
   set_tests_properties(castem${test_arg}_mtest
     PROPERTIES DEPENDS MFrontCastemBehaviours)
   set_tests_properties(castem${test_arg}_mtest
@@ -179,43 +199,43 @@ macro(test_castem test_arg)
     castem${test_arg}.mtest-install)
 endmacro(test_castem)
 
-test_castem(materialpropertiesboundscheck)
-test_castem(materialpropertiesboundscheck2)
+test_castem(materialpropertiesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_castem(materialpropertiesboundscheck2
+  NO_XML_OUTPUT WILL_FAIL)
 test_castem(materialpropertiesboundscheck3)
 test_castem(materialpropertiesboundscheck4)
-test_castem(materialpropertiesboundscheck5)
+test_castem(materialpropertiesboundscheck5
+  NO_XML_OUTPUT WILL_FAIL)
 test_castem(materialpropertiesboundscheck6)
 set_tests_properties(castemmaterialpropertiesboundscheck6_mtest
   PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
 test_castem(materialpropertiesboundscheck7)
 set_tests_properties(castemmaterialpropertiesboundscheck7_mtest
   PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
-test_castem(materialpropertiesboundscheck8)
+test_castem(materialpropertiesboundscheck8
+  NO_XML_OUTPUT WILL_FAIL)
 set_tests_properties(castemmaterialpropertiesboundscheck8_mtest
   PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
-set_tests_properties(castemmaterialpropertiesboundscheck_mtest
-  castemmaterialpropertiesboundscheck2_mtest
-  castemmaterialpropertiesboundscheck5_mtest
-  castemmaterialpropertiesboundscheck8_mtest
-  PROPERTIES WILL_FAIL true)
 
-test_castem(statevariablesboundscheck)
-test_castem(statevariablesboundscheck2)
+test_castem(statevariablesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_castem(statevariablesboundscheck2
+  NO_XML_OUTPUT WILL_FAIL)
 set_tests_properties(castemstatevariablesboundscheck_mtest
   castemstatevariablesboundscheck2_mtest
   PROPERTIES WILL_FAIL true)
 
-test_castem(externalstatevariablesboundscheck)
-test_castem(externalstatevariablesboundscheck2)
+test_castem(externalstatevariablesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_castem(externalstatevariablesboundscheck2
+  NO_XML_OUTPUT WILL_FAIL)
 test_castem(externalstatevariablesboundscheck3)
 test_castem(externalstatevariablesboundscheck4)
-test_castem(externalstatevariablesboundscheck5)
-test_castem(externalstatevariablesboundscheck6)
-set_tests_properties(castemexternalstatevariablesboundscheck_mtest
-  castemexternalstatevariablesboundscheck2_mtest
-  castemexternalstatevariablesboundscheck5_mtest
-  castemexternalstatevariablesboundscheck6_mtest
-  PROPERTIES WILL_FAIL true)
+test_castem(externalstatevariablesboundscheck5
+  NO_XML_OUTPUT WILL_FAIL)
+test_castem(externalstatevariablesboundscheck6
+  NO_XML_OUTPUT WILL_FAIL)
 
 test_castem(elasticity)
 test_castem(elasticity2)

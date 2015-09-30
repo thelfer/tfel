@@ -56,10 +56,30 @@ get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPE
 get_property(MFrontMaterialPropertiesCyranoBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
 
 macro(test_cyrano test_arg)
+  set(_NO_XML_OUTPUT )
+  set(_WILL_FAIL )
+  foreach(_ARG ${ARGN})
+    if ( ${_ARG} MATCHES NO_XML_OUTPUT )
+      set ( _NO_XML_OUTPUT ON)
+    elseif ( ${_ARG} MATCHES WILL_FAIL)
+      set ( _WILL_FAIL ON)
+    else()
+      message(FATAL_ERROR "test_castem: unsupported option '${_ARG}'")
+    endif()
+  endforeach(_ARG ${ARGN})
   configure_file(cyrano${test_arg}.mtest.in
     cyrano${test_arg}.mtest @ONLY)
-  add_test(NAME cyrano${test_arg}_mtest
-    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false cyrano${test_arg}.mtest)
+  if(_NO_XML_OUTPUT)
+    add_test(NAME cyrano${test_arg}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false cyrano${test_arg}.mtest)
+  else(_NO_XML_OUTPUT)
+    add_test(NAME cyrano${test_arg}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false cyrano${test_arg}.mtest)
+  endif(_NO_XML_OUTPUT)
+  if(_WILL_FAIL)
+    set_tests_properties(cyrano${test_arg}_mtest
+      PROPERTIES WILL_FAIL true)
+  endif(_WILL_FAIL)
   set_tests_properties(cyrano${test_arg}_mtest
     PROPERTIES DEPENDS MFrontCyranoBehaviours)
   set_tests_properties(cyrano${test_arg}_mtest
@@ -71,35 +91,33 @@ macro(test_cyrano test_arg)
     cyrano${test_arg}.mtest-install)
 endmacro(test_cyrano)
 
-test_cyrano(materialpropertiesboundscheck)
-test_cyrano(materialpropertiesboundscheck2)
+test_cyrano(materialpropertiesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_cyrano(materialpropertiesboundscheck2
+  NO_XML_OUTPUT WILL_FAIL)
 test_cyrano(materialpropertiesboundscheck3)
 test_cyrano(materialpropertiesboundscheck4)
-test_cyrano(materialpropertiesboundscheck5)
+test_cyrano(materialpropertiesboundscheck5
+  NO_XML_OUTPUT WILL_FAIL)
 test_cyrano(materialpropertiesboundscheck6)
 set_tests_properties(cyranomaterialpropertiesboundscheck6_mtest
   PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
 test_cyrano(materialpropertiesboundscheck7)
 set_tests_properties(cyranomaterialpropertiesboundscheck7_mtest
   PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=WARNING")
-test_cyrano(materialpropertiesboundscheck8)
+test_cyrano(materialpropertiesboundscheck8
+  NO_XML_OUTPUT WILL_FAIL)
 set_tests_properties(cyranomaterialpropertiesboundscheck8_mtest
   PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
-set_tests_properties(cyranomaterialpropertiesboundscheck_mtest
-  cyranomaterialpropertiesboundscheck2_mtest
-  cyranomaterialpropertiesboundscheck5_mtest
-  cyranomaterialpropertiesboundscheck8_mtest
-  PROPERTIES WILL_FAIL true)
 
-test_cyrano(externalstatevariablesboundscheck)
-test_cyrano(externalstatevariablesboundscheck2)
+test_cyrano(externalstatevariablesboundscheck
+  NO_XML_OUTPUT WILL_FAIL)
+test_cyrano(externalstatevariablesboundscheck2
+  NO_XML_OUTPUT WILL_FAIL)
 test_cyrano(externalstatevariablesboundscheck3)
 test_cyrano(externalstatevariablesboundscheck4)
-test_cyrano(externalstatevariablesboundscheck5)
-set_tests_properties(cyranoexternalstatevariablesboundscheck_mtest
-  cyranoexternalstatevariablesboundscheck2_mtest
-  cyranoexternalstatevariablesboundscheck5_mtest
-  PROPERTIES WILL_FAIL true)
+test_cyrano(externalstatevariablesboundscheck5
+  NO_XML_OUTPUT WILL_FAIL)
 
 test_cyrano(elasticity)
 test_cyrano(elasticity10)
