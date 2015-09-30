@@ -1,0 +1,22 @@
+option(enable-cadna "enable-cadna tests" OFF)
+
+if(enable-cadna)
+  if(CADNA_INSTALL_PATH)
+    set(CADNAHOME "${CADNA_INSTALL_PATH}")
+  else(CADNA_INSTALL_PATH)
+    set(CADNAHOME $ENV{CADNAHOME})
+  endif(CADNA_INSTALL_PATH)
+  find_program(CADNA_CONFIG  cadna-config  "${CADNAHOME}/bin")
+  IF(CADNA_CONFIG)
+    EXECUTE_PROCESS(COMMAND ${CADNA_CONFIG} "--cxxflags"
+      OUTPUT_VARIABLE CADNA_CXXFLAGS
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(CADNA_INCLUDE_PATH "${CADNAHOME}/include")
+    set(CADNA_LIBRARY_PATH "${CADNAHOME}/lib")
+    MESSAGE(STATUS "cadna-config  : ${CADNA_CONFIG}")
+    MESSAGE(STATUS "cadna include : ${CADNA_INCLUDE_PATH}")
+    MESSAGE(STATUS "cadna libs    : ${CADNA_LIBRARY_PATH}")
+  ELSE(CADNA_CONFIG)
+    MESSAGE(FATAL_ERROR "cadna not found")
+  ENDIF(CADNA_CONFIG)
+ENDIF(enable-cadna)

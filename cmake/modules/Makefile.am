@@ -15,4 +15,5 @@ EXTRA_DIST = autotools.cmake               \
 	     OptimizeForArchitecture.cmake \
 	     tfel.cmake                    \
 	     latex.cmake                   \
+	     cadna.cmake                   \
 	     pandoc.cmake

@@ -227,7 +227,7 @@ namespace tfel
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
       int (TFEL_ADDCALL_PTR fct)(int);
       fct = ::tfel_getSetOutOfBoundsPolicyFunction(lib,(f+"_setOutOfBoundsPolicy").c_str());
-      if(fct==0){
+      if(fct==nullptr){
 	string msg("ExternalLibraryManager::setOutOfBoundsPolicy : ");
 	msg += " can't get the '"+f+"_setOutOfBoundsPolicy' function (";
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__

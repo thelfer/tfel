@@ -1827,6 +1827,7 @@ AC_OUTPUT([debug.sh
 	   tests/Math/st2tost2/Makefile
 	   tests/Math/t2tost2/Makefile
 	   tests/Math/st2tot2/Makefile
+   	   tests/Math/cadna/Makefile
 	   tests/FSAlgorithms/Makefile
 	   tests/Utilities/Makefile
 	   tests/MetaProgramming/Makefile

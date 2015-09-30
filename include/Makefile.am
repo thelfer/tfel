@@ -391,6 +391,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx                                        \
 			TFEL/Math/ExpressionTemplates/Expr.hxx							     \
 			TFEL/Math/ExpressionTemplates/StandardOperations.hxx					     \
+			TFEL/Math/cadna.hxx					                                     \
 			TFEL/Metaprogramming/Forward/TypeList.hxx                                                    \
 			TFEL/Metaprogramming/IsConstCallable.hxx                                                     \
 			TFEL/Metaprogramming/StaticAssert.hxx                                                        \

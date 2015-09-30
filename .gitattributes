@@ -71,6 +71,7 @@ cmake/modules/Makefile.am -text
 cmake/modules/OptimizeForArchitecture.cmake -text
 cmake/modules/aster.cmake -text
 cmake/modules/autotools.cmake -text
+cmake/modules/cadna.cmake -text
 cmake/modules/castem-unix-type.cmake -text
 cmake/modules/castem.cmake -text
 cmake/modules/clang.cmake -text
@@ -1456,6 +1457,7 @@ include/TFEL/Math/Vector/tvectorIO.hxx -text
 include/TFEL/Math/Vector/tvectorResultType.hxx -text
 include/TFEL/Math/Vector/vector.ixx -text
 include/TFEL/Math/Vector/vectorResultType.hxx -text
+include/TFEL/Math/cadna.hxx -text
 include/TFEL/Math/fsarray.hxx -text
 include/TFEL/Math/math.doxygen -text
 include/TFEL/Math/matrix.hxx -text
@@ -3650,6 +3652,10 @@ tests/Math/TinyVectorOfTinyVectorFromTinyVectorView.cxx -text
 tests/Math/VectorResultType.cxx -text
 tests/Math/broyden.cxx -text
 tests/Math/broyden2.cxx -text
+tests/Math/cadna/CMakeLists.txt -text
+tests/Math/cadna/Makefile.am -text
+tests/Math/cadna/cadna.cxx -text
+tests/Math/cadna/stensor_eigenvalues.cxx -text
 tests/Math/complex_operations.cxx -text
 tests/Math/conj.cxx -text
 tests/Math/discretization1D.cxx -text

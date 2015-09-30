@@ -218,6 +218,9 @@ if(enable-java)
   add_definitions("-DTFEL_JAVA_INCLUDES=\\\"\"${JNI_INCLUDES_FLAGS}\"\\\"")
 endif(enable-java)
 
+# cadna
+include(cmake/modules/cadna.cmake)
+
 # sub directories
 add_subdirectory(include) 
 add_subdirectory(src)
@@ -229,6 +232,7 @@ endif(UNIX AND (NOT CYGWIN))
 
 add_subdirectory(mfront)
 add_subdirectory(tests)
+
 
 #documentations
 add_custom_target(doc)

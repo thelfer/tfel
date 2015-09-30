@@ -57,10 +57,12 @@ macro(add_mfront_generated_source lib interface ext file)
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
-    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
-    add_test(NAME mfront-${file}-${interface}
-      COMMAND ${mfront_executable} ${mfront_flags} --interface=${interface} ${mfront_file}
-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
+    if(${CMAKE_VERSION} GREATER "2.8.2")
+      file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
+      add_test(NAME mfront-${file}-${interface}
+	COMMAND ${mfront_executable} ${mfront_flags} --interface=${interface} ${mfront_file}
+	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
+    endif(${CMAKE_VERSION} GREATER "2.8.2")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES})
 endmacro(add_mfront_generated_source)

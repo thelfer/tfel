@@ -160,13 +160,15 @@ macro(add_mfront_behaviour_generated_source lib interface file)
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${file}.mfront")
       file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generation-test)
-      add_test(NAME mfront-${file}-${interface}
-	COMMAND ${mfront_executable}
-	--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
-	--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties
-	${mfront_flags}
-	--interface=${interface} ${mfront_file}
-	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
+      if(${CMAKE_VERSION} GREATER "2.8.2")
+	add_test(NAME mfront-${file}-${interface}
+	  COMMAND ${mfront_executable}
+	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
+	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties
+	  ${mfront_flags}
+	  --interface=${interface} ${mfront_file}
+	  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
+      endif(${CMAKE_VERSION} GREATER "2.8.2")
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set(${lib}_SOURCES "src/${file}.cxx" "src/${interface}${file}.cxx"
     ${${lib}_SOURCES})
