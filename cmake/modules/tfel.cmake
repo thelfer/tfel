@@ -105,9 +105,9 @@ endmacro(mtest_library)
 
 macro(add_mfront_behaviour_generated_source lib interface file)
   set(mfront_file   "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${file}.mfront")
-  if(${CMAKE_VERSION} GREATER "2.8.2")
+  if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     set(mfront_executable "$<TARGET_FILE:mfront>")
-  else(${CMAKE_VERSION} GREATER "2.8.2")
+  else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     # retrieve the old behaviour for debian squeeze's version of cmake
     # does not work with configurations
     if(WIN32)
@@ -115,7 +115,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
     else(WIN32)
       set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
     endif(WIN32)
-  endif(${CMAKE_VERSION} GREATER "2.8.2")
+  endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(mfront_flags "--debug")
   else(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -160,7 +160,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${file}.mfront")
       file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generation-test)
-      if(${CMAKE_VERSION} GREATER "2.8.2")
+      if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
 	add_test(NAME mfront-${file}-${interface}
 	  COMMAND ${mfront_executable}
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
@@ -168,7 +168,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
 	  ${mfront_flags}
 	  --interface=${interface} ${mfront_file}
 	  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
-      endif(${CMAKE_VERSION} GREATER "2.8.2")
+      endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set(${lib}_SOURCES "src/${file}.cxx" "src/${interface}${file}.cxx"
     ${${lib}_SOURCES})
@@ -179,9 +179,9 @@ macro(mfront_dependencies lib)
     message(FATAL_ERROR "mfront_dependencies : no source specified")
   endif(${ARGC} LESS 1)
   foreach(source ${ARGN})
-    if(${CMAKE_VERSION} GREATER "2.8.2")
+    if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
       set(mfront_executable "$<TARGET_FILE:mfront>")
-    else(${CMAKE_VERSION} GREATER "2.8.2")
+    else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
       # retrieve the old behaviour for debian squeeze's version of cmake
       # does not work with configurations
       if(WIN32)
@@ -189,7 +189,7 @@ macro(mfront_dependencies lib)
       else(WIN32)
 	set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
       endif(WIN32)
-    endif(${CMAKE_VERSION} GREATER "2.8.2")
+    endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
       set(mfront_flags "--debug")
     else(CMAKE_BUILD_TYPE STREQUAL "Debug")

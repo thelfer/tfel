@@ -4,9 +4,9 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 
 macro(add_mfront_generated_source lib interface ext file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
-  if(${CMAKE_VERSION} GREATER "2.8.2")
+  if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     set(mfront_executable "$<TARGET_FILE:mfront>")
-  else(${CMAKE_VERSION} GREATER "2.8.2")
+  else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     # retrieve the old behaviour for debian squeeze's version of cmake
     # does not work with configurations
     if(WIN32)
@@ -14,7 +14,7 @@ macro(add_mfront_generated_source lib interface ext file)
     else(WIN32)
       set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
     endif(WIN32)
-  endif(${CMAKE_VERSION} GREATER "2.8.2")
+  endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
   if("${ext}" STREQUAL "")
     set(mfront_output "src/${file}.cxx")
   else("${ext}" STREQUAL "")
@@ -57,12 +57,12 @@ macro(add_mfront_generated_source lib interface ext file)
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
-    if(${CMAKE_VERSION} GREATER "2.8.2")
+    if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
       file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
       add_test(NAME mfront-${file}-${interface}
 	COMMAND ${mfront_executable} ${mfront_flags} --interface=${interface} ${mfront_file}
 	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
-    endif(${CMAKE_VERSION} GREATER "2.8.2")
+    endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES})
 endmacro(add_mfront_generated_source)

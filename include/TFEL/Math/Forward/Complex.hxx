@@ -17,7 +17,7 @@
 
 // August 2015 : a simple trick: including this header has not effect
 // in c++ other than defining some macros specific to the standard
-// library implementation: here we wan't to detect if we use libc++
+// library implementation: here we want to detect if we use libc++
 // which is a bit touchy with std::complex
 #include<ciso646>
 

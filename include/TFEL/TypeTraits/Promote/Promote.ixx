@@ -342,7 +342,8 @@ namespace tfel{
 	/*!
 	 * The result
 	 */
-	typedef typename std::conditional<std::is_same<typename tfel::typetraits::internals::PromoteNumericsGreater_<A,B>::type,A>::value,A,typename ChooseType<typename Promote_<A>::type,B,true,false>::type>::type type;
+	typedef typename std::conditional<std::is_same<typename tfel::typetraits::internals::PromoteNumericsGreater_<A,B>::type,A>::value,A,
+					  typename ChooseType<typename Promote_<A>::type,B,true,false>::type>::type type;
       };
 
       /*!
@@ -356,7 +357,8 @@ namespace tfel{
 	 * The result
 	 */
 	typedef typename std::conditional<
-	  std::is_same<typename tfel::typetraits::internals::PromoteNumericsGreater_<A,B>::type,B>::value,B,typename ChooseType<A,typename Promote_<B>::type,false,true>::type>::type type;
+	  std::is_same<typename tfel::typetraits::internals::PromoteNumericsGreater_<A,B>::type,B>::value,B,
+	  typename ChooseType<A,typename Promote_<B>::type,false,true>::type>::type type;
       };
 
       TFEL_MATH_CHOOSETYPE(unsigned short);

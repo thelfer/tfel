@@ -148,6 +148,32 @@ namespace tfel{
       };
     }
 
+    template<typename T1>
+    struct Promote<cadna::numeric_type<T1>,
+		   cadna::numeric_type<T1>>
+    {
+      using type = cadna::numeric_type<T1>;
+    };
+    
+    template<typename T1, typename T2>
+    struct Promote<cadna::numeric_type<T1>,
+		   cadna::numeric_type<T2>>
+    {
+      using type = cadna::numeric_type<typename Promote<T1,T2>::type>;
+    };
+
+    template<typename T1, typename T2>
+    struct Promote<cadna::numeric_type<T1>,T2>
+    {
+      using type = cadna::numeric_type<typename Promote<T1,T2>::type>;
+    };
+
+    template<typename T1, typename T2>
+    struct Promote<T1,cadna::numeric_type<T2>>
+    {
+      using type = cadna::numeric_type<typename Promote<T1,T2>::type>;
+    };
+    
     template<typename T>
     struct IsScalar<cadna::numeric_type<T>>
     {
