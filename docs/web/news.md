@@ -2,6 +2,17 @@
 % Helfer Thomas
 % September 9, 2015
 
+# MFront and Cyrano3 at the LWR Fuel Performance Meeting 2015 (13 - 17 September 2015, Zurich, Switzerland)
+
+![](img/topfuel2015-poster.png "")
+
+A poster describing the use of `MFront` in EDF `Cyrano3` fuel
+performance code has been presented at the LWR Fuel Performance
+Meeting 2015 (13 - 17 September 2015, Zurich, Switzerland):
+
+- [abstract](documents/articles/topfuel2015.pdf)
+- [poster](documents/articles/topfuel2015-poster.pdf)
+
 # Release of version 2.0.3 (9 September 2015)
 
 Version 2.0.3 is mostly a bug-fix release:

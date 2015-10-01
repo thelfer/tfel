@@ -267,10 +267,10 @@ if(enable-reference-doc)
 endif(enable-reference-doc)
 
 option(enable-website "enable generation of the website" ON)
-if((enable-website) AND (enable-reference-doc))
+if((enable-website) OR (enable-reference-doc))
   # Looking for pandoc (http://johnmacfarlane.net/pandoc)
   include(cmake/modules/pandoc.cmake)
-endif((enable-website) AND (enable-reference-doc))
+endif((enable-website) OR (enable-reference-doc))
 
 if(enable-reference-doc)
   if(HAVE_PANDOC OR HAVE_LATEX)

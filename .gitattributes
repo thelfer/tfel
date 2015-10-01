@@ -94,6 +94,10 @@ cmake/pyo-compile.py -text
 /debug.sh.in -text
 docs/CMakeLists.txt -text
 docs/Makefile.am -text
+docs/articles/CMakeLists.txt -text
+docs/articles/Makefile.am -text
+docs/articles/topfuel2015-poster.pdf -text
+docs/articles/topfuel2015.pdf -text
 docs/doxygen/CMakeLists.txt -text
 docs/doxygen/Makefile.am -text
 docs/html/Makefile.am -text
@@ -1063,6 +1067,7 @@ docs/web/img/mingw-get3.xcf -text
 docs/web/img/parameters.svg -text
 docs/web/img/poster-giens2015-2-fr.svg -text
 docs/web/img/poster-giens2015.svg -text
+docs/web/img/topfuel2015-poster.png -text
 docs/web/img/tutorielch12-img1.png -text
 docs/web/index.md -text
 docs/web/install-windows.md -text
