@@ -1,5 +1,5 @@
 /*!
- * \file   MTestParser.cxx
+ * \file   mfront/tests/unit-tests/MTestParserTest.cxx
  * \brief    
  * \author THOMAS HELFER
  * \date   16 sept. 2015
@@ -113,9 +113,9 @@ struct MTestParserTest final
  private:
   void check(const std::string& s){
     mfront::MTest m;
-    mfront::MTestParser p;
+    auto p = m.getParser();
     try{
-      p.parseString(m,s);
+      p->parseString(s);
     }
     catch(std::runtime_error& e){
       TestCase::registerResult("analysing '"+s+"' has thrown as expected "

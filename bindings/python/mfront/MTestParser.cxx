@@ -23,8 +23,8 @@ void declareMTestParser(void)
   using namespace boost;
   using namespace boost::python;
   using namespace mfront;
-  void (MTestParser::* execute)(MTest&, const std::string&) = &MTestParser::execute;
-  class_<MTestParser,noncopyable>("MTestParser")
+  void (MTestParser::* execute)(const std::string&) = &MTestParser::execute;
+  class_<MTestParser,noncopyable>("MTestParser",init<MTest&>())
     .def("execute",execute)
     .def("parseString",&MTestParser::parseString)
     ;

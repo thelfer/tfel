@@ -271,14 +271,16 @@ namespace mfront
   void
   MTestMain::treatHelpCommandsList(void)
   {
-    MTestParser().displayKeyWordsList();
+    auto t = std::make_shared<MTest>();
+    t->getParser()->displayKeyWordsList();
     ::exit(EXIT_SUCCESS);
   } // end of MTestMain::treatHelpCommandsList
 
   void
   MTestMain::treatHelpCommands(void)
   {
-    MTestParser().displayKeyWordsHelp();
+    auto t = std::make_shared<MTest>();
+    t->getParser()->displayKeyWordsHelp();
     ::exit(EXIT_SUCCESS);
   } // end of MTestMain::treatHelpCommands
   
@@ -290,8 +292,8 @@ namespace mfront
       throw(std::runtime_error("MTestMain::treatHelpCommand : "
 			       "no command specified"));
     }
-    MTestParser p;
-    p.displayKeyWordDescription(k);
+    auto t = std::make_shared<MTest>();
+    t->getParser()->displayKeyWordDescription(k);
     ::exit(EXIT_SUCCESS);
   }
 
@@ -315,17 +317,13 @@ namespace mfront
   std::string 
   MTestMain::getVersionDescription(void) const
   {
-    using namespace std;
     return "mtest is an behaviour testing utility";
   }
 
   std::string 
   MTestMain::getUsageDescription(void) const
   {
-    using namespace std;
-    string usage("Usage : ");
-    usage += "mtest [options] [files]";
-    return usage;
+    return "Usage : mtest [options] [filesusage]";
   }
 
   int
@@ -333,26 +331,23 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::tests;
-    using namespace tfel::utilities;
     auto& tm = TestManager::getTestManager();
-    vector<string>::const_iterator p;
-    for(p=this->inputs.begin();
-	p!=this->inputs.end();++p){
+    for(const auto& i : this->inputs){
       string tname;
-      string::size_type pos = p->rfind('.');
+      const auto pos = i.rfind('.');
       if(pos!=string::npos){
-	tname = p->substr(0,pos);
+	tname = i.substr(0,pos);
       } else {
-	tname = *p;
+	tname = i;
       }
-      shared_ptr<Test> t(new MTest());
-      MTestParser parser;
-      parser.execute(static_cast<MTest&>(*(t.get())),*p);
+      auto t = make_shared<MTest>();
+      auto parser = t->getParser();
+      parser->execute(i);
       if(this->result_file_output){
-	static_cast<MTest&>(*(t.get())).setOutputFileName(tname+".res");
+	t->setOutputFileName(tname+".res");
       }
       if(this->residual_file_output){
-	static_cast<MTest&>(*(t.get())).setResidualFileName(tname+"-residual.res");
+	t->setResidualFileName(tname+"-residual.res");
       }
       tm.addTest("MTest/"+tname,t);
       if(this->xml_output){
@@ -361,11 +356,8 @@ namespace mfront
       }
       tm.addTestOutput("MTest/"+tname,cout);
     }
-    TestResult r = tm.execute();
-    if(!r.success()){
-      return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
+    const auto r = tm.execute();
+    return r.success() ?  EXIT_SUCCESS : EXIT_FAILURE;
   }
 
   MTestMain::~MTestMain()

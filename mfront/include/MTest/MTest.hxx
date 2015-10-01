@@ -40,6 +40,9 @@
 
 namespace mfront
 {
+
+  // forward declaration
+  struct MTestParser;
   
   /*!
    * \brief MTest is a simple class to test mfront behaviours.
@@ -265,6 +268,11 @@ namespace mfront
      */
     virtual std::string
     classname(void) const override;
+    /*!
+     * \return a appropriate parser
+     */
+    virtual std::shared_ptr<MTestParser>
+    getParser(void);
     /*!
      * complete the initialisation. This method must be called once.
      * \note this method is called automatically by the execute method.

@@ -81,37 +81,36 @@ namespace mfront
 			     "invalid dimension"));
   }
 
-  MTestParser::MTestParser()
+  MTestParser::MTestParser(MTest& mt)
+    : t(mt)
   {
     this->registerCallBacks();
   }
 
   void
-  MTestParser::parseString(MTest& t,
-			   const std::string& f)
+  MTestParser::parseString(const std::string& f)
   {
     this->file = "user defined string";
     this->treatCharAsString(true);
     CxxTokenizer::parseString(f);
     this->stripComments();
-    this->execute(t);
+    this->execute();
   } // end of MTestParser::parseString
 
   void
-  MTestParser::execute(MTest& t,const std::string& f)
+  MTestParser::execute(const std::string& f)
   {
     this->file = f;
     this->treatCharAsString(true);
     this->openFile(f);
     this->stripComments();
-    this->execute(t);
+    this->execute();
   }
   
   void
-  MTestParser::execute(MTest& t)
+  MTestParser::execute()
   {
-    using CxxTokenizer = tfel::utilities::CxxTokenizer;
-    CxxTokenizer::const_iterator p = this->fileTokens.begin();
+    auto p = this->fileTokens.cbegin();
     while(p!=fileTokens.end()){
       auto pc=this->callbacks.find(p->value);
       if(pc==this->callbacks.end()){
@@ -129,7 +128,7 @@ namespace mfront
       ++p;
       auto line = p->line;
       try{
-	(this->*(pc->second))(t,p);
+	(this->*(pc->second))(p);
       } catch(std::exception& e){
 	std::ostringstream msg;
 	msg << "MTestParser::MTest : error while "
@@ -425,7 +424,7 @@ namespace mfront
   }
 
   void
-  MTestParser::handleDescription(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleDescription(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -476,18 +475,18 @@ namespace mfront
     ++p;
     this->readSpecifiedToken("MTestParser::handleDescription",";",
 			     p,this->fileTokens.end());
-    t.setDescription(description);
+    this->t.setDescription(description);
   } // end of MTestParser::Description
 
-  void MTestParser::handleCompareToNumericalTangentOperator(MTest& t,TokensContainer::const_iterator& p)
+  void MTestParser::handleCompareToNumericalTangentOperator(TokensContainer::const_iterator& p)
   {
     using namespace std;
     this->checkNotEndOfLine("handleCompareToNumericalTangentOperator",
 			    p,this->fileTokens.end());
     if(p->value=="true"){
-      t.setCompareToNumericalTangentOperator(true);
+      this->t.setCompareToNumericalTangentOperator(true);
     } else if(p->value=="false"){
-      t.setCompareToNumericalTangentOperator(false);
+      this->t.setCompareToNumericalTangentOperator(false);
     } else {
       string msg("MTestParser::handleCompareToNumericalTangentOperator : "
 		 "unexpected value (expected 'true' or 'false', read '"+p->value+"')");
@@ -500,51 +499,51 @@ namespace mfront
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleCompareToNumericalTangentOperator
 
-  void MTestParser::handleTangentOperatorComparisonCriterium(MTest& t,TokensContainer::const_iterator& p)
+  void MTestParser::handleTangentOperatorComparisonCriterium(TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium",
 			    p,this->fileTokens.end());
-    t.setTangentOperatorComparisonCriterium(this->readDouble(t,p));
+    this->t.setTangentOperatorComparisonCriterium(this->readDouble(p));
     this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium",
 			    p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handleTangentOperatorComparisonCriterium",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleTangentOperatorComparisonCriterium
 
-  void MTestParser::handleNumericalTangentOperatorPerturbationValue(MTest& t,TokensContainer::const_iterator& p)
+  void MTestParser::handleNumericalTangentOperatorPerturbationValue(TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("handleNumericalTangentOperatorPerturbationValue",
 			    p,this->fileTokens.end());
-    t.setNumericalTangentOperatorPerturbationValue(this->readDouble(t,p));
+    this->t.setNumericalTangentOperatorPerturbationValue(this->readDouble(p));
     this->checkNotEndOfLine("handleNumericalTangentOperatorPerturbationValue",
 			    p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handleNumericalTangentOperatorPerturbationValue",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleNumericalTangentOperatorPerturbationValue
 
-  void MTestParser::handleAuthor(MTest& t,TokensContainer::const_iterator& p)
+  void MTestParser::handleAuthor(TokensContainer::const_iterator& p)
   {
-    t.setAuthor(this->readUntilEndOfInstruction(p));
+    this->t.setAuthor(this->readUntilEndOfInstruction(p));
   } // end of MTestParser::handleAuthor
 
-  void MTestParser::handleOutOfBoundsPolicy(MTest& t,TokensContainer::const_iterator& p)
+  void MTestParser::handleOutOfBoundsPolicy(TokensContainer::const_iterator& p)
   {
     const std::string& s = this->readString(p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handlePredictionPolicy",";",
 			     p,this->fileTokens.end());
     if(s=="None"){
-      t.setOutOfBoundsPolicy(tfel::material::None);
+      this->t.setOutOfBoundsPolicy(tfel::material::None);
     } else if(s=="Warning"){
-      t.setOutOfBoundsPolicy(tfel::material::Warning);
+      this->t.setOutOfBoundsPolicy(tfel::material::Warning);
     } else if(s=="Strict"){
-      t.setOutOfBoundsPolicy(tfel::material::Strict);
+      this->t.setOutOfBoundsPolicy(tfel::material::Strict);
     } else {
       throw(std::runtime_error("MTestParser::handleOutOfBoundsPolicy: "
 			       "unsupported policy '"+s+"'"));
     }
   } // end of MTestParser::handleOutOfBoundsPolicy
   
-  void MTestParser::handlePredictionPolicy(MTest& t,TokensContainer::const_iterator& p)
+  void MTestParser::handlePredictionPolicy(TokensContainer::const_iterator& p)
   {
     using namespace std;
     MTest::PredictionPolicy ppolicy;
@@ -570,16 +569,16 @@ namespace mfront
 		 "unsupported prediction policy '"+s+"'");
       throw(runtime_error(msg));
     }
-    t.setPredictionPolicy(ppolicy);
+    this->t.setPredictionPolicy(ppolicy);
   }
 
-  void MTestParser::handleDate(MTest& t,TokensContainer::const_iterator& p)
+  void MTestParser::handleDate(TokensContainer::const_iterator& p)
   {
-    t.setDate(this->readUntilEndOfInstruction(p));
+    this->t.setDate(this->readUntilEndOfInstruction(p));
   } // end of MTestParser::handleDate
 
   void
-  MTestParser::handleStiffnessMatrixType(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleStiffnessMatrixType(TokensContainer::const_iterator& p)
   {
     using namespace std;
     MTestStiffnessMatrixType::mtype ktype;
@@ -599,11 +598,11 @@ namespace mfront
     }
     this->readSpecifiedToken("MTestParser::handleStiffnessMatrixType",";",
 			     p,this->fileTokens.end());
-    t.setStiffnessMatrixType(ktype);
+    this->t.setStiffnessMatrixType(ktype);
   }
 
   void
-  MTestParser::handleHandleThermalExpansion(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleHandleThermalExpansion(TokensContainer::const_iterator& p)
   {
     using namespace std;
     bool b;
@@ -621,11 +620,11 @@ namespace mfront
     ++p;
     this->readSpecifiedToken("MTestParser::handleHandleThermalExpansion",
 			     ";",p,this->fileTokens.end());
-    t.setHandleThermalExpansion(b);
+    this->t.setHandleThermalExpansion(b);
   }
 
   void
-  MTestParser::handleUseCastemAccelerationAlgorithm(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleUseCastemAccelerationAlgorithm(TokensContainer::const_iterator& p)
   {
     using namespace std;
     bool useCastemAcceleration;
@@ -643,31 +642,31 @@ namespace mfront
     ++p;
     this->readSpecifiedToken("MTestParser::handleUseCastemAccelerationAlgorithm",
 			     ";",p,this->fileTokens.end());
-    t.setUseCastemAccelerationAlgorithm(useCastemAcceleration);
+    this->t.setUseCastemAccelerationAlgorithm(useCastemAcceleration);
   }
 
   void
-  MTestParser::handleCastemAccelerationTrigger(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleCastemAccelerationTrigger(TokensContainer::const_iterator& p)
   {
     using namespace std;
     int cat = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleCastemAccelerationTrigger",";",
 			     p,this->fileTokens.end());
-    t.setCastemAccelerationTrigger(cat);
+    this->t.setCastemAccelerationTrigger(cat);
   } // end of MTestParser::handleCastemAccelerationTrigger
 
   void
-  MTestParser::handleCastemAccelerationPeriod(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleCastemAccelerationPeriod(TokensContainer::const_iterator& p)
   {
     using namespace std;
     int cap = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleCastemAccelerationPeriod",";",
 			     p,this->fileTokens.end());
-    t.setCastemAccelerationPeriod(cap);
+    this->t.setCastemAccelerationPeriod(cap);
   } // end of MTestParser::handleCastemAccelerationPeriod
 
   void
-  MTestParser::handleAccelerationAlgorithm(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleAccelerationAlgorithm(TokensContainer::const_iterator& p)
   {
     using namespace std;
     this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithm",
@@ -675,11 +674,11 @@ namespace mfront
     const auto& a = this->readString(p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handleAccelerationAlgorithm",
 			     ";",p,this->fileTokens.end());
-    t.setAccelerationAlgorithm(a);
+    this->t.setAccelerationAlgorithm(a);
   }
 
   void
-  MTestParser::handleAccelerationAlgorithmParameter(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleAccelerationAlgorithmParameter(TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("MTestParser::handleAccelerationAlgorithmParameter",
 			    p,this->fileTokens.end());
@@ -690,12 +689,12 @@ namespace mfront
     ++p;
     this->readSpecifiedToken("MTestParser::handleAccelerationAlgorithmParameter",";",
 			     p,this->fileTokens.end());
-    t.setAccelerationAlgorithmParameter(pn,v);
+    this->t.setAccelerationAlgorithmParameter(pn,v);
   } // end of MTestParser::handleIronsTuckAccelerationTrigger
 
 
   void
-  MTestParser::handleStiffnessUpdatePolicy(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleStiffnessUpdatePolicy(TokensContainer::const_iterator& p)
   {
     using namespace std;
     MTest::StiffnessUpdatingPolicy ks;
@@ -713,11 +712,11 @@ namespace mfront
     }
     this->readSpecifiedToken("MTestParser::handleStiffnessUpdatePolicy",";",
 			     p,this->fileTokens.end());
-    t.setStiffnessUpdatingPolicy(ks);
+    this->t.setStiffnessUpdatingPolicy(ks);
   }
 
   void
-  MTestParser::handleTest(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleTest(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -771,7 +770,7 @@ namespace mfront
 	this->readSpecifiedToken("MTestParser::handleTest","}",
 				 p,this->fileTokens.end());	
       }
-      const real eps = this->readDouble(t,p);
+      const real eps = this->readDouble(p);
       if(eps<0){
 	string msg("MTestParser::handleTest : "
 		   "invalid criterium value");
@@ -781,11 +780,11 @@ namespace mfront
       for(pf=functions.begin();pf!=functions.end();++pf){
 	MTest::UTest::TestedVariable ttype;
 	unsigned short pos;
-	t.getVariableTypeAndPosition(ttype,pos,pf->first);
+	this->t.getVariableTypeAndPosition(ttype,pos,pf->first);
 	shared_ptr<MTest::UTest> test;
 	test = shared_ptr<MTest::UTest>(new AnalyticalTest(pf->second,pf->first,
-								ttype,pos,t.getEvolutions(),eps));
-	t.addTest(test);
+								ttype,pos,this->t.getEvolutions(),eps));
+	this->t.addTest(test);
       }
     } else if (type=="file"){
       const auto& f = this->readString(p,this->fileTokens.end());
@@ -824,7 +823,7 @@ namespace mfront
 	this->readSpecifiedToken("MTestParser::handleTest","}",
 				 p,this->fileTokens.end());	
       }
-      const real eps = this->readDouble(t,p);
+      const real eps = this->readDouble(p);
       if(eps<0){
 	string msg("MTestParser::handleTest : "
 		   "invalid criterium value");
@@ -835,12 +834,12 @@ namespace mfront
       for(pf=columns.begin();pf!=columns.end();++pf){
 	MTest::UTest::TestedVariable ttype;
 	unsigned short pos;
-	t.getVariableTypeAndPosition(ttype,pos,pf->first);
+	this->t.getVariableTypeAndPosition(ttype,pos,pf->first);
 	shared_ptr<MTest::UTest> test;
 	test = shared_ptr<MTest::UTest>(new ReferenceFileComparisonTest(data,pf->first,
 									     pf->second,
 									     ttype,pos,eps));
-	t.addTest(test);
+	this->t.addTest(test);
       }
     } else {
       string msg("MTestParser::handleTest : "
@@ -852,7 +851,7 @@ namespace mfront
   } // end of MTestParser::handleTest
 
   void
-  MTestParser::handleReal(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleReal(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -862,34 +861,34 @@ namespace mfront
 		 v+"' is not a valid identifier");
       throw(runtime_error(msg));
     }
-    const real value = this->readDouble(t,p);
+    const real value = this->readDouble(p);
     shared_ptr<Evolution> mpev;
     mpev = shared_ptr<Evolution>(new ConstantEvolution(value));
     this->readSpecifiedToken("MTestParser::handleReal",";",
 			     p,this->fileTokens.end());
-    t.addEvolution(v,mpev,true,true);
+    this->t.addEvolution(v,mpev,true,true);
   }
 
   void
-  MTestParser::handleMaximumNumberOfIterations(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleMaximumNumberOfIterations(TokensContainer::const_iterator& p)
   {
     using namespace std;
-    t.setMaximumNumberOfIterations(this->readUnsignedInt(p,this->fileTokens.end()));
+    this->t.setMaximumNumberOfIterations(this->readUnsignedInt(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleMaximumNumberOfIterations",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleMaximumNumberOfIterations
 
   void
-  MTestParser::handleMaximumNumberOfSubSteps(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleMaximumNumberOfSubSteps(TokensContainer::const_iterator& p)
   {
     using namespace std;
-    t.setMaximumNumberOfSubSteps(this->readUnsignedInt(p,this->fileTokens.end()));
+    this->t.setMaximumNumberOfSubSteps(this->readUnsignedInt(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleMaximumNumberOfSubSteps",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleMaximumNumberOfSubSteps
 
   void
-  MTestParser::handleRotationMatrix(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleRotationMatrix(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::math;
@@ -899,7 +898,7 @@ namespace mfront
     vector<vector<real> > v(3);
     for(unsigned short i=0;i!=3;){
       v[i].resize(3);
-      this->readArrayOfSpecifiedSize(v[i],t,p);
+      this->readArrayOfSpecifiedSize(v[i],p);
       if(++i!=3){
 	this->readSpecifiedToken("MTestParser::handleRotationMatrix",",",
 				 p,this->fileTokens.end());
@@ -916,174 +915,174 @@ namespace mfront
 	rm(i,j)=v[i][j];
       }
     }
-    t.setRotationMatrix(rm);
+    this->t.setRotationMatrix(rm);
   } // end of MTestParser::handleRotationMatrix
 
   void
-  MTestParser::handleStrainEpsilon(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleStrainEpsilon(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(this->t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
       string msg("MTestParser::handleStrainEpsilon : "
 		 "the @StrainEpsilon keyword is only valid "
 		 "for small strain behaviours");
       throw(runtime_error(msg));
     }
-    this->handleDrivingVariableEpsilon(t,p);
+    this->handleDrivingVariableEpsilon(p);
   }
 
   void
-  MTestParser::handleDeformationGradientEpsilon(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleDeformationGradientEpsilon(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
       string msg("MTestParser::handleDeformationGradientEpsilon : "
 		 "the @DeformationGradientEpsilon keyword is only valid "
 		 "for finite strain behaviours");
       throw(runtime_error(msg));
     }
-    this->handleDrivingVariableEpsilon(t,p);
+    this->handleDrivingVariableEpsilon(p);
   } // end of MTestParser::handleDeformationGradientEpsilon
 
   void
-  MTestParser::handleOpeningDisplacementEpsilon(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleOpeningDisplacementEpsilon(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    if(this->t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
       string msg("MTestParser::handleOpeningDisplacementEpsilon : "
 		 "the @OpeningDisplacementEpsilon keyword is only valid "
 		 "for cohesive zone model behaviours");
       throw(runtime_error(msg));
     }
-    this->handleDrivingVariableEpsilon(t,p);
+    this->handleDrivingVariableEpsilon(p);
   }
 
   void
-  MTestParser::handleDrivingVariableEpsilon(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleDrivingVariableEpsilon(TokensContainer::const_iterator& p)
   {
-    t.setDrivingVariableEpsilon(this->readDouble(t,p));
+    this->t.setDrivingVariableEpsilon(this->readDouble(p));
     this->readSpecifiedToken("MTestParser::handleDrivingVariableEpsilon",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleDrivingVariableEpsilon
 
   void
-  MTestParser::handleStressEpsilon(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleStressEpsilon(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((this->t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (this->t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
       string msg("MTestParser::handleStressEpsilon : "
 		 "the @StressEpsilon keyword is only valid "
 		 "for small strain behaviours");
       throw(runtime_error(msg));
     }
-    this->handleThermodynamicForceEpsilon(t,p);
+    this->handleThermodynamicForceEpsilon(p);
   }
 
   void
-  MTestParser::handleCohesiveForceEpsilon(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleCohesiveForceEpsilon(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    if(this->t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
       string msg("MTestParser::handleCohesiveForceEpsilon : "
 		 "the @CohesiveForceEpsilon keyword is only valid "
 		 "for cohesive zone model behaviours");
       throw(runtime_error(msg));
     }
-    this->handleThermodynamicForceEpsilon(t,p);
+    this->handleThermodynamicForceEpsilon(p);
   }
 
   void
-  MTestParser::handleThermodynamicForceEpsilon(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleThermodynamicForceEpsilon(TokensContainer::const_iterator& p)
   {
     using namespace std;
-    t.setThermodynamicForceEpsilon(this->readDouble(t,p));
+    this->t.setThermodynamicForceEpsilon(this->readDouble(p));
     this->readSpecifiedToken("MTestParser::handleThermodynamicForceEpsilon",";",
 			     p,this->fileTokens.end());
   }
 
   void
-  MTestParser::handleParameter(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleParameter(TokensContainer::const_iterator& p)
   {
     using namespace std;
     const string&n  = this->readString(p,this->fileTokens.end());
-    const real v    = this->readDouble(t,p);
-    t.setParameter(n,v);
+    const real v    = this->readDouble(p);
+    this->t.setParameter(n,v);
     this->readSpecifiedToken("MTestParser::handleParameter",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleParameter
 
   void
-  MTestParser::handleIntegerParameter(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleIntegerParameter(TokensContainer::const_iterator& p)
   {
     using namespace std;
     const string&n  = this->readString(p,this->fileTokens.end());
     const int v     = this->readInt(p,this->fileTokens.end());
-    t.setIntegerParameter(n,v);
+    this->t.setIntegerParameter(n,v);
     this->readSpecifiedToken("MTestParser::handleIntegerParameter",";",
   			     p,this->fileTokens.end());
   } // end of MTestParser::handleIntegerParameter
   
   void
-  MTestParser::handleUnsignedIntegerParameter(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleUnsignedIntegerParameter(TokensContainer::const_iterator& p)
   {
     using namespace std;
     const string&n       = this->readString(p,this->fileTokens.end());
     const unsigned int v = this->readUnsignedInt(p,this->fileTokens.end());
-    t.setUnsignedIntegerParameter(n,v);
+    this->t.setUnsignedIntegerParameter(n,v);
     this->readSpecifiedToken("MTestParser::handleUnsignedIntegerParameter",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleUnsignedIntegerParameteru
 
   void
-  MTestParser::handleOutputFile(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleOutputFile(TokensContainer::const_iterator& p)
   {
     using namespace std;
-    t.setOutputFileName(this->readString(p,this->fileTokens.end()));
+    this->t.setOutputFileName(this->readString(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleOutputFiles",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleOutputFile
 
   void
-  MTestParser::handleOutputFilePrecision(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleOutputFilePrecision(TokensContainer::const_iterator& p)
   {
-    t.setOutputFilePrecision(this->readUnsignedInt(p,this->fileTokens.end()));
+    this->t.setOutputFilePrecision(this->readUnsignedInt(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleOutputFilePrecisions",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleOutputFilePrecision
 
   void
-  MTestParser::handleResidualFile(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleResidualFile(TokensContainer::const_iterator& p)
   {
     using namespace std;
-    t.setResidualFileName(this->readString(p,this->fileTokens.end()));
+    this->t.setResidualFileName(this->readString(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleResidualFiles",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleResidualFile
 
   void
-  MTestParser::handleResidualFilePrecision(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleResidualFilePrecision(TokensContainer::const_iterator& p)
   {
-    t.setResidualFilePrecision(this->readUnsignedInt(p,this->fileTokens.end()));
+    this->t.setResidualFilePrecision(this->readUnsignedInt(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleResidualFilePrecisions",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleResidualFilePrecision
 
   void
-  MTestParser::handleModellingHypothesis(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleModellingHypothesis(TokensContainer::const_iterator& p)
   {
-    t.setModellingHypothesis(this->readString(p,this->fileTokens.end()));
+    this->t.setModellingHypothesis(this->readString(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleModellingHypothesis",";",p,
 			     this->fileTokens.end());
   }
 
   void
-  MTestParser::handleTimes(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleTimes(TokensContainer::const_iterator& p)
   {
     using namespace std;
     vector<real> times;
@@ -1092,7 +1091,7 @@ namespace mfront
     this->checkNotEndOfLine("MTestParser::handleTimes",p,
 			    this->fileTokens.end());
     while(p->value!="}"){
-      const real t_dt = this->readTime(t,p);
+      const real t_dt = this->readTime(p);
       this->checkNotEndOfLine("MTestParser::handleTimes",p,
 			      this->fileTokens.end());
       if(!times.empty()){
@@ -1170,112 +1169,112 @@ namespace mfront
       ++pt2;
       ++pt;
     }
-    t.setTimes(times);
+    this->t.setTimes(times);
   }
   
   void
-  MTestParser::handleImposedStress(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleImposedStress(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::material;
-    if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((this->t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (this->t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
       string msg("MTestParser::handleImposedStress : "
 		 "the @ImposedStress keyword is only valid "
 		 "for standard behaviours");
       throw(runtime_error(msg));
     }
-    this->handleImposedThermodynamicForce(t,p);
+    this->handleImposedThermodynamicForce(p);
   } // end of MTestParser::handleImposedStress
 
   void
-  MTestParser::handleImposedCohesiveForce(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleImposedCohesiveForce(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    if(this->t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
       string msg("MTestParser::handleImposedCohesiveForce : "
 		 "the @ImposedCohesiveForce keyword is only valid "
 		 "for cohesive zone model behaviours");
       throw(runtime_error(msg));
     }
-    this->handleImposedThermodynamicForce(t,p);
+    this->handleImposedThermodynamicForce(p);
   } // end of MTestParser::handleImposedCohesiveForce
 
   void
-  MTestParser::handleImposedThermodynamicForce(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleImposedThermodynamicForce(TokensContainer::const_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     const auto& c = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedThermodynamicForce",p,
 			    this->fileTokens.end());
-    auto sev = this->parseEvolution(evt,t,p);
-    auto sc  = std::make_shared<ImposedThermodynamicForce>(*(t.getBehaviour()),
-							   t.getModellingHypothesis(),
+    auto sev = this->parseEvolution(evt,p);
+    auto sc  = std::make_shared<ImposedThermodynamicForce>(*(this->t.getBehaviour()),
+							   this->t.getModellingHypothesis(),
 							   c,sev);
-    t.addEvolution(c,sev,false,true);
-    t.addConstraint(sc);
+    this->t.addEvolution(c,sev,false,true);
+    this->t.addConstraint(sc);
     this->readSpecifiedToken("MTestParser::handleImposedThermodynamicForce",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleImposedStress
 
   void
-  MTestParser::handleImposedStrain(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleImposedStrain(TokensContainer::const_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(this->t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
       throw(std::runtime_error("MTestParser::handleImposedStrain : "
 			       "the @ImposedStrain keyword is only valid "
 			       "for small strain behaviours"));
     }
-    this->handleImposedDrivingVariable(t,p);
+    this->handleImposedDrivingVariable(p);
   }
 
   void
-  MTestParser::handleImposedDeformationGradient(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleImposedDeformationGradient(TokensContainer::const_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
       throw(std::runtime_error("MTestParser::handleImposedDeformationGradient : "
 			       "the @ImposedDeformationGradient keyword is only valid "
 			       "for finite strain behaviours"));
     }
-    this->handleImposedDrivingVariable(t,p);
+    this->handleImposedDrivingVariable(p);
   }
 
   void
-  MTestParser::handleImposedOpeningDisplacement(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleImposedOpeningDisplacement(TokensContainer::const_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    if(this->t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
       throw(std::runtime_error("MTestParser::ImposedOpeningDisplacement : "
 			       "the @ImposedOpeningDisplacement keyword is only valid "
 			       "for cohesive zone model behaviours"));
     }
-    this->handleImposedDrivingVariable(t,p);
+    this->handleImposedDrivingVariable(p);
   }
 
   void
-  MTestParser::handleImposedDrivingVariable(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleImposedDrivingVariable(TokensContainer::const_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     const auto& c = this->readString(p,this->fileTokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedDrivingVariable",p,
 			    this->fileTokens.end());
-    auto sev = this->parseEvolution(evt,t,p);
-    auto sc  = std::make_shared<ImposedDrivingVariable>(*(t.getBehaviour()),
-							t.getModellingHypothesis(),
+    auto sev = this->parseEvolution(evt,p);
+    auto sc  = std::make_shared<ImposedDrivingVariable>(*(this->t.getBehaviour()),
+							this->t.getModellingHypothesis(),
 							c,sev);
     this->readSpecifiedToken("MTestParser::handleImposedDrivingVariable",";",
 			     p,this->fileTokens.end());
-    t.addEvolution(c,sev,false,true);
-    t.addConstraint(sc);
+    this->t.addEvolution(c,sev,false,true);
+    this->t.addConstraint(sc);
   } // end of MTestParser::handleImposedDrivingVariable
 
   void
-  MTestParser::handleBehaviour(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleBehaviour(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -1312,11 +1311,11 @@ namespace mfront
     const auto& f = this->readString(p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handleBehaviour",";",p,
 			     this->fileTokens.end());
-    t.setBehaviour(i,l,f);
+    this->t.setBehaviour(i,l,f);
   } // end of MTestParser::handleBehaviour
 
   void
-  MTestParser::handleMaterialProperty(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleMaterialProperty(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -1342,20 +1341,20 @@ namespace mfront
       shared_ptr<Evolution> mpev;
       this->checkNotEndOfLine("MTestParser::handleMaterialProperty",p,
 			      this->fileTokens.end());
-      const real v = this->readDouble(t,p);
+      const real v = this->readDouble(p);
       mpev = shared_ptr<Evolution>(new ConstantEvolution(v));
-      t.setMaterialProperty(n,mpev,true);
+      this->t.setMaterialProperty(n,mpev,true);
     } else if(i=="function"){
       shared_ptr<Evolution> mpev;
       const string f = this->readString(p,this->fileTokens.end());
-      mpev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
-      t.setMaterialProperty(n,mpev,true);
+      mpev = shared_ptr<Evolution>(new FunctionEvolution(f,this->t.getEvolutions()));
+      this->t.setMaterialProperty(n,mpev,true);
     } else if(i=="castem"){
       shared_ptr<Evolution> mpev;
       const string l = this->readString(p,this->fileTokens.end());
       const string f = this->readString(p,this->fileTokens.end());
-      mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
-      t.setMaterialProperty(n,mpev,true);
+      mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,this->t.getEvolutions()));
+      this->t.setMaterialProperty(n,mpev,true);
     } else {
       string msg("MTestParser::handleMaterialProperty : ");
       msg += "unknown interface '"+i+"'";
@@ -1366,100 +1365,100 @@ namespace mfront
   }
     
   void
-  MTestParser::handleStrain(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleStrain(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(this->t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
       string msg("MTestParser::handleStrain : "
 		 "the @Strain keyword is only valid "
 		 "for small strain behaviours");
       throw(runtime_error(msg));
     }
-    this->handleDrivingVariable(t,p);
+    this->handleDrivingVariable(p);
   }
 
   void
-  MTestParser::handleDeformationGradient(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleDeformationGradient(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
       string msg("MTestParser::handleDeformationGradient : "
 		 "the @DeformationGradient keyword is only valid "
 		 "for finite strain behaviours");
       throw(runtime_error(msg));
     }
-    this->handleDrivingVariable(t,p);
+    this->handleDrivingVariable(p);
   }
 
   void
-  MTestParser::handleOpeningDisplacement(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleOpeningDisplacement(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    if(this->t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
       string msg("MTestParser::handleOpeningDisplacement : "
 		 "the @OpeningDisplacement keyword is only valid "
 		 "for cohesive zone models behaviours");
       throw(runtime_error(msg));
     }
-    this->handleDrivingVariable(t,p);
+    this->handleDrivingVariable(p);
   }
       
   void
-  MTestParser::handleDrivingVariable(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleDrivingVariable(TokensContainer::const_iterator& p)
   {
     using namespace std;
-    const unsigned short N = t.getBehaviour()->getDrivingVariablesSize(t.getModellingHypothesis());
+    const unsigned short N = this->t.getBehaviour()->getDrivingVariablesSize(this->t.getModellingHypothesis());
     vector<real> e_t0;
     e_t0.resize(N,0);
-    this->readArrayOfSpecifiedSize(e_t0,t,p);
+    this->readArrayOfSpecifiedSize(e_t0,p);
     this->readSpecifiedToken("MTestParser::handleDrivingVariable",
 			     ";",p,this->fileTokens.end());
-    t.setDrivingVariablesInitialValues(e_t0);
+    this->t.setDrivingVariablesInitialValues(e_t0);
   } // end of MTestParser::handleDrivingVariable
 
   void
-  MTestParser::handleStress(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleStress(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if((t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((this->t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (this->t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
       string msg("MTestParser::handleStress : "
 		 "the @Stress keyword is only valid "
 		 "for small strain behaviours");
       throw(runtime_error(msg));
     }
-    this->handleThermodynamicForce(t,p);
+    this->handleThermodynamicForce(p);
   }
 
   void
-  MTestParser::handleCohesiveForce(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleCohesiveForce(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using namespace tfel::material;
-    if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    if(this->t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
       string msg("MTestParser::handleCohesiveForce : "
 		 "the @CohesiveForce keyword is only valid "
 		 "for cohesive zone model behaviours");
       throw(runtime_error(msg));
     }
-    this->handleThermodynamicForce(t,p);
+    this->handleThermodynamicForce(p);
   }
 
   void
-  MTestParser::handleThermodynamicForce(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleThermodynamicForce(TokensContainer::const_iterator& p)
   {
     using namespace std;
-    const unsigned short N = t.getBehaviour()->getThermodynamicForcesSize(t.getModellingHypothesis());
+    const unsigned short N = this->t.getBehaviour()->getThermodynamicForcesSize(this->t.getModellingHypothesis());
     vector<real> s_t0;
     s_t0.resize(N,0);
-    this->readArrayOfSpecifiedSize(s_t0,t,p);
+    this->readArrayOfSpecifiedSize(s_t0,p);
     this->readSpecifiedToken("MTestParser::handleThermodynamicForce",
 			     ";",p,this->fileTokens.end());
-    t.setThermodynamicForcesInitialValues(s_t0);
+    this->t.setThermodynamicForcesInitialValues(s_t0);
   } // end of MTestParser::handleThermodynamicForce
 
   static void
@@ -1498,23 +1497,23 @@ namespace mfront
   } // end of selectVariables
     
   void
-  MTestParser::setInternalStateVariableValue(MTest& t,
+  MTestParser::setInternalStateVariableValue(
 					     TokensContainer::const_iterator& p,
 					     const std::string& n){
     using namespace std;
-    const int type = t.getBehaviour()->getInternalStateVariableType(n);
+    const int type = this->t.getBehaviour()->getInternalStateVariableType(n);
     if(type==0){
-      t.setScalarInternalStateVariableInitialValue(n,this->readDouble(t,p));
+      this->t.setScalarInternalStateVariableInitialValue(n,this->readDouble(p));
     } else if(type==1){
-      const unsigned short N = getSTensorSize(t.getDimension());
+      const unsigned short N = getSTensorSize(this->t.getDimension());
       vector<real> v(N);
-      this->readArrayOfSpecifiedSize(v,t,p);
-      t.setStensorInternalStateVariableInitialValues(n,v);
+      this->readArrayOfSpecifiedSize(v,p);
+      this->t.setStensorInternalStateVariableInitialValues(n,v);
     } else if(type==3){
-      const unsigned short N = getTensorSize(t.getDimension());
+      const unsigned short N = getTensorSize(this->t.getDimension());
       vector<real> v(N);
-      this->readArrayOfSpecifiedSize(v,t,p);
-      t.setTensorInternalStateVariableInitialValues(n,v);
+      this->readArrayOfSpecifiedSize(v,p);
+      this->t.setTensorInternalStateVariableInitialValues(n,v);
     } else {
       string msg("MTestParser::setInternalStateVariableValue : "
 		 "unsupported state variable type for "
@@ -1524,10 +1523,10 @@ namespace mfront
   }
 
   void
-  MTestParser::handleInternalStateVariable(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleInternalStateVariable(TokensContainer::const_iterator& p)
   {
     using namespace std;
-    shared_ptr<Behaviour> b(t.getBehaviour());
+    shared_ptr<Behaviour> b(this->t.getBehaviour());
     const string& n = this->readString(p,this->fileTokens.end());
     const vector<string>& ivsnames = b->getInternalStateVariablesNames();
     vector<string> ivs;
@@ -1539,7 +1538,7 @@ namespace mfront
       throw(runtime_error(msg));
     }
     if(ivs.size()==1){
-      this->setInternalStateVariableValue(t,p,ivs[0]);
+      this->setInternalStateVariableValue(p,ivs[0]);
     } else {
       const int type = b->getInternalStateVariableType(ivs[0]);
       bool uniform = false;
@@ -1562,14 +1561,14 @@ namespace mfront
 	const TokensContainer::const_iterator p2 = p;
 	for(pn=ivs.begin();pn!=ivs.end();++pn){
 	  p=p2;
-	  this->setInternalStateVariableValue(t,p,*pn);
+	  this->setInternalStateVariableValue(p,*pn);
 	}
       } else {
 	this->readSpecifiedToken("MTestParser::handleInternalStateVariable",
 				 "{",p,this->fileTokens.end());
 	vector<string>::const_iterator pn;
 	for(pn=ivs.begin();pn!=ivs.end();){
-	  this->setInternalStateVariableValue(t,p,*pn);
+	  this->setInternalStateVariableValue(p,*pn);
 	  if(++pn!=ivs.end()){
 	    this->readSpecifiedToken("MTestParser::handleInternalStateVariable",
 				     ",",p,this->fileTokens.end());
@@ -1584,27 +1583,27 @@ namespace mfront
   }
 
   void
-  MTestParser::handleExternalStateVariable(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleExternalStateVariable(TokensContainer::const_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p,this->fileTokens.end());
-    t.setExternalStateVariable(n,this->parseEvolution(evt,t,p),true);
+    this->t.setExternalStateVariable(n,this->parseEvolution(evt,p),true);
     this->readSpecifiedToken("MTestParser::handleExternalStateVariable",";",p,
 			     this->fileTokens.end());
   }
 
   void
-  MTestParser::handleEvolution(MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::handleEvolution(TokensContainer::const_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p,this->fileTokens.end());
-    t.addEvolution(n,this->parseEvolution(evt,t,p),true,true);
+    this->t.addEvolution(n,this->parseEvolution(evt,p),true,true);
     this->readSpecifiedToken("MTestParser::handleEvolution",";",p,
 			     this->fileTokens.end());
   }
 
   real
-  MTestParser::readDouble(const MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::readDouble(TokensContainer::const_iterator& p)
   {
     using namespace std;
     using tfel::utilities::Token;
@@ -1620,7 +1619,7 @@ namespace mfront
       for(pv=vn.begin();pv!=vn.end();++pv){
 	map<string,shared_ptr<Evolution> >::const_iterator pev;
 	shared_ptr<map<string,shared_ptr<Evolution> > > evs;
-	evs = t.getEvolutions();
+	evs = this->t.getEvolutions();
 	pev = evs->find(*pv);
 	if(pev==evs->end()){
 	  string msg("MTestParser::readDouble : "
@@ -1644,21 +1643,20 @@ namespace mfront
   } // end of MTestParser::readDouble
 
   real
-  MTestParser::readTime(const MTest& t,TokensContainer::const_iterator& p)
+  MTestParser::readTime(TokensContainer::const_iterator& p)
   {
-    return this->readDouble(t,p);
+    return this->readDouble(p);
   } // end of MTestParser::readTime
 
   void
   MTestParser::readArrayOfSpecifiedSize(std::vector<real>& v,
-					const MTest& t,
 					TokensContainer::const_iterator& p)
   {
     this->readSpecifiedToken("MTestParser::readArrayOfSpecifiedSize","{",p,
 			     this->fileTokens.end());
     std::vector<real>::size_type i = 0;
     while(i!=v.size()){
-      v[i] = this->readDouble(t,p);
+      v[i] = this->readDouble(p);
       if(++i!=v.size()){
 	this->readSpecifiedToken("MTestParser::readArrayOfSpecifiedSize",",",p,
 				 this->fileTokens.end());
@@ -1670,7 +1668,6 @@ namespace mfront
   
   std::shared_ptr<Evolution>
   MTestParser::parseEvolution(const std::string& type,
-			      const MTest& t,
 			      TokensContainer::const_iterator& p)
   {
     using namespace std;
@@ -1687,10 +1684,10 @@ namespace mfront
 	this->checkNotEndOfLine("MTestParser::parseEvolution",p,
 				this->fileTokens.end());
 	while(p->value!="}"){
-	  tvalues.push_back(this->readTime(t,p));
+	  tvalues.push_back(this->readTime(p));
 	  this->readSpecifiedToken("MTestParser::parseEvolution",":",p,
 				   this->fileTokens.end());
-	  values.push_back(this->readDouble(t,p));
+	  values.push_back(this->readDouble(p));
 	  this->checkNotEndOfLine("MTestParser::parseEvolution",p,
 				  this->fileTokens.end());
 	  if(p->value==","){
@@ -1714,12 +1711,12 @@ namespace mfront
 				 this->fileTokens.end());
 	ev = shared_ptr<Evolution>(new LPIEvolution(tvalues,values));
       } else {
-	const real s = this->readDouble(t,p);
+	const real s = this->readDouble(p);
 	ev = shared_ptr<Evolution>(new ConstantEvolution(s));
       }
     } else if(type=="function"){
       const auto& f = this->readString(p,this->fileTokens.end());
-      ev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
+      ev = shared_ptr<Evolution>(new FunctionEvolution(f,this->t.getEvolutions()));
     } else {
       string msg("MTestParser::parseEvolution : ");
       msg += "invalid evolution type '"+type+"'";

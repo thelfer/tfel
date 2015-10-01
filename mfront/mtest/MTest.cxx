@@ -36,6 +36,7 @@
 #include"MFront/MFrontLogStream.hxx"
 
 #include"MTest/MTest.hxx"
+#include"MTest/MTestParser.hxx"
 #include"MTest/Behaviour.hxx"
 #ifdef HAVE_CASTEM
 #include"MTest/UmatSmallStrainBehaviour.hxx"
@@ -179,14 +180,17 @@ namespace mfront
     this->declareVariable("t",true);
   }
 
+  std::shared_ptr<MTestParser>
+  MTest::getParser(){
+    return std::make_shared<MTestParser>(*this);
+  } // end of MTest::getParser
+  
   void
   MTest::setAccelerationAlgorithm(const std::string& a)
   {
-    using namespace std;
     if(this->aa.get()!=nullptr){
-      string msg("MTest::setAccelerationAlgorithm : "
-		 "acceleration algorithm already set");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setAccelerationAlgorithm : "
+			       "acceleration algorithm already set"));
     }
     auto& f = AccelerationAlgorithmFactory::getAccelerationAlgorithmFactory();
     this->aa = f.getAlgorithm(a);
@@ -196,11 +200,9 @@ namespace mfront
   MTest::setAccelerationAlgorithmParameter(const std::string& p,
 					   const std::string& v)
   {
-    using namespace std;
     if(this->aa.get()==nullptr){
-      string msg("MTest::setAccelerationAlgorithmParameter : "
-		 "no acceleration algorithm set");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setAccelerationAlgorithmParameter : "
+			       "no acceleration algorithm set"));
     }
     this->aa->setParameter(p,v);
   }
@@ -210,12 +212,10 @@ namespace mfront
 			   const real t,
 			   const real v)
   {
-    using namespace std;
     const auto pev = this->evm->find(n);
     if(pev==this->evm->end()){
-      string msg("MTest::setEvolutionValue : no evolution '"+
-		 n+"' declared");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setEvolutionValue : no evolution '"+
+			       n+"' declared"));
     }
     Evolution& ev = *(pev->second);
     ev.setValue(t,v);
@@ -224,11 +224,9 @@ namespace mfront
   void
   MTest::setDescription(const std::string& d)
   {
-    using namespace std;
     if(!this->description.empty()){
-      string msg("MTest::setDescription : ");
-      msg += "description already set.";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setDescription : "
+			       "description already set."));
     }
     this->description = d;
   } // end of MTest::setDescription
@@ -236,11 +234,9 @@ namespace mfront
   void
   MTest::setAuthor(const std::string& a)
   {
-    using namespace std;
     if(!this->author.empty()){
-      string msg("MTest::setAuthor : ");
-      msg += "author already set.";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setAuthor : "
+			       "author already set."));
     }
     this->author = a;
   } // end of MTest::setAuthor
@@ -258,11 +254,9 @@ namespace mfront
   void
   MTest::setDate(const std::string& d)
   {
-    using namespace std;
     if(!this->date.empty()){
-      string msg("MTest::setDate : ");
-      msg += "date already set.";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setDate : "
+			       "date already set."));
     }
     this->date = d;
   } // end of MTest::setDate
@@ -270,11 +264,9 @@ namespace mfront
   void
   MTest::setPredictionPolicy(const MTest::PredictionPolicy p)
   {
-    using namespace std;
     if(this->ppolicy!=UNSPECIFIEDPREDICTIONPOLICY){
-      string msg("MTest::setPredictionPolicy : "
-		 "prediction policy already declared");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setPredictionPolicy : "
+			       "prediction policy already declared"));
     }
     this->ppolicy = p;
   } // end of MTest::setPredictionPolicy
@@ -282,11 +274,9 @@ namespace mfront
   void
   MTest::setStiffnessMatrixType(const MTestStiffnessMatrixType::mtype k)
   {
-    using namespace std;
     if(this->ktype!=MTestStiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
-      string msg("MTest::setStiffnessMatrixType : "
-		 "stiffness matrix type already specificed");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setStiffnessMatrixType : "
+			       "stiffness matrix type already specificed"));
     }
     this->ktype = k;
   }
@@ -294,11 +284,9 @@ namespace mfront
   void
   MTest::setHandleThermalExpansion(const bool b1)
   {
-    using namespace std;
     if(!this->handleThermalExpansion){
-      string msg("MTest::setHandleThermalExpansion : "
-		 "thermal expansion is not handled");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setHandleThermalExpansion : "
+			       "thermal expansion is not handled"));
     }
     this->handleThermalExpansion = b1;
   }
@@ -306,14 +294,12 @@ namespace mfront
   void
   MTest::setUseCastemAccelerationAlgorithm(const bool ucaa)
   {
-    using namespace std;
     if(ucaa){
       if(this->aa.get()!=nullptr){
-	string msg("MTest::setUseCastemAccelerationAlgorithm : "
-		   "an algorithm was already set");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MTest::setUseCastemAccelerationAlgorithm : "
+				 "an algorithm was already set"));
       }
-      this->aa = shared_ptr<AccelerationAlgorithm>(new CastemAccelerationAlgorithm);
+      this->aa = std::shared_ptr<AccelerationAlgorithm>(new CastemAccelerationAlgorithm);
     }
     this->useCastemAcceleration = ucaa;
   }
@@ -321,22 +307,22 @@ namespace mfront
   void
   MTest::setCastemAccelerationTrigger(const int i)
   {
-    using namespace std;
     if(!this->useCastemAcceleration){
-      string msg("MTest::setCastemAccelerationTrigger : "
-		 "the castem acceleration algorithm has not been set using the "
-		 "@UseCast3mAccelerationAlgorithm keyword. If the Cast3M "
-		 "acceleration algorithm was specified using the @AccelerationAlgorithm "
-		 "keyword, please use the @AccelerationAlgorithmParameter keyword to "
-		 "specify the acceleration trigger.");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setCastemAccelerationTrigger : "
+			       "the castem acceleration algorithm has "
+			       "not been set using the "
+			       "@UseCast3mAccelerationAlgorithm keyword. "
+			       "If the Cast3M acceleration algorithm "
+			       "was specified using the "
+			       "@AccelerationAlgorithm keyword, please "
+			       "use the @AccelerationAlgorithmParameter "
+			       "keyword to specify the acceleration trigger."));
     }
     if(this->aa.get()==nullptr){
-      string msg("MTest::setCastemAccelerationTrigger : "
-		 "internal error");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setCastemAccelerationTrigger : "
+			       "internal error"));
     }
-    ostringstream nb;
+    std::ostringstream nb;
     nb << i;
     this->aa->setParameter("AccelerationTrigger",nb.str());
   }
@@ -345,22 +331,22 @@ namespace mfront
   void
   MTest::setCastemAccelerationPeriod(const int p)
   {
-    using namespace std;
     if(!this->useCastemAcceleration){
-      string msg("MTest::setCastemAccelerationPeriod : "
-		 "the castem acceleration algorithm has not been set using the "
-		 "@UseCast3mAccelerationAlgorithm keyword. If the Cast3M "
-		 "acceleration algorithm was specified using the @AccelerationAlgorithm "
-		 "keyword, please use the @AccelerationAlgorithmParameter keyword to "
-		 "specify the acceleration period.");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setCastemAccelerationPeriod : "
+			       "the castem acceleration algorithm has not "
+			       "been set using the "
+			       "@UseCast3mAccelerationAlgorithm keyword. "
+			       "If the Cast3M acceleration algorithm was "
+			       "specified using the @AccelerationAlgorithm "
+			       "keyword, please use the "
+			       "@AccelerationAlgorithmParameter keyword to "
+			       "specify the acceleration period."));
     }
     if(this->aa.get()==nullptr){
-      string msg("MTest::setCastemAccelerationPeriod : "
-		 "internal error");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setCastemAccelerationPeriod : "
+			       "internal error"));
     }
-    ostringstream nb;
+    std::ostringstream nb;
     nb << p;
     this->aa->setParameter("AccelerationPeriod",nb.str());
   }
@@ -368,11 +354,9 @@ namespace mfront
   void
   MTest::setStiffnessUpdatingPolicy(const MTest::StiffnessUpdatingPolicy p)
   {
-    using namespace std;
     if(this->ks!=MTest::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY){
-      string msg("MTest::setStiffnessUpdatePolicy : "
-		 "stiffness matrix type already specificed");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setStiffnessUpdatePolicy : "
+			       "stiffness matrix type already specificed"));
     }
     this->ks = p;
   } // end of MTest::setStiffnessUpdatingPolicy
@@ -398,21 +382,18 @@ namespace mfront
 		      const bool b1,
 		      const bool b2)
   {
-    using namespace std;
     if(b1){
       this->declareVariable(n,b1);
     } else {
       if(find(this->vnames.begin(),this->vnames.end(),n)==this->vnames.end()){
-	string msg("MTest::addEvolution : "
-		   "variable '"+n+"' is not defined");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MTest::addEvolution : "
+				 "variable '"+n+"' is not defined"));
       }
     }
     if(b2){
       if(this->evm->find(n)!=this->evm->end()){
-	string msg("MTest::addEvolution : "
-		   "evolution '"+n+"' already defined");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MTest::addEvolution : "
+				 "evolution '"+n+"' already defined"));
       }
     }
     (*(this->evm))[n] = p;

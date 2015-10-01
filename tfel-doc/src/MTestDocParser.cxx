@@ -24,7 +24,8 @@ namespace tfel{
       : MTest(),
 	file(f)
     {
-      mfront::MTestParser().execute(*this,f);
+      auto parser = this->getParser();
+      parser->execute(f);
     } // end of MTestDocParser::MTestDocParser
     
     void
