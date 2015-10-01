@@ -15,4 +15,5 @@ nocite: |
 	@ramiere_iterative_2015
 	@sercombe_2d_2015
 	@bary_numerical_2015
+	@petry_advanced_2015
 ...

@@ -413,6 +413,7 @@ AC_OUTPUT([debug.sh
 	   Makefile
 	   Doxyfile
 	   docs/Makefile
+	   docs/articles/Makefile
 	   docs/tfel/Makefile
 	   docs/tfel/Makefile.doc
 	   docs/tfel/reference-guide.tex
