@@ -547,7 +547,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/unit-tests/DSLTest2.cxx
 	   mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx
 	   mfront/tests/unit-tests/MTestParserTest.cxx
-	   mfront/mtest/Makefile
            mfront/tests/Makefile
            mfront/tests/properties/Makefile
            mfront/tests/properties/interfaces/Makefile
@@ -1802,6 +1801,9 @@ AC_OUTPUT([debug.sh
            mfront/tests/models/include/Makefile
            mfront/tests/models/src/Makefile
 	   mfront/Examples/Makefile
+	   mtest/Makefile
+   	   mtest/src/Makefile
+   	   mtest/include/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile

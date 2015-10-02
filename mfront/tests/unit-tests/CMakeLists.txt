@@ -1,5 +1,6 @@
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/mfront/include")
+include_directories("${PROJECT_SOURCE_DIR}/mtest/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/Glossary"
@@ -7,7 +8,8 @@ link_directories("${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception"
 		 "${PROJECT_BINARY_DIR}/src/Tests"
-		 "${PROJECT_BINARY_DIR}/mfront/src")
+		 "${PROJECT_BINARY_DIR}/mfront/src"
+		 "${PROJECT_BINARY_DIR}/mtest/src")
 
 # a simple macro
 macro(test_mfront test_arg)

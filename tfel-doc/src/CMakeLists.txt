@@ -1,6 +1,7 @@
 include_directories("${PROJECT_SOURCE_DIR}/include"
-                    "${PROJECT_SOURCE_DIR}/mfront/include"
-		    "${PROJECT_SOURCE_DIR}/tfel-doc/include")
+  "${PROJECT_SOURCE_DIR}/mtest/include"
+  "${PROJECT_SOURCE_DIR}/mfront/include"
+  "${PROJECT_SOURCE_DIR}/tfel-doc/include")
 
 link_directories("${PROJECT_BINARY_DIR}/mfront/mtest"
                  "${PROJECT_BINARY_DIR}/mfront/src"

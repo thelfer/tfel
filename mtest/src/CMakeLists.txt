@@ -1,6 +1,7 @@
 include_directories("${PROJECT_BINARY_DIR}/src/TFELConfig"
                     "${PROJECT_SOURCE_DIR}/include"
-                    "${PROJECT_SOURCE_DIR}/mfront/include")
+                    "${PROJECT_SOURCE_DIR}/mfront/include"
+		    "${PROJECT_SOURCE_DIR}/mtest/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/System"
@@ -8,7 +9,7 @@ link_directories("${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Exception"
                  "${PROJECT_BINARY_DIR}/src/Tests"
 		 "${PROJECT_BINARY_DIR}/mfront/src"
-		 "${PROJECT_BINARY_DIR}/mfront/mtest")
+		 "${PROJECT_BINARY_DIR}/mtest/src")
 
 set(TFELMTest_SOURCES
     MTest.cxx
