@@ -19,10 +19,10 @@
 
 #include<memory>
 
-#include"MTest/MTestConfig.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
   
   /*!
@@ -68,7 +68,7 @@ namespace mfront
     std::map<std::string,constructor> constructors;
   };
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTACCELERATIONALGORITHMFACTORY_H_ */
 

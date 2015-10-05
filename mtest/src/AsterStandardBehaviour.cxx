@@ -25,7 +25,7 @@
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AsterStandardBehaviour.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   AsterStandardBehaviour::AsterStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -190,10 +190,10 @@ namespace mfront
     this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
   } // end of AsterStandardBehaviour::allocate
 
-  MTestStiffnessMatrixType::mtype
+  StiffnessMatrixType::mtype
   AsterStandardBehaviour::getDefaultStiffnessMatrixType(void) const
   {
-    return MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
+    return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }
   
   bool
@@ -205,7 +205,7 @@ namespace mfront
 							    const tfel::math::vector<real>& iv0,
 							    const tfel::math::vector<real>& esv0,
 							    const tfel::material::ModellingHypothesis::Hypothesis h,
-							    const MTestStiffnessMatrixType::mtype ktype) const
+							    const StiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
     vector<real> s1(s0);
@@ -231,7 +231,7 @@ namespace mfront
 					    const tfel::math::vector<real>& dev,
 					    const tfel::material::ModellingHypothesis::Hypothesis h,
 					    const real dt,
-					    const MTestStiffnessMatrixType::mtype ktype) const
+					    const StiffnessMatrixType::mtype ktype) const
   {
     return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
 				mp,iv0,ev0,dev,h,dt,
@@ -241,7 +241,7 @@ namespace mfront
   AsterStandardBehaviour::~AsterStandardBehaviour()
   {}
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 
 

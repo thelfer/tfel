@@ -18,7 +18,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/CrossedSecantAccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   CrossedSecantAccelerationAlgorithm::CrossedSecantAccelerationAlgorithm()
@@ -96,8 +96,8 @@ namespace mfront
     if(iter>=this->csat){
       const real nr2_dr = this->csa_dr|this->csa_dr;
       if(nr2_dr>(csa_eps*csa_eps)){
-	if(getVerboseMode()>=VERBOSE_LEVEL1){
-	  ostream& log = getLogStream();
+	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	  ostream& log = mfront::getLogStream();
 	  log << "CrossedSecant acceleration convergence" << endl;
 	}
 	const real csa_a = (this->csa_du|this->csa_dr)/nr2_dr;
@@ -114,4 +114,4 @@ namespace mfront
   CrossedSecantAccelerationAlgorithm::~CrossedSecantAccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

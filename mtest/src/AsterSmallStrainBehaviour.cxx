@@ -24,7 +24,7 @@
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AsterSmallStrainBehaviour.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   AsterSmallStrainBehaviour::AsterSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -54,7 +54,7 @@ namespace mfront
 					    const tfel::math::vector<real>& dev,
 					    const tfel::material::ModellingHypothesis::Hypothesis h,
 					    const real dt,
-					    const MTestStiffnessMatrixType::mtype ktype,
+					    const StiffnessMatrixType::mtype ktype,
 					    const bool b) const
   {
     using namespace std;
@@ -135,7 +135,7 @@ namespace mfront
     if(ndt<0.){
       return false;
     }
-    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){
+    if(ktype!=StiffnessMatrixType::NOSTIFFNESS){
       UmatNormaliseTangentOperator::exe(Kt,D,dimension);
     }
     if(b){
@@ -153,7 +153,7 @@ namespace mfront
   AsterSmallStrainBehaviour::~AsterSmallStrainBehaviour()
   {}
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 
 

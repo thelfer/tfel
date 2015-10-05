@@ -23,10 +23,10 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MTest/MTestConfig.hxx"
-#include"MTest/MTestTypes.hxx"
+#include"MTest/Config.hxx"
+#include"MTest/Types.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   // forward declaration
@@ -37,24 +37,26 @@ namespace mfront
   /*!
    * MTestParser is used to parse mtest file.
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT MTestParser
+  struct MTEST_VISIBILITY_EXPORT MTestParser
     : public tfel::utilities::CxxTokenizer
   {
     /*!
      * default constructor
-     * \param[in] : mt structure to be filled
      */
-    MTestParser(MTest&);
+    MTestParser();
     /*!
      * execute mtest parser on a file
+     * \param[out] t : structure to be filled
      * \param[in] f : file name
      */
-    void execute(const std::string&);
+    void execute(MTest&,
+		 const std::string&);
     /*!
      * execute mtest parser on a string
      * \param[in] s : string
      */
-    void parseString(const std::string&);
+    void parseString(MTest&,
+		     const std::string&);
     /*!
      * display the list of keywords
      */
@@ -76,11 +78,13 @@ namespace mfront
     virtual ~MTestParser();
   protected:
     //! a simple alias
-    typedef void (MTestParser::* CallBack)(TokensContainer::const_iterator&);
+    typedef void (MTestParser::* CallBack)(MTest&,
+					   TokensContainer::const_iterator&);
     /*!
      * execute mtest parser after reading a file or parsing a string
+     * \param[out] t : structure to be filled
      */
-    void execute();
+    void execute(MTest& t);
     /*!
      * register a call back
      * \param[in] k : key word
@@ -98,290 +102,290 @@ namespace mfront
      * handle the @Real keyword
      * \param[in,out] p : position in the input file
      */
-    void handleReal(TokensContainer::const_iterator&);
+    void handleReal(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @CompareToNumericalTangentOperator keyword
      * \param[in,out] p : position in the input file
      */
-    void handleCompareToNumericalTangentOperator(TokensContainer::const_iterator&);
+    void handleCompareToNumericalTangentOperator(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @TangentOperatorComparisonCriterium keyword
      * \param[in,out] p : position in the input file
      */
-    void handleTangentOperatorComparisonCriterium(TokensContainer::const_iterator&);
+    void handleTangentOperatorComparisonCriterium(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @NumericalTangentOperatorPerturbationValue keyword
      * \param[in,out] p : position in the input file
      */
-    void handleNumericalTangentOperatorPerturbationValue(TokensContainer::const_iterator&);
+    void handleNumericalTangentOperatorPerturbationValue(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @StiffnessMatrixType keyword
      * \param[in,out] p : position in the input file
      */
-    void handleStiffnessMatrixType(TokensContainer::const_iterator&);
+    void handleStiffnessMatrixType(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @StiffnessUpdatePolicy keyword
      * \param[in,out] p : position in the input file
      */
-    void handleStiffnessUpdatePolicy(TokensContainer::const_iterator&);
+    void handleStiffnessUpdatePolicy(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @UseCastemAccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
     void
-    handleUseCastemAccelerationAlgorithm(TokensContainer::const_iterator&);
+    handleUseCastemAccelerationAlgorithm(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @CastemAccelerationTrigger keyword
      * \param[in,out] p : position in the input file
      */
     void
-    handleCastemAccelerationTrigger(TokensContainer::const_iterator&);
+    handleCastemAccelerationTrigger(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @CastemAccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
     void
-    handleCastemAccelerationPeriod(TokensContainer::const_iterator&);
+    handleCastemAccelerationPeriod(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @AccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
     void
-    handleAccelerationAlgorithm(TokensContainer::const_iterator&);
+    handleAccelerationAlgorithm(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @AccelerationAlgorithmParameter keyword
      * \param[in,out] p : position in the input file
      */
     void
-    handleAccelerationAlgorithmParameter(TokensContainer::const_iterator&);
+    handleAccelerationAlgorithmParameter(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Test keyword
      * \param[in,out] p : position in the input file
      */
-    void handleTest(TokensContainer::const_iterator&);
+    void handleTest(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @RotationMatrix keyword
      * \param[in,out] p : position in the input file
      */
-    void handleRotationMatrix(TokensContainer::const_iterator&);
+    void handleRotationMatrix(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @MaximumNumberOfIterations keyword
      * \param[in,out] p : position in the input file
      */
-    void handleMaximumNumberOfIterations(TokensContainer::const_iterator&);
+    void handleMaximumNumberOfIterations(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @MaximumNumberOfSubSteps keyword
      * \param[in,out] p : position in the input file
      */
-    void handleMaximumNumberOfSubSteps(TokensContainer::const_iterator&);
+    void handleMaximumNumberOfSubSteps(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @StrainEpsilon keyword
      * \param[in,out] p : position in the input file
      */
-    void handleStrainEpsilon(TokensContainer::const_iterator&);
+    void handleStrainEpsilon(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @DeformationGradientEpsilon keyword
      * \param[in,out] p : position in the input file
      */
-    void handleDeformationGradientEpsilon(TokensContainer::const_iterator&);
+    void handleDeformationGradientEpsilon(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @OpeningDisplacementEpsilon keyword
      * \param[in,out] p : position in the input file
      */
-    void handleOpeningDisplacementEpsilon(TokensContainer::const_iterator&);
+    void handleOpeningDisplacementEpsilon(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @DrivingVariableEpsilon keyword
      * \param[in,out] p : position in the input file
      */
-    void handleDrivingVariableEpsilon(TokensContainer::const_iterator&);
+    void handleDrivingVariableEpsilon(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @StressEpsilon keyword
      * \param[in,out] p : position in the input file
      */
-    void handleStressEpsilon(TokensContainer::const_iterator&);
+    void handleStressEpsilon(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @CohesiveForceEpsilon keyword
      * \param[in,out] p : position in the input file
      */
-    void handleCohesiveForceEpsilon(TokensContainer::const_iterator&);
+    void handleCohesiveForceEpsilon(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ThermodynamicForceEpsilon keyword
      * \param[in,out] p : position in the input file
      */
-    void handleThermodynamicForceEpsilon(TokensContainer::const_iterator&);
+    void handleThermodynamicForceEpsilon(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Parameter keyword
      * \param[in,out] p : position in the input file
      */
-    void handleParameter(TokensContainer::const_iterator&);
+    void handleParameter(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @IntegerParameter keyword
      * \param[in,out] p : position in the input file
      */
-    void handleIntegerParameter(TokensContainer::const_iterator&);
+    void handleIntegerParameter(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @UnsignedIntegerParameter keyword
      * \param[in,out] p : position in the input file
      */
-    void handleUnsignedIntegerParameter(TokensContainer::const_iterator&);
+    void handleUnsignedIntegerParameter(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @OutputFile keyword
      * \param[in,out] p : position in the input file
      */
-    void handleOutputFile(TokensContainer::const_iterator&);
+    void handleOutputFile(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @OutputFilePrecision keyword
      * \param[in,out] p : position in the input file
      */
-    void handleOutputFilePrecision(TokensContainer::const_iterator&);
+    void handleOutputFilePrecision(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ResidualFile keyword
      * \param[in,out] p : position in the input file
      */
-    void handleResidualFile(TokensContainer::const_iterator&);
+    void handleResidualFile(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ResidualFilePrecision keyword
      * \param[in,out] p : position in the input file
      */
-    void handleResidualFilePrecision(TokensContainer::const_iterator&);
+    void handleResidualFilePrecision(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ModellingHypothesis keyword
      * \param[in,out] p : position in the input file
      */
-    void handleModellingHypothesis(TokensContainer::const_iterator&);
+    void handleModellingHypothesis(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Times keyword
      * \param[in,out] p : position in the input file
      */
-    void handleTimes(TokensContainer::const_iterator&);
+    void handleTimes(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Strain keyword
      * \param[in,out] p : position in the input file
      */
-    void handleStrain(TokensContainer::const_iterator&);
+    void handleStrain(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @DeformationGradient keyword
      * \param[in,out] p : position in the input file
      */
-    void handleDeformationGradient(TokensContainer::const_iterator&);
+    void handleDeformationGradient(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @OpeningDisplacement keyword
      * \param[in,out] p : position in the input file
      */
-    void handleOpeningDisplacement(TokensContainer::const_iterator&);
+    void handleOpeningDisplacement(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @DrivingVariable keyword
      * \param[in,out] p : position in the input file
      */
-    void handleDrivingVariable(TokensContainer::const_iterator&);
+    void handleDrivingVariable(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Stress keyword
      * \param[in,out] p : position in the input file
      */
-    void handleStress(TokensContainer::const_iterator&);
+    void handleStress(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @CohesiveForce keyword
      * \param[in,out] p : position in the input file
      */
-    void handleCohesiveForce(TokensContainer::const_iterator&);
+    void handleCohesiveForce(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ThermodynamicForce keyword
      * \param[in,out] p : position in the input file
      */
-    void handleThermodynamicForce(TokensContainer::const_iterator&);
+    void handleThermodynamicForce(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Behaviour keyword
      * \param[in,out] p : position in the input file
      */
-    void handleBehaviour(TokensContainer::const_iterator&);
+    void handleBehaviour(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @MaterialProperty keyword
      * \param[in,out] p : position in the input file
      */
-    void handleMaterialProperty(TokensContainer::const_iterator&);
+    void handleMaterialProperty(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @InternalStateVariable keyword
      * \param[in,out] p : position in the input file
      */
-    void handleInternalStateVariable(TokensContainer::const_iterator&);
+    void handleInternalStateVariable(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ExternalStateVariable keyword
      * \param[in,out] p : position in the input file
      */
-    void handleExternalStateVariable(TokensContainer::const_iterator&);
+    void handleExternalStateVariable(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ImposedStress keyword
      * \param[in,out] p : position in the input file
      */
-    void handleImposedStress(TokensContainer::const_iterator&);
+    void handleImposedStress(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ImposedCohesiveForce keyword
      * \param[in,out] p : position in the input file
      */
-    void handleImposedCohesiveForce(TokensContainer::const_iterator&);
+    void handleImposedCohesiveForce(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ImposedThermodynamicForce keyword
      * \param[in,out] p : position in the input file
      */
-    void handleImposedThermodynamicForce(TokensContainer::const_iterator&);
+    void handleImposedThermodynamicForce(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ImposedStrain keyword
      * \param[in,out] p : position in the input file
      */
-    void handleImposedStrain(TokensContainer::const_iterator&);
+    void handleImposedStrain(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ImposedDeformationGradient keyword
      * \param[in,out] p : position in the input file
      */
-    void handleImposedDeformationGradient(TokensContainer::const_iterator&);
+    void handleImposedDeformationGradient(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ImposedOpeningDisplacement keyword
      * \param[in,out] p : position in the input file
      */
-    void handleImposedOpeningDisplacement(TokensContainer::const_iterator&);
+    void handleImposedOpeningDisplacement(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @ImposedDrivingVariable keyword
      * \param[in,out] p : position in the input file
      */
-    void handleImposedDrivingVariable(TokensContainer::const_iterator&);
+    void handleImposedDrivingVariable(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Author keyword
      * \param[in,out] p : position in the input file
      */
-    void handleAuthor(TokensContainer::const_iterator&);
+    void handleAuthor(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @OutOfBoundsPolicy keyword
      * \param[in,out] p : position in the input file
      */
-    void handleOutOfBoundsPolicy(TokensContainer::const_iterator&);
+    void handleOutOfBoundsPolicy(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Date keyword
      * \param[in,out] p : position in the input file
      */
-    void handleDate(TokensContainer::const_iterator&);
+    void handleDate(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Description keyword
      * \param[in,out] p : position in the input file
      */
-    void handleDescription(TokensContainer::const_iterator&);
+    void handleDescription(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @PredictionPolicy keyword
      * \param[in,out] p : position in the input file
      */
     void 
-    handlePredictionPolicy(TokensContainer::const_iterator&);
+    handlePredictionPolicy(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @Evolution keyword
      * \param[in,out] p : position in the input file
      */
     void 
-    handleEvolution(TokensContainer::const_iterator&);
+    handleEvolution(MTest&,TokensContainer::const_iterator&);
     /*!
      * handle the @HandleThermalExpansion keyword
      * \param[in,out] p : position in the input file
      */
     void 
-    handleHandleThermalExpansion(TokensContainer::const_iterator&);
+    handleHandleThermalExpansion(MTest&,TokensContainer::const_iterator&);
     /*!
      * \return everything from the given starting point up to the next
      * semi-colon.
@@ -391,22 +395,26 @@ namespace mfront
     readUntilEndOfInstruction(TokensContainer::const_iterator&);
     /*!
      * \return a real value
+     * \param[in] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
-    real readDouble(TokensContainer::const_iterator&);
+    real readDouble(MTest&,TokensContainer::const_iterator&);
     /*!
      * read a time
+     * \param[in,out] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
     real
-    readTime(TokensContainer::const_iterator&);
+    readTime(MTest&,TokensContainer::const_iterator&);
     /*!
      * \brief parse an evolution
+     * \param[in,out] t    : structure to be filled
      * \param[in]     type : evolution type
      * \param[in,out] p    : position in the input file
      */
     std::shared_ptr<Evolution>
-    parseEvolution(const std::string&,
+    parseEvolution(MTest&,
+		   const std::string&,
 		   TokensContainer::const_iterator&);
     /*!
      * \brief try to read the type of an evolution
@@ -418,27 +426,28 @@ namespace mfront
      * read an array
      * The expected size of the array is given by the output vector
      * \param[out]    v : array to be read
+     * \param[in,out] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
     void
     readArrayOfSpecifiedSize(std::vector<real>&,
+			     MTest&,
 			     TokensContainer::const_iterator&);
     /*!
      * \param[in,out] p : position in the input file
      * \param[out]    n : name of the variable
      */
     void
-    setInternalStateVariableValue(TokensContainer::const_iterator&,
+    setInternalStateVariableValue(MTest&,
+				  TokensContainer::const_iterator&,
 				  const std::string&);
-    //! t : MTest object
-    MTest& t;
     //! callbacks
     std::map<std::string,CallBack> callbacks;
     //! input file
     std::string file;
   }; // end of struct MTestParser
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTPARSER_H_ */
 

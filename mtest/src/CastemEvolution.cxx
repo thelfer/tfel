@@ -15,7 +15,7 @@
 
 #include"MTest/CastemEvolution.hxx"
 
-namespace mfront{
+namespace mtest{
 
   CastemEvolution::CastemEvolution(const std::string& l,
 					     const std::string& fn,

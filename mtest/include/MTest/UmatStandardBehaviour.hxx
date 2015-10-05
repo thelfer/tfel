@@ -17,7 +17,7 @@
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/UmatBehaviourBase.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
@@ -38,7 +38,7 @@ namespace mfront
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual MTestStiffnessMatrixType::mtype
+    virtual StiffnessMatrixType::mtype
     getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief allocate internal workspace
@@ -82,7 +82,7 @@ namespace mfront
     mutable tfel::math::vector<real> ivs;
   }; // end of struct Behaviour
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTSTANDARDUMATBEHAVIOUR_H_ */
 

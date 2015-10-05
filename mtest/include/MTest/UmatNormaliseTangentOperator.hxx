@@ -16,9 +16,9 @@
 
 #include"TFEL/Math/matrix.hxx"
 
-#include"MTest/MTestTypes.hxx"
+#include"MTest/Types.hxx"
 
-namespace mfront
+namespace mtest
 {
   /*!
    *
@@ -36,7 +36,7 @@ namespace mfront
 	const unsigned short);
   };
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTUMATNORMALISETANGENTOPERATOR_H_ */
 

@@ -18,7 +18,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/AlternateSecantAccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   AlternateSecantAccelerationAlgorithm::AlternateSecantAccelerationAlgorithm()
@@ -96,8 +96,8 @@ namespace mfront
     if(iter>=this->asat){
       const real nr2_dr = this->asa_dr|this->asa_dr;
       if(nr2_dr>(asa_eps*asa_eps)){
-	if(getVerboseMode()>=VERBOSE_LEVEL1){
-	  ostream& log = getLogStream();
+	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	  ostream& log = mfront::getLogStream();
 	  log << "AlternateSecant acceleration convergence" << endl;
 	}
 	const real asa_a = (this->asa_dr|this->asa_r1)/nr2_dr;
@@ -114,4 +114,4 @@ namespace mfront
   AlternateSecantAccelerationAlgorithm::~AlternateSecantAccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

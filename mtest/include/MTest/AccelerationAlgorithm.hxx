@@ -15,15 +15,15 @@
 #define LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_ 
 
 #include"TFEL/Math/vector.hxx"
-#include"MTest/MTestConfig.hxx"
-#include"MTest/MTestTypes.hxx"
+#include"MTest/Config.hxx"
+#include"MTest/Types.hxx"
 
-namespace mfront{
+namespace mtest{
 
   /*!
    * \brief abstract class for acceleration algorithm.
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT AccelerationAlgorithm
+  struct MTEST_VISIBILITY_EXPORT AccelerationAlgorithm
   {
     /*!
      * \brief extract an unsigned short from a string
@@ -82,7 +82,7 @@ namespace mfront{
     virtual ~AccelerationAlgorithm();
   }; // end of struct struct AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_ */
 

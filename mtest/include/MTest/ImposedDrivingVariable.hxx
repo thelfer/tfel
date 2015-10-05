@@ -19,12 +19,12 @@
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include<memory>
 
-#include"MTest/MTestTypes.hxx"
-#include"MTest/MTestConfig.hxx"
+#include"MTest/Types.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/Constraint.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   // forward declaration
@@ -33,7 +33,7 @@ namespace mfront
   /*!
    * Impose the value of a driving variable component
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT ImposedDrivingVariable final
+  struct MTEST_VISIBILITY_EXPORT ImposedDrivingVariable final
     : public Constraint
   {
     /*!
@@ -125,7 +125,7 @@ namespace mfront
     unsigned short c;
   }; // end of struct ImposedDrivingVariable
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTIMPOSEDDRIVINGVARIABLE_H_ */
 

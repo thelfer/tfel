@@ -19,7 +19,7 @@
 #include"MFront/Aster/Aster.hxx"
 #include"MTest/AsterCohesiveZoneModel.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   AsterCohesiveZoneModel::AsterCohesiveZoneModel(const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -78,10 +78,10 @@ namespace mfront
     fill(v.begin(),v.end(),real(0));
   } // end of AsterCohesiveZoneModel::setDrivingVariablesDefaultInitialValue  
 
-  MTestStiffnessMatrixType::mtype
+  StiffnessMatrixType::mtype
   AsterCohesiveZoneModel::getDefaultStiffnessMatrixType(void) const
   {
-    return MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
+    return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }
   
   bool
@@ -93,7 +93,7 @@ namespace mfront
 						    const tfel::math::vector<real>& iv0,
 						    const tfel::math::vector<real>& esv0,
 						    const tfel::material::ModellingHypothesis::Hypothesis h,
-						    const MTestStiffnessMatrixType::mtype ktype) const
+						    const StiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
     vector<real> s1(s0);
@@ -119,7 +119,7 @@ namespace mfront
 				    const tfel::math::vector<real>& dev,
 				    const tfel::material::ModellingHypothesis::Hypothesis h,
 				    const real dt,
-				    const MTestStiffnessMatrixType::mtype ktype) const
+				    const StiffnessMatrixType::mtype ktype) const
   {
     return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
 				mp,iv0,ev0,dev,h,dt,
@@ -140,7 +140,7 @@ namespace mfront
 					 const tfel::math::vector<real>& dev,
 					 const tfel::material::ModellingHypothesis::Hypothesis h,
 					 const real dt,
-					 const MTestStiffnessMatrixType::mtype ktype,
+					 const StiffnessMatrixType::mtype ktype,
 					 const bool b) const
   {
     using namespace std;
@@ -172,15 +172,15 @@ namespace mfront
     fill(Kt.begin(),Kt.end(),0.);
     // choosing the type of stiffness matrix
     if(b){
-      if(ktype==MTestStiffnessMatrixType::NOSTIFFNESS){
+      if(ktype==StiffnessMatrixType::NOSTIFFNESS){
 	// do nothing
-      } else if(ktype==MTestStiffnessMatrixType::ELASTIC){
+      } else if(ktype==StiffnessMatrixType::ELASTIC){
 	Kt(0,0) = real(1);
-      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::SECANTOPERATOR){
 	Kt(0,0) = real(2);
-      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
 	Kt(0,0) = real(3);
-      } else if(ktype==MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
 	Kt(0,0) = real(4);
       } else {
 	string msg("AsterCohesiveZoneModel::call_behaviour : "
@@ -188,11 +188,11 @@ namespace mfront
 	throw(runtime_error(msg));
       }
     } else {
-      if(ktype==MTestStiffnessMatrixType::ELASTIC){
+      if(ktype==StiffnessMatrixType::ELASTIC){
 	Kt(0,0) = real(-1);
-      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::SECANTOPERATOR){
 	Kt(0,0) = real(-2);
-      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
 	Kt(0,0) = real(-3);
       } else {
 	string msg("AsterCohesiveZoneModel::call_behaviour : "
@@ -254,5 +254,5 @@ namespace mfront
   AsterCohesiveZoneModel::~AsterCohesiveZoneModel()
   {}
   
-} // end of namespace mfront
+} // end of namespace mtest
 

@@ -17,7 +17,7 @@
 #include"MTest/Behaviour.hxx"
 #include"MTest/Evolution.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   void
@@ -28,8 +28,8 @@ namespace mfront
   {
     using namespace std;
     if(evm.find(n)==evm.end()){
-      if(getVerboseMode()>=VERBOSE_LEVEL2){
-	auto& log = getLogStream();
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
+	auto& log = mfront::getLogStream();
 	log << "MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues : "
 	    << "set material property '" << n << "' to default value" << endl;
       }
@@ -41,9 +41,8 @@ namespace mfront
     }
   } // end of Behaviour::setOptionalMaterialPropertyDefaultValue
 
-
   Behaviour::~Behaviour()
   {} // end of Behaviour::~Behaviour
 
-} // end of namespace mfront
+} // end of namespace mtest
 

@@ -27,22 +27,16 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/LUSolve.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
 
-#include"MTest/MTestConfig.hxx"
-#include"MTest/MTestTypes.hxx"
+#include"MTest/Config.hxx"
+#include"MTest/SchemeBase.hxx"
+#include"MTest/Types.hxx"
 #include"MTest/Constraint.hxx"
 #include"MTest/Evolution.hxx"
-#include"MTest/Behaviour.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
-#include"TFEL/Tests/Test.hxx"
-
-namespace mfront
+namespace mtest
 {
-
-  // forward declaration
-  struct MTestParser;
   
   /*!
    * \brief MTest is a simple class to test mfront behaviours.
@@ -50,8 +44,8 @@ namespace mfront
    * The unknowns are made of the driving variables stensor (for small
    * strain behaviours) followed by a number of lagrange multiplier.
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT MTest
-    : public tfel::tests::Test
+  struct MTEST_VISIBILITY_EXPORT MTest
+    : public SchemeBase
   {
     /*!
      * structure containing the state of the material.
@@ -59,7 +53,7 @@ namespace mfront
      * for the python bindings. In particular, the description of the
      * variables given here is only valid during the computations.
      */
-    struct MFRONT_MTEST_VISIBILITY_EXPORT MTestCurrentState
+    struct MTEST_VISIBILITY_EXPORT MTestCurrentState
     {
       //! default constructor
       MTestCurrentState();
@@ -141,7 +135,7 @@ namespace mfront
      * This structure is used internally and is declared
      * public only for the python bindings.
      */
-    struct MFRONT_MTEST_VISIBILITY_EXPORT MTestWorkSpace
+    struct MTEST_VISIBILITY_EXPORT MTestWorkSpace
     {
       MTestWorkSpace();
       ~MTestWorkSpace() noexcept;
@@ -181,43 +175,6 @@ namespace mfront
       MTestWorkSpace&
       operator=(const MTestWorkSpace&) = delete;
     };
-    /*!
-     * \brief possible algorithms used for global convergence to
-     * update the stiffness matrix
-     */
-    enum StiffnessUpdatingPolicy{
-      /*!
-       * the initial prediction matrix or the initial tangent coherent
-       * matrix or the initial secant matrix (normally equal to the
-       * elastic stiffness) is used for all iterations
-       */
-      CONSTANTSTIFFNESS,
-      /*!
-       * the prediction matrix or the first tangent coherent matrix or
-       * the first secant matrix is used for all iterations and
-       * updated and factorized at at periods
-       */
-      CONSTANTSTIFFNESSBYPERIOD,
-      /*!
-       * the tangent coherent matrix or the secant matrix is computed
-       * and factorized at each iteration
-       */
-      UPDATEDSTIFFNESSMATRIX,
-      //! default value
-      UNSPECIFIEDSTIFFNESSUPDATINGPOLICY
-    }; // end of enum StiffnessUpdatingPolicy
-    /*!
-     * \brief possible prediction policies
-     */
-    enum PredictionPolicy{
-      NOPREDICTION,
-      LINEARPREDICTION,
-      ELASTICPREDICTION,
-      ELASTICPREDICTIONFROMMATERIALPROPERTIES,
-      SECANTOPERATORPREDICTION,
-      TANGENTOPERATORPREDICTION,
-      UNSPECIFIEDPREDICTIONPOLICY
-    }; // end of enum PredictionPolicy
     /*!
      * \brief base class for testing the behaviour outputs
      */
@@ -269,10 +226,10 @@ namespace mfront
     virtual std::string
     classname(void) const override;
     /*!
-     * \return a appropriate parser
+     * \param[in] f : file to be read
      */
-    virtual std::shared_ptr<MTestParser>
-    getParser(void);
+    virtual void
+    readInputFile(const std::string&);
     /*!
      * complete the initialisation. This method must be called once.
      * \note this method is called automatically by the execute method.
@@ -306,36 +263,6 @@ namespace mfront
 	    const real,
 	    const real);
     /*!
-     * \brief set the description
-     * \param[in] d : description
-     */
-    virtual void setDescription(const std::string&);
-    /*!
-     * \brief set the author
-     * \param[in] a : author
-     */
-    virtual void setAuthor(const std::string&);
-    /*!
-     * \brief set the out of bounds policy
-     * \param[in] a : out of bounds policy
-     */
-    virtual void setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy);
-    /*!
-     * \brief set the date
-     * \param[in] d : date
-     */
-    virtual void setDate(const std::string&);
-    /*!
-     * \brief set the prediction policy
-     * \param[in] p : prediction policy
-     */
-    virtual void setPredictionPolicy(const MTest::PredictionPolicy);
-    /*!
-     * \brief set the stiffness matrix type
-     * \param[in] k : stiffness matrix type
-     */
-    virtual void setStiffnessMatrixType(const MTestStiffnessMatrixType::mtype);
-    /*!
      * \brief ask the comparison to the numerical tangent operator
      * \param[in] bo : boolean
      */
@@ -352,17 +279,6 @@ namespace mfront
      */
     virtual void setNumericalTangentOperatorPerturbationValue(const real);
     /*!
-     * \brief set the stiffness updating policy
-     * \param[in] b : boolean
-     */
-    virtual void
-    setStiffnessUpdatingPolicy(const StiffnessUpdatingPolicy);
-    /*!
-     * \brief set the use of the castem acceleration algorithm
-     * \param[in] b : boolean
-     */
-    virtual void setUseCastemAccelerationAlgorithm(const bool);
-    /*!
      * \brief set if mtest shall handle thermal expansion coefficient
      * If true, the thermal expansion will be handled if the thermal
      * expansion coefficients are defined.
@@ -370,48 +286,12 @@ namespace mfront
      */
     virtual void setHandleThermalExpansion(const bool);
     /*!
-     * \brief set the acceleration algorithm to be used
-     * \param[in] a : acceleration algorithm
-     */
-    virtual void setAccelerationAlgorithm(const std::string&);
-    /*!
-     * \brief set a parameter of the acceleration algorithm
-     * \param[in] p : parameter name
-     * \param[in] v : parameter value
-     */
-    virtual void setAccelerationAlgorithmParameter(const std::string&,
-						   const std::string&);
-    /*!
-     * \brief set at which iteration the use of the castem
-     * acceleration algorithm  will begin
-     * \param[in] i : iteration number
-     */
-    virtual void setCastemAccelerationTrigger(const int);
-    /*!
-     * \brief set at which period the use of the castem
-     * acceleration algorithm  will take place
-     * \param[in] p : period
-     */
-    virtual void setCastemAccelerationPeriod(const int);
-    virtual void setMaximumNumberOfIterations(const unsigned int);
-    virtual void setMaximumNumberOfSubSteps(const unsigned int);
-    /*!
      * \brief set the rotation matrix
      * \param[in] r : rotation matrix
      * \param[in] b : allow redefining the rotation matrix 
      */
     virtual void setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>&,
 				   const bool = false);
-    /*!
-     * \brief set the behaviour
-     * \param[in] i : interface
-     * \param[in] l : library name
-     * \param[in] f : function
-     */
-    virtual void
-    setBehaviour(const std::string&,
-		 const std::string&,
-		 const std::string&);
     /*!
      * \brief set the output file
      * \param[in] f : file name
@@ -450,37 +330,6 @@ namespace mfront
      */
     virtual void
     setThermodynamicForceEpsilon(const double);
-    /*!
-     * \param[in] n : parameter name
-     * \param[in] v : parameter value
-     */
-    virtual void
-    setParameter(const std::string&,
-		 const double);
-    /*!
-     * \param[in] n : parameter name
-     * \param[in] v : parameter value
-     */
-    virtual void
-    setIntegerParameter(const std::string&,
-			const int);
-    /*!
-     * \param[in] n : parameter name
-     * \param[in] v : parameter value
-     */
-    virtual void
-    setUnsignedIntegerParameter(const std::string&,
-				const unsigned int);
-    /*!
-     * \param[in] h : modelling hypothesis
-     */
-    virtual void
-    setModellingHypothesis(const std::string&);
-    /*!
-     * \param[in] t : times
-     */
-    virtual void
-    setTimes(const std::vector<real>&);
     /*!
      * \return the type and the position of the given variable
      * \param[out] type : type of the variable
@@ -594,26 +443,6 @@ namespace mfront
     virtual void
     addConstraint(const std::shared_ptr<Constraint>);
     /*!
-     * \return the behaviour type
-     */
-    virtual tfel::material::MechanicalBehaviourBase::BehaviourType
-    getBehaviourType(void) const;
-    /*!
-     * \return the behaviour
-     */
-    virtual std::shared_ptr<Behaviour>
-    getBehaviour(void);
-    /*!
-     * \return the modelling hypothesis
-     */
-    virtual tfel::material::ModellingHypothesis::Hypothesis
-    getModellingHypothesis(void) const;
-    /*!
-     * \return the dimension
-     */
-    virtual unsigned short
-    getDimension(void) const;
-    /*!
      * \brief print the driving variable, 
      * \param[in] t  : time
      * \param[in] u  : unknowns (driving variable)
@@ -627,22 +456,8 @@ namespace mfront
      */
     ~MTest();
   protected:
-    /*!
-     * \brief declare a new variable
-     * \param[in] v : variable name
-     */
-    void declareVariable(const std::string&,
-			 const bool);
-    /*!
-     * \brief declare a list of new variables
-     * \param[in] v : variable names
-     */
-    void declareVariables(const std::vector<std::string>&,
-			  const bool);
-    /*!
-     * \brief set the modelling hypothesis to the default one
-     */
-    void setDefaultHypothesis(void);
+    //! \brief set the modelling hypothesis to the default one
+    virtual void setDefaultHypothesis(void) override;
     /*!
      * \return the number of unknowns (size of driving variables plus
      * the number of lagrangian multipliers)
@@ -653,19 +468,13 @@ namespace mfront
     //! residual file precision
     int rprec;
     //! list of tests
-    std::vector<std::shared_ptr<UTest> > tests;
-    //! declared variable names
-    std::vector<std::string> vnames;
-    //! the mechanical behaviour
-    std::shared_ptr<Behaviour> b;
+    std::vector<std::shared_ptr<UTest>> tests;
     //! constraints
-    std::vector<std::shared_ptr<Constraint> > constraints;
+    std::vector<std::shared_ptr<Constraint>> constraints;
     //! rotation matrix
     tfel::math::tmatrix<3u,3u,real> rm;
     //! boolean, true if the rotation matrix has been defined by the user
     bool isRmDefined;
-    //! times
-    std::vector<real> times;
     //! list of evolutions
     std::shared_ptr<EvolutionManager> evm;
     //! default values for material properties as given by the behaviour
@@ -679,12 +488,6 @@ namespace mfront
     //! file where residuals evolutions as a function of the iteration
     //! number are saved
     std::ofstream residual;
-    //! dimension used for the computation
-    unsigned short dimension;
-    //! modelling hypothesis
-    tfel::material::ModellingHypothesis::Hypothesis hypothesis;
-    //! list of internal variable names, including their suffixes
-    std::vector<std::string> ivfullnames;
     // inital values of the driving variables
     std::vector<real> e_t0;
     // inital values of the thermodynamic forces
@@ -704,28 +507,8 @@ namespace mfront
      * for thermodynamic forces expresses in Pa (small strain behaviours).
      */
     real seps;
-    //! maximum number of sub steps allowed
-    int mSubSteps;
-    //! maximum number of iterations allowed in the Newton-Raphson algorithm
-    int iterMax;
-    //! stiffness updating policy
-    StiffnessUpdatingPolicy ks;
-    //! type of stifness matrix to use for the resolution
-    MTestStiffnessMatrixType::mtype ktype;
-    //! use a prediction matrix before beginning the resolution
-    PredictionPolicy ppolicy;
-    //! acceleration algorithm
-    std::shared_ptr<AccelerationAlgorithm> aa;
     //! handle the computation of thermal expansion
     bool handleThermalExpansion;
-    //! use castem acceleration
-    bool useCastemAcceleration;
-    //! description of the test
-    std::string description;
-    //! author
-    std::string author;
-    //! date
-    std::string date;
     //! test name
     std::string tname;
     //! tangent operator comparison criterium
@@ -734,11 +517,9 @@ namespace mfront
     real pv;
     //! compare to numerical jacobian
     bool cto;
-    //! initilisation stage
-    bool initialisationFinished;
   }; // end of struct MTest
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTEST_H_ */
 

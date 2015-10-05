@@ -3438,6 +3438,7 @@ mtest/include/MTest/AsterStandardBehaviour.hxx -text
 mtest/include/MTest/Behaviour.hxx -text
 mtest/include/MTest/CastemAccelerationAlgorithm.hxx -text
 mtest/include/MTest/CastemEvolution.hxx -text
+mtest/include/MTest/Config.hxx -text
 mtest/include/MTest/Constraint.hxx -text
 mtest/include/MTest/Crossed2DeltaAccelerationAlgorithm.hxx -text
 mtest/include/MTest/Crossed2DeltabisAccelerationAlgorithm.hxx -text
@@ -3450,12 +3451,13 @@ mtest/include/MTest/ImposedDrivingVariable.hxx -text
 mtest/include/MTest/ImposedThermodynamicForce.hxx -text
 mtest/include/MTest/IronsTuckAccelerationAlgorithm.hxx -text
 mtest/include/MTest/MTest.hxx -text
-mtest/include/MTest/MTestConfig.hxx -text
 mtest/include/MTest/MTestParser.hxx -text
-mtest/include/MTest/MTestTypes.hxx -text
 mtest/include/MTest/ReferenceFileComparisonTest.hxx -text
+mtest/include/MTest/Scheme.hxx -text
+mtest/include/MTest/SchemeBase.hxx -text
 mtest/include/MTest/SecantAccelerationAlgorithm.hxx -text
 mtest/include/MTest/SteffensenAccelerationAlgorithm.hxx -text
+mtest/include/MTest/Types.hxx -text
 mtest/include/MTest/UmatBehaviourBase.hxx -text
 mtest/include/MTest/UmatCohesiveZoneModel.hxx -text
 mtest/include/MTest/UmatFiniteStrainBehaviour.hxx -text
@@ -3493,6 +3495,8 @@ mtest/src/MTestMain.cxx -text
 mtest/src/MTestParser.cxx -text
 mtest/src/Makefile.am -text
 mtest/src/ReferenceFileComparisonTest.cxx -text
+mtest/src/Scheme.cxx -text
+mtest/src/SchemeBase.cxx -text
 mtest/src/SecantAccelerationAlgorithm.cxx -text
 mtest/src/SteffensenAccelerationAlgorithm.cxx -text
 mtest/src/UmatBehaviourBase.cxx -text

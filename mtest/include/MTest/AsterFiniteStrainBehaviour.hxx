@@ -18,7 +18,7 @@
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/AsterStandardBehaviour.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
@@ -82,11 +82,11 @@ namespace mfront
 		   const tfel::math::vector<real>&,
 		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
-		   const MTestStiffnessMatrixType::mtype,
+		   const StiffnessMatrixType::mtype,
 		   const bool) const override;
   }; // end of struct Behaviour
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTASTERFINITESTRAINBEHAVIOUR_H_ */
 

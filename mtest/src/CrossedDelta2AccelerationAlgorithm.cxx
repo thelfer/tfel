@@ -18,7 +18,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/CrossedDelta2AccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   CrossedDelta2AccelerationAlgorithm::CrossedDelta2AccelerationAlgorithm()
@@ -102,8 +102,8 @@ namespace mfront
 	// crossed secant acceleration
       const real nr2_dr = this->csa_dr1|this->csa_dr1;
       if(nr2_dr>(csa_eps*csa_eps)){
-	if(getVerboseMode()>=VERBOSE_LEVEL1){
-	  ostream& log = getLogStream();
+	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	  ostream& log = mfront::getLogStream();
 	  log << "CrossedSecant acceleration convergence" << endl;
 	}
 	const real csa_a = (this->csa_du|this->csa_dr1)/nr2_dr;
@@ -113,8 +113,8 @@ namespace mfront
       else{
       const real nr2_d2r = this->csa_d2r|this->csa_d2r;
       if(nr2_d2r>(csa_eps*csa_eps)){
-	if(getVerboseMode()>=VERBOSE_LEVEL1){
-	  ostream& log = getLogStream();
+	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	  ostream& log = mfront::getLogStream();
 	  log << "CrossedDelta2 acceleration convergence" << endl;
 	}
 	const real csa_a = (this->csa_du|this->csa_d2r)/nr2_d2r;
@@ -131,4 +131,4 @@ namespace mfront
   CrossedDelta2AccelerationAlgorithm::~CrossedDelta2AccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

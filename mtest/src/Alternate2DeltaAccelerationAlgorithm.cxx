@@ -18,7 +18,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Alternate2DeltaAccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   Alternate2DeltaAccelerationAlgorithm::Alternate2DeltaAccelerationAlgorithm()
@@ -102,8 +102,8 @@ namespace mfront
       //alternate secant
 	const real nr2_dr1 = this->asa_dr1|this->asa_dr1;
 	if(nr2_dr1>(asa_eps*asa_eps)){
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    ostream& log = getLogStream();
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    ostream& log = mfront::getLogStream();
 	    log << "AlternateSecant acceleration convergence" << endl;
 	  }
 	  const real asa_a = (this->asa_dr1|this->asa_r1)/nr2_dr1;
@@ -117,8 +117,8 @@ namespace mfront
 	const real det = nr2_dr1*nr2_dr0 - dr1_dr0 * dr1_dr0 ;
 	if ((dr1_dr0*dr1_dr0)/(nr2_dr1*nr2_dr0) < 0.99){
 	//if(abs(det/(nr2_dr0*b1))>(1e-3)){
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    ostream& log = getLogStream();
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    auto& log = mfront::getLogStream();
 	    log << "Alternate2Delta acceleration convergence" << endl;
 	  }
 	  const real b1 = this->asa_dr1| this->asa_r1;
@@ -131,8 +131,8 @@ namespace mfront
 	}
 	else{
 	  if(nr2_dr1>(asa_eps*asa_eps)){
-	    if(getVerboseMode()>=VERBOSE_LEVEL1){
-	      ostream& log = getLogStream();
+	    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	      auto& log = mfront::getLogStream();
 	      log << "AlternateSecant acceleration convergence" << endl;
 	    }
 	    const real asa_a = (this->asa_dr1|this->asa_r1)/nr2_dr1;
@@ -150,4 +150,4 @@ namespace mfront
   Alternate2DeltaAccelerationAlgorithm::~Alternate2DeltaAccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

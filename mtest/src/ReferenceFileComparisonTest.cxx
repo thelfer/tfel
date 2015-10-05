@@ -15,7 +15,7 @@
 
 #include"MTest/ReferenceFileComparisonTest.hxx"
 
-namespace mfront{
+namespace mtest{
 
   ReferenceFileComparisonTest::ReferenceFileComparisonTest(const std::shared_ptr<tfel::utilities::TextData> d,
 								     const std::string& v,

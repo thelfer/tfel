@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/MTestTypes.hxx
+ * \file  mfront/include/MTest/Types.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013
@@ -18,7 +18,7 @@
 #include<string>
 #include<memory>
 
-namespace mfront
+namespace mtest
 {
   
   //! a simple alias
@@ -34,7 +34,7 @@ namespace mfront
   /*!
    * \brief possible type of stiffness matrix
    */
-  struct MTestStiffnessMatrixType
+  struct StiffnessMatrixType
   {
     //! list of possible matrix type
     enum mtype{
@@ -49,7 +49,7 @@ namespace mfront
     }; // end of struct StiffnessMatrixType
   };
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTTYPES_H_ */
 

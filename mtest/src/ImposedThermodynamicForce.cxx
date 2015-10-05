@@ -16,7 +16,7 @@
 #include"MTest/Behaviour.hxx"
 #include"MTest/ImposedThermodynamicForce.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   ImposedThermodynamicForce::ImposedThermodynamicForce(const Behaviour& b,
@@ -90,5 +90,5 @@ namespace mfront
   ImposedThermodynamicForce::~ImposedThermodynamicForce()
   {} // end of ImposedThermodynamicForce::~ImposedThermodynamicForce
 
-} // end of namespace mfront
+} // end of namespace mtest
 

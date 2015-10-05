@@ -19,12 +19,12 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MTest/UmatBehaviourBase.hxx"
 
-namespace mfront
+namespace mtest
 {
 
-  UmatBehaviourBase::UmatBehaviourBase(const tfel::material::ModellingHypothesis::Hypothesis h,
-						 const std::string& l,
-						 const std::string& b)
+  UmatBehaviourBase::UmatBehaviourBase(const Hypothesis h,
+				       const std::string& l,
+				       const std::string& b)
     : hypothesis(tfel::material::ModellingHypothesis::toString(h)),
       library(l),
       behaviour(b)
@@ -84,7 +84,7 @@ namespace mfront
   } // end of UmatBehaviourBase::getBehaviourType
 
   unsigned short
-  UmatBehaviourBase::getDrivingVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
+  UmatBehaviourBase::getDrivingVariablesSize(const Hypothesis h) const
   {
     typedef tfel::material::ModellingHypothesis MH;
     if(this->type==1){
@@ -132,7 +132,7 @@ namespace mfront
   } // end of UmatBehaviourBase::getDrivingVariablesSize
 
   unsigned short
-  UmatBehaviourBase::getThermodynamicForcesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
+  UmatBehaviourBase::getThermodynamicForcesSize(const Hypothesis h) const
   {
     typedef tfel::material::ModellingHypothesis MH;
     if(this->type==1){
@@ -179,13 +179,11 @@ namespace mfront
 			     "unsupported behaviour type"));
   } // end of UmatBehaviourBase::getThermodynamicForcesSize
 
-  void
-  UmatBehaviourBase::getStensorComponentsSuffixes(std::vector<std::string>& c,
-						       const tfel::material::ModellingHypothesis::Hypothesis h) const
+  std::vector<std::string>
+  UmatBehaviourBase::getStensorComponentsSuffixes(const Hypothesis h) const
   {
-    using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
-    c.clear();
+    std::vector<std::string> c;						  
     if((h==MH::TRIDIMENSIONAL)||
        (h==MH::PLANESTRAIN)||
        (h==MH::PLANESTRESS)||
@@ -208,19 +206,17 @@ namespace mfront
 	c.push_back("RZ");
       }
     } else {
-      string msg("UmatBehaviourBase::getDrivingVariablesComponents : "
-		 "unsupported modelling hypothesis");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesComponents : "
+			       "unsupported modelling hypothesis"));
     }
+    return c;
   } // end of UmatBehaviourBase::getStensorComponentsSuffixes
 
-  void
-  UmatBehaviourBase::getTensorComponentsSuffixes(std::vector<std::string>& c,
-						      const tfel::material::ModellingHypothesis::Hypothesis h) const
+  std::vector<std::string>
+  UmatBehaviourBase::getTensorComponentsSuffixes(const Hypothesis h) const
   {
-    using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
-    c.clear();
+    std::vector<std::string> c;						  
     if((h==MH::TRIDIMENSIONAL)||
        (h==MH::PLANESTRAIN)||
        (h==MH::PLANESTRESS)||
@@ -247,32 +243,27 @@ namespace mfront
 	c.push_back("ZR");
       }
     } else {
-      string msg("UmatBehaviourBase::getDrivingVariablesComponents : "
-		 "unsupported modelling hypothesis");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesComponents : "
+			       "unsupported modelling hypothesis"));
     }
+    return c;
   } // end of UmatBehaviourBase::getTensorComponentsSuffixes
 
-  void
-  UmatBehaviourBase::getDrivingVariablesComponents(std::vector<std::string>& c,
-							const tfel::material::ModellingHypothesis::Hypothesis h) const
+  std::vector<std::string>
+  UmatBehaviourBase::getDrivingVariablesComponents(const Hypothesis h) const
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
-    c.clear();
+    vector<string> c;
     if(this->type==1){
-      vector<string> exts;
-      vector<string>::const_iterator pe;
-      this->getStensorComponentsSuffixes(exts,h);
-      for(pe=exts.begin();pe!=exts.end();++pe){
-	c.push_back("E"+*pe);
+      const auto exts = this->getStensorComponentsSuffixes(h);
+      for(const auto& e : exts){
+	c.push_back("E"+e);
       }
     } else if(this->type==2){
-      vector<string> exts;
-      vector<string>::const_iterator pe;
-      this->getTensorComponentsSuffixes(exts,h);
-      for(pe=exts.begin();pe!=exts.end();++pe){
-	c.push_back("F"+*pe);
+      const auto exts = this->getTensorComponentsSuffixes(h);
+      for(const auto& e : exts){
+	c.push_back("F"+e);
       }
     } else if(this->type==3){
       if((h==MH::TRIDIMENSIONAL)||
@@ -296,22 +287,19 @@ namespace mfront
 		 "unsupported behaviour type");
       throw(runtime_error(msg));
     }
+    return c;
   } // end of UmatBehaviourBase::getDrivingVariablesComponents
 
-  void
-  UmatBehaviourBase::getThermodynamicForcesComponents(std::vector<std::string>& c,
-							   const tfel::material::ModellingHypothesis::Hypothesis h) const
+  std::vector<std::string>
+  UmatBehaviourBase::getThermodynamicForcesComponents(const Hypothesis h) const
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
-    c.clear();
-    if((this->type==1)||
-       (this->type==2)){
-      vector<string> exts;
-      vector<string>::const_iterator pe;
-      this->getStensorComponentsSuffixes(exts,h);
-      for(pe=exts.begin();pe!=exts.end();++pe){
-	c.push_back("S"+*pe);
+    vector<string> c;							   
+    if((this->type==1)||(this->type==2)){
+      const auto exts = this->getStensorComponentsSuffixes(h);
+      for(const auto& e : exts){
+	c.push_back("S"+e);
       }
     } else if(this->type==3){
       if((h==MH::TRIDIMENSIONAL)||
@@ -326,26 +314,23 @@ namespace mfront
 	  c.push_back("Tt");
 	}
       } else {
-	string msg("UmatBehaviourBase::getThermodynamicForcesComponents : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(runtime_error("UmatBehaviourBase::getThermodynamicForcesComponents : "
+			    "unsupported modelling hypothesis"));
       }
     } else {
-      string msg("UmatBehaviourBase::getThermodynamicForcesComponents : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw(runtime_error("UmatBehaviourBase::getThermodynamicForcesComponents : "
+			  "unsupported behaviour type"));
     }
+    return c;
   } // end of UmatBehaviourBase::getThermodynamicForcesComponents
 
   unsigned short
-  UmatBehaviourBase::getDrivingVariableComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis h,
+  UmatBehaviourBase::getDrivingVariableComponentPosition(const Hypothesis h,
 							      const std::string& cname) const
   {
     using namespace std;
-    vector<string> c;
-    vector<string>::const_iterator p;
-    this->getDrivingVariablesComponents(c,h);
-    p = find(c.begin(),c.end(),cname);
+    const auto c = this->getDrivingVariablesComponents(h);
+    auto p = find(c.begin(),c.end(),cname);
     if(p==c.end()){
       ostringstream msg;
       msg << "UmatBehaviourBase::getDrivingVariableComponentPosition : "
@@ -357,14 +342,12 @@ namespace mfront
   } // end of UmatBehaviourBase::getDrivingVariableComponentPosition
 
   unsigned short
-  UmatBehaviourBase::getThermodynamicForceComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis h,
+  UmatBehaviourBase::getThermodynamicForceComponentPosition(const Hypothesis h,
 								 const std::string& cname) const
   {
     using namespace std;
-    vector<string> c;
-    vector<string>::const_iterator p;
-    this->getThermodynamicForcesComponents(c,h);
-    p = find(c.begin(),c.end(),cname);
+    const auto c = this->getThermodynamicForcesComponents(h);
+    auto p = find(c.begin(),c.end(),cname);
     if(p==c.end()){
       ostringstream msg;
       msg << "UmatBehaviourBase::getThermodynamicForceComponentPosition : "
@@ -407,7 +390,7 @@ namespace mfront
   }
 
   size_t
-  UmatBehaviourBase::getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
+  UmatBehaviourBase::getInternalStateVariablesSize(const Hypothesis h) const
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
@@ -454,7 +437,7 @@ namespace mfront
   } // end of UmatBehaviourBase::getInternalStateVariablesSize
 
   std::vector<std::string>
-  UmatBehaviourBase::getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis h) const
+  UmatBehaviourBase::getInternalStateVariablesDescriptions(const Hypothesis h) const
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
@@ -550,8 +533,8 @@ namespace mfront
   }
   
   unsigned short
-  UmatBehaviourBase::getInternalStateVariablePosition(const tfel::material::ModellingHypothesis::Hypothesis h,
-							   const std::string& n) const
+  UmatBehaviourBase::getInternalStateVariablePosition(const Hypothesis h,
+						      const std::string& n) const
   {
     using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
@@ -648,21 +631,21 @@ namespace mfront
   
 
   void
-  UmatBehaviourBase::initializeTangentOperator(const MTestStiffnessMatrixType::mtype ktype,
+  UmatBehaviourBase::initializeTangentOperator(const StiffnessMatrixType::mtype ktype,
 						    const bool b) const
   {
     using namespace std;
     if(b){
-      if((ktype==MTestStiffnessMatrixType::NOSTIFFNESS)||
-	 (ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
+      if((ktype==StiffnessMatrixType::NOSTIFFNESS)||
+	 (ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
 	// do nothing
-      } else if(ktype==MTestStiffnessMatrixType::ELASTIC){
+      } else if(ktype==StiffnessMatrixType::ELASTIC){
 	this->D(0,0) = real(1);
-      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::SECANTOPERATOR){
 	this->D(0,0) = real(2);
-      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
 	this->D(0,0) = real(3);
-      } else if(ktype==MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
 	this->D(0,0) = real(4);
       } else {
 	string msg("AsterSmallStrainBehaviour::call_behaviour : "
@@ -670,11 +653,11 @@ namespace mfront
 	throw(runtime_error(msg));
       }
     } else {
-      if(ktype==MTestStiffnessMatrixType::ELASTIC){
+      if(ktype==StiffnessMatrixType::ELASTIC){
 	this->D(0,0) = real(-1);
-      } else if(ktype==MTestStiffnessMatrixType::SECANTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::SECANTOPERATOR){
 	this->D(0,0) = real(-2);
-      } else if(ktype==MTestStiffnessMatrixType::TANGENTOPERATOR){
+      } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
 	this->D(0,0) = real(-3);
       } else {
 	string msg("AsterSmallStrainBehaviour::call_behaviour : "
@@ -687,5 +670,5 @@ namespace mfront
   UmatBehaviourBase::~UmatBehaviourBase()
   {}
   
-} // end of namespace mfront
+} // end of namespace mtest
 

@@ -14,16 +14,16 @@
 #ifndef LIB_MFRONT_MTEST_MTESTSTEFFENSENACCELERATIONALGORITHM_H_
 #define LIB_MFRONT_MTEST_MTESTSTEFFENSENACCELERATIONALGORITHM_H_ 
 
-#include"MTest/MTestConfig.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
    * \brief This class implements the Steffensen acceleration algorithm.
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT SteffensenAccelerationAlgorithm
+  struct MTEST_VISIBILITY_EXPORT SteffensenAccelerationAlgorithm
     : public AccelerationAlgorithm
   {
     //! default constructor
@@ -84,7 +84,7 @@ namespace mfront
     int stat;
   }; // end of struct SteffensenAccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTEST_MTESTSTEFFENSENACCELERATIONALGORITHM_H_ */
 

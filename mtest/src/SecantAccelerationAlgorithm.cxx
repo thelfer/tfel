@@ -19,7 +19,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/SecantAccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   SecantAccelerationAlgorithm::SecantAccelerationAlgorithm()
@@ -97,37 +97,16 @@ namespace mfront
     this->sa_u1 = u1;
     this->sa_dr = this->sa_r1-this->sa_r0;
     if(iter>=this->sat){
-      if(getVerboseMode()>=VERBOSE_LEVEL1){
-	auto& log = getLogStream();
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	auto& log = mfront::getLogStream();
 	log << "Secant acceleration convergence" << endl;
       }
       const real nr2_dr = this->sa_dr|this->sa_dr;
       if(nr2_dr>sa_eps){
 	const real sa_a = (this->sa_r1|this->sa_dr)/nr2_dr;
 	u1 -= sa_a*(this->sa_u1-this->sa_u0);
-	// this->sa_w *= -(this->sa_r0|this->sa_dr)/nr2_dr;
-	// u1    = (this->sa_w)*this->sa_u1+(1-this->sa_w)*this->sa_u0;
       }
-      //      this->sa_u1 = u1;
     }
-// wk.sa_r0.swap(wk.sa_r1);
-// wk.sa_r1 = wk.rdv;
-// wk.sa_dr = wk.sa_r1 - wk.sa_r0;
-// wk.sa_u0.swap(wk.sa_u1);
-// wk.sa_u1 = state.u1;
-// wk.sa_du = wk.sa_u1 - wk.sa_u0;
-// if(iter>=this->sat){
-// if(getVerboseMode()>=VERBOSE_LEVEL1){
-// auto& log = getLogStream();
-// log << "Secant acceleration convergence" << endl;
-// }
-// const real nr2_dr = wk.sa_dr|wk.sa_dr;
-// if(nr2_dr>sa_eps){
-// const real sa_a = (wk.sa_du|wk.sa_dr)/nr2_dr;
-// state.u1 -= sa_a*wk.sa_r1;
-// }
-// }
-
   } // end of SecantAccelerationAlgorithm::execute
 
   void
@@ -137,4 +116,4 @@ namespace mfront
   SecantAccelerationAlgorithm::~SecantAccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

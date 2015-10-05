@@ -18,7 +18,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Crossed2DeltaAccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   Crossed2DeltaAccelerationAlgorithm::Crossed2DeltaAccelerationAlgorithm()
@@ -100,8 +100,8 @@ namespace mfront
 	// crossed secant acceleration
 	const real nr2_dr1 = this->csa_dr1|this->csa_dr1;
 	if(nr2_dr1>(csa_eps*csa_eps)){
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    ostream& log = getLogStream();
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    ostream& log = mfront::getLogStream();
 	    log << "CrossedSecant acceleration convergence" << endl;
 	  }
 	  const real csa_a = (this->csa_du|this->csa_dr1)/nr2_dr1;
@@ -114,8 +114,8 @@ namespace mfront
 	const real dr1_dr0 = this->csa_dr1|this->csa_dr0;
 	const real det = nr2_dr1*nr2_dr0 - dr1_dr0*dr1_dr0;
 	if ((dr1_dr0*dr1_dr0)/(nr2_dr1*nr2_dr0) < 0.99){
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    ostream& log = getLogStream();
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    ostream& log = mfront::getLogStream();
 	    log << "Crossed2Delta acceleration convergence" << endl;
 	  }
 	  const real b1 = this->csa_dr1| this->csa_du;
@@ -128,8 +128,8 @@ namespace mfront
 	}
 	else
 	  if(nr2_dr1>(csa_eps*csa_eps)){
-	    if(getVerboseMode()>=VERBOSE_LEVEL1){
-	      ostream& log = getLogStream();
+	    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	      ostream& log = mfront::getLogStream();
 	      log << "CrossedSecant acceleration convergence" << endl;
 	    }
 	    const real csa_a = (this->csa_du|this->csa_dr1)/nr2_dr1;
@@ -146,4 +146,4 @@ namespace mfront
   Crossed2DeltaAccelerationAlgorithm::~Crossed2DeltaAccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

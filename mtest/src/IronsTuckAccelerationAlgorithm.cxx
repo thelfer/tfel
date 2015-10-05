@@ -18,7 +18,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/IronsTuckAccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   IronsTuckAccelerationAlgorithm::IronsTuckAccelerationAlgorithm()
@@ -86,8 +86,8 @@ namespace mfront
     this->ita_r0.swap(this->ita_r1);
     this->ita_r1 = -rx ; // rx = Xn - G(Xn) = -Delta Xn or rf = F(Xn)
     if((iter>=this->itat)&&((iter-this->itat)%2==0)){
-      if(getVerboseMode()>=VERBOSE_LEVEL1){
-	auto& log = getLogStream();
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	auto& log = mfront::getLogStream();
 	log << "Irons Tuck acceleration convergence" << endl;
       }
       this->ita_dr  = this->ita_r1-this->ita_r0;
@@ -106,4 +106,4 @@ namespace mfront
   IronsTuckAccelerationAlgorithm::~IronsTuckAccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

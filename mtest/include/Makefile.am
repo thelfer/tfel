@@ -1,7 +1,7 @@
-nobase_include_HEADERS = MTest/MTestTypes.hxx	                         \
+nobase_include_HEADERS = MTest/Config.hxx	                         \
+			 MTest/Types.hxx	                         \
 			 MTest/MTest.hxx	                         \
 			 MTest/MTestParser.hxx	                         \
-			 MTest/MTestConfig.hxx	                         \
 			 MTest/AnalyticalTest.hxx	                 \
 			 MTest/ReferenceFileComparisonTest.hxx           \
 			 MTest/Behaviour.hxx                             \

@@ -22,28 +22,28 @@
 #include"MTest/ImposedDrivingVariable.hxx"
 
 static void
-MTest_addEvolution(mfront::MTest& t,
+MTest_addEvolution(mtest::MTest& t,
 		   const std::string&  n,
-		   const mfront::real& v,
+		   const mtest::real& v,
 		   const bool b1,
 		   const bool b2)
 {
-  using namespace mfront;
+  using namespace mtest;
   std::shared_ptr<Evolution> pev(new ConstantEvolution(v));
   t.addEvolution(n,pev,b1,b2);
 }
 
 static void
-MTest_addEvolution2(mfront::MTest& t,
+MTest_addEvolution2(mtest::MTest& t,
 		    const std::string&  n,
-		    const std::map<mfront::real,
-				   mfront::real>& v,
+		    const std::map<mtest::real,
+				   mtest::real>& v,
 		    const bool b1,
 		    const bool b2)
 {
   using namespace std;
-  using namespace mfront;
-  using mfront::real;
+  using namespace mtest;
+  using mtest::real;
   vector<real> tv(v.size());
   vector<real> ev(v.size());
   vector<real>::size_type i;
@@ -57,94 +57,91 @@ MTest_addEvolution2(mfront::MTest& t,
 }
 
 static void
-MTest_addEvolution3(mfront::MTest& t,
+MTest_addEvolution3(mtest::MTest& t,
 		    const std::string&  n,
 		    const std::string& f,
 		    const bool b1,
 		    const bool b2)
 {
   using namespace std;
-  using namespace mfront;
-  using std::shared_ptr;
+  using namespace mtest;
   shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.addEvolution(n,pev,b1,b2);
 }
 
 static void
-MTest_setMaterialProperty(mfront::MTest& t,
+MTest_setMaterialProperty(mtest::MTest& t,
 			  const std::string&  n,
-			  const mfront::real& v,
+			  const mtest::real& v,
 			  const bool b)
 {
-  using namespace mfront;
+  using namespace mtest;
   std::shared_ptr<Evolution> pev(new ConstantEvolution(v));
   t.setMaterialProperty(n,pev,b);
 }
 
 static void
-MTest_setMaterialProperty2(mfront::MTest& t,
+MTest_setMaterialProperty2(mtest::MTest& t,
 			   const std::string& n,
 			   const std::string& f,
 			   const bool b)
 {
   using namespace std;
-  using namespace mfront;
-  using mfront::real;
+  using namespace mtest;
+  using mtest::real;
   shared_ptr<Evolution> mpev;
   mpev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
   t.setMaterialProperty(n,mpev,b);
 }
 
 static void
-MTest_setMaterialProperty3(mfront::MTest& t,
+MTest_setMaterialProperty3(mtest::MTest& t,
 		    const std::string&  n,
 		    const std::string& f,
 		    const bool b)
 {
   using namespace std;
-  using namespace mfront;
-  using std::shared_ptr;
+  using namespace mtest;
   shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.setMaterialProperty(n,pev,b);
 }
 
 static void
-MTest_setCastemMaterialProperty(mfront::MTest& t,
+MTest_setCastemMaterialProperty(mtest::MTest& t,
 				const std::string& n,
 				const std::string& l,
 				const std::string& f,
 				const bool b)
 {
   using namespace std;
-  using namespace mfront;
-  using std::shared_ptr;
-  using mfront::real;
+  using namespace mtest;
+  using mtest::real;
   shared_ptr<Evolution> mpev;
   mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
   t.setMaterialProperty(n,mpev,b);
 }
 
 static void
-MTest_setExternalStateVariable(mfront::MTest& t,
+MTest_setExternalStateVariable(mtest::MTest& t,
 			       const std::string&  n,
-			       const mfront::real& v,
+			       const mtest::real& v,
 			       const bool b)
 {
-  using namespace mfront;
+  using namespace mtest;
   std::shared_ptr<Evolution> pev(new ConstantEvolution(v));
   t.setExternalStateVariable(n,pev,b);
 }
 
 static void
-MTest_setExternalStateVariable2(mfront::MTest& t,
+MTest_setExternalStateVariable2(mtest::MTest& t,
 				const std::string&  n,
-				const std::map<mfront::real,
-				mfront::real>& v,
+				const std::map<mtest::real,
+				mtest::real>& v,
 				const bool b)
 {
   using namespace std;
-  using namespace mfront;
-  using mfront::real;
+  using namespace mtest;
+  using mtest::real;
   vector<real> tv(v.size());
   vector<real> ev(v.size());
   vector<real>::size_type i;
@@ -158,25 +155,24 @@ MTest_setExternalStateVariable2(mfront::MTest& t,
 }
 
 static void
-MTest_setExternalStateVariable3(mfront::MTest& t,
+MTest_setExternalStateVariable3(mtest::MTest& t,
 				const std::string&  n,
 				const std::string& f,
 				const bool b)
 {
   using namespace std;
-  using namespace mfront;
-  using std::shared_ptr;
+  using namespace mtest;
   shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.setExternalStateVariable(n,pev,b);
 }
 
 static void
-MTest_setImposedThermodynamicForce(mfront::MTest& t,
+MTest_setImposedThermodynamicForce(mtest::MTest& t,
 				   const std::string&  n,
-				   const mfront::real& v)
+				   const mtest::real& v)
 {
   using namespace std;
-  using namespace mfront;
+  using namespace mtest;
   using std::shared_ptr; 
   shared_ptr<Constraint> sc;
   shared_ptr<Evolution> sev(new ConstantEvolution(v));
@@ -188,15 +184,14 @@ MTest_setImposedThermodynamicForce(mfront::MTest& t,
 } // end of MTest_setImposedThermodynamicForce
 
 static void
-MTest_setImposedThermodynamicForce2(mfront::MTest& t,
+MTest_setImposedThermodynamicForce2(mtest::MTest& t,
 				   const std::string&  n,
-				   const std::map<mfront::real,
-						  mfront::real>& v)
+				   const std::map<mtest::real,
+						  mtest::real>& v)
 {
   using namespace std;
-  using namespace mfront;
-  using std::shared_ptr;
-  using mfront::real;
+  using namespace mtest;
+  using mtest::real;
   shared_ptr<Constraint> sc;
   vector<real> tv(v.size());
   vector<real> ev(v.size());
@@ -215,9 +210,9 @@ MTest_setImposedThermodynamicForce2(mfront::MTest& t,
 } // end of MTest_setImposedThermodynamicForce
 
 static void
-MTest_setImposedStress(mfront::MTest& t,
+MTest_setImposedStress(mtest::MTest& t,
 		       const std::string&  n,
-		       const mfront::real& v)
+		       const mtest::real& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -232,10 +227,10 @@ MTest_setImposedStress(mfront::MTest& t,
 }
 
 static void
-MTest_setImposedStress2(mfront::MTest& t,
+MTest_setImposedStress2(mtest::MTest& t,
 			const std::string&  n,
-			const std::map<mfront::real,
-			mfront::real>& v)
+			const std::map<mtest::real,
+			mtest::real>& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -250,9 +245,9 @@ MTest_setImposedStress2(mfront::MTest& t,
 }
 
 static void
-MTest_setImposedCohesiveForce(mfront::MTest& t,
+MTest_setImposedCohesiveForce(mtest::MTest& t,
 			      const std::string&  n,
-			      const mfront::real& v)
+			      const mtest::real& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -266,10 +261,10 @@ MTest_setImposedCohesiveForce(mfront::MTest& t,
 }
 
 static void
-MTest_setImposedCohesiveForce2(mfront::MTest& t,
+MTest_setImposedCohesiveForce2(mtest::MTest& t,
 			       const std::string&  n,
-			       const std::map<mfront::real,
-			       mfront::real>& v)
+			       const std::map<mtest::real,
+			       mtest::real>& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -283,13 +278,12 @@ MTest_setImposedCohesiveForce2(mfront::MTest& t,
 }
 
 static void
-MTest_setImposedDrivingVariable(mfront::MTest& t,
+MTest_setImposedDrivingVariable(mtest::MTest& t,
 				const std::string&  n,
-				const mfront::real& v)
+				const mtest::real& v)
 {
   using namespace std;
-  using namespace mfront;
-  using std::shared_ptr;
+  using namespace mtest;
   shared_ptr<Constraint> sc;
   shared_ptr<Evolution> sev(new ConstantEvolution(v));
   sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),
@@ -300,15 +294,14 @@ MTest_setImposedDrivingVariable(mfront::MTest& t,
 } // end of MTest_setImposedDrivingVariable
 
 static void
-MTest_setImposedDrivingVariable2(mfront::MTest& t,
-				   const std::string&  n,
-				   const std::map<mfront::real,
-						  mfront::real>& v)
+MTest_setImposedDrivingVariable2(mtest::MTest& t,
+				 const std::string&  n,
+				 const std::map<mtest::real,
+				 mtest::real>& v)
 {
   using namespace std;
-  using namespace mfront;
-  using std::shared_ptr;
-  using mfront::real;
+  using namespace mtest;
+  using mtest::real;
   shared_ptr<Constraint> sc;
   vector<real> tv(v.size());
   vector<real> ev(v.size());
@@ -327,9 +320,9 @@ MTest_setImposedDrivingVariable2(mfront::MTest& t,
 } // end of MTest_setImposedDrivingVariable
 
 static void
-MTest_setImposedStrain(mfront::MTest& t,
+MTest_setImposedStrain(mtest::MTest& t,
 		       const std::string&  n,
-		       const mfront::real& v)
+		       const mtest::real& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -343,10 +336,10 @@ MTest_setImposedStrain(mfront::MTest& t,
 }
 
 static void
-MTest_setImposedStrain2(mfront::MTest& t,
+MTest_setImposedStrain2(mtest::MTest& t,
 			const std::string&  n,
-			const std::map<mfront::real,
-			mfront::real>& v)
+			const std::map<mtest::real,
+			mtest::real>& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -360,9 +353,9 @@ MTest_setImposedStrain2(mfront::MTest& t,
 }
 
 static void
-MTest_setImposedDeformationGradient(mfront::MTest& t,
+MTest_setImposedDeformationGradient(mtest::MTest& t,
 		       const std::string&  n,
-		       const mfront::real& v)
+		       const mtest::real& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -376,10 +369,10 @@ MTest_setImposedDeformationGradient(mfront::MTest& t,
 }
 
 static void
-MTest_setImposedDeformationGradient2(mfront::MTest& t,
+MTest_setImposedDeformationGradient2(mtest::MTest& t,
 			const std::string&  n,
-			const std::map<mfront::real,
-			mfront::real>& v)
+			const std::map<mtest::real,
+			mtest::real>& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -393,9 +386,9 @@ MTest_setImposedDeformationGradient2(mfront::MTest& t,
 }
 
 static void
-MTest_setImposedOpeningDisplacement(mfront::MTest& t,
+MTest_setImposedOpeningDisplacement(mtest::MTest& t,
 				    const std::string&  n,
-				    const mfront::real& v)
+				    const mtest::real& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -409,10 +402,10 @@ MTest_setImposedOpeningDisplacement(mfront::MTest& t,
 }
 
 static void
-MTest_setImposedOpeningDisplacement2(mfront::MTest& t,
+MTest_setImposedOpeningDisplacement2(mtest::MTest& t,
 				     const std::string&  n,
-				     const std::map<mfront::real,
-				     mfront::real>& v)
+				     const std::map<mtest::real,
+				     mtest::real>& v)
 {
   using namespace std;
   using namespace tfel::material;
@@ -425,18 +418,17 @@ MTest_setImposedOpeningDisplacement2(mfront::MTest& t,
   MTest_setImposedDrivingVariable2(t,n,v);
 }
 
-static mfront::MTest::MTestCurrentState
-MTestCurrentState_copy(const mfront::MTest::MTestCurrentState& src)
+static mtest::MTest::MTestCurrentState
+MTestCurrentState_copy(const mtest::MTest::MTestCurrentState& src)
 {
   return src;
 }
 
 static void
-MTest_setRotationMatrix1(mfront::MTest& t,
-			 const std::vector<std::vector<mfront::real> >& m,
+MTest_setRotationMatrix1(mtest::MTest& t,
+			 const std::vector<std::vector<mtest::real> >& m,
 			 const bool b){
-  using namespace std;
-  typedef tfel::math::tmatrix<3u,3u,mfront::real> matrix;
+  typedef tfel::math::tmatrix<3u,3u,mtest::real> matrix;
   matrix r;
   for(matrix::size_type i = 0; i!=3;++i){
     for(matrix::size_type j = 0; j!=3;++j){
@@ -447,21 +439,21 @@ MTest_setRotationMatrix1(mfront::MTest& t,
 } // end of MTest_setRotationMatrix
 
 static void
-MTest_setRotationMatrix2(mfront::MTest& t,
-			 const std::vector<std::vector<mfront::real> >& m){
+MTest_setRotationMatrix2(mtest::MTest& t,
+			 const std::vector<std::vector<mtest::real> >& m){
   MTest_setRotationMatrix1(t,m,false);
 } // end of MTest_setRotationMatrix
 
 #define TFEL_PYTHON_MTESTCURRENTSTATEGETTER( X )		        \
-  static tfel::math::vector<mfront::real>				\
-  MTestCurrentState_get##X(const mfront::MTest::MTestCurrentState& t)	\
+  static tfel::math::vector<mtest::real>				\
+  MTestCurrentState_get##X(const mtest::MTest::MTestCurrentState& t)	\
   {                                                                     \
     return t. X ;                                                       \
   }
 
 #define TFEL_PYTHON_MTESTCURRENTSTATEGETTER2( X )		        \
-  static mfront::real			                         	\
-  MTestCurrentState_get##X(const mfront::MTest::MTestCurrentState& t)	\
+  static mtest::real			                         	\
+  MTestCurrentState_get##X(const mtest::MTest::MTestCurrentState& t)	\
   {                                                                     \
     return t. X ;                                                       \
   }
@@ -492,7 +484,7 @@ void declareMTest(void)
 {
   using namespace boost;
   using namespace boost::python;
-  using namespace mfront;
+  using namespace mtest;
   using boost::python::arg;
   using tfel::tests::TestResult;
 
@@ -510,13 +502,23 @@ void declareMTest(void)
     .value("TANGENTOPERATORPREDICTION",MTest::TANGENTOPERATORPREDICTION)
     ;
   
-  enum_<MTestStiffnessMatrixType::mtype>("StiffnessMatrixType")
-    .value("NOSTIFFNESS",MTestStiffnessMatrixType::NOSTIFFNESS)
-    .value("ELASTIC",MTestStiffnessMatrixType::ELASTIC)
-    .value("SECANTOPERATOR",MTestStiffnessMatrixType::SECANTOPERATOR)
-    .value("TANGENTOPERATOR",MTestStiffnessMatrixType::TANGENTOPERATOR)
+  enum_<StiffnessMatrixType::mtype>("StiffnessMatrixType")
+    .value("NOSTIFFNESS",StiffnessMatrixType::NOSTIFFNESS)
+    .value("ELASTIC",StiffnessMatrixType::ELASTIC)
+    .value("SECANTOPERATOR",StiffnessMatrixType::SECANTOPERATOR)
+    .value("TANGENTOPERATOR",StiffnessMatrixType::TANGENTOPERATOR)
     .value("CONSISTENTTANGENTOPERATOR",
-	   MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR)
+	   StiffnessMatrixType::CONSISTENTTANGENTOPERATOR)
+    ;
+
+  // for backward compatibility
+  enum_<StiffnessMatrixType::mtype>("MTestStiffnessMatrixType")
+    .value("NOSTIFFNESS",StiffnessMatrixType::NOSTIFFNESS)
+    .value("ELASTIC",StiffnessMatrixType::ELASTIC)
+    .value("SECANTOPERATOR",StiffnessMatrixType::SECANTOPERATOR)
+    .value("TANGENTOPERATOR",StiffnessMatrixType::TANGENTOPERATOR)
+    .value("CONSISTENTTANGENTOPERATOR",
+	   StiffnessMatrixType::CONSISTENTTANGENTOPERATOR)
     ;
   
   TestResult (MTest:: *pm)(void) = &MTest::execute;

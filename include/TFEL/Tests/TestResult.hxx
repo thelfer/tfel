@@ -14,7 +14,7 @@
 #ifndef LIB_TFEL_TESTS_TESTRESULT_HXX
 #define LIB_TFEL_TESTS_TESTRESULT_HXX 1
 
-#include<ostream>
+#include<iosfwd>
 #include<string>
 #include<vector>
 

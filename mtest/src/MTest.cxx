@@ -36,21 +36,8 @@
 #include"MFront/MFrontLogStream.hxx"
 
 #include"MTest/MTest.hxx"
-#include"MTest/MTestParser.hxx"
 #include"MTest/Behaviour.hxx"
-#ifdef HAVE_CASTEM
-#include"MTest/UmatSmallStrainBehaviour.hxx"
-#include"MTest/UmatFiniteStrainBehaviour.hxx"
-#include"MTest/UmatCohesiveZoneModel.hxx"
-#endif /* HAVE_CASTEM */
-#ifdef HAVE_ASTER
-#include"MTest/AsterSmallStrainBehaviour.hxx"
-#include"MTest/AsterFiniteStrainBehaviour.hxx"
-#include"MTest/AsterCohesiveZoneModel.hxx"
-#endif /* HAVE_ASTER  */
-#ifdef HAVE_CYRANO
-#include"MTest/CyranoBehaviour.hxx"
-#endif /* HAVE_CYRANO  */
+#include"MTest/MTestParser.hxx"
 
 #include"MTest/AnalyticalTest.hxx"
 #include"MTest/ReferenceFileComparisonTest.hxx"
@@ -63,14 +50,11 @@
 #include"MTest/ImposedThermodynamicForce.hxx"
 #include"MTest/ImposedDrivingVariable.hxx"
 
-#include"MTest/AccelerationAlgorithmFactory.hxx"
-#include"MTest/CastemAccelerationAlgorithm.hxx"
-
 #ifdef min
 #undef min
 #endif
 
-namespace mfront
+namespace mtest
 {
 
   static void
@@ -160,52 +144,21 @@ namespace mfront
       isRmDefined(false),
       evm(new EvolutionManager()),
       defaultMaterialPropertiesValues(new EvolutionManager()),
-      dimension(0u),
-      hypothesis(tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS),
       eeps(-1.),
       seps(-1.),
-      mSubSteps(-1),
-      iterMax(-1),
-      ks(MTest::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY),
-      ktype(MTestStiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE),
-      ppolicy(MTest::UNSPECIFIEDPREDICTIONPOLICY),
       handleThermalExpansion(true),
-      useCastemAcceleration(false),
       toeps(-1),
       pv(-1),
-      cto(false),
-      initialisationFinished(false)
+      cto(false)
   {
     // declare time variable
     this->declareVariable("t",true);
   }
 
-  std::shared_ptr<MTestParser>
-  MTest::getParser(){
-    return std::make_shared<MTestParser>(*this);
-  } // end of MTest::getParser
-  
-  void
-  MTest::setAccelerationAlgorithm(const std::string& a)
-  {
-    if(this->aa.get()!=nullptr){
-      throw(std::runtime_error("MTest::setAccelerationAlgorithm : "
-			       "acceleration algorithm already set"));
-    }
-    auto& f = AccelerationAlgorithmFactory::getAccelerationAlgorithmFactory();
-    this->aa = f.getAlgorithm(a);
-  }
-
-  void
-  MTest::setAccelerationAlgorithmParameter(const std::string& p,
-					   const std::string& v)
-  {
-    if(this->aa.get()==nullptr){
-      throw(std::runtime_error("MTest::setAccelerationAlgorithmParameter : "
-			       "no acceleration algorithm set"));
-    }
-    this->aa->setParameter(p,v);
-  }
+  void MTest::readInputFile(const std::string& f){
+    MTestParser p;
+    p.execute(*this,f);
+  } // end of MTest::readInputFile
 
   void
   MTest::setEvolutionValue(const std::string& n,
@@ -217,69 +170,8 @@ namespace mfront
       throw(std::runtime_error("MTest::setEvolutionValue : no evolution '"+
 			       n+"' declared"));
     }
-    Evolution& ev = *(pev->second);
-    ev.setValue(t,v);
+    pev->second->setValue(t,v);
   } // end of MTest::setEvolutionValue
-
-  void
-  MTest::setDescription(const std::string& d)
-  {
-    if(!this->description.empty()){
-      throw(std::runtime_error("MTest::setDescription : "
-			       "description already set."));
-    }
-    this->description = d;
-  } // end of MTest::setDescription
-
-  void
-  MTest::setAuthor(const std::string& a)
-  {
-    if(!this->author.empty()){
-      throw(std::runtime_error("MTest::setAuthor : "
-			       "author already set."));
-    }
-    this->author = a;
-  } // end of MTest::setAuthor
-
-  void
-  MTest::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p)
-  {
-    if(this->b.get()==0){
-      throw(std::runtime_error("MTest::setOutOfBoundsPolicy: "
-			       "no behaviour defined"));
-    }
-    this->b->setOutOfBoundsPolicy(p);
-  }
-  
-  void
-  MTest::setDate(const std::string& d)
-  {
-    if(!this->date.empty()){
-      throw(std::runtime_error("MTest::setDate : "
-			       "date already set."));
-    }
-    this->date = d;
-  } // end of MTest::setDate
-
-  void
-  MTest::setPredictionPolicy(const MTest::PredictionPolicy p)
-  {
-    if(this->ppolicy!=UNSPECIFIEDPREDICTIONPOLICY){
-      throw(std::runtime_error("MTest::setPredictionPolicy : "
-			       "prediction policy already declared"));
-    }
-    this->ppolicy = p;
-  } // end of MTest::setPredictionPolicy
-
-  void
-  MTest::setStiffnessMatrixType(const MTestStiffnessMatrixType::mtype k)
-  {
-    if(this->ktype!=MTestStiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
-      throw(std::runtime_error("MTest::setStiffnessMatrixType : "
-			       "stiffness matrix type already specificed"));
-    }
-    this->ktype = k;
-  }
 
   void
   MTest::setHandleThermalExpansion(const bool b1)
@@ -290,76 +182,6 @@ namespace mfront
     }
     this->handleThermalExpansion = b1;
   }
-
-  void
-  MTest::setUseCastemAccelerationAlgorithm(const bool ucaa)
-  {
-    if(ucaa){
-      if(this->aa.get()!=nullptr){
-	throw(std::runtime_error("MTest::setUseCastemAccelerationAlgorithm : "
-				 "an algorithm was already set"));
-      }
-      this->aa = std::shared_ptr<AccelerationAlgorithm>(new CastemAccelerationAlgorithm);
-    }
-    this->useCastemAcceleration = ucaa;
-  }
-  
-  void
-  MTest::setCastemAccelerationTrigger(const int i)
-  {
-    if(!this->useCastemAcceleration){
-      throw(std::runtime_error("MTest::setCastemAccelerationTrigger : "
-			       "the castem acceleration algorithm has "
-			       "not been set using the "
-			       "@UseCast3mAccelerationAlgorithm keyword. "
-			       "If the Cast3M acceleration algorithm "
-			       "was specified using the "
-			       "@AccelerationAlgorithm keyword, please "
-			       "use the @AccelerationAlgorithmParameter "
-			       "keyword to specify the acceleration trigger."));
-    }
-    if(this->aa.get()==nullptr){
-      throw(std::runtime_error("MTest::setCastemAccelerationTrigger : "
-			       "internal error"));
-    }
-    std::ostringstream nb;
-    nb << i;
-    this->aa->setParameter("AccelerationTrigger",nb.str());
-  }
-
-
-  void
-  MTest::setCastemAccelerationPeriod(const int p)
-  {
-    if(!this->useCastemAcceleration){
-      throw(std::runtime_error("MTest::setCastemAccelerationPeriod : "
-			       "the castem acceleration algorithm has not "
-			       "been set using the "
-			       "@UseCast3mAccelerationAlgorithm keyword. "
-			       "If the Cast3M acceleration algorithm was "
-			       "specified using the @AccelerationAlgorithm "
-			       "keyword, please use the "
-			       "@AccelerationAlgorithmParameter keyword to "
-			       "specify the acceleration period."));
-    }
-    if(this->aa.get()==nullptr){
-      throw(std::runtime_error("MTest::setCastemAccelerationPeriod : "
-			       "internal error"));
-    }
-    std::ostringstream nb;
-    nb << p;
-    this->aa->setParameter("AccelerationPeriod",nb.str());
-  }
-  
-  void
-  MTest::setStiffnessUpdatingPolicy(const MTest::StiffnessUpdatingPolicy p)
-  {
-    if(this->ks!=MTest::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY){
-      throw(std::runtime_error("MTest::setStiffnessUpdatePolicy : "
-			       "stiffness matrix type already specificed"));
-    }
-    this->ks = p;
-  } // end of MTest::setStiffnessUpdatingPolicy
 
   std::string
   MTest::name(void) const
@@ -465,24 +287,6 @@ namespace mfront
   }
 
   void
-  MTest::setMaximumNumberOfIterations(const unsigned int i)
-  {
-    using namespace std;
-    if(this->iterMax!=-1){
-      string msg("MTest::setMaximumNumberOfIterations : "
-		 "the maximum number of iterations "
-		 "has already been declared");
-      throw(runtime_error(msg));
-    }
-    if(i==0){
-      string msg("MTest::setMaximumNumberOfIterations : ");
-      msg += "invalid number of iterations";
-      throw(runtime_error(msg));
-    }
-    this->iterMax = static_cast<int>(i);
-  }
-
-  void
   MTest::setDrivingVariableEpsilon(const double e)
   {
     using namespace std;
@@ -512,147 +316,6 @@ namespace mfront
       throw(runtime_error(msg));
     }
     this->seps = s;
-  }
-
-  void
-  MTest::setParameter(const std::string& n,
-		      const double v)
-  {
-    using namespace std;
-    if(this->b.get()==nullptr){
-      string msg("MTest::setParameter : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    this->b->setParameter(n,v);
-  }
-
-  void
-  MTest::setIntegerParameter(const std::string& n,
-			     const int v)
-  {
-    using namespace std;
-    if(this->b.get()==nullptr){
-      string msg("MTest::setIntegerParameter : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    this->b->setIntegerParameter(n,v);
-  }
-
-  void
-  MTest::setUnsignedIntegerParameter(const std::string& n,
-				     const unsigned int v)
-  {
-    using namespace std;
-    if(this->b.get()==nullptr){
-      string msg("MTest::setUnsignedIntegerParameter : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    this->b->setUnsignedIntegerParameter(n,v);
-  }
-
-  void
-  MTest::setModellingHypothesis(const std::string& h)
-  {
-    using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->dimension!=0){
-      string msg("MTestParser::setModellingHypothesis : ");
-      msg += "the modelling hypothesis is already defined";
-      throw(runtime_error(msg));
-    }
-    if(h=="AxisymmetricalGeneralisedPlaneStrain"){
-      this->dimension=1u;
-      this->hypothesis = MH::AXISYMMETRICALGENERALISEDPLANESTRAIN;
-    } else if(h=="AxisymmetricalGeneralisedPlaneStress"){
-      this->dimension=1u;
-      this->hypothesis = MH::AXISYMMETRICALGENERALISEDPLANESTRESS;
-    } else if(h=="Axisymmetrical"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::AXISYMMETRICAL;
-    } else if(h=="PlaneStress"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::PLANESTRESS;
-    } else if(h=="PlaneStrain"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::PLANESTRAIN;
-    } else if(h=="GeneralisedPlaneStrain"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::GENERALISEDPLANESTRAIN;
-    } else if(h=="Tridimensional"){
-      this->dimension  = 3u;
-      this->hypothesis = MH::TRIDIMENSIONAL;
-    } else {
-      string msg("MTestParser::setModellingHypothesis : ");
-      msg += "unsupported hypothesis '"+h+"'";
-      throw(runtime_error(msg));
-    }
-  } // end of MTest::setModellingHypothesis
-
-  tfel::material::ModellingHypothesis::Hypothesis
-  MTest::getModellingHypothesis() const
-  {
-    using namespace std;
-    if(this->dimension==0){
-      string msg("MTest::getModellingHypothesis : ");
-      msg += "the modelling hypothesis is not defined";
-      throw(runtime_error(msg));
-    }
-    return this->hypothesis;
-  }
-
-  unsigned short
-  MTest::getDimension(void) const
-  {
-    using namespace std;
-    if(this->dimension==0){
-      string msg("MTest::getDimension : ");
-      msg += "the modelling hypothesis is not defined";
-      throw(runtime_error(msg));
-    }
-    return this->dimension;
-  }
-
-  tfel::material::MechanicalBehaviourBase::BehaviourType
-  MTest::getBehaviourType() const{
-    using namespace std;
-    if(this->b.get()==nullptr){
-      string msg("MTest::getBehaviourType : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    return this->b->getBehaviourType();
-  }
-
-  std::shared_ptr<Behaviour>
-  MTest::getBehaviour(void){
-    using namespace std;
-    if(this->b.get()==nullptr){
-      string msg("MTest::getBehaviour : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    return this->b;
-  }
-
-  void
-  MTest::setMaximumNumberOfSubSteps(const unsigned int i)
-  {
-    using namespace std;
-    if(this->mSubSteps!=-1){
-      string msg("MTest::setMaximumNumberOfSubSteps : "
-		 "the maximum number of sub steps "
-		 "has already been declared");
-      throw(runtime_error(msg));
-    }
-    if(i==0){
-      string msg("MTest::setMaximumNumberOfSubSteps : ");
-      msg += "invalid number of sub steps";
-      throw(runtime_error(msg));
-    }
-    this->mSubSteps = static_cast<int>(i);
   }
 
   void
@@ -705,17 +368,13 @@ namespace mfront
 				    const std::string& n)
   {
     using namespace std;
-    vector<string>::const_iterator p;
     if(this->b.get()==nullptr){
-      string msg("MTest::getVariableTypeAndPosition : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
+      throw(runtime_error("MTest::getVariableTypeAndPosition : "
+			  "no behaviour defined"));
     }
-    vector<string> enames;
-    vector<string> snames;
-    this->b->getDrivingVariablesComponents(enames,this->hypothesis);
-    this->b->getThermodynamicForcesComponents(snames,this->hypothesis);
-    p=find(enames.begin(),enames.end(),n);
+    const auto enames = this->b->getDrivingVariablesComponents(this->hypothesis);
+    const auto snames = this->b->getThermodynamicForcesComponents(this->hypothesis);
+    auto p=find(enames.begin(),enames.end(),n);
     if(p!=enames.end()){
       pos  = static_cast<unsigned short>(p-enames.begin());
       type = MTest::UTest::DRIVINGVARIABLE;
@@ -754,8 +413,8 @@ namespace mfront
       msg += "behaviour already defined";
       throw(runtime_error(msg));
     }
-    if(getVerboseMode()>=VERBOSE_LEVEL1){
-      auto& log = getLogStream();
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+      auto& log = mfront::getLogStream();
       log << "No hypothesis defined, using default" << endl;
     }
     this->hypothesis = MH::TRIDIMENSIONAL;
@@ -811,7 +470,7 @@ namespace mfront
   }
 
   void
-  MTest::addTest(const std::shared_ptr<mfront::MTest::UTest> t)
+  MTest::addTest(const std::shared_ptr<MTest::UTest> t)
   {
     this->tests.push_back(t);
   }
@@ -958,129 +617,11 @@ namespace mfront
 	 this->iv_t0.begin()+pos);
   } // end of MTest::setTensorInternalStateVariableInitialValue
 
-  void
-  MTest::setTimes(const std::vector<real>& t)
-  {
-    using namespace std;
-    if(!this->times.empty()){
-      string msg("MTest::setTimes : "
-		 "times already defined");
-      throw(runtime_error(msg));
-    }
-    this->times=t;
-  } // end of MTest::setTimes
-
   std::shared_ptr<EvolutionManager>
   MTest::getEvolutions() const
   {
     return this->evm;
   } // end of MTest::getEvolutions() const
-
-  void
-  MTest::setBehaviour(const std::string& i,
-		      const std::string& l,
-		      const std::string& f)
-  {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::system;
-    typedef ExternalLibraryManager ELM;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
-      this->setDefaultHypothesis();
-    }
-    if(this->b.get()!=nullptr){
-      string msg("MTest::setBehaviour : "
-		 "behaviour already defined");
-      throw(runtime_error(msg));
-    }
-#ifdef HAVE_CASTEM
-    if(i=="umat"){
-      auto& elm = ELM::getExternalLibraryManager();
-      const unsigned short type = elm.getUMATBehaviourType(l,f);
-      if(type==1u){
-	this->b = shared_ptr<Behaviour>(new UmatSmallStrainBehaviour(this->hypothesis,l,f));
-      } else if(type==2u){
-	this->b = shared_ptr<Behaviour>(new UmatFiniteStrainBehaviour(this->hypothesis,l,f));
-      } else if(type==3u){
-	this->b = shared_ptr<Behaviour>(new UmatCohesiveZoneModel(this->hypothesis,l,f));
-      } else {
-	ostringstream msg;
-	msg << "MTest::setBehaviour : "
-	  "unsupported behaviour type (" << type << ")";
-	throw(runtime_error(msg.str()));
-      }
-    }
-#endif
-#ifdef HAVE_ASTER
-    if(i=="aster"){
-      auto& elm = ELM::getExternalLibraryManager();
-      const unsigned short type = elm.getUMATBehaviourType(l,f);
-      if(type==1u){
-      this->b = shared_ptr<Behaviour>(new AsterSmallStrainBehaviour(this->hypothesis,l,f));
-      } else if(type==2u){
-	this->b = shared_ptr<Behaviour>(new AsterFiniteStrainBehaviour(this->hypothesis,l,f));
-      } else if(type==3u){
-	this->b = shared_ptr<Behaviour>(new AsterCohesiveZoneModel(this->hypothesis,l,f));
-      } else {
-	ostringstream msg;
-	msg << "MTest::setBehaviour : "
-	  "unsupported behaviour type (" << type << ")";
-	throw(runtime_error(msg.str()));
-      }
-    }
-#endif
-#ifdef HAVE_CYRANO
-    if(i=="cyrano"){
-      this->b = shared_ptr<Behaviour>(new CyranoBehaviour(this->hypothesis,l,f));
-    }
-#endif
-    if(this->b.get()==nullptr){
-      string msg("MTest::setBehaviour : ");
-      msg += "unknown interface '"+i+"'";
-      throw(runtime_error(msg));
-    }
-    const auto& ivnames = this->b->getInternalStateVariablesNames();
-    this->declareVariables(this->b->getMaterialPropertiesNames(),true);
-    this->declareVariables(ivnames,true);
-    this->declareVariables(this->b->getExternalStateVariablesNames(),true);
-    vector<string>::const_iterator pn;
-    for(pn=ivnames.begin();pn!=ivnames.end();++pn){
-      unsigned short t = this->b->getInternalStateVariableType(*pn);
-      if(t==0){
-	this->ivfullnames.push_back(*pn);
-      } else if(t==1){
-	//! suffixes of stensor components
-	vector<string> sexts;
-	this->b->getStensorComponentsSuffixes(sexts,this->hypothesis);
-	for(auto s=0;s!=sexts.size();++s){
-	  const string& vn = *pn+sexts[s];
-	  this->declareVariable(vn,true);
-	  this->ivfullnames.push_back(vn);
-	}
-      } else if(t==3){
-	//! suffixes f stensor components
-	vector<string> sexts;
-	this->b->getTensorComponentsSuffixes(sexts,this->hypothesis);
-	for(auto s=0;s!=sexts.size();++s){
-	  const string& vn = *pn+sexts[s];
-	  this->declareVariable(vn,true);
-	  this->ivfullnames.push_back(vn);
-	}
-      } else {
-	string msg("MTest::setBehaviour : "
-		   "unsupported variable type for variable '"+*pn+"'");
-	throw(runtime_error(msg));
-      }
-    }
-    // declaring behaviour variables
-    std::vector<string> enames;
-    std::vector<string> snames;
-    this->b->getDrivingVariablesComponents(enames,this->hypothesis);
-    this->b->getThermodynamicForcesComponents(snames,this->hypothesis);
-    this->declareVariables(enames,true);
-    this->declareVariables(snames,true);
-  } // end of MTest::setBehaviour
 
   void
   MTest::completeInitialisation()
@@ -1090,24 +631,22 @@ namespace mfront
     typedef tfel::material::ModellingHypothesis MH;
     EvolutionManager::const_iterator pev;
     if(this->initialisationFinished){
-      string msg("MTest::completeInitialisation : "
-		 "object already initialised");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::completeInitialisation : "
+			       "object already initialised"));
     }
     if(this->dimension==0u){
       this->setDefaultHypothesis();
     }
     if(this->b.get()==nullptr){
-      string msg("MTest::completeInitialisation : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::completeInitialisation : "
+			       "no behaviour defined"));
     }
     // number of components of the driving variables and the thermodynamic forces
     const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
     const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
     // check if material properties and external state variables are declared
-    vector<string> mpnames(this->b->getMaterialPropertiesNames());
-    vector<string> esvnames(this->b->getExternalStateVariablesNames());
+    const auto mpnames  = this->b->getMaterialPropertiesNames();
+    const auto esvnames = this->b->getExternalStateVariablesNames();
     this->b->setOptionalMaterialPropertiesDefaultValues(*(this->defaultMaterialPropertiesValues),*(this->evm));
     checkIfDeclared(mpnames,*(this->evm),*(this->defaultMaterialPropertiesValues),
 		    "material property");
@@ -1153,11 +692,10 @@ namespace mfront
     }
     const auto& ivdes = this->b->getInternalStateVariablesDescriptions(this->hypothesis);
     if(ivdes.size()!=this->b->getInternalStateVariablesSize(this->hypothesis)){
-      string msg("MTest::completeInitialisation : internal error "
-		 "(the number of descriptions given by "
-		 "the mechanical behaviour don't match "
-		 "the number of internal state variables)");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::completeInitialisation : internal error "
+			       "(the number of descriptions given by "
+			       "the mechanical behaviour don't match "
+			       "the number of internal state variables)"));
     }
     for(std::vector<string>::size_type i=0;i!=ivdes.size();++i){
       this->out << "# " << cnbr << " column : " << ivdes[i] << endl;
@@ -1202,10 +740,9 @@ namespace mfront
 	this->constraints.push_back(ec);
 	this->constraints.push_back(sc);
       } else {
-	string msg("MTest::completeInitialisation : "
-		   "generalised plane stress is only "
-		   "handled for small and finite strain behaviours");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MTest::completeInitialisation : "
+				 "generalised plane stress is only "
+				 "handled for small and finite strain behaviours"));
       }
     }
     if(this->hypothesis==MH::PLANESTRESS){
@@ -1219,9 +756,9 @@ namespace mfront
 	this->constraints.push_back(ec);
 	this->constraints.push_back(sc);
       } else {
-	string msg("MTest::completeInitialisation : "
-		   "plane stress is only handled for small and finite strain behaviours");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MTest::completeInitialisation : "
+				 "plane stress is only handled for small and "
+				 "finite strain behaviours"));
       }
     }
     if(!this->isRmDefined){
@@ -1243,7 +780,7 @@ namespace mfront
       this->ppolicy=NOPREDICTION;
     }
     // stiffness matrix type
-    if(this->ktype==MTestStiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
+    if(this->ktype==StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
       this->ktype = this->b->getDefaultStiffnessMatrixType();
     }
     // thermal expansion reference temperature
@@ -1257,8 +794,8 @@ namespace mfront
       }
     }
     // options selected
-    if(getVerboseMode()>=VERBOSE_LEVEL1){
-      auto& log = getLogStream();
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+      auto& log = mfront::getLogStream();
       if(this->aa.get()!=nullptr){
 	log << "mtest : " << this->aa->getName() << " acceleration algorithm selected" << endl;
       }
@@ -1541,8 +1078,8 @@ namespace mfront
     const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
     real t  = ti;
     real dt = te-ti;
-    if(getVerboseMode()>=VERBOSE_LEVEL2){
-      auto& log = getLogStream();
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
+      auto& log = mfront::getLogStream();
       log << "number of driving variables : "    << ndv << endl;
       log << "number of thermodynamic forces : " << nth << endl;
       log << "number of constraints       : " << this->constraints.size() << endl;
@@ -1651,8 +1188,8 @@ namespace mfront
       // resolution
       bool converged = false;
       unsigned short iter = 0;
-      if(getVerboseMode()>=VERBOSE_LEVEL1){
-	auto& log = getLogStream();
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	auto& log = mfront::getLogStream();
 	log << "resolution from " << t << " to " << t+dt << endl;
       }
       if(this->residual){
@@ -1703,25 +1240,25 @@ namespace mfront
 						  state.s0,state.mprops0,
 						  state.iv0,state.esv0,
 						  this->hypothesis,
-						  MTestStiffnessMatrixType::ELASTIC);
+						  StiffnessMatrixType::ELASTIC);
 	} else if(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES){
 	  sp = this->b->computePredictionOperator(wk.Kp,this->rm,state.e0,
 						  state.s0,state.mprops0,
 						  state.iv0,state.esv0,
 						  this->hypothesis,
-						  MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES);
+						  StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES);
 	} else if (this->ppolicy==SECANTOPERATORPREDICTION){
 	  sp = this->b->computePredictionOperator(wk.Kp,this->rm,state.e0,
 						  state.s0,state.mprops0,
 						  state.iv0,state.esv0,
 						  this->hypothesis,
-						  MTestStiffnessMatrixType::SECANTOPERATOR);
+						  StiffnessMatrixType::SECANTOPERATOR);
 	} else if (this->ppolicy==TANGENTOPERATORPREDICTION){
 	  sp = this->b->computePredictionOperator(wk.Kp,this->rm,state.e0,
 						  state.s0,state.mprops0,
 						  state.iv0,state.esv0,
 						  this->hypothesis,
-						  MTestStiffnessMatrixType::TANGENTOPERATOR);
+						  StiffnessMatrixType::TANGENTOPERATOR);
 	}
 	if(sp){
 	  fill(wk.K.begin(),wk.K.end(),0.);
@@ -1751,8 +1288,8 @@ namespace mfront
 	  LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
 	  state.u1 -= wk.du;
 	} else {
-	  if(getVerboseMode()>VERBOSE_QUIET){
-	    auto& log = getLogStream();
+	  if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
+	    auto& log = mfront::getLogStream();
 	    log << "MTest::execute : behaviour compute prediction matrix failed" << endl;
 	  }
 	  state.u1  = state.u0;
@@ -1806,7 +1343,7 @@ namespace mfront
 						state.mprops1,state.iv0,
 						state.esv0,state.desv,
 						this->hypothesis,dt,
-						MTestStiffnessMatrixType::NOSTIFFNESS);
+						StiffnessMatrixType::NOSTIFFNESS);
 	    copy(state.iv0.begin(),state.iv0.end(),wk.statev.begin());
 	    state.e1[j]-=2*(this->pv);
 	    const bool ok2 = this->b->integrate(wk.tKt,wk.s2,wk.statev,this->rm,
@@ -1814,7 +1351,7 @@ namespace mfront
 						state.mprops1,state.iv0,
 						state.esv0,state.desv,
 						this->hypothesis,dt,
-						MTestStiffnessMatrixType::NOSTIFFNESS);
+						StiffnessMatrixType::NOSTIFFNESS);
 	    state.e1[j]+=this->pv;
 	    ok = ok1 && ok2;
 	    if(ok){
@@ -1831,7 +1368,7 @@ namespace mfront
 	      }
 	    }
 	    if(merr>this->toeps){
-	      auto& log = getLogStream();
+	      auto& log = mfront::getLogStream();
 	      log << "Comparison to numerical jacobian failed (error : " << merr << ", criterium " << this->toeps << ")." << endl;
 	      log << "Tangent operator returned by the behaviour : " << endl;
 	      for(i=0;i!=nth;++i){
@@ -1855,7 +1392,7 @@ namespace mfront
 	      }
 	    }
 	  } else {
-	    auto& log = getLogStream();
+	    auto& log = mfront::getLogStream();
 	    log << "Numerical evalution of tangent operator failed." << endl << endl;
 	  }
 	}
@@ -1898,8 +1435,8 @@ namespace mfront
 			this->dimension,t,dt,wk.a);
 	    pos = static_cast<unsigned short>(pos+c.getNumberOfLagrangeMultipliers());
 	  }
-	  if(getVerboseMode()>=VERBOSE_DEBUG){
-	    auto& log = getLogStream();
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_DEBUG){
+	    auto& log = mfront::getLogStream();
 	    for(i=0;i!=wk.K.getNbRows();++i){
 	      for(j=0;j!=wk.K.getNbCols();++j){
 		log << wk.K(i,j) << " ";
@@ -1919,8 +1456,8 @@ namespace mfront
 	  for(i=0;i!=ndv;++i){
 	    ne = max(ne,abs(wk.du(i)));
 	  }
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    auto& log = getLogStream();
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    auto& log = mfront::getLogStream();
 	    log << "iteration " << iter << " : " << ne << " " 
 		<< nr << " (";
 	    for(i=0;i!=ndv;){
@@ -1993,13 +1530,13 @@ namespace mfront
 	  if(!converged){
 	    if(this->aa.get()!=nullptr){
 	      this->aa->execute(state.u1,wk.du,wk.r,this->eeps,this->seps,iter);
-	      if(getVerboseMode()>=VERBOSE_LEVEL2){
+	      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
 		real nit = 0;
 		for(i=0;i!=ndv;++i){
 		  nit = max(nit,abs(state.u1(i)-state.u10(i)));
 		}
 		//ne = nit ; // for order of convergence??
-		auto& log = getLogStream();
+		auto& log = mfront::getLogStream();
 		log << "accelerated-sequence-convergence "<<iter<<" "<<nit << " (";
 		for(i=0;i!=ndv;){
 		  log << state.u1(i);
@@ -2013,8 +1550,8 @@ namespace mfront
 	    state.u10 = state.u1;
 	  }
 	} else {
-	  if(getVerboseMode()>VERBOSE_QUIET){
-	    auto& log = getLogStream();
+	  if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
+	    auto& log = mfront::getLogStream();
 	    log << "MTest::execute : behaviour intregration failed" << endl;
 	  }
 	  cont = false;
@@ -2023,8 +1560,8 @@ namespace mfront
       if(!converged){
 	// no convergence
 	if(iter==this->iterMax){
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    auto& log = getLogStream();
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    auto& log = mfront::getLogStream();
 	    log << "No convergence, the following criteria were not met : " << endl;
 	    for(vector<string>::const_iterator pfc=failed_criteria.begin();
 		pfc!=failed_criteria.end();++pfc){
@@ -2039,8 +1576,8 @@ namespace mfront
 		     "maximum number of sub stepping reached");
 	  throw(runtime_error(msg));
 	}
-	if(getVerboseMode()>=VERBOSE_LEVEL1){
-	  auto& log = getLogStream();
+	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	  auto& log = mfront::getLogStream();
 	  log << "Dividing time "
 	      << "step by two" << endl << endl;
 	}
@@ -2049,13 +1586,13 @@ namespace mfront
 	state.s1  = state.s0;
 	state.iv1 = state.iv0;
       } else {
-	if(getVerboseMode()>=VERBOSE_LEVEL1){
+	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
 	  if(iter==1u){
-	    auto& log = getLogStream();
+	    auto& log = mfront::getLogStream();
 	    log << "convergence, after one iteration "
 		<< endl << endl;
 	  } else {
-	    auto& log = getLogStream();
+	    auto& log = mfront::getLogStream();
 	    if((iter>=3)&&
 	       (ne  >100*numeric_limits<real>::min())&&
 	       (nep >100*numeric_limits<real>::min())&&
@@ -2113,36 +1650,8 @@ namespace mfront
       this->out << endl;
     }
   }
+  
+  MTest::~MTest()
+  {}
 
-  void
-  MTest::declareVariable(const std::string& v,
-			 const bool check)
-  {
-    using namespace std;
-    if(find(this->vnames.begin(),this->vnames.end(),v)!=
-       this->vnames.end()){
-      if(check){
-	string msg("MTest::declareVariable : ");
-	msg += "variable '"+v+"' already declared";
-	throw(runtime_error(msg));
-      }
-    } else {
-      this->vnames.push_back(v);
-    }
-  }
-
-void
-  MTest::declareVariables(const std::vector<std::string>& v,
-			  const bool check)
-  {
-    using namespace std;
-    vector<string>::const_iterator p;
-    for(p=v.begin();p!=v.end();++p){
-      this->declareVariable(*p,check);
-    }
-  }
-
-MTest::~MTest()
-{}
-
-} // end namespace mfront
+} // end namespace mtest

@@ -16,7 +16,7 @@
 #include"MTest/Evolution.hxx"
 #include"MTest/UmatStandardBehaviour.hxx"
 
-namespace mfront
+namespace mtest
 {
   
   UmatStandardBehaviour::UmatStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -167,10 +167,10 @@ namespace mfront
     this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
   }
 
-  MTestStiffnessMatrixType::mtype
+  StiffnessMatrixType::mtype
   UmatStandardBehaviour::getDefaultStiffnessMatrixType(void) const
   {
-    return MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;    
+    return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;    
   } // end of UmatStandardBehaviour::getDefaultStiffnessMatrixType
 
   void

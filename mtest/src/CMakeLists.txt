@@ -12,51 +12,53 @@ link_directories("${PROJECT_BINARY_DIR}/src/Material"
 		 "${PROJECT_BINARY_DIR}/mtest/src")
 
 set(TFELMTest_SOURCES
-    MTest.cxx
-    MTestParser.cxx
-    AnalyticalTest.cxx
-    ReferenceFileComparisonTest.cxx
-    Evolution.cxx
-    CastemEvolution.cxx
-    FunctionEvolution.cxx
-    Behaviour.cxx
-    UmatBehaviourBase.cxx
-    UmatNormaliseTangentOperator.cxx
-    Constraint.cxx
-    ImposedDrivingVariable.cxx
-    ImposedThermodynamicForce.cxx
-    AccelerationAlgorithmFactory.cxx
-    AccelerationAlgorithm.cxx
-    CastemAccelerationAlgorithm.cxx
-    AlternateSecantAccelerationAlgorithm.cxx
-    AlternateDelta2AccelerationAlgorithm.cxx
-    Alternate2DeltaAccelerationAlgorithm.cxx
-    CrossedSecantAccelerationAlgorithm.cxx
-    CrossedDelta2AccelerationAlgorithm.cxx
-    Crossed2DeltaAccelerationAlgorithm.cxx
-    Crossed2DeltabisAccelerationAlgorithm.cxx
-    SecantAccelerationAlgorithm.cxx
-    SteffensenAccelerationAlgorithm.cxx
-    IronsTuckAccelerationAlgorithm.cxx)
+  Scheme.cxx
+  SchemeBase.cxx
+  MTest.cxx
+  MTestParser.cxx
+  AnalyticalTest.cxx
+  ReferenceFileComparisonTest.cxx
+  Evolution.cxx
+  CastemEvolution.cxx
+  FunctionEvolution.cxx
+  Behaviour.cxx
+  UmatBehaviourBase.cxx
+  UmatNormaliseTangentOperator.cxx
+  Constraint.cxx
+  ImposedDrivingVariable.cxx
+  ImposedThermodynamicForce.cxx
+  AccelerationAlgorithmFactory.cxx
+  AccelerationAlgorithm.cxx
+  CastemAccelerationAlgorithm.cxx
+  AlternateSecantAccelerationAlgorithm.cxx
+  AlternateDelta2AccelerationAlgorithm.cxx
+  Alternate2DeltaAccelerationAlgorithm.cxx
+  CrossedSecantAccelerationAlgorithm.cxx
+  CrossedDelta2AccelerationAlgorithm.cxx
+  Crossed2DeltaAccelerationAlgorithm.cxx
+  Crossed2DeltabisAccelerationAlgorithm.cxx
+  SecantAccelerationAlgorithm.cxx
+  SteffensenAccelerationAlgorithm.cxx
+  IronsTuckAccelerationAlgorithm.cxx)
 
 set(TFELMTest_LDADD
-    MFrontLogStream
-    TFELMaterial
-    TFELMathParser
-    TFELMath
-    TFELSystem
-    TFELUtilities
-    TFELException
-    TFELTests)
+  MFrontLogStream
+  TFELMaterial
+  TFELMathParser
+  TFELMath
+  TFELSystem
+  TFELUtilities
+  TFELException
+  TFELTests)
 
 if(HAVE_CASTEM)
-set(TFELMTest_SOURCES
+  set(TFELMTest_SOURCES
     UmatStandardBehaviour.cxx
     UmatSmallStrainBehaviour.cxx
     UmatFiniteStrainBehaviour.cxx
     UmatCohesiveZoneModel.cxx
     ${TFELMTest_SOURCES})
-set(TFELMTest_LDADD
+  set(TFELMTest_LDADD
     UMATInterface
     ${TFELMTest_LDADD})
 endif(HAVE_CASTEM)

@@ -8,31 +8,33 @@ lib_LTLIBRARIES = libTFELMTest.la
 bin_PROGRAMS  = mtest
 mtest_SOURCES = MTestMain.cxx
 
-libTFELMTest_la_SOURCES = MTest.cxx                                \
-			  MTestParser.cxx                          \
-			  AnalyticalTest.cxx                  \
-			  ReferenceFileComparisonTest.cxx     \
-			  Evolution.cxx                       \
-			  CastemEvolution.cxx                 \
-			  FunctionEvolution.cxx               \
-			  Behaviour.cxx                       \
-			  UmatBehaviourBase.cxx               \
-			  UmatNormaliseTangentOperator.cxx    \
-			  Constraint.cxx                      \
-			  ImposedDrivingVariable.cxx          \
-			  ImposedThermodynamicForce.cxx       \
-			  AccelerationAlgorithmFactory.cxx    \
-			  AccelerationAlgorithm.cxx           \
-			  AlternateSecantAccelerationAlgorithm.cxx     \
-			  AlternateDelta2AccelerationAlgorithm.cxx     \
-			  Alternate2DeltaAccelerationAlgorithm.cxx     \
-			  CrossedSecantAccelerationAlgorithm.cxx     \
-			  CrossedDelta2AccelerationAlgorithm.cxx     \
-			  Crossed2DeltaAccelerationAlgorithm.cxx     \
-			  Crossed2DeltabisAccelerationAlgorithm.cxx     \
-			  SecantAccelerationAlgorithm.cxx     \
-			  CastemAccelerationAlgorithm.cxx     \
-			  IronsTuckAccelerationAlgorithm.cxx  \
+libTFELMTest_la_SOURCES = Scheme.cxx                                \
+			  SchemeBase.cxx                            \
+			  MTest.cxx                                 \
+			  MTestParser.cxx                           \
+			  AnalyticalTest.cxx                        \
+			  ReferenceFileComparisonTest.cxx           \
+			  Evolution.cxx                             \
+			  CastemEvolution.cxx                       \
+			  FunctionEvolution.cxx                     \
+			  Behaviour.cxx                             \
+			  UmatBehaviourBase.cxx                     \
+			  UmatNormaliseTangentOperator.cxx          \
+			  Constraint.cxx                            \
+			  ImposedDrivingVariable.cxx                \
+			  ImposedThermodynamicForce.cxx             \
+			  AccelerationAlgorithmFactory.cxx          \
+			  AccelerationAlgorithm.cxx                 \
+			  AlternateSecantAccelerationAlgorithm.cxx  \
+			  AlternateDelta2AccelerationAlgorithm.cxx  \
+			  Alternate2DeltaAccelerationAlgorithm.cxx  \
+			  CrossedSecantAccelerationAlgorithm.cxx    \
+			  CrossedDelta2AccelerationAlgorithm.cxx    \
+			  Crossed2DeltaAccelerationAlgorithm.cxx    \
+			  Crossed2DeltabisAccelerationAlgorithm.cxx \
+			  SecantAccelerationAlgorithm.cxx           \
+			  CastemAccelerationAlgorithm.cxx           \
+			  IronsTuckAccelerationAlgorithm.cxx        \
 			  SteffensenAccelerationAlgorithm.cxx
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \

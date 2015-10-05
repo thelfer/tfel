@@ -17,7 +17,7 @@
 #include"MTest/Behaviour.hxx"
 #include"MTest/ImposedDrivingVariable.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   ImposedDrivingVariable::ImposedDrivingVariable(const Behaviour& b,
@@ -92,5 +92,5 @@ namespace mfront
   ImposedDrivingVariable::~ImposedDrivingVariable()
   {} // end of ImposedDrivingVariable::~ImposedDrivingVariable
 
-} // end of namespace mfront
+} // end of namespace mtest
 

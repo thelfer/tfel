@@ -17,7 +17,7 @@
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/Behaviour.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
@@ -32,7 +32,7 @@ namespace mfront
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    UmatBehaviourBase(const tfel::material::ModellingHypothesis::Hypothesis,
+    UmatBehaviourBase(const Hypothesis,
 			   const std::string&,
 			   const std::string&);
     /*!
@@ -45,54 +45,50 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getDrivingVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    getDrivingVariablesSize(const Hypothesis) const override;
     /*!
      * \return the size of a vector able to contain all the components of the thermodynamic forces
      * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getThermodynamicForcesSize(const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    getThermodynamicForcesSize(const Hypothesis) const override;
     /*!
-     * \param[in] c : components
+     * \return the components suffixes of a symmetric tensor
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    getStensorComponentsSuffixes(std::vector<std::string>&,
-				 const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    virtual std::vector<std::string>
+    getStensorComponentsSuffixes(const Hypothesis) const override;
     /*!
-     * \param[in] c : components
+     * \return the components suffixes of a tensor
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    getTensorComponentsSuffixes(std::vector<std::string>&,
-				const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    virtual std::vector<std::string>
+    getTensorComponentsSuffixes(const Hypothesis) const override;
     /*!
-     * \param[in] c : components
+     * \return the components of the driving variables
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    getDrivingVariablesComponents(std::vector<std::string>&,
-				  const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    virtual std::vector<std::string>
+    getDrivingVariablesComponents(const Hypothesis) const override;
     /*!
-     * \param[in] c : components
+     * \return the components of the thermodynamic forces
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    getThermodynamicForcesComponents(std::vector<std::string>&,
-				     const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    virtual std::vector<std::string>
+    getThermodynamicForcesComponents(const Hypothesis) const override;
     /*!
      * \param[in] h     : modelling hypothesis
      * \param[in] cname : component name
      */
     virtual unsigned short
-    getDrivingVariableComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
+    getDrivingVariableComponentPosition(const Hypothesis,
 					const std::string&) const override;
     /*!
      * \param[in] h     : modelling hypothesis
      * \param[in] cname : component name
      */
     virtual unsigned short
-    getThermodynamicForceComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
+    getThermodynamicForceComponentPosition(const Hypothesis,
 					   const std::string&) const override;
     /*!
      * \return the type of the behaviour
@@ -116,13 +112,13 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      */
     virtual size_t
-    getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    getInternalStateVariablesSize(const Hypothesis) const override;
     /*!
      * \return the descriptions the internal variables
      * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    getInternalStateVariablesDescriptions(const Hypothesis) const override;
     /*!
      * \return the type of an internal variable
      * \param[in] n : internal variable name
@@ -135,7 +131,7 @@ namespace mfront
      * \param[in] n : internal variable name
      */
     virtual unsigned short
-    getInternalStateVariablePosition(const tfel::material::ModellingHypothesis::Hypothesis,
+    getInternalStateVariablePosition(const Hypothesis,
 				     const std::string&) const override;
     /*!
      * \return the names of external variables
@@ -194,7 +190,7 @@ namespace mfront
      * \param[in] b     : if false, a prediction operator is requested
      */
     void
-    initializeTangentOperator(const MTestStiffnessMatrixType::mtype,
+    initializeTangentOperator(const StiffnessMatrixType::mtype,
 			      const bool) const;
     //! hypothesis
     const std::string hypothesis;
@@ -218,7 +214,7 @@ namespace mfront
     unsigned short stype;
   }; // end of struct Behaviour
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTUMATBEHAVIOURBASE_H_ */
 

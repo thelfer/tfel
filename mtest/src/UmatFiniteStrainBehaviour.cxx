@@ -24,7 +24,7 @@
 #include"MTest/UmatFiniteStrainBehaviour.hxx"
 #include"MFront/BehaviourSymmetryType.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   static void
@@ -101,7 +101,7 @@ namespace mfront
    * tensors.
    */
   template<tfel::material::ModellingHypothesis::Hypothesis,
-	   BehaviourSymmetryType>
+	   mfront::BehaviourSymmetryType>
   struct MTestUmatComputeFiniteStrainStiffnessTensor;
 
   template<>
@@ -132,7 +132,7 @@ namespace mfront
 
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,
-						     ISOTROPIC>
+						     mfront::ISOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -157,7 +157,7 @@ namespace mfront
   
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,
-						     ISOTROPIC>
+						     mfront::ISOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -169,7 +169,7 @@ namespace mfront
 
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,
-						     ISOTROPIC>
+						     mfront::ISOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -181,7 +181,7 @@ namespace mfront
 
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
-						     ISOTROPIC>
+						     mfront::ISOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -193,7 +193,7 @@ namespace mfront
 
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
-						     ISOTROPIC>
+						     mfront::ISOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -227,7 +227,7 @@ namespace mfront
   
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-						     ORTHOTROPIC>
+						     mfront::ORTHOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -269,7 +269,7 @@ namespace mfront
 
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,
-						     ORTHOTROPIC>
+						     mfront::ORTHOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -322,7 +322,7 @@ namespace mfront
 
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,
-						     ORTHOTROPIC>
+						     mfront::ORTHOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -334,7 +334,7 @@ namespace mfront
 
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,
-						     ORTHOTROPIC>
+						     mfront::ORTHOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -346,7 +346,7 @@ namespace mfront
 
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
-						     ORTHOTROPIC>
+						     mfront::ORTHOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -358,7 +358,7 @@ namespace mfront
 
   template<>
   struct MTestUmatComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
-						     ORTHOTROPIC>
+						     mfront::ORTHOTROPIC>
   {
     static void
     exe(const real* const props,
@@ -654,12 +654,12 @@ namespace mfront
 							    const tfel::math::vector<real>&,
 							    const tfel::math::vector<real>&,
 							    const tfel::material::ModellingHypothesis::Hypothesis h,
-							    const MTestStiffnessMatrixType::mtype ktype) const
+							    const StiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
     // rotation matrix
-    if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+    if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       // compute the stiffness operator from material properties
       tmatrix<3u,3u,real> drot(0.);
       tmatrix<3u,3u,real>::size_type i,j;
@@ -690,7 +690,7 @@ namespace mfront
 					    const tfel::math::vector<real>& dev,
 					    const tfel::material::ModellingHypothesis::Hypothesis h,
 					    const real dt,
-					    const MTestStiffnessMatrixType::mtype ktype) const
+					    const StiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -807,8 +807,8 @@ namespace mfront
       copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
     }
     // tangent operator (...)
-    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 
-      if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+    if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
+      if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
 	this->computeElasticStiffness(Kt,mp,drot,h);
       } else {
 	string msg("UmatFiniteStrainBehaviour::integrate : "
@@ -838,7 +838,7 @@ namespace mfront
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	t2tost2<1u,real> De;
 	MTestUmatComputeFiniteStrainStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-						    ISOTROPIC>::exe(&mp(0),De);
+						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=3u;++i){
 	  for(j=0;j!=3u;++j){
 	    Kt(i,j) = De(i,j);
@@ -847,7 +847,7 @@ namespace mfront
       } else if (h==MH::AXISYMMETRICAL){
 	t2tost2<2u,real> De;
 	MTestUmatComputeFiniteStrainStiffnessTensor<MH::AXISYMMETRICAL,
-						    ISOTROPIC>::exe(&mp(0),De);
+						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=5u;++j){
 	    Kt(i,j) = De(i,j);
@@ -856,7 +856,7 @@ namespace mfront
       } else if (h==MH::PLANESTRESS){
 	t2tost2<2u,real> De;
 	MTestUmatComputeFiniteStrainStiffnessTensor<MH::PLANESTRESS,
-						    ISOTROPIC>::exe(&mp(0),De);
+						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=5u;++j){
 	    Kt(i,j) = De(i,j);
@@ -865,7 +865,7 @@ namespace mfront
       } else if (h==MH::PLANESTRAIN){
 	t2tost2<2u,real> De;
 	MTestUmatComputeFiniteStrainStiffnessTensor<MH::PLANESTRAIN,
-						    ISOTROPIC>::exe(&mp(0),De);
+						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=5u;++j){
 	    Kt(i,j) = De(i,j);
@@ -874,7 +874,7 @@ namespace mfront
       } else if (h==MH::GENERALISEDPLANESTRAIN){
 	t2tost2<2u,real> De;
 	MTestUmatComputeFiniteStrainStiffnessTensor<MH::GENERALISEDPLANESTRAIN,
-						    ISOTROPIC>::exe(&mp(0),De);
+						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=5u;++j){
 	    Kt(i,j) = De(i,j);
@@ -883,7 +883,7 @@ namespace mfront
       } else if (h==MH::TRIDIMENSIONAL){
 	t2tost2<3u,real> De;
 	MTestUmatComputeFiniteStrainStiffnessTensor<MH::TRIDIMENSIONAL,
-						    ISOTROPIC>::exe(&mp(0),De);
+						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=6u;++i){
 	  for(j=0;j!=9u;++j){
 	    Kt(i,j) = De(i,j);
@@ -898,7 +898,7 @@ namespace mfront
       if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       	t2tost2<1u,real> De;
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-						    ORTHOTROPIC>::exe(&mp(0),De);
+						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
       	for(i=0;i!=3u;++i){
       	  for(j=0;j!=3u;++j){
       	    Kt(i,j) = De(i,j);
@@ -907,7 +907,7 @@ namespace mfront
       } else if (h==MH::AXISYMMETRICAL){
       	t2tost2<2u,real> De;
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::AXISYMMETRICAL,
-						    ORTHOTROPIC>::exe(&mp(0),De);
+						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestUmatfiniteStrainRotationMatrix2D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=4u;++i){
@@ -918,7 +918,7 @@ namespace mfront
       } else if (h==MH::PLANESTRESS){
       	t2tost2<2u,real> De;
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::PLANESTRESS,
-						    ORTHOTROPIC>::exe(&mp(0),De);
+						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestUmatfiniteStrainRotationMatrix2D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=4u;++i){
@@ -929,7 +929,7 @@ namespace mfront
       } else if (h==MH::PLANESTRAIN){
       	t2tost2<2u,real> De;
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::PLANESTRAIN,
-						    ORTHOTROPIC>::exe(&mp(0),De);
+						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestUmatfiniteStrainRotationMatrix2D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=4u;++i){
@@ -940,7 +940,7 @@ namespace mfront
       } else if (h==MH::GENERALISEDPLANESTRAIN){
       	t2tost2<2u,real> De;
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::GENERALISEDPLANESTRAIN,
-						    ORTHOTROPIC>::exe(&mp(0),De);
+						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestUmatfiniteStrainRotationMatrix2D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=4u;++i){
@@ -951,7 +951,7 @@ namespace mfront
       } else if (h==MH::TRIDIMENSIONAL){
       	t2tost2<3u,real> De;
       	MTestUmatComputeFiniteStrainStiffnessTensor<MH::TRIDIMENSIONAL,
-						    ORTHOTROPIC>::exe(&mp(0),De);
+						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
 	//      	MTestUmatfiniteStrainRotationMatrix3D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=6u;++i){
@@ -1000,5 +1000,5 @@ namespace mfront
   UmatFiniteStrainBehaviour::~UmatFiniteStrainBehaviour()
   {}
   
-} // end of namespace mfront
+} // end of namespace mtest
 

@@ -23,7 +23,7 @@
 
 #include"MTest/MTest.hxx"
 
-namespace mfront{
+namespace mtest{
 
   /*!
    * Test based on the comparison of the solution to analytical
@@ -92,7 +92,7 @@ namespace mfront{
     const real eps;
   }; 
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTANALYTICALTEST_H_ */
 

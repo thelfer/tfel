@@ -27,7 +27,7 @@
 #include"MTest/Crossed2DeltabisAccelerationAlgorithm.hxx"
 #include"MTest/AccelerationAlgorithmFactory.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   template<typename T>
@@ -86,4 +86,4 @@ namespace mfront
     }
   } // end of AccelerationAlgorithmFactory::registerAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

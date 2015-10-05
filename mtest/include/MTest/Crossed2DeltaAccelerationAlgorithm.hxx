@@ -14,16 +14,16 @@
 #ifndef LIB_MFRONT_MTEST_MTESTCROSSED2DELTAACCELERATIONALGORITHM_H_
 #define LIB_MFRONT_MTEST_MTESTCROSSED2DELTAACCELERATIONALGORITHM_H_ 
 
-#include"MTest/MTestConfig.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
    * \brief This class implements the secant acceleration algorithm.
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT Crossed2DeltaAccelerationAlgorithm
+  struct MTEST_VISIBILITY_EXPORT Crossed2DeltaAccelerationAlgorithm
     : public AccelerationAlgorithm
   {
     //! default constructor
@@ -86,7 +86,7 @@ namespace mfront
     int csat;
   }; // end of struct Crossed2DeltaAccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTEST_MTESTCROSSED2DELTAACCELERATIONALGORITHM_H_ */
 

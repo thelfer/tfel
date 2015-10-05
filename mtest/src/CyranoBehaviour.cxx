@@ -24,7 +24,7 @@
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
 
-namespace mfront
+namespace mtest
 {
 
   CyranoBehaviour::CyranoBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -91,10 +91,10 @@ namespace mfront
     return r;
   } // end of CyranoBehaviour::getRotationMatrix
 
-  MTestStiffnessMatrixType::mtype
+  StiffnessMatrixType::mtype
   CyranoBehaviour::getDefaultStiffnessMatrixType(void) const
   {
-    return MTestStiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
+    return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   } // end of CyranoBehaviour::getDefaultStiffnessMatrixType
 
   void
@@ -113,10 +113,10 @@ namespace mfront
 					     const tfel::math::vector<real>& iv0,
 					     const tfel::math::vector<real>& esv0,
 					     const tfel::material::ModellingHypothesis::Hypothesis h,
-					     const MTestStiffnessMatrixType::mtype ktype) const
+					     const StiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
-    if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+    if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return false;
     }
     vector<real> s1(s0);
@@ -142,7 +142,7 @@ namespace mfront
 			     const tfel::math::vector<real>& dev,
 			     const tfel::material::ModellingHypothesis::Hypothesis h,
 			     const real dt,
-			     const MTestStiffnessMatrixType::mtype ktype) const
+			     const StiffnessMatrixType::mtype ktype) const
   {
     return this->call_behaviour(Kt,s1,iv1,e0,e1,s0,
 				mp,iv0,ev0,dev,h,dt,
@@ -162,7 +162,7 @@ namespace mfront
 				  const tfel::math::vector<real>& dev,
 				  const tfel::material::ModellingHypothesis::Hypothesis h,
 				  const real dt,
-				  const MTestStiffnessMatrixType::mtype ktype,
+				  const StiffnessMatrixType::mtype ktype,
 				  const bool b) const
   {
     using namespace std;
@@ -254,7 +254,7 @@ namespace mfront
     // turning back to MFront conventions
     swap(s1(1),s1(2));
     // tangent operator (...)
-    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 
+    if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       // transpose (fortran -> c++)
       tmatrix<3u,3u,real> D2;
       for(unsigned short mi=0;mi!=3u;++mi){
@@ -279,5 +279,5 @@ namespace mfront
   CyranoBehaviour::~CyranoBehaviour()
   {}
   
-} // end of namespace mfront
+} // end of namespace mtest
 

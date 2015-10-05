@@ -15,7 +15,7 @@
 
 #include"MTest/AccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   unsigned short
@@ -37,4 +37,4 @@ namespace mfront
   AccelerationAlgorithm::~AccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

@@ -18,7 +18,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/SteffensenAccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   SteffensenAccelerationAlgorithm::SteffensenAccelerationAlgorithm()
@@ -90,8 +90,8 @@ namespace mfront
     this->sta_u1.swap(this->sta_u2);
     this->sta_u2 = u1;
     if((iter>=this->stat)&&((iter-this->stat)%2==0)){
-      if(getVerboseMode()>=VERBOSE_LEVEL1){
-	auto& log = getLogStream();
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	auto& log = mfront::getLogStream();
 	log << "Steffensen acceleration convergence" << endl;
       }
       this->sta_du2  = this->sta_u2-this->sta_u1;
@@ -112,4 +112,4 @@ namespace mfront
   SteffensenAccelerationAlgorithm::~SteffensenAccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

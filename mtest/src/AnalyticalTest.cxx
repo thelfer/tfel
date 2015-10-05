@@ -16,7 +16,7 @@
 #include"MTest/Evolution.hxx"
 #include"MTest/AnalyticalTest.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   AnalyticalTest::AnalyticalTest(const std::string& f_,
@@ -105,4 +105,4 @@ namespace mfront
   AnalyticalTest::~AnalyticalTest()
   {} // end of AnalyticalTest::~AnalyticalTest
 
-} // end of namespace mfront
+} // end of namespace mtest

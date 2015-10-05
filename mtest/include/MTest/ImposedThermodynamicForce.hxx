@@ -19,12 +19,12 @@
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include<memory>
 
-#include"MTest/MTestTypes.hxx"
-#include"MTest/MTestConfig.hxx"
+#include"MTest/Types.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/Constraint.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   // forward declaration
@@ -33,7 +33,7 @@ namespace mfront
   /*!
    * Impose the value of a thermodynamic force component
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT ImposedThermodynamicForce final
+  struct MTEST_VISIBILITY_EXPORT ImposedThermodynamicForce final
     : public Constraint
   {
     /*!
@@ -125,7 +125,7 @@ namespace mfront
     unsigned short c;
   }; // end of struct ImposedThermodynamicForce
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTIMPOSEDTHERMODYNAMICFORCE_H_ */
 

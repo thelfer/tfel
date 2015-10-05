@@ -18,7 +18,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/AlternateDelta2AccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   AlternateDelta2AccelerationAlgorithm::AlternateDelta2AccelerationAlgorithm()
@@ -106,8 +106,8 @@ namespace mfront
       //alternate secant
 	const real nr2_dr = this->asa_dr1|this->asa_dr1;
 	if(nr2_dr>(asa_eps*asa_eps)){
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    ostream& log = getLogStream();
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    ostream& log = mfront::getLogStream();
 	    log << "AlternateSecant acceleration convergence" << endl;
 	  }
 	  const real asa_a = (this->asa_dr1|this->asa_r1)/nr2_dr;
@@ -117,8 +117,8 @@ namespace mfront
       else{
 	const real nr2_d2r = this->asa_d2r|this->asa_d2r;
 	if(nr2_d2r>(asa_eps*asa_eps)){
-	  if(getVerboseMode()>=VERBOSE_LEVEL1){
-	    ostream& log = getLogStream();
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    ostream& log = mfront::getLogStream();
 	    log << "AlternateDelta2 acceleration convergence" << endl;
 	  }
 	  const real asa_a = (this->asa_d2r|this->asa_r1)/nr2_d2r;
@@ -135,4 +135,4 @@ namespace mfront
   AlternateDelta2AccelerationAlgorithm::~AlternateDelta2AccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

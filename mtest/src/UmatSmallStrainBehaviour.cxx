@@ -26,7 +26,7 @@
 #include"MTest/UmatSmallStrainBehaviour.hxx"
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   struct MTestUmatRotationMatrix2D
@@ -289,10 +289,10 @@ namespace mfront
 							   const tfel::math::vector<real>& iv0,
 							   const tfel::math::vector<real>& esv0,
 							   const tfel::material::ModellingHypothesis::Hypothesis h,
-							   const MTestStiffnessMatrixType::mtype ktype) const
+							   const StiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
-    if(ktype!=MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+    if(ktype!=StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       vector<real> s1(s0);
       vector<real> e1(e0);
       vector<real> iv1(iv0);
@@ -327,7 +327,7 @@ namespace mfront
 					   const tfel::math::vector<real>& dev,
 					   const tfel::material::ModellingHypothesis::Hypothesis h,
 					   const real dt,
-					   const MTestStiffnessMatrixType::mtype ktype) const
+					   const StiffnessMatrixType::mtype ktype) const
   {
     return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
 				mp,iv0,ev0,dev,h,dt,
@@ -348,7 +348,7 @@ namespace mfront
 						const tfel::math::vector<real>& dev,
 						const tfel::material::ModellingHypothesis::Hypothesis h,
 						const real dt,
-						const MTestStiffnessMatrixType::mtype ktype,
+						const StiffnessMatrixType::mtype ktype,
 						const bool b) const
   {
     using namespace std;
@@ -452,8 +452,8 @@ namespace mfront
       copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
     }
     // tangent operator (...)
-    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 
-      if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+    if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
+      if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
 	this->computeElasticStiffness(Kt,mp,drot,h);
       } else {
 	UmatNormaliseTangentOperator::exe(Kt,D,dimension);
@@ -667,5 +667,5 @@ namespace mfront
   UmatSmallStrainBehaviour::~UmatSmallStrainBehaviour()
   {}
   
-} // end of namespace mfront
+} // end of namespace mtest
 

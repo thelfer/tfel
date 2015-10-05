@@ -27,7 +27,7 @@ namespace tfel{
      * Structure in charge of reading a test documentation file
      */
     struct MTestDocParser
-      : protected mfront::MTest
+      : protected mtest::MTest
     {
       /*!
        * \param f : file to be read

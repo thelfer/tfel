@@ -19,17 +19,17 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tvector.hxx"
 
-#include"MTest/MTestConfig.hxx"
-#include"MTest/MTestTypes.hxx"
+#include"MTest/Config.hxx"
+#include"MTest/Types.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
    * Base class for all the constraints
    * imposed to the point
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT Constraint
+  struct MTEST_VISIBILITY_EXPORT Constraint
   {
     /*!
      * \return the number of Lagrange Multipliers
@@ -95,7 +95,7 @@ namespace mfront
     virtual ~Constraint();
   }; // end of struct Constraint
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTCONSTRAINT_H_ */
 

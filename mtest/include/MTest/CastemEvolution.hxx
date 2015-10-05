@@ -21,17 +21,17 @@
 #include<memory>
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
-#include"MTest/MTestConfig.hxx"
-#include"MTest/MTestTypes.hxx"
+#include"MTest/Config.hxx"
+#include"MTest/Types.hxx"
 #include"MTest/Evolution.hxx"
 
-namespace mfront
+namespace mtest
 {
   
   /*!
    * An evolution defined by a castem fonction
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT CastemEvolution
+  struct MTEST_VISIBILITY_EXPORT CastemEvolution
     : public Evolution
   {
     /*!
@@ -77,7 +77,7 @@ namespace mfront
     mutable std::vector<real> args;
   };
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTCASTEMEVOLUTION_H_ */
 

@@ -17,16 +17,16 @@
 #include<map>
 #include<vector>
 
-#include"MTest/MTestConfig.hxx"
-#include"MTest/MTestTypes.hxx"
+#include"MTest/Config.hxx"
+#include"MTest/Types.hxx"
 
-namespace mfront
+namespace mtest
 {
   
   /*!
    * Base class for evolutions of external variables
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT Evolution
+  struct MTEST_VISIBILITY_EXPORT Evolution
   {
     /*!
      * \return the value of the evolution
@@ -55,7 +55,7 @@ namespace mfront
   /*!
    * a constant evolution
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT ConstantEvolution final
+  struct MTEST_VISIBILITY_EXPORT ConstantEvolution final
     : public Evolution
   {
     /*!
@@ -93,7 +93,7 @@ namespace mfront
   /*!
    * a linear per interval evolution
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT LPIEvolution final
+  struct MTEST_VISIBILITY_EXPORT LPIEvolution final
     : public Evolution
   {
     /*!
@@ -127,7 +127,7 @@ namespace mfront
     std::map<real,real> values;
   };
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTEVOLUTION_H_ */
 

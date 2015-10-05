@@ -16,7 +16,7 @@
 
 #include"MTest/Evolution.hxx"
 
-namespace mfront
+namespace mtest
 {
   
   Evolution::~Evolution()
@@ -117,5 +117,5 @@ namespace mfront
   LPIEvolution::~LPIEvolution()
   {}
 
-} // end of namespace mfront
+} // end of namespace mtest
 

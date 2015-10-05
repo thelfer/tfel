@@ -26,7 +26,7 @@
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AsterFiniteStrainBehaviour.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   static unsigned short
@@ -152,7 +152,7 @@ namespace mfront
 					     const tfel::math::vector<real>& dev,
 					     const tfel::material::ModellingHypothesis::Hypothesis h,
 					     const real dt,
-					     const MTestStiffnessMatrixType::mtype ktype,
+					     const StiffnessMatrixType::mtype ktype,
 					     const bool b) const
   {
     using namespace std;
@@ -267,7 +267,7 @@ namespace mfront
 	s1(i) *= sqrt2;
       }
     }
-    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){
+    if(ktype!=StiffnessMatrixType::NOSTIFFNESS){
       if(dimension==1u){
 	convertTangentOperator<1u>(Kt,D,s1,u0,u1);
       } else if(dimension==2u){
@@ -282,7 +282,7 @@ namespace mfront
   AsterFiniteStrainBehaviour::~AsterFiniteStrainBehaviour()
   {}
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 
 

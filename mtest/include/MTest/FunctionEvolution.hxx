@@ -16,14 +16,14 @@
 
 #include"TFEL/Math/Evaluator.hxx"
 
-#include"MTest/MTestConfig.hxx"
-#include"MTest/MTestTypes.hxx"
+#include"MTest/Config.hxx"
+#include"MTest/Types.hxx"
 #include"MTest/Evolution.hxx"
 
-namespace mfront
+namespace mtest
 {
 
-  struct MFRONT_MTEST_VISIBILITY_EXPORT FunctionEvolution
+  struct MTEST_VISIBILITY_EXPORT FunctionEvolution
     : public Evolution
   {
     /*!
@@ -61,7 +61,7 @@ namespace mfront
     mutable tfel::math::Evaluator f;
   };
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTFUNCTIONEVOLUTION_H_ */
 

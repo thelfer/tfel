@@ -19,7 +19,7 @@
 #include"MFront/UMAT/UMAT.hxx"
 #include"MTest/UmatCohesiveZoneModel.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   UmatCohesiveZoneModel::UmatCohesiveZoneModel(const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -80,10 +80,10 @@ namespace mfront
     fill(v.begin(),v.end(),real(0));
   } // end of UmatCohesiveZoneModel::setDrivingVariablesDefaultInitialValue  
 
-  MTestStiffnessMatrixType::mtype
+  StiffnessMatrixType::mtype
   UmatCohesiveZoneModel::getDefaultStiffnessMatrixType(void) const
   {
-    return MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
+    return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
   }
   
   bool
@@ -95,10 +95,10 @@ namespace mfront
 								 const tfel::math::vector<real>&,
 								 const tfel::math::vector<real>&,
 								 const tfel::material::ModellingHypothesis::Hypothesis h,
-								 const MTestStiffnessMatrixType::mtype ktype) const
+								 const StiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
-    if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+    if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       // rotation matrix
       tmatrix<3u,3u,real> drot(0.);
       tmatrix<3u,3u,real>::size_type i,j;
@@ -129,7 +129,7 @@ namespace mfront
 						 const tfel::math::vector<real>& dev,
 						 const tfel::material::ModellingHypothesis::Hypothesis h,
 						 const real dt,
-						 const MTestStiffnessMatrixType::mtype ktype) const
+						 const StiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -220,8 +220,8 @@ namespace mfront
       copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
     }
     // tangent operator (...)
-    if(ktype!=MTestStiffnessMatrixType::NOSTIFFNESS){ 
-      if(ktype==MTestStiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+    if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
+      if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
 	this->computeElasticStiffness(Kt,mp,drot,h);
       } else {
 	string msg("UmatCohesiveZoneModel::integrate : "
@@ -301,5 +301,5 @@ namespace mfront
   UmatCohesiveZoneModel::~UmatCohesiveZoneModel()
   {}
   
-} // end of namespace mfront
+} // end of namespace mtest
 

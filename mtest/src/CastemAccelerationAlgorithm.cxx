@@ -18,7 +18,7 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/CastemAccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   CastemAccelerationAlgorithm::CastemAccelerationAlgorithm()
@@ -117,8 +117,8 @@ namespace mfront
     this->ca_u2 = u1;
     this->ca_r2  = r;
     if((iter>=this->cat)&&((iter-this->cat)%this->cap==0)){
-      if(getVerboseMode()>=VERBOSE_LEVEL1){
-	auto& log = getLogStream();
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	auto& log = mfront::getLogStream();
 	log << "Cast3M acceleration convergence" << endl;
       }
       this->ca_tmp0 = this->ca_r1-this->ca_r0;
@@ -162,4 +162,4 @@ namespace mfront
   CastemAccelerationAlgorithm::~CastemAccelerationAlgorithm()
   {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest

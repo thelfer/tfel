@@ -39,7 +39,7 @@
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/XMLTestOutput.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   struct MTestMain
@@ -183,29 +183,27 @@ namespace mfront
   void
   MTestMain::treatVerbose(void)
   {
-    using namespace std;
     if(this->currentArgument->getOption().empty()){
-      setVerboseMode(VERBOSE_LEVEL1);
+      mfront::setVerboseMode(mfront::VERBOSE_LEVEL1);
     } else {
       const auto& option = this->currentArgument->getOption();
       if(option=="quiet"){
-	setVerboseMode(VERBOSE_QUIET);
+	mfront::setVerboseMode(mfront::VERBOSE_QUIET);
       } else if(option=="level0"){
-	setVerboseMode(VERBOSE_LEVEL0);
+	mfront::setVerboseMode(mfront::VERBOSE_LEVEL0);
       } else if(option=="level1"){
-	setVerboseMode(VERBOSE_LEVEL1);
+	mfront::setVerboseMode(mfront::VERBOSE_LEVEL1);
       } else if (option=="level2"){
-	setVerboseMode(VERBOSE_LEVEL2);
+	mfront::setVerboseMode(mfront::VERBOSE_LEVEL2);
       } else if (option=="level3"){
-	setVerboseMode(VERBOSE_LEVEL3);
+	mfront::setVerboseMode(mfront::VERBOSE_LEVEL3);
       } else if (option=="debug"){
-	setVerboseMode(VERBOSE_DEBUG);
+	mfront::setVerboseMode(mfront::VERBOSE_DEBUG);
       } else if (option=="full"){
-	setVerboseMode(VERBOSE_FULL);
+	mfront::setVerboseMode(mfront::VERBOSE_FULL);
       } else {
-	string msg("MTestMain::treatVerbose : ");
-	msg += "unknown option '"+option+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MTestMain::treatVerbose : "
+				 "unknown option '"+option+"'"));
       }
     }
   } // end of MTestMain::treatVerbose
@@ -271,16 +269,16 @@ namespace mfront
   void
   MTestMain::treatHelpCommandsList(void)
   {
-    auto t = std::make_shared<MTest>();
-    t->getParser()->displayKeyWordsList();
+    MTestParser p;
+    p.displayKeyWordsList();
     ::exit(EXIT_SUCCESS);
   } // end of MTestMain::treatHelpCommandsList
 
   void
   MTestMain::treatHelpCommands(void)
   {
-    auto t = std::make_shared<MTest>();
-    t->getParser()->displayKeyWordsHelp();
+    MTestParser p;
+    p.displayKeyWordsHelp();
     ::exit(EXIT_SUCCESS);
   } // end of MTestMain::treatHelpCommands
   
@@ -292,8 +290,8 @@ namespace mfront
       throw(std::runtime_error("MTestMain::treatHelpCommand : "
 			       "no command specified"));
     }
-    auto t = std::make_shared<MTest>();
-    t->getParser()->displayKeyWordDescription(k);
+    MTestParser p;
+    p.displayKeyWordDescription(k);
     ::exit(EXIT_SUCCESS);
   }
 
@@ -341,8 +339,7 @@ namespace mfront
 	tname = i;
       }
       auto t = make_shared<MTest>();
-      auto parser = t->getParser();
-      parser->execute(i);
+      t->readInputFile(i);
       if(this->result_file_output){
 	t->setOutputFileName(tname+".res");
       }
@@ -363,14 +360,14 @@ namespace mfront
   MTestMain::~MTestMain()
   {}
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc,
 	 const char * const * const argv)
 {
   using namespace std;
-  using namespace mfront;
+  using namespace mtest;
   int r = EXIT_FAILURE;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{

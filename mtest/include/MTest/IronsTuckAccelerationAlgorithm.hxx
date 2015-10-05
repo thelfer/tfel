@@ -14,16 +14,16 @@
 #ifndef LIB_MFRONT_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_H_
 #define LIB_MFRONT_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_H_ 
 
-#include"MTest/MTestConfig.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
    * \brief This class implements the Irons-Tuck acceleration algorithm.
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT IronsTuckAccelerationAlgorithm
+  struct MTEST_VISIBILITY_EXPORT IronsTuckAccelerationAlgorithm
     : public AccelerationAlgorithm
   {
     //! default constructor
@@ -83,7 +83,7 @@ namespace mfront
     int itat;
   }; // end of struct IronsTuckAccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_H_ */
 

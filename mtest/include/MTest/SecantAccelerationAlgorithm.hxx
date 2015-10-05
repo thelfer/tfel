@@ -14,16 +14,16 @@
 #ifndef LIB_MFRONT_MTEST_MTESTSECANTACCELERATIONALGORITHM_H_
 #define LIB_MFRONT_MTEST_MTESTSECANTACCELERATIONALGORITHM_H_ 
 
-#include"MTest/MTestConfig.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
    * \brief This class implements the secant acceleration algorithm.
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT SecantAccelerationAlgorithm
+  struct MTEST_VISIBILITY_EXPORT SecantAccelerationAlgorithm
     : public AccelerationAlgorithm
   {
     //! default constructor
@@ -90,7 +90,7 @@ namespace mfront
     int sat;
   }; // end of struct SecantAccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTEST_MTESTSECANTACCELERATIONALGORITHM_H_ */
 

@@ -19,7 +19,7 @@
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/UmatBehaviourBase.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
@@ -50,7 +50,7 @@ namespace mfront
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual MTestStiffnessMatrixType::mtype
+    virtual StiffnessMatrixType::mtype
     getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief allocate internal workspace
@@ -86,7 +86,7 @@ namespace mfront
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::material::ModellingHypothesis::Hypothesis,
-			      const MTestStiffnessMatrixType::mtype) const override;
+			      const StiffnessMatrixType::mtype) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -119,7 +119,7 @@ namespace mfront
 	      const tfel::math::vector<real>&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
-	      const MTestStiffnessMatrixType::mtype) const override;
+	      const StiffnessMatrixType::mtype) const override;
     //! destructor
     virtual ~CyranoBehaviour();
   protected:
@@ -154,7 +154,7 @@ namespace mfront
 		     const tfel::math::vector<real>&,
 		     const tfel::material::ModellingHypothesis::Hypothesis,
 		     const real,
-		     const MTestStiffnessMatrixType::mtype,
+		     const StiffnessMatrixType::mtype,
 		     const bool) const;
   protected:
     //! the umat fonction
@@ -165,6 +165,6 @@ namespace mfront
     mutable tfel::math::vector<real> ivs;
   }; // end of struct Behaviour
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTCYRANOBEHAVIOUR_H_ */

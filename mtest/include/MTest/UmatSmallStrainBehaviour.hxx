@@ -17,7 +17,7 @@
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/UmatStandardBehaviour.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
@@ -63,7 +63,7 @@ namespace mfront
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::material::ModellingHypothesis::Hypothesis,
-			      const MTestStiffnessMatrixType::mtype) const override;
+			      const StiffnessMatrixType::mtype) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -96,7 +96,7 @@ namespace mfront
 	      const tfel::math::vector<real>&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
-	      const MTestStiffnessMatrixType::mtype) const override;
+	      const StiffnessMatrixType::mtype) const override;
     /*!
      * \brief some interfaces requires dummy material properties to be
      * declared. For example, the Cast3M finite element solver
@@ -146,7 +146,7 @@ namespace mfront
 		   const tfel::math::vector<real>&,
 		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
-		   const MTestStiffnessMatrixType::mtype,
+		   const StiffnessMatrixType::mtype,
 		   const bool) const;
     /*!
      * \brief compute the elastic stiffness
@@ -162,6 +162,6 @@ namespace mfront
 			    const tfel::material::ModellingHypothesis::Hypothesis) const;
   }; // end of struct Behaviour
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTSMALLSTRAINUMATBEHAVIOUR_H_ */

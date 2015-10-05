@@ -25,9 +25,9 @@
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
-#include"MTest/MTestTypes.hxx"
+#include"MTest/Types.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
@@ -35,6 +35,7 @@ namespace mfront
    */
   struct Behaviour
   {
+    using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
     /*!
      * \brief This function set a material property to its default value if it not already declared
      * \param[out] mp  : evolution manager where 
@@ -57,7 +58,7 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getDrivingVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    getDrivingVariablesSize(const Hypothesis) const = 0;
     /*!
      * \param[out] v : initial values of the driving variables
      * \note : the vector shall have been correctly allocated
@@ -69,48 +70,44 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getThermodynamicForcesSize(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    getThermodynamicForcesSize(const Hypothesis) const = 0;
     /*!
-     * \param[in] c : components
+     * \return the components suffixes of a symmetric tensor
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    getStensorComponentsSuffixes(std::vector<std::string>&,
-				 const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    virtual std::vector<std::string>
+    getStensorComponentsSuffixes(const Hypothesis) const = 0;
     /*!
-     * \param[in] c : components
+     * \return the components suffixes of a tensor
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    getTensorComponentsSuffixes(std::vector<std::string>&,
-				const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    virtual std::vector<std::string>
+    getTensorComponentsSuffixes(const Hypothesis) const = 0;
     /*!
-     * \param[in] c : components
+     * \return the components of the driving variables
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    getDrivingVariablesComponents(std::vector<std::string>&,
-				  const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    virtual std::vector<std::string>
+    getDrivingVariablesComponents(const Hypothesis) const = 0;
     /*!
-     * \param[in] c : components
+     * \return the components of the thermodynamic forces
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    getThermodynamicForcesComponents(std::vector<std::string>&,
-				     const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    virtual std::vector<std::string>
+    getThermodynamicForcesComponents(const Hypothesis) const = 0;
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] c : component
      */
     virtual unsigned short
-    getDrivingVariableComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
+    getDrivingVariableComponentPosition(const Hypothesis,
 					const std::string&) const = 0;
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] c : component
      */
     virtual unsigned short
-    getThermodynamicForceComponentPosition(const tfel::material::ModellingHypothesis::Hypothesis,
+    getThermodynamicForceComponentPosition(const Hypothesis,
 					   const std::string&) const = 0;
     /*!
      * \return the type of the behaviour
@@ -147,13 +144,13 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      */
     virtual size_t
-    getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    getInternalStateVariablesSize(const Hypothesis) const = 0;
     /*!
      * \return the descriptions the internal variables
      * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+    getInternalStateVariablesDescriptions(const Hypothesis) const = 0;
     /*!
      * \return the type of an internal variable
      * \param[in] n : internal variable name
@@ -166,7 +163,7 @@ namespace mfront
      * \param[in] n : internal variable name
      */
     virtual unsigned short
-    getInternalStateVariablePosition(const tfel::material::ModellingHypothesis::Hypothesis,
+    getInternalStateVariablePosition(const Hypothesis,
 				     const std::string&) const = 0;
     /*!
      * \return the number of external variables
@@ -208,11 +205,11 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis) = 0;
+    allocate(const Hypothesis) = 0;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual MTestStiffnessMatrixType::mtype
+    virtual StiffnessMatrixType::mtype
     getDefaultStiffnessMatrixType(void) const = 0;
     /*!
      * \brief compute the *real* rotation matrix
@@ -246,8 +243,8 @@ namespace mfront
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
-			      const tfel::material::ModellingHypothesis::Hypothesis,
-			      const MTestStiffnessMatrixType::mtype) const = 0;
+			      const Hypothesis,
+			      const StiffnessMatrixType::mtype) const = 0;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -278,14 +275,14 @@ namespace mfront
 	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,
 	      const tfel::math::vector<real>&,
-	      const tfel::material::ModellingHypothesis::Hypothesis,
+	      const Hypothesis,
 	      const real,
-	      const MTestStiffnessMatrixType::mtype) const = 0;
+	      const StiffnessMatrixType::mtype) const = 0;
     //! destructor
     virtual ~Behaviour();
   }; // end of struct Behaviour
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTBEHAVIOUR_H_ */
 

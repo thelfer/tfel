@@ -17,7 +17,7 @@
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/UmatBehaviourBase.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
@@ -59,7 +59,7 @@ namespace mfront
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual MTestStiffnessMatrixType::mtype
+    virtual StiffnessMatrixType::mtype
     getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
@@ -84,7 +84,7 @@ namespace mfront
 			      const tfel::math::vector<real>&,
 			      const tfel::math::vector<real>&,
 			      const tfel::material::ModellingHypothesis::Hypothesis,
-			      const MTestStiffnessMatrixType::mtype) const override;
+			      const StiffnessMatrixType::mtype) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
@@ -117,7 +117,7 @@ namespace mfront
 	      const tfel::math::vector<real>&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
-	      const MTestStiffnessMatrixType::mtype) const override;
+	      const StiffnessMatrixType::mtype) const override;
     /*!
      * \brief some interfaces requires dummy material properties to be
      * declared. For example, the Cast3M finite element solver
@@ -166,7 +166,7 @@ namespace mfront
 		   const tfel::math::vector<real>&,
 		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
-		   const MTestStiffnessMatrixType::mtype,
+		   const StiffnessMatrixType::mtype,
 		   const bool) const;
     //! the aster fonction
     tfel::system::AsterFctPtr fct;
@@ -176,7 +176,7 @@ namespace mfront
     mutable tfel::math::vector<real> ivs;
   }; // end of struct AsterCohesiveZoneModel
   
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTASTERCOHESIVEZONEMODELBEHAVIOUR_H_ */
 

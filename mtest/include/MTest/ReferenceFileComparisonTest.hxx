@@ -24,7 +24,7 @@
 
 #include"MTest/MTest.hxx"
 
-namespace mfront{
+namespace mtest{
 
   /*!
    * Test based on the comparison of the solution to a reference file
@@ -86,7 +86,7 @@ namespace mfront{
     const real eps;
   }; 
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTESTREFERENCEFILECOMPARISONTEST_H_ */
 

@@ -15,6 +15,10 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+// a small trick so that the compiler refers to the original file for
+// error reports
+#line 21 "@abs_top_srcdir@/mfront/tests/unit-tests/MTestParserTest.cxx.in"
+
 #include<cstdlib>
 #include<stdexcept>
 
@@ -112,10 +116,10 @@ struct MTestParserTest final
   } // end of execute()
  private:
   void check(const std::string& s){
-    mfront::MTest m;
-    auto p = m.getParser();
+    mtest::MTest m;
+    mtest::MTestParser p;
     try{
-      p->parseString(s);
+      p.parseString(m,s);
     }
     catch(std::runtime_error& e){
       TestCase::registerResult("analysing '"+s+"' has thrown as expected "

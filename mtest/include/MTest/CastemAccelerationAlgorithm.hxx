@@ -14,16 +14,16 @@
 #ifndef LIB_MFRONT_MTEST_MTESTCASTEMACCELERATIONALGORITHM_H_
 #define LIB_MFRONT_MTEST_MTESTCASTEMACCELERATIONALGORITHM_H_ 
 
-#include"MTest/MTestConfig.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   /*!
    * \brief This class implements the Cast3M acceleration algorithm.
    */
-  struct MFRONT_MTEST_VISIBILITY_EXPORT CastemAccelerationAlgorithm final
+  struct MTEST_VISIBILITY_EXPORT CastemAccelerationAlgorithm final
     : public AccelerationAlgorithm
   {
     //! default constructor
@@ -91,7 +91,7 @@ namespace mfront
     int cap;
   }; // end of struct CastemAccelerationAlgorithm
 
-} // end of namespace mfront
+} // end of namespace mtest
 
 #endif /* LIB_MFRONT_MTEST_MTESTCASTEMACCELERATIONALGORITHM_H_ */
 

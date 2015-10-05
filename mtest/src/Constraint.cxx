@@ -13,10 +13,10 @@
 
 #include"MTest/Constraint.hxx"
 
-namespace mfront
+namespace mtest
 {
 
   Constraint::~Constraint()
   {} // end of Constraint::~Constraint
 
-} // end of namespace mfront
+} // end of namespace mtest

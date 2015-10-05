@@ -15,7 +15,7 @@
 
 #include"MTest/FunctionEvolution.hxx"
 
-namespace mfront{
+namespace mtest{
 
   FunctionEvolution::FunctionEvolution(const std::string& f_,
 						 const std::shared_ptr<std::map<std::string,

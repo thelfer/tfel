@@ -15,7 +15,7 @@
 #include<cmath>
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 
-namespace mfront{
+namespace mtest{
 
   void
   UmatNormaliseTangentOperator::exe(tfel::math::matrix<real>& Kt,
@@ -71,5 +71,5 @@ namespace mfront{
     }
   } // end of UmatNormaliseTangentOperator::exe
 
-} // end of namespace mfront
+} // end of namespace mtest
 
