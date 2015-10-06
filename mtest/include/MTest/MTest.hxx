@@ -32,7 +32,6 @@
 #include"MTest/SchemeBase.hxx"
 #include"MTest/Types.hxx"
 #include"MTest/Constraint.hxx"
-#include"MTest/Evolution.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
 namespace mtest
@@ -341,68 +340,11 @@ namespace mtest
 			       unsigned short&,
 			       const std::string&);
     /*!
-     * \return the list of evolutions
-     */
-    std::shared_ptr<EvolutionManager>
-    getEvolutions() const;
-    /*!
      * \brief add a new test
      * \param[in] t : test to be added
      */
     virtual void
     addTest(std::shared_ptr<UTest>);
-    /*!
-     * \brief add a new evolution
-     * \param[in] n  : evolution name
-     * \param[in] p  : evolution pointer
-     * \param[in] b1 : declare the variable.
-     * \param[in] b2 : check if the evolution already exists.
-     * \note if b1 is false, we check that the variable is already
-     * declared. Otherwise, an exeception is thrown.
-     * \note if b2 is true and the evolution already exists, an
-     * exeception is thrown.
-     */
-    virtual void
-    addEvolution(const std::string&,
-		 const EvolutionPtr,
-		 const bool,
-		 const bool);
-    /*!
-     * \brief set evolution value for a given time
-     * \param[in] n  : evolution name
-     * \param[in] t  : time
-     * \param[in] v  : value
-     *
-     * \note the evolution *must* be of type MTestLPIEvolution
-     */
-    virtual void
-    setEvolutionValue(const std::string&,
-		      const real,
-		      const real);
-    /*!
-     * \brief define a material property
-     * \param[in] n     : evolution name
-     * \param[in] p     : evolution pointer
-     * \param[in] check : check if the evolution already exists.
-     * \note if check is true and the evolution already exists, an
-     * exeception is thrown.
-     */
-    virtual void
-    setMaterialProperty(const std::string&,
-			const EvolutionPtr,
-			const bool);
-    /*!
-     * \brief define an external state variable
-     * \param[in] n     : evolution name
-     * \param[in] p     : evolution pointer
-     * \param[in] check : check if the evolution already exists.
-     * \note if check is true and the evolution already exists, an
-     * exeception is thrown.
-     */
-    virtual void
-    setExternalStateVariable(const std::string&,
-			     const EvolutionPtr,
-			     const bool);
     /*!
      * \brief set the inital values of the driving variable
      * \param[in] v : values
@@ -462,7 +404,7 @@ namespace mtest
      * \return the number of unknowns (size of driving variables plus
      * the number of lagrangian multipliers)
      */
-    size_t getNumberOfUnknowns(void) const;
+    virtual size_t getNumberOfUnknowns(void) const override;
     //! output file precision
     int oprec;
     //! residual file precision
@@ -475,10 +417,6 @@ namespace mtest
     tfel::math::tmatrix<3u,3u,real> rm;
     //! boolean, true if the rotation matrix has been defined by the user
     bool isRmDefined;
-    //! list of evolutions
-    std::shared_ptr<EvolutionManager> evm;
-    //! default values for material properties as given by the behaviour
-    std::shared_ptr<EvolutionManager> defaultMaterialPropertiesValues;
     //! output file name
     std::string output;
     //! output file

@@ -9,6 +9,7 @@
 
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
+#include"MFront/MFrontLogStream.hxx"
 #include"MTest/Behaviour.hxx"
 #ifdef HAVE_CASTEM
 #include"MTest/UmatSmallStrainBehaviour.hxx"
@@ -25,15 +26,150 @@
 #endif /* HAVE_CYRANO  */
 #include"MTest/AccelerationAlgorithmFactory.hxx"
 #include"MTest/CastemAccelerationAlgorithm.hxx"
+#include"MTest/Evolution.hxx"
 #include"MTest/SchemeBase.hxx"
 
 namespace mtest{
 
+  static void
+  checkIfDeclared(const std::vector<std::string>& names,
+		  const EvolutionManager& m,
+		  const std::string& type)
+  {
+    for(const auto& n : names){
+      if(m.find(n)==m.end()){
+	throw(std::runtime_error("no '"+type+"' named '"+
+				 n+"' declared"));
+      }
+    }
+  }
+
+  static void
+  checkIfDeclared(const std::vector<std::string>& names,
+		  const EvolutionManager& evm1,
+		  const EvolutionManager& evm2,
+		  const std::string& type)
+  {
+    for(const auto& n : names){
+      if(evm1.find(n)==evm1.end()){
+	if(evm2.find(n)==evm2.end()){
+	  throw(std::runtime_error("no "+type+" named '"+
+				   n+"' declared"));
+	}
+      }
+    }
+  }
+  
+  SchemeBase::SchemeBase()
+    : defaultMaterialPropertiesValues(new EvolutionManager()),
+      evm(new EvolutionManager())
+  {
+    // declare time variable
+    this->declareVariable("t",true);
+  } // end of SchemeBase::SchemeBase
+
+  void
+  SchemeBase::addEvolution(const std::string& n,
+			   const EvolutionPtr p,
+			   const bool b1,
+			   const bool b2)
+  {
+    if(b1){
+      this->declareVariable(n,b1);
+    } else {
+      if(find(this->vnames.begin(),this->vnames.end(),n)==this->vnames.end()){
+	throw(std::runtime_error("SchemeBase::addEvolution: "
+				 "variable '"+n+"' is not defined"));
+      }
+    }
+    if(b2){
+      if(this->evm->find(n)!=this->evm->end()){
+	throw(std::runtime_error("SchemeBase::addEvolution: "
+				 "evolution '"+n+"' already defined"));
+      }
+    }
+    (*(this->evm))[n] = p;
+  }
+
+  void
+  SchemeBase::setEvolutionValue(const std::string& n,
+			   const real t,
+			   const real v)
+  {
+    const auto pev = this->evm->find(n);
+    if(pev==this->evm->end()){
+      throw(std::runtime_error("SchemeBase::setEvolutionValue : no evolution '"+
+			       n+"' declared"));
+    }
+    pev->second->setValue(t,v);
+  } // end of SchemeBase::setEvolutionValue
+
+  std::shared_ptr<EvolutionManager>
+  SchemeBase::getEvolutions() const
+  {
+    return this->evm;
+  } // end of SchemeBase::getEvolutions() const
+
+  void
+  SchemeBase::setMaterialProperty(const std::string& n,
+			     const EvolutionPtr p,
+			     const bool check)
+  {
+    using namespace std;
+    if(this->b.get()==nullptr){
+      throw(std::runtime_error("SchemeBase::setMaterialProperty: "
+			       "no behaviour defined"));
+    }
+    const auto& mpnames = this->b->getMaterialPropertiesNames();
+    bool is_mp = find(mpnames.begin(),mpnames.end(),n)==mpnames.end();
+    if((is_mp)&&(n!="ThermalExpansion") &&(n!="ThermalExpansion1")&&
+       (n!="ThermalExpansion2")&&(n!="ThermalExpansion3")){
+      ostringstream msg;
+      msg << "SchemeBase::setMaterialProperty: "
+	  << "the behaviour don't declare a material property '" << n << "'.";
+      if(!mpnames.empty()){
+	msg << "\nThe behaviour declares:";
+	for(const auto& n : mpnames){
+	  msg << "\n- '" << n << "'";
+	}
+      }
+      throw(runtime_error(msg.str()));
+    }
+    if((n=="ThermalExpansion") ||(n=="ThermalExpansion1")||
+       (n=="ThermalExpansion2")||(n=="ThermalExpansion3")){
+      if(is_mp){
+	this->addEvolution(n,p,true,check);
+      } else {
+	this->addEvolution(n,p,false,check);
+      }
+    } else {
+      this->addEvolution(n,p,false,check);
+    }
+  }
+
+  void
+  SchemeBase::setExternalStateVariable(const std::string& n,
+				  const EvolutionPtr p,
+				  const bool check)
+  {
+    if(this->b.get()==nullptr){
+      throw(std::runtime_error("SchemeBase::setExternalStateVariable: "
+			       "no behaviour defined"));
+    }
+    const auto& evsnames = this->b->getExternalStateVariablesNames();
+    if(find(evsnames.begin(),evsnames.end(),n)==evsnames.end()){
+      throw(std::runtime_error("SchemeBase::setExternalStateVariable: "
+			       "the behaviour don't declare an "
+			       "external state variable named '"+n+"'"));
+    }
+    this->addEvolution(n,p,false,check);
+  }
+  
   void
   SchemeBase::setTimes(const std::vector<real>& t)
   {
     if(!this->times.empty()){
-      throw(std::runtime_error("SchemeBase::setTimes : "
+      throw(std::runtime_error("SchemeBase::setTimes: "
 			       "times already defined"));
     }
     this->times=t;
@@ -43,12 +179,12 @@ namespace mtest{
   SchemeBase::setMaximumNumberOfIterations(const unsigned int i)
   {
     if(this->iterMax!=-1){
-      throw(std::runtime_error("SchemeBase::setMaximumNumberOfIterations : "
+      throw(std::runtime_error("SchemeBase::setMaximumNumberOfIterations: "
 			       "the maximum number of iterations "
 			       "has already been declared"));
     }
     if(i==0){
-      throw(std::runtime_error("SchemeBase::setMaximumNumberOfIterations : "
+      throw(std::runtime_error("SchemeBase::setMaximumNumberOfIterations: "
 			       "invalid number of iterations"));
     }
     this->iterMax = static_cast<int>(i);
@@ -58,12 +194,12 @@ namespace mtest{
   SchemeBase::setMaximumNumberOfSubSteps(const unsigned int i)
   {
     if(this->mSubSteps!=-1){
-      throw(std::runtime_error("SchemeBase::setMaximumNumberOfSubSteps : "
+      throw(std::runtime_error("SchemeBase::setMaximumNumberOfSubSteps: "
 			       "the maximum number of sub steps "
 			       "has already been declared"));
     }
     if(i==0){
-      throw(std::runtime_error("SchemeBase::setMaximumNumberOfSubSteps : "
+      throw(std::runtime_error("SchemeBase::setMaximumNumberOfSubSteps: "
 			       "invalid number of sub steps"));
     }
     this->mSubSteps = static_cast<int>(i);
@@ -73,7 +209,7 @@ namespace mtest{
   SchemeBase::setDescription(const std::string& d)
   {
     if(!this->description.empty()){
-      throw(std::runtime_error("SchemeBase::setDescription : "
+      throw(std::runtime_error("SchemeBase::setDescription: "
 			       "description already set."));
     }
     this->description = d;
@@ -83,7 +219,7 @@ namespace mtest{
   SchemeBase::setAuthor(const std::string& a)
   {
     if(!this->author.empty()){
-      throw(std::runtime_error("SchemeBase::setAuthor : "
+      throw(std::runtime_error("SchemeBase::setAuthor: "
 			       "author already set."));
     }
     this->author = a;
@@ -103,7 +239,7 @@ namespace mtest{
   SchemeBase::setDate(const std::string& d)
   {
     if(!this->date.empty()){
-      throw(std::runtime_error("SchemeBase::setDate : "
+      throw(std::runtime_error("SchemeBase::setDate: "
 			       "date already set."));
     }
     this->date = d;
@@ -122,7 +258,7 @@ namespace mtest{
       this->setDefaultHypothesis();
     }
     if(this->b.get()!=nullptr){
-      throw(std::runtime_error("SchemeBase::setBehaviour : "
+      throw(std::runtime_error("SchemeBase::setBehaviour: "
 			       "behaviour already defined"));
     }
 #ifdef HAVE_CASTEM
@@ -137,7 +273,7 @@ namespace mtest{
 	this->b = shared_ptr<Behaviour>(new UmatCohesiveZoneModel(this->hypothesis,l,f));
       } else {
 	ostringstream msg;
-	msg << "SchemeBase::setBehaviour : "
+	msg << "SchemeBase::setBehaviour: "
 	  "unsupported behaviour type (" << type << ")";
 	throw(runtime_error(msg.str()));
       }
@@ -155,7 +291,7 @@ namespace mtest{
 	this->b = shared_ptr<Behaviour>(new AsterCohesiveZoneModel(this->hypothesis,l,f));
       } else {
 	ostringstream msg;
-	msg << "SchemeBase::setBehaviour : "
+	msg << "SchemeBase::setBehaviour: "
 	  "unsupported behaviour type (" << type << ")";
 	throw(runtime_error(msg.str()));
       }
@@ -167,7 +303,7 @@ namespace mtest{
     }
 #endif
     if(this->b.get()==nullptr){
-      throw(runtime_error("SchemeBase::setBehaviour : "
+      throw(runtime_error("SchemeBase::setBehaviour: "
 			  "unknown interface '"+i+"'"));
     }
     const auto& ivnames = this->b->getInternalStateVariablesNames();
@@ -195,7 +331,7 @@ namespace mtest{
 	  this->ivfullnames.push_back(vn);
 	}
       } else {
-	throw(runtime_error("SchemeBase::setBehaviour : "
+	throw(runtime_error("SchemeBase::setBehaviour: "
 			    "unsupported variable type for variable '"+n+"'"));
       }
     }
@@ -210,7 +346,7 @@ namespace mtest{
   {
     using namespace std;
     if(this->b.get()==nullptr){
-      string msg("SchemeBase::setParameter : ");
+      string msg("SchemeBase::setParameter: ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
@@ -223,7 +359,7 @@ namespace mtest{
   {
     using namespace std;
     if(this->b.get()==nullptr){
-      string msg("SchemeBase::setIntegerParameter : ");
+      string msg("SchemeBase::setIntegerParameter: ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
@@ -236,7 +372,7 @@ namespace mtest{
   {
     using namespace std;
     if(this->b.get()==nullptr){
-      string msg("SchemeBase::setUnsignedIntegerParameter : ");
+      string msg("SchemeBase::setUnsignedIntegerParameter: ");
       msg += "no behaviour defined";
       throw(runtime_error(msg));
     }
@@ -248,7 +384,7 @@ namespace mtest{
   {
     typedef tfel::material::ModellingHypothesis MH;
     if(this->dimension!=0){
-      throw(std::runtime_error("SchemeBase::setModellingHypothesis : "
+      throw(std::runtime_error("SchemeBase::setModellingHypothesis: "
 			       "the modelling hypothesis is already defined"));
     }
     if(h=="AxisymmetricalGeneralisedPlaneStrain"){
@@ -273,7 +409,7 @@ namespace mtest{
       this->dimension  = 3u;
       this->hypothesis = MH::TRIDIMENSIONAL;
     } else {
-      throw(std::runtime_error("SchemeBase::setModellingHypothesis : "
+      throw(std::runtime_error("SchemeBase::setModellingHypothesis: "
 			       "unsupported hypothesis '"+h+"'"));
     }
   } // end of SchemeBase::setModellingHypothesis
@@ -282,7 +418,7 @@ namespace mtest{
   SchemeBase::getModellingHypothesis() const
   {
     if(this->dimension==0){
-      throw(std::runtime_error("SchemeBase::getModellingHypothesis : "
+      throw(std::runtime_error("SchemeBase::getModellingHypothesis: "
 			       "the modelling hypothesis is not defined"));
     }
     return this->hypothesis;
@@ -321,7 +457,7 @@ namespace mtest{
   SchemeBase::setAccelerationAlgorithm(const std::string& a)
   {
     if(this->aa.get()!=nullptr){
-      throw(std::runtime_error("SchemeBase::setAccelerationAlgorithm : "
+      throw(std::runtime_error("SchemeBase::setAccelerationAlgorithm: "
 			       "acceleration algorithm already set"));
     }
     auto& f = AccelerationAlgorithmFactory::getAccelerationAlgorithmFactory();
@@ -333,7 +469,7 @@ namespace mtest{
 					   const std::string& v)
   {
     if(this->aa.get()==nullptr){
-      throw(std::runtime_error("SchemeBase::setAccelerationAlgorithmParameter : "
+      throw(std::runtime_error("SchemeBase::setAccelerationAlgorithmParameter: "
 			       "no acceleration algorithm set"));
     }
     this->aa->setParameter(p,v);
@@ -343,7 +479,7 @@ namespace mtest{
   SchemeBase::setPredictionPolicy(const SchemeBase::PredictionPolicy p)
   {
     if(this->ppolicy!=UNSPECIFIEDPREDICTIONPOLICY){
-      throw(std::runtime_error("SchemeBase::setPredictionPolicy : "
+      throw(std::runtime_error("SchemeBase::setPredictionPolicy: "
 			       "prediction policy already declared"));
     }
     this->ppolicy = p;
@@ -353,7 +489,7 @@ namespace mtest{
   SchemeBase::setStiffnessMatrixType(const StiffnessMatrixType::mtype k)
   {
     if(this->ktype!=StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
-      throw(std::runtime_error("SchemeBase::setStiffnessMatrixType : "
+      throw(std::runtime_error("SchemeBase::setStiffnessMatrixType: "
 			       "stiffness matrix type already specificed"));
     }
     this->ktype = k;
@@ -364,7 +500,7 @@ namespace mtest{
   {
     if(ucaa){
       if(this->aa.get()!=nullptr){
-	throw(std::runtime_error("SchemeBase::setUseCastemAccelerationAlgorithm : "
+	throw(std::runtime_error("SchemeBase::setUseCastemAccelerationAlgorithm: "
 				 "an algorithm was already set"));
       }
       this->aa = std::shared_ptr<AccelerationAlgorithm>(new CastemAccelerationAlgorithm);
@@ -376,7 +512,7 @@ namespace mtest{
   SchemeBase::setCastemAccelerationTrigger(const int i)
   {
     if(!this->useCastemAcceleration){
-      throw(std::runtime_error("SchemeBase::setCastemAccelerationTrigger : "
+      throw(std::runtime_error("SchemeBase::setCastemAccelerationTrigger: "
 			       "the castem acceleration algorithm has "
 			       "not been set using the "
 			       "@UseCast3mAccelerationAlgorithm keyword. "
@@ -387,7 +523,7 @@ namespace mtest{
 			       "keyword to specify the acceleration trigger."));
     }
     if(this->aa.get()==nullptr){
-      throw(std::runtime_error("SchemeBase::setCastemAccelerationTrigger : "
+      throw(std::runtime_error("SchemeBase::setCastemAccelerationTrigger: "
 			       "internal error"));
     }
     std::ostringstream nb;
@@ -400,7 +536,7 @@ namespace mtest{
   SchemeBase::setCastemAccelerationPeriod(const int p)
   {
     if(!this->useCastemAcceleration){
-      throw(std::runtime_error("SchemeBase::setCastemAccelerationPeriod : "
+      throw(std::runtime_error("SchemeBase::setCastemAccelerationPeriod: "
 			       "the castem acceleration algorithm has not "
 			       "been set using the "
 			       "@UseCast3mAccelerationAlgorithm keyword. "
@@ -411,7 +547,7 @@ namespace mtest{
 			       "specify the acceleration period."));
     }
     if(this->aa.get()==nullptr){
-      throw(std::runtime_error("SchemeBase::setCastemAccelerationPeriod : "
+      throw(std::runtime_error("SchemeBase::setCastemAccelerationPeriod: "
 			       "internal error"));
     }
     std::ostringstream nb;
@@ -423,11 +559,81 @@ namespace mtest{
   SchemeBase::setStiffnessUpdatingPolicy(const SchemeBase::StiffnessUpdatingPolicy p)
   {
     if(this->ks!=SchemeBase::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY){
-      throw(std::runtime_error("SchemeBase::setStiffnessUpdatePolicy : "
+      throw(std::runtime_error("SchemeBase::setStiffnessUpdatePolicy: "
 			       "stiffness matrix type already specificed"));
     }
     this->ks = p;
   } // end of SchemeBase::setStiffnessUpdatingPolicy
+
+  void
+  SchemeBase::completeInitialisation(void)
+  {
+    if(this->initialisationFinished){
+      throw(std::runtime_error("MTest::completeInitialisation : "
+			       "object already initialised"));
+    }
+    if(this->dimension==0u){
+      this->setDefaultHypothesis();
+    }
+    if(this->b.get()==nullptr){
+      throw(std::runtime_error("MTest::completeInitialisation : "
+			       "no behaviour defined"));
+    }
+    // check if material properties and external state variables are declared
+    const auto mpnames  = this->b->getMaterialPropertiesNames();
+    const auto esvnames = this->b->getExternalStateVariablesNames();
+    this->b->setOptionalMaterialPropertiesDefaultValues(*(this->defaultMaterialPropertiesValues),
+							*(this->evm));
+    checkIfDeclared(mpnames,*(this->evm),*(this->defaultMaterialPropertiesValues),
+		    "material property");
+    checkIfDeclared(esvnames,*(this->evm),"external state variable");
+    // numerical parameters
+    if(this->mSubSteps==-1){
+      this->mSubSteps=10;
+    }
+    if(this->iterMax==-1){
+      this->iterMax=100;
+    }
+    if(this->aa.get()!=nullptr){
+      this->aa->initialize(this->getNumberOfUnknowns());
+    }
+    // prediction policy
+    if(this->ppolicy==UNSPECIFIEDPREDICTIONPOLICY){
+      this->ppolicy=NOPREDICTION;
+    }
+    // stiffness matrix type
+    if(this->ktype==StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
+      this->ktype = this->b->getDefaultStiffnessMatrixType();
+    }
+    // options selected
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+      auto& log = mfront::getLogStream();
+      if(this->aa.get()!=nullptr){
+	log << "** " << this->aa->getName()
+	    << " acceleration algorithm selected\n";
+      }
+      if(this->ppolicy==LINEARPREDICTION){
+	log << "** using linear prediction\n";
+      } else if(this->ppolicy==ELASTICPREDICTION){
+	log << "** prediction using elastic stiffness\n";
+      } else if(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES){
+	log << "** prediction using elastic stiffness computed from material properties\n";
+      } else if(this->ppolicy==TANGENTOPERATORPREDICTION){
+	log << "** prediction using tangent operator\n";
+      } else {
+	if(this->ppolicy!=NOPREDICTION){
+	  throw(std::runtime_error("MTest::completeInitialisation : "
+				   "internal error, unsupported "
+				   "prediction policy"));
+	}	    
+	log << "** no prediction\n";
+      }
+    }
+    // allocating behaviour workspace
+    this->b->allocate(this->hypothesis);
+    // initialisation is complete
+    this->initialisationFinished = true;
+  } // end of SchemeBase::completeInitialisation
   
   void
   SchemeBase::declareVariable(const std::string& v,
@@ -436,7 +642,7 @@ namespace mtest{
     if(find(this->vnames.begin(),this->vnames.end(),v)!=
        this->vnames.end()){
       if(check){
-	throw(std::runtime_error("SchemeBase::declareVariable : "
+	throw(std::runtime_error("SchemeBase::declareVariable: "
 				 "variable '"+v+"' already declared"));
       }
     } else {

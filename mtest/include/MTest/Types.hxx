@@ -27,9 +27,9 @@ namespace mtest
   //! forward declaration
   struct Evolution;
   // ! a simple alias
-  typedef std::shared_ptr<Evolution> EvolutionPtr;
+  using EvolutionPtr = std::shared_ptr<Evolution>;
   // ! a simple alias
-  typedef std::map<std::string,EvolutionPtr> EvolutionManager;
+  using EvolutionManager = std::map<std::string,EvolutionPtr>;
 
   /*!
    * \brief possible type of stiffness matrix

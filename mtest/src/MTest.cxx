@@ -57,73 +57,32 @@
 namespace mtest
 {
 
-  static void
-  checkIfDeclared(const std::vector<std::string>& n,
-		  const EvolutionManager& m,
-		  const std::string& type)
-  {
-    using namespace std;
-    for(auto p=n.cbegin();p!=n.cend();++p){
-      if(m.find(*p)==m.end()){
-	string msg("no '"+type+"' named '"+*p+"' declared");
-	throw(runtime_error(msg));
-      }
-    }
-  }
-
-  static void
-  checkIfDeclared(const std::vector<std::string>& n,
-		  const EvolutionManager& evm1,
-		  const EvolutionManager& evm2,
-		  const std::string& type)
-  {
-    using namespace std;
-    for(auto p=n.begin();p!=n.end();++p){
-      if(evm1.find(*p)==evm1.end()){
-	if(evm2.find(*p)==evm2.end()){
-	  string msg("no "+type+" named '"+*p+"' declared");
-	  throw(runtime_error(msg));
-	}
-      }
-    }
-  }
-
   static unsigned short
   getStensorSize(const unsigned short d)
   {
-    using namespace std;
-    unsigned short s = 0u;
     if(d==1){
-      s=3;
+      return 3;
     } else if(d==2){
-      s=4;
+      return 4;
     } else if(d==3){
-      s=6;
-    } else {
-      string msg("mfront::getStensorSize : ");
-      msg += "";
-      throw(runtime_error(msg));
+      return 6;
     }
-    return s;
+    throw(std::runtime_error("mtest::getStensorSize: "
+			     "invalid dimenstion"));
   }
 
   static unsigned short
   getTensorSize(const unsigned short d)
   {
-    using namespace std;
-    unsigned short s = 0u;
     if(d==1){
-      s=3;
+      return 3;
     } else if(d==2){
-      s=5;
+      return 5;
     } else if(d==3){
-      s=9;
-    } else {
-      string msg("mfront::getTensorSize : ");
-      msg += "";
-      throw(runtime_error(msg));
+      return 9;
     }
-    return s;
+    throw(std::runtime_error("mtest::getTensorSize: "
+			     "invalid dimenstion"));
   }
 
   MTest::MTestCurrentState::MTestCurrentState() = default;
@@ -142,18 +101,13 @@ namespace mtest
       rprec(-1),
       rm(real(0)),
       isRmDefined(false),
-      evm(new EvolutionManager()),
-      defaultMaterialPropertiesValues(new EvolutionManager()),
       eeps(-1.),
       seps(-1.),
       handleThermalExpansion(true),
       toeps(-1),
       pv(-1),
       cto(false)
-  {
-    // declare time variable
-    this->declareVariable("t",true);
-  }
+  {}
 
   void MTest::readInputFile(const std::string& f){
     MTestParser p;
@@ -161,23 +115,10 @@ namespace mtest
   } // end of MTest::readInputFile
 
   void
-  MTest::setEvolutionValue(const std::string& n,
-			   const real t,
-			   const real v)
-  {
-    const auto pev = this->evm->find(n);
-    if(pev==this->evm->end()){
-      throw(std::runtime_error("MTest::setEvolutionValue : no evolution '"+
-			       n+"' declared"));
-    }
-    pev->second->setValue(t,v);
-  } // end of MTest::setEvolutionValue
-
-  void
   MTest::setHandleThermalExpansion(const bool b1)
   {
     if(!this->handleThermalExpansion){
-      throw(std::runtime_error("MTest::setHandleThermalExpansion : "
+      throw(std::runtime_error("MTest::setHandleThermalExpansion: "
 			       "thermal expansion is not handled"));
     }
     this->handleThermalExpansion = b1;
@@ -196,88 +137,6 @@ namespace mtest
   MTest::classname(void) const
   {
     return "MTest";
-  }
-
-  void
-  MTest::addEvolution(const std::string& n,
-		      const EvolutionPtr p,
-		      const bool b1,
-		      const bool b2)
-  {
-    if(b1){
-      this->declareVariable(n,b1);
-    } else {
-      if(find(this->vnames.begin(),this->vnames.end(),n)==this->vnames.end()){
-	throw(std::runtime_error("MTest::addEvolution : "
-				 "variable '"+n+"' is not defined"));
-      }
-    }
-    if(b2){
-      if(this->evm->find(n)!=this->evm->end()){
-	throw(std::runtime_error("MTest::addEvolution : "
-				 "evolution '"+n+"' already defined"));
-      }
-    }
-    (*(this->evm))[n] = p;
-  }
-
-  void
-  MTest::setMaterialProperty(const std::string& n,
-			     const EvolutionPtr p,
-			     const bool check)
-  {
-    using namespace std;
-    if(this->b.get()==nullptr){
-      string msg("MTest::setMaterialProperty : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    const auto& mpnames = this->b->getMaterialPropertiesNames();
-    bool is_mp = find(mpnames.begin(),mpnames.end(),n)==mpnames.end();
-    if((is_mp)&&(n!="ThermalExpansion") &&(n!="ThermalExpansion1")&&
-       (n!="ThermalExpansion2")&&(n!="ThermalExpansion3")){
-      ostringstream msg;
-      msg << "MTest::setMaterialProperty : "
-	  << "the behaviour don't declare a material property '" << n+"'.";
-      if(!mpnames.empty()){
-	msg << "\nThe behaviour declares:";
-	for(vector<string>::const_iterator pn=mpnames.begin();pn!=mpnames.end();++pn){
-	  msg << "\n- '" << *pn << "'";
-	}
-      }
-      throw(runtime_error(msg.str()));
-    }
-    if((n=="ThermalExpansion") ||(n=="ThermalExpansion1")||
-       (n=="ThermalExpansion2")||(n=="ThermalExpansion3")){
-      if(is_mp){
-	this->addEvolution(n,p,true,check);
-      } else {
-	this->addEvolution(n,p,false,check);
-      }
-    } else {
-      this->addEvolution(n,p,false,check);
-    }
-  }
-
-  void
-  MTest::setExternalStateVariable(const std::string& n,
-				  const EvolutionPtr p,
-				  const bool check)
-  {
-    using namespace std;
-    if(this->b.get()==nullptr){
-      string msg("MTest::setExternalStateVariable : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
-    }
-    const auto& evsnames = this->b->getExternalStateVariablesNames();
-    if(find(evsnames.begin(),evsnames.end(),n)==evsnames.end()){
-      string msg("MTestParser::setExternalStateVariable : ");
-      msg += "the behaviour don't declare an external state variable '";
-      msg += n+"'";
-      throw(runtime_error(msg));
-    }
-    this->addEvolution(n,p,false,check);
   }
 
   void
@@ -322,42 +181,36 @@ namespace mtest
   MTest::setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>& r,
 			   const bool bo)
   {
-    using namespace std;
     using namespace tfel::math;
     if((this->isRmDefined)&&(!bo)){
-      string msg("MTest::setRotationMatrix : "
-		 "rotation matrix already defined");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setRotationMatrix: "
+			       "rotation matrix already defined"));
     }
     if(this->b.get()==nullptr){
-      string msg("MTest::setRotationMatrix : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setRotationMatrix: "
+			       "no behaviour defined"));
     }
     if(this->b->getSymmetryType()!=1){
-      string msg("MTest::setRotationMatrix : "
-		 "rotation matrix may only be defined "
-		 "for orthotropic behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setRotationMatrix: "
+			       "rotation matrix may only be defined "
+			       "for orthotropic behaviours"));
     }
     this->isRmDefined = true;
     // checking that the given matrix is a rotation one
-    tvector<3u,real> c0 = r.column_view<0>();
-    tvector<3u,real> c1 = r.column_view<1>();
-    tvector<3u,real> c2 = r.column_view<2>();
-    if((abs(norm(c0)-real(1))>100*numeric_limits<real>::epsilon())||
-       (abs(norm(c1)-real(1))>100*numeric_limits<real>::epsilon())||
-       (abs(norm(c2)-real(1))>100*numeric_limits<real>::epsilon())){
-      string msg("MTest::setRotationMatrix : "
-		 "at least one column is not normalised");
-      throw(runtime_error(msg));
+    const tvector<3u,real> c0 = r.column_view<0>();
+    const tvector<3u,real> c1 = r.column_view<1>();
+    const tvector<3u,real> c2 = r.column_view<2>();
+    if((abs(norm(c0)-real(1))>100*std::numeric_limits<real>::epsilon())||
+       (abs(norm(c1)-real(1))>100*std::numeric_limits<real>::epsilon())||
+       (abs(norm(c2)-real(1))>100*std::numeric_limits<real>::epsilon())){
+      throw(std::runtime_error("MTest::setRotationMatrix: "
+			       "at least one column is not normalised"));
     }
-    if((abs(c0|c1)>100*numeric_limits<real>::epsilon())||
-       (abs(c0|c2)>100*numeric_limits<real>::epsilon())||
-       (abs(c1|c2)>100*numeric_limits<real>::epsilon())){
-      string msg("MTest::setRotationMatrix : "
-		 "at least two columns are not orthogonals");
-      throw(runtime_error(msg));
+    if((abs(c0|c1)>100*std::numeric_limits<real>::epsilon())||
+       (abs(c0|c2)>100*std::numeric_limits<real>::epsilon())||
+       (abs(c1|c2)>100*std::numeric_limits<real>::epsilon())){
+      throw(std::runtime_error("MTest::setRotationMatrix : "
+			       "at least two columns are not orthogonals"));
     }
     this->rm = r;
   }
@@ -367,10 +220,9 @@ namespace mtest
 				    unsigned short& pos,
 				    const std::string& n)
   {
-    using namespace std;
     if(this->b.get()==nullptr){
-      throw(runtime_error("MTest::getVariableTypeAndPosition : "
-			  "no behaviour defined"));
+      throw(std::runtime_error("MTest::getVariableTypeAndPosition : "
+			       "no behaviour defined"));
     }
     const auto enames = this->b->getDrivingVariablesComponents(this->hypothesis);
     const auto snames = this->b->getThermodynamicForcesComponents(this->hypothesis);
@@ -392,30 +244,26 @@ namespace mtest
       type = MTest::UTest::INTERNALSTATEVARIABLE;
       return;
     } 
-    string msg("MTest::getVariableTypeAndPosition : "
-	       "no variable name '"+n+"'");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("MTest::getVariableTypeAndPosition : "
+			     "no variable name '"+n+"'"));
   } // end of MTest::getVariableTypeAndPosition
 
   void
   MTest::setDefaultHypothesis(void)
   {
-    using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
     if(this->hypothesis!=MH::UNDEFINEDHYPOTHESIS){
-      string msg("MTest::setDefaultHypothesis : "
-		 "internal error : the modelling "
-		 "hypothesis is already defined");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setDefaultHypothesis: "
+			       "internal error : the modelling "
+			       "hypothesis is already defined"));
     }
     if(this->b.get()!=nullptr){
-      string msg("MTest::setDefaultHypothesis : ");
-      msg += "behaviour already defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setDefaultHypothesis: "
+			       "behaviour already defined"));
     }
     if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
       auto& log = mfront::getLogStream();
-      log << "No hypothesis defined, using default" << endl;
+      log << "No hypothesis defined, using default" << std::endl;
     }
     this->hypothesis = MH::TRIDIMENSIONAL;
     this->dimension  = 3u;
@@ -424,11 +272,9 @@ namespace mtest
   void
   MTest::setOutputFileName(const std::string& o)
   {
-    using namespace std;
     if(!this->output.empty()){
-      string msg("MTest::setOutputFileName : ");
-      msg += "output file name already defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setOutputFileName: "
+			       "output file name already defined"));
     }
     this->output = o;
   }
@@ -436,11 +282,9 @@ namespace mtest
   void
   MTest::setOutputFilePrecision(const unsigned int p)
   {
-    using namespace std;
     if(this->oprec!=-1){
-      string msg("MTest::setOutputFileName : ");
-      msg += "output file precision already defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setOutputFileName: "
+			       "output file precision already defined"));
     }
     this->oprec = static_cast<int>(p);
   }
@@ -448,11 +292,9 @@ namespace mtest
   void
   MTest::setResidualFileName(const std::string& o)
   {
-    using namespace std;
     if(!this->residualFileName.empty()){
-      string msg("MTest::setResidualFileName : ");
-      msg += "residual file name already defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setResidualFileName : "
+			       "residual file name already defined"));
     }
     this->residualFileName = o;
   }
@@ -460,11 +302,9 @@ namespace mtest
   void
   MTest::setResidualFilePrecision(const unsigned int p)
   {
-    using namespace std;
     if(this->rprec!=-1){
-      string msg("MTest::setResidualFileName : ");
-      msg += "residual file precision already defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTest::setResidualFileName: "
+			       "residual file precision already defined"));
     }
     this->rprec = static_cast<int>(p);
   }
@@ -586,9 +426,8 @@ namespace mtest
   {
     using namespace std;
     if(this->b.get()==nullptr){
-      string msg("MTest::setTensorInternalStateVariableInitialValue : ");
-      msg += "no behaviour defined";
-      throw(runtime_error(msg));
+      throw(runtime_error("MTest::setTensorInternalStateVariableInitialValue: "
+			  "no behaviour defined"));
     }
     const auto& ivsnames = this->b->getInternalStateVariablesNames();
     if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
@@ -617,12 +456,6 @@ namespace mtest
 	 this->iv_t0.begin()+pos);
   } // end of MTest::setTensorInternalStateVariableInitialValue
 
-  std::shared_ptr<EvolutionManager>
-  MTest::getEvolutions() const
-  {
-    return this->evm;
-  } // end of MTest::getEvolutions() const
-
   void
   MTest::completeInitialisation()
   {
@@ -630,34 +463,13 @@ namespace mtest
     using namespace tfel::material;
     typedef tfel::material::ModellingHypothesis MH;
     EvolutionManager::const_iterator pev;
-    if(this->initialisationFinished){
-      throw(std::runtime_error("MTest::completeInitialisation : "
-			       "object already initialised"));
-    }
-    if(this->dimension==0u){
-      this->setDefaultHypothesis();
-    }
-    if(this->b.get()==nullptr){
-      throw(std::runtime_error("MTest::completeInitialisation : "
-			       "no behaviour defined"));
-    }
-    // number of components of the driving variables and the thermodynamic forces
-    const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
-    // check if material properties and external state variables are declared
-    const auto mpnames  = this->b->getMaterialPropertiesNames();
-    const auto esvnames = this->b->getExternalStateVariablesNames();
-    this->b->setOptionalMaterialPropertiesDefaultValues(*(this->defaultMaterialPropertiesValues),*(this->evm));
-    checkIfDeclared(mpnames,*(this->evm),*(this->defaultMaterialPropertiesValues),
-		    "material property");
-    checkIfDeclared(esvnames,*(this->evm),"external state variable");
+    SchemeBase::completeInitialisation();
     // output
     if(!this->output.empty()){
       this->out.open(this->output.c_str());
       if(!this->out){
-	string msg("MTest::completeInitialisation : ");
-	msg += "can't open file '"+this->output+"'";
-	throw(runtime_error(msg));
+	throw(runtime_error("MTest::completeInitialisation : "
+			    "can't open file '"+this->output+"'"));
       }
       this->out.exceptions(ofstream::failbit|ofstream::badbit);
       if(this->oprec!=-1){
@@ -682,6 +494,8 @@ namespace mtest
       dvn = "driving variables";
       thn = "thermodynamic forces";
     }
+    const unsigned short ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const unsigned short nth = this->b->getThermodynamicForcesSize(this->hypothesis);
     for(unsigned short i=0;i!=ndv;++i){
       this->out << "# " << cnbr << " column : " << i+1 << "th component of the " << dvn << endl;
       ++cnbr;
@@ -766,23 +580,6 @@ namespace mtest
 	rm(i,i) = real(1);
       }
     }
-    if(this->mSubSteps==-1){
-      this->mSubSteps=10;
-    }
-    if(this->iterMax==-1){
-      this->iterMax=100;
-    }
-    if(this->aa.get()!=nullptr){
-      this->aa->initialize(this->getNumberOfUnknowns());
-    }
-    // prediction policy
-    if(this->ppolicy==UNSPECIFIEDPREDICTIONPOLICY){
-      this->ppolicy=NOPREDICTION;
-    }
-    // stiffness matrix type
-    if(this->ktype==StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
-      this->ktype = this->b->getDefaultStiffnessMatrixType();
-    }
     // thermal expansion reference temperature
     pev = this->evm->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evm->end()){
@@ -793,32 +590,6 @@ namespace mtest
 	throw(runtime_error(msg));
       }
     }
-    // options selected
-    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-      auto& log = mfront::getLogStream();
-      if(this->aa.get()!=nullptr){
-	log << "mtest : " << this->aa->getName() << " acceleration algorithm selected" << endl;
-      }
-      if(this->ppolicy==LINEARPREDICTION){
-	log << "mtest : using linear prediction" << endl;
-      } else if(this->ppolicy==ELASTICPREDICTION){
-	log << "mtest : prediction using elastic stiffness" << endl;
-      } else if(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES){
-	log << "mtest : prediction using elastic stiffness computed from material properties" << endl;
-      } else if(this->ppolicy==TANGENTOPERATORPREDICTION){
-	log << "mtest : prediction using tangent operator" << endl;
-      } else {
-	if(this->ppolicy!=NOPREDICTION){
-	  string msg("MTest::completeInitialisation : "
-		     "internal error, unsupported "
-		     "prediction policy");
-	  throw(runtime_error(msg));
-	}	    
-	log << "mtest : no prediction" << endl;
-      }
-    }
-    // allocating behaviour workspace
-    this->b->allocate(this->hypothesis);
     //
     if(!this->residualFileName.empty()){
       this->residual.open(this->residualFileName.c_str());
@@ -840,8 +611,6 @@ namespace mtest
       this->residual << "#third  column : thermodynamic force residual" << endl;
       this->residual << "#The following columns are the components of the driving variable" << endl;
     }
-    // the end
-    this->initialisationFinished = true;
   }
 
   void

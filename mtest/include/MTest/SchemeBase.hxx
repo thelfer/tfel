@@ -10,6 +10,7 @@
 
 #include<vector>
 #include<string>
+#include<memory>
 
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -29,6 +30,7 @@ namespace mtest{
   struct MTEST_VISIBILITY_EXPORT SchemeBase
     : public Scheme
   {
+    using EvolutionPtr = std::shared_ptr<Evolution>;
     /*!
      * \brief possible algorithms used for global convergence to
      * update the stiffness matrix
@@ -66,11 +68,88 @@ namespace mtest{
       TANGENTOPERATORPREDICTION,
       UNSPECIFIEDPREDICTIONPOLICY
     }; // end of enum PredictionPolicy
+    SchemeBase();
+    SchemeBase(SchemeBase&&) = delete;
+    SchemeBase(const SchemeBase&) = delete;
+    SchemeBase& operator=(SchemeBase&&) = delete;
+    SchemeBase& operator=(const SchemeBase&) = delete;
+    /*!
+     * \brief set the behaviour
+     * \param[in] i : interface
+     * \param[in] l : library name
+     * \param[in] f : function
+     */
+    virtual void
+    setBehaviour(const std::string&,
+		 const std::string&,
+		 const std::string&);
+    /*!
+     * \param[in] h : modelling hypothesis
+     */
+    virtual void
+    setModellingHypothesis(const std::string&);
     /*!
      * \param[in] t : times
      */
     virtual void
     setTimes(const std::vector<real>&);
+    /*!
+     * \return the list of evolutions
+     */
+    std::shared_ptr<EvolutionManager>
+    getEvolutions() const;
+    /*!
+     * \brief add a new evolution
+     * \param[in] n  : evolution name
+     * \param[in] p  : evolution pointer
+     * \param[in] b1 : declare the variable.
+     * \param[in] b2 : check if the evolution already exists.
+     * \note if b1 is false, we check that the variable is already
+     * declared. Otherwise, an exeception is thrown.
+     * \note if b2 is true and the evolution already exists, an
+     * exeception is thrown.
+     */
+    virtual void
+    addEvolution(const std::string&,
+		 const EvolutionPtr,
+		 const bool,
+		 const bool);
+    /*!
+     * \brief set evolution value for a given time
+     * \param[in] n  : evolution name
+     * \param[in] t  : time
+     * \param[in] v  : value
+     *
+     * \note the evolution *must* be of type MTestLPIEvolution
+     */
+    virtual void
+    setEvolutionValue(const std::string&,
+		      const real,
+		      const real);
+    /*!
+     * \brief define a material property
+     * \param[in] n     : evolution name
+     * \param[in] p     : evolution pointer
+     * \param[in] check : check if the evolution already exists.
+     * \note if check is true and the evolution already exists, an
+     * exeception is thrown.
+     */
+    virtual void
+    setMaterialProperty(const std::string&,
+			const EvolutionPtr,
+			const bool);
+    /*!
+     * \brief define an external state variable
+     * \param[in] n     : evolution name
+     * \param[in] p     : evolution pointer
+     * \param[in] check : check if the evolution already exists.
+     * \note if check is true and the evolution already exists, an
+     * exeception is thrown.
+     */
+    virtual void
+    setExternalStateVariable(const std::string&,
+			     const EvolutionPtr,
+			     const bool);
     /*!
      * \brief set the description
      * \param[in] d : description
@@ -91,21 +170,6 @@ namespace mtest{
      * \param[in] d : date
      */
     virtual void setDate(const std::string&);
-    /*!
-     * \brief set the behaviour
-     * \param[in] i : interface
-     * \param[in] l : library name
-     * \param[in] f : function
-     */
-    virtual void
-    setBehaviour(const std::string&,
-		 const std::string&,
-		 const std::string&);
-    /*!
-     * \param[in] h : modelling hypothesis
-     */
-    virtual void
-    setModellingHypothesis(const std::string&);
     virtual void setMaximumNumberOfIterations(const unsigned int);
     virtual void setMaximumNumberOfSubSteps(const unsigned int);
     //! \return the dimension
@@ -186,9 +250,20 @@ namespace mtest{
      * \param[in] p : period
      */
     virtual void setCastemAccelerationPeriod(const int);
+    
     //! destructor
     virtual ~SchemeBase();
   protected:
+    /*!
+     * complete the initialisation. This method must be called once.
+     * \note this method must be called by the derived class.
+     */ 
+    void completeInitialisation(void);
+    /*!
+     * \return the number of unknowns (size of driving variables plus
+     * the number of lagrangian multipliers)
+     */
+    virtual size_t getNumberOfUnknowns(void) const = 0;
     /*!
      * \brief declare a new variable
      * \param[in] v : variable name
@@ -231,6 +306,10 @@ namespace mtest{
     PredictionPolicy ppolicy = UNSPECIFIEDPREDICTIONPOLICY;
     //! acceleration algorithm
     std::shared_ptr<AccelerationAlgorithm> aa;
+    //! default values for material properties as given by the behaviour
+    std::shared_ptr<EvolutionManager> defaultMaterialPropertiesValues;
+    //! list of evolutions
+    std::shared_ptr<EvolutionManager> evm;
     //! maximum number of sub steps allowed
     int mSubSteps = -1;
     //! maximum number of iterations allowed in the Newton-Raphson algorithm
