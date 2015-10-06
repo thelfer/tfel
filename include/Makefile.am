@@ -18,6 +18,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Glossary/Glossary.hxx	                                                             \
 			TFEL/Glossary/GlossaryEntry.hxx	                                                             \
 			TFEL/Material/OutOfBoundsPolicy.hxx	                                                     \
+			TFEL/Material/BehaviourIntegrationErrorReport.hxx                                            \
 			TFEL/Material/MechanicalBehaviour.hxx	                                                     \
 			TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx	                                     \
 			TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx	                             \

@@ -393,6 +393,7 @@ namespace mfront{
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
+    this->writeGetIntegrationErrorReportFunctionDeclaration(out,name);
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     
     this->writeCyranoFunctionDeclaration(out,name);
@@ -457,6 +458,7 @@ namespace mfront{
 	<< makeLowerCase(name) << "_Interface = 1u;\n\n";
 
     this->writeSetParametersFunctionsImplementations(out,name,mb);
+    this->writeGetIntegrationErrorReportFunctionImplementation(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
     this->writeStandardCyranoFunction(out,name,mb);

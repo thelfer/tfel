@@ -29,6 +29,13 @@
 namespace tfel
 {
 
+  namespace material{
+
+    //! forward declaration
+    struct BehaviourIntegrationErrorReport;
+    
+  } // end of namespace material
+  
   namespace system
   {
 
@@ -66,7 +73,14 @@ namespace tfel
       void setOutOfBoundsPolicy(const std::string&,
 				const std::string&,
 				const tfel::material::OutOfBoundsPolicy);
-      
+      /*!
+       * \return the integration error report for the given behaviour
+       * \param[in] l : name of the library
+       * \param[in] f : name of function or mechanical behaviour
+       */
+      const tfel::material::BehaviourIntegrationErrorReport&
+      getBehaviourIntegrationErrorReport(const std::string&,
+					 const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour

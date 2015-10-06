@@ -34,6 +34,7 @@
 #include"TFEL/Material/MaterialException.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
+#include"TFEL/Material/BehaviourIntegrationErrorReport.hxx"
 
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterConfig.hxx"
@@ -308,6 +309,7 @@ namespace aster
 	using namespace std;
 	using namespace tfel::meta;
 	using namespace tfel::utilities;
+	using namespace tfel::material;
 	typedef Behaviour<H,AsterReal,false> BV;
 	typedef AsterTraits<BV> Traits;
 	try {
@@ -322,42 +324,70 @@ namespace aster
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceBase::treatAsterException(Name<BV>::getName(),e);
 	  }
+	  BehaviourIntegrationErrorReport& r =
+	    BV::getBehaviourIntegrationErrorReport();
+	  r.s = BehaviourIntegrationErrorReport::INTERFACEEXCEPTION;
+	  r.e = e.what();
 	  return -2;
 	}
 	catch(const tfel::material::OutOfBoundsException& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceBase::treatMaterialException(Name<BV>::getName(),e);
 	  }
+	  BehaviourIntegrationErrorReport& r =
+	    BV::getBehaviourIntegrationErrorReport();
+	  r.s = BehaviourIntegrationErrorReport::OUTOFBOUNDSEXCEPTION;
+	  r.e = e.what();
 	  return -3;
 	}
 	catch(const tfel::material::DivergenceException& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceBase::treatMaterialException(Name<BV>::getName(),e);
 	  }
+	  BehaviourIntegrationErrorReport& r =
+	    BV::getBehaviourIntegrationErrorReport();
+	  r.s = BehaviourIntegrationErrorReport::DIVERGENCEEXCEPTION;
+	  r.e = e.what();
 	  return -4;
 	}
 	catch(const tfel::material::MaterialException& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceBase::treatMaterialException(Name<BV>::getName(),e);
 	  }
+	  BehaviourIntegrationErrorReport& r =
+	    BV::getBehaviourIntegrationErrorReport();
+	  r.s = BehaviourIntegrationErrorReport::MATERIALEXCEPTION;
+	  r.e = e.what();
 	  return -5;
 	}
 	catch(const tfel::exception::TFELException& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceBase::treatTFELException(Name<BV>::getName(),e);
 	  }
+	  BehaviourIntegrationErrorReport& r =
+	    BV::getBehaviourIntegrationErrorReport();
+	  r.s = BehaviourIntegrationErrorReport::TFELEXCEPTION;
+	  r.e = e.what();
 	  return -6;
 	}
 	catch(const std::exception& e){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceBase::treatStandardException(Name<BV>::getName(),e);
 	  }
+	  BehaviourIntegrationErrorReport& r =
+	    BV::getBehaviourIntegrationErrorReport();
+	  r.s = BehaviourIntegrationErrorReport::STANDARDEXCEPTION;
+	  r.e = e.what();
 	  return -7;
 	}
 	catch(...){
 	  if(Traits::errorReportPolicy!=ASTER_NOERRORREPORT){
 	    AsterInterfaceBase::treatUnknownException(Name<BV>::getName());
 	  }
+	  BehaviourIntegrationErrorReport& r =
+	    BV::getBehaviourIntegrationErrorReport();
+	  r.s = BehaviourIntegrationErrorReport::UNKNOWNEXCEPTION;
+	  r.e = "(unknown exception)";
 	  return -8;
 	}
 	return 0;

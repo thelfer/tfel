@@ -386,7 +386,8 @@ namespace mfront{
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
-    
+    this->writeGetIntegrationErrorReportFunctionDeclaration(out,name);
+
     out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\naster"
 	<< makeLowerCase(name) << "("
 	<< "aster::AsterReal *const,"       /*< tenseur des contraintes */
@@ -487,6 +488,7 @@ namespace mfront{
     }
     
     this->writeSetParametersFunctionsImplementations(out,name,mb);
+    this->writeGetIntegrationErrorReportFunctionImplementation(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
     
     out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\n"

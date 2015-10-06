@@ -540,6 +540,7 @@ install_header(TFEL/Math/LevenbergMarquardt FSLevenbergMarquardt.ixx)
 
 install_header(TFEL/Material ModellingHypothesis.hxx)
 install_header(TFEL/Material OutOfBoundsPolicy.hxx)
+install_header(TFEL/Material BehaviourIntegrationErrorReport.hxx)
 install_header(TFEL/Material MechanicalBehaviour.hxx)
 install_header(TFEL/Material FiniteStrainBehaviourTangentOperator.hxx)
 install_header(TFEL/Material FiniteStrainBehaviourTangentOperatorBase.hxx)

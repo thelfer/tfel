@@ -86,7 +86,15 @@ extern "C" {
   char **
   tfel_getCastemFunctionVariables(LibraryHandlerPtr,
 				  const char * const);
-
+  /*!
+   * \return a function giving access the behaviour integration error
+   * report.
+   * \param l: link to library opened through dlopen
+   * \param b: name of the behaviour
+   */
+  void * (TFEL_ADDCALL_PTR tfel_getBehaviourIntegrationErrorReport(LibraryHandlerPtr,
+								   const char * const))(void);
+  
   int (TFEL_ADDCALL_PTR tfel_getSetOutOfBoundsPolicyFunction(LibraryHandlerPtr lib,
 							     const char * const name))(const int);
 

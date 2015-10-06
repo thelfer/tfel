@@ -188,6 +188,12 @@ extern "C" {
     return (int (TFEL_ADDCALL_PTR)(const int)) dlsym(lib,name);
   } 
 
+  void * (TFEL_ADDCALL_PTR tfel_getBehaviourIntegrationErrorReport(LibraryHandlerPtr l,
+								   const char * const b))(void){
+    return (void* (TFEL_ADDCALL_PTR)(void)) dlsym(l,b);
+  } 
+
+  
   int (TFEL_ADDCALL_PTR tfel_getSetParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
 												     const double){
     return (int (TFEL_ADDCALL_PTR)(const char*const,

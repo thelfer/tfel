@@ -773,7 +773,8 @@ namespace mfront{
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/UMAT/UMATOrthotropicBehaviour.hxx\"\n";
     }
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
+    out << "#include\"TFEL/Material/BehaviourIntegrationErrorReport.hxx\"\n"
+	<< "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
@@ -840,6 +841,8 @@ namespace mfront{
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
+    this->writeGetIntegrationErrorReportFunctionDeclaration(out,name);
+    
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
 	this->writeSetParametersFunctionsDeclarations(out,name,mb);
@@ -987,6 +990,8 @@ namespace mfront{
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#include\"MFront/UMAT/umat" << name << ".hxx\"\n\n";
 
+    this->writeGetIntegrationErrorReportFunctionImplementation(out,name,mb);
+    
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
 	this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);

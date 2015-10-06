@@ -29,7 +29,6 @@ namespace tfel
     static void
     ExternalLibraryManagerCheckModellingHypothesisName(const std::string& h)
     {
-      using namespace std;
       if(!((h=="AxisymmetricalGeneralisedPlaneStrain")||
 	   (h=="AxisymmetricalGeneralisedPlaneStress")||
 	   (h=="Axisymmetrical")||
@@ -37,16 +36,15 @@ namespace tfel
 	   (h=="PlaneStrain")||
 	   (h=="GeneralisedPlaneStrain")||
 	   (h=="Tridimensional"))){
-	string msg("ExternalLibraryManagerCheckModellingHypothesisName : "
-		   "invalid or unsupported hypothesis '"+h+"'. The following "
-		   "hypotheses are supported:\n"
-		   "- AxisymmetricalGeneralisedPlaneStrain\n"
-		   "- Axisymmetrical\n"
-		   "- PlaneStress\n"
-		   "- PlaneStrain\n"
-		   "- GeneralisedPlaneStrain\n"
-		   "- Tridimensional");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("ExternalLibraryManagerCheckModellingHypothesisName : "
+				 "invalid or unsupported hypothesis '"+h+"'. The following "
+				 "hypotheses are supported:\n"
+				 "- AxisymmetricalGeneralisedPlaneStrain\n"
+				 "- Axisymmetrical\n"
+				 "- PlaneStress\n"
+				 "- PlaneStrain\n"
+				 "- GeneralisedPlaneStrain\n"
+				 "- Tridimensional"));
       }
     } // end of ExternalLibraryManagerCheckModellingHypothesisName
     
@@ -219,6 +217,32 @@ namespace tfel
 			    "unsupported policy"));
       }
     } // end of ExternalLibraryManager::setParameter
+
+    const tfel::material::BehaviourIntegrationErrorReport&
+    ExternalLibraryManager::getBehaviourIntegrationErrorReport(const std::string& l,
+							       const std::string& f){
+      using namespace std;
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+      void* (TFEL_ADDCALL_PTR fct)(void);
+      fct = ::tfel_getBehaviourIntegrationErrorReport(lib,(f+"_getIntegrationErrorReport").c_str());
+      if(fct==0){
+	string msg("ExternalLibraryManager::setOutOfBoundsPolicy : ");
+	msg += " can't get the '"+f+"_setOutOfBoundsPolicy' function (";
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+	  msg += ::GetLastError();
+#else
+	  msg += ::dlerror();
+#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      return *(static_cast<const tfel::material::BehaviourIntegrationErrorReport*>(fct()));
+    }
+
     
     void
     ExternalLibraryManager::setParameter(const std::string& l,

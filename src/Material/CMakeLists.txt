@@ -7,6 +7,7 @@ set(TFELMaterial_SOURCES
     MaterialException.cxx
     ModellingHypothesis.cxx
     DDIF2Base.cxx
+    BehaviourIntegrationErrorReport.cxx
     FiniteStrainBehaviourTangentOperator.cxx)
 
 tfel_library(TFELMaterial ${TFELMaterial_SOURCES})

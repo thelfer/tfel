@@ -847,6 +847,9 @@ namespace mfront{
     writeBehaviourParameters(const Hypothesis);
 
     virtual void
+    writeBehaviourStaticMethods(const Hypothesis);
+    
+    virtual void
     writeBehaviourStaticVariables(const Hypothesis);
 
     virtual void
@@ -900,8 +903,11 @@ namespace mfront{
     writeBehaviourParameterInitialisation(const Hypothesis);
 
     virtual void
+    writeBehaviourIntegrationErrorReportHandler();
+    
+    virtual void
     writeBehaviourParametersInitializers();
-
+    
     virtual void
     writeBehaviourParametersInitializer(const Hypothesis);
 
@@ -920,6 +926,9 @@ namespace mfront{
     virtual void
     writeSrcFileParametersInitializers(void);
 
+    virtual void
+    writeSrcFileBehaviourIntegrationErrorReportHandler(void);
+    
     virtual void
     writeSrcFileParametersInitializer(const Hypothesis);
 

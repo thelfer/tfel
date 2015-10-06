@@ -1112,6 +1112,7 @@ include/TFEL/Glossary/Forward/Glossary.hxx -text
 include/TFEL/Glossary/Glossary.hxx -text
 include/TFEL/Glossary/GlossaryEntry.hxx -text
 include/TFEL/Macros.hxx -text
+include/TFEL/Material/BehaviourIntegrationErrorReport.hxx -text
 include/TFEL/Material/BoundsCheck.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text
@@ -2824,6 +2825,7 @@ src/Glossary/Glossary.cxx -text
 src/Glossary/GlossaryEntry.cxx -text
 src/Glossary/Makefile.am -text
 src/Makefile.am -text
+src/Material/BehaviourIntegrationErrorReport.cxx -text
 src/Material/CMakeLists.txt -text
 src/Material/DDIF2Base.cxx -text
 src/Material/FiniteStrainBehaviourTangentOperator.cxx -text

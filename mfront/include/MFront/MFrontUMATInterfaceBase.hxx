@@ -324,6 +324,22 @@ namespace mfront{
     virtual void
     writeSetOutOfBoundsPolicyFunctionImplementation(std::ostream&,
 						    const std::string&) const;
+    /*!
+     * \param[out] out : output stream
+     * \param[in]  n   : function name
+     */
+    virtual void
+    writeGetIntegrationErrorReportFunctionDeclaration(std::ostream&,
+						      const std::string&) const;
+    /*!
+     * \param[out] out : output stream
+     * \param[in]  n   : function name
+     * \param[in]  mb  : behaviour description
+     */
+    virtual void
+    writeGetIntegrationErrorReportFunctionImplementation(std::ostream&,
+							 const std::string&,
+							 const MechanicalBehaviourDescription&) const;
     
     virtual void
     writeSetParametersFunctionsDeclarations(std::ostream&,

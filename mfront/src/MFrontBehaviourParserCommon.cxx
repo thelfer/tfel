@@ -3441,6 +3441,18 @@ namespace mfront{
     this->behaviourFile << "OutOfBoundsPolicy policy;" << endl;  
   } // end of MFrontBehaviourParserCommon::writeBehaviourPolicyVariable
 
+  void MFrontBehaviourParserCommon::writeBehaviourStaticMethods(const Hypothesis)
+  {    
+    this->checkBehaviourFile();
+    this->behaviourFile << "public:\n\n"
+			<< "static BehaviourIntegrationErrorReport&\n"
+			<< "getBehaviourIntegrationErrorReport(void){\n"
+			<< "return " << this->mb.getClassName()
+			<< "BehaviourIntegrationErrorReportHandler::getBehaviourIntegrationErrorReport();\n"
+			<< "}\n\n"
+			<< "private:\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourStaticMethods
+  
   void MFrontBehaviourParserCommon::writeBehaviourStaticVariables(const Hypothesis h)
   {    
     using namespace std;
@@ -3622,6 +3634,7 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviour.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"" << endl;
+    this->behaviourFile << "#include\"TFEL/Material/BehaviourIntegrationErrorReport.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/BoundsCheck.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/Lame.hxx\"" << endl;
     if(this->mb.getSymmetryType()==ORTHOTROPIC){
@@ -4046,6 +4059,20 @@ namespace mfront{
     this->behaviourFile << "};" << endl << endl;
   } // end of MFrontBehaviourParserCommon::writeBehaviourParametersInitializer
 
+  void
+  MFrontBehaviourParserCommon::writeBehaviourIntegrationErrorReportHandler()
+  {
+    this->checkBehaviourFile();
+    this->behaviourFile << "/*!\n"
+			<< " * \\brief a structure in charge of holding integration error reports\n"
+			<< " */\n"
+			<< "struct " << mb.getClassName() << "BehaviourIntegrationErrorReportHandler\n"
+			<< "{\n"
+			<< "static BehaviourIntegrationErrorReport&\n"
+			<< "getBehaviourIntegrationErrorReport(void);\n"
+			<< "};\n\n";
+  } // end of MFrontBehaviourParserCommon::writeBehaviourIntegrationErrorReportHandler
+  
   void MFrontBehaviourParserCommon::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis)
   {
     // Empty member meant to be overriden in Child if necessary
@@ -4071,6 +4098,7 @@ namespace mfront{
       interface->writeInterfaceSpecificIncludes(this->behaviourFile,this->mb);
     }
     this->writeNamespaceBegin(this->behaviourFile);
+    this->writeBehaviourIntegrationErrorReportHandler();
     this->writeBehaviourParametersInitializers();
     this->writeBehaviourForwardDeclarations();
     this->writeBehaviourProfiler();
@@ -4101,6 +4129,7 @@ namespace mfront{
     this->writeBehaviourClassBegin(h);
     this->writeBehaviourStandardTFELTypedefs();
     this->writeBehaviourParserSpecificTypedefs();
+    this->writeBehaviourStaticMethods(h);
     this->writeBehaviourStaticVariables(h);
     this->writeBehaviourIntegrationVariables(h);
     this->writeBehaviourIntegrationVariablesIncrements(h);
@@ -5265,6 +5294,16 @@ namespace mfront{
     }
   } // end of MFrontBehaviourParserCommon::writeSrcFileBehaviourProfiler
 
+  void MFrontBehaviourParserCommon::writeSrcFileBehaviourIntegrationErrorReportHandler()
+  {
+    this->checkSrcFile();
+    this->srcFile << "BehaviourIntegrationErrorReport&\n"
+		  << mb.getClassName() << "BehaviourIntegrationErrorReportHandler::getBehaviourIntegrationErrorReport(void){\n"
+		  << "static BehaviourIntegrationErrorReportHandler h;\n"
+		  << "return h.getBehaviourIntegrationErrorReport();\n"
+		  << "}\n\n";
+  } // end of MFrontBehaviourParserCommon::writeSrcFileBehaviourIntegrationErrorReportHandler
+  
   void MFrontBehaviourParserCommon::writeSrcFile(void)
   {
     using namespace std;
@@ -5272,6 +5311,7 @@ namespace mfront{
     this->writeSrcFileUserDefinedCode();
     this->writeNamespaceBegin(this->srcFile);
     this->writeSrcFileBehaviourProfiler();
+    this->writeSrcFileBehaviourIntegrationErrorReportHandler();
     this->writeSrcFileParametersInitializers();
     // modelling hypotheses handled by the behaviour
     const set<Hypothesis>& h = this->mb.getModellingHypotheses();
