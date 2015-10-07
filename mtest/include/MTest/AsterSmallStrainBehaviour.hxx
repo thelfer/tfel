@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/AsterSmallStrainBehaviour.hxx
+ * \file  mtest/include/MTest/AsterSmallStrainBehaviour.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTASTERSMALLSTRAINBEHAVIOUR_H_
-#define LIB_MFRONT_MTESTASTERSMALLSTRAINBEHAVIOUR_H_ 
+#ifndef LIB_MTEST_MTESTASTERSMALLSTRAINBEHAVIOUR_H_
+#define LIB_MTEST_MTESTASTERSMALLSTRAINBEHAVIOUR_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
@@ -82,5 +82,5 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTASTERSMALLSTRAINBEHAVIOUR_H_ */
+#endif /* LIB_MTEST_MTESTASTERSMALLSTRAINBEHAVIOUR_H_ */
 

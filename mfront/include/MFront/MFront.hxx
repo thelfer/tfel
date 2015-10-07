@@ -18,7 +18,7 @@
 #include<map>
 #include<string>
 #include<vector>
-#include<fstream>
+#include<iosfwd>
 
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"MFront/MFrontBase.hxx"

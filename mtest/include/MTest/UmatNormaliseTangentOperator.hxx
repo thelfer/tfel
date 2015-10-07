@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/UmatNormaliseTangentOperator.hxx
+ * \file  mtest/include/MTest/UmatNormaliseTangentOperator.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 15 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTUMATNORMALISETANGENTOPERATOR_H_
-#define LIB_MFRONT_MTESTUMATNORMALISETANGENTOPERATOR_H_ 
+#ifndef LIB_MTEST_MTESTUMATNORMALISETANGENTOPERATOR_H_
+#define LIB_MTEST_MTESTUMATNORMALISETANGENTOPERATOR_H_ 
 
 #include"TFEL/Math/matrix.hxx"
 
@@ -38,5 +38,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTUMATNORMALISETANGENTOPERATOR_H_ */
+#endif /* LIB_MTEST_MTESTUMATNORMALISETANGENTOPERATOR_H_ */
 

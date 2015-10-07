@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/include/MTest/AccelerationAlgorithm.hxx
+ * \file   mtest/include/MTest/AccelerationAlgorithm.hxx
  * \brief
  * \author Helfer Thomas
  * \brief  10 juin 2014
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_
-#define LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MTEST_MTEST_MTESTACCELERATIONALGORITHM_H_
+#define LIB_MTEST_MTEST_MTESTACCELERATIONALGORITHM_H_ 
 
 #include"TFEL/Math/vector.hxx"
 #include"MTest/Config.hxx"
@@ -84,5 +84,5 @@ namespace mtest{
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTEST_MTESTACCELERATIONALGORITHM_H_ */
+#endif /* LIB_MTEST_MTEST_MTESTACCELERATIONALGORITHM_H_ */
 

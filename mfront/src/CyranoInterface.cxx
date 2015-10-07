@@ -11,12 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#include<iterator>
-#include<algorithm>
-
+#include<fstream>
 #include<sstream>
 #include<cstdlib>
+#include<iterator>
 #include<stdexcept>
+#include<algorithm>
 
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"

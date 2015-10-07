@@ -15,7 +15,7 @@
 #define LIB_MFRONTCYRANOINTERFACE_H_ 
 
 #include<string>
-#include<fstream>
+#include<iosfwd>
 
 #include"MFront/InterfaceBase.hxx"
 #include"MFront/UMATInterfaceBase.hxx"

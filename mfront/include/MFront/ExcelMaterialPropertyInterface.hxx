@@ -15,7 +15,6 @@
 #define LIB_MFRONTEXCELLAWINTERFACE_H_ 
 
 #include<string>
-#include<fstream>
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 

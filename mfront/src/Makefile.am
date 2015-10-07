@@ -126,7 +126,7 @@ libTFELMFront_la_SOURCES += JavaMaterialPropertyInterface.cxx
 endif
 
 if HAVE_CASTEM
-libTFELMFront_la_SOURCES += UMATInterface.cxx      \
+libTFELMFront_la_SOURCES += CastemInterface.cxx      \
 		  CastemMaterialPropertyInterface.cxx
 endif
 
@@ -174,8 +174,8 @@ libMFrontProfiling_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-
 endif # TFEL_WIN
 
 libMTestFileGenerator_la_SOURCES = MTestFileGeneratorBase.cxx             \
-				   UMATSmallStrainMTestFileGenerator.cxx  \
-				   UMATFiniteStrainMTestFileGenerator.cxx
+				   UmatSmallStrainMTestFileGenerator.cxx  \
+				   UmatFiniteStrainMTestFileGenerator.cxx
 
 libMTestFileGenerator_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
 				   -L$(top_builddir)/src/Material  -lTFELMaterial  \
@@ -186,27 +186,27 @@ if TFEL_WIN
 libMTestFileGenerator_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 
-# UMAT Interface
+# Castem Interface
 if HAVE_CASTEM
-lib_LTLIBRARIES += libUMATInterface.la
-libUMATInterface_la_SOURCES = UMATInterfaceExceptions.cxx                      \
-			      UMATFiniteStrain.cxx                             \
-			      UMATComputeStiffnessTensor.cxx                   \
-			      UMATComputeThermalExpansionCoefficientTensor.cxx \
-			      UMATRotationMatrix.cxx                           \
-			      UMATFiniteStrainRotationMatrix.cxx               \
-			      UMATTangentOperator.cxx                          \
-		              UMATOutOfBoundsPolicy.cxx                        \
-		              UMATGetModellingHypothesis.cxx                   \
-			      UMATStressFreeExpansionHandler.cxx               \
-		              UMATException.cxx
-libUMATInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
+lib_LTLIBRARIES += libCastemInterface.la
+libCastemInterface_la_SOURCES = CastemInterfaceExceptions.cxx                      \
+			        CastemFiniteStrain.cxx                             \
+			        CastemComputeStiffnessTensor.cxx                   \
+			        CastemComputeThermalExpansionCoefficientTensor.cxx \
+			        CastemRotationMatrix.cxx                           \
+			        CastemFiniteStrainRotationMatrix.cxx               \
+			        CastemTangentOperator.cxx                          \
+		                CastemOutOfBoundsPolicy.cxx                        \
+		                CastemGetModellingHypothesis.cxx                   \
+			        CastemStressFreeExpansionHandler.cxx               \
+		                CastemException.cxx
+libCastemInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities        \
 			      -L$(top_builddir)/src/Exception -lTFELException          \
 			      -L$(top_builddir)/mfront/src    -lMTestFileGenerator
-libUMATInterface_la_DEPENDENCIES = libMTestFileGenerator.la
-libUMATInterface_la_CPPFLAGS = $(AM_CPPFLAGS) -DUMATInterface_EXPORTS
+libCastemInterface_la_DEPENDENCIES = libMTestFileGenerator.la
+libCastemInterface_la_CPPFLAGS = $(AM_CPPFLAGS) -DCastemInterface_EXPORTS
 if TFEL_WIN
-libUMATInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+libCastemInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 endif # HAVE_CASTEM
 

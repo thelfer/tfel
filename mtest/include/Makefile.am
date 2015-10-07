@@ -1,16 +1,18 @@
 nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Types.hxx	                         \
+			 MTest/Scheme.hxx	                         \
+			 MTest/SchemeBase.hxx	                         \
 			 MTest/MTest.hxx	                         \
 			 MTest/MTestParser.hxx	                         \
 			 MTest/AnalyticalTest.hxx	                 \
 			 MTest/ReferenceFileComparisonTest.hxx           \
 			 MTest/Behaviour.hxx                             \
 			 MTest/UmatBehaviourBase.hxx                     \
-			 MTest/UmatStandardBehaviour.hxx                 \
-			 MTest/UmatSmallStrainBehaviour.hxx              \
-			 MTest/UmatFiniteStrainBehaviour.hxx             \
-			 MTest/UmatCohesiveZoneModel.hxx                 \
 			 MTest/UmatNormaliseTangentOperator.hxx          \
+			 MTest/CastemStandardBehaviour.hxx               \
+			 MTest/CastemSmallStrainBehaviour.hxx            \
+			 MTest/CastemFiniteStrainBehaviour.hxx           \
+			 MTest/CastemCohesiveZoneModel.hxx               \
 			 MTest/AsterStandardBehaviour.hxx                \
 			 MTest/AsterSmallStrainBehaviour.hxx             \
 			 MTest/AsterFiniteStrainBehaviour.hxx            \

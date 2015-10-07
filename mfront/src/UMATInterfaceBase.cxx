@@ -524,7 +524,7 @@ namespace mfront
 								  const BehaviourDescription& mb) const
   {
     using namespace std;
-    const std::string iprefix = makeUpperCase(this->getInterfaceName());
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
     map<DrivingVariable,
 	ThermodynamicForce>::const_iterator pm;
     SupportedTypes::TypeSize ov;
@@ -988,8 +988,8 @@ namespace mfront
     if(this->generateMTestFile){
       out << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
       out << "#include\"MFront/SupportedTypes.hxx\"" << endl;
-      out << "#include\"MFront/UMATSmallStrainMTestFileGenerator.hxx\"" << endl;
-      out << "#include\"MFront/UMATFiniteStrainMTestFileGenerator.hxx\"" << endl;
+      out << "#include\"MFront/UmatSmallStrainMTestFileGenerator.hxx\"" << endl;
+      out << "#include\"MFront/UmatFiniteStrainMTestFileGenerator.hxx\"" << endl;
     }
   } // end of UMATInterfaceBase::getExtraSrcIncludes
   
@@ -1023,12 +1023,12 @@ namespace mfront
     	fname += "_"+suffix;
       }
       if(type==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-    	out << "mfront::UMATSmallStrainMTestFileGenerator mg(\""
+    	out << "mfront::UmatSmallStrainMTestFileGenerator mg(\""
     	    << makeLowerCase(this->getInterfaceName()) << "\",\""
     	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
     	    <<  "\");" << endl;
       } else if(type==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-    	out << "mfront::UMATFiniteStrainMTestFileGenerator mg(\""
+    	out << "mfront::UmatFiniteStrainMTestFileGenerator mg(\""
     	    << makeLowerCase(this->getInterfaceName()) << "\",\""
     	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
     	    <<  "\");" << endl;

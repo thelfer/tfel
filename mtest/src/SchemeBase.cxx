@@ -12,9 +12,9 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Behaviour.hxx"
 #ifdef HAVE_CASTEM
-#include"MTest/UmatSmallStrainBehaviour.hxx"
-#include"MTest/UmatFiniteStrainBehaviour.hxx"
-#include"MTest/UmatCohesiveZoneModel.hxx"
+#include"MTest/CastemSmallStrainBehaviour.hxx"
+#include"MTest/CastemFiniteStrainBehaviour.hxx"
+#include"MTest/CastemCohesiveZoneModel.hxx"
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
 #include"MTest/AsterSmallStrainBehaviour.hxx"
@@ -262,15 +262,15 @@ namespace mtest{
 			       "behaviour already defined"));
     }
 #ifdef HAVE_CASTEM
-    if(i=="umat"){
+    if(i=="castem"){
       auto& elm = ELM::getExternalLibraryManager();
       const unsigned short type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
-	this->b = shared_ptr<Behaviour>(new UmatSmallStrainBehaviour(this->hypothesis,l,f));
+	this->b = shared_ptr<Behaviour>(new CastemSmallStrainBehaviour(this->hypothesis,l,f));
       } else if(type==2u){
-	this->b = shared_ptr<Behaviour>(new UmatFiniteStrainBehaviour(this->hypothesis,l,f));
+	this->b = shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour(this->hypothesis,l,f));
       } else if(type==3u){
-	this->b = shared_ptr<Behaviour>(new UmatCohesiveZoneModel(this->hypothesis,l,f));
+	this->b = shared_ptr<Behaviour>(new CastemCohesiveZoneModel(this->hypothesis,l,f));
       } else {
 	ostringstream msg;
 	msg << "SchemeBase::setBehaviour: "

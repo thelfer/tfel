@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/Config.hxx
+ * \file  mtest/include/MTest/Config.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 25 juin 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTEST_MTESTCONFIG_H_
-#define LIB_MFRONT_MTEST_MTESTCONFIG_H_ 
+#ifndef LIB_MTEST_MTEST_MTESTCONFIG_H_
+#define LIB_MTEST_MTEST_MTESTCONFIG_H_ 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -28,7 +28,7 @@
 #  endif
 #else
 #  define MTEST_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif /* LIB_MFRONT_MTEST_MTESTCONFIG_H_ */
+#endif /* LIB_MTEST_MTEST_MTESTCONFIG_H_ */
 
-#endif /* LIB_MFRONT_MTEST_MTESTCONFIG_H_ */
+#endif /* LIB_MTEST_MTEST_MTESTCONFIG_H_ */
 

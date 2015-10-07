@@ -148,23 +148,23 @@ endif(HAVE_FORTRAN)
 
 if(HAVE_CASTEM)
     set(TFELMFront_SOURCES
-	UMATInterface.cxx
+	CastemInterface.cxx
 	CastemMaterialPropertyInterface.cxx
 	${TFELMFront_SOURCES})
-    set(UMATInterface_SOURCES
-	UMATInterfaceExceptions.cxx
-	UMATFiniteStrain.cxx
-	UMATComputeStiffnessTensor.cxx
-	UMATComputeThermalExpansionCoefficientTensor.cxx
-	UMATRotationMatrix.cxx
-	UMATFiniteStrainRotationMatrix.cxx
-	UMATTangentOperator.cxx
-	UMATOutOfBoundsPolicy.cxx
-	UMATGetModellingHypothesis.cxx
-	UMATStressFreeExpansionHandler.cxx
-	UMATException.cxx)
-    mfront_library(UMATInterface ${UMATInterface_SOURCES})
-    target_link_libraries(UMATInterface
+    set(CastemInterface_SOURCES
+	CastemInterfaceExceptions.cxx
+	CastemFiniteStrain.cxx
+	CastemComputeStiffnessTensor.cxx
+	CastemComputeThermalExpansionCoefficientTensor.cxx
+	CastemRotationMatrix.cxx
+	CastemFiniteStrainRotationMatrix.cxx
+	CastemTangentOperator.cxx
+	CastemOutOfBoundsPolicy.cxx
+	CastemGetModellingHypothesis.cxx
+	CastemStressFreeExpansionHandler.cxx
+	CastemException.cxx)
+    mfront_library(CastemInterface ${CastemInterface_SOURCES})
+    target_link_libraries(CastemInterface
       MTestFileGenerator
       TFELUtilities
       TFELException)
@@ -235,8 +235,8 @@ endif(UNIX)
 
 mfront_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
-  UMATSmallStrainMTestFileGenerator.cxx
-  UMATFiniteStrainMTestFileGenerator.cxx)
+  UmatSmallStrainMTestFileGenerator.cxx
+  UmatFiniteStrainMTestFileGenerator.cxx)
 target_link_libraries(MTestFileGenerator
   TFELMaterial
   TFELMath

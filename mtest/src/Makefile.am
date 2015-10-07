@@ -59,11 +59,11 @@ mtest_LDADD = -L$(top_builddir)/mtest/src  -lTFELMTest        \
 mtest_DEPENDENCIES = libTFELMTest.la
 
 if HAVE_CASTEM
-libTFELMTest_la_SOURCES += UmatStandardBehaviour.cxx          \
-			   UmatSmallStrainBehaviour.cxx       \
-			   UmatFiniteStrainBehaviour.cxx      \
-			   UmatCohesiveZoneModel.cxx
-libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lUMATInterface
+libTFELMTest_la_SOURCES += CastemStandardBehaviour.cxx          \
+			   CastemSmallStrainBehaviour.cxx       \
+			   CastemFiniteStrainBehaviour.cxx      \
+			   CastemCohesiveZoneModel.cxx
+libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lCastemInterface
 endif
 
 if HAVE_ASTER

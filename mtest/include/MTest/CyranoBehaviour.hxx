@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/CyranoBehaviour.hxx
+ * \file  mtest/include/MTest/CyranoBehaviour.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTCYRANOBEHAVIOUR_H_
-#define LIB_MFRONT_MTESTCYRANOBEHAVIOUR_H_ 
+#ifndef LIB_MTEST_MTESTCYRANOBEHAVIOUR_H_
+#define LIB_MTEST_MTESTCYRANOBEHAVIOUR_H_ 
 
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -167,4 +167,4 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTCYRANOBEHAVIOUR_H_ */
+#endif /* LIB_MTEST_MTESTCYRANOBEHAVIOUR_H_ */

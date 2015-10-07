@@ -15,8 +15,6 @@
 #define LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_ 
 
 #include<string>
-#include<fstream>
-
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/AbstractMaterialPropertyInterface.hxx"
 

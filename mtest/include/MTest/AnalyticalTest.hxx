@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/AnalyticalTest.hxx
+ * \file  mtest/include/MTest/AnalyticalTest.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTANALYTICALTEST_H_
-#define LIB_MFRONT_MTESTANALYTICALTEST_H_ 
+#ifndef LIB_MTEST_MTESTANALYTICALTEST_H_
+#define LIB_MTEST_MTESTANALYTICALTEST_H_ 
 
 #include<map>
 #include<string>
@@ -94,5 +94,5 @@ namespace mtest{
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTANALYTICALTEST_H_ */
+#endif /* LIB_MTEST_MTESTANALYTICALTEST_H_ */
 

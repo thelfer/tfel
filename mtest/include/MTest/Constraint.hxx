@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/Constraint.hxx
+ * \file  mtest/include/MTest/Constraint.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTCONSTRAINT_H_
-#define LIB_MFRONT_MTESTCONSTRAINT_H_ 
+#ifndef LIB_MTEST_MTESTCONSTRAINT_H_
+#define LIB_MTEST_MTESTCONSTRAINT_H_ 
 
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
@@ -97,5 +97,5 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTCONSTRAINT_H_ */
+#endif /* LIB_MTEST_MTESTCONSTRAINT_H_ */
 

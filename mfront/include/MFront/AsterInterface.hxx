@@ -15,7 +15,7 @@
 #define LIB_MFRONTASTERINTERFACE_H_ 
 
 #include<string>
-#include<fstream>
+#include<iosfwd>
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/UMATInterfaceBase.hxx"

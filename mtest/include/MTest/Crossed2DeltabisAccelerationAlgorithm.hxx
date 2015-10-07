@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/Crossed2DeltabisAccelerationAlgorithm.hxx
+ * \file  mtest/include/MTest/Crossed2DeltabisAccelerationAlgorithm.hxx
  * \brief
  * \author RAMIERE Isabelle
  * \brief 16 mars 2015
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTEST_MTESTCROSSED2DELTABISACCELERATIONALGORITHM_H_
-#define LIB_MFRONT_MTEST_MTESTCROSSED2DELTABISACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MTEST_MTEST_MTESTCROSSED2DELTABISACCELERATIONALGORITHM_H_
+#define LIB_MTEST_MTEST_MTESTCROSSED2DELTABISACCELERATIONALGORITHM_H_ 
 
 #include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
@@ -94,5 +94,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTEST_MTESTCROSSED2DELTABISACCELERATIONALGORITHM_H_ */
+#endif /* LIB_MTEST_MTEST_MTESTCROSSED2DELTABISACCELERATIONALGORITHM_H_ */
 

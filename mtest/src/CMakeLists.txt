@@ -53,13 +53,13 @@ set(TFELMTest_LDADD
 
 if(HAVE_CASTEM)
   set(TFELMTest_SOURCES
-    UmatStandardBehaviour.cxx
-    UmatSmallStrainBehaviour.cxx
-    UmatFiniteStrainBehaviour.cxx
-    UmatCohesiveZoneModel.cxx
+    CastemStandardBehaviour.cxx
+    CastemSmallStrainBehaviour.cxx
+    CastemFiniteStrainBehaviour.cxx
+    CastemCohesiveZoneModel.cxx
     ${TFELMTest_SOURCES})
   set(TFELMTest_LDADD
-    UMATInterface
+    CastemInterface
     ${TFELMTest_LDADD})
 endif(HAVE_CASTEM)
 

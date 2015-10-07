@@ -20,7 +20,6 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Cyrano/Cyrano.hxx"
 #include"MTest/CyranoBehaviour.hxx"
-#include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
 

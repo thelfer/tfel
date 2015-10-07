@@ -137,7 +137,7 @@ mfront_dependencies(MFrontCastemBehaviours
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 
 target_link_libraries(MFrontCastemBehaviours
-  UMATInterface
+  CastemInterface
   MFrontProfiling
   TFELMaterial
   TFELMath

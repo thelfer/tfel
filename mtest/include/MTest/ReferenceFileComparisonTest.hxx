@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/ReferenceFileComparisonTest.hxx
+ * \file  mtest/include/MTest/ReferenceFileComparisonTest.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 18 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTREFERENCEFILECOMPARISONTEST_H_
-#define LIB_MFRONT_MTESTREFERENCEFILECOMPARISONTEST_H_ 
+#ifndef LIB_MTEST_MTESTREFERENCEFILECOMPARISONTEST_H_
+#define LIB_MTEST_MTESTREFERENCEFILECOMPARISONTEST_H_ 
 
 #include<map>
 #include<string>
@@ -88,5 +88,5 @@ namespace mtest{
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTREFERENCEFILECOMPARISONTEST_H_ */
+#endif /* LIB_MTEST_MTESTREFERENCEFILECOMPARISONTEST_H_ */
 

@@ -1,90 +1,90 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-nobase_include_HEADERS= MFront/MFront.hxx                             \
-			MFront/MFrontBase.hxx                         \
-			MFront/MFrontUtilities.hxx                    \
-			MFront/MFrontUtilities.ixx                    \
-			MFront/GeneratorOptions.hxx                   \
-			MFront/MakefileGenerator.hxx                  \
-			MFront/BehaviourQuery.hxx                     \
-			MFront/BehaviourDocumentationGenerator.hxx    \
-			MFront/CodeBlock.hxx                          \
-			MFront/MFrontConfig.hxx	                      \
-			MFront/MFrontDebugMode.hxx	              \
-			MFront/PerformanceProfiling.hxx               \
-			MFront/PedanticMode.hxx	                      \
-			MFront/MFrontLogStream.hxx                    \
-			MFront/GenericData.hxx                        \
-			MFront/FileDescription.hxx                    \
-			MFront/TargetsDescription.hxx                 \
-			MFront/LibraryDescription.hxx                 \
-			MFront/MFrontLock.hxx                         \
-			MFront/InitDSLs.hxx                           \
-			MFront/InitInterfaces.hxx                     \
-			MFront/MFrontHeader.hxx                       \
-			MFront/AbstractDSL.hxx                        \
-			MFront/DSLBase.hxx                            \
-			MFront/DSLBase.ixx                            \
-			MFront/AbstractBehaviourDSL.hxx               \
-			MFront/BehaviourDSLCommon.hxx                 \
-			MFront/BehaviourDSLCommon.ixx                 \
-			MFront/BehaviourDSLBase.hxx                   \
-			MFront/BehaviourDSLBase.ixx                   \
-			MFront/DSLFactory.hxx                         \
-			MFront/DSLProxy.hxx                           \
-			MFront/DSLProxy.ixx                           \
-			MFront/AbstractMaterialPropertyInterface.hxx  \
-			MFront/MaterialPropertyInterfaceFactory.hxx   \
-			MFront/MaterialPropertyInterfaceProxy.hxx     \
-			MFront/MaterialPropertyInterfaceProxy.ixx     \
-			MFront/AbstractBehaviourInterface.hxx         \
-			MFront/BehaviourInterfaceProxy.hxx            \
-			MFront/BehaviourInterfaceProxy.ixx            \
-			MFront/BehaviourInterfaceFactory.hxx          \
-			MFront/AbstractModelInterface.hxx             \
-			MFront/ModelData.hxx                          \
-			MFront/ModelInterfaceProxy.hxx                \
-			MFront/ModelInterfaceProxy.ixx                \
-			MFront/ModelInterfaceFactory.hxx              \
-			MFront/ModelDSLCommon.hxx                     \
-			MFront/ModelDSLBase.hxx                       \
-			MFront/ModelDSLBase.ixx                       \
-			MFront/MaterialPropertyDescription.hxx        \
-			MFront/BehaviourAttribute.hxx                 \
-			MFront/BehaviourData.hxx                      \
-			MFront/BehaviourData.ixx                      \
-			MFront/BehaviourDescription.hxx               \
-			MFront/BehaviourDescription.ixx               \
-			MFront/BehaviourSymmetryType.hxx              \
-			MFront/InterfaceBase.hxx                      \
-			MFront/DSLUtilities.hxx                       \
-			MFront/SupportedTypes.hxx                     \
-			MFront/SearchFile.hxx                         \
-			MFront/DrivingVariable.hxx                    \
-			MFront/ThermodynamicForce.hxx                 \
-			MFront/BoundsDescription.hxx                  \
-			MFront/VariableBoundsDescription.hxx          \
-			MFront/VarHandler.hxx                         \
-			MFront/StaticVarHandler.hxx                   \
-			MFront/VariableDescription.hxx                \
-			MFront/StaticVariableDescription.hxx          \
-			MFront/LawFunction.hxx                        \
-			MFront/DefaultDSLBase.hxx                     \
-			MFront/DefaultDSL.hxx                         \
-			MFront/DefaultCZMDSL.hxx                      \
-			MFront/DefaultFiniteStrainDSL.hxx             \
-			MFront/MaterialPropertyDSL.hxx                \
-			MFront/ModelDSL.hxx                           \
-			MFront/UMATInterfaceBase.hxx                  \
-			MFront/MTestFileGeneratorBase.hxx             \
-			MFront/UMATSmallStrainMTestFileGenerator.hxx  \
-			MFront/UMATFiniteStrainMTestFileGenerator.hxx \
-			MFront/AbstractBehaviourBrick.hxx             \
-			MFront/BehaviourBrickBase.hxx                 \
-			MFront/AbstractBehaviourBrickFactory.hxx      \
-			MFront/BehaviourBrick/ProviderIdentifier.hxx  \
-			MFront/BehaviourBrick/Requirement.hxx         \
-			MFront/BehaviourBrick/RequirementManager.hxx  \
+nobase_include_HEADERS= MFront/MFront.hxx                               \
+			MFront/MFrontBase.hxx                           \
+			MFront/MFrontUtilities.hxx                      \
+			MFront/MFrontUtilities.ixx                      \
+			MFront/GeneratorOptions.hxx                     \
+			MFront/MakefileGenerator.hxx                    \
+			MFront/BehaviourQuery.hxx                       \
+			MFront/BehaviourDocumentationGenerator.hxx      \
+			MFront/CodeBlock.hxx                            \
+			MFront/MFrontConfig.hxx	                        \
+			MFront/MFrontDebugMode.hxx	                \
+			MFront/PerformanceProfiling.hxx                 \
+			MFront/PedanticMode.hxx	                        \
+			MFront/MFrontLogStream.hxx                      \
+			MFront/GenericData.hxx                          \
+			MFront/FileDescription.hxx                      \
+			MFront/TargetsDescription.hxx                   \
+			MFront/LibraryDescription.hxx                   \
+			MFront/MFrontLock.hxx                           \
+			MFront/InitDSLs.hxx                             \
+			MFront/InitInterfaces.hxx                       \
+			MFront/MFrontHeader.hxx                         \
+			MFront/AbstractDSL.hxx                          \
+			MFront/DSLBase.hxx                              \
+			MFront/DSLBase.ixx                              \
+			MFront/AbstractBehaviourDSL.hxx                 \
+			MFront/BehaviourDSLCommon.hxx                   \
+			MFront/BehaviourDSLCommon.ixx                   \
+			MFront/BehaviourDSLBase.hxx                     \
+			MFront/BehaviourDSLBase.ixx                     \
+			MFront/DSLFactory.hxx                           \
+			MFront/DSLProxy.hxx                             \
+			MFront/DSLProxy.ixx                             \
+			MFront/AbstractMaterialPropertyInterface.hxx    \
+			MFront/MaterialPropertyInterfaceFactory.hxx     \
+			MFront/MaterialPropertyInterfaceProxy.hxx       \
+			MFront/MaterialPropertyInterfaceProxy.ixx       \
+			MFront/AbstractBehaviourInterface.hxx           \
+			MFront/BehaviourInterfaceProxy.hxx              \
+			MFront/BehaviourInterfaceProxy.ixx              \
+			MFront/BehaviourInterfaceFactory.hxx            \
+			MFront/AbstractModelInterface.hxx               \
+			MFront/ModelData.hxx                            \
+			MFront/ModelInterfaceProxy.hxx                  \
+			MFront/ModelInterfaceProxy.ixx                  \
+			MFront/ModelInterfaceFactory.hxx                \
+			MFront/ModelDSLCommon.hxx                       \
+			MFront/ModelDSLBase.hxx                         \
+			MFront/ModelDSLBase.ixx                         \
+			MFront/MaterialPropertyDescription.hxx          \
+			MFront/BehaviourAttribute.hxx                   \
+			MFront/BehaviourData.hxx                        \
+			MFront/BehaviourData.ixx                        \
+			MFront/BehaviourDescription.hxx                 \
+			MFront/BehaviourDescription.ixx                 \
+			MFront/BehaviourSymmetryType.hxx                \
+			MFront/InterfaceBase.hxx                        \
+			MFront/DSLUtilities.hxx                         \
+			MFront/SupportedTypes.hxx                       \
+			MFront/SearchFile.hxx                           \
+			MFront/DrivingVariable.hxx                      \
+			MFront/ThermodynamicForce.hxx                   \
+			MFront/BoundsDescription.hxx                    \
+			MFront/VariableBoundsDescription.hxx            \
+			MFront/VarHandler.hxx                           \
+			MFront/StaticVarHandler.hxx                     \
+			MFront/VariableDescription.hxx                  \
+			MFront/StaticVariableDescription.hxx            \
+			MFront/LawFunction.hxx                          \
+			MFront/DefaultDSLBase.hxx                       \
+			MFront/DefaultDSL.hxx                           \
+			MFront/DefaultCZMDSL.hxx                        \
+			MFront/DefaultFiniteStrainDSL.hxx               \
+			MFront/MaterialPropertyDSL.hxx                  \
+			MFront/ModelDSL.hxx                             \
+			MFront/UMATInterfaceBase.hxx                    \
+			MFront/MTestFileGeneratorBase.hxx               \
+			MFront/UmatSmallStrainMTestFileGenerator.hxx    \
+			MFront/UmatFiniteStrainMTestFileGenerator.hxx   \
+			MFront/AbstractBehaviourBrick.hxx               \
+			MFront/BehaviourBrickBase.hxx                   \
+			MFront/AbstractBehaviourBrickFactory.hxx        \
+			MFront/BehaviourBrick/ProviderIdentifier.hxx    \
+			MFront/BehaviourBrick/Requirement.hxx           \
+			MFront/BehaviourBrick/RequirementManager.hxx    \
 			MFront/BehaviourBrick/Provider.hxx
 
 
@@ -130,32 +130,32 @@ nobase_include_HEADERS += MFront/BehaviourProfiler.hxx
 
 if HAVE_CASTEM
 nobase_include_HEADERS += MFront/CastemMaterialPropertyInterface.hxx   \
-	 	          MFront/UMATInterface.hxx
+	 	          MFront/CastemInterface.hxx
 if LOCAL_CASTEM_HEADER
 nobase_include_HEADERS += castem.h
 endif 
 
-nobase_include_HEADERS += MFront/UMAT/UMAT.hxx                                         \
-			  MFront/UMAT/UMATConfig.hxx				       \
-			  MFront/UMAT/UMATTraits.hxx                                   \
-			  MFront/UMAT/UMATException.hxx                                \
-			  MFront/UMAT/UMATGetModellingHypothesis.hxx                   \
-			  MFront/UMAT/UMATOutOfBoundsPolicy.hxx                        \
-			  MFront/UMAT/UMATInterface.hxx                                \
-			  MFront/UMAT/UMATInterfaceDispatch.hxx                        \
-			  MFront/UMAT/UMATInterfaceExceptions.hxx                      \
-			  MFront/UMAT/UMATFiniteStrain.hxx                             \
-			  MFront/UMAT/UMATBehaviourHandler.hxx                         \
-			  MFront/UMAT/UMATIsotropicBehaviourHandler.hxx                \
-			  MFront/UMAT/UMATOrthotropicBehaviourHandler.hxx              \
-			  MFront/UMAT/UMATGenericPlaneStressHandler.hxx                \
-			  MFront/UMAT/UMATRotationMatrix.hxx                           \
-			  MFront/UMAT/UMATFiniteStrainRotationMatrix.hxx               \
-			  MFront/UMAT/UMATOrthotropicBehaviour.hxx                     \
-			  MFront/UMAT/UMATComputeStiffnessTensor.hxx                   \
-			  MFront/UMAT/UMATComputeThermalExpansionCoefficientTensor.hxx \
-			  MFront/UMAT/UMATStressFreeExpansionHandler.hxx               \
-			  MFront/UMAT/UMATTangentOperator.hxx
+nobase_include_HEADERS += MFront/Castem/Castem.hxx                                         \
+			  MFront/Castem/CastemConfig.hxx				       \
+			  MFront/Castem/CastemTraits.hxx                                   \
+			  MFront/Castem/CastemException.hxx                                \
+			  MFront/Castem/CastemGetModellingHypothesis.hxx                   \
+			  MFront/Castem/CastemOutOfBoundsPolicy.hxx                        \
+			  MFront/Castem/CastemInterface.hxx                                \
+			  MFront/Castem/CastemInterfaceDispatch.hxx                        \
+			  MFront/Castem/CastemInterfaceExceptions.hxx                      \
+			  MFront/Castem/CastemFiniteStrain.hxx                             \
+			  MFront/Castem/CastemBehaviourHandler.hxx                         \
+			  MFront/Castem/CastemIsotropicBehaviourHandler.hxx                \
+			  MFront/Castem/CastemOrthotropicBehaviourHandler.hxx              \
+			  MFront/Castem/CastemGenericPlaneStressHandler.hxx                \
+			  MFront/Castem/CastemRotationMatrix.hxx                           \
+			  MFront/Castem/CastemFiniteStrainRotationMatrix.hxx               \
+			  MFront/Castem/CastemOrthotropicBehaviour.hxx                     \
+			  MFront/Castem/CastemComputeStiffnessTensor.hxx                   \
+			  MFront/Castem/CastemComputeThermalExpansionCoefficientTensor.hxx \
+			  MFront/Castem/CastemStressFreeExpansionHandler.hxx               \
+			  MFront/Castem/CastemTangentOperator.hxx
 endif
 
 if HAVE_CYRANO
@@ -208,7 +208,7 @@ endif
 
 EXTRA_DIST = CMakeLists.txt               \
 	     MFront/mfront.doxygen        \
-	     MFront/UMAT/umat.doxygen     \
+	     MFront/Castem/castem.doxygen \
 	     MFront/Aster/aster.doxygen   \
 	     MFront/Cyrano/cyrano.doxygen \
 	     MFront/ZMAT/zmat.doxygen

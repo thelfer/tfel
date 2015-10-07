@@ -14,11 +14,10 @@
 #ifndef LIB_MFRONTMODELPARSERCOMMON_H_
 #define LIB_MFRONTMODELPARSERCOMMON_H_ 
 
-#include<vector>
-#include<map>
 #include<set>
+#include<map>
+#include<vector>
 #include<string>
-#include<fstream>
 
 #include"MFront/MFrontConfig.hxx"
 

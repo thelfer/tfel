@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/MTestParser.hxx
+ * \file  mtest/include/MTest/MTestParser.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 09 avril 2013
@@ -11,14 +11,13 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTPARSER_H_
-#define LIB_MFRONT_MTESTPARSER_H_ 
+#ifndef LIB_MTEST_MTESTPARSER_H_
+#define LIB_MTEST_MTESTPARSER_H_ 
 
 #include<map>
 #include<string>
 #include<vector>
 #include<memory>
-#include<fstream>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
@@ -449,5 +448,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTPARSER_H_ */
+#endif /* LIB_MTEST_MTESTPARSER_H_ */
 

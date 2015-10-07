@@ -14,6 +14,7 @@
 #ifndef _LIB_MFRONTMODELINTERFACE_H_
 #define _LIB_MFRONTMODELINTERFACE_H_ 
 
+#include<fstream>
 #include"MFront/AbstractModelInterface.hxx"
 
 namespace mfront{

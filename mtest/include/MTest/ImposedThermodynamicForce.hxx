@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/ImposedThermodynamicForce.hxx
+ * \file  mtest/include/MTest/ImposedThermodynamicForce.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTIMPOSEDTHERMODYNAMICFORCE_H_
-#define LIB_MFRONT_MTESTIMPOSEDTHERMODYNAMICFORCE_H_ 
+#ifndef LIB_MTEST_MTESTIMPOSEDTHERMODYNAMICFORCE_H_
+#define LIB_MTEST_MTESTIMPOSEDTHERMODYNAMICFORCE_H_ 
 
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
@@ -127,5 +127,5 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTIMPOSEDTHERMODYNAMICFORCE_H_ */
+#endif /* LIB_MTEST_MTESTIMPOSEDTHERMODYNAMICFORCE_H_ */
 

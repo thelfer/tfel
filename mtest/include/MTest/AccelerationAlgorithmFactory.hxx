@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/AccelerationAlgorithmFactory.hxx
+ * \file  mtest/include/MTest/AccelerationAlgorithmFactory.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 juin 2014
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTACCELERATIONALGORITHMFACTORY_H_
-#define LIB_MFRONT_MTESTACCELERATIONALGORITHMFACTORY_H_ 
+#ifndef LIB_MTEST_MTESTACCELERATIONALGORITHMFACTORY_H_
+#define LIB_MTEST_MTESTACCELERATIONALGORITHMFACTORY_H_ 
 
 #include<map>
 #include<string>
@@ -70,5 +70,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTACCELERATIONALGORITHMFACTORY_H_ */
+#endif /* LIB_MTEST_MTESTACCELERATIONALGORITHMFACTORY_H_ */
 

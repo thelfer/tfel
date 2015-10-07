@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/FunctionEvolution.hxx
+ * \file  mtest/include/MTest/FunctionEvolution.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 14 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTFUNCTIONEVOLUTION_H_
-#define LIB_MFRONT_MTESTFUNCTIONEVOLUTION_H_ 
+#ifndef LIB_MTEST_MTESTFUNCTIONEVOLUTION_H_
+#define LIB_MTEST_MTESTFUNCTIONEVOLUTION_H_ 
 
 #include"TFEL/Math/Evaluator.hxx"
 
@@ -63,5 +63,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTFUNCTIONEVOLUTION_H_ */
+#endif /* LIB_MTEST_MTESTFUNCTIONEVOLUTION_H_ */
 

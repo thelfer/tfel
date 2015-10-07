@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/Alternate2DeltaAccelerationAlgorithm.hxx
+ * \file  mtest/include/MTest/Alternate2DeltaAccelerationAlgorithm.hxx
  * \brief
  * \author RAMIERE Isabelle
  * \brief 19 mars 2015
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_
-#define LIB_MFRONT_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MTEST_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_
+#define LIB_MTEST_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_ 
 
 #include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
@@ -91,5 +91,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_ */
+#endif /* LIB_MTEST_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_ */
 

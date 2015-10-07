@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/UmatBehaviourBase.hxx
+ * \file  mtest/include/MTest/UmatBehaviourBase.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTUMATBEHAVIOURBASE_H_
-#define LIB_MFRONT_MTESTUMATBEHAVIOURBASE_H_ 
+#ifndef LIB_MTEST_MTESTUMATBEHAVIOURBASE_H_
+#define LIB_MTEST_MTESTUMATBEHAVIOURBASE_H_ 
 
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/Behaviour.hxx"
@@ -216,5 +216,5 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTUMATBEHAVIOURBASE_H_ */
+#endif /* LIB_MTEST_MTESTUMATBEHAVIOURBASE_H_ */
 

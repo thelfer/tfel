@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/Types.hxx
+ * \file  mtest/include/MTest/Types.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTTYPES_H_
-#define LIB_MFRONT_MTESTTYPES_H_ 
+#ifndef LIB_MTEST_MTESTTYPES_H_
+#define LIB_MTEST_MTESTTYPES_H_ 
 
 #include<map>
 #include<string>
@@ -51,5 +51,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTTYPES_H_ */
+#endif /* LIB_MTEST_MTESTTYPES_H_ */
 

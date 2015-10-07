@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/Evolution.hxx
+ * \file  mtest/include/MTest/Evolution.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTEVOLUTION_H_
-#define LIB_MFRONT_MTESTEVOLUTION_H_ 
+#ifndef LIB_MTEST_MTESTEVOLUTION_H_
+#define LIB_MTEST_MTESTEVOLUTION_H_ 
 
 #include<map>
 #include<vector>
@@ -129,5 +129,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTESTEVOLUTION_H_ */
+#endif /* LIB_MTEST_MTESTEVOLUTION_H_ */
 

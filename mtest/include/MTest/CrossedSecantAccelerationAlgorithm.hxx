@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/CrossedSecantAccelerationAlgorithm.hxx
+ * \file  mtest/include/MTest/CrossedSecantAccelerationAlgorithm.hxx
  * \brief
  * \author RAMIERE Isabelle
  * \brief 9 mars 2015
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTEST_MTESTCROSSEDSECANTACCELERATIONALGORITHM_H_
-#define LIB_MFRONT_MTEST_MTESTCROSSEDSECANTACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MTEST_MTEST_MTESTCROSSEDSECANTACCELERATIONALGORITHM_H_
+#define LIB_MTEST_MTEST_MTESTCROSSEDSECANTACCELERATIONALGORITHM_H_ 
 
 #include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
@@ -88,5 +88,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTEST_MTESTCROSSEDSECANTACCELERATIONALGORITHM_H_ */
+#endif /* LIB_MTEST_MTEST_MTESTCROSSEDSECANTACCELERATIONALGORITHM_H_ */
 

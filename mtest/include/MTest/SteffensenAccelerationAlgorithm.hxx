@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MTest/SteffensenAccelerationAlgorithm.hxx
+ * \file  mtest/include/MTest/SteffensenAccelerationAlgorithm.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 10 juin 2014
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTEST_MTESTSTEFFENSENACCELERATIONALGORITHM_H_
-#define LIB_MFRONT_MTEST_MTESTSTEFFENSENACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MTEST_MTEST_MTESTSTEFFENSENACCELERATIONALGORITHM_H_
+#define LIB_MTEST_MTEST_MTESTSTEFFENSENACCELERATIONALGORITHM_H_ 
 
 #include"MTest/Config.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
@@ -86,5 +86,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MFRONT_MTEST_MTESTSTEFFENSENACCELERATIONALGORITHM_H_ */
+#endif /* LIB_MTEST_MTEST_MTESTSTEFFENSENACCELERATIONALGORITHM_H_ */
 

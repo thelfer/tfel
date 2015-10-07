@@ -1276,8 +1276,9 @@ namespace mtest
     this->checkNotEndOfLine("MTestParser::handleBehaviour",p,
 			    this->fileTokens.end());
 #ifdef HAVE_CASTEM
-    if(p->value=="umat"){
-      i = p->value;
+    if((p->value=="umat")||
+       (p->value=="castem")){
+      i = "castem";
     }
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
