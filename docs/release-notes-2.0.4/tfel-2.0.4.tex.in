@@ -1,5 +1,7 @@
 \documentclass[anti,projet]{note_technique_2010}
 
+\usepackage{listings}
+
 \newcommand{\castem}{\texttt{Cast3M}}
 \newcommand{\aster}{\texttt{Code\_\-Aster}}
 \newcommand{\alcyone}{\texttt{Alcyone}}
@@ -172,22 +174,36 @@ en grandes transformations et était donc peu accessible. Ce point a
 la documentation du mot clé {\tt @Imposed\-Deformation\-Gradient} de
 \mtest{}.
 
-\subsubsection{Gestion de l'échappement des '#' suivant les version de CMake
-  (Ticket \#15)}
+\subsubsection{Définition des macros F77\_FUNC et F77\_FUNC\_ avec
+  cmake (Ticket \#15)}
 
-Les versions de CMake supérieures à 3.1 échappent correctement les '#'.
-Par conséquent l'échappement des '#' dans les versions antérieures à 3.1 créent des erreurs.\\
-Ce point a été corrigé en modifiant le comportement suivant la version deu CMake. L'algorithme est le suivant~:\\
+La version \(2.0.3\) ne compilaient plus avec les versions récentes de
+{\tt CMake}. Le problème est lié à la définition de macros {\tt
+  F77\_FUNC} et {\tt F77\_FUNC\_} qui permettent de trouver la
+correspondance entre le nom d'une fonction en {\tt C} et son nom en
+{\tt fortran}.
 
-if(CMAKE_VERSION)\\
-  if(CMAKE_VERSION VERSION_GREATER 3.1)\\
-    # Nouvelle solution\\
-  else(CMAKE_VERSION VERSION_GREATER 3.1)\\
-    # Ancienne solution\\
-  endif(CMAKE_VERSION VERSION_GREATER 3.1)\\
-else(CMAKE_VERSION)\\
-    # Ancienne solution\\
-endif(CMAKE_VERSION)\\
+Plus précisément, le problème est apparu suit à une correction de bug
+dans les versions de {\tt CMake} supérieures à 3.1 qui conduit à
+traiter correctement le caractère dièse ({\tt '\#'}). Hors, pour
+contourner ce bug, nous utilisions un contournement~: nous préfixions
+le caractère dièse par le caractère {\tt '\textbackslash{}'}. C'est ce
+contournement qui conduit à des erreurs dans les versions récentes de
+{\tt CMake}.
+
+Afin de supporter toutes les versions de {\tt CMake}, le problème a
+été résolu ainsi~:
+\begin{lstlisting}[language=sh]
+if(CMAKE_VERSION)
+  if(CMAKE_VERSION VERSION_GREATER 3.1)
+    # Nouvelle definition de la macro  F77_FUNC
+  else(CMAKE_VERSION VERSION_GREATER 3.1)
+    # Ancienne definition de la macro  F77_FUNC
+  endif(CMAKE_VERSION VERSION_GREATER 3.1)
+else(CMAKE_VERSION)
+    # Ancienne definition de la macro  F77_FUNC
+endif(CMAKE_VERSION)
+\end{lstlisting}
 
 Plus de détails peuvent être trouvés à la page~:
 \begin{center}
