@@ -1,5 +1,7 @@
 \documentclass[anti,projet]{note_technique_2010}
 
+\usepackage{listings}
+
 \newcommand{\castem}{\texttt{Cast3M}}
 \newcommand{\aster}{\texttt{Code\_\-Aster}}
 \newcommand{\alcyone}{\texttt{Alcyone}}
@@ -171,6 +173,67 @@ en grandes transformations et était donc peu accessible. Ce point a
 été corrigé et cette convention est maintenant également décrite dans
 la documentation du mot clé {\tt @Imposed\-Deformation\-Gradient} de
 \mtest{}.
+
+\subsubsection{Définition des macros F77\_FUNC et F77\_FUNC\_ avec
+  cmake (Ticket \#15)}
+
+La version \(2.0.3\) ne compilaient plus avec les versions récentes de
+{\tt CMake}. Le problème est lié à la définition de macros {\tt
+  F77\_FUNC} et {\tt F77\_FUNC\_} qui permettent de trouver la
+correspondance entre le nom d'une fonction en {\tt C} et son nom en
+{\tt fortran}.
+
+Plus précisément, le problème est apparu suit à une correction de bug
+dans les versions de {\tt CMake} supérieures à 3.1 qui conduit à
+traiter correctement le caractère dièse ({\tt '\#'}). Hors, pour
+contourner ce bug, nous utilisions un contournement~: nous préfixions
+le caractère dièse par le caractère {\tt '\textbackslash{}'}. C'est ce
+contournement qui conduit à des erreurs dans les versions récentes de
+{\tt CMake}.
+
+Afin de supporter toutes les versions de {\tt CMake}, le problème a
+été résolu ainsi~:
+\begin{lstlisting}[language=sh]
+if(CMAKE_VERSION)
+  if(CMAKE_VERSION VERSION_GREATER 3.1)
+    # Nouvelle definition de la macro  F77_FUNC
+  else(CMAKE_VERSION VERSION_GREATER 3.1)
+    # Ancienne definition de la macro  F77_FUNC
+  endif(CMAKE_VERSION VERSION_GREATER 3.1)
+else(CMAKE_VERSION)
+    # Ancienne definition de la macro  F77_FUNC
+endif(CMAKE_VERSION)
+\end{lstlisting}
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/15/}
+\end{center}
+
+\subsection{Nouvelles fonctionnalités}
+
+\subsubsection{Définition du repère d'orthotropie à l'aide des angles
+  d'Euler ou des indices de Miller dans MTest}
+
+Il est maintenant possible de définir le repère d'orthotropie à l'aide
+des angles d'Euler ou des indices de Miller dans \mtest{}. Pour cela,
+le mot clé {\tt \@Rotation\-Matrix} peut prendre une option (précisée
+entre les caractère {\tt <} et {\tt >}) dont la valeur peut être~:
+\begin{itemize}
+\item {\tt Standard} (la valeur par défaut). Dans ce cas,
+  l'utilisateur doit préciser la matrice de rotation.
+\item {\tt Euler}. Dans ce cas, l'utilisateur doit préciser les 3
+  angles d'\textsc{Euler}.
+\item {\tt Miller}. Dans ce cas, l'utilisateur doit préciser les 3
+  indices de \textsc{Miller}. Ce dernier cas est intéressant pour le
+  test de lois mono-cristallines.
+\end{itemize}
+
+\paragraph{Exemple}
+
+\begin{lstlisting}[language=sh]
+@RotationMatrix<Miller> {1,5,9};
+\end{lstlisting}
 
 \section{Conclusions}
 
