@@ -184,12 +184,7 @@
 
 Cette annexe décrit l'interface \aster{}.
 
-\subsection{La fonction {\tt umat}}
-
-Le prototype de la fonction {\tt umat} a été initialement défini dans
-le code ABAQUS. Ce prototype a été repris dans \aster{}. La
-compatibilité avec ABAQUS nécessite cependant de déclarer des champs
-qui ne sont pas nécessairement utilisés dans \aster{}.
+\subsection{Prototype des fonctions générées par l'interface aster}
 
 \begin{figure}[htbp]
   \centering
@@ -312,7 +307,7 @@ Plus précisément, nous avons les correspondances suivantes~:
   \item une variable est hors des bornes physiques~;
   \item une variable est hors des bornes de corrélation de la loi et
     que la politique de dépassement des bornes est égale à {\tt
-      'Strict'}.
+      'ARRET} (voir paragraphe~\ref{sec:gestion-des-bornes}).
   \end{itemize}
 \item \(-4\)~: exception de type {\tt DivergenceException}. Cette
   exception est lancée quand l'algorithme d'intégration de la loi a
@@ -331,6 +326,20 @@ Par défaut, un message d'erreur est affiché quand une exception est
 captée. Ce comportement est modifiable à l'aide du mot clé
 \mkey{AsterErrorReport}, décrit au
 paragraphe~\ref{sec:affich-des-erre}.
+
+\subsection{Gestion des bornes}
+\label{sec:gestion-des-bornes}
+
+\aster{} permet à l'utilisateur de choisir le comportement à adopter
+en cas de dépassement des bornes de la corrélation à l'aide du mot-clé
+{\tt VERI\_BORNE}.
+
+Ce mot clé a trois options~:
+\begin{itemize}
+\item {\tt SANS} ignore les dépassements de borne~;
+\item {\tt MESSAGE} affiche un message d'avertissement~;
+\item {\tt ARRET} provoque une erreur lors de l'intégration.
+\end{itemize}
 
 \subsection{Mots clés spécifiques}
 

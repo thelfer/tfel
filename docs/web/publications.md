@@ -5,6 +5,7 @@
 ---
 nocite: | 
 	@helfer_fuel_2009
+	@soulacroix_simulation_2013
 	@soulacroix_aging_2014
 	@salvo_experimental_2015
 	@salvo_experimental_2015-1

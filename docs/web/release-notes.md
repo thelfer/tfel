@@ -45,6 +45,11 @@ Minor fixes.
 A full description of the 2.0.3 release can be found
 [here](documents/tfel/tfel-2.0.3.pdf) (in french).
 
+## Version 2.0.4
+
+- Fix a typo in the `zmat` interface which may prevent the use of
+  external state variables
+
 # Versions 2.1.x
 
 The 2.1.x versions will be the last versions based build on C++98.

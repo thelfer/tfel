@@ -183,13 +183,13 @@ pour effectuer des variantes, des tests de modèles, etc.
 \mfront{} gère la compilation de la loi, il suffit de taper dans un terminal~:
 \begin{flushleft}
   {\tt
-    \$ mfront -{}-obuild -interface=aster norton.mfront
+    \$ mfront -{}-obuild -{}-interface=aster norton.mfront
   }
 \end{flushleft}
 ou
 \begin{flushleft}
   {\tt
-    \$ mfront -{}-obuild -interface=umat norton.mfront
+    \$ mfront -{}-obuild -{}-interface=umat norton.mfront
   }
 \end{flushleft}
 suivant le code de résolution que l'on souhaite utiliser~: l'interface

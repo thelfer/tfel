@@ -1,6 +1,6 @@
 % News
 % Helfer Thomas
-% September 9, 2015
+% September 11, 2015
 
 # MFront and Cyrano3 at the LWR Fuel Performance Meeting 2015 (13 - 17 September 2015, Zurich, Switzerland)
 
@@ -30,7 +30,7 @@ Version 2.0.3 is mostly a bug-fix release:
 A full description of the 2.0.3 release can be found
 [here](documents/tfel/tfel-2.0.3.pdf) (in french).
 
-# Introducting `mfront-doc` (19 August 2015)
+# Introducing `mfront-doc` (19 August 2015)
 
 `mfront-doc` allows the user to extract the documentation out of
 `MFront` file. `mfront-doc` generates files in `pandoc`

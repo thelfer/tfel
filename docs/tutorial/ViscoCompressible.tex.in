@@ -383,7 +383,7 @@ compilées avec l'interface \castem{}~:
 
 \begin{flushleft}
   {\tt
-    \$ \small mfront --obuild --interface=castem UO2\_PoissonRatio\_Fink1981.mfront UO2\_YoungModulus\_Fink1981.mfront UO2\_ThermalExpansion\_MATPRO.mfront\\
+    \$ \small mfront -{}-obuild -{}-interface=castem UO2\_PoissonRatio\_Fink1981.mfront UO2\_YoungModulus\_Fink1981.mfront UO2\_ThermalExpansion\_MATPRO.mfront\\
     Treating target : all\\
     The following library has been build :\\
     - libCastemUO2.so
@@ -800,7 +800,7 @@ La première étape des tests est la compilation de la loi. Nous
 utilisons l'interface {\tt umat} utilisée par le code \castem{}~:
 \begin{flushleft}
   {\tt
-    \$ \small mfront --obuild --interface=umat EllipticCreep.mfront \\
+    \$ \small mfront -{}-obuild -{}-interface=umat EllipticCreep.mfront \\
     Treating target : all \\
     UO2\_ThermalExpansion-mfront.cxx: In function ‘double mfront::UO2\_ThermalExpansion()’: \\
     UO2\_ThermalExpansion-mfront.cxx:21:22: warning: unused variable ‘ReferenceTemperature’ [-Wunused-variable] \\
@@ -944,7 +944,7 @@ l'intégration de la loi. Pour cela, \mfront{} dispose d'une option
 {\tt -{}-{}debug}. Recompilons la loi~:
 \begin{flushleft}
   {\tt
-    \$ \small mfront --obuild --debug --interface=umat EllipticCreep.mfront
+    \$ \small mfront -{}-obuild -{}-debug -{}-interface=umat EllipticCreep.mfront
   }
 \end{flushleft}
 

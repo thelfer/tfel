@@ -88,8 +88,8 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/mingw-get3.xcf			                   \
 	   ./img/Win64.xcf			                   \
 	   ./img/Win64.png			                   \
-	   ./img/materiaux2014.jpg		                   \
 	   ./img/Interfaces.svg			                   \
+	   ./img/materiaux2014.jpg		                   \
 	   ./img/SalomeMeca2015.png 				   \
 	   ./img/IconeCast3M_verte.png 				   \
 	   ./img/poster-giens2015.svg 				   \

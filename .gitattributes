@@ -735,6 +735,9 @@ docs/release-notes-2.0.3/CMakeLists.txt -text
 docs/release-notes-2.0.3/Makefile.am -text
 docs/release-notes-2.0.3/Makefile.doc.in -text
 docs/release-notes-2.0.3/bibliographie.bib -text
+docs/release-notes-2.0.3/images/cb.pdf -text
+docs/release-notes-2.0.3/images/signatures.png -text
+docs/release-notes-2.0.3/images/signatures.xcf -text
 docs/release-notes-2.0.3/tfel-2.0.3.tex.in -text
 docs/release-notes-2.0.4/CMakeLists.txt -text
 docs/release-notes-2.0.4/Makefile.am -text
