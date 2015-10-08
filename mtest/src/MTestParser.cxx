@@ -14,6 +14,7 @@
 
 #include<map>
 #include<cmath>
+#include<array>
 #include<string>
 #include<vector>
 #include<memory>
@@ -881,7 +882,6 @@ namespace mtest
   void
   MTestParser::handleMaximumNumberOfSubSteps(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     t.setMaximumNumberOfSubSteps(this->readUnsignedInt(p,this->fileTokens.end()));
     this->readSpecifiedToken("MTestParser::handleMaximumNumberOfSubSteps",";",
 			     p,this->fileTokens.end());
@@ -890,31 +890,101 @@ namespace mtest
   void
   MTestParser::handleRotationMatrix(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    using namespace tfel::math;
-    using std::vector;
-    this->readSpecifiedToken("MTestParser::handleRotationMatrix","{",
-			     p,this->fileTokens.end());
-    vector<vector<real> > v(3);
-    for(unsigned short i=0;i!=3;){
-      v[i].resize(3);
-      this->readArrayOfSpecifiedSize(v[i],t,p);
-      if(++i!=3){
-	this->readSpecifiedToken("MTestParser::handleRotationMatrix",",",
-				 p,this->fileTokens.end());
+    auto from_euler = [](tfel::math::tmatrix<3,3,real>& r,
+			 const real psi,const real the,const real phi){
+      const real cospsi = std::cos(psi);
+      const real costhe = std::cos(the);
+      const real cosphi = std::cos(phi);
+      const real sinpsi = std::sin(psi);
+      const real sinthe = std::sin(the);
+      const real sinphi = std::sin(phi);
+      r(0,0) =  cosphi*cospsi - sinphi*costhe*sinpsi;
+      r(0,1) =  cosphi*sinpsi + sinphi*costhe*cospsi;
+      r(0,2) =  sinphi*sinthe;
+      r(1,0) = -sinphi*cospsi - cosphi*costhe*sinpsi;
+      r(1,1) = -sinphi*sinpsi + cosphi*costhe*cospsi;
+      r(1,2) =  cosphi*sinthe;
+      r(2,0) =  sinthe*sinpsi;
+      r(2,1) = -sinthe*cospsi;
+      r(2,2) =  costhe;
+    };
+    enum {
+      STANDARD,
+      EULER,
+      MILLER
+    } choice = STANDARD;
+    this->checkNotEndOfLine("MTestParser::handleRotationMatrix",p,
+			    this->fileTokens.end());
+    if(p->value=="<"){
+      ++p;
+      this->checkNotEndOfLine("MTestParser::handleRotationMatrix",p,
+			      this->fileTokens.end());
+      if(p->value=="Standard"){
+	choice = STANDARD;
+      } else if(p->value=="Euler"){
+	choice = EULER;
+      } else if(p->value=="Miller"){
+	choice = MILLER;
+      } else {
+	throw(std::runtime_error("MTestParser::handleRotationMatrix: "
+				 "unsupported roation matrix type"));
+      }
+      ++p;
+      this->checkNotEndOfLine("MTestParser::handleRotationMatrix",p,
+			      this->fileTokens.end());
+    }
+    // saving the read values
+    tfel::math::tmatrix<3u,3u,real> rm;
+    if(choice==MILLER){
+      constexpr const real cste = 180. / M_PI;
+      this->readSpecifiedToken("MTestParser::handleRotationMatrix","{",
+			       p,this->fileTokens.end());
+      const auto h = this->readInt(p,this->fileTokens.end());
+      this->readSpecifiedToken("MTestParser::handleRotationMatrix",",",
+			       p,this->fileTokens.end());
+      const auto k = this->readInt(p,this->fileTokens.end());
+      this->readSpecifiedToken("MTestParser::handleRotationMatrix",",",
+			       p,this->fileTokens.end());
+      const auto l = this->readInt(p,this->fileTokens.end());
+      this->readSpecifiedToken("MTestParser::handleRotationMatrix","}",
+			       p,this->fileTokens.end());
+      const real n1   = std::sqrt(real{h*h+k*k+l*l});
+      const real n2   = std::sqrt(real{h*h+k*k});
+      const real phi1 = 0;
+      const real phi  = std::acos(l/n1)*cste;
+      const real phi2 = std::atan2(h/n2,k/n2)*cste;
+      from_euler(rm,phi1,phi,phi2);
+    } else if(choice==EULER){
+      std::vector<real> v(3);
+      this->readSpecifiedToken("MTestParser::handleRotationMatrix","{",
+			       p,this->fileTokens.end());
+      this->readArrayOfSpecifiedSize(v,t,p);
+      this->readSpecifiedToken("MTestParser::handleRotationMatrix","}",
+			       p,this->fileTokens.end());
+      from_euler(rm,v[0],v[1],v[2]);
+    } else {
+      // standard choice
+      this->readSpecifiedToken("MTestParser::handleRotationMatrix","{",
+			       p,this->fileTokens.end());
+      std::vector<std::vector<real>> v(3);
+      for(unsigned short i=0;i!=3;){
+	v[i].resize(3);
+	this->readArrayOfSpecifiedSize(v[i],t,p);
+	if(++i!=3){
+	  this->readSpecifiedToken("MTestParser::handleRotationMatrix",",",
+				   p,this->fileTokens.end());
+	}
+      }
+      this->readSpecifiedToken("MTestParser::handleRotationMatrix","}",
+			       p,this->fileTokens.end());
+      for(unsigned short i=0;i!=3;++i){
+	for(unsigned short j=0;j!=3;++j){
+	  rm(i,j)=v[i][j];
+	}
       }
     }
-    this->readSpecifiedToken("MTestParser::handleRotationMatrix","}",
-			     p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handleRotationMatrix",";",
 			     p,this->fileTokens.end());
-    // saving the read values
-    tmatrix<3u,3u,real> rm;
-    for(unsigned short i=0;i!=3;++i){
-      for(unsigned short j=0;j!=3;++j){
-	rm(i,j)=v[i][j];
-      }
-    }
     t.setRotationMatrix(rm);
   } // end of MTestParser::handleRotationMatrix
 
