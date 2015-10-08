@@ -172,6 +172,28 @@ en grandes transformations et était donc peu accessible. Ce point a
 la documentation du mot clé {\tt @Imposed\-Deformation\-Gradient} de
 \mtest{}.
 
+\subsubsection{Gestion de l'échappement des '#' suivant les version de CMake
+  (Ticket \#15)}
+
+Les versions de CMake supérieures à 3.1 échappent correctement les '#'.
+Par conséquent l'échappement des '#' dans les versions antérieures à 3.1 créent des erreurs.\\
+Ce point a été corrigé en modifiant le comportement suivant la version deu CMake. L'algorithme est le suivant~:\\
+
+if(CMAKE_VERSION)\\
+  if(CMAKE_VERSION VERSION_GREATER 3.1)\\
+    # Nouvelle solution\\
+  else(CMAKE_VERSION VERSION_GREATER 3.1)\\
+    # Ancienne solution\\
+  endif(CMAKE_VERSION VERSION_GREATER 3.1)\\
+else(CMAKE_VERSION)\\
+    # Ancienne solution\\
+endif(CMAKE_VERSION)\\
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/15/}
+\end{center}
+
 \section{Conclusions}
 
 \subsection{Remerciements}
