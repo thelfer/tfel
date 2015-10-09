@@ -210,6 +210,31 @@ Plus de détails peuvent être trouvés à la page~:
   \url{https://sourceforge.net/p/tfel/tickets/15/}
 \end{center}
 
+\subsection{Nouvelles fonctionnalités}
+
+\subsubsection{Définition du repère d'orthotropie à l'aide des angles
+  d'Euler ou des indices de Miller dans MTest}
+
+Il est maintenant possible de définir le repère d'orthotropie à l'aide
+des angles d'Euler ou des indices de Miller dans \mtest{}. Pour cela,
+le mot clé {\tt \@Rotation\-Matrix} peut prendre une option (précisée
+entre les caractère {\tt <} et {\tt >}) dont la valeur peut être~:
+\begin{itemize}
+\item {\tt Standard} (la valeur par défaut). Dans ce cas,
+  l'utilisateur doit préciser la matrice de rotation.
+\item {\tt Euler}. Dans ce cas, l'utilisateur doit préciser les 3
+  angles d'\textsc{Euler}.
+\item {\tt Miller}. Dans ce cas, l'utilisateur doit préciser les 3
+  indices de \textsc{Miller}. Ce dernier cas est intéressant pour le
+  test de lois mono-cristallines.
+\end{itemize}
+
+\paragraph{Exemple}
+
+\begin{lstlisting}[language=sh]
+@RotationMatrix<Miller> {1,5,9};
+\end{lstlisting}
+
 \section{Conclusions}
 
 \subsection{Remerciements}
