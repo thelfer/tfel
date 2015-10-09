@@ -127,7 +127,7 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   add_subdirectory(behaviours)
   add_subdirectory(finitestrain)
   add_subdirectory(planestress)
-  add_subdirectory(umat)
+  add_subdirectory(castem)
   add_subdirectory(aster)
   add_subdirectory(zmat)
 

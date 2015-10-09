@@ -303,8 +303,8 @@ plupart du temps explicites~:
 Lors de l'exécution, il est possible de localiser les erreurs
 numériques ou autres via les options de compilation~:
 \begin{itemize}
-\item le plus simple est de compiler avec {\tt --debug} (détails sur
-  l'intégration)~:\newline \texttt{mfront -{}-obuild --interface=aster
+\item le plus simple est de compiler avec {\tt -{}-debug} (détails sur
+  l'intégration)~:\newline \texttt{mfront -{}-obuild -{}-interface=aster
     -{}-debug chaboche.mfront}
 \item un \og~classique~\fg{} du développement, les impressions
   locales~:
@@ -328,7 +328,7 @@ numériques ou autres via les options de compilation~:
   en cas d'échec d'intégration~:
   \newline 
   \texttt{mfront -{}-obuild
-    --interface=aster -{}-@Aster\-Generate\-MTest\-File\-On\-Fail\-ure=\-true
+    -{}-interface=aster -{}-@Aster\-Generate\-MTest\-File\-On\-Fail\-ure=\-true
     cha\-boche\-.mfront}
 \end{itemize}
 
@@ -499,7 +499,7 @@ mieux, sur la ligne de commande à la compilation (ce qui évite de
 \og~polluer~\fg{} le fichier mfront)~:
 \begin{flushleft}
   {\tt
-    mfront --obuild -{}-@CompareToNumericalJacobian=true -{}-@JacobianComparisonCriterium=1.e-6 chaboche.mfront
+    mfront -{}-obuild -{}-@CompareToNumericalJacobian=true -{}-@JacobianComparisonCriterium=1.e-6 chaboche.mfront
   }
 \end{flushleft}
 
@@ -919,7 +919,7 @@ y voir~:
 
 Une fois le comportement défini dans \mfront, et compilé de façon habituelle :
 
-{\tt mfront --obuild --interface=aster Chaboche.mfront }
+{\tt mfront -{}-obuild -{}-interface=aster Chaboche.mfront }
 
 une bibliothèqe dynamique est produite :
 

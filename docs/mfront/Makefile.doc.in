@@ -3,7 +3,7 @@ all:
 	make -C behaviours   -f Makefile.doc behaviours
 	make -C finitestrain -f Makefile.doc finitestrain
 	make -C planestress  -f Makefile.doc planestress
-	make -C umat         -f Makefile.doc umat
+	make -C castem       -f Makefile.doc castem
 	make -C aster        -f Makefile.doc aster
 	make -C zmat         -f Makefile.doc zmat
 
@@ -12,6 +12,6 @@ clean:
 	make -C behaviours   -f Makefile.doc clean
 	make -C finitestrain -f Makefile.doc clean
 	make -C planestress  -f Makefile.doc clean
-	make -C umat         -f Makefile.doc clean
+	make -C castem       -f Makefile.doc clean
 	make -C aster        -f Makefile.doc clean
 	make -C zmat         -f Makefile.doc clean

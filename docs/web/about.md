@@ -20,6 +20,8 @@
 - Olivier Fandeur
 - Sébastien Melin
 - Thierry Thomas
+- Alexis Foerster
+- Alexandre Lemaire
 
 # Tools
 

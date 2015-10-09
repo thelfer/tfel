@@ -21,7 +21,7 @@ doc-install: doc
 	cp    docs/mfront/behaviours/behaviours.pdf      @docdir@/mfront
 	cp    docs/mfront/finitestrain/finitestrain.pdf  @docdir@/mfront
 	cp    docs/mfront/planestress/planestress.pdf    @docdir@/mfront
-	cp    docs/mfront/umat/umat.pdf                  @docdir@/mfront
+	cp    docs/mfront/castem/castem.pdf              @docdir@/mfront
 	cp    docs/mfront/aster/aster.pdf                @docdir@/mfront
 	cp    docs/mfront/zmat/zmat.pdf                  @docdir@/mfront
 	cp    docs/mtest/mtest.pdf                       @docdir@/mtest

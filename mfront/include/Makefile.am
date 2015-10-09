@@ -199,6 +199,22 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                                
 			  MFront/AsterInterface.hxx
 endif
 
+if HAVE_ABAQUS
+nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                                         \
+			  MFront/Abaqus/AbaqusConfig.hxx                                   \
+			  MFront/Abaqus/AbaqusTraits.hxx                                   \
+			  MFront/Abaqus/AbaqusException.hxx 		                   \
+			  MFront/Abaqus/AbaqusInterface.hxx	                           \
+			  MFront/Abaqus/AbaqusInterfaceExceptions.hxx                      \
+			  MFront/Abaqus/AbaqusBehaviourHandler.hxx                         \
+			  MFront/Abaqus/AbaqusOrthotropicBehaviourHandler.hxx              \
+			  MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx                   \
+			  MFront/Abaqus/AbaqusComputeThermalExpansionCoefficientTensor.hxx \
+			  MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx               \
+			  MFront/Abaqus/AbaqusTangentOperator.hxx                          \
+			  MFront/AbaqusInterface.hxx
+endif
+
 if HAVE_ZMAT
 nobase_include_HEADERS += MFront/ZMATInterface.hxx \
 			  MFront/ZMAT/ZMATUndefs.hxx     \
@@ -210,5 +226,6 @@ EXTRA_DIST = CMakeLists.txt               \
 	     MFront/mfront.doxygen        \
 	     MFront/Castem/castem.doxygen \
 	     MFront/Aster/aster.doxygen   \
+	     MFront/Abaqus/abaqus.doxygen \
 	     MFront/Cyrano/cyrano.doxygen \
 	     MFront/ZMAT/zmat.doxygen

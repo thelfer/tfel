@@ -25,7 +25,7 @@ Minor fixes.
 - In the results files of [`mtest`](mtest.html), the name of the
   driving variables and the thermodynamic forces are appropriately
   changed for more clarity.
-- A new finite strain strategy named `log1D` was added to the `umat`
+- A new finite strain strategy named `log1D` was added to the `castem`
   interface. This interface allow the use of the logarithmic strain
   formalism in mono-dimensional fuel performance codes. See
   @helfer_extension_2015 for details.

@@ -190,6 +190,24 @@ if(HAVE_ASTER)
     TFELException)
 endif(HAVE_ASTER)
 
+if(HAVE_ABAQUS)
+  set(TFELMFront_SOURCES
+    AbaqusInterface.cxx
+    ${TFELMFront_SOURCES})
+  set(AbaqusInterface_SOURCES
+    AbaqusInterfaceExceptions.cxx
+    AbaqusException.cxx
+    AbaqusComputeStiffnessTensor.cxx
+    AbaqusStressFreeExpansionHandler.cxx
+    AbaqusComputeThermalExpansionCoefficientTensor.cxx
+    AbaqusTangentOperator.cxx)
+  mfront_library(AbaqusInterface ${AsterInterface_SOURCES})
+  target_link_libraries(AsterInterface
+    MTestFileGenerator
+    TFELUtilities
+    TFELException)
+endif(HAVE_ABAQUS)
+
 if(HAVE_ZMAT)
   set(TFELMFront_SOURCES
     ZMATInterface.cxx

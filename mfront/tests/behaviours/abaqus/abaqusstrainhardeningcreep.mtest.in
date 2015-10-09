@@ -1,0 +1,37 @@
+/*! 
+ * \file   strainhardeningcreep.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@ModellingHypothesis 'Axisymmetrical';
+
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterstrainhardeningcreep';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'A'  8.e-40;
+@MaterialProperty<constant> 'Ns' 4.2;
+@MaterialProperty<constant> 'Np' 1.37;
+
+@Real 'srr' 20e6;
+@ImposedStress 'SRR' 'srr';
+// Initial value of the elastic strain
+@Real 'EELRR0' 0.00013333333333333333;
+@Real 'EELZZ0' -0.00004;
+@InternalStateVariable 'ElasticStrain' {'EELRR0','EELZZ0','EELZZ0',0.};
+// Initial value of the total strain
+@Strain {'EELRR0','EELZZ0','EELZZ0',0.};
+// Initial value of the total stresses
+@Stress {'srr',0.,0.,0.};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,10. in 100, 100. in 30,3600 in 20};
+
+// dp*(p+p0)**Np=A*seq**Ns
+// ((p+p0)**(Np+1)-p0**(Np+1)) = (Np+1)*A*seq**Ns*t
+// ((p+p0)**(Np+1)-p0**(Np+1)) = (Np+1)*A*seq**Ns*t
+// p=(p0**(Np+1)+(Np+1)*A*seq**Ns*t)**(1/(Np+1))-p0
+@Real 'p0' 1.e-6;
+@Test<function> 'EquivalentViscoplasticStrain' '(p0**(Np+1)+(Np+1)*A*srr**Ns*t)**(1/(Np+1))-p0' 1.e-5;

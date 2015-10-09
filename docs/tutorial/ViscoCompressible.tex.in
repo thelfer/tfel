@@ -383,7 +383,7 @@ compilées avec l'interface \castem{}~:
 
 \begin{flushleft}
   {\tt
-    \$ \small mfront --obuild --interface=castem UO2\_PoissonRatio\_Fink1981.mfront UO2\_YoungModulus\_Fink1981.mfront UO2\_ThermalExpansion\_MATPRO.mfront\\
+    \$ \small mfront -{}-obuild -{}-interface=castem UO2\_PoissonRatio\_Fink1981.mfront UO2\_YoungModulus\_Fink1981.mfront UO2\_ThermalExpansion\_MATPRO.mfront\\
     Treating target : all\\
     The following library has been build :\\
     - libCastemUO2.so
@@ -452,7 +452,7 @@ matériau est une affaire de compromis et d'habitude de travail.
 
 \paragraph{Propriétés matériau}
 Afin de pouvoir modifier les valeurs des coefficients d'une loi depuis
-un jeu de données \castem{} ou \aster{}, l'interface {\tt umat}
+un jeu de données \castem{} ou \aster{}, l'interface {\tt castem}
 \og~standard~\fg{} impose de déclarer ces coefficients comme des
 propriétés matériau (mot clé {\tt @Material\-Property}) que doit
 fournir le code appelant.
@@ -797,17 +797,17 @@ qui se résolvent trivialement en~:
 \subsubsection{Compilation}
 
 La première étape des tests est la compilation de la loi. Nous
-utilisons l'interface {\tt umat} utilisée par le code \castem{}~:
+utilisons l'interface {\tt castem} utilisée par le code \castem{}~:
 \begin{flushleft}
   {\tt
-    \$ \small mfront --obuild --interface=umat EllipticCreep.mfront \\
+    \$ \small mfront -{}-obuild -{}-interface=castem EllipticCreep.mfront \\
     Treating target : all \\
     UO2\_ThermalExpansion-mfront.cxx: In function ‘double mfront::UO2\_ThermalExpansion()’: \\
     UO2\_ThermalExpansion-mfront.cxx:21:22: warning: unused variable ‘ReferenceTemperature’ [-Wunused-variable] \\
     The following libraries have been build : \\
     - libCastemUO2.so \\
     - libMFrontMaterialLaw.so \\
-    - libUmatBehaviour.so
+    - libCastemBehaviour.so
   }
 \end{flushleft}
 Le message d'avertissement relatif à la variable {\tt
@@ -910,7 +910,7 @@ de temps. Il faut environ \(50\) itérations pour que la norme du
 résidu soit inférieure à la valeur du critère utilisé par \mtest{}. La
 vitesse de convergence est visiblement linéaire. Cela est dû au fait
 que \mtest{} utilise un opérateur tangent élastique (c'est le choix
-par défaut pour les lois compilées avec l'interface {\tt umat}).
+par défaut pour les lois compilées avec l'interface {\tt castem}).
 
 \begin{figure}
   \centering
@@ -944,7 +944,7 @@ l'intégration de la loi. Pour cela, \mfront{} dispose d'une option
 {\tt -{}-{}debug}. Recompilons la loi~:
 \begin{flushleft}
   {\tt
-    \$ \small mfront --obuild --debug --interface=umat EllipticCreep.mfront
+    \$ \small mfront -{}-obuild -{}-debug -{}-interface=castem EllipticCreep.mfront
   }
 \end{flushleft}
 

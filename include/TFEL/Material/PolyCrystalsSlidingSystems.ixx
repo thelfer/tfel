@@ -59,24 +59,24 @@ namespace tfel
 	  }
 	}
       } else {
-	const real pi = real(4)*atan(real(1));  
+	const real pi = real(4)*std::atan(real(1));  
 	// reading from the specified file
 	CxxTokenizer file(f);
 	file.stripComments();
 	CxxTokenizer::const_iterator p  = file.begin();
-	CxxTokenizer::const_iterator pe = file.end();
+	const CxxTokenizer::const_iterator pe = file.end();
 	for (unsigned short i=0;i!=Np;i++){
 	  this->mus[i].resize(Nss);
 	  tmatrix<3u,3u,real> drot;
-	  real psi=CxxTokenizer::readDouble(p,pe)*pi/180.0;
-	  real the=CxxTokenizer::readDouble(p,pe)*pi/180.0;
-	  real phi=CxxTokenizer::readDouble(p,pe)*pi/180.0;
-	  real cospsi=cos(psi);
-	  real costhe=cos(the);
-	  real cosphi=cos(phi);
-	  real sinpsi=sin(psi);
-	  real sinthe=sin(the);
-	  real sinphi=sin(phi);
+	  const real psi=CxxTokenizer::readDouble(p,pe)*pi/180.0;
+	  const real the=CxxTokenizer::readDouble(p,pe)*pi/180.0;
+	  const real phi=CxxTokenizer::readDouble(p,pe)*pi/180.0;
+	  const real cospsi = std::cos(psi);
+	  const real costhe = std::cos(the);
+	  const real cosphi = std::cos(phi);
+	  const real sinpsi = std::sin(psi);
+	  const real sinthe = std::sin(the);
+	  const real sinphi = std::sin(phi);
 	  drot(0,0) =  cosphi*cospsi - sinphi*costhe*sinpsi;
 	  drot(0,1) =  cosphi*sinpsi + sinphi*costhe*cospsi;
 	  drot(0,2) =  sinphi*sinthe;

@@ -55,6 +55,10 @@
 #include"MFront/AsterInterface.hxx"
 #endif
 
+#ifdef HAVE_ABAQUS
+#include"MFront/AbaqusInterface.hxx"
+#endif
+
 #include"MFront/ZMATInterface.hxx"
 #include"MFront/InitInterfaces.hxx"
 
@@ -118,6 +122,10 @@ namespace mfront
     BehaviourInterfaceProxy<AsterInterface> asterProxy;
 #endif /* HAVE_ASTER */
 
+#ifdef HAVE_ABAQUS
+    BehaviourInterfaceProxy<AbaqusInterface> abaqusProxy;
+#endif /* HAVE_ABAQUS */
+    
 #ifdef HAVE_ZMAT
     BehaviourInterfaceProxy<ZMATInterface> zmatProxy;
 #endif /* HAVE_ZMAT */

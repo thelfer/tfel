@@ -40,12 +40,12 @@
 
 # Mechanical behaviours
 
-The `umat` interface has been developed for the CEA
-[`Cast3M`](http://www-cast3m.cea.fr/) finite element solver. Its name
-comes from the name of
+The `castem` interface has been developed for the CEA
+[`Cast3M`](http://www-cast3m.cea.fr/) finite element solver using the
 [`UMAT`](http://www-cast3m.cea.fr/index.php?page=sources&source=umat)
 subroutine which is meant to be overridden by the user, loosely
-following the `Abaqus` standard.
+following the `Abaqus` standard. For historical reasons, it has also
+an alias named `umat`.
 
 A french version of this document is available [here](castem-fr.html).
 
@@ -66,11 +66,20 @@ We broke this documents in three parts:
 ## Compilation of the behaviour
 
 The following instruction will compile the `MFront` behaviour using
-the `umat` interface :
+the `castem` interface :
+
+~~~~ {.bash}
+$ mfront --obuild --interface=castem norton.mfront
+~~~~~~~~~~~~~~~~~~~
+
+This is equivalent to:
 
 ~~~~ {.bash}
 $ mfront --obuild --interface=umat norton.mfront
 ~~~~~~~~~~~~~~~~~~~
+
+The `umat` interface is deprecated as it may be confusing for `Abaqus`
+users.
 
 Three directories are created, respectively called `include`, `src`,
 `castem`. Only the `src` and `castem` directories have interest for

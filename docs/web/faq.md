@@ -14,7 +14,7 @@ The first thing to do is to identify the trouble.
 If your computations are very CPU intensive and if the divergence
 appends after a noticeable amount of time, it is worth enabling the
 generation of a `MTest` file on failure. This feature is for example
-supported by the `umat` (`Cast3M`), `aster` and `cyrano` interfaces.
+supported by the `castem` (`Cast3M`), `aster` and `cyrano` interfaces.
 
 I thus assume that your are using `MTest`.
 
@@ -47,7 +47,7 @@ keyword in the command line rather than in your implementation to
 avoid forgetting removing it in your real-world tests:
 
 ~~~~ {.bash}
-$ mfront --obuild --interface=umat --@CompareToNumericalJacobian=true norton.mfront
+$ mfront --obuild --interface=castem --@CompareToNumericalJacobian=true norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 Spurious oscillations may also be caused by an ill-conditioned system,
@@ -61,20 +61,20 @@ environment variable before the behaviour compilation. For example:
 
 ~~~~ {.bash}
 $ export CXXFLAGS="-g"
-$ mfront --obuild --interface=umat norton.mfront
+$ mfront --obuild --interface=castem norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 or even better
 
 ~~~~ {.bash}
-$ CXXFLAGS="-g" mfront --obuild --interface=umat norton.mfront
+$ CXXFLAGS="-g" mfront --obuild --interface=castem norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 In `c-shell`, you must use the following lines:
 
 ~~~~ {.bash}
 $ setenv CXXFLAGS "-g"
-$ mfront --obuild --interface=umat norton.mfront
+$ mfront --obuild --interface=castem norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 You can then launch `MTest` in the `gdb` debugger like this:

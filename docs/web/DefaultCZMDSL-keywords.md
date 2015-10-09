@@ -362,9 +362,8 @@ be used.
 ## Example
 
 ~~~~{.cpp}
-@Interface umat;
+@Interface castem;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 # The `@IsTangentOperatorSymmetric` keyword
 

@@ -62,7 +62,7 @@ where :
   "\(A\)" and "\(E\)" are declared as material properties.
 }
 
-@UMATFiniteStrainStrategies[umat] {None,LogarithmicStrain1D};
+@UMATFiniteStrainStrategies[castem] {None,LogarithmicStrain1D};
 
 //! The Norton coefficient
 @MaterialProperty real A;

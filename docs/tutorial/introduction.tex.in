@@ -183,18 +183,18 @@ pour effectuer des variantes, des tests de modèles, etc.
 \mfront{} gère la compilation de la loi, il suffit de taper dans un terminal~:
 \begin{flushleft}
   {\tt
-    \$ mfront -{}-obuild -interface=aster norton.mfront
+    \$ mfront -{}-obuild -{}-interface=aster norton.mfront
   }
 \end{flushleft}
 ou
 \begin{flushleft}
   {\tt
-    \$ mfront -{}-obuild -interface=umat norton.mfront
+    \$ mfront -{}-obuild -{}-interface=castem norton.mfront
   }
 \end{flushleft}
 suivant le code de résolution que l'on souhaite utiliser~: l'interface
 {\tt aster} correspond au {\tt Code-Aster}, tandis que l'interface
-{\tt umat} correspond au code {\tt Cast3M}.
+{\tt castem} correspond au code {\tt Cast3M}.
 
 Ceci génère deux répertoires~: {\tt src} et {\tt include}.
 
@@ -208,7 +208,9 @@ pour une exécution avec \aster{}, ou bien~ :
 \begin{flushleft}
 { \tt src/libUmatBehaviour.so}
 \end{flushleft}
-pour une exécution avec \castem{}.
+pour une exécution avec \castem{}. Le nom {\tt Umat} est historique et
+correspond au nom de la routine que l'utilisateur \castem{} devait
+surcharger avant le support des appels dynamiques.
 
 Dans le cas du code \castem{}, un répertoire nommé {\tt castem} est
 créé dans la plupart des cas. Ce répertoire contient une mise en

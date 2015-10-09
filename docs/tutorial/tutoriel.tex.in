@@ -192,11 +192,11 @@ Si l'on note \(l_{T^{\alpha}}\) et \(l_{T}\) les longueurs respectives
 du corps à ces deux températures, le coefficient de dilatation
 thermique linéique \(\alpha\paren{T}\) est défini par~:
 \begin{equation}
-  \label{eq:umat:alpha}
+  \label{eq:castem:alpha}
   \Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
 \end{equation}
 
-Dans le cas des petites déformations, l'équation~\eqref{eq:umat:alpha}
+Dans le cas des petites déformations, l'équation~\eqref{eq:castem:alpha}
 définit une déformation associée à la dilatation thermique~:
 \[
 \epsilonth_{T^{\alpha}}\paren{T}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
@@ -232,7 +232,7 @@ obtenons~:
 
 Nous obtenons finalement la relation~:
 \begin{equation}
-  \label{eq:umat:epsilonth}
+  \label{eq:castem:epsilonth}
   \begin{aligned}
     \epsilonth_{T^{i}}\paren{T}&=
     \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right] \\

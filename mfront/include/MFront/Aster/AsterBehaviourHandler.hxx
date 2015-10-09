@@ -217,6 +217,7 @@ namespace aster
 	    const AsterReal *const,
 	    const AsterReal *const,
 	    const AsterReal *const,
+	    const tfel::material::OutOfBoundsPolicy,
 	    const StressFreeExpansionHandler&)
       {} // end of Error
 

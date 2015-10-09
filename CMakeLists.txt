@@ -104,6 +104,14 @@ if(enable-aster)
   include(cmake/modules/aster.cmake)
 endif(enable-aster)
 
+#abaqus
+option(enable-abaqus "build abaqus interface for mechanical behaviours" OFF)
+if(enable-abaqus)
+  message(STATUS "abaqus support enabled")
+  set(HAVE_ABAQUS ON)
+  add_definitions("-DHAVE_ABAQUS=1")
+endif(enable-abaqus)
+
 #zmat
 option(enable-zmat "build zmat interface for mechanical behaviours" OFF)
 if(enable-zmat)
@@ -233,7 +241,6 @@ endif(UNIX AND (NOT CYGWIN))
 add_subdirectory(mfront)
 add_subdirectory(mtest)
 add_subdirectory(tests)
-
 
 #documentations
 add_custom_target(doc)

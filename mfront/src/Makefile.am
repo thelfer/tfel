@@ -134,6 +134,10 @@ if HAVE_ASTER
 libTFELMFront_la_SOURCES += AsterInterface.cxx
 endif
 
+if HAVE_ABAQUS
+libTFELMFront_la_SOURCES += AbaqusInterface.cxx
+endif
+
 if HAVE_ZMAT
 libTFELMFront_la_SOURCES += ZMATInterface.cxx
 endif
@@ -249,6 +253,26 @@ if TFEL_WIN
 libAsterInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 endif # HAVE_ASTER
+
+# Abaqus Interface
+if HAVE_ABAQUS
+lib_LTLIBRARIES += libAbaqusInterface.la
+libAbaqusInterface_la_SOURCES = AbaqusInterfaceExceptions.cxx                      \
+		                AbaqusException.cxx                                \
+		                AbaqusTangentOperator.cxx                          \
+			        AbaqusComputeStiffnessTensor.cxx                   \
+			        AbaqusStressFreeExpansionHandler.cxx               \
+			        AbaqusComputeThermalExpansionCoefficientTensor.cxx
+
+libAbaqusInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
+			       -L$(top_builddir)/src/Exception -lTFELException          \
+			       -L$(top_builddir)/mfront/src    -lMTestFileGenerator
+libAbaqusInterface_la_DEPENDENCIES = libMTestFileGenerator.la
+libAbaqusInterface_la_CPPFLAGS     = $(AM_CPPFLAGS) -DAbaqusInterface_EXPORTS
+if TFEL_WIN
+libAbaqusInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
+endif # HAVE_ABAQUS
 
 mfront_SOURCES = main.cxx
 mfront_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \

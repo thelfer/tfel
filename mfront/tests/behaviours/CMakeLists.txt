@@ -17,6 +17,10 @@ if(HAVE_ASTER)
   add_subdirectory(aster)
 endif(HAVE_ASTER)
 
+if(HAVE_ABAQUS)
+  add_subdirectory(abaqus)
+endif(HAVE_ABAQUS)
+
 if(HAVE_CYRANO)
   add_subdirectory(cyrano)
 endif(HAVE_CYRANO)

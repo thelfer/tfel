@@ -202,7 +202,7 @@ $ mfront --obuild --interface=aster norton.mfront
 ou
 
 ~~~~ {.bash}
-$ mfront --obuild --interface=umat norton.mfront
+$ mfront --obuild --interface=castem norton.mfront
 ~~~~~~~~~~~~~~~~~~~
 
 suivant le code que l’on souhaite utiliser. Ceci génère deux

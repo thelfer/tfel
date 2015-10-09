@@ -39,142 +39,98 @@ namespace mfront{
 
   static void
   writeUMATArguments(std::ostream& out,
-		     const BehaviourDescription::BehaviourType& t,
-		     const bool f)
+		     const BehaviourDescription::BehaviourType& t)
   {
-    using namespace std;
-    if(f){
-      out << "(castem::CastemReal *const STRESS," << endl
-	  << " castem::CastemReal *const STATEV," << endl
-	  << " castem::CastemReal *const DDSDDE," << endl
-	  << " castem::CastemReal *const SSE," << endl
-	  << " castem::CastemReal *const SPD," << endl
-	  << " castem::CastemReal *const SCD," << endl
-	  << " castem::CastemReal *const RPL," << endl
-	  << " castem::CastemReal *const DDSDDT," << endl
-	  << " castem::CastemReal *const DRPLDE," << endl
-	  << " castem::CastemReal *const DRPLDT," << endl
-	  << " const castem::CastemReal *const STRAN," << endl
-	  << " const castem::CastemReal *const DSTRAN," << endl
-	  << " const castem::CastemReal *const TIME," << endl
-	  << " const castem::CastemReal *const DTIME," << endl
-	  << " const castem::CastemReal *const TEMP," << endl
-	  << " const castem::CastemReal *const DTEMP," << endl
-	  << " const castem::CastemReal *const PREDEF," << endl
-	  << " const castem::CastemReal *const DPRED," << endl
-	  << " const char           *const CMNAME," << endl
-	  << " const castem::CastemInt  *const NDI," << endl
-	  << " const castem::CastemInt  *const NSHR," << endl
-	  << " const castem::CastemInt  *const NTENS," << endl
-	  << " const castem::CastemInt  *const NSTATV," << endl
-	  << " const castem::CastemReal *const PROPS," << endl
-	  << " const castem::CastemInt  *const NPROPS," << endl
-	  << " const castem::CastemReal *const COORDS," << endl
-	  << " const castem::CastemReal *const DROT," << endl
-	  << " const castem::CastemReal *const PNEWDT," << endl
-	  << " const castem::CastemReal *const CELENT," << endl
-	  << " const castem::CastemReal *const DFGRD0," << endl
-	  << " const castem::CastemReal *const DFGRD1," << endl
-	  << " const castem::CastemInt  *const NOEL," << endl
-	  << " const castem::CastemInt  *const NPT," << endl
-	  << " const castem::CastemInt  *const LAYER," << endl
-	  << " const castem::CastemInt  *const KSPT," << endl
-	  << " const castem::CastemInt  *const KSTEP," << endl
-	  << "       castem::CastemInt  *const KINC," << endl
-	  << "const int size)";
+    out << "(castem::CastemReal *const STRESS,\n"
+	<< " castem::CastemReal *const STATEV,\n"
+	<< " castem::CastemReal *const DDSDDE,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n";
+    if(t!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << " const castem::CastemReal *const STRAN,\n"
+	  << " const castem::CastemReal *const DSTRAN,\n";
     } else {
-      out << "(castem::CastemReal *const STRESS," << endl
-	  << " castem::CastemReal *const STATEV," << endl
-	  << " castem::CastemReal *const DDSDDE," << endl
-	  << " castem::CastemReal *const," << endl
-	  << " castem::CastemReal *const," << endl
-	  << " castem::CastemReal *const," << endl
-	  << " castem::CastemReal *const," << endl
-	  << " castem::CastemReal *const," << endl
-	  << " castem::CastemReal *const," << endl
-	  << " castem::CastemReal *const," << endl;
-      if(t!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	out << " const castem::CastemReal *const STRAN," << endl
-	    << " const castem::CastemReal *const DSTRAN," << endl;
-      } else {
-	out << " const castem::CastemReal *const," << endl
-	    << " const castem::CastemReal *const," << endl;
-      }
-      out << " const castem::CastemReal *const," << endl
-	  << " const castem::CastemReal *const DTIME," << endl
-	  << " const castem::CastemReal *const TEMP," << endl
-	  << " const castem::CastemReal *const DTEMP," << endl
-	  << " const castem::CastemReal *const PREDEF," << endl
-	  << " const castem::CastemReal *const DPRED," << endl
-	  << " const char           *const," << endl
-	  << " const castem::CastemInt  *const NDI," << endl
-	  << " const castem::CastemInt  *const," << endl
-	  << " const castem::CastemInt  *const NTENS," << endl
-	  << " const castem::CastemInt  *const NSTATV," << endl
-	  << " const castem::CastemReal *const PROPS," << endl
-	  << " const castem::CastemInt  *const NPROPS," << endl
-	  << " const castem::CastemReal *const," << endl
-	  << " const castem::CastemReal *const DROT," << endl
-	  << " const castem::CastemReal *const," << endl
-	  << " const castem::CastemReal *const," << endl;
-      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	out << " const castem::CastemReal *const F0," << endl
-	    << " const castem::CastemReal *const F1," << endl;
-      } else {
-	out << " const castem::CastemReal *const," << endl
-	    << " const castem::CastemReal *const," << endl;
-      }
-      out << " const castem::CastemInt  *const," << endl
-	  << " const castem::CastemInt  *const," << endl
-	  << " const castem::CastemInt  *const," << endl
-	  << " const castem::CastemInt  *const," << endl
-	  << " const castem::CastemInt  *const," << endl
-	  << "       castem::CastemInt  *const KINC," << endl
-	  << "const int)";
+      out << " const castem::CastemReal *const,\n"
+	  << " const castem::CastemReal *const,\n";
     }
+    out << " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const DTIME,\n"
+	<< " const castem::CastemReal *const TEMP,\n"
+	<< " const castem::CastemReal *const DTEMP,\n"
+	<< " const castem::CastemReal *const PREDEF,\n"
+	<< " const castem::CastemReal *const DPRED,\n"
+	<< " const char           *const,\n"
+	<< " const castem::CastemInt  *const NDI,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const NTENS,\n"
+	<< " const castem::CastemInt  *const NSTATV,\n"
+	<< " const castem::CastemReal *const PROPS,\n"
+	<< " const castem::CastemInt  *const NPROPS,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const DROT,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n";
+    if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << " const castem::CastemReal *const F0,\n"
+	  << " const castem::CastemReal *const F1,\n";
+    } else {
+      out << " const castem::CastemReal *const,\n"
+	  << " const castem::CastemReal *const,\n";
+    }
+    out << " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< "       castem::CastemInt  *const KINC,\n"
+	<< "const int)";
   } // end of writeUMATArguments
 
   static void
   writeUMATArguments(std::ostream& out)
   {
-    using namespace std;
-    out << "(castem::CastemReal *const," << endl
-	<< " castem::CastemReal *const," << endl
-	<< " castem::CastemReal *const," << endl
-	<< " castem::CastemReal *const," << endl
-	<< " castem::CastemReal *const," << endl
-	<< " castem::CastemReal *const," << endl
-	<< " castem::CastemReal *const," << endl
-	<< " castem::CastemReal *const," << endl
-	<< " castem::CastemReal *const," << endl
-	<< " castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const char           *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-        << " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemReal *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< " const castem::CastemInt  *const," << endl
-	<< "       castem::CastemInt  *const,"
+    out << "(castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const char           *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemReal *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< " const castem::CastemInt  *const,\n"
+	<< "       castem::CastemInt  *const,\n"
 	<< "const int)";
   } // end of writeUMATArguments
 
@@ -1656,7 +1612,7 @@ namespace mfront{
     }
     out << "MFRONT_SHAREDOBJ void\n"
 	<< fname;
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,false);
+    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
     out << endl;
     out << "{\n";
     out << "using namespace castem;\n";
@@ -1722,7 +1678,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,false);
+    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
     out << endl;
     out << "{\n";
     out << "using namespace castem;\n";
@@ -1791,7 +1747,7 @@ namespace mfront{
       throw(runtime_error(msg));
     }
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,false);
+    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR);
     out << endl;
     out << "{\n";
     out << "using namespace castem;\n";
@@ -1859,7 +1815,7 @@ namespace mfront{
   {
     using namespace std;
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out,mb.getBehaviourType(),false);
+    writeUMATArguments(out,mb.getBehaviourType());
     out << endl;
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -2283,13 +2239,3 @@ namespace mfront{
   }
 
 } // end of namespace mfront
-
-
-
-
-
-
-
-
-
-

@@ -402,6 +402,18 @@ then
     CHECK_ASTER_MACHINE_TYPE
 fi
 
+#abaqus
+AC_ARG_ENABLE([abaqus],
+               AC_HELP_STRING([--enable-abaqus],
+		   [build abaqus interface for mechanical behaviours]),
+	       [enable_abaqus=true],
+	       [enable_abaqus=false])
+AM_CONDITIONAL(HAVE_ABAQUS,[test x"$enable_abaqus" = "xtrue"])
+if(test "x$enable_abaqus" = "xtrue")
+then
+    AC_DEFINE(HAVE_ABAQUS)
+fi
+
 #zmat
 AC_ARG_ENABLE([zmat],
                AC_HELP_STRING([--enable-zmat],
@@ -484,8 +496,8 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/planestress/Makefile.doc
 	   docs/mfront/aster/aster.tex
 	   docs/mfront/aster/Makefile.doc
-	   docs/mfront/umat/umat.tex
-	   docs/mfront/umat/Makefile.doc
+	   docs/mfront/castem/castem.tex
+	   docs/mfront/castem/Makefile.doc
 	   docs/mfront/zmat/zmat.tex
 	   docs/mfront/zmat/Makefile.doc
 	   docs/mfront/glossary.tex
@@ -697,7 +709,148 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/aster/asterdruckerprager.mtest
            mfront/tests/behaviours/aster/asterdruckerprager2.mtest	  
-           mfront/tests/behaviours/castem/Makefile
+           mfront/tests/behaviours/abaqus/Makefile
+	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest
+           mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest
+           mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck3.mtest
+           mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck4.mtest
+           mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck5.mtest
+           mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck6.mtest
+           mfront/tests/behaviours/abaqus/abaqusexternalstatevariablesboundscheck.mtest
+           mfront/tests/behaviours/abaqus/abaqusexternalstatevariablesboundscheck2.mtest
+           mfront/tests/behaviours/abaqus/abaqusexternalstatevariablesboundscheck3.mtest
+           mfront/tests/behaviours/abaqus/abaqusexternalstatevariablesboundscheck4.mtest
+           mfront/tests/behaviours/abaqus/abaqusexternalstatevariablesboundscheck5.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity2.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity3.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity4.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity5.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity6.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity7.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity8.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity9.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity10.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity11.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity12.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity13.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity14.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity15.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity16.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity18.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity19.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity20.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity21.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity22.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity23.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity24.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity25.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity26.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity27.mtest	   
+           mfront/tests/behaviours/abaqus/abaqusmazars.mtest
+           mfront/tests/behaviours/abaqus/abaqusmazars2.mtest
+           mfront/tests/behaviours/abaqus/abaquslorentz.mtest
+           mfront/tests/behaviours/abaqus/abaquslorentz2.mtest
+           mfront/tests/behaviours/abaqus/abaqusnorton.mtest
+           mfront/tests/behaviours/abaqus/abaqusnorton2.mtest
+           mfront/tests/behaviours/abaqus/abaqusstressrelaxation.mtest
+           mfront/tests/behaviours/abaqus/abaqusorthotropiccreep.mtest
+           mfront/tests/behaviours/abaqus/abaqusorthotropiccreep-rk42.mtest
+           mfront/tests/behaviours/abaqus/abaqusorthotropiccreep-rkCastem.mtest
+           mfront/tests/behaviours/abaqus/abaqusimplicitnorton.mtest
+           mfront/tests/behaviours/abaqus/abaqusimplicitnorton2.mtest
+           mfront/tests/behaviours/abaqus/abaqusimplicitnorton3.mtest
+           mfront/tests/behaviours/abaqus/abaqusimplicitnorton_broyden.mtest
+           mfront/tests/behaviours/abaqus/abaqusimplicitnorton_broyden2.mtest
+           mfront/tests/behaviours/abaqus/abaqusimplicitnorton_levenbergmarquardt.mtest	   
+           mfront/tests/behaviours/abaqus/abaqusimplicitorthotropiccreep.mtest
+           mfront/tests/behaviours/abaqus/abaqusellipticcreep.mtest
+           mfront/tests/behaviours/abaqus/abaqusplasticity.mtest
+           mfront/tests/behaviours/abaqus/abaqusstrainhardeningcreep.mtest
+           mfront/tests/behaviours/abaqus/abaqusplasisocin.mtest
+           mfront/tests/behaviours/abaqus/abaqusviscoplasisocin.mtest
+           mfront/tests/behaviours/abaqus/abaquschaboche.mtest
+           mfront/tests/behaviours/abaqus/abaquschaboche2.mtest
+           mfront/tests/behaviours/abaqus/abaqusviscochaboche.mtest
+           mfront/tests/behaviours/abaqus/abaqusmonocrystal.mtest
+           mfront/tests/behaviours/abaqus/abaqusmonocrystal-2.mtest
+           mfront/tests/behaviours/abaqus/abaqusimplicitmonocrystal.mtest
+           mfront/tests/behaviours/abaqus/abaqusimplicitmonocrystal-2.mtest
+           mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cfc.mtest
+           mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cfc_numericaljacobian.mtest
+           mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cfc_irradiation.mtest
+           mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cc.mtest
+           mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cc_numericaljacobian.mtest
+           mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cc_irradiation.mtest
+           mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cc_irradiation_numericaljacobian.mtest
+           mfront/tests/behaviours/abaqus/abaquspolycrystals.mtest
+           mfront/tests/behaviours/abaqus/abaquspolycrystals_dd_cc.mtest
+           mfront/tests/behaviours/abaqus/abaquspolycrystals_dd_cfc.mtest
+           mfront/tests/behaviours/abaqus/abaqusimplicithayhurst.mtest
+           mfront/tests/behaviours/abaqus/abaqusburger.mtest
+           mfront/tests/behaviours/abaqus/abaqusageingburger.mtest
+	   mfront/tests/behaviours/abaqus/abaqusgursontvergaardneedlemanplasticflow.mtest
+	   mfront/tests/behaviours/abaqus/abaqusgursontvergaardneedlemanviscoplasticflow.mtest
+           mfront/tests/behaviours/abaqus/abaqusanistropiclemaitreviscoplasticbehaviour.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-sig11-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-sig22-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-4-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-5-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-shear-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-shear-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-shear-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-shear-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-shear-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-shear-4-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-shear-5-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity2-shear-6-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-4-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-5-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-6-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal-001.mtest
+           mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal-012.mtest
+           mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal-012-2.mtest
+           mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal-159.mtest
+           mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal_numericaljacobian-001.mtest
+           mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal_numericaljacobian-012.mtest
+           mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
+           mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal_numericaljacobian-159.mtest
+           mfront/tests/behaviours/abaqus/abaqusdruckerprager.mtest
+           mfront/tests/behaviours/abaqus/abaqusdruckerprager2.mtest	  
+	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck.mtest
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck2.mtest

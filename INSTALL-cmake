@@ -35,6 +35,7 @@ Options
   enable-python  : enables python support
   enable-java    : enables java support
   enable-aster   : enables aster support
+  enable-abaqus  : enables abaqus support
   enable-zmat    : enables zmat support
   enable-cyrano  : enables cyrano support (cyrano is eDF fuel performance code)
   enable-libcxx  : enable libc++ on Linux
@@ -63,27 +64,27 @@ cmake usefull variables
 cmake typical usage
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
 debug and valgrind
 ==================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Debug -DCTEST_MEMORYCHECK_COMMAND=valgrind -DCTEST_MEMORYCHECK_COMMAND_OPTIONS="--trace-children=yes --leak-check=full" -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-debug
+cmake ../trunk -DCMAKE_BUILD_TYPE=Debug -DCTEST_MEMORYCHECK_COMMAND=valgrind -DCTEST_MEMORYCHECK_COMMAND_OPTIONS="--trace-children=yes --leak-check=full" -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-debug
 
 profiling (gcc only) 
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Profiling -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
+cmake ../trunk -DCMAKE_BUILD_TYPE=Profiling -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
 
 coverage (gcc only) 
 ===================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Coverage -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
+cmake ../trunk -DCMAKE_BUILD_TYPE=Coverage -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/tmp/tfel-profiling
 
 cmake for PLEIADES users
 ========================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
 main targets:
 =============

@@ -60,6 +60,18 @@ namespace aster {
     operator=(const AsterInvalidNTENSValue&);
   }; // end of struct AsterInvalidNTENSValue
 
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidModellingHypothesis
+    : public AsterException
+  {
+    AsterInvalidModellingHypothesis();
+    virtual ~AsterInvalidModellingHypothesis() noexcept;
+  private:
+    AsterInvalidModellingHypothesis&
+    operator=(const AsterInvalidModellingHypothesis&) = delete;
+    AsterInvalidModellingHypothesis&
+    operator=(AsterInvalidModellingHypothesis&&) = delete;
+  }; // end of struct AsterInvalidModellingHypothesis
+  
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidDimension
     : public AsterException
   {

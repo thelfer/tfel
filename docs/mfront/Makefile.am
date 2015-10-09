@@ -3,7 +3,7 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   behaviours/CMakeLists.txt                                \
 	   finitestrain/CMakeLists.txt                              \
 	   planestress/CMakeLists.txt                               \
-	   umat/CMakeLists.txt                                      \
+	   castem/CMakeLists.txt                                    \
 	   aster/CMakeLists.txt                                     \
 	   zmat/CMakeLists.txt                                      \
 	   Images/ConfigurationIsocline.eps			    \

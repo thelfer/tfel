@@ -56,7 +56,7 @@ final semi-colon.
 
 The `@Behaviour` keyword declares the behaviour used for the
 test. This keyword must be followed by an option specifying the
-interface used by the behaviour. The `umat`, `cyrano` and `aster`
+interface used by the behaviour. The `castem`, `cyrano` and `aster`
 interfaces are supported.
 
 Two strings are then expected:
@@ -67,9 +67,8 @@ Two strings are then expected:
 ## Example
 
 ~~~~ {.cpp}
-@Behaviour<umat> 'libMFrontCastemBehaviours.so' 'umatnorton';
+@Behaviour<castem> 'libMFrontCastemBehaviours.so' 'umatnorton';
 ~~~~~~~~
-
 
 # The `@CastemAccelerationPeriod` keyword
 
@@ -682,8 +681,8 @@ allowed:
 ## Note
 
 The `ElasticPredictionFromMaterialProperties` policy is only supported
-by the `umat` interface as the `Cast3M` finite element solver requires
-the stiffness matrix to be defined.
+by the `castem` interface as the `Cast3M` finite element solver
+requires the stiffness matrix to be defined.
 
 
 # The `@Real` keyword
