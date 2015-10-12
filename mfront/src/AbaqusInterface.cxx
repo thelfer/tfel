@@ -293,8 +293,6 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
-    using namespace tfel::utilities;
-    string name;
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
       throw(std::runtime_error("AbaqusInterface::endTreatment : "
@@ -311,10 +309,7 @@ namespace mfront{
     }
     // get the modelling hypotheses to be treated
     const auto& h = this->getModellingHypothesesToBeTreated(mb);
-    if(!mb.getLibrary().empty()){
-      name += mb.getLibrary();
-    }
-    name += mb.getClassName();
+    auto name =  mb.getLibrary()+mb.getClassName();
     // output directories
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Abaqus");
@@ -657,20 +652,19 @@ namespace mfront{
 	const auto& mps = d.getMaterialProperties();
 	for(const auto & mp : mps){
 	  const auto& mp1 = findUMATMaterialProperty(mfirst.first,
-								     mb.getExternalName(h,mp.name));
+						     mb.getExternalName(h,mp.name));
 	  const auto& mp2 = findUMATMaterialProperty(pum->first,
-								     mb.getExternalName(h,mp.name));
+						     mb.getExternalName(h,mp.name));
 	  auto o1 = mp1.offset;
 	  o1+=pum->second;
 	  auto o2 = mp2.offset;
 	  o2+=mfirst.second;
 	  if(o1!=o2){
-	    string msg("UMATInterface::buildMaterialPropertiesList : "
-		       "incompatible offset for material property '"+mp.name+
-		       "' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
-		       "To by-pass this limitation, you may want to explicitely "
-		       "specialise some modelling hypotheses");
-	    throw(runtime_error(msg));
+	    throw(runtime_error("UMATInterface::buildMaterialPropertiesList : "
+				"incompatible offset for material property '"+mp.name+
+				"' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
+				"To by-pass this limitation, you may want to explicitely "
+				"specialise some modelling hypotheses"));
 	  }
 	}
       }
@@ -714,14 +708,12 @@ namespace mfront{
 		  (h!=ModellingHypothesis::AXISYMMETRICAL)&&
 		  (h!=ModellingHypothesis::PLANESTRAIN)&&
 		  (h!=ModellingHypothesis::PLANESTRESS)){
-	  string msg("AbaqusInterface::buildMaterialPropertiesList : "
-		     "unsupported modelling hypothesis");
-	  throw(runtime_error(msg));
+	  throw(runtime_error("AbaqusInterface::buildMaterialPropertiesList : "
+			      "unsupported modelling hypothesis"));
 	}
       } else {
-	string msg("AbaqusInterface::buildMaterialPropertiesList : "
-		   "unsupported behaviour symmetry type");
-	throw(runtime_error(msg));
+	throw(runtime_error("AbaqusInterface::buildMaterialPropertiesList : "
+			    "unsupported behaviour symmetry type"));
       }
     }
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
@@ -732,9 +724,8 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3","alp3",false);
       } else {
-	string msg("AbaqusInterface::buildMaterialPropertiesList : "
-		   "unsupported behaviour symmetry type");
-	throw(runtime_error(msg));
+	throw(runtime_error("AbaqusInterface::buildMaterialPropertiesList : "
+			    "unsupported behaviour symmetry type"));
       }
     }
     if(!mprops.empty()){
@@ -748,8 +739,8 @@ namespace mfront{
     
   void
   AbaqusInterface::writeAbaqusBehaviourTraits(std::ostream& out,
-						  const BehaviourDescription& mb,
-						  const tfel::material::ModellingHypothesis::Hypothesis h) const
+					      const BehaviourDescription& mb,
+					      const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
     using namespace tfel::material;
@@ -895,15 +886,11 @@ namespace mfront{
   AbaqusInterface::getModellingHypothesisTest(const Hypothesis h) const
   {
     if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      return  "*NUMMOD == 2u";
-    } else if(h==ModellingHypothesis::AXISYMMETRICAL){
-      return "*NUMMOD==4";
+      return "*NTENS==4";
     } else if(h==ModellingHypothesis::PLANESTRESS){
-      return "*NUMMOD==5";
-    } else if(h==ModellingHypothesis::PLANESTRAIN){
-      return "*NUMMOD==6";
+      return "*NTENS==3";
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      return "*NUMMOD==3";
+      return "*NTENS==6";
     }
     throw(std::runtime_error("AbaqusInterface::getModellingHypothesisTest : "
 			     "unsupported modelling hypothesis"));

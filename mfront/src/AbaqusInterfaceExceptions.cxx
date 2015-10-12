@@ -19,8 +19,6 @@
 
 namespace abaqus{
 
-  
-
   void
   AbaqusInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties(const std::string& b,
 								     const unsigned short n1,
@@ -106,27 +104,6 @@ namespace abaqus{
     throw(runtime_error(msg));
   } // end of AbaqusInterfaceExceptions::throwNegativeTimeStepException
   
-  void
-  AbaqusInterfaceExceptions::throwInvalidDDSOEException(const std::string& b,
-						       const AbaqusReal v)
-  {
-    using namespace std;
-    ostringstream msg;
-    msg << "AbaqusInterfaceExceptions::throwInvalidDDSOEException : "
-	<< "an invalid value for the DDSOE parameter has been given ('" << v << "')"
-	<< " to the behaviour '" << b << "'.\n"
-	<< "The following values are accepted:\n"
-	<< "-3 : compute the prediction tangent operator, no behaviour integration\n"
-	<< "-2 : compute the prediction secant  operator, no behaviour integration\n"
-	<< "-1 : compute the prediction elastic operator, no behaviour integration\n"
-	<< " 0 : integrate the behaviour over the time step, no stiffness requested\n"
-	<< " 1 : integrate the behaviour over the time step, elastic stiffness requested\n"
-	<< " 2 : integrate the behaviour over the time step, secant  operator  requested\n"
-	<< " 3 : integrate the behaviour over the time step, tagent  operator  requested\n"
-	<< " 4 : integrate the behaviour over the time step, consistent tagent operator requested\n";
-    throw(runtime_error(msg.str()));
-  } // end of AbaqusInterfaceExceptions::throwInvalidDDSOEException
-
   void
   AbaqusInterfaceExceptions::throwBehaviourIntegrationFailedException(const std::string& b)
   {

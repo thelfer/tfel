@@ -120,19 +120,16 @@ namespace mfront
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
     const auto& mp = d.getMaterialProperties();
-    VariableDescriptionContainer::const_iterator p;
-    for(p=mp.begin();p!=mp.end();++p){
+    for(auto p=mp.begin();p!=mp.end();++p){
       const auto& n = mb.getExternalName(h,p->name);
-      vector<UMATMaterialProperty>::const_iterator pum;
       bool found = false;
       const auto flag = this->getTypeFlag(p->type);
       if(flag!=SupportedTypes::Scalar){
-	string msg("UMATMaterialProperty::UMATMaterialProperty : "
-		   "Invalid type for material property '"+p->name+"' ("+p->type+").\n"
-		   "Material properties shall be scalars");
-	throw(runtime_error(msg));
+	throw(runtime_error("UMATMaterialProperty::UMATMaterialProperty : "
+			    "Invalid type for material property '"+p->name+"' ("+p->type+").\n"
+			    "Material properties shall be scalars"));
       }
-      for(pum=mprops.begin();(pum!=mprops.end())&&(!found);++pum){
+      for(auto pum=mprops.begin();(pum!=mprops.end())&&(!found);++pum){
 	if(!pum->dummy){
 	  if(pum->name==n){
 	    // type check
@@ -186,51 +183,48 @@ namespace mfront
 						const Hypothesis h,
 						const BehaviourDescription& mb) const
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
     const auto& persistentVarsHolder = d.getPersistentVariables();
-    const std::string iprefix = makeUpperCase(this->getInterfaceName());
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!persistentVarsHolder.empty()){
-      behaviourDataFile << "void" << endl
+      behaviourDataFile << "void\n"
 			<< iprefix+"exportStateData("
-			<< "Type * const "+iprefix+"stress_,Type * const "+iprefix+"statev) const" << endl;
+			<< "Type * const "+iprefix+"stress_,Type * const "+iprefix+"statev) const\n";
     } else {
-      behaviourDataFile << "void" << endl
+      behaviourDataFile << "void\n"
 			<< iprefix+"exportStateData("
-			<< "Type * const "+iprefix+"stress_,Type * const) const" << endl;
+			<< "Type * const "+iprefix+"stress_,Type * const) const\n";
     }
-    behaviourDataFile << "{" << endl;
-    behaviourDataFile << "using namespace tfel::math;" << endl;
-    map<DrivingVariable,
-      ThermodynamicForce>::const_iterator pm;
+    behaviourDataFile << "{\n";
+    behaviourDataFile << "using namespace tfel::math;\n";
     SupportedTypes::TypeSize of;
-    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
+    for(auto pm = mb.getMainVariables().begin();
+	pm!=mb.getMainVariables().end();++pm){
       const auto& f = pm->second;
       const auto flag = this->getTypeFlag(f.type);
       if(flag==SupportedTypes::Scalar){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "*("+iprefix+"stress_+" << of << ") = this->" << f.name << ";" << endl;
+	  behaviourDataFile << "*("+iprefix+"stress_+" << of << ") = this->" << f.name << ";\n";
 	} else {
-	  behaviourDataFile << "*("+iprefix+"stress_) = this->" << f.name << ";" << endl;
+	  behaviourDataFile << "*("+iprefix+"stress_) = this->" << f.name << ";\n";
 	}
       } else if(flag==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_+" << of << ");" << endl;
+	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_+" << of << ");\n";
 	} else {
-	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_"");" << endl;
+	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_"");\n";
 	}
       } else if((flag==SupportedTypes::TVector)||
 		(flag==SupportedTypes::Tensor)){
 	if(pm!=mb.getMainVariables().begin()){
 	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_+"
-			    << of << ");" << endl;	
+			    << of << ");\n";	
 	} else {
-	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_);" << endl;	
+	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_);\n";	
 	}
       } else {
-	string msg("UMATInterfaceBase::exportMechanicalData : ");
-	msg += "unsupported forces type";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UMATInterfaceBase::exportMechanicalData : "
+				 "unsupported forces type"));
       }
       of += this->getTypeSize(f.type,1u);
     }
@@ -240,8 +234,7 @@ namespace mfront
 			  iprefix+"statev",
 			  mb.useQt());
     }
-    behaviourDataFile << "} // end of "+iprefix+"ExportStateData" << endl;
-    behaviourDataFile << endl;
+    behaviourDataFile << "} // end of "+iprefix+"ExportStateData\n\n";
   }
   
   void
@@ -249,52 +242,51 @@ namespace mfront
 						     const BehaviourDescription& mb,
 						     const std::string& initStateVarsIncrements) const
   {
-    using namespace std;
-    const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    behaviourFile << "/*" << endl;
-    behaviourFile << " * \\brief constructor for the umat interface" << endl;
-    behaviourFile << " *" << endl;
-    behaviourFile << " * \\param const Type *const "+iprefix+"dt_, time increment" << endl;
-    behaviourFile << " * \\param const Type *const "+iprefix+"T_, temperature" << endl;
-    behaviourFile << " * \\param const Type *const "+iprefix+"dT_, temperature increment" << endl;
-    behaviourFile << " * \\param const Type *const "+iprefix+"mat, material properties" << endl;
-    behaviourFile << " * \\param const Type *const "+iprefix+"int_vars, state variables" << endl; 
-    behaviourFile << " * \\param const Type *const "+iprefix+"ext_vars, external state variables" << endl;
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    behaviourFile << "/*\n";
+    behaviourFile << " * \\brief constructor for the umat interface\n";
+    behaviourFile << " *\n";
+    behaviourFile << " * \\param const Type *const "+iprefix+"dt_, time increment\n";
+    behaviourFile << " * \\param const Type *const "+iprefix+"T_, temperature\n";
+    behaviourFile << " * \\param const Type *const "+iprefix+"dT_, temperature increment\n";
+    behaviourFile << " * \\param const Type *const "+iprefix+"mat, material properties\n";
+    behaviourFile << " * \\param const Type *const "+iprefix+"int_vars, state variables\n"; 
+    behaviourFile << " * \\param const Type *const "+iprefix+"ext_vars, external state variables\n";
     behaviourFile << " * \\param const Type *const "+iprefix+"dext_vars,";
-    behaviourFile << " external state variables increments" << endl;
-    behaviourFile << " */" << endl;
+    behaviourFile << " external state variables increments\n";
+    behaviourFile << " */\n";
     behaviourFile << mb.getClassName() 
-		  << "(const Type* const "+iprefix+"dt_," << endl 
-		  <<  "const Type* const "+iprefix+"T_,const Type* const "+iprefix+"dT_," << endl
-		  <<  "const Type* const "+iprefix+"mat,const Type* const "+iprefix+"int_vars," << endl
-		  <<  "const Type* const "+iprefix+"ext_vars,const Type* const "+iprefix+"dext_vars)" << endl;
+		  << "(const Type* const "+iprefix+"dt_,\n" 
+		  <<  "const Type* const "+iprefix+"T_,const Type* const "+iprefix+"dT_,\n"
+		  <<  "const Type* const "+iprefix+"mat,const Type* const "+iprefix+"int_vars,\n"
+		  <<  "const Type* const "+iprefix+"ext_vars,const Type* const "+iprefix+"dext_vars)\n";
     if(mb.useQt()){
       behaviourFile << ": " << mb.getClassName() 
-		    << "BehaviourData<hypothesis,Type,use_qt>("+iprefix+"T_,"+iprefix+"mat," << endl
-		    << iprefix+"int_vars,"+iprefix+"ext_vars)," << endl;
+		    << "BehaviourData<hypothesis,Type,use_qt>("+iprefix+"T_,"+iprefix+"mat,\n"
+		    << iprefix+"int_vars,"+iprefix+"ext_vars),\n";
       behaviourFile << mb.getClassName() 
 		    << "IntegrationData<hypothesis,Type,use_qt>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
     } else {
       behaviourFile << ": " << mb.getClassName() 
-		    << "BehaviourData<hypothesis,Type,false>("+iprefix+"T_,"+iprefix+"mat," << endl
-		    << iprefix+"int_vars,"+iprefix+"ext_vars)," << endl;
+		    << "BehaviourData<hypothesis,Type,false>("+iprefix+"T_,"+iprefix+"mat,\n"
+		    << iprefix+"int_vars,"+iprefix+"ext_vars),\n";
       behaviourFile << mb.getClassName() 
 		    << "IntegrationData<hypothesis,Type,false>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
     }
     if(!initStateVarsIncrements.empty()){
-      behaviourFile << "," << endl << initStateVarsIncrements;
+      behaviourFile << ",\n" << initStateVarsIncrements;
     }
   }
 
   void
   UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorI(std::ostream& f,
-											  const Hypothesis h,
-											  const BehaviourDescription& mb,
-											  const std::vector<UMATMaterialProperty>& i,
-											  const SupportedTypes::TypeSize ioffset,
-											  const std::string& src,
-											  const std::string& prefix,
-											  const std::string& suffix) const
+										    const Hypothesis h,
+										    const BehaviourDescription& mb,
+										    const std::vector<UMATMaterialProperty>& i,
+										    const SupportedTypes::TypeSize ioffset,
+										    const std::string& src,
+										    const std::string& prefix,
+										    const std::string& suffix) const
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
@@ -1070,28 +1062,26 @@ namespace mfront
 	unsigned int offset;
 	out << "if(" << elem.second << "){" << endl;
 	offset=0;
-	for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
-	    pm!=mprops.first.end();++pm){
-	  auto flag = this->getTypeFlag(pm->type);
+	for(const auto& m : mprops.first){
+	  auto flag = this->getTypeFlag(m.type);
 	  if(flag!=SupportedTypes::Scalar){
-	    string msg("UMATInterfaceBase::generateFile2 : "
-		       "unsupported external state variable type "
-		       "in mtest file generation");
-	    throw(runtime_error(msg));
+	    throw(runtime_error("UMATInterfaceBase::generateFile2 : "
+				"unsupported external state variable type "
+				"in mtest file generation"));
 	  }
-	  if(pm->arraySize==1u){
+	  if(m.arraySize==1u){
 	    if(offset==0){
-	      out << "mg.addMaterialProperty(\"" << pm->name << "\",*(PROPS));" << endl;	    
+	      out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS));" << endl;	    
 	    } else {
-	      out << "mg.addMaterialProperty(\"" << pm->name << "\",*(PROPS+" << offset << "));" << endl;	    
+	      out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS+" << offset << "));" << endl;	    
 	    }
 	    ++offset;
 	  } else {
-	    for(unsigned short s=0;s!=pm->arraySize;++s,++offset){
+	    for(unsigned short s=0;s!=m.arraySize;++s,++offset){
 	      if(offset==0){
-		out << "mg.addMaterialProperty(\"" << pm->name << "[" << s << "]\",*(PROPS));" << endl;	    
+		out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\",*(PROPS));" << endl;	    
 	      } else {
-		out << "mg.addMaterialProperty(\"" << pm->name << "[" << s << "]\","
+		out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\","
 		    << "*(PROPS+" << offset << "));" << endl;	    
 	      }
 	    }
