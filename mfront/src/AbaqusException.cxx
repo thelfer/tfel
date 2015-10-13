@@ -59,7 +59,7 @@ namespace abaqus
 		      std::string(b)+"'")
   {}
 
-  AbaqusInvalidModellingHypothesis::~AbaqusInvalidModellingHypothesis()
+  AbaqusInvalidModellingHypothesis::~AbaqusInvalidModellingHypothesis() noexcept
   {} // end of AbaqusInvalidModellingHypothesis::~AbaqusInvalidModellingHypothesis()
   
   AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue(const unsigned short N)
