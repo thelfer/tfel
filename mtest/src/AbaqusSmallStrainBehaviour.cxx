@@ -62,10 +62,14 @@ namespace mtest
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     static const real sqrt2 = sqrt(real(2));
+    if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
+      throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_beahviour : "
+			       "abaqus behaviours may only provide the "
+			       "consistent tangent operator"));
+    }
     unsigned short dimension;
     AbaqusInt ntens;
-    AbaqusInt nprops = mp0.size() == 0 ? 1 : static_cast<AbaqusInt>(mp0.size());
-    AbaqusInt nstatv;
+    const AbaqusInt nprops = mp0.size() == 0 ? 1 : static_cast<AbaqusInt>(mp0.size());
     if (h==MH::AXISYMMETRICAL){
       ntens  = 4;
       dimension = 2u;
@@ -92,11 +96,11 @@ namespace mtest
     if(iv0.empty()){
       this->ivs[0] = real(0);
     }
-    nstatv = static_cast<AbaqusInt>(this->ivs.size());
+    const auto nstatv = static_cast<AbaqusInt>(this->ivs.size());
     // rotation matrix, set to identity
-    tmatrix<3u,3u,real> drot = {1,0,0,
-				0,1,0,
-				0,0,1};
+    const tmatrix<3u,3u,real> drot = {1,0,0,
+				      0,1,0,
+				      0,0,1};
     stensor<3u,real> ue0(real(0));
     stensor<3u,real> ude(real(0));
     stensor<3u,real> us(real(0));
@@ -118,7 +122,7 @@ namespace mtest
       us[3] = 0;
     } else {
       for(AbaqusInt i=3;i!=static_cast<unsigned short>(ntens);++i){
-	us(i)  /= sqrt2;
+	us(i) /= sqrt2;
       }
     }
     AbaqusReal ndt(1.);
@@ -135,21 +139,53 @@ namespace mtest
     if(ndt<1.){
       return false;
     }
+    const auto rb = transpose(r);
+    // treatin the consistent tangent operator
     if(h!=MH::PLANESTRESS){
-      if(ktype!=StiffnessMatrixType::NOSTIFFNESS){
-	UmatNormaliseTangentOperator::exe(Kt,D,dimension);
+      UmatNormaliseTangentOperator::exe(Kt,D,dimension);
+      if(h==MH::TRIDIMENSIONAL){
+	st2tost2<3u,AbaqusReal> K;
+	for(unsigned short i=0;i!=6u;++i){
+	  for(unsigned short j=0;j!=6u;++j){
+	    K(i,j)=Kt(i,j);
+	  }
+	}
+	const auto nK = change_basis(K,rb);
+	for(unsigned short i=0;i!=6u;++i){
+	  for(unsigned short j=0;j!=6u;++j){
+	    Kt(i,j)=nK(i,j);
+	  }
+	}
+      } else if (h==MH::AXISYMMETRICAL){
+	st2tost2<2u,AbaqusReal> K;
+	for(unsigned short i=0;i!=4u;++i){
+	  for(unsigned short j=0;j!=4u;++j){
+	    K(i,j)=Kt(i,j);
+	  }
+	}
+	const auto nK = change_basis(K,rb);
+	for(unsigned short i=0;i!=4u;++i){
+	  for(unsigned short j=0;j!=4u;++j){
+	    Kt(i,j)=nK(i,j);
+	  }
+	}
+      } else {
+	throw(std::runtime_error("AbaqusSmallStrainBehaviour::"
+				 "call_behaviour: normalise, "
+				 "unsupported modelling hypothesis"));
       }
     } else {
       throw(std::runtime_error("AbaqusSmallStrainBehaviour::"
-			       "call_behaviour: normalise "
+			       "call_behaviour: normalise, "
 			       "tangent operator in plane stress "
 			       "not implemented yet"));
     }
     if(b){
-      auto rb = transpose(r);
+      // treating internal state variables
       if(!iv0.empty()){
 	copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
       }
+      // treating stresses
       if (h==MH::PLANESTRESS){
 	us[3] = us[2]*sqrt2;
 	us[2] = real(0);

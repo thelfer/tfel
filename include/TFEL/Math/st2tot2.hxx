@@ -229,7 +229,7 @@ namespace tfel{
       TFEL_MATH_INLINE constexpr const T&
       operator()(const unsigned short,const unsigned short) const;      
       //! access operator
-      TFEL_MATH_INLINE       T& operator()(const unsigned short,const unsigned short);
+      TFEL_MATH_INLINE T& operator()(const unsigned short,const unsigned short);
       /*!
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties

@@ -1336,6 +1336,8 @@ include/TFEL/Math/RungeKutta2.hxx -text
 include/TFEL/Math/RungeKutta4.hxx -text
 include/TFEL/Math/RungeKutta42.hxx -text
 include/TFEL/Math/RungeKutta54.hxx -text
+include/TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx -text
+include/TFEL/Math/ST2toST2/ChangeBasis.hxx -text
 include/TFEL/Math/ST2toST2/ConstST2toST2View.hxx -text
 include/TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2Concept.hxx -text
@@ -3884,6 +3886,7 @@ tests/Math/qt3.cxx -text
 tests/Math/solve.cxx -text
 tests/Math/st2tost2/CMakeLists.txt -text
 tests/Math/st2tost2/Makefile.am -text
+tests/Math/st2tost2/ST2toST2ChangeBasis.cxx -text
 tests/Math/st2tost2/ST2toST2FromTinyMatrixView.cxx -text
 tests/Math/st2tost2/ST2toST2FromTinyMatrixView2.cxx -text
 tests/Math/st2tost2/StensorSquareDerivative.cxx -text

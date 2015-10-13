@@ -557,7 +557,19 @@ namespace tfel{
       typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,Power<3> >::Result
     >::type
     det(const StensorType&);
-  
+
+      /*!
+       * change basis
+       */
+    template<typename StensorType>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename StensorTraits<StensorType>::NumType>
+      >::type
+    change_basis(const StensorType&,
+		 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type>&);
+    
     template<typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,

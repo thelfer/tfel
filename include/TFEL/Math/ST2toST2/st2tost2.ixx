@@ -17,17 +17,17 @@
 #include <cmath>
 #include <iterator>
 #include <algorithm>
-
-#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
-
 #include<type_traits>
 
+#include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/General/BaseCast.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include"TFEL/Math/TinyMatrixInvert.hxx"
 #include"TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx"
+#include"TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx"
+#include"TFEL/Math/ST2toST2/ChangeBasis.hxx"
 
 namespace tfel{
 
@@ -165,6 +165,12 @@ namespace tfel{
       return Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> >(src);
     }
 
+    template<unsigned short N, typename T>
+    st2tost2<N,typename tfel::typetraits::BaseType<T>::type>
+    st2tost2<N,T>::fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& r){
+      return st2tost2_internals::BuildFromRotationMatrix<N>::exe(r);
+    } // end of st2tost2<N,T>::fromRotationMatrix
+    
     template<unsigned short N, typename T>
     template<typename T2,
 	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
@@ -442,9 +448,30 @@ namespace tfel{
       return is;
     } // end of invert
 
+    template<typename ST2toST2Type>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+	       typename ST2toST2Traits<ST2toST2Type>::NumType>
+    >::type
+    change_basis(const ST2toST2Type& s,
+		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type>& r){
+      return st2tost2_internals::ChangeBasis<ST2toST2Traits<ST2toST2Type>::dime>::exe(s,r);
+    }
+    
   } //end of namespace math
 
 } // end of namespace tfel
 
 #endif /* LIB_TFEL_ST2TOST2_IXX_ */
+
+
+
+
+
+
+
+
+
+
 

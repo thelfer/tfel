@@ -186,10 +186,9 @@ namespace abaqus
 	  const tfel::material::OutOfBoundsPolicy op,
 	  const StressFreeExpansionHandler& sfeh)
       {
-	using namespace std;
+	typedef AbaqusBehaviourHandler<H,Behaviour> AHandler;
 	using BV = Behaviour<H,AbaqusReal,false>;
-	using ATraits  =  AbaqusTraits<BV>;
-	using AHandler = AbaqusBehaviourHandler<H,Behaviour>;
+	using ATraits =  AbaqusTraits<BV>;
 	const bool bs = ATraits::requiresStiffnessTensor;
 	const bool ba = ATraits::requiresThermalExpansionCoefficientTensor;
 	using Integrator = typename AHandler::template Integrator<bs,ba>;

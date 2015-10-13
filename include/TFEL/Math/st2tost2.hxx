@@ -25,6 +25,7 @@
 #include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/fsarray.hxx"
+#include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Forward/st2tost2.hxx"
@@ -177,6 +178,12 @@ namespace tfel{
 	Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> > >::type
       convert(const T2toST2Type&);
       /*!
+       * build the equivalent st2tost2 from a rotation matrix
+       * \param[in] r : rotation matrix
+       */
+      static tfel::math::st2tost2<N,typename tfel::typetraits::BaseType<T>::type>
+      fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&);
+      /*!
        * This is a StensorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -197,7 +204,7 @@ namespace tfel{
       template<typename T2,
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
       TFEL_MATH_INLINE constexpr
-      explicit st2tost2(const std::initializer_list<T2>&);
+      st2tost2(const std::initializer_list<T2>&);
       /*!
        * \brief Default Constructor.
        * \param const typename tfel::typetraits::BaseType<T>::type* const,
@@ -266,6 +273,20 @@ namespace tfel{
 
     }; // end of struct st2tost2
 
+    /*!
+     * \return change the basis of a st2tost2
+     * \param[in] s : st2tost2
+     * \param[in] r : rotation matrix 
+     */
+    template<typename ST2toST2Type>
+    TFEL_MATH_INLINE2
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+	       typename ST2toST2Traits<ST2toST2Type>::NumType>
+    >::type
+    change_basis(const ST2toST2Type&,
+		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type>&);
     /*!
      * \return the invert of a st2tost2
      * \param[in] s : st2tost2 to be inverted

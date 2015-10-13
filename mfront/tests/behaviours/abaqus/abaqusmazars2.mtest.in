@@ -8,7 +8,7 @@
 @ModellingHypothesis 'PlaneStress';
 @StiffnessMatrixType 'SecantOperator';
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'mazars';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'Mazars';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    
 

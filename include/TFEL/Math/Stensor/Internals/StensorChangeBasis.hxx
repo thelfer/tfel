@@ -44,7 +44,7 @@ namespace tfel{
 	static void exe(T* s,const tfel::math::tmatrix<3u,3u,T2>& m)
 	{
 	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr T2 cste = sqrt(T2{2});
+	  constexpr const T2 cste = sqrt(T2{2});
 	  T tmp[3];
 	  // Works begin
 	  tmp[0]  = cste*m(0,0)*m(1,0)*s[3]+m(1,0)*m(1,0)*s[1]+m(0,0)*m(0,0)*s[0];

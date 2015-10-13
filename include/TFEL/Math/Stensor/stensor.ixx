@@ -1409,6 +1409,20 @@ namespace tfel{
 	  (2*(s(2)+s(1))*s(5)+cste*s(3)*s(4))*one_half};
     }
 
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename StensorTraits<StensorType>::NumType>
+      >::type
+    change_basis(const StensorType& s,
+		 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type>& r){
+      stensor<StensorTraits<StensorType>::dime,
+	      typename StensorTraits<StensorType>::NumType> ns{s};
+      ns.changeBasis(r);
+      return ns;
+    }
+    
 #endif /* LIB_TFEL_STENSOR_IXX_ */
 
   } //end of namespace math
@@ -1416,3 +1430,13 @@ namespace tfel{
 } // end of namespace tfel
 
 #endif /* LIB_TFEL_STENSOR_IXX_ */
+
+
+
+
+
+
+
+
+
+

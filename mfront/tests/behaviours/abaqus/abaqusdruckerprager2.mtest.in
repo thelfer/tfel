@@ -4,7 +4,7 @@
   Uniaxial testing of a Drucker-Prager behaviour.
 };
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'druckerprager';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'DruckerPrager';
 @StiffnessMatrixType 'ConsistentTangentOperator';
 @MaximumNumberOfSubSteps 1;
 

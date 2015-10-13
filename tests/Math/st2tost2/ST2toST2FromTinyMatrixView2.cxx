@@ -112,15 +112,11 @@ TFEL_TESTS_GENERATE_PROXY(ST2toST2FromTinyMatrixView2Test,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("ST2toST2FromTinyMatrixView2.xml");
   TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main
 
