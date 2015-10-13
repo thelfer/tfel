@@ -29,7 +29,7 @@ namespace mtest
     using namespace tfel::material;
     typedef ExternalLibraryManager ELM;
     auto& elm = ELM::getExternalLibraryManager();
-    this->fct = elm.getUMATFunction(l,b);
+    this->fct = elm.getCastemExternalBehaviourFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
     if(this->stype==0){
       this->mpnames.insert(this->mpnames.begin(),"ThermalExpansion");

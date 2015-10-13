@@ -51,11 +51,14 @@ namespace abaqus {
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusInvalidModellingHypothesis
     : public AbaqusException
   {
+    /*!
+     * \param[in] b : behaviour name
+     */
     AbaqusInvalidModellingHypothesis(const char*);
+    //! destructor
     virtual ~AbaqusInvalidModellingHypothesis() noexcept;
-  private:
     AbaqusInvalidModellingHypothesis&
-    operator=(const AbaqusInvalidModellingHypothesis&);
+      operator=(const AbaqusInvalidModellingHypothesis&) = delete;
   }; // end of struct AbaqusInvalidModellingHypothesis
   
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusInvalidNTENSValue

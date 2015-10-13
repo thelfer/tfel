@@ -1,4 +1,4 @@
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterageingburger';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ageingburger';
 
 @MaterialProperty<constant> 'YoungModulus' 31000. ; 
 @MaterialProperty<constant> 'PoissonRatio'    0.2 ;    

@@ -201,8 +201,8 @@ if(HAVE_ABAQUS)
     AbaqusStressFreeExpansionHandler.cxx
     AbaqusComputeThermalExpansionCoefficientTensor.cxx
     AbaqusTangentOperator.cxx)
-  mfront_library(AbaqusInterface ${AsterInterface_SOURCES})
-  target_link_libraries(AsterInterface
+  mfront_library(AbaqusInterface ${AbaqusInterface_SOURCES})
+  target_link_libraries(AbaqusInterface
     MTestFileGenerator
     TFELUtilities
     TFELException)

@@ -21,6 +21,9 @@
 #include"MTest/AsterFiniteStrainBehaviour.hxx"
 #include"MTest/AsterCohesiveZoneModel.hxx"
 #endif /* HAVE_ASTER  */
+#ifdef HAVE_ABAQUS
+#include"MTest/AbaqusSmallStrainBehaviour.hxx"
+#endif /* HAVE_ABAQUS  */
 #ifdef HAVE_CYRANO
 #include"MTest/CyranoBehaviour.hxx"
 #endif /* HAVE_CYRANO  */
@@ -289,6 +292,22 @@ namespace mtest{
 	this->b = shared_ptr<Behaviour>(new AsterFiniteStrainBehaviour(this->hypothesis,l,f));
       } else if(type==3u){
 	this->b = shared_ptr<Behaviour>(new AsterCohesiveZoneModel(this->hypothesis,l,f));
+      } else {
+	ostringstream msg;
+	msg << "SchemeBase::setBehaviour: "
+	  "unsupported behaviour type (" << type << ")";
+	throw(runtime_error(msg.str()));
+      }
+    }
+#endif
+#ifdef HAVE_ABAQUS
+    if(i=="abaqus"){
+      auto& elm = ELM::getExternalLibraryManager();
+      const unsigned short type = elm.getUMATBehaviourType(l,f);
+      if(type==1u){
+	this->b = shared_ptr<Behaviour>(new AbaqusSmallStrainBehaviour(this->hypothesis,l,f));
+      // }  else if(type==2u){
+      // 	this->b = shared_ptr<Behaviour>(new AbaqusFiniteStrainBehaviour(this->hypothesis,l,f));
       } else {
 	ostringstream msg;
 	msg << "SchemeBase::setBehaviour: "

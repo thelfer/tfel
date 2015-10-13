@@ -7,7 +7,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astermaterialpropertiesboundscheck';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'materialpropertiesboundscheck';
 @OutOfBoundsPolicy 'None';
 @MaterialProperty<constant> 'YoungModulus'   50.e9;
 @MaterialProperty<constant> 'PoissonRatio'    0.3;

@@ -22,6 +22,13 @@
 #define TFEL_ABAQUS_INLINE2 inline
 #endif /* LIB_MFRONT_ABAQUS_H_ */
 
+#include<type_traits>
+
+#include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
+
 namespace abaqus{
 
   using AbaqusInt  = int;
@@ -44,8 +51,15 @@ namespace abaqus{
 					     const AbaqusReal *const,
 					     const AbaqusReal *const,
 					     const AbaqusInt);
+  /*!
+   * Base class of defining convertion for abaqus to mfront and back
+   */
+  template<tfel::material::ModellingHypothesis::Hypothesis H>
+  struct Converter;
 
 } // end of namespace abaqus
+
+// #include"MFront/Abaqus/Abaqus.ixx"
 
 #endif /* LIB_MFRONT_ABAQUS_H_ */
 

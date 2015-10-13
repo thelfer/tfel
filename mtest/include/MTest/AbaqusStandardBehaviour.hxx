@@ -1,5 +1,5 @@
 /*! 
- * \file  mtest/include/MTest/CastemCohesiveZoneModel.hxx
+ * \file  mtest/include/MTest/AbaqusStandardBehaviour.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013
@@ -11,9 +11,10 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_CASTEMCOHESIVEZONEMODEL_H_
-#define LIB_MTEST_CASTEMCOHESIVEZONEMODEL_H_ 
+#ifndef LIB_MTEST_MTESTABAQUSSTANDARDBEHAVIOUR_H_
+#define LIB_MTEST_MTESTABAQUSSTANDARDBEHAVIOUR_H_ 
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/UmatBehaviourBase.hxx"
 
@@ -21,10 +22,10 @@ namespace mtest
 {
 
   /*!
-   * A class to handle mechanical beheaviours written using the umat
+   * A class to handle mechanical beheaviours written using the abaqus
    * interface
    */
-  struct TFEL_VISIBILITY_LOCAL CastemCohesiveZoneModel
+  struct TFEL_VISIBILITY_LOCAL AbaqusStandardBehaviour
     : public UmatBehaviourBase
   {
     /*!
@@ -32,9 +33,9 @@ namespace mtest
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    CastemCohesiveZoneModel(const tfel::material::ModellingHypothesis::Hypothesis,
-					const std::string&,
-					const std::string&);
+    AbaqusStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+				const std::string&,
+				const std::string&);
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -45,17 +46,6 @@ namespace mtest
     virtual tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
 		      const tfel::math::tmatrix<3u,3u,real>&) const override;
-    /*!
-     * \param[out] v : initial values of the driving variables
-     */
-    virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
-    /*!
-     * \brief allocate internal workspace
-     * \param[in] h : modelling hypothesis
-     */
-    virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
@@ -119,42 +109,59 @@ namespace mtest
 	      const real,
 	      const StiffnessMatrixType::mtype) const override;
     /*!
-     * \brief some interfaces requires dummy material properties to be
-     * declared. For example, the Cast3M finite element solver
-     * requires the mass density and some extra material properties
-     * describing orthotropic axes to be declared.  This method is
-     * meant to automatically declare those if they are not defined by
-     * the user.
-     * \param[out] mp  : evolution manager where 
-     * \param[in]  evm : evolution manager
+     * \brief allocate internal workspace
+     * \param[in] h : modelling hypothesis
      */
     virtual void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const override;
+    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
     //! destructor
-    virtual ~CastemCohesiveZoneModel();
+    virtual ~AbaqusStandardBehaviour();
   protected:
     /*!
-     * \brief compute the elastic stiffness
-     * \param[out] Kt   : tangent operator
-     * \param[in]  mp   : material properties
-     * \param[in]  drot : rotation matrix (Fortran convention)
-     * \param[in]  h    : modelling hypothesis
+     * \brief call the mechanical behaviour
+     * \param[out] s1    : stresses at the end of the time step
+     * \param[out] iv1   : internal state variables at the end of the time step
+     * \param[in]  r     : rotation matrix
+     * \param[in]  e0    : strain at the beginning of the time step
+     * \param[in]  de    : strain increment
+     * \param[in]  s0    : stresses at the beginning of the time step
+     * \param[in]  mp    : material properties
+     * \param[in]  iv0   : internal state variables at the beginning of the time step
+     * \param[in]  ev0   : external state variables at the beginning of the time step
+     * \param[in]  dev   : external state variables increments
+     * \param[in]  h     : modelling hypothesis
+     * \param[in]  dt    : time increment
+     * \param[in]  ktype : type of the stiffness matrix
+     * \param[in] b : if true, integrate the behaviour over the time
+     * step, if false compute a prediction of the stiffness matrix
      */
-    virtual void
-    computeElasticStiffness(tfel::math::matrix<real>&,
-			    const tfel::math::vector<real>&,
-			    const tfel::math::tmatrix<3u,3u,real>&,
-			    const tfel::material::ModellingHypothesis::Hypothesis) const;
-    //! the umat fonction
-    tfel::system::CastemFctPtr fct;
+    virtual bool
+    call_behaviour(tfel::math::matrix<real>&,
+		   tfel::math::vector<real>&,
+		   tfel::math::vector<real>&,
+		   const tfel::math::tmatrix<3u,3u,real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::material::ModellingHypothesis::Hypothesis,
+		   const real,
+		   const StiffnessMatrixType::mtype,
+		   const bool) const = 0;
+    //! the abaqus fonction
+    tfel::system::AbaqusFctPtr fct;
     //! temporary vector for material properties
     mutable tfel::math::vector<real> mps;
     //! temporary vector for internal variables
     mutable tfel::math::vector<real> ivs;
-  }; // end of struct MTest
+    //! save tangent operator
+    bool savesTangentOperator;
+  }; // end of struct Behaviour
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_CASTEMCOHESIVEZONEMODEL_H_ */
+#endif /* LIB_MTEST_MTESTABAQUSSTANDARDBEHAVIOUR_H_ */
 

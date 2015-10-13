@@ -201,13 +201,13 @@ endif
 
 if HAVE_ABAQUS
 nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                                         \
+			  MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx                     \
 			  MFront/Abaqus/AbaqusConfig.hxx                                   \
 			  MFront/Abaqus/AbaqusTraits.hxx                                   \
 			  MFront/Abaqus/AbaqusException.hxx 		                   \
 			  MFront/Abaqus/AbaqusInterface.hxx	                           \
 			  MFront/Abaqus/AbaqusInterfaceExceptions.hxx                      \
 			  MFront/Abaqus/AbaqusBehaviourHandler.hxx                         \
-			  MFront/Abaqus/AbaqusOrthotropicBehaviourHandler.hxx              \
 			  MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx                   \
 			  MFront/Abaqus/AbaqusComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx               \

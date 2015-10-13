@@ -1356,6 +1356,11 @@ namespace mtest
       i = p->value;
     }
 #endif /* HAVE_ASTER */
+#ifdef HAVE_ABAQUS
+    if(p->value=="abaqus"){
+      i = "abaqus";
+    }
+#endif /* HAVE_ABAQUS */
 #ifdef HAVE_CYRANO
     if(p->value=="cyrano"){
       i = p->value;

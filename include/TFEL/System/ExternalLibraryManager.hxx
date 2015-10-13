@@ -198,9 +198,16 @@ namespace tfel
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      UMATFctPtr
-      getUMATFunction(const std::string&,
-		      const std::string&);
+      CastemFctPtr
+      getCastemExternalBehaviourFunction(const std::string&,
+					 const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      AbaqusFctPtr
+      getAbaqusExternalBehaviourFunction(const std::string&,
+					 const std::string&);
       /*!
        * \note the loadLibrary must have already been called with this name
        */

@@ -627,17 +627,14 @@ namespace mtest
 	}
 	UmatNormaliseTangentOperator::exe(Kt,Kt,3u);
       } else {
-	string msg("CastemSmallStrainBehaviour::integrate : ");
-	msg += "unsupported hypothesis";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("CastemSmallStrainBehaviour::integrate : "
+				 "unsupported hypothesis"));
       }
     } else {
-      string msg("CastemSmallStrainBehaviour::integrate : ");
-      msg += "invalid behaviour type (neither "
-	"isotropic or orthotropic)";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("CastemSmallStrainBehaviour::integrate : "
+			       "invalid behaviour type (neither "
+			       "isotropic or orthotropic)"));
     }
-
   }
 
   void

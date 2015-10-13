@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astermonocrystal_dd_cc_numericaljacobian';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'monocrystal_dd_cc_numericaljacobian';
 
 // Material properties
 @MaterialProperty<constant> 'DeltaG_0' 0.84;

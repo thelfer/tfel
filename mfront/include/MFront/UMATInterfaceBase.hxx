@@ -49,6 +49,34 @@ namespace mfront{
 			 const Hypothesis,
 			 const BehaviourDescription&) const override;
     /*!
+     * \return the list of additional variables to be passed to the
+     * behaviour data and integration data constructors which are
+     * specific to the interface.
+     *
+     * For each item in the list, the first element is the variable
+     * name and the second element is the variable description.
+     */
+    virtual std::vector<std::pair<std::string,std::string>>
+    getBehaviourConstructorsAdditionalVariables(void) const;
+    /*!
+     * \return the list of additional variables to be passed to the
+     * behaviour data constructor which are specific to the interface.
+     *
+     * For each item in the list, the first element is the variable
+     * name and the second element is the variable description.
+     */
+    virtual std::vector<std::pair<std::string,std::string>>
+    getBehaviourDataConstructorAdditionalVariables(void) const;
+    /*!
+     * \return the list of additional variables to be passed to the
+     * integration data constructor which are specific to the interface.
+     *
+     * For each item in the list, the first element is the variable
+     * name and the second element is the variable description.
+     */
+    virtual std::vector<std::pair<std::string,std::string>>
+    getIntegrationDataConstructorAdditionalVariables(void) const;
+    /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
      * \param[in] mb                      : mechanical behaviour description
@@ -60,20 +88,55 @@ namespace mfront{
     writeBehaviourConstructor(std::ofstream&,
 			      const BehaviourDescription&,
 			      const std::string&) const override;
-
+    /*!
+     * \brief write the behaviour constructor associated with the law
+     * \param[in] behaviourFile : output file
+     * \param[in] h             : modelling hypothesis
+     * \param[in] mb            : mechanical behaviour description
+     */
     virtual void
     writeBehaviourDataConstructor(std::ofstream&,
 				  const Hypothesis,
 				  const BehaviourDescription&) const override;
-
+    /*!
+     * \brief add interface specific lines at the end of the behaviour
+     * data constructor
+     * \param[in] behaviourFile : output file
+     * \param[in] h             : modelling hypothesis
+     * \param[in] mb            : mechanical behaviour description
+     */
+    virtual void 
+    completeBehaviourDataConstructor(std::ofstream&,
+				     const Hypothesis,
+				     const BehaviourDescription&) const;
     /*!
      * write the initialisation of the driving variables
-     * \param[in] behaviourFile : output file
-     * \param[in] mb            : mechanical behaviour description
+     * \param[in] os : output file
+     * \param[in] mb : mechanical behaviour description
      */
     virtual void 
     writeBehaviourDataMainVariablesSetters(std::ofstream&,
 					   const BehaviourDescription&) const override;
+    /*!
+     * \brief write the initialisation of a driving variables
+     * \param[in] os : output file
+     * \param[in] v  : variable to be initialised
+     * \param[in] o  : variable offsert
+     */
+    virtual void
+    writeBehaviourDataDrivingVariableSetter(std::ofstream&,
+					    const DrivingVariable&,
+					    const SupportedTypes::TypeSize) const;
+    /*!
+     * \brief write the initialisation of a thermodynamic force
+     * \param[in] os : output file
+     * \param[in] v  : variable to be initialised
+     * \param[in] o  : variable offsert
+     */
+    virtual void
+    writeBehaviourDataThermodynamicForceSetter(std::ofstream&,
+					       const ThermodynamicForce&,
+					       const SupportedTypes::TypeSize) const;
     
     virtual void
     writeIntegrationDataConstructor(std::ofstream&,
@@ -87,6 +150,16 @@ namespace mfront{
     virtual void 
     writeIntegrationDataMainVariablesSetters(std::ofstream&,
 					     const BehaviourDescription&) const override;
+    /*!
+     * \brief write the initialisation of a driving variables
+     * \param[in] os : output file
+     * \param[in] v  : variable to be initialised
+     * \param[in] o  : variable offsert
+     */
+    virtual void
+    writeIntegrationDataDrivingVariableSetter(std::ofstream&,
+					      const DrivingVariable&,
+					      const SupportedTypes::TypeSize) const;
     //! destructor
     virtual ~UMATInterfaceBase();
 

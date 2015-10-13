@@ -26,24 +26,27 @@ extern "C" {
 
 #ifdef TFEL_ARCH32
   typedef int    CyranoIntegerType;
-  typedef int    UMATIntegerType;
+  typedef int    CastemIntegerType;
   typedef int    AsterIntegerType;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 #ifdef TFEL_ARCH64
 #ifdef _WIN64
   typedef long long   CyranoIntegerType;
-  typedef long long   UMATIntegerType;
+  typedef long long   CastemIntegerType;
   typedef long long   AsterIntegerType;
 #else
   typedef long   CyranoIntegerType;
-  typedef long   UMATIntegerType;
+  typedef long   CastemIntegerType;
   typedef long   AsterIntegerType;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
-  typedef double CyranoRealType;
-  typedef double UMATRealType;
-  typedef double AsterRealType;
+  typedef int    AbaqusIntegerType;
 
+  typedef double AbaqusRealType;
+  typedef double CyranoRealType;
+  typedef double CastemRealType;
+  typedef double AsterRealType;
+  
 #ifdef	__cplusplus
 }
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
@@ -264,43 +267,86 @@ namespace tfel
        * This is the prototype of the external functions used by the
        * pleiades version of the castem finite element solver
        */
-      typedef void (TFEL_ADDCALL_PTR UMATFctPtr)(UMATRealType *const,       /* stress                   */
-						  UMATRealType *const,       /* internal state variables */
-						  UMATRealType *const,       /* tangent operator         */
-						  UMATRealType *const,
-						  UMATRealType *const,
-						  UMATRealType *const,
-						  UMATRealType *const,
-						  UMATRealType *const,
-						  UMATRealType *const,
-						  UMATRealType *const,
-						  const UMATRealType *const, /* strain tensor    */
-						  const UMATRealType *const, /* strain increment */
-						  const UMATRealType *const,
-						  const UMATRealType *const, /* time increment   */
-						  const UMATRealType *const, /* temperature      */
-						  const UMATRealType *const, /* temperature increment    */
-						  const UMATRealType *const, /* external state variables */
-						  const UMATRealType *const, /* external state variables increments   */
+      typedef void (TFEL_ADDCALL_PTR CastemFctPtr)(CastemRealType *const,       /* stress                   */
+						   CastemRealType *const,       /* internal state variables */
+						   CastemRealType *const,       /* tangent operator         */
+						   CastemRealType *const,
+						   CastemRealType *const,
+						   CastemRealType *const,
+						   CastemRealType *const,
+						   CastemRealType *const,
+						   CastemRealType *const,
+						   CastemRealType *const,
+						   const CastemRealType *const, /* strain tensor    */
+						   const CastemRealType *const, /* strain increment */
+						   const CastemRealType *const,
+						   const CastemRealType *const, /* time increment   */
+						   const CastemRealType *const, /* temperature      */
+						   const CastemRealType *const, /* temperature increment    */
+						   const CastemRealType *const, /* external state variables */
+						   const CastemRealType *const, /* external state variables increments   */
+						   const char     *const,
+						   const CastemIntegerType  *const,
+						   const CastemIntegerType  *const,
+						   const CastemIntegerType  *const, /* number of components of tensors       */
+						   const CastemIntegerType  *const, /* number of internal state variables    */
+						   const CastemRealType *const,     /* material properties                   */
+						   const CastemIntegerType  *const, /* number of material properties         */
+						   const CastemRealType *const,
+						   const CastemRealType *const, /* rotation matrix                       */
+						   CastemRealType *const,       /* estimation of the next time increment */
+						   const CastemRealType *const,
+						   const CastemRealType *const,
+						   const CastemRealType *const,
+						   const CastemIntegerType  *const,
+						   const CastemIntegerType  *const,
+						   const CastemIntegerType  *const,
+						   const CastemIntegerType  *const,
+						   const CastemIntegerType  *const,
+						   CastemIntegerType  *const,
+						   const int /* hidden fortran parameter */);
+      /*!
+       * a simple alias.
+       * This is the prototype of the external functions used by the
+       * pleiades version of the castem finite element solver
+       */
+      typedef void (TFEL_ADDCALL_PTR AbaqusFctPtr)(AbaqusRealType *const,       /* stress                   */
+						  AbaqusRealType *const,       /* internal state variables */
+						  AbaqusRealType *const,       /* tangent operator         */
+						  AbaqusRealType *const,
+						  AbaqusRealType *const,
+						  AbaqusRealType *const,
+						  AbaqusRealType *const,
+						  AbaqusRealType *const,
+						  AbaqusRealType *const,
+						  AbaqusRealType *const,
+						  const AbaqusRealType *const, /* strain tensor    */
+						  const AbaqusRealType *const, /* strain increment */
+						  const AbaqusRealType *const,
+						  const AbaqusRealType *const, /* time increment   */
+						  const AbaqusRealType *const, /* temperature      */
+						  const AbaqusRealType *const, /* temperature increment    */
+						  const AbaqusRealType *const, /* external state variables */
+						  const AbaqusRealType *const, /* external state variables increments   */
 						  const char     *const,
-						  const UMATIntegerType  *const,
-						  const UMATIntegerType  *const,
-						  const UMATIntegerType  *const, /* number of components of tensors       */
-						  const UMATIntegerType  *const, /* number of internal state variables    */
-						  const UMATRealType *const,     /* material properties                   */
-						  const UMATIntegerType  *const, /* number of material properties         */
-						  const UMATRealType *const,
-						  const UMATRealType *const, /* rotation matrix                       */
-						  UMATRealType *const,       /* estimation of the next time increment */
-						  const UMATRealType *const,
-						  const UMATRealType *const,
-						  const UMATRealType *const,
-						  const UMATIntegerType  *const,
-						  const UMATIntegerType  *const,
-						  const UMATIntegerType  *const,
-						  const UMATIntegerType  *const,
-						  const UMATIntegerType  *const,
-						 UMATIntegerType  *const,
+						  const AbaqusIntegerType  *const,
+						  const AbaqusIntegerType  *const,
+						  const AbaqusIntegerType  *const, /* number of components of tensors       */
+						  const AbaqusIntegerType  *const, /* number of internal state variables    */
+						  const AbaqusRealType *const,     /* material properties                   */
+						  const AbaqusIntegerType  *const, /* number of material properties         */
+						  const AbaqusRealType *const,
+						  const AbaqusRealType *const, /* rotation matrix                       */
+						  AbaqusRealType *const,       /* estimation of the next time increment */
+						  const AbaqusRealType *const,
+						  const AbaqusRealType *const,
+						  const AbaqusRealType *const,
+						  const AbaqusIntegerType  *const,
+						  const AbaqusIntegerType  *const,
+						  const AbaqusIntegerType  *const,
+						  const AbaqusIntegerType  *const,
+						  const AbaqusIntegerType  *const,
+						 AbaqusIntegerType  *const,
 						 const int /* hidden fortran parameter */);
 
       /*!

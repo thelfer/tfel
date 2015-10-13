@@ -383,7 +383,7 @@ namespace mfront
   
   void 
   ZMATInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
-						       const BehaviourDescription& mb) const
+						const BehaviourDescription& mb) const
   {
     using namespace std;
     out << "#include\"MFront/ZMAT/ZMATInterface.hxx\"\n";
@@ -711,8 +711,8 @@ namespace mfront
   
   void 
   ZMATInterface::writeIntegrationDataConstructor(std::ofstream& out,
-						       const Hypothesis h,
-						       const BehaviourDescription& mb) const
+						 const Hypothesis h,
+						 const BehaviourDescription& mb) const
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);

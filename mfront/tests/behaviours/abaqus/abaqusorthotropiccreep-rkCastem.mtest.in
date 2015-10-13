@@ -11,7 +11,7 @@
 @Real 'young' 100e9;
 @Real 'nu'    0.3;
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterorthotropiccreep_rkcastem';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'orthotropiccreep_rkcastem';
 @MaterialProperty<constant> 'YoungModulus1'     'young';
 @MaterialProperty<constant> 'YoungModulus2'     'young';
 @MaterialProperty<constant> 'YoungModulus3'     'young';

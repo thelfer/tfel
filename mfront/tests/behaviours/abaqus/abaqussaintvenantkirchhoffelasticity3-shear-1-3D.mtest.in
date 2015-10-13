@@ -1,11 +1,11 @@
 /*! 
- * \file    astersaintvenantkirchhoffelasticity3-shear-1-3D.mtest
+ * \file    abaqussaintvenantkirchhoffelasticity3-shear-1-3D.mtest
  * \brief
  * \author Helfer Thomas
  * \brief  26 nov. 2013
  */
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astersaintvenantkirchhoffelasticity3';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'saintvenantkirchhoffelasticity3';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

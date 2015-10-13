@@ -75,7 +75,7 @@ namespace mtest
     ~CastemStandardBehaviour();
   protected:
     //! the umat fonction
-    tfel::system::UMATFctPtr fct;
+    tfel::system::CastemFctPtr fct;
     //! temporary vector for material properties
     mutable tfel::math::vector<real> mps;
     //! temporary vector for internal variables

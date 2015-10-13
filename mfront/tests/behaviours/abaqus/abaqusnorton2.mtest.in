@@ -7,7 +7,7 @@
 
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asternorton';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'norton';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @Real 'A' 8.e-67;

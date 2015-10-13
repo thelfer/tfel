@@ -33,7 +33,7 @@ namespace mtest
     typedef ExternalLibraryManager ELM;
     const auto& nh = ModellingHypothesis::toString(h);
     auto& elm = ELM::getExternalLibraryManager();
-    this->fct = elm.getUMATFunction(l,b);
+    this->fct = elm.getCastemExternalBehaviourFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
     if(this->type!=3u){
       string msg("CastemCohesiveZoneModel::CastemCohesiveZoneModel : ");

@@ -1,5 +1,5 @@
 /*! 
- * \file   astermonocrystal-2.mtest
+ * \file   abaqusmonocrystal-2.mtest
  * \brief un cas particulièrement difficile généré automatiquement
  * lors d'une divergence du Newton local. Ce cas passe uniquement si
  * on limite les incréments de variables internes (méthode
@@ -9,7 +9,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astermonocrystal';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'monocrystal';
 @MaximumNumberOfSubSteps 1;
 
 // Material properties

@@ -313,32 +313,27 @@ namespace mfront{
 								       const std::string& prefix,
 								       const std::string& suffix) const
   {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize currentOffset;
-    if(!v.empty()){
-      for(p=v.begin();p!=v.end();++p){
-	if(p->arraySize==1u){
-	  const string n = prefix+p->name+suffix;
-	  f << ",\n";
-	  SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	  if(flag==SupportedTypes::Scalar){
-	    f << n << "("+src+"[" 
-	      << currentOffset << "])";  
-	  } else if((flag==SupportedTypes::TVector)||
-		    (flag==SupportedTypes::Stensor)||
-		    (flag==SupportedTypes::Tensor)){
-	    f << n << "(&"+src+"[" 
-	      << currentOffset << "])";  
-	  } else {
-	    string msg("SupportedTypes::");
-	    msg += "writeVariableInitializersInBehaviourDataConstructorI : ";
-	    msg += "internal error, tag unsupported";
-	    throw(runtime_error(msg));
-	  }
+    for(auto p=v.begin();p!=v.end();++p){
+      if(p->arraySize==1u){
+	const auto n = prefix+p->name+suffix;
+	f << ",\n";
+	auto flag = this->getTypeFlag(p->type);
+	if(flag==SupportedTypes::Scalar){
+	  f << n << "("+src+"[" 
+	    << currentOffset << "])";  
+	} else if((flag==SupportedTypes::TVector)||
+		  (flag==SupportedTypes::Stensor)||
+		  (flag==SupportedTypes::Tensor)){
+	  f << n << "(&"+src+"[" 
+	    << currentOffset << "])";  
+	} else {
+	  throw(std::runtime_error("SupportedTypes::"
+				   "writeVariableInitializersInBehaviourDataConstructorI : "
+				   "internal error, tag unsupported"));
 	}
-	currentOffset+=this->getTypeSize(p->type,p->arraySize);
       }
+      currentOffset+=this->getTypeSize(p->type,p->arraySize);
     }
   } // end of SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI
 
@@ -361,73 +356,67 @@ namespace mfront{
 									const std::string& prefix,
 									const std::string& suffix) const
   {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize currentOffset;
-    if(!v.empty()){
-      for(p=v.begin();p!=v.end();++p){
-	if(p->arraySize==1u){
+    for(auto p=v.begin();p!=v.end();++p){
+      if(p->arraySize==1u){
+	currentOffset+=this->getTypeSize(p->type,p->arraySize);
+      } else {
+	const auto flag = this->getTypeFlag(p->type);
+	const auto n = prefix+p->name+suffix;
+	if(this->useDynamicallyAllocatedVector(p->arraySize)){
+	  f << n << ".resize(" << p->arraySize << ");\n";
+	  f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){\n";
+	  switch(flag){
+	  case SupportedTypes::Scalar : 
+	    f << n << "[idx] = "+src+"[" 
+	      << currentOffset << "+idx];\n";  
+	    break;
+	  case SupportedTypes::TVector :
+	    f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
+	      << currentOffset << "+idx*TVectorSize],"
+	      << n << "[idx].begin());\n";  
+	    break;
+	  case SupportedTypes::Stensor :
+	    f << n << "[idx].import(&"+src+"[" 
+	      << currentOffset << "+idx*StensorSize]);\n";  
+	    break;
+	  case SupportedTypes::Tensor :
+	    f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
+	      << currentOffset << "+idx*TensorSize],"
+	      << n << "[idx].begin());\n";  
+	    break;
+	  default : 
+	    throw(std::runtime_error("SupportedTypes::"
+				     "writeVariableInitializersInBehaviourDataConstructorII: "
+				     "internal error, tag unsupported"));
+	  }
+	  f << "}\n";
 	  currentOffset+=this->getTypeSize(p->type,p->arraySize);
 	} else {
-	  const SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
-	  const string n = prefix+p->name+suffix;
-	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	    f << n << ".resize(" << p->arraySize << ");" << endl;
-	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
+	  for(int i=0;i!=p->arraySize;++i){
 	    switch(flag){
 	    case SupportedTypes::Scalar : 
-	      f << n << "[idx] = "+src+"[" 
-		<< currentOffset << "+idx];\n";  
+	      f << n << "[" << i << "] = "+src+"[" 
+		<< currentOffset << "];\n";  
 	      break;
 	    case SupportedTypes::TVector :
 	      f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
-		<< currentOffset << "+idx*TVectorSize],"
-		<< n << "[idx].begin());\n";  
+		<< currentOffset << "]," << n << "[" << i << "].begin());\n";  
 	      break;
 	    case SupportedTypes::Stensor :
-	      f << n << "[idx].import(&"+src+"[" 
-		  << currentOffset << "+idx*StensorSize]);\n";  
+	      f << n << "["<< i << "].import(&"+src+"[" 
+		<< currentOffset << "]);\n";  
 	      break;
 	    case SupportedTypes::Tensor :
 	      f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
-		<< currentOffset << "+idx*TensorSize],"
-		<< n << "[idx].begin());\n";  
+		<< currentOffset << "]," << n << "[" << i << "].begin());\n";  
 	      break;
 	    default : 
-	      string msg("SupportedTypes::");
-	      msg += "writeVariableInitializersInBehaviourDataConstructorII : ";
-	      msg += "internal error, tag unsupported";
-	      throw(runtime_error(msg));
+	      throw(std::runtime_error("SupportedTypes::"
+				       "writeVariableInitializersInBehaviourDataConstructorII: "
+				       "internal error, tag unsupported"));
 	    }
-	    f << "}" << endl;
-	    currentOffset+=this->getTypeSize(p->type,p->arraySize);
-	  } else {
-	    for(int i=0;i!=p->arraySize;++i){
-	      switch(flag){
-	      case SupportedTypes::Scalar : 
-		f << n << "[" << i << "] = "+src+"[" 
-		  << currentOffset << "];\n";  
-		break;
-	      case SupportedTypes::TVector :
-		f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
-		  << currentOffset << "]," << n << "[" << i << "].begin());\n";  
-		break;
-	      case SupportedTypes::Stensor :
-		f << n << "["<< i << "].import(&"+src+"[" 
-		  << currentOffset << "]);\n";  
-		break;
-	      case SupportedTypes::Tensor :
-		f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
-		  << currentOffset << "]," << n << "[" << i << "].begin());\n";  
-		break;
-	      default : 
-		string msg("SupportedTypes::");
-		msg += "writeVariableInitializersInBehaviourDataConstructorII : ";
-		msg += "internal error, tag unsupported";
-		throw(runtime_error(msg));
-	      }
-	      currentOffset+=this->getTypeSize(p->type,1u);
-	    }
+	    currentOffset+=this->getTypeSize(p->type,1u);
 	  }
 	}
       }

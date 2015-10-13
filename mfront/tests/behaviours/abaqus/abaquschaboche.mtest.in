@@ -5,7 +5,7 @@
  * \brief 18 avril 2013
  */
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterchaboche';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'chaboche';
 @MaterialProperty<constant> 'YoungModulus' 145200. ; 
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
 
@@ -27,7 +27,7 @@
 
 @Times {0.,0.4 in 1,1.435 in 12};
 
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-aster.ref'
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-abaqus.ref'
             {'EXX':2,'EYY':3} 4.e-5 ; 
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-aster.ref'
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-abaqus.ref'
             {'SXX':8} 1.e0 ; 

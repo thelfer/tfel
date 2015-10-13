@@ -3594,6 +3594,8 @@ mfront/tests/unit-tests/mfront/test2.mfront -text
 mtest/CMakeLists.txt -text
 mtest/Makefile.am -text
 mtest/include/CMakeLists.txt -text
+mtest/include/MTest/AbaqusSmallStrainBehaviour.hxx -text
+mtest/include/MTest/AbaqusStandardBehaviour.hxx -text
 mtest/include/MTest/AccelerationAlgorithm.hxx -text
 mtest/include/MTest/AccelerationAlgorithmFactory.hxx -text
 mtest/include/MTest/Alternate2DeltaAccelerationAlgorithm.hxx -text
@@ -3634,6 +3636,8 @@ mtest/include/MTest/Types.hxx -text
 mtest/include/MTest/UmatBehaviourBase.hxx -text
 mtest/include/MTest/UmatNormaliseTangentOperator.hxx -text
 mtest/include/Makefile.am -text
+mtest/src/AbaqusSmallStrainBehaviour.cxx -text
+mtest/src/AbaqusStandardBehaviour.cxx -text
 mtest/src/AccelerationAlgorithm.cxx -text
 mtest/src/AccelerationAlgorithmFactory.cxx -text
 mtest/src/Alternate2DeltaAccelerationAlgorithm.cxx -text

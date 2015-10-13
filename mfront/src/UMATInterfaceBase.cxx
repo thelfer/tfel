@@ -180,8 +180,8 @@ namespace mfront
 
   void 
   UMATInterfaceBase::exportMechanicalData(std::ofstream& behaviourDataFile,
-						const Hypothesis h,
-						const BehaviourDescription& mb) const
+					  const Hypothesis h,
+					  const BehaviourDescription& mb) const
   {
     const auto& d = mb.getBehaviourData(h);
     const auto& persistentVarsHolder = d.getPersistentVariables();
@@ -189,11 +189,11 @@ namespace mfront
     if(!persistentVarsHolder.empty()){
       behaviourDataFile << "void\n"
 			<< iprefix+"exportStateData("
-			<< "Type * const "+iprefix+"stress_,Type * const "+iprefix+"statev) const\n";
+			<< "Type * const " << iprefix+"stress_,Type * const " << iprefix+"statev) const\n";
     } else {
       behaviourDataFile << "void\n"
 			<< iprefix+"exportStateData("
-			<< "Type * const "+iprefix+"stress_,Type * const) const\n";
+			<< "Type * const " << iprefix << "stress_,Type * const) const\n";
     }
     behaviourDataFile << "{\n";
     behaviourDataFile << "using namespace tfel::math;\n";
@@ -204,23 +204,23 @@ namespace mfront
       const auto flag = this->getTypeFlag(f.type);
       if(flag==SupportedTypes::Scalar){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "*("+iprefix+"stress_+" << of << ") = this->" << f.name << ";\n";
+	  behaviourDataFile << "*(" << iprefix << "stress_+" << of << ") = this->" << f.name << ";\n";
 	} else {
-	  behaviourDataFile << "*("+iprefix+"stress_) = this->" << f.name << ";\n";
+	  behaviourDataFile << "*(" << iprefix << "stress_) = this->" << f.name << ";\n";
 	}
       } else if(flag==SupportedTypes::Stensor){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_+" << of << ");\n";
+	  behaviourDataFile << "this->sig.exportTab(" << iprefix << "stress_+" << of << ");\n";
 	} else {
-	  behaviourDataFile << "this->sig.exportTab("+iprefix+"stress_"");\n";
+	  behaviourDataFile << "this->sig.exportTab(" << iprefix << "stress_"");\n";
 	}
       } else if((flag==SupportedTypes::TVector)||
 		(flag==SupportedTypes::Tensor)){
 	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_+"
+	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << "," << iprefix << "stress_+"
 			    << of << ");\n";	
 	} else {
-	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << ","+iprefix+"stress_);\n";	
+	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << "," << iprefix << "stress_);\n";	
 	}
       } else {
 	throw(std::runtime_error("UMATInterfaceBase::exportMechanicalData : "
@@ -234,49 +234,112 @@ namespace mfront
 			  iprefix+"statev",
 			  mb.useQt());
     }
-    behaviourDataFile << "} // end of "+iprefix+"ExportStateData\n\n";
+    behaviourDataFile << "} // end of " << iprefix << "ExportStateData\n\n";
   }
+
+  std::vector<std::pair<std::string,std::string>>
+  UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables(void) const{
+    return {};
+  } // end of UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables
+			 
+  std::vector<std::pair<std::string,std::string>>
+  UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables(void) const{
+    return {};
+  } // end of UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables
+
+  std::vector<std::pair<std::string,std::string>>
+  UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables(void) const{
+    return {};
+  } // end of UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables
   
   void
   UMATInterfaceBase::writeBehaviourConstructor(std::ofstream& behaviourFile,
-						     const BehaviourDescription& mb,
-						     const std::string& initStateVarsIncrements) const
+					       const BehaviourDescription& mb,
+					       const std::string& initStateVarsIncrements) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    behaviourFile << "/*\n";
-    behaviourFile << " * \\brief constructor for the umat interface\n";
-    behaviourFile << " *\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"dt_, time increment\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"T_, temperature\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"dT_, temperature increment\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"mat, material properties\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"int_vars, state variables\n"; 
-    behaviourFile << " * \\param const Type *const "+iprefix+"ext_vars, external state variables\n";
-    behaviourFile << " * \\param const Type *const "+iprefix+"dext_vars,";
-    behaviourFile << " external state variables increments\n";
-    behaviourFile << " */\n";
-    behaviourFile << mb.getClassName() 
-		  << "(const Type* const "+iprefix+"dt_,\n" 
-		  <<  "const Type* const "+iprefix+"T_,const Type* const "+iprefix+"dT_,\n"
-		  <<  "const Type* const "+iprefix+"mat,const Type* const "+iprefix+"int_vars,\n"
-		  <<  "const Type* const "+iprefix+"ext_vars,const Type* const "+iprefix+"dext_vars)\n";
+    const auto av   = this->getBehaviourConstructorsAdditionalVariables();
+    const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
+    const auto aidv = this->getIntegrationDataConstructorAdditionalVariables();
+    behaviourFile << "/*\n"
+		  << " * \\brief constructor for the umat interface\n"
+		  << " * \\param[in] " << iprefix << "dt_: time increment\n"
+		  << " * \\param[in] " << iprefix << "T_: temperature\n"
+		  << " * \\param[in] " << iprefix << "dT_: temperature increment\n"
+		  << " * \\param[in] " << iprefix << "mat: material properties\n"
+		  << " * \\param[in] " << iprefix << "int_vars: state variables\n" 
+		  << " * \\param[in] " << iprefix << "ext_vars: external state variables\n"
+		  << " * \\param[in] " << iprefix << "dext_vars: external state variables increments\n";
+    for(const auto& v: abdv){
+      behaviourFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+    }
+    for(const auto& v: aidv){
+      behaviourFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+    }
+    for(const auto& v: av){
+      behaviourFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+    }
+    behaviourFile << " */\n"
+		  << mb.getClassName() 
+		  << "(const Type* const " << iprefix << "dt_,\n" 
+		  <<  "const Type* const " << iprefix << "T_,const Type* const " << iprefix << "dT_,\n"
+		  <<  "const Type* const " << iprefix << "mat,const Type* const " << iprefix << "int_vars,\n"
+		  <<  "const Type* const " << iprefix << "ext_vars,const Type* const " << iprefix << "dext_vars";
+    for(const auto& v: abdv){
+      behaviourFile << ",\nconst Type* const " << iprefix << v.first;
+    }
+    for(const auto& v: aidv){
+      behaviourFile << ",\nconst Type* const " << iprefix << v.first;
+    }
+    for(const auto& v: av){
+      behaviourFile << ",\nconst Type* const " << iprefix << v.first;
+    }
+    behaviourFile << ")\n";
     if(mb.useQt()){
       behaviourFile << ": " << mb.getClassName() 
-		    << "BehaviourData<hypothesis,Type,use_qt>("+iprefix+"T_,"+iprefix+"mat,\n"
-		    << iprefix+"int_vars,"+iprefix+"ext_vars),\n";
-      behaviourFile << mb.getClassName() 
-		    << "IntegrationData<hypothesis,Type,use_qt>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
+		    << "BehaviourData<hypothesis,Type,use_qt>(" << iprefix << "T_," << iprefix << "mat,\n"
+		    << iprefix+"int_vars," << iprefix << "ext_vars";
+      for(const auto& v: abdv){
+	behaviourFile << "," << iprefix << v.first;
+      }
+      for(const auto& v: av){
+	behaviourFile << "," << iprefix << v.first;
+      }
+      behaviourFile << "),\n"
+		    << mb.getClassName() 
+		    << "IntegrationData<hypothesis,Type,use_qt>(" << iprefix << "dt_," << iprefix << "dT_," << iprefix << "dext_vars";
+      for(const auto& v: aidv){
+	behaviourFile << "," << iprefix << v.first;
+      }
+      for(const auto& v: av){
+	behaviourFile << "," << iprefix << v.first;
+      }
+      behaviourFile << ")";
     } else {
       behaviourFile << ": " << mb.getClassName() 
-		    << "BehaviourData<hypothesis,Type,false>("+iprefix+"T_,"+iprefix+"mat,\n"
-		    << iprefix+"int_vars,"+iprefix+"ext_vars),\n";
-      behaviourFile << mb.getClassName() 
-		    << "IntegrationData<hypothesis,Type,false>("+iprefix+"dt_,"+iprefix+"dT_,"+iprefix+"dext_vars)";
+		    << "BehaviourData<hypothesis,Type,false>(" << iprefix << "T_," << iprefix << "mat,\n"
+		    << iprefix+"int_vars," << iprefix << "ext_vars";
+      for(const auto& v: abdv){
+	behaviourFile << "," << iprefix << v.first;
+      }
+      for(const auto& v: av){
+	behaviourFile << "," << iprefix << v.first;
+      }
+      behaviourFile << "),\n"
+		    << mb.getClassName() 
+		    << "IntegrationData<hypothesis,Type,false>(" << iprefix << "dt_," << iprefix << "dT_," << iprefix << "dext_vars";
+      for(const auto& v: aidv){
+	behaviourFile << "," << iprefix << v.first;
+      }
+      for(const auto& v: av){
+	behaviourFile << "," << iprefix << v.first;
+      }
+      behaviourFile << ")";
     }
     if(!initStateVarsIncrements.empty()){
       behaviourFile << ",\n" << initStateVarsIncrements;
     }
-  }
+  } // end of UMATInterfaceBase::writeBehaviourConstructor
 
   void
   UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorI(std::ostream& f,
@@ -288,19 +351,16 @@ namespace mfront
 										    const std::string& prefix,
 										    const std::string& suffix) const
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
     const auto& v = d.getMaterialProperties();
-    VariableDescriptionContainer::const_iterator p;
     if(!v.empty()){
-      for(p=v.begin();p!=v.end();++p){
+      for(auto p=v.cbegin();p!=v.cend();++p){
 	if(p->arraySize==1u){
-	  const string n = prefix+p->name+suffix;
-	  const UMATMaterialProperty& m = 
-	    UMATInterfaceBase::findUMATMaterialProperty(i,mb.getExternalName(h,p->name));
-	  SupportedTypes::TypeSize offset = m.offset;
+	  const auto n = prefix+p->name+suffix;
+	  const auto& m = UMATInterfaceBase::findUMATMaterialProperty(i,mb.getExternalName(h,p->name));
+	  auto offset = m.offset;
 	  offset -= ioffset;
-	  f << "," << endl;
+	  f << ",\n";
 	  auto flag = this->getTypeFlag(p->type);
 	  if(flag==SupportedTypes::Scalar){
 	    f << n << "("+src+"[" 
@@ -311,10 +371,9 @@ namespace mfront
 	    f << n << "(&"+src+"[" 
 	      << offset << "])";  
 	  } else {
-	    string msg("SupportedTypes::");
-	    msg += "writeVariableInitializersInBehaviourDataConstructorI : ";
-	    msg += "internal error, tag unsupported";
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("SupportedTypes::"
+				     "writeVariableInitializersInBehaviourDataConstructorI: "
+				     "internal error, tag unsupported"));
 	  }
 	}
       }
@@ -324,80 +383,76 @@ namespace mfront
 
   void
   UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorII(std::ostream& f,
-											   const Hypothesis h,
-											   const BehaviourDescription& mb,
-											   const std::vector<UMATMaterialProperty>& i,
-											   const SupportedTypes::TypeSize ioffset,
-											   const std::string& src,
-											   const std::string& prefix,
-											   const std::string& suffix) const
+										     const Hypothesis h,
+										     const BehaviourDescription& mb,
+										     const std::vector<UMATMaterialProperty>& i,
+										     const SupportedTypes::TypeSize ioffset,
+										     const std::string& src,
+										     const std::string& prefix,
+										     const std::string& suffix) const
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
     const auto& v = d.getMaterialProperties();
-    VariableDescriptionContainer::const_iterator p;
     if(!v.empty()){
-      for(p=v.begin();p!=v.end();++p){
+      for(auto p=v.begin();p!=v.end();++p){
 	if(p->arraySize!=1u){
-	  const UMATMaterialProperty& m =
+	  const auto& m =
 	    UMATInterfaceBase::findUMATMaterialProperty(i,mb.getExternalName(h,p->name));	  
 	  const auto flag = this->getTypeFlag(p->type);
 	  SupportedTypes::TypeSize offset = m.offset;
 	  offset -= ioffset;
-	  const string n = prefix+p->name+suffix;
+	  const auto n = prefix+p->name+suffix;
 	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	    f << n << ".resize(" << p->arraySize << ");" << endl;
-	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){" << endl;
+	    f << n << ".resize(" << p->arraySize << ");\n";
+	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){\n";
 	    switch(flag){
 	    case SupportedTypes::Scalar : 
 	      f << n << "[idx] = "+src+"[" 
-		<< offset << "+idx];" << endl;  
+		<< offset << "+idx];\n";  
 	      break;
 	    case SupportedTypes::TVector :
 	      f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
 		<< offset << "+idx*TVectorSize],"
-		<< n << "[idx].begin());" << endl;  
+		<< n << "[idx].begin());\n";  
 	      break;
 	    case SupportedTypes::Stensor :
 	      f << n << "[idx].import(&"+src+"[" 
-		  << offset << "+idx*StensorSize]);" << endl;  
+		  << offset << "+idx*StensorSize]);\n";  
 	      break;
 	    case SupportedTypes::Tensor :
 	      f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
 		<< offset << "+idx*TensorSize],"
-		<< n << "[idx].begin());" << endl;  
+		<< n << "[idx].begin());\n";  
 	      break;
 	    default : 
-	      string msg("SupportedTypes::");
-	      msg += "writeVariableInitializersInBehaviourDataConstructorII : ";
-	      msg += "internal error, tag unsupported";
-	      throw(runtime_error(msg));
+	      throw(std::runtime_error("UMATInterfaceBase::"
+				       "writeVariableInitializersInBehaviourDataConstructorII: "
+				       "internal error, tag unsupported"));
 	    }
-	    f << "}" << endl;
+	    f << "}\n";
 	  } else {
 	    for(int index=0;index!=p->arraySize;++index){
 	      switch(flag){
 	      case SupportedTypes::Scalar : 
 		f << n << "[" << index << "] = "+src+"[" 
-		  << offset << "];" << endl;  
+		  << offset << "];\n";  
 		break;
 	      case SupportedTypes::TVector :
 		f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
-		  << offset << "]," << n << "[" << index << "].begin());" << endl;  
+		  << offset << "]," << n << "[" << index << "].begin());\n";  
 		break;
 	      case SupportedTypes::Stensor :
 		f << n << "["<< index << "].import(&"+src+"[" 
-		  << offset << "]);" << endl;  
+		  << offset << "]);\n";  
 		break;
 	      case SupportedTypes::Tensor :
 		f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
-		  << offset << "]," << n << "[" << index << "].begin());" << endl;  
+		  << offset << "]," << n << "[" << index << "].begin());\n";  
 		break;
 	      default : 
-		string msg("SupportedTypes::");
-		msg += "writeVariableInitializersInBehaviourDataConstructorII : ";
-		msg += "internal error, tag unsupported";
-		throw(runtime_error(msg));
+		throw(std::runtime_error("UMATInterfaceBase::"
+					 "writeVariableInitializersInBehaviourDataConstructorII: "
+					 "internal error, tag unsupported"));
 	      }
 	      offset+=this->getTypeSize(p->type,1u);
 	    }
@@ -406,47 +461,58 @@ namespace mfront
       }
     }
   } // end of UMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorII
-  
+
   void 
   UMATInterfaceBase::writeBehaviourDataConstructor(std::ofstream& behaviourDataFile,
-							 const Hypothesis h,
-							 const BehaviourDescription& mb) const
+						   const Hypothesis h,
+						   const BehaviourDescription& mb) const
   {
-    using namespace std;
+    const auto av   = this->getBehaviourConstructorsAdditionalVariables();
+    const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
     const auto& d = mb.getBehaviourData(h);
-    const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    pair<vector<UMATMaterialProperty>,
-	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    auto mprops = this->buildMaterialPropertiesList(mb,h);
     const auto& mp = d.getMaterialProperties();
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
-    behaviourDataFile << "/*" << endl;
-    behaviourDataFile << " * \\brief constructor for the umat interface" << endl;
-    behaviourDataFile << " *" << endl;
-    behaviourDataFile << " * \\param const Type *const "+iprefix+"T_, temperature" << endl;
-    behaviourDataFile << " * \\param const Type *const "+iprefix+"mat, material properties" << endl;
-    behaviourDataFile << " * \\param const Type *const "+iprefix+"int_vars, state variables" << endl; 
-    behaviourDataFile << " * \\param const Type *const "+iprefix+"ext_vars, external state variables" << endl;
-    behaviourDataFile << " */" << endl;
-    behaviourDataFile << mb.getClassName() << "BehaviourData"
-		      << "(const Type* const "+iprefix+"T_,const Type* const";
+    behaviourDataFile << "/*\n"
+		      << " * \\brief constructor for the umat interface\n"
+		      << " * \\param[in] " << iprefix << "T_: temperature\n"
+		      << " * \\param[in] " << iprefix << "mat: material properties\n"
+		      << " * \\param[in] " << iprefix << "int_vars: state variables\n"
+		      << " * \\param[in] " << iprefix << "ext_vars: external std::ate variables\n";
+    for(const auto& v: abdv){
+      behaviourDataFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+    }
+    for(const auto& v: av){
+      behaviourDataFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+    }
+    behaviourDataFile << " */\n"
+		      << mb.getClassName() << "BehaviourData"
+		      << "(const Type* const " << iprefix << "T_,const Type* const";
     if(!mp.empty()){
-      behaviourDataFile << " "+iprefix+"mat," << endl;
+      behaviourDataFile << " " << iprefix << "mat,\n";
     } else {
-      behaviourDataFile << "," << endl;
+      behaviourDataFile << ",\n";
     }
     behaviourDataFile <<  "const Type* const";
     if(!persistentVarsHolder.empty()){
-      behaviourDataFile << " "+iprefix+"int_vars," << endl;
+      behaviourDataFile << " " << iprefix << "int_vars,\n";
     } else {
-      behaviourDataFile << "," << endl;
+      behaviourDataFile << ",\n";
     }
     behaviourDataFile << "const Type* const";
     if(!externalStateVarsHolder.empty()){
-      behaviourDataFile << " "+iprefix+"ext_vars";
+      behaviourDataFile << " " << iprefix << "ext_vars";
     }
-    behaviourDataFile << ")" << endl;
-    behaviourDataFile << ": T(*"+iprefix+"T_)";
+    for(const auto& v: abdv){
+      behaviourDataFile << ",const Type* const " << iprefix << v.first;
+    }
+    for(const auto& v: av){
+      behaviourDataFile << ",const Type* const " << iprefix << v.first;
+    }
+    behaviourDataFile << ")\n";
+    behaviourDataFile << ": T(*" << iprefix << "T_)";
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(behaviourDataFile,
 									 h,mb,mprops.first,
 									 mprops.second,
@@ -457,7 +523,7 @@ namespace mfront
     this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
 							       externalStateVarsHolder,
 							       iprefix+"ext_vars","","");
-    behaviourDataFile << "\n{" << endl;
+    behaviourDataFile << "\n{\n";
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(behaviourDataFile,
 									  h,mb,mprops.first,
 									  mprops.second,
@@ -468,224 +534,253 @@ namespace mfront
     this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
 								externalStateVarsHolder,
 								iprefix+"ext_vars","","");
-    behaviourDataFile << "}" << endl << endl;
+    this->completeBehaviourDataConstructor(behaviourDataFile,h,mb);
+    behaviourDataFile << "}\n\n";
   }
+
+  void 
+  UMATInterfaceBase::completeBehaviourDataConstructor(std::ofstream&,
+						      const Hypothesis,
+						      const BehaviourDescription&) const
+  {} // end of UMATInterfaceBase::completeBehaviourDataConstructor
   
   void 
   UMATInterfaceBase::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
-							   const Hypothesis h,
-							   const BehaviourDescription& mb) const
+						     const Hypothesis h,
+						     const BehaviourDescription& mb) const
   {
-    using namespace std;
+    const auto av   = this->getBehaviourConstructorsAdditionalVariables();
+    const auto aidv = this->getIntegrationDataConstructorAdditionalVariables();
     const auto& d = mb.getBehaviourData(h);
-    const std::string iprefix = makeUpperCase(this->getInterfaceName());
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
-    behaviourIntegrationFile << "/*" << endl;
-    behaviourIntegrationFile << " * \\brief constructor for the umat interface" << endl;
-    behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dt_, time increment" << endl;
-    behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dT_, temperature increment" << endl;
-    behaviourIntegrationFile << " * \\param const Type *const "+iprefix+"dext_vars,";
-    behaviourIntegrationFile << " external state variables increments" << endl;
-    behaviourIntegrationFile << " *" << endl;
-    behaviourIntegrationFile << " */" << endl;
-    behaviourIntegrationFile << mb.getClassName() << "IntegrationData"
-			     << "(const Type* const "+iprefix+"dt_," << endl 
-			     <<  "const Type* const "+iprefix+"dT_,const Type* const";
-    if(!externalStateVarsHolder.empty()){
-      behaviourIntegrationFile << " "+iprefix+"dext_vars)" << endl;
-    } else {
-      behaviourIntegrationFile << ")" << endl;
+    behaviourIntegrationFile << "/*\n"
+			     << " * \\brief constructor for the umat interface\n"
+			     << " * \\param[in] "+ iprefix+"dt_: time increment\n"
+			     << " * \\param[in] "+ iprefix+"dT_: temperature increment\n"
+			     << " * \\param[in] "+ iprefix+"dext_vars: external state variables increments\n";
+    for(const auto& v: aidv){
+      behaviourIntegrationFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
-    behaviourIntegrationFile << ": dt(*"+iprefix+"dt_),dT(*"+iprefix+"dT_)";
+    for(const auto& v: av){
+      behaviourIntegrationFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+    }
+    behaviourIntegrationFile << " */\n"
+			     << mb.getClassName() << "IntegrationData"
+			     << "(const Type* const " << iprefix << "dt_,\n" 
+			     <<  "const Type* const " << iprefix << "dT_,const Type* const";
+    if(!externalStateVarsHolder.empty()){
+      behaviourIntegrationFile << " " << iprefix << "dext_vars";
+    }
+    for(const auto& v: aidv){
+      behaviourIntegrationFile << ",const Type* const " << iprefix << v.first;
+    }
+    for(const auto& v: av){
+      behaviourIntegrationFile << ",const Type* const " << iprefix << v.first;
+    }
+    behaviourIntegrationFile << ")\n";
+    behaviourIntegrationFile << ": dt(*" << iprefix << "dt_),dT(*" << iprefix << "dT_)";
     if(!externalStateVarsHolder.empty()){
       this->writeVariableInitializersInBehaviourDataConstructorI(behaviourIntegrationFile,
 								 externalStateVarsHolder,
 								 iprefix+"dext_vars","d","");
     }
-    behaviourIntegrationFile << "\n{" << endl;
+    behaviourIntegrationFile << "\n{\n";
     if(!externalStateVarsHolder.empty()){
       this->writeVariableInitializersInBehaviourDataConstructorII(behaviourIntegrationFile,
 								  externalStateVarsHolder,
 								  iprefix+"dext_vars","d","");
     }
-    behaviourIntegrationFile << "}" << endl << endl;
+    behaviourIntegrationFile << "}\n\n";
   }
 
   void 
   UMATInterfaceBase::writeBehaviourDataMainVariablesSetters(std::ofstream& os,
-								  const BehaviourDescription& mb) const
+							    const BehaviourDescription& mb) const
   {
-    using namespace std;
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
-    SupportedTypes::TypeSize ov;
-    os << "void set"+iprefix+"BehaviourDataDrivingVariables(const Type* const "+iprefix+"stran)" << endl
-       << "{" << endl;
-    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const auto& v = pm->first;
-      if(!v.increment_known){
-	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+"  << ov <<",this->" << v.name << "0.begin());" << endl;
-	  } else {
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->" << v.name << "0.begin());" << endl;
-	  }
-	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << "this->" << v.name << "0.importVoigt("+iprefix+"stran+" << ov <<");" << endl;
-	  } else {
-	    os << "this->" << v.name << "0.importVoigt("+iprefix+"stran);" << endl;
-	  }
-	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << "0,"
-			      << iprefix << "stran+" << ov <<");" << endl;
-	  } else {
-	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << "0,"
-			      << iprefix << "stran);" << endl;
-	  }
-	} else {
-	  string msg("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : ");
-	  msg += "unsupported driving variable type";
-	  throw(runtime_error(msg));
-	}
-      } else {
-	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran+"  << ov << ",this->"  << v.name << ".begin());" << endl;
-	  } else {
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stran,this->"   << v.name << ".begin());" << endl;
-	  }
-	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << "this->" << v.name << ".importVoigt("+iprefix+"stran+" << ov <<");" << endl;
-	  } else {
-	    os << "this->"  << v.name << ".importVoigt("+iprefix+"stran);" << endl;
-	  }
-	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << ","
-			      << iprefix << "stran+" << ov <<");" << endl;
-	  } else {
-	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << ","
-			      << iprefix+"stran);" << endl;
-	  }
-	} else {
-	  string msg("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : ");
-	  msg += "unsupported driving variable type";
-	  throw(runtime_error(msg));
-	}
-      }
-      ov += this->getTypeSize(v.type,1u);
+    SupportedTypes::TypeSize ov,of;
+    os << "void set" << iprefix << "BehaviourDataDrivingVariables(const Type* const " << iprefix << "stran)\n"
+       << "{\n";
+    for(const auto& v : mb.getMainVariables()){
+      this->writeBehaviourDataDrivingVariableSetter(os,v.first,ov);
+      ov += this->getTypeSize(v.first.type,1u);
     }
-    os << "}" << endl << endl;
-    os << "void set"+iprefix+"BehaviourDataThermodynamicForces(const Type* const "+iprefix+"stress_)" << endl
-      << "{" << endl;
-    SupportedTypes::TypeSize of;
-    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const auto& f = pm->second;
-      if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
-	if(pm!=mb.getMainVariables().begin()){
-	  os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stress_+" << of <<",this->" << f.name << ".begin());" << endl;
-	} else {
-	  os << "tfel::fsalgo::copy<N>::exe("+iprefix+"stress_,this->" << f.name << ".begin());" << endl;
-	}
-      } else if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  os << "this->" << f.name << ".importTab("+iprefix+"stress_+" << of <<");" << endl;
-	} else {
-	  os << "this->" << f.name << ".importTab("+iprefix+"stress_);" << endl;
-	}
-      } else if(this->getTypeFlag(f.type)==SupportedTypes::Tensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  os << f.type << "::buildFromFortranMatrix(this->" << f.name << ","
-			    << iprefix << "stress_+" << of <<");" << endl;
-	} else {
-	  os << f.type << "::buildFromFortranMatrix(this->" << f.name << ","
-			    << iprefix << "stress_);" << endl;
-	}
-      } else {
-	string msg("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : ");
-	msg += "unsupported forces type";
-	throw(runtime_error(msg));
-      }
-      of += this->getTypeSize(f.type,1u);
+    os << "}\n\n";
+    os << "void set" << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_)\n"
+      << "{\n";
+    for(const auto& v : mb.getMainVariables()){
+      this->writeBehaviourDataThermodynamicForceSetter(os,v.second,of);
+      of += this->getTypeSize(v.second.type,1u);
     }
-    os << "}" << endl << endl;
-  }
+    os << "}\n\n";
+  } // end of UMATInterfaceBase::writeBehaviourDataMainVariablesSetters
 
   void 
-  UMATInterfaceBase::writeIntegrationDataMainVariablesSetters(std::ofstream& os,
-								    const BehaviourDescription& mb) const
+  UMATInterfaceBase::writeBehaviourDataDrivingVariableSetter(std::ofstream& os,
+							     const DrivingVariable& v,
+							     const SupportedTypes::TypeSize o) const
   {
-    using namespace std;
-    const std::string iprefix = makeUpperCase(this->getInterfaceName());
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
-    SupportedTypes::TypeSize ov;
-    os << "void set"+iprefix+"IntegrationDataDrivingVariables(const Type* const "+iprefix+"dstran)" << endl
-       << "{" << endl;
-    for(pm=mb.getMainVariables().begin();pm!=mb.getMainVariables().end();++pm){
-      const auto& v = pm->first;
-      if(!v.increment_known){
-	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov <<",this->" << v.name << "1.begin());" << endl;
-	  } else {
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->" << v.name << "1.begin());" << endl;
-	  }
-	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << "this->" << v.name << "1.importVoigt("+iprefix+"dstran+" << ov <<");" << endl;
-	  } else {
-	    os << "this->" << v.name << "1.importVoigt("+iprefix+"dstran);" << endl;
-	  }
-	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << "1,"
-			      << iprefix << "dstran+" << ov <<");" << endl;
-	  } else {
-	    os << v.type << "::buildFromFortranMatrix(this->" << v.name << "1,"
-			      << iprefix << "dstran);" << endl;
-	  }
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    if(!v.increment_known){
+      if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	if(!o.isNull()){
+	  os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stran+"  << o <<",this->" << v.name << "0.begin());\n";
 	} else {
-	  string msg("UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : ");
-	  msg += "unsupported driving variable type";
-	  throw(runtime_error(msg));
+	  os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stran,this->" << v.name << "0.begin());\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	if(!o.isNull()){
+	  os << "this->" << v.name << "0.importVoigt(" << iprefix << "stran+" << o <<");\n";
+	} else {
+	  os << "this->" << v.name << "0.importVoigt(" << iprefix << "stran);\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	if(!o.isNull()){
+	  os << v.type << "::buildFromFortranMatrix(this->" << v.name << "0,"
+	     << iprefix << "stran+" << o <<");\n";
+	} else {
+	  os << v.type << "::buildFromFortranMatrix(this->" << v.name << "0,"
+	     << iprefix << "stran);\n";
 	}
       } else {
-	if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran+" << ov << ",this->d" << v.name << ".begin());" << endl;
-	  } else {
-	    os << "tfel::fsalgo::copy<N>::exe("+iprefix+"dstran,this->d" << v.name << ".begin());" << endl;
-	  }
-	} else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << "this->d" << v.name << ".importVoigt("+iprefix+"dstran+" << ov <<");" << endl;
-	  } else {
-	    os << "this->d" << v.name << ".importVoigt("+iprefix+"dstran);" << endl;
-	  }
-	} else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
-	  if(pm!=mb.getMainVariables().begin()){
-	    os << v.type << "::buildFromFortranMatrix(this->d" << v.name << ","
-			      << iprefix << "dstran+" << ov <<");" << endl;
-	  } else {
-	    os << v.type << "::buildFromFortranMatrix(this->d" << v.name << ","
-			      << iprefix+"dstran);" << endl;
-	  }
-	} else {
-	  string msg("UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : ");
-	  msg += "unsupported driving variable type";
-	  throw(runtime_error(msg));
-	}
+	throw(std::runtime_error("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
+				 "unsupported driving variable type"));
       }
-      ov += this->getTypeSize(v.type,1u);
+    } else {
+      if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	if(!o.isNull()){
+	  os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stran+"  << o << ",this->"  << v.name << ".begin());\n";
+	} else {
+	  os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stran,this->"   << v.name << ".begin());\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	if(!o.isNull()){
+	  os << "this->" << v.name << ".importVoigt(" << iprefix << "stran+" << o <<");\n";
+	} else {
+	  os << "this->"  << v.name << ".importVoigt(" << iprefix << "stran);\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	if(!o.isNull()){
+	  os << v.type << "::buildFromFortranMatrix(this->" << v.name << ","
+	     << iprefix << "stran+" << o <<");\n";
+	} else {
+	  os << v.type << "::buildFromFortranMatrix(this->" << v.name << ","
+	     << iprefix+"stran);\n";
+	}
+      } else {
+	throw(std::runtime_error("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
+				 "unsupported driving variable type"));
+      }
     }
-    os << "}" << endl << endl;
-  }
+  } // end of UMATInterfaceBase::writeBehaviourDataDrivingVariableSetter
 
+  void 
+  UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter(std::ofstream& os,
+								const ThermodynamicForce& f,
+								const SupportedTypes::TypeSize o) const
+  {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    if(this->getTypeFlag(f.type)==SupportedTypes::TVector){
+      if(!o.isNull()){
+	os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stress_+" << o <<",this->" << f.name << ".begin());\n";
+      } else {
+	os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stress_,this->" << f.name << ".begin());\n";
+      }
+    } else if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+      if(!o.isNull()){
+	os << "this->" << f.name << ".importTab(" << iprefix << "stress_+" << o <<");\n";
+      } else {
+	os << "this->" << f.name << ".importTab(" << iprefix << "stress_);\n";
+      }
+    } else if(this->getTypeFlag(f.type)==SupportedTypes::Tensor){
+      if(!o.isNull()){
+	os << f.type << "::buildFromFortranMatrix(this->" << f.name << ","
+	   << iprefix << "stress_+" << o <<");\n";
+      } else {
+	os << f.type << "::buildFromFortranMatrix(this->" << f.name << ","
+	   << iprefix << "stress_);\n";
+      }
+    } else {
+      throw(std::runtime_error("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
+			       "unsupported forces type"));
+    }
+  } // end of UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter
+  
+  void 
+  UMATInterfaceBase::writeIntegrationDataMainVariablesSetters(std::ofstream& os,
+							      const BehaviourDescription& mb) const
+  {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    SupportedTypes::TypeSize ov;
+    os << "void set" << iprefix << "IntegrationDataDrivingVariables(const Type* const " << iprefix << "dstran)\n"
+       << "{\n";
+    for(const auto& v : mb.getMainVariables()){
+      this->writeIntegrationDataDrivingVariableSetter(os,v.first,ov);
+      ov += this->getTypeSize(v.first.type,1u);
+    }
+    os << "}\n\n";
+  } // end of writeIntegrationDataMainVariablesSetters
+
+  void 
+  UMATInterfaceBase::writeIntegrationDataDrivingVariableSetter(std::ofstream& os,
+							       const DrivingVariable& v,
+							       const SupportedTypes::TypeSize o) const
+  {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    if(!v.increment_known){
+      if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	if(!o.isNull()){
+	  os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "dstran+" << o <<",this->" << v.name << "1.begin());\n";
+	} else {
+	  os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "dstran,this->" << v.name << "1.begin());\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	if(!o.isNull()){
+	  os << "this->" << v.name << "1.importVoigt(" << iprefix << "dstran+" << o <<");\n";
+	} else {
+	  os << "this->" << v.name << "1.importVoigt(" << iprefix << "dstran);\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	if(!o.isNull()){
+	  os << v.type << "::buildFromFortranMatrix(this->" << v.name << "1,"
+	     << iprefix << "dstran+" << o <<");\n";
+	} else {
+	  os << v.type << "::buildFromFortranMatrix(this->" << v.name << "1,"
+	     << iprefix << "dstran);\n";
+	}
+      } else {
+	throw(std::runtime_error("UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : "
+				 "unsupported driving variable type"));
+      }
+    } else {
+      if(this->getTypeFlag(v.type)==SupportedTypes::TVector){
+	if(!o.isNull()){
+	  os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "dstran+" << o << ",this->d" << v.name << ".begin());\n";
+	} else {
+	  os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "dstran,this->d" << v.name << ".begin());\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+	if(!o.isNull()){
+	  os << "this->d" << v.name << ".importVoigt(" << iprefix << "dstran+" << o <<");\n";
+	} else {
+	  os << "this->d" << v.name << ".importVoigt(" << iprefix << "dstran);\n";
+	}
+      } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+	if(!o.isNull()){
+	  os << v.type << "::buildFromFortranMatrix(this->d" << v.name << ","
+	     << iprefix << "dstran+" << o <<");\n";
+	} else {
+	  os << v.type << "::buildFromFortranMatrix(this->d" << v.name << ","
+	     << iprefix+"dstran);\n";
+	}
+      } else {
+	throw(std::runtime_error("UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : "
+				 "unsupported driving variable type"));
+      }
+    }
+  } // end of UMATInterfaceBase::writeIntegrationDataDrivingVariableSetter
+  
   void
   UMATInterfaceBase::writeExternalNames(std::ostream& f,
 					      const std::string& name,

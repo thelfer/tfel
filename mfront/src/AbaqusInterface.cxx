@@ -104,7 +104,7 @@ namespace mfront{
 	  << " const abaqus::AbaqusReal *const PREDEF,\n"
 	  << " const abaqus::AbaqusReal *const DPRED,\n"
 	  << " const char           *const,\n"
-	  << " const abaqus::AbaqusInt  *const NDI,\n"
+	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const NTENS,\n"
 	  << " const abaqus::AbaqusInt  *const NSTATV,\n"
@@ -126,7 +126,7 @@ namespace mfront{
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n"
-	  << "       abaqus::AbaqusInt  *const KINC,\n"
+	  << "       abaqus::AbaqusInt  *const,\n"
 	  << "const int)";
     }
   } // end of writeUMATArguments
@@ -289,7 +289,7 @@ namespace mfront{
 
   void
   AbaqusInterface::endTreatment(const BehaviourDescription& mb,
-				      const FileDescription& fd) const
+				const FileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
@@ -571,6 +571,31 @@ namespace mfront{
     out.close();
   } // end of AbaqusInterface::endTreatment
 
+  void 
+  AbaqusInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
+						  const BehaviourDescription&) const
+  {
+    out << "#include\"MFront/Abaqus/Abaqus.hxx\"\n\n";
+  } // end of AbaqusInterface::writeInterfaceSpecificIncludes
+
+  std::vector<std::pair<std::string,std::string>>
+  AbaqusInterface::getBehaviourDataConstructorAdditionalVariables(void) const{
+    return {{"DROT","increment of rigid body rotation"}};
+  } // end of AbaqusInterface::getBehaviourDataConstructorAdditionalVariables
+
+  void 
+  AbaqusInterface::completeBehaviourDataConstructor(std::ofstream& out,
+						    const Hypothesis h,
+						    const BehaviourDescription& mb) const
+  {
+#pragma message("HERE")
+    // out << "const tfel::math::matrix<3u,real,real> abaqus_drot = ";
+    // const auto& d = mb.getBehaviourData(h);
+    // for(const auto& v:d.getPersistentVariables()){
+
+    // }
+  } // end of UMATInterfaceBase::completeBehaviourDataConstructor
+
   void
   AbaqusInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
   {
@@ -588,13 +613,6 @@ namespace mfront{
     out << "mg.setModellingHypothesis(h);\n";
   } // end of AbaqusInterface::writeMTestFileGeneratorSetModellingHypothesis
   
-  void 
-  AbaqusInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
-						       const BehaviourDescription&) const
-  {
-    out << "#include\"MFront/Abaqus/Abaqus.hxx\"\n\n";
-  } // end of AbaqusInterface::writeInterfaceSpecificIncludes
-
   AbaqusInterface::~AbaqusInterface()
   {}
 

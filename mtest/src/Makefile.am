@@ -74,6 +74,12 @@ libTFELMTest_la_SOURCES += AsterStandardBehaviour.cxx    \
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAsterInterface
 endif
 
+if HAVE_ABAQUS
+libTFELMTest_la_SOURCES += AbaqusStandardBehaviour.cxx    \
+			   AbaqusSmallStrainBehaviour.cxx
+libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAbaqusInterface
+endif
+
 if HAVE_CYRANO
 libTFELMTest_la_SOURCES += CyranoBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lCyranoInterface

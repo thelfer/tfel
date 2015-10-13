@@ -5,7 +5,7 @@
  * \brief  18 juin 2013
  */
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterlorentz';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'lorentz';
 
 @StrainEpsilon 1.e-11;
 @StressEpsilon 1.e-1;

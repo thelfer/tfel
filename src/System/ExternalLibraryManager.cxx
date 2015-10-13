@@ -659,8 +659,8 @@ namespace tfel
       return fct;
     }
 
-    UMATFctPtr
-    ExternalLibraryManager::getUMATFunction(const std::string& l,
+    AbaqusFctPtr
+    ExternalLibraryManager::getAbaqusExternalBehaviourFunction(const std::string& l,
 					    const std::string& f)
     {
       using namespace std;
@@ -669,10 +669,10 @@ namespace tfel
 #else
       void * lib = this->loadLibrary(l);
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-      UMATFctPtr fct = ::tfel_getUMATFunction(lib,f.c_str());
+      AbaqusFctPtr fct = ::tfel_getAbaqusExternalBehaviourFunction(lib,f.c_str());
       if(fct==nullptr){
-	string msg("ExternalLibraryManager::getUMATFunction : ");
-	msg += " could not load UMAT function '"+f+"' (";
+	string msg("ExternalLibraryManager::getAbaqusExternalBehaviourFunction : ");
+	msg += " could not load Abaqus external behaviour '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
 	  msg += getLastWin32Error();
 #else
@@ -684,6 +684,31 @@ namespace tfel
       return fct;
     }
 
+    CastemFctPtr
+    ExternalLibraryManager::getCastemExternalBehaviourFunction(const std::string& l,
+					    const std::string& f)
+    {
+      using namespace std;
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      CastemFctPtr fct = ::tfel_getCastemExternalBehaviourFunction(lib,f.c_str());
+      if(fct==nullptr){
+	string msg("ExternalLibraryManager::getCastemExternalBehaviourFunction : ");
+	msg += " could not load castem external behaviour '"+f+"' (";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	  msg += getLastWin32Error();
+#else
+	  msg += ::dlerror();
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      return fct;
+    }
+    
     AsterFctPtr
     ExternalLibraryManager::getAsterFunction(const std::string& l,
 					     const std::string& f)

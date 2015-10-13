@@ -198,7 +198,7 @@ namespace abaqus
 	Integrator i(DTIME,STRAN,DSTRAN,
 		     TEMP,DTEMP,PROPS,
 		     PREDEF,DPRED,STATEV,
-		     STRESS,op,sfeh);
+		     STRESS,DROT,op,sfeh);
 	i.exe(DDSDDE,STRESS,STATEV);
       }
     }; // end of struct CallBehaviour

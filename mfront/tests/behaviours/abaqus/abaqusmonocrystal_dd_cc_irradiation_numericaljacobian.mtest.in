@@ -1,12 +1,12 @@
 /*! 
- * \file   astermonocrystal_dd_cc_irradiation_numericaljacobian.mtest
+ * \file   abaqusmonocrystal_dd_cc_irradiation_numericaljacobian.mtest
  * \brief
  * \author jmp
  * \brief  2 déc. 2013
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astermonocrystal_dd_cc_irradiation_numericaljacobian';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'monocrystal_dd_cc_irradiation_numericaljacobian';
 
 // Material properties
 @MaterialProperty<constant> 'DeltaG_0' 0.84;

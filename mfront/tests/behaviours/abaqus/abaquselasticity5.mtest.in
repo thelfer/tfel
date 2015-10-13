@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterorthotropicelastic';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'OrthotropicElastic';
 @MaterialProperty<constant> 'YoungModulus1'     100.e9;
 @MaterialProperty<constant> 'YoungModulus2'     100.e9;
 @MaterialProperty<constant> 'YoungModulus3'     100.e9;

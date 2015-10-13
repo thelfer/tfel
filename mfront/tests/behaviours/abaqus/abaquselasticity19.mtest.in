@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterelasticity2';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'Elasticity2';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

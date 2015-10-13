@@ -5,7 +5,7 @@
  * \brief  11 avril 2014
  */
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asteranistropiclemaitreviscoplasticbehaviour';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'anistropiclemaitreviscoplasticbehaviour';
 
 @MaterialProperty<constant> 'YoungModulus' 80000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.35;

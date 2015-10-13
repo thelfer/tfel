@@ -207,12 +207,13 @@ namespace abaqus
 				    const AbaqusReal *const DPRED,
 				    const AbaqusReal *const STATEV,
 				    const AbaqusReal *const STRESS,
+				    const AbaqusReal *const DROT,
 				    const tfel::material::OutOfBoundsPolicy op,
 				    const StressFreeExpansionHandler& sfeh)
 	: behaviour(DTIME,TEMP,DTEMP,
 		    PROPS+AbaqusTraits<BV>::elasticPropertiesOffset+
 		    AbaqusTraits<BV>::thermalExpansionPropertiesOffset,
-		    STATEV,PREDEF,DPRED),
+		    STATEV,PREDEF,DPRED,DROT),
 	dt(*DTIME)
 	  {
 	    using namespace tfel::material;

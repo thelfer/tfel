@@ -5,7 +5,7 @@
  * \brief 25 avril 2013
  */
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterchaboche2';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'chaboche2';
 @MaterialProperty<function> 'YoungModulus' '2.e5 - (1.e5*((TC - 100.)/960.)**2)';
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
 @MaterialProperty<function> 'ThermalExpansion' '1.e-5 + (1.e-5  * ((TC - 100.)/960.) ** 4)'; 
@@ -50,7 +50,7 @@
         241.  in 60,  301.  in 60,  361.  in 60, 421.  in 60,
        449.8  in 29, 465.4  in 15, 473.8  in 9,  481.  in 45 };
 
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche2-aster.ref'
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche2-abaqus.ref'
             'EYY' 3 1.e-5 ; 
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche2-aster.ref'
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche2-abaqus.ref'
             {'SXX':8,'SXY':36} 3.; 

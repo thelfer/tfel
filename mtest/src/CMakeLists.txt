@@ -75,6 +75,16 @@ set(TFELMTest_LDADD
     ${TFELMTest_LDADD})
 endif(HAVE_ASTER)
 
+if(HAVE_ABAQUS)
+set(TFELMTest_SOURCES
+    AbaqusStandardBehaviour.cxx
+    AbaqusSmallStrainBehaviour.cxx
+    ${TFELMTest_SOURCES})
+set(TFELMTest_LDADD
+    AbaqusInterface
+    ${TFELMTest_LDADD})
+endif(HAVE_ABAQUS)
+
 if(HAVE_CYRANO)
 set(TFELMTest_SOURCES
     CyranoBehaviour.cxx
@@ -105,6 +115,9 @@ if(WIN32 AND enable-static)
   if(HAVE_ASTER)
     list(APPEND mtest_static_link_libraries AsterInterface-static)
   endif(HAVE_ASTER)
+  if(HAVE_ABAQUS)
+    list(APPEND mtest_static_link_libraries AbaqusInterface-static)
+  endif(HAVE_ABAQUS)
   if(HAVE_CYRANO)
     list(APPEND mtest_static_link_libraries CyranoInterface-static)
   endif(HAVE_CYRANO)

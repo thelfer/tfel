@@ -150,56 +150,97 @@ extern "C" {
 										       const CyranoIntegerType  *const,
 										       CyranoIntegerType  *const);
   /*!
-   * \brief this function returns a function of type
-   *
-   * The name 'umat' comes from the Cast3M finite element code.
+   * \return a pointer to a Castem external behaviour
    *
    * This function is a simple wrapper around dlsym. We can check if a
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param LibraryHandlerPtr, link to library opened through dlopen
-   * \param const char * const, name of the function to be checked
+   * \param[in] l: link to library opened through dlopen
+   * \param[in] n: name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  void (TFEL_ADDCALL_PTR tfel_getUMATFunction(LibraryHandlerPtr,const char * const))(UMATRealType *const,
-										     UMATRealType *const,
-										     UMATRealType *const,
-										     UMATRealType *const,
-										     UMATRealType *const,
-										     UMATRealType *const,
-										     UMATRealType *const,
-										     UMATRealType *const,
-										     UMATRealType *const,
-										     UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
+  void (TFEL_ADDCALL_PTR tfel_getAbaqusExternalBehaviourFunction(LibraryHandlerPtr,const char * const))(AbaqusRealType *const,
+											       AbaqusRealType *const,
+										     AbaqusRealType *const,
+										     AbaqusRealType *const,
+										     AbaqusRealType *const,
+										     AbaqusRealType *const,
+										     AbaqusRealType *const,
+										     AbaqusRealType *const,
+										     AbaqusRealType *const,
+										     AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
 										     const char      *const,
-										     const UMATIntegerType  *const,
-										     const UMATIntegerType  *const,
-										     const UMATIntegerType  *const,
-										     const UMATIntegerType  *const,
-										     const UMATRealType *const,
-										     const UMATIntegerType  *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATRealType *const,
-										     const UMATIntegerType  *const,
-										     const UMATIntegerType  *const,
-										     const UMATIntegerType  *const,
-										     const UMATIntegerType  *const,
-										     const UMATIntegerType  *const,
-										     UMATIntegerType  *const,
+										     const AbaqusIntegerType  *const,
+										     const AbaqusIntegerType  *const,
+										     const AbaqusIntegerType  *const,
+										     const AbaqusIntegerType  *const,
+										     const AbaqusRealType *const,
+										     const AbaqusIntegerType  *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusRealType *const,
+										     const AbaqusIntegerType  *const,
+										     const AbaqusIntegerType  *const,
+										     const AbaqusIntegerType  *const,
+										     const AbaqusIntegerType  *const,
+										     const AbaqusIntegerType  *const,
+										     AbaqusIntegerType  *const,
 										     const int);
+  /*!
+   * \return a pointer to a Castem external behaviour
+   * \param[in] l : library
+   * \param[in] n : external behaviour name
+   */
+  void (TFEL_ADDCALL_PTR tfel_getCastemExternalBehaviourFunction(LibraryHandlerPtr,const char * const))(CastemRealType *const,
+												CastemRealType *const,
+												CastemRealType *const,
+												CastemRealType *const,
+												CastemRealType *const,
+												CastemRealType *const,
+												CastemRealType *const,
+												CastemRealType *const,
+												CastemRealType *const,
+												CastemRealType *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												const char      *const,
+												const CastemIntegerType  *const,
+												const CastemIntegerType  *const,
+												const CastemIntegerType  *const,
+												const CastemIntegerType  *const,
+												const CastemRealType *const,
+												const CastemIntegerType  *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												CastemRealType *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												const CastemRealType *const,
+												const CastemIntegerType  *const,
+												const CastemIntegerType  *const,
+												const CastemIntegerType  *const,
+												const CastemIntegerType  *const,
+												const CastemIntegerType  *const,
+												CastemIntegerType  *const,
+												const int);
 
  /*!
    * \brief this function returns a function of type

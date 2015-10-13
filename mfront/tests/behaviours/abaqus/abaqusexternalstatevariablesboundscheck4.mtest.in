@@ -7,7 +7,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterexternalstatevariablesboundscheck';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'externalstatevariablesboundscheck';
 @OutOfBoundsPolicy 'Warning';
 
 @ExternalStateVariable 'Temperature' 293.15;

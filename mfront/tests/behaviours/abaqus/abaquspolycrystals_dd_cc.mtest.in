@@ -5,7 +5,7 @@
  * \brief 08 octobre 2014
  */
 
-@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterpolycrystals_dd_cc';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'polycrystals_dd_cc';
 @StiffnessMatrixType 'Elastic' ;
 
 @MaterialProperty<constant> 'YoungModulus1' 233705.0;

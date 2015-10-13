@@ -54,6 +54,14 @@ namespace abaqus
   AbaqusException::~AbaqusException() noexcept
   {} // end of AbaqusException::~AbaqusException
 
+  AbaqusInvalidModellingHypothesis::AbaqusInvalidModellingHypothesis(const char* b)
+    : AbaqusException("current modelling hypothesis is not supported by behaviour '"+
+		      std::string(b)+"'")
+  {}
+
+  AbaqusInvalidModellingHypothesis::~AbaqusInvalidModellingHypothesis()
+  {} // end of AbaqusInvalidModellingHypothesis::~AbaqusInvalidModellingHypothesis()
+  
   AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue(const unsigned short N)
     : AbaqusException("Invalid tensor size declared '"+
 		     std::to_string(static_cast<unsigned int>(N))+"'")
