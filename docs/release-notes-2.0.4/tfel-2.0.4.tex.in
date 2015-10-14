@@ -4,6 +4,7 @@
 
 \newcommand{\castem}{\texttt{Cast3M}}
 \newcommand{\aster}{\texttt{Code\_\-Aster}}
+\newcommand{\zebulon}{\texttt{Zebulon}}
 \newcommand{\alcyone}{\texttt{Alcyone}}
 \newcommand{\mfront}{\texttt{MFront}}
 \newcommand{\mtest}{\texttt{MTest}}
