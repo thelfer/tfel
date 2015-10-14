@@ -210,6 +210,30 @@ Plus de détails peuvent être trouvés à la page~:
   \url{https://sourceforge.net/p/tfel/tickets/15/}
 \end{center}
 
+\subsubsection{Correction du calcul de la matrice d'élasticité
+  \og~altérée~\fg pour un matériau orthotrope en contraintes planes
+  (Ticket \#18)}
+
+Le terme de cisaillement \(D_{xyxy}\) dans le calcul de la matrice
+d'élasticité \og~altérée~\fg pour un matériau orthotrope en
+contraintes planes était mal calculé.
+
+Pour cette hypothèse de modélisation, \mfront{} peut fournir deux
+types de matrices d'élasticité à la loi de comportement~: la matrice
+standard et la matrice altérée qui prend en compte l'hypothèse de
+contraintes planes. Seule la première est utilisée en pratique, ce qui
+limite la portée de cette anomalie dont la correction ne devrait pas
+avoir d'impact sur les utilisateurs.
+
+Deux cas test supplémentaires, pour les codes \castem{} et \aster{},
+ont été rajoutées, pour tester spécifiquement cette fonctionnalité. Le
+code \zebulon{} n'est pas affecté.
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/18/}
+\end{center}
+
 \subsection{Nouvelles fonctionnalités}
 
 \subsubsection{Définition du repère d'orthotropie à l'aide des angles
