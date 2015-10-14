@@ -28,6 +28,7 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace abaqus{
 
@@ -52,14 +53,105 @@ namespace abaqus{
 					     const AbaqusReal *const,
 					     const AbaqusInt);
   /*!
-   * Base class of defining convertion for abaqus to mfront and back
+   * \brief class defining the convertion from abaqus to mfront for
+   * thermodynamic forces
+   * \tparam H: modelling hypothesis
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct Converter;
-
+  struct ImportThermodynamicForces
+  {
+    //! space dimension
+    static constexpr const unsigned short N =
+      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template<typename T>
+    static inline void
+    exe(tfel::math::stensor<N,T>& s,const AbaqusReal* const v){
+      s.importTab(v);
+    } // end of exe
+  }; // end of struct ImportThermodynamicForces
+  /*!
+   * \brief partial specialisation of the ImportThermodynamicForces
+   * for the plane stress modelling hypothesis.
+   */
+  template<>
+  struct ImportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
+  {
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template<typename T>
+    static inline void
+    exe(tfel::math::stensor<2u,T>& s,const AbaqusReal* const v){
+      constexpr AbaqusReal cste = tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+      s[0]=v[0];
+      s[1]=v[1];
+      s[2]=AbaqusReal{0};
+      s[3]=v[2]*cste;
+    } // end of exe
+  }; // end of struct ImportThermodynamicForces
+  /*!
+   * \brief class defining the convertion from mfront to abaqus for
+   * thermodynamic forces
+   * \tparam H: modelling hypothesis
+   */
+  template<tfel::material::ModellingHypothesis::Hypothesis H>
+  struct ExportThermodynamicForces
+  {
+    //! space dimension
+    static constexpr const unsigned short N =
+      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] v: values
+     * \param[in]  s: symmetric tensor to be exported
+     */
+    template<typename T>
+    static inline void
+    exe(AbaqusReal* const v,const tfel::math::stensor<N,T>& s){
+      s.exportTab(v);
+    } // end of exe
+  }; // end of struct ExportThermodynamicForces
+  /*!
+   * \brief partial specialisation of the ExportThermodynamicForces
+   * for the plane stress modelling hypothesis.
+   */
+  template<>
+  struct ExportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
+  {
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] v: values
+     * \param[in]  s: symmetric tensor to be exported
+     */
+    template<typename T>
+    static inline void
+    exe(AbaqusReal* const v,const tfel::math::stensor<2u,T>& s){
+      constexpr AbaqusReal cste = 1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+      v[0]=s[0];
+      v[1]=s[1];
+      v[2]=s[3]*cste;
+    } // end of exe
+  }; // end of struct ExportThermodynamicForces
+  
 } // end of namespace abaqus
 
 // #include"MFront/Abaqus/Abaqus.ixx"
 
 #endif /* LIB_MFRONT_ABAQUS_H_ */
+
+
+
+
+
+
+
+
+
 

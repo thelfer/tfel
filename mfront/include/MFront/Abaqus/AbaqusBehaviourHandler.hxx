@@ -52,23 +52,6 @@ namespace abaqus
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DTAU_DDF;
   };
 
-  template<AbaqusBehaviourType btype,unsigned short N>
-  struct AbaqusTangentOperatorType;
-
-  template<unsigned short N>
-  struct AbaqusTangentOperatorType<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,N>
-  {
-    using type      = tfel::math::st2tost2<N,AbaqusReal>;
-    using view_type = tfel::math::ST2toST2View<N,AbaqusReal>;
-  };
-
-  template<unsigned short N>
-  struct AbaqusTangentOperatorType<abaqus::FINITESTRAINSTANDARDBEHAVIOUR,N>
-  {
-    using type      = tfel::math::t2tost2<N,AbaqusReal>;
-    using view_type = tfel::math::T2toST2View<N,AbaqusReal>;
-  };
-
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AbaqusBehaviourHandler
@@ -239,10 +222,7 @@ namespace abaqus
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename std::conditional<
 	  Traits::hasConsistentTangentOperator,
-	  typename std::conditional<
-	    Traits::isConsistentTangentOperatorSymmetric,
-	    SymmetricConsistentTangentOperatorComputer,
-	    GeneralConsistentTangentOperatorComputer>::type,
+	  ExtractAndConvertTangentOperator<H>,
 	  ConsistentTangentOperatorIsNotAvalaible
 	  >::type ConsistentTangentOperatorHandler;
 	if(this->dt<0.){
@@ -270,46 +250,6 @@ namespace abaqus
 	{
 	  typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	  throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
-	} // end of exe	  
-      };
-
-      struct ConsistentTangentOperatorComputer
-      {
-	typedef Behaviour<H,AbaqusReal,false> BV;
-	static void exe(const BV& bv,AbaqusReal *const DDSDDE)
-	{
-	  using tfel::material::ModellingHypothesisToSpaceDimension;
-	  const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
-	  using  TangentOperatorType     = typename AbaqusTangentOperatorType<AbaqusTraits<BV>::btype,N>::type;
-	  using  TangentOperatorViewType = typename AbaqusTangentOperatorType<AbaqusTraits<BV>::btype,N>::view_type;
-	  TangentOperatorViewType Dt{DDSDDE};
-	  Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
-	  // l'opérateur tangent contient des sqrt(2) en petites déformations...
-	  AbaqusTangentOperator::normalize(Dt);
-	} // end of exe	  
-      };
-
-      struct SymmetricConsistentTangentOperatorComputer
-      {
-	typedef Behaviour<H,AbaqusReal,false> BV;
-	static void exe(const BV& bv,AbaqusReal *const DDSDDE)
-	{
-	  ConsistentTangentOperatorComputer::exe(bv,DDSDDE);
-	} // end of exe	  
-      };
-
-      struct GeneralConsistentTangentOperatorComputer
-      {
-	typedef Behaviour<H,AbaqusReal,false> BV;
-	static void exe(const BV& bv,AbaqusReal *const DDSDDE)
-	{
-	  using tfel::material::ModellingHypothesisToSpaceDimension;
-	  const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
-	  using  TangentOperatorViewType = typename AbaqusTangentOperatorType<AbaqusTraits<BV>::btype,N>::view_type;
-	  ConsistentTangentOperatorComputer::exe(bv,DDSDDE);
-	  // les conventions fortran.... (petites déformations et modèles de zones cohésives)
-	  TangentOperatorViewType Dt{DDSDDE};
-	  AbaqusTangentOperator::transpose(Dt);
 	} // end of exe	  
       };
 

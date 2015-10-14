@@ -19,17 +19,16 @@ namespace tfel{
   namespace math{
     
     /*!
-     * structure in charge of changing the basis of a tensor
-     * \param N, the spatial dimension, see TensorDimeToSize for details. 
-     * \param T, numerical type used, by default, double
+     * \brief structure in charge of changing the basis of a tensor
+     * \tparam N, the spatial dimension, see TensorDimeToSize for details. 
+     * \tparam T, numerical type used, by default, double
      * \note partial specialisation are provided in 1D, 2D and 3D
      */
     template<unsigned short N,
 	     typename T>
     struct TensorChangeBasis;
-
     /*!
-     * Partial specialisation in 1D
+     * \brief partial specialisation in 1D
      */
     template<typename T>
     struct TensorChangeBasis<1u,T>
@@ -43,14 +42,13 @@ namespace tfel{
        * \param[in,out] v : on input, initial values of the tensor, on output new values
        * \param[out]    m : rotation matrix
        */
+      static TFEL_MATH_INLINE2
       void exe(T * const,
 	       const RotationMatrix&)
       {} // end of exe
     };
-    
-
     /*!
-     * Partial specialisation in 2D
+     * \brief partial specialisation in 2D
      */
     template<typename T>
     struct TensorChangeBasis<2u,T>
@@ -64,6 +62,7 @@ namespace tfel{
        * \param[in,out] v : on input, initial values of the tensor, on output new values
        * \param[out]    m : rotation matrix
        */
+      static TFEL_MATH_INLINE2
       void exe(T * const v,
 	       const RotationMatrix& m)
       {
@@ -81,9 +80,8 @@ namespace tfel{
 	copy<5u>::exe(nv,v);
       }
     };
-
     /*!
-     * Partial specialisation in 3D
+     * \brief partial specialisation in 3D
      */
     template<typename T>
     struct TensorChangeBasis<3u,T>
@@ -97,6 +95,7 @@ namespace tfel{
        * \param[in,out] v : on input, initial values of the tensor, on output new values
        * \param[out]    m : rotation matrix
        */
+      static TFEL_MATH_INLINE2
       void exe(T * const v,
 	       const RotationMatrix& m)
       {

@@ -128,6 +128,12 @@ namespace tfel{
 	public t2tot2_base<t2tot2<N,T> >
     {
       /*!
+       * \return a t2tot2 which acts on a tensor as a rotation of the coordinate system
+       * \param[in] r : rotation matrix
+       */
+      static tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
+      fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&);
+      /*!
        * \param[in] B : second tensor of the product
        * \return the left part of the derivative of a tensor product
        */
@@ -246,7 +252,22 @@ namespace tfel{
       TFEL_MATH_INLINE2 void copy(const InputIterator src);
 
     }; // end of struct t2tot2
-        
+
+    /*!
+     * \return change the basis of a t2tot2
+     * \param[in] s : t2tot2
+     * \param[in] r : rotation matrix 
+     */
+    template<typename T2toT2Type>
+    TFEL_MATH_INLINE2
+    typename std::enable_if<
+      tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond,
+      t2tot2<T2toT2Traits<T2toT2Type>::dime,
+	       typename T2toT2Traits<T2toT2Type>::NumType>
+    >::type
+    change_basis(const T2toT2Type&,
+		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename T2toT2Traits<T2toT2Type>::NumType>::type>&);
+    
   } // end of namespace math
 
   namespace typetraits{

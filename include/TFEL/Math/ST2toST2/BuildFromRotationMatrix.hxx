@@ -1,5 +1,5 @@
 /*!
- * \file   BuildFromRotationMatrix.hxx
+ * \file   include/TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx
  * \brief    
  * \author THOMAS HELFER
  * \date   13 oct. 2015

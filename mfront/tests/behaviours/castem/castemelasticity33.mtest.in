@@ -1,0 +1,24 @@
+@Author Thomas Helfer;
+@Date 14/10/2015;
+@Description{
+  "Test of the orthotropic elastic behaviour "
+  "in plane stress and shear loading"
+};
+
+@ModellingHypothesis 'PlaneStress';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
+@MaterialProperty<constant> 'YoungModulus1'     100.e9;
+@MaterialProperty<constant> 'YoungModulus2'     100.e9;
+@MaterialProperty<constant> 'YoungModulus3'     100.e9;
+@MaterialProperty<constant> 'PoissonRatio12'      0.3;
+@MaterialProperty<constant> 'PoissonRatio13'      0.3;
+@MaterialProperty<constant> 'PoissonRatio23'      0.3;
+@MaterialProperty<constant> 'ShearModulus12'    100.e9;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStress 'SXY' {0.:0.,1:50.e6};
+
+@Times {0.,1.};
+
+@Test<function> {'EXX':'0','EYY':'0','EXY':'SXY/(2*ShearModulus12)'} 1.e-12;

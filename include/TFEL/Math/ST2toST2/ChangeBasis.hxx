@@ -1,5 +1,5 @@
 /*!
- * \file   ChangeBasis.hxx
+ * \file   include/TFEL/Math/ST2toST2/ChangeBasis.hxx
  * \brief    
  * \author THOMAS HELFER
  * \date   13 oct. 2015

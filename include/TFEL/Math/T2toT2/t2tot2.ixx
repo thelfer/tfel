@@ -26,6 +26,8 @@
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include"TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx"
 #include"TFEL/Math/T2toT2/TensorProductRightDerivativeExpr.hxx"
+#include"TFEL/Math/T2toT2/BuildFromRotationMatrix.hxx"
+#include"TFEL/Math/T2toT2/ChangeBasis.hxx"
 
 namespace tfel{
 
@@ -120,6 +122,12 @@ namespace tfel{
       return child;
     }
 
+    template<unsigned short N, typename T>
+    t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
+    t2tot2<N,T>::fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& r){
+      return t2tot2_internals::BuildFromRotationMatrix<N>::exe(r);
+    } // end of t2tot2<N,T>::fromRotationMatrix
+    
     template<unsigned short N, typename T>
     template<typename TensorType>
     typename std::enable_if<
@@ -240,6 +248,17 @@ namespace tfel{
       return RunTimeProperties();
     } // end of t2tot2<N,T>::getRunTimeProperties
 
+    template<typename T2toT2Type>
+    typename std::enable_if<
+      tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond,
+      t2tot2<T2toT2Traits<T2toT2Type>::dime,
+	       typename T2toT2Traits<T2toT2Type>::NumType>
+    >::type
+    change_basis(const T2toT2Type& s,
+		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename T2toT2Traits<T2toT2Type>::NumType>::type>& r){
+      return t2tot2_internals::ChangeBasis<T2toT2Traits<T2toT2Type>::dime>::exe(s,r);
+    }
+    
   } //end of namespace math
 
 } // end of namespace tfel

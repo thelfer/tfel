@@ -430,6 +430,20 @@ namespace tfel{
       t2(8) = (t(3)*t(6)-t(0)*t(8))*id;
       return t2;
     }
+
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      tensor<TensorTraits<TensorType>::dime,
+	      typename TensorTraits<TensorType>::NumType>
+      >::type
+    change_basis(const TensorType& t,
+		 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type>& r){
+      tensor<TensorTraits<TensorType>::dime,
+	      typename TensorTraits<TensorType>::NumType> nt{t};
+      nt.changeBasis(r);
+      return nt;
+    } // end of change_basis
     
 #endif /* LIB_TFEL_TENSOR_IXX_ */
 

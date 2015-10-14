@@ -61,28 +61,24 @@ namespace mtest
     using namespace abaqus;
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
-    static const real sqrt2 = sqrt(real(2));
+    static const real sqrt2 = std::sqrt(real(2));
     if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
       throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_beahviour : "
 			       "abaqus behaviours may only provide the "
 			       "consistent tangent operator"));
     }
-    unsigned short dimension;
-    AbaqusInt ntens;
     const AbaqusInt nprops = mp0.size() == 0 ? 1 : static_cast<AbaqusInt>(mp0.size());
-    if (h==MH::AXISYMMETRICAL){
-      ntens  = 4;
-      dimension = 2u;
-    } else if (h==MH::PLANESTRESS){
-      ntens  = 3;
-      dimension = 2u;
-    } else if (h==MH::TRIDIMENSIONAL){
-      ntens = 6;
-      dimension = 3u;
-    } else {
+    const AbaqusInt ntens = [&h](){
+      if (h==MH::AXISYMMETRICAL){
+	return 4;
+      } else if (h==MH::PLANESTRESS){
+	return 3;
+      } else if (h==MH::TRIDIMENSIONAL){
+	return 6;
+      } 
       throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_beahviour : "
-			       "unsupported hypothesis"));
-    }
+			       "unsupported hypothesis"));      
+    }();
     fill(this->D.begin(),this->D.end(),0.);
     // using a local copy of material properties to handle the
     // case where mp0 is empty
@@ -140,45 +136,85 @@ namespace mtest
       return false;
     }
     const auto rb = transpose(r);
-    // treatin the consistent tangent operator
-    if(h!=MH::PLANESTRESS){
-      UmatNormaliseTangentOperator::exe(Kt,D,dimension);
-      if(h==MH::TRIDIMENSIONAL){
-	st2tost2<3u,AbaqusReal> K;
-	for(unsigned short i=0;i!=6u;++i){
-	  for(unsigned short j=0;j!=6u;++j){
-	    K(i,j)=Kt(i,j);
-	  }
+    // treating the consistent tangent operator
+    if(h==MH::TRIDIMENSIONAL){
+      UmatNormaliseTangentOperator::exe(Kt,D,3u);
+      st2tost2<3u,AbaqusReal> K;
+      for(unsigned short i=0;i!=6u;++i){
+	for(unsigned short j=0;j!=6u;++j){
+	  K(i,j)=Kt(i,j);
 	}
-	const auto nK = change_basis(K,rb);
-	for(unsigned short i=0;i!=6u;++i){
-	  for(unsigned short j=0;j!=6u;++j){
-	    Kt(i,j)=nK(i,j);
-	  }
+      }
+      const auto nK = change_basis(K,rb);
+      for(unsigned short i=0;i!=6u;++i){
+	for(unsigned short j=0;j!=6u;++j){
+	  Kt(i,j)=nK(i,j);
 	}
-      } else if (h==MH::AXISYMMETRICAL){
-	st2tost2<2u,AbaqusReal> K;
-	for(unsigned short i=0;i!=4u;++i){
-	  for(unsigned short j=0;j!=4u;++j){
-	    K(i,j)=Kt(i,j);
-	  }
+      }
+    } else if (h==MH::AXISYMMETRICAL){
+      UmatNormaliseTangentOperator::exe(Kt,D,2u);
+      st2tost2<2u,AbaqusReal> K;
+      for(unsigned short i=0;i!=4u;++i){
+	for(unsigned short j=0;j!=4u;++j){
+	  K(i,j)=Kt(i,j);
 	}
-	const auto nK = change_basis(K,rb);
-	for(unsigned short i=0;i!=4u;++i){
-	  for(unsigned short j=0;j!=4u;++j){
-	    Kt(i,j)=nK(i,j);
-	  }
+      }
+      const auto nK = change_basis(K,rb);
+      for(unsigned short i=0;i!=4u;++i){
+	for(unsigned short j=0;j!=4u;++j){
+	  Kt(i,j)=nK(i,j);
 	}
-      } else {
-	throw(std::runtime_error("AbaqusSmallStrainBehaviour::"
-				 "call_behaviour: normalise, "
-				 "unsupported modelling hypothesis"));
+      }
+    } else if (h==MH::PLANESTRESS){
+      constexpr const auto zero = AbaqusReal{0};
+      // D has been as a 3*3 fortran matrix. The terms associated with
+      // the 2 indices are omitted.
+      // D = D00 D10 D30 D01 D11 D31 D03 D13 D33
+      double D2[9u];
+      std::copy(D.begin(),D.begin()+9,D2);
+      // Let us add the missing term
+      // We want D00 D10 D20 D30 D01 D11 D21 D31 D02 D12 D22 D32 D03 D13 D23 D33 
+      auto p = D.begin();
+      // D00 D10 D20 D30
+      *p     = D2[0];
+      *(p+1) = D2[1];
+      *(p+2) = zero;
+      *(p+3) = D2[2];
+      // D01 D11 D21 D31
+      *(p+4) = D2[3];
+      *(p+5) = D2[4];
+      *(p+6) = zero;
+      *(p+7) = D2[5];
+      // D02 D12 D22 D32
+      *(p+8)  = zero;
+      *(p+9)  = zero;
+      *(p+10) = zero;
+      *(p+11) = zero;
+      // D03 D13 D23 D33
+      *(p+12) = D2[6];
+      *(p+13) = D2[7];
+      *(p+14) = zero;
+      *(p+15) = D2[8];
+      // so now we have D in a conventional fortan form, so we can
+      // normalise it (transpose and TFEL storage conventions !)
+      UmatNormaliseTangentOperator::exe(Kt,D,2u);
+      // the last step: rotation in the global frame
+      st2tost2<2u,AbaqusReal> K;
+      for(unsigned short i=0;i!=4u;++i){
+	for(unsigned short j=0;j!=4u;++j){
+	  K(i,j)=Kt(i,j);
+	}
+      }
+      const auto nK = change_basis(K,rb);
+      for(unsigned short i=0;i!=4u;++i){
+	for(unsigned short j=0;j!=4u;++j){
+	  Kt(i,j)=nK(i,j);
+	}
       }
     } else {
       throw(std::runtime_error("AbaqusSmallStrainBehaviour::"
 			       "call_behaviour: normalise, "
-			       "tangent operator in plane stress "
-			       "not implemented yet"));
+			       "unsupported modelling hypothesis"));
     }
     if(b){
       // treating internal state variables
@@ -190,7 +226,7 @@ namespace mtest
 	us[3] = us[2]*sqrt2;
 	us[2] = real(0);
       } else {
-	// turning things in standard conventions
+	// turning stresses in TFEL conventions
 	for(AbaqusInt i=3;i!=static_cast<unsigned short>(ntens);++i){
 	  us[i] *= sqrt2;
 	}
@@ -205,15 +241,3 @@ namespace mtest
   {}
   
 } // end of namespace mtest
-
-
-
-
-
-
-
-
-
-
-
-

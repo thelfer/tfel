@@ -49,6 +49,18 @@ namespace mfront{
 			 const Hypothesis,
 			 const BehaviourDescription&) const override;
     /*!
+     * \brief write the instruction of exporting a thermodynamic force in an array
+     * \param[out] out : output stream
+     * \param[in]  a   : array name
+     * \param[in]  f   : thermodynamic force
+     * \param[in]  o   : thermodynamic force offset
+     */
+    virtual void 
+    exportThermodynamicForce(std::ofstream&,
+			     const std::string&,
+			     const ThermodynamicForce&,
+			     const SupportedTypes::TypeSize) const;
+    /*!
      * \return the list of additional variables to be passed to the
      * behaviour data and integration data constructors which are
      * specific to the interface.

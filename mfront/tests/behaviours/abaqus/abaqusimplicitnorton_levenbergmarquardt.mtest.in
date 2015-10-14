@@ -7,7 +7,7 @@
 
 @PredictionPolicy 'LinearPrediction';
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'implicitnorton_levenbergmarquardt';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ImplicitNorton_LevenbergMarquardt';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

@@ -1409,6 +1409,8 @@ include/TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx -text
 include/TFEL/Math/T2toST2/T2toST2View.hxx -text
 include/TFEL/Math/T2toST2/t2tost2.ixx -text
 include/TFEL/Math/T2toST2/t2tost2ResultType.hxx -text
+include/TFEL/Math/T2toT2/BuildFromRotationMatrix.hxx -text
+include/TFEL/Math/T2toT2/ChangeBasis.hxx -text
 include/TFEL/Math/T2toT2/T2toT2Concept.hxx -text
 include/TFEL/Math/T2toT2/T2toT2Concept.ixx -text
 include/TFEL/Math/T2toT2/T2toT2ConceptIO.hxx -text
@@ -2063,6 +2065,7 @@ mfront/tests/behaviours/abaqus/abaquselasticity25.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquselasticity26.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquselasticity27.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquselasticity3.mtest.in -text
+mfront/tests/behaviours/abaqus/abaquselasticity33.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquselasticity4.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquselasticity5.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquselasticity6.mtest.in -text
@@ -2095,8 +2098,6 @@ mfront/tests/behaviours/abaqus/abaqusimplicitnorton_broyden.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusimplicitnorton_broyden2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusimplicitnorton_levenbergmarquardt.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusimplicitorthotropiccreep.mtest.in -text
-mfront/tests/behaviours/abaqus/abaquslorentz.mtest.in -text
-mfront/tests/behaviours/abaqus/abaquslorentz2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck3.mtest.in -text
@@ -2104,7 +2105,6 @@ mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck4.mtest.in -te
 mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck5.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck6.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmazars.mtest.in -text
-mfront/tests/behaviours/abaqus/abaqusmazars2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmonocrystal-2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmonocrystal.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cc.mtest.in -text
@@ -2116,14 +2116,8 @@ mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cfc_irradiation.mtest.in -te
 mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cfc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusnorton.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusnorton2.mtest.in -text
-mfront/tests/behaviours/abaqus/abaqusorthotropiccreep-rk42.mtest.in -text
-mfront/tests/behaviours/abaqus/abaqusorthotropiccreep-rkCastem.mtest.in -text
-mfront/tests/behaviours/abaqus/abaqusorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusplasisocin.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusplasticity.mtest.in -text
-mfront/tests/behaviours/abaqus/abaquspolycrystals.mtest.in -text
-mfront/tests/behaviours/abaqus/abaquspolycrystals_dd_cc.mtest.in -text
-mfront/tests/behaviours/abaqus/abaquspolycrystals_dd_cfc.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-1-2D.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-2-2D.mtest.in -text
@@ -2499,6 +2493,7 @@ mfront/tests/behaviours/aster/asterelasticity25.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity26.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity27.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity3.mtest.in -text
+mfront/tests/behaviours/aster/asterelasticity33.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity4.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity5.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity6.mtest.in -text
@@ -2659,6 +2654,7 @@ mfront/tests/behaviours/castem/castemelasticity3.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity30.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity31.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity32.mtest.in -text
+mfront/tests/behaviours/castem/castemelasticity33.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity4.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity5.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity6.mtest.in -text

@@ -557,10 +557,12 @@ namespace tfel{
       typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,Power<3> >::Result
     >::type
     det(const StensorType&);
-
-      /*!
-       * change basis
-       */
+    /*!
+     * \brief rotate a symmetric tensor using a rotation matrix
+     * \param[in] s: symmetric tensor to be rotated
+     * \param[in] r: rotation matrix
+     * \return the rotated symmetric tensor
+     */
     template<typename StensorType>
     TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,

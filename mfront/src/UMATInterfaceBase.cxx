@@ -198,35 +198,9 @@ namespace mfront
     behaviourDataFile << "{\n";
     behaviourDataFile << "using namespace tfel::math;\n";
     SupportedTypes::TypeSize of;
-    for(auto pm = mb.getMainVariables().begin();
-	pm!=mb.getMainVariables().end();++pm){
-      const auto& f = pm->second;
-      const auto flag = this->getTypeFlag(f.type);
-      if(flag==SupportedTypes::Scalar){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "*(" << iprefix << "stress_+" << of << ") = this->" << f.name << ";\n";
-	} else {
-	  behaviourDataFile << "*(" << iprefix << "stress_) = this->" << f.name << ";\n";
-	}
-      } else if(flag==SupportedTypes::Stensor){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "this->sig.exportTab(" << iprefix << "stress_+" << of << ");\n";
-	} else {
-	  behaviourDataFile << "this->sig.exportTab(" << iprefix << "stress_"");\n";
-	}
-      } else if((flag==SupportedTypes::TVector)||
-		(flag==SupportedTypes::Tensor)){
-	if(pm!=mb.getMainVariables().begin()){
-	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << "," << iprefix << "stress_+"
-			    << of << ");\n";	
-	} else {
-	  behaviourDataFile << "exportToBaseTypeArray(this->" << f.name << "," << iprefix << "stress_);\n";	
-	}
-      } else {
-	throw(std::runtime_error("UMATInterfaceBase::exportMechanicalData : "
-				 "unsupported forces type"));
-      }
-      of += this->getTypeSize(f.type,1u);
+    for(const auto& v : mb.getMainVariables()){
+      this->exportThermodynamicForce(behaviourDataFile,iprefix+"stress_",v.second,of);
+      of += this->getTypeSize(v.second.type,1u);
     }
     if(!persistentVarsHolder.empty()){
       this->exportResults(behaviourDataFile,
@@ -237,6 +211,40 @@ namespace mfront
     behaviourDataFile << "} // end of " << iprefix << "ExportStateData\n\n";
   }
 
+  void 
+  UMATInterfaceBase::exportThermodynamicForce(std::ofstream& out,
+					      const std::string& a,
+					      const ThermodynamicForce& f,
+					      const SupportedTypes::TypeSize o) const
+   {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    const auto flag = this->getTypeFlag(f.type);
+    if(flag==SupportedTypes::Scalar){
+      if(!o.isNull()){
+	out << "*(" << a << "+" << o << ") = this->" << f.name << ";\n";
+      } else {
+	out << "*(" << a << ") = this->" << f.name << ";\n";
+      }
+    } else if(flag==SupportedTypes::Stensor){
+      if(!o.isNull()){
+	out << "this->sig.exportTab(" << a << "+" << o << ");\n";
+      } else {
+	out << "this->sig.exportTab(" << a << """);\n";
+      }
+    } else if((flag==SupportedTypes::TVector)||
+	      (flag==SupportedTypes::Tensor)){
+      if(!o.isNull()){
+	out << "exportToBaseTypeArray(this->" << f.name << "," << a << "+"
+	    << o << ");\n";	
+      } else {
+	out << "exportToBaseTypeArray(this->" << f.name << "," << a << ");\n";	
+      }
+    } else {
+      throw(std::runtime_error("UMATInterfaceBase::exportThermodynamicForce: "
+			       "unsupported forces type"));
+    }
+  } // end of UMATInterfaceBase::exportThermodynamicForce
+  
   std::vector<std::pair<std::string,std::string>>
   UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables(void) const{
     return {};

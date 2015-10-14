@@ -319,7 +319,6 @@ namespace castem
     // props[6] :'G12'
     // props[7] :'G23'
     // props[8] :'G13'
-    using namespace std;
     // S11 = 1/E1
     const CastemReal S11=1/props[0];
     // S22 = 1/E2
@@ -334,7 +333,7 @@ namespace castem
     const CastemReal S23=-props[4]/props[1];
     const CastemReal inv_detS=1/(S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12);
     // Matrice de raideur
-    fill(C.begin(),C.end(),CastemReal(0.));
+    std::fill(C.begin(),C.end(),CastemReal(0.));
     C(0,0)=(S22*S33-S23*S23)*inv_detS;
     C(1,1)=(S11*S33-S13*S13)*inv_detS;
     C(2,2)=(S11*S22-S12*S12)*inv_detS;
@@ -347,3 +346,11 @@ namespace castem
   } // end of struct CastemComputeStiffnessTensor
 
 } // end of namespace castem
+
+
+
+
+
+
+
+

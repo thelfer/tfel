@@ -327,6 +327,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toT2/TensorT2toT2ProductExpr.hxx						     \
 			TFEL/Math/T2toT2/T2toT2TensorProductExpr.hxx						     \
 			TFEL/Math/T2toT2/T2toT2T2toT2ProductExpr.hxx						     \
+			TFEL/Math/T2toT2/BuildFromRotationMatrix.hxx                                                 \
+			TFEL/Math/T2toT2/ChangeBasis.hxx                                                             \
 			TFEL/Math/st2tost2.hxx                                                                       \
 			TFEL/Math/ST2toST2/st2tost2.ixx                                                              \
 			TFEL/Math/ST2toST2/ST2toST2Concept.hxx                                                       \

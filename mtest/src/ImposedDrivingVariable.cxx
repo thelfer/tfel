@@ -84,7 +84,7 @@ namespace mtest
     const Evolution& ev = *(this->eev);
     ostringstream msg;
     msg << "imposed driving variable not reached for component " << this->c 
-	<< "(imposed value : " << ev(t+dt) << ", computed value : " 
+	<< " (imposed value : " << ev(t+dt) << ", computed value : " 
 	<< e(this->c) << ", criteria : " << eeps << ")";
     return msg.str();
   }

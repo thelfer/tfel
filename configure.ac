@@ -603,6 +603,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterelasticity25.mtest
            mfront/tests/behaviours/aster/asterelasticity26.mtest
            mfront/tests/behaviours/aster/asterelasticity27.mtest	   
+           mfront/tests/behaviours/aster/asterelasticity33.mtest	   
            mfront/tests/behaviours/aster/astermazars.mtest
            mfront/tests/behaviours/aster/astermazars2.mtest
            mfront/tests/behaviours/aster/asterlorentz.mtest
@@ -746,17 +747,12 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/abaqus/abaquselasticity24.mtest
            mfront/tests/behaviours/abaqus/abaquselasticity25.mtest
            mfront/tests/behaviours/abaqus/abaquselasticity26.mtest
-           mfront/tests/behaviours/abaqus/abaquselasticity27.mtest	   
+           mfront/tests/behaviours/abaqus/abaquselasticity27.mtest
+           mfront/tests/behaviours/abaqus/abaquselasticity33.mtest	   
            mfront/tests/behaviours/abaqus/abaqusmazars.mtest
-           mfront/tests/behaviours/abaqus/abaqusmazars2.mtest
-           mfront/tests/behaviours/abaqus/abaquslorentz.mtest
-           mfront/tests/behaviours/abaqus/abaquslorentz2.mtest
            mfront/tests/behaviours/abaqus/abaqusnorton.mtest
            mfront/tests/behaviours/abaqus/abaqusnorton2.mtest
            mfront/tests/behaviours/abaqus/abaqusstressrelaxation.mtest
-           mfront/tests/behaviours/abaqus/abaqusorthotropiccreep.mtest
-           mfront/tests/behaviours/abaqus/abaqusorthotropiccreep-rk42.mtest
-           mfront/tests/behaviours/abaqus/abaqusorthotropiccreep-rkCastem.mtest
            mfront/tests/behaviours/abaqus/abaqusimplicitnorton.mtest
            mfront/tests/behaviours/abaqus/abaqusimplicitnorton2.mtest
            mfront/tests/behaviours/abaqus/abaqusimplicitnorton3.mtest
@@ -783,9 +779,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cc_numericaljacobian.mtest
            mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cc_irradiation.mtest
            mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cc_irradiation_numericaljacobian.mtest
-           mfront/tests/behaviours/abaqus/abaquspolycrystals.mtest
-           mfront/tests/behaviours/abaqus/abaquspolycrystals_dd_cc.mtest
-           mfront/tests/behaviours/abaqus/abaquspolycrystals_dd_cfc.mtest
            mfront/tests/behaviours/abaqus/abaqusimplicithayhurst.mtest
            mfront/tests/behaviours/abaqus/abaqusburger.mtest
            mfront/tests/behaviours/abaqus/abaqusageingburger.mtest
@@ -900,6 +893,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemelasticity30.mtest
            mfront/tests/behaviours/castem/castemelasticity31.mtest
            mfront/tests/behaviours/castem/castemelasticity32.mtest
+           mfront/tests/behaviours/castem/castemelasticity33.mtest
            mfront/tests/behaviours/castem/castemgeneralizedmaxwell.mtest
            mfront/tests/behaviours/castem/castemddif2.mtest
            mfront/tests/behaviours/castem/castemddif2-2.mtest

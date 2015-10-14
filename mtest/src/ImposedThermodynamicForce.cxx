@@ -82,7 +82,7 @@ namespace mtest
      const Evolution& sv = *(this->sev);
      ostringstream msg;
      msg << "imposed thermodynmic force not reached for component " << this->c 
-	 << "(imposed value : " << sv(t+dt) << ", computed value : " 
+	 << " (imposed value : " << sv(t+dt) << ", computed value : " 
 	 << s(this->c) << ", criteria : " << seps << ")";
      return msg.str();
    }

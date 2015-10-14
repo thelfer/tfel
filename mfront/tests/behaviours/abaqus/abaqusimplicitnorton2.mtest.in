@@ -7,7 +7,7 @@
 
 @PredictionPolicy 'LinearPrediction';
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'implicitnorton2';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ImplicitNorton2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

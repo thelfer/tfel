@@ -580,22 +580,86 @@ namespace mfront{
 
   std::vector<std::pair<std::string,std::string>>
   AbaqusInterface::getBehaviourDataConstructorAdditionalVariables(void) const{
-    return {{"DROT","increment of rigid body rotation"}};
+    return {{"DR","increment of rigid body rotation"}};
   } // end of AbaqusInterface::getBehaviourDataConstructorAdditionalVariables
 
+  void 
+  AbaqusInterface::writeBehaviourDataThermodynamicForceSetter(std::ofstream& os,
+							      const ThermodynamicForce& f,
+							      const SupportedTypes::TypeSize o) const
+  {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+      os << "abaqus::ImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
+      if(!o.isNull()){
+	os << iprefix << "stress_+" << o << ");\n";
+      } else {
+	os << iprefix << "stress_);\n";
+      }
+    } else {
+      throw(std::runtime_error("AbaqusInterface::writeBehaviourDataMainVariablesSetters : "
+			       "unsupported forces type"));
+    }
+  } // end of AbaqusInterface::writeBehaviourDataThermodynamicForceSetter
+  
   void 
   AbaqusInterface::completeBehaviourDataConstructor(std::ofstream& out,
 						    const Hypothesis h,
 						    const BehaviourDescription& mb) const
   {
-#pragma message("HERE")
-    // out << "const tfel::math::matrix<3u,real,real> abaqus_drot = ";
-    // const auto& d = mb.getBehaviourData(h);
-    // for(const auto& v:d.getPersistentVariables()){
-
-    // }
+    const auto& d = mb.getBehaviourData(h);
+    bool b = false; // have persistent variables that have to be updated
+    for(const auto& v:d.getPersistentVariables()){
+	const auto flag = this->getTypeFlag(v.type);
+	if((flag==SupportedTypes::Stensor)||
+	   (flag==SupportedTypes::Tensor)){
+	  b = true;
+	  break;
+	}
+    }
+    if(!b){
+      out << "static_cast<void>(ABAQUSDR);\n";
+    } else {
+      out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[3],ABAQUSDR[6],"
+             "                                                   ABAQUSDR[1],ABAQUSDR[4],ABAQUSDR[7],"
+             "                                                   ABAQUSDR[2],ABAQUSDR[5],ABAQUSDR[8]};\n";
+      for(const auto& v:d.getPersistentVariables()){
+	const auto flag = this->getTypeFlag(v.type);
+	if((flag==SupportedTypes::Stensor)||
+	   (flag==SupportedTypes::Tensor)){
+	  if(v.arraySize==1u){
+	    out << "tfel::math::change_basis(this->" << v.name << ",abaqus_dr);\n";
+	  } else {
+	    for(unsigned short i=0;i!=v.arraySize;++i){
+	      out << "tfel::math::change_basis(this->" << v.name << "[" << i << "],abaqus_dr);\n";
+	    }
+	  }
+	}
+      }
+    }
   } // end of UMATInterfaceBase::completeBehaviourDataConstructor
 
+  void 
+  AbaqusInterface::exportThermodynamicForce(std::ofstream& out,
+					    const std::string& a,
+					    const ThermodynamicForce& f,
+					    const SupportedTypes::TypeSize o) const
+   {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    const auto flag = this->getTypeFlag(f.type);
+    if(flag==SupportedTypes::Stensor){
+      if(!o.isNull()){
+	out << "abaqus::ExportThermodynamicForces<hypothesis>::exe("
+	    << a << "+" << o << ",this->sig);\n";
+      } else {
+	out << "abaqus::ExportThermodynamicForces<hypothesis>::exe(" << a << ",this->sig);\n";
+      }
+    } else {
+      throw(std::runtime_error("AbaqusInterface::exportThermodynamicForce: "
+			       "unsupported forces type"));
+    }
+  } // end of AbaqusInterface::exportThermodynamicForce
+    
   void
   AbaqusInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
   {

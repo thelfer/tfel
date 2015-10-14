@@ -279,7 +279,21 @@ namespace tfel{
 					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
     >::type
     invert(const TensorType&);
-
+    /*!
+     * \brief rotate a tensor using a rotation matrix
+     * \param[in] s: tensor to be rotated
+     * \param[in] r: rotation matrix
+     * \return the rotated tensor
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      tensor<TensorTraits<TensorType>::dime,
+	     typename TensorTraits<TensorType>::NumType>
+      >::type
+    change_basis(const TensorType&,
+		 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type>&);
+    
   } // end of namespace math
 
   namespace typetraits{
