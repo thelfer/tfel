@@ -761,14 +761,12 @@ namespace mfront{
 		  (h!=ModellingHypothesis::AXISYMMETRICAL)&&
 		  (h!=ModellingHypothesis::PLANESTRAIN)&&
 		  (h!=ModellingHypothesis::PLANESTRESS)){
-	  string msg("AsterInterface::buildMaterialPropertiesList : "
-		     "unsupported modelling hypothesis");
-	  throw(runtime_error(msg));
+	  throw(runtime_error("AsterInterface::buildMaterialPropertiesList : "
+			      "unsupported modelling hypothesis"));
 	}
       } else {
-	string msg("AsterInterface::buildMaterialPropertiesList : "
-		   "unsupported behaviour symmetry type");
-	throw(runtime_error(msg));
+	throw(runtime_error("AsterInterface::buildMaterialPropertiesList : "
+			    "unsupported behaviour symmetry type"));
       }
     }
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){

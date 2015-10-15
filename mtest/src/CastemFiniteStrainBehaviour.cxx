@@ -48,8 +48,8 @@ namespace mtest
     C(2,0)=l;
     C(2,1)=l;
     C(2,2)=C11;
-    C(3,3)=cste*G;    
-    C(3,4)=cste*G;
+    C(3,3)=cste*G/2;    
+    C(3,4)=cste*G/2;
   }
 
   static void
@@ -90,8 +90,8 @@ namespace mtest
     C(2,0)=(S12*S23-S13*S22)/detS;
     C(2,1)=(S12*S13-S11*S23)/detS;
     C(2,2)=(S11*S22-S12*S12)/detS;
-    C(3,3)=cste*props[6];
-    C(3,4)=cste*props[6];
+    C(3,3)=cste*props[6]/2;
+    C(3,4)=cste*props[6]/2;
   } // end of struct CastemComputeStiffnessTensor
 
   /*!
@@ -150,8 +150,8 @@ namespace mtest
       C(0,1)=C2;
       C(1,0)=C2;
       C(1,1)=C1;
-      C(3,3)=cste*C3;
-      C(3,4)=cste*C3;    
+      C(3,3)=cste*C3/2;
+      C(3,4)=cste*C3/2;    
     } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
   }; 
   
@@ -216,12 +216,12 @@ namespace mtest
       C(2,0)=l;
       C(2,1)=l;
       C(2,2)=C11;
-      C(3,3)=cste*G;
-      C(3,4)=cste*G;
-      C(4,5)=cste*G;
-      C(4,6)=cste*G;
-      C(5,7)=cste*G;
-      C(5,8)=cste*G;
+      C(3,3)=cste*G/2;
+      C(3,4)=cste*G/2;
+      C(4,5)=cste*G/2;
+      C(4,6)=cste*G/2;
+      C(5,7)=cste*G/2;
+      C(5,8)=cste*G/2;
     } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
   };
   
@@ -315,8 +315,8 @@ namespace mtest
       C(0,1)=C01-C02*tmp21;
       C(1,0)=C10-C12*tmp20;
       C(1,1)=C11-C12*tmp21;
-      C(3,3)=2*cste*props[3];
-      C(3,4)=2*cste*props[3];    
+      C(3,3)=cste*props[3];
+      C(3,4)=cste*props[3];    
     } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
   };
 
@@ -396,12 +396,12 @@ namespace mtest
       C(0,1)=C(1,0)=(S13*S23-S12*S33)/detS;
       C(0,2)=C(2,0)=(S12*S23-S13*S22)/detS;
       C(1,2)=C(2,1)=(S12*S13-S11*S23)/detS;
-      C(3,3)=cste*props[6];
-      C(3,4)=cste*props[6];
-      C(4,5)=cste*props[7];
-      C(4,6)=cste*props[7];
-      C(5,7)=cste*props[8];
-      C(5,8)=cste*props[8];
+      C(3,3)=cste*props[6]/2;
+      C(3,4)=cste*props[6]/2;
+      C(4,5)=cste*props[7]/2;
+      C(4,6)=cste*props[7]/2;
+      C(5,7)=cste*props[8]/2;
+      C(5,8)=cste*props[8]/2;
     } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
   };
 

@@ -3999,6 +3999,9 @@ tfel-doc/src/TestDocumentation.cxx -text
 tfel-doc/src/tfel-doc.cxx -text
 /tfel.doxygen -text
 tools/FourthOrderTensorProduct/generate.cxx -text
+tools/TensorConvertion.cxx -text
+tools/TensorConvertion1D.cxx -text
+tools/TensorConvertion2D.cxx -text
 tools/docs/mfront-keywords.sh -text
 tools/glossary/generate_glossary.cxx -text
 tools/glossary/glossary.txt -text

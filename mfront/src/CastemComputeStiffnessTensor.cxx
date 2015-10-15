@@ -263,7 +263,7 @@ namespace castem
     C(0,1)=C01-C02*tmp21;
     C(1,0)=C10-C12*tmp20;
     C(1,1)=C11-C12*tmp21;
-    C(3,3)=2.*props[6];
+    C(3,3)=2.*props[3];
   } // end of struct CastemComputeOrthotropicPlaneStressUnAlteredStiffnessTensor
 
   void

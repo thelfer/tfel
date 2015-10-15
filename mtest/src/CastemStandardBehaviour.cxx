@@ -100,9 +100,8 @@ namespace mtest
 	tmp.push_back("ThermalExpansion2");
 	tmp.push_back("ThermalExpansion3");
       } else {
-	string msg("CastemStandardBehaviour::CastemStandardBehaviour : ");
-	msg += "unsupported hypothesis";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("CastemStandardBehaviour::CastemStandardBehaviour : "
+				 "unsupported hypothesis"));
       }
       this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
     }
@@ -177,7 +176,6 @@ namespace mtest
   CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
 									 const EvolutionManager& evm) const
   {
-    using namespace std;
     using tfel::material::ModellingHypothesis;
     const ModellingHypothesis::Hypothesis h = ModellingHypothesis::fromString(this->hypothesis);      
     Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"MassDensity",0.);
@@ -192,10 +190,9 @@ namespace mtest
 	   (h==ModellingHypothesis::PLANESTRAIN)){
 	  const bool b = bv1x&&bv1y;
 	  if(((bv1x)&&(!b))||((bv1y)&&(!b))){
-	    string msg("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
-		       "if on component of the orthotropic basis is defined, all "
-		       "the components must be defined.");
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
+				     "if on component of the orthotropic basis is defined, all "
+				     "the components must be defined."));
 	  }
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1X",1.);
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1Y",0.);
@@ -207,10 +204,9 @@ namespace mtest
 	  const bool b = bv1x&&bv1y&&bv1z&&bv2x&&bv2y&&bv2z;
 	  if(((bv1x)&&(!b))||((bv1y)&&(!b))||((bv1z)&&(!b))||
 	     ((bv2x)&&(!b))||((bv2y)&&(!b))||((bv2z)&&(!b))){
-	    string msg("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
-		       "if on component of the orthotropic basis is defined, all "
-		       "the components must be defined.");
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
+				     "if on component of the orthotropic basis is defined, all "
+				     "the components must be defined."));
 	  }
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1X",1.);
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1Y",0.);
@@ -219,9 +215,8 @@ namespace mtest
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V2Y",1.);
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V2Z",0.);
 	} else {
-	  string msg("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
-		     "unsupported hypothesis");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
+				   "unsupported hypothesis"));
 	}
       }
     }
