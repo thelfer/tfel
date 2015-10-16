@@ -15,6 +15,12 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#endif
+
+#include<cmath>
+
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"

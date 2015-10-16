@@ -11,6 +11,9 @@
  * project under specific licensing conditions. 
  */
 
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#endif
 
 #include<map>
 #include<cmath>
@@ -948,8 +951,8 @@ namespace mtest
       const auto l = this->readInt(p,this->fileTokens.end());
       this->readSpecifiedToken("MTestParser::handleRotationMatrix","}",
 			       p,this->fileTokens.end());
-      const real n1   = std::sqrt(real{h*h+k*k+l*l});
-      const real n2   = std::sqrt(real{h*h+k*k});
+      const real n1   = std::sqrt(static_cast<real>(h*h+k*k+l*l));
+      const real n2   = std::sqrt(static_cast<real>(h*h+k*k));
       const real phi1 = 0;
       const real phi  = std::acos(l/n1)*cste;
       const real phi2 = std::atan2(h/n2,k/n2)*cste;

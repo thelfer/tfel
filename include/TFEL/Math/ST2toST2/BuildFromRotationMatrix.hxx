@@ -101,6 +101,7 @@ namespace tfel{
 	template<typename T>
 	static TFEL_MATH_INLINE2 tfel::math::st2tost2<3u,T>
 	exe(const tfel::math::tmatrix<3,3,T>& r){
+	  using tfel::math::constexpr_fct::sqrt;
 	  tfel::math::st2tost2<3u,T> s;
 	  constexpr const T cste = sqrt(T{2});
 	  const T a = r(0,0);
