@@ -1197,15 +1197,16 @@ namespace tfel{
 			     const CxxTokenizer::const_iterator pe)
       
     {
-      using namespace std;
       double res;
       CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readDouble",
 				      "expected number",p,pe);
-      istringstream is(p->value);
-      is >> res;
-      if(!is&&(!is.eof())){
-	throw(runtime_error("CxxTokenizer::readDouble : "
-			    "could not read value from token '"+p->value+"'."));
+      try{
+	res = std::stod(p->value);
+      }
+      catch(std::exception& e){
+	throw(std::runtime_error("CxxTokenizer::readDouble : "
+				 "could not read value from token "
+				 "'"+p->value+"' ("+std::string(e.what())+")."));
       }
       ++p;
       return res;
