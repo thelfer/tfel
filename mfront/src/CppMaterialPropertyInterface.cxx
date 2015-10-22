@@ -52,7 +52,7 @@ namespace mfront
 						    const MaterialPropertyDescription& mpd)
   {
     using std::string;
-    const auto lib  = "libCpp"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+    const auto lib  = "Cpp"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     insert_if(d[lib].ldflags,"-lm");
     insert_if(d[lib].sources,name+"-cxx.cxx");

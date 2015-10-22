@@ -67,17 +67,21 @@ namespace aster
   {} // end of AsterInvalidNTENSValue::~AsterInvalidNTENSValue()
 
   AsterInvalidDimension::AsterInvalidDimension(const std::string& b,
-					     const unsigned short N)
+					       const unsigned short N)
     : AsterException("''"+b+"' can't be used in "+
 		     std::to_string(static_cast<unsigned int>(N))+"D")
   {} // end of AsterInvalidDimension::AsterInvalidDimension
 
-  AsterInvalidDimension::AsterInvalidDimension(const AsterInvalidDimension& e)
-    : AsterException(e)
-  {} // end of AsterInvalidDimension::AsterInvalidDimension
+  AsterInvalidDimension::AsterInvalidDimension(const AsterInvalidDimension&) = default;
+  AsterInvalidDimension::~AsterInvalidDimension() noexcept = default;
 
-  AsterInvalidDimension::~AsterInvalidDimension() noexcept
-  {} // end of AsterInvalidDimension::~AsterInvalidDimension()
+  AsterInvalidModellingHypothesis::AsterInvalidModellingHypothesis()
+    : AsterException("unsupported modelling hypothesis")
+  {}
 
+  AsterInvalidModellingHypothesis::AsterInvalidModellingHypothesis(const AsterInvalidModellingHypothesis&) = default;
+  
+  AsterInvalidModellingHypothesis::~AsterInvalidModellingHypothesis() noexcept = default;
+  
 } // end of namespace aster
 

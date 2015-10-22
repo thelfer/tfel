@@ -188,12 +188,12 @@ namespace mfront{
     string lib;
     if(mb.getLibrary().empty()){
       if(!mb.getMaterialName().empty()){
-	lib = "libAbaqus"+mb.getMaterialName();
+	lib = "Abaqus"+mb.getMaterialName();
       } else {
-	lib = "libAbaqusBehaviour";
+	lib = "AbaqusBehaviour";
       }
     } else {
-      lib = "libAbaqus"+mb.getLibrary();
+      lib = "Abaqus"+mb.getLibrary();
     }
     return lib;
   } // end of AbaqusInterface::getLibraryName
@@ -696,7 +696,7 @@ namespace mfront{
     insert_if(d[lib].ldflags,"`tfel-config --libs --material --mfront-profiling`");
     // insert_if(d[lib].epts,name);
     insert_if(d[lib].epts,this->getFunctionName(name));
-  } // end of AbaqusInterface::getGeneratedSources
+  } // end of AbaqusInterface::getTargetsDescription
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
 	    SupportedTypes::TypeSize>

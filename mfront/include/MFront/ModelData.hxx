@@ -64,8 +64,6 @@ namespace mfront
     VariableDescriptionContainer constantMaterialProperties;
     //!static variables
     StaticVariableDescriptionContainer staticVars;
-    //! external library dependencies
-    std::vector<std::string> librariesDependencies;
     //! list of reserved names
     std::set<std::string> reservedNames;
     //! list of variables names

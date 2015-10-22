@@ -161,18 +161,12 @@ namespace mfront{
     for(const auto & i : this->interfaces){
       i.second->getTargetsDescription(this->td,*this);
     }
-    for(const auto& l : this->td){
-      for(const auto& deps : this->librariesDependencies){
-	if("-l"+l.name!=deps){
-	  this->td[l.name].ldflags.push_back(deps);
-	}
-      }
-    }
+    this->completeTargetsDescription();
   }
 
   template<typename Child>
   void ModelDSLBase<Child>::registerNewCallBack(const std::string& keyword,
-							    const MemberFuncPtr f)
+						const MemberFuncPtr f)
   {
     using namespace std;
     this->callBacks.insert(make_pair(keyword,f));

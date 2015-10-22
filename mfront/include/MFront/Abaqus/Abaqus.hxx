@@ -89,7 +89,13 @@ namespace abaqus{
     template<typename T>
     static inline void
     exe(tfel::math::stensor<2u,T>& s,const AbaqusReal* const v){
-      constexpr AbaqusReal cste = tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+#if defined __INTEL_COMPILER
+      const AbaqusReal cste =
+	tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+#else
+      constexpr const AbaqusReal cste =
+	tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+#endif
       s[0]=v[0];
       s[1]=v[1];
       s[2]=AbaqusReal{0};
@@ -133,7 +139,13 @@ namespace abaqus{
     template<typename T>
     static inline void
     exe(AbaqusReal* const v,const tfel::math::stensor<2u,T>& s){
-      constexpr AbaqusReal cste = 1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+#if defined __INTEL_COMPILER
+      const AbaqusReal cste =
+	1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+#else
+      constexpr const AbaqusReal cste =
+	1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+#endif
       v[0]=s[0];
       v[1]=s[1];
       v[2]=s[3]*cste;

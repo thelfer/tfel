@@ -28,74 +28,47 @@
 #include"MFront/MakefileGenerator.hxx"
 
 namespace mfront{
-
-  static std::string
-  sortLibraryList(const std::string& lib)
-  {
-    std::istringstream tokenizer{lib};
-    auto libs = std::vector<std::string>{};
-    auto vres = std::vector<std::string>{};
-    copy(std::istream_iterator<std::string>(tokenizer),
-	 std::istream_iterator<std::string>(),back_inserter(libs));
-    auto p  = libs.crbegin();
-    const auto pe = libs.crend();
-    auto res = std::string{};
-    while(p!=pe){
-      if(find(vres.begin(),vres.end(),*p)==vres.end()){
-	vres.push_back(*p);
-	res = *p+" "+res; 
-      }
-      ++p;
-    }
-    return res;
-  } // end of sortLibraryList
   
   static std::string
-  getLibraryLinkDependencies(std::ostream& m,
-			     const TargetsDescription& t,
-			     const GeneratorOptions& o,
-			     const std::string& name)
+  getLibraryLinkFlags(const TargetsDescription& t,
+		      const GeneratorOptions& o,
+		      const std::string& name)
   {
     if(!describes(t,name)){
-      throw(std::runtime_error("getLibraryDependencies : no library named '"+name+"'.\n"
-			       "Internal Error."));
+      throw(std::runtime_error("getLibraryLinkFlags : no library "
+			       "named '"+name+"'.\nInternal Error."));
     }
     const auto& l = t[name];
-    if(l.ldflags.empty()){
-      return {};
-    }
     auto res = std::string{};
-    m << "-L. ";
     for(const auto& d : l.ldflags){
-      if(!d.empty()){
-	if(d.size()>2){
-	  if(d.substr(0,2)=="-l"){
-	    if(describes(t,"lib"+d.substr(2))){
-	      if(!o.melt){
-		res += getLibraryLinkDependencies(m,t,o,d) + " " + d + " ";
-	      }
-	    } else {
-	      res += d + " ";
-	    }
-	  } else {
-	    res += d + " ";
-	  }
-	} else {
-	  res += d + " ";
+      res += d+" ";
+    }
+    if(o.melt){
+      for(const auto& ldn : l.deps){
+	if(!describes(t,ldn)){
+	  throw(std::runtime_error("getLibraryLinkFlags : no library "
+				   "named '"+ldn+"' (dependency of library "
+				   "'"+name+"').\nInternal Error."));
+	}
+	const auto& ld = t[ldn];
+	for(const auto& d : ld.ldflags){
+	  res += d+" ";
 	}
       }
     }
-    return sortLibraryList(res);
-  } // end of getLibraryLinkDependencies(const std::string&)
-  
-  static std::pair<bool,std::pair<std::string,std::string> >
-  getLibraryDependencies(const TargetsDescription& t,
-			 const GeneratorOptions& o,
-			 const std::string& name)
+    return res;
+  } // end of getLibraryLinkFlags(const std::string&)
+
+  // res.first : true if the target has C++ source files
+  // res.second.first : list of object files
+  // res.second.first : list of library dependencies
+  static std::pair<bool,std::pair<std::string,std::string>>
+  getLibrarySourcesAndDependencies(const TargetsDescription& t,
+				   const GeneratorOptions& o,
+				   const std::string& name)
   {
-    using namespace std;
     const auto& l = t[name];
-    auto res = pair<bool,pair<string,string> >{};
+    auto res = std::pair<bool,std::pair<std::string,std::string>>{};
     res.first = false;
     for(const auto& s : l.sources){
       if(s.size()>4){
@@ -111,27 +84,22 @@ namespace mfront{
 	}
       }
     }
-    for(const auto& d : l.ldflags){
-      if(d.size()>2){
-	if(d.substr(0,2)=="-l"){
-	  auto lib = d.substr(2);
-	  if(describes(t,lib)){
-	    if(o.melt){
-	      auto dep = getLibraryDependencies(t,o,"lib"+lib);
-	      res.first = res.first || dep.first;
-	      res.second.first  += dep.second.first;
-	      res.second.second += dep.second.second;
-	    } else {
-	      res.second.second += "lib";
-	      res.second.second += lib;
-	      res.second.second +=  + "."+l.suffix+" ";
-	    }
-	  }
+    if(o.melt){
+      for(const auto& d : l.deps){
+	const auto rd = getLibrarySourcesAndDependencies(t,o,d);
+	res.first = res.first || rd.first;
+	if(!res.second.first.empty()){
+	  res.second.first+=" ";
 	}
+	res.second.first+=rd.second.first;
+      }
+    } else {
+      for(const auto& d : l.deps){
+	res.second.second += " "+d;
       }
     }
     return res;
-  } // end of getLibraryDependencies
+  } // end of getLibrarySourcesAndDependencies
   
   void
   generateMakeFile(const TargetsDescription& t,
@@ -317,7 +285,7 @@ namespace mfront{
     m << ".PHONY = ";
     m << "all clean ";
     for(const auto& l : t){
-      m << l.name << "." << l.suffix << " ";
+      m << "lib" <<  l.name << "." << l.suffix << " ";
     }
     for(const auto& target : t.specific_targets){
       if((target.first!="all")&&(target.first!="clean")){
@@ -327,8 +295,9 @@ namespace mfront{
     m << "\n\n";
     m << "all : ";
     for(const auto& l : t){
-      m << l.name << "." << l.suffix << " ";
+      m << "lib" << l.name << "." << l.suffix << " ";
     }
+    m << "\n";
     auto p5=t.specific_targets.find("all");
     if(p5!=t.specific_targets.end()){
       copy(p5->second.first.begin(),p5->second.first.end(),
@@ -352,14 +321,15 @@ namespace mfront{
       }
     }
     for(const auto& l : t){
-      m << l.name << "." << l.suffix << " : ";
-      auto dep = getLibraryDependencies(t,o,l.name);
+      m << "lib" << l.name << "." << l.suffix << " : ";
+      auto dep = getLibrarySourcesAndDependencies(t,o,l.name);
       const auto hasCxxSources = dep.first;
       if(!dep.second.first.empty()){
 	m << dep.second.first;
       } 
       if(!dep.second.second.empty()){
-	m << sortLibraryList(dep.second.second);
+	auto sl = dep.second.second;
+	m << sl;
       }
       m << "\n\t";
       if(hasCxxSources){
@@ -371,14 +341,14 @@ namespace mfront{
 	m << "$(LDFLAGS) ";
       }
       if(o.sys=="win32"){
-	m << "-shared -Wl,--add-stdcall-alias,--out-implib," << l.name << "_dll.a,-no-undefined ";
+	m << "-shared -Wl,--add-stdcall-alias,--out-implib,lib" << l.name << "_dll.a,-no-undefined ";
       } else if(o.sys=="apple"){
 	m << "-bundle ";
       } else {
 	m << "-shared ";
       }
       m << "$^  -o $@ ";
-      m << getLibraryLinkDependencies(m,t,o,l.name);
+      m << getLibraryLinkFlags(t,o,l.name);
       m << "\n\n";
     }
     m << "clean : ";

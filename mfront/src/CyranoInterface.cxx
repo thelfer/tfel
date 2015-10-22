@@ -67,16 +67,15 @@ namespace mfront{
   std::string
   CyranoInterface::getLibraryName(const BehaviourDescription& mb) const
   {
-    using namespace std;
-    string lib;
+    auto lib = std::string{};
     if(mb.getLibrary().empty()){
       if(!mb.getMaterialName().empty()){
-	lib = "libCyrano"+mb.getMaterialName();
+	lib = "Cyrano"+mb.getMaterialName();
       } else {
-	lib = "libCyranoBehaviour";
+	lib = "CyranoBehaviour";
       }
     } else {
-      lib = "libCyrano"+mb.getLibrary();
+      lib = "Cyrano"+mb.getLibrary();
     }
     return lib;
   } // end of CyranoInterface::getLibraryName
@@ -97,13 +96,7 @@ namespace mfront{
   CyranoInterface::getBehaviourName(const std::string& library,
 					  const std::string& className) const
   {
-    using namespace std;
-    string name;
-    if(!library.empty()){
-      name += library;
-    }
-    name += className;
-    return name;
+    return library+className;
   } // end of CyranoInterface::getBehaviourName
 
   std::string
@@ -137,45 +130,39 @@ namespace mfront{
     } else if ((key=="@CyranoMaximumSubStepping")||
 	       (key=="@UMATMaximumSubStepping")){
       if(!this->useTimeSubStepping){
-	string msg("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping) : ");
-	msg += "time sub stepping is not enabled at this stage.\n";
-	msg += "Use the @CyranoUseTimeSubStepping directive before ";
-	msg += "@CyranoMaximumSubStepping";
-	throw(runtime_error(msg));
+	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping): "
+			    "time sub stepping is not enabled at this stage.\n"
+			    "Use the @CyranoUseTimeSubStepping directive before "
+			    "@CyranoMaximumSubStepping"));
       }
       if(current==end){
-	string msg("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
+	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping): "
+			    "unexpected end of file"));
       }
       istringstream flux(current->value);
       flux >> this->maximumSubStepping;
       if(flux.fail()){
-	string msg("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping) : ");
-	msg+="failed to read maximum substepping value.\n";
-	throw(runtime_error(msg));
+	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping): "
+			    "failed to read maximum substepping value."));
       }
       ++(current);
       if(current==end){
-	string msg("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping) : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
+	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping): "
+			    "unexpected end of file"));
       }      
       if(current->value!=";"){
-	string msg("CyranoInterface::treatKeyword : expected ';', read ");
-	msg += current->value;
-	throw(runtime_error(msg));
+	throw(runtime_error("CyranoInterface::treatKeyword : expected ';',"
+			    " read '"+current->value+"'"));
       }
       ++(current);
       return make_pair(true,current);      
     } else if ((key=="@CyranoDoSubSteppingOnInvalidResults")||
 	       (key=="@UMATDoSubSteppingOnInvalidResults")){
       if(!this->useTimeSubStepping){
-	string msg("CyranoInterface::treatKeyword (@CyranoDoSubSteppingOnInvalidResults) : ");
-	msg += "time sub stepping is not enabled at this stage.\n";
-	msg += "Use the @CyranoUseTimeSubStepping directive before ";
-	msg += "@CyranoMaximumSubStepping";
-	throw(runtime_error(msg));
+	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoDoSubSteppingOnInvalidResults): "
+			    "time sub stepping is not enabled at this stage.\n"
+			    "Use the @CyranoUseTimeSubStepping directive before "
+			    "@CyranoMaximumSubStepping"));
       }
       this->doSubSteppingOnInvalidResults = this->readBooleanValue(key,current,end);
       return make_pair(true,current);      
@@ -195,9 +182,8 @@ namespace mfront{
     if((h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)&&
        (h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)&&
        (h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)){
-      string msg("CyranoInterface::buildMaterialPropertiesList : "
-		 "unsupported modelling hypothesis ");
-      throw(runtime_error(msg));
+      throw(runtime_error("CyranoInterface::buildMaterialPropertiesList: "
+			  "unsupported modelling hypothesis "));
     }
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
@@ -224,9 +210,8 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3","alp3",false);
       } else {
-	string msg("CyranoInterface::buildMaterialPropertiesList : "
-		   "unsupported behaviour symmetry type");
-	throw(runtime_error(msg));
+	throw(runtime_error("CyranoInterface::buildMaterialPropertiesList: "
+			    "unsupported behaviour symmetry type"));
       }
     }
     if(!mprops.empty()){
@@ -257,12 +242,11 @@ namespace mfront{
       h.insert(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
     }
     if(h.empty()){
-      string msg("CyranoInterface::getModellingHypothesesToBeTreated : "
-		 "no hypotheses selected. This means that the given beahviour "
-		 "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-		 "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-		 "make sense to use the Cyrano interface");
-      throw(runtime_error(msg));
+      throw(runtime_error("CyranoInterface::getModellingHypothesesToBeTreated : "
+			  "no hypotheses selected. This means that the given beahviour "
+			  "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+			  "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+			  "make sense to use the Cyrano interface"));
     }
     return h;
   } // end of CyranoInterface::getModellingHypothesesToBeTreated
@@ -291,9 +275,9 @@ namespace mfront{
     typedef ModellingHypothesis::Hypothesis Hypothesis;
     // check
     if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("CyranoInterface::endTreatment : "
-		 "the aster interface only supports small strain behaviours");
-      throw(runtime_error(msg));
+      throw(runtime_error("CyranoInterface::endTreatment : "
+			  "the cyrano interface only supports "
+			  "small strain behaviours"));
     }
     // get the modelling hypotheses to be treated
     const auto& h = this->getModellingHypothesesToBeTreated(mb);
@@ -306,9 +290,9 @@ namespace mfront{
 
     // some checks
     if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("CyranoInterface::endTreatment : ");
-      msg += "only small strain behaviours are supported.\n";
-      throw(runtime_error(msg));
+      throw(runtime_error("CyranoInterface::endTreatment: "
+			  "only small strain behaviours "
+			  "are supported."));
     }
 
     if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){

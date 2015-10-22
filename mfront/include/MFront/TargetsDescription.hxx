@@ -37,6 +37,8 @@ namespace mfront{
     TargetsDescription(TargetsDescription&&);
     ~TargetsDescription();
     //! a simple alias
+    using iterator = std::vector<LibraryDescription>::iterator;
+    //! a simple alias
     using const_iterator = std::vector<LibraryDescription>::const_iterator;
     /*!
      * \return the library description associated with the given
@@ -73,11 +75,15 @@ namespace mfront{
      */
     const LibraryDescription& operator[](const std::string&) const;
     //! \return an iterator to the first library description
-    const_iterator begin() const;
+    iterator begin();
+    //! \return an iterator past the last library description
+    iterator end();
     //! \return an iterator to the first library description
-    const_iterator cbegin() const;
+    const_iterator begin() const;
     //! \return an iterator past the last library description
     const_iterator end() const;
+    //! \return an iterator to the first library description
+    const_iterator cbegin() const;
     //! \return an iterator past the last library description
     const_iterator cend() const;
     //! generated headers
@@ -127,7 +133,7 @@ namespace mfront{
    * \brief merge two targets description
    * \param[out] d : destination
    * \param[in]  s : source
-   * \param[in]  b : override targets
+   * \param[in]  b : override specific targets
    */
   MFRONT_VISIBILITY_EXPORT void
   mergeTargetsDescription(TargetsDescription&,

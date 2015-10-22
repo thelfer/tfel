@@ -120,7 +120,7 @@ namespace mfront
   JavaMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 						       const MaterialPropertyDescription& mpd)
   {
-    const auto lib = "lib"+getMaterialLawLibraryNameBase(mpd.library,mpd.material)+"-java";
+    const auto lib = getMaterialLawLibraryNameBase(mpd.library,mpd.material)+"-java";
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     insert_if(d[lib].ldflags,"-lm");    
     // the jni part

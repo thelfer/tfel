@@ -95,8 +95,6 @@ namespace mfront
      * physical bounds description
      */
     std::vector<VariableBoundsDescription> physicalBoundsDescriptions;
-    //! external library dependencies
-    std::vector<std::string> librariesDependencies;
     //! list of reserved names
     std::set<std::string> reservedNames;
     //! list of variables names

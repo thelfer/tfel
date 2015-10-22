@@ -461,11 +461,6 @@ namespace mfront{
     virtual void
     setInterfaces(const std::set<std::string>&) override;
     /*!
-     * \brief : add a new library dependency
-     * \param[in] l : library dependency
-     */
-    virtual void addLibraryDependency(const std::string&) override;
-    /*!
      * \brief register a name.
      * \param[in] n : name
      */

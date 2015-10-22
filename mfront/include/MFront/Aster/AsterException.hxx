@@ -64,6 +64,7 @@ namespace aster {
     : public AsterException
   {
     AsterInvalidModellingHypothesis();
+    AsterInvalidModellingHypothesis(const AsterInvalidModellingHypothesis&);
     virtual ~AsterInvalidModellingHypothesis() noexcept;
   private:
     AsterInvalidModellingHypothesis&

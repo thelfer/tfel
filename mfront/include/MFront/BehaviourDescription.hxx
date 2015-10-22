@@ -1111,15 +1111,6 @@ namespace mfront
     checkVariablePosition(const std::string&,
 			  const std::string&,
 			  const size_t);
-    /*!
-     * \brief : add a new library dependency
-     * \param[in] l : library dependency
-     */
-    void
-    addLibraryDependency(const std::string&);
-    //! external library dependencies
-    const std::vector<std::string>&
-    getLibrariesDependencies(void) const;
     //! destructor
     ~BehaviourDescription();
   private:
@@ -1146,8 +1137,7 @@ namespace mfront
      * \param[in] m : behaviour data method
      * \param[in] a : argument given to the behaviour data's method
      */
-    template<typename Res,
-	     typename Arg1>
+    template<typename Res,typename Arg1>
     Res
     getData(const Hypothesis,
 	    Res (BehaviourData:: *)(const Arg1&) const,
@@ -1174,8 +1164,7 @@ namespace mfront
      * \note if h is Hypothesis::UNDEFINEDHYPOTHESIS, the default data
      * and all the specialisations are called.
      */
-    template<typename Arg1,
-	     typename Arg2>
+    template<typename Arg1,typename Arg2>
     void
     callBehaviourData(const Hypothesis,
     				void (BehaviourData:: *)(const Arg1&,
@@ -1190,8 +1179,7 @@ namespace mfront
      * \note if h is Hypothesis::UNDEFINEDHYPOTHESIS, the default data
      * and all the specialisations are called.
      */
-    template<typename Arg1,
-	     typename Arg2>
+    template<typename Arg1,typename Arg2>
     void
     callBehaviourData(const Hypothesis,
 		      void (BehaviourData:: *)(const Arg1&,
@@ -1276,8 +1264,6 @@ namespace mfront
     checkModellingHypothesis(const Hypothesis&) const;
     //! a simple alias
     typedef std::shared_ptr<BehaviourData> MBDPtr;
-    //! external library dependencies
-    std::vector<std::string> librariesDependencies;
     /*!
      * behaviour attributes
      */

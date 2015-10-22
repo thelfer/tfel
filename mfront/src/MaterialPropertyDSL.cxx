@@ -665,22 +665,8 @@ namespace mfront{
     for(const auto & i : this->interfaces){
       i.second->getTargetsDescription(this->td,*this);
     }
-    for(const auto& s : this->td){
-      for(const auto& ld : this->librariesDependencies){
-	if("-l"+s.name!=ld){
-	  insert_if(this->td[s.name].ldflags,ld);
-	}
-      }
-    }
+    this->completeTargetsDescription();
   }
-
-  void
-  MaterialPropertyDSL::addLibraryDependency(const std::string& l){
-    if(std::find(this->librariesDependencies.begin(),
-		 this->librariesDependencies.end(),l)==this->librariesDependencies.end()){
-      this->librariesDependencies.push_back(l);
-    }
-  } // end of MaterialPropertyDSL::addLibraryDependency
 
   void
   MaterialPropertyDSL::reserveName(const std::string& n){

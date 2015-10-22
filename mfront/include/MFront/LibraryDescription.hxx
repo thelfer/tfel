@@ -85,6 +85,8 @@ namespace mfront{
     std::vector<std::string> ldflags;
     //! generated entry points
     std::vector<std::string> epts;
+    //! dependencies to other generated libraries
+    std::vector<std::string> deps;
   }; // end of struct LibraryDescription
 
   /*!

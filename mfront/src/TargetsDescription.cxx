@@ -84,6 +84,15 @@ namespace mfront{
     return *p;
   } // end of TargetsDescription::operator[]
 
+  TargetsDescription::iterator
+  TargetsDescription::begin(void) {
+    return this->libraries.begin();
+  }
+
+  TargetsDescription::iterator
+  TargetsDescription::end(void) {
+    return this->libraries.end();
+  }
   
   TargetsDescription::const_iterator
   TargetsDescription::begin(void) const {
@@ -104,7 +113,7 @@ namespace mfront{
   TargetsDescription::cend(void) const {
     return this->libraries.cend();
   }
-
+  
   void mergeTargetsDescription(TargetsDescription& d,
 			       const TargetsDescription& s,
 			       const bool b)
@@ -194,7 +203,7 @@ namespace mfront{
       if(c->value=="library"){
 	++c;
 	CxxTokenizer::readSpecifiedToken(f,":",c,pe);
-	LibraryDescription l = read<LibraryDescription>(c,pe);
+	const auto l = read<LibraryDescription>(c,pe);
 	CxxTokenizer::readSpecifiedToken(f,";",c,pe);
 	if(describes(t,l.name)){
 	  error("library '"+l.name+"' multiply defined");
@@ -245,6 +254,7 @@ namespace mfront{
       }
     }
     CxxTokenizer::readSpecifiedToken(f,"}",c,pe);
+    CxxTokenizer::readSpecifiedToken(f,";",c,pe);
     p = c;
     return t;
   } // end of read

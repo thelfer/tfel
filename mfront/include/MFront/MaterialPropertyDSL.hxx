@@ -91,11 +91,6 @@ namespace mfront{
     typedef void (MaterialPropertyDSL::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
     /*!
-     * \brief : add a new library dependency
-     * \param[in] l : library dependency
-     */
-    virtual void addLibraryDependency(const std::string&) override;
-    /*!
      * \brief register a name.
      * \param[in] n : name
      */

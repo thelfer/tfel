@@ -38,7 +38,7 @@ namespace mfront
   MFrontMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 							 const MaterialPropertyDescription& mpd)
   {
-    const auto lib   = "libMFrontMaterialLaw";
+    const auto lib   = "MFrontMaterialLaw";
     const auto  name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     const auto header = this->getHeaderFileName(mpd.material,mpd.className);

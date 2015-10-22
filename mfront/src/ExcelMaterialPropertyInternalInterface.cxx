@@ -31,7 +31,7 @@ namespace mfront
   ExcelMaterialPropertyInternalInterface::getGeneratedLibraryName(const std::string& l,
 								  const std::string& m) const
   {
-    return "libExcel"+getMaterialLawLibraryNameBase(l,m);
+    return "Excel"+getMaterialLawLibraryNameBase(l,m);
   } // end of ExcelMaterialPropertyInternalInterface::getGeneratedLibraryName
 
   std::string

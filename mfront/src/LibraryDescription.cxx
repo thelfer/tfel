@@ -51,6 +51,7 @@ namespace mfront{
     insert_if(d.cppflags,s.cppflags);
     insert_if(d.ldflags,s.ldflags);
     insert_if(d.epts,s.epts);
+    insert_if(d.deps,s.deps);
   } // end of mergeLibraryDescription
 
   const char*
@@ -128,7 +129,8 @@ namespace mfront{
     write(os,l.cppflags,"cppflags");
     write(os,l.ldflags,"ldflags");
     write(os,l.epts,"epts");
-    os << "};\n";
+    write(os,l.deps,"deps");
+    os << "};\n";    
     return os;
   }
 
@@ -163,6 +165,7 @@ namespace mfront{
     auto cppflags = std::vector<std::string>{};
     auto ldflags  = std::vector<std::string>{};
     auto epts     = std::vector<std::string>{};
+    auto deps     = std::vector<std::string>{};
     // parsing 
     auto c = p;
     CxxTokenizer::readSpecifiedToken(f,"{",c,pe);
@@ -214,8 +217,15 @@ namespace mfront{
       } else if(c->value=="epts"){
 	++c;
 	get_vector(epts,c,pe,"epts");
+      } else if(c->value=="epts"){
+	++c;
+	get_vector(epts,c,pe,"epts");
+      } else if(c->value=="deps"){
+	++c;
+	get_vector(deps,c,pe,"deps");
+      } else {
+	error("unsupported entry type '"+c->value+"'");
       }
-      CxxTokenizer::checkNotEndOfLine(f,c,pe);
     }
     CxxTokenizer::readSpecifiedToken(f,"}",c,pe);
     if(!btype){
@@ -226,10 +236,10 @@ namespace mfront{
     std::swap(l.cppflags,cppflags);
     std::swap(l.ldflags,ldflags);
     std::swap(l.epts,epts);
+    std::swap(l.deps,deps);
     p = c;
     return l;
   }
-
   
 } // end of namespace mfront
 

@@ -43,15 +43,7 @@ namespace mfront{
       this->reserveName(v);
     }
   }
-  
-  void
-  ModelDSLCommon::addLibraryDependency(const std::string& l){
-    if(std::find(this->librariesDependencies.begin(),
-		 this->librariesDependencies.end(),l)==this->librariesDependencies.end()){
-      this->librariesDependencies.push_back(l);
-    }
-  } // end of ModelDSLCommon::addLibraryDependency
-  
+    
   void
   ModelDSLCommon::reserveName(const std::string& n){
     if(!this->reservedNames.insert(n).second){

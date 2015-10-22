@@ -38,7 +38,7 @@ namespace mfront
   CMaterialPropertyInterface::getGeneratedLibraryName(const std::string& l,
 					       const std::string& m) const
   {
-    return "lib"+getMaterialLawLibraryNameBase(l,m);
+    return getMaterialLawLibraryNameBase(l,m);
   } // end of CMaterialPropertyInterface::getGeneratedLibraryName
 
   void

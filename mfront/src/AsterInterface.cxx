@@ -48,12 +48,12 @@ namespace mfront{
     string lib;
     if(mb.getLibrary().empty()){
       if(!mb.getMaterialName().empty()){
-	lib = "libAster"+mb.getMaterialName();
+	lib = "Aster"+mb.getMaterialName();
       } else {
-	lib = "libAsterBehaviour";
+	lib = "AsterBehaviour";
       }
     } else {
-      lib = "libAster"+mb.getLibrary();
+      lib = "Aster"+mb.getLibrary();
     }
     return lib;
   } // end of AsterInterface::getLibraryName
@@ -666,7 +666,7 @@ namespace mfront{
     insert_if(d[lib].ldflags,"`tfel-config --libs --material --mfront-profiling`");
     // insert_if(d[lib].epts,name);
     insert_if(d[lib].epts,this->getFunctionName(name));
-  } // end of AsterInterface::getGeneratedSources
+  } // end of AsterInterface::getTargetsDescription
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
 	    SupportedTypes::TypeSize>

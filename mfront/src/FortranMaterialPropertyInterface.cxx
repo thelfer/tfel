@@ -40,7 +40,7 @@ namespace mfront
 							  const MaterialPropertyDescription& mpd)
 
   {
-    const auto lib  = "libFortran"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+    const auto lib  = "Fortran"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f = makeLowerCase(mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className);
     insert_if(d[lib].ldflags,"-lm");

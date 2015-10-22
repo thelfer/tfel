@@ -760,9 +760,9 @@ namespace mfront
   DSLBase::treatLink(void){
     const auto nlink = readStringOrArrayOfString("DSLBase::treatLink");
     this->readSpecifiedToken("DSLBase::treatLink",";");
-    for(const auto& l : nlink){
-      this->addLibraryDependency(l);
-    }
+#pragma message("DSLBase::treatLink: unimplemented feature")
+    throw(std::runtime_error("DSLBase::treatLink: "
+			     "unimplemented feature"));
   } // end of DSLBase::treatLink
 
   void
@@ -774,7 +774,7 @@ namespace mfront
       m.setInterface(i);
     }
     for(const auto& f : files){
-      mergeTargetsDescription(this->td,m.treatFile(f),true);
+      mergeTargetsDescription(this->td,m.treatFile(f),false);
     }
   } // end of DSLBase::callMFront
 
@@ -872,10 +872,15 @@ namespace mfront
       this->appendToIncludes("#include\""+minterface.getHeaderFileName(mpd.material,
 								       mpd.law)+".hxx\"");
       this->addMaterialLaw(mname);
-      // generating the source files and adds them to the various
-      // files used to generate the final Makefile
-      this->callMFront(vector<string>(1u,"mfront"),
-		       vector<string>(1u,path));
+      MFront m;
+      m.setInterface("mfront");
+      const auto t = m.treatFile(path);
+      if(!t.specific_targets.empty()){
+	throw(std::runtime_error("DSLBase::handleMaterialLaw: "
+				 "error while treating file '"+f+"'\n"
+				 "No specific targets are not supported"));
+      }
+      this->atds.push_back(t);
     } catch(exception& e){
       throw(std::runtime_error("DSLBase::handleMaterialLaw: "
 			       "error while treating file '"+f+"'\n"+
@@ -884,7 +889,6 @@ namespace mfront
       throw(std::runtime_error("DSLBase::handleMaterialLaw: "
 			       "error while treating file '"+f+"'"));
     }
-    this->addLibraryDependency("-lMFrontMaterialLaw");
     return mp.getMaterialPropertyDescription();
   } // end of DSLBase::handleMaterialLaw
 
@@ -1143,6 +1147,36 @@ namespace mfront
     }
   } // end of DSLBase::handleParameter
 
-  
+  void DSLBase::completeTargetsDescription(){
+    for(const auto& t : this->atds){
+      for(const auto& al : t){
+	for(auto& l : this->td){
+	  if(l.name!=al.name){
+	    insert_if(l.deps,al.name);
+	  }
+	}
+      }
+    }
+    for(const auto& t : this->atds){
+      mergeTargetsDescription(this->td,t,false);      
+    }
+    this->atds.clear();
+  } // end of DSLBase::completeTargetsDescription()
 
 } // end of namespace mfront
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

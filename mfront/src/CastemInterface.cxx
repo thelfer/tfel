@@ -201,12 +201,12 @@ namespace mfront{
     auto lib = std::string{};
     if(mb.getLibrary().empty()){
       if(!mb.getMaterialName().empty()){
-	lib = "libUmat"+mb.getMaterialName();
+	lib = "Umat"+mb.getMaterialName();
       } else {
-	lib = "libUmatBehaviour";
+	lib = "UmatBehaviour";
       }
     } else {
-      lib = "libUmat"+mb.getLibrary();
+      lib = "Umat"+mb.getLibrary();
     }
     return lib;
   } // end of CastemInterface::getLibraryName

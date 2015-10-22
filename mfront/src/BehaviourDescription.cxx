@@ -510,20 +510,6 @@ namespace mfront
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"F1");
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sig");
   }
-
-  void
-  BehaviourDescription::addLibraryDependency(const std::string& l){
-    if(std::find(this->librariesDependencies.begin(),
-		 this->librariesDependencies.end(),l)==this->librariesDependencies.end()){
-      this->librariesDependencies.push_back(l);
-    }
-  } // end of BehaviourDescription::addLibraryDependency
-
-  const std::vector<std::string>&
-  BehaviourDescription::getLibrariesDependencies(void) const
-  {
-    return this->librariesDependencies;
-  }
   
   void
   BehaviourDescription::declareAsACohesiveZoneModel(void)

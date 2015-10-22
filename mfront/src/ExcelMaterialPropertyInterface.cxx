@@ -130,7 +130,7 @@ namespace mfront
       }
       iwrapper.close();
     }
-    const auto lib = "libExcel"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+    const auto lib = "Excel"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     auto p2 = interfaces.end();
     for(auto p=interfaces.begin();p!=interfaces.end();++p){
       if((p->function==name)&&

@@ -83,7 +83,7 @@ namespace mfront
 
   {
     auto fmname = (mpd.material.empty()) ? "mfront_mp" : mpd.material;
-    const auto lib  = "libFortran03"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+    const auto lib  = "Fortran03"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     insert_if(d[lib].ldflags,"-lm");
     insert_if(d[lib].sources,name+".cxx");

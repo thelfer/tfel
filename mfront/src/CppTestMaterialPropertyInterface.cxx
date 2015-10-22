@@ -178,9 +178,9 @@ namespace mfront
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto target = name+"CppTest";
 #if defined _WIN32 || defined _WIN64
-    d.specific_targets[target].first.push_back("lib"+lib+".dll");
+    d.specific_targets[target].first.push_back(lib+".dll");
 #else
-    d.specific_targets[target].first.push_back("lib"+lib+".so");
+    d.specific_targets[target].first.push_back(lib+".so");
 #endif
     d.specific_targets[target].first.push_back(name+"-CppTest.o");
     d.specific_targets[target].second.push_back("@$(CXX) $(LDFLAGS) -L. -l"+lib+" $^ -o $@");

@@ -65,8 +65,8 @@ namespace mfront
   CastemMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 							 const MaterialPropertyDescription& mpd)
   {
-    const auto lib = "libCastem"+getMaterialLawLibraryNameBase(mpd.library,
-							       mpd.material);
+    const auto lib = "Castem"+getMaterialLawLibraryNameBase(mpd.library,
+							    mpd.material);
     const auto name    = this->getCastemFunctionName(mpd.material,
 						     mpd.className);
     insert_if(d[lib].ldflags,"-lm");

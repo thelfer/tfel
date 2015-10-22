@@ -92,14 +92,12 @@ namespace mfront{
   static std::string
   handleSpace(const std::string& p)
   {
-    using namespace std;
     if(find(p.begin(),p.end(),' ')!=p.end()){
 #if defined _WIN32 || defined _WIN64
-      string msg("tfel-config handleSpace: "
-		 "path to TFEL shall not contain space as "
-		 "MinGW can't handle it (Found '"+p+"'). "
-		 "Please change TFEL installation directory");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("tfel-config handleSpace: "
+			       "path to TFEL shall not contain space as "
+			       "MinGW can't handle it (Found '"+p+"'). "
+			       "Please change TFEL installation directory"));
 #endif
       return '"'+p+'"';
     }
@@ -109,24 +107,21 @@ namespace mfront{
   static std::string
   getTFELHOME(void)
   {
-    using namespace std;
 #if defined _WIN32 || defined _WIN64
     // check in the registry (installation through NSIS)
-    string rpath;
+    std::string rpath;
     if(getValueInRegistry(rpath)){
       return handleSpace(rpath);
     }
 #endif
-    const char * const path = getenv("TFELHOME");
+    const char * const path = ::getenv("TFELHOME");
     if(path!=nullptr){
       return handleSpace(path);
     }
-    
 #if defined _WIN32 || defined _WIN64
-    string msg("tfel-config getTFELHOME: "
-	       "no TFELHOME registry key defined and no TFEHOME "
-	       "environment variable defined");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("tfel-config getTFELHOME: "
+			     "no TFELHOME registry key defined and no TFEHOME "
+			     "environment variable defined"));
 #endif
     return "";
   }

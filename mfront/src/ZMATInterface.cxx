@@ -198,12 +198,12 @@ namespace mfront
   {
     if(mb.getLibrary().empty()){
       if(!mb.getMaterialName().empty()){
-	return "libZMAT"+mb.getMaterialName();
+	return "ZMAT"+mb.getMaterialName();
       } else {
-	return "libZMATBehaviour";
+	return "ZMATBehaviour";
       }
     }
-    return "libZMAT"+mb.getLibrary();
+    return "ZMAT"+mb.getLibrary();
   } // end of UMATInterface::getLibraryName
 
   std::string

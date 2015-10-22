@@ -343,17 +343,13 @@ namespace mfront{
     for(const auto & i : this->interfaces){
       i.second->getTargetsDescription(this->td,this->mb);
     }
-    for(const auto& l : this->td){
-      for(const auto& ld : this->mb.getLibrariesDependencies()){
-	if("-l"+l.name!=ld){
-	  insert_if(this->td[l.name].ldflags,ld);
-	}
-      }
+    for(auto& l : this->td){
       insert_if(this->td[l.name].sources,this->srcFileName);
     }
     insert_if(this->td.headers,this->behaviourFileName);
     insert_if(this->td.headers,this->behaviourDataFileName);
     insert_if(this->td.headers,this->integrationDataFileName);
+    this->completeTargetsDescription();
   }
 
   void
@@ -1804,10 +1800,6 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("BehaviourDSLCommon::treatBounds",";");
   } // end of BehaviourDSLCommon::treatBounds
-
-  void BehaviourDSLCommon::addLibraryDependency(const std::string& l){
-    this->mb.addLibraryDependency(l);
-  }
   
   void BehaviourDSLCommon::registerDefaultVarNames(void)
   {
