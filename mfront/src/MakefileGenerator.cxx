@@ -122,6 +122,11 @@ namespace mfront{
     const auto sb  = o.silentBuild ? "@" : "";
     const auto cxx = (env_cxx==nullptr) ? "$(CXX)" : env_cxx;
     const auto cc  = (env_cc ==nullptr) ? "$(CC)"  : env_cc;
+#ifdef _WIN32
+    const string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const string tfel_config = "tfel-config";
+#endif /* WIN32 */
     auto mfile = d+dirStringSeparator()+f;
     ofstream m(mfile);
     m.exceptions(ios::badbit|ios::failbit);
@@ -163,7 +168,7 @@ namespace mfront{
     if(inc!=nullptr){
       m << inc << " ";
     }
-    m << "-I../include `tfel-config --includes`";
+    m << "-I../include $(shell " << tfel_config << " --includes)";
     // cpp flags
     vector<string> tmp_cppflags;
     for(const auto& l:t){
@@ -202,14 +207,14 @@ namespace mfront{
 	m << cxxflags << " ";
       } else if(o.oflags0||o.oflags||o.oflags2){
 	if(o.oflags2){
-	  m << "`tfel-config --compiler-flags --oflags --oflags2` ";
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags --oflags2) ";
 	} else if(o.oflags){
-	  m << "`tfel-config --compiler-flags --oflags` ";
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
 	} else {
-	  m << "`tfel-config --compiler-flags --oflags0` ";
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
 	}
       } else {
-	m << "-O2 `tfel-config --compiler-flags`";
+	m << "-O2 $(shell " << tfel_config << " --compiler-flags)";
       }
       if(o.sys=="win32"){
 	m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES) \n\n";
@@ -227,11 +232,11 @@ namespace mfront{
 	m << cflags << " ";
       } else if(o.oflags0||o.oflags||o.oflags2){
 	if(o.oflags2){
-	  m << "`tfel-config --oflags --oflags2` ";
+	  m << "$(shell " << tfel_config << " --oflags --oflags2) ";
 	} else if(o.oflags){
-	  m << "`tfel-config --compiler-flags --oflags` ";
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
 	} else {
-	  m << "`tfel-config --compiler-flags --oflags0` ";
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
 	}
       } else {
 	m << "-O2 ";

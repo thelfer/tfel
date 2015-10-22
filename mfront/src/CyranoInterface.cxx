@@ -459,7 +459,12 @@ namespace mfront{
 				       const BehaviourDescription& bd){
     const auto lib  = CyranoInterface::getLibraryName(bd);
     const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
-    insert_if(d[lib].cppflags,"`tfel-config --includes`");
+#ifdef _WIN32
+    const std::string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const std::string tfel_config = "tfel-config";
+#endif /* WIN32 */
+    insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
 #if CYRANO_ARCH == 64
     insert_if(d[lib].cppflags,"-DCYRANO_ARCH=64");
 #elif CYRANO_ARCH == 32
@@ -475,7 +480,7 @@ namespace mfront{
     if(this->generateMTestFile){
       insert_if(d[lib].ldflags,"-lMTestFileGenerator");
     }
-    insert_if(d[lib].ldflags,"`tfel-config --libs --material --mfront-profiling`");
+    insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
   } // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
 
   void 

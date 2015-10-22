@@ -1234,7 +1234,12 @@ namespace mfront{
     using namespace std;
     const auto lib  = CastemInterface::getLibraryName(bd);
     const auto name = this->getBehaviourName(bd);
-    insert_if(d[lib].cppflags,"`tfel-config --includes`");
+#ifdef _WIN32
+    const string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const string tfel_config = "tfel-config";
+#endif /* WIN32 */
+    insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
 #ifdef CASTEM_CPPFLAGS
     insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
@@ -1258,7 +1263,7 @@ namespace mfront{
     if(this->generateMTestFile){
       insert_if(d[lib].ldflags,"-lMTestFileGenerator");
     }
-    insert_if(d[lib].ldflags,"`tfel-config --libs --material --mfront-profiling`");
+    insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
     // entry points
     auto b = vector<string>{};
     const auto base = this->getUmatFunctionName(bd);

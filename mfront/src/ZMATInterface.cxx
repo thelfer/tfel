@@ -1562,13 +1562,18 @@ namespace mfront
 				       const BehaviourDescription& bd){
     const auto lib  = getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName();
-    insert_if(d[lib].cppflags,"`tfel-config --includes --zmat`");
+#ifdef _WIN32
+    const std::string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const std::string tfel_config = "tfel-config";
+#endif /* WIN32 */
+    insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes --zmat)");
 #pragma message("Linux specific")
     insert_if(d[lib].cppflags,"-DLinux");
     insert_if(d.headers,"MFront/ZMAT/ZMAT"+name+".hxx");
     insert_if(d[lib].sources,"ZMAT"+name+".cxx");
     insert_if(d[lib].epts,bd.getClassName());
-    insert_if(d[lib].ldflags,"`tfel-config --libs --material --mfront-profiling`");
+    insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
   } // end of ZMATInterface::getTargetsDescription
 
   ZMATInterface::~ZMATInterface()
