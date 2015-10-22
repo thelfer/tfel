@@ -936,8 +936,8 @@ namespace mfront
       const int l = this->readInt(p,this->fileTokens.end());
       this->readSpecifiedToken("MTestParser::handleRotationMatrix","}",
 			       p,this->fileTokens.end());
-      const real n1   = std::sqrt(real{h*h+k*k+l*l});
-      const real n2   = std::sqrt(real{h*h+k*k});
+      const real n1   = std::sqrt(real(h*h+k*k+l*l));
+      const real n2   = std::sqrt(real(h*h+k*k));
       const real phi1 = 0;
       const real phi  = std::acos(l/n1)*cste;
       const real phi2 = std::atan2(h/n2,k/n2)*cste;
