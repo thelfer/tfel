@@ -1633,6 +1633,11 @@ namespace mfront{
     const char * const cxxflags = ::getenv("CXXFLAGS");
     const char * const cflags   = ::getenv("CFLAGS");
     const char * const ldflags  = ::getenv("LDFLAGS");
+#ifdef _WIN32
+    const char * const tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const char * const tfel_config = "tfel-config";
+#endif /* WIN32 */
     if(this->silentBuild){
       sb = "@"; 
     }
@@ -1692,7 +1697,7 @@ namespace mfront{
       if(inc!=0){
 	this->makeFile << inc << " ";
       }
-      this->makeFile << "-I../include `tfel-config --includes`";
+      this->makeFile << "-I../include $(shell " << tfel_config << " --includes)";
       if(!this->globalIncludes.empty()){
 	this->makeFile << " \\\n";
 	for(p7=this->globalIncludes.begin();
@@ -1726,14 +1731,14 @@ namespace mfront{
 	  this->makeFile << cxxflags << " ";
 	} else if(this->oflags0||this->oflags||this->oflags2){
 	  if(this->oflags2){
-	    this->makeFile << "`tfel-config --compiler-flags --oflags --oflags2` ";
+	    this->makeFile << "$(shell " << tfel_config << " --compiler-flags --oflags --oflags2) ";
 	  } else if(this->oflags){
-	    this->makeFile << "`tfel-config --compiler-flags --oflags` ";
+	    this->makeFile << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
 	  } else {
-	    this->makeFile << "`tfel-config --compiler-flags --oflags0` ";
+	    this->makeFile << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
 	  }
 	} else {
-	  this->makeFile << "-O2 `tfel-config --compiler-flags`";
+	  this->makeFile << "-O2 $(shell " << tfel_config << " --compiler-flags)";
 	}
 	if(this->sys=="win32"){
 	  this->makeFile << "-D'F77_FUNC(X,Y)=X\\#\\#_' -D'F77_FUNC_(X,Y)=X\\#\\#__' -DWIN32 $(INCLUDES) \n\n";
@@ -1751,11 +1756,11 @@ namespace mfront{
 	  this->makeFile << cflags << " ";
 	} else if(this->oflags0||this->oflags||this->oflags2){
 	  if(this->oflags2){
-	    this->makeFile << "`tfel-config --oflags --oflags2` ";
+	    this->makeFile << "$(shell " << tfel_config << " --oflags --oflags2) ";
 	  } else if(this->oflags){
-	    this->makeFile << "`tfel-config --compiler-flags --oflags` ";
+	    this->makeFile << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
 	  } else {
-	    this->makeFile << "`tfel-config --compiler-flags --oflags0` ";
+	    this->makeFile << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
 	  }
 	} else {
 	  this->makeFile << "-O2 ";

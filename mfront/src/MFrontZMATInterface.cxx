@@ -1580,7 +1580,12 @@ namespace mfront
   {
     using namespace std;
     map<string,vector<string> > incs;
-    incs[getLibraryName(mb)].push_back("`tfel-config --includes --zmat`");
+#ifdef _WIN32
+    const string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const string tfel_config = "tfel-config";
+#endif /* WIN32 */
+    incs[getLibraryName(mb)].push_back("$(shell "+tfel_config+" --includes --zmat)");
 #warning "HERE"
     incs[getLibraryName(mb)].push_back("-DLinux");
     return incs;
@@ -1617,10 +1622,15 @@ namespace mfront
     using namespace std;
     map<string,vector<string> > deps;
     const string lib = getLibraryName(mb);
+#ifdef _WIN32
+    const string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const string tfel_config = "tfel-config";
+#endif /* WIN32 */
 #ifdef HAVE_CXX11
-      deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
+      deps[lib].push_back("$(shell "+tfel_config+" --libs --material --mfront-profiling)");
 #else 
-      deps[lib].push_back("`tfel-config --libs --material`");
+      deps[lib].push_back("$(shell "+tfel_config+" --libs --material)");
 #endif
     return deps;
   } // end of MFrontZMATInterface::getLibrariesDependencies

@@ -482,7 +482,6 @@ namespace mfront{
     using namespace std;
     map<string,vector<string> > incs;
     string lib = MFrontCyranoInterface::getLibraryName(mb);
-    incs[lib].push_back("`tfel-config --includes`");
 #if CYRANO_ARCH == 64
     incs[lib].push_back("-DCYRANO_ARCH=64");
 #elif CYRANO_ARCH == 32
@@ -526,14 +525,19 @@ namespace mfront{
     using namespace std;
     map<string,vector<string> > deps;
     string lib = MFrontCyranoInterface::getLibraryName(mb);
+#ifdef _WIN32
+    const string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const string tfel_config = "tfel-config";
+#endif /* WIN32 */
     deps[lib].push_back("-lCyranoInterface");
     if(this->generateMTestFile){
       deps[lib].push_back("-lMTestFileGenerator");
     }
 #ifdef HAVE_CXX11
-      deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
+      deps[lib].push_back("$(shell "+tfel_config+" --libs --material --mfront-profiling)");
 #else 
-      deps[lib].push_back("`tfel-config --libs --material`");
+      deps[lib].push_back("$(shell "+tfel_config+" --libs --material)");
 #endif
     return deps;
   } // end of MFrontCyranoInterface::getLibrariesDependencies()

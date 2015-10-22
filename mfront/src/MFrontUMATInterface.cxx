@@ -1379,7 +1379,6 @@ namespace mfront{
     using namespace std;
     map<string,vector<string> > incs;
     string lib = MFrontUMATInterface::getLibraryName(mb);
-    incs[lib].push_back("`tfel-config --includes`");
 #ifdef CASTEM_CPPFLAGS
     incs[lib].push_back(CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
@@ -1436,14 +1435,19 @@ namespace mfront{
     using namespace std;
     map<string,vector<string> > deps;
     string lib = MFrontUMATInterface::getLibraryName(mb);
+#ifdef _WIN32
+    const string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const string tfel_config = "tfel-config";
+#endif /* WIN32 */
     deps[lib].push_back("-lUMATInterface");
     if(this->generateMTestFile){
       deps[lib].push_back("-lMTestFileGenerator");
     }
 #ifdef HAVE_CXX11
-      deps[lib].push_back("`tfel-config --libs --material --mfront-profiling`");
+      deps[lib].push_back("$(shell "+tfel_config+" --libs --material --mfront-profiling)");
 #else 
-      deps[lib].push_back("`tfel-config --libs --material`");
+      deps[lib].push_back("$(shell "+tfel_config+" --libs --material)");
 #endif
     return deps;
   } // end of MFrontUMATInterface::getLibrariesDependencies()
