@@ -11,16 +11,17 @@
  * project under specific licensing conditions. 
  */
 
+#include<stdexcept>
 #include<iostream>
+#include<iterator>
 #include<cstdlib>
+#include<cassert>
 #include<fstream>
 #include<sstream>
+#include<cstring>
 #include<string>
-#include<iterator>
-#include<stdexcept>
 #include<cerrno>
 #include<memory>
-#include<cassert>
 
 #include<sys/types.h>
 #include<sys/stat.h>
@@ -54,6 +55,7 @@
 #include"MFront/BehaviourInterfaceFactory.hxx"
 #include"MFront/ModelInterfaceFactory.hxx"
 #include"MFront/MFrontLock.hxx"
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontUtilities.hxx"
 
 #include"MFront/MFront.hxx"
@@ -136,13 +138,12 @@ namespace mfront{
   getDocumentationFilePath(const std::string& pn,
 			   const std::string& k)
   {
-    using namespace std;
-    string root = getTFELHOME();
+    std::string root = getTFELHOME();
     if(root.empty()){
       root = PREFIXDIR;
     }
-    string fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".md";
-    ifstream desc(fn);
+    auto fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".md";
+    std::ifstream desc{fn};
     if(desc){
       return fn;
     }
@@ -163,11 +164,7 @@ namespace mfront{
   std::string 
   MFront::getUsageDescription(void) const
   {
-    using namespace std;
-    string usage("Usage : ");
-    usage += this->programName;
-    usage += " [options] [files]";
-    return usage;
+    return "Usage: "+this->programName+" [options] [files]";
   }
 
   const tfel::utilities::Argument&
@@ -183,9 +180,9 @@ namespace mfront{
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<MFront>::treatUnknownArgument();
 #else
-		auto a = static_cast<const std::string&>(this->getCurrentCommandLineArgument());
-		std::cerr << "mfront : unsupported option '" 
-				<< a << '\'' << std::endl;
+      auto a = static_cast<const std::string&>(this->getCurrentCommandLineArgument());
+      std::cerr << "mfront : unsupported option '" 
+		<< a << '\'' << std::endl;
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
     }
@@ -215,9 +212,8 @@ namespace mfront{
   void
   MFront::treatOMake(void)
   {
-    using namespace std;
     this->genMake = true;
-    string level = this->currentArgument->getOption();
+    const auto level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
 	this->opts.oflags2   = true;
@@ -226,10 +222,9 @@ namespace mfront{
       } else if(level=="level1"){
 	this->opts.oflags    = true;
       } else if(level!="level1"){
-	string msg("MFront::treatOMake : ");
-	msg += "unsupported value '"+level+
-	  "' for the --omake option";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MFront::treatOMake: "
+				 "unsupported value '"+level+
+				 "' for the --omake option"));
       }
     } else {
       this->opts.oflags  = true;
@@ -239,10 +234,9 @@ namespace mfront{
   void
   MFront::treatOBuild(void)
   {
-    using namespace std;
     this->genMake   = true;
     this->buildLibs = true;
-    string level = this->currentArgument->getOption();
+    const auto level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
 	this->opts.oflags2   = true;
@@ -251,10 +245,9 @@ namespace mfront{
       } else if(level=="level1"){
 	this->opts.oflags    = true;
       } else if(level!="level1"){
-	string msg("MFront::treatOBuild : ");
-	msg += "unsupported value '"+level+
-	  "' for the --obuild option";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MFront::treatOBuild: "
+				 "unsupported value '"+level+
+				 "' for the --obuild option"));
       }
     } else {
       this->opts.oflags    = true;
@@ -266,8 +259,7 @@ namespace mfront{
   void
   MFront::treatListParsers(void)
   {
-    using namespace std;
-    cout << "available dsl : " << endl;
+    std::cout << "available dsl : \n";
     auto& parserFactory = DSLFactory::getDSLFactory();
     const auto& parsers = parserFactory.getRegistredParsers();
     auto p = parsers.begin();
@@ -276,7 +268,7 @@ namespace mfront{
       if(tmp.size()<=32){
 	tmp.insert(tmp.size(),32-tmp.size(),' ');
       }
-      cout << tmp << " : " << parserFactory.getParserDescription(*p) << ".\n";
+      std::cout << tmp << " : " << parserFactory.getParserDescription(*p) << ".\n";
       ++p;
     }
     exit(EXIT_SUCCESS);
@@ -288,7 +280,8 @@ namespace mfront{
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
       throw(std::runtime_error("MFront::treatSilentBuild : "
-			       "no argument given to the --silentBuild option"));
+			       "no argument given to the "
+			       "--silentBuild option"));
     }
     if(o=="on"){
       this->opts.silentBuild=true;
@@ -307,12 +300,12 @@ namespace mfront{
   void
   MFront::treatTarget(void)
   {
-    using namespace std;
     using tfel::utilities::tokenize;
     const auto& t = tokenize(this->currentArgument->getOption(),',');
     if(t.empty()){
-      throw(runtime_error("MFront::treatTarget : "
-			  "no argument given to the --target option"));
+      throw(std::runtime_error("MFront::treatTarget: "
+			       "no argument given to the "
+			       "--target option"));
     }
     this->specifiedTargets.insert(t.begin(),t.end());
     this->genMake   = true;
@@ -322,11 +315,10 @@ namespace mfront{
   void
   MFront::treatOTarget(void)
   {
-    using namespace std;
     if(this->currentArgument==this->args.end()){
-      string msg("MFront::treatTarget : ");
-      msg += "no argument given to the --otarget option";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MFront::treatTarget: "
+			       "no argument given to the "
+			       "--otarget option"));
     }
     this->opts.oflags    = true;
     this->treatTarget();
@@ -434,21 +426,19 @@ namespace mfront{
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
-      string msg("MFront::treatHelpCommandsList : ");
-      msg += "no parser name given";
-      throw(runtime_error(msg));
+      throw(runtime_error("MFront::treatHelpCommandsList: "
+			  "no parser name given"));
     }
     shared_ptr<AbstractDSL> p{f.createNewParser(o)};
     vector<string> k;
-    vector<string>::const_iterator pk;
     p->getKeywordsList(k);
     string::size_type msize = 0;
-    for(pk=k.begin();pk!=k.end();++pk){
+    for(auto pk=k.begin();pk!=k.end();++pk){
       msize = max(msize,pk->size());
     }
-    for(pk=k.begin();pk!=k.end();++pk){
-      string fp = getDocumentationFilePath(o,*pk);
-      string key = *pk;
+    for(auto pk=k.begin();pk!=k.end();++pk){
+      const auto fp = getDocumentationFilePath(o,*pk);
+      auto key = *pk;
       key.resize(msize,' ');
       cout << key << "  ";
       if(!fp.empty()){
@@ -471,7 +461,7 @@ namespace mfront{
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
-      throw(runtime_error("MFront::treatHelpCommandsList : "
+      throw(runtime_error("MFront::treatHelpCommandsList: "
 			  "no parser name given"));
     }
     auto keys = vector<string>{};
@@ -503,29 +493,26 @@ namespace mfront{
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
-      string msg("MFront::treatHelpCommand : ");
-      msg += "no argument given";
-      throw(runtime_error(msg));
+      throw(runtime_error("MFront::treatHelpCommand: "
+			  "no argument given"));
     }
-    string pn;
-    string k;
-    string::size_type pos = o.rfind(':');
+    const auto pos = o.rfind(':');
     if((pos==string::npos)||(pos+1==o.size())){
-      string msg("MFront::treatHelpCommand : ");
-      msg += "ill-formed argument, expected 'parser:@keyword'";
-      throw(runtime_error(msg));
+      throw(runtime_error("MFront::treatHelpCommand: "
+			  "ill-formed argument, expected "
+			  "'parser:@keyword'"));
     }
-    pn = o.substr(0,pos); // parser name
-    k  = o.substr(pos+1); // key
+    const auto pn = o.substr(0,pos); // parser name
+    const auto k  = o.substr(pos+1); // key
     if((pn.empty())||(k.empty())){
-      string msg("MFront::treatHelpCommand : ");
-      msg += "ill-formed argument, expected 'parser:@keyword'";
-      throw(runtime_error(msg));
+      throw(runtime_error("MFront::treatHelpCommand: "
+			  "ill-formed argument, expected "
+			  "'parser:@keyword'"));
     }
     if(k[0]!='@'){
-      string msg("MFront::treatHelpCommand : ");
-      msg += "ill-formed argument, expected 'parser:@keyword'";
-      throw(runtime_error(msg));
+      throw(runtime_error("MFront::treatHelpCommand: "
+			  "ill-formed argument, expected "
+			  "'parser:@keyword'"));
     }
     auto p = f.createNewParser(pn);
     vector<string> keys;
@@ -535,7 +522,7 @@ namespace mfront{
       msg += "keyword '"+k+"' is not declared ";
       throw(runtime_error(msg));
     }
-    string fp = getDocumentationFilePath(pn,k);
+    const auto fp = getDocumentationFilePath(pn,k);
     if(fp.empty()){
       cout << "no description available for keyword '"
 	   << k << "'" << endl;
@@ -586,12 +573,11 @@ namespace mfront{
   TargetsDescription
   MFront::treatFile(const std::string& f) const
   {
-    using namespace std;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       auto& log = getLogStream();
-      log << "Treating file : '" << f << "'" <<  endl;
+      log << "Treating file : '" << f << "'" <<  std::endl;
     }
-    shared_ptr<AbstractDSL> dsl = MFrontBase::getDSL(f);
+    auto dsl = MFrontBase::getDSL(f);
     if(!this->interfaces.empty()){
       dsl->setInterfaces(this->interfaces);
     }
@@ -612,7 +598,7 @@ namespace mfront{
     }
     CxxTokenizer tokenizer{file};
     auto c = tokenizer.begin();
-    auto t = read<TargetsDescription>(c,tokenizer.end());
+    const auto t = read<TargetsDescription>(c,tokenizer.end());
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       auto& log = getLogStream();
       log << t << std::endl;
@@ -621,119 +607,94 @@ namespace mfront{
   }
   
 #ifdef MFRONT_MAKE_SUPPORT
+  static const char*
+  getMakeCommand(void){
+    const char * emake = ::getenv("MAKE");
+    if(emake!=nullptr){
+      return emake;
+    }
+#if defined _WIN32 || defined _WIN64
+    return "make.exe";
+#else
+    return "make";
+#endif
+  }
+
+  static void callMake(const std::string& target){
+    const char * make = getMakeCommand();
+    const char * silent = getDebugMode() ? "" : "-s";
+    const char *const argv[] = {make,silent,"-C","src",
+				"-f","Makefile.mfront",
+				target.c_str(),nullptr};
+    auto error = [&argv,&target](const std::string& e){
+      auto msg = "callMake: can't build target '"+target+"'\n";
+      if(!e.empty()){
+	msg += e+'\n';
+      }
+      msg += "Command was: ";
+      for(const char * const * a = argv;*a!=nullptr;++a){
+	msg += *a;msg += ' ';
+      }
+      throw(std::runtime_error(msg));
+    };
+    if(::strlen(make)==0u){
+      throw(std::runtime_error("callMake: empty make command"));
+    }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    if(_spawnvp(_P_WAIT,make,argv)!=0){
+      error("");
+    }
+#else
+    const auto child_pid = fork();
+    if(child_pid!=0){
+      int status;
+      if(wait(&status)==-1){
+	error("something went wrong while "
+	      "waiting end of make process");
+      }
+      if(status!=0){
+	error("libraries building went wrong");
+      }
+    } else {
+      execvp(make,const_cast<char* const*>(argv));
+      ::exit(EXIT_FAILURE);
+    }
+#endif
+  }
+  
   void
   MFront::buildLibraries(const std::string& target)
   {
-    using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    const char *const argv[] = {"make.exe","-C","src",
-				"-f","Makefile.mfront",
-				target.c_str(),nullptr};
-    if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
-      string msg("MFront::buildLibraries : ");
-      msg += "can't build target '"+target+"'";
-      throw(runtime_error(msg));
-    }
-#else
-    const char *const argv[] = {"make","-f",
-				"Makefile.mfront",target.c_str(),
-				nullptr};
-    pid_t child_pid;
-    int status;
-    child_pid = fork();
-    if(child_pid!=0){
-      if(wait(&status)==-1){
-	string msg("MFront::buildLibraries : ");
-	msg += "something went wrong while waiting end of make process";
-	throw(runtime_error(msg));
-      }
-      if(status!=0){
-	string msg("MFront::buildLibraries : ");
-	msg += "libraries building went wrong";
-	throw(runtime_error(msg));
-      }
-    } else {
-      if(chdir("./src")!=0){
-	string msg("MFront::buildLibraries : ");
-	msg += "can't change working directory to ./src";
-	throw(runtime_error(msg));
-      }
-      execvp("make",const_cast<char* const*>(argv));
-    }
-#endif
+    callMake(target.c_str());
   } // end of MFront::buildLibraries
 
   void
   MFront::cleanLibraries(void)
   {
-    using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    const char *const argv[] = {"make.exe","-C","src",
-				"-f","Makefile.mfront",
-				"clean",nullptr};
-    if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
-      string msg("MFront::cleanLibraries : ");
-      msg += "can't clean libraries";
-      throw(runtime_error(msg));
-    }
-#else
-    const char *const argv[] = {"make","-f",
-				"Makefile.mfront",
-				"clean",nullptr};
-    pid_t child_pid;
-    int status;
-    child_pid = fork();
-    if(child_pid!=0){
-      if(wait(&status)==-1){
-	string msg("MFront::cleanLibraries : ");
-	msg += "something went wrong while waiting end of make process";
-	throw(runtime_error(msg));
-      }
-      if(status!=0){
-	string msg("MFront::cleanLibraries : ");
-	msg += "can't clean libraries";
-	throw(runtime_error(msg));
-      }
-    } else {
-      if(chdir("./src")!=0){
-	string msg("MFront::cleanLibraries : ");
-	msg += "can't change working directory to ./src";
-	throw(runtime_error(msg));
-      }
-      execvp("make",const_cast<char* const*>(argv));
-    }
-#endif
+    callMake("clean");
   } // end of MFront::cleanLibraries
 #endif /* MFRONT_MAKE_SUPPORT */
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void MFront::generateDefsFiles(void){
-    auto& mlock = MFrontLock::getMFrontLock();
-    mlock.lock();
-    try{
-      for(const auto& d:this->defs){
-	if(!describes(this->targets,d)){
-	  throw(std::runtime_error("MFront::generateDefsFile : "
-				   "libray '"+d+"' is not handled"));
-	}
-	const auto f = "src"+tfel::system::dirStringSeparator()+d+".def";
-	std::ofstream def{f};
-	def.exceptions(std::ios::badbit|std::ios::failbit);
-	if(!def){
-	  throw(std::runtime_error("MFront::generateDefsFile : "
-				   "can't open file '"+f+"'"));
-	}
-	def << "LIBRARY " << d << "\n"
-	    << "EXPORTS\n";
-	std::copy(this->targets[d].epts.begin(),this->targets[d].epts.end(),
-		  std::ostream_iterator<std::string>(def,"\n"));
+    MFrontLockGuard lock;
+    for(const auto& d:this->defs){
+      if(!describes(this->targets,d)){
+	throw(std::runtime_error("MFront::generateDefsFile : "
+				 "libray '"+d+"' is not handled"));
       }
+      const auto f = "src"+tfel::system::dirStringSeparator()+d+".def";
+      std::ofstream def{f};
+      def.exceptions(std::ios::badbit|std::ios::failbit);
+      if(!def){
+	throw(std::runtime_error("MFront::generateDefsFile : "
+				 "can't open file '"+f+"'"));
+      }
+      def << "LIBRARY " << d << "\n"
+	  << "EXPORTS\n";
+      std::copy(this->targets[d].epts.begin(),this->targets[d].epts.end(),
+		std::ostream_iterator<std::string>(def,"\n"));
     }
-    catch(...){
-      mlock.unlock();
-      throw;
-    }
-    mlock.unlock();
   } // end of MFront::generateDefsFile
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 
@@ -741,18 +702,10 @@ namespace mfront{
   MFront::writeTargetsDescription(void) const
   {
     using namespace tfel::system;
-    auto& mlock = MFrontLock::getMFrontLock();
-    mlock.lock();
-    try{
-      std::ofstream file{"src"+dirStringSeparator()+"targets.lst"};
-      file.exceptions(std::ios::badbit|std::ios::failbit);
-      file << this->targets;
-    }
-    catch(...){
-      mlock.unlock();
-      throw;
-    }
-    mlock.unlock();
+    MFrontLockGuard lock;
+    std::ofstream file{"src"+dirStringSeparator()+"targets.lst"};
+    file.exceptions(std::ios::badbit|std::ios::failbit);
+    file << this->targets;
   } // end of MFront::writeTargetDescription
   
   void
