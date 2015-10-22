@@ -1954,23 +1954,36 @@ namespace mfront{
     }
     l.unlock();
   } // end of MFront::generateMakeFile
+
+  static const char*
+  getMakeCommand(void){
+    const char * emake = ::getenv("MAKE");
+    if(emake!=0){
+      return emake;
+    }
+#if defined _WIN32 || defined _WIN64
+    return "make.exe";
+#else
+    return "make";
+#endif
+  }
   
   void
   MFront::buildLibraries(const std::string& target)
   {
     using namespace std;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    const char *const argv[] = {"make.exe","-C","src",
+    const char * make = getMakeCommand();
+    const char * silent = getDebugMode() ? "" : "-s";
+    const char *const argv[] = {make,silent,"-C","src",
 				"-f","Makefile.mfront",
 				target.c_str(),0};
-    if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+    if(_spawnvp(_P_WAIT,make,argv)!=0){
       string msg("MFront::buildLibraries : ");
       msg += "can't build target '"+target+"'";
       throw(runtime_error(msg));
     }
 #else
-    const char *const argv[] = {"make","-f",
-				"Makefile.mfront",target.c_str(),0};
     pid_t child_pid;
     int status;
     child_pid = fork();
@@ -1986,12 +1999,8 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     } else {
-      if(chdir("./src")!=0){
-	string msg("MFront::buildLibraries : ");
-	msg += "can't change working directory to ./src";
-	throw(runtime_error(msg));
-      }
-      execvp("make",const_cast<char* const*>(argv));
+      execvp(make,const_cast<char* const*>(argv));
+      ::exit(EXIT_FAILURE);
     }
 #endif
   } // end of MFront::buildLibraries
@@ -2000,19 +2009,18 @@ namespace mfront{
   MFront::cleanLibraries(void)
   {
     using namespace std;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    const char *const argv[] = {"make.exe","-C","src",
+    const char * make = getMakeCommand();
+    const char * silent = getDebugMode() ? "" : "-s";
+    const char *const argv[] = {make,silent,"-C","src",
 				"-f","Makefile.mfront",
 				"clean",0};
-    if(_spawnvp(_P_WAIT,"make.exe",argv)!=0){
+#if defined _WIN32 || defined _WIN64
+    if(_spawnvp(_P_WAIT,make,argv)!=0){
       string msg("MFront::cleanLibraries : ");
       msg += "can't clean libraries";
       throw(runtime_error(msg));
     }
 #else
-    const char *const argv[] = {"make","-f",
-				"Makefile.mfront",
-				"clean",0};
     map<string,set<string> >::const_iterator p;
     pid_t child_pid;
     int status;
@@ -2029,12 +2037,8 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     } else {
-      if(chdir("./src")!=0){
-	string msg("MFront::cleanLibraries : ");
-	msg += "can't change working directory to ./src";
-	throw(runtime_error(msg));
-      }
-      execvp("make",const_cast<char* const*>(argv));
+      execvp(make,const_cast<char* const*>(argv));
+      ::exit(EXIT_FAILURE);
     }
 #endif
   } // end of MFront::cleanLibraries
