@@ -220,21 +220,21 @@ namespace tfel
 						 const tfel::material::OutOfBoundsPolicy p)
     {
       using namespace std;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGQWIN__)
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGQWIN__) */
       int (TFEL_ADDCALL_PTR fct)(int);
       fct = ::tfel_getSetOutOfBoundsPolicyFunction(lib,(f+"_setOutOfBoundsPolicy").c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::setOutOfBoundsPolicy : ");
 	msg += " can't get the '"+f+"_setOutOfBoundsPolicy' function (";
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 	  msg += ::GetLastError();
 #else
 	  msg += ::dlerror();
-#endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */
+#endif /* (defined _WIN32 || _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
       }

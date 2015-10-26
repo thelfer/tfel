@@ -1200,6 +1200,14 @@ namespace tfel{
       double res;
       CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readDouble",
 				      "expected number",p,pe);
+ #ifdef __CYGWIN__
+      std::istringstream is(p->value);
+      is >> res;
+      if(!is&&(!is.eof())){
+	throw(std::runtime_error("CxxTokenizer::readInt : "
+				 "could not read value from token '"+p->value+"'."));
+      }
+#else
       try{
 	res = std::stod(p->value);
       }
@@ -1208,6 +1216,7 @@ namespace tfel{
 				 "could not read value from token "
 				 "'"+p->value+"' ("+std::string(e.what())+")."));
       }
+#endif
       ++p;
       return res;
     } // end of CxxTokenizer::readDouble
