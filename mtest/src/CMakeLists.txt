@@ -12,6 +12,8 @@ link_directories("${PROJECT_BINARY_DIR}/src/Material"
 		 "${PROJECT_BINARY_DIR}/mtest/src")
 
 set(TFELMTest_SOURCES
+  CurrentState.cxx
+  StructureCurrentState.cxx
   Scheme.cxx
   SchemeBase.cxx
   MTest.cxx

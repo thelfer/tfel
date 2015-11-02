@@ -17,6 +17,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Castem/Castem.hxx"
+#include"MTest/CurrentState.hxx"
 #include"MTest/CastemCohesiveZoneModel.hxx"
 
 namespace mtest
@@ -88,26 +89,15 @@ namespace mtest
   
   bool
   CastemCohesiveZoneModel::computePredictionOperator(tfel::math::matrix<real>& Kt,
-								 const tfel::math::tmatrix<3u,3u,real>& r,
-								 const tfel::math::vector<real>&,
-								 const tfel::math::vector<real>&,
-								 const tfel::math::vector<real>& mp,
-								 const tfel::math::vector<real>&,
-								 const tfel::math::vector<real>&,
-								 const tfel::material::ModellingHypothesis::Hypothesis h,
-								 const StiffnessMatrixType::mtype ktype) const
+						     const CurrentState& s,
+						     const tfel::material::ModellingHypothesis::Hypothesis h,
+						     const StiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       // rotation matrix
-      tmatrix<3u,3u,real> drot(0.);
-      tmatrix<3u,3u,real>::size_type i,j;
-      for(i=0;i!=r.getNbRows();++i){
-	for(j=0;j!=r.getNbCols();++j){
-	  drot(i,j) = r(j,i);
-	}
-      }
-      this->computeElasticStiffness(Kt,mp,drot,h);
+      const auto drot = transpose(s.r);
+      this->computeElasticStiffness(Kt,s.mprops1,drot,h);
       return true;
     }
     throw(std::runtime_error("CastemCohesiveZoneModel::computePredictionOperator : "
@@ -117,19 +107,10 @@ namespace mtest
 
   bool
   CastemCohesiveZoneModel::integrate(tfel::math::matrix<real>& Kt,
-						 tfel::math::vector<real>& s1,
-						 tfel::math::vector<real>& iv1,
-						 const tfel::math::tmatrix<3u,3u,real>& r,
-						 const tfel::math::vector<real>& e0,
-						 const tfel::math::vector<real>& e1,
-						 const tfel::math::vector<real>& s0,
-						 const tfel::math::vector<real>& mp,
-						 const tfel::math::vector<real>& iv0,
-						 const tfel::math::vector<real>& ev0,
-						 const tfel::math::vector<real>& dev,
-						 const tfel::material::ModellingHypothesis::Hypothesis h,
-						 const real dt,
-						 const StiffnessMatrixType::mtype ktype) const
+				     CurrentState& s,
+				     const tfel::material::ModellingHypothesis::Hypothesis h,
+				     const real dt,
+				     const StiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -138,14 +119,13 @@ namespace mtest
     using tfel::math::vector;
     CastemInt ntens;
     CastemInt ndi;
-    CastemInt nprops = static_cast<CastemInt>(mp.size());
+    CastemInt nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
     if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
        (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)||
        (h==MH::AXISYMMETRICAL)){
-      string msg(" CastemCohesiveZoneModel::integrate : ");
-      msg += "unsupported modelling hypothesis";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
+			  "unsupported modelling hypothesis"));
     } else if (h==MH::PLANESTRESS){
       ndi = -2;
       ntens = 2;
@@ -159,86 +139,76 @@ namespace mtest
       ndi = 2;
       ntens = 3;
     } else {
-      string msg("CastemCohesiveZoneModel::integrate : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
+			  "unsupported hypothesis"));
     }
     if((this->D.getNbRows()!=Kt.getNbRows())||
        (this->D.getNbCols()!=Kt.getNbCols())){
-      string msg("CastemCohesiveZoneModel::integrate : ");
-      msg += "the memory has not been allocated correctly";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
+			  "the memory has not been allocated correctly"));
     }
-    if(((iv0.size()==0)&&(this->ivs.size()!=1u))||
-       ((iv0.size()!=0)&&(iv0.size()!=this->ivs.size()))){
-      string msg("CastemCohesiveZoneModel::integrate : ");
-      msg += "the memory has not been allocated correctly";
-      throw(runtime_error(msg));
+    if(((s.iv0.size()==0)&&(this->ivs.size()!=1u))||
+       ((s.iv0.size()!=0)&&(s.iv0.size()!=this->ivs.size()))){
+      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
+			  "the memory has not been allocated correctly"));
     }
     fill(this->D.begin(),this->D.end(),0.);
-    if(iv0.size()!=0){
-      copy(iv0.begin(),iv0.end(),
+    if(s.iv0.size()!=0){
+      copy(s.iv0.begin(),s.iv0.end(),
 	   this->ivs.begin());
     }
     nstatv = static_cast<CastemInt>(this->ivs.size());
     // rotation matrix
-    tmatrix<3u,3u,real> drot(0.);
-    tmatrix<3u,3u,real>::size_type i,j;
-    for(i=0;i!=r.getNbRows();++i){
-      for(j=0;j!=r.getNbCols();++j){
-	drot(i,j) = r(j,i);
-      }
-    }
+    tmatrix<3u,3u,real> drot = transpose(s.r);
     CastemInt kinc(1);
     tvector<3u,real> ue0(real(0));
     tvector<3u,real> ude(real(0));
     if(ntens==2){
-      ue0[0] = e0[1]      ; ue0[1] = e0[0];
-      ude[0] = e1[1]-e0[1]; ude[1] = e1[0]-e0[0];
-      s1[0]  = s0[1]; s1[1]  = s0[0];
+      ue0[0] = s.e0[1]      ; ue0[1] = s.e0[0];
+      ude[0] = s.e1[1]-s.e0[1]; ude[1] = s.e1[0]-s.e0[0];
+      s.s1[0]  = s.s0[1]; s.s1[1]  = s.s0[0];
     }
     if(ntens==3){
-      ue0[0] = e0[1]; ue0[1] = e0[2]; ue0[2] = e0[0];
-      ude[0] = e1[1]-e0[1]; ude[1] = e1[2]-e0[2]; ude[2] = e1[0]-e0[0];
-      s1[0]  = s0[1]; s1[1]  = s0[2]; s1[2]  = s0[0];
+      ue0[0] = s.e0[1];        ue0[1] = s.e0[2];          ue0[2] = s.e0[0];
+      ude[0] = s.e1[1]-s.e0[1]; ude[1] = s.e1[2]-s.e0[2]; ude[2] = s.e1[0]-s.e0[0];
+      s.s1[0]  = s.s0[1]; s.s1[1]  = s.s0[2]; s.s1[2]  = s.s0[0];
     }
     CastemReal ndt(1.);
-    (this->fct)(&s1(0),&this->ivs(0),&D(0,0),
+    (this->fct)(&s.s1(0),&this->ivs(0),&D(0,0),
 		nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,nullptr,
 		&ue0(0),&ude(0),nullptr,&dt,
-		&ev0(0),&dev(0),
-		&ev0(0)+1,&dev(0)+1,
-		nullptr,&ndi,nullptr,&ntens,&nstatv,&mp(0),
+		&(s.esv0(0))  ,&(s.desv(0)),
+		&(s.esv0(0))+1,&(s.desv(0))+1,
+		nullptr,&ndi,nullptr,&ntens,&nstatv,&(s.mprops1(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,nullptr,&kinc,0);
     if(kinc!=1){
       return false;
     }
-    if(!iv1.empty()){
-      copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
-    }
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-	this->computeElasticStiffness(Kt,mp,drot,h);
+	this->computeElasticStiffness(Kt,s.mprops1,drot,h);
       } else {
-	string msg("CastemCohesiveZoneModel::integrate : "
-		   "computation of the tangent operator "
-		   "is not supported");
-	throw(runtime_error(msg));
+	throw(runtime_error("CastemCohesiveZoneModel::integrate : "
+			    "computation of the tangent operator "
+			    "is not supported"));
       }
+    }
+    if(!s.iv1.empty()){
+      copy_n(this->ivs.begin(), s.iv1.size(),s.iv1.begin());
     }
     // turning things in standard conventions
     if(ntens==2){
-      swap(s1[0],s1[1]);
+      swap(s.s1[0],s.s1[1]);
     }
     if(ntens==3){
-      const real tmp = s1[0];
-      s1[0] = s1[2];
-      s1[2] = s1[1];
-      s1[1] = tmp;
+      const real tmp = s.s1[0];
+      s.s1[0] = s.s1[2];
+      s.s1[2] = s.s1[1];
+      s.s1[1] = tmp;
     }
     return true;
   } // end of CastemCohesiveZoneModel::integrate

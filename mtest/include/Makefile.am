@@ -1,9 +1,12 @@
 nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Types.hxx	                         \
+			 MTest/CurrentState.hxx	                         \
+			 MTest/StructureCurrentState.hxx	         \
 			 MTest/Scheme.hxx	                         \
 			 MTest/SchemeBase.hxx	                         \
 			 MTest/MTest.hxx	                         \
 			 MTest/MTestParser.hxx	                         \
+			 MTest/PTest.hxx	                         \
 			 MTest/AnalyticalTest.hxx	                 \
 			 MTest/ReferenceFileComparisonTest.hxx           \
 			 MTest/Behaviour.hxx                             \

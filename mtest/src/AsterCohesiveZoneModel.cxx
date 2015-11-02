@@ -17,6 +17,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
+#include"MTest/CurrentState.hxx"
 #include"MTest/AsterCohesiveZoneModel.hxx"
 
 namespace mtest
@@ -86,58 +87,27 @@ namespace mtest
   
   bool
   AsterCohesiveZoneModel::computePredictionOperator(tfel::math::matrix<real>& Kt,
-						    const tfel::math::tmatrix<3u,3u,real>& r,
-						    const tfel::math::vector<real>& u0,
-						    const tfel::math::vector<real>& s0,
-						    const tfel::math::vector<real>& mprops0,
-						    const tfel::math::vector<real>& iv0,
-						    const tfel::math::vector<real>& esv0,
+						    const CurrentState& s,
 						    const tfel::material::ModellingHypothesis::Hypothesis h,
 						    const StiffnessMatrixType::mtype ktype) const
   {
-    using namespace tfel::math;
-    vector<real> s1(s0);
-    vector<real> u1(u0);
-    vector<real> iv1(iv0);
-    vector<real> desv(esv0.size(),real(0));
-    return this->call_behaviour(Kt,s1,iv1,r,u0,u1,s0,
-				mprops0,iv0,esv0,desv,
-				h,real(1),ktype,false);
+    CurrentState ls(s);
+    return this->call_behaviour(Kt,ls,h,real(1),ktype,false);
   } // end of AsterCohesiveZoneModel::computePredictionOperator
 
   bool
   AsterCohesiveZoneModel::integrate(tfel::math::matrix<real>& Kt,
-				    tfel::math::vector<real>& s1,
-				    tfel::math::vector<real>& iv1,
-				    const tfel::math::tmatrix<3u,3u,real>& r,
-				    const tfel::math::vector<real>& e0,
-				    const tfel::math::vector<real>& e1,
-				    const tfel::math::vector<real>& s0,
-				    const tfel::math::vector<real>& mp,
-				    const tfel::math::vector<real>& iv0,
-				    const tfel::math::vector<real>& ev0,
-				    const tfel::math::vector<real>& dev,
+				    CurrentState& s,
 				    const tfel::material::ModellingHypothesis::Hypothesis h,
 				    const real dt,
 				    const StiffnessMatrixType::mtype ktype) const
   {
-    return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
-				mp,iv0,ev0,dev,h,dt,
-				ktype,true);
+    return this->call_behaviour(Kt,s,h,dt,ktype,true);
   } // end of AsterCohesiveZoneModel::integrate
 
   bool
   AsterCohesiveZoneModel::call_behaviour(tfel::math::matrix<real>& Kt,
-					 tfel::math::vector<real>& s1,
-					 tfel::math::vector<real>& iv1,
-					 const tfel::math::tmatrix<3u,3u,real>& r,
-					 const tfel::math::vector<real>& e0,
-					 const tfel::math::vector<real>& e1,
-					 const tfel::math::vector<real>& s0,
-					 const tfel::math::vector<real>& mp0,
-					 const tfel::math::vector<real>& iv0,
-					 const tfel::math::vector<real>& ev0,
-					 const tfel::math::vector<real>& dev,
+					 CurrentState& s,
 					 const tfel::material::ModellingHypothesis::Hypothesis h,
 					 const real dt,
 					 const StiffnessMatrixType::mtype ktype,
@@ -149,7 +119,7 @@ namespace mtest
     typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     AsterInt ntens;
-    AsterInt nprops = mp0.size() == 0 ? 1 : static_cast<AsterInt>(mp0.size());
+    AsterInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AsterInt>(s.mprops1.size());
     AsterInt nstatv;
     AsterInt nummod;
     if (h==MH::AXISYMMETRICAL){
@@ -201,46 +171,41 @@ namespace mtest
       }
     }
     // using a local copy of material properties to handle the
-    // case where mp0 is empty
-    copy(mp0.begin(),mp0.end(),this->mps.begin());
-    if(mp0.empty()){
+    // case where s.mprops1 is empty
+    copy(s.mprops1.begin(),s.mprops1.end(),this->mps.begin());
+    if(s.mprops1.empty()){
       this->mps[0] = real(0);
     }
     // using a local copy of internal state variables to handle the
-    // case where iv0 is empty
-    copy(iv0.begin(),iv0.end(),this->ivs.begin());
-    if(iv0.empty()){
+    // case where s.iv0 is empty
+    copy(s.iv0.begin(),s.iv0.end(),this->ivs.begin());
+    if(s.iv0.empty()){
       ivs[0] = real(0);
     }
     nstatv = static_cast<AsterInt>(ivs.size());
     // rotation matrix
-    tmatrix<3u,3u,real> drot;
-    tmatrix<3u,3u,real>::size_type i,j;
-    for(i=0;i!=3u;++i){
-      for(j=0;j!=3u;++j){
-	drot(i,j) = r(j,i);
-      }
-    }
+    tmatrix<3u,3u,real> drot = transpose(s.r);
     tvector<3u,real> ue0(real(0));
     tvector<3u,real> ude(real(0));
-    copy(e0.begin(),e0.end(),ue0.begin());
-    for(i=0;i!=e1.size();++i){
-      ude(i) = e1(i)-e0(i);
+    copy(s.e0.begin(),s.e0.end(),ue0.begin());
+    tmatrix<3u,3u,real>::size_type i;
+    for(i=0;i!=s.e1.size();++i){
+      ude(i) = s.e1(i)-s.e0(i);
     }
-    copy(s0.begin(),s0.end(),s1.begin());
+    copy(s.s0.begin(),s.s0.end(),s.s1.begin());
     AsterReal ndt(1.);
-    (this->fct)(&s1(0),&ivs(0),&Kt(0,0),
+    (this->fct)(&(s.s1(0)),&ivs(0),&Kt(0,0),
 		&ue0(0),&ude(0),&dt,
-		&ev0(0),&dev(0),
-		&ev0(0)+1,&dev(0)+1,
+		&(s.esv0(0))  ,&(s.desv(0)),
+		&(s.esv0(0))+1,&(s.desv(0))+1,
 		&ntens,&nstatv,&(this->mps(0)),
 		&nprops,&drot(0,0),&ndt,&nummod);
     if(ndt<0.){
       return false;
     }
     if(b){
-      if(!iv0.empty()){
-	copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
+      if(!s.iv0.empty()){
+	copy_n(this->ivs.begin(),s.iv1.size(),s.iv1.begin());
       }
     }
     return true;

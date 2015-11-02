@@ -585,32 +585,30 @@ namespace mfront{
     while(this->current != this->fileTokens.end()){
       const auto p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
-	auto found = false;
-	MemberFuncPtr handler;
+	MemberFuncPtr handler = nullptr;
 	if(this->output==this->current->value){
-	  found = true;
 	  this->currentVar = this->output;
 	  handler = &MaterialPropertyDSL::treatMethod;
 	}
-	for(auto p2=this->inputs.begin();(p2!=this->inputs.end())&&(!found);){
+	for(auto p2=this->inputs.begin();
+	    (p2!=this->inputs.end())&&(handler==nullptr);){
 	  if(p2->name==this->current->value){
-	    found = true;
 	    this->currentVar = this->current->value;
 	    handler = &MaterialPropertyDSL::treatMethod;
 	  } else {
 	    ++p2;
 	  }
 	}
-	for(auto p3=this->parameters.begin();(p3!=this->parameters.end())&&(!found);){
+	for(auto p3=this->parameters.begin();
+	    (p3!=this->parameters.end())&&(handler==nullptr);){
 	  if(*p3==this->current->value){
-	    found = true;
 	    this->currentVar = this->current->value;
 	    handler = &MaterialPropertyDSL::treatMethod;
 	  } else {
 	    ++p3;
 	  }
 	}
-	if(!found){
+	if(handler==nullptr){
 	  handler = &MaterialPropertyDSL::treatUnknownKeyword;
 	}
 	++(this->current);

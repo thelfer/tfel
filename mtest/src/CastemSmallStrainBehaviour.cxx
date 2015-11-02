@@ -23,6 +23,7 @@
 #include"MFront/Castem/CastemComputeStiffnessTensor.hxx"
 
 #include"MTest/Evolution.hxx"
+#include"MTest/CurrentState.hxx"
 #include"MTest/CastemSmallStrainBehaviour.hxx"
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 
@@ -282,74 +283,37 @@ namespace mtest
 
   bool
   CastemSmallStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
-							   const tfel::math::tmatrix<3u,3u,real>& r,
-							   const tfel::math::vector<real>& e0,
-							   const tfel::math::vector<real>& s0,
-							   const tfel::math::vector<real>& mp,
-							   const tfel::math::vector<real>& iv0,
-							   const tfel::math::vector<real>& esv0,
-							   const tfel::material::ModellingHypothesis::Hypothesis h,
-							   const StiffnessMatrixType::mtype ktype) const
+							const CurrentState& s,
+							const tfel::material::ModellingHypothesis::Hypothesis h,
+							const StiffnessMatrixType::mtype ktype) const
   {
     using namespace tfel::math;
     if(ktype!=StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-      vector<real> s1(s0);
-      vector<real> e1(e0);
-      vector<real> iv1(iv0);
-      vector<real> desv(esv0.size(),real(0));
-      return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
-				  mp,iv0,esv0,desv,
-				  h,real(1),ktype,false);
+      CurrentState ls(s);
+      return this->call_behaviour(Kt,ls,h,real(1),ktype,false);
     }
     // compute the stiffness operator from material properties
-    tmatrix<3u,3u,real> drot(0.);
-    tmatrix<3u,3u,real>::size_type i,j;
-    for(i=0;i!=r.getNbRows();++i){
-      for(j=0;j!=r.getNbCols();++j){
-	drot(i,j) = r(j,i);
-      }
-    }
-    this->computeElasticStiffness(Kt,mp,drot,h);
+    this->computeElasticStiffness(Kt,s.mprops1,transpose(s.r),h);
     return true;
   } // end of CastemSmallStrainBehaviour::computePredictionOperator
 
   bool
   CastemSmallStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
-					   tfel::math::vector<real>& s1,
-					   tfel::math::vector<real>& iv1,
-					   const tfel::math::tmatrix<3u,3u,real>& r,
-					   const tfel::math::vector<real>& e0,
-					   const tfel::math::vector<real>& e1,
-					   const tfel::math::vector<real>& s0,
-					   const tfel::math::vector<real>& mp,
-					   const tfel::math::vector<real>& iv0,
-					   const tfel::math::vector<real>& ev0,
-					   const tfel::math::vector<real>& dev,
-					   const tfel::material::ModellingHypothesis::Hypothesis h,
-					   const real dt,
-					   const StiffnessMatrixType::mtype ktype) const
+					CurrentState& s,
+					const tfel::material::ModellingHypothesis::Hypothesis h,
+					const real dt,
+					const StiffnessMatrixType::mtype ktype) const
   {
-    return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
-				mp,iv0,ev0,dev,h,dt,
-				ktype,true);
+    return this->call_behaviour(Kt,s,h,dt,ktype,true);
   } // end of CastemSmallStrainBehaviour::integrate
 
   bool
   CastemSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
-						tfel::math::vector<real>& s1,
-						tfel::math::vector<real>& iv1,
-						const tfel::math::tmatrix<3u,3u,real>& r,
-						const tfel::math::vector<real>& e0,
-						const tfel::math::vector<real>& e1,
-						const tfel::math::vector<real>& s0,
-						const tfel::math::vector<real>& mp,
-						const tfel::math::vector<real>& iv0,
-						const tfel::math::vector<real>& ev0,
-						const tfel::math::vector<real>& dev,
-						const tfel::material::ModellingHypothesis::Hypothesis h,
-						const real dt,
-						const StiffnessMatrixType::mtype ktype,
-						const bool b) const
+					     CurrentState& s,
+					     const tfel::material::ModellingHypothesis::Hypothesis h,
+					     const real dt,
+					     const StiffnessMatrixType::mtype ktype,
+					     const bool b) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -360,7 +324,7 @@ namespace mtest
     static const real sqrt2 = sqrt(real(2));
     CastemInt ntens;
     CastemInt ndi;
-    CastemInt nprops = static_cast<CastemInt>(mp.size());
+    const auto nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
     unsigned short dimension;
     if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
@@ -388,80 +352,72 @@ namespace mtest
       ntens = 6;
       dimension = 3u;
     } else {
-      string msg("CastemSmallStrainBehaviour::integrate : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
+			  "unsupported hypothesis"));
     }
     if((this->D.getNbRows()!=Kt.getNbRows())||
        (this->D.getNbCols()!=Kt.getNbCols())){
-      string msg("CastemSmallStrainBehaviour::integrate : ");
-      msg += "the memory has not been allocated correctly";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
+			  "the memory has not been allocated correctly"));
     }
-    if(((iv0.size()==0)&&(this->ivs.size()!=1u))||
-       ((iv0.size()!=0)&&(iv0.size()!=this->ivs.size()))){
-      string msg("CastemSmallStrainBehaviour::integrate : ");
-      msg += "the memory has not been allocated correctly";
-      throw(runtime_error(msg));
+    if(((s.iv0.size()==0)&&(this->ivs.size()!=1u))||
+       ((s.iv0.size()!=0)&&(s.iv0.size()!=this->ivs.size()))){
+      throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
+			  "the memory has not been allocated correctly"));
     }
     fill(this->D.begin(),this->D.end(),0.);
     // choosing the type of stiffness matrix
     UmatBehaviourBase::initializeTangentOperator(ktype,b);
     // state variable initial values
-    if(iv0.size()!=0){
-      copy(iv0.begin(),iv0.end(),
-	   this->ivs.begin());
+    if(s.iv0.size()!=0){
+      copy(s.iv0.begin(),s.iv0.end(),this->ivs.begin());
     }
     nstatv = static_cast<CastemInt>(this->ivs.size());
     // rotation matrix
-    tmatrix<3u,3u,real> drot(0.);
-    tmatrix<3u,3u,real>::size_type i,j;
-    for(i=0;i!=r.getNbRows();++i){
-      for(j=0;j!=r.getNbCols();++j){
-	drot(i,j) = r(j,i);
-      }
-    }
+    tmatrix<3u,3u,real> drot = transpose(s.r);
+    tmatrix<3u,3u,real>::size_type i;
     CastemInt kinc(1);
     stensor<3u,real> ue0(real(0));
     stensor<3u,real> ude(real(0));
-    copy(e0.begin(),e0.end(),ue0.begin());
-    for(i=0;i!=e1.size();++i){
-      ude(i) = e1(i)-e0(i);
+    copy(s.e0.begin(),s.e0.end(),ue0.begin());
+    for(i=0;i!=s.e1.size();++i){
+      ude(i) = s.e1(i)-s.e0(i);
     }
-    copy(s0.begin(),s0.end(),s1.begin());
+    copy(s.s0.begin(),s.s0.end(),s.s1.begin());
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i)  /= sqrt2;
-      ue0(i) *= sqrt2;
-      ude(i) *= sqrt2;
+      s.s1(i) /= sqrt2;
+      ue0(i)  *= sqrt2;
+      ude(i)  *= sqrt2;
     }
     CastemReal ndt(1.);
-    (this->fct)(&s1(0),&this->ivs(0),&D(0,0),
+    (this->fct)(&(s.s1(0)),&this->ivs(0),&D(0,0),
 		nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,
 		&ue0(0),&ude(0),nullptr,&dt,
-		&ev0(0),&dev(0),
-		&ev0(0)+1,&dev(0)+1,
-		nullptr,&ndi,nullptr,&ntens,&nstatv,&mp(0),
+		&(s.esv0(0))  ,&(s.desv(0)),
+		&(s.esv0(0))+1,&(s.desv(0))+1,
+		nullptr,&ndi,nullptr,&ntens,&nstatv,
+		&(s.mprops1(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,&kinc,0);
     if(kinc!=1){
       return false;
     }
-    if(!iv1.empty()){
-      copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
-    }
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-	this->computeElasticStiffness(Kt,mp,drot,h);
+	this->computeElasticStiffness(Kt,s.mprops1,drot,h);
       } else {
 	UmatNormaliseTangentOperator::exe(Kt,D,dimension);
       }
     }
+    if(!s.iv1.empty()){
+      copy_n(this->ivs.begin(),s.iv1.size(),s.iv1.begin());
+    }
     // turning things in standard conventions
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i) *= sqrt2;
+      s.s1(i) *= sqrt2;
     }
     return true;
   } // end of CastemSmallStrainBehaviour::integrate

@@ -19,6 +19,7 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Cyrano/Cyrano.hxx"
+#include"MTest/CurrentState.hxx"
 #include"MTest/CyranoBehaviour.hxx"
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
@@ -105,60 +106,30 @@ namespace mtest
 
   bool
   CyranoBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
-					     const tfel::math::tmatrix<3u,3u,real>&,
-					     const tfel::math::vector<real>& e0,
-					     const tfel::math::vector<real>& s0,
-					     const tfel::math::vector<real>& mp,
-					     const tfel::math::vector<real>& iv0,
-					     const tfel::math::vector<real>& esv0,
+					     const CurrentState& s,
 					     const tfel::material::ModellingHypothesis::Hypothesis h,
 					     const StiffnessMatrixType::mtype ktype) const
   {
-    using namespace tfel::math;
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return false;
     }
-    vector<real> s1(s0);
-    vector<real> e1(e0);
-    vector<real> iv1(iv0);
-    vector<real> desv(esv0.size(),real(0));
-    return this->call_behaviour(Kt,s1,iv1,e0,e1,s0,
-				mp,iv0,esv0,desv,
-				h,real(1),ktype,false);
+    CurrentState ls(s);
+    return this->call_behaviour(Kt,ls,h,real(1),ktype,false);
   } // end of CyranoBehaviour::computePredictionOperator
 
   bool
   CyranoBehaviour::integrate(tfel::math::matrix<real>& Kt,
-			     tfel::math::vector<real>& s1,
-			     tfel::math::vector<real>& iv1,
-			     const tfel::math::tmatrix<3u,3u,real>&,
-			     const tfel::math::vector<real>& e0,
-			     const tfel::math::vector<real>& e1,
-			     const tfel::math::vector<real>& s0,
-			     const tfel::math::vector<real>& mp,
-			     const tfel::math::vector<real>& iv0,
-			     const tfel::math::vector<real>& ev0,
-			     const tfel::math::vector<real>& dev,
+			     CurrentState& s,
 			     const tfel::material::ModellingHypothesis::Hypothesis h,
 			     const real dt,
 			     const StiffnessMatrixType::mtype ktype) const
   {
-    return this->call_behaviour(Kt,s1,iv1,e0,e1,s0,
-				mp,iv0,ev0,dev,h,dt,
-				ktype,true);
+    return this->call_behaviour(Kt,s,h,dt,ktype,true);
   } // end of CyranoBehaviour::integrate
 
   bool
   CyranoBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
-				  tfel::math::vector<real>& s1,
-				  tfel::math::vector<real>& iv1,
-				  const tfel::math::vector<real>& e0,
-				  const tfel::math::vector<real>& e1,
-				  const tfel::math::vector<real>& s0,
-				  const tfel::math::vector<real>& mp0,
-				  const tfel::math::vector<real>& iv0,
-				  const tfel::math::vector<real>& ev0,
-				  const tfel::math::vector<real>& dev,
+				  CurrentState& s,
 				  const tfel::material::ModellingHypothesis::Hypothesis h,
 				  const real dt,
 				  const StiffnessMatrixType::mtype ktype,
@@ -172,7 +143,7 @@ namespace mtest
     using cyrano::CyranoComputeStiffnessTensor;
     CyranoInt ntens;
     CyranoInt ndi;
-    CyranoInt nprops = mp0.size() == 0 ? 1 : static_cast<CyranoInt>(mp0.size());
+    CyranoInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<CyranoInt>(s.mprops1.size());
     CyranoInt nstatv;
     if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       ndi   = 1;
@@ -185,30 +156,27 @@ namespace mtest
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
-    if((Kt.getNbRows()!=3u)||
-       (Kt.getNbCols()!=3u)){
-      string msg("CyranoBehaviour::integrate : ");
-      msg += "invalid tangent operator size";
-      throw(runtime_error(msg));
+    if((Kt.getNbRows()!=3u)||(Kt.getNbCols()!=3u)){
+      throw(runtime_error("CyranoBehaviour::integrate: "
+			  "invalid tangent operator size"));
     }
-    if(((iv0.size()==0)&&(this->ivs.size()!=1u))||
-       ((iv0.size()!=0)&&(iv0.size()!=this->ivs.size()))){
-      string msg("CyranoBehaviour::integrate : ");
-      msg += "the memory has not been allocated correctly";
-      throw(runtime_error(msg));
+    if(((s.iv0.size()==0)&&(this->ivs.size()!=1u))||
+       ((s.iv0.size()!=0)&&(s.iv0.size()!=this->ivs.size()))){
+      throw(runtime_error("CyranoBehaviour::integrate: "
+			  "the memory has not been allocated correctly"));
     }
     fill(this->D.begin(),this->D.end(),0.);
     // choosing the type of stiffness matrix
     UmatBehaviourBase::initializeTangentOperator(ktype,b);
     // using a local copy of material properties to handle the
-    // case where mp0 is empty
-    copy(mp0.begin(),mp0.end(),this->mps.begin());
-    if(mp0.empty()){
+    // case where s.mprops1 is empty
+    copy(s.mprops1.begin(),s.mprops1.end(),this->mps.begin());
+    if(s.mprops1.empty()){
       this->mps[0] = real(0);
     }
     // state variable initial values
-    copy(iv0.begin(),iv0.end(),this->ivs.begin());
-    if(iv0.empty()){
+    copy(s.iv0.begin(),s.iv0.end(),this->ivs.begin());
+    if(s.iv0.empty()){
       this->ivs[0]=real(0);
     }
     nstatv = static_cast<CyranoInt>(ivs.size());
@@ -227,31 +195,31 @@ namespace mtest
     CyranoInt kinc(1);
     stensor<1u,real> ue0(real(0));
     stensor<1u,real> ude(real(0));
-    copy(e0.begin(),e0.end(),ue0.begin());
+    copy(s.e0.begin(),s.e0.end(),ue0.begin());
     for(i=0;i!=3u;++i){
-      ude(i) = e1(i)-e0(i);
+      ude(i)  = s.e1(i)-s.e0(i);
     }
-    copy(s0.begin(),s0.end(),s1.begin());
+    copy(s.s0.begin(),s.s0.end(),s.s1.begin());
     // turning to cyrano convention
-    swap(s1(1),s1(2));
+    swap(s.s1(1),s.s1(2));
     swap(ue0(1),ue0(2));
     swap(ude(1),ude(2));
     // integration
     (this->fct)(&ntens,&dt,&drot(0,0),
 		&D(0,0),&ue0(0),&ude(0),
-		&ev0(0),&dev(0),
+		&(s.esv0(0)),&(s.desv(0)),
 		&this->mps(0),&nprops,
-		&ev0(0)+1,&dev(0)+1,
-		&this->ivs(0),&nstatv,&s1(0),
+		&(s.esv0(0))+1,&(s.desv(0))+1,
+		&this->ivs(0),&nstatv,&(s.s1(0)),
 		&ndi,&kinc);
     if(kinc!=1){
       return false;
     }
-    if(!iv1.empty()){
-      copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
+    if(!s.iv1.empty()){
+      copy_n(this->ivs.begin(), s.iv1.size(),s.iv1.begin());
     }
     // turning back to MFront conventions
-    swap(s1(1),s1(2));
+    swap(s.s1(1),s.s1(2));
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       // transpose (fortran -> c++)

@@ -19,6 +19,15 @@
 - catch c++ exceptions
 - catch c errno
 
+# Update documentation
+
+Installation on windows without MSYS
+
+# Ninja build system
+
+- add a -G option allowing to choose a generator
+- generate a ninja.build file
+
 # Fallback
 
 Fall back behaviour if the default one fails

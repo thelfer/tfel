@@ -15,10 +15,12 @@
 
 void declareMTestParser(void);
 void declareMTest(void);
+void declareCurrentState(void);
 void declareMFrontLogStream(void);
 
 BOOST_PYTHON_MODULE(mtest)
 {
+  declareCurrentState();
   declareMTestParser();
   declareMTest();
   declareMFrontLogStream();

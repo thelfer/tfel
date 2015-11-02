@@ -51,13 +51,12 @@ namespace mfront
   CppMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 						    const MaterialPropertyDescription& mpd)
   {
-    using std::string;
     const auto lib  = "Cpp"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     insert_if(d[lib].ldflags,"-lm");
     insert_if(d[lib].sources,name+"-cxx.cxx");
     insert_if(d.headers,this->headerFileName);
-    auto cn = string{};
+    auto cn = std::string{};
 #pragma message("HERE")
     // for(const auto& ns : this->namespaces){
     //   cc += ns + "::"

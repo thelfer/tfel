@@ -23,6 +23,7 @@
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 
+#include"MTest/CurrentState.hxx"
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AsterFiniteStrainBehaviour.hxx"
 
@@ -140,16 +141,7 @@ namespace mtest
 
   bool
   AsterFiniteStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
-					     tfel::math::vector<real>& s1,
-					     tfel::math::vector<real>& iv1,
-					     const tfel::math::tmatrix<3u,3u,real>& r,
-					     const tfel::math::vector<real>& u0,
-					     const tfel::math::vector<real>& u1,
-					     const tfel::math::vector<real>& s0,
-					     const tfel::math::vector<real>& mp0,
-					     const tfel::math::vector<real>& iv0,
-					     const tfel::math::vector<real>& ev0,
-					     const tfel::math::vector<real>& dev,
+					     CurrentState& s,
 					     const tfel::material::ModellingHypothesis::Hypothesis h,
 					     const real dt,
 					     const StiffnessMatrixType::mtype ktype,
@@ -163,7 +155,7 @@ namespace mtest
     static const real sqrt2 = sqrt(real(2));
     AsterInt ntens;
     AsterInt dimension;
-    AsterInt nprops = mp0.size() == 0 ? 1 : static_cast<AsterInt>(mp0.size());
+    AsterInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AsterInt>(s.mprops1.size());
     AsterInt nstatv;
     AsterInt nummod;
     if (h==MH::AXISYMMETRICAL){
@@ -191,30 +183,25 @@ namespace mtest
     // choosing the type of stiffness matrix
     UmatBehaviourBase::initializeTangentOperator(ktype,b);
     // using a local copy of material properties to handle the
-    // case where mp0 is empty
-    copy(mp0.begin(),mp0.end(),this->mps.begin());
-    if(mp0.empty()){
+    // case where s.mprops1 is empty
+    copy(s.mprops1.begin(),s.mprops1.end(),this->mps.begin());
+    if(s.mprops1.empty()){
       this->mps[0] = real(0);
     }
     // using a local copy of internal state variables to handle the
-    // case where iv0 is empty
-    copy(iv0.begin(),iv0.end(),this->ivs.begin());
-    if(iv0.empty()){
+    // case where s.iv0 is empty
+    copy(s.iv0.begin(),s.iv0.end(),this->ivs.begin());
+    if(s.iv0.empty()){
       this->ivs[0] = real(0);
     }
     nstatv = static_cast<AsterInt>(ivs.size());
     // rotation matrix
-    tmatrix<3u,3u,real> drot;
-    for(tmatrix<3u,3u,real>::size_type i=0;i!=3u;++i){
-      for(tmatrix<3u,3u,real>::size_type j=0;j!=3u;++j){
-	drot(i,j) = r(j,i);
-      }
-    }
+    tmatrix<3u,3u,real> drot = transpose(s.r);
     tmatrix<3u,3u,real> uu0(real(0));
     tmatrix<3u,3u,real> uu1(real(0));
-    uu0(0,0) = u0(0); uu1(0,0) = u1(0);
-    uu0(1,1) = u0(1); uu1(1,1) = u1(1);
-    uu0(2,2) = u0(2); uu1(2,2) = u1(2);
+    uu0(0,0) = s.e0(0); uu1(0,0) = s.e1(0);
+    uu0(1,1) = s.e0(1); uu1(1,1) = s.e1(1);
+    uu0(2,2) = s.e0(2); uu1(2,2) = s.e1(2);
     if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       uu0(1,0) = 0.; uu1(1,0) = 0.;
       uu0(0,1) = 0.; uu1(0,1) = 0.;
@@ -225,55 +212,55 @@ namespace mtest
     } else if ((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
 	       (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
       // uu0 and uu1 must be built using Fortran notations
-      uu0(1,0) = u0(3); uu1(1,0) = u1(3);
-      uu0(0,1) = u0(4); uu1(0,1) = u1(4);
+      uu0(1,0) = s.e0(3); uu1(1,0) = s.e1(3);
+      uu0(0,1) = s.e0(4); uu1(0,1) = s.e1(4);
       uu0(2,0) = 0.; uu1(2,0) = 0.;
       uu0(0,2) = 0.; uu1(0,2) = 0.;
       uu0(2,1) = 0.; uu1(2,1) = 0.;
       uu0(1,2) = 0.; uu1(1,2) = 0.;
     } else if (h==MH::TRIDIMENSIONAL){
       // uu0 and uu1 must be built using Fortran notations
-      uu0(1,0) = u0(3); uu1(1,0) = u1(3);
-      uu0(0,1) = u0(4); uu1(0,1) = u1(4);
-      uu0(2,0) = u0(5); uu1(2,0) = u1(5);
-      uu0(0,2) = u0(6); uu1(0,2) = u1(6);
-      uu0(2,1) = u0(7); uu1(2,1) = u1(7);
-      uu0(1,2) = u0(8); uu1(1,2) = u1(8);
+      uu0(1,0) = s.e0(3); uu1(1,0) = s.e1(3);
+      uu0(0,1) = s.e0(4); uu1(0,1) = s.e1(4);
+      uu0(2,0) = s.e0(5); uu1(2,0) = s.e1(5);
+      uu0(0,2) = s.e0(6); uu1(0,2) = s.e1(6);
+      uu0(2,1) = s.e0(7); uu1(2,1) = s.e1(7);
+      uu0(1,2) = s.e0(8); uu1(1,2) = s.e1(8);
     } else {
       string msg("UmatFiniteStrainBehaviour::integrate : ");
       msg += "unsupported hypothesis";
       throw(runtime_error(msg));
     }
-    copy(s0.begin(),s0.end(),s1.begin());
+    copy(s.s0.begin(),s.s0.end(),s.s1.begin());
     for(unsigned short i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i)  /= sqrt2;
+      s.s1(i)  /= sqrt2;
     }
     AsterReal ndt(1.);
-    (this->fct)(&s1(0),&(this->ivs(0)),&D(0,0),
+    (this->fct)(&(s.s1(0)),&(this->ivs(0)),&D(0,0),
 		&uu0(0,0),&uu1(0,0),&dt,
-		&ev0(0),&dev(0),
-		&ev0(0)+1,&dev(0)+1,
+		&(s.esv0(0))  ,&(s.desv(0)),
+		&(s.esv0(0))+1,&(s.desv(0))+1,
 		&ntens,&nstatv,&this->mps(0),
 		&nprops,&drot(0,0),&ndt,&nummod);
     if(ndt<0.){
       return false;
     }
     if(b){
-      if(!iv0.empty()){
-	copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
+      if(!s.iv0.empty()){
+	copy_n(this->ivs.begin(), s.iv1.size(),s.iv1.begin());
       }
       // turning things in standard conventions
       for(unsigned short i=3;i!=static_cast<unsigned short>(ntens);++i){
-	s1(i) *= sqrt2;
+	s.s1(i) *= sqrt2;
       }
     }
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){
       if(dimension==1u){
-	convertTangentOperator<1u>(Kt,D,s1,u0,u1);
+	convertTangentOperator<1u>(Kt,D,s.s1,s.e0,s.e1);
       } else if(dimension==2u){
-	convertTangentOperator<2u>(Kt,D,s1,u0,u1);
+	convertTangentOperator<2u>(Kt,D,s.s1,s.e0,s.e1);
       } else if(dimension==3u){
-	convertTangentOperator<3u>(Kt,D,s1,u0,u1);
+	convertTangentOperator<3u>(Kt,D,s.s1,s.e0,s.e1);
       }
     }
     return true;

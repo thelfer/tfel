@@ -21,6 +21,7 @@
 #include"MFront/Castem/Castem.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Evolution.hxx"
+#include"MTest/CurrentState.hxx"
 #include"MTest/CastemFiniteStrainBehaviour.hxx"
 #include"MFront/BehaviourSymmetryType.hxx"
 
@@ -647,28 +648,17 @@ namespace mtest
 
   bool
   CastemFiniteStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
-							    const tfel::math::tmatrix<3u,3u,real>& r,
-							    const tfel::math::vector<real>&,
-							    const tfel::math::vector<real>&,
-							    const tfel::math::vector<real>& mp,
-							    const tfel::math::vector<real>&,
-							    const tfel::math::vector<real>&,
-							    const tfel::material::ModellingHypothesis::Hypothesis h,
-							    const StiffnessMatrixType::mtype ktype) const
+							 const CurrentState& s,
+							 const tfel::material::ModellingHypothesis::Hypothesis h,
+							 const StiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
     // rotation matrix
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       // compute the stiffness operator from material properties
-      tmatrix<3u,3u,real> drot(0.);
-      tmatrix<3u,3u,real>::size_type i,j;
-      for(i=0;i!=r.getNbRows();++i){
-	for(j=0;j!=r.getNbCols();++j){
-	  drot(i,j) = r(j,i);
-	}
-      }
-      this->computeElasticStiffness(Kt,mp,drot,h);
+      const auto rt = transpose(s.r);
+      this->computeElasticStiffness(Kt,s.mprops1,rt,h);
       return true;
     }
     throw(std::runtime_error("CastemFiniteStrainBehaviour::computePredictionOperator : "
@@ -678,19 +668,10 @@ namespace mtest
 
   bool
   CastemFiniteStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
-					    tfel::math::vector<real>& s1,
-					    tfel::math::vector<real>& iv1,
-					    const tfel::math::tmatrix<3u,3u,real>& r,
-					    const tfel::math::vector<real>& u0,
-					    const tfel::math::vector<real>& u1,
-					    const tfel::math::vector<real>& s0,
-					    const tfel::math::vector<real>& mp,
-					    const tfel::math::vector<real>& iv0,
-					    const tfel::math::vector<real>& ev0,
-					    const tfel::math::vector<real>& dev,
-					    const tfel::material::ModellingHypothesis::Hypothesis h,
-					    const real dt,
-					    const StiffnessMatrixType::mtype ktype) const
+					 CurrentState& s,
+					 const tfel::material::ModellingHypothesis::Hypothesis h,
+					 const real dt,
+					 const StiffnessMatrixType::mtype ktype) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -700,7 +681,7 @@ namespace mtest
     static const real sqrt2 = sqrt(real(2));
     CastemInt ntens;
     CastemInt ndi;
-    CastemInt nprops = static_cast<CastemInt>(mp.size());
+    const auto nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
     if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       ndi   = 14;
@@ -721,42 +702,32 @@ namespace mtest
       ndi = 2;
       ntens = 6;
     } else {
-      string msg("CastemFiniteStrainBehaviour::integrate : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
+			  "unsupported hypothesis"));
     }
     if((this->D.getNbRows()!=Kt.getNbRows())||
        (this->D.getNbCols()!=Kt.getNbCols())){
-      string msg("CastemFiniteStrainBehaviour::integrate : ");
-      msg += "the memory has not been allocated correctly";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
+			  "the memory has not been allocated correctly"));
     }
-    if(((iv0.size()==0)&&(this->ivs.size()!=1u))||
-       ((iv0.size()!=0)&&(iv0.size()!=this->ivs.size()))){
-      string msg("CastemFiniteStrainBehaviour::integrate : ");
-      msg += "the memory has not been allocated correctly";
-      throw(runtime_error(msg));
+    if(((s.iv0.size()==0)&&(this->ivs.size()!=1u))||
+       ((s.iv0.size()!=0)&&(s.iv0.size()!=this->ivs.size()))){
+      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
+			  "the memory has not been allocated correctly"));
     }
     fill(this->D.begin(),this->D.end(),0.);
-    if(iv0.size()!=0){
-      copy(iv0.begin(),iv0.end(),
-	   this->ivs.begin());
+    if(s.iv0.size()!=0){
+      copy(s.iv0.begin(),s.iv0.end(),this->ivs.begin());
     }
     nstatv = static_cast<CastemInt>(this->ivs.size());
     // rotation matrix
-    tmatrix<3u,3u,real> drot(0.);
-    tmatrix<3u,3u,real>::size_type i,j;
-    for(i=0;i!=r.getNbRows();++i){
-      for(j=0;j!=r.getNbCols();++j){
-	drot(i,j) = r(j,i);
-      }
-    }
+    tmatrix<3u,3u,real> drot = transpose(s.r);
     CastemInt kinc(1);
     tmatrix<3u,3u,real> uu0(real(0));
     tmatrix<3u,3u,real> uu1(real(0));
-    uu0(0,0) = u0(0); uu1(0,0) = u1(0);
-    uu0(1,1) = u0(1); uu1(1,1) = u1(1);
-    uu0(2,2) = u0(2); uu1(2,2) = u1(2);
+    uu0(0,0) = s.e0(0); uu1(0,0) = s.e1(0);
+    uu0(1,1) = s.e0(1); uu1(1,1) = s.e1(1);
+    uu0(2,2) = s.e0(2); uu1(2,2) = s.e1(2);
     if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       uu0(1,0) = 0.; uu1(1,0) = 0.;
       uu0(0,1) = 0.; uu1(0,1) = 0.;
@@ -767,59 +738,58 @@ namespace mtest
     } else if ((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
 	       (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
       // uu0 and uu1 must be built using Fortran notations
-      uu0(1,0) = u0(3); uu1(1,0) = u1(3);
-      uu0(0,1) = u0(4); uu1(0,1) = u1(4);
+      uu0(1,0) = s.e0(3); uu1(1,0) = s.e1(3);
+      uu0(0,1) = s.e0(4); uu1(0,1) = s.e1(4);
       uu0(2,0) = 0.; uu1(2,0) = 0.;
       uu0(0,2) = 0.; uu1(0,2) = 0.;
       uu0(2,1) = 0.; uu1(2,1) = 0.;
       uu0(1,2) = 0.; uu1(1,2) = 0.;
     } else if (h==MH::TRIDIMENSIONAL){
       // uu0 and uu1 must be built using Fortran notations
-      uu0(1,0) = u0(3); uu1(1,0) = u1(3);
-      uu0(0,1) = u0(4); uu1(0,1) = u1(4);
-      uu0(2,0) = u0(5); uu1(2,0) = u1(5);
-      uu0(0,2) = u0(6); uu1(0,2) = u1(6);
-      uu0(2,1) = u0(7); uu1(2,1) = u1(7);
-      uu0(1,2) = u0(8); uu1(1,2) = u1(8);
+      uu0(1,0) = s.e0(3); uu1(1,0) = s.e1(3);
+      uu0(0,1) = s.e0(4); uu1(0,1) = s.e1(4);
+      uu0(2,0) = s.e0(5); uu1(2,0) = s.e1(5);
+      uu0(0,2) = s.e0(6); uu1(0,2) = s.e1(6);
+      uu0(2,1) = s.e0(7); uu1(2,1) = s.e1(7);
+      uu0(1,2) = s.e0(8); uu1(1,2) = s.e1(8);
     } else {
-      string msg("CastemFiniteStrainBehaviour::integrate : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
+			  "unsupported hypothesis"));
     }
-    copy(s0.begin(),s0.end(),s1.begin());
+    copy(s.s0.begin(),s.s0.end(),s.s1.begin());
+    tmatrix<3u,3u,real>::size_type i;
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i)  /= sqrt2;
+      s.s1(i)  /= sqrt2;
     }
     CastemReal ndt(1.);
-    (this->fct)(&s1(0),&ivs(0),&D(0,0),
+    (this->fct)(&(s.s1(0)),&ivs(0),&D(0,0),
 		nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,&dt,
-		&ev0(0),&dev(0),
-		&ev0(0)+1,&dev(0)+1,
-		nullptr,&ndi,nullptr,&ntens,&nstatv,&mp(0),
+		&(s.esv0(0))  ,&(s.desv(0)),
+		&(s.esv0(0))+1,&(s.desv(0))+1,
+		nullptr,&ndi,nullptr,&ntens,&nstatv,&(s.mprops1(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,&uu0(0,0),&uu1(0,0),nullptr,nullptr,
 		nullptr,nullptr,nullptr,&kinc,0);
     if(kinc!=1){
       return false;
     }
-    if(!iv1.empty()){
-      copy_n(this->ivs.begin(), iv1.size(),iv1.begin());
-    }
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-	this->computeElasticStiffness(Kt,mp,drot,h);
+	this->computeElasticStiffness(Kt,s.mprops1,drot,h);
       } else {
-	string msg("CastemFiniteStrainBehaviour::integrate : "
-		   "computation of the tangent operator "
-		   "is not supported");
-	throw(runtime_error(msg));
+	throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
+			    "computation of the tangent operator "
+			    "is not supported"));
       }
+    }
+    if(!s.iv1.empty()){
+      copy_n(this->ivs.begin(), s.iv1.size(),s.iv1.begin());
     }
     // turning things in standard conventions
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s1(i) *= sqrt2;
+      s.s1(i) *= sqrt2;
     }
     return true;
   } // end of CastemFiniteStrainBehaviour::integrate

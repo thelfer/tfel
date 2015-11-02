@@ -26,14 +26,12 @@ namespace mfront{
   setElasticSymmetryType(BehaviourDescription& bd,
 			 const BehaviourSymmetryType s)
   {
-    using namespace std;
     if(bd.isElasticSymmetryTypeDefined()){
       if(bd.getElasticSymmetryType()!=s){
-	string msg("setElasticSymmetryType : "
-		   "the elastic symmetry type defined for "
-		   "the behaviour is inconsistent with the option "
-		   "passed to the 'Elasticity' brick.");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("setElasticSymmetryType : "
+				 "the elastic symmetry type defined for "
+				 "the behaviour is inconsistent with the option "
+				 "passed to the 'Elasticity' brick."));
       }
     } else {
       bd.setElasticSymmetryType(s);
@@ -64,7 +62,7 @@ namespace mfront{
 			       "implicit schemes"));
     }
     // parameters
-    for(AbstractBehaviourBrick::Parameters::const_iterator pp=p.begin();pp!=p.end();++pp){
+    for(auto pp=p.cbegin();pp!=p.cend();++pp){
       if(pp->first=="Isotropic"){
 	this->checkThatParameterHasNoValue(*pp);
 	setElasticSymmetryType(this->bd,mfront::ISOTROPIC);

@@ -96,8 +96,8 @@ namespace mtest{
 
   void
   SchemeBase::setEvolutionValue(const std::string& n,
-			   const real t,
-			   const real v)
+				const real t,
+				const real v)
   {
     const auto pev = this->evm->find(n);
     if(pev==this->evm->end()){
@@ -115,8 +115,8 @@ namespace mtest{
 
   void
   SchemeBase::setMaterialProperty(const std::string& n,
-			     const EvolutionPtr p,
-			     const bool check)
+				  const EvolutionPtr p,
+				  const bool check)
   {
     using namespace std;
     if(this->b.get()==nullptr){
@@ -132,8 +132,8 @@ namespace mtest{
 	  << "the behaviour don't declare a material property '" << n << "'.";
       if(!mpnames.empty()){
 	msg << "\nThe behaviour declares:";
-	for(const auto& n : mpnames){
-	  msg << "\n- '" << n << "'";
+	for(const auto& mp : mpnames){
+	  msg << "\n- '" << mp << "'";
 	}
       }
       throw(runtime_error(msg.str()));
@@ -152,8 +152,8 @@ namespace mtest{
 
   void
   SchemeBase::setExternalStateVariable(const std::string& n,
-				  const EvolutionPtr p,
-				  const bool check)
+				       const EvolutionPtr p,
+				       const bool check)
   {
     if(this->b.get()==nullptr){
       throw(std::runtime_error("SchemeBase::setExternalStateVariable: "
@@ -231,7 +231,7 @@ namespace mtest{
   void
   SchemeBase::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p)
   {
-    if(this->b.get()==0){
+    if(this->b.get()==nullptr){
       throw(std::runtime_error("SchemeBase::setOutOfBoundsPolicy: "
 			       "no behaviour defined"));
     }
@@ -336,16 +336,16 @@ namespace mtest{
       } else if(t==1){
 	//! suffixes of stensor components
 	const auto& sexts = this->b->getStensorComponentsSuffixes(this->hypothesis);
-	for(auto s=0;s!=sexts.size();++s){
-	  const string& vn = n+sexts[s];
+	for(decltype(sexts.size()) s=0;s!=sexts.size();++s){
+	  const auto vn = n+sexts[s];
 	  this->declareVariable(vn,true);
 	  this->ivfullnames.push_back(vn);
 	}
       } else if(t==3){
 	//! suffixes f stensor components
 	const auto& exts = this->b->getTensorComponentsSuffixes(this->hypothesis);
-	for(auto s=0;s!=exts.size();++s){
-	  const string& vn = n+exts[s];
+	for(decltype(exts.size()) s=0;s!=exts.size();++s){
+	  const auto vn = n+exts[s];
 	  this->declareVariable(vn,true);
 	  this->ivfullnames.push_back(vn);
 	}

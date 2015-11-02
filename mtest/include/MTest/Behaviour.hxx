@@ -17,9 +17,9 @@
 #include<vector>
 #include<string>
 
+#include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/vector.hxx"
 
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -29,12 +29,11 @@
 
 namespace mtest
 {
-
-  /*!
-   * A simple wrapper around mechanical beheaviours
-   */
+  
+  //! A simple wrapper around mechanical beheaviours
   struct Behaviour
   {
+    //! a simple alias
     using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
     /*!
      * \brief This function set a material property to its default value if it not already declared
@@ -225,56 +224,27 @@ namespace mtest
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
      * \param[out] Kt    : tangent operator
-     * \param[in]  r     : rotation matrix
-     * \param[in]  e0    : strain at the beginning of the time step
-     * \param[in]  s0    : stresses at the beginning of the time step
-     * \param[in]  mp    : material properties at the beginning of the time step
-     * \param[in]  iv0   : internal state variables at the beginning of the time step
-     * \param[in]  ev0   : external state variables at the beginning of the time step
+     * \param[in]  s     : current state
      * \param[in]  h     : modelling hypothesis
-     * \param[in]  dt    : time increment
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual bool
     computePredictionOperator(tfel::math::matrix<real>&,
-			      const tfel::math::tmatrix<3u,3u,real>&,
-			      const tfel::math::vector<real>&,
-			      const tfel::math::vector<real>&,
-			      const tfel::math::vector<real>&,
-			      const tfel::math::vector<real>&,
-			      const tfel::math::vector<real>&,
+			      const CurrentState&,
 			      const Hypothesis,
 			      const StiffnessMatrixType::mtype) const = 0;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[out] Kt    : tangent operator
-     * \param[out] s1    : stresses at the end of the time step
-     * \param[out] iv1   : internal state variables at the end of the time step
-     * \param[in]  r     : rotation matrix
-     * \param[in]  e0    : strain at the beginning of the time step
-     * \param[in]  de    : strain increment
-     * \param[in]  s0    : stresses at the beginning of the time step
-     * \param[in]  mp    : material properties
-     * \param[in]  iv0   : internal state variables at the beginning of the time step
-     * \param[in]  ev0   : external state variables at the beginning of the time step
-     * \param[in]  dev   : external state variables increments
-     * \param[in]  h     : modelling hypothesis
-     * \param[in]  dt    : time increment
-     * \param[in]  ktype : type of the stiffness matrix
+     * \param[out]    Kt    : tangent operator
+     * \param[out/in] s     : current state
+     * \param[in]     h     : modelling hypothesis
+     * \param[in]     dt    : time increment
+     * \param[in]     ktype : type of the stiffness matrix
      */
     virtual bool
     integrate(tfel::math::matrix<real>&,
-	      tfel::math::vector<real>&,
-	      tfel::math::vector<real>&,
-	      const tfel::math::tmatrix<3u,3u,real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
+	      CurrentState&,
 	      const Hypothesis,
 	      const real,
 	      const StiffnessMatrixType::mtype) const = 0;

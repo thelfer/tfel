@@ -11,9 +11,10 @@ mfront_PYTHON = __init__.py
 
 mfront_LTLIBRARIES = mtest.la
 
-mtest_la_SOURCES =  pymtest.cxx        \
-		    MTest.cxx          \
-		    MTestParser.cxx    \
+mtest_la_SOURCES =  pymtest.cxx         \
+		    MTest.cxx           \
+		    MTestParser.cxx     \
+		    CurrentState.cxx    \
 		    MFrontLogStream.cxx
 mtest_la_LIBADD  = -L@top_builddir@/mtest/src                   \
 		   -L@top_builddir@/mfront/src                  \

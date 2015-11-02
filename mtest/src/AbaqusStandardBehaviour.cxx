@@ -22,6 +22,7 @@
 #include"MFront/Abaqus/Abaqus.hxx"
 #include"MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx"
 
+#include"MTest/CurrentState.hxx"
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AbaqusStandardBehaviour.hxx"
 
@@ -126,44 +127,22 @@ namespace mtest
   
   bool
   AbaqusStandardBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
-							    const tfel::math::tmatrix<3u,3u,real>& r,
-							    const tfel::math::vector<real>& e0,
-							    const tfel::math::vector<real>& s0,
-							    const tfel::math::vector<real>& mprops0,
-							    const tfel::math::vector<real>& iv0,
-							    const tfel::math::vector<real>& esv0,
-							    const tfel::material::ModellingHypothesis::Hypothesis h,
-							    const StiffnessMatrixType::mtype ktype) const
+						     const CurrentState& s,
+						     const tfel::material::ModellingHypothesis::Hypothesis h,
+						     const StiffnessMatrixType::mtype ktype) const
   {
-    using namespace tfel::math;
-    vector<real> s1(s0);
-    vector<real> e1(e0);
-    vector<real> iv1(iv0);
-    vector<real> desv(esv0.size(),real(0));
-    return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
-				mprops0,iv0,esv0,desv,
-				h,real(1),ktype,false);
+    CurrentState ls(s);
+    return this->call_behaviour(Kt,ls,h,real(1),ktype,false);
   }
 
   bool
   AbaqusStandardBehaviour::integrate(tfel::math::matrix<real>& Kt,
-					    tfel::math::vector<real>& s1,
-					    tfel::math::vector<real>& iv1,
-					    const tfel::math::tmatrix<3u,3u,real>& r,
-					    const tfel::math::vector<real>& e0,
-					    const tfel::math::vector<real>& e1,
-					    const tfel::math::vector<real>& s0,
-					    const tfel::math::vector<real>& mp,
-					    const tfel::math::vector<real>& iv0,
-					    const tfel::math::vector<real>& ev0,
-					    const tfel::math::vector<real>& dev,
-					    const tfel::material::ModellingHypothesis::Hypothesis h,
-					    const real dt,
-					    const StiffnessMatrixType::mtype ktype) const
+				     CurrentState& s,
+				     const tfel::material::ModellingHypothesis::Hypothesis h,
+				     const real dt,
+				     const StiffnessMatrixType::mtype ktype) const
   {
-    return this->call_behaviour(Kt,s1,iv1,r,e0,e1,s0,
-				mp,iv0,ev0,dev,h,dt,
-				ktype,true);
+    return this->call_behaviour(Kt,s,h,dt,ktype,true);
   } // end of AbaqusStandardBehaviour::integrate
 
   AbaqusStandardBehaviour::~AbaqusStandardBehaviour()

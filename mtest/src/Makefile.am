@@ -8,7 +8,9 @@ lib_LTLIBRARIES = libTFELMTest.la
 bin_PROGRAMS  = mtest
 mtest_SOURCES = MTestMain.cxx
 
-libTFELMTest_la_SOURCES = Scheme.cxx                                \
+libTFELMTest_la_SOURCES = CurrentState.cxx                          \
+			  StructureCurrentState.cxx                 \
+			  Scheme.cxx                                \
 			  SchemeBase.cxx                            \
 			  MTest.cxx                                 \
 			  MTestParser.cxx                           \

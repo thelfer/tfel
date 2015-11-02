@@ -22,6 +22,7 @@ mfront_python_module(mtest
   pymtest.cxx
   MTest.cxx
   MTestParser.cxx
+  CurrentState.cxx
   MFrontLogStream.cxx)
 target_link_libraries(py_mfront_mtest
   TFELMTest)

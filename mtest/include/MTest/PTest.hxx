@@ -1,5 +1,5 @@
 /*! 
- * \file  mtest/include/MTest/MTest.hxx
+ * \file  mtest/include/MTest/PTest.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 09 avril 2013
@@ -37,67 +37,27 @@
 
 namespace mtest
 {
+
   
   /*!
-   * \brief MTest is a simple class to test mfront behaviours.
+   * \brief PTest is a simple class to test mfront behaviours.
    *
    * The unknowns are made of the driving variables stensor (for small
    * strain behaviours) followed by a number of lagrange multiplier.
    */
-  struct MTEST_VISIBILITY_EXPORT MTest
+  struct MTEST_VISIBILITY_EXPORT PTest
     : public SchemeBase
   {
-    /*!
-     * structure containing the state of the material.
-     * This structure is used internally and is declared public only
-     * for the python bindings. In particular, the description of the
-     * variables given here is only valid during the computations.
-     */
-    struct MTEST_VISIBILITY_EXPORT MTestCurrentState
-      : public CurrentState
-    {
-      //! default constructor
-      MTestCurrentState();
-      //! copy constructor
-      MTestCurrentState(const MTestCurrentState&);
-      MTestCurrentState(MTestCurrentState&&);
-      //! destructor
-      ~MTestCurrentState() noexcept;
-      // vector of unknows at 
-      // the beginning of the
-      // previous time step.
-      tfel::math::vector<real> u_1;
-      // vector of unknows at the beginning of the
-      // time step.
-      tfel::math::vector<real> u0;
-      // vector of unknows at the end of the
-      // time step
-      tfel::math::vector<real> u1;
-      // vector of unknows at the preivous iteration (end of the
-      // time step)
-      tfel::math::vector<real> u10;
-      // current period number
-      unsigned int period;
-      // previous time step
-      real dt_1;
-      // reference Temperature
-      real Tref;
-    private:
-      MTestCurrentState&
-      operator=(const MTestCurrentState&) = delete;
-      MTestCurrentState&
-      operator=(MTestCurrentState&&) = delete;
-    };
     /*!
      * structure where usefull variables for the computations are
      * defined.
      * This structure is used internally and is declared
      * public only for the python bindings.
      */
-    struct MTEST_VISIBILITY_EXPORT MTestWorkSpace
+    struct MTEST_VISIBILITY_EXPORT PTestWorkSpace
     {
-      MTestWorkSpace();
-      ~MTestWorkSpace() noexcept;
+      PTestWorkSpace();
+      ~PTestWorkSpace() noexcept;
       // stiffness tensor
       tfel::math::matrix<real> Kt;
       // numertical stiffness tensor
@@ -130,9 +90,9 @@ namespace mtest
       bool first;
       real a;
     private:
-      MTestWorkSpace(const MTestWorkSpace&) = delete;
-      MTestWorkSpace&
-      operator=(const MTestWorkSpace&) = delete;
+      PTestWorkSpace(const PTestWorkSpace&) = delete;
+      PTestWorkSpace&
+      operator=(const PTestWorkSpace&) = delete;
     };
     /*!
      * \brief base class for testing the behaviour outputs
@@ -173,7 +133,7 @@ namespace mtest
     /*!
      * default constructor
      */
-    MTest(void);
+    PTest(void);
     /*! 
      * \return the name of the test
      */
@@ -200,13 +160,13 @@ namespace mtest
      * \param[in] s : current state
      */
     virtual void
-    initializeCurrentState(MTestCurrentState&) const;
+    initializeCurrentState(PTestCurrentState&) const;
     /*!
      * \brief initialize the workspace
      * \param[in] wk : workspace
      */
     virtual void
-    initializeWorkSpace(MTestWorkSpace&) const;
+    initializeWorkSpace(PTestWorkSpace&) const;
     /*!
      * integrate the behaviour
      * along the loading path
@@ -217,8 +177,8 @@ namespace mtest
      * integrate the behaviour over one step
      */ 
     virtual void
-    execute(MTestCurrentState&,
-	    MTestWorkSpace&,
+    execute(PTestCurrentState&,
+	    PTestWorkSpace&,
 	    const real,
 	    const real);
     /*!
@@ -352,11 +312,11 @@ namespace mtest
      * \param[in] iv : internal state variables
      */
     virtual void
-    printOutput(const real,const MTestCurrentState&);
+    printOutput(const real,const PTestCurrentState&);
     /*!
      * destructor
      */
-    ~MTest();
+    ~PTest();
   protected:
     //! \brief set the modelling hypothesis to the default one
     virtual void setDefaultHypothesis(void) override;
@@ -415,7 +375,7 @@ namespace mtest
     real pv;
     //! compare to numerical jacobian
     bool cto;
-  }; // end of struct MTest
+  }; // end of struct PTest
 
 } // end of namespace mtest
 

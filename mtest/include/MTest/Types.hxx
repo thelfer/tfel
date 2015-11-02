@@ -24,12 +24,14 @@ namespace mtest
   //! a simple alias
   typedef double real;
   
-  //! forward declaration
+  // forward declaration
   struct Evolution;
   // ! a simple alias
   using EvolutionPtr = std::shared_ptr<Evolution>;
   // ! a simple alias
   using EvolutionManager = std::map<std::string,EvolutionPtr>;
+  // forward declaration
+  struct CurrentState;
 
   /*!
    * \brief possible type of stiffness matrix
