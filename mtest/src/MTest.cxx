@@ -595,51 +595,18 @@ namespace mtest
   void
   MTest::initializeCurrentState(MTestCurrentState& s) const
   {
-    using namespace std;
-    // getting the names of the materials properties
-    const auto mpnames(this->b->getMaterialPropertiesNames());
-    const auto esvnames(this->b->getExternalStateVariablesNames());
+    // unknowns
     const auto psz = this->getNumberOfUnknowns();
-    // clear
-    s.s_1.clear();
-    s.s0.clear();
-    s.s1.clear();
-    s.e0.clear();
-    s.e1.clear();
-    s.e_th0.clear();
-    s.e_th1.clear();
     s.u_1.clear();
     s.u0.clear();
     s.u1.clear();
     s.u10.clear();
-    s.mprops0.clear();
-    s.mprops1.clear();
-    s.iv_1.clear();
-    s.iv0.clear();
-    s.iv1.clear();
-    s.esv0.clear();
-    s.desv.clear();
-    // resizing
-    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
-    s.s_1.resize(nth,0.);
-    s.s0.resize(nth,0.);
-    s.s1.resize(nth,0.);
-    s.e0.resize(ndv,0.);
-    s.e1.resize(ndv,0.);
-    s.e_th0.resize(ndv,0.);
-    s.e_th1.resize(ndv,0.);
     s.u_1.resize(psz,0.);
     s.u0.resize(psz,0.);
     s.u1.resize(psz,0.);
     s.u10.resize(psz,0.);
-    s.mprops0.resize(mpnames.size());
-    s.mprops1.resize(mpnames.size());
-    s.iv_1.resize(this->b->getInternalStateVariablesSize(this->hypothesis),0.);
-    s.iv0.resize(s.iv_1.size(),0.);
-    s.iv1.resize(s.iv0.size(),0.);
-    s.esv0.resize(esvnames.size(),0.);
-    s.desv.resize(esvnames.size(),0.);
+    // current state
+    allocate(s,*(this->b),this->hypothesis);
     // setting the intial  values of strains
     this->b->getDrivingVariablesDefaultInitialValues(s.u_1);
     copy(this->e_t0.begin(),this->e_t0.end(),s.u_1.begin());
@@ -648,12 +615,12 @@ namespace mtest
     copy(this->s_t0.begin(),this->s_t0.end(),s.s0.begin());
     // getting the initial values of internal state variables
     if(this->iv_t0.size()>s.iv0.size()){
-      throw(runtime_error("MTest::initializeCurrentState: the number of initial values declared "
-			  "by the user for the internal state variables exceeds the "
-			  "number of internal state variables declared by the behaviour"));
+      throw(std::runtime_error("MTest::initializeCurrentState: the number of initial values declared "
+			       "by the user for the internal state variables exceeds the "
+			       "number of internal state variables declared by the behaviour"));
     }
-    copy(this->iv_t0.begin(),this->iv_t0.end(),s.iv_1.begin());
-    copy(this->iv_t0.begin(),this->iv_t0.end(),s.iv0.begin());
+    std::copy(this->iv_t0.begin(),this->iv_t0.end(),s.iv_1.begin());
+    std::copy(this->iv_t0.begin(),this->iv_t0.end(),s.iv0.begin());
     // rotation matrix
     s.r = this->rm;
     // mandatory for time step management
@@ -664,9 +631,9 @@ namespace mtest
     if(pev!=this->evm->end()){
       const auto& ev = *(pev->second);
       if(!ev.isConstant()){
-	throw(runtime_error("MTest::initializeCurrentState : "
-			    "'ThermalExpansionReferenceTemperature' "
-			    "must be a constant evolution"));
+	throw(std::runtime_error("MTest::initializeCurrentState : "
+				 "'ThermalExpansionReferenceTemperature' "
+				 "must be a constant evolution"));
       }
       s.Tref = ev(0);
     } else {
@@ -711,11 +678,11 @@ namespace mtest
   {
     using tfel::math::vector;
     // number of components of the driving variables
-    const unsigned short N = this->b->getDrivingVariablesSize(this->hypothesis);
+    const auto N = this->b->getDrivingVariablesSize(this->hypothesis);
     // getting the total number of unknowns
     size_t s = N;
     for(const auto& pc : this->constraints){
-      const Constraint& c = *pc;
+      const auto& c = *pc;
       s += c.getNumberOfLagrangeMultipliers();
     }
     return s;
@@ -798,8 +765,6 @@ namespace mtest
     using namespace tfel::material;
     using tfel::tests::TestResult;
     using tfel::math::vector;
-    // getting the names of the materials properties
-    const auto mpnames  = this->b->getMaterialPropertiesNames();
     unsigned short subStep = 0;
     // // number of components of the driving variables and the thermodynamic forces
     const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
@@ -816,23 +781,10 @@ namespace mtest
       unsigned short i,j;
       // evaluations of the materials properties at the end of the
       // time step
-      i=0;
-      for(const auto& mpn : mpnames){
-	auto pev = this->evm->find(mpn);
-	if(pev!=this->evm->end()){
-	  const Evolution& ev = *(pev->second);
-	  state.mprops1[i] = ev(t+dt);
-	} else {
-	  pev = this->defaultMaterialPropertiesValues->find(mpn);
-	  if(pev!=this->evm->end()){
-	    const Evolution& ev = *(pev->second);
-	    state.mprops1[i] = ev(t+dt);
-	  } else {
-	    throw(runtime_error("MTest::execute : no evolution named '"+mpn+"'"));
-	  }
-	}
-	++i;
-      }
+      computeMaterialProperties(state,*(this->evm),
+				*(this->defaultMaterialPropertiesValues),
+				this->b->getMaterialPropertiesNames(),
+				t,dt);
       computeExternalStateVariables(state,*(this->evm),
 				    this->b->getExternalStateVariablesNames(),
 				    t,dt);
@@ -934,26 +886,11 @@ namespace mtest
 		(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES)||
 		(this->ppolicy==SECANTOPERATORPREDICTION)||
 		(this->ppolicy==TANGENTOPERATORPREDICTION)){
-	// evaluations of the materials properties at the beginning
-	// of the time step
-	i=0;
-	for(const auto& mpn : mpnames){
-	  auto pev = this->evm->find(mpn);
-	  if(pev!=this->evm->end()){
-	    const auto& ev = *(pev->second);
-	    state.mprops0[i] = ev(t);
-	  } else {
-	    pev = this->defaultMaterialPropertiesValues->find(mpn);
-	    if(pev!=this->evm->end()){
-	      const auto& ev = *(pev->second);
-	      state.mprops0[i] = ev(t);
-	    } else {
-	      throw(runtime_error("MTest::execute : no evolution named '"+mpn+"'"));
-	    }
-	  }
-	  ++i;
-	}
-	fill(wk.Kp.begin(),wk.Kp.end(),0.);
+	computeMaterialProperties(state,*(this->evm),
+				  *(this->defaultMaterialPropertiesValues),
+				  this->b->getMaterialPropertiesNames(),
+				  t,real(0));
+	std::fill(wk.Kp.begin(),wk.Kp.end(),0.);
 	bool sp(true);
 	if(this->ppolicy==ELASTICPREDICTION){
 	  sp = this->b->computePredictionOperator(wk.Kp,state,

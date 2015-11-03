@@ -120,29 +120,20 @@ namespace castem{
   void
   CastemInterfaceExceptions::throwBehaviourIntegrationFailedException(const std::string& b)
   {
-    using namespace std;
-    string msg;
-    msg += "integration failed for behaviour '"+b+"'";
-    throw(CastemIntegrationFailed(msg));
+    throw(CastemIntegrationFailed("integration failed for behaviour '"+b+"'"));
   } // end of CastemInterfaceExceptions::throwBehaviourIntegrationFailedException
   
   void
   CastemInterfaceExceptions::throwMaximumNumberOfSubSteppingReachedException(const std::string& b)
   {
-    using namespace std;
-    string msg;
-    msg += "maximum number of sub stepping reached failed for behaviour '"+b+"'";
-    throw(CastemIntegrationFailed(msg));    
+    throw(CastemIntegrationFailed("maximum number of sub stepping reached failed for behaviour '"+b+"'"));    
   } // end of CastemInterfaceExceptions::throwMaximumNumberOfSubSteppingReachedException
   
   void
   CastemInterfaceExceptions::throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string& b)
   {
-    using namespace std;
-    string msg;
-    msg += "maximum number of iterations of the plane stress algorithm ";
-    msg += "reached failed for behaviour '"+b+"'";
-    throw(CastemIntegrationFailed(msg));  
+    throw(CastemIntegrationFailed("maximum number of iterations of the plane stress algorithm "
+				  "reached failed for behaviour '"+b+"'"));  
   } // end of CastemInterfaceExceptions::throwPlaneStressMaximumNumberOfIterationsReachedException
 
   void
@@ -151,11 +142,10 @@ namespace castem{
   {
     using namespace std;
     if(NTENS!=s){
-      string msg("CastemInterfaceExceptions::checkNTENSValue : "
-		 "invalid value for the NTENS parameter "
-		 "(got '"+to_string(NTENS)+"', "
-		 "expected '"+to_string(static_cast<unsigned int>(s))+"')");
-      throw(runtime_error(msg));  
+      throw(runtime_error("CastemInterfaceExceptions::checkNTENSValue : "
+			  "invalid value for the NTENS parameter "
+			  "(got '"+to_string(NTENS)+"', "
+			  "expected '"+to_string(static_cast<unsigned int>(s))+"')"));  
     }
   } // end of CastemInterfaceExceptions::checkNTENSValue
 
@@ -216,13 +206,19 @@ namespace castem{
   }
 
   void
-  CastemInterfaceExceptions::throwInvalidDDSOEException(const std::string& b,
-						      const CastemReal v)
+  CastemInterfaceExceptions::throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(const std::string&){
+    
+    throw(std::runtime_error("tangent operator is not available in the "
+			     "generic plane stress handler"));
+  }
+  
+  void
+  CastemInterfaceExceptions::throwInvalidDDSDDEException(const std::string& b,
+							 const CastemReal v)
   {
-    using namespace std;
-    ostringstream msg;
-    msg << "CastemInterfaceExceptions::throwInvalidDDSOEException : "
-	<< "an invalid value for the DDSOE parameter has been given ('" << v << "')"
+    std::ostringstream msg;
+    msg << "CastemInterfaceExceptions::throwInvalidDDSDDEException : "
+	<< "an invalid value for the DDSDDE parameter has been given ('" << v << "')"
 	<< " to the behaviour '" << b << "'.\n"
 	<< "The following values are accepted:\n"
 	<< "-3 : compute the prediction tangent operator, no behaviour integration\n"
@@ -233,8 +229,8 @@ namespace castem{
 	<< " 2 : integrate the behaviour over the time step, secant  operator  requested\n"
 	<< " 3 : integrate the behaviour over the time step, tagent  operator  requested\n"
 	<< " 4 : integrate the behaviour over the time step, consistent tagent operator requested\n";
-    throw(runtime_error(msg.str()));
-  } // end of CastemInterfaceExceptions::throwInvalidDDSOEException
+    throw(std::runtime_error(msg.str()));
+  } // end of CastemInterfaceExceptions::throwInvalidDDSDDEException
 
   void
   CastemUnSupportedCaseHandler::exe(const CastemReal *const,

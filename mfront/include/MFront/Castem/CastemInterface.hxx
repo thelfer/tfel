@@ -53,7 +53,7 @@ namespace castem{
      */
     TFEL_CASTEM_INLINE2 static
       void exe(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-	       const CastemReal *const DROT,  CastemReal *const DDSOE,
+	       const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	       const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	       const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	       const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -67,27 +67,27 @@ namespace castem{
       using namespace tfel::material;
       typedef ModellingHypothesis MH;
       if(*NDI==2){
-	CastemInterface::template callBehaviour<MH::TRIDIMENSIONAL>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+	CastemInterface::template callBehaviour<MH::TRIDIMENSIONAL>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 								  STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==0){
-	CastemInterface::template callBehaviour<MH::AXISYMMETRICAL>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+	CastemInterface::template callBehaviour<MH::AXISYMMETRICAL>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 								  STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==-1){
-	CastemInterface::template callBehaviour<MH::PLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+	CastemInterface::template callBehaviour<MH::PLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 							       STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==-2){
-	CastemInterface::template callBehaviour<MH::PLANESTRESS>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+	CastemInterface::template callBehaviour<MH::PLANESTRESS>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 							       STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==-3){
-	CastemInterface::template callBehaviour<MH::GENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+	CastemInterface::template callBehaviour<MH::GENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 									  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 									  STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else if(*NDI==14){
-	CastemInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+	CastemInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 											TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 											STATEV,NSTATV,STRESS,KINC,op,sfeh);
       } else {
@@ -99,7 +99,7 @@ namespace castem{
     template<tfel::material::ModellingHypothesis::Hypothesis H>
     TFEL_CASTEM_INLINE2 static void
     callBehaviour(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-		  const CastemReal *const DROT,  CastemReal *const DDSOE,
+		  const CastemReal *const DROT,  CastemReal *const DDSDDE,
 		  const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 		  const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 		  const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -115,9 +115,9 @@ namespace castem{
       typedef CastemTraits<BV> CastemTraits;
       try {
 	CastemInterfaceDispatch<CastemTraits::btype,H,
-			      Behaviour>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
-					      TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-					      STATEV,NSTATV,STRESS,op,sfeh);
+				Behaviour>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
+						TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+						STATEV,NSTATV,STRESS,op,sfeh);
       }
       catch(const CastemIntegrationFailed& e){
 	CastemInterfaceExceptions::treatCastemException(Traits::getName(),e);

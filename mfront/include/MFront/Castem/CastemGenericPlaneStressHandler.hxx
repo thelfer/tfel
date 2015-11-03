@@ -45,7 +45,7 @@ namespace castem
      */
     TFEL_CASTEM_INLINE2 static
     void exe(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-	     const CastemReal *const DROT,  CastemReal *const DDSOE,
+	     const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	     const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	     const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	     const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -57,14 +57,19 @@ namespace castem
     {
       using namespace tfel::meta;
       using namespace tfel::material;
-      const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;
+      constexpr const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;
       //! a simple alias
-      typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
+      using BV = Behaviour<H,CastemReal,false>;
+      using MTraits = MechanicalBehaviourTraits<BV>;
+      using Traits  = CastemTraits<BV>;
       typedef typename std::conditional<Traits::stype==castem::ISOTROPIC,
 	TreatPlaneStressIsotropicBehaviour,
 	TreatPlaneStressOrthotropicBehaviour>::type Handler;
       CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
-      Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
+      if(*DDSDDE!=0){
+	throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(MTraits::getName());
+      }
+      Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		   STRESS,op,sfeh);
     } // end of exe
@@ -92,7 +97,7 @@ namespace castem
 	     const CastemReal c2,
 	     const CastemReal c3,
 	     const CastemReal *const DTIME,
-	     const CastemReal *const DROT,  CastemReal *const DDSOE,
+	     const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	     const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	     const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	     const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -127,7 +132,7 @@ namespace castem
       CastemReal f[2];
 
       dez = c1*DSTRAN[0]+c2*DSTRAN[1];
-      CastemGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSOE,
+      CastemGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSDDE,
 										    TEMP,DTEMP,PROPS,
 										    NPROPS,PREDEF,DPRED,
 										    STATEV,STRESS,
@@ -139,7 +144,7 @@ namespace castem
 	
       if(abs(c3*s[2]) > 1.e-12){
 	dez -= c3*s[2];
-	CastemGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSOE,
+	CastemGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSDDE,
 										      TEMP,DTEMP,PROPS,
 										      NPROPS,PREDEF,DPRED,
 										      STATEV,STRESS,
@@ -156,7 +161,7 @@ namespace castem
 	x[1] = dez;
 	f[1] = s[2];
 	dez -= (x[1]-x[0])/(f[1]-f[0])*s[2];
-	CastemGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSOE,
+	CastemGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSDDE,
 										      TEMP,DTEMP,PROPS,
 										      NPROPS,PREDEF,DPRED,
 										      STATEV,STRESS,
@@ -192,7 +197,7 @@ namespace castem
     TFEL_CASTEM_INLINE2 static
     void iter(const CastemReal *const DTIME,
 	      const CastemReal *const DROT,
-	      CastemReal *const DDSOE,
+	      CastemReal *const DDSDDE,
 	      const CastemReal *const TEMP,
 	      const CastemReal *const DTEMP,
 	      const CastemReal *const PROPS,
@@ -225,7 +230,7 @@ namespace castem
       eto[2]  = STATEV[NSTATV_-1];
       deto[2] = dez;
       std::copy(STATEV,STATEV+NSTATV_,v);
-      GeneralisedPlaneStrainBehaviour::exe(DTIME,DROT,DDSOE,eto,deto,TEMP,DTEMP,
+      GeneralisedPlaneStrainBehaviour::exe(DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,
 					   PROPS,NPROPS,PREDEF,DPRED,v,
 					   &nNSTATV,s,op,sfeh);
     }
@@ -235,7 +240,7 @@ namespace castem
 	
       TFEL_CASTEM_INLINE2 static
       void exe(const CastemReal *const DTIME,
-	       const CastemReal *const DROT,  CastemReal *const DDSOE,
+	       const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	       const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	       const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	       const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -253,7 +258,7 @@ namespace castem
 	const CastemReal c1 = -n/(1-n);
 	const CastemReal c3 = 1/y;
 	CastemGenericPlaneStressHandler::template exe<BehaviourHandler>(c1,c1,c3,
-								      DTIME,DROT,DDSOE,
+								      DTIME,DROT,DDSDDE,
 								      STRAN,DSTRAN,TEMP,
 								      DTEMP,PROPS,NPROPS,
 								      PREDEF,DPRED,STATEV,
@@ -265,7 +270,7 @@ namespace castem
     {
       TFEL_CASTEM_INLINE2 static
       void exe(const CastemReal *const DTIME,
-	       const CastemReal *const DROT,  CastemReal *const DDSOE,
+	       const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	       const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	       const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	       const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -323,7 +328,7 @@ namespace castem
 	const CastemReal c2 = -C21/C22;
 	// calling the resolution
 	CastemGenericPlaneStressHandler::template exe<BehaviourHandler>(c1,c2,S22,
-								      DTIME,DROT,DDSOE,
+								      DTIME,DROT,DDSDDE,
 								      STRAN,DSTRAN,TEMP,
 								      DTEMP,nPROPS,NPROPS,
 								      PREDEF,DPRED,STATEV,

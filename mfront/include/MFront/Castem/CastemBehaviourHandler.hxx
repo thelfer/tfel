@@ -404,7 +404,7 @@ namespace castem
     private:
 
       void
-      computePredictionOperator(CastemReal *const DDSOE)
+      computePredictionOperator(CastemReal *const DDSDDE)
       {
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
@@ -424,14 +424,14 @@ namespace castem
 	  ConsistentTangentOperatorHandler;
 	const typename BV::SMFlag smflag = CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
 	  typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
-	if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
+	if((-3.25<*DDSDDE)&&(*DDSDDE<-2.75)){
 	  smtype = BV::TANGENTOPERATOR;
-	} else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
+	} else if((-2.25<*DDSDDE)&&(*DDSDDE<-1.75)){
 	  smtype = BV::SECANTOPERATOR;
-	} else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
+	} else if((-1.25<*DDSDDE)&&(*DDSDDE<-0.75)){
 	  smtype = BV::ELASTIC;
 	} else {
-	  throwInvalidDDSOEException(Traits::getName(),*DDSOE);
+	  throwInvalidDDSDDEException(Traits::getName(),*DDSDDE);
 	}
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
 		     this->PROPS+CastemTraits<BV>::propertiesOffset,
@@ -448,7 +448,7 @@ namespace castem
 	if(r==BV::FAILURE){
 	  throwPredictionComputationFailedException(Traits::getName());
 	}
-	ConsistentTangentOperatorHandler::exe(behaviour,DDSOE);
+	ConsistentTangentOperatorHandler::exe(behaviour,DDSDDE);
       }
 
       void
@@ -482,7 +482,7 @@ namespace castem
 	} else if((3.75<*ddsoe)&&(*ddsoe<4.25)){
 	  smtype = BV::CONSISTENTTANGENTOPERATOR;
 	} else {
-	  throwInvalidDDSOEException(Traits::getName(),*ddsoe);
+	  throwInvalidDDSDDEException(Traits::getName(),*ddsoe);
 	}
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
 		     this->PROPS+CastemTraits<BV>::propertiesOffset,
@@ -663,7 +663,7 @@ namespace castem
 	  } // end of Integrator::Integrator
 	
       TFEL_CASTEM_INLINE2
-	void exe(CastemReal *const DDSOE,
+	void exe(CastemReal *const DDSDDE,
 		 CastemReal *const STRESS,
 		 CastemReal *const STATEV)
       {
@@ -685,31 +685,31 @@ namespace castem
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
 	const typename BV::SMFlag smflag = CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
-	if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
+	if((-3.25<*DDSDDE)&&(*DDSDDE<-2.75)){
 	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
 					      BV::TANGENTOPERATOR);
-	} else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
+	} else if((-2.25<*DDSDDE)&&(*DDSDDE<-1.75)){
 	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
 					      BV::SECANTOPERATOR);
-	} else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
+	} else if((-1.25<*DDSDDE)&&(*DDSDDE<-0.75)){
 	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
 					      BV::ELASTIC);
-	} else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
+	} else if((-0.25<*DDSDDE)&&(*DDSDDE<0.25)){
 	  r = this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
-	} else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
+	} else if((0.75<*DDSDDE)&&(*DDSDDE<1.25)){
 	  r = this->behaviour.integrate(smflag,BV::ELASTIC);
-	} else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
+	} else if((1.75<*DDSDDE)&&(*DDSDDE<2.25)){
 	  r = this->behaviour.integrate(smflag,BV::SECANTOPERATOR);
-	} else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
+	} else if((2.75<*DDSDDE)&&(*DDSDDE<3.25)){
 	  r = this->behaviour.integrate(smflag,BV::TANGENTOPERATOR);
-	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
+	} else if((3.75<*DDSDDE)&&(*DDSDDE<4.25)){
 	  r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	} else {
-	  throwInvalidDDSOEException(Traits::getName(),*DDSOE);
+	  throwInvalidDDSDDEException(Traits::getName(),*DDSDDE);
 	}
 	if(r==BV::FAILURE){
 	  // Il manque un vraie gestion locale de résultats imprécis
-	  if(*DDSOE<-0.5){
+	  if(*DDSDDE<-0.5){
 	    throwPredictionComputationFailedException(Traits::getName());
 	  } else {
 	    throwBehaviourIntegrationFailedException(Traits::getName());
@@ -720,8 +720,8 @@ namespace castem
 	// }
 	behaviour.checkBounds();
 	this->behaviour.CASTEMexportStateData(STRESS,STATEV);
-	if((*DDSOE>0.5)||(*DDSOE<-0.5)){
-	  ConsistentTangentOperatorHandler::exe(this->behaviour,DDSOE);
+	if((*DDSDDE>0.5)||(*DDSDDE<-0.5)){
+	  ConsistentTangentOperatorHandler::exe(this->behaviour,DDSDDE);
 	}
       } // end of Integrator::exe
 	
@@ -772,10 +772,10 @@ namespace castem
       typedef Behaviour<H,CastemReal,false> BV;
       const static unsigned short N = 
 	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-      static void exe(const BV& bv,CastemReal *const DDSOE)
+      static void exe(const BV& bv,CastemReal *const DDSDDE)
       {
 	typedef typename CastemTangentOperatorType<CastemTraits<BV>::btype,N>::type TangentOperatorType;
-	TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
+	TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSDDE));
 	Dt = bv.getTangentOperator();
 	// l'opérateur tangent contient des sqrt(2) en petites et grandes transformations...
 	CastemTangentOperator::normalize(Dt);
@@ -787,9 +787,9 @@ namespace castem
       typedef Behaviour<H,CastemReal,false> BV;
       const static unsigned short N = 
 	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-      static void exe(const BV& bv,CastemReal *const DDSOE)
+      static void exe(const BV& bv,CastemReal *const DDSDDE)
       {
-	ConsistentTangentOperatorComputer::exe(bv,DDSOE);
+	ConsistentTangentOperatorComputer::exe(bv,DDSDDE);
       } // end of exe	  
     };
 
@@ -798,12 +798,12 @@ namespace castem
       typedef Behaviour<H,CastemReal,false> BV;
       const static unsigned short N = 
 	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-      static void exe(const BV& bv,CastemReal *const DDSOE)
+      static void exe(const BV& bv,CastemReal *const DDSDDE)
       {
 	using namespace tfel::math;
 	typedef typename CastemTangentOperatorType<CastemTraits<BV>::btype,N>::type TangentOperatorType;
-	ConsistentTangentOperatorComputer::exe(bv,DDSOE);
-	TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSOE));
+	ConsistentTangentOperatorComputer::exe(bv,DDSDDE);
+	TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSDDE));
 	// les conventions fortran....
 	CastemTangentOperator::transpose(Dt);
       } // end of exe	  

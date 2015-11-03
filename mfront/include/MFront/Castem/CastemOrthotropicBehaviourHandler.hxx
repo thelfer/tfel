@@ -142,7 +142,7 @@ namespace castem
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME,
 	       const CastemReal *const,
-	       CastemReal *const DDSOE,
+	       CastemReal *const DDSDDE,
 	       const CastemReal *const STRAN ,
 	       const CastemReal *const DSTRAN,
 	       const CastemReal *const TEMP  ,
@@ -186,7 +186,7 @@ namespace castem
       ThermalExpansionCoefficientCheck::exe(PROPS[9]);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSOE,STRESS,STATEV);
+      handler.exe(DDSDDE,STRESS,STATEV);
     } // end of CastemOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
 
@@ -199,7 +199,7 @@ namespace castem
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME ,
 	       const CastemReal *const DROT  ,
-	       CastemReal *const DDSOE,
+	       CastemReal *const DDSDDE,
 	       const CastemReal *const STRAN ,
 	       const CastemReal *const DSTRAN,
 	       const CastemReal *const TEMP  ,
@@ -248,13 +248,13 @@ namespace castem
       m.rotateStressesForward(STRESS,s);
       m.rotateStrainsForward(STRAN,e);
       m.rotateStrainsForward(DSTRAN,de);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
+      const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      if(bDDSDDE){
+	m.rotateTangentOperatorBackward(DDSDDE);
       }
     } // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
   }; // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
@@ -271,7 +271,7 @@ namespace castem
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME ,
 	       const CastemReal *const DROT  ,
-	       CastemReal *const DDSOE,
+	       CastemReal *const DDSDDE,
 	       const CastemReal *const STRAN ,
 	       const CastemReal *const DSTRAN,
 	       const CastemReal *const TEMP  ,
@@ -321,13 +321,13 @@ namespace castem
       m.rotateStressesForward(STRESS,s);
       m.rotateStrainsForward(STRAN,e);
       m.rotateStrainsForward(DSTRAN,de);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
+      const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      if(bDDSDDE){
+	m.rotateTangentOperatorBackward(DDSDDE);
       }
     } // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
   }; // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
@@ -341,7 +341,7 @@ namespace castem
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME,
 	       const CastemReal *const DROT,
-	       CastemReal *const DDSOE,
+	       CastemReal *const DDSDDE,
 	       const CastemReal *const STRAN,
 	       const CastemReal *const DSTRAN,
 	       const CastemReal *const TEMP  ,
@@ -391,13 +391,13 @@ namespace castem
       ThermalExpansionCoefficientCheck::exe(PROPS[16]);
       ThermalExpansionCoefficientCheck::exe(PROPS[17]);
       ThermalExpansionCoefficientCheck::exe(PROPS[18]);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
+      const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      if(bDDSDDE){
+	m.rotateTangentOperatorBackward(DDSDDE);
       }
     } // end of CastemOrthotropicBehaviourHandler<3u,Behaviour>::exe
   };
@@ -423,7 +423,7 @@ namespace castem
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME,
 	       const CastemReal *const,
-	       CastemReal *const DDSOE,
+	       CastemReal *const DDSDDE,
 	       const CastemReal *const F0 ,
 	       const CastemReal *const F1,
 	       const CastemReal *const TEMP  ,
@@ -467,7 +467,7 @@ namespace castem
       ThermalExpansionCoefficientCheck::exe(PROPS[9]);
       Handler handler(DTIME,F0,F1,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSOE,STRESS,STATEV);
+      handler.exe(DDSDDE,STRESS,STATEV);
     } // end of CastemOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
 
@@ -480,7 +480,7 @@ namespace castem
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME ,
 	       const CastemReal *const DROT  ,
-	       CastemReal *const DDSOE,
+	       CastemReal *const DDSDDE,
 	       const CastemReal *const F0 ,
 	       const CastemReal *const F1,
 	       const CastemReal *const TEMP  ,
@@ -529,13 +529,13 @@ namespace castem
       m.rotateStressesForward(STRESS,s);
       m.rotateDeformationGradientForward(F0,F0m);
       m.rotateDeformationGradientForward(F1,F1m);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
+      const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      if(bDDSDDE){
+	m.rotateTangentOperatorBackward(DDSDDE);
       }
     } // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
   }; // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
@@ -552,7 +552,7 @@ namespace castem
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME ,
 	       const CastemReal *const DROT  ,
-	       CastemReal *const DDSOE,
+	       CastemReal *const DDSDDE,
 	       const CastemReal *const F0 ,
 	       const CastemReal *const F1,
 	       const CastemReal *const TEMP  ,
@@ -602,13 +602,13 @@ namespace castem
       m.rotateStressesForward(STRESS,s);
       m.rotateDeformationGradientForward(F0,F0m);
       m.rotateDeformationGradientForward(F1,F1m);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
+      const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV);
       m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      if(bDDSDDE){
+	m.rotateTangentOperatorBackward(DDSDDE);
       }
     } // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
   }; // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
@@ -622,7 +622,7 @@ namespace castem
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME,
 	       const CastemReal *const DROT,
-	       CastemReal *const DDSOE,
+	       CastemReal *const DDSDDE,
 	       const CastemReal *const F0,
 	       const CastemReal *const F1,
 	       const CastemReal *const TEMP  ,
@@ -672,13 +672,13 @@ namespace castem
       ThermalExpansionCoefficientCheck::exe(PROPS[16]);
       ThermalExpansionCoefficientCheck::exe(PROPS[17]);
       ThermalExpansionCoefficientCheck::exe(PROPS[18]);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
+      const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,sm,op,sfeh);
-      handler.exe(DDSOE,sm,STATEV);
+      handler.exe(DDSDDE,sm,STATEV);
       m.rotateStressesBackward(sm,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      if(bDDSDDE){
+	m.rotateTangentOperatorBackward(DDSDDE);
       }
     } // end of CastemOrthotropicBehaviourHandler<3u,Behaviour>::exe
 	

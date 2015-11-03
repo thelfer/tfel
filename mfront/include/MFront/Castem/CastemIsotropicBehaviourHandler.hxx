@@ -33,7 +33,7 @@ namespace castem
     TFEL_CASTEM_INLINE static
       void exe(const CastemReal *const DTIME ,
 	       const CastemReal *const,
-	       CastemReal *const DDSOE,
+	       CastemReal *const DDSDDE,
 	       const CastemReal *const STRAN ,
 	       const CastemReal *const DSTRAN,
 	       const CastemReal *const TEMP  ,
@@ -74,7 +74,7 @@ namespace castem
       ThermalExpansionCoefficientCheck::exe(PROPS[3]);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSOE,STRESS,STATEV);
+      handler.exe(DDSDDE,STRESS,STATEV);
     } // end of CastemIsotropicBehaviourHandlerBase::exe
 
   }; // end of struct CastemIsotropicBehaviourHandlerBase
@@ -96,7 +96,7 @@ namespace castem
     TFEL_CASTEM_INLINE static
       void exe(const CastemReal *const DTIME ,
 	       const CastemReal *const DROT,
-	             CastemReal *const DDSOE,
+	             CastemReal *const DDSDDE,
 	       const CastemReal *const STRAN ,
 	       const CastemReal *const DSTRAN,
 	       const CastemReal *const TEMP  ,
@@ -126,9 +126,9 @@ namespace castem
       copy<NPROPS_>::exe(PROPS,mp);
       mp[0] = PROPS[1];
       mp[1] = PROPS[0];
-      CastemIsotropicBehaviourHandlerBase<COHESIVEZONEMODEL,H,Behaviour>::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,
-									    TEMP,DTEMP,mp,NPROPS,PREDEF,
-									    DPRED,STATEV,NSTATV,STRESS,op,sfeh);
+      CastemIsotropicBehaviourHandlerBase<COHESIVEZONEMODEL,H,Behaviour>::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,
+									      TEMP,DTEMP,mp,NPROPS,PREDEF,
+									      DPRED,STATEV,NSTATV,STRESS,op,sfeh);
     }
   };
 

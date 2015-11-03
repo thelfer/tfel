@@ -16,6 +16,7 @@
 
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
 
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
@@ -69,8 +70,6 @@ namespace mtest
      * (small strain behaviours)
      */
     tfel::math::vector<real> e_th1;
-    //! material properties at the beginning of the time step
-    tfel::math::vector<real> mprops0;
     //! material properties at the end of the time step
     tfel::math::vector<real> mprops1;
     //! internal variables at the beginning of the previous time step
@@ -87,6 +86,35 @@ namespace mtest
     tfel::math::tmatrix<3u,3u> r;
   }; // end of struct CurrentState
 
+  /*!
+   * \brief allocate memory
+   * \param[out] s: state
+   * \param[in]  b: behaviour
+   * \param[in]  h: modelling hypothesis
+   */
+  MTEST_VISIBILITY_EXPORT void
+  allocate(CurrentState&,
+	   const Behaviour&,
+	   const tfel::material::ModellingHypothesis::Hypothesis);
+  
+  /*!
+   * \brief compute the external state variables for the current time
+   * step
+   * \param[out] s       : state
+   * \param[in]  evm     : evolution manager
+   * \param[in]  dvm     : default material properties value
+   * \param[in]  mpnames : material properties names
+   * \param[in]  t       : time at the beginning of the time step
+   * \param[in]  dt      : time increment
+   */
+  MTEST_VISIBILITY_EXPORT void
+  computeMaterialProperties(CurrentState&,
+			    const EvolutionManager&,
+			    const EvolutionManager&,
+			    const std::vector<std::string>&,
+			    const real,
+			    const real);
+  
   /*!
    * \brief compute the external state variables for the current time
    * step

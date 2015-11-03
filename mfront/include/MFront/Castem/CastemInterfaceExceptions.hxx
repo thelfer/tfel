@@ -169,13 +169,20 @@ namespace castem{
     TFEL_NORETURN static void
     throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string&);
     /*!
-     * \brief throw an CastemException if the DDSOE parameter is invalid
+     * \brief throw an CastemException if the DDSDDE parameter is invalid
      * \param[in] b : behaviour name
-     * \param[in] v : DDSOE value
+     * \param[in] v : DDSDDE value
      */
     TFEL_NORETURN static void
-    throwInvalidDDSOEException(const std::string&,
-			       const CastemReal);
+    throwInvalidDDSDDEException(const std::string&,
+				const CastemReal);
+    /*!
+     * \brief throw an CastemException when a tanget operator is
+     * requested in the generic plane stress handler
+     * \param[in] b : behaviour name
+     */
+    TFEL_NORETURN static void
+    throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(const std::string&);
     /*!
      * \brief throw an AsterException if the prediction computation
      * failed

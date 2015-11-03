@@ -25,6 +25,8 @@ namespace mtest
   typedef double real;
   
   // forward declaration
+  struct Behaviour;
+  // forward declaration
   struct Evolution;
   // ! a simple alias
   using EvolutionPtr = std::shared_ptr<Evolution>;

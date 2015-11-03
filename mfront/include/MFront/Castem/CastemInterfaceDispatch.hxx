@@ -76,7 +76,7 @@ namespace castem{
   {
     TFEL_CASTEM_INLINE2 static
     void exe(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-	     const CastemReal *const DROT,  CastemReal *const DDSOE,
+	     const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	     const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	     const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	     const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -98,7 +98,7 @@ namespace castem{
 			  CastemOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
 							  H,Behaviour> >::type Handler;
       CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
-      Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
+      Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		   STRESS,op,sfeh);
     } // end of exe
@@ -119,7 +119,7 @@ namespace castem{
   {
     TFEL_CASTEM_INLINE2 static
     void exe(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-	     const CastemReal *const DROT,  CastemReal *const DDSOE,
+	     const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	     const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	     const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	     const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -141,11 +141,11 @@ namespace castem{
 			    CastemOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
 							    MH::PLANESTRESS,Behaviour> >::type Handler;
 	CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
-	Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
+	Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		     STRESS,op,sfeh);
       } else { 
-	CastemGenericPlaneStressHandler<Behaviour>::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,
+	CastemGenericPlaneStressHandler<Behaviour>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 						      TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
 						      STATEV,NSTATV,STRESS,op,sfeh);
       }
@@ -166,7 +166,7 @@ namespace castem{
   {
     TFEL_CASTEM_INLINE2 static
     void exe(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-	     const CastemReal *const DROT,  CastemReal *const DDSOE,
+	     const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	     const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	     const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	     const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -188,7 +188,7 @@ namespace castem{
 			  CastemOrthotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,
 							  H,Behaviour> >::type Handler;
       CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
-      Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
+      Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
 		   STRESS,op,sfeh);
     } // end of exe
@@ -202,7 +202,7 @@ namespace castem{
   {
     TFEL_CASTEM_INLINE2 static
     void exe(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-	     const CastemReal *const DROT,  CastemReal *const DDSOE,
+	     const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	     const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	     const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	     const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -229,12 +229,12 @@ namespace castem{
       u[0]  = STRAN[1];  u[1]  = STRAN[0];
       du[0] = DSTRAN[1]; du[1] = DSTRAN[0];
       t[0]  = STRESS[1]; t[1]  = STRESS[0];
-      Handler::exe(DTIME,DROT,DDSOE,u,du,TEMP,DTEMP,
+      Handler::exe(DTIME,DROT,DDSDDE,u,du,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,op,sfeh);
-      D[0] = DDSOE[0]; D[1] = DDSOE[1];
-      D[2] = DDSOE[2]; D[3] = DDSOE[3];
-      DDSOE[0] = D[3]; DDSOE[1] = D[2];
-      DDSOE[2] = D[1]; DDSOE[3] = D[0];
+      D[0] = DDSDDE[0]; D[1] = DDSDDE[1];
+      D[2] = DDSDDE[2]; D[3] = DDSDDE[3];
+      DDSDDE[0] = D[3]; DDSDDE[1] = D[2];
+      DDSDDE[2] = D[1]; DDSDDE[3] = D[0];
       STRESS[0] = t[1]; STRESS[1] = t[0];
     } // end of exe
   }; // end of struct CastemInterfaceDispatch
@@ -247,7 +247,7 @@ namespace castem{
   {
     TFEL_CASTEM_INLINE2 static
     void exe(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-	     const CastemReal *const DROT,  CastemReal *const DDSOE,
+	     const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	     const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	     const CastemReal *const TEMP,  const CastemReal *const DTEMP,
 	     const CastemReal *const PROPS, const CastemInt  *const NPROPS,
@@ -274,14 +274,14 @@ namespace castem{
       u[0]  = STRAN[2];  u[1]  = STRAN[0];  u[2]  = STRAN[1]; 
       du[0] = DSTRAN[2]; du[1] = DSTRAN[0]; du[2] = DSTRAN[1];
       t[0]  = STRESS[2]; t[1]  = STRESS[0]; t[2]  = STRESS[1];
-      Handler::exe(DTIME,DROT,DDSOE,u,du,TEMP,DTEMP,
+      Handler::exe(DTIME,DROT,DDSDDE,u,du,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,op,sfeh);
-      D[0] = DDSOE[0]; D[1] = DDSOE[1]; D[2] = DDSOE[2];
-      D[3] = DDSOE[3]; D[4] = DDSOE[4]; D[5] = DDSOE[5]; 
-      D[6] = DDSOE[6]; D[7] = DDSOE[7]; D[8] = DDSOE[8]; 
-      DDSOE[0] = D[4]; DDSOE[1] = D[5]; DDSOE[2] = D[3];
-      DDSOE[3] = D[7]; DDSOE[4] = D[8]; DDSOE[5] = D[6]; 
-      DDSOE[6] = D[1]; DDSOE[7] = D[2]; DDSOE[8] = D[0]; 
+      D[0] = DDSDDE[0]; D[1] = DDSDDE[1]; D[2] = DDSDDE[2];
+      D[3] = DDSDDE[3]; D[4] = DDSDDE[4]; D[5] = DDSDDE[5]; 
+      D[6] = DDSDDE[6]; D[7] = DDSDDE[7]; D[8] = DDSDDE[8]; 
+      DDSDDE[0] = D[4]; DDSDDE[1] = D[5]; DDSDDE[2] = D[3];
+      DDSDDE[3] = D[7]; DDSDDE[4] = D[8]; DDSDDE[5] = D[6]; 
+      DDSDDE[6] = D[1]; DDSDDE[7] = D[2]; DDSDDE[8] = D[0]; 
       STRESS[0] = t[1]; STRESS[1] = t[2]; STRESS[2] = t[0];
     } // end of exe
   }; // end of struct CastemInterfaceDispatch
