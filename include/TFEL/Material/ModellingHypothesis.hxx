@@ -170,6 +170,28 @@ namespace tfel
       static constexpr unsigned short value = 3u;
     };
 
+    /*!
+     * \return the space dimension associated to a modelling hypothesis
+     * \param[in] h: modelling hypothesis
+     */
+    TFELMATERIAL_VISIBILITY_EXPORT unsigned short
+    getSpaceDimension(const ModellingHypothesis::Hypothesis);
+
+    /*!
+     * \return the size of a symmetric tensor for a given modelling
+     * hypothesis
+     * \param[in] h: modelling hypothesis
+     */
+    TFELMATERIAL_VISIBILITY_EXPORT unsigned short
+    getStensorSize(const ModellingHypothesis::Hypothesis);
+
+    /*!
+     * \return the size of a tensor for a given modelling hypothesis
+     * \param[in] h: modelling hypothesis
+     */
+    TFELMATERIAL_VISIBILITY_EXPORT unsigned short
+    getTensorSize(const ModellingHypothesis::Hypothesis);
+    
   } // end of namespace material
 
 } // end of namespace tfel

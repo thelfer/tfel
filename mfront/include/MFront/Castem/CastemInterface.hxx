@@ -59,7 +59,8 @@ namespace castem{
 	       const CastemReal *const PROPS, const CastemInt  *const NPROPS,
 	       const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	       CastemReal *const STATEV,const CastemInt  *const NSTATV,
-	       CastemReal *const STRESS,const CastemInt  *const NDI,
+	       CastemReal *const STRESS,      CastemReal *const PNEWDT,
+	       const CastemInt  *const NDI,
 	       CastemInt  *const KINC,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
@@ -69,27 +70,27 @@ namespace castem{
       if(*NDI==2){
 	CastemInterface::template callBehaviour<MH::TRIDIMENSIONAL>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,KINC,op,sfeh);
+								  STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
       } else if(*NDI==0){
 	CastemInterface::template callBehaviour<MH::AXISYMMETRICAL>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,KINC,op,sfeh);
+								  STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
       } else if(*NDI==-1){
 	CastemInterface::template callBehaviour<MH::PLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,KINC,op,sfeh);
+							       STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
       } else if(*NDI==-2){
 	CastemInterface::template callBehaviour<MH::PLANESTRESS>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,KINC,op,sfeh);
+							       STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
       } else if(*NDI==-3){
 	CastemInterface::template callBehaviour<MH::GENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 									  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									  STATEV,NSTATV,STRESS,KINC,op,sfeh);
+									  STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
       } else if(*NDI==14){
 	CastemInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 											TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-											STATEV,NSTATV,STRESS,KINC,op,sfeh);
+											STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
       } else {
 	CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage();
 	*KINC = -7;
@@ -105,7 +106,8 @@ namespace castem{
 		  const CastemReal *const PROPS, const CastemInt  *const NPROPS,
 		  const CastemReal *const PREDEF,const CastemReal *const DPRED,
 		  CastemReal *const STATEV,const CastemInt  *const NSTATV,
-		  CastemReal *const STRESS,CastemInt  *const KINC,
+		  CastemReal *const STRESS,      CastemReal *const PNEWDT,
+		  CastemInt  *const KINC,
 		  const tfel::material::OutOfBoundsPolicy op,
 		  const StressFreeExpansionHandler& sfeh)
     {
@@ -117,7 +119,7 @@ namespace castem{
 	CastemInterfaceDispatch<CastemTraits::btype,H,
 				Behaviour>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 						TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-						STATEV,NSTATV,STRESS,op,sfeh);
+						STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
       }
       catch(const CastemIntegrationFailed& e){
 	CastemInterfaceExceptions::treatCastemException(Traits::getName(),e);

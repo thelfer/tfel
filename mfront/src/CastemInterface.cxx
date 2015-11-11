@@ -73,7 +73,7 @@ namespace mfront{
 	<< " const castem::CastemInt  *const NPROPS,\n"
 	<< " const castem::CastemReal *const,\n"
 	<< " const castem::CastemReal *const DROT,\n"
-	<< " const castem::CastemReal *const,\n"
+	<< "       castem::CastemReal *const PNEWDT,\n"
 	<< " const castem::CastemReal *const,\n";
     if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << " const castem::CastemReal *const F0,\n"
@@ -121,7 +121,7 @@ namespace mfront{
 	<< " const castem::CastemInt  *const,\n"
 	<< " const castem::CastemReal *const,\n"
 	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
+	<< "       castem::CastemReal *const,\n"
         << " const castem::CastemReal *const,\n"
 	<< " const castem::CastemReal *const,\n"
 	<< " const castem::CastemReal *const,\n"
@@ -162,32 +162,6 @@ namespace mfront{
     }
     throw(std::runtime_error(msg.str()));
   } // end of getCastemModellingHypothesisIndex
-
-  unsigned short
-  CastemInterface::getStensorSize(const tfel::material::ModellingHypothesis::Hypothesis h)
-  {
-    using namespace tfel::material;
-    switch(h){
-    case ModellingHypothesis::TRIDIMENSIONAL:
-      return 6u;
-    case ModellingHypothesis::AXISYMMETRICAL:
-    case ModellingHypothesis::PLANESTRAIN:
-    case ModellingHypothesis::PLANESTRESS:
-    case ModellingHypothesis::GENERALISEDPLANESTRAIN:
-      return 4u;
-    case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
-      return 3u;
-    default:
-      break;
-    }
-    std::ostringstream msg;
-    msg << "CastemInterface::getStensorSize : "
-	<< "unsupported hypothesis";
-    if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      msg << " ('" << ModellingHypothesis::toString(h) << "')";
-    }
-    throw(std::runtime_error(msg.str()));
-  } // end of CastemInterface::getStensorSize
 
   std::string
   CastemInterface::getName(void)
@@ -1137,7 +1111,8 @@ namespace mfront{
 	<< "const castem::CastemReal *const PROPS, const castem::CastemInt    *const NPROPS,\n"
 	<< "const castem::CastemReal *const PREDEF,const castem::CastemReal *const DPRED,\n"
 	<< "castem::CastemReal *const STATEV,const castem::CastemInt    *const NSTATV,\n"
-	<< "castem::CastemReal *const STRESS,const castem::CastemInt    *const NDI,\n"
+	<< "castem::CastemReal *const STRESS,castem::CastemReal *const PNEWDT,\n"
+	<< "const castem::CastemInt *const NDI,\n"
 	<< "castem::CastemInt  *const KINC,\n"
 	<< "const castem::StressFreeExpansionHandler& sfeh)\n";
     out << "{\n";
@@ -1147,7 +1122,7 @@ namespace mfront{
 	<< ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,\n"
 	<< "TEMP,DTEMP,PROPS,NPROPS,\n"
 	<< "PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC,op,sfeh);\n";
+	<< "STRESS,PNEWDT,NDI,KINC,op,sfeh);\n";
     out << "}\n\n";
 
     
@@ -1286,9 +1261,8 @@ namespace mfront{
 	    b.push_back(base+"_ss");
 	    b.push_back(name+"_ss");
 	  } else {
-	    string msg("CastemInterface::getGeneratedEntryPoints : "
-		       "internal error, unsupported finite strain strategy");
-	    throw(runtime_error(msg));
+	    throw(runtime_error("CastemInterface::getGeneratedEntryPoints: "
+				"internal error, unsupported finite strain strategy"));
 	  }
 	  if(this->finiteStrainStrategies.size()==1u){
 	    b.push_back(base);
@@ -1650,7 +1624,7 @@ namespace mfront{
     out << "umat" << makeLowerCase(name)
 	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,NDI,KINC,\n"
+	<< "STRESS,PNEWDT,NDI,KINC,\n"
 	<< "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -1719,7 +1693,7 @@ namespace mfront{
     out << "umat" << makeLowerCase(name)
 	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "s,NDI,KINC,\n"
+	<< "s,PNEWDT,NDI,KINC,\n"
 	<< "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -1791,7 +1765,7 @@ namespace mfront{
     out << "umat" << makeLowerCase(name)
     	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
     	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-    	<< "s,NDI,KINC,\n"
+    	<< "s,PNEWDT,NDI,KINC,\n"
     	<< "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -1834,13 +1808,13 @@ namespace mfront{
       out << "umat" << makeLowerCase(name)
 	  << "_base(NTENS, DTIME,DROT,DDSDDE,F0,F1,TEMP,DTEMP,\n"
 	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	  << "STRESS,NDI,KINC,\n"
+	  << "STRESS,PNEWDT,NDI,KINC,\n"
 	  << "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
     } else {
       out << "umat" << makeLowerCase(name)
 	  << "_base(NTENS, DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,\n"
 	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	  << "STRESS,NDI,KINC,\n"
+	  << "STRESS,PNEWDT,NDI,KINC,\n"
 	  << "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
     }
     if(this->generateMTestFile){

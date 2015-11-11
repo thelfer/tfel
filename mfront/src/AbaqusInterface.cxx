@@ -184,8 +184,7 @@ namespace mfront{
   std::string
   AbaqusInterface::getLibraryName(const BehaviourDescription& mb) const
   {
-    using namespace std;
-    string lib;
+    auto lib = std::string{};
     if(mb.getLibrary().empty()){
       if(!mb.getMaterialName().empty()){
 	lib = "Abaqus"+mb.getMaterialName();
@@ -195,7 +194,7 @@ namespace mfront{
     } else {
       lib = "Abaqus"+mb.getLibrary();
     }
-    return lib;
+    return makeUpperCase(lib);
   } // end of AbaqusInterface::getLibraryName
 
   std::string
@@ -207,7 +206,7 @@ namespace mfront{
   std::string
   AbaqusInterface::getFunctionName(const std::string& name) const
   {
-    return name;
+    return makeUpperCase(name);
   } // end of AbaqusInterface::getLibraryName
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
@@ -371,7 +370,8 @@ namespace mfront{
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
-    out << "MFRONT_SHAREDOBJ void\n" << name;
+    out << "MFRONT_SHAREDOBJ void\n"
+	<< getFunctionName(name);
     writeUMATArguments(out);
     out << ";\n\n";
 
@@ -457,7 +457,7 @@ namespace mfront{
     }
 
     out << "MFRONT_SHAREDOBJ void\n"
-	<< name;
+	<< getFunctionName(name);
     writeUMATArguments(out,mb.getBehaviourType(),false);
     out << "{\n";
     if(((getDebugMode())||(this->compareToNumericalTangentOperator))&&(!this->generateMTestFile)){

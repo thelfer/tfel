@@ -342,8 +342,9 @@ namespace castem
       {} // end of Error
       
       TFEL_CASTEM_INLINE void exe(CastemReal *const,
-				CastemReal *const,
-				CastemReal *const)
+				  CastemReal *const,
+				  CastemReal *const,
+				  CastemReal *const)
       {
 	using namespace std;
 	using namespace tfel::material;
@@ -390,14 +391,15 @@ namespace castem
        {} // end of IntegratorWithTimeStepping
       
       TFEL_CASTEM_INLINE2 void
-	exe(CastemReal *const ddsoe,
-	    CastemReal *const stress,
-	    CastemReal *const statev)
+      exe(CastemReal *const ddsoe,
+	  CastemReal *const stress,
+	  CastemReal *const statev,
+	  CastemReal *const pnewdt)
       {
 	if(*ddsoe<-0.5){
 	  this->computePredictionOperator(ddsoe);
 	} else {
-	  this->integrate(stress,statev,ddsoe);
+	  this->integrate(stress,statev,ddsoe,pnewdt);
 	}
       } // end of IntegratorWithTimeStepping::exe
 
@@ -454,7 +456,8 @@ namespace castem
       void
       integrate(CastemReal *const stress,
 		CastemReal *const statev,
-		CastemReal *const ddsoe)
+		CastemReal *const ddsoe,
+		CastemReal *const pnewdt)
       {
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
@@ -509,7 +512,7 @@ namespace castem
 	}
 	if((r==BV::FAILURE)||((r==BV::UNRELIABLE_RESULTS)&&
 			      (CastemTraits<BV>::doSubSteppingOnInvalidResults))){
-	  this->integrate2(stress,statev,ddsoe,smtype);
+	  this->integrate2(stress,statev,ddsoe,pnewdt,smtype);
 	} else {
 	  behaviour.CASTEMexportStateData(stress,statev);
 	  if((*ddsoe>0.5)||(*ddsoe<-0.5)){
@@ -522,6 +525,7 @@ namespace castem
       integrate2(CastemReal *const stress,
 		 CastemReal *const statev,
 		 CastemReal *const ddsoe,
+		 CastemReal *const, /* pnewdt */
 		 const typename Behaviour<H,CastemReal,false>::SMType smtype)
       {
 	using namespace tfel::material;
@@ -665,7 +669,8 @@ namespace castem
       TFEL_CASTEM_INLINE2
 	void exe(CastemReal *const DDSDDE,
 		 CastemReal *const STRESS,
-		 CastemReal *const STATEV)
+		 CastemReal *const STATEV,
+		 CastemReal *const /* PNEWDT */)
       {
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;

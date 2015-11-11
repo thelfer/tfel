@@ -7,7 +7,7 @@
 
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'strainhardeningcreep';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'STRAINHARDENINGCREEP';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'A'  8.e-40;

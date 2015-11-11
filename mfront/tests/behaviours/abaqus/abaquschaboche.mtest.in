@@ -5,7 +5,7 @@
  * \brief 18 avril 2013
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'chaboche';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'CHABOCHE';
 @MaterialProperty<constant> 'YoungModulus' 145200. ; 
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
 

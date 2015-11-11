@@ -123,6 +123,57 @@ namespace tfel
 			       "- Tridimensional"));
     }
 
+    unsigned short
+    getSpaceDimension(const ModellingHypothesis::Hypothesis h){
+      if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	return 1u;
+      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	return 2u;
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	return 3u;
+      }
+      throw(std::runtime_error("tfel::material::getSpaceDimension : "
+			       "unsupported modelling hypothesis"));
+    }
+
+    unsigned short
+    getStensorSize(const ModellingHypothesis::Hypothesis h){
+      if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	return 3u;
+      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	return 4u;
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	return 6u;
+      }
+      throw(std::runtime_error("tfel::material::getStensorSize : "
+			       "unsupported modelling hypothesis"));
+    } // end of getStensorSize
+
+    unsigned short
+    getTensorSize(const ModellingHypothesis::Hypothesis h){
+      if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	return 3u;
+      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	return 5u;
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	return 9u;
+      }
+      throw(std::runtime_error("tfel::material::getTensorSize : "
+			       "unsupported modelling hypothesis"));
+    } // end of getTensorSize
+    
   } // end of namespace material
 
 } // end of namespace tfel

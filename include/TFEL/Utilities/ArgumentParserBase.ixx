@@ -33,8 +33,18 @@ namespace tfel
 							const std::string& description,
 							const bool b)
     {
-      using namespace std;
-      this->callBacksContainer.insert(make_pair(key,make_pair(f,make_pair(b,description))));
+      if(key.empty()){
+	throw(std::runtime_error("ArgumentParserBase<Child>::registerNewCallBack: "
+				 "invalid key"));	
+      }
+#ifdef _WIN32
+      if(key.size()>2){
+	if((key[0]=='-')&&(key[1]=='-')){
+	  this->callBacksContainer.insert({'/'+key.substr(2),{f,{b,description}}});
+	}
+      }
+#endif
+      this->callBacksContainer.insert({key,{f,{b,description}}});
     }
 
     template<typename Child>
@@ -44,41 +54,42 @@ namespace tfel
 							const std::string& description,
 							const bool b)
     {
-      using namespace std;
-      this->alias.insert(make_pair(aliasName,key));
+      if(aliasName.empty()){
+	throw(std::runtime_error("ArgumentParserBase<Child>::registerNewCallBack: "
+				 "invalid alias"));	
+      }
+      this->alias.insert({aliasName,key});
+#ifdef _WIN32
+      if(aliasName[0]=='-'){
+	this->alias.insert({'/'+aliasName.substr(1),key});
+      }
+#endif
       this->registerNewCallBack(key,f,description,b);
     }
 
     template<typename Child>
     void ArgumentParserBase<Child>::treatHelp(void)
     {
-      using namespace std;
-      typename CallBacksContainer::const_iterator p;
-      typename AliasContainer::const_iterator pa;
-      bool aliasFound;
-      string aliasName;
-      string tmp;
-      cout << this->getUsageDescription() << endl << endl;
-      cout << "Available options are : \n";
-      aliasFound = false;
-      for(p  = this->callBacksContainer.begin();
-	  p != this->callBacksContainer.end(); ++p){ 
-	for(pa=this->alias.begin();(pa!=this->alias.end())&&(!aliasFound);++pa){
-	  if(pa->second==p->first){
-	    aliasName = pa->first;
+      std::cout << this->getUsageDescription() << "\n\n";
+      std::cout << "Available options are : \n";
+      for(const auto c : this->callBacksContainer){ 
+	auto aliasFound = false;
+	auto aliasName = std::string{};
+	for(const auto& a : this->alias){
+	  if(a.second==c.first){
+	    aliasName = a.first;
 	    aliasFound = true;
+	    break;
 	  }
 	}
+	auto tmp = c.first;
 	if(aliasFound){
-	  tmp = p->first + ", " + aliasName;
-	} else {
-	  tmp = p->first;
+	  tmp +=  ", " + aliasName;
 	}
 	if(tmp.size()<=32){
 	  tmp.insert(tmp.size(),32-tmp.size(),' ');
 	}
-	cout << tmp << " : " <<  p->second.second.second << endl;
-	aliasFound=false;
+	std::cout << tmp << " : " <<  c.second.second.second << '\n';
       }
       std::exit(EXIT_SUCCESS);
     }
@@ -86,8 +97,7 @@ namespace tfel
     template<typename Child>
     void ArgumentParserBase<Child>::treatVersion(void)
     {
-      using namespace std;
-      cout << this->getVersionDescription() << endl;
+      std::cout << this->getVersionDescription() << std::endl;
       std::exit(EXIT_SUCCESS);
     }
 
@@ -120,7 +130,8 @@ namespace tfel
 					    const char * const * const argv)
     {
       if(argc<1){
-	throw(std::runtime_error("argc value not valid"));
+	throw(std::runtime_error("ArgumentParserBase<Child>::setArguments: "
+				 "argc value not valid"));
       }
       this->programName = argv[0];
       this->args.clear();
@@ -191,11 +202,9 @@ namespace tfel
     void
     ArgumentParserBase<Child>::treatUnknownArgument(void)
     {
-      using namespace std;
-      string msg("ArgumentParserBase<Child>::treatUnknownArg : ");
-      msg += this->currentArgument->as_string();
-      msg += " is not a valid argument";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("ArgumentParserBase<Child>::treatUnknownArg: '"+
+			       this->currentArgument->as_string()+
+			       "' is not a valid argument"));
     } // end of ArgumentParserBase<Child>::treatUnknownArgument
   
     template<typename Child>
@@ -225,8 +234,8 @@ namespace tfel
       }
       this->currentArgument=this->args.begin();
       while(this->currentArgument!=this->args.end()){
-	  auto a  = this->currentArgument->as_string();
-	  auto pf = this->callBacksContainer.find(a);
+	const auto a  = this->currentArgument->as_string();
+	const auto pf = this->callBacksContainer.find(a);
 	if(pf!=this->callBacksContainer.end()){
 	  (static_cast<Child *>(this)->*(pf->second.first))();
 	} else {

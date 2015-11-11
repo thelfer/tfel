@@ -45,6 +45,7 @@ namespace castem
 	       CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh) 
     {
@@ -74,7 +75,7 @@ namespace castem
       ThermalExpansionCoefficientCheck::exe(PROPS[3]);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSDDE,STRESS,STATEV);
+      handler.exe(DDSDDE,STRESS,STATEV,PNEWDT);
     } // end of CastemIsotropicBehaviourHandlerBase::exe
 
   }; // end of struct CastemIsotropicBehaviourHandlerBase
@@ -108,6 +109,7 @@ namespace castem
 	             CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	             CastemReal *const STRESS,
+	             CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh) 
     {
@@ -128,7 +130,7 @@ namespace castem
       mp[1] = PROPS[0];
       CastemIsotropicBehaviourHandlerBase<COHESIVEZONEMODEL,H,Behaviour>::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 									      TEMP,DTEMP,mp,NPROPS,PREDEF,
-									      DPRED,STATEV,NSTATV,STRESS,op,sfeh);
+									      DPRED,STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
     }
   };
 

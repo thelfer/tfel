@@ -1,7 +1,7 @@
 @Author Jeremy Hure;
 @Date 08 Aout 2013;
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'viscoplasisocin';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'VISCOPLASISOCIN';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

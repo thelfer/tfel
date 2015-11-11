@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'OrthotropicElastic';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ORTHOTROPICELASTIC';
 @MaterialProperty<constant> 'YoungModulus1'     100.e9;
 @MaterialProperty<constant> 'YoungModulus2'     100.e9;
 @MaterialProperty<constant> 'YoungModulus3'     100.e9;

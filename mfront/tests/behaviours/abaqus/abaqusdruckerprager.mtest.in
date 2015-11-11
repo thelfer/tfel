@@ -4,7 +4,7 @@
   Uniaxial testing of a Drucker-Prager behaviour.
 };
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'DruckerPrager';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'DRUCKERPRAGER';
 @MaximumNumberOfSubSteps 1;
 
 @MaterialProperty<constant> 'YoungModulus' 200.e9;

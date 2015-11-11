@@ -61,19 +61,15 @@ namespace mfront
   static std::set<std::string>
   getAllMaterialPropertiesNames(const BehaviourDescription& mb)
   {
-    typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
-    typedef ZMATInterface::Hypothesis Hypothesis;
-    std::set<std::string> mp_names;
-    const Hypothesis hypotheses[3u] = {ModellingHypothesis::TRIDIMENSIONAL,
-				       ModellingHypothesis::GENERALISEDPLANESTRAIN,
-				       ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN};
-    for(const Hypothesis* ph = hypotheses;ph!=hypotheses+3u;++ph){
-      const Hypothesis h = *ph;
+    using ModellingHypothesis = ZMATInterface::ModellingHypothesis;
+    auto mp_names = std::set<std::string>{};
+    for(const auto h : {ModellingHypothesis::TRIDIMENSIONAL,
+	  ModellingHypothesis::GENERALISEDPLANESTRAIN,
+	  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN}){
       if(mb.isModellingHypothesisSupported(h)){
 	const auto& d = mb.getBehaviourData(h);
 	const auto& mps = d.getMaterialProperties();
 	for(const auto & v : mps){
-	  
 	  const auto& name = d.getExternalName(v.name);
 	  if(v.arraySize==1u){
 	    mp_names.insert(name);
@@ -93,15 +89,12 @@ namespace mfront
   static VariableDescriptionContainer
   getAllStateVariables(const BehaviourDescription& mb)
   {
-    using namespace std;
     typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
     typedef ZMATInterface::Hypothesis Hypothesis;
     auto s = VariableDescriptionContainer{};
-    const Hypothesis hypotheses[3u] = {ModellingHypothesis::TRIDIMENSIONAL,
-				       ModellingHypothesis::GENERALISEDPLANESTRAIN,
-				       ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN};
-    for(const Hypothesis* ph = hypotheses;ph!=hypotheses+3u;++ph){
-      const Hypothesis h = *ph;
+    for(const Hypothesis h : {ModellingHypothesis::TRIDIMENSIONAL,
+	  ModellingHypothesis::GENERALISEDPLANESTRAIN,
+	  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN}){
       if(mb.isModellingHypothesisSupported(h)){
 	const auto& d = mb.getBehaviourData(h);
 	const auto& svs = d.getPersistentVariables();
@@ -121,76 +114,18 @@ namespace mfront
     return s;
   }
 
-  static unsigned short
-  getSpaceDimension(const ZMATInterface::Hypothesis h)
-  {
-    typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
-    unsigned short d = 0u;
-    if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      d=3u;
-    } else if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      d=2u;
-    } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      d=1u;
-    }
-    if(d==0u){
-      throw(std::runtime_error("getSpaceDimension: unsupported hypothesis"));
-    }
-    return d;
-  }
-
-  static unsigned short
-  getStensorSize(const ZMATInterface::Hypothesis h)
-  {
-    typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
-    unsigned short s = 0u;
-    if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      s=6u;
-    } else if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      s=4u;
-    } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      s=3u;
-    }
-    if(s==0u){
-      throw(std::runtime_error("getStensorSize: unsupported hypothesis"));
-    }
-    return s;
-  }
-
-  static unsigned short
-  getTensorSize(const ZMATInterface::Hypothesis h)
-  {
-    typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
-    unsigned short s = 0u;
-    if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      s=9u;
-    } else if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      s=5u;
-    } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      s=3u;
-    }
-    if(s==0u){
-      throw(std::runtime_error("getTensorSize: unsupported hypothesis"));
-    }
-    return s;
-  }
-
   static std::string
   getSpaceDimensionSuffix(const ZMATInterface::Hypothesis h)
   {
     typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
-    const char * s = nullptr;
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      s = "3D";
+      return "3D";
     } else if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      s = "2D";
+      return "2D";
     } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      s = "1D";
+      return "1D";
     }
-    if(s==nullptr){
-      throw(std::runtime_error("getSpaceDimension: unsupported hypothesis"));
-    }
-    return s;
+    throw(std::runtime_error("getSpaceDimension: unsupported hypothesis"));
   }
 
   static std::string
@@ -258,7 +193,7 @@ namespace mfront
       h.insert(ModellingHypothesis::TRIDIMENSIONAL);
     }
     if(h.empty()){
-      throw(std::runtime_error("ZMATInterfaceModellingHypothesesToBeTreated : "
+      throw(std::runtime_error("ZMATInterfaceModellingHypothesesToBeTreated: "
 			       "no hypotheses selected. This means that the given beahviour "
 			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
 			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
@@ -268,7 +203,7 @@ namespace mfront
   } // edn of ZMATInterface::getModellingHypothesesToBeTreated
 
   void 
-  ZMATInterface::exportMechanicalData(std::ofstream& behaviourDataFile,
+  ZMATInterface::exportMechanicalData(std::ofstream& out,
 				      const Hypothesis h,
 				      const BehaviourDescription& mb) const
   {
@@ -276,100 +211,96 @@ namespace mfront
     const auto& d = mb.getBehaviourData(h);
     const auto& persistentVarsHolder = d.getPersistentVariables();
     if(!persistentVarsHolder.empty()){
-      behaviourDataFile << "void\n"
-    			<< "ZMATexportStateData("
-    			<< "ZSET::TENSOR2_FLUX& ZMATsig,ZSET::MAT_DATA& ZMATdata) const\n";
+      out << "void\n"
+	  << "ZMATexportStateData("
+	  << "ZSET::TENSOR2_FLUX& ZMATsig,ZSET::MAT_DATA& ZMATdata) const\n";
     } else {
-      behaviourDataFile << "void\n"
-    			<< "ZMATexportStateData("
-    			<< "ZSET::TENSOR2_FLUX& ZMATsig,ZSET::MAT_DATA&) const\n";
+      out << "void\n"
+	  << "ZMATexportStateData("
+	  << "ZSET::TENSOR2_FLUX& ZMATsig,ZSET::MAT_DATA&) const\n";
     }
-    behaviourDataFile << "{\n";
-    behaviourDataFile << "using namespace tfel::math;\n";
+    out << "{\n";
+    out << "using namespace tfel::math;\n";
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      string msg("ZMATInterface::exportMechanicalData : "
-		 "only small or finite strain behaviours are supported");
-      throw(runtime_error(msg));
+      throw(runtime_error("ZMATInterface::exportMechanicalData: "
+			  "only small or finite strain behaviours are supported"));
     }
-    behaviourDataFile << "zmat::ZMATInterface::convert(&ZMATsig[0],this->sig);\n";
+    out << "zmat::ZMATInterface::convert(&ZMATsig[0],this->sig);\n";
     if(!persistentVarsHolder.empty()){
-      behaviourDataFile << "auto& ZMATstatev = ZMATdata.var_int()[0];\n";
+      out << "auto& ZMATstatev = ZMATdata.var_int()[0];\n";
       VariableDescriptionContainer::const_iterator p;
       SupportedTypes::TypeSize currentOffset;
       for(p=persistentVarsHolder.begin();p!=persistentVarsHolder.end();++p){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	const auto flag = this->getTypeFlag(p->type);
 	if(p->arraySize==1u){
 	  if(flag==SupportedTypes::Scalar){
 	    if(mb.useQt()){
-	       behaviourDataFile << "ZMATstatev" << "[" 
-				 << currentOffset << "] = base_cast(this->"
-				 << p->name << ");\n"; 
+	      out << "ZMATstatev" << "[" 
+		  << currentOffset << "] = base_cast(this->"
+		  << p->name << ");\n"; 
 	    } else {
-	      behaviourDataFile << "ZMATstatev" << "[" 
-				<< currentOffset << "] = this->"
-				<< p->name << ";\n"; 
+	      out << "ZMATstatev" << "[" 
+		  << currentOffset << "] = this->"
+		  << p->name << ";\n"; 
 	    } 
 	  } else if((flag==SupportedTypes::TVector)||
 		    (flag==SupportedTypes::Stensor)||
 		    (flag==SupportedTypes::Tensor)){
-	    behaviourDataFile << "zmat::ZMATInterface::convert(&" << "ZMATstatev" << "[" 
-			      << currentOffset << "],this->" << p->name 
-			      << ");\n";  
+	    out << "zmat::ZMATInterface::convert(&" << "ZMATstatev" << "[" 
+		<< currentOffset << "],this->" << p->name 
+		<< ");\n";  
 	  } else {
-	    string msg("SupportedTypes::exportResults : ");
-	    msg += "internal error, tag unsupported";
-	    throw(runtime_error(msg));
+	    throw(runtime_error("SupportedTypes::exportResults: "
+				"internal error, tag unsupported"));
 	  }
 	  currentOffset+=this->getTypeSize(p->type,p->arraySize);
 	} else {
 	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	    behaviourDataFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){\n";
+	    out << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){\n";
 	    if(flag==SupportedTypes::Scalar){ 
 	      if(mb.useQt()){
-		behaviourDataFile << "ZMATstatev" << "[" 
-				  << currentOffset << "+idx] = common_cast(this->"
-				  << p->name << "[idx]);\n"; 
+		out << "ZMATstatev" << "[" 
+		    << currentOffset << "+idx] = common_cast(this->"
+		    << p->name << "[idx]);\n"; 
 	      } else {
-		behaviourDataFile << "ZMATstatev" << "[" 
-				  << currentOffset << "+idx] = this->"
-				  << p->name << "[idx];\n"; 
+		out << "ZMATstatev" << "[" 
+		    << currentOffset << "+idx] = this->"
+		    << p->name << "[idx];\n"; 
 	      }
 	    } else if((flag==SupportedTypes::TVector)||
 		      (flag==SupportedTypes::Stensor)||
 		      (flag==SupportedTypes::Tensor)){
-	      behaviourDataFile << "zmat::ZMATInterface::convert(&ZMATstatev" << "[" 
-				<< currentOffset << "+idx*StensorSize],this->" << p->name
-				<< "[idx]);\n";  
+	      out << "zmat::ZMATInterface::convert(&ZMATstatev" << "[" 
+		  << currentOffset << "+idx*StensorSize],this->" << p->name
+		  << "[idx]);\n";  
 	    } else {
-	      string msg("SupportedTypes::exportResults : ");
-	      msg += "internal error, tag unsupported";
-	      throw(runtime_error(msg));
+	      throw(runtime_error("SupportedTypes::exportResults: "
+				  "internal error, tag unsupported"));
 	    }
-	    behaviourDataFile << "}\n";
-	      currentOffset+=this->getTypeSize(p->type,p->arraySize);
+	    out << "}\n";
+	    currentOffset+=this->getTypeSize(p->type,p->arraySize);
 	  } else {
 	    for(unsigned short i=0;i!=p->arraySize;++i){
 	      if(flag==SupportedTypes::Scalar){
 		if(mb.useQt()){
-		  behaviourDataFile << "ZMATstatev" << "[" 
-				    << currentOffset << "] = common_cast(this->"
-				    << p->name << "[" << i << "]);\n"; 
+		  out << "ZMATstatev" << "[" 
+		      << currentOffset << "] = common_cast(this->"
+		      << p->name << "[" << i << "]);\n"; 
 		} else {
-		  behaviourDataFile << "ZMATstatev" << "[" 
-				    << currentOffset << "] = this->"
-				    << p->name << "[" << i << "];\n"; 
+		  out << "ZMATstatev" << "[" 
+		      << currentOffset << "] = this->"
+		      << p->name << "[" << i << "];\n"; 
 		} 
 	      } else if((flag==SupportedTypes::TVector)||
 			(flag==SupportedTypes::Stensor)||
 			(flag==SupportedTypes::Tensor)){
-		behaviourDataFile << "zmat::ZMATInterface::convert(&" << "ZMATstatev" << "[" 
-				  << currentOffset << "],this->" << p->name
-				  << "[" << i << "]);\n";  
+		out << "zmat::ZMATInterface::convert(&" << "ZMATstatev" << "[" 
+		    << currentOffset << "],this->" << p->name
+		    << "[" << i << "]);\n";  
 	      } else {
-		string msg("SupportedTypes::exportResults : ");
-		msg += "internal error, tag unsupported";
-		throw(runtime_error(msg));
+		throw(runtime_error("SupportedTypes::exportResults: "
+				    "internal error, tag unsupported"));
 	      }
 	      currentOffset+=this->getTypeSize(p->type,1u);
 	    }
@@ -377,15 +308,14 @@ namespace mfront
 	}
       }
     }
-    behaviourDataFile << "} // end of ZMATexportStateData\n";
-    behaviourDataFile << endl;
+    out << "} // end of ZMATexportStateData\n";
+    out << endl;
   }
   
   void 
   ZMATInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
 						const BehaviourDescription& mb) const
   {
-    using namespace std;
     out << "#include\"MFront/ZMAT/ZMATInterface.hxx\"\n";
     out << "#include\"Coefficient.h\"\n";
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
@@ -395,7 +325,7 @@ namespace mfront
     out << "#include\"Coefficient.h\"\n";
     out << "#include\"Behavior.h\"\n";
     writeZMATUndefs(out);
-    out << endl;
+    out << std::endl;
   } // end of ZMATInterface::writeInterfaceSpecificIncludes
 
   void
@@ -410,9 +340,8 @@ namespace mfront
     const auto& evs = d.getExternalStateVariables();
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      string msg("ZMATInterface::writeBehaviourDataConstructor : "
-		 "only small or finite strain behaviours are supported");
-      throw(runtime_error(msg));
+      throw(runtime_error("ZMATInterface::writeBehaviourDataConstructor: "
+			  "only small or finite strain behaviours are supported"));
     }
     out << "/*!\n";
     out << " * \\brief constructor for the ZMAT interface\n";
@@ -445,9 +374,8 @@ namespace mfront
       out << "const real * const ZMATF0,\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw(runtime_error("ZMATInterface::writeCallMFrontBehaviour: "
+			  "unsupported behaviour type"));
     } 
     if(!mps.empty()){
       out << "const ZSET::ARRAY<ZSET::COEFF>& ZMATmprops,\n";
@@ -474,9 +402,8 @@ namespace mfront
       out << "zmat::ZMATInterface::convert(this->F0,&ZMATF0[0]);\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw(runtime_error("ZMATInterface::writeCallMFrontBehaviour: "
+			  "unsupported behaviour type"));
     }
     if(!mps.empty()){
       SupportedTypes::TypeSize o;
@@ -501,9 +428,8 @@ namespace mfront
 	    }
 	  }
 	} else {
-	  string msg("ZMATInterface::writeBehaviourDataConstructor : "
-		     "unsupported material properties type (only scalar supported yet)");
-	  throw(runtime_error(msg));
+	  throw(runtime_error("ZMATInterface::writeBehaviourDataConstructor : "
+			      "unsupported material properties type (only scalar supported yet)"));
 	}
       }
     }
@@ -547,9 +473,8 @@ namespace mfront
 		  << o << "+idx*StensorSize]);\n";  
 	      break;
 	    default : 
-	      string msg("ZMATInterface::writeBehaviourDataConstructor : "
-			 "unsupported variable type ('"+iv.type+"')");
-	      throw(runtime_error(msg));
+	      throw(runtime_error("ZMATInterface::writeBehaviourDataConstructor : "
+				  "unsupported variable type ('"+iv.type+"')"));
 	    }
 	    out << "}\n";
 	    o+=this->getTypeSize(iv.type,iv.arraySize);

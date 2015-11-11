@@ -159,9 +159,6 @@ namespace mfront{
 		const std::string&,
 		const unsigned short);
 
-    static unsigned short
-    getStensorSize(const Hypothesis);
-
     virtual std::string
     getInterfaceName(void) const override;
 

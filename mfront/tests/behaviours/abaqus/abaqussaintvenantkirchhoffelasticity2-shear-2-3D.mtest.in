@@ -1,11 +1,11 @@
 /*! 
- * \file    abaqussaintvenantkirchhoffelasticity2-shear-2-3D.mtest
+ * \file    abaqusSAINTVENANTKIRCHHOFFELASTICITY2-shear-2-3D.mtest
  * \brief
  * \author Helfer Thomas
  * \brief  26 nov. 2013
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'saintvenantkirchhoffelasticity2';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'SAINTVENANTKIRCHHOFFELASTICITY2';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

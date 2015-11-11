@@ -154,6 +154,7 @@ namespace castem
 	       CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
@@ -186,7 +187,7 @@ namespace castem
       ThermalExpansionCoefficientCheck::exe(PROPS[9]);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSDDE,STRESS,STATEV);
+      handler.exe(DDSDDE,STRESS,STATEV,PNEWDT);
     } // end of CastemOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
 
@@ -211,6 +212,7 @@ namespace castem
 	       CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh) 
     {
@@ -251,7 +253,7 @@ namespace castem
       const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSDDE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV,PNEWDT);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSDDE){
 	m.rotateTangentOperatorBackward(DDSDDE);
@@ -283,6 +285,7 @@ namespace castem
 	       CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh) 
     {
@@ -324,7 +327,7 @@ namespace castem
       const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSDDE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV,PNEWDT);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSDDE){
 	m.rotateTangentOperatorBackward(DDSDDE);
@@ -353,6 +356,7 @@ namespace castem
 	       CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
@@ -394,7 +398,7 @@ namespace castem
       const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSDDE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV,PNEWDT);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSDDE){
 	m.rotateTangentOperatorBackward(DDSDDE);
@@ -435,6 +439,7 @@ namespace castem
 	       CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
@@ -467,7 +472,7 @@ namespace castem
       ThermalExpansionCoefficientCheck::exe(PROPS[9]);
       Handler handler(DTIME,F0,F1,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSDDE,STRESS,STATEV);
+      handler.exe(DDSDDE,STRESS,STATEV,PNEWDT);
     } // end of CastemOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
 
@@ -492,6 +497,7 @@ namespace castem
 	       CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh) 
     {
@@ -532,7 +538,7 @@ namespace castem
       const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSDDE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV,PNEWDT);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSDDE){
 	m.rotateTangentOperatorBackward(DDSDDE);
@@ -564,6 +570,7 @@ namespace castem
 	       CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh) 
     {
@@ -605,7 +612,7 @@ namespace castem
       const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSDDE,s,STATEV);
+      handler.exe(DDSDDE,s,STATEV,PNEWDT);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSDDE){
 	m.rotateTangentOperatorBackward(DDSDDE);
@@ -634,6 +641,7 @@ namespace castem
 	       CastemReal *const STATEV,
 	       const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
     {
@@ -675,7 +683,7 @@ namespace castem
       const bool bDDSDDE = std::abs(*DDSDDE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,sm,op,sfeh);
-      handler.exe(DDSDDE,sm,STATEV);
+      handler.exe(DDSDDE,sm,STATEV,PNEWDT);
       m.rotateStressesBackward(sm,STRESS);
       if(bDDSDDE){
 	m.rotateTangentOperatorBackward(DDSDDE);

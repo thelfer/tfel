@@ -22,6 +22,7 @@
 #define TFEL_ABAQUS_INLINE2 inline
 #endif /* LIB_MFRONT_ABAQUS_H_ */
 
+#include<cstdint>
 #include<type_traits>
 
 #include"TFEL/Math/tensor.hxx"
@@ -32,7 +33,11 @@
 
 namespace abaqus{
 
-  using AbaqusInt  = int;
+#ifdef _WIN32
+  using AbaqusInt  = int32_t;
+#else /* _WIN32 */
+  using  AbaqusInt = int64_t;
+#endif /* _WIN32 */
   using AbaqusReal = double;
 
   /*!

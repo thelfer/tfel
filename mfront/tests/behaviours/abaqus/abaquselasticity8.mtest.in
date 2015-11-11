@@ -5,7 +5,7 @@
   "account for an orthotropic material."
 };
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'OrthotropicElastic';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ORTHOTROPICELASTIC';
 @Real 'E'  100.e9;
 @Real 'nu'   0.3;
 @Real 'a'    2.e-5;

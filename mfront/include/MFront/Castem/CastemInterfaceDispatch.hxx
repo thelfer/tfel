@@ -54,6 +54,7 @@ namespace castem{
 	     const CastemReal *const, const CastemReal *const,
 	     CastemReal *const,const CastemInt  *const,
 	     CastemReal *const,
+	     CastemReal *const,
 	     const tfel::material::OutOfBoundsPolicy,
 	     const StressFreeExpansionHandler&)
     {
@@ -83,6 +84,7 @@ namespace castem{
 	     const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	     CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	     CastemReal *const STRESS,
+	     CastemReal *const PNEWDT,
 	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
@@ -100,7 +102,7 @@ namespace castem{
       CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS,op,sfeh);
+		   STRESS,PNEWDT,op,sfeh);
     } // end of exe
   }; // end of struct CastemInterfaceDispatch
 
@@ -126,6 +128,7 @@ namespace castem{
 	     const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	     CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	     CastemReal *const STRESS,
+	     CastemReal *const PNEWDT,
 	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
@@ -143,11 +146,11 @@ namespace castem{
 	CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
 	Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
 		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		     STRESS,op,sfeh);
+		     STRESS,PNEWDT,op,sfeh);
       } else { 
 	CastemGenericPlaneStressHandler<Behaviour>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-						      TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-						      STATEV,NSTATV,STRESS,op,sfeh);
+							TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
+							STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
       }
     }
   };
@@ -173,6 +176,7 @@ namespace castem{
 	     const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	     CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	     CastemReal *const STRESS,
+	     CastemReal *const PNEWDT,
 	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
@@ -190,7 +194,7 @@ namespace castem{
       CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS,op,sfeh);
+		   STRESS,PNEWDT,op,sfeh);
     } // end of exe
   }; // end of struct CastemInterfaceDispatch
 
@@ -209,6 +213,7 @@ namespace castem{
 	     const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	     CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	     CastemReal *const STRESS,
+	     CastemReal *const PNEWDT,
 	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
@@ -230,7 +235,8 @@ namespace castem{
       du[0] = DSTRAN[1]; du[1] = DSTRAN[0];
       t[0]  = STRESS[1]; t[1]  = STRESS[0];
       Handler::exe(DTIME,DROT,DDSDDE,u,du,TEMP,DTEMP,
-		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,op,sfeh);
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,
+		   PNEWDT,op,sfeh);
       D[0] = DDSDDE[0]; D[1] = DDSDDE[1];
       D[2] = DDSDDE[2]; D[3] = DDSDDE[3];
       DDSDDE[0] = D[3]; DDSDDE[1] = D[2];
@@ -254,6 +260,7 @@ namespace castem{
 	     const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	     CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	     CastemReal *const STRESS,
+	     CastemReal *const PNEWDT,
 	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
@@ -275,7 +282,8 @@ namespace castem{
       du[0] = DSTRAN[2]; du[1] = DSTRAN[0]; du[2] = DSTRAN[1];
       t[0]  = STRESS[2]; t[1]  = STRESS[0]; t[2]  = STRESS[1];
       Handler::exe(DTIME,DROT,DDSDDE,u,du,TEMP,DTEMP,
-		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,t,op,sfeh);
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
+		   t,PNEWDT,op,sfeh);
       D[0] = DDSDDE[0]; D[1] = DDSDDE[1]; D[2] = DDSDDE[2];
       D[3] = DDSDDE[3]; D[4] = DDSDDE[4]; D[5] = DDSDDE[5]; 
       D[6] = DDSDDE[6]; D[7] = DDSDDE[7]; D[8] = DDSDDE[8]; 

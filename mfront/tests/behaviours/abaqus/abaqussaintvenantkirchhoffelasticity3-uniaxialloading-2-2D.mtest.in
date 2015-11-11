@@ -1,12 +1,12 @@
 /*! 
- * \file    abaqussaintvenantkirchhoffelasticity3-uniaxialloading-2-2D.mtest
+ * \file    abaqusSAINTVENANTKIRCHHOFFELASTICITY3-uniaxialloading-2-2D.mtest
  * \brief
  * \author Helfer Thomas
  * \brief  26 nov. 2013
  */
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'saintvenantkirchhoffelasticity3';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'SAINTVENANTKIRCHHOFFELASTICITY3';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

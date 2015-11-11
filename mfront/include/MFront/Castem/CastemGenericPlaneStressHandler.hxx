@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_CASTEM_CASTEMGENERICPLANESTRESSHANDLER_H_
 #define LIB_MFRONT_CASTEM_CASTEMGENERICPLANESTRESSHANDLER_H_ 
 
+#include<cmath>
 #include<algorithm>
 
 #include"TFEL/Math/vector.hxx"
@@ -52,6 +53,7 @@ namespace castem
 	     const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	     CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	     CastemReal *const STRESS,
+	     CastemReal *const PNEWDT,
 	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
@@ -66,12 +68,12 @@ namespace castem
 	TreatPlaneStressIsotropicBehaviour,
 	TreatPlaneStressOrthotropicBehaviour>::type Handler;
       CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
-      if(*DDSDDE!=0){
+      if(std::abs(*DDSDDE)>0){
 	throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(MTraits::getName());
       }
       Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS,op,sfeh);
+		   STRESS,PNEWDT,op,sfeh);
     } // end of exe
     
   private:
@@ -104,6 +106,7 @@ namespace castem
 	     const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	     CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	     CastemReal *const STRESS,
+	     CastemReal *const PNEWDT,
 	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
@@ -135,7 +138,7 @@ namespace castem
       CastemGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSDDE,
 										    TEMP,DTEMP,PROPS,
 										    NPROPS,PREDEF,DPRED,
-										    STATEV,STRESS,
+										    STATEV,STRESS,PNEWDT,
 										    STRAN,DSTRAN,dez,
 										    &v[0],s,eto,deto,
 										    op,sfeh);
@@ -147,7 +150,7 @@ namespace castem
 	CastemGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSDDE,
 										      TEMP,DTEMP,PROPS,
 										      NPROPS,PREDEF,DPRED,
-										      STATEV,STRESS,
+										      STATEV,STRESS,PNEWDT,
 										      STRAN,DSTRAN,dez,
 										      &v[0],s,eto,deto,
 										      op,sfeh);
@@ -164,7 +167,7 @@ namespace castem
 	CastemGenericPlaneStressHandler::template iter<GeneralisedPlaneStrainBehaviour>(DTIME,DROT,DDSDDE,
 										      TEMP,DTEMP,PROPS,
 										      NPROPS,PREDEF,DPRED,
-										      STATEV,STRESS,
+										      STATEV,STRESS,PNEWDT,
 										      STRAN,DSTRAN,dez,
 										      &v[0],s,eto,deto,
 										      op,sfeh);
@@ -206,6 +209,7 @@ namespace castem
 	      const CastemReal *const DPRED,
 	      const CastemReal *const STATEV,
 	      const CastemReal *const STRESS,
+	      CastemReal *const PNEWDT,
 	      const CastemReal *const STRAN,
 	      const CastemReal *const DSTRAN,
 	      const CastemReal dez,
@@ -223,7 +227,6 @@ namespace castem
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const CastemInt nNSTATV =  Traits::internal_variables_nb == 0 ? 1 : Traits::internal_variables_nb;
       const unsigned short NSTATV_  = Traits::internal_variables_nb+1u;
-	
       copy<4>::exe(STRESS,s);
       copy<4>::exe(STRAN,eto);
       copy<4>::exe(DSTRAN,deto);
@@ -232,7 +235,7 @@ namespace castem
       std::copy(STATEV,STATEV+NSTATV_,v);
       GeneralisedPlaneStrainBehaviour::exe(DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,
 					   PROPS,NPROPS,PREDEF,DPRED,v,
-					   &nNSTATV,s,op,sfeh);
+					   &nNSTATV,s,PNEWDT,op,sfeh);
     }
     
     struct TreatPlaneStressIsotropicBehaviour
@@ -247,6 +250,7 @@ namespace castem
 	       const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	       CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+ 	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
       {
@@ -262,7 +266,7 @@ namespace castem
 								      STRAN,DSTRAN,TEMP,
 								      DTEMP,PROPS,NPROPS,
 								      PREDEF,DPRED,STATEV,
-								      NSTATV,STRESS,op,sfeh);
+								      NSTATV,STRESS,PNEWDT,op,sfeh);
       } // end of exe
     }; // end of struct TreatPlanStressIsotropicBehaviour
 
@@ -277,6 +281,7 @@ namespace castem
 	       const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	       CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,
+ 	       CastemReal *const PNEWDT,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
       {
@@ -332,7 +337,7 @@ namespace castem
 								      STRAN,DSTRAN,TEMP,
 								      DTEMP,nPROPS,NPROPS,
 								      PREDEF,DPRED,STATEV,
-								      NSTATV,STRESS,op,sfeh);
+								      NSTATV,STRESS,PNEWDT,op,sfeh);
       } // end of exe
     }; // end of struct TreatPlanStressOrthotropicBehaviour
 

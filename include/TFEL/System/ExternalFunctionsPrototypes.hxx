@@ -14,6 +14,12 @@
 #ifndef LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_
 #define LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ 
 
+#ifdef	__cplusplus
+#include <cstdint>
+#else
+#include <stdint.h>
+#endif	/* __cplusplus */
+
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #define TFEL_ADDCALL_PTR __cdecl *
 #else 
@@ -40,8 +46,13 @@ extern "C" {
   typedef long   AsterIntegerType;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
-  typedef int    AbaqusIntegerType;
 
+#ifdef _WIN32
+  typedef int32_t AbaqusIntegerType;
+#else /* _WIN32 */
+  typedef int64_t AbaqusIntegerType;
+#endif /* _WIN32 */
+  
   typedef double AbaqusRealType;
   typedef double CyranoRealType;
   typedef double CastemRealType;
