@@ -38,14 +38,16 @@ namespace mtest
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual StiffnessMatrixType::mtype
+    virtual StiffnessMatrixType
     getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief allocate internal workspace
-     * \param[in] h : modelling hypothesis
+     * \param[out] wk : workspace
+     * \param[in]  h  : modelling hypothesis
      */
     virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
+    allocate(BehaviourWorkSpace&,
+	     const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -76,10 +78,6 @@ namespace mtest
   protected:
     //! the umat fonction
     tfel::system::CastemFctPtr fct;
-    //! temporary vector for material properties
-    mutable tfel::math::vector<real> mps;
-    //! temporary vector for internal variables
-    mutable tfel::math::vector<real> ivs;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

@@ -50,14 +50,16 @@ namespace mtest
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual StiffnessMatrixType::mtype
+    virtual StiffnessMatrixType
     getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief allocate internal workspace
-     * \param[in] h : modelling hypothesis
+     * \param[out] wk : behaviour workspace
+     * \param[in]  h  : modelling hypothesis
      */
     virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
+    allocate(BehaviourWorkSpace&,
+	     const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \param[out] v : initial values of the driving variables
      */
@@ -66,29 +68,31 @@ namespace mtest
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[out] Kt    : tangent operator
+     * \param[out] wk    : behaviour workspace
      * \param[in]  s     : current state
      * \param[in]  h     : modelling hypothesis
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual bool
-    computePredictionOperator(tfel::math::matrix<real>&,
+    computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const tfel::material::ModellingHypothesis::Hypothesis,
-			      const StiffnessMatrixType::mtype) const override;
+			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[in]  h     : modelling hypothesis
-     * \param[in]  dt    : time increment
-     * \param[in]  ktype : type of the stiffness matrix
+     * \param[out/in] s     : current state
+     * \param[out]    wk    : behaviour workspace
+     * \param[in]     h     : modelling hypothesis
+     * \param[in]     dt    : time increment
+     * \param[in]     ktype : type of the stiffness matrix
      */
     virtual bool
-    integrate(tfel::math::matrix<real>&,
-	      CurrentState&,
+    integrate(CurrentState&,
+	      BehaviourWorkSpace&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
-	      const StiffnessMatrixType::mtype) const override;
+	      const StiffnessMatrixType) const override;
     //! destructor
     virtual ~CyranoBehaviour();
   protected:
@@ -97,6 +101,7 @@ namespace mtest
      * \return true if the integration was successfull, false otherwise
      * \param[out]    Kt    : tangent operator
      * \param[out/in] s     : state
+     * \param[out]    wk    : workspace
      * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
@@ -105,17 +110,14 @@ namespace mtest
     virtual bool
     call_behaviour(tfel::math::matrix<real>&,
 		   CurrentState&,
+		   BehaviourWorkSpace&,
 		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
-		   const StiffnessMatrixType::mtype,
+		   const StiffnessMatrixType,
 		   const bool) const;
   protected:
     //! the umat fonction
     tfel::system::CyranoFctPtr fct;
-    //! temporary vector for material properties
-    mutable tfel::math::vector<real> mps;
-    //! temporary vector for internal variables
-    mutable tfel::math::vector<real> ivs;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

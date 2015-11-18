@@ -1,5 +1,6 @@
 @AccelerationAlgorithm 'CrossedSecant';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatviscochaboche';
+@StrainEpsilon 1.e-11;
 
 @MaterialProperty<function> 'YoungModulus' '2.e5 - (1.e5*((TC - 100.)/960.)**2)';
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    

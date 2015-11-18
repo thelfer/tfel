@@ -2,7 +2,7 @@
  * \file  mtest/include/MTest/MTest.hxx
  * \brief
  * \author Helfer Thomas
- * \brief 09 avril 2013
+ * \date 09 avril 2013
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -32,11 +32,74 @@
 #include"MTest/SchemeBase.hxx"
 #include"MTest/Types.hxx"
 #include"MTest/Constraint.hxx"
-#include"MTest/CurrentState.hxx"
+#include"MTest/SolverWorkSpace.hxx"
+#include"MTest/StudyCurrentState.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
 namespace mtest
 {
+
+  /*!
+   * structure containing the state of the material.
+   * This structure is used internally and is declared public only
+   * for the python bindings. In particular, the description of the
+   * variables given here is only valid during the computations.
+   */
+  struct MTEST_VISIBILITY_EXPORT MTestCurrentState
+    : public StudyCurrentState
+  {
+    //! default constructor
+    MTestCurrentState();
+    //! copy constructor
+    MTestCurrentState(const MTestCurrentState&);
+    MTestCurrentState(MTestCurrentState&&);
+    //! destructor
+    ~MTestCurrentState();
+  private:
+    MTestCurrentState&
+    operator=(const MTestCurrentState&) = delete;
+    MTestCurrentState&
+    operator=(MTestCurrentState&&) = delete;
+  };
+
+  /*!
+   * structure where usefull variables for the computations are
+   * defined.
+   * This structure is used internally and is declared
+   * public only for the python bindings.
+   */
+  struct MTEST_VISIBILITY_EXPORT MTestWorkSpace
+    : public SolverWorkSpace
+  {
+    MTestWorkSpace();
+    //! destructor
+    ~MTestWorkSpace();
+    // stiffness tensor
+    tfel::math::matrix<real> Kt;
+    // numertical stiffness tensor
+    tfel::math::matrix<real> nKt;
+    // temporary variable used for numerical tangent operator
+    // computation
+    tfel::math::matrix<real> tKt;
+    // prediction tensor
+    tfel::math::matrix<real> Kp;
+    // temporary variable used for numerical tangent operator
+    // computation
+    tfel::math::vector<real> s1;
+    // temporary variable used for numerical tangent operator
+    // computation
+    tfel::math::vector<real> s2;
+    // temporary variable used for numerical tangent operator
+    // computation
+    tfel::math::vector<real> statev;
+    //
+    bool first;
+    real a;
+  private:
+    MTestWorkSpace(const MTestWorkSpace&) = delete;
+    MTestWorkSpace&
+    operator=(const MTestWorkSpace&) = delete;
+  };
   
   /*!
    * \brief MTest is a simple class to test mfront behaviours.
@@ -47,93 +110,6 @@ namespace mtest
   struct MTEST_VISIBILITY_EXPORT MTest
     : public SchemeBase
   {
-    /*!
-     * structure containing the state of the material.
-     * This structure is used internally and is declared public only
-     * for the python bindings. In particular, the description of the
-     * variables given here is only valid during the computations.
-     */
-    struct MTEST_VISIBILITY_EXPORT MTestCurrentState
-      : public CurrentState
-    {
-      //! default constructor
-      MTestCurrentState();
-      //! copy constructor
-      MTestCurrentState(const MTestCurrentState&);
-      MTestCurrentState(MTestCurrentState&&);
-      //! destructor
-      ~MTestCurrentState() noexcept;
-      // vector of unknows at 
-      // the beginning of the
-      // previous time step.
-      tfel::math::vector<real> u_1;
-      // vector of unknows at the beginning of the
-      // time step.
-      tfel::math::vector<real> u0;
-      // vector of unknows at the end of the
-      // time step
-      tfel::math::vector<real> u1;
-      // vector of unknows at the preivous iteration (end of the
-      // time step)
-      tfel::math::vector<real> u10;
-      // current period number
-      unsigned int period;
-      // previous time step
-      real dt_1;
-      // reference Temperature
-      real Tref;
-    private:
-      MTestCurrentState&
-      operator=(const MTestCurrentState&) = delete;
-      MTestCurrentState&
-      operator=(MTestCurrentState&&) = delete;
-    };
-    /*!
-     * structure where usefull variables for the computations are
-     * defined.
-     * This structure is used internally and is declared
-     * public only for the python bindings.
-     */
-    struct MTEST_VISIBILITY_EXPORT MTestWorkSpace
-    {
-      MTestWorkSpace();
-      ~MTestWorkSpace() noexcept;
-      // stiffness tensor
-      tfel::math::matrix<real> Kt;
-      // numertical stiffness tensor
-      tfel::math::matrix<real> nKt;
-      // temporary variable used for numerical tangent operator
-      // computation
-      tfel::math::matrix<real> tKt;
-      // prediction tensor
-      tfel::math::matrix<real> Kp;
-      //! stiffness matrix
-      tfel::math::matrix<real> K;
-      // residual
-      tfel::math::vector<real> r;
-      // unknowns correction
-      tfel::math::vector<real> du;
-      // permuation matrix
-      tfel::math::Permutation<tfel::math::matrix<real>::size_type> p_lu;
-      // temporary vector used by the LUSolve::exe function
-      tfel::math::vector<real> x;
-      // temporary variable used for numerical tangent operator
-      // computation
-      tfel::math::vector<real> s1;
-      // temporary variable used for numerical tangent operator
-      // computation
-      tfel::math::vector<real> s2;
-      // temporary variable used for numerical tangent operator
-      // computation
-      tfel::math::vector<real> statev;
-      //
-      bool first;
-      real a;
-    private:
-      MTestWorkSpace(const MTestWorkSpace&) = delete;
-      MTestWorkSpace&
-      operator=(const MTestWorkSpace&) = delete;
-    };
     /*!
      * \brief base class for testing the behaviour outputs
      */
@@ -214,13 +190,116 @@ namespace mtest
     virtual tfel::tests::TestResult
     execute(void) override;
     /*!
+     * \brief update current state at the beginning of a new time step:
+     * - update the material properties
+     * - update the external state variables
+     * - compute the thermal expansion if mandatory
+     * \param[out] state: current structure state
+     * \param[in]  t: current time
+     * \param[in] dt: time increment
+     */
+    virtual void
+    prepare(StudyCurrentState&,
+	    const real,
+	    const real) const override;
+    /*!
+     * \brief make a linear prediction of the unknows and state
+     * \param[out] s: current structure state
+     * \param[in] dt: time increment
+     */
+    virtual void
+    makeLinearPrediction(StudyCurrentState&,
+			 const real) const override;
+    /*!
+     * \brief compute the stiffness matrix and the residual
+     * \param[out] state: current structure state
+     * \param[out] k:   tangent operator
+     * \param[out] r:   residual
+     * \param[in]  t:   current time
+     * \param[in]  dt:  time increment
+     * \param[in]  smt: type of tangent operator
+     * \note the memory has already been allocated
+     */
+    virtual bool
+    computePredictionStiffnessAndResidual(StudyCurrentState&,
+					  tfel::math::matrix<real>&,
+					  tfel::math::vector<real>&,
+					  const real&,
+					  const real&,
+					  const StiffnessMatrixType) const override;
+    /*!
+     * \brief compute the stiffness matrix and the residual
+     * \param[out] s:   current structure state
+     * \param[out] K:   tangent operator
+     * \param[out] r:   residual
+     * \param[in]  t:   current time
+     * \param[in]  dt:  time increment
+     * \param[in]  smt: type of tangent operator
+     * \note the memory has already been allocated
+     */
+    virtual bool
+    computeStiffnessMatrixAndResidual(StudyCurrentState&,
+				      tfel::math::matrix<real>&,
+				      tfel::math::vector<real>&,
+				      const real,
+				      const real,
+				      const StiffnessMatrixType) const override;
+    /*!
+     * \param[in]  s: current structure state
+     * \param[in] du: unknows increment estimation
+     * \param[in] r:  residual
+     * \param[in] o:  solver options
+     * \param[in] i:  iteration number
+     * \param[in] t:  current time
+     * \param[in] dt: time increment
+     * \return a pair containing:
+     * - a boolean saying if all convergence criteria are met
+     * - one of the convergence estimator used to compute the order of
+     *   convergence.
+     */
+    virtual std::pair<bool,real>
+    checkConvergence(const StudyCurrentState&,
+		     const tfel::math::vector<real>&,
+		     const tfel::math::vector<real>&,
+		     const SolverOptions&,
+		     const unsigned int,
+		     const real,
+		     const real) const override;
+    /*!
+     * \param[in]  s: current structure state
+     * \param[in] du: unknows increment estimation
+     * \param[in] r:  residual
+     * \param[in] o:  solver options
+     * \param[in] t:  current time
+     * \param[in] dt: time increment
+     * \return a description of all the criteria that were not met.
+     */
+    virtual std::vector<std::string>
+    getFailedCriteriaDiagnostic(const StudyCurrentState&,
+				const tfel::math::vector<real>&,
+				const tfel::math::vector<real>&,
+				const SolverOptions&,
+				const real,
+				const real) const override;
+    /*!
+     * \param[out] s: current structure state
+     * \param[in]  t:  current time
+     * \param[in]  dt: time increment
+     * \param[in]  p:  period
+     */
+    virtual void
+    postConvergence(StudyCurrentState&,
+		    const real,
+		    const real,
+		    const unsigned int) const override;
+    /*!
      * integrate the behaviour over one step
      */ 
     virtual void
     execute(MTestCurrentState&,
 	    MTestWorkSpace&,
 	    const real,
-	    const real);
+	    const real) const;
     /*!
      * \brief ask the comparison to the numerical tangent operator
      * \param[in] bo : boolean
@@ -385,26 +464,13 @@ namespace mtest
     std::string residualFileName;
     //! file where residuals evolutions as a function of the iteration
     //! number are saved
-    std::ofstream residual;
+    mutable std::ofstream residual;
     // inital values of the driving variables
     std::vector<real> e_t0;
     // inital values of the thermodynamic forces
     std::vector<real> s_t0;
     // inital values of the internal state variables
     std::vector<real> iv_t0;
-    /*!
-     * criterium value on driving variables used to stop the
-     * Newton-Raphson algorithm.
-     * By default, a value of 1.e-12 is used.
-     */
-    real eeps;
-    /*!
-     * criterium value on thermodynamic forces used to stop the
-     * Newton-Raphson algorithm.
-     * By default, a value of 1.e-3 is used. This value is suitable
-     * for thermodynamic forces expresses in Pa (small strain behaviours).
-     */
-    real seps;
     //! handle the computation of thermal expansion
     bool handleThermalExpansion;
     //! test name

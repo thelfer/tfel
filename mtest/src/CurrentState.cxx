@@ -115,6 +115,18 @@ namespace mtest{
       ++i;
     }
   } // end of computeExternalStateVariables
+
+  void update(CurrentState& s){
+    s.iv_1 = s.iv0;
+    s.s0   = s.s1;
+    s.iv0  = s.iv1;
+  }
+
+  void revert(CurrentState& s){
+    s.e1  = s.e0;
+    s.s1  = s.s0;
+    s.iv1 = s.iv0;
+  }
   
 } // end of namespace mtest
 

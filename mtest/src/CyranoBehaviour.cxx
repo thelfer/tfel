@@ -20,6 +20,7 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Cyrano/Cyrano.hxx"
 #include"MTest/CurrentState.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/CyranoBehaviour.hxx"
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
@@ -76,12 +77,16 @@ namespace mtest
   }
 
   void
-  CyranoBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
+  CyranoBehaviour::allocate(BehaviourWorkSpace& wk,
+			    const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     const auto nstatev = this->getInternalStateVariablesSize(h);
-    this->D.resize(3u,3u);
-    this->mps.resize(this->mpnames.size() ==0 ? 1u : this->mpnames.size(),real(0));
-    this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    wk.D.resize(3u,3u);
+    wk.kt.resize(3u,3u);
+    wk.k.resize(3u,3u);
+    wk.mps.resize(this->mpnames.size() ==0 ? 1u : this->mpnames.size(),real(0));
+    wk.ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    mtest::allocate(wk.cs,*this,h);
   }
 
   tfel::math::tmatrix<3u,3u,real>
@@ -91,7 +96,7 @@ namespace mtest
     return r;
   } // end of CyranoBehaviour::getRotationMatrix
 
-  StiffnessMatrixType::mtype
+  StiffnessMatrixType
   CyranoBehaviour::getDefaultStiffnessMatrixType(void) const
   {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
@@ -105,34 +110,35 @@ namespace mtest
   } // end of CyranoBehaviour::setDrivingVariablesDefaultInitialValue  
 
   bool
-  CyranoBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
+  CyranoBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 					     const CurrentState& s,
 					     const tfel::material::ModellingHypothesis::Hypothesis h,
-					     const StiffnessMatrixType::mtype ktype) const
+					     const StiffnessMatrixType ktype) const
   {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return false;
     }
-    CurrentState ls(s);
-    return this->call_behaviour(Kt,ls,h,real(1),ktype,false);
+    wk.cs = s;
+    return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
   } // end of CyranoBehaviour::computePredictionOperator
 
   bool
-  CyranoBehaviour::integrate(tfel::math::matrix<real>& Kt,
-			     CurrentState& s,
+  CyranoBehaviour::integrate(CurrentState& s,
+			     BehaviourWorkSpace& wk,
 			     const tfel::material::ModellingHypothesis::Hypothesis h,
 			     const real dt,
-			     const StiffnessMatrixType::mtype ktype) const
+			     const StiffnessMatrixType ktype) const
   {
-    return this->call_behaviour(Kt,s,h,dt,ktype,true);
+    return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
   } // end of CyranoBehaviour::integrate
 
   bool
   CyranoBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 				  CurrentState& s,
+				  BehaviourWorkSpace& wk,
 				  const tfel::material::ModellingHypothesis::Hypothesis h,
 				  const real dt,
-				  const StiffnessMatrixType::mtype ktype,
+				  const StiffnessMatrixType ktype,
 				  const bool b) const
   {
     using namespace std;
@@ -160,26 +166,26 @@ namespace mtest
       throw(runtime_error("CyranoBehaviour::integrate: "
 			  "invalid tangent operator size"));
     }
-    if(((s.iv0.size()==0)&&(this->ivs.size()!=1u))||
-       ((s.iv0.size()!=0)&&(s.iv0.size()!=this->ivs.size()))){
+    if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
+       ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size()))){
       throw(runtime_error("CyranoBehaviour::integrate: "
 			  "the memory has not been allocated correctly"));
     }
-    fill(this->D.begin(),this->D.end(),0.);
+    fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
-    UmatBehaviourBase::initializeTangentOperator(ktype,b);
+    UmatBehaviourBase::initializeTangentOperator(wk,ktype,b);
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin(),s.mprops1.end(),this->mps.begin());
+    copy(s.mprops1.begin(),s.mprops1.end(),wk.mps.begin());
     if(s.mprops1.empty()){
-      this->mps[0] = real(0);
+      wk.mps[0] = real(0);
     }
     // state variable initial values
-    copy(s.iv0.begin(),s.iv0.end(),this->ivs.begin());
+    copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
     if(s.iv0.empty()){
-      this->ivs[0]=real(0);
+      wk.ivs[0]=real(0);
     }
-    nstatv = static_cast<CyranoInt>(ivs.size());
+    nstatv = static_cast<CyranoInt>(wk.ivs.size());
     // rotation matrix
     tmatrix<3u,3u,real> drot(0.);
     tmatrix<3u,3u,real>::size_type i,j;
@@ -206,17 +212,17 @@ namespace mtest
     swap(ude(1),ude(2));
     // integration
     (this->fct)(&ntens,&dt,&drot(0,0),
-		&D(0,0),&ue0(0),&ude(0),
+		&(wk.D(0,0)),&ue0(0),&ude(0),
 		&(s.esv0(0)),&(s.desv(0)),
-		&this->mps(0),&nprops,
+		&wk.mps(0),&nprops,
 		&(s.esv0(0))+1,&(s.desv(0))+1,
-		&this->ivs(0),&nstatv,&(s.s1(0)),
+		&wk.ivs(0),&nstatv,&(s.s1(0)),
 		&ndi,&kinc);
     if(kinc!=1){
       return false;
     }
     if(!s.iv1.empty()){
-      copy_n(this->ivs.begin(), s.iv1.size(),s.iv1.begin());
+      copy_n(wk.ivs.begin(), s.iv1.size(),s.iv1.begin());
     }
     // turning back to MFront conventions
     swap(s.s1(1),s.s1(2));
@@ -226,7 +232,7 @@ namespace mtest
       tmatrix<3u,3u,real> D2;
       for(unsigned short mi=0;mi!=3u;++mi){
 	for(unsigned short mj=0;mj!=3u;++mj){
-	  D2(mi,mj)=D(mj,mi);
+	  D2(mi,mj)=wk.D(mj,mi);
 	}
       }
       // change to MTest conventions

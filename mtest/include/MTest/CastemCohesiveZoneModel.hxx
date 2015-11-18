@@ -52,43 +52,45 @@ namespace mtest
     getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief allocate internal workspace
-     * \param[in] h : modelling hypothesis
+     * \param[in] wk : workspace
+     * \param[in] h  : modelling hypothesis
      */
     virtual void
-    allocate(const tfel::material::ModellingHypothesis::Hypothesis) override;
+    allocate(BehaviourWorkSpace&,
+	     const tfel::material::ModellingHypothesis::Hypothesis) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual StiffnessMatrixType::mtype
+    virtual StiffnessMatrixType
     getDefaultStiffnessMatrixType(void) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[out] Kt    : tangent operator
+     * \param[out] wk    : behaviour workspace
      * \param[in]  s     : current state
      * \param[in]  h     : modelling hypothesis
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual bool
-    computePredictionOperator(tfel::math::matrix<real>&,
+    computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const tfel::material::ModellingHypothesis::Hypothesis,
-			      const StiffnessMatrixType::mtype) const override;
+			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[out]    Kt    : tangent operator
      * \param[out/in] s     : current state
+     * \param[out]    wk    : behaviour workspace
      * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual bool
-    integrate(tfel::math::matrix<real>&,
-	      CurrentState&,
+    integrate(CurrentState&,
+	      BehaviourWorkSpace&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
-	      const StiffnessMatrixType::mtype) const override;
+	      const StiffnessMatrixType) const override;
     /*!
      * \brief some interfaces requires dummy material properties to be
      * declared. For example, the Cast3M finite element solver
@@ -119,10 +121,6 @@ namespace mtest
 			    const tfel::material::ModellingHypothesis::Hypothesis) const;
     //! the umat fonction
     tfel::system::CastemFctPtr fct;
-    //! temporary vector for material properties
-    mutable tfel::math::vector<real> mps;
-    //! temporary vector for internal variables
-    mutable tfel::math::vector<real> ivs;
   }; // end of struct MTest
   
 } // end of namespace mtest

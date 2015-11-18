@@ -622,10 +622,11 @@ namespace mfront{
 
   static void callMake(const std::string& target){
     const char * make = getMakeCommand();
-    const char * silent = getDebugMode() ? "" : "-s";
-    const char *const argv[] = {make,silent,"-C","src",
-				"-f","Makefile.mfront",
-				target.c_str(),nullptr};
+    const char * silent = getDebugMode() ? nullptr : "-s";
+    const char *const argv[] = {make,"-C","src","-f",
+				"Makefile.mfront",
+				target.c_str(),
+				silent,nullptr};
     auto error = [&argv,&target](const std::string& e){
       auto msg = "callMake: can't build target '"+target+"'\n";
       if(!e.empty()){

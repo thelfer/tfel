@@ -24,6 +24,7 @@
 
 #include"MTest/Evolution.hxx"
 #include"MTest/CurrentState.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/CastemSmallStrainBehaviour.hxx"
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 
@@ -282,37 +283,37 @@ namespace mtest
   } // end of CastemSmallStrainBehaviour::setDrivingVariablesDefaultInitialValue  
 
   bool
-  CastemSmallStrainBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
+  CastemSmallStrainBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 							const CurrentState& s,
 							const tfel::material::ModellingHypothesis::Hypothesis h,
-							const StiffnessMatrixType::mtype ktype) const
+							const StiffnessMatrixType ktype) const
   {
-    using namespace tfel::math;
     if(ktype!=StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-      CurrentState ls(s);
-      return this->call_behaviour(Kt,ls,h,real(1),ktype,false);
+      wk.cs=s;
+      return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
     }
     // compute the stiffness operator from material properties
-    this->computeElasticStiffness(Kt,s.mprops1,transpose(s.r),h);
+    this->computeElasticStiffness(wk.kt,s.mprops1,transpose(s.r),h);
     return true;
   } // end of CastemSmallStrainBehaviour::computePredictionOperator
 
   bool
-  CastemSmallStrainBehaviour::integrate(tfel::math::matrix<real>& Kt,
-					CurrentState& s,
+  CastemSmallStrainBehaviour::integrate(CurrentState& s,
+					BehaviourWorkSpace& wk,
 					const tfel::material::ModellingHypothesis::Hypothesis h,
 					const real dt,
-					const StiffnessMatrixType::mtype ktype) const
+					const StiffnessMatrixType ktype) const
   {
-    return this->call_behaviour(Kt,s,h,dt,ktype,true);
+    return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
   } // end of CastemSmallStrainBehaviour::integrate
 
   bool
   CastemSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 					     CurrentState& s,
+					     BehaviourWorkSpace& wk,
 					     const tfel::material::ModellingHypothesis::Hypothesis h,
 					     const real dt,
-					     const StiffnessMatrixType::mtype ktype,
+					     const StiffnessMatrixType ktype,
 					     const bool b) const
   {
     using namespace std;
@@ -355,24 +356,24 @@ namespace mtest
       throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
 			  "unsupported hypothesis"));
     }
-    if((this->D.getNbRows()!=Kt.getNbRows())||
-       (this->D.getNbCols()!=Kt.getNbCols())){
+    if((wk.D.getNbRows()!=Kt.getNbRows())||
+       (wk.D.getNbCols()!=Kt.getNbCols())){
       throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
 			  "the memory has not been allocated correctly"));
     }
-    if(((s.iv0.size()==0)&&(this->ivs.size()!=1u))||
-       ((s.iv0.size()!=0)&&(s.iv0.size()!=this->ivs.size()))){
+    if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
+       ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size()))){
       throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
-			  "the memory has not been allocated correctly"));
+			  "the memory has not been allocated correctly (2)"));
     }
-    fill(this->D.begin(),this->D.end(),0.);
+    fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
-    UmatBehaviourBase::initializeTangentOperator(ktype,b);
+    UmatBehaviourBase::initializeTangentOperator(wk,ktype,b);
     // state variable initial values
     if(s.iv0.size()!=0){
-      copy(s.iv0.begin(),s.iv0.end(),this->ivs.begin());
+      copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
     }
-    nstatv = static_cast<CastemInt>(this->ivs.size());
+    nstatv = static_cast<CastemInt>(wk.ivs.size());
     // rotation matrix
     tmatrix<3u,3u,real> drot = transpose(s.r);
     tmatrix<3u,3u,real>::size_type i;
@@ -390,7 +391,7 @@ namespace mtest
       ude(i)  *= sqrt2;
     }
     CastemReal ndt(1.);
-    (this->fct)(&(s.s1(0)),&this->ivs(0),&D(0,0),
+    (this->fct)(&(s.s1(0)),&wk.ivs(0),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,
 		&ue0(0),&ude(0),nullptr,&dt,
@@ -409,11 +410,11 @@ namespace mtest
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
 	this->computeElasticStiffness(Kt,s.mprops1,drot,h);
       } else {
-	UmatNormaliseTangentOperator::exe(Kt,D,dimension);
+	UmatNormaliseTangentOperator::exe(Kt,wk.D,dimension);
       }
     }
     if(!s.iv1.empty()){
-      copy_n(this->ivs.begin(),s.iv1.size(),s.iv1.begin());
+      copy_n(wk.ivs.begin(),s.iv1.size(),s.iv1.begin());
     }
     // turning things in standard conventions
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){

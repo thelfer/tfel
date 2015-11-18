@@ -24,6 +24,9 @@
 namespace mtest
 {
 
+  // forward declaration
+  struct Behaviour;
+  
   /*!
    * structure containing the state of the material.
    * This structure is used internally and is declared public only
@@ -84,6 +87,8 @@ namespace mtest
     tfel::math::vector<real> desv;
     //! rotation matrix
     tfel::math::tmatrix<3u,3u> r;
+    // reference Temperature
+    real Tref  = 293.15;
   }; // end of struct CurrentState
 
   /*!
@@ -130,6 +135,20 @@ namespace mtest
 				const std::vector<std::string>&,
 				const real,
 				const real);
+
+  /*!
+   * \brief update the state for the next time step
+   * \param[out] s: state
+   */
+  MTEST_VISIBILITY_EXPORT void
+  update(CurrentState&);
+
+  /*!
+   * \brief revert the state to the beginning of the time step
+   * \param[out] s: state
+   */
+  MTEST_VISIBILITY_EXPORT void
+  revert(CurrentState&);
   
 } // end of namespace mtest
 

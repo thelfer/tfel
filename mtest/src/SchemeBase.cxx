@@ -30,6 +30,7 @@
 #include"MTest/AccelerationAlgorithmFactory.hxx"
 #include"MTest/CastemAccelerationAlgorithm.hxx"
 #include"MTest/Evolution.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/SchemeBase.hxx"
 
 namespace mtest{
@@ -64,7 +65,7 @@ namespace mtest{
   }
   
   SchemeBase::SchemeBase()
-    : defaultMaterialPropertiesValues(new EvolutionManager()),
+    : dmpv(new EvolutionManager()),
       evm(new EvolutionManager())
   {
     // declare time variable
@@ -181,7 +182,7 @@ namespace mtest{
   void
   SchemeBase::setMaximumNumberOfIterations(const unsigned int i)
   {
-    if(this->iterMax!=-1){
+    if(this->options.iterMax!=-1){
       throw(std::runtime_error("SchemeBase::setMaximumNumberOfIterations: "
 			       "the maximum number of iterations "
 			       "has already been declared"));
@@ -190,13 +191,13 @@ namespace mtest{
       throw(std::runtime_error("SchemeBase::setMaximumNumberOfIterations: "
 			       "invalid number of iterations"));
     }
-    this->iterMax = static_cast<int>(i);
+    this->options.iterMax = static_cast<int>(i);
   }
 
   void
   SchemeBase::setMaximumNumberOfSubSteps(const unsigned int i)
   {
-    if(this->mSubSteps!=-1){
+    if(this->options.mSubSteps!=-1){
       throw(std::runtime_error("SchemeBase::setMaximumNumberOfSubSteps: "
 			       "the maximum number of sub steps "
 			       "has already been declared"));
@@ -205,7 +206,7 @@ namespace mtest{
       throw(std::runtime_error("SchemeBase::setMaximumNumberOfSubSteps: "
 			       "invalid number of sub steps"));
     }
-    this->mSubSteps = static_cast<int>(i);
+    this->options.mSubSteps = static_cast<int>(i);
   }
   
   void
@@ -475,62 +476,62 @@ namespace mtest{
   void
   SchemeBase::setAccelerationAlgorithm(const std::string& a)
   {
-    if(this->aa.get()!=nullptr){
+    if(this->options.aa.get()!=nullptr){
       throw(std::runtime_error("SchemeBase::setAccelerationAlgorithm: "
 			       "acceleration algorithm already set"));
     }
     auto& f = AccelerationAlgorithmFactory::getAccelerationAlgorithmFactory();
-    this->aa = f.getAlgorithm(a);
+    this->options.aa = f.getAlgorithm(a);
   }
 
   void
   SchemeBase::setAccelerationAlgorithmParameter(const std::string& p,
 					   const std::string& v)
   {
-    if(this->aa.get()==nullptr){
+    if(this->options.aa.get()==nullptr){
       throw(std::runtime_error("SchemeBase::setAccelerationAlgorithmParameter: "
 			       "no acceleration algorithm set"));
     }
-    this->aa->setParameter(p,v);
+    this->options.aa->setParameter(p,v);
   }
 
   void
-  SchemeBase::setPredictionPolicy(const SchemeBase::PredictionPolicy p)
+  SchemeBase::setPredictionPolicy(const PredictionPolicy p)
   {
-    if(this->ppolicy!=UNSPECIFIEDPREDICTIONPOLICY){
+    if(this->options.ppolicy!=PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY){
       throw(std::runtime_error("SchemeBase::setPredictionPolicy: "
 			       "prediction policy already declared"));
     }
-    this->ppolicy = p;
+    this->options.ppolicy = p;
   } // end of SchemeBase::setPredictionPolicy
 
   void
-  SchemeBase::setStiffnessMatrixType(const StiffnessMatrixType::mtype k)
+  SchemeBase::setStiffnessMatrixType(const StiffnessMatrixType k)
   {
-    if(this->ktype!=StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
+    if(this->options.ktype!=StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
       throw(std::runtime_error("SchemeBase::setStiffnessMatrixType: "
 			       "stiffness matrix type already specificed"));
     }
-    this->ktype = k;
+    this->options.ktype = k;
   }
 
   void
   SchemeBase::setUseCastemAccelerationAlgorithm(const bool ucaa)
   {
     if(ucaa){
-      if(this->aa.get()!=nullptr){
+      if(this->options.aa.get()!=nullptr){
 	throw(std::runtime_error("SchemeBase::setUseCastemAccelerationAlgorithm: "
 				 "an algorithm was already set"));
       }
-      this->aa = std::shared_ptr<AccelerationAlgorithm>(new CastemAccelerationAlgorithm);
+      this->options.aa = std::shared_ptr<AccelerationAlgorithm>(new CastemAccelerationAlgorithm);
     }
-    this->useCastemAcceleration = ucaa;
+    this->options.useCastemAcceleration = ucaa;
   }
   
   void
   SchemeBase::setCastemAccelerationTrigger(const int i)
   {
-    if(!this->useCastemAcceleration){
+    if(!this->options.useCastemAcceleration){
       throw(std::runtime_error("SchemeBase::setCastemAccelerationTrigger: "
 			       "the castem acceleration algorithm has "
 			       "not been set using the "
@@ -541,20 +542,20 @@ namespace mtest{
 			       "use the @AccelerationAlgorithmParameter "
 			       "keyword to specify the acceleration trigger."));
     }
-    if(this->aa.get()==nullptr){
+    if(this->options.aa.get()==nullptr){
       throw(std::runtime_error("SchemeBase::setCastemAccelerationTrigger: "
 			       "internal error"));
     }
     std::ostringstream nb;
     nb << i;
-    this->aa->setParameter("AccelerationTrigger",nb.str());
+    this->options.aa->setParameter("AccelerationTrigger",nb.str());
   }
 
 
   void
   SchemeBase::setCastemAccelerationPeriod(const int p)
   {
-    if(!this->useCastemAcceleration){
+    if(!this->options.useCastemAcceleration){
       throw(std::runtime_error("SchemeBase::setCastemAccelerationPeriod: "
 			       "the castem acceleration algorithm has not "
 			       "been set using the "
@@ -565,23 +566,23 @@ namespace mtest{
 			       "@AccelerationAlgorithmParameter keyword to "
 			       "specify the acceleration period."));
     }
-    if(this->aa.get()==nullptr){
+    if(this->options.aa.get()==nullptr){
       throw(std::runtime_error("SchemeBase::setCastemAccelerationPeriod: "
 			       "internal error"));
     }
     std::ostringstream nb;
     nb << p;
-    this->aa->setParameter("AccelerationPeriod",nb.str());
+    this->options.aa->setParameter("AccelerationPeriod",nb.str());
   }
   
   void
-  SchemeBase::setStiffnessUpdatingPolicy(const SchemeBase::StiffnessUpdatingPolicy p)
+  SchemeBase::setStiffnessUpdatingPolicy(const StiffnessUpdatingPolicy p)
   {
-    if(this->ks!=SchemeBase::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY){
+    if(this->options.ks!=StiffnessUpdatingPolicy::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY){
       throw(std::runtime_error("SchemeBase::setStiffnessUpdatePolicy: "
 			       "stiffness matrix type already specificed"));
     }
-    this->ks = p;
+    this->options.ks = p;
   } // end of SchemeBase::setStiffnessUpdatingPolicy
 
   void
@@ -601,46 +602,46 @@ namespace mtest{
     // check if material properties and external state variables are declared
     const auto mpnames  = this->b->getMaterialPropertiesNames();
     const auto esvnames = this->b->getExternalStateVariablesNames();
-    this->b->setOptionalMaterialPropertiesDefaultValues(*(this->defaultMaterialPropertiesValues),
+    this->b->setOptionalMaterialPropertiesDefaultValues(*(this->dmpv),
 							*(this->evm));
-    checkIfDeclared(mpnames,*(this->evm),*(this->defaultMaterialPropertiesValues),
+    checkIfDeclared(mpnames,*(this->evm),*(this->dmpv),
 		    "material property");
     checkIfDeclared(esvnames,*(this->evm),"external state variable");
     // numerical parameters
-    if(this->mSubSteps==-1){
-      this->mSubSteps=10;
+    if(this->options.mSubSteps==-1){
+      this->options.mSubSteps=10;
     }
-    if(this->iterMax==-1){
-      this->iterMax=100;
+    if(this->options.iterMax==-1){
+      this->options.iterMax=100;
     }
-    if(this->aa.get()!=nullptr){
-      this->aa->initialize(this->getNumberOfUnknowns());
+    if(this->options.aa.get()!=nullptr){
+      this->options.aa->initialize(this->getNumberOfUnknowns());
     }
     // prediction policy
-    if(this->ppolicy==UNSPECIFIEDPREDICTIONPOLICY){
-      this->ppolicy=NOPREDICTION;
+    if(this->options.ppolicy==PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY){
+      this->options.ppolicy=PredictionPolicy::NOPREDICTION;
     }
     // stiffness matrix type
-    if(this->ktype==StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
-      this->ktype = this->b->getDefaultStiffnessMatrixType();
+    if(this->options.ktype==StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
+      this->options.ktype = this->b->getDefaultStiffnessMatrixType();
     }
     // options selected
     if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
       auto& log = mfront::getLogStream();
-      if(this->aa.get()!=nullptr){
-	log << "** " << this->aa->getName()
+      if(this->options.aa.get()!=nullptr){
+	log << "** " << this->options.aa->getName()
 	    << " acceleration algorithm selected\n";
       }
-      if(this->ppolicy==LINEARPREDICTION){
+      if(this->options.ppolicy==PredictionPolicy::LINEARPREDICTION){
 	log << "** using linear prediction\n";
-      } else if(this->ppolicy==ELASTICPREDICTION){
+      } else if(this->options.ppolicy==PredictionPolicy::ELASTICPREDICTION){
 	log << "** prediction using elastic stiffness\n";
-      } else if(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES){
+      } else if(this->options.ppolicy==PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES){
 	log << "** prediction using elastic stiffness computed from material properties\n";
-      } else if(this->ppolicy==TANGENTOPERATORPREDICTION){
+      } else if(this->options.ppolicy==PredictionPolicy::TANGENTOPERATORPREDICTION){
 	log << "** prediction using tangent operator\n";
       } else {
-	if(this->ppolicy!=NOPREDICTION){
+	if(this->options.ppolicy!=PredictionPolicy::NOPREDICTION){
 	  throw(std::runtime_error("MTest::completeInitialisation : "
 				   "internal error, unsupported "
 				   "prediction policy"));
@@ -648,8 +649,6 @@ namespace mtest{
 	log << "** no prediction\n";
       }
     }
-    // allocating behaviour workspace
-    this->b->allocate(this->hypothesis);
     // initialisation is complete
     this->initialisationFinished = true;
   } // end of SchemeBase::completeInitialisation

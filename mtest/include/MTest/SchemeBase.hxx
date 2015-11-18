@@ -18,7 +18,9 @@
 
 #include"MTest/Types.hxx"
 #include"MTest/Config.hxx"
+#include"MTest/Study.hxx"
 #include"MTest/Scheme.hxx"
+#include"MTest/SolverOptions.hxx"
 
 namespace mtest{
 
@@ -28,46 +30,10 @@ namespace mtest{
   struct AccelerationAlgorithm;
   
   struct MTEST_VISIBILITY_EXPORT SchemeBase
-    : public Scheme
+    : public Scheme,
+      public Study
   {
     using EvolutionPtr = std::shared_ptr<Evolution>;
-    /*!
-     * \brief possible algorithms used for global convergence to
-     * update the stiffness matrix
-     */
-    enum StiffnessUpdatingPolicy{
-      /*!
-       * the initial prediction matrix or the initial tangent coherent
-       * matrix or the initial secant matrix (normally equal to the
-       * elastic stiffness) is used for all iterations
-       */
-      CONSTANTSTIFFNESS,
-      /*!
-       * the prediction matrix or the first tangent coherent matrix or
-       * the first secant matrix is used for all iterations and
-       * updated and factorized at at periods
-       */
-      CONSTANTSTIFFNESSBYPERIOD,
-      /*!
-       * the tangent coherent matrix or the secant matrix is computed
-       * and factorized at each iteration
-       */
-      UPDATEDSTIFFNESSMATRIX,
-      //! default value
-      UNSPECIFIEDSTIFFNESSUPDATINGPOLICY
-    }; // end of enum StiffnessUpdatingPolicy
-    /*!
-     * \brief possible prediction policies
-     */
-    enum PredictionPolicy{
-      NOPREDICTION,
-      LINEARPREDICTION,
-      ELASTICPREDICTION,
-      ELASTICPREDICTIONFROMMATERIALPROPERTIES,
-      SECANTOPERATORPREDICTION,
-      TANGENTOPERATORPREDICTION,
-      UNSPECIFIEDPREDICTIONPOLICY
-    }; // end of enum PredictionPolicy
     SchemeBase();
     SchemeBase(SchemeBase&&) = delete;
     SchemeBase(const SchemeBase&) = delete;
@@ -220,7 +186,7 @@ namespace mtest{
      * \brief set the stiffness matrix type
      * \param[in] k : stiffness matrix type
      */
-    virtual void setStiffnessMatrixType(const StiffnessMatrixType::mtype);
+    virtual void setStiffnessMatrixType(const StiffnessMatrixType);
     /*!
      * \brief set the use of the castem acceleration algorithm
      * \param[in] b : boolean
@@ -250,7 +216,6 @@ namespace mtest{
      * \param[in] p : period
      */
     virtual void setCastemAccelerationPeriod(const int);
-    
     //! destructor
     virtual ~SchemeBase();
   protected:
@@ -259,11 +224,6 @@ namespace mtest{
      * \note this method must be called by the derived class.
      */ 
     void completeInitialisation(void);
-    /*!
-     * \return the number of unknowns (size of driving variables plus
-     * the number of lagrangian multipliers)
-     */
-    virtual size_t getNumberOfUnknowns(void) const = 0;
     /*!
      * \brief declare a new variable
      * \param[in] v : variable name
@@ -278,6 +238,10 @@ namespace mtest{
 			  const bool);
     //! \brief set the modelling hypothesis to the default one
     virtual void setDefaultHypothesis(void) = 0;
+    //! initilisation stage
+    bool initialisationFinished = false;
+    //! solver options
+    SolverOptions options;
     //! times
     std::vector<real> times;
     //! list of internal variable names, including their suffixes
@@ -297,27 +261,10 @@ namespace mtest{
       tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //! dimension used for the computation
     unsigned short dimension = 0u;
-    //! stiffness updating policy
-    StiffnessUpdatingPolicy ks = UNSPECIFIEDSTIFFNESSUPDATINGPOLICY;
-    //! type of stifness matrix to use for the resolution
-    StiffnessMatrixType::mtype ktype =
-      StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE;
-    //! use a prediction matrix before beginning the resolution
-    PredictionPolicy ppolicy = UNSPECIFIEDPREDICTIONPOLICY;
-    //! acceleration algorithm
-    std::shared_ptr<AccelerationAlgorithm> aa;
     //! default values for material properties as given by the behaviour
-    std::shared_ptr<EvolutionManager> defaultMaterialPropertiesValues;
+    std::shared_ptr<EvolutionManager> dmpv;
     //! list of evolutions
     std::shared_ptr<EvolutionManager> evm;
-    //! maximum number of sub steps allowed
-    int mSubSteps = -1;
-    //! maximum number of iterations allowed in the Newton-Raphson algorithm
-    int iterMax = -1;
-    //! use castem acceleration
-    bool useCastemAcceleration = false;
-    //! initilisation stage
-    bool initialisationFinished = false;
   }; // end of struct SchemeBase
   
 } // end of namespace mtest

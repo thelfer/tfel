@@ -23,6 +23,7 @@
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 
 #include"MTest/CurrentState.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AsterStandardBehaviour.hxx"
 
@@ -181,53 +182,47 @@ namespace mtest
   } // end of AsterStandardBehaviour::getInternalStateVariablesDescriptions
 
   void
-  AsterStandardBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
+  AsterStandardBehaviour::allocate(BehaviourWorkSpace& wk,
+				   const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     const auto ndv     = this->getDrivingVariablesSize(h);
     const auto nth     = this->getThermodynamicForcesSize(h);
     const auto nstatev = this->getInternalStateVariablesSize(h);
-    this->D.resize(nth,ndv);
-    this->mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
-    this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    wk.kt.resize(nth,ndv);
+    wk.k.resize(nth,ndv);
+    wk.D.resize(nth,ndv);
+    wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
+    wk.ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    mtest::allocate(wk.cs,*this,h);
   } // end of AsterStandardBehaviour::allocate
 
-  StiffnessMatrixType::mtype
+  StiffnessMatrixType
   AsterStandardBehaviour::getDefaultStiffnessMatrixType(void) const
   {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }
   
   bool
-  AsterStandardBehaviour::computePredictionOperator(tfel::math::matrix<real>& Kt,
+  AsterStandardBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 						    const CurrentState& s,
 						    const tfel::material::ModellingHypothesis::Hypothesis h,
-						    const StiffnessMatrixType::mtype ktype) const
+						    const StiffnessMatrixType ktype) const
   {
-    using namespace tfel::math;
-    CurrentState ls(s);
-    return this->call_behaviour(Kt,ls,h,real(1),ktype,false);
+    wk.cs = s;
+    return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
   }
 
   bool
-  AsterStandardBehaviour::integrate(tfel::math::matrix<real>& Kt,
-				    CurrentState& s,
+  AsterStandardBehaviour::integrate(CurrentState& s,
+				    BehaviourWorkSpace& wk,
 				    const tfel::material::ModellingHypothesis::Hypothesis h,
 				    const real dt,
-				    const StiffnessMatrixType::mtype ktype) const
+				    const StiffnessMatrixType ktype) const
   {
-    return this->call_behaviour(Kt,s,h,dt,ktype,true);
+    return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
   } // end of AsterStandardBehaviour::integrate
 
   AsterStandardBehaviour::~AsterStandardBehaviour()
   {}
   
 } // end of namespace mtest
-
-
-
-
-
-
-
-
-

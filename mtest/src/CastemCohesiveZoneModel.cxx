@@ -18,6 +18,7 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Castem/Castem.hxx"
 #include"MTest/CurrentState.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/CastemCohesiveZoneModel.hxx"
 
 namespace mtest
@@ -65,39 +66,41 @@ namespace mtest
   } // end of CastemCohesiveZoneModel::getRotationMatrix
 
   void
-  CastemCohesiveZoneModel::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
+  CastemCohesiveZoneModel::allocate(BehaviourWorkSpace& wk,
+				    const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     const auto ndv     = this->getDrivingVariablesSize(h);
     const auto nth     = this->getThermodynamicForcesSize(h);
     const auto nstatev = this->getInternalStateVariablesSize(h);
-    this->D.resize(nth,ndv);
-    this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    wk.D.resize(nth,ndv);
+    wk.kt.resize(nth,ndv);
+    wk.k.resize(nth,ndv);
+    wk.ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    mtest::allocate(wk.cs,*this,h);
   }
 
   void
   CastemCohesiveZoneModel::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {
-    using namespace std;
-    fill(v.begin(),v.end(),real(0));
+    std::fill(v.begin(),v.end(),real(0));
   } // end of CastemCohesiveZoneModel::setDrivingVariablesDefaultInitialValue  
 
-  StiffnessMatrixType::mtype
+  StiffnessMatrixType
   CastemCohesiveZoneModel::getDefaultStiffnessMatrixType(void) const
   {
     return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
   }
   
   bool
-  CastemCohesiveZoneModel::computePredictionOperator(tfel::math::matrix<real>& Kt,
+  CastemCohesiveZoneModel::computePredictionOperator(BehaviourWorkSpace& wk,
 						     const CurrentState& s,
 						     const tfel::material::ModellingHypothesis::Hypothesis h,
-						     const StiffnessMatrixType::mtype ktype) const
+						     const StiffnessMatrixType ktype) const
   {
-    using namespace tfel::math;
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       // rotation matrix
       const auto drot = transpose(s.r);
-      this->computeElasticStiffness(Kt,s.mprops1,drot,h);
+      this->computeElasticStiffness(wk.k,s.mprops1,drot,h);
       return true;
     }
     throw(std::runtime_error("CastemCohesiveZoneModel::computePredictionOperator : "
@@ -106,11 +109,11 @@ namespace mtest
   } // end of CastemCohesiveZoneModel::computePredictionOperator
 
   bool
-  CastemCohesiveZoneModel::integrate(tfel::math::matrix<real>& Kt,
-				     CurrentState& s,
+  CastemCohesiveZoneModel::integrate(CurrentState& s,
+				     BehaviourWorkSpace& wk,
 				     const tfel::material::ModellingHypothesis::Hypothesis h,
 				     const real dt,
-				     const StiffnessMatrixType::mtype ktype) const
+				     const StiffnessMatrixType ktype) const
   {
     using namespace std;
     using namespace tfel::math;
@@ -142,22 +145,22 @@ namespace mtest
       throw(runtime_error("CastemCohesiveZoneModel::integrate: "
 			  "unsupported hypothesis"));
     }
-    if((this->D.getNbRows()!=Kt.getNbRows())||
-       (this->D.getNbCols()!=Kt.getNbCols())){
+    if((wk.D.getNbRows()!=wk.k.getNbRows())||
+       (wk.D.getNbCols()!=wk.k.getNbCols())){
       throw(runtime_error("CastemCohesiveZoneModel::integrate: "
 			  "the memory has not been allocated correctly"));
     }
-    if(((s.iv0.size()==0)&&(this->ivs.size()!=1u))||
-       ((s.iv0.size()!=0)&&(s.iv0.size()!=this->ivs.size()))){
+    if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
+       ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size()))){
       throw(runtime_error("CastemCohesiveZoneModel::integrate: "
 			  "the memory has not been allocated correctly"));
     }
-    fill(this->D.begin(),this->D.end(),0.);
+    fill(wk.D.begin(),wk.D.end(),0.);
     if(s.iv0.size()!=0){
       copy(s.iv0.begin(),s.iv0.end(),
-	   this->ivs.begin());
+	   wk.ivs.begin());
     }
-    nstatv = static_cast<CastemInt>(this->ivs.size());
+    nstatv = static_cast<CastemInt>(wk.ivs.size());
     // rotation matrix
     tmatrix<3u,3u,real> drot = transpose(s.r);
     CastemInt kinc(1);
@@ -174,7 +177,7 @@ namespace mtest
       s.s1[0]  = s.s0[1]; s.s1[1]  = s.s0[2]; s.s1[2]  = s.s0[0];
     }
     CastemReal ndt(1.);
-    (this->fct)(&s.s1(0),&this->ivs(0),&D(0,0),
+    (this->fct)(&s.s1(0),&wk.ivs(0),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,nullptr,
 		&ue0(0),&ude(0),nullptr,&dt,
@@ -190,7 +193,7 @@ namespace mtest
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-	this->computeElasticStiffness(Kt,s.mprops1,drot,h);
+	this->computeElasticStiffness(wk.k,s.mprops1,drot,h);
       } else {
 	throw(runtime_error("CastemCohesiveZoneModel::integrate : "
 			    "computation of the tangent operator "
@@ -198,7 +201,7 @@ namespace mtest
       }
     }
     if(!s.iv1.empty()){
-      copy_n(this->ivs.begin(), s.iv1.size(),s.iv1.begin());
+      copy_n(wk.ivs.begin(), s.iv1.size(),s.iv1.begin());
     }
     // turning things in standard conventions
     if(ntens==2){

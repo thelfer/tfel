@@ -17,6 +17,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/UmatBehaviourBase.hxx"
 
 namespace mtest
@@ -631,38 +632,36 @@ namespace mtest
   
 
   void
-  UmatBehaviourBase::initializeTangentOperator(const StiffnessMatrixType::mtype ktype,
-						    const bool b) const
+  UmatBehaviourBase::initializeTangentOperator(BehaviourWorkSpace& wk,
+					       const StiffnessMatrixType ktype,
+					       const bool b) const
   {
-    using namespace std;
     if(b){
       if((ktype==StiffnessMatrixType::NOSTIFFNESS)||
 	 (ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
 	// do nothing
       } else if(ktype==StiffnessMatrixType::ELASTIC){
-	this->D(0,0) = real(1);
+	wk.D(0,0) = real(1);
       } else if(ktype==StiffnessMatrixType::SECANTOPERATOR){
-	this->D(0,0) = real(2);
+	wk.D(0,0) = real(2);
       } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
-	this->D(0,0) = real(3);
+	wk.D(0,0) = real(3);
       } else if(ktype==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
-	this->D(0,0) = real(4);
+	wk.D(0,0) = real(4);
       } else {
-	string msg("AsterSmallStrainBehaviour::call_behaviour : "
-		   "invalid or unspecified stiffness matrix type");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::call_behaviour : "
+				 "invalid or unspecified stiffness matrix type"));
       }
     } else {
       if(ktype==StiffnessMatrixType::ELASTIC){
-	this->D(0,0) = real(-1);
+	wk.D(0,0) = real(-1);
       } else if(ktype==StiffnessMatrixType::SECANTOPERATOR){
-	this->D(0,0) = real(-2);
+	wk.D(0,0) = real(-2);
       } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
-	this->D(0,0) = real(-3);
+	wk.D(0,0) = real(-3);
       } else {
-	string msg("AsterSmallStrainBehaviour::call_behaviour : "
-		   "invalid or unspecified stiffness matrix type");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::call_behaviour : "
+				 "invalid or unspecified stiffness matrix type"));
       }
     }
   } // end of UmatBehaviourBase::initializeTangentOperator
@@ -671,4 +670,14 @@ namespace mtest
   {}
   
 } // end of namespace mtest
+
+
+
+
+
+
+
+
+
+
 

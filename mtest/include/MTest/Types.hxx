@@ -23,36 +23,13 @@ namespace mtest
   
   //! a simple alias
   typedef double real;
-  
-  // forward declaration
-  struct Behaviour;
-  // forward declaration
+  //! a simple alias
   struct Evolution;
   // ! a simple alias
   using EvolutionPtr = std::shared_ptr<Evolution>;
   // ! a simple alias
   using EvolutionManager = std::map<std::string,EvolutionPtr>;
-  // forward declaration
-  struct CurrentState;
-
-  /*!
-   * \brief possible type of stiffness matrix
-   */
-  struct StiffnessMatrixType
-  {
-    //! list of possible matrix type
-    enum mtype{
-      NOSTIFFNESS,
-      ELASTIC,
-      SECANTOPERATOR,
-      TANGENTOPERATOR,
-      CONSISTENTTANGENTOPERATOR,
-      // This one is mostly for the umat behaviour
-      ELASTICSTIFNESSFROMMATERIALPROPERTIES,
-      UNSPECIFIEDSTIFFNESSMATRIXTYPE
-    }; // end of struct StiffnessMatrixType
-  };
-
+  
 } // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTTYPES_H_ */

@@ -1,7 +1,13 @@
 nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Types.hxx	                         \
-			 MTest/CurrentState.hxx	                         \
+			 MTest/Solver.hxx	                         \
+			 MTest/SolverOptions.hxx	                 \
+			 MTest/SolverWorkSpace.hxx	                 \
+			 MTest/GenericSolver.hxx	                 \
+			 MTest/Study.hxx	                         \
+			 MTest/StudyCurrentState.hxx	                 \
 			 MTest/StructureCurrentState.hxx	         \
+			 MTest/CurrentState.hxx	                         \
 			 MTest/Scheme.hxx	                         \
 			 MTest/SchemeBase.hxx	                         \
 			 MTest/MTest.hxx	                         \
@@ -10,6 +16,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/AnalyticalTest.hxx	                 \
 			 MTest/ReferenceFileComparisonTest.hxx           \
 			 MTest/Behaviour.hxx                             \
+			 MTest/BehaviourWorkSpace.hxx                    \
 			 MTest/UmatBehaviourBase.hxx                     \
 			 MTest/UmatNormaliseTangentOperator.hxx          \
 			 MTest/CastemStandardBehaviour.hxx               \

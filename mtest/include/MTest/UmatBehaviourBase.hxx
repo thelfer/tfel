@@ -186,11 +186,13 @@ namespace mtest
   protected:
     /*!
      * \brief initialize the first value of the tangent operator
-     * \param[in] ktype : requested tangent operator type
-     * \param[in] b     : if false, a prediction operator is requested
+     * \param[out] wk    : behaviour workspace
+     * \param[in]  ktype : requested tangent operator type
+     * \param[in]  b     : if false, a prediction operator is requested
      */
     void
-    initializeTangentOperator(const StiffnessMatrixType::mtype,
+    initializeTangentOperator(BehaviourWorkSpace&,
+			      const StiffnessMatrixType,
 			      const bool) const;
     //! hypothesis
     const std::string hypothesis;
@@ -198,8 +200,6 @@ namespace mtest
     const std::string library;
     //! function
     const std::string behaviour;
-    //! local stifness matrix
-    mutable tfel::math::matrix<real> D;
     //! names of the material properties
     std::vector<std::string> mpnames;
     //! names of the internal state variables

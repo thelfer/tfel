@@ -11,7 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-
 #include<map>
 #include<cmath>
 #include<string>
@@ -49,6 +48,10 @@
 #include"MTest/Constraint.hxx"
 #include"MTest/ImposedThermodynamicForce.hxx"
 #include"MTest/ImposedDrivingVariable.hxx"
+#include"MTest/CurrentState.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
+#include"MTest/StructureCurrentState.hxx"
+#include"MTest/GenericSolver.hxx"
 
 #ifdef min
 #undef min
@@ -57,6 +60,47 @@
 namespace mtest
 {
 
+  static void
+  updateStiffnessAndResidual(tfel::math::matrix<real>& k,
+			     tfel::math::vector<real>& r,
+			     const Behaviour& b,
+			     const tfel::math::matrix<real>& kt,
+			     const tfel::math::vector<real>& s,
+			     const tfel::material::ModellingHypothesis::Hypothesis h)
+  {
+    using namespace tfel::material;
+    using size_type = tfel::math::matrix<real>::size_type;
+    const auto ndv = b.getDrivingVariablesSize(h);
+    const auto nth = b.getThermodynamicForcesSize(h);
+    std::fill(k.begin(),k.end(),real(0));
+    std::fill(r.begin(),r.end(),real(0));
+    if(b.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+      for(size_type i=0;i!=3u;++i){
+	r(i) += s(i);
+	for(size_type j=0;j!=ndv;++j){
+	  k(i,j) += kt(i,j);
+	}
+      }
+      if(getSpaceDimension(h)>1u){
+	for(size_type i=0;i!=nth-3u;++i){
+	  r(2*i+3u)   += s(i);
+	  r(2*i+3u+1) += s(i);
+	  for(size_type j=0;j!=ndv;++j){
+	    k(2*i+3u,j)   += kt(i+3u,j);
+	    k(2*i+3u+1,j) += kt(i+3u,j);
+	  }
+	}
+      }
+    } else {
+      for(size_type i=0;i!=nth;++i){
+	r(i) += s(i);
+	for(size_type j=0;j!=ndv;++j){
+	  k(i,j) += kt(i,j);
+	}
+      }
+    }
+  } // end of updateStiffnessAndResidual
+  
   static unsigned short
   getStensorSize(const unsigned short d)
   {
@@ -85,13 +129,13 @@ namespace mtest
 			     "invalid dimenstion"));
   }
 
-  MTest::MTestCurrentState::MTestCurrentState() = default;
-  MTest::MTestCurrentState::MTestCurrentState(const MTestCurrentState&) = default;
-  MTest::MTestCurrentState::MTestCurrentState(MTestCurrentState&&)      = default;
-  MTest::MTestCurrentState::~MTestCurrentState() noexcept = default;
+  MTestCurrentState::MTestCurrentState() = default;
+  MTestCurrentState::MTestCurrentState(const MTestCurrentState&) = default;
+  MTestCurrentState::MTestCurrentState(MTestCurrentState&&)      = default;
+  MTestCurrentState::~MTestCurrentState() noexcept = default;
 
-  MTest::MTestWorkSpace::MTestWorkSpace() = default;
-  MTest::MTestWorkSpace::~MTestWorkSpace() noexcept =  default;
+  MTestWorkSpace::MTestWorkSpace() = default;
+  MTestWorkSpace::~MTestWorkSpace() noexcept =  default;
 
   MTest::UTest::~UTest()
   {}
@@ -101,8 +145,6 @@ namespace mtest
       rprec(-1),
       rm(real(0)),
       isRmDefined(false),
-      eeps(-1.),
-      seps(-1.),
       handleThermalExpansion(true),
       toeps(-1),
       pv(-1),
@@ -148,7 +190,7 @@ namespace mtest
   void
   MTest::setDrivingVariableEpsilon(const double e)
   {
-    if(this->eeps>0){
+    if(this->options.eeps>0){
       throw(std::runtime_error("MTest::setDrivingVariableEpsilon: the epsilon "
 			       "value has already been declared"));
     }
@@ -156,20 +198,20 @@ namespace mtest
       throw(std::runtime_error("MTest::setDrivingVariableEpsilon:"
 			       " invalid value"));
     }
-    this->eeps = e;
+    this->options.eeps = e;
   }
 
   void
   MTest::setThermodynamicForceEpsilon(const double s)
   {
-    if(this->seps>0){
+    if(this->options.seps>0){
       throw(std::runtime_error("MTest::setThermodynamicForceEpsilon: the epsilon "
 			       "value has already been declared"));
     }
     if(s < 100*std::numeric_limits<real>::min()){
       throw(std::runtime_error("MTest::setThermodynamicForceEpsilon: invalid value"));
     }
-    this->seps = s;
+    this->options.seps = s;
   }
 
   void
@@ -441,8 +483,6 @@ namespace mtest
   {
     using namespace std;
     using namespace tfel::material;
-    typedef tfel::material::ModellingHypothesis MH;
-    EvolutionManager::const_iterator pev;
     SchemeBase::completeInitialisation();
     // output
     if(!this->output.empty()){
@@ -496,35 +536,35 @@ namespace mtest
       ++cnbr;
     }
     // convergence criterium value for driving variables
-    if(this->eeps<0){
-      this->eeps = 1.e-12;
+    if(this->options.eeps<0){
+      this->options.eeps = 1.e-12;
     }
     // convergence criterium value for thermodynamic forces
-    if(this->seps<0){
-      this->seps = 1.e-3;
+    if(this->options.seps<0){
+      this->options.seps = 1.e-3;
     }
     // tangent operator comparison criterium
     if(this->toeps<0){
-      this->toeps = (this->seps/1e-3)*1.e7;
+      this->toeps = (this->options.seps/1e-3)*1.e7;
     }
     // perturbation value
     if(this->pv<0){
-      this->pv = 10*this->eeps;
+      this->pv = 10*this->options.eeps;
     }
     // additional constraints
-    if(this->hypothesis==MH::PLANESTRAIN){
+    if(this->hypothesis==ModellingHypothesis::PLANESTRAIN){
       shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
       shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
       this->constraints.push_back(ec);
     }
-    if(this->hypothesis==MH::AXISYMMETRICALGENERALISEDPLANESTRESS){
+    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
       // shall be in the behaviour
       if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
 	shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
 	shared_ptr<Constraint> ec(new ImposedDrivingVariable(1,eev));
 	shared_ptr<Evolution>  sev;
-	pev = this->evm->find("AxialStress");
+	auto pev = this->evm->find("AxialStress");
 	if(pev!=this->evm->end()){
 	  sev = pev->second;
 	} else {
@@ -539,7 +579,7 @@ namespace mtest
 				 "handled for small and finite strain behaviours"));
       }
     }
-    if(this->hypothesis==MH::PLANESTRESS){
+    if(this->hypothesis==ModellingHypothesis::PLANESTRESS){
       // shall be in the behaviour
       if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
@@ -561,7 +601,7 @@ namespace mtest
       }
     }
     // thermal expansion reference temperature
-    pev = this->evm->find("ThermalExpansionReferenceTemperature");
+    auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evm->end()){
       const Evolution& ev = *(pev->second);
       if(!ev.isConstant()){
@@ -595,37 +635,46 @@ namespace mtest
   void
   MTest::initializeCurrentState(MTestCurrentState& s) const
   {
+    if(this->b.get()==nullptr){
+      throw(std::runtime_error("MTest::initializeCurrentState: "
+			       "mechanical behaviour not set"));
+    }
+    if(this->hypothesis==tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      throw(std::runtime_error("MTest::initializeCurrentState: "
+			       "modelling hypothesis not set"));
+    }
     // unknowns
     const auto psz = this->getNumberOfUnknowns();
-    s.u_1.clear();
-    s.u0.clear();
-    s.u1.clear();
-    s.u10.clear();
-    s.u_1.resize(psz,0.);
-    s.u0.resize(psz,0.);
-    s.u1.resize(psz,0.);
-    s.u10.resize(psz,0.);
-    // current state
-    allocate(s,*(this->b),this->hypothesis);
+    s.initialize(psz);
+    // initializing the state of the one and only structure
+    auto& ss = s.getStructureCurrentState("");
+    ss.setBehaviour(this->b);
+    ss.setModellingHypothesis(this->hypothesis);
+    // state of the one and only integration point
+    ss.istates.resize(1);
+    auto& cs = ss.istates[0];
+    mtest::allocate(cs,*(this->b),this->hypothesis);
     // setting the intial  values of strains
     this->b->getDrivingVariablesDefaultInitialValues(s.u_1);
     copy(this->e_t0.begin(),this->e_t0.end(),s.u_1.begin());
     s.u0 = s.u_1;
+    s.u1 = s.u_1;
     // setting the intial  values of stresses
-    copy(this->s_t0.begin(),this->s_t0.end(),s.s0.begin());
+    copy(this->s_t0.begin(),this->s_t0.end(),cs.s0.begin());
     // getting the initial values of internal state variables
-    if(this->iv_t0.size()>s.iv0.size()){
+    if((this->iv_t0.size()>cs.iv_1.size())||
+       (this->iv_t0.size()>cs.iv0.size())||
+       (this->iv_t0.size()>cs.iv1.size())){
       throw(std::runtime_error("MTest::initializeCurrentState: the number of initial values declared "
 			       "by the user for the internal state variables exceeds the "
 			       "number of internal state variables declared by the behaviour"));
     }
-    std::copy(this->iv_t0.begin(),this->iv_t0.end(),s.iv_1.begin());
-    std::copy(this->iv_t0.begin(),this->iv_t0.end(),s.iv0.begin());
+    std::copy(this->iv_t0.begin(),this->iv_t0.end(),cs.iv_1.begin());
+    std::copy(this->iv_t0.begin(),this->iv_t0.end(),cs.iv0.begin());
+    // revert the current state
+    mtest::revert(ss);
     // rotation matrix
-    s.r = this->rm;
-    // mandatory for time step management
-    s.period = 1u;
-    s.dt_1   = 0.;
+    cs.r = this->rm;
     // reference temperature
     const auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evm->end()){
@@ -635,9 +684,7 @@ namespace mtest
 				 "'ThermalExpansionReferenceTemperature' "
 				 "must be a constant evolution"));
       }
-      s.Tref = ev(0);
-    } else {
-      s.Tref = real(293.15);
+      cs.Tref = ev(0);
     }
   } // end of MTest::initializeCurrentState
 
@@ -754,447 +801,342 @@ namespace mtest
   } // end of MTest::setNumericalTangentOperatorPerturbationValue
 
   void
+  MTest::prepare(StudyCurrentState& state,
+		 const real t,
+		 const real dt) const{
+    using namespace tfel::material;
+    auto& scs = state.getStructureCurrentState("");
+    if(scs.istates.size()!=1u){
+      throw(std::runtime_error("MTest::prepare: "
+			       "invalid state"));
+    }
+    // evaluations of the materials properties at the end of the
+    // time step
+    for(auto& s: scs.istates){
+      computeMaterialProperties(s,*(this->evm),*(this->dmpv),
+  				this->b->getMaterialPropertiesNames(),t,dt);
+      computeExternalStateVariables(s,*(this->evm),
+  				    this->b->getExternalStateVariablesNames(),t,dt);
+      if(this->handleThermalExpansion){
+  	if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+  	  // thermal expansion (isotropic case)
+  	  auto pev   = this->evm->find("Temperature");
+  	  auto pev2  = this->evm->find("ThermalExpansion");
+  	  if((pev!=this->evm->end())&&(pev2!=this->evm->end())){
+  	    const auto& T_ev = *(pev->second);
+  	    const auto& a_ev = *(pev2->second);
+  	    const real eth0 = a_ev(t)*(T_ev(t)-s.Tref);
+  	    const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+  	    for(unsigned short i=0;i!=3;++i){
+  	      s.e_th0[i] = eth0;
+  	      s.e_th1[i] = eth1;
+  	    }
+  	  }
+  	  pev2  = this->evm->find("ThermalExpansion1");
+  	  auto pev3  = this->evm->find("ThermalExpansion2");
+  	  auto pev4  = this->evm->find("ThermalExpansion3");
+  	  if((pev!=this->evm->end())&&
+  	     ((pev2!=this->evm->end())||(pev3!=this->evm->end())||(pev4!=this->evm->end()))){
+  	    if((pev2==this->evm->end())||(pev3==this->evm->end())||(pev4==this->evm->end())){
+  	      throw(std::runtime_error("MTest::prepare: at least one "
+  				       "of the three thermal expansion coefficient is "
+  				       "defined and at least one is not"));
+  	    }
+  	    const auto& T_ev  = *(pev->second);
+  	    const auto& a1_ev = *(pev2->second);
+  	    const auto& a2_ev = *(pev3->second);
+  	    const auto& a3_ev = *(pev4->second);
+  	    const auto d = getSpaceDimension(this->hypothesis);
+  	    if(d==1u){
+  	      s.e_th0[0u] = a1_ev(t)*(T_ev(t)-s.Tref);
+  	      s.e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+  	      s.e_th0[1u] = a2_ev(t)*(T_ev(t)-s.Tref);
+  	      s.e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+  	      s.e_th0[2u] = a3_ev(t)*(T_ev(t)-s.Tref);
+  	      s.e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+  	    } else if((d==2u)||
+  		      (d==3u)){
+  	      // thermal expansion tensors in the material frame
+  	      tfel::math::stensor<3u,real> se_th0(real(0));
+  	      tfel::math::stensor<3u,real> se_th1(real(0));
+  	      se_th0[0u] = a1_ev(t)*(T_ev(t)-s.Tref);
+  	      se_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+  	      se_th0[1u] = a2_ev(t)*(T_ev(t)-s.Tref);
+  	      se_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+  	      se_th0[2u] = a3_ev(t)*(T_ev(t)-s.Tref);
+  	      se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+  	      // backward rotation matrix
+  	      auto brm = transpose(this->b->getRotationMatrix(s.mprops1,this->rm));
+  	      se_th0.changeBasis(brm);
+  	      se_th1.changeBasis(brm);
+  	      const auto ss = getStensorSize(this->hypothesis);
+  	      std::copy(se_th0.begin(),se_th0.begin()+ss,s.e_th0.begin());
+  	      std::copy(se_th1.begin(),se_th1.begin()+ss,s.e_th1.begin());
+  	    } else {
+  	      throw(std::runtime_error("MTest::prepare: invalid dimension"));
+  	    }
+  	  }
+  	}
+      }
+      // driving variables at the beginning of the time step
+      const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+      for(unsigned short i=0;i!=ndv;++i){
+  	s.e0[i] = state.u0[i]-s.e_th0[i];
+      }
+    }
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+      auto& log = mfront::getLogStream();
+      log << "resolution from " << t << " to " << t+dt << '\n';
+    }
+    if(this->residual){
+      this->residual << '\n' << "#resolution from " << t << " to " << t+dt << '\n';
+    }
+  } // end of MTest::prepare
+
+  void
+  MTest::makeLinearPrediction(StudyCurrentState& state,
+			      const real dt) const
+  {
+    auto& scs = state.getStructureCurrentState("");
+    if(scs.istates.size()!=1u){
+      throw(std::runtime_error("MTest::prepare: "
+			       "invalid state"));
+    }
+    auto& s = scs.istates[0];
+    if(state.period>1){
+      const auto r = dt/state.dt_1;
+      state.u1  = state.u0 +(state.u0 -state.u_1)*r;
+      s.iv1     = s.iv0+(s.iv0-s.iv_1)*r;
+      s.s1      = s.s0 +(s.s0 -s.s_1 )*r;
+    }
+  } // end of MTest::makeLinearPrediction
+  
+  bool
+  MTest::computePredictionStiffnessAndResidual(StudyCurrentState& state,
+					       tfel::math::matrix<real>& k,
+					       tfel::math::vector<real>& r,
+					       const real& t,
+					       const real& dt,
+					       const StiffnessMatrixType smt) const{
+    using tfel::material::MechanicalBehaviourBase;
+    auto& scs = state.getStructureCurrentState("");
+    auto& bwk = scs.getBehaviourWorkSpace();
+    if(scs.istates.size()!=1u){
+      throw(std::runtime_error("MTest::prepare: "
+			       "invalid state"));
+    }
+    auto& s = scs.istates[0];
+    if(!this->b->computePredictionOperator(bwk,s,this->hypothesis,smt)){
+      return false;
+    }
+    std::fill(k.begin(),k.end(),0.);
+    std::fill(r.begin(),r.end(),0.);
+    updateStiffnessAndResidual(k,r,*(this->b),bwk.kt,s.s0,this->hypothesis);
+    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+    // free dilatation treatment
+    if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      for(size_type i=0;i!=nth;++i){
+  	for(size_type j=0;j!=ndv;++j){
+  	  r(i) -= k(i,j)*(s.e_th1[j]-s.e_th0[j]);
+  	}
+      }
+    }
+#pragma message("HERE")    
+    //    if(this->first){
+      auto a = *(std::max_element(k.begin(),k.end()));
+      //      this->first = false;
+      //    }
+    unsigned short pos = ndv;
+    for(const auto& c : this->constraints){
+      c->setValues(k,r,state.u0,state.u0,pos,getSpaceDimension(this->hypothesis),t,dt,a);
+      pos = static_cast<unsigned short>(pos+c->getNumberOfLagrangeMultipliers());
+    }
+    return true;
+  } // end of MTest::computePredictionStiffnessAndResidual
+  
+  bool
+  MTest::computeStiffnessMatrixAndResidual(StudyCurrentState& state,
+					   tfel::math::matrix<real>& k,
+					   tfel::math::vector<real>& r,
+					   const real t,
+					   const real dt,
+					   const StiffnessMatrixType mt) const{
+    using namespace tfel::material;
+    auto& scs = state.getStructureCurrentState("");
+    auto& bwk = scs.getBehaviourWorkSpace();
+    if(scs.istates.size()!=1u){
+      throw(std::runtime_error("MTest::prepare: "
+			       "invalid state"));
+    }
+    auto& s = scs.istates[0];
+    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      for(size_type i=0;i!=ndv;++i){
+  	s.e1[i] = state.u1[i]-s.e_th1[i];
+      }
+    } else {
+      for(size_type i=0;i!=ndv;++i){
+  	s.e1[i] = state.u1[i];
+      }
+    }
+    // behaviour integration
+    if(!this->b->integrate(s,bwk,this->hypothesis,dt,mt)){
+      if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
+  	auto& log = mfront::getLogStream();
+  	log << "MTest::computeStiffnessMatrixAndResidual : "
+  	    << "behaviour intregration failed" << std::endl;
+      }
+      return false;
+    }
+    updateStiffnessAndResidual(k,r,*(this->b),bwk.k,s.s1,this->hypothesis);
+#pragma message("HERE")
+    //    if(this->first){
+      auto a = *(std::max_element(k.begin(),k.end()));
+      //      this->first = false;
+      //    }
+    const auto d = getSpaceDimension(this->hypothesis);
+    unsigned short pos = ndv;
+    for(const auto c : this->constraints){
+      c->setValues(k,r,state.u0,state.u1,pos,d,t,dt,a);
+      pos = static_cast<unsigned short>(pos+c->getNumberOfLagrangeMultipliers());
+    }
+    return true;
+  } // end of MTest::computeStiffnessMatrixAndResidual
+  
+  std::pair<bool,real>
+  MTest::checkConvergence(const StudyCurrentState&  state,
+			  const tfel::math::vector<real>& du,
+			  const tfel::math::vector<real>& r,
+			  const SolverOptions& o,
+			  const unsigned int iter,
+			  const real t,
+			  const real dt) const
+  {
+    auto report = [&iter,&state](std::ostream& os,
+				 const tfel::math::vector<real>::size_type ndv,
+				 const real ne,
+				 const real nr){
+      os << "iteration " << iter << " : " << ne << " " << nr << " (";
+      for(size_type i=0;i!=ndv;){
+        os << state.u1(i);
+        if(++i!=ndv){
+          os << " ";
+        }
+      }
+      os << ")" << std::endl;
+    };
+    const auto& scs = state.getStructureCurrentState("");
+    if(scs.istates.size()!=1u){
+      throw(std::runtime_error("MTest::prepare: "
+			       "invalid state"));
+    }
+    const auto& s = scs.istates[0];
+    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    auto ne = real(0);
+    for(size_type i=0;i!=ndv;++i){
+      ne = std::max(ne,std::abs(du(i)));
+    }
+    auto nr = real(0);
+    for(size_type i=0;i!=ndv;++i){
+      nr = std::max(nr,std::abs(r(i)));
+    }
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+      auto& log = mfront::getLogStream();
+      report(log,ndv,ne,nr);
+    }
+    if(this->residual){
+      report(this->residual,ndv,ne,nr);
+    }
+    if((ne>o.eeps)||(nr>o.seps)){
+      return {false,ne};
+    }
+    for(const auto& c : this->constraints){
+      if(!c->checkConvergence(state.u1,s.s1,
+  			      o.eeps,o.seps,t,dt)){
+	return {false,ne};
+      }
+    }
+    return {true,ne};
+  }
+
+  std::vector<std::string>
+  MTest::getFailedCriteriaDiagnostic(const StudyCurrentState&  state,
+				     const tfel::math::vector<real>& du,
+				     const tfel::math::vector<real>& r,
+				     const SolverOptions& o,
+				     const real t,
+				     const real dt) const
+  {
+    const auto& scs = state.getStructureCurrentState("");
+    if(scs.istates.size()!=1u){
+      throw(std::runtime_error("MTest::prepare: "
+			       "invalid state"));
+    }
+    const auto& s = scs.istates[0];
+    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    auto ne = real(0);
+    for(size_type i=0;i!=ndv;++i){
+      ne = std::max(ne,std::abs(du(i)));
+    }
+    auto nr = real(0);
+    for(size_type i=0;i!=ndv;++i){
+      nr = std::max(nr,std::abs(r(i)));
+    }
+    auto fc = std::vector<std::string>{};
+    if(ne>o.eeps){
+      std::ostringstream msg;
+      msg << "test on driving variables (error : " << ne
+  	  << ", criteria : " << o.eeps << ")";
+      fc.push_back(msg.str());
+    }
+    if(nr>o.seps){
+      std::ostringstream msg;
+      msg << "test on thermodynamic forces (error : " << nr
+  	  << ", criteria : " << o.seps << ")";
+      fc.push_back(msg.str());
+    }
+    for(const auto& c : this->constraints){
+      if(!c->checkConvergence(state.u1,s.s1,
+  			      o.eeps,o.seps,t,dt)){
+  	fc.push_back(c->getFailedCriteriaDiagnostic(state.u1,s.s1,
+						    o.eeps,o.seps,
+						    t,dt));
+      }
+    }
+    return fc;
+  } // end of MTest::getFailedCriteriaDiagnostic
+  
+  void MTest::postConvergence(StudyCurrentState& state,
+			      const real t,
+  			      const real dt,
+  			      const unsigned int p) const{
+    auto& scs = state.getStructureCurrentState("");
+    if(scs.istates.size()!=1u){
+      throw(std::runtime_error("MTest::prepare: "
+			       "invalid state"));
+    }
+    auto& s = scs.istates[0];
+    for(const auto& test : this->tests){
+      test->check(state.u1,s.s1,s.iv1,t,dt,p);
+    }
+  } // end of MTest::postConvergence
+  
+  void
   MTest::execute(MTestCurrentState& state,
 		 MTestWorkSpace& wk,
 		 const real ti,
-		 const real te)
+		 const real te) const
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::math;
-    using namespace tfel::material;
-    using tfel::tests::TestResult;
-    using tfel::math::vector;
-    unsigned short subStep = 0;
-    // // number of components of the driving variables and the thermodynamic forces
-    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
-    real t  = ti;
-    real dt = te-ti;
-    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
-      auto& log = mfront::getLogStream();
-      log << "number of driving variables : "    << ndv << endl;
-      log << "number of thermodynamic forces : " << nth << endl;
-      log << "number of constraints       : " << this->constraints.size() << endl;
-    }
-    while((abs(te-t)>0.5*dt)&&(subStep!=this->mSubSteps)){
-      unsigned short i,j;
-      // evaluations of the materials properties at the end of the
-      // time step
-      computeMaterialProperties(state,*(this->evm),
-				*(this->defaultMaterialPropertiesValues),
-				this->b->getMaterialPropertiesNames(),
-				t,dt);
-      computeExternalStateVariables(state,*(this->evm),
-				    this->b->getExternalStateVariablesNames(),
-				    t,dt);
-      if(this->handleThermalExpansion){
-	if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-	  // thermal expansion (isotropic case)
-	  auto pev   = this->evm->find("Temperature");
-	  auto pev2  = this->evm->find("ThermalExpansion");
-	  if((pev!=this->evm->end())&&(pev2!=this->evm->end())){
-	    const Evolution& T_ev = *(pev->second);
-	    const Evolution& a_ev = *(pev2->second);
-	    const real eth0 = a_ev(t)*(T_ev(t)-state.Tref);
-	    const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	    for(i=0;i!=3;++i){
-	      state.e_th0[i] = eth0;
-	      state.e_th1[i] = eth1;
-	    }
-	  }
-	  pev2  = this->evm->find("ThermalExpansion1");
-	  auto pev3  = this->evm->find("ThermalExpansion2");
-	  auto pev4  = this->evm->find("ThermalExpansion3");
-	  if((pev!=this->evm->end())&&
-	     ((pev2!=this->evm->end())||
-	      (pev3!=this->evm->end())||
-	      (pev4!=this->evm->end()))){
-	    if((pev2==this->evm->end())||
-	       (pev3==this->evm->end())||
-	       (pev4==this->evm->end())){
-	      string msg("MTest::execute : at least one of the three "
-			 "thermal expansion coefficient is defined and "
-			 "at least one is not");
-	      throw(runtime_error(msg));
-	    }
-	    const Evolution& T_ev  = *(pev->second);
-	    const Evolution& a1_ev = *(pev2->second);
-	    const Evolution& a2_ev = *(pev3->second);
-	    const Evolution& a3_ev = *(pev4->second);
-	    if(this->dimension==1u){
-	      state.e_th0[0u] = a1_ev(t)*(T_ev(t)-state.Tref);
-	      state.e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	      state.e_th0[1u] = a2_ev(t)*(T_ev(t)-state.Tref);
-	      state.e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	      state.e_th0[2u] = a3_ev(t)*(T_ev(t)-state.Tref);
-	      state.e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	    } else if((this->dimension==2u)||
-		      (this->dimension==3u)){
-	      // thermal expansion tensors in the material referential
-	      stensor<3u,real> se_th0(real(0));
-	      stensor<3u,real> se_th1(real(0));
-	      se_th0[0u] = a1_ev(t)*(T_ev(t)-state.Tref);
-	      se_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	      se_th0[1u] = a2_ev(t)*(T_ev(t)-state.Tref);
-	      se_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	      se_th0[2u] = a3_ev(t)*(T_ev(t)-state.Tref);
-	      se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-state.Tref);
-	      // backward rotation matrix
-	      tmatrix<3u,3u,real> brm = transpose(this->b->getRotationMatrix(state.mprops1,this->rm));
-	      se_th0.changeBasis(brm);
-	      se_th1.changeBasis(brm);
-	      copy(se_th0.begin(),se_th0.begin()+getStensorSize(this->dimension),state.e_th0.begin());
-	      copy(se_th1.begin(),se_th1.begin()+getStensorSize(this->dimension),state.e_th1.begin());
-	    } else {
-	      throw(runtime_error("MTest::execute : invalid dimension"));
-	    }
-	  }
-	}
-      }
-      // driving variables at the beginning of the time step
-      for(i=0;i!=ndv;++i){
-	state.e0[i] = state.u0[i]-state.e_th0[i];
-      }
-      // resolution
-      bool converged = false;
-      unsigned short iter = 0;
-      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-	auto& log = mfront::getLogStream();
-	log << "resolution from " << t << " to " << t+dt << endl;
-      }
-      if(this->residual){
-	this->residual << endl << "#resolution from " << t << " to " << t+dt << endl;
-      }
-      real ne  = 0.;  // norm of the increment of the driving variables
-      real nep = 0.;  // norm of the increment of the driving variables at the
-      // previous iteration
-      real nep2 = 0.; // norm of the increment of the driving variables two
-      // iterations before...
-      /* prediction */
-      if(this->ppolicy==LINEARPREDICTION){
-	if(state.period>1){
-	  state.u1  = state.u0 +(state.u0 -state.u_1)*dt/state.dt_1;
-	  state.iv1 = state.iv0+(state.iv0-state.iv_1)*dt/state.dt_1;
-	  state.s1  = state.s0 +(state.s0 -state.s_1)*dt/state.dt_1;
-	} else {
-	  state.u1  = state.u0;
-	  state.s1  = state.s0;
-	  state.iv1 = state.iv0;
-	}
-      } else if((this->ppolicy==ELASTICPREDICTION)||
-		(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES)||
-		(this->ppolicy==SECANTOPERATORPREDICTION)||
-		(this->ppolicy==TANGENTOPERATORPREDICTION)){
-	computeMaterialProperties(state,*(this->evm),
-				  *(this->defaultMaterialPropertiesValues),
-				  this->b->getMaterialPropertiesNames(),
-				  t,real(0));
-	std::fill(wk.Kp.begin(),wk.Kp.end(),0.);
-	bool sp(true);
-	if(this->ppolicy==ELASTICPREDICTION){
-	  sp = this->b->computePredictionOperator(wk.Kp,state,
-						  this->hypothesis,
-						  StiffnessMatrixType::ELASTIC);
-	} else if(this->ppolicy==ELASTICPREDICTIONFROMMATERIALPROPERTIES){
-	  sp = this->b->computePredictionOperator(wk.Kp,state,
-						  this->hypothesis,
-						  StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES);
-	} else if (this->ppolicy==SECANTOPERATORPREDICTION){
-	  sp = this->b->computePredictionOperator(wk.Kp,state,
-						  this->hypothesis,
-						  StiffnessMatrixType::SECANTOPERATOR);
-	} else if (this->ppolicy==TANGENTOPERATORPREDICTION){
-	  sp = this->b->computePredictionOperator(wk.Kp,state,
-						  this->hypothesis,
-						  StiffnessMatrixType::TANGENTOPERATOR);
-	}
-	if(sp){
-	  fill(wk.K.begin(),wk.K.end(),0.);
-	  fill(wk.r.begin(),wk.r.end(),0.);
-	  state.u1 = state.u0;
-	  for(i=0;i!=nth;++i){
-	    wk.r(i) += state.s0(i);
-	    for(j=0;j!=ndv;++j){
-	      wk.K(i,j)+=wk.Kp(i,j);
-	      // free dilatation treatment
-	      wk.r(i) -= wk.Kp(i,j)*(state.e_th1[j]-state.e_th0[j]);
-	    }
-	  }
-	  if(wk.first){
-	    wk.a = *(max_element(wk.K.begin(),wk.K.end()));
-	    wk.first = false;
-	  }
-	  unsigned short pos = ndv;
-	  for(const auto& c : this->constraints){
-	    c->setValues(wk.K,wk.r,state.u0,state.u1,pos,
-			 this->dimension,t,dt,wk.a);
-	    pos = static_cast<unsigned short>(pos+c->getNumberOfLagrangeMultipliers());
-	  }
-	  wk.du = wk.r;
-	  LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
-	  state.u1 -= wk.du;
-	} else {
-	  if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
-	    auto& log = mfront::getLogStream();
-	    log << "MTest::execute : behaviour compute prediction matrix failed" << endl;
-	  }
-	  state.u1  = state.u0;
-	  state.s1  = state.s0;
-	  state.iv1 = state.iv0;
-	}
-      } else {
-	if(this->ppolicy != NOPREDICTION){
-	  throw(runtime_error("MTest::execute: internal error, "
-			      "unsupported prediction policy"));
-	}	    
-	state.u1  = state.u0;
-	state.s1  = state.s0;
-	state.iv1 = state.iv0;
-      }
-      /* resolution */
-      auto failed_criteria = vector<string>{};
-      if(this->aa.get()!=nullptr){
-	this->aa->preExecuteTasks();
-      }
-      while((!converged)&&(iter!=this->iterMax)){
-	failed_criteria.clear();
-	++iter;
-	nep2 = nep;
-	nep  = ne;
-	fill(wk.K.begin(), wk.K.end(),0.);
-	fill(wk.Kt.begin(),wk.Kt.end(),0.);
-	fill(wk.r.begin(), wk.r.end(),0.);
-	for(i=0;i!=ndv;++i){
-	  state.e1[i] = state.u1[i]-state.e_th1[i];
-	}
-	if(!this->b->integrate(wk.Kt,state,
-			       this->hypothesis,dt,
-			       this->ktype)){
-	  if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
-	    auto& log = mfront::getLogStream();
-	    log << "MTest::execute : behaviour intregration failed" << endl;
-	  }
-	  break;
-	}
-	// behaviour integration is a success
-	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
-	  for(i=0;i!=3u;++i){
-	    wk.r(i) += state.s1(i);
-	    for(j=0;j!=ndv;++j){
-	      wk.K(i,j) += wk.Kt(i,j);
-	    }
-	  }
-	  if(this->dimension>1u){
-	    for(i=0;i!=nth-3u;++i){
-	      wk.r(2*i+3u)   += state.s1(i);
-	      wk.r(2*i+3u+1) += state.s1(i);
-	      for(j=0;j!=ndv;++j){
-		wk.K(2*i+3u,j)   += wk.Kt(i+3u,j);
-		wk.K(2*i+3u+1,j) += wk.Kt(i+3u,j);
-	      }
-	    }
-	  }
-	} else {
-	  for(i=0;i!=nth;++i){
-	    wk.r(i) += state.s1(i);
-	    for(j=0;j!=ndv;++j){
-	      wk.K(i,j) += wk.Kt(i,j);
-	    }
-	  }
-	}
-	if(wk.first){
-	  wk.a = *(max_element(wk.K.begin(),wk.K.end()));
-	  wk.first = false;
-	}
-	unsigned short pos = ndv;
-	for(const auto c : this->constraints){
-	  c->setValues(wk.K,wk.r,state.u0,state.u1,pos,
-		       this->dimension,t,dt,wk.a);
-	  pos = static_cast<unsigned short>(pos+c->getNumberOfLagrangeMultipliers());
-	}
-	if(mfront::getVerboseMode()>=mfront::VERBOSE_DEBUG){
-	  auto& log = mfront::getLogStream();
-	  for(i=0;i!=wk.K.getNbRows();++i){
-	    for(j=0;j!=wk.K.getNbCols();++j){
-	      log << wk.K(i,j) << " ";
-	    }
-	    log << endl;
-	  }
-	  log << endl;
-	}
-	wk.du = wk.r;
-	LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
-	state.u1 -= wk.du;
-	real nr = 0.;
-	for(i=0;i!=nth;++i){
-	  nr = max(nr,abs(wk.r(i)));
-	}
-	ne = 0;
-	for(i=0;i!=ndv;++i){
-	  ne = max(ne,abs(wk.du(i)));
-	}
-	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-	  auto& log = mfront::getLogStream();
-	  log << "iteration " << iter << " : " << ne << " " 
-	      << nr << " (";
-	  for(i=0;i!=ndv;){
-	    log << state.u1(i);
-	    if(++i!=ndv){
-	      log << " ";
-	    }
-	  }
-	  log << ")" << endl;
-	}
-	if(this->residual){
-	  this->residual << iter << " " << ne << " " 
-			 << nr << " ";
-	  for(i=0;i!=ndv;){
-	    this->residual << state.u1(i);
-	    if(++i!=ndv){
-	      this->residual << " ";
-	    }
-	  }
-	  this->residual << endl;
-	}
-	converged = (ne<this->eeps)&&(nr<this->seps);
-	// BEGIN : to have convergence only with respect to driving variable
-	// uncomment following lines
-	// converged = (ne<this->eeps);
-	// END
-
-	// BEGIN : to have convergence only with respect to driving variable
-	// comment following lines
-	for(auto pc =this->constraints.begin();
-	    (pc!=this->constraints.end())&&(converged);++pc){
-	  const Constraint& c = *(*pc);
-	  converged = c.checkConvergence(state.u1,state.s1,
-					 this->eeps,this->seps,
-					 t,dt);
-	}
-	// END
-	if((!converged)&&(iter==this->iterMax)){
-	  if(ne>this->eeps){
-	    ostringstream msg;
-	    msg << "test on driving variables (error : " << ne
-		<< ", criteria : " << this->eeps << ")";
-	    failed_criteria.push_back(msg.str());
-	  }
-	  if(nr>this->seps){
-	    ostringstream msg;
-	    msg << "test on thermodynamic forces (error : " << nr
-		<< ", criteria : " << this->seps << ")";
-	    failed_criteria.push_back(msg.str());
-	  }
-	  // BEGIN : to have convergence only with respect to driving variable
-	  // comment following lines
-	  for(const auto& c : this->constraints){
-	    if(!c->checkConvergence(state.u1,state.s1,
-				    this->eeps,this->seps,
-				    t,dt)){
-	      failed_criteria.push_back(c->getFailedCriteriaDiagnostic(state.u1,state.s1,
-								       this->eeps,this->seps,
-								       t,dt));
-	    }
-	  }
-	  // END
-	}
-	if(this->ppolicy == NOPREDICTION){
-	  converged = (converged) && (iter>1);
-	}
-	if(!converged){
-	  if(this->aa.get()!=nullptr){
-	    this->aa->execute(state.u1,wk.du,wk.r,this->eeps,this->seps,iter);
-	    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
-	      real nit = 0;
-	      for(i=0;i!=ndv;++i){
-		nit = max(nit,abs(state.u1(i)-state.u10(i)));
-	      }
-	      //ne = nit ; // for order of convergence??
-	      auto& log = mfront::getLogStream();
-	      log << "accelerated-sequence-convergence "<<iter<<" "<<nit << " (";
-	      for(i=0;i!=ndv;){
-		log << state.u1(i);
-		if(++i!=ndv){
-		  log << " ";
-		}
-	      }
-	      log << ")" << endl;
-	    }
-	  }
-	  state.u10 = state.u1;
-	}
-      }
-      if(!converged){
-	// no convergence
-	if(iter==this->iterMax){
-	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-	    auto& log = mfront::getLogStream();
-	    log << "No convergence, the following criteria were not met : " << endl;
-	    for(const auto& fc : failed_criteria){
-	      log << "- " << fc << '\n';
-	    }
-	    log << endl;
-	  }
-	}
-	++subStep;
-	if(subStep==this->mSubSteps){
-	  throw(runtime_error("MTest::execute : behaviour "
-			      "maximum number of sub stepping reached"));
-	}
-	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-	  auto& log = mfront::getLogStream();
-	  log << "Dividing time step by two\n\n";
-	}
-	dt *= 0.5;
-	state.u1  = state.u0;
-	state.s1  = state.s0;
-	state.iv1 = state.iv0;
-      } else {
-	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-	  if(iter==1u){
-	    auto& log = mfront::getLogStream();
-	    log << "convergence, after one iteration \n\n";
-	  } else {
-	    auto& log = mfront::getLogStream();
-	    if((iter>=3)&&
-	       (ne  >100*numeric_limits<real>::min())&&
-	       (nep >100*numeric_limits<real>::min())&&
-	       (nep2>100*numeric_limits<real>::min())){
-	      log << "convergence, after " << iter << " iterations, "
-		  << "order " << std::log(ne/nep)/std::log(nep/nep2)
-		  << "\n\n";
-	    } else {
-	      log << "convergence, after " << iter << " iterations, "
-		  << "order undefined\n\n";
-	    }
-	  }
-	  if(this->aa.get()!=nullptr){
-	    this->aa->postExecuteTasks();
-	  }
-	}
-	// testing
-	for(const auto& test : this->tests){
-	  test->check(state.u1,state.s1,state.iv1,t,dt,state.period);
-	}
-	// update variables
-	state.u_1  = state.u0;
-	state.s_1  = state.s0;
-	state.iv_1 = state.iv0;
-	state.dt_1 = dt;
-	state.u0   = state.u1;
-	state.s0   = state.s1;
-	state.iv0  = state.iv1;
-	t+=dt;
-	++state.period;
-      }
-    }
+    GenericSolver s;
+    s.execute(state,wk,*this,this->options,ti,te);
   }
-
+  
   void
   MTest::printOutput(const real t,const MTestCurrentState& s)
   {
     if(this->out){
+      auto& cs = s.getStructureCurrentState("").istates[0];
       // number of components of the driving variables and the thermodynamic forces
       const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
       const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
@@ -1204,9 +1146,9 @@ namespace mtest
 	this->out << s.u0[i] << " ";
       }
       for(i=0;i!=nth;++i){
-	this->out << s.s0[i] << " ";
+	this->out << cs.s0[i] << " ";
       }
-      std::copy(s.iv0.begin(),s.iv0.end(),
+      std::copy(cs.iv0.begin(),cs.iv0.end(),
 		std::ostream_iterator<real>(this->out," "));
       this->out << '\n';
     }

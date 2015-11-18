@@ -8,8 +8,10 @@ lib_LTLIBRARIES = libTFELMTest.la
 bin_PROGRAMS  = mtest
 mtest_SOURCES = MTestMain.cxx
 
-libTFELMTest_la_SOURCES = CurrentState.cxx                          \
+libTFELMTest_la_SOURCES = Study.cxx                                 \
+			  StudyCurrentState.cxx                     \
 			  StructureCurrentState.cxx                 \
+			  CurrentState.cxx                          \
 			  Scheme.cxx                                \
 			  SchemeBase.cxx                            \
 			  MTest.cxx                                 \
@@ -20,11 +22,14 @@ libTFELMTest_la_SOURCES = CurrentState.cxx                          \
 			  CastemEvolution.cxx                       \
 			  FunctionEvolution.cxx                     \
 			  Behaviour.cxx                             \
+			  BehaviourWorkSpace.cxx                    \
 			  UmatBehaviourBase.cxx                     \
 			  UmatNormaliseTangentOperator.cxx          \
 			  Constraint.cxx                            \
 			  ImposedDrivingVariable.cxx                \
 			  ImposedThermodynamicForce.cxx             \
+			  Solver.cxx                                \
+			  GenericSolver.cxx                         \
 			  AccelerationAlgorithmFactory.cxx          \
 			  AccelerationAlgorithm.cxx                 \
 			  AlternateSecantAccelerationAlgorithm.cxx  \

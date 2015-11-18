@@ -48,6 +48,7 @@ namespace mtest
      * \brief call the mechanical behaviour
      * \param[out]    Kt    : tangent operator
      * \param[in/out] s     : current state
+     * \param[out]    wk    : workspace
      * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
@@ -57,9 +58,10 @@ namespace mtest
     virtual bool
     call_behaviour(tfel::math::matrix<real>&,
 		   CurrentState&,
+		   BehaviourWorkSpace&,
 		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
-		   const StiffnessMatrixType::mtype,
+		   const StiffnessMatrixType,
 		   const bool) const override;
   }; // end of struct Behaviour
   

@@ -26,9 +26,15 @@
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
 #include"MTest/Types.hxx"
+#include"MTest/SolverOptions.hxx"
 
 namespace mtest
 {
+
+  // forward declaration
+  struct CurrentState;
+  // forward declaration
+  struct BehaviourWorkSpace;
   
   //! A simple wrapper around mechanical beheaviours
   struct Behaviour
@@ -200,15 +206,17 @@ namespace mtest
     setUnsignedIntegerParameter(const std::string&,
 				const unsigned short) const  = 0;
     /*!
-     * \brief allocate internal workspace
-     * \param[in] h : modelling hypothesis
+     * \brief allocate workspace
+     * \param[out] wk : behaviour workspace
+     * \param[in]  h  : modelling hypothesis
      */
     virtual void
-    allocate(const Hypothesis) = 0;
+    allocate(BehaviourWorkSpace&,
+	     const Hypothesis) const = 0;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual StiffnessMatrixType::mtype
+    virtual StiffnessMatrixType
     getDefaultStiffnessMatrixType(void) const = 0;
     /*!
      * \brief compute the *real* rotation matrix
@@ -223,31 +231,31 @@ namespace mtest
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[out] Kt    : tangent operator
+     * \param[out] wk    : behaviour workspace
      * \param[in]  s     : current state
      * \param[in]  h     : modelling hypothesis
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual bool
-    computePredictionOperator(tfel::math::matrix<real>&,
+    computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const Hypothesis,
-			      const StiffnessMatrixType::mtype) const = 0;
+			      const StiffnessMatrixType) const = 0;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[out]    Kt    : tangent operator
      * \param[out/in] s     : current state
+     * \param[out]    wk    : behaviour workspace
      * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual bool
-    integrate(tfel::math::matrix<real>&,
-	      CurrentState&,
+    integrate(CurrentState&,
+	      BehaviourWorkSpace&,
 	      const Hypothesis,
 	      const real,
-	      const StiffnessMatrixType::mtype) const = 0;
+	      const StiffnessMatrixType) const = 0;
     //! destructor
     virtual ~Behaviour();
   }; // end of struct Behaviour

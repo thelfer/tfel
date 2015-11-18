@@ -52,7 +52,7 @@ namespace mtest
 				    const real dt,
 				    const real a) const
   {
-    const Evolution& e = *(this->eev);
+    const auto& e = *(this->eev);
     K(pos,this->c)+=a;
     K(this->c,pos)+=a;
     r(this->c)     =a*u1(pos);
@@ -61,28 +61,26 @@ namespace mtest
 
   bool
   ImposedDrivingVariable::checkConvergence(const tfel::math::vector<real>& u,
-						const tfel::math::vector<real>&,
-						const real eeps,
-						const real,
-						const real t,
-						const real dt) const
+					   const tfel::math::vector<real>&,
+					   const real eeps,
+					   const real,
+					   const real t,
+					   const real dt) const
   {
-    using namespace std;
-    const Evolution& e = *(this->eev);
-    return abs(u(this->c)-e(t+dt))<eeps;
+    const auto& e = *(this->eev);
+    return std::abs(u(this->c)-e(t+dt))<eeps;
   }
   
   std::string
   ImposedDrivingVariable::getFailedCriteriaDiagnostic(const tfel::math::vector<real>& e,
-							   const tfel::math::vector<real>&,
-							   const real eeps,
-							   const real ,
-							   const real t,
-							   const real dt) const
+						      const tfel::math::vector<real>&,
+						      const real eeps,
+						      const real ,
+						      const real t,
+						      const real dt) const
   {
-    using namespace std;
-    const Evolution& ev = *(this->eev);
-    ostringstream msg;
+    const auto& ev = *(this->eev);
+    std::ostringstream msg;
     msg << "imposed driving variable not reached for component " << this->c 
 	<< " (imposed value : " << ev(t+dt) << ", computed value : " 
 	<< e(this->c) << ", criteria : " << eeps << ")";

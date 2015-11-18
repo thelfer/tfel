@@ -14,52 +14,92 @@
 #ifndef _LIB_MTEST_STRUCTURECURRENTSTATE_HXX_
 #define _LIB_MTEST_STRUCTURECURRENTSTATE_HXX_
 
+#include<memory>
+#include<vector>
+
 #include"TFEL/Math/vector.hxx"
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
 
 namespace mtest{
 
+  // forward declaration
+  struct CurrentState;
+  // forward declaration
+  struct Behaviour;
+  // forward declaration
+  struct BehaviourWorkSpace;
+  
   /*!
    * Data structure containing the state of a mechanical structure.
    */
   struct MTEST_VISIBILITY_EXPORT StructureCurrentState
   {
-    //! default constructor
+    //! a simple alias
+    using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
+    /*!
+     * default constructor
+     * \param[in] p: behaviour
+     * \param[in] h: modelling hypotesis
+     */
     StructureCurrentState();
+    //! move constructor
+    StructureCurrentState(StructureCurrentState&&);
     //! copy constructor
     StructureCurrentState(const StructureCurrentState&);
-    StructureCurrentState(StructureCurrentState&&);
+    //! move assignment operator
+    StructureCurrentState&
+    operator=(StructureCurrentState&&);
+    //! assignment operator
+    StructureCurrentState&
+    operator=(const StructureCurrentState&);
+    /*!
+     * \set the behaviour associated to the structure
+     * \param[in] p : pointer to the behaviour
+     */
+    void setBehaviour(const std::shared_ptr<Behaviour>&);
+    /*!
+     * \set the behaviour associated to the structure
+     * \param[in] mh : modelling hypothesis 
+     */
+    void setModellingHypothesis(const Hypothesis);
+    /*!
+     * \return the behaviour workspace associated to the current thread.
+     */
+    BehaviourWorkSpace& getBehaviourWorkSpace(void);
+    /*!
+     * \return the behaviour associated to the structure
+     */
+    const Behaviour& getBehaviour(void) const;
     //! destructor
-    ~StructureCurrentState() noexcept;
-    // vector of unknows at 
-    // the beginning of the
-    // previous time step.
-    tfel::math::vector<real> u_1;
-    // vector of unknows at the beginning of the
-    // time step.
-    tfel::math::vector<real> u0;
-    // vector of unknows at the end of the
-    // time step
-    tfel::math::vector<real> u1;
-    // vector of unknows at the preivous iteration (end of the
-    // time step)
-    tfel::math::vector<real> u10;
-    // current period number
-    unsigned int period;
-    // previous time step
-    real dt_1;
-    // reference Temperature
-    real Tref;
+    ~StructureCurrentState();
     //! current state of each integration points
     tfel::math::vector<CurrentState> istates;
   private:
-    StructureCurrentState&
-    operator=(const StructureCurrentState&) = delete;
-    StructureCurrentState&
-    operator=(StructureCurrentState&&) = delete;
+    //! behaviour
+    std::shared_ptr<Behaviour> b;
+    //! modelling hypothesis
+    Hypothesis h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    //! behaviour workspaces
+    std::vector<std::shared_ptr<BehaviourWorkSpace>> bwks;
   };
 
+  /*!
+   * \brief update the state: values at the end of the time step
+   * becomes the values at the beginning of the next time step
+   * \param[out] s: state
+   */
+  MTEST_VISIBILITY_EXPORT void
+  update(StructureCurrentState&);
+  /*!
+   * \brief revert the state: values at the end of the time step are
+   * set equal to the values at the beginning of the next time step
+   * \param[out] s: state
+   */
+  MTEST_VISIBILITY_EXPORT void
+  revert(StructureCurrentState&);
+  
 } // end of namespace mtest
 
 #endif /* _LIB_MTEST_STRUCTURECURRENTSTATE_HXX_ */

@@ -18,6 +18,7 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MTest/CurrentState.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/AsterCohesiveZoneModel.hxx"
 
 namespace mtest
@@ -65,52 +66,58 @@ namespace mtest
   } // end of AsterCohesiveZoneModel::getRotationMatrix
 
   void
-  AsterCohesiveZoneModel::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
+  AsterCohesiveZoneModel::allocate(BehaviourWorkSpace& wk,
+				   const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
+    const auto ndv     = this->getDrivingVariablesSize(h);
+    const auto nth     = this->getThermodynamicForcesSize(h);
     const auto nstatev = this->getInternalStateVariablesSize(h);
-    this->mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
-    this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    wk.kt.resize(nth,ndv);
+    wk.k.resize(nth,ndv);
+    wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
+    wk.ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    mtest::allocate(wk.cs,*this,h);
   }
 
   void
   AsterCohesiveZoneModel::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {
-    using namespace std;
-    fill(v.begin(),v.end(),real(0));
+    std::fill(v.begin(),v.end(),real(0));
   } // end of AsterCohesiveZoneModel::setDrivingVariablesDefaultInitialValue  
 
-  StiffnessMatrixType::mtype
+  StiffnessMatrixType
   AsterCohesiveZoneModel::getDefaultStiffnessMatrixType(void) const
   {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }
   
   bool
-  AsterCohesiveZoneModel::computePredictionOperator(tfel::math::matrix<real>& Kt,
+  AsterCohesiveZoneModel::computePredictionOperator(BehaviourWorkSpace& wk,
 						    const CurrentState& s,
 						    const tfel::material::ModellingHypothesis::Hypothesis h,
-						    const StiffnessMatrixType::mtype ktype) const
+						    const StiffnessMatrixType ktype) const
   {
-    CurrentState ls(s);
-    return this->call_behaviour(Kt,ls,h,real(1),ktype,false);
+    wk.cs = s;
+    return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
   } // end of AsterCohesiveZoneModel::computePredictionOperator
 
   bool
-  AsterCohesiveZoneModel::integrate(tfel::math::matrix<real>& Kt,
-				    CurrentState& s,
+  AsterCohesiveZoneModel::integrate(CurrentState& s,
+				    BehaviourWorkSpace& wk,
 				    const tfel::material::ModellingHypothesis::Hypothesis h,
 				    const real dt,
-				    const StiffnessMatrixType::mtype ktype) const
+				    const StiffnessMatrixType ktype) const
   {
-    return this->call_behaviour(Kt,s,h,dt,ktype,true);
+    return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
   } // end of AsterCohesiveZoneModel::integrate
 
   bool
   AsterCohesiveZoneModel::call_behaviour(tfel::math::matrix<real>& Kt,
 					 CurrentState& s,
+					 BehaviourWorkSpace& wk,
 					 const tfel::material::ModellingHypothesis::Hypothesis h,
 					 const real dt,
-					 const StiffnessMatrixType::mtype ktype,
+					 const StiffnessMatrixType ktype,
 					 const bool b) const
   {
     using namespace std;
@@ -172,17 +179,17 @@ namespace mtest
     }
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin(),s.mprops1.end(),this->mps.begin());
+    copy(s.mprops1.begin(),s.mprops1.end(),wk.mps.begin());
     if(s.mprops1.empty()){
-      this->mps[0] = real(0);
+      wk.mps[0] = real(0);
     }
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
-    copy(s.iv0.begin(),s.iv0.end(),this->ivs.begin());
+    copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
     if(s.iv0.empty()){
-      ivs[0] = real(0);
+      wk.ivs[0] = real(0);
     }
-    nstatv = static_cast<AsterInt>(ivs.size());
+    nstatv = static_cast<AsterInt>(wk.ivs.size());
     // rotation matrix
     tmatrix<3u,3u,real> drot = transpose(s.r);
     tvector<3u,real> ue0(real(0));
@@ -194,18 +201,18 @@ namespace mtest
     }
     copy(s.s0.begin(),s.s0.end(),s.s1.begin());
     AsterReal ndt(1.);
-    (this->fct)(&(s.s1(0)),&ivs(0),&Kt(0,0),
+    (this->fct)(&(s.s1(0)),&(wk.ivs(0)),&Kt(0,0),
 		&ue0(0),&ude(0),&dt,
 		&(s.esv0(0))  ,&(s.desv(0)),
 		&(s.esv0(0))+1,&(s.desv(0))+1,
-		&ntens,&nstatv,&(this->mps(0)),
+		&ntens,&nstatv,&(wk.mps(0)),
 		&nprops,&drot(0,0),&ndt,&nummod);
     if(ndt<0.){
       return false;
     }
     if(b){
       if(!s.iv0.empty()){
-	copy_n(this->ivs.begin(),s.iv1.size(),s.iv1.begin());
+	copy_n(wk.ivs.begin(),s.iv1.size(),s.iv1.begin());
       }
     }
     return true;
@@ -213,7 +220,7 @@ namespace mtest
 
   void
   AsterCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-										  const EvolutionManager& ) const
+								     const EvolutionManager& ) const
   {} // end of AsterCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues
       
   AsterCohesiveZoneModel::~AsterCohesiveZoneModel()

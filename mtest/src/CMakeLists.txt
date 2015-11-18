@@ -12,18 +12,21 @@ link_directories("${PROJECT_BINARY_DIR}/src/Material"
 		 "${PROJECT_BINARY_DIR}/mtest/src")
 
 set(TFELMTest_SOURCES
-  CurrentState.cxx
+  Study.cxx
+  StudyCurrentState.cxx
   StructureCurrentState.cxx
+  CurrentState.cxx
+  Solver.cxx
+  GenericSolver.cxx
   Scheme.cxx
   SchemeBase.cxx
-  MTest.cxx
-  MTestParser.cxx
   AnalyticalTest.cxx
   ReferenceFileComparisonTest.cxx
   Evolution.cxx
   CastemEvolution.cxx
   FunctionEvolution.cxx
   Behaviour.cxx
+  BehaviourWorkSpace.cxx
   UmatBehaviourBase.cxx
   UmatNormaliseTangentOperator.cxx
   Constraint.cxx
@@ -41,7 +44,9 @@ set(TFELMTest_SOURCES
   Crossed2DeltabisAccelerationAlgorithm.cxx
   SecantAccelerationAlgorithm.cxx
   SteffensenAccelerationAlgorithm.cxx
-  IronsTuckAccelerationAlgorithm.cxx)
+  IronsTuckAccelerationAlgorithm.cxx
+  MTest.cxx
+  MTestParser.cxx)
 
 set(TFELMTest_LDADD
   MFrontLogStream

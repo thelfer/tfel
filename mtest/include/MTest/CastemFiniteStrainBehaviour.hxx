@@ -42,32 +42,32 @@ namespace mtest
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[out] Kt    : tangent operator
+     * \param[out] wk    : workspace
      * \param[in]  s     : current state
      * \param[in]  h     : modelling hypothesis
      * \param[in]  dt    : time increment
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual bool
-    computePredictionOperator(tfel::math::matrix<real>&,
+    computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const tfel::material::ModellingHypothesis::Hypothesis,
-			      const StiffnessMatrixType::mtype) const override;
+			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return true if the integration was successfull, false otherwise
-     * \param[out]    Kt    : tangent operator
      * \param[out/in] s     : current state
+     * \param[out]    wk    : workspace
      * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual bool
-    integrate(tfel::math::matrix<real>&,
-	      CurrentState&,
+    integrate(CurrentState&,
+	      BehaviourWorkSpace&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
-	      const StiffnessMatrixType::mtype) const override;
+	      const StiffnessMatrixType) const override;
     /*!
      * \brief some interfaces requires dummy material properties to be
      * declared. For example, the Cast3M finite element solver

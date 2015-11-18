@@ -22,6 +22,7 @@
 #include"MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx"
 
 #include"MTest/CurrentState.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AbaqusSmallStrainBehaviour.hxx"
 
@@ -43,9 +44,10 @@ namespace mtest
   bool
   AbaqusSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 					     CurrentState& s,
+					     BehaviourWorkSpace& wk,
 					     const tfel::material::ModellingHypothesis::Hypothesis h,
 					     const real dt,
-					     const StiffnessMatrixType::mtype ktype,
+					     const StiffnessMatrixType ktype,
 					     const bool b) const
   {
     using namespace std;
@@ -71,20 +73,20 @@ namespace mtest
       throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_beahviour : "
 			       "unsupported hypothesis"));      
     }();
-    fill(this->D.begin(),this->D.end(),0.);
+    fill(wk.D.begin(),wk.D.end(),0.);
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin(),s.mprops1.end(),this->mps.begin());
+    copy(s.mprops1.begin(),s.mprops1.end(),wk.mps.begin());
     if(s.mprops1.empty()){
-      this->mps[0] = real(0);
+      wk.mps[0] = real(0);
     }
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
-    copy(s.iv0.begin(),s.iv0.end(),this->ivs.begin());
+    copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
     if(s.iv0.empty()){
-      this->ivs[0] = real(0);
+      wk.ivs[0] = real(0);
     }
-    const auto nstatv = static_cast<AbaqusInt>(this->ivs.size());
+    const auto nstatv = static_cast<AbaqusInt>(wk.ivs.size());
     // rotation matrix, set to identity
     const tmatrix<3u,3u,real> drot = {1,0,0,
 				      0,1,0,
@@ -114,13 +116,13 @@ namespace mtest
       }
     }
     AbaqusReal ndt(1.);
-    (this->fct)(&us(0),&this->ivs(0),&D(0,0),
+    (this->fct)(&us(0),&wk.ivs(0),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,
 		&ue0(0),&ude(0),nullptr,&dt,
 		&(s.esv0(0))  ,&(s.desv(0)),
 		&(s.esv0(0))+1,&(s.desv(0))+1,
-		nullptr,nullptr,nullptr,&ntens,&nstatv,&mps(0),
+		nullptr,nullptr,nullptr,&ntens,&nstatv,&(wk.mps(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,nullptr,0);
@@ -130,7 +132,7 @@ namespace mtest
     const auto rb = transpose(s.r);
     // treating the consistent tangent operator
     if(h==MH::TRIDIMENSIONAL){
-      UmatNormaliseTangentOperator::exe(Kt,D,3u);
+      UmatNormaliseTangentOperator::exe(Kt,wk.D,3u);
       st2tost2<3u,AbaqusReal> K;
       for(unsigned short i=0;i!=6u;++i){
 	for(unsigned short j=0;j!=6u;++j){
@@ -144,7 +146,7 @@ namespace mtest
 	}
       }
     } else if (h==MH::AXISYMMETRICAL){
-      UmatNormaliseTangentOperator::exe(Kt,D,2u);
+      UmatNormaliseTangentOperator::exe(Kt,wk.D,2u);
       st2tost2<2u,AbaqusReal> K;
       for(unsigned short i=0;i!=4u;++i){
 	for(unsigned short j=0;j!=4u;++j){
@@ -163,10 +165,10 @@ namespace mtest
       // the 2 indices are omitted.
       // D = D00 D10 D30 D01 D11 D31 D03 D13 D33
       double D2[9u];
-      std::copy(D.begin(),D.begin()+9,D2);
+      std::copy(wk.D.begin(),wk.D.begin()+9,D2);
       // Let us add the missing term
       // We want D00 D10 D20 D30 D01 D11 D21 D31 D02 D12 D22 D32 D03 D13 D23 D33 
-      auto p = D.begin();
+      auto p = wk.D.begin();
       // D00 D10 D20 D30
       *p     = D2[0];
       *(p+1) = D2[1];
@@ -189,7 +191,7 @@ namespace mtest
       *(p+15) = D2[8];
       // so now we have D in a conventional fortan form, so we can
       // normalise it (transpose and TFEL storage conventions !)
-      UmatNormaliseTangentOperator::exe(Kt,D,2u);
+      UmatNormaliseTangentOperator::exe(Kt,wk.D,2u);
       // the last step: rotation in the global frame
       st2tost2<2u,AbaqusReal> K;
       for(unsigned short i=0;i!=4u;++i){
@@ -211,7 +213,7 @@ namespace mtest
     if(b){
       // treating internal state variables
       if(!s.iv0.empty()){
-	copy_n(this->ivs.begin(),s.iv1.size(),s.iv1.begin());
+	copy_n(wk.ivs.begin(),s.iv1.size(),s.iv1.begin());
       }
       // treating stresses
       if (h==MH::PLANESTRESS){

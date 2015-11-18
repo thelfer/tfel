@@ -553,29 +553,27 @@ namespace mtest
   
   void MTestParser::handlePredictionPolicy(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    MTest::PredictionPolicy ppolicy;
+    PredictionPolicy ppolicy;
     this->checkNotEndOfLine("handlePredictionPolicy",
 			    p,this->fileTokens.end());
     const auto& s = this->readString(p,this->fileTokens.end());
     this->readSpecifiedToken("MTestParser::handlePredictionPolicy",";",
 			     p,this->fileTokens.end());
     if(s=="NoPrediction"){
-      ppolicy = MTest::NOPREDICTION;
+      ppolicy = PredictionPolicy::NOPREDICTION;
     } else if(s=="LinearPrediction"){
-      ppolicy = MTest::LINEARPREDICTION;
+      ppolicy = PredictionPolicy::LINEARPREDICTION;
     } else if(s=="ElasticPrediction"){
-      ppolicy = MTest::ELASTICPREDICTION;
+      ppolicy = PredictionPolicy::ELASTICPREDICTION;
     } else if(s=="ElasticPredictionFromMaterialProperties"){
-      ppolicy = MTest::ELASTICPREDICTIONFROMMATERIALPROPERTIES;
+      ppolicy = PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES;
     } else if(s=="SecantOperatorPrediction"){
-      ppolicy = MTest::SECANTOPERATORPREDICTION;
+      ppolicy = PredictionPolicy::SECANTOPERATORPREDICTION;
     } else if(s=="TangentOperatorPrediction"){
-      ppolicy = MTest::TANGENTOPERATORPREDICTION;
+      ppolicy = PredictionPolicy::TANGENTOPERATORPREDICTION;
     } else {
-      string msg("MTestParser::handlePredictionPolicy : "
-		 "unsupported prediction policy '"+s+"'");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestParser::handlePredictionPolicy : "
+			       "unsupported prediction policy '"+s+"'"));
     }
     t.setPredictionPolicy(ppolicy);
   }
@@ -589,7 +587,7 @@ namespace mtest
   MTestParser::handleStiffnessMatrixType(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
-    StiffnessMatrixType::mtype ktype;
+    StiffnessMatrixType ktype;
     const auto& type = this->readString(p,this->fileTokens.end());
     if(type=="Elastic"){
       ktype=StiffnessMatrixType::ELASTIC;
@@ -704,19 +702,17 @@ namespace mtest
   void
   MTestParser::handleStiffnessUpdatePolicy(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    MTest::StiffnessUpdatingPolicy ks;
+    StiffnessUpdatingPolicy ks;
     const auto& type = this->readString(p,this->fileTokens.end());
     if(type=="ConstantStiffness"){
-      ks=MTest::CONSTANTSTIFFNESS;
+      ks=StiffnessUpdatingPolicy::CONSTANTSTIFFNESS;
     } else if(type=="SecantOperator"){
-      ks=MTest::CONSTANTSTIFFNESSBYPERIOD;
+      ks=StiffnessUpdatingPolicy::CONSTANTSTIFFNESSBYPERIOD;
     } else if(type=="TangentOperator"){
-      ks=MTest::UPDATEDSTIFFNESSMATRIX;
+      ks=StiffnessUpdatingPolicy::UPDATEDSTIFFNESSMATRIX;
     } else {
-      string msg("MTestParser::handleStiffnessUpdatePolicy : "
-		 "unsupported stiffness matrix policy '"+type+"'");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestParser::handleStiffnessUpdatePolicy : "
+			       "unsupported stiffness matrix policy '"+type+"'"));
     }
     this->readSpecifiedToken("MTestParser::handleStiffnessUpdatePolicy",";",
 			     p,this->fileTokens.end());

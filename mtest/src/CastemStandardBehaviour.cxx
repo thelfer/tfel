@@ -14,6 +14,7 @@
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Evolution.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/CastemStandardBehaviour.hxx"
 
 namespace mtest
@@ -157,16 +158,20 @@ namespace mtest
   } // end of CastemStandardBehaviour::getRotationMatrix
 
   void
-  CastemStandardBehaviour::allocate(const tfel::material::ModellingHypothesis::Hypothesis h)
+  CastemStandardBehaviour::allocate(BehaviourWorkSpace& wk,
+				    const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     const auto ndv     = this->getDrivingVariablesSize(h);
     const auto nth     = this->getThermodynamicForcesSize(h);
     const auto nstatev = this->getInternalStateVariablesSize(h);
-    this->D.resize(nth,ndv);
-    this->ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    wk.D.resize(nth,ndv);
+    wk.k.resize(nth,ndv);
+    wk.kt.resize(nth,ndv);
+    wk.ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    mtest::allocate(wk.cs,*this,h);
   }
 
-  StiffnessMatrixType::mtype
+  StiffnessMatrixType
   CastemStandardBehaviour::getDefaultStiffnessMatrixType(void) const
   {
     return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;    

@@ -17,6 +17,8 @@
 #include"MTest/Evolution.hxx"
 #include"MTest/FunctionEvolution.hxx"
 #include"MTest/CastemEvolution.hxx"
+#include"MTest/CurrentState.hxx"
+#include"MTest/StructureCurrentState.hxx"
 #include"MTest/Constraint.hxx"
 #include"MTest/ImposedThermodynamicForce.hxx"
 #include"MTest/ImposedDrivingVariable.hxx"
@@ -418,8 +420,8 @@ MTest_setImposedOpeningDisplacement2(mtest::MTest& t,
   MTest_setImposedDrivingVariable2(t,n,v);
 }
 
-static mtest::MTest::MTestCurrentState
-MTestCurrentState_copy(const mtest::MTest::MTestCurrentState& src)
+static mtest::MTestCurrentState
+MTestCurrentState_copy(const mtest::MTestCurrentState& src)
 {
   return src;
 }
@@ -446,14 +448,14 @@ MTest_setRotationMatrix2(mtest::MTest& t,
 
 #define TFEL_PYTHON_MTESTCURRENTSTATEGETTER( X )		        \
   static tfel::math::vector<mtest::real>				\
-  MTestCurrentState_get##X(const mtest::MTest::MTestCurrentState& t)	\
+  MTestCurrentState_get##X(const mtest::MTestCurrentState& t)	\
   {                                                                     \
     return t. X ;                                                       \
   }
 
 #define TFEL_PYTHON_MTESTCURRENTSTATEGETTER2( X )		        \
   static mtest::real			                         	\
-  MTestCurrentState_get##X(const mtest::MTest::MTestCurrentState& t)	\
+  MTestCurrentState_get##X(const mtest::MTestCurrentState& t)	\
   {                                                                     \
     return t. X ;                                                       \
   }
@@ -462,7 +464,43 @@ TFEL_PYTHON_MTESTCURRENTSTATEGETTER(u_1)
 TFEL_PYTHON_MTESTCURRENTSTATEGETTER(u0)
 TFEL_PYTHON_MTESTCURRENTSTATEGETTER(u1)
 TFEL_PYTHON_MTESTCURRENTSTATEGETTER2(dt_1)
-TFEL_PYTHON_MTESTCURRENTSTATEGETTER2(Tref)
+
+#define TFEL_PYTHON_MTESTCURRENTSTATEGETTER3( X )	      \
+  static tfel::math::vector<mtest::real>		      \
+  MTestCurrentState_get##X(const mtest::MTestCurrentState& t) \
+  {                                                           \
+    const auto& sc = t.getStructureCurrentState("");          \
+    if(sc.istates.size()!=1){                                 \
+      throw(std::runtime_error("MTestCurrentState::get: "     \
+                               "uninitialized state"));       \
+    }                                                         \
+    return sc. istates[0]. X ;				      \
+  }
+
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(s_1)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(s0)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(s1)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(e0)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(e1)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(e_th0)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(e_th1)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(mprops1)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(iv_1)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(iv0)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(iv1)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(esv0)
+TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(desv)
+
+static mtest::real
+MTestCurrentState_getTref(const mtest::MTestCurrentState& t)
+{
+  const auto& sc = t.getStructureCurrentState("");
+  if(sc.istates.size()!=1){
+    throw(std::runtime_error("MTestCurrentState::get: "
+			     "uninitialized state"));
+  }
+  return sc. istates[0]. Tref ;
+}
 
 void declareMTest(void);
 
@@ -474,21 +512,26 @@ void declareMTest(void)
   using boost::python::arg;
   using tfel::tests::TestResult;
 
-  enum_<MTest::StiffnessUpdatingPolicy>("StiffnessUpdatingPolicy")
-    .value("CONSTANTSTIFFNESS",MTest::CONSTANTSTIFFNESS)
-    .value("CONSTANTSTIFFNESSBYPERIOD",MTest::CONSTANTSTIFFNESSBYPERIOD)
-    .value("UPDATEDSTIFFNESSMATRIX",MTest::UPDATEDSTIFFNESSMATRIX)
+  enum_<StiffnessUpdatingPolicy>("StiffnessUpdatingPolicy")
+    .value("CONSTANTSTIFFNESS",
+	   StiffnessUpdatingPolicy::CONSTANTSTIFFNESS)
+    .value("CONSTANTSTIFFNESSBYPERIOD",
+	   StiffnessUpdatingPolicy::CONSTANTSTIFFNESSBYPERIOD)
+    .value("UPDATEDSTIFFNESSMATRIX",
+	   StiffnessUpdatingPolicy::UPDATEDSTIFFNESSMATRIX)
     ;
 
-  enum_<MTest::PredictionPolicy>("PredictionPolicy")
-    .value("NOPREDICTION",MTest::NOPREDICTION)
-    .value("LINEARPREDICTION",MTest::LINEARPREDICTION)
-    .value("ELASTICPREDICTION",MTest::ELASTICPREDICTION)
-    .value("SECANTOPERATORPREDICTION",MTest::SECANTOPERATORPREDICTION)
-    .value("TANGENTOPERATORPREDICTION",MTest::TANGENTOPERATORPREDICTION)
+  enum_<PredictionPolicy>("PredictionPolicy")
+    .value("NOPREDICTION",PredictionPolicy::NOPREDICTION)
+    .value("LINEARPREDICTION",PredictionPolicy::LINEARPREDICTION)
+    .value("ELASTICPREDICTION",PredictionPolicy::ELASTICPREDICTION)
+    .value("SECANTOPERATORPREDICTION",
+	   PredictionPolicy::SECANTOPERATORPREDICTION)
+    .value("TANGENTOPERATORPREDICTION",
+	   PredictionPolicy::TANGENTOPERATORPREDICTION)
     ;
   
-  enum_<StiffnessMatrixType::mtype>("StiffnessMatrixType")
+  enum_<StiffnessMatrixType>("StiffnessMatrixType")
     .value("NOSTIFFNESS",StiffnessMatrixType::NOSTIFFNESS)
     .value("ELASTIC",StiffnessMatrixType::ELASTIC)
     .value("SECANTOPERATOR",StiffnessMatrixType::SECANTOPERATOR)
@@ -498,7 +541,7 @@ void declareMTest(void)
     ;
 
   // for backward compatibility
-  enum_<StiffnessMatrixType::mtype>("MTestStiffnessMatrixType")
+  enum_<StiffnessMatrixType>("MTestStiffnessMatrixType")
     .value("NOSTIFFNESS",StiffnessMatrixType::NOSTIFFNESS)
     .value("ELASTIC",StiffnessMatrixType::ELASTIC)
     .value("SECANTOPERATOR",StiffnessMatrixType::SECANTOPERATOR)
@@ -508,21 +551,34 @@ void declareMTest(void)
     ;
   
   TestResult (MTest:: *pm)(void) = &MTest::execute;
-  void (MTest:: *pm2)(MTest::MTestCurrentState&,
-		      MTest::MTestWorkSpace&,
+  void (MTest:: *pm2)(MTestCurrentState&,
+		      MTestWorkSpace&,
 		      const real,
-		      const real) = &MTest::execute;
+		      const real) const = &MTest::execute;
 
-  class_<MTest::MTestCurrentState,bases<CurrentState>>("MTestCurrentState")
+  class_<MTestCurrentState>("MTestCurrentState")
     .def("copy",&MTestCurrentState_copy)
     .add_property("u_1",MTestCurrentState_getu_1)
     .add_property("u0",MTestCurrentState_getu0)
     .add_property("u1",MTestCurrentState_getu1)
+    .add_property("s_1",MTestCurrentState_gets_1)
+    .add_property("s0",MTestCurrentState_gets0)
+    .add_property("s1",MTestCurrentState_gets1)
+    .add_property("e0",MTestCurrentState_gete0)
+    .add_property("e1",MTestCurrentState_gete1)
+    .add_property("e_th0",MTestCurrentState_gete_th0)
+    .add_property("e_th1",MTestCurrentState_gete_th1)
+    .add_property("mprops1",MTestCurrentState_getmprops1)
+    .add_property("iv_1",MTestCurrentState_getiv_1)
+    .add_property("iv0",MTestCurrentState_getiv0)
+    .add_property("iv1",MTestCurrentState_getiv1)
+    .add_property("evs0",MTestCurrentState_getesv0)
+    .add_property("desv",MTestCurrentState_getdesv)
     .add_property("dt_1",MTestCurrentState_getdt_1)
     .add_property("Tref",MTestCurrentState_getTref)
     ;
 
-  class_<MTest::MTestWorkSpace,noncopyable>("MTestWorkSpace")
+  class_<MTestWorkSpace,noncopyable>("MTestWorkSpace")
     ;
 
   class_<MTest,noncopyable>("MTest")
