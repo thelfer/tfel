@@ -135,7 +135,7 @@ namespace mtest
   MTestCurrentState::~MTestCurrentState() noexcept = default;
 
   MTestWorkSpace::MTestWorkSpace() = default;
-  MTestWorkSpace::~MTestWorkSpace() noexcept =  default;
+  MTestWorkSpace::~MTestWorkSpace() =  default;
 
   MTest::UTest::~UTest()
   {}
