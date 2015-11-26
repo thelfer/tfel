@@ -35,6 +35,7 @@ namespace mfront{
   void
   MFrontBehaviourParserBase<Child>::registerDefaultCallBacks(void)
   {
+    this->registerNewCallBack("@DSL",&Child::treatParser);
     this->registerNewCallBack("@Parser",&Child::treatParser);
     this->registerNewCallBack("@ModellingHypothesis",
 			      &Child::treatModellingHypothesis);

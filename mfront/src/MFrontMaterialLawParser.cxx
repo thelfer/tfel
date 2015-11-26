@@ -48,6 +48,7 @@ namespace mfront{
 			      &MFrontMaterialLawParser::treatMFront);
     this->registerNewCallBack("@Material",&MFrontMaterialLawParser::treatMaterial);
     this->registerNewCallBack("@Library",&MFrontMaterialLawParser::treatLibrary);
+    this->registerNewCallBack("@DSL",&MFrontMaterialLawParser::treatParser);
     this->registerNewCallBack("@Parser",&MFrontMaterialLawParser::treatParser);
     this->registerNewCallBack("@Law",&MFrontMaterialLawParser::treatLaw);
     this->registerNewCallBack("@Author",&MFrontMaterialLawParser::treatAuthor);

@@ -774,13 +774,14 @@ namespace mfront{
     pte = file.end();
     found=false;
     while((pt!=pte)&&(!found)){
-      if(pt->value=="@Parser"){
+      if((pt->value=="@Parser")||(pt->value=="@DSL")){
 	if(pt!=file.begin()){
 	  CxxTokenizer::TokensContainer::const_iterator ptp = pt;
 	  --ptp;
 	  if(ptp->value!=";"){
 	    string msg("MFront::treatFile : ");
-	    msg += "the keyword @Parser does not begin a new instruction.";
+	    msg += "the keyword @DSL (@Parser) does not begin "
+	      "a new instruction.";
 	    throw(runtime_error(msg));
 	  }
 	}
@@ -1973,10 +1974,10 @@ namespace mfront{
   {
     using namespace std;
     const char * make = getMakeCommand();
-    const char * silent = getDebugMode() ? "" : "-s";
-    const char *const argv[] = {make,silent,"-C","src",
+    const char * silent = getDebugMode() ? 0 : "-s";
+    const char *const argv[] = {make,"-C","src",
 				"-f","Makefile.mfront",
-				target.c_str(),0};
+				target.c_str(),silent,0};
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     if(_spawnvp(_P_WAIT,make,argv)!=0){
       string msg("MFront::buildLibraries : ");
@@ -1984,10 +1985,9 @@ namespace mfront{
       throw(runtime_error(msg));
     }
 #else
-    pid_t child_pid;
-    int status;
-    child_pid = fork();
+    pid_t child_pid = fork();
     if(child_pid!=0){
+      int status;
       if(wait(&status)==-1){
 	string msg("MFront::buildLibraries : ");
 	msg += "something went wrong while waiting end of make process";
@@ -2010,10 +2010,10 @@ namespace mfront{
   {
     using namespace std;
     const char * make = getMakeCommand();
-    const char * silent = getDebugMode() ? "" : "-s";
-    const char *const argv[] = {make,silent,"-C","src",
+    const char * silent = getDebugMode() ? 0 : "-s";
+    const char *const argv[] = {make,"-C","src",
 				"-f","Makefile.mfront",
-				"clean",0};
+				"clean",silent,0};
 #if defined _WIN32 || defined _WIN64
     if(_spawnvp(_P_WAIT,make,argv)!=0){
       string msg("MFront::cleanLibraries : ");

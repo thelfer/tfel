@@ -864,7 +864,7 @@ namespace mfront
 	  --ptp;
 	  if(ptp->value!=";"){
 	    string msg("ParserBase::readSpecifiedValues : ");
-	    msg += "the keyword @Parser does not begin a new instruction.";
+	    msg += "the keyword '"+*p+"' does not begin a new instruction.";
 	    throw(runtime_error(msg));
 	  }
 	}
