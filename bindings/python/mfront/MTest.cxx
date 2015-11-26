@@ -420,8 +420,8 @@ MTest_setImposedOpeningDisplacement2(mtest::MTest& t,
   MTest_setImposedDrivingVariable2(t,n,v);
 }
 
-static mtest::MTestCurrentState
-MTestCurrentState_copy(const mtest::MTestCurrentState& src)
+static mtest::StudyCurrentState
+StudyCurrentState_copy(const mtest::StudyCurrentState& src)
 {
   return src;
 }
@@ -448,14 +448,14 @@ MTest_setRotationMatrix2(mtest::MTest& t,
 
 #define TFEL_PYTHON_MTESTCURRENTSTATEGETTER( X )		        \
   static tfel::math::vector<mtest::real>				\
-  MTestCurrentState_get##X(const mtest::MTestCurrentState& t)	\
+  StudyCurrentState_get##X(const mtest::StudyCurrentState& t)	\
   {                                                                     \
     return t. X ;                                                       \
   }
 
 #define TFEL_PYTHON_MTESTCURRENTSTATEGETTER2( X )		        \
   static mtest::real			                         	\
-  MTestCurrentState_get##X(const mtest::MTestCurrentState& t)	\
+  StudyCurrentState_get##X(const mtest::StudyCurrentState& t)	\
   {                                                                     \
     return t. X ;                                                       \
   }
@@ -467,11 +467,11 @@ TFEL_PYTHON_MTESTCURRENTSTATEGETTER2(dt_1)
 
 #define TFEL_PYTHON_MTESTCURRENTSTATEGETTER3( X )	      \
   static tfel::math::vector<mtest::real>		      \
-  MTestCurrentState_get##X(const mtest::MTestCurrentState& t) \
+  StudyCurrentState_get##X(const mtest::StudyCurrentState& t) \
   {                                                           \
     const auto& sc = t.getStructureCurrentState("");          \
     if(sc.istates.size()!=1){                                 \
-      throw(std::runtime_error("MTestCurrentState::get: "     \
+      throw(std::runtime_error("StudyCurrentState::get: "     \
                                "uninitialized state"));       \
     }                                                         \
     return sc. istates[0]. X ;				      \
@@ -492,11 +492,11 @@ TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(esv0)
 TFEL_PYTHON_MTESTCURRENTSTATEGETTER3(desv)
 
 static mtest::real
-MTestCurrentState_getTref(const mtest::MTestCurrentState& t)
+StudyCurrentState_getTref(const mtest::StudyCurrentState& t)
 {
   const auto& sc = t.getStructureCurrentState("");
   if(sc.istates.size()!=1){
-    throw(std::runtime_error("MTestCurrentState::get: "
+    throw(std::runtime_error("StudyCurrentState::get: "
 			     "uninitialized state"));
   }
   return sc. istates[0]. Tref ;
@@ -551,34 +551,34 @@ void declareMTest(void)
     ;
   
   TestResult (MTest:: *pm)(void) = &MTest::execute;
-  void (MTest:: *pm2)(MTestCurrentState&,
-		      MTestWorkSpace&,
+  void (MTest:: *pm2)(StudyCurrentState&,
+		      SolverWorkSpace&,
 		      const real,
 		      const real) const = &MTest::execute;
 
-  class_<MTestCurrentState>("MTestCurrentState")
-    .def("copy",&MTestCurrentState_copy)
-    .add_property("u_1",MTestCurrentState_getu_1)
-    .add_property("u0",MTestCurrentState_getu0)
-    .add_property("u1",MTestCurrentState_getu1)
-    .add_property("s_1",MTestCurrentState_gets_1)
-    .add_property("s0",MTestCurrentState_gets0)
-    .add_property("s1",MTestCurrentState_gets1)
-    .add_property("e0",MTestCurrentState_gete0)
-    .add_property("e1",MTestCurrentState_gete1)
-    .add_property("e_th0",MTestCurrentState_gete_th0)
-    .add_property("e_th1",MTestCurrentState_gete_th1)
-    .add_property("mprops1",MTestCurrentState_getmprops1)
-    .add_property("iv_1",MTestCurrentState_getiv_1)
-    .add_property("iv0",MTestCurrentState_getiv0)
-    .add_property("iv1",MTestCurrentState_getiv1)
-    .add_property("evs0",MTestCurrentState_getesv0)
-    .add_property("desv",MTestCurrentState_getdesv)
-    .add_property("dt_1",MTestCurrentState_getdt_1)
-    .add_property("Tref",MTestCurrentState_getTref)
+  class_<StudyCurrentState>("MTestCurrentState")
+    .def("copy",&StudyCurrentState_copy)
+    .add_property("u_1",StudyCurrentState_getu_1)
+    .add_property("u0",StudyCurrentState_getu0)
+    .add_property("u1",StudyCurrentState_getu1)
+    .add_property("s_1",StudyCurrentState_gets_1)
+    .add_property("s0",StudyCurrentState_gets0)
+    .add_property("s1",StudyCurrentState_gets1)
+    .add_property("e0",StudyCurrentState_gete0)
+    .add_property("e1",StudyCurrentState_gete1)
+    .add_property("e_th0",StudyCurrentState_gete_th0)
+    .add_property("e_th1",StudyCurrentState_gete_th1)
+    .add_property("mprops1",StudyCurrentState_getmprops1)
+    .add_property("iv_1",StudyCurrentState_getiv_1)
+    .add_property("iv0",StudyCurrentState_getiv0)
+    .add_property("iv1",StudyCurrentState_getiv1)
+    .add_property("evs0",StudyCurrentState_getesv0)
+    .add_property("desv",StudyCurrentState_getdesv)
+    .add_property("dt_1",StudyCurrentState_getdt_1)
+    .add_property("Tref",StudyCurrentState_getTref)
     ;
 
-  class_<MTestWorkSpace,noncopyable>("MTestWorkSpace")
+  class_<SolverWorkSpace,noncopyable>("MTestWorkSpace")
     ;
 
   class_<MTest,noncopyable>("MTest")

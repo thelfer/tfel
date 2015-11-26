@@ -129,14 +129,6 @@ namespace mtest
 			     "invalid dimenstion"));
   }
 
-  MTestCurrentState::MTestCurrentState() = default;
-  MTestCurrentState::MTestCurrentState(const MTestCurrentState&) = default;
-  MTestCurrentState::MTestCurrentState(MTestCurrentState&&)      = default;
-  MTestCurrentState::~MTestCurrentState() noexcept = default;
-
-  MTestWorkSpace::MTestWorkSpace() = default;
-  MTestWorkSpace::~MTestWorkSpace() =  default;
-
   MTest::UTest::~UTest()
   {}
 
@@ -633,7 +625,7 @@ namespace mtest
   }
 
   void
-  MTest::initializeCurrentState(MTestCurrentState& s) const
+  MTest::initializeCurrentState(StudyCurrentState& s) const
   {
     if(this->b.get()==nullptr){
       throw(std::runtime_error("MTest::initializeCurrentState: "
@@ -689,35 +681,21 @@ namespace mtest
   } // end of MTest::initializeCurrentState
 
   void
-  MTest::initializeWorkSpace(MTestWorkSpace& wk) const
+  MTest::initializeWorkSpace(SolverWorkSpace& wk) const
   {
     const auto psz = this->getNumberOfUnknowns();
-    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
-    const auto nstatev = this->b->getInternalStateVariablesSize(this->hypothesis);
     // clear
     wk.K.clear();
-    wk.Kt.clear();
-    wk.Kp.clear();
     wk.p_lu.clear();
     wk.x.clear();
     wk.r.clear();
     wk.du.clear();
     //resizing
     wk.K.resize(psz,psz);
-    wk.Kt.resize(nth,ndv);
-    wk.nKt.resize(nth,ndv);
-    wk.tKt.resize(nth,ndv);
-    wk.s1.resize(nth);
-    wk.s2.resize(nth);
-    wk.statev.resize(nstatev);
-    wk.Kp.resize(nth,ndv);
     wk.p_lu.resize(psz);
     wk.x.resize(psz);
     wk.r.resize(psz,0.);
     wk.du.resize(psz,0.);
-    wk.first = true;
-    wk.a = 0;
   } // end of MTest::initializeWorkSpace
   
   size_t
@@ -751,8 +729,8 @@ namespace mtest
     // finish initialization
     this->completeInitialisation();
     // initialize current state and work space
-    MTestCurrentState state;
-    MTestWorkSpace    wk;
+    StudyCurrentState state;
+    SolverWorkSpace    wk;
     this->initializeCurrentState(state);
     this->initializeWorkSpace(wk);
     // integrating over the loading path
@@ -942,11 +920,11 @@ namespace mtest
   	}
       }
     }
-#pragma message("HERE")    
-    //    if(this->first){
-      auto a = *(std::max_element(k.begin(),k.end()));
-      //      this->first = false;
-      //    }
+    if(!state.containsParameter("LagrangeMultipliersNormalisationFactor")){
+      state.setParameter("LagrangeMultipliersNormalisationFactor",
+			 *(std::max_element(k.begin(),k.end())));
+    }
+    const auto a = state.getParameter<real>("LagrangeMultipliersNormalisationFactor");      
     unsigned short pos = ndv;
     for(const auto& c : this->constraints){
       c->setValues(k,r,state.u0,state.u0,pos,getSpaceDimension(this->hypothesis),t,dt,a);
@@ -963,6 +941,18 @@ namespace mtest
 					   const real dt,
 					   const StiffnessMatrixType mt) const{
     using namespace tfel::material;
+    auto display = [](const tfel::math::matrix<real>& m){
+      auto& os = mfront::getLogStream();
+      for(size_type i=0;i!=m.getNbRows();++i){
+	for(size_type j=0;j!=m.getNbCols();){
+	  os << m(i,j);
+	  if(++j!=m.getNbCols()){
+	    os << " ";
+	  }
+	}
+	os << "\n";
+      }
+    };    
     auto& scs = state.getStructureCurrentState("");
     auto& bwk = scs.getBehaviourWorkSpace();
     if(scs.istates.size()!=1u){
@@ -971,7 +961,9 @@ namespace mtest
     }
     auto& s = scs.istates[0];
     const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+    const auto btype = this->b->getBehaviourType();
+    if(btype==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
       for(size_type i=0;i!=ndv;++i){
   	s.e1[i] = state.u1[i]-s.e_th1[i];
       }
@@ -989,12 +981,74 @@ namespace mtest
       }
       return false;
     }
+    if((this->cto)&&(mt==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR)&&
+       ((btype==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	(btype==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
+      bool ok = true;
+      bwk.ne.swap(s.e1);
+      bwk.ns.swap(s.s1);
+      bwk.nivs.swap(s.iv1);
+      for(size_type i=0;i!=ndv;++i){
+	revert(s);
+	std::copy(bwk.ne.begin(),bwk.ne.end(),s.e1.begin());
+	s.e1[i] += this->pv;
+	try{
+	  ok = this->b->integrate(s,bwk,this->hypothesis,dt,mt);
+	} catch(...){
+	  ok = false;
+	}
+	if(!ok){
+	  break;
+	}
+	for(size_type j=0;j!=nth;++j){
+	  bwk.nk(j,i) = s.s1(j);
+	}
+	revert(s);
+	std::copy(bwk.ne.begin(),bwk.ne.end(),s.e1.begin());
+	s.e1[i] -= this->pv;
+	try{
+	  ok = this->b->integrate(s,bwk,this->hypothesis,dt,mt);
+	} catch(...){
+	  ok = false;
+	}
+	if(!ok){
+	  break;
+	}
+	for(size_type j=0;j!=nth;++j){
+	  bwk.nk(j,i) -= s.s1(j);
+	  bwk.nk(j,i) /= 2*(this->pv);
+	}
+      }
+      bwk.ne.swap(s.e1);
+      bwk.ns.swap(s.s1);
+      bwk.nivs.swap(s.iv1);
+      if(ok){
+	real merr(0);
+	for(size_type i=0;i!=nth;++i){
+	  for(size_type j=0;j!=ndv;++j){
+	    merr = std::max(merr,std::abs(bwk.k(i,j)-bwk.nk(i,j)));
+	  }
+	}
+	if(merr>this->toeps){
+	  auto& log = mfront::getLogStream();
+	  log << "Compaison to numerical jacobian failed "
+	      << "(error : " << merr << ", criterium " << this->toeps << ").\n"
+	      << "Tangent operator returned by the behaviour : \n";
+	  display(bwk.k);
+	  log << "Numerical tangent operator (perturbation value : " << this-> pv << ") : \n";
+	  display(bwk.nk);
+	}
+      } else {
+	auto& log = mfront::getLogStream();
+	log << "Numerical evalution of tangent operator failed.\n\n";
+      }
+    }
     updateStiffnessAndResidual(k,r,*(this->b),bwk.k,s.s1,this->hypothesis);
-#pragma message("HERE")
-    //    if(this->first){
-      auto a = *(std::max_element(k.begin(),k.end()));
-      //      this->first = false;
-      //    }
+    if(!state.containsParameter("LagrangeMultipliersNormalisationFactor")){
+      state.setParameter("LagrangeMultipliersNormalisationFactor",
+			 *(std::max_element(k.begin(),k.end())));
+    }
+    const auto a = state.getParameter<real>("LagrangeMultipliersNormalisationFactor");      
     const auto d = getSpaceDimension(this->hypothesis);
     unsigned short pos = ndv;
     for(const auto c : this->constraints){
@@ -1003,8 +1057,26 @@ namespace mtest
     }
     return true;
   } // end of MTest::computeStiffnessMatrixAndResidual
+
+  static real
+  MTest_getErrorNorm(const tfel::math::vector<real>& v,
+		     const tfel::math::vector<real>::size_type s)
+  {
+    using size_type = tfel::math::vector<real>::size_type;
+    auto n = real(0);
+    for(size_type i=0;i!=s;++i){
+      n = std::max(n,std::abs(v(i)));
+    }
+    return n;
+  }
   
-  std::pair<bool,real>
+  real
+  MTest::getErrorNorm(const tfel::math::vector<real>& du) const {
+    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    return MTest_getErrorNorm(du,ndv);
+  } // end of MTest::getErrorNorm
+  
+  bool
   MTest::checkConvergence(const StudyCurrentState&  state,
 			  const tfel::math::vector<real>& du,
 			  const tfel::math::vector<real>& r,
@@ -1033,14 +1105,8 @@ namespace mtest
     }
     const auto& s = scs.istates[0];
     const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    auto ne = real(0);
-    for(size_type i=0;i!=ndv;++i){
-      ne = std::max(ne,std::abs(du(i)));
-    }
-    auto nr = real(0);
-    for(size_type i=0;i!=ndv;++i){
-      nr = std::max(nr,std::abs(r(i)));
-    }
+    const auto ne = getErrorNorm(du);
+    const auto nr = MTest_getErrorNorm(r,ndv);
     if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
       auto& log = mfront::getLogStream();
       report(log,ndv,ne,nr);
@@ -1049,15 +1115,15 @@ namespace mtest
       report(this->residual,ndv,ne,nr);
     }
     if((ne>o.eeps)||(nr>o.seps)){
-      return {false,ne};
+      return false;
     }
     for(const auto& c : this->constraints){
       if(!c->checkConvergence(state.u1,s.s1,
   			      o.eeps,o.seps,t,dt)){
-	return {false,ne};
+	return false;
       }
     }
-    return {true,ne};
+    return true;
   }
 
   std::vector<std::string>
@@ -1075,14 +1141,8 @@ namespace mtest
     }
     const auto& s = scs.istates[0];
     const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    auto ne = real(0);
-    for(size_type i=0;i!=ndv;++i){
-      ne = std::max(ne,std::abs(du(i)));
-    }
-    auto nr = real(0);
-    for(size_type i=0;i!=ndv;++i){
-      nr = std::max(nr,std::abs(r(i)));
-    }
+    const auto ne = this->getErrorNorm(du);
+    const auto nr = MTest_getErrorNorm(r,ndv);
     auto fc = std::vector<std::string>{};
     if(ne>o.eeps){
       std::ostringstream msg;
@@ -1123,8 +1183,8 @@ namespace mtest
   } // end of MTest::postConvergence
   
   void
-  MTest::execute(MTestCurrentState& state,
-		 MTestWorkSpace& wk,
+  MTest::execute(StudyCurrentState& state,
+		 SolverWorkSpace& wk,
 		 const real ti,
 		 const real te) const
   {
@@ -1133,7 +1193,7 @@ namespace mtest
   }
   
   void
-  MTest::printOutput(const real t,const MTestCurrentState& s)
+  MTest::printOutput(const real t,const StudyCurrentState& s)
   {
     if(this->out){
       auto& cs = s.getStructureCurrentState("").istates[0];

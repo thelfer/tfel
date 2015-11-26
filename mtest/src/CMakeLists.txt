@@ -46,7 +46,9 @@ set(TFELMTest_SOURCES
   SteffensenAccelerationAlgorithm.cxx
   IronsTuckAccelerationAlgorithm.cxx
   MTest.cxx
-  MTestParser.cxx)
+  MTestParser.cxx
+#  PipeTest.cxx
+  )
 
 set(TFELMTest_LDADD
   MFrontLogStream

@@ -132,9 +132,8 @@ namespace mtest{
       LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
       u1 -= wk.du;
       converged = (o.ppolicy == PredictionPolicy::NOPREDICTION) ? (iter>1) : true;
-      const auto rc = s.checkConvergence(scs,wk.du,wk.r,o,iter,t,dt);
-      converged = converged && rc.first;
-      ne = rc.second;
+      converged = converged && s.checkConvergence(scs,wk.du,wk.r,o,iter,t,dt);
+      ne = s.getErrorNorm(wk.du);
       if(!converged){
 	if(iter==o.iterMax){
 	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
@@ -148,21 +147,12 @@ namespace mtest{
 	  // call the acceleration algorithm
 	  if(o.aa.get()!=nullptr){
 	    o.aa->execute(u1,wk.du,wk.r,o.eeps,o.seps,iter);
-	    // if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
-	    // 	real nit = 0;
-	    // 	for(i=0;i!=ndv;++i){
-	    // 	  nit = max(nit,abs(u1(i)-wk.u10(i)));
-	    // 	}
-	    // 	auto& log = mfront::getLogStream();
-	    // 	log << "accelerated-sequence-convergence " << iter << " " << nit << " (";
-	    // 	for(i=0;i!=ndv;){
-	    // 	  log << u1(i);
-	    // 	  if(++i!=ndv){
-	    // 	    log << " ";
-	    // 	  }
-	    // 	}
-	    // 	log << ")" << endl;
-	    // }
+	    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
+	      wk.du = u1-wk.u10;
+	      const auto nit = s.getErrorNorm(wk.du);
+	      auto& log = mfront::getLogStream();
+	      log << "accelerated-sequence-convergence " << iter << " " << nit << '\n';
+	    }
 	  }
 	  wk.u10 = u1;
 	}

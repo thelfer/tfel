@@ -38,68 +38,6 @@
 
 namespace mtest
 {
-
-  /*!
-   * structure containing the state of the material.
-   * This structure is used internally and is declared public only
-   * for the python bindings. In particular, the description of the
-   * variables given here is only valid during the computations.
-   */
-  struct MTEST_VISIBILITY_EXPORT MTestCurrentState
-    : public StudyCurrentState
-  {
-    //! default constructor
-    MTestCurrentState();
-    //! copy constructor
-    MTestCurrentState(const MTestCurrentState&);
-    MTestCurrentState(MTestCurrentState&&);
-    //! destructor
-    ~MTestCurrentState();
-  private:
-    MTestCurrentState&
-    operator=(const MTestCurrentState&) = delete;
-    MTestCurrentState&
-    operator=(MTestCurrentState&&) = delete;
-  };
-
-  /*!
-   * structure where usefull variables for the computations are
-   * defined.
-   * This structure is used internally and is declared
-   * public only for the python bindings.
-   */
-  struct MTEST_VISIBILITY_EXPORT MTestWorkSpace
-    : public SolverWorkSpace
-  {
-    MTestWorkSpace();
-    //! destructor
-    ~MTestWorkSpace();
-    // stiffness tensor
-    tfel::math::matrix<real> Kt;
-    // numertical stiffness tensor
-    tfel::math::matrix<real> nKt;
-    // temporary variable used for numerical tangent operator
-    // computation
-    tfel::math::matrix<real> tKt;
-    // prediction tensor
-    tfel::math::matrix<real> Kp;
-    // temporary variable used for numerical tangent operator
-    // computation
-    tfel::math::vector<real> s1;
-    // temporary variable used for numerical tangent operator
-    // computation
-    tfel::math::vector<real> s2;
-    // temporary variable used for numerical tangent operator
-    // computation
-    tfel::math::vector<real> statev;
-    //
-    bool first;
-    real a;
-  private:
-    MTestWorkSpace(const MTestWorkSpace&) = delete;
-    MTestWorkSpace&
-    operator=(const MTestWorkSpace&) = delete;
-  };
   
   /*!
    * \brief MTest is a simple class to test mfront behaviours.
@@ -176,13 +114,13 @@ namespace mtest
      * \param[in] s : current state
      */
     virtual void
-    initializeCurrentState(MTestCurrentState&) const;
+    initializeCurrentState(StudyCurrentState&) const;
     /*!
      * \brief initialize the workspace
      * \param[in] wk : workspace
      */
     virtual void
-    initializeWorkSpace(MTestWorkSpace&) const;
+    initializeWorkSpace(SolverWorkSpace&) const;
     /*!
      * integrate the behaviour
      * along the loading path
@@ -245,6 +183,11 @@ namespace mtest
 				      const real,
 				      const StiffnessMatrixType) const override;
     /*!
+     * \param[in] : du unknows increment difference between two iterations
+     */
+    virtual real
+    getErrorNorm(const tfel::math::vector<real>&) const override;
+    /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
      * \param[in] r:  residual
@@ -252,12 +195,9 @@ namespace mtest
      * \param[in] i:  iteration number
      * \param[in] t:  current time
      * \param[in] dt: time increment
-     * \return a pair containing:
-     * - a boolean saying if all convergence criteria are met
-     * - one of the convergence estimator used to compute the order of
-     *   convergence.
+     * \return a boolean saying if all convergence criteria are met
      */
-    virtual std::pair<bool,real>
+    virtual bool
     checkConvergence(const StudyCurrentState&,
 		     const tfel::math::vector<real>&,
 		     const tfel::math::vector<real>&,
@@ -296,8 +236,8 @@ namespace mtest
      * integrate the behaviour over one step
      */ 
     virtual void
-    execute(MTestCurrentState&,
-	    MTestWorkSpace&,
+    execute(StudyCurrentState&,
+	    SolverWorkSpace&,
 	    const real,
 	    const real) const;
     /*!
@@ -431,7 +371,7 @@ namespace mtest
      * \param[in] iv : internal state variables
      */
     virtual void
-    printOutput(const real,const MTestCurrentState&);
+    printOutput(const real,const StudyCurrentState&);
     /*!
      * destructor
      */

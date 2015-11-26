@@ -76,6 +76,10 @@ namespace mtest
     wk.k.resize(nth,ndv);
     wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
     wk.ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    wk.nk.resize(nth,ndv);
+    wk.ne.resize(ndv);
+    wk.ns.resize(nth);
+    wk.nivs.resize(nstatev);
     mtest::allocate(wk.cs,*this,h);
   }
 

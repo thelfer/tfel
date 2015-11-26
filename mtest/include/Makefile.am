@@ -5,14 +5,15 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/SolverWorkSpace.hxx	                 \
 			 MTest/GenericSolver.hxx	                 \
 			 MTest/Study.hxx	                         \
+			 MTest/StudyParameter.hxx	                 \
 			 MTest/StudyCurrentState.hxx	                 \
+			 MTest/StudyCurrentState.ixx	                 \
 			 MTest/StructureCurrentState.hxx	         \
 			 MTest/CurrentState.hxx	                         \
 			 MTest/Scheme.hxx	                         \
 			 MTest/SchemeBase.hxx	                         \
 			 MTest/MTest.hxx	                         \
 			 MTest/MTestParser.hxx	                         \
-			 MTest/PTest.hxx	                         \
 			 MTest/AnalyticalTest.hxx	                 \
 			 MTest/ReferenceFileComparisonTest.hxx           \
 			 MTest/Behaviour.hxx                             \

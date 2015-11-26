@@ -75,6 +75,22 @@ namespace mtest{
     }
     return *(p->second);
   }
+
+  bool StudyCurrentState::containsParameter(const std::string& n) const{
+    return this->parameters.count(n)!=0;
+  } // end of StudyCurrentState::containsParameter
+
+  void
+  StudyCurrentState::throwUnknownParameterException(const std::string& n){
+    throw(std::runtime_error("StudyCurrentState::throwUnknownParameterException:"
+			     "no parameter '"+n+"' declared"));
+  }
+
+  void
+  StudyCurrentState::throwAlreadyDeclaredParameterException(const std::string& n){
+    throw(std::runtime_error("StudyCurrentState::throwAlreadyDeclaredParameterException:"
+			     "parameter '"+n+"' already declared"));
+  }
   
   StudyCurrentState::~StudyCurrentState() = default;
   

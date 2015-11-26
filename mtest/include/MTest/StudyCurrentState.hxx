@@ -21,6 +21,7 @@
 #include"TFEL/Math/vector.hxx"
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
+#include"MTest/StudyParameter.hxx"
 
 namespace mtest{
 
@@ -86,7 +87,68 @@ namespace mtest{
      */ 
     const StructureCurrentState&
     getStructureCurrentState(const std::string&) const;
+    /*!
+     * \param[in] n: parameter name
+     */
+    bool containsParameter(const std::string&) const;
+    /*!
+     * \return true if the study parameter with the specified name has the
+     * specified type
+     * \tparam T    : requested type
+     * \param[in] n : the requested name
+     * \note an exception is thrown if no data of the specified name
+     * is found or if the object type has not the requested type
+     */
+    template<typename T>
+    bool checkParameterType(const std::string&) const;
+    /*!
+     * \return the object holded by the study parameter with the
+     * specified name
+     * \tparam T    : requested type
+     * \param[in] n : the requested name
+     * \param[in] b : create the object if it does not exists
+     * \note an exception is thrown if no data of the specified name
+     * is found or if the object type has not the requested type
+     */
+    template<typename T>
+    T& getParameter(const std::string&,const bool = false);
+    /*!
+     * \return the object holded by the study parameter with the
+     * specified name
+     * \tparam T     : requested type
+     * \param[in] n : the requested name
+     * \note an exception is thrown if no data of the specified name
+     * is found or if the object type has not the requested type
+     */
+    template<typename T>
+    const T& getParameter(const std::string&) const;
+    /*!
+     * \brief set a parameter
+     * \tparam T    : type of the parameter
+     * \param[in] n : parameter name
+     * \param[in] v : parameter value
+     * \note an exception is thrown if a data of the specified name
+     * is found
+     */
+    template<typename T>
+    T& setParameter(const std::string&,T&&);
   protected:
+    /*!
+     * \brief throw an exception stating that no parameter with the
+     * given name has been found
+     * \param[in] n: parameter name
+     */
+    static void throwUnknownParameterException(const std::string&);
+    /*!
+     * \brief throw an exception stating that a parameter with the
+     * given name has been found
+     * \param[in] n: parameter name
+     */
+    static void throwAlreadyDeclaredParameterException(const std::string&);
+    /*!
+     * study parameters
+     */
+    std::map<std::string,StudyParameter> parameters;
     /*!
      * current state of the structures indexed by the structure's
      * names
@@ -94,10 +156,15 @@ namespace mtest{
     std::map<std::string,
 	     std::shared_ptr<StructureCurrentState>> s;
   }; // end of struct StudyCurrentState
-
     
 } // end of namespace mtest
 
+#include"MTest/StudyCurrentState.ixx"
+
 #endif /* _LIB_MTEST_STUDYCURRENTSTATE_HXX_ */
+
+
+
+
 
 

@@ -15,6 +15,7 @@
 #define _LIB_MTEST_BEHAVIOURWORKSPACE_HXX_
 
 #include"TFEL/Math/matrix.hxx"
+#include"TFEL/Math/vector.hxx"
 
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
@@ -42,10 +43,10 @@ namespace mtest
     ~BehaviourWorkSpace();
     //! current state
     CurrentState cs;
-    //! prediction operator (used by mtest for building the global
+    //! prediction operator (used by mtest to build the global
     //! stiffness matrix)
     tfel::math::matrix<real> kt;
-    //! stiffness operator (used by mtest for building the global
+    //! stiffness operator (used by mtest to build the global
     //! stiffness matrix)
     tfel::math::matrix<real> k;
     //! local stifness matrix (result of the behaviour integration)
@@ -54,13 +55,16 @@ namespace mtest
     tfel::math::vector<real> mps;
    //! temporary vector for internal variables
     tfel::math::vector<real> ivs;
+    //! numerical stiffness operator
+    tfel::math::matrix<real> nk;
+   //! temporary vector for internal state variables
+    tfel::math::vector<real> nivs;
+   //! temporary vector for driving variables
+    tfel::math::vector<real> ne;
+   //! temporary vector for stresses
+    tfel::math::vector<real> ns;
   }; // end of struct BehaviourWorkSpace
   
 } // end of namespace mtest
 
 #endif /* _LIB_MTEST_BEHAVIOURWORKSPACE_HXX_ */
-
-
-
-
-

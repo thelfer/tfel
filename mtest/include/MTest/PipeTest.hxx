@@ -1,33 +1,30 @@
 /*!
- * \file   Study.hxx
+ * \file   mtest/include/MTest/PipeTest.hxx
  * \brief    
  * \author THOMAS HELFER
- * \date   03 nov. 2015
+ * \date   24 nov. 2015
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MTEST_STUDY_HXX_
-#define _LIB_MTEST_STUDY_HXX_
-
-#include"TFEL/Math/vector.hxx"
-#include"TFEL/Math/matrix.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#ifndef _LIB_MTEST_PIPETEST_HXX_
+#define _LIB_MTEST_PIPETEST_HXX_
 
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
-#include"MTest/SolverOptions.hxx"
+#include"MTest/Study.hxx"
 
 namespace mtest{
 
-  // forward declaration
-  struct StudyCurrentState;
-
-  // forward declaration
-  struct Structure;
-  
   /*!
-   * \brief abstract class describing a physical system
+   * a study describing mechanical tests on pipes
    */
-  struct MTEST_VISIBILITY_EXPORT Study
+  struct MTEST_VISIBILITY_EXPORT PipeTest
+    : public Study
   {
     //! a simple alias
     using size_type = tfel::math::vector<real>::size_type;
@@ -36,7 +33,7 @@ namespace mtest{
      * multipliers)
      */
     virtual size_type
-    getNumberOfUnknowns(void) const = 0;
+    getNumberOfUnknowns(void) const override;
     /*!
      * \brief update current state at the beginning of a new time step:
      * - update the material properties
@@ -49,14 +46,14 @@ namespace mtest{
     virtual void
     prepare(StudyCurrentState&,
 	    const real,
-	    const real) const = 0;
+	    const real) const override;
     /*!
      * \brief make a linear prediction of the unknows and state
      * \param[out] s: current structure state
      * \param[in] dt: time increment
      */
     virtual void makeLinearPrediction(StudyCurrentState&,
-				      const real) const = 0;
+				      const real) const override;
     /*!
      * \brief compute the stiffness matrix and the residual
      * \param[out] s: current structure state
@@ -73,7 +70,7 @@ namespace mtest{
 					  tfel::math::vector<real>&,
 					  const real&,
 					  const real&,
-					  const StiffnessMatrixType) const = 0;
+					  const StiffnessMatrixType) const override;
     /*!
      * \brief compute the stiffness matrix and the residual
      * \param[out] s: current structure state
@@ -90,12 +87,12 @@ namespace mtest{
 				      tfel::math::vector<real>&,
 				      const real,
 				      const real,
-				      const StiffnessMatrixType) const = 0;
+				      const StiffnessMatrixType) const override;
     /*!
      * \param[in] : du unknows increment difference between two iterations
      */
     virtual real
-    getErrorNorm(const tfel::math::vector<real>&) const = 0;
+    getErrorNorm(const tfel::math::vector<real>&) const override;
     /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
@@ -113,7 +110,7 @@ namespace mtest{
 		     const SolverOptions&,
 		     const unsigned int,
 		     const real,
-		     const real) const = 0;
+		     const real) const override;
     /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
@@ -129,7 +126,7 @@ namespace mtest{
 				const tfel::math::vector<real>&,
 				const SolverOptions&,
 				const real,
-				const real) const = 0;
+				const real) const override;
     /*!
      * \param[out] s: current structure state
      * \param[in]  t:  current time
@@ -140,19 +137,18 @@ namespace mtest{
     postConvergence(StudyCurrentState&,
 		    const real,
 		    const real,
-		    const unsigned int) const = 0;
+		    const unsigned int) const override;
     /*!
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    setModellingHypothesis(const std::string&) = 0;
+    setModellingHypothesis(const std::string&) override;
     //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultHypothesis(void) = 0;
+    virtual void setDefaultHypothesis(void) override;
     //! destructor
-    virtual ~Study();
-  }; // end of struct Study
+    virtual ~PipeTest();
+  }; // end of struct PipeTest
   
 } // end of namespace mtest
 
-#endif /* _LIB_MTEST_STUDY_HXX_ */
-
+#endif /* _LIB_MTEST_PIPETEST_HXX_ */

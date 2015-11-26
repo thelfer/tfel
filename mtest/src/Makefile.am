@@ -14,8 +14,6 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  CurrentState.cxx                          \
 			  Scheme.cxx                                \
 			  SchemeBase.cxx                            \
-			  MTest.cxx                                 \
-			  MTestParser.cxx                           \
 			  AnalyticalTest.cxx                        \
 			  ReferenceFileComparisonTest.cxx           \
 			  Evolution.cxx                             \
@@ -42,7 +40,11 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  SecantAccelerationAlgorithm.cxx           \
 			  CastemAccelerationAlgorithm.cxx           \
 			  IronsTuckAccelerationAlgorithm.cxx        \
-			  SteffensenAccelerationAlgorithm.cxx
+			  SteffensenAccelerationAlgorithm.cxx       \
+			  MTest.cxx                                 \
+			  MTestParser.cxx
+# \
+# 			  PipeTest.cxx
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Material -lTFELMaterial   \

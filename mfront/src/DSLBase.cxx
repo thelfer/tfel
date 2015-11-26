@@ -837,7 +837,7 @@ namespace mfront
 	if(pt!=cfile.begin()){
 	  auto ptp = pt;
 	  --ptp;
-	  throw_if(ptp->value!=";","the keyword @Parser does not "
+	  throw_if(ptp->value!=";","the keyword '"+*p+"' does not "
 		   "begin a new instruction.",pt->line);
 	}
 	throw_if(++pt==pte,"unexepected end of file '"+file+

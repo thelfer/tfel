@@ -3629,7 +3629,7 @@ mtest/include/MTest/ImposedThermodynamicForce.hxx -text
 mtest/include/MTest/IronsTuckAccelerationAlgorithm.hxx -text
 mtest/include/MTest/MTest.hxx -text
 mtest/include/MTest/MTestParser.hxx -text
-mtest/include/MTest/PTest.hxx -text
+mtest/include/MTest/PipeTest.hxx -text
 mtest/include/MTest/ReferenceFileComparisonTest.hxx -text
 mtest/include/MTest/Scheme.hxx -text
 mtest/include/MTest/SchemeBase.hxx -text
@@ -3641,6 +3641,8 @@ mtest/include/MTest/SteffensenAccelerationAlgorithm.hxx -text
 mtest/include/MTest/StructureCurrentState.hxx -text
 mtest/include/MTest/Study.hxx -text
 mtest/include/MTest/StudyCurrentState.hxx -text
+mtest/include/MTest/StudyCurrentState.ixx -text
+mtest/include/MTest/StudyParameter.hxx -text
 mtest/include/MTest/Types.hxx -text
 mtest/include/MTest/UmatBehaviourBase.hxx -text
 mtest/include/MTest/UmatNormaliseTangentOperator.hxx -text
@@ -3683,7 +3685,7 @@ mtest/src/MTest.cxx -text
 mtest/src/MTestMain.cxx -text
 mtest/src/MTestParser.cxx -text
 mtest/src/Makefile.am -text
-mtest/src/PTest.cxx -text
+mtest/src/PipeTest.cxx -text
 mtest/src/ReferenceFileComparisonTest.cxx -text
 mtest/src/Scheme.cxx -text
 mtest/src/SchemeBase.cxx -text
