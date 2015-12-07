@@ -5,6 +5,9 @@ EXTRA_DIST=CMakeLists.txt                                           \
 	   planestress/CMakeLists.txt                               \
 	   castem/CMakeLists.txt                                    \
 	   aster/CMakeLists.txt                                     \
+	   abaqus/CMakeLists.txt                                    \
+	   abaqus/img/abaqus_v6.env                                 \
+	   abaqus/umat.cpp                                          \
 	   zmat/CMakeLists.txt                                      \
 	   Images/ConfigurationIsocline.eps			    \
 	   Images/Polar_decomposition_of_F.png			    \

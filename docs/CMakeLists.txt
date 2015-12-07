@@ -18,3 +18,5 @@ endif(GENERATE_WEBSITE)
 add_subdirectory(articles)
 add_subdirectory(mfront)
 add_subdirectory(mtest)
+add_subdirectory(ptest)
+

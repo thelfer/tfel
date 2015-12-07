@@ -6,6 +6,7 @@ all:
 	make -C castem       -f Makefile.doc castem
 	make -C aster        -f Makefile.doc aster
 	make -C zmat         -f Makefile.doc zmat
+	make -C abaqus       -f Makefile.doc abaqus
 
 clean:
 	make -C general      -f Makefile.doc clean
@@ -15,3 +16,4 @@ clean:
 	make -C castem       -f Makefile.doc clean
 	make -C aster        -f Makefile.doc clean
 	make -C zmat         -f Makefile.doc clean
+	make -C abaqus       -f Makefile.doc clean

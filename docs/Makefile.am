@@ -1,4 +1,6 @@
-SUBDIRS=tex html tfel mfront mtest presentations \
+SUBDIRS=tex html tfel mfront   \
+	mtest ptest            \
+	presentations          \
 	release-notes-2.0      \
 	release-notes-2.0.3    \
 	release-notes-2.0.4    \

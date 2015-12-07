@@ -309,6 +309,11 @@ docs/mfront/UpdateAuxiliaryStateVariables.md -text
 docs/mfront/UpdateAuxiliaryStateVars.md -text
 docs/mfront/UsableInPurelyImplicitResolution.md -text
 docs/mfront/UseQt.md -text
+docs/mfront/abaqus/CMakeLists.txt -text
+docs/mfront/abaqus/Makefile.doc.in -text
+docs/mfront/abaqus/abaqus.tex.in -text
+docs/mfront/abaqus/img/abaqus_v6.env -text
+docs/mfront/abaqus/umat.cpp -text
 docs/mfront/aster/CMakeLists.txt -text
 docs/mfront/aster/Makefile.doc.in -text
 docs/mfront/aster/aster.tex.in -text
@@ -737,6 +742,12 @@ docs/presentations/portable-behaviour/img/tubeaxi.eps -text
 docs/presentations/portable-behaviour/img/tubeaxi2.eps -text
 docs/presentations/portable-behaviour/mysettings.css -text
 docs/presentations/portable-behaviour/portability.md -text
+docs/ptest/CMakeLists.txt -text
+docs/ptest/Makefile.am -text
+docs/ptest/Makefile.doc.in -text
+docs/ptest/img/mesh1D.pdf -text
+docs/ptest/img/tubeaxi.pdf -text
+docs/ptest/ptest.tex.in -text
 docs/references/matrixcookbook.pdf -text svneol=unset#unset
 docs/release-notes-2.0.3/CMakeLists.txt -text
 docs/release-notes-2.0.3/Makefile.am -text

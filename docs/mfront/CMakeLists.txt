@@ -132,3 +132,5 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   add_subdirectory(zmat)
 
 endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
+
+add_subdirectory(abaqus)
