@@ -11,6 +11,7 @@ doc-install: doc
 	mkdir -p @docdir@/reference-guide
 	mkdir -p @docdir@/mfront
 	mkdir -p @docdir@/mtest
+	mkdir -p @docdir@/ptest
 	mkdir -p @docdir@/release-notes-2.0
 	mkdir -p @docdir@/release-notes-3.0
 	mkdir -p @docdir@/release-notes-2.0.4
@@ -24,7 +25,9 @@ doc-install: doc
 	cp    docs/mfront/castem/castem.pdf              @docdir@/mfront
 	cp    docs/mfront/aster/aster.pdf                @docdir@/mfront
 	cp    docs/mfront/zmat/zmat.pdf                  @docdir@/mfront
+	cp    docs/mfront/abaqus/abaqus.pdf              @docdir@/mfront
 	cp    docs/mtest/mtest.pdf                       @docdir@/mtest
+	cp    docs/mtest/ptest.pdf                       @docdir@/ptest
 	cp    docs/release-notes-2.0/tfel-2.0.pdf        @docdir@/release-notes-2.0
 	cp    docs/release-notes-2.0.3/tfel-2.0.3.pdf    @docdir@/release-notes-2.0.3
 	cp    docs/release-notes-2.0.4/tfel-2.0.4.pdf    @docdir@/release-notes-2.0.4
@@ -36,8 +39,9 @@ doc: doc-pdf doc-html
 
 doc-html: tfel-doc-html
 
-doc-pdf: tfel-doc-pdf mfront-doc-pdf mtest-doc-pdf presentations-doc-pdf \
-	 release-notes-2.0-doc-pdf release-notes-2.0.3-doc-pdf           \
+doc-pdf: tfel-doc-pdf mfront-doc-pdf mtest-doc-pdf ptest-doc-pdf \
+	 presentations-doc-pdf                                   \
+	 release-notes-2.0-doc-pdf release-notes-2.0.3-doc-pdf   \
 	 release-notes-2.0.4-doc-pdf release-notes-3.0-doc-pdf
 
 tfel-doc-html:
@@ -49,6 +53,10 @@ tfel-doc-pdf:
 
 mtest-doc-pdf:
 	cd docs/mtest ;                                            \
+	make -f Makefile.doc
+
+ptest-doc-pdf:
+	cd docs/ptest ;                                            \
 	make -f Makefile.doc
 
 release-notes-2.0-doc-pdf:

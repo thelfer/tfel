@@ -153,7 +153,7 @@ namespace tfel{
        */
       template<typename T2,
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
-      TFEL_MATH_INLINE constexpr
+      TFEL_MATH_INLINE explicit constexpr
       tensor(const T2&);
       /*!
        * \brief Default Constructor.

@@ -101,34 +101,6 @@ namespace mtest
     }
   } // end of updateStiffnessAndResidual
   
-  static unsigned short
-  getStensorSize(const unsigned short d)
-  {
-    if(d==1){
-      return 3;
-    } else if(d==2){
-      return 4;
-    } else if(d==3){
-      return 6;
-    }
-    throw(std::runtime_error("mtest::getStensorSize: "
-			     "invalid dimenstion"));
-  }
-
-  static unsigned short
-  getTensorSize(const unsigned short d)
-  {
-    if(d==1){
-      return 3;
-    } else if(d==2){
-      return 5;
-    } else if(d==3){
-      return 9;
-    }
-    throw(std::runtime_error("mtest::getTensorSize: "
-			     "invalid dimenstion"));
-  }
-
   MTest::UTest::~UTest()
   {}
 
@@ -161,10 +133,7 @@ namespace mtest
   std::string
   MTest::name(void) const
   {
-    if(this->tname.empty()){
-      return "unit behaviour test";
-    }
-    return this->tname;
+    return "unit behaviour test";
   } // end of MTest::name
   
   std::string
@@ -278,16 +247,16 @@ namespace mtest
   } // end of MTest::getVariableTypeAndPosition
 
   void
-  MTest::setDefaultHypothesis(void)
+  MTest::setDefaultModellingHypothesis(void)
   {
     typedef tfel::material::ModellingHypothesis MH;
     if(this->hypothesis!=MH::UNDEFINEDHYPOTHESIS){
-      throw(std::runtime_error("MTest::setDefaultHypothesis: "
+      throw(std::runtime_error("MTest::setDefaultModellingHypothesis: "
 			       "internal error : the modelling "
 			       "hypothesis is already defined"));
     }
     if(this->b.get()!=nullptr){
-      throw(std::runtime_error("MTest::setDefaultHypothesis: "
+      throw(std::runtime_error("MTest::setDefaultModellingHypothesis: "
 			       "behaviour already defined"));
     }
     if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
@@ -295,7 +264,6 @@ namespace mtest
       log << "No hypothesis defined, using default" << std::endl;
     }
     this->hypothesis = MH::TRIDIMENSIONAL;
-    this->dimension  = 3u;
   }
 
   void
@@ -424,7 +392,7 @@ namespace mtest
       throw(std::runtime_error("MTest::setStensorInternalStateVariableInitialValue: "
 			       "internal state variable '"+n+"' is not defined"));
     }
-    const auto N = getStensorSize(this->dimension);
+    const auto N = tfel::material::getStensorSize(this->hypothesis);
     if(v.size()!=N){
       throw(std::runtime_error("MTest::setStensorInternalStateVariableInitialValues : "
 			       "invalid values size"));
@@ -458,7 +426,7 @@ namespace mtest
       msg += "internal state variable '"+n+"' is not defined";
       throw(runtime_error(msg));
     }
-    const unsigned short N = getTensorSize(this->dimension);
+    const unsigned short N = tfel::material::getTensorSize(this->hypothesis);
     if(v.size()!=N){
       string msg("MTest::setTensorInternalStateVariableInitialValues : "
 		 "invalid values size");

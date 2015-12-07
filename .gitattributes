@@ -3596,7 +3596,6 @@ mfront/tests/unit-tests/BehaviourDescriptionTest.cxx -text
 mfront/tests/unit-tests/CMakeLists.txt -text
 mfront/tests/unit-tests/DSLTest.cxx -text
 mfront/tests/unit-tests/DSLTest2.cxx.in -text
-mfront/tests/unit-tests/MTestParserTest.cxx.in -text
 mfront/tests/unit-tests/Makefile.am -text
 mfront/tests/unit-tests/TargetsDescriptionTest.cxx -text
 mfront/tests/unit-tests/mfront/test1.mfront -text
@@ -3708,6 +3707,10 @@ mtest/src/Study.cxx -text
 mtest/src/StudyCurrentState.cxx -text
 mtest/src/UmatBehaviourBase.cxx -text
 mtest/src/UmatNormaliseTangentOperator.cxx -text
+mtest/tests/CMakeLists.txt -text
+mtest/tests/MTestParserTest.cxx.in -text
+mtest/tests/Makefile.am -text
+mtest/tests/PipeTest.cxx -text
 src/CMakeLists.txt -text
 src/Exception/CMakeLists.txt -text
 src/Exception/Makefile.am -text

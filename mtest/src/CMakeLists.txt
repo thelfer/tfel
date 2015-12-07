@@ -47,7 +47,7 @@ set(TFELMTest_SOURCES
   IronsTuckAccelerationAlgorithm.cxx
   MTest.cxx
   MTestParser.cxx
-#  PipeTest.cxx
+  PipeTest.cxx
   )
 
 set(TFELMTest_LDADD

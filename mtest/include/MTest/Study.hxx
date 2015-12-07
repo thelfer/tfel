@@ -20,7 +20,8 @@ namespace mtest{
 
   // forward declaration
   struct StudyCurrentState;
-
+  // forward declaration
+  struct SolverWorkSpace;
   // forward declaration
   struct Structure;
   
@@ -37,6 +38,18 @@ namespace mtest{
      */
     virtual size_type
     getNumberOfUnknowns(void) const = 0;
+    /*!
+     * \brief initialize the current state
+     * \param[in] s : current state
+     */
+    virtual void
+    initializeCurrentState(StudyCurrentState&) const = 0;
+    /*!
+     * \brief initialize the workspace
+     * \param[in] wk : workspace
+     */
+    virtual void
+    initializeWorkSpace(SolverWorkSpace&) const = 0;
     /*!
      * \brief update current state at the beginning of a new time step:
      * - update the material properties
@@ -147,7 +160,7 @@ namespace mtest{
     virtual void
     setModellingHypothesis(const std::string&) = 0;
     //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultHypothesis(void) = 0;
+    virtual void setDefaultModellingHypothesis(void) = 0;
     //! destructor
     virtual ~Study();
   }; // end of struct Study

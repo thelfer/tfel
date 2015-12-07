@@ -114,13 +114,13 @@ namespace mtest
      * \param[in] s : current state
      */
     virtual void
-    initializeCurrentState(StudyCurrentState&) const;
+    initializeCurrentState(StudyCurrentState&) const override;
     /*!
      * \brief initialize the workspace
      * \param[in] wk : workspace
      */
     virtual void
-    initializeWorkSpace(SolverWorkSpace&) const;
+    initializeWorkSpace(SolverWorkSpace&) const override;
     /*!
      * integrate the behaviour
      * along the loading path
@@ -378,7 +378,7 @@ namespace mtest
     ~MTest();
   protected:
     //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultHypothesis(void) override;
+    virtual void setDefaultModellingHypothesis(void) override;
     /*!
      * \return the number of unknowns (size of driving variables plus
      * the number of lagrangian multipliers)
@@ -413,8 +413,6 @@ namespace mtest
     std::vector<real> iv_t0;
     //! handle the computation of thermal expansion
     bool handleThermalExpansion;
-    //! test name
-    std::string tname;
     //! tangent operator comparison criterium
     real toeps;
     //! perturbation value

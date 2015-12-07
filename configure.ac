@@ -481,6 +481,9 @@ AC_OUTPUT([debug.sh
 	   docs/mtest/Makefile.doc
 	   docs/mtest/mtest.tex
 	   docs/mtest/Champs.tex
+	   docs/ptest/Makefile
+	   docs/ptest/ptest.tex
+	   docs/ptest/Makefile.doc
 	   docs/mfront/Makefile
 	   docs/mfront/Makefile.doc
 	   docs/mfront/general/mfront.tex
@@ -500,6 +503,8 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/castem/Makefile.doc
 	   docs/mfront/zmat/zmat.tex
 	   docs/mfront/zmat/Makefile.doc
+	   docs/mfront/abaqus/abaqus.tex
+	   docs/mfront/abaqus/Makefile.doc
 	   docs/mfront/glossary.tex
 	   docs/presentations/Makefile
 	   docs/presentations/mfront-presentation/Makefile
@@ -558,7 +563,6 @@ AC_OUTPUT([debug.sh
            mfront/tests/unit-tests/Makefile
            mfront/tests/unit-tests/DSLTest2.cxx
 	   mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx
-	   mfront/tests/unit-tests/MTestParserTest.cxx
            mfront/tests/Makefile
            mfront/tests/properties/Makefile
            mfront/tests/properties/interfaces/Makefile
@@ -1951,6 +1955,8 @@ AC_OUTPUT([debug.sh
 	   mtest/Makefile
    	   mtest/src/Makefile
    	   mtest/include/Makefile
+	   mtest/tests/Makefile
+	   mtest/tests/MTestParserTest.cxx
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile

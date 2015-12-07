@@ -219,6 +219,8 @@ namespace mtest{
     //! destructor
     virtual ~SchemeBase();
   protected:
+    //! a simple alias
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
     /*!
      * complete the initialisation. This method must be called once.
      * \note this method must be called by the derived class.
@@ -237,7 +239,7 @@ namespace mtest{
     void declareVariables(const std::vector<std::string>&,
 			  const bool);
     //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultHypothesis(void) = 0;
+    virtual void setDefaultModellingHypothesis(void) = 0;
     //! initilisation stage
     bool initialisationFinished = false;
     //! solver options
@@ -257,10 +259,8 @@ namespace mtest{
     //! date
     std::string date;
     //! modelling hypothesis
-    tfel::material::ModellingHypothesis::Hypothesis hypothesis = 
-      tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    //! dimension used for the computation
-    unsigned short dimension = 0u;
+    ModellingHypothesis::Hypothesis hypothesis = 
+      ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //! default values for material properties as given by the behaviour
     std::shared_ptr<EvolutionManager> dmpv;
     //! list of evolutions

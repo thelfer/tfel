@@ -14,9 +14,12 @@
 #ifndef _LIB_MTEST_PIPETEST_HXX_
 #define _LIB_MTEST_PIPETEST_HXX_
 
+#include"TFEL/Math/vector.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
+
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
-#include"MTest/Study.hxx"
+#include"MTest/SchemeBase.hxx"
 
 namespace mtest{
 
@@ -24,16 +27,64 @@ namespace mtest{
    * a study describing mechanical tests on pipes
    */
   struct MTEST_VISIBILITY_EXPORT PipeTest
-    : public Study
+    : public SchemeBase
   {
     //! a simple alias
     using size_type = tfel::math::vector<real>::size_type;
+    /*! 
+     * \return the name of the test
+     */
+    virtual std::string
+    name(void) const override;
+    /*! 
+     * \return the group of the test
+     */
+    virtual std::string
+    classname(void) const override;
+    /*!
+     * integrate the behaviour
+     * along the loading path
+     */ 
+    virtual tfel::tests::TestResult
+    execute(void) override;
+    /*!
+     * \brief set the pipe inner radius
+     * \param[in] r: radius value
+     */
+    virtual void setInnerRadius(const real);
+    /*!
+     * \brief set the pipe outer radius
+     * \param[in] r: radius value
+     */
+    virtual void setOuterRadius(const real);
+    /*!
+     * \brief set the number of elements
+     * \param[in] n: number of elements
+     */
+    virtual void setNumberOfElements(const int);
+    /*!
+     * complete the initialisation. This method must be called once.
+     * \note this method is called automatically by the execute method.
+     */ 
+    virtual void completeInitialisation(void);
     /*!
      * \return the total number of unknowns (including the Lagrange
      * multipliers)
      */
     virtual size_type
     getNumberOfUnknowns(void) const override;
+    /*!
+     * \brief initialize the current state
+     * \param[in] s : current state
+     */
+    virtual void
+    initializeCurrentState(StudyCurrentState&) const override;
+    /*!
+     * \brief initialize the workspace
+     * \param[in] wk : workspace
+     */
+    virtual void
+    initializeWorkSpace(SolverWorkSpace&) const override;
     /*!
      * \brief update current state at the beginning of a new time step:
      * - update the material properties
@@ -144,9 +195,20 @@ namespace mtest{
     virtual void
     setModellingHypothesis(const std::string&) override;
     //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultHypothesis(void) override;
+    virtual void setDefaultModellingHypothesis(void) override;
     //! destructor
     virtual ~PipeTest();
+  private:
+    struct {
+      real inner_radius = real(-1);
+      real outer_radius = real(-1);
+      int  number_of_elements = -1;
+    } mesh;
+    //! a simple alias
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    //! the modelling hypothesis
+    ModellingHypothesis::Hypothesis hypothesis =
+      ModellingHypothesis::UNDEFINEDHYPOTHESIS;
   }; // end of struct PipeTest
   
 } // end of namespace mtest

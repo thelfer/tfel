@@ -259,7 +259,7 @@ namespace mtest{
     typedef ExternalLibraryManager ELM;
     typedef tfel::material::ModellingHypothesis MH;
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
-      this->setDefaultHypothesis();
+      this->setDefaultModellingHypothesis();
     }
     if(this->b.get()!=nullptr){
       throw(std::runtime_error("SchemeBase::setBehaviour: "
@@ -402,42 +402,17 @@ namespace mtest{
   void
   SchemeBase::setModellingHypothesis(const std::string& h)
   {
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->dimension!=0){
+    if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("SchemeBase::setModellingHypothesis: "
 			       "the modelling hypothesis is already defined"));
     }
-    if(h=="AxisymmetricalGeneralisedPlaneStrain"){
-      this->dimension=1u;
-      this->hypothesis = MH::AXISYMMETRICALGENERALISEDPLANESTRAIN;
-    } else if(h=="AxisymmetricalGeneralisedPlaneStress"){
-      this->dimension=1u;
-      this->hypothesis = MH::AXISYMMETRICALGENERALISEDPLANESTRESS;
-    } else if(h=="Axisymmetrical"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::AXISYMMETRICAL;
-    } else if(h=="PlaneStress"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::PLANESTRESS;
-    } else if(h=="PlaneStrain"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::PLANESTRAIN;
-    } else if(h=="GeneralisedPlaneStrain"){
-      this->dimension  = 2u;
-      this->hypothesis = MH::GENERALISEDPLANESTRAIN;
-    } else if(h=="Tridimensional"){
-      this->dimension  = 3u;
-      this->hypothesis = MH::TRIDIMENSIONAL;
-    } else {
-      throw(std::runtime_error("SchemeBase::setModellingHypothesis: "
-			       "unsupported hypothesis '"+h+"'"));
-    }
+    this->hypothesis=ModellingHypothesis::fromString(h);
   } // end of SchemeBase::setModellingHypothesis
 
   tfel::material::ModellingHypothesis::Hypothesis
   SchemeBase::getModellingHypothesis() const
   {
-    if(this->dimension==0){
+    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("SchemeBase::getModellingHypothesis: "
 			       "the modelling hypothesis is not defined"));
     }
@@ -447,12 +422,12 @@ namespace mtest{
   unsigned short
   SchemeBase::getDimension(void) const
   {
-    if(this->dimension==0){
+    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("SchemeBase::getDimension: "
 			       "the modelling hypothesis is "
 			       "not defined"));
     }
-    return this->dimension;
+    return tfel::material::getSpaceDimension(this->hypothesis);
   }
 
   tfel::material::MechanicalBehaviourBase::BehaviourType
@@ -592,8 +567,8 @@ namespace mtest{
       throw(std::runtime_error("MTest::completeInitialisation : "
 			       "object already initialised"));
     }
-    if(this->dimension==0u){
-      this->setDefaultHypothesis();
+    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      this->setDefaultModellingHypothesis();
     }
     if(this->b.get()==nullptr){
       throw(std::runtime_error("MTest::completeInitialisation : "

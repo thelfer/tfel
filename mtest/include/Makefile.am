@@ -14,6 +14,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/SchemeBase.hxx	                         \
 			 MTest/MTest.hxx	                         \
 			 MTest/MTestParser.hxx	                         \
+			 MTest/PipeTest.hxx	                         \
 			 MTest/AnalyticalTest.hxx	                 \
 			 MTest/ReferenceFileComparisonTest.hxx           \
 			 MTest/Behaviour.hxx                             \

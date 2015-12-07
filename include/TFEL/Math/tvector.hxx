@@ -177,7 +177,7 @@ namespace tfel{
        */
       template<typename T2,
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
-      TFEL_MATH_INLINE constexpr tvector(const T2&);
+      TFEL_MATH_INLINE constexpr explicit tvector(const T2&);
       /*!
        * \brief Default Constructor 
        * \param[in] init: values used to initialise the components of the vector 
