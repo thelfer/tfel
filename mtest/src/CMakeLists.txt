@@ -20,6 +20,7 @@ set(TFELMTest_SOURCES
   GenericSolver.cxx
   Scheme.cxx
   SchemeBase.cxx
+  SingleStructureScheme.cxx
   AnalyticalTest.cxx
   ReferenceFileComparisonTest.cxx
   Evolution.cxx

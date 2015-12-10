@@ -19,7 +19,7 @@
 
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
-#include"MTest/SchemeBase.hxx"
+#include"MTest/SingleStructureScheme.hxx"
 
 namespace mtest{
 
@@ -27,8 +27,20 @@ namespace mtest{
    * a study describing mechanical tests on pipes
    */
   struct MTEST_VISIBILITY_EXPORT PipeTest
-    : public SchemeBase
+    : public SingleStructureScheme
   {
+    //! structure describing the pipe mesh
+    struct Mesh{
+      real inner_radius = real(-1);
+      real outer_radius = real(-1);
+      int  number_of_elements = -1;
+    }; // end of struct Mesh
+    //! how the pipe is modelled
+    enum PipeModellingHypothesis{
+      DEFAULT,
+      ENDCAPEFFECT,
+      NONE
+    }; // end of enum PipeModellingHypothesis
     //! a simple alias
     using size_type = tfel::math::vector<real>::size_type;
     /*! 
@@ -48,6 +60,18 @@ namespace mtest{
     virtual tfel::tests::TestResult
     execute(void) override;
     /*!
+     * integrate the behaviour over one step
+     * \param[out] s: current structure state
+     * \param[out] wk: workspace
+     * \param[in]  t:  current time
+     * \param[in]  dt: time increment
+     */ 
+    virtual void
+    execute(StudyCurrentState&,
+	    SolverWorkSpace&,
+	    const real,
+	    const real) const;
+    /*!
      * \brief set the pipe inner radius
      * \param[in] r: radius value
      */
@@ -63,10 +87,36 @@ namespace mtest{
      */
     virtual void setNumberOfElements(const int);
     /*!
+     * \brief set the pipe modelling hypothesis
+     * \param[in] ph: pipe modelling hypothesis
+     */
+    virtual void setPipeModellingHypothesis(const PipeModellingHypothesis);
+    /*!
+     * \brief set the inner pressure evolution
+     * \param[in] p : pressure evolution
+     */
+    virtual void setInnerPressureEvolution(std::shared_ptr<Evolution>);
+    /*!
+     * \brief set the outer pressure evolution
+     * \param[in] p : pressure evolution
+     */
+    virtual void setOuterPressureEvolution(std::shared_ptr<Evolution>);
+    /*!
+     * \brief set displacement criterion value
+     * \param[in] e: criterion value
+     */
+    virtual void setDisplacementEpsilon(const real);
+    /*!
+     * \brief set criterium value for the convergence test on the
+     * residual
+     * \param[in] e : criterion value
+     */
+    virtual void setResidualEpsilon(const real);
+    /*!
      * complete the initialisation. This method must be called once.
      * \note this method is called automatically by the execute method.
      */ 
-    virtual void completeInitialisation(void);
+    virtual void completeInitialisation(void) override;
     /*!
      * \return the total number of unknowns (including the Lagrange
      * multipliers)
@@ -94,10 +144,9 @@ namespace mtest{
      * \param[in]  t: current time
      * \param[in] dt: time increment
      */
-    virtual void
-    prepare(StudyCurrentState&,
-	    const real,
-	    const real) const override;
+    virtual void prepare(StudyCurrentState&,
+			 const real,
+			 const real) const override;
     /*!
      * \brief make a linear prediction of the unknows and state
      * \param[out] s: current structure state
@@ -142,8 +191,7 @@ namespace mtest{
     /*!
      * \param[in] : du unknows increment difference between two iterations
      */
-    virtual real
-    getErrorNorm(const tfel::math::vector<real>&) const override;
+    virtual real getErrorNorm(const tfel::math::vector<real>&) const override;
     /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
@@ -154,14 +202,13 @@ namespace mtest{
      * \param[in] dt: time increment
      * \return a boolean saying if all convergence criteria are met
      */
-    virtual bool
-    checkConvergence(const StudyCurrentState&,
-		     const tfel::math::vector<real>&,
-		     const tfel::math::vector<real>&,
-		     const SolverOptions&,
-		     const unsigned int,
-		     const real,
-		     const real) const override;
+    virtual bool checkConvergence(const StudyCurrentState&,
+				  const tfel::math::vector<real>&,
+				  const tfel::math::vector<real>&,
+				  const SolverOptions&,
+				  const unsigned int,
+				  const real,
+				  const real) const override;
     /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
@@ -196,19 +243,31 @@ namespace mtest{
     setModellingHypothesis(const std::string&) override;
     //! \brief set the modelling hypothesis to the default one
     virtual void setDefaultModellingHypothesis(void) override;
+    //! \brief turn hpp to true
+    virtual void performSmallStrainAnalysis(void);
+    /*!
+     * \brief print usefull information in the output file 
+     * \param[in] t  : time
+     * \param[in] state  : current state
+     */
+    virtual void printOutput(const real,const StudyCurrentState&) override;
     //! destructor
     virtual ~PipeTest();
   private:
-    struct {
-      real inner_radius = real(-1);
-      real outer_radius = real(-1);
-      int  number_of_elements = -1;
-    } mesh;
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    //! the modelling hypothesis
-    ModellingHypothesis::Hypothesis hypothesis =
-      ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    //! mesh data
+    Mesh mesh;
+    //! output file precision
+    int oprec;
+    //! inner pressure
+    std::shared_ptr<Evolution> inner_pressure;
+    //! outer pressure
+    std::shared_ptr<Evolution> outer_pressure;
+    //! pipe modelling hypothesis
+    PipeModellingHypothesis pmh = DEFAULT;
+    //! small strain hypothesis
+    bool hpp = false;
   }; // end of struct PipeTest
   
 } // end of namespace mtest

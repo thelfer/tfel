@@ -14,6 +14,7 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  CurrentState.cxx                          \
 			  Scheme.cxx                                \
 			  SchemeBase.cxx                            \
+			  SingleStructureScheme.cxx                 \
 			  AnalyticalTest.cxx                        \
 			  ReferenceFileComparisonTest.cxx           \
 			  Evolution.cxx                             \

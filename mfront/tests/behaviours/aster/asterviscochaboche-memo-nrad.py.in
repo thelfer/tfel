@@ -9,7 +9,7 @@ except ImportError:
 import std
 import tfel.math
 import tfel.tests
-from mfront.mtest import *
+from mtest import *
 
 class ViscoChabochMemoNRad(unittest.TestCase):
 

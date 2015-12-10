@@ -1,8 +1,8 @@
-/*! 
- * \file   bindings/python/mfront/pymtest.cxx
- * \brief
- * \author Helfer Thomas
- * \brief  10 avril 2014
+/*!
+ * \file   StructureCurrentState.cxx
+ * \brief    
+ * \author THOMAS HELFER
+ * \date   08 déc. 2015
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -12,16 +12,13 @@
  */
 
 #include<boost/python.hpp>
+#include"MTest/StructureCurrentState.hxx"
 
-void declareMTestParser(void);
-void declareMTest(void);
-void declareCurrentState(void);
-void declareMFrontLogStream(void);
+void declareStructureCurrentState(void);
 
-BOOST_PYTHON_MODULE(mtest)
+void declareStructureCurrentState(void)
 {
-  declareCurrentState();
-  declareMTestParser();
-  declareMTest();
-  declareMFrontLogStream();
+  boost::python::class_<mtest::StructureCurrentState>("StructureCurrentState")
+    ;
+
 }

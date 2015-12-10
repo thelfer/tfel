@@ -1968,9 +1968,13 @@ AC_OUTPUT([debug.sh
 	   bindings/python/tfel/__init__.py
 	   bindings/python/mfront/Makefile
 	   bindings/python/mfront/__init__.py
+	   bindings/python/mfront/mtest/Makefile
+	   bindings/python/mfront/mtest/__init__.py
 	   bindings/python/mfront/umatxx/Makefile
 	   bindings/python/mfront/umatxx/__init__.py
 	   bindings/python/mfront/umatxx/Behaviour.py
+	   bindings/python/mtest/Makefile
+	   bindings/python/mtest/__init__.py
 	   bindings/python/include/Makefile
 	   tests/Makefile
 	   tests/Tests/Makefile

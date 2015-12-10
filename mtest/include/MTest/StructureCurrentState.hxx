@@ -74,8 +74,6 @@ namespace mtest{
     const Behaviour& getBehaviour(void) const;
     //! destructor
     ~StructureCurrentState();
-    //! evolution of the structure loading
-    EvolutionManager evm;
     //! current state of each integration points
     tfel::math::vector<CurrentState> istates;
   private:

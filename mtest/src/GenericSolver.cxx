@@ -120,14 +120,66 @@ namespace mtest{
       if((mfront::getVerboseMode()>=mfront::VERBOSE_DEBUG)&&
 	 (o.ktype!=StiffnessMatrixType::NOSTIFFNESS)){
 	auto& log = mfront::getLogStream();
+	log << "Stiffness matrix:\n";
 	for(size_type i=0;i!=wk.K.getNbRows();++i){
 	  for(size_type j=0;j!=wk.K.getNbCols();++j){
 	    log << wk.K(i,j) << " ";
 	  }
-	  log << endl;
+	  log << '\n';
 	}
 	log << endl;
       }
+      // scs.revert();
+      // tfel::math::matrix<real> nK(wk.K.getNbRows(),wk.K.getNbCols());
+      // tfel::math::vector<real> nr(wk.K.getNbRows());
+      // std::fill(nK.begin(),nK.end(),real(0));
+      // std::fill(nr.begin(),nr.end(),real(0));
+      // for(size_type i=0;i!=wk.K.getNbRows();++i){
+      // 	constexpr const real eps = 1.e-6;
+      // 	scs.revert();
+      // 	scs.u1[i] += eps;
+      // 	s.computeStiffnessMatrixAndResidual(scs,nK,nr,t,dt,
+      // 					    StiffnessMatrixType::NOSTIFFNESS);
+      // 	// std::cout << "nr : ";
+      // 	for(size_type j=0;j!=wk.K.getNbCols();++j){
+      // 	  // std::cout << nr[j] << " ";
+      // 	  nK(j,i) = nr[j];
+      // 	}
+      // 	// std::cout << "\n";
+      // 	scs.revert();
+      // 	scs.u1[i] -= eps;
+      // 	s.computeStiffnessMatrixAndResidual(scs,nK,nr,t,dt,
+      // 					    StiffnessMatrixType::NOSTIFFNESS);
+      // 	// std::cout << "nr : ";
+      // 	for(size_type j=0;j!=wk.K.getNbCols();++j){
+      // 	  // std::cout << nr[j] << " ";
+      // 	  nK(j,i) -= nr[j];
+      // 	  nK(j,i) /= 2*eps;
+      // 	}
+      // 	// std::cout << "\n";
+      // }
+      // if(mfront::getVerboseMode()>=mfront::VERBOSE_DEBUG){
+      // 	auto& log = mfront::getLogStream();
+      // 	log << "Numerical stiffness matrix:\n";
+      // 	for(size_type i=0;i!=wk.K.getNbRows();++i){
+      // 	  for(size_type j=0;j!=wk.K.getNbCols();++j){
+      // 	    log << nK(i,j) << " ";
+      // 	  }
+      // 	  log << '\n';
+      // 	}
+      // 	log << endl;
+      // }
+      // for(size_type i=0;i!=wk.K.getNbRows();++i){
+      // 	for(size_type j=0;j!=wk.K.getNbCols();++j){
+      // 	  if(std::abs(wk.K(i,j)-nK(i,j))>1){
+      // 	    std::cout << i << " " << j << " " << wk.K(i,j) << " " << nK(i,j)
+      // 		      << " " << std::abs(wk.K(i,j)-nK(i,j))
+      // 		      << " " << std::abs(wk.K(i,j)-nK(i,j))/std::abs(nK(i,j))*100
+      // 		      << std::endl;
+      // 	  }
+      // 	}
+      // }
+      // ::exit(-1);
       wk.du = wk.r;
       LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
       u1 -= wk.du;

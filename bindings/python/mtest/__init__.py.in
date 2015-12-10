@@ -1,0 +1,3 @@
+from _mtest import *
+MTestStiffnessMatrixType=StiffnessMatrixType
+MTestWorkSpace=SolverWorkSpace

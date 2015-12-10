@@ -33,11 +33,7 @@
 
 namespace abaqus{
 
-#ifdef _WIN32
-  using AbaqusInt  = int32_t;
-#else /* _WIN32 */
-  using  AbaqusInt = int64_t;
-#endif /* _WIN32 */
+  using AbaqusInt  = int;
   using AbaqusReal = double;
 
   /*!

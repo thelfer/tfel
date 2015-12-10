@@ -1,3 +1,3 @@
-SUBDIRS = std tfel mfront include
+SUBDIRS =  include std tfel mfront mtest
 
 EXTRA_DIST = CMakeLists.txt

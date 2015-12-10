@@ -21,6 +21,7 @@
 
 \newcommand{\pleiades}{\texttt{pleiades}}
 \newcommand{\tfel}{\texttt{TFEL}}
+\newcommand{\python}{\texttt{python}}
 \newcommand{\mfront}{\texttt{mfront}}
 \newcommand{\mtest}{\texttt{mtest}}
 \newcommand{\licos}{\texttt{licos}}
@@ -109,6 +110,16 @@ informations sur un fichier \mfront{}.
 \section{Nouveautés \mtest{}}
 
 \subsection{Nouvelles méthodes d'accélération de convergence}
+
+\subsection{Création du module {\tt mtest}}
+
+Les fonctionnalités de \mtest{} sont désormais accessibles en
+\python{} depuis le module éponyme.
+
+Dans les versions précédentes, un modèle {\tt mfront.mtest} avait ce
+rôle. Celui existe toujours pour assurer la compatibilité avec les
+versions précédentes. Son utilisation conduit cependant à une message
+d'avertissement conseillant d'utiliser le nouveau module.
 
 \section{Nouveautés \tfel{}}
 

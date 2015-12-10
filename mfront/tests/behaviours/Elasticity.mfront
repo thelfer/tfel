@@ -19,11 +19,9 @@
 @AsterGenerateMTestFileOnFailure[aster] true;
 
 // Material properties
-// rho and alpha are mandatory
-// for the Cast3M finite element solver
 @MaterialProperty stress young;
-@MaterialProperty real   nu;
 young.setGlossaryName("YoungModulus");
+@MaterialProperty real   nu;
 nu.setGlossaryName("PoissonRatio");
 
 // Lame Coefficients

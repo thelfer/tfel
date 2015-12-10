@@ -102,7 +102,7 @@ namespace mtest
      * \param[in] v : values
      */
     LPIEvolution(const std::vector<real>&,
-		      const std::vector<real>&);
+		 const std::vector<real>&);
     /*!
      * \return the value of the evolution
      * at the given time
@@ -127,6 +127,20 @@ namespace mtest
     std::map<real,real> values;
   };
 
+  /*!
+   * \brief build a constant evolution from a real value
+   * \param[in] v: value
+   */
+  MTEST_VISIBILITY_EXPORT std::shared_ptr<Evolution>
+  make_evolution(const real);
+  /*!
+   * \brief build a linear per interval evolution from a map
+   * associating a time and a value.
+   * \param[in] v: values
+   */
+  MTEST_VISIBILITY_EXPORT std::shared_ptr<Evolution>
+  make_evolution(const std::map<real,real>&);
+  
 } // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTEVOLUTION_H_ */

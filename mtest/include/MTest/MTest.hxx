@@ -29,12 +29,12 @@
 #include"TFEL/Math/LUSolve.hxx"
 
 #include"MTest/Config.hxx"
-#include"MTest/SchemeBase.hxx"
 #include"MTest/Types.hxx"
 #include"MTest/Constraint.hxx"
 #include"MTest/SolverWorkSpace.hxx"
 #include"MTest/StudyCurrentState.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
+#include"MTest/SingleStructureScheme.hxx"
 
 namespace mtest
 {
@@ -46,7 +46,7 @@ namespace mtest
    * strain behaviours) followed by a number of lagrange multiplier.
    */
   struct MTEST_VISIBILITY_EXPORT MTest
-    : public SchemeBase
+    : public SingleStructureScheme
   {
     /*!
      * \brief base class for testing the behaviour outputs
@@ -108,7 +108,7 @@ namespace mtest
      * \note this method is called automatically by the execute method.
      */ 
     virtual void
-    completeInitialisation(void);
+    completeInitialisation(void) override;
     /*!
      * \brief initialize the current state
      * \param[in] s : current state
@@ -234,6 +234,10 @@ namespace mtest
 		    const unsigned int) const override;
     /*!
      * integrate the behaviour over one step
+     * \param[out] s: current structure state
+     * \param[out] wk: workspace
+     * \param[in]  t:  current time
+     * \param[in]  dt: time increment
      */ 
     virtual void
     execute(StudyCurrentState&,
@@ -271,43 +275,19 @@ namespace mtest
     virtual void setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>&,
 				   const bool = false);
     /*!
-     * \brief set the output file
-     * \param[in] f : file name
-     */
-    virtual void
-    setOutputFileName(const std::string&);
-    /*!
-     * \brief set the output file precision
-     * \param[in] p : precision
-     */
-    virtual void
-    setOutputFilePrecision(const unsigned int);
-    /*!
-     * \brief set the residual file
-     * \param[in] f : file name
-     */
-    virtual void
-    setResidualFileName(const std::string&);
-    /*!
-     * \brief set the residual file precision
-     * \param[in] p : precision
-     */
-    virtual void
-    setResidualFilePrecision(const unsigned int);
-    /*!
      * \brief set criterium value for the convergence test on the on
      * the driving variable
      * \param[in] e : criterium
      */
     virtual void
-    setDrivingVariableEpsilon(const double);
+    setDrivingVariableEpsilon(const real);
     /*!
      * \brief set criterium value for the convergence test on the
      * thermodynamic forces
      * \param[in] e : criterium
      */
     virtual void
-    setThermodynamicForceEpsilon(const double);
+    setThermodynamicForceEpsilon(const real);
     /*!
      * \return the type and the position of the given variable
      * \param[out] type : type of the variable
@@ -361,17 +341,13 @@ namespace mtest
      * \brief add a new constraint
      * \param[in] c     : constraint
      */
-    virtual void
-    addConstraint(const std::shared_ptr<Constraint>);
+    virtual void addConstraint(const std::shared_ptr<Constraint>);
     /*!
-     * \brief print the driving variable, 
+     * \brief print usefull information in the output file 
      * \param[in] t  : time
-     * \param[in] u  : unknowns (driving variable)
-     * \param[in] s  : thermodynamic forces
-     * \param[in] iv : internal state variables
+     * \param[in] state  : current state
      */
-    virtual void
-    printOutput(const real,const StudyCurrentState&);
+    virtual void printOutput(const real,const StudyCurrentState&) override;
     /*!
      * destructor
      */
@@ -384,10 +360,6 @@ namespace mtest
      * the number of lagrangian multipliers)
      */
     virtual size_t getNumberOfUnknowns(void) const override;
-    //! output file precision
-    int oprec;
-    //! residual file precision
-    int rprec;
     //! list of tests
     std::vector<std::shared_ptr<UTest>> tests;
     //! constraints
@@ -396,15 +368,6 @@ namespace mtest
     tfel::math::tmatrix<3u,3u,real> rm;
     //! boolean, true if the rotation matrix has been defined by the user
     bool isRmDefined;
-    //! output file name
-    std::string output;
-    //! output file
-    std::ofstream out;
-    //! residual file name
-    std::string residualFileName;
-    //! file where residuals evolutions as a function of the iteration
-    //! number are saved
-    mutable std::ofstream residual;
     // inital values of the driving variables
     std::vector<real> e_t0;
     // inital values of the thermodynamic forces

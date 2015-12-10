@@ -47,11 +47,7 @@ extern "C" {
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 
-#ifdef _WIN32
-  typedef int32_t AbaqusIntegerType;
-#else /* _WIN32 */
-  typedef int64_t AbaqusIntegerType;
-#endif /* _WIN32 */
+  typedef int AbaqusIntegerType;
   
   typedef double AbaqusRealType;
   typedef double CyranoRealType;

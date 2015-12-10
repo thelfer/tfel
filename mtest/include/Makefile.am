@@ -12,6 +12,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/CurrentState.hxx	                         \
 			 MTest/Scheme.hxx	                         \
 			 MTest/SchemeBase.hxx	                         \
+			 MTest/SingleStructureScheme.hxx                 \
 			 MTest/MTest.hxx	                         \
 			 MTest/MTestParser.hxx	                         \
 			 MTest/PipeTest.hxx	                         \

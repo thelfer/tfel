@@ -123,13 +123,38 @@ library, without prefix ({\tt lib}) or suffix ({\tt .dll} or {\tt
   contain an underscore character.}
 
 For example, on {\tt UNIX} systems, if one want to call the {\tt
-  ELASTICITY} behaviour in {\tt libABAQUSBEHAVIOURS.so} library, the
+  ELASTICITY} behaviour in {\tt libABAQUSBEHAVIOUR.so} library, the
 name of the behaviour in the \abaqus{} input file has to be: {\tt
-  ABAQUSBEHAVIOURS\_ELASTICITY}. This leads to the following
+  ABAQUSBEHAVIOUR\_ELASTICITY}. This leads to the following
 declaration of the material:
 \begin{flushleft}
-{\tt *Material, name=ABAQUSBEHAVIOURS\_ELASTICITY}
+{\tt *Material, name=ABAQUSBEHAVIOUR\_ELASTICITY}
 \end{flushleft}
+
+\subsection{Note on libraries locations}
+
+As explained above, \mfront{} libraries will be loaded at the runtime
+time. This means that the libraries must be found by the dynamic
+loader of the operating system.
+
+\subsubsection{Under Linux}
+
+Under Linux, the search path for dynamic libraries are specified using
+the {\tt LD\_LIBRARY\_PATH} variable environment. This variable
+defines a colon-separated set of directories where libraries should be
+searched for first, before the standard set of directories.
+
+Depending on the configuration of the system, the current directory
+can be considered by default.
+
+\subsubsection{Under Windows}
+
+Under Windows, the dynamic libraries are searched:
+\begin{itemize}
+\item in the current directory~;
+\item in the directories listed in the {\tt PATH} environment. This
+  variable defines a semicolon-separated set of directories.
+\end{itemize}
 
 \section{Description of the interface functionalities}
 
@@ -167,7 +192,7 @@ the tangent moduli associated with the \nom{Jauman} rate of the
 \nom{Kirchhoff} stress \(\tenseurq{C}^{J\,\tau}\) divided by \(J\):
 \begin{equation}
   \label{eq:CJt}
-  J\,\tenseurq{C}\,\colon\,\tenseur{D}=\tenseurq{C}^{J\,\tau}\,\colon\,\tenseur{D}=\tenseur{\dot{\tau}}-\tns{W}\,.\,\tenseur{\tau}+\tenseur{\tau}\,.\,\tns{W}  
+  J\,\tenseurq{C}\,\colon\,\delta\,\tenseur{D}=\tenseurq{C}^{J\,\tau}\,\colon\,\delta\,\tenseur{D}=\delta\,\tenseur{\tau}-\delta\,\tns{W}\,.\,\tenseur{\tau}+\tenseur{\tau}\,.\,\delta\,\tns{W}  
 \end{equation}
 where~:
 \begin{minipage}[t]{0.8\linewidth}
@@ -188,22 +213,9 @@ The velocity gradient is defined by:
   \tns{L}=\dot{\tns{F}}\,.\,\tns{F}^{-1}
 \end{equation}
 
-\subsection{Incremental resolutions}
-
-Equation~\eqref{eq:CJt} gives the expression of the consistent tangent
-operator \(\tenseurq{C}\) in terms of rates. This is not of much help
-in incremental resolutions. Multiplying Equation~\eqref{eq:CJt} by the
-time increment \(\Delta\,t\) leads to:
-\[
-J\,\tenseurq{C}\,\colon\,\Delta\,t\,\tenseur{D}=\Delta\,\tenseur{\tau}-\Delta\,t\,\tns{W}\,.\,\tenseur{\tau}+\tenseur{\tau}\,.\,\Delta\,t\,\tns{W}  
-\]
-
-This equation is far from being well defined. Indeed, an assumption
-must be made to define the velocity gradient \(\tns{L}\) (and the spin
-rate \(\tns{W}\). Moreover, the instant when \(J\) is evaluated must
-be precised.
-
-Let us introduce the following definitions:
+For incremental resolutions, one have make an assumption must be made
+to define the velocity gradient \(\tns{L}\) (and the spin rate
+\(\tns{W}\). Let us introduce the following definitions:
 \begin{itemize}
 \item \(\bts{F}\) is the deformation gradient at the beginning of the time step~;
 \item \(\ets{F}\) is the deformation gradient at the end of the time step~;
@@ -215,6 +227,29 @@ An approximation of \(\tns{L}\) can be given by~:
 \[
 \Delta\,t\,\tns{L}=\paren{\ets{\tns{F}}-\bts{\tns{F}}}\,.\,\paren{\bts{\tns{F}}+\theta\,\paren{\ets{\tns{F}}-\bts{\tns{F}}}}^{-1}=\paren{\ets{\tns{F}}-\bts{\tns{F}}}\,.\,\mts{\tns{F}}^{-1}
 \]
+
+% Using this approximation, one can compute a fourth order tensor giving
+% \(\Delta\,t\,\deriv{\tns{L}}{\ets{\tns{F}}}\) for any value of
+% \(\theta\) and thus the derivative
+% \(\Delta\,t\,\deriv{\tns{W}}{\ets{\tns{F}}}\):
+% \[
+% \tenseurq{K}_{\tns{W}}=\Delta\,t\,\deriv{\tns{W}}{\ets{\tns{F}}}
+% \]
+
+% Thus, one can define a fourth order tensor \(\tenseurq{K}\) by:
+% \[
+%   \tenseurq{K}=\deriv{}{\ets{\tns{F}}}\paren{\Delta\,\tenseur{\tau}-\Delta\,t\,\tns{W}\,.\,\tenseur{\tau}+\tenseur{\tau}\,.\,\Delta\,t\,\tns{W}}=
+%   \deriv{\tenseur{\tau}}{\ets{\tns{F}}}-\dtot^{\star}_{r}\paren{\tenseur{\tau}}\,.\,\tenseurq{K}_{\tns{W}}+\dtot^{\star}_{l}\paren{\tenseur{\tau}}\,.\,\tenseurq{K}_{\tns{W}}
+% \]
+
+% Then, one have to deduce \(\tenseurq{C}\) from
+% \(\tenseurq{K}\). Indeed, following Han~\cite{han_implantation_2010},
+% one may use the following relationship~:
+% \[
+% C_{ijkm}=\sum{l=0}^{2}K_{ijkl}F^{T}_{lm}=\sum{l=0}^{2}K_{ijkl}F_{ml}
+% \]
+
+%  By combing this term with \(\deriv{\tenseur{\tau}}{\ets{\tns{F}}}\).
 
 \referencecea{}
 

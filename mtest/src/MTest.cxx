@@ -105,9 +105,7 @@ namespace mtest
   {}
 
   MTest::MTest()
-    : oprec(-1),
-      rprec(-1),
-      rm(real(0)),
+    : rm(real(0)),
       isRmDefined(false),
       handleThermalExpansion(true),
       toeps(-1),
@@ -149,7 +147,7 @@ namespace mtest
   }
 
   void
-  MTest::setDrivingVariableEpsilon(const double e)
+  MTest::setDrivingVariableEpsilon(const real e)
   {
     if(this->options.eeps>0){
       throw(std::runtime_error("MTest::setDrivingVariableEpsilon: the epsilon "
@@ -163,7 +161,7 @@ namespace mtest
   }
 
   void
-  MTest::setThermodynamicForceEpsilon(const double s)
+  MTest::setThermodynamicForceEpsilon(const real s)
   {
     if(this->options.seps>0){
       throw(std::runtime_error("MTest::setThermodynamicForceEpsilon: the epsilon "
@@ -264,46 +262,6 @@ namespace mtest
       log << "No hypothesis defined, using default" << std::endl;
     }
     this->hypothesis = MH::TRIDIMENSIONAL;
-  }
-
-  void
-  MTest::setOutputFileName(const std::string& o)
-  {
-    if(!this->output.empty()){
-      throw(std::runtime_error("MTest::setOutputFileName: "
-			       "output file name already defined"));
-    }
-    this->output = o;
-  }
-
-  void
-  MTest::setOutputFilePrecision(const unsigned int p)
-  {
-    if(this->oprec!=-1){
-      throw(std::runtime_error("MTest::setOutputFileName: "
-			       "output file precision already defined"));
-    }
-    this->oprec = static_cast<int>(p);
-  }
-
-  void
-  MTest::setResidualFileName(const std::string& o)
-  {
-    if(!this->residualFileName.empty()){
-      throw(std::runtime_error("MTest::setResidualFileName : "
-			       "residual file name already defined"));
-    }
-    this->residualFileName = o;
-  }
-
-  void
-  MTest::setResidualFilePrecision(const unsigned int p)
-  {
-    if(this->rprec!=-1){
-      throw(std::runtime_error("MTest::setResidualFileName: "
-			       "residual file precision already defined"));
-    }
-    this->rprec = static_cast<int>(p);
   }
 
   void
@@ -443,19 +401,7 @@ namespace mtest
   {
     using namespace std;
     using namespace tfel::material;
-    SchemeBase::completeInitialisation();
-    // output
-    if(!this->output.empty()){
-      this->out.open(this->output.c_str());
-      if(!this->out){
-	throw(runtime_error("MTest::completeInitialisation : "
-			    "can't open file '"+this->output+"'"));
-      }
-      this->out.exceptions(ofstream::failbit|ofstream::badbit);
-      if(this->oprec!=-1){
-	this->out.precision(static_cast<streamsize>(this->oprec));
-      }
-    }
+    SingleStructureScheme::completeInitialisation();
     // post-processing
     unsigned short cnbr = 2;
     const char* dvn;
@@ -563,28 +509,15 @@ namespace mtest
     // thermal expansion reference temperature
     auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evm->end()){
-      const Evolution& ev = *(pev->second);
+      const auto& ev = *(pev->second);
       if(!ev.isConstant()){
 	throw(runtime_error("MTest::completeInitialisation: "
 			    "'ThermalExpansionReferenceTemperature' "
 			    "must be a constant evolution"));
       }
     }
-    //
-    if(!this->residualFileName.empty()){
-      this->residual.open(this->residualFileName.c_str());
-      if(!this->residual){
-	throw(runtime_error("MTest::completeInitialisation : "
-			    "unable to open file '"+this->residualFileName+"'"));
-      }
-      this->residual.exceptions(ofstream::failbit|ofstream::badbit);
-      if(this->rprec!=-1){
-	this->residual.precision(static_cast<streamsize>(this->rprec));
-      } else {
-	if(this->oprec!=-1){
-	  this->residual.precision(static_cast<streamsize>(this->oprec));
-	}
-      }
+    // residual file
+    if(this->residual){
       this->residual << "#first  column : iteration number\n"
 		     << "#second column : driving variable residual\n"
 		     << "#third  column : thermodynamic force residual\n"
@@ -1115,13 +1048,13 @@ namespace mtest
     if(ne>o.eeps){
       std::ostringstream msg;
       msg << "test on driving variables (error : " << ne
-  	  << ", criteria : " << o.eeps << ")";
+  	  << ", criterion value : " << o.eeps << ")";
       fc.push_back(msg.str());
     }
     if(nr>o.seps){
       std::ostringstream msg;
       msg << "test on thermodynamic forces (error : " << nr
-  	  << ", criteria : " << o.seps << ")";
+  	  << ", criterion value : " << o.seps << ")";
       fc.push_back(msg.str());
     }
     for(const auto& c : this->constraints){
@@ -1156,8 +1089,7 @@ namespace mtest
 		 const real ti,
 		 const real te) const
   {
-    GenericSolver s;
-    s.execute(state,wk,*this,this->options,ti,te);
+    GenericSolver().execute(state,wk,*this,this->options,ti,te);
   }
   
   void

@@ -251,22 +251,33 @@ macro(mfront_behaviour_check_library lib interface)
   add_dependencies(check ${lib})
 endmacro(mfront_behaviour_check_library)
 
-macro(python_lib_module name package)
-  if(${ARGC} LESS 1)
+macro(python_module_base fullname name)
+    if(${ARGC} LESS 1)
     message(FATAL_ERROR "python_lib_module : no source specified")
   endif(${ARGC} LESS 1)
-  add_library(py_${package}_${name} MODULE ${ARGN})
+  add_library(py_${fullname} MODULE ${ARGN})
   if(WIN32)
-    set_target_properties(py_${package}_${name} PROPERTIES
+    set_target_properties(py_${fullname} PROPERTIES
       COMPILE_FLAGS "-DHAVE_ROUND")
-    set_target_properties(py_${package}_${name} PROPERTIES SUFFIX ".pyd")
+    set_target_properties(py_${fullname} PROPERTIES SUFFIX ".pyd")
   elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_target_properties(py_${package}_${name} PROPERTIES SUFFIX ".so")
+    set_target_properties(py_${fullname} PROPERTIES SUFFIX ".so")
   endif(WIN32)
-  set_target_properties(py_${package}_${name} PROPERTIES PREFIX "")
-  set_target_properties(py_${package}_${name} PROPERTIES OUTPUT_NAME ${name})
-  target_link_libraries(py_${package}_${name}
+  set_target_properties(py_${fullname} PROPERTIES PREFIX "")
+  set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
+  target_link_libraries(py_${fullname}
     ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARY})
+endmacro(python_module_base)
+
+macro(python_module name)
+  python_module_base(${name} ${name} ${ARGN})
+  install(TARGETS py_${name}
+    DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/
+    COMPONENT python_bindings)
+endmacro(python_module)
+
+macro(python_lib_module name package)
+  python_module_base(${package}_${name} ${name} ${ARGN})
   install(TARGETS py_${package}_${name}
     DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
     COMPONENT python_bindings)
@@ -283,6 +294,10 @@ endmacro(tfel_python_module)
 macro(mfront_python_module name)
   python_lib_module(${name} mfront ${ARGN})
 endmacro(mfront_python_module)
+
+macro(mtest_python_module name)
+  python_lib_module(${name} mtest ${ARGN})
+endmacro(mtest_python_module)
 
 macro(tfel_python_script dir)
   if(${ARGC} LESS 1)

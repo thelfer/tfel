@@ -117,5 +117,23 @@ namespace mtest
   LPIEvolution::~LPIEvolution()
   {}
 
+  std::shared_ptr<Evolution>
+  make_evolution(const real v){
+    return std::shared_ptr<Evolution>{new ConstantEvolution(v)};
+  }
+
+  std::shared_ptr<Evolution>
+  make_evolution(const std::map<real,real>& v){
+    std::vector<real> tv(v.size());
+    std::vector<real> ev(v.size());
+    std::vector<real>::size_type i = 0u;
+    for(const auto mv : v){
+      tv[i] = mv.first;
+      ev[i] = mv.second;
+      ++i;
+    }
+    return std::shared_ptr<Evolution>{new LPIEvolution(tv,ev)};
+  }
+  
 } // end of namespace mtest
 
