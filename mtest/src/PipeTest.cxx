@@ -22,167 +22,28 @@
 #include"MTest/CurrentState.hxx"
 #include"MTest/StudyCurrentState.hxx"
 #include"MTest/StructureCurrentState.hxx"
-#include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/GenericSolver.hxx"
+#include"MTest/PipeLinearElement.hxx"
 #include"MTest/PipeTest.hxx"
 
 namespace mtest{
 
-  /*!
-   * \brief structure describing a linear element for pipes
-   */
-  struct PipeLinearElement
-  {
-    /*!
-     * \param[out] k:   stiffness matrix
-     * \param[out] r:   residual
-     * \param[out] scs: structure current state
-     * \param[in]  u1:  current displacement estimation
-     * \param[in]  m:   pipe mesh
-     * \param[in]  b:   behaviour
-     * \param[in]  dt:  time increment
-     * \param[in]  mt:  stiffness matrix type
-     * \param[in]  i:   element number
-     */
-    static bool
-    updateStiffnessMatrixAndInnerForces(tfel::math::matrix<real>&,
-					tfel::math::vector<real>&,
-					StructureCurrentState&,
-					const Behaviour&,
-					const tfel::math::vector<real>&,
-					const PipeTest::Mesh&,
-					const real,
-					const StiffnessMatrixType,
-					const size_t);
-  }; // end of struct LinearElement
-
-  bool
-  PipeLinearElement::updateStiffnessMatrixAndInnerForces(tfel::math::matrix<real>& k,
-							 tfel::math::vector<real>& r,
-							 StructureCurrentState& scs,
-							 const Behaviour& b,
-							 const tfel::math::vector<real>& u1,
-							 const PipeTest::Mesh& m,
-							 const real dt,
-							 const StiffnessMatrixType mt,
-							 const size_t i){
-    //! a simple alias
-    using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    constexpr const real pi = 3.14159265358979323846;
-    auto interpolate = [](const real v0,const real v1,const real x){
-      return 0.5*((1-x)*v0+(1+x)*v1);
-    };
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // number of nodes
-    const auto n  = ne+1;
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const real dr = (Re-Ri)/ne;
-    // radial position of the first node
-    const auto r0 = Ri+dr*i;
-    // radial position of the second node
-    const auto r1 = Ri+dr*(i+1);
-    // jacobian of the transformation
-    const auto J = dr/2;
-    // radial displacement of the first node
-    const auto ur0 = u1[i];
-    // radial displacement of the second node
-    const auto ur1 = u1[i+1];
-    // axial strain
-    const auto& ezz = u1[ne+1];
-    /* inner forces */
-    auto& bwk = scs.getBehaviourWorkSpace();
-    // absolute value of the Gauss points position in the reference
-    // element
-    const real abs_pg = 1./std::sqrt(real(3));
-    // value of the Gauss points position in the reference element
-    const real pg_radii[2] = {-abs_pg,abs_pg};
-    // Gauss point weight
-    constexpr real wg = 1.;
-    // loop over Gauss point
-    for(const auto g : {0,1}){
-      // Gauss point position in the reference element
-      const auto pg = pg_radii[g];
-      // radial position of the Gauss point
-      const auto rg = interpolate(r0,r1,pg);
-      // current state
-      auto& s = scs.istates[2*i+g];
-      // strain
-      s.e1[0] = (ur1-ur0)/dr;
-      s.e1[1] = ezz;
-      s.e1[2] = interpolate(ur0,ur1,pg)/rg;
-      if(!b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt)){
-	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
-	  auto& log = mfront::getLogStream();
-	  log << "PTest::computeStiffnessMatrixAndResidual : "
-	      << "behaviour intregration failed" << std::endl;
-	}
-	return false;
-      }
-      // stress tensor
-      const auto pi_rr = s.s1[0];
-      const auto pi_zz = s.s1[1];
-      const auto pi_tt = s.s1[2];
-      const auto w = 2*pi*wg*J;
-      // innner forces
-      r[i]   += w*(pi_rr*(-rg/dr)+pi_tt*(1-pg)/2);
-      r[i+1] += w*(pi_rr*( rg/dr)+pi_tt*(1+pg)/2);
-      // axial forces
-      r[n]   += w*rg*pi_zz;
-      // jacobian matrix
-      if(mt!=StiffnessMatrixType::NOSTIFFNESS){
-	const auto& bk = bwk.k;
-	const real de10_dur0 = -1/dr;
-	const real de12_dur0 = (1-pg)/(2*rg);
-	const real de10_dur1 = 1/dr;
-	const real de12_dur1 = (1+pg)/(2*rg);
-	k(i,i)   += w*(bk(0,0)*de10_dur0*(-rg/dr)+
-		       bk(0,2)*de12_dur0*(-rg/dr)+
-		       bk(2,0)*de10_dur0*(1-pg)/2+
-		       bk(2,2)*de12_dur0*(1-pg)/2);
-	k(i,i+1) += w*(bk(0,0)*de10_dur1*(-rg/dr)+
-		       bk(0,2)*de12_dur1*(-rg/dr)+
-		       bk(2,0)*de10_dur1*(1-pg)/2+
-		       bk(2,2)*de12_dur1*(1-pg)/2);
-	k(i,n)   += w*(bk(0,1)*(-rg/dr)+bk(2,1)*(1-pg)/2);
-	k(i+1,i) += w*(bk(0,0)*de10_dur0*( rg/dr)+
-		       bk(0,2)*de12_dur0*( rg/dr)+
-		       bk(2,0)*de10_dur0*(1+pg)/2+
-		       bk(2,2)*de12_dur0*(1+pg)/2);
-	k(i+1,i+1) += w*(bk(0,0)*de10_dur1*( rg/dr)+
-			 bk(0,2)*de12_dur1*( rg/dr)+
-			 bk(2,0)*de10_dur1*(1+pg)/2+
-			 bk(2,2)*de12_dur1*(1+pg)/2);
-	k(i+1,n)   += w*(bk(0,1)*( rg/dr)+bk(2,1)*(1+pg)/2);
-	// axial forces
-	k(n,i)    += w*rg*(bk(1,0)*de10_dur0+bk(1,2)*de12_dur0);
-	k(n,i+1)  += w*rg*(bk(1,0)*de10_dur1+bk(1,2)*de12_dur1);
-	k(n,n)    += w*rg*bk(1,1);
-      }
-    }
-    return true;
-  }
-  
   template<typename T>
   static void setMeshValue(T& v,
 			   const char* const m,
 			   const char* const n,
-			   const T nv){
+			   const T nv, const bool b){
     if(v>=0){
       throw(std::runtime_error(std::string(m)+": "
 			       "value '"+std::string(n)+
 			       "' already set"));
     }
-    if(nv<=real(0)){
+    if(b ? nv<T(0) : nv<=T(0)){
       throw(std::runtime_error(std::string(m)+": "
 			       "invalid value for '"+std::string(n)+"'"));
     }
     v = nv;
-  }
+  } // end of setMeshValue
   
   void PipeTest::setInnerRadius(const real r)
   {
@@ -195,7 +56,7 @@ namespace mtest{
     }
     setMeshValue(this->mesh.inner_radius,
 		 "PipeTest::setInnerRadius",
-		 "inner radius",r);
+		 "inner radius",r,true);
   } // end of PipeTest::setInnerRadius
 
   void PipeTest::setOuterRadius(const real r)
@@ -209,14 +70,14 @@ namespace mtest{
     }
     setMeshValue(this->mesh.outer_radius,
 		 "PipeTest::setOuterRadius",
-		 "outer radius",r);
+		 "outer radius",r,false);
   } // end of PipeTest::setOuterRadius
 
   void PipeTest::setNumberOfElements(const int r)
   {
     setMeshValue(this->mesh.number_of_elements,
 		 "PipeTest::setNumberOfElements",
-		 "number of elements",r);
+		 "number of elements",r,false);
   } // end of PipeTest::setNumberOfElements
 
   template<typename T>
@@ -233,11 +94,18 @@ namespace mtest{
     checkValue(mesh.inner_radius,"inner radius");
     checkValue(mesh.outer_radius,"outer radius");
     checkValue(mesh.number_of_elements,"number of elements");
-    if((this->inner_pressure.get()==nullptr)&&
-       (this->outer_pressure.get()==nullptr)){
-      throw(std::runtime_error("PipeTest::completeInitialisation: "
-			       "either an inner pressure evolution or "
-			       "an outer pressure evolution must be defined"));
+    if(this->pmh==IMPOSEDAXIALFORCE){
+      if(this->axial_force.get()==nullptr){
+	throw(std::runtime_error("PipeTest::completeInitialisation: "
+				 "the axial force evolution must be defined"));
+      }
+    } else {
+      if((this->inner_pressure.get()==nullptr)&&
+	 (this->outer_pressure.get()==nullptr)){
+	throw(std::runtime_error("PipeTest::completeInitialisation: "
+				 "either an inner pressure evolution or "
+				 "an outer pressure evolution must be defined"));
+      }
     }
     if(this->options.eeps<0){
       this->options.eeps=1.e-11;
@@ -252,6 +120,12 @@ namespace mtest{
     }
     if(this->pmh==DEFAULT){
       this->pmh=ENDCAPEFFECT;
+    }
+    if(this->pmh==IMPOSEDAXIALFORCE){
+      if(this->axial_force.get()==nullptr){
+	throw(std::runtime_error("PipeTest::completeInitialisation: "
+				 "no axial force defined"));
+      }
     }
     if(this->out){
       this->out << "# first  column : time\n"
@@ -439,10 +313,14 @@ namespace mtest{
 		    const real t,
 		    const real dt) const
   {
-    using namespace tfel::material;
+    using LE  = PipeLinearElement;
     auto& scs = state.getStructureCurrentState("");
-    // evaluations of the materials properties at the end of the
-    // time step
+    // number of elements
+    const auto ne = size_t(this->mesh.number_of_elements);
+    // loop over the elements
+    for(size_type i=0;i!=ne;++i){
+      LE::computeStrain(scs,this->mesh,state.u0,i,false);
+    }
     for(auto& s: scs.istates){
       computeMaterialProperties(s,*(this->evm),*(this->dmpv),
   				this->b->getMaterialPropertiesNames(),t,dt);
@@ -546,6 +424,9 @@ namespace mtest{
 	}
       }
     }
+    if(this->pmh==IMPOSEDAXIALFORCE){
+      r(n) -= (*(this->axial_force))(t+dt);
+    }
     // loop over the elements
     for(size_type i=0;i!=ne;++i){
       if(!LE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
@@ -583,14 +464,26 @@ namespace mtest{
 			     const tfel::math::vector<real>& du,
 			     const tfel::math::vector<real>& r,
 			     const SolverOptions&,
-			     const unsigned int,
+			     const unsigned int iter,
 			     const real,
 			     const real) const
   {
+    auto report = [&iter](std::ostream& os,
+			  const real ne,
+			  const real nr){
+      os << "iteration " << iter << " : " << ne << " " << nr << std::endl;
+    };
     constexpr const real pi = 3.14159265358979323846;
     const auto Re = this->mesh.outer_radius;
     auto nu = PipeTest_getErrorNorm(du,this->getNumberOfUnknowns());
     auto nr = PipeTest_getErrorNorm(r,this->getNumberOfUnknowns())/(2*pi*Re);
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+      auto& log = mfront::getLogStream();
+      report(log,nu,nr);
+    }
+    if(this->residual){
+      report(this->residual,nu,nr);
+    }
     return ((nu<Re*this->options.eeps)&&(nr<this->options.seps));
   } // end of 
 
@@ -720,6 +613,22 @@ namespace mtest{
     this->outer_pressure = p;
   } // end of PipeTest::setOuterPressureEvolution
 
+  void
+  PipeTest::setAxialForceEvolution(std::shared_ptr<Evolution> f)
+  {
+    if(this->pmh!=IMPOSEDAXIALFORCE){
+      throw(std::runtime_error("PipeTest::setAxialForceEvolution: "
+			       "axial force evolution can be set "
+			       "only if the pipe modelling hypothesis is "
+			       "'ImposedAxialForce'"));
+    }
+    if(this->axial_force.get()!=nullptr){
+      throw(std::runtime_error("PipeTest::setAxialForceEvolution: "
+			       "axial force evolution already set"));
+    }
+    this->axial_force = f;
+  } // end of PipeTest::setAxialForceEvolution
+  
   void
   PipeTest::printOutput(const real t,
 			const StudyCurrentState& state){

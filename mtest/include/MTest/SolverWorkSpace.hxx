@@ -30,8 +30,6 @@ namespace mtest{
     tfel::math::vector<real> r;
     // unknowns correction
     tfel::math::vector<real> du;
-    // unknowns estimation at the previous iteration
-    tfel::math::vector<real> u10;
     // permuation matrix
     tfel::math::Permutation<size_type> p_lu;
     // temporary vector used by the LUSolve::exe function

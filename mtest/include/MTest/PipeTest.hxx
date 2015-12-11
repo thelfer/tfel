@@ -19,6 +19,7 @@
 
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
+#include"MTest/PipeMesh.hxx"
 #include"MTest/SingleStructureScheme.hxx"
 
 namespace mtest{
@@ -29,16 +30,11 @@ namespace mtest{
   struct MTEST_VISIBILITY_EXPORT PipeTest
     : public SingleStructureScheme
   {
-    //! structure describing the pipe mesh
-    struct Mesh{
-      real inner_radius = real(-1);
-      real outer_radius = real(-1);
-      int  number_of_elements = -1;
-    }; // end of struct Mesh
     //! how the pipe is modelled
     enum PipeModellingHypothesis{
       DEFAULT,
       ENDCAPEFFECT,
+      IMPOSEDAXIALFORCE,
       NONE
     }; // end of enum PipeModellingHypothesis
     //! a simple alias
@@ -101,6 +97,11 @@ namespace mtest{
      * \param[in] p : pressure evolution
      */
     virtual void setOuterPressureEvolution(std::shared_ptr<Evolution>);
+    /*!
+     * \brief set the axial force evolution
+     * \param[in] f : axial force evolution
+     */
+    virtual void setAxialForceEvolution(std::shared_ptr<Evolution>);
     /*!
      * \brief set displacement criterion value
      * \param[in] e: criterion value
@@ -257,9 +258,11 @@ namespace mtest{
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! mesh data
-    Mesh mesh;
+    PipeMesh mesh;
     //! output file precision
     int oprec;
+    //! axial force evolution
+    std::shared_ptr<Evolution> axial_force;
     //! inner pressure
     std::shared_ptr<Evolution> inner_pressure;
     //! outer pressure

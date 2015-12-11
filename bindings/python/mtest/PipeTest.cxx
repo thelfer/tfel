@@ -52,12 +52,29 @@ PipeTest_setOuterPressureEvolution2(mtest::PipeTest& t,
 } // end of PipeTest_setOuterPressureEvolution2
 
 static void
+PipeTest_setAxialForceEvolution(mtest::PipeTest& t,
+				const mtest::real& v)
+{
+  t.setAxialForceEvolution(mtest::make_evolution(v));
+} // end of PipeTest_setAxialForceEvolution
+
+static void
+PipeTest_setAxialForceEvolution2(mtest::PipeTest& t,
+				 const std::map<mtest::real,
+				                mtest::real>& v)
+{
+  t.setAxialForceEvolution(mtest::make_evolution(v));
+} // end of PipeTest_setAxialForceEvolution2
+
+static void
 PipeTest_setPipeModellingHypothesis(mtest::PipeTest& t,
 				    const std::string& h){
   if(h=="None"){
     t.setPipeModellingHypothesis(mtest::PipeTest::NONE);
   } else if(h=="EndCapEffect"){
     t.setPipeModellingHypothesis(mtest::PipeTest::ENDCAPEFFECT);
+  } else if(h=="ImposedAxialForce"){
+    t.setPipeModellingHypothesis(mtest::PipeTest::IMPOSEDAXIALFORCE);
   } else {
     throw(std::runtime_error("PipeTest::setPipeModellingHypothesis: "
 			     "invalid pipe modelling hypothesis ('"+h+"').\n"
@@ -93,6 +110,8 @@ void declarePipeTest(void)
     .def("setInnerPressureEvolution",&PipeTest_setInnerPressureEvolution2)
     .def("setOuterPressureEvolution",&PipeTest_setOuterPressureEvolution)
     .def("setOuterPressureEvolution",&PipeTest_setOuterPressureEvolution2)
+    .def("setAxialForceEvolution",&PipeTest_setAxialForceEvolution)
+    .def("setAxialForceEvolution",&PipeTest_setAxialForceEvolution2)
     .def("performSmallStrainAnalysis",&PipeTest::performSmallStrainAnalysis)
     .def("setDisplacementEpsilon",&PipeTest::setDisplacementEpsilon)
     .def("setResidualEpsilon",&PipeTest::setResidualEpsilon)

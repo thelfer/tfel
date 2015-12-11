@@ -44,7 +44,9 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  SteffensenAccelerationAlgorithm.cxx       \
 			  MTest.cxx                                 \
 			  MTestParser.cxx                           \
-			  PipeTest.cxx
+			  PipeTest.cxx                              \
+			  PipeLinearElement.cxx                     \
+			  PipeQuadraticElement.cxx
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Material -lTFELMaterial   \

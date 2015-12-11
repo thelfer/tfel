@@ -3651,6 +3651,9 @@ mtest/include/MTest/ImposedThermodynamicForce.hxx -text
 mtest/include/MTest/IronsTuckAccelerationAlgorithm.hxx -text
 mtest/include/MTest/MTest.hxx -text
 mtest/include/MTest/MTestParser.hxx -text
+mtest/include/MTest/PipeLinearElement.hxx -text
+mtest/include/MTest/PipeMesh.hxx -text
+mtest/include/MTest/PipeQuadraticElement.hxx -text
 mtest/include/MTest/PipeTest.hxx -text
 mtest/include/MTest/ReferenceFileComparisonTest.hxx -text
 mtest/include/MTest/Scheme.hxx -text
@@ -3708,6 +3711,8 @@ mtest/src/MTest.cxx -text
 mtest/src/MTestMain.cxx -text
 mtest/src/MTestParser.cxx -text
 mtest/src/Makefile.am -text
+mtest/src/PipeLinearElement.cxx -text
+mtest/src/PipeQuadraticElement.cxx -text
 mtest/src/PipeTest.cxx -text
 mtest/src/ReferenceFileComparisonTest.cxx -text
 mtest/src/Scheme.cxx -text

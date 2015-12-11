@@ -49,6 +49,8 @@ set(TFELMTest_SOURCES
   MTest.cxx
   MTestParser.cxx
   PipeTest.cxx
+  PipeLinearElement.cxx
+  PipeQuadraticElement.cxx
   )
 
 set(TFELMTest_LDADD

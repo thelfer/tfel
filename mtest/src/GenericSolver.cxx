@@ -200,13 +200,13 @@ namespace mtest{
 	  if(o.aa.get()!=nullptr){
 	    o.aa->execute(u1,wk.du,wk.r,o.eeps,o.seps,iter);
 	    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
-	      wk.du = u1-wk.u10;
+	      wk.du = u1-scs.u10;
 	      const auto nit = s.getErrorNorm(wk.du);
 	      auto& log = mfront::getLogStream();
 	      log << "accelerated-sequence-convergence " << iter << " " << nit << '\n';
 	    }
 	  }
-	  wk.u10 = u1;
+	  scs.u10 = u1;
 	}
       }
     }
