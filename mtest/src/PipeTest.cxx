@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<memory>
 #include<fstream>
 #include<sstream>
 #include<stdexcept>
@@ -24,10 +25,14 @@
 #include"MTest/StructureCurrentState.hxx"
 #include"MTest/GenericSolver.hxx"
 #include"MTest/PipeLinearElement.hxx"
+#include"MTest/PipeQuadraticElement.hxx"
+#include"MTest/PipeCubicElement.hxx"
+#include"MTest/PipeProfile.hxx"
+#include"MTest/PipeProfileHandler.hxx"
 #include"MTest/PipeTest.hxx"
 
 namespace mtest{
-
+  
   template<typename T>
   static void setMeshValue(T& v,
 			   const char* const m,
@@ -127,6 +132,9 @@ namespace mtest{
 				 "no axial force defined"));
       }
     }
+    if(this->mesh.etype==PipeMesh::DEFAULT){
+      this->mesh.etype=PipeMesh::CUBIC;
+    }
     if(this->out){
       this->out << "# first  column : time\n"
 	"# second column : inner radius\n"
@@ -134,17 +142,36 @@ namespace mtest{
 	"# fourth column : axial displacement" << std::endl;
     }
   } // end of PipeTest::completeInitialisation
-  
+
   PipeTest::size_type
-  PipeTest::getNumberOfUnknowns(void) const
+  PipeTest::getNumberOfNodes(void) const
   {
     if(this->mesh.number_of_elements<=0){
       throw(std::runtime_error("PipeTest::getNumberOfUnknowns: "
 			       "uninitialized number of elements"));
     }
-    // number of nodes+axial displacement
-    return size_type{this->mesh.number_of_elements+2};
-  } // end of 
+    if(this->mesh.etype==PipeMesh::DEFAULT){
+      throw(std::runtime_error("PipeTest::getNumberOfUnknowns: "
+			       "element type not defined"));
+    }
+    // number of elements
+    const auto ne = size_type(this->mesh.number_of_elements);
+    if(this->mesh.etype==PipeMesh::LINEAR){
+      return ne+1;
+    } else if(this->mesh.etype==PipeMesh::QUADRATIC){
+      return 2*ne+1;
+    } else if(this->mesh.etype==PipeMesh::CUBIC){
+      return 3*ne+1;
+    }
+    throw(std::runtime_error("PipeTest::getNumberOfUnknowns: "
+			     "unknown element type"));
+  }
+  
+  PipeTest::size_type
+  PipeTest::getNumberOfUnknowns(void) const
+  {
+    return this->getNumberOfNodes()+1;
+  } // end of PipeTest::getNumberOfUnknowns
 
   void
   PipeTest::setDisplacementEpsilon(const real e){
@@ -183,6 +210,13 @@ namespace mtest{
       throw(std::runtime_error("PipeTest::initializeCurrentState: "
     			       "modelling hypothesis not set"));
     }
+    if((this->mesh.number_of_elements==-1)||
+       (this->mesh.inner_radius<0)||
+       (this->mesh.outer_radius<0)||
+       (this->mesh.etype==PipeMesh::DEFAULT)){
+      throw(std::runtime_error("PipeTest::initializeCurrentState: "
+    			       "mesh not properly initialised"));
+    }
     // unknowns
     const auto psz = this->getNumberOfUnknowns();
     s.initialize(psz);
@@ -193,8 +227,22 @@ namespace mtest{
     auto& ss = s.getStructureCurrentState("");
     ss.setBehaviour(this->b);
     ss.setModellingHypothesis(this->hypothesis);
-    // each element has two integration points
-    ss.istates.resize(2*this->mesh.number_of_elements);
+    if(this->mesh.etype==PipeMesh::LINEAR){
+      // each element has two integration points
+      ss.istates.resize(2*this->mesh.number_of_elements);
+      PipeLinearElement::setGaussPointsPositions(ss,this->mesh);
+    } else if(this->mesh.etype==PipeMesh::QUADRATIC){
+      // each element has three integration points
+      ss.istates.resize(3*this->mesh.number_of_elements);
+      PipeQuadraticElement::setGaussPointsPositions(ss,this->mesh);
+    } else if(this->mesh.etype==PipeMesh::CUBIC){
+      // each element has three integration points
+      ss.istates.resize(4*this->mesh.number_of_elements);
+      PipeCubicElement::setGaussPointsPositions(ss,this->mesh);
+    } else {
+      throw(std::runtime_error("PipeTest::getNumberOfUnknowns: "
+			       "unknown element type"));
+    }
     for(auto& cs : ss.istates){
       mtest::allocate(cs,*(this->b),this->hypothesis);
       // // setting the intial  values of strains
@@ -314,12 +362,23 @@ namespace mtest{
 		    const real dt) const
   {
     using LE  = PipeLinearElement;
+    using QE  = PipeQuadraticElement;
+    using CE  = PipeCubicElement;
     auto& scs = state.getStructureCurrentState("");
     // number of elements
     const auto ne = size_t(this->mesh.number_of_elements);
     // loop over the elements
     for(size_type i=0;i!=ne;++i){
-      LE::computeStrain(scs,this->mesh,state.u0,i,false);
+      if(this->mesh.etype==PipeMesh::LINEAR){
+	LE::computeStrain(scs,this->mesh,state.u0,i,false);
+      } else if(this->mesh.etype==PipeMesh::QUADRATIC){
+	QE::computeStrain(scs,this->mesh,state.u0,i,false);
+      } else if(this->mesh.etype==PipeMesh::CUBIC){
+	CE::computeStrain(scs,this->mesh,state.u0,i,false);
+      } else {
+	throw(std::runtime_error("PipeTest::prepare: "
+				 "unknown element type"));
+      }
     }
     for(auto& s: scs.istates){
       computeMaterialProperties(s,*(this->evm),*(this->dmpv),
@@ -367,6 +426,8 @@ namespace mtest{
 					      const StiffnessMatrixType mt) const
   {
     using LE  = PipeLinearElement;
+    using QE  = PipeQuadraticElement;
+    using CE  = PipeCubicElement;
     constexpr const real pi = 3.14159265358979323846;
     // reset r and k
     std::fill(r.begin(),r.end(),real(0));
@@ -382,7 +443,7 @@ namespace mtest{
     // number of elements
     const auto ne = size_type(this->mesh.number_of_elements);
     // number of nodes
-    const auto n  = ne+1;
+    const auto n  = this->getNumberOfNodes();
     // axial strain
     const auto& ezz = state.u1[n];
     /* external forces */
@@ -406,21 +467,22 @@ namespace mtest{
       }
     }
     if(this->outer_pressure.get()!=nullptr){
+      const size_type ln = n-1;
       const auto Pe  = (*(this->outer_pressure))(t+dt);
-      const auto Re_ = (this->hpp) ? Re : Re+state.u1[ne];
+      const auto Re_ = (this->hpp) ? Re : Re+state.u1[ln];
       if(this->hpp){
-	r(ne) += 2*pi*Pe*Re_;
+	r(ln) += 2*pi*Pe*Re_;
       } else {
-	r(ne) += 2*pi*Pe*(1+ezz)*Re_;
+	r(ln) += 2*pi*Pe*(1+ezz)*Re_;
 	if(mt!=StiffnessMatrixType::NOSTIFFNESS){
-	  k(ne,ne) += 2*pi*Pe*(1+ezz);
-	  k(ne,n)  += 2*pi*Pe*Re_;
+	  k(ln,ln) += 2*pi*Pe*(1+ezz);
+	  k(ln,n)  += 2*pi*Pe*Re_;
 	}
       }
       if(this->pmh==ENDCAPEFFECT){
 	r(n)    +=   pi*Re_*Re_*Pe;
 	if(!this->hpp){
-	  k(n,ne) += 2*pi*Re_*Pe;
+	  k(n,ln) += 2*pi*Re_*Pe;
 	}
       }
     }
@@ -429,13 +491,28 @@ namespace mtest{
     }
     // loop over the elements
     for(size_type i=0;i!=ne;++i){
-      if(!LE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
-						  state.u1,this->mesh,dt,mt,i)){
-	return false;
+      if(this->mesh.etype==PipeMesh::LINEAR){
+	if(!LE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
+						    state.u1,this->mesh,dt,mt,i)){
+	  return false;
+	}
+      } else if(this->mesh.etype==PipeMesh::QUADRATIC){
+	if(!QE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
+						    state.u1,this->mesh,dt,mt,i)){
+	  return false;
+	}
+      } else if(this->mesh.etype==PipeMesh::CUBIC){
+	if(!CE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
+						    state.u1,this->mesh,dt,mt,i)){
+	  return false;
+	}
+      } else {
+	throw(std::runtime_error("PipeTest::computeStiffnessMatrixAndResidual: "
+				 "unknown element type"));
       }
     }
     return true;
-  } // end of computeStiffnessMatrixAndResidual
+  } // end of PipeTest::computeStiffnessMatrixAndResidual
 
   void PipeTest::performSmallStrainAnalysis(void){
     this->hpp=true;
@@ -515,50 +592,91 @@ namespace mtest{
     return cd;
   } // end of 
 
+  static PipeTest::size_type
+  getNumberOfGaussPoints(const PipeMesh& m){
+    // number of elements
+    const auto ne = PipeTest::size_type(m.number_of_elements);
+    if(m.etype==PipeMesh::LINEAR){
+      return 2*ne;
+    } else if(m.etype==PipeMesh::QUADRATIC){
+      return 3*ne;
+    } else if(m.etype==PipeMesh::CUBIC){
+      return 4*ne;
+    }
+    throw(std::runtime_error("getNumberOfGaussPoints: "
+			     "unknown element type"));
+  } // end of getNumberOfGaussPoints
+  
   void
   PipeTest::postConvergence(StudyCurrentState& state,
-			    const real,
-			    const real,
+			    const real t,
+			    const real dt,
 			    const unsigned int) const
   {
-    auto interpolate = [](const real v0,const real v1,const real x){
-      return 0.5*((1-x)*v0+(1+x)*v1);
-    };
     // current pipe state
     auto& scs = state.getStructureCurrentState("");
-    // displacement
-    const auto& u1 = state.u1;
-    // inner radius
-    const auto Ri = this->mesh.inner_radius;
-    // outer radius
-    const auto Re = this->mesh.outer_radius;
-    // number of elements
-    const auto ne = size_type(this->mesh.number_of_elements);
-    const real dr = (Re-Ri)/ne;
-    std::ofstream out_stress("stresses.txt");
-    // element
-    const real abs_pg = 1./std::sqrt(real(3));
-    // value of the Gauss points position in the reference element
-    const real pg_radii[2] = {-abs_pg,abs_pg};
-     // loop over the elements
-    for(size_type i=0;i!=ne;++i){
-      // radial position of the first node
-      const auto r0 = Ri+dr*i;
-      // radial position of the second node
-      const auto r1 = Ri+dr*(i+1);
-      for(const auto g : {0,1}){
-	// Gauss point position in the reference element
-	const auto pg = pg_radii[g];
-	// radial position of the Gauss point
-	const auto rg = interpolate(r0,r1,pg);
-	// current state
-	auto& s = scs.istates[2*i+g];
-	out_stress << rg << " " << s.s1[0] << " "
-		   << s.s1[1] << " " << s.s1[2] << '\n';
+    for(const auto& p: this->profiles){
+      *(p.out) << "#Time " << t+dt << '\n';
+      // loop over the elements
+      for(size_type i=0;i!=getNumberOfGaussPoints(this->mesh);++i){
+	const auto& s = scs.istates[i];
+	*(p.out) << s.position;
+	for(const auto& pp: p.profiles){
+	  pp->report(*(p.out),s);
+	}
+	*(p.out) << '\n';
       }
     }
-  } // end of 
-  
+  } // end of PipeTest::postConvergence
+
+  void
+  PipeTest::addProfile(const std::string& f,
+		       const std::vector<std::string>& cn)
+  {
+    auto ph = PipeProfileHandler{};
+    ph.out = std::shared_ptr<std::ostream>(new std::ofstream(f));
+    if(!(*(ph.out))){
+      throw(std::runtime_error("PipeTest::addProfile: "
+			       "can't open file '"+f+"'"));
+    }
+    ph.out->exceptions(std::ofstream::failbit|std::ofstream::badbit);
+    *(ph.out) << "#First column: radial position\n";
+    auto i=1;
+    for(const auto& c: cn){
+      ++i;
+      *(ph.out) << "#Column " << i << ": ";
+      if(c=="SRR"){
+	*(ph.out) << "radial stress \n";
+	ph.profiles.emplace_back(new PipeStressProfile(0u));
+      } else if(c=="STT"){
+	*(ph.out) << "hoop stress \n";
+	ph.profiles.emplace_back(new PipeStressProfile(2u));
+      } else if(c=="SZZ"){
+	*(ph.out) << "axial stress \n";
+	ph.profiles.emplace_back(new PipeStressProfile(1u));
+      } else if(c=="ERR"){
+	*(ph.out) << "radial strain \n";
+	ph.profiles.emplace_back(new PipeStrainProfile(0u));
+      } else if(c=="ETT"){
+	*(ph.out) << "hoop strain \n";
+	ph.profiles.emplace_back(new PipeStrainProfile(2u));
+      } else if(c=="EZZ"){
+	*(ph.out) << "axial strain \n";
+	ph.profiles.emplace_back(new PipeStrainProfile(1u));
+      } else {
+	const auto ivnames = this->b->getInternalStateVariablesNames();
+	const auto piv = std::find(ivnames.begin(),ivnames.end(),c);
+	if(piv==ivnames.end()){
+	  throw(std::runtime_error("PipeTest::addProfile: "
+				   "no internal state variable named '"+c+"'"));
+	}
+	*(ph.out) << c << " internal state variable\n";
+	ph.profiles.emplace_back(new PipeInternalStateVariableProfile(piv-ivnames.begin()));
+      }
+    }
+    this->profiles.push_back(ph);
+  } // end of PipeTest::addProfile
+
   void
   PipeTest::setModellingHypothesis(const std::string& h)
   {
@@ -592,6 +710,15 @@ namespace mtest{
     }
     this->pmh=ph;
   } // end of PipeTest::setPipeModellingHypothesis
+
+  void
+  PipeTest::setElementType(const PipeMesh::ElementType ph){
+    if(this->mesh.etype!=PipeMesh::DEFAULT){
+      throw(std::runtime_error("PipeTest::setElementType: "
+			       "element type already defined"));
+    }
+    this->mesh.etype=ph;
+  } // end of PipeTest::setElementType
   
   void
   PipeTest::setInnerPressureEvolution(std::shared_ptr<Evolution> p)
@@ -633,9 +760,8 @@ namespace mtest{
   PipeTest::printOutput(const real t,
 			const StudyCurrentState& state){
     const auto& u1 = state.u1;
-    const auto ne = size_type(this->mesh.number_of_elements);
-    const auto n  = ne+1;
-    this->out << t << " " << u1[0] << " " << u1[ne] << " " << u1[n] << std::endl;
+    const auto n  = this->getNumberOfNodes();
+    this->out << t << " " << u1[0] << " " << u1[n-1] << " " << u1[n] << std::endl;
   } // end of PipeTest::printOutput
   
   PipeTest::~PipeTest() = default;

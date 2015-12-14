@@ -187,69 +187,84 @@ current knowledge, the derivation of the consistent tangent operator
 defined in the \abaqus{} manuel differs from the one given in the book
 of \nom{Belytschko} et al.~\cite{belytschko_nonlinear_2000}.
 
-More precisely, the consistent tangent operator \(\tenseurq{C}\) is
-the tangent moduli associated with the \nom{Jauman} rate of the
-\nom{Kirchhoff} stress \(\tenseurq{C}^{J\,\tau}\) divided by \(J\):
+Let \(\delta\,\tns{F}\) a variation of the deformation gradient at the
+end of the time step. This variation induces a variation of~:
+\begin{minipage}[t]{0.8\linewidth}
+  \begin{itemize}
+  \item a variation \(\delta\,\tns{L}\) of the gradient defined by:
+    \[
+    \delta\,\tns{L}=\delta\,\tns{F}\,.\,\ets{\tns{F}}^{-1}
+    \]
+  \item a variation \(\delta\,\tenseur{D}\) of the strain rate defined
+    by the symmetric part of \(\delta\,\tns{L}\).
+  \item a variation \(\delta\,\tns{W}\) of the spin rate defined
+    by the unsymmetric part of \(\delta\,\tns{L}\).
+  \item a variation of the \(\Delta\,\tenseur{\tau}\) of the Kirchhoff
+    stress tensor.
+  \end{itemize}
+\end{minipage}
+
+For the sake of conciseness, \(\ets{\tns{F}}\) will be noted
+\(\tns{F}\) in the rest of this section.
+
+The abaqus manual defines the consistent tangent operator
+\(\tenseurq{C}\) as the tangent moduli associated with the
+\nom{Jauman} rate of the \nom{Kirchhoff} stress
+\(\tenseurq{C}^{J\,\tau}\) divided by \(J\). \(\tenseurq{C}\)
+satisfies:
 \begin{equation}
   \label{eq:CJt}
   J\,\tenseurq{C}\,\colon\,\delta\,\tenseur{D}=\tenseurq{C}^{J\,\tau}\,\colon\,\delta\,\tenseur{D}=\delta\,\tenseur{\tau}-\delta\,\tns{W}\,.\,\tenseur{\tau}+\tenseur{\tau}\,.\,\delta\,\tns{W}  
 \end{equation}
-where~:
-\begin{minipage}[t]{0.8\linewidth}
-  \begin{itemize}
-  \item \(J\) is the determinant of the deformation gradient~;
-  \item \(\tenseur{D}\) is the strain rate~;
-  \item \(\tns{W}\) is the spin rate, defined as the unsymmetric part
-    of the velocity gradient \(\tns{L}\) (defined below):
-    \[\tns{W}_{ij}=\Frac{1}{2}\paren{L_{ij}-L_{ji}}\]
-  \item \(\tenseur{\tau}\) is the Kirchhoff stress tensor~;
-  \item \(\tenseur{\sigma}\) is the Cauchy stress tensor.
-  \end{itemize}
-\end{minipage}
 
-The velocity gradient is defined by:
-\begin{equation}
-  \label{eq:L}
-  \tns{L}=\dot{\tns{F}}\,.\,\tns{F}^{-1}
-\end{equation}
-
-For incremental resolutions, one have make an assumption must be made
-to define the velocity gradient \(\tns{L}\) (and the spin rate
-\(\tns{W}\). Let us introduce the following definitions:
-\begin{itemize}
-\item \(\bts{F}\) is the deformation gradient at the beginning of the time step~;
-\item \(\ets{F}\) is the deformation gradient at the end of the time step~;
-\item \(\Delta\,t\) is the time increment~;
-\item  \(\theta\) is a parameter between \(0\) and \(1\):
-\end{itemize}
-
-An approximation of \(\tns{L}\) can be given by~:
+The mechanical behaviour allows us to compute
+\(\delta\,\tenseur{\tau}\) as:
 \[
-\Delta\,t\,\tns{L}=\paren{\ets{\tns{F}}-\bts{\tns{F}}}\,.\,\paren{\bts{\tns{F}}+\theta\,\paren{\ets{\tns{F}}-\bts{\tns{F}}}}^{-1}=\paren{\ets{\tns{F}}-\bts{\tns{F}}}\,.\,\mts{\tns{F}}^{-1}
+\delta\,\tenseur{\tau}=\deriv{\tenseur{\tau}}{\tns{F}}\,\colon\,\delta\,\tns{F}
 \]
 
-% Using this approximation, one can compute a fourth order tensor giving
-% \(\Delta\,t\,\deriv{\tns{L}}{\ets{\tns{F}}}\) for any value of
-% \(\theta\) and thus the derivative
-% \(\Delta\,t\,\deriv{\tns{W}}{\ets{\tns{F}}}\):
-% \[
-% \tenseurq{K}_{\tns{W}}=\Delta\,t\,\deriv{\tns{W}}{\ets{\tns{F}}}
-% \]
+The tangent operator \(\deriv{\tenseur{\tau}}{\tns{F}}\) is well
+defined and given by most mechanical behaviour implementations.
 
-% Thus, one can define a fourth order tensor \(\tenseurq{K}\) by:
-% \[
-%   \tenseurq{K}=\deriv{}{\ets{\tns{F}}}\paren{\Delta\,\tenseur{\tau}-\Delta\,t\,\tns{W}\,.\,\tenseur{\tau}+\tenseur{\tau}\,.\,\Delta\,t\,\tns{W}}=
-%   \deriv{\tenseur{\tau}}{\ets{\tns{F}}}-\dtot^{\star}_{r}\paren{\tenseur{\tau}}\,.\,\tenseurq{K}_{\tns{W}}+\dtot^{\star}_{l}\paren{\tenseur{\tau}}\,.\,\tenseurq{K}_{\tns{W}}
-% \]
+To compute the other term, we will need \(\deriv{W}{F}\):
+\[
+\deriv{\tns{W}}{\tns{F}}=\Frac{1}{2}\,\paren{\partial^{l}_{\star}\paren{\tns{F}^{-1}}+\partial^{r}_{\star}\paren{\tns{F}^{-1}}}
+\]
+The term \(\partial^{l}_{\star}\paren{\tns{F}^{-1}}\) can be computed
+using the method {\tt tpld} of the {\tt t2tot2} class. The term
+\(\partial^{r}_{\star}\paren{\tns{F}^{-1}}\) can be computed using the
+method {\tt tprd} of the {\tt t2tot2} class.
 
-% Then, one have to deduce \(\tenseurq{C}\) from
-% \(\tenseurq{K}\). Indeed, following Han~\cite{han_implantation_2010},
-% one may use the following relationship~:
-% \[
-% C_{ijkm}=\sum{l=0}^{2}K_{ijkl}F^{T}_{lm}=\sum{l=0}^{2}K_{ijkl}F_{ml}
-% \]
 
-%  By combing this term with \(\deriv{\tenseur{\tau}}{\ets{\tns{F}}}\).
+This derivative allow us to compute the remaining terms of Equation~\eqref{eq:CJt}:
+\[
+\begin{aligned}
+  \delta\,\tns{W}\,.\,\tenseur{\tau}&=\partial^{l}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}\,\colon\,\delta\tns{F}\\
+  \tenseur{\tau}\,.\,\delta\,\tns{W}&=\partial^{r}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}\,\colon\,\delta\tns{F}
+\end{aligned}
+\]
+The terms
+\(\partial^{l}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}\)
+and
+\(\partial^{r}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}\)
+can be computed with the {\tt tpld} and {\tt tprd} of the {\tt t2tot2}
+class.
+
+Finally, Equation~\eqref{eq:CJt} can be recast as~:
+\[
+J\,\tenseurq{C}\,\colon\,\delta\,\tenseur{D}=\tenseurq{K}\,\colon\,\delta\tns{F}
+\]
+where \(\tenseurq{K}\) is given by~:
+\[
+K=\deriv{\tenseur{\tau}}{\tns{F}}-\partial^{l}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}+\partial^{r}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}
+\]
+
+Following \nom{Han}~\cite{han_modelisation_2012}, the consistent
+tangent operator \(\tenseurq{C}\) can be deduced from the
+\(\tenseurq{K}\) matrix using the following relationship~:
+\[
+J\,\tenseurq{C}_{ijkl}=K_{ijkm}\,F_{lm}
+\]
 
 \referencecea{}
 

@@ -51,6 +51,9 @@ set(TFELMTest_SOURCES
   PipeTest.cxx
   PipeLinearElement.cxx
   PipeQuadraticElement.cxx
+  PipeCubicElement.cxx
+  PipeProfile.cxx
+  PipeProfileHandler.cxx
   )
 
 set(TFELMTest_LDADD

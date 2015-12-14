@@ -21,16 +21,56 @@
 
 namespace mtest{
 
+#ifndef _MSC_VER
   constexpr const real PipeQuadraticElement::abs_pg;
   constexpr const real PipeQuadraticElement::wg[3];
   constexpr const real PipeQuadraticElement::pg_radii[3];
+#else  /* _MSC_VER */
+  // value of the Gauss points position in the reference element
+  static const real PipeQuadraticElement::pg_radii[3] = {-std::sqrt(real(3)/real(5)),real(0),
+							  std::sqrt(real(3)/real(5))};
+  // Gauss point weight
+  static const real PipeQuadraticElement::wg[3] =  {real(5.)/real(9.),
+						    real(8.)/real(9.),
+						    real(5.)/real(9.)};
+#endif  /* _MSC_VER */
 
   real
   PipeQuadraticElement::interpolate(const real v0,const real v1,
 				    const real v2,const real x)
   {
-    return ((1.-x)*x*v0+(1+x)*x*v2+2*(1.+x)*(1.-x)*v1)/2;
+    return (-(1.-x)*x*v0+(1+x)*x*v2)/2+(1.+x)*(1.-x)*v1;
   } // end of PipeQuadraticElement::interpolate
+
+  void
+  PipeQuadraticElement::setGaussPointsPositions(StructureCurrentState& scs,
+						const PipeMesh& m){
+    // number of elements
+    const auto ne = size_t(m.number_of_elements);
+    // inner radius
+    const auto Ri = m.inner_radius;
+    // outer radius
+    const auto Re = m.outer_radius;
+    // radius increment
+    const auto dr = (Re-Ri)/ne;
+    for(size_t i=0;i!=ne;++i){
+      // radial position of the first node
+      const auto r0 = Ri+dr*i;
+      // radial position of the second node
+      const auto r1 = r0+dr/2;
+      // radial position of the second node
+      const auto r2 = r0+dr;
+      // loop over Gauss point
+      for(const auto g : {0,1,2}){
+	// current state
+	auto& s = scs.istates[3*i+g];
+	// Gauss point position in the reference element
+	const auto pg = pg_radii[g];
+	// radial position of the Gauss point
+	s.position = interpolate(r0,r1,r2,pg);
+      }
+    }
+  }
   
   void
   PipeQuadraticElement::computeStrain(StructureCurrentState& scs,
@@ -40,6 +80,8 @@ namespace mtest{
 				      const bool b){
     // number of elements
     const auto ne = size_t(m.number_of_elements);
+    // number of nodes
+    const auto n  = 2*ne+1;
     // inner radius
     const auto Ri = m.inner_radius;
     // outer radius
@@ -49,9 +91,9 @@ namespace mtest{
     // radial position of the first node
     const auto r0 = Ri+dr*i;
     // radial position of the second node
-    const auto r1 = Ri+dr*(i+1)/2;
+    const auto r1 = r0+dr/2;
     // radial position of the second node
-    const auto r2 = Ri+dr*(i+1);
+    const auto r2 = r0+dr;
     // radial displacement of the first node
     const auto ur0 = u[2*i];
     // radial displacement of the second node
@@ -59,7 +101,7 @@ namespace mtest{
     // radial displacement of the third node
     const auto ur2 = u[2*i+2];
     // axial strain
-    const auto& ezz = u[ne+1];
+    const auto& ezz = u[n];
     // loop over Gauss point
     for(const auto g : {0,1,2}){
       // Gauss point position in the reference element
@@ -67,7 +109,7 @@ namespace mtest{
       // inverse of the jacobian
       const auto iJ = 1/(r0*(pg-0.5)+r2*(pg+0.5)-2*r1*pg);
       // radial position of the Gauss point
-      const auto rg = 0.5*((1-pg)*r0+(1+pg)*r2);
+      const auto rg = interpolate(r0,r1,r2,pg);
       // current state
       auto& s = scs.istates[3*i+g];
       // strain
@@ -78,101 +120,95 @@ namespace mtest{
     }    
   } // end of PipeQuadraticElement::computeStrain
   
-    bool
-    PipeQuadraticElement::updateStiffnessMatrixAndInnerForces(tfel::math::matrix<real>& k,
-  							 tfel::math::vector<real>& r,
-  							 StructureCurrentState& scs,
-  							 const Behaviour& b,
-  							 const tfel::math::vector<real>& u1,
-  							 const PipeMesh& m,
-  							 const real dt,
-  							 const StiffnessMatrixType mt,
-  							 const size_t i){
-      //! a simple alias
-      using ModellingHypothesis = tfel::material::ModellingHypothesis;
-      constexpr const real pi = 3.14159265358979323846;
-      // number of elements
-      const auto ne = size_t(m.number_of_elements);
-      // number of nodes
-      const auto n  = ne+1;
-      // inner radius
-      const auto Ri = m.inner_radius;
-      // outer radius
-      const auto Re = m.outer_radius;
-      // radius increment
-      const auto dr = (Re-Ri)/ne;
-      // radial position of the first node
-      const auto r0 = Ri+dr*i;
-      // radial position of the second node
-      const auto r1 = Ri+dr*(i+1)/2;
-      // radial position of the second node
-      const auto r2 = Ri+dr*(i+1);
-      /* inner forces */
-      auto& bwk = scs.getBehaviourWorkSpace();
-      // compute the strain
-      computeStrain(scs,m,u1,i,true);
-      // loop over Gauss point
-      for(const auto g : {0,1,2}){
-	// Gauss point position in the reference element
-	const auto pg = pg_radii[g];
-	// radial position of the Gauss point
-	const auto rg = 0.5*((1-pg)*r0+(1+pg)*r2);
-	// jacobian of the transformation
-	const auto J = r0*(pg-0.5)+r2*(pg+0.5)-2*r1*pg;
-	// current state
-	auto& s = scs.istates[3*i+g];
-	if(!b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt)){
-	  if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
-	    auto& log = mfront::getLogStream();
-	    log << "PipeQuadraticElement::computeStiffnessMatrixAndResidual : "
-		<< "behaviour intregration failed" << std::endl;
-	  }
-	  return false;
+  bool
+  PipeQuadraticElement::updateStiffnessMatrixAndInnerForces(tfel::math::matrix<real>& k,
+							    tfel::math::vector<real>& r,
+							    StructureCurrentState& scs,
+							    const Behaviour& b,
+							    const tfel::math::vector<real>& u1,
+							    const PipeMesh& m,
+							    const real dt,
+							    const StiffnessMatrixType mt,
+							    const size_t i){
+    //! a simple alias
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    constexpr const real pi = 3.14159265358979323846;
+    // number of elements
+    const auto ne = size_t(m.number_of_elements);
+    // number of nodes
+    const auto n  = 2*ne+1;
+    // inner radius
+    const auto Ri = m.inner_radius;
+    // outer radius
+    const auto Re = m.outer_radius;
+    // radius increment
+    const auto dr = (Re-Ri)/ne;
+    // radial position of the first node
+    const auto r0 = Ri+dr*i;
+    // radial position of the second node
+    const auto r1 = r0+dr/2;
+    // radial position of the thrid node
+    const auto r2 = r0+dr;
+    /* inner forces */
+    auto& bwk = scs.getBehaviourWorkSpace();
+    // compute the strain
+    computeStrain(scs,m,u1,i,true);
+    // loop over Gauss point
+    for(const auto g : {0,1,2}){
+      // Gauss point position in the reference element
+      const auto pg = pg_radii[g];
+      // radial position of the Gauss point
+      const auto rg = interpolate(r0,r1,r2,pg);
+      // jacobian of the transformation
+      const auto J = r0*(pg-0.5)+r2*(pg+0.5)-2*r1*pg;
+      // shape function value
+      const real sf[3] = {-0.5*(1.-pg)*pg,
+			  (1.+pg)*(1.-pg),
+			  0.5*(1+pg)*pg};
+      // shape function derivative 
+      const real dsf[3] = {pg-0.5,-2.*pg,pg+0.5};
+      // current state
+      auto& s = scs.istates[3*i+g];
+      if(!b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt)){
+	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
+	  auto& log = mfront::getLogStream();
+	  log << "PipeQuadraticElement::computeStiffnessMatrixAndResidual : "
+	      << "behaviour intregration failed" << std::endl;
 	}
-	// stress tensor
-	const auto pi_rr = s.s1[0];
-	const auto pi_zz = s.s1[1];
-	const auto pi_tt = s.s1[2];
-      	const auto w = 2*pi*wg[g]*J;
-      	// innner forces
-      	r[2*i]   += w*(rg*pi_rr*(pg-0.5)/J+pi_tt*(-0.5*(1.-pg)*pg));
-	r[2*i+1] += w*(rg*pi_rr*(-2.*pg)/J+pi_tt*((1.+pg)*(1.-pg)));
-	r[2*i+2] += w*(rg*pi_rr*(pg+0.5)/J+pi_tt*(0.5*(1+pg)*pg));
-      	// axial forces
-      	r[n]   += w*rg*pi_zz;
-	// jacobian matrix
-	if(mt!=StiffnessMatrixType::NOSTIFFNESS){
-	  const auto& bk = bwk.k;
-      	  const real de10_dur0 = (pg-0.5)/J;
-      	  const real de12_dur0 = (1.-pg)*pg/(2*rg);
-      	  const real de10_dur1 = -2.*pg/J;
-      	  const real de12_dur1 = (1.+pg)*(1.-pg)/rg;
-      	  const real de10_dur2 = (0.5+pg)/J;
-      	  const real de12_dur2 = (1+pg)*pg/(2*rg);
-	  // k(2*i,2*i)   += w*(bk(0,0)*de10_dur0*(-rg/dr)+
-	  // 		 bk(0,2)*de12_dur0*(-rg/dr)+
-	  // 		 bk(2,0)*de10_dur0*(1-pg)/2+
-	  // 		 bk(2,2)*de12_dur0*(1-pg)/2);
-	  // k(2*i,2*i+1) += w*(bk(0,0)*de10_dur1*(-rg/dr)+
-	  // 		 bk(0,2)*de12_dur1*(-rg/dr)+
-	  // 		 bk(2,0)*de10_dur1*(1-pg)/2+
-	  // 		 bk(2,2)*de12_dur1*(1-pg)/2);
-	  // k(2*i,n)   += w*(bk(0,1)*(-rg/dr)+bk(2,1)*(1-pg)/2);
-	  // k(2*i+1,2*i) += w*(bk(0,0)*de10_dur0*( rg/dr)+
-	  // 		 bk(0,2)*de12_dur0*( rg/dr)+
-	  // 		 bk(2,0)*de10_dur0*(1+pg)/2+
-	  // 		 bk(2,2)*de12_dur0*(1+pg)/2);
-	  // k(2*i+1,2*i+1) += w*(bk(0,0)*de10_dur1*( rg/dr)+
-	  // 		       bk(0,2)*de12_dur1*( rg/dr)+
-	  // 		       bk(2,0)*de10_dur1*(1+pg)/2+
-	  // 		       bk(2,2)*de12_dur1*(1+pg)/2);
-	  // k(i+1,n)   += w*(bk(0,1)*( rg/dr)+bk(2,1)*(1+pg)/2);
-	  //       	  axial forces
-      	  // k(n,i)    += w*rg*(bk(1,0)*de10_dur0+bk(1,2)*de12_dur0);
-      	  // k(n,i+1)  += w*rg*(bk(1,0)*de10_dur1+bk(1,2)*de12_dur1);
-      	  k(n,n)    += w*rg*bk(1,1);
-	}
+	return false;
       }
-      return true;
-    }
+      // stress tensor
+      const auto pi_rr = s.s1[0];
+      const auto pi_zz = s.s1[1];
+      const auto pi_tt = s.s1[2];
+      const auto w = 2*pi*wg[g]*J;
+      // innner forces
+      for(const auto j : {0,1,2}){
+	r[2*i+j] += w*(rg*pi_rr*dsf[j]/J+pi_tt*sf[j]);
+      }
+      // axial forces
+      r[n]   += w*rg*pi_zz;
+      // jacobian matrix
+      if(mt!=StiffnessMatrixType::NOSTIFFNESS){
+	const auto& bk = bwk.k;
+	for(const auto l : {0,1,2}){
+	  for(const auto j : {0,1,2}){
+	    const auto de0_du = dsf[j]/J;
+	    const auto de2_du = sf[j]/rg;
+	    k(2*i+l,2*i+j) += w*(rg*dsf[l]/J*(bk(0,0)*de0_du+bk(0,2)*de2_du)+
+				 sf[l]*(bk(2,0)*de0_du+bk(2,2)*de2_du));
+	  }
+	  k(2*i+l,n) += w*(rg*dsf[l]/J*bk(0,1)+bk(2,1)*sf[l]);
+	} // loop over nodes
+	for(const auto j : {0,1,2}){
+	  const auto de0_du = dsf[j]/J;
+	  const auto de2_du = sf[j]/rg;
+	  k(n,2*i+j) += w*rg*(bk(1,0)*de0_du+bk(1,2)*de2_du);
+	}
+	k(n,n) += w*rg*bk(1,1);
+      }
+    } // loop over gauss point
+    return true;
+  }
+  
 } // end of namespace mtest

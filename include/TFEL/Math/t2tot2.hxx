@@ -267,6 +267,19 @@ namespace tfel{
     >::type
     change_basis(const T2toT2Type&,
 		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename T2toT2Traits<T2toT2Type>::NumType>::type>&);
+
+    /*!
+     * \return compute the derivative of the spin rate
+     * \param[in] F : deformation gradient
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      t2tot2<TensorTraits<TensorType>::dime,
+	     typename TensorTraits<TensorType>::NumType>
+    >::type
+    computeSpinRateDerivative(const TensorType&);
     
   } // end of namespace math
 

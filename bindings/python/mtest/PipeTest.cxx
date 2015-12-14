@@ -19,6 +19,8 @@
 #include"MTest/Evolution.hxx"
 #include"MTest/StudyCurrentState.hxx"
 #include"MTest/SolverWorkSpace.hxx"
+#include"MTest/PipeProfile.hxx"
+#include"MTest/PipeProfileHandler.hxx"
 #include"MTest/PipeTest.hxx"
 
 static void
@@ -83,6 +85,23 @@ PipeTest_setPipeModellingHypothesis(mtest::PipeTest& t,
   }
 } // end of PipeTest_setPipeModellingHypothesis
 
+static void
+PipeTest_setElementType(mtest::PipeTest& t,
+			const std::string& e){
+  if(e=="Linear"){
+    t.setElementType(mtest::PipeMesh::LINEAR);
+  } else if(e=="Quadratic"){
+    t.setElementType(mtest::PipeMesh::QUADRATIC);
+  } else if(e=="Cubic"){
+    t.setElementType(mtest::PipeMesh::CUBIC);
+  } else {
+    throw(std::runtime_error("PipeTest::setElementType: "
+			     "invalid element type ('"+e+"').\n"
+			     "Valid element type are "
+			     "'Linear' and 'Quadratic'"));
+  }
+} // end of PipeTest_setElementType
+
 void declarePipeTest(void);
 
 void declarePipeTest(void)
@@ -116,6 +135,8 @@ void declarePipeTest(void)
     .def("setDisplacementEpsilon",&PipeTest::setDisplacementEpsilon)
     .def("setResidualEpsilon",&PipeTest::setResidualEpsilon)
     .def("setPipeModellingHypothesis",&PipeTest_setPipeModellingHypothesis)
+    .def("setElementType",&PipeTest_setElementType)
+    .def("addProfile",&PipeTest::addProfile)
     ;
 
 }

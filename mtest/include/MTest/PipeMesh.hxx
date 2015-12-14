@@ -20,11 +20,23 @@ namespace mtest{
 
   //! structure describing the pipe mesh
   struct PipeMesh{
+    //! how the pipe is modelled
+    enum ElementType{
+      DEFAULT,
+      LINEAR,
+      QUADRATIC,
+      CUBIC
+    }; // end of enum ElementType
+    //! inner radius
     real inner_radius = real(-1);
+    //! outer radius
     real outer_radius = real(-1);
+    //! number of elements
     int  number_of_elements = -1;
+    //! element type
+    ElementType etype = DEFAULT;
   }; // end of struct PipeMesh
 
-}
+} // end of namespace mtest
 
 #endif /* _LIB_MTEST_PIPEMESH_HXX_ */

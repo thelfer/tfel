@@ -258,6 +258,19 @@ namespace tfel{
 		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename T2toT2Traits<T2toT2Type>::NumType>::type>& r){
       return t2tot2_internals::ChangeBasis<T2toT2Traits<T2toT2Type>::dime>::exe(s,r);
     }
+
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      t2tot2<TensorTraits<TensorType>::dime,
+	     typename TensorTraits<TensorType>::NumType>
+    >::type
+    computeSpinRateDerivative(const TensorType& F){
+      using res = t2tot2<TensorTraits<TensorType>::dime,
+			 typename TensorTraits<TensorType>::NumType>;
+      const auto iF = invert(F);
+      return (res::tpld(iF)+res::tprd(iF))/2;
+    }
     
   } //end of namespace math
 

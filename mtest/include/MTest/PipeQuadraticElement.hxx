@@ -14,6 +14,8 @@
 #ifndef _LIB_MTEST_PIPEQUADRATICELEMENT_HXX_
 #define _LIB_MTEST_PIPEQUADRATICELEMENT_HXX_
 
+#include<iosfwd>
+
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
@@ -33,6 +35,7 @@ namespace mtest{
    */
   struct PipeQuadraticElement
   {
+#ifndef _MSC_VER
     // absolute value of the Gauss points position in the reference
     // element
     static constexpr const real abs_pg =
@@ -43,6 +46,20 @@ namespace mtest{
     static constexpr const real wg[3] =  {real(5.)/real(9.),
 					  real(8.)/real(9.),
 					  real(5.)/real(9.)};
+#else /* _MSC_VER */
+    // value of the Gauss points position in the reference element
+    static const real pg_radii[3];
+    // Gauss point weight
+    static const real wg[3];
+#endif  /* _MSC_VER */
+    /*!
+     * \brief set the position of the gauss points
+     * \param[out] scs: structure current state
+     * \param[in]  m:   pipe mesh
+     */
+    static void
+    setGaussPointsPositions(StructureCurrentState&,
+			    const PipeMesh&);
     /*!
      * \brief interpolate nodal value in the element
      * \param[in] v0: value at the first node

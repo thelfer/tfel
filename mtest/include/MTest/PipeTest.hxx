@@ -14,6 +14,9 @@
 #ifndef _LIB_MTEST_PIPETEST_HXX_
 #define _LIB_MTEST_PIPETEST_HXX_
 
+#include<string>
+#include<vector>
+
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
@@ -24,6 +27,9 @@
 
 namespace mtest{
 
+  // forward declaration
+  struct PipeProfileHandler;
+  
   /*!
    * a study describing mechanical tests on pipes
    */
@@ -88,6 +94,11 @@ namespace mtest{
      */
     virtual void setPipeModellingHypothesis(const PipeModellingHypothesis);
     /*!
+     * \brief set the element type
+     * \param[in] e: element type
+     */
+    virtual void setElementType(const PipeMesh::ElementType);
+    /*!
      * \brief set the inner pressure evolution
      * \param[in] p : pressure evolution
      */
@@ -119,11 +130,15 @@ namespace mtest{
      */ 
     virtual void completeInitialisation(void) override;
     /*!
-     * \return the total number of unknowns (including the Lagrange
-     * multipliers)
+     * \return the total number of unknowns
      */
     virtual size_type
     getNumberOfUnknowns(void) const override;
+    /*!
+     * \return the total number of nodes
+     */
+    virtual size_type
+    getNumberOfNodes(void) const;
     /*!
      * \brief initialize the current state
      * \param[in] s : current state
@@ -238,6 +253,13 @@ namespace mtest{
 		    const real,
 		    const unsigned int) const override;
     /*!
+     * \brief add a new profile postprocessing
+     * \param[in] f: file name
+     * \param[in] c: components
+     */
+    virtual void
+    addProfile(const std::string&,const std::vector<std::string>&);
+    /*!
      * \param[in] h : modelling hypothesis
      */
     virtual void
@@ -257,6 +279,8 @@ namespace mtest{
   private:
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    //! registred profile
+    std::vector<PipeProfileHandler> profiles;
     //! mesh data
     PipeMesh mesh;
     //! output file precision
@@ -269,6 +293,7 @@ namespace mtest{
     std::shared_ptr<Evolution> outer_pressure;
     //! pipe modelling hypothesis
     PipeModellingHypothesis pmh = DEFAULT;
+    //! element type
     //! small strain hypothesis
     bool hpp = false;
   }; // end of struct PipeTest

@@ -22,6 +22,7 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
+#include"MTest/PipeProfileHandler.hxx"
 #include"MTest/PipeTest.hxx"
 
 struct PipeTestUnitTest final

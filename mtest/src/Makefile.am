@@ -46,7 +46,10 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  MTestParser.cxx                           \
 			  PipeTest.cxx                              \
 			  PipeLinearElement.cxx                     \
-			  PipeQuadraticElement.cxx
+			  PipeQuadraticElement.cxx                  \
+			  PipeCubicElement.cxx                      \
+			  PipeProfile.cxx                           \
+			  PipeProfileHandler.cxx
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Material -lTFELMaterial   \

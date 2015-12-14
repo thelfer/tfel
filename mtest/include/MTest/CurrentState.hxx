@@ -87,6 +87,8 @@ namespace mtest
     tfel::math::vector<real> desv;
     //! rotation matrix
     tfel::math::tmatrix<3u,3u> r;
+    // position of the gauss point in the initial configuration
+    real position;
     // reference Temperature
     real Tref  = 293.15;
   }; // end of struct CurrentState

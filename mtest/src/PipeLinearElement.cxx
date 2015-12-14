@@ -21,14 +21,50 @@
 
 namespace mtest{
 
+#ifndef _MSC_VER
   constexpr const real PipeLinearElement::abs_pg;
   constexpr const real PipeLinearElement::wg;
   constexpr const real PipeLinearElement::pg_radii[2];
+#else /* _MSC_VER */
+  const real PipeLinearElement::abs_pg = real(1)/(std::sqrt(3));
+  const real PipeLinearElement::wg = 1;
+  const real PipeLinearElement::pg_radii[2] = {-real(1)/(std::sqrt(3)),
+					        real(1)/(std::sqrt(3))};
+#endif /* _MSC_VER */
 
+  
   real
   PipeLinearElement::interpolate(const real v0,const real v1,const real x){
     return 0.5*((1-x)*v0+(1+x)*v1);
   } // end of PipeLinearElement::interpolate
+
+  void
+  PipeLinearElement::setGaussPointsPositions(StructureCurrentState& scs,
+					     const PipeMesh& m){
+    // number of elements
+    const auto ne = size_t(m.number_of_elements);
+    // inner radius
+    const auto Ri = m.inner_radius;
+    // outer radius
+    const auto Re = m.outer_radius;
+    // radius increment
+    const auto dr = (Re-Ri)/ne;
+    for(size_t i=0;i!=ne;++i){
+      // radial position of the first node
+      const auto r0 = Ri+dr*i;
+      // radial position of the second node
+      const auto r1 = Ri+dr*(i+1);
+      // loop over Gauss point
+      for(const auto g : {0,1}){
+	// current state
+	auto& s = scs.istates[2*i+g];
+	// Gauss point position in the reference element
+	const auto pg = pg_radii[g];
+	// radial position of the Gauss point
+	s.position = interpolate(r0,r1,pg);
+      }
+    }
+  }
   
   void
   PipeLinearElement::computeStrain(StructureCurrentState& scs,
@@ -162,5 +198,5 @@ namespace mtest{
     }
     return true;
   }
-
+  
 }

@@ -129,6 +129,7 @@ namespace mtest{
 	}
 	log << endl;
       }
+
       // scs.revert();
       // tfel::math::matrix<real> nK(wk.K.getNbRows(),wk.K.getNbCols());
       // tfel::math::vector<real> nr(wk.K.getNbRows());
@@ -180,6 +181,7 @@ namespace mtest{
       // 	}
       // }
       // ::exit(-1);
+
       wk.du = wk.r;
       LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
       u1 -= wk.du;

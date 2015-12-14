@@ -1,5 +1,5 @@
 /*!
- * \file   PipeLinearElement.hxx
+ * \file   PipeCubicElement.hxx
  * \brief    
  * \author THOMAS HELFER
  * \date   10 déc. 2015
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MTEST_PIPELINEARELEMENT_HXX_
-#define _LIB_MTEST_PIPELINEARELEMENT_HXX_
+#ifndef _LIB_MTEST_PIPECUBICELEMENT_HXX_
+#define _LIB_MTEST_PIPECUBICELEMENT_HXX_
 
 #include<iosfwd>
 
@@ -31,35 +31,27 @@ namespace mtest{
   struct StructureCurrentState;
   
   /*!
-   * \brief structure describing a linear element for pipes
+   * \brief structure describing a cubic element for pipes
    */
-  struct PipeLinearElement
+  struct PipeCubicElement
   {
 #ifndef _MSC_VER
-    // absolute value of the Gauss points position in the reference
-    // element
-    static constexpr const real abs_pg =
-      real(1)/tfel::math::constexpr_fct::sqrt(real(3));
     // value of the Gauss points position in the reference element
-    static constexpr const real pg_radii[2] = {-abs_pg,abs_pg};
+    static constexpr const real pg_radii[4] = {-0.861136311594053,
+					       -0.339981043584856,
+					        0.339981043584856,
+					        0.861136311594053};
     // Gauss point weight
-    static constexpr const real wg = real(1);
+    static constexpr const real wg[4] =  {0.347854845137454,
+					  0.652145154862546,
+					  0.652145154862546,
+					  0.347854845137454};
 #else /* _MSC_VER */
-    // absolute value of the Gauss points position in the reference
-    // element
-    static const const real abs_pg;
     // value of the Gauss points position in the reference element
-    static const const real pg_radii[2];
+    static const real pg_radii[4];
     // Gauss point weight
-    static const const real wg;
-#endif /* _MSC_VER */
-    /*!
-     * \brief interpolate nodal value in the element
-     * \param[in] v0: value at the first node
-     * \param[in] v1: value at the second node
-     * \param[in] x:  position in the reference element (-1<x<1)
-     */
-    static real interpolate(const real,const real,const real);
+    static const real wg[4];
+#endif  /* _MSC_VER */
     /*!
      * \brief set the position of the gauss points
      * \param[out] scs: structure current state
@@ -68,6 +60,17 @@ namespace mtest{
     static void
     setGaussPointsPositions(StructureCurrentState&,
 			    const PipeMesh&);
+    /*!
+     * \brief interpolate nodal value in the element
+     * \param[in] v0: value at the first node
+     * \param[in] v1: value at the second node
+     * \param[in] v2: value at the third node
+     * \param[in] v4: value at the fourth node
+     * \param[in] x:  position in the reference element (-1<x<1)
+     */
+    static real interpolate(const real,const real,
+			    const real,const real,
+			    const real);
     /*!
      * \brief compute the strain
      * \param[out] scs: structure current state
@@ -105,8 +108,29 @@ namespace mtest{
 					const real,
 					const StiffnessMatrixType,
 					const size_t);
-  }; // end of struct PipeLinearElement
+  private:
+#ifndef _MSC_VER
+    static constexpr const real one_third = real{1}/real{3};
+    static constexpr const real cste      = real{ 9}/real{16};
+    static constexpr const real cste2     = real{27}/real{16};
+#else /* _MSC_VER */
+    static const real one_third;
+    static const real cste;
+    static const real cste2;
+#endif /* _MSC_VER */
+    static constexpr inline real jacobian(const real,const real,
+					  const real,const real,
+					  const real);
+    static constexpr inline real sf0(const real);
+    static constexpr inline real dsf0(const real);
+    static constexpr inline real sf1(const real);
+    static constexpr inline real dsf1(const real);
+    static constexpr inline real sf2(const real);
+    static constexpr inline real dsf2(const real);
+    static constexpr inline real sf3(const real);
+    static constexpr inline real dsf3(const real);
+  }; // end of struct PipeCubicElement
 
 } // end of namespace mtest
 
-#endif /* _LIB_MTEST_PIPELINEARELEMENT_HXX_ */
+#endif /* _LIB_MTEST_PIPECUBICELEMENT_HXX_ */
