@@ -153,7 +153,7 @@ static umatptr load(const char* n){
     ~LibrariesHandler(){
       for(auto l:*this){
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-	
+	::FreeLibrary(l.second);
 #else
 	::dlclose(l.second);
 #endif
@@ -228,7 +228,7 @@ static umatptr load(const char* n){
 	return nullptr;
       }
       UmatPtrHandler h;
-      h.name = fct;
+      h.name = std::string(n,ne);
       h.ptr  = r.f;
       fcts.push_back(h);
       return r.f;
