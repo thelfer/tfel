@@ -266,7 +266,7 @@ macro(python_module_base fullname name)
   set_target_properties(py_${fullname} PROPERTIES PREFIX "")
   set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
   target_link_libraries(py_${fullname}
-    ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARY})
+    ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
 endmacro(python_module_base)
 
 macro(python_module name)

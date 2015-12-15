@@ -139,7 +139,9 @@ namespace mtest{
       this->out << "# first  column : time\n"
 	"# second column : inner radius\n"
 	"# third  column : outer radius\n"
-	"# fourth column : axial displacement" << std::endl;
+	"# fourth column : inner radius displacement\n"
+	"# fifth  column : outer radius displacement\n"
+	"# sixth  column : axial displacement" << std::endl;
     }
   } // end of PipeTest::completeInitialisation
 
@@ -577,10 +579,10 @@ namespace mtest{
     const auto Re = this->mesh.outer_radius;
     auto nu = PipeTest_getErrorNorm(du,this->getNumberOfUnknowns());
     auto nr = PipeTest_getErrorNorm(r,this->getNumberOfUnknowns())/(2*pi*Re);
-    if(nu>o.eeps){
+    if(nu>Re*o.eeps){
       std::ostringstream msg;
       msg << "test on displacement (error : " << nu
-  	  << ", criterion value : " << o.eeps << ")";
+  	  << ", criterion value : " << Re*o.eeps << ")";
       cd.push_back(msg.str());
     }
     if(nr>o.seps){
@@ -761,7 +763,13 @@ namespace mtest{
 			const StudyCurrentState& state){
     const auto& u1 = state.u1;
     const auto n  = this->getNumberOfNodes();
-    this->out << t << " " << u1[0] << " " << u1[n-1] << " " << u1[n] << std::endl;
+    // inner radius
+    const auto Ri = this->mesh.inner_radius;
+    // outer radius
+    const auto Re = this->mesh.outer_radius;
+    this->out << t   << " " << Ri+u1[0] << " " << Re+u1[n-1]
+	      << " " << u1[0] << " " << u1[n-1] << " "
+	      << u1[n] << std::endl;
   } // end of PipeTest::printOutput
   
   PipeTest::~PipeTest() = default;

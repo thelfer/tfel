@@ -226,9 +226,9 @@ The mechanical behaviour allows us to compute
 The tangent operator \(\deriv{\tenseur{\tau}}{\tns{F}}\) is well
 defined and given by most mechanical behaviour implementations.
 
-To compute the other term, we will need \(\deriv{W}{F}\):
+To compute the other terms, we will need \(\deriv{W}{F}\):
 \[
-\deriv{\tns{W}}{\tns{F}}=\Frac{1}{2}\,\paren{\partial^{l}_{\star}\paren{\tns{F}^{-1}}+\partial^{r}_{\star}\paren{\tns{F}^{-1}}}
+\deriv{\tns{W}}{\tns{F}}=\Frac{1}{2}\,\paren{\partial^{l}_{\star}\paren{\tns{F}^{-1}}-\partial^{r}_{\star}\paren{\tns{F}^{-T}}\,.\,\paren{\deriv{\tns{F}^{T}}{\tns{F}}}}
 \]
 The term \(\partial^{l}_{\star}\paren{\tns{F}^{-1}}\) can be computed
 using the method {\tt tpld} of the {\tt t2tot2} class. The term
@@ -260,7 +260,7 @@ K=\deriv{\tenseur{\tau}}{\tns{F}}-\partial^{l}_{\star}\paren{\tenseur{\tau}}\par
 \]
 
 Following \nom{Han}~\cite{han_modelisation_2012}, the consistent
-tangent operator \(\tenseurq{C}\) can be deduced from the
+tangent operator \(\tenseurq{C}\) can then be deduced from the
 \(\tenseurq{K}\) matrix using the following relationship~:
 \[
 J\,\tenseurq{C}_{ijkl}=K_{ijkm}\,F_{lm}

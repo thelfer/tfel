@@ -85,7 +85,7 @@ namespace tfel{
 											  typename T2toT2Traits<T2toT2Type>::NumType,
 											  OpMult>::Result,
 							     typename T2toT2Traits<T2toT2ResultType>::NumType>::cond));
-	this->v[0]=C(0,1)*A[0];
+	this->v[0]=C(0,0)*A[0];
 	this->v[1]=C(0,1)*A[0];
 	this->v[2]=C(0,2)*A[0];
 	this->v[3]=C(1,0)*A[1];
@@ -163,7 +163,7 @@ namespace tfel{
       template<typename TensorType,
 	       typename T2toT2Type>
       Expr(const TensorType& A,
-		 const T2toT2Type& C)
+	   const T2toT2Type& C)
       {
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
@@ -178,7 +178,7 @@ namespace tfel{
 											  typename T2toT2Traits<T2toT2Type>::NumType,
 											  OpMult>::Result,
 							     typename T2toT2Traits<T2toT2ResultType>::NumType>::cond));
-	this->v[0]=C(4,0)*A[3]+C(0,1)*A[0];
+	this->v[0]=C(4,0)*A[3]+C(0,0)*A[0];
 	this->v[1]=C(4,1)*A[3]+C(0,1)*A[0];
 	this->v[2]=C(4,2)*A[3]+C(0,2)*A[0];
 	this->v[3]=C(4,3)*A[3]+C(0,3)*A[0];
@@ -198,7 +198,7 @@ namespace tfel{
 	this->v[17]=C(1,2)*A[3]+C(3,2)*A[0];
 	this->v[18]=C(1,3)*A[3]+C(3,3)*A[0];
 	this->v[19]=C(1,4)*A[3]+C(3,4)*A[0];
-	this->v[20]=C(0,1)*A[4]+C(4,0)*A[1];
+	this->v[20]=C(0,0)*A[4]+C(4,0)*A[1];
 	this->v[21]=C(0,1)*A[4]+C(4,1)*A[1];
 	this->v[22]=C(0,2)*A[4]+C(4,2)*A[1];
 	this->v[23]=C(0,3)*A[4]+C(4,3)*A[1];

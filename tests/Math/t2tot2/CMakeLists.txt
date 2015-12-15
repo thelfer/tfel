@@ -18,3 +18,7 @@ endmacro(tests_t2tot2)
 
 tests_t2tot2(t2tot2)
 tests_t2tot2(TensorProductDerivative)
+tests_t2tot2(TransposeDerivative)
+tests_t2tot2(VelocityGradientDerivative)
+tests_t2tot2(SpinRateDerivative)
+

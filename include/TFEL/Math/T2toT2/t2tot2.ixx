@@ -181,13 +181,31 @@ namespace tfel{
       tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
 								    typename T2toT2Traits<T2toT2Type>::NumType,
 								    OpMult>::Result,T>::cond,
-      Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+      Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
     t2tot2<N,T>::tprd(const TensorType& A,
 		      const T2toT2Type& C)
     {
-      return Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(A,C);
+      return Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> >(A,C);
     }
 
+    template<unsigned short N, typename T>
+    typename tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
+    t2tot2<N,T>::transpose_derivative(void){
+      using size_type = typename t2tot2<N,T>::size_type;
+      using base = typename tfel::typetraits::BaseType<T>::type;
+      constexpr base one  = base(1);
+      constexpr base zero = base(0);
+      t2tot2<N,base> r(zero);
+      for(size_type i=0;i!=3u;++i){
+	r(i,i)=one;
+      }
+      for(size_type j=3u;j!=TensorDimeToSize<N>::value;j+=2){
+	r(j+1,j) = one;
+	r(j,j+1) = one;
+      }
+      return r;
+    }
+    
     template<unsigned short N, typename T>
     constexpr t2tot2<N,T>::t2tot2()
     {}
@@ -265,11 +283,29 @@ namespace tfel{
       t2tot2<TensorTraits<TensorType>::dime,
 	     typename TensorTraits<TensorType>::NumType>
     >::type
-    computeSpinRateDerivative(const TensorType& F){
+    computeVelocityGradientDerivative(const TensorType& F){
       using res = t2tot2<TensorTraits<TensorType>::dime,
 			 typename TensorTraits<TensorType>::NumType>;
       const auto iF = invert(F);
-      return (res::tpld(iF)+res::tprd(iF))/2;
+      return res::tpld(iF);
+    }
+    
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      t2tot2<TensorTraits<TensorType>::dime,
+	     typename TensorTraits<TensorType>::NumType>
+    >::type
+    computeSpinRateDerivative(const TensorType& F){
+      using value_type = typename TensorTraits<TensorType>::NumType;
+      using base    = typename tfel::typetraits::BaseType<value_type>::type;
+      using res     = t2tot2<TensorTraits<TensorType>::dime,value_type>;
+      using resbase = t2tot2<TensorTraits<TensorType>::dime,base>;;
+      const auto iF  = invert(F);
+      const auto itF = invert(transpose(F));
+      const auto dt  = resbase::transpose_derivative();
+      const res r = res::tpld(iF)-res::tprd(itF,dt);
+      return r/2;
     }
     
   } //end of namespace math
