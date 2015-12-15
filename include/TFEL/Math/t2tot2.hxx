@@ -193,9 +193,15 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
 								      typename T2toT2Traits<T2toT2Type>::NumType,
 								      OpMult>::Result,T>::cond,
-	T2toT2Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> > >::type
+	T2toT2Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
       tprd(const TensorType&,
 	   const T2toT2Type&);
+      /*!
+       * \return the derivative of the transpose of a tensor with respect of this tensor
+       */
+      static TFEL_MATH_INLINE
+      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
+      transpose_derivative(void);
       /*!
        * This is a StensorConcept requirement.
        */
@@ -252,7 +258,33 @@ namespace tfel{
       TFEL_MATH_INLINE2 void copy(const InputIterator src);
 
     }; // end of struct t2tot2
-        
+    
+    /*!
+     * \return compute the derivative of the velocity gradient
+     * \param[in] F : deformation gradient
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      t2tot2<TensorTraits<TensorType>::dime,
+	     typename TensorTraits<TensorType>::NumType>
+    >::type
+    computeVelocityGradientDerivative(const TensorType&);
+
+    /*!
+     * \return compute the derivative of the spin rate
+     * \param[in] F : deformation gradient
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename tfel::meta::EnableIf<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      t2tot2<TensorTraits<TensorType>::dime,
+	     typename TensorTraits<TensorType>::NumType>
+    >::type
+    computeSpinRateDerivative(const TensorType&);
+    
   } // end of namespace math
 
   namespace typetraits{
