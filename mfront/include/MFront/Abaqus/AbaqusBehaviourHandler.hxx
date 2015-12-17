@@ -49,7 +49,7 @@ namespace abaqus
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
     TangentOperatorTraits;
-    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DTAU_DDF;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::ABAQUS;
   };
 
   template<tfel::material::ModellingHypothesis::Hypothesis H,
@@ -208,7 +208,7 @@ namespace abaqus
 	    SInitializer::exe(this->behaviour,PROPS);
 	    AInitializer::exe(this->behaviour,PROPS);
 	    DVInitializer::exe(this->behaviour,STRAN,DSTRAN,sfeh);
-	    this->behaviour.setABAQUSBehaviourDataThermodynamicForces(STRESS);
+	    this->behaviour.setABAQUSBehaviourDataThermodynamicForces(STRESS,DROT);
 	    this->behaviour.setOutOfBoundsPolicy(op);
 	    this->behaviour.initialize();
 	  } // end of Integrator::Integrator

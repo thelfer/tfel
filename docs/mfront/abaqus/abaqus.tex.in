@@ -6,10 +6,11 @@
 \usepackage{presentation}
 
 \titre{Description of the mechanical behaviour interface to the Abaqus solver}
-\auteurs{T.~Helfer}
+\auteurs{T.~Helfer, Kulbir Singh}
 \redacteur{T.~Helfer}
 
 \newcommand{\mfront}{\texttt{MFront}}
+\newcommand{\mtest}{\texttt{MTest}}
 \newcommand{\abaqus}{\texttt{Abaqus}}
 
 \lstset{ %
@@ -178,6 +179,85 @@ The parameters file must be formatted like this~:
 
 If a parameter is omitted, this parameter will have its default value.
 
+\section{Test cases}
+
+\subsection{Unit tests in small strain}
+
+\paragraph{Isotropic elastic behaviour under tensile loading in small strain}
+
+\paragraph{Isotropic elastic behaviour under shear loading in small strain}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-sxz.pdf}
+  \caption{Comparison of the results obtained the \mfront{}
+    implementation of an isotropic elastic behaviour and the results
+    obtained with the \abaqus{} build-in elastic behaviour under shear
+    loading.}
+  \label{fig:abaqus:ShearLoading-IsotropicElasticity-sxz}
+\end{figure}
+
+\paragraph{Isotropic viscoplastic behaviour under tensile loading in
+  small strain}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/IsotropicViscoplasticity-TensileLoading-szz.pdf}
+  \caption{Comparison of the results obtained with \abaqus{} and
+    \mtest{} using an \mfront{} implementation of an isotropic
+    viscoplastic behaviour under tensile loading.}
+  \label{fig:abaqus:IsotropicViscoplasticity-TensileLoading-szz}
+\end{figure}
+
+\paragraph{Isotropic plastic behaviour with isotropic hardening under shear
+  loading in small strain}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/ShearLoading-Plasticity-sxz.pdf}
+  \caption{Comparison of the results obtained the \mfront{}
+    implementation of an isotropic plastic behaviour with isotropic
+    hardening and the results obtained with the \abaqus{} build-in
+    behaviour under shear loading.}
+  \label{fig:abaqus:ShearLoading-Plasticity-sxz}
+\end{figure}
+
+\subsubsection{Unit tests in finite strain}
+
+\paragraph{Isotropic elastic behaviour under shear loading in finite strain}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-nlgeom-sxz.pdf}
+  \caption{Comparison of the results obtained the \mfront{}
+    implementation of an isotropic elastic behaviour and the results
+    obtained with the \abaqus{} build-in elastic behaviour under shear
+    loading when the Hughes-Winglet hypo-elastic formulation is used.}
+  \label{fig:abaqus:ShearLoading-IsotropicElasticity-nlgeom-sxz}
+\end{figure}
+
+\subsection{Isotropic plastic behaviour with isotropic hardening on a
+  notched beam}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/IsotropicHardeningPlasticity-VonMisesStress.png}
+  \caption{Comparison of the \nom{Von Mises} stress distribution obtained with \mfront{} and the results obtained with the \abaqus{} build-in plasticity behaviour on a notched beam.}
+  \label{fig:abaqus:vmis}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/IsotropicHardeningPlasticity-Stress_vs_Strain.png}
+  \caption{Comparison of the stress vs. strain curves obtained with
+    \mfront{} and with the \abaqus{} build-in plasticity behaviour on
+    a notched beam.}
+  \label{fig:abaqus:sig_vs_eps}
+\end{figure}
+
+
+\appendix
+
 \section{Definition of the consistent tangent operator for finite
   strain behaviours}
 
@@ -256,7 +336,7 @@ J\,\tenseurq{C}\,\colon\,\delta\,\tenseur{D}=\tenseurq{K}\,\colon\,\delta\tns{F}
 \]
 where \(\tenseurq{K}\) is given by~:
 \[
-K=\deriv{\tenseur{\tau}}{\tns{F}}-\partial^{l}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}+\partial^{r}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}
+\tenseurq{K}=\deriv{\tenseur{\tau}}{\tns{F}}-\partial^{l}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}+\partial^{r}_{\star}\paren{\tenseur{\tau}}\paren{\deriv{\tns{W}}{\tns{F}}}
 \]
 
 Following \nom{Han}~\cite{han_modelisation_2012}, the consistent

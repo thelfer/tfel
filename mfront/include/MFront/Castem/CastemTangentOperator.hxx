@@ -14,9 +14,8 @@
 #ifndef LIB_MFRONT_CASTEMTANGENTOPERATOR_H_
 #define LIB_MFRONT_CASTEMTANGENTOPERATOR_H_ 
 
-#include"TFEL/Math/Forward/tmatrix.hxx"
-#include"TFEL/Math/Forward/t2tost2.hxx"
-#include"TFEL/Math/Forward/st2tost2.hxx"
+#include"TFEL/Math/Matrix/TMatrixView.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 
 #include"MFront/Castem/Castem.hxx"
 #include"MFront/Castem/CastemConfig.hxx"
@@ -31,122 +30,77 @@ namespace castem
   struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemTangentOperator
   {
     /*!
-     * \brief normalize the finite strain behaviour tangent operator
-     * in 1D
-     * \param[in] Dt : finite strain behaviour tangent operator
-     */
-    TFEL_NORETURN static void
-    normalize(tfel::math::t2tost2<1u,CastemReal>&);
-    /*!
-     * \brief normalize the finite strain behaviour tangent operator
-     * in 2D
-     * \param[in] Dt : finite strain behaviour tangent operator
-     */
-    TFEL_NORETURN static void
-    normalize(tfel::math::t2tost2<2u,CastemReal>&);
-    /*!
-     * \brief normalize the finite strain behaviour tangent operator
-     * in 3D
-     * \param[in] Dt : finite strain behaviour tangent operator
-     */
-    TFEL_NORETURN static void
-    normalize(tfel::math::t2tost2<3u,CastemReal>&);
-    /*!
-     * \brief transpose the finite strain behaviour tangent operator
-     * in 1D
-     * \param[in] Dt : finite strain behaviour tangent operator
-     * \note this method does nothing
-     */
-    static void
-    transpose(tfel::math::t2tost2<1u,CastemReal>&);
-    /*!
-     * \brief transpose the finite strain behaviour tangent operator
-     * in 2D
-     * \param[in] Dt : finite strain behaviour tangent operator
-     * \note this method does nothing
-     */
-    static void
-    transpose(tfel::math::t2tost2<2u,CastemReal>&);
-    /*!
-     * \brief transpose the finite strain behaviour tangent operator
-     * in 3D
-     * \param[in] Dt : finite strain behaviour tangent operator
-     * \note this method does nothing
-     */
-    static void
-    transpose(tfel::math::t2tost2<3u,CastemReal>&);
-    /*!
      * \brief normalize the tangent operator in 1D
      * \param[in] Dt : tangent operator
      */
     static void
-    normalize(tfel::math::st2tost2<1u,CastemReal>&);
+    normalize(tfel::math::ST2toST2View<1u,CastemReal>&);
     /*!
      * \brief normalize the tangent operator in 2D
      * \param[in] Dt : tangent operator
      */
     static void
-    normalize(tfel::math::st2tost2<2u,CastemReal>&);
+    normalize(tfel::math::ST2toST2View<2u,CastemReal>&);
     /*!
      * \brief normalize the tangent operator in 3D
      * \param[in] Dt : tangent operator
      */
     static void
-    normalize(tfel::math::st2tost2<3u,CastemReal>&);
+    normalize(tfel::math::ST2toST2View<3u,CastemReal>&);
     /*!
      * \brief transpose the tangent operator in 1D
      * \param[in] Dt : tangent operator
      */
     static void
-    transpose(tfel::math::st2tost2<1u,CastemReal>&);
+    transpose(tfel::math::ST2toST2View<1u,CastemReal>&);
     /*!
      * \brief transpose the tangent operator in 2D
      * \param[in] Dt : tangent operator
      */
     static void
-    transpose(tfel::math::st2tost2<2u,CastemReal>&);
+    transpose(tfel::math::ST2toST2View<2u,CastemReal>&);
     /*!
      * \brief transpose the tangent operator in 3D
      * \param[in] Dt : tangent operator
      */
     static void
-    transpose(tfel::math::st2tost2<3u,CastemReal>&);
+    transpose(tfel::math::ST2toST2View<3u,CastemReal>&);
     /*!
      * \brief normalize the tangent operator in 1D
      * \param[in] Dt : tangent operator
      */
     static void
-    normalize(tfel::math::tmatrix<1u,1u,CastemReal>&);
+    normalize(tfel::math::TMatrixView<1u,1u,CastemReal>&);
     /*!
      * \brief normalize the tangent operator in 2D
      * \param[in] Dt : tangent operator
      */
     static void
-    normalize(tfel::math::tmatrix<2u,2u,CastemReal>&);
+    normalize(tfel::math::TMatrixView<2u,2u,CastemReal>&);
     /*!
      * \brief normalize the tangent operator in 3D
      * \param[in] Dt : tangent operator
      */
     static void
-    normalize(tfel::math::tmatrix<3u,3u,CastemReal>&);
+    normalize(tfel::math::TMatrixView<3u,3u,CastemReal>&);
     /*!
      * \brief transpose the tangent operator in 1D
      * \param[in] Dt : tangent operator
      */
     static void
-    transpose(tfel::math::tmatrix<1u,1u,CastemReal>&);
+    transpose(tfel::math::TMatrixView<1u,1u,CastemReal>&);
     /*!
      * \brief transpose the tangent operator in 2D
      * \param[in] Dt : tangent operator
      */
     static void
-    transpose(tfel::math::tmatrix<2u,2u,CastemReal>&);
+    transpose(tfel::math::TMatrixView<2u,2u,CastemReal>&);
     /*!
      * \brief transpose the tangent operator in 3D
      * \param[in] Dt : tangent operator
      */
     static void
-    transpose(tfel::math::tmatrix<3u,3u,CastemReal>&);
+    transpose(tfel::math::TMatrixView<3u,3u,CastemReal>&);
   }; // end of struct CastemTangentOperator
 
 } // end of namespace castem

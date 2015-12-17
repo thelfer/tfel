@@ -584,6 +584,33 @@ namespace mfront{
   } // end of AbaqusInterface::getBehaviourDataConstructorAdditionalVariables
 
   void 
+  AbaqusInterface::writeBehaviourDataMainVariablesSetters(std::ofstream& os,
+							  const BehaviourDescription& mb) const
+  {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    SupportedTypes::TypeSize ov,of;
+    os << "void set" << iprefix << "BehaviourDataDrivingVariables(const Type* const " << iprefix << "stran)\n"
+       << "{\n";
+    for(const auto& v : mb.getMainVariables()){
+      this->writeBehaviourDataDrivingVariableSetter(os,v.first,ov);
+      ov += this->getTypeSize(v.first.type,1u);
+    }
+    os << "}\n\n";
+    //       << "                                                          const Type* const " << iprefix << "DR)\n"
+    os << "void set" << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_,\n"
+       << "                                                          const Type* const )\n"
+       << "{\n";
+       // << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[3],ABAQUSDR[6],\n"
+       // << "                                                   ABAQUSDR[1],ABAQUSDR[4],ABAQUSDR[7],\n"
+       // << "                                                   ABAQUSDR[2],ABAQUSDR[5],ABAQUSDR[8]};\n";
+    for(const auto& v : mb.getMainVariables()){
+      this->writeBehaviourDataThermodynamicForceSetter(os,v.second,of);
+      of += this->getTypeSize(v.second.type,1u);
+    }
+    os << "}\n\n";
+  } // end of AbaqusInterface::writeBehaviourDataMainVariablesSetters
+  
+  void 
   AbaqusInterface::writeBehaviourDataThermodynamicForceSetter(std::ofstream& os,
 							      const ThermodynamicForce& f,
 							      const SupportedTypes::TypeSize o) const
@@ -596,6 +623,7 @@ namespace mfront{
       } else {
 	os << iprefix << "stress_);\n";
       }
+      //      os << "tfel::math::change_basis(this->" << f.name << ",abaqus_dr);\n";
     } else {
       throw(std::runtime_error("AbaqusInterface::writeBehaviourDataMainVariablesSetters : "
 			       "unsupported forces type"));
@@ -620,18 +648,18 @@ namespace mfront{
     if(!b){
       out << "static_cast<void>(ABAQUSDR);\n";
     } else {
-      out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[3],ABAQUSDR[6],"
-             "                                                   ABAQUSDR[1],ABAQUSDR[4],ABAQUSDR[7],"
+      out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[3],ABAQUSDR[6],\n"
+             "                                                   ABAQUSDR[1],ABAQUSDR[4],ABAQUSDR[7],\n"
              "                                                   ABAQUSDR[2],ABAQUSDR[5],ABAQUSDR[8]};\n";
       for(const auto& v:d.getPersistentVariables()){
 	const auto flag = this->getTypeFlag(v.type);
 	if((flag==SupportedTypes::Stensor)||
 	   (flag==SupportedTypes::Tensor)){
 	  if(v.arraySize==1u){
-	    out << "tfel::math::change_basis(this->" << v.name << ",abaqus_dr);\n";
+	    out << "this->" << v.name << ".changeBasis(abaqus_dr);\n";
 	  } else {
 	    for(unsigned short i=0;i!=v.arraySize;++i){
-	      out << "tfel::math::change_basis(this->" << v.name << "[" << i << "],abaqus_dr);\n";
+	      out << "this->" << v.name << "[" << i << "].changeBasis(abaqus_dr);\n";
 	    }
 	  }
 	}

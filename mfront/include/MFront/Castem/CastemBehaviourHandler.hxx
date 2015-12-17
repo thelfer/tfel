@@ -19,6 +19,10 @@
 #endif /* LIB_MFRONT_CASTEM_CALL_HXX */
 
 #include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/Matrix/TMatrixView.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"MFront/Castem/CastemTangentOperator.hxx"
 #include"MFront/Castem/CastemComputeStiffnessTensor.hxx"
@@ -44,7 +48,7 @@ namespace castem
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
     TangentOperatorTraits;
-    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DSIG_DF;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DSIG_DD;
   };
 
   template<>
@@ -63,19 +67,22 @@ namespace castem
   template<unsigned short N>
   struct CastemTangentOperatorType<castem::SMALLSTRAINSTANDARDBEHAVIOUR,N>
   {
-    typedef tfel::math::st2tost2<N,CastemReal> type;
+    using type      = tfel::math::st2tost2<N,CastemReal>;
+    using view_type = tfel::math::ST2toST2View<N,CastemReal>;
   };
 
   template<unsigned short N>
   struct CastemTangentOperatorType<castem::FINITESTRAINSTANDARDBEHAVIOUR,N>
   {
-    typedef tfel::math::t2tost2<N,CastemReal> type;
+    using type      = tfel::math::st2tost2<N,CastemReal>;
+    using view_type = tfel::math::ST2toST2View<N,CastemReal>;
   };
 
   template<unsigned short N>
   struct CastemTangentOperatorType<castem::COHESIVEZONEMODEL,N>
   {
-    typedef tfel::math::tmatrix<N,N,CastemReal> type;
+    using type      = tfel::math::tmatrix<N,N,CastemReal>;
+    using view_type = tfel::math::TMatrixView<N,N,CastemReal>;
   };
   
   /*!
@@ -779,9 +786,12 @@ namespace castem
 	tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(const BV& bv,CastemReal *const DDSDDE)
       {
-	typedef typename CastemTangentOperatorType<CastemTraits<BV>::btype,N>::type TangentOperatorType;
-	TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSDDE));
-	Dt = bv.getTangentOperator();
+	using TangentOperatorType =
+	  typename CastemTangentOperatorType<CastemTraits<BV>::btype,N>::type;
+	using TangentOperatorViewType =
+	  typename CastemTangentOperatorType<CastemTraits<BV>::btype,N>::view_type;
+	TangentOperatorViewType Dt{DDSDDE};
+	Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
 	// l'opérateur tangent contient des sqrt(2) en petites et grandes transformations...
 	CastemTangentOperator::normalize(Dt);
       } // end of exe	  
@@ -806,9 +816,10 @@ namespace castem
       static void exe(const BV& bv,CastemReal *const DDSDDE)
       {
 	using namespace tfel::math;
-	typedef typename CastemTangentOperatorType<CastemTraits<BV>::btype,N>::type TangentOperatorType;
+	using TangentOperatorViewType =
+	  typename CastemTangentOperatorType<CastemTraits<BV>::btype,N>::view_type;
 	ConsistentTangentOperatorComputer::exe(bv,DDSDDE);
-	TangentOperatorType& Dt = *(reinterpret_cast<TangentOperatorType*>(DDSDDE));
+	TangentOperatorViewType Dt{DDSDDE};
 	// les conventions fortran....
 	CastemTangentOperator::transpose(Dt);
       } // end of exe	  

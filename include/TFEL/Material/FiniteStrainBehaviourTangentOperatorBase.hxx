@@ -41,8 +41,12 @@ namespace tfel
 		    \f$D=\frac{1}{2}\left(L+L^{tr}\right)\f$
 		    with
 		    \f$L=\dot{F}\,F^{-1}\f$
-		    This is one of the tangenet operator usable in
+		    This is one of the tangent operator usable in
 		    the ZeBuLoN finite element solver */
+	ABAQUS,   /*!< tangent moduli associated with the Jaumann rate
+		    of the Kirchhoff stress divided by J. This is the
+		    tangent operator for the Abaqus and Ansys finite
+		    element solvers */
 	DSIG_DDE, /*!< derivative of the Cauchy stress with respect to
 		    the small strain deformation increment*/
 	DTAU_DF,  /*!< derivative of the Kirchhoff stress with respect to

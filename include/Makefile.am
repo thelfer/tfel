@@ -347,6 +347,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/StensorSquareDerivative.hxx                                               \
 			TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx                                               \
 			TFEL/Math/ST2toST2/ChangeBasis.hxx                                                           \
+			TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx                                                \
 			TFEL/Math/t2tost2.hxx                                                                        \
 			TFEL/Math/T2toST2/t2tost2.ixx                                                                \
 			TFEL/Math/T2toST2/T2toST2Concept.hxx                                                         \

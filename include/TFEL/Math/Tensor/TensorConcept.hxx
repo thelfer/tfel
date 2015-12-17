@@ -155,7 +155,7 @@ namespace tfel{
       stensor<3u,typename TensorTraits<T>::NumType>
       >::type
     syme(const T&);
-    
+
     template<class T>
     typename std::enable_if<
       ((tfel::meta::Implements<T,TensorConcept>::cond) &&

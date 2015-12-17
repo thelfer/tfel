@@ -324,6 +324,12 @@ docs/mfront/UseQt.md -text
 docs/mfront/abaqus/CMakeLists.txt -text
 docs/mfront/abaqus/Makefile.doc.in -text
 docs/mfront/abaqus/abaqus.tex.in -text
+docs/mfront/abaqus/img/IsotropicHardeningPlasticity-Stress_vs_Strain.png -text
+docs/mfront/abaqus/img/IsotropicHardeningPlasticity-VonMisesStress.png -text
+docs/mfront/abaqus/img/IsotropicViscoplasticity-TensileLoading-szz.pdf -text
+docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-nlgeom-sxz.pdf -text
+docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-sxz.pdf -text
+docs/mfront/abaqus/img/ShearLoading-Plasticity-sxz.pdf -text
 docs/mfront/abaqus/img/abaqus_v6.env -text
 docs/mfront/abaqus/umat.cpp -text
 docs/mfront/aster/CMakeLists.txt -text
@@ -1364,6 +1370,7 @@ include/TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx -text
 include/TFEL/Math/ST2toST2/ChangeBasis.hxx -text
 include/TFEL/Math/ST2toST2/ConstST2toST2View.hxx -text
 include/TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx -text
+include/TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2Concept.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2Concept.ixx -text
 include/TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx -text
@@ -3942,6 +3949,7 @@ tests/Math/qt2.cxx -text
 tests/Math/qt3.cxx -text
 tests/Math/solve.cxx -text
 tests/Math/st2tost2/CMakeLists.txt -text
+tests/Math/st2tost2/ConvertToTangentModuliTest.cxx -text
 tests/Math/st2tost2/Makefile.am -text
 tests/Math/st2tost2/ST2toST2ChangeBasis.cxx -text
 tests/Math/st2tost2/ST2toST2FromTinyMatrixView.cxx -text
@@ -4063,9 +4071,10 @@ tfel-doc/src/TestDocumentation.cxx -text
 tfel-doc/src/tfel-doc.cxx -text
 /tfel.doxygen -text
 tools/FourthOrderTensorProduct/generate.cxx -text
-tools/TensorConvertion.cxx -text
-tools/TensorConvertion1D.cxx -text
-tools/TensorConvertion2D.cxx -text
+tools/TensorConvertion/TensorConvertion.cxx -text
+tools/TensorConvertion/TensorConvertion1D.cxx -text
+tools/TensorConvertion/TensorConvertion2D.cxx -text
+tools/TensorConvertion/TensorConvertion3D.cxx -text
 tools/docs/mfront-keywords.sh -text
 tools/glossary/generate_glossary.cxx -text
 tools/glossary/glossary.txt -text

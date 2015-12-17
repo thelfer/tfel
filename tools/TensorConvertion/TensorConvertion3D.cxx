@@ -27,8 +27,8 @@ index(const unsigned short i,
   }
 }
 
-int main(void){
-  // CIJKL=1/J(K_{IJKN}*F_{LN}
+// CIJKL=1/J(K_{IJKN}*F_{LN}
+void t2tot2()
   for(unsigned short i=0;i!=3;++i){
     for(unsigned short j=0;j!=3;++j){
       auto ri = index(i,j);
@@ -47,6 +47,9 @@ int main(void){
       }
     }
   }
+}
+
+int main(void){
   return EXIT_SUCCESS;
 }
 

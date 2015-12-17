@@ -205,6 +205,17 @@ namespace tfel
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DD,N,StressType>
 
     /*!
+     * \brief partial specialisation for the tangent moduli associated
+     * with the Jaumann rate of the Kirchhoff stress divided by J.
+     */
+    template<unsigned short N,typename StressType>
+    struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::ABAQUS,N,StressType>
+    {
+      //! the result of the meta function
+      typedef tfel::math::st2tost2<N,StressType> type;
+    };
+    
+    /*!
      * partial specialisation for the derivative of the Kirchhoff
      * stress with respect to the deformation gradient
      */

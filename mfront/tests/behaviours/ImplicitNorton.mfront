@@ -63,28 +63,11 @@ AxisymmetricalGeneralisedPlaneStress::etozz.setGlossaryName("AxialStrain");
 AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
 
 /* Initialize Lame coefficients */
-@InitLocalVars{
+@InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
-} // end of @InitLocalVars
-
-@IsTangentOperatorSymmetric true;
-@TangentOperator{
-  using namespace tfel::material::lame;
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
-     (smt==TANGENTOPERATOR)){
-    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    StiffnessTensor Hooke;
-    Stensor4 Je;
-    computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
-    getPartialJacobianInvert(Je);
-    Dt = Hooke*Je;
-  } else {
-    return false;
-  }
-}
+} // end of @InitLocalVariables
 
 @ComputeStress{
   sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
@@ -139,3 +122,21 @@ AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
   dfetozz_ddeel(0) = lambda/young;
   dfetozz_ddeel(2) = lambda/young;
 }
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
+     (smt==TANGENTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor Hooke;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = Hooke*Je;
+  } else {
+    return false;
+  }
+}
+			  

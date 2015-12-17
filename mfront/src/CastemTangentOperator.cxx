@@ -22,45 +22,12 @@
 namespace castem
 {
 
-  TFEL_NORETURN void
-  CastemTangentOperator::normalize(tfel::math::t2tost2<1u,CastemReal>&)
-  {
-    throw(std::runtime_error("CastemTangentOperator::normalize : "
-			     "unsupported feature"));
-  } // end of CastemTangentOperator::normalize
+  void
+  CastemTangentOperator::normalize(tfel::math::ST2toST2View<1u,CastemReal>&)
+  {}
   
   void
-  CastemTangentOperator::normalize(tfel::math::t2tost2<2u,CastemReal>&)
-  {
-    throw(std::runtime_error("CastemTangentOperator::normalize : "
-			     "unsupported feature"));
-  } // end of CastemTangentOperator::normalize
-  
-  void
-  CastemTangentOperator::normalize(tfel::math::t2tost2<3u,CastemReal>&)
-  {
-    throw(std::runtime_error("CastemTangentOperator::normalize : "
-			     "unsupported feature"));
-  } // end of struct CastemTangentOperator
-
-  void
-  CastemTangentOperator::transpose(tfel::math::t2tost2<1u,CastemReal>&)
-  {}
-
-  void
-  CastemTangentOperator::transpose(tfel::math::t2tost2<2u,CastemReal>&)
-  {}
-
-  void
-  CastemTangentOperator::transpose(tfel::math::t2tost2<3u,CastemReal>&)
-  {}
-
-  void
-  CastemTangentOperator::normalize(tfel::math::st2tost2<1u,CastemReal>&)
-  {} // end of CastemTangentOperator::normalize
-
-  void
-  CastemTangentOperator::normalize(tfel::math::st2tost2<2u,CastemReal>& Dt)
+  CastemTangentOperator::normalize(tfel::math::ST2toST2View<2u,CastemReal>& Dt)
   {
     using namespace std;
     static const CastemReal inv_sqrt2 = CastemReal(1)/std::sqrt(CastemReal(2));
@@ -77,7 +44,7 @@ namespace castem
    * \brief normalize the tangent operator in 3D
    */
   void
-  CastemTangentOperator::normalize(tfel::math::st2tost2<3u,CastemReal>& Dt)
+  CastemTangentOperator::normalize(tfel::math::ST2toST2View<3u,CastemReal>& Dt)
   {
     using namespace std;
     static const CastemReal inv_sqrt2 = CastemReal(1)/std::sqrt(CastemReal(2));
@@ -111,7 +78,7 @@ namespace castem
   } // end of struct CastemTangentOperator
 
   void
-  CastemTangentOperator::transpose(tfel::math::st2tost2<1u,CastemReal>& Dt)
+  CastemTangentOperator::transpose(tfel::math::ST2toST2View<1u,CastemReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));
@@ -119,7 +86,7 @@ namespace castem
   }
 
   void
-  CastemTangentOperator::transpose(tfel::math::st2tost2<2u,CastemReal>& Dt)
+  CastemTangentOperator::transpose(tfel::math::ST2toST2View<2u,CastemReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));
@@ -130,7 +97,7 @@ namespace castem
   }
 
   void
-  CastemTangentOperator::transpose(tfel::math::st2tost2<3u,CastemReal>& Dt)
+  CastemTangentOperator::transpose(tfel::math::ST2toST2View<3u,CastemReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));
@@ -150,29 +117,29 @@ namespace castem
   }
 
   void
-  CastemTangentOperator::normalize(tfel::math::tmatrix<1u,1u,CastemReal>&)
+  CastemTangentOperator::normalize(tfel::math::TMatrixView<1u,1u,CastemReal>&)
   {} // end of CastemTangentOperator::normalize
 
   void
-  CastemTangentOperator::normalize(tfel::math::tmatrix<2u,2u,CastemReal>&)
+  CastemTangentOperator::normalize(tfel::math::TMatrixView<2u,2u,CastemReal>&)
   {} // end of CastemTangentOperator::normalize
   
   void
-  CastemTangentOperator::normalize(tfel::math::tmatrix<3u,3u,CastemReal>&)
+  CastemTangentOperator::normalize(tfel::math::TMatrixView<3u,3u,CastemReal>&)
   {} // end of struct CastemTangentOperator
 
   void
-  CastemTangentOperator::transpose(tfel::math::tmatrix<1u,1u,CastemReal>&)
+  CastemTangentOperator::transpose(tfel::math::TMatrixView<1u,1u,CastemReal>&)
   {}
 
   void
-  CastemTangentOperator::transpose(tfel::math::tmatrix<2u,2u,CastemReal>& Dt)
+  CastemTangentOperator::transpose(tfel::math::TMatrixView<2u,2u,CastemReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
   }
 
   void
-  CastemTangentOperator::transpose(tfel::math::tmatrix<3u,3u,CastemReal>& Dt)
+  CastemTangentOperator::transpose(tfel::math::TMatrixView<3u,3u,CastemReal>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));

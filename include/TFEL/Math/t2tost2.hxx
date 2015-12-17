@@ -30,6 +30,7 @@
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
+#include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include"TFEL/Math/T2toST2/T2toST2ConceptOperations.hxx"
 
@@ -209,7 +210,43 @@ namespace tfel{
       TFEL_MATH_INLINE2 void copy(const InputIterator src);
 
     }; // end of struct t2tost2
-        
+
+    /*!
+     * convert a t2tot2 tensor to a t2tost2
+     */
+    template<typename T2toT2Type>
+    TFEL_MATH_INLINE 
+    typename std::enable_if<
+      ((T2toT2Traits<T2toT2Type>::dime==1u)&&
+       tfel::meta::Implements<T2toT2Type,tfel::math::T2toT2Concept>::cond),
+      t2tost2<1u,typename T2toT2Traits<T2toT2Type>::NumType>
+      >::type
+    convertToT2toST2(const T2toT2Type&);
+
+    /*!
+     * convert a t2tot2 tensor to a t2tost2
+     */
+    template<typename T2toT2Type>
+    TFEL_MATH_INLINE 
+    typename std::enable_if<
+      ((T2toT2Traits<T2toT2Type>::dime==2u)&&
+       tfel::meta::Implements<T2toT2Type,tfel::math::T2toT2Concept>::cond),
+      t2tost2<2u,typename T2toT2Traits<T2toT2Type>::NumType>
+      >::type
+    convertToT2toST2(const T2toT2Type&);
+
+    /*!
+     * convert a t2tot2 tensor to a t2tost2
+     */
+    template<typename T2toT2Type>
+    TFEL_MATH_INLINE 
+    typename std::enable_if<
+      ((T2toT2Traits<T2toT2Type>::dime==3u)&&
+       tfel::meta::Implements<T2toT2Type,tfel::math::T2toT2Concept>::cond),
+      t2tost2<3u,typename T2toT2Traits<T2toT2Type>::NumType>
+      >::type
+    convertToT2toST2(const T2toT2Type&);
+    
   } // end of namespace math
 
   namespace typetraits{

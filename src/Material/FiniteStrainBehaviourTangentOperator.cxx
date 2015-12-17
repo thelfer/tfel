@@ -23,7 +23,8 @@ namespace tfel{
     {
       return {FiniteStrainBehaviourTangentOperatorBase::DSIG_DF, 
 	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,
-	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DD, 
+	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DD,
+	  FiniteStrainBehaviourTangentOperatorBase::ABAQUS, 
 	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE,
 	  FiniteStrainBehaviourTangentOperatorBase::DTAU_DF, 
 	  FiniteStrainBehaviourTangentOperatorBase::DTAU_DDF,
@@ -45,6 +46,7 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DS_DDF:
 	return "t2tost2";
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DD:
+      case FiniteStrainBehaviourTangentOperatorBase::ABAQUS:
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
       case FiniteStrainBehaviourTangentOperatorBase::DS_DC:
       case FiniteStrainBehaviourTangentOperatorBase::DS_DEGL:
@@ -64,6 +66,8 @@ namespace tfel{
 	return "DSIG_DDF";
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DD:
 	return "DSIG_DD";
+      case FiniteStrainBehaviourTangentOperatorBase::ABAQUS:
+	return "ABAQUS";
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
 	return "DSIG_DDE";
       case FiniteStrainBehaviourTangentOperatorBase::DTAU_DF:
@@ -96,6 +100,9 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DD:
 	return "derivative of the Cauchy stress with respect to "
 	  "the deformation rate";
+      case FiniteStrainBehaviourTangentOperatorBase::ABAQUS:
+	return "tangent moduli associated with the Jaumann rate "
+	  "of the Kirchhoff stress divided by the change of volume";
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
 	return "derivative of the Cauchy stress with respect to "
 	  "the small strain deformation";

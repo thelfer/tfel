@@ -163,13 +163,12 @@ namespace abaqus
       static void exe(const Behaviour& bv,
 		      AbaqusReal *const DDSDDE)
       {
+#ifndef _MSC_VER
 	using tfel::math::constexpr_fct::sqrt;
-#if defined __INTEL_COMPILER
-	const AbaqusReal cste
-	  = AbaqusReal(1)/sqrt(AbaqusReal(2));
+	constexpr AbaqusReal cste
+	  = AbaqusReal(1)/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
 #else
-	constexpr const AbaqusReal cste
-	  = AbaqusReal(1)/sqrt(AbaqusReal(2));
+	const AbaqusReal cste = AbaqusReal(1)/std::sqrt(AbaqusReal(2));
 #endif
 	constexpr const AbaqusReal one_half = AbaqusReal(1)/AbaqusReal(2);
 	constexpr const unsigned short N = 2u;
@@ -191,8 +190,13 @@ namespace abaqus
       template<typename Behaviour>
       static void exe(const Behaviour& bv,AbaqusReal *const DDSDDE)
       {
+#ifndef _MSC_VER
 	using tfel::math::constexpr_fct::sqrt;
-	constexpr const AbaqusReal cste     = AbaqusReal(1)/sqrt(AbaqusReal(2));
+	constexpr AbaqusReal cste
+	  = AbaqusReal(1)/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+#else
+	const AbaqusReal cste = AbaqusReal(1)/std::sqrt(AbaqusReal(2));
+#endif
 	constexpr const AbaqusReal one_half = AbaqusReal(1)/AbaqusReal(2);
 	constexpr const unsigned short N = 2u;
 	using  TangentOperatorType = typename AbaqusTangentOperatorType<AbaqusTraits<Behaviour>::btype,N>::type;

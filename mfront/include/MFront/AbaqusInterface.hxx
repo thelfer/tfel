@@ -68,6 +68,14 @@ namespace mfront{
     virtual std::string
     getInterfaceName(void) const override;
     /*!
+     * write the initialisation of the driving variables
+     * \param[out] os: output file
+     * \param[in]  mb: mechanical behaviour description
+     */
+    virtual void
+    writeBehaviourDataMainVariablesSetters(std::ofstream&,
+					   const BehaviourDescription&) const;
+    /*!
      * \brief write the instruction of exporting a thermodynamic force in an array
      * \param[out] out : output stream
      * \param[in]  a   : array name

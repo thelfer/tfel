@@ -293,6 +293,33 @@ namespace tfel{
       >::type
     change_basis(const TensorType&,
 		 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type>&);
+
+    template<class T>
+    TFEL_MATH_INLINE 
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)),
+      tensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    unsyme(const T&);
+
+    template<class T>
+    TFEL_MATH_INLINE 
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)),
+      tensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    unsyme(const T&);
+
+    template<class T>
+    TFEL_MATH_INLINE 
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)),
+      tensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    unsyme(const T&);
     
   } // end of namespace math
 

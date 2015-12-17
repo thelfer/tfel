@@ -21,6 +21,7 @@
 
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Tensor/TensorChangeBasis.hxx"
 
@@ -173,8 +174,6 @@ namespace tfel{
       };
 
     } // end of namespace internals
-
-#ifndef DOXYGENSPECIFIC
 
     template<typename Child>
     template<typename TensorType>
@@ -444,8 +443,58 @@ namespace tfel{
       nt.changeBasis(r);
       return nt;
     } // end of change_basis
-    
-#endif /* LIB_TFEL_TENSOR_IXX_ */
+
+    template<class T>
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)),
+      tensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    unsyme(const T& s){
+      tensor<1u,typename StensorTraits<T>::NumType> r;
+      r[0] = s[0];
+      r[1] = s[1];
+      r[2] = s[2];
+      return r;
+    }
+
+    template<class T>
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)),
+      tensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    unsyme(const T& s){
+      using value_type = typename StensorTraits<T>::NumType;
+      using base_type  = typename tfel::typetraits::BaseType<value_type>::type;
+      constexpr base_type cste = base_type(1)/constexpr_fct::sqrt(base_type(2));
+      tensor<2u,value_type> r;
+      r[0] = s[0];
+      r[1] = s[1];
+      r[2] = s[2];
+      r[3] = r[4] = s[3]*cste;
+      return r;
+    }
+
+    template<class T>
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)),
+      tensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    unsyme(const T& s){
+      using value_type = typename StensorTraits<T>::NumType;
+      using base_type  = typename tfel::typetraits::BaseType<value_type>::type;
+      constexpr base_type cste = base_type(1)/constexpr_fct::sqrt(base_type(2));
+      tensor<3u,value_type> r;
+      r[0] = s[0];
+      r[1] = s[1];
+      r[2] = s[2];
+      r[3] = r[4] = s[3]*cste;
+      r[5] = r[6] = s[4]*cste;
+      r[7] = r[8] = s[5]*cste;
+      return r;
+    }
 
   } //end of namespace math
 

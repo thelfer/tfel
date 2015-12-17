@@ -2076,6 +2076,7 @@ namespace mfront{
       this->behaviourDataFile << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"\n";
       this->behaviourDataFile << "#include\"TFEL/Math/st2tot2.hxx\"\n";
       this->behaviourDataFile << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n";
+      this->behaviourDataFile << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n";
       this->behaviourDataFile << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
     }
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n";
