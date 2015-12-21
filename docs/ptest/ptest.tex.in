@@ -19,6 +19,7 @@
 \usepackage[frenchb]{babel}
 
 \newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\alcyone}{\texttt{alcyone}}
 \newcommand{\TFEL}{\texttt{tfel}}
 \newcommand{\mfront}{\texttt{mfront}}
 \newcommand{\mtest}{\texttt{mtest}}
@@ -37,6 +38,8 @@
 \newcommand{\fortran}{\texttt{fortran}}
 \newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
 \newcommand{\jenkins}{\href{http://jenkins-ci.org/}{\texttt{jenkins}}}
+
+\newcommand{\notepleiades}[1]{#1}
 
 \newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
 \newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
@@ -521,5 +524,345 @@ où~:
 Ce système non linéaire peut être résolu de multiples manières.
 
 L'une d'entre elle fait intervenir la matrice tangente cohérente.
+
+\section{Vérification et qualification}
+
+\subsection{Tests élémentaires petites déformations}
+
+\subsubsection{Validation de l'implantation des éléments linéaires}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \multicolumn{2}{|c|}{Caractéristiques géométriques} \\
+    \hline
+    \hline
+    Rayon interne & \(4,2\,mm\) \\
+    Rayon externe & \(4,7\,mm\) \\
+    \hline
+    \multicolumn{2}{|c|}{Discrétisation} \\
+    \hline
+    \hline
+    Nombre d'éléments finis & \(10\) \\
+    \hline
+    \hline
+    \multicolumn{2}{|c|}{Propriétés élastiques} \\
+    \hline
+    \hline
+    Module d'\nom{Young}         & \(150\,GPa\) \\
+    Coefficient de \nom{Poisson} & \(0,3\) \\
+    \hline
+    \hline
+    \multicolumn{2}{|c|}{Pressions imposées} \\
+    \hline
+    \hline
+    Pression interne & \(1.5\,MPa\)\\
+    \hline
+    Pression externe & \(10\,MPa\) \\
+    \hline
+  \end{tabular}
+  \caption{Caractéristiques utilisées.}
+  \label{tab:test1:carac}
+\end{table}
+
+Pour ce premier test, nous modélisons un tube élastique isotrope en
+petites déformations. Les caractéristiques géométriques et les
+propriétés élastiques, et les pressions imposées choisies sont
+résumées au tableau~\ref{tab:test1:carac}.
+
+Le tube est supposé ouvert~: aucune force axiale n'est considérée et
+l'équilibre est caractérisée par~:
+\[
+\int_{\Omega_{0}}\,\Pi_{zz}\,2\pi\,r\,\dtot r=0
+\]
+
+Pour ce test, la solution analytique est connue et s'écrit~:
+\[
+\left\{
+  \begin{aligned}
+    \Pi_{rr}        &=K_{1}+\Frac{K_{2}}{r^{2}}\\
+    \Pi_{\theta\theta}&=K_{1}-\Frac{K_{2}}{r^{2}}\\
+    \Pi_{zz}        &=0\\
+  \end{aligned}
+\right.
+\]
+où \(K_{1}\) et \(K_{2}\) sont des coefficients ne dépendant que des
+propriétés géométriques et des pressions imposées~:
+\[
+\left\{
+  \begin{aligned}
+    K_{1}&=-P_{i}-\Frac{\paren{R^{e}_{0}}^{2}}{\left(R^{e}_{0}\right)^{2}-\left(R^{i}_{0}\right)^{2}}\paren{P_{e}-P_{i}}\\  
+    K_{2}&=\Frac{\paren{R^{i}_{0}R^{e}_{0}}^{2}}{\left(R^{e}_{0}\right)^{2}-\left(R^{i}_{0}\right)^{2}}\paren{P_{e}-P_{i}} \\
+  \end{aligned}
+\right.
+\]
+
+Pour valider l'implantation des éléments finis linéaires, nous pouvons
+comparer les profils des contraintes aux points de \nom{Gauss}
+calculés par \mtest{} à la solution analytique ainsi qu'aux profils
+obtenus par \castem{}.
+
+Pour la solution de référence obtenue avec \castem{}, nous avons
+utilisé directement l'opérateur {\tt RESOUD} puis avons calculé les
+contraintes à partir des déplacements l'aide de l'opérateur {\tt
+  SIGMA}. Les positions des points de \nom{Gauss} sont obtenus par
+interpolation de la position des n\oe{}ds.
+
+Les résultats obtenus sont reportés sur les
+figures~\ref{fig:ptest-LinearElements-sigrr},
+\ref{fig:ptest-LinearElements-sigtt} et
+\ref{fig:ptest-LinearElements-sigzz} qui présentent successivement les
+profils de contrainte radiale, orthoradiale et axiale. Dans tous les
+cas, les valeurs aux points de \nom{Gauss} obtenus par \mtest{} et
+\castem{} sont strictement identiques. Nous avons relié les points de
+la solution \mtest{} pour visualiser plus nettement les oscillations
+des contraintes autour de la solution analytique~: de telles
+oscillations sont caractéristiques d'éléments linéaires.
+
+Le lecteur habitué des éléments finis aura remarqué que les
+contraintes ne sont pas constantes par éléments. En effet, si le
+gradient radial du déplacement est constant sur l'élément, les
+déformations ne le sont pas~: ceci est dû au terme
+\(\epsilon_{\theta\theta}\) qui fait intervenir la valeur du
+déplacement et de la position au point de Gauss.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-LinearElements-sigrr.pdf}
+  \caption{Profil de la contrainte radiale aux points de Gauss obtenue
+    avec des éléments linéaires~: comparaison à la solution analytique
+    et à un calcul \castem{}}
+  \label{fig:ptest-LinearElements-sigrr}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-LinearElements-sigtt.pdf}
+  \caption{Profil de la contrainte orthoradiale aux points de Gauss
+    obtenue avec des éléments linéaires~: comparaison à la solution
+    analytique et à un calcul \castem{}}
+  \label{fig:ptest-LinearElements-sigtt}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-LinearElements-sigzz.pdf}
+  \caption{Profil de la contrainte axiale aux points de Gauss obtenue
+    avec des éléments linéaires~: comparaison à la solution analytique
+    et à un calcul \castem{}}
+  \label{fig:ptest-LinearElements-sigzz}
+\end{figure}
+
+Le calcul étant linéaire, seules deux itérations sont nécessaires pour
+obtenir un résidu nul à la précision machine~: la première trouve la
+solution tandis que la second confirme que la solution obtenue est la
+bonne\footnote{\mtest{} a été prévu pour les calculs non linéaires et
+  ne fait pas du cas élastique un cas particulier, ce qui explique la
+  nécessité de faire au moins deux itérations par résolution.}. Ceci
+confirme que la matrice de raideur est calculée exactement. Ceci a
+également été confirmé par comparaison à une évaluation numérique de
+la matrice de raideur par différences finies centrées.
+
+Ce test a été repris en prenant en compte l'effet de fond~: les
+conclusions sont identiques.
+
+\subsubsection{Validation de l'implantation des éléments quadratiques}
+
+Pour valider l'implantation des éléments quadratiques, nous avons
+réitérer le test précédent. Les résultats obtenus sont illustrés par
+les figures~\ref{fig:ptest-QuadraticElements-sigrr},
+\ref{fig:ptest-QuadraticElements-sigtt} et
+\ref{fig:ptest-QuadraticElements-sigzz}. Dans le cas considéré, les
+profils obtenus à l'aide de \castem{} et \mtest{} ne peuvent être
+distingués des solutions analytiques.
+
+Ce test a été repris en prenant en compte l'effet de fond~: les
+conclusions sont identiques.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-QuadraticElements-sigrr.pdf}
+  \caption{Profil de la contrainte radiale aux points de Gauss obtenue
+    avec des éléments quadratiques~: comparaison à la solution analytique
+    et à un calcul \castem{}}
+  \label{fig:ptest-QuadraticElements-sigrr}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-QuadraticElements-sigtt.pdf}
+  \caption{Profil de la contrainte orthoradiale aux points de Gauss
+    obtenue avec des éléments quadratiques~: comparaison à la solution
+    analytique et à un calcul \castem{}}
+  \label{fig:ptest-QuadraticElements-sigtt}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-QuadraticElements-sigzz.pdf}
+  \caption{Profil de la contrainte axiale aux points de Gauss obtenue
+    avec des éléments quadratiques~: comparaison à la solution analytique
+    et à un calcul \castem{}}
+  \label{fig:ptest-QuadraticElements-sigzz}
+\end{figure}
+
+\paragraph{Notes} L'utilisation des éléments quadratiques offrent une
+qualité de discrétisation très supérieure aux éléments linéaires pour
+un coût qu'il convient d'analyser avec précaution. Si l'utilisation
+d'éléments quadratiques augmente le nombre d'inconnues nodales et le
+nombre de points d'intégrations, il est possible, dans le cas étudié,
+de restreindre fortement le nombre d'élément tout en gardant une
+qualité élevée~: ici deux éléments suffiraient, ce qui correspond à
+\(6\) points de \nom{Gauss} et \(5\) n\oe{}uds. En comparaison,
+l'utilisation des \(10\) éléments linéaires nécessite \(20\) points de
+\nom{Gauss} et \(11\) n\oe{}uds.
+
+Nous pouvons également considérer l'utilisation d'éléments d'ordre
+plus élevés.
+
+\notepleiades{Nous pensons qu'un développement intéressant pour
+  \alcyone{} serait de passer en éléments quadratique dans la
+  gaine.
+
+  Dans le cas \(1D\) ce n'est qu'un problème de maillage.
+
+  Pour les schémas multi-dimensionnels, il y a essentiellement deux
+  problèmes pour modéliser le combustible avec des éléments linéaires
+  et la gaine avec des éléments quadratiques~:
+  \begin{itemize}
+  \item gérer le transfert thermique, une relation n\oe{}ud à n\oe{}ud
+    ne peut plus être utilisée~;
+  \item 
+  \end{itemize}
+
+  Nous avons montré dans \licos{}, avec l'aide du {\tt SEMT}, qu'il
+  était possible de résoudre ces deux difficultés par une gestion
+  spécifique du transfert thermique et du contact. Cependant, cela
+  conduit à introduire plusieurs multiplicateurs de \nom{Lagrange}
+  supplémentaires ce qui peut augmenter notablement le coût du
+  calcul. Par ailleurs, nous avons noté que~:
+  \begin{itemize}
+  \item ces techniques peuvent rendre le calcul moins robuste~;
+  \item la gestion des multiplicateurs évolue d'une version de
+    \castem{} à une autre, ce qui peut conduire à des problèmes de
+    portabilité.
+  \end{itemize}
+
+  Pour le combustible, le caractère fragile de la loi de comportement
+  ne permet pas d'envisager de passer en éléments quadratiques tant
+  que l'on restera à une description locale de l'endommagement. Un
+  modèle d'endommagement non local permettrait de lever cette
+  restriction et permettrait d'avoir une description précise des
+  contraintes, ce qui éviterait les opérations de lissage des
+  contraintes (notamment pour la pression hydrostatique) aujourd'hui
+  utilisées.
+}
+
+\subsubsection{Tests de fluage en force axiale imposée}
+
+Pour tester l'imposition d'une force axiale, nous avons simulé un
+essai de fluage en petites déformations. Sur un cylindre de
+\(4,18\,mm\), nous imposons une force axiale correspondant à une
+pression \(\sigma\) de \(20\,MPa\). Le cylindre est supposé isotrope
+et obéir une loi de Norton de coefficient \(A\) et d'exposant \(E\).
+
+La solution analytique donnant l'évolution de la déformation axiale
+est donnée par~:
+\[
+\epsilon\paren{t}=\Frac{\sigma}{E}+A\,\sigma^{n}\,t
+\]
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/Creep.pdf}
+  \caption{Évolution de la déformation axiale lors d'un test de
+    fluage~: comparaison de la solution \mtest{} à la solution
+    analytique.}
+  \label{fig:ptest-creep}
+\end{figure}
+
+La figure~\ref{fig:ptest-creep} compare la solution obtenue à la
+solution analytique~: les solutions sont confondues.
+
+\subsection{Description détaillée d'un test en pression interne}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \multicolumn{2}{|c|}{Caractéristiques géométriques} \\
+    \hline
+    \hline
+    Rayon interne & \(4,18\,mm\) \\
+    Épaisseur     & \(0,57\,mm\) \\
+    \hline
+    \multicolumn{2}{|c|}{Discrétisation} \\
+    \hline
+    \hline
+    Nombre d'éléments finis & \(1\) \\
+    \hline
+    \hline
+    \multicolumn{2}{|c|}{Propriétés mécaniques} \\
+    \hline
+    \hline
+    Module d'\nom{Young}         & \(70\,GPa\) \\
+    Coefficient de \nom{Poisson} & \(0,3\) \\
+    Coefficient de \nom{Norton}  & \(5\,10^{-10}\) \\
+    Exposant de \nom{Norton}  & \(1\) \\
+    \hline
+    \hline
+    \multicolumn{2}{|c|}{Pressions imposées} \\
+    \hline
+    \hline
+    Pression interne & \(30\,MPa\)\\
+    \hline
+  \end{tabular}
+  \caption{Caractéristiques utilisées.}
+  \label{tab:test2:carac}
+\end{table}
+
+Nous considérons maintenant un test en pression interne avec effet de fond.
+
+Le tube est modélisé par une loi de comportement de type \nom{Norton}
+en déformation logarithmiques. Les caractéristiques du test sont
+résumés au tableau~\ref{tab:test2:carac}. Les caractéristiques de la
+loi de \nom{Norton} n'ont pas de réalité physique~: elles ont été
+choisies pour conduire à des déformations très importantes (de l'ordre
+de \(500\,\%\) en quelques secondes.
+
+\subsubsection{Premier cas~: modélisation sans pression suiveuse}
+
+Pour le premier cas test, nous ne tiendrons pas compte de
+l'actualisation des efforts avec la géométrie (pas de pression
+suiveuse).
+
+Nous comparons notre simulation à une simulation effectuée avec le
+code \castem{}~: les deux solutions sont identiques. En petites
+déformations, la loi de \nom{Norton} conduirait à une évolution
+linéaire du rayon en fonction du temps. L'utilisation des déformations
+logarithmiques conduit à l'accélération de la déformation au cours du
+temps.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/Creep-NortonLogarithmicStrain.pdf}
+  \caption{Évolution de la déformation axiale lors d'un test en
+    pression interne~: comparaison de la solution \mtest{} à la
+    solution obtenue via \castem{}.}
+  \label{fig:ptest-creep}
+\end{figure}
+
+\subsubsection{Second cas~: modélisation avec pression suiveuse}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/Creep-NortonLogarithmicStrain-ps.pdf}
+  \caption{Évolution de la déformation axiale lors d'un test en
+    pression interne~: comparaison de la solution \mtest{} à la
+    solution obtenue via \castem{}.}
+  \label{fig:ptest-creep-pression_suiveuse}
+\end{figure}
+
 
 \end{document}

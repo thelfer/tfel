@@ -11,6 +11,7 @@ EXTRA_DIST=CMakeLists.txt                                               \
 	   abaqus/img/ShearLoading-IsotropicElasticity-nlgeom-sxz.pdf	\
 	   abaqus/img/ShearLoading-IsotropicElasticity-sxz.pdf		\
 	   abaqus/img/ShearLoading-Plasticity-sxz.pdf			\
+	   abaqus/img/SaintVenantKirchhoff-TensileLoading-szz.pdf       \
 	   abaqus/img/IsotropicHardeningPlasticity-Stress_vs_Strain.png \
 	   abaqus/img/IsotropicHardeningPlasticity-VonMisesStress.png   \
 	   abaqus/umat.cpp                                              \

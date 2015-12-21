@@ -190,7 +190,7 @@ If a parameter is omitted, this parameter will have its default value.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-sxz.pdf}
-  \caption{Comparison of the results obtained the \mfront{}
+  \caption{Comparison of the results obtained by the \mfront{}
     implementation of an isotropic elastic behaviour and the results
     obtained with the \abaqus{} build-in elastic behaviour under shear
     loading.}
@@ -215,7 +215,7 @@ If a parameter is omitted, this parameter will have its default value.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/ShearLoading-Plasticity-sxz.pdf}
-  \caption{Comparison of the results obtained the \mfront{}
+  \caption{Comparison of the results obtained by the \mfront{}
     implementation of an isotropic plastic behaviour with isotropic
     hardening and the results obtained with the \abaqus{} build-in
     behaviour under shear loading.}
@@ -229,12 +229,37 @@ If a parameter is omitted, this parameter will have its default value.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-nlgeom-sxz.pdf}
-  \caption{Comparison of the results obtained the \mfront{}
+  \caption{Comparison of the results obtained by the \mfront{}
     implementation of an isotropic elastic behaviour and the results
     obtained with the \abaqus{} build-in elastic behaviour under shear
     loading when the Hughes-Winglet hypo-elastic formulation is used.}
   \label{fig:abaqus:ShearLoading-IsotropicElasticity-nlgeom-sxz}
 \end{figure}
+
+\paragraph{Saint-Venant Kirchhoff hyperelastic behaviour under tensile
+  loading}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/SaintVenantKirchhoff-TensileLoading-szz.pdf}
+  \caption{Comparison of the results obtained the \mfront{}
+    implementation of the Saint-Venant Kirchhoff hyperelastic
+    behaviour using \abaqus{} and \mtest{}.}
+  \label{fig:abaqus:SaintVenantKirchhoff-TensileLoading-szz}
+\end{figure}
+
+\paragraph{Saint-Venant Kirchhoff hyperelastic behaviour under shear
+  loading}
+
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/mfront/abaqus/img/SaintVenantKirchhoff-ShearLoading-sxz.pdf}
+%   \caption{Results obtained with the \mfront{}
+%     implementation of the Saint-Venant Kirchhoff hyperelastic
+%     behaviour using \abaqus{}.}
+%   \label{fig:abaqus:SaintVenantKirchhoff-ShearLoading-sxz}
+% \end{figure}
+
 
 \subsection{Isotropic plastic behaviour with isotropic hardening on a
   notched beam}

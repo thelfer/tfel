@@ -1737,10 +1737,12 @@ namespace mfront{
     	  << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
+    out << "bool k = std::abs(*DDSDDE)>0.5;\n";
     out << "// computing the logarithmic strain\n";
     out << "CastemReal eto[3];\n";
     out << "CastemReal deto[3];\n";
     out << "CastemReal s[3];\n";
+    out << "CastemReal K[9];\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "{\n"
     	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
@@ -1759,11 +1761,12 @@ namespace mfront{
     out << "s[0]=(*STRESS)*(1+*STRAN);\n";
     out << "s[1]=(*(STRESS+1))*(1+*(STRAN+1));\n";
     out << "s[2]=(*(STRESS+2))*(1+*(STRAN+2));\n";
+    out << "K[0]=*DDSDDE;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "}\n";
     }
     out << "umat" << makeLowerCase(name)
-    	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
+    	<< "_base(NTENS, DTIME,DROT,K,eto,deto,TEMP,DTEMP,\n"
     	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
     	<< "s,PNEWDT,NDI,KINC,\n"
     	<< "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
@@ -1772,9 +1775,22 @@ namespace mfront{
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
     	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
+    // First Piola-Kirchhoff stress
     out << "STRESS[0]=s[0]/(1+*STRAN+*DSTRAN);\n";
     out << "STRESS[1]=s[1]/(1+*(STRAN+1)+*(DSTRAN+1));\n";
     out << "STRESS[2]=s[2]/(1+*(STRAN+2)+*(DSTRAN+2));\n";
+    // computation of the stiffness matrix
+    out << "if(k){\n"
+	<< "*DDSDDE     = (-STRESS[0]+K[0]/(1+STRAN[0]+DSTRAN[0]))/(1+STRAN[0]+DSTRAN[0]);\n"
+	<< "*(DDSDDE+3) = K[3]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[0]+DSTRAN[0]));\n"
+	<< "*(DDSDDE+6) = K[6]/((1+STRAN[2]+DSTRAN[2])*(1+STRAN[0]+DSTRAN[0]));\n"
+	<< "*(DDSDDE+1) = K[1]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[1]+DSTRAN[1]));\n"
+	<< "*(DDSDDE+4) = (-STRESS[1]+K[4]/(1+STRAN[1]+DSTRAN[1]))/(1+STRAN[1]+DSTRAN[1]);\n"
+	<< "*(DDSDDE+7) = K[7]/((1+STRAN[2]+DSTRAN[2])*(1+STRAN[1]+DSTRAN[1]));\n"
+	<< "*(DDSDDE+2) = K[2]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[2]+DSTRAN[2]));\n"
+	<< "*(DDSDDE+5) = K[5]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[2]+DSTRAN[2]));\n"
+	<< "*(DDSDDE+8) = (-STRESS[2]+K[8]/(1+STRAN[2]+DSTRAN[2]))/(1+STRAN[2]+DSTRAN[2]);\n"
+	<< "}\n";
     out << "}\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";

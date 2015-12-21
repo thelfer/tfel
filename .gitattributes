@@ -327,6 +327,7 @@ docs/mfront/abaqus/abaqus.tex.in -text
 docs/mfront/abaqus/img/IsotropicHardeningPlasticity-Stress_vs_Strain.png -text
 docs/mfront/abaqus/img/IsotropicHardeningPlasticity-VonMisesStress.png -text
 docs/mfront/abaqus/img/IsotropicViscoplasticity-TensileLoading-szz.pdf -text
+docs/mfront/abaqus/img/SaintVenantKirchhoff-TensileLoading-szz.pdf -text
 docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-nlgeom-sxz.pdf -text
 docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-sxz.pdf -text
 docs/mfront/abaqus/img/ShearLoading-Plasticity-sxz.pdf -text
@@ -763,7 +764,16 @@ docs/presentations/portable-behaviour/portability.md -text
 docs/ptest/CMakeLists.txt -text
 docs/ptest/Makefile.am -text
 docs/ptest/Makefile.doc.in -text
+docs/ptest/img/Creep-NortonLogarithmicStrain-ps.pdf -text
+docs/ptest/img/Creep-NortonLogarithmicStrain.pdf -text
+docs/ptest/img/Creep.pdf -text
 docs/ptest/img/mesh1D.pdf -text
+docs/ptest/img/ptest-LinearElements-sigrr.pdf -text
+docs/ptest/img/ptest-LinearElements-sigtt.pdf -text
+docs/ptest/img/ptest-LinearElements-sigzz.pdf -text
+docs/ptest/img/ptest-QuadraticElements-sigrr.pdf -text
+docs/ptest/img/ptest-QuadraticElements-sigtt.pdf -text
+docs/ptest/img/ptest-QuadraticElements-sigzz.pdf -text
 docs/ptest/img/tubeaxi.pdf -text
 docs/ptest/ptest.tex.in -text
 docs/references/matrixcookbook.pdf -text svneol=unset#unset
@@ -4078,3 +4088,4 @@ tools/TensorConvertion/TensorConvertion3D.cxx -text
 tools/docs/mfront-keywords.sh -text
 tools/glossary/generate_glossary.cxx -text
 tools/glossary/glossary.txt -text
+tools/log1D.cxx -text
