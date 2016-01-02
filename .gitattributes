@@ -3775,6 +3775,8 @@ mtest/src/Study.cxx -text
 mtest/src/StudyCurrentState.cxx -text
 mtest/src/UmatBehaviourBase.cxx -text
 mtest/src/UmatNormaliseTangentOperator.cxx -text
+mtest/tests/CMakeLists.txt -text
+mtest/tests/Makefile.am -text
 mtest/tests/ptest/CMakeLists.txt -text
 mtest/tests/ptest/Makefile.am -text
 mtest/tests/ptest/abaqus/CMakeLists.txt -text
