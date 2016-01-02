@@ -99,6 +99,11 @@ namespace mtest
     for(AbaqusInt i=0;i!=s.e1.size();++i){
       ude(i) = s.e1(i)-s.e0(i);
     }
+    // thermal strain
+    for(AbaqusInt i=0;i!=static_cast<unsigned short>(ntens);++i){
+      ue0(i) -= s.e_th0(i);
+      ude(i) -= s.e_th1(i)-s.e_th0(i);
+    }
     ue0.changeBasis(s.r);
     ude.changeBasis(s.r);
     us.changeBasis(s.r);

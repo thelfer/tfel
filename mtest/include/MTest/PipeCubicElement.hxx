@@ -110,7 +110,7 @@ namespace mtest{
 					const size_t);
   private:
 #ifndef _MSC_VER
-    static constexpr const real one_third = real{1}/real{3};
+    static constexpr const real one_third = real{ 1}/real{3};
     static constexpr const real cste      = real{ 9}/real{16};
     static constexpr const real cste2     = real{27}/real{16};
 #else /* _MSC_VER */

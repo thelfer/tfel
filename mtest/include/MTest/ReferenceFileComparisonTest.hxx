@@ -39,14 +39,14 @@ namespace mtest{
      * \param[in] c    : column
      * \param[in] vt   : variable type
      * \param[in] vp   : variable position
-     * \param[in] eps : criterium value
+     * \param[in] eps  : criterium value
      */
     ReferenceFileComparisonTest(const std::shared_ptr<tfel::utilities::TextData>,
-				     const std::string&,
-				     const unsigned int,
-				     const MTest::UTest::TestedVariable,
-				     const unsigned short,
-				     const real);
+				const std::string&,
+				const unsigned int,
+				const MTest::UTest::TestedVariable,
+				const unsigned short,
+				const real);
     /*!
      * \param[in] e  : strains
      * \param[in] s  : strains
@@ -70,8 +70,10 @@ namespace mtest{
     //! destructor
     virtual ~ReferenceFileComparisonTest();
   protected:
-    ReferenceFileComparisonTest& operator=(const ReferenceFileComparisonTest&) = delete;
-    ReferenceFileComparisonTest& operator=(ReferenceFileComparisonTest&&) = delete;
+    ReferenceFileComparisonTest&
+    operator=(const ReferenceFileComparisonTest&) = delete;
+    ReferenceFileComparisonTest&
+    operator=(ReferenceFileComparisonTest&&) = delete;
     //! reference values
     const std::vector<real> values;
     //! results of the test

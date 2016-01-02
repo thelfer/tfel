@@ -14,7 +14,6 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/SchemeBase.hxx	                         \
 			 MTest/SingleStructureScheme.hxx                 \
 			 MTest/MTest.hxx	                         \
-			 MTest/MTestParser.hxx	                         \
 			 MTest/PipeTest.hxx	                         \
 			 MTest/PipeMesh.hxx	                         \
 			 MTest/PipeLinearElement.hxx	                 \
@@ -25,6 +24,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/AnalyticalTest.hxx	                 \
 			 MTest/ReferenceFileComparisonTest.hxx           \
 			 MTest/Behaviour.hxx                             \
+			 MTest/LogarithmicStrain1DBehaviourWrapper.hxx   \
 			 MTest/BehaviourWorkSpace.hxx                    \
 			 MTest/UmatBehaviourBase.hxx                     \
 			 MTest/UmatNormaliseTangentOperator.hxx          \
@@ -57,6 +57,10 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/AlternateSecantAccelerationAlgorithm.hxx  \
 			 MTest/Crossed2DeltabisAccelerationAlgorithm.hxx \
 			 MTest/Crossed2DeltaAccelerationAlgorithm.hxx    \
-			 MTest/CrossedDelta2AccelerationAlgorithm.hxx
+			 MTest/CrossedDelta2AccelerationAlgorithm.hxx    \
+			 MTest/SchemeParserBase.hxx	                 \
+			 MTest/SingleStructureSchemeParser.hxx	         \
+			 MTest/MTestParser.hxx                           \
+			 MTest/PipeTestParser.hxx
 
 EXTRA_DIST = CMakeLists.txt

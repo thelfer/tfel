@@ -9,6 +9,7 @@ set(TFELMath_SOURCES
     LUException.cxx
     QRException.cxx
     Discretization1D.cxx
+    StensorConcept.cxx
     TensorConcept.cxx
     RunTimeCheck.cxx
     StensorComputeEigenValues.cxx)

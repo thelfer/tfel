@@ -119,6 +119,14 @@ namespace tfel{
     >::type
     deviator(const T&);
 
+    /*!
+     * \brief return the size of a symmetric tensor for the given
+     * dimension
+     * \param[in] d: space dimension
+     */
+    TFELMATH_VISIBILITY_EXPORT unsigned short
+    getStensorSize(const unsigned short);
+    
   } // end of namespace math
 
 } // end of namespace tfel

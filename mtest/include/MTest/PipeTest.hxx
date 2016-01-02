@@ -22,6 +22,7 @@
 
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
+#include"MTest/PipeProfileHandler.hxx"
 #include"MTest/PipeMesh.hxx"
 #include"MTest/SingleStructureScheme.hxx"
 
@@ -283,8 +284,6 @@ namespace mtest{
     std::vector<PipeProfileHandler> profiles;
     //! mesh data
     PipeMesh mesh;
-    //! output file precision
-    int oprec;
     //! axial force evolution
     std::shared_ptr<Evolution> axial_force;
     //! inner pressure

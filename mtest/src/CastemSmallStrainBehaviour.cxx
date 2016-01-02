@@ -385,6 +385,12 @@ namespace mtest
       ude(i) = s.e1(i)-s.e0(i);
     }
     copy(s.s0.begin(),s.s0.end(),s.s1.begin());
+    // thermal strain
+    for(i=0;i!=s.e1.size();++i){
+      ue0(i) -= s.e_th0(i);
+      ude(i) -= s.e_th1(i)-s.e_th0(i);
+    }
+    // castem conventions
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s.s1(i) /= sqrt2;
       ue0(i)  *= sqrt2;

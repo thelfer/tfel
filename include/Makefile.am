@@ -55,6 +55,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Config/Internals/JacobianType.hxx	                                                     \
 			TFEL/Config/Internals/ThermalConductivityMatrixType.hxx                                      \
 			TFEL/Config/TFEL_MATH_Config.hxx		                                             \
+			TFEL/Config/GetInstallPath.hxx		                                                     \
 			TFEL/Config/TFELTypes.hxx			                                             \
 			TFEL/Config/TFELConfig.hxx			                                             \
 			TFEL/TypeTraits/Promote/Promote.ixx		                                             \

@@ -39,7 +39,6 @@ namespace mtest{
 					  const unsigned int p)
   {
     using namespace std;
-    using namespace tfel::utilities;
     using tfel::tests::TestResult;
     real v(0);
     if(this->type==MTest::UTest::INTERNALSTATEVARIABLE){

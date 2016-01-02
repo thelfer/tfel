@@ -15,7 +15,12 @@
 
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
+#include"MFront/MFrontLogStream.hxx"
 #include"MTest/Behaviour.hxx"
+#include"MTest/StudyCurrentState.hxx"
+#include"MTest/StructureCurrentState.hxx"
+#include"MTest/CurrentState.hxx"
+#include"MTest/LogarithmicStrain1DBehaviourWrapper.hxx"
 #ifdef HAVE_CASTEM
 #include"MTest/CastemSmallStrainBehaviour.hxx"
 #include"MTest/CastemFiniteStrainBehaviour.hxx"
@@ -135,32 +140,26 @@ namespace mtest{
     this->b->setOutOfBoundsPolicy(p);
   }
 
-  void
-  SingleStructureScheme::setBehaviour(const std::string& i,
-				      const std::string& l,
-				      const std::string& f)
+  static std::shared_ptr<Behaviour>
+  SingleStructureScheme_getBehaviour(const std::string& i,
+				     const std::string& l,
+				     const std::string& f,
+				     const tfel::material::ModellingHypothesis::Hypothesis h)
   {
     using namespace std;
     using namespace tfel::system;
     typedef ExternalLibraryManager ELM;
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
-      this->setDefaultModellingHypothesis();
-    }
-    if(this->b.get()!=nullptr){
-      throw(std::runtime_error("SingleStructureScheme::setBehaviour: "
-			       "behaviour already defined"));
-    }
+    std::shared_ptr<Behaviour> b;
 #ifdef HAVE_CASTEM
     if((i=="castem")||(i=="umat")){
       auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
-	this->b = shared_ptr<Behaviour>(new CastemSmallStrainBehaviour(this->hypothesis,l,f));
+	b = shared_ptr<Behaviour>(new CastemSmallStrainBehaviour(h,l,f));
       } else if(type==2u){
-	this->b = shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour(this->hypothesis,l,f));
+	b = shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour(h,l,f));
       } else if(type==3u){
-	this->b = shared_ptr<Behaviour>(new CastemCohesiveZoneModel(this->hypothesis,l,f));
+	b = shared_ptr<Behaviour>(new CastemCohesiveZoneModel(h,l,f));
       } else {
 	ostringstream msg;
 	msg << "SingleStructureScheme::setBehaviour: "
@@ -174,11 +173,11 @@ namespace mtest{
       auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
-	this->b = shared_ptr<Behaviour>(new AsterSmallStrainBehaviour(this->hypothesis,l,f));
+	b = shared_ptr<Behaviour>(new AsterSmallStrainBehaviour(h,l,f));
       } else if(type==2u){
-	this->b = shared_ptr<Behaviour>(new AsterFiniteStrainBehaviour(this->hypothesis,l,f));
+	b = shared_ptr<Behaviour>(new AsterFiniteStrainBehaviour(h,l,f));
       } else if(type==3u){
-	this->b = shared_ptr<Behaviour>(new AsterCohesiveZoneModel(this->hypothesis,l,f));
+	b = shared_ptr<Behaviour>(new AsterCohesiveZoneModel(h,l,f));
       } else {
 	ostringstream msg;
 	msg << "SingleStructureScheme::setBehaviour: "
@@ -192,9 +191,9 @@ namespace mtest{
       auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
-	this->b = shared_ptr<Behaviour>(new AbaqusSmallStrainBehaviour(this->hypothesis,l,f));
+	b = shared_ptr<Behaviour>(new AbaqusSmallStrainBehaviour(h,l,f));
 	// }  else if(type==2u){
-	// 	this->b = shared_ptr<Behaviour>(new AbaqusFiniteStrainBehaviour(this->hypothesis,l,f));
+	// 	b = shared_ptr<Behaviour>(new AbaqusFiniteStrainBehaviour(h,l,f));
       } else {
 	ostringstream msg;
 	msg << "SingleStructureScheme::setBehaviour: "
@@ -205,13 +204,57 @@ namespace mtest{
 #endif
 #ifdef HAVE_CYRANO
     if(i=="cyrano"){
-      this->b = shared_ptr<Behaviour>(new CyranoBehaviour(this->hypothesis,l,f));
+      b = shared_ptr<Behaviour>(new CyranoBehaviour(h,l,f));
     }
 #endif
-    if(this->b.get()==nullptr){
+    if(b.get()==nullptr){
       throw(runtime_error("SingleStructureScheme::setBehaviour: "
 			  "unknown interface '"+i+"'"));
     }
+    return b;
+  }
+  
+  void
+  SingleStructureScheme::setBehaviour(const std::string& i,
+				      const std::string& l,
+				      const std::string& f)
+  {
+    using namespace std;
+    using MH = tfel::material::ModellingHypothesis;
+    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
+      this->setDefaultModellingHypothesis();
+    }
+    this->setBehaviour(SingleStructureScheme_getBehaviour(i,l,f,this->hypothesis));
+  }
+
+  void
+  SingleStructureScheme::setBehaviour(const std::string& w,
+				      const std::string& i,
+				      const std::string& l,
+				      const std::string& f)
+  {
+    using MH = tfel::material::ModellingHypothesis;
+    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
+      this->setDefaultModellingHypothesis();
+    }
+    auto bp = SingleStructureScheme_getBehaviour(i,l,f,this->hypothesis);
+    if(w=="LogarithmicStrain1D"){
+      auto wp = std::shared_ptr<Behaviour>(new LogarithmicStrain1DBehaviourWrapper(bp));
+      this->setBehaviour(wp);
+    } else {
+      throw(std::runtime_error("SingleStructureScheme::setBehaviour: "
+			       "unknown wrapper '"+w+"'"));
+    }
+  }
+  
+  void
+  SingleStructureScheme::setBehaviour(const std::shared_ptr<Behaviour>& bp)
+  {
+    if(this->b.get()!=nullptr){
+      throw(std::runtime_error("SingleStructureScheme::setBehaviour: "
+			       "behaviour already defined"));
+    }
+    this->b = bp;
     const auto& ivnames = this->b->getInternalStateVariablesNames();
     this->declareVariables(this->b->getMaterialPropertiesNames(),true);
     this->declareVariables(ivnames,true);
@@ -237,8 +280,8 @@ namespace mtest{
 	  this->ivfullnames.push_back(vn);
 	}
       } else {
-	throw(runtime_error("SingleStructureScheme::setBehaviour: "
-			    "unsupported variable type for variable '"+n+"'"));
+	throw(std::runtime_error("SingleStructureScheme::setBehaviour: "
+				 "unsupported variable type for variable '"+n+"'"));
       }
     }
     // declaring behaviour variables
@@ -319,6 +362,148 @@ namespace mtest{
   SingleStructureScheme::getDefaultStiffnessMatrixType(void) const{
     return this->b->getDefaultStiffnessMatrixType();
   } // end of SingleStructureScheme::getDefaultStiffnessMatrixType
+
+  void
+  SingleStructureScheme::setScalarInternalStateVariableInitialValue(const std::string& n,
+								    const real v)
+  {
+    if(this->b.get()==nullptr){
+      throw(std::runtime_error("SingleStructureScheme::setScalarInternalStateVariableInitialValue: "
+			       "no behaviour defined"));
+    }
+    const auto& ivsnames = this->b->getInternalStateVariablesNames();
+    if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
+      throw(std::runtime_error("SingleStructureScheme::setScalarInternalStateVariableInitialValue : "
+			       "the behaviour don't declare an internal state "
+			       "variable named '"+n+"'"));
+    }
+    const auto type = this->b->getInternalStateVariableType(n);
+    const auto pos  = this->b->getInternalStateVariablePosition(this->hypothesis,n);
+    if(type!=0){
+      throw(std::runtime_error("SingleStructureScheme::setScalarInternalStateVariableInitialValue: "
+			       "internal state variable '"+n+"' is not defined"));
+    }
+    if(this->iv_t0.size()<=pos){
+      this->iv_t0.resize(pos+1,0.);
+    }
+    this->iv_t0[pos] = v;
+  }
+
+  void
+  SingleStructureScheme::setStensorInternalStateVariableInitialValues(const std::string& n,
+								      const std::vector<real>& v)
+  {
+    if(this->b.get()==nullptr){
+      throw(std::runtime_error("SingleStructureScheme::setStensorInternalStateVariableInitialValue: "
+			       "no behaviour defined"));
+    }
+    const auto& ivsnames = this->b->getInternalStateVariablesNames();
+    if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
+      throw(std::runtime_error("SingleStructureScheme::setStensorInternalStateVariableInitialValue: "
+			       "the behaviour don't declare an internal "
+			       "state variable named '"+n+"'"));
+    }
+    const auto type = this->b->getInternalStateVariableType(n);
+    const auto pos  = this->b->getInternalStateVariablePosition(this->hypothesis,n);
+    if(type!=1){
+      throw(std::runtime_error("SingleStructureScheme::setStensorInternalStateVariableInitialValue: "
+			       "internal state variable '"+n+"' is not defined"));
+    }
+    const auto N = tfel::material::getStensorSize(this->hypothesis);
+    if(v.size()!=N){
+      throw(std::runtime_error("SingleStructureScheme::setStensorInternalStateVariableInitialValues : "
+			       "invalid values size"));
+    }
+    if(this->iv_t0.size()<pos+N){
+      this->iv_t0.resize(pos+N,0.);
+    }
+    std::copy(v.begin(),v.end(),this->iv_t0.begin()+pos);
+  } // end of SingleStructureScheme::setStensorInternalStateVariableInitialValue
+
+  void
+  SingleStructureScheme::setTensorInternalStateVariableInitialValues(const std::string& n,
+								     const std::vector<real>& v)
+  {
+    using namespace std;
+    if(this->b.get()==nullptr){
+      throw(runtime_error("SingleStructureScheme::setTensorInternalStateVariableInitialValue: "
+			  "no behaviour defined"));
+    }
+    const auto& ivsnames = this->b->getInternalStateVariablesNames();
+    if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
+      string msg("SingleStructureScheme::setTensorInternalStateVariableInitialValue : ");
+      msg += "the behaviour don't declare an internal state variable named '";
+      msg += n+"'";
+      throw(runtime_error(msg));
+    }
+    const int type           = this->b->getInternalStateVariableType(n);
+    const unsigned short pos = this->b->getInternalStateVariablePosition(this->hypothesis,n);
+    if(type!=3){
+      string msg("SingleStructureScheme::setTensorInternalStateVariableInitialValue : ");
+      msg += "internal state variable '"+n+"' is not defined";
+      throw(runtime_error(msg));
+    }
+    const unsigned short N = tfel::material::getTensorSize(this->hypothesis);
+    if(v.size()!=N){
+      string msg("SingleStructureScheme::setTensorInternalStateVariableInitialValues : "
+		 "invalid values size");
+      throw(runtime_error(msg));
+    }
+    if(this->iv_t0.size()<pos+N){
+      this->iv_t0.resize(pos+N,0.);
+    }
+    copy(v.begin(),v.end(),this->iv_t0.begin()+pos);
+  } // end of SingleStructureScheme::setTensorInternalStateVariableInitialValue
+
+  void
+  SingleStructureScheme::prepare(StudyCurrentState& state,
+				 const real t,
+				 const real dt) const
+  {
+    using namespace tfel::material;
+    auto& scs = state.getStructureCurrentState("");
+    // evaluations of the materials properties, state variables at the
+    // end of the time step. Computation of thermal expansion if needed.
+    for(auto& s: scs.istates){
+      computeMaterialProperties(s,*(this->evm),*(this->dmpv),
+  				this->b->getMaterialPropertiesNames(),t,dt);
+      computeExternalStateVariables(s,*(this->evm),
+  				    this->b->getExternalStateVariablesNames(),t,dt);
+      // thermal expansion
+      if((this->handleThermalExpansion)&&
+	 (this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)){
+	if(this->b->getSymmetryType()==0){
+	  // isotropic case
+	  computeThermalExpansion(s,*(this->evm),t,dt);
+	} else if(this->b->getSymmetryType()==1){
+	  // orthotropic case
+	  computeThermalExpansion(s,*(this->b),*(this->evm),t,dt,
+				  getSpaceDimension(this->hypothesis));
+	} else {
+	  throw(std::runtime_error("SingleStructureScheme::prepare: "
+				   "unsupported behaviour symmetry"));
+	}
+      }
+    }
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+      auto& log = mfront::getLogStream();
+      log << "resolution from " << t << " to " << t+dt << '\n';
+    }
+    if(this->residual){
+      this->residual << '\n' << "#resolution from " << t << " to " << t+dt << '\n';
+    }
+  } // end of SingleStructureScheme::prepare
+
+
+  void
+  SingleStructureScheme::setHandleThermalExpansion(const bool b1)
+  {
+    if(!this->handleThermalExpansion){
+      throw(std::runtime_error("SingleStructureScheme::setHandleThermalExpansion: "
+			       "thermal expansion is not handled"));
+    }
+    this->handleThermalExpansion = b1;
+  }
   
   SingleStructureScheme::~SingleStructureScheme() = default;
   

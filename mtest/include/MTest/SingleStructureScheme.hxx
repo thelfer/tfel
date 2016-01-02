@@ -43,6 +43,18 @@ namespace mtest{
 		 const std::string&,
 		 const std::string&);
     /*!
+     * \brief set the behaviour
+     * \param[in] w : behaviour wrapper
+     * \param[in] i : interface
+     * \param[in] l : library name
+     * \param[in] f : function
+     */
+    virtual void
+    setBehaviour(const std::string&,
+		 const std::string&,
+		 const std::string&,
+		 const std::string&);
+    /*!
      * \brief define a material property
      * \param[in] n     : evolution name
      * \param[in] p     : evolution pointer
@@ -73,6 +85,26 @@ namespace mtest{
     virtual std::shared_ptr<Behaviour>
     getBehaviour(void);
     /*!
+     * \brief set if mtest shall handle thermal expansion coefficient
+     * If true, the thermal expansion will be handled if the thermal
+     * expansion coefficients are defined.
+     * \param[in] b : boolean
+     */
+    virtual void setHandleThermalExpansion(const bool);
+    /*!
+     * \brief update current state at the beginning of a new time step:
+     * - update the material properties
+     * - update the external state variables
+     * - compute the thermal expansion if mandatory
+     * \param[out] state: current structure state
+     * \param[in]  t: current time
+     * \param[in] dt: time increment
+     */
+    virtual void
+    prepare(StudyCurrentState&,
+	    const real,
+	    const real) const override;
+    /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter value
      */
@@ -94,6 +126,27 @@ namespace mtest{
     setUnsignedIntegerParameter(const std::string&,
 				const unsigned int);
     /*!
+     * \brief set the inital value of a scalar variable
+     * \param[in] v : value
+     */
+    virtual void
+    setScalarInternalStateVariableInitialValue(const std::string&,
+					       const real);
+    /*!
+     * \brief set the inital values of a symetric tensor variable
+     * \param[in] v : values
+     */
+    virtual void
+    setStensorInternalStateVariableInitialValues(const std::string&,
+						 const std::vector<real>&);
+    /*!
+     * \brief set the inital values of a tensor variable
+     * \param[in] v : values
+     */
+    virtual void
+    setTensorInternalStateVariableInitialValues(const std::string&,
+						const std::vector<real>&);
+    /*!
      * \brief set the out of bounds policy
      * \param[in] a : out of bounds policy
      */
@@ -101,6 +154,11 @@ namespace mtest{
     //! destructor
     virtual ~SingleStructureScheme();
   protected:
+    /*!
+     * \brief set the behaviour
+     * \param[in] bp : pointer to the behaviour
+     */
+    virtual void setBehaviour(const std::shared_ptr<Behaviour>&);
     /*!
      * complete the initialisation. This method must be called once.
      * \note this method must be called by the derived class.
@@ -115,6 +173,10 @@ namespace mtest{
     std::shared_ptr<Behaviour> b;
     //! default values for material properties as given by the behaviour
     std::shared_ptr<EvolutionManager> dmpv;
+    // inital values of the internal state variables
+    std::vector<real> iv_t0;
+    //! handle the computation of thermal expansion
+    bool handleThermalExpansion = true;
   }; // end of SingleStructureScheme
   
 } // end of namespace mtest

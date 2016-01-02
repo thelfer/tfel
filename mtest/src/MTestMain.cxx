@@ -33,6 +33,8 @@
 
 #include"MTest/MTest.hxx"
 #include"MTest/MTestParser.hxx"
+#include"MTest/PipeTest.hxx"
+#include"MTest/PipeTestParser.hxx"
 #include"MTest/Constraint.hxx"
 #include"MTest/Evolution.hxx"
 
@@ -47,16 +49,26 @@ namespace mtest
   {
     MTestMain(const int, 
 	      const char *const *const);
-
-    
+    /*!
+     * \brief main entry point
+     * \return EXIT_SUCESS on success
+     */
     int execute(void);
+    //! destructor
     ~MTestMain();
   protected:
+    enum {
+      MTEST,
+      PTEST,
+      DEFAULT
+    } scheme = DEFAULT;
     friend struct tfel::utilities::ArgumentParserBase<MTestMain>;
     void
     treatUnknownArgument(void);
     void
     treatVerbose(void);
+    void
+    treatScheme(void);
     void
     treatXMLOutput(void);
     void
@@ -84,26 +96,21 @@ namespace mtest
     // input files
     std::vector<std::string> inputs;
     // xml output
-    bool xml_output;
+    bool xml_output = false;
     // generate result file
-    bool result_file_output;
+    bool result_file_output = true;
     // generate residual file
-    bool residual_file_output;
+    bool residual_file_output = false;
   };
 
   MTestMain::MTestMain(const int argc, const char *const *const argv)
-    : tfel::utilities::ArgumentParserBase<MTestMain>(argc,argv),
-      xml_output(false),
-      result_file_output(true),
-      residual_file_output(false)
+    : tfel::utilities::ArgumentParserBase<MTestMain>(argc,argv)
   {
-    using namespace std;
     this->registerArgumentCallBacks();
     this->parseArguments();
     if(this->inputs.empty()){
-      string msg("MTestMain::MTestMain : ");
-      msg += "no input file defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestMain::MTestMain: "
+			       "no input file defined"));
     }
   }
 
@@ -112,6 +119,8 @@ namespace mtest
   {
     this->registerNewCallBack("--verbose",&MTestMain::treatVerbose,
 			      "set verbose output",true);
+    this->registerNewCallBack("--scheme",&MTestMain::treatScheme,
+			      "set scheme",true);
     this->registerNewCallBack("--xml-output",&MTestMain::treatXMLOutput,
 			      "control xml output (default no)",true);
     this->registerNewCallBack("--result-file-output",&MTestMain::treatResultFileOutput,
@@ -151,6 +160,28 @@ namespace mtest
 #endif
   }
 
+  void
+  MTestMain::treatScheme(void)
+  {
+    if(this->currentArgument->getOption().empty()){
+      throw(std::runtime_error("MTestMain::treatScheme: "
+			       "no option given"));
+    }
+    if(this->scheme!=DEFAULT){
+      throw(std::runtime_error("MTestMain::treatScheme: "
+			       "scheme already given"));
+    }
+    const auto& s = this->currentArgument->getOption();
+    if((s=="MTest")||(s=="mtest")){
+      this->scheme = MTEST;
+    } else if((s=="PTest")||(s=="ptest")){
+      this->scheme = PTEST;
+    } else {
+      throw(std::runtime_error("MTestMain::treatScheme: "
+			       "invalid scheme '"+s+"'"));
+    }
+  } // end of MTestMain::treatScheme
+  
   void
   MTestMain::treatEnableFloatingPointExceptions(void)
   {
@@ -211,7 +242,6 @@ namespace mtest
   void
   MTestMain::treatXMLOutput(void)
   {
-    using namespace std;
     if(this->currentArgument->getOption().empty()){
       this->xml_output = true;
     } else {
@@ -221,9 +251,8 @@ namespace mtest
       } else if(option=="false"){
 	this->xml_output = false;
       } else {
-	string msg("MTestMain::treatXMLOutput : ");
-	msg += "unknown option '"+option+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MTestMain::treatXMLOutput: "
+				 "unknown option '"+option+"'"));
       }
     }
   } // end of MTestMain::treatXMLOutput
@@ -231,7 +260,6 @@ namespace mtest
   void
   MTestMain::treatResultFileOutput(void)
   {
-    using namespace std;
     if(this->currentArgument->getOption().empty()){
       this->result_file_output = true;
     } else {
@@ -241,9 +269,8 @@ namespace mtest
       } else if(option=="false"){
 	this->result_file_output = false;
       } else {
-	string msg("MTestMain::treatResultFileOutput : ");
-	msg += "unknown option '"+option+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MTestMain::treatResultFileOutput: "
+				 "unknown option '"+option+"'"));
       }
     }
   } // end of MTestMain::treatResultFileOutput
@@ -269,16 +296,22 @@ namespace mtest
   void
   MTestMain::treatHelpCommandsList(void)
   {
-    MTestParser p;
-    p.displayKeyWordsList();
+    if((this->scheme==MTEST)||(this->scheme==DEFAULT)){
+      MTestParser().displayKeyWordsList();
+    } else if(this->scheme==PTEST){
+      PipeTestParser().displayKeyWordsList();
+    }
     ::exit(EXIT_SUCCESS);
   } // end of MTestMain::treatHelpCommandsList
 
   void
   MTestMain::treatHelpCommands(void)
   {
-    MTestParser p;
-    p.displayKeyWordsHelp();
+    if((this->scheme==MTEST)||(this->scheme==DEFAULT)){
+      MTestParser().displayKeyWordsHelp();
+    } else if(this->scheme==PTEST){
+      PipeTestParser().displayKeyWordsList();
+    }
     ::exit(EXIT_SUCCESS);
   } // end of MTestMain::treatHelpCommands
   
@@ -290,8 +323,11 @@ namespace mtest
       throw(std::runtime_error("MTestMain::treatHelpCommand : "
 			       "no command specified"));
     }
-    MTestParser p;
-    p.displayKeyWordDescription(k);
+    if((this->scheme==MTEST)||(this->scheme==DEFAULT)){
+      MTestParser().displayKeyWordDescription(k);
+    } else if(this->scheme==PTEST){
+      PipeTestParser().displayKeyWordDescription(k);
+    }
     ::exit(EXIT_SUCCESS);
   }
 
@@ -327,19 +363,43 @@ namespace mtest
   int
   MTestMain::execute(void)
   {
+    auto mtest = [](const std::string& f)
+      -> std::shared_ptr<SchemeBase> {
+      auto t = std::make_shared<MTest>();
+      t->readInputFile(f);
+      return t;
+    };
+    auto ptest = [](const std::string& f)
+      -> std::shared_ptr<SchemeBase> {
+      auto t = std::make_shared<PipeTest>();
+      PipeTestParser().execute(*t,f);
+      return t;
+    };
     using namespace std;
     using namespace tfel::tests;
     auto& tm = TestManager::getTestManager();
     for(const auto& i : this->inputs){
       string tname;
+      string ext;
       const auto pos = i.rfind('.');
       if(pos!=string::npos){
 	tname = i.substr(0,pos);
+	ext   = i.substr(pos); 
       } else {
 	tname = i;
       }
-      auto t = make_shared<MTest>();
-      t->readInputFile(i);
+      auto t = std::shared_ptr<SchemeBase>{};
+      if(this->scheme==MTEST){
+	t = mtest(i);
+      } else if (this->scheme==PTEST){
+	t = ptest(i);
+      } else if (this->scheme==DEFAULT){
+	if(ext==".ptest"){
+	  t = ptest(i);
+	} else {
+	  t = mtest(i);
+	}
+      }
       if(this->result_file_output){
 	t->setOutputFileName(tname+".res");
       }

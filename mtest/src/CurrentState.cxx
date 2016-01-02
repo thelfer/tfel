@@ -5,6 +5,8 @@
  * \date   23 oct. 2015
  */
 
+#include"TFEL/Math/stensor.hxx"
+
 #include"MTest/Evolution.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/CurrentState.hxx"
@@ -116,6 +118,79 @@ namespace mtest{
     }
   } // end of computeExternalStateVariables
 
+  void
+  computeThermalExpansion(CurrentState& s,
+			  const EvolutionManager& evm,
+			  const real t,
+			  const real dt){
+    auto pev   = evm.find("Temperature");
+    auto pev2  = evm.find("ThermalExpansion");
+    if((pev==evm.end())||(pev2==evm.end())){
+      return;
+    }
+    const auto& T_ev = *(pev->second);
+    const auto& a_ev = *(pev2->second);
+    const auto eth0 = a_ev(t)*(T_ev(t)-s.Tref);
+    const auto eth1 = a_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+    for(unsigned short i=0;i!=3;++i){
+      s.e_th0[i] = eth0;
+      s.e_th1[i] = eth1;
+    }
+  }
+
+  void
+  computeThermalExpansion(CurrentState& s,
+			  const Behaviour& b,
+			  const EvolutionManager& evm,
+			  const real t,
+			  const real dt,
+			  const unsigned short d)
+  {
+    auto pev   = evm.find("Temperature");
+    auto pev2  = evm.find("ThermalExpansion1");
+    auto pev3  = evm.find("ThermalExpansion2");
+    auto pev4  = evm.find("ThermalExpansion3");
+    if((pev==evm.end())||((pev2==evm.end())||(pev3==evm.end())||(pev4==evm.end()))){
+      return;
+    }
+    if((pev2==evm.end())||(pev3==evm.end())||(pev4==evm.end())){
+      throw(std::runtime_error("computeThermalExpansion: at least one "
+			       "of the three thermal expansion coefficient is "
+			       "defined and at least one is not"));
+    }
+    const auto& T_ev  = *(pev->second);
+    const auto& a1_ev = *(pev2->second);
+    const auto& a2_ev = *(pev3->second);
+    const auto& a3_ev = *(pev4->second);
+    if(d==1u){
+      s.e_th0[0u] = a1_ev(t)*(T_ev(t)-s.Tref);
+      s.e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+      s.e_th0[1u] = a2_ev(t)*(T_ev(t)-s.Tref);
+      s.e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+      s.e_th0[2u] = a3_ev(t)*(T_ev(t)-s.Tref);
+      s.e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+    } else if((d==2u)||(d==3u)){
+      // thermal expansion tensors in the material frame
+      tfel::math::stensor<3u,real> se_th0(real(0));
+      tfel::math::stensor<3u,real> se_th1(real(0));
+      se_th0[0u] = a1_ev(t)*(T_ev(t)-s.Tref);
+      se_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+      se_th0[1u] = a2_ev(t)*(T_ev(t)-s.Tref);
+      se_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+      se_th0[2u] = a3_ev(t)*(T_ev(t)-s.Tref);
+      se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-s.Tref);
+      // backward rotation matrix
+      auto brm = transpose(b.getRotationMatrix(s.mprops1,s.r));
+      se_th0.changeBasis(brm);
+      se_th1.changeBasis(brm);
+      const auto ss = tfel::math::getStensorSize(d);
+      std::copy(se_th0.begin(),se_th0.begin()+ss,s.e_th0.begin());
+      std::copy(se_th1.begin(),se_th1.begin()+ss,s.e_th1.begin());
+    } else {
+      throw(std::runtime_error("MTest::prepare: invalid dimension"));
+    }
+  }
+  
   void update(CurrentState& s){
     s.iv_1 = s.iv0;
     s.s0   = s.s1;

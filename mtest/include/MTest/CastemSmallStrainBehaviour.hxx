@@ -33,8 +33,8 @@ namespace mtest
      * \param[in] b : behaviour name
      */
     CastemSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis,
-				  const std::string&,
-				  const std::string&);
+			       const std::string&,
+			       const std::string&);
     /*!
      * \param[out] v : initial values of the driving variables
      */

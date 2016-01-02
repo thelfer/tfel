@@ -29,16 +29,16 @@ namespace mtest{
   constexpr const real PipeCubicElement::pg_radii[4];
 #else /* _MSC_VER */
   const real PipeCubicElement::one_third = real{1}/real{3};
-  const real PipeCubicElement::cste  = real{ 9}/real{16};
-  const real PipeCubicElement::cste2 = real{27}/real{16};
-  const real PipeCubicElement::wg[4] = {-0.861136311594053,
-					-0.339981043584856,
-					0.339981043584856,
-					0.861136311594053};
-  const real PipeCubicElement::pg_radii[4] = =  {0.347854845137454,
-						 0.652145154862546,
-						 0.652145154862546,
-						 0.347854845137454};
+  const real PipeCubicElement::cste      = real{ 9}/real{16};
+  const real PipeCubicElement::cste2     = real{27}/real{16};
+  const real PipeCubicElement::pg_radii[4] = {-0.861136311594053,
+					      -0.339981043584856,
+					      0.339981043584856,
+					      0.861136311594053};
+  const real PipeCubicElement::wg[4] =  {0.347854845137454,
+				         0.652145154862546,
+					 0.652145154862546,
+					 0.347854845137454};
 #endif /* _MSC_VER */
 
   constexpr real PipeCubicElement::sf0(const real x){
@@ -87,7 +87,7 @@ namespace mtest{
 			     const real x)
   {
     return r0*dsf0(x)+r1*dsf1(x)+r2*dsf2(x)+r3*dsf3(x);
-  } // end of PipeCubicElement::interpolate
+  } // end of PipeCubicElement::jacobian
 
   void
   PipeCubicElement::setGaussPointsPositions(StructureCurrentState& scs,
@@ -161,10 +161,10 @@ namespace mtest{
       const auto pg = pg_radii[g];
       // inverse of the jacobian
       const auto iJ = 1/PipeCubicElement::jacobian(r0,r1,r2,r3,pg);
-      // radial position of the Gauss point
-      const auto rg = interpolate(r0,r1,r2,r3,pg);
       // current state
       auto& s = scs.istates[4*i+g];
+      // radial position of the Gauss point
+      const auto rg = s.position;
       // strain
       auto& e = b ? s.e1 : s.e0;
       e[0] = (ur0*dsf0(pg)+ur1*dsf1(pg)+ur2*dsf2(pg)+ur3*dsf3(pg))*iJ;
@@ -212,14 +212,14 @@ namespace mtest{
     for(const auto g : {0,1,2,3}){
       // Gauss point position in the reference element
       const auto pg = pg_radii[g];
+      // current state
+      auto& s = scs.istates[4*i+g];
       // radial position of the Gauss point
-      const auto rg = interpolate(r0,r1,r2,r3,pg);
+      const auto rg = s.position;
       const real sfv[4]  = {sf0(rg),sf1(rg),sf2(rg),sf3(rg)};
       const real dsfv[4] = {dsf0(rg),dsf1(rg),dsf2(rg),dsf3(rg)};
       // jacobian of the transformation
       const auto J = PipeCubicElement::jacobian(r0,r1,r2,r3,pg);
-      // current state
-      auto& s = scs.istates[4*i+g];
       if(!b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt)){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
 	  auto& log = mfront::getLogStream();

@@ -1,5 +1,4 @@
-include_directories("${PROJECT_BINARY_DIR}/src/TFELConfig"
-                    "${PROJECT_SOURCE_DIR}/include"
+include_directories("${PROJECT_SOURCE_DIR}/include"
                     "${PROJECT_SOURCE_DIR}/mfront/include")
 if(HAVE_CASTEM)
   if(CASTEHOME)
@@ -14,7 +13,8 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
                  "${PROJECT_BINARY_DIR}/src/System"
                  "${PROJECT_BINARY_DIR}/src/Glossary"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
+                 "${PROJECT_BINARY_DIR}/src/Exception"
+		 "${PROJECT_BINARY_DIR}/src/Config")
 
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
@@ -240,13 +240,15 @@ if(UNIX)
     TFELMaterial TFELMathParser
     TFELSystem   TFELUtilities
     TFELGlossary TFELException
+    TFELConfig
     -pthread ${TFEL_DL_LIBRARY})
 else(UNIX)
   target_link_libraries(TFELMFront
     MFrontLogStream
     TFELMaterial TFELMathParser
     TFELSystem   TFELUtilities
-    TFELGlossary TFELException)
+    TFELGlossary TFELException
+    TFELConfig)
 endif(UNIX)
 
 # MTestFileGenerator

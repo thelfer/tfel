@@ -85,6 +85,8 @@ namespace mtest
     tfel::math::vector<real> esv0;
     //! external variables increments
     tfel::math::vector<real> desv;
+    //! boolean, true if the rotation matrix has been defined by the user
+    bool isRmDefined = false;
     //! rotation matrix
     tfel::math::tmatrix<3u,3u> r;
     // position of the gauss point in the initial configuration
@@ -138,6 +140,20 @@ namespace mtest
 				const real,
 				const real);
 
+  MTEST_VISIBILITY_EXPORT void
+  computeThermalExpansion(CurrentState&,
+			  const EvolutionManager&,
+			  const real,
+			  const real);
+
+  MTEST_VISIBILITY_EXPORT void
+  computeThermalExpansion(CurrentState&,
+			  const Behaviour&,
+			  const EvolutionManager&,
+			  const real,
+			  const real,
+			  const unsigned short);
+  
   /*!
    * \brief update the state for the next time step
    * \param[out] s: state

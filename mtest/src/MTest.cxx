@@ -22,7 +22,6 @@
 #include<algorithm>
 #include<stdexcept>
 
-#include"tfel-config.hxx"
 #include"TFEL/Utilities/TextData.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
@@ -107,7 +106,6 @@ namespace mtest
   MTest::MTest()
     : rm(real(0)),
       isRmDefined(false),
-      handleThermalExpansion(true),
       toeps(-1),
       pv(-1),
       cto(false)
@@ -117,16 +115,6 @@ namespace mtest
     MTestParser p;
     p.execute(*this,f);
   } // end of MTest::readInputFile
-
-  void
-  MTest::setHandleThermalExpansion(const bool b1)
-  {
-    if(!this->handleThermalExpansion){
-      throw(std::runtime_error("MTest::setHandleThermalExpansion: "
-			       "thermal expansion is not handled"));
-    }
-    this->handleThermalExpansion = b1;
-  }
 
   std::string
   MTest::name(void) const
@@ -304,98 +292,6 @@ namespace mtest
     std::copy(v.begin(),v.end(),this->s_t0.begin());
   } // end of MTest::setThermodynamicForcesInitialValues
   
-  void
-  MTest::setScalarInternalStateVariableInitialValue(const std::string& n,
-						    const real v)
-  {
-    if(this->b.get()==nullptr){
-      throw(std::runtime_error("MTest::setScalarInternalStateVariableInitialValue: "
-			       "no behaviour defined"));
-    }
-    const auto& ivsnames = this->b->getInternalStateVariablesNames();
-    if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
-      throw(std::runtime_error("MTest::setScalarInternalStateVariableInitialValue : "
-			       "the behaviour don't declare an internal state "
-			       "variable named '"+n+"'"));
-    }
-    const auto type = this->b->getInternalStateVariableType(n);
-    const auto pos  = this->b->getInternalStateVariablePosition(this->hypothesis,n);
-    if(type!=0){
-      throw(std::runtime_error("MTest::setScalarInternalStateVariableInitialValue: "
-			       "internal state variable '"+n+"' is not defined"));
-    }
-    if(this->iv_t0.size()<=pos){
-      this->iv_t0.resize(pos+1,0.);
-    }
-    this->iv_t0[pos] = v;
-  }
-
-  void
-  MTest::setStensorInternalStateVariableInitialValues(const std::string& n,
-						      const std::vector<real>& v)
-  {
-    if(this->b.get()==nullptr){
-      throw(std::runtime_error("MTest::setStensorInternalStateVariableInitialValue: "
-			       "no behaviour defined"));
-    }
-    const auto& ivsnames = this->b->getInternalStateVariablesNames();
-    if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
-      throw(std::runtime_error("MTest::setStensorInternalStateVariableInitialValue: "
-			       "the behaviour don't declare an internal "
-			       "state variable named '"+n+"'"));
-    }
-    const auto type = this->b->getInternalStateVariableType(n);
-    const auto pos  = this->b->getInternalStateVariablePosition(this->hypothesis,n);
-    if(type!=1){
-      throw(std::runtime_error("MTest::setStensorInternalStateVariableInitialValue: "
-			       "internal state variable '"+n+"' is not defined"));
-    }
-    const auto N = tfel::material::getStensorSize(this->hypothesis);
-    if(v.size()!=N){
-      throw(std::runtime_error("MTest::setStensorInternalStateVariableInitialValues : "
-			       "invalid values size"));
-    }
-    if(this->iv_t0.size()<pos+N){
-      this->iv_t0.resize(pos+N,0.);
-    }
-    std::copy(v.begin(),v.end(),this->iv_t0.begin()+pos);
-  } // end of MTest::setStensorInternalStateVariableInitialValue
-
-  void
-  MTest::setTensorInternalStateVariableInitialValues(const std::string& n,
-						      const std::vector<real>& v)
-  {
-    using namespace std;
-    if(this->b.get()==nullptr){
-      throw(runtime_error("MTest::setTensorInternalStateVariableInitialValue: "
-			  "no behaviour defined"));
-    }
-    const auto& ivsnames = this->b->getInternalStateVariablesNames();
-    if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
-      string msg("MTest::setTensorInternalStateVariableInitialValue : ");
-      msg += "the behaviour don't declare an internal state variable named '";
-      msg += n+"'";
-      throw(runtime_error(msg));
-    }
-    const int type           = this->b->getInternalStateVariableType(n);
-    const unsigned short pos = this->b->getInternalStateVariablePosition(this->hypothesis,n);
-    if(type!=3){
-      string msg("MTest::setTensorInternalStateVariableInitialValue : ");
-      msg += "internal state variable '"+n+"' is not defined";
-      throw(runtime_error(msg));
-    }
-    const unsigned short N = tfel::material::getTensorSize(this->hypothesis);
-    if(v.size()!=N){
-      string msg("MTest::setTensorInternalStateVariableInitialValues : "
-		 "invalid values size");
-      throw(runtime_error(msg));
-    }
-    if(this->iv_t0.size()<pos+N){
-      this->iv_t0.resize(pos+N,0.);
-    }
-    copy(v.begin(),v.end(),this->iv_t0.begin()+pos);
-  } // end of MTest::setTensorInternalStateVariableInitialValue
-
   void
   MTest::completeInitialisation()
   {
@@ -683,93 +579,19 @@ namespace mtest
   MTest::prepare(StudyCurrentState& state,
 		 const real t,
 		 const real dt) const{
-    using namespace tfel::material;
     auto& scs = state.getStructureCurrentState("");
     if(scs.istates.size()!=1u){
       throw(std::runtime_error("MTest::prepare: "
 			       "invalid state"));
     }
-    // evaluations of the materials properties at the end of the
-    // time step
+    // driving variables at the beginning of the time step
     for(auto& s: scs.istates){
-      computeMaterialProperties(s,*(this->evm),*(this->dmpv),
-  				this->b->getMaterialPropertiesNames(),t,dt);
-      computeExternalStateVariables(s,*(this->evm),
-  				    this->b->getExternalStateVariablesNames(),t,dt);
-      if(this->handleThermalExpansion){
-  	if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-  	  // thermal expansion (isotropic case)
-  	  auto pev   = this->evm->find("Temperature");
-  	  auto pev2  = this->evm->find("ThermalExpansion");
-  	  if((pev!=this->evm->end())&&(pev2!=this->evm->end())){
-  	    const auto& T_ev = *(pev->second);
-  	    const auto& a_ev = *(pev2->second);
-  	    const real eth0 = a_ev(t)*(T_ev(t)-s.Tref);
-  	    const real eth1 = a_ev(t+dt)*(T_ev(t+dt)-s.Tref);
-  	    for(unsigned short i=0;i!=3;++i){
-  	      s.e_th0[i] = eth0;
-  	      s.e_th1[i] = eth1;
-  	    }
-  	  }
-  	  pev2  = this->evm->find("ThermalExpansion1");
-  	  auto pev3  = this->evm->find("ThermalExpansion2");
-  	  auto pev4  = this->evm->find("ThermalExpansion3");
-  	  if((pev!=this->evm->end())&&
-  	     ((pev2!=this->evm->end())||(pev3!=this->evm->end())||(pev4!=this->evm->end()))){
-  	    if((pev2==this->evm->end())||(pev3==this->evm->end())||(pev4==this->evm->end())){
-  	      throw(std::runtime_error("MTest::prepare: at least one "
-  				       "of the three thermal expansion coefficient is "
-  				       "defined and at least one is not"));
-  	    }
-  	    const auto& T_ev  = *(pev->second);
-  	    const auto& a1_ev = *(pev2->second);
-  	    const auto& a2_ev = *(pev3->second);
-  	    const auto& a3_ev = *(pev4->second);
-  	    const auto d = getSpaceDimension(this->hypothesis);
-  	    if(d==1u){
-  	      s.e_th0[0u] = a1_ev(t)*(T_ev(t)-s.Tref);
-  	      s.e_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-s.Tref);
-  	      s.e_th0[1u] = a2_ev(t)*(T_ev(t)-s.Tref);
-  	      s.e_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-s.Tref);
-  	      s.e_th0[2u] = a3_ev(t)*(T_ev(t)-s.Tref);
-  	      s.e_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-s.Tref);
-  	    } else if((d==2u)||
-  		      (d==3u)){
-  	      // thermal expansion tensors in the material frame
-  	      tfel::math::stensor<3u,real> se_th0(real(0));
-  	      tfel::math::stensor<3u,real> se_th1(real(0));
-  	      se_th0[0u] = a1_ev(t)*(T_ev(t)-s.Tref);
-  	      se_th1[0u] = a1_ev(t+dt)*(T_ev(t+dt)-s.Tref);
-  	      se_th0[1u] = a2_ev(t)*(T_ev(t)-s.Tref);
-  	      se_th1[1u] = a2_ev(t+dt)*(T_ev(t+dt)-s.Tref);
-  	      se_th0[2u] = a3_ev(t)*(T_ev(t)-s.Tref);
-  	      se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-s.Tref);
-  	      // backward rotation matrix
-  	      auto brm = transpose(this->b->getRotationMatrix(s.mprops1,this->rm));
-  	      se_th0.changeBasis(brm);
-  	      se_th1.changeBasis(brm);
-  	      const auto ss = getStensorSize(this->hypothesis);
-  	      std::copy(se_th0.begin(),se_th0.begin()+ss,s.e_th0.begin());
-  	      std::copy(se_th1.begin(),se_th1.begin()+ss,s.e_th1.begin());
-  	    } else {
-  	      throw(std::runtime_error("MTest::prepare: invalid dimension"));
-  	    }
-  	  }
-  	}
-      }
-      // driving variables at the beginning of the time step
       const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
       for(unsigned short i=0;i!=ndv;++i){
-  	s.e0[i] = state.u0[i]-s.e_th0[i];
+  	s.e0[i] = state.u0[i];
       }
     }
-    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-      auto& log = mfront::getLogStream();
-      log << "resolution from " << t << " to " << t+dt << '\n';
-    }
-    if(this->residual){
-      this->residual << '\n' << "#resolution from " << t << " to " << t+dt << '\n';
-    }
+    SingleStructureScheme::prepare(state,t,dt);
   } // end of MTest::prepare
 
   void
@@ -864,14 +686,8 @@ namespace mtest
     const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
     const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
     const auto btype = this->b->getBehaviourType();
-    if(btype==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      for(size_type i=0;i!=ndv;++i){
-  	s.e1[i] = state.u1[i]-s.e_th1[i];
-      }
-    } else {
-      for(size_type i=0;i!=ndv;++i){
-  	s.e1[i] = state.u1[i];
-      }
+    for(size_type i=0;i!=ndv;++i){
+      s.e1[i] = state.u1[i];
     }
     // behaviour integration
     if(!this->b->integrate(s,bwk,this->hypothesis,dt,mt)){

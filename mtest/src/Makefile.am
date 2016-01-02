@@ -1,5 +1,4 @@
-AM_CPPFLAGS = -I$(top_builddir)/src/TFELConfig \
-	      -I$(top_srcdir)/include          \
+AM_CPPFLAGS = -I$(top_srcdir)/include          \
 	      -I$(top_srcdir)/mfront/include   \
 	      -I$(top_srcdir)/mtest/include
 
@@ -22,6 +21,7 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  FunctionEvolution.cxx                     \
 			  Behaviour.cxx                             \
 			  BehaviourWorkSpace.cxx                    \
+			  LogarithmicStrain1DBehaviourWrapper.cxx   \
 			  UmatBehaviourBase.cxx                     \
 			  UmatNormaliseTangentOperator.cxx          \
 			  Constraint.cxx                            \
@@ -43,13 +43,16 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  IronsTuckAccelerationAlgorithm.cxx        \
 			  SteffensenAccelerationAlgorithm.cxx       \
 			  MTest.cxx                                 \
-			  MTestParser.cxx                           \
 			  PipeTest.cxx                              \
 			  PipeLinearElement.cxx                     \
 			  PipeQuadraticElement.cxx                  \
 			  PipeCubicElement.cxx                      \
 			  PipeProfile.cxx                           \
-			  PipeProfileHandler.cxx
+			  PipeProfileHandler.cxx                    \
+			  SchemeParserBase.cxx                      \
+			  SingleStructureSchemeParser.cxx           \
+			  MTestParser.cxx                           \
+			  PipeTestParser.cxx
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Material -lTFELMaterial   \
@@ -58,7 +61,8 @@ libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 		 	  -L$(top_builddir)/src/System    -lTFELSystem    \
 			  -L$(top_builddir)/src/Utilities -lTFELUtilities \
 			  -L$(top_builddir)/src/Exception -lTFELException \
-			  -L$(top_builddir)/src/Tests     -lTFELTests
+			  -L$(top_builddir)/src/Tests     -lTFELTests     \
+			  -L$(top_builddir)/src/Config     -lTFELConfig
 libTFELMTest_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMTest_EXPORTS
 if TFEL_WIN
 libTFELMTest_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at

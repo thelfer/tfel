@@ -1,15 +1,15 @@
-include_directories("${PROJECT_BINARY_DIR}/src/TFELConfig"
-                    "${PROJECT_SOURCE_DIR}/include"
+include_directories("${PROJECT_SOURCE_DIR}/include"
                     "${PROJECT_SOURCE_DIR}/mfront/include"
 		    "${PROJECT_SOURCE_DIR}/mtest/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Material"
+link_directories("${PROJECT_BINARY_DIR}/mtest/src"
+		 "${PROJECT_BINARY_DIR}/mfront/src"
+		 "${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Math"
                  "${PROJECT_BINARY_DIR}/src/System"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception"
                  "${PROJECT_BINARY_DIR}/src/Tests"
-		 "${PROJECT_BINARY_DIR}/mfront/src"
-		 "${PROJECT_BINARY_DIR}/mtest/src")
+		 "${PROJECT_BINARY_DIR}/src/Config")
 
 set(TFELMTest_SOURCES
   Study.cxx
@@ -28,6 +28,7 @@ set(TFELMTest_SOURCES
   FunctionEvolution.cxx
   Behaviour.cxx
   BehaviourWorkSpace.cxx
+  LogarithmicStrain1DBehaviourWrapper.cxx
   UmatBehaviourBase.cxx
   UmatNormaliseTangentOperator.cxx
   Constraint.cxx
@@ -47,14 +48,16 @@ set(TFELMTest_SOURCES
   SteffensenAccelerationAlgorithm.cxx
   IronsTuckAccelerationAlgorithm.cxx
   MTest.cxx
-  MTestParser.cxx
   PipeTest.cxx
   PipeLinearElement.cxx
   PipeQuadraticElement.cxx
   PipeCubicElement.cxx
   PipeProfile.cxx
   PipeProfileHandler.cxx
-  )
+  SchemeParserBase.cxx
+  SingleStructureSchemeParser.cxx
+  MTestParser.cxx
+  PipeTestParser.cxx)
 
 set(TFELMTest_LDADD
   MFrontLogStream
@@ -64,7 +67,8 @@ set(TFELMTest_LDADD
   TFELSystem
   TFELUtilities
   TFELException
-  TFELTests)
+  TFELTests
+  TFELConfig)
 
 if(HAVE_CASTEM)
   set(TFELMTest_SOURCES

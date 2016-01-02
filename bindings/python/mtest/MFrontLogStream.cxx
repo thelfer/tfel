@@ -11,9 +11,32 @@
  * project under specific licensing conditions. 
  */
 
+#include<stdexcept>
 #include<boost/python.hpp>
 
 #include"MFront/MFrontLogStream.hxx"
+
+static void
+pySetVerboseMode(const std::string& m){
+  if(m=="Quiet"){
+    mfront::setVerboseMode(mfront::VERBOSE_QUIET);
+  } else if (m=="Level0"){
+    mfront::setVerboseMode(mfront::VERBOSE_LEVEL0);
+  } else if (m=="Level1"){
+    mfront::setVerboseMode(mfront::VERBOSE_LEVEL1);
+  } else if (m=="Level2"){
+    mfront::setVerboseMode(mfront::VERBOSE_LEVEL2);
+  } else if (m=="Level3"){
+    mfront::setVerboseMode(mfront::VERBOSE_LEVEL3);
+  } else if (m=="Debug"){
+    mfront::setVerboseMode(mfront::VERBOSE_DEBUG);
+  } else if (m=="Full"){
+    mfront::setVerboseMode(mfront::VERBOSE_FULL);
+  } else {
+    throw(std::runtime_error("mfront::setVerboseMode: "
+			     "unknown mode '"+m+"'"));
+  }
+}
 
 void declareMFrontLogStream(void);
 
@@ -34,5 +57,6 @@ void declareMFrontLogStream(void)
     ;
 
   def("setVerboseMode",setVerboseMode);
+  def("setVerboseMode",pySetVerboseMode);
 
 }

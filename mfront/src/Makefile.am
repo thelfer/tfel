@@ -1,7 +1,6 @@
 # Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-AM_CPPFLAGS = -I$(top_builddir)/src/TFELConfig \
-	      -I$(top_srcdir)/include          \
+AM_CPPFLAGS = -I$(top_srcdir)/include          \
 	      -I$(top_srcdir)/mfront/include
 
 if HAVE_CASTEM
@@ -153,7 +152,8 @@ libTFELMFront_la_LIBADD  = -L$(top_builddir)/mfront/src    -lMFrontLogStream \
 		           -L$(top_builddir)/src/System    -lTFELSystem      \
 		           -L$(top_builddir)/src/Glossary  -lTFELGlossary    \
 		           -L$(top_builddir)/src/Utilities -lTFELUtilities   \
-		           -L$(top_builddir)/src/Exception -lTFELException
+		           -L$(top_builddir)/src/Exception -lTFELException   \
+		           -L$(top_builddir)/src/Config    -lTFELConfig
 if TFEL_WIN
 libTFELMFront_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN

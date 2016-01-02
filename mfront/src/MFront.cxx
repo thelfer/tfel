@@ -40,7 +40,7 @@
 #include<unistd.h>
 #endif
 
-#include"tfel-config.hxx"
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
@@ -66,68 +66,6 @@
 
 namespace mfront{
 
-#if defined _WIN32 || defined _WIN64
-  static bool
-  getValueInRegistry(std::string &value)
-  {
-    using namespace std;
-    HKEY  hKey;
-    char  szBuffer[512];
-    DWORD dwBufferSize = sizeof(szBuffer);
-    LONG  nError;
-    LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-" VERSION,0,KEY_READ,&hKey);
-    if(ERROR_SUCCESS != lRes){
-      return false;
-    }
-    nError = RegQueryValueEx(hKey,"",nullptr,nullptr,
-			     reinterpret_cast<LPBYTE>(szBuffer),
-			     &dwBufferSize);
-    RegCloseKey(hKey);
-    if (ERROR_SUCCESS == nError){
-      value = szBuffer;
-      return true;
-    }
-    return false;
-  }
-#endif
-  
-  static std::string
-  handleSpace(const std::string& p)
-  {
-    if(find(p.begin(),p.end(),' ')!=p.end()){
-#if defined _WIN32 || defined _WIN64
-      throw(std::runtime_error("tfel-config handleSpace: "
-			       "path to TFEL shall not contain space as "
-			       "MinGW can't handle it (Found '"+p+"'). "
-			       "Please change TFEL installation directory"));
-#endif
-      return '"'+p+'"';
-    }
-    return p;
-  }
-
-  static std::string
-  getTFELHOME(void)
-  {
-#if defined _WIN32 || defined _WIN64
-    // check in the registry (installation through NSIS)
-    std::string rpath;
-    if(getValueInRegistry(rpath)){
-      return handleSpace(rpath);
-    }
-#endif
-    const char * const path = ::getenv("TFELHOME");
-    if(path!=nullptr){
-      return handleSpace(path);
-    }
-#if defined _WIN32 || defined _WIN64
-    throw(std::runtime_error("tfel-config getTFELHOME: "
-			     "no TFELHOME registry key defined and no TFEHOME "
-			     "environment variable defined"));
-#endif
-    return "";
-  }
-
   /*!
    * \return the path to the documentation file if available.
    * If not, an empty string is returned
@@ -138,10 +76,7 @@ namespace mfront{
   getDocumentationFilePath(const std::string& pn,
 			   const std::string& k)
   {
-    std::string root = getTFELHOME();
-    if(root.empty()){
-      root = PREFIXDIR;
-    }
+    const auto root = tfel::getInstallPath();
     auto fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".md";
     std::ifstream desc{fn};
     if(desc){

@@ -25,10 +25,10 @@ if(CMAKE_CONFIGURATION_TYPES)
       get_property(MFrontCyranoBehavioursBuildPath
 	TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
     endif(HAVE_CYRANO)
-    configure_file("${PROJECT_SOURCE_DIR}/mtest/tests/MTestParserTest.cxx.in"
-      ${PROJECT_BINARY_DIR}/mtest/tests/MTestParserTest_${conf}.cxx @ONLY)
+    configure_file("${PROJECT_SOURCE_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx.in"
+      ${PROJECT_BINARY_DIR}/mtest/tests/unit-tests/MTestParserTest_${conf}.cxx @ONLY)
     add_executable(MTestParserTest_${conf} EXCLUDE_FROM_ALL
-      ${PROJECT_BINARY_DIR}/mtest/tests/MTestParserTest_${conf}.cxx)
+      ${PROJECT_BINARY_DIR}/mtest/tests/unit-tests/MTestParserTest_${conf}.cxx)
     add_test(NAME MTestParserTest_${conf}
       COMMAND MTestParserTest_${conf}
       CONFIGURATIONS ${conf})
@@ -62,10 +62,10 @@ else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontCyranoBehavioursBuildPath
       TARGET MFrontCyranoBehaviours PROPERTY LOCATION)
   endif(HAVE_CYRANO)
-  configure_file("${PROJECT_SOURCE_DIR}/mtest/tests/MTestParserTest.cxx.in"
-    ${PROJECT_BINARY_DIR}/mtest/tests/MTestParserTest.cxx @ONLY)
+  configure_file("${PROJECT_SOURCE_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx.in"
+    ${PROJECT_BINARY_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx @ONLY)
   add_executable(MTestParserTest EXCLUDE_FROM_ALL
-    ${PROJECT_BINARY_DIR}/mtest/tests/MTestParserTest.cxx)
+    ${PROJECT_BINARY_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx)
   add_test(NAME MTestParserTest COMMAND MTestParserTest)
   target_link_libraries(MTestParserTest TFELMTest
     MFrontLogStream TFELGlossary TFELSystem TFELTests TFELException)

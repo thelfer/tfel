@@ -154,10 +154,22 @@ void declareSingleStructureScheme(void)
 {
   using namespace boost::python;
   using namespace mtest;
+  void (SingleStructureScheme::* ptr1)(const std::string&,
+				       const std::string&,
+				       const std::string&) =
+    &SingleStructureScheme::setBehaviour;
+  void (SingleStructureScheme::* ptr2)(const std::string&,
+				       const std::string&,
+				       const std::string&,
+				       const std::string&) =
+    &SingleStructureScheme::setBehaviour;
   class_<SingleStructureScheme,boost::noncopyable,
 			bases<SchemeBase>>("SingleStructureScheme",
 					   no_init)
-    .def("setBehaviour",&SingleStructureScheme::setBehaviour)
+    .def("setBehaviour",ptr1)
+    .def("setBehaviour",ptr2)
+    .def("handleThermalExpansion",
+	 &SingleStructureScheme::setHandleThermalExpansion)
     .def("setParameter",&SingleStructureScheme::setParameter)
     .def("setIntegerParameter",
 	 &SingleStructureScheme::setIntegerParameter)

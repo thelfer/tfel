@@ -104,11 +104,27 @@
 #endif /* LIB_TFEL_CONFIG_HXX_ */
 #endif /* LIB_TFEL_CONFIG_HXX_ */
 
-/*!
- * defining macros by librairies using cmake conventions.
+/*
+ * Defining macros by librairies using cmake conventions.
  * When compiling libfoo, cmake defines the macro foo_EXPORTS.
  * This allows to distinguish import/export definitions of symbols
  */
+
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#  if defined TFELConfig_EXPORTS
+#    define TFELCONFIG_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#  else
+#  ifndef TFEL_STATIC_BUILD
+#    define TFELCONFIG_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#  else 
+#    define TFELCONFIG_VISIBILITY_EXPORT 
+#  endif
+#  endif
+#else
+#  define TFELCONFIG_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif /* LIB_TFEL_CONFIG_HXX_ */
+
+
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #  if defined TFELException_EXPORTS
 #    define TFELEXCEPTION_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT

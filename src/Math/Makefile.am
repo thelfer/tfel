@@ -14,6 +14,7 @@ libTFELMath_la_SOURCES = MathException.cxx              \
 			 Discretization1D.cxx           \
 		         RunTimeCheck.cxx               \
 		         TensorConcept.cxx              \
+			 StensorConcept.cxx             \
 			 StensorComputeEigenValues.cxx
 
 libTFELMath_la_CPPFLAGS  = -I$(top_srcdir)/include

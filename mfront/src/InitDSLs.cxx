@@ -33,8 +33,7 @@
 namespace mfront
 {
 
-  void
-  initParsers(void)
+  void initParsers(void)
   {
     DSLProxy<DefaultDSL> proxy1("DefaultParser");
     DSLProxy<IsotropicMisesCreepDSL>  proxy2("IsotropicMisesCreepParser");

@@ -26,6 +26,7 @@
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
 #include"MTest/Types.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/SolverOptions.hxx"
 
 namespace mtest
@@ -36,7 +37,7 @@ namespace mtest
   // forward declaration
   struct BehaviourWorkSpace;
   
-  //! A simple wrapper around mechanical beheaviours
+  //! A simple wrapper around mechanical behaviours
   struct Behaviour
   {
     //! a simple alias

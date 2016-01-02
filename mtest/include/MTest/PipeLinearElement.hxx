@@ -47,11 +47,11 @@ namespace mtest{
 #else /* _MSC_VER */
     // absolute value of the Gauss points position in the reference
     // element
-    static const const real abs_pg;
+    static const real abs_pg;
     // value of the Gauss points position in the reference element
-    static const const real pg_radii[2];
+    static const real pg_radii[2];
     // Gauss point weight
-    static const const real wg;
+    static const real wg;
 #endif /* _MSC_VER */
     /*!
      * \brief interpolate nodal value in the element

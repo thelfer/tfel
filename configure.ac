@@ -547,6 +547,7 @@ AC_OUTPUT([debug.sh
 	   cmake/modules/Makefile
 	   include/Makefile
 	   src/Makefile
+	   src/Config/Makefile
 	   src/Tests/Makefile
 	   src/Exception/Makefile
 	   src/Utilities/Makefile
@@ -713,7 +714,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/aster/asterdruckerprager.mtest
-           mfront/tests/behaviours/aster/asterdruckerprager2.mtest	  
+           mfront/tests/behaviours/aster/asterdruckerprager2.mtest
            mfront/tests/behaviours/abaqus/Makefile
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest
            mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest
@@ -1060,6 +1061,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemnorton_log1D-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/castem/castemnorton_log1D-uniaxialloading-2-1D.mtest
            mfront/tests/behaviours/castem/castemnorton_log1D-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_LogarithmicStrain1DWrapper-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_LogarithmicStrain1DWrapper-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem/castemelasticity_LogarithmicStrain1DWrapper-uniaxialloading-3-1D.mtest
+	   mfront/tests/behaviours/castem/castemelasticity_LogarithmicStrain1DWrapper-thermalstrain.mtest
+  	   mfront/tests/behaviours/castem/castemelasticity_LogarithmicStrain1DWrapper-thermalstrain2.mtest
+           mfront/tests/behaviours/castem/castemnorton_LogarithmicStrain1DWrapper-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem/castemnorton_LogarithmicStrain1DWrapper-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem/castemnorton_LogarithmicStrain1DWrapper-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-2D.mtest
            mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-1-3D.mtest
@@ -1948,6 +1957,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/cyrano/cyranoimplicitnorton.mtest
            mfront/tests/behaviours/cyrano/cyranoimplicitnorton2.mtest
            mfront/tests/behaviours/cyrano/cyranoimplicitnorton3.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-thermalstrain.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-thermalstrain2.mtest
+           mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-3-1D.mtest
            mfront/tests/models/Makefile
            mfront/tests/models/include/Makefile
            mfront/tests/models/src/Makefile
@@ -1956,7 +1973,15 @@ AC_OUTPUT([debug.sh
    	   mtest/src/Makefile
    	   mtest/include/Makefile
 	   mtest/tests/Makefile
-	   mtest/tests/MTestParserTest.cxx
+	   mtest/tests/unit-tests/Makefile
+	   mtest/tests/unit-tests/MTestParserTest.cxx
+	   mtest/tests/ptest/Makefile
+	   mtest/tests/ptest/castem/Makefile
+   	   mtest/tests/ptest/castem/castemelasticity-linear.ptest
+	   mtest/tests/ptest/castem2/Makefile
+	   mtest/tests/ptest/aster/Makefile
+	   mtest/tests/ptest/abaqus/Makefile
+  	   mtest/tests/ptest/cyrano/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile

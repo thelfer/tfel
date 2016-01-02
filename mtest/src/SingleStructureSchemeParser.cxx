@@ -1,0 +1,404 @@
+/*!
+ * \file   SingleStructureSchemeParser.cxx
+ * \brief    
+ * \author THOMAS HELFER
+ * \date   21 déc. 2015
+ */
+
+#include<sstream>
+#include"TFEL/Material/OutOfBoundsPolicy.hxx"
+#include"MFront/MFrontLogStream.hxx"
+#include"MTest/MTest.hxx"
+#include"MTest/Behaviour.hxx"
+#include"MTest/Evolution.hxx"
+#include"MTest/CastemEvolution.hxx"
+#include"MTest/FunctionEvolution.hxx"
+#include"MTest/SingleStructureSchemeParser.hxx"
+
+namespace mtest{
+
+  static void
+  selectVariables(std::vector<std::string>& r,
+		  const std::vector<std::string>& names,
+		  const std::string& n)
+  {
+    r.clear();    
+    if(find(names.begin(),names.end(),n)!=names.end()){
+      r.push_back(n);
+    } else {
+      // checking for an array of internal state variables
+      for(const auto& vn : names){
+	if(vn.compare(0,n.length(),n)==0){
+	  if(!(vn.size()>=n.length()+3u)){
+	    continue;
+	  }
+	  auto pn  = vn.crbegin();
+	  const auto pne = vn.crbegin()+(vn.size()-n.size()-1);
+	  if((vn[n.size()]!='[')||(*pn!=']')){
+	    continue;
+	  }
+	  ++pn;
+	  bool ok = true;
+	  while((pn!=pne)&&(ok)){
+	    ok = ::isdigit(*pn)!=0;
+	    ++pn;
+	  }
+	  if(ok){
+	    r.push_back(vn);
+	  }
+	}
+      }
+    }
+  } // end of selectVariables
+
+  static unsigned short
+  getSTensorSize(const unsigned short d)
+  {
+    if(d==1){
+      return 3;
+    } else if(d==2){
+      return 4;
+    } else if(d==3){
+      return 6;
+    }
+    throw(std::runtime_error("mfront::getSTensorSize : "
+			     "invalid dimension"));
+  }
+
+  static unsigned short
+  getTensorSize(const unsigned short d)
+  {
+    if(d==1){
+      return 3;
+    } else if(d==2){
+      return 5;
+    } else if(d==3){
+      return 9;
+    }
+    throw(std::runtime_error("mfront::getTensorSize : "
+			     "invalid dimension"));
+  }
+  
+  void
+  SingleStructureSchemeParser::handleBehaviour(SingleStructureScheme& t,
+					       TokensContainer::const_iterator& p)
+  {
+    auto i = std::string{}; // interface
+    auto w = std::string{}; // wrapper
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour","<",p,
+			     this->fileTokens.end());
+    this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
+			    this->fileTokens.end());
+#ifdef HAVE_CASTEM
+    if((p->value=="umat")||
+       (p->value=="castem")){
+      i = "castem";
+    }
+#endif /* HAVE_CASTEM */
+#ifdef HAVE_ASTER
+    if(p->value=="aster"){
+      i = p->value;
+    }
+#endif /* HAVE_ASTER */
+#ifdef HAVE_ABAQUS
+    if(p->value=="abaqus"){
+      i = "abaqus";
+    }
+#endif /* HAVE_ABAQUS */
+#ifdef HAVE_CYRANO
+    if(p->value=="cyrano"){
+      i = p->value;
+    }
+#endif /* HAVE_CYRANO */
+    if(i.empty()){
+      throw(std::runtime_error("SingleStructureSchemeParser::handleBehaviour: "
+			       "unknown interface '"+p->value+"'"));
+    }
+    ++p;
+    this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
+			    this->fileTokens.end());
+    if(p->value==","){
+      this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",",",p,
+			       this->fileTokens.end());
+      w = p->value;
+      ++p;
+    }
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",">",p,
+			     this->fileTokens.end());
+    const auto& l = this->readString(p,this->fileTokens.end());
+    const auto& f = this->readString(p,this->fileTokens.end());
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",";",p,
+			     this->fileTokens.end());
+    if(w.empty()){
+      t.setBehaviour(i,l,f);
+    } else {
+      t.setBehaviour(w,i,l,f);
+    }
+  } // end of SingleStructureSchemeParser::handleBehaviour
+
+  void
+  SingleStructureSchemeParser::handleMaterialProperty(SingleStructureScheme& t,
+						      TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    string i;
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty","<",p,
+			     this->fileTokens.end());
+    this->checkNotEndOfLine("SingleStructureSchemeParser::handleMaterialProperty",p,
+			    this->fileTokens.end());
+    if((p->value=="constant")||
+       (p->value=="castem")||
+       (p->value=="function")){
+      i = p->value;
+    } else {
+      throw(runtime_error("SingleStructureSchemeParser::handleMaterialProperty: "
+			  "unknown interface '"+p->value+"'"));
+    }
+    ++p;
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty",">",p,
+			     this->fileTokens.end());
+    const auto& n = this->readString(p,this->fileTokens.end());
+    if(i=="constant"){
+      shared_ptr<Evolution> mpev;
+      this->checkNotEndOfLine("SingleStructureSchemeParser::handleMaterialProperty",p,
+			      this->fileTokens.end());
+      const real v = this->readDouble(t,p);
+      mpev = shared_ptr<Evolution>(new ConstantEvolution(v));
+      t.setMaterialProperty(n,mpev,true);
+    } else if(i=="function"){
+      shared_ptr<Evolution> mpev;
+      const string f = this->readString(p,this->fileTokens.end());
+      mpev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
+      t.setMaterialProperty(n,mpev,true);
+    } else if(i=="castem"){
+      shared_ptr<Evolution> mpev;
+      const string l = this->readString(p,this->fileTokens.end());
+      const string f = this->readString(p,this->fileTokens.end());
+      mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
+      t.setMaterialProperty(n,mpev,true);
+    } else {
+      throw(runtime_error("SingleStructureSchemeParser::handleMaterialProperty: "
+			  "unknown interface '"+i+"'"));
+    }
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty",";",p,
+			     this->fileTokens.end());
+  }
+  
+  void
+  SingleStructureSchemeParser::handleOutOfBoundsPolicy(SingleStructureScheme& t,
+						       TokensContainer::const_iterator& p)
+  {
+    const std::string& s = this->readString(p,this->fileTokens.end());
+    this->readSpecifiedToken("SingleStructureSchemeParser::handlePredictionPolicy",";",
+			     p,this->fileTokens.end());
+    if(s=="None"){
+      t.setOutOfBoundsPolicy(tfel::material::None);
+    } else if(s=="Warning"){
+      t.setOutOfBoundsPolicy(tfel::material::Warning);
+    } else if(s=="Strict"){
+      t.setOutOfBoundsPolicy(tfel::material::Strict);
+    } else {
+      throw(std::runtime_error("SingleStructureSchemeParser::handleOutOfBoundsPolicy: "
+			       "unsupported policy '"+s+"'"));
+    }
+  } // end of SingleStructureSchemeParser::handleOutOfBoundsPolicy
+
+  void
+  SingleStructureSchemeParser::handleParameter(SingleStructureScheme& t,
+					       TokensContainer::const_iterator& p)
+  {
+    const auto n = this->readString(p,this->fileTokens.end());
+    const real v = this->readDouble(t,p);
+    t.setParameter(n,v);
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleParameter",";",
+			     p,this->fileTokens.end());
+  } // end of SingleStructureSchemeParser::handleParameter
+
+  void
+  SingleStructureSchemeParser::handleIntegerParameter(SingleStructureScheme& t,
+						      TokensContainer::const_iterator& p)
+  {
+    const auto n = this->readString(p,this->fileTokens.end());
+    const int  v = this->readInt(p,this->fileTokens.end());
+    t.setIntegerParameter(n,v);
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleIntegerParameter",";",
+  			     p,this->fileTokens.end());
+  } // end of SingleStructureSchemeParser::handleIntegerParameter
+  
+  void
+  SingleStructureSchemeParser::handleUnsignedIntegerParameter(SingleStructureScheme& t,
+							      TokensContainer::const_iterator& p)
+  {
+    const auto n = this->readString(p,this->fileTokens.end());
+    const unsigned int v = this->readUnsignedInt(p,this->fileTokens.end());
+    t.setUnsignedIntegerParameter(n,v);
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleUnsignedIntegerParameter",";",
+			     p,this->fileTokens.end());
+  } // end of SingleStructureSchemeParser::handleUnsignedIntegerParameteru
+
+  void
+  SingleStructureSchemeParser::handleInternalStateVariable(SingleStructureScheme& t,
+							   TokensContainer::const_iterator& p)
+  {
+    using namespace std;
+    shared_ptr<Behaviour> b(t.getBehaviour());
+    const string& n = this->readString(p,this->fileTokens.end());
+    const vector<string>& ivsnames = b->getInternalStateVariablesNames();
+    vector<string> ivs;
+    selectVariables(ivs,ivsnames,n);
+    if(ivs.empty()){
+      string msg("SingleStructureSchemeParser::handleInternalStateVariable : ");
+      msg += "the behaviour don't declare an internal state variable named '";
+      msg += n+"'";
+      throw(runtime_error(msg));
+    }
+    if(ivs.size()==1){
+      this->setInternalStateVariableValue(t,p,ivs[0]);
+    } else {
+      const int type = b->getInternalStateVariableType(ivs[0]);
+      bool uniform = false;
+      if(type==0){
+	uniform = p->value!="{";
+      } else {
+	if(p->value!="{"){
+	  string msg("SingleStructureSchemeParser::handleInternalStateVariable : ");
+	  msg += "unexpected token '"+n+"'";
+	  throw(runtime_error(msg));
+	}
+	++p;
+	this->checkNotEndOfLine("SingleStructureSchemeParser::handleInternalStateVariable",p,
+				this->fileTokens.end());
+	uniform = p->value!="{";
+	--p;
+      }
+      if(uniform){
+	vector<string>::const_iterator pn;
+	const TokensContainer::const_iterator p2 = p;
+	for(pn=ivs.begin();pn!=ivs.end();++pn){
+	  p=p2;
+	  this->setInternalStateVariableValue(t,p,*pn);
+	}
+      } else {
+	this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable",
+				 "{",p,this->fileTokens.end());
+	vector<string>::const_iterator pn;
+	for(pn=ivs.begin();pn!=ivs.end();){
+	  this->setInternalStateVariableValue(t,p,*pn);
+	  if(++pn!=ivs.end()){
+	    this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable",
+				     ",",p,this->fileTokens.end());
+	  }
+	}
+	this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable",
+				 "}",p,this->fileTokens.end());
+      }
+    }
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable",
+			     ";",p,this->fileTokens.end());
+  }
+
+  void
+  SingleStructureSchemeParser::handleExternalStateVariable(SingleStructureScheme& t,
+							   TokensContainer::const_iterator& p)
+  {
+    const auto& evt = this->readEvolutionType(p);
+    const auto& n = this->readString(p,this->fileTokens.end());
+    t.setExternalStateVariable(n,this->parseEvolution(t,evt,p),true);
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleExternalStateVariable",";",p,
+			     this->fileTokens.end());
+  }
+
+    
+  void
+  SingleStructureSchemeParser::setInternalStateVariableValue(SingleStructureScheme& t,
+							     TokensContainer::const_iterator& p,
+							     const std::string& n){
+    using namespace std;
+    const int type = t.getBehaviour()->getInternalStateVariableType(n);
+    if(type==0){
+      t.setScalarInternalStateVariableInitialValue(n,this->readDouble(t,p));
+    } else if(type==1){
+      const unsigned short N = getSTensorSize(t.getDimension());
+      vector<real> v(N);
+      this->readArrayOfSpecifiedSize(v,t,p);
+      t.setStensorInternalStateVariableInitialValues(n,v);
+    } else if(type==3){
+      const unsigned short N = getTensorSize(t.getDimension());
+      vector<real> v(N);
+      this->readArrayOfSpecifiedSize(v,t,p);
+      t.setTensorInternalStateVariableInitialValues(n,v);
+    } else {
+      throw(runtime_error("SingleStructureSchemeParser::setInternalStateVariableValue : "
+			  "unsupported state variable type for "
+			  "internal state variable '"+n+"'"));
+    }
+  }
+
+  void
+  SingleStructureSchemeParser::registerCallBack(const std::string& k,
+						const SingleStructureSchemeParser::CallBack& p)
+  {
+    this->callbacks.insert({k,p});
+  } // end of SingleStructureSchemeParser::registerCallBack
+  
+  void
+  SingleStructureSchemeParser::registerCallBacks(void){
+    this->registerCallBack("@Behaviour",&SingleStructureSchemeParser::handleBehaviour);
+    this->registerCallBack("@MaterialProperty",
+			   &SingleStructureSchemeParser::handleMaterialProperty);
+    this->registerCallBack("@InternalStateVariable",
+			   &SingleStructureSchemeParser::handleInternalStateVariable);
+    this->registerCallBack("@ExternalStateVariable",
+			   &SingleStructureSchemeParser::handleExternalStateVariable);
+    this->registerCallBack("@OutOfBoundsPolicy",
+			   &SingleStructureSchemeParser::handleOutOfBoundsPolicy);
+    this->registerCallBack("@Parameter",
+			   &SingleStructureSchemeParser::handleParameter);
+    this->registerCallBack("@IntegerParameter",
+			   &SingleStructureSchemeParser::handleIntegerParameter);
+    this->registerCallBack("@UnsignedIntegerParameter",
+			   &SingleStructureSchemeParser::handleUnsignedIntegerParameter);
+  } // end of SingleStructureSchemeParser::registerCallBacks
+  
+  bool
+  SingleStructureSchemeParser::treatKeyword(SingleStructureScheme& t,
+					    TokensContainer::const_iterator& p)
+  {
+    auto pc = this->callbacks.find(p->value);
+    if(pc==this->callbacks.end()){
+      return false;
+    }
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_DEBUG){
+      auto& log = mfront::getLogStream();
+      log << "SingleStructureSchemeParser::execute : treating keyword '" << p->value
+	  << "' at line '" << p->line << "'\n";
+    }
+    ++p;
+    auto line = p->line;
+    try{
+      (this->*(pc->second))(t,p);
+    } catch(std::exception& e){
+      std::ostringstream msg;
+      msg << "SingleStructureSchemeParser::SingleStructureScheme : error while "
+	  << "parsing file '" << this->file << "' at line '"
+	  << line << "'.\n" << e.what();
+      throw(std::runtime_error(msg.str()));
+    }
+    return true;
+  } // end of SingleStructureSchemeParser::treatKeyword
+
+  std::vector<std::string>
+  SingleStructureSchemeParser::getKeyWordsList(void) const
+  {
+    auto keys = std::vector<std::string>{};
+    for(const auto& k : this->callbacks){
+      keys.push_back(k.first);
+    }
+    return keys;
+  } // end of SingleStructureSchemeParser::getKeyWordsList
+  
+  SingleStructureSchemeParser::~SingleStructureSchemeParser()
+  {} // end of SingleStructureSchemeParser::~SingleStructureSchemeParser()
+  
+} // end of namespace mtest

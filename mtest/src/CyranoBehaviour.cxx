@@ -210,6 +210,11 @@ namespace mtest
       ude(i)  = s.e1(i)-s.e0(i);
     }
     copy(s.s0.begin(),s.s0.end(),s.s1.begin());
+    // thermal strain
+    for(i=0;i!=3u;++i){
+      ue0(i) -= s.e_th0(i);
+      ude(i) -= s.e_th1(i)-s.e_th0(i);
+    }
     // turning to cyrano convention
     swap(s.s1(1),s.s1(2));
     swap(ue0(1),ue0(2));

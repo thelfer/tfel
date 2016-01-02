@@ -261,13 +261,6 @@ namespace mtest
      */
     virtual void setNumericalTangentOperatorPerturbationValue(const real);
     /*!
-     * \brief set if mtest shall handle thermal expansion coefficient
-     * If true, the thermal expansion will be handled if the thermal
-     * expansion coefficients are defined.
-     * \param[in] b : boolean
-     */
-    virtual void setHandleThermalExpansion(const bool);
-    /*!
      * \brief set the rotation matrix
      * \param[in] r : rotation matrix
      * \param[in] b : allow redefining the rotation matrix 
@@ -317,27 +310,6 @@ namespace mtest
     virtual void
     setThermodynamicForcesInitialValues(const std::vector<real>&);
     /*!
-     * \brief set the inital value of a scalar variable
-     * \param[in] v : value
-     */
-    virtual void
-    setScalarInternalStateVariableInitialValue(const std::string&,
-					       const real);
-    /*!
-     * \brief set the inital values of a symetric tensor variable
-     * \param[in] v : values
-     */
-    virtual void
-    setStensorInternalStateVariableInitialValues(const std::string&,
-						 const std::vector<real>&);
-    /*!
-     * \brief set the inital values of a tensor variable
-     * \param[in] v : values
-     */
-    virtual void
-    setTensorInternalStateVariableInitialValues(const std::string&,
-						const std::vector<real>&);
-    /*!
      * \brief add a new constraint
      * \param[in] c     : constraint
      */
@@ -372,10 +344,6 @@ namespace mtest
     std::vector<real> e_t0;
     // inital values of the thermodynamic forces
     std::vector<real> s_t0;
-    // inital values of the internal state variables
-    std::vector<real> iv_t0;
-    //! handle the computation of thermal expansion
-    bool handleThermalExpansion;
     //! tangent operator comparison criterium
     real toeps;
     //! perturbation value

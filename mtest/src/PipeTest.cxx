@@ -133,7 +133,7 @@ namespace mtest{
       }
     }
     if(this->mesh.etype==PipeMesh::DEFAULT){
-      this->mesh.etype=PipeMesh::CUBIC;
+      this->mesh.etype=PipeMesh::QUADRATIC;
     }
     if(this->out){
       this->out << "# first  column : time\n"
@@ -245,10 +245,21 @@ namespace mtest{
       throw(std::runtime_error("PipeTest::getNumberOfUnknowns: "
 			       "unknown element type"));
     }
+    // intial values of strains
+    tfel::math::vector<real> e0(this->b->getDrivingVariablesSize(this->hypothesis));
+    this->b->getDrivingVariablesDefaultInitialValues(e0);
+    // intial values of stresses
     for(auto& cs : ss.istates){
       mtest::allocate(cs,*(this->b),this->hypothesis);
-      // // setting the intial  values of strains
-      // this->b->getDrivingVariablesDefaultInitialValues(s.u_1);
+      std::copy(e0.begin(),e0.end(),cs.e0.begin());
+      std::copy(e0.begin(),e0.end(),cs.e1.begin());
+      std::fill(cs.e_th0.begin(),cs.e_th0.end(),real(0));
+      std::fill(cs.e_th1.begin(),cs.e_th1.end(),real(0));
+      std::fill(cs.s0.begin(),cs.s0.end(),real(0));
+      std::fill(cs.s1.begin(),cs.s1.end(),real(0));
+      std::fill(cs.iv_1.begin(),cs.iv_1.end(),real(0));
+      std::fill(cs.iv0.begin(),cs.iv0.end(),real(0));
+      std::fill(cs.iv1.begin(),cs.iv1.end(),real(0));
       // copy(this->e_t0.begin(),this->e_t0.end(),s.u_1.begin());
       // // setting the intial  values of stresses
       // copy(this->s_t0.begin(),this->s_t0.end(),cs.s0.begin());
@@ -363,36 +374,24 @@ namespace mtest{
 		    const real t,
 		    const real dt) const
   {
-    using LE  = PipeLinearElement;
-    using QE  = PipeQuadraticElement;
-    using CE  = PipeCubicElement;
     auto& scs = state.getStructureCurrentState("");
     // number of elements
     const auto ne = size_t(this->mesh.number_of_elements);
     // loop over the elements
     for(size_type i=0;i!=ne;++i){
       if(this->mesh.etype==PipeMesh::LINEAR){
-	LE::computeStrain(scs,this->mesh,state.u0,i,false);
+	PipeLinearElement::computeStrain(scs,this->mesh,state.u0,i,false);
       } else if(this->mesh.etype==PipeMesh::QUADRATIC){
-	QE::computeStrain(scs,this->mesh,state.u0,i,false);
+	PipeQuadraticElement::computeStrain(scs,this->mesh,state.u0,i,false);
       } else if(this->mesh.etype==PipeMesh::CUBIC){
-	CE::computeStrain(scs,this->mesh,state.u0,i,false);
+	PipeCubicElement::computeStrain(scs,this->mesh,state.u0,i,false);
       } else {
 	throw(std::runtime_error("PipeTest::prepare: "
 				 "unknown element type"));
       }
     }
-    for(auto& s: scs.istates){
-      computeMaterialProperties(s,*(this->evm),*(this->dmpv),
-  				this->b->getMaterialPropertiesNames(),t,dt);
-      computeExternalStateVariables(s,*(this->evm),
-  				    this->b->getExternalStateVariablesNames(),t,dt);
-    }
-    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-      auto& log = mfront::getLogStream();
-      log << "resolution from " << t << " to " << t+dt << '\n';
-    }
-  } // end of PipeTest::prepare
+    SingleStructureScheme::prepare(state,t,dt);
+   } // end of PipeTest::prepare
 
   void PipeTest::makeLinearPrediction(StudyCurrentState& state,
 				      const real dt) const
@@ -761,15 +760,17 @@ namespace mtest{
   void
   PipeTest::printOutput(const real t,
 			const StudyCurrentState& state){
-    const auto& u1 = state.u1;
-    const auto n  = this->getNumberOfNodes();
-    // inner radius
-    const auto Ri = this->mesh.inner_radius;
-    // outer radius
-    const auto Re = this->mesh.outer_radius;
-    this->out << t   << " " << Ri+u1[0] << " " << Re+u1[n-1]
-	      << " " << u1[0] << " " << u1[n-1] << " "
-	      << u1[n] << std::endl;
+    if(this->out){
+      const auto& u1 = state.u1;
+      const auto n  = this->getNumberOfNodes();
+      // inner radius
+      const auto Ri = this->mesh.inner_radius;
+      // outer radius
+      const auto Re = this->mesh.outer_radius;
+      this->out << t   << " " << Ri+u1[0] << " " << Re+u1[n-1]
+		<< " " << u1[0] << " " << u1[n-1] << " "
+		<< u1[n] << std::endl;
+    }
   } // end of PipeTest::printOutput
   
   PipeTest::~PipeTest() = default;

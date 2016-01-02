@@ -411,8 +411,6 @@ void declareMTest(void)
 	 &MTest::initializeCurrentState)
     .def("initializeWorkSpace",
 	 &MTest::initializeWorkSpace)
-    .def("printOutput",
-	 &MTest::printOutput)
     .def("setEvolutionValue",
 	 &MTest::setEvolutionValue)
     .def("setDrivingVariableEpsilon",

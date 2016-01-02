@@ -5,6 +5,7 @@
  * \date   02 oct. 2015
  */
 
+#include<iostream>
 #include<sstream>
 #include<algorithm>
 
