@@ -155,15 +155,14 @@ namespace tfel
     Evaluator::checkParameterNumber(const std::vector<double>::size_type n,
 				    const std::vector<double>::size_type p)
     {
-      using namespace std;
       if(p!=n){
-	string msg("Evaluator::checkParameterNumber : ");
+	std::string msg("Evaluator::checkParameterNumber : ");
 	if(p==0){
 	  msg += "no parameter given";
 	} else {	
 	  msg += "too many parameters given";
 	}
-	throw(runtime_error(msg));
+	throw(std::runtime_error(msg));
       }
     } // end of Evaluator::checkParameterNubmer
 
@@ -171,15 +170,14 @@ namespace tfel
     Evaluator::checkVariableNumber(const std::vector<double>::size_type n,
 				   const std::vector<double>::size_type p)
     {
-      using namespace std;
       if(p!=n){
-	string msg("Evaluator::checkVariableNumber : ");
+	std::string msg("Evaluator::checkVariableNumber : ");
 	if(p==0){
 	  msg += "no parameter given";
 	} else {	
 	  msg += "too many parameters given";
 	}
-	throw(runtime_error(msg));
+	throw(std::runtime_error(msg));
       }
     } // end of Evaluator::checkVariableNubmer
 
@@ -206,8 +204,6 @@ namespace tfel
     EvaluatorTreatPower(const std::vector<std::string>& params,
 			std::vector<std::shared_ptr<tfel::math::parser::Expr> >& args)
     {
-      using namespace std;
-      using namespace tfel::math;
       using namespace tfel::math::parser;
       unsigned short nbr;
       Evaluator::checkParameterNumber(1,params.size());
@@ -215,9 +211,9 @@ namespace tfel
       nbr = Evaluator::convertToUnsignedShort("EvaluatorTreatPower",params[0]);
       switch (nbr){
       case 0:
-	return shared_ptr<Expr>(new Number(1.));
+	return std::shared_ptr<Expr>(new Number(1.));
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-	  case 1:
+      case 1:
 	return EvaluatorPowerFunctionGenerator<1>(args[0]);
       case 2:
 	return EvaluatorPowerFunctionGenerator<2>(args[0]);
@@ -250,10 +246,8 @@ namespace tfel
       case 16:
 	return EvaluatorPowerFunctionGenerator<16>(args[0]);
 #endif
-      default:
-	string msg("EvaluatorTreatPower : only exponent below 16 are supported");
-	throw(runtime_error(msg));
       }
+      throw(std::runtime_error("EvaluatorTreatPower: only exponent below 16 are supported"));
     } // end of EvaluatorTreatPower
 
     void
@@ -436,45 +430,25 @@ namespace tfel
     
     Evaluator::FunctionGeneratorManager::FunctionGeneratorManager(void)
     {
-      using namespace std;
-      typedef map<string,ExternalFunctionGenerator>::value_type MVType;
-      this->fctGenerators.insert(make_pair(string("exp"),
-					   &StandardFctGenerator<exp>));
-      this->fctGenerators.insert(make_pair(string("abs"),
-					   &StandardFctGenerator<fabs>));
-      this->fctGenerators.insert(make_pair(string("sin"),
-					   &StandardFctGenerator<sin>));
-      this->fctGenerators.insert(make_pair(string("cos"),
-					   &StandardFctGenerator<cos>));
-      this->fctGenerators.insert(make_pair(string("tan"),
-					   &StandardFctGenerator<tan>));
-      this->fctGenerators.insert(make_pair(string("sqrt"),
-					   &StandardFctGenerator<sqrt>));
-      this->fctGenerators.insert(make_pair(string("log"),
-					   &StandardFctGenerator<log>));
-      this->fctGenerators.insert(make_pair(string("ln"),
-					   &StandardFctGenerator<log>));
-      this->fctGenerators.insert(make_pair(string("log10"),
-					   &StandardFctGenerator<log10>));
-      this->fctGenerators.insert(make_pair(string("asin"),
-					   &StandardFctGenerator<asin>));
-      this->fctGenerators.insert(make_pair(string("acos"),
-					   &StandardFctGenerator<acos>));
-      this->fctGenerators.insert(make_pair(string("atan"),
-					   &StandardFctGenerator<atan>));
-      this->fctGenerators.insert(make_pair(string("sinh"),
-					   &StandardFctGenerator<sinh>));
-      this->fctGenerators.insert(make_pair(string("cosh"),
-					   &StandardFctGenerator<cosh>));
-      this->fctGenerators.insert(make_pair(string("tanh"),
-					   &StandardFctGenerator<tanh>));
-      this->fctGenerators.insert(make_pair(string("H"),
-					   &StandardFctGenerator<Evaluator::Heavyside>));
-      this->bFctGenerators.insert(make_pair(string("max"),
-					    &StandardBinaryFctGenerator<Evaluator::max>));
-      this->bFctGenerators.insert(make_pair(string("min"),
-					    &StandardBinaryFctGenerator<Evaluator::min>));
-      this->extOpGenerators.insert(MVType("power",EvaluatorTreatPower));
+      this->fctGenerators.insert({"exp",&StandardFctGenerator<exp>});
+      this->fctGenerators.insert({"abs",&StandardFctGenerator<fabs>});
+      this->fctGenerators.insert({"sin",&StandardFctGenerator<sin>});
+      this->fctGenerators.insert({"cos",&StandardFctGenerator<cos>});
+      this->fctGenerators.insert({"tan",&StandardFctGenerator<tan>});
+      this->fctGenerators.insert({"sqrt",&StandardFctGenerator<sqrt>});
+      this->fctGenerators.insert({"log",&StandardFctGenerator<log>});
+      this->fctGenerators.insert({"ln",&StandardFctGenerator<log>});
+      this->fctGenerators.insert({"log10",&StandardFctGenerator<log10>});
+      this->fctGenerators.insert({"asin",&StandardFctGenerator<asin>});
+      this->fctGenerators.insert({"acos",&StandardFctGenerator<acos>});
+      this->fctGenerators.insert({"atan",&StandardFctGenerator<atan>});
+      this->fctGenerators.insert({"sinh",&StandardFctGenerator<sinh>});
+      this->fctGenerators.insert({"cosh",&StandardFctGenerator<cosh>});
+      this->fctGenerators.insert({"tanh",&StandardFctGenerator<tanh>});
+      this->fctGenerators.insert({"H",&StandardFctGenerator<Evaluator::Heavyside>});
+      this->bFctGenerators.insert({"max",&StandardBinaryFctGenerator<Evaluator::max>});
+      this->bFctGenerators.insert({"min",&StandardBinaryFctGenerator<Evaluator::min>});
+      this->extOpGenerators.insert({"power",EvaluatorTreatPower});
     } // end of Evaluator::FunctionGeneratorManager::FunctionGeneratorManager
 
     Evaluator::FunctionGeneratorManager&
@@ -524,23 +498,20 @@ namespace tfel
     void
     Evaluator::checkCyclicDependency(std::vector<std::string>& names) const
     {
-      using namespace std;
       this->expr->checkCyclicDependency(names);
     } // end of Evaluator::checkCyclicDependency
 
     void
     Evaluator::checkCyclicDependency(const std::string& name) const
     {
-      using namespace std;
-      vector<string> names(1,name);
+      std::vector<std::string> names(1,name);
       this->expr->checkCyclicDependency(names);
     } // end of Evaluator::checkCyclicDependency
 
     void
     Evaluator::checkCyclicDependency(void) const
     {
-      using namespace std;
-      vector<string> names;
+      std::vector<std::string> names;
       this->expr->checkCyclicDependency(names);
     } // end of Evaluator::checkCyclicDependency
 
@@ -575,9 +546,8 @@ namespace tfel
 	// check parameter validity
 	for(ps=p->begin();ps!=p->end();++ps){
 	  if(!(isalpha(*ps)||isdigit(*ps))||(*ps=='_')||(*ps=='-')){
-	    string msg("Evaluator::analyseParameters : ");
-	    msg += "invalid parameter '"+*p+"'";
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("Evaluator::analyseParameters: "
+				     "invalid parameter '"+*p+"'"));
 	  }
 	}
 	params.push_back(*p);
@@ -588,10 +558,9 @@ namespace tfel
 	    ++p;
 	    Evaluator::checkNotEndOfExpression("Evaluator::analyseParameters",p,pe);
 	  } else {
-	    string msg("Evaluator::analyseParameters");
-	    msg += "unexpected token '"+*p+"' ";
-	    msg += "(expected ',' or '>')";
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("Evaluator::analyseParameters: "
+				     "unexpected token '"+*p+"' "
+				     "(expected ',' or '>')"));
 	  }
 	}
       }
@@ -935,7 +904,7 @@ namespace tfel
 	  msg += "(use parenthesis as as workaround)";
 	  throw(runtime_error(msg));
 	}
-	pair<bool,vector<string>::const_iterator> res2 = this->search(res.second+1,pe,":",s);
+	const auto res2 = this->search(res.second+1,pe,":",s);
 	if(!res2.first){
 	  string msg("Evaluator::treatGroup : ");
 	  msg += "no matching ':' character to '?' character";
@@ -1102,12 +1071,10 @@ namespace tfel
     Evaluator::setVariableValue(const std::string& vname,
 				const double value)
     {
-      using namespace std;
       auto p = this->positions.find(vname);
       if(p==this->positions.end()){
-	string msg("Evaluator::setVariableValue : variable '");
-	msg += vname + "' does not exist";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("Evaluator::setVariableValue: "
+				 "variable '"+vname+ "' does not exist"));
       }
       this->variables[p->second] = value;
     }//end of Evaluator::setVariableValue
@@ -1116,9 +1083,8 @@ namespace tfel
     Evaluator::setVariableValue(const std::vector<double>::size_type pos,
 				const double value)
     {
-      using namespace std;
       if(pos>=this->variables.size()){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "Evaluator::setVariableValue : position '" << pos << "' is invalid ";
 	if(this->variables.size()==0){
 	  msg << "(function has no variable).";
@@ -1127,7 +1093,7 @@ namespace tfel
 	} else {
 	  msg << "(function has only '" <<  this->variables.size() << "' variable(s)).";
 	}
-	throw(runtime_error(msg.str()));
+	throw(std::runtime_error(msg.str()));
       }
       this->variables[pos] = value;
     }//end of Evaluator::setVariableValue
@@ -1135,30 +1101,22 @@ namespace tfel
     double
     Evaluator::getValue(void) const
     {
-      using namespace std;
       if(this->expr.get()==nullptr){
-	string msg("Evaluator::getValue : ");
-	msg += "uninitialized expression.";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("Evaluator::getValue: "
+				 "uninitialized expression."));
       }
-      double v = this->expr->getValue();
-      return v;
+      return this->expr->getValue();
     }//end of Evaluator::getValue
 
     std::vector<std::string>
     Evaluator::getVariablesNames(void) const
     {
-      using namespace std;
-      typedef map<vector<double>::size_type,string>::value_type MVType;
-      vector<string> res;
-      map<string,vector<double>::size_type>::const_iterator p;
-      map<vector<double>::size_type,string>::const_iterator p2;
-      map<vector<double>::size_type,string> vnames;
-      for(p=this->positions.begin();p!=this->positions.end();++p){
-	vnames.insert(MVType(p->second,p->first));
-      }
-      for(p2=vnames.begin();p2!=vnames.end();++p2){
-	res.push_back(p2->second);
+      auto res = std::vector<std::string>{};
+      res.resize(this->positions.size());
+      auto i = std::vector<std::string>::size_type{};
+      for(const auto& p : this->positions){
+	res[i] = p.first;
+	++i;
       }
       return res;
     } // end of Evaluator::getVariablesNames
@@ -1173,16 +1131,12 @@ namespace tfel
     Evaluator::analyse(const std::string& f,
 		       const bool b)
     {
-      using namespace std;
-      using namespace tfel::math::parser;
-      vector<string>::const_iterator p;
-      vector<string>::const_iterator pe;
-      EvaluatorBase::analyse(f);
-      p  = this->tokens.begin(); 
-      pe = this->tokens.end();
-      shared_ptr<TExpr> g = this->treatGroup(p,pe,b,"");
+      tfel::math::parser::EvaluatorBase::analyse(f);
+      std::vector<std::string>::const_iterator p  = this->tokens.begin(); 
+      const std::vector<std::string>::const_iterator pe = this->tokens.end();
+      auto g = this->treatGroup(p,pe,b,"");
       g->reduce();
-      this->expr = shared_ptr<Expr>(g->analyse());
+      this->expr = g->analyse();
     }
 
     void
@@ -1191,14 +1145,12 @@ namespace tfel
 					  const std::vector<std::string>::const_iterator pe,
 					  const bool b)
     {
-      using namespace std;
-      string fname = *p;
+      const auto fname = *p;
       ++p;
       Evaluator::readSpecifiedToken("Evaluator::addExternalFunctionToGroup","(",p,pe);
-      vector<shared_ptr<Evaluator::TExpr> > args = this->analyseArguments(p,pe,b);
-      g->add(shared_ptr<Evaluator::TExpr>(new TExternalFunctionExpr(fname,
-								  args,
-								  this->manager)));
+      auto args = this->analyseArguments(p,pe,b);
+      g->add(std::shared_ptr<Evaluator::TExpr>(new TExternalFunctionExpr(fname,args,
+									 this->manager)));
     } // end of Evaluator::addExternalFunctionToGroup
 
     Evaluator::Evaluator()
@@ -1264,8 +1216,6 @@ namespace tfel
     void
     Evaluator::setFunction(const std::string& f)
     {
-      using namespace std;
-      using namespace tfel::math::parser;
       this->variables.clear();
       this->positions.clear();
       this->expr.reset();
@@ -1277,27 +1227,23 @@ namespace tfel
     Evaluator::setFunction(const std::vector<std::string>& vars,
 			   const std::string& f)
     {
-      using namespace std;
-      using namespace tfel::math::parser;
-      vector<string>::const_iterator p;
-      vector<double>::size_type pos;
       this->variables.clear();
       this->positions.clear();
       this->expr.reset();
       this->manager.reset();
       this->variables.resize(vars.size());
-      for(p=vars.begin(),pos=0u;p!=vars.end();++p,++pos){
+      auto pos = std::vector<double>::size_type{0u};
+      for(auto p = vars.cbegin();p!=vars.cend();++p){
 	if(this->positions.find(*p)!=this->positions.end()){
-	  string msg("Evaluator::setFunction : ");
-	  msg += "variable '"+*p+"' multiply defined.";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("Evaluator::setFunction: "
+				   "variable '"+*p+"' multiply defined."));
 	}
 	if(!Evaluator::isValidIdentifier(*p)){
-	  string msg("Evaluator::setFunction : ");
-	  msg += "variable '"+*p+"' is not valid.";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("Evaluator::setFunction: "
+				   "variable '"+*p+"' is not valid."));
 	}
 	this->positions[*p]=pos;
+	++pos;
       }
       this->analyse(f,true);
     } // end of Evaluator::setFunction
@@ -1306,8 +1252,6 @@ namespace tfel
     Evaluator::setFunction(const std::string& f,
 			   std::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
     {
-      using namespace std;
-      using namespace tfel::math::parser;
       this->variables.clear();
       this->positions.clear();
       this->expr.reset();
@@ -1331,14 +1275,12 @@ namespace tfel
       this->variables.resize(vars.size());
       for(p=vars.begin(),pos=0u;p!=vars.end();++p,++pos){
 	if(this->positions.find(*p)!=this->positions.end()){
-	  string msg("Evaluator::setFunction : ");
-	  msg += "variable '"+*p+"' multiply defined.";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("Evaluator::setFunction: "
+				   "variable '"+*p+"' multiply defined"));
 	}
 	if(!Evaluator::isValidIdentifier(*p)){
-	  string msg("Evaluator::setFunction : ");
-	  msg += "variable '"+*p+"' is not valid.";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("Evaluator::setFunction: "
+				   "variable '"+*p+"' is not valid."));
 	}
 	this->positions[*p]=pos;
       }
@@ -1412,13 +1354,10 @@ namespace tfel
     std::vector<double>::size_type
     Evaluator::getVariablePosition(const std::string& name) const
     {
-      using namespace std;
-      map<string,vector<double>::size_type>::const_iterator p;
-      p = this->positions.find(name);
+      const auto p = this->positions.find(name);
       if(p==this->positions.end()){
-	string msg("Evaluator::getVariablePosition : ");
-	msg += "unknown variable '"+name+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("Evaluator::getVariablePosition: "
+				 "unknown variable '"+name+"'"));
       }
       return p->second;
     } // end of Evaluator::getVariablePosition(const std::string&)
@@ -1430,12 +1369,10 @@ namespace tfel
 							       const std::map<std::string,
 							       std::vector<double>::size_type>&) const
     {
-      using namespace std;
-      set<string> ev_params;
-      vector<string>::const_iterator p;
+      std::set<std::string> ev_params;
       nparams.clear();
       this->getParametersNames(ev_params);
-      for(p=params.begin();p!=params.end();++p){
+      for(auto p=params.begin();p!=params.end();++p){
 	if(ev_params.find(*p)!=ev_params.end()){
 	  if(find(nparams.begin(),nparams.end(),*p)==nparams.end()){
 	    nparams.push_back(*p);

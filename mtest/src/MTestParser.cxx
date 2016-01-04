@@ -236,8 +236,6 @@ namespace mtest
 			   &MTestParser::handleTangentOperatorComparisonCriterium);
     this->registerCallBack("@NumericalTangentOperatorPerturbationValue",
 			   &MTestParser::handleNumericalTangentOperatorPerturbationValue);
-    this->registerCallBack("@HandleThermalExpansion",
-			   &MTestParser::handleHandleThermalExpansion);
   }
 
   void
@@ -312,26 +310,6 @@ namespace mtest
     this->readSpecifiedToken("MTestParser::handleNumericalTangentOperatorPerturbationValue",";",
 			     p,this->fileTokens.end());
   } // end of MTestParser::handleNumericalTangentOperatorPerturbationValue  
-
-  void
-  MTestParser::handleHandleThermalExpansion(MTest& t,TokensContainer::const_iterator& p)
-  {
-    bool b;
-    this->checkNotEndOfLine("MTestParser::handleHandleThermalExpansion",
-			    p,this->fileTokens.end());
-    if(p->value=="true"){
-      b = true;
-    } else if(p->value=="false"){
-      b = false;
-    } else {
-      throw(std::runtime_error("MTestParser::handleHandleThermalExpansion : "
-			       "unexpected token '"+p->value+"'"));
-    }
-    ++p;
-    this->readSpecifiedToken("MTestParser::handleHandleThermalExpansion",
-			     ";",p,this->fileTokens.end());
-    t.setHandleThermalExpansion(b);
-  }
 
   void
   MTestParser::handleTest(MTest& t,TokensContainer::const_iterator& p)

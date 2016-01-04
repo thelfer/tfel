@@ -33,6 +33,15 @@ namespace mtest{
     k(1,2) = k(1,2)/((1+e(2))*(1+e(1)));
     k(2,1) = k(2,1)/((1+e(1))*(1+e(2)));
   }
+
+  static void
+  checkHypothesis(const LogarithmicStrain1DBehaviourWrapper::Hypothesis h){
+    using tfel::material::ModellingHypothesis;
+    if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+      throw(std::runtime_error("LogarithmicStrain1DBehaviourWrapper::check: "
+			       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
+    }
+  }
   
   LogarithmicStrain1DBehaviourWrapper::LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>& wb)
     : b(wb)
@@ -47,6 +56,7 @@ namespace mtest{
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesSize(const Hypothesis h) const
   {
+    checkHypothesis(h);
     return this->b->getDrivingVariablesSize(h);
   } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesSize
 
@@ -59,30 +69,35 @@ namespace mtest{
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesSize(const Hypothesis h) const
   {
+    checkHypothesis(h);
     return this->b->getThermodynamicForcesSize(h);
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesSize
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getStensorComponentsSuffixes(const Hypothesis h) const
   {
+    checkHypothesis(h);
     return this->b->getStensorComponentsSuffixes(h);
   } // end of LogarithmicStrain1DBehaviourWrapper::getStensorComponentsSuffixes
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getTensorComponentsSuffixes(const Hypothesis h) const
   {
+    checkHypothesis(h);
     return this->b->getTensorComponentsSuffixes(h);
   } // end of LogarithmicStrain1DBehaviourWrapper::getTensorComponentsSuffixes
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesComponents(const Hypothesis h) const
   {
+    checkHypothesis(h);
     return this->b->getDrivingVariablesComponents(h);
   } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesComponents
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesComponents(const Hypothesis h) const
   {
+    checkHypothesis(h);
     return this->b->getThermodynamicForcesComponents(h);
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesComponents
 
@@ -90,6 +105,7 @@ namespace mtest{
   LogarithmicStrain1DBehaviourWrapper::getDrivingVariableComponentPosition(const Hypothesis h,
 									   const std::string& c) const
   {
+    checkHypothesis(h);
     return this->b->getDrivingVariableComponentPosition(h,c);
   } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariableComponentPosition
 
@@ -97,6 +113,7 @@ namespace mtest{
   LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition(const Hypothesis h,
 									      const std::string& c) const
   {
+    checkHypothesis(h);
     return this->b->getThermodynamicForceComponentPosition(h,c);
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition
 
@@ -128,12 +145,14 @@ namespace mtest{
   size_t
   LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesSize(const Hypothesis h) const
   {
+    checkHypothesis(h);
     return this->b->getInternalStateVariablesSize(h);
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesSize
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesDescriptions(const Hypothesis h) const
   {
+    checkHypothesis(h);
     return this->b->getInternalStateVariablesDescriptions(h);
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesDescriptions
 
@@ -147,6 +166,7 @@ namespace mtest{
   LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablePosition(const Hypothesis h,
 									const std::string& n) const
   {
+    checkHypothesis(h);
     return this->b->getInternalStateVariablePosition(h,n);
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablePosition
 
@@ -209,6 +229,7 @@ namespace mtest{
 								 const Hypothesis h,
 								 const StiffnessMatrixType ktype) const
   {
+    checkHypothesis(h);
     auto cs=s;
     // logarithmic strains
     cs.e0[0] = std::log(1+s.e0[0]);
@@ -249,6 +270,7 @@ namespace mtest{
 						 const real dt,
 						 const StiffnessMatrixType ktype) const
   {
+    checkHypothesis(h);
     real e0[3];
     real e1[3];
     real e_th0[3];

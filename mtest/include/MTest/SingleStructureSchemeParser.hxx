@@ -21,42 +21,56 @@ namespace mtest{
      * handle the @Behaviour keyword
      * \param[in,out] p : position in the input file
      */
-    void handleBehaviour(SingleStructureScheme&,TokensContainer::const_iterator&);
+    virtual void
+    handleBehaviour(SingleStructureScheme&,TokensContainer::const_iterator&);
     /*!
      * handle the @Parameter keyword
      * \param[in,out] p : position in the input file
      */
-    void handleParameter(SingleStructureScheme&,TokensContainer::const_iterator&);
+    virtual void
+    handleParameter(SingleStructureScheme&,TokensContainer::const_iterator&);
     /*!
      * handle the @IntegerParameter keyword
      * \param[in,out] p : position in the input file
      */
-    void handleIntegerParameter(SingleStructureScheme&,TokensContainer::const_iterator&);
+    virtual void
+    handleIntegerParameter(SingleStructureScheme&,TokensContainer::const_iterator&);
     /*!
      * handle the @UnsignedIntegerParameter keyword
      * \param[in,out] p : position in the input file
      */
-    void handleUnsignedIntegerParameter(SingleStructureScheme&,TokensContainer::const_iterator&);
+    virtual void
+    handleUnsignedIntegerParameter(SingleStructureScheme&,TokensContainer::const_iterator&);
     /*!
      * handle the @OutOfBoundsPolicy keyword
      * \param[in,out] p : position in the input file
      */
-    void handleOutOfBoundsPolicy(SingleStructureScheme&,TokensContainer::const_iterator&);
+    virtual void
+    handleOutOfBoundsPolicy(SingleStructureScheme&,TokensContainer::const_iterator&);
     /*!
      * handle the @MaterialProperty keyword
      * \param[in,out] p : position in the input file
      */
-    void handleMaterialProperty(SingleStructureScheme&,TokensContainer::const_iterator&);
+    virtual void
+    handleMaterialProperty(SingleStructureScheme&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @HandleThermalExpansion keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void
+    handleHandleThermalExpansion(SingleStructureScheme&,TokensContainer::const_iterator&);
     /*!
      * handle the @InternalStateVariable keyword
      * \param[in,out] p : position in the input file
      */
-    void handleInternalStateVariable(SingleStructureScheme&,TokensContainer::const_iterator&);
+    virtual void
+    handleInternalStateVariable(SingleStructureScheme&,TokensContainer::const_iterator&);
     /*!
      * handle the @ExternalStateVariable keyword
      * \param[in,out] p : position in the input file
      */
-    void handleExternalStateVariable(SingleStructureScheme&,TokensContainer::const_iterator&);
+    virtual void
+    handleExternalStateVariable(SingleStructureScheme&,TokensContainer::const_iterator&);
     //! destructor
     ~SingleStructureSchemeParser();
   protected:

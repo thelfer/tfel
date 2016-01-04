@@ -123,8 +123,10 @@ namespace mtest{
 			  const EvolutionManager& evm,
 			  const real t,
 			  const real dt){
-    auto pev   = evm.find("Temperature");
-    auto pev2  = evm.find("ThermalExpansion");
+    static const std::string T{"Temperature"};
+    static const std::string a{"ThermalExpansion"};
+    auto pev   = evm.find(T);
+    auto pev2  = evm.find(a);
     if((pev==evm.end())||(pev2==evm.end())){
       return;
     }
@@ -146,10 +148,14 @@ namespace mtest{
 			  const real dt,
 			  const unsigned short d)
   {
-    auto pev   = evm.find("Temperature");
-    auto pev2  = evm.find("ThermalExpansion1");
-    auto pev3  = evm.find("ThermalExpansion2");
-    auto pev4  = evm.find("ThermalExpansion3");
+    static const std::string T{"Temperature"};
+    static const std::string a1{"ThermalExpansion1"};
+    static const std::string a2{"ThermalExpansion2"};
+    static const std::string a3{"ThermalExpansion3"};
+    const auto pev   = evm.find(T);
+    const auto pev2  = evm.find(a1);
+    const auto pev3  = evm.find(a2);
+    const auto pev4  = evm.find(a3);
     if((pev==evm.end())||((pev2==evm.end())||(pev3==evm.end())||(pev4==evm.end()))){
       return;
     }
@@ -180,7 +186,7 @@ namespace mtest{
       se_th0[2u] = a3_ev(t)*(T_ev(t)-s.Tref);
       se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-s.Tref);
       // backward rotation matrix
-      auto brm = transpose(b.getRotationMatrix(s.mprops1,s.r));
+      const auto brm = transpose(b.getRotationMatrix(s.mprops1,s.r));
       se_th0.changeBasis(brm);
       se_th1.changeBasis(brm);
       const auto ss = tfel::math::getStensorSize(d);

@@ -78,6 +78,27 @@ namespace mtest{
     throw(std::runtime_error("mfront::getTensorSize : "
 			     "invalid dimension"));
   }
+
+  void
+  SingleStructureSchemeParser::handleHandleThermalExpansion(SingleStructureScheme& t,
+							    TokensContainer::const_iterator& p)
+  {
+    bool b;
+    this->checkNotEndOfLine("SingleStructureSchemeParser::handleHandleThermalExpansion",
+			    p,this->fileTokens.end());
+    if(p->value=="true"){
+      b = true;
+    } else if(p->value=="false"){
+      b = false;
+    } else {
+      throw(std::runtime_error("SingleStructureSchemeParser::handleHandleThermalExpansion : "
+			       "unexpected token '"+p->value+"'"));
+    }
+    ++p;
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleHandleThermalExpansion",
+			     ";",p,this->fileTokens.end());
+    t.setHandleThermalExpansion(b);
+  }
   
   void
   SingleStructureSchemeParser::handleBehaviour(SingleStructureScheme& t,
@@ -359,6 +380,8 @@ namespace mtest{
 			   &SingleStructureSchemeParser::handleIntegerParameter);
     this->registerCallBack("@UnsignedIntegerParameter",
 			   &SingleStructureSchemeParser::handleUnsignedIntegerParameter);
+    this->registerCallBack("@HandleThermalExpansion",
+			   &SingleStructureSchemeParser::handleHandleThermalExpansion);
   } // end of SingleStructureSchemeParser::registerCallBacks
   
   bool

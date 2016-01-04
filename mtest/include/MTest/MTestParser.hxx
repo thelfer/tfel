@@ -248,12 +248,6 @@ namespace mtest
     virtual void
     handleImposedDrivingVariable(MTest&,TokensContainer::const_iterator&);
     /*!
-     * handle the @HandleThermalExpansion keyword
-     * \param[in,out] p : position in the input file
-     */
-    virtual void
-    handleHandleThermalExpansion(MTest&,TokensContainer::const_iterator&);
-    /*!
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file
      */
