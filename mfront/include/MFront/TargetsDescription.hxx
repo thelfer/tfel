@@ -43,21 +43,34 @@ namespace mfront{
     /*!
      * \return the library description associated with the given
      * library name or a newly created one if non existed.
-     * \param[in] n : name of the library searched
-     * \param[in] s : library suffix
-     * \param[in] t : library type
+     * \param[in] n  : name of the library searched
+     * \param[in] pr : library prefix
+     * \param[in] s  : library suffix
+     * \param[in] t  : library type
      * \note If the the library already exists and the suffix and/or
      * the type does not match, an exception is thrown
      */
     LibraryDescription&
     operator()(const std::string&,
 	       const std::string&,
+	       const std::string&,
 	       const LibraryDescription::LibraryType);
     /*!
      * \return the library description associated with the given
      * library name or a newly created one if non existed.
      * \param[in] n : name of the library searched
+     * \param[in] p : library prefix
      * \param[in] s : library suffix
+     */
+    LibraryDescription&
+    operator()(const std::string&,
+	       const std::string&,
+	       const std::string&);
+    /*!
+     * \return the library description associated with the given
+     * library name or a newly created one if non existed.
+     * \param[in] n : name of the library searched
+     * \param[in] p : library prefix
      */
     LibraryDescription&
     operator()(const std::string&,

@@ -26,6 +26,14 @@
 #include"MTest/PipeMesh.hxx"
 #include"MTest/SingleStructureScheme.hxx"
 
+namespace tfel{
+  namespace utilities{
+    // forward declaration
+    struct TextData;
+  }
+}
+
+
 namespace mtest{
 
   // forward declaration
@@ -38,14 +46,48 @@ namespace mtest{
     : public SingleStructureScheme
   {
     //! how the pipe is modelled
-    enum PipeModellingHypothesis{
-      DEFAULT,
+    enum AxialLoading{
+      DEFAULTAXIALLOADING,
       ENDCAPEFFECT,
       IMPOSEDAXIALFORCE,
+      IMPOSEDAXIALGROWTH,
       NONE
-    }; // end of enum PipeModellingHypothesis
+    }; // end of enum AxialLoading
+    //! how the pipe is modelled
+    enum RadialLoading{
+      DEFAULTLOADINGTYPE,
+      TIGHTPIPE,
+      IMPOSEDPRESSURE,
+      IMPOSEDOUTERRADIUS
+    }; // end of enum AxialLoading
     //! a simple alias
     using size_type = tfel::math::vector<real>::size_type;
+    /*!
+     * \brief base class for tests
+     */
+    struct UTest
+    {
+      /*!
+       * \param[in] s  : current state
+       * \param[in] t  : time
+       * \param[in] dt : time increment
+       * \param[in] p  : period
+       */
+      virtual void
+      check(const StudyCurrentState&,
+	    const real,
+	    const real,
+	    const unsigned int) = 0;
+      /*!
+       * \return the results of the test
+       */
+      virtual tfel::tests::TestResult
+      getResults() const = 0;
+      //! desctructor
+      virtual ~UTest();
+    }; // end of struct UnitTest
+    //! default constructor
+    PipeTest();
     /*! 
      * \return the name of the test
      */
@@ -90,20 +132,30 @@ namespace mtest{
      */
     virtual void setNumberOfElements(const int);
     /*!
-     * \brief set the pipe modelling hypothesis
-     * \param[in] ph: pipe modelling hypothesis
-     */
-    virtual void setPipeModellingHypothesis(const PipeModellingHypothesis);
-    /*!
      * \brief set the element type
      * \param[in] e: element type
      */
     virtual void setElementType(const PipeMesh::ElementType);
     /*!
+     * \brief set the pipe modelling hypothesis
+     * \param[in] ph: pipe modelling hypothesis
+     */
+    virtual void setAxialLoading(const AxialLoading);
+    /*!
      * \brief set the inner pressure evolution
      * \param[in] p : pressure evolution
      */
     virtual void setInnerPressureEvolution(std::shared_ptr<Evolution>);
+    /*!
+     * \brief set the loading type
+     * \param[in] t: loading type
+     */
+    virtual void setRadialLoading(const RadialLoading);
+    /*!
+     * \brief set the inner radius evolution
+     * \param[in] p : radius evolution
+     */
+    virtual void setOuterRadiusEvolution(std::shared_ptr<Evolution>);
     /*!
      * \brief set the outer pressure evolution
      * \param[in] p : pressure evolution
@@ -114,6 +166,21 @@ namespace mtest{
      * \param[in] f : axial force evolution
      */
     virtual void setAxialForceEvolution(std::shared_ptr<Evolution>);
+    /*!
+     * \brief set the axial growth evolution
+     * \param[in] f : axial growth evolution
+     */
+    virtual void setAxialGrowthEvolution(std::shared_ptr<Evolution>);
+    /*!
+     * \brief set the filling pressure evolution
+     * \param[in] p : filling pressure evolution
+     */
+    virtual void setFillingPressure(const real);
+    /*!
+     * \brief set the filling temperature evolution
+     * \param[in] p : filling temperature evolution
+     */
+    virtual void setFillingTemperature(const real);
     /*!
      * \brief set displacement criterion value
      * \param[in] e: criterion value
@@ -243,6 +310,19 @@ namespace mtest{
 				const real,
 				const real) const override;
     /*!
+     * \param[in/out]  s: current structure state
+     * \param[in/out] wk: solver workspace
+     * \param[in] o:  solver options
+     * \param[in] t:  current time
+     * \param[in] dt: time increment
+     */
+    virtual void
+    computeLoadingCorrection(StudyCurrentState&,
+			     SolverWorkSpace&,
+			     const SolverOptions&,
+			     const real,
+			     const real) const override;
+    /*!
      * \param[out] s: current structure state
      * \param[in]  t:  current time
      * \param[in]  dt: time increment
@@ -275,23 +355,68 @@ namespace mtest{
      * \param[in] state  : current state
      */
     virtual void printOutput(const real,const StudyCurrentState&) override;
+    /*!
+     * \brief add a test comparing to results stored in a reference
+     * file to the computed ones
+     * \param[in] n: named of the variable tested 
+     * \param[in] d: data
+     * \param[in] c: column
+     * \param[in] e: criterion value
+     */
+    virtual void
+    addIntegralTest(const std::string&,
+		    const tfel::utilities::TextData&,
+		    const unsigned short,
+		    const real);
+    /*!
+     * \brief add a test comparing to results stored in a reference
+     * file to the computed ones
+     * \param[in] n: named of the variable tested 
+     * \param[in] d: data
+     * \param[in] c: column
+     * \param[in] e: criterion value
+     */
+    virtual void
+    addProfileTest(const std::string&,
+		   const tfel::utilities::TextData&,
+		   const unsigned short,
+		   const real);
     //! destructor
     virtual ~PipeTest();
   private:
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    /*!
+     * \brief set the position of the Gauss point in the evolution
+     * manager
+     * \param[in] s: current state
+     */
+    virtual void
+    setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const override;
+    //! list of tests
+    std::vector<std::shared_ptr<UTest>> tests;
     //! registred profile
     std::vector<PipeProfileHandler> profiles;
     //! mesh data
     PipeMesh mesh;
+    //! outer radius evolution
+    std::shared_ptr<Evolution> orev;
+    //! axial growth evolution
+    std::shared_ptr<Evolution> axial_growth;
     //! axial force evolution
     std::shared_ptr<Evolution> axial_force;
     //! inner pressure
     std::shared_ptr<Evolution> inner_pressure;
     //! outer pressure
     std::shared_ptr<Evolution> outer_pressure;
+    //! initial pressure (tight pipe modelling)
+    real p0 = -1;
+    //! initial temperature (tight pipe modelling)
+    real T0 = -1;
     //! pipe modelling hypothesis
-    PipeModellingHypothesis pmh = DEFAULT;
+    RadialLoading rl = DEFAULTLOADINGTYPE;
+    //! axial modelling hypothesis
+    AxialLoading  al = DEFAULTAXIALLOADING;
     //! element type
     //! small strain hypothesis
     bool hpp = false;

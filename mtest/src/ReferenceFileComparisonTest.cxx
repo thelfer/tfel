@@ -32,11 +32,11 @@ namespace mtest{
 
   void
   ReferenceFileComparisonTest::check(const tfel::math::vector<real>& e,
-					  const tfel::math::vector<real>& s,
-					  const tfel::math::vector<real>& iv,
-					  const real t,
-					  const real dt,
-					  const unsigned int p)
+				     const tfel::math::vector<real>& s,
+				     const tfel::math::vector<real>& iv,
+				     const real t,
+				     const real dt,
+				     const unsigned int p)
   {
     using namespace std;
     using tfel::tests::TestResult;
@@ -48,9 +48,8 @@ namespace mtest{
     } else if(this->type==MTest::UTest::THERMODYNAMICFORCE){
       v = s(pos);
     } else {
-      string msg("ReferenceFileComparisonTest::check : "
-		 "internal error (unsuported type of variable");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("ReferenceFileComparisonTest::check: "
+			       "internal error (unsuported type of variable"));
     }
     if(p>=this->values.size()){
       ostringstream msg;
@@ -59,14 +58,14 @@ namespace mtest{
 	  << "(reference value is not available for period  '" << p << "')";
       this->results.append(TestResult(false,msg.str()));
     } else {
-      const real err = abs(v-this->values[p]);
+      const real err = std::abs(v-this->values[p]);
       if(err>this->eps){
 	ostringstream msg;
 	msg << "ReferenceFileComparisonTest::check : comparison for variable '"
 	    << this->name << "' failed for time '" << t+dt << "' "
 	    << "(computed value: '" << v << "', "
 	    << "expected value: '" << this->values[p] << "', "
-	    << "error: '" << err << "', criterium '"
+	    << "error: '" << err << "', criterion '"
 	    << this->eps << "')";
 	this->results.append(TestResult(false,msg.str()));
       }
@@ -82,7 +81,7 @@ namespace mtest{
       ostringstream msg;
       msg << "ReferenceFileComparisonTest::check : comparison for variable '"
 	  << this->name << "' was successfull for all times (" 
-	  << "criterium '"<< this->eps << "')";
+	  << "criterion '"<< this->eps << "')";
       return TestResult(true,msg.str());
     }
     return this->results;

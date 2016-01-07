@@ -1264,14 +1264,12 @@ namespace tfel{
 			    const_iterator& p, 
 			    const const_iterator pe)
     {
-      using namespace std;
       CxxTokenizer::readSpecifiedToken(m,"{",p,pe);
       CxxTokenizer::checkNotEndOfLine(m,p,pe);
       while(p->value!="}"){
 	CxxTokenizer::checkNotEndOfLine(m,p,pe);
 	if((p->value==",")||p->value=="}"||p->value=="{"){
-	  string msg(m+" : unexpected token ',' or '}' or '{'");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error(m+" : unexpected token ',' or '}' or '{'"));
 	}
 	v.push_back(p->value);
 	++p;
@@ -1280,8 +1278,7 @@ namespace tfel{
 	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
 	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
 	  if(p->value==","){
-	    string msg(m+" : unexpected token ',' or '}'");
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error(m+" : unexpected token ',' or '}'"));
 	  }
 	}
       }

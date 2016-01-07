@@ -7,6 +7,7 @@
 
 #include<sstream>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/MTest.hxx"
 #include"MTest/Evolution.hxx"
@@ -15,6 +16,24 @@
 
 namespace mtest{
 
+  std::string
+  SchemeParserBase::getDocumentationFilePath(const std::string& s,
+					     const std::string& k) const
+  {
+    const auto root = tfel::getInstallPath();
+    auto f = root+"/share/doc/mtest/"+s+'/'+k.substr(1)+".md";
+    std::ifstream desc{f};
+    if(desc){
+      return f;
+    }
+    f = root+"/share/doc/mtest/"+k.substr(1)+".md";
+    desc.open(f);
+    if(desc){
+      return f;
+    }
+    return "";
+  }
+  
   void SchemeParserBase::handleAuthor(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     t.setAuthor(this->readUntilEndOfInstruction(p));

@@ -2,7 +2,7 @@
 @OuterRadius 4.7e-3;
 @NumberOfElements 10;
 @ElementType 'Linear';
-@PipeModellingHypothesis 'None';
+@AxialLoading 'None';
 @PerformSmallStrainAnalysis true;
 
 @Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';

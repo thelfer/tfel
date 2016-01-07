@@ -143,6 +143,14 @@ namespace mtest{
      */
     virtual void registerCallBacks();
     /*!
+     * \return the file path associated with the keyword documentation
+     * \param[in] s: scheme
+     * \param[in] k: keyword
+     */
+    virtual std::string
+    getDocumentationFilePath(const std::string&,
+			     const std::string&) const;
+    /*!
      * \return everything from the given starting point up to the next
      * semi-colon.
      * \param[in,out] p : position in the input file

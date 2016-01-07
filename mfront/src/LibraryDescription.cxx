@@ -40,12 +40,19 @@ namespace mfront{
   void mergeLibraryDescription(LibraryDescription& d,
 			       const LibraryDescription& s)
   {
-    if((d.name!=s.name)||(d.suffix!=s.suffix)||(d.type!=s.type)){
+    if((d.name!=s.name)||(d.prefix!=s.prefix)||
+       (d.suffix!=s.suffix)||(d.type!=s.type)){
       throw(std::runtime_error("mergeLibraryDescription : "
-			       "can't merge description of library'"+
-			       d.name+"' ("+d.suffix+","+","+convert(d.type)+")"
+			       "can't merge description of library' "+
+			       d.name+"' ("
+			       "prefix: '"+d.prefix+"', "+
+			       "suffix: '"+d.suffix+"', "+
+			       "type: '"+convert(d.type)+"')"
 			       "and description of library '"+
-			       s.name+"' ("+s.suffix+","+","+convert(s.type)+")"));
+			       s.name+"' ("
+			       "prefix: '"+s.prefix+"', "+
+			       "suffix: '"+s.suffix+"', "+
+			       "type: '"+convert(s.type)+"')"));
     }
     insert_if(d.sources,s.sources);
     insert_if(d.cppflags,s.cppflags);
@@ -54,6 +61,12 @@ namespace mfront{
     insert_if(d.deps,s.deps);
   } // end of mergeLibraryDescription
 
+  const char*
+  LibraryDescription::getDefaultLibraryPrefix(const TargetSystem,
+					      const LibraryType) noexcept{
+    return "lib";
+  }
+  
   const char*
   LibraryDescription::getDefaultLibrarySuffix(const TargetSystem s,
 					      const LibraryType l) noexcept{
@@ -91,9 +104,11 @@ namespace mfront{
   } // end of LibraryDescription::getDefaultLibrarySuffix
   
   LibraryDescription::LibraryDescription(const std::string& n,
+					 const std::string& p,
 					 const std::string& s,
 					 const LibraryType  t)
     : name(n),
+      prefix(p),
       suffix(s),
       type(t)
   {} // end of LibraryDescription::LibraryDescription
@@ -124,6 +139,7 @@ namespace mfront{
       error();
     }
     os << ";\n";    
+    os << "prefix : \"" << l.prefix << "\";\n";
     os << "suffix : \"" << l.suffix << "\";\n";
     write(os,l.sources,"sources");
     write(os,l.cppflags,"cppflags");
@@ -160,6 +176,7 @@ namespace mfront{
     LibraryDescription::LibraryType type = LibraryDescription::SHARED_LIBRARY;
     auto btype    = false;
     auto name     = std::string{};
+    auto prefix   = std::string{};
     auto suffix   = std::string{};
     auto sources  = std::vector<std::string>{};
     auto cppflags = std::vector<std::string>{};
@@ -178,6 +195,14 @@ namespace mfront{
 	++c;
 	CxxTokenizer::readSpecifiedToken(f,":",c,pe);
 	name = CxxTokenizer::readString(c,pe);
+	CxxTokenizer::readSpecifiedToken(f,";",c,pe);
+      } else if(c->value=="prefix"){
+	if(!prefix.empty()){
+	  error("library prefix multiply defined");
+	}
+	++c;
+	CxxTokenizer::readSpecifiedToken(f,":",c,pe);
+	prefix = CxxTokenizer::readString(c,pe);
 	CxxTokenizer::readSpecifiedToken(f,";",c,pe);
       } else if(c->value=="suffix"){
 	if(!suffix.empty()){
@@ -231,7 +256,7 @@ namespace mfront{
     if(!btype){
       error("library type undefined");
     }
-    LibraryDescription l{name,suffix,type};
+    LibraryDescription l{name,prefix,suffix,type};
     std::swap(l.sources,sources);
     std::swap(l.cppflags,cppflags);
     std::swap(l.ldflags,ldflags);

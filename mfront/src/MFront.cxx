@@ -740,7 +740,7 @@ namespace mfront{
 	    log << "The following libraries have been built :\n";
 	  }
 	  for(const auto& l:this->targets){
-	    log << "- " << l.name << "." << l.suffix << " : ";
+	    log << "- " << l.prefix << l.name << "." << l.suffix << " : ";
 	    for(const auto& pts:l.epts){
 	      log << " " << pts;
 	    }

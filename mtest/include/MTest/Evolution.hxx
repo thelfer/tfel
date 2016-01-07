@@ -41,6 +41,13 @@ namespace mtest
     virtual bool isConstant(void) const = 0;
     /*!
      * \brief set the evolution value for a given date
+     * \param[in] v  : value
+     * \note most evolution will throw an exception (this
+     * method only makes sense for constant evolutions)
+     */
+    virtual void setValue(const real) = 0;
+    /*!
+     * \brief set the evolution value for a given date
      * \param[in] t  : time
      * \param[in] v  : value
      * \note most evolution will throw an exception (for example, this
@@ -76,6 +83,13 @@ namespace mtest
     virtual bool isConstant(void) const override;
     /*!
      * \brief set the evolution value for a given date
+     * \param[in] v  : value
+     * \note most evolution will throw an exception (this
+     * method only makes sense for constant evolutions)
+     */
+    virtual void setValue(const real) override;
+    /*!
+     * \brief set the evolution value for a given date
      * \param[in] t  : time
      * \param[in] v  : value
      */
@@ -87,7 +101,7 @@ namespace mtest
   protected:
     ConstantEvolution& operator=(const ConstantEvolution&) = delete;
     ConstantEvolution& operator=(ConstantEvolution&&) = delete;
-    const real value;
+    real value;
   };
 
   /*!
@@ -114,6 +128,13 @@ namespace mtest
      * is constant
      */
     virtual bool isConstant(void) const override;
+    /*!
+     * \brief set the evolution value for a given date
+     * \param[in] v  : value
+     * \note most evolution will throw an exception (this
+     * method only makes sense for constant evolutions)
+     */
+    virtual void setValue(const real) override;
     /*!
      * \brief set the evolution value for a given date
      * \param[in] t  : time

@@ -1,3 +1,5 @@
+SUBDIRS=mtest ptest
+
 MTEST_DOCS = Author.md                                    \
 	     Behaviour.md                                 \
 	     CastemAccelerationPeriod.md                  \
@@ -5,15 +7,11 @@ MTEST_DOCS = Author.md                                    \
 	     Date.md                                      \
 	     Description.md                               \
 	     Evolution.md                                 \
-	     ExternalStateVariable.md                     \
-	     ImposedStrain.md                             \
-	     ImposedDeformationGradient.md                \
-	     ImposedStress.md                             \
 	     InternalStateVariable.md                     \
+	     ExternalStateVariable.md                     \
 	     MaterialProperty.md                          \
 	     MaximumNumberOfIterations.md                 \
 	     MaximumNumberOfSubSteps.md                   \
-             ModellingHypothesis.md                       \
 	     Parameter.md                                 \
 	     IntegerParameter.md                          \
 	     UnsignedIntegerParameter.md                  \
@@ -21,18 +19,8 @@ MTEST_DOCS = Author.md                                    \
 	     OutputFilePrecision.md                       \
 	     PredictionPolicy.md                          \
 	     Real.md                                      \
-	     RotationMatrix.md                            \
 	     StiffnessMatrixType.md                       \
 	     StiffnessUpdatePolicy.md                     \
-	     Strain.md                                    \
-	     StrainEpsilon.md                             \
-	     DeformationGradient.md                       \
-	     DeformationGradientEpsilon.md                \
-	     Stress.md                                    \
-	     StressEpsilon.md                             \
-	     CohesiveForce.md                             \
-	     CohesiveForceEpsilon.md                      \
-	     Test.md                                      \
 	     Times.md                                     \
              UseCastemAccelerationAlgorithm.md            \
 	     AccelerationAlgorithm.md		          \
@@ -41,7 +29,7 @@ MTEST_DOCS = Author.md                                    \
 	     NumericalTangentOperatorPerturbationValue.md \
 	     OutOfBoundsPolicy.md
 
-mtestdocdir   = $(docdir)
+mtestdocdir   = $(docdir)/mtest
 mtestdoc_DATA = $(MTEST_DOCS)
 
 EXTRA_DIST=CMakeLists.txt                         \

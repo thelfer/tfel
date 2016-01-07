@@ -69,21 +69,71 @@ PipeTest_setAxialForceEvolution2(mtest::PipeTest& t,
 } // end of PipeTest_setAxialForceEvolution2
 
 static void
-PipeTest_setPipeModellingHypothesis(mtest::PipeTest& t,
+PipeTest_setAxialGrowthEvolution(mtest::PipeTest& t,
+				const mtest::real& v)
+{
+  t.setAxialGrowthEvolution(mtest::make_evolution(v));
+} // end of PipeTest_setAxialGrowthEvolution
+
+static void
+PipeTest_setAxialGrowthEvolution2(mtest::PipeTest& t,
+				 const std::map<mtest::real,
+				                mtest::real>& v)
+{
+  t.setAxialGrowthEvolution(mtest::make_evolution(v));
+} // end of PipeTest_setAxialGrowthEvolution2
+
+static void
+PipeTest_setAxialLoading(mtest::PipeTest& t,
 				    const std::string& h){
   if(h=="None"){
-    t.setPipeModellingHypothesis(mtest::PipeTest::NONE);
+    t.setAxialLoading(mtest::PipeTest::NONE);
   } else if(h=="EndCapEffect"){
-    t.setPipeModellingHypothesis(mtest::PipeTest::ENDCAPEFFECT);
+    t.setAxialLoading(mtest::PipeTest::ENDCAPEFFECT);
   } else if(h=="ImposedAxialForce"){
-    t.setPipeModellingHypothesis(mtest::PipeTest::IMPOSEDAXIALFORCE);
+    t.setAxialLoading(mtest::PipeTest::IMPOSEDAXIALFORCE);
+  } else if(h=="ImposedAxialGrowth"){
+    t.setAxialLoading(mtest::PipeTest::IMPOSEDAXIALGROWTH);
   } else {
-    throw(std::runtime_error("PipeTest::setPipeModellingHypothesis: "
+    throw(std::runtime_error("PipeTest::setAxialLoading: "
 			     "invalid pipe modelling hypothesis ('"+h+"').\n"
 			     "Valid modelling hypothesis are "
-			     "'None' and 'EndCapEffect'"));
+			     "'None', 'ImposedAxialForce' and 'EndCapEffect'"));
   }
-} // end of PipeTest_setPipeModellingHypothesis
+} // end of PipeTest_setAxialLoading
+
+static void
+PipeTest_setRadialLoading(mtest::PipeTest& t,
+			const std::string& h){
+  if(h=="ImposedPressure"){
+    t.setRadialLoading(mtest::PipeTest::IMPOSEDPRESSURE);
+  } else if(h=="ImposedOuterRadius"){
+    t.setRadialLoading(mtest::PipeTest::IMPOSEDOUTERRADIUS);
+  } else if(h=="TightPipe"){
+    t.setRadialLoading(mtest::PipeTest::TIGHTPIPE);
+  } else {
+    throw(std::runtime_error("PipeTest::setRadialLoading: "
+			     "invalid pipe loading type ('"+h+"').\n"
+			     "Valid loading type are "
+			     "'ImposedPressure', 'TightPipe' "
+			     "and 'ImposedOuterRadius'"));
+  }
+} // end of PipeTest_setRadialLoading
+
+static void
+PipeTest_setOuterRadiusEvolution(mtest::PipeTest& t,
+				 const mtest::real& v)
+{
+  t.setOuterRadiusEvolution(mtest::make_evolution(v));
+} // end of PipeTest_setOuterRadiusEvolution
+
+static void
+PipeTest_setOuterRadiusEvolution2(mtest::PipeTest& t,
+				  const std::map<mtest::real,
+				                 mtest::real>& v)
+{
+  t.setOuterRadiusEvolution(mtest::make_evolution(v));
+} // end of PipeTest_setOuterRadiusEvolution2
 
 static void
 PipeTest_setElementType(mtest::PipeTest& t,
@@ -131,10 +181,17 @@ void declarePipeTest(void)
     .def("setOuterPressureEvolution",&PipeTest_setOuterPressureEvolution2)
     .def("setAxialForceEvolution",&PipeTest_setAxialForceEvolution)
     .def("setAxialForceEvolution",&PipeTest_setAxialForceEvolution2)
+    .def("setAxialGrowthEvolution",&PipeTest_setAxialGrowthEvolution)
+    .def("setAxialGrowthEvolution",&PipeTest_setAxialGrowthEvolution2)
+    .def("setOuterRadiusEvolution",&PipeTest_setOuterRadiusEvolution)
+    .def("setOuterRadiusEvolution",&PipeTest_setOuterRadiusEvolution2)
+    .def("setFillingPressure",&PipeTest::setFillingPressure)
+    .def("setFillingTemperature",&PipeTest::setFillingTemperature)
     .def("performSmallStrainAnalysis",&PipeTest::performSmallStrainAnalysis)
     .def("setDisplacementEpsilon",&PipeTest::setDisplacementEpsilon)
     .def("setResidualEpsilon",&PipeTest::setResidualEpsilon)
-    .def("setPipeModellingHypothesis",&PipeTest_setPipeModellingHypothesis)
+    .def("setAxialLoading",&PipeTest_setAxialLoading)
+    .def("setRadialLoading",&PipeTest_setRadialLoading)
     .def("setElementType",&PipeTest_setElementType)
     .def("addProfile",&PipeTest::addProfile)
     ;

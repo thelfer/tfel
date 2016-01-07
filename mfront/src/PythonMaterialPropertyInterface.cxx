@@ -90,13 +90,14 @@ namespace mfront
     } else {
       src = mpd.library+"wrapper.cxx";
     }
-    insert_if(d[lib].ldflags,"-lm");    
-    insert_if(d[lib].ldflags,TFEL_PYTHON_LIBS);
-    insert_if(d[lib].cppflags,TFEL_PYTHON_INCLUDES);
-    insert_if(d[lib].sources,name+"-python.cxx");
-    insert_if(d[lib].sources,src);
+    auto& l = d(lib,"");
+    insert_if(l.ldflags,"-lm");    
+    insert_if(l.ldflags,TFEL_PYTHON_LIBS);
+    insert_if(l.cppflags,TFEL_PYTHON_INCLUDES);
+    insert_if(l.sources,name+"-python.cxx");
+    insert_if(l.sources,src);
+    insert_if(l.epts,name);
     insert_if(d.headers,this->headerFileName);    
-    insert_if(d[lib].epts,name);
   } // end of PythonMaterialPropertyInterface::getTargetsDescription
 
   void

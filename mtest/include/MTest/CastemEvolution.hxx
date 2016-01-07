@@ -58,6 +58,13 @@ namespace mtest
     virtual bool isConstant(void) const override;
     /*!
      * \brief set the evolution value for a given date
+     * \param[in] v  : value
+     * \note most evolution will throw an exception (this
+     * method only makes sense for constant evolutions)
+     */
+    virtual void setValue(const real) override;
+    /*!
+     * \brief set the evolution value for a given date
      * \param[in] t  : time
      * \param[in] v  : value
      */

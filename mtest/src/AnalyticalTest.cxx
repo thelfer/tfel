@@ -20,12 +20,12 @@ namespace mtest
 {
 
   AnalyticalTest::AnalyticalTest(const std::string& f_,
-					   const std::string& v,
-					   const MTest::UTest::TestedVariable t,
-					   const unsigned short p,
-					   std::shared_ptr<std::map<std::string,
-										std::shared_ptr<Evolution> > > evm_,
-					   const real eps_)
+				 const std::string& v,
+				 const MTest::UTest::TestedVariable t,
+				 const unsigned short p,
+				 std::shared_ptr<std::map<std::string,
+				                          std::shared_ptr<Evolution> > > evm_,
+				 const real eps_)
     : f(f_),
       name(v),
       type(t),
@@ -38,11 +38,11 @@ namespace mtest
 
   void
   AnalyticalTest::check(const tfel::math::vector<real>& e,
-			     const tfel::math::vector<real>& s,
-			     const tfel::math::vector<real>& iv,
-			     const real t,
-			     const real dt,
-			     const unsigned int)
+			const tfel::math::vector<real>& s,
+			const tfel::math::vector<real>& iv,
+			const real t,
+			const real dt,
+			const unsigned int)
   {
     using namespace std;
     using tfel::tests::TestResult;
@@ -81,7 +81,7 @@ namespace mtest
 	  << this->name << "' failed for time '" << t+dt << "' "
 	  << "(computed value: '" << v << "', "
 	  << "expected value: '" << this->f.getValue() << "', "
-	  << "error: '" << err << "', criterium '"
+	  << "error: '" << err << "', criterion '"
 	  << this->eps << "')";
       this->results.append(TestResult(false,msg.str()));
     }
@@ -96,7 +96,7 @@ namespace mtest
       ostringstream msg;
       msg << "AnalyticalTest::check : comparison for variable '"
 	  << this->name << "' was successfull for all times (" 
-	  << "criterium '"<< this->eps << "')";
+	  << "criterion '"<< this->eps << "')";
       return TestResult(true,msg.str());
     }
     return this->results;

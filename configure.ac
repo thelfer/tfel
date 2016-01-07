@@ -481,6 +481,8 @@ AC_OUTPUT([debug.sh
 	   docs/mtest/Makefile.doc
 	   docs/mtest/mtest.tex
 	   docs/mtest/Champs.tex
+   	   docs/mtest/mtest/Makefile
+      	   docs/mtest/ptest/Makefile
 	   docs/ptest/Makefile
 	   docs/ptest/ptest.tex
 	   docs/ptest/Makefile.doc
@@ -1979,8 +1981,6 @@ AC_OUTPUT([debug.sh
 	   mtest/tests/ptest/castem/Makefile
    	   mtest/tests/ptest/castem/castemelasticity-linear.ptest
 	   mtest/tests/ptest/castem2/Makefile
-	   mtest/tests/ptest/aster/Makefile
-	   mtest/tests/ptest/abaqus/Makefile
   	   mtest/tests/ptest/cyrano/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile

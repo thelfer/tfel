@@ -222,6 +222,19 @@ namespace mtest
 				const real,
 				const real) const override;
     /*!
+     * \param[in/out]  s: current structure state
+     * \param[in/out] wk: solver workspace
+     * \param[in] o:  solver options
+     * \param[in] t:  current time
+     * \param[in] dt: time increment
+     */
+    virtual void
+    computeLoadingCorrection(StudyCurrentState&,
+			     SolverWorkSpace&,
+			     const SolverOptions&,
+			     const real,
+			     const real) const override;
+    /*!
      * \param[out] s: current structure state
      * \param[in]  t:  current time
      * \param[in]  dt: time increment
@@ -327,6 +340,13 @@ namespace mtest
   protected:
     //! \brief set the modelling hypothesis to the default one
     virtual void setDefaultModellingHypothesis(void) override;
+    /*!
+     * \brief set the position of the Gauss point in the evolution
+     * manager
+     * \param[in] s: current state
+     */
+    virtual void
+    setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const override;
     /*!
      * \return the number of unknowns (size of driving variables plus
      * the number of lagrangian multipliers)

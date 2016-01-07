@@ -219,7 +219,6 @@ namespace mtest{
 				      const std::string& l,
 				      const std::string& f)
   {
-    using namespace std;
     using MH = tfel::material::ModellingHypothesis;
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
       this->setDefaultModellingHypothesis();
@@ -465,6 +464,7 @@ namespace mtest{
     // evaluations of the materials properties, state variables at the
     // end of the time step. Computation of thermal expansion if needed.
     for(auto& s: scs.istates){
+      this->setGaussPointPositionForEvolutionsEvaluation(s);
       computeMaterialProperties(s,*(this->evm),*(this->dmpv),
   				this->b->getMaterialPropertiesNames(),t,dt);
       computeExternalStateVariables(s,*(this->evm),
@@ -493,7 +493,6 @@ namespace mtest{
       this->residual << '\n' << "#resolution from " << t << " to " << t+dt << '\n';
     }
   } // end of SingleStructureScheme::prepare
-
 
   void
   SingleStructureScheme::setHandleThermalExpansion(const bool b1)

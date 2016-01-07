@@ -38,7 +38,7 @@ namespace mtest{
      * time step
      * \param[out] scs: structure current state
      * \param[out]  wk: workspace
-     * \param[in]    s: physical system
+     * \param[out]   s: physical system
      * \param[in]    o: solver options
      * \param[in]   ti: time at the beginning of the time step
      * \param[in]   ti: time at the end of the time step

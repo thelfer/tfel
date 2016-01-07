@@ -38,13 +38,16 @@ namespace mtest
     return true;
   } // end of ConstantEvolution::isConstant
 
-  void  ConstantEvolution::setValue(const real,
-				    const real)
+  void ConstantEvolution::setValue(const real v)
   {
-    using namespace std;
-    string msg("ConstantEvolution::setValue : "
-	       "this method does not makes sense for constant evolution");
-    throw(runtime_error(msg));
+    this->value = v;
+  }
+  
+  void ConstantEvolution::setValue(const real,const real)
+  {
+    throw(std::runtime_error("ConstantEvolution::setValue : "
+			     "this method does not makes sense "
+			     "for constant evolution"));
   }
 
   ConstantEvolution::~ConstantEvolution()
@@ -69,8 +72,15 @@ namespace mtest
     }
   }
 
-  void  LPIEvolution::setValue(const real t,
-			       const real v)
+  void LPIEvolution::setValue(const real)
+  {
+    throw(std::runtime_error("LPIEvolution::setValue : "
+			     "this method does not makes sense "
+			     "for LPI evolution"));
+  }
+  
+  void LPIEvolution::setValue(const real t,
+			      const real v)
   {
     this->values[t] = v;
   }
@@ -78,14 +88,11 @@ namespace mtest
   real
   LPIEvolution::operator()(const real t) const
   {
-    using namespace std;
-    map<real,real>::const_iterator p;
     if(this->values.empty()){
-      string msg("LPILoadingEvolution::getValue : ");
-      msg += "no values specified";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("LPILoadingEvolution::getValue: "
+			       "no values specified"));
     }
-    p = this->values.lower_bound(t);
+    auto p = this->values.lower_bound(t);
     real x0;
     real x1;
     real y0;

@@ -113,6 +113,59 @@
 
 \begin{document}
 
+\section{Présentation}
+
+\subsection{Type d'essais}
+
+Par défaut, on modélise un tube fermé dont on impose la pression
+interne et externe au cours du temps.
+
+\subsubsection{Chargements dans la direction radiale}
+
+Concernant la face externe du tube, l'utilisateur peut imposer
+l'évolution d'une pression externe \(P_{i}\) au cours du temps.
+
+Concernant la face interne du tube, l'utilisateur a le choix entre
+plusieurs options (qui s'exclut mutuellement)~:
+\begin{itemize}
+\item il est possible d'imposer une pression interne \(P_{i}\)
+  évoluant dans le temps~;
+\item il est possible d'imposer l'évolution du rayon externe évoluant
+  dans le temps. Dans ce cas, la pression interne est ajustée pour
+  obtenir l'évolution souhaitée.
+\item il est possible de modéliser un tube étanche contenant une
+  quantité fixe de gaz donnée par une pression \(P_{0}\) et une
+  température \(T_{0}\) de remplissage. Dans ce cas, on suppose que~:
+  \begin{itemize}
+  \item le tube est fermé, c'est à dire que l'on modélise
+    nécessairement l'effet de fond (voir les options concernant le
+    chargement axial)~;
+  \item que le comportement du gaz suit la loi des gaz parfaits, ce
+    qui permet d'exprimer la pression interne à un instant donné via
+    l'équation d'état~:
+    \[
+    P_{i} = P_{0}\,\Frac{T}{T_{0}}\,\Frac{V_{0}}{V}
+    \]
+    où \(T\) est la température actuelle en paroi interne du tube,
+    \(V\) le volume actuel et \(V_{0}\) le volume initial (après
+    remplissage).
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Chargements axiaux}
+
+Dans la direction axiale, il est possible d'imposer~:
+\begin{itemize}
+\item l'effet de fond dans le cas d'un tube fermé (effets des
+  pressions internes et externes sur les extrémités du tube). Cette
+  modélisation est obligatoire si l'on choisit de modéliser un tube étanche~;
+\item l'évolution de la force axiale s'appliquant sur le tube~;
+\item l'évolution de la déformation axiale.
+\end{itemize}
+
+Il est également possible de ne rien imposer, ce qui est équivalent à
+imposer une force axiale nulle.
+
 \section{Éléments de théorie}
 
 \subsection{Cas général}
@@ -333,197 +386,6 @@ En vertu de l'équation~\eqref{eq:pi:bc}, nous pouvons écrire~:
 \[
 F_{z}^{a}=\int_{R^{i}}^{R^{e}}\,\Pi_{zz}\,2\,\pi\,R\,\dtot R
 \]
-
-\section{Résolution}
-
-\subsection{Formulation faible}
-
-Soit \(\vec{v}\) un champ de vitesses cinémaquement admissible,
-nous avons~:
-\[
-\int_{\Omega_{0}}\left(\mathrm{Div} \tns{\Pi}\right)\,.\,\vec{v}\,\,\dtot\,V = 0
-\]
-
-La formule de \nom{Green} permet de transformer l'intégrale ainsi~:
-\[
-\int_{\Omega_{0}}\left(\mathrm{Div} \tns{\Pi}\right)\,.\,\vec{v}\,\,\dtot\,V = 
-\int_{\Omega_{0}}\tns{\Pi}\,\colon\,\derivtot{\vec{v}}{\vec{X}}\,\,\dtot\,V-\int_{\Omega_{0}}\left(\tns{\Pi}\,\colon\,\vec{n}\right)\,.\,\vec{v}\,\dtot\,S
-\]
-
-Nous obtenons ainsi la formulation faible recherchée~:
-\begin{equation}
-  \label{eq:weak:formulation}
-  2\,pi\,\int_{R_{0}^{i}}^{R_{0}^{e}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R=
-  -2\,pi\,F_{zz}\left[P^{e}\,\paren{1+\Frac{u_{r}^{e}}{R_{0}^{e}}}\paren{R_{0}^{e}}^{2}\,v^{e}_{r}+
-    P^{i}\,\paren{1+\Frac{u_{r}^{i}}{R_{0}^{i}}}\paren{R_{0}^{i}}^{2}\,v^{i}_{r}\right]
-\end{equation}
-
-\subsection{Discrétisation à l'aide d'éléments finis linéaire}
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/ptest/img/mesh1D.pdf}
-  \caption{Exemple de maillage 1D}
-  \label{fig:tube}
-\end{figure}
-
-Par calculer le premier terme de l'intégrale, nous discrétisons
-maintenant le tube par des éléments linéaires~: celui-ci est découpé
-en \(N-1\) segments sur lesquels la variation du déplacement radial
-est supposé linéaire. Les sommets des segments forment les n\oe{}uds
-du maillage et ils sont numérotés de manière croissante de gauche à
-droite. Cette discrétisation est schématisée sur la
-figure~\ref{fig:tube}.
-
-Dans cette discrétisation, la position du \(i\)\ieme n\oe{}ud, dans la
-configuration initiale est notée \(R_{0}^{\paren{i}}\).
-
-Les fonctions de l'espace de discrétisation sont donc caractérisées
-par leurs valeurs aux n\oe{}uds. Une fonction \(v\) de cet espace est
-donc équivalente à un vecteur \(\vec{\mathbb{V}}\) dont la valeur au
-\(i\)\ieme n\oe{}ud est \(\mathbb{V}^{\paren{i}}\).
-
-Le problème est alors de déterminer les valeurs nodales du déplacement
-radial. Sa valeur au \(i\)\ieme n\oe{}ud est notée
-\(\mathbb{U}_{r}^{\paren{i}}\).
-
-\subsubsection{Forces externes}
-
-Le terme de droite de l'équation~\eqref{eq:weak:formulation} décrit
-les forces externes imposées au tube (à l'exception de l'effet de fond
-qui sera décrit plus loin).
-
-Ce terme peut s'écrire~:
-\[
--2\,pi\,F_{zz}\left[P^{e}\,\paren{1+\Frac{u_{r}^{e}}{R_{0}^{e}}}\paren{R_{0}^{e}}^{2}\,v^{e}_{r}+
-  P^{i}\,\paren{1+\Frac{u_{r}^{i}}{R_{0}^{i}}}\paren{R_{0}^{i}}^{2}\,v^{i}_{r}\right]=\vec{\mathbb{F}}_{e}\,.\,\vec{\mathbb{V}}
-\]
-où le vecteur \(\vec{\mathbb{F}}_{e}\) n'a pour composantes non
-nulles que celles correspondant au premier et dernier n\oe{}uds de la
-structure.
-
-Nous avons~:
-\[
-\left\{
-  \begin{aligned}
-    \mathbb{F}_{e}^{0}   & =-2\,pi\,F_{zz}\,P^{i}\,\paren{R_{0}^{i}+u_{r}^{i}}\,R_{0}^{i} \\    
-    \mathbb{F}_{e}^{N-1} & =-2\,pi\,F_{zz}\,P^{e}\,\paren{R_{0}^{e}+u_{r}^{e}}\,R_{0}^{e}
-  \end{aligned}
-\right.
-\]
-
-\subsubsection{Forces internes}
-
-Par linéarité, l'intégrale à calculer est alors~:
-\[
-\int_{R_{0}^{i}}^{R_{0}^{e}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R=
-\sum_{i=1}^{N-1}\,\int_{R_{0}^{\paren{i}}}^{R_{0}^{\paren{i+1}}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R
-\]
-où \(R_{0}^{\paren{i}}\) est la coordonnée du \(i\)\ieme{} n\oe{}ud
-dans la configuration initiale.
-
-Pour simplifier, nous allons considérer un élément fini linéaire
-iso-paramétrique. L'intégrale sur le \(i\)\ieme{} élément est calculé
-par une formule à deux points d'intégration~:
-\[
-\int_{R_{0}^{\paren{i}}}^{R_{0}^{\paren{i+1}}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R
-\approx\sum_{g=1}^{2}\left[\Pi_{rr}\paren{R^{g}_{0}}\,\derivtot{v_{r}}{R}\paren{R^{g}_{0}}\,R^{g}_{0}+\Pi_{\theta\theta}\paren{R^{g}_{0}}\,v_{r}\paren{R^{g}_{0}}\right]\,w_{g}\,J_{g}
-\]
-où~:
-\begin{minipage}[t]{0.9\linewidth}
-  \begin{itemize}
-  \item \(R^{g}_{0}\) est le rayon du point du point de Gauss
-    considéré dans la configuration initiale~;
-  \item \(w_{g}\) est son poids~;
-  \item \(J_{g}\) est le déterminant du jacobien permettant de passer
-    de l'élément de réference (le segment \(\left[-1:1\right]\)) à
-    l'élément considéré (le segement
-    \(\left[R_{0}^{\paren{i}}:R_{0}^{\paren{i+1}}\right]\))~;
-  \end{itemize}
-\end{minipage}
-
-Les deux points de Gauss étant équivalent, les poids de chacun sont
-égaux à \(1\). \(J_{g}\) est quand à lui égal à~:
-\[
-J_{g}=\Frac{R_{0}^{\paren{i+1}}-R_{0}^{\paren{i}}}{2}
-\]
-
-La position des points de Gauss est donnée par~:
-\[
-R^{g}_{0}=\Frac{1}{2}\paren{\paren{1-p_{g}}\,R_{0}^{\paren{i}}+\paren{1+p_{g}}\,R_{0}^{\paren{i+1}}}=R_{0}^{\paren{i}}+\Frac{\paren{1+p_{g}}}{2}\paren{R_{0}^{\paren{i+1}}-R_{0}^{\paren{i}}}
-\]
-avec~:
-\begin{minipage}[t]{0.9\linewidth}
-  \begin{itemize}
-  \item \(p_{g}=-\Frac{1}{\sqrt{3}}\) pour le premier point de Gauss~;
-  \item \(p_{g}= \Frac{1}{\sqrt{3}}\) pour le second point de Gauss.
-  \end{itemize}
-\end{minipage}
-
-Sur chaque segment, délimité par deux noeuds situés en \(R^{\paren{i}}_{0}\) et
-\(R^{\paren{i+1}}_{0}\) nous avons~:
-\[
-\left\{
-\begin{aligned}
-  v\paren{R}   &= \mathbb{V}^{\paren{i}}+\paren{R-R^{\paren{i}}_{0}}\,\Frac{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}{R^{\paren{i+1}}_{0}-R^{\paren{i}}_{0}}\\
-  \deriv{v}{R} &= \Frac{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}{R^{\paren{i+1}}_{0}-R^{\paren{i}}_{0}}
-\end{aligned}
-\right.
-\]
-
-Évaluée en un des deux points de \nom{Gauss}, la formule précédente s'écrit~:
-\[
-\left\{
-\begin{aligned}
-  v\paren{R_{g}} &= \mathbb{V}^{\paren{i}}+\Frac{1+p_{g}}{2}\,\paren{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}\\
-  \deriv{v}{R}  &= \Frac{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}{R^{\paren{i+1}}_{0}-R^{\paren{i}}_{0}}
-\end{aligned}
-\right.
-\]
-
-Approximée ainsi, l'intégrale est linéaire en \(\mathbb{V}^{\paren{i}}\) et
-\(\mathbb{V}^{\paren{i+1}}\). On peut donc écrire cette intégrale sous la forme~:
-\[
-\int_{R_{0}^{\paren{i}}}^{R_{0}^{\paren{i+1}}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R
-\approx
-\mathbb{F}_{ie}^{\paren{i}}\,\mathbb{V}^{\paren{i}}+\mathbb{F}_{ie}^{\paren{i+1}}\,\mathbb{V}^{\paren{i+1}}
-\]
-Le terme \(\mathbb{F}_{ie}^{\paren{i}}\) est la contribution de
-l'élément considéré à la force nodale associée au n\oe{}ud
-\(\paren{i}\).
-
-\subsection{Système discrétisé}
-
-Finalement, la forme faible discrétisée s'écrit~:
-\[
-\vec{\mathbb{F}}_{i}\,.\,\vec{\mathbb{V}}=\vec{\mathbb{F}}_{e}\,.\,\vec{\mathbb{V}}
-\]
-
-Cette expression étant vraie pour toute valeur de
-\(\vec{\mathbb{V}}\), l'équilibre mécanique discrétisé est
-simplement~:
-\[
-\vec{\mathbb{F}}_{i}=\vec{\mathbb{F}}_{e}
-\]
-
-Dans ce qui précède, nous n'avions pas précisé la dépendance du
-\(\tns{\Pi}\) et le gradient de déformation. Explicité cette
-dépendance permet de montrer que le système à résoudre est~:
-
-\[
-\vec{\mathbb{R}}\paren{\Delta\,\vec{\mathbb{U}}}=\vec{\mathbb{F}}_{i}\paren{\Delta\,\vec{\mathbb{U}}}-\vec{\mathbb{F}}_{e}\paren{\Delta\,\vec{\mathbb{U}}}=\vec{0}
-\]
-où~:
-\begin{minipage}[t]{0.9\linewidth}
-  \begin{itemize}
-  \item \(\Delta\,\vec{\mathbb{U}}\) est l'incrément de déplacement~;
-  \item \(\vec{\mathbb{R}}\) est le vecteur des résidus.
-  \end{itemize}
-\end{minipage}
-
-Ce système non linéaire peut être résolu de multiples manières.
-
-L'une d'entre elle fait intervenir la matrice tangente cohérente.
 
 \section{Vérification et qualification}
 
@@ -864,5 +726,197 @@ temps.
   \label{fig:ptest-creep-pression_suiveuse}
 \end{figure}
 
+\appendix
+
+\section{Résolution}
+
+\subsection{Formulation faible}
+
+Soit \(\vec{v}\) un champ de vitesses cinémaquement admissible,
+nous avons~:
+\[
+\int_{\Omega_{0}}\left(\mathrm{Div} \tns{\Pi}\right)\,.\,\vec{v}\,\,\dtot\,V = 0
+\]
+
+La formule de \nom{Green} permet de transformer l'intégrale ainsi~:
+\[
+\int_{\Omega_{0}}\left(\mathrm{Div} \tns{\Pi}\right)\,.\,\vec{v}\,\,\dtot\,V = 
+\int_{\Omega_{0}}\tns{\Pi}\,\colon\,\derivtot{\vec{v}}{\vec{X}}\,\,\dtot\,V-\int_{\Omega_{0}}\left(\tns{\Pi}\,\colon\,\vec{n}\right)\,.\,\vec{v}\,\dtot\,S
+\]
+
+Nous obtenons ainsi la formulation faible recherchée~:
+\begin{equation}
+  \label{eq:weak:formulation}
+  2\,pi\,\int_{R_{0}^{i}}^{R_{0}^{e}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R=
+  -2\,pi\,F_{zz}\left[P^{e}\,\paren{1+\Frac{u_{r}^{e}}{R_{0}^{e}}}\paren{R_{0}^{e}}^{2}\,v^{e}_{r}+
+    P^{i}\,\paren{1+\Frac{u_{r}^{i}}{R_{0}^{i}}}\paren{R_{0}^{i}}^{2}\,v^{i}_{r}\right]
+\end{equation}
+
+\subsection{Discrétisation à l'aide d'éléments finis linéaire}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/ptest/img/mesh1D.pdf}
+  \caption{Exemple de maillage 1D}
+  \label{fig:tube}
+\end{figure}
+
+Par calculer le premier terme de l'intégrale, nous discrétisons
+maintenant le tube par des éléments linéaires~: celui-ci est découpé
+en \(N-1\) segments sur lesquels la variation du déplacement radial
+est supposé linéaire. Les sommets des segments forment les n\oe{}uds
+du maillage et ils sont numérotés de manière croissante de gauche à
+droite. Cette discrétisation est schématisée sur la
+figure~\ref{fig:tube}.
+
+Dans cette discrétisation, la position du \(i\)\ieme n\oe{}ud, dans la
+configuration initiale est notée \(R_{0}^{\paren{i}}\).
+
+Les fonctions de l'espace de discrétisation sont donc caractérisées
+par leurs valeurs aux n\oe{}uds. Une fonction \(v\) de cet espace est
+donc équivalente à un vecteur \(\vec{\mathbb{V}}\) dont la valeur au
+\(i\)\ieme n\oe{}ud est \(\mathbb{V}^{\paren{i}}\).
+
+Le problème est alors de déterminer les valeurs nodales du déplacement
+radial. Sa valeur au \(i\)\ieme n\oe{}ud est notée
+\(\mathbb{U}_{r}^{\paren{i}}\).
+
+\subsubsection{Forces externes}
+
+Le terme de droite de l'équation~\eqref{eq:weak:formulation} décrit
+les forces externes imposées au tube (à l'exception de l'effet de fond
+qui sera décrit plus loin).
+
+Ce terme peut s'écrire~:
+\[
+-2\,pi\,F_{zz}\left[P^{e}\,\paren{1+\Frac{u_{r}^{e}}{R_{0}^{e}}}\paren{R_{0}^{e}}^{2}\,v^{e}_{r}+
+  P^{i}\,\paren{1+\Frac{u_{r}^{i}}{R_{0}^{i}}}\paren{R_{0}^{i}}^{2}\,v^{i}_{r}\right]=\vec{\mathbb{F}}_{e}\,.\,\vec{\mathbb{V}}
+\]
+où le vecteur \(\vec{\mathbb{F}}_{e}\) n'a pour composantes non
+nulles que celles correspondant au premier et dernier n\oe{}uds de la
+structure.
+
+Nous avons~:
+\[
+\left\{
+  \begin{aligned}
+    \mathbb{F}_{e}^{0}   & =-2\,pi\,F_{zz}\,P^{i}\,\paren{R_{0}^{i}+u_{r}^{i}}\,R_{0}^{i} \\    
+    \mathbb{F}_{e}^{N-1} & =-2\,pi\,F_{zz}\,P^{e}\,\paren{R_{0}^{e}+u_{r}^{e}}\,R_{0}^{e}
+  \end{aligned}
+\right.
+\]
+
+\subsubsection{Forces internes}
+
+Par linéarité, l'intégrale à calculer est alors~:
+\[
+\int_{R_{0}^{i}}^{R_{0}^{e}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R=
+\sum_{i=1}^{N-1}\,\int_{R_{0}^{\paren{i}}}^{R_{0}^{\paren{i+1}}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R
+\]
+où \(R_{0}^{\paren{i}}\) est la coordonnée du \(i\)\ieme{} n\oe{}ud
+dans la configuration initiale.
+
+Pour simplifier, nous allons considérer un élément fini linéaire
+iso-paramétrique. L'intégrale sur le \(i\)\ieme{} élément est calculé
+par une formule à deux points d'intégration~:
+\[
+\int_{R_{0}^{\paren{i}}}^{R_{0}^{\paren{i+1}}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R
+\approx\sum_{g=1}^{2}\left[\Pi_{rr}\paren{R^{g}_{0}}\,\derivtot{v_{r}}{R}\paren{R^{g}_{0}}\,R^{g}_{0}+\Pi_{\theta\theta}\paren{R^{g}_{0}}\,v_{r}\paren{R^{g}_{0}}\right]\,w_{g}\,J_{g}
+\]
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(R^{g}_{0}\) est le rayon du point du point de Gauss
+    considéré dans la configuration initiale~;
+  \item \(w_{g}\) est son poids~;
+  \item \(J_{g}\) est le déterminant du jacobien permettant de passer
+    de l'élément de réference (le segment \(\left[-1:1\right]\)) à
+    l'élément considéré (le segement
+    \(\left[R_{0}^{\paren{i}}:R_{0}^{\paren{i+1}}\right]\))~;
+  \end{itemize}
+\end{minipage}
+
+Les deux points de Gauss étant équivalent, les poids de chacun sont
+égaux à \(1\). \(J_{g}\) est quand à lui égal à~:
+\[
+J_{g}=\Frac{R_{0}^{\paren{i+1}}-R_{0}^{\paren{i}}}{2}
+\]
+
+La position des points de Gauss est donnée par~:
+\[
+R^{g}_{0}=\Frac{1}{2}\paren{\paren{1-p_{g}}\,R_{0}^{\paren{i}}+\paren{1+p_{g}}\,R_{0}^{\paren{i+1}}}=R_{0}^{\paren{i}}+\Frac{\paren{1+p_{g}}}{2}\paren{R_{0}^{\paren{i+1}}-R_{0}^{\paren{i}}}
+\]
+avec~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(p_{g}=-\Frac{1}{\sqrt{3}}\) pour le premier point de Gauss~;
+  \item \(p_{g}= \Frac{1}{\sqrt{3}}\) pour le second point de Gauss.
+  \end{itemize}
+\end{minipage}
+
+Sur chaque segment, délimité par deux noeuds situés en \(R^{\paren{i}}_{0}\) et
+\(R^{\paren{i+1}}_{0}\) nous avons~:
+\[
+\left\{
+\begin{aligned}
+  v\paren{R}   &= \mathbb{V}^{\paren{i}}+\paren{R-R^{\paren{i}}_{0}}\,\Frac{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}{R^{\paren{i+1}}_{0}-R^{\paren{i}}_{0}}\\
+  \deriv{v}{R} &= \Frac{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}{R^{\paren{i+1}}_{0}-R^{\paren{i}}_{0}}
+\end{aligned}
+\right.
+\]
+
+Évaluée en un des deux points de \nom{Gauss}, la formule précédente s'écrit~:
+\[
+\left\{
+\begin{aligned}
+  v\paren{R_{g}} &= \mathbb{V}^{\paren{i}}+\Frac{1+p_{g}}{2}\,\paren{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}\\
+  \deriv{v}{R}  &= \Frac{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}{R^{\paren{i+1}}_{0}-R^{\paren{i}}_{0}}
+\end{aligned}
+\right.
+\]
+
+Approximée ainsi, l'intégrale est linéaire en \(\mathbb{V}^{\paren{i}}\) et
+\(\mathbb{V}^{\paren{i+1}}\). On peut donc écrire cette intégrale sous la forme~:
+\[
+\int_{R_{0}^{\paren{i}}}^{R_{0}^{\paren{i+1}}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R
+\approx
+\mathbb{F}_{ie}^{\paren{i}}\,\mathbb{V}^{\paren{i}}+\mathbb{F}_{ie}^{\paren{i+1}}\,\mathbb{V}^{\paren{i+1}}
+\]
+Le terme \(\mathbb{F}_{ie}^{\paren{i}}\) est la contribution de
+l'élément considéré à la force nodale associée au n\oe{}ud
+\(\paren{i}\).
+
+\subsection{Système discrétisé}
+
+Finalement, la forme faible discrétisée s'écrit~:
+\[
+\vec{\mathbb{F}}_{i}\,.\,\vec{\mathbb{V}}=\vec{\mathbb{F}}_{e}\,.\,\vec{\mathbb{V}}
+\]
+
+Cette expression étant vraie pour toute valeur de
+\(\vec{\mathbb{V}}\), l'équilibre mécanique discrétisé est
+simplement~:
+\[
+\vec{\mathbb{F}}_{i}=\vec{\mathbb{F}}_{e}
+\]
+
+Dans ce qui précède, nous n'avions pas précisé la dépendance du
+\(\tns{\Pi}\) et le gradient de déformation. Explicité cette
+dépendance permet de montrer que le système à résoudre est~:
+
+\[
+\vec{\mathbb{R}}\paren{\Delta\,\vec{\mathbb{U}}}=\vec{\mathbb{F}}_{i}\paren{\Delta\,\vec{\mathbb{U}}}-\vec{\mathbb{F}}_{e}\paren{\Delta\,\vec{\mathbb{U}}}=\vec{0}
+\]
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(\Delta\,\vec{\mathbb{U}}\) est l'incrément de déplacement~;
+  \item \(\vec{\mathbb{R}}\) est le vecteur des résidus.
+  \end{itemize}
+\end{minipage}
+
+Ce système non linéaire peut être résolu de multiples manières.
+
+L'une d'entre elle fait intervenir la matrice tangente cohérente.
 
 \end{document}

@@ -21,6 +21,8 @@ namespace mtest{
   // forward declaration
   struct StudyCurrentState;
   // forward declaration
+  struct CurrentState;
+  // forward declaration
   struct SolverWorkSpace;
   // forward declaration
   struct Structure;
@@ -145,6 +147,19 @@ namespace mtest{
 				const real) const = 0;
     /*!
      * \param[out] s: current structure state
+     * \param[in] wk: solver workspace
+     * \param[in]  o:  solver options
+     * \param[in]  t:  current time
+     * \param[in]  dt: time increment
+     */
+    virtual void
+    computeLoadingCorrection(StudyCurrentState&,
+			     SolverWorkSpace&,
+			     const SolverOptions&,
+			     const real,
+			     const real) const = 0;
+    /*!
+     * \param[out] s: current structure state
      * \param[in]  t:  current time
      * \param[in]  dt: time increment
      * \param[in]  p:  period
@@ -163,6 +178,13 @@ namespace mtest{
     virtual void setDefaultModellingHypothesis(void) = 0;
     //! destructor
     virtual ~Study();
+  protected:
+    /*!
+     * \brief set the position of the Gauss point in the evolution
+     * manager
+     * \param[in] s: current state
+     */
+    virtual void setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const = 0;
   }; // end of struct Study
   
 } // end of namespace mtest

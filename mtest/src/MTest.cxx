@@ -37,9 +37,6 @@
 #include"MTest/Behaviour.hxx"
 #include"MTest/MTestParser.hxx"
 
-#include"MTest/AnalyticalTest.hxx"
-#include"MTest/ReferenceFileComparisonTest.hxx"
-
 #include"MTest/Evolution.hxx"
 #include"MTest/FunctionEvolution.hxx"
 #include"MTest/CastemEvolution.hxx"
@@ -291,9 +288,11 @@ namespace mtest
     this->s_t0.resize(N,0);
     std::copy(v.begin(),v.end(),this->s_t0.begin());
   } // end of MTest::setThermodynamicForcesInitialValues
+
+  void MTest::setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const
+  {} // end of MTest::setGaussPointPositionForEvolutionsEvaluation
   
-  void
-  MTest::completeInitialisation()
+  void MTest::completeInitialisation()
   {
     using namespace std;
     using namespace tfel::material;
@@ -337,15 +336,15 @@ namespace mtest
       this->out << "# " << cnbr << " column : " << ivdes[i] << '\n';
       ++cnbr;
     }
-    // convergence criterium value for driving variables
+    // convergence criterion value for driving variables
     if(this->options.eeps<0){
       this->options.eeps = 1.e-12;
     }
-    // convergence criterium value for thermodynamic forces
+    // convergence criterion value for thermodynamic forces
     if(this->options.seps<0){
       this->options.seps = 1.e-3;
     }
-    // tangent operator comparison criterium
+    // tangent operator comparison criterion
     if(this->toeps<0){
       this->toeps = (this->options.seps/1e-3)*1.e7;
     }
@@ -883,6 +882,14 @@ namespace mtest
     }
     return fc;
   } // end of MTest::getFailedCriteriaDiagnostic
+
+  void
+  MTest::computeLoadingCorrection(StudyCurrentState&,
+				  SolverWorkSpace&,
+				  const SolverOptions&,
+				  const real,
+				  const real) const
+  {} // end of MTest::computeLoadingCorrection
   
   void MTest::postConvergence(StudyCurrentState& state,
 			      const real t,

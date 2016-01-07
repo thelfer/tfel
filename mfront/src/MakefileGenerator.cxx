@@ -290,7 +290,7 @@ namespace mfront{
     m << ".PHONY = ";
     m << "all clean ";
     for(const auto& l : t){
-      m << "lib" <<  l.name << "." << l.suffix << " ";
+      m << l.prefix <<  l.name << "." << l.suffix << " ";
     }
     for(const auto& target : t.specific_targets){
       if((target.first!="all")&&(target.first!="clean")){
@@ -300,7 +300,7 @@ namespace mfront{
     m << "\n\n";
     m << "all : ";
     for(const auto& l : t){
-      m << "lib" << l.name << "." << l.suffix << " ";
+      m << l.prefix << l.name << "." << l.suffix << " ";
     }
     m << "\n";
     auto p5=t.specific_targets.find("all");
@@ -326,7 +326,7 @@ namespace mfront{
       }
     }
     for(const auto& l : t){
-      m << "lib" << l.name << "." << l.suffix << " : ";
+      m << l.prefix << l.name << "." << l.suffix << " : ";
       auto dep = getLibrarySourcesAndDependencies(t,o,l.name);
       const auto hasCxxSources = dep.first;
       if(!dep.second.first.empty()){

@@ -68,7 +68,7 @@ namespace tfel{
       } // end of LUSolve::exe
 
       template<typename MatrixType,typename VectorType>
-      static void back_substitute(MatrixType& m,
+      static void back_substitute(const MatrixType& m,
 				  VectorType& b,
 				  VectorType& x,
 				  Permutation<typename MatrixTraits<MatrixType>::IndexType>& p)

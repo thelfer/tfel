@@ -20,6 +20,7 @@ namespace mfront{
 
   LibraryDescription&
   TargetsDescription::operator()(const std::string& n,
+				 const std::string& pr,
 				 const std::string& s,
 				 const LibraryDescription::LibraryType t){
     auto c = [&n](const LibraryDescription& l){
@@ -29,10 +30,15 @@ namespace mfront{
     const auto e = this->libraries.end();
     const auto p = std::find_if(b,e,c);
     if(p==e){
-      this->libraries.emplace_back(n,s,t);
+      this->libraries.emplace_back(n,pr,s,t);
       return this->libraries.back();
     }
-    LibraryDescription& l = *p;
+    auto& l = *p;
+    if(l.prefix!=pr){
+      throw(std::runtime_error("TargetsDescription::operator() : "
+			       "unmatched library prefix for library '"+n+"'"
+			       " ('"+l.prefix+"' vs '"+s+"')"));
+    }
     if(l.suffix!=s){
       throw(std::runtime_error("TargetsDescription::operator() : "
 			       "unmatched library suffix for library '"+n+"'"
@@ -48,8 +54,17 @@ namespace mfront{
 
   LibraryDescription&
   TargetsDescription::operator()(const std::string& n,
+				 const std::string& p){
+    const auto s  = LibraryDescription::getDefaultLibrarySuffix(this->system,
+								this->libraryType);
+    return this->operator()(n,p,s,this->libraryType);
+  } // end of TargetsDescription::operator()
+  
+  LibraryDescription&
+  TargetsDescription::operator()(const std::string& n,
+				 const std::string& pr,
 				 const std::string& s){
-    return this->operator()(n,s,this->libraryType);
+    return this->operator()(n,pr,s,this->libraryType);
   } // end of TargetsDescription::operator()
   
   LibraryDescription&
@@ -61,9 +76,11 @@ namespace mfront{
     const auto e = this->libraries.end();
     const auto p = std::find_if(b,e,c);
     if(p==e){
-      const auto s = LibraryDescription::getDefaultLibrarySuffix(this->system,
+      const auto pr = LibraryDescription::getDefaultLibraryPrefix(this->system,
 								 this->libraryType);
-      this->libraries.emplace_back(n,s,this->libraryType);
+      const auto s  = LibraryDescription::getDefaultLibrarySuffix(this->system,
+								  this->libraryType);
+      this->libraries.emplace_back(n,pr,s,this->libraryType);
       return this->libraries.back();
     }
     return *p;
@@ -119,7 +136,7 @@ namespace mfront{
 			       const bool b)
   {
     for(const auto& ls : s){
-      auto& ld = d[ls.name];
+      auto& ld = d(ls.name,ls.prefix,ls.suffix,ls.type);
       mergeLibraryDescription(ld,ls);
     }
     for(const auto& h:s.headers){
@@ -208,7 +225,7 @@ namespace mfront{
 	if(describes(t,l.name)){
 	  error("library '"+l.name+"' multiply defined");
 	}
-	mergeLibraryDescription(t(l.name,l.suffix,l.type),l);
+	mergeLibraryDescription(t(l.name,l.prefix,l.suffix,l.type),l);
       } else if (c->value=="headers"){
 	++c;
 	get_vector(t.headers,c,pe,"headers");

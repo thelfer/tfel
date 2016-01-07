@@ -47,6 +47,15 @@ namespace mfront{
       SHARED_LIBRARY, //<! a shared library meant to be used for linking
       MODULE          //<! a module is meant to be used as a plugin 
     };
+    /*!
+     * \return the default library prefix for the given target system
+     * and library type
+     * \param[in] s : target system
+     * \param[in] t : library type
+     */
+    static const char*
+    getDefaultLibraryPrefix(const TargetSystem,
+			    const LibraryType) noexcept;
    /*!
      * \return the default library suffix for the given target system
      * and library type
@@ -65,6 +74,17 @@ namespace mfront{
     LibraryDescription(const std::string&,
 		       const std::string&,
 		       const LibraryType);
+    /*!
+     * Constructor
+     * \param[in] n : name   of the library
+     * \param[in] p : prefix of the library
+     * \param[in] s : suffix of the library
+     * \param[in] t : type   of the library
+     */
+    LibraryDescription(const std::string&,
+		       const std::string&,
+		       const std::string&,
+		       const LibraryType);
     LibraryDescription(const LibraryDescription&);
     LibraryDescription(LibraryDescription&&);
     LibraryDescription& operator=(const LibraryDescription&) = delete;
@@ -73,6 +93,8 @@ namespace mfront{
     ~LibraryDescription();
     //! library name
     const std::string name;
+    //! libray suffix
+    const std::string prefix;
     //! libray suffix
     const std::string suffix;
     //! libray type

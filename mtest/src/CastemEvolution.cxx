@@ -75,16 +75,20 @@ namespace mtest{
     return true;
   } // end of CastemEvolution::isConstant
 
-  void  CastemEvolution::setValue(const real,
-					 const real)
+  void CastemEvolution::setValue(const real)
   {
-    using namespace std;
-    string msg("CastemEvolution::setValue : "
-	       "this method does not makes sense for castem evolution");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("CastemEvolution::setValue : "
+			     "this method does not makes "
+			     "sense for castem evolution"));
   }
   
-  CastemEvolution::~CastemEvolution()
-  {} // end of CastemEvolution::~CastemEvolution
+  void CastemEvolution::setValue(const real,const real)
+  {
+    throw(std::runtime_error("CastemEvolution::setValue : "
+			     "this method does not makes "
+			     "sense for castem evolution"));
+  }
+  
+  CastemEvolution::~CastemEvolution() = default;
 
 }

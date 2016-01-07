@@ -91,6 +91,42 @@ namespace mtest{
     throw(std::runtime_error("StudyCurrentState::throwAlreadyDeclaredParameterException:"
 			     "parameter '"+n+"' already declared"));
   }
+
+  bool
+  StudyCurrentState::containsEvolution(const std::string& n) const{
+    return this->evs.find(n)!=this->evs.end();
+  }
+  
+  void
+  StudyCurrentState::addEvolution(const std::string& n,
+				  std::shared_ptr<Evolution> e){
+    auto p = this->evs.find(n);
+    if(p!=this->evs.end()){
+      throw(std::runtime_error("StudyCurrentState::getEvolution: "
+			       "evolution '"+n+"' already defined"));
+    }
+    this->evs[n]=e;
+  }
+
+  Evolution&
+  StudyCurrentState::getEvolution(const std::string& n){
+    auto p = this->evs.find(n);
+    if(p==this->evs.end()){
+      throw(std::runtime_error("StudyCurrentState::getEvolution: "
+			       "no evolution named '"+n+"'"));
+    }
+    return *(p->second);
+  }
+
+  const Evolution&
+  StudyCurrentState::getEvolution(const std::string& n) const{
+    auto p = this->evs.find(n);
+    if(p==this->evs.end()){
+      throw(std::runtime_error("StudyCurrentState::getEvolution: "
+			       "no evolution named '"+n+"'"));
+    }
+    return *(p->second);
+  }
   
   StudyCurrentState::~StudyCurrentState() = default;
   

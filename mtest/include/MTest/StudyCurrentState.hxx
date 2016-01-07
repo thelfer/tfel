@@ -26,6 +26,8 @@
 namespace mtest{
 
   // forward declaration
+  struct Evolution;
+  // forward declaration
   struct StructureCurrentState;
   
   /*!
@@ -132,6 +134,27 @@ namespace mtest{
      */
     template<typename T>
     T& setParameter(const std::string&,T&&);
+    /*!
+     * \param[in] n : name of the evolution
+     */
+    bool containsEvolution(const std::string&) const;
+    /*!
+     * \brief add a new evolution
+     * \param[in] n : name of the evolution
+     * \param[in] e : evolution
+     */
+    void addEvolution(const std::string&,
+		      std::shared_ptr<Evolution>);
+    /*!
+     * \return the evolution with the given name
+     * \param[in] n  : name of the evolution
+     */
+    Evolution& getEvolution(const std::string&);
+    /*!
+     * \return the evolution with the given name
+     * \param[in] n  : name of the evolution
+     */
+    const Evolution& getEvolution(const std::string&) const;
   protected:
     /*!
      * \brief throw an exception stating that no parameter with the
@@ -155,6 +178,10 @@ namespace mtest{
      */
     std::map<std::string,
 	     std::shared_ptr<StructureCurrentState>> s;
+    /*!
+     * evolutions
+     */
+    std::map<std::string,std::shared_ptr<Evolution>> evs;
   }; // end of struct StudyCurrentState
     
 } // end of namespace mtest

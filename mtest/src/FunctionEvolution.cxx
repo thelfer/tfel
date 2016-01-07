@@ -27,21 +27,18 @@ namespace mtest{
   real
   FunctionEvolution::operator()(const real t) const
   {
-    using namespace std;
     const auto& args = this->f.getVariablesNames();
-    vector<string>::size_type i;
+    std::vector<std::string>::size_type i;
     for(i=0;i!=args.size();++i){
       if(args[i]=="t"){
 	this->f.setVariableValue("t",t);
       } else {
-	map<string,shared_ptr<Evolution> >::const_iterator pev;
-	pev = evm->find(args[i]);
+	auto pev = evm->find(args[i]);
 	if(pev==evm->end()){
-	  string msg("FunctionEvolution::operator() : ");
-	  msg += "can't evaluate argument '"+args[i]+"'";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("FunctionEvolution::operator(): "
+				   "can't evaluate argument '"+args[i]+"'"));
 	} else {
-	  const Evolution& ev = *(pev->second);
+	  const auto& ev = *(pev->second);
 	  this->f.setVariableValue(args[i],ev(t));
 	}
       }
@@ -52,19 +49,16 @@ namespace mtest{
   bool
   FunctionEvolution::isConstant(void) const
   {
-    using namespace std;
     const auto& args = this->f.getVariablesNames();
-    vector<string>::size_type i;
+    std::vector<std::string>::size_type i;
     for(i=0;i!=args.size();++i){
       if(args[i]=="t"){
 	return false;
       } else {
-	map<string,shared_ptr<Evolution> >::const_iterator pev;
-	pev = evm->find(args[i]);
+	auto pev = evm->find(args[i]);
 	if(pev==evm->end()){
-	  string msg("FunctionEvolution::operator() : ");
-	  msg += "can't evaluate argument '"+args[i]+"'";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("FunctionEvolution::operator(): "
+				   "can't evaluate argument '"+args[i]+"'"));
 	} else {
 	  const Evolution& ev = *(pev->second);
 	  if(!ev.isConstant()){
@@ -76,16 +70,20 @@ namespace mtest{
     return true;
   } // end of FunctionEvolution::isConstant
 
-  void  FunctionEvolution::setValue(const real,
-					 const real)
+  void FunctionEvolution::setValue(const real)
   {
-    using namespace std;
-    string msg("FunctionEvolution::setValue : "
-	       "this method does not makes sense for function evolution");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("FunctionEvolution::setValue: "
+			     "this method does not makes sense "
+			     "for function evolution"));
   }
   
-  FunctionEvolution::~FunctionEvolution()
-  {} // end of FunctionEvolution::~FunctionEvolution
+  void FunctionEvolution::setValue(const real,const real)
+  {
+    throw(std::runtime_error("FunctionEvolution::setValue: "
+			     "this method does not makes sense "
+			     "for function evolution"));
+  }
+  
+  FunctionEvolution::~FunctionEvolution() = default;
 
 }

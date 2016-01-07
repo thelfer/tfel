@@ -1,2 +1,2 @@
-SUBDIRS=castem castem2 aster abaqus cyrano
+SUBDIRS=castem castem2 cyrano
 EXTRA_DIST=CMakeLists.txt

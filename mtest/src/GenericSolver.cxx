@@ -198,6 +198,7 @@ namespace mtest{
 	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL3){
 	    report(s.getFailedCriteriaDiagnostic(scs,wk.du,wk.r,o,t,dt));
 	  }
+	  s.computeLoadingCorrection(scs,wk,o,t,dt);
 	  // call the acceleration algorithm
 	  if(o.aa.get()!=nullptr){
 	    o.aa->execute(u1,wk.du,wk.r,o.eeps,o.seps,iter);
