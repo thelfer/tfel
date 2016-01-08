@@ -294,7 +294,8 @@ namespace mtest
       throw(std::runtime_error("PipeTestParser::handleAxialLoading: "
 			       "invalid pipe modelling hypothesis ('"+h+"').\n"
 			       "Valid modelling hypothesis are "
-			       "'None' and 'EndCapEffect'"));
+			       "'None', 'ImposedAxialGrowth', "
+			       "'ImposedAxialForce' and 'EndCapEffect'"));
     }
     this->checkNotEndOfLine("PipeTestParser::handleAxialLoading",
 			    p,this->fileTokens.end());
