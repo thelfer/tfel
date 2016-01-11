@@ -79,65 +79,21 @@ namespace mfront{
     getSourceFileName(const std::string&);
 
   private:
-
-    /*
-     * \param[in] className
-     * \param[in] author
-     * \param[in] date
-     * \param[in] description
-     * \param[in] params
+    /*!
+     * \brief generate the output files
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
      */
     virtual void
-    writeHeaderFile(const std::string&,
-		    const std::string&,
-		    const std::string&,
-		    const std::string&,
-		    const std::vector<std::string>&);
-    
-    /*
-     * \param const std::string&, name of the original file
-     * \param const std::string&, className
-     * \param const std::string&, author
-     * \param const std::string&, date
-     * \param const std::string&, includes
-     * \param const std::string&, output name
-     * \param const VariableDescriptionContainer&, inputs
-     * \param const std::vector<std::string>&, material laws
-     * \param const StaticVariableDescriptionContainer&, static variables
-     * \param const std::map<std::string,std::string>&, glossary names,
-     * \param const std::map<std::string,std::string>&, entry names,
-     * \param const std::vector<std::string>&, parameters
-     * \param const std::map<std::string,double>&, parameters values
-     * \param const LawFunction&, function definition
-     * \param const std::vector<VariableBoundsDescription>&, bounds of the law
-     * \param const std::vector<VariableBoundsDescription>&, physical bounds of the law
+    writeHeaderFile(const MaterialPropertyDescription&,
+		    const FileDescription&);
+    /*!
+     * \brief generate the output files
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
      */
-    virtual void
-    writeSrcFile(const std::string&,
-		 const std::string&,
-		 const std::string&,
-		 const std::string&,
-		 const std::string&,
-		 const std::string&,
-		 const VariableDescriptionContainer&,
-		 const std::vector<std::string>&,
-		 const StaticVariableDescriptionContainer&,
-		 const std::map<std::string,std::string>&,
-		 const std::map<std::string,std::string>&,
-		 const std::vector<std::string>&,
-		 const std::map<std::string,double>&,
-		 const LawFunction&,
-		 const std::vector<VariableBoundsDescription>&,
-		 const std::vector<VariableBoundsDescription>&);
-    
-    std::ofstream headerFile;
-
-    std::ofstream srcFile;
-
-    std::string headerFileName;
-
-    std::string srcFileName;
-    
+    virtual void writeSrcFile(const MaterialPropertyDescription&,
+			      const FileDescription&);
   }; // end of MfrontCastemMaterialPropertyInterface
 
 } // end of namespace mfront

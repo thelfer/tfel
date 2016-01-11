@@ -54,6 +54,7 @@ set(TFELMFront_SOURCES
     ThermodynamicForce.cxx
     LawFunction.cxx
     MaterialPropertyDescription.cxx
+    MaterialPropertyParametersHandler.cxx
     BehaviourData.cxx
     BehaviourDescription.cxx
     BoundsDescription.cxx

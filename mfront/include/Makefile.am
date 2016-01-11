@@ -37,6 +37,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                               \
 			MFront/MaterialPropertyInterfaceFactory.hxx     \
 			MFront/MaterialPropertyInterfaceProxy.hxx       \
 			MFront/MaterialPropertyInterfaceProxy.ixx       \
+			MFront/MaterialPropertyParametersHandler.hxx    \
 			MFront/AbstractBehaviourInterface.hxx           \
 			MFront/BehaviourInterfaceProxy.hxx              \
 			MFront/BehaviourInterfaceProxy.ixx              \

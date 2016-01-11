@@ -40,6 +40,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           ThermodynamicForce.cxx                                 \
 		           LawFunction.cxx                                        \
 		           MaterialPropertyDescription.cxx                        \
+			   MaterialPropertyParametersHandler.cxx                  \
 		           BehaviourData.cxx                                      \
 		           BehaviourDescription.cxx                               \
 		           BoundsDescription.cxx                                  \

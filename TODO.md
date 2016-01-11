@@ -18,6 +18,7 @@
 
 - catch c++ exceptions
 - catch c errno
+- support of parameters modification through txt file
 
 # Update documentation
 

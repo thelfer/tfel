@@ -78,30 +78,6 @@ namespace mfront{
     std::string
     treatDescriptionString(const std::string&) const;
 
-    void writeSrcFile(const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const VariableDescriptionContainer&,
-		      const std::vector<std::string>&,
-		      const StaticVariableDescriptionContainer&,
-		      const std::vector<std::string>&,
-		      const std::map<std::string,double>&,
-		      const LawFunction&,
-		      const std::vector<VariableBoundsDescription>&,
-		      const std::vector<VariableBoundsDescription>&);
-
-    std::ofstream headerFile;
-
-    std::ofstream srcFile;
-
-    std::string headerFileName;
-
-    std::string srcFileName;
-
   }; // end of MfrontOctaveLawInterface
 
 } // end of namespace mfront

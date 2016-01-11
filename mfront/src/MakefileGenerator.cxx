@@ -302,7 +302,6 @@ namespace mfront{
     for(const auto& l : t){
       m << l.prefix << l.name << "." << l.suffix << " ";
     }
-    m << "\n";
     auto p5=t.specific_targets.find("all");
     if(p5!=t.specific_targets.end()){
       copy(p5->second.first.begin(),p5->second.first.end(),

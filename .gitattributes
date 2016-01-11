@@ -1804,6 +1804,7 @@ mfront/include/MFront/MaterialPropertyDescription.hxx -text
 mfront/include/MFront/MaterialPropertyInterfaceFactory.hxx -text
 mfront/include/MFront/MaterialPropertyInterfaceProxy.hxx -text
 mfront/include/MFront/MaterialPropertyInterfaceProxy.ixx -text
+mfront/include/MFront/MaterialPropertyParametersHandler.hxx -text
 mfront/include/MFront/ModelDSL.hxx -text
 mfront/include/MFront/ModelDSLBase.hxx -text
 mfront/include/MFront/ModelDSLBase.ixx -text
@@ -1956,6 +1957,7 @@ mfront/src/MakefileGenerator.cxx -text
 mfront/src/MaterialPropertyDSL.cxx -text
 mfront/src/MaterialPropertyDescription.cxx -text
 mfront/src/MaterialPropertyInterfaceFactory.cxx -text
+mfront/src/MaterialPropertyParametersHandler.cxx -text
 mfront/src/ModelDSL.cxx -text
 mfront/src/ModelDSLCommon.cxx -text
 mfront/src/ModelData.cxx -text

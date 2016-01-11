@@ -43,6 +43,7 @@
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CMaterialPropertyInterface.hxx"
+#include"MFront/MaterialPropertyParametersHandler.hxx"
 #include"MFront/PythonMaterialPropertyInterface.hxx"
 
 #ifndef _MSC_VER
@@ -199,7 +200,9 @@ namespace mfront
     this->srcFile << " */\n\n";
     this->srcFile << "#include <Python.h>\n\n";
     this->srcFile << "#include<iostream>\n";
+    this->srcFile << "#include<fstream>\n";
     this->srcFile << "#include<sstream>\n";
+    this->srcFile << "#include<string>\n";
     this->srcFile << "#include<cmath>\n";
     this->srcFile << "#include<algorithm>\n";
     this->srcFile << "#include<cstring>\n";
@@ -209,6 +212,8 @@ namespace mfront
       this->srcFile << includes << endl << endl;
     }
     this->srcFile << "#include\"" << name << "-python.hxx\"\n\n";
+    writeMaterialPropertyParametersHandler(this->srcFile,mpd,
+					   name,"double","python");
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "extern \"C\"{\n";
     this->srcFile << "#endif /* __cplusplus */\n\n";
@@ -230,18 +235,16 @@ namespace mfront
     this->srcFile << "auto throwPythonRuntimeException = [](const string& msg){\n"
 		  << "  PyErr_SetString(PyExc_RuntimeError,msg.c_str());\n"
 		  << "  return nullptr;\n"
-		  << "};";
+		  << "};\n";
     // parameters
-    if(!params.empty()){
-      for(auto p=params.begin();p!=params.end();++p){
-	auto p6 = paramValues.find(*p);
-	if(p6==paramValues.end()){
-	  string msg("PythonMaterialPropertyInterface::writeOutputFile : ");
-	  msg += "internal error (can't find value of parameter " + *p + ")";
-	  throw(runtime_error(msg));
-	}
-	this->srcFile << "static " << constexpr_c << " double " << *p << " = " << p6->second << ";\n";
-      }
+    if(!mpd.parameters.empty()){
+      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
+      this->srcFile << "if(!python::" <<  hn << "::get" << hn << "().ok){\n"
+		    << "return throwPythonRuntimeException(python::"<< name << "MaterialPropertyHandler::get"
+		    << name << "MaterialPropertyHandler().msg);\n"
+		    << "}\n";
+      writeAssignMaterialPropertyParameters(this->srcFile,mpd,name,
+					    "double","python");
     }
     if(!inputs.empty()){
       unsigned short i;
