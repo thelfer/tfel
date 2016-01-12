@@ -13,23 +13,38 @@
 
 #include<sstream>
 
+#include"MTest/TextDataUtilities.hxx"
 #include"MTest/ReferenceFileComparisonTest.hxx"
 
 namespace mtest{
-
-  ReferenceFileComparisonTest::ReferenceFileComparisonTest(const std::shared_ptr<tfel::utilities::TextData> d,
-								     const std::string& v,
-								     const unsigned int c,
-								     const MTest::UTest::TestedVariable t,
-								     const unsigned short p,
-								     const real eps_)
-    : values(d->getColumn(c)),
+  
+  ReferenceFileComparisonTest::ReferenceFileComparisonTest(const tfel::utilities::TextData& d,
+							   const unsigned int c,
+							   const std::string& v,
+							   const MTest::UTest::TestedVariable t,
+							   const unsigned short p,
+							   const real eps_)
+    : values(d.getColumn(c)),
       name(v),
       type(t),
       pos(p),
       eps(eps_)
   {} // ReferenceFileComparisonTest::ReferenceFileComparisonTest
 
+  ReferenceFileComparisonTest::ReferenceFileComparisonTest(const tfel::utilities::TextData& d,
+							   const EvolutionManager& e,
+							   const std::string& f,
+							   const std::string& v,
+							   const MTest::UTest::TestedVariable t,
+							   const unsigned short p,
+							   const real eps_)
+    : values(eval(d,e,f)),
+      name(v),
+      type(t),
+      pos(p),
+      eps(eps_)
+  {} // ReferenceFileComparisonTest::ReferenceFileComparisonTest
+  
   void
   ReferenceFileComparisonTest::check(const tfel::math::vector<real>& e,
 				     const tfel::math::vector<real>& s,
@@ -52,7 +67,7 @@ namespace mtest{
 			       "internal error (unsuported type of variable"));
     }
     if(p>=this->values.size()){
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "ReferenceFileComparisonTest::check : comparison for variable '"
 	  << this->name << "' failed for time '" << t+dt << "' "
 	  << "(reference value is not available for period  '" << p << "')";
@@ -75,14 +90,12 @@ namespace mtest{
   tfel::tests::TestResult
   ReferenceFileComparisonTest::getResults() const
   {
-    using namespace std;
-    using tfel::tests::TestResult;
     if(this->results.success()){
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "ReferenceFileComparisonTest::check : comparison for variable '"
 	  << this->name << "' was successfull for all times (" 
 	  << "criterion '"<< this->eps << "')";
-      return TestResult(true,msg.str());
+      return tfel::tests::TestResult(true,msg.str());
     }
     return this->results;
   }

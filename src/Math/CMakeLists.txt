@@ -1,7 +1,5 @@
 include_directories("${PROJECT_SOURCE_DIR}/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/System"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
                  "${PROJECT_BINARY_DIR}/src/Exception")
 
 set(TFELMath_SOURCES
@@ -57,8 +55,6 @@ set(TFELMathParser_SOURCES
 tfel_library(TFELMath ${TFELMath_SOURCES})
 target_link_libraries(TFELMath
                       TFELException)
-
-
 
 tfel_library(TFELMathCubicSpline ${TFELMathCubicSpline_SOURCES})
 target_link_libraries(TFELMathCubicSpline

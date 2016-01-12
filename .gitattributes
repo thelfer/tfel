@@ -3716,6 +3716,7 @@ mtest/include/MTest/Study.hxx -text
 mtest/include/MTest/StudyCurrentState.hxx -text
 mtest/include/MTest/StudyCurrentState.ixx -text
 mtest/include/MTest/StudyParameter.hxx -text
+mtest/include/MTest/TextDataUtilities.hxx -text
 mtest/include/MTest/Types.hxx -text
 mtest/include/MTest/UmatBehaviourBase.hxx -text
 mtest/include/MTest/UmatNormaliseTangentOperator.hxx -text
@@ -3779,6 +3780,7 @@ mtest/src/SteffensenAccelerationAlgorithm.cxx -text
 mtest/src/StructureCurrentState.cxx -text
 mtest/src/Study.cxx -text
 mtest/src/StudyCurrentState.cxx -text
+mtest/src/TextDataUtilities.cxx -text
 mtest/src/UmatBehaviourBase.cxx -text
 mtest/src/UmatNormaliseTangentOperator.cxx -text
 mtest/tests/CMakeLists.txt -text

@@ -8,9 +8,11 @@
 #include<sstream>
 
 #include"TFEL/Config/GetInstallPath.hxx"
+#include"TFEL/Utilities/TextData.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/MTest.hxx"
 #include"MTest/Evolution.hxx"
+#include"MTest/TextDataUtilities.hxx"
 #include"MTest/FunctionEvolution.hxx"
 #include"MTest/SchemeParserBase.hxx"
 
@@ -168,7 +170,7 @@ namespace mtest{
     } else if(s=="TangentOperatorPrediction"){
       ppolicy = PredictionPolicy::TANGENTOPERATORPREDICTION;
     } else {
-      throw(std::runtime_error("SchemeParserBase::handlePredictionPolicy : "
+      throw(std::runtime_error("SchemeParserBase::handlePredictionPolicy: "
 			       "unsupported prediction policy '"+s+"'"));
     }
     t.setPredictionPolicy(ppolicy);
@@ -189,7 +191,7 @@ namespace mtest{
     } else if(type=="ConsistentTangentOperator"){
       ktype=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
     } else {
-      throw(runtime_error("SchemeParserBase::handleStiffnessMatrixType : "
+      throw(runtime_error("SchemeParserBase::handleStiffnessMatrixType: "
 			  "unsupported stiffness matrix type '"+type+"'"));
     }
     this->readSpecifiedToken("SchemeParserBase::handleStiffnessMatrixType",";",
@@ -209,7 +211,7 @@ namespace mtest{
     } else if(p->value=="false"){
       useCastemAcceleration = false;
     } else {
-      throw(runtime_error("SchemeParserBase::handleUseCastemAccelerationAlgorithm : "
+      throw(runtime_error("SchemeParserBase::handleUseCastemAccelerationAlgorithm: "
 			  "unexpected token '"+p->value+"'"));
     }
     ++p;
@@ -276,7 +278,7 @@ namespace mtest{
     } else if(type=="TangentOperator"){
       ks=StiffnessUpdatingPolicy::UPDATEDSTIFFNESSMATRIX;
     } else {
-      throw(std::runtime_error("SchemeParserBase::handleStiffnessUpdatePolicy : "
+      throw(std::runtime_error("SchemeParserBase::handleStiffnessUpdatePolicy: "
 			       "unsupported stiffness matrix policy '"+type+"'"));
     }
     this->readSpecifiedToken("SchemeParserBase::handleStiffnessUpdatePolicy",";",
@@ -312,7 +314,7 @@ namespace mtest{
 	  (p->value != ";")){
       if(!p->value.empty()){
 	if(p->value[0]=='@'){
-	  string msg("SchemeParserBase::readUntilEndOfInstruction : ");
+	  string msg("SchemeParserBase::readUntilEndOfInstruction: ");
 	  msg += "no word beginning with '@' are allowed here";
 	  throw(runtime_error(msg));
 	}
@@ -330,78 +332,109 @@ namespace mtest{
   SchemeParserBase::handleTimes(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
+    enum {ARRAY,FILE} entry_type = ARRAY;
     vector<real> times;
-    this->readSpecifiedToken("SchemeParserBase::handleTimes","{",p,
-			     this->fileTokens.end());
     this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
 			    this->fileTokens.end());
-    while(p->value!="}"){
-      const real t_dt = this->readTime(t,p);
+    if(p->value=="<"){
+      ++p;
       this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
 			      this->fileTokens.end());
-      if(!times.empty()){
-	if(p->value=="in"){
-	  ++p;
-	  unsigned int n = this->readUnsignedInt(p,this->fileTokens.end());
-	  if(n==0){
-	    throw(runtime_error("SchemeParserBase::handleTimes : "
-				"invalid number of intervals"));
-	  }
-	  const real tt = times.back();
-	  real dt = (t_dt-tt)/(static_cast<real>(n));
-	  for(unsigned int i=1;i!=n;++i){
-	    times.push_back(tt+i*dt);
-	  }
-	}
-	this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
-				this->fileTokens.end());
-      }
-      times.push_back(t_dt);
-      if(p->value==","){
-	++p;
-	this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
-				this->fileTokens.end());
-	if(p->value=="}"){
-	  string msg("SchemeParserBase::handleTimes : ");
-	  msg += "unexpected token '}'";
-	  throw(runtime_error(msg));
-	}
+      if(p->value=="array"){
+	entry_type=ARRAY;
+      } else if((p->value=="file")||(p->value=="data")){
+	entry_type=FILE;
       } else {
-	if(p->value!="}"){
-	  string msg("SchemeParserBase::handleTimes : ");
-	  msg += "unexpected token '"+p->value+"', expected ',' or '}'";
-	  throw(runtime_error(msg));
+	throw(std::runtime_error("SchemeParserBase::handleTimes: "
+				 "invalid entry type for times. Expected 'array' "
+				 "or 'file' or 'data', read '"+p->value+"'"));
+      }
+      ++p;
+      this->readSpecifiedToken("SchemeParserBase::handleTimes",">",p,
+			       this->fileTokens.end());
+    }
+    if(entry_type==ARRAY){
+      this->readSpecifiedToken("SchemeParserBase::handleTimes","{",p,
+			       this->fileTokens.end());
+      this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
+			      this->fileTokens.end());
+      while(p->value!="}"){
+	const real t_dt = this->readTime(t,p);
+	this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
+				this->fileTokens.end());
+	if(!times.empty()){
+	  if(p->value=="in"){
+	    ++p;
+	    unsigned int n = this->readUnsignedInt(p,this->fileTokens.end());
+	    if(n==0){
+	      throw(runtime_error("SchemeParserBase::handleTimes: "
+				  "invalid number of intervals"));
+	    }
+	    const real tt = times.back();
+	    real dt = (t_dt-tt)/(static_cast<real>(n));
+	    for(unsigned int i=1;i!=n;++i){
+	      times.push_back(tt+i*dt);
+	    }
+	  }
+	  this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
+				  this->fileTokens.end());
 	}
+	times.push_back(t_dt);
+	if(p->value==","){
+	  ++p;
+	  this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
+				  this->fileTokens.end());
+	  if(p->value=="}"){
+	    string msg("SchemeParserBase::handleTimes: ");
+	    msg += "unexpected token '}'";
+	    throw(runtime_error(msg));
+	  }
+	} else {
+	  if(p->value!="}"){
+	    string msg("SchemeParserBase::handleTimes: ");
+	    msg += "unexpected token '"+p->value+"', expected ',' or '}'";
+	    throw(runtime_error(msg));
+	  }
+	}
+      }
+      this->readSpecifiedToken("SchemeParserBase::handleTimes","}",p,
+			       this->fileTokens.end());
+    } else{
+      tfel::utilities::TextData d{this->readString(p,this->fileTokens.end())};
+      this->readSpecifiedToken("SchemeParserBase::handleTimes","using",p,
+			       this->fileTokens.end());
+      this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
+			      this->fileTokens.end());
+      if(p->flag==tfel::utilities::Token::String){
+	times = eval(d,*(t.getEvolutions()),
+		     this->readString(p,this->fileTokens.end()));
+      } else {
+	times = d.getColumn(this->readUnsignedInt(p,this->fileTokens.end()));
       }
     }
-    this->readSpecifiedToken("SchemeParserBase::handleTimes","}",p,
-			     this->fileTokens.end());
     this->readSpecifiedToken("SchemeParserBase::handleTimes",";",p,
 			     this->fileTokens.end());
     if(times.empty()){
-      string msg("SchemeParserBase::handleTimes : ");
-      msg += "no time defined";
-      throw(runtime_error(msg));
+      throw(runtime_error("SchemeParserBase::handleTimes: "
+			  "no time defined"));
     }
     if(times.size()==1){
-      string msg("SchemeParserBase::handleTimes : ");
-      msg += "at least two different times must be defined";
-      throw(runtime_error(msg));
+      throw(runtime_error("SchemeParserBase::handleTimes: "
+			  "at least two different times must be defined"));
     }
-    vector<real>::const_iterator pt  = times.begin();
+    auto pt  = times.begin();
     real mt(0);
     while(pt!=times.end()){
       mt = max(mt,abs(*pt));
       ++pt;
     }
     if(mt<100*numeric_limits<real>::min()){
-      string msg("SchemeParserBase::handleTimes : maximal "
-		 "absolute value of times is too low");
-      throw(runtime_error(msg));
+      throw(runtime_error("SchemeParserBase::handleTimes: maximal "
+			  "absolute value of times is too low"));
     }
     const real eps = 100*mt*numeric_limits<real>::epsilon();
     pt  = times.begin();
-    vector<real>::const_iterator pt2 = pt+1u;
+    auto pt2 = pt+1u;
     while(pt2!=times.end()){
       if((*pt2<=*pt)||abs(*pt2-*pt)<eps){
 	ostringstream msg;
@@ -446,7 +479,7 @@ namespace mtest{
 	evs = t.getEvolutions();
 	pev = evs->find(*pv);
 	if(pev==evs->end()){
-	  string msg("SchemeParserBase::readDouble : "
+	  string msg("SchemeParserBase::readDouble: "
 		     "no evolution named '"+*pv+"' defined");
 	  throw(runtime_error(msg));
 	}
@@ -498,7 +531,6 @@ namespace mtest{
 				   TokensContainer::const_iterator& p)
   {
     using namespace std;
-    using namespace tfel::utilities;
     shared_ptr<Evolution> ev;
     this->checkNotEndOfLine("SchemeParserBase::parseEvolution",p,
 			    this->fileTokens.end());
@@ -522,15 +554,13 @@ namespace mtest{
 	    this->checkNotEndOfLine("SchemeParserBase::parseEvolution",p,
 				    this->fileTokens.end());
 	    if(p->value=="}"){
-	      string msg("SchemeParserBase::parseEvolution : ");
-	      msg += "unexpected token '}'";
-	      throw(runtime_error(msg));
+	      throw(std::runtime_error("SchemeParserBase::parseEvolution: "
+				       "unexpected token '}'"));
 	    }
 	  } else {
 	    if(p->value!="}"){
-	      string msg("SchemeParserBase::parseEvolution : ");
-	      msg += "unexpected token '"+p->value+"', expected ',' or '}'";
-	      throw(runtime_error(msg));
+	      throw(std::runtime_error("SchemeParserBase::parseEvolution: "
+				       "unexpected token '"+p->value+"', expected ',' or '}'"));
 	    }
 	  }
 	}
@@ -544,10 +574,30 @@ namespace mtest{
     } else if(type=="function"){
       const auto& f = this->readString(p,this->fileTokens.end());
       ev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
+    } else if((type=="data")||(type=="file")){
+      tfel::utilities::TextData data{this->readString(p,this->fileTokens.end())};
+      this->readSpecifiedToken("SchemeParserBase::parseEvolution","using",p,
+			       this->fileTokens.end());
+      auto tv = std::vector<double>{};
+      auto vv = std::vector<double>{};
+      if(p->flag==tfel::utilities::Token::String){
+	tv = eval(data,*(t.getEvolutions()),
+		  this->readString(p,this->fileTokens.end()));
+      } else {
+	tv = data.getColumn(readUnsignedInt(p,this->fileTokens.end()));
+      }
+      this->readSpecifiedToken("SchemeParserBase::parseEvolution",":",p,
+			       this->fileTokens.end());
+      if(p->flag==tfel::utilities::Token::String){
+	vv = eval(data,*(t.getEvolutions()),
+		  this->readString(p,this->fileTokens.end()));
+      } else {
+	vv = data.getColumn(readUnsignedInt(p,this->fileTokens.end()));
+      }
+      ev = shared_ptr<Evolution>(new LPIEvolution(tv,vv));
     } else {
-      string msg("SchemeParserBase::parseEvolution : ");
-      msg += "invalid evolution type '"+type+"'";
-      throw(runtime_error(msg));
+      throw(runtime_error("SchemeParserBase::parseEvolution: "
+			  "invalid evolution type '"+type+"'"));
     }
     return ev;
   } // end of SchemeParserBase::parseEvolution

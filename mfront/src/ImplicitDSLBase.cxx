@@ -1382,6 +1382,9 @@ namespace mfront{
 			    << "}" << endl;
       }
     }
+    if(this->mb.hasCode(h,BehaviourData::ComputePredictor)){
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputePredictor) << endl;
+    }
     if(this->mb.getAttribute(BehaviourData::profiling,false)){
       writeStandardPerformanceProfilingBegin(this->behaviourFile,
 					     mb.getClassName(),

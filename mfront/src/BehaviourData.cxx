@@ -394,7 +394,7 @@ namespace mfront{
   BehaviourData::addAuxiliaryStateVariable(const VariableDescription& v,
 					   const RegistrationStatus s)
   {
-    this->addVariable(this->auxiliaryStateVariables,v,s,true);
+    this->addVariable(this->auxiliaryStateVariables,v,s,false);
     this->addVariable(this->persistentVariables,v,
 		      ALREADYREGISTRED,true);
   } // end of BehaviourData::addAuxiliaryStateVariable

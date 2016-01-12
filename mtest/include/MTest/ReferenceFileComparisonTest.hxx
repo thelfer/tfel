@@ -35,15 +35,32 @@ namespace mtest{
     /*!
      * constructor
      * \param[in] d    : data
-     * \param[in] v    : variable
      * \param[in] c    : column
+     * \param[in] v    : variable
      * \param[in] vt   : variable type
      * \param[in] vp   : variable position
      * \param[in] eps  : criterium value
      */
-    ReferenceFileComparisonTest(const std::shared_ptr<tfel::utilities::TextData>,
-				const std::string&,
+    ReferenceFileComparisonTest(const tfel::utilities::TextData&,
 				const unsigned int,
+				const std::string&,
+				const MTest::UTest::TestedVariable,
+				const unsigned short,
+				const real);
+    /*!
+     * constructor
+     * \param[in] d    : data
+     * \param[in] v    : variable
+     * \param[in] m    : evolution manager
+     * \param[in] f    : formulae
+     * \param[in] vt   : variable type
+     * \param[in] vp   : variable position
+     * \param[in] eps  : criterium value
+     */
+    ReferenceFileComparisonTest(const tfel::utilities::TextData&,
+				const EvolutionManager&,
+				const std::string&,
+				const std::string&,
 				const MTest::UTest::TestedVariable,
 				const unsigned short,
 				const real);

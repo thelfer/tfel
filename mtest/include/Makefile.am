@@ -58,6 +58,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Crossed2DeltabisAccelerationAlgorithm.hxx \
 			 MTest/Crossed2DeltaAccelerationAlgorithm.hxx    \
 			 MTest/CrossedDelta2AccelerationAlgorithm.hxx    \
+			 MTest/TextDataUtilities.hxx                     \
 			 MTest/SchemeParserBase.hxx	                 \
 			 MTest/SingleStructureSchemeParser.hxx	         \
 			 MTest/MTestParser.hxx                           \

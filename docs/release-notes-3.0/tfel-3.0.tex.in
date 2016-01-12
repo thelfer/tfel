@@ -109,7 +109,9 @@ informations sur un fichier \mfront{}.
 
 \section{Nouveautés \mtest{}}
 
-\subsection{Nouvelles méthodes d'accélération de convergence}
+\subsection{Modélisation des tubes sous pression}
+
+\subsection{Lecture des données dans un fichier}
 
 \subsection{Création du module {\tt mtest}}
 
@@ -120,6 +122,8 @@ Dans les versions précédentes, un modèle {\tt mfront.mtest} avait ce
 rôle. Celui existe toujours pour assurer la compatibilité avec les
 versions précédentes. Son utilisation conduit cependant à une message
 d'avertissement conseillant d'utiliser le nouveau module.
+
+\subsection{Nouvelles méthodes d'accélération de convergence}
 
 \section{Nouveautés \tfel{}}
 

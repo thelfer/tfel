@@ -2882,6 +2882,9 @@ namespace mfront{
       }
     }
     this->behaviourFile << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputePredictor)){
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputePredictor) << endl;
+    }
     if(this->mb.hasCode(h,BehaviourData::Integrator)){
       this->behaviourFile << this->mb.getCode(h,BehaviourData::Integrator) << endl;
     }
@@ -3229,9 +3232,6 @@ namespace mfront{
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
 	writeStandardPerformanceProfilingEnd(this->behaviourFile);
       }
-    }
-    if(this->mb.hasCode(h,BehaviourData::ComputePredictor)){
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputePredictor) << endl;
     }
     this->writeBehaviourParserSpecificInitializeMethodPart(h);
     this->behaviourFile << "}\n\n";

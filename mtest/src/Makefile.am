@@ -49,6 +49,7 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  PipeCubicElement.cxx                      \
 			  PipeProfile.cxx                           \
 			  PipeProfileHandler.cxx                    \
+			  TextDataUtilities.cxx                     \
 			  SchemeParserBase.cxx                      \
 			  SingleStructureSchemeParser.cxx           \
 			  MTestParser.cxx                           \

@@ -39,6 +39,7 @@
 #endif
 
 #include"TFEL/Utilities/TerminalColors.hxx"
+#include"TFEL/Utilities/GenTypeBase.hxx"
 #include"MFront/MFrontLogStream.hxx"
 
 #include"MTest/AnalyticalTest.hxx"
@@ -386,11 +387,12 @@ namespace mtest
       const auto& f = this->readString(p,this->fileTokens.end());
       this->checkNotEndOfLine("MTestParser::handleTest",p,
 			      this->fileTokens.end());
-      map<string,unsigned int> columns; 
+      using gentype=tfel::utilities::GenTypeBase<tfel::meta::GenerateTypeList<std::string,unsigned short>::type>;
+      map<string,gentype> columns; 
       if(p->flag==tfel::utilities::Token::String){
 	const auto& v = this->readString(p,this->fileTokens.end());
-	const unsigned int c = this->readUnsignedInt(p,this->fileTokens.end());
-	columns.insert({v,c});
+	const unsigned short c = this->readUnsignedInt(p,this->fileTokens.end());
+	columns.insert({v,gentype(c)});
       } else {
 	this->readSpecifiedToken("MTestParser::handleTest","{",
 				 p,this->fileTokens.end());
@@ -400,8 +402,12 @@ namespace mtest
 	  const auto& v = this->readString(p,this->fileTokens.end());
 	  this->readSpecifiedToken("MTestParser::handleTest",":",
 				   p,this->fileTokens.end());
-	  const unsigned int c = this->readUnsignedInt(p,this->fileTokens.end());
-	  columns.insert({v,c});
+	  if(p->flag==tfel::utilities::Token::String){
+	    columns.insert({v,p->value.substr(1,p->value.size()-2)});
+	  } else {
+	    const unsigned short c = this->readUnsignedInt(p,this->fileTokens.end());
+	    columns.insert({v,gentype(c)});
+	  }
 	  this->checkNotEndOfLine("MTestParser::handleTest",p,
 				  this->fileTokens.end());
 	  if(p->value!="}"){
@@ -424,16 +430,21 @@ namespace mtest
 	throw(runtime_error("MTestParser::handleTest: "
 			    "invalid criterion value"));
       }
-      map<string,unsigned int>::const_iterator pf;
       shared_ptr<tfel::utilities::TextData> data(new tfel::utilities::TextData(f));
-      for(pf=columns.begin();pf!=columns.end();++pf){
+      for(const auto& c : columns){
 	MTest::UTest::TestedVariable ttype;
 	unsigned short pos;
-	t.getVariableTypeAndPosition(ttype,pos,pf->first);
-	shared_ptr<MTest::UTest> test;
-	test = shared_ptr<MTest::UTest>(new ReferenceFileComparisonTest(data,pf->first,
-									pf->second,
-									ttype,pos,eps));
+	t.getVariableTypeAndPosition(ttype,pos,c.first);
+	std::shared_ptr<MTest::UTest> test;
+	if(c.second.is<unsigned short>()){
+	  const auto cn = static_cast<unsigned short>(c.second);
+	  test = shared_ptr<MTest::UTest>(new ReferenceFileComparisonTest(*data,cn,c.first,
+									  ttype,pos,eps));
+	} else {
+	  const auto ef = static_cast<std::string>(c.second);
+	  test = shared_ptr<MTest::UTest>(new ReferenceFileComparisonTest(*data,*(t.getEvolutions()),
+									  ef,c.first,ttype,pos,eps));
+	}
 	t.addTest(test);
       }
     } else {
