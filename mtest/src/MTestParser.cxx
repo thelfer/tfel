@@ -191,9 +191,12 @@ namespace mtest
     auto keys  = SchemeParserBase::getKeyWordsList();
     auto keys2 = SingleStructureSchemeParser::getKeyWordsList();
     keys.insert(keys.end(),keys2.begin(),keys2.end());
+    for(const auto& c : this->callbacks){
+      keys.push_back(c.first);
+    }
     if(std::find(keys.begin(),keys.end(),k)==keys.end()){
       throw(std::runtime_error("MTestParser::displayKeyWordDescription: "
-			       "unknowns keyword '"+k+"'"));
+			       "unknown keyword '"+k+"'"));
     }
     const auto f = SchemeParserBase::getDocumentationFilePath("mtest",k);
     if(f.empty()){
