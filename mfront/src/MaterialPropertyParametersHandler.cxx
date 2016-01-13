@@ -12,6 +12,7 @@
  */
 
 #include<ostream>
+#include<stdexcept>
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/MaterialPropertyParametersHandler.hxx"
 

@@ -141,7 +141,7 @@ namespace mtest
     wk.D.resize(6u,9u);
   }
 
-  bool
+  std::pair<bool,real>
   AsterFiniteStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 					     CurrentState& s,
 					     BehaviourWorkSpace& wk,
@@ -245,8 +245,8 @@ namespace mtest
 		&(s.esv0(0))+1,&(s.desv(0))+1,
 		&ntens,&nstatv,&wk.mps(0),
 		&nprops,&drot(0,0),&ndt,&nummod);
-    if(ndt<0.){
-      return false;
+    if(ndt<1){
+      return {false,ndt};
     }
     if(b){
       if(!s.iv0.empty()){
@@ -266,7 +266,7 @@ namespace mtest
 	convertTangentOperator<3u>(Kt,wk.D,s.s1,s.e0,s.e1);
       }
     }
-    return true;
+    return {true,ndt};
   }
 
   AsterFiniteStrainBehaviour::~AsterFiniteStrainBehaviour()

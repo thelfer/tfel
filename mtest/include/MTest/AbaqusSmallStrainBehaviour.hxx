@@ -46,6 +46,9 @@ namespace mtest
   protected:
     /*!
      * \brief call the mechanical behaviour
+     * \return a pair. The first member is true if the integration was
+     * successfull, false otherwise. The second member contains a time
+     * step scaling factor.
      * \param[out]    Kt    : tangent operator
      * \param[in/out] s     : current state
      * \param[out]    wk    : workspace
@@ -55,7 +58,7 @@ namespace mtest
      * \param[in] b : if true, integrate the behaviour over the time
      * step, if false compute a prediction of the stiffness matrix
      */
-    virtual bool
+    virtual std::pair<bool,real>
     call_behaviour(tfel::math::matrix<real>&,
 		   CurrentState&,
 		   BehaviourWorkSpace&,

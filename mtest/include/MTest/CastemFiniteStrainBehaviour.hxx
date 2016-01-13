@@ -41,28 +41,32 @@ namespace mtest
     getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
-     * \return true if the integration was successfull, false otherwise
+     * \return a pair. The first member is true if the integration was
+     * successfull, false otherwise. The second member contains a time
+     * step scaling factor.
      * \param[out] wk    : workspace
      * \param[in]  s     : current state
      * \param[in]  h     : modelling hypothesis
      * \param[in]  dt    : time increment
      * \param[in]  ktype : type of the stiffness matrix
      */
-    virtual bool
+    virtual std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const tfel::material::ModellingHypothesis::Hypothesis,
 			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
-     * \return true if the integration was successfull, false otherwise
+     * \return a pair. The first member is true if the integration was
+     * successfull, false otherwise. The second member contains a time
+     * step scaling factor.
      * \param[out/in] s     : current state
      * \param[out]    wk    : workspace
      * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    virtual bool
+    virtual std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
 	      const tfel::material::ModellingHypothesis::Hypothesis,

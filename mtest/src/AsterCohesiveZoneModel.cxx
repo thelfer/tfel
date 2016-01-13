@@ -95,17 +95,20 @@ namespace mtest
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }
   
-  bool
+  std::pair<bool,real>
   AsterCohesiveZoneModel::computePredictionOperator(BehaviourWorkSpace& wk,
 						    const CurrentState& s,
 						    const tfel::material::ModellingHypothesis::Hypothesis h,
 						    const StiffnessMatrixType ktype) const
   {
+    if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+      return {false,real(-1)};
+    }
     wk.cs = s;
     return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
   } // end of AsterCohesiveZoneModel::computePredictionOperator
 
-  bool
+  std::pair<bool,real>
   AsterCohesiveZoneModel::integrate(CurrentState& s,
 				    BehaviourWorkSpace& wk,
 				    const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -115,7 +118,7 @@ namespace mtest
     return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
   } // end of AsterCohesiveZoneModel::integrate
 
-  bool
+  std::pair<bool,real>
   AsterCohesiveZoneModel::call_behaviour(tfel::math::matrix<real>& Kt,
 					 CurrentState& s,
 					 BehaviourWorkSpace& wk,
@@ -211,15 +214,15 @@ namespace mtest
 		&(s.esv0(0))+1,&(s.desv(0))+1,
 		&ntens,&nstatv,&(wk.mps(0)),
 		&nprops,&drot(0,0),&ndt,&nummod);
-    if(ndt<0.){
-      return false;
+    if(ndt<1.){
+      return {false,ndt};
     }
     if(b){
       if(!s.iv0.empty()){
 	copy_n(wk.ivs.begin(),s.iv1.size(),s.iv1.begin());
       }
     }
-    return true;
+    return {true,ndt};
   }
 
   void

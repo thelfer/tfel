@@ -134,17 +134,20 @@ namespace mtest
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }
   
-  bool
+  std::pair<bool,real>
   AbaqusStandardBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 						     const CurrentState& s,
 						     const tfel::material::ModellingHypothesis::Hypothesis h,
 						     const StiffnessMatrixType ktype) const
   {
+    if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
+      return {false,real(-1)};
+    }
     wk.cs = s;
     return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
   }
 
-  bool
+  std::pair<bool,real>
   AbaqusStandardBehaviour::integrate(CurrentState& s,
 				     BehaviourWorkSpace& wk,
 				     const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -158,7 +161,3 @@ namespace mtest
   {}
   
 } // end of namespace mtest
-
-
-
-

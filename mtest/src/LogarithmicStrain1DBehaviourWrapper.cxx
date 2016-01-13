@@ -223,7 +223,7 @@ namespace mtest{
     return this->b->getRotationMatrix(mp,r);
   } // end of LogarithmicStrain1DBehaviourWrapper::getRotationMatrix
 
-  bool
+  std::pair<bool,real>
   LogarithmicStrain1DBehaviourWrapper::computePredictionOperator(BehaviourWorkSpace& wk,
 								 const CurrentState& s,
 								 const Hypothesis h,
@@ -251,8 +251,9 @@ namespace mtest{
     cs.s1[0] = cs.s0[0];
     cs.s1[1] = cs.s0[1];
     cs.s1[2] = cs.s0[2];
-    if(!this->b->computePredictionOperator(wk,cs,h,ktype)){
-      return false;
+    const auto r = this->b->computePredictionOperator(wk,cs,h,ktype);
+    if(!r.first){
+      return r;
     }
     // modify wk.kp
     if((ktype!=StiffnessMatrixType::NOSTIFFNESS)&&
@@ -260,10 +261,10 @@ namespace mtest{
        (ktype!=StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
       convertStiffness(wk.kt,s.e0,s.s0);
     }
-    return true;
+    return r;
   } // end of LogarithmicStrain1DBehaviourWrapper::computePredictionOperator
 
-  bool
+  std::pair<bool,real>
   LogarithmicStrain1DBehaviourWrapper::integrate(CurrentState& s,
 						 BehaviourWorkSpace& wk,
 						 const Hypothesis h,
@@ -300,15 +301,15 @@ namespace mtest{
     s.e_th1[1] = std::log(1+e_th1[1]);
     s.e_th1[2] = std::log(1+e_th1[2]);
     tfel::fsalgo::copy<3u>::exe(s.s0.begin(),s.s1.begin());
-    auto ok = this->b->integrate(s,wk,h,dt,ktype);
+    const auto r = this->b->integrate(s,wk,h,dt,ktype);
     tfel::fsalgo::copy<3u>::exe(e0,s.e0.begin());
     tfel::fsalgo::copy<3u>::exe(e1,s.e1.begin());
     tfel::fsalgo::copy<3u>::exe(s0,s.s0.begin());
     tfel::fsalgo::copy<3u>::exe(e_th0,s.e_th0.begin());
     tfel::fsalgo::copy<3u>::exe(e_th1,s.e_th1.begin());
-    if(!ok){
+    if(!r.first){
       tfel::fsalgo::copy<3u>::exe(s0,s.s1.begin());
-      return false;
+      return r;
     }
     s.s1[0] /= 1+e1[0];
     s.s1[1] /= 1+e1[1];
@@ -319,7 +320,7 @@ namespace mtest{
        (ktype!=StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
       convertStiffness(wk.k,s.e1,s.s1);
     }
-    return true;
+    return r;
   } // end of LogarithmicStrain1DBehaviourWrapper::integrate
   
   LogarithmicStrain1DBehaviourWrapper::~LogarithmicStrain1DBehaviourWrapper()

@@ -147,7 +147,9 @@ namespace mtest{
       const auto rg = interpolate(r0,r1,pg);
       // current state
       auto& s = scs.istates[2*i+g];
-      if(!b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt)){
+      const auto rb =
+	b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt);
+      if(!rb.first){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
 	  auto& log = mfront::getLogStream();
 	  log << "PipeLinearElement::computeStiffnessMatrixAndResidual : "

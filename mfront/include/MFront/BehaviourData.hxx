@@ -71,7 +71,11 @@ namespace mfront{
     //! standard code name
     static const std::string DefaultComputeFinalStress;
     //! standard code name
+    static const std::string APrioriTimeStepScalingFactor;
+    //! standard code name
     static const std::string Integrator;
+    //! standard code name
+    static const std::string APosterioriTimeStepScalingFactor;
     //! standard code name
     static const std::string ComputeDerivative;
     //! standard code name
@@ -94,9 +98,14 @@ namespace mfront{
     //! if this attribute is true, the tangent operator can be
     //  considered symmetric
     static const std::string isConsistentTangentOperatorSymmetric;
-    //! if this attribute is true, the behaviour can compute a
-    //! furnish a time step scaling factor
-    static const std::string hasTimeStepScalingFactor;
+    //! if this attribute is true, the behaviour can compute an a
+    //! priori estimate of the time step scaling factor after the
+    //! initialisation
+    static const std::string hasAPrioriTimeStepScalingFactor;
+    //! if this attribute is true, the behaviour can compute an a
+    //! posteriori estimate of the time step scaling factor after the
+    //! integration
+    static const std::string hasAPosterioriTimeStepScalingFactor;
     //! if this attribute is true, the behaviour can compute a
     //! prediction operator
     static const std::string hasPredictionOperator;

@@ -41,7 +41,7 @@ namespace mtest
     std::fill(v.begin(),v.end(),real(0));
   }
 
-  bool
+  std::pair<bool,real>
   AbaqusSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 					     CurrentState& s,
 					     BehaviourWorkSpace& wk,
@@ -132,7 +132,7 @@ namespace mtest
 		nullptr,nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,nullptr,0);
     if(ndt<1.){
-      return false;
+      return {false,ndt};
     }
     const auto rb = transpose(s.r);
     // treating the consistent tangent operator
@@ -233,7 +233,7 @@ namespace mtest
       us.changeBasis(rb);
       copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
     }
-    return true;
+    return {ndt,true};
   }
 
   AbaqusSmallStrainBehaviour::~AbaqusSmallStrainBehaviour()

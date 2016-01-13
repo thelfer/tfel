@@ -42,7 +42,11 @@ namespace mfront{
   const std::string
   BehaviourData::ComputeFinalStressCandidate("ComputeFinalStressCandidate");
   const std::string
+  BehaviourData::APrioriTimeStepScalingFactor("APrioriTimeStepScalingFactor");
+  const std::string
   BehaviourData::Integrator("Integrator");
+  const std::string
+  BehaviourData::APosterioriTimeStepScalingFactor("APosterioriTimeStepScalingFactor");
   const std::string
   BehaviourData::ComputeDerivative("ComputeDerivative");
   const std::string
@@ -59,7 +63,9 @@ namespace mfront{
   const std::string
   BehaviourData::profiling("profiling");
   const std::string
-  BehaviourData::hasTimeStepScalingFactor("hasTimeStepScalingFactor");
+  BehaviourData::hasAPrioriTimeStepScalingFactor("hasAPrioriTimeStepScalingFactor");
+  const std::string
+  BehaviourData::hasAPosterioriTimeStepScalingFactor("hasAPosterioriTimeStepScalingFactor");
   const std::string
   BehaviourData::hasConsistentTangentOperator("hasConsistentTangentOperator");
   const std::string

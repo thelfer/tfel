@@ -220,7 +220,9 @@ namespace mtest{
       const real dsfv[4] = {dsf0(rg),dsf1(rg),dsf2(rg),dsf3(rg)};
       // jacobian of the transformation
       const auto J = PipeCubicElement::jacobian(r0,r1,r2,r3,pg);
-      if(!b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt)){
+      const auto rb =
+	b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt);
+      if(!rb.first){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
 	  auto& log = mfront::getLogStream();
 	  log << "PipeCubicElement::computeStiffnessMatrixAndResidual : "

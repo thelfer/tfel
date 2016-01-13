@@ -42,7 +42,7 @@ namespace mtest
     fill(v.begin(),v.end(),real(0));
   }
 
-  bool
+  std::pair<bool,real>
   AsterSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 					    CurrentState& s,
 					    BehaviourWorkSpace& wk,
@@ -126,8 +126,8 @@ namespace mtest
 		&(s.esv0(0))+1,&(s.desv(0))+1,
 		&ntens,&nstatv,&(wk.mps(0)),
 		&nprops,&drot(0,0),&ndt,&nummod);
-    if(ndt<0.){
-      return false;
+    if(ndt<1){
+      return {false,ndt};
     }
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){
       UmatNormaliseTangentOperator::exe(Kt,wk.D,dimension);
@@ -141,7 +141,7 @@ namespace mtest
 	s.s1(i) *= sqrt2;
       }
     }
-    return true;
+    return {true,ndt};
   }
 
   AsterSmallStrainBehaviour::~AsterSmallStrainBehaviour()

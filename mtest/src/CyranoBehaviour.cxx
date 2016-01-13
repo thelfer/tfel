@@ -113,20 +113,20 @@ namespace mtest
     fill(v.begin(),v.end(),real(0));
   } // end of CyranoBehaviour::setDrivingVariablesDefaultInitialValue  
 
-  bool
+  std::pair<bool,real>
   CyranoBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 					     const CurrentState& s,
 					     const tfel::material::ModellingHypothesis::Hypothesis h,
 					     const StiffnessMatrixType ktype) const
   {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-      return false;
+      return {false,real(-1)};
     }
     wk.cs = s;
     return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
   } // end of CyranoBehaviour::computePredictionOperator
 
-  bool
+  std::pair<bool,real>
   CyranoBehaviour::integrate(CurrentState& s,
 			     BehaviourWorkSpace& wk,
 			     const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -136,7 +136,7 @@ namespace mtest
     return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
   } // end of CyranoBehaviour::integrate
 
-  bool
+  std::pair<bool,real>
   CyranoBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 				  CurrentState& s,
 				  BehaviourWorkSpace& wk,
@@ -228,7 +228,7 @@ namespace mtest
 		&wk.ivs(0),&nstatv,&(s.s1(0)),
 		&ndi,&kinc);
     if(kinc!=1){
-      return false;
+      return {false,1};
     }
     if(!s.iv1.empty()){
       copy_n(wk.ivs.begin(), s.iv1.size(),s.iv1.begin());
@@ -255,7 +255,7 @@ namespace mtest
       Kt(1,2)=D2(2,1);
       Kt(2,2)=D2(1,1);
     }
-    return true;
+    return {true,1};
   } // end of CyranoBehaviour::integrate
       
   CyranoBehaviour::~CyranoBehaviour()

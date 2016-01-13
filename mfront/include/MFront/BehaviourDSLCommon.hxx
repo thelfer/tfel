@@ -557,10 +557,22 @@ namespace mfront{
 
     virtual void
       treatExternalStateVariable(void);
-
+    //! \brief treat the @MinimalTimeStepScalingFactor keyword
     virtual void
-      treatIntegrator(void);
-
+    treatMinimalTimeStepScalingFactor(void);
+    //! \brief treat the @MaximalTimeStepScalingFactor keyword
+    virtual void
+    treatMaximalTimeStepScalingFactor(void);
+    //! \brief treat the @APrioriTimeStepScalingFactor keyword
+    virtual void
+    treatAPrioriTimeStepScalingFactor(void);
+    //! \brief treat the @Integrator keyword
+    virtual void
+    treatIntegrator(void);
+    //! \brief treat the @APosterioriTimeStepScalingFactor keyword
+    virtual void
+    treatAPosterioriTimeStepScalingFactor(void);
+    
     virtual void
       treatCoef(void);
 
@@ -849,10 +861,27 @@ namespace mfront{
 
     virtual void
     writeBehaviourIntegrator(const Hypothesis);
-
+    /*!
+     * \brief write the computeAPrioriTimeStepsScalingFactor method
+     */
     virtual void
-    writeBehaviourGetTimeStepScalingFactor(void);
-
+    writeBehaviourComputeAPrioriTimeStepScalingFactor();
+    /*!
+     * \brief write the computeAPrioriTimeStepsScalingFactorII method
+     */
+    virtual void
+    writeBehaviourComputeAPrioriTimeStepScalingFactorII(const Hypothesis);
+    /*!
+     * \brief write the computeAPosterioriTimeStepsScalingFactor method
+     */
+    virtual void
+    writeBehaviourComputeAPosterioriTimeStepScalingFactor();
+    /*!
+     * \brief write the computeAPosterioriTimeStepsScalingFactorII method
+     */
+    virtual void
+    writeBehaviourComputeAPosterioriTimeStepScalingFactorII(const Hypothesis);
+    
     virtual void
     writeBehaviourUpdateExternalStateVariables(const Hypothesis);
 

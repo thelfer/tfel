@@ -626,7 +626,8 @@ namespace mtest
 			       "invalid state"));
     }
     auto& s = scs.istates[0];
-    if(!this->b->computePredictionOperator(bwk,s,this->hypothesis,smt)){
+    auto res = this->b->computePredictionOperator(bwk,s,this->hypothesis,smt);
+    if(!res.first){
       return false;
     }
     std::fill(k.begin(),k.end(),0.);
@@ -689,7 +690,8 @@ namespace mtest
       s.e1[i] = state.u1[i];
     }
     // behaviour integration
-    if(!this->b->integrate(s,bwk,this->hypothesis,dt,mt)){
+    const auto rb = this->b->integrate(s,bwk,this->hypothesis,dt,mt);
+    if(!rb.first){
       if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
   	auto& log = mfront::getLogStream();
   	log << "MTest::computeStiffnessMatrixAndResidual : "
@@ -709,7 +711,7 @@ namespace mtest
 	std::copy(bwk.ne.begin(),bwk.ne.end(),s.e1.begin());
 	s.e1[i] += this->pv;
 	try{
-	  ok = this->b->integrate(s,bwk,this->hypothesis,dt,mt);
+	  ok = this->b->integrate(s,bwk,this->hypothesis,dt,mt).first;
 	} catch(...){
 	  ok = false;
 	}
@@ -723,7 +725,7 @@ namespace mtest
 	std::copy(bwk.ne.begin(),bwk.ne.end(),s.e1.begin());
 	s.e1[i] -= this->pv;
 	try{
-	  ok = this->b->integrate(s,bwk,this->hypothesis,dt,mt);
+	  ok = this->b->integrate(s,bwk,this->hypothesis,dt,mt).first;
 	} catch(...){
 	  ok = false;
 	}

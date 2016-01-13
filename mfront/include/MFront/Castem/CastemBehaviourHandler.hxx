@@ -398,15 +398,15 @@ namespace castem
        {} // end of IntegratorWithTimeStepping
       
       TFEL_CASTEM_INLINE2 void
-      exe(CastemReal *const ddsoe,
+      exe(CastemReal *const ddsdde,
 	  CastemReal *const stress,
 	  CastemReal *const statev,
 	  CastemReal *const pnewdt)
       {
-	if(*ddsoe<-0.5){
-	  this->computePredictionOperator(ddsoe);
+	if(*ddsdde<-0.5){
+	  this->computePredictionOperator(ddsdde);
 	} else {
-	  this->integrate(stress,statev,ddsoe,pnewdt);
+	  this->integrate(stress,statev,ddsdde,pnewdt);
 	}
       } // end of IntegratorWithTimeStepping::exe
 
@@ -463,7 +463,7 @@ namespace castem
       void
       integrate(CastemReal *const stress,
 		CastemReal *const statev,
-		CastemReal *const ddsoe,
+		CastemReal *const ddsdde,
 		CastemReal *const pnewdt)
       {
 	using namespace tfel::material;
@@ -482,17 +482,17 @@ namespace castem
 	  >::type ConsistentTangentOperatorHandler;
 	const typename BV::SMFlag smflag = CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
 	typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
-	if((-0.25<*ddsoe)&&(*ddsoe<0.25)){
-	} else if((0.75<*ddsoe)&&(*ddsoe<1.25)){
+	if((-0.25<*ddsdde)&&(*ddsdde<0.25)){
+	} else if((0.75<*ddsdde)&&(*ddsdde<1.25)){
 	  smtype = BV::ELASTIC;
-	} else if((1.75<*ddsoe)&&(*ddsoe<2.25)){
+	} else if((1.75<*ddsdde)&&(*ddsdde<2.25)){
 	  smtype = BV::SECANTOPERATOR;
-	} else if((2.75<*ddsoe)&&(*ddsoe<3.25)){
+	} else if((2.75<*ddsdde)&&(*ddsdde<3.25)){
 	  smtype = BV::TANGENTOPERATOR;
-	} else if((3.75<*ddsoe)&&(*ddsoe<4.25)){
+	} else if((3.75<*ddsdde)&&(*ddsdde<4.25)){
 	  smtype = BV::CONSISTENTTANGENTOPERATOR;
 	} else {
-	  throwInvalidDDSDDEException(Traits::getName(),*ddsoe);
+	  throwInvalidDDSDDEException(Traits::getName(),*ddsdde);
 	}
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
 		     this->PROPS+CastemTraits<BV>::propertiesOffset,
@@ -504,10 +504,19 @@ namespace castem
 	  DVInitializer::exe(behaviour,STRAN,DSTRAN,sfeh);
 	  behaviour.setCASTEMBehaviourDataThermodynamicForces(STRESS);
 	  behaviour.initialize();
-	  behaviour.setOutOfBoundsPolicy(this->policy);
-	  behaviour.checkBounds();
-	  r = behaviour.integrate(smflag,smtype);
-	  behaviour.checkBounds();
+	  *pnewdt = behaviour.computeAPrioriTimeStepScalingFactor();
+	  if((*pnewdt<1)&&(std::abs(*pnewdt-1)>10*std::numeric_limits<CastemReal>::min())){
+	    r = BV::FAILURE;
+	  } else {
+	    behaviour.setOutOfBoundsPolicy(this->policy);
+	    behaviour.checkBounds();
+	    r = behaviour.integrate(smflag,smtype);
+	    *pnewdt = behaviour.computeAPosterioriTimeStepScalingFactor();
+	    behaviour.checkBounds();
+	    if((*pnewdt<1)&&(std::abs(*pnewdt-1)>10*std::numeric_limits<CastemReal>::min())){
+	      r = BV::UNRELIABLE_RESULTS;
+	    }
+	  }
 	}
 #ifdef MFRONT_CASTEM_VERBOSE
 	catch(const tfel::material::DivergenceException& e){
@@ -519,11 +528,11 @@ namespace castem
 	}
 	if((r==BV::FAILURE)||((r==BV::UNRELIABLE_RESULTS)&&
 			      (CastemTraits<BV>::doSubSteppingOnInvalidResults))){
-	  this->integrate2(stress,statev,ddsoe,pnewdt,smtype);
+	  this->integrate2(stress,statev,ddsdde,pnewdt,smtype);
 	} else {
 	  behaviour.CASTEMexportStateData(stress,statev);
-	  if((*ddsoe>0.5)||(*ddsoe<-0.5)){
-	    ConsistentTangentOperatorHandler::exe(behaviour,ddsoe);
+	  if((*ddsdde>0.5)||(*ddsdde<-0.5)){
+	    ConsistentTangentOperatorHandler::exe(behaviour,ddsdde);
 	  }
 	}
       }
@@ -531,7 +540,7 @@ namespace castem
       void
       integrate2(CastemReal *const stress,
 		 CastemReal *const statev,
-		 CastemReal *const ddsoe,
+		 CastemReal *const ddsdde,
 		 CastemReal *const, /* pnewdt */
 		 const typename Behaviour<H,CastemReal,false>::SMType smtype)
       {
@@ -590,8 +599,8 @@ namespace castem
 	    behaviour.updateExternalStateVariables();
 	    if(iterations==0){
 	      behaviour.CASTEMexportStateData(stress,statev);
-	      if(*ddsoe>0.5){
-		ConsistentTangentOperatorHandler::exe(behaviour,ddsoe);
+	      if(*ddsdde>0.5){
+		ConsistentTangentOperatorHandler::exe(behaviour,ddsdde);
 	      }
 	    } else {
 	      bData = static_cast<const BData&>(behaviour);
@@ -677,7 +686,7 @@ namespace castem
 	void exe(CastemReal *const DDSDDE,
 		 CastemReal *const STRESS,
 		 CastemReal *const STATEV,
-		 CastemReal *const /* PNEWDT */)
+		 CastemReal *const PNEWDT)
       {
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
@@ -706,18 +715,32 @@ namespace castem
 	} else if((-1.25<*DDSDDE)&&(*DDSDDE<-0.75)){
 	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
 					      BV::ELASTIC);
-	} else if((-0.25<*DDSDDE)&&(*DDSDDE<0.25)){
-	  r = this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
-	} else if((0.75<*DDSDDE)&&(*DDSDDE<1.25)){
-	  r = this->behaviour.integrate(smflag,BV::ELASTIC);
-	} else if((1.75<*DDSDDE)&&(*DDSDDE<2.25)){
-	  r = this->behaviour.integrate(smflag,BV::SECANTOPERATOR);
-	} else if((2.75<*DDSDDE)&&(*DDSDDE<3.25)){
-	  r = this->behaviour.integrate(smflag,BV::TANGENTOPERATOR);
-	} else if((3.75<*DDSDDE)&&(*DDSDDE<4.25)){
-	  r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
-	} else {
-	  throwInvalidDDSDDEException(Traits::getName(),*DDSDDE);
+	} else{
+	  typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
+	  if((-0.25<*DDSDDE)&&(*DDSDDE<0.25)){
+	  } else if((0.75<*DDSDDE)&&(*DDSDDE<1.25)){
+	    smtype = BV::ELASTIC;
+	  } else if((1.75<*DDSDDE)&&(*DDSDDE<2.25)){
+	    smtype = BV::SECANTOPERATOR;
+	  } else if((2.75<*DDSDDE)&&(*DDSDDE<3.25)){
+	    smtype = BV::TANGENTOPERATOR;
+	  } else if((3.75<*DDSDDE)&&(*DDSDDE<4.25)){
+	    smtype = BV::CONSISTENTTANGENTOPERATOR;
+	  } else {
+	    throwInvalidDDSDDEException(Traits::getName(),*DDSDDE);
+	  }
+	  *PNEWDT = behaviour.computeAPrioriTimeStepScalingFactor();
+	  if((*PNEWDT<1)&&(std::abs(*PNEWDT-1)>10*std::numeric_limits<CastemReal>::min())){
+	    r = BV::FAILURE;
+	  } else {
+	    r = this->behaviour.integrate(smflag,smtype);
+	    if(r==BV::SUCCESS){
+	      *PNEWDT = behaviour.computeAPosterioriTimeStepScalingFactor();
+	      if((*PNEWDT<1)&&(std::abs(*PNEWDT-1)>10*std::numeric_limits<CastemReal>::min())){
+		r = BV::UNRELIABLE_RESULTS;
+	      }
+	    }
+	  }
 	}
 	if(r==BV::FAILURE){
 	  // Il manque un vraie gestion locale de résultats imprécis

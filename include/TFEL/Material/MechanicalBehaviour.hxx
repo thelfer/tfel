@@ -134,6 +134,20 @@ namespace tfel{
       computePredictionOperator(const SMFlag,
 				const SMType) = 0;
       /*!
+       * This method returns a scaling factor that can be used to:
+       * - increase the time step if the integration was successfull
+       * - decrease the time step if the integration failed or if the
+       *   results were not reliable (time step too large).
+       *
+       * Interfaces to behaviour law shall use the
+       * hasAPrioriTimeStepScalingFactor of the traits class
+       * MechanicalBehaviourTraits to know if the behaviour is able to
+       * give such a time step scaling factor. If not, behaviours
+       * may return the NumType(1) value.
+       */
+      virtual NumType
+      computeAPrioriTimeStepScalingFactor(void) const = 0;
+      /*!
        * \brief determine the value of the internal state variables at
        * the end of the time step
        * \param[in] smflag : expected tangent operator
@@ -150,13 +164,13 @@ namespace tfel{
        *   results were not reliable (time step too large).
        *
        * Interfaces to behaviour law shall use the
-       * hasTimeStepScalingFactor of the traits class
+       * hasAPosterioriTimeStepScalingFactor of the traits class
        * MechanicalBehaviourTraits to know if the behaviour is able to
        * give such a time step scaling factor. If not, behaviours
        * may return the NumType(1) value.
        */
       virtual NumType
-      getTimeStepScalingFactor(void) const = 0;
+      computeAPosterioriTimeStepScalingFactor(void) const = 0;
       /*!
        * destructor
        */

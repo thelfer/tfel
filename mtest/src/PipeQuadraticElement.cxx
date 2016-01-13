@@ -169,7 +169,9 @@ namespace mtest{
       const real dsf[3] = {pg-0.5,-2.*pg,pg+0.5};
       // current state
       auto& s = scs.istates[3*i+g];
-      if(!b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt)){
+      const auto rb =
+	b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt);
+      if(!rb.first){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
 	  auto& log = mfront::getLogStream();
 	  log << "PipeQuadraticElement::computeStiffnessMatrixAndResidual : "

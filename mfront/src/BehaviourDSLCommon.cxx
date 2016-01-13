@@ -379,6 +379,29 @@ namespace mfront{
 	log << endl;	    
       }
     }
+    // time step scaling factors
+    if(!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			      "minimal_time_step_scaling_factor")){
+      VariableDescription e("real","minimal_time_step_scaling_factor",1u,0u);
+      e.description = "minimal value for the time step scaling factor";
+      this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			    e,BehaviourData::ALREADYREGISTRED);
+      this->mb.setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+					"minimal_time_step_scaling_factor",0.1);
+      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS
+			    ,"minimal_time_step_scaling_factor","minimal_time_step_scaling_factor");
+    }
+    if(!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			      "maximal_time_step_scaling_factor")){
+      VariableDescription e("real","maximal_time_step_scaling_factor",1u,0u);
+      e.description = "maximal value for the time step scaling factor";
+      this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			    e,BehaviourData::ALREADYREGISTRED);
+      this->mb.setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+					"maximal_time_step_scaling_factor",1.);
+      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS
+			    ,"maximal_time_step_scaling_factor","maximal_time_step_scaling_factor");
+    }
     // treating bricks
     if(!this->bricks.empty()){
       if(getVerboseMode()>=VERBOSE_DEBUG){
@@ -1551,12 +1574,25 @@ namespace mfront{
   } // end of BehaviourDSLCommon::setInterfaces
 
   void
+  BehaviourDSLCommon::treatAPrioriTimeStepScalingFactor(void){
+    this->readCodeBlock(*this,BehaviourData::APrioriTimeStepScalingFactor,
+			&BehaviourDSLCommon::standardModifier,true,true);
+  }
+  
+  void
   BehaviourDSLCommon::treatIntegrator(void)
   {
     this->readCodeBlock(*this,BehaviourData::Integrator,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatIntegrator
 
+  void
+  BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor(void){
+    this->readCodeBlock(*this,BehaviourData::APosterioriTimeStepScalingFactor,
+			&BehaviourDSLCommon::standardModifier,true,true);
+  }
+    
+  
   void BehaviourDSLCommon::treatStateVariable(void)
   {
     VarContainer v;
@@ -1827,7 +1863,10 @@ namespace mfront{
     this->mb.registerMemberName(h,"updateStateVariables");
     this->mb.registerMemberName(h,"updateAuxiliaryStateVariables");
     this->mb.registerMemberName(h,"getTangentOperator");
-    this->mb.registerMemberName(h,"getTimeStepScalingFactor");
+    this->mb.registerMemberName(h,"computeAPrioriTimeStepScalingFactor");
+    this->mb.registerMemberName(h,"computeAPrioriTimeStepScalingFactorII");
+    this->mb.registerMemberName(h,"computeAPosterioriTimeStepScalingFactor");
+    this->mb.registerMemberName(h,"computeAPosterioriTimeStepScalingFactorII");
     this->mb.registerMemberName(h,"computeConsistentTangentOperator");
     for(const auto& to : tos){
       const auto ktype = convertFiniteStrainBehaviourTangentOperatorFlagToString(to);
@@ -1877,6 +1916,8 @@ namespace mfront{
     }
     // register behaviours specific names
     this->registerDefaultVarNames();
+    this->reserveName("minimal_time_step_scaling_factor");
+    this->reserveName("maximal_time_step_scaling_factor");
   } // end of BehaviourDSLCommon::MFrontParserCommon
 
   void BehaviourDSLCommon::reserveName(const std::string& n){
@@ -3777,9 +3818,19 @@ namespace mfront{
     } else {
       this->behaviourFile << "false;\n";
     }
-    this->behaviourFile << "static " << constexpr_c << " bool hasTimeStepScalingFactor = ";
+    this->behaviourFile << "static " << constexpr_c << " bool hasAPrioriTimeStepScalingFactor = ";
     if(b){
-      if(this->mb.getAttribute<bool>(h,BehaviourData::hasTimeStepScalingFactor,false)){
+      if(this->mb.getAttribute<bool>(h,BehaviourData::hasAPrioriTimeStepScalingFactor,false)){
+	this->behaviourFile << "true;\n";
+      } else {
+	this->behaviourFile << "false;\n";
+      }
+    } else {
+      this->behaviourFile << "false;\n";
+    }
+    this->behaviourFile << "static " << constexpr_c << " bool hasAPosterioriTimeStepScalingFactor = ";
+    if(b){
+      if(this->mb.getAttribute<bool>(h,BehaviourData::hasAPosterioriTimeStepScalingFactor,false)){
 	this->behaviourFile << "true;\n";
       } else {
 	this->behaviourFile << "false;\n";
@@ -4007,14 +4058,17 @@ namespace mfront{
     this->writeBehaviourGetModellingHypothesis();
     this->writeBehaviourCheckBounds(h);
     this->writeBehaviourComputePredictionOperator(h);
+    this->writeBehaviourComputeAPrioriTimeStepScalingFactor();
     this->writeBehaviourIntegrator(h);
+    this->writeBehaviourComputeAPosterioriTimeStepScalingFactor();
     this->writeBehaviourComputeTangentOperator(h);
     this->writeBehaviourGetTangentOperator();
-    this->writeBehaviourGetTimeStepScalingFactor();
     this->writeBehaviourUpdateExternalStateVariables(h);
     this->writeBehaviourDestructor();
     this->checkBehaviourFile();
     this->behaviourFile << "private:\n\n";
+    this->writeBehaviourComputeAPrioriTimeStepScalingFactorII(h);
+    this->writeBehaviourComputeAPosterioriTimeStepScalingFactorII(h);
     this->writeBehaviourTangentOperator();
     this->writeBehaviourPolicyVariable();
     this->writeBehaviourClassEnd();
@@ -4185,7 +4239,6 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourGetTangentOperator()
   {
-    using namespace std;
     this->checkBehaviourFile();
     this->behaviourFile << "const TangentOperator&\n";
     this->behaviourFile << "getTangentOperator(void) const{\n";
@@ -4193,19 +4246,53 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator(void)
 
-  void BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor()
+  void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor()
   {
-    using namespace std;
     this->checkBehaviourFile();
-    this->behaviourFile << "real\n";
-    this->behaviourFile << "getTimeStepScalingFactor(void) const override{\n";
+    this->behaviourFile << "real\n"
+			<< "computeAPrioriTimeStepScalingFactor(void) const override{\n";
+    this->behaviourFile << "return std::min(std::max(this->computeAPrioriTimeStepScalingFactorII(),\n"
+			<< "                         this->minimal_time_step_scaling_factor),\n"
+			<< "                this->maximal_time_step_scaling_factor);\n"
+			<< "}\n\n";
+  } // end of BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor(void)
+
+  void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactorII(const Hypothesis h){
+    this->checkBehaviourFile();
+    this->behaviourFile << "real\n"
+			<< "computeAPrioriTimeStepScalingFactorII(void) const{\n";
+    if(this->mb.hasCode(h,BehaviourData::APrioriTimeStepScalingFactor)){
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::APrioriTimeStepScalingFactor) << '\n';
+    }
     this->behaviourFile << "return real(1);\n";
     this->behaviourFile << "}\n\n";
-  } // end of BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor(void)
+  }
 
+  void BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor()
+  {
+    this->checkBehaviourFile();
+    this->behaviourFile << "real\n"
+			<< "computeAPosterioriTimeStepScalingFactor(void) const override{\n";
+    this->behaviourFile << "return std::min(std::max(this->computeAPosterioriTimeStepScalingFactorII(),\n"
+			<< "                         this->minimal_time_step_scaling_factor),\n"
+			<< "                this->maximal_time_step_scaling_factor);\n"
+			<< "}\n\n";
+  } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(void)
+  
+  void BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactorII(const Hypothesis h)
+  {
+    this->checkBehaviourFile();
+    this->behaviourFile << "real\n";
+    this->behaviourFile << "computeAPosterioriTimeStepScalingFactorII(void) const{\n";
+    if(this->mb.hasCode(h,BehaviourData::APosterioriTimeStepScalingFactor)){
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::APosterioriTimeStepScalingFactor) << '\n';
+    }
+    this->behaviourFile << "return real(1);\n";
+    this->behaviourFile << "}\n\n";
+  } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(void)
+  
   void BehaviourDSLCommon::writeBehaviourTangentOperator()
   {
-    using namespace std;
     this->checkBehaviourFile();
     this->behaviourFile << "//! Tangent operator;\n";
     this->behaviourFile << "TangentOperator Dt;\n";
@@ -5203,6 +5290,58 @@ namespace mfront{
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon:treatInitLocalVariables
 
+  void
+  BehaviourDSLCommon::treatMinimalTimeStepScalingFactor(void){
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    double r_dt;
+    this->checkNotEndOfFile("ImplicitDSLBase::treatMinimalTimeStepScalingFactor",
+			    "Cannot read value.");
+    std::istringstream flux(current->value);
+    flux >> r_dt;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("ImplicitDSLBase::treatMinimalTimeStepScalingFactor",
+			      "Failed to read value.");
+    }
+    if(r_dt<10*std::numeric_limits<double>::min()){
+      this->throwRuntimeError("ImplicitDSLBase::treatMinimalTimeStepScalingFactor",
+			      "minimal time step scaling factor either too "
+			      "low value or negative.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("ImplicitDSLBase::treatMinimalTimeStepScalingFactor",";");
+    VariableDescription e("real","minimal_time_step_scaling_factor",1u,0u);
+    e.description = "minimal value for the time step scaling factor";
+    this->mb.addParameter(h,e,BehaviourData::ALREADYREGISTRED);
+    this->mb.setParameterDefaultValue(h,"minimal_time_step_scaling_factor",r_dt);
+    this->mb.setEntryName(h,"minimal_time_step_scaling_factor","minimal_time_step_scaling_factor");
+  } // end of BehaviourDSLCommon::treatMinimalTimeStepScalingFactor
+
+  void
+  BehaviourDSLCommon::treatMaximalTimeStepScalingFactor(void){
+    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    double r_dt;
+    this->checkNotEndOfFile("ImplicitDSLBase::treatMaximalTimeStepScalingFactor",
+			    "Cannot read value.");
+    std::istringstream flux(current->value);
+    flux >> r_dt;
+    if((flux.fail())||(!flux.eof())){
+      this->throwRuntimeError("ImplicitDSLBase::treatMaximalTimeStepScalingFactor",
+			      "Failed to read value.");
+    }
+    if(r_dt<1){
+      this->throwRuntimeError("ImplicitDSLBase::treatMaximalTimeStepScalingFactor",
+			      "maximal time step scaling factor value either too "
+			      "low or negative.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("ImplicitDSLBase::treatMaximalTimeStepScalingFactor",";");
+    VariableDescription e("real","maximal_time_step_scaling_factor",1u,0u);
+    e.description = "maximal value for the time step scaling factor";
+    this->mb.addParameter(h,e,BehaviourData::ALREADYREGISTRED);
+    this->mb.setParameterDefaultValue(h,"maximal_time_step_scaling_factor",r_dt);
+    this->mb.setEntryName(h,"maximal_time_step_scaling_factor","maximal_time_step_scaling_factor");
+  } // end of BehaviourDSLCommon::treatMaximalTimeStepScalingFactor
+  
   void
   BehaviourDSLCommon::disableVariableDeclaration(const Hypothesis h)
   {

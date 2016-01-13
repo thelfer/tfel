@@ -282,7 +282,7 @@ namespace mtest
     fill(v.begin(),v.end(),real(0));
   } // end of CastemSmallStrainBehaviour::setDrivingVariablesDefaultInitialValue  
 
-  bool
+  std::pair<bool,real>
   CastemSmallStrainBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 							const CurrentState& s,
 							const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -294,10 +294,10 @@ namespace mtest
     }
     // compute the stiffness operator from material properties
     this->computeElasticStiffness(wk.kt,s.mprops1,transpose(s.r),h);
-    return true;
+    return {true,1};
   } // end of CastemSmallStrainBehaviour::computePredictionOperator
 
-  bool
+  std::pair<bool,real>
   CastemSmallStrainBehaviour::integrate(CurrentState& s,
 					BehaviourWorkSpace& wk,
 					const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -307,7 +307,7 @@ namespace mtest
     return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
   } // end of CastemSmallStrainBehaviour::integrate
 
-  bool
+  std::pair<bool,real>
   CastemSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 					     CurrentState& s,
 					     BehaviourWorkSpace& wk,
@@ -409,7 +409,7 @@ namespace mtest
 		nullptr,nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,&kinc,0);
     if(kinc!=1){
-      return false;
+      return {false,ndt};
     }
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
@@ -426,7 +426,7 @@ namespace mtest
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s.s1(i) *= sqrt2;
     }
-    return true;
+    return {true,ndt};
   } // end of CastemSmallStrainBehaviour::integrate
 
   void

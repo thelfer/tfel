@@ -76,7 +76,15 @@ namespace mfront{
 			      &Child::treatInitLocalVariables);
     this->registerNewCallBack("@InitializeLocalVariables",
 			      &Child::treatInitLocalVariables);
+    this->registerNewCallBack("@MinimalTimeStepScalingFactor",
+			      &Child::treatMinimalTimeStepScalingFactor);
+    this->registerNewCallBack("@MaximalTimeStepScalingFactor",
+			      &Child::treatMaximalTimeStepScalingFactor);
+    this->registerNewCallBack("@APrioriTimeStepScalingFactor",
+			      &Child::treatAPrioriTimeStepScalingFactor);
     this->registerNewCallBack("@Integrator",&Child::treatIntegrator);
+    this->registerNewCallBack("@APosterioriTimeStepScalingFactor",
+			      &Child::treatAPosterioriTimeStepScalingFactor);
     this->registerNewCallBack("@Interface",&Child::treatInterface);
     this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);
     this->registerNewCallBack("@StaticVariable",&Child::treatStaticVar);

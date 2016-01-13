@@ -95,7 +95,7 @@ namespace mtest
     return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
   }
   
-  bool
+  std::pair<bool,real>
   CastemCohesiveZoneModel::computePredictionOperator(BehaviourWorkSpace& wk,
 						     const CurrentState& s,
 						     const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -105,14 +105,14 @@ namespace mtest
       // rotation matrix
       const auto drot = transpose(s.r);
       this->computeElasticStiffness(wk.k,s.mprops1,drot,h);
-      return true;
+      return {true,1};
     }
     throw(std::runtime_error("CastemCohesiveZoneModel::computePredictionOperator : "
 			     "computation of the tangent operator "
 			     "is not supported"));
   } // end of CastemCohesiveZoneModel::computePredictionOperator
 
-  bool
+  std::pair<bool,real>
   CastemCohesiveZoneModel::integrate(CurrentState& s,
 				     BehaviourWorkSpace& wk,
 				     const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -192,7 +192,7 @@ namespace mtest
 		nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,nullptr,&kinc,0);
     if(kinc!=1){
-      return false;
+      return {false,ndt};
     }
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
@@ -217,7 +217,7 @@ namespace mtest
       s.s1[2] = s.s1[1];
       s.s1[1] = tmp;
     }
-    return true;
+    return {true,ndt};
   } // end of CastemCohesiveZoneModel::integrate
 
   void

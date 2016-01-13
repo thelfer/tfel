@@ -647,7 +647,7 @@ namespace mtest
     v[2] = real(1);
   } // end of CastemFiniteStrainBehaviour::setDrivingVariablesDefaultInitialValue  
 
-  bool
+  std::pair<bool,real>
   CastemFiniteStrainBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 							 const CurrentState& s,
 							 const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -658,14 +658,14 @@ namespace mtest
       // compute the stiffness operator from material properties
       const auto rt = transpose(s.r);
       this->computeElasticStiffness(wk.kt,s.mprops1,rt,h);
-      return true;
+      return {true,1};
     }
     throw(std::runtime_error("CastemFiniteStrainBehaviour::computePredictionOperator : "
 			     "computation of the tangent operator "
 			     "is not supported"));
   } // end of CastemFiniteStrainBehaviour::computePredictionOperator
 
-  bool
+  std::pair<bool,real>
   CastemFiniteStrainBehaviour::integrate(CurrentState& s,
 					 BehaviourWorkSpace& wk,
 					 const tfel::material::ModellingHypothesis::Hypothesis h,
@@ -771,7 +771,7 @@ namespace mtest
 		nullptr,&uu0(0,0),&uu1(0,0),nullptr,nullptr,
 		nullptr,nullptr,nullptr,&kinc,0);
     if(kinc!=1){
-      return false;
+      return {false,ndt};
     }
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
@@ -790,7 +790,7 @@ namespace mtest
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s.s1(i) *= sqrt2;
     }
-    return true;
+    return {true,ndt};
   } // end of CastemFiniteStrainBehaviour::integrate
 
   void
