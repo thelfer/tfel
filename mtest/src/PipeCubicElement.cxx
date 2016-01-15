@@ -173,7 +173,7 @@ namespace mtest{
     }    
   } // end of PipeCubicElement::computeStrain
   
-  bool
+  std::pair<bool,real>
   PipeCubicElement::updateStiffnessMatrixAndInnerForces(tfel::math::matrix<real>& k,
 							tfel::math::vector<real>& r,
 							StructureCurrentState& scs,
@@ -209,6 +209,7 @@ namespace mtest{
     // compute the strain
     computeStrain(scs,m,u1,i,true);
     // loop over Gauss point
+    auto r_dt = real{};
     for(const auto g : {0,1,2,3}){
       // Gauss point position in the reference element
       const auto pg = pg_radii[g];
@@ -222,13 +223,14 @@ namespace mtest{
       const auto J = PipeCubicElement::jacobian(r0,r1,r2,r3,pg);
       const auto rb =
 	b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt);
+      r_dt = (g==0) ? rb.second : std::min(rb.second,r_dt);
       if(!rb.first){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
 	  auto& log = mfront::getLogStream();
 	  log << "PipeCubicElement::computeStiffnessMatrixAndResidual : "
 	      << "behaviour intregration failed" << std::endl;
 	}
-	return false;
+	return {false,r_dt};
       }
       // stress tensor
       const auto pi_rr = s.s1[0];
@@ -261,7 +263,7 @@ namespace mtest{
 	k(n,n) += w*rg*bk(1,1);
       }
     } // loop over gauss point
-    return true;
+    return {true,r_dt};
   }
   
 } // end of namespace mtest

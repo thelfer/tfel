@@ -57,7 +57,7 @@ namespace mtest{
 			    p,this->fileTokens.end());
     auto currentLine = p->line;
     auto openedBrackets = 1u;
-    string description;
+    auto description = std::string{};
     while((!((p->value=="}")&&
 	     (openedBrackets==1u)))&&
 	  (p!=this->fileTokens.end())){
@@ -289,7 +289,6 @@ namespace mtest{
   void
   SchemeParserBase::handleMaximumNumberOfIterations(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     t.setMaximumNumberOfIterations(this->readUnsignedInt(p,this->fileTokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleMaximumNumberOfIterations",";",
 			     p,this->fileTokens.end());
@@ -302,21 +301,92 @@ namespace mtest{
     this->readSpecifiedToken("SchemeParserBase::handleMaximumNumberOfSubSteps",";",
 			     p,this->fileTokens.end());
   } // end of SchemeParserBase::handleMaximumNumberOfSubSteps
+
+  void
+  SchemeParserBase::handleOutputFrequency(SchemeBase& t,
+					  TokensContainer::const_iterator& p)
+  {
+    const auto v = this->readString(p,this->fileTokens.end());
+    if(v=="UserDefinedTimes"){
+      t.setOutputFrequency(SchemeBase::USERDEFINEDTIMES);
+    } else if(v=="EveryPeriod"){
+      t.setOutputFrequency(SchemeBase::EVERYPERIOD);
+    } else {
+      throw(std::runtime_error("SchemeParserBase::handleOutputFrequency: "
+			       "invalid frequency '"+v+"'"));
+    }
+    this->readSpecifiedToken("SchemeParserBase::handleOutputFrequency",";",
+			     p,this->fileTokens.end());
+  } // end of SchemeParserBase::handleOutputFrequency
+  
+  void
+  SchemeParserBase::handleDynamicTimeStepScaling(SchemeBase& t,
+						 TokensContainer::const_iterator& p)
+  {
+    this->checkNotEndOfLine("SchemeParserBase::handleDynamicTimeStepScaling",
+			    p,this->fileTokens.end());
+    if(p->value=="true"){
+      t.setDynamicTimeStepScaling(true);
+    } else if(p->value=="false"){
+      t.setDynamicTimeStepScaling(false);
+    } else {
+      throw(std::runtime_error("SchemeParserBase::handleDynamicTimeStepScaling: "
+			       "unexpected value (expected 'true' or 'false', "
+			       "read '"+p->value+"')"));
+    }
+    ++p;
+    this->readSpecifiedToken("SchemeParserBase::handleDynamicTimeStepScaling",";",
+			     p,this->fileTokens.end());
+  }
+  
+  void
+  SchemeParserBase::handleMaximalTimeStep(SchemeBase& t,
+					  TokensContainer::const_iterator& p)
+  {
+    t.setMaximalTimeStep(this->readDouble(t,p));
+    this->readSpecifiedToken("SchemeParserBase::handleMaximalTimeStep",";",
+			     p,this->fileTokens.end());
+  }
+
+  void
+  SchemeParserBase::handleMinimalTimeStep(SchemeBase& t,
+					  TokensContainer::const_iterator& p)
+  {
+    t.setMinimalTimeStep(this->readDouble(t,p));
+    this->readSpecifiedToken("SchemeParserBase::handleMinimalTimeStep",";",
+			     p,this->fileTokens.end());
+  }
+
+  void
+  SchemeParserBase::handleMinimalTimeStepScalingFactor(SchemeBase& t,
+						       TokensContainer::const_iterator& p)
+  {
+    t.setMinimalTimeStepScalingFactor(this->readDouble(t,p));
+    this->readSpecifiedToken("SchemeParserBase::handleMinimalTimeStepScalingFactor",";",
+			     p,this->fileTokens.end());
+  }
+
+  void
+  SchemeParserBase::handleMaximalTimeStepScalingFactor(SchemeBase& t,
+						       TokensContainer::const_iterator& p)
+  {
+    t.setMaximalTimeStepScalingFactor(this->readDouble(t,p));
+    this->readSpecifiedToken("SchemeParserBase::handleMaximalTimeStepScalingFactor",";",
+			     p,this->fileTokens.end());
+  }
   
   std::string
   SchemeParserBase::readUntilEndOfInstruction(TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    string res;
+    auto res = std::string{};
     this->checkNotEndOfLine("SchemeParserBase::readUntilEndOfInstruction",
 			    p,this->fileTokens.end());
     while((p!=this->fileTokens.end())&&
 	  (p->value != ";")){
       if(!p->value.empty()){
 	if(p->value[0]=='@'){
-	  string msg("SchemeParserBase::readUntilEndOfInstruction: ");
-	  msg += "no word beginning with '@' are allowed here";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("SchemeParserBase::readUntilEndOfInstruction: "
+				   "no word beginning with '@' are allowed here"));
 	}
 	res+=p->value;
 	res+=" ";
@@ -636,6 +706,8 @@ namespace mtest{
     this->registerCallBack("@Description",&SchemeParserBase::handleDescription);
     this->registerCallBack("@OutputFile",
 			   &SchemeParserBase::handleOutputFile);
+    this->registerCallBack("@OutputFrequency",
+			   &SchemeParserBase::handleOutputFrequency);
     this->registerCallBack("@OutputFilePrecision",
 			   &SchemeParserBase::handleOutputFilePrecision);
     this->registerCallBack("@ResidualFile",
@@ -665,6 +737,16 @@ namespace mtest{
 			   &SchemeParserBase::handleMaximumNumberOfIterations);
     this->registerCallBack("@MaximumNumberOfSubSteps",
 			   &SchemeParserBase::handleMaximumNumberOfSubSteps);
+    this->registerCallBack("@DynamicTimeStepScaling",
+			   &SchemeParserBase::handleDynamicTimeStepScaling);
+    this->registerCallBack("@MaximalTimeStepScalingFactor",
+			   &SchemeParserBase::handleMaximalTimeStepScalingFactor);
+    this->registerCallBack("@MinimalTimeStepScalingFactor",
+			   &SchemeParserBase::handleMinimalTimeStepScalingFactor);
+    this->registerCallBack("@MaximalTimeStep",
+			   &SchemeParserBase::handleMaximalTimeStep);
+    this->registerCallBack("@MinimalTimeStep",
+			   &SchemeParserBase::handleMinimalTimeStep);
   } // end of SchemeParserBase::registerCallBacks
 
   bool

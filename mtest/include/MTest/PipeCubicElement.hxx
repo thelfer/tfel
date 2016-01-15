@@ -88,6 +88,13 @@ namespace mtest{
 		  const size_t,
 		  const bool);
     /*!
+     * \return a pair containing:
+     * - a boolean syaing if the behaviour integration shall be
+     *   performed
+     * - a scaling factor that can be used to:
+     *     - increase the time step if the integration was successfull
+     *     - decrease the time step if the integration failed or if the
+     *       results were not reliable (time step too large).
      * \param[out] k:   stiffness matrix
      * \param[out] r:   residual
      * \param[out] scs: structure current state
@@ -98,7 +105,7 @@ namespace mtest{
      * \param[in]  mt:  stiffness matrix type
      * \param[in]  i:   element number
      */
-    static bool
+    static std::pair<bool,real>
     updateStiffnessMatrixAndInnerForces(tfel::math::matrix<real>&,
 					tfel::math::vector<real>&,
 					StructureCurrentState&,

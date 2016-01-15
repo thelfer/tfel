@@ -106,6 +106,109 @@ namespace mtest{
     }
     this->options.mSubSteps = static_cast<int>(i);
   }
+
+  void
+  SchemeBase::setOutputFrequency(const OutputFrequency o){
+    this->output_frequency = o;
+  }
+  
+  void
+  SchemeBase::setDynamicTimeStepScaling(const bool b){
+    this->options.dynamic_time_step_scaling = b;
+  }
+  
+  void
+  SchemeBase::setMaximalTimeStep(const real v)
+  {
+    if(this->options.maximal_time_step>0){
+      throw(std::runtime_error("SchemeBase::setMaximalTimeStep: "
+			       "the maximal time step "
+			       "has already been declared"));
+    }
+    if(this->options.minimal_time_step>0){
+      if(v<=this->options.minimal_time_step){
+	throw(std::runtime_error("SchemeBase::setMaximalTimeStep: "
+				 "the specified maximal time step "
+				 "is lower than the minimal time step"));
+      }
+      if((std::abs(v-this->options.minimal_time_step)<100*std::numeric_limits<real>::min())||
+	 (std::abs(v-this->options.minimal_time_step)<100*v*std::numeric_limits<real>::epsilon())){
+	throw(std::runtime_error("SchemeBase::setMaximalTimeStep: "
+				 "the minimal and the maximal time step are too close"));
+      }
+    }
+    if(v<=100*std::numeric_limits<real>::min()){
+      throw(std::runtime_error("SchemeBase::setMaximalTimeStep: "
+			       "the maximal time step is either negative or too small"));
+    }
+    this->options.maximal_time_step=v;
+  }
+
+  void
+  SchemeBase::setMinimalTimeStep(const real v)
+  {
+    if(this->options.minimal_time_step>0){
+      throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
+			       "the minimal time step "
+			       "has already been declared"));
+    }
+    if(this->options.maximal_time_step>0){
+      if(v>=this->options.maximal_time_step){
+	throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
+				 "the specified minimal time step "
+				 "is greater than the maximal time step"));
+      }
+      if((std::abs(this->options.maximal_time_step-v)<100*std::numeric_limits<real>::min())||
+	 (std::abs(this->options.maximal_time_step-v)<100*(this->options.maximal_time_step*
+							   std::numeric_limits<real>::epsilon()))){
+	throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
+				 "the maximal and the minimal time step are too close"));
+      }
+    }
+    if(v<=100*std::numeric_limits<real>::min()){
+      throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
+			       "the specified minimal time step is "
+			       "either negative or too small"));
+    }
+    this->options.minimal_time_step=v;
+  }
+
+  void
+  SchemeBase::setMinimalTimeStepScalingFactor(const real v)
+  {
+    if(this->options.minimal_time_step>0){
+      throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
+			       "the minimal time step scaling factor"
+			       "has already been declared"));
+    }
+    if(v>=1){
+      throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
+			       "the minimal time step scaling factor "
+			       "is greater than one "));
+    }
+    if(v<=100*std::numeric_limits<real>::epsilon()){
+      throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
+			       "the minimal time step scaling is either "
+			       "negative or too small"));
+    }
+    this->options.minimal_time_step=v;
+  }
+
+  void
+  SchemeBase::setMaximalTimeStepScalingFactor(const real v)
+  {
+    if(this->options.maximal_time_step>0){
+      throw(std::runtime_error("SchemeBase::setMaximalTimeStep: "
+			       "the maximal time step scaling factor"
+			       "has already been declared"));
+    }
+    if(v<1){
+      throw(std::runtime_error("SchemeBase::setMaximalTimeStep: "
+			       "the maximal time step scaling factor "
+			       "is lower than one "));
+    }
+    this->options.maximal_time_step=v;
+  }
   
   void
   SchemeBase::setDescription(const std::string& d)

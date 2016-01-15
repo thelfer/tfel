@@ -120,7 +120,7 @@ namespace mtest{
     }    
   } // end of PipeQuadraticElement::computeStrain
   
-  bool
+  std::pair<bool,real>
   PipeQuadraticElement::updateStiffnessMatrixAndInnerForces(tfel::math::matrix<real>& k,
 							    tfel::math::vector<real>& r,
 							    StructureCurrentState& scs,
@@ -153,6 +153,7 @@ namespace mtest{
     auto& bwk = scs.getBehaviourWorkSpace();
     // compute the strain
     computeStrain(scs,m,u1,i,true);
+    auto r_dt = real{};
     // loop over Gauss point
     for(const auto g : {0,1,2}){
       // Gauss point position in the reference element
@@ -171,13 +172,14 @@ namespace mtest{
       auto& s = scs.istates[3*i+g];
       const auto rb =
 	b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt);
+      r_dt = (g==0) ? rb.second : std::min(rb.second,r_dt);
       if(!rb.first){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
 	  auto& log = mfront::getLogStream();
 	  log << "PipeQuadraticElement::computeStiffnessMatrixAndResidual : "
 	      << "behaviour intregration failed" << std::endl;
 	}
-	return false;
+	return {false,r_dt};
       }
       // stress tensor
       const auto pi_rr = s.s1[0];
@@ -210,7 +212,7 @@ namespace mtest{
 	k(n,n) += w*rg*bk(1,1);
       }
     } // loop over gauss point
-    return true;
+    return {true,r_dt};
   }
   
 } // end of namespace mtest

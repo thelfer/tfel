@@ -3776,6 +3776,7 @@ mtest/src/SecantAccelerationAlgorithm.cxx -text
 mtest/src/SingleStructureScheme.cxx -text
 mtest/src/SingleStructureSchemeParser.cxx -text
 mtest/src/Solver.cxx -text
+mtest/src/SolverOptions.cxx -text
 mtest/src/SteffensenAccelerationAlgorithm.cxx -text
 mtest/src/StructureCurrentState.cxx -text
 mtest/src/Study.cxx -text

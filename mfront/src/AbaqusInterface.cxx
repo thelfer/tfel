@@ -480,7 +480,7 @@ namespace mfront{
     }
     out << "if(abaqus::AbaqusInterface<tfel::material::" << mb.getClassName() 
 	<< ">::exe(NTENS,DTIME,DROT,DDSDDE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,"
+	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,PNEWDT,"
 	<< getFunctionName(name) << "_getOutOfBoundsPolicy(),"
 	<< sfeh << ")!=0){\n";
     this->generateMTestFile2(out,mb.getBehaviourType(),

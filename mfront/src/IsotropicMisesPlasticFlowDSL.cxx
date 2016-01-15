@@ -168,19 +168,19 @@ namespace mfront{
     this->behaviourFile << "/*!\n";
     this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
     this->behaviourFile << "*/\n";
-    this->behaviourFile << "IntegrationResult" << endl;
+    this->behaviourFile << "IntegrationResult\n";
     this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
-    this->behaviourFile << "using namespace std;" << endl;
+    this->behaviourFile << "using namespace std;\n";
     if(this->mb.useQt()){
       this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			  << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
-			  << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-			  << "}" << endl;
+			  << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+			  << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+			  << "}\n";
     } else {
       this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			  << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
-			  << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-			  << "}" << endl;
+			  << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+			  << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+			  << "}\n";
     }
     this->behaviourFile << "if(!this->NewtonIntegration()){\n";
     if(this->mb.useQt()){        
@@ -215,29 +215,27 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
   }
 
-
   void IsotropicMisesPlasticFlowDSL::writeBehaviourComputeTangentOperator(const Hypothesis)
   {
-    using std::endl;
-    this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){" << endl;
-    this->behaviourFile << "using namespace std;" << endl;
-    this->behaviourFile << "using tfel::material::lame::computeElasticStiffness;" << endl;
-    this->behaviourFile << "using tfel::math::st2tost2;" << endl;
-    this->behaviourFile << "constexpr real prec = std::numeric_limits<strain>::epsilon()/100;" << endl;
-    this->behaviourFile << "if(smt==CONSISTENTTANGENTOPERATOR){" << endl;
-    this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);" << endl;
-    this->behaviourFile << "if(this->dp>prec){" << endl;
-    this->behaviourFile << "const real ccto_tmp_1 =  this->dp/this->seq_e;" << endl;
-    this->behaviourFile << "const auto& M = st2tost2<N,Type>::M();" << endl;
-    this->behaviourFile << "this->Dt += -4*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq/((this->theta)*(3*(this->mu)*(this->df_dseq)-(this->df_dp))))*((this->n)^(this->n)));" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl;
-    this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);" << endl;
-    this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "return false;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "return true;" << endl;
-    this->behaviourFile << "}" << endl << endl;
+    this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
+    this->behaviourFile << "using namespace std;\n";
+    this->behaviourFile << "using tfel::material::lame::computeElasticStiffness;\n";
+    this->behaviourFile << "using tfel::math::st2tost2;\n";
+    this->behaviourFile << "constexpr real prec = std::numeric_limits<strain>::epsilon()/100;\n";
+    this->behaviourFile << "if(smt==CONSISTENTTANGENTOPERATOR){\n";
+    this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
+    this->behaviourFile << "if(this->dp>prec){\n";
+    this->behaviourFile << "const real ccto_tmp_1 =  this->dp/this->seq_e;\n";
+    this->behaviourFile << "const auto& M = st2tost2<N,Type>::M();\n";
+    this->behaviourFile << "this->Dt += -4*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq/((this->theta)*(3*(this->mu)*(this->df_dseq)-(this->df_dp))))*((this->n)^(this->n)));\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
+    this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
+    this->behaviourFile << "} else {\n";
+    this->behaviourFile << "return false;\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "return true;\n";
+    this->behaviourFile << "}\n\n";
   }
 
   void

@@ -8,6 +8,8 @@
 #ifndef _LIB_MTEST_STUDY_HXX_
 #define _LIB_MTEST_STUDY_HXX_
 
+#include<utility>
+
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -74,6 +76,13 @@ namespace mtest{
 				      const real) const = 0;
     /*!
      * \brief compute the stiffness matrix and the residual
+     * \return a pair containing:
+     * - a boolean syaing if the behaviour integration shall be
+     *   performed
+     * - a scaling factor that can be used to:
+     *     - increase the time step if the integration was successfull
+     *     - decrease the time step if the integration failed or if the
+     *       results were not reliable (time step too large).
      * \param[out] s: current structure state
      * \param[out] K:   tangent operator
      * \param[out] r:   residual
@@ -82,7 +91,7 @@ namespace mtest{
      * \param[in]  smt: type of tangent operator
      * \note the memory has already been allocated
      */
-    virtual bool
+    virtual std::pair<bool,real>
     computePredictionStiffnessAndResidual(StudyCurrentState&,
 					  tfel::math::matrix<real>&,
 					  tfel::math::vector<real>&,
@@ -91,6 +100,13 @@ namespace mtest{
 					  const StiffnessMatrixType) const = 0;
     /*!
      * \brief compute the stiffness matrix and the residual
+     * \return a pair containing:
+     * - a boolean syaing if the behaviour integration shall be
+     *   performed
+     * - a scaling factor that can be used to:
+     *     - increase the time step if the integration was successfull
+     *     - decrease the time step if the integration failed or if the
+     *       results were not reliable (time step too large).
      * \param[out] s: current structure state
      * \param[out] K:   tangent operator
      * \param[out] r:   residual
@@ -99,7 +115,7 @@ namespace mtest{
      * \param[in]  smt: type of tangent operator
      * \note the memory has already been allocated
      */
-    virtual bool
+    virtual std::pair<bool,real>
     computeStiffnessMatrixAndResidual(StudyCurrentState&,
 				      tfel::math::matrix<real>&,
 				      tfel::math::vector<real>&,
@@ -174,6 +190,15 @@ namespace mtest{
      */
     virtual void
     setModellingHypothesis(const std::string&) = 0;
+    /*!
+     * \brief print usefull information in the output file 
+     * \param[in] t: time
+     * \param[in] s: current state
+     * \param[in] o: if true, this time has been specified by the
+     * user. Otherwise, it has been reached due to sub-stepping.
+     */
+    virtual void printOutput(const real,const StudyCurrentState&,
+			     const bool) const = 0;
     //! \brief set the modelling hypothesis to the default one
     virtual void setDefaultModellingHypothesis(void) = 0;
     //! destructor

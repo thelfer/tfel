@@ -40,7 +40,7 @@ namespace mtest{
     log << '\n';
   }
   
-  static bool
+  static std::pair<bool,real>
   iterate(StudyCurrentState& scs,
 	  SolverWorkSpace& wk,
 	  const Study& s,
@@ -76,7 +76,7 @@ namespace mtest{
       } else if (o.ppolicy==PredictionPolicy::TANGENTOPERATORPREDICTION){
 	smt=StiffnessMatrixType::TANGENTOPERATOR;
       }
-      if(s.computePredictionStiffnessAndResidual(scs,wk.K,wk.r,t,dt,smt)){
+      if(s.computePredictionStiffnessAndResidual(scs,wk.K,wk.r,t,dt,smt).first){
 	wk.du = wk.r;
 	LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
 	u1 -= wk.du;	  
@@ -101,6 +101,7 @@ namespace mtest{
     real nep2 = 0.; // norm of the increment of the driving variables two
     // iterations before...
     /* prediction */
+    auto r_dt = real{};
     while((!converged)&&(iter!=o.iterMax)){
       ++iter;
       nep2 = nep;
@@ -114,9 +115,11 @@ namespace mtest{
       // if(o.ks==SolverOptions::CONSTANTSTIFFNESSBYPERIOD){
 	  
       // }
-      if(!s.computeStiffnessMatrixAndResidual(scs,wk.K,wk.r,t,dt,o.ktype)){
-	return false;
+      auto r = s.computeStiffnessMatrixAndResidual(scs,wk.K,wk.r,t,dt,o.ktype);
+      if(!r.first){
+	return r;
       }
+      r_dt = r.second;
       if((mfront::getVerboseMode()>=mfront::VERBOSE_DEBUG)&&
 	 (o.ktype!=StiffnessMatrixType::NOSTIFFNESS)){
 	auto& log = mfront::getLogStream();
@@ -129,7 +132,6 @@ namespace mtest{
 	}
 	log << endl;
       }
-
       // scs.revert();
       // tfel::math::matrix<real> nK(wk.K.getNbRows(),wk.K.getNbCols());
       // tfel::math::vector<real> nr(wk.K.getNbRows());
@@ -193,7 +195,7 @@ namespace mtest{
 	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
 	    report(s.getFailedCriteriaDiagnostic(scs,wk.du,wk.r,o,t,dt));
 	  }
-	  return false;
+	  return {false,r.second};
 	} else {
 	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL3){
 	    report(s.getFailedCriteriaDiagnostic(scs,wk.du,wk.r,o,t,dt));
@@ -236,7 +238,7 @@ namespace mtest{
       o.aa->postExecuteTasks();
     }
     s.postConvergence(scs,t,dt,scs.period);
-    return true;
+    return {true,r_dt};
   } // end of iterate
   
   void
@@ -250,11 +252,30 @@ namespace mtest{
     unsigned short subStep = 0;
     auto t  = ti;
     auto dt = te-ti;
-    while((std::abs(te-t)>0.5*dt)&&(subStep!=o.mSubSteps)){
-      if(iterate(scs,wk,s,o,t,dt)){
+    if(dt<0){
+      throw(std::runtime_error("GenericSolver::execute: "
+			       "negative time step"));
+    }
+    // almost bone
+    constexpr real aone = 1-10*std::numeric_limits<real>::epsilon();
+    bool end = false;
+    while((!end)&&(subStep!=o.mSubSteps)){
+      auto r = iterate(scs,wk,s,o,t,dt);
+      auto converged = o.dynamic_time_step_scaling ?
+	(r.first && (r.second>=aone)) : r.first;
+      if(converged){
 	scs.update(dt);
 	t+=dt;
+	end=std::abs(te-t)<0.5*dt;
+	if(o.dynamic_time_step_scaling){
+	  dt *= std::max(std::min(o.maximal_time_step_scaling_factor,r.second),1.);
+	}
 	++scs.period;
+	if(end){
+	  s.printOutput(t,scs,true);
+	} else {
+	  s.printOutput(t,scs,false);
+	}
       } else {
 	++subStep;
 	if(subStep==o.mSubSteps){
@@ -266,7 +287,33 @@ namespace mtest{
 	  log << "Dividing time step by two\n\n";
 	}
 	scs.revert();
-	dt *= 0.5;
+	if(o.dynamic_time_step_scaling){
+	  if(r.first){
+	    dt *= std::max(r.second,o.minimal_time_step_scaling_factor);
+	  } else {
+	    dt *= std::max(std::min(0.5,r.second),
+			   o.minimal_time_step_scaling_factor);
+	  }
+	} else {
+	  dt*=0.5;
+	}
+      }
+      if(o.maximal_time_step>0){
+	dt = std::min(dt,o.maximal_time_step);
+      }
+      dt = std::min(dt,te-t);
+      if(dt>(te-t)*aone){
+	dt=te-t;
+      } else if(dt>0.95*(te-t)){
+	dt = (te-t)*0.5;
+      }
+      if(dt<0){
+	throw(std::runtime_error("GenericSolver::execute: "
+				 "negative time step"));
+      }
+      if(dt<o.minimal_time_step){
+	throw(std::runtime_error("GenericSolver::execute: "
+				 "time step is below its minimal value"));
       }
     }
   }

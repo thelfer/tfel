@@ -858,7 +858,10 @@ namespace mfront{
 
     virtual void
     writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis);
-
+    //! \brief write the getTimeStepScalingFactor method
+    virtual void
+    writeBehaviourGetTimeStepScalingFactor(void);
+    //! \brief write the integrate method
     virtual void
     writeBehaviourIntegrator(const Hypothesis);
     /*!

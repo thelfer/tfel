@@ -12,6 +12,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
 #include<utility>
 #include"TFEL/Material/MaterialException.hxx"
 
@@ -22,6 +23,14 @@ namespace tfel{
     MaterialException::~MaterialException() noexcept
     {} // end of MaterialException::~MaterialException
 
+    DivergenceException::DivergenceException(const char* const msg){
+      std::cerr << "DivergenceException::DivergenceException: " << msg << std::endl;
+    }
+
+    DivergenceException::DivergenceException(const std::string& msg){
+      std::cerr << "DivergenceException::DivergenceException: " << msg << std::endl;
+    }
+    
     const char*
     DivergenceException::what() const noexcept
     {

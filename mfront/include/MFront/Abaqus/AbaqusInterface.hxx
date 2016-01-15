@@ -68,7 +68,7 @@ namespace abaqus
 	     const AbaqusReal *const PROPS, const AbaqusInt  *const NPROPS,
 	     const AbaqusReal *const PREDEF,const AbaqusReal *const DPRED,
 	     AbaqusReal *const STATEV,const AbaqusInt  *const NSTATV,
-	     AbaqusReal *const STRESS,
+	     AbaqusReal *const STRESS,	    AbaqusReal *const PNEWDT,
 	     const tfel::material::OutOfBoundsPolicy op,
 	     const StressFreeExpansionHandler& sfeh)
     {
@@ -76,15 +76,15 @@ namespace abaqus
       if( *NTENS == 4 ){
 	return CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 									       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									       STATEV,NSTATV,STRESS,op,sfeh);
+									       STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
       } else if( *NTENS == 3 ){
         return CallBehaviour<ModellingHypothesis::PLANESTRESS>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 								    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								    STATEV,NSTATV,STRESS,op,sfeh);
+								    STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
       } else if( *NTENS == 6 ){
         return CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 								       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								       STATEV,NSTATV,STRESS,op,sfeh);
+								       STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
       } else {
         AbaqusInterfaceExceptions::displayUnsupportedHypothesisMessage();
         return -2;
@@ -104,7 +104,7 @@ namespace abaqus
 	  const AbaqusReal *const, const AbaqusInt  *const,
 	  const AbaqusReal *const,const AbaqusReal *const,
 	  AbaqusReal *const,const AbaqusInt  *const,
-	  AbaqusReal *const,
+	  AbaqusReal *const,      AbaqusReal *const,
 	  const tfel::material::OutOfBoundsPolicy,
 	  const StressFreeExpansionHandler&)
       {
@@ -125,7 +125,7 @@ namespace abaqus
 	      const AbaqusReal *const PROPS, const AbaqusInt  *const NPROPS,
 	      const AbaqusReal *const PREDEF,const AbaqusReal *const DPRED,
 	      AbaqusReal *const STATEV,const AbaqusInt  *const NSTATV,
-	      AbaqusReal *const STRESS,
+	      AbaqusReal *const STRESS,      AbaqusReal *const PNEWDT,
 	      const tfel::material::OutOfBoundsPolicy op,
 	      const StressFreeExpansionHandler& sfeh)
       {
@@ -137,7 +137,7 @@ namespace abaqus
 	try{
 	  Handler::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
 		       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-		       STATEV,NSTATV,STRESS,op,sfeh);
+		       STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
 	}
 	catch(const AbaqusException& e){
 	  AbaqusInterfaceExceptions::treatAbaqusException(MTraits::getName(),e);
@@ -182,7 +182,7 @@ namespace abaqus
 	  const AbaqusReal *const PROPS, const AbaqusInt  *const NPROPS,
 	  const AbaqusReal *const PREDEF,const AbaqusReal *const DPRED,
 	  AbaqusReal *const STATEV,const AbaqusInt  *const NSTATV,
-	  AbaqusReal *const STRESS,
+	  AbaqusReal *const STRESS,AbaqusReal *const PNEWDT,
 	  const tfel::material::OutOfBoundsPolicy op,
 	  const StressFreeExpansionHandler& sfeh)
       {
@@ -198,7 +198,7 @@ namespace abaqus
 		     TEMP,DTEMP,PROPS,
 		     PREDEF,DPRED,STATEV,
 		     STRESS,DROT,op,sfeh);
-	i.exe(DDSDDE,STRESS,STATEV);
+	i.exe(PNEWDT,DDSDDE,STRESS,STATEV);
       }
     }; // end of struct CallBehaviour
   }; // end of struct AbaqusInterface

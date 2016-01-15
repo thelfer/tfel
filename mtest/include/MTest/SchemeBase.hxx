@@ -37,6 +37,11 @@ namespace mtest{
     : public Scheme,
       public Study
   {
+    // simple alias
+    enum OutputFrequency{
+      USERDEFINEDTIMES,
+      EVERYPERIOD
+    }; // end of enum OutputFrequency      
     using EvolutionPtr = std::shared_ptr<Evolution>;
     SchemeBase();
     SchemeBase(SchemeBase&&) = delete;
@@ -77,12 +82,6 @@ namespace mtest{
      */
     virtual void
     setResidualFilePrecision(const unsigned int);
-    /*!
-     * \brief print usefull information in the output file 
-     * \param[in] t  : time
-     * \param[in] state  : current state
-     */
-    virtual void printOutput(const real,const StudyCurrentState&) = 0;
     /*!
      * \return the list of evolutions
      */
@@ -130,7 +129,42 @@ namespace mtest{
      * \brief set the date
      * \param[in] d : date
      */
-    virtual void setDate(const std::string&);
+    virtual void setDate(const std::string&); 
+    /*!
+     * \brief set the output frequency
+     * \param[in] o: output frequency
+     */
+    virtual void setOutputFrequency(const OutputFrequency);
+    /*!
+     * \brief set the maximal time step
+     * \param[in] v : value
+     */
+    virtual void
+    setDynamicTimeStepScaling(const bool);
+   /*!
+     * \brief set the maximal time step
+     * \param[in] v : value
+     */
+    virtual void
+    setMaximalTimeStep(const real);
+    /*!
+     * \brief set the minimal time step
+     * \param[in] v : value
+     */
+    virtual void
+    setMinimalTimeStep(const real);
+    /*!
+     * \brief set the maximal time step scaling factor
+     * \param[in] v : value
+     */
+    virtual void
+    setMaximalTimeStepScalingFactor(const real);
+    /*!
+     * \brief set the minimal time step scaling factor
+     * \param[in] v : value
+     */
+    virtual void
+    setMinimalTimeStepScalingFactor(const real);
     virtual void setMaximumNumberOfIterations(const unsigned int);
     virtual void setMaximumNumberOfSubSteps(const unsigned int);
     //! \return the dimension
@@ -233,12 +267,14 @@ namespace mtest{
     //! output file name
     std::string output;
     //! output file
-    std::ofstream out;
+    mutable std::ofstream out;
     //! residual file name
     std::string residualFileName;
     //! file where residuals evolutions as a function of the iteration
     //! number are saved
     mutable std::ofstream residual;
+    //! output frequency
+    OutputFrequency output_frequency = USERDEFINEDTIMES;
     //! output file precision
     int oprec = -1;
     //! residual file precision

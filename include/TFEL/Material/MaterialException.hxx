@@ -35,6 +35,8 @@ namespace tfel{
       : public MaterialException
     {
       DivergenceException() = default;
+      DivergenceException(const char* const);
+      DivergenceException(const std::string&);
       DivergenceException(DivergenceException&&)      = default;
       DivergenceException(const DivergenceException&) = default;
       virtual const char * what() const noexcept override final;

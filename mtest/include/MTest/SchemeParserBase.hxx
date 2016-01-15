@@ -35,6 +35,11 @@ namespace mtest{
      */
     virtual void handleDate(SchemeBase&,TokensContainer::const_iterator&);
     /*!
+     * handle the @OutputFrequency keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void handleOutputFrequency(SchemeBase&,TokensContainer::const_iterator&);
+    /*!
      * handle the @Description keyword
      * \param[in,out] p : position in the input file
      */
@@ -95,6 +100,36 @@ namespace mtest{
      */
     virtual void
     handleAccelerationAlgorithmParameter(SchemeBase&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @DynamicTimeStepScaling keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void
+    handleDynamicTimeStepScaling(SchemeBase&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @MaximalTimeStep keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void
+    handleMaximalTimeStep(SchemeBase&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @MinimalTimeStep keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void
+    handleMinimalTimeStep(SchemeBase&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @MaximalTimeStepScalingFactor keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void
+    handleMaximalTimeStepScalingFactor(SchemeBase&,TokensContainer::const_iterator&);
+    /*!
+     * handle the @MinimalTimeStepScalingFactor keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void
+    handleMinimalTimeStepScalingFactor(SchemeBase&,TokensContainer::const_iterator&);
     /*!
      * handle the @MaximumNumberOfIterations keyword
      * \param[in,out] p : position in the input file

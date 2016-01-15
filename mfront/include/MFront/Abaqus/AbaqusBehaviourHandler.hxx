@@ -214,7 +214,8 @@ namespace abaqus
 	  } // end of Integrator::Integrator
 	
       TFEL_ABAQUS_INLINE2
-	void exe(AbaqusReal *const DDSDDE,
+	void exe(AbaqusReal *const PNEWDT,
+		 AbaqusReal *const DDSDDE,
 		 AbaqusReal *const STRESS,
 		 AbaqusReal *const STATEV)
       {
@@ -231,7 +232,22 @@ namespace abaqus
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
 	const typename BV::SMFlag smflag = AbaqusTangentOperatorFlag<AbaqusTraits<BV>::btype>::value;
-	r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
+	auto tsf = behaviour.computeAPrioriTimeStepScalingFactor();
+	*PNEWDT = tsf.second;
+	if(!tsf.first){
+	  r = BV::FAILURE;
+	} else {
+	  r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
+	  if(r==BV::FAILURE){
+	    *PNEWDT = behaviour.getMinimalTimeStepScalingFactor();
+	  } else {
+	    tsf = behaviour.computeAPosterioriTimeStepScalingFactor();
+	    if(!tsf.first){
+	      r=BV::FAILURE;
+	    }
+	    *PNEWDT = std::min(tsf.second,*PNEWDT);
+	  }
+	}
 	if(r==BV::FAILURE){
 	  // Il manque un vraie gestion locale de résultats imprécis
 	  throwBehaviourIntegrationFailedException(Traits::getName());

@@ -28,6 +28,7 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  ImposedDrivingVariable.cxx                \
 			  ImposedThermodynamicForce.cxx             \
 			  Solver.cxx                                \
+		 	  SolverOptions.cxx                         \
 			  GenericSolver.cxx                         \
 			  AccelerationAlgorithmFactory.cxx          \
 			  AccelerationAlgorithm.cxx                 \

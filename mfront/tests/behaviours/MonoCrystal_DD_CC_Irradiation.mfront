@@ -14,7 +14,7 @@
 @RequireStiffnessTensor;
 
 @Theta 1.0;
-@Epsilon 1.e-0;
+@Epsilon 1.e-10;
 @IterMax 100 ;
 
 @MaterialProperty real b;

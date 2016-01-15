@@ -504,14 +504,23 @@ namespace castem
 	  DVInitializer::exe(behaviour,STRAN,DSTRAN,sfeh);
 	  behaviour.setCASTEMBehaviourDataThermodynamicForces(STRESS);
 	  behaviour.initialize();
-	  *pnewdt = behaviour.computeAPrioriTimeStepScalingFactor();
-	  if((*pnewdt<1)&&(std::abs(*pnewdt-1)>10*std::numeric_limits<CastemReal>::min())){
+	  auto tsf = behaviour.computeAPrioriTimeStepScalingFactor();
+	  *pnewdt = tsf.second;
+	  if(!tsf.first){
 	    r = BV::FAILURE;
 	  } else {
 	    behaviour.setOutOfBoundsPolicy(this->policy);
 	    behaviour.checkBounds();
 	    r = behaviour.integrate(smflag,smtype);
-	    *pnewdt = behaviour.computeAPosterioriTimeStepScalingFactor();
+	    if(r==BV::FAILURE){
+	      *pnewdt = behaviour.getMinimalTimeStepScalingFactor();
+	    } else {
+	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor();
+	      if(!tsf.first){
+		r=BV::FAILURE;
+	      }
+	      *pnewdt = std::min(tsf.second,*pnewdt);
+	    }
 	    behaviour.checkBounds();
 	    if((*pnewdt<1)&&(std::abs(*pnewdt-1)>10*std::numeric_limits<CastemReal>::min())){
 	      r = BV::UNRELIABLE_RESULTS;
@@ -541,7 +550,7 @@ namespace castem
       integrate2(CastemReal *const stress,
 		 CastemReal *const statev,
 		 CastemReal *const ddsdde,
-		 CastemReal *const, /* pnewdt */
+		 CastemReal *const pnewdt,
 		 const typename Behaviour<H,CastemReal,false>::SMType smtype)
       {
 	using namespace tfel::material;
@@ -569,10 +578,12 @@ namespace castem
 	unsigned short subSteps   = 1u;
 	unsigned short iterations = 2u;
 	const typename BV::SMFlag smflag = CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
+	*pnewdt=0.5;
 	while((iterations!=0)&&
 	      (subSteps!=CastemTraits<BV>::maximumSubStepping)){
 	  typename BV::IntegrationResult result;
 	  BV behaviour(bData,iData);
+	  auto tsf = std::pair<bool,CastemReal>{};
 	  try{
 	    behaviour.initialize();
 	    behaviour.setOutOfBoundsPolicy(this->policy);
@@ -581,6 +592,12 @@ namespace castem
 	      result = behaviour.integrate(smflag,smtype);
 	    } else {
 	      result = behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
+	    }
+	    if(result==BV::SUCCESS){
+	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor();
+	      if(!tsf.first){
+		result=BV::FAILURE;
+	      }
 	    }
 	  }
 #ifdef MFRONT_CASTEM_VERBOSE
@@ -595,6 +612,7 @@ namespace castem
 	     ((result==BV::UNRELIABLE_RESULTS)&&
 	      (!CastemTraits<BV>::doSubSteppingOnInvalidResults))){
 	    --(iterations);
+	    *pnewdt *= tsf.second;
 	    behaviour.checkBounds();
 	    behaviour.updateExternalStateVariables();
 	    if(iterations==0){
@@ -609,10 +627,12 @@ namespace castem
 		     (CastemTraits<BV>::doSubSteppingOnInvalidResults)){
 	    iterations = static_cast<unsigned short>(iterations*2u);
 	    iData.scale(bData,0.5);
+	    *pnewdt *= 0.5;
 	  } else {
 	    ++subSteps;
 	    iterations = static_cast<unsigned short>(iterations*2u);
 	    iData.scale(bData,0.5);
+	    *pnewdt *= 0.5;
 	  }
 	}
 	if((subSteps==CastemTraits<BV>::maximumSubStepping)&&(iterations!=0)){
@@ -729,16 +749,23 @@ namespace castem
 	  } else {
 	    throwInvalidDDSDDEException(Traits::getName(),*DDSDDE);
 	  }
-	  *PNEWDT = behaviour.computeAPrioriTimeStepScalingFactor();
-	  if((*PNEWDT<1)&&(std::abs(*PNEWDT-1)>10*std::numeric_limits<CastemReal>::min())){
+	  auto tsf = behaviour.computeAPrioriTimeStepScalingFactor();
+	  *PNEWDT = tsf.second;
+	  if(!tsf.first){
 	    r = BV::FAILURE;
 	  } else {
 	    r = this->behaviour.integrate(smflag,smtype);
 	    if(r==BV::SUCCESS){
-	      *PNEWDT = behaviour.computeAPosterioriTimeStepScalingFactor();
+	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor();
+	      *PNEWDT = std::min(*PNEWDT,tsf.second);
+	      if(!tsf.first){
+		r = BV::FAILURE;
+	      }
 	      if((*PNEWDT<1)&&(std::abs(*PNEWDT-1)>10*std::numeric_limits<CastemReal>::min())){
 		r = BV::UNRELIABLE_RESULTS;
 	      }
+	    } else {
+	      *PNEWDT = behaviour.getMinimalTimeStepScalingFactor();
 	    }
 	  }
 	}

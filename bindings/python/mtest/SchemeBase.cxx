@@ -66,6 +66,19 @@ setStiffnessUpdatingPolicy(mtest::SchemeBase& s,const std::string& p){
   }
 }
 
+static void
+setOutputFrequency(mtest::SchemeBase& s,const std::string& v){
+  if(v=="UserDefinedTimes"){
+    s.setOutputFrequency(mtest::SchemeBase::USERDEFINEDTIMES);
+  } else if(v=="EveryPeriod"){
+    s.setOutputFrequency(mtest::SchemeBase::EVERYPERIOD);
+  } else {
+    throw(std::runtime_error("SchemeBase::setOutputFrequency: "
+			       "invalid frequency '"+v+"'"));
+  }
+}
+
+
 void declareSchemeBase(void);
 
 void declareSchemeBase(void)
@@ -112,6 +125,18 @@ void declareSchemeBase(void)
 	 &SchemeBase::setResidualFileName)
     .def("setResidualFilePrecision",
 	 &SchemeBase::setResidualFilePrecision)
+    .def("setDynamicTimeStepScaling",
+	 &SchemeBase::setDynamicTimeStepScaling)
+    .def("setMaximalTimeStep",
+	 &SchemeBase::setMaximalTimeStep)
+    .def("setMinimalTimeStep",
+	 &SchemeBase::setMinimalTimeStep)
+    .def("setMaximalTimeStepScalingFactor",
+	 &SchemeBase::setMaximalTimeStepScalingFactor)
+    .def("setMinimalTimeStepScalingFactor",
+	 &SchemeBase::setMinimalTimeStepScalingFactor)
+    .def("setOutputFrequency",
+	 setOutputFrequency)
     ;
 
 }

@@ -672,12 +672,11 @@ namespace mtest{
 			 std::shared_ptr<Evolution>(new LPIEvolution({*pt,*pt2},
 								     {real(0),real(0)})));
     }
-    this->printOutput(*pt,state);
+    this->printOutput(*pt,state,true);
     // real work begins here
     while(pt2!=this->times.end()){
       // allowing subdivisions of the time step
       this->execute(state,wk,*pt,*pt2);
-      this->printOutput(*pt2,state);
       ++pt;
       ++pt2;
     }
@@ -785,7 +784,7 @@ namespace mtest{
     }
   } // end of PipeTest::makeLinearPrediction
 
-  bool
+  std::pair<bool,real>
   PipeTest::computePredictionStiffnessAndResidual(StudyCurrentState&,
 						  tfel::math::matrix<real>&,
 						  tfel::math::vector<real>&,
@@ -793,10 +792,10 @@ namespace mtest{
 						  const real&,
 						  const StiffnessMatrixType) const
   {
-    return false;
+    return {false,1};
   } // end of PipeTest
   
-  bool
+  std::pair<bool,real>
   PipeTest::computeStiffnessMatrixAndResidual(StudyCurrentState& state,
 					      tfel::math::matrix<real>& k,
 					      tfel::math::vector<real>& r,
@@ -913,28 +912,31 @@ namespace mtest{
       r(n) -= state.getEvolution("AxialForce")(t+dt);
     }
     // loop over the elements
+    auto r_dt = real{};
     for(size_type i=0;i!=ne;++i){
+      auto ri = std::pair<bool,real>{};
       if(this->mesh.etype==PipeMesh::LINEAR){
-	if(!LE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
-						    state.u1,this->mesh,dt,mt,i)){
-	  return false;
-	}
+	ri = LE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
+						     state.u1,this->mesh,dt,mt,i);
       } else if(this->mesh.etype==PipeMesh::QUADRATIC){
-	if(!QE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
-						    state.u1,this->mesh,dt,mt,i)){
-	  return false;
-	}
+	ri = QE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
+						     state.u1,this->mesh,dt,mt,i);
       } else if(this->mesh.etype==PipeMesh::CUBIC){
-	if(!CE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
-						    state.u1,this->mesh,dt,mt,i)){
-	  return false;
-	}
+	ri = CE::updateStiffnessMatrixAndInnerForces(k,r,scs,*(this->b),
+						     state.u1,this->mesh,dt,mt,i);
       } else {
 	throw(std::runtime_error("PipeTest::computeStiffnessMatrixAndResidual: "
 				 "unknown element type"));
       }
+      if(i==0){
+	r_dt = ri.second;
+      }
+      r_dt = std::min(r_dt,ri.second);
+      if(!ri.first){
+	return {false,r_dt};
+      }
     }
-    return true;
+    return {true,r_dt};
   } // end of PipeTest::computeStiffnessMatrixAndResidual
 
   void PipeTest::performSmallStrainAnalysis(void){
@@ -1375,8 +1377,11 @@ namespace mtest{
   } // end of PipeTest::setFillingTemperature
   
   void
-  PipeTest::printOutput(const real t,
-			const StudyCurrentState& state){
+  PipeTest::printOutput(const real t,const StudyCurrentState& state,
+			const bool o) const{
+    if((!o)&&(this->output_frequency==USERDEFINEDTIMES)){
+      return;
+    }
     if(this->out){
       const auto& u1 = state.u1;
       const auto n  = this->getNumberOfNodes();

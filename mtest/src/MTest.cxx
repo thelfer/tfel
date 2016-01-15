@@ -532,12 +532,11 @@ namespace mtest
     // integrating over the loading path
     auto pt  = this->times.begin();
     auto pt2 = pt+1;
-    this->printOutput(*pt,state);
+    this->printOutput(*pt,state,true);
     // real work begins here
     while(pt2!=this->times.end()){
       // allowing subdivisions of the time step
       this->execute(state,wk,*pt,*pt2);
-      this->printOutput(*pt2,state);
       ++pt;
       ++pt2;
     }
@@ -611,7 +610,7 @@ namespace mtest
     }
   } // end of MTest::makeLinearPrediction
   
-  bool
+  std::pair<bool,real>
   MTest::computePredictionStiffnessAndResidual(StudyCurrentState& state,
 					       tfel::math::matrix<real>& k,
 					       tfel::math::vector<real>& r,
@@ -628,7 +627,7 @@ namespace mtest
     auto& s = scs.istates[0];
     auto res = this->b->computePredictionOperator(bwk,s,this->hypothesis,smt);
     if(!res.first){
-      return false;
+      return res;
     }
     std::fill(k.begin(),k.end(),0.);
     std::fill(r.begin(),r.end(),0.);
@@ -653,10 +652,10 @@ namespace mtest
       c->setValues(k,r,state.u0,state.u0,pos,getSpaceDimension(this->hypothesis),t,dt,a);
       pos = static_cast<unsigned short>(pos+c->getNumberOfLagrangeMultipliers());
     }
-    return true;
+    return res;
   } // end of MTest::computePredictionStiffnessAndResidual
   
-  bool
+  std::pair<bool,real>
   MTest::computeStiffnessMatrixAndResidual(StudyCurrentState& state,
 					   tfel::math::matrix<real>& k,
 					   tfel::math::vector<real>& r,
@@ -697,7 +696,7 @@ namespace mtest
   	log << "MTest::computeStiffnessMatrixAndResidual : "
   	    << "behaviour intregration failed" << std::endl;
       }
-      return false;
+      return rb;
     }
     if((this->cto)&&(mt==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR)&&
        ((btype==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
@@ -773,7 +772,7 @@ namespace mtest
       c->setValues(k,r,state.u0,state.u1,pos,d,t,dt,a);
       pos = static_cast<unsigned short>(pos+c->getNumberOfLagrangeMultipliers());
     }
-    return true;
+    return rb;
   } // end of MTest::computeStiffnessMatrixAndResidual
 
   static real
@@ -918,8 +917,12 @@ namespace mtest
   }
   
   void
-  MTest::printOutput(const real t,const StudyCurrentState& s)
+  MTest::printOutput(const real t,const StudyCurrentState& s,
+		     const bool o) const
   {
+    if((!o)&&(this->output_frequency==USERDEFINEDTIMES)){
+      return;
+    }
     if(this->out){
       auto& cs = s.getStructureCurrentState("").istates[0];
       // number of components of the driving variables and the thermodynamic forces

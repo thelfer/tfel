@@ -3,6 +3,12 @@
  * \brief    
  * \author THOMAS HELFER
  * \date   04 nov. 2015
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 #ifndef _LIB_MTEST_SOLVEROPTIONS_HXX_
@@ -76,6 +82,14 @@ namespace mtest{
    */
   struct SolverOptions
   {
+    SolverOptions();
+    SolverOptions(SolverOptions&&);
+    SolverOptions(const SolverOptions&);
+    SolverOptions&
+    operator=(SolverOptions&&);
+    SolverOptions&
+    operator=(const SolverOptions&);
+    ~SolverOptions();
     //! acceleration algorithm
     std::shared_ptr<AccelerationAlgorithm> aa;
     //! use castem acceleration
@@ -93,10 +107,27 @@ namespace mtest{
     real eeps = -real(1);
     //! order of magnitude of the precision expected for the forces
     real seps = -real(1);
+    //! maximal time step
+    real maximal_time_step = -1;
+    //! minimal time step
+    real minimal_time_step = -1;
+    /*!
+     * \brief maximal time scaling factor allowed for increasing the
+     * time step. If set, must be greater than 1
+     */
+    real maximal_time_step_scaling_factor = -1;
+    /*!
+     * \brief minimal time scaling factor allowed for decreasing the
+     * time step. If set, must be lesser than 1
+     */
+    real minimal_time_step_scaling_factor = -1;
     //! maximum number of substeps allowed
     int mSubSteps = -1;
     //! maximum number of iterations per subtep
     int iterMax = -1;
+    //! if true, the time step is adjusted using the values given by
+    //! the mechanical behaviour
+    bool dynamic_time_step_scaling = false;
   }; // end of struct SolverOptions
   
 } // end of namespace namespace mtest

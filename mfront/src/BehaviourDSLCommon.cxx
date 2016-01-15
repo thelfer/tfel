@@ -1863,6 +1863,7 @@ namespace mfront{
     this->mb.registerMemberName(h,"updateStateVariables");
     this->mb.registerMemberName(h,"updateAuxiliaryStateVariables");
     this->mb.registerMemberName(h,"getTangentOperator");
+    this->mb.registerMemberName(h,"getMinimalTimeStepScalingFactor");
     this->mb.registerMemberName(h,"computeAPrioriTimeStepScalingFactor");
     this->mb.registerMemberName(h,"computeAPrioriTimeStepScalingFactorII");
     this->mb.registerMemberName(h,"computeAPosterioriTimeStepScalingFactor");
@@ -4058,6 +4059,7 @@ namespace mfront{
     this->writeBehaviourGetModellingHypothesis();
     this->writeBehaviourCheckBounds(h);
     this->writeBehaviourComputePredictionOperator(h);
+    this->writeBehaviourGetTimeStepScalingFactor();
     this->writeBehaviourComputeAPrioriTimeStepScalingFactor();
     this->writeBehaviourIntegrator(h);
     this->writeBehaviourComputeAPosterioriTimeStepScalingFactor();
@@ -4246,48 +4248,71 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator(void)
 
-  void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor()
+  void BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor()
   {
     this->checkBehaviourFile();
     this->behaviourFile << "real\n"
-			<< "computeAPrioriTimeStepScalingFactor(void) const override{\n";
-    this->behaviourFile << "return std::min(std::max(this->computeAPrioriTimeStepScalingFactorII(),\n"
-			<< "                         this->minimal_time_step_scaling_factor),\n"
-			<< "                this->maximal_time_step_scaling_factor);\n"
-			<< "}\n\n";
+      "getMinimalTimeStepScalingFactor(void) const override{\n"
+      "  return this->minimal_time_step_scaling_factor;\n"
+      "}\n\n";
+  }
+  
+  void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor()
+  {
+    this->checkBehaviourFile();
+    this->behaviourFile << "std::pair<bool,real>\n"
+      "computeAPrioriTimeStepScalingFactor(void) const override{\n"
+      "const auto time_scaling_factor = this->computeAPrioriTimeStepScalingFactorII();\n"
+      "return {time_scaling_factor.first,\n"
+      "        std::min(std::max(time_scaling_factor.second,\n"
+      "                          this->minimal_time_step_scaling_factor),\n"
+      "                 this->maximal_time_step_scaling_factor)};\n"
+      "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor(void)
 
   void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactorII(const Hypothesis h){
     this->checkBehaviourFile();
-    this->behaviourFile << "real\n"
+    this->behaviourFile << "std::pair<bool,real>\n"
 			<< "computeAPrioriTimeStepScalingFactorII(void) const{\n";
     if(this->mb.hasCode(h,BehaviourData::APrioriTimeStepScalingFactor)){
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "using std::vector;\n";
+      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeTangentOperator",
+			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << this->mb.getCode(h,BehaviourData::APrioriTimeStepScalingFactor) << '\n';
     }
-    this->behaviourFile << "return real(1);\n";
+    this->behaviourFile << "return {true,real(1)};\n";
     this->behaviourFile << "}\n\n";
   }
 
   void BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor()
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "real\n"
-			<< "computeAPosterioriTimeStepScalingFactor(void) const override{\n";
-    this->behaviourFile << "return std::min(std::max(this->computeAPosterioriTimeStepScalingFactorII(),\n"
-			<< "                         this->minimal_time_step_scaling_factor),\n"
-			<< "                this->maximal_time_step_scaling_factor);\n"
-			<< "}\n\n";
+    this->behaviourFile << "std::pair<bool,real>\n"
+      "computeAPosterioriTimeStepScalingFactor(void) const override{\n"
+      "const auto time_scaling_factor = this->computeAPosterioriTimeStepScalingFactorII();\n"
+      "return {time_scaling_factor.first,\n"
+      "        std::min(std::max(time_scaling_factor.second,\n"
+      "                          this->minimal_time_step_scaling_factor),\n"
+      "                 this->maximal_time_step_scaling_factor)};\n"
+      "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(void)
   
   void BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactorII(const Hypothesis h)
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "real\n";
+    this->behaviourFile << "std::pair<bool,real>\n";
     this->behaviourFile << "computeAPosterioriTimeStepScalingFactorII(void) const{\n";
     if(this->mb.hasCode(h,BehaviourData::APosterioriTimeStepScalingFactor)){
+      this->behaviourFile << "using namespace std;\n";
+      this->behaviourFile << "using namespace tfel::math;\n";
+      this->behaviourFile << "using std::vector;\n";
+      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeTangentOperator",
+			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << this->mb.getCode(h,BehaviourData::APosterioriTimeStepScalingFactor) << '\n';
     }
-    this->behaviourFile << "return real(1);\n";
+    this->behaviourFile << "return {true,real(1)};\n";
     this->behaviourFile << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(void)
   

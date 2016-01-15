@@ -17,6 +17,7 @@ set(TFELMTest_SOURCES
   StructureCurrentState.cxx
   CurrentState.cxx
   Solver.cxx
+  SolverOptions.cxx
   GenericSolver.cxx
   Scheme.cxx
   SchemeBase.cxx

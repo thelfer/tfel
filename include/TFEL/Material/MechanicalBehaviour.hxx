@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MECHANICALBEHAVIOUR_H_
 #define LIB_TFEL_MECHANICALBEHAVIOUR_H_ 
 
+#include<utility>
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx"
 
@@ -134,10 +135,20 @@ namespace tfel{
       computePredictionOperator(const SMFlag,
 				const SMType) = 0;
       /*!
-       * This method returns a scaling factor that can be used to:
-       * - increase the time step if the integration was successfull
-       * - decrease the time step if the integration failed or if the
-       *   results were not reliable (time step too large).
+       * \return the minimal scaling factor to be used. This scaling
+       * factor is used to decrease the time step if the integration
+       * failed.
+       */
+      virtual NumType
+      getMinimalTimeStepScalingFactor(void) const = 0;
+      /*!
+       * \return a pair containing:
+       * - a boolean syaing if the behaviour integration shall be
+       *   performed
+       * - a scaling factor that can be used to:
+       *     - increase the time step if the integration was successfull
+       *     - decrease the time step if the integration failed or if the
+       *       results were not reliable (time step too large).
        *
        * Interfaces to behaviour law shall use the
        * hasAPrioriTimeStepScalingFactor of the traits class
@@ -145,7 +156,7 @@ namespace tfel{
        * give such a time step scaling factor. If not, behaviours
        * may return the NumType(1) value.
        */
-      virtual NumType
+      virtual std::pair<bool,NumType>
       computeAPrioriTimeStepScalingFactor(void) const = 0;
       /*!
        * \brief determine the value of the internal state variables at
@@ -158,10 +169,13 @@ namespace tfel{
       integrate(const SMFlag,
 		const SMType) = 0;
       /*!
-       * This method returns a scaling factor that can be used to:
-       * - increase the time step if the integration was successfull
-       * - decrease the time step if the integration failed or if the
-       *   results were not reliable (time step too large).
+       * \return a pair containing:
+       * - a boolean syaing if the behaviour integration shall be
+       *   considered a success or a failure
+       * - a scaling factor that can be used to:
+       *     - increase the time step if the integration was successfull
+       *     - decrease the time step if the integration failed or if the
+       *       results were not reliable (time step too large).
        *
        * Interfaces to behaviour law shall use the
        * hasAPosterioriTimeStepScalingFactor of the traits class
@@ -169,7 +183,7 @@ namespace tfel{
        * give such a time step scaling factor. If not, behaviours
        * may return the NumType(1) value.
        */
-      virtual NumType
+      virtual std::pair<bool,NumType>
       computeAPosterioriTimeStepScalingFactor(void) const = 0;
       /*!
        * destructor
