@@ -217,7 +217,13 @@ namespace mtest{
   struct StressProfileTest
     : public ProfileTest
   {
-    using ProfileTest::ProfileTest;
+    StressProfileTest(const std::string& n,
+		      const size_type p,
+		      const tfel::utilities::TextData& d,
+		      const unsigned short c,
+		      const real e)
+      : ProfileTest(n,p,d,c,e)
+    {}
   protected:
     /*!
      * \return the array of values in which the variable tested is
@@ -233,7 +239,13 @@ namespace mtest{
   struct StrainProfileTest
     : public ProfileTest
   {
-    using ProfileTest::ProfileTest;
+    StrainProfileTest(const std::string& n,
+		      const size_type p,
+		      const tfel::utilities::TextData& d,
+		      const unsigned short c,
+		      const real e)
+      : ProfileTest(n,p,d,c,e)
+    {}
   protected:
     /*!
      * \return the array of values in which the variable tested is
@@ -249,7 +261,13 @@ namespace mtest{
   struct InternalStateVariableProfileTest
     : public ProfileTest
   {
-    using ProfileTest::ProfileTest;
+    InternalStateVariableProfileTest(const std::string& n,
+				     const size_type p,
+				     const tfel::utilities::TextData& d,
+				     const unsigned short c,
+				     const real e)
+      : ProfileTest(n,p,d,c,e)
+    {}
   protected:
     /*!
      * \return the array of values in which the variable tested is
