@@ -6,12 +6,19 @@ MTEST_DOCS = Author.md                                    \
 	     CastemAccelerationTrigger.md                 \
 	     Date.md                                      \
 	     Description.md                               \
+	     DynamicTimeStepScaling.md                    \
 	     Evolution.md                                 \
+	     HandleThermalExpansion.md                    \
 	     InternalStateVariable.md                     \
 	     ExternalStateVariable.md                     \
 	     MaterialProperty.md                          \
+	     MinimalTimeStep.md                           \
+	     MinimalTimeStepScalingFactor.md              \
+	     MaximalTimeStep.md                           \
+	     MaximalTimeStepScalingFactor.md              \
 	     MaximumNumberOfIterations.md                 \
 	     MaximumNumberOfSubSteps.md                   \
+	     OutputFrequency.md                           \
 	     Parameter.md                                 \
 	     IntegerParameter.md                          \
 	     UnsignedIntegerParameter.md                  \
@@ -19,6 +26,8 @@ MTEST_DOCS = Author.md                                    \
 	     OutputFilePrecision.md                       \
 	     PredictionPolicy.md                          \
 	     Real.md                                      \
+	     ResidualFile.md                              \
+	     ResidualFilePrecision.md                     \
 	     StiffnessMatrixType.md                       \
 	     StiffnessUpdatePolicy.md                     \
 	     Times.md                                     \
