@@ -9,7 +9,7 @@
 @Behaviour DruckerPrager;
 
 @Theta 1.;
-@Epsilon 1.e-8;
+@Epsilon 1.e-13;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");

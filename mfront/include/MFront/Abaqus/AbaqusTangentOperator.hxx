@@ -163,10 +163,12 @@ namespace abaqus
       static void exe(const Behaviour& bv,
 		      AbaqusReal *const DDSDDE)
       {
-#ifndef _MSC_VER
+#if (not defined _MSC_VER) && (not defined __INTEL_COMPILER)
 	using tfel::math::constexpr_fct::sqrt;
-	constexpr AbaqusReal cste
-	  = AbaqusReal(1)/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+	constexpr const AbaqusReal one   = AbaqusReal(1);
+	constexpr const AbaqusReal two   = AbaqusReal(2);
+	constexpr const AbaqusReal sqrt2 = sqrt(two);
+	constexpr const AbaqusReal cste = one/sqrt2;
 #else
 	const AbaqusReal cste = AbaqusReal(1)/std::sqrt(AbaqusReal(2));
 #endif
