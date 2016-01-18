@@ -211,7 +211,7 @@ namespace tfel{
        */
       TFEL_MATH_INLINE 
       explicit t2tot2()
-      {};
+      {}
       /*!
        * \brief Default Constructor 
        * \param T, value used to initialise the components of the t2tot2 
