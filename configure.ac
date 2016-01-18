@@ -25,6 +25,7 @@ esac
 
 
 define([svnrevision],esyscmd([sh -c "svnversion|tr -d '\n'"]))
+AC_SUBST(TFEL_VERSION,"$PACKAGE_VERSION")
 AC_DEFINE(TFEL_SVN_REVISION,"svnrevision",[SVN REVISION])
 AC_SUBST(TFEL_SVN_REVISION,"svnrevision")
 
