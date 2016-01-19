@@ -1,6 +1,6 @@
 % About
 % Helfer Thomas; Jean-Michel Proix
-% August 16, 2014
+% Janvier 19, 2015
 
 # Contributors
 
@@ -22,6 +22,9 @@
 - Thierry Thomas
 - Alexis Foerster
 - Alexandre Lemaire
+- Kulbir Singh
+- Christian Fokam
+- Élodie Bosso
 
 # Tools
 

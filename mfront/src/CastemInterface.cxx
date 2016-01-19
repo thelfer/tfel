@@ -1321,9 +1321,9 @@ namespace mfront{
 	const auto& mps = d.getMaterialProperties();
 	for(const auto & mp : mps){
 	  const auto& mp1 = findUMATMaterialProperty(mfirst.first,
-								     mb.getExternalName(h,mp.name));
+						     mb.getExternalName(h,mp.name));
 	  const auto& mp2 = findUMATMaterialProperty(pum->first,
-								     mb.getExternalName(h,mp.name));
+						     mb.getExternalName(h,mp.name));
 	  SupportedTypes::TypeSize o1 = mp1.offset;
 	  o1+=pum->second;
 	  SupportedTypes::TypeSize o2 = mp2.offset;
@@ -1932,10 +1932,8 @@ namespace mfront{
     ofstream out;
     out.open(fileName);
     if(!out){
-      string msg("CastemInterface::generateGibianeDeclaration : ");
-      msg += "could not open file ";
-	msg += fileName;
-	throw(runtime_error(msg));
+      throw(runtime_error("CastemInterface::generateGibianeDeclaration: "
+			  "could not open file '"+fileName+"'"));
     }
     // header
     out << "*\n";

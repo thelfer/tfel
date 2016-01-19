@@ -44,18 +44,21 @@ namespace mfront{
       os << t << " " << p << ";\n";
     }
     os << "std::string msg;\n"
-       << "bool ok;\n" 
+       << "bool ok = false;\n" 
        << "private:\n"
-       << n << "MaterialPropertyHandler():ok(false),\n";
-    for(auto p = mpd.parameters.begin();p!=mpd.parameters.end();){
-      const auto pv = mpd.parametersValues.find(*p);
-      if(pv==mpd.parametersValues.end()){
-	throw(std::runtime_error("writeAssignMaterialPropertyParameters: "
-				 "no default value for parameter '"+*p+"'"));
-      }
-      os << *p << "(" << pv->second << ")";
-      if(++p!=mpd.parameters.end()){
-	os << ",\n";
+       << n << "MaterialPropertyHandler()";
+    if(!mpd.parameters.empty()){
+      os << "\n: ";
+      for(auto p = mpd.parameters.begin();p!=mpd.parameters.end();){
+	const auto pv = mpd.parametersValues.find(*p);
+	if(pv==mpd.parametersValues.end()){
+	  throw(std::runtime_error("writeAssignMaterialPropertyParameters: "
+				   "no default value for parameter '"+*p+"'"));
+	}
+	os << *p << "(" << pv->second << ")";
+	if(++p!=mpd.parameters.end()){
+	  os << ",\n";
+	}
       }
     }
     os << "\n{\n"

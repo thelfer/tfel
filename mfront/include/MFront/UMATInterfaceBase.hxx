@@ -235,7 +235,7 @@ namespace mfront{
        */
       SupportedTypes::TypeSize offset;
       /*!
-       * If true, this variable is not considered in the compoutation
+       * If true, this variable is not considered in the computation
        * of the indirection map. For example, the Cast3M solver may
        * require a variable called 'V1X' for the first component of
        * the first direction of the orthotropic basis.  The variable

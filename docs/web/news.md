@@ -1,6 +1,76 @@
 % News
 % Helfer Thomas
-% September 9, 2015
+% Janvier 19, 2016
+
+# Abaqus interface
+
+The current development version now includes an experimental interface
+to the
+[`Abaqus`](http://www.3ds.com/products-services/simulia/products/abaqus/)
+solver through the `umat` subroutine.
+
+The following results shows the results obtained on notched beam under
+a cyclic loading with an isotropic hardening plastic beahviour
+implemented with `mfront`:
+
+![](img/abaqus-isotropichardening1.png "")
+
+The `mfront` results can be compared to the results obtained using
+`Abaqus` in-built model on the following figure:
+
+![](img/abaqus-isotropichardening2.png "")
+
+The `Abaqus` interface is still in its early stage of developments. A
+full description of its usage and current abilities can be found in
+the associated [documentation](documents/mfront/abaqus.pdf).
+
+Feed-back from users would be greatly welcomed.
+
+# IMSIA Seminar about MFront on Januar, 27 2016
+
+An IMSIA seminar about MFront will be held on Januar, 27 2016. Here is
+the official announcement (in french):
+
+  > Séminaire IMSIA : Implémentation de lois de comportement mécanique
+  > à l’aide du générateur de code MFront
+  >
+  > Créé dans le cadre de la simulation des éléments combustibles
+  > nucléaire au sein d’une plate-forme logicielle nommée PLEIADES,
+  > MFront est un générateur de code, distribué en open-source [1],
+  > qui vise à permettre aux ingénieurs/chercheurs d’implémenter de
+  > manière simple et rapide des lois de comportements mécaniques de
+  > manière indépendante du code cible (EF ou FTT) [2,3].
+  >
+  > Ce dernier point permet d’échanger les lois MFront entre différents
+  > partenaires, universitaires ou industriels. Le lien vers les codes
+  > cible se fait via la notion d’interface. A l’heure actuelle, des
+  > interfaces existent pour les codes Cast3M, Code-Aster, Abaqus,
+  > ZeBuLoN, AMITEX_FFT et d’autres codes métiers, et sont en cours de
+  > développement pour d’autres codes tels Europlexus, …
+  > 
+  > Ce séminaire proposera une description des fonctionnalités de
+  > MFront (lois en transformations infinitésimales et en grandes
+  > transformations, modèles de zones cohésives) et commentera
+  > plusieurs exemples d’applications, discutera des performances
+  > numériques obtenues et soulèvera la question de la portabilité des
+  > connaissances matériau. Nous montrerons qu’une démarche cohérente
+  > allant des expérimentations aux codes de calcul est nécessaire.
+  > 
+  > [1] http://tfel.sourceforge.net
+  >
+  > [2] Introducing the open-source mfront code generator: Application
+  > to mechanical behaviours and material knowledge management within
+  > the PLEIADES fuel element modelling platform. Thomas Helfer, Bruno
+  > Michel, Jean-Michel Proix, Maxime Salvo, Jérôme Sercombe, Michel
+  > Casella, Computers & Mathematics with Applications, Volume 70,
+  > Issue 5, September 2015, Pages 994-1023, ISSN 0898-1221,
+  > http://dx.doi.org/10.1016/j.camwa.2015.06.027.
+  > 
+  > [3] Implantation de lois de comportement mécanique à l’aide de
+  > MFront : simplicité, efficacité, robustesse et
+  > portabilité. T. Helfer, J.M. Proix, O. Fandeur. 12ème Colloque
+  > National en Calcul des Structures 18-22 Mai 2015, Giens (Var)
+
 
 # MFront and Cyrano3 at the LWR Fuel Performance Meeting 2015 (13 - 17 September 2015, Zurich, Switzerland)
 

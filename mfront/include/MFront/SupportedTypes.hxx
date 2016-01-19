@@ -19,6 +19,7 @@
 #include<vector>
 #include<ostream>
 
+#include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/MFrontConfig.hxx"
 #include"MFront/VariableDescription.hxx"
 
@@ -76,6 +77,9 @@ namespace mfront
 
       int
       getValueForDimension(const unsigned short) const;
+
+      int
+      getValueForModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis) const;
 
       bool isNull(void) const;
       

@@ -758,7 +758,6 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"real",  "PoissonRatio13","nu13",false);
 	this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus12","g12",false);
 	if (h==ModellingHypothesis::TRIDIMENSIONAL){
-	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus12","g12",false);
 	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus23","g23",false);
 	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus13","g13",false);
 	} else if((h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)&&

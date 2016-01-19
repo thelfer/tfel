@@ -130,6 +130,11 @@ namespace mfront{
 			     "invalid type size"));
   } // end of SupportedTypes::TypeSize::getValueForDimension
 
+  int
+  SupportedTypes::TypeSize::getValueForModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis h) const{
+    return this->getValueForDimension(tfel::material::getSpaceDimension(h));
+  }
+  
   std::ostream&
   operator << (std::ostream& os,const SupportedTypes::TypeSize& size)
   {

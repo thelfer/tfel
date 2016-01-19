@@ -5,6 +5,7 @@
 /ChangeLog -text
 /Doxyfile.in -text
 /INSTALL -text
+/INSTALL-EDF-calibre -text
 /INSTALL-cmake -text
 /LICENCE-CECILL-A-EN -text
 /LICENCE-CECILL-A-FR -text
@@ -1110,6 +1111,8 @@ docs/web/img/VoidsGrowth.png -text
 docs/web/img/VoidsGrowth.xcf -text
 docs/web/img/Win64.png -text
 docs/web/img/Win64.xcf -text
+docs/web/img/abaqus-isotropichardening1.png -text
+docs/web/img/abaqus-isotropichardening2.png -text
 docs/web/img/arrows.png -text
 docs/web/img/background.svg -text
 docs/web/img/cyrano-mfront.eps -text

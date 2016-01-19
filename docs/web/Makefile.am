@@ -102,6 +102,8 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/Norton-full.odt				   \
 	   ./img/Norton-full.pdf				   \
 	   ./img/topfuel2015-poster.png				   \
+	   ./img/abaqus-isotropichardening1.png			   \
+	   ./img/abaqus-isotropichardening2.png			   \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

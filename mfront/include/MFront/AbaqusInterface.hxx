@@ -184,6 +184,16 @@ namespace mfront{
     virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
 
+    virtual void 
+    writeInputFileExample(const BehaviourDescription&,
+			  const FileDescription&) const;
+    
+    virtual void
+    writeDepvar(std::ostream&,int&,
+		const tfel::material::ModellingHypothesis::Hypothesis&,
+		const VariableDescription&,
+		const std::string&) const;
+    
     bool compareToNumericalTangentOperator = false;
 
     double strainPerturbationValue = 1.e6;
