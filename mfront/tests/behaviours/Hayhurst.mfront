@@ -6,7 +6,7 @@
  * \date   04/02/2013
  */
 
-@Parser RungeKutta;
+@DSL RungeKutta;
 @Behaviour Hayhurst;
 @Algorithm rk54;
 
@@ -27,9 +27,7 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real delta1;
 @MaterialProperty real delta2;
 @MaterialProperty real sequid;
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
+
 @StateVariable Stensor evp; 
 @StateVariable real    p;
 @StateVariable real    H1;
@@ -46,7 +44,6 @@ nu.setGlossaryName("PoissonRatio");
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 } 

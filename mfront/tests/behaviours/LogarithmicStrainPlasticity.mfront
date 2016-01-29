@@ -1,4 +1,4 @@
-@Parser    IsotropicPlasticMisesFlow;
+@DSL IsotropicPlasticMisesFlow;
 @Behaviour LogarithmicStrainPlasticity;
 @Author    Helfer Thomas;
 @Date      5/12/13;

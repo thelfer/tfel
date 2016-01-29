@@ -6,7 +6,7 @@
  * \date   23 oct 2013
  */
 
-@Parser    ImplicitFiniteStrain;
+@DSL ImplicitFiniteStrain;
 @Behaviour ImplicitSimoMieheElastoPlasticity;
 @Author T. Helfer;
 @Description{

@@ -5,7 +5,7 @@
  * \date   23 otc. 2013
  */
 
-@Parser    ImplicitFiniteStrain;
+@DSL ImplicitFiniteStrain;
 @Behaviour ImplicitFiniteStrainNorton;
 @Description{
   A finite rotation small strain version
@@ -16,11 +16,6 @@
   Jean Michel Proix
   Documentation R5.03.22 du Code-Aster
   25/09/2013
-}
-
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
 }
 
 @MaterialProperty stress young; /* mandatory for castem */
@@ -37,7 +32,6 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable StressStensor pk2;
 
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   /* strain increment */
   StrainStensor eto  = computeGreenLagrangeTensor(F0);
   deto = computeGreenLagrangeTensor(F1)-eto;

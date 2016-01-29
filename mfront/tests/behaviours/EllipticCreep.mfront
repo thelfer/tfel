@@ -1,11 +1,7 @@
-@Parser    Implicit;
+@DSL    Implicit;
 @Behaviour EllipticCreep;
 @Author    Thomas Helfer;
 @Author    9 Octobre 2013;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 // elastic properties
 @MaterialProperty stress young;
@@ -32,7 +28,6 @@ f.setGlossaryName("Porosity");
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
   K = lambda+(2*mu)/3;
@@ -94,7 +89,6 @@ f.setGlossaryName("Porosity");
 } // end of @Integrator
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTENTTANGENTOPERATOR){

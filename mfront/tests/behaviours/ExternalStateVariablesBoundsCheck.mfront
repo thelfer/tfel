@@ -16,8 +16,8 @@ ev.setEntryName("ExternalStateVariable");
   static_cast<void>(smt); // remove compiler warning
   const stress young  = 150e9;
   const real    nu    = 0.3;
-  const stress lambda = lame::computeLambda(young,nu);
-  const stress mu     = lame::computeMu(young,nu);
+  const stress lambda = computeLambda(young,nu);
+  const stress mu     = computeMu(young,nu);
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
   if(computeTangentOperator_){
     Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();

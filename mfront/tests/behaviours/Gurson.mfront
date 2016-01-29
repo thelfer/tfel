@@ -1,4 +1,4 @@
-@Parser    Implicit;
+@DSL    Implicit;
 @Behaviour Gurson;
 @Author Sebastien Melin;
 @Date 11/05/2015;
@@ -56,7 +56,6 @@ q3.setEntryName("ThirdGursonParameter");
 @LocalVariable real flim;
 
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   delta = ((ffb-fc)/(fmax-fc));
   const temperature T_ = T+theta*dT;
   const real feq = (f<fc ? f : fc+delta*(f-fc));
@@ -201,7 +200,6 @@ q3.setEntryName("ThirdGursonParameter");
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
-  using namespace tfel::material::lame;
   if(!broken){
     if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
        (smt==TANGENTOPERATOR)){

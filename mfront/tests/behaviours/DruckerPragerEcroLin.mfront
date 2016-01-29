@@ -5,7 +5,7 @@
  * \date   05/09/2014
  */
 
-@Parser    Implicit;
+@DSL    Implicit;
 @Behaviour DruckerPragerEcroLin;
 @Algorithm NewtonRaphson_NumericalJacobian;
 
@@ -38,13 +38,8 @@ p.setGlossaryName("EquivalentPlasticStrain");
 @LocalVariable real Dp ;
 @LocalVariable real ind ;
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
   K      = lambda+(2*mu)/3;
@@ -92,7 +87,6 @@ p.setGlossaryName("EquivalentPlasticStrain");
 }
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTENTTANGENTOPERATOR){

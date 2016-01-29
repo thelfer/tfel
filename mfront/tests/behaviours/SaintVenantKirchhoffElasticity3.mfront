@@ -1,4 +1,4 @@
-@Parser DefaultFiniteStrainParser;
+@DSL DefaultFiniteStrainDSL;
 @Behaviour SaintVenantKirchhoffElasticity3;
 @Author T. Helfer;
 @Date   20/06/2014;
@@ -25,12 +25,7 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable stress lambda;
 @LocalVariable stress mu;
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 @Integrator{
-  using namespace tfel::material::lame;
   // Lame coefficients
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);

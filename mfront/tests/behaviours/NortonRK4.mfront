@@ -1,14 +1,10 @@
-@Parser    RungeKutta;
+@DSL RungeKutta;
 @Behaviour NortonRK4;
 @Author    Helfer Thomas;
 @Algorithm rk42;
 @Date 23/11/06;
 
 @Epsilon 1.e-8;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -27,7 +23,6 @@ nu.setGlossaryName("PoissonRatio");
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 }

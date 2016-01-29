@@ -1,4 +1,4 @@
-@Parser    Implicit;
+@DSL Implicit;
 @Behaviour MonoCrystal_DD_CFC_NumericalJacobian;
 @Algorithm NewtonRaphson_NumericalJacobian;
 @Author    Jean-Michel Proix;

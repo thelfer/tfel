@@ -6,7 +6,7 @@
  * \date   21 sep 2008
  */
 
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour ImplicitNorton;
 @Description{
   This file implements the Norton law, described as:
@@ -28,10 +28,6 @@
 @AsterCompareToNumericalTangentOperator[aster] true;
 @AsterStrainPerturbationValue[aster] 1.e-6;
 @AsterTangentOperatorComparisonCriterium[aster] 1.e7;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
@@ -64,7 +60,6 @@ AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 } // end of @InitLocalVariables
@@ -125,7 +120,6 @@ AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
      (smt==TANGENTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);

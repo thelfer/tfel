@@ -8,7 +8,7 @@
  * dY={ deel, dp, dH1, dh2, dd}
  */
 
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour ImplicitHayhurst;
 
 @MaterialProperty stress young; 
@@ -36,13 +36,8 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable real    lambda;
 @LocalVariable real    mu;
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 }
@@ -109,7 +104,6 @@ nu.setGlossaryName("PoissonRatio");
 }
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if(smt==CONSISTENTTANGENTOPERATOR){

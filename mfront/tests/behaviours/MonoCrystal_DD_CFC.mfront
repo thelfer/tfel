@@ -1,4 +1,4 @@
-@Parser    Implicit;
+@DSL Implicit;
 @Behaviour MonoCrystal_DD_CFC;
 @Author    Jean-Michel Proix;
 @Date      11/06/2013;

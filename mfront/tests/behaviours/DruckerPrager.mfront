@@ -5,7 +5,7 @@
  * \date   18/11/2013
  */
 
-@Parser    Implicit;
+@DSL    Implicit;
 @Behaviour DruckerPrager;
 
 @Theta 1.;
@@ -32,13 +32,8 @@ p.setGlossaryName("EquivalentPlasticStrain");
 @LocalVariable stress mu;
 @LocalVariable bool b;
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
   K      = lambda+(2*mu)/3;
@@ -80,7 +75,6 @@ p.setGlossaryName("EquivalentPlasticStrain");
 }
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTENTTANGENTOPERATOR){

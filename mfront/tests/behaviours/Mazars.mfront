@@ -29,12 +29,6 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real k;
 @MaterialProperty real ed0;
 
-@ProvidesSymmetricTangentOperator;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 @StateVariable real d;
 @StateVariable real Y;
 @StateVariable real eeqcor;
@@ -49,7 +43,6 @@ PlaneStress::etozz.setGlossaryName("AxialStrain");
  * Nous initialisons les coefficients de Lamé.
  */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 }
@@ -59,7 +52,6 @@ PlaneStress::etozz.setGlossaryName("AxialStrain");
  * contrainte plane (voir ci-dessous).
  */
 @Integrator{
-  using namespace tfel::material::lame;
   const Stensor e  = eto+deto;
   const real    tr = trace(e);
   const Stensor s0 = lambda*tr*Stensor::Id()+2*mu*e;
@@ -72,8 +64,8 @@ PlaneStress::etozz.setGlossaryName("AxialStrain");
  * de la loi de Mazars, celle-ci est déduite de la loi de Hooke.
  * On "remplace" les initialisations faites précédemment.
  */
+@ProvidesSymmetricTangentOperator;
 @Integrator<PlaneStress,Replace>{
-  using namespace tfel::material::lame;
   const stress C1  = young/(1-nu*nu);
   const stress C2  = nu*C1;
   const stress C3  = (1-nu)*C1;

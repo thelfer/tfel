@@ -1,4 +1,4 @@
-@Parser    DefaultParser;
+@DSL DefaultDSL;
 @Behaviour GeneralizedMaxwell;
 @Author    Benoît Bary;
 @Date      8/10/2014; 

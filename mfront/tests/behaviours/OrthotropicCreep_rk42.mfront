@@ -1,4 +1,4 @@
-@Parser    RungeKutta;
+@DSL RungeKutta;
 @Behaviour OrthotropicCreep_rk42;
 @Author    Helfer Thomas;
 @Algorithm rk42;
@@ -22,11 +22,6 @@ seq.setGlossaryName("HillStress");
 @LocalVariable real H_L;
 @LocalVariable real H_M;
 @LocalVariable real H_N;
-
-@Includes{
-#include<TFEL/Material/Lame.hxx>
-#include<TFEL/Material/Hill.hxx>
-}
 
 @InitLocalVariables{
   H_F = 0.371;

@@ -1,4 +1,4 @@
-@Parser IsotropicMisesCreep;
+@DSL IsotropicMisesCreep;
 @Behaviour Norton;
 @Author Helfer Thomas;
 @Date 23/11/06;

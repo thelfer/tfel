@@ -1,4 +1,4 @@
-@Parser IsotropicPlasticMisesFlow;
+@DSL IsotropicPlasticMisesFlow;
 @Behaviour Plasticity;
 @Author Helfer Thomas;
 @Date 23/11/06;

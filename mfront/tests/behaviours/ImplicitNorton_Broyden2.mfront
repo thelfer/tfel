@@ -1,5 +1,5 @@
+@DSL Implicit;
 @Behaviour ImplicitNorton_Broyden2;
-@Parser    Implicit;
 @Algorithm Broyden2;
 @Author Helfer Thomas;
 @Date   21 sep 2008;
@@ -11,10 +11,6 @@
 }
 
 @Epsilon 1.e-12;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
@@ -38,7 +34,6 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 
 /* Initialize Lame coefficients */
 @InitLocalVars{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 } // end of @InitLocalVars

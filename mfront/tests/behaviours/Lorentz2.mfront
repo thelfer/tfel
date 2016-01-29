@@ -20,12 +20,6 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real k;
 @MaterialProperty real g;
 
-@ProvidesSymmetricTangentOperator;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 @StateVariable real d;
 @StateVariable real y;
 
@@ -33,8 +27,8 @@ nu.setGlossaryName("PoissonRatio");
   Dt = StiffnessTensor(real(0));
 }
 
+@ProvidesSymmetricTangentOperator;
 @Integrator{
-  using namespace tfel::material::lame;
   tmatrix<3u,3u,real> m;
   tvector<3u,real>    vp;
   const real lambda = computeLambda(young,nu);

@@ -1,4 +1,4 @@
-@Parser    IsotropicMisesCreep;
+@DSL IsotropicMisesCreep;
 @Behaviour LogarithmicStrainNortonCreep;
 @Author    Helfer Thomas;
 @Date      4/12/13;

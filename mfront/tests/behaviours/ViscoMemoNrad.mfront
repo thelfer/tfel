@@ -6,7 +6,7 @@
  * \date   13 02 2013
  */
 
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour ViscoMemoNrad;
 @Algorithm NewtonRaphson_NumericalJacobian;
 @Description{
@@ -42,10 +42,6 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real Q0;
 @MaterialProperty real Mu;
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 @StateVariable real    p;
 @StateVariable Stensor a1; 
 @StateVariable Stensor a2; 
@@ -60,13 +56,11 @@ nu.setGlossaryName("PoissonRatio");
 
 /* Initialize Lame coefficients */
 @InitLocalVars{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 } 
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   StiffnessTensor De;
   Stensor4 Je;
   computeElasticStiffness<N,Type>::exe(De,lambda,mu);

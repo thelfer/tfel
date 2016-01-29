@@ -1,4 +1,4 @@
-@Parser    IsotropicStrainHardeningMisesCreep;
+@DSL IsotropicStrainHardeningMisesCreep;
 @Behaviour StrainHardeningCreep;
 @Author    Helfer Thomas;
 @Date      23/11/06;

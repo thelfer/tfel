@@ -1,4 +1,4 @@
-@Parser    Implicit;
+@DSL Implicit;
 @Behaviour MonoCrystal_DD_CFC_Irradiation;
 @Author    Jean-Michel Proix;
 @Date      26/11/2013;

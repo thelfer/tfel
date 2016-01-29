@@ -1,4 +1,4 @@
-@Parser    Implicit;
+@DSL Implicit;
 @Behaviour ImplicitOrthotropicCreep;
 @Author    Helfer Thomas;
 @Date      15/03/11;
@@ -17,25 +17,7 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 @AuxiliaryStateVariable real seq;
 seq.setGlossaryName("HillStress");
 
-@LocalVariable tfel::math::st2tost2<N,real> H;
-
-@Includes{
-#include<TFEL/Material/Lame.hxx>
-#include<TFEL/Material/Hill.hxx>
-}
-
-@IsTangentOperatorSymmetric true;
-@TangentOperator{
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    Dt = D;
-  } else if(smt==CONSISTENTTANGENTOPERATOR){
-    Stensor4 Je;
-    getPartialJacobianInvert(Je);
-    Dt = D*Je;
-  } else {
-    return false;
-  }
-}
+@LocalVariable Stensor4 H;
 
 @InitLocalVariables{
   const real H_F = 0.371;
@@ -78,4 +60,17 @@ seq.setGlossaryName("HillStress");
 
 @UpdateAuxiliaryStateVars{
   seq = sqrt(sig|H*sig);
+}
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    Dt = D;
+  } else if(smt==CONSISTENTTANGENTOPERATOR){
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = D*Je;
+  } else {
+    return false;
+  }
 }

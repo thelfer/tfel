@@ -1,4 +1,4 @@
-@Parser    RungeKutta;
+@DSL RungeKutta;
 @Behaviour OrthotropicCreep;
 @Author    Helfer Thomas;
 @Algorithm rk54;
@@ -22,11 +22,6 @@ seq.setGlossaryName("HillStress");
 @Parameter H_M = 1.5;
 @Parameter H_N = 1.5;
 @LocalVariable tfel::math::st2tost2<N,real> H;
-
-@Includes{
-#include<TFEL/Material/Lame.hxx>
-#include<TFEL/Material/Hill.hxx>
-}
 
 @InitLocalVariables{
    H = hillTensor<N,real>(H_F,H_G,H_H,

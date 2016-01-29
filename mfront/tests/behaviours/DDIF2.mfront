@@ -1,4 +1,4 @@
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour DDIF2;
 @Author Helfer Thomas;
 @Date 5 Mars 2010;
@@ -9,9 +9,7 @@
 @UMATUseTimeSubStepping[umat] true;
 @UMATMaximumSubStepping[umat] 20;
 
-
 @Includes{
-#include"TFEL/Material/Lame.hxx"
 #include"TFEL/Material/DDIF2Base.hxx"
 }
 
@@ -44,7 +42,6 @@ sigr.setEntryName("FractureStress");
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
   // directions 

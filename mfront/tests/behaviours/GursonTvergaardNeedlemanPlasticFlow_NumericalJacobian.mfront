@@ -1,4 +1,4 @@
-@Parser    Implicit;
+@DSL    Implicit;
 @Behaviour GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian;
 @Author    Jeremy Hure;
 @Date      10 Février 2014;
@@ -7,7 +7,6 @@
 @Theta 1;
 
 @Includes{
-#include"TFEL/Material/Lame.hxx"
 #include"TFEL/Material/GursonTvergaardNeedleman.hxx"
 }
 
@@ -51,7 +50,6 @@ Temp.setEntryName("MaterialTemperature");
 @Parameter  q2    = 1.0;
 
 @InitLocalVariables{ 
-  using namespace tfel::material::lame;
   /* Calcul des paramètres matériaux */
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
@@ -91,7 +89,6 @@ Temp.setEntryName("MaterialTemperature");
 }
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTENTTANGENTOPERATOR){

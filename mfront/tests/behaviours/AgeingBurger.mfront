@@ -6,7 +6,7 @@
  * \date   13 05 2013
  */
 
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour AgeingBurger;
 @Algorithm NewtonRaphson_NumericalJacobian;
 @Theta 1. ;
@@ -14,10 +14,6 @@
 
 @Description{
   Nous implantons une loi décrivant le comportement viscoplastique du béton.
-}
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
 }
 
 @MaterialProperty stress young; 
@@ -65,7 +61,6 @@ nu.setGlossaryName("PoissonRatio");
  * coûteux.
  */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   /*!
    * Pour exprimer la loi d'élasticité, nous utilisons les
    * coefficients de Lamé définis par~:
@@ -144,7 +139,6 @@ nu.setGlossaryName("PoissonRatio");
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
      (smt==TANGENTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);

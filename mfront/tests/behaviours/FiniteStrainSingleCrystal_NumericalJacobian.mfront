@@ -5,7 +5,7 @@
  * \date   20 mars 2014
  */
 
-@Parser    ImplicitFiniteStrain;
+@DSL    ImplicitFiniteStrain;
 @Behaviour FiniteStrainSingleCrystal_NumericalJacobian;
 @Author JMP;
 @Description{

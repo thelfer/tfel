@@ -6,7 +6,7 @@
  * \date   1 07 2014
  */
 
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour ImplicitNorton3;
 @Description{
   This file implements the Norton law, described as:
@@ -26,10 +26,6 @@
 @Epsilon 1.e-11;
 @UMATUseTimeSubStepping[umat] true;
 @UMATMaximumSubStepping[umat] 20;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
@@ -55,7 +51,6 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 
 /* Initialize Lame coefficients */
 @InitLocalVars{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
   if(dt>0.1){

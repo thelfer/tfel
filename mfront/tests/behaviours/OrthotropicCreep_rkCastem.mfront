@@ -1,4 +1,4 @@
-@Parser    RungeKutta;
+@DSL RungeKutta;
 @Behaviour OrthotropicCreep_rkCastem;
 @Author    Helfer Thomas;
 @Algorithm rkCastem;
@@ -19,11 +19,6 @@ seq.setGlossaryName("HillStress");
 // named young is defined.
 @LocalVariable real young;
 @LocalVariable tfel::math::st2tost2<N,real> H;
-
-@Includes{
-#include<TFEL/Material/Lame.hxx>
-#include<TFEL/Material/Hill.hxx>
-}
 
 @InitLocalVariables{
   const real H_F = 0.371;

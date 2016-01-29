@@ -6,14 +6,10 @@
  * \date   13 05 2013
  */
 
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour Burger;
 @Algorithm NewtonRaphson_NumericalJacobian;
 @Theta 1. ;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -48,13 +44,11 @@ nu.setGlossaryName("PoissonRatio");
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 } 
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if(smt==CONSISTENTTANGENTOPERATOR){

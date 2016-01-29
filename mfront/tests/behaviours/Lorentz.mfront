@@ -19,15 +19,10 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real k;
 @MaterialProperty real g;
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 @StateVariable real d;
 
 @ProvidesTangentOperator;
 @Integrator{
-  using namespace tfel::material::lame;
   const real lambda = computeLambda(young,nu);
   const real  mu    = computeMu(young,nu);
   Stensor4      dpp; // derivative of the positive part

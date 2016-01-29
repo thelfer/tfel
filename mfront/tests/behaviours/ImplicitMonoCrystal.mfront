@@ -1,4 +1,4 @@
-@Parser    Implicit;
+@DSL Implicit;
 @Behaviour ImplicitMonoCrystal;
 
 @ModellingHypothesis Tridimensional;

@@ -1,4 +1,4 @@
-@Parser    RungeKutta;
+@DSL RungeKutta;
 @Behaviour Norton_rk42;
 @Author    Helfer Thomas;
 @Algorithm rk42;
@@ -6,10 +6,6 @@
 
 @UMATUseTimeSubStepping[umat] true;
 @UMATMaximumSubStepping[umat] 20;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -27,7 +23,6 @@ nu.setGlossaryName("PoissonRatio");
 
 /* Initialize Lame coefficients */
 @InitLocalVars{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 }

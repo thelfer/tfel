@@ -1,4 +1,4 @@
-@Parser DefaultFiniteStrainParser;
+@DSL DefaultFiniteStrainDSL;
 @Behaviour IncompressiblePlaneStressGornetDesmoratBehaviour;
 
 @ModellingHypothesis PlaneStress;

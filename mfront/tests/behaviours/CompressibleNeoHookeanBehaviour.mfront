@@ -1,4 +1,4 @@
-@Parser DefaultFiniteStrainParser;
+@DSL DefaultFiniteStrainDSL;
 @Behaviour CompressibleNeoHookeanBehaviour;
 @Author T. Helfer;
 @Date 19/10/2013;

@@ -29,12 +29,7 @@ nu.setGlossaryName("PoissonRatio");
 @AuxiliaryStateVariable StressStensor ps;
 ps.setEntryName("PreviousStress");
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 @InitLocalVars{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
   if(sqrt((sig-ps)|(sig-ps))>10*young*numeric_limits<stress>::epsilon()){

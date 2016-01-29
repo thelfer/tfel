@@ -6,7 +6,7 @@
  * \date   15 04 2014
  */
 
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour ViscoChaboche;
 
 @Theta 1.;
@@ -15,10 +15,6 @@
 
 @StateVariable strain    p;
 @StateVariable StrainStensor a[2];
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialProperty stress young; 
 young.setGlossaryName("YoungModulus");
@@ -38,7 +34,6 @@ nu.setGlossaryName("PoissonRatio");
 
 /* Initialize Lame coefficients */
 @InitializeLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
 } 
@@ -97,7 +92,6 @@ nu.setGlossaryName("PoissonRatio");
 } 
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTENTTANGENTOPERATOR){

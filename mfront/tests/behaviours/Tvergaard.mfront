@@ -1,4 +1,4 @@
-@Parser DefaultCZMParser;
+@DSL DefaultCZMDSL;
 @Behaviour Tvergaard;
 @Author Helfer Thomas;
 @Date 23/07/2013;

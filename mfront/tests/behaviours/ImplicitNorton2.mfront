@@ -6,7 +6,7 @@
  * \date   12 février 2013
  */
 
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour ImplicitNorton2;
 
 @Epsilon 1.e-12;
@@ -14,10 +14,6 @@
 @CompareToNumericalJacobian true;
 @JacobianComparisonCriterium 1.e-8;
 @PerturbationValueForNumericalJacobianComputation 1.e-8;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
@@ -44,13 +40,11 @@ evp.setGlossaryName("ViscoplasticStrain");
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 } // end of @InitLocalVariables
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTENTTANGENTOPERATOR){

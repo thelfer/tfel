@@ -1,4 +1,4 @@
-@Parser RungeKutta;
+@DSL RungeKutta;
 @Algorithm rk54;
 @Behaviour PolyCrystals;
 @OrthotropicBehaviour;

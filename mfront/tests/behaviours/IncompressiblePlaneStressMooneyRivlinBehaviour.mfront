@@ -1,4 +1,4 @@
-@Parser DefaultFiniteStrainParser;
+@DSL DefaultFiniteStrainDSL;
 @Behaviour IncompressiblePlaneStressMooneyRivlinBehaviour;
 @Author T. Helfer;
 @Date 19/10/2013;

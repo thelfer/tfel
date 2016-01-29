@@ -1,5 +1,5 @@
+@DSL Implicit;
 @Behaviour ImplicitNorton_Broyden;
-@Parser    Implicit;
 @Algorithm Broyden;
 @Author Helfer Thomas;
 @Date   21 sep 2008;
@@ -8,10 +8,6 @@
   "an implicit scheme."
   "The non linear system is solved "
   "using Broyden Algorithm"
-}
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
 }
 
 @MaterialProperty stress young; /* mandatory for castem */
@@ -27,7 +23,6 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 } // end of @InitLocalVars
@@ -38,7 +33,6 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
-  using namespace tfel::material::lame;
   computeNumericalJacobian(this->jacobian);
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
      computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);

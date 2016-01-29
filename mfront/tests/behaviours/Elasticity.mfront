@@ -27,18 +27,12 @@ nu.setGlossaryName("PoissonRatio");
 // Lame Coefficients
 @LocalVariable stress lambda,mu;
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 }
 
 @PredictionOperator{
-  using namespace tfel::material::lame;
   static_cast<void>(smt); // remove unused variable warning
   computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
 }
@@ -51,7 +45,6 @@ nu.setGlossaryName("PoissonRatio");
 }
 
 @Integrator<PlaneStress,AxisymmetricalGeneralisedPlaneStress,Replace>{
-  using namespace tfel::material::lame;
   // here we compute the tangent operator even if we don't need too
   static_cast<void>(computeTangentOperator_);
   computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);

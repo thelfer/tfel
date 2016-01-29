@@ -5,7 +5,7 @@
  * \date   05/09/2014
  */
 
-@Parser    DefaultParser;
+@DSL DefaultDSL;
 @Behaviour DruckerPragerEcroLinDefault;
 
 @MaterialProperty stress young;
@@ -19,10 +19,6 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real H ;
 
 @ProvidesSymmetricTangentOperator;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @StateVariable real p;
 @StateVariable real pvol ;
@@ -41,7 +37,6 @@ nu.setGlossaryName("PoissonRatio");
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
   K      = lambda+(2*mu)/3;
@@ -54,7 +49,6 @@ nu.setGlossaryName("PoissonRatio");
 } 
 
 @Integrator{
-  using namespace tfel::material::lame;
   ind=0;
   Dp=0.;
   Stensor deel(0.) ;

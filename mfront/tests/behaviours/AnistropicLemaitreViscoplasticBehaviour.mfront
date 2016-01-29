@@ -1,4 +1,4 @@
-@Parser    Implicit;
+@DSL    Implicit;
 @Behaviour AnistropicLemaitreViscoplasticBehaviour;
 @Author    jmp;
 @Date      03/2014;
@@ -12,11 +12,6 @@
  "Modèle utilisé par le département MMC pour"
  "décrire les gaines de crayon combustible en"
  "situation d'APRP."
-}
-
-@Includes{
-#include<TFEL/Material/Hill.hxx>
-#include<TFEL/Material/Lame.hxx>
 }
 
 @OrthotropicBehaviour;
@@ -54,7 +49,6 @@ seq.setGlossaryName("HillStress");
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
   } else if(smt==CONSISTENTTANGENTOPERATOR){
@@ -69,7 +63,6 @@ seq.setGlossaryName("HillStress");
 }
 
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
   // proportion en phase alpha en milieu de pas de temps

@@ -16,7 +16,6 @@ nu.setGlossaryName("PoissonRatio");
 				      
 @ProvidesSymmetricTangentOperator;
 @Integrator{
-  using namespace tfel::material::lame;
   static_cast<void>(smt); // remove compiler warning
   const stress lambda = computeLambda(young,nu);
   const stress mu     = computeMu(young,nu);

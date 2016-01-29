@@ -1,4 +1,4 @@
-@Parser DefaultFiniteStrainParser;
+@DSL DefaultFiniteStrainDSL;
 @Behaviour SaintVenantKirchhoffElasticity;
 @Author T. Helfer;
 @Date 19/10/2013;
@@ -21,15 +21,10 @@ nu.setGlossaryName("PoissonRatio");
 // tangent
 @LocalVariable StressStensor s; //<! Second tenseur des contraintes de Piola-Kirchhoff
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 /*!
  * Nous décrivons ici l'intégration de la loi. 
  */
 @Integrator{
-  using namespace tfel::material::lame;
   /*! 
    * Nous commençons par calculer les coefficients de Lame \(\lambda\)
    * et \(\mu\)~:

@@ -5,7 +5,7 @@
  * \date   08 11 2013
  */
  
-@Parser    Implicit;
+@DSL Implicit;
 @Behaviour T91ViscoplasticBehaviour;
 @Algorithm NewtonRaphson_NumericalJacobian;
 @Author    Franck Milliard;
@@ -22,10 +22,6 @@ nu.setGlossaryName("PoissonRatio");
 @StateVariable real      ksi              ;  // Phase proportion
 @PhysicalBounds ksi in [-0.00001:1.00001] ;
 ksi.setNormalisationFactor(1.e-2)         ;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialLaw{"T91MartensiticSteel_YoungModulus_ROUX2007.mfront",
     "T91MartensiticSteel_ThermalExpansion_ROUX2007.mfront",
@@ -123,7 +119,6 @@ R_aust.setNormalisationFactor(1.e11);
 @InitLocalVars{
   const real R = 8.3144621;
   const real KELVIN= 273.15;
-  using namespace tfel::material::lame;
 
   T_ = T + theta * dT ;
   
