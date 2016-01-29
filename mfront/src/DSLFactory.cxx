@@ -14,6 +14,7 @@
 #include<vector>
 #include<string>
 #include<utility>
+#include<stdexcept>
 
 #include"MFront/DSLFactory.hxx"
 #include"MFront/DSLProxy.hxx"
