@@ -44,6 +44,8 @@ macro(add_mfront_generated_source lib interface ext file)
       ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
+      COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
       COMMAND "${mfront_executable}"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"

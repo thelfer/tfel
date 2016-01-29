@@ -52,7 +52,6 @@ namespace mtest{
     using namespace tfel::math;
     using namespace tfel::material;
     using size_type = matrix<real>::size_type;
-    const auto& u0 = scs.u0;
     auto& u1 = scs.u1;
     // compute material properties and state variables
     s.prepare(scs,t,dt);

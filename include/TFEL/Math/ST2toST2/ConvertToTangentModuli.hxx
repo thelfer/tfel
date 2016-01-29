@@ -77,7 +77,7 @@ namespace tfel{
 #ifndef _MSC_VER
       constexpr const base cste = base(1)/(base(2)*tfel::math::constexpr_fct::sqrt(base(2)));
 #else
-      static constexpr const base cste = base(1)/(base(2)*std::sqrt(base(2)));
+      static const base cste = base(1)/(base(2)*std::sqrt(base(2)));
 #endif
       st2tost2<2u,res> C;
       C(0,0) = K(0,0)*F(0)+K(0,3)*F(3);
@@ -119,7 +119,7 @@ namespace tfel{
 #ifndef _MSC_VER
       constexpr const base cste = base(1)/(base(2)*tfel::math::constexpr_fct::sqrt(base(2)));
 #else
-      static constexpr const base cste = base(1)/(base(2)*std::sqrt(base(2)));
+      static const base cste = base(1)/(base(2)*std::sqrt(base(2)));
 #endif
       st2tost2<3u,res> C;
       C(0,0) = K(0,0)*F(0)+K(0,3)*F(3)+K(0,5)*F(5);

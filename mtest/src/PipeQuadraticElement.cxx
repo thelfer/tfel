@@ -27,10 +27,10 @@ namespace mtest{
   constexpr const real PipeQuadraticElement::pg_radii[3];
 #else  /* _MSC_VER */
   // value of the Gauss points position in the reference element
-  static const real PipeQuadraticElement::pg_radii[3] = {-std::sqrt(real(3)/real(5)),real(0),
+  const real PipeQuadraticElement::pg_radii[3] = {-std::sqrt(real(3)/real(5)),real(0),
 							  std::sqrt(real(3)/real(5))};
   // Gauss point weight
-  static const real PipeQuadraticElement::wg[3] =  {real(5.)/real(9.),
+  const real PipeQuadraticElement::wg[3] =  {real(5.)/real(9.),
 						    real(8.)/real(9.),
 						    real(5.)/real(9.)};
 #endif  /* _MSC_VER */

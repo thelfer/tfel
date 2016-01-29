@@ -7,3 +7,4 @@ export PATH=@TFEL_BINARY_DIR@/src/Utilities@TFEL_CONF_DIR@:$PATH
 export PATH=@TFEL_BINARY_DIR@/src/Exception@TFEL_CONF_DIR@:$PATH
 export PATH=@TFEL_BINARY_DIR@/src/Glossary@TFEL_CONF_DIR@:$PATH
 export PATH=@TFEL_BINARY_DIR@/src/System@TFEL_CONF_DIR@:$PATH
+export PATH=@TFEL_BINARY_DIR@/src/Config@TFEL_CONF_DIR@:$PATH

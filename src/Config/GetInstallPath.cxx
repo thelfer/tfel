@@ -5,6 +5,7 @@
  * \date   21 déc. 2015
  */
 
+#include<stdexcept>
 #include<algorithm>
 
 #if defined _WIN32 || defined _WIN64
