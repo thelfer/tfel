@@ -506,7 +506,6 @@ docs/mtest/images/mtest-l3f.eps -text
 docs/mtest/images/norton-acc.txt -text
 docs/mtest/images/norton-elas.txt -text
 docs/mtest/images/norton-tc.txt -text
-docs/mtest/images/signatures_mtest.eps -text
 docs/mtest/images/signatures_mtest.xcf -text
 docs/mtest/images/strainhardeningcreep.eps -text
 docs/mtest/images/strainhardeningcreep.mtest -text
@@ -799,8 +798,6 @@ docs/release-notes-2.0.3/Makefile.am -text
 docs/release-notes-2.0.3/Makefile.doc.in -text
 docs/release-notes-2.0.3/bibliographie.bib -text
 docs/release-notes-2.0.3/images/cb.pdf -text
-docs/release-notes-2.0.3/images/signatures.png -text
-docs/release-notes-2.0.3/images/signatures.xcf -text
 docs/release-notes-2.0.3/tfel-2.0.3.tex.in -text
 docs/release-notes-2.0.4/CMakeLists.txt -text
 docs/release-notes-2.0.4/Makefile.am -text
@@ -945,7 +942,6 @@ docs/tutorial/images/UO2_YoungModulus_Fink1981.png -text
 docs/tutorial/images/code-barre.pdf -text
 docs/tutorial/images/cyclique.png -text
 docs/tutorial/images/hayhurst.png -text
-docs/tutorial/images/signatures.pdf -text
 docs/tutorial/images/tutorielch12-img1.png -text
 docs/tutorial/images/tutorielch12-img10.png -text
 docs/tutorial/images/tutorielch12-img11.png -text
