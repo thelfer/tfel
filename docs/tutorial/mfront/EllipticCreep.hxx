@@ -162,7 +162,7 @@ typedef typename MechanicalBehaviour<hypothesis,Type,false>::SMType            S
 using MechanicalBehaviour<hypothesis,Type,false>::ELASTIC;
 using MechanicalBehaviour<hypothesis,Type,false>::SECANTOPERATOR;
 using MechanicalBehaviour<hypothesis,Type,false>::TANGENTOPERATOR;
-using MechanicalBehaviour<hypothesis,Type,false>::CONSISTANTTANGENTOPERATOR;
+using MechanicalBehaviour<hypothesis,Type,false>::CONSISTENTTANGENTOPERATOR;
 using MechanicalBehaviour<hypothesis,Type,false>::NOSTIFFNESSREQUESTED;
 typedef typename MechanicalBehaviour<hypothesis,Type,false>::IntegrationResult IntegrationResult;
 using MechanicalBehaviour<hypothesis,Type,false>::SUCCESS;
