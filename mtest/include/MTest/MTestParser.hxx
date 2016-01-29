@@ -52,6 +52,9 @@ namespace mtest
      */
     void parseString(MTest&,
 		     const std::string&);
+    //! \return the list of keywords
+    virtual std::vector<std::string>
+    getKeyWordsList() const;
     /*!
      * display the list of keywords
      */

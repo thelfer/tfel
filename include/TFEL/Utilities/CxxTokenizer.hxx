@@ -83,12 +83,18 @@ namespace tfel{
        * \param[in] f : file name
        */ 
       void openFile(const std::string&);
-
       /*!
        * \brief print the stored tokens to the specified stream
        * \param[out] out : output stream
        */ 
       void printFileTokens(std::ostream&) const;
+      /*!
+       * \brief assume that a C-style comment was opened at the
+       * beginning of the processing.
+       * This is usefull when parsing a file line by line
+       * \param[in] b: boolean
+       */
+      void setCStyleCommentOpened(const bool);
       /*!
        * \brief remove all comment tokens
        */ 
@@ -275,7 +281,7 @@ namespace tfel{
       static void TFEL_VISIBILITY_LOCAL
       join(std::vector<std::string>&,const std::string&,const std::string&);
 
-      void TFEL_VISIBILITY_LOCAL
+      TFEL_VISIBILITY_LOCAL void
       splitAtCxxTokenSperator(std::vector<std::string>&);
     
       static void TFEL_VISIBILITY_LOCAL

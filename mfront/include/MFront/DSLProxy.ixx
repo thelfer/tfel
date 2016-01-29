@@ -37,6 +37,18 @@ namespace mfront{
 					&DSLType::getDescription);
   }
 
+  template<typename DSLType>
+  DSLProxy<DSLType>::DSLProxy(const std::vector<std::string>& names)
+  {
+    auto& parserFactory = DSLFactory::getDSLFactory();
+    parserFactory.registerParserCreator(DSLType::getName(),
+					&DSLProxy<DSLType>::createParser,
+					&DSLType::getDescription);
+    for(const auto& n:names){
+      parserFactory.registerParserCreator(n,&DSLProxy<DSLType>::createParser,
+					  &DSLType::getDescription);
+    }
+  }
 
   template<typename DSLType>
   std::shared_ptr<AbstractDSL>

@@ -28,7 +28,8 @@ namespace tfel{
      */
     struct TFELUTILITIES_VISIBILITY_EXPORT Token
     {
-
+      //! a simple alias
+      using size_type = size_t;
       //! possible type of the token
       enum TokenFlag{Standard,Comment,DoxygenComment,
 		     DoxygenBackwardComment,
@@ -39,27 +40,27 @@ namespace tfel{
       Token();
       /*!
        * \brief constructor
-       * \param line_  : line number
-       * \param token_ : token value
-       * \param flag_  : token type
+       * \param[in] l: line number
+       * \param[in] v: token value
+       * \param[in] f: token type
        */
-      Token(const unsigned int,
+      Token(const size_type,
 	    const std::string&,
 	    const TokenFlag = Standard);
 
-      Token(const Token&) = default;
-      Token(Token&&) = default;
-      Token& operator=(const Token&) = default;
-      Token& operator=(Token&&) = default;
+      Token(const Token&);
+      Token(Token&&);
+      Token& operator=(const Token&);
+      Token& operator=(Token&&);
       ~Token() noexcept;
       //! line number
-      unsigned int line;
+      size_type line = 0u;
       //! string holded by the token
       std::string value;
       //! comment
       std::string comment;
       //! type of the token
-      TokenFlag flag;
+      TokenFlag flag = Standard;
     }; // end of struct Token
 
   } // end of namespace utilities

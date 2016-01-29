@@ -223,8 +223,7 @@ namespace mfront{
     			 BehaviourData::AT_BEGINNING);
       } else {
     	if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-    	  to << "using namespace tfel::material::lame;" << endl
-    	     << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl
+    	  to << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl
     	     << "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);" << endl
     	     << "} else if (smt==CONSISTENTTANGENTOPERATOR){" << endl
     	     << "  StiffnessTensor Hooke;" << endl
@@ -269,8 +268,8 @@ namespace mfront{
     // local variable initialisation
     CodeBlock init;
     init.code = "// initialisation Lame's coefficient\n"
-      "this->lambda=tfel::material::lame::computeLambda(this->young,this->nu);\n"
-      "this->mu=tfel::material::lame::computeMu(this->young,this->nu);\n";
+      "this->lambda=tfel::material::computeLambda(this->young,this->nu);\n"
+      "this->mu=tfel::material::computeMu(this->young,this->nu);\n";
     CodeBlock smts;
     smts.code =
       "this->sig=this->lambda*trace(this->eel+theta*(this->deel))*Stensor::Id()+2*(this->mu)*(this->eel+theta*(this->deel));\n";

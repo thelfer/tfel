@@ -30,7 +30,7 @@ namespace tfel
     namespace parser
     {
 
-      struct ExternalCFunctionException
+      struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunctionException
       {
 	TFEL_NORETURN static void
 	throwUnimplementedDifferentiateFunctionException(void);
@@ -69,14 +69,10 @@ namespace tfel
 							std::vector<double>::size_type>&) const override;
 	virtual void
 	getParametersNames(std::set<std::string>&) const override;
-	virtual ~ExternalCFunctionBase();
+	virtual ~ExternalCFunctionBase() = default;
       protected:
 	double variables[N];
       }; // end of struct ExternalCFunction
-
-      template<unsigned short N>
-      ExternalCFunctionBase<N>::~ExternalCFunctionBase()
-      {} // end of ExternalCFunctionBase<N>::~ExternalCFunctionBase
 
       template<unsigned short N>
       void
@@ -150,7 +146,7 @@ namespace tfel
       } // end of ExternalCFunctionBase<N>::getNumberOfVariables(void) const
 
       template<>
-      struct ExternalCFunctionBase<0u>
+      struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunctionBase<0u>
 	: public ExternalFunction
       {
 	virtual void

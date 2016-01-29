@@ -45,9 +45,20 @@ namespace tfel
       }; // end of struct Line
       /*!
        * \brief constructor
-       * \param[in] file : file name
+       * \param[in] file   : file name
+       * \param[in] format : file format
+       * Available file formats include:
+       * - the default. If the first line is a comment, column legends
+       *   are extracted out of it. If the next lines are comments,
+       *   they are added to the preamble.
+       * - gnuplot (also called alcyone). The first line is not a
+       *   comment but column legends are extracted out of it. This is
+       *   the behaviour of gnuplot when the following command is
+       *   used:
+       *   set key autotitle columnhead
        */
-      TextData(const std::string&);
+      TextData(const std::string&,
+	       const std::string& = "");
       /*!
        * \param[in] i : column number
        * \return the specified column, converting all values to double
@@ -110,21 +121,11 @@ namespace tfel
        */
       void skipLines(const unsigned short);
     private:
-      /*!
-       * \brief default constructor (disabled)
-       */
-      TFEL_VISIBILITY_LOCAL 
-      TextData();
-      /*!
-       * \brief copy constructor (disabled)
-       */
-      TextData(const TextData&);
-      /*!
-       * \brief assignement operator (disabled)
-       */
-      TFEL_VISIBILITY_LOCAL 
-      TextData&
-      operator = (const TextData&);
+      TextData() = delete;
+      TextData(TextData&&) = delete;
+      TextData(const TextData&) = delete;
+      TextData& operator = (TextData&&) = delete;
+      TextData& operator = (const TextData&) = delete;
       /*!
        * \brief extract a double from a token
        * \param[in] current : iterator to the token

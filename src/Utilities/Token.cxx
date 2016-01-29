@@ -18,17 +18,19 @@ namespace tfel{
 
   namespace utilities{
 
-    Token::Token()
-      : line(0u),value(),flag(Standard)
+    Token::Token() = default;
+    Token::Token(const Token&) = default;
+    Token::Token(Token&&) = default;
+    Token& Token::operator=(const Token&) = default;
+    Token& Token::operator=(Token&&) = default;
+
+    Token::Token(const size_type l,
+		 const std::string& v,
+		 const TokenFlag f)
+      : line(l),value(v),flag(f)
     {}
 
-    Token::Token(const unsigned int line_,const std::string& token_,
-		 const TokenFlag flag_)
-      : line(line_),value(token_),flag(flag_)
-    {}
-
-    Token::~Token() noexcept
-    {}
+    Token::~Token() noexcept = default;
 
   } // end of namespace utilities
 

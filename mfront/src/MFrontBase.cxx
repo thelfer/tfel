@@ -22,6 +22,7 @@
 #include"MFront/PedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontDebugMode.hxx"
+#include"MFront/DefaultDSL.hxx"
 #include"MFront/DSLFactory.hxx"
 #include"MFront/MFrontBase.hxx"
 
@@ -120,7 +121,7 @@ namespace mfront{
 	auto& log = getLogStream();
 	log << "MFrontBase::getDSL : no dsl specified, using default" << endl;
       }
-      dsl = dslFactory.createNewParser();
+      dsl = dslFactory.createNewParser(DefaultDSL::getName());
     }
     return dsl;
   } // end of MFrontBase::getAbstractDSL

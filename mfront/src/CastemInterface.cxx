@@ -1596,8 +1596,8 @@ namespace mfront{
     out << "{\n";
     out << "using namespace castem;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "using namespace mfront::BehaviourProfiler;\n";
-      out << "using namespace tfel::material::" << mb.getClassName() << "Profiler;\n";
+      out << "using mfront::BehaviourProfiler;\n";
+      out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
       out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
@@ -1814,8 +1814,8 @@ namespace mfront{
     out << endl;
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "using namespace mfront::BehaviourProfiler;\n";
-      out << "using namespace tfel::material::" << mb.getClassName() << "Profiler;\n";
+      out << "using mfront::BehaviourProfiler;\n";
+      out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
       out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
@@ -1943,13 +1943,6 @@ namespace mfront{
     out << "* \\author "  << fd.authorName << endl;
     out << "* \\date   "  << fd.date       << endl;
     out << "*\n\n";
-    out << "* Note for Cast3M pleiades users, you may want to use\n"
-	<< "* the syntaxe based on the LIB_LOI keyword. In this case,\n"
-	<< "* you may want to use the following declaration : \n\n";
-    out << "cmp = 'TABLE';\n";
-    out << "cmp. 'LIB_LOI' = '" << this->getLibraryName(mb) << "';\n";
-    out << "cmp. 'FCT_LOI' = '" << this->getUmatFunctionName(mb) << "';\n";
-    out << "*\n\n";
     // specific declaration
     string nonlin;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -2016,8 +2009,10 @@ namespace mfront{
       out << endl;
       ostringstream mmod;
       mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
-      mmod << nonlin << " 'NUME_LOI' 1 ";
-      mmod << "'C_MATERIAU' coel ";
+      mmod << nonlin << "\n"
+	   << "'LIB_LOI' 'lib"+this->getLibraryName(mb)+".so'\n"
+	   << "'FCT_LOI' '"+this->getUmatFunctionName(mb)+"'\n"
+	   << "'C_MATERIAU' coel ";
       if(!persistentVarsHolder.empty()){
 	mmod << "'C_VARINTER' statev ";
       }
@@ -2025,7 +2020,7 @@ namespace mfront{
       writeGibianeInstruction(out,mmod.str());
       out << endl;
       ostringstream mi;
-      mi << "MA = 'MATERIAU' MO";
+      mi << "MA = 'MATERIAU' MO ";
       for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
 	  pm!=mprops.first.end();){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);

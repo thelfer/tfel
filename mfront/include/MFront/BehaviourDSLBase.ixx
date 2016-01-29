@@ -118,28 +118,23 @@ namespace mfront{
   void
   BehaviourDSLBase<Child>::getKeywordsList(std::vector<std::string>& k) const
   {
-    typename CallBackContainer::const_iterator p;
-    for(p=this->callBacks.begin();p!=this->callBacks.end();++p){
-      k.push_back(p->first);
+    for(const auto& c : this->callBacks){
+      k.push_back(c.first);
     }
   } // end of BehaviourDSLBase<Child>::getKeywordsList
 
   template<typename Child>
   void BehaviourDSLBase<Child>::treatDisabledCallBack()
   {
-    using namespace std;
     --(this->current);
-    string msg("The keyword ");
-    msg += this->current->value;
-    msg += " has been disabled";
-    throw(runtime_error(msg));
+    throw(std::runtime_error("The keyword: '"+this->current->value+
+			     "' has been disabled"));
   } // end of treatDisabledCallBack
 
   template<typename Child>
   void BehaviourDSLBase<Child>::disableCallBack(const std::string& name)
   {
-    typename CallBackContainer::iterator p;
-    p=this->callBacks.find(name);
+    auto p = this->callBacks.find(name);
     if(p==this->callBacks.end()){
       this->registerNewCallBack(name,&Child::treatDisabledCallBack);
       return;

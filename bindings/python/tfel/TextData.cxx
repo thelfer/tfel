@@ -19,14 +19,15 @@ void declareTextData(void);
 
 void declareTextData()
 {
-  using namespace std;
-  using namespace boost;
   using namespace boost::python;
   using namespace tfel::utilities;
+
   std::vector<double>
     (TextData:: *getColumn)(const unsigned short) const = &TextData::getColumn;
 
-  class_<TextData,noncopyable>("TextData",init<string>())
+  class_<TextData,boost::noncopyable>("TextData",no_init)
+    .def(init<std::string>())
+    .def(init<std::string,std::string>())
     .def("getColumn",getColumn)
     ;
 

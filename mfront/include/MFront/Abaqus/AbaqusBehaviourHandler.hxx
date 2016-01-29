@@ -237,7 +237,11 @@ namespace abaqus
 	if(!tsf.first){
 	  r = BV::FAILURE;
 	} else {
-	  r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
+	  try{
+	    r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
+	  } catch(DivergenceException&){
+	    r==BV::FAILURE;
+	  }
 	  if(r==BV::FAILURE){
 	    *PNEWDT = behaviour.getMinimalTimeStepScalingFactor();
 	  } else {
@@ -249,8 +253,7 @@ namespace abaqus
 	  }
 	}
 	if(r==BV::FAILURE){
-	  // Il manque un vraie gestion locale de résultats imprécis
-	  throwBehaviourIntegrationFailedException(Traits::getName());
+	  return;
 	}
 	this->behaviour.checkBounds();
 	this->behaviour.ABAQUSexportStateData(STRESS,STATEV);

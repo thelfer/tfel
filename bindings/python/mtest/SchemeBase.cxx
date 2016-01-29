@@ -78,6 +78,14 @@ setOutputFrequency(mtest::SchemeBase& s,const std::string& v){
   }
 }
 
+static void
+SchemeBase_printOutput(mtest::SchemeBase& s,
+		       const mtest::real t,
+		       const mtest::StudyCurrentState& scs){
+  s.printOutput(t,scs,true);
+}
+
+
 
 void declareSchemeBase(void);
 
@@ -121,6 +129,8 @@ void declareSchemeBase(void)
 	 &SchemeBase::setOutputFilePrecision)
     .def("printOutput",
 	 &SchemeBase::printOutput)
+    .def("printOutput",
+	 &SchemeBase_printOutput)
     .def("setResidualFileName",
 	 &SchemeBase::setResidualFileName)
     .def("setResidualFilePrecision",

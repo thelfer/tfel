@@ -44,8 +44,8 @@ namespace mfront{
     // local variable initialisation
     CodeBlock initLocalVars;
     initLocalVars.code = "// initialisation Lame's coefficient\n"
-      "this->lambda=tfel::material::lame::computeLambda(this->young,this->nu);\n"
-      "this->mu=tfel::material::lame::computeMu(this->young,this->nu);\n";
+      "this->lambda=tfel::material::computeLambda(this->young,this->nu);\n"
+      "this->mu=tfel::material::computeMu(this->young,this->nu);\n";
     this->mb.setCode(h,BehaviourData::BeforeInitializeLocalVariables,
 		     initLocalVars,BehaviourData::CREATEORAPPEND,
 		     BehaviourData::AT_BEGINNING);

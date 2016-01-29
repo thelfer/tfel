@@ -39,7 +39,6 @@ Options
   enable-zmat    : enables zmat support
   enable-cyrano  : enables cyrano support (cyrano is eDF fuel performance code)
   enable-libcxx  : enable libc++ on Linux
-  enable-cadna   : enables tests based on the cadna library
   
   enable-sanitize-options : additional compiler flags (gcc specific)
   enable-portable-build   : do not use processor specific flags. The generated binaries can be

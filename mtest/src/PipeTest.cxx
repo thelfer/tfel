@@ -655,49 +655,61 @@ namespace mtest{
   tfel::tests::TestResult
   PipeTest::execute(void)
   {
-    using namespace std;
-    using namespace tfel::tests;
-    using tfel::math::vector;
+    auto report = [](const StudyCurrentState& s,const bool bs){
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	auto& log = mfront::getLogStream();
+	log << "Execution " << (bs ? "succeeded" : "failed") << '\n'
+	<< "-number of period:     " << (s.period-1) << '\n'
+	<< "-number of iterations: " << s.iterations << '\n'
+	<< "-number of sub-steps:  " << s.subSteps   << '\n';
+      }
+    };
     // some checks
     if(this->times.empty()){
-      throw(runtime_error("PipeTest::execute: no times defined"));
+      throw(std::runtime_error("PipeTest::execute: no times defined"));
     }
     if(this->times.size()<2){
-      throw(runtime_error("PipeTest::execute: invalid number of times defined"));
+      throw(std::runtime_error("PipeTest::execute: invalid number of times defined"));
     }
     // finish initialization
     this->completeInitialisation();
     // initialize current state and work space
     StudyCurrentState state;
     SolverWorkSpace    wk;
-    this->initializeCurrentState(state);
-    this->initializeWorkSpace(wk);
-    // integrating over the loading path
-    auto pt  = this->times.begin();
-    auto pt2 = pt+1;
-    if(this->rl==IMPOSEDOUTERRADIUS){ 
-      state.addEvolution("InnerPressure",
-			 std::shared_ptr<Evolution>(new LPIEvolution({*pt,*pt2},
-								     {real(0),real(0)})));
+    try{
+      this->initializeCurrentState(state);
+      this->initializeWorkSpace(wk);
+      // integrating over the loading path
+      auto pt  = this->times.begin();
+      auto pt2 = pt+1;
+      if(this->rl==IMPOSEDOUTERRADIUS){ 
+	state.addEvolution("InnerPressure",
+			   std::shared_ptr<Evolution>(new LPIEvolution({*pt,*pt2},
+								       {real(0),real(0)})));
+      }
+      if(this->rl==TIGHTPIPE){ 
+	state.addEvolution("InnerPressure",
+			   std::shared_ptr<Evolution>(new LPIEvolution({*pt,*pt2},
+								       {this->p0,this->p0})));
+      }
+      if(this->al==IMPOSEDAXIALGROWTH){ 
+	state.addEvolution("AxialForce",
+			   std::shared_ptr<Evolution>(new LPIEvolution({*pt,*pt2},
+								       {real(0),real(0)})));
+      }
+      this->printOutput(*pt,state,true);
+      // real work begins here
+      while(pt2!=this->times.end()){
+	// allowing subdivisions of the time step
+	this->execute(state,wk,*pt,*pt2);
+	++pt;
+	++pt2;
+      }
+    } catch(...){
+      report(state,false);
+      throw;
     }
-    if(this->rl==TIGHTPIPE){ 
-      state.addEvolution("InnerPressure",
-			 std::shared_ptr<Evolution>(new LPIEvolution({*pt,*pt2},
-								     {this->p0,this->p0})));
-    }
-    if(this->al==IMPOSEDAXIALGROWTH){ 
-      state.addEvolution("AxialForce",
-			 std::shared_ptr<Evolution>(new LPIEvolution({*pt,*pt2},
-								     {real(0),real(0)})));
-    }
-    this->printOutput(*pt,state,true);
-    // real work begins here
-    while(pt2!=this->times.end()){
-      // allowing subdivisions of the time step
-      this->execute(state,wk,*pt,*pt2);
-      ++pt;
-      ++pt2;
-    }
+    report(state,true);
     tfel::tests::TestResult tr;
     for(const auto& t : this->tests){
       tr.append(t->getResults());

@@ -57,7 +57,7 @@ struct SaintVenantKirchoffTangentOperator final
   {
     using namespace std;
     using namespace tfel::math;
-    using namespace tfel::material::lame;
+    using namespace tfel::material;
     const double eps  = 1.e-7;
     const double E  = 150e9;
     const double prec1 = E*1.e-7;

@@ -11,7 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
 #include<cassert>
 #include<stdexcept>
 #include<sstream>
@@ -26,17 +25,36 @@ namespace tfel
   namespace utilities
   {
 
-    TextData::TextData(const std::string& file)
+    TextData::TextData(const std::string& file,
+		       const std::string& format)
     {
       using namespace std;
-      ifstream f(file.c_str());
+      auto get_legends = [](std::vector<std::string>& r,
+			    const std::string& l){
+	istringstream tokenizer(l);
+	copy(istream_iterator<string>(tokenizer),
+	     istream_iterator<string>(),back_inserter(r));
+      };
+      auto add_line = [](std::vector<Line>& vl,
+			 const std::string& l,
+			 const unsigned short n){
+	Line nl;
+	nl.nbr = n;
+	vl.push_back(nl);
+	istringstream tokenizer(l);
+	copy(istream_iterator<string>(tokenizer),
+	     istream_iterator<string>(),back_inserter(vl.back().tokens));
+	if(vl.back().tokens.empty()){
+	  vl.pop_back();
+	}
+      };
       bool firstLine;
       bool firstComments;
       unsigned short nbr;
+      std::ifstream f{file};
       if(!f){
-	string msg("TextData::TextData : ");
-	msg += "can't open "+file+".";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("TextData::TextData: "
+				 "can't open '"+file+'\''));
       }
       nbr=1;
       firstLine=true;
@@ -44,31 +62,44 @@ namespace tfel
       while(!f.eof()){
 	string line;
 	getline(f,line);
-	if(!line.empty()){
-	  if(line[0]=='#'){
+	if(line.empty()){
+	  continue;
+	}
+	if(line[0]=='#'){
+	  if(!firstComments){
+	    continue;
+	  }
+	  if(format.empty()){
 	    line.erase(line.begin());
 	    if(firstLine){
-	      istringstream tokenizer(line);
-	      copy(istream_iterator<string>(tokenizer),
-		   istream_iterator<string>(),back_inserter(this->legends));
+	      get_legends(this->legends,line);
 	    }
-	    if(firstComments){
-	      this->preamble.push_back(line);
+	    this->preamble.push_back(line);
+	  }
+	} else {
+	  if(((format=="gnuplot")||(format=="alcyone"))&&(firstLine)){
+	    get_legends(this->legends,line);
+	    bool all_numbers = true;
+	    for(const auto& l:this->legends){
+	      try{
+		std::stod(l);
+	      } catch(exception&){
+		all_numbers = false;
+	      }
+	      if(!all_numbers){
+		break;
+	      }
+	    }
+	    if(all_numbers){
+	      this->legends.clear();
+	      add_line(this->lines,line,nbr);
 	    }
 	  } else {
-	    Line l;
-	    l.nbr = nbr;
-	    this->lines.push_back(l);
-	    istringstream tokenizer(line);
-	    copy(istream_iterator<string>(tokenizer),
-		 istream_iterator<string>(),back_inserter(this->lines.back().tokens));
-	    if(this->lines.back().tokens.empty()){
-	      this->lines.pop_back();
-	    }
+	    add_line(this->lines,line,nbr);
 	    firstComments = false;
 	  }
-	  firstLine = false;
 	}
+	firstLine = false;
 	++nbr;
       }
     } // end of TextData::TextData
@@ -118,8 +149,7 @@ namespace tfel
     std::vector<double>
     TextData::getColumn(const unsigned short i) const
     {
-      using namespace std;
-      vector<double> tab;
+      std::vector<double> tab;
       this->getColumn(tab,i);
       return tab;
     } // end of TextData::getColumn
@@ -128,26 +158,23 @@ namespace tfel
     TextData::getColumn(std::vector<double>& tab,
 			const unsigned short i) const
     {
-      using namespace std;
+      tab.clear();
       tab.reserve(this->lines.size());
-      int j;
-      // current line
-      vector<Line>::const_iterator line;
       // sanity check
       if(i==0u){
-	string msg("TextData::getColumn : ");
-	msg += "column '0' requested (column numbers begins at '1').";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("TextData::getColumn: "
+				 "column '0' requested (column numbers begins at '1')."));
       }
       // treatment
-      for(line=this->lines.begin(),j=0;line!=this->lines.end();++line,++j){
+      auto line=this->lines.begin();
+      for(int j=0;line!=this->lines.end();++line,++j){
 	assert(line->tokens.begin()!=line->tokens.end());
 	if(line->tokens.size()<i){
-	  ostringstream msg;
+	  std::ostringstream msg;
 	  msg << "TextData::getColumn : line '" 
 	      << line->nbr << "' "
 	      << "does not have '" << i << "' columns.";
-	  throw(runtime_error(msg.str()));
+	  throw(std::runtime_error(msg.str()));
 	}
 	tab.push_back(this->readDouble(line->tokens.begin()+i-1u,line->nbr));
       }

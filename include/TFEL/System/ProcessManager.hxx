@@ -14,9 +14,9 @@
 #ifndef LIB_TFEL_SYSTEM_PROCESSMANAGER_H_
 #define LIB_TFEL_SYSTEM_PROCESSMANAGER_H_ 
 
+#include<map>
 #include<string>
 #include<vector>
-#include<map>
 
 #include<sys/types.h>
 #include<signal.h>
@@ -63,7 +63,7 @@ namespace tfel
       virtual void
       sendSignal(const ProcessId,const int = SIGTERM);
 
-      /*
+      /*;
        * create a new process
        * \param const std::string&, command to be executed. The first word
        * is the program name, the others options
@@ -74,8 +74,7 @@ namespace tfel
       virtual ProcessId
       createProcess(const std::string&,
 		    const RedirectionType = None);
-      
-      /*
+      /*!
        * create a new process
        * \param const std::string&, command to be executed. The first word
        * is the program name, the others options
@@ -85,14 +84,15 @@ namespace tfel
        * \param const std::string&, name of a file to which the
        * new process standard output is redirected. This option is ignored
        * if this name is void.
-       * \return const ProcessId, the pid of the new process
+       * \param[in] e : additionnal environment variables for the child process
+       * \return the pid of the new process
        */
       virtual ProcessId
       createProcess(const std::string&,
 		    const std::string&,
-		    const std::string&);
-
-      /*
+		    const std::string&,
+		    const std::map<std::string, std::string>& = {});
+      /*!
        * execute the command and wait until its end
        * \param const std::string&, command to be executed. The first word
        * is the program name, the others options
@@ -102,11 +102,13 @@ namespace tfel
        * \param const std::string&, name of a file to which the
        * new process standard output is redirected. This option is ignored
        * if this name is void.
+       * \param[in] e : additionnal environment variables for the child process
        */
       virtual void
       execute(const std::string&,
 	      const std::string& = "",
-	      const std::string& = "");
+	      const std::string& = "",
+	      const std::map<std::string, std::string>& = {});
       
       virtual void
       stopOnSignals(const bool);
@@ -155,13 +157,15 @@ namespace tfel
        * registred (if any)
        * \param StreamMap&, map to which the output file descriptor is
        * registred (if any)
-       * \return const ProcessId, the pid of the new process
+       * \param[in] e : additionnal environment variables for the child process
+       * \return the pid of the new process
        */
       TFEL_VISIBILITY_LOCAL ProcessId
       createProcess(const std::string&,
 		    const StreamId *const,
 		    const StreamId *const,
-		    StreamMap&,StreamMap&);
+		    StreamMap&,StreamMap&,
+		    const std::map<std::string,std::string>& = {});
 
       TFEL_VISIBILITY_LOCAL
       void sigChildHandler(const int);

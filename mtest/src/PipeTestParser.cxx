@@ -120,18 +120,24 @@ namespace mtest
     }
     return true;
   } // end of PipeTestParser::treatKeyword
-    
-  void
-  PipeTestParser::displayKeyWordsList(void) const
-  {
-    using namespace std;
-    using namespace tfel::utilities;
+
+  std::vector<std::string>
+  PipeTestParser::getKeyWordsList() const{
     auto keys  = SchemeParserBase::getKeyWordsList();
     auto keys2 = SingleStructureSchemeParser::getKeyWordsList();
     keys.insert(keys.end(),keys2.begin(),keys2.end());
     for(const auto& c : this->callbacks){
       keys.push_back(c.first);
     }
+    return keys;
+  }
+  
+  void
+  PipeTestParser::displayKeyWordsList(void) const
+  {
+    using namespace std;
+    using namespace tfel::utilities;
+    auto keys  = this->getKeyWordsList();
     string::size_type msize = 0;
     for(const auto& k : keys){
       msize = max(msize,k.size());
@@ -156,12 +162,7 @@ namespace mtest
   void
   PipeTestParser::displayKeyWordsHelp(void) const
   {
-    auto keys  = SchemeParserBase::getKeyWordsList();
-    auto keys2 = SingleStructureSchemeParser::getKeyWordsList();
-    keys.insert(keys.end(),keys2.begin(),keys2.end());
-    for(const auto& c : this->callbacks){
-      keys.push_back(c.first);
-    }
+    auto keys  = this->getKeyWordsList();
     std::cout << "% `PipeTest` keywords\n\n";
     for(const auto& k : keys){
       const auto f = SchemeParserBase::getDocumentationFilePath("ptest",k);
@@ -182,12 +183,7 @@ namespace mtest
   void
   PipeTestParser::displayKeyWordDescription(const std::string& k) const
   {
-    auto keys  = SchemeParserBase::getKeyWordsList();
-    auto keys2 = SingleStructureSchemeParser::getKeyWordsList();
-    keys.insert(keys.end(),keys2.begin(),keys2.end());
-    for(const auto& c : this->callbacks){
-      keys.push_back(c.first);
-    }
+    auto keys  = this->getKeyWordsList();
     if(std::find(keys.begin(),keys.end(),k)==keys.end()){
       throw(std::runtime_error("PipeTestParser::displayKeyWordDescription: "
 			       "unknown keyword '"+k+"'"));

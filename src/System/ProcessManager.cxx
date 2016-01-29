@@ -271,7 +271,8 @@ namespace tfel
 				  const ProcessManager::StreamId * const in,
 				  const ProcessManager::StreamId * const out,
 				  ProcessManager::StreamMap& ins,
-				  ProcessManager::StreamMap& outs)
+				  ProcessManager::StreamMap& outs,
+				  const std::map<std::string,std::string>& e)
     {
       using namespace std;
       typedef StreamMap::value_type MVType;
@@ -333,6 +334,7 @@ namespace tfel
 	}
 	if(out[0]!=-1){
 	  dup2(out[1],STDOUT_FILENO);
+	  dup2(out[1], STDERR_FILENO);
 	}
 	argv = static_cast<char **>(malloc((tmp.size()+2)*sizeof(char*)));
 	p  = tmp.begin();
@@ -353,6 +355,10 @@ namespace tfel
 	close(cfd[0]);
 	// restoring the previous signal mask
 	sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
+	// calling the external process
+	for(const auto& ev : e) {
+	  ::setenv(ev.first.c_str(),ev.second.c_str(), 1);
+	}
 	// calling the command
 	execvp(argv[0],argv);
 	// called failed, tells the father, free memory and quit
@@ -412,7 +418,8 @@ namespace tfel
     ProcessManager::ProcessId
     ProcessManager::createProcess(const std::string& cmd,
 				  const std::string& inputFile,
-				  const std::string& outputFile)
+				  const std::string& outputFile,
+				  const std::map<std::string,std::string>& e)
     {
       using namespace std;
       const bool in  = !inputFile.empty();
@@ -448,7 +455,7 @@ namespace tfel
 	fdOut[1] = fdOut[0];
       }
       try{
-	pid = this->createProcess(cmd,fdIn,fdOut,this->inputFiles,this->outputFiles);
+	pid = this->createProcess(cmd,fdIn,fdOut,this->inputFiles,this->outputFiles,e);
       }
       catch(...){
 	// something went wrong in createProcess,
@@ -710,9 +717,10 @@ namespace tfel
     void
     ProcessManager::execute(const std::string& cmd,
 			    const std::string& in,
-			    const std::string& out)
+			    const std::string& out,
+			    const std::map<std::string,std::string>& e)
     {
-      auto pid = this->createProcess(cmd,in,out);
+      auto pid = this->createProcess(cmd,in,out,e);
       const auto p  = static_cast<const ProcessManager&>(*this).findProcess(pid);
       assert(p!=this->processes.rcend());
       auto cond = p->isRunning;

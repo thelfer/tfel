@@ -59,6 +59,10 @@ namespace mtest{
     tfel::math::vector<real> u10;
     // current period number
     unsigned int period = 1u;
+    // number of iterations made so far
+    unsigned int iterations = 0u;
+    // number of sub-steppings so far
+    unsigned int subSteps = 0u;
     // previous time step
     real dt_1 = real{};    
     /*!

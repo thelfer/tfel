@@ -512,35 +512,47 @@ namespace mtest
   tfel::tests::TestResult
   MTest::execute(void)
   {
-    using namespace std;
-    using namespace tfel::tests;
-    using tfel::math::vector;
+    auto report = [](const StudyCurrentState& s,const bool bs){
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	auto& log = mfront::getLogStream();
+	log << "Execution " << (bs ? "succeeded" : "failed") << '\n'
+	<< "-number of period:     " << s.period-1   << '\n'
+	<< "-number of iterations: " << s.iterations << '\n'
+	<< "-number of sub-steps:  " << s.subSteps   << '\n';
+      }
+    };
     // some checks
     if(times.empty()){
-      throw(runtime_error("MTest::execute: no times defined"));
+      throw(std::runtime_error("MTest::execute: no times defined"));
     }
     if(times.size()<2){
-      throw(runtime_error("MTest::execute: invalid number of times defined"));
+      throw(std::runtime_error("MTest::execute: invalid number of times defined"));
     }
-    // finish initialization
-    this->completeInitialisation();
     // initialize current state and work space
     StudyCurrentState state;
     SolverWorkSpace    wk;
-    this->initializeCurrentState(state);
-    this->initializeWorkSpace(wk);
-    // integrating over the loading path
-    auto pt  = this->times.begin();
-    auto pt2 = pt+1;
-    this->printOutput(*pt,state,true);
-    // real work begins here
-    while(pt2!=this->times.end()){
-      // allowing subdivisions of the time step
-      this->execute(state,wk,*pt,*pt2);
-      ++pt;
-      ++pt2;
+    try{
+      // finish initialization
+      this->completeInitialisation();
+      this->initializeCurrentState(state);
+      this->initializeWorkSpace(wk);
+      // integrating over the loading path
+      auto pt  = this->times.begin();
+      auto pt2 = pt+1;
+      this->printOutput(*pt,state,true);
+      // real work begins here
+      while(pt2!=this->times.end()){
+	// allowing subdivisions of the time step
+	this->execute(state,wk,*pt,*pt2);
+	++pt;
+	++pt2;
+      }
+    } catch(...){
+      report(state,false);
+      throw;
     }
-    TestResult tr;
+    report(state,true);
+    tfel::tests::TestResult tr;
     for(const auto& t : this->tests){
       tr.append(t->getResults());
     }

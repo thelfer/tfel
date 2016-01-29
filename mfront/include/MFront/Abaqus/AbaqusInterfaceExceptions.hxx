@@ -147,13 +147,6 @@ namespace abaqus{
     TFEL_NORETURN static void
     throwPredictionComputationFailedException(const std::string&);
     /*!
-     * \brief throw an AbaqusException if the behaviour integration
-     * failed
-     * \param[in] b : behaviour name
-     */
-    TFEL_NORETURN static void
-    throwBehaviourIntegrationFailedException(const std::string&);
-    /*!
      * \brief throw an AbaqusException if the a consistent tangent
      * operator has to been requested and that the behaviour does not
      * provide one.

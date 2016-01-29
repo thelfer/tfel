@@ -14,14 +14,13 @@
 #ifndef LIB_MFRONTPARSERFACTORY_HXX_
 #define LIB_MFRONTPARSERFACTORY_HXX_ 
 
+#include<map>
 #include<vector>
 #include<string>
-#include<map>
+#include<memory>
 
 #include"MFront/MFrontConfig.hxx"
-
 #include"MFront/AbstractDSL.hxx"
-#include"MFront/DefaultDSL.hxx"
 
 namespace mfront{
 
@@ -41,7 +40,7 @@ namespace mfront{
 			       DescriptionPtr);
     
     std::shared_ptr<AbstractDSL>
-    createNewParser(const std::string& = DefaultDSL::getName());
+    createNewParser(const std::string&);
 
     std::string
     getParserDescription(const std::string&);

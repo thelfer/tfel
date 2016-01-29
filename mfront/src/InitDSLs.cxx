@@ -12,6 +12,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<mutex>
 #include"MFront/DSLProxy.hxx"
 
 #include"MFront/DefaultDSL.hxx"
@@ -35,21 +36,33 @@ namespace mfront
 
   void initParsers(void)
   {
-    DSLProxy<DefaultDSL> proxy1("DefaultParser");
-    DSLProxy<IsotropicMisesCreepDSL>  proxy2("IsotropicMisesCreepParser");
-    DSLProxy<IsotropicMisesPlasticFlowDSL>  proxy3("IsotropicMisesPlasticFlowParser");
-    DSLProxy<IsotropicStrainHardeningMisesCreepDSL>  proxy4("IsotropicStrainHardeningMisesCreepParser");
-    DSLProxy<MaterialPropertyDSL>  proxy5("MaterialPropertyParser");
-    DSLProxy<MultipleIsotropicMisesFlowsDSL>  proxy6("MultipleIsotropicMisesFlowsParser");
-    DSLProxy<RungeKuttaDSL>  proxy7("RungeKuttaParser");
-    DSLProxy<ImplicitDSL>    proxy8("ImplicitParser");
-    DSLProxy<ImplicitDSLII>  proxy9("ImplicitParserII");
-    DSLProxy<ModelDSL>       proxy10("ModelParser");
-    // CZM
-    DSLProxy<DefaultCZMDSL> proxy100("DefaultCZMParser");
-    // FiniteStrain
-    DSLProxy<DefaultFiniteStrainDSL>  proxy200("DefaultFiniteStrainParser");
-    DSLProxy<ImplicitFiniteStrainDSL> proxy201("ImplicitFiniteStrainParser");
+    static bool init = false;
+    static std::mutex m;
+    std::lock_guard<std::mutex> lock(m);
+    if(init){
+      return;
+    }
+    if(!init){
+      DSLProxy<DefaultDSL> proxy1(std::vector<std::string>{"Default","DefaultParser"});
+      DSLProxy<IsotropicMisesCreepDSL>  proxy2("IsotropicMisesCreepParser");
+      DSLProxy<IsotropicMisesPlasticFlowDSL>  proxy3(std::vector<std::string>{"IsotropicMisesPlasticFlowParser",
+	    "IsotropicMisesPlasticFlow"});
+      DSLProxy<IsotropicStrainHardeningMisesCreepDSL>  proxy4("IsotropicStrainHardeningMisesCreepParser");
+      DSLProxy<MaterialPropertyDSL>  proxy5(std::vector<std::string>{"MaterialProperty",
+	    "MaterialPropertyParser"});
+      DSLProxy<MultipleIsotropicMisesFlowsDSL>  proxy6("MultipleIsotropicMisesFlowsParser");
+      DSLProxy<RungeKuttaDSL>  proxy7(std::vector<std::string>{"RungeKuttaParser"});
+      DSLProxy<ImplicitDSL>    proxy8("ImplicitParser");
+      DSLProxy<ImplicitDSLII>  proxy9("ImplicitParserII");
+      DSLProxy<ModelDSL>       proxy10("ModelParser");
+      // CZM
+      DSLProxy<DefaultCZMDSL> proxy100(std::vector<std::string>{"DefaultCZMParser","DefaultCZM"});
+      // FiniteStrain
+      DSLProxy<DefaultFiniteStrainDSL>  proxy200(std::vector<std::string>{"DefaultFiniteStrain",
+	    "DefaultFiniteStrainParser"});
+      DSLProxy<ImplicitFiniteStrainDSL> proxy201("ImplicitFiniteStrainParser");
+      init = true;
+    }
   } // end of initParsers 
 
 } // end of namespace mfront

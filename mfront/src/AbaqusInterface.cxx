@@ -722,13 +722,9 @@ namespace mfront{
       ov += this->getTypeSize(v.first.type,1u);
     }
     os << "}\n\n";
-    //       << "                                                          const Type* const " << iprefix << "DR)\n"
     os << "void set" << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_,\n"
        << "                                                          const Type* const )\n"
        << "{\n";
-       // << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[3],ABAQUSDR[6],\n"
-       // << "                                                   ABAQUSDR[1],ABAQUSDR[4],ABAQUSDR[7],\n"
-       // << "                                                   ABAQUSDR[2],ABAQUSDR[5],ABAQUSDR[8]};\n";
     for(const auto& v : mb.getMainVariables()){
       this->writeBehaviourDataThermodynamicForceSetter(os,v.second,of);
       of += this->getTypeSize(v.second.type,1u);
@@ -774,9 +770,9 @@ namespace mfront{
     if(!b){
       out << "static_cast<void>(ABAQUSDR);\n";
     } else {
-      out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[3],ABAQUSDR[6],\n"
-             "                                                   ABAQUSDR[1],ABAQUSDR[4],ABAQUSDR[7],\n"
-             "                                                   ABAQUSDR[2],ABAQUSDR[5],ABAQUSDR[8]};\n";
+      out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[1],ABAQUSDR[2],\n"
+             "                                                   ABAQUSDR[3],ABAQUSDR[4],ABAQUSDR[5],\n"
+             "                                                   ABAQUSDR[6],ABAQUSDR[7],ABAQUSDR[8]};\n";
       for(const auto& v:d.getPersistentVariables()){
 	const auto flag = this->getTypeFlag(v.type);
 	if((flag==SupportedTypes::Stensor)||

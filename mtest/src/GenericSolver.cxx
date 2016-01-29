@@ -103,6 +103,7 @@ namespace mtest{
     /* prediction */
     auto r_dt = real{};
     while((!converged)&&(iter!=o.iterMax)){
+      ++(scs.iterations);
       ++iter;
       nep2 = nep;
       nep  = ne;
@@ -277,6 +278,7 @@ namespace mtest{
 	  s.printOutput(t,scs,false);
 	}
       } else {
+	++(scs.subSteps);
 	++subStep;
 	if(subStep==o.mSubSteps){
 	  throw(std::runtime_error("GenericSolver::execute: "

@@ -203,7 +203,7 @@ namespace mfront{
   IsotropicStrainHardeningMisesCreepDSL::writeBehaviourComputeTangentOperator(const Hypothesis)
   {
     this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
-    this->behaviourFile << "using tfel::material::lame::computeElasticStiffness;\n";
+    this->behaviourFile << "using tfel::material::computeElasticStiffness;\n";
     this->behaviourFile << "using tfel::math::st2tost2;\n";
     this->behaviourFile << "if(smt==CONSISTENTTANGENTOPERATOR){\n";
     this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";

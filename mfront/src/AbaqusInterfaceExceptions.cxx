@@ -105,15 +105,6 @@ namespace abaqus{
   } // end of AbaqusInterfaceExceptions::throwNegativeTimeStepException
   
   void
-  AbaqusInterfaceExceptions::throwBehaviourIntegrationFailedException(const std::string& b)
-  {
-    using namespace std;
-    string msg("AbaqusInterfaceExceptions::throwBehaviourIntegrationFailedException : ");
-    msg += "integration failed for behaviour '"+b+"'";
-    throw(runtime_error(msg));
-  } // end of AbaqusInterfaceExceptions::throwBehaviourIntegrationFailedException
-  
-  void
   AbaqusInterfaceExceptions::throwPredictionComputationFailedException(const std::string& b)
   {
     using namespace std;

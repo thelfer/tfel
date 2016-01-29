@@ -1,4 +1,4 @@
-The `AxialLoading` keyword let the user choose the king of loading to
+The `AxialLoading` keyword let the user choose the kind of loading to
 be applied to the pipe in the axial direction.
 
 This keyword is followed by a string. The following values are

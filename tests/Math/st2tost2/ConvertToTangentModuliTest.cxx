@@ -51,8 +51,8 @@ private:
     const double eps = 1.e-14;
     const double E  = 150e9;
     const double nu = 0.33;
-    const double lambda = tfel::material::lame::computeLambda(E,nu);
-    const double mu     = tfel::material::lame::computeMu(E,nu);
+    const double lambda = tfel::material::computeLambda(E,nu);
+    const double mu     = tfel::material::computeMu(E,nu);
     const st2tost2<N,double> D = lambda*st2tost2<N,double>::IxI()+2*mu*st2tost2<N,double>::Id();
     tensor<N,double> F;
     for(size_type i=0;i!=F.size();++i){

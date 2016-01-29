@@ -123,7 +123,7 @@ interne et externe au cours du temps.
 \subsubsection{Chargements dans la direction radiale}
 
 Concernant la face externe du tube, l'utilisateur peut imposer
-l'évolution d'une pression externe \(P_{i}\) au cours du temps.
+l'évolution d'une pression externe \(P_{e}\) au cours du temps.
 
 Concernant la face interne du tube, l'utilisateur a le choix entre
 plusieurs options (qui s'exclut mutuellement)~:
