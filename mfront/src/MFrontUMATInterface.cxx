@@ -1760,8 +1760,8 @@ namespace mfront{
     out << "{\n";
     out << "using namespace umat;\n";
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-      out << "using namespace mfront::MFrontBehaviourProfiler;\n";
-      out << "using namespace tfel::material::" << mb.getClassName() << "Profiler;\n";
+      out << "using mfront::MFrontBehaviourProfiler;\n";
+      out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
       out << "MFrontBehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "MFrontBehaviourProfiler::TOTALTIME);\n";
     }
@@ -2009,8 +2009,8 @@ namespace mfront{
     out << endl;
     out << "{\n";
     if(mb.getAttribute(MechanicalBehaviourData::profiling,false)){
-      out << "using namespace mfront::MFrontBehaviourProfiler;\n";
-      out << "using namespace tfel::material::" << mb.getClassName() << "Profiler;\n";
+      out << "using mfront::MFrontBehaviourProfiler;\n";
+      out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
       out << "MFrontBehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "MFrontBehaviourProfiler::TOTALTIME);\n";
     }
