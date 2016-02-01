@@ -13,7 +13,7 @@ MTEST_MTEST_DOCS = ImposedStrain.md              \
 	     	   CohesiveForceEpsilon.md       \
 	     	   Test.md
 
-mtestdocdir   = $(docdir)/mtest/mtest
+mtestdocdir   = $(datadir)/doc/mtest/mtest
 mtestdoc_DATA = $(MTEST_MTEST_DOCS)
 
 EXTRA_DIST=CMakeLists.txt \

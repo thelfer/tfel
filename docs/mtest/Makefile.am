@@ -38,7 +38,7 @@ MTEST_DOCS = Author.md                                    \
 	     NumericalTangentOperatorPerturbationValue.md \
 	     OutOfBoundsPolicy.md
 
-mtestdocdir   = $(docdir)/mtest
+mtestdocdir   = $(datadir)/doc/mtest
 mtestdoc_DATA = $(MTEST_DOCS)
 
 EXTRA_DIST=CMakeLists.txt                         \

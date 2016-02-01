@@ -266,8 +266,8 @@ $ mfront --obuild --interface=castem UPuCThermalConductivity.mfront
 L'appel à des librairies dynamiques depuis l'opérateur `MATERIAU` nécessite
 l'application d'un patch~:
 
--|Cast3M 2014](downloads/patchs-Cast3M-2014.tar.bz2)
--|Cast3M 2015](downloads/patchs-Cast3M-2015.tar.bz2)
+- [Cast3M 2014](downloads/patchs-Cast3M-2014.tar.bz2)
+- [Cast3M 2015](downloads/patchs-Cast3M-2015.tar.bz2)
 
 La directive `MATERIAU` accepte alors une table comme paramètre:
 

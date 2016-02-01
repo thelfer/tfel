@@ -3,8 +3,8 @@ PTEST_DOCS = AxialForceEvolution.md  \
 	     AxialLoading.md         \
 	     RadialLoading.md
 
-mtestdocdir   = $(docdir)/mtest/ptest
-mtestdoc_DATA = $(PTEST_DOCS)
+ptestdocdir   = $(datadir)/doc/mtest/ptest
+ptestdoc_DATA = $(PTEST_DOCS)
 
 EXTRA_DIST=CMakeLists.txt \
 	   $(PTEST_DOCS)
