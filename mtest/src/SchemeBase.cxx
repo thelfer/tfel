@@ -176,38 +176,38 @@ namespace mtest{
   void
   SchemeBase::setMinimalTimeStepScalingFactor(const real v)
   {
-    if(this->options.minimal_time_step>0){
-      throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
-			       "the minimal time step scaling factor"
+    if(this->options.minimal_time_step_scaling_factor>0){
+      throw(std::runtime_error("SchemeBase::setMinimalTimeStepScalingFactor: "
+			       "the minimal time step scaling factor "
 			       "has already been declared"));
     }
     if(v>=1){
-      throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
+      throw(std::runtime_error("SchemeBase::setMinimalTimeStepScalingFactor: "
 			       "the minimal time step scaling factor "
 			       "is greater than one "));
     }
     if(v<=100*std::numeric_limits<real>::epsilon()){
-      throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
+      throw(std::runtime_error("SchemeBase::setMinimalTimeStepScalingFactor: "
 			       "the minimal time step scaling is either "
 			       "negative or too small"));
     }
-    this->options.minimal_time_step=v;
+    this->options.minimal_time_step_scaling_factor=v;
   }
 
   void
   SchemeBase::setMaximalTimeStepScalingFactor(const real v)
   {
-    if(this->options.maximal_time_step>0){
-      throw(std::runtime_error("SchemeBase::setMaximalTimeStep: "
-			       "the maximal time step scaling factor"
+    if(this->options.maximal_time_step_scaling_factor>0){
+      throw(std::runtime_error("SchemeBase::setMaximalTimeStepScalingFactor: "
+			       "the maximal time step scaling factor "
 			       "has already been declared"));
     }
     if(v<1){
-      throw(std::runtime_error("SchemeBase::setMaximalTimeStep: "
+      throw(std::runtime_error("SchemeBase::setMaximalTimeStepScalingFactor: "
 			       "the maximal time step scaling factor "
 			       "is lower than one "));
     }
-    this->options.maximal_time_step=v;
+    this->options.maximal_time_step_scaling_factor=v;
   }
   
   void

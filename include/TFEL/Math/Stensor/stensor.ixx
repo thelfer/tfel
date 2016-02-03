@@ -921,11 +921,11 @@ namespace tfel{
 					typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
       void>::type
     stensor<N,T>::computeEigenTensorsDerivatives(ST2toST2Type& dn0_ds,
-							 ST2toST2Type& dn1_ds,
-							 ST2toST2Type& dn2_ds,
-							 const tvector<3u,T>& vp,
-							 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m,
-							 const T eps)
+						 ST2toST2Type& dn1_ds,
+						 ST2toST2Type& dn2_ds,
+						 const tvector<3u,T>& vp,
+						 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m,
+						 const T eps)
     {
       return tfel::math::internals::StensorComputeEigenTensorsDerivatives<N>::exe(dn0_ds,dn1_ds,dn2_ds,
 										  vp,m,eps); 

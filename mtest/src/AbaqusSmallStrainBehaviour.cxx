@@ -233,7 +233,7 @@ namespace mtest
       us.changeBasis(rb);
       copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
     }
-    return {ndt,true};
+    return {true,ndt};
   }
 
   AbaqusSmallStrainBehaviour::~AbaqusSmallStrainBehaviour()

@@ -4282,7 +4282,7 @@ namespace mfront{
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << this->mb.getCode(h,BehaviourData::APrioriTimeStepScalingFactor) << '\n';
     }
-    this->behaviourFile << "return {true,real(1)};\n";
+    this->behaviourFile << "return {true,this->maximal_time_step_scaling_factor};\n";
     this->behaviourFile << "}\n\n";
   }
 

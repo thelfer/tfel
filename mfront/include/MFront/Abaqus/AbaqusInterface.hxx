@@ -148,11 +148,10 @@ namespace abaqus
 	  return -3;
 	}
 	catch(const tfel::material::DivergenceException& e){
-	  AbaqusInterfaceExceptions::treatTFELException(MTraits::getName(),e);
-	  return -4;
+	  AbaqusInterfaceExceptions::treatMaterialException(MTraits::getName(),e);	  return -4;
 	}
 	catch(const tfel::material::MaterialException& e){
-	  AbaqusInterfaceExceptions::treatStandardException(MTraits::getName(),e);
+	  AbaqusInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
 	  return -5;
 	}
 	catch(const tfel::exception::TFELException& e){

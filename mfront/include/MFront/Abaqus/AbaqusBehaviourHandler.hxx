@@ -240,7 +240,7 @@ namespace abaqus
 	  try{
 	    r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	  } catch(DivergenceException&){
-	    r==BV::FAILURE;
+	    r=BV::FAILURE;
 	  }
 	  if(r==BV::FAILURE){
 	    *PNEWDT = behaviour.getMinimalTimeStepScalingFactor();
@@ -252,6 +252,7 @@ namespace abaqus
 	    *PNEWDT = std::min(tsf.second,*PNEWDT);
 	  }
 	}
+	std::cout << "*PNEWDT: " << *PNEWDT << std::endl;
 	if(r==BV::FAILURE){
 	  return;
 	}

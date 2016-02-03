@@ -515,15 +515,16 @@ namespace castem
 	    if(r==BV::FAILURE){
 	      *pnewdt = behaviour.getMinimalTimeStepScalingFactor();
 	    } else {
+	      behaviour.checkBounds();
 	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor();
+	      *pnewdt = std::min(tsf.second,*pnewdt);
 	      if(!tsf.first){
 		r=BV::FAILURE;
+	      } else {
+		if((*pnewdt<1)&&(std::abs(*pnewdt-1)>10*std::numeric_limits<CastemReal>::min())){
+		  r = BV::UNRELIABLE_RESULTS;
+		}
 	      }
-	      *pnewdt = std::min(tsf.second,*pnewdt);
-	    }
-	    behaviour.checkBounds();
-	    if((*pnewdt<1)&&(std::abs(*pnewdt-1)>10*std::numeric_limits<CastemReal>::min())){
-	      r = BV::UNRELIABLE_RESULTS;
 	    }
 	  }
 	}
@@ -760,9 +761,10 @@ namespace castem
 	      *PNEWDT = std::min(*PNEWDT,tsf.second);
 	      if(!tsf.first){
 		r = BV::FAILURE;
-	      }
-	      if((*PNEWDT<1)&&(std::abs(*PNEWDT-1)>10*std::numeric_limits<CastemReal>::min())){
-		r = BV::UNRELIABLE_RESULTS;
+	      } else {
+		if((*PNEWDT<1)&&(std::abs(*PNEWDT-1)>10*std::numeric_limits<CastemReal>::min())){
+		  r = BV::UNRELIABLE_RESULTS;
+		}
 	      }
 	    } else {
 	      *PNEWDT = behaviour.getMinimalTimeStepScalingFactor();

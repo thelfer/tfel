@@ -259,6 +259,19 @@ namespace mtest{
     // almost bone
     constexpr real aone = 1-10*std::numeric_limits<real>::epsilon();
     bool end = false;
+    if(o.dynamic_time_step_scaling){
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	auto& log = mfront::getLogStream();
+	log << "Dynamic time step scaling: \n"
+	    << "- minimal time step: " << o.minimal_time_step << "\n"
+	    << "- maximal time step: " << o.maximal_time_step << "\n"
+	    << "- minimal time step scaling factor: " << o.minimal_time_step_scaling_factor << "\n";
+	if(o.maximal_time_step>0){
+	  log << "- maximal time step scaling factor: " << o.maximal_time_step_scaling_factor << "\n";
+	}
+      }
+    }
+
     while((!end)&&(subStep!=o.mSubSteps)){
       auto r = iterate(scs,wk,s,o,t,dt);
       auto converged = o.dynamic_time_step_scaling ?
@@ -268,7 +281,12 @@ namespace mtest{
 	t+=dt;
 	end=std::abs(te-t)<0.5*dt;
 	if(o.dynamic_time_step_scaling){
-	  dt *= std::max(std::min(o.maximal_time_step_scaling_factor,r.second),1.);
+	  const auto rdt = std::max(std::min(o.maximal_time_step_scaling_factor,r.second),1.);
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    auto& log = mfront::getLogStream();
+	    log << "Increasing time step by a factor: " << rdt << "\n\n";
+	  }
+	  dt *= rdt;
 	}
 	++scs.period;
 	if(end){
@@ -283,38 +301,52 @@ namespace mtest{
 	  throw(std::runtime_error("GenericSolver::execute: "
 				   "maximum number of sub stepping reached"));
 	}
-	if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-	  auto& log = mfront::getLogStream();
-	  log << "Dividing time step by two\n\n";
-	}
 	scs.revert();
 	if(o.dynamic_time_step_scaling){
+	  real rdt;
 	  if(r.first){
-	    dt *= std::max(r.second,o.minimal_time_step_scaling_factor);
+	    rdt = std::max(r.second,o.minimal_time_step_scaling_factor);
 	  } else {
-	    dt *= std::max(std::min(0.5,r.second),
+	    rdt = std::max(std::min(0.5,r.second),
 			   o.minimal_time_step_scaling_factor);
 	  }
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    auto& log = mfront::getLogStream();
+	    log << "Reducing time step by a factor: " << rdt << "\n\n";
+	  }
+	  dt *= rdt;
 	} else {
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    auto& log = mfront::getLogStream();
+	    log << "Dividing time step by two\n\n";
+	  }
 	  dt*=0.5;
 	}
       }
-      if(o.maximal_time_step>0){
-	dt = std::min(dt,o.maximal_time_step);
-      }
-      dt = std::min(dt,te-t);
-      if(dt>(te-t)*aone){
-	dt=te-t;
-      } else if(dt>0.95*(te-t)){
-	dt = (te-t)*0.5;
-      }
-      if(dt<0){
-	throw(std::runtime_error("GenericSolver::execute: "
-				 "negative time step"));
-      }
-      if(dt<o.minimal_time_step){
-	throw(std::runtime_error("GenericSolver::execute: "
-				 "time step is below its minimal value"));
+      if(!end){
+	if(o.maximal_time_step>0){
+	  dt = std::min(dt,o.maximal_time_step);
+	}
+	if(dt>te-t){
+	  dt = te-t;
+	} else {
+	  if(std::abs(te-t-dt)<=o.minimal_time_step){
+	    if(0.5*(te-t)<=o.minimal_time_step){
+	      dt=te-t;
+	    } else {
+	      dt = 0.5*(te-t);
+	    }
+	  }
+	}
+	if(dt<0){
+	  throw(std::runtime_error("GenericSolver::execute: "
+				   "negative time step"));
+	}
+	std::cout << "ndt: " << dt << std::endl;
+	if(dt<o.minimal_time_step){
+	  throw(std::runtime_error("GenericSolver::execute: "
+				   "time step is below its minimal value"));
+	}
       }
     }
   }
