@@ -252,7 +252,6 @@ namespace abaqus
 	    *PNEWDT = std::min(tsf.second,*PNEWDT);
 	  }
 	}
-	std::cout << "*PNEWDT: " << *PNEWDT << std::endl;
 	if(r==BV::FAILURE){
 	  return;
 	}
