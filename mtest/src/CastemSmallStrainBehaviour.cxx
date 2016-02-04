@@ -408,7 +408,6 @@ namespace mtest
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,&kinc,0);
-    std::cout << "ndt : " << ndt << std::endl;
     if(kinc!=1){
       return {false,ndt};
     }
