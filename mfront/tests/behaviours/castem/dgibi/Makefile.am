@@ -1,5 +1,6 @@
 EXTRA_DIST=CMakeLists.txt               			                 \
 	   exec_ktests_CAST3M_XML.sh.in 			                 \
+	   pipe3D.dgibi		                                                 \
 	   CompressibleNeoHookeanBehaviour.dgibi		                 \
 	   IncompressibleMooneyRivlinUniaxialTesting.dgibi	                 \
 	   IncompressiblePlaneStressMooneyRivlinBiaxialTesting.dgibi             \

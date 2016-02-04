@@ -1290,7 +1290,7 @@ namespace mfront{
   {
     using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      const set<Hypothesis> ah = this->getModellingHypothesesToBeTreated(mb);
+      const auto ah = this->getModellingHypothesesToBeTreated(mb);
       set<Hypothesis> uh;
       for(const auto & elem : ah){
 	if(!mb.hasSpecialisedMechanicalData(elem)){
@@ -1309,11 +1309,9 @@ namespace mfront{
       for(const auto & elem : uh){
 	mpositions.push_back(this->buildMaterialPropertiesList(mb,elem));
       }
-      set<Hypothesis>::const_iterator ph=uh.begin();
-      vector<pair<vector<UMATMaterialProperty>,
-		  SupportedTypes::TypeSize> >::const_iterator pum = mpositions.begin();
-      const pair<vector<UMATMaterialProperty>,
-		 SupportedTypes::TypeSize>& mfirst = *pum;
+      auto ph=uh.cbegin();
+      auto pum = mpositions.cbegin();
+      const auto& mfirst = *pum;
       ++ph;
       ++pum;
       for(;ph!=uh.end();++ph,++pum){
@@ -1484,31 +1482,25 @@ namespace mfront{
   CastemInterface::writeCastemFunctionDeclaration(std::ostream& out,
 					      const std::string& name) const
   {
-    using namespace std;
-    // out << "MFRONT_SHAREDOBJ void\n"
-    // 	<< name;
-    // writeUMATArguments(out);
-    //    out << ";" << endl << endl;
     out << "MFRONT_SHAREDOBJ void\numat"
     	<< makeLowerCase(name);
     writeUMATArguments(out);
-    out << ";" << endl << endl;
+    out << ";\n\n";
   } // end of CastemInterface::writeCastemFunctionDeclaration
 
   std::pair<bool,SupportedTypes::TypeSize>
   CastemInterface::checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription& mb) const
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(ModellingHypothesis::PLANESTRESS);
     const auto& sv = d.getPersistentVariables();
     SupportedTypes::TypeSize o;
     for(const auto & elem : sv){
       if(d.getExternalName(elem.name)=="AxialStrain"){
-	return make_pair(true,o);
+	return {true,o};
       }
       o += this->getTypeSize(elem.type,elem.arraySize);
     }
-    return make_pair(false,o);
+    return {false,o};
   }
 
   void
@@ -1569,9 +1561,8 @@ namespace mfront{
 							      const std::string&,
 							      const BehaviourDescription&) const) const
   {
-    using namespace std;
-    const string base  = suffix.empty() ? name : name+"_"+suffix;
-    const string fname2 = "umat"+makeLowerCase(base);
+    const auto base  = suffix.empty() ? name : name+"_"+suffix;
+    const auto fname2 = "umat"+makeLowerCase(base);
     //    (this->*m)(out,name,base,suffix,mb);
     (this->*m)(out,name,fname2,suffix,mb);
   }
@@ -1808,11 +1799,9 @@ namespace mfront{
 					   const std::string& suffix,
 					   const BehaviourDescription& mb) const
   {
-    using namespace std;
     out << "MFRONT_SHAREDOBJ void\n" << fname;
     writeUMATArguments(out,mb.getBehaviourType());
-    out << endl;
-    out << "{\n";
+    out << "\n{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
@@ -1844,13 +1833,12 @@ namespace mfront{
 
   void
   CastemInterface::writeVariableDescriptionContainerToGibiane(std::ostream& out,
-								  const Hypothesis h,
-								  const VariableDescriptionContainer& v) const
+							      const Hypothesis h,
+							      const VariableDescriptionContainer& v) const
   {
-    using namespace std;
     for(const auto & elem : v){
-      const SupportedTypes::TypeFlag flag = this->getTypeFlag(elem.type);
-      string tmp;
+      const auto flag = this->getTypeFlag(elem.type);
+      std::string tmp;
       tmp += ' ';
       if(flag==SupportedTypes::Scalar){
 	if(elem.arraySize==1){
@@ -1886,9 +1874,8 @@ namespace mfront{
 	  }
 	}
       } else {
-	string msg(" CastemInterface::writeVariableDescriptionContainerToGibiane : ");
-	msg += "internal error, tag unsupported";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("CastemInterface::writeVariableDescriptionContainerToGibiane: "
+				 "internal error, tag unsupported"));
       }
       out << tmp;
     }
@@ -1921,12 +1908,19 @@ namespace mfront{
 
   void
   CastemInterface::generateGibianeDeclaration(const BehaviourDescription& mb,
-						  const FileDescription& fd) const
+					      const FileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
-    const string name((!mb.getLibrary().empty())?mb.getLibrary()+mb.getClassName():mb.getClassName());
-    const string fileName("castem/"+name+".dgibi");
+    std::map<ModellingHypothesis::Hypothesis,std::string> mo = {
+      {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,"'UNID' 'AXIS' 'AXGZ'"},
+      {ModellingHypothesis::AXISYMMETRICAL,"'AXIS'"},
+      {ModellingHypothesis::PLANESTRESS,"'PLAN' 'CONT'"},
+      {ModellingHypothesis::PLANESTRAIN,"'PLAN' 'DEFO'"},
+      {ModellingHypothesis::GENERALISEDPLANESTRAIN,"'PLAN' 'GENE'"},
+      {ModellingHypothesis::TRIDIMENSIONAL,"'TRID'"}};
+    const auto name((!mb.getLibrary().empty())?mb.getLibrary()+mb.getClassName():mb.getClassName());
+    const auto fileName("castem/"+name+".dgibi");
     // opening output file
     systemCall::mkdir("castem");
     ofstream out;
@@ -1950,28 +1944,28 @@ namespace mfront{
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       nonlin = "'NON_LINEAIRE' 'UTILISATEUR' 'EPSILON' 'UTILISATEUR'";
     } else {
-      string msg("CastemInterface::generateGibianeDeclaration : ");
-      msg += "internal error, unsupported behaviour type";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemInterface::generateGibianeDeclaration: "
+			  "internal error, unsupported behaviour type"));
     }
     // loop over hypothesis
-    const set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
+    const auto h = this->getModellingHypothesesToBeTreated(mb);
     for(const auto & elem : h){
       const auto& d = mb.getBehaviourData(elem);
       const auto& persistentVarsHolder = d.getPersistentVariables();
       const auto& externalStateVarsHolder = d.getExternalStateVariables();
       const auto mprops = this->buildMaterialPropertiesList(mb,elem);
       string tmp;
-      out << "** " << ModellingHypothesis::toString(elem) << " example\n\n";
+      out << "** " << ModellingHypothesis::toString(elem) << " example\n";
+      if(mo.find(elem)!=mo.end()){
+	out << "** 'OPTION' 'MODELISER' " << mo[elem] << "\n\n";
+      }
       ostringstream mcoel;
       mcoel << "coel = 'MOTS' ";
-      for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
-	  pm!=mprops.first.end();){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);
+      for(auto pm=mprops.first.cbegin();pm!=mprops.first.cend();){
+	auto flag = this->getTypeFlag(pm->type);
 	if(flag!=SupportedTypes::Scalar){
-	  string msg("CastemInterface::generateGibianeDeclaration : ");
-	  msg += "material properties shall be scalars";
-	  throw(runtime_error(msg));
+	  throw(runtime_error("CastemInterface::generateGibianeDeclaration: "
+			      "material properties shall be scalars"));
 	}
 	if(pm->arraySize==1){
 	  mcoel << treatScalar(pm->var_name);
@@ -2021,13 +2015,11 @@ namespace mfront{
       out << endl;
       ostringstream mi;
       mi << "MA = 'MATERIAU' MO ";
-      for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
-	  pm!=mprops.first.end();){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);
+      for(auto pm=mprops.first.cbegin();pm!=mprops.first.cend();){
+	auto flag = this->getTypeFlag(pm->type);
 	if(flag!=SupportedTypes::Scalar){
-	  string msg("CastemInterface::generateGibianeDeclaration : ");
-	  msg += "material properties shall be scalars";
-	  throw(runtime_error(msg));
+	  throw(runtime_error("CastemInterface::generateGibianeDeclaration: "
+			      "material properties shall be scalars"));
 	}
 	if(pm->arraySize==1){
 	  tmp = treatScalar(pm->var_name);
@@ -2068,10 +2060,8 @@ namespace mfront{
 						const Hypothesis h) const
   {
     using namespace std;
-    pair<SupportedTypes::TypeSize,
-	 SupportedTypes::TypeSize> mvs = mb.getMainVariablesSize();
-    pair<vector<UMATMaterialProperty>,
-	 SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,h);
+    const auto mvs = mb.getMainVariablesSize();
+    const auto mprops = this->buildMaterialPropertiesList(mb,h);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(mb.useQt()){
 	out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type,bool use_qt>\n";
@@ -2115,9 +2105,8 @@ namespace mfront{
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       out << "static " << constexpr_c << " CastemBehaviourType btype  = COHESIVEZONEMODEL;\n";
     } else {
-      string msg("CastemInterface::writeUMATBehaviourTraits : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemInterface::writeUMATBehaviourTraits: "
+			  "unsupported behaviour type"));
     }
     out << "// space dimension\n";
     out << "static " << constexpr_c << " unsigned short N           = ModellingHypothesisToSpaceDimension::value;\n";
@@ -2181,15 +2170,14 @@ namespace mfront{
 	// something needs to be done here
 	out << "static " << constexpr_c << " unsigned short propertiesOffset = CastemOrthotropicOffset<castem::SMALLSTRAINSTANDARDBEHAVIOUR,N>::value;\n";
       } else {
-	string msg("CastemInterface::writeUMATBehaviourTraits : "
-		   "unsupported behaviour type");
-	throw(runtime_error(msg));
+	throw(runtime_error("CastemInterface::writeUMATBehaviourTraits: "
+			    "unsupported behaviour type"));
       }
     } else {
-      string msg("CastemInterface::writeUMATBehaviourTraits : ");
-      msg += "unsupported behaviour symmetry type.\n";
-      msg += "The umat interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemInterface::writeUMATBehaviourTraits:"
+			  "unsupported behaviour symmetry type.\n"
+			  "The umat interface only support isotropic or "
+			  "orthotropic behaviour at this time."));
     }
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
       out << "static " << constexpr_c << " CastemSymmetryType stype = castem::ISOTROPIC;\n";
