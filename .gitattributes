@@ -3791,10 +3791,12 @@ mtest/tests/ptest/Makefile.am -text
 mtest/tests/ptest/castem/CMakeLists.txt -text
 mtest/tests/ptest/castem/Makefile.am -text
 mtest/tests/ptest/castem/castemelasticity-linear.ptest.in -text
+mtest/tests/ptest/castem/castemisotropic-elastic.ptest.in -text
 mtest/tests/ptest/castem2/CMakeLists.txt -text
 mtest/tests/ptest/castem2/Makefile.am -text
 mtest/tests/ptest/cyrano/CMakeLists.txt -text
 mtest/tests/ptest/cyrano/Makefile.am -text
+mtest/tests/ptest/references/isotropic-elastic.ref -text
 mtest/tests/unit-tests/CMakeLists.txt -text
 mtest/tests/unit-tests/MTestParserTest.cxx.in -text
 mtest/tests/unit-tests/Makefile.am -text

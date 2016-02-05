@@ -68,3 +68,4 @@ macro(castemptest test_arg)
 endmacro(castemptest)
 
 castemptest(elasticity-linear)
+castemptest(isotropic-elastic)
