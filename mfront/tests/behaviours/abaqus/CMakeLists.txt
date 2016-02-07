@@ -29,7 +29,8 @@ set(mfront_tests_SOURCES
   DruckerPrager
   DruckerPragerEcroLin
   DruckerPragerEcroLinDefault
-  Norton NortonRK DDIF2
+  Norton Norton2
+  NortonRK DDIF2
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42
   Norton_rkCastem
@@ -280,6 +281,7 @@ test_abaqus(monocrystal_dd_cc)
 test_abaqus(monocrystal_dd_cc_numericaljacobian)
 test_abaqus(monocrystal_dd_cc_irradiation)
 test_abaqus(monocrystal_dd_cc_irradiation_numericaljacobian)
+test_abaqus(tssf)
 # test_abaqus(implicithayhurst)
 # test_abaqus(burger)
 # test_abaqus(ageingburger)

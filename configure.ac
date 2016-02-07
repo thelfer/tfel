@@ -850,7 +850,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
            mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/abaqus/abaqusdruckerprager.mtest
-           mfront/tests/behaviours/abaqus/abaqusdruckerprager2.mtest	  
+           mfront/tests/behaviours/abaqus/abaqusdruckerprager2.mtest
+           mfront/tests/behaviours/abaqus/abaqustssf.mtest	  
 	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck.mtest
@@ -1109,6 +1110,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
            mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/castem/castemanistropiclemaitreviscoplasticbehaviour.mtest
+	   mfront/tests/behaviours/castem/castemtssf.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   
            mfront/tests/behaviours/castem2/castem2burger.mtest
@@ -1152,7 +1154,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem2/castem2plasticity.mtest
            mfront/tests/behaviours/castem2/castem2strainhardeningcreep.mtest
            mfront/tests/behaviours/castem2/castem2stressrelaxation.mtest
-           mfront/tests/behaviours/castem2/castem2viscoplasisocin.mtest   
+           mfront/tests/behaviours/castem2/castem2viscoplasisocin.mtest
+   	   mfront/tests/behaviours/castem2/castem2tssf.mtest
 	   mfront/tests/behaviours/secant/Makefile
            mfront/tests/behaviours/secant/secantchaboche2.mtest
            mfront/tests/behaviours/secant/secantchaboche.mtest
@@ -1981,6 +1984,7 @@ AC_OUTPUT([debug.sh
 	   mtest/tests/ptest/Makefile
 	   mtest/tests/ptest/castem/Makefile
    	   mtest/tests/ptest/castem/castemelasticity-linear.ptest
+      	   mtest/tests/ptest/castem/castemisotropic-elastic.ptest
 	   mtest/tests/ptest/castem2/Makefile
   	   mtest/tests/ptest/cyrano/Makefile
 	   tfel-doc/Makefile

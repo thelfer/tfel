@@ -250,6 +250,7 @@ namespace mtest{
 			 const real te)
   {
     unsigned short subStep = 0;
+    auto t_eps = (te-ti)*100*std::numeric_limits<real>::epsilon();
     auto t  = ti;
     auto dt = te-ti;
     if(dt<0){
@@ -279,7 +280,7 @@ namespace mtest{
       if(converged){
 	scs.update(dt);
 	t+=dt;
-	end=std::abs(te-t)<0.5*dt;
+	end=std::abs(te-t)<t_eps;
 	if(o.dynamic_time_step_scaling){
 	  const auto rdt = std::max(std::min(o.maximal_time_step_scaling_factor,r.second),1.);
 	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
@@ -324,25 +325,18 @@ namespace mtest{
 	}
       }
       if(!end){
-	if(o.maximal_time_step>0){
-	  dt = std::min(dt,o.maximal_time_step);
-	}
-	if(dt>te-t){
-	  dt = te-t;
-	} else {
-	  if(std::abs(te-t-dt)<=o.minimal_time_step){
-	    if(0.5*(te-t)<=o.minimal_time_step){
-	      dt=te-t;
-	    } else {
-	      dt = 0.5*(te-t);
-	    }
+	if(o.dynamic_time_step_scaling){
+	  if(o.maximal_time_step>0){
+	    dt = std::min(dt,o.maximal_time_step);
+	  }
+	  if(dt>te-t-o.minimal_time_step){
+	    dt = te-t;
 	  }
 	}
 	if(dt<0){
 	  throw(std::runtime_error("GenericSolver::execute: "
 				   "negative time step"));
 	}
-	std::cout << "ndt: " << dt << std::endl;
 	if(dt<o.minimal_time_step){
 	  throw(std::runtime_error("GenericSolver::execute: "
 				   "time step is below its minimal value"));

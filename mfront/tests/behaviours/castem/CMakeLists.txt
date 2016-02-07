@@ -42,7 +42,9 @@ set(mfront_tests_SOURCES
   DruckerPrager
   DruckerPragerEcroLin
   DruckerPragerEcroLinDefault
-  Norton DDIF2
+  Norton
+  Norton2
+  DDIF2
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42
   Norton_rkCastem
@@ -517,6 +519,7 @@ test_castem(finitestrainsinglecrystal_numericaljacobian-012-2)
 test_castem(finitestrainsinglecrystal_numericaljacobian-159)
 test_castem(finitestrainsinglecrystal2-001)
 test_castem(anistropiclemaitreviscoplasticbehaviour)
+test_castem(tssf)
 
 if(CMAKE_CONFIGURATION_TYPES)
   foreach(conf ${CMAKE_CONFIGURATION_TYPES})

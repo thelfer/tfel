@@ -18,6 +18,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 Plasticity.mfront                                                 \
 	 DruckerPrager.mfront                                              \
          Norton.mfront                                                     \
+         Norton2.mfront                                                    \
          ImplicitNorton.mfront                                             \
          ImplicitNorton2.mfront                                            \
          ImplicitNorton3.mfront                                            \
@@ -135,4 +136,7 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/finitestrainsinglecrystal-012.ref			  \
 	   references/finitestrainsinglecrystal-159.ref                   \
 	   references/AnistropicLemaitreViscoplasticBehaviour.ref         \
-	   references/ViscoChaboche.ref
+	   references/ViscoChaboche.ref                                   \
+	   references/tssf.ref                                            \
+	   references/tssf2.ref                                           \
+	   references/tssf3.ref

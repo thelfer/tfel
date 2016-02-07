@@ -2064,6 +2064,7 @@ mfront/tests/behaviours/MonoCrystal_DD_CFC_InteractionMatrix.mfront -text
 mfront/tests/behaviours/MonoCrystal_DD_CFC_Irradiation.mfront -text
 mfront/tests/behaviours/MonoCrystal_DD_CFC_NumericalJacobian.mfront -text
 mfront/tests/behaviours/Norton.mfront -text
+mfront/tests/behaviours/Norton2.mfront -text
 mfront/tests/behaviours/NortonRK.mfront -text
 mfront/tests/behaviours/NortonRK2.mfront -text
 mfront/tests/behaviours/NortonRK3.mfront -text
@@ -2227,6 +2228,7 @@ mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-uniaxialloa
 mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-uniaxialloading-3-3D.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusstressrelaxation.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqustssf.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusviscochaboche-memo-nrad.py.in -text
 mfront/tests/behaviours/abaqus/abaqusviscochaboche.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusviscoplasisocin.mtest.in -text
@@ -2926,6 +2928,7 @@ mfront/tests/behaviours/castem/castemstatevariablesboundscheck.mtest.in -text
 mfront/tests/behaviours/castem/castemstatevariablesboundscheck2.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
+mfront/tests/behaviours/castem/castemtssf.mtest.in -text
 mfront/tests/behaviours/castem/castemtvergaard.mtest.in -text
 mfront/tests/behaviours/castem/castemviscochaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemviscoplasisocin.mtest.in -text
@@ -2988,6 +2991,7 @@ mfront/tests/behaviours/castem2/castem2plasisocin.mtest.in -text
 mfront/tests/behaviours/castem2/castem2plasticity.mtest.in -text
 mfront/tests/behaviours/castem2/castem2strainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem2/castem2stressrelaxation.mtest.in -text
+mfront/tests/behaviours/castem2/castem2tssf.mtest.in -text
 mfront/tests/behaviours/castem2/castem2viscoplasisocin.mtest.in -text
 mfront/tests/behaviours/crossed2delta/CMakeLists.txt -text
 mfront/tests/behaviours/crossed2delta/Makefile.am -text
@@ -3398,6 +3402,9 @@ mfront/tests/behaviours/references/plasticity.ref -text
 mfront/tests/behaviours/references/polycrystals.ref -text
 mfront/tests/behaviours/references/polycrystals_dd_cc.ref -text
 mfront/tests/behaviours/references/polycrystals_dd_cfc.ref -text
+mfront/tests/behaviours/references/tssf.ref -text
+mfront/tests/behaviours/references/tssf2.ref -text
+mfront/tests/behaviours/references/tssf3.ref -text
 mfront/tests/behaviours/references/tvergaard.ref -text
 mfront/tests/behaviours/references/viscoplasisocin.ref -text
 mfront/tests/behaviours/secant/CMakeLists.txt -text
