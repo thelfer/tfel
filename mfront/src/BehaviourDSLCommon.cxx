@@ -3399,7 +3399,7 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     this->behaviourFile << "//! policy for treating out of bounds conditions\n";
-    this->behaviourFile << "OutOfBoundsPolicy policy;\n";  
+    this->behaviourFile << "OutOfBoundsPolicy policy = None;\n";
   } // end of BehaviourDSLCommon::writeBehaviourPolicyVariable
 
   void BehaviourDSLCommon::writeBehaviourStaticVariables(const Hypothesis h)
@@ -4312,7 +4312,7 @@ namespace mfront{
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << this->mb.getCode(h,BehaviourData::APosterioriTimeStepScalingFactor) << '\n';
     }
-    this->behaviourFile << "return {true,real(1)};\n";
+    this->behaviourFile << "return {true,this->maximal_time_step_scaling_factor};\n";
     this->behaviourFile << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(void)
   

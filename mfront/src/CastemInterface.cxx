@@ -1957,7 +1957,7 @@ namespace mfront{
       string tmp;
       out << "** " << ModellingHypothesis::toString(elem) << " example\n";
       if(mo.find(elem)!=mo.end()){
-	out << "** 'OPTION' 'MODELISER' " << mo[elem] << "\n\n";
+	out << "** 'OPTION' 'DIMENSION' " << getSpaceDimension(elem) << " 'MODELISER' " << mo[elem] << " ;\n\n";
       }
       ostringstream mcoel;
       mcoel << "coel = 'MOTS' ";

@@ -27,7 +27,7 @@
 
 @Times {0.,0.4 in 1,1.435 in 12};
 
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-abaqus.ref'
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-aster.ref'
             {'EXX':2,'EYY':3} 4.e-5 ; 
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-abaqus.ref'
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-aster.ref'
             {'SXX':8} 1.e0 ; 
