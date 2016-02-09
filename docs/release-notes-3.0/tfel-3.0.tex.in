@@ -92,6 +92,8 @@
 
 \subsection{L'interface {\tt Europlexus}}
 
+\subsection{L'interface {\tt Abaqus}}
+
 \subsection{Support des déformations logarithmiques pour les codes
   combustibles $1D$ écrits en petites déformations}
 
@@ -118,9 +120,9 @@ informations sur un fichier \mfront{}.
 Les fonctionnalités de \mtest{} sont désormais accessibles en
 \python{} depuis le module éponyme.
 
-Dans les versions précédentes, un modèle {\tt mfront.mtest} avait ce
+Dans les versions précédentes, un module {\tt mfront.mtest} avait ce
 rôle. Celui existe toujours pour assurer la compatibilité avec les
-versions précédentes. Son utilisation conduit cependant à une message
+versions précédentes. Son utilisation conduit cependant à un message
 d'avertissement conseillant d'utiliser le nouveau module.
 
 \subsection{Nouvelles méthodes d'accélération de convergence}
@@ -128,5 +130,51 @@ d'avertissement conseillant d'utiliser le nouveau module.
 \section{Nouveautés \tfel{}}
 
 \subsection{Passage au standard C++-11}
+
+\subsection{Nouveautés de la librairie mathématique}
+
+\subsubsection{Fonctions isotropes de tenseurs et dérivées}
+
+Un tenseur symétrique \(\tenseur{s}\) peut toujours être
+diagonalisé. Soit \(\lambda_{1},\lambda_{2},\lambda_{3}\) ses trois
+valeurs propres.
+
+Le tenseur \(\tenseur{s}\) se décompose ainsi~:
+\begin{equation}
+  \label{eq:tfel-3.0:s}
+  \tenseur{s} = \sum_{i=1}^{3}\lambda_{i}\,\tenseur{n}_{i}
+\end{equation}
+où les tenseurs \(\tenseur{n}_{i}\) sont appelés tenseurs propres de
+\(\tenseur{s}\).
+
+Une fonction \(\tenseur{f}\) de tenseur d'ordre \(2\) symétrique est dite {\em
+  isotrope} si elle vérifie~:
+\[
+\tenseur{f}\paren{\tilde{\tenseur{s}}}=\widetilde{\tenseur{f}\paren{\tenseur{s}}}
+\]
+pour changement de base représenté par \(\tilde{\mbox{}}\).
+
+Toute fonction définie par une série entière est isotrope. Ainsi les
+fonctions logarithme \(\log\) et exponentielle \(\exp\) sont des
+fonctions isotropes. Dans ce cas, \(f\) désigne à la fois une fonction
+réelle et une fonction de tenseur d'ordre \(2\) symétrique.
+
+Une telle fonction peut être évaluée à l'aide des vecteurs propres et
+des tenseurs propres~:
+\begin{equation}
+  \label{eq:tfel-3.0:fs}
+  f\paren{\tenseur{s}}=\sum_{i=1}^{3}f\paren{\lambda_{i}}\tenseur{n}_{i}
+\end{equation}
+
+L'équation~\eqref{eq:tfel-3.0:fs} peut être dérivée si \(f\) est
+dérivable.
+
+La classe {\tt stensor} comporte désormais les méthodes {\tt
+  computeIsotropicFunction}, {\tt computeIsotropicFunctionDerivative}
+et {\tt computeIsotropicFunctionAndDerivative} qui permettent
+respectivement de calculer la valeur d'une fonction isotrope, la
+valeur de sa dérivée ou les deux en même temps.
+
+Trois fonctions du même nom sont également disponibles.
 
 \end{document}

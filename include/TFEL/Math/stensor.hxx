@@ -35,6 +35,7 @@
 #include"TFEL/Math/Forward/tvector.hxx"
 #include"TFEL/Math/Forward/tmatrix.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
+#include"TFEL/Math/Forward/st2tost2.hxx"
 #include"TFEL/Math/fsarray.hxx"
 
 namespace tfel{
@@ -502,7 +503,66 @@ namespace tfel{
 				     const tvector<3u,T>&,
 				     const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&,
 				     const T);
-
+      /*!
+       * compute the derivative of an isotropic function
+       * \param[out] d:   result
+       * \param[in]  f:   function
+       * \param[in]  df:  derivative of the function
+       * \param[in]  vp:  eigen values
+       * \param[in]  m:   eigenvectors
+       * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
+       */
+      template<typename ST2toST2Type,
+	       typename Function,
+	       typename FunctionDerivative>
+      static typename std::enable_if<
+	(tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
+	(ST2toST2Traits<ST2toST2Type>::dime==N)&&
+	(tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename tfel::typetraits::BaseType<T>::type,
+								       T,OpDiv>::Result,
+					  typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+	void>::type
+      computeIsotropicFunctionDerivative(ST2toST2Type&,
+					 const Function&,
+					 const FunctionDerivative&,
+					 const tvector<3u,T>&,
+					 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&,
+					 const T);
+      /*!
+       * \return the value of an isotropic function
+       * \param[in] f: function
+       * \param[in] b:   if true, refinement of eigen values is performed
+       */
+      template<typename Function>
+      stensor<N,T>
+      computeIsotropicFunction(const Function&,const bool=false) const;
+      /*!
+       * \return the derivative of an isotropic function
+       * \param[in] f:   function
+       * \param[in] df:  derivative of the function
+       * \param[in] eps: criterion value used to judge if two eigenvalues are equals
+       * \param[in] b:   if true, refinement of eigen values is performed
+       */
+      template<typename Function,
+	       typename FunctionDerivative>
+      st2tost2<N,T>
+      computeIsotropicFunctionDerivative(const Function&,
+					 const FunctionDerivative&,
+					 const T,const bool=false) const;
+      /*!
+       * \return the derivative of an isotropic function
+       * \param[in] f:   function
+       * \param[in] df:  derivative of the function
+       * \param[in] eps: criterion value used to judge if two eigenvalues are equals
+       * \param[in] b:   if true, refinement of eigen values is performed
+       */
+      template<typename Function,
+	       typename FunctionDerivative>
+      std::pair<stensor<N,T>,st2tost2<N,T>>
+      computeIsotropicFunctionAndDerivative(const Function&,
+					    const FunctionDerivative&,
+					    const T,const bool=false) const;
+      
     private:      
       //! a simple check
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
@@ -573,21 +633,20 @@ namespace tfel{
 		 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type>&);
     
     template<typename StensorType>
-    typename std::enable_if<
+    TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       stensor<StensorTraits<StensorType>::dime,
 	      typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
 					   typename StensorTraits<StensorType>::NumType,OpDiv>::Result>
       >::type
     invert(const StensorType&);
-
     /*!
      * \brief compute the logarithm of a symmetric tensor
      * \param s : tensor
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    typename std::enable_if<
+    TFEL_MATH_INLINE2 typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        (StensorTraits<StensorType>::dime==1u) &&
        (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<StensorType>::NumType>::cond)),
@@ -595,14 +654,13 @@ namespace tfel{
     >::type
     logarithm(const StensorType&,
 	      const bool = false);
-
     /*!
      * \brief compute the logarithm of a symmetric tensor
      * \param s : tensor
      * \param b : if true, refinement of eigen values is performed
      */
     template<typename StensorType>
-    typename std::enable_if<
+    TFEL_MATH_INLINE2 typename std::enable_if<
       ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
        ((StensorTraits<StensorType>::dime==2u)||
 	(StensorTraits<StensorType>::dime==3u))&&
@@ -611,7 +669,6 @@ namespace tfel{
     >::type
     logarithm(const StensorType&,
 	      const bool = false);
-
     /*!
      * \brief compute the absolute value of a symmetric tensor
      * \param s : tensor
@@ -626,7 +683,6 @@ namespace tfel{
     >::type
     absolute_value(const StensorType&,
 		   const bool = false);
-
     /*!
      * \brief compute the absolute value of a symmetric tensor
      * \param s : tensor
@@ -642,7 +698,6 @@ namespace tfel{
     >::type
     absolute_value(const StensorType&,
 		   const bool = false);
-
     /*!
      * \brief compute the positive part of a symmetric tensor
      * \param s : tensor
@@ -657,7 +712,6 @@ namespace tfel{
     >::type
     positive_part(const StensorType&,
 		  const bool = false);
-
     /*!
      * \brief compute the positive part of a symmetric tensor
      * \param s : tensor
@@ -673,7 +727,6 @@ namespace tfel{
     >::type
     positive_part(const StensorType&,
 		  const bool = false);
-    
     /*!
      * \brief compute the negative part of a symmetric tensor
      * \param s : tensor
@@ -688,7 +741,6 @@ namespace tfel{
     >::type
     negative_part(const StensorType&,
 		  const bool = false);
-    
     /*!
      * \brief compute the negative part of a symmetric tensor
      * \param s : tensor
@@ -740,6 +792,60 @@ namespace tfel{
 					      typename StensorTraits<StensorType>::NumType,OpMult>::Result>
       >::type
     square(const StensorType&);
+    /*!
+     * \return the value of an isotropic function
+     * \param[in] f: function
+     * \param[in] s: symmetric tensor
+     * \param[in] b: if true, refinement of eigen values is performed
+     */
+    template<typename Function,typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename StensorTraits<StensorType>::NumType>>::type
+    computeIsotropicFunction(const Function&,
+			     const StensorType&,
+			     const bool = false);
+    /*!
+     * \return the derivative of an isotropic function
+     * \param[in] f:   function
+     * \param[in] df:  derivative of the function
+     * \param[in] s:   symmetric tensor
+     * \param[in] eps: criterion value used to judge if two eigenvalues are equals
+     * \param[in] b:   if true, refinement of eigen values is performed
+     */
+    template<typename Function,typename FunctionDerivative,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      st2tost2<StensorTraits<StensorType>::dime,
+	       typename StensorTraits<StensorType>::NumType>>::type
+    computeIsotropicFunctionDerivative(const Function&,
+				       const FunctionDerivative&,
+				       const StensorType&,
+				       const typename StensorTraits<StensorType>::NumType,
+				       const bool = false);
+    /*!
+     * \return the derivative of an isotropic function
+     * \param[in] f:   function
+     * \param[in] df:  derivative of the function
+     * \param[in] s:   symmetric tensor
+     * \param[in] eps: criterion value used to judge if two eigenvalues are equals
+     * \param[in] b:   if true, refinement of eigen values is performed
+     */
+    template<typename Function,typename FunctionDerivative,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      std::pair<stensor<StensorTraits<StensorType>::dime,
+			typename StensorTraits<StensorType>::NumType>,
+		st2tost2<StensorTraits<StensorType>::dime,
+			 typename StensorTraits<StensorType>::NumType>>>::type
+    computeIsotropicFunctionDerivative(const Function&,
+				       const FunctionDerivative&,
+				       const StensorType&,
+				       const typename StensorTraits<StensorType>::NumType,
+				       const bool = false);
     
   } // end of namespace math
 

@@ -50,6 +50,7 @@ test_PROGRAMS = hill                                     \
 		stensor_eigenvalues                      \
 		stensor_eigenvectors                     \
 		stensor_eigenvectors2                    \
+		stensor_isotropic_function               \
 		tmatrix                                  \
 		tmatrix1                                 \
 		tmatrix2                                 \
@@ -128,6 +129,7 @@ stensor_changeBasis4_SOURCES  = stensor_changeBasis4.cxx
 stensor_eigenvalues_SOURCES   = stensor_eigenvalues.cxx  
 stensor_eigenvectors_SOURCES  = stensor_eigenvectors.cxx 
 stensor_eigenvectors2_SOURCES = stensor_eigenvectors2.cxx
+stensor_isotropic_function_SOURCES = stensor_isotropic_function.cxx
 tmatrix_SOURCES               = tmatrix.cxx
 tmatrix1_SOURCES              = tmatrix1.cxx
 tmatrix2_SOURCES              = tmatrix2.cxx

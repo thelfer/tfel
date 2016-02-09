@@ -4099,6 +4099,7 @@ tests/Math/stensor_changeBasis4.cxx -text
 tests/Math/stensor_eigenvalues.cxx -text
 tests/Math/stensor_eigenvectors.cxx -text
 tests/Math/stensor_eigenvectors2.cxx -text
+tests/Math/stensor_isotropic_function.cxx -text
 tests/Math/t2tost2/CMakeLists.txt -text
 tests/Math/t2tost2/Makefile.am -text
 tests/Math/t2tost2/SaintVenantKirchhoffTangentOperator.cxx -text
