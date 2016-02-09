@@ -14,4 +14,4 @@
 @OuterPressureEvolution {0:1.5e6,1:10e6};
 @ExternalStateVariable 'Temperature' 293.15;
 
-@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/isotropic-elastic.ref' {'SRR':2,'SZZ':3,'STT':4} 1e-4;
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/isotropic-elastic-quadratic.ref' {'SRR':2,'SZZ':3,'STT':4} 1e-4;

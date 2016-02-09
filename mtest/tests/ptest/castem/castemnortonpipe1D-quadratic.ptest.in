@@ -1,0 +1,50 @@
+@Author Thomas Helfer;
+@Date   01-2016;
+@Description{
+  On modélise un tube ouvert décrit par une loi de Norton en déformations
+  logarithmiques sans actualisation des forces de pression et soumis à
+  une pression interne constante.
+}
+
+// mesh
+@InnerRadius 4.18e-3;
+@OuterRadius '4.18e-3+0.57e-3';
+@NumberOfElements 20;
+@ElementType 'Quadratic';
+
+// modelling hypotheses
+@AxialLoading 'None';
+@HandleThermalExpansion false;
+@PerformSmallStrainAnalysis true;
+
+// numerical parameters
+@PredictionPolicy 'LinearPrediction';
+@MaximumNumberOfSubSteps 1;
+@ResidualEpsilon 1.;
+@StiffnessMatrixType 'ConsistentTangentOperator';
+
+// mechanical behaviours
+@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatnorton_log1d';
+@MaterialProperty<constant> 'YoungModulus' 70e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+@MaterialProperty<constant> 'A' 5.e-10;
+@MaterialProperty<constant> 'E' 1;
+
+// loadings
+@ExternalStateVariable 'Temperature' 293.15;
+@InnerPressureEvolution 3.e7;
+
+// time discretization
+@Times {0,7.5 in 50};
+
+// post-processing
+@OutputFilePrecision 14;
+@Profile 'pipe1D-strains.txt'   {'ERR','EZZ','ETT'};
+@Profile 'pipe1D-stresses.txt' {'SRR','SZZ','STT'};
+
+// unit-tests
+@Test<file> '@top_srcdir@/mtest/tests/ptest/references/nortonpipe1D-quadratic.ref' {'InnerDisplacement':4,'OuterDisplacement':5} 1.e-7;
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/nortonpipe1D-stresses-quadratic.ref' {'SRR':2,'STT':4,'SZZ':3} 1e-4;
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/nortonpipe1D-strains-quadratic.ref'  {'ERR':2,'ETT':4,'EZZ':3} 1e-10;
+
+

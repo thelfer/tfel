@@ -1984,9 +1984,55 @@ AC_OUTPUT([debug.sh
 	   mtest/tests/ptest/Makefile
 	   mtest/tests/ptest/castem/Makefile
    	   mtest/tests/ptest/castem/castemelasticity-linear.ptest
-      	   mtest/tests/ptest/castem/castemisotropic-elastic.ptest
+   	   mtest/tests/ptest/castem/castemelasticity-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemisotropic-elastic2-linear.ptest
+   	   mtest/tests/ptest/castem/castemisotropic-elastic2-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemisotropic-elastic-linear.ptest
+   	   mtest/tests/ptest/castem/castemisotropic-elastic-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemisotropic-thermoelastic-linear.ptest
+   	   mtest/tests/ptest/castem/castemisotropic-thermoelastic-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemnorton2pipe1D-linear.ptest
+   	   mtest/tests/ptest/castem/castemnorton2pipe1D-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemnortonpipe1D-linear.ptest
+   	   mtest/tests/ptest/castem/castemnortonpipe1D-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemorthotropic-elastic2-linear.ptest
+   	   mtest/tests/ptest/castem/castemorthotropic-elastic2-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemorthotropic-elastic-linear.ptest
+   	   mtest/tests/ptest/castem/castemorthotropic-elastic-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemorthotropic-thermoelastic2-linear.ptest
+   	   mtest/tests/ptest/castem/castemorthotropic-thermoelastic2-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemorthotropic-thermoelastic-linear.ptest
+   	   mtest/tests/ptest/castem/castemorthotropic-thermoelastic-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemtightpipe-gd-linear.ptest
+   	   mtest/tests/ptest/castem/castemtightpipe-gd-quadratic.ptest
+   	   mtest/tests/ptest/castem/castemtightpipe-linear.ptest
+   	   mtest/tests/ptest/castem/castemtightpipe-quadratic.ptest
 	   mtest/tests/ptest/castem2/Makefile
   	   mtest/tests/ptest/cyrano/Makefile
+   	   mtest/tests/ptest/cyrano/cyranoelasticity-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranoelasticity-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranoisotropic-elastic2-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranoisotropic-elastic2-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranoisotropic-elastic-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranoisotropic-elastic-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranoisotropic-thermoelastic-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranoisotropic-thermoelastic-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranonorton2pipe1D-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranonorton2pipe1D-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranonortonpipe1D-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranonortonpipe1D-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranoorthotropic-elastic2-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranoorthotropic-elastic2-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranoorthotropic-elastic-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranoorthotropic-elastic-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranoorthotropic-thermoelastic2-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranoorthotropic-thermoelastic2-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranoorthotropic-thermoelastic-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranoorthotropic-thermoelastic-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranotightpipe-gd-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranotightpipe-gd-quadratic.ptest
+   	   mtest/tests/ptest/cyrano/cyranotightpipe-linear.ptest
+   	   mtest/tests/ptest/cyrano/cyranotightpipe-quadratic.ptest
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile
