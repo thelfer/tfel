@@ -55,24 +55,24 @@ struct StensorIsotropicFunctionDerivativeTest final
 	    const Function f,
 	    const FunctionDerivative df)
   {
-    using stensor = tfel::math::stensor<N,double>;
+    using size_type = typename tfel::math::stensor<N,double>::size_type;
     constexpr const double eps  = 1.e-7;
     constexpr const double prec = 5.e-8;
     const auto fdf = v.computeIsotropicFunctionAndDerivative(f,df,1.e-12);
     const auto& d = fdf.second;
     decltype(fdf.second) nd;
-    for(typename stensor::size_type i=0;i!=v.size();++i){
+    for(size_type i=0;i!=v.size();++i){
       auto v2 = v;
       v2[i]+=eps;
       const auto nf_f = v2.computeIsotropicFunction(f);
       v2[i]-=2*eps;
       const auto nf_b = v2.computeIsotropicFunction(f);
-      for(typename stensor::size_type j=0;j!=v.size();++j){
+      for(size_type j=0;j!=v.size();++j){
 	nd(j,i)=(nf_f[j]-nf_b[j])/(2*eps);
       }
     }
-    for(typename stensor::size_type i=0;i!=v.size();++i){
-      for(typename stensor::size_type j=0;j!=v.size();++j){
+    for(size_type i=0;i!=v.size();++i){
+      for(size_type j=0;j!=v.size();++j){
 	// if(std::abs(d(i,j)-nd(i,j))>prec){
 	//   std::cout << i << " " << j << " " << d(i,j)
 	//   << " " << nd(i,j) << " " << std::abs(d(i,j)-nd(i,j))
