@@ -10,7 +10,6 @@
   "le caractère unilatéral de l'endommagement"
 }
 
-
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;

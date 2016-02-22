@@ -40,8 +40,7 @@ namespace mtest
      */
     virtual bool isConstant(void) const = 0;
     /*!
-     * \brief set the evolution value for a given date
-     * \param[in] v  : value
+     * \brief set the evolution value
      * \note most evolution will throw an exception (this
      * method only makes sense for constant evolutions)
      */

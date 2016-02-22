@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<limits>
 #include<algorithm>
 
 #include"TFEL/Math/tmatrix.hxx"
@@ -180,7 +181,7 @@ namespace mtest
       ude[0] = s.e1[1]-s.e0[1]; ude[1] = s.e1[2]-s.e0[2]; ude[2] = s.e1[0]-s.e0[0];
       s.s1[0]  = s.s0[1]; s.s1[1]  = s.s0[2]; s.s1[2]  = s.s0[0];
     }
-    CastemReal ndt(1.);
+    CastemReal ndt = std::numeric_limits<CastemReal>::max();
     (this->fct)(&s.s1(0),&wk.ivs(0),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,nullptr,

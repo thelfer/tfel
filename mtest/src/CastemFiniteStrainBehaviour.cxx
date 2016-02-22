@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<limits>
 #include<algorithm>
 
 #include"TFEL/Config/TFELTypes.hxx"
@@ -760,7 +761,7 @@ namespace mtest
     for(i=3;i!=static_cast<unsigned short>(ntens);++i){
       s.s1(i)  /= sqrt2;
     }
-    CastemReal ndt(1.);
+    CastemReal ndt = std::numeric_limits<CastemReal>::max();
     (this->fct)(&(s.s1(0)),&(wk.ivs(0)),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,&dt,

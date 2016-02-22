@@ -504,7 +504,7 @@ namespace castem
 	  DVInitializer::exe(behaviour,STRAN,DSTRAN,sfeh);
 	  behaviour.setCASTEMBehaviourDataThermodynamicForces(STRESS);
 	  behaviour.initialize();
-	  auto tsf = behaviour.computeAPrioriTimeStepScalingFactor();
+	  auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*pnewdt);
 	  *pnewdt = tsf.second;
 	  if(!tsf.first){
 	    r = BV::FAILURE;
@@ -516,7 +516,7 @@ namespace castem
 	      *pnewdt = behaviour.getMinimalTimeStepScalingFactor();
 	    } else {
 	      behaviour.checkBounds();
-	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor();
+	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor(*pnewdt);
 	      *pnewdt = std::min(tsf.second,*pnewdt);
 	      if(!tsf.first){
 		r=BV::FAILURE;
@@ -595,7 +595,7 @@ namespace castem
 	      result = behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
 	    }
 	    if(result==BV::SUCCESS){
-	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor();
+	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor(*pnewdt);
 	      if(!tsf.first){
 		result=BV::FAILURE;
 	      }
@@ -750,14 +750,14 @@ namespace castem
 	  } else {
 	    throwInvalidDDSDDEException(Traits::getName(),*DDSDDE);
 	  }
-	  auto tsf = behaviour.computeAPrioriTimeStepScalingFactor();
+	  auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*PNEWDT);
 	  *PNEWDT = tsf.second;
 	  if(!tsf.first){
 	    r = BV::FAILURE;
 	  } else {
 	    r = this->behaviour.integrate(smflag,smtype);
 	    if(r==BV::SUCCESS){
-	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor();
+	      tsf = behaviour.computeAPosterioriTimeStepScalingFactor(*PNEWDT);
 	      *PNEWDT = std::min(*PNEWDT,tsf.second);
 	      if(!tsf.first){
 		r = BV::FAILURE;

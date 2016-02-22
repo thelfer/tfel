@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<limits>
 #include<algorithm>
 
 #include"TFEL/Math/tmatrix.hxx"
@@ -120,7 +121,7 @@ namespace mtest
 	us(i) /= sqrt2;
       }
     }
-    AbaqusReal ndt(1.);
+    AbaqusReal ndt = std::numeric_limits<AbaqusReal>::max();
     (this->fct)(&us(0),&wk.ivs(0),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,

@@ -232,7 +232,7 @@ namespace abaqus
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
 	const typename BV::SMFlag smflag = AbaqusTangentOperatorFlag<AbaqusTraits<BV>::btype>::value;
-	auto tsf = behaviour.computeAPrioriTimeStepScalingFactor();
+	auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*PNEWDT);
 	*PNEWDT = tsf.second;
 	if(!tsf.first){
 	  r = BV::FAILURE;
@@ -245,7 +245,7 @@ namespace abaqus
 	  if(r==BV::FAILURE){
 	    *PNEWDT = behaviour.getMinimalTimeStepScalingFactor();
 	  } else {
-	    tsf = behaviour.computeAPosterioriTimeStepScalingFactor();
+	    tsf = behaviour.computeAPosterioriTimeStepScalingFactor(*PNEWDT);
 	    if(!tsf.first){
 	      r=BV::FAILURE;
 	    }

@@ -117,7 +117,7 @@ namespace tfel{
       /*!
        * available tangent operator
        */
-      typedef typename TangentOperatorTraits<btype>::SMFlag SMFlag;
+      using SMFlag = typename TangentOperatorTraits<btype>::SMFlag;
       /*!
        * dimension of the space for the the given modelling hypothesis
        */
@@ -142,6 +142,7 @@ namespace tfel{
       virtual NumType
       getMinimalTimeStepScalingFactor(void) const = 0;
       /*!
+       * \param[in] dt: time step scaling factor proposed by the calling code
        * \return a pair containing:
        * - a boolean syaing if the behaviour integration shall be
        *   performed
@@ -157,7 +158,7 @@ namespace tfel{
        * may return the NumType(1) value.
        */
       virtual std::pair<bool,NumType>
-      computeAPrioriTimeStepScalingFactor(void) const = 0;
+      computeAPrioriTimeStepScalingFactor(const NumType) const = 0;
       /*!
        * \brief determine the value of the internal state variables at
        * the end of the time step
@@ -169,6 +170,7 @@ namespace tfel{
       integrate(const SMFlag,
 		const SMType) = 0;
       /*!
+       * \param[in] dt: current time step scaling factor
        * \return a pair containing:
        * - a boolean syaing if the behaviour integration shall be
        *   considered a success or a failure
@@ -184,7 +186,7 @@ namespace tfel{
        * may return the NumType(1) value.
        */
       virtual std::pair<bool,NumType>
-      computeAPosterioriTimeStepScalingFactor(void) const = 0;
+      computeAPosterioriTimeStepScalingFactor(const NumType) const = 0;
       /*!
        * destructor
        */

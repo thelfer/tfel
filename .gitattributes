@@ -3857,6 +3857,7 @@ mtest/tests/ptest/references/nortonpipe1D-strains-quadratic.ref -text
 mtest/tests/ptest/references/nortonpipe1D-stresses-quadratic.ref -text
 mtest/tests/ptest/references/orthotropic-elastic-profile-quadratic.ref -text
 mtest/tests/unit-tests/CMakeLists.txt -text
+mtest/tests/unit-tests/EvolutionTest.cxx -text
 mtest/tests/unit-tests/MTestParserTest.cxx.in -text
 mtest/tests/unit-tests/Makefile.am -text
 mtest/tests/unit-tests/PipeTest.cxx -text

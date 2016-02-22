@@ -398,7 +398,8 @@ namespace mfront{
       this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 			    e,BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-					"maximal_time_step_scaling_factor",1.);
+					"maximal_time_step_scaling_factor",
+					std::numeric_limits<double>::max());
       this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS
 			    ,"maximal_time_step_scaling_factor","maximal_time_step_scaling_factor");
     }
@@ -1919,6 +1920,7 @@ namespace mfront{
     this->registerDefaultVarNames();
     this->reserveName("minimal_time_step_scaling_factor");
     this->reserveName("maximal_time_step_scaling_factor");
+    this->reserveName("current_time_step_scaling_factor");
   } // end of BehaviourDSLCommon::MFrontParserCommon
 
   void BehaviourDSLCommon::reserveName(const std::string& n){
@@ -4261,12 +4263,13 @@ namespace mfront{
   {
     this->checkBehaviourFile();
     this->behaviourFile << "std::pair<bool,real>\n"
-      "computeAPrioriTimeStepScalingFactor(void) const override{\n"
+      "computeAPrioriTimeStepScalingFactor(const real current_time_step_scaling_factor) const override{\n"
       "const auto time_scaling_factor = this->computeAPrioriTimeStepScalingFactorII();\n"
       "return {time_scaling_factor.first,\n"
-      "        std::min(std::max(time_scaling_factor.second,\n"
-      "                          this->minimal_time_step_scaling_factor),\n"
-      "                 this->maximal_time_step_scaling_factor)};\n"
+      "        std::min(std::min(std::max(time_scaling_factor.second,\n"
+      "                                   this->minimal_time_step_scaling_factor),\n"
+      "                          this->maximal_time_step_scaling_factor),\n"
+      "                  current_time_step_scaling_factor)};\n"
       "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor(void)
 
@@ -4290,12 +4293,13 @@ namespace mfront{
   {
     this->checkBehaviourFile();
     this->behaviourFile << "std::pair<bool,real>\n"
-      "computeAPosterioriTimeStepScalingFactor(void) const override{\n"
+      "computeAPosterioriTimeStepScalingFactor(const real current_time_step_scaling_factor) const override{\n"
       "const auto time_scaling_factor = this->computeAPosterioriTimeStepScalingFactorII();\n"
       "return {time_scaling_factor.first,\n"
-      "        std::min(std::max(time_scaling_factor.second,\n"
-      "                          this->minimal_time_step_scaling_factor),\n"
-      "                 this->maximal_time_step_scaling_factor)};\n"
+      "        std::min(std::min(std::max(time_scaling_factor.second,\n"
+      "                                   this->minimal_time_step_scaling_factor),\n"
+      "                          this->maximal_time_step_scaling_factor),\n"
+      "                 current_time_step_scaling_factor)};\n"
       "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(void)
   

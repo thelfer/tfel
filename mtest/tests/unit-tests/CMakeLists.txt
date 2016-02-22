@@ -93,3 +93,4 @@ macro(test_mtest test_arg)
 endmacro(test_mtest)
 
 test_mtest(PipeTest)
+test_mtest(EvolutionTest)
