@@ -9,6 +9,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<stdexcept>
 #include<cstdlib>
 
 #include"TFEL/Tests/TestCase.hxx"
