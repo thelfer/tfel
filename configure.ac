@@ -415,6 +415,18 @@ then
     AC_DEFINE(HAVE_ABAQUS)
 fi
 
+#europlexus
+AC_ARG_ENABLE([europlexus],
+               AC_HELP_STRING([--enable-europlexus],
+		   [build europlexus interface for mechanical behaviours]),
+	       [enable_europlexus=true],
+	       [enable_europlexus=false])
+AM_CONDITIONAL(HAVE_EUROPLEXUS,[test x"$enable_europlexus" = "xtrue"])
+if(test "x$enable_europlexus" = "xtrue")
+then
+    AC_DEFINE(HAVE_EUROPLEXUS)
+fi
+
 #zmat
 AC_ARG_ENABLE([zmat],
                AC_HELP_STRING([--enable-zmat],

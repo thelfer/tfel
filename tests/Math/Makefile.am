@@ -74,6 +74,8 @@ test_PROGRAMS = hill                                     \
 		parser7                                  \
 		parser8                                  \
 		parser9                                  \
+		parser10                                 \
+		integerparser                            \
 		broyden                                  \
 		broyden2                                 \
 		StensorFromTinyMatrixColumnView          \
@@ -301,6 +303,25 @@ parser9_LDADD = -L$(top_builddir)/src/Tests        \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath  -lTFELUtilities        \
 		-lTFELException	-lTFELTests
+
+parser10_SOURCES               = parser10.cxx
+parser10_LDADD = -L$(top_builddir)/src/Tests       \
+		-L$(top_builddir)/src/Math         \
+	        -L$(top_builddir)/src/Utilities    \
+	        -L$(top_builddir)/src/Exception    \
+	        -lTFELMathParser -lTFELMathKriging \
+		-lTFELMath  -lTFELUtilities        \
+		-lTFELException	-lTFELTests
+
+integerparser_SOURCES = integerparser.cxx
+integerparser_LDADD = -L$(top_builddir)/src/Tests        \
+		      -L$(top_builddir)/src/Math         \
+	              -L$(top_builddir)/src/Utilities    \
+	              -L$(top_builddir)/src/Exception    \
+	              -lTFELMathParser -lTFELMathKriging \
+		      -lTFELMath  -lTFELUtilities        \
+		      -lTFELException	-lTFELTests
+
 
 TESTS=$(test_PROGRAMS)
 

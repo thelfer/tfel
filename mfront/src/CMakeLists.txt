@@ -209,6 +209,23 @@ if(HAVE_ABAQUS)
     TFELException)
 endif(HAVE_ABAQUS)
 
+if(HAVE_EUROPLEXUS)
+  set(TFELMFront_SOURCES
+    EuroplexusInterface.cxx
+    ${TFELMFront_SOURCES})
+  set(EuroplexusInterface_SOURCES
+    EuroplexusInterfaceExceptions.cxx
+    EuroplexusException.cxx
+    EuroplexusComputeStiffnessTensor.cxx
+    EuroplexusStressFreeExpansionHandler.cxx
+    EuroplexusComputeThermalExpansionCoefficientTensor.cxx)
+  mfront_library(EuroplexusInterface ${EuroplexusInterface_SOURCES})
+  target_link_libraries(EuroplexusInterface
+    MTestFileGenerator
+    TFELUtilities
+    TFELException)
+endif(HAVE_EUROPLEXUS)
+
 if(HAVE_ZMAT)
   set(TFELMFront_SOURCES
     ZMATInterface.cxx

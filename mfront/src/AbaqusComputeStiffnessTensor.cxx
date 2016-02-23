@@ -21,7 +21,7 @@ namespace abaqus
  
   void
   AbaqusComputeIsotropicStiffnessTensor2D(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-					const AbaqusReal* const props)
+					  const AbaqusReal* const props)
   {
     const AbaqusReal E   = props[0];
     const AbaqusReal n   = props[1];
@@ -48,7 +48,7 @@ namespace abaqus
 
   void
   AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-							const AbaqusReal* const props)
+							  const AbaqusReal* const props)
 					       
   {
     const AbaqusReal E   = props[0];
@@ -76,7 +76,7 @@ namespace abaqus
 
   void
   AbaqusComputeIsotropicStiffnessTensor3D(tfel::config::Types<3u,AbaqusReal,false>::StiffnessTensor& C,
-					const AbaqusReal* const props)
+					  const AbaqusReal* const props)
   {
     const AbaqusReal E = props[0];
     const AbaqusReal n = props[1];
@@ -123,7 +123,7 @@ namespace abaqus
 
   void
   AbaqusComputeOrthotropicStiffnessTensor2D(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-					  const AbaqusReal* const props)
+					    const AbaqusReal* const props)
   {
     using namespace std;
     // props[0] :'YG1'
@@ -163,7 +163,7 @@ namespace abaqus
 
   void
   AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-							  const AbaqusReal* const props)
+							    const AbaqusReal* const props)
   {
     using namespace std;
     // S11 = 1/E1
@@ -201,7 +201,7 @@ namespace abaqus
 
   void
   AbaqusComputeOrthotropicStiffnessTensor3D(tfel::config::Types<3u,AbaqusReal,false>::StiffnessTensor& C,
-					  const AbaqusReal* const props)
+					    const AbaqusReal* const props)
   {
     // props[0] :'YG1'
     // props[1] :'YG2'

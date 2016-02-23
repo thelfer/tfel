@@ -112,6 +112,14 @@ if(enable-abaqus)
   add_definitions("-DHAVE_ABAQUS=1")
 endif(enable-abaqus)
 
+#europlexus
+option(enable-europlexus "build europlexus interface for mechanical behaviours" OFF)
+if(enable-europlexus)
+  message(STATUS "europlexus support enabled")
+  set(HAVE_EUROPLEXUS ON)
+  add_definitions("-DHAVE_EUROPLEXUS=1")
+endif(enable-europlexus)
+
 #zmat
 option(enable-zmat "build zmat interface for mechanical behaviours" OFF)
 if(enable-zmat)

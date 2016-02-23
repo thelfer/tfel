@@ -15,4 +15,6 @@
 
 @Times {0,1};
 
-@Profile 'pipe.res' {'SRR','STT','SZZ'};
+@OutputFilePrecision 14;
+@Profile 'elasticity-linear-profile.res' {'SRR','STT','SZZ'};
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/elasticity-linear-profile.ref' {'SRR':2,'STT':3,'SZZ':4} 1e-4;

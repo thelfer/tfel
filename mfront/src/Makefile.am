@@ -138,6 +138,10 @@ if HAVE_ABAQUS
 libTFELMFront_la_SOURCES += AbaqusInterface.cxx
 endif
 
+if HAVE_EUROPLEXUS
+libTFELMFront_la_SOURCES += EuroplexusInterface.cxx
+endif
+
 if HAVE_ZMAT
 libTFELMFront_la_SOURCES += ZMATInterface.cxx
 endif
@@ -274,6 +278,25 @@ if TFEL_WIN
 libAbaqusInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 endif # HAVE_ABAQUS
+
+# Europlexus Interface
+if HAVE_EUROPLEXUS
+lib_LTLIBRARIES += libEuroplexusInterface.la
+libEuroplexusInterface_la_SOURCES = EuroplexusInterfaceExceptions.cxx                      \
+		                    EuroplexusException.cxx                                \
+			            EuroplexusComputeStiffnessTensor.cxx                   \
+			            EuroplexusStressFreeExpansionHandler.cxx               \
+			            EuroplexusComputeThermalExpansionCoefficientTensor.cxx
+
+libEuroplexusInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
+			            -L$(top_builddir)/src/Exception -lTFELException          \
+			            -L$(top_builddir)/mfront/src    -lMTestFileGenerator
+libEuroplexusInterface_la_DEPENDENCIES = libMTestFileGenerator.la
+libEuroplexusInterface_la_CPPFLAGS     = $(AM_CPPFLAGS) -DEuroplexusInterface_EXPORTS
+if TFEL_WIN
+libEuroplexusInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
+endif # HAVE_EUROPLEXUS
 
 mfront_SOURCES = main.cxx
 mfront_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \

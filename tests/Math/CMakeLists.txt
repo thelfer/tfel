@@ -137,6 +137,8 @@ tests_math3(parser6)
 tests_math3(parser7)
 tests_math3(parser8)
 tests_math3(parser9)
+tests_math3(parser10)
+tests_math3(integerparser)
 
 tests_math4(CubicSplineTest)
 

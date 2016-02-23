@@ -1773,6 +1773,19 @@ mfront/include/MFront/DefaultDSLBase.hxx -text
 mfront/include/MFront/DefaultFiniteStrainDSL.hxx -text
 mfront/include/MFront/DrivingVariable.hxx -text
 mfront/include/MFront/ElasticityBehaviourBrick.hxx -text
+mfront/include/MFront/Europlexus/Europlexus.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusBehaviourHandler.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusComputeStiffnessTensor.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusComputeThermalExpansionCoefficientTensor.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusConfig.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusException.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusInterface.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusInterfaceExceptions.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusOrthotropicBehaviour.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx -text
+mfront/include/MFront/Europlexus/EuroplexusTraits.hxx -text
+mfront/include/MFront/Europlexus/europlexus.doxygen -text
+mfront/include/MFront/EuroplexusInterface.hxx -text
 mfront/include/MFront/ExcelMaterialPropertyInterface.hxx -text
 mfront/include/MFront/ExcelMaterialPropertyInternalInterface.hxx -text
 mfront/include/MFront/FileDescription.hxx -text
@@ -1931,6 +1944,12 @@ mfront/src/DefaultDSLBase.cxx -text
 mfront/src/DefaultFiniteStrainDSL.cxx -text
 mfront/src/DrivingVariable.cxx -text
 mfront/src/ElasticityBehaviourBrick.cxx -text
+mfront/src/EuroplexusComputeStiffnessTensor.cxx -text
+mfront/src/EuroplexusComputeThermalExpansionCoefficientTensor.cxx -text
+mfront/src/EuroplexusException.cxx -text
+mfront/src/EuroplexusInterface.cxx -text
+mfront/src/EuroplexusInterfaceExceptions.cxx -text
+mfront/src/EuroplexusStressFreeExpansionHandler.cxx -text
 mfront/src/ExcelMaterialPropertyInterface.cxx -text
 mfront/src/ExcelMaterialPropertyInternalInterface.cxx -text
 mfront/src/FileDescription.cxx -text
@@ -3849,6 +3868,8 @@ mtest/tests/ptest/cyrano/cyranotightpipe-gd-linear.ptest.in -text
 mtest/tests/ptest/cyrano/cyranotightpipe-gd-quadratic.ptest.in -text
 mtest/tests/ptest/cyrano/cyranotightpipe-linear.ptest.in -text
 mtest/tests/ptest/cyrano/cyranotightpipe-quadratic.ptest.in -text
+mtest/tests/ptest/references/elasticity-linear-profile.ref -text
+mtest/tests/ptest/references/elasticity-quadratic-profile.ref -text
 mtest/tests/ptest/references/isotropic-elastic-quadratic.ref -text
 mtest/tests/ptest/references/isotropic-elastic2-quadratic.ref -text
 mtest/tests/ptest/references/isotropic-thermoelastic-quadratic.ref -text
@@ -4041,6 +4062,7 @@ tests/Math/include/function_tests.ixx -text
 tests/Math/include/function_unary_tests.hxx -text
 tests/Math/include/function_unary_tests.ixx -text
 tests/Math/include/promote-header.hxx -text
+tests/Math/integerparser.cxx -text
 tests/Math/invert.cxx -text
 tests/Math/invert2.cxx -text
 tests/Math/krigeage.cxx -text
@@ -4054,6 +4076,7 @@ tests/Math/lu.cxx -text
 tests/Math/lu2.cxx -text
 tests/Math/newton_raphson.cxx -text
 tests/Math/parser.cxx -text
+tests/Math/parser10.cxx -text
 tests/Math/parser2.cxx -text
 tests/Math/parser3.cxx -text
 tests/Math/parser4.cxx -text

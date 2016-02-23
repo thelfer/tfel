@@ -216,6 +216,21 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/AbaqusInterface.hxx
 endif
 
+if HAVE_EUROPLEXUS
+nobase_include_HEADERS += MFront/Europlexus/Europlexus.hxx                                         \
+			  MFront/Europlexus/EuroplexusOrthotropicBehaviour.hxx                     \
+			  MFront/Europlexus/EuroplexusConfig.hxx                                   \
+			  MFront/Europlexus/EuroplexusTraits.hxx                                   \
+			  MFront/Europlexus/EuroplexusException.hxx 		                   \
+			  MFront/Europlexus/EuroplexusInterface.hxx	                           \
+			  MFront/Europlexus/EuroplexusInterfaceExceptions.hxx                      \
+			  MFront/Europlexus/EuroplexusBehaviourHandler.hxx                         \
+			  MFront/Europlexus/EuroplexusComputeStiffnessTensor.hxx                   \
+			  MFront/Europlexus/EuroplexusComputeThermalExpansionCoefficientTensor.hxx \
+			  MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx               \
+			  MFront/EuroplexusInterface.hxx
+endif
+
 if HAVE_ZMAT
 nobase_include_HEADERS += MFront/ZMATInterface.hxx \
 			  MFront/ZMAT/ZMATUndefs.hxx     \
