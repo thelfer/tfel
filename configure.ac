@@ -942,6 +942,9 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemnorton-rk4.mtest
            mfront/tests/behaviours/castem/castemellipticcreep.mtest
            mfront/tests/behaviours/castem/castemstressrelaxation.mtest
+           mfront/tests/behaviours/castem/castemorthotropicelasticity3-1.mtest
+	   mfront/tests/behaviours/castem/castemorthotropicelasticity3-2.mtest
+	   mfront/tests/behaviours/castem/castemorthotropicelasticity3-3.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep-rk42.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest

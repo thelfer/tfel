@@ -2098,6 +2098,7 @@ mfront/tests/behaviours/OrthotropicCreep_rk42.mfront -text
 mfront/tests/behaviours/OrthotropicCreep_rkCastem.mfront -text
 mfront/tests/behaviours/OrthotropicElastic.mfront -text
 mfront/tests/behaviours/OrthotropicElastic2.mfront -text
+mfront/tests/behaviours/OrthotropicElastic3.mfront -text
 mfront/tests/behaviours/PlasIsoCin.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/PolyCrystals.mfront -text
@@ -2912,6 +2913,9 @@ mfront/tests/behaviours/castem/castemnortonrk4.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep-rk42.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropiccreep.mtest.in -text
+mfront/tests/behaviours/castem/castemorthotropicelasticity3-1.mtest.in -text
+mfront/tests/behaviours/castem/castemorthotropicelasticity3-2.mtest.in -text
+mfront/tests/behaviours/castem/castemorthotropicelasticity3-3.mtest.in -text
 mfront/tests/behaviours/castem/castemplasisocin.mtest.in -text
 mfront/tests/behaviours/castem/castemplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castempolycrystals.mtest.in -text

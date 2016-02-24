@@ -49,7 +49,7 @@ namespace tfel{
      * \param[in/out] s : stensor
      */
     template<ModellingHypothesis::Hypothesis mh,OrthotropicAxesConvention c,typename T>
-    void convert(tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value,T>&);
+    void convertStressFreeExpansionStrain(tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value,T>&);
 				 
   } // end of namespace material
 

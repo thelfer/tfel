@@ -29,6 +29,7 @@ set(mfront_tests_SOURCES
   ExternalStateVariablesBoundsCheck
   OrthotropicElastic
   OrthotropicElastic2
+  OrthotropicElastic3
   Elasticity
   Elasticity2
   Elasticity3
@@ -338,6 +339,9 @@ test_castem(stressrelaxation)
 test_castem(norton-euler)
 test_castem(norton-rk2)
 test_castem(norton-rk4)
+test_castem(orthotropicelasticity3-1)
+test_castem(orthotropicelasticity3-2)
+test_castem(orthotropicelasticity3-3)
 test_castem(orthotropiccreep)
 test_castem(orthotropiccreep-rk42)
 test_castem(orthotropiccreep-rkCastem)

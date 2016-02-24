@@ -65,7 +65,7 @@ struct OrthotropicAxesConventionTest final
     using namespace tfel::material;
     stensor<ModellingHypothesisToSpaceDimension<h>::value,int> s(0);
     s[0]= 1; s[1]=2; s[2]=3;
-    convert<h,c>(s);
+    convertStressFreeExpansionStrain<h,c>(s);
     TFEL_TESTS_CHECK_EQUAL(s[0],1);
     TFEL_TESTS_CHECK_EQUAL(s[1],2);
     TFEL_TESTS_CHECK_EQUAL(s[2],3);
@@ -76,7 +76,7 @@ struct OrthotropicAxesConventionTest final
     using namespace tfel::material;
     stensor<ModellingHypothesisToSpaceDimension<h>::value,int> s(0);
     s[0]= 1; s[1]=2; s[2]=3;
-    convert<h,c>(s);
+    convertStressFreeExpansionStrain<h,c>(s);
     TFEL_TESTS_CHECK_EQUAL(s[0],1);
     TFEL_TESTS_CHECK_EQUAL(s[1],3);
     TFEL_TESTS_CHECK_EQUAL(s[2],2);
@@ -88,13 +88,8 @@ TFEL_TESTS_GENERATE_PROXY(OrthotropicAxesConventionTest,"OrthotropicAxesConventi
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
+  auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("OrthotropicAxesConvention.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  return manager.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

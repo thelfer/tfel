@@ -45,11 +45,10 @@ struct MyTest final
     return this->result;
   } // end of execute()
 private:
-  bool
-  test() const
+  bool test() const
   {
     return true;
-  };
+  }
 }; // end of struct MyTest 
 
 TFEL_TESTS_GENERATE_PROXY(MyTest,"TestSuite1");

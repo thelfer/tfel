@@ -60,8 +60,7 @@ namespace castem
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
-  template<CastemBehaviourType btype,
-	   unsigned short N>
+  template<CastemBehaviourType btype,unsigned short N>
   struct CastemTangentOperatorType;
 
   template<unsigned short N>
@@ -166,22 +165,19 @@ namespace castem
 	       const CastemReal *const DSTRAN,
 	       const StressFreeExpansionHandler& sfeh)
       {
-	using tfel::fsalgo::copy;
-	using std::pair;
-	using tfel::material::MechanicalBehaviourTraits;
-	typedef MechanicalBehaviourTraits<BV> Traits;
-	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
+	using Traits = tfel::material::MechanicalBehaviourTraits<BV>;
+	using StressFreeExpansionType = typename BV::StressFreeExpansionType;
 	CastemReal dv0[CastemTraits<BV>::DrivingVariableSize];
 	CastemReal dv1[CastemTraits<BV>::DrivingVariableSize];
-	copy<CastemTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
-	copy<CastemTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	tfel::fsalgo::copy<CastemTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
+	tfel::fsalgo::copy<CastemTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
 	if(sfeh==0){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
 	}
 	// creating a fake behaviour to compoute the stress-free expansion
 	// this is not really elegant by can't do better
-	pair<StressFreeExpansionType,StressFreeExpansionType> s;
+	std::pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	BV b(bData,iData);
 	b.computeStressFreeExpansion(s);
 	const auto& s0 = s.first;

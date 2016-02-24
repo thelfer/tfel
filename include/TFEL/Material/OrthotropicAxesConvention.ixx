@@ -53,9 +53,7 @@ namespace tfel{
 	static TFEL_MATERIAL_INLINE void
 	convert(tfel::math::stensor<2u,T>& s)
 	{
-	  const T tmp = s[1];
-	  s[1] = s[2];
-	  s[2] = tmp;
+	  std::swap(s[1],s[2]);
 	} // end of convert
       };
       
@@ -94,10 +92,10 @@ namespace tfel{
     template<ModellingHypothesis::Hypothesis mh,
 	     OrthotropicAxesConvention c,
 	     typename T>
-    void convert(tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value,T>& s)
+    void
+    convertStressFreeExpansionStrain(tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value,T>& s)
     {
-      using Converter = tfel::material::internals::OrthotropicAxesConventionConverter<mh,c>;
-      Converter::convert(s);
+      tfel::material::internals::OrthotropicAxesConventionConverter<mh,c>::convert(s);
     } // end of convert
     
   } // end of namespace material

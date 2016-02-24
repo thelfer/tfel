@@ -1324,10 +1324,11 @@ namespace mfront{
       this->readSpecifiedToken("BehaviourDSLCommon::treatOrthotropicBehaviour","<");
       this->checkNotEndOfFile("BehaviourDSLCommon::treatOrthotropicBehaviour");
       if(this->current->value=="Pipe"){
+	++this->current;
 	c = OrthotropicAxesConvention::PIPE;
       } else {
-	this->readSpecifiedToken("BehaviourDSLCommon::treatOrthotropicBehaviour",
-				 "Undefined");
+	this->throwRuntimeError("BehaviourDSLCommon::treatOrthotropicBehaviour",
+				"unsupported orthotropic axes convention");
       }
       this->readSpecifiedToken("BehaviourDSLCommon::treatOrthotropicBehaviour",">");
     }
@@ -1359,12 +1360,10 @@ namespace mfront{
   void
   BehaviourDSLCommon::treatRequireStiffnessOperator(void)
   {
-    using namespace std;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
-      auto& log = getLogStream();
-      log << "BehaviourDSLCommon::treatRequireStiffnessOperator : "
-	  << "@RequireStiffnessOperator is deprecated\n"
-	  << "You shall use @RequireStiffnessTensor instead\n";
+      getLogStream() << "BehaviourDSLCommon::treatRequireStiffnessOperator : "
+		     << "@RequireStiffnessOperator is deprecated\n"
+		     << "You shall use @RequireStiffnessTensor instead\n";
     }
     this->treatRequireStiffnessTensor();
   } // end of BehaviourDSLCommon::treatRequireStiffnessOperator
@@ -1390,13 +1389,6 @@ namespace mfront{
       this->readSpecifiedToken("BehaviourDSLCommon::treatRequireStiffnessTensor",">");
     }
     this->readSpecifiedToken("BehaviourDSLCommon::treatRequireStiffnessTensor",";");
-    if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if(this->mb.getOrthotropicAxesConvention()!=OrthotropicAxesConvention::DEFAULT){
-	this->throwRuntimeError("BehaviourDSLCommon::treatRequireStiffnessTensor : ",
-				"RequireStiffnessTensor can only be used with the 'Default' "
-				"orthotropic axes convention");
-      }
-    }
     this->mb.setAttribute(BehaviourDescription::requiresStiffnessTensor,true,false);
   } // end of BehaviourDSLCommon::treatRequireStiffnessTensor
 
@@ -3222,6 +3214,10 @@ namespace mfront{
 	BehaviourDSLCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs[1]),"t_dt","1","1");
 	BehaviourDSLCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs[2]),"t","2","2");
 	BehaviourDSLCommonWriteThermalExpansionComputation(this->behaviourFile,*(acs[2]),"t_dt","2","2");
+	if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
+	  this->behaviourFile << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl_l0);\n";
+	  this->behaviourFile << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl_l1);\n";
+	}
       } else {
 	this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
 				"unsupported behaviour symmetry");
@@ -3642,12 +3638,13 @@ namespace mfront{
 			    << convertFiniteStrainBehaviourTangentOperatorFlagToString(toflag) << ";\n";
       }
     }
-    this->behaviourFile << "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::IntegrationResult IntegrationResult;\n\n";
+    this->behaviourFile << "using IntegrationResult = typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::IntegrationResult;\n\n";
     this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SUCCESS;\n";
     this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::FAILURE;\n";
     this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::UNRELIABLE_RESULTS;\n\n";
     if(this->mb.areThermalExpansionCoefficientsDefined()){
-      this->behaviourFile << "typedef " << this->mb.getStressFreeExpansionType()  << " StressFreeExpansionType;\n\n";
+      this->behaviourFile << "using StressFreeExpansionType = "
+			  << this->mb.getStressFreeExpansionType()  << ";\n\n";
     }
     this->behaviourFile << "private :\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs
