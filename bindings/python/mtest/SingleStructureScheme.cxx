@@ -166,38 +166,162 @@ void declareSingleStructureScheme(void)
   class_<SingleStructureScheme,boost::noncopyable,
 			bases<SchemeBase>>("SingleStructureScheme",
 					   no_init)
-    .def("setBehaviour",ptr1)
+    .def("setBehaviour",ptr1,
+     "This method declares the behaviour used for the "
+     "test.\n"
+     "* The first parameter (string) specify the interface "
+     "used by the behaviour. Supported interfaces are:\n"
+     "- 'umat'\n"
+     "- 'cyrano'\n"
+     "- 'aster'\n"
+     "* The second parameter (string) is the path to the "
+     "dynamic library which implement the selected behaviour.\n"
+     "* The third parameter (string) is the name of the function.")
     .def("setBehaviour",ptr2)
     .def("handleThermalExpansion",
-	 &SingleStructureScheme::setHandleThermalExpansion)
-    .def("setParameter",&SingleStructureScheme::setParameter)
+     &SingleStructureScheme::setHandleThermalExpansion,
+     "This method override the (de)activation of the thermal "
+     "strain computation. It's activated by default if a "
+     "material property named 'ThermalExpansion' is defined "
+     "(isotropic materials).\n"
+     "* If the parameter (bool) is 'true', the computation is "
+     "activated. Otherwise, the computation is deactivated.")
+    .def("setParameter",&SingleStructureScheme::setParameter,
+     "This method specifies the value of a parameter's "
+     "behaviour.\n"
+     "* The first parameter (string) is the name of the "
+     "parameter's behaviour.\n"
+     "* The second parameter (double) is the value of that "
+     "parameter's behaviour.")
     .def("setIntegerParameter",
-	 &SingleStructureScheme::setIntegerParameter)
+     &SingleStructureScheme::setIntegerParameter,
+     "This keyword specifies the value of an "
+     "integer parameter of the behaviour.\n"
+     "* The first parameter (string) is the name of the "
+     "parameter's behaviour.\n"
+     "* The second parameter (int) is the value of that "
+     "parameter's behaviour.")
     .def("setUnsignedIntegerParameter",
-	 &SingleStructureScheme::setUnsignedIntegerParameter)
+     &SingleStructureScheme::setUnsignedIntegerParameter,
+     "This method specifies the value of an "
+     "unsigned integer parameter of the behaviour.\n"
+     "* The first parameter (string) is the name of the "
+     "parameter's behaviour.\n"
+     "* The second parameter (uint) is the value of that "
+     "parameter's behaviour.")
     .def("setOutOfBoundsPolicy",
-	 &SingleStructureScheme::setOutOfBoundsPolicy)
+     &SingleStructureScheme::setOutOfBoundsPolicy,
+     "This method let the user to precise the out "
+     "of bounds policy.\n"
+     "* The parameter (OutOfBoundsPolicy) is the selected "
+     "policy. Three policies are available:\n"
+     "- 'None' : nothing is done when a variable is out of "
+     "bounds.\n"
+     "- 'Warning' : a message is selected when a variable "
+     "is out of bounds.\n"
+     "- 'Strict' : the computation fails when a variable "
+     "is out of bounds. Most mechanical behaviours "
+     "implementations throw an exception which is caught "
+     "by 'MTest'.")
     .def("setMaterialProperty",
 	 SingleStructureScheme_setMaterialProperty,
-	 (arg("name"),"value",arg("check")=true))
+     (arg("name"),"value",arg("check")=true),
+     "This method defines a constant material property.\n"
+     "* The first parameter (string) is the selected material "
+     "property. Only the mechanical properties defined by the "
+     "behaviour for the modelling hypothesis considered may be "
+     "used. (Note : isotropic thermal expansion is defined "
+     "through the 'ThermalExpansion' property and the "
+     "orthotropic thermal expansion is defined through the "
+     "'ThermalExpansion1', 'ThermalExpansion2' and "
+     "'ThermalExpansion3' material properties).\n"
+     "* The second parameter (double) is the constant value of "
+     "the selected material property.")
     .def("setMaterialProperty",
 	 SingleStructureScheme_setMaterialProperty2,
-	 (arg("name"),"value",arg("check")=true))
+     (arg("name"),"value",arg("check")=true),
+     "This method defines a function material property.\n"
+     "* The first parameter (string) is the selected material "
+     "property. Only the mechanical properties defined by the "
+     "behaviour for the modelling hypothesis considered may be "
+     "used. (Note : isotropic thermal expansion is defined "
+     "through the 'ThermalExpansion' property and the "
+     "orthotropic thermal expansion is defined through the "
+     "'ThermalExpansion1', 'ThermalExpansion2' and "
+     "'ThermalExpansion3' material properties).\n"
+     "* The second parameter (string) is the function used "
+     "to represent the behaviour of the selected material "
+     "property.")
     .def("setMaterialProperty",
 	 SingleStructureScheme_setMaterialProperty3,
-	 (arg("name"),"value","function",arg("check")=true))
+     (arg("name"),"value","function",arg("check")=true),
+     "This method defines a function material property.\n"
+     "* The first parameter (string) is the selected material "
+     "property. Only the mechanical properties defined by the "
+     "behaviour for the modelling hypothesis considered may "
+     "be used. (Note : isotropic thermal expansion is defined "
+     "through the 'ThermalExpansion' property and the "
+     "orthotropic thermal expansion is defined through the "
+     "'ThermalExpansion1', 'ThermalExpansion2' and "
+     "'ThermalExpansion3' material properties).\n"
+     "* The second parameter (string) is the function used "
+     "to represent the behaviour of the selected material "
+     "property.")
     .def("setCastemMaterialProperty",
 	 SingleStructureScheme_setCastemMaterialProperty,
-	 (arg("name"),arg("library"),arg("function"),arg("check")=true))
+     (arg("name"),arg("library"),arg("function"),arg("check")=true),
+     "This method defines a castem material property.\n"
+     "* The first parameter (string) is the selected material "
+     "property. Only the mechanical properties defined by the "
+     "behaviour for the modelling hypothesis considered may be "
+     "used. (Note : isotropic thermal expansion is defined "
+     "through the 'ThermalExpansion' property and the "
+     "orthotropic thermal expansion is defined through the "
+     "'ThermalExpansion1', 'ThermalExpansion2' and "
+     "'ThermalExpansion3' material properties).\n"
+     "* The second parameter (string) is the path to the "
+     "dynamic library which implement the behaviour of the "
+     "selected material property.\n"
+     "* The third parameter (string) is the name of the "
+     "function.")
     .def("setExternalStateVariable",
 	 SingleStructureScheme_setExternalStateVariable,
-	 (arg("name"),"value",arg("check")=true))
+     (arg("name"),"value",arg("check")=true),
+     "This method specify the constant evolution of an "
+     "external state variable.\n"
+     "* The first parameter (string) is the name of the "
+     "external state variable (generally the temperature "
+     "which is by default defined in behaviour interfaces).\n"
+     "* The second parameter (double) is the constant value "
+     "of the selected external state variable.")
     .def("setExternalStateVariable",
 	 SingleStructureScheme_setExternalStateVariable2,
-	 (arg("name"),"value",arg("check")=true))
+     (arg("name"),"value",arg("check")=true),
+     "This method specify the linear evolution of an "
+     "external state variable.\n"
+     "* The first parameter (string) is the name of the "
+     "external state variable (generally the temperature "
+     "which is by default defined in behaviour interfaces).\n"
+     "* The second parameter (map<double, double>) specify "
+     "a linear evolution: the associative array of time-value "
+     "is used to perform an interpolation. That interpolation "
+     "is only performed between the minimum and maximum times "
+     "given in the array. Should a time be out of the array, "
+     "the returned value will be the one from the nearest "
+     "association available.")
     .def("setExternalStateVariable",
 	 SingleStructureScheme_setExternalStateVariable3,
-	 (arg("name"),"value","function",arg("check")=true))
+     (arg("name"),"value","function",arg("check")=true),
+     "This method specify the complex evolution of an "
+     "external state variable.\n"
+     "* The first parameter (string) is the name of the "
+     "external state variable (generally the temperature "
+     "which is by default defined in behaviour interfaces).\n"
+     "* The second parameter (string) is the function used "
+     "to represent the evolution of the selected external "
+     "state variable. The string will be interpreted as a "
+     "function of time (represented by the variable 't' in "
+     "the string).")
     .def("addReal",
 	 SingleStructureScheme_addEvolution,
 	 (arg("name"),"value",arg("b1")=true,arg("b2")=true))

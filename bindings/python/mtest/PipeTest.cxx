@@ -179,10 +179,28 @@ void declarePipeTest(void)
     .def("setInnerPressureEvolution",&PipeTest_setInnerPressureEvolution2)
     .def("setOuterPressureEvolution",&PipeTest_setOuterPressureEvolution)
     .def("setOuterPressureEvolution",&PipeTest_setOuterPressureEvolution2)
-    .def("setAxialForceEvolution",&PipeTest_setAxialForceEvolution)
-    .def("setAxialForceEvolution",&PipeTest_setAxialForceEvolution2)
-    .def("setAxialGrowthEvolution",&PipeTest_setAxialGrowthEvolution)
-    .def("setAxialGrowthEvolution",&PipeTest_setAxialGrowthEvolution2)
+    .def("setAxialForceEvolution",&PipeTest_setAxialForceEvolution,
+     "This method specify the constant evolution of the axial force.\n"
+     "* The parameter (double) is the constant evolution value.")
+    .def("setAxialForceEvolution",&PipeTest_setAxialForceEvolution2,
+     "This method specify the linear evolution of the axial force.\n"
+     "* The parameter (map<double, double>) specify a linear "
+     "evolution: the associative array of time-value is used "
+     "to perform an interpolation. That interpolation is only "
+     "performed between the minimum and maximum times given "
+     "in the array. Should a time be out of the array, the returned "
+     "value will be the one from the nearest association available.")
+    .def("setAxialGrowthEvolution",&PipeTest_setAxialGrowthEvolution,
+     "This method specify the constant evolution of the axial growth.\n"
+     "* The parameter (double) is the constant evolution value.")
+    .def("setAxialGrowthEvolution",&PipeTest_setAxialGrowthEvolution2,
+     "This method specify the linear evolution of the axial growth.\n"
+     "* The parameter (map<double, double>) specify a linear "
+     "evolution: the associative array of time-value is used "
+     "to perform an interpolation. That interpolation is only "
+     "performed between the minimum and maximum times given "
+     "in the array. Should a time be out of the array, the returned "
+     "value will be the one from the nearest association available.")
     .def("setOuterRadiusEvolution",&PipeTest_setOuterRadiusEvolution)
     .def("setOuterRadiusEvolution",&PipeTest_setOuterRadiusEvolution2)
     .def("setFillingPressure",&PipeTest::setFillingPressure)
@@ -190,8 +208,40 @@ void declarePipeTest(void)
     .def("performSmallStrainAnalysis",&PipeTest::performSmallStrainAnalysis)
     .def("setDisplacementEpsilon",&PipeTest::setDisplacementEpsilon)
     .def("setResidualEpsilon",&PipeTest::setResidualEpsilon)
-    .def("setAxialLoading",&PipeTest_setAxialLoading)
-    .def("setRadialLoading",&PipeTest_setRadialLoading)
+    .def("setAxialLoading",&PipeTest_setAxialLoading,
+     "This method specify the kind of loading to apply to "
+     "the pipe in the axial direction.\n"
+     "* The parameter (string) is the choosen kind of loading "
+     "to apply. The allowed kind of loadings allowed are:\n"
+     "- 'None': no load is applied to the pipe.\n"
+     "- 'EndCapEffect' (default) : load applied to the pipe "
+     "modelise the inner and outer pressure effects on a closed "
+     "pipe. See the 'setRadialLoading' method to specify if "
+     "these pressures are specified or computed.\n"
+     "- 'ImposedAxialForce': the axial force acting of the pipe "
+     "is specified by the user. See the 'setAxialForceEvolution' "
+     "method for details.\n"
+     "- 'ImposedAxialGrowth': the axial growth of the pipe is "
+     "specified by the user. See the 'setAxialGrowthEvolution' "
+     "method for details.")
+    .def("setRadialLoading",&PipeTest_setRadialLoading,
+     "This method specify the kind of loading to apply to "
+     "the pipe in radial direction.\n"
+     "* The parameter (string) is the choosen kind of loading "
+     "to apply. The allowed kind of loadings allowed are:\n"
+     "- 'ImposedPressure' (default) : the inner pressure is "
+     "specified by the user. See the 'setInnerPressureEvolution' "
+     "method for details.\n"
+     "- 'TightPipe': the total amount of substance of the gas is"
+     "constant. The gas is ideal which allows:\n"
+     "  > the computation of the amount of substance using the "
+     "filling pressure and temperature. See the 'setFillingPressure' "
+     "and the 'setFillingTemperature' methods for details.\n"
+     "  > the computation of the inner pressure as a function "
+     "of the curent temperature and enclosed volume.\n"
+     "- 'ImposedOuterRadius': the evolution of the outer radius "
+     "is user-specified. See the 'setOuterRadiusEvolution' "
+     "method for details.\n")
     .def("setElementType",&PipeTest_setElementType)
     .def("addProfile",&PipeTest::addProfile)
     ;

@@ -416,41 +416,142 @@ void declareMTest(void)
     .def("setDrivingVariableEpsilon",
 	 &MTest::setDrivingVariableEpsilon)
     .def("setThermodynamicForceEpsilon",
-	 &MTest::setThermodynamicForceEpsilon)
+     &MTest::setThermodynamicForceEpsilon)
     .def("setImposedStress",MTest_setImposedStress,
-	 (arg("name"),"values"))
+     (arg("name"),"values"),
+     "This method specify the constant evolution of a stresses component.\n"
+     "* The first parameter (string) is the name of the choosen "
+     "stresses component. The allowed components (see the "
+     "'setModellingHypothesis' method) are:\n"
+     "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+     "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+     "- 'PlaneStress'                          : SXX SYY SXY\n"
+     "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+     "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+     "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+     "* The second parameter (double) is the constant value "
+     "of the selected stresses component.")
     .def("setImposedStress",MTest_setImposedStress2,
-	 (arg("name"),"values"))
+     (arg("name"),"values"),
+     "This method specify the linear evolution of a stresses component.\n"
+     "* The first parameter (string) is the name of the choosen "
+     "stresses component. The allowed components (see the "
+     "'setModellingHypothesis' method) are:\n"
+     "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+     "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+     "- 'PlaneStress'                          : SXX SYY SXY\n"
+     "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+     "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+     "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+     "* The second parameter (map<double, double>) specify "
+     "a linear evolution: the associative array of time-value "
+     "is used to perform an interpolation. That interpolation "
+     "is only performed between the minimum and maximum times "
+     "given in the array. Should a time be out of the array, "
+     "the returned value will be the one from the nearest "
+     "association available.")
     .def("setImposedCohesiveForce",MTest_setImposedCohesiveForce,
-	 (arg("name"),"values"))
+     (arg("name"),"values"))
     .def("setImposedCohesiveForce",MTest_setImposedCohesiveForce2,
-	 (arg("name"),"values"))
+     (arg("name"),"values"))
     .def("setImposedThermodynamicForce",MTest_setImposedThermodynamicForce,
-	 (arg("name"),"values"))
+     (arg("name"),"values"))
     .def("setImposedThermodynamicForce",MTest_setImposedThermodynamicForce2,
-	 (arg("name"),"values"))
+     (arg("name"),"values"))
     .def("setImposedStrain",MTest_setImposedStrain,
-	 (arg("name"),"values"))
+     (arg("name"),"values"),
+     "This method specify the constant evolution of a strains component.\n"
+     "* The first parameter (string) is the name of the choosen "
+     "strains component. The allowed components (see the "
+     "'setModellingHypothesis' method) are:\n"
+     "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
+     "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
+     "- PlaneStress                          : EXX EYY EZZ EXY\n"
+     "- PlaneStrain                          : EXX EYY     EXY\n"
+     "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
+     "- Tridimensional                       : EXX EYY EZZ EXY EXZ EYZ\n"
+     "* The second parameter (double) is the constant value "
+     "of the selected strains component.")
     .def("setImposedStrain",MTest_setImposedStrain2,
-	 (arg("name"),"values"))
+     (arg("name"),"values"),
+     "This method specify the linear evolution of a strains component.\n"
+     "* The first parameter (string) is the name of the choosen "
+     "strains component. The allowed components (see the "
+     "'setModellingHypothesis' method) are:\n"
+     "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
+     "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
+     "- PlaneStress                          : EXX EYY EZZ EXY\n"
+     "- PlaneStrain                          : EXX EYY     EXY\n"
+     "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
+     "- Tridimensional                       : EXX EYY EZZ EXY EXZ EYZ\n"
+     "* The second parameter (map<double, double>) specify "
+     "a linear evolution: the associative array of time-value "
+     "is used to perform an interpolation. That interpolation "
+     "is only performed between the minimum and maximum times "
+     "given in the array. Should a time be out of the array, "
+     "the returned value will be the one from the nearest "
+     "association available.")
     .def("setImposedDeformationGradient",MTest_setImposedDeformationGradient,
-	 (arg("name"),"values"))
+     (arg("name"),"values"),
+     "This method specify the constant evolution of a deformation "
+     "gradient component.\n"
+     "* The first parameter (string) is the name of the choosen "
+     "deformation gradient component. The allowed components (see "
+     "the 'setModellingHypothesis' method) are:\n"
+     "- 'AxisymmetricalGeneralisedPlaneStrain' : FRR FZZ FTT\n"
+     "- 'Axisymmetrical'                       : FRR FZZ FTT ERZ FZR\n"
+     "- 'PlaneStress'                          : FXX FYY FZZ FXY FYX\n"
+     "- 'PlaneStrain'                          : FXX FYY     FXY FYX\n"
+     "- 'GeneralisedPlaneStrain'               : FXX FYY FZZ FXY FYX\n"
+     "- 'Tridimensional'                       : FXX FYY FZZ FXY FYX FXZ FZX FYZ FZY\n"
+     "* The second parameter (double) is the constant value "
+     "of the selected deformation gradient component.")
     .def("setImposedDeformationGradient",MTest_setImposedDeformationGradient2,
-	 (arg("name"),"values"))
+     (arg("name"),"values"),
+     "This method specify the linear evolution of a deformation "
+     "gradient component.\n"
+     "* The first parameter (string) is the name of the choosen "
+     "deformation gradient component. The allowed components (see "
+     "the 'setModellingHypothesis' method) are:\n"
+     "- 'AxisymmetricalGeneralisedPlaneStrain' : FRR FZZ FTT\n"
+     "- 'Axisymmetrical'                       : FRR FZZ FTT ERZ FZR\n"
+     "- 'PlaneStress'                          : FXX FYY FZZ FXY FYX\n"
+     "- 'PlaneStrain'                          : FXX FYY     FXY FYX\n"
+     "- 'GeneralisedPlaneStrain'               : FXX FYY FZZ FXY FYX\n"
+     "- 'Tridimensional'                       : FXX FYY FZZ FXY FYX FXZ FZX FYZ FZY\n"
+     "* The second parameter (map<double, double>) specify "
+     "a linear evolution: the associative array of time-value "
+     "is used to perform an interpolation. That interpolation "
+     "is only performed between the minimum and maximum times "
+     "given in the array. Should a time be out of the array, "
+     "the returned value will be the one from the nearest "
+     "association available.")
     .def("setImposedOpeningDisplacement",MTest_setImposedOpeningDisplacement,
-	 (arg("name"),"values"))
+     (arg("name"),"values"))
     .def("setImposedOpeningDisplacement",MTest_setImposedOpeningDisplacement2,
-	 (arg("name"),"values"))
+     (arg("name"),"values"))
     .def("setImposedDrivingVariable",MTest_setImposedDrivingVariable,
-	 (arg("name"),"values"))
+     (arg("name"),"values"))
     .def("setImposedDrivingVariable",MTest_setImposedDrivingVariable2,
-	 (arg("name"),"values"))
+     (arg("name"),"values"))
     .def("setScalarInternalStateVariableInitialValue",
 	 &MTest::setScalarInternalStateVariableInitialValue)
     .def("setRotationMatrix",
-	 &MTest_setRotationMatrix1)
+     &MTest_setRotationMatrix1,
+     "This method specify a rotation matrix, for the "
+     "principal material directions to be different from "
+     "those used for the resolution and the boundary "
+     "conditions.\n"
+     "* The parameter (vector<vector<double> >) specify the "
+     "3x3 rotation matrix.")
     .def("setRotationMatrix",
-	 &MTest_setRotationMatrix2)
+     &MTest_setRotationMatrix2,
+     "This method specify a rotation matrix, for the "
+     "principal material directions to be different from "
+     "those used for the resolution and the boundary "
+     "conditions.\n"
+     "* The parameter (vector<vector<double> >) specify the "
+     "3x3 rotation matrix.")
     .def("setScalarInternalStateVariableInitialValue",
 	 &MTest::setScalarInternalStateVariableInitialValue)
     .def("setStensorInternalStateVariableInitialValues",
