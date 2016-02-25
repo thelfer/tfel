@@ -3621,6 +3621,9 @@ mfront/tests/behaviours/unit-tests/CMakeLists.txt -text
 mfront/tests/behaviours/unit-tests/ComputeThermalExpansion.mfront -text
 mfront/tests/behaviours/unit-tests/ComputeThermalExpansion2.mfront -text
 mfront/tests/behaviours/unit-tests/ComputeThermalExpansion3.mfront -text
+mfront/tests/behaviours/unit-tests/ComputeThermalExpansion4.mfront -text
+mfront/tests/behaviours/unit-tests/ComputeThermalExpansion5.mfront -text
+mfront/tests/behaviours/unit-tests/ComputeThermalExpansion6.mfront -text
 mfront/tests/behaviours/unit-tests/Makefile.am -text
 mfront/tests/models/CMakeLists.txt -text
 mfront/tests/models/Makefile.am -text

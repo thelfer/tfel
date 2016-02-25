@@ -1,22 +1,22 @@
-@DSL DefaultDSL;
-@Behaviour OrthotropicElastic2;
+@DSL       DefaultDSL;
+@Behaviour ComputeThermalExpansion6;
 @Author    Helfer Thomas;
-@Date      10/03/11;
+@Date      25/02/16;
+@Description{
+  "A simple behaviour used to check that one cannot use "
+  "the @ComputeThermalExpansion keyword without "
+  "specifying an orthotropic axes convention if "
+  "modelling hypotheses different than 'Tridimensional'"
+  "are supported."
+}
 
-@OrthotropicBehaviour<Pipe>;
+@OrthotropicBehaviour;
 @RequireStiffnessTensor;
 @ProvidesSymmetricTangentOperator;
 
 @ComputeThermalExpansion {"ThermalExpansionCoefficientTest_1.mfront",
                           "ThermalExpansionCoefficientTest_2.mfront",
                           "ThermalExpansionCoefficientTest_3.mfront"};
-
-@PredictionOperator{
-  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
-    return FAILURE;
-  }
-  Dt=D;
-}
 
 @Integrator{
   sig = D*(eto+deto);

@@ -23,11 +23,13 @@ namespace mfront{
     : BehaviourDSLBase<IsotropicBehaviourDSLBase>(),
       theta(0.5f)
   {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");
     // main variables
     this->mb.declareAsASmallStrainStandardBehaviour();
+    // material symmetry
+    this->mb.setSymmetryType(mfront::ISOTROPIC);
+    this->mb.setElasticSymmetryType(mfront::ISOTROPIC);
     // parameters
     this->reserveName("theta");
     this->reserveName("epsilon");

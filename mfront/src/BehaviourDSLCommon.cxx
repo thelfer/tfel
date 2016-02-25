@@ -444,6 +444,36 @@ namespace mfront{
       	this->mb.setParameterDefaultValue(uh,"referenceTemperatureForThermalExpansion",293.15);
       }
     }
+    // if no orthotropic axes convention is defined, one can't compute
+    if((this->mb.getSymmetryType()==mfront::ORTHOTROPIC)&&
+       ((this->mb.areElasticCoefficientsDefined())||
+	(this->mb.areThermalExpansionCoefficientsDefined()))){
+      if((this->mb.getOrthotropicAxesConvention()==
+	  tfel::material::OrthotropicAxesConvention::DEFAULT)&&
+	 (this->mb.areElasticCoefficientsDefined() ?
+	  (this->mb.getElasticCoefficients().size()==9u) :
+	  ((this->mb.areThermalExpansionCoefficientsDefined()) ?
+	   (this->mb.getThermalExpansionCoefficients().size()==3u) : false))){
+	// in this case, only tridimensional case is supported
+	const auto& hs = this->mb.getDistinctModellingHypotheses();
+	for(const auto mh:hs){
+	  if(mh!=ModellingHypothesis::TRIDIMENSIONAL){
+	    this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
+				    "An orthotropic axes convention must be choosen when "
+				    "using the @ComputeStiffnessTensor or the "
+				    "@ComputeThermalExpansion keywords in behaviours which "
+				    "shall be valid in other modelling hypothesis than "
+				    "'Tridimensional'. This message was triggered because "
+				    "either the thermal expansion or to the stiffness tensor "
+				    "is orthotropic.\n"
+				    "Either restrict the validity of the behaviour to "
+				    "'Tridimensional' (see @ModellingHypothesis) or "
+				    "choose and orthotropic axes convention as on option "
+				    "to the @OrthotropicBehaviour keyword");
+	  }
+	}
+      }
+    }
     for(const auto& i  : this->interfaces){
       i.second->allowDynamicallyAllocatedArrays(this->areDynamicallyAllocatedVectorsAllowed());
     }
@@ -972,6 +1002,11 @@ namespace mfront{
   {
     using namespace std;
     const string m("BehaviourDSLCommon::treatComputeThermalExpansion");
+    if(this->mb.getAttribute<bool>(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
+      this->throwRuntimeError("BehaviourDSLCommon::treatComputeThermalExpansion",
+			      "@ComputeThermalExpansion can be used along with "
+			      "@RequireThermalExpansionCoefficientTensor");
+    }
     const auto& files = this->readStringOrArrayOfString(m);
     this->readSpecifiedToken(m,";");
     if((files.size()!=1u)&&(files.size()!=3u)){
@@ -1009,7 +1044,7 @@ namespace mfront{
   void
   BehaviourDSLCommon::treatComputeStiffnessTensor(void)
   {
-    if(this->mb.hasAttribute(BehaviourDescription::requiresStiffnessTensor)){
+    if(this->mb.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false)){
       this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
 			      "@ComputeStiffnessTensor can be used along with "
 			      "@RequireStiffnessTensor");
@@ -2299,7 +2334,6 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourDataPublicMembers(void)
   {
-    using namespace std;
     this->checkBehaviourDataFile();
     if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       this->behaviourDataFile << "StiffnessTensor&\n";
@@ -3182,6 +3216,27 @@ namespace mfront{
 	 (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
       this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
 			      "only finite strain or small strain behaviour are supported");
+    }
+    if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if((this->mb.getOrthotropicAxesConvention()==
+	  tfel::material::OrthotropicAxesConvention::DEFAULT)&&
+	 (this->mb.getThermalExpansionCoefficients().size()==3u)){
+	// in this case, only tridimensional case is supported
+	const auto& hs = this->mb.getDistinctModellingHypotheses();
+	for(const auto mh:hs){
+	  if(mh!=ModellingHypothesis::TRIDIMENSIONAL){
+	    this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
+				    "An orthotropic axes convention must be choosen when "
+				    "using @ComputeThermalExpansion keyword in behaviours which "
+				    "shall be valid in other modelling hypothesis than "
+				    "'Tridimensional'.\n"
+				    "Either restrict the validity of the behaviour to "
+				    "'Tridimensional' (see @ModellingHypothesis) or "
+				    "choose and orthotropic axes convention as on option "
+				    "to the @OrthotropicBehaviour keyword");
+	  }
+	}
+      }
     }
     this->checkBehaviourFile();
     this->behaviourFile << "void\n"

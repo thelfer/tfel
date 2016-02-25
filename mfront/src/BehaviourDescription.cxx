@@ -432,6 +432,8 @@ namespace mfront
   void
   BehaviourDescription::setElasticCoefficients(const std::vector<std::shared_ptr<MaterialPropertyDescription>>& emps)
   {
+    this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		       BehaviourDescription::requiresStiffnessTensor,false);
     if(!this->elasticCoefficients.empty()){
       throw(std::runtime_error("BehaviourDescription::setElasticCoefficients: "
 			       "elastic coefficients already declared"));
@@ -652,8 +654,7 @@ namespace mfront
     return false;
   } // end of BehaviourDescription::isDrivingVariableIncrementName
 
-  std::pair<SupportedTypes::TypeSize,
-	    SupportedTypes::TypeSize>
+  std::pair<SupportedTypes::TypeSize,SupportedTypes::TypeSize>
   BehaviourDescription::getMainVariablesSize(void) const
   {
     auto ov = SupportedTypes::TypeSize{};
@@ -672,6 +673,8 @@ namespace mfront
       throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
 			       "thermal expansion coefficient already defined"));
     }
+    this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		       BehaviourDescription::requiresThermalExpansionCoefficientTensor,false);
     BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a);
     this->thermalExpansionCoefficients.push_back(a);
   } // end of BehaviourDescription::setThermalExpansionCoefficient
@@ -689,6 +692,8 @@ namespace mfront
       throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
 			       "the behaviour is not orthotropic."));
     }
+    this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		       BehaviourDescription::requiresThermalExpansionCoefficientTensor,false);
     BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a1);
     BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a2);
     BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a3);
