@@ -110,6 +110,8 @@ namespace mfront{
 			      &Child::treatUpdateAuxiliaryStateVariables);
     this->registerNewCallBack("@UpdateAuxiliaryStateVariables",
 			      &Child::treatUpdateAuxiliaryStateVariables);
+    this->registerNewCallBack("@ComputeStiffnessTensor",
+			      &Child::treatComputeStiffnessTensor);
     this->registerNewCallBack("@ComputeThermalExpansion",
 			      &Child::treatComputeThermalExpansion);
   } // end of BehaviourDSLBase<Child>::registerDefaultCallBacks

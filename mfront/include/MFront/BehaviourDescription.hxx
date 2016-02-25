@@ -72,6 +72,8 @@ namespace mfront
     //! attribute name
     static const std::string requiresStiffnessTensor;
     //! attribute name
+    static const std::string computesStiffnessTensor;
+    //! attribute name
     static const std::string requiresUnAlteredStiffnessTensor;
     //! attribute name
     static const std::string requiresThermalExpansionCoefficientTensor;
@@ -279,17 +281,29 @@ namespace mfront
     tfel::material::OrthotropicAxesConvention
     getOrthotropicAxesConvention(void) const;
     
-    bool
-    isSymmetryTypeDefined() const;
+    bool isSymmetryTypeDefined() const;
 
     BehaviourSymmetryType
     getElasticSymmetryType() const;
 
-    void
-    setElasticSymmetryType(const BehaviourSymmetryType);
+    void setElasticSymmetryType(const BehaviourSymmetryType);
     
-    bool
-    isElasticSymmetryTypeDefined() const;
+    bool isElasticSymmetryTypeDefined() const;
+    /*!
+     * \brief set the elastic coefficients
+     * \param[in] emps : elastic coefficients
+     */
+    void
+    setElasticCoefficients(const std::vector<std::shared_ptr<MaterialPropertyDescription>>&);
+    /*!
+     * \return the elastic coefficients
+     */
+    const std::vector<std::shared_ptr<MaterialPropertyDescription>>&
+    getElasticCoefficients(void) const;
+    /*!
+     * \return true if the elastic coefficients have been defined
+     */
+    bool areElasticCoefficientsDefined(void) const;
     /*!
      * \return a mechanical behaviour data associated with the
      * given modelling hypothesis
@@ -652,7 +666,7 @@ namespace mfront
     /*!
      * \return the thermal expansion coefficients
      */
-    const std::vector<std::shared_ptr<MaterialPropertyDescription> >&
+    const std::vector<std::shared_ptr<MaterialPropertyDescription>>&
     getThermalExpansionCoefficients(void) const;
     /*!
      * set the behaviour thermal expansion coefficient (isotropic behaviour)
@@ -1327,14 +1341,19 @@ namespace mfront
      * main variables, association of a driving variable and a
      * thermodynamicforce
      */
-    std::map<DrivingVariable,
-	     ThermodynamicForce> mvariables;
+    std::map<DrivingVariable,ThermodynamicForce> mvariables;
+    /*!
+     * elastic coefficients
+     * For isotropic   behaviours, only two elastic coefficients must be defined.
+     * For orthotropic behaviours, two or nine elastic coefficients must be defined.
+     */
+    std::vector<std::shared_ptr<MaterialPropertyDescription>> elasticCoefficients;
     /*!
      * average thermal coefficient
      * For isotropic   behaviours, only one thermal expansion coefficient must be defined.
-     * For orthotropic behaviours, three thermal expansions coefficient must be defined.
+     * For orthotropic behaviours, one or three thermal expansions coefficients must be defined.
      */
-    std::vector<std::shared_ptr<MaterialPropertyDescription> > thermalExpansionCoefficients;
+    std::vector<std::shared_ptr<MaterialPropertyDescription>> thermalExpansionCoefficients;
     //! use units
     bool use_qt;
     //! type of behaviour

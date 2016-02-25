@@ -30,6 +30,7 @@ set(mfront_tests_SOURCES
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicElastic3
+  OrthotropicElastic4
   Elasticity
   Elasticity2
   Elasticity3
@@ -342,6 +343,7 @@ test_castem(norton-rk4)
 test_castem(orthotropicelasticity3-1)
 test_castem(orthotropicelasticity3-2)
 test_castem(orthotropicelasticity3-3)
+test_castem(orthotropicelasticity4-1)
 test_castem(orthotropiccreep)
 test_castem(orthotropiccreep-rk42)
 test_castem(orthotropiccreep-rkCastem)

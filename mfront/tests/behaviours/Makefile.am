@@ -1,4 +1,5 @@
-SUBDIRS = aster abaqus castem castem2 cyrano secant      \
+SUBDIRS = unit-tests                                     \
+	  aster abaqus castem castem2 cyrano secant      \
 	  steffensen ironstuck  alternatesecant          \
 	  alternatedelta2 alternate2delta crossedsecant  \
 	  crosseddelta2 crossed2delta crossed2deltabis
@@ -13,6 +14,7 @@ MFRONTS= DDIF2.mfront                                                      \
          OrthotropicElastic.mfront                                         \
          OrthotropicElastic2.mfront                                        \
          OrthotropicElastic3.mfront                                        \
+         OrthotropicElastic4.mfront                                        \
          GeneralizedMaxwell.mfront                                         \
          FiniteRotationSmallStrainElasticity.mfront                        \
          FiniteRotationSmallStrainElasticity2.mfront                       \

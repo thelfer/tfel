@@ -18,15 +18,41 @@
 #include<windows.h>
 #endif /* __CYGWIN__ */
 
+#include<cstring>
 #include<cstdlib>
+#include<stdexcept>
+
 #include"MFront/InitDSLs.hxx"
 #include"MFront/InitInterfaces.hxx"
 #include"MFront/MFront.hxx"
+
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+static void mfront_terminate_handler(){
+  ::exit(EXIT_FAILURE);
+}
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char *const *const argv)
 {
   using namespace mfront;
+  auto find = [argv,argc](const char *v){
+    for(auto a = argv; a!=argv+argc;++a){
+      if(::strcmp(*a,v)==0){
+	return true;
+      }
+    }
+    return false;
+  };
+#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+  if(find("--terminate-handler")){
+    std::set_terminate(mfront_terminate_handler);
+  }
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
+#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+  const auto bg = !find("--no-gui");
+#endif
   initParsers();
   initInterfaces();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
@@ -37,8 +63,12 @@ int main(const int argc, const char *const *const argv)
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   }
   catch(std::exception& e){
-    MessageBox(nullptr,e.what(),
-	       "mfront",0);
+    if(bg){
+      MessageBox(nullptr,e.what(),
+		 "mfront",0);
+    } else {
+      std::cerr << e.what() << std::endl;
+    }
     return EXIT_FAILURE;
   }
   catch(...){

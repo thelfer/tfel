@@ -67,6 +67,8 @@ namespace mfront{
 
     //! treat an unknown argument
     virtual void treatUnknownArgument(void) final;
+    //! a do nothing callback
+    virtual void doNothing(void) final;
     //! return the current argument
     virtual const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const override final;

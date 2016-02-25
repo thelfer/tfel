@@ -585,6 +585,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/properties/interfaces/include/Makefile
            mfront/tests/properties/interfaces/src/Makefile
            mfront/tests/behaviours/Makefile
+           mfront/tests/behaviours/unit-tests/Makefile
            mfront/tests/behaviours/aster/Makefile
 	   mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck.mtest
            mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck2.mtest
@@ -945,6 +946,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemorthotropicelasticity3-1.mtest
 	   mfront/tests/behaviours/castem/castemorthotropicelasticity3-2.mtest
 	   mfront/tests/behaviours/castem/castemorthotropicelasticity3-3.mtest
+  	   mfront/tests/behaviours/castem/castemorthotropicelasticity4-1.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep-rk42.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest

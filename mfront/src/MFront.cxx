@@ -109,6 +109,10 @@ namespace mfront{
   }
 
   void
+  MFront::doNothing(void)
+  {} // end of MFront::doNothing
+  
+  void
   MFront::treatUnknownArgument(void)
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
@@ -272,6 +276,10 @@ namespace mfront{
   void 
   MFront::registerArgumentCallBacks(void)
   {
+    this->registerNewCallBack("--terminate-handler",&MFront::doNothing,
+			      "set a terminate handler");
+    this->registerNewCallBack("--no-gui",&MFront::doNothing,
+			      "does not report errors by a message box");
     this->registerNewCallBack("--verbose",&MFront::treatVerbose,
 			      "set verbose output",true);
     this->registerNewCallBack("--list-parsers",&MFront::treatListParsers,"list all available domain specific languages (deprecated)");

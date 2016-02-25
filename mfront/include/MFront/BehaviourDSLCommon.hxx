@@ -169,6 +169,25 @@ namespace mfront{
       std::vector<tfel::utilities::Token> untreated;
     };
     /*!
+     * a simple structure used to compte the value of a material
+     * property
+     */
+    struct MaterialPropertyInput{
+      //! variable name
+      std::string name;
+      //! external name
+      std::string ename;
+      //! variable type
+      enum {TEMPERATURE,MATERIALPROPERTY,
+	    EXTERNALSTATEVARIABLE,PARAMETER} type;
+    }; // end of 
+    /*!
+     * \return the inputs of a material property
+     * \param[in] mpd: material property description
+     */
+    std::vector<MaterialPropertyInput>
+    getMaterialPropertyInputs(const MaterialPropertyDescription&) const;
+    /*!
      * \return the name of the generated class
      */
     virtual std::string getClassName(void) const override;
@@ -518,10 +537,13 @@ namespace mfront{
 
     virtual void
       treatLocalVar(void);
-
+    //! handle the @ComputeThermalExpansion keyword
     virtual void
     treatComputeThermalExpansion(void);
-
+    //! handle the @ComputeStiffnessTensor keyword
+    virtual void
+    treatComputeStiffnessTensor(void);
+    
     virtual void
       treatInitLocalVariables(void);
 
@@ -540,6 +562,9 @@ namespace mfront{
     virtual void
     treatRequireStiffnessTensor(void);
 
+    virtual void
+    treatStiffnessTensorOption(void);
+    
     virtual void
     treatRequireThermalExpansionCoefficientTensor(void);
 
@@ -811,6 +836,44 @@ namespace mfront{
     virtual std::string
     getBehaviourConstructorsInitializers(const Hypothesis);
     /*!
+     * \brief write the call to a material property
+     * \param[out] out: output stream
+     * \param[in]  mpd: material property
+     * \param[in] b: if true, the material property is evaluated at
+     * the end of the step, otherwise, it is evaluated at
+     * the beginning of the time step.
+     */
+    virtual void
+    writeMaterialPropertyEvaluation(std::ostream&,
+				    const MaterialPropertyDescription&,
+				    const bool);
+    /*!
+     * \brief write the evoluation of a thermal expansion coefficient
+     * \param[out] out: output stream
+     * \param[in]  mpd: material property
+     * \param[in] T: temperature at which the thermal expansion
+     * coefficient is computed
+     * \param[in] i: indice
+     * \param[in] s: suffix
+     */
+    virtual void
+    writeThermalExpansionCoefficientComputation(std::ostream&,
+						const MaterialPropertyDescription&,
+						const std::string&,
+						const std::string&,
+						const std::string&);
+    virtual void
+    writeThermalExpansionCoefficientsComputations(std::ostream&,
+						  const MaterialPropertyDescription&,
+						  const std::string& = "");
+    virtual void
+    writeThermalExpansionComputation(std::ostream&,
+				     const MaterialPropertyDescription&,
+				     const std::string&,
+				     const std::string&,
+				     const std::string& = "");
+    
+    /*!
      * write the behaviour's compouteStressFreeExpansion method, if
      * mandatory.
      */
@@ -993,21 +1056,6 @@ namespace mfront{
     declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const Hypothesis,
 									   const std::string&);
     /*!
-     * analyse the inputs of a material property to check if it is
-     * available either as a material property or as an external state
-     * variable.
-     *
-     *  If one input is not found, an external state variable is
-     * implicitely declared to allow the evaluation of this material
-     * property.
-     * 
-     * \param[in] h  : modelling hypothesis
-     * \param[in] mp : material property description
-     */
-    virtual void
-    analyseMaterialProperty(const Hypothesis,
-			    const MaterialPropertyDescription&);
-    /*!
      * \brief if no tangent operator was provided, but that the
      * behaviour requires a stiffness matrix, this method creates a
      * minimal tangent operator for elasticity.
@@ -1041,6 +1089,13 @@ namespace mfront{
      */
     virtual bool
     hasUserDefinedTangentOperatorCode(const Hypothesis) const;
+    /*!
+     * \return the list of external state variables names to be used
+     * to compute a material property description
+     * \param[in] mpd: material property description
+     */
+    std::vector<std::string>
+    getMaterialPropertyInputsFromExternalStateVariables(const MaterialPropertyDescription&) const;
     //! constructor
     BehaviourDSLCommon();
     //! behaviour description

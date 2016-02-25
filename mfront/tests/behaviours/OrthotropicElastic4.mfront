@@ -1,0 +1,21 @@
+@DSL DefaultDSL;
+@Behaviour OrthotropicElastic4;
+@Author    Helfer Thomas;
+@Date      23/02/16;
+@Description{
+  "This behaviour uses an isotropic thermal expansion "
+  "definition for an orthoropic behaviour".
+}
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor;
+
+@ComputeThermalExpansion {"ThermalExpansionCoefficientTest_1.mfront"};
+
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = D;
+  }
+}

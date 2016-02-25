@@ -161,6 +161,7 @@ struct DSLTest final
     this->check("DefaultDSL","@StateVariable real v;@Bounds v in [2:*];");
     this->check("DefaultDSL","@StateVariable real v;@Bounds v in ]*:*[;");
     this->check("DefaultDSL","@StateVariable real v;@Bounds v in ]-*:0];");
+    this->check("DefaultDSL","@ComputeThermalExpansion {\"test.mfront\"};");
     return this->result;
   } // end of execute()
  private:

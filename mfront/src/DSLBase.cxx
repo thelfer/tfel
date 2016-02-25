@@ -855,6 +855,21 @@ namespace mfront
     return res;
   } // end of DSLBase::readSpecifiedValues
 
+    /*!
+   * \return the material property description generated from a list of mfront files
+   * \param[in] files: list of files
+   */
+  std::vector<std::shared_ptr<MaterialPropertyDescription>>
+  DSLBase::getMaterialPropertiesDescriptions(const std::vector<std::string>& files)
+  {
+    auto mpds = std::vector<std::shared_ptr<MaterialPropertyDescription>>{};
+    for(const auto & file : files){
+      const auto& f = SearchFile::search(file);
+      mpds.push_back(std::make_shared<MaterialPropertyDescription>(this->handleMaterialLaw(f)));
+    }
+    return mpds;
+  }
+  
   MaterialPropertyDescription
   DSLBase::handleMaterialLaw(const std::string& f)
   {

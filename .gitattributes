@@ -2099,6 +2099,7 @@ mfront/tests/behaviours/OrthotropicCreep_rkCastem.mfront -text
 mfront/tests/behaviours/OrthotropicElastic.mfront -text
 mfront/tests/behaviours/OrthotropicElastic2.mfront -text
 mfront/tests/behaviours/OrthotropicElastic3.mfront -text
+mfront/tests/behaviours/OrthotropicElastic4.mfront -text
 mfront/tests/behaviours/PlasIsoCin.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/PolyCrystals.mfront -text
@@ -2916,6 +2917,7 @@ mfront/tests/behaviours/castem/castemorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicelasticity3-1.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicelasticity3-2.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicelasticity3-3.mtest.in -text
+mfront/tests/behaviours/castem/castemorthotropicelasticity4-1.mtest.in -text
 mfront/tests/behaviours/castem/castemplasisocin.mtest.in -text
 mfront/tests/behaviours/castem/castemplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castempolycrystals.mtest.in -text
@@ -3615,6 +3617,11 @@ mfront/tests/behaviours/steffensen/steffensenplasticity.mtest.in -text
 mfront/tests/behaviours/steffensen/steffensenstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/steffensen/steffensenstressrelaxation.mtest.in -text
 mfront/tests/behaviours/steffensen/steffensenviscoplasisocin.mtest.in -text
+mfront/tests/behaviours/unit-tests/CMakeLists.txt -text
+mfront/tests/behaviours/unit-tests/ComputeThermalExpansion.mfront -text
+mfront/tests/behaviours/unit-tests/ComputeThermalExpansion2.mfront -text
+mfront/tests/behaviours/unit-tests/ComputeThermalExpansion3.mfront -text
+mfront/tests/behaviours/unit-tests/Makefile.am -text
 mfront/tests/models/CMakeLists.txt -text
 mfront/tests/models/Makefile.am -text
 mfront/tests/models/include/CMakeLists.txt -text

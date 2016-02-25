@@ -65,6 +65,7 @@ namespace mfront{
     this->disableCallBack("@IsotropicElasticBehaviour");
     this->disableCallBack("@IsotropicBehaviour");
     this->disableCallBack("@RequireStiffnessOperator");
+    this->disableCallBack("@ComputeStiffnessOperator");
     this->disableCallBack("@RequireThermalExpansionCoefficientTensor");
     // a defaut version of the prediction operator is always provided
     this->mb.setAttribute(h,BehaviourData::hasPredictionOperator,true);

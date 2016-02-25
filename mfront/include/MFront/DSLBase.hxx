@@ -348,6 +348,12 @@ namespace mfront
      */
     virtual MaterialPropertyDescription
     handleMaterialLaw(const std::string&);
+    /*!
+     * \return the material property description generated from a list of mfront files
+     * \param[in] files: list of files
+     */
+    virtual std::vector<std::shared_ptr<MaterialPropertyDescription>>
+    getMaterialPropertiesDescriptions(const std::vector<std::string>&);
 
     virtual void
     treatMFront(void);
