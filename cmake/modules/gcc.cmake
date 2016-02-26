@@ -82,6 +82,7 @@ if(enable-sanitize-options)
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=object-size")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=vpt")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=address")
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=leak")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
 endif(enable-sanitize-options)
 

@@ -235,6 +235,63 @@ namespace mfront
     return this->parser;
   } // end of BehaviourDescription::getParserName
 
+  std::vector<BehaviourDescription::MaterialPropertyInput>
+  BehaviourDescription::getMaterialPropertyInputs(const MaterialPropertyDescription& mpd) const
+  {
+    auto getVariableType = [](const BehaviourDescription& bd,
+			      const Hypothesis h,
+			      const std::string& v){
+      if(bd.isExternalStateVariableName(h,v)){
+	return MaterialPropertyInput::EXTERNALSTATEVARIABLE;
+      } else if(bd.isMaterialPropertyName(h,v)){
+	return MaterialPropertyInput::MATERIALPROPERTY;
+      } else if(bd.isParameterName(h,v)){
+	return MaterialPropertyInput::PARAMETER;
+      } else {
+	throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs: "
+				 "unsupported variable: variable '"+v+"' is "
+				 "neither an external state variable, a material "
+				 "property nor a parameter"));
+      }
+    };
+    auto inputs = std::vector<MaterialPropertyInput>{};
+    for(const auto& v : mpd.inputs){
+      if((mpd.glossaryNames.find(v.name)==mpd.glossaryNames.end())&&
+    	 (mpd.entryNames.find(v.name)==mpd.entryNames.end())){
+    	throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs : "
+				 "no glossary nor entry name declared for variable "
+				 "'"+v.name+"' used by the material property "
+				 "'"+mpd.law+"'"));
+      }
+      const auto& vn = v.getExternalName(mpd.glossaryNames,mpd.entryNames);
+      if(vn==tfel::glossary::Glossary::Temperature){
+	inputs.push_back({"T",tfel::glossary::Glossary::Temperature,
+	      MaterialPropertyInput::TEMPERATURE});
+      } else {
+	auto hs = this->getDistinctModellingHypotheses();
+	const auto n =
+	  this->getVariableNameFromGlossaryNameOrEntryName(*(hs.begin()),vn);
+	const auto t = getVariableType(*this,*(hs.begin()),n);
+	for(const auto h:hs){
+	  if(this->getVariableNameFromGlossaryNameOrEntryName(h,vn)!=n){
+	    throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs: "
+				    "the external name '"+vn+"' is associated with "
+				    "two differents variables in two distinct "
+				     "modelling hypotheses. This is not supported."));
+	  }
+	  if(getVariableType(*this,h,n)!=t){
+	    throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs: "
+				    "the external name '"+vn+"' has two different "
+				    "types in two distinct modelling hypotheses. "
+				     "This is not supported."));
+	  }
+	}
+	inputs.push_back({n,vn,t});
+      }
+    }
+    return inputs;
+  } // end of BehaviourDescription::getMaterialPropertyInputs
+  
   void
   BehaviourDescription::setIntegrationScheme(const BehaviourDescription::IntegrationScheme s)
   {
@@ -408,76 +465,92 @@ namespace mfront
   } // end of BehaviourDescription::getBehaviourTypeFlag
 
   bool
-  BehaviourDescription::areElasticCoefficientsDefined(void) const
+  BehaviourDescription::areElasticMaterialPropertiesDefined(void) const
   {
-    return !this->elasticCoefficients.empty();
-  } // end of BehaviourDescription::areElasticCoefficientsDefined
+    return !this->elasticMaterialProperties.empty();
+  } // end of BehaviourDescription::areElasticMaterialPropertiesDefined
 
-  const std::vector<std::shared_ptr<MaterialPropertyDescription>>&
-  BehaviourDescription::getElasticCoefficients(void) const
-  {
-    if(!this->areElasticCoefficientsDefined()){
-      throw(std::runtime_error("BehaviourDescription::getElasticCoefficients: "
-			       "no elastic coefficients defined"));
+  bool
+  BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep(void) const{
+    if(!this->areElasticMaterialPropertiesDefined()){
+      throw(std::runtime_error("BehaviourDescription::getElasticMaterialProperties: "
+			       "no elastic material property defined"));
     }
-    return this->elasticCoefficients;
+    for(const auto mp : this->elasticMaterialProperties){
+      for(const auto i : this->getMaterialPropertyInputs(*mp)){
+	if(!((i.type==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
+	     (i.type==BehaviourDescription::MaterialPropertyInput::PARAMETER))){
+	  return false;
+	}
+      }
+    }
+    return true;
+  } // end of BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep
+  
+  const std::vector<std::shared_ptr<MaterialPropertyDescription>>&
+  BehaviourDescription::getElasticMaterialProperties(void) const
+  {
+    if(!this->areElasticMaterialPropertiesDefined()){
+      throw(std::runtime_error("BehaviourDescription::getElasticMaterialProperties: "
+			       "no elastic material property defined"));
+    }
+    return this->elasticMaterialProperties;
   }
 
   static void
-  checkElasticCoefficient(const MaterialPropertyDescription& emp,
+  checkElasticMaterialProperty(const MaterialPropertyDescription& emp,
 			  const std::string&){
     
   }
   
   void
-  BehaviourDescription::setElasticCoefficients(const std::vector<std::shared_ptr<MaterialPropertyDescription>>& emps)
+  BehaviourDescription::setElasticMaterialProperties(const std::vector<std::shared_ptr<MaterialPropertyDescription>>& emps)
   {
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresStiffnessTensor,false);
-    if(!this->elasticCoefficients.empty()){
-      throw(std::runtime_error("BehaviourDescription::setElasticCoefficients: "
-			       "elastic coefficients already declared"));
+    if(!this->elasticMaterialProperties.empty()){
+      throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
+			       "elastic material property already declared"));
     }
     if(emps.size()==2u){
       if(this->isElasticSymmetryTypeDefined()){
 	if(this->getElasticSymmetryType()!=mfront::ISOTROPIC){
-	  throw(std::runtime_error("BehaviourDescription::setElasticCoefficients: "
+	  throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
 				   "inconsistent elastic symmetry type"));
 	}
       } else {
 	this->setElasticSymmetryType(mfront::ISOTROPIC);
       }
-      checkElasticCoefficient(*(emps[0]),tfel::glossary::Glossary::YoungModulus);
-      checkElasticCoefficient(*(emps[1]),tfel::glossary::Glossary::PoissonRatio);
+      checkElasticMaterialProperty(*(emps[0]),tfel::glossary::Glossary::YoungModulus);
+      checkElasticMaterialProperty(*(emps[1]),tfel::glossary::Glossary::PoissonRatio);
     } else if(emps.size()==9u){
       if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
-	throw(std::runtime_error("BehaviourDescription::setElasticCoefficients: "
+	throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
 				 "the behaviour is not orthotropic."));
       }
       if(this->isElasticSymmetryTypeDefined()){
 	if(this->getElasticSymmetryType()!=mfront::ORTHOTROPIC){
-	  throw(std::runtime_error("BehaviourDescription::setElasticCoefficients: "
+	  throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
 				   "inconsistent elastic symmetry type"));
 	}
       } else {
 	this->setElasticSymmetryType(mfront::ORTHOTROPIC);
       }
-      checkElasticCoefficient(*(emps[0]),tfel::glossary::Glossary::YoungModulus1);
-      checkElasticCoefficient(*(emps[1]),tfel::glossary::Glossary::YoungModulus2);
-      checkElasticCoefficient(*(emps[2]),tfel::glossary::Glossary::YoungModulus3);
-      checkElasticCoefficient(*(emps[3]),tfel::glossary::Glossary::PoissonRatio12);
-      checkElasticCoefficient(*(emps[4]),tfel::glossary::Glossary::PoissonRatio23);
-      checkElasticCoefficient(*(emps[5]),tfel::glossary::Glossary::PoissonRatio13);
-      checkElasticCoefficient(*(emps[6]),tfel::glossary::Glossary::ShearModulus12);
-      checkElasticCoefficient(*(emps[7]),tfel::glossary::Glossary::ShearModulus23);
-      checkElasticCoefficient(*(emps[9]),tfel::glossary::Glossary::ShearModulus13);
-	
+      checkElasticMaterialProperty(*(emps[0]),tfel::glossary::Glossary::YoungModulus1);
+      checkElasticMaterialProperty(*(emps[1]),tfel::glossary::Glossary::YoungModulus2);
+      checkElasticMaterialProperty(*(emps[2]),tfel::glossary::Glossary::YoungModulus3);
+      checkElasticMaterialProperty(*(emps[3]),tfel::glossary::Glossary::PoissonRatio12);
+      checkElasticMaterialProperty(*(emps[4]),tfel::glossary::Glossary::PoissonRatio23);
+      checkElasticMaterialProperty(*(emps[5]),tfel::glossary::Glossary::PoissonRatio13);
+      checkElasticMaterialProperty(*(emps[6]),tfel::glossary::Glossary::ShearModulus12);
+      checkElasticMaterialProperty(*(emps[7]),tfel::glossary::Glossary::ShearModulus23);
+      checkElasticMaterialProperty(*(emps[9]),tfel::glossary::Glossary::ShearModulus13);
     } else {
-      throw(std::runtime_error("BehaviourDescription::setElasticCoefficients: "
+      throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
 			       "unsupported behaviour type"));
     }
-    this->elasticCoefficients = emps;
-  } // end of BehaviourDescription::setElasticCoefficients
+    this->elasticMaterialProperties = emps;
+  } // end of BehaviourDescription::setElasticMaterialProperties
     
   BehaviourSymmetryType
   BehaviourDescription::getElasticSymmetryType() const

@@ -103,7 +103,7 @@ MACRO(tfel_enable_cxx_compiler_flag2 out flag var)
 	SET(${out} "-${flag} ${${out}}")
     endif(MSVC)
   ELSE(${${var})
-    MESSAGE(STATUS "flag '-${flag}' disabled")
+    MESSAGE(STATUS "flag '${flag}' disabled")
   ENDIF(${var})
 ENDMACRO(tfel_enable_cxx_compiler_flag2)
 

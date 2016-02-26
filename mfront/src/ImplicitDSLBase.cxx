@@ -41,7 +41,6 @@ namespace mfront{
   ImplicitDSLBase::ImplicitDSLBase()
     : BehaviourDSLBase<ImplicitDSLBase>()
   {
-    using namespace std;
     // dynamically allocated vectors are not yet allowed in implicit
     // parsers
     this->areDynamicallyAllocatedVectorsAllowed_ = false;
@@ -108,6 +107,8 @@ namespace mfront{
 			      &ImplicitDSLBase::treatMaximumIncrementValuePerIteration);
     this->registerNewCallBack("@IntegrationVariable",
     			      &ImplicitDSLBase::treatIntegrationVariable);
+    this->registerNewCallBack("@ComputeStiffnessTensor",
+			      &ImplicitDSLBase::treatComputeStiffnessTensor);
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
     this->mb.setIntegrationScheme(BehaviourDescription::IMPLICITSCHEME);
@@ -130,6 +131,12 @@ namespace mfront{
     BehaviourDSLCommon::treatUnknownKeyword();
   } // end of ImplicitDSLBase::treatUnknownKeyword
 
+  void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
+  {
+    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(h);
+      
+  } // end of writeBehaviourLocalVariablesInitialisation
+  
   void ImplicitDSLBase::treatStateVariable(void)
   {
     VarContainer v;

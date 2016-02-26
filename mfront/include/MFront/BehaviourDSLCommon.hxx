@@ -169,25 +169,6 @@ namespace mfront{
       std::vector<tfel::utilities::Token> untreated;
     };
     /*!
-     * a simple structure used to compte the value of a material
-     * property
-     */
-    struct MaterialPropertyInput{
-      //! variable name
-      std::string name;
-      //! external name
-      std::string ename;
-      //! variable type
-      enum {TEMPERATURE,MATERIALPROPERTY,
-	    EXTERNALSTATEVARIABLE,PARAMETER} type;
-    }; // end of 
-    /*!
-     * \return the inputs of a material property
-     * \param[in] mpd: material property description
-     */
-    std::vector<MaterialPropertyInput>
-    getMaterialPropertyInputs(const MaterialPropertyDescription&) const;
-    /*!
      * \return the name of the generated class
      */
     virtual std::string getClassName(void) const override;
@@ -839,9 +820,7 @@ namespace mfront{
      * \brief write the call to a material property
      * \param[out] out: output stream
      * \param[in]  mpd: material property
-     * \param[in] b: if true, the material property is evaluated at
-     * the end of the step, otherwise, it is evaluated at
-     * the beginning of the time step.
+     * \param[in]  t: instant at which the material property is evaluated.
      */
     virtual void
     writeMaterialPropertyEvaluation(std::ostream&,
@@ -874,13 +853,19 @@ namespace mfront{
 				     const std::string& = "");
     
     /*!
-     * write the behaviour's compouteStressFreeExpansion method, if
+     * \brief write the behaviour's computeStressFreeExpansion method, if
      * mandatory.
      */
     virtual void
     writeBehaviourComputeStressFreeExpansion(void);
     /*!
-     * write the initalize method . This method is called after that
+     * \brief write the stiffness tensor computation, if
+     * mandatory.
+     */
+    virtual void
+    writeBehaviourComputeStiffnessTensor(void);
+    /*!
+     * \brief write the initalize method . This method is called after that
      * the main variables were set.
      */
     virtual void

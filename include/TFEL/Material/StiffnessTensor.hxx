@@ -21,6 +21,12 @@
 namespace tfel{
 
   namespace material{
+
+    //! a small enumerattion
+    enum struct StiffnessMatrixType{
+      UNALTERED,
+      ALTERED
+    }; // end of enum struct StiffnessMatrixType
     
     /*!
      * \brief compute the altered stiffness tensor from the unaltered
@@ -71,6 +77,68 @@ namespace tfel{
 	  const tfel::math::st2tost2<2u,StressType>&);
     };
 
+    /*!
+     * \param[out] D:  stiffness tensor
+     * \param[in]  yg: young modulus
+     * \param[in]  nu: poisson ratio
+     */
+    template<unsigned short N,StiffnessMatrixType,
+	     typename StressType,typename RealType>
+    void
+    computeIsotropicStiffnessTensor(tfel::math::st2tost2<N,StressType>&,
+				    const StressType,
+				    const RealType);
+    /*!
+     * \param[out] D: stiffness tensor
+     * \param[in]  yg1:  young modulus in the first direction
+     * \param[in]  yg2:  young modulus in the second direction
+     * \param[in]  yg3:  young modulus in the third direction
+     * \param[in]  nu12: PoissonRatio
+     * \param[in]  nu23: PoissonRatio
+     * \param[in]  nu13: PoissonRatio
+     * \param[in]  G12:  shear modulus
+     * \param[in]  G23:  shear modulus
+     * \param[in]  G13:  shear modulus
+     */
+    template<unsigned short N,StiffnessMatrixType,
+	     typename StressType,typename RealType>
+    void
+    computeOrthotropicStiffnessTensor(tfel::math::st2tost2<N,StressType>&,
+				      const StressType,const StressType,const StressType,
+				      const RealType,const RealType,const RealType,
+				      const StressType,const StressType,const StressType);
+
+    /*!
+     * \param[out] D:  stiffness tensor
+     * \param[in]  yg: young modulus
+     * \param[in]  nu: poisson ratio
+     */
+    template<ModellingHypothesis::Hypothesis H,StiffnessMatrixType,
+	     typename StressType,typename RealType>
+    void
+    computeIsotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,
+				    const StressType,
+				    const RealType);
+    /*!
+     * \param[out] D: stiffness tensor
+     * \param[in]  yg1:  young modulus in the first direction
+     * \param[in]  yg2:  young modulus in the second direction
+     * \param[in]  yg3:  young modulus in the third direction
+     * \param[in]  nu12: PoissonRatio
+     * \param[in]  nu23: PoissonRatio
+     * \param[in]  nu13: PoissonRatio
+     * \param[in]  G12:  shear modulus
+     * \param[in]  G23:  shear modulus
+     * \param[in]  G13:  shear modulus
+     */
+    template<ModellingHypothesis::Hypothesis H,StiffnessMatrixType,
+	     typename StressType,typename RealType>
+    void
+    computeOrthotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,
+				      const StressType,const StressType,const StressType,
+				      const RealType,const RealType,const RealType,
+				      const StressType,const StressType,const StressType);
+    
   } // end of namespace material
 
 } // end of namespace tfel

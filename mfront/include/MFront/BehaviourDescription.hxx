@@ -61,6 +61,19 @@ namespace mfront
 		       * `MultipleIsotropicMisesFlowsDSL` parsers. */
       UNDEFINEDINTEGRATIONSCHEME //! default value.
     };
+    /*!
+     * a simple structure used to compte the value of a material
+     * property
+     */
+    struct MaterialPropertyInput{
+      //! variable name
+      std::string name;
+      //! external name
+      std::string ename;
+      //! variable type
+      enum {TEMPERATURE,MATERIALPROPERTY,
+	    EXTERNALSTATEVARIABLE,PARAMETER} type;
+    }; // end of 
     //! a simple alias
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
     //! a simple alias
@@ -133,6 +146,12 @@ namespace mfront
      */
     const std::string&
     getClassName(void) const;
+    /*!
+     * \return the inputs of a material property
+     * \param[in] mpd: material property description
+     */
+    std::vector<MaterialPropertyInput>
+    getMaterialPropertyInputs(const MaterialPropertyDescription&) const;
     /*!
      * \brief append the given code to the sources
      * \param[in] s : sources
@@ -290,20 +309,25 @@ namespace mfront
     
     bool isElasticSymmetryTypeDefined() const;
     /*!
-     * \brief set the elastic coefficients
-     * \param[in] emps : elastic coefficients
+     * \brief set the elastic material properties
+     * \param[in] emps : elastic material properties
      */
     void
-    setElasticCoefficients(const std::vector<std::shared_ptr<MaterialPropertyDescription>>&);
+    setElasticMaterialProperties(const std::vector<std::shared_ptr<MaterialPropertyDescription>>&);
     /*!
-     * \return the elastic coefficients
+     * \return the elastic material properties
      */
     const std::vector<std::shared_ptr<MaterialPropertyDescription>>&
-    getElasticCoefficients(void) const;
+    getElasticMaterialProperties(void) const;
     /*!
-     * \return true if the elastic coefficients have been defined
+     * \return true if the elastic material properties have been defined
      */
-    bool areElasticCoefficientsDefined(void) const;
+    bool areElasticMaterialPropertiesDefined(void) const;
+    /*!
+     * \return true if the elastic material properties are constant
+     * over the time step
+     */
+    bool areElasticMaterialPropertiesConstantDuringTheTimeStep(void) const;
     /*!
      * \return a mechanical behaviour data associated with the
      * given modelling hypothesis
@@ -1343,11 +1367,11 @@ namespace mfront
      */
     std::map<DrivingVariable,ThermodynamicForce> mvariables;
     /*!
-     * elastic coefficients
-     * For isotropic   behaviours, only two elastic coefficients must be defined.
-     * For orthotropic behaviours, two or nine elastic coefficients must be defined.
+     * elastic material properties
+     * For isotropic   behaviours, only two elastic material properties must be defined.
+     * For orthotropic behaviours, two or nine elastic material properties must be defined.
      */
-    std::vector<std::shared_ptr<MaterialPropertyDescription>> elasticCoefficients;
+    std::vector<std::shared_ptr<MaterialPropertyDescription>> elasticMaterialProperties;
     /*!
      * average thermal coefficient
      * For isotropic   behaviours, only one thermal expansion coefficient must be defined.

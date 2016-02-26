@@ -48,12 +48,10 @@ namespace mfront
 
   static bool
   isInteger(const std::string& s){
-    using namespace std;
-    bool b = true;
-    for(auto p=s.begin();(p!=s.end()&&(b));++p){
-      b = isdigit(*p)!=0;
+    for(const auto c : s){
+      if(!std::isdigit(c)){return false;}
     }
-    return b;
+    return true;
   }
 
   DSLBase::VariableModifier::~VariableModifier()
@@ -1051,7 +1049,6 @@ namespace mfront
   void
   DSLBase::ignoreKeyWord(const std::string& key)
   {
-    using namespace std;
     this->checkNotEndOfFile("DSLBase::ignoreKeyWord",
 			    "error while treating keyword '"+key+"' ");
     while((this->current->value!="{")&&(this->current->value!=";")){
@@ -1073,7 +1070,7 @@ namespace mfront
 	  --openedBrackets;
 	}
       }
-      TokensContainer::const_iterator next = this->current;
+      auto next = this->current;
       ++next;
       if(next!=this->fileTokens.end()){
 	if(next->value==";"){
@@ -1084,8 +1081,7 @@ namespace mfront
     ++(this->current);
   } // end of DSLBase::ignoreKeyWord
 
-  double
-  DSLBase::readDouble(void)
+  double DSLBase::readDouble(void)
   {
     this->checkNotEndOfFile("DSLBase::readDouble");
     std::istringstream flux(this->current->value);
@@ -1102,7 +1098,7 @@ namespace mfront
 
   void
   DSLBase::handleParameter(VariableDescriptionContainer& c,
-			      std::map<std::string,double>& v)
+			   std::map<std::string,double>& v)
   {
     auto endOfTreatment=false;
     while((this->current!=this->fileTokens.end())&&
@@ -1179,19 +1175,3 @@ namespace mfront
   } // end of DSLBase::completeTargetsDescription()
 
 } // end of namespace mfront
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
