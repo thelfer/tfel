@@ -173,7 +173,6 @@ namespace tfel
        * argument
        */
       void treatVersion(void);
-
       /*!
        * \brief parse arguments using registred methods.
        */

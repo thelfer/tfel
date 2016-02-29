@@ -916,6 +916,11 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemelasticity31.mtest
            mfront/tests/behaviours/castem/castemelasticity32.mtest
            mfront/tests/behaviours/castem/castemelasticity33.mtest
+           mfront/tests/behaviours/castem/castemelasticity4-1.mtest
+	   mfront/tests/behaviours/castem/castemelasticity4-2.mtest
+	   mfront/tests/behaviours/castem/castemelasticity4-3.mtest
+	   mfront/tests/behaviours/castem/castemelasticity4-4.mtest
+  	   mfront/tests/behaviours/castem/castemelasticity5-1.mtest
            mfront/tests/behaviours/castem/castemgeneralizedmaxwell.mtest
            mfront/tests/behaviours/castem/castemddif2.mtest
            mfront/tests/behaviours/castem/castemddif2-2.mtest
@@ -947,6 +952,30 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/castem/castemorthotropicelasticity3-2.mtest
 	   mfront/tests/behaviours/castem/castemorthotropicelasticity3-3.mtest
   	   mfront/tests/behaviours/castem/castemorthotropicelasticity4-1.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-1.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-2.mtest
+      	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-3.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-4.mtest
+      	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-5.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-6.mtest
+      	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-7.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-8.mtest
+      	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-9.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-10.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-11.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-12.mtest
+      	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-13.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-14.mtest
+      	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-15.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-16.mtest
+      	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-17.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-18.mtest
+      	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-19.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-20.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-21.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-22.mtest
+      	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-23.mtest
+    	   mfront/tests/behaviours/castem/castemorthotropicelasticity5-24.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep-rk42.mtest
            mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest
@@ -1988,6 +2017,9 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-2-1D.mtest
            mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-3-1D.mtest
+	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity5-1.mtest
+	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity5-2.mtest
+	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity5-3.mtest
            mfront/tests/models/Makefile
            mfront/tests/models/include/Makefile
            mfront/tests/models/src/Makefile

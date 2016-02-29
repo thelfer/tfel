@@ -598,11 +598,9 @@ namespace mfront
   void
   BehaviourDescription::setSymmetryType(const BehaviourSymmetryType t)
   {
-    using namespace std;
     if(this->stypeIsDefined){
-      string msg("BehaviourDescription::setSymmetryType: "
-		 "symmetry type already declared");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setSymmetryType: "
+			       "symmetry type already declared"));
     }
     this->stype = t;
     this->stypeIsDefined=true;
@@ -659,11 +657,9 @@ namespace mfront
   void
   BehaviourDescription::declareAsACohesiveZoneModel(void)
   {
-    using namespace std;
     if(!this->mvariables.empty()){
-      string msg("BehaviourDescription::declareAsACohesiveZoneModel: ");
-      msg += "some driving variables are already declared";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::declareAsACohesiveZoneModel: "
+			       "some driving variables are already declared"));
     }
     DrivingVariable u;
     u.name = "u";
@@ -695,8 +691,7 @@ namespace mfront
     }
   } // end of BehaviourDescription::addMainVariables
 
-  const std::map<DrivingVariable,
-		 ThermodynamicForce>&
+  const std::map<DrivingVariable,ThermodynamicForce>&
   BehaviourDescription::getMainVariables(void) const
   {
     return this->mvariables;

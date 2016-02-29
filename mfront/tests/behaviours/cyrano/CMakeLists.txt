@@ -16,11 +16,21 @@ set(mfront_tests_SOURCES
   Elasticity3
   OrthotropicElastic
   OrthotropicElastic2
+  OrthotropicElastic5
   Norton
   ImplicitNorton
   OrthotropicCreep
   EllipticCreep)
 mfront_dependencies(MFrontCyranoBehaviours
+  YoungModulusTest_1
+  YoungModulusTest_2
+  YoungModulusTest_3
+  PoissonRatioTest_12
+  PoissonRatioTest_23
+  PoissonRatioTest_13
+  ShearModulusTest_12
+  ShearModulusTest_23
+  ShearModulusTest_13
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
   ThermalExpansionCoefficientTest_1
@@ -152,6 +162,9 @@ test_cyrano(elasticity18)
 test_cyrano(elasticity19)
 test_cyrano(elasticity20)
 test_cyrano(elasticity21)
+test_cyrano(orthotropicelasticity5-1)
+test_cyrano(orthotropicelasticity5-2)
+test_cyrano(orthotropicelasticity5-3)
 test_cyrano(norton)
 test_cyrano(norton2)
 test_cyrano(orthotropiccreep)

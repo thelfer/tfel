@@ -122,7 +122,6 @@ namespace mfront{
   BehaviourDSLCommon::appendToHypothesesList(std::set<Hypothesis>& h,
 					     const std::string& v) const
   {
-    using namespace std;
     if(v==".+"){
       const auto& ash = ModellingHypothesis::getModellingHypotheses();
       for(const auto & elem : ash){
@@ -265,12 +264,11 @@ namespace mfront{
   std::set<BehaviourDSLCommon::Hypothesis>
   BehaviourDSLCommon::getDefaultModellingHypotheses(void) const
   {
-    using MH = ModellingHypothesis;
-    return std::set<Hypothesis>{MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-	MH::AXISYMMETRICAL,
-	MH::PLANESTRAIN,
-	MH::GENERALISEDPLANESTRAIN,
-	MH::TRIDIMENSIONAL};
+    return {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+	ModellingHypothesis::AXISYMMETRICAL,
+	ModellingHypothesis::PLANESTRAIN,
+	ModellingHypothesis::GENERALISEDPLANESTRAIN,
+	ModellingHypothesis::TRIDIMENSIONAL};
   } // end of BehaviourDSLCommon::getDefaultModellingHypotheses
 
   bool
@@ -985,6 +983,35 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatComputeThermalExpansion
 
   void
+  BehaviourDSLCommon::treatElasticMaterialProperties(void){
+    if(this->mb.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false)){
+      this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
+			      "@ElasticMaterialProperties can not be used along with "
+			      "@RequireStiffnessTensor");
+    }
+    this->readElasticMaterialProperties();
+  }
+
+  void
+  BehaviourDSLCommon::readElasticMaterialProperties(void){
+    const auto& files = this->readStringOrArrayOfString("BehaviourDSLCommon::treatComputeStiffnessTensor");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatComputeStiffnessTensor",";");
+    if((files.size()!=2u)&&(files.size()!=9u)){
+      this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
+			      "invalid number of file names given");
+    }
+    if(files.size()==9u){
+      // the material shall have been declared orthotropic
+      if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
+	this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
+				"the mechanical behaviour must be orthotropic to give more than "
+				"two elastic material properties.");
+      }
+    }
+    this->mb.setElasticMaterialProperties(this->getMaterialPropertiesDescriptions(files));
+  }
+  
+  void
   BehaviourDSLCommon::treatComputeStiffnessTensor(void)
   {
     if(this->mb.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false)){
@@ -995,23 +1022,8 @@ namespace mfront{
     if(this->current->value=="<"){
       this->treatStiffnessTensorOption();
     }
-    const auto& files = this->readStringOrArrayOfString("BehaviourDSLCommon::treatComputeStiffnessTensor");
-    this->readSpecifiedToken("BehaviourDSLCommon::treatComputeStiffnessTensor",";");
-    if((files.size()!=2u)&&(files.size()!=9u)){
-      this->throwRuntimeError("BehaviourDSLCommon::treatComputeThermalExpansion",
-			      "invalid number of file names given");
-    }
-    if(files.size()==9u){
-      // the material shall have been declared orthotropic
-      if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
-	this->throwRuntimeError("BehaviourDSLCommon::treatComputeThermalExpansion",
-				"the mechanical behaviour must be orthotropic to give more than "
-				"one thermal expansion coefficient.");
-      }
-    }
-    this->mb.setElasticMaterialProperties(this->getMaterialPropertiesDescriptions(files));
-    this->mb.setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			  BehaviourDescription::computesStiffnessTensor,true);
+    this->readElasticMaterialProperties();
+    this->mb.setAttribute(BehaviourDescription::computesStiffnessTensor,true,true);
   } // end of BehaviourDSLCommon::treatComputeStiffnessTensor
 
   void
@@ -1316,8 +1328,6 @@ namespace mfront{
     this->readSpecifiedToken("BehaviourDSLCommon::treatOrthotropicBehaviour",";");
     this->mb.setSymmetryType(mfront::ORTHOTROPIC);
     this->mb.setOrthotropicAxesConvention(c);
-    // by defaut the elastic behaviour is also orthotropic
-    this->mb.setElasticSymmetryType(mfront::ORTHOTROPIC);
   } // end of BehaviourDSLCommon::treatOrthotropicBehaviour
 
   void
@@ -1327,10 +1337,6 @@ namespace mfront{
     if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
       this->throwRuntimeError("BehaviourDSLCommon::treatIsotropicElasticBehaviour",
 			      "this behaviour has not been declared orthotropic");
-    }
-    if(this->mb.getElasticSymmetryType()!=mfront::ORTHOTROPIC){
-      this->throwRuntimeError("BehaviourDSLCommon::treatIsotropicElasticBehaviour",
-			      "the elastic behaviour has already been declared isotropic");
     }
     this->mb.setElasticSymmetryType(mfront::ISOTROPIC);
   } // end of BehaviourDSLCommon::treatIsotropicElasticBehaviour
@@ -1823,8 +1829,6 @@ namespace mfront{
     const auto tos = tfel::material::getFiniteStrainBehaviourTangentOperatorFlags();
     // stiffness tensor
     this->mb.registerMemberName(h,"D");
-    // stiffness tensor at the end of the time step
-    this->mb.registerMemberName(h,"D_tdt");
     // tangent operator
     this->mb.registerMemberName(h,"Dt");
     this->reserveName("N");
@@ -1888,11 +1892,11 @@ namespace mfront{
     // By default disable use of quantities
     this->mb.setUseQt(false);
     // By default, a behaviour can be used in a purely implicit resolution
-    const Hypothesis h=ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setUsableInPurelyImplicitResolution(h,true);
     // reserve names
     for(const auto& v : DSLBase::getDefaultReservedNames()){
-      this->mb.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v);
+      this->mb.reserveName(h,v);
     }
     // register behaviours specific names
     this->registerDefaultVarNames();
@@ -1906,54 +1910,39 @@ namespace mfront{
   }
   
   void BehaviourDSLCommon::writeIncludes(std::ofstream& file) {
-    using namespace std;
-    if((!file)||
-       (!file.good())){
-      string msg("BehaviourDSLCommon::writeIncludes : ");
-      msg += "ouput file is not valid";
-      throw(runtime_error(msg));
+    if((!file)||(!file.good())){
+      this->throwRuntimeError("BehaviourDSLCommon::writeIncludes",
+			      "ouput file is not valid");
     }
     const auto& h = this->mb.getIncludes();
     if(!h.empty()){
-      file << h << endl;
+      file << h << '\n';
     }
   }
 
   void BehaviourDSLCommon::writeNamespaceBegin(std::ofstream& file) {
-    using namespace std;
-    if((!file)||
-       (!file.good())){
-      string msg("BehaviourDSLCommon::writeNamespaceBegin : ");
-      msg += "ouput file is not valid";
-      throw(runtime_error(msg));
+    if((!file)||(!file.good())){
+      this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceBegin",
+			      "ouput file is not valid");
     }
-    file << "namespace tfel{\n";
-    file << endl;
-    file << "namespace material{\n";
-    file << endl;
+    file << "namespace tfel{\n\n"
+	 << "namespace material{\n\n";
   }
 
   void BehaviourDSLCommon::writeNamespaceEnd(std::ofstream& file) {
-    using namespace std;
-    if((!file)||
-       (!file.good())){
-      string msg("BehaviourDSLCommon::writeNamespaceEnd : ");
-      msg += "ouput file is not valid";
-      throw(runtime_error(msg));
+    if((!file)||(!file.good())){
+      this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceEnd",
+			      "ouput file is not valid");
     }
-    file << "} // end of namespace material\n";
-    file << endl;
-    file << "} // end of namespace tfel\n";
-    file << endl;
+    file << "} // end of namespace material\n\n"
+	 << "} // end of namespace tfel\n\n";
   }
 
   void BehaviourDSLCommon::writeStandardTFELTypedefs(std::ofstream& file) 
   {
-    using namespace std;
     if((!file)||(!file.good())){
-      string msg("BehaviourDSLCommon::writeStandardTFELTypedefs : ");
-      msg += "ouput file is not valid";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("BehaviourDSLCommon::writeStandardTFELTypedefs",
+			      "ouput file is not valid");
     }
     file << "typedef unsigned short ushort;\n";
     if(this->mb.useQt()){        
@@ -1961,34 +1950,34 @@ namespace mfront{
     } else {
       file << "typedef tfel::config::Types<N,Type,false> Types;\n";
     }
-    file << "typedef typename Types::real                              real;\n";
-    file << "typedef typename Types::time                              time;\n";
-    file << "typedef typename Types::length                            length;\n";
-    file << "typedef typename Types::frequency                         frequency;\n";
-    file << "typedef typename Types::stress                            stress;\n";
-    file << "typedef typename Types::strain                            strain;\n";
-    file << "typedef typename Types::strainrate                        strainrate;\n";
-    file << "typedef typename Types::stressrate                        stressrate;\n";
-    file << "typedef typename Types::temperature                       temperature;\n";
-    file << "typedef typename Types::thermalexpansion                  thermalexpansion;\n";
-    file << "typedef typename Types::massdensity                       massdensity;\n";
-    file << "typedef typename Types::TVector                           TVector;\n";
-    file << "typedef typename Types::Stensor                           Stensor;\n";
-    file << "typedef typename Types::Stensor4                          Stensor4;\n";
-    file << "typedef typename Types::FrequencyStensor                  FrequencyStensor;\n";
-    file << "typedef typename Types::ForceTVector                      ForceTVector;\n";
-    file << "typedef typename Types::StressStensor                     StressStensor;\n";
-    file << "typedef typename Types::StressRateStensor                 StressRateStensor;\n";
-    file << "typedef typename Types::DisplacementTVector               DisplacementTVector;\n";
-    file << "typedef typename Types::StrainStensor                     StrainStensor;\n";
-    file << "typedef typename Types::StrainRateStensor                 StrainRateStensor;\n";
-    file << "typedef typename Types::StiffnessTensor                   StiffnessTensor;\n";
-    file << "typedef typename Types::Tensor                            Tensor;\n";
-    file << "typedef typename Types::StressTensor                      StressTensor;\n";
-    file << "typedef typename Types::ThermalExpansionCoefficientTensor ThermalExpansionCoefficientTensor;\n";
-    file << "typedef typename Types::DeformationGradientTensor         DeformationGradientTensor;\n";
-    // tangent operator
-    file << "typedef " << this->mb.getTangentOperatorType() << " TangentOperator;\n";
+    file << "typedef typename Types::real                              real;\n"
+	 << "typedef typename Types::time                              time;\n"
+	 << "typedef typename Types::length                            length;\n"
+	 << "typedef typename Types::frequency                         frequency;\n"
+	 << "typedef typename Types::stress                            stress;\n"
+	 << "typedef typename Types::strain                            strain;\n"
+	 << "typedef typename Types::strainrate                        strainrate;\n"
+	 << "typedef typename Types::stressrate                        stressrate;\n"
+	 << "typedef typename Types::temperature                       temperature;\n"
+	 << "typedef typename Types::thermalexpansion                  thermalexpansion;\n"
+	 << "typedef typename Types::massdensity                       massdensity;\n"
+	 << "typedef typename Types::TVector                           TVector;\n"
+	 << "typedef typename Types::Stensor                           Stensor;\n"
+	 << "typedef typename Types::Stensor4                          Stensor4;\n"
+	 << "typedef typename Types::FrequencyStensor                  FrequencyStensor;\n"
+	 << "typedef typename Types::ForceTVector                      ForceTVector;\n"
+	 << "typedef typename Types::StressStensor                     StressStensor;\n"
+	 << "typedef typename Types::StressRateStensor                 StressRateStensor;\n"
+	 << "typedef typename Types::DisplacementTVector               DisplacementTVector;\n"
+	 << "typedef typename Types::StrainStensor                     StrainStensor;\n"
+	 << "typedef typename Types::StrainRateStensor                 StrainRateStensor;\n"
+	 << "typedef typename Types::StiffnessTensor                   StiffnessTensor;\n"
+	 << "typedef typename Types::Tensor                            Tensor;\n"
+	 << "typedef typename Types::StressTensor                      StressTensor;\n"
+	 << "typedef typename Types::ThermalExpansionCoefficientTensor ThermalExpansionCoefficientTensor;\n"
+	 << "typedef typename Types::DeformationGradientTensor         DeformationGradientTensor;\n"
+      // tangent operator
+	 << "typedef " << this->mb.getTangentOperatorType() << " TangentOperator;\n";
   } // end of BehaviourDSLCommon::writeStandardTFELTypedefs
 
   BehaviourDSLCommon::~BehaviourDSLCommon()
@@ -2000,66 +1989,52 @@ namespace mfront{
   } // end of BehaviourDSLCommon::~MFrontParserCommon
 
   void BehaviourDSLCommon::checkBehaviourDataFile() const {
-    using namespace std;
-    if((!this->behaviourDataFile)||
-       (!this->behaviourDataFile.good())){
-      string msg("BehaviourDSLCommon::checkBehaviourDataOutputFile : ");
-      msg += "ouput file is not valid";
-      throw(runtime_error(msg));
+    if((!this->behaviourDataFile)||(!this->behaviourDataFile.good())){
+      this->throwRuntimeError("BehaviourDSLCommon::checkBehaviourDataOutputFile",
+			      "ouput file is not valid");
     }
   }
 
   void BehaviourDSLCommon::writeBehaviourDataFileHeader(){
-    using namespace std;
-
     this->checkBehaviourDataFile();
-
-    this->behaviourDataFile << "/*!\n";
-    this->behaviourDataFile << "* \\file   " << this->behaviourDataFileName << endl;
-    this->behaviourDataFile << "* \\brief  " << "this file implements the " 
-			    << this->mb.getClassName() << "BehaviourData" << " class.\n";
-    this->behaviourDataFile << "*         File generated by ";
-    this->behaviourDataFile << MFrontHeader::getVersionName() << " ";
-    this->behaviourDataFile << "version " << MFrontHeader::getVersionNumber();
-    this->behaviourDataFile << endl;
+    this->behaviourDataFile << "/*!\n"
+			    << "* \\file   " << this->behaviourDataFileName << '\n'
+			    << "* \\brief  " << "this file implements the " 
+			    << this->mb.getClassName() << "BehaviourData" << " class.\n"
+			    << "*         File generated by "
+			    << MFrontHeader::getVersionName() << " "
+			    << "version " << MFrontHeader::getVersionNumber()<< '\n';
     if(!this->authorName.empty()){
-      this->behaviourDataFile << "* \\author " << this->authorName << endl;
+      this->behaviourDataFile << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->behaviourDataFile << "* \\date   " << this->date       << endl;
+      this->behaviourDataFile << "* \\date   " << this->date       << '\n';
     }
-    this->behaviourDataFile << " */\n";
-    this->behaviourDataFile << endl;
+    this->behaviourDataFile << " */\n\n";
   }
 
   void BehaviourDSLCommon::writeBehaviourDataFileHeaderBegin(){
-    using namespace std;
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "#ifndef LIB_TFELMATERIAL_";
-    this->behaviourDataFile << makeUpperCase(this->mb.getClassName());
-    this->behaviourDataFile << "_BEHAVIOUR_DATA_HXX\n";
-    this->behaviourDataFile << "#define LIB_TFELMATERIAL_";
-    this->behaviourDataFile << makeUpperCase(this->mb.getClassName());
-    this->behaviourDataFile << "_BEHAVIOUR_DATA_HXX\n";
-    this->behaviourDataFile << endl;
+    this->behaviourDataFile << "#ifndef LIB_TFELMATERIAL_"
+			    << makeUpperCase(this->mb.getClassName())
+			    << "_BEHAVIOUR_DATA_HXX\n";
+    this->behaviourDataFile << "#define LIB_TFELMATERIAL_"
+			    << makeUpperCase(this->mb.getClassName())
+			    << "_BEHAVIOUR_DATA_HXX\n\n";
   }
 
   void BehaviourDSLCommon::writeBehaviourDataFileHeaderEnd()
   {
-    using namespace std;
-
     this->checkBehaviourDataFile();
-
-    this->behaviourDataFile << "#endif /* LIB_TFELMATERIAL_";
-    this->behaviourDataFile << makeUpperCase(this->mb.getClassName());
-    this->behaviourDataFile << "_BEHAVIOUR_DATA_HXX */\n";
+    this->behaviourDataFile << "#endif /* LIB_TFELMATERIAL_"
+			    << makeUpperCase(this->mb.getClassName())
+			    << "_BEHAVIOUR_DATA_HXX */\n";
   }
 
   void BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes(void)
   {
-    using namespace std;
-    bool b1 = false;
-    bool b2 = false;
+    auto b1 = false;
+    auto b2 = false;
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "#include<limits>\n";
     this->behaviourDataFile << "#include<string>\n";
@@ -2107,21 +2082,9 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourDataDefaultMembers(void)
   {
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "protected: \n\n";
     if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       this->behaviourDataFile << "//! stiffness tensor computed by the calling solver\n"
 			      << "StiffnessTensor D;\n";
-    }
-    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
-      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
-	this->behaviourDataFile << "//! stiffness tensor computed from elastic material properties at mid-time step\n"
-				<< "StiffnessTensor D;\n";
-	this->behaviourDataFile << "//! stiffness tensor computed from elastic material properties  at the end of the time step\n"
-				<< "StiffnessTensor D_tdt;\n";
-      } else {
-	this->behaviourDataFile << "//! stiffness tensor computed from elastic material properties\n"
-				<< "StiffnessTensor D;\n";
-      }
     }
     if(this->mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
       this->behaviourDataFile << "ThermalExpansionCoefficientTensor A;\n";
@@ -2173,12 +2136,6 @@ namespace mfront{
 			    << ": ";
     if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       this->behaviourDataFile << "D(src.D),\n";
-    }
-    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
-      this->behaviourDataFile << "D(src.D),\n";
-      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
-	this->behaviourDataFile << "D_tdt(src.D_tdt),\n";
-      }
     }
     if(this->mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
       this->behaviourDataFile << "A(src.A),\n";
@@ -2277,20 +2234,20 @@ namespace mfront{
   {
     this->checkBehaviourDataFile();
     if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      this->behaviourDataFile << "StiffnessTensor&\n";
-      this->behaviourDataFile << "getStiffnessTensor(void)\n";
-      this->behaviourDataFile << "{\nreturn this->D;\n}\n\n";
-      this->behaviourDataFile << "const StiffnessTensor&\n";
-      this->behaviourDataFile << "getStiffnessTensor(void) const\n";
-      this->behaviourDataFile << "{\nreturn this->D;\n}\n\n";
+      this->behaviourDataFile << "StiffnessTensor&\n"
+			      << "getStiffnessTensor(void)\n"
+			      << "{\nreturn this->D;\n}\n\n"
+			      << "const StiffnessTensor&\n"
+			      << "getStiffnessTensor(void) const\n"
+			      << "{\nreturn this->D;\n}\n\n";
     }
     if(this->mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      this->behaviourDataFile << "ThermalExpansionCoefficientTensor&\n";
-      this->behaviourDataFile << "getThermalExpansionCoefficientTensor(void)\n";
-      this->behaviourDataFile << "{\nreturn this->A;\n}\n\n";
-      this->behaviourDataFile << "const ThermalExpansionCoefficientTensor&\n";
-      this->behaviourDataFile << "getThermalExpansionCoefficientTensor(void) const\n";
-      this->behaviourDataFile << "{\nreturn this->A;\n}\n\n";
+      this->behaviourDataFile << "ThermalExpansionCoefficientTensor&\n"
+			      << "getThermalExpansionCoefficientTensor(void)\n"
+			      << "{\nreturn this->A;\n}\n\n"
+			      << "const ThermalExpansionCoefficientTensor&\n"
+			      << "getThermalExpansionCoefficientTensor(void) const\n"
+			      << "{\nreturn this->A;\n}\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourDataPublicMembers
 
@@ -2409,24 +2366,18 @@ namespace mfront{
   }
 
   void BehaviourDSLCommon::writeBehaviourDataClassEnd() {    
-    using namespace std;
-
     this->checkBehaviourDataFile();
-
     this->behaviourDataFile << "}; // end of " << this->mb.getClassName() << "BehaviourData" 
-			    << "class\n";
-    this->behaviourDataFile << endl;
+			    << "class\n\n";
   }
 
   void BehaviourDSLCommon::writeBehaviourDataMaterialProperties(const Hypothesis h) {
-    using namespace std;
     this->checkBehaviourDataFile();
     this->writeVariablesDeclarations(this->behaviourDataFile,
 				     this->mb.getBehaviourData(h).getMaterialProperties(),
 				     "","",this->fileName,
 				     false);
-
-    this->behaviourDataFile << endl;
+    this->behaviourDataFile << '\n';
   }
 
   void BehaviourDSLCommon::writeBehaviourDataStateVariables(const Hypothesis h) {
@@ -2447,12 +2398,8 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourDataOutputOperator(const Hypothesis h)
   {    
-    using namespace std;
     this->checkBehaviourFile();
     const auto& d = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    map<DrivingVariable,
-      ThermodynamicForce>::const_iterator p2;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){
 	this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
@@ -2484,32 +2431,30 @@ namespace mfront{
     }
     this->behaviourDataFile << "{\n";
     this->behaviourDataFile << "using namespace std;\n";
-    for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
-      if(p2->first.increment_known){
-	this->behaviourDataFile << "os << \"" << p2->first.name  << " : \" << b." << p2->first.name  << " << '\\n';\n";
+    for(const auto v : this->mb.getMainVariables()){
+      if(v.first.increment_known){
+	this->behaviourDataFile << "os << \"" << v.first.name  << " : \" << b." << v.first.name  << " << '\\n';\n";
       } else {
-	this->behaviourDataFile << "os << \"" << p2->first.name  << "0 : \" << b." << p2->first.name  << "0 << endl;\n";
+	this->behaviourDataFile << "os << \"" << v.first.name  << "0 : \" << b." << v.first.name  << "0 << endl;\n";
       }
-      this->behaviourDataFile << "os << \"" << p2->second.name << " : \" << b." << p2->second.name << " << '\\n';\n";
+      this->behaviourDataFile << "os << \"" << v.second.name << " : \" << b." << v.second.name << " << '\\n';\n";
     }
     this->behaviourDataFile << "os << \"T : \" << b.T << endl;\n";
-    for(p=d.getMaterialProperties().begin();p!=d.getMaterialProperties().end();++p){
-      this->behaviourDataFile <<  "os << \"" << p->name << " : \" << b." 
-			      << p->name <<  " << '\\n';\n";  
+    for(const auto& v: d.getMaterialProperties()){
+      this->behaviourDataFile <<  "os << \"" << v.name << " : \" << b." 
+			      << v.name <<  " << '\\n';\n";  
     }
-    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourDataFile << "os << \"" << p->name << " : \" << b." 
-			      << p->name <<  " << '\\n';\n";  
+    for(const auto& v: d.getStateVariables()){
+      this->behaviourDataFile << "os << \"" << v.name << " : \" << b." 
+			      << v.name <<  " << '\\n';\n";  
     }    
-    for(p=d.getAuxiliaryStateVariables().begin();
-	p!=d.getAuxiliaryStateVariables().end();++p){
-      this->behaviourDataFile << "os << \"" << p->name << " : \" << b." 
-			      << p->name <<  " << '\\n';\n";  
+    for(const auto& v : d.getAuxiliaryStateVariables()){
+      this->behaviourDataFile << "os << \"" << v.name << " : \" << b." 
+			      << v.name <<  " << '\\n';\n";  
     }    
-    for(p=d.getExternalStateVariables().begin();
-	p!=d.getExternalStateVariables().end();++p){
-      this->behaviourDataFile << "os << \"" << p->name << " : \" << b." 
-			      << p->name << " << '\\n';\n";
+    for(const auto& v : d.getExternalStateVariables()){
+      this->behaviourDataFile << "os << \"" << v.name << " : \" << b." 
+			      << v.name << " << '\\n';\n";
     }
     this->behaviourDataFile << "return os;\n";
     this->behaviourDataFile << "}\n\n";
@@ -2531,10 +2476,10 @@ namespace mfront{
   } // end of BehaviourDSLCommon::writeBehaviourDataFile
 
   void BehaviourDSLCommon::writeBehaviourDataClass(const Hypothesis h){
-    using namespace std;
     this->checkBehaviourDataFile();
     this->writeBehaviourDataClassBegin(h);
     this->writeBehaviourDataStandardTFELTypedefs();
+    this->behaviourDataFile << "protected:\n\n";
     this->writeBehaviourDataDefaultMembers();
     this->writeBehaviourDataMaterialProperties(h);
     this->writeBehaviourDataStateVariables(h);
@@ -2556,18 +2501,14 @@ namespace mfront{
   } // end of BehaviourDSLCommon::writeBehaviourDataFileEnd
 
   void BehaviourDSLCommon::checkBehaviourFile() const {
-    using namespace std;
-    if((!this->behaviourFile)||
-       (!this->behaviourFile.good())){
-      string msg("BehaviourDSLCommon::checkBehaviourDataOutputFile : ");
-      msg += "ouput file is not valid";
-      throw(runtime_error(msg));
+    if((!this->behaviourFile)||(!this->behaviourFile.good())){
+      this->throwRuntimeError("BehaviourDSLCommon::checkBehaviourDataOutputFile",
+			      "ouput file is not valid");
     }
   }
 
   void BehaviourDSLCommon::writeBehaviourForwardDeclarations(void)
   {
-    using namespace std;
     this->checkBehaviourFile();
     this->behaviourFile << "// Forward Declaration\n";
     this->behaviourFile << "template<ModellingHypothesis::Hypothesis,typename Type,bool use_qt>\n";
@@ -3059,108 +3000,94 @@ namespace mfront{
   }
 
   void
-  BehaviourDSLCommon::writeBehaviourComputeStiffnessTensor(void)
+  BehaviourDSLCommon::writeStiffnessTensorComputation(std::ostream& out,
+						      const std::string& D,
+						      std::function<std::string(const MaterialPropertyInput&)>& f)
   {
-    // if(!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
-    //   return;
-    // }
-    // this->checkBehaviourFile();
-    // const auto& emps = this->mb.getElasticMaterialProperties();
-    // if((this->mb.getSymmetryType()==mfront::ISOTROPIC)&&
-    //    (this->mb.getElasticSymmetryType()!=mfront::ISOTROPIC)){
-    //   this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
-    // 			      "inconsistent symmetry type for the material and "
-    // 			      "the elastic behaviour.");
-    // }
-    // this->behaviourFile <<"void computeStiffnessTensorAtBeginningOfTimeStep(void){";
-    // if(this->mb.getElasticSymmetryType()==mfront::ISOTROPIC){
-    //   if(emps.size()!=2u){
-    // 	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
-    // 				"invalid number of material properties");
-    //   }
-    //   if(this->mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
-    // 	this->behaviourFile << "computeIsotropicStiffnessTensor<hypothesis,StifnessTensorType::ALTERED" << ">(this->D,";
-    //   } else {
-    // 	this->behaviourFile << "computeIsotropicStiffnessTensor<hypothesis,StifnessTensorType::UNALTERED" << ">(this->D,";
-    //   }
-    //   this->writeMaterialPropertyEvaluation(this->behaviourFile,*(emps[0]),false);
-    //   this->behaviourFile << ",\n";
-    //   this->writeMaterialPropertyEvaluation(this->behaviourFile,*(emps[1]),false);
-    //   this->behaviourFile << ");\n";
-    //   if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
-    // 	if(this->mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
-    // 	  this->behaviourFile << "computeIsotropicStiffnessTensor<hypothesis,StifnessTensorType::ALTERED" << ">(this->Dt,";
-    // 	} else {
-    // 	  this->behaviourFile << "computeIsotropicStiffnessTensor<hypothesis,StifnessTensorType::UNALTERED" << ">(this->Dt,";
-    // 	}
-    // 	this->writeMaterialPropertyEvaluation(this->behaviourFile,*(emps[0]),true);
-    // 	this->behaviourFile << ",\n";
-    // 	this->writeMaterialPropertyEvaluation(this->behaviourFile,*(emps[1]),true);
-    // 	this->behaviourFile << ");\n";
-    //   }	
-    // } else if(this->mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-    //   if(emps.size()!=9u){
-    // 	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
-    // 				"invalid number of material properties");
-    //   }
-    //   if(this->mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
-    // 	this->behaviourFile << "computeOrthotropicStiffnessTensor<hypothesis,StifnessTensorType::ALTERED" << ">(this->D,";
-    //   } else {
-    // 	this->behaviourFile << "computeOrthotropicStiffnessTensor<hypothesis,StifnessTensorType::UNALTERED" << ">(this->D,";
-    //   }
-    //   for(decltype(emps.size()) i=0;i!=emps.size();){
-    // 	this->writeMaterialPropertyEvaluation(this->behaviourFile,*(emps[i]),false);
-    // 	if(++i!=emps.size()){this->behaviourFile << ",\n";}
-    //   }
-    //   this->behaviourFile << ");\n";
-    //   if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
-    // 	this->behaviourFile << "tfel::material::convertStiffnessTensor<hypothesis,OrthotropicAxesConvention::PIPE>(this->D);\n";
-    //   }
-    //   if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
-    // 	if(this->mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
-    // 	  this->behaviourFile << "computeOrthotropicStiffnessTensor<hypothesis,StifnessTensorType::ALTERED" << ">(this->D,";
-    // 	} else {
-    // 	  this->behaviourFile << "computeOrthotropicStiffnessTensor<hypothesis,StifnessTensorType::UNALTERED" << ">(this->D,";
-    // 	}
-    // 	for(decltype(emps.size()) i=0;i!=emps.size();){
-    // 	  this->writeMaterialPropertyEvaluation(this->behaviourFile,*(emps[i]),true);
-    // 	  if(++i!=emps.size()){this->behaviourFile << ",\n";}
-    // 	}
-    // 	this->behaviourFile << ");\n";
-    // 	if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
-    // 	  this->behaviourFile << "tfel::material::convertStiffnessTensor<hypothesis,OrthotropicAxesConvention::PIPE>(this->D);\n";
-    // 	}
-    //   }
-    // } else {
-    //   this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
-    // 			      "unsupported elastic symmetry type");
-    // }
+    const auto& emps = this->mb.getElasticMaterialProperties();
+    if((this->mb.getSymmetryType()==mfront::ISOTROPIC)&&
+       (this->mb.getElasticSymmetryType()!=mfront::ISOTROPIC)){
+      this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
+			      "inconsistent symmetry type for the material and "
+			      "the elastic behaviour.");
+    }
+    bool ua = true;
+    if(!this->mb.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
+      const auto& h = this->mb.getModellingHypotheses();
+      if((h.find(ModellingHypothesis::PLANESTRESS)!=h.end())||
+	 (h.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=h.end())){
+	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
+				"For plane stress hypotheses, it is required to precise whether "
+				"the expected stiffness tensor is 'Altered' (the plane stress "
+				"hypothesis is taken into account) or 'UnAltered' (the stiffness "
+				"tensor is the same as in plane strain). "
+				"See the '@ComputeStiffnessTensor' documentation");
+      }
+    } else {
+      ua = this->mb.getAttribute<bool>(BehaviourDescription::requiresUnAlteredStiffnessTensor);
+    }
+    if(this->mb.getElasticSymmetryType()==mfront::ISOTROPIC){
+      if(emps.size()!=2u){
+	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
+				"invalid number of material properties");
+      }
+      if(ua){
+	out << "tfel::material::computeIsotropicStiffnessTensor<hypothesis,StiffnessTensorAlterationCharacteristic::UNALTERED" << ">(" << D << ",";
+      } else {
+	out << "tfel::material::computeIsotropicStiffnessTensor<hypothesis,StiffnessTensorAlterationCharacteristic::ALTERED" << ">("   << D << ",";
+      }
+      this->writeMaterialPropertyEvaluation(out,*(emps[0]),f);
+      out << ",\n";
+      this->writeMaterialPropertyEvaluation(out,*(emps[1]),f);
+      out << ");\n";
+    } else if(this->mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
+      if(emps.size()!=9u){
+	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
+				"invalid number of material properties");
+      }
+      if(ua){
+	if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
+	  out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+	      << "StiffnessTensorAlterationCharacteristic::UNALTERED,"
+	      << "OrthotropicAxesConvention::PIPE>(" << D << ",";
+	} else {
+	  out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+	      << "StiffnessTensorAlterationCharacteristic::UNALTERED,"
+	      << "OrthotropicAxesConvention::DEFAULT>(" << D << ",";
+	}
+      } else {
+	if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
+	  out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+	      << "StiffnessTensorAlterationCharacteristic::ALTERED,"
+	      << "OrthotropicAxesConvention::PIPE>(" << D << ",";
+	} else {
+	  out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+	      << "StiffnessTensorAlterationCharacteristic::ALTERED,"
+	      << "OrthotropicAxesConvention::DEFAULT>(" << D << ",";
+	}
+      }
+      for(decltype(emps.size()) i=0;i!=emps.size();){
+	this->writeMaterialPropertyEvaluation(out,*(emps[i]),f);
+	if(++i!=emps.size()){out << ",\n";}
+      }
+      out << ");\n";
+    } else {
+      this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
+			      "unsupported elastic symmetry type");
+    }
   } // end of BehaviourDSLCommon::writeStiffnessTensorComputation
   
   void
   BehaviourDSLCommon::writeMaterialPropertyEvaluation(std::ostream& out,
 						      const MaterialPropertyDescription& mpd,
-						      const bool b)
+						      std::function<std::string(const MaterialPropertyInput&)>& f)
   {
     out << MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law) << '(';
     if(!mpd.inputs.empty()){
       const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
       const auto pie = std::end(inputs);
       for(auto pi = std::begin(inputs);pi!=pie;){
-	if((pi->type==BehaviourDescription::MaterialPropertyInput::TEMPERATURE)||
-	   (pi->type==BehaviourDescription::MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
-	  if(b){
-	    out << pi->name << "+d" << pi->name;
-	  } else {
-	    out << pi->name;
-	  }
-	} else if ((pi->type==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
-		   (pi->type==BehaviourDescription::MaterialPropertyInput::PARAMETER)){
-	  out << pi->name;
-	} else {
-	  this->throwRuntimeError("BehaviourDSLCommon::writeMaterialPropertyEvaluation",
-				  "unsupported input type for variable '"+pi->name+"'");
-	}
+	out << f(*pi);
 	if(++pi!=pie){
 	  out << ",";
 	}
@@ -3643,6 +3570,9 @@ namespace mfront{
       this->behaviourFile << "#include\"TFEL/Material/Hill.hxx\"\n";
       this->behaviourFile << "#include\"TFEL/Material/OrthotropicAxesConvention.hxx\"\n";
     }
+    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
+      this->behaviourFile << "#include\"TFEL/Material/StiffnessTensor.hxx\"\n";
+    }
     this->behaviourFile << "#include\"" << this->behaviourDataFileName << "\"\n";
     this->behaviourFile << "#include\"" << this->integrationDataFileName << "\"\n";
     if(this->mb.getAttribute<bool>(BehaviourData::profiling,false)){
@@ -3652,20 +3582,18 @@ namespace mfront{
   }
 
   void BehaviourDSLCommon::writeBehaviourMembersFunc(void) {    
-    using namespace std;
     const auto& m = this->mb.getMembers();
     this->checkBehaviourFile();
     if(!m.empty()){
-      this->behaviourFile << m << endl << endl;
+      this->behaviourFile << m << "\n\n";
     }
   }
 
   void BehaviourDSLCommon::writeBehaviourPrivate(void) {    
-    using namespace std;
     const auto& c = this->mb.getPrivateCode();
     this->checkBehaviourFile();
     if(!c.empty()){
-      this->behaviourFile << c << endl << endl;
+      this->behaviourFile << c << "\n\n";
     }
   } // end of void BehaviourDSLCommon::writeBehaviourPrivate
 
@@ -3675,53 +3603,49 @@ namespace mfront{
     using namespace tfel::material;
     this->checkBehaviourFile();
     const string btype = this->mb.getBehaviourTypeFlag();
-    this->behaviourFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
-    this->behaviourFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
-    this->behaviourFile << "static " << constexpr_c << " unsigned short StensorSize = ";
-    this->behaviourFile << "StensorDimeToSize::value;\n";
-    this->behaviourFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n";
-    this->behaviourFile << "static " << constexpr_c << " unsigned short TensorSize = ";
-    this->behaviourFile << "TensorDimeToSize::value;\n";
-    this->behaviourFile << endl;
+    this->behaviourFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+			<< "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
+			<< "static " << constexpr_c << " unsigned short StensorSize = "
+			<< "StensorDimeToSize::value;\n"
+			<< "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
+			<< "static " << constexpr_c << " unsigned short TensorSize = "
+			<< "TensorDimeToSize::value;\n\n";
     this->writeStandardTFELTypedefs(this->behaviourFile);
-    this->behaviourFile << endl;
-    this->behaviourFile << "public :\n\n";
+    this->behaviourFile << '\n'
+			<< "public :\n\n";
     const string qt = this->mb.useQt() ? "use_qt" : "false";
     this->behaviourFile << "typedef " << this->mb.getClassName() 
-			<< "BehaviourData<hypothesis,Type," << qt << "> BehaviourData;\n";
-    this->behaviourFile << "typedef " << this->mb.getClassName() 
-			<< "IntegrationData<hypothesis,Type," << qt << "> IntegrationData;\n";
-    this->behaviourFile << "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMFlag SMFlag;\n";
-    this->behaviourFile << "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMType SMType;\n";
-    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::ELASTIC;\n";
-    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SECANTOPERATOR;\n";
-    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::TANGENTOPERATOR;\n";
-    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::CONSISTENTTANGENTOPERATOR;\n";
-    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::NOSTIFFNESSREQUESTED;\n";
+			<< "BehaviourData<hypothesis,Type," << qt << "> BehaviourData;\n"
+			<< "typedef " << this->mb.getClassName() 
+			<< "IntegrationData<hypothesis,Type," << qt << "> IntegrationData;\n"
+			<< "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMFlag SMFlag;\n"
+			<< "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMType SMType;\n"
+			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::ELASTIC;\n"
+			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SECANTOPERATOR;\n"
+			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::TANGENTOPERATOR;\n"
+			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::CONSISTENTTANGENTOPERATOR;\n"
+			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::NOSTIFFNESSREQUESTED;\n";
     if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::STANDARDTANGENTOPERATOR;\n";
     } else if (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      const vector<FiniteStrainBehaviourTangentOperatorBase::Flag> toflags = getFiniteStrainBehaviourTangentOperatorFlags();
-      for(const auto & toflag : toflags){
+      for(const auto & toflag : getFiniteStrainBehaviourTangentOperatorFlags()){
 	this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::"
 			    << convertFiniteStrainBehaviourTangentOperatorFlagToString(toflag) << ";\n";
       }
     }
-    this->behaviourFile << "using IntegrationResult = typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::IntegrationResult;\n\n";
-    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SUCCESS;\n";
-    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::FAILURE;\n";
-    this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::UNRELIABLE_RESULTS;\n\n";
+    this->behaviourFile << "using IntegrationResult = typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::IntegrationResult;\n\n"
+			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SUCCESS;\n"
+			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::FAILURE;\n"
+			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::UNRELIABLE_RESULTS;\n\n";
     if(this->mb.areThermalExpansionCoefficientsDefined()){
       this->behaviourFile << "using StressFreeExpansionType = "
 			  << this->mb.getStressFreeExpansionType()  << ";\n\n";
     }
-    this->behaviourFile << "private :\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs
 
   void BehaviourDSLCommon::writeBehaviourTraits(void)
   {
-    using namespace std;
     this->checkBehaviourFile();
     const auto& ah = ModellingHypothesis::getModellingHypotheses();
     // writing partial specialisations
@@ -3729,29 +3653,27 @@ namespace mfront{
       // on définit toutes les hypothèses par défaut
       this->writeBehaviourTraitsSpecialisation(ModellingHypothesis::UNDEFINEDHYPOTHESIS,true);
       // unsupported hypothesis
-      vector<ModellingHypothesis::Hypothesis>::const_iterator p;
-      for(p=ah.begin();p!=ah.end();++p){
-    	if(this->mb.isModellingHypothesisSupported(*p)){
-	  if(this->mb.hasSpecialisedMechanicalData(*p)){
-	    this->writeBehaviourTraitsSpecialisation(*p,true);
+      for(const auto h : ah){
+    	if(this->mb.isModellingHypothesisSupported(h)){
+	  if(this->mb.hasSpecialisedMechanicalData(h)){
+	    this->writeBehaviourTraitsSpecialisation(h,true);
 	  }
     	} else {
-    	  this->writeBehaviourTraitsSpecialisation(*p,false);
+    	  this->writeBehaviourTraitsSpecialisation(h,false);
 	}
       }
     } else {
       // on exclut toutes les hypothèses par défaut
       this->writeBehaviourTraitsSpecialisation(ModellingHypothesis::UNDEFINEDHYPOTHESIS,false);
       // unsupported hypothesis
-      set<ModellingHypothesis::Hypothesis>::const_iterator p;
-      for(p=this->mb.getModellingHypotheses().begin();p!=this->mb.getModellingHypotheses().end();++p){
-    	this->writeBehaviourTraitsSpecialisation(*p,true);
+      for(const auto h: this->mb.getModellingHypotheses()){
+    	this->writeBehaviourTraitsSpecialisation(h,true);
       }
     }
   }
 
   void
-  BehaviourDSLCommon::writeBehaviourTraitsSpecialisation(const tfel::material::ModellingHypothesis::Hypothesis h,
+  BehaviourDSLCommon::writeBehaviourTraitsSpecialisation(const Hypothesis h,
 							 const bool b)
   {
     using namespace std;
@@ -4102,10 +4024,10 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourClass(const Hypothesis h)
   {
-    using namespace std;
     this->checkBehaviourFile();
     this->writeBehaviourClassBegin(h);
     this->writeBehaviourStandardTFELTypedefs();
+    this->behaviourFile << "private :\n\n";
     this->writeBehaviourParserSpecificTypedefs();
     this->writeBehaviourStaticVariables(h);
     this->writeBehaviourIntegrationVariables(h);
@@ -4123,9 +4045,6 @@ namespace mfront{
     this->behaviourFile << "public:\n\n";
     this->writeBehaviourConstructors(h);
     this->writeBehaviourComputeStressFreeExpansion();
-    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
-      this->writeBehaviourComputeStiffnessTensor();
-    }
     this->writeBehaviourInitializeMethod(h);
     this->writeBehaviourSetOutOfBoundsPolicy();
     this->writeBehaviourGetModellingHypothesis();

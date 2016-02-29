@@ -47,6 +47,7 @@ macro(add_mfront_generated_source lib interface ext file)
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
       COMMAND "${mfront_executable}"
+      ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
@@ -55,6 +56,7 @@ macro(add_mfront_generated_source lib interface ext file)
     add_custom_command(
       OUTPUT  "${mfront_output}"
       COMMAND "${mfront_executable}"
+      ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
       DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
       DEPENDS "${mfront_file}"
@@ -62,7 +64,10 @@ macro(add_mfront_generated_source lib interface ext file)
     if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
       file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
       add_test(NAME mfront-${file}-${interface}
-	COMMAND ${mfront_executable} ${mfront_flags} --interface=${interface} ${mfront_file}
+	COMMAND ${mfront_executable} ${mfront_flags}
+	--interface=${interface}
+	--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties
+	${mfront_file}
 	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
     endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -81,48 +86,67 @@ macro(mfront_check_library lib interface ext)
     endif("${ext}" STREQUAL "")
   endforeach(source)
   add_library(${lib} SHARED EXCLUDE_FROM_ALL
-    ${${lib}_SOURCES})
+    ${${lib}_SOURCES}
+    ${${lib}_ADDITIONAL_SOURCES})
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
   add_dependencies(check ${lib})
 endmacro(mfront_check_library)
 
 set(mfront_SOURCES
-    ThermalExpansionCoefficientTest
-    ThermalExpansionCoefficientTest2
-    ThermalExpansionCoefficientTest_1
-    ThermalExpansionCoefficientTest_2
-    ThermalExpansionCoefficientTest_3
-    VanadiumAlloy_YoungModulus_SRMA
-    VanadiumAlloy_PoissonRatio_SRMA
-    VanadiumAlloy_SpecificHeat_SRMA
-    VanadiumAlloy_ThermalExpansion_SRMA
-    VanadiumAlloy_ThermalConductivity_SRMA
-    Inconel600_YoungModulus
-    T91AusteniticSteel_ThermalExpansion_ROUX2007
-    T91AusteniticSteel_b_ROUX2007
-    T91AusteniticSteel_F_ROUX2007
-    T91AusteniticSteel_Kvisc_ROUX2007
-    T91AusteniticSteel_Nexp_ROUX2007
-    T91AusteniticSteel_Rinf_ROUX2007
-    T91AusteniticSteel_YieldStress_ROUX2007
-    T91AusteniticSteel_YoungModulus_ROUX2007
-    T91MartensiticSteel_b_ROUX2007
-    T91MartensiticSteel_C1_ROUX2007
-    T91MartensiticSteel_C2_ROUX2007
-    T91MartensiticSteel_F_ROUX2007
-    T91MartensiticSteel_gamma1_ROUX2007
-    T91MartensiticSteel_growth_ROUX2007
-    T91MartensiticSteel_Kvisc_ROUX2007
-    T91MartensiticSteel_Nexp_ROUX2007
-    T91MartensiticSteel_Rinf_ROUX2007
-    T91MartensiticSteel_ThermalExpansion_ROUX2007
-    T91MartensiticSteel_YieldStress_ROUX2007
-    T91MartensiticSteel_YoungModulus_ROUX2007)
+  YoungModulusTest
+  PoissonRatioTest
+  YoungModulusTest_1
+  YoungModulusTest_2
+  YoungModulusTest_3
+  PoissonRatioTest_12
+  PoissonRatioTest_23
+  PoissonRatioTest_13
+  ShearModulusTest_12
+  ShearModulusTest_23
+  ShearModulusTest_13
+  ThermalExpansionCoefficientTest
+  ThermalExpansionCoefficientTest2
+  ThermalExpansionCoefficientTest_1
+  ThermalExpansionCoefficientTest_2
+  ThermalExpansionCoefficientTest_3
+  VanadiumAlloy_YoungModulus_SRMA
+  VanadiumAlloy_PoissonRatio_SRMA
+  VanadiumAlloy_ShearModulus_SRMA
+  VanadiumAlloy_SpecificHeat_SRMA
+  VanadiumAlloy_ThermalExpansion_SRMA
+  VanadiumAlloy_ThermalConductivity_SRMA
+  Inconel600_YoungModulus
+  T91AusteniticSteel_ThermalExpansion_ROUX2007
+  T91AusteniticSteel_b_ROUX2007
+  T91AusteniticSteel_F_ROUX2007
+  T91AusteniticSteel_Kvisc_ROUX2007
+  T91AusteniticSteel_Nexp_ROUX2007
+  T91AusteniticSteel_Rinf_ROUX2007
+  T91AusteniticSteel_YieldStress_ROUX2007
+  T91AusteniticSteel_YoungModulus_ROUX2007
+  T91MartensiticSteel_b_ROUX2007
+  T91MartensiticSteel_C1_ROUX2007
+  T91MartensiticSteel_C2_ROUX2007
+  T91MartensiticSteel_F_ROUX2007
+  T91MartensiticSteel_gamma1_ROUX2007
+  T91MartensiticSteel_growth_ROUX2007
+  T91MartensiticSteel_Kvisc_ROUX2007
+  T91MartensiticSteel_Nexp_ROUX2007
+  T91MartensiticSteel_Rinf_ROUX2007
+  T91MartensiticSteel_ThermalExpansion_ROUX2007
+  T91MartensiticSteel_YieldStress_ROUX2007
+  T91MartensiticSteel_YoungModulus_ROUX2007)
 
+mfront_dependencies(MFrontMaterialProperties
+  VanadiumAlloy_YoungModulus_SRMA
+  VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties c "" ${mfront_SOURCES})
 
 if(HAVE_CASTEM)
+  mfront_dependencies(MFrontMaterialProperties-castem
+    VanadiumAlloy_YoungModulus_SRMA
+    VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_library(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -132,6 +156,9 @@ if(HAVE_CASTEM)
 endif(HAVE_CASTEM)
 
 if(HAVE_FORTRAN)
+  mfront_dependencies(MFrontMaterialProperties-fortran
+    VanadiumAlloy_YoungModulus_SRMA
+    VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_library(MFrontMaterialProperties-fortran fortran "fortran" ${mfront_SOURCES})
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

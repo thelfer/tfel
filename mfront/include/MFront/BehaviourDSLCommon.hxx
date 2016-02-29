@@ -19,8 +19,9 @@
 #include<map>
 #include<vector>
 #include<string>
-#include<fstream>
 #include<memory>
+#include<fstream>
+#include<functional>
 
 #include"MFront/MFrontConfig.hxx"
 
@@ -60,6 +61,9 @@ namespace mfront{
     analyseFile(const std::string&,
 		const std::vector<std::string>&) override;
   protected:
+    //! a simple alias
+    using MaterialPropertyInput =
+      BehaviourDescription::MaterialPropertyInput;
     /*!
      * create a variable modifier from a method
      */
@@ -524,6 +528,15 @@ namespace mfront{
     //! handle the @ComputeStiffnessTensor keyword
     virtual void
     treatComputeStiffnessTensor(void);
+    //! handle the @ElasticMaterialProperties keyword
+    virtual void
+    treatElasticMaterialProperties(void);
+    /*! 
+     * \brief read the elastic material properties and assign them to
+     * the behaviour Description
+     */
+    virtual void
+    readElasticMaterialProperties(void);
     
     virtual void
       treatInitLocalVariables(void);
@@ -819,13 +832,16 @@ namespace mfront{
     /*!
      * \brief write the call to a material property
      * \param[out] out: output stream
-     * \param[in]  mpd: material property
-     * \param[in]  t: instant at which the material property is evaluated.
+     * \param[in]  mpd: material property description
+     * \param[in]  f:   function converting input variable name.
+     * The function f can be used to specify how evaluate a variable value.
+     * For example, if we want to evaluate the variable name 'V' at
+     * the end of the time step, we could make f return V+dV
      */
     virtual void
     writeMaterialPropertyEvaluation(std::ostream&,
 				    const MaterialPropertyDescription&,
-				    const bool);
+				    std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
      * \brief write the evoluation of a thermal expansion coefficient
      * \param[out] out: output stream
@@ -859,11 +875,16 @@ namespace mfront{
     virtual void
     writeBehaviourComputeStressFreeExpansion(void);
     /*!
-     * \brief write the stiffness tensor computation, if
-     * mandatory.
+     * \brief write the stiffness tensor computation evaluation 
+     * from the elastic material properties.
+     * \param[out] out: output stream
+     * \param[in]  D:   name of the stiffness tensor variable
+     * \param[in]  f:   function used to handle the variables of the material properties.
      */
     virtual void
-    writeBehaviourComputeStiffnessTensor(void);
+    writeStiffnessTensorComputation(std::ostream&,
+				    const std::string&,
+				    std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
      * \brief write the initalize method . This method is called after that
      * the main variables were set.

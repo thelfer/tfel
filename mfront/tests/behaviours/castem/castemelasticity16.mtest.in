@@ -1,7 +1,7 @@
 @Author Helfer Thomas;
 @Date   09 avril 2013;
 @Description{
-  "Modélisation d'un tube souus pression"
+  "Modélisation d'un tube sous pression"
 };
 
 @ModellingHypothesis 'Axisymmetrical';

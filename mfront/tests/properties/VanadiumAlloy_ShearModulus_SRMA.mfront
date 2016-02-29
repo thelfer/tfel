@@ -1,0 +1,38 @@
+@Parser   MaterialLaw;
+@Material VanadiumAlloy;
+@Law      ShearModulus_SRMA;
+@Author   T. Helfer;
+@Date     2011-06;
+
+@Description
+{
+  Corrélation établie sur la nuance V-4Cr-4Ti.
+
+  Propriétés extraites du document :
+
+  Propriétés et comportement mécanique d alliages
+    de Vanadium avant, après et sous irradiation
+
+  Marion Le Flem, Jean-Luc Bechade, Annick Bougault,
+  Aurore Michaux, Lionel Gosmain, Jean-Louis Seran
+  DMN/SRMA/LA2M/NT/2008-2967/A
+}
+
+@Output G;
+G.setGlossaryName("ShearModulus");
+
+@Input TK;
+TK.setGlossaryName("Temperature");
+
+@MaterialLaw {"VanadiumAlloy_YoungModulus_SRMA.mfront",
+    "VanadiumAlloy_PoissonRatio_SRMA.mfront"};
+
+@PhysicalBounds TK in [0:*[;
+@Bounds TK in [293.15:973.15];
+		   
+@Function
+{
+  const real E = VanadiumAlloy_YoungModulus_SRMA(TK);
+  const real n = VanadiumAlloy_PoissonRatio_SRMA(TK);
+  G = E/(2.*(1+n));
+}

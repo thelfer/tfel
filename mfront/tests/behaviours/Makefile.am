@@ -11,10 +11,13 @@ MFRONTS= DDIF2.mfront                                                      \
 	 Elasticity.mfront                                                 \
          Elasticity2.mfront                                                \
          Elasticity3.mfront                                                \
+         Elasticity4.mfront                                                \
+         Elasticity5.mfront                                                \
          OrthotropicElastic.mfront                                         \
          OrthotropicElastic2.mfront                                        \
          OrthotropicElastic3.mfront                                        \
          OrthotropicElastic4.mfront                                        \
+         OrthotropicElastic5.mfront                                        \
          GeneralizedMaxwell.mfront                                         \
          FiniteRotationSmallStrainElasticity.mfront                        \
          FiniteRotationSmallStrainElasticity2.mfront                       \

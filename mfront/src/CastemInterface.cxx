@@ -565,20 +565,19 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
-    using namespace tfel::utilities;
-
     // get the modelling hypotheses to be treated
     const auto& h = this->getModellingHypothesesToBeTreated(mb);
-
     // some consistency checks
-    if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){
-      string msg("CastemInterface::endTreatment : ");
-      msg += "the type of the behaviour (isotropic or orthotropic) does not ";
-      msg += "match the the type of its elastic behaviour.\n";
-      msg += "This is not allowed here :\n";
-      msg += "- an isotropic behaviour must have an isotropic elastic behaviour\n";
-      msg += "- an orthotropic behaviour must have an orthotropic elastic behaviour";
-      throw(runtime_error(msg));
+    if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
+      if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){
+	string msg("CastemInterface::endTreatment : ");
+	msg += "the type of the behaviour (isotropic or orthotropic) does not ";
+	msg += "match the the type of its elastic behaviour.\n";
+	msg += "This is not allowed here :\n";
+	msg += "- an isotropic behaviour must have an isotropic elastic behaviour\n";
+	msg += "- an orthotropic behaviour must have an orthotropic elastic behaviour";
+	throw(runtime_error(msg));
+      }
     }
     if(this->useTimeSubStepping){
       if(this->maximumSubStepping==0u){
@@ -588,7 +587,6 @@ namespace mfront{
 	throw(runtime_error(msg));
       }
     }
-
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Castem");
 

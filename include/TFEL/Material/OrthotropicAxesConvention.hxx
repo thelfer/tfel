@@ -14,7 +14,9 @@
 #ifndef _LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX_
 #define _LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX_
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/stensor.hxx"
+#include"TFEL/Material/StiffnessTensor.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
 namespace tfel{
@@ -50,7 +52,29 @@ namespace tfel{
      */
     template<ModellingHypothesis::Hypothesis mh,OrthotropicAxesConvention c,typename T>
     void convertStressFreeExpansionStrain(tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value,T>&);
-				 
+
+    /*!
+     * \param[out] D: stiffness tensor
+     * \param[in]  yg1:  young modulus in the first direction
+     * \param[in]  yg2:  young modulus in the second direction
+     * \param[in]  yg3:  young modulus in the third direction
+     * \param[in]  nu12: PoissonRatio
+     * \param[in]  nu23: PoissonRatio
+     * \param[in]  nu13: PoissonRatio
+     * \param[in]  G12:  shear modulus
+     * \param[in]  G23:  shear modulus
+     * \param[in]  G13:  shear modulus
+     */
+    template<ModellingHypothesis::Hypothesis H,
+	     StiffnessTensorAlterationCharacteristic smt,
+	     OrthotropicAxesConvention c,
+	     typename StressType,typename RealType>
+    TFEL_MATERIAL_INLINE void
+    computeOrthotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,
+				      const StressType,const StressType,const StressType,
+				      const RealType,const RealType,const RealType,
+				      const StressType,const StressType,const StressType);
+    
   } // end of namespace material
 
 } // end of namespace tfel

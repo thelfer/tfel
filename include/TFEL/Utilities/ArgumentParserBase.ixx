@@ -236,10 +236,11 @@ namespace tfel
       while(this->currentArgument!=this->args.end()){
 	const auto a  = this->currentArgument->as_string();
 	const auto pf = this->callBacksContainer.find(a);
+	Child& child = *(static_cast<Child *>(this));
 	if(pf!=this->callBacksContainer.end()){
-	  (static_cast<Child *>(this)->*(pf->second.first))();
+	  (child.*(pf->second.first))();
 	} else {
-	  static_cast<Child *>(this)->treatUnknownArgument();
+	  child.treatUnknownArgument();
 	}
 	++(this->currentArgument);
       }

@@ -23,56 +23,40 @@ namespace tfel{
   namespace material{
 
     //! a small enumerattion
-    enum struct StiffnessMatrixType{
+    enum struct StiffnessTensorAlterationCharacteristic{
       UNALTERED,
       ALTERED
-    }; // end of enum struct StiffnessMatrixType
+    }; // end of enum struct StiffnessTensorAlterationCharacteristic
     
     /*!
      * \brief compute the altered stiffness tensor from the unaltered
      * one.
      */
     template<ModellingHypothesis::Hypothesis H>
-    struct computeAlteredStiffnessTensor
+    struct ComputeAlteredStiffnessTensor
     {
       /*!
        * \param[out] Da : altered stiffness
        * \param[in]  D  : unaltered stiffness
        */
       template<typename StressType>
-      static TFEL_MATH_INLINE void
+      static TFEL_MATERIAL_INLINE void
       exe(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,
 	  const tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&);
-    };
-    /*!
-     * \brief compute the altered stiffness tensor from the unaltered
-     * one in axysymmetrical generalised plane stress.
-     */
-    template<>
-    struct computeAlteredStiffnessTensor<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS>
-    {
-      /*!
-       * \param[out] Da : altered stiffness
-       * \param[in]  D  : unaltered stiffness
-       */
-      template<typename StressType>
-      static TFEL_MATH_INLINE void
-      exe(tfel::math::st2tost2<1u,StressType>&,
-	  const tfel::math::st2tost2<1u,StressType>&);
     };
     /*!
      * \brief compute the altered stiffness tensor from the unaltered
      * one in plane stress.
      */
     template<>
-    struct computeAlteredStiffnessTensor<ModellingHypothesis::PLANESTRESS>
+    struct ComputeAlteredStiffnessTensor<ModellingHypothesis::PLANESTRESS>
     {
       /*!
        * \param[out] Da : altered stiffness
        * \param[in]  D  : unaltered stiffness
        */
       template<typename StressType>
-      static TFEL_MATH_INLINE void
+      static TFEL_MATERIAL_INLINE void
       exe(tfel::math::st2tost2<2u,StressType>&,
 	  const tfel::math::st2tost2<2u,StressType>&);
     };
@@ -82,9 +66,9 @@ namespace tfel{
      * \param[in]  yg: young modulus
      * \param[in]  nu: poisson ratio
      */
-    template<unsigned short N,StiffnessMatrixType,
+    template<unsigned short N,StiffnessTensorAlterationCharacteristic,
 	     typename StressType,typename RealType>
-    void
+    TFEL_MATERIAL_INLINE void
     computeIsotropicStiffnessTensor(tfel::math::st2tost2<N,StressType>&,
 				    const StressType,
 				    const RealType);
@@ -100,9 +84,9 @@ namespace tfel{
      * \param[in]  G23:  shear modulus
      * \param[in]  G13:  shear modulus
      */
-    template<unsigned short N,StiffnessMatrixType,
+    template<unsigned short N,StiffnessTensorAlterationCharacteristic,
 	     typename StressType,typename RealType>
-    void
+    TFEL_MATERIAL_INLINE void
     computeOrthotropicStiffnessTensor(tfel::math::st2tost2<N,StressType>&,
 				      const StressType,const StressType,const StressType,
 				      const RealType,const RealType,const RealType,
@@ -113,9 +97,9 @@ namespace tfel{
      * \param[in]  yg: young modulus
      * \param[in]  nu: poisson ratio
      */
-    template<ModellingHypothesis::Hypothesis H,StiffnessMatrixType,
+    template<ModellingHypothesis::Hypothesis H,StiffnessTensorAlterationCharacteristic,
 	     typename StressType,typename RealType>
-    void
+    TFEL_MATERIAL_INLINE void
     computeIsotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,
 				    const StressType,
 				    const RealType);
@@ -131,9 +115,9 @@ namespace tfel{
      * \param[in]  G23:  shear modulus
      * \param[in]  G13:  shear modulus
      */
-    template<ModellingHypothesis::Hypothesis H,StiffnessMatrixType,
+    template<ModellingHypothesis::Hypothesis H,StiffnessTensorAlterationCharacteristic,
 	     typename StressType,typename RealType>
-    void
+    TFEL_MATERIAL_INLINE void
     computeOrthotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,
 				      const StressType,const StressType,const StressType,
 				      const RealType,const RealType,const RealType,

@@ -3,9 +3,21 @@ SUBDIRS = interfaces
 
 mfronts = VanadiumAlloy_YoungModulus_SRMA.mfront               \
 	  VanadiumAlloy_PoissonRatio_SRMA.mfront               \
+	  VanadiumAlloy_ShearModulus_SRMA.mfront               \
 	  VanadiumAlloy_SpecificHeat_SRMA.mfront               \
 	  VanadiumAlloy_ThermalExpansion_SRMA.mfront           \
 	  VanadiumAlloy_ThermalConductivity_SRMA.mfront        \
+	  YoungModulusTest.mfront                              \
+	  PoissonRatioTest.mfront                              \
+	  YoungModulusTest_1.mfront                            \
+	  YoungModulusTest_2.mfront                            \
+	  YoungModulusTest_3.mfront                            \
+	  PoissonRatioTest_12.mfront                           \
+	  PoissonRatioTest_23.mfront                           \
+	  PoissonRatioTest_13.mfront                           \
+	  ShearModulusTest_12.mfront                           \
+	  ShearModulusTest_23.mfront                           \
+	  ShearModulusTest_13.mfront                           \
 	  ThermalExpansionCoefficientTest.mfront               \
 	  ThermalExpansionCoefficientTest2.mfront              \
 	  ThermalExpansionCoefficientTest_1.mfront             \

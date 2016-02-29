@@ -25,7 +25,8 @@ namespace epx
 					      const EuroplexusReal* const props)
   {
     using namespace tfel::material;
-    computeIsotropicStiffnessTensor<2u,StiffnessMatrixType::UNALTERED>(C,props[0],props[1]);
+    using STAC = StiffnessTensorAlterationCharacteristic;
+    computeIsotropicStiffnessTensor<2u,STAC::UNALTERED>(C,props[0],props[1]);
   }
 
   void
@@ -34,7 +35,8 @@ namespace epx
 					       
   {
     using namespace tfel::material;
-    computeIsotropicStiffnessTensor<2u,StiffnessMatrixType::ALTERED>(C,props[0],props[1]);
+    using STAC = StiffnessTensorAlterationCharacteristic;
+    computeIsotropicStiffnessTensor<2u,STAC::ALTERED>(C,props[0],props[1]);
   } // end of struct EuroplexusComputeIsotropicPlaneStressAlteredStiffnessTensor
 
   void
@@ -42,7 +44,8 @@ namespace epx
 					      const EuroplexusReal* const props)
   {
     using namespace tfel::material;
-    computeIsotropicStiffnessTensor<3u,StiffnessMatrixType::UNALTERED>(C,props[0],props[1]);
+    using STAC = StiffnessTensorAlterationCharacteristic;
+    computeIsotropicStiffnessTensor<3u,STAC::UNALTERED>(C,props[0],props[1]);
   } // end of struct EuroplexusComputeStiffnessTensor
 
   void
@@ -50,9 +53,10 @@ namespace epx
 						const EuroplexusReal* const props)
   {
     using namespace tfel::material;
-    computeOrthotropicStiffnessTensor<2u,StiffnessMatrixType::UNALTERED>(C,props[0],props[1],props[2],
-									 props[3],props[4],props[5],
-									 props[6],props[6],props[6]);
+    using STAC = StiffnessTensorAlterationCharacteristic;
+    computeOrthotropicStiffnessTensor<2u,STAC::UNALTERED>(C,props[0],props[1],props[2],
+							  props[3],props[4],props[5],
+							  props[6],props[6],props[6]);
   } // end of struct EuroplexusComputeStiffnessTensor
 
   void
@@ -60,9 +64,10 @@ namespace epx
 								const EuroplexusReal* const props)
   {
     using namespace tfel::material;
-    computeOrthotropicStiffnessTensor<2u,StiffnessMatrixType::ALTERED>(C,props[0],props[1],props[2],
-								       props[3],props[4],props[5],
-								       props[6],props[6],props[6]);
+    using STAC = StiffnessTensorAlterationCharacteristic;
+    computeOrthotropicStiffnessTensor<2u,STAC::ALTERED>(C,props[0],props[1],props[2],
+							props[3],props[4],props[5],
+							props[6],props[6],props[6]);
   } // end of struct EuroplexusComputeOrthotropicPlaneStressAlteredStiffnessTensor
 
   void
@@ -70,9 +75,10 @@ namespace epx
 						const EuroplexusReal* const props)
   {
     using namespace tfel::material;
-    computeOrthotropicStiffnessTensor<3u,StiffnessMatrixType::UNALTERED>(C,props[0],props[1],props[2],
-									 props[3],props[4],props[5],
-									 props[6],props[7],props[8]);
+    using STAC = StiffnessTensorAlterationCharacteristic;
+    computeOrthotropicStiffnessTensor<3u,STAC::UNALTERED>(C,props[0],props[1],props[2],
+							  props[3],props[4],props[5],
+							  props[6],props[7],props[8]);
   } // end of struct EuroplexusComputeStiffnessTensor
 
 } // end of namespace epx

@@ -990,10 +990,9 @@ namespace mfront
      * \param[in] v : default value
      */
     template<typename T>
-    const T
-    getAttribute(const Hypothesis,
-		 const std::string&,
-		 const T&) const;
+    T getAttribute(const Hypothesis,
+		   const std::string&,
+		   const T&) const;
     /*!
      * \return true an attribute with the given name has been declared
      * \param[in] h : modelling hypothesis

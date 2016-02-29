@@ -27,10 +27,9 @@ namespace mfront
   } // end of BehaviourDescription::getAttribute
 
   template<typename T>
-  const T
-  BehaviourDescription::getAttribute(const Hypothesis   h,
-					       const std::string& n,
-					       const T& v) const
+  T BehaviourDescription::getAttribute(const Hypothesis h,
+				       const std::string& n,
+				       const T& v) const
   {
     const auto& bdata = this->getBehaviourData(h);
     if(!bdata.hasAttribute(n)){

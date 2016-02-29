@@ -1,0 +1,19 @@
+@DSL    Implicit;
+@Author T. Helfer;
+@Date   26/02/2016;
+@Behaviour ComputeStiffnessTensor;
+@Description{
+  "This behaviour is invalid since an isotropic "
+  "behaviour must have an isotropic "
+  "stiffness tensor."
+}
+
+@ComputeStiffnessTensor {"VanadiumAlloy_YoungModulus_SRMA.mfront",
+    "VanadiumAlloy_YoungModulus_SRMA.mfront",
+    "VanadiumAlloy_YoungModulus_SRMA.mfront",
+    "VanadiumAlloy_PoissonRatio_SRMA.mfront",
+    "VanadiumAlloy_PoissonRatio_SRMA.mfront",
+    "VanadiumAlloy_PoissonRatio_SRMA.mfront",
+    "VanadiumAlloy_ShearModulus_SRMA.mfront",
+    "VanadiumAlloy_ShearModulus_SRMA.mfront",
+    "VanadiumAlloy_ShearModulus_SRMA.mfront"};

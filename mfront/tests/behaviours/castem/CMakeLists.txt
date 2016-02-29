@@ -27,13 +27,16 @@ set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
+  Elasticity
+  Elasticity2
+  Elasticity3
+  Elasticity4
+  Elasticity5
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicElastic3
   OrthotropicElastic4
-  Elasticity
-  Elasticity2
-  Elasticity3
+  OrthotropicElastic5  
   GeneralizedMaxwell
   FiniteRotationSmallStrainElasticity
   FiniteRotationSmallStrainElasticity2
@@ -111,6 +114,18 @@ set(mfront_tests_SOURCES
   AnistropicLemaitreViscoplasticBehaviour)
 
 mfront_dependencies(MFrontCastemBehaviours
+  Inconel600_YoungModulus
+  YoungModulusTest
+  PoissonRatioTest
+  YoungModulusTest_1
+  YoungModulusTest_2
+  YoungModulusTest_3
+  PoissonRatioTest_12
+  PoissonRatioTest_23
+  PoissonRatioTest_13
+  ShearModulusTest_12
+  ShearModulusTest_23
+  ShearModulusTest_13
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
   ThermalExpansionCoefficientTest_1
@@ -314,6 +329,11 @@ test_castem(elasticity30)
 test_castem(elasticity31)
 test_castem(elasticity32)
 test_castem(elasticity33)
+test_castem(elasticity4-1)
+test_castem(elasticity4-2)
+test_castem(elasticity4-3)
+test_castem(elasticity4-4)
+test_castem(elasticity5-1)
 test_castem(generalizedmaxwell)
 test_castem(ddif2)
 test_castem(ddif2-2)
@@ -344,6 +364,30 @@ test_castem(orthotropicelasticity3-1)
 test_castem(orthotropicelasticity3-2)
 test_castem(orthotropicelasticity3-3)
 test_castem(orthotropicelasticity4-1)
+test_castem(orthotropicelasticity5-1)
+test_castem(orthotropicelasticity5-2)
+test_castem(orthotropicelasticity5-3)
+test_castem(orthotropicelasticity5-4)
+test_castem(orthotropicelasticity5-5)
+test_castem(orthotropicelasticity5-6)
+test_castem(orthotropicelasticity5-7)
+test_castem(orthotropicelasticity5-8)
+test_castem(orthotropicelasticity5-9)
+test_castem(orthotropicelasticity5-10)
+test_castem(orthotropicelasticity5-11)
+test_castem(orthotropicelasticity5-12)
+test_castem(orthotropicelasticity5-13)
+test_castem(orthotropicelasticity5-14)
+test_castem(orthotropicelasticity5-15)
+test_castem(orthotropicelasticity5-16)
+test_castem(orthotropicelasticity5-17)
+test_castem(orthotropicelasticity5-18)
+test_castem(orthotropicelasticity5-19)
+test_castem(orthotropicelasticity5-20)
+test_castem(orthotropicelasticity5-21)
+test_castem(orthotropicelasticity5-22)
+test_castem(orthotropicelasticity5-23)
+test_castem(orthotropicelasticity5-24)
 test_castem(orthotropiccreep)
 test_castem(orthotropiccreep-rk42)
 test_castem(orthotropiccreep-rkCastem)

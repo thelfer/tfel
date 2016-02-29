@@ -1,0 +1,58 @@
+@DSL       Implicit;
+@Behaviour OrthotropicElastic5;
+@Author    Helfer Thomas;
+@Date      26/02/16;
+
+@ModellingHypotheses {".+"};
+@Epsilon 1.e-16;
+@Theta 1;
+
+@OrthotropicBehaviour<Pipe>;
+@ComputeStiffnessTensor<Altered>{
+  "YoungModulusTest_1.mfront", "YoungModulusTest_2.mfront", "YoungModulusTest_3.mfront" ,
+  "PoissonRatioTest_12.mfront","PoissonRatioTest_23.mfront","PoissonRatioTest_13.mfront",
+  "ShearModulusTest_12.mfront","ShearModulusTest_23.mfront","ShearModulusTest_13.mfront"};
+@ComputeThermalExpansion {"ThermalExpansionCoefficientTest_1.mfront"};
+
+@StateVariable<AxisymmetricalGeneralisedPlaneStress> real etozz;
+AxisymmetricalGeneralisedPlaneStress::etozz.setGlossaryName("AxialStrain");
+@ExternalStateVariable<AxisymmetricalGeneralisedPlaneStress> stress sigzz;
+AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
+
+@Integrator{
+  feel -= deto;
+}
+
+@ComputeFinalStress {
+  sig = D*eel;
+}
+
+@Integrator<AxisymmetricalGeneralisedPlaneStress,Append,AtEnd>{
+  // the plane stress equation is satisfied at the end of the time
+  // step
+  const stress szz = D(1,1)*(eel(1)+deel(1))+
+    D(1,0)*(eel(0)+deel(0))+
+    D(1,2)*(eel(2)+deel(2));
+  fetozz   = (szz-sigzz-dsigzz)/D(1,1);
+  // modification of the partition of strain
+  feel(1) -= detozz;
+  // jacobian
+  dfeel_ddetozz(1) = -1;
+  dfetozz_ddeel(1) =  1;
+  dfetozz_ddeel(0) = D(1,0)/D(1,1);
+  dfetozz_ddeel(2) = D(2,0)/D(1,1);
+}
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  static_cast<void>(smt);
+  if(hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
+    Dt(0,0)=D(0,0)-D(0,1)*D(1,0)/D(1,1);
+    Dt(2,0)=D(2,0)-D(1,2)*D(1,0)/D(1,1);
+    Dt(0,2)=D(0,2)-D(0,1)*D(2,1)/D(1,1);
+    Dt(2,2)=D(2,2)-D(1,2)*D(2,1)/D(1,1);
+    Dt(0,1)=Dt(1,0)=D(1,2)=Dt(2,1)=Dt(1,1)=stress(0);
+  } else {
+    Dt = D;
+  }
+}

@@ -352,7 +352,7 @@ namespace mfront{
     this->opts.sys = "default";
 #endif /* __CYGWIN__ */
   } // end of MFront::MFront
-
+  
   MFront::MFront(const int argc, const char *const *const argv)
     : MFront()
   {
