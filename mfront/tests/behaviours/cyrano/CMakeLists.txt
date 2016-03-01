@@ -17,6 +17,7 @@ set(mfront_tests_SOURCES
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicElastic5
+  OrthotropicElastic6
   Norton
   ImplicitNorton
   OrthotropicCreep
@@ -165,6 +166,9 @@ test_cyrano(elasticity21)
 test_cyrano(orthotropicelasticity5-1)
 test_cyrano(orthotropicelasticity5-2)
 test_cyrano(orthotropicelasticity5-3)
+test_cyrano(orthotropicelasticity6-1)
+test_cyrano(orthotropicelasticity6-2)
+test_cyrano(orthotropicelasticity6-3)
 test_cyrano(norton)
 test_cyrano(norton2)
 test_cyrano(orthotropiccreep)

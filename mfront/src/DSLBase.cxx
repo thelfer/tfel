@@ -861,17 +861,22 @@ namespace mfront
   DSLBase::getMaterialPropertiesDescriptions(const std::vector<std::string>& files)
   {
     auto mpds = std::vector<std::shared_ptr<MaterialPropertyDescription>>{};
-    for(const auto & file : files){
-      const auto& f = SearchFile::search(file);
-      mpds.push_back(std::make_shared<MaterialPropertyDescription>(this->handleMaterialLaw(f)));
+    for(const auto & f : files){
+      mpds.push_back(this->getMaterialPropertyDescription(f));
     }
     return mpds;
+  }
+
+  std::shared_ptr<MaterialPropertyDescription>
+  DSLBase::getMaterialPropertyDescription(const std::string& file)
+  {
+    const auto& f = SearchFile::search(file);
+    return std::make_shared<MaterialPropertyDescription>(this->handleMaterialLaw(f));
   }
   
   MaterialPropertyDescription
   DSLBase::handleMaterialLaw(const std::string& f)
   {
-    using namespace std;
     // getting informations the source files
     MaterialPropertyDSL mp;
     try{
@@ -889,18 +894,18 @@ namespace mfront
       m.setInterface("mfront");
       const auto t = m.treatFile(path);
       if(!t.specific_targets.empty()){
-	throw(std::runtime_error("DSLBase::handleMaterialLaw: "
-				 "error while treating file '"+f+"'\n"
-				 "No specific targets are not supported"));
+	this->throwRuntimeError("DSLBase::handleMaterialLaw",
+				"error while treating file '"+f+"'\n"
+				"No specific targets are not supported");
       }
       this->atds.push_back(t);
-    } catch(exception& e){
-      throw(std::runtime_error("DSLBase::handleMaterialLaw: "
-			       "error while treating file '"+f+"'\n"+
-			       std::string(e.what())));
+    } catch(std::exception& e){
+      this->throwRuntimeError("DSLBase::handleMaterialLaw",
+			      "error while treating file '"+f+"'\n"+
+			      std::string(e.what()));
     } catch(...){
-      throw(std::runtime_error("DSLBase::handleMaterialLaw: "
-			       "error while treating file '"+f+"'"));
+      this->throwRuntimeError("DSLBase::handleMaterialLaw",
+			      "error while treating file '"+f+"'");
     }
     return mp.getMaterialPropertyDescription();
   } // end of DSLBase::handleMaterialLaw

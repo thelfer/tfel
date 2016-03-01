@@ -1,0 +1,43 @@
+@Author Helfer Thomas;
+@Date  29/02/2016;
+@Description{
+  "This test checks that the stiffness tensor "
+  "is correctly computed for an "
+  "orthotropic material."
+};
+
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic6';
+
+@Real 'E1'   '7.8e+10';
+@Real 'E2'   '2.64233e+11';
+@Real 'E3'   '3.32e+11';
+@Real 'nu12' '0.13';
+@Real 'nu13' '0.18';
+@Real 'nu23' '0.24';
+@Real 'G12'  '4.8e+10';
+@Real 'G13'  '7.8e+10';
+@Real 'G23'  '1.16418e+11';
+
+@MaterialProperty<constant> 'YoungModulus1'     'E1';
+@MaterialProperty<constant> 'YoungModulus2'     'E2';
+@MaterialProperty<constant> 'YoungModulus3'     'E3';
+@MaterialProperty<constant> 'PoissonRatio12'    'nu12';
+@MaterialProperty<constant> 'PoissonRatio13'    'nu13';
+@MaterialProperty<constant> 'PoissonRatio23'    'nu23';
+@MaterialProperty<constant> 'ShearModulus12'    'G12';
+@MaterialProperty<constant> 'ShearModulus13'    'G13';
+@MaterialProperty<constant> 'ShearModulus23'    'G23';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStrain<function> 'EXX' '1.e-3*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> 'SXX' 'E1*EXX'  1.e-3;
+@Test<function> {'SZZ':'0','SYY':'0'}  1.e-3;
+// strains
+@Test<function> 'EYY' '-nu12*EXX'  1.e-12;
+@Test<function> 'EZZ' '-nu13*EXX'  1.e-12;
+@Test<function> {'EXY':'0.','EXZ':'0.','EYZ':'0.'} 1.e-12;

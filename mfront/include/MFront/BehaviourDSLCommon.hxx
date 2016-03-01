@@ -406,6 +406,29 @@ namespace mfront{
     tangentOperatorVariableModifier(const Hypothesis,
 				    const std::string&,
 				    const bool);
+    /*!
+     * \brief extract a material property from a token. If the token
+     * is a string, it is interpred as a mfront file name. Otherwise,
+     * the token is converted to a scalar.
+     * \param[in] m: calling method
+     * \param[in] t: token
+     * \return a material property
+     */
+    BehaviourDescription::MaterialProperty
+    extractMaterialProperty(const std::string&,
+			    const tfel::utilities::Token&);
+    /*!
+     * \brief read an an array of material properties. String are
+     * interpreted as mfront file name. Other tokens are interpreted
+     * as long double.
+     * \param[in] m: calling method
+     * \return the array of material properties
+     */
+    virtual std::vector<BehaviourDescription::MaterialProperty>
+    readMaterialPropertyOrArrayOfMaterialProperties(const std::string& m);      
+    /*!
+     * 
+     */
     virtual void
     readStringList(std::vector<std::string>&);
     /*!
@@ -832,7 +855,7 @@ namespace mfront{
     /*!
      * \brief write the call to a material property
      * \param[out] out: output stream
-     * \param[in]  mpd: material property description
+     * \param[in]  m:   material property description
      * \param[in]  f:   function converting input variable name.
      * The function f can be used to specify how evaluate a variable value.
      * For example, if we want to evaluate the variable name 'V' at
@@ -840,7 +863,7 @@ namespace mfront{
      */
     virtual void
     writeMaterialPropertyEvaluation(std::ostream&,
-				    const MaterialPropertyDescription&,
+				    const BehaviourDescription::MaterialProperty&,
 				    std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
      * \brief write the evoluation of a thermal expansion coefficient
@@ -853,17 +876,17 @@ namespace mfront{
      */
     virtual void
     writeThermalExpansionCoefficientComputation(std::ostream&,
-						const MaterialPropertyDescription&,
+						const BehaviourDescription::MaterialProperty&,
 						const std::string&,
 						const std::string&,
 						const std::string&);
     virtual void
     writeThermalExpansionCoefficientsComputations(std::ostream&,
-						  const MaterialPropertyDescription&,
+						  const BehaviourDescription::MaterialProperty&,
 						  const std::string& = "");
     virtual void
     writeThermalExpansionComputation(std::ostream&,
-				     const MaterialPropertyDescription&,
+				     const BehaviourDescription::MaterialProperty&,
 				     const std::string&,
 				     const std::string&,
 				     const std::string& = "");
@@ -1095,13 +1118,6 @@ namespace mfront{
      */
     virtual bool
     hasUserDefinedTangentOperatorCode(const Hypothesis) const;
-    /*!
-     * \return the list of external state variables names to be used
-     * to compute a material property description
-     * \param[in] mpd: material property description
-     */
-    std::vector<std::string>
-    getMaterialPropertyInputsFromExternalStateVariables(const MaterialPropertyDescription&) const;
     //! constructor
     BehaviourDSLCommon();
     //! behaviour description

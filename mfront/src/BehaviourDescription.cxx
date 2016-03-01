@@ -108,15 +108,19 @@ namespace mfront
   } // end of BehaviourDescription::getData
 
   static void
-  BehaviourDescriptionCheckThermalExpansionCoefficientArgument(const MaterialPropertyDescription& a)
+  BehaviourDescriptionCheckThermalExpansionCoefficientArgument(const BehaviourDescription::MaterialProperty& a)
   {
-    if(!((a.inputs.size())||(a.inputs.size()!=1u))){
+    if(!a.is<BehaviourDescription::ComputedMaterialProperty>()){
+      return;
+    }
+    const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
+    if(!((mpd.inputs.size())||(mpd.inputs.size()!=1u))){
       throw(std::runtime_error("BehaviourDescriptionCheckThermalExpansionCoefficientArgument: "
 			       "thermal expansion shall only depend on temperature or be constant"));
     }
-    if(a.inputs.size()==1u){
-      const auto& v = a.inputs.front();
-      const auto& vn = v.getExternalName(a.glossaryNames,a.entryNames);
+    if(mpd.inputs.size()==1u){
+      const auto& v = mpd.inputs.front();
+      const auto& vn = v.getExternalName(mpd.glossaryNames,mpd.entryNames);
       if(vn!="Temperature"){
 	throw(std::runtime_error("BehaviourDescriptionCheckThermalExpansionCoefficientArgument: "
 				 "thermal expansion shall only depend on temperature"));
@@ -477,17 +481,20 @@ namespace mfront
 			       "no elastic material property defined"));
     }
     for(const auto mp : this->elasticMaterialProperties){
-      for(const auto i : this->getMaterialPropertyInputs(*mp)){
-	if(!((i.type==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
-	     (i.type==BehaviourDescription::MaterialPropertyInput::PARAMETER))){
-	  return false;
+      if(mp.is<ComputedMaterialProperty>()){
+	const auto& cmp = mp.get<ComputedMaterialProperty>();
+	for(const auto i : this->getMaterialPropertyInputs(*(cmp.mpd))){
+	  if(!((i.type==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
+	       (i.type==BehaviourDescription::MaterialPropertyInput::PARAMETER))){
+	    return false;
+	  }
 	}
       }
     }
     return true;
   } // end of BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep
   
-  const std::vector<std::shared_ptr<MaterialPropertyDescription>>&
+  const std::vector<BehaviourDescription::MaterialProperty>&
   BehaviourDescription::getElasticMaterialProperties(void) const
   {
     if(!this->areElasticMaterialPropertiesDefined()){
@@ -498,13 +505,13 @@ namespace mfront
   }
 
   static void
-  checkElasticMaterialProperty(const MaterialPropertyDescription& emp,
-			  const std::string&){
+  checkElasticMaterialProperty(const BehaviourDescription::MaterialProperty& emp,
+			       const std::string&){
     
   }
   
   void
-  BehaviourDescription::setElasticMaterialProperties(const std::vector<std::shared_ptr<MaterialPropertyDescription>>& emps)
+  BehaviourDescription::setElasticMaterialProperties(const std::vector<MaterialProperty>& emps)
   {
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresStiffnessTensor,false);
@@ -521,8 +528,8 @@ namespace mfront
       } else {
 	this->setElasticSymmetryType(mfront::ISOTROPIC);
       }
-      checkElasticMaterialProperty(*(emps[0]),tfel::glossary::Glossary::YoungModulus);
-      checkElasticMaterialProperty(*(emps[1]),tfel::glossary::Glossary::PoissonRatio);
+      checkElasticMaterialProperty(emps[0],tfel::glossary::Glossary::YoungModulus);
+      checkElasticMaterialProperty(emps[1],tfel::glossary::Glossary::PoissonRatio);
     } else if(emps.size()==9u){
       if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
 	throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
@@ -536,15 +543,15 @@ namespace mfront
       } else {
 	this->setElasticSymmetryType(mfront::ORTHOTROPIC);
       }
-      checkElasticMaterialProperty(*(emps[0]),tfel::glossary::Glossary::YoungModulus1);
-      checkElasticMaterialProperty(*(emps[1]),tfel::glossary::Glossary::YoungModulus2);
-      checkElasticMaterialProperty(*(emps[2]),tfel::glossary::Glossary::YoungModulus3);
-      checkElasticMaterialProperty(*(emps[3]),tfel::glossary::Glossary::PoissonRatio12);
-      checkElasticMaterialProperty(*(emps[4]),tfel::glossary::Glossary::PoissonRatio23);
-      checkElasticMaterialProperty(*(emps[5]),tfel::glossary::Glossary::PoissonRatio13);
-      checkElasticMaterialProperty(*(emps[6]),tfel::glossary::Glossary::ShearModulus12);
-      checkElasticMaterialProperty(*(emps[7]),tfel::glossary::Glossary::ShearModulus23);
-      checkElasticMaterialProperty(*(emps[9]),tfel::glossary::Glossary::ShearModulus13);
+      checkElasticMaterialProperty(emps[0],tfel::glossary::Glossary::YoungModulus1);
+      checkElasticMaterialProperty(emps[1],tfel::glossary::Glossary::YoungModulus2);
+      checkElasticMaterialProperty(emps[2],tfel::glossary::Glossary::YoungModulus3);
+      checkElasticMaterialProperty(emps[3],tfel::glossary::Glossary::PoissonRatio12);
+      checkElasticMaterialProperty(emps[4],tfel::glossary::Glossary::PoissonRatio23);
+      checkElasticMaterialProperty(emps[5],tfel::glossary::Glossary::PoissonRatio13);
+      checkElasticMaterialProperty(emps[6],tfel::glossary::Glossary::ShearModulus12);
+      checkElasticMaterialProperty(emps[7],tfel::glossary::Glossary::ShearModulus23);
+      checkElasticMaterialProperty(emps[9],tfel::glossary::Glossary::ShearModulus13);
     } else {
       throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
 			       "unsupported behaviour type"));
@@ -735,7 +742,7 @@ namespace mfront
   } // end of BehaviourDescription::getMainVariablesSize
 
   void
-  BehaviourDescription::setThermalExpansionCoefficient(const std::shared_ptr<MaterialPropertyDescription>& a)
+  BehaviourDescription::setThermalExpansionCoefficient(const MaterialProperty& a)
   {
     if(this->areThermalExpansionCoefficientsDefined()){
       throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
@@ -743,14 +750,14 @@ namespace mfront
     }
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresThermalExpansionCoefficientTensor,false);
-    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a);
+    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(a);
     this->thermalExpansionCoefficients.push_back(a);
   } // end of BehaviourDescription::setThermalExpansionCoefficient
 
   void
-  BehaviourDescription::setThermalExpansionCoefficients(const std::shared_ptr<MaterialPropertyDescription>& a1,
-							const std::shared_ptr<MaterialPropertyDescription>& a2,
-							const std::shared_ptr<MaterialPropertyDescription>& a3)
+  BehaviourDescription::setThermalExpansionCoefficients(const MaterialProperty& a1,
+							const MaterialProperty& a2,
+							const MaterialProperty& a3)
   {
     if(this->areThermalExpansionCoefficientsDefined()){
       throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
@@ -762,9 +769,9 @@ namespace mfront
     }
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresThermalExpansionCoefficientTensor,false);
-    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a1);
-    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a2);
-    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(*a3);
+    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(a1);
+    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(a2);
+    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(a3);
     this->thermalExpansionCoefficients.push_back(a1);
     this->thermalExpansionCoefficients.push_back(a2);
     this->thermalExpansionCoefficients.push_back(a3);
@@ -776,7 +783,7 @@ namespace mfront
     return !this->thermalExpansionCoefficients.empty();
   } // end of BehaviourDescription::areThermalExpansionCoefficientsDefined
 
-  const std::vector<std::shared_ptr<MaterialPropertyDescription>>&
+  const std::vector<BehaviourDescription::MaterialProperty>&
   BehaviourDescription::getThermalExpansionCoefficients(void) const
   {
     if(!this->areThermalExpansionCoefficientsDefined()){

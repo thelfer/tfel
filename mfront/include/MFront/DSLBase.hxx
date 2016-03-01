@@ -344,13 +344,23 @@ namespace mfront
      *   associated with this material property and have them compiled
      *   when mandatory (done by the callMFront method).
      *
-     * \param[in] f : file in which the material law is implemented
+     * \param[in] f : file in which the material law is
+     * implemented. This must be the full path.
      */
     virtual MaterialPropertyDescription
     handleMaterialLaw(const std::string&);
     /*!
+     * \return the material property description generated from
+     * a mfront files. The file is searched using the SearchFile class.
+     * \param[in] files: list of files
+     * \note this method calls handleMaterialLaw method internally.
+     */
+    std::shared_ptr<MaterialPropertyDescription>
+    getMaterialPropertyDescription(const std::string&);
+    /*!
      * \return the material property description generated from a list of mfront files
      * \param[in] files: list of files
+     * \note this is a small wrapper aroung getMaterialPropertyDescription
      */
     virtual std::vector<std::shared_ptr<MaterialPropertyDescription>>
     getMaterialPropertiesDescriptions(const std::vector<std::string>&);

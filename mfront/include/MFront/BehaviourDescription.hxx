@@ -18,6 +18,7 @@
 #include<map>
 #include<memory>
 
+#include"TFEL/Utilities/GenTypeBase.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/OrthotropicAxesConvention.hxx"
@@ -47,6 +48,32 @@ namespace mfront
     : public tfel::material::MechanicalBehaviourBase,
       public SupportedTypes  
   {
+    /*!
+     * \brief this structure holds the value of a constant material
+     * property
+     */
+    struct ConstantMaterialProperty
+    {
+      long double value;
+    };
+    /*!
+     * \brief this structure holds the value of a material
+     * property defined through an mfront file
+     */
+    struct ComputedMaterialProperty
+    {
+      //! description of a material property
+      std::shared_ptr<MaterialPropertyDescription> mpd;
+    };
+    //! list of supported material properties types
+    using MaterialPropertyTypes =
+      tfel::meta::GenerateTypeList<ConstantMaterialProperty,
+				   ComputedMaterialProperty>::type;
+    /*!
+     * The description of a material property from the point of
+     * view of a behaviour.
+     */
+    using MaterialProperty = tfel::utilities::GenTypeBase<MaterialPropertyTypes>;
     /*!
      * \brief Available integration schemes.
      * One of the first thing a parser shall do is to set the
@@ -313,11 +340,11 @@ namespace mfront
      * \param[in] emps : elastic material properties
      */
     void
-    setElasticMaterialProperties(const std::vector<std::shared_ptr<MaterialPropertyDescription>>&);
+    setElasticMaterialProperties(const std::vector<MaterialProperty>&);
     /*!
      * \return the elastic material properties
      */
-    const std::vector<std::shared_ptr<MaterialPropertyDescription>>&
+    const std::vector<MaterialProperty>&
     getElasticMaterialProperties(void) const;
     /*!
      * \return true if the elastic material properties have been defined
@@ -690,22 +717,22 @@ namespace mfront
     /*!
      * \return the thermal expansion coefficients
      */
-    const std::vector<std::shared_ptr<MaterialPropertyDescription>>&
+    const std::vector<MaterialProperty>&
     getThermalExpansionCoefficients(void) const;
     /*!
      * set the behaviour thermal expansion coefficient (isotropic behaviour)
      * \param[in] a : thermal expansion
      */
-    void setThermalExpansionCoefficient(const std::shared_ptr<MaterialPropertyDescription>&);
+    void setThermalExpansionCoefficient(const MaterialProperty&);
     /*!
      * set the behaviour thermal expansions coefficient (orthotropic behaviour)
      * \param[in] a1 : thermal expansion in the first direction
      * \param[in] a2 : thermal expansion in the second direction
      * \param[in] a3 : thermal expansion in the third  direction
      */
-    void setThermalExpansionCoefficients(const std::shared_ptr<MaterialPropertyDescription>&,
-					 const std::shared_ptr<MaterialPropertyDescription>&,
-					 const std::shared_ptr<MaterialPropertyDescription>&);
+    void setThermalExpansionCoefficients(const MaterialProperty&,
+					 const MaterialProperty&,
+					 const MaterialProperty&);
     /*!
      * \return the external names associated with the variables
      * contained in the given container
@@ -1370,13 +1397,13 @@ namespace mfront
      * For isotropic   behaviours, only two elastic material properties must be defined.
      * For orthotropic behaviours, two or nine elastic material properties must be defined.
      */
-    std::vector<std::shared_ptr<MaterialPropertyDescription>> elasticMaterialProperties;
+    std::vector<MaterialProperty> elasticMaterialProperties;
     /*!
      * average thermal coefficient
      * For isotropic   behaviours, only one thermal expansion coefficient must be defined.
      * For orthotropic behaviours, one or three thermal expansions coefficients must be defined.
      */
-    std::vector<std::shared_ptr<MaterialPropertyDescription>> thermalExpansionCoefficients;
+    std::vector<MaterialProperty> thermalExpansionCoefficients;
     //! use units
     bool use_qt;
     //! type of behaviour

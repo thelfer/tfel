@@ -36,7 +36,8 @@ set(mfront_tests_SOURCES
   OrthotropicElastic2
   OrthotropicElastic3
   OrthotropicElastic4
-  OrthotropicElastic5  
+  OrthotropicElastic5
+  OrthotropicElastic6
   GeneralizedMaxwell
   FiniteRotationSmallStrainElasticity
   FiniteRotationSmallStrainElasticity2
@@ -388,6 +389,30 @@ test_castem(orthotropicelasticity5-21)
 test_castem(orthotropicelasticity5-22)
 test_castem(orthotropicelasticity5-23)
 test_castem(orthotropicelasticity5-24)
+test_castem(orthotropicelasticity6-1)
+test_castem(orthotropicelasticity6-2)
+test_castem(orthotropicelasticity6-3)
+test_castem(orthotropicelasticity6-4)
+test_castem(orthotropicelasticity6-5)
+test_castem(orthotropicelasticity6-6)
+test_castem(orthotropicelasticity6-7)
+test_castem(orthotropicelasticity6-8)
+test_castem(orthotropicelasticity6-9)
+test_castem(orthotropicelasticity6-10)
+test_castem(orthotropicelasticity6-11)
+test_castem(orthotropicelasticity6-12)
+test_castem(orthotropicelasticity6-13)
+test_castem(orthotropicelasticity6-14)
+test_castem(orthotropicelasticity6-15)
+test_castem(orthotropicelasticity6-16)
+test_castem(orthotropicelasticity6-17)
+test_castem(orthotropicelasticity6-18)
+test_castem(orthotropicelasticity6-19)
+test_castem(orthotropicelasticity6-20)
+test_castem(orthotropicelasticity6-21)
+test_castem(orthotropicelasticity6-22)
+test_castem(orthotropicelasticity6-23)
+test_castem(orthotropicelasticity6-24)
 test_castem(orthotropiccreep)
 test_castem(orthotropiccreep-rk42)
 test_castem(orthotropiccreep-rkCastem)

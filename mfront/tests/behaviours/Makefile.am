@@ -18,6 +18,7 @@ MFRONTS= DDIF2.mfront                                                      \
          OrthotropicElastic3.mfront                                        \
          OrthotropicElastic4.mfront                                        \
          OrthotropicElastic5.mfront                                        \
+         OrthotropicElastic6.mfront                                        \
          GeneralizedMaxwell.mfront                                         \
          FiniteRotationSmallStrainElasticity.mfront                        \
          FiniteRotationSmallStrainElasticity2.mfront                       \

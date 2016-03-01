@@ -941,37 +941,36 @@ namespace mfront{
   void
   BehaviourDSLCommon::treatComputeThermalExpansion(void)
   {
-    using namespace std;
-    const string m("BehaviourDSLCommon::treatComputeThermalExpansion");
+    using ComputedMaterialProperty = BehaviourDescription::ComputedMaterialProperty;
+    const std::string m("BehaviourDSLCommon::treatComputeThermalExpansion");
     if(this->mb.getAttribute<bool>(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      this->throwRuntimeError("BehaviourDSLCommon::treatComputeThermalExpansion",
-			      "@ComputeThermalExpansion can be used along with "
+      this->throwRuntimeError(m,"@ComputeThermalExpansion can be used along with "
 			      "@RequireThermalExpansionCoefficientTensor");
     }
-    const auto& files = this->readStringOrArrayOfString(m);
+    const auto& acs = this->readMaterialPropertyOrArrayOfMaterialProperties(m);
     this->readSpecifiedToken(m,";");
-    if((files.size()!=1u)&&(files.size()!=3u)){
-      this->throwRuntimeError("BehaviourDSLCommon::treatComputeThermalExpansion",
-			      "invalid number of file names given");
+    if((acs.size()!=1u)&&(acs.size()!=3u)){
+      this->throwRuntimeError(m,"invalid number of file names given");
     }
-    if(files.size()==3u){
+    if(acs.size()==3u){
       // the material shall have been declared orthotropic
       if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
-	this->throwRuntimeError("BehaviourDSLCommon::treatComputeThermalExpansion",
-				"the mechanical behaviour must be orthotropic to give more than "
-				"one thermal expansion coefficient.");
+	this->throwRuntimeError(m,"the mechanical behaviour must be orthotropic "
+				"to give more than one thermal expansion coefficient.");
       }
     }
-    const auto acs = getMaterialPropertiesDescriptions(files);
     for(const auto& a:acs){
-      if(!a->staticVars.contains("ReferenceTemperature")){
-	if(getVerboseMode()!=VERBOSE_QUIET){
-	  auto& os = getLogStream();
-	  os  << "no reference temperature in material property '";
-	  if(a->material.empty()){
-	    os << a->material << '_';
+      if(a.is<ComputedMaterialProperty>()){
+	const auto& mpd = *(a.get<ComputedMaterialProperty>().mpd);
+	if(!mpd.staticVars.contains("ReferenceTemperature")){
+	  if(getVerboseMode()!=VERBOSE_QUIET){
+	    auto& os = getLogStream();
+	    os  << "no reference temperature in material property '";
+	    if(mpd.material.empty()){
+	      os << mpd.material << '_';
+	    }
+	    os << mpd.law << "'\n";
 	  }
-	  os << a->law << "'\n";
 	}
       }
     }
@@ -992,15 +991,52 @@ namespace mfront{
     this->readElasticMaterialProperties();
   }
 
+  BehaviourDescription::MaterialProperty
+  BehaviourDSLCommon::extractMaterialProperty(const std::string& m,
+					      const tfel::utilities::Token& t){
+    if(t.flag==tfel::utilities::Token::String){
+      BehaviourDescription::ComputedMaterialProperty mp;
+      mp.mpd = this->getMaterialPropertyDescription(t.value.substr(1,t.value.size()-2));
+      return mp;
+    }
+    BehaviourDescription::ConstantMaterialProperty mp;
+    try{
+      mp.value = std::stold(t.value);
+    } catch(std::exception& e){
+      this->throwRuntimeError(m,"can't convert token '"+t.value+"' to long double "
+			      "("+std::string(e.what())+")");
+    }
+    return mp;
+  }
+  
+  std::vector<BehaviourDescription::MaterialProperty>
+  BehaviourDSLCommon::readMaterialPropertyOrArrayOfMaterialProperties(const std::string& m)
+  {
+    auto mps    = std::vector<BehaviourDescription::MaterialProperty>{};
+    this->checkNotEndOfFile(m);
+    if(this->current->value=="{"){
+      auto tokens = std::vector<tfel::utilities::Token>{};
+      this->readList(tokens,m,"{","}",false);
+      for(const auto& t: tokens){
+	mps.push_back(this->extractMaterialProperty(m,t));
+      }
+    } else {
+      mps.push_back(this->extractMaterialProperty(m,*(this->current)));
+      ++(this->current);
+    }
+    return mps;
+  }
+  
   void
   BehaviourDSLCommon::readElasticMaterialProperties(void){
-    const auto& files = this->readStringOrArrayOfString("BehaviourDSLCommon::treatComputeStiffnessTensor");
+    const auto& emps =
+      this->readMaterialPropertyOrArrayOfMaterialProperties("BehaviourDSLCommon::treatComputeStiffnessTensor");
     this->readSpecifiedToken("BehaviourDSLCommon::treatComputeStiffnessTensor",";");
-    if((files.size()!=2u)&&(files.size()!=9u)){
+    if((emps.size()!=2u)&&(emps.size()!=9u)){
       this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
 			      "invalid number of file names given");
     }
-    if(files.size()==9u){
+    if(emps.size()==9u){
       // the material shall have been declared orthotropic
       if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
 	this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
@@ -1008,7 +1044,7 @@ namespace mfront{
 				"two elastic material properties.");
       }
     }
-    this->mb.setElasticMaterialProperties(this->getMaterialPropertiesDescriptions(files));
+    this->mb.setElasticMaterialProperties(emps);
   }
   
   void
@@ -3036,9 +3072,9 @@ namespace mfront{
       } else {
 	out << "tfel::material::computeIsotropicStiffnessTensor<hypothesis,StiffnessTensorAlterationCharacteristic::ALTERED" << ">("   << D << ",";
       }
-      this->writeMaterialPropertyEvaluation(out,*(emps[0]),f);
+      this->writeMaterialPropertyEvaluation(out,emps[0],f);
       out << ",\n";
-      this->writeMaterialPropertyEvaluation(out,*(emps[1]),f);
+      this->writeMaterialPropertyEvaluation(out,emps[1],f);
       out << ");\n";
     } else if(this->mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
       if(emps.size()!=9u){
@@ -3067,7 +3103,7 @@ namespace mfront{
 	}
       }
       for(decltype(emps.size()) i=0;i!=emps.size();){
-	this->writeMaterialPropertyEvaluation(out,*(emps[i]),f);
+	this->writeMaterialPropertyEvaluation(out,emps[i],f);
 	if(++i!=emps.size()){out << ",\n";}
       }
       out << ");\n";
@@ -3079,52 +3115,69 @@ namespace mfront{
   
   void
   BehaviourDSLCommon::writeMaterialPropertyEvaluation(std::ostream& out,
-						      const MaterialPropertyDescription& mpd,
+						      const BehaviourDescription::MaterialProperty& m,
 						      std::function<std::string(const MaterialPropertyInput&)>& f)
   {
-    out << MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law) << '(';
-    if(!mpd.inputs.empty()){
-      const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
-      const auto pie = std::end(inputs);
-      for(auto pi = std::begin(inputs);pi!=pie;){
-	out << f(*pi);
-	if(++pi!=pie){
-	  out << ",";
+    if(m.is<BehaviourDescription::ConstantMaterialProperty>()){
+      out << m.get<BehaviourDescription::ConstantMaterialProperty>().value;
+    } else if(m.is<BehaviourDescription::ComputedMaterialProperty>()){
+      const auto& mpd = *(m.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
+      out << MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law) << '(';
+      if(!mpd.inputs.empty()){
+	const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
+	const auto pie = std::end(inputs);
+	for(auto pi = std::begin(inputs);pi!=pie;){
+	  out << f(*pi);
+	  if(++pi!=pie){
+	    out << ",";
+	  }
 	}
       }
+      out << ")";
+    } else {
+      this->throwRuntimeError("BehaviourDSLCommon::writeMaterialPropertyEvaluation",
+			      "unsupported material property type");
     }
-    out << ")";
   } // end of BehaviourDSLCommon::writeMaterialPropertyEvaluation
   
   void
   BehaviourDSLCommon::writeThermalExpansionCoefficientComputation(std::ostream& out,
-								  const MaterialPropertyDescription& a,
+								  const BehaviourDescription::MaterialProperty& a,
 								  const std::string& T,
 								  const std::string& i,
 								  const std::string& s)
   {
-    const auto& mname = MFrontMaterialPropertyInterface().getFunctionName(a.material,a.law);
-    const auto inputs = this->mb.getMaterialPropertyInputs(a);
     out << "const thermalexpansion alpha" << s;
     if(!i.empty()){out << "_" << i;}
-    out << " = " << MFrontMaterialPropertyInterface().getFunctionName(a.material,a.law) << '(';
-    if(!inputs.empty()){
-      if(inputs.size()!=1u){
-	this->throwRuntimeError("BehaviourDSLCommon::writeThermalExpansionCoefficientComputation",
-				"thermal expansion coefficients must depend on the temperature only");
+    out << " = ";
+    if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
+      out << a.get<BehaviourDescription::ConstantMaterialProperty>().value << ";\n";
+    } else if(a.is<BehaviourDescription::ComputedMaterialProperty>()){
+      const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
+      const auto& mname = MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law);
+      const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
+      out << MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law) << '(';
+      if(!inputs.empty()){
+	if(inputs.size()!=1u){
+	  this->throwRuntimeError("BehaviourDSLCommon::writeThermalExpansionCoefficientComputation",
+				  "thermal expansion coefficients must depend on the temperature only");
+	}
+	if(inputs.front().ename!=tfel::glossary::Glossary::Temperature){
+	  this->throwRuntimeError("BehaviourDSLCommon::writeThermalExpansionCoefficientComputation",
+				  "thermal expansion coefficients must depend on the temperature only");
+	}
+	out << T;
       }
-      if(inputs.front().ename!=tfel::glossary::Glossary::Temperature){
-	this->throwRuntimeError("BehaviourDSLCommon::writeThermalExpansionCoefficientComputation",
-				"thermal expansion coefficients must depend on the temperature only");
-      }
-      out << T;
+      out << ");\n";
+    } else {
+      this->throwRuntimeError("BehaviourDSLCommon::writeMaterialPropertyEvaluation",
+			      "unsupported material property type");
     }
-    out << ");\n";
   } // end of BehaviourDSLCommon::writeThermalExpansionCoefficientComputation
 
   void
   BehaviourDSLCommon::writeThermalExpansionCoefficientsComputations(std::ostream& out,
-								    const MaterialPropertyDescription& a,
+								    const BehaviourDescription::MaterialProperty& a,
 								    const std::string& suffix)
   {
     this->writeThermalExpansionCoefficientComputation(out,a,"this->referenceTemperatureForThermalExpansion",
@@ -3136,20 +3189,30 @@ namespace mfront{
 
   void
   BehaviourDSLCommon::writeThermalExpansionComputation(std::ostream& out,
-						       const MaterialPropertyDescription& a,
+						       const BehaviourDescription::MaterialProperty& a,
 						       const std::string& t,
 						       const std::string& c,
 						       const std::string& suffix)
   {
-    const auto Tref = a.staticVars.contains("ReferenceTemperature") ?
-      std::to_string(a.staticVars.get("ReferenceTemperature").value) : "293.15";
+    const auto Tref = [&a]() -> std::string {
+      if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
+	return "293.15";
+      } else if(a.is<BehaviourDescription::ComputedMaterialProperty>()){
+	const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
+	return mpd.staticVars.contains("ReferenceTemperature") ?
+	std::to_string(mpd.staticVars.get("ReferenceTemperature").value) : "293.15";
+      }
+      throw(std::runtime_error("BehaviourDSLCommon::writeThermalExpansionComputation: "
+			       "unsupported material property type"));
+    }();
     const auto T = (t=="t") ? "this->T" : "this->T+this->dT";
     if(t=="t"){
       out << "dl_l0";
     } else {
       out << "dl_l1";
     }
-    out << "[" << c << "] = 1/(1+alpha" << suffix << "_Ti * (this->referenceTemperatureForThermalExpansion-" << Tref << "))*("
+    out << "[" << c << "] = 1/(1+alpha"
+	<< suffix << "_Ti * (this->referenceTemperatureForThermalExpansion-" << Tref << "))*("
 	<< "alpha" << suffix << "_T_"  << t << " * (" << T << "-" << Tref << ")-"
 	<< "alpha" << suffix << "_Ti * (this->referenceTemperatureForThermalExpansion-" << Tref << "));\n";
   } // end of BehaviourDSLCommon::writeThermalExpansionComputation
@@ -3199,12 +3262,11 @@ namespace mfront{
     this->behaviourFile << "dl_l1 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
     const auto& acs = this->mb.getThermalExpansionCoefficients();
     if(acs.size()==1u){
-      this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,
-								      *(acs.front()));
-      this->writeThermalExpansionComputation(this->behaviourFile,*(acs.front()),"t","0");
+      this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs.front());
+      this->writeThermalExpansionComputation(this->behaviourFile,acs.front(),"t","0");
       this->behaviourFile << "dl_l0[1] = dl_l0[0];\n"
 			  << "dl_l0[2] = dl_l0[0];\n";
-      this->writeThermalExpansionComputation(this->behaviourFile,*(acs.front()),"t_dt","0");
+      this->writeThermalExpansionComputation(this->behaviourFile,acs.front(),"t_dt","0");
       this->behaviourFile << "dl_l1[1] = dl_l1[0];\n"
 			  << "dl_l1[2] = dl_l1[0];\n";
     } else if(acs.size()==3u){
@@ -3212,15 +3274,15 @@ namespace mfront{
 	this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
 				"invalid number of thermal expansion coefficients");
       }
-      this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,*(acs[0]),"0");
-      this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,*(acs[1]),"1");
-      this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,*(acs[2]),"2");
-      this->writeThermalExpansionComputation(this->behaviourFile,*(acs[0]),"t","0","0");
-      this->writeThermalExpansionComputation(this->behaviourFile,*(acs[0]),"t_dt","0","0");
-      this->writeThermalExpansionComputation(this->behaviourFile,*(acs[1]),"t","1","1");
-      this->writeThermalExpansionComputation(this->behaviourFile,*(acs[1]),"t_dt","1","1");
-      this->writeThermalExpansionComputation(this->behaviourFile,*(acs[2]),"t","2","2");
-      this->writeThermalExpansionComputation(this->behaviourFile,*(acs[2]),"t_dt","2","2");
+      this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs[0],"0");
+      this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs[1],"1");
+      this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs[2],"2");
+      this->writeThermalExpansionComputation(this->behaviourFile,acs[0],"t","0","0");
+      this->writeThermalExpansionComputation(this->behaviourFile,acs[0],"t_dt","0","0");
+      this->writeThermalExpansionComputation(this->behaviourFile,acs[1],"t","1","1");
+      this->writeThermalExpansionComputation(this->behaviourFile,acs[1],"t_dt","1","1");
+      this->writeThermalExpansionComputation(this->behaviourFile,acs[2],"t","2","2");
+      this->writeThermalExpansionComputation(this->behaviourFile,acs[2],"t_dt","2","2");
       if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
 	this->behaviourFile << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl_l0);\n"
 			    << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl_l1);\n";

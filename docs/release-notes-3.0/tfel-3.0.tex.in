@@ -90,12 +90,91 @@
 
 \section{Nouveautés \mfront{}}
 
-\subsection{L'interface {\tt Europlexus}}
-
-\subsection{L'interface {\tt Abaqus}}
-
 \subsection{Support des déformations logarithmiques pour les codes
   combustibles $1D$ écrits en petites déformations}
+
+\subsection{Possibilité de gérer un pas de temps adaptatif depuis la
+  loi de comportement}
+
+\subsection{Calcul des dilatations libres, du tenseur d'élasticité et
+  du tenseur de Hill dans les lois de comportement}
+
+Nous traitons dans ce paragraphe les fonctionnalités relatives au
+calcul des dilatations libres, du tenseur d'élasticité et du tenseur
+de Hill par la lois de comportement.
+
+La difficulté provient essentiellement du cas des matériaux
+orthotropes qui posent le problème de la cohérence de la définition
+des axes entre les différentes hypothèses de modélisation.
+
+Pour illustrer cette difficulté, rappelons que tous les codes imposent
+que~:
+\begin{itemize}
+\item la direction axiale soit la troisième direction matériau en
+  \(2D\) déformation plane ou en \(2D\) contrainte plane.
+\item la direction orthoradiale soit la la troisième direction
+  matériau en axisymétrie.
+\end{itemize}
+
+Dans les versions précédentes de \mfront{}, ses difficultés étaient
+gérées ainsi~:
+\begin{itemize}
+\item pour le calcul des dilatations libres, on laissait le code
+  appelant faire leur évaluation~: le code fournissait alors à la loi
+  un incrément de déformation dit \og{}~mécanique\fg{}\footnote{Il
+    s'agit de l'incrément de déformation totale auquel on a soustrait
+    l'incrément des dilatations libres.}.
+\item pour le calcul du tenseur d'élasticité, l'utilisateur pouvait
+  utiliser le mot clé {\tt @RequireStiffnessTensor} pour que \mfront{}
+  rajoute à la liste des propriétés matériau les propriétés
+  élastiques. Celles-ci devaient alors être fournies par le code dans
+  \og{}~le bon ordre~\fg{}. Charge à l'utilisateur de ne pas se
+  tromper~: il fallait en particulier être prudent si l'on changeait
+  d'hypothèse de modélisation et penser à inverser l'ordre des axes.
+\item pour le calcul du tenseur de \nom{Hill}, on testait
+  explicitement l'hypothèse de modélisation et l'on devait intervertir
+  l'ordre des coefficients de \nom{Hill}.
+\end{itemize}
+
+Ces trois solutions sont insatisfaisantes pour les raisons suivantes~:
+\begin{itemize}
+\item pour les deux premiers points (dilatations libres et tenseur
+  d'élasticité), une partie de l'information physique se trouve en
+  dehors de la loi.
+\item pour gérer correctement les grandes transformations, le calcul
+  des dilatations libres, ou du moins leur traitement, doit être
+  réalisé par la loi de comportement.
+\item dans tous les cas, on multiplie les causes d'erreurs
+  potentielles.
+\end{itemize}
+
+Une première étape pour celaPour permettre 
+
+\subsubsection{Convention de rangement des axes en orthotropie}
+
+. Pour cela, il est nécessaire de se
+donner une convention.
+
+
+ Ce problème se retrouve ~:
+
+\subsubsection{Calcul des déformations libres}
+
+\paragraph{Le mot clé {\tt @ComputeThermalExpansion}}
+
+\paragraph{Le mot clé {\tt @AxialGrowth}}
+
+\subsubsection{Calcul du tenseur d'élasticité}
+
+\paragraph{Cas des contraintes planes}
+
+\paragraph{Le mot clé {\tt @ComputeStiffnessTensor}}
+
+\subsection{Nouvelles interfaces}
+
+\subsubsection{L'interface {\tt Europlexus}}
+
+\subsubsection{L'interface {\tt Abaqus}}
 
 \subsection{L'utilitaire {\tt mfront-doc}}
 
@@ -126,6 +205,8 @@ versions précédentes. Son utilisation conduit cependant à un message
 d'avertissement conseillant d'utiliser le nouveau module.
 
 \subsection{Nouvelles méthodes d'accélération de convergence}
+
+\subsection{Pas de temps adaptatif}
 
 \section{Nouveautés \tfel{}}
 
