@@ -506,8 +506,28 @@ namespace mfront
 
   static void
   checkElasticMaterialProperty(const BehaviourDescription::MaterialProperty& emp,
-			       const std::string&){
-    
+			       const std::string& n){
+    if(emp.is<BehaviourDescription::ComputedMaterialProperty>()){
+      const auto& mpd = *(emp.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
+      
+      const auto ename = [&mpd](){
+	auto p = mpd.glossaryNames.find(mpd.output);
+	if(p!=mpd.glossaryNames.end()){
+	  return p->second;
+	}
+	p = mpd.entryNames.find(mpd.output);
+	if(p!=mpd.entryNames.end()){
+	  return p->second;
+	}
+	return mpd.output;
+      }();
+      if(ename!=n){
+	auto& log = getLogStream();
+	log << "checkElasticMaterialProperty: inconsistent external name for "
+	    << "material property '"+n+"': external name of mfront file "
+	    << "output  is '" << ename << "'\n";
+      }
+    }
   }
   
   void

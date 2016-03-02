@@ -19,10 +19,11 @@
   DMN/SRMA/LA2M/NT/2008-2967/A
 }
 
+@Output E;
+E.setGlossaryName("YoungModulus");
+
 @Input TK;
 TK.setGlossaryName("Temperature");
-
-@Output E;
 
 @PhysicalBounds TK in [0:*[;
 @Bounds TK in [293.15:973.15];

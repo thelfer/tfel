@@ -14,6 +14,7 @@ CEA/DEN/CAD/DEC/SESC/LC2I DO 84 17/03/04
 TK.setGlossaryName("Temperature");
 
 @Output E;
+E.setGlossaryName("YoungModulus");
 
 @PhysicalBounds TK in [0:*[;
 

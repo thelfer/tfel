@@ -13,6 +13,7 @@ MFRONTS= DDIF2.mfront                                                      \
          Elasticity3.mfront                                                \
          Elasticity4.mfront                                                \
          Elasticity5.mfront                                                \
+         Elasticity6.mfront                                                \
          OrthotropicElastic.mfront                                         \
          OrthotropicElastic2.mfront                                        \
          OrthotropicElastic3.mfront                                        \

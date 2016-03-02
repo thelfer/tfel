@@ -96,16 +96,30 @@
 \subsection{Possibilité de gérer un pas de temps adaptatif depuis la
   loi de comportement}
 
-\subsection{Calcul des dilatations libres, du tenseur d'élasticité et
-  du tenseur de Hill dans les lois de comportement}
+\subsection{Calcul des dilatations libres, du tenseur d'élasticité, du
+  tenseur de Hill et de propriétés matériaux par les lois de
+  comportement}
 
 Nous traitons dans ce paragraphe les fonctionnalités relatives au
-calcul des dilatations libres, du tenseur d'élasticité et du tenseur
-de Hill par la lois de comportement.
+calcul des dilatations libres, du tenseur d'élasticité, du tenseur de
+Hill et, de manière générale, de propriétés matériau, par la loi de
+comportement.
 
-La difficulté provient essentiellement du cas des matériaux
-orthotropes qui posent le problème de la cohérence de la définition
-des axes entre les différentes hypothèses de modélisation.
+Il s'agit d'un sujet d'apparence anodine, mais qui s'est avéré
+étonnamment complexe pour trois raisons~:
+\begin{itemize}
+\item la prise en compte des contraintes planes pour le calcul du
+  tenseur d'élasticité. Ce point est discuté au paragraphe~\ref{}~;
+\item la prise en compte des évolutions des propriétés au cours du
+  calcul, notamment avec la température dont l'évolution sur le pas de
+  temps est connu par la loi de comportement. Nous reportons la
+  discussion de ce point au paragraphe~\ref{sec:eval-des-propr}.
+\item le cas des matériaux orthotropes.
+\end{itemize}
+
+Pour les matériaux orthotropes, la difficulté provient essentiellement
+du problème de la cohérence de la définition des axes matériau entre
+les différentes hypothèses de modélisation.
 
 Pour illustrer cette difficulté, rappelons que tous les codes imposent
 que~:
@@ -148,15 +162,15 @@ Ces trois solutions sont insatisfaisantes pour les raisons suivantes~:
   potentielles.
 \end{itemize}
 
-Une première étape pour celaPour permettre 
+La meilleure solution serait de permettre l'évaluation dans la loi de
+comportement des dilatations libres, du tenseur d'élasticité et du tenseur
+de Hill.
+
+Une première étape pour résoudre ces difficultés est de permettre à
+l'utilisateur de spécifier une convention de rangement des axes
+d'orthotropie.
 
 \subsubsection{Convention de rangement des axes en orthotropie}
-
-. Pour cela, il est nécessaire de se
-donner une convention.
-
-
- Ce problème se retrouve ~:
 
 \subsubsection{Calcul des déformations libres}
 
@@ -170,20 +184,29 @@ donner une convention.
 
 \paragraph{Le mot clé {\tt @ComputeStiffnessTensor}}
 
+\subsubsection{Propriétés matériaux externes}
+
+\subsubsection{Évaluation des propriétés matériaux externes}
+\label{sec:eval-des-propr}
+
+\subsection{Briques élémentaires de lois de comportement}
+
 \subsection{Nouvelles interfaces}
 
 \subsubsection{L'interface {\tt Europlexus}}
 
 \subsubsection{L'interface {\tt Abaqus}}
 
-\subsection{L'utilitaire {\tt mfront-doc}}
+\subsection{Utilitaires}
+
+\subsubsection{L'utilitaire {\tt mfront-doc}}
 
 L'utilitaire {\tt mfront-doc} permet de générer un fichier au format
 {\tt Markdown} à partir des commentaires écrits dans un fichier
 \mfront{}. Ce fichier peut ensuite être converti en différents formats
 (pdf, docx, tex, html) par l'utilitaire {\tt pandoc}.
 
-\subsection{L'utilitaire {\tt mfront-query}}
+\subsubsection{L'utilitaire {\tt mfront-query}}
 
 L'utilitaire {\tt mfront-query} permet d'obtenir en ligne commande des
 informations sur un fichier \mfront{}.
@@ -257,5 +280,49 @@ respectivement de calculer la valeur d'une fonction isotrope, la
 valeur de sa dérivée ou les deux en même temps.
 
 Trois fonctions du même nom sont également disponibles.
+
+\section{Publication}
+
+\section{Éléments d'assurance qualité}
+
+\subsection{Indicateurs de la qualité du code}
+
+\subsubsection{Analyse statique du code}
+
+\paragraph{L'outil {\tt scan-build}}
+
+\paragraph{L'outil {\tt Coverity}}
+
+\subsubsection{Sanitizers}
+
+\subsubsection{Cas tests de vérification et taux de couverture}
+
+{\tt gcov}
+
+\subsection{Documentation}
+
+\subsubsection{Formation}
+
+\subsubsection{Documentation en ligne de commande}
+
+\paragraph{Documentation des mots-clés \mfront{}}
+
+\paragraph{Documentation des mots-clés \mtest{}}
+
+\subsubsection{Documentation des modules python de \mtest{}}
+
+\subsubsection{Page wiki pleiades}
+
+\subsection{Portabilité}
+
+\subsubsection{Portage sur Microsoft Visual Studio 2015}
+
+\subsubsection{Liste des compilateurs supportés}
+
+\subsection{Perspectives}
+
+\subsubsection{Lois de comportement à gradient de variables internes}
+
+% \subsubsection{Lois de comportement à gradient de variables internes}
 
 \end{document}

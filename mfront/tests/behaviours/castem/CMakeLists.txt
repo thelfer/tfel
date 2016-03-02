@@ -32,6 +32,7 @@ set(mfront_tests_SOURCES
   Elasticity3
   Elasticity4
   Elasticity5
+  Elasticity6
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicElastic3
@@ -335,6 +336,9 @@ test_castem(elasticity4-2)
 test_castem(elasticity4-3)
 test_castem(elasticity4-4)
 test_castem(elasticity5-1)
+test_castem(elasticity5-2)
+test_castem(elasticity6-1)
+test_castem(elasticity6-2)
 test_castem(generalizedmaxwell)
 test_castem(ddif2)
 test_castem(ddif2-2)

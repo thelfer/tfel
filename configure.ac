@@ -921,6 +921,9 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/castem/castemelasticity4-3.mtest
 	   mfront/tests/behaviours/castem/castemelasticity4-4.mtest
   	   mfront/tests/behaviours/castem/castemelasticity5-1.mtest
+	   mfront/tests/behaviours/castem/castemelasticity5-2.mtest
+    	   mfront/tests/behaviours/castem/castemelasticity6-1.mtest
+	   mfront/tests/behaviours/castem/castemelasticity6-2.mtest	   
            mfront/tests/behaviours/castem/castemgeneralizedmaxwell.mtest
            mfront/tests/behaviours/castem/castemddif2.mtest
            mfront/tests/behaviours/castem/castemddif2-2.mtest

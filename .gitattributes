@@ -2036,6 +2036,7 @@ mfront/tests/behaviours/Elasticity2.mfront -text
 mfront/tests/behaviours/Elasticity3.mfront -text
 mfront/tests/behaviours/Elasticity4.mfront -text
 mfront/tests/behaviours/Elasticity5.mfront -text
+mfront/tests/behaviours/Elasticity6.mfront -text
 mfront/tests/behaviours/EllipticCreep.mfront -text
 mfront/tests/behaviours/ExternalStateVariablesBoundsCheck.mfront -text
 mfront/tests/behaviours/FiniteRotationSmallStrainElasticity.mfront -text
@@ -2747,7 +2748,10 @@ mfront/tests/behaviours/castem/castemelasticity4-3.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity4-4.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity4.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity5-1.mtest.in -text
+mfront/tests/behaviours/castem/castemelasticity5-2.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity5.mtest.in -text
+mfront/tests/behaviours/castem/castemelasticity6-1.mtest.in -text
+mfront/tests/behaviours/castem/castemelasticity6-2.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity6.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity7.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity8.mtest.in -text

@@ -6,32 +6,17 @@
  (the most simple one in fact).
 }
 
-@UseQt true;
-@ProvidesSymmetricTangentOperator;
-
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
-@LocalVariable stress lambda;
-@LocalVariable stress mu;
-
 @ComputeThermalExpansion "ThermalExpansionCoefficientTest2.mfront";
 
-@InitLocalVariables{
-  lambda = computeLambda(young,nu);
-  mu = computeMu(young,nu);
-}
-
-@PredictionOperator{
-  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
-    return FAILURE;
-  }
-  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
-}
-
+@ProvidesSymmetricTangentOperator;
 @Integrator{
+  const stress lambda = computeLambda(young,nu);
+  const stress mu = computeMu(young,nu);
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
   if(computeTangentOperator_){
     Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
