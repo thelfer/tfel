@@ -45,7 +45,6 @@ macro(cyranoptest test_arg)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
-    get_property(MFrontMaterialPropertiesCyranoBuildPath TARGET MFrontMaterialProperties-fortran PROPERTY LOCATION_${conf})
     configure_file(cyrano${test_arg}.ptest.in
       cyrano${test_arg}.ptest @ONLY)
     if(_NO_XML_OUTPUT)
@@ -60,7 +59,7 @@ macro(cyranoptest test_arg)
 	PROPERTIES WILL_FAIL true)
     endif(_WILL_FAIL)
     set_property(TEST cyrano${test_arg}_ptest
-      PROPERTY DEPENDS "MFrontCyranoBehaviours MFrontMaterialProperties-cyrano ptest")
+      PROPERTY DEPENDS "MFrontCyranoBehaviours MFrontMaterialProperties-castem ptest")
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cyrano${test_arg}.ptest
       DESTINATION "share/mfront/tests/behaviours/cyrano"
       COMPONENT mtest)

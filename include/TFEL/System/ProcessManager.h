@@ -24,13 +24,15 @@ extern "C" {
   
   int
   processManager_wexitstatus(int);
-  
+
+#ifndef _AIX
   int
   processManager_wtermsig(int);
   
   int
   processManager_wcoredump(int);
-
+#endif _AIX
+  
 #ifdef	__cplusplus
 }
 #endif /* LIB_TFEL_PROCESSMANAGER_H_ */

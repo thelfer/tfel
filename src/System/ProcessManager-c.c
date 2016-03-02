@@ -29,6 +29,7 @@ processManager_wexitstatus(int status){
   return WEXITSTATUS(status);
 } /* end of processManager_wexitstatus */
 
+#ifndef _AIX
 int
 processManager_wtermsig(int status){
   return WTERMSIG(status);
@@ -38,3 +39,4 @@ int
 processManager_wcoredump(int status){
   return WCOREDUMP(status);
 } /* end of processManager_wcoredump */
+#endif
