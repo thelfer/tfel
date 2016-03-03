@@ -26,7 +26,7 @@ namespace abaqus
   {
     using namespace tfel::material;
     using STAC = StiffnessTensorAlterationCharacteristic;
-    computeIsotropicStiffnessTensor<2u,STAC::UNALTERED>(C,props[0],props[1]);
+    computeIsotropicStiffnessTensorII<2u,STAC::UNALTERED>(C,props[0],props[1]);
   }
 
   void
@@ -36,7 +36,7 @@ namespace abaqus
   {
     using namespace tfel::material;
     using STAC = StiffnessTensorAlterationCharacteristic;
-    computeIsotropicStiffnessTensor<2u,STAC::ALTERED>(C,props[0],props[1]);
+    computeIsotropicStiffnessTensorII<2u,STAC::ALTERED>(C,props[0],props[1]);
   } // end of struct AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor
 
   void
@@ -45,7 +45,7 @@ namespace abaqus
   {
     using namespace tfel::material;
     using STAC = StiffnessTensorAlterationCharacteristic;
-    computeIsotropicStiffnessTensor<3u,STAC::UNALTERED>(C,props[0],props[1]);
+    computeIsotropicStiffnessTensorII<3u,STAC::UNALTERED>(C,props[0],props[1]);
   } // end of struct AbaqusComputeStiffnessTensor
 
   void
@@ -54,9 +54,9 @@ namespace abaqus
   {
     using namespace tfel::material;
     using STAC = StiffnessTensorAlterationCharacteristic;
-    computeOrthotropicStiffnessTensor<2u,STAC::UNALTERED>(C,props[0],props[1],props[2],
-							  props[3],props[4],props[5],
-							  props[6],props[6],props[6]);
+    computeOrthotropicStiffnessTensorII<2u,STAC::UNALTERED>(C,props[0],props[1],props[2],
+							    props[3],props[4],props[5],
+							    props[6],props[6],props[6]);
   } // end of struct AbaqusComputeStiffnessTensor
 
   void
@@ -65,9 +65,9 @@ namespace abaqus
   {
     using namespace tfel::material;
     using STAC = StiffnessTensorAlterationCharacteristic;
-    computeOrthotropicStiffnessTensor<2u,STAC::ALTERED>(C,props[0],props[1],props[2],
-							props[3],props[4],props[5],
-							props[6],props[6],props[6]);
+    computeOrthotropicStiffnessTensorII<2u,STAC::ALTERED>(C,props[0],props[1],props[2],
+							  props[3],props[4],props[5],
+							  props[6],props[6],props[6]);
   } // end of struct AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor
 
   void
@@ -76,9 +76,9 @@ namespace abaqus
   {
     using namespace tfel::material;
     using STAC = StiffnessTensorAlterationCharacteristic;
-    computeOrthotropicStiffnessTensor<3u,STAC::UNALTERED>(C,props[0],props[1],props[2],
-							  props[3],props[4],props[5],
-							  props[6],props[7],props[8]);
+    computeOrthotropicStiffnessTensorII<3u,STAC::UNALTERED>(C,props[0],props[1],props[2],
+							    props[3],props[4],props[5],
+							    props[6],props[7],props[8]);
   } // end of struct AbaqusComputeStiffnessTensor
 
 } // end of namespace abaqus

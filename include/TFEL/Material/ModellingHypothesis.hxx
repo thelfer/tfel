@@ -33,7 +33,8 @@ namespace tfel
       /*!
        * the list of supported modelling hypothesis
        */
-      enum Hypothesis{
+      enum Hypothesis
+      {
 	AXISYMMETRICALGENERALISEDPLANESTRAIN,
 	AXISYMMETRICALGENERALISEDPLANESTRESS,
 	AXISYMMETRICAL,

@@ -349,19 +349,19 @@ namespace tfel{
      
     template<unsigned short N,StiffnessTensorAlterationCharacteristic smt,
 	     typename StressType,typename RealType>
-    void computeIsotropicStiffnessTensor(tfel::math::st2tost2<N,StressType>& C,
-					 const StressType E,
-					 const RealType n)
+    void computeIsotropicStiffnessTensorII(tfel::math::st2tost2<N,StressType>& C,
+					   const StressType E,
+					   const RealType n)
     {
       tfel::material::internals::ComputeIsotropicStiffnessTensorI<N,smt>::exe(C,E,n);
     }
 
     template<unsigned short N,StiffnessTensorAlterationCharacteristic smt,
 	     typename StressType,typename RealType>
-    void computeOrthotropicStiffnessTensor(tfel::math::st2tost2<N,StressType>& C,
-					   const StressType E1,const StressType E2,const StressType E3,
-					   const RealType n12,const RealType n23,const RealType n13,
-					   const StressType G12,const StressType G23,const StressType G13)
+    void computeOrthotropicStiffnessTensorII(tfel::math::st2tost2<N,StressType>& C,
+					     const StressType E1,const StressType E2,const StressType E3,
+					     const RealType n12,const RealType n23,const RealType n13,
+					     const StressType G12,const StressType G23,const StressType G13)
     {
       tfel::material::internals::ComputeOrthotropicStiffnessTensorI<N,smt>::exe(C,E1,E2,E3,
 										n12,n23,n13,

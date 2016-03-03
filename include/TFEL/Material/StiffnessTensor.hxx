@@ -69,9 +69,9 @@ namespace tfel{
     template<unsigned short N,StiffnessTensorAlterationCharacteristic,
 	     typename StressType,typename RealType>
     TFEL_MATERIAL_INLINE void
-    computeIsotropicStiffnessTensor(tfel::math::st2tost2<N,StressType>&,
-				    const StressType,
-				    const RealType);
+    computeIsotropicStiffnessTensorII(tfel::math::st2tost2<N,StressType>&,
+				      const StressType,
+				      const RealType);
     /*!
      * \param[out] D: stiffness tensor
      * \param[in]  yg1:  young modulus in the first direction
@@ -87,10 +87,10 @@ namespace tfel{
     template<unsigned short N,StiffnessTensorAlterationCharacteristic,
 	     typename StressType,typename RealType>
     TFEL_MATERIAL_INLINE void
-    computeOrthotropicStiffnessTensor(tfel::math::st2tost2<N,StressType>&,
-				      const StressType,const StressType,const StressType,
-				      const RealType,const RealType,const RealType,
-				      const StressType,const StressType,const StressType);
+    computeOrthotropicStiffnessTensorII(tfel::math::st2tost2<N,StressType>&,
+					const StressType,const StressType,const StressType,
+					const RealType,const RealType,const RealType,
+					const StressType,const StressType,const StressType);
 
     /*!
      * \param[out] D:  stiffness tensor

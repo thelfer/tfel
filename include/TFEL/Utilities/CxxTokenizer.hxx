@@ -315,8 +315,7 @@ namespace tfel{
       TokensContainer fileTokens;
 
       //! store all the comments of a line
-      std::map<unsigned int,
-	       std::string> comments;
+      std::map<Token::size_type,std::string> comments;
 
       bool cStyleCommentOpened = false;
 

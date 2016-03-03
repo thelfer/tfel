@@ -4358,8 +4358,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::writeBehaviourTangentOperator()
 
   void BehaviourDSLCommon::checkIntegrationDataFile() const {
-    if((!this->integrationDataFile)||
-       (!this->integrationDataFile.good())){
+    if((!this->integrationDataFile)||(!this->integrationDataFile.good())){
       this->throwRuntimeError("BehaviourDSLCommon::checkIntegrationDataOutputFile",
 			      "ouput file is not valid");
     }
@@ -4485,35 +4484,30 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeIntegrationDataConstructors(const Hypothesis h)
   {
-    using namespace std;
     const auto& md = this->mb.getBehaviourData(h);
     this->checkIntegrationDataFile();
-    this->integrationDataFile << "/*!\n";
-    this->integrationDataFile << "* \\brief Default constructor\n";
-    this->integrationDataFile << "*/\n";
-    this->integrationDataFile << this->mb.getClassName() << "IntegrationData()\n";
-    this->integrationDataFile << "{}\n\n";
-    this->integrationDataFile << "/*!\n";
-    this->integrationDataFile << "* \\brief Copy constructor\n";
-    this->integrationDataFile << "*/\n";
-    this->integrationDataFile << this->mb.getClassName() << "IntegrationData(const ";
-    this->integrationDataFile << this->mb.getClassName() << "IntegrationData& src)\n";
-    this->integrationDataFile << ": ";
-    for(auto p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
-      if(p2->first.increment_known){
-	this->integrationDataFile << "d" <<p2->first.name  << "(src.d" << p2->first.name << "),\n";
+    this->integrationDataFile << "/*!\n"
+			      << "* \\brief Default constructor\n"
+			      << "*/\n"
+			      << this->mb.getClassName() << "IntegrationData()\n"
+			      << "{}\n\n"
+			      << "/*!\n"
+			      << "* \\brief Copy constructor\n"
+			      << "*/\n"
+			      << this->mb.getClassName() << "IntegrationData(const "
+			      << this->mb.getClassName() << "IntegrationData& src)\n"
+			      << ": ";
+    for(const auto& v : this->mb.getMainVariables()){
+      if(v.first.increment_known){
+	this->integrationDataFile << "d" <<v.first.name  << "(src.d" << v.first.name << "),\n";
       } else {
-	this->integrationDataFile << p2->first.name  << "1(src." << p2->first.name << "1),\n";
+	this->integrationDataFile << v.first.name  << "1(src." << v.first.name << "1),\n";
       }
     }
-    this->integrationDataFile << "dt(src.dt),\n";
-    this->integrationDataFile << "dT(src.dT)";
-    if(!md.getExternalStateVariables().empty()){
-      for(auto p =md.getExternalStateVariables().begin();
-	  p!=md.getExternalStateVariables().end();++p){
-	this->integrationDataFile << ",\n";
-	this->integrationDataFile << "d" << p->name << "(src.d" << p->name << ")";
-      }
+    this->integrationDataFile << "dt(src.dt),\n"
+			      << "dT(src.dT)";
+    for(const auto& v : md.getExternalStateVariables()){
+      this->integrationDataFile << ",\nd" << v.name << "(src.d" << v.name << ")";
     }
     this->integrationDataFile << "\n{}\n\n";
     // Creating constructor for external interfaces
@@ -4526,28 +4520,24 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeIntegrationDataScaleOperators(const Hypothesis h)
   {
-    using namespace std;
     const auto& md = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    map<DrivingVariable,
-      ThermodynamicForce>::const_iterator p2;
     bool iknown = true;
-    for(p2=this->mb.getMainVariables().begin();(p2!=this->mb.getMainVariables().end())&&(iknown);++p2){
-      iknown = p2->first.increment_known;
+    for(const auto& v  : this->mb.getMainVariables()){
+      iknown = v.first.increment_known;
     }
     this->checkIntegrationDataFile();
-    this->integrationDataFile << "/*\n";
-    this->integrationDataFile << "* Multiplication by a scalar.\n";
-    this->integrationDataFile << "*/\n";
-    this->integrationDataFile << "template<typename Scal>\n";
-    this->integrationDataFile << "typename std::enable_if<\n";
-    this->integrationDataFile << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n";
-    this->integrationDataFile << "tfel::typetraits::IsScalar<Scal>::cond&&\n";
-    this->integrationDataFile << "tfel::typetraits::IsReal<Scal>::cond&&\n";
-    this->integrationDataFile << "std::is_same<Type," 
+    this->integrationDataFile << "/*\n"
+			      << "* Multiplication by a scalar.\n"
+			      << "*/\n"
+			      << "template<typename Scal>\n"
+			      << "typename std::enable_if<\n"
+			      << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n"
+			      << "tfel::typetraits::IsScalar<Scal>::cond&&\n"
+			      << "tfel::typetraits::IsReal<Scal>::cond&&\n"
+			      << "std::is_same<Type," 
 			      << "typename tfel::typetraits::Promote"
-			      << "<Type,Scal>::type>::value,\n";
-    this->integrationDataFile << this->mb.getClassName() << "IntegrationData&\n"
+			      << "<Type,Scal>::type>::value,\n"
+			      << this->mb.getClassName() << "IntegrationData&\n"
 			      << ">::type\n";
     if(!iknown){
       if(this->mb.useQt()){
@@ -4563,37 +4553,36 @@ namespace mfront{
       }
     }
     this->integrationDataFile << "this->dt   *= time_scaling_factor;\n";
-    for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
-      if(p2->first.increment_known){
-	this->integrationDataFile << "this->d" <<p2->first.name  << " *= time_scaling_factor;\n";
+    for(const auto& v : this->mb.getMainVariables()){
+      if(v.first.increment_known){
+	this->integrationDataFile << "this->d" <<v.first.name  << " *= time_scaling_factor;\n";
       } else {
-	this->integrationDataFile << "this->" <<p2->first.name  << "1 = (1-time_scaling_factor)*(behaviourData." <<p2->first.name  << "0)+time_scaling_factor*(this->" <<p2->first.name  << "1);\n";
+	this->integrationDataFile << "this->" <<v.first.name  << "1 = (1-time_scaling_factor)*(behaviourData." <<v.first.name  << "0)+time_scaling_factor*(this->" <<v.first.name  << "1);\n";
       }
     }
     this->integrationDataFile << "this->dT   *= time_scaling_factor;\n";
-    for(p=md.getExternalStateVariables().begin();p!=md.getExternalStateVariables().end();++p){
-      this->integrationDataFile << "this->d" << p->name << " *= time_scaling_factor;\n";
+    for(const auto& v : md.getExternalStateVariables()){
+      this->integrationDataFile << "this->d" << v.name << " *= time_scaling_factor;\n";
     }
-    this->integrationDataFile << "return *this;\n";
-    this->integrationDataFile << "}\n\n";
+    this->integrationDataFile << "return *this;\n"
+			      << "}\n\n";
   } // end of BehaviourDSLCommon::writeIntegrationDataScaleOpeartors
 
   void BehaviourDSLCommon::writeIntegrationDataClassHeader(void) 
   {
-    using namespace std;
     this->checkIntegrationDataFile();
-    this->integrationDataFile << "/*!\n";
-    this->integrationDataFile << "* \\class " << this->mb.getClassName() << "IntegrationData\n";
-    this->integrationDataFile << "* \\brief This class implements the " 
-			      << this->mb.getClassName() << "IntegrationData" << " behaviour.\n";
-    this->integrationDataFile << "* \\param unsigned short N, space dimension.\n";
-    this->integrationDataFile << "* \\param typename Type, numerical type.\n";
-    this->integrationDataFile << "* \\param bool use_qt, conditional saying if quantities are use.\n";
+    this->integrationDataFile << "/*!\n"
+			      << "* \\class " << this->mb.getClassName() << "IntegrationData\n"
+			      << "* \\brief This class implements the " 
+			      << this->mb.getClassName() << "IntegrationData" << " behaviour.\n"
+			      << "* \\param unsigned short N, space dimension.\n"
+			      << "* \\param typename Type, numerical type.\n"
+			      << "* \\param bool use_qt, conditional saying if quantities are use.\n";
     if(!this->authorName.empty()){
-      this->integrationDataFile << "* \\author " << this->authorName << endl;
+      this->integrationDataFile << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->integrationDataFile << "* \\date   " << this->date << endl;
+      this->integrationDataFile << "* \\date   " << this->date << '\n';
     }
     this->integrationDataFile << "*/\n";
   }

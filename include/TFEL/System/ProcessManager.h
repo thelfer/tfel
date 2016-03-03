@@ -31,7 +31,7 @@ extern "C" {
   
   int
   processManager_wcoredump(int);
-#endif _AIX
+#endif /* _AIX */
   
 #ifdef	__cplusplus
 }
