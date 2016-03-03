@@ -119,13 +119,17 @@ taille \(6+1+2\times{}6=19\)), la \og~traduction~\fg{} de ces
 \item définition des propriétés matériau (modifiables depuis le jeu de
   commandes \mtest{} ou \aster{})~:
   \begin{flushleft}
-    \lstinputlisting[firstline=6,lastline=16,firstnumber=6]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+    \lstinputlisting[firstline=6,lastline=14,firstnumber=6]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
   \end{flushleft}
+  Les appels à {\tt setGlossaryName} sont importants pour \castem{}
+  car ils permettent à \mfront{} de faire le lien entre les propriétés
+  matériau nécessaires à la loi et ceux définis par \castem{} pour ses
+  propres besoins.
 \item définition des variables internes (l'écriture ci-dessus utilise
   des tableaux, ce qui permet de gérer facilement un nombre quelconque
   de variables cinématiques. Ici on en choisit \(2\))~:
   \begin{flushleft}
-    \lstinputlisting[firstline=18,lastline=19,firstnumber=18]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+    \lstinputlisting[firstline=16,lastline=17,firstnumber=16]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
   \end{flushleft}
   De plus, il faut compter en tant que variable interne (donc inconnue
   du problème à résoudre) le tenseur des déformations élastiques (ou
@@ -140,7 +144,7 @@ taille \(6+1+2\times{}6=19\)), la \og~traduction~\fg{} de ces
   l'appel de l'algorithme implicite ce qui permet de gagner du temps
   de calcul)~:
   \begin{flushleft}
-    \lstinputlisting[firstline=21,lastline=39,firstnumber=21]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+    \lstinputlisting[firstline=19,lastline=35,firstnumber=19]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
   \end{flushleft}
   On calcule dans cette section le critère \( F^{el} \), qui permet
   d'éviter de lancer l'algorithme de \nom{Newton} si la solution reste
@@ -148,47 +152,47 @@ taille \(6+1+2\times{}6=19\)), la \og~traduction~\fg{} de ces
 \item calcul des contraintes. À chaque itération de l'algorithme
   implicite et après convergence, on calcule~:
   \begin{flushleft}
-    \lstinputlisting[firstline=41,lastline=43,firstnumber=43]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+    \lstinputlisting[firstline=37,lastline=39,firstnumber=39]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
   \end{flushleft}
 \item Calcul des différents termes du système d'équations~:
   \begin{flushleft}
-    \lstinputlisting[firstline=60,lastline=84,firstnumber=60]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+    \lstinputlisting[firstline=41,lastline=65,firstnumber=41]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
   \end{flushleft}
   \begin{itemize}
   \item la valeur de \(p\) est actualisée en \(t_{i}+\theta\Delta\,t\)
-    à la ligne \(64\), ce qui permet d'actualiser l'écrouissage
+    à la ligne \(45\), ce qui permet d'actualiser l'écrouissage
     isotrope \(R\paren{p}\)~;
   \item de même, pour les variables d'écrouissage cinématique
-    \(\alpha_{i}\) en ligne \(70\).  Ceci permet de calculer le
-    tenseur \((\ets{\tsigma}-\ets{\tenseur{X}})\) à la ligne \(71\)~;
+    \(\alpha_{i}\) en ligne \(51\).  Ceci permet de calculer le
+    tenseur \((\ets{\tsigma}-\ets{\tenseur{X}})\) à la ligne \(52\)~;
   \item la direction d'écoulement \(
     \tenseur{n}=\Frac{3}{2}\Frac{\tilde
       {\tsigma}-{\tenseur{X}}}{\left(\sigma-\tenseur{X}\right)_{\text{eq}}}
     \)~;
-  \item la ligne \(75\) décrit simplement la décomposition additive
+  \item la ligne \(56\) décrit simplement la décomposition additive
     des déformations~;
-  \item la ligne \(76\) traduit le critère de plasticité (normalisé
+  \item la ligne \(57\) traduit le critère de plasticité (normalisé
     par le module d'Young pour conserver un système d'équations
     portant sur des grandeurs de la même dimension que les
     déformations~;
-  \item les lignes \(77\) à \(79\) décrivent les évolutions des
+  \item les lignes \(58\) à \(60\) décrivent les évolutions des
     variables cinématiques~:
     \[
     \Delta\,\talpha_{i}-\Delta p \left
       (\tenseur{n} - \gamma_{i} \talpha_{i} \right ) =\tenseur{0}
     \]
-  \item enfin la ligne \(82\) correspond au cas où l'incrément est
+  \item enfin la ligne \(63\) correspond au cas où l'incrément est
     élastique.
   \end{itemize}
 \item calcul de l'opérateur tangent cohérent~: il utilise directement
   l'inverse de la matrice jacobienne~\cite{helfer_generateur_2013}~:
   \begin{flushleft}
-    \lstinputlisting[firstline=45,lastline=58,firstnumber=45]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+    \lstinputlisting[firstline=67,lastline=79,firstnumber=67]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
   \end{flushleft}
+  La variable {\tt smt} permet de connaître le type d'opérateur
+  tangent demandé par le code appelant.
 \end{enumerate}
 
-La variable {\tt smt} permet de connaître le type d'opérateur tangent
-demandé par le code appelant.
 
 Cette écriture avec \mfront{} et l'algorithme implicite (et matrice
 jacobienne numérique) permettent d'obtenir une résolution efficace
@@ -562,11 +566,11 @@ ce qui modifie peu de choses dans le fichier \mfront{}~:
 \item au début du fichier, la déclaration des propriétés matériau
   supplémentaires~:
   \begin{flushleft}
-    \lstinputlisting[firstline=19,lastline=20,firstnumber=19]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+    \lstinputlisting[firstline=21,lastline=22,firstnumber=21]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
   \end{flushleft}
 \item et dans l'intégration~:
   \begin{flushleft}
-    \lstinputlisting[firstline=96,lastline=99,firstnumber=96]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+    \lstinputlisting[firstline=86,lastline=88,firstnumber=86]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
   \end{flushleft}
 \end{enumerate}
 
@@ -627,7 +631,7 @@ Introduisons ces équations dans notre comportement \mfront{}~:
 \begin{enumerate}
 \item il faut ajouter les variables internes $\txi $ et $q$~:
   \begin{flushleft}
-    \lstinputlisting[firstline=46,lastline=47,firstnumber=46]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+    \lstinputlisting[firstline=44,lastline=45,firstnumber=44]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
   \end{flushleft}
 \item nous aurons besoin de mémoriser la valeur de l'écrouissage
   isotrope $R$. Mais il n'est pas nécessaire de définir $R$ en tant
@@ -637,11 +641,11 @@ Introduisons ces équations dans notre comportement \mfront{}~:
   comme variable auxiliaire, actualisée après convergence de
   l'algorithme d'intégration implicite~:
   \begin{flushleft}
-    \lstinputlisting[firstline=49,lastline=49,firstnumber=49]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+    \lstinputlisting[firstline=47,lastline=47,firstnumber=47]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
   \end{flushleft}
   En fin d'intégration, on trouvera donc~:
   \begin{flushleft}
-    \lstinputlisting[firstline=118,lastline=124,firstnumber=118]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+    \lstinputlisting[firstline=106,lastline=112,firstnumber=106]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
   \end{flushleft}
 \item il reste à ajouter les équations (\texttt{fq} et \texttt{fksi})
   relatives à l'effet de mémoire~:
@@ -652,7 +656,7 @@ Introduisons ces équations dans notre comportement \mfront{}~:
   plasticité, puisque $R(p)$ doit être maintenant déterminé à partir
   de $\Delta\,p$ {et} $\Delta q$~:
   \begin{flushleft}
-    \lstinputlisting[firstline=88,lastline=90,firstnumber=88]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+    \lstinputlisting[firstline=76,lastline=78,firstnumber=76]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
   \end{flushleft}
 \end{enumerate}
 

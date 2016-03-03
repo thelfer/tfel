@@ -14,8 +14,10 @@
 @Epsilon 1.e-8 ;
 @IterMax 200 ;
 
-@MaterialProperty stress young; 
-@MaterialProperty real nu;    
+@MaterialProperty real young; /* mandatory for castem */
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;    /* mandatory for castem */
+nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real delta1;
 @MaterialProperty real delta2;
 @MaterialProperty real Rinf;
@@ -35,10 +37,6 @@
 @MaterialProperty real Q0;
 @MaterialProperty real Mu;
 
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
-
 @StateVariable real    p;
 @StateVariable Stensor a1; 
 @StateVariable Stensor a2; 
@@ -53,19 +51,9 @@
 
 /* Initialize Lame coefficients */
 @InitLocalVars{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 } 
-
-@TangentOperator{
-  using namespace tfel::material::lame;
-  StiffnessTensor De;
-  Stensor4 Je;
-  computeElasticStiffness<N,Type>::exe(De,lambda,mu);
-  getPartialJacobianInvert(Je);
-  Dt = De*Je;
-}
 
 @ComputeStress{
   sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
@@ -123,3 +111,10 @@
   R+=b*(Q-R)*dp; 
 }
 
+@TangentOperator{
+  StiffnessTensor De;
+  Stensor4 Je;
+  computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+  getPartialJacobianInvert(Je);
+  Dt = De*Je;
+}
