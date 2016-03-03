@@ -36,4 +36,4 @@
 @Test<function> {'SRR':'0','SZZ':'0'}  1.e-3;
 // strains
 @Test<function> 'ERR' '-nu13*(E3/E1)*ETT'  1.e-12;
-@Test<function> 'EZZ' '-nu23*ETT'  1.e-12;
+@Test<function> 'EZZ' '-nu23*(E3/E2)*ETT'  1.e-12;

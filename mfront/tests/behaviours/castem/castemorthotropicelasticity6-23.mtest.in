@@ -40,4 +40,4 @@
 @Test<function> {'SRR':'0','STT':'0'}  1.e-3;
 // strains
 @Test<function> 'ERR' '-nu12*(E2/E1)*EZZ'  1.e-12;
-@Test<function> 'ETT' '-nu23*(E2/E3)*EZZ'  1.e-12;
+@Test<function> 'ETT' '-nu23*EZZ'          1.e-12;

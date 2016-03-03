@@ -33,11 +33,9 @@ namespace mtest
 					     const std::string& b)
     : UmatBehaviourBase(h,l,b)
   {
-    using namespace std;
     using namespace tfel::system;
     using namespace tfel::material;
-    typedef ExternalLibraryManager ELM;
-    auto& elm = ELM::getExternalLibraryManager();
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     this->fct = elm.getCyranoFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
     const bool b1 = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);
@@ -51,7 +49,7 @@ namespace mtest
 	this->mpnames.push_back("ThermalExpansion");
       }
     } else {
-      vector<string> tmp;
+      std::vector<std::string> tmp;
       if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
     	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
     	if(b1){
@@ -68,9 +66,8 @@ namespace mtest
 	  tmp.push_back("ThermalExpansion3");
 	}
       } else {
-    	string msg("UmatStandardBehaviour::UmatStandardBehaviour : ");
-    	msg += "unsupported hypothesis";
-    	throw(runtime_error(msg));
+    	throw(std::runtime_error("UmatStandardBehaviour::UmatStandardBehaviour: "
+				 "unsupported hypothesis"));
       }
       this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
     }

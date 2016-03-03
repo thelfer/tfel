@@ -209,7 +209,7 @@ namespace tfel{
 	  const auto S33=1/E3;
 	  const auto S12=-n12/E1;
 	  const auto S13=-n13/E1;
-	  const auto S23=-n23/E3;
+	  const auto S23=-n23/E2;
 	  const auto inv_detS=1/(S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12);
 	  C(0,0)=(S22*S33-S23*S23)*inv_detS;
 	  C(0,1)=(S13*S23-S12*S33)*inv_detS;

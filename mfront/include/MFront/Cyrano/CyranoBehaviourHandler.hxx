@@ -198,9 +198,8 @@ namespace cyrano
       TFEL_CYRANO_INLINE static void
 	exe(BData& data,const CyranoReal * const props){
 	typedef CyranoTraits<BV> Traits;
-	const bool buas = Traits::requiresUnAlteredStiffnessTensor;
-	CyranoComputeStiffnessTensor<H,Traits::stype,buas>::exe(data.getStiffnessTensor(),
-								props);
+	CyranoComputeStiffnessTensor<Traits::stype>::exe(data.getStiffnessTensor(),
+							 props);
       } // end of exe
     }; // end of struct StiffnessOperatorInitializer
     

@@ -29,21 +29,15 @@ namespace cyrano
    * from the material properties given by Cyrano.  The resulting
    * tensor uses MFront representation of tensors and symmetric
    * tensors.
-   * The first template parameter is the modelling hypothesis considered
-   * The second template parameter is the behaviour symmetry type
+   * The template parameter is the behaviour symmetry type
    * (isotropy or orthotropy)
-   * The third template parameter says if the altered or unaltered
-   * stiffness tensor shall be computed. If true, the unaltered
-   * stiffness tensor is computed
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis,
-	   CyranoSymmetryType,bool>
+  template<CyranoSymmetryType>
   struct CyranoComputeStiffnessTensor;
 
   template<>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-			       ISOTROPIC,true>
+  CyranoComputeStiffnessTensor<ISOTROPIC>
   {
     /*!
      * \brief compute the stiffness tensor
@@ -57,98 +51,7 @@ namespace cyrano
 
   template<>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-			       ISOTROPIC,false>
-  {
-    /*!
-     * \brief compute the stiffness tensor
-     * \param[out] D     : stiffness tensor
-     * \param[in]  props : material properties
-     */
-    static void
-    exe(tfel::config::Types<1u,CyranoReal,false>::StiffnessTensor&,
-	const CyranoReal* const);
-  }; // end of struct CyranoComputeStiffnessTensor
-
-  template<>
-  struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-			       ORTHOTROPIC,true>
-  {
-    /*!
-     * \brief compute the stiffness tensor
-     * \param[out] D     : stiffness tensor
-     * \param[in]  props : material properties
-     */
-    static void
-    exe(tfel::config::Types<1u,CyranoReal,false>::StiffnessTensor&,
-	const CyranoReal* const);
-  }; // end of struct CyranoComputeStiffnessTensor
-
-  template<>
-  struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-			       ORTHOTROPIC,false>
-  {
-    /*!
-     * \brief compute the stiffness tensor
-     * \param[out] D     : stiffness tensor
-     * \param[in]  props : material properties
-     */
-    static void
-    exe(tfel::config::Types<1u,CyranoReal,false>::StiffnessTensor&,
-	const CyranoReal* const);
-  }; // end of struct CyranoComputeStiffnessTensor
-
-  template<>
-  struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
-			       ISOTROPIC,true>
-  {
-    /*!
-     * \brief compute the stiffness tensor
-     * \param[out] D     : stiffness tensor
-     * \param[in]  props : material properties
-     */
-    static void
-    exe(tfel::config::Types<1u,CyranoReal,false>::StiffnessTensor&,
-	const CyranoReal* const);
-  }; // end of struct CyranoComputeStiffnessTensor
-
-  template<>
-  struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
-			       ISOTROPIC,false>
-  {
-    /*!
-     * \brief compute the stiffness tensor
-     * \param[out] D     : stiffness tensor
-     * \param[in]  props : material properties
-     */
-    static void
-    exe(tfel::config::Types<1u,CyranoReal,false>::StiffnessTensor&,
-	const CyranoReal* const);
-  }; // end of struct CyranoComputeStiffnessTensor
-
-  template<>
-  struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
-			       ORTHOTROPIC,true>
-  {
-    /*!
-     * \brief compute the stiffness tensor
-     * \param[out] D     : stiffness tensor
-     * \param[in]  props : material properties
-     */
-    static void
-    exe(tfel::config::Types<1u,CyranoReal,false>::StiffnessTensor&,
-	const CyranoReal* const);
-  }; // end of struct CyranoComputeStiffnessTensor
-
-  template<>
-  struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
-			       ORTHOTROPIC,false>
+  CyranoComputeStiffnessTensor<ORTHOTROPIC>
   {
     /*!
      * \brief compute the stiffness tensor

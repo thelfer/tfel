@@ -10,13 +10,12 @@
 @ProvidesSymmetricTangentOperator;
 
 @PredictionOperator{
-  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
-    return FAILURE;
-  }
+  static_cast<void>(smt);
   Dt=D;
 }
 
 @Integrator{
+  static_cast<void>(smt);
   sig = D*(eto+deto);
   if(computeTangentOperator_){
     Dt = D;
