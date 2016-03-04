@@ -23,7 +23,7 @@ namespace aster
   AsterComputeIsotropicThermalExpansionCoefficientTensor2D(const AsterReal* const props,
 					       tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a = props[0];
+    const AsterReal a = props[0];
     A(0)=A(1)=A(2)=a;
     A(3)=0.;
   }
@@ -32,9 +32,9 @@ namespace aster
   AsterComputeOrthotropicThermalExpansionCoefficientTensor2D(const AsterReal* const props,
 						 tfel::config::Types<2u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a0 = props[0];
-    const double a1 = props[1];
-    const double a2 = props[2];
+    const AsterReal a0 = props[0];
+    const AsterReal a1 = props[1];
+    const AsterReal a2 = props[2];
     A(0)=a0;
     A(1)=a1;
     A(2)=a2;
@@ -83,7 +83,7 @@ namespace aster
 				    ISOTROPIC>::exe(const AsterReal* const props,
 						    tfel::config::Types<3u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a = props[0];
+    const AsterReal a = props[0];
     A(0)=A(1)=A(2)=a;
     A(3)=A(4)=A(5)=0.;
   } // end of struct AsterComputeThermalExpansionCoefficientTensor
@@ -130,9 +130,9 @@ namespace aster
 				    ORTHOTROPIC>::exe(const AsterReal* const props,
 						      tfel::config::Types<3u,AsterReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a0 = props[0];
-    const double a1 = props[1];
-    const double a2 = props[2];
+    const AsterReal a0 = props[0];
+    const AsterReal a1 = props[1];
+    const AsterReal a2 = props[2];
     A(0)=a0;
     A(1)=a1;
     A(2)=a2;

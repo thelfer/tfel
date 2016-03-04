@@ -23,7 +23,7 @@ namespace castem
   CastemComputeIsotropicThermalExpansionCoefficientTensor2D(const CastemReal* const props,
 					       tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a = props[3];
+    const CastemReal a = props[3];
     A(0)=A(1)=A(2)=a;
     A(3)=0.;
   }
@@ -32,9 +32,9 @@ namespace castem
   CastemComputeOrthotropicThermalExpansionCoefficientTensor2D(const CastemReal* const props,
 						 tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a0 = props[10];
-    const double a1 = props[11];
-    const double a2 = props[12];
+    const CastemReal a0 = props[10];
+    const CastemReal a1 = props[11];
+    const CastemReal a2 = props[12];
     A(0)=a0;
     A(1)=a1;
     A(2)=a2;
@@ -47,7 +47,7 @@ namespace castem
 				    ISOTROPIC>::exe(const CastemReal* const props,
 						    tfel::config::Types<1u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a = props[3];
+    const CastemReal a = props[3];
     A(0)=A(1)=A(2)=a;
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
@@ -98,7 +98,7 @@ namespace castem
 				    ISOTROPIC>::exe(const CastemReal* const props,
 						    tfel::config::Types<3u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a = props[3];
+    const CastemReal a = props[3];
     A(0)=A(1)=A(2)=a;
     A(3)=A(4)=A(5)=0.;
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
@@ -109,9 +109,9 @@ namespace castem
 				    ORTHOTROPIC>::exe(const CastemReal* const props,
 						      tfel::config::Types<1u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a0 = props[7];
-    const double a1 = props[8];
-    const double a2 = props[9];
+    const CastemReal a0 = props[7];
+    const CastemReal a1 = props[8];
+    const CastemReal a2 = props[9];
     A(0)=a0;
     A(1)=a1;
     A(2)=a2;
@@ -164,9 +164,9 @@ namespace castem
 				    ORTHOTROPIC>::exe(const CastemReal* const props,
 						      tfel::config::Types<3u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a0 = props[16];
-    const double a1 = props[17];
-    const double a2 = props[18];
+    const CastemReal a0 = props[16];
+    const CastemReal a1 = props[17];
+    const CastemReal a2 = props[18];
     A(0)=a0;
     A(1)=a1;
     A(2)=a2;

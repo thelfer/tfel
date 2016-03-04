@@ -23,7 +23,7 @@ namespace abaqus
   AbaqusComputeIsotropicThermalExpansionCoefficientTensor2D(const AbaqusReal* const props,
 					       tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a = props[0];
+    const AbaqusReal a = props[0];
     A(0)=A(1)=A(2)=a;
     A(3)=0.;
   }
@@ -32,9 +32,9 @@ namespace abaqus
   AbaqusComputeOrthotropicThermalExpansionCoefficientTensor2D(const AbaqusReal* const props,
 						 tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a0 = props[0];
-    const double a1 = props[1];
-    const double a2 = props[2];
+    const AbaqusReal a0 = props[0];
+    const AbaqusReal a1 = props[1];
+    const AbaqusReal a2 = props[2];
     A(0)=a0;
     A(1)=a1;
     A(2)=a2;
@@ -83,7 +83,7 @@ namespace abaqus
 				    ISOTROPIC>::exe(const AbaqusReal* const props,
 						    tfel::config::Types<3u,AbaqusReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a = props[0];
+    const AbaqusReal a = props[0];
     A(0)=A(1)=A(2)=a;
     A(3)=A(4)=A(5)=0.;
   } // end of struct AbaqusComputeThermalExpansionCoefficientTensor
@@ -130,9 +130,9 @@ namespace abaqus
 				    ORTHOTROPIC>::exe(const AbaqusReal* const props,
 						      tfel::config::Types<3u,AbaqusReal,false>::ThermalExpansionCoefficientTensor& A)
   {
-    const double a0 = props[0];
-    const double a1 = props[1];
-    const double a2 = props[2];
+    const AbaqusReal a0 = props[0];
+    const AbaqusReal a1 = props[1];
+    const AbaqusReal a2 = props[2];
     A(0)=a0;
     A(1)=a1;
     A(2)=a2;

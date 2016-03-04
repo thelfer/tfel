@@ -193,12 +193,6 @@ namespace mfront{
 		const tfel::material::ModellingHypothesis::Hypothesis&,
 		const VariableDescription&,
 		const std::string&) const;
-    
-    bool compareToNumericalTangentOperator = false;
-
-    double strainPerturbationValue = 1.e6;
-
-    double tangentOperatorComparisonCriterion = 1.e7;
 
   }; // end of EuroplexusInterface
 

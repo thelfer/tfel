@@ -36,144 +36,48 @@ static const char * const constexpr_c = "const";
 namespace mfront{
   
   static void
-  writeUMATArguments(std::ostream& out,
-		     const BehaviourDescription::BehaviourType& t,
-		     const bool f)
+  writeEPXArguments(std::ostream& out)
   {
-    if(f){
-      out << "(epx::EuroplexusReal *const STRESS,\n"
-	  << " epx::EuroplexusReal *const STATEV,\n"
-	  << " epx::EuroplexusReal *const DDSDDE,\n"
-	  << " epx::EuroplexusReal *const SSE,\n"
-	  << " epx::EuroplexusReal *const SPD,\n"
-	  << " epx::EuroplexusReal *const SCD,\n"
-	  << " epx::EuroplexusReal *const RPL,\n"
-	  << " epx::EuroplexusReal *const DDSDDT,\n"
-	  << " epx::EuroplexusReal *const DRPLDE,\n"
-	  << " epx::EuroplexusReal *const DRPLDT,\n"
-	  << " const epx::EuroplexusReal *const STRAN,\n"
-	  << " const epx::EuroplexusReal *const DSTRAN,\n"
-	  << " const epx::EuroplexusReal *const TIME,\n"
-	  << " const epx::EuroplexusReal *const DTIME,\n"
-	  << " const epx::EuroplexusReal *const TEMP,\n"
-	  << " const epx::EuroplexusReal *const DTEMP,\n"
-	  << " const epx::EuroplexusReal *const PREDEF,\n"
-	  << " const epx::EuroplexusReal *const DPRED,\n"
-	  << " const char           *const CMNAME,\n"
-	  << " const epx::EuroplexusInt  *const NDI,\n"
-	  << " const epx::EuroplexusInt  *const NSHR,\n"
-	  << " const epx::EuroplexusInt  *const NTENS,\n"
-	  << " const epx::EuroplexusInt  *const NSTATV,\n"
-	  << " const epx::EuroplexusReal *const PROPS,\n"
-	  << " const epx::EuroplexusInt  *const NPROPS,\n"
-	  << " const epx::EuroplexusReal *const COORDS,\n"
-	  << " const epx::EuroplexusReal *const DROT,\n"
-	  << "       epx::EuroplexusReal *const PNEWDT,\n"
-	  << " const epx::EuroplexusReal *const CELENT,\n"
-	  << " const epx::EuroplexusReal *const DFGRD0,\n"
-	  << " const epx::EuroplexusReal *const DFGRD1,\n"
-	  << " const epx::EuroplexusInt  *const NOEL,\n"
-	  << " const epx::EuroplexusInt  *const NPT,\n"
-	  << " const epx::EuroplexusInt  *const LAYER,\n"
-	  << " const epx::EuroplexusInt  *const KSPT,\n"
-	  << " const epx::EuroplexusInt  *const KSTEP,\n"
-	  << "       epx::EuroplexusInt  *const KINC,\n"
-	  << "const int size)";
-    } else {
-      out << "(epx::EuroplexusReal *const STRESS,\n"
-	  << " epx::EuroplexusReal *const STATEV,\n"
-	  << " epx::EuroplexusReal *const DDSDDE,\n"
-	  << " epx::EuroplexusReal *const,\n"
-	  << " epx::EuroplexusReal *const,\n"
-	  << " epx::EuroplexusReal *const,\n"
-	  << " epx::EuroplexusReal *const,\n"
-	  << " epx::EuroplexusReal *const,\n"
-	  << " epx::EuroplexusReal *const,\n"
-	  << " epx::EuroplexusReal *const,\n";
-      if(t!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	out << " const epx::EuroplexusReal *const STRAN,\n"
-	    << " const epx::EuroplexusReal *const DSTRAN,\n";
-      } else {
-	out << " const epx::EuroplexusReal *const,\n"
-	    << " const epx::EuroplexusReal *const,\n";
-      }
-      out << " const epx::EuroplexusReal *const,\n"
-	  << " const epx::EuroplexusReal *const DTIME,\n"
-	  << " const epx::EuroplexusReal *const TEMP,\n"
-	  << " const epx::EuroplexusReal *const DTEMP,\n"
-	  << " const epx::EuroplexusReal *const PREDEF,\n"
-	  << " const epx::EuroplexusReal *const DPRED,\n"
-	  << " const char           *const,\n"
-	  << " const epx::EuroplexusInt  *const,\n"
-	  << " const epx::EuroplexusInt  *const,\n"
-	  << " const epx::EuroplexusInt  *const NTENS,\n"
-	  << " const epx::EuroplexusInt  *const NSTATV,\n"
-	  << " const epx::EuroplexusReal *const PROPS,\n"
-	  << " const epx::EuroplexusInt  *const NPROPS,\n"
-	  << " const epx::EuroplexusReal *const,\n"
-	  << " const epx::EuroplexusReal *const DROT,\n"
-	  << "       epx::EuroplexusReal *const PNEWDT,\n"
-	  << " const epx::EuroplexusReal *const,\n";
-      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	out << " const epx::EuroplexusReal *const F0,\n"
-	    << " const epx::EuroplexusReal *const F1,\n";
-      } else {
-	out << " const epx::EuroplexusReal *const,\n"
-	    << " const epx::EuroplexusReal *const,\n";
-      }
-      out << " const epx::EuroplexusInt  *const,\n"
-	  << " const epx::EuroplexusInt  *const,\n"
-	  << " const epx::EuroplexusInt  *const,\n"
-	  << " const epx::EuroplexusInt  *const,\n"
-	  << " const epx::EuroplexusInt  *const,\n"
-	  << "       epx::EuroplexusInt  *const,\n"
-	  << "const int)";
-    }
-  } // end of writeUMATArguments
-
-  static void
-  writeUMATArguments(std::ostream& out)
-  {
-    using namespace std;
     out << "(epx::EuroplexusReal *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
-	<< " epx::EuroplexusReal *const,\n"
-	<< " epx::EuroplexusReal *const,\n"
-	<< " epx::EuroplexusReal *const,\n"
-	<< " epx::EuroplexusReal *const,\n"
-	<< " epx::EuroplexusReal *const,\n"
-	<< " epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const char           *const,\n"
-	<< " const epx::EuroplexusInt  *const,\n"
-	<< " const epx::EuroplexusInt  *const,\n"
-	<< " const epx::EuroplexusInt  *const,\n"
-	<< " const epx::EuroplexusInt  *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
+	<< " epx::EuroplexusInt  *const,\n"
 	<< " const epx::EuroplexusInt  *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
-	<< "       epx::EuroplexusReal *const,\n"
-        << " const epx::EuroplexusReal *const,\n"
+	<< " const epx::EuroplexusReal *const,\n"
+	<< " const epx::EuroplexusReal *const,\n"
+	<< " const epx::EuroplexusReal *const,\n"
+	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusInt  *const,\n"
 	<< " const epx::EuroplexusInt  *const,\n"
-	<< " const epx::EuroplexusInt  *const,\n"
-	<< " const epx::EuroplexusInt  *const,\n"
-	<< " const epx::EuroplexusInt  *const,\n"
-	<< "       epx::EuroplexusInt  *const,\n"
-	<< "const int)";
-  } // end of writeUMATArguments
+	<< " const epx::EuroplexusInt  *const)";
+  } // end of writeEuroplexusArguments
+
+  static void
+  writeEPXArgumentsII(std::ostream& out)
+  {
+    out << "(epx::EuroplexusReal *const STRESS,\n"
+	<< " epx::EuroplexusReal *const STATEV,\n"
+	<< " epx::EuroplexusReal *const DDSDDE,\n"
+	<< " epx::EuroplexusReal *const PNEWDT,\n"
+	<< " epx::EuroplexusInt  *const KINC,\n"
+	<< " const epx::EuroplexusInt  *const NDI,\n"
+	<< " const epx::EuroplexusReal *const DTIME,\n"
+	<< " const epx::EuroplexusReal *const F0,\n"
+	<< " const epx::EuroplexusReal *const F1,\n"
+	<< " const epx::EuroplexusReal *const TEMP,\n"
+	<< " const epx::EuroplexusReal *const DTEMP,\n"
+	<< " const epx::EuroplexusReal *const PREDEF,\n"
+	<< " const epx::EuroplexusReal *const DPRED,\n"
+	<< " const epx::EuroplexusReal *const PROPS,\n"
+	<< " const epx::EuroplexusInt  *const NPROPS,\n"
+	<< " const epx::EuroplexusInt  *const NSTATV,\n"
+	<< " const epx::EuroplexusInt  *const NPREDEF)";
+  } // end of writeEPXArguments
   
   std::string
   EuroplexusInterface::getName(void)
@@ -214,38 +118,8 @@ namespace mfront{
 			       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 			       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
-    using tfel::utilities::CxxTokenizer;
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("EuroplexusInterface::treatKeyword : "+m));}
-    };
     if (key=="@EuroplexusGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
-      return {true,current};      
-    } else if(key=="@EuroplexusCompareToNumericalTangentOperator"){
-      this->compareToNumericalTangentOperator  = this->readBooleanValue(key,current,end);
-      return make_pair(true,current);
-    } else if ((key=="@EuroplexusTangentOperatorComparisonCriterium")||
-	       (key=="@EuroplexusTangentOperatorComparisonCriterion")){
-      throw_if(!this->compareToNumericalTangentOperator,
-	       "comparison to tangent operator is not enabled at this stage.\n"
-	       "Use the @EuroplexusCompareToNumericalTangentOperator directive before "
-	       "@EuroplexusTangentOperatorComparisonCriterion");
-      throw_if(current==end,"unexpected end of file");
-      this->tangentOperatorComparisonCriterion = CxxTokenizer::readDouble(current,end);
-      throw_if(current==end,"unexpected end of file");
-      throw_if(current->value!=";","expected ';', read '"+current->value+"'");
-      ++(current);
-      return {true,current};
-    } else if (key=="@EuroplexusStrainPerturbationValue"){
-      throw_if(!this->compareToNumericalTangentOperator,
-	       "time stepping is not enabled at this stage.\n"
-	       "Use the @EuroplexusUseTimeSubStepping directive before "
-	       "@EuroplexusStrainPerturbationValue");
-      throw_if(current==end,"unexpected end of file");
-      this->strainPerturbationValue = CxxTokenizer::readDouble(current,end);
-      throw_if(current==end,"unexpected end of file");
-      throw_if(current->value!=";","expected ';', read '"+current->value+"'");
-      ++(current);
       return {true,current};
     }
     return {false,current};
@@ -254,11 +128,10 @@ namespace mfront{
   std::set<tfel::material::ModellingHypothesis::Hypothesis>
   EuroplexusInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
-    using namespace std;
     using tfel::material::ModellingHypothesis;
     typedef ModellingHypothesis::Hypothesis Hypothesis;
     // treatment 
-    set<Hypothesis> h;
+    std::set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour
     const auto& bh = mb.getModellingHypotheses();
     // if(bh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN)!=bh.end()){
@@ -297,14 +170,6 @@ namespace mfront{
       throw(std::runtime_error("EuroplexusInterface::endTreatment : "
 			       "the europlexus interface only supports small and "
 			       "finite strain behaviours"));
-    }
-    if(this->compareToNumericalTangentOperator){
-      if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	throw(std::runtime_error("EuroplexusInterface::endTreatment : "
-				 "unsupported feature @EuroplexusSaveTangentOperator "
-				 "and @EuroplexusCompareToNumericalTangentOperator : "
-				 "those are only valid for small strain beahviours"));
-      }
     }
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
@@ -373,7 +238,7 @@ namespace mfront{
 
     out << "MFRONT_SHAREDOBJ void\n"
 	<< getFunctionName(name);
-    writeUMATArguments(out);
+    writeEPXArguments(out);
     out << ";\n\n";
 
     out << "#ifdef __cplusplus\n";
@@ -411,11 +276,6 @@ namespace mfront{
 
     this->getExtraSrcIncludes(out,mb);
 
-    if(this->compareToNumericalTangentOperator){
-      out << "#include<cmath>\n"
-	  << "#include<vector>\n"
-	  << "#include<algorithm>\n";
-    }
     out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -443,25 +303,11 @@ namespace mfront{
     this->writeSetParametersFunctionsImplementations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    string dv0;
-    string dv1;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      dv0 = "STRAN";
-      dv1 = "DSTRAN";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      dv0 = "F0";
-      dv1 = "F1";
-    } else {
-      throw(runtime_error("EuroplexusInterface::endTreatment : "
-			  "the europlexus interface only supports small "
-			  "and finite strain behaviours"));
-    }
-
     out << "MFRONT_SHAREDOBJ void\n"
 	<< getFunctionName(name);
-    writeUMATArguments(out,mb.getBehaviourType(),false);
+    writeEPXArgumentsII(out);
     out << "{\n";
-    if(((getDebugMode())||(this->compareToNumericalTangentOperator))&&(!this->generateMTestFile)){
+    if(getDebugMode()){
       out << "using namespace std;\n";
     }
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -471,16 +317,8 @@ namespace mfront{
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
-    if(this->compareToNumericalTangentOperator){
-      out << "vector<epx::EuroplexusReal> deto0(*NTENS);\n";
-      out << "vector<epx::EuroplexusReal> sig0(*NTENS);\n";
-      out << "vector<epx::EuroplexusReal> sv0(*NSTATV);\n";
-      out << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n";
-      out << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
-      out << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
-    }
     out << "if(epx::EuroplexusInterface<tfel::material::" << mb.getClassName() 
-	<< ">::exe(NTENS,DTIME,DROT,DDSDDE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
+	<< ">::exe(DTIME,DROT,DDSDDE,F0,F1,TEMP,DTEMP,PROPS,NPROPS,"
 	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,PNEWDT,"
 	<< getFunctionName(name) << "_getOutOfBoundsPolicy(),"
 	<< sfeh << ")!=0){\n";
@@ -489,84 +327,6 @@ namespace mfront{
     out << "*PNEWDT = -1.;\n";
     out << "return;\n";
     out << "}\n";
-    if(getDebugMode()){
-      out << "cout << \"Dt :\" << endl;\n";
-      out << "for(epx::EuroplexusInt i=0;i!=*NTENS;++i){\n";
-      out << "for(epx::EuroplexusInt j=0;j!=*NTENS;++j){\n";
-      out << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-    }
-    if(this->compareToNumericalTangentOperator){
-      out << "// computing the tangent operator by pertubation\n";
-      out << "vector<epx::EuroplexusReal> nD((*NTENS)*(*NTENS));\n";
-      out << "vector<epx::EuroplexusReal> deto(*NTENS);\n";
-      out << "vector<epx::EuroplexusReal> sigf(*NTENS);\n";
-      out << "vector<epx::EuroplexusReal> sigb(*NTENS);\n";
-      out << "vector<epx::EuroplexusReal> sv(*NSTATV);\n";
-      out << "vector<epx::EuroplexusReal> D((*NTENS)*(*NTENS));\n";
-      out << "epx::EuroplexusReal m;\n";
-      out << "epx::EuroplexusReal mDt;\n";
-      out << "epx::EuroplexusReal mnDt;\n";
-      out << "for(epx::EuroplexusInt i=0;i!=*NTENS;++i){\n";
-      out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
-      out << "copy(sig0.begin(),sig0.end(),sigf.begin());\n";
-      out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
-      out << "deto[i] += " << this->strainPerturbationValue << ";\n";
-      out << "D[0] = 0.;\n";
-      out << "if(epx::EuroplexusInterface<tfel::material::" << mb.getClassName() 
-	  << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],"
-	  << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
-	  << sfeh << ")!=0){\n";
-      out << "return;\n";
-      out << "}\n";
-      out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
-      out << "copy(sig0.begin(),sig0.end(),sigb.begin());\n";
-      out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
-      out << "deto[i] -= " << this->strainPerturbationValue << ";\n";
-      out << "D[0] = 0.;\n";
-      out << "if(epx::EuroplexusInterface<tfel::material::" << mb.getClassName() 
-	  << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],"
-	  << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
-	  << sfeh << ")!=0){\n";
-      out << "return;\n";
-      out << "}\n";
-      out << "for(epx::EuroplexusInt j=0;j!=*NTENS;++j){\n";
-      out << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n";
-      out << "}\n";
-      out << "}\n";
-      out << "// comparison\n";
-      out << "m=0.;\n";
-      out << "mDt=0.;\n";
-      out << "mnDt=0.;\n";
-      out << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n";
-      out << "mDt=max(mDt,*(DDSDDE+i));\n";
-      out << "mnDt=max(mnDt,nD[i]);\n";
-      out << "m=max(m,abs(nD[i]-*(DDSDDE+i)));\n";
-      out << "}\n";
-      out << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n";
-      out << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< endl;\n";
-      out << "cout << \"Dt :\" << endl;\n";
-      out << "for(epx::EuroplexusInt i=0;i!=*NTENS;++i){\n";
-      out << "for(epx::EuroplexusInt j=0;j!=*NTENS;++j){\n";
-      out << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "cout << \"nDt :\" << endl;\n";
-      out << "for(epx::EuroplexusInt i=0;i!=*NTENS;++i){\n";
-      out << "for(epx::EuroplexusInt j=0;j!=*NTENS;++j){\n";
-      out << "cout << nD[j*(*NTENS)+i] << \" \";\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-    }
     out << "}\n";
     out << "} // end of extern \"C\"\n";
     out.close();
