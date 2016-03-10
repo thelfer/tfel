@@ -302,38 +302,42 @@ namespace aster
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
 	const typename BV::SMFlag smflag = AsterTangentOperatorFlag<AsterTraits<BV>::btype>::value;
-	if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
-	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
-					      BV::TANGENTOPERATOR);
-	} else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
-	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
-					      BV::SECANTOPERATOR);
-	} else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
-	  r = PredictionOperatorComputer::exe(this->behaviour,smflag,
-					      BV::ELASTIC);
-	} else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
-	  r = this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
-	} else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
-	  r = this->behaviour.integrate(smflag,BV::ELASTIC);
-	} else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
-	  r = this->behaviour.integrate(smflag,BV::SECANTOPERATOR);
-	} else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
-	  r = this->behaviour.integrate(smflag,BV::TANGENTOPERATOR);
-	} else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
-	  r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
-	} else {
-	  throwInvalidDDSOEException(Traits::getName(),*DDSOE);
-	}
-	if(r==BV::FAILURE){
-	  // Il manque un vraie gestion locale de résultats imprécis
-	  if(*DDSOE<-0.5){
-	    throwPredictionComputationFailedException(Traits::getName());
+	if(*DDSOE<-0.5){
+	  if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
+	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,
+						BV::TANGENTOPERATOR);
+	  } else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
+	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,
+						BV::SECANTOPERATOR);
+	  } else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
+	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,
+						BV::ELASTIC);
 	  } else {
+	    throwInvalidDDSOEException(Traits::getName(),*DDSOE);
+	  }
+	  if(r==BV::FAILURE){
+	    throwPredictionComputationFailedException(Traits::getName());
+	  }
+	} else {
+	  if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
+	    r = this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
+	  } else if((0.75<*DDSOE)&&(*DDSOE<1.25)){
+	    r = this->behaviour.integrate(smflag,BV::ELASTIC);
+	  } else if((1.75<*DDSOE)&&(*DDSOE<2.25)){
+	    r = this->behaviour.integrate(smflag,BV::SECANTOPERATOR);
+	  } else if((2.75<*DDSOE)&&(*DDSOE<3.25)){
+	    r = this->behaviour.integrate(smflag,BV::TANGENTOPERATOR);
+	  } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
+	    r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
+	  } else {
+	    throwInvalidDDSOEException(Traits::getName(),*DDSOE);
+	  }
+	  if(r==BV::FAILURE){
 	    throwBehaviourIntegrationFailedException(Traits::getName());
 	  }
+	  this->behaviour.checkBounds();
+	  this->behaviour.ASTERexportStateData(STRESS,STATEV);
 	}
-	this->behaviour.checkBounds();
-	this->behaviour.ASTERexportStateData(STRESS,STATEV);
 	if((*DDSOE>0.5)||(*DDSOE<-0.5)){
 	  ConsistentTangentOperatorHandler::exe(this->behaviour,DDSOE);
 	}

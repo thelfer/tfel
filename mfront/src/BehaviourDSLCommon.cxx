@@ -1905,6 +1905,7 @@ namespace mfront{
     this->reserveName("StressFreeExpansionType");
     this->reserveName("behaviourData");
     this->reserveName("time_scaling_factor");
+    this->reserveName("mp_bounds_check_status");
   } // end of BehaviourDSLCommon::registerDefaultVarNames
 
   BehaviourDSLCommon::BehaviourDSLCommon()
@@ -3042,6 +3043,8 @@ namespace mfront{
 	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
 				"invalid number of material properties");
       }
+      this->writeMaterialPropertyCheckBoundsEvaluation(out,emps[0],f);
+      this->writeMaterialPropertyCheckBoundsEvaluation(out,emps[1],f);
       if(ua){
 	out << "tfel::material::computeIsotropicStiffnessTensor<hypothesis,StiffnessTensorAlterationCharacteristic::UNALTERED" << ">(" << D << ",";
       } else {
@@ -3055,6 +3058,9 @@ namespace mfront{
       if(emps.size()!=9u){
 	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
 				"invalid number of material properties");
+      }
+      for(decltype(emps.size()) i=0;i!=emps.size();++i){
+	this->writeMaterialPropertyCheckBoundsEvaluation(out,emps[i],f);
       }
       if(ua){
 	if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
@@ -3087,6 +3093,64 @@ namespace mfront{
 			      "unsupported elastic symmetry type");
     }
   } // end of BehaviourDSLCommon::writeStiffnessTensorComputation
+
+  void
+  BehaviourDSLCommon::writeMaterialPropertyArguments(std::ostream& out,
+						     const BehaviourDescription::ComputedMaterialProperty& cmp,
+						     std::function<std::string(const MaterialPropertyInput&)>& f)
+  {
+    const auto& mpd = *(cmp.mpd);
+    out << '(';
+    if(!mpd.inputs.empty()){
+      const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
+      auto pi = std::begin(inputs);
+      const auto pie = std::end(inputs);
+      while(pi!=pie){
+	out << f(*pi);
+	if(++pi!=pie){
+	  out << ",";
+	}
+      }
+    }
+    out << ")";
+  }
+
+  void
+  BehaviourDSLCommon::writeMaterialPropertyCheckBoundsEvaluation(std::ostream& out,
+								 const BehaviourDescription::MaterialProperty& m,
+								 std::function<std::string(const MaterialPropertyInput&)>& f)
+  {
+    if(m.is<BehaviourDescription::ComputedMaterialProperty>()){
+      const auto& cmp = m.get<BehaviourDescription::ComputedMaterialProperty>();
+      const auto& mpd = *(cmp.mpd);
+      const auto& n   = MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law);
+      out << "if(auto mp_bounds_check_status="
+	  << n << "_checkBounds";
+      this->writeMaterialPropertyArguments(out,cmp,f);
+      out << "!=0){\n"
+	  << "if(mp_bounds_check_status<0){\n"
+	  << "// physical bounds\n"
+	  << "throw(OutOfBoundsException(\"" << this->mb.getClassName() << ": \"\n"
+	  << "                           \"a variable is out of its physical bounds \"\n"
+	  << "                           \"when calling the material property '" << n << "'\"));\n"
+	  << "} else {\n"
+	  << "// standard bounds\n"
+	  << "if(this->policy==Strict){\n"
+	  << "throw(OutOfBoundsException(\"" << this->mb.getClassName() << ": \"\n"
+	  << "                           \"a variable is out of its bounds \"\n"
+	  << "                           \"when calling the material property '" << n << "'\"));\n"
+	  << "} else if(this->policy==Warning){\n"
+	  << "std::cerr << \"" << this->mb.getClassName() << ": \"\n"
+	  << "             \"a variable is out of its bounds \"\n"
+	  << "             \"when calling the material property '" << n << "'\\n\";\n"
+	  << "}\n"
+	  << "}\n"
+	  << "}\n";
+    } else if(!m.is<BehaviourDescription::ConstantMaterialProperty>()){
+      this->throwRuntimeError("BehaviourDSLCommon::writeMaterialPropertyEvaluation",
+			      "unsupported material property type");
+    }
+  } // end of BehaviourDSLCommon::writeMaterialPropertyEvaluation
   
   void
   BehaviourDSLCommon::writeMaterialPropertyEvaluation(std::ostream& out,
@@ -3096,19 +3160,10 @@ namespace mfront{
     if(m.is<BehaviourDescription::ConstantMaterialProperty>()){
       out << m.get<BehaviourDescription::ConstantMaterialProperty>().value;
     } else if(m.is<BehaviourDescription::ComputedMaterialProperty>()){
-      const auto& mpd = *(m.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
-      out << MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law) << '(';
-      if(!mpd.inputs.empty()){
-	const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
-	const auto pie = std::end(inputs);
-	for(auto pi = std::begin(inputs);pi!=pie;){
-	  out << f(*pi);
-	  if(++pi!=pie){
-	    out << ",";
-	  }
-	}
-      }
-      out << ")";
+      const auto& cmp = m.get<BehaviourDescription::ComputedMaterialProperty>();
+      const auto& mpd = *(cmp.mpd);
+      out << MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law);
+      this->writeMaterialPropertyArguments(out,cmp,f);
     } else {
       this->throwRuntimeError("BehaviourDSLCommon::writeMaterialPropertyEvaluation",
 			      "unsupported material property type");
@@ -3404,9 +3459,9 @@ namespace mfront{
   {
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n"
-			<< "* \\brief set the policy for \"out of bounds\" conditions\n"
+			<< "* \\return the modelling hypothesis\n"
 			<< "*/\n"
-			<< "ModellingHypothesis::Hypothesis\ngetModellingHypothesis(void) const{\n"
+			<< "constexpr ModellingHypothesis::Hypothesis\ngetModellingHypothesis(void) const{\n"
 			<< "return hypothesis;\n"
 			<< "} // end of getModellingHypothesis\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourGetModellingHypothesis();

@@ -3364,6 +3364,8 @@ mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity5-3.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-1.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-3.mtest.in -text
+mfront/tests/behaviours/epx/CMakeLists.txt -text
+mfront/tests/behaviours/epx/Makefile.am -text
 mfront/tests/behaviours/ironstuck/CMakeLists.txt -text
 mfront/tests/behaviours/ironstuck/Makefile.am -text
 mfront/tests/behaviours/ironstuck/ironstuckT91-satohtest.mtest.in -text

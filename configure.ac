@@ -731,6 +731,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/aster/asterdruckerprager.mtest
            mfront/tests/behaviours/aster/asterdruckerprager2.mtest
+           mfront/tests/behaviours/epx/Makefile
            mfront/tests/behaviours/abaqus/Makefile
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest
            mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest

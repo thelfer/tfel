@@ -853,6 +853,34 @@ namespace mfront{
     virtual std::string
     getBehaviourConstructorsInitializers(const Hypothesis);
     /*!
+     * \brief write the arguments of a material property, including
+     * the the surrounding parenthesis. Those arguments are used to
+     * evaluate the material property and/or check its bounds.
+     * \param[out] out: output stream
+     * \param[in]  m:   material property description
+     * \param[in]  f:   function converting input variable name.
+     * The function f can be used to specify how evaluate a variable value.
+     * For example, if we want to evaluate the variable name 'V' at
+     * the end of the time step, we could make f return V+dV
+     */
+    virtual void
+    writeMaterialPropertyArguments(std::ostream&,
+				   const BehaviourDescription::ComputedMaterialProperty&,
+				   std::function<std::string(const MaterialPropertyInput&)>&);
+    /*!
+     * \brief write the bounds checks to a material property
+     * \param[out] out: output stream
+     * \param[in]  m:   material property description
+     * \param[in]  f:   function converting input variable name.
+     * The function f can be used to specify how evaluate a variable value.
+     * For example, if we want to evaluate the variable name 'V' at
+     * the end of the time step, we could make f return V+dV
+     */
+    virtual void
+    writeMaterialPropertyCheckBoundsEvaluation(std::ostream&,
+					       const BehaviourDescription::MaterialProperty&,
+					       std::function<std::string(const MaterialPropertyInput&)>&);
+    /*!
      * \brief write the call to a material property
      * \param[out] out: output stream
      * \param[in]  m:   material property description

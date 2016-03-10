@@ -22,6 +22,10 @@ if(HAVE_ABAQUS)
   add_subdirectory(abaqus)
 endif(HAVE_ABAQUS)
 
+if(HAVE_EUROPLEXUS)
+  add_subdirectory(epx)
+endif(HAVE_EUROPLEXUS)
+
 if(HAVE_CYRANO)
   add_subdirectory(cyrano)
 endif(HAVE_CYRANO)

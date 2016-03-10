@@ -61,7 +61,7 @@ namespace epx
   {
 
     TFEL_EPX_INLINE2 static
-     int exe(const EuroplexusInt  *const NTENS, const EuroplexusReal *const DTIME,
+     int exe(const EuroplexusReal *const DTIME,EuroplexusReal *const DDSDDE,
 	     const EuroplexusReal *const F0, const EuroplexusReal *const F1,
 	     const EuroplexusReal *const TEMP,  const EuroplexusReal *const DTEMP,
 	     const EuroplexusReal *const PROPS, const EuroplexusInt  *const NPROPS,

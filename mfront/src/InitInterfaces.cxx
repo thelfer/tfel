@@ -59,6 +59,10 @@
 #include"MFront/AbaqusInterface.hxx"
 #endif
 
+#ifdef HAVE_EUROPLEXUS
+#include"MFront/EuroplexusInterface.hxx"
+#endif
+
 #include"MFront/ZMATInterface.hxx"
 #include"MFront/InitInterfaces.hxx"
 
@@ -125,6 +129,10 @@ namespace mfront
 #ifdef HAVE_ABAQUS
     BehaviourInterfaceProxy<AbaqusInterface> abaqusProxy;
 #endif /* HAVE_ABAQUS */
+
+#ifdef HAVE_EUROPLEXUS
+    BehaviourInterfaceProxy<EuroplexusInterface> europlexusProxy;
+#endif /* HAVE_EUROPLEXUS */
     
 #ifdef HAVE_ZMAT
     BehaviourInterfaceProxy<ZMATInterface> zmatProxy;

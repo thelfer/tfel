@@ -50,6 +50,11 @@ namespace tfel
      * F\left(\sigma_{11}-\sigma_{22}\right)^2+G\left(\sigma_{22}-\sigma_{33}\right)^2+H\left(\sigma_{33}-\sigma_{11}\right)^2
      * + 2L\sigma_{12}^{2} + 2M\sigma_{13}^{2} + 2N\sigma_{23}^{2}
      * \f]
+     *
+     * \warning This convention is given in the book of Lemaître et
+     * Chaboche and seems to differ from the one described in most
+     * other books.
+     *
      * \return an object of type st2tost2
      */    
     template<unsigned short N,

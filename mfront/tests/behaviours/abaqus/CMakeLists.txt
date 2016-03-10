@@ -173,22 +173,6 @@ macro(test_abaqus test_arg)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_abaqus)
 
-macro(test_abaqus_python test)
-  configure_file(abaqus${test}.py.in
-    abaqus${test}.py @ONLY)
-  add_test(NAME abaqus${test}_py
-    COMMAND ${PYTHON_EXECUTABLE} abaqus${test}.py)
-  set_tests_properties(abaqus${test}_py
-    PROPERTIES DEPENDS MFrontAbaqusBehaviours)
-  if(CMAKE_CONFIGURATION_TYPES)
-    set_tests_properties(abaqus${test}_py
-      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_std__stl_vector>;$<TARGET_FILE_DIR:py_tfel_tests>")
-  else(CMAKE_CONFIGURATION_TYPES)
-    set_tests_properties(abaqus${test}_py
-      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
-  endif(CMAKE_CONFIGURATION_TYPES)
-endmacro(test_abaqus_python)
-
 test_abaqus(materialpropertiesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_abaqus(materialpropertiesboundscheck2 

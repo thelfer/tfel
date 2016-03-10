@@ -28,9 +28,9 @@ namespace mfront{
   struct EuroplexusInterface
     : public UMATInterfaceBase
   {
+    //! return the name of the interface
     static std::string 
     getName(void);
-    
     /*!
      * \param[in] k  : keyword treated
      * \param[in] p  : iterator to the current token
@@ -50,7 +50,7 @@ namespace mfront{
      */
     virtual void
     endTreatment(const BehaviourDescription&,
-		  const FileDescription&) const override;
+		 const FileDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
@@ -61,10 +61,10 @@ namespace mfront{
     virtual ~EuroplexusInterface();
     
   protected:
-
+    //! \return the name of the generated library
     virtual std::string
     getLibraryName(const BehaviourDescription&) const override;
-
+    
     virtual std::string
     getInterfaceName(void) const override;
     /*!
@@ -141,15 +141,6 @@ namespace mfront{
 					       const ThermodynamicForce&,
 					       const SupportedTypes::TypeSize) const override;
     /*!
-     * \return the list of additional variables to be passed to the
-     * behaviour data constructor which are specific to the interface.
-     *
-     * For each item in the list, the first element is the variable
-     * name and the second element is the variable description.
-     */
-    virtual std::vector<std::pair<std::string,std::string>>
-    getBehaviourDataConstructorAdditionalVariables(void) const;
-    /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface
      *                   (generally taking into account the material
@@ -164,17 +155,6 @@ namespace mfront{
 				 const Hypothesis,
 				 const BehaviourDescription&,
 				 const FileDescription&) const override;
-    /*!
-     * \brief add interface specific lines at the end of the behaviour
-     * data constructor
-     * \param[in] out : output file
-     * \param[in] h   : modelling hypothesis
-     * \param[in] mb  : mechanical behaviour description
-     */
-    virtual void 
-    completeBehaviourDataConstructor(std::ofstream&,
-				     const Hypothesis,
-				     const BehaviourDescription&) const override;
     virtual std::string
     getModellingHypothesisTest(const Hypothesis) const override;
 
@@ -183,16 +163,6 @@ namespace mfront{
 
     virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
-
-    virtual void 
-    writeInputFileExample(const BehaviourDescription&,
-			  const FileDescription&) const;
-    
-    virtual void
-    writeDepvar(std::ostream&,int&,
-		const tfel::material::ModellingHypothesis::Hypothesis&,
-		const VariableDescription&,
-		const std::string&) const;
 
   }; // end of EuroplexusInterface
 

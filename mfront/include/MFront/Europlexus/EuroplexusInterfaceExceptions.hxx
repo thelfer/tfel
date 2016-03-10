@@ -97,7 +97,7 @@ namespace epx{
      */
     static void
     treatEuroplexusException(const std::string&,
-			const EuroplexusException&);
+			     const EuroplexusException&);
     /*!
      * \brief display the error message out of a material exception to the
      * standard output.
@@ -137,6 +137,23 @@ namespace epx{
      */
     TFEL_NORETURN static void
     throwNegativeTimeStepException(const std::string&);
+    /*!
+     * \brief throw an EuroplexusException if the DDSDDE parameter is invalid
+     * \param[in] b : behaviour name
+     * \param[in] v : DDSDDE value
+     */
+    TFEL_NORETURN static void
+    throwInvalidDDSDDException(const std::string&,
+			       const EuroplexusReal);
+    /*!
+     * \brief throw an EuroplexusException if the time step scaling factor
+     * is greater or egal to one on failure
+     * \param[in] b: behaviour name
+     * \param[in] v: time step scaling factor value
+     */
+    TFEL_NORETURN static void
+    throwInvalidTimeStepScalingFactorOnFailure(const std::string&,
+					       const EuroplexusReal);
     /*!
      * \brief display an error message if the behaviour shall handle
      * stress free expansion and that the umat interface can't
