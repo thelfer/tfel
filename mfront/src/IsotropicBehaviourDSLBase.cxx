@@ -21,7 +21,7 @@ namespace mfront{
 
   IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase()
     : BehaviourDSLBase<IsotropicBehaviourDSLBase>(),
-      theta(0.5f)
+      theta(0.5)
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");

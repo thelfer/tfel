@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_UTILITIES_TESTDOCMAIN_H_
-#define _LIB_TFEL_UTILITIES_TESTDOCMAIN_H_ 
+#ifndef LIB_TFEL_UTILITIES_TESTDOCMAIN_H_
+#define LIB_TFEL_UTILITIES_TESTDOCMAIN_H_ 
 
 #include<string>
 #include<ostream>
@@ -100,5 +100,5 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_UTILITIES_TESTDOCMAIN_H */
+#endif /* LIB_TFEL_UTILITIES_TESTDOCMAIN_H */
 

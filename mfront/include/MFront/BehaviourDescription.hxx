@@ -691,7 +691,7 @@ namespace mfront
      * \param[in] b2 : requires true if one has to include vector.hxx
      */
     void
-    requiresTVectorOrVectorIncludes(bool&,bool&);   
+    requiresTVectorOrVectorIncludes(bool&,bool&) const;
     /*!
      * \return true if all mechanical data are specialised
      * This means that the default mechanical data is useless

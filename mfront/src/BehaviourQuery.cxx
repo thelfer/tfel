@@ -432,7 +432,7 @@ const Hypothesis){
 		    const BehaviourDescription&,
 		    const Hypothesis){
       const auto targets = ldsl->getTargetsDescription().specific_targets;
-      for(const auto t : targets){
+      for(const auto& t : targets){
 	cout << t.first << " : ";
 	copy(t.second.first.begin(),t.second.first.end(),
 	     ostream_iterator<string>(cout," "));

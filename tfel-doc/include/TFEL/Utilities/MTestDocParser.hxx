@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_UTILITIES_MTESTDOCPARSER_H_
-#define _LIB_TFEL_UTILITIES_MTESTDOCPARSER_H_ 
+#ifndef LIB_TFEL_UTILITIES_MTESTDOCPARSER_H_
+#define LIB_TFEL_UTILITIES_MTESTDOCPARSER_H_ 
 
 #include"TFEL/Utilities/ParserBase.hxx"
 #include"TFEL/Utilities/TestDocumentation.hxx"
@@ -50,5 +50,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_UTILITIES_MTESTDOCPARSER_H */
-
+#endif /* LIB_TFEL_UTILITIES_MTESTDOCPARSER_H */

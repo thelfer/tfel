@@ -75,7 +75,7 @@ namespace mfront{
     BoundsType     boundsType  = LowerAndUpper;
     long double    lowerBound  = std::numeric_limits<long double>::min();
     long double    upperBound  = std::numeric_limits<long double>::max();
-    unsigned int   lineNumber  = 0u;
+    size_t         lineNumber  = 0u;
 
   protected:
 

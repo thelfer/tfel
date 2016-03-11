@@ -171,7 +171,7 @@ namespace mfront
     }
     out << ")\n{\n";
     out << "using namespace std;\n";
-    out << "typedef double real;\n";
+    out << "using real = double;\n";
     // material laws
     writeMaterialLaws("OctaveMaterialPropertyInterface::writeOutputFile",
 		      out,mpd.materialLaws);
@@ -183,11 +183,11 @@ namespace mfront
       writeAssignMaterialPropertyParameters(out,mpd,name,
 					    "double","octave");
     }
-    out << "double " << mpd.output << ";\n";
+    out << "real " << mpd.output << ";\n";
     out << mpd.f.body;
     out << "return " << mpd.output << ";\n";
     out << "} // end of " << name << "_compute\n\n";
-    if((!mpd.boundsDescriptions.empty())||(!mpd.physicalBoundsDescriptions.empty())){
+    if((!mpd.bounds.empty())||(!mpd.physicalBounds.empty())){
       out << "static double " << name <<"_checkBounds(";
       for(auto p3=mpd.inputs.begin();p3!=mpd.inputs.end();){
 	out << "const double " << p3->name;
@@ -197,10 +197,10 @@ namespace mfront
       }
       out << ")\n{\n";
       out << "using namespace std;\n";
-      if(!mpd.physicalBoundsDescriptions.empty()){
+      if(!mpd.physicalBounds.empty()){
 	out << "// treating physical bounds\n";
-	for(auto p5=mpd.physicalBoundsDescriptions.begin();
-	    p5!=mpd.physicalBoundsDescriptions.end();++p5){
+	for(auto p5=mpd.physicalBounds.begin();
+	    p5!=mpd.physicalBounds.end();++p5){
 	  if(p5->boundsType==VariableBoundsDescription::Lower){
 	    out << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
 	    out << "error(\"" << name << " :"  << p5->varName 
@@ -229,10 +229,10 @@ namespace mfront
 	  }
 	}
       }
-      if(!mpd.boundsDescriptions.empty()){
+      if(!mpd.bounds.empty()){
 	out << "// treating standard bounds\n";
-	for(auto p5=mpd.boundsDescriptions.begin();
-	    p5!=mpd.boundsDescriptions.end();++p5){
+	for(auto p5=mpd.bounds.begin();
+	    p5!=mpd.bounds.end();++p5){
 	  if(p5->boundsType==VariableBoundsDescription::Lower){
 	    out << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
 	    out << "const octave_value policy = get_global_value("
@@ -363,8 +363,8 @@ namespace mfront
       out << "retval = " << name << "_compute();\n";
     } else if(mpd.inputs.size()==1){
       out << "if(args(0).is_real_scalar()){\n";
-      if((!mpd.boundsDescriptions.empty())||
-	 (!mpd.physicalBoundsDescriptions.empty())){
+      if((!mpd.bounds.empty())||
+	 (!mpd.physicalBounds.empty())){
 	out << "if("<< name << "_checkBounds(";
 	out << "args(0).scalar_value())<0){\n";
 	out << "return retval;\n";
@@ -377,8 +377,8 @@ namespace mfront
       out << "Matrix xout(xin0.rows(),xin0.cols());\n";
       out << "for(i=0;i!=xin0.rows();++i){\n";
       out << "for(j=0;j!=xin0.cols();++j){\n";
-      if((!mpd.boundsDescriptions.empty())||
-	 (!mpd.physicalBoundsDescriptions.empty())){
+      if((!mpd.bounds.empty())||
+	 (!mpd.physicalBounds.empty())){
 	out << "if("<< name << "_checkBounds(";
 	out << "xin0(i,j))<0){\n";
 	out << "return retval;\n";
@@ -436,8 +436,8 @@ namespace mfront
       // all scalar case
       out << "if(areAllVariablesScalars){\n";
       decltype(mpd.inputs.size()) i;
-      if((!mpd.boundsDescriptions.empty())||
-	 (!mpd.physicalBoundsDescriptions.empty())){
+      if((!mpd.bounds.empty())||
+	 (!mpd.physicalBounds.empty())){
 	out << "if("<< name << "_checkBounds(";
 	for(i=0;i!=mpd.inputs.size()-1;++i){
 	  out << "args(" << i << ").scalar_value(),";
@@ -459,8 +459,8 @@ namespace mfront
       out << "Matrix xout(row,col);\n";
       out << "for(i=0;i!=row;++i){\n";
       out << "for(j=0;j!=col;++j){\n";
-      if((!mpd.boundsDescriptions.empty())||
-	 (!mpd.physicalBoundsDescriptions.empty())){
+      if((!mpd.bounds.empty())||
+	 (!mpd.physicalBounds.empty())){
 	out << "if("<< name << "_checkBounds(";
 	for(i=0;i!=mpd.inputs.size()-1;++i){
 	  out << "xin" << i << "(i,j),";
@@ -482,8 +482,8 @@ namespace mfront
       out << "Matrix xout(row,col);\n";
       out << "for(i=0;i!=row;++i){\n";
       out << "for(j=0;j!=col;++j){\n";
-      if((!mpd.boundsDescriptions.empty())||
-	 (!mpd.physicalBoundsDescriptions.empty())){
+      if((!mpd.bounds.empty())||
+	 (!mpd.physicalBounds.empty())){
 	out << "if("<< name << "_checkBounds(";
 	for(i=0;i!=mpd.inputs.size()-1;++i){
 	  out << "(*(getfunction[" << i << "]))(args(" << i << "),i,j),\n";

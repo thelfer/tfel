@@ -90,11 +90,11 @@ namespace mfront
     /*!
      * bounds description
      */
-    std::vector<VariableBoundsDescription> boundsDescriptions;
+    std::vector<VariableBoundsDescription> bounds;
     /*!
      * physical bounds description
      */
-    std::vector<VariableBoundsDescription> physicalBoundsDescriptions;
+    std::vector<VariableBoundsDescription> physicalBounds;
     //! list of reserved names
     std::set<std::string> reservedNames;
     //! list of variables names

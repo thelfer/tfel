@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_UTILITIES_LATEXCONVERTION_H_
-#define _LIB_TFEL_UTILITIES_LATEXCONVERTION_H_ 
+#ifndef LIB_TFEL_UTILITIES_LATEXCONVERTION_H_
+#define LIB_TFEL_UTILITIES_LATEXCONVERTION_H_ 
 
 #include<map>
 #include<vector>
@@ -45,5 +45,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_UTILITIES_LATEXCONVERTION_H */
+#endif /* LIB_TFEL_UTILITIES_LATEXCONVERTION_H */
 

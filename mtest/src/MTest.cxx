@@ -780,7 +780,7 @@ namespace mtest
     const auto a = state.getParameter<real>("LagrangeMultipliersNormalisationFactor");      
     const auto d = getSpaceDimension(this->hypothesis);
     unsigned short pos = ndv;
-    for(const auto c : this->constraints){
+    for(const auto& c : this->constraints){
       c->setValues(k,r,state.u0,state.u1,pos,d,t,dt,a);
       pos = static_cast<unsigned short>(pos+c->getNumberOfLagrangeMultipliers());
     }

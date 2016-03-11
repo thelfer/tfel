@@ -265,7 +265,7 @@ namespace mfront{
     typedef MaterialPropertyInterfaceFactory MLIF;
     auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     // searching i2 depedencies
-    for(const auto i: inames){
+    for(const auto& i: inames){
       for(const auto& d : mlif.getInterfaceDependencies(i)){
 	this->addInterface(d);
       }
@@ -728,13 +728,13 @@ namespace mfront{
   void
   MaterialPropertyDSL::treatBounds(void)
   {
-    this->registerBounds(this->boundsDescriptions);
+    this->registerBounds(this->bounds);
   } // end of MaterialPropertyDSL::treatBounds
 
   void
   MaterialPropertyDSL::treatPhysicalBounds(void)
   {
-    this->registerBounds(this->physicalBoundsDescriptions);
+    this->registerBounds(this->physicalBounds);
   } // end of MaterialPropertyDSL::treatPhysicalBounds
 
   void

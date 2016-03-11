@@ -46,12 +46,6 @@
 #include"MFront/MaterialPropertyParametersHandler.hxx"
 #include"MFront/PythonMaterialPropertyInterface.hxx"
 
-#ifndef _MSC_VER
-static const char * const constexpr_c = "constexpr";
-#else
-static const char * const constexpr_c = "const";
-#endif
-
 namespace mfront
 {
 
@@ -119,11 +113,9 @@ namespace mfront
     const auto& inputs=mpd.inputs;
     const auto& materialLaws=mpd.materialLaws;
     const auto& staticVars=mpd.staticVars;
-    const auto& params=mpd.parameters;
-    const auto& paramValues=mpd.parametersValues;
     const auto& function=mpd.f;
-    const auto& bounds=mpd.boundsDescriptions;
-    const auto& physicalBounds=mpd.physicalBoundsDescriptions;
+    const auto& bounds=mpd.bounds;
+    const auto& physicalBounds=mpd.physicalBounds;
     const auto name = (!material.empty()) ? material+"_"+law : law;
     this->headerFileName  = "include/" + name;
     this->headerFileName += "-python.hxx";
@@ -225,7 +217,7 @@ namespace mfront
       this->srcFile << "PyObject *,PyObject*)\n{\n";
     }
     this->srcFile << "using namespace std;\n";
-    this->srcFile << "typedef double real;\n";
+    this->srcFile << "using real = double;\n";
     // material laws
     writeMaterialLaws("PythonMaterialPropertyInterface::writeOutputFile",
 		      this->srcFile,materialLaws);
@@ -249,7 +241,7 @@ namespace mfront
     if(!inputs.empty()){
       unsigned short i;
       for(auto p3=inputs.begin();p3!=inputs.end();++p3){
-	this->srcFile << "double " << p3->name << ";\n";
+	this->srcFile << "real " << p3->name << ";\n";
       }
       if(!bounds.empty()){
 	this->srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
@@ -356,7 +348,7 @@ namespace mfront
 	this->srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
       }
     }
-    this->srcFile << "double " << output << ";\n"
+    this->srcFile << "real " << output << ";\n"
 		  << "try{\n"
 		  << function.body
 		  << "} catch(exception& cpp_except){\n"

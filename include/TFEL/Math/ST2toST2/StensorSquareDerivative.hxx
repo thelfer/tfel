@@ -147,9 +147,7 @@ namespace tfel{
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
 							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
 	using tfel::typetraits::BaseType;
-	typedef typename BaseType<value_type>::type real;
 	const value_type zero = value_type(0);
-	const real one_half   = real(1)/2;
 	this->v[0]  = 2*s(0);
 	this->v[1]  = zero;
 	this->v[2]  = zero;

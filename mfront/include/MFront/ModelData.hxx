@@ -91,8 +91,8 @@ namespace mfront
     std::map<std::string,std::string> entryNames;
     std::map<std::string,double>      initialValues;
     std::map<std::string,std::string> defaultValues;
-    std::vector<VariableBoundsDescription> boundsDescriptions;
-    std::vector<VariableBoundsDescription> physicalBoundsDescriptions;
+    std::vector<VariableBoundsDescription> bounds;
+    std::vector<VariableBoundsDescription> physicalBounds;
     std::map<std::string,unsigned short> depths;
     //! list of material laws used
     std::vector<std::string> materialLaws;

@@ -85,8 +85,8 @@ namespace mfront
     const auto& params=mpd.parameters;
     const auto& paramValues=mpd.parametersValues;
     const auto& function=mpd.f;
-    const auto& bounds=mpd.boundsDescriptions;
-    const auto& physicalBounds=mpd.physicalBoundsDescriptions;
+    const auto& bounds=mpd.bounds;
+    const auto& physicalBounds=mpd.physicalBounds;
     string name;
     if(!material.empty()){
       name = material+"_"+className;

@@ -20,7 +20,7 @@ namespace tfel{
   namespace math{
 
     template<unsigned int N,typename T,typename Func>
-    class RungeKutta2;
+    struct RungeKutta2;
 
   } // end of namespace math
 

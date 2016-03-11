@@ -9,7 +9,7 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-endif-labels" "Wsign-compar
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-multichar" "Wno-deprecated-declarations" "Wpacked")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wredundant-decls")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wunknown-pragmas" "Wundef" "Wreorder")
-tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wconversion")
+tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-conversion")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wdouble-promotion")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Winit-self")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wlogical-op")

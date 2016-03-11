@@ -40,7 +40,7 @@
 @ImposedStrain 'EZZ' 0.;
 @ImposedStrain 'EXY' 0.;
 
-@Real 'pi'   '2*atan(1)';
+@Real 'pi'   '4*atan(1)';
 @Real 'phi'  'pi/7';
 @Real 'c'    'cos(phi)';
 @Real 's'    'sin(phi)';

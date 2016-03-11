@@ -108,7 +108,7 @@ namespace mfront{
     virtual void endsInputFileProcessing(void) override;
 
     virtual void
-    writeBehaviourLocalVariablesInitialisation(const Hypothesis);
+    writeBehaviourLocalVariablesInitialisation(const Hypothesis) override;
     
     virtual void writeBehaviourIntegrator(const Hypothesis) override;
 

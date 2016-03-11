@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MTEST_PIPELINEARELEMENT_HXX_
-#define _LIB_MTEST_PIPELINEARELEMENT_HXX_
+#ifndef LIB_MTEST_PIPELINEARELEMENT_HXX_
+#define LIB_MTEST_PIPELINEARELEMENT_HXX_
 
 #include<iosfwd>
 
@@ -116,4 +116,4 @@ namespace mtest{
 
 } // end of namespace mtest
 
-#endif /* _LIB_MTEST_PIPELINEARELEMENT_HXX_ */
+#endif /* LIB_MTEST_PIPELINEARELEMENT_HXX_ */

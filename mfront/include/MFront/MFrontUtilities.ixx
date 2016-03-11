@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MFRONTUTILITIES_IXX_
-#define _LIB_MFRONT_MFRONTUTILITIES_IXX_
+#ifndef LIB_MFRONT_MFRONTUTILITIES_IXX_
+#define LIB_MFRONT_MFRONTUTILITIES_IXX_
 
 namespace mfront{
 
@@ -44,4 +44,4 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MFRONTUTILITIES_IXX_ */
+#endif /* LIB_MFRONT_MFRONTUTILITIES_IXX_ */

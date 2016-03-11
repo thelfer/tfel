@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_MFRONTUTILITIES_HXX_
-#define _LIB_MFRONT_MFRONTUTILITIES_HXX_
+#ifndef LIB_MFRONT_MFRONTUTILITIES_HXX_
+#define LIB_MFRONT_MFRONTUTILITIES_HXX_
 
 #include<string>
 #include<vector>
@@ -154,6 +154,4 @@ namespace mfront{
 
 #include"MFront/MFrontUtilities.ixx"
 	   
-#endif /* _LIB_MFRONT_MFRONTUTILITIES_HXX_ */
-
-
+#endif /* LIB_MFRONT_MFRONTUTILITIES_HXX_ */

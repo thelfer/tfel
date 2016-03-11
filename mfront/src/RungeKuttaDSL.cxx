@@ -196,7 +196,7 @@ namespace mfront{
     bool b1 = false;
     bool b2 = false;
     this->checkBehaviourFile();
-    this->behaviourFile << "#include\"TFEL/Math/General/Abs.hxx\"" << endl << endl;
+    this->behaviourFile << "#include\"TFEL/Math/General/Abs.hxx\"\n\n";
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
       this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
@@ -447,11 +447,11 @@ namespace mfront{
       this->reserveName("errabs");
       this->reserveName("asig");
       this->reserveName("sigf");
-      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_div",0u,7.));
-      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_rmin",0u,0.7));
-      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_rmax",0u,1.3));
-      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_fac",0u,3.));
-      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_borne",0u,2.));
+      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_div",0u,7L));
+      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_rmin",0u,0.7L));
+      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_rmax",0u,1.3L));
+      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_fac",0u,3L));
+      this->mb.addStaticVariable(h,StaticVariableDescription("real","rkcastem_borne",0u,2.L));
       this->mb.setAttribute(BehaviourData::algorithm,std::string("RungeKuttaCastem"),false);
       this->mb.setAttribute(BehaviourData::numberOfEvaluations,ushort(5u),false);
     } else {
@@ -484,30 +484,26 @@ namespace mfront{
     using namespace std;
     BehaviourDSLCommon::endsInputFileProcessing();
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator pm;
     CodeBlock ib; // code inserted at before of the local variable initialisation
     CodeBlock ie; // code inserted at the end of the local variable initialisation
     if(!this->mb.hasAttribute(BehaviourData::algorithm)){
       this->setDefaultAlgorithm();
     }
-    const string& algorithm =
+    const auto& algorithm =
       this->mb.getAttribute<string>(BehaviourData::algorithm);
-    const unsigned short n =
-	  this->mb.getAttribute<unsigned short>(BehaviourData::numberOfEvaluations);
+    const auto n =
+      this->mb.getAttribute<unsigned short>(BehaviourData::numberOfEvaluations);
     // some checks
     const auto& bh = this->mb.getDistinctModellingHypotheses();
     for(const auto & elem : bh){
       const auto& d = this->mb.getBehaviourData(elem);
       if(!d.hasCode(BehaviourData::ComputeStress)){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "@ComputeStress was not defined.";
-	throw(runtime_error(msg));
+	this->throwRuntimeError("RungeKuttaDSL::endsInputFileProcessing",
+				"@ComputeStress was not defined.");
       }
       if(!d.hasCode(BehaviourData::ComputeDerivative)){
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "@Derivative was not defined.";
-	throw(runtime_error(msg));
+	this->throwRuntimeError("RungeKuttaDSL::endsInputFileProcessing",
+				"@Derivative was not defined.");
       }
       auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
       const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
@@ -523,10 +519,10 @@ namespace mfront{
 	    auto& log = getLogStream();
 	    log << "registring variable '" << currentVarName << "'";
 	    if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	      log << " for default hypothesis" << endl;
+	      log << " for default hypothesis\n";
 	    } else {
 	      log << " for the '" << ModellingHypothesis::toString(elem)
-		  << "' hypothesis" << endl;
+		  << "' hypothesis\n";
 	    }
 	  }
 	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
@@ -537,10 +533,10 @@ namespace mfront{
 	    auto& log = getLogStream();
 	    log << "registring variable '" << currentVarName << "'";
 	    if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	      log << " for default hypothesis" << endl;
+	      log << " for default hypothesis\n";
 	    } else {
 	      log << " for the '" << ModellingHypothesis::toString(elem)
-		  << "' hypothesis" << endl;
+		  << "' hypothesis\n";
 	    }
 	  }
 	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
@@ -554,8 +550,8 @@ namespace mfront{
       }
       // driving variables
       if((algorithm!="RungeKutta4/2")&&(algorithm!="RungeKutta5/4")){
-	for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-	  const auto& dv = pm->first;
+	for(const auto& vm : this->mb.getMainVariables()){
+	  const auto& dv = vm.first;
 	  if(uvs.find(dv.name)!=uvs.end()){
 	    ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
 	  }
@@ -571,10 +567,10 @@ namespace mfront{
 	    auto& log = getLogStream();
 	    log << "registring variable '" << currentVarName << "'";
 	    if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	      log << " for default hypothesis" << endl;
+	      log << " for default hypothesis\n";
 	    } else {
 	      log << " for the '" << ModellingHypothesis::toString(elem)
-		  << "' hypothesis" << endl;
+		  << "' hypothesis\n";
 	    }
 	  }
 	  this->mb.addLocalVariable(elem,VariableDescription(ev.type,currentVarName,ev.arraySize,0u));
@@ -614,14 +610,13 @@ namespace mfront{
 		     BehaviourData::CREATEORAPPEND,
 		     BehaviourData::AT_BEGINNING);
     // part introduced at the end of the initialize local variables
-    for(pm=this->mb.getMainVariables().begin();pm!=this->mb.getMainVariables().end();++pm){
-      const auto& dv = pm->first;
+    for(const auto& vm : this->mb.getMainVariables()){
+      const auto& dv = vm.first;
       if(dv.increment_known){
 	ie.code += "this->d" + dv.name + "_ = (this->d"+dv.name+")/(this->dt);\n";
       } else {
-	string msg("RungeKuttaDSL::endsInputFileProcessing : ");
-	msg += "unsupported driving variable '"+dv.name+"'";
-	throw(runtime_error(msg));
+	this->throwRuntimeError("RungeKuttaDSL::endsInputFileProcessing",
+				"unsupported driving variable '"+dv.name+"'");
       }
     }
     this->mb.setCode(h,BehaviourData::AfterInitializeLocalVariables,ie,
@@ -640,30 +635,29 @@ namespace mfront{
   void
   RungeKuttaDSL::writeBehaviourParserSpecificMembers(const Hypothesis h)
   {
-    using namespace std;
     this->checkBehaviourFile();
-    this->behaviourFile << "bool\ncomputeStress(void){" << endl;
-    this->behaviourFile << "using namespace std;" << endl;
-    this->behaviourFile << "using namespace tfel::math;" << endl;
-    this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeStress) << endl;
-    this->behaviourFile << "return true;" << endl;
-    this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress" << endl << endl;
-    this->behaviourFile << "bool\ncomputeFinalStress(void){" << endl;
-    this->behaviourFile << "using namespace std;" << endl;
-    this->behaviourFile << "using namespace tfel::math;" << endl;
+    this->behaviourFile << "bool\ncomputeStress(void){\n"
+			<< "using namespace std;\n"
+			<< "using namespace tfel::math;\n"
+			<< this->mb.getCode(h,BehaviourData::ComputeStress) << '\n'
+			<< "return true;\n"
+			<< "} // end of " << this->mb.getClassName() << "::computeStress\n\n"
+			<< "bool\ncomputeFinalStress(void){\n"
+			<< "using namespace std;\n"
+			<< "using namespace tfel::math;\n";
     writeMaterialLaws("RungeKuttaDSL::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());
-    this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeFinalStress) << endl;
-    this->behaviourFile << "return true;" << endl;
-    this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeFinalStress" << endl << endl;
-    this->behaviourFile << "bool\ncomputeDerivative(void){" << endl;
-    this->behaviourFile << "using namespace std;" << endl;
-    this->behaviourFile << "using namespace tfel::math;" << endl;
+    this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeFinalStress) << '\n'
+			<< "return true;\n"
+			<< "} // end of " << this->mb.getClassName() << "::computeFinalStress\n\n"
+			<< "bool\ncomputeDerivative(void){\n"
+			<< "using namespace std;\n"
+			<< "using namespace tfel::math;\n";
     writeMaterialLaws("RungeKuttaDSL::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());
-    this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeDerivative) << endl;
-    this->behaviourFile << "return true;" << endl;
-    this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeDerivative" << endl << endl;
+    this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeDerivative) << '\n'
+			<< "return true;\n"
+			<< "} // end of " << this->mb.getClassName() << "::computeDerivative\n\n";
   } // end of writeBehaviourParserSpecificMembers
 
   void RungeKuttaDSL::writeBehaviourUpdateStateVariables(const Hypothesis)
@@ -674,73 +668,70 @@ namespace mfront{
   void
   RungeKuttaDSL::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h)
   {
-    using namespace std;
     if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
-    this->behaviourFile << "/*!\n";
-    this->behaviourFile << "* \\brief Update auxiliary state variables at end of integration\n";
-    this->behaviourFile << "*/\n";
-    this->behaviourFile << "void\n";
-    this->behaviourFile << "updateAuxiliaryStateVariables(const real dt_)";
-      this->behaviourFile << "{\n";
-      this->behaviourFile << "static_cast<void>(dt_);\n";
-      this->behaviourFile << "using namespace std;" << endl;
-      this->behaviourFile << "using namespace tfel::math;" << endl;
+      this->behaviourFile << "/*!\n"
+			  << "* \\brief Update auxiliary state variables at end of integration\n"
+			  << "*/\n"
+			  << "void\n"
+			  << "updateAuxiliaryStateVariables(const real dt_)"
+			  << "{\n"
+			  << "static_cast<void>(dt_);\n"
+			  << "using namespace std;\n"
+			  << "using namespace tfel::math;\n";
       writeMaterialLaws("RungeKuttaDSL::writeBehaviourUpdateAuxiliaryStateVariables",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::UpdateAuxiliaryStateVariables) << endl;
-      this->behaviourFile << "}\n\n";
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::UpdateAuxiliaryStateVariables) << '\n'
+			  << "}\n\n";
     }
   } // end of  RungeKuttaDSL::writeBehaviourUpdateAuxiliaryStateVariables
 
   void RungeKuttaDSL::writeBehaviourEulerIntegrator(const Hypothesis h)
   {
-    using std::endl;
     const auto& d = this->mb.getBehaviourData(h);
-    this->behaviourFile << "this->computeStress();" << endl;
-    this->behaviourFile << "this->computeDerivative();" << endl;
+    this->behaviourFile << "this->computeStress();\n"
+			<< "this->computeDerivative();\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->" << v.name << " += "
-			  << "this->dt*(this->d" << v.name << ");" << endl;
+			  << "this->dt*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeFinalStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "this->computeFinalStress();\n";
     if(d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)){
-      this->behaviourFile << "this->updateAuxiliaryStateVariables(this->dt);" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   } // end of writeBehaviourEulerIntegrator
 
   void RungeKuttaDSL::writeBehaviourRK2Integrator(const Hypothesis h)
   {
-    using std::endl;
     const auto& d = this->mb.getBehaviourData(h);
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
-    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
-    this->behaviourFile << "// Compute K1's values" << endl;
-    this->behaviourFile << "this->computeStress();" << endl;
-    this->behaviourFile << "this->computeDerivative();" << endl;
+    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};\n"
+			<< "// Compute K1's values\n"
+			<< "this->computeStress();\n"
+			<< "this->computeDerivative();\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->d" << v.name
-			  << "_K1 = (this->dt)*(this->d" << v.name << ");" << endl;
+			  << "_K1 = (this->dt)*(this->d" << v.name << ");\n";
     }
     writeExternalVariablesCurrentValues2(this->behaviourFile,this->mb,h,"cste1_2");
     for(const auto& iv : d.getStateVariables()){
       if(uvs.find(iv.name)!=uvs.end()){
-	this->behaviourFile << "this->" << iv.name << "_ += cste1_2*(this->d" << iv.name << "_K1);" << endl;
+	this->behaviourFile << "this->" << iv.name << "_ += cste1_2*(this->d" << iv.name << "_K1);\n";
       }
     }
-    this->behaviourFile << "this->computeStress();" << endl << endl;
-    this->behaviourFile << "this->computeDerivative();" << endl;
-    this->behaviourFile << "// Final Step" << endl;
+    this->behaviourFile << "this->computeStress();\n\n"
+			<< "this->computeDerivative();\n"
+			<< "// Final Step\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->" << v.name << " += "
-			  << "this->dt*(this->d" << v.name << ");" << endl;
+			  << "this->dt*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeFinalStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "this->computeFinalStress();\n";
     if(d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)){
-      this->behaviourFile << "this->updateAuxiliaryStateVariables(this->dt);" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   } // end of writeBehaviourRK2Integrator
 
@@ -752,7 +743,6 @@ namespace mfront{
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
-    VariableDescriptionContainer::const_iterator p;
     ErrorEvaluation eev;
     auto svsize = this->getTotalSize(d.getStateVariables());
     if(svsize.getScalarSize()+svsize.getTVectorSize()+
@@ -761,462 +751,463 @@ namespace mfront{
     } else {
       eev = ERRORSUMMATIONEVALUATION;
     }
-    this->behaviourFile << "constexpr real cste1_2         = real{1}/real{2};" << endl;
-    this->behaviourFile << "constexpr real cste1_4         = real{1}/real{4};" << endl;
-    this->behaviourFile << "constexpr real cste3_8         = real{3}/real{8};" << endl;
-    this->behaviourFile << "constexpr real cste3_32        = real{3}/real{32};" << endl;
-    this->behaviourFile << "constexpr real cste12_13       = Type(12)/Type(13);" << endl;
-    this->behaviourFile << "constexpr real cste1932_2197   = Type(1932)/Type(2197);" << endl;
-    this->behaviourFile << "constexpr real cste7200_2197   = Type(7200)/Type(2197);" << endl;
-    this->behaviourFile << "constexpr real cste7296_2197   = Type(7296)/Type(2197);" << endl;
-    this->behaviourFile << "constexpr real cste439_216     = Type(439)/Type(216);" << endl;
-    this->behaviourFile << "constexpr real cste3680_513    = Type(3680)/Type(513);" << endl;
-    this->behaviourFile << "constexpr real cste845_4104    = Type(845)/Type(4104);" << endl;
-    this->behaviourFile << "constexpr real cste8_27        = Type(8)/Type(27);" << endl;
-    this->behaviourFile << "constexpr real cste3544_2565   = Type(3544)/Type(2565);" << endl;
-    this->behaviourFile << "constexpr real cste1859_4104   = Type(1859)/Type(4104);" << endl;
-    this->behaviourFile << "constexpr real cste11_40       = Type(11)/Type(40);" << endl;
-    this->behaviourFile << "constexpr real cste16_135      = Type(16)/Type(135);" << endl;
-    this->behaviourFile << "constexpr real cste6656_12825  = Type(6656)/Type(12825);" << endl;
-    this->behaviourFile << "constexpr real cste28561_56430 = Type(28561)/Type(56430);" << endl;
-    this->behaviourFile << "constexpr real cste9_50        = Type(9)/Type(50);" << endl;
-    this->behaviourFile << "constexpr real cste2_55        = Type(2)/Type(55);" << endl;
-    this->behaviourFile << "constexpr real cste1_360       = Type(1)/Type(360);" << endl;
-    this->behaviourFile << "constexpr real cste128_4275    = Type(128)/Type(4275);" << endl;
-    this->behaviourFile << "constexpr real cste2197_75240  = Type(2197)/Type(75240);" << endl;
-    this->behaviourFile << "constexpr real cste1_50        = Type(1)/Type(50);" << endl;
-    this->behaviourFile << "time t      = time(0);" << endl;
-    this->behaviourFile << "time dt_    = this->dt;" << endl;
-    this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
-    this->behaviourFile << "Type error;" << endl;
-    this->behaviourFile << "bool converged = false;" << endl;
+    this->behaviourFile << "constexpr real cste1_2         = real{1}/real{2};\n"
+			<< "constexpr real cste1_4         = real{1}/real{4};\n"
+			<< "constexpr real cste3_8         = real{3}/real{8};\n"
+			<< "constexpr real cste3_32        = real{3}/real{32};\n"
+			<< "constexpr real cste12_13       = Type(12)/Type(13);\n"
+			<< "constexpr real cste1932_2197   = Type(1932)/Type(2197);\n"
+			<< "constexpr real cste7200_2197   = Type(7200)/Type(2197);\n"
+			<< "constexpr real cste7296_2197   = Type(7296)/Type(2197);\n"
+			<< "constexpr real cste439_216     = Type(439)/Type(216);\n"
+			<< "constexpr real cste3680_513    = Type(3680)/Type(513);\n"
+			<< "constexpr real cste845_4104    = Type(845)/Type(4104);\n"
+			<< "constexpr real cste8_27        = Type(8)/Type(27);\n"
+			<< "constexpr real cste3544_2565   = Type(3544)/Type(2565);\n"
+			<< "constexpr real cste1859_4104   = Type(1859)/Type(4104);\n"
+			<< "constexpr real cste11_40       = Type(11)/Type(40);\n"
+			<< "constexpr real cste16_135      = Type(16)/Type(135);\n"
+			<< "constexpr real cste6656_12825  = Type(6656)/Type(12825);\n"
+			<< "constexpr real cste28561_56430 = Type(28561)/Type(56430);\n"
+			<< "constexpr real cste9_50        = Type(9)/Type(50);\n"
+			<< "constexpr real cste2_55        = Type(2)/Type(55);\n"
+			<< "constexpr real cste1_360       = Type(1)/Type(360);\n"
+			<< "constexpr real cste128_4275    = Type(128)/Type(4275);\n"
+			<< "constexpr real cste2197_75240  = Type(2197)/Type(75240);\n"
+			<< "constexpr real cste1_50        = Type(1)/Type(50);\n"
+			<< "time t      = time(0);\n"
+			<< "time dt_    = this->dt;\n"
+			<< "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
+			<< "Type error;\n"
+			<< "bool converged = false;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
 			  << "::integrate() : beginning of resolution\" << endl;\n";
     }
-    this->behaviourFile << "while(!converged){" << endl;
+    this->behaviourFile << "while(!converged){\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
     }
-    this->behaviourFile << "bool failed = false;" << endl;
-    this->behaviourFile << "// Compute K1's values" << endl;
+    this->behaviourFile << "bool failed = false;\n";
+    this->behaviourFile << "// Compute K1's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name << "_ = this->" << v.name << ";\n";
       }
     }
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K1's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K1's stress\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    this->behaviourFile << "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K1's derivative\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K1's derivative\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K1 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K1 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K2's values" << endl;
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "}\n\n";
+    this->behaviourFile << "if(!failed){\n";
+    this->behaviourFile << "// Compute K2's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_4");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name << "_ += cste1_4*(this->d" << p->name << "_K1);" << endl;
+    for(const auto& v: d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name << "_ += cste1_4*(this->d" << v.name << "_K1);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n";
+    this->behaviourFile << "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K2's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K2's stress\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    this->behaviourFile << "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K2's derivative\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K2's derivative\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K2 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K2 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K3's values" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Compute K3's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste3_8");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ = this->" << p->name
-			    << "+cste3_32*(this->d" << p->name << "_K1+3*(this->d"
-			    << p->name << "_K2));" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ = this->" << v.name
+			    << "+cste3_32*(this->d" << v.name << "_K1+3*(this->d"
+			    << v.name << "_K2));\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K3's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K3's stress\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    this->behaviourFile << "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K3's derivative\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K3's derivative\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K3 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K3 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "}\n\n";
 
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K4's values" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    this->behaviourFile << "// Compute K4's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste12_13");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ = this->" << p->name
-			    << "+cste1932_2197*(this->d" << p->name << "_K1)"
-			    << "-cste7200_2197*(this->d" << p->name << "_K2)"
-			    << "+cste7296_2197*(this->d" << p->name << "_K3);" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ = this->" << v.name
+			    << "+cste1932_2197*(this->d" << v.name << "_K1)"
+			    << "-cste7200_2197*(this->d" << v.name << "_K2)"
+			    << "+cste7296_2197*(this->d" << v.name << "_K3);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n";
+    this->behaviourFile << "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K4's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K4's stress\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    this->behaviourFile << "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K4's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K4's derivatives\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K4 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K4 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K5's values" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Compute K5's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ = this->" << p->name
-			    << "+cste439_216*(this->d" << p->name << "_K1)"
-			    << "-8*(this->d" << p->name << "_K2)"
-			    << "+cste3680_513*(this->d" << p->name << "_K3)"
-			    << "-cste845_4104*(this->d" << p->name << "_K4);" << endl;
+    for(const auto & v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ = this->" << v.name
+			    << "+cste439_216*(this->d" << v.name << "_K1)"
+			    << "-8*(this->d" << v.name << "_K2)"
+			    << "+cste3680_513*(this->d" << v.name << "_K3)"
+			    << "-cste845_4104*(this->d" << v.name << "_K4);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n";
+    this->behaviourFile << "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K5's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K5's stress\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    this->behaviourFile << "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
+      this->behaviourFile << "if(failed){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K5's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : failed while computing K5's derivatives\" << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K5 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K5 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K6's values" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Compute K6's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ = this->" << p->name
-			    << "-cste8_27*(this->d" << p->name << "_K1)"
-			    << "+2*(this->d" << p->name << "_K2)"
-			    << "-cste3544_2565*(this->d" << p->name << "_K3)"
-			    << "+cste1859_4104*(this->d" << p->name << "_K4)"
-			    << "-cste11_40*(this->d" << p->name << "_K5);" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ = this->" << v.name
+			    << "-cste8_27*(this->d" << v.name << "_K1)"
+			    << "+2*(this->d" << v.name << "_K2)"
+			    << "-cste3544_2565*(this->d" << v.name << "_K3)"
+			    << "+cste1859_4104*(this->d" << v.name << "_K4)"
+			    << "-cste11_40*(this->d" << v.name << "_K5);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K6's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K6's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K6's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K6's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K6 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K6 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Computing the error" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Computing the error\n";
     if(eev==ERRORSUMMATIONEVALUATION){
-      for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-	if(p->arraySize==1u){
+      for(auto p = std::begin(d.getStateVariables());
+	  p!=std::end(d.getStateVariables());++p){
+	const auto& v = *p;
+	if(v.arraySize==1u){
 	  if(p==d.getStateVariables().begin()){
 	    this->behaviourFile << "error  = ";
 	  } else {
 	    this->behaviourFile << "error += ";
 	  }
-	  if(enf.find(p->name)!=enf.end()){
+	  if(enf.find(v.name)!=enf.end()){
 	    this->behaviourFile << "(";
 	  }
 	  this->behaviourFile << "tfel::math::abs(";
-	  this->behaviourFile << "cste1_360*(this->d" << p->name << "_K1)"
-			      << "-cste128_4275*(this->d" << p->name << "_K3)"
-			      << "-cste2197_75240*(this->d" << p->name << "_K4)"
-			      << "+cste1_50*(this->d" << p->name << "_K5)"
-			      << "+cste2_55*(this->d" << p->name << "_K6))";
-	  if(enf.find(p->name)!=enf.end()){
-	    this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	  this->behaviourFile << "cste1_360*(this->d" << v.name << "_K1)"
+			      << "-cste128_4275*(this->d" << v.name << "_K3)"
+			      << "-cste2197_75240*(this->d" << v.name << "_K4)"
+			      << "+cste1_50*(this->d" << v.name << "_K5)"
+			      << "+cste2_55*(this->d" << v.name << "_K6))";
+	  if(enf.find(v.name)!=enf.end()){
+	    this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	  }
-	  this->behaviourFile << ";"  << endl;
+	  this->behaviourFile << ";\n";
 	} else {
-	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
+	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
 	    if(p==d.getStateVariables().begin()){
-	      this->behaviourFile << "error  = Type(0);" << endl;
+	      this->behaviourFile << "error  = Type(0);\n";
 	    }
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){"  << endl;
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
 	    this->behaviourFile << "error += ";
-	    if(enf.find(p->name)!=enf.end()){
+	    if(enf.find(v.name)!=enf.end()){
 	      this->behaviourFile << "(";
 	    }
 	    this->behaviourFile << "tfel::math::abs(";
-	    this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[idx])"
-				<< "-cste128_4275*(this->d" << p->name   << "_K3[idx])"
-				<< "-cste2197_75240*(this->d" << p->name << "_K4[idx])"
-				<< "+cste1_50*(this->d" << p->name       << "_K5[idx])"
-				<< "+cste2_55*(this->d" << p->name       << "_K6[idx]))";
-	    if(enf.find(p->name)!=enf.end()){
-	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    this->behaviourFile << "cste1_360*(this->d" << v.name       << "_K1[idx])"
+				<< "-cste128_4275*(this->d" << v.name   << "_K3[idx])"
+				<< "-cste2197_75240*(this->d" << v.name << "_K4[idx])"
+				<< "+cste1_50*(this->d" << v.name       << "_K5[idx])"
+				<< "+cste2_55*(this->d" << v.name       << "_K6[idx]))";
+	    if(enf.find(v.name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	    }
-	    this->behaviourFile << ";"  << endl;
-	    this->behaviourFile << "}" << endl;
+	    this->behaviourFile << ";\n";
+	    this->behaviourFile << "}\n";
 	  } else {
-	    for(unsigned short i=0;i!=p->arraySize;++i){
+	    for(unsigned short i=0;i!=v.arraySize;++i){
 	      if((p==d.getStateVariables().begin())&&(i==0)){
 		this->behaviourFile << "error  = ";
 	      } else {
 		this->behaviourFile << "error += ";
 	      }
-	      if(enf.find(p->name)!=enf.end()){
+	      if(enf.find(v.name)!=enf.end()){
 		this->behaviourFile << "(";
 	      }
-	      this->behaviourFile << "tfel::math::abs(";
-	      this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[" << i << "])"
-				  << "-cste128_4275*(this->d" << p->name   << "_K3[" << i << "])"
-				  << "-cste2197_75240*(this->d" << p->name << "_K4[" << i << "])"
-				  << "+cste1_50*(this->d" << p->name       << "_K5[" << i << "])"
-				  << "+cste2_55*(this->d" << p->name       << "_K6[" << i << "]))";
-	      if(enf.find(p->name)!=enf.end()){
-		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      this->behaviourFile << "tfel::math::abs("
+				  << "cste1_360*(this->d" << v.name       << "_K1[" << i << "])"
+				  << "-cste128_4275*(this->d" << v.name   << "_K3[" << i << "])"
+				  << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
+				  << "+cste1_50*(this->d" << v.name       << "_K5[" << i << "])"
+				  << "+cste2_55*(this->d" << v.name       << "_K6[" << i << "]))";
+	      if(enf.find(v.name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	      }
-	      this->behaviourFile << ";"  << endl;
+	      this->behaviourFile << ";\n";
 	    }
 	  }
 	}
       }
-      this->behaviourFile << "error/=" << svsize << ";" << endl;
+      this->behaviourFile << "error/=" << svsize << ";\n";
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
-      this->behaviourFile << "error  = Type(0);" << endl;
-      for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-	if(p->arraySize==1u){
+      this->behaviourFile << "error  = Type(0);\n";
+      for(const auto& v : d.getStateVariables()){
+	if(v.arraySize==1u){
 	  this->behaviourFile << "error = std::max(error,";
-	  if(enf.find(p->name)!=enf.end()){
+	  if(enf.find(v.name)!=enf.end()){
 	    this->behaviourFile << "(";
 	  }
-	  this->behaviourFile << "tfel::math::abs(";
-	  this->behaviourFile << "cste1_360*(this->d" << p->name << "_K1)"
-			      << "-cste128_4275*(this->d" << p->name << "_K3)"
-			      << "-cste2197_75240*(this->d" << p->name << "_K4)"
-			      << "+cste1_50*(this->d" << p->name << "_K5)"
-			      << "+cste2_55*(this->d" << p->name << "_K6))";
-	  if(enf.find(p->name)!=enf.end()){
-	    this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	  this->behaviourFile << "tfel::math::abs("
+			      << "cste1_360*(this->d" << v.name << "_K1)"
+			      << "-cste128_4275*(this->d" << v.name << "_K3)"
+			      << "-cste2197_75240*(this->d" << v.name << "_K4)"
+			      << "+cste1_50*(this->d" << v.name << "_K5)"
+			      << "+cste2_55*(this->d" << v.name << "_K6))";
+	  if(enf.find(v.name)!=enf.end()){
+	    this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	  }
-	  this->behaviourFile << ");"  << endl;
+	  this->behaviourFile << ");\n";
 	} else {
-	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){"  << endl;
+	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
 	    this->behaviourFile << "error = std::max(error,";
-	    if(enf.find(p->name)!=enf.end()){
+	    if(enf.find(v.name)!=enf.end()){
 	      this->behaviourFile << "(";
 	    }
-	    this->behaviourFile << "tfel::math::abs(";
-	    this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[idx])"
-				<< "-cste128_4275*(this->d" << p->name   << "_K3[idx])"
-				<< "-cste2197_75240*(this->d" << p->name << "_K4[idx])"
-				<< "+cste1_50*(this->d" << p->name       << "_K5[idx])"
-				<< "+cste2_55*(this->d" << p->name       << "_K6[idx]))";
-	    if(enf.find(p->name)!=enf.end()){
-	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    this->behaviourFile << "tfel::math::abs("
+				<< "cste1_360*(this->d" << v.name       << "_K1[idx])"
+				<< "-cste128_4275*(this->d" << v.name   << "_K3[idx])"
+				<< "-cste2197_75240*(this->d" << v.name << "_K4[idx])"
+				<< "+cste1_50*(this->d" << v.name       << "_K5[idx])"
+				<< "+cste2_55*(this->d" << v.name       << "_K6[idx]))";
+	    if(enf.find(v.name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	    }
-	    this->behaviourFile << ");"  << endl;
-	    this->behaviourFile << "}" << endl;
+	    this->behaviourFile << ");\n";
+	    this->behaviourFile << "}\n";
 	  } else {
-	    for(unsigned short i=0;i!=p->arraySize;++i){
+	    for(unsigned short i=0;i!=v.arraySize;++i){
 	      this->behaviourFile << "error  = std::max(error,";
-	      if(enf.find(p->name)!=enf.end()){
+	      if(enf.find(v.name)!=enf.end()){
 		this->behaviourFile << "(";
 	      }
-	      this->behaviourFile << "tfel::math::abs(";
-	      this->behaviourFile << "cste1_360*(this->d" << p->name       << "_K1[" << i << "])"
-				  << "-cste128_4275*(this->d" << p->name   << "_K3[" << i << "])"
-				  << "-cste2197_75240*(this->d" << p->name << "_K4[" << i << "])"
-				  << "+cste1_50*(this->d" << p->name       << "_K5[" << i << "])"
-				  << "+cste2_55*(this->d" << p->name       << "_K6[" << i << "]))";
-	      if(enf.find(p->name)!=enf.end()){
-		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      this->behaviourFile << "tfel::math::abs("
+				  << "cste1_360*(this->d" << v.name       << "_K1[" << i << "])"
+				  << "-cste128_4275*(this->d" << v.name   << "_K3[" << i << "])"
+				  << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
+				  << "+cste1_50*(this->d" << v.name       << "_K5[" << i << "])"
+				  << "+cste2_55*(this->d" << v.name       << "_K6[" << i << "]))";
+	      if(enf.find(v.name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	      }
-	      this->behaviourFile << ");"  << endl;
+	      this->behaviourFile << ");\n";
 	    }
 	  }
 	}
       }
     } else {
-      string msg("RungeKuttaDSL::writeBehaviourRK54Integrator : ");
-      msg += "internal error, unsupported error evaluation.";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("RungeKuttaDSL::writeBehaviourRK54Integrator",
+			      "internal error, unsupported error evaluation.");
     }
-    this->behaviourFile << "if(std::isnan(error)){" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
-    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "if(std::isnan(error)){\n"
+			<< "throw(tfel::material::DivergenceException());\n"
+			<< "}\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : error \" << error << endl;"  << endl;
+			  << "::integrate() : error \" << error << endl;\n";
     }
-    this->behaviourFile << "// test for convergence" << endl;
-    this->behaviourFile << "if(error<this->epsilon){" << endl;
-    this->behaviourFile << "// Final Step" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name
-			  << " += cste16_135*(this->d" << p->name << "_K1)"
-			  << "+cste6656_12825*(this->d" << p->name << "_K3)"
-			  << "+cste28561_56430*(this->d" << p->name << "_K4)"
-			  << "-cste9_50*(this->d" << p->name << "_K5)"
-			  << "+cste2_55*(this->d" << p->name << "_K6);" << endl;
+    this->behaviourFile << "// test for convergence\n"
+			<< "if(error<this->epsilon){\n"
+			<< "// Final Step\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->" << v.name
+			  << " += cste16_135*(this->d" << v.name << "_K1)"
+			  << "+cste6656_12825*(this->d" << v.name << "_K3)"
+			  << "+cste28561_56430*(this->d" << v.name << "_K4)"
+			  << "-cste9_50*(this->d" << v.name << "_K5)"
+			  << "+cste2_55*(this->d" << v.name << "_K6);\n";
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeFinalStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "this->computeFinalStress();\n";
     if(d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)){
-      this->behaviourFile << "this->updateAuxiliaryStateVariables(dt_);" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
-    this->behaviourFile << "t += dt_;" << endl;
-    this->behaviourFile << "if(abs(this->dt-t)<dtprec){" << endl;
-    this->behaviourFile << "converged=true;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(!converged){" << endl;
-    this->behaviourFile << "// time multiplier" << endl;
-    this->behaviourFile << "real corrector;" << endl;
-    this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){" << endl;
-    this->behaviourFile << "corrector=real(10);" << endl;
-    this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "corrector = 0.8*pow(this->epsilon/error,0.2);" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(corrector<real(0.1f)){" << endl;
+    this->behaviourFile << "t += dt_;\n"
+			<< "if(abs(this->dt-t)<dtprec){\n"
+			<< "converged=true;\n"
+			<< "}\n"
+			<< "}\n"
+			<< "if(!converged){\n"
+			<< "// time multiplier\n"
+			<< "real corrector;\n"
+			<< "if(error<100*std::numeric_limits<real>::min()){\n"
+			<< "corrector=real(10);\n"
+			<< "} else {\n"
+			<< "corrector = 0.8*pow(this->epsilon/error,0.2);\n"
+			<< "}\n"
+			<< "if(corrector<real(0.1f)){\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : reducing time step by a factor 10\" << endl;" << endl;
+			  << "::integrate() : reducing time step by a factor 10\" << endl;\n";
     }
-    this->behaviourFile << "dt_ *= real(0.1f);" << endl;
-    this->behaviourFile << "} else if(corrector>real(10)){" << endl;
+    this->behaviourFile << "dt_ *= real(0.1f);\n";
+    this->behaviourFile << "} else if(corrector>real(10)){\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : increasing time step by a factor 10\" << endl;" << endl;
+			  << "::integrate() : increasing time step by a factor 10\" << endl;\n";
     }
-    this->behaviourFile << "dt_ *= real(10);" << endl;
-    this->behaviourFile << "} else {" << endl;
+    this->behaviourFile << "dt_ *= real(10);\n";
+    this->behaviourFile << "} else {\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(corrector<1){" << endl;
+      this->behaviourFile << "if(corrector<1){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : reducing time step by a factor \"   << corrector << endl;" << endl;
-      this->behaviourFile << "} else {" << endl;
+			  << "::integrate() : reducing time step by a factor \"   << corrector << endl;\n";
+      this->behaviourFile << "} else {\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : increasing time step by a factor \" << corrector << endl;" << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : increasing time step by a factor \" << corrector << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "dt_ *= corrector;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
-    this->behaviourFile << "dt_=this->dt-t;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "} else {" << endl;
+    this->behaviourFile << "dt_ *= corrector;\n"
+			<< "}\n"
+			<< "if(dt_<dtprec){\n"
+			<< "throw(tfel::material::DivergenceException());\n"
+			<< "}\n"
+			<< "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
+			<< "dt_=this->dt-t;\n"
+			<< "}\n"
+			<< "}\n"
+			<< "} else {\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : failure detected, reducing time step by a factor 10\" << endl;";
     }
-    this->behaviourFile << "// failed is true" << endl;
-    this->behaviourFile << "dt_ *= real(0.1f);" << endl;
-    this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "// failed is true\n"
+			<< "dt_ *= real(0.1f);\n"
+			<< "if(dt_<dtprec){\n"
+			<< "throw(tfel::material::DivergenceException());\n"
+			<< "}\n"
+			<< "}\n"
+			<< "}\n";
   } // end of RungeKuttaDSL::writeBehaviourRK54Integrator
 
   void RungeKuttaDSL::writeBehaviourRKCastemIntegrator(const Hypothesis h)
@@ -1227,309 +1218,308 @@ namespace mfront{
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
-    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize stateVarsSize;
-    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
+    for(const auto& v : d.getStateVariables()){
+      stateVarsSize+=this->getTypeSize(v.type,v.arraySize);
     }
-    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
-    this->behaviourFile << "constexpr real cste1_4 = real{1}/real{4};" << endl;
-    this->behaviourFile << "constexpr real cste1_6 = Type(1)/Type(6);" << endl;
-    this->behaviourFile << "time t   = time(0);" << endl;
-    this->behaviourFile << "time dt_ = this->dt;" << endl;
-    this->behaviourFile << "StressStensor sigf;" << endl;
-    this->behaviourFile << "real errabs;" << endl;
-    this->behaviourFile << "real asig;" << endl;
-    this->behaviourFile << "bool failed = !this->computeStress();" << endl;
+    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};\n"
+			<< "constexpr real cste1_4 = real{1}/real{4};\n"
+			<< "constexpr real cste1_6 = Type(1)/Type(6);\n"
+			<< "time t   = time(0);\n"
+			<< "time dt_ = this->dt;\n"
+			<< "StressStensor sigf;\n"
+			<< "real errabs;\n"
+			<< "real asig;\n"
+			<< "bool failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing initial stress\" << endl;" << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing initial stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(failed){" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "asig = sqrt((this->sig)|(this->sig));" << endl;
-    this->behaviourFile << "if ((this->young)*Type(1.e-3)>asig){" << endl;
-    this->behaviourFile << "  errabs = (this->young)*Type(1.e-3)*(this->epsilon);" << endl;
-    this->behaviourFile << "}else{" << endl;
-    this->behaviourFile << "  errabs = (this->epsilon)*asig;\n}\n" << endl;
-    this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
-    this->behaviourFile << "bool converged = false;" << endl;
+    this->behaviourFile << "if(failed){\n"
+			<< "throw(tfel::material::DivergenceException());\n"
+			<< "}\n"
+			<< "asig = sqrt((this->sig)|(this->sig));\n"
+			<< "if ((this->young)*Type(1.e-3)>asig){\n"
+			<< "  errabs = (this->young)*Type(1.e-3)*(this->epsilon);\n"
+			<< "}else{\n"
+			<< "  errabs = (this->epsilon)*asig;\n}\n\n"
+			<< "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
+			<< "bool converged = false;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
 			  << "::integrate() : beginning of resolution\" << endl;\n";
     }
-    this->behaviourFile << "while(!converged){" << endl;
-    this->behaviourFile << "if(dt_< dtprec){" << endl;
-    this->behaviourFile << "cout<<\" dt \"<<this->dt<<\" t \"<<t<<\" dt_ \"<<dt_<<endl;" << endl;
-    this->behaviourFile << "string msg(\"DDIF2::DDIF2\");" << endl;
-    this->behaviourFile << "msg += \" time step too small \"; " << endl;
-    this->behaviourFile << "throw(runtime_error(msg)); " << endl;
-    this->behaviourFile << "} " << endl;
+    this->behaviourFile << "while(!converged){\n"
+			<< "if(dt_< dtprec){\n"
+			<< "cout<<\" dt \"<<this->dt<<\" t \"<<t<<\" dt_ \"<<dt_<<endl;\n"
+			<< "string msg(\"" << this->mb.getClassName()<< "\");\n"
+			<< "msg += \" time step too small \"; \n"
+			<< "throw(runtime_error(msg)); \n"
+			<< "} \n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
     }
-    this->behaviourFile << "// Compute K1's values => y in castem " << endl;
+    this->behaviourFile << "// Compute K1's values => y in castem \n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name << "_ = this->" << v.name << ";\n";
       }
     }
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K1's stress\" << endl;" << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K1's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K1's derivatives\" << endl;" << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K1's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute y'1*dt=f(y)*dt in castem" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K1 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "// Compute y'1*dt=f(y)*dt in castem\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K1 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K2's values => y1 in castem" << endl;
+    this->behaviourFile << "}\n";
+    this->behaviourFile << "}\n\n";
+    this->behaviourFile << "if(!failed){\n";
+    this->behaviourFile << "// Compute K2's values => y1 in castem\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name << "_ += cste1_2*(this->d" << p->name << "_K1);" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name << "_ += cste1_2*(this->d" << v.name << "_K1);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K2's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K2's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K2's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K2's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute y'2*dt=f(y1)*dt in castem" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K2 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "// Compute y'2*dt=f(y1)*dt in castem\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K2 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "// Compute K3's values => y12 in castem" << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ = this->" << p->name
-			    << "+cste1_4*(this->d" << p->name << "_K1 + this->d" << p->name << "_K2);" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "// Compute K3's values => y12 in castem\n"
+			<< "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ = this->" << v.name
+			    << "+cste1_4*(this->d" << v.name << "_K1 + this->d" << v.name << "_K2);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K3's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K3's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K3's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K3's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute y'3*dt=f(y12)*dt in castem" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K3 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "// Compute y'3*dt=f(y12)*dt in castem\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K3 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K4's values => y13 = y12+y'3*dt/2 in castem" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Compute K4's values => y13 = y12+y'3*dt/2 in castem\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ += cste1_2*(this->d" << p->name << "_K3);" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ += cste1_2*(this->d" << v.name << "_K3);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K4's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K4's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K4's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K4's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute y'4*dt=f(y13)*dt in castem" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K4 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "// Compute y'4*dt=f(y13)*dt in castem\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K4 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K5's values => yf = y12+0.5*(y'3+y'4)*dt/2 in castem" << endl;
-    this->behaviourFile << "//                     => yf = y+0.5*(y'1+y'2+y'3+y'4)*dt/2 in castem" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ = this->" << p->name
-			    << "+cste1_4*(this->d" << p->name << "_K1 + this->d" << p->name
-			    << "_K2 + this->d" << p->name << "_K3 + this->d" << p->name << "_K4);" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Compute K5's values => yf = y12+0.5*(y'3+y'4)*dt/2 in castem\n"
+			<< "//                     => yf = y+0.5*(y'1+y'2+y'3+y'4)*dt/2 in castem\n";
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ = this->" << v.name
+			    << "+cste1_4*(this->d" << v.name << "_K1 + this->d" << v.name
+			    << "_K2 + this->d" << v.name << "_K3 + this->d" << v.name << "_K4);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K5's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K5's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "// Saving stresses obtained with yf" << endl;
-    this->behaviourFile << "sigf=this->sig;" << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "// Saving stresses obtained with yf\n"
+			<< "sigf=this->sig;\n"
+			<< "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K5's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K5's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute y'5*dt=f(yf)*dt in castem" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K5 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "// Compute y'5*dt=f(yf)*dt in castem\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K5 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K6's values => y5 = y+1/6*(y'1+4*y'3+y'5)*dt in castem" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ = this->" << p->name
-			    << "+cste1_6*(this->d" << p->name << "_K1 + Type(4)*this->d" << p->name
-			    << "_K3 + this->d" << p->name << "_K5);" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Compute K6's values => y5 = y+1/6*(y'1+4*y'3+y'5)*dt in castem\n";
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ = this->" << v.name
+			    << "+cste1_6*(this->d" << v.name << "_K1 + Type(4)*this->d" << v.name
+			    << "_K3 + this->d" << v.name << "_K5);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing criterium stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing criterium stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "real ra;" << endl;
-    this->behaviourFile << "real sqra;" << endl;
-    this->behaviourFile << "// Computing the error" << endl;
+    this->behaviourFile << "}\n\n"
+			<< "if(!failed){\n"
+			<< "real ra;\n"
+			<< "real sqra;\n"
+			<< "// Computing the error\n"
 
-    this->behaviourFile << "ra = sqrt(((sigf)-(this->sig))|((sigf)-(this->sig)))/errabs;" << endl;
-    this->behaviourFile << "sqra = sqrt(ra);" << endl;
-    this->behaviourFile << "// test for convergence" << endl;
-    this->behaviourFile << "if ((sqra>"  << this->mb.getClassName() << "::rkcastem_div)||(std::isnan(ra))){" << endl;
-    this->behaviourFile << "dt_ /= "  << this->mb.getClassName() << "::rkcastem_div;" << endl;
+			<< "ra = sqrt(((sigf)-(this->sig))|((sigf)-(this->sig)))/errabs;\n"
+			<< "sqra = sqrt(ra);\n"
+			<< "// test for convergence\n"
+			<< "if ((sqra>"  << this->mb.getClassName() << "::rkcastem_div)||(std::isnan(ra))){\n"
+			<< "dt_ /= "  << this->mb.getClassName() << "::rkcastem_div;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : multiplying time step by a factor \" << 1/("
-			  << this->mb.getClassName() << "::rkcastem_div) << endl;" << endl;
+			  << this->mb.getClassName() << "::rkcastem_div) << endl;\n";
     }
-    this->behaviourFile << "} else if (ra> " << this->mb.getClassName() << "::rkcastem_borne){" << endl;
-    this->behaviourFile << "dt_ /= sqra;" << endl;
+    this->behaviourFile << "} else if (ra> " << this->mb.getClassName() << "::rkcastem_borne){\n"
+			<< "dt_ /= sqra;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : multiplying time step by a factor \" << 1/sqra << endl;" << endl;
+			  << "::integrate() : multiplying time step by a factor \" << 1/sqra << endl;\n";
     }
-    this->behaviourFile << "}else{" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name
-			  << " += cste1_4*(this->d" << p->name << "_K1 + this->d" << p->name
-			  << "_K2 + this->d" << p->name << "_K3 + this->d" << p->name << "_K4);" << endl;
+    this->behaviourFile << "}else{\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->" << v.name
+			  << " += cste1_4*(this->d" << v.name << "_K1 + this->d" << v.name
+			  << "_K2 + this->d" << v.name << "_K3 + this->d" << v.name << "_K4);\n";
     }
-    this->behaviourFile << "this->computeFinalStress();" << endl;
+    this->behaviourFile << "this->computeFinalStress();\n";
     if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
-      this->behaviourFile << "this->updateAuxiliaryStateVariables(dt_);" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
-    this->behaviourFile << "t += dt_;" << endl;
-    this->behaviourFile << "if(abs(this->dt-t)<dtprec){" << endl;
-    this->behaviourFile << "converged=true;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(!converged){" << endl;
-    this->behaviourFile << "if (("  << this->mb.getClassName() << "::rkcastem_fac)*sqra<1.){" << endl;
-    this->behaviourFile << "dt_ *= " << this->mb.getClassName() << "::rkcastem_fac;" << endl;
+    this->behaviourFile << "t += dt_;\n"
+			<< "if(abs(this->dt-t)<dtprec){\n"
+			<< "converged=true;\n"
+			<< "}\n"
+			<< "if(!converged){\n"
+			<< "if (("  << this->mb.getClassName() << "::rkcastem_fac)*sqra<1.){\n"
+			<< "dt_ *= " << this->mb.getClassName() << "::rkcastem_fac;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : multiplying time step by a factor \" << "
-			  << this->mb.getClassName() << "::rkcastem_fac << endl;" << endl;
+			  << this->mb.getClassName() << "::rkcastem_fac << endl;\n";
     }
     this->behaviourFile << "}else if ((sqra< "<< this->mb.getClassName() << "::rkcastem_rmin)||" <<
-      "(sqra>" << this->mb.getClassName() << "::rkcastem_rmax)){" << endl;
-    this->behaviourFile << "dt_ /= sqra;" << endl;
+      "(sqra>" << this->mb.getClassName() << "::rkcastem_rmax)){\n";
+    this->behaviourFile << "dt_ /= sqra;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : multiplying time step by a factor \" << 1/sqra << endl;" << endl;
+			  << "::integrate() : multiplying time step by a factor \" << 1/sqra << endl;\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "} else { " << endl;
-    this->behaviourFile << "dt_ /=  " << this->mb.getClassName() << "::rkcastem_div;" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n"
+			<< "} else { \n"
+			<< "dt_ /=  " << this->mb.getClassName() << "::rkcastem_div;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : multiplying time step by a factor \" << 1/("
-			  << this->mb.getClassName() << "::rkcastem_fac) << endl;" << endl;
+			  << this->mb.getClassName() << "::rkcastem_fac) << endl;\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(!converged){" << endl;
-    this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
-    this->behaviourFile << "dt_=this->dt-t;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}\n"
+			<< "if(dt_<dtprec){\n"
+			<< "throw(tfel::material::DivergenceException());\n"
+			<< "}\n"
+			<< "if(!converged){\n"
+			<< "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
+			<< "dt_=this->dt-t;\n"
+			<< "}\n"
+			<< "}\n"
+			<< "}\n";
   } // end of RungeKuttaDSL::writeBehaviourRKCastemIntegrator
 
   void RungeKuttaDSL::writeBehaviourRK42Integrator(const Hypothesis h)
@@ -1539,7 +1529,6 @@ namespace mfront{
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
-    VariableDescriptionContainer::const_iterator p;
     ErrorEvaluation eev;
     auto svsize = this->getTotalSize(d.getStateVariables());
     if(svsize.getScalarSize()+svsize.getTVectorSize()+
@@ -1549,457 +1538,456 @@ namespace mfront{
       eev = ERRORSUMMATIONEVALUATION;
     }
     SupportedTypes::TypeSize stateVarsSize;
-    for(p=d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      stateVarsSize+=this->getTypeSize(p->type,p->arraySize);
+    for(const auto& v : d.getStateVariables()){
+      stateVarsSize+=this->getTypeSize(v.type,v.arraySize);
     }
-    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
-    this->behaviourFile << "constexpr real cste1_6  = Type(1)/Type(6);" << endl;
-    this->behaviourFile << "constexpr real cste1_3  = Type(1)/Type(3);" << endl;
-    this->behaviourFile << "time t   = time(0);" << endl;
-    this->behaviourFile << "time dt_ = this->dt;" << endl;
-    this->behaviourFile << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();" << endl;
-    this->behaviourFile << "Type error;" << endl;
-    this->behaviourFile << "bool converged = false;" << endl;
+    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};\n"
+			<< "constexpr real cste1_6  = Type(1)/Type(6);\n"
+			<< "constexpr real cste1_3  = Type(1)/Type(3);\n"
+			<< "time t   = time(0);\n"
+			<< "time dt_ = this->dt;\n"
+			<< "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
+			<< "Type error;\n"
+			<< "bool converged = false;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << endl << \"" << this->mb.getClassName()
 			  << "::integrate() : beginning of resolution\" << endl;\n";
     }
-    this->behaviourFile << "while(!converged){" << endl;
+    this->behaviourFile << "while(!converged){\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
     }
-    this->behaviourFile << "bool failed = false;" << endl;
-    this->behaviourFile << "// Compute K1's values" << endl;
+    this->behaviourFile << "bool failed = false;\n";
+    this->behaviourFile << "// Compute K1's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name << "_ = this->" << p->name << ";" << endl;
+    for(const auto& v: d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name << "_ = this->" << v.name << ";\n";
       }
     }
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K1's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K1's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K1's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K1's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K1 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K1 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K2's values" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Compute K2's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name << "_ += cste1_2*(this->d" << p->name << "_K1);" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name << "_ += cste1_2*(this->d" << v.name << "_K1);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K2's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K2's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K2's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K2's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K2 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K2 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "// Compute K3's values" << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ = this->" << p->name
-			    << "+cste1_2*(this->d" << p->name << "_K2);" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "// Compute K3's values\n"
+			<< "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ = this->" << v.name
+			    << "+cste1_2*(this->d" << v.name << "_K2);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K3's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K3's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K3's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K3's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K3 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K3 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Compute K4's values" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Compute K4's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name
-			    << "_ = this->" << p->name
-			    << "+this->d" << p->name << "_K3;" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name
+			    << "_ = this->" << v.name
+			    << "+this->d" << v.name << "_K3;\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "failed = !this->computeStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K4's stress\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K4's stress\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "failed = !this->computeDerivative();" << endl;
+    this->behaviourFile << "if(!failed){\n"
+			<< "failed = !this->computeDerivative();\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(failed){" << endl;
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : failed while computing K4's derivatives\" << endl;"  << endl;
-      this->behaviourFile << "}" << endl;
+      this->behaviourFile << "if(failed){\n"
+			  << "cout << \"" << this->mb.getClassName()
+			  << "::integrate() : failed while computing K4's derivatives\" << endl;\n"
+			  << "}\n";
     }
-    this->behaviourFile << "if(!failed){" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K4 = (dt_)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "if(!failed){\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K4 = (dt_)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl << endl;
-    this->behaviourFile << "if(!failed){" << endl;
-    this->behaviourFile << "// Computing the error" << endl;
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(!failed){\n"
+			<< "// Computing the error\n";
     if(eev==ERRORSUMMATIONEVALUATION){
-      for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-	if(p->arraySize==1u){
-	  if(p==d.getStateVariables().begin()){
+      bool first = true;
+      for(const auto& v : d.getStateVariables()){
+	if(v.arraySize==1u){
+	  if(first){
 	    this->behaviourFile << "error  = ";
+	    first=false;
 	  } else {
 	    this->behaviourFile << "error += ";
 	  }
 	  this->behaviourFile << "tfel::math::abs(";
-	  if(enf.find(p->name)!=enf.end()){
+	  if(enf.find(v.name)!=enf.end()){
 	    this->behaviourFile << "(";
 	  }
-	  this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1+"
-			      << "this->d" << p->name << "_K4-"
-			      << "this->d" << p->name << "_K2-"
-			      << "this->d" << p->name << "_K3))";
-	  if(enf.find(p->name)!=enf.end()){
-	    this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	  this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1+"
+			      << "this->d" << v.name << "_K4-"
+			      << "this->d" << v.name << "_K2-"
+			      << "this->d" << v.name << "_K3))";
+	  if(enf.find(v.name)!=enf.end()){
+	    this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	  }
-	  this->behaviourFile << ";" << endl;
+	  this->behaviourFile << ";\n";
 	} else {
-	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	    if(p==d.getStateVariables().begin()){
-	      this->behaviourFile << "error  = Type(0);" << endl;
+	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	    if(first){
+	      this->behaviourFile << "error  = Type(0);\n";
+	      first=false;
 	    }
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<p->arraySize << ";++idx){" << endl;
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<v.arraySize << ";++idx){\n";
 	    this->behaviourFile << "error += tfel::math::abs(";
-	    if(enf.find(p->name)!=enf.end()){
+	    if(enf.find(v.name)!=enf.end()){
 	      this->behaviourFile << "(";
 	    }
-	    this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[idx]+"
-				<< "this->d" << p->name          << "_K4[idx]-"
-				<< "this->d" << p->name          << "_K2[idx]-"
-				<< "this->d" << p->name          << "_K3[idx]))";
-	    if(enf.find(p->name)!=enf.end()){
-	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1[idx]+"
+				<< "this->d" << v.name          << "_K4[idx]-"
+				<< "this->d" << v.name          << "_K2[idx]-"
+				<< "this->d" << v.name          << "_K3[idx]))";
+	    if(enf.find(v.name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	    }
-	    this->behaviourFile << ";" << endl;
-	    this->behaviourFile << "}" << endl;
+	    this->behaviourFile << ";\n";
+	    this->behaviourFile << "}\n";
 	  } else {
-	    for(unsigned short i=0;i!=p->arraySize;++i){
-	      if((p==d.getStateVariables().begin())&&(i==0)){
+	    for(unsigned short i=0;i!=v.arraySize;++i){
+	      if(first){
 		this->behaviourFile << "error  = ";
+		first=false;
 	      } else {
 		this->behaviourFile << "error += ";
 	      }
 	      this->behaviourFile << "tfel::math::abs(";
-	      if(enf.find(p->name)!=enf.end()){
+	      if(enf.find(v.name)!=enf.end()){
 		this->behaviourFile << "(";
 	      }
-	      this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[" << i << "]+"
-				  << "this->d" << p->name          << "_K4[" << i << "]-"
-				  << "this->d" << p->name          << "_K2[" << i << "]-"
-				  << "this->d" << p->name          << "_K3[" << i << "]))";
-	      if(enf.find(p->name)!=enf.end()){
-		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1[" << i << "]+"
+				  << "this->d" << v.name          << "_K4[" << i << "]-"
+				  << "this->d" << v.name          << "_K2[" << i << "]-"
+				  << "this->d" << v.name          << "_K3[" << i << "]))";
+	      if(enf.find(v.name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	      }
-	      this->behaviourFile << ";" << endl;
+	      this->behaviourFile << ";\n";
 	    }
 	  }
 	}
       }
-      this->behaviourFile << "error/=" << stateVarsSize << ";" << endl;
+      this->behaviourFile << "error/=" << stateVarsSize << ";\n";
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
-      this->behaviourFile << "error  = Type(0);" << endl;
-      for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-	if(p->arraySize==1u){
+      this->behaviourFile << "error  = Type(0);\n";
+      for(const auto& v : d.getStateVariables()){
+	if(v.arraySize==1u){
 	  this->behaviourFile << "error = std::max(error,tfel::math::abs(";
-	  if(enf.find(p->name)!=enf.end()){
+	  if(enf.find(v.name)!=enf.end()){
 	    this->behaviourFile << "(";
 	  }
-	  this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1+"
-			      << "this->d" << p->name << "_K4-"
-			      << "this->d" << p->name << "_K2-"
-			      << "this->d" << p->name << "_K3))";
-	  if(enf.find(p->name)!=enf.end()){
-	    this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	  this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1+"
+			      << "this->d" << v.name << "_K4-"
+			      << "this->d" << v.name << "_K2-"
+			      << "this->d" << v.name << "_K3))";
+	  if(enf.find(v.name)!=enf.end()){
+	    this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	  }
-	  this->behaviourFile << ");" << endl;
+	  this->behaviourFile << ");\n";
 	} else {
-	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<p->arraySize << ";++idx){" << endl;
+	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<v.arraySize << ";++idx){\n";
 	    this->behaviourFile << "error = std::max(error,tfel::math::abs(";
-	    if(enf.find(p->name)!=enf.end()){
+	    if(enf.find(v.name)!=enf.end()){
 	      this->behaviourFile << "(";
 	    }
-	    this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[idx]+"
-				<< "this->d" << p->name          << "_K4[idx]-"
-				<< "this->d" << p->name          << "_K2[idx]-"
-				<< "this->d" << p->name          << "_K3[idx]))";
-	    if(enf.find(p->name)!=enf.end()){
-	      this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	    this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1[idx]+"
+				<< "this->d" << v.name          << "_K4[idx]-"
+				<< "this->d" << v.name          << "_K2[idx]-"
+				<< "this->d" << v.name          << "_K3[idx]))";
+	    if(enf.find(v.name)!=enf.end()){
+	      this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	    }
-	    this->behaviourFile << ");" << endl;
-	    this->behaviourFile << "}" << endl;
+	    this->behaviourFile << ");\n";
+	    this->behaviourFile << "}\n";
 	  } else {
-	    for(unsigned short i=0;i!=p->arraySize;++i){
+	    for(unsigned short i=0;i!=v.arraySize;++i){
 	      this->behaviourFile << "error = std::max(error,tfel::math::abs(";
-	      if(enf.find(p->name)!=enf.end()){
+	      if(enf.find(v.name)!=enf.end()){
 		this->behaviourFile << "(";
 	      }
-	      this->behaviourFile << "cste1_6*(this->d" << p->name << "_K1[" << i << "]+"
-				  << "this->d" << p->name          << "_K4[" << i << "]-"
-				  << "this->d" << p->name          << "_K2[" << i << "]-"
-				  << "this->d" << p->name          << "_K3[" << i << "]))";
-	      if(enf.find(p->name)!=enf.end()){
-		this->behaviourFile << ")/(" << enf.find(p->name)->second << ")";
+	      this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1[" << i << "]+"
+				  << "this->d" << v.name          << "_K4[" << i << "]-"
+				  << "this->d" << v.name          << "_K2[" << i << "]-"
+				  << "this->d" << v.name          << "_K3[" << i << "]))";
+	      if(enf.find(v.name)!=enf.end()){
+		this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
 	      }
-	      this->behaviourFile << ");" << endl;
+	      this->behaviourFile << ");\n";
 	    }
 	  }
 	}
       }
     } else {
-      string msg("RungeKuttaDSL::writeBehaviourRK42Integrator : ");
-      msg += "internal error, unsupported error evaluation.";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("RungeKuttaDSL::writeBehaviourRK42Integrator",
+			      "internal error, unsupported error evaluation");
     }
-    this->behaviourFile << "if(std::isnan(error)){" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
-    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "if(std::isnan(error)){\n"
+			<< "throw(tfel::material::DivergenceException());\n"
+			<< "}\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : error \" << error << endl;"  << endl;
+			  << "::integrate() : error \" << error << endl;\n";
     }
-    this->behaviourFile << "// test for convergence" << endl;
-    this->behaviourFile << "if(error<this->epsilon){" << endl;
-    this->behaviourFile << "// Final Step" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name
-			  << " += cste1_6*(this->d" << p->name << "_K1 + this->d" << p->name << "_K4)+"
-			  << "    cste1_3*(this->d" << p->name << "_K3 + this->d" << p->name << "_K2);" << endl;
+    this->behaviourFile << "// test for convergence\n"
+			<< "if(error<this->epsilon){\n"
+			<< "// Final Step\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->" << v.name
+			  << " += cste1_6*(this->d" << v.name << "_K1 + this->d" << v.name << "_K4)+"
+			  << "    cste1_3*(this->d" << v.name << "_K3 + this->d" << v.name << "_K2);\n";
     }
-    this->behaviourFile << "this->computeFinalStress();" << endl;
+    this->behaviourFile << "this->computeFinalStress();\n";
     if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
-      this->behaviourFile << "this->updateAuxiliaryStateVariables(dt_);" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
-    this->behaviourFile << "t += dt_;" << endl;
-    this->behaviourFile << "if(abs(this->dt-t)<dtprec){" << endl;
-    this->behaviourFile << "converged=true;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(!converged){";
-    this->behaviourFile << "// time multiplier" << endl;
-    this->behaviourFile << "real corrector;" << endl;
-    this->behaviourFile << "if(error<100*std::numeric_limits<real>::min()){" << endl;
-    this->behaviourFile << "corrector=real(10.);" << endl;
-    this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "corrector = 0.8*pow((this->epsilon)/error,1./3.);" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(corrector<=real(0.1f)){" << endl;
-    this->behaviourFile << "dt_ *= real(0.1f);" << endl;
+    this->behaviourFile << "t += dt_;\n"
+			<< "if(abs(this->dt-t)<dtprec){\n"
+			<< "converged=true;\n"
+			<< "}\n"
+			<< "}\n"
+			<< "if(!converged){"
+			<< "// time multiplier\n"
+			<< "real corrector;\n"
+			<< "if(error<100*std::numeric_limits<real>::min()){\n"
+			<< "corrector=real(10.);\n"
+			<< "} else {\n"
+			<< "corrector = 0.8*pow((this->epsilon)/error,1./3.);\n"
+			<< "}\n"
+			<< "if(corrector<=real(0.1f)){\n"
+			<< "dt_ *= real(0.1f);\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : reducing time step by a factor 10\" << endl;" << endl;
+			  << "::integrate() : reducing time step by a factor 10\" << endl;\n";
     }
-    this->behaviourFile << "} else if(corrector>real(10)){" << endl;
-    this->behaviourFile << "dt_ *= real(10);" << endl;
+    this->behaviourFile << "} else if(corrector>real(10)){\n";
+    this->behaviourFile << "dt_ *= real(10);\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : multiplying time step by a factor 10\" << endl;" << endl;
+			  << "::integrate() : multiplying time step by a factor 10\" << endl;\n";
     }
-    this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "dt_ *= corrector;" << endl;
+    this->behaviourFile << "} else {\n";
+    this->behaviourFile << "dt_ *= corrector;\n";
     if(getDebugMode()){
-      this->behaviourFile << "if(corrector<1){" << endl;
+      this->behaviourFile << "if(corrector<1){\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : reducing time step by a factor \"   << corrector << endl;" << endl;
-      this->behaviourFile << "} else {" << endl;
+			  << "::integrate() : reducing time step by a factor \"   << corrector << endl;\n";
+      this->behaviourFile << "} else {\n";
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : increasing time step by a factor \" << corrector << endl;" << endl;
-      this->behaviourFile << "}" << endl;
+			  << "::integrate() : increasing time step by a factor \" << corrector << endl;\n";
+      this->behaviourFile << "}\n";
     }
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){" << endl;
-    this->behaviourFile << "dt_=this->dt-t;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "} else {" << endl;
-    this->behaviourFile << "// failed is true" << endl;
-    this->behaviourFile << "dt_ *= real(0.1f);" << endl;
-    this->behaviourFile << "if(dt_<dtprec){" << endl;
-    this->behaviourFile << "throw(tfel::material::DivergenceException());" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "}" << endl;
+    this->behaviourFile << "}\n"
+			<< "if(dt_<dtprec){\n"
+			<< "throw(tfel::material::DivergenceException());\n"
+			<< "}\n"
+			<< "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
+			<< "dt_=this->dt-t;\n"
+			<< "}\n"
+			<< "}\n"
+			<< "} else {\n"
+			<< "// failed is true\n"
+			<< "dt_ *= real(0.1f);\n"
+			<< "if(dt_<dtprec){\n"
+			<< "throw(tfel::material::DivergenceException());\n"
+			<< "}\n"
+			<< "}\n"
+			<< "}\n";
   } // end of RungeKuttaDSL::writeBehaviourRK42Integrator
 
   void RungeKuttaDSL::writeBehaviourRK4Integrator(const Hypothesis h)
   {
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
-    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};" << endl;
-    this->behaviourFile << "// Compute K1's values" << endl;
-    this->behaviourFile << "this->computeStress();" << endl;
-    this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K1 = (this->dt)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};\n";
+    this->behaviourFile << "// Compute K1's values\n";
+    this->behaviourFile << "this->computeStress();\n";
+    this->behaviourFile << "this->computeDerivative();\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K1 = (this->dt)*(this->d" << v.name << ");\n";
     }
     writeExternalVariablesCurrentValues2(this->behaviourFile,this->mb,h,"cste1_2");
     for(const auto& iv : d.getStateVariables()){
       if(uvs.find(iv.name)!=uvs.end()){
-	this->behaviourFile << "this->" << iv.name << "_ += cste1_2*(this->d" << iv.name << "_K1);" << endl;
+	this->behaviourFile << "this->" << iv.name << "_ += cste1_2*(this->d" << iv.name << "_K1);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeStress();" << endl << endl;
-    this->behaviourFile << "// Compute K2's values" << endl;
-    this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K2 = (this->dt)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "this->computeStress();\n\n"
+			<< "// Compute K2's values\n"
+			<< "this->computeDerivative();\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K2 = (this->dt)*(this->d" << v.name << ");\n";
     }
     for(const auto& iv : d.getStateVariables()){
       if(uvs.find(iv.name)!=uvs.end()){
 	this->behaviourFile << "this->" << iv.name << "_ = " << "this->" << iv.name
-			    << "+ cste1_2*(this->d" << iv.name << "_K2);" << endl;
+			    << "+ cste1_2*(this->d" << iv.name << "_K2);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeStress();" << endl << endl;
-    this->behaviourFile << "// Compute K3's values" << endl;
-    this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K3 = (this->dt)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "this->computeStress();\n\n"
+			<< "// Compute K3's values\n"
+			<< "this->computeDerivative();\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K3 = (this->dt)*(this->d" << v.name << ");\n";
     }
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      if(uvs.find(p->name)!=uvs.end()){
-	this->behaviourFile << "this->" << p->name << "_ = " << "this->" << p->name
-			    << "+ (this->d" << p->name << "_K3);" << endl;
+    for(const auto& v : d.getStateVariables()){
+      if(uvs.find(v.name)!=uvs.end()){
+	this->behaviourFile << "this->" << v.name << "_ = " << "this->" << v.name
+			    << "+ (this->d" << v.name << "_K3);\n";
       }
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeStress();" << endl << endl;
-    this->behaviourFile << "// Compute K4's values" << endl;
-    this->behaviourFile << "this->computeDerivative();" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->d" << p->name
-			  << "_K4 = (this->dt)*(this->d" << p->name << ");" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "this->computeStress();\n\n"
+			<< "// Compute K4's values\n"
+			<< "this->computeDerivative();\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->d" << v.name
+			  << "_K4 = (this->dt)*(this->d" << v.name << ");\n";
     }
-    this->behaviourFile << "// Final Step" << endl;
-    for(p =d.getStateVariables().begin();p!=d.getStateVariables().end();++p){
-      this->behaviourFile << "this->" << p->name << " += "
-			  << "1.f/6.f*(this->d" << p->name
-			  << "_K1+this->d" << p->name << "_K4)+" << endl;
-      this->behaviourFile << "1.f/3.f*(this->d" << p->name
-			  << "_K2+this->d" << p->name << "_K3);" << endl;
+    this->behaviourFile << "// Final Step\n";
+    for(const auto& v : d.getStateVariables()){
+      this->behaviourFile << "this->" << v.name << " += "
+			  << "1.f/6.f*(this->d" << v.name
+			  << "_K1+this->d" << v.name << "_K4)+\n";
+      this->behaviourFile << "1.f/3.f*(this->d" << v.name
+			  << "_K2+this->d" << v.name << "_K3);\n";
     }
-    this->behaviourFile << "// Update stress field" << endl;
-    this->behaviourFile << "this->computeFinalStress();" << endl;
+    this->behaviourFile << "// Update stress field\n"
+			<< "this->computeFinalStress();\n";
     if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
-      this->behaviourFile << "this->updateAuxiliaryStateVariables(this->dt);" << endl;
+      this->behaviourFile << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of RungeKuttaDSL::writeBehaviourRK4Integrator
 
   void RungeKuttaDSL::writeBehaviourIntegrator(const Hypothesis h)
   {
-    using namespace std;
-    const string btype = this->mb.getBehaviourTypeFlag();
-    const auto& algorithm = this->mb.getAttribute<string>(BehaviourData::algorithm);
+    const auto btype = this->mb.getBehaviourTypeFlag();
+    const auto& algorithm = this->mb.getAttribute<std::string>(BehaviourData::algorithm);
     const auto& d = this->mb.getBehaviourData(h);
-    std::vector<BoundsDescription>::const_iterator p2;
     this->checkBehaviourFile();
-    this->behaviourFile << "/*!" << endl;
-    this->behaviourFile << "* \\brief Integrate behaviour law over the time step" << endl;
-    this->behaviourFile << "*/" << endl;
-    this->behaviourFile << "IntegrationResult" << endl;
+    this->behaviourFile << "/*!\n"
+			<< "* \\brief Integrate behaviour law over the time step\n"
+			<< "*/\n"
+			<< "IntegrationResult\n";
     if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
-      this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{" << endl;
+      this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
       if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
-	this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{" << endl;
+	this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
       } else {
-	this->behaviourFile << "integrate(const SMFlag,const SMType smt) override{" << endl;
+	this->behaviourFile << "integrate(const SMFlag,const SMType smt) override{\n";
       }
     }
-    this->behaviourFile << "using namespace std;" << endl;
-    this->behaviourFile << "using namespace tfel::math;" << endl;
+    this->behaviourFile << "using namespace std;\n"
+			<< "using namespace tfel::math;\n";
     if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       if(this->mb.useQt()){
 	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype
-			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
-			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-			    << "}" << endl;
+			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+			    << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+			    << "}\n";
       } else {
 	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype
-			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
-			    << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-			    << "}" << endl;
+			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+			    << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+			    << "}\n";
       }
     }
     if(this->mb.getAttribute(BehaviourData::profiling,false)){
@@ -2020,17 +2008,15 @@ namespace mfront{
     } else if (algorithm == "RungeKutta4"){
       this->writeBehaviourRK4Integrator(h);
     } else {
-      string msg("RungeKuttaDSL::writeBehaviourIntegrator : ");
-      msg += "internal error\n";
-      msg += algorithm;
-      msg += " is not a known algorithm. This shall not happen at this stage.";
-      msg += " Please contact MFront developper to help them debug this.";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("RungeKuttaDSL::writeBehaviourIntegrator",
+			      "internal error\n'"+
+			      algorithm+"' is not a known algorithm. "
+			      "This shall not happen at this stage."
+			      " Please contact MFront developper to help them debug this.");
     }
-    for(p2  = d.getBounds().begin();
-	p2 != d.getBounds().end();++p2){
-      if(p2->varCategory==BoundsDescription::StateVariable){
-	p2->writeBoundsChecks(this->behaviourFile);
+    for(const auto& b : d.getBounds()){
+      if(b.varCategory==BoundsDescription::StateVariable){
+	b.writeBoundsChecks(this->behaviourFile);
       }
     }
     if(this->mb.getAttribute(BehaviourData::profiling,false)){
@@ -2044,23 +2030,27 @@ namespace mfront{
 	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
       }
       if(this->mb.useQt()){
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<"
+			    << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+	this->behaviourFile << "return MechanicalBehaviour<"
+			    << btype << ",hypothesis,Type,false>::FAILURE;\n";
       }
       this->behaviourFile << "}\n";
     } else {
-      this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");\n";
-      this->behaviourFile << "msg +=\"unimplemented feature\";\n";
-      this->behaviourFile << "throw(runtime_error(msg));\n";
+      this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");\n"
+			  << "msg +=\"unimplemented feature\";\n"
+			  << "throw(runtime_error(msg));\n";
     }
     this->behaviourFile << "}\n";
     if(this->mb.useQt()){
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,false>::SUCCESS;\n";
     }
-    this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate" << endl << endl;
+    this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
   } // end of void RungeKuttaDSL::writeBehaviourIntegrator(void)
 
   RungeKuttaDSL::~RungeKuttaDSL()

@@ -134,7 +134,7 @@ namespace mtest
     std::vector<real> tv(v.size());
     std::vector<real> ev(v.size());
     std::vector<real>::size_type i = 0u;
-    for(const auto mv : v){
+    for(const auto& mv : v){
       tv[i] = mv.first;
       ev[i] = mv.second;
       ++i;

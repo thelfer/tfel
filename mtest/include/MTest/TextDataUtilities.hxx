@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MTEST_TEXTDATAUTILITIES_HXX_
-#define _LIB_MTEST_TEXTDATAUTILITIES_HXX_
+#ifndef LIB_MTEST_TEXTDATAUTILITIES_HXX_
+#define LIB_MTEST_TEXTDATAUTILITIES_HXX_
 
 #include<string>
 #include<vector>
@@ -37,4 +37,4 @@ namespace mtest{
   
 }
 
-#endif /* _LIB_MTEST_TEXTDATAUTILITIES_HXX_ */
+#endif /* LIB_MTEST_TEXTDATAUTILITIES_HXX_ */

@@ -143,7 +143,7 @@ namespace mfront
     this->headerFile << "(";
     this->writeParameterList(this->headerFile,mpd.inputs);
     this->headerFile << ");\n\n";
-    if(((!mpd.boundsDescriptions.empty())||(!mpd.physicalBoundsDescriptions.empty()))||
+    if(((!mpd.bounds.empty())||(!mpd.physicalBounds.empty()))||
        (this->requiresCheckBoundsFunction())){
       this->headerFile << "MFRONT_SHAREDOBJ int "
 		       << this->getCallingConvention() << '\n'
@@ -180,18 +180,18 @@ namespace mfront
 			  const char * const s){
     for(const auto& b : bounds){
       if(b.boundsType==VariableBoundsDescription::Lower){
-	out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	out << "return " << s << b.varNbr << ";\n";
-	out << "}\n";
+	out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n"
+	    << "return " << s << b.varNbr << ";\n"
+	    << "}\n";
       } else if(b.boundsType==VariableBoundsDescription::Upper){
-	out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
-	out << "return " << s << b.varNbr << ";\n";
-	out << "}\n";
+	out << "if(" << b.varName<< " > "<< b.upperBound << "){\n"
+	    << "return " << s << b.varNbr << ";\n"
+	    << "}\n";
       } else {
 	out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
-	    << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
-	out << "return " << s << b.varNbr << ";\n";
-	out << "}\n";
+	    << "(" << b.varName<< " > "<< b.upperBound << ")){\n"
+	    << "return " << s << b.varNbr << ";\n"
+	    << "}\n";
       }
     }
   }
@@ -216,6 +216,7 @@ namespace mfront
     }
     this->srcFile << " */\n\n"
 		  << "#include<cmath>\n\n"
+      		  << "#include<cerrno>\n\n"
 		  << "#include<algorithm>\n\n";
     if(!mpd.includes.empty()){
       this->srcFile << mpd.includes << "\n\n";
@@ -226,12 +227,12 @@ namespace mfront
     }
     this->writeSrcPreprocessorDirectives(mpd);
     this->writeBeginSrcNamespace();
-    this->srcFile << "double " << this->getFunctionName(mpd.material,mpd.className);
-    this->srcFile << "(";
+    this->srcFile << "double " << this->getFunctionName(mpd.material,mpd.className)
+		  << "(";
     this->writeParameterList(this->srcFile,mpd.inputs);
-    this->srcFile << ")\n{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "typedef double real;\n";
+    this->srcFile << ")\n{\n"
+		  << "using namespace std;\n"
+		  << "using real = double;\n";
     // material laws
     writeMaterialLaws("CMaterialPropertyInterfaceBase::writeSrcFile",
 		      this->srcFile,mpd.materialLaws);
@@ -246,15 +247,23 @@ namespace mfront
 	  throw(std::runtime_error("CMaterialPropertyInterfaceBase::writeSrcFile : "
 				   "internal error (can't find value of parameter '"+p+"')"));
 	}
-	this->srcFile << "static " << constexpr_c << " double " << p << " = " << p6->second << ";\n";
+	this->srcFile << "static " << constexpr_c << " real " << p << " = " << p6->second << ";\n";
       }
     }
     this->writeInterfaceSpecificVariables(mpd.inputs);
-    this->srcFile << "double " << mpd.output << ";\n";
-    this->srcFile << mpd.f.body;
-    this->srcFile << "return " << mpd.output << ";\n";
-    this->srcFile << "} /* end of " << mpd.className << " */\n\n";
-    if(((!mpd.boundsDescriptions.empty())||(!mpd.physicalBoundsDescriptions.empty()))||
+    this->srcFile << "const auto mfront_errno_old = errno;\n"
+		  << "errno=0;\n"
+		  << "real " << mpd.output << ";\n"
+		  << mpd.f.body
+      // can't use std::swap here as errno might be a macro
+		  << "const auto mfront_errno = errno;\n"
+		  << "errno = mfront_errno_old;\n"
+		  << "if(mfront_errno!=0){\n";
+    this->writeCErrorTreatment(this->srcFile,mpd);
+    this->srcFile << "}\n"
+		  << "return " << mpd.output << ";\n"
+		  << "} /* end of " << mpd.className << " */\n\n";
+    if(((!mpd.bounds.empty())||(!mpd.physicalBounds.empty()))||
        (this->requiresCheckBoundsFunction())){
       this->srcFile << "int "
 		    << this->getCheckBoundsFunctionName(mpd.material,mpd.className);
@@ -265,17 +274,24 @@ namespace mfront
       for(const auto& i : mpd.inputs){
 	this->srcFile << "static_cast<void>(" << i.name << ");\n";
       }
-      if(!mpd.physicalBoundsDescriptions.empty()){
+      if(!mpd.physicalBounds.empty()){
 	this->srcFile << "/* treating mpd.physical bounds */\n";
-	writeBounds(this->srcFile,mpd.physicalBoundsDescriptions,"-");
+	writeBounds(this->srcFile,mpd.physicalBounds,"-");
       }
-      if(!mpd.boundsDescriptions.empty()){
+      if(!mpd.bounds.empty()){
 	this->srcFile << "/* treating standard bounds */\n";
-	writeBounds(this->srcFile,mpd.physicalBoundsDescriptions,"");
+	writeBounds(this->srcFile,mpd.physicalBounds,"");
       }
       this->srcFile << "return 0;\n} /* end of " << mpd.className << "_checkBounds */\n\n";
     }
     this->writeEndSrcNamespace();
   } // end of CMaterialPropertyInterfaceBase::writeSrcFile(void)
 
+  void
+  CMaterialPropertyInterfaceBase::writeCErrorTreatment(std::ostream& os,
+						       const MaterialPropertyDescription& mpd) const{
+    os << "return std::nan(\"" << this->getFunctionName(mpd.material,mpd.className)
+       << ": invalid call to a C function (errno is not null)\");\n";
+  } // CMaterialPropertyInterfaceBase::writeCErrorTreatment
+  
 } // end of namespace mfront

@@ -74,7 +74,7 @@ namespace mfront{
      */
     virtual void
     writeBehaviourDataMainVariablesSetters(std::ofstream&,
-					   const BehaviourDescription&) const;
+					   const BehaviourDescription&) const override;
     /*!
      * \brief write the instruction of exporting a thermodynamic force in an array
      * \param[out] out : output stream
@@ -148,7 +148,7 @@ namespace mfront{
      * name and the second element is the variable description.
      */
     virtual std::vector<std::pair<std::string,std::string>>
-    getBehaviourDataConstructorAdditionalVariables(void) const;
+    getBehaviourDataConstructorAdditionalVariables(void) const override;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface

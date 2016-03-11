@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MTEST_STUDYCURRENTSTATE_IXX_
-#define _LIB_MTEST_STUDYCURRENTSTATE_IXX_
+#ifndef LIB_MTEST_STUDYCURRENTSTATE_IXX_
+#define LIB_MTEST_STUDYCURRENTSTATE_IXX_
 
 namespace mtest{
 
@@ -60,4 +60,4 @@ namespace mtest{
   
 } // end of namespace mtest
 
-#endif /* _LIB_MTEST_STUDYCURRENTSTATE_IXX_ */
+#endif /* LIB_MTEST_STUDYCURRENTSTATE_IXX_ */

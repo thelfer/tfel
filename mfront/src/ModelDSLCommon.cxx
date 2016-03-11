@@ -1223,13 +1223,13 @@ namespace mfront{
   void
   ModelDSLCommon::treatBounds(void)
   {
-    this->registerBounds(this->boundsDescriptions);
+    this->registerBounds(this->bounds);
   } // end of ModelDSLCommon::treatBounds
 
   void
   ModelDSLCommon::treatPhysicalBounds(void)
   {
-    this->registerBounds(this->physicalBoundsDescriptions);
+    this->registerBounds(this->physicalBounds);
   } // end of ModelDSLCommon::treatPhysicalBounds
 
   void

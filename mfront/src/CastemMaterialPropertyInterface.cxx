@@ -175,10 +175,7 @@ namespace mfront
     out.exceptions(std::ios::badbit|std::ios::failbit);
     const auto& file=fd.fileName;
     const auto& author=fd.authorName;
-    const auto& description=fd.description;
     const auto& date=fd.date;
-    const auto& material=mpd.material;
-    const auto& className=mpd.className;
     const auto& includes=mpd.includes;
     const auto& output=mpd.output;
     const auto& inputs=mpd.inputs;
@@ -187,10 +184,9 @@ namespace mfront
     const auto& entryNames=mpd.entryNames;
     const auto& staticVars=mpd.staticVars;
     const auto& params=mpd.parameters;
-    const auto& paramValues=mpd.parametersValues;
     const auto& function=mpd.f;
-    const auto& bounds=mpd.boundsDescriptions;
-    const auto& physicalBounds=mpd.physicalBoundsDescriptions;
+    const auto& bounds=mpd.bounds;
+    const auto& physicalBounds=mpd.physicalBounds;
     out << "/*!\n";
     out << "* \\file   " << fn  << '\n';
     out << "* \\brief  " << "this file implements the " 
@@ -305,7 +301,7 @@ namespace mfront
 	}
       }
     }
-    out << "double " << output << ";\n";
+    out << "real " << output << ";\n";
     if((!physicalBounds.empty())||
        (!bounds.empty())){
       out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";

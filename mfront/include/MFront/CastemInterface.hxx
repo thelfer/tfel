@@ -190,11 +190,11 @@ namespace mfront{
 				const Hypothesis) const override;
 
     virtual void
-    writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const;
+    writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const override;
 
     virtual void
     writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream&,
-						    const std::string&) const;
+						    const std::string&) const override;
     /*!
      * \brief write the set out of bounds policy function for an alias behaviour 
      * \param[out] out   : output stream

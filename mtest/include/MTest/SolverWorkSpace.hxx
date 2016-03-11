@@ -5,8 +5,8 @@
  * \date   04 nov. 2015
  */
 
-#ifndef _LIB_MTEST_SOLVERWORKSPACE_HXX_
-#define _LIB_MTEST_SOLVERWORKSPACE_HXX_
+#ifndef LIB_MTEST_SOLVERWORKSPACE_HXX_
+#define LIB_MTEST_SOLVERWORKSPACE_HXX_
 
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/matrix.hxx"
@@ -46,4 +46,4 @@ namespace mtest{
   
 } // end of namespace namespace mtest
 
-#endif /* _LIB_MTEST_SOLVERWORKSPACE_HXX_ */
+#endif /* LIB_MTEST_SOLVERWORKSPACE_HXX_ */

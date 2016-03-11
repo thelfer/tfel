@@ -79,6 +79,10 @@ namespace mfront{
     virtual void
     writeSrcPreprocessorDirectives(const MaterialPropertyDescription&);
 
+    virtual void
+    writeCErrorTreatment(std::ostream&,
+			 const MaterialPropertyDescription&) const;
+    
     virtual std::string
     getCallingConvention(void) const;
     

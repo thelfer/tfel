@@ -1064,7 +1064,7 @@ namespace mfront{
   BehaviourData::getCodeBlockNames() const
   {
     auto names = std::vector<std::string>{};
-    for(const auto c : this->cblocks){
+    for(const auto& c : this->cblocks){
       names.push_back(c.first);
     }
     return names;

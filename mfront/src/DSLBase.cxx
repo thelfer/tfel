@@ -96,6 +96,9 @@ namespace mfront
       names.push_back(v.first);
     }
     names.push_back("policy");
+    names.push_back("errno");
+    names.push_back("mfront_errno");
+    names.push_back("mfront_errno_old");    
     return names;
   }
   
@@ -887,6 +890,8 @@ namespace mfront
       const auto& mname = minterface.getFunctionName(mpd.material,
 						       mpd.law);
       this->reserveName(mname);
+      this->reserveName(mname+"_checkBounds");
+      this->reserveName(mname+"_bounds_check_status");
       this->appendToIncludes("#include\""+minterface.getHeaderFileName(mpd.material,
 								       mpd.law)+".hxx\"");
       this->addMaterialLaw(mname);

@@ -841,7 +841,7 @@ namespace tfel{
 	  vector<string> splittedTokens;
 	  splittedTokens.push_back(p->value);
 	  splitAtCxxTokenSperator(splittedTokens);
-	  unsigned int line = p->line;
+	  auto line = p->line;
 	  auto p2 = splittedTokens.begin();
 	  auto current=p;
 	  for(;p2!=splittedTokens.end();++p2){

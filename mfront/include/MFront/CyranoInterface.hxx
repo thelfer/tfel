@@ -43,7 +43,7 @@ namespace mfront{
 
     virtual void
     writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream&,
-						    const std::string&) const;
+						    const std::string&) const override;
     /*!
      * write interface specific includes
      * \param[in] out : output file

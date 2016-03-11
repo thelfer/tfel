@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef   _LIB_MFRONT_MFRONTLOCK_H_
-#define   _LIB_MFRONT_MFRONTLOCK_H_ 
+#ifndef   LIB_MFRONT_MFRONTLOCK_H_
+#define   LIB_MFRONT_MFRONTLOCK_H_ 
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #ifndef NOMINMAX
@@ -68,5 +68,4 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* _LIB_MFRONT_MFRONTLOCK_H */
-
+#endif /* LIB_MFRONT_MFRONTLOCK_H */

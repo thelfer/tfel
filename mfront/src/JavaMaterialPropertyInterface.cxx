@@ -208,7 +208,7 @@ namespace mfront
     }
     srcFile << "_" <<  replace_all(mpd.law,"_","_1") << "(";
     srcFile << "JNIEnv *java_env,jclass";
-    for(const auto i:mpd.inputs){
+    for(const auto& i:mpd.inputs){
       srcFile << ", const jdouble " << i.name;
     }
     srcFile << ")\n{\n";
@@ -239,11 +239,11 @@ namespace mfront
 	       "internal error (can't find value of parameter '"+p+"')");
       srcFile << "static " << constexpr_c << " double " << p << " = " << p6->second << ";\n";
     }
-    if((!mpd.physicalBoundsDescriptions.empty())||(!mpd.boundsDescriptions.empty())){
+    if((!mpd.physicalBounds.empty())||(!mpd.bounds.empty())){
       srcFile << "#ifndef JAVA_NO_BOUNDS_CHECK\n";
-      if(!mpd.physicalBoundsDescriptions.empty()){
+      if(!mpd.physicalBounds.empty()){
 	srcFile << "// treating physical bounds\n";
-	for(const auto& b : mpd.physicalBoundsDescriptions){
+	for(const auto& b : mpd.physicalBounds){
 	  if(b.boundsType==VariableBoundsDescription::Lower){
 	    srcFile << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	    srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
@@ -275,9 +275,9 @@ namespace mfront
 	    srcFile << "}\n";
 	  }
 	}
-	if(!mpd.boundsDescriptions.empty()){
+	if(!mpd.bounds.empty()){
 	  srcFile << "// treating standard bounds\n";
-	  for(const auto& b : mpd.boundsDescriptions){
+	  for(const auto& b : mpd.bounds){
 	    if((b.boundsType==VariableBoundsDescription::Lower)||
 	       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
 	      srcFile << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";

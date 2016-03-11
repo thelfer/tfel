@@ -2455,7 +2455,7 @@ namespace mfront{
     }
     this->behaviourDataFile << "{\n";
     this->behaviourDataFile << "using namespace std;\n";
-    for(const auto v : this->mb.getMainVariables()){
+    for(const auto& v : this->mb.getMainVariables()){
       if(v.first.increment_known){
 	this->behaviourDataFile << "os << \"" << v.first.name  << " : \" << b." << v.first.name  << " << '\\n';\n";
       } else {
@@ -3123,29 +3123,35 @@ namespace mfront{
     if(m.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& cmp = m.get<BehaviourDescription::ComputedMaterialProperty>();
       const auto& mpd = *(cmp.mpd);
+      if((mpd.bounds.empty())&&(mpd.physicalBounds.empty())){
+	return;
+      }
       const auto& n   = MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law);
-      out << "if(auto mp_bounds_check_status="
+      out << "{\n // check bounds for material property '" << n << "'\n"
+	  << "const auto " << n << "_bounds_check_status = "
 	  << n << "_checkBounds";
       this->writeMaterialPropertyArguments(out,cmp,f);
-      out << "!=0){\n"
-	  << "if(mp_bounds_check_status<0){\n"
+      out << ";\n"
+	  << "if(" << n << "_bounds_check_status!=0){\n"
+	  << "if(" << n << "_bounds_check_status<0){\n"
 	  << "// physical bounds\n"
-	  << "throw(OutOfBoundsException(\"" << this->mb.getClassName() << ": \"\n"
-	  << "                           \"a variable is out of its physical bounds \"\n"
+	  << "throw(OutOfBoundsException(\"" << this->mb.getClassName() << ": "
+	  << "a variable is out of its physical bounds \"\n"
 	  << "                           \"when calling the material property '" << n << "'\"));\n"
 	  << "} else {\n"
 	  << "// standard bounds\n"
 	  << "if(this->policy==Strict){\n"
-	  << "throw(OutOfBoundsException(\"" << this->mb.getClassName() << ": \"\n"
-	  << "                           \"a variable is out of its bounds \"\n"
+	  << "throw(OutOfBoundsException(\"" << this->mb.getClassName() << ": "
+	  << "a variable is out of its bounds \"\n"
 	  << "                           \"when calling the material property '" << n << "'\"));\n"
 	  << "} else if(this->policy==Warning){\n"
-	  << "std::cerr << \"" << this->mb.getClassName() << ": \"\n"
-	  << "             \"a variable is out of its bounds \"\n"
+	  << "std::cerr << \"" << this->mb.getClassName() << ": "
+	  << "a variable is out of its bounds \"\n"
 	  << "             \"when calling the material property '" << n << "'\\n\";\n"
 	  << "}\n"
 	  << "}\n"
-	  << "}\n";
+	  << "}\n"
+      	  << "}\n";
     } else if(!m.is<BehaviourDescription::ConstantMaterialProperty>()){
       this->throwRuntimeError("BehaviourDSLCommon::writeMaterialPropertyEvaluation",
 			      "unsupported material property type");
@@ -3184,7 +3190,6 @@ namespace mfront{
       out << a.get<BehaviourDescription::ConstantMaterialProperty>().value << ";\n";
     } else if(a.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
-      const auto& mname = MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law);
       const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
       out << MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law) << '(';
       if(!inputs.empty()){

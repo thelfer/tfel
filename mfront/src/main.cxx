@@ -22,12 +22,13 @@
 #include<cstdlib>
 #include<stdexcept>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"MFront/InitDSLs.hxx"
 #include"MFront/InitInterfaces.hxx"
 #include"MFront/MFront.hxx"
 
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-static void mfront_terminate_handler(){
+TFEL_NORETURN static void mfront_terminate_handler(){
   ::exit(EXIT_FAILURE);
 }
 #endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */

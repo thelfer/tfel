@@ -292,7 +292,7 @@ namespace mfront
     const auto& className=mpd.className;
     const auto& material=mpd.material;
     const auto& inputs=mpd.inputs;
-    const auto& bounds=mpd.boundsDescriptions;
+    const auto& bounds=mpd.bounds;
     const auto name = (material.empty()) ? className : material+"_"+className;
     this->srcFileName  = "src/" + name;
     this->srcFileName += ".gp";

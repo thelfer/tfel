@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_UTILITIES_PARSERBASE_H_
-#define _LIB_TFEL_UTILITIES_PARSERBASE_H_ 
+#ifndef LIB_TFEL_UTILITIES_PARSERBASE_H_
+#define LIB_TFEL_UTILITIES_PARSERBASE_H_ 
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
@@ -69,5 +69,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* _LIB_PARSERBASE_H */
+#endif /* LIB_PARSERBASE_H */
 

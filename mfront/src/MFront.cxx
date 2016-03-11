@@ -734,7 +734,7 @@ namespace mfront{
     }
     if((this->buildLibs)&&((has_libs)||(!this->targets.specific_targets.empty()))){
       auto& log = getLogStream();
-      for(const auto t : this->specifiedTargets){
+      for(const auto& t : this->specifiedTargets){
 	if(getVerboseMode()>=VERBOSE_LEVEL0){
 	  log << "Treating target : " << t << endl;
 	}

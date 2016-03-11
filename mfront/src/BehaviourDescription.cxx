@@ -57,8 +57,7 @@ namespace mfront
     }
   } // end of BehaviourDescription::callBehaviourData
 
-  template<typename Arg1,
-	   typename Arg2>
+  template<typename Arg1,typename Arg2>
   void
   BehaviourDescription::callBehaviourData(const Hypothesis h,
 					  void (BehaviourData:: *m)(const Arg1&,
@@ -97,8 +96,7 @@ namespace mfront
     }
   } // end of BehaviourDescription::callBehaviourData
 
-  template<typename Res,
-	   typename Arg1>
+  template<typename Res,typename Arg1>
   Res
   BehaviourDescription::getData(const Hypothesis h,
 				Res (BehaviourData:: *m)(const Arg1&) const,
@@ -480,10 +478,10 @@ namespace mfront
       throw(std::runtime_error("BehaviourDescription::getElasticMaterialProperties: "
 			       "no elastic material property defined"));
     }
-    for(const auto mp : this->elasticMaterialProperties){
+    for(const auto& mp : this->elasticMaterialProperties){
       if(mp.is<ComputedMaterialProperty>()){
 	const auto& cmp = mp.get<ComputedMaterialProperty>();
-	for(const auto i : this->getMaterialPropertyInputs(*(cmp.mpd))){
+	for(const auto& i : this->getMaterialPropertyInputs(*(cmp.mpd))){
 	  if(!((i.type==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
 	       (i.type==BehaviourDescription::MaterialPropertyInput::PARAMETER))){
 	    return false;
@@ -1241,12 +1239,10 @@ namespace mfront
 					  const StaticVariableDescription& v,
 					  const BehaviourData::RegistrationStatus s)
   {
-    using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->d.addStaticVariable(v,s);
-      map<Hypothesis,MBDPtr>::iterator p;
-      for(p=this->sd.begin();p!=this->sd.end();++p){
-	p->second->addStaticVariable(v,s);
+      for(const auto& md : this->sd){
+	md.second->addStaticVariable(v,s);
       }
     } else {
       this->getBehaviourData2(h).addStaticVariable(v,s);
@@ -1260,12 +1256,10 @@ namespace mfront
 				     void (BehaviourData::* m)(const VariableDescription&,
 							       const BehaviourData::RegistrationStatus))
   {
-    using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->addVariables(this->d,v,s,m);
-      map<Hypothesis,MBDPtr>::iterator p;
-      for(p=this->sd.begin();p!=this->sd.end();++p){
-	this->addVariables(*(p->second),v,s,m);
+      for(auto& md: this->sd){
+	this->addVariables(*(md.second),v,s,m);
       }
     } else {
       this->addVariables(this->getBehaviourData2(h),v,s,m);
@@ -1279,12 +1273,10 @@ namespace mfront
 				    void (BehaviourData::* m)(const VariableDescription&,
 							      const BehaviourData::RegistrationStatus))
   {
-    using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->addVariable(this->d,v,s,m);
-      map<Hypothesis,MBDPtr>::iterator p;
-      for(p=this->sd.begin();p!=this->sd.end();++p){
-	this->addVariable(*(p->second),v,s,m);
+      for(auto& md : this->sd){
+	this->addVariable(*(md.second),v,s,m);
       }
     } else {
       this->addVariable(this->getBehaviourData2(h),v,s,m);
@@ -1298,8 +1290,8 @@ namespace mfront
 				     void (BehaviourData::* m)(const VariableDescription&,
 							       const BehaviourData::RegistrationStatus))
   {
-    for(const auto & elem : v){
-      this->addVariable(b,elem,s,m);
+    for(const auto & e : v){
+      this->addVariable(b,e,s,m);
     }
   }
 
@@ -1320,9 +1312,8 @@ namespace mfront
 
   bool BehaviourDescription::areAllMechanicalDataSpecialised(const std::set<Hypothesis>& h) const
   {
-    using namespace std;
-    for(const auto & elem : h){
-      if(!this->hasSpecialisedMechanicalData(elem)){
+    for(const auto & mh : h){
+      if(!this->hasSpecialisedMechanicalData(mh)){
 	return false;
       }
     }
@@ -1332,33 +1323,28 @@ namespace mfront
   bool
   BehaviourDescription::hasSpecialisedMechanicalData(const Hypothesis h) const
   {
-    using namespace std;
-    using namespace std;
     if(this->getModellingHypotheses().find(h)==this->getModellingHypotheses().end()){
-      string msg("BehaviourDescription::areAllMechanicalDataSpecialised: "
-		 "hypothesis '"+ModellingHypothesis::toString(h)+"' is not supported");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::areAllMechanicalDataSpecialised: "
+			       "hypothesis '"+ModellingHypothesis::toString(h)+
+			       "' is not supported"));
     }
     return this->sd.find(h)!=this->sd.end();
   }
 
   void
   BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,
-							bool& b2)
+							bool& b2) const
   {
-    using namespace std;
     b1 = b2 = false;
     if(this->hypotheses.empty()){
-      string msg("BehaviourDescription::areAllMechanicalDataSpecialised: "
-		 "no hypothesis defined");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::areAllMechanicalDataSpecialised: "
+			       "no hypothesis defined"));
     }
     if(!this->areAllMechanicalDataSpecialised()){
       this->d.requiresTVectorOrVectorIncludes(b1,b2);
     }
-    map<Hypothesis,MBDPtr>::iterator p;
-    for(p=this->sd.begin();(p!=this->sd.end())&&(!(b1&&b2));++p){
-      p->second->requiresTVectorOrVectorIncludes(b1,b2);
+    for(const auto& md : this->sd){
+      md.second->requiresTVectorOrVectorIncludes(b1,b2);
     }
   } // end of BehaviourDescription::requiresTVectorOrVectorIncludes
 
@@ -1488,12 +1474,11 @@ namespace mfront
 				const Position p,
 				const bool b)
   {
-    using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
 	log << "BehaviourDescription::setCode : setting '"
-	    << n << "' on default hypothesis"  << endl;
+	    << n << "' on default hypothesis"  << std::endl;
       }
       this->d.setCode(n,c,m,p,b);
       for(const auto& pd : sd){
@@ -1501,7 +1486,7 @@ namespace mfront
 	  auto& log = getLogStream();
 	  log << "BehaviourDescription::setCode : setting '"
 	      << n << "' on hypothesis '" 
-	      << ModellingHypothesis::toString(pd.first) << "'" << endl;
+	      << ModellingHypothesis::toString(pd.first) << "'" << std::endl;
 	}
 	pd.second->setCode(n,c,m,p,b);
       }
@@ -1510,7 +1495,7 @@ namespace mfront
 	auto& log = getLogStream();
 	log << "BehaviourDescription::setCode : setting '"
 	    << n << "' on hypothesis '" 
-	    << ModellingHypothesis::toString(h) << "'" << endl;
+	    << ModellingHypothesis::toString(h) << "'" << std::endl;
       }
       this->getBehaviourData2(h).setCode(n,c,m,p,b);
     }
@@ -1527,7 +1512,7 @@ namespace mfront
   BehaviourDescription::getCode(const Hypothesis h,
 				const std::string& n) const
   {
-    const bool b = this->getAttribute(BehaviourData::profiling,false);
+    const auto b = this->getAttribute(BehaviourData::profiling,false);
     return this->getBehaviourData(h).getCode(n,this->getClassName(),b);
   } // end of BehaviourDescription::getCode
 
@@ -1542,12 +1527,10 @@ namespace mfront
   BehaviourDescription::setBounds(const Hypothesis h,
 				  const BoundsDescription& b)
   {
-    using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->d.setBounds(b);
-      map<Hypothesis,MBDPtr>::iterator p;
-      for(p=this->sd.begin();p!=this->sd.end();++p){
-	p->second->setBounds(b);
+      for(const auto& md : this->sd){
+	md.second->setBounds(b);
       }
     } else {
       this->getBehaviourData2(h).setBounds(b);
@@ -1560,12 +1543,10 @@ namespace mfront
 				     const BehaviourAttribute& a,
 				     const bool b)
   {
-    using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->d.setAttribute(n,a,b);
-      map<Hypothesis,MBDPtr>::iterator p;
-      for(p=this->sd.begin();p!=this->sd.end();++p){
-  	BehaviourData& bdata = *(p->second);
+      for(const auto& md : this->sd){
+  	BehaviourData& bdata = *(md.second);
   	bdata.setAttribute(n,a,b);
       }
     } else {
@@ -1658,22 +1639,19 @@ namespace mfront
 				     const BehaviourAttribute& a,
 				     const bool b)
   {
-    using namespace std;
     if(b){
       auto p=this->attributes.find(n);
       if(p!=this->attributes.end()){
 	if(a.getTypeIndex()!=p->second.getTypeIndex()){
-	  string msg("BehaviourDescription::setAttribute: ",
-		     "attribute already exists with a different type");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("BehaviourDescription::setAttribute: "
+				   "attribute already exists with a different type"));
 	}
 	return;
       }
     }
     if(!this->attributes.insert({n,a}).second){
-      string msg("BehaviourDescription::setAttribute: "
-		 "attribute '"+n+"' already declared");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setAttribute: "
+			       "attribute '"+n+"' already declared"));
     }
   } // end of BehaviourDescription::setAttribute
 
@@ -1748,16 +1726,15 @@ namespace mfront
 					       const std::string& c,
 					       const bool b) const
   {
-    using namespace std;
     const auto& h = this->getDistinctModellingHypotheses();
-    pair<bool,bool> r = {true,false};
+    std::pair<bool,bool> r = {true,false};
     for(const auto & elem : h){
       const auto& bdata = this->getBehaviourData(elem);
       const bool f = bdata.getVariables(c).contains(n);
       if(!f&&b){
-	string msg("BehaviourDescription::checkVariableExistence: "
-		   "no variable named '"+n+"' found for at least one modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("BehaviourDescription::checkVariableExistence: "
+				 "no variable named '"+n+"' found for at "
+				 "least one modelling hypothesis"));
       }
       r.first  = r.first  && f;
       r.second = r.second || f;
@@ -1772,21 +1749,18 @@ namespace mfront
   BehaviourDescription::checkVariableGlossaryName(const std::string& n,
 						  const std::string& g) const
   {
-    using namespace std;
     const auto& h = this->getDistinctModellingHypotheses();
     for(const auto & elem : h){
       const auto& bdata = this->getBehaviourData(elem);
       if(!bdata.hasGlossaryName(n)){
-	string msg("BehaviourDescription::VariableGlossaryName: "
-		   "no glossary name associated with variable '"+n+"'");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("BehaviourDescription::VariableGlossaryName: "
+				 "no glossary name associated with variable '"+n+"'"));
       }
       const auto& en = bdata.getExternalName(n);
       if(en!=g){
-	string msg("BehaviourDescription::VariableGlossaryName: "
-		   "the glossary name associated with "
-		   "variable '"+n+"' is not '"+g+"', but '"+en+"'");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("BehaviourDescription::VariableGlossaryName: "
+				 "the glossary name associated with "
+				 "variable '"+n+"' is not '"+g+"', but '"+en+"'"));
       }
     }
   } // end of BehaviourDescription::checkVariableGlossaryName
@@ -1796,23 +1770,20 @@ namespace mfront
 					      const std::string& c,
 					      const size_t p)
   {
-    using namespace std;
     const auto& h = this->getDistinctModellingHypotheses();
     for(const auto & elem : h){
       const auto& bdata = this->getBehaviourData(elem);
       const auto& vc = bdata.getVariables(c);
       if(p>=vc.size()){
-	string msg("BehaviourDescription::checkVariablePosition: "
-		   "position given is greater than the number "
-		   "of variables of category '"+c+"'");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("BehaviourDescription::checkVariablePosition: "
+				 "position given is greater than the number "
+				 "of variables of category '"+c+"'"));
       }
       const auto& v = vc[p];
       if(v.name!=n){
-	string msg("BehaviourDescription::checkVariablePosition: "
-		   "variable at the given position is not named '"+n+
-		   "' but '"+v.name+"'");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("BehaviourDescription::checkVariablePosition: "
+				 "variable at the given position is not named '"+n+
+				 "' but '"+v.name+"'"));
       }
     }
   } // end of BehaviourDescription::checkVariablePosition

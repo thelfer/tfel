@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_T2TOT2_CHANGEBASIS_HXX_
-#define _LIB_TFEL_MATH_T2TOT2_CHANGEBASIS_HXX_
+#ifndef LIB_TFEL_MATH_T2TOT2_CHANGEBASIS_HXX_
+#define LIB_TFEL_MATH_T2TOT2_CHANGEBASIS_HXX_
 
 #include<type_traits>
 
@@ -102,4 +102,4 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_T2TOT2_CHANGEBASIS_HXX_ */
+#endif /* LIB_TFEL_MATH_T2TOT2_CHANGEBASIS_HXX_ */

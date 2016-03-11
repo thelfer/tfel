@@ -11,13 +11,14 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MTEST_STUDYCURRENTSTATE_HXX_
-#define _LIB_MTEST_STUDYCURRENTSTATE_HXX_
+#ifndef LIB_MTEST_STUDYCURRENTSTATE_HXX_
+#define LIB_MTEST_STUDYCURRENTSTATE_HXX_
 
 #include<map>
 #include<string>
 #include<memory>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
@@ -165,13 +166,15 @@ namespace mtest{
      * given name has been found
      * \param[in] n: parameter name
      */
-    static void throwUnknownParameterException(const std::string&);
+    TFEL_NORETURN static void
+    throwUnknownParameterException(const std::string&);
     /*!
      * \brief throw an exception stating that a parameter with the
      * given name has been found
      * \param[in] n: parameter name
      */
-    static void throwAlreadyDeclaredParameterException(const std::string&);
+    TFEL_NORETURN static void
+    throwAlreadyDeclaredParameterException(const std::string&);
     /*!
      * study parameters
      */
@@ -192,10 +195,4 @@ namespace mtest{
 
 #include"MTest/StudyCurrentState.ixx"
 
-#endif /* _LIB_MTEST_STUDYCURRENTSTATE_HXX_ */
-
-
-
-
-
-
+#endif /* LIB_MTEST_STUDYCURRENTSTATE_HXX_ */

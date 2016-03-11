@@ -19,7 +19,7 @@
 @Real 'a1'   '3.41e-5';
 @Real 'a2'   '2.23e-5';
 @Real 'a3'   '4.63e-5';
-@Real 'pi'   '2*atan(1)';
+@Real 'pi'   '4*atan(1)';
 @Real 'phi'  'pi/7';
 @Real 'c'    'cos(phi)';
 @Real 's'    'sin(phi)';

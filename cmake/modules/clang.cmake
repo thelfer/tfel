@@ -1,6 +1,7 @@
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Weverything")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-padded")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-documentation")
+tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-documentation-unknown-command")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-exit-time-destructors")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-global-constructors")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wrange-loop-analysis")

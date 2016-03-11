@@ -9,8 +9,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX_
-#define _LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX_
+#ifndef LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX_
+#define LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX_
 
 namespace tfel
 {
@@ -41,4 +41,4 @@ namespace tfel
 } // end of namespace tfel
 
 
-#endif /* _LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX_ */
+#endif /* LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX_ */

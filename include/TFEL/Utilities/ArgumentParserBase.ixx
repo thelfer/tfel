@@ -72,7 +72,7 @@ namespace tfel
     {
       std::cout << this->getUsageDescription() << "\n\n";
       std::cout << "Available options are : \n";
-      for(const auto c : this->callBacksContainer){ 
+      for(const auto& c : this->callBacksContainer){ 
 	auto aliasFound = false;
 	auto aliasName = std::string{};
 	for(const auto& a : this->alias){

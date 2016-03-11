@@ -663,26 +663,26 @@ namespace mfront{
 			this->srcFile,mdata.materialLaws);		      
       for(i=0,p12=p11->usedVariables.begin();p12!=p11->usedVariables.end();++p12,++i){
 	found = false;
-	for(p19=mdata.physicalBoundsDescriptions.begin();
-	    (p19!=mdata.physicalBoundsDescriptions.end())&&(!found);){
+	for(p19=mdata.physicalBounds.begin();
+	    (p19!=mdata.physicalBounds.end())&&(!found);){
 	  found = (p19->varName==*p12);
 	  if(!found){
 	    ++p19;
 	  }
 	}
 	found = false;
-	for(p20=mdata.boundsDescriptions.begin();
-	    (p20!=mdata.boundsDescriptions.end())&&(!found);){
+	for(p20=mdata.bounds.begin();
+	    (p20!=mdata.bounds.end())&&(!found);){
 	  found = (p20->varName==*p12);
 	  if(!found){
 	    ++p20;
 	  }
 	}
-	if((p19!=mdata.physicalBoundsDescriptions.end())||
-	   (p20!=mdata.boundsDescriptions.end())){
+	if((p19!=mdata.physicalBounds.end())||
+	   (p20!=mdata.bounds.end())){
 	  this->srcFile << "#ifndef NO_PLEIADES_BOUNDS_CHECK\n";
 	}
-	if(p19!=mdata.physicalBoundsDescriptions.end()){
+	if(p19!=mdata.physicalBounds.end()){
 	  this->srcFile << "// checking " << p19->varName<< " physical bounds\n";
 	  if((p19->boundsType==VariableBoundsDescription::Lower)||
 	     (p19->boundsType==VariableBoundsDescription::LowerAndUpper)){
@@ -705,7 +705,7 @@ namespace mfront{
 	      this->srcFile << "}\n";
 	  }
 	}
-	if(p20!=mdata.boundsDescriptions.end()){
+	if(p20!=mdata.bounds.end()){
 	  this->srcFile << "// checking " << p20->varName<< " bounds\n";
 	  if((p20->boundsType==VariableBoundsDescription::Lower)||
 	     (p20->boundsType==VariableBoundsDescription::LowerAndUpper)){
@@ -750,8 +750,7 @@ namespace mfront{
 	    this->srcFile << "}\n";
 	  }
 	}
-	if((p19!=mdata.physicalBoundsDescriptions.end())||
-	   (p20!=mdata.boundsDescriptions.end())){
+	if((p19!=mdata.physicalBounds.end())||(p20!=mdata.bounds.end())){
 	  this->srcFile << "#endif /* NO_PLEIADES_BOUNDS_CHECK */\n";
 	}
       }
