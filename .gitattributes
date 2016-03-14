@@ -733,7 +733,7 @@ docs/presentations/mfront-user-meeting-2015/img/voro.png -text
 docs/presentations/mfront-user-meeting-2015/img/website.eps -text
 docs/presentations/mfront-user-meeting-2015/img/website.xcf -text
 docs/presentations/mfront-user-meeting-2015/mfront-cea.tex.in -text
-docs/presentations/mfront-user-meeting-2015/tfel-3.0.tex.in -text
+docs/presentations/mfront-user-meeting-2015/tfel-3.0-overview.tex.in -text
 docs/presentations/mfront-user-meeting-2015/writing-portable-behaviour.tex.in -text
 docs/presentations/mfront/Chaboche.mfront -text
 docs/presentations/mfront/Chaboche_simple.mfront -text
@@ -3710,6 +3710,7 @@ mfront/tests/models/src/MFrontGerminalModelInterface.cxx -text
 mfront/tests/models/src/MFrontPleiadesModelInterfaceBase.cxx -text
 mfront/tests/models/src/Makefile.am -text
 mfront/tests/properties/CMakeLists.txt -text
+mfront/tests/properties/ErrnoHandlingCheck.mfront -text
 mfront/tests/properties/Inconel600_YoungModulus.mfront -text
 mfront/tests/properties/Makefile.am -text
 mfront/tests/properties/PoissonRatioTest.mfront -text
@@ -3764,6 +3765,7 @@ mfront/tests/properties/interfaces/src/CMakeLists.txt -text
 mfront/tests/properties/interfaces/src/MFrontPleiadesMaterialPropertyInterface-2.0.cxx -text
 mfront/tests/properties/interfaces/src/Makefile.am -text
 mfront/tests/properties/test-c.c -text
+mfront/tests/properties/test-cxx.cxx -text
 mfront/tests/properties/test-f.c -text
 mfront/tests/unit-tests/BehaviourBrickProviderTest.cxx -text
 mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx.in -text

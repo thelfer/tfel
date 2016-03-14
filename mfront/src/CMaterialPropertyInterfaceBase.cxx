@@ -251,17 +251,25 @@ namespace mfront
       }
     }
     this->writeInterfaceSpecificVariables(mpd.inputs);
-    this->srcFile << "const auto mfront_errno_old = errno;\n"
-		  << "errno=0;\n"
-		  << "real " << mpd.output << ";\n"
-		  << mpd.f.body
-      // can't use std::swap here as errno might be a macro
-		  << "const auto mfront_errno = errno;\n"
-		  << "errno = mfront_errno_old;\n"
-		  << "if(mfront_errno!=0){\n";
-    this->writeCErrorTreatment(this->srcFile,mpd);
-    this->srcFile << "}\n"
-		  << "return " << mpd.output << ";\n"
+    if(!mpd.inputs.empty()){
+      this->srcFile << "#ifndef MFRONT_NOERRNO_HANDLING\n"
+		    << "const auto mfront_errno_old = errno;\n"
+		    << "errno=0;\n"
+		    << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+    }
+    this->srcFile << "real " << mpd.output << ";\n"
+		  << mpd.f.body << "\n";
+    if(!mpd.inputs.empty()){
+      this->srcFile << "#ifndef MFRONT_NOERRNO_HANDLING\n"
+	// can't use std::swap here as errno might be a macro
+		    << "const auto mfront_errno = errno;\n"
+		    << "errno = mfront_errno_old;\n"
+		    << "if(mfront_errno!=0){\n";
+      this->writeCErrorTreatment(this->srcFile,mpd);
+      this->srcFile << "}\n"
+		    << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+    }
+    this->srcFile << "return " << mpd.output << ";\n"
 		  << "} /* end of " << mpd.className << " */\n\n";
     if(((!mpd.bounds.empty())||(!mpd.physicalBounds.empty()))||
        (this->requiresCheckBoundsFunction())){

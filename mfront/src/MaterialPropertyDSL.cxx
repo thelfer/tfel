@@ -681,7 +681,7 @@ namespace mfront{
     using namespace tfel::system;
     if(this->className.empty()){
       throw(std::runtime_error("MaterialPropertyDSL::generateOutputFiles: "
-			       "no behaviour name defined."));      
+			       "no material property name defined."));      
     }
     if(this->f.body.empty()){
       throw(std::runtime_error("MaterialPropertyDSL::generateOutputFiles: "

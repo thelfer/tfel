@@ -138,13 +138,35 @@ namespace epx{
     TFEL_NORETURN static void
     throwNegativeTimeStepException(const std::string&);
     /*!
+     * \brief throw an AbaqusException if the prediction computation
+     * failed
+     * \param[in] b : behaviour name
+     */
+    TFEL_NORETURN static void
+    throwPredictionComputationFailedException(const std::string&);
+    /*!
      * \brief throw an EuroplexusException if the DDSDDE parameter is invalid
      * \param[in] b : behaviour name
      * \param[in] v : DDSDDE value
      */
     TFEL_NORETURN static void
-    throwInvalidDDSDDException(const std::string&,
-			       const EuroplexusReal);
+    throwInvalidDDSDDEValueException(const std::string&,
+				     const EuroplexusReal);
+    /*!
+     * \brief throw an AbaqusException if the a consistent tangent
+     * operator has to been requested and that the behaviour does not
+     * provide one.
+     * \param[in] b : behaviour name
+     */
+    TFEL_NORETURN static void
+    throwConsistentTangentOperatorIsNotAvalaible(const std::string&);
+    /*!
+     * \brief throw an AbaqusException if the a prediction operator has
+     * to been requested and that the behaviour does not provide one.
+     * \param[in] b : behaviour name
+     */
+    TFEL_NORETURN static void
+    throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an EuroplexusException if the time step scaling factor
      * is greater or egal to one on failure

@@ -37,7 +37,7 @@
 
 namespace epx
 {
-
+    
   /*!
    * \class  EuroplexusInterface
    * \brief This class create an interface between a behaviour class
@@ -52,7 +52,7 @@ namespace epx
    * reduce both compile-time and library size).
    *
    * \author Helfer Thomas
-   * \date   28 Jul 2006
+   * \date   11/03/2016
    */
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
@@ -60,33 +60,20 @@ namespace epx
     : protected EuroplexusInterfaceExceptions
   {
 
-    TFEL_EPX_INLINE2 static
-     int exe(const EuroplexusReal *const DTIME,EuroplexusReal *const DDSDDE,
-	     const EuroplexusReal *const F0, const EuroplexusReal *const F1,
-	     const EuroplexusReal *const TEMP,  const EuroplexusReal *const DTEMP,
-	     const EuroplexusReal *const PROPS, const EuroplexusInt  *const NPROPS,
-	     const EuroplexusReal *const PREDEF,const EuroplexusReal *const DPRED,
-	     EuroplexusReal *const STATEV,const EuroplexusInt  *const NSTATV,
-	     EuroplexusReal *const STRESS,	    EuroplexusReal *const PNEWDT,
-	     const tfel::material::OutOfBoundsPolicy op,
-	     const StressFreeExpansionHandler& sfeh)
+    TFEL_EPX_INLINE2 static void
+    exe(const EPXData& d,
+	const tfel::material::ModellingHypothesis::Hypothesis h)
     {
       using namespace tfel::material;
-      if( *NTENS == 4 ){
-	return CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>::exe(NTENS,DTIME,F0,F1,
-									       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									       STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
-      } else if( *NTENS == 3 ){
-        return CallBehaviour<ModellingHypothesis::PLANESTRESS>::exe(NTENS,DTIME,F0,F1,
-								    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								    STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
-      } else if( *NTENS == 6 ){
-        return CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(NTENS,DTIME,F0,F1,
-								       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								       STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
+      if(h==ModellingHypothesis::PLANESTRESS){
+	CallBehaviour<ModellingHypothesis::PLANESTRESS>::exe(d);
+      } else if(h==ModellingHypothesis::PLANESTRAIN){
+	CallBehaviour<ModellingHypothesis::PLANESTRAIN>::exe(d);
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(d);
       } else {
         EuroplexusInterfaceExceptions::displayUnsupportedHypothesisMessage();
-        return -2;
+	*(d.STATUS)=-2;
       }
     }
 
@@ -96,16 +83,7 @@ namespace epx
     struct UnsupportedHypothesisHandler
     {
       TFEL_EPX_INLINE2 static void
-      exe(const EuroplexusInt  *const, const EuroplexusReal *const,
-	  const EuroplexusReal *const,  EuroplexusReal *const,
-	  const EuroplexusReal *const, const EuroplexusReal *const,
-	  const EuroplexusReal *const,  const EuroplexusReal *const,
-	  const EuroplexusReal *const, const EuroplexusInt  *const,
-	  const EuroplexusReal *const,const EuroplexusReal *const,
-	  EuroplexusReal *const,const EuroplexusInt  *const,
-	  EuroplexusReal *const,      EuroplexusReal *const,
-	  const tfel::material::OutOfBoundsPolicy,
-	  const StressFreeExpansionHandler&)
+      exe(const EPXData&)
       {
 	using BV = Behaviour<H,EuroplexusReal,false>;
 	using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
@@ -116,16 +94,8 @@ namespace epx
     template<tfel::material::ModellingHypothesis::Hypothesis H>
     struct CallBehaviour
     {
-      TFEL_EPX_INLINE2 static
-      int exe(const EuroplexusInt  *const NTENS, const EuroplexusReal *const DTIME,
-	      const EuroplexusReal *const F0, const EuroplexusReal *const F1,
-	      const EuroplexusReal *const TEMP,  const EuroplexusReal *const DTEMP,
-	      const EuroplexusReal *const PROPS, const EuroplexusInt  *const NPROPS,
-	      const EuroplexusReal *const PREDEF,const EuroplexusReal *const DPRED,
-	      EuroplexusReal *const STATEV,const EuroplexusInt  *const NSTATV,
-	      EuroplexusReal *const STRESS,      EuroplexusReal *const PNEWDT,
-	      const tfel::material::OutOfBoundsPolicy op,
-	      const StressFreeExpansionHandler& sfeh)
+      TFEL_EPX_INLINE2 static void
+      exe(const EPXData& d)
       {
 	using BV = Behaviour<H,EuroplexusReal,false>;
 	using MTraits  = tfel::material::MechanicalBehaviourTraits<BV>;
@@ -133,38 +103,36 @@ namespace epx
 	using Handler = typename std::conditional<is_defined_,CallBehaviour2<H>,
 						  UnsupportedHypothesisHandler<H>>::type;
 	try{
-	  Handler::exe(NTENS,DTIME,F0,F1,
-		       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-		       STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
+	  Handler::exe(d);
 	}
 	catch(const EuroplexusException& e){
 	  EuroplexusInterfaceExceptions::treatEuroplexusException(MTraits::getName(),e);
-	  return -2;
+	  *(d.STATUS)= -2;
 	}
 	catch(const tfel::material::OutOfBoundsException& e){
 	  EuroplexusInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
-	  return -3;
+	  *(d.STATUS)= -3;
 	}
 	catch(const tfel::material::DivergenceException& e){
-	  EuroplexusInterfaceExceptions::treatMaterialException(MTraits::getName(),e);	  return -4;
+	  EuroplexusInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
+	  *(d.STATUS)= -4;
 	}
 	catch(const tfel::material::MaterialException& e){
 	  EuroplexusInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
-	  return -5;
+	  *(d.STATUS)= -5;
 	}
 	catch(const tfel::exception::TFELException& e){
 	  EuroplexusInterfaceExceptions::treatTFELException(MTraits::getName(),e);
-	  return -6;
+	  *(d.STATUS)= -6;
 	}
 	catch(const std::exception& e){
 	  EuroplexusInterfaceExceptions::treatStandardException(MTraits::getName(),e);
-	  return -7;
+	  *(d.STATUS)= -7;
 	}
 	catch(...){
 	  EuroplexusInterfaceExceptions::treatUnknownException(MTraits::getName());
-	  return -8;
+	  *(d.STATUS)= -8;
 	}
-	return 0;
       } // end of CallBehaviour::exe
     };
     
@@ -172,29 +140,18 @@ namespace epx
     struct CallBehaviour2
     {
       TFEL_EPX_INLINE2 static void
-      exe(const EuroplexusInt  *const, const EuroplexusReal *const DTIME,
-	  const EuroplexusReal *const F0, const EuroplexusReal *const F1,
-	  const EuroplexusReal *const TEMP,  const EuroplexusReal *const DTEMP,
-	  const EuroplexusReal *const PROPS, const EuroplexusInt  *const NPROPS,
-	  const EuroplexusReal *const PREDEF,const EuroplexusReal *const DPRED,
-	  EuroplexusReal *const STATEV,const EuroplexusInt  *const NSTATV,
-	  EuroplexusReal *const STRESS,EuroplexusReal *const PNEWDT,
-	  const tfel::material::OutOfBoundsPolicy op,
-	  const StressFreeExpansionHandler& sfeh)
+      exe(const EPXData& d)
       {
-	typedef EuroplexusBehaviourHandler<H,Behaviour> AHandler;
+	using  AHandler = EuroplexusBehaviourHandler<H,Behaviour>;
 	using BV = Behaviour<H,EuroplexusReal,false>;
-	using ATraits =  EuroplexusTraits<BV>;
-	const bool bs = ATraits::requiresStiffnessTensor;
-	const bool ba = ATraits::requiresThermalExpansionCoefficientTensor;
+	const bool bs = EuroplexusTraits<BV>::requiresStiffnessTensor;
+	const bool ba = EuroplexusTraits<BV>::requiresThermalExpansionCoefficientTensor;
 	using Integrator = typename AHandler::template Integrator<bs,ba>;
-	AHandler::checkNPROPS(*NPROPS);
-	AHandler::checkNSTATV(*NSTATV);
-	Integrator i(DTIME,F0,F1,
-		     TEMP,DTEMP,PROPS,
-		     PREDEF,DPRED,STATEV,
-		     STRESS,op,sfeh);
-	i.exe(PNEWDT,STRESS,STATEV);
+	AHandler::checkNPROPS(d.NPROPS);
+	AHandler::checkNSTATV(d.NSTATV);
+	AHandler::checkNPREDEF(d.NPREDEF);
+	Integrator i(d);
+	i.exe(d);
       }
     }; // end of struct CallBehaviour
   }; // end of struct EuroplexusInterface

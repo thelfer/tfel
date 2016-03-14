@@ -116,8 +116,8 @@ namespace epx
 	const auto& s0 = s.first;
 	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],N);
-	b.setEPXBehaviourDataDrivingVariables(dv0);
-	b.setEPXIntegrationDataDrivingVariables(dv1);
+	b.setEUROPLEXUSBehaviourDataDrivingVariables(dv0);
+	b.setEUROPLEXUSIntegrationDataDrivingVariables(dv1);
       } // end of exe
 
     }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
@@ -144,8 +144,8 @@ namespace epx
 		 const EuroplexusReal *const DSTRAN,
 		 const StressFreeExpansionHandler&)
       {
-	b.setEPXBehaviourDataDrivingVariables(STRAN);
-	b.setEPXIntegrationDataDrivingVariables(DSTRAN);
+	b.setEUROPLEXUSBehaviourDataDrivingVariables(STRAN);
+	b.setEUROPLEXUSIntegrationDataDrivingVariables(DSTRAN);
       } // end of exe
     }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
 
@@ -199,43 +199,29 @@ namespace epx
       typedef typename std::conditional<ba,ThermalExpansionCoefficientTensorInitializer,
 					DoNothingInitializer>::type AInitializer;
 
-      TFEL_EPX_INLINE Integrator(const EuroplexusReal *const DTIME ,
-				    const EuroplexusReal *const STRAN ,
-				    const EuroplexusReal *const DSTRAN,
-				    const EuroplexusReal *const TEMP,
-				    const EuroplexusReal *const DTEMP,
-				    const EuroplexusReal *const PROPS ,
-				    const EuroplexusReal *const PREDEF,
-				    const EuroplexusReal *const DPRED,
-				    const EuroplexusReal *const STATEV,
-				    const EuroplexusReal *const STRESS,
-				    const tfel::material::OutOfBoundsPolicy op,
-				    const StressFreeExpansionHandler& sfeh)
-	: behaviour(DTIME,TEMP,DTEMP,
-		    PROPS+EuroplexusTraits<BV>::elasticPropertiesOffset+
+      TFEL_EPX_INLINE Integrator(const EPXData& d)
+	: behaviour(d.DTIME,d.TEMP,d.DTEMP,
+		    d.PROPS+EuroplexusTraits<BV>::elasticPropertiesOffset+
 		    EuroplexusTraits<BV>::thermalExpansionPropertiesOffset,
-		    STATEV,PREDEF,DPRED),
-	dt(*DTIME)
-	  {
-	    using namespace tfel::material;
-	    typedef MechanicalBehaviourTraits<BV> Traits;
-	    typedef typename std::conditional<
-	      Traits::hasStressFreeExpansion,
-	      DrivingVariableInitialiserWithStressFreeExpansion,
-	      DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	    SInitializer::exe(this->behaviour,PROPS);
-	    AInitializer::exe(this->behaviour,PROPS);
-	    DVInitializer::exe(this->behaviour,STRAN,DSTRAN,sfeh);
-	    this->behaviour.setEPXBehaviourDataThermodynamicForces(STRESS);
-	    this->behaviour.setOutOfBoundsPolicy(op);
-	    this->behaviour.initialize();
-	  } // end of Integrator::Integrator
+		    d.STATEV,d.PREDEF,d.DPRED),
+	  dt(*(d.DTIME))
+      {
+	using namespace tfel::material;
+	typedef MechanicalBehaviourTraits<BV> Traits;
+	typedef typename std::conditional<
+	  Traits::hasStressFreeExpansion,
+	  DrivingVariableInitialiserWithStressFreeExpansion,
+	  DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	SInitializer::exe(this->behaviour,d.PROPS);
+	AInitializer::exe(this->behaviour,d.PROPS);
+	DVInitializer::exe(this->behaviour,d.DV0,d.DV1,d.sfeh);
+	this->behaviour.setEUROPLEXUSBehaviourDataThermodynamicForces(d.STRESS);
+	this->behaviour.setOutOfBoundsPolicy(d.op);
+	this->behaviour.initialize();
+      } // end of Integrator::Integrator
 	
       TFEL_EPX_INLINE2
-	void exe(EuroplexusReal *const PNEWDT,
-		 EuroplexusReal *const STRESS,
-		 EuroplexusReal *const DDSDDE,
-		 EuroplexusReal *const STATEV)
+      void exe(const EPXData& d)
       {
 	using Traits = tfel::material::MechanicalBehaviourTraits<BV>;
 	using ConsistentTangentOperatorHandler =
@@ -247,6 +233,10 @@ namespace epx
 	    GeneralConsistentTangentOperatorComputer>::type,
 	  ConsistentTangentOperatorIsNotAvalaible
 	  >::type;
+	EuroplexusReal *const PNEWDT = d.PNEWDT;
+	EuroplexusReal *const STRESS = d.STRESS;
+	EuroplexusReal *const DDSDDE = d.DDSDDE;
+	EuroplexusReal *const STATEV = d.STATEV;
 	if(this->dt<0.){
 	  throwNegativeTimeStepException(Traits::getName());
 	}
@@ -255,13 +245,15 @@ namespace epx
 	  this->computePredictionOperator(*DDSDDE) :
 	  this->integrate(PNEWDT,STRESS,STATEV,DDSDDE);
 	if(r==BV::SUCCESS){
+	  *(d.STATUS)=0;
 	  if((*DDSDDE>0.5)||(*DDSDDE<-0.5)){
 	    ConsistentTangentOperatorHandler::exe(this->behaviour,DDSDDE);
 	  }
 	} else {
 	  if(!(*PNEWDT<1)){
-	    throwInvalidTimeStepScalingFactorOnFailure(*PNEWDT);
+	    throwInvalidTimeStepScalingFactorOnFailure(Traits::getName(),*PNEWDT);
 	  }
+	  *(d.STATUS)=-1;
 	}
       } // end of Integrator::exe
 	
@@ -284,8 +276,11 @@ namespace epx
 	  } else if((-1.25<v)&&(v<-0.75)){
 	    return BV::ELASTIC;
 	  } 
-	  throwInvalidDDSDDException(Traits::getName(),v);
+	  return BV::NOSTIFFNESSREQUESTED;
 	}(DDSDDE);
+	if(smtype==BV::NOSTIFFNESSREQUESTED){
+	  throwInvalidDDSDDEValueException(Traits::getName(),DDSDDE);
+	}
 	const auto r = PredictionOperatorComputer::exe(this->behaviour,smflag,smtype);
 	if(r==BV::FAILURE){
 	  throwPredictionComputationFailedException(Traits::getName());
@@ -321,7 +316,7 @@ namespace epx
 	  } else if((3.75<*DDSDDE)&&(*DDSDDE<4.25)){
 	    r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	  } else {
-	    throwInvalidDDSDDEException(Traits::getName(),*DDSDDE);
+	    throwInvalidDDSDDEValueException(Traits::getName(),*DDSDDE);
 	  }
 	} catch(tfel::material::DivergenceException&){
 	  r=BV::FAILURE;
@@ -338,6 +333,7 @@ namespace epx
 	  this->behaviour.checkBounds();
 	  this->behaviour.EUROPLEXUSexportStateData(STRESS,STATEV);
 	}
+	return r;
       }
 
       BV behaviour;
@@ -426,15 +422,14 @@ namespace epx
       using namespace tfel::material;
       typedef Behaviour<H,EuroplexusReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
-      const unsigned short offset  = (EuroplexusTraits<BV>::elasticPropertiesOffset+
-				      EuroplexusTraits<BV>::thermalExpansionPropertiesOffset);
-      const unsigned short nprops  = EuroplexusTraits<BV>::material_properties_nb;
-      const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
-      const bool is_defined_       = Traits::is_defined;
+      constexpr const unsigned short offset  = (EuroplexusTraits<BV>::elasticPropertiesOffset+
+						EuroplexusTraits<BV>::thermalExpansionPropertiesOffset);
+      constexpr const unsigned short nprops  = EuroplexusTraits<BV>::material_properties_nb+offset;
+      constexpr const bool is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements
-      if((NPROPS!=NPROPS_)&&is_defined_){
+      if((NPROPS!=nprops)&&is_defined_){
 	throwUnMatchedNumberOfMaterialProperties(Traits::getName(),
-						 NPROPS_,NPROPS);
+						 nprops,NPROPS);
       }
     } // end of checkNPROPS
       
@@ -443,16 +438,30 @@ namespace epx
     {
       typedef Behaviour<H,EuroplexusReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-      const unsigned short nstatv  = Traits::internal_variables_nb;
-      const unsigned short NSTATV_ = nstatv == 0 ? 1u : nstatv;
-      const bool is_defined_       = Traits::is_defined;
+      constexpr const unsigned short nstatv  = Traits::internal_variables_nb;
+      constexpr const bool is_defined_       = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
-      if((NSTATV_!=NSTATV)&&is_defined_){
+      if((nstatv!=NSTATV)&&is_defined_){
 	throwUnMatchedNumberOfStateVariables(Traits::getName(),
-					     NSTATV_,NSTATV);
+					     nstatv,NSTATV);
       }
     } // end of checkNSTATV
-      
+
+    TFEL_EPX_INLINE2 static void
+      checkNPREDEF(const EuroplexusInt NPREDEF)
+    {
+      typedef Behaviour<H,EuroplexusReal,false> BV;
+      typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+      constexpr const unsigned short npredef  = Traits::external_variables_nb;
+      constexpr const bool is_defined_        = Traits::is_defined;
+      //Test if the nb of state variables matches Behaviour requirements
+      if((npredef!=NPREDEF)&&is_defined_){
+#pragma message("HERE")
+	// throwUnMatchedNumberOfExternalStateVariables(Traits::getName(),
+	// 					     npredef,NPREDEF);
+      }
+    } // end of checkNPREDEF
+    
   }; // end of struct EuroplexusBehaviourHandler
   
 } // end of namespace epx

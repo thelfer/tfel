@@ -80,7 +80,7 @@ endmacro(latex_presentation2 doc)
 
 if(HAVE_LATEX)
   latex_presentation(mfront-cea)
-  latex_presentation2(tfel-3.0)
+  latex_presentation2(tfel-3.0-overview)
   latex_presentation(writing-portable-behaviour)
 endif(HAVE_LATEX)
 

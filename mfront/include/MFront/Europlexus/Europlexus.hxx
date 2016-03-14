@@ -29,6 +29,7 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Material/OutOfBoundsPolicy.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace epx{
@@ -53,109 +54,29 @@ namespace epx{
 					     const EuroplexusReal *const,
 					     const EuroplexusReal *const,
 					     const EuroplexusInt);
-  /*!
-   * \brief class defining the convertion from europlexus to mfront for
-   * thermodynamic forces
-   * \tparam H: modelling hypothesis
-   */
-  template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct ImportThermodynamicForces
-  {
-    //! space dimension
-    static constexpr const unsigned short N =
-      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-    /*!
-     * \tparam T: type of the thermodynamique forces
-     * \param[out] s: symmetric tensor to be filled
-     * \param[in]  v: values
-     */
-    template<typename T>
-    static inline void
-    exe(tfel::math::stensor<N,T>& s,const EuroplexusReal* const v){
-      s.importTab(v);
-    } // end of exe
-  }; // end of struct ImportThermodynamicForces
-  /*!
-   * \brief partial specialisation of the ImportThermodynamicForces
-   * for the plane stress modelling hypothesis.
-   */
-  template<>
-  struct ImportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
-  {
-    /*!
-     * \tparam T: type of the thermodynamique forces
-     * \param[out] s: symmetric tensor to be filled
-     * \param[in]  v: values
-     */
-    template<typename T>
-    static inline void
-    exe(tfel::math::stensor<2u,T>& s,const EuroplexusReal* const v){
-#if defined __INTEL_COMPILER
-      const EuroplexusReal cste =
-	tfel::math::constexpr_fct::sqrt(EuroplexusReal(2));
-#else
-      constexpr const EuroplexusReal cste =
-	tfel::math::constexpr_fct::sqrt(EuroplexusReal(2));
-#endif
-      s[0]=v[0];
-      s[1]=v[1];
-      s[2]=EuroplexusReal{0};
-      s[3]=v[2]*cste;
-    } // end of exe
-  }; // end of struct ImportThermodynamicForces
-  /*!
-   * \brief class defining the convertion from mfront to europlexus for
-   * thermodynamic forces
-   * \tparam H: modelling hypothesis
-   */
-  template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct ExportThermodynamicForces
-  {
-    //! space dimension
-    static constexpr const unsigned short N =
-      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-    /*!
-     * \tparam T: type of the thermodynamique forces
-     * \param[out] v: values
-     * \param[in]  s: symmetric tensor to be exported
-     */
-    template<typename T>
-    static inline void
-    exe(EuroplexusReal* const v,const tfel::math::stensor<N,T>& s){
-      s.exportTab(v);
-    } // end of exe
-  }; // end of struct ExportThermodynamicForces
-  /*!
-   * \brief partial specialisation of the ExportThermodynamicForces
-   * for the plane stress modelling hypothesis.
-   */
-  template<>
-  struct ExportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
-  {
-    /*!
-     * \tparam T: type of the thermodynamique forces
-     * \param[out] v: values
-     * \param[in]  s: symmetric tensor to be exported
-     */
-    template<typename T>
-    static inline void
-    exe(EuroplexusReal* const v,const tfel::math::stensor<2u,T>& s){
-#if defined __INTEL_COMPILER
-      const EuroplexusReal cste =
-	1/tfel::math::constexpr_fct::sqrt(EuroplexusReal(2));
-#else
-      constexpr const EuroplexusReal cste =
-	1/tfel::math::constexpr_fct::sqrt(EuroplexusReal(2));
-#endif
-      v[0]=s[0];
-      v[1]=s[1];
-      v[2]=s[3]*cste;
-    } // end of exe
-  }; // end of struct ExportThermodynamicForces
   
-} // end of namespace epx
+  struct EPXData{
+    EuroplexusInt  *const STATUS;
+    EuroplexusReal *const STRESS;
+    EuroplexusReal *const STATEV;
+    EuroplexusReal *const DDSDDE;
+    EuroplexusReal *const PNEWDT;
+    const EuroplexusInt NSTATV;
+    const EuroplexusReal *const DV0;
+    const EuroplexusReal *const DV1;
+    const EuroplexusReal *const DTIME;
+    const EuroplexusReal *const TEMP;
+    const EuroplexusReal *const DTEMP;
+    const EuroplexusReal *const PROPS;
+    const EuroplexusInt  NPROPS;
+    const EuroplexusReal *const PREDEF;
+    const EuroplexusReal *const DPRED;
+    const EuroplexusInt   NPREDEF;
+    const tfel::material::OutOfBoundsPolicy op;
+    const StressFreeExpansionHandler& sfeh;
+  }; // end of EPXData
 
-// #include"MFront/Europlexus/Europlexus.ixx"
+} // end of namespace epx
 
 #endif /* LIB_MFRONT_EPX_H_ */
 

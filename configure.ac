@@ -540,7 +540,7 @@ AC_OUTPUT([debug.sh
 	   docs/presentations/mtest-presentation/mtest-presentation.tex
 	   docs/presentations/mfront-user-meeting-2015/Makefile
 	   docs/presentations/mfront-user-meeting-2015/mfront-cea.tex
-	   docs/presentations/mfront-user-meeting-2015/tfel-3.0.tex
+	   docs/presentations/mfront-user-meeting-2015/tfel-3.0-overview.tex
 	   docs/presentations/mfront-user-meeting-2015/writing-portable-behaviour.tex
 	   docs/presentations/portable-behaviour/Makefile
 	   docs/presentations/Materiaux2014/Makefile

@@ -103,14 +103,33 @@ namespace epx{
     msg += "negative time step detected for behaviour '"+b+"'";
     throw(runtime_error(msg));
   } // end of EuroplexusInterfaceExceptions::throwNegativeTimeStepException
+
+  void
+  EuroplexusInterfaceExceptions::throwPredictionComputationFailedException(const std::string& b)
+  {
+    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwPredictionComputationFailedException: "
+			     "prediction computation failed for behaviour '"+b+"'"));
+  }
+
+  void
+  EuroplexusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(const std::string& b)
+  {
+    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
+			     "behaviour '"+b+"' can't compute a prediction operator"));
+  } // end of EuroplexusInterfaceExceptions::throwBehaviourIntegrationFailedException
+
+  void
+  EuroplexusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(const std::string& b)
+  {
+    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
+			     "behaviour '"+b+"' can't compute a consistent tangent operator"));
+  } // end of EuroplexusInterfaceExceptions::throwBehaviourIntegrationFailedException
   
   void
   EuroplexusInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
-    using namespace std;
-    string msg("EuroplexusInterfaceExceptions::throwUnsupportedStressFreeExpansionException : ");
-    msg += "behaviour '"+b+"' can handle stress-free expansion but the Europlexus interface can't";
-    throw(runtime_error(msg));
+    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
+			     "behaviour '"+b+"' can handle stress-free expansion but the Europlexus interface can't"));
   } // end of EuroplexusInterfaceExceptions::throwUnsupportedStressFreeExpansionException
 
   void

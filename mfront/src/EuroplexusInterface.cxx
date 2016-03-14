@@ -38,44 +38,44 @@ namespace mfront{
   static void
   writeEPXArguments(std::ostream& out)
   {
-    out << "(epx::EuroplexusReal *const,\n"
+    out << "(epx::EuroplexusInt *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
-	<< " epx::EuroplexusInt  *const,\n"
+      	<< " epx::EuroplexusReal *const,\n"
+	<< " const epx::EuroplexusInt  *const,\n"
+      	<< " const epx::EuroplexusInt  *const,\n"
+	<< " const epx::EuroplexusReal *const,\n"
+	<< " const epx::EuroplexusReal *const,\n"
+	<< " const epx::EuroplexusReal *const,\n"
+	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusInt  *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusReal *const,\n"
-	<< " const epx::EuroplexusInt  *const,\n"
-	<< " const epx::EuroplexusInt  *const,\n"
 	<< " const epx::EuroplexusInt  *const)";
   } // end of writeEuroplexusArguments
 
   static void
   writeEPXArgumentsII(std::ostream& out)
   {
-    out << "(epx::EuroplexusReal *const STRESS,\n"
+    out << "(epx::EuroplexusInt  *const STATUS,\n"
+	<< " epx::EuroplexusReal *const STRESS,\n"
 	<< " epx::EuroplexusReal *const STATEV,\n"
 	<< " epx::EuroplexusReal *const DDSDDE,\n"
 	<< " epx::EuroplexusReal *const PNEWDT,\n"
-	<< " epx::EuroplexusInt  *const KINC,\n"
-	<< " const epx::EuroplexusInt  *const NDI,\n"
+	<< " const epx::EuroplexusInt  *const NSTATV,\n"
+	<< " const epx::EuroplexusInt *const HYPOTHESIS,\n"
 	<< " const epx::EuroplexusReal *const DTIME,\n"
 	<< " const epx::EuroplexusReal *const F0,\n"
 	<< " const epx::EuroplexusReal *const F1,\n"
+	<< " const epx::EuroplexusReal *const PROPS,\n"
+	<< " const epx::EuroplexusInt  *const NPROPS,\n"
 	<< " const epx::EuroplexusReal *const TEMP,\n"
 	<< " const epx::EuroplexusReal *const DTEMP,\n"
 	<< " const epx::EuroplexusReal *const PREDEF,\n"
 	<< " const epx::EuroplexusReal *const DPRED,\n"
-	<< " const epx::EuroplexusReal *const PROPS,\n"
-	<< " const epx::EuroplexusInt  *const NPROPS,\n"
-	<< " const epx::EuroplexusInt  *const NSTATV,\n"
 	<< " const epx::EuroplexusInt  *const NPREDEF)";
   } // end of writeEPXArguments
   
@@ -167,7 +167,7 @@ namespace mfront{
     using namespace tfel::system;
     if(mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       throw(std::runtime_error("EuroplexusInterface::endTreatment : "
-			       "the europlexus interface only supports small and "
+			       "the europlexus interface only supports "
 			       "finite strain behaviours"));
     }
     // get the modelling hypotheses to be treated
@@ -176,10 +176,9 @@ namespace mfront{
     // output directories
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Europlexus");
-    systemCall::mkdir("europlexus");
 
     // header
-    auto fname = "epx"+name+".hxx";
+    auto fname = "europlexus"+name+".hxx";
     ofstream out("include/MFront/Europlexus/"+fname);
     if(!out){
       throw(std::runtime_error("EuroplexusInterface::endTreatment : "
@@ -309,23 +308,37 @@ namespace mfront{
     if(getDebugMode()){
       out << "using namespace std;\n";
     }
+    out << "using tfel::material::ModellingHypothesis;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
       out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    this->generateMTestFile1(out);
-    out << "if(epx::EuroplexusInterface<tfel::material::" << mb.getClassName() 
-	<< ">::exe(DTIME,DDSDDE,F0,F1,TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,PNEWDT,"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy(),"
-	<< sfeh << ")!=0){\n";
-    this->generateMTestFile2(out,mb.getBehaviourType(),
-			     name,"",mb);
-    out << "*PNEWDT = -1.;\n";
-    out << "return;\n";
-    out << "}\n";
+    // this->generateMTestFile1(out);
+    out << "const auto h = [](const epx::EuroplexusInt hv){\n"
+	<< "  if(hv==0){\n"
+	<< "	return ModellingHypothesis::TRIDIMENSIONAL;\n"
+	<< "  } else if(hv==1){\n"
+	<< "	return ModellingHypothesis::PLANESTRAIN;\n"
+	<< "  } else if(hv==2){\n"
+	<< "	return ModellingHypothesis::PLANESTRESS;\n"
+	<< "  } else {\n"
+	<< "  	return ModellingHypothesis::UNDEFINEDHYPOTHESIS;\n"
+	<< "  }\n"
+	<< "}(*HYPOTHESIS);\n"
+	<< "if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){\n"
+	<< "*STATUS=-1;\n"
+	<< "return;\n"
+	<< "}\n"
+	<< "const epx::EPXData d = {STATUS,STRESS,STATEV,PNEWDT,DDSDDE,\n"
+	<< "                        *NSTATV,F0,F1,DTIME,TEMP,DTEMP,\n"
+	<< "                        PROPS,*NPROPS,PREDEF,DPRED,*NPREDEF,\n"
+	<< "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
+	<< "                        " << sfeh << "};\n"
+	<< "epx::EuroplexusInterface<tfel::material::" << mb.getClassName() << ">::exe(d,h);";
+    // this->generateMTestFile2(out,mb.getBehaviourType(),
+    // 			     name,"",mb);
     out << "}\n";
     out << "} // end of extern \"C\"\n";
     out.close();
@@ -351,8 +364,7 @@ namespace mfront{
       ov += this->getTypeSize(v.first.type,1u);
     }
     os << "}\n\n";
-    os << "void set" << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_,\n"
-       << "                                                          const Type* const )\n"
+    os << "void set" << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_)\n"
        << "{\n";
     for(const auto& v : mb.getMainVariables()){
       this->writeBehaviourDataThermodynamicForceSetter(os,v.second,of);
@@ -360,6 +372,72 @@ namespace mfront{
     }
     os << "}\n\n";
   } // end of EuroplexusInterface::writeBehaviourDataMainVariablesSetters
+
+  void 
+  EuroplexusInterface::writeBehaviourDataDrivingVariableSetter(std::ofstream& os,
+							       const DrivingVariable& v,
+							       const SupportedTypes::TypeSize o) const
+  {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    if(!v.increment_known){
+      if(this->getTypeFlag(v.type)!=SupportedTypes::Tensor){
+	throw(std::runtime_error("EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
+				 "unsupported driving variable type"));
+      }
+      if(!o.isNull()){
+	os << "tfel::fsalgo::copy<TensorSize>::exe(" << iprefix << "stran+"  << o
+	   <<",this->" << v.name << "0.begin());\n";
+      } else {
+	os << "tfel::fsalgo::copy<TensorSize>::exe(" << iprefix << "stran,this->"
+	   << v.name << "0.begin());\n";
+      }
+    } else {
+      if(this->getTypeFlag(v.type)!=SupportedTypes::Stensor){
+	throw(std::runtime_error("EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
+				 "unsupported driving variable type"));
+      }
+      if(!o.isNull()){
+	os << "tfel::fsalgo::copy<StensorSize>::exe(" << iprefix << "stran+"  << o
+	   <<",this->" << v.name << ".begin());\n";
+      } else {
+	os << "tfel::fsalgo::copy<StensorSize>::exe(" << iprefix << "stran,this->"
+	   << v.name << ".begin());\n";
+      }
+    }
+  }
+
+  void 
+  EuroplexusInterface::writeIntegrationDataDrivingVariableSetter(std::ofstream& os,
+								 const DrivingVariable& v,
+								 const SupportedTypes::TypeSize o) const
+  {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    if(!v.increment_known){
+      if(this->getTypeFlag(v.type)!=SupportedTypes::Tensor){
+	throw(std::runtime_error("EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
+				 "unsupported driving variable type"));
+      }
+      if(!o.isNull()){
+	os << "tfel::fsalgo::copy<TensorSize>::exe(" << iprefix << "dstran+"  << o
+	   <<",this->" << v.name << "1.begin());\n";
+      } else {
+	os << "tfel::fsalgo::copy<TensorSize>::exe(" << iprefix << "dstran,this->"
+	   << v.name << "1.begin());\n";
+      }
+    } else {
+      if(this->getTypeFlag(v.type)!=SupportedTypes::Stensor){
+	throw(std::runtime_error("EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
+				 "unsupported driving variable type"));
+      }
+      if(!o.isNull()){
+	os << "tfel::fsalgo::copy<StensorSize>::exe(" << iprefix << "dstran+"  << o
+	   <<",this->d" << v.name << ".begin());\n";
+      } else {
+	os << "tfel::fsalgo::copy<StensorSize>::exe(" << iprefix << "dstran,this->d"
+	   << v.name << ".begin());\n";
+      }
+    }
+  }
   
   void 
   EuroplexusInterface::writeBehaviourDataThermodynamicForceSetter(std::ofstream& os,
@@ -368,13 +446,13 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
-      os << "epx::ImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
+      os << "tfel::fsalgo::copy<StensorSize>::exe(";
       if(!o.isNull()){
-	os << iprefix << "stress_+" << o << ");\n";
+	os << iprefix << "stress_+" << o;
       } else {
-	os << iprefix << "stress_);\n";
+	os << iprefix << "stress_";
       }
-      //      os << "tfel::math::change_basis(this->" << f.name << ",europlexus_dr);\n";
+      os << ",this->" << f.name << ".begin());\n";
     } else {
       throw(std::runtime_error("EuroplexusInterface::writeBehaviourDataMainVariablesSetters : "
 			       "unsupported forces type"));
@@ -390,12 +468,11 @@ namespace mfront{
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = this->getTypeFlag(f.type);
     if(flag==SupportedTypes::Stensor){
+      out << "tfel::fsalgo::copy<StensorSize>::exe(" << f.name << ".begin()," << a;
       if(!o.isNull()){
-	out << "epx::ExportThermodynamicForces<hypothesis>::exe("
-	    << a << "+" << o << ",this->sig);\n";
-      } else {
-	out << "epx::ExportThermodynamicForces<hypothesis>::exe(" << a << ",this->sig);\n";
+	out << "+" << o;
       }
+      out << ");\n";
     } else {
       throw(std::runtime_error("EuroplexusInterface::exportThermodynamicForce: "
 			       "unsupported forces type"));
@@ -405,17 +482,6 @@ namespace mfront{
   void
   EuroplexusInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
   {
-    using namespace std;
-    out << "ModellingHypothesis::Hypothesis h;\n";
-    out << "if( *NTENS == 6 ){\n";
-    out << "  h = ModellingHypothesis::TRIDIMENSIONAL;\n";
-    out << "} else if(*NTENS==3){\n";
-    out << "  h = ModellingHypothesis::PLANESTRESS;\n";
-    out << "} else if(*NTENS==4){\n";
-    out << "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n";
-    out << "} else {\n";
-    out << "  return;\n";
-    out << "}\n";
     out << "mg.setModellingHypothesis(h);\n";
   } // end of EuroplexusInterface::writeMTestFileGeneratorSetModellingHypothesis
   

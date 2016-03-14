@@ -15,7 +15,6 @@
 #define LIB_MFRONTCPPLAWINTERFACE_H_ 
 
 #include<string>
-#include<fstream>
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
@@ -113,13 +112,7 @@ namespace mfront{
 		      const std::vector<VariableBoundsDescription>&,
 		      const std::vector<VariableBoundsDescription>&);
 
-    std::ofstream headerFile;
-
-    std::ofstream srcFile;
-
     std::string headerFileName;
-
-    std::string srcFileName;
     
   }; // end of MfrontCppMaterialPropertyInterface
 

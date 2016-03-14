@@ -1,6 +1,8 @@
 add_subdirectory(interfaces)
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
+include_directories("${PROJECT_SOURCE_DIR}/include")
+link_directories("${PROJECT_BINARY_DIR}/src/Tests")
 
 macro(add_mfront_generated_source lib interface ext file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
@@ -15,11 +17,11 @@ macro(add_mfront_generated_source lib interface ext file)
       set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
     endif(WIN32)
   endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-  if("${ext}" STREQUAL "")
+  if("${interface}" STREQUAL "c")
     set(mfront_output "src/${file}.cxx")
-  else("${ext}" STREQUAL "")
+  else("${interface}" STREQUAL "c")
     set(mfront_output "src/${file}-${ext}.cxx")
-  endif("${ext}" STREQUAL "")
+  endif("${interface}" STREQUAL "c")
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(mfront_flags "--debug")
   else(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -79,11 +81,7 @@ macro(mfront_check_library lib interface ext)
     message(FATAL_ERROR "mfront_library : no source specified")
   endif(${ARGC} LESS 1)
   foreach(source ${ARGN})
-    if("${ext}" STREQUAL "")
-      add_mfront_generated_source(${lib} ${interface} "" ${source})
-    else("${ext}" STREQUAL "")
-      add_mfront_generated_source(${lib} ${interface} ${ext} ${source})
-    endif("${ext}" STREQUAL "")
+    add_mfront_generated_source(${lib} ${interface} "${ext}" ${source})
   endforeach(source)
   add_library(${lib} SHARED EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
@@ -94,6 +92,7 @@ macro(mfront_check_library lib interface ext)
 endmacro(mfront_check_library)
 
 set(mfront_SOURCES
+  ErrnoHandlingCheck
   YoungModulusTest
   PoissonRatioTest
   YoungModulusTest_1
@@ -155,6 +154,16 @@ if(HAVE_CASTEM)
   endif(WIN32)
 endif(HAVE_CASTEM)
 
+mfront_dependencies(MFrontMaterialProperties-cxx
+  VanadiumAlloy_YoungModulus_SRMA
+  VanadiumAlloy_PoissonRatio_SRMA)
+mfront_check_library(MFrontMaterialProperties-cxx cxx cxx ${mfront_SOURCES})
+if(WIN32)
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    set_target_properties(MFrontMaterialProperties-cxx PROPERTIES LINK_FLAGS "-Wl,--kill-at")
+  endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+endif(WIN32)
+
 if(HAVE_FORTRAN)
   mfront_dependencies(MFrontMaterialProperties-fortran
     VanadiumAlloy_YoungModulus_SRMA
@@ -172,6 +181,16 @@ add_test(NAME test-c COMMAND test-c)
 add_dependencies(check test-c)
 add_dependencies(test-c MFrontMaterialProperties)
 target_link_libraries(test-c MFrontMaterialProperties)
+
+add_executable(test-cxx EXCLUDE_FROM_ALL test-cxx.cxx)
+add_test(NAME test-cxx COMMAND test-cxx)
+add_dependencies(check test-cxx)
+add_dependencies(test-cxx MFrontMaterialProperties-cxx)
+target_link_libraries(test-cxx MFrontMaterialProperties-cxx
+  TFELTests)
+if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+  target_link_libraries(test-cxx "-lgcov")
+endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 
 if(HAVE_FORTRAN)
   IF(GNU_FORTRAN_COMPILER)

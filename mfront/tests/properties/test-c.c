@@ -13,6 +13,7 @@
 #include<stdlib.h>
 #include<assert.h>
 
+#include"ErrnoHandlingCheck.hxx"
 #include"VanadiumAlloy_YoungModulus_SRMA.hxx"
 #include"VanadiumAlloy_PoissonRatio_SRMA.hxx"
 #include"VanadiumAlloy_ThermalExpansion_SRMA.hxx"
@@ -20,12 +21,15 @@
 #include"VanadiumAlloy_SpecificHeat_SRMA.hxx"
 
 int main(void){
-  
+  // check if material properties are correctly evaluated
   const double T = 900.;
   const double y = 127.8e9 * (1.-7.825e-5*(T-293.15));
   const double n = 0.3272  * (1.-3.056e-5*(T-293.15));
   assert(fabs(VanadiumAlloy_YoungModulus_SRMA(900.)-y)<1.e-14*y);
   assert(fabs(VanadiumAlloy_PoissonRatio_SRMA(900.)-n)<1.e-14*n);
-
+  // check for errno value
+  assert(isnan(ErrnoHandlingCheck(2)));
+  assert(!isnan(ErrnoHandlingCheck(0)));
+  assert(isnan(ErrnoHandlingCheck(-2)));
   return EXIT_SUCCESS;
 }
