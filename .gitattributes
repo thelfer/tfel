@@ -3809,6 +3809,8 @@ mtest/include/MTest/CrossedDelta2AccelerationAlgorithm.hxx -text
 mtest/include/MTest/CrossedSecantAccelerationAlgorithm.hxx -text
 mtest/include/MTest/CurrentState.hxx -text
 mtest/include/MTest/CyranoBehaviour.hxx -text
+mtest/include/MTest/EuroplexusFiniteStrainBehaviour.hxx -text
+mtest/include/MTest/EuroplexusStandardBehaviour.hxx -text
 mtest/include/MTest/Evolution.hxx -text
 mtest/include/MTest/FunctionEvolution.hxx -text
 mtest/include/MTest/GenericSolver.hxx -text
@@ -3875,6 +3877,8 @@ mtest/src/CrossedDelta2AccelerationAlgorithm.cxx -text
 mtest/src/CrossedSecantAccelerationAlgorithm.cxx -text
 mtest/src/CurrentState.cxx -text
 mtest/src/CyranoBehaviour.cxx -text
+mtest/src/EuroplexusFiniteStrainBehaviour.cxx -text
+mtest/src/EuroplexusStandardBehaviour.cxx -text
 mtest/src/Evolution.cxx -text
 mtest/src/FunctionEvolution.cxx -text
 mtest/src/GenericSolver.cxx -text

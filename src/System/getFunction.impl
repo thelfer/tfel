@@ -404,6 +404,36 @@ extern "C" {
 				    const AsterIntegerType  *const))dlsym(lib,name);
   }
 
+  void (TFEL_ADDCALL_PTR tfel_getEuroplexusFunction(LibraryHandlerPtr l,
+						    const char * const n))(EuroplexusIntegerType *const,
+									   EuroplexusRealType *const,
+									   EuroplexusRealType *const,
+									   EuroplexusRealType *const,
+									   EuroplexusRealType *const,
+									   const EuroplexusIntegerType  *const,
+									   const EuroplexusIntegerType  *const,
+									   const EuroplexusRealType *const,
+									   const EuroplexusRealType *const,
+									   const EuroplexusRealType *const,
+									   const EuroplexusRealType *const,
+									   const EuroplexusIntegerType  *const,
+									   const EuroplexusRealType *const,
+									   const EuroplexusRealType *const,
+									   const EuroplexusRealType *const,
+									   const EuroplexusRealType *const,
+									   const EuroplexusIntegerType  *const)
+  {
+    return (void (TFEL_ADDCALL_PTR)(   EuroplexusIntegerType *const,      EuroplexusRealType *const,
+				          EuroplexusRealType *const,      EuroplexusRealType *const,
+				          EuroplexusRealType *const,const EuroplexusIntegerType  *const,
+				    const EuroplexusIntegerType  *const,const EuroplexusRealType *const,
+				    const EuroplexusRealType *const,const EuroplexusRealType *const,
+				    const EuroplexusRealType *const,const EuroplexusIntegerType  *const,
+				    const EuroplexusRealType *const,const EuroplexusRealType *const,
+				    const EuroplexusRealType *const,const EuroplexusRealType *const,
+				    const EuroplexusIntegerType  *const))dlsym(l,n);
+  }
+  
   double (TFEL_ADDCALL_PTR tfel_getCFunction0(LibraryHandlerPtr lib,const char * const name))(void){
     return (double (TFEL_ADDCALL_PTR)(void)) dlsym(lib,name);
   } 

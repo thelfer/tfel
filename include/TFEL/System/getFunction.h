@@ -287,7 +287,35 @@ extern "C" {
 										      const AsterRealType *const,
 										      AsterRealType *const,
 										      const AsterIntegerType  *const);
- 
+ /*!
+   * \brief this function returns a pointer to an europlexus external
+   * function.
+   *
+   * This function is a simple wrapper around dlsym. We can check if a
+   * symbol with the given name exists but cannot check if it points to
+   * a function with that prototype.
+   *
+   * \param l: library opened through dlopen
+   * \param f: name of the function to be checked
+   * \return a function pointer if the call succeed, the NULL pointer if not.
+   */
+  void (TFEL_ADDCALL_PTR tfel_getEuroplexusFunction(LibraryHandlerPtr,const char * const))(EuroplexusIntegerType *const,
+											   EuroplexusRealType *const,
+											   EuroplexusRealType *const,
+											   EuroplexusRealType *const,
+											   EuroplexusRealType *const,
+											   const EuroplexusIntegerType  *const,
+											   const EuroplexusIntegerType  *const,
+											   const EuroplexusRealType *const,
+											   const EuroplexusRealType *const,
+											   const EuroplexusRealType *const,
+											   const EuroplexusRealType *const,
+											   const EuroplexusIntegerType  *const,
+											   const EuroplexusRealType *const,
+											   const EuroplexusRealType *const,
+											   const EuroplexusRealType *const,
+											   const EuroplexusRealType *const,
+											   const EuroplexusIntegerType  *const);
   /*!
    * \brief this function returns a function of type
    * double (*)(const double * const)

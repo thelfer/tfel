@@ -94,6 +94,12 @@ libTFELMTest_la_SOURCES += AsterStandardBehaviour.cxx    \
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAsterInterface
 endif
 
+if HAVE_EUROPLEXUS
+libTFELMTest_la_SOURCES += EuroplexusStandardBehaviour.cxx    \
+			   EuroplexusFiniteStrainBehaviour.cxx
+libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lEuroplexusInterface
+endif
+
 if HAVE_ABAQUS
 libTFELMTest_la_SOURCES += AbaqusStandardBehaviour.cxx    \
 			   AbaqusSmallStrainBehaviour.cxx

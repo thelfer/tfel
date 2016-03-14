@@ -734,6 +734,30 @@ namespace tfel
       return fct;
     }
 
+    EuroplexusFctPtr
+    ExternalLibraryManager::getEuroplexusFunction(const std::string& l,
+						  const std::string& f)
+    {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      EuroplexusFctPtr fct = ::tfel_getEuroplexusFunction(lib,f.c_str());
+      if(fct==nullptr){
+	std::string msg("ExternalLibraryManager::getEuroplexusFunction : ");
+	msg += " could not load Europlexus function '"+f+"' (";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	  msg += getLastWin32Error();
+#else
+	  msg += ::dlerror();
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	msg += ")";
+	throw(std::runtime_error(msg));
+      }
+      return fct;
+    }
+    
     void
     ExternalLibraryManager::getUMATNames(std::vector<std::string>& vars,
 					 const std::string& l,

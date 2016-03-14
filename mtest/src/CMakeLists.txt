@@ -96,6 +96,16 @@ set(TFELMTest_LDADD
     ${TFELMTest_LDADD})
 endif(HAVE_ASTER)
 
+if(HAVE_EUROPLEXUS)
+set(TFELMTest_SOURCES
+    EuroplexusStandardBehaviour.cxx
+    EuroplexusFiniteStrainBehaviour.cxx
+    ${TFELMTest_SOURCES})
+set(TFELMTest_LDADD
+    EuroplexusInterface
+    ${TFELMTest_LDADD})
+endif(HAVE_EUROPLEXUS)
+
 if(HAVE_ABAQUS)
 set(TFELMTest_SOURCES
     AbaqusStandardBehaviour.cxx
