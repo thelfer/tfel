@@ -105,29 +105,27 @@ namespace mtest
 	  tmp.push_back("ThermalExpansion3");
 	}
       } else { 
-	string msg("EuroplexusStandardBehaviour::EuroplexusStandardBehaviour : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(runtime_error("EuroplexusStandardBehaviour::EuroplexusStandardBehaviour: "
+			    "unsupported modelling hypothesis"));
       }
     } else {
-      string msg("EuroplexusStandardBehaviour::EuroplexusStandardBehaviour : "
-		 "unsupported behaviour type "
-		 "(neither isotropic nor orthotropic)");
-      throw(runtime_error(msg));
+      throw(runtime_error("EuroplexusStandardBehaviour::EuroplexusStandardBehaviour: "
+			  "unsupported behaviour type "
+			  "(neither isotropic nor orthotropic)"));
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
 
   tfel::math::tmatrix<3u,3u,real>
   EuroplexusStandardBehaviour::getRotationMatrix(const tfel::math::vector<real>&,
-					    const tfel::math::tmatrix<3u,3u,real>& r) const
+						 const tfel::math::tmatrix<3u,3u,real>& r) const
   {
     return r;
   } // end of EuroplexusStandardBehaviour::getRotationMatrix
 
   void
   EuroplexusStandardBehaviour::allocate(BehaviourWorkSpace& wk,
-				   const tfel::material::ModellingHypothesis::Hypothesis h) const
+					const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     const auto ndv     = this->getDrivingVariablesSize(h);
     const auto nth     = this->getThermodynamicForcesSize(h);
@@ -135,8 +133,8 @@ namespace mtest
     wk.kt.resize(nth,ndv);
     wk.k.resize(nth,ndv);
     wk.D.resize(nth,ndv);
-    wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
-    wk.ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    // wk.mps.resize(this->mpnames.size(),real(0));
+    // wk.ivs.resize(nstatev,real(0));
     wk.nk.resize(nth,ndv);
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
@@ -152,9 +150,9 @@ namespace mtest
   
   std::pair<bool,real>
   EuroplexusStandardBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
-						    const CurrentState& s,
-						    const tfel::material::ModellingHypothesis::Hypothesis h,
-						    const StiffnessMatrixType ktype) const
+							 const CurrentState& s,
+							 const tfel::material::ModellingHypothesis::Hypothesis h,
+							 const StiffnessMatrixType ktype) const
   {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return {false,real(-1)};
@@ -165,10 +163,10 @@ namespace mtest
 
   std::pair<bool,real>
   EuroplexusStandardBehaviour::integrate(CurrentState& s,
-				    BehaviourWorkSpace& wk,
-				    const tfel::material::ModellingHypothesis::Hypothesis h,
-				    const real dt,
-				    const StiffnessMatrixType ktype) const
+					 BehaviourWorkSpace& wk,
+					 const tfel::material::ModellingHypothesis::Hypothesis h,
+					 const real dt,
+					 const StiffnessMatrixType ktype) const
   {
     return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
   } // end of EuroplexusStandardBehaviour::integrate

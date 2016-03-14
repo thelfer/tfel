@@ -14,6 +14,7 @@
 #ifndef LIB_MTEST_MTESTUMATBEHAVIOURBASE_H_
 #define LIB_MTEST_MTESTUMATBEHAVIOURBASE_H_ 
 
+#include"TFEL/Math/matrix.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/Behaviour.hxx"
 
@@ -191,7 +192,7 @@ namespace mtest
      * \param[in]  b     : if false, a prediction operator is requested
      */
     void
-    initializeTangentOperator(BehaviourWorkSpace&,
+    initializeTangentOperator(tfel::math::matrix<real>&,
 			      const StiffnessMatrixType,
 			      const bool) const;
     //! hypothesis

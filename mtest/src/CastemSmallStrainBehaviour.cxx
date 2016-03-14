@@ -369,7 +369,7 @@ namespace mtest
     }
     fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
-    UmatBehaviourBase::initializeTangentOperator(wk,ktype,b);
+    UmatBehaviourBase::initializeTangentOperator(wk.D,ktype,b);
     // state variable initial values
     if(s.iv0.size()!=0){
       copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());

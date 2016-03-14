@@ -732,6 +732,54 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterdruckerprager.mtest
            mfront/tests/behaviours/aster/asterdruckerprager2.mtest
            mfront/tests/behaviours/epx/Makefile
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig11-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig22-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-1-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-2-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-1-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-2-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-3-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-4-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-5-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-shear-1-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-shear-2-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-shear-1-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-shear-2-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-shear-3-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-shear-4-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-shear-5-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity2-shear-6-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-1-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-2-2D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-1-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-2-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-3-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-4-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-5-3D.mtest
+           mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-6-3D.mtest
            mfront/tests/behaviours/abaqus/Makefile
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest
            mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest

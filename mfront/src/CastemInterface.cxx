@@ -216,9 +216,6 @@ namespace mfront{
   } // end of CastemInterface::getUmatFunctionName
 
   CastemInterface::CastemInterface()
-    : useTimeSubStepping(false),
-      doSubSteppingOnInvalidResults(false),
-      maximumSubStepping(0u)
   {}
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>

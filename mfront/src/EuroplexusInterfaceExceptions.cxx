@@ -105,6 +105,23 @@ namespace epx{
   } // end of EuroplexusInterfaceExceptions::throwNegativeTimeStepException
 
   void
+  EuroplexusInterfaceExceptions::throwInvalidDDSDDEValueException(const std::string& b,
+								  const EuroplexusReal v){
+    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwInvalidDDSDDEValueException: "
+			     "invalid value "+std::to_string(v)+" for DDSDDE. "
+			     "Invalid call to behaviour '"+b+"'"));
+  } // end of EuroplexusInterfaceExceptions::throwInvalidDDSDDEValueException
+
+  void
+  EuroplexusInterfaceExceptions::throwInvalidTimeStepScalingFactorOnFailure(const std::string& b,
+									    const EuroplexusReal v){
+    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwInvalidTimeStepScalingFactorOnFailure: "
+			     "invalid value '"+std::to_string(v)+"' for time"
+			     "step scaling factor on failure. "
+			     "Invalid call to behaviour '"+b+"'"));
+  } // end of EuroplexusInterfaceExceptions::throwInvalidDDSDDEValueException
+  
+  void
   EuroplexusInterfaceExceptions::throwPredictionComputationFailedException(const std::string& b)
   {
     throw(std::runtime_error("EuroplexusInterfaceExceptions::throwPredictionComputationFailedException: "

@@ -62,14 +62,16 @@ namespace epx
 
     TFEL_EPX_INLINE2 static void
     exe(const EPXData& d,
-	const tfel::material::ModellingHypothesis::Hypothesis h)
+	const EuroplexusInt h)
     {
-      using namespace tfel::material;
-      if(h==ModellingHypothesis::PLANESTRESS){
+      using tfel::material::ModellingHypothesis;
+      if(h==3){
+	CallBehaviour<ModellingHypothesis::AXISYMMETRICAL>::exe(d);
+      } else if(h==2){
 	CallBehaviour<ModellingHypothesis::PLANESTRESS>::exe(d);
-      } else if(h==ModellingHypothesis::PLANESTRAIN){
+      } else if(h==1){
 	CallBehaviour<ModellingHypothesis::PLANESTRAIN>::exe(d);
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+      } else if(h==0){
 	CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(d);
       } else {
         EuroplexusInterfaceExceptions::displayUnsupportedHypothesisMessage();

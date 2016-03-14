@@ -369,11 +369,11 @@ namespace mfront{
 
     std::vector<FiniteStrainStrategy> finiteStrainStrategies;
 
-    bool useTimeSubStepping;
+    bool useTimeSubStepping = false;
 
-    bool doSubSteppingOnInvalidResults;
+    bool doSubSteppingOnInvalidResults = false;
 
-    unsigned short maximumSubStepping;
+    unsigned short maximumSubStepping = 0u;
 
   }; // end of CastemInterface
 

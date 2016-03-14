@@ -61,17 +61,17 @@ namespace epx{
     EuroplexusReal *const STATEV;
     EuroplexusReal *const DDSDDE;
     EuroplexusReal *const PNEWDT;
-    const EuroplexusInt NSTATV;
+    const EuroplexusInt  NSTATV;
+    const EuroplexusReal DTIME;
     const EuroplexusReal *const DV0;
     const EuroplexusReal *const DV1;
-    const EuroplexusReal *const DTIME;
-    const EuroplexusReal *const TEMP;
-    const EuroplexusReal *const DTEMP;
     const EuroplexusReal *const PROPS;
     const EuroplexusInt  NPROPS;
+    const EuroplexusReal *const TEMP;
+    const EuroplexusReal *const DTEMP;
     const EuroplexusReal *const PREDEF;
     const EuroplexusReal *const DPRED;
-    const EuroplexusInt   NPREDEF;
+    const EuroplexusInt  NPREDEF;
     const tfel::material::OutOfBoundsPolicy op;
     const StressFreeExpansionHandler& sfeh;
   }; // end of EPXData

@@ -66,7 +66,7 @@ namespace mfront{
 	<< " epx::EuroplexusReal *const DDSDDE,\n"
 	<< " epx::EuroplexusReal *const PNEWDT,\n"
 	<< " const epx::EuroplexusInt  *const NSTATV,\n"
-	<< " const epx::EuroplexusInt *const HYPOTHESIS,\n"
+	<< " const epx::EuroplexusInt  *const HYPOTHESIS,\n"
 	<< " const epx::EuroplexusReal *const DTIME,\n"
 	<< " const epx::EuroplexusReal *const F0,\n"
 	<< " const epx::EuroplexusReal *const F1,\n"
@@ -118,7 +118,46 @@ namespace mfront{
 				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
-    if (key=="@EuroplexusGenerateMTestFileOnFailure"){
+    using tfel::utilities::CxxTokenizer;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("EuroplexusInterface::treatKeyword: "+m));}
+    };
+    auto read = [](const std::string& fss){
+      if(fss=="FiniteRotationSmallStrain"){
+	return FINITEROTATIONSMALLSTRAIN;
+      } else if(fss=="MieheApelLambrechtLogarithmicStrain"){
+	return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
+      } else {
+	throw(std::runtime_error("EuroplexusInterface::treatKeyword: "
+				 "unsupported strategy '"+fss+"'\n"
+				 "The only supported strategies are "
+				 "'FiniteRotationSmallStrain' and "
+				 "'MieheApelLambrechtLogarithmicStrain'"));
+      }
+    };
+    if ((key=="@EuroplexusFiniteStrainStrategy")||(key=="@EPXFiniteStrainStrategy")){
+      throw_if(!this->finiteStrainStrategies.empty(),
+	       "at least one strategy has already been defined");
+      throw_if(current==end,"unexpected end of file");
+      this->finiteStrainStrategies.push_back(read(current->value));
+      throw_if(++current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
+      ++(current);
+      return {true,current};
+    } else if ((key=="@EuroplexusFiniteStrainStrategies")||(key=="@EPXFiniteStrainStrategies")){
+            auto fss = std::vector<std::string>{};
+      CxxTokenizer::readArray("EuroplexusInterface::treatKeyword "
+			      "(@EuroplexusFiniteStrainStrategies)",fss,current,end);
+      CxxTokenizer::readSpecifiedToken("EuroplexusInterface::treatKeyword "
+				       "(@EuroplexusFiniteStrainStrategies)",
+				       ";",current,end);
+      throw_if(fss.empty(),"no strategy defined");
+      for(const auto& fs : fss){
+	this->finiteStrainStrategies.push_back(read(fs));
+      }
+      return {true,current};
+    } else if ((key=="@EuroplexusGenerateMTestFileOnFailure")||
+	       (key=="@EPXGenerateMTestFileOnFailure")){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
       return {true,current};
     }
@@ -129,34 +168,22 @@ namespace mfront{
   EuroplexusInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
     using tfel::material::ModellingHypothesis;
-    typedef ModellingHypothesis::Hypothesis Hypothesis;
     // treatment 
-    std::set<Hypothesis> h;
+    std::set<ModellingHypothesis::Hypothesis> mh;
     // modelling hypotheses handled by the behaviour
     const auto& bh = mb.getModellingHypotheses();
-    // if(bh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN)!=bh.end()){
-    //   h.insert(ModellingHypothesis::GENERALISEDPLANESTRAIN);
-    // }
-    if(bh.find(ModellingHypothesis::AXISYMMETRICAL)!=bh.end()){
-      h.insert(ModellingHypothesis::AXISYMMETRICAL);
+    for(const auto h : {ModellingHypothesis::AXISYMMETRICAL,ModellingHypothesis::PLANESTRAIN,
+	  ModellingHypothesis::PLANESTRESS,ModellingHypothesis::TRIDIMENSIONAL}){
+      if(bh.find(h)!=bh.end()){
+	mh.insert(h);
+      }
     }
-    if(bh.find(ModellingHypothesis::PLANESTRAIN)!=bh.end()){
-      h.insert(ModellingHypothesis::PLANESTRAIN);
-    }
-    if(bh.find(ModellingHypothesis::PLANESTRESS)!=bh.end()){
-      h.insert(ModellingHypothesis::PLANESTRESS);
-    }
-    if(bh.find(ModellingHypothesis::TRIDIMENSIONAL)!=bh.end()){
-      h.insert(ModellingHypothesis::TRIDIMENSIONAL);
-    }
-    if(h.empty()){
+    if(mh.empty()){
       throw(std::runtime_error("EuroplexusInterfaceModellingHypothesesToBeTreated : "
-			       "no hypotheses selected. This means that the given beahviour "
-			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+			       "no hypotheses selected, so it does not "
 			       "make sense to use the Europlexus interface"));
     }
-    return h;
+    return mh;
   } // end of EuroplexusInterface::getModellingHypothesesToBeTreated
 
   void
@@ -309,6 +336,7 @@ namespace mfront{
       out << "using namespace std;\n";
     }
     out << "using tfel::material::ModellingHypothesis;\n";
+    out << "using tfel::material::" << mb.getClassName() << ";\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
@@ -316,27 +344,12 @@ namespace mfront{
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
     // this->generateMTestFile1(out);
-    out << "const auto h = [](const epx::EuroplexusInt hv){\n"
-	<< "  if(hv==0){\n"
-	<< "	return ModellingHypothesis::TRIDIMENSIONAL;\n"
-	<< "  } else if(hv==1){\n"
-	<< "	return ModellingHypothesis::PLANESTRAIN;\n"
-	<< "  } else if(hv==2){\n"
-	<< "	return ModellingHypothesis::PLANESTRESS;\n"
-	<< "  } else {\n"
-	<< "  	return ModellingHypothesis::UNDEFINEDHYPOTHESIS;\n"
-	<< "  }\n"
-	<< "}(*HYPOTHESIS);\n"
-	<< "if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){\n"
-	<< "*STATUS=-1;\n"
-	<< "return;\n"
-	<< "}\n"
-	<< "const epx::EPXData d = {STATUS,STRESS,STATEV,PNEWDT,DDSDDE,\n"
-	<< "                        *NSTATV,F0,F1,DTIME,TEMP,DTEMP,\n"
-	<< "                        PROPS,*NPROPS,PREDEF,DPRED,*NPREDEF,\n"
+    out << "const epx::EPXData d = {STATUS,STRESS,STATEV,DDSDDE,PNEWDT,\n"
+	<< "                        *NSTATV,*DTIME,F0,F1,PROPS,*NPROPS,\n"
+	<< "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
 	<< "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
 	<< "                        " << sfeh << "};\n"
-	<< "epx::EuroplexusInterface<tfel::material::" << mb.getClassName() << ">::exe(d,h);";
+	<< "epx::EuroplexusInterface<" << mb.getClassName() << ">::exe(d,*HYPOTHESIS);\n";
     // this->generateMTestFile2(out,mb.getBehaviourType(),
     // 			     name,"",mb);
     out << "}\n";

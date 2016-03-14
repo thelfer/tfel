@@ -31,6 +31,9 @@
 #include"MTest/AsterFiniteStrainBehaviour.hxx"
 #include"MTest/AsterCohesiveZoneModel.hxx"
 #endif /* HAVE_ASTER  */
+#ifdef HAVE_EUROPLEXUS
+#include"MTest/EuroplexusFiniteStrainBehaviour.hxx"
+#endif /* HAVE_EUROPLEXUS  */
 #ifdef HAVE_ABAQUS
 #include"MTest/AbaqusSmallStrainBehaviour.hxx"
 #endif /* HAVE_ABAQUS  */
@@ -178,6 +181,20 @@ namespace mtest{
 	b = shared_ptr<Behaviour>(new AsterFiniteStrainBehaviour(h,l,f));
       } else if(type==3u){
 	b = shared_ptr<Behaviour>(new AsterCohesiveZoneModel(h,l,f));
+      } else {
+	ostringstream msg;
+	msg << "SingleStructureScheme::setBehaviour: "
+	  "unsupported behaviour type (" << type << ")";
+	throw(runtime_error(msg.str()));
+      }
+    }
+#endif
+#ifdef HAVE_EUROPLEXUS
+    if((i=="europlexus")||(i=="epx")){
+      auto& elm = ELM::getExternalLibraryManager();
+      const auto type = elm.getUMATBehaviourType(l,f);
+      if(type==2u){
+	b = shared_ptr<Behaviour>(new EuroplexusFiniteStrainBehaviour(h,l,f));
       } else {
 	ostringstream msg;
 	msg << "SingleStructureScheme::setBehaviour: "

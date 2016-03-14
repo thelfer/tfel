@@ -48,7 +48,7 @@ namespace epx
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
     TangentOperatorTraits;
-    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DSIG_DDF;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DSIG_DF;
   };
 
   template<EuroplexusBehaviourType btype,unsigned short N>
@@ -200,11 +200,11 @@ namespace epx
 					DoNothingInitializer>::type AInitializer;
 
       TFEL_EPX_INLINE Integrator(const EPXData& d)
-	: behaviour(d.DTIME,d.TEMP,d.DTEMP,
+	: behaviour(&(d.DTIME),d.TEMP,d.DTEMP,
 		    d.PROPS+EuroplexusTraits<BV>::elasticPropertiesOffset+
 		    EuroplexusTraits<BV>::thermalExpansionPropertiesOffset,
 		    d.STATEV,d.PREDEF,d.DPRED),
-	  dt(*(d.DTIME))
+	  dt(d.DTIME)
       {
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
@@ -384,9 +384,6 @@ namespace epx
 	using  TangentOperatorViewType = typename EuroplexusTangentOperatorType<EuroplexusTraits<BV>::btype,N>::view_type;
 	TangentOperatorViewType Dt{DDSOE};
 	Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
-#pragma message("HERE")
-	// l'opérateur tangent contient des sqrt(2) en petites déformations...
-	//	EuroplexusTangentOperator::normalize(Dt);
       } // end of exe	  
     };
 
@@ -408,9 +405,7 @@ namespace epx
 	const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
 	using  TangentOperatorViewType = typename EuroplexusTangentOperatorType<EuroplexusTraits<BV>::btype,N>::view_type;
 	ConsistentTangentOperatorComputer::exe(bv,DDSOE);
-	// les conventions fortran.... (petites déformations et modèles de zones cohésives)
 	TangentOperatorViewType Dt{DDSOE};
-#pragma message("HERE")
 	//	EuroplexusTangentOperator::transpose(Dt);
       } // end of exe	  
     };
@@ -456,7 +451,7 @@ namespace epx
       constexpr const bool is_defined_        = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((npredef!=NPREDEF)&&is_defined_){
-#pragma message("HERE")
+#pragma message("HERE")	
 	// throwUnMatchedNumberOfExternalStateVariables(Traits::getName(),
 	// 					     npredef,NPREDEF);
       }

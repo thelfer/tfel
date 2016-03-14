@@ -632,7 +632,7 @@ namespace mtest
   
 
   void
-  UmatBehaviourBase::initializeTangentOperator(BehaviourWorkSpace& wk,
+  UmatBehaviourBase::initializeTangentOperator(tfel::math::matrix<real>& D,
 					       const StiffnessMatrixType ktype,
 					       const bool b) const
   {
@@ -641,24 +641,24 @@ namespace mtest
 	 (ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)){
 	// do nothing
       } else if(ktype==StiffnessMatrixType::ELASTIC){
-	wk.D(0,0) = real(1);
+	D(0,0) = real(1);
       } else if(ktype==StiffnessMatrixType::SECANTOPERATOR){
-	wk.D(0,0) = real(2);
+	D(0,0) = real(2);
       } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
-	wk.D(0,0) = real(3);
+	D(0,0) = real(3);
       } else if(ktype==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
-	wk.D(0,0) = real(4);
+	D(0,0) = real(4);
       } else {
 	throw(std::runtime_error("UmatBehaviourBase::call_behaviour : "
 				 "invalid or unspecified stiffness matrix type"));
       }
     } else {
       if(ktype==StiffnessMatrixType::ELASTIC){
-	wk.D(0,0) = real(-1);
+	D(0,0) = real(-1);
       } else if(ktype==StiffnessMatrixType::SECANTOPERATOR){
-	wk.D(0,0) = real(-2);
+	D(0,0) = real(-2);
       } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
-	wk.D(0,0) = real(-3);
+	D(0,0) = real(-3);
       } else {
 	throw(std::runtime_error("UmatBehaviourBase::call_behaviour : "
 				 "invalid or unspecified stiffness matrix type"));

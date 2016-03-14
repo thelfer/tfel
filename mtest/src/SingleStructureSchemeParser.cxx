@@ -121,6 +121,11 @@ namespace mtest{
       i = p->value;
     }
 #endif /* HAVE_ASTER */
+#ifdef HAVE_EUROPLEXUS
+    if((p->value=="europlexus")||(p->value=="epx")){
+      i = p->value;
+    }
+#endif /* HAVE_EUROPLEXUS */
 #ifdef HAVE_ABAQUS
     if(p->value=="abaqus"){
       i = "abaqus";
