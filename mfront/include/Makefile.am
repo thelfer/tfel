@@ -228,6 +228,7 @@ nobase_include_HEADERS += MFront/Europlexus/Europlexus.hxx                      
 			  MFront/Europlexus/EuroplexusComputeStiffnessTensor.hxx                   \
 			  MFront/Europlexus/EuroplexusComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx               \
+			  MFront/Europlexus/EuroplexusFiniteStrain.hxx                             \
 			  MFront/EuroplexusInterface.hxx
 endif
 

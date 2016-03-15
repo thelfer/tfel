@@ -780,6 +780,20 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-4-3D.mtest
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-5-3D.mtest
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity3-shear-6-3D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-1-2D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-2-2D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-1-3D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-2-3D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-3-3D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-4-3D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-5-3D.mtest
+           mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-6-3D.mtest
            mfront/tests/behaviours/abaqus/Makefile
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest
            mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest

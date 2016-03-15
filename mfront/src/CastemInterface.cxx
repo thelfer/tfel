@@ -1483,21 +1483,6 @@ namespace mfront{
     out << ";\n\n";
   } // end of CastemInterface::writeCastemFunctionDeclaration
 
-  std::pair<bool,SupportedTypes::TypeSize>
-  CastemInterface::checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription& mb) const
-  {
-    const auto& d = mb.getBehaviourData(ModellingHypothesis::PLANESTRESS);
-    const auto& sv = d.getPersistentVariables();
-    SupportedTypes::TypeSize o;
-    for(const auto & elem : sv){
-      if(d.getExternalName(elem.name)=="AxialStrain"){
-	return {true,o};
-      }
-      o += this->getTypeSize(elem.type,elem.arraySize);
-    }
-    return {false,o};
-  }
-
   void
   CastemInterface::writeFiniteStrainStrategiesPlaneStressSpecificCall(std::ostream& out,
 									  const BehaviourDescription& mb,
@@ -1509,7 +1494,7 @@ namespace mfront{
        (this->usesGenericPlaneStressAlgorithm(mb))){
       out << "if(*NDI==" << getCastemModellingHypothesisIndex(ModellingHypothesis::PLANESTRESS) << "){\n";
       if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
-	pair<bool,SupportedTypes::TypeSize> v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
 	if(v.first){
 	  out << "const CastemReal ezz = STATEV[" << v.second.getValueForDimension(2) << "];\n"
 	      << "const CastemReal Fzz = " << c2 << ";" << endl;

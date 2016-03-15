@@ -4,9 +4,8 @@
 @Description{
   "A test of the finite rotation small strain"
   "of the umat interface"
- "A very first test of the logarithmic finite strain"
- "formulation proposed by Miehe et al."
- "(the most simple one in fact)."
+ "A very first test of the finite rotation small strain"
+ "formulation."
  "We check that the stress at the beginning"
  "of the time step (which is calculated using"
  "the Cauchy stress) is equal to the stress "

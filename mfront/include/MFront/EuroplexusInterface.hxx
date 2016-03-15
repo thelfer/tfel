@@ -46,6 +46,7 @@ namespace mfront{
      * [R5.03.24] Modèles de grandes déformations GDEF_LOG et GDEF_HYPO_ELAS
      */
     enum FiniteStrainStrategy{
+      UNDEFINEDSTRATEGY,
       FINITEROTATIONSMALLSTRAIN,
       MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN,
     }; // end of enum FiniteStrainStrategy
@@ -186,6 +187,17 @@ namespace mfront{
      * \param[in] name : name of the behaviour as defined by interface
      *                   (generally taking into account the material
      *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     */
+    virtual void
+    writeUMATxxBehaviourTypeSymbols(std::ostream&,
+				    const std::string&,
+				    const BehaviourDescription&) const override;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
      * \param[in] h    : modelling hypothesis
      * \param[in] mb   : behaviour description
      * \param[in] fd   : file description
@@ -204,8 +216,8 @@ namespace mfront{
 
     virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
-    //! selected finite strain strategies
-    std::vector<FiniteStrainStrategy> finiteStrainStrategies;
+    //! selected finite strain strategy
+    FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
     
   }; // end of EuroplexusInterface
 

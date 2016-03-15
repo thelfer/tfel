@@ -18,6 +18,8 @@
 
 #include"TFEL/System/System.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -1687,6 +1689,22 @@ namespace mfront
     return res;
   } // end of UMATInterface::gatherModellingHypothesesAndTests
 
+  std::pair<bool,SupportedTypes::TypeSize>
+  UMATInterfaceBase::checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription& mb) const
+  {
+    using tfel::glossary::Glossary;
+    const auto& d = mb.getBehaviourData(ModellingHypothesis::PLANESTRESS);
+    const auto& sv = d.getPersistentVariables();
+    SupportedTypes::TypeSize o;
+    for(const auto & elem : sv){
+      if(d.getExternalName(elem.name)==Glossary::AxialStrain){
+	return {true,o};
+      }
+      o += this->getTypeSize(elem.type,elem.arraySize);
+    }
+    return {false,o};
+  }
+  
   UMATInterfaceBase::~UMATInterfaceBase()
   {}
 

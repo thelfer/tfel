@@ -122,39 +122,27 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("EuroplexusInterface::treatKeyword: "+m));}
     };
-    auto read = [](const std::string& fss){
-      if(fss=="FiniteRotationSmallStrain"){
+    auto read = [](const std::string& s){
+      if(s=="FiniteRotationSmallStrain"){
 	return FINITEROTATIONSMALLSTRAIN;
-      } else if(fss=="MieheApelLambrechtLogarithmicStrain"){
+      } else if(s=="MieheApelLambrechtLogarithmicStrain"){
 	return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
       } else {
 	throw(std::runtime_error("EuroplexusInterface::treatKeyword: "
-				 "unsupported strategy '"+fss+"'\n"
+				 "unsupported strategy '"+s+"'\n"
 				 "The only supported strategies are "
 				 "'FiniteRotationSmallStrain' and "
 				 "'MieheApelLambrechtLogarithmicStrain'"));
       }
     };
     if ((key=="@EuroplexusFiniteStrainStrategy")||(key=="@EPXFiniteStrainStrategy")){
-      throw_if(!this->finiteStrainStrategies.empty(),
-	       "at least one strategy has already been defined");
+      throw_if(this->fss!=UNDEFINEDSTRATEGY,
+	       "a finite strain strategy has already been defined");
       throw_if(current==end,"unexpected end of file");
-      this->finiteStrainStrategies.push_back(read(current->value));
+      this->fss = read(current->value);
       throw_if(++current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
-      return {true,current};
-    } else if ((key=="@EuroplexusFiniteStrainStrategies")||(key=="@EPXFiniteStrainStrategies")){
-            auto fss = std::vector<std::string>{};
-      CxxTokenizer::readArray("EuroplexusInterface::treatKeyword "
-			      "(@EuroplexusFiniteStrainStrategies)",fss,current,end);
-      CxxTokenizer::readSpecifiedToken("EuroplexusInterface::treatKeyword "
-				       "(@EuroplexusFiniteStrainStrategies)",
-				       ";",current,end);
-      throw_if(fss.empty(),"no strategy defined");
-      for(const auto& fs : fss){
-	this->finiteStrainStrategies.push_back(read(fs));
-      }
       return {true,current};
     } else if ((key=="@EuroplexusGenerateMTestFileOnFailure")||
 	       (key=="@EPXGenerateMTestFileOnFailure")){
@@ -192,10 +180,25 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::system;
-    if(mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if((mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
+       (mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)){
       throw(std::runtime_error("EuroplexusInterface::endTreatment : "
 			       "the europlexus interface only supports "
 			       "finite strain behaviours"));
+    }
+    if(this->fss==UNDEFINEDSTRATEGY){
+      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	throw(std::runtime_error("EuroplexusInterface::endTreatment: "
+				 "behaviours written in the small strain framework "
+				 "must be embedded in a strain strategy"));
+      }
+    } else {
+      if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	throw(std::runtime_error("EuroplexusInterface::endTreatment: "
+				 "finite strain strategies can only be defined "
+				 "for behaviours writtent in the "
+				 "small strain framework"));
+      }
     }
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
@@ -306,6 +309,9 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
+    if(this->fss!=UNDEFINEDSTRATEGY){
+      out << "#include\"MFront/Europlexus/EuroplexusFiniteStrain.hxx\"\n\n";
+    }
     out << "#include\"MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx\"\n\n";
     out << "#include\"MFront/Europlexus/EuroplexusInterface.hxx\"\n\n";
     out << "#include\"MFront/Europlexus/europlexus" << name << ".hxx\"\n\n";
@@ -343,16 +349,95 @@ namespace mfront{
       out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    // this->generateMTestFile1(out);
-    out << "const epx::EPXData d = {STATUS,STRESS,STATEV,DDSDDE,PNEWDT,\n"
-	<< "                        *NSTATV,*DTIME,F0,F1,PROPS,*NPROPS,\n"
-	<< "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
-	<< "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
-	<< "                        " << sfeh << "};\n"
-	<< "epx::EuroplexusInterface<" << mb.getClassName() << ">::exe(d,*HYPOTHESIS);\n";
+    if(this->fss==FINITEROTATIONSMALLSTRAIN){
+      if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	throw(std::runtime_error("EuroplexusInterface::endTreatment: "
+				 "internal error, the 'finite rotation small strain' "
+				 "strategy shall be used only with small "
+				 "strain behaviour"));
+      }
+      out << "epx::EuroplexusReal eto[6];\n"
+	  << "epx::EuroplexusReal deto[6];\n"
+	  << "epx::EuroplexusReal sig[6];\n"
+	  << "epx::computeGreenLagrangeStrain(eto,deto,F0,F1,*HYPOTHESIS);\n"
+	  << "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,F0,*HYPOTHESIS);\n"
+	  << "const bool b = std::abs(*DDSDDE)>0.5;\n"
+	  << "if(*HYPOTHESIS==2){\n";
+      if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
+	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+	if(v.first){
+	  out << "const epx::EuroplexusReal ezz = "
+	      << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
+	      << "epx::EuroplexusReal F_0[5] = {F0[0],F0[1],ezz,F0[3],F0[4]};\n"
+	      << "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,"
+	      << "F_0,*HYPOTHESIS);\n";
+	} else {
+	  // no axial strain
+	  out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	      << "glossary name 'AxialStrain')\" << std::endl;\n";
+	  out << "*STATUS=-2;\n";
+	  out << "return;\n";
+	}
+      } else {
+	out << "*STATUS=-2;\n"
+	    << "return;\n";
+      }
+      out << "} else {\n"
+	  << "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,F0,*HYPOTHESIS);\n"
+	  << "}\n"
+	  << "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,\n"
+	  << "                        *NSTATV,*DTIME,eto,deto,PROPS,*NPROPS,\n"
+	  << "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
+	  << "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
+	  << "                        " << sfeh << "};\n"
+	  << "epx::EuroplexusInterface<" << mb.getClassName() << ">::exe(d,*HYPOTHESIS);\n"
+	  << "if(*STATUS==0){\n"
+	  << "if(*HYPOTHESIS==2){\n";
+      if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
+	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+	if(v.first){
+	  out << "const epx::EuroplexusReal ezz = "
+	      << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
+	      << "epx::EuroplexusReal F_1[5] = {F1[1],F1[1],ezz,F1[3],F1[4]};\n"
+	      << "epx::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,sig,F_1,*HYPOTHESIS);\n";
+	} else {
+	  // no axial strain
+	  out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	      << "glossary name 'AxialStrain')\" << std::endl;\n";
+	  out << "*STATUS=-2;\n";
+	  out << "return;\n";
+	}
+      } else {
+	out << "*STATUS=-2;\n"
+	    << "return;\n";
+      }
+      out << "} else {\n"
+	  << "epx::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,sig,F1,*HYPOTHESIS);\n"
+	  << "}\n"
+	  << "if(b){\n"
+	  << "epx::computeCauchyStressDerivativeFromSecondPiolaKirchhoffStressDerivative(DDSDDE,STRESS,F1,*HYPOTHESIS);\n"
+	  << "}\n"
+      	  << "}\n";
+    } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+      if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	throw(std::runtime_error("EuroplexusInterface::endTreatment: "
+				 "internal error, logarithmic strain strategy shall be "
+				 "used only with small strain behaviour"));
+      }
+      throw(std::runtime_error("EuroplexusInterface::endTreatment: "
+			       "logarithmic strain not implemented yet"));
+    } else {
+      // this->generateMTestFile1(out);
+      out << "const epx::EPXData d = {STATUS,STRESS,STATEV,DDSDDE,PNEWDT,\n"
+	  << "                        *NSTATV,*DTIME,F0,F1,PROPS,*NPROPS,\n"
+	  << "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
+	  << "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
+	  << "                        " << sfeh << "};\n"
+	  << "epx::EuroplexusInterface<" << mb.getClassName() << ">::exe(d,*HYPOTHESIS);\n";
+    } 
     // this->generateMTestFile2(out,mb.getBehaviourType(),
     // 			     name,"",mb);
-    out << "}\n";
+    out << "}\n\n";
     out << "} // end of extern \"C\"\n";
     out.close();
   } // end of EuroplexusInterface::endTreatment
@@ -539,14 +624,14 @@ namespace mfront{
 	}
       }
       if(uh.empty()){
-	string msg("UMATInterface::endTreatment : ");
-	msg += "internal error : the mechanical behaviour says that not "
-	  "all handled mechanical data are specialised, but we found none.";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UMATInterface::endTreatment: "
+				 "internal error, the mechanical behaviour "
+				 "says that not all handled mechanical data "
+				 "are specialised, but we found none."));
       }
       // material properties for all the selected hypothesis
-      vector<pair<vector<UMATMaterialProperty>,
-		  SupportedTypes::TypeSize> > mpositions;
+      auto mpositions = vector<pair<vector<UMATMaterialProperty>,
+				    SupportedTypes::TypeSize>>{};
       for(const auto & elem : uh){
 	mpositions.push_back(this->buildMaterialPropertiesList(mb,elem));
       }
@@ -570,16 +655,15 @@ namespace mfront{
 	  if(o1!=o2){
 	    throw(runtime_error("UMATInterface::buildMaterialPropertiesList : "
 				"incompatible offset for material property '"+mp.name+
-				"' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
-				"To by-pass this limitation, you may want to explicitely "
-				"specialise some modelling hypotheses"));
+				"' (aka '"+mp1.name+"'). This is one pitfall of the "
+				"exp interface. To by-pass this limitation, you may "
+				"want to explicitely specialise some modelling hypotheses"));
 	  }
 	}
       }
       return mfirst;
     }
-    pair<vector<UMATMaterialProperty>,
-	 SupportedTypes::TypeSize> res;
+    auto res = pair<vector<UMATMaterialProperty>,SupportedTypes::TypeSize>{};
     auto& mprops = res.first;
     if((h!=ModellingHypothesis::GENERALISEDPLANESTRAIN)&&
        (h!=ModellingHypothesis::AXISYMMETRICAL)&&
@@ -792,16 +876,39 @@ namespace mfront{
   EuroplexusInterface::getModellingHypothesisTest(const Hypothesis h) const
   {
     if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      return "*NTENS==4";
+      return "*HYPOTHESIS==3";
     } else if(h==ModellingHypothesis::PLANESTRESS){
-      return "*NTENS==3";
+      return "*HYPOTHESIS==2";
+    } else if(h==ModellingHypothesis::PLANESTRAIN){
+      return "*HYPOTHESIS==1";
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      return "*NTENS==6";
+      return "*HYPOTHESIS==0";
     }
     throw(std::runtime_error("EuroplexusInterface::getModellingHypothesisTest : "
 			     "unsupported modelling hypothesis"));
   } // end of EuroplexusInterface::gatherModellingHypothesesAndTests
 
+  void
+  EuroplexusInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+						       const std::string& name,
+						       const BehaviourDescription& mb) const
+  {
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourType = " ;
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->fss==UNDEFINEDSTRATEGY){
+	out << "1u;\n\n";
+      } else {
+	out << "2u;\n\n";
+      }
+    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "2u;\n\n";
+    } else {
+      throw(std::runtime_error("EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
+			       "unsupported behaviour type"));
+    }
+  } // end of EuroplexusInterface::writeUMATxxBehaviourTypeSymbols
+  
   void
   EuroplexusInterface::writeUMATxxAdditionalSymbols(std::ostream&,
 						    const std::string&,

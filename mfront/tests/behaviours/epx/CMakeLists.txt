@@ -11,7 +11,8 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
-  SaintVenantKirchhoffElasticity3)
+  SaintVenantKirchhoffElasticity3
+  FiniteRotationSmallStrainElasticity)
 
 mfront_behaviour_check_library(MFrontEuroplexusBehaviours  epx ${mfront_tests_SOURCES})
 target_link_libraries(MFrontEuroplexusBehaviours
@@ -151,3 +152,17 @@ test_epx(saintvenantkirchhoffelasticity3-shear-3-3D)
 test_epx(saintvenantkirchhoffelasticity3-shear-4-3D)
 test_epx(saintvenantkirchhoffelasticity3-shear-5-3D)
 test_epx(saintvenantkirchhoffelasticity3-shear-6-3D)
+test_epx(finiterotationsmallstrainelasticity-uniaxialloading-1-2D)
+test_epx(finiterotationsmallstrainelasticity-uniaxialloading-2-2D)
+test_epx(finiterotationsmallstrainelasticity-uniaxialloading-3-2D)
+test_epx(finiterotationsmallstrainelasticity-shear-1-2D)
+test_epx(finiterotationsmallstrainelasticity-shear-2-2D)
+test_epx(finiterotationsmallstrainelasticity-uniaxialloading-1-3D)
+test_epx(finiterotationsmallstrainelasticity-uniaxialloading-2-3D)
+test_epx(finiterotationsmallstrainelasticity-uniaxialloading-3-3D)
+test_epx(finiterotationsmallstrainelasticity-shear-1-3D)
+test_epx(finiterotationsmallstrainelasticity-shear-2-3D)
+test_epx(finiterotationsmallstrainelasticity-shear-3-3D)
+test_epx(finiterotationsmallstrainelasticity-shear-4-3D)
+test_epx(finiterotationsmallstrainelasticity-shear-5-3D)
+test_epx(finiterotationsmallstrainelasticity-shear-6-3D)

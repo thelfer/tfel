@@ -160,6 +160,7 @@ if(HAVE_EUROPLEXUS)
   install_mfront_header(MFront/Europlexus EuroplexusComputeStiffnessTensor.hxx)
   install_mfront_header(MFront/Europlexus EuroplexusStressFreeExpansionHandler.hxx)
   install_mfront_header(MFront/Europlexus EuroplexusComputeThermalExpansionCoefficientTensor.hxx)
+  install_mfront_header(MFront/Europlexus EuroplexusFiniteStrain.hxx)
 endif(HAVE_EUROPLEXUS)
 
 if(HAVE_CYRANO)

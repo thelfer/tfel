@@ -123,14 +123,6 @@ namespace mfront{
     
   protected:
 
-    /*!
-     * \return a pair. If first is true, the "axial strain" was found
-     * and the second contains its offset
-     * \param[in] mb : material description
-     */
-    std::pair<bool,SupportedTypes::TypeSize>
-    checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription&) const;
-
     virtual std::string
     getLibraryName(const BehaviourDescription&) const override;
 

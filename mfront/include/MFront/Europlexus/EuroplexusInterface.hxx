@@ -144,7 +144,7 @@ namespace epx
       TFEL_EPX_INLINE2 static void
       exe(const EPXData& d)
       {
-	using  AHandler = EuroplexusBehaviourHandler<H,Behaviour>;
+	typedef EuroplexusBehaviourHandler<H,Behaviour> AHandler;
 	using BV = Behaviour<H,EuroplexusReal,false>;
 	const bool bs = EuroplexusTraits<BV>::requiresStiffnessTensor;
 	const bool ba = EuroplexusTraits<BV>::requiresThermalExpansionCoefficientTensor;

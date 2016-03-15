@@ -6,7 +6,8 @@
   of the umat interface
 }
                            
-@UMATFiniteStrainStrategy FiniteRotationSmallStrain;
+@UMATFiniteStrainStrategy[umat] FiniteRotationSmallStrain;
+@EPXFiniteStrainStrategy[epx] FiniteRotationSmallStrain;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -21,7 +22,11 @@ nu.setGlossaryName("PoissonRatio");
   mu = computeMu(young,nu);
 }
 
+@ProvidesSymmetricTangentOperator;
 @Integrator{
-  static_cast<void>(computeTangentOperator_);
+  static_cast<void>(smt);
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
 }

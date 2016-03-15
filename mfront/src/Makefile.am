@@ -286,7 +286,8 @@ libEuroplexusInterface_la_SOURCES = EuroplexusInterfaceExceptions.cxx           
 		                    EuroplexusException.cxx                                \
 			            EuroplexusComputeStiffnessTensor.cxx                   \
 			            EuroplexusStressFreeExpansionHandler.cxx               \
-			            EuroplexusComputeThermalExpansionCoefficientTensor.cxx
+			            EuroplexusComputeThermalExpansionCoefficientTensor.cxx \
+			            EuroplexusFiniteStrain.cxx
 
 libEuroplexusInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
 			            -L$(top_builddir)/src/Exception -lTFELException          \

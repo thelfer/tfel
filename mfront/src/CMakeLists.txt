@@ -218,7 +218,8 @@ if(HAVE_EUROPLEXUS)
     EuroplexusException.cxx
     EuroplexusComputeStiffnessTensor.cxx
     EuroplexusStressFreeExpansionHandler.cxx
-    EuroplexusComputeThermalExpansionCoefficientTensor.cxx)
+    EuroplexusComputeThermalExpansionCoefficientTensor.cxx
+    EuroplexusFiniteStrain.cxx)
   mfront_library(EuroplexusInterface ${EuroplexusInterface_SOURCES})
   target_link_libraries(EuroplexusInterface
     MTestFileGenerator
