@@ -193,7 +193,9 @@ endif(HAVE_ASTER)
 
 if(HAVE_ABAQUS)
   set(TFELMFront_SOURCES
+    AbaqusInterfaceBase.cxx
     AbaqusInterface.cxx
+    AbaqusExplicitInterface.cxx
     ${TFELMFront_SOURCES})
   set(AbaqusInterface_SOURCES
     AbaqusInterfaceExceptions.cxx

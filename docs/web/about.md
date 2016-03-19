@@ -22,6 +22,7 @@
 - Thierry Thomas
 - Alexis Foerster
 - Alexandre Lemaire
+- Dominique Deloison
 - Kulbir Singh
 - Christian Fokam
 - Élodie Bosso

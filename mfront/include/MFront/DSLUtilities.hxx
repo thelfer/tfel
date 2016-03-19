@@ -25,12 +25,12 @@ namespace mfront{
 
   MFRONT_VISIBILITY_EXPORT void
   writeMaterialLaws(const std::string&,
-		    std::ofstream&,
+		    std::ostream&,
 		    const std::vector<std::string>&);
 
   MFRONT_VISIBILITY_EXPORT void
   writeStaticVariables(const std::string&,
-		       std::ofstream&,
+		       std::ostream&,
 		       const StaticVariableDescriptionContainer&,
 		       const std::string&);
   

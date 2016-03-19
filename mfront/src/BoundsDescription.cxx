@@ -31,7 +31,7 @@ namespace mfront{
   BoundsDescription::~BoundsDescription() = default;
   
   void
-  BoundsDescription::writeBoundsChecks(std::ofstream& file) const
+  BoundsDescription::writeBoundsChecks(std::ostream& file) const
   {
     if(this->arraySize==1u){
       this->writeBoundsChecks(file,this->varName);
@@ -46,7 +46,7 @@ namespace mfront{
   } // end of BoundsDescription::writeBoundsChecks
 
   void
-  BoundsDescription::writeBoundsChecks(std::ofstream& file,
+  BoundsDescription::writeBoundsChecks(std::ostream& file,
 				       const std::string& n) const
   {
     if(this->category==Standard){

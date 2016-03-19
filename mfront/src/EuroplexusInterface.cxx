@@ -443,14 +443,14 @@ namespace mfront{
   } // end of EuroplexusInterface::endTreatment
   
   void 
-  EuroplexusInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
+  EuroplexusInterface::writeInterfaceSpecificIncludes(std::ostream& out,
 						      const BehaviourDescription&) const
   {
     out << "#include\"MFront/Europlexus/Europlexus.hxx\"\n\n";
   } // end of EuroplexusInterface::writeInterfaceSpecificIncludes
 
   void 
-  EuroplexusInterface::writeBehaviourDataMainVariablesSetters(std::ofstream& os,
+  EuroplexusInterface::writeBehaviourDataMainVariablesSetters(std::ostream& os,
 							      const BehaviourDescription& mb) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
@@ -472,7 +472,7 @@ namespace mfront{
   } // end of EuroplexusInterface::writeBehaviourDataMainVariablesSetters
 
   void 
-  EuroplexusInterface::writeBehaviourDataDrivingVariableSetter(std::ofstream& os,
+  EuroplexusInterface::writeBehaviourDataDrivingVariableSetter(std::ostream& os,
 							       const DrivingVariable& v,
 							       const SupportedTypes::TypeSize o) const
   {
@@ -505,7 +505,7 @@ namespace mfront{
   }
 
   void 
-  EuroplexusInterface::writeIntegrationDataDrivingVariableSetter(std::ofstream& os,
+  EuroplexusInterface::writeIntegrationDataDrivingVariableSetter(std::ostream& os,
 								 const DrivingVariable& v,
 								 const SupportedTypes::TypeSize o) const
   {
@@ -538,7 +538,7 @@ namespace mfront{
   }
   
   void 
-  EuroplexusInterface::writeBehaviourDataThermodynamicForceSetter(std::ofstream& os,
+  EuroplexusInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream& os,
 								  const ThermodynamicForce& f,
 								  const SupportedTypes::TypeSize o) const
   {
@@ -558,7 +558,7 @@ namespace mfront{
   } // end of EuroplexusInterface::writeBehaviourDataThermodynamicForceSetter
   
   void 
-  EuroplexusInterface::exportThermodynamicForce(std::ofstream& out,
+  EuroplexusInterface::exportThermodynamicForce(std::ostream& out,
 						const std::string& a,
 						const ThermodynamicForce& f,
 						const SupportedTypes::TypeSize o) const

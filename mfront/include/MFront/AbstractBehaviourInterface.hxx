@@ -45,7 +45,8 @@ namespace mfront{
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
     //! a simple alias
     typedef ModellingHypothesis::Hypothesis Hypothesis;
-
+    //! a simple alias
+    using CxxTokenizer = tfel::utilities::CxxTokenizer;
     /*!
      * set if dynamically allocated arrays are allowed
      * \param[in] b : boolean
@@ -53,76 +54,79 @@ namespace mfront{
     virtual void
     allowDynamicallyAllocatedArrays(const bool) = 0;
 
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
-		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) = 0;
+		 CxxTokenizer::TokensContainer::const_iterator,
+		 const CxxTokenizer::TokensContainer::const_iterator) = 0;
     /*!
      * \return true if the interface handles the given modelling hypothesis
      * \param[in] h  : modelling hypothesis
-     * \param[in] mb : mechanical behaviour description
+     * \param[in] mb : behaviour description
      */
     virtual bool
     isModellingHypothesisHandled(const Hypothesis,
 				 const BehaviourDescription&) const = 0;
-    
+    /*!
+     * \return the list of modelling hypotheses treated by the interface
+     * \param[in] mb : behaviour description
+     */
     virtual std::set<Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const = 0;
 
     /*!
      * write interface specific includes
      * \param[in] out : output file
-     * \param[in] mb  : mechanical behaviour description
+     * \param[in] mb  : behaviour description
      */
     virtual void 
-    writeInterfaceSpecificIncludes(std::ofstream&,
+    writeInterfaceSpecificIncludes(std::ostream&,
 				   const BehaviourDescription&) const = 0;
 
     virtual void 
-    exportMechanicalData(std::ofstream&,
+    exportMechanicalData(std::ostream&,
 			 const Hypothesis,
 			 const BehaviourDescription&) const = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
-     * \param[in] mb                      : mechanical behaviour description
+     * \param[in] mb                      : behaviour description
      * \param[in] initStateVarsIncrements : constructor part assigning
      *                                      default value (zero) to state
      *                                      variable increments
      */
     virtual void 
-    writeBehaviourConstructor(std::ofstream&,
+    writeBehaviourConstructor(std::ostream&,
 			      const BehaviourDescription&,
 			      const std::string&) const = 0;
     
     virtual void
-    writeBehaviourDataConstructor(std::ofstream&,
+    writeBehaviourDataConstructor(std::ostream&,
 				  const Hypothesis,
 				  const BehaviourDescription&) const = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile : output file
-     * \param[in] mb            : mechanical behaviour description
+     * \param[in] mb            : behaviour description
      */
     virtual void 
-    writeBehaviourDataMainVariablesSetters(std::ofstream&,
+    writeBehaviourDataMainVariablesSetters(std::ostream&,
 					   const BehaviourDescription&) const = 0;
     
     virtual void 
-    writeIntegrationDataConstructor(std::ofstream&,
+    writeIntegrationDataConstructor(std::ostream&,
 				    const Hypothesis,
 				    const BehaviourDescription&) const = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile : output file
-     * \param[in] mb            : mechanical behaviour description
+     * \param[in] mb            : behaviour description
      */
     virtual void 
-    writeIntegrationDataMainVariablesSetters(std::ofstream&,
+    writeIntegrationDataMainVariablesSetters(std::ostream&,
 					     const BehaviourDescription&) const = 0;
     /*!
      * \brief write output files
-     * \param[in] mb : mechanical behaviour description
+     * \param[in] mb : behaviour description
      * \param[in] fd : mfront file description
      */
     virtual void

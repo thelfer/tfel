@@ -24,8 +24,7 @@ namespace epx{
 									  const unsigned short n1,
 									  const EuroplexusInt n2)
   {
-    using namespace std;
-    ostringstream msg;
+    std::ostringstream msg;
     msg << "EuroplexusInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties : "
 	<< "the number of material properties does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " material properties, and "
@@ -38,8 +37,7 @@ namespace epx{
 								      const unsigned short n1,
 								      const EuroplexusInt n2)
   {
-    using namespace std;
-    ostringstream msg;
+    std::ostringstream msg;
     msg << "EuroplexusInterfaceExceptions::throwUnMatchedNumberOfStateVariables : "
 	<< "the number of internal state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
@@ -48,60 +46,66 @@ namespace epx{
   } // end of throwUnMatchedNumberOfStateVariables
 
   void
+  EuroplexusInterfaceExceptions::throwUnMatchedNumberOfExternalStateVariables(const std::string& b,
+								      const unsigned short n1,
+								      const EuroplexusInt n2)
+  {
+    std::ostringstream msg;
+    msg << "EuroplexusInterfaceExceptions::throwUnMatchedNumberOfExternalStateVariables : "
+	<< "the number of external state variables does not match. The behaviour '" 
+	<< b  << "' requires " << n1 << " state variables, and "
+	<< n2 << " state variables were declared";
+    throw(EuroplexusException(msg.str()));
+  } // end of throwUnMatchedNumberOfExternalStateVariables
+  
+  void
   EuroplexusInterfaceExceptions::treatEuroplexusException(const std::string& b,
 							  const EuroplexusException& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown an EuroplexusException : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown an EuroplexusException : "
+	      << e.what() << std::endl;
   } // end of EuroplexusInterfaceExceptions::treatEuroplexusException
 
   void
   EuroplexusInterfaceExceptions::treatMaterialException(const std::string& b,
 							const tfel::material::MaterialException& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown an MaterialException : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown an MaterialException : "
+	      << e.what() << std::endl;
   } // end of treatMaterialException
     
   void
   EuroplexusInterfaceExceptions::treatTFELException(const std::string& b,
 						    const tfel::exception::TFELException& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown a generic tfel exception : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown a generic tfel exception : "
+	      << e.what() << std::endl;
   } // end of treatTFELException
 
   void
   EuroplexusInterfaceExceptions::treatStandardException(const std::string& b,
 							const std::exception& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown a generic standard exception : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown a generic standard exception : "
+	      << e.what() << std::endl;
   } // end of treatStandardException
 
   void
   EuroplexusInterfaceExceptions::treatUnknownException(const std::string& b)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown an unknown exception" << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown an unknown exception" << std::endl;
   } // end of treatUnknownException
   
   void
   EuroplexusInterfaceExceptions::throwNegativeTimeStepException(const std::string& b)
   {
-    using namespace std;
-    string msg("EuroplexusInterfaceExceptions::throwNegativeTimeStepException : ");
-    msg += "negative time step detected for behaviour '"+b+"'";
-    throw(runtime_error(msg));
+    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwNegativeTimeStepException: "
+			     "negative time step detected for behaviour '"+b+"'"));
   } // end of EuroplexusInterfaceExceptions::throwNegativeTimeStepException
 
   void
@@ -152,9 +156,8 @@ namespace epx{
   void
   EuroplexusInterfaceExceptions::displayUnsupportedHypothesisMessage()
   {
-    using namespace std;
-    cout << "EuroplexusInterfaceExceptions::displayUnsupportedHypothesisMessage : "
-	 << "unsupported hypothesis" << endl;
+    std::cout << "EuroplexusInterfaceExceptions::displayUnsupportedHypothesisMessage : "
+	      << "unsupported hypothesis" << std::endl;
   }
 
   void

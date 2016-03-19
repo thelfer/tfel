@@ -24,8 +24,7 @@ namespace abaqus{
 								     const unsigned short n1,
 								     const AbaqusInt n2)
   {
-    using namespace std;
-    ostringstream msg;
+    std::ostringstream msg;
     msg << "AbaqusInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties : "
 	<< "the number of material properties does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " material properties, and "
@@ -38,8 +37,7 @@ namespace abaqus{
 								 const unsigned short n1,
 								 const AbaqusInt n2)
   {
-    using namespace std;
-    ostringstream msg;
+    std::ostringstream msg;
     msg << "AbaqusInterfaceExceptions::throwUnMatchedNumberOfStateVariables : "
 	<< "the number of internal state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
@@ -51,141 +49,88 @@ namespace abaqus{
   AbaqusInterfaceExceptions::treatAbaqusException(const std::string& b,
 						const AbaqusException& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown an AbaqusException : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown an AbaqusException : "
+	      << e.what() << std::endl;
   } // end of AbaqusInterfaceExceptions::treatAbaqusException
 
   void
   AbaqusInterfaceExceptions::treatMaterialException(const std::string& b,
 						   const tfel::material::MaterialException& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown an MaterialException : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown an MaterialException : "
+	      << e.what() << std::endl;
   } // end of treatMaterialException
     
   void
   AbaqusInterfaceExceptions::treatTFELException(const std::string& b,
 					       const tfel::exception::TFELException& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown a generic tfel exception : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown a generic tfel exception : "
+	      << e.what() << std::endl;
   } // end of treatTFELException
 
   void
   AbaqusInterfaceExceptions::treatStandardException(const std::string& b,
 						   const std::exception& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown a generic standard exception : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown a generic standard exception : "
+	      << e.what() << std::endl;
   } // end of treatStandardException
 
   void
   AbaqusInterfaceExceptions::treatUnknownException(const std::string& b)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown an unknown exception" << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown an unknown exception" << std::endl;
   } // end of treatUnknownException
   
   void
   AbaqusInterfaceExceptions::throwNegativeTimeStepException(const std::string& b)
   {
-    using namespace std;
-    string msg("AbaqusInterfaceExceptions::throwNegativeTimeStepException : ");
-    msg += "negative time step detected for behaviour '"+b+"'";
-    throw(runtime_error(msg));
+    throw(std::runtime_error("AbaqusInterfaceExceptions::throwNegativeTimeStepException: "
+			     "negative time step detected for behaviour '"+b+"'"));
   } // end of AbaqusInterfaceExceptions::throwNegativeTimeStepException
   
   void
   AbaqusInterfaceExceptions::throwPredictionComputationFailedException(const std::string& b)
   {
-    using namespace std;
-    string msg("AbaqusInterfaceExceptions::throwPredictionComputationFailedException : ");
-    msg += "prediction computation failed for behaviour '"+b+"'";
-    throw(runtime_error(msg));
+    throw(std::runtime_error("AbaqusInterfaceExceptions::throwPredictionComputationFailedException: "
+			     "prediction computation failed for behaviour '"+b+"'"));
   }
 
   void
   AbaqusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(const std::string& b)
   {
-    using namespace std;
-    string msg("AbaqusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible : ");
-    msg += "behaviour '"+b+"' can't compute a prediction operator";
-    throw(runtime_error(msg));
+    throw(std::runtime_error("AbaqusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
+			     "behaviour '"+b+"' can't compute a prediction operator"));
   } // end of AbaqusInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   AbaqusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(const std::string& b)
   {
-    using namespace std;
-    string msg("AbaqusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible : ");
-    msg += "behaviour '"+b+"' can't compute a consistent tangent operator";
-    throw(runtime_error(msg));
+    throw(std::runtime_error("AbaqusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
+			     "behaviour '"+b+"' can't compute a consistent tangent operator"));
   } // end of AbaqusInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   AbaqusInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
-    using namespace std;
-    string msg("AbaqusInterfaceExceptions::throwUnsupportedStressFreeExpansionException : ");
-    msg += "behaviour '"+b+"' can handle stress-free expansion but the Abaqus interface can't";
-    throw(runtime_error(msg));
+    ;
+    throw(std::runtime_error("AbaqusInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
+			     "behaviour '"+b+"' can handle stress-free expansion but the Abaqus interface can't"));
   } // end of AbaqusInterfaceExceptions::throwUnsupportedStressFreeExpansionException
 
   void
   AbaqusInterfaceExceptions::displayUnsupportedHypothesisMessage()
   {
-    using namespace std;
-    cout << "AbaqusInterfaceExceptions::displayUnsupportedHypothesisMessage : "
-	 << "unsupported hypothesis" << endl;
+    std::cout << "AbaqusInterfaceExceptions::displayUnsupportedHypothesisMessage : "
+	      << "unsupported hypothesis" << std::endl;
   }
-
-
-  void
-  AbaqusReduceTangentOperator<1u>::exe(AbaqusReal * const DDSOE,
-				      const AbaqusReal* const K)
-  {
-    DDSOE[0] = K[0];
-    DDSOE[1] = K[1];
-    DDSOE[2] = K[2];
-    DDSOE[3] = K[6];
-    DDSOE[4] = K[7];
-    DDSOE[5] = K[8];
-    DDSOE[6] = K[12];
-    DDSOE[7] = K[13];
-    DDSOE[8] = K[14];
-  } // end of AbaqusReduceTangentOperator<1u>::exe
-
-  void
-  AbaqusReduceTangentOperator<2u>::exe(AbaqusReal * const DDSOE,
-				      const AbaqusReal* const K)
-  {
-    DDSOE[0] = K[0];
-    DDSOE[1] = K[1];
-    DDSOE[2] = K[2];
-    DDSOE[3] = K[3];
-    DDSOE[4] = K[6];
-    DDSOE[5] = K[7];
-    DDSOE[6] = K[8];
-    DDSOE[7] = K[9];
-    DDSOE[8]  = K[12];
-    DDSOE[9]  = K[13];
-    DDSOE[10] = K[14];
-    DDSOE[11] = K[15];
-    DDSOE[12] = K[18];
-    DDSOE[13] = K[19];
-    DDSOE[14] = K[20];
-    DDSOE[15] = K[21];
-  } // end of AbaqusReduceTangentOperator<1u>::exe
-
+  
   void
   AbaqusUnSupportedCaseHandler::exe(const AbaqusReal *const,
 				   const AbaqusReal *const,
@@ -201,13 +146,11 @@ namespace abaqus{
 				   AbaqusReal *const,
 				   const AbaqusInt  *const,
 				   AbaqusReal *const,
-				   const StressFreeExpansionHandler&)
+				    const StressFreeExpansionHandler<AbaqusReal>&)
   {
-    using namespace std;
-    string msg("AbaqusUnSupportedCaseHandler::exe : "
-	       "we fall in a case that the abaqus interface "
-	       "is not able to handle.");
-    throw(runtime_error(msg));  
+    throw(std::runtime_error("AbaqusUnSupportedCaseHandler::exe : "
+			     "we fall in a case that the abaqus interface "
+			     "is not able to handle."));  
   } // end of exe
 
 } // end of namespace abaqus 

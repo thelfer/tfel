@@ -71,15 +71,11 @@ namespace tfel{
 	  const StressType G   = E/(1+n);
 	  const StressType C11 = l+G;
 	  C(0,0)=C11;
-	  C(0,1)=l;
-	  C(0,2)=l;
-	  C(1,0)=l;
+	  C(0,1)=C(0,2)=l;
 	  C(1,1)=C11;
-	  C(1,2)=l;
-	  C(2,0)=l;
-	  C(2,1)=l;
+	  C(1,0)=C(1,2)=l;
+	  C(2,0)=C(2,1)=l;
 	  C(2,2)=C11;
-	  C(3,3)=G;    
 	}
       };
       
@@ -91,24 +87,23 @@ namespace tfel{
 	exe(tfel::math::st2tost2<2u,StressType>& C,
 	    const StressType E,const RealType n)
 	{
-	  const StressType l   = E*n/((1.-2*n)*(1+n));
+	  constexpr const StressType zero = StressType(0);
+	  const StressType l   = E*n/((1-2*n)*(1+n));
 	  const StressType G   = E/(1+n);
 	  const StressType C11 = l+G;
 	  C(0,0)=C11;
 	  C(0,1)=l;
 	  C(0,2)=l;
-	  C(0,3)=0.;
+	  C(0,3)=zero;
 	  C(1,0)=l;
 	  C(1,1)=C11;
 	  C(1,2)=l;
-	  C(1,3)=0.;
+	  C(1,3)=zero;
 	  C(2,0)=l;
 	  C(2,1)=l;
 	  C(2,2)=C11;
-	  C(2,3)=0.;
-	  C(3,0)=0.;
-	  C(3,1)=0.;
-	  C(3,2)=0.;
+	  C(2,3)=C(3,0)=zero;
+	  C(3,1)=C(3,2)=zero;
 	  C(3,3)=G;    
 	}
       }; // end of struct ComputeIsotropicStiffnessTensorI
@@ -123,24 +118,20 @@ namespace tfel{
 	    const StressType E,const RealType n)
 	  
 	{
+	  constexpr const StressType zero = StressType(0);
 	  const StressType C1  = E/(1-n*n);
 	  const StressType C2  = n*C1;
 	  const StressType C3  = (1-n)*C1;
 	  C(0,0)=C1;
 	  C(0,1)=C2;
-	  C(0,2)=0.;
-	  C(0,3)=0.;
+	  C(0,2)=C(0,3)=zero;
 	  C(1,0)=C2;
 	  C(1,1)=C1;
-	  C(1,2)=0.;
-	  C(1,3)=0.;
-	  C(2,0)=0.;
-	  C(2,1)=0.;
-	  C(2,2)=0.;
-	  C(2,3)=0.;
-	  C(3,0)=0.;
-	  C(3,1)=0.;
-	  C(3,2)=0.;
+	  C(1,2)=C(1,3)=zero;
+	  C(2,0)=C(2,1)=zero;
+	  C(2,2)=C(2,3)=zero;
+	  C(3,0)=C(3,1)=zero;
+	  C(3,2)=zero;
 	  C(3,3)=C3;    
 	} // end of struct computeIsotropicPlaneStressAlteredStiffnessTensor
       };
@@ -153,44 +144,26 @@ namespace tfel{
 	exe(tfel::math::st2tost2<3u,StressType>& C,
 	    const StressType E,const RealType n)
 	{
-	  const StressType l = E*n/((1.-2*n)*(1+n));
+	  constexpr const StressType zero = StressType(0);
+	  const StressType l = E*n/((1-2*n)*(1+n));
 	  const StressType G = E/(1+n);
 	  const StressType C11 = l+G;
 	  C(0,0)=C11;
-	  C(0,1)=l;
-	  C(0,2)=l;
-	  C(0,3)=0.;
-	  C(0,4)=0.;
-	  C(0,5)=0.;
-	  C(1,0)=l;
+	  C(0,1)=C(0,2)=l;
+	  C(0,3)=C(0,4)=C(0,5)=zero;
+	  C(1,0)=C(1,2)=l;
 	  C(1,1)=C11;
-	  C(1,2)=l;
-	  C(1,3)=0.;
-	  C(1,4)=0.;
-	  C(1,5)=0.;
-	  C(2,0)=l;
-	  C(2,1)=l;
+	  C(1,3)=C(1,4)=C(1,5)=zero;
+	  C(2,0)=C(2,1)=l;
 	  C(2,2)=C11;
-	  C(2,3)=0.;
-	  C(2,4)=0.;
-	  C(2,5)=0.;
-	  C(3,0)=0.;
-	  C(3,1)=0.;
-	  C(3,2)=0.;
+	  C(2,3)=C(2,4)=C(2,5)=zero;
+	  C(3,0)=C(3,1)=C(3,2)=zero;
 	  C(3,3)=G;
-	  C(3,4)=0.;
-	  C(3,5)=0.;
-	  C(4,0)=0.;
-	  C(4,1)=0.;
-	  C(4,2)=0.;
-	  C(4,3)=0.;
+	  C(3,4)=C(3,5)=C(4,0)=zero;
+	  C(4,1)=C(4,2)=C(4,3)=zero;
 	  C(4,4)=G;
-	  C(4,5)=0.;
-	  C(5,0)=0.;
-	  C(5,1)=0.;
-	  C(5,2)=0.;
-	  C(5,3)=0.;
-	  C(5,4)=0.;
+	  C(4,5)=C(5,0)=C(5,1)=zero;
+	  C(5,2)=C(5,3)=C(5,4)=zero;
 	  C(5,5)=G;
 	} // end of struct computeStiffnessTensor
       };

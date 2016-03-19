@@ -70,7 +70,7 @@ namespace abaqus
 	     AbaqusReal *const STATEV,const AbaqusInt  *const NSTATV,
 	     AbaqusReal *const STRESS,	    AbaqusReal *const PNEWDT,
 	     const tfel::material::OutOfBoundsPolicy op,
-	     const StressFreeExpansionHandler& sfeh)
+	     const StressFreeExpansionHandler<AbaqusReal>& sfeh)
     {
       using namespace tfel::material;
       if( *NTENS == 4 ){
@@ -106,7 +106,7 @@ namespace abaqus
 	  AbaqusReal *const,const AbaqusInt  *const,
 	  AbaqusReal *const,      AbaqusReal *const,
 	  const tfel::material::OutOfBoundsPolicy,
-	  const StressFreeExpansionHandler&)
+	  const StressFreeExpansionHandler<AbaqusReal>&)
       {
 	using BV = Behaviour<H,AbaqusReal,false>;
 	using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
@@ -127,7 +127,7 @@ namespace abaqus
 	      AbaqusReal *const STATEV,const AbaqusInt  *const NSTATV,
 	      AbaqusReal *const STRESS,      AbaqusReal *const PNEWDT,
 	      const tfel::material::OutOfBoundsPolicy op,
-	      const StressFreeExpansionHandler& sfeh)
+	      const StressFreeExpansionHandler<AbaqusReal>& sfeh)
       {
 	using BV = Behaviour<H,AbaqusReal,false>;
 	using MTraits  = tfel::material::MechanicalBehaviourTraits<BV>;
@@ -183,7 +183,7 @@ namespace abaqus
 	  AbaqusReal *const STATEV,const AbaqusInt  *const NSTATV,
 	  AbaqusReal *const STRESS,AbaqusReal *const PNEWDT,
 	  const tfel::material::OutOfBoundsPolicy op,
-	  const StressFreeExpansionHandler& sfeh)
+	  const StressFreeExpansionHandler<AbaqusReal>& sfeh)
       {
 	typedef AbaqusBehaviourHandler<H,Behaviour> AHandler;
 	using BV = Behaviour<H,AbaqusReal,false>;

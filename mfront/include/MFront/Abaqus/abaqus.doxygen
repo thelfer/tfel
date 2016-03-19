@@ -6,6 +6,5 @@
 /*!
  * \namespace abaqus
  * \brief the namespace abaqus contains material related to the MFront
- * interface to the [Code-Abaqus](http://www.code-abaqus.org) finite
- * element solver.
+ * interface to the abaqus finite element solver.
  */

@@ -203,7 +203,7 @@ namespace mfront
   } // edn of ZMATInterface::getModellingHypothesesToBeTreated
 
   void 
-  ZMATInterface::exportMechanicalData(std::ofstream& out,
+  ZMATInterface::exportMechanicalData(std::ostream& out,
 				      const Hypothesis h,
 				      const BehaviourDescription& mb) const
   {
@@ -313,7 +313,7 @@ namespace mfront
   }
   
   void 
-  ZMATInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
+  ZMATInterface::writeInterfaceSpecificIncludes(std::ostream& out,
 						const BehaviourDescription& mb) const
   {
     out << "#include\"MFront/ZMAT/ZMATInterface.hxx\"\n";
@@ -329,7 +329,7 @@ namespace mfront
   } // end of ZMATInterface::writeInterfaceSpecificIncludes
 
   void
-  ZMATInterface::writeBehaviourDataConstructor(std::ofstream& out,
+  ZMATInterface::writeBehaviourDataConstructor(std::ostream& out,
 						     const Hypothesis h,
 						     const BehaviourDescription& mb) const
   {
@@ -535,7 +535,7 @@ namespace mfront
   } // end of ZMATInterface::writeBehaviourDataConstructor
 
   void
-  ZMATInterface::writeBehaviourConstructor(std::ofstream& out,
+  ZMATInterface::writeBehaviourConstructor(std::ostream& out,
 						 const BehaviourDescription& mb,
 						 const std::string& initStateVarsIncrements) const
   {
@@ -635,7 +635,7 @@ namespace mfront
   }
   
   void 
-  ZMATInterface::writeIntegrationDataConstructor(std::ofstream& out,
+  ZMATInterface::writeIntegrationDataConstructor(std::ostream& out,
 						 const Hypothesis h,
 						 const BehaviourDescription& mb) const
   {
@@ -739,14 +739,14 @@ namespace mfront
   }
 
   void 
-  ZMATInterface::writeBehaviourDataMainVariablesSetters(std::ofstream&,
+  ZMATInterface::writeBehaviourDataMainVariablesSetters(std::ostream&,
 							      const BehaviourDescription&) const
   {
     //handled by the constructors
   }
 
   void 
-  ZMATInterface::writeIntegrationDataMainVariablesSetters(std::ofstream&,
+  ZMATInterface::writeIntegrationDataMainVariablesSetters(std::ostream&,
 								const BehaviourDescription&) const
   {
     //handled by the constructors

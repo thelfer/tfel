@@ -135,7 +135,9 @@ libTFELMFront_la_SOURCES += AsterInterface.cxx
 endif
 
 if HAVE_ABAQUS
-libTFELMFront_la_SOURCES += AbaqusInterface.cxx
+libTFELMFront_la_SOURCES += AbaqusInterfaceBase.cxx     \
+			    AbaqusInterface.cxx         \
+			    AbaqusExplicitInterface.cxx
 endif
 
 if HAVE_EUROPLEXUS

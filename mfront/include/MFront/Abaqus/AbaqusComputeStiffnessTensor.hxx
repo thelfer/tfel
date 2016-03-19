@@ -31,29 +31,8 @@ namespace abaqus
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-  AbaqusComputeIsotropicStiffnessTensor2D(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor&,
-					const AbaqusReal* const);
-
-  /*!
-   * \brief compute the stiffness tensor for plane stress modelling
-   * hypothesis.
-   * \param[out] C     : stiffness tensor
-   * \param[in]  props : material properties
-   */
-  MFRONT_ABAQUS_VISIBILITY_EXPORT void
-  AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor&,
-							const AbaqusReal* const);
-
-  /*!
-   * \brief compute the stiffness tensor for the tridimensionnal
-   * modelling hypothesis.
-   * \param[out] C     : stiffness tensor
-   * \param[in]  props : material properties
-   */
-  MFRONT_ABAQUS_VISIBILITY_EXPORT void
-  AbaqusComputeIsotropicStiffnessTensor3D(tfel::config::Types<3u,AbaqusReal,false>::StiffnessTensor&,
-					const AbaqusReal* const);
-
+  AbaqusComputeIsotropicStiffnessTensor2D(tfel::config::Types<2u,float,false>::StiffnessTensor&,
+					  const float* const);
   /*!
    * \brief compute the stiffness tensor for plane strain, generalised
    * plane strain and axisymmetrical hypotheses.
@@ -61,9 +40,8 @@ namespace abaqus
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-  AbaqusComputeOrthotropicStiffnessTensor2D(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor&,
-					  const AbaqusReal* const);
-
+  AbaqusComputeIsotropicStiffnessTensor2D(tfel::config::Types<2u,double,false>::StiffnessTensor&,
+					const double* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -71,9 +49,17 @@ namespace abaqus
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-  AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor&,
-							  const AbaqusReal* const);
-
+  AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor(tfel::config::Types<2u,float,false>::StiffnessTensor&,
+							  const float* const);
+  /*!
+   * \brief compute the stiffness tensor for plane stress modelling
+   * hypothesis.
+   * \param[out] C     : stiffness tensor
+   * \param[in]  props : material properties
+   */
+  MFRONT_ABAQUS_VISIBILITY_EXPORT void
+  AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor(tfel::config::Types<2u,double,false>::StiffnessTensor&,
+							  const double* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -81,8 +67,71 @@ namespace abaqus
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-  AbaqusComputeOrthotropicStiffnessTensor3D(tfel::config::Types<3u,AbaqusReal,false>::StiffnessTensor&,
-					  const AbaqusReal* const);
+  AbaqusComputeIsotropicStiffnessTensor3D(tfel::config::Types<3u,float,false>::StiffnessTensor&,
+					  const float* const);
+  /*!
+   * \brief compute the stiffness tensor for the tridimensionnal
+   * modelling hypothesis.
+   * \param[out] C     : stiffness tensor
+   * \param[in]  props : material properties
+   */
+  MFRONT_ABAQUS_VISIBILITY_EXPORT void
+  AbaqusComputeIsotropicStiffnessTensor3D(tfel::config::Types<3u,double,false>::StiffnessTensor&,
+					const double* const);
+  /*!
+   * \brief compute the stiffness tensor for plane strain, generalised
+   * plane strain and axisymmetrical hypotheses.
+   * \param[out] C     : stiffness tensor
+   * \param[in]  props : material properties
+   */
+  MFRONT_ABAQUS_VISIBILITY_EXPORT void
+  AbaqusComputeOrthotropicStiffnessTensor2D(tfel::config::Types<2u,float,false>::StiffnessTensor&,
+					  const float* const);
+  /*!
+   * \brief compute the stiffness tensor for plane strain, generalised
+   * plane strain and axisymmetrical hypotheses.
+   * \param[out] C     : stiffness tensor
+   * \param[in]  props : material properties
+   */
+  MFRONT_ABAQUS_VISIBILITY_EXPORT void
+  AbaqusComputeOrthotropicStiffnessTensor2D(tfel::config::Types<2u,double,false>::StiffnessTensor&,
+					    const double* const);
+  /*!
+   * \brief compute the stiffness tensor for plane stress modelling
+   * hypothesis.
+   * \param[out] C     : stiffness tensor
+   * \param[in]  props : material properties
+   */
+  MFRONT_ABAQUS_VISIBILITY_EXPORT void
+  AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor(tfel::config::Types<2u,float,false>::StiffnessTensor&,
+							    const float* const);
+  /*!
+   * \brief compute the stiffness tensor for plane stress modelling
+   * hypothesis.
+   * \param[out] C     : stiffness tensor
+   * \param[in]  props : material properties
+   */
+  MFRONT_ABAQUS_VISIBILITY_EXPORT void
+  AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor(tfel::config::Types<2u,double,false>::StiffnessTensor&,
+							    const double* const);
+  /*!
+   * \brief compute the stiffness tensor for the tridimensionnal
+   * modelling hypothesis.
+   * \param[out] C     : stiffness tensor
+   * \param[in]  props : material properties
+   */
+  MFRONT_ABAQUS_VISIBILITY_EXPORT void
+  AbaqusComputeOrthotropicStiffnessTensor3D(tfel::config::Types<3u,float,false>::StiffnessTensor&,
+					    const float* const);
+  /*!
+   * \brief compute the stiffness tensor for the tridimensionnal
+   * modelling hypothesis.
+   * \param[out] C     : stiffness tensor
+   * \param[in]  props : material properties
+   */
+  MFRONT_ABAQUS_VISIBILITY_EXPORT void
+  AbaqusComputeOrthotropicStiffnessTensor3D(tfel::config::Types<3u,double,false>::StiffnessTensor&,
+					    const double* const);
   
   /*!
    * This structure is in charge of computing the Stiffness operator
@@ -106,9 +155,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeIsotropicStiffnessTensor2D(C,props);
     }
@@ -125,9 +175,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeIsotropicStiffnessTensor2D(C,props);
     }
@@ -144,9 +195,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor(C,props);
     }
@@ -163,9 +215,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeIsotropicStiffnessTensor2D(C,props);
     }
@@ -182,9 +235,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeIsotropicStiffnessTensor2D(C,props);
     }
@@ -201,9 +255,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<3u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<3u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeIsotropicStiffnessTensor3D(C,props);
     }
@@ -219,9 +274,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeOrthotropicStiffnessTensor2D(C,props);
     }
@@ -238,9 +294,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeOrthotropicStiffnessTensor2D(C,props);
     }
@@ -257,9 +314,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor(C,props);
     }
@@ -276,9 +334,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeOrthotropicStiffnessTensor2D(C,props);
     }
@@ -295,9 +354,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<2u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<2u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeOrthotropicStiffnessTensor2D(C,props);      
     }
@@ -314,9 +374,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(tfel::config::Types<3u,AbaqusReal,false>::StiffnessTensor& C,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<3u,real,false>::StiffnessTensor& C,
+	const real* const props)
     {
       AbaqusComputeOrthotropicStiffnessTensor3D(C,props);      
     }
@@ -336,9 +397,10 @@ namespace abaqus
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
+    template<typename real>
     static void
-    exe(typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,AbaqusReal,false>::StiffnessTensor& D,
-	const AbaqusReal* const props)
+    exe(typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,real,false>::StiffnessTensor& D,
+	const real* const props)
     {
       AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,H,stype,b>::exe(D,props);
     }

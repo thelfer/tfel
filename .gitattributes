@@ -1666,7 +1666,9 @@ mfront/include/MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/Abaqus/AbaqusTangentOperator.hxx -text
 mfront/include/MFront/Abaqus/AbaqusTraits.hxx -text
 mfront/include/MFront/Abaqus/abaqus.doxygen -text
+mfront/include/MFront/AbaqusExplicitInterface.hxx -text
 mfront/include/MFront/AbaqusInterface.hxx -text
+mfront/include/MFront/AbaqusInterfaceBase.hxx -text
 mfront/include/MFront/AbstractBehaviourBrick.hxx -text
 mfront/include/MFront/AbstractBehaviourBrickFactory.hxx -text
 mfront/include/MFront/AbstractBehaviourDSL.hxx -text
@@ -1876,7 +1878,9 @@ mfront/lisp/mfront.el -text
 mfront/src/AbaqusComputeStiffnessTensor.cxx -text
 mfront/src/AbaqusComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/AbaqusException.cxx -text
+mfront/src/AbaqusExplicitInterface.cxx -text
 mfront/src/AbaqusInterface.cxx -text
+mfront/src/AbaqusInterfaceBase.cxx -text
 mfront/src/AbaqusInterfaceExceptions.cxx -text
 mfront/src/AbaqusStressFreeExpansionHandler.cxx -text
 mfront/src/AbaqusTangentOperator.cxx -text

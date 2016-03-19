@@ -451,9 +451,8 @@ namespace epx
       constexpr const bool is_defined_        = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((npredef!=NPREDEF)&&is_defined_){
-#pragma message("HERE")	
-	// throwUnMatchedNumberOfExternalStateVariables(Traits::getName(),
-	// 					     npredef,NPREDEF);
+	throwUnMatchedNumberOfExternalStateVariables(Traits::getName(),
+						     npredef,NPREDEF);
       }
     } // end of checkNPREDEF
     

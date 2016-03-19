@@ -36,8 +36,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<1u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<1u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<1u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
   template<>
@@ -46,8 +49,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
   template<>
@@ -56,8 +62,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
 
@@ -67,8 +76,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::PLANESTRAIN,ISOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
   template<>
@@ -77,8 +89,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
   template<>
@@ -87,8 +102,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ISOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<3u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<3u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<3u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
   template<>
@@ -97,8 +115,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<1u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<1u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<1u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
   template<>
@@ -107,8 +128,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
   template<>
@@ -117,8 +141,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
 
@@ -128,8 +155,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::PLANESTRAIN,ORTHOTROPIC>
   {
     static void
-      exe(const AbaqusReal* const,
-	  tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
   template<>
@@ -138,8 +168,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
-    exe(const AbaqusReal* const,
-	tfel::config::Types<2u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
   template<>
@@ -148,8 +181,11 @@ namespace abaqus
 					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ORTHOTROPIC>
   {
     static void
-    exe(const AbaqusReal* const,
-	tfel::config::Types<3u,AbaqusReal,false>::ThermalExpansionCoefficientTensor&);
+    exe(const float* const,
+	tfel::config::Types<3u,float,false>::ThermalExpansionCoefficientTensor&);
+    static void
+    exe(const double* const,
+	tfel::config::Types<3u,double,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
 } // end of namespace abaqus

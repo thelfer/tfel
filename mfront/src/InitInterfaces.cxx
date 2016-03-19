@@ -57,6 +57,7 @@
 
 #ifdef HAVE_ABAQUS
 #include"MFront/AbaqusInterface.hxx"
+#include"MFront/AbaqusExplicitInterface.hxx"
 #endif
 
 #ifdef HAVE_EUROPLEXUS
@@ -127,7 +128,8 @@ namespace mfront
 #endif /* HAVE_ASTER */
 
 #ifdef HAVE_ABAQUS
-    BehaviourInterfaceProxy<AbaqusInterface> abaqusProxy;
+    BehaviourInterfaceProxy<AbaqusInterface>         abaqusProxy;
+    BehaviourInterfaceProxy<AbaqusExplicitInterface> abaqusExplicitProxy;
 #endif /* HAVE_ABAQUS */
 
 #ifdef HAVE_EUROPLEXUS

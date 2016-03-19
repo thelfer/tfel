@@ -484,11 +484,10 @@ namespace mfront{
   } // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
 
   void 
-  CyranoInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
-							const BehaviourDescription&) const
+  CyranoInterface::writeInterfaceSpecificIncludes(std::ostream& out,
+						  const BehaviourDescription&) const
   {
-    using namespace std;
-    out << "#include\"MFront/Cyrano/Cyrano.hxx\"" << endl << endl;
+    out << "#include\"MFront/Cyrano/Cyrano.hxx\"\n\n";
   }
 
   void

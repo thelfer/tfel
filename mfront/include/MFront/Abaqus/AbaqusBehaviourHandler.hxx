@@ -79,7 +79,7 @@ namespace abaqus
 	void exe(BV& b,
 		 const AbaqusReal *const STRAN,
 		 const AbaqusReal *const DSTRAN,
-		 const StressFreeExpansionHandler& sfeh)
+		 const StressFreeExpansionHandler<AbaqusReal>& sfeh)
       {
 	using std::pair;
 	using tfel::fsalgo::copy;
@@ -126,7 +126,7 @@ namespace abaqus
 	void exe(BV& b,
 		 const AbaqusReal *const STRAN,
 		 const AbaqusReal *const DSTRAN,
-		 const StressFreeExpansionHandler&)
+		 const StressFreeExpansionHandler<AbaqusReal>&)
       {
 	b.setABAQUSBehaviourDataDrivingVariables(STRAN);
 	b.setABAQUSIntegrationDataDrivingVariables(DSTRAN);
@@ -192,7 +192,7 @@ namespace abaqus
 				    const AbaqusReal *const STRESS,
 				    const AbaqusReal *const DROT,
 				    const tfel::material::OutOfBoundsPolicy op,
-				    const StressFreeExpansionHandler& sfeh)
+				    const StressFreeExpansionHandler<AbaqusReal>& sfeh)
 	: behaviour(DTIME,TEMP,DTEMP,
 		    PROPS+AbaqusTraits<BV>::elasticPropertiesOffset+
 		    AbaqusTraits<BV>::thermalExpansionPropertiesOffset,

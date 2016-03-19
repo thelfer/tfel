@@ -45,7 +45,7 @@ namespace mfront{
     allowDynamicallyAllocatedArrays(const bool) override;
 
     virtual void
-    exportMechanicalData(std::ofstream&,
+    exportMechanicalData(std::ostream&,
 			 const Hypothesis,
 			 const BehaviourDescription&) const override;
     /*!
@@ -56,7 +56,7 @@ namespace mfront{
      * \param[in]  o   : thermodynamic force offset
      */
     virtual void 
-    exportThermodynamicForce(std::ofstream&,
+    exportThermodynamicForce(std::ostream&,
 			     const std::string&,
 			     const ThermodynamicForce&,
 			     const SupportedTypes::TypeSize) const;
@@ -91,23 +91,23 @@ namespace mfront{
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
-     * \param[in] mb                      : mechanical behaviour description
+     * \param[in] mb                      : behaviour description
      * \param[in] initStateVarsIncrements : constructor part assigning
      *                                      default value (zero) to state
      *                                      variable increments
      */
     virtual void
-    writeBehaviourConstructor(std::ofstream&,
+    writeBehaviourConstructor(std::ostream&,
 			      const BehaviourDescription&,
 			      const std::string&) const override;
     /*!
      * \brief write the behaviour constructor associated with the law
      * \param[in] behaviourFile : output file
      * \param[in] h             : modelling hypothesis
-     * \param[in] mb            : mechanical behaviour description
+     * \param[in] mb            : behaviour description
      */
     virtual void
-    writeBehaviourDataConstructor(std::ofstream&,
+    writeBehaviourDataConstructor(std::ostream&,
 				  const Hypothesis,
 				  const BehaviourDescription&) const override;
     /*!
@@ -115,19 +115,19 @@ namespace mfront{
      * data constructor
      * \param[in] behaviourFile : output file
      * \param[in] h             : modelling hypothesis
-     * \param[in] mb            : mechanical behaviour description
+     * \param[in] mb            : behaviour description
      */
     virtual void 
-    completeBehaviourDataConstructor(std::ofstream&,
+    completeBehaviourDataConstructor(std::ostream&,
 				     const Hypothesis,
 				     const BehaviourDescription&) const;
     /*!
      * write the initialisation of the driving variables
      * \param[in] os : output file
-     * \param[in] mb : mechanical behaviour description
+     * \param[in] mb : behaviour description
      */
     virtual void 
-    writeBehaviourDataMainVariablesSetters(std::ofstream&,
+    writeBehaviourDataMainVariablesSetters(std::ostream&,
 					   const BehaviourDescription&) const override;
     /*!
      * \brief write the initialisation of a driving variables
@@ -136,7 +136,7 @@ namespace mfront{
      * \param[in] o  : variable offsert
      */
     virtual void
-    writeBehaviourDataDrivingVariableSetter(std::ofstream&,
+    writeBehaviourDataDrivingVariableSetter(std::ostream&,
 					    const DrivingVariable&,
 					    const SupportedTypes::TypeSize) const;
     /*!
@@ -146,21 +146,21 @@ namespace mfront{
      * \param[in] o  : variable offsert
      */
     virtual void
-    writeBehaviourDataThermodynamicForceSetter(std::ofstream&,
+    writeBehaviourDataThermodynamicForceSetter(std::ostream&,
 					       const ThermodynamicForce&,
 					       const SupportedTypes::TypeSize) const;
     
     virtual void
-    writeIntegrationDataConstructor(std::ofstream&,
+    writeIntegrationDataConstructor(std::ostream&,
 				    const Hypothesis,
 				    const BehaviourDescription&) const override;
     /*!
      * write the initialisation of the driving variables
      * \param[in] behaviourFile : output file
-     * \param[in] mb            : mechanical behaviour description
+     * \param[in] mb            : behaviour description
      */
     virtual void 
-    writeIntegrationDataMainVariablesSetters(std::ofstream&,
+    writeIntegrationDataMainVariablesSetters(std::ostream&,
 					     const BehaviourDescription&) const override;
     /*!
      * \brief write the initialisation of a driving variables
@@ -169,7 +169,7 @@ namespace mfront{
      * \param[in] o  : variable offsert
      */
     virtual void
-    writeIntegrationDataDrivingVariableSetter(std::ofstream&,
+    writeIntegrationDataDrivingVariableSetter(std::ostream&,
 					      const DrivingVariable&,
 					      const SupportedTypes::TypeSize) const;
     //! destructor
@@ -264,7 +264,10 @@ namespace mfront{
 
     virtual std::string
     getInterfaceName(void) const = 0;
-
+    /*!
+     * \return the name of the generated library
+     * \param[in] mb : behaviour description
+     */
     virtual std::string
     getLibraryName(const BehaviourDescription&) const = 0;
 
@@ -277,7 +280,7 @@ namespace mfront{
      * material properties in the values given through the interface
      * and whose second members is an offset giving the number of
      * imposed material properties.
-     * \param[in] mb : mechanical behaviour description
+     * \param[in] mb : behaviour description
      * \param[in] h  : modelling hypothesis
      */
     virtual std::pair<std::vector<UMATMaterialProperty>,
@@ -304,7 +307,7 @@ namespace mfront{
      * after that the mandatory material properties list have been
      * filled.
      * \param[out] mprops : list of material properties
-     * \param[in]  mb     : mechanical behaviour description
+     * \param[in]  mb     : behaviour description
      * \param[in]  h      : modelling hypothesis
      */
     virtual void
@@ -332,7 +335,7 @@ namespace mfront{
     /*!
      * \param[out] f      : output file
      * \param[in]  h      : modelling hypothesis
-     * \param[in]  mb     : mechanical behaviour description
+     * \param[in]  mb     : behaviour description
      * \param[in]  v      : variables to be initialized
      * \param[in]  iv     : indirection vector
      * \param[in]  o      : offset in the indirection vector
@@ -352,7 +355,7 @@ namespace mfront{
     /*!
      * \param[out] f      : output file
      * \param[in]  h      : modelling hypothesis
-     * \param[in]  mb     : mechanical behaviour description
+     * \param[in]  mb     : behaviour description
      * \param[in]  v      : variables to be initialized
      * \param[in]  iv     : indirection vector
      * \param[in]  o      : offset in the indirection vector
@@ -626,7 +629,7 @@ namespace mfront{
     /*!
      * \return true if the interface handles the given modelling hypothesis
      * \param[in] h  : modelling hypothesis
-     * \param[in] mb : mechanical behaviour description
+     * \param[in] mb : behaviour description
      */
     virtual bool
     isModellingHypothesisHandled(const Hypothesis,

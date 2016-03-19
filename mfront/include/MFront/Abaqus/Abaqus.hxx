@@ -36,30 +36,38 @@ namespace abaqus{
   using AbaqusInt  = int;
   using AbaqusReal = double;
 
-  /*!
-   * prototype of a function handling stress-free expansion at the
-   * beginning of the time step
-   *
-   * - first  paramater : driving variable
-   * - second paramater : driving variable at the end of the time step
-   *   or driving variable increment
-   * - third paramater  : expansion value at the beginning of the time
-   *   step
-   * - fourth paramater : expansion value at the end of the time step
-   * - third  parameter : spatial dimension
-   */
-  typedef void (*StressFreeExpansionHandler)(AbaqusReal * const,
-					     AbaqusReal * const,
-					     const AbaqusReal *const,
-					     const AbaqusReal *const,
-					     const AbaqusInt);
+  template<typename real>
+  struct StressFreeExpansionHandlerType
+  {
+    /*!
+     * prototype of a function handling stress-free expansion at the
+     * beginning of the time step
+     *
+     * - first  paramater : driving variable
+     * - second paramater : driving variable at the end of the time step
+     *   or driving variable increment
+     * - third paramater  : expansion value at the beginning of the time
+     *   step
+     * - fourth paramater : expansion value at the end of the time step
+     * - third  parameter : spatial dimension
+     */
+    using type = void (*)(real * const,
+			  real * const,
+			  const real *const,
+			  const real *const,
+			  const AbaqusInt);
+  };
+
+  template<typename real>
+  using StressFreeExpansionHandler = typename StressFreeExpansionHandlerType<real>::type;
+  
   /*!
    * \brief class defining the convertion from abaqus to mfront for
    * thermodynamic forces
    * \tparam H: modelling hypothesis
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct ImportThermodynamicForces
+  struct UMATImportThermodynamicForces
   {
     //! space dimension
     static constexpr const unsigned short N =
@@ -74,13 +82,13 @@ namespace abaqus{
     exe(tfel::math::stensor<N,T>& s,const AbaqusReal* const v){
       s.importTab(v);
     } // end of exe
-  }; // end of struct ImportThermodynamicForces
+  }; // end of struct UMATImportThermodynamicForces
   /*!
-   * \brief partial specialisation of the ImportThermodynamicForces
+   * \brief partial specialisation of the UMATImportThermodynamicForces
    * for the plane stress modelling hypothesis.
    */
   template<>
-  struct ImportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
+  struct UMATImportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
   {
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -102,14 +110,14 @@ namespace abaqus{
       s[2]=AbaqusReal{0};
       s[3]=v[2]*cste;
     } // end of exe
-  }; // end of struct ImportThermodynamicForces
+  }; // end of struct UMATImportThermodynamicForces
   /*!
    * \brief class defining the convertion from mfront to abaqus for
    * thermodynamic forces
    * \tparam H: modelling hypothesis
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct ExportThermodynamicForces
+  struct UMATExportThermodynamicForces
   {
     //! space dimension
     static constexpr const unsigned short N =
@@ -124,13 +132,13 @@ namespace abaqus{
     exe(AbaqusReal* const v,const tfel::math::stensor<N,T>& s){
       s.exportTab(v);
     } // end of exe
-  }; // end of struct ExportThermodynamicForces
+  }; // end of struct UMATExportThermodynamicForces
   /*!
-   * \brief partial specialisation of the ExportThermodynamicForces
+   * \brief partial specialisation of the UMATExportThermodynamicForces
    * for the plane stress modelling hypothesis.
    */
   template<>
-  struct ExportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
+  struct UMATExportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
   {
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -151,7 +159,7 @@ namespace abaqus{
       v[1]=s[1];
       v[2]=s[3]*cste;
     } // end of exe
-  }; // end of struct ExportThermodynamicForces
+  }; // end of struct UMATExportThermodynamicForces
   
 } // end of namespace abaqus
 

@@ -181,7 +181,7 @@ namespace mfront
   } // end of UMATInterfaceBase::completeMaterialPropertiesList
 
   void 
-  UMATInterfaceBase::exportMechanicalData(std::ofstream& behaviourDataFile,
+  UMATInterfaceBase::exportMechanicalData(std::ostream& behaviourDataFile,
 					  const Hypothesis h,
 					  const BehaviourDescription& mb) const
   {
@@ -214,7 +214,7 @@ namespace mfront
   }
 
   void 
-  UMATInterfaceBase::exportThermodynamicForce(std::ofstream& out,
+  UMATInterfaceBase::exportThermodynamicForce(std::ostream& out,
 					      const std::string& a,
 					      const ThermodynamicForce& f,
 					      const SupportedTypes::TypeSize o) const
@@ -263,7 +263,7 @@ namespace mfront
   } // end of UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables
   
   void
-  UMATInterfaceBase::writeBehaviourConstructor(std::ofstream& behaviourFile,
+  UMATInterfaceBase::writeBehaviourConstructor(std::ostream& behaviourFile,
 					       const BehaviourDescription& mb,
 					       const std::string& initStateVarsIncrements) const
   {
@@ -473,7 +473,7 @@ namespace mfront
   } // end of UMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorII
 
   void 
-  UMATInterfaceBase::writeBehaviourDataConstructor(std::ofstream& behaviourDataFile,
+  UMATInterfaceBase::writeBehaviourDataConstructor(std::ostream& behaviourDataFile,
 						   const Hypothesis h,
 						   const BehaviourDescription& mb) const
   {
@@ -549,13 +549,13 @@ namespace mfront
   }
 
   void 
-  UMATInterfaceBase::completeBehaviourDataConstructor(std::ofstream&,
+  UMATInterfaceBase::completeBehaviourDataConstructor(std::ostream&,
 						      const Hypothesis,
 						      const BehaviourDescription&) const
   {} // end of UMATInterfaceBase::completeBehaviourDataConstructor
   
   void 
-  UMATInterfaceBase::writeIntegrationDataConstructor(std::ofstream& behaviourIntegrationFile,
+  UMATInterfaceBase::writeIntegrationDataConstructor(std::ostream& behaviourIntegrationFile,
 						     const Hypothesis h,
 						     const BehaviourDescription& mb) const
   {
@@ -605,7 +605,7 @@ namespace mfront
   }
 
   void 
-  UMATInterfaceBase::writeBehaviourDataMainVariablesSetters(std::ofstream& os,
+  UMATInterfaceBase::writeBehaviourDataMainVariablesSetters(std::ostream& os,
 							    const BehaviourDescription& mb) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
@@ -627,7 +627,7 @@ namespace mfront
   } // end of UMATInterfaceBase::writeBehaviourDataMainVariablesSetters
 
   void 
-  UMATInterfaceBase::writeBehaviourDataDrivingVariableSetter(std::ofstream& os,
+  UMATInterfaceBase::writeBehaviourDataDrivingVariableSetter(std::ostream& os,
 							     const DrivingVariable& v,
 							     const SupportedTypes::TypeSize o) const
   {
@@ -686,7 +686,7 @@ namespace mfront
   } // end of UMATInterfaceBase::writeBehaviourDataDrivingVariableSetter
 
   void 
-  UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter(std::ofstream& os,
+  UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter(std::ostream& os,
 								const ThermodynamicForce& f,
 								const SupportedTypes::TypeSize o) const
   {
@@ -718,7 +718,7 @@ namespace mfront
   } // end of UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter
   
   void 
-  UMATInterfaceBase::writeIntegrationDataMainVariablesSetters(std::ofstream& os,
+  UMATInterfaceBase::writeIntegrationDataMainVariablesSetters(std::ostream& os,
 							      const BehaviourDescription& mb) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
@@ -733,7 +733,7 @@ namespace mfront
   } // end of writeIntegrationDataMainVariablesSetters
 
   void 
-  UMATInterfaceBase::writeIntegrationDataDrivingVariableSetter(std::ofstream& os,
+  UMATInterfaceBase::writeIntegrationDataDrivingVariableSetter(std::ostream& os,
 							       const DrivingVariable& v,
 							       const SupportedTypes::TypeSize o) const
   {
@@ -903,7 +903,7 @@ namespace mfront
 									const std::string& name) const
   {
     out << "MFRONT_SHAREDOBJ void\n"
-	<< getFunctionName(name) << "_setOutOfBoundsPolicy(const int);\n\n";
+	<< this->getFunctionName(name) << "_setOutOfBoundsPolicy(const int);\n\n";
   }
 
   void
@@ -911,7 +911,7 @@ namespace mfront
 									   const std::string& name) const
   {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy(void){\n"
+	<< this->getFunctionName(name) << "_getOutOfBoundsPolicy(void){\n"
 	<< "using namespace tfel::material;\n"
 	<< "static OutOfBoundsPolicy policy = None;\n"
 	<< "return policy;\n"
@@ -923,15 +923,15 @@ namespace mfront
 							             const std::string& name) const
   {
     out << "MFRONT_SHAREDOBJ void\n"
-	<< getFunctionName(name) << "_setOutOfBoundsPolicy(const int p){\n"
+	<< this->getFunctionName(name) << "_setOutOfBoundsPolicy(const int p){\n"
 	<< "if(p==0){\n"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::None;\n"
+	<< this->getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::None;\n"
 	<< "} else if(p==1){\n"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::Warning;\n"
+	<< this->getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::Warning;\n"
 	<< "} else if(p==2){\n"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::Strict;\n"
+	<< this->getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::Strict;\n"
 	<< "} else {\n"
-      	<< "std::cerr << \"" << getFunctionName(name)
+      	<< "std::cerr << \"" << this->getFunctionName(name)
 	<< "_setOutOfBoundsPolicy : invalid argument\\n\";\n"
 	<< "}\n"
 	<< "}\n\n";

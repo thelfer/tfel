@@ -58,7 +58,7 @@ namespace mfront{
     operator=(BoundsDescription&&);
     ~BoundsDescription();
 
-    void writeBoundsChecks(std::ofstream&) const;
+    void writeBoundsChecks(std::ostream&) const;
 
     // name of the variable on which the bounds acts
     std::string    name;
@@ -79,7 +79,7 @@ namespace mfront{
 
   protected:
 
-    void writeBoundsChecks(std::ofstream&,
+    void writeBoundsChecks(std::ostream&,
 			   const std::string&) const;
 
   }; // end of class BoundsDescription

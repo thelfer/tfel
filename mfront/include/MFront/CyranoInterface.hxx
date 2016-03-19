@@ -50,7 +50,7 @@ namespace mfront{
      * \param[in] mb  : mechanical behaviour description
      */
     virtual void 
-    writeInterfaceSpecificIncludes(std::ofstream&,
+    writeInterfaceSpecificIncludes(std::ostream&,
 				   const BehaviourDescription&) const override;
     /*!
      * \param[in] k  : keyword treated
@@ -167,7 +167,10 @@ namespace mfront{
 
     virtual std::string
     getModellingHypothesisTest(const Hypothesis) const override;
-
+    /*!
+     * \return the list of modelling hypotheses treated by the interface
+     * \param[in] mb : behaviour description
+     */
     std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
 

@@ -81,11 +81,11 @@ namespace mfront{
      * \param[in] mb  : mechanical behaviour description
      */
     virtual void 
-    writeInterfaceSpecificIncludes(std::ofstream&,
+    writeInterfaceSpecificIncludes(std::ostream&,
 				   const BehaviourDescription&) const override;
 
     virtual void
-    exportMechanicalData(std::ofstream&,
+    exportMechanicalData(std::ostream&,
 			 const Hypothesis,
 			 const BehaviourDescription&) const override;
     /*!
@@ -97,12 +97,12 @@ namespace mfront{
      *                                      variable increments
      */
     virtual void
-    writeBehaviourConstructor(std::ofstream&,
+    writeBehaviourConstructor(std::ostream&,
 			      const BehaviourDescription&,
 			      const std::string&) const override;
 
     virtual void
-    writeBehaviourDataConstructor(std::ofstream&,
+    writeBehaviourDataConstructor(std::ostream&,
 				  const Hypothesis,
 				  const BehaviourDescription&) const override;
 
@@ -112,11 +112,11 @@ namespace mfront{
      * \param[in] mb            : mechanical behaviour description
      */
     virtual void 
-    writeBehaviourDataMainVariablesSetters(std::ofstream&,
+    writeBehaviourDataMainVariablesSetters(std::ostream&,
 					   const BehaviourDescription&) const override;
     
     virtual void
-    writeIntegrationDataConstructor(std::ofstream&,
+    writeIntegrationDataConstructor(std::ostream&,
 				    const Hypothesis,
 				    const BehaviourDescription&) const override;
     /*!
@@ -125,7 +125,7 @@ namespace mfront{
      * \param[in] mb            : mechanical behaviour description
      */
     virtual void 
-    writeIntegrationDataMainVariablesSetters(std::ofstream&,
+    writeIntegrationDataMainVariablesSetters(std::ostream&,
 					     const BehaviourDescription&) const override;
     /*!
      * \brief write output files

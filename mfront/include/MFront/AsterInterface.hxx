@@ -134,7 +134,7 @@ namespace mfront{
      * \param[in] mb  : mechanical behaviour description
      */
     virtual void 
-    writeInterfaceSpecificIncludes(std::ofstream&,
+    writeInterfaceSpecificIncludes(std::ostream&,
 				   const BehaviourDescription&) const override;
 
     virtual std::string
@@ -142,7 +142,10 @@ namespace mfront{
 
     virtual std::map<UMATInterfaceBase::Hypothesis,std::string>
     gatherModellingHypothesesAndTests(const BehaviourDescription&) const override;
-
+    /*!
+     * \return the list of modelling hypotheses treated by the interface
+     * \param[in] mb : behaviour description
+     */
     virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
 

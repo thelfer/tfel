@@ -638,16 +638,16 @@ namespace mfront{
 		const Hypothesis);
 
     virtual void
-    writeIncludes(std::ofstream&);
+    writeIncludes(std::ostream&);
 
     virtual void
-    writeNamespaceBegin(std::ofstream&);
+    writeNamespaceBegin(std::ostream&);
     
     virtual void
-    writeNamespaceEnd(std::ofstream&);
+    writeNamespaceEnd(std::ostream&);
     
     virtual void
-    writeStandardTFELTypedefs(std::ofstream&); 
+    writeStandardTFELTypedefs(std::ostream&); 
     
     virtual void
     checkBehaviourDataFile(void) const;

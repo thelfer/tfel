@@ -95,7 +95,7 @@ namespace mfront{
      * \param[in]  mb: mechanical behaviour description
      */
     virtual void
-    writeBehaviourDataMainVariablesSetters(std::ofstream&,
+    writeBehaviourDataMainVariablesSetters(std::ostream&,
 					   const BehaviourDescription&) const override;
     /*!
      * \brief write the initialisation of a driving variables
@@ -104,7 +104,7 @@ namespace mfront{
      * \param[in] o  : variable offsert
      */
     virtual void 
-    writeBehaviourDataDrivingVariableSetter(std::ofstream&,
+    writeBehaviourDataDrivingVariableSetter(std::ostream&,
 					    const DrivingVariable&,
 					    const SupportedTypes::TypeSize) const override;
     /*!
@@ -114,7 +114,7 @@ namespace mfront{
      * \param[in] o  : variable offsert
      */
     virtual void 
-    writeIntegrationDataDrivingVariableSetter(std::ofstream&,
+    writeIntegrationDataDrivingVariableSetter(std::ostream&,
 					      const DrivingVariable&,
 					      const SupportedTypes::TypeSize) const override;
     /*!
@@ -125,7 +125,7 @@ namespace mfront{
      * \param[in]  o   : thermodynamic force offset
      */
     virtual void 
-    exportThermodynamicForce(std::ofstream&,
+    exportThermodynamicForce(std::ostream&,
 			     const std::string&,
 			     const ThermodynamicForce&,
 			     const SupportedTypes::TypeSize) const override;
@@ -170,7 +170,7 @@ namespace mfront{
      * \param[in] mb  : mechanical behaviour description
      */
     virtual void 
-    writeInterfaceSpecificIncludes(std::ofstream&,
+    writeInterfaceSpecificIncludes(std::ostream&,
 				   const BehaviourDescription&) const override;
     /*!
      * \brief write the initialisation of a thermodynamic force
@@ -179,7 +179,7 @@ namespace mfront{
      * \param[in] o  : variable offsert
      */
     virtual void
-    writeBehaviourDataThermodynamicForceSetter(std::ofstream&,
+    writeBehaviourDataThermodynamicForceSetter(std::ostream&,
 					       const ThermodynamicForce&,
 					       const SupportedTypes::TypeSize) const override;
     /*!
@@ -213,7 +213,10 @@ namespace mfront{
 
     virtual std::map<UMATInterfaceBase::Hypothesis,std::string>
     gatherModellingHypothesesAndTests(const BehaviourDescription&) const override;
-
+    /*!
+     * \return the list of modelling hypotheses treated by the interface
+     * \param[in] mb : behaviour description
+     */
     virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
     //! selected finite strain strategy

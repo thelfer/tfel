@@ -633,8 +633,8 @@ namespace mfront{
   } // end of AsterInterface::writeMTestFileGeneratorSetModellingHypothesis
   
   void 
-  AsterInterface::writeInterfaceSpecificIncludes(std::ofstream& out,
-						       const BehaviourDescription&) const
+  AsterInterface::writeInterfaceSpecificIncludes(std::ostream& out,
+						 const BehaviourDescription&) const
   {
     using namespace std;
     out << "#include\"MFront/Aster/Aster.hxx\"" << endl << endl;

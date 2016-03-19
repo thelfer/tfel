@@ -74,7 +74,6 @@ namespace epx{
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
 					     const EuroplexusInt n2);
-    
     /*!
      * \brief throw an EuroplexusException. This method shall be called when
      * the number of state variables declared by the beahviour and the
@@ -88,7 +87,19 @@ namespace epx{
     throwUnMatchedNumberOfStateVariables(const std::string&,
 					 const unsigned short n1,
 					 const EuroplexusInt n2);
-
+    /*!
+     * \brief throw an EuroplexusException. This method shall be called when
+     * the number of external state variables declared by the beahviour and the
+     * number of state variables declared by the interface does not
+     * match.
+     * \param[in] b  : behaviour name
+     * \param[in] n1 : number of external state variables declared by the behaviour
+     * \param[in] n2 : number of external state variables declared by the interface
+     */
+    TFEL_NORETURN static void
+    throwUnMatchedNumberOfExternalStateVariables(const std::string&,
+						 const unsigned short n1,
+						 const EuroplexusInt n2);
     /*!
      * \brief display the error message out of an EuroplexusException to the
      * standard output.

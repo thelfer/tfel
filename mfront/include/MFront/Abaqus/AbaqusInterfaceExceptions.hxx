@@ -51,7 +51,7 @@ namespace abaqus{
 	AbaqusReal *const,
 	const AbaqusInt  *const,
 	AbaqusReal *const,
-	const StressFreeExpansionHandler&);
+	const StressFreeExpansionHandler<AbaqusReal>&);
   }; // end of struct AbaqusUnSupportedCaseHandler
 
   /*!
@@ -176,29 +176,6 @@ namespace abaqus{
     displayUnsupportedHypothesisMessage();
     
   }; // end of struct AbaqusInterfaceExceptions
-
-  /*!
-   * \brief an helper class used to reduce the tangent operator from
-   * 3D to a lower dimension
-   */
-  template<unsigned short N>
-  struct AbaqusReduceTangentOperator;
-
-  template<>
-  struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusReduceTangentOperator<1u>
-  {
-    static void
-    exe(AbaqusReal * const,
-	const AbaqusReal* const);
-  };
-
-  template<>
-  struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusReduceTangentOperator<2u>
-  {
-    static void
-    exe(AbaqusReal * const,
-	const AbaqusReal* const);
-  };
 
 } // end of namespace abaqus
 

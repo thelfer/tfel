@@ -1933,7 +1933,7 @@ namespace mfront{
     this->mb.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,n);
   }
   
-  void BehaviourDSLCommon::writeIncludes(std::ofstream& file) {
+  void BehaviourDSLCommon::writeIncludes(std::ostream& file) {
     if((!file)||(!file.good())){
       this->throwRuntimeError("BehaviourDSLCommon::writeIncludes",
 			      "ouput file is not valid");
@@ -1944,7 +1944,7 @@ namespace mfront{
     }
   }
 
-  void BehaviourDSLCommon::writeNamespaceBegin(std::ofstream& file) {
+  void BehaviourDSLCommon::writeNamespaceBegin(std::ostream& file) {
     if((!file)||(!file.good())){
       this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceBegin",
 			      "ouput file is not valid");
@@ -1953,7 +1953,7 @@ namespace mfront{
 	 << "namespace material{\n\n";
   }
 
-  void BehaviourDSLCommon::writeNamespaceEnd(std::ofstream& file) {
+  void BehaviourDSLCommon::writeNamespaceEnd(std::ostream& file) {
     if((!file)||(!file.good())){
       this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceEnd",
 			      "ouput file is not valid");
@@ -1962,7 +1962,7 @@ namespace mfront{
 	 << "} // end of namespace tfel\n\n";
   }
 
-  void BehaviourDSLCommon::writeStandardTFELTypedefs(std::ofstream& file) 
+  void BehaviourDSLCommon::writeStandardTFELTypedefs(std::ostream& file) 
   {
     if((!file)||(!file.good())){
       this->throwRuntimeError("BehaviourDSLCommon::writeStandardTFELTypedefs",

@@ -17,14 +17,15 @@
 namespace abaqus
 {
 
-  void AbaqusStandardSmallStrainStressFreeExpansionHandler(AbaqusReal * const e,
-							  AbaqusReal * const de,
-							  const AbaqusReal *const s0,
-							  const AbaqusReal *const s1,
+  template<typename real>
+  static void
+  AbaqusStandardSmallStrainStressFreeExpansionHandlerImpl(real * const e,
+							  real * const de,
+							  const real *const s0,
+							  const real *const s1,
 							  const AbaqusInt d)
   {
-    using namespace std;
-    static const AbaqusReal cste = AbaqusReal(2)/sqrt(AbaqusReal(2));
+    static const real cste = real(2)/std::sqrt(real(2));
     e[0]  -= s0[0];
     e[1]  -= s0[1];
     e[2]  -= s0[2];
@@ -45,4 +46,22 @@ namespace abaqus
     }
   } // end of AbaqusStandardSmallStrainStressFreeExpansionHandler
 
+  void AbaqusStandardSmallStrainStressFreeExpansionHandler(float * const e,
+							   float * const de,
+							   const float *const s0,
+							   const float *const s1,
+							   const AbaqusInt d)
+  {
+    AbaqusStandardSmallStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
+  }
+  
+  void AbaqusStandardSmallStrainStressFreeExpansionHandler(double * const e,
+							   double * const de,
+							   const double *const s0,
+							   const double *const s1,
+							   const AbaqusInt d)
+  {
+    AbaqusStandardSmallStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
+  }
+  
 } // end of namespace abaqus
