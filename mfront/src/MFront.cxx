@@ -292,6 +292,8 @@ namespace mfront{
 			      "list all keywords for the given domain specific language and exits",true);
     this->registerNewCallBack("--help-keywords-list",&MFront::treatHelpCommandsList,
 			      "list all keywords for the given domain specific language and exits",true);
+    this->registerNewCallBack("--define","-D",&MFront::treatDefine,
+			      "define a macro from the command line",true);
     this->registerNewCallBack("--include","-I",&MFront::treatSearchPath,
 			      "add a new path at the beginning of the search paths",true);
     this->registerNewCallBack("--search-path",&MFront::treatSearchPath,
@@ -361,6 +363,17 @@ namespace mfront{
     this->parseArguments();
   } // end of MFront::MFront
 
+  void
+  MFront::treatDefine(void)
+  {
+    const auto& o = this->currentArgument->getOption();
+    if(o.empty()){
+      throw(std::runtime_error("MFront::treatDefine: "
+			       "no macro definition given"));
+    }
+    this->defines.insert(o);
+  } // end of MFront::treatDefine
+  
   void
   MFront::treatHelpCommandsList(void)
   {
@@ -526,7 +539,17 @@ namespace mfront{
     }
     dsl->analyseFile(f,this->ecmds);
     dsl->generateOutputFiles();
-    return dsl->getTargetsDescription();
+    auto td = dsl->getTargetsDescription();
+    for(auto& l: td){
+      for(const auto& d:this->defines){
+#ifndef _MSC_VER
+	insert_if(l.cppflags,"-D "+d);
+#else   /* _MSC_VER */
+	insert_if(l.cppflags,"/D "+d);
+#endif  /* _MSC_VER */
+      }
+    }
+    return td;
   } // end of MFront::treatFile(void)
 
   void

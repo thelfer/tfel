@@ -78,6 +78,8 @@ namespace mfront{
     //! get the usage description
     virtual std::string
     getUsageDescription(void) const override final;
+    //! treat the -D command line option
+    virtual void treatDefine(void);
     //! treat the --help-commands-list command line option
     virtual void treatHelpCommandsList(void);
     //! treat the --help-commands command line option
@@ -144,7 +146,9 @@ namespace mfront{
     
     //! targets to be build as specified by the user
     std::set<std::string> specifiedTargets;
-
+    //! macros defined by the user on the command line
+    std::set<std::string> defines;
+    
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     // libraries for which a def file must be generated
     std::set<std::string> defs;
