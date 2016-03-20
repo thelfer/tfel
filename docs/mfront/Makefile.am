@@ -1,3 +1,5 @@
+SUBDIRS=abaqus
+
 MFRONT_DOCS = Algorithm.md				                \
 	      Author.md				                        \
 	      AuxiliaryStateVar.md				        \
@@ -94,7 +96,6 @@ EXTRA_DIST=CMakeLists.txt                                               \
 	   abaqus/img/SaintVenantKirchhoff-TensileLoading-szz.pdf       \
 	   abaqus/img/IsotropicHardeningPlasticity-Stress_vs_Strain.png \
 	   abaqus/img/IsotropicHardeningPlasticity-VonMisesStress.png   \
-	   abaqus/umat.cpp                                              \
 	   zmat/CMakeLists.txt                                          \
 	   Images/ConfigurationIsocline.eps			        \
 	   Images/Polar_decomposition_of_F.png			        \

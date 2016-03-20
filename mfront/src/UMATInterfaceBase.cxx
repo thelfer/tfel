@@ -47,7 +47,7 @@ namespace mfront
 
   const UMATInterfaceBase::UMATMaterialProperty&
   UMATInterfaceBase::findUMATMaterialProperty(const std::vector<UMATMaterialProperty>& mprops,
-						    const std::string& n)
+					      const std::string& n)
   {
     for(const auto& m : mprops){
       if((m.name==n)&&(!m.dummy)){
@@ -66,7 +66,7 @@ namespace mfront
 
   bool
   UMATInterfaceBase::isModellingHypothesisHandled(const Hypothesis h,
-							const BehaviourDescription& mb) const
+						  const BehaviourDescription& mb) const
   {
     const auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -77,7 +77,7 @@ namespace mfront
 
   std::string
   UMATInterfaceBase::getSymbolName(const std::string& n,
-					 const Hypothesis h) const
+				   const Hypothesis h) const
   {
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       return this->getFunctionName(n)+"_"+ModellingHypothesis::toString(h);
@@ -116,8 +116,8 @@ namespace mfront
 
   void
   UMATInterfaceBase::completeMaterialPropertiesList(std::vector<UMATMaterialProperty>& mprops,
-							  const BehaviourDescription& mb,
-							  const Hypothesis h) const
+						    const BehaviourDescription& mb,
+						    const Hypothesis h) const
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
@@ -154,7 +154,7 @@ namespace mfront
 		auto& log = getLogStream();
 		log << "UMATInterfaceBase::completeMaterialPropertiesList : "
 		    << "inconsistent type for variable '" << n
-		    << "' ('" << p->type << "' vs '" << pum->type << "')" << endl;
+		    << "' ('" << p->type << "' vs '" << pum->type << "')\n";
 	      }
 	    }
 	    if(p->arraySize!=pum->arraySize){
@@ -181,7 +181,7 @@ namespace mfront
   } // end of UMATInterfaceBase::completeMaterialPropertiesList
 
   void 
-  UMATInterfaceBase::exportMechanicalData(std::ostream& behaviourDataFile,
+  UMATInterfaceBase::exportMechanicalData(std::ostream& out,
 					  const Hypothesis h,
 					  const BehaviourDescription& mb) const
   {
@@ -189,28 +189,28 @@ namespace mfront
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!persistentVarsHolder.empty()){
-      behaviourDataFile << "void\n"
-			<< iprefix+"exportStateData("
-			<< "Type * const " << iprefix+"stress_,Type * const " << iprefix+"statev) const\n";
+      out << "void\n"
+	  << iprefix+"exportStateData("
+	  << "Type * const " << iprefix+"stress_,Type * const " << iprefix+"statev) const\n";
     } else {
-      behaviourDataFile << "void\n"
-			<< iprefix+"exportStateData("
-			<< "Type * const " << iprefix << "stress_,Type * const) const\n";
+      out << "void\n"
+	  << iprefix+"exportStateData("
+	  << "Type * const " << iprefix << "stress_,Type * const) const\n";
     }
-    behaviourDataFile << "{\n";
-    behaviourDataFile << "using namespace tfel::math;\n";
+    out << "{\n";
+    out << "using namespace tfel::math;\n";
     SupportedTypes::TypeSize of;
     for(const auto& v : mb.getMainVariables()){
-      this->exportThermodynamicForce(behaviourDataFile,iprefix+"stress_",v.second,of);
+      this->exportThermodynamicForce(out,iprefix+"stress_",v.second,of);
       of += this->getTypeSize(v.second.type,1u);
     }
     if(!persistentVarsHolder.empty()){
-      this->exportResults(behaviourDataFile,
+      this->exportResults(out,
 			  persistentVarsHolder,
 			  iprefix+"statev",
 			  mb.useQt());
     }
-    behaviourDataFile << "} // end of " << iprefix << "ExportStateData\n\n";
+    out << "} // end of " << iprefix << "ExportStateData\n\n";
   }
 
   void 
@@ -218,7 +218,7 @@ namespace mfront
 					      const std::string& a,
 					      const ThermodynamicForce& f,
 					      const SupportedTypes::TypeSize o) const
-   {
+  {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = this->getTypeFlag(f.type);
     if(flag==SupportedTypes::Scalar){
@@ -248,22 +248,22 @@ namespace mfront
   } // end of UMATInterfaceBase::exportThermodynamicForce
   
   std::vector<std::pair<std::string,std::string>>
-  UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables(void) const{
+								  UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables(void) const{
     return {};
   } // end of UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables
 			 
   std::vector<std::pair<std::string,std::string>>
-  UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables(void) const{
+								  UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables(void) const{
     return {};
   } // end of UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables
 
   std::vector<std::pair<std::string,std::string>>
-  UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables(void) const{
+								  UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables(void) const{
     return {};
   } // end of UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables
   
   void
-  UMATInterfaceBase::writeBehaviourConstructor(std::ostream& behaviourFile,
+  UMATInterfaceBase::writeBehaviourConstructor(std::ostream& out,
 					       const BehaviourDescription& mb,
 					       const std::string& initStateVarsIncrements) const
   {
@@ -271,83 +271,83 @@ namespace mfront
     const auto av   = this->getBehaviourConstructorsAdditionalVariables();
     const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
     const auto aidv = this->getIntegrationDataConstructorAdditionalVariables();
-    behaviourFile << "/*\n"
-		  << " * \\brief constructor for the umat interface\n"
-		  << " * \\param[in] " << iprefix << "dt_: time increment\n"
-		  << " * \\param[in] " << iprefix << "T_: temperature\n"
-		  << " * \\param[in] " << iprefix << "dT_: temperature increment\n"
-		  << " * \\param[in] " << iprefix << "mat: material properties\n"
-		  << " * \\param[in] " << iprefix << "int_vars: state variables\n" 
-		  << " * \\param[in] " << iprefix << "ext_vars: external state variables\n"
-		  << " * \\param[in] " << iprefix << "dext_vars: external state variables increments\n";
+    out << "/*\n"
+	<< " * \\brief constructor for the umat interface\n"
+	<< " * \\param[in] " << iprefix << "dt_: time increment\n"
+	<< " * \\param[in] " << iprefix << "T_: temperature\n"
+	<< " * \\param[in] " << iprefix << "dT_: temperature increment\n"
+	<< " * \\param[in] " << iprefix << "mat: material properties\n"
+	<< " * \\param[in] " << iprefix << "int_vars: state variables\n" 
+	<< " * \\param[in] " << iprefix << "ext_vars: external state variables\n"
+	<< " * \\param[in] " << iprefix << "dext_vars: external state variables increments\n";
     for(const auto& v: abdv){
-      behaviourFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+      out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
     for(const auto& v: aidv){
-      behaviourFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+      out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
     for(const auto& v: av){
-      behaviourFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+      out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
-    behaviourFile << " */\n"
-		  << mb.getClassName() 
-		  << "(const Type* const " << iprefix << "dt_,\n" 
-		  <<  "const Type* const " << iprefix << "T_,const Type* const " << iprefix << "dT_,\n"
-		  <<  "const Type* const " << iprefix << "mat,const Type* const " << iprefix << "int_vars,\n"
-		  <<  "const Type* const " << iprefix << "ext_vars,const Type* const " << iprefix << "dext_vars";
+    out << " */\n"
+	<< mb.getClassName() 
+	<< "(const Type* const " << iprefix << "dt_,\n" 
+	<<  "const Type* const " << iprefix << "T_,const Type* const " << iprefix << "dT_,\n"
+	<<  "const Type* const " << iprefix << "mat,const Type* const " << iprefix << "int_vars,\n"
+	<<  "const Type* const " << iprefix << "ext_vars,const Type* const " << iprefix << "dext_vars";
     for(const auto& v: abdv){
-      behaviourFile << ",\nconst Type* const " << iprefix << v.first;
+      out << ",\nconst Type* const " << iprefix << v.first;
     }
     for(const auto& v: aidv){
-      behaviourFile << ",\nconst Type* const " << iprefix << v.first;
+      out << ",\nconst Type* const " << iprefix << v.first;
     }
     for(const auto& v: av){
-      behaviourFile << ",\nconst Type* const " << iprefix << v.first;
+      out << ",\nconst Type* const " << iprefix << v.first;
     }
-    behaviourFile << ")\n";
+    out << ")\n";
     if(mb.useQt()){
-      behaviourFile << ": " << mb.getClassName() 
-		    << "BehaviourData<hypothesis,Type,use_qt>(" << iprefix << "T_," << iprefix << "mat,\n"
-		    << iprefix+"int_vars," << iprefix << "ext_vars";
+      out << ": " << mb.getClassName() 
+	  << "BehaviourData<hypothesis,Type,use_qt>(" << iprefix << "T_," << iprefix << "mat,\n"
+	  << iprefix+"int_vars," << iprefix << "ext_vars";
       for(const auto& v: abdv){
-	behaviourFile << "," << iprefix << v.first;
+	out << "," << iprefix << v.first;
       }
       for(const auto& v: av){
-	behaviourFile << "," << iprefix << v.first;
+	out << "," << iprefix << v.first;
       }
-      behaviourFile << "),\n"
-		    << mb.getClassName() 
-		    << "IntegrationData<hypothesis,Type,use_qt>(" << iprefix << "dt_," << iprefix << "dT_," << iprefix << "dext_vars";
+      out << "),\n"
+	  << mb.getClassName() 
+	  << "IntegrationData<hypothesis,Type,use_qt>(" << iprefix << "dt_," << iprefix << "dT_," << iprefix << "dext_vars";
       for(const auto& v: aidv){
-	behaviourFile << "," << iprefix << v.first;
+	out << "," << iprefix << v.first;
       }
       for(const auto& v: av){
-	behaviourFile << "," << iprefix << v.first;
+	out << "," << iprefix << v.first;
       }
-      behaviourFile << ")";
+      out << ")";
     } else {
-      behaviourFile << ": " << mb.getClassName() 
-		    << "BehaviourData<hypothesis,Type,false>(" << iprefix << "T_," << iprefix << "mat,\n"
-		    << iprefix+"int_vars," << iprefix << "ext_vars";
+      out << ": " << mb.getClassName() 
+	  << "BehaviourData<hypothesis,Type,false>(" << iprefix << "T_," << iprefix << "mat,\n"
+	  << iprefix+"int_vars," << iprefix << "ext_vars";
       for(const auto& v: abdv){
-	behaviourFile << "," << iprefix << v.first;
+	out << "," << iprefix << v.first;
       }
       for(const auto& v: av){
-	behaviourFile << "," << iprefix << v.first;
+	out << "," << iprefix << v.first;
       }
-      behaviourFile << "),\n"
-		    << mb.getClassName() 
-		    << "IntegrationData<hypothesis,Type,false>(" << iprefix << "dt_," << iprefix << "dT_," << iprefix << "dext_vars";
+      out << "),\n"
+	  << mb.getClassName() 
+	  << "IntegrationData<hypothesis,Type,false>(" << iprefix << "dt_," << iprefix << "dT_," << iprefix << "dext_vars";
       for(const auto& v: aidv){
-	behaviourFile << "," << iprefix << v.first;
+	out << "," << iprefix << v.first;
       }
       for(const auto& v: av){
-	behaviourFile << "," << iprefix << v.first;
+	out << "," << iprefix << v.first;
       }
-      behaviourFile << ")";
+      out << ")";
     }
     if(!initStateVarsIncrements.empty()){
-      behaviourFile << ",\n" << initStateVarsIncrements;
+      out << ",\n" << initStateVarsIncrements;
     }
   } // end of UMATInterfaceBase::writeBehaviourConstructor
 
@@ -427,7 +427,7 @@ namespace mfront
 	      break;
 	    case SupportedTypes::Stensor :
 	      f << n << "[idx].import(&"+src+"[" 
-		  << offset << "+idx*StensorSize]);\n";  
+		<< offset << "+idx*StensorSize]);\n";  
 	      break;
 	    case SupportedTypes::Tensor :
 	      f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
@@ -473,7 +473,7 @@ namespace mfront
   } // end of UMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorII
 
   void 
-  UMATInterfaceBase::writeBehaviourDataConstructor(std::ostream& behaviourDataFile,
+  UMATInterfaceBase::writeBehaviourDataConstructor(std::ostream& out,
 						   const Hypothesis h,
 						   const BehaviourDescription& mb) const
   {
@@ -485,67 +485,67 @@ namespace mfront
     const auto& mp = d.getMaterialProperties();
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
-    behaviourDataFile << "/*\n"
-		      << " * \\brief constructor for the umat interface\n"
-		      << " * \\param[in] " << iprefix << "T_: temperature\n"
-		      << " * \\param[in] " << iprefix << "mat: material properties\n"
-		      << " * \\param[in] " << iprefix << "int_vars: state variables\n"
-		      << " * \\param[in] " << iprefix << "ext_vars: external std::ate variables\n";
+    out << "/*\n"
+	<< " * \\brief constructor for the umat interface\n"
+	<< " * \\param[in] " << iprefix << "T_: temperature\n"
+	<< " * \\param[in] " << iprefix << "mat: material properties\n"
+	<< " * \\param[in] " << iprefix << "int_vars: state variables\n"
+	<< " * \\param[in] " << iprefix << "ext_vars: external std::ate variables\n";
     for(const auto& v: abdv){
-      behaviourDataFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+      out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
     for(const auto& v: av){
-      behaviourDataFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+      out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
-    behaviourDataFile << " */\n"
-		      << mb.getClassName() << "BehaviourData"
-		      << "(const Type* const " << iprefix << "T_,const Type* const";
+    out << " */\n"
+	<< mb.getClassName() << "BehaviourData"
+	<< "(const Type* const " << iprefix << "T_,const Type* const";
     if(!mp.empty()){
-      behaviourDataFile << " " << iprefix << "mat,\n";
+      out << " " << iprefix << "mat,\n";
     } else {
-      behaviourDataFile << ",\n";
+      out << ",\n";
     }
-    behaviourDataFile <<  "const Type* const";
+    out <<  "const Type* const";
     if(!persistentVarsHolder.empty()){
-      behaviourDataFile << " " << iprefix << "int_vars,\n";
+      out << " " << iprefix << "int_vars,\n";
     } else {
-      behaviourDataFile << ",\n";
+      out << ",\n";
     }
-    behaviourDataFile << "const Type* const";
+    out << "const Type* const";
     if(!externalStateVarsHolder.empty()){
-      behaviourDataFile << " " << iprefix << "ext_vars";
+      out << " " << iprefix << "ext_vars";
     }
     for(const auto& v: abdv){
-      behaviourDataFile << ",const Type* const " << iprefix << v.first;
+      out << ",const Type* const " << iprefix << v.first;
     }
     for(const auto& v: av){
-      behaviourDataFile << ",const Type* const " << iprefix << v.first;
+      out << ",const Type* const " << iprefix << v.first;
     }
-    behaviourDataFile << ")\n";
-    behaviourDataFile << ": T(*" << iprefix << "T_)";
-    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(behaviourDataFile,
+    out << ")\n";
+    out << ": T(*" << iprefix << "T_)";
+    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(out,
 									 h,mb,mprops.first,
 									 mprops.second,
 									 iprefix+"mat","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
+    this->writeVariableInitializersInBehaviourDataConstructorI(out,
 							       persistentVarsHolder,
 							       iprefix+"int_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(behaviourDataFile,
+    this->writeVariableInitializersInBehaviourDataConstructorI(out,
 							       externalStateVarsHolder,
 							       iprefix+"ext_vars","","");
-    behaviourDataFile << "\n{\n";
-    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(behaviourDataFile,
+    out << "\n{\n";
+    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(out,
 									  h,mb,mprops.first,
 									  mprops.second,
 									  iprefix+"mat","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
+    this->writeVariableInitializersInBehaviourDataConstructorII(out,
 								persistentVarsHolder,
 								iprefix+"int_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(behaviourDataFile,
+    this->writeVariableInitializersInBehaviourDataConstructorII(out,
 								externalStateVarsHolder,
 								iprefix+"ext_vars","","");
-    this->completeBehaviourDataConstructor(behaviourDataFile,h,mb);
-    behaviourDataFile << "}\n\n";
+    this->completeBehaviourDataConstructor(out,h,mb);
+    out << "}\n\n";
   }
 
   void 
@@ -555,7 +555,7 @@ namespace mfront
   {} // end of UMATInterfaceBase::completeBehaviourDataConstructor
   
   void 
-  UMATInterfaceBase::writeIntegrationDataConstructor(std::ostream& behaviourIntegrationFile,
+  UMATInterfaceBase::writeIntegrationDataConstructor(std::ostream& out,
 						     const Hypothesis h,
 						     const BehaviourDescription& mb) const
   {
@@ -564,44 +564,44 @@ namespace mfront
     const auto& d = mb.getBehaviourData(h);
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
-    behaviourIntegrationFile << "/*\n"
-			     << " * \\brief constructor for the umat interface\n"
-			     << " * \\param[in] "+ iprefix+"dt_: time increment\n"
-			     << " * \\param[in] "+ iprefix+"dT_: temperature increment\n"
-			     << " * \\param[in] "+ iprefix+"dext_vars: external state variables increments\n";
+    out << "/*\n"
+	<< " * \\brief constructor for the umat interface\n"
+	<< " * \\param[in] "+ iprefix+"dt_: time increment\n"
+	<< " * \\param[in] "+ iprefix+"dT_: temperature increment\n"
+	<< " * \\param[in] "+ iprefix+"dext_vars: external state variables increments\n";
     for(const auto& v: aidv){
-      behaviourIntegrationFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+      out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
     for(const auto& v: av){
-      behaviourIntegrationFile << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
+      out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
-    behaviourIntegrationFile << " */\n"
-			     << mb.getClassName() << "IntegrationData"
-			     << "(const Type* const " << iprefix << "dt_,\n" 
-			     <<  "const Type* const " << iprefix << "dT_,const Type* const";
+    out << " */\n"
+	<< mb.getClassName() << "IntegrationData"
+	<< "(const Type* const " << iprefix << "dt_,\n" 
+	<<  "const Type* const " << iprefix << "dT_,const Type* const";
     if(!externalStateVarsHolder.empty()){
-      behaviourIntegrationFile << " " << iprefix << "dext_vars";
+      out << " " << iprefix << "dext_vars";
     }
     for(const auto& v: aidv){
-      behaviourIntegrationFile << ",const Type* const " << iprefix << v.first;
+      out << ",const Type* const " << iprefix << v.first;
     }
     for(const auto& v: av){
-      behaviourIntegrationFile << ",const Type* const " << iprefix << v.first;
+      out << ",const Type* const " << iprefix << v.first;
     }
-    behaviourIntegrationFile << ")\n";
-    behaviourIntegrationFile << ": dt(*" << iprefix << "dt_),dT(*" << iprefix << "dT_)";
+    out << ")\n";
+    out << ": dt(*" << iprefix << "dt_),dT(*" << iprefix << "dT_)";
     if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorI(behaviourIntegrationFile,
+      this->writeVariableInitializersInBehaviourDataConstructorI(out,
 								 externalStateVarsHolder,
 								 iprefix+"dext_vars","d","");
     }
-    behaviourIntegrationFile << "\n{\n";
+    out << "\n{\n";
     if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorII(behaviourIntegrationFile,
+      this->writeVariableInitializersInBehaviourDataConstructorII(out,
 								  externalStateVarsHolder,
 								  iprefix+"dext_vars","d","");
     }
-    behaviourIntegrationFile << "}\n\n";
+    out << "}\n\n";
   }
 
   void 
@@ -618,7 +618,7 @@ namespace mfront
     }
     os << "}\n\n";
     os << "void set" << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_)\n"
-      << "{\n";
+       << "{\n";
     for(const auto& v : mb.getMainVariables()){
       this->writeBehaviourDataThermodynamicForceSetter(os,v.second,of);
       of += this->getTypeSize(v.second.type,1u);
@@ -793,15 +793,15 @@ namespace mfront
   
   void
   UMATInterfaceBase::writeExternalNames(std::ostream& f,
-					      const std::string& name,
-					      const Hypothesis& h,
-					      const std::vector<std::string>& v,
-					      const std::string& t) const
+					const std::string& name,
+					const Hypothesis& h,
+					const std::vector<std::string>& v,
+					const std::string& t) const
   {
     using namespace std;
     if(v.empty()){
       f << "MFRONT_SHAREDOBJ const char * const * "  << this->getSymbolName(name,h)
-	<< "_" << t << " = nullptr;" << endl << endl;
+	<< "_" << t << " = nullptr;\n\n";
     } else {
       vector<string>::size_type s = 0u;
       vector<string>::const_iterator p = v.begin();      
@@ -811,21 +811,21 @@ namespace mfront
 	f << '"' << *p << '"';
 	if(++p!=v.end()){
 	  if(s%5==0){
-	    f << "," << endl;
+	    f << ",\n";
 	  } else {
 	    f << ",";
 	  }
 	}
 	++s;
       }
-      f << "};" << endl;
+      f << "};\n";
     }
   } // end of UMATInterfaceBase::writeExternalNames
 
   bool
   UMATInterfaceBase::readBooleanValue(const std::string& key,
-					    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator& current,
-					    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end) const
+				      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator& current,
+				      const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end) const
   {
     using namespace std;
     bool b = true;
@@ -874,9 +874,9 @@ namespace mfront
 
   void
   UMATInterfaceBase::checkParametersType(bool& rp,
-					       bool& ip,
-					       bool& up,
-					       const VariableDescriptionContainer& pc) const
+					 bool& ip,
+					 bool& up,
+					 const VariableDescriptionContainer& pc) const
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator pp;
@@ -900,7 +900,7 @@ namespace mfront
 
   void
   UMATInterfaceBase::writeSetOutOfBoundsPolicyFunctionDeclaration(std::ostream& out,
-									const std::string& name) const
+								  const std::string& name) const
   {
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionName(name) << "_setOutOfBoundsPolicy(const int);\n\n";
@@ -908,7 +908,7 @@ namespace mfront
 
   void
   UMATInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream& out,
-									   const std::string& name) const
+								     const std::string& name) const
   {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
 	<< this->getFunctionName(name) << "_getOutOfBoundsPolicy(void){\n"
@@ -939,8 +939,8 @@ namespace mfront
   
   void
   UMATInterfaceBase::writeSetParametersFunctionsDeclarations(std::ostream& out,
-								   const std::string& name,
-								   const BehaviourDescription& mb) const
+							     const std::string& name,
+							     const BehaviourDescription& mb) const
   {
     using namespace std;
     const set<Hypothesis> h  = mb.getDistinctModellingHypotheses();
@@ -960,16 +960,16 @@ namespace mfront
 	  fctName += "_"+suffix;
 	}
 	if(rp){
-	  out << "MFRONT_SHAREDOBJ int" << endl
-	      << fctName << "_setParameter(const char *const,const double);" << endl << endl;
+	  out << "MFRONT_SHAREDOBJ int\n"
+	      << fctName << "_setParameter(const char *const,const double);\n\n";
 	}
 	if(ip){
-	  out << "MFRONT_SHAREDOBJ int" << endl
-	      << fctName << "_setIntegerParameter(const char *const,const int);" << endl << endl;
+	  out << "MFRONT_SHAREDOBJ int\n"
+	      << fctName << "_setIntegerParameter(const char *const,const int);\n\n";
 	}
 	if(up){
-	  out << "MFRONT_SHAREDOBJ int" << endl
-	      << fctName << "_setUnsignedShortParameter(const char *const,const unsigned short);" << endl << endl;
+	  out << "MFRONT_SHAREDOBJ int\n"
+	      << fctName << "_setUnsignedShortParameter(const char *const,const unsigned short);\n\n";
 	}
       }
     }
@@ -977,8 +977,8 @@ namespace mfront
 
   void
   UMATInterfaceBase::writeSetParametersFunctionsImplementations(std::ostream& out,
-								      const std::string& name,
-								      const BehaviourDescription& mb) const
+								const std::string& name,
+								const BehaviourDescription& mb) const
   {
     using namespace std;
     set<Hypothesis> h  = mb.getDistinctModellingHypotheses();
@@ -999,49 +999,49 @@ namespace mfront
 	}
 	string cname = mb.getClassName() + suffix + "ParametersInitializer";
 	if(rp){
-	  out << "MFRONT_SHAREDOBJ int" << endl
-	      << fctName << "_setParameter(const char *const key,const double value){" << endl
-	      << "using namespace std;" << endl
-	      << "using namespace tfel::material;" << endl
-	      << cname << "& i = " << cname << "::get();" << endl
-	      << "try{" << endl
-	      << "i.set(key,value);" << endl
-	      << "} catch(runtime_error& e){" << endl
-	      << "cerr << e.what() << endl;" << endl
-	      << "return 0;" << endl
-	      << "}" << endl
-	      << "return 1;" << endl
-	      << "}" << endl << endl;
+	  out << "MFRONT_SHAREDOBJ int\n"
+	      << fctName << "_setParameter(const char *const key,const double value){\n"
+	      << "using namespace std;\n"
+	      << "using namespace tfel::material;\n"
+	      << cname << "& i = " << cname << "::get();\n"
+	      << "try{\n"
+	      << "i.set(key,value);\n"
+	      << "} catch(runtime_error& e){\n"
+	      << "cerr << e.what() << endl;\n"
+	      << "return 0;\n"
+	      << "}\n"
+	      << "return 1;\n"
+	      << "}\n\n";
 	}
 	if(ip){
-	  out << "MFRONT_SHAREDOBJ int" << endl
-	      << fctName << "_setIntegerParameter(const char *const key,const int value){" << endl
-	      << "using namespace std;" << endl
-	      << "using namespace tfel::material;" << endl
-	      << cname << "& i = " << cname << "::get();" << endl
-	      << "try{" << endl
-	      << "i.set(key,value);" << endl
-	      << "} catch(runtime_error& e){" << endl
-	      << "cerr << e.what() << endl;" << endl
-	      << "return 0;" << endl
-	      << "}" << endl
-	      << "return 1;" << endl
-	      << "}" << endl << endl;
+	  out << "MFRONT_SHAREDOBJ int\n"
+	      << fctName << "_setIntegerParameter(const char *const key,const int value){\n"
+	      << "using namespace std;\n"
+	      << "using namespace tfel::material;\n"
+	      << cname << "& i = " << cname << "::get();\n"
+	      << "try{\n"
+	      << "i.set(key,value);\n"
+	      << "} catch(runtime_error& e){\n"
+	      << "cerr << e.what() << endl;\n"
+	      << "return 0;\n"
+	      << "}\n"
+	      << "return 1;\n"
+	      << "}\n\n";
 	}
 	if(up){
-	  out << "MFRONT_SHAREDOBJ int" << endl
-	      << fctName << "_setUnsignedShortParameter(const char *const key,const unsigned short value){" << endl
-	      << "using namespace std;" << endl
-	      << "using namespace tfel::material;" << endl
-	      << cname << "& i = " << cname << "::get();" << endl
-	      << "try{" << endl
-	      << "i.set(key,value);" << endl
-	      << "} catch(runtime_error& e){" << endl
-	      << "cerr << e.what() << endl;" << endl
-	      << "return 0;" << endl
-	      << "}" << endl
-	      << "return 1;" << endl
-	      << "}" << endl << endl;
+	  out << "MFRONT_SHAREDOBJ int\n"
+	      << fctName << "_setUnsignedShortParameter(const char *const key,const unsigned short value){\n"
+	      << "using namespace std;\n"
+	      << "using namespace tfel::material;\n"
+	      << cname << "& i = " << cname << "::get();\n"
+	      << "try{\n"
+	      << "i.set(key,value);\n"
+	      << "} catch(runtime_error& e){\n"
+	      << "cerr << e.what() << endl;\n"
+	      << "return 0;\n"
+	      << "}\n"
+	      << "return 1;\n"
+	      << "}\n\n";
 	}
       }
     }
@@ -1050,9 +1050,8 @@ namespace mfront
   std::string
   UMATInterfaceBase::getHeaderDefine(const BehaviourDescription& mb) const
   {
-    using namespace std;
     const auto& m = mb.getMaterialName();
-    string header = "LIB_"+makeUpperCase(this->getInterfaceName());
+    auto header = "LIB_"+makeUpperCase(this->getInterfaceName());
     if(!mb.getLibrary().empty()){
       header += "_";
       header += makeUpperCase(mb.getLibrary());
@@ -1069,49 +1068,43 @@ namespace mfront
 
   void
   UMATInterfaceBase::getExtraSrcIncludes(std::ostream& out,
-					       const BehaviourDescription& mb) const
+					 const BehaviourDescription& mb) const
   {
-    using namespace std;
     if(mb.hasParameters()){
-      out << "#include<iostream>" << endl;
-      out << "#include<stdexcept>" << endl;
+      out << "#include<iostream>\n"
+	  << "#include<stdexcept>\n";
     }
     if(this->generateMTestFile){
-      out << "#include<vector>" << endl;
-    }
-    if(this->generateMTestFile){
-      out << "#include<sstream>" << endl;
-    }
-    if(this->generateMTestFile){
-      out << "#include\"TFEL/Material/ModellingHypothesis.hxx\"" << endl;
-      out << "#include\"MFront/SupportedTypes.hxx\"" << endl;
-      out << "#include\"MFront/UmatSmallStrainMTestFileGenerator.hxx\"" << endl;
-      out << "#include\"MFront/UmatFiniteStrainMTestFileGenerator.hxx\"" << endl;
+      out << "#include<vector>\n"
+	  << "#include<sstream>\n"
+	  << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n"
+	  << "#include\"MFront/SupportedTypes.hxx\"\n"
+	  << "#include\"MFront/UmatSmallStrainMTestFileGenerator.hxx\"\n"
+	  << "#include\"MFront/UmatFiniteStrainMTestFileGenerator.hxx\"\n";
     }
   } // end of UMATInterfaceBase::getExtraSrcIncludes
   
   void
   UMATInterfaceBase::generateMTestFile1(std::ostream& out) const
   {
-    using namespace std;
     if(this->generateMTestFile){
-      out << "using namespace std;" << endl;
-      out << "using tfel::material::ModellingHypothesis;" << endl;
-      out << "using mfront::SupportedTypes;" << endl;
-      out << "// double is used by MTestFileGeneratorBase" << endl;
-      out << "vector<double> mg_STRESS(*NTENS);" << endl;
-      out << "vector<double> mg_STATEV(*NSTATV);" << endl;
-      out << "copy(STRESS,STRESS+*NTENS,mg_STRESS.begin());" << endl;
-      out << "copy(STATEV,STATEV+*NSTATV,mg_STATEV.begin());" << endl;
+      out << "using namespace std;\n"
+	  << "using tfel::material::ModellingHypothesis;\n"
+	  << "using mfront::SupportedTypes;\n"
+	  << "// double is used by MTestFileGeneratorBase\n"
+	  << "vector<double> mg_STRESS(*NTENS);\n"
+	  << "vector<double> mg_STATEV(*NSTATV);\n"
+	  << "copy(STRESS,STRESS+*NTENS,mg_STRESS.begin());\n"
+	  << "copy(STATEV,STATEV+*NSTATV,mg_STATEV.begin());\n";
     }
   } // end of UMATInterfaceBase::generateMTestFile1
 
   void
   UMATInterfaceBase::generateMTestFile2(std::ostream& out,
-					      const BehaviourDescription::BehaviourType type,
-					      const std::string& name,
-					      const std::string& suffix,
-					      const BehaviourDescription& mb) const
+					const BehaviourDescription::BehaviourType type,
+					const std::string& name,
+					const std::string& suffix,
+					const BehaviourDescription& mb) const
   {
     using namespace std;
     if(this->generateMTestFile){
@@ -1123,12 +1116,12 @@ namespace mfront
     	out << "mfront::UmatSmallStrainMTestFileGenerator mg(\""
     	    << makeLowerCase(this->getInterfaceName()) << "\",\""
     	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
-    	    <<  "\");" << endl;
+    	    <<  "\");\n";
       } else if(type==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
     	out << "mfront::UmatFiniteStrainMTestFileGenerator mg(\""
     	    << makeLowerCase(this->getInterfaceName()) << "\",\""
     	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
-    	    <<  "\");" << endl;
+    	    <<  "\");\n";
       } else {
     	string msg("UMATInterfaceBase::generateMTestFile2 : ");
     	msg += "only small strain or finite strain behaviours are supported";
@@ -1136,20 +1129,20 @@ namespace mfront
       }
       this->writeMTestFileGeneratorSetModellingHypothesis(out);
       this->writeMTestFileGeneratorSetRotationMatrix(out,mb);
-      out << "const unsigned short TVectorSize = mg.getTVectorSize();" << endl;
-      out << "const unsigned short StensorSize = mg.getStensorSize();" << endl;
-      out << "const unsigned short TensorSize  = mg.getTensorSize();" << endl;
-      out << "mg.setHandleThermalExpansion(false);" << endl;
-      out << "mg.addTime(0.);" << endl;
-      out << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);" << endl;
+      out << "const unsigned short TVectorSize = mg.getTVectorSize();\n";
+      out << "const unsigned short StensorSize = mg.getStensorSize();\n";
+      out << "const unsigned short TensorSize  = mg.getTensorSize();\n";
+      out << "mg.setHandleThermalExpansion(false);\n";
+      out << "mg.addTime(0.);\n";
+      out << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);\n";
       if(type==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-    	out << "mg.setStrainTensor(STRAN);" << endl;
-    	out << "mg.setStrainTensorIncrement(DSTRAN);" << endl;
-    	out << "mg.setStressTensor(&mg_STRESS[0]);" << endl;
+    	out << "mg.setStrainTensor(STRAN);\n";
+    	out << "mg.setStrainTensorIncrement(DSTRAN);\n";
+    	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
       } else if(type==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-    	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);" << endl;
-    	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);" << endl;
-    	out << "mg.setStressTensor(&mg_STRESS[0]);" << endl;
+    	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n";
+    	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n";
+    	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
       } else {
     	string msg("UMATInterfaceBase::generateMTestFile2 : ");
     	msg += "only small strain or finite strain behaviours are supported";
@@ -1165,7 +1158,7 @@ namespace mfront
 	VariableDescriptionContainer::const_iterator p;
 	unsigned short i;
 	unsigned int offset;
-	out << "if(" << elem.second << "){" << endl;
+	out << "if(" << elem.second << "){\n";
 	offset=0;
 	for(const auto& m : mprops.first){
 	  auto flag = this->getTypeFlag(m.type);
@@ -1176,18 +1169,18 @@ namespace mfront
 	  }
 	  if(m.arraySize==1u){
 	    if(offset==0){
-	      out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS));" << endl;	    
+	      out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS));\n";	    
 	    } else {
-	      out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS+" << offset << "));" << endl;	    
+	      out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS+" << offset << "));\n";	    
 	    }
 	    ++offset;
 	  } else {
 	    for(unsigned short s=0;s!=m.arraySize;++s,++offset){
 	      if(offset==0){
-		out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\",*(PROPS));" << endl;	    
+		out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\",*(PROPS));\n";	    
 	      } else {
 		out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\","
-		    << "*(PROPS+" << offset << "));" << endl;	    
+		    << "*(PROPS+" << offset << "));\n";	    
 	      }
 	    }
 	  }
@@ -1198,23 +1191,23 @@ namespace mfront
 	  const auto& ivname = d.getExternalName(p->name);
 	  if(p->arraySize==1u){
 	    if(flag==SupportedTypes::Scalar){
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);" << endl;
+	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);\n";
 	      ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 	    } else {
-	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);" << endl;
+	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);\n";
 	      ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
 	    }
 	  } else {
 	    if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){" << endl;
-	      out << "ostringstream name;" << endl;
-	      out << "name << \"" << ivname << "[\" << i << \"]\";" << endl;
+	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
+	      out << "ostringstream name;\n";
+	      out << "name << \"" << ivname << "[\" << i << \"]\";\n";
 	      if(flag==SupportedTypes::Scalar){
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]+i);" << endl;
+		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]+i);\n";
 	      } else {
-		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]+i);" << endl;
+		out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]+i);\n";
 	      }
-	      out << "}" << endl;
+	      out << "}\n";
 	      if(flag==SupportedTypes::Scalar){
 		ivoffset += SupportedTypes::TypeSize(p->arraySize,0u,0u,0u);
 	      } else {
@@ -1224,19 +1217,19 @@ namespace mfront
 	      for(i=0;i!=p->arraySize;++i){
 		if(flag==SupportedTypes::Scalar){
 		  out << "mg.addInternalStateVariable(\""
-		      << ivname << "[" << i << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);" << endl;
+		      << ivname << "[" << i << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);\n";
 		  ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
 		} else {
 		  out << "mg.addInternalStateVariable(\""
-		      << ivname << "[" << i << "]\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);" << endl;
+		      << ivname << "[" << i << "]\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset<< "]);\n";
 		  ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
 		}
 	      }
 	    }
 	  }
 	}
-	out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);" << endl;
-	out << "mg.addExternalStateVariableValue(\"Temperature\",*DTIME,*TEMP+*DTEMP);" << endl;
+	out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
+	out << "mg.addExternalStateVariableValue(\"Temperature\",*DTIME,*TEMP+*DTEMP);\n";
 	for(p=externalStateVarsHolder.begin(),offset=0;p!=externalStateVarsHolder.end();++p){
 	  auto flag = this->getTypeFlag(p->type);
 	  if(flag!=SupportedTypes::Scalar){
@@ -1249,79 +1242,78 @@ namespace mfront
 	  if(p->arraySize==1u){
 	    if(offset==0){
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
-		  << "\",0,*PREDEF);" << endl;
+		  << "\",0,*PREDEF);\n";
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
-		  << "\",*DTIME,*PREDEF+*DPRED);" << endl;
+		  << "\",*DTIME,*PREDEF+*DPRED);\n";
 	    } else {
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
-		  << "\",0,*(PREDEF+" << offset<< "));" << endl;
+		  << "\",0,*(PREDEF+" << offset<< "));\n";
 	      out << "mg.addExternalStateVariableValue(\"" << evname 
-		  << "\",*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));" << endl;
+		  << "\",*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));\n";
 	    }
 	    ++offset;
 	  } else {
 	    if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){" << endl;
-	      out << "ostringstream name;" << endl;
-	      out << "name << \"" << evname << "[\" << i << \"]\";" << endl;
+	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
+	      out << "ostringstream name;\n";
+	      out << "name << \"" << evname << "[\" << i << \"]\";\n";
 	      if(offset==0){
-		out << "mg.addExternalStateVariableValue(name.str(),0,*(PREDEF+i));" << endl;
+		out << "mg.addExternalStateVariableValue(name.str(),0,*(PREDEF+i));\n";
 		out << "mg.addExternalStateVariableValue(name.str(),"
-		  "*DTIME,*(PREDEF+i)+*(DPRED+i));" << endl;
+		  "*DTIME,*(PREDEF+i)+*(DPRED+i));\n";
 	      } else {
 		out << "mg.addExternalStateVariableValue(name.str(),"
-		  "0,*(PREDEF+" << offset<< "+i));" << endl;
+		  "0,*(PREDEF+" << offset<< "+i));\n";
 		out << "mg.addExternalStateVariableValue(name.str(),"
-		  "*DTIME,*(PREDEF+" << offset << "+i)+*(DPRED+" << offset<< "+i));" << endl;
+		  "*DTIME,*(PREDEF+" << offset << "+i)+*(DPRED+" << offset<< "+i));\n";
 	      }
-	      out << "}" << endl;
+	      out << "}\n";
 	      offset += p->arraySize;
 	    } else {
 	      for(i=0;i!=p->arraySize;++i,++offset){
 		if(offset==0){
 		  out << "mg.addExternalStateVariableValue(\"" << evname
-		      << "[" << i << "]\",0,*PREDEF);" << endl;
+		      << "[" << i << "]\",0,*PREDEF);\n";
 		  out << "mg.addExternalStateVariableValue(\"" << evname
-		      << "[" << i << "]\",*DTIME,*PREDEF+*DPRED);" << endl;
+		      << "[" << i << "]\",*DTIME,*PREDEF+*DPRED);\n";
 		} else {
 		  out << "mg.addExternalStateVariableValue(\""
 		      << evname << "[" << i << "]\","
-		    "0,*(PREDEF+" << offset<< "));" << endl;
+		    "0,*(PREDEF+" << offset<< "));\n";
 		  out << "mg.addExternalStateVariableValue(\""
 		      << evname << "[" << i << "]\","
-		    "*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));" << endl;
+		    "*DTIME,*(PREDEF+" << offset<< ")+*(DPRED+" << offset<< "));\n";
 		}
 	      }
 	    }
 	  }
 	}
-	out << "}" << endl;
+	out << "}\n";
       }
-      out << "mg.generate(\""+name+"\");" << endl;
-      out << "static_cast<void>(TVectorSize); // remove gcc warning" << endl;
-      out << "static_cast<void>(StensorSize); // remove gcc warning" << endl;
-      out << "static_cast<void>(TensorSize);  // remove gcc warning" << endl;
+      out << "mg.generate(\""+name+"\");\n";
+      out << "static_cast<void>(TVectorSize); // remove gcc warning\n";
+      out << "static_cast<void>(StensorSize); // remove gcc warning\n";
+      out << "static_cast<void>(TensorSize);  // remove gcc warning\n";
     }
   }
 
   void
   UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix(std::ostream& out,
-								    const BehaviourDescription& mb) const
+							      const BehaviourDescription& mb) const
   {
-    using namespace std;
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "mg.setRotationMatrix("
 	  << "DROT[0],DROT[3],DROT[6],"
 	  << "DROT[1],DROT[4],DROT[7],"
-	  << "DROT[2],DROT[5],DROT[8]);" << endl;
+	  << "DROT[2],DROT[5],DROT[8]);\n";
     }
   } // end of UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
 
   void
   UMATInterfaceBase::generateUMATxxGeneralSymbols(std::ostream& out,
-							const std::string& name,
-							const BehaviourDescription& mb,
-							const FileDescription & fd) const
+						  const std::string& name,
+						  const BehaviourDescription& mb,
+						  const FileDescription & fd) const
   {
     this->writeUMATxxSourceFileSymbols(out,name,mb,fd);
     this->writeUMATxxSupportedModellingHypothesis(out,name,mb);
@@ -1333,10 +1325,10 @@ namespace mfront
 
   void
   UMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,
-						 const std::string& name,
-						 const Hypothesis h,
-						 const BehaviourDescription& mb,
-						 const FileDescription & fd) const
+					   const std::string& name,
+					   const Hypothesis h,
+					   const BehaviourDescription& mb,
+					   const FileDescription & fd) const
   {
     this->writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(out,name,h,mb);
     this->writeUMATxxMaterialPropertiesSymbols(out,name,h,mb);
@@ -1348,75 +1340,73 @@ namespace mfront
 
   void
   UMATInterfaceBase::writeUMATxxSpecificSymbols(std::ostream&,
-						      const std::string&,
-						      const BehaviourDescription&,
-						      const FileDescription&) const
+						const std::string&,
+						const BehaviourDescription&,
+						const FileDescription&) const
   {} // end of UMATInterfaceBase::writeUMATxxSpecificSymbols
 
   void
   UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-							   const std::string& name,
-							   const BehaviourDescription& mb) const
+						     const std::string& name,
+						     const BehaviourDescription& mb) const
   {
-    using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::GENERALBEHAVIOUR){
-      out << "0u;" << endl << endl;
+      out << "0u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "1u;" << endl << endl;
+      out << "1u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "2u;" << endl << endl;
+      out << "2u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
-      out << "3u;" << endl << endl;
+      out << "3u;\n\n";
     } else {
-      string msg("UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols : ");
-      msg += "unsupported behaviour type.";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols: "
+			       "unsupported behaviour type."));
     }
   } // end of UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols
 
   void
   UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(std::ostream& out,
-								   const std::string& name,
-								   const BehaviourDescription& mb) const
+							     const std::string& name,
+							     const BehaviourDescription& mb) const
   {
     using namespace std;
     using namespace tfel::material;
     auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(ih.empty()){
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
-	  << "_nModellingHypotheses = 0u;" << endl << endl;
+	  << "_nModellingHypotheses = 0u;\n\n";
       out << "MFRONT_SHAREDOBJ const char * const * "  << this->getFunctionName(name)
-	  << "_ModellingHypotheses = 0;" << endl << endl;
+	  << "_ModellingHypotheses = 0;\n\n";
     } else {
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
-	  << "_nModellingHypotheses = " << ih.size() << "u;" << endl << endl;
-      out << "MFRONT_SHAREDOBJ const char * " << endl
+	  << "_nModellingHypotheses = " << ih.size() << "u;\n\n";
+      out << "MFRONT_SHAREDOBJ const char * \n"
 	  << this->getFunctionName(name) << "_ModellingHypotheses[" << ih.size() << "u] = {";
       for(auto ph=ih.begin();ph!=ih.end();){
 	out << "\"" << ModellingHypothesis::toString(*ph) << "\"";
 	if(++ph!=ih.end()){
-	  out << "," << endl;
+	  out << ",\n";
 	}
       }
-      out << "};" << endl << endl;
+      out << "};\n\n";
     }
   } // end of UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis
 
   void
   UMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols(std::ostream& out,
-								const std::string& name,
-								const Hypothesis h,
-								const BehaviourDescription& mb) const
+							  const std::string& name,
+							  const Hypothesis h,
+							  const BehaviourDescription& mb) const
   {
     using namespace std;
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
     if(mprops.first.empty()){
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
-	  << "_nMaterialProperties = 0u;" << endl << endl;
+	  << "_nMaterialProperties = 0u;\n\n";
       out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
-	  << "_MaterialProperties = nullptr;" << endl << endl;
+	  << "_MaterialProperties = nullptr;\n\n";
     } else {
       const auto& last = mprops.first.back();
       SupportedTypes::TypeSize s;
@@ -1451,17 +1441,16 @@ namespace mfront
       }
       if(!found){
 	if(s.getScalarSize()!=0){
-	  string msg("UMATInterface::writeUMATxxMaterialPropertiesSymbols : "
-		     "internal error : inconsistent offset declaration");
-	  throw(runtime_error(msg));
+	  throw(runtime_error("UMATInterface::writeUMATxxMaterialPropertiesSymbols: "
+			      "internal error : inconsistent offset declaration"));
 	}
 	out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
-	    << "_nMaterialProperties = 0u;" << endl << endl;
+	    << "_nMaterialProperties = 0u;\n\n";
 	out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
-	    << "_MaterialProperties = nullptr;" << endl << endl;
+	    << "_MaterialProperties = nullptr;\n\n";
       } else {
 	out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
-	    << "_nMaterialProperties = " << s.getScalarSize() << "u;" << endl << endl;
+	    << "_nMaterialProperties = " << s.getScalarSize() << "u;\n\n";
 	out << "MFRONT_SHAREDOBJ const char *"  << this->getSymbolName(name,h)
 	    << "_MaterialProperties[" <<  s.getScalarSize() << "u] = {";
         for(auto i=ib;i!=mprops.first.size();){
@@ -1472,24 +1461,24 @@ namespace mfront
 	    for(unsigned short j=0;j!=m.arraySize;){
 	      out << "\"" << m.name << "[" << j << "]\"";
 	      if(++j!=m.arraySize){
-		out << "," << endl;
+		out << ",\n";
 	      }
 	    }
 	  }
 	  if(++i!=mprops.first.size()){
-	    out << "," << endl;
+	    out << ",\n";
 	  }
 	}
-	out << "};" << endl << endl;
+	out << "};\n\n";
       }
     }
   } // end of UMATInterface::writeUMATxxMaterialPropertiesSymbol
 
   void
   UMATInterfaceBase::writeUMATxxStateVariablesSymbols(std::ostream& out,
-  							    const std::string& name,
-  							    const Hypothesis h,
-  							    const BehaviourDescription& mb) const
+						      const std::string& name,
+						      const Hypothesis h,
+						      const BehaviourDescription& mb) const
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
@@ -1498,7 +1487,7 @@ namespace mfront
     VariableDescriptionContainer::const_iterator p;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
   	<< "_nInternalStateVariables = " << nStateVariables
-  	<< ";" << endl;
+  	<< ";\n";
     vector<string> stateVariablesNames;
     mb.getExternalNames(stateVariablesNames,h,persistentVarsHolder);
     this->writeExternalNames(out,name,h,stateVariablesNames,"InternalStateVariables");
@@ -1534,35 +1523,33 @@ namespace mfront
   	  out << ",";
   	}
       }
-      out << "};" << endl << endl;
+      out << "};\n\n";
     } else {
       out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(name,h)
-  	  << "_InternalStateVariablesTypes = nullptr;" << endl << endl;
+  	  << "_InternalStateVariablesTypes = nullptr;\n\n";
     }
   } // end of UMATInterfaceBase::writeUMATxxStateVariablesSymbols
   
   void
   UMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols(std::ostream& out,
-  								    const std::string& name,
-  								    const Hypothesis h,
-  								    const BehaviourDescription& mb) const
+							      const std::string& name,
+							      const Hypothesis h,
+							      const BehaviourDescription& mb) const
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
-  	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";" << endl;
+  	<< "_nExternalStateVariables = " << this->getNumberOfVariables(externalStateVarsHolder) << ";\n";
     this->writeExternalNames(out,name,h,mb.getExternalNames(h,externalStateVarsHolder),
   			     "ExternalStateVariables");
   } // end of UMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
 
   void
   UMATInterfaceBase::writeUMATxxRequirementsSymbols(std::ostream& out,
-							  const std::string& name,
-							  const Hypothesis h,
-							  const BehaviourDescription& mb) const
+						    const std::string& name,
+						    const Hypothesis h,
+						    const BehaviourDescription& mb) const
   {
-    using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h);
     out << "_requiresStiffnessTensor = ";
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
@@ -1570,7 +1557,7 @@ namespace mfront
     } else {
       out << "0";
     }
-    out << ";" << endl;
+    out << ";\n";
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h);
     out << "_requiresThermalExpansionCoefficientTensor = ";
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
@@ -1578,24 +1565,23 @@ namespace mfront
     } else {
       out << "0";
     }
-    out << ";" << endl;
+    out << ";\n";
 
   } // end of UMATInterfaceBase::writeUMATxxRequirementsSymbols
 
   void
   UMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(std::ostream& out,
-  										const std::string& name,
-										const Hypothesis h,
-  										const BehaviourDescription& mb) const
+									  const std::string& name,
+									  const Hypothesis h,
+									  const BehaviourDescription& mb) const
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
   	<< "_UsableInPurelyImplicitResolution = ";
     if(d.isUsableInPurelyImplicitResolution()){
-      out << "1;" << endl << endl;
+      out << "1;\n\n";
     } else {
-      out << "0;" << endl << endl;
+      out << "0;\n\n";
     }
   } // end of UMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolution
 
@@ -1604,54 +1590,51 @@ namespace mfront
   						    const std::string& name,
   						    const BehaviourDescription& mb) const
   {
-    using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
   	<< "_SymmetryType = " ;
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "0u;" << endl << endl;
+      out << "0u;\n\n";
     } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "1u;" << endl << endl;
+      out << "1u;\n\n";
     } else {
-      string msg("UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols : ");
-      msg += "unsupported behaviour type.\n";
-      msg += "only isotropic or orthotropic behaviours are supported at this time.";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols: "
+			       "unsupported behaviour type.\n"
+			       "only isotropic or orthotropic behaviours "
+			       "are supported at this time."));
     }
   } // end of UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols
 
   void
   UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols(std::ostream& out,
-  								  const std::string& name,
-  								  const BehaviourDescription& mb) const
+							   const std::string& name,
+							   const BehaviourDescription& mb) const
   {
-    using namespace std;
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
   	<< "_ElasticSymmetryType = " ;
     if(mb.getElasticSymmetryType()==mfront::ISOTROPIC){
-      out << "0u;" << endl << endl;
+      out << "0u;\n\n";
     } else if(mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-      out << "1u;" << endl << endl;
+      out << "1u;\n\n";
     } else {
-      string msg("UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols : ");
-      msg += "unsupported behaviour type.\n";
-      msg += "only isotropic or orthotropic behaviours are supported at this time.";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols: "
+			       "unsupported behaviour type.\n"
+			       "only isotropic or orthotropic behaviours are "
+			       "supported at this time."));
     }
   } // end of UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols
 
   void
   UMATInterfaceBase::writeUMATxxSourceFileSymbols(std::ostream& out,
-  							const std::string& name,
-  							const BehaviourDescription&,
-							const mfront::FileDescription& fd) const
+						  const std::string& name,
+						  const BehaviourDescription&,
+						  const mfront::FileDescription& fd) const
   {
-    using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
-    out << "MFRONT_SHAREDOBJ const char *" << endl 
+    out << "MFRONT_SHAREDOBJ const char *\n"
   	<< this->getFunctionName(name) << "_src = \""
   	<< tokenize(fd.fileName,dirSeparator()).back()
-  	<< "\";" << endl << endl;
+  	<< "\";\n\n";
   }
 
   std::map<UMATInterfaceBase::Hypothesis,std::string>

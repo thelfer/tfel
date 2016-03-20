@@ -211,6 +211,17 @@ L'utilitaire {\tt mfront-doc} permet de générer un fichier au format
 L'utilitaire {\tt mfront-query} permet d'obtenir en ligne commande des
 informations sur un fichier \mfront{}.
 
+\subsection{Développements divers}
+
+\subsubsection{Refactorisation du code}
+
+\paragraph{Les classes {\tt TargetsDescription} et {\tt LibraryDescription}}
+
+\subsubsection{Options en ligne de commandes}
+
+\paragraph{L'option {\tt -D}} L'option {\tt -D} permet de définir des
+macros pour le préprocesseur {\tt C/C++} en ligne de commande.
+
 \section{Nouveautés \mtest{}}
 
 \subsection{Modélisation des tubes sous pression}

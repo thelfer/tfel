@@ -323,6 +323,7 @@ docs/mfront/UpdateAuxiliaryStateVars.md -text
 docs/mfront/UsableInPurelyImplicitResolution.md -text
 docs/mfront/UseQt.md -text
 docs/mfront/abaqus/CMakeLists.txt -text
+docs/mfront/abaqus/Makefile.am -text
 docs/mfront/abaqus/Makefile.doc.in -text
 docs/mfront/abaqus/abaqus.tex.in -text
 docs/mfront/abaqus/img/IsotropicHardeningPlasticity-Stress_vs_Strain.png -text
@@ -334,6 +335,7 @@ docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-sxz.pdf -text
 docs/mfront/abaqus/img/ShearLoading-Plasticity-sxz.pdf -text
 docs/mfront/abaqus/img/abaqus_v6.env -text
 docs/mfront/abaqus/umat.cpp -text
+docs/mfront/abaqus/vumat.cpp -text
 docs/mfront/aster/CMakeLists.txt -text
 docs/mfront/aster/Makefile.doc.in -text
 docs/mfront/aster/aster.tex.in -text
@@ -1659,6 +1661,7 @@ mfront/include/MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx -text
 mfront/include/MFront/Abaqus/AbaqusComputeThermalExpansionCoefficientTensor.hxx -text
 mfront/include/MFront/Abaqus/AbaqusConfig.hxx -text
 mfront/include/MFront/Abaqus/AbaqusException.hxx -text
+mfront/include/MFront/Abaqus/AbaqusExplicitInterface.hxx -text
 mfront/include/MFront/Abaqus/AbaqusInterface.hxx -text
 mfront/include/MFront/Abaqus/AbaqusInterfaceExceptions.hxx -text
 mfront/include/MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx -text

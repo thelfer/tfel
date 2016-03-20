@@ -16,10 +16,12 @@
 #include<cstdlib>
 #include<stdexcept>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontLock.hxx"
 #include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontDebugMode.hxx"
@@ -252,9 +254,32 @@ namespace mfront{
     systemCall::mkdir("include/MFront/Abaqus");
     systemCall::mkdir("abaqus");
 
+    ofstream out;
+    {
+      // copy umat.cpp locally
+      MFrontLockGuard lock;
+      out.open("abaqus/umat.cpp");
+      if(out){
+	const auto root = tfel::getInstallPath();
+	const auto fn = root+"/share/doc/mfront/abaqus/umat.cpp";
+	std::ifstream in{fn};
+	if(in){
+	  out << in.rdbuf();
+	  in.close();
+	} else {
+	  std::cerr << "AbaqusInterface::endTreatment: "
+		    << "could not open file '" << fn << "'" << std::endl;
+	}
+      } else {
+	  std::cerr << "AbaqusInterface::endTreatment: "
+		    << "could not open file 'abaqus/umat.cpp'" << std::endl;
+      }
+      out.close();
+    }
+    
     // header
     auto fname = "abaqus"+name+".hxx";
-    ofstream out("include/MFront/Abaqus/"+fname);
+    out.open("include/MFront/Abaqus/"+fname);
     if(!out){
       throw(std::runtime_error("AbaqusInterface::endTreatment : "
 			       "could not open file '"+fname+"'"));

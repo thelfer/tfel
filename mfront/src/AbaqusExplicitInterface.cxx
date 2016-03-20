@@ -13,8 +13,11 @@
 
 #include<fstream>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
+
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontLock.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/AbaqusExplicitInterface.hxx"
@@ -34,7 +37,7 @@ namespace mfront{
 	  << "const abaqus::AbaqusInt *const nstatev,\n"
 	  << "const abaqus::AbaqusInt *const nfieldv,\n"
 	  << "const abaqus::AbaqusInt *const nprops,\n"
-	  << "const " << type << "* const lanneal,\n"
+	  << "const abaqus::AbaqusInt * const lanneal,\n"
 	  << "const " << type << "* const stepTime,\n"
 	  << "const " << type << "* const totalTime,\n"
 	  << "const " << type << "* const dt,\n"
@@ -57,10 +60,10 @@ namespace mfront{
 	  << "const " << type << "* const stretchNew,\n"
 	  << "const " << type << "* const defgradNew,\n"
 	  << "const " << type << "* const fieldNew,\n"
-	  << "const " << type << " stressNew,\n"
-	  << "const " << type << " stateNew,\n"
-	  << "const " << type << " enerInternNew,\n"
-	  << "const " << type << " enerInelasNew,\n"
+	  << "const " << type << "* stressNew,\n"
+	  << "const " << type << "* stateNew,\n"
+	  << "const " << type << "* enerInternNew,\n"
+	  << "const " << type << "* enerInelasNew,\n"
 	  << "const int)";
     } else {
       out << "(const abaqus::AbaqusInt *const nblock,\n"
@@ -69,9 +72,9 @@ namespace mfront{
 	  << "const abaqus::AbaqusInt *const nstatev,\n"
 	  << "const abaqus::AbaqusInt *const nfieldv,\n"
 	  << "const abaqus::AbaqusInt *const nprops,\n"
-	  << "const " << type << "* const,\n"
-	  << "const " << type << "* const,\n"
-	  << "const " << type << "* const,\n"
+	  << "const abaqus::AbaqusInt *const,\n"
+	  << "const " << type << "* const stepTime,\n"
+	  << "const " << type << "* const totalTime,\n"
 	  << "const " << type << "* const dt,\n"
 	  << "const " << type << "* const cmname,\n"
 	  << "const " << type << "* const,\n"
@@ -92,10 +95,10 @@ namespace mfront{
 	  << "const " << type << "* const stretchNew,\n"
 	  << "const " << type << "* const defgradNew,\n"
 	  << "const " << type << "* const fieldNew,\n"
-	  << "const " << type << " stressNew,\n"
-	  << "const " << type << " stateNew,\n"
-	  << "const " << type << " enerInternNew,\n"
-	  << "const " << type << " enerInelasNew,\n"
+	  << "const " << type << "* stressNew,\n"
+	  << "const " << type << "* stateNew,\n"
+	  << "const " << type << "* enerInternNew,\n"
+	  << "const " << type << "* enerInelasNew,\n"
 	  << "const int)";
     }
   } // end of writeVUMATArguments
@@ -110,6 +113,7 @@ namespace mfront{
 	  << "const abaqus::AbaqusInt *const,\n"
 	  << "const abaqus::AbaqusInt *const,\n"
 	  << "const abaqus::AbaqusInt *const,\n"
+	  << "const abaqus::AbaqusInt *const,\n"
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
@@ -132,11 +136,10 @@ namespace mfront{
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
-	  << "const " << type << "* const,\n"
-	  << "const " << type << ",\n"
-	  << "const " << type << ",\n"
-	  << "const " << type << ",\n"
-	  << "const " << type << ",\n"
+	  << "const " << type << "*,\n"
+	  << "const " << type << "*,\n"
+	  << "const " << type << "*,\n"
+	  << "const " << type << "*,\n"
 	  << "const int)";
   } // end of writeVUMATArguments
   
@@ -166,10 +169,10 @@ namespace mfront{
   } // end of AbaqusExplicitInterface::getTargetsDescription
 
   void 
-  AbaqusExplicitInterface::writeInterfaceSpecificIncludes(std::ostream&,
+  AbaqusExplicitInterface::writeInterfaceSpecificIncludes(std::ostream& out,
 							  const BehaviourDescription&) const
   {
-    //    out << "#include\"MFront/Abaqus/AbaqusExplicit.hxx\"\n\n";
+    out << "#include\"MFront/Abaqus/AbaqusExplicitInterface.hxx\"\n\n";
   } // end of AbaqusExplicitInterface::writeInterfaceSpecificIncludes
   
   void
@@ -192,42 +195,62 @@ namespace mfront{
     systemCall::mkdir("include/MFront/Abaqus");
     systemCall::mkdir("abaqus");
 
+    ofstream out;
+    {
+      // copy vumat.cpp locally
+      MFrontLockGuard lock;
+      out.open("abaqus/vumat.cpp");
+      if(out){
+	const auto root = tfel::getInstallPath();
+	const auto fn = root+"/share/doc/mfront/abaqus/vumat.cpp";
+	std::ifstream in{fn};
+	if(in){
+	  out << in.rdbuf();
+	  in.close();
+	  out.close();
+	} else {
+	  std::cerr << "AbaqusExplicitInterface::endTreatment: "
+		    << "could not open file '" << fn << "'" << std::endl;
+	}
+      } else {
+	  std::cerr << "AbaqusExplicitInterface::endTreatment: "
+		    << "could not open file 'abaqus/vumat.cpp'" << std::endl;
+      }
+    }
+    
     // header
     auto fname = "abaqusExplicit"+name+".hxx";
-    ofstream out("include/MFront/Abaqus/"+fname);
+    out.open("include/MFront/Abaqus/"+fname);
     if(!out){
       throw(std::runtime_error("AbaqusInterface::endTreatment : "
 			       "could not open file '"+fname+"'"));
     }
 
-    out << "/*!\n";
-    out << "* \\file   "  << fname << endl;
-    out << "* \\brief  This file declares the abaqus explicit interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << endl;
-    out << "* \\date   "  << fd.date       << endl;
-    out << "*/\n\n";
+    out << "/*!\n"
+	<< "* \\file   "  << fname << '\n'
+	<< "* \\brief  This file declares the abaqus explicit interface for the " 
+	<< mb.getClassName() << " behaviour law\n"
+	<< "* \\author "  << fd.authorName << '\n'
+	<< "* \\date   "  << fd.date       << '\n'
+	<< "*/\n\n";
 
     const auto header = this->getHeaderDefine(mb);
-    out << "#ifndef "<< header << "\n";
-    out << "#define "<< header << "\n\n";
-
-    out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
-    out << "#include\"MFront/Abaqus/Abaqus.hxx\"\n\n";
-
-    out << "#ifdef __cplusplus\n";
-    out << "#include\"MFront/Abaqus/AbaqusTraits.hxx\"\n";
+    out << "#ifndef "<< header << "\n"
+	<< "#define "<< header << "\n\n"
+	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n"
+	<< "#include\"MFront/Abaqus/Abaqus.hxx\"\n\n"
+	<< "#ifdef __cplusplus\n"
+	<< "#include\"MFront/Abaqus/AbaqusTraits.hxx\"\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx\"\n";
     }
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
+	<< "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
 
-    out << "#ifdef __cplusplus\n\n";
-
-    out << "namespace abaqus{\n\n";
+    out << "#ifdef __cplusplus\n\n"
+	<< "namespace abaqus{\n\n";
 
     if(!mb.areAllMechanicalDataSpecialised(mh)){
       this->writeAbaqusBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
@@ -238,13 +261,11 @@ namespace mfront{
       }
     }
 
-    out << "} // end of namespace abaqus\n\n";
-
-    out << "#endif /* __cplusplus */\n\n";
-
-    out << "#ifdef __cplusplus\n";
-    out << "extern \"C\"{\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "} // end of namespace abaqus\n\n"
+	<< "#endif /* __cplusplus */\n\n"
+	<< "#ifdef __cplusplus\n"
+	<< "extern \"C\"{\n"
+	<< "#endif /* __cplusplus */\n\n";
 
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
@@ -255,13 +276,11 @@ namespace mfront{
 
     out << "MFRONT_SHAREDOBJ void\n" << getFunctionName(name);
     writeVUMATArguments(out,"double");
-    out << ";\n\n";
-    
-    out << "#ifdef __cplusplus\n";
-    out << "}\n";
-    out << "#endif /* __cplusplus */\n\n";
-
-    out << "#endif /* " << header << " */\n";
+    out << ";\n\n"
+	<< "#ifdef __cplusplus\n"
+	<< "}\n"
+	<< "#endif /* __cplusplus */\n\n"
+	<< "#endif /* " << header << " */\n";
 
     out.close();
 
@@ -272,24 +291,26 @@ namespace mfront{
 			       "could not open file '"+fname+"'"));
     }
 
-    out << "/*!\n";
-    out << "* \\file   "  << fname << endl;
-    out << "* \\brief  This file implements the abaqus explicit interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << endl;
-    out << "* \\date   "  << fd.date       << endl;
-    out << "*/\n\n";
+    out << "/*!\n"
+	<< "* \\file   "  << fname << '\n'
+	<< "* \\brief  This file implements the abaqus explicit interface for the " 
+	<< mb.getClassName() << " behaviour law\n"
+	<< "* \\author "  << fd.authorName << '\n'
+	<< "* \\date   "  << fd.date       << '\n'
+	<< "*/\n\n";
 
+    out << "#include<cmath>\n"
+	<< "#include<limits>\n";
     this->getExtraSrcIncludes(out,mb);
 
-    out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
+    out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
+	<< "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n";
-    out << "#include\"MFront/Abaqus/AbaqusInterface.hxx\"\n\n";
-    out << "#include\"MFront/Abaqus/abaqusExplicit" << name << ".hxx\"\n\n";
+    out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n"
+	<< "#include\"MFront/Abaqus/AbaqusInterface.hxx\"\n\n"
+	<< "#include\"MFront/Abaqus/abaqusExplicit" << name << ".hxx\"\n\n";
 
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
     
@@ -338,11 +359,11 @@ namespace mfront{
 			       "only supports small and finite strain behaviours"));
     }
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      dv0 = "STRAN";
-      dv1 = "DSTRAN";
+      dv0 = "nullptr";
+      dv1 = "strainInc";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      dv0 = "F0";
-      dv1 = "F1";
+      dv0 = "defgradOld";
+      dv1 = "defgradNew";
     } else {
       throw(std::runtime_error("AbaqusInterface::writeVUMATFunction: "
 				"the abaqus explicit interface only supports small "
@@ -355,14 +376,26 @@ namespace mfront{
 	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    out << "if(abaqus::AbaqusInterface<tfel::material::" << mb.getClassName() 
-	<< ">::exe(NTENS,DTIME,DROT,DDSDDE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,PNEWDT,"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy(),"
-	<< sfeh << ")!=0){\n"
-	<< "*PNEWDT = -1.;\n"
-	<< "return;\n"
-	<< "}\n"
+    // datacheck phase
+    out << "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
+	<< "   (std::abs(*totalTime)<std::numeric_limits<" << t << ">::min())){\n"
+	// << "if(abaqus::AbaqusExplicitInterface<tfel::material::" << mb.getClassName() 
+	// << ">::computeElasticPrediction(*NTENS,dt," << dv0 << "," << dv1 << ","
+	// << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
+	// << sfeh << ")!=0){\n"
+	// << "std::cerr << \"" << mb.getClassName() << "\": integration failed\";\n"
+	// << "::exit(-1);\n"
+	// << "}\n"
+	<< "} else {\n"
+	// << "if(abaqus::AbaqusExplicitInterface<tfel::material::" << mb.getClassName() 
+	// << ">::exe(NTENS,DTIME,DROT,DDSDDE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
+	// << "PREDEF,DPRED,STATEV,NSTATV,STRESS,PNEWDT,"
+	// << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
+	// << sfeh << ")!=0){\n"
+	// << "std::cerr << \"" << mb.getClassName() << "\": integration failed\";\n"
+	// << "::exit(-1);\n"
+        // << "}\n"
+      	<< "}\n"
     	<< "}\n";
   } // end of AbaqusExplicitInterface::endTreatment
 

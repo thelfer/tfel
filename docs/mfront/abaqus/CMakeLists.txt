@@ -51,3 +51,5 @@ endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 
 install(FILES umat.cpp DESTINATION share/doc/mfront/abaqus
     COMPONENT mfront)
+install(FILES vumat.cpp DESTINATION share/doc/mfront/abaqus
+    COMPONENT mfront)

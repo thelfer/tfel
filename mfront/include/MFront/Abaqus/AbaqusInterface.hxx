@@ -50,9 +50,6 @@ namespace abaqus
    * runtime-functions comes from the fact that we did not want a code
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
-   *
-   * \author Helfer Thomas
-   * \date   28 Jul 2006
    */
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>

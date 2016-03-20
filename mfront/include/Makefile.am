@@ -207,6 +207,7 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/Abaqus/AbaqusTraits.hxx                                   \
 			  MFront/Abaqus/AbaqusException.hxx 		                   \
 			  MFront/Abaqus/AbaqusInterface.hxx	                           \
+			  MFront/Abaqus/AbaqusExplicitInterface.hxx	                   \
 			  MFront/Abaqus/AbaqusInterfaceExceptions.hxx                      \
 			  MFront/Abaqus/AbaqusBehaviourHandler.hxx                         \
 			  MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx                   \

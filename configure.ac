@@ -518,6 +518,7 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/castem/Makefile.doc
 	   docs/mfront/zmat/zmat.tex
 	   docs/mfront/zmat/Makefile.doc
+	   docs/mfront/abaqus/Makefile
 	   docs/mfront/abaqus/abaqus.tex
 	   docs/mfront/abaqus/Makefile.doc
 	   docs/mfront/glossary.tex

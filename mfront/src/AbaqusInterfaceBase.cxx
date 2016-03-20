@@ -14,7 +14,6 @@
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/AbaqusInterfaceBase.hxx"
 
-
 #ifndef _MSC_VER
 static const char * const constexpr_c = "constexpr";
 #else
