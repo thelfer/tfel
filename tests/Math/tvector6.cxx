@@ -57,15 +57,11 @@ TFEL_TESTS_GENERATE_PROXY(TVector6,
 /* coverity [root_function]*/
 int main(void)
 {
-  using namespace std;
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  auto& manager = tfel::tests::TestManager::getTestManager();
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("tvector6.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  /* coverity [root_function]*/
+  const auto r = manager.execute();
+  return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main
 
