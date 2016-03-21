@@ -98,7 +98,7 @@ namespace mfront{
     } else {
       lib = "Europlexus"+mb.getLibrary();
     }
-    return makeUpperCase(lib);
+    return lib;
   } // end of EuroplexusInterface::getLibraryName
 
   std::string
@@ -206,6 +206,8 @@ namespace mfront{
     // output directories
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Europlexus");
+    systemCall::mkdir("src");
+    systemCall::mkdir("europlexus");
 
     // header
     auto fname = "europlexus"+name+".hxx";
@@ -439,6 +441,101 @@ namespace mfront{
     // 			     name,"",mb);
     out << "}\n\n";
     out << "} // end of extern \"C\"\n";
+    out.close();
+    out.open("europlexus/"+mb.getClassName()+".epx");
+    out << "!\n"
+	<< "! \\file   "  << fd.fileName << '\n'
+	<< "! \\brief  example of how to use the " << mb.getClassName() << " behaviour law\n"
+	<< "! in the Cast3M finite element solver\n"
+	<< "! \\author "  << fd.authorName << '\n'
+	<< "! \\date   "  << fd.date       << '\n'
+	<< "!\n";
+    for(const auto & h : this->getModellingHypothesesToBeTreated(mb)){
+      const auto& d = mb.getBehaviourData(h);
+      out << "\n!! " << ModellingHypothesis::toString(h) << " example\n"
+	  << "MFRONT\n";
+      out << "LIB 'lib" << this->getLibraryName(mb) <<  ".so'\n";
+      out << "LAW '" << this->getFunctionName(name)  <<  "'\n"
+	  << "!! material properties\n";
+      for(const auto& mp : this->buildMaterialPropertiesList(mb,h).first){
+	if(this->getTypeFlag(mp.type)!=SupportedTypes::Scalar){
+	  throw(std::runtime_error("EuroplexusInterface::endTreatment: "
+				   "material property '"+mp.name+
+				   "' is not a scalar. "
+				   "This is not supported yet"));
+	}
+	if(mp.arraySize==1u){
+	  out << "MATP '" << mp.name << "' ???\n";
+	} else {
+	  for(unsigned short i=0;i!=mp.arraySize;++i){
+	    out << "MATP '" << mp.name << '[' << i <<  "]' ???\n";
+	  }
+	}
+      }
+      out << "!! internal state variables\n";
+      out << "!! by default, internal state variables are set to zero\n";
+      for(const auto& iv: d.getPersistentVariables()){
+	auto display = [&h,&out](const SupportedTypes::TypeFlag f){
+	  if(f==SupportedTypes::Scalar){
+	    out << " ???";
+	  } else if(f==SupportedTypes::Stensor){
+	    if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	      out << " ??? ??? ??? ??? ??? ???";
+	    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+		       (h==ModellingHypothesis::PLANESTRAIN)||
+		       (h==ModellingHypothesis::PLANESTRESS)){
+	      out << " ??? ??? ??? ???";
+	    }
+	  } else if(f==SupportedTypes::Tensor){
+	    if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	      out << " ??? ??? ??? ??? ??? ??? ??? ??? ???";
+	    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+		       (h==ModellingHypothesis::PLANESTRAIN)||
+		       (h==ModellingHypothesis::PLANESTRESS)){
+	      out << " ??? ??? ??? ??? ???";
+	    }
+	  } else {
+	    throw(std::runtime_error("EuroplexusInterface::endTreatment: "
+				     "unsupported state variable type"));
+	  }
+	};
+	if(iv.arraySize==1u){
+	  out << "!! IVAR '" << d.getExternalName(iv.name) << "' ";
+	  display(this->getTypeFlag(iv.type));
+	  out << '\n';
+	} else {
+	  for(unsigned short i=0;i!=iv.arraySize;++i){
+	    out << "!! IVAR '" << d.getExternalName(iv.name)
+		<< '[' << i <<  "]' ";
+	    display(this->getTypeFlag(iv.type));
+	    out << '\n';
+	  }
+	}
+      }
+      out << "!! external state variables\n"
+	  << "EVAR 'Temperature' 293.15\n";
+      for(const auto& e: d.getExternalStateVariables()){
+	if(this->getTypeFlag(e.type)!=SupportedTypes::Scalar){
+	  throw(std::runtime_error("EuroplexusInterface::endTreatment: "
+				   "external state variable '"+e.name+
+				   "' is not a scalar. "
+				   "This is not supported yet"));
+	}
+	if(e.arraySize==1u){
+	  out << "EVAR '" << d.getExternalName(e.name) << "' ???\n";
+	} else {
+	  for(unsigned short i=0;i!=e.arraySize;++i){
+	    out << "EVAR '" << d.getExternalName(e.name) << '[' << i <<  "]' ???\n";
+	  }
+	}
+      }
+      // for(const auto& mp : this->buildMaterialPropertiesList(mb,h)){
+      // 	out << "IVAR '" << mp.name << "' ???\n";
+      // }
+      // << "IVAR 'ElasticStrain' 1 0 1 0 0 0\n"
+      // << "EVAR 'Temperature' 293.15\n"
+      out << "LECT MESH TERM\n";
+    }
     out.close();
   } // end of EuroplexusInterface::endTreatment
   

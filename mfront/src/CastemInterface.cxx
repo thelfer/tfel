@@ -416,7 +416,7 @@ namespace mfront{
 
   std::string
   CastemInterface::treatTensor(const Hypothesis h,
-				   const std::string& s)
+			       const std::string& s)
   {
     auto res = std::string{};
     const auto s2 = makeUpperCase(s.substr(0,2));
@@ -580,11 +580,11 @@ namespace mfront{
     }
   
     out << "/*!\n";
-    out << "* \\file   "  << fileName << endl;
+    out << "* \\file   "  << fileName << '\n';
     out << "* \\brief  This file declares the umat interface for the " 
 	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << endl;
-    out << "* \\date   "  << fd.date       << endl;
+    out << "* \\author "  << fd.authorName << '\n';
+    out << "* \\date   "  << fd.date       << '\n';
     out << "*/\n\n";
 
     const string header = this->getHeaderDefine(mb);
@@ -592,9 +592,9 @@ namespace mfront{
     out << "#define " << header << "\n\n";
     
     out << "#include\"castem.h\"\n";
-    out << "#ifdef umat" << endl;
-    out << "#undef umat" << endl;
-    out << "#endif /* umat */" << endl << endl;
+    out << "#ifdef umat\n";
+    out << "#undef umat\n";
+    out << "#endif /* umat */\n\n";
 
     out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
     out << "#include\"MFront/Castem/Castem.hxx\"\n\n";
@@ -740,11 +740,11 @@ namespace mfront{
     }
 
     out << "/*!\n";
-    out << "* \\file   "  << fileName << endl;
+    out << "* \\file   "  << fileName << '\n';
     out << "* \\brief  This file implements the umat interface for the " 
 	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << endl;
-    out << "* \\date   "  << fd.date       << endl;
+    out << "* \\author "  << fd.authorName << '\n';
+    out << "* \\date   "  << fd.date       << '\n';
     out << "*/\n\n";
 
     this->getExtraSrcIncludes(out,mb);
@@ -1155,8 +1155,7 @@ namespace mfront{
   CastemInterface::writeInterfaceSpecificIncludes(std::ostream& out,
 						  const BehaviourDescription&) const
   {
-    using namespace std;
-    out << "#include\"MFront/Castem/Castem.hxx\"" << endl << endl;
+    out << "#include\"MFront/Castem/Castem.hxx\"\n\n";
   } // end of CastemInterface::writeInterfaceSpecificIncludes
 
   CastemInterface::~CastemInterface()
@@ -1258,10 +1257,9 @@ namespace mfront{
 	}
       }
       if(uh.empty()){
-	string msg("CastemInterface::endTreatment : ");
-	msg += "internal error : the mechanical behaviour says that not "
-	  "all handled mechanical data are specialised, but we found none.";
-	throw(runtime_error(msg));
+	throw(runtime_error("CastemInterface::endTreatment: "
+			    "internal error : the mechanical behaviour says that not "
+			    "all handled mechanical data are specialised, but we found none."));
       }
       // material properties for all the selected hypothesis
       auto mpositions = vector<pair<vector<UMATMaterialProperty>,
@@ -1501,7 +1499,6 @@ namespace mfront{
   {
     const auto base  = suffix.empty() ? name : name+"_"+suffix;
     const auto fname2 = "umat"+makeLowerCase(base);
-    //    (this->*m)(out,name,base,suffix,mb);
     (this->*m)(out,name,fname2,suffix,mb);
   }
 
@@ -1514,15 +1511,12 @@ namespace mfront{
   {
     using namespace std;
     if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("CastemInterface::writeFiniteRotationSmallStrainCastemFunction : "
-		 "finite strain strategies shall be used with small strain behaviours");
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemInterface::writeFiniteRotationSmallStrainCastemFunction: "
+			  "finite strain strategies shall be used with small strain behaviours"));
     }
-    out << "MFRONT_SHAREDOBJ void\n"
-	<< fname;
+    out << "MFRONT_SHAREDOBJ void\n" << fname;
     writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
-    out << endl;
-    out << "{\n";
+    out << "\n{\n";
     out << "using namespace castem;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n";
@@ -1674,10 +1668,10 @@ namespace mfront{
     	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
     	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
-    out << "if(*NDI!=14){" << endl
-	<< "*KINC=-7;" << endl
-	<< "return;" << endl
-	<< "}" << endl;
+    out << "if(*NDI!=14){\n"
+	<< "*KINC=-7;\n"
+	<< "return;\n"
+	<< "}\n";
     out << "eto[0]=std::log(1+*STRAN);\n";
     out << "eto[1]=std::log(1+*(STRAN+1));\n";
     out << "eto[2]=std::log(1+*(STRAN+2));\n";
@@ -1827,10 +1821,10 @@ namespace mfront{
       string w;
       in >> w;
       if(buffer.size()+w.size()>70){
-	out << buffer << endl;
+	out << buffer << '\n';
 	buffer.clear();
 	if(w.size()>70){
-	  out << w << endl;
+	  out << w << '\n';
 	} else {
 	  buffer = w;
 	}
@@ -1838,7 +1832,7 @@ namespace mfront{
 	buffer+=' '+w;
       }
     }
-    out << buffer << endl;
+    out << buffer << '\n';
   } // end of CastemInterface::writeGibianeInstruction
 
   void
@@ -1866,11 +1860,11 @@ namespace mfront{
     }
     // header
     out << "*\n";
-    out << "* \\file   "  << fd.fileName << endl;
+    out << "* \\file   "  << fd.fileName << '\n';
     out << "* \\brief  example of how to use the " << mb.getClassName() << " behaviour law\n"
 	<< "* in the Cast3M finite element solver\n";
-    out << "* \\author "  << fd.authorName << endl;
-    out << "* \\date   "  << fd.date       << endl;
+    out << "* \\author "  << fd.authorName << '\n';
+    out << "* \\date   "  << fd.date       << '\n';
     out << "*\n\n";
     // specific declaration
     string nonlin;
@@ -1918,14 +1912,14 @@ namespace mfront{
       }
       mcoel << ";";
       writeGibianeInstruction(out,mcoel.str());
-      out << endl;
+      out << '\n';
       if(!persistentVarsHolder.empty()){
 	ostringstream mstatev;
 	mstatev << "statev = 'MOTS' ";
 	this->writeVariableDescriptionContainerToGibiane(mstatev,elem,persistentVarsHolder);
 	mstatev << ";";
 	writeGibianeInstruction(out,mstatev.str());
-	out << endl;
+	out << '\n';
       }
       ostringstream mparam;
       mparam << "params = 'MOTS' 'T'";
@@ -1935,7 +1929,7 @@ namespace mfront{
       }
       mparam << ";";
       writeGibianeInstruction(out,mparam.str());
-      out << endl;
+      out << '\n';
       ostringstream mmod;
       mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
       mmod << nonlin << "\n"
@@ -1947,7 +1941,7 @@ namespace mfront{
       }
       mmod << "'PARA_LOI'   params 'CONS' M;";
       writeGibianeInstruction(out,mmod.str());
-      out << endl;
+      out << '\n';
       ostringstream mi;
       mi << "MA = 'MATERIAU' MO ";
       for(auto pm=mprops.first.cbegin();pm!=mprops.first.cend();){
@@ -1984,7 +1978,7 @@ namespace mfront{
       }
       mi << ";";
       writeGibianeInstruction(out,mi.str());
-      out << endl;
+      out << '\n';
     }
     out.close();
   } // end of CastemInterface::generateGibianeDeclaration
@@ -2031,7 +2025,7 @@ namespace mfront{
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       out << "static " << constexpr_c << " ModellingHypothesis::Hypothesis H = " 
 	  << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
-	  << ";" << endl;
+	  << ";\n";
     }
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       out << "static " << constexpr_c << " CastemBehaviourType btype  = SMALLSTRAINSTANDARDBEHAVIOUR;\n";
