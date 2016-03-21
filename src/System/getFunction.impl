@@ -410,6 +410,7 @@ extern "C" {
 									   EuroplexusRealType *const,
 									   EuroplexusRealType *const,
 									   EuroplexusRealType *const,
+									   char *const,
 									   const EuroplexusIntegerType  *const,
 									   const EuroplexusIntegerType  *const,
 									   const EuroplexusRealType *const,
@@ -423,14 +424,15 @@ extern "C" {
 									   const EuroplexusRealType *const,
 									   const EuroplexusIntegerType  *const)
   {
-    return (void (TFEL_ADDCALL_PTR)(   EuroplexusIntegerType *const,      EuroplexusRealType *const,
-				          EuroplexusRealType *const,      EuroplexusRealType *const,
-				          EuroplexusRealType *const,const EuroplexusIntegerType  *const,
-				    const EuroplexusIntegerType  *const,const EuroplexusRealType *const,
-				    const EuroplexusRealType *const,const EuroplexusRealType *const,
-				    const EuroplexusRealType *const,const EuroplexusIntegerType  *const,
-				    const EuroplexusRealType *const,const EuroplexusRealType *const,
-				    const EuroplexusRealType *const,const EuroplexusRealType *const,
+    return (void (TFEL_ADDCALL_PTR)(      EuroplexusIntegerType  *const,       EuroplexusRealType     *const,
+				          EuroplexusRealType     *const,       EuroplexusRealType     *const,
+				          EuroplexusRealType     *const,       char                   *const,
+				    const EuroplexusIntegerType  *const, const EuroplexusIntegerType  *const,
+				    const EuroplexusRealType     *const, const EuroplexusRealType     *const,
+				    const EuroplexusRealType     *const, const EuroplexusRealType     *const,
+				    const EuroplexusIntegerType  *const,
+				    const EuroplexusRealType     *const, const EuroplexusRealType     *const,
+				    const EuroplexusRealType     *const, const EuroplexusRealType     *const,
 				    const EuroplexusIntegerType  *const))dlsym(l,n);
   }
   

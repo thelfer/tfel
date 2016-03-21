@@ -1,8 +1,8 @@
 /*!
- * \file   umat.cpp
+ * \file   vumat-dp.cpp
  * \brief    
- * \author THOMAS HELFER
- * \date   08 oct. 2015
+ * \author Thomas Helfer
+ * \date   21/03/2016
  */
 
 #include<iostream>

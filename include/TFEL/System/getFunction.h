@@ -304,6 +304,7 @@ extern "C" {
 											   EuroplexusRealType *const,
 											   EuroplexusRealType *const,
 											   EuroplexusRealType *const,
+											   char *const,
 											   const EuroplexusIntegerType  *const,
 											   const EuroplexusIntegerType  *const,
 											   const EuroplexusRealType *const,

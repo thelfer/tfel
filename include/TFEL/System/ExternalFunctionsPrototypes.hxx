@@ -391,6 +391,7 @@ namespace tfel
 						       EuroplexusRealType *const,        // state variables
 						       EuroplexusRealType *const,        // stiffness tensor	  
 						       EuroplexusRealType *const,        // time step scaling factor
+						       char *const,        // error message
 						       const EuroplexusIntegerType  *const,  // number of state variables
 						       const EuroplexusIntegerType  *const,  // modelling hypothesis
 						       const EuroplexusRealType *const,  // time increment

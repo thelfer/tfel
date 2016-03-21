@@ -38,11 +38,12 @@ namespace mfront{
   static void
   writeEPXArguments(std::ostream& out)
   {
-    out << "(epx::EuroplexusInt *const,\n"
+    out << "(epx::EuroplexusInt  *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
       	<< " epx::EuroplexusReal *const,\n"
+	<< "                char *const,\n"
 	<< " const epx::EuroplexusInt  *const,\n"
       	<< " const epx::EuroplexusInt  *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
@@ -65,6 +66,7 @@ namespace mfront{
 	<< " epx::EuroplexusReal *const STATEV,\n"
 	<< " epx::EuroplexusReal *const DDSDDE,\n"
 	<< " epx::EuroplexusReal *const PNEWDT,\n"
+      	<< "                char *const MSG,\n"
 	<< " const epx::EuroplexusInt  *const NSTATV,\n"
 	<< " const epx::EuroplexusInt  *const HYPOTHESIS,\n"
 	<< " const epx::EuroplexusReal *const DTIME,\n"
@@ -387,7 +389,7 @@ namespace mfront{
       out << "} else {\n"
 	  << "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,F0,*HYPOTHESIS);\n"
 	  << "}\n"
-	  << "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,\n"
+	  << "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,MSG,\n"
 	  << "                        *NSTATV,*DTIME,eto,deto,PROPS,*NPROPS,\n"
 	  << "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
 	  << "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
@@ -430,7 +432,7 @@ namespace mfront{
 			       "logarithmic strain not implemented yet"));
     } else {
       // this->generateMTestFile1(out);
-      out << "const epx::EPXData d = {STATUS,STRESS,STATEV,DDSDDE,PNEWDT,\n"
+      out << "const epx::EPXData d = {STATUS,STRESS,STATEV,DDSDDE,PNEWDT,MSG,\n"
 	  << "                        *NSTATV,*DTIME,F0,F1,PROPS,*NPROPS,\n"
 	  << "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
 	  << "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
@@ -529,11 +531,6 @@ namespace mfront{
 	  }
 	}
       }
-      // for(const auto& mp : this->buildMaterialPropertiesList(mb,h)){
-      // 	out << "IVAR '" << mp.name << "' ???\n";
-      // }
-      // << "IVAR 'ElasticStrain' 1 0 1 0 0 0\n"
-      // << "EVAR 'Temperature' 293.15\n"
       out << "LECT MESH TERM\n";
     }
     out.close();

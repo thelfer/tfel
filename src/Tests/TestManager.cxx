@@ -44,13 +44,10 @@ namespace tfel
     TestManager::addTestOutput(const std::string& n,
 			       const TestOutputPtr& o)
     {
-      using namespace std;
-      typedef map<string,MultipleTestOutputsPtr>::value_type MVType;
-      map<string,MultipleTestOutputsPtr>::iterator p;
-      p = this->outputs.find(n);
+      auto p = this->outputs.find(n);
       if(p==this->outputs.end()){
 	MultipleTestOutputsPtr out(new MultipleTestOutputs());
-	p = this->outputs.insert(MVType(n,out)).first;
+	p = this->outputs.insert({n,out}).first;
       }
       p->second->addTestOutput(o);
     } // end of TestManager::addTestOutput
@@ -59,7 +56,6 @@ namespace tfel
     TestManager::addTestOutput(std::ostream& o,
 			       const bool b)
     {
-      using namespace std;
       TestOutputPtr output(new StdStreamTestOutput(o,b));
       this->addTestOutput(output);
     } // end of TestManager::addTestOutput
@@ -69,7 +65,6 @@ namespace tfel
 			       std::ostream& o,
 			       const bool b)
     {
-      using namespace std;
       TestOutputPtr output(new StdStreamTestOutput(o,b));
       this->addTestOutput(n,output);
     } // end of TestManager::addTestOutput
@@ -77,7 +72,6 @@ namespace tfel
     void
     TestManager::addTestOutput(const std::string& f)
     {
-      using namespace std;
       TestOutputPtr o(new StdStreamTestOutput(f));
       this->addTestOutput(o);
     } // end of TestManager::addTestOutput
@@ -94,7 +88,6 @@ namespace tfel
     TestManager::addTestOutput(const std::string& n,
 			       const std::string& f)
     {
-      using namespace std;
       TestOutputPtr o(new StdStreamTestOutput(f));
       this->addTestOutput(n,o);
     } // end of TestManager::addTestOutput
@@ -128,9 +121,9 @@ namespace tfel
 	  output = p2->second;
 	} else{
 	  if(this->default_outputs.get()==nullptr){
-	    string msg("TestManager::execute : ");
-	    msg += "no output defined for test suite '"+n+"'";
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("TestManager::execute: "
+				     "no output defined for "
+				     "test suite '"+n+"'"));
 	  }
 	  output = this->default_outputs;
 	}

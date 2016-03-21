@@ -335,7 +335,8 @@ docs/mfront/abaqus/img/ShearLoading-IsotropicElasticity-sxz.pdf -text
 docs/mfront/abaqus/img/ShearLoading-Plasticity-sxz.pdf -text
 docs/mfront/abaqus/img/abaqus_v6.env -text
 docs/mfront/abaqus/umat.cpp -text
-docs/mfront/abaqus/vumat.cpp -text
+docs/mfront/abaqus/vumat-dp.cpp -text
+docs/mfront/abaqus/vumat-sp.cpp -text
 docs/mfront/aster/CMakeLists.txt -text
 docs/mfront/aster/Makefile.doc.in -text
 docs/mfront/aster/aster.tex.in -text

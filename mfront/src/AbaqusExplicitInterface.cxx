@@ -197,24 +197,26 @@ namespace mfront{
 
     ofstream out;
     {
-      // copy vumat.cpp locally
       MFrontLockGuard lock;
-      out.open("abaqus/vumat.cpp");
-      if(out){
-	const auto root = tfel::getInstallPath();
-	const auto fn = root+"/share/doc/mfront/abaqus/vumat.cpp";
-	std::ifstream in{fn};
-	if(in){
-	  out << in.rdbuf();
-	  in.close();
-	  out.close();
+      // copy vumat.cpp locally
+      for(const std::string f: {"vumat-sp.cpp","vumat-dp.cpp"}){
+	out.open("abaqus/"+f);
+	if(out){
+	  const auto root = tfel::getInstallPath();
+	  const auto fn = root+"/share/doc/mfront/abaqus/"+f;
+	  std::ifstream in{fn};
+	  if(in){
+	    out << in.rdbuf();
+	    in.close();
+	  } else {
+	    std::cerr << "AbaqusExplicitInterface::endTreatment: "
+		      << "could not open file '" << fn << "'\n";
+	  }
 	} else {
 	  std::cerr << "AbaqusExplicitInterface::endTreatment: "
-		    << "could not open file '" << fn << "'" << std::endl;
+		    << "could not open file 'abaqus/" << f << "'\n";
 	}
-      } else {
-	  std::cerr << "AbaqusExplicitInterface::endTreatment: "
-		    << "could not open file 'abaqus/vumat.cpp'" << std::endl;
+	out.close();
       }
     }
     

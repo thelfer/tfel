@@ -92,7 +92,8 @@ namespace mtest
     }
     epx::EuroplexusReal ndt(1.);
     epx::EuroplexusInt  status(0);
-    (this->fct)(&status,&(s1(0)),&(s.iv1(0)),&Kt(0,0),&ndt,
+    char msg[256];
+    (this->fct)(&status,&(s1(0)),&(s.iv1(0)),&Kt(0,0),&ndt,msg,
 		&nstatv,&hv,&dt,&uu0(0),&uu1(0),
     		&s.mprops1(0),&nprops,
 		&(s.esv0(0))  ,&(s.desv(0)),
