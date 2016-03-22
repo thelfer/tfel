@@ -298,7 +298,8 @@ namespace mfront{
     out << "#define "<< header << "\n\n";
 
     out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
-    out << "#include\"MFront/Abaqus/Abaqus.hxx\"\n\n";
+    out << "#include\"MFront/Abaqus/Abaqus.hxx\"\n";
+    out << "#include\"MFront/Abaqus/AbaqusData.hxx\"\n\n";
 
     out << "#ifdef __cplusplus\n";
     out << "#include\"MFront/Abaqus/AbaqusTraits.hxx\"\n";
@@ -420,115 +421,120 @@ namespace mfront{
 			  "and finite strain behaviours"));
     }
 
-    out << "MFRONT_SHAREDOBJ void\n"
-	<< getFunctionName(name);
+    out << "MFRONT_SHAREDOBJ void\n" << getFunctionName(name);
     writeUMATArguments(out,mb.getBehaviourType(),false);
     out << "{\n";
     if(((getDebugMode())||(this->compareToNumericalTangentOperator))&&(!this->generateMTestFile)){
       out << "using namespace std;\n";
     }
     if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "using mfront::BehaviourProfiler;\n";
-      out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
-      out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+      out << "using mfront::BehaviourProfiler;\n"
+	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
+	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
     if(this->compareToNumericalTangentOperator){
-      out << "vector<abaqus::AbaqusReal> deto0(*NTENS);\n";
-      out << "vector<abaqus::AbaqusReal> sig0(*NTENS);\n";
-      out << "vector<abaqus::AbaqusReal> sv0(*NSTATV);\n";
-      out << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n";
-      out << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
-      out << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
+      out << "abaqus::AbaqusReal pnewdt0(*PNEWDT);\n"
+	  << "vector<abaqus::AbaqusReal> deto0(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sig0(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sv0(*NSTATV);\n"
+	  << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n"
+	  << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
+	  << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
     }
-    out << "if(abaqus::AbaqusInterface<tfel::material::" << mb.getClassName() 
-	<< ">::exe(NTENS,DTIME,DROT,DDSDDE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
-	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,PNEWDT,"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy(),"
-	<< sfeh << ")!=0){\n";
+    out << "abaqus::AbaqusData d = {STRESS,PNEWDT,DDSDDE,STATEV,\n"
+	<< "                        *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
+	<< "                        DROT," << dv0 << "," << dv1 << ",TEMP,DTEMP,\n"
+      	<< "                        PROPS,PREDEF,DPRED,\n"
+	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
+	<< "if(abaqus::AbaqusInterface<tfel::material::" << mb.getClassName() 
+	<< ">::exe(d)!=0){\n";
     this->generateMTestFile2(out,mb.getBehaviourType(),
 			     name,"",mb);
-    out << "*PNEWDT = -1.;\n";
-    out << "return;\n";
-    out << "}\n";
+    out << "*PNEWDT = -1.;\n"
+	<< "return;\n"
+	<< "}\n";
     if(getDebugMode()){
-      out << "cout << \"Dt :\" << endl;\n";
-      out << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n";
-      out << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n";
-      out << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "cout << endl;\n";
+      out << "cout << \"Dt :\" << endl;\n"
+	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
+	  << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
+	  << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
+	  << "}\n"
+	  << "cout << endl;\n"
+	  << "}\n"
+	  << "cout << endl;\n";
     }
     if(this->compareToNumericalTangentOperator){
-      out << "// computing the tangent operator by pertubation\n";
-      out << "vector<abaqus::AbaqusReal> nD((*NTENS)*(*NTENS));\n";
-      out << "vector<abaqus::AbaqusReal> deto(*NTENS);\n";
-      out << "vector<abaqus::AbaqusReal> sigf(*NTENS);\n";
-      out << "vector<abaqus::AbaqusReal> sigb(*NTENS);\n";
-      out << "vector<abaqus::AbaqusReal> sv(*NSTATV);\n";
-      out << "vector<abaqus::AbaqusReal> D((*NTENS)*(*NTENS));\n";
-      out << "abaqus::AbaqusReal m;\n";
-      out << "abaqus::AbaqusReal mDt;\n";
-      out << "abaqus::AbaqusReal mnDt;\n";
-      out << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n";
-      out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
-      out << "copy(sig0.begin(),sig0.end(),sigf.begin());\n";
-      out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
-      out << "deto[i] += " << this->strainPerturbationValue << ";\n";
-      out << "D[0] = 0.;\n";
-      out << "if(abaqus::AbaqusInterface<tfel::material::" << mb.getClassName() 
-	  << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],"
-	  << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
-	  << sfeh << ")!=0){\n";
-      out << "return;\n";
-      out << "}\n";
-      out << "copy(deto0.begin(),deto0.end(),deto.begin());\n";
-      out << "copy(sig0.begin(),sig0.end(),sigb.begin());\n";
-      out << "copy(sv0.begin(),sv0.end(),sv.begin());\n";
-      out << "deto[i] -= " << this->strainPerturbationValue << ";\n";
-      out << "D[0] = 0.;\n";
-      out << "if(abaqus::AbaqusInterface<tfel::material::" << mb.getClassName() 
-	  << ">::exe(NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-	  << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],"
-	  << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
-	  << sfeh << ")!=0){\n";
-      out << "return;\n";
-      out << "}\n";
-      out << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n";
-      out << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n";
-      out << "}\n";
-      out << "}\n";
-      out << "// comparison\n";
-      out << "m=0.;\n";
-      out << "mDt=0.;\n";
-      out << "mnDt=0.;\n";
-      out << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n";
-      out << "mDt=max(mDt,*(DDSDDE+i));\n";
-      out << "mnDt=max(mnDt,nD[i]);\n";
-      out << "m=max(m,abs(nD[i]-*(DDSDDE+i)));\n";
-      out << "}\n";
-      out << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n";
-      out << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< endl;\n";
-      out << "cout << \"Dt :\" << endl;\n";
-      out << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n";
-      out << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n";
-      out << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "cout << \"nDt :\" << endl;\n";
-      out << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n";
-      out << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n";
-      out << "cout << nD[j*(*NTENS)+i] << \" \";\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
-      out << "cout << endl;\n";
-      out << "}\n";
+      out << "// computing the tangent operator by pertubation\n"
+	  << "vector<abaqus::AbaqusReal> nD((*NTENS)*(*NTENS));\n"
+	  << "vector<abaqus::AbaqusReal> deto(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sigf(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sigb(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sv(*NSTATV);\n"
+	  << "vector<abaqus::AbaqusReal> D((*NTENS)*(*NTENS));\n"
+	  << "abaqus::AbaqusReal pnewdt(pnewdt0);\n"
+	  << "abaqus::AbaqusReal m;\n"
+	  << "abaqus::AbaqusReal mDt;\n"
+	  << "abaqus::AbaqusReal mnDt;\n"
+	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
+	  << "copy(deto0.begin(),deto0.end(),deto.begin());\n"
+	  << "copy(sig0.begin(),sig0.end(),sigf.begin());\n"
+	  << "copy(sv0.begin(),sv0.end(),sv.begin());\n"
+	  << "deto[i] += " << this->strainPerturbationValue << ";\n"
+	  << "D[0] = 0.;\n"
+	  << "abaqus::AbaqusData d2 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
+	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
+	  << "                         PROPS,PREDEF,DPRED,\n"
+	  << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
+	  << "if(abaqus::AbaqusInterface<tfel::material::" << mb.getClassName() << ">::exe(d2)!=0){\n"
+	  << "return;\n"
+	  << "}\n"
+	  << "abaqus::AbaqusReal pnewdt(pnewdt0);\n"
+	  << "copy(deto0.begin(),deto0.end(),deto.begin());\n"
+	  << "copy(sig0.begin(),sig0.end(),sigb.begin());\n"
+	  << "copy(sv0.begin(),sv0.end(),sv.begin());\n"
+	  << "deto[i] -= " << this->strainPerturbationValue << ";\n"
+	  << "D[0] = 0.;\n"
+	  << "abaqus::AbaqusData d3 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
+	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
+	  << "                         PROPS,PREDEF,DPRED,\n"
+	  << "if(abaqus::AbaqusInterface<tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
+	  << "return;\n"
+	  << "}\n"
+	  << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
+	  << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n"
+	  << "}\n"
+	  << "}\n"
+	  << "// comparison\n"
+	  << "m=0.;\n"
+	  << "mDt=0.;\n"
+	  << "mnDt=0.;\n"
+	  << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
+	  << "mDt=max(mDt,*(DDSDDE+i));\n"
+	  << "mnDt=max(mnDt,nD[i]);\n"
+	  << "m=max(m,abs(nD[i]-*(DDSDDE+i)));\n"
+	  << "}\n"
+	  << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n"
+	  << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< endl;\n"
+	  << "cout << \"Dt :\" << endl;\n"
+	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
+	  << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
+	  << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
+	  << "}\n"
+	  << "cout << endl;\n"
+	  << "}\n"
+	  << "cout << \"nDt :\" << endl;\n"
+	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
+	  << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
+	  << "cout << nD[j*(*NTENS)+i] << \" \";\n"
+	  << "}\n"
+	  << "cout << endl;\n"
+	  << "}\n"
+	  << "cout << endl;\n"
+	  << "}\n";
     }
     out << "}\n";
     out << "} // end of extern \"C\"\n";
@@ -664,7 +670,8 @@ namespace mfront{
   AbaqusInterface::writeInterfaceSpecificIncludes(std::ostream& out,
 						  const BehaviourDescription&) const
   {
-    out << "#include\"MFront/Abaqus/Abaqus.hxx\"\n\n";
+    out << "#include\"MFront/Abaqus/Abaqus.hxx\"\n"
+	<< "#include\"MFront/Abaqus/AbaqusConvert.hxx\"\n\n";
   } // end of AbaqusInterface::writeInterfaceSpecificIncludes
 
   std::vector<std::pair<std::string,std::string>>

@@ -18,11 +18,17 @@
 #error "This header shall not be called directly"
 #endif /* LIB_MFRONT_ABAQUS_CALL_H_ */
 
+#include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/Matrix/TMatrixView.hxx"
 #include"TFEL/Math/T2toST2/T2toST2View.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
+#include"MFront/Abaqus/AbaqusData.hxx"
 #include"MFront/Abaqus/AbaqusTangentOperator.hxx"
 #include"MFront/Abaqus/AbaqusInterfaceExceptions.hxx"
 #include"MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx"
@@ -180,44 +186,29 @@ namespace abaqus
       typedef typename std::conditional<ba,ThermalExpansionCoefficientTensorInitializer,
 					DoNothingInitializer>::type AInitializer;
 
-      TFEL_ABAQUS_INLINE Integrator(const AbaqusReal *const DTIME ,
-				    const AbaqusReal *const STRAN ,
-				    const AbaqusReal *const DSTRAN,
-				    const AbaqusReal *const TEMP,
-				    const AbaqusReal *const DTEMP,
-				    const AbaqusReal *const PROPS ,
-				    const AbaqusReal *const PREDEF,
-				    const AbaqusReal *const DPRED,
-				    const AbaqusReal *const STATEV,
-				    const AbaqusReal *const STRESS,
-				    const AbaqusReal *const DROT,
-				    const tfel::material::OutOfBoundsPolicy op,
-				    const StressFreeExpansionHandler<AbaqusReal>& sfeh)
-	: behaviour(DTIME,TEMP,DTEMP,
-		    PROPS+AbaqusTraits<BV>::elasticPropertiesOffset+
+      TFEL_ABAQUS_INLINE Integrator(const AbaqusData& d)
+	: behaviour(&(d.DTIME),d.TEMP,d.DTEMP,
+		    d.PROPS+AbaqusTraits<BV>::elasticPropertiesOffset+
 		    AbaqusTraits<BV>::thermalExpansionPropertiesOffset,
-		    STATEV,PREDEF,DPRED,DROT),
-	dt(*DTIME)
-	  {
-	    using namespace tfel::material;
-	    typedef MechanicalBehaviourTraits<BV> Traits;
-	    typedef typename std::conditional<
-	      Traits::hasStressFreeExpansion,
-	      DrivingVariableInitialiserWithStressFreeExpansion,
-	      DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	    SInitializer::exe(this->behaviour,PROPS);
-	    AInitializer::exe(this->behaviour,PROPS);
-	    DVInitializer::exe(this->behaviour,STRAN,DSTRAN,sfeh);
-	    this->behaviour.setABAQUSBehaviourDataThermodynamicForces(STRESS,DROT);
-	    this->behaviour.setOutOfBoundsPolicy(op);
-	    this->behaviour.initialize();
-	  } // end of Integrator::Integrator
+		    d.STATEV,d.PREDEF,d.DPRED,d.DROT),
+	  dt(d.DTIME)
+       {
+	 using namespace tfel::material;
+	 typedef MechanicalBehaviourTraits<BV> Traits;
+	 typedef typename std::conditional<
+	   Traits::hasStressFreeExpansion,
+	   DrivingVariableInitialiserWithStressFreeExpansion,
+	   DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	 SInitializer::exe(this->behaviour,d.PROPS);
+	 AInitializer::exe(this->behaviour,d.PROPS);
+	 DVInitializer::exe(this->behaviour,d.STRAN,d.DSTRAN,d.sfeh);
+	 this->behaviour.setABAQUSBehaviourDataThermodynamicForces(d.STRESS,d.DROT);
+	 this->behaviour.setOutOfBoundsPolicy(d.op);
+	 this->behaviour.initialize();
+       } // end of Integrator::Integrator
 	
       TFEL_ABAQUS_INLINE2
-	void exe(AbaqusReal *const PNEWDT,
-		 AbaqusReal *const DDSDDE,
-		 AbaqusReal *const STRESS,
-		 AbaqusReal *const STATEV)
+      void exe(const AbaqusData& d)
       {
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
@@ -232,8 +223,8 @@ namespace abaqus
 	this->behaviour.checkBounds();
 	typename BV::IntegrationResult r = BV::SUCCESS;
 	const typename BV::SMFlag smflag = AbaqusTangentOperatorFlag<AbaqusTraits<BV>::btype>::value;
-	auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*PNEWDT);
-	*PNEWDT = tsf.second;
+	auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*(d.PNEWDT));
+	*(d.PNEWDT) = tsf.second;
 	if(!tsf.first){
 	  r = BV::FAILURE;
 	} else {
@@ -243,21 +234,21 @@ namespace abaqus
 	    r=BV::FAILURE;
 	  }
 	  if(r==BV::FAILURE){
-	    *PNEWDT = behaviour.getMinimalTimeStepScalingFactor();
+	    *(d.PNEWDT) = behaviour.getMinimalTimeStepScalingFactor();
 	  } else {
-	    tsf = behaviour.computeAPosterioriTimeStepScalingFactor(*PNEWDT);
+	    tsf = behaviour.computeAPosterioriTimeStepScalingFactor(*(d.PNEWDT));
 	    if(!tsf.first){
 	      r=BV::FAILURE;
 	    }
-	    *PNEWDT = std::min(tsf.second,*PNEWDT);
+	    *(d.PNEWDT) = std::min(tsf.second,*(d.PNEWDT));
 	  }
 	}
 	if(r==BV::FAILURE){
 	  return;
 	}
 	this->behaviour.checkBounds();
-	this->behaviour.ABAQUSexportStateData(STRESS,STATEV);
-	ConsistentTangentOperatorHandler::exe(this->behaviour,DDSDDE);
+	this->behaviour.ABAQUSexportStateData(d.STRESS,d.STATEV);
+	ConsistentTangentOperatorHandler::exe(this->behaviour,d.DDSDDE);
       } // end of Integrator::exe
 	
     private:

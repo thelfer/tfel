@@ -202,6 +202,8 @@ endif
 
 if HAVE_ABAQUS
 nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                                         \
+			  MFront/Abaqus/AbaqusData.hxx                                     \
+			  MFront/Abaqus/AbaqusConvert.hxx                                  \
 			  MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx                     \
 			  MFront/Abaqus/AbaqusConfig.hxx                                   \
 			  MFront/Abaqus/AbaqusTraits.hxx                                   \

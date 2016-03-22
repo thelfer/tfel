@@ -135,6 +135,8 @@ endif(HAVE_ASTER)
 
 if(HAVE_ABAQUS)
   install_mfront_header(MFront/Abaqus Abaqus.hxx)
+  install_mfront_header(MFront/Abaqus AbaqusData.hxx)
+  install_mfront_header(MFront/Abaqus AbaqusConvert.hxx)
   install_mfront_header(MFront/Abaqus AbaqusConfig.hxx)
   install_mfront_header(MFront/Abaqus AbaqusTraits.hxx)
   install_mfront_header(MFront/Abaqus AbaqusException.hxx)

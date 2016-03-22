@@ -29,6 +29,7 @@
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
 #include"MFront/Abaqus/Abaqus.hxx"
+#include"MFront/Abaqus/AbaqusData.hxx"
 #include"MFront/Abaqus/AbaqusConfig.hxx"
 #include"MFront/Abaqus/AbaqusTraits.hxx"
 #include"MFront/Abaqus/AbaqusException.hxx"
@@ -37,7 +38,7 @@
 
 namespace abaqus
 {
-
+  
   /*!
    * \class  AbaqusInterface
    * \brief This class create an interface between a behaviour class
@@ -58,30 +59,15 @@ namespace abaqus
   {
 
     TFEL_ABAQUS_INLINE2 static
-     int exe(const AbaqusInt  *const NTENS, const AbaqusReal *const DTIME,
-	     const AbaqusReal *const DROT,  AbaqusReal *const DDSDDE,
-	     const AbaqusReal *const STRAN, const AbaqusReal *const DSTRAN,
-	     const AbaqusReal *const TEMP,  const AbaqusReal *const DTEMP,
-	     const AbaqusReal *const PROPS, const AbaqusInt  *const NPROPS,
-	     const AbaqusReal *const PREDEF,const AbaqusReal *const DPRED,
-	     AbaqusReal *const STATEV,const AbaqusInt  *const NSTATV,
-	     AbaqusReal *const STRESS,	    AbaqusReal *const PNEWDT,
-	     const tfel::material::OutOfBoundsPolicy op,
-	     const StressFreeExpansionHandler<AbaqusReal>& sfeh)
+     int exe(const AbaqusData& d)
     {
       using namespace tfel::material;
-      if( *NTENS == 4 ){
-	return CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-									       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									       STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
-      } else if( *NTENS == 3 ){
-        return CallBehaviour<ModellingHypothesis::PLANESTRESS>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-								    TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								    STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
-      } else if( *NTENS == 6 ){
-        return CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-								       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								       STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
+      if( d.NTENS == 4 ){
+	return CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>::exe(d);
+      } else if( d.NTENS == 3 ){
+        return CallBehaviour<ModellingHypothesis::PLANESTRESS>::exe(d);
+      } else if( d.NTENS == 6 ){
+        return CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(d);
       } else {
         AbaqusInterfaceExceptions::displayUnsupportedHypothesisMessage();
         return -2;
@@ -94,16 +80,7 @@ namespace abaqus
     struct UnsupportedHypothesisHandler
     {
       TFEL_ABAQUS_INLINE2 static void
-      exe(const AbaqusInt  *const, const AbaqusReal *const,
-	  const AbaqusReal *const,  AbaqusReal *const,
-	  const AbaqusReal *const, const AbaqusReal *const,
-	  const AbaqusReal *const,  const AbaqusReal *const,
-	  const AbaqusReal *const, const AbaqusInt  *const,
-	  const AbaqusReal *const,const AbaqusReal *const,
-	  AbaqusReal *const,const AbaqusInt  *const,
-	  AbaqusReal *const,      AbaqusReal *const,
-	  const tfel::material::OutOfBoundsPolicy,
-	  const StressFreeExpansionHandler<AbaqusReal>&)
+      exe(const AbaqusData&)
       {
 	using BV = Behaviour<H,AbaqusReal,false>;
 	using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
@@ -115,16 +92,7 @@ namespace abaqus
     struct CallBehaviour
     {
       TFEL_ABAQUS_INLINE2 static
-      int exe(const AbaqusInt  *const NTENS, const AbaqusReal *const DTIME,
-	      const AbaqusReal *const DROT,  AbaqusReal *const DDSDDE,
-	      const AbaqusReal *const STRAN, const AbaqusReal *const DSTRAN,
-	      const AbaqusReal *const TEMP,  const AbaqusReal *const DTEMP,
-	      const AbaqusReal *const PROPS, const AbaqusInt  *const NPROPS,
-	      const AbaqusReal *const PREDEF,const AbaqusReal *const DPRED,
-	      AbaqusReal *const STATEV,const AbaqusInt  *const NSTATV,
-	      AbaqusReal *const STRESS,      AbaqusReal *const PNEWDT,
-	      const tfel::material::OutOfBoundsPolicy op,
-	      const StressFreeExpansionHandler<AbaqusReal>& sfeh)
+      int exe(const AbaqusData& d)
       {
 	using BV = Behaviour<H,AbaqusReal,false>;
 	using MTraits  = tfel::material::MechanicalBehaviourTraits<BV>;
@@ -132,9 +100,7 @@ namespace abaqus
 	using Handler = typename std::conditional<is_defined_,CallBehaviour2<H>,
 						  UnsupportedHypothesisHandler<H>>::type;
 	try{
-	  Handler::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-		       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-		       STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
+	  Handler::exe(d);
 	}
 	catch(const AbaqusException& e){
 	  AbaqusInterfaceExceptions::treatAbaqusException(MTraits::getName(),e);
@@ -145,7 +111,8 @@ namespace abaqus
 	  return -3;
 	}
 	catch(const tfel::material::DivergenceException& e){
-	  AbaqusInterfaceExceptions::treatMaterialException(MTraits::getName(),e);	  return -4;
+	  AbaqusInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
+	  return -4;
 	}
 	catch(const tfel::material::MaterialException& e){
 	  AbaqusInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
@@ -171,16 +138,7 @@ namespace abaqus
     struct CallBehaviour2
     {
       TFEL_ABAQUS_INLINE2 static void
-      exe(const AbaqusInt  *const, const AbaqusReal *const DTIME,
-	  const AbaqusReal *const DROT,  AbaqusReal *const DDSDDE,
-	  const AbaqusReal *const STRAN, const AbaqusReal *const DSTRAN,
-	  const AbaqusReal *const TEMP,  const AbaqusReal *const DTEMP,
-	  const AbaqusReal *const PROPS, const AbaqusInt  *const NPROPS,
-	  const AbaqusReal *const PREDEF,const AbaqusReal *const DPRED,
-	  AbaqusReal *const STATEV,const AbaqusInt  *const NSTATV,
-	  AbaqusReal *const STRESS,AbaqusReal *const PNEWDT,
-	  const tfel::material::OutOfBoundsPolicy op,
-	  const StressFreeExpansionHandler<AbaqusReal>& sfeh)
+      exe(const AbaqusData& d)
       {
 	typedef AbaqusBehaviourHandler<H,Behaviour> AHandler;
 	using BV = Behaviour<H,AbaqusReal,false>;
@@ -188,13 +146,10 @@ namespace abaqus
 	const bool bs = ATraits::requiresStiffnessTensor;
 	const bool ba = ATraits::requiresThermalExpansionCoefficientTensor;
 	using Integrator = typename AHandler::template Integrator<bs,ba>;
-	AHandler::checkNPROPS(*NPROPS);
-	AHandler::checkNSTATV(*NSTATV);
-	Integrator i(DTIME,STRAN,DSTRAN,
-		     TEMP,DTEMP,PROPS,
-		     PREDEF,DPRED,STATEV,
-		     STRESS,DROT,op,sfeh);
-	i.exe(PNEWDT,DDSDDE,STRESS,STATEV);
+	AHandler::checkNPROPS(d.NPROPS);
+	AHandler::checkNSTATV(d.NSTATV);
+	Integrator i(d);
+	i.exe(d);
       }
     }; // end of struct CallBehaviour
   }; // end of struct AbaqusInterface
