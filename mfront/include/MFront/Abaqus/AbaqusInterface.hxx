@@ -151,7 +151,7 @@ namespace abaqus
 	Integrator i(d);
 	i.exe(d);
       }
-    }; // end of struct CallBehaviour
+    }; // end of struct CallBehaviour2
   }; // end of struct AbaqusInterface
     
 } // end of namespace abaqus

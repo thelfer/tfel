@@ -6,6 +6,7 @@
 
 @Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'DRUCKERPRAGER';
 @MaximumNumberOfSubSteps 1;
+@StressEpsilon 1e-1;
 
 @MaterialProperty<constant> 'YoungModulus' 200.e9;
 @MaterialProperty<constant> 'PoissonRatio'   0.3;

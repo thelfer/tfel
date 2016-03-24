@@ -24,6 +24,30 @@
 
 namespace mfront{
 
+  //! copy vumat-sp.cpp and vumat-dp locally
+  static void copyVUMATFiles(void)
+  {
+    std::ofstream out;
+    MFrontLockGuard lock;
+    for(const std::string f: {"vumat-sp.cpp","vumat-dp.cpp"}){
+      out.open("abaqus/"+f);
+      if(out){
+	const auto root = tfel::getInstallPath();
+	const auto fn = root+"/share/doc/mfront/abaqus/"+f;
+	std::ifstream in{fn};
+	if(in){
+	  out << in.rdbuf();
+	  in.close();
+	} else {
+	  std::cerr << "copyVUMATFiles: could not open file '" << fn << "'\n";
+	}
+      } else {
+	std::cerr << "copyVUMATFiles: could not open file 'abaqus/" << f << "'\n";
+      }
+      out.close();
+    }
+  } // end of copyVUMATFiles
+  
   static void
   writeVUMATArguments(std::ostream& out,
 		      const BehaviourDescription::BehaviourType& t,
@@ -175,56 +199,70 @@ namespace mfront{
     out << "#include\"MFront/Abaqus/AbaqusExplicitInterface.hxx\"\n\n";
   } // end of AbaqusExplicitInterface::writeInterfaceSpecificIncludes
   
+  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  AbaqusExplicitInterface::treatKeyword(const std::string& key,
+					CxxTokenizer::TokensContainer::const_iterator current,
+					const CxxTokenizer::TokensContainer::const_iterator end)
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "+m));}
+    };
+    auto read = [](const std::string& s){
+      if(s=="FiniteRotationSmallStrain"){
+	return FINITEROTATIONSMALLSTRAIN;
+      } else if(s=="MieheApelLambrechtLogarithmicStrain"){
+	return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
+      } else {
+	throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "
+				 "unsupported strategy '"+s+"'\n"
+				 "The only supported strategies are "
+				 "'FiniteRotationSmallStrain' and "
+				 "'MieheApelLambrechtLogarithmicStrain'"));
+      }
+    };
+    if (key=="@AbaqusFiniteStrainStrategy"){
+      throw_if(this->fss!=UNDEFINEDSTRATEGY,
+	       "a finite strain strategy has already been defined");
+      throw_if(current==end,"unexpected end of file");
+      this->fss = read(current->value);
+      throw_if(++current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
+      ++(current);
+      return {true,current};
+    }
+    return {false,current};
+  } // end of AbaqusExplicitInterface::treatKeyword
+
   void
   AbaqusExplicitInterface::endTreatment(const BehaviourDescription& mb,
 					const FileDescription& fd) const
   {
-    using namespace std;
-    using namespace tfel::system;
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      throw(std::runtime_error("AbaqusInterface::endTreatment : "
+      throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
 			       "the abaqus explicit interface only supports small and "
 			       "finite strain behaviours"));
+    }
+    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (this->fss==UNDEFINEDSTRATEGY)){
+      throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
+			       "behaviours written in the small strain framework "
+			       "must be embedded in a strain strategy. See the "
+			       "'@AbaqusFiniteStrainStrategy' keyword"));
     }
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     // output directories
-    systemCall::mkdir("include/MFront");
-    systemCall::mkdir("include/MFront/Abaqus");
-    systemCall::mkdir("abaqus");
-
-    ofstream out;
-    {
-      MFrontLockGuard lock;
-      // copy vumat.cpp locally
-      for(const std::string f: {"vumat-sp.cpp","vumat-dp.cpp"}){
-	out.open("abaqus/"+f);
-	if(out){
-	  const auto root = tfel::getInstallPath();
-	  const auto fn = root+"/share/doc/mfront/abaqus/"+f;
-	  std::ifstream in{fn};
-	  if(in){
-	    out << in.rdbuf();
-	    in.close();
-	  } else {
-	    std::cerr << "AbaqusExplicitInterface::endTreatment: "
-		      << "could not open file '" << fn << "'\n";
-	  }
-	} else {
-	  std::cerr << "AbaqusExplicitInterface::endTreatment: "
-		    << "could not open file 'abaqus/" << f << "'\n";
-	}
-	out.close();
-      }
-    }
-    
+    tfel::system::systemCall::mkdir("include/MFront");
+    tfel::system::systemCall::mkdir("include/MFront/Abaqus");
+    tfel::system::systemCall::mkdir("abaqus");
+    copyVUMATFiles();
     // header
     auto fname = "abaqusExplicit"+name+".hxx";
-    out.open("include/MFront/Abaqus/"+fname);
+    std::ofstream out("include/MFront/Abaqus/"+fname);
     if(!out){
-      throw(std::runtime_error("AbaqusInterface::endTreatment : "
+      throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
 			       "could not open file '"+fname+"'"));
     }
 
@@ -289,7 +327,7 @@ namespace mfront{
     fname  = "abaqusExplicit"+name+".cxx";
     out.open("src/"+fname);
     if(!out){
-      throw(std::runtime_error("AbaqusInterface::endTreatment : "
+      throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
 			       "could not open file '"+fname+"'"));
     }
 
@@ -311,7 +349,7 @@ namespace mfront{
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
     out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n"
-	<< "#include\"MFront/Abaqus/AbaqusInterface.hxx\"\n\n"
+	<< "#include\"MFront/Abaqus/AbaqusExplicitInterface.hxx\"\n\n"
 	<< "#include\"MFront/Abaqus/abaqusExplicit" << name << ".hxx\"\n\n";
 
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
@@ -357,7 +395,7 @@ namespace mfront{
     } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       sfeh = "nullptr";
     } else {
-      throw(std::runtime_error("AbaqusInterface::writeVUMATFunction: the abaqus explicit interface "
+      throw(std::runtime_error("AbaqusExplicitInterface::writeVUMATFunction: the abaqus explicit interface "
 			       "only supports small and finite strain behaviours"));
     }
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -367,7 +405,7 @@ namespace mfront{
       dv0 = "defgradOld";
       dv1 = "defgradNew";
     } else {
-      throw(std::runtime_error("AbaqusInterface::writeVUMATFunction: "
+      throw(std::runtime_error("AbaqusExplicitInterface::writeVUMATFunction: "
 				"the abaqus explicit interface only supports small "
 				"and finite strain behaviours"));
     }
@@ -400,14 +438,6 @@ namespace mfront{
       	<< "}\n"
     	<< "}\n";
   } // end of AbaqusExplicitInterface::endTreatment
-
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  AbaqusExplicitInterface::treatKeyword(const std::string&,
-					CxxTokenizer::TokensContainer::const_iterator p,
-					const CxxTokenizer::TokensContainer::const_iterator)
-  {
-    return {false,p};
-  } // end of AbaqusExplicitInterface::treatKeyword
 
   std::string
   AbaqusExplicitInterface::getInterfaceName(void) const

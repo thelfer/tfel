@@ -25,6 +25,28 @@ namespace mfront{
     : public AbaqusInterfaceBase
   {
     /*!
+     * This enum defines the various finite strain strategies
+     * available to resuse HPP laws into finite strain computations.
+     *
+     * The "finite rotation small strain" strategy is defined in the
+     * reference of the Code-Aster finite element software:
+     * [R5.03.22] Loi de comportement en grandes rotations et petites déformations
+     *
+     * The logarithmic strain strategy has been introduced by Miehe,
+     * Apel and Lambrecht:
+     * Miehe C., Apel N., Lambrecht M.: Anisotropic additive plasticity in the logarithm strain space : modular
+     * kinematic formulation and implementation based on incremental minimization principles for
+     * standard materials., Computer Methods in Applied Mechanics and Engineering, 191,
+     * pp.5383-5425, 2002.
+     * This strategy is also developped int the reference of the Code-Aster finite element software:
+     * [R5.03.24] Modèles de grandes déformations GDEF_LOG et GDEF_HYPO_ELAS
+     */
+    enum FiniteStrainStrategy{
+      UNDEFINEDSTRATEGY,
+      FINITEROTATIONSMALLSTRAIN,
+      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN,
+    }; // end of enum FiniteStrainStrategy
+    /*!
      * \return the name of the interface
      */
     static std::string
@@ -82,6 +104,8 @@ namespace mfront{
     writeVUMATFunction(std::ostream&,
 		       const BehaviourDescription&,
 		       const std::string&) const;
+    //! selected finite strain strategy
+    FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
   };
   
 } // end of namespace mfront
