@@ -208,9 +208,9 @@ static vumatptr load(const char* n){
 	vumatptr f;
       } r;
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      r.ptr = ::GetProcAddress(l,fct.c_str())
+      r.ptr = ::GetProcAddress(l,fct.c_str());
 #else
-	r.ptr = ::dlsym(l,fct.c_str());
+      r.ptr = ::dlsym(l,fct.c_str());
 #endif
       if(r.ptr==nullptr){
 	report(lib,fct,::dlerror());
