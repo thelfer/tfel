@@ -20,5 +20,5 @@
 
 @Times {0,1};
 
-@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/isotropic-thermoelastic-quadratic.ref' {'SRR':2,'STT':3,'SZZ':4} 1.e-4;
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/isotropic-thermoelastic-quadratic.ref' {'SRR':2,'STT':3,'SZZ':4} 1.e-3;
 @Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/isotropic-thermoelastic-quadratic.ref' {'ERR':5,'ETT':6,'EZZ':7} 1.e-10;

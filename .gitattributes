@@ -1664,6 +1664,7 @@ mfront/include/MFront/Abaqus/AbaqusConfig.hxx -text
 mfront/include/MFront/Abaqus/AbaqusConvert.hxx -text
 mfront/include/MFront/Abaqus/AbaqusData.hxx -text
 mfront/include/MFront/Abaqus/AbaqusException.hxx -text
+mfront/include/MFront/Abaqus/AbaqusExplicitBehaviourHandler.hxx -text
 mfront/include/MFront/Abaqus/AbaqusExplicitInterface.hxx -text
 mfront/include/MFront/Abaqus/AbaqusInterface.hxx -text
 mfront/include/MFront/Abaqus/AbaqusInterfaceExceptions.hxx -text

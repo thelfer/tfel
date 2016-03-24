@@ -25,5 +25,5 @@
 
 @Times {0,1};
 
-@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/orthotropic-elastic-profile-quadratic.ref' {'SRR':2,'SZZ':3,'STT':4} 1e-4;
-@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/orthotropic-elastic-profile-quadratic.ref' {'ERR':5,'EZZ':6,'ETT':7} 1e-15;
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/orthotropic-elastic-profile-quadratic.ref' {'SRR':2,'SZZ':3,'STT':4} 1e-3;
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/orthotropic-elastic-profile-quadratic.ref' {'ERR':5,'EZZ':6,'ETT':7} 1e-14;

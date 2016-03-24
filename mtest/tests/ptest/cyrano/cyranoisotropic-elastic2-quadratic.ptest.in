@@ -14,4 +14,4 @@
 @ExternalStateVariable 'Temperature' 293.15;
 
 @OutputFilePrecision 14;
-@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/isotropic-elastic2-quadratic.ref' {'SRR':2,'SZZ':3,'STT':4} 1e-4;
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/isotropic-elastic2-quadratic.ref' {'SRR':2,'SZZ':3,'STT':4} 1e-3;
