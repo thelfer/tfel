@@ -20,6 +20,19 @@
 #include"VanadiumAlloy_YoungModulus_SRMA-cxx.hxx"
 #include"VanadiumAlloy_PoissonRatio_SRMA-cxx.hxx"
 
+#ifdef _MSC_VER
+int setenv(const char *name, const char *value, int overwrite)
+{
+	int errcode = 0;
+	if (!overwrite) {
+		size_t envsize = 0;
+		errcode = getenv_s(&envsize, NULL, 0, name);
+		if (errcode || envsize) return errcode;
+	}
+	return _putenv_s(name, value);
+}
+#endif /* _MSC_VER */
+
 struct CxxMaterialPropertyInterfaceTest final
   : public tfel::tests::TestCase
 {
@@ -44,7 +57,9 @@ struct CxxMaterialPropertyInterfaceTest final
     TFEL_TESTS_ASSERT(std::abs(mp_n(900)-n(900))<1.e-14*n(900));
     TFEL_TESTS_CHECK_THROW(mp_y(-900),std::range_error);
     TFEL_TESTS_CHECK_THROW(mp_n(-900),std::range_error);
-    unsetenv("OUT_OF_BOUNDS_POLICY");
+#ifndef _MSC_VER
+	unsetenv("OUT_OF_BOUNDS_POLICY");
+#endif
     TFEL_TESTS_ASSERT(std::abs(mp_y(50)-y(50))<1.e-14*y(50));
     setenv("OUT_OF_BOUNDS_POLICY","NONE",1);
     TFEL_TESTS_ASSERT(std::abs(mp_y(50)-y(50))<1.e-14*y(50));

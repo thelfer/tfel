@@ -513,8 +513,7 @@ namespace cyrano
 	  } else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
 	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,BV::SECANTOPERATOR);
 	  } else if((-1.25<*DDSOE)&&(*DDSOE<-0.75)){
-	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,BV::
-ELASTIC);
+	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,BV::ELASTIC);
 	  } else if((-0.25<*DDSOE)&&(*DDSOE<0.25)){
 	    r = this->behaviour.integrate(smflag,BV::NOSTIFFNESSREQUESTED);
 	  } else if((0.75<*DDSOE)&&(*DDSOE<1.25)){

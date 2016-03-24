@@ -19,11 +19,11 @@ macro(castemptest test_arg)
 	${file} @ONLY)
       if(_NO_XML_OUTPUT)
 	add_test(NAME castem${test_arg}_${conf}_ptest
-	  COMMAND ptest --verbose=level0 --xml-output=false --result-file-output=false ${file}
+	  COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false ${file}
 	  CONFIGURATIONS ${conf})
       else(_NO_XML_OUTPUT)
 	add_test(NAME castem${test_arg}_${conf}_ptest
-	  COMMAND ptest --verbose=level0 --xml-output=true --result-file-output=false ${file}
+	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file}
 	  CONFIGURATIONS ${conf})
       endif(_NO_XML_OUTPUT)
       if(_WILL_FAIL)

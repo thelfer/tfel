@@ -12,6 +12,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<cctype>
 #include<iterator>
 #include<sstream>
 #include<stdexcept>

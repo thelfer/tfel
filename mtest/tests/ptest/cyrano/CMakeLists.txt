@@ -14,16 +14,16 @@ macro(cyranoptest test_arg)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
       set(file "cyrano${test_arg}-${conf}.ptest")
       get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
-      get_property(MFrontMaterialPropertiesCyranoBuildPath TARGET MFrontMaterialProperties-cyrano PROPERTY LOCATION_${conf})
+      get_property(MFrontMaterialPropertiesCyranoBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
       configure_file(cyrano${test_arg}.ptest.in
 	${file} @ONLY)
       if(_NO_XML_OUTPUT)
 	add_test(NAME cyrano${test_arg}_${conf}_ptest
-	  COMMAND ptest --verbose=level0 --xml-output=false --result-file-output=false ${file}
+	  COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false ${file}
 	  CONFIGURATIONS ${conf})
       else(_NO_XML_OUTPUT)
 	add_test(NAME cyrano${test_arg}_${conf}_ptest
-	  COMMAND ptest --verbose=level0 --xml-output=true --result-file-output=false ${file}
+	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file}
 	  CONFIGURATIONS ${conf})
       endif(_NO_XML_OUTPUT)
       if(_WILL_FAIL)
@@ -32,11 +32,11 @@ macro(cyranoptest test_arg)
       endif(_WILL_FAIL)
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
         set_property(TEST cyrano${test_arg}_${conf}_ptest
-          PROPERTY DEPENDS "MFrontCyranoBehaviours MFrontMaterialProperties-cyrano ptest"
+          PROPERTY DEPENDS "MFrontCyranoBehaviours MFrontMaterialProperties-castem ptest"
 	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
       elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
         set_property(TEST cyrano${test_arg}_${conf}_mtest
-          PROPERTY DEPENDS "MFrontCyranoBehaviours MFrontMaterialProperties-cyrano mtest")
+          PROPERTY DEPENDS "MFrontCyranoBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	DESTINATION "share/mfront/tests/behaviours/cyrano"
