@@ -24,7 +24,7 @@ namespace tfel{
 			      const InputIterator pe)
     {
       this->clear();
-      this->fileTokens.insert(this->fileTokens.begin(),p,pe);
+      this->tokens.insert(this->tokens.begin(),p,pe);
       this->treatPreprocessorDirectives();
       this->splitTokens();
     } // end of CxxTokenizer::import

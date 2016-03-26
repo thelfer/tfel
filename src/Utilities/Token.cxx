@@ -24,10 +24,10 @@ namespace tfel{
     Token& Token::operator=(const Token&) = default;
     Token& Token::operator=(Token&&) = default;
 
-    Token::Token(const size_type l,
-		 const std::string& v,
+    Token::Token(const std::string& v,
+		 const size_type l,
 		 const TokenFlag f)
-      : line(l),value(v),flag(f)
+      : value(v),line(l),flag(f)
     {}
 
     Token::~Token() noexcept = default;

@@ -159,7 +159,7 @@ namespace mfront{
     auto cposition = false;
     auto cmode     = false;
     o.hypotheses.clear();
-    if(this->current==this->fileTokens.end()){
+    if(this->current==this->tokens.end()){
       o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       return;
     }
@@ -1262,7 +1262,7 @@ namespace mfront{
       }
       for(const auto & elem : s){
 	p = this->interfaces.at(elem)->treatKeyword(key,this->current,
-						    this->fileTokens.end());
+						    this->tokens.end());
 	if(!p.first){
 	  this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
 				  "the keyword '"+key+"' has not been treated "
@@ -1282,7 +1282,7 @@ namespace mfront{
     } else {
       for(const auto&i : this->interfaces){
 	p = i.second->treatKeyword(key,this->current,
-				 this->fileTokens.end());
+				 this->tokens.end());
 	if(p.first){
 	  if(treated){
 	    if(p2!=p.second){
@@ -1433,7 +1433,7 @@ namespace mfront{
     this->checkNotEndOfFile("BehaviourDSLCommon::readStringList",
 			    "Cannot read interface name.");
     auto endOfTreatment=false;
-    while((this->current!=this->fileTokens.end())&&
+    while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
       const auto s = this->current->value;
       if(!isValidIdentifier(s)){
@@ -1469,7 +1469,7 @@ namespace mfront{
   BehaviourDSLCommon::readHypothesesList(std::set<Hypothesis>& h)
   {
     h.clear();
-    if(this->current==this->fileTokens.end()){
+    if(this->current==this->tokens.end()){
       h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       return;
     }
@@ -5314,7 +5314,7 @@ namespace mfront{
     set<Hypothesis> h;
     this->readHypothesesList(h);
     bool endOfTreatment=false;
-    while((this->current!=this->fileTokens.end())&&
+    while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("DSLBase::handleParameter : ",

@@ -117,7 +117,7 @@ namespace mfront
 				 "error while parsing external command "
 				 "'"+c+"'\n"+std::string(e.what())));
       }
-      this->fileTokens.insert(this->fileTokens.begin(),
+      this->tokens.insert(this->tokens.begin(),
 			      t.begin(),t.end());
     }
   } // end of DSLBase::openFile
@@ -248,7 +248,7 @@ namespace mfront
     }
     res += " ";
     ++(this->current);
-    while((this->current!=this->fileTokens.end())&&
+    while((this->current!=this->tokens.end())&&
 	  (!((this->current->value==delim2)&&(openedBlock==0)))){
       if(currentLine!=this->current->line){
 	currentLine = this->current->line;
@@ -329,7 +329,7 @@ namespace mfront
       }
       ++(this->current);
     }
-    if(this->current==this->fileTokens.end()){
+    if(this->current==this->tokens.end()){
       --(this->current);
       string msg("DSLBase::readNextBlock : ");
       msg += "Expected the end of a block.\n";
@@ -349,9 +349,9 @@ namespace mfront
     if(!m.empty()){
       msg +=": " + m;
     }
-    if(!this->fileTokens.empty()){
+    if(!this->tokens.empty()){
       auto t = this->current;
-      if(t==this->fileTokens.end()){
+      if(t==this->tokens.end()){
 	--t;
       }
       msg += "\nError at line " + std::to_string(t->line);
@@ -369,14 +369,14 @@ namespace mfront
     this->checkNotEndOfFile(m);
     this->readSpecifiedToken(m,";");
     TokensContainer oFileTokens;
-    oFileTokens.swap(this->fileTokens);
+    oFileTokens.swap(this->tokens);
     TokensContainer::const_iterator ocurrent = this->current;
     for(const auto& f : files){
       this->importFile(SearchFile::search(f),
 		       vector<string>());
     }
     this->fileName = oFileName;
-    this->fileTokens.swap(oFileTokens);
+    this->tokens.swap(oFileTokens);
     this->current = ocurrent;
   }
 
@@ -384,7 +384,7 @@ namespace mfront
   DSLBase::checkNotEndOfFile(const std::string& method,
 				const std::string& error) const{
     using namespace std;
-    if(this->current==this->fileTokens.end()){
+    if(this->current==this->tokens.end()){
       auto previous = this->current;
       --previous;
       string msg(method+" : ");
@@ -392,7 +392,7 @@ namespace mfront
       if(!error.empty()){
 	msg += "\n"+error;
       }
-      if(!this->fileTokens.empty()){
+      if(!this->tokens.empty()){
 	msg += "\nError at line " + to_string(this->current->line);
       }
       throw(runtime_error(msg));
@@ -436,7 +436,7 @@ namespace mfront
   {
     using namespace std;
     string res;
-    while((this->current!=this->fileTokens.end())&&
+    while((this->current!=this->tokens.end())&&
 	  (this->current->value != ";")){
       if(!this->current->value.empty()){
 	if(this->current->value[0]=='@'){
@@ -507,7 +507,7 @@ namespace mfront
     using namespace tfel::utilities;
     string endComment;
     auto endOfTreatment=false;
-    while((this->current!=this->fileTokens.end())&&
+    while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
       const auto& varName = this->current->value;
       if(!isValidIdentifier(this->current->value)){
@@ -669,7 +669,7 @@ namespace mfront
 		    const bool b)
   {
     l.clear();
-    if(this->current==this->fileTokens.end()){
+    if(this->current==this->tokens.end()){
       if(b){
 	return;
       }
@@ -933,7 +933,7 @@ namespace mfront
     this->description += "* ";
     auto currentLine = this->current->line;
     unsigned int openedBrackets = 1u;
-    while((this->current!=this->fileTokens.end())&&
+    while((this->current!=this->tokens.end())&&
 	  (!((this->current->value=="}")&&
 	     (openedBrackets==1u)))){
       if(this->current->value=="{"){
@@ -966,7 +966,7 @@ namespace mfront
       this->description+=" ";
       ++(this->current);
     }
-    if(this->current==this->fileTokens.end()){
+    if(this->current==this->tokens.end()){
       --(this->current);
       this->throwRuntimeError("DSLBase::treatDescription",
 			      "File ended before the end of description.");
@@ -1083,7 +1083,7 @@ namespace mfront
       }
       auto next = this->current;
       ++next;
-      if(next!=this->fileTokens.end()){
+      if(next!=this->tokens.end()){
 	if(next->value==";"){
 	  current = next;
 	}
@@ -1112,7 +1112,7 @@ namespace mfront
 			   std::map<std::string,double>& v)
   {
     auto endOfTreatment=false;
-    while((this->current!=this->fileTokens.end())&&
+    while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
       if(!isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("DSLBase::handleParameter : ",

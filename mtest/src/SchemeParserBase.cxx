@@ -52,15 +52,15 @@ namespace mtest{
     using namespace std;
     using namespace tfel::utilities;
     this->readSpecifiedToken("SchemeParserBase::handleDescription","{",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     this->checkNotEndOfLine("SchemeParserBase::handleDescription",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     auto currentLine = p->line;
     auto openedBrackets = 1u;
     auto description = std::string{};
     while((!((p->value=="}")&&
 	     (openedBrackets==1u)))&&
-	  (p!=this->fileTokens.end())){
+	  (p!=this->tokens.end())){
       if(p->value=="{"){
 	TokensContainer::const_iterator previous = p;
 	--previous;
@@ -89,54 +89,54 @@ namespace mtest{
       description+=" ";
       ++p;
     }
-    if(p==this->fileTokens.end()){
+    if(p==this->tokens.end()){
       --p;
       throw(runtime_error("SchemeParserBase::handleDescription: "
 			  "file ended before the end of description."));
     }
     ++p;
     this->readSpecifiedToken("SchemeParserBase::handleDescription",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     t.setDescription(description);
   } // end of SchemeParserBase::Description
 
   void
   SchemeParserBase::handleOutputFile(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    t.setOutputFileName(this->readString(p,this->fileTokens.end()));
+    t.setOutputFileName(this->readString(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleOutputFiles",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of SchemeParserBase::handleOutputFile
 
   void
   SchemeParserBase::handleOutputFilePrecision(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    t.setOutputFilePrecision(this->readUnsignedInt(p,this->fileTokens.end()));
+    t.setOutputFilePrecision(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleOutputFilePrecisions",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of SchemeParserBase::handleOutputFilePrecision
 
   void
   SchemeParserBase::handleResidualFile(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    t.setResidualFileName(this->readString(p,this->fileTokens.end()));
+    t.setResidualFileName(this->readString(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleResidualFiles",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of SchemeParserBase::handleResidualFile
 
   void
   SchemeParserBase::handleResidualFilePrecision(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    t.setResidualFilePrecision(this->readUnsignedInt(p,this->fileTokens.end()));
+    t.setResidualFilePrecision(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleResidualFilePrecisions",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of SchemeParserBase::handleResidualFilePrecision
 
   void
   SchemeParserBase::handleReal(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
-    const auto& v = this->readString(p,this->fileTokens.end());
+    const auto& v = this->readString(p,this->tokens.end());
     if(!this->isValidIdentifier(v)){
       throw(runtime_error("SchemeParserBase::handleReal : '"+
 			  v+"' is not a valid identifier"));
@@ -145,7 +145,7 @@ namespace mtest{
     shared_ptr<Evolution> mpev;
     mpev = shared_ptr<Evolution>(new ConstantEvolution(value));
     this->readSpecifiedToken("SchemeParserBase::handleReal",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     t.addEvolution(v,mpev,true,true);
   }
   
@@ -153,10 +153,10 @@ namespace mtest{
   {
     PredictionPolicy ppolicy;
     this->checkNotEndOfLine("handlePredictionPolicy",
-			    p,this->fileTokens.end());
-    const auto& s = this->readString(p,this->fileTokens.end());
+			    p,this->tokens.end());
+    const auto& s = this->readString(p,this->tokens.end());
     this->readSpecifiedToken("SchemeParserBase::handlePredictionPolicy",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     if(s=="NoPrediction"){
       ppolicy = PredictionPolicy::NOPREDICTION;
     } else if(s=="LinearPrediction"){
@@ -181,7 +181,7 @@ namespace mtest{
   {
     using namespace std;
     StiffnessMatrixType ktype;
-    const auto& type = this->readString(p,this->fileTokens.end());
+    const auto& type = this->readString(p,this->tokens.end());
     if(type=="Elastic"){
       ktype=StiffnessMatrixType::ELASTIC;
     } else if(type=="SecantOperator"){
@@ -195,7 +195,7 @@ namespace mtest{
 			  "unsupported stiffness matrix type '"+type+"'"));
     }
     this->readSpecifiedToken("SchemeParserBase::handleStiffnessMatrixType",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     t.setStiffnessMatrixType(ktype);
   }
 
@@ -205,7 +205,7 @@ namespace mtest{
     using namespace std;
     bool useCastemAcceleration;
     this->checkNotEndOfLine("SchemeParserBase::handleUseCastemAccelerationAlgorithm",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     if(p->value=="true"){
       useCastemAcceleration = true;
     } else if(p->value=="false"){
@@ -216,16 +216,16 @@ namespace mtest{
     }
     ++p;
     this->readSpecifiedToken("SchemeParserBase::handleUseCastemAccelerationAlgorithm",
-			     ";",p,this->fileTokens.end());
+			     ";",p,this->tokens.end());
     t.setUseCastemAccelerationAlgorithm(useCastemAcceleration);
   }
 
   void
   SchemeParserBase::handleCastemAccelerationTrigger(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    int cat = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
+    int cat = static_cast<int>(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleCastemAccelerationTrigger",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     t.setCastemAccelerationTrigger(cat);
   } // end of SchemeParserBase::handleCastemAccelerationTrigger
 
@@ -233,9 +233,9 @@ namespace mtest{
   SchemeParserBase::handleCastemAccelerationPeriod(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     using namespace std;
-    int cap = static_cast<int>(this->readUnsignedInt(p,this->fileTokens.end()));
+    int cap = static_cast<int>(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleCastemAccelerationPeriod",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     t.setCastemAccelerationPeriod(cap);
   } // end of SchemeParserBase::handleCastemAccelerationPeriod
 
@@ -243,10 +243,10 @@ namespace mtest{
   SchemeParserBase::handleAccelerationAlgorithm(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::handleAccelerationAlgorithm",
-			    p,this->fileTokens.end());
-    const auto& a = this->readString(p,this->fileTokens.end());
+			    p,this->tokens.end());
+    const auto& a = this->readString(p,this->tokens.end());
     this->readSpecifiedToken("SchemeParserBase::handleAccelerationAlgorithm",
-			     ";",p,this->fileTokens.end());
+			     ";",p,this->tokens.end());
     t.setAccelerationAlgorithm(a);
   }
 
@@ -254,14 +254,14 @@ namespace mtest{
   SchemeParserBase::handleAccelerationAlgorithmParameter(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::handleAccelerationAlgorithmParameter",
-			    p,this->fileTokens.end());
-    const auto& pn = this->readString(p,this->fileTokens.end());
+			    p,this->tokens.end());
+    const auto& pn = this->readString(p,this->tokens.end());
     this->checkNotEndOfLine("SchemeParserBase::handleAccelerationAlgorithmParameter",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     const auto& v = p->value;
     ++p;
     this->readSpecifiedToken("SchemeParserBase::handleAccelerationAlgorithmParameter",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     t.setAccelerationAlgorithmParameter(pn,v);
   } // end of SchemeParserBase::handleIronsTuckAccelerationTrigger
 
@@ -270,7 +270,7 @@ namespace mtest{
   SchemeParserBase::handleStiffnessUpdatePolicy(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     StiffnessUpdatingPolicy ks;
-    const auto& type = this->readString(p,this->fileTokens.end());
+    const auto& type = this->readString(p,this->tokens.end());
     if(type=="ConstantStiffness"){
       ks=StiffnessUpdatingPolicy::CONSTANTSTIFFNESS;
     } else if(type=="SecantOperator"){
@@ -282,31 +282,31 @@ namespace mtest{
 			       "unsupported stiffness matrix policy '"+type+"'"));
     }
     this->readSpecifiedToken("SchemeParserBase::handleStiffnessUpdatePolicy",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     t.setStiffnessUpdatingPolicy(ks);
   }
 
   void
   SchemeParserBase::handleMaximumNumberOfIterations(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    t.setMaximumNumberOfIterations(this->readUnsignedInt(p,this->fileTokens.end()));
+    t.setMaximumNumberOfIterations(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleMaximumNumberOfIterations",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of SchemeParserBase::handleMaximumNumberOfIterations
 
   void
   SchemeParserBase::handleMaximumNumberOfSubSteps(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    t.setMaximumNumberOfSubSteps(this->readUnsignedInt(p,this->fileTokens.end()));
+    t.setMaximumNumberOfSubSteps(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleMaximumNumberOfSubSteps",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of SchemeParserBase::handleMaximumNumberOfSubSteps
 
   void
   SchemeParserBase::handleOutputFrequency(SchemeBase& t,
 					  TokensContainer::const_iterator& p)
   {
-    const auto v = this->readString(p,this->fileTokens.end());
+    const auto v = this->readString(p,this->tokens.end());
     if(v=="UserDefinedTimes"){
       t.setOutputFrequency(SchemeBase::USERDEFINEDTIMES);
     } else if(v=="EveryPeriod"){
@@ -316,7 +316,7 @@ namespace mtest{
 			       "invalid frequency '"+v+"'"));
     }
     this->readSpecifiedToken("SchemeParserBase::handleOutputFrequency",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of SchemeParserBase::handleOutputFrequency
   
   void
@@ -324,7 +324,7 @@ namespace mtest{
 						 TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::handleDynamicTimeStepScaling",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     if(p->value=="true"){
       t.setDynamicTimeStepScaling(true);
     } else if(p->value=="false"){
@@ -336,7 +336,7 @@ namespace mtest{
     }
     ++p;
     this->readSpecifiedToken("SchemeParserBase::handleDynamicTimeStepScaling",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   }
   
   void
@@ -345,7 +345,7 @@ namespace mtest{
   {
     t.setMaximalTimeStep(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMaximalTimeStep",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   }
 
   void
@@ -354,7 +354,7 @@ namespace mtest{
   {
     t.setMinimalTimeStep(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMinimalTimeStep",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   }
 
   void
@@ -363,7 +363,7 @@ namespace mtest{
   {
     t.setMinimalTimeStepScalingFactor(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMinimalTimeStepScalingFactor",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   }
 
   void
@@ -372,7 +372,7 @@ namespace mtest{
   {
     t.setMaximalTimeStepScalingFactor(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMaximalTimeStepScalingFactor",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   }
   
   std::string
@@ -380,8 +380,8 @@ namespace mtest{
   {
     auto res = std::string{};
     this->checkNotEndOfLine("SchemeParserBase::readUntilEndOfInstruction",
-			    p,this->fileTokens.end());
-    while((p!=this->fileTokens.end())&&
+			    p,this->tokens.end());
+    while((p!=this->tokens.end())&&
 	  (p->value != ";")){
       if(!p->value.empty()){
 	if(p->value[0]=='@'){
@@ -394,7 +394,7 @@ namespace mtest{
       ++p;
     }
     this->readSpecifiedToken("SchemeParserBase::readUntilEndOfInstruction",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     return res;
   }
 
@@ -405,11 +405,11 @@ namespace mtest{
     enum {ARRAY,FILE} entry_type = ARRAY;
     vector<real> times;
     this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     if(p->value=="<"){
       ++p;
       this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
-			      this->fileTokens.end());
+			      this->tokens.end());
       if(p->value=="array"){
 	entry_type=ARRAY;
       } else if((p->value=="file")||(p->value=="data")){
@@ -421,21 +421,21 @@ namespace mtest{
       }
       ++p;
       this->readSpecifiedToken("SchemeParserBase::handleTimes",">",p,
-			       this->fileTokens.end());
+			       this->tokens.end());
     }
     if(entry_type==ARRAY){
       this->readSpecifiedToken("SchemeParserBase::handleTimes","{",p,
-			       this->fileTokens.end());
+			       this->tokens.end());
       this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
-			      this->fileTokens.end());
+			      this->tokens.end());
       while(p->value!="}"){
 	const real t_dt = this->readTime(t,p);
 	this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
-				this->fileTokens.end());
+				this->tokens.end());
 	if(!times.empty()){
 	  if(p->value=="in"){
 	    ++p;
-	    unsigned int n = this->readUnsignedInt(p,this->fileTokens.end());
+	    unsigned int n = this->readUnsignedInt(p,this->tokens.end());
 	    if(n==0){
 	      throw(runtime_error("SchemeParserBase::handleTimes: "
 				  "invalid number of intervals"));
@@ -447,13 +447,13 @@ namespace mtest{
 	    }
 	  }
 	  this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
-				  this->fileTokens.end());
+				  this->tokens.end());
 	}
 	times.push_back(t_dt);
 	if(p->value==","){
 	  ++p;
 	  this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
-				  this->fileTokens.end());
+				  this->tokens.end());
 	  if(p->value=="}"){
 	    string msg("SchemeParserBase::handleTimes: ");
 	    msg += "unexpected token '}'";
@@ -468,22 +468,22 @@ namespace mtest{
 	}
       }
       this->readSpecifiedToken("SchemeParserBase::handleTimes","}",p,
-			       this->fileTokens.end());
+			       this->tokens.end());
     } else{
-      tfel::utilities::TextData d{this->readString(p,this->fileTokens.end())};
+      tfel::utilities::TextData d{this->readString(p,this->tokens.end())};
       this->readSpecifiedToken("SchemeParserBase::handleTimes","using",p,
-			       this->fileTokens.end());
+			       this->tokens.end());
       this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
-			      this->fileTokens.end());
+			      this->tokens.end());
       if(p->flag==tfel::utilities::Token::String){
 	times = eval(d,*(t.getEvolutions()),
-		     this->readString(p,this->fileTokens.end()));
+		     this->readString(p,this->tokens.end()));
       } else {
-	times = d.getColumn(this->readUnsignedInt(p,this->fileTokens.end()));
+	times = d.getColumn(this->readUnsignedInt(p,this->tokens.end()));
       }
     }
     this->readSpecifiedToken("SchemeParserBase::handleTimes",";",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
     if(times.empty()){
       throw(runtime_error("SchemeParserBase::handleTimes: "
 			  "no time defined"));
@@ -523,10 +523,10 @@ namespace mtest{
   SchemeParserBase::handleEvolution(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
-    const auto& n = this->readString(p,this->fileTokens.end());
+    const auto& n = this->readString(p,this->tokens.end());
     t.addEvolution(n,this->parseEvolution(t,evt,p),true,true);
     this->readSpecifiedToken("SchemeParserBase::handleEvolution",";",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
   }
 
   real
@@ -536,10 +536,10 @@ namespace mtest{
     using tfel::utilities::Token;
     using tfel::math::Evaluator;
     this->checkNotEndOfLine("SchemeParserBase::readDouble",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     real v(0);
     if(p->flag==Token::String){
-      const string&f = this->readString(p,this->fileTokens.end());
+      const string&f = this->readString(p,this->tokens.end());
       Evaluator ev(f);
       const auto& vn = ev.getVariablesNames();
       vector<string>::const_iterator pv;
@@ -564,7 +564,7 @@ namespace mtest{
       }
       v = ev.getValue();
     } else {
-      v = CxxTokenizer::readDouble(p,this->fileTokens.end());
+      v = CxxTokenizer::readDouble(p,this->tokens.end());
     }
     return v;
   } // end of SchemeParserBase::readDouble
@@ -582,17 +582,17 @@ namespace mtest{
 					     TokensContainer::const_iterator& p)
   {
     this->readSpecifiedToken("SchemeParserBase::readArrayOfSpecifiedSize","{",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
     std::vector<real>::size_type i = 0;
     while(i!=v.size()){
       v[i] = this->readDouble(t,p);
       if(++i!=v.size()){
 	this->readSpecifiedToken("SchemeParserBase::readArrayOfSpecifiedSize",",",p,
-				 this->fileTokens.end());
+				 this->tokens.end());
       }
     }
     this->readSpecifiedToken("SchemeParserBase::readArrayOfSpecifiedSize","}",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
   } // end of SchemeParserBase::readArrayOfSpecifiedSize
   
   std::shared_ptr<Evolution>
@@ -603,26 +603,26 @@ namespace mtest{
     using namespace std;
     shared_ptr<Evolution> ev;
     this->checkNotEndOfLine("SchemeParserBase::parseEvolution",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     if(type.empty()||type=="evolution"){
       if(p->value=="{"){
 	vector<real> tvalues;
 	vector<real> values;
 	this->readSpecifiedToken("SchemeParserBase::parseEvolution","{",p,
-				 this->fileTokens.end());
+				 this->tokens.end());
 	this->checkNotEndOfLine("SchemeParserBase::parseEvolution",p,
-				this->fileTokens.end());
+				this->tokens.end());
 	while(p->value!="}"){
 	  tvalues.push_back(this->readTime(t,p));
 	  this->readSpecifiedToken("SchemeParserBase::parseEvolution",":",p,
-				   this->fileTokens.end());
+				   this->tokens.end());
 	  values.push_back(this->readDouble(t,p));
 	  this->checkNotEndOfLine("SchemeParserBase::parseEvolution",p,
-				  this->fileTokens.end());
+				  this->tokens.end());
 	  if(p->value==","){
 	    ++p;
 	    this->checkNotEndOfLine("SchemeParserBase::parseEvolution",p,
-				    this->fileTokens.end());
+				    this->tokens.end());
 	    if(p->value=="}"){
 	      throw(std::runtime_error("SchemeParserBase::parseEvolution: "
 				       "unexpected token '}'"));
@@ -635,34 +635,34 @@ namespace mtest{
 	  }
 	}
 	this->readSpecifiedToken("SchemeParserBase::parseEvolution","}",p,
-				 this->fileTokens.end());
+				 this->tokens.end());
 	ev = shared_ptr<Evolution>(new LPIEvolution(tvalues,values));
       } else {
 	const real s = this->readDouble(t,p);
 	ev = shared_ptr<Evolution>(new ConstantEvolution(s));
       }
     } else if(type=="function"){
-      const auto& f = this->readString(p,this->fileTokens.end());
+      const auto& f = this->readString(p,this->tokens.end());
       ev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
     } else if((type=="data")||(type=="file")){
-      tfel::utilities::TextData data{this->readString(p,this->fileTokens.end())};
+      tfel::utilities::TextData data{this->readString(p,this->tokens.end())};
       this->readSpecifiedToken("SchemeParserBase::parseEvolution","using",p,
-			       this->fileTokens.end());
+			       this->tokens.end());
       auto tv = std::vector<double>{};
       auto vv = std::vector<double>{};
       if(p->flag==tfel::utilities::Token::String){
 	tv = eval(data,*(t.getEvolutions()),
-		  this->readString(p,this->fileTokens.end()));
+		  this->readString(p,this->tokens.end()));
       } else {
-	tv = data.getColumn(readUnsignedInt(p,this->fileTokens.end()));
+	tv = data.getColumn(readUnsignedInt(p,this->tokens.end()));
       }
       this->readSpecifiedToken("SchemeParserBase::parseEvolution",":",p,
-			       this->fileTokens.end());
+			       this->tokens.end());
       if(p->flag==tfel::utilities::Token::String){
 	vv = eval(data,*(t.getEvolutions()),
-		  this->readString(p,this->fileTokens.end()));
+		  this->readString(p,this->tokens.end()));
       } else {
-	vv = data.getColumn(readUnsignedInt(p,this->fileTokens.end()));
+	vv = data.getColumn(readUnsignedInt(p,this->tokens.end()));
       }
       ev = shared_ptr<Evolution>(new LPIEvolution(tv,vv));
     } else {
@@ -676,18 +676,18 @@ namespace mtest{
   SchemeParserBase::readEvolutionType(TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::readEvolutionType",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     if(p->value!="<"){
       return "";
     }
     this->readSpecifiedToken("SchemeParserBase::parseEvolution","<",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
     this->checkNotEndOfLine("SchemeParserBase::readEvolutionType",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     const auto evt = p->value;
     ++p;
     this->readSpecifiedToken("SchemeParserBase::parseEvolution",">",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
     return evt;
   } // end of SchemeParserBase::readEvolutionType
 

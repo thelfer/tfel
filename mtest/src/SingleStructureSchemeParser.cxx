@@ -85,7 +85,7 @@ namespace mtest{
   {
     bool b;
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleHandleThermalExpansion",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     if(p->value=="true"){
       b = true;
     } else if(p->value=="false"){
@@ -96,7 +96,7 @@ namespace mtest{
     }
     ++p;
     this->readSpecifiedToken("SingleStructureSchemeParser::handleHandleThermalExpansion",
-			     ";",p,this->fileTokens.end());
+			     ";",p,this->tokens.end());
     t.setHandleThermalExpansion(b);
   }
   
@@ -107,9 +107,9 @@ namespace mtest{
     auto i = std::string{}; // interface
     auto w = std::string{}; // wrapper
     this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour","<",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
 #ifdef HAVE_CASTEM
     if((p->value=="umat")||
        (p->value=="castem")){
@@ -142,19 +142,19 @@ namespace mtest{
     }
     ++p;
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     if(p->value==","){
       this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",",",p,
-			       this->fileTokens.end());
+			       this->tokens.end());
       w = p->value;
       ++p;
     }
     this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",">",p,
-			     this->fileTokens.end());
-    const auto& l = this->readString(p,this->fileTokens.end());
-    const auto& f = this->readString(p,this->fileTokens.end());
+			     this->tokens.end());
+    const auto& l = this->readString(p,this->tokens.end());
+    const auto& f = this->readString(p,this->tokens.end());
     this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",";",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
     if(w.empty()){
       t.setBehaviour(i,l,f);
     } else {
@@ -170,9 +170,9 @@ namespace mtest{
     using namespace tfel::utilities;
     string i;
     this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty","<",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleMaterialProperty",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     if((p->value=="constant")||
        (p->value=="castem")||
        (p->value=="function")){
@@ -183,24 +183,24 @@ namespace mtest{
     }
     ++p;
     this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty",">",p,
-			     this->fileTokens.end());
-    const auto& n = this->readString(p,this->fileTokens.end());
+			     this->tokens.end());
+    const auto& n = this->readString(p,this->tokens.end());
     if(i=="constant"){
       shared_ptr<Evolution> mpev;
       this->checkNotEndOfLine("SingleStructureSchemeParser::handleMaterialProperty",p,
-			      this->fileTokens.end());
+			      this->tokens.end());
       const real v = this->readDouble(t,p);
       mpev = shared_ptr<Evolution>(new ConstantEvolution(v));
       t.setMaterialProperty(n,mpev,true);
     } else if(i=="function"){
       shared_ptr<Evolution> mpev;
-      const string f = this->readString(p,this->fileTokens.end());
+      const string f = this->readString(p,this->tokens.end());
       mpev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
       t.setMaterialProperty(n,mpev,true);
     } else if(i=="castem"){
       shared_ptr<Evolution> mpev;
-      const string l = this->readString(p,this->fileTokens.end());
-      const string f = this->readString(p,this->fileTokens.end());
+      const string l = this->readString(p,this->tokens.end());
+      const string f = this->readString(p,this->tokens.end());
       mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
       t.setMaterialProperty(n,mpev,true);
     } else {
@@ -208,16 +208,16 @@ namespace mtest{
 			  "unknown interface '"+i+"'"));
     }
     this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty",";",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
   }
   
   void
   SingleStructureSchemeParser::handleOutOfBoundsPolicy(SingleStructureScheme& t,
 						       TokensContainer::const_iterator& p)
   {
-    const std::string& s = this->readString(p,this->fileTokens.end());
+    const std::string& s = this->readString(p,this->tokens.end());
     this->readSpecifiedToken("SingleStructureSchemeParser::handlePredictionPolicy",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     if(s=="None"){
       t.setOutOfBoundsPolicy(tfel::material::None);
     } else if(s=="Warning"){
@@ -234,33 +234,33 @@ namespace mtest{
   SingleStructureSchemeParser::handleParameter(SingleStructureScheme& t,
 					       TokensContainer::const_iterator& p)
   {
-    const auto n = this->readString(p,this->fileTokens.end());
+    const auto n = this->readString(p,this->tokens.end());
     const real v = this->readDouble(t,p);
     t.setParameter(n,v);
     this->readSpecifiedToken("SingleStructureSchemeParser::handleParameter",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of SingleStructureSchemeParser::handleParameter
 
   void
   SingleStructureSchemeParser::handleIntegerParameter(SingleStructureScheme& t,
 						      TokensContainer::const_iterator& p)
   {
-    const auto n = this->readString(p,this->fileTokens.end());
-    const int  v = this->readInt(p,this->fileTokens.end());
+    const auto n = this->readString(p,this->tokens.end());
+    const int  v = this->readInt(p,this->tokens.end());
     t.setIntegerParameter(n,v);
     this->readSpecifiedToken("SingleStructureSchemeParser::handleIntegerParameter",";",
-  			     p,this->fileTokens.end());
+  			     p,this->tokens.end());
   } // end of SingleStructureSchemeParser::handleIntegerParameter
   
   void
   SingleStructureSchemeParser::handleUnsignedIntegerParameter(SingleStructureScheme& t,
 							      TokensContainer::const_iterator& p)
   {
-    const auto n = this->readString(p,this->fileTokens.end());
-    const unsigned int v = this->readUnsignedInt(p,this->fileTokens.end());
+    const auto n = this->readString(p,this->tokens.end());
+    const unsigned int v = this->readUnsignedInt(p,this->tokens.end());
     t.setUnsignedIntegerParameter(n,v);
     this->readSpecifiedToken("SingleStructureSchemeParser::handleUnsignedIntegerParameter",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of SingleStructureSchemeParser::handleUnsignedIntegerParameteru
 
   void
@@ -269,7 +269,7 @@ namespace mtest{
   {
     using namespace std;
     shared_ptr<Behaviour> b(t.getBehaviour());
-    const string& n = this->readString(p,this->fileTokens.end());
+    const string& n = this->readString(p,this->tokens.end());
     const vector<string>& ivsnames = b->getInternalStateVariablesNames();
     vector<string> ivs;
     selectVariables(ivs,ivsnames,n);
@@ -294,7 +294,7 @@ namespace mtest{
 	}
 	++p;
 	this->checkNotEndOfLine("SingleStructureSchemeParser::handleInternalStateVariable",p,
-				this->fileTokens.end());
+				this->tokens.end());
 	uniform = p->value!="{";
 	--p;
       }
@@ -307,21 +307,21 @@ namespace mtest{
 	}
       } else {
 	this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable",
-				 "{",p,this->fileTokens.end());
+				 "{",p,this->tokens.end());
 	vector<string>::const_iterator pn;
 	for(pn=ivs.begin();pn!=ivs.end();){
 	  this->setInternalStateVariableValue(t,p,*pn);
 	  if(++pn!=ivs.end()){
 	    this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable",
-				     ",",p,this->fileTokens.end());
+				     ",",p,this->tokens.end());
 	  }
 	}
 	this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable",
-				 "}",p,this->fileTokens.end());
+				 "}",p,this->tokens.end());
       }
     }
     this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable",
-			     ";",p,this->fileTokens.end());
+			     ";",p,this->tokens.end());
   }
 
   void
@@ -329,10 +329,10 @@ namespace mtest{
 							   TokensContainer::const_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
-    const auto& n = this->readString(p,this->fileTokens.end());
+    const auto& n = this->readString(p,this->tokens.end());
     t.setExternalStateVariable(n,this->parseEvolution(t,evt,p),true);
     this->readSpecifiedToken("SingleStructureSchemeParser::handleExternalStateVariable",";",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
   }
 
     

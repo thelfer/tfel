@@ -25,6 +25,7 @@
 \newcommand{\mfront}{\texttt{mfront}}
 \newcommand{\mtest}{\texttt{mtest}}
 \newcommand{\licos}{\texttt{licos}}
+\newcommand{\germinal}{\texttt{germinal}}
 \newcommand{\cyrano}{\texttt{cyrano}}
 \newcommand{\galileo}{\texttt{galileo}}
 \newcommand{\castem}{\texttt{Cast3M}}
@@ -346,6 +347,44 @@ Pour le compilateur {\tt intel}, cette option n'a pas d'effet.
 \subsubsection{Portage sur Microsoft Visual Studio 2015}
 
 \subsubsection{Liste des compilateurs supportés}
+
+\subsection{Listes des changements conduisant à des incompatibilités
+  de version}
+
+Différents codes se basent sur la librairie \tfel{}~: l'architecture
+\pleiades{}, les applications basées sur cette architecture, et en
+particulier \licos{}.
+
+Dans la mesure du possible, les changements pouvant conduire à des
+incompatibilités sont évités. Elles ne sont introduites que si leurs
+conséquences sont minimales. Voici les principaux exemples connus à ce
+jour et une évaluation de leurs conséquences~:
+\begin{itemize}
+\item modification majeur des classes d'interface de \mfront{}. Les
+  interfaces \pleiades{}, \germinal{} et \licos{} pour les propriétés
+  matériaux et les modèles sont impactées. Les conséquences de ces
+  changements sont faibles car des copies locales de ces interfaces
+  est présente dans les tests de \mfront{}. Ces copies ayant été mise
+  à jour, le travail de portage est direct (recopie de ces nouvelles
+  versions dans les applications cible, recompilation et test).
+\item changement du nom d'une données membre dans la classe {\tt
+    CxxTokenizer}~: {\tt fileTokens} devient {\tt tokens}. Cette
+  donnée membre est utilisée par les classes de lecture des jeux de
+  données de l'architecture \pleiades{} et de \licos{}. Seules une
+  dizaine de lignes de codes sont concernées. Cette donnée membre y
+  est utilisée pour avoir l'adresse de la fin de fichier~: il est
+  conseillé d'utiliser la méthode {\tt end} prévue à cet effet plutôt
+  que d'accéder directement à cette donnée membre.
+\item retrait de la classe {\tt tfel:{}:\-utilities:{}:\-Name}~: cette
+  classe est utilisée pour la sauvegarde/reprise dans \licos{}. Cette
+  classe reposait sur la définition d'une méthode statique {\tt
+    getName} dans la plupart des classes de \tfel{} ce qui posait des
+  problèmes de maintenance. Nous conseillons de reprendre cette classe
+  dans \licos{} et d'en adapter le code quand cela est nécessaire. Il
+  s'agit d'une action ciblée d'une ou deux journées qu'il est possible
+  de déléguer à la tierce maintenance applicative du projet
+  \pleiades{}.
+\end{itemize}
 
 \section{Perspectives}
 

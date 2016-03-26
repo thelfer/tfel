@@ -327,7 +327,7 @@ namespace mfront{
     if(!getDebugMode()){
       this->f.body  +="#line " + to_string(currentLine) + " \"" + this->fileName + "\"\n";
     }
-    for(;(this->current!=this->fileTokens.end())&&
+    for(;(this->current!=this->tokens.end())&&
 	  (openedBrackets!=0);++(this->current)){
       if(this->current->line!=currentLine){
 	currentLine=this->current->line;
@@ -369,7 +369,7 @@ namespace mfront{
 	  if(newInstruction){
 	    const auto var = this->current->value;
 	    ++(this->current);
-	    if(this->current==fileTokens.end()){
+	    if(this->current==tokens.end()){
 	      string msg("MaterialPropertyDSL::treatFunction : ");
 	      msg+="unexpected end of file while reading body of function ";
 	      throw(runtime_error(msg));
@@ -400,7 +400,7 @@ namespace mfront{
       }
       newLine=false;
     }
-    if((this->current==fileTokens.end())&&(openedBrackets!=0)){
+    if((this->current==tokens.end())&&(openedBrackets!=0)){
       string msg("MaterialPropertyDSL::treatFunction : ");
       msg+="unexpected end of file while reading body of function";
       throw(runtime_error(msg));
@@ -582,8 +582,8 @@ namespace mfront{
     // strip comments from file
     this->stripComments();
     // begin treatement
-    this->current = this->fileTokens.begin();
-    while(this->current != this->fileTokens.end()){
+    this->current = this->tokens.begin();
+    while(this->current != this->tokens.end()){
       const auto p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
 	MemberFuncPtr handler = nullptr;
@@ -635,7 +635,7 @@ namespace mfront{
 	for(const auto& i : this->interfaces){
 	  std::pair<bool,CxxTokenizer::TokensContainer::const_iterator> p2;
 	  try{
-	    p2 = i.second->treatKeyword(key,b,this->fileTokens.end());
+	    p2 = i.second->treatKeyword(key,b,this->tokens.end());
 	  }
 	  catch(const std::runtime_error& e){
 	    throw(std::runtime_error("MaterialPropertyDSL::analyse: "
@@ -884,7 +884,7 @@ namespace mfront{
       } else {
 	for(const auto &i : s){
 	  p = this->interfaces.at(i)->treatKeyword(key,this->current,
-						   this->fileTokens.end());
+						   this->tokens.end());
 	  if(!p.first){
 	    string msg("MaterialPropertyDSL::treatUnknownKeyword : the keyword '");
 	    msg += key;
@@ -908,7 +908,7 @@ namespace mfront{
     } else {
       for(const auto& i : this->interfaces){
 	p = i.second->treatKeyword(key,this->current,
-				   this->fileTokens.end());
+				   this->tokens.end());
 	if(p.first){
 	  if(treated){
 	    if(p2!=p.second){

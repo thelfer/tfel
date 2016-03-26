@@ -122,7 +122,7 @@ namespace mfront{
     ++(this->current);
     if(this->solver.get()!=nullptr){
       const auto r =  this->solver->treatSpecificKeywords(this->mb,key,this->current,
-							  this->fileTokens.end());
+							  this->tokens.end());
       if(r.first){
 	this->current = r.second;
 	return;

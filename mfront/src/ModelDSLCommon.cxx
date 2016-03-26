@@ -235,7 +235,7 @@ namespace mfront{
       } else {
 	for(const auto & elem : s){
 	  p = interfaces.at(elem)->treatKeyword(key,this->current,
-						this->fileTokens.end());
+						this->tokens.end());
 	  if(!p.first){
 	    string msg("ModelDSLCommon::treatUnknownKeyword : the keyword '");
 	    msg += key;
@@ -259,7 +259,7 @@ namespace mfront{
     } else {
       for(const auto& i : this->interfaces){
 	p = i.second->treatKeyword(key,this->current,
-				   this->fileTokens.end());
+				   this->tokens.end());
 	if(p.first){
 	  if(treated){
 	    if(p2!=p.second){
@@ -325,7 +325,7 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatDomains","{");
     this->checkNotEndOfFile("ModelDSLCommon::treatDomains");
     bend = false;
-    while((this->current!=this->fileTokens.end())&&(!bend)){
+    while((this->current!=this->tokens.end())&&(!bend)){
       if(this->current->flag!=Token::String){
 	this->throwRuntimeError("ModelDSLCommon::treatDomains",
 				"Expected to read a string (read '"+this->current->value+"').");
@@ -462,7 +462,7 @@ namespace mfront{
     if(getDebugMode()){
       f.body  +="#line " + to_string(currentLine) + " \"" + this->fileName + "\"\n";
     }
-    for(;(this->current!=this->fileTokens.end())&&
+    for(;(this->current!=this->tokens.end())&&
 	  (openedBrackets!=0);++(this->current)){
       if(this->current->line!=currentLine){
 	currentLine=this->current->line;
@@ -506,7 +506,7 @@ namespace mfront{
 	    string var = this->current->value;
 	    string op;
 	    ++(this->current);
-	    if(this->current==fileTokens.end()){
+	    if(this->current==tokens.end()){
 	      string msg("ModelDSLCommon::treatFunction : ");
 	      msg+="unexpected end of file while reading body of function " + f.name;
 	      throw(runtime_error(msg));
@@ -612,7 +612,7 @@ namespace mfront{
       }
       newLine=false;
     }
-    if((this->current==fileTokens.end())&&(openedBrackets!=0)){
+    if((this->current==tokens.end())&&(openedBrackets!=0)){
       string msg("ModelDSLCommon::treatFunction : ");
       msg+="unexpected end of file while reading body of function " + f.name;
       throw(runtime_error(msg));

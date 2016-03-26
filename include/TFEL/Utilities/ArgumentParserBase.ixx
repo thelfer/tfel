@@ -15,10 +15,10 @@
 #define LIB_TFEL_ARGUMENTPARSERBASE_I_ 
 
 #include<iostream>
-#include<utility>
 #include<algorithm>
-#include<iterator>
 #include<stdexcept>
+#include<iterator>
+#include<utility>
 #include<cstdlib>
 
 namespace tfel

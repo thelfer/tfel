@@ -82,8 +82,8 @@ namespace mtest
   void
   MTestParser::execute(MTest& t)
   {
-    auto p = this->fileTokens.cbegin();
-    while(p!=fileTokens.end()){
+    auto p = this->tokens.cbegin();
+    while(p!=tokens.end()){
       if(MTestParser::treatKeyword(t,p)){
 	continue;
       }
@@ -274,7 +274,7 @@ namespace mtest
 							    TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("handleCompareToNumericalTangentOperator",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     if(p->value=="true"){
       t.setCompareToNumericalTangentOperator(true);
     } else if(p->value=="false"){
@@ -286,33 +286,33 @@ namespace mtest
     }
     ++p;
     this->checkNotEndOfLine("handleCompareToNumericalTangentOperator",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     this->readSpecifiedToken("MTestParser::handleCompareToNumericalTangentOperator",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of MTestParser::handleCompareToNumericalTangentOperator
 
   void MTestParser::handleTangentOperatorComparisonCriterium(MTest& t,
 							     TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     t.setTangentOperatorComparisonCriterium(this->readDouble(t,p));
     this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     this->readSpecifiedToken("MTestParser::handleTangentOperatorComparisonCriterium",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of MTestParser::handleTangentOperatorComparisonCriterium
 
   void MTestParser::handleNumericalTangentOperatorPerturbationValue(MTest& t,
 								    TokensContainer::const_iterator& p)
   {
     this->checkNotEndOfLine("handleNumericalTangentOperatorPerturbationValue",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     t.setNumericalTangentOperatorPerturbationValue(this->readDouble(t,p));
     this->checkNotEndOfLine("handleNumericalTangentOperatorPerturbationValue",
-			    p,this->fileTokens.end());
+			    p,this->tokens.end());
     this->readSpecifiedToken("MTestParser::handleNumericalTangentOperatorPerturbationValue",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of MTestParser::handleNumericalTangentOperatorPerturbationValue  
 
   void
@@ -320,9 +320,9 @@ namespace mtest
   {
     using namespace std;
     this->readSpecifiedToken("MTestParser::handleTest","<",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     this->checkNotEndOfLine("MTestParser::handleTest",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     const auto& type = p->value;
     if((type!="function")&&(type!="file")){
       throw(std::runtime_error("MTestParser::handleTest: "
@@ -330,33 +330,33 @@ namespace mtest
     }
     ++p;
     this->readSpecifiedToken("MTestParser::handleTest",">",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     if(type=="function"){
       this->checkNotEndOfLine("MTestParser::handleTest",p,
-			      this->fileTokens.end());
+			      this->tokens.end());
       map<string,string> functions; 
       if(p->flag==tfel::utilities::Token::String){
-	const auto& v = this->readString(p,this->fileTokens.end());
-	const auto& f = this->readString(p,this->fileTokens.end());
+	const auto& v = this->readString(p,this->tokens.end());
+	const auto& f = this->readString(p,this->tokens.end());
 	functions.insert({v,f});
       } else {
 	this->readSpecifiedToken("MTestParser::handleTest","{",
-				 p,this->fileTokens.end());
+				 p,this->tokens.end());
 	this->checkNotEndOfLine("MTestParser::handleTest",p,
-				this->fileTokens.end());
+				this->tokens.end());
 	while(p->value!="}"){
-	  const auto& v = this->readString(p,this->fileTokens.end());
+	  const auto& v = this->readString(p,this->tokens.end());
 	  this->readSpecifiedToken("MTestParser::handleTest",":",
-				   p,this->fileTokens.end());
-	  const auto& f = this->readString(p,this->fileTokens.end());
+				   p,this->tokens.end());
+	  const auto& f = this->readString(p,this->tokens.end());
 	  functions.insert({v,f});
 	  this->checkNotEndOfLine("MTestParser::handleTest",p,
-				  this->fileTokens.end());
+				  this->tokens.end());
 	  if(p->value!="}"){
 	    this->readSpecifiedToken("MTestParser::handleTest",",",
-				     p,this->fileTokens.end());	
+				     p,this->tokens.end());	
 	    this->checkNotEndOfLine("MTestParser::handleTest",p,
-				    this->fileTokens.end());
+				    this->tokens.end());
 	    if(p->value=="}"){
 	      string msg("MTestParser::handleTest: "
 			 "unexpected token '}'");
@@ -365,7 +365,7 @@ namespace mtest
 	  }
 	}
 	this->readSpecifiedToken("MTestParser::handleTest","}",
-				 p,this->fileTokens.end());	
+				 p,this->tokens.end());	
       }
       const real eps = this->readDouble(t,p);
       if(eps<0){
@@ -383,37 +383,37 @@ namespace mtest
 	t.addTest(test);
       }
     } else if (type=="file"){
-      const auto& f = this->readString(p,this->fileTokens.end());
+      const auto& f = this->readString(p,this->tokens.end());
       this->checkNotEndOfLine("MTestParser::handleTest",p,
-			      this->fileTokens.end());
+			      this->tokens.end());
       using gentype=tfel::utilities::GenTypeBase<tfel::meta::GenerateTypeList<std::string,unsigned short>::type>;
       map<string,gentype> columns; 
       if(p->flag==tfel::utilities::Token::String){
-	const auto& v = this->readString(p,this->fileTokens.end());
-	const unsigned short c = this->readUnsignedInt(p,this->fileTokens.end());
+	const auto& v = this->readString(p,this->tokens.end());
+	const unsigned short c = this->readUnsignedInt(p,this->tokens.end());
 	columns.insert({v,gentype(c)});
       } else {
 	this->readSpecifiedToken("MTestParser::handleTest","{",
-				 p,this->fileTokens.end());
+				 p,this->tokens.end());
 	this->checkNotEndOfLine("MTestParser::handleTest",p,
-				this->fileTokens.end());
+				this->tokens.end());
 	while(p->value!="}"){
-	  const auto& v = this->readString(p,this->fileTokens.end());
+	  const auto& v = this->readString(p,this->tokens.end());
 	  this->readSpecifiedToken("MTestParser::handleTest",":",
-				   p,this->fileTokens.end());
+				   p,this->tokens.end());
 	  if(p->flag==tfel::utilities::Token::String){
 	    columns.insert({v,p->value.substr(1,p->value.size()-2)});
 	  } else {
-	    const unsigned short c = this->readUnsignedInt(p,this->fileTokens.end());
+	    const unsigned short c = this->readUnsignedInt(p,this->tokens.end());
 	    columns.insert({v,gentype(c)});
 	  }
 	  this->checkNotEndOfLine("MTestParser::handleTest",p,
-				  this->fileTokens.end());
+				  this->tokens.end());
 	  if(p->value!="}"){
 	    this->readSpecifiedToken("MTestParser::handleTest",",",
-				     p,this->fileTokens.end());	
+				     p,this->tokens.end());	
 	    this->checkNotEndOfLine("MTestParser::handleTest",p,
-				    this->fileTokens.end());
+				    this->tokens.end());
 	    if(p->value=="}"){
 	      string msg("MTestParser::handleTest: "
 			 "unexpected token '}'");
@@ -422,7 +422,7 @@ namespace mtest
 	  }
 	}
 	this->readSpecifiedToken("MTestParser::handleTest","}",
-				 p,this->fileTokens.end());	
+				 p,this->tokens.end());	
       }
       const real eps = this->readDouble(t,p);
       if(eps<0){
@@ -451,7 +451,7 @@ namespace mtest
 			  "invalid test type '"+type+"'"));
     }
     this->readSpecifiedToken("MTestParser::handleTest",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of MTestParser::handleTest
 
   void
@@ -481,11 +481,11 @@ namespace mtest
       MILLER
     } choice = STANDARD;
     this->checkNotEndOfLine("MTestParser::handleRotationMatrix",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     if(p->value=="<"){
       ++p;
       this->checkNotEndOfLine("MTestParser::handleRotationMatrix",p,
-			      this->fileTokens.end());
+			      this->tokens.end());
       if(p->value=="Standard"){
 	choice = STANDARD;
       } else if(p->value=="Euler"){
@@ -498,23 +498,23 @@ namespace mtest
       }
       ++p;
       this->checkNotEndOfLine("MTestParser::handleRotationMatrix",p,
-			      this->fileTokens.end());
+			      this->tokens.end());
     }
     // saving the read values
     tfel::math::tmatrix<3u,3u,real> rm;
     if(choice==MILLER){
       constexpr const real cste = 180. / M_PI;
       this->readSpecifiedToken("MTestParser::handleRotationMatrix","{",
-			       p,this->fileTokens.end());
-      const auto h = this->readInt(p,this->fileTokens.end());
+			       p,this->tokens.end());
+      const auto h = this->readInt(p,this->tokens.end());
       this->readSpecifiedToken("MTestParser::handleRotationMatrix",",",
-			       p,this->fileTokens.end());
-      const auto k = this->readInt(p,this->fileTokens.end());
+			       p,this->tokens.end());
+      const auto k = this->readInt(p,this->tokens.end());
       this->readSpecifiedToken("MTestParser::handleRotationMatrix",",",
-			       p,this->fileTokens.end());
-      const auto l = this->readInt(p,this->fileTokens.end());
+			       p,this->tokens.end());
+      const auto l = this->readInt(p,this->tokens.end());
       this->readSpecifiedToken("MTestParser::handleRotationMatrix","}",
-			       p,this->fileTokens.end());
+			       p,this->tokens.end());
       const real n1   = std::sqrt(static_cast<real>(h*h+k*k+l*l));
       const real n2   = std::sqrt(static_cast<real>(h*h+k*k));
       const real phi1 = 0;
@@ -524,26 +524,26 @@ namespace mtest
     } else if(choice==EULER){
       std::vector<real> v(3);
       this->readSpecifiedToken("MTestParser::handleRotationMatrix","{",
-			       p,this->fileTokens.end());
+			       p,this->tokens.end());
       this->readArrayOfSpecifiedSize(v,t,p);
       this->readSpecifiedToken("MTestParser::handleRotationMatrix","}",
-			       p,this->fileTokens.end());
+			       p,this->tokens.end());
       from_euler(rm,v[0],v[1],v[2]);
     } else {
       // standard choice
       this->readSpecifiedToken("MTestParser::handleRotationMatrix","{",
-			       p,this->fileTokens.end());
+			       p,this->tokens.end());
       std::vector<std::vector<real>> v(3);
       for(unsigned short i=0;i!=3;){
 	v[i].resize(3);
 	this->readArrayOfSpecifiedSize(v[i],t,p);
 	if(++i!=3){
 	  this->readSpecifiedToken("MTestParser::handleRotationMatrix",",",
-				   p,this->fileTokens.end());
+				   p,this->tokens.end());
 	}
       }
       this->readSpecifiedToken("MTestParser::handleRotationMatrix","}",
-			       p,this->fileTokens.end());
+			       p,this->tokens.end());
       for(unsigned short i=0;i!=3;++i){
 	for(unsigned short j=0;j!=3;++j){
 	  rm(i,j)=v[i][j];
@@ -551,7 +551,7 @@ namespace mtest
       }
     }
     this->readSpecifiedToken("MTestParser::handleRotationMatrix",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     t.setRotationMatrix(rm);
   } // end of MTestParser::handleRotationMatrix
 
@@ -602,7 +602,7 @@ namespace mtest
   {
     t.setDrivingVariableEpsilon(this->readDouble(t,p));
     this->readSpecifiedToken("MTestParser::handleDrivingVariableEpsilon",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of MTestParser::handleDrivingVariableEpsilon
 
   void
@@ -637,15 +637,15 @@ namespace mtest
   {
     t.setThermodynamicForceEpsilon(this->readDouble(t,p));
     this->readSpecifiedToken("MTestParser::handleThermodynamicForceEpsilon",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   }
 
   void
   MTestParser::handleModellingHypothesis(MTest& t,TokensContainer::const_iterator& p)
   {
-    t.setModellingHypothesis(this->readString(p,this->fileTokens.end()));
+    t.setModellingHypothesis(this->readString(p,this->tokens.end()));
     this->readSpecifiedToken("MTestParser::handleModellingHypothesis",";",p,
-			     this->fileTokens.end());
+			     this->tokens.end());
   }
   
   void
@@ -679,9 +679,9 @@ namespace mtest
   MTestParser::handleImposedThermodynamicForce(MTest& t,TokensContainer::const_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
-    const auto& c = this->readString(p,this->fileTokens.end());
+    const auto& c = this->readString(p,this->tokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedThermodynamicForce",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     auto sev = this->parseEvolution(t,evt,p);
     auto sc  = std::make_shared<ImposedThermodynamicForce>(*(t.getBehaviour()),
 							   t.getModellingHypothesis(),
@@ -689,7 +689,7 @@ namespace mtest
     t.addEvolution(c,sev,false,true);
     t.addConstraint(sc);
     this->readSpecifiedToken("MTestParser::handleImposedThermodynamicForce",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
   } // end of MTestParser::handleImposedStress
 
   void
@@ -732,15 +732,15 @@ namespace mtest
   MTestParser::handleImposedDrivingVariable(MTest& t,TokensContainer::const_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
-    const auto& c = this->readString(p,this->fileTokens.end());
+    const auto& c = this->readString(p,this->tokens.end());
     this->checkNotEndOfLine("MTestParser::handleImposedDrivingVariable",p,
-			    this->fileTokens.end());
+			    this->tokens.end());
     auto sev = this->parseEvolution(t,evt,p);
     auto sc  = std::make_shared<ImposedDrivingVariable>(*(t.getBehaviour()),
 							t.getModellingHypothesis(),
 							c,sev);
     this->readSpecifiedToken("MTestParser::handleImposedDrivingVariable",";",
-			     p,this->fileTokens.end());
+			     p,this->tokens.end());
     t.addEvolution(c,sev,false,true);
     t.addConstraint(sc);
   } // end of MTestParser::handleImposedDrivingVariable
@@ -791,7 +791,7 @@ namespace mtest
     e_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(e_t0,t,p);
     this->readSpecifiedToken("MTestParser::handleDrivingVariable",
-			     ";",p,this->fileTokens.end());
+			     ";",p,this->tokens.end());
     t.setDrivingVariablesInitialValues(e_t0);
   } // end of MTestParser::handleDrivingVariable
 
@@ -828,7 +828,7 @@ namespace mtest
     s_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(s_t0,t,p);
     this->readSpecifiedToken("MTestParser::handleThermodynamicForce",
-			     ";",p,this->fileTokens.end());
+			     ";",p,this->tokens.end());
     t.setThermodynamicForcesInitialValues(s_t0);
   } // end of MTestParser::handleThermodynamicForce
 

@@ -94,8 +94,8 @@ namespace mfront{
     // strip comments from file
     this->stripComments();
     // begin treatement
-    this->current = this->fileTokens.begin();
-    while(this->current != this->fileTokens.end()){
+    this->current = this->tokens.begin();
+    while(this->current != this->tokens.end()){
       p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
 	bool found = false;

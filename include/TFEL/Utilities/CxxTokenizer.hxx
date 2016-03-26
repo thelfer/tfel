@@ -312,7 +312,24 @@ namespace tfel{
       void
       splitTokens(void);
 
-      TokensContainer fileTokens;
+      /*!
+       * \param[in/out] l: line treated
+       * \param[in]     n: line number
+       * \param[p]      p: position of the C comment
+       */
+      void treatString(std::string&,
+		       const Token::size_type,
+		       const std::string::size_type);
+      /*!
+       * \param[in/out] l: line treated
+       * \param[in]     n: line number
+       * \param[p]      p: position of the C comment
+       */
+      void treatCxxComment(std::string&,
+			   const Token::size_type,
+			   const std::string::size_type);
+      
+      TokensContainer tokens;
 
       //! store all the comments of a line
       std::map<Token::size_type,std::string> comments;

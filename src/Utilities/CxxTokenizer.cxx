@@ -103,6 +103,93 @@ namespace tfel{
       }
       return "";
     }
+
+    void
+    CxxTokenizer::treatString(std::string& l,
+			      const Token::size_type n,
+			      const std::string::size_type p)
+    {
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error("treatString: "+m));}
+      };
+      if(p!=0){
+	for(const auto& t : splitStringAtSpaces(l.substr(0,p))){
+	  this->tokens.emplace_back(t,n);
+	}
+      }
+      l.erase(0,p);
+      auto ps = l.begin();
+      ++ps;
+      auto found=false;
+      for(;(ps!=l.end())&&(!found);++ps){
+	if(*ps=='\"'){
+	  std::string::const_reverse_iterator ps2(ps);
+	  const std::string::const_reverse_iterator pse = l.rend();
+	  found=true;
+	  while((ps2!=pse)&&(*ps2=='\\')){
+	    found = !found;
+	    ++ps2;
+	  }
+	}
+      }
+      throw_if(!found,"found no matching \" to close string\n"
+	       "Error at l : "+std::to_string(n));
+      if(!this->tokens.empty()){
+	if(this->tokens.back().flag==Token::String){
+	  const auto old_value =
+	    this->tokens.back().value.substr(0,this->tokens.back().value.size()-1);
+	  const auto new_value = std::string(l.begin()+1,ps);
+	  this->tokens.back().value = old_value+new_value;
+	} else {
+	  this->tokens.emplace_back(std::string(l.begin(),ps),n,Token::String);
+	}
+      } else {
+	this->tokens.emplace_back(std::string(l.begin(),ps),n,Token::String);
+      }
+      l.erase(l.begin(),ps);
+    }
+
+    void
+    CxxTokenizer::treatCxxComment(std::string& l,
+				  const Token::size_type n,
+				  const std::string::size_type p)
+    {
+      if(p!=0){
+	for(const auto&t : splitStringAtSpaces(l.substr(0,p))){
+	  this->tokens.emplace_back(t,n);
+	}
+      }
+      l.erase(0,p);
+      if((l.size()>=3u)&&((l[1]=='/')&&(l[2]=='!'))){
+	// doxygen comment
+	if((l.size()>=4u)&&(l[3]=='<')){
+	  // doxygen backward comment
+	  if(this->tokens.empty()){
+	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(l.substr(4)),
+					  n,Token::Comment);
+	  } else {
+	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(l.substr(4)),
+					  n,Token::DoxygenBackwardComment);
+	  }
+	} else {
+	  // standard doxygen command
+	  if(this->tokens.back().flag==Token::DoxygenComment){
+	    if(!this->tokens.back().value.empty()){
+	      this->tokens.back().value += '\n';
+	    }
+	    this->tokens.back().value += stripSpaceAndStarAtBeginningOfCommentLine(l.substr(3));
+	  } else {
+	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(l.substr(3)),
+					  n,Token::DoxygenComment);
+	  }
+	}
+      } else {
+	// standard C++ comment
+	this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(l.substr(2)),
+				      n,Token::Comment);
+      }
+      l.clear();
+    }
     
     void
     CxxTokenizer::splitLine(std::string line, const unsigned int lineNumber)
@@ -112,34 +199,30 @@ namespace tfel{
 	if(b){throw(std::runtime_error("CxxTokenizer::splitLine : "+m));}
       };
       if(this->cStyleCommentOpened){
-	string::size_type pos3;
-	pos3 = line.find("*/");
-	if((this->fileTokens.empty())||
-	   ((this->fileTokens.back().flag!=Token::Comment)&&
-	    (this->fileTokens.back().flag!=Token::DoxygenComment)&&
-	    (this->fileTokens.back().flag!=Token::DoxygenBackwardComment))){
-	  string msg("CxxTokenizer::splitLine : internal error (previous token "
-		     "is not a comment)");
-	  throw(runtime_error(msg));
-	}
-	if(!this->fileTokens.back().value.empty()){
-	  this->fileTokens.back().value += '\n';
+	const auto pos3 = line.find("*/");
+	throw_if((this->tokens.empty())||
+		 ((this->tokens.back().flag!=Token::Comment)&&
+		  (this->tokens.back().flag!=Token::DoxygenComment)&&
+		  (this->tokens.back().flag!=Token::DoxygenBackwardComment)),
+		 "internal error (previous token is not a comment)");
+	if(!this->tokens.back().value.empty()){
+	  this->tokens.back().value += '\n';
 	}
 	if(pos3==string::npos){
-	  this->fileTokens.back().value += 
+	  this->tokens.back().value += 
 	    stripSpaceAndStarAtBeginningOfCommentLine(line);
 	  return;
 	}
-	this->fileTokens.back().value +=
+	this->tokens.back().value +=
 	  stripSpaceAndStarAtBeginningOfCommentLine(line.substr(0,pos3));
 	line.erase(0,pos3+2);
 	this->cStyleCommentOpened=false;
       }
       while(!line.empty()){
-	auto treatString=false;
-	auto treatCppComment=false;
-	auto treatCComment=false;
-	auto treatChar=false;
+	auto bString=false;
+	auto bCxxComment=false;
+	auto bCComment=false;
+	auto bChar=false;
 	string::size_type pos[4];
 	const string::size_type * min_pos;
 
@@ -152,87 +235,20 @@ namespace tfel{
 
 	if(*min_pos!=string::npos){
 	  const auto diff = min_pos-pos;
-	  treatString=(diff==0);
-	  treatCppComment=(diff==1);
-	  treatCComment=(diff==2);
-	  treatChar = (diff==3);
+	  bString=(diff==0);
+	  bCxxComment=(diff==1);
+	  bCComment=(diff==2);
+	  bChar = (diff==3);
 	}
 
-	if(treatString){
-	  if(pos[0]!=0){
-	    for(const auto& t : splitStringAtSpaces(line.substr(0,pos[0]))){
-	      this->fileTokens.emplace_back(lineNumber,t);
-	    }
-	  }
-	  line.erase(0,pos[0]);
-	  auto ps = line.begin();
-	  ++ps;
-	  bool found=false;
-	  for(;(ps!=line.end())&&(!found);++ps){
-	    if(*ps=='\"'){
-	      string::const_reverse_iterator ps2(ps);
-	      const string::const_reverse_iterator pse(line.rend());
-	      found=true;
-	      while((ps2!=pse)&&(*ps2=='\\')){
-		found = !found;
-		++ps2;
-	      }
-	    }
-	  }
-	  throw_if(!found,"found no matching \" to close string\n"
-		   "Error at line : "+to_string(lineNumber));
-	  if(!this->fileTokens.empty()){
-	    if(this->fileTokens.back().flag==Token::String){
-	      const auto old_value = this->fileTokens.back().value.substr(0,this->fileTokens.back().value.size()-1);
-	      const auto new_value = string(line.begin()+1,ps);
-	      this->fileTokens.back().value = old_value+new_value;
-	    } else {
-	      this->fileTokens.emplace_back(lineNumber,string(line.begin(),ps),Token::String);
-	    }
-	  } else {
-	    this->fileTokens.emplace_back(lineNumber,string(line.begin(),ps),Token::String);
-	  }
-	  line.erase(line.begin(),ps);
-	} else if (treatCppComment){
-	  if(pos[1]!=0){
-	    for(const auto&t : splitStringAtSpaces(line.substr(0,pos[1]))){
-	      this->fileTokens.emplace_back(lineNumber,t);
-	    }
-	  }
-	  line.erase(0,pos[1]);
-	  if((line.size()>=3u)&&((line[1]=='/')&&(line[2]=='!'))){
-	    // doxygen comment
-	    if((line.size()>=4u)&&(line[3]=='<')){
-	      // doxygen backward comment
-	      if(this->fileTokens.empty()){
-		this->fileTokens.emplace_back(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(4)),
-						 Token::Comment);
-	      } else {
-		this->fileTokens.emplace_back(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(4)),
-						 Token::DoxygenBackwardComment);
-	      }
-	    } else {
-	      // standard doxygen command
-	      if(this->fileTokens.back().flag==Token::DoxygenComment){
-		if(!this->fileTokens.back().value.empty()){
-		  this->fileTokens.back().value += '\n';
-		}
-		this->fileTokens.back().value += stripSpaceAndStarAtBeginningOfCommentLine(line.substr(3));
-	      } else {
-		this->fileTokens.emplace_back(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(3)),
-						 Token::DoxygenComment);
-	      }
-	    }
-	  } else {
-	    // standard C++ comment
-	    this->fileTokens.emplace_back(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(line.substr(2)),
-					     Token::Comment);
-	  }
-	  line.clear();
-	} else if(treatCComment){
+	if(bString){
+	  this->treatString(line,lineNumber,pos[0]);
+	} else if (bCxxComment){
+	  this->treatCxxComment(line,lineNumber,pos[1]);
+	} else if(bCComment){
 	  if(pos[2]!=0){
 	    for(const auto& t : splitStringAtSpaces(line.substr(0,pos[2]))){
-	      this->fileTokens.emplace_back(lineNumber,t);
+	      this->tokens.emplace_back(t,lineNumber);
 	    }
 	  }
 	  line.erase(0,pos[2]);
@@ -250,28 +266,27 @@ namespace tfel{
 	    // doxygen comment
 	    if((comment.size()>=2)&&(comment[1]=='<')){
 	      // backward doxygen comment
-	      if(this->fileTokens.empty()){
-		this->fileTokens.emplace_back(lineNumber,
-						 stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
-						 Token::Comment);
+	      if(this->tokens.empty()){
+		this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
+					      lineNumber,Token::Comment);
 	      } else {
-		this->fileTokens.emplace_back(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
-					      Token::DoxygenBackwardComment);
+		this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
+					      lineNumber,Token::DoxygenBackwardComment);
 	      }
 	    } else {
-	      this->fileTokens.emplace_back(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(1)),
-					       Token::DoxygenComment);
+	      this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(1)),
+					    lineNumber,Token::DoxygenComment);
 	    }
 	  } else {
 	    // standard C++ comment
-	    this->fileTokens.emplace_back(lineNumber,stripSpaceAndStarAtBeginningOfCommentLine(comment)
-					     ,Token::Comment);
+	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment),
+					  lineNumber,Token::Comment);
 	  }
-	} else if(treatChar){
+	} else if(bChar){
 	  if(this->charAsString){
 	    if(pos[3]!=0){
 	      for(const auto& t : splitStringAtSpaces(line.substr(0,pos[3]))){
-		this->fileTokens.emplace_back(lineNumber,t);
+		this->tokens.emplace_back(t,lineNumber);
 	      }
 	    }
 	    line.erase(0,pos[3]);
@@ -285,12 +300,12 @@ namespace tfel{
 	    }
 	    throw_if(!found,"found no matching \' to close string.\n"
 		     "Error at line : "+to_string(lineNumber));
-	    this->fileTokens.emplace_back(lineNumber,string(line.begin(),ps),Token::String);
+	    this->tokens.emplace_back(string(line.begin(),ps),lineNumber,Token::String);
 	    line.erase(line.begin(),ps);
 	  } else {
 	    if(pos[3]!=0){
 	      for(const auto& t : splitStringAtSpaces(line.substr(0,pos[3]))){
-		this->fileTokens.emplace_back(lineNumber,t);
+		this->tokens.emplace_back(t,lineNumber);
 	      }
 	    }
 	    line.erase(0,pos[3]);
@@ -301,20 +316,20 @@ namespace tfel{
 		       "Error at line : "+to_string(lineNumber));
 	      throw_if(line[3]!='\'',"error while reading char (3).\n"
 		       "Error at line : "+to_string(lineNumber));
-	      this->fileTokens.emplace_back(lineNumber,line.substr(0,4),Token::Char);
+	      this->tokens.emplace_back(line.substr(0,4),lineNumber,Token::Char);
 	      line.erase(0,4);
 	    } else {
 	      throw_if(line[2]!='\'',
 		       string("error while reading char ""(expected to read ', read '")+
 		       line[2]+"').\n"
 		       "Error at line : "+to_string(lineNumber));
-	      this->fileTokens.emplace_back(lineNumber,line.substr(0,3),Token::Char);
+	      this->tokens.emplace_back(line.substr(0,3),lineNumber,Token::Char);
 	      line.erase(0,3);
 	    }
 	  }
 	} else {
 	  for(const auto&t : splitStringAtSpaces(line)){
-	    this->fileTokens.emplace_back(lineNumber,t);
+	    this->tokens.emplace_back(t,lineNumber);
 	  }
 	  line.clear();
 	}
@@ -692,7 +707,7 @@ namespace tfel{
     } // end of CxxTokenizer::join
 
     void
-    CxxTokenizer::splitAtCxxTokenSperator(std::vector<std::string>& tokens)
+    CxxTokenizer::splitAtCxxTokenSperator(std::vector<std::string>& t)
     {
       using namespace std;
       // '.' deserves a special treatement.
@@ -701,7 +716,7 @@ namespace tfel{
 				      '|','{','}','[',']','(',
 				      ')','%','=','^',',',':',
 				      '<','>'};
-      vector<string> res(tokens);
+      vector<string> res(t);
       vector<string> init;
       vector<string>::const_iterator p;
       unsigned int i;
@@ -756,13 +771,12 @@ namespace tfel{
       if(this->bExtractNumbers){
 	init.swap(res);
 	res.clear();
-	for(const auto& t : init){
+	for(const auto& ti : init){
 	  auto v = std::vector<std::string>{};
-	  CxxTokenizer::extractNumbers(v,t);
+	  CxxTokenizer::extractNumbers(v,ti);
 	  res.insert(res.end(),v.begin(),v.end());
 	}
       }
-
       join(res,"/","/"); 
       join(res,"/","*");    
       join(res,"*","/");
@@ -785,27 +799,23 @@ namespace tfel{
       join(res,".","*");
       join(res,"->","*");    
       join(res,"|","|");
-
-      tokens.swap(res);
-
+      t.swap(res);
     }
 
     void
     CxxTokenizer::stripComments(void){
-      using namespace std;
-      TokensContainer::iterator p;    
-      for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
+      for(auto p=this->tokens.begin();p!=this->tokens.end();++p){
 	if(p->flag==Token::Comment){
 	  if(this->comments.find(p->line)!=this->comments.end()){
 	    this->comments[p->line] += ' ';
 	  }
 	  this->comments[p->line] = p->value;
-	  p = --(this->fileTokens.erase(p));
+	  p = --(this->tokens.erase(p));
 	}
 	if(p->flag==Token::DoxygenComment){
 	  auto p2 = p;
 	  ++p2;
-	  if(p2!=this->fileTokens.end()){
+	  if(p2!=this->tokens.end()){
 	    if(p2->flag==Token::Standard){
 	      if(!p2->comment.empty()){
 		p2->comment += '\n';
@@ -816,17 +826,17 @@ namespace tfel{
 	      p2->value = p->value+"\n"+p2->value;
 	    }
 	  }
-	  p = --(this->fileTokens.erase(p));
+	  p = --(this->tokens.erase(p));
 	}
 	if(p->flag==Token::DoxygenBackwardComment){
 	  auto p2 = p;
 	  --p2;
-	  if(p2!=this->fileTokens.begin()){
+	  if(p2!=this->tokens.begin()){
 	    if(p2->flag==Token::Standard){
 	      p2->comment += p->value;
 	    }
 	  }
-	  p = --(this->fileTokens.erase(p));
+	  p = --(this->tokens.erase(p));
 	}
       }
     } // end of CxxTokenizer::stripComments
@@ -834,20 +844,18 @@ namespace tfel{
     void 
     CxxTokenizer::splitTokens(void)
     {
-      using namespace std;
-      TokensContainer::iterator p;
-      for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
+      for(auto p=this->tokens.begin();p!=this->tokens.end();++p){
 	if(p->flag==Token::Standard){
-	  vector<string> splittedTokens;
+	  std::vector<std::string> splittedTokens;
 	  splittedTokens.push_back(p->value);
 	  splitAtCxxTokenSperator(splittedTokens);
 	  auto line = p->line;
 	  auto p2 = splittedTokens.begin();
 	  auto current=p;
 	  for(;p2!=splittedTokens.end();++p2){
-	    p = this->fileTokens.insert(current,Token(line,*p2));
+	    p = this->tokens.insert(current,Token(*p2,line));
 	  }
-	  this->fileTokens.erase(current);
+	  this->tokens.erase(current);
 	}
       }
     } // end of CxxTokenizer::splitStandardTokens
@@ -855,22 +863,20 @@ namespace tfel{
     void
     CxxTokenizer::openFile(const std::string& f)
     {
-      using namespace std;
       this->clear();
       try{
-	ifstream file{f};
+	std::ifstream file{f};
 	if(!file){
-	  throw(runtime_error("CxxTokenizer::openFile : "
-			      "unable to open file '"+f+"'"));
+	  throw(std::runtime_error("CxxTokenizer::openFile: "
+				   "unable to open file '"+f+"'"));
 	}
 	unsigned int lineNumber{0};
 	while(!file.eof()){
 	  if(!file.good()){
-	    string msg("CxxTokenizer::openFile : ");
-	    msg+="error while reading file '"+f+"'";
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("CxxTokenizer::openFile: "
+				     "error while reading file '"+f+"'"));
 	  }
-	  auto line = string{};
+	  auto line = std::string{};
 	  getline(file,line);
 	  ++lineNumber;
 	  if(!line.empty()){
@@ -921,39 +927,30 @@ namespace tfel{
     void
     CxxTokenizer::treatPreprocessorDirectives(void)
     {
-      using namespace std;
-      constexpr const char * CppKeywords[11] = {"#define","#undef","#include",
-						"#line","#error","#if","#ifdef",
-						"#ifndef","elif","#else","#endif"};
-      constexpr unsigned short CppKeywordsNumber = 11;
-
-      unsigned short i;
-      TokensContainer::iterator p;
-      string::size_type pos;
-      for(i=0;i<CppKeywordsNumber;++i){
-	for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
+      for(const auto& k : {"#define","#undef","#include",
+	    "#line","#error","#if","#ifdef",
+	    "#ifndef","elif","#else","#endif"}){
+	for(auto p = this->tokens.begin();p!=this->tokens.end();++p){
 	  if(p->flag==Token::Standard){
-	    pos=p->value.find(CppKeywords[i]);
-	    if(pos!=string::npos){
+	    const auto pos=p->value.find(k);
+	    if(pos!=std::string::npos){
 	      auto b=p;
-	      TokensContainer::iterator current;
 	      b->flag=Token::Preprocessor;
 	      ++p;
-	      if(p==this->fileTokens.end()){
+	      if(p==this->tokens.end()){
 		--p;
 	      } else if(p->line!=b->line){
 		--p;
 	      } else {
-		while((p->line==b->line)&&
-		      (p!=this->fileTokens.end())){
-		  current = p;
+		while((p->line==b->line)&&(p!=this->tokens.end())){
+		  const auto current = p;
 		  ++p;
 		  if((current->flag!=Token::Comment)&&
 		     (current->flag!=Token::DoxygenComment)&&
 		     (current->flag!=Token::DoxygenBackwardComment)){
 		    b->value.append(" ");
 		    b->value.append(current->value);
-		    this->fileTokens.erase(current);
+		    this->tokens.erase(current);
 		  }
 		}
 		--p;
@@ -967,14 +964,14 @@ namespace tfel{
     void 
     CxxTokenizer::printFileTokens(std::ostream& out) const
     {
-      auto p    = this->fileTokens.begin();
+      auto p    = this->tokens.begin();
       auto line = p->line;
-      for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
-	if(p->line!=line){
+      for(const auto& t : this->tokens){
+	if(t.line!=line){
 	  out << '\n';
-	  line = p->line;
+	  line = t.line;
 	}
-	out << p->value << " ";
+	out << t.value << " ";
       }
       out << '\n';
     }
@@ -1052,9 +1049,6 @@ namespace tfel{
 					  CxxTokenizer::TokensContainer& src,
 					  CxxTokenizer::TokensContainer::iterator p)
     {
-      using namespace std;
-      TokensContainer::iterator p2;
-      TokensContainer::iterator a;
       bool previous=false;
       bool next=false;
       if(p==src.end()){
@@ -1063,7 +1057,7 @@ namespace tfel{
       auto b=p;
       ++b;
       if(p!=src.begin()){
-	a=std::prev(p);
+	auto a=std::prev(p);
 	if(a->line==p->line){
 	  previous=true;
 	}
@@ -1074,11 +1068,9 @@ namespace tfel{
 	}
       }
       if(res.empty()){
-	string msg("CxxTokenizer::joinPreviousCurrentNext : ");
-	msg += "internal error \"::\"\n";
-	msg += "Error at line : ";
-	msg += to_string(p->line);
-	throw(runtime_error(msg));
+	throw(std::runtime_error("CxxTokenizer::joinPreviousCurrentNext: "
+				 "internal error \"::\"\n"
+				 "Error at line: "+std::to_string(p->line)));
       }
       if(previous&&next){
 	res.back().value.append(p->value+b->value);
@@ -1112,13 +1104,13 @@ namespace tfel{
     CxxTokenizer::const_iterator
     CxxTokenizer::begin(void) const
     {
-      return this->fileTokens.begin();
+      return this->tokens.begin();
     } // end of CxxTokenizer::begin
 
     CxxTokenizer::const_iterator
     CxxTokenizer::end(void) const
     {
-      return this->fileTokens.end();
+      return this->tokens.end();
     } // end of CxxTokenizer::end
 
     void
@@ -1130,7 +1122,7 @@ namespace tfel{
     CxxTokenizer::clear(void)
     {
       this->cStyleCommentOpened = false;
-      this->fileTokens.clear();
+      this->tokens.clear();
       this->comments.clear();
     } // end of CxxTokenizer::end
 
@@ -1317,7 +1309,7 @@ namespace tfel{
     CxxTokenizer::size_type
     CxxTokenizer::size() const
     {
-      return this->fileTokens.size();
+      return this->tokens.size();
     } // end of CxxTokenizer::size
 
     CxxTokenizer::~CxxTokenizer()

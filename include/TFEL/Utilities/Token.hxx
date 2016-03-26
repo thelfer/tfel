@@ -15,9 +15,7 @@
 #define LIB_TFEL_UTILITIES_TOKEN_H_ 
 
 #include<string>
-
 #include"TFEL/Config/TFELConfig.hxx"
-
 
 namespace tfel{
 
@@ -34,29 +32,31 @@ namespace tfel{
       enum TokenFlag{Standard,Comment,DoxygenComment,
 		     DoxygenBackwardComment,
 		     String,Char,Preprocessor};
-      /*!
-       * \brief default constructor
-       */
+      //! default constructor
       Token();
       /*!
        * \brief constructor
-       * \param[in] l: line number
        * \param[in] v: token value
-       * \param[in] f: token type
+       * \param[in] l: line number
+       * \param[in] f: token flag
        */
-      Token(const size_type,
-	    const std::string&,
+      Token(const std::string&,
+	    const size_type,
 	    const TokenFlag = Standard);
-
+      //! copy constructor
       Token(const Token&);
+      //! move constructor
       Token(Token&&);
+      //! assignement
       Token& operator=(const Token&);
+      //! move assignement
       Token& operator=(Token&&);
+      //! destructor
       ~Token() noexcept;
-      //! line number
-      size_type line = 0u;
       //! string holded by the token
       std::string value;
+      //! line number
+      size_type line = 0u;
       //! comment
       std::string comment;
       //! type of the token

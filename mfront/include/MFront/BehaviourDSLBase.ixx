@@ -163,8 +163,8 @@ namespace mfront{
     // strip comments from file
     this->stripComments();
     // begin treatement
-    this->current = this->fileTokens.begin();
-    while(this->current != this->fileTokens.end()){
+    this->current = this->tokens.begin();
+    while(this->current != this->tokens.end()){
       if(find(hn.begin(),hn.end(),this->current->value)!=hn.end()){
 	const auto h = ModellingHypothesis::fromString(this->current->value);
 	++(this->current);
