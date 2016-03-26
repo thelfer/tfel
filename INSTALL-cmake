@@ -51,6 +51,8 @@ Options
                           (requires a valid latex engine)
   enable-website        : generate the TFEL website
                           (enabled by default if pandoc is found)
+  enable-fast-math      : use advance options to optimize code further.
+  			  Compiler can then ignore IEEE 754 compatibility
 
 cmake usefull variables
 =======================

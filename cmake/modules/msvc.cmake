@@ -26,5 +26,9 @@ set(COMPILER_FLAGS "-D_SCL_SECURE_NO_WARNINGS ${COMPILER_FLAGS}")
 set(OPTIMISATION_FLAGS "/O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
+if(NOT enable-fast-math)
+  set(COMPILER_FLAGS "/fp:strict ${COMPILER_FLAGS}")
+endif(NOT enable-fast-math)
+
 # optimise build
 OptimizeForArchitecture()

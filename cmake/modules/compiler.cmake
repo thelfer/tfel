@@ -124,6 +124,7 @@ set(VISIBILITY_FLAGS   "")
 set(OPTIMISATION_FLAGS "")
 set(COMPILER_WARNINGS  "")
 
+option(enable-fast-math "enable -ffast-math compiler flag" OFF)
 option(PATHSCALE_COMPILER "set true if using the PathScale compiler" OFF)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

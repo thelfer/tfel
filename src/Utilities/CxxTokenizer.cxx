@@ -1063,8 +1063,7 @@ namespace tfel{
       auto b=p;
       ++b;
       if(p!=src.begin()){
-	a=p;
-	--a;
+	a=std::prev(p);
 	if(a->line==p->line){
 	  previous=true;
 	}

@@ -292,6 +292,23 @@ valeur de sa dérivée ou les deux en même temps.
 
 Trois fonctions du même nom sont également disponibles.
 
+\subsection{Nouvelles options de compilation}
+
+\subsubsection{Options \cmake{}}
+
+\paragraph{L'option {\tt enable-fast-math}} L'option {\tt
+  enable-fast-math} permet de sélectionner des options de compilations
+permettant une optimisation plus agressive du code en autorisant le
+compilateur à ne pas respecter la norme {\tt IEEE 754}.
+
+Pour les compilateurs {\tt clang} et {\tt gcc}, cette option ajoute le
+drapeau {\tt -ffast-math}.
+
+Pour le compilateur {\tt Visual Studio}, cette option supprime le
+drapeau {\tt /fp:strict}.
+
+Pour le compilateur {\tt intel}, cette option n'a pas d'effet.
+
 \section{Publication}
 
 \section{Éléments d'assurance qualité}
@@ -330,7 +347,7 @@ Trois fonctions du même nom sont également disponibles.
 
 \subsubsection{Liste des compilateurs supportés}
 
-\subsection{Perspectives}
+\section{Perspectives}
 
 \subsubsection{Lois de comportement à gradient de variables internes}
 
