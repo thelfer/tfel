@@ -190,6 +190,104 @@ namespace tfel{
       }
       l.clear();
     }
+
+    void
+    CxxTokenizer::treatCComment(std::string& l,
+				const Token::size_type n,
+				const std::string::size_type p)
+    {
+      if(p!=0){
+	for(const auto& t : splitStringAtSpaces(l.substr(0,p))){
+	  this->tokens.emplace_back(t,n);
+	}
+      }
+      l.erase(0,p);
+      const auto p2 = l.find("*/");
+      auto comment = std::string{};
+      if(p2==std::string::npos){
+	comment = l.substr(2);
+	l.clear();
+	this->cStyleCommentOpened=true;  
+      } else {
+	comment = l.substr(2,p2-2);
+	l.erase(0,p2+2);
+      }
+      if((comment.size()>=1)&&(comment[0]=='!')){
+	// doxygen comment
+	if((comment.size()>=2)&&(comment[1]=='<')){
+	  // backward doxygen comment
+	  if(this->tokens.empty()){
+	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
+				      n,Token::Comment);
+	  } else {
+	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
+				      n,Token::DoxygenBackwardComment);
+	  }
+	} else {
+	  this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(1)),
+				    n,Token::DoxygenComment);
+	}
+      } else {
+	// standard C++ comment
+	this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment),
+				  n,Token::Comment);
+      }
+    }
+
+    void
+    CxxTokenizer::treatCChar(std::string& l,
+			     const Token::size_type n,
+			     const std::string::size_type p)
+    {
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error("CxxTokenizer::splitLine : "+m));}
+      };
+      if(this->charAsString){
+	if(p!=0){
+	  for(const auto& t : splitStringAtSpaces(l.substr(0,p))){
+	    this->tokens.emplace_back(t,n);
+	  }
+	}
+	l.erase(0,p);
+	auto ps = l.begin();
+	++ps;
+	bool found=false;
+	for(;(ps!=l.end())&&(!found);++ps){
+	  if((*ps=='\'')&&(*(ps-1)!='\\')){
+	    found=true;
+	  }
+	}
+	throw_if(!found,"found no matching \' to close string.\n"
+		 "Error at l : "+std::to_string(n));
+	this->tokens.emplace_back(std::string(l.begin(),ps),n,Token::String);
+	l.erase(l.begin(),ps);
+      } else {
+	if(p!=0){
+	  for(const auto& t : splitStringAtSpaces(l.substr(0,p))){
+	    this->tokens.emplace_back(t,n);
+	  }
+	}
+	l.erase(0,p);
+	throw_if(l.length()<3,"error while reading char (1)."
+		 "Error at l : "+std::to_string(n));
+	if(l[1]=='\\'){
+	  throw_if(l.length()<4,"error while reading char (2).\n"
+		   "Error at l : "+std::to_string(n));
+	  throw_if(l[3]!='\'',"error while reading char (3).\n"
+		   "Error at l : "+std::to_string(n));
+	  this->tokens.emplace_back(l.substr(0,4),n,Token::Char);
+	  l.erase(0,4);
+	} else {
+	  throw_if(l[2]!='\'',
+		   std::string("error while reading char "
+			  "(expected to read ', read '")+
+		   l[2]+"').\n"
+		   "Error at l : "+std::to_string(n));
+	  this->tokens.emplace_back(l.substr(0,3),n,Token::Char);
+	  l.erase(0,3);
+	}
+      }
+    }
     
     void
     CxxTokenizer::splitLine(std::string line, const unsigned int lineNumber)
@@ -246,87 +344,9 @@ namespace tfel{
 	} else if (bCxxComment){
 	  this->treatCxxComment(line,lineNumber,pos[1]);
 	} else if(bCComment){
-	  if(pos[2]!=0){
-	    for(const auto& t : splitStringAtSpaces(line.substr(0,pos[2]))){
-	      this->tokens.emplace_back(t,lineNumber);
-	    }
-	  }
-	  line.erase(0,pos[2]);
-	  pos[2]=line.find("*/");
-	  auto comment = string{};
-	  if(pos[2]==string::npos){
-	    comment = line.substr(2);
-	    line.clear();
-	    this->cStyleCommentOpened=true;  
-	  } else {
-	    comment = line.substr(2,pos[2]-2);
-	    line.erase(0,pos[2]+2);
-	  }
-	  if((comment.size()>=1)&&(comment[0]=='!')){
-	    // doxygen comment
-	    if((comment.size()>=2)&&(comment[1]=='<')){
-	      // backward doxygen comment
-	      if(this->tokens.empty()){
-		this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
-					      lineNumber,Token::Comment);
-	      } else {
-		this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
-					      lineNumber,Token::DoxygenBackwardComment);
-	      }
-	    } else {
-	      this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(1)),
-					    lineNumber,Token::DoxygenComment);
-	    }
-	  } else {
-	    // standard C++ comment
-	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment),
-					  lineNumber,Token::Comment);
-	  }
+	  this->treatCComment(line,lineNumber,pos[2]);
 	} else if(bChar){
-	  if(this->charAsString){
-	    if(pos[3]!=0){
-	      for(const auto& t : splitStringAtSpaces(line.substr(0,pos[3]))){
-		this->tokens.emplace_back(t,lineNumber);
-	      }
-	    }
-	    line.erase(0,pos[3]);
-	    auto ps = line.begin();
-	    ++ps;
-	    bool found=false;
-	    for(;(ps!=line.end())&&(!found);++ps){
-	      if((*ps=='\'')&&(*(ps-1)!='\\')){
-		found=true;
-	      }
-	    }
-	    throw_if(!found,"found no matching \' to close string.\n"
-		     "Error at line : "+to_string(lineNumber));
-	    this->tokens.emplace_back(string(line.begin(),ps),lineNumber,Token::String);
-	    line.erase(line.begin(),ps);
-	  } else {
-	    if(pos[3]!=0){
-	      for(const auto& t : splitStringAtSpaces(line.substr(0,pos[3]))){
-		this->tokens.emplace_back(t,lineNumber);
-	      }
-	    }
-	    line.erase(0,pos[3]);
-	    throw_if(line.length()<3,"error while reading char (1)."
-		     "Error at line : "+to_string(lineNumber));
-	    if(line[1]=='\\'){
-	      throw_if(line.length()<4,"error while reading char (2).\n"
-		       "Error at line : "+to_string(lineNumber));
-	      throw_if(line[3]!='\'',"error while reading char (3).\n"
-		       "Error at line : "+to_string(lineNumber));
-	      this->tokens.emplace_back(line.substr(0,4),lineNumber,Token::Char);
-	      line.erase(0,4);
-	    } else {
-	      throw_if(line[2]!='\'',
-		       string("error while reading char ""(expected to read ', read '")+
-		       line[2]+"').\n"
-		       "Error at line : "+to_string(lineNumber));
-	      this->tokens.emplace_back(line.substr(0,3),lineNumber,Token::Char);
-	      line.erase(0,3);
-	    }
-	  }
+	  this->treatCChar(line,lineNumber,pos[3]);
 	} else {
 	  for(const auto&t : splitStringAtSpaces(line)){
 	    this->tokens.emplace_back(t,lineNumber);
@@ -335,7 +355,7 @@ namespace tfel{
 	}
       }
     }
-
+    
     std::string
     CxxTokenizer::readNumber(std::string::const_iterator& p,
 			     const std::string::const_iterator pe)

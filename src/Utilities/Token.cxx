@@ -30,6 +30,13 @@ namespace tfel{
       : value(v),line(l),flag(f)
     {}
 
+    Token::Token(const std::string& v,
+		 const size_type l,
+		 const size_type o,
+		 const TokenFlag f)
+      : value(v),line(l),offset(o),flag(f)
+    {}
+    
     Token::~Token() noexcept = default;
 
   } // end of namespace utilities

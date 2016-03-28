@@ -43,6 +43,17 @@ namespace tfel{
       Token(const std::string&,
 	    const size_type,
 	    const TokenFlag = Standard);
+      /*!
+       * \brief constructor
+       * \param[in] v: token value
+       * \param[in] l: line number
+       * \param[in] o: offset
+       * \param[in] f: token flag
+       */
+      Token(const std::string&,
+	    const size_type,
+	    const size_type,
+	    const TokenFlag = Standard);
       //! copy constructor
       Token(const Token&);
       //! move constructor
@@ -57,6 +68,8 @@ namespace tfel{
       std::string value;
       //! line number
       size_type line = 0u;
+      //! offset in the line
+      size_type offset = 0u;
       //! comment
       std::string comment;
       //! type of the token
