@@ -34,27 +34,19 @@ namespace mtest
   Crossed2DeltaAccelerationAlgorithm::setParameter(const std::string& p,
 						    const std::string& v)
   {
-    using namespace std;
-    const string m = "Crossed2DeltaAccelerationAlgorithm::setParameter";
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("Crossed2DeltaAccelerationAlgorithm::"
+				     "setParameter: "+m));}
+    };
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->csat!=-1){
-	string msg("Crossed2DeltaAccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<2){
-	string msg("Crossed2DeltaAccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto m = "Crossed2DeltaAccelerationAlgorithm::setParameter";
+      throw_if(this->csat!=-1,"the acceleration trigger has already "
+	       "been defined");
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      throw_if(i<2,"invalid acceleration trigger value.");
       this->csat = i;
     } else {
-      string msg("Crossed2DeltaAccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      throw_if(true,"invalid parameter '"+p+"'.");
     }
   } // end of Crossed2DeltaAccelerationAlgorithm::setParameter
 
@@ -96,7 +88,7 @@ namespace mtest
     this->csa_du = this->csa_u1-this->csa_u0; // G(Xn) - G(X{n-1})
     this->csa_dr1 = this->csa_r1-this->csa_r0; // Delta X{n} - Delta X{n-1}
     if(iter>=this->csat){
-      if (iter==2){
+      if(iter==2){
 	// crossed secant acceleration
 	const real nr2_dr1 = this->csa_dr1|this->csa_dr1;
 	if(nr2_dr1>(csa_eps*csa_eps)){
@@ -107,8 +99,7 @@ namespace mtest
 	  const real csa_a = (this->csa_du|this->csa_dr1)/nr2_dr1;
 	  u1 -= csa_a*(this->csa_r1);
 	}
-      }
-      else{
+      } else{
 	const real nr2_dr1 = this->csa_dr1|this->csa_dr1;
 	const real nr2_dr0 = this->csa_dr0|this->csa_dr0;
 	const real dr1_dr0 = this->csa_dr1|this->csa_dr0;
@@ -125,16 +116,14 @@ namespace mtest
 	  real l2 = nr2_dr1*b2 - dr1_dr0*b1;
 	  l2 /= det;
 	  u1 -= l1*(this->csa_r1) + l2*(this->csa_r0);
-	}
-	else
-	  if(nr2_dr1>(csa_eps*csa_eps)){
-	    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-	      ostream& log = mfront::getLogStream();
-	      log << "CrossedSecant acceleration convergence" << endl;
-	    }
-	    const real csa_a = (this->csa_du|this->csa_dr1)/nr2_dr1;
-	    u1 -= csa_a*(this->csa_r1);
+	} else if(nr2_dr1>(csa_eps*csa_eps)){
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	    auto& log = mfront::getLogStream();
+	    log << "CrossedSecant acceleration convergence" << endl;
 	  }
+	  const real csa_a = (this->csa_du|this->csa_dr1)/nr2_dr1;
+	  u1 -= csa_a*(this->csa_r1);
+	}
       }
     }
   } // end of Crossed2DeltaAccelerationAlgorithm::execute

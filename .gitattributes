@@ -915,6 +915,8 @@ docs/texmacs/Tensor3D.tm -text
 docs/texmacs/UMATFiniteStrain.tm -text
 docs/texmacs/UMATRotationMatrix2D.tm -text
 docs/texmacs/UMATRotationMatrix3D.tm -text
+docs/texmacs/USU2D.tm -text
+docs/texmacs/USU3D.tm -text
 docs/texmacs/stensor_rotation_matrix.tm -text
 docs/texmacs/tensor_rotation_matrix.tm -text
 docs/tfel/CMakeLists.txt -text
@@ -1665,6 +1667,7 @@ mfront/include/MFront/Abaqus/AbaqusConvert.hxx -text
 mfront/include/MFront/Abaqus/AbaqusData.hxx -text
 mfront/include/MFront/Abaqus/AbaqusException.hxx -text
 mfront/include/MFront/Abaqus/AbaqusExplicitBehaviourHandler.hxx -text
+mfront/include/MFront/Abaqus/AbaqusExplicitData.hxx -text
 mfront/include/MFront/Abaqus/AbaqusExplicitInterface.hxx -text
 mfront/include/MFront/Abaqus/AbaqusInterface.hxx -text
 mfront/include/MFront/Abaqus/AbaqusInterfaceExceptions.hxx -text
@@ -4203,6 +4206,7 @@ tests/Material/Makefile.am -text
 tests/Material/OrthotropicAxesConventionTest.cxx -text
 tests/Material/boundsCheck.cxx -text
 tests/Math/CMakeLists.txt -text
+tests/Math/ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest.cxx -text
 tests/Math/CubicRoots.cxx -text
 tests/Math/CubicSplineTest.cxx -text
 tests/Math/ExpressionTemplates/CMakeLists.txt -text
@@ -4375,6 +4379,7 @@ tests/Tests/testproxy2.cxx -text
 tests/Tests/testsuite.cxx -text
 tests/Utilities/CMakeLists.txt -text
 tests/Utilities/CxxTokenizerTest.cxx -text
+tests/Utilities/CxxTokenizerTest2.cxx -text
 tests/Utilities/Makefile.am -text
 tests/Utilities/StringAlgorithms.cxx -text
 tests/Utilities/gentype.cxx -text

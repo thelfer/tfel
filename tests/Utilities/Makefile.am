@@ -4,10 +4,11 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(srcdir)/include
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Utilities
-test_PROGRAMS = gentype          \
-		gentype2         \
-		gentype3         \
-		CxxTokenizerTest \
+test_PROGRAMS = gentype           \
+		gentype2          \
+		gentype3          \
+		CxxTokenizerTest  \
+		CxxTokenizerTest2 \
 		StringAlgorithms
 
 LDADD = -lTFELUtilities -lTFELException  \
@@ -16,11 +17,12 @@ LDADD = -lTFELUtilities -lTFELException  \
 	-L$(top_builddir)/src/Tests      \
 	-L$(top_builddir)/src/Exception
 
-gentype_SOURCES          = gentype.cxx
-gentype2_SOURCES         = gentype2.cxx
-gentype3_SOURCES         = gentype3.cxx
-CxxTokenizerTest_SOURCES = CxxTokenizerTest.cxx
-StringAlgorithms_SOURCES = StringAlgorithms.cxx
+gentype_SOURCES           = gentype.cxx
+gentype2_SOURCES          = gentype2.cxx
+gentype3_SOURCES          = gentype3.cxx
+CxxTokenizerTest_SOURCES  = CxxTokenizerTest.cxx
+CxxTokenizerTest2_SOURCES = CxxTokenizerTest2.cxx
+StringAlgorithms_SOURCES  = StringAlgorithms.cxx
 
 TESTS=$(test_PROGRAMS)
 

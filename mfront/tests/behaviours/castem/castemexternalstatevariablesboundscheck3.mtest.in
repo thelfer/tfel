@@ -1,7 +1,7 @@
 @Author Helfer Thomas;
 @Date   2/09/2015;
 @Description{
-  This test checks that the \'None\' out of bounds
+  This test checks that the "None" out of bounds
   policy does not lead to throwing an exception
   when an external state variable is out its bounds.
 };

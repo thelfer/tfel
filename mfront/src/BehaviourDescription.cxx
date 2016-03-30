@@ -569,7 +569,7 @@ namespace mfront
       checkElasticMaterialProperty(emps[5],tfel::glossary::Glossary::PoissonRatio13);
       checkElasticMaterialProperty(emps[6],tfel::glossary::Glossary::ShearModulus12);
       checkElasticMaterialProperty(emps[7],tfel::glossary::Glossary::ShearModulus23);
-      checkElasticMaterialProperty(emps[9],tfel::glossary::Glossary::ShearModulus13);
+      checkElasticMaterialProperty(emps[8],tfel::glossary::Glossary::ShearModulus13);
     } else {
       throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
 			       "unsupported behaviour type"));

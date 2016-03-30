@@ -28,14 +28,6 @@
 #include"MFront/PerformanceProfiling.hxx"
 #include"MFront/ImplicitDSLBase.hxx"
 
-#pragma message("HERE")
-  // if(this->varNames.find(p+"df"+v1.name+"_dd"+v2.name)!=this->varNames.end()){
-  //   string msg("NonLinearSystemSolverBase::getJacobianPart : ");
-  //   msg += "variable name 'df"+v1.name+"_dd"+v2.name;
-  //   msg += "' is reserved.\n";
-  //   throw(runtime_error(msg));
-  // }
-  
 namespace mfront{
 
   ImplicitDSLBase::ImplicitDSLBase()
@@ -1168,16 +1160,14 @@ namespace mfront{
     this->checkBehaviourFile();
     SupportedTypes::TypeSize n;
     VariableDescriptionContainer::size_type i;
-    VariableDescriptionContainer::const_iterator p;
-    VariableDescriptionContainer::const_iterator p2;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n += this->getTypeSize(p->type,p->arraySize);
+    for(const auto& v : d.getIntegrationVariables()){
+      n += this->getTypeSize(v.type,v.arraySize);
     }
-    p=d.getIntegrationVariables().begin();
+    auto p=d.getIntegrationVariables().begin();
     ++p;
     for(i=0;i!=d.getIntegrationVariables().size();++p,++i){
       this->behaviourFile << "void\ngetPartialJacobianInvert(";
-      for(p2=d.getIntegrationVariables().begin();p2!=p;){
+      for(auto p2=d.getIntegrationVariables().begin();p2!=p;){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
 	if(p2->arraySize==1u){
 	  switch(flag){
@@ -1223,7 +1213,7 @@ namespace mfront{
       this->behaviourFile << "vect_e(idx) = real(1);\n";
       this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);\n";
       SupportedTypes::TypeSize n2;
-      for(p2=d.getIntegrationVariables().begin();p2!=p;++p2){
+      for(auto p2=d.getIntegrationVariables().begin();p2!=p;++p2){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
 	if(flag==SupportedTypes::Scalar){
 	  if(p2->arraySize==1u){
@@ -1279,7 +1269,7 @@ namespace mfront{
 	}
       }
       this->behaviourFile << "}\n";
-      for(p2=d.getIntegrationVariables().begin();p2!=p;++p2){
+      for(auto p2=d.getIntegrationVariables().begin();p2!=p;++p2){
 	if(this->mb.hasAttribute(h,p2->name+"_normalisation_factor")){
 	  const auto& nf = this->mb.getAttribute<std::string>(h,p2->name+"_normalisation_factor");
 	  this->behaviourFile << "partial_jacobian_" << p2->name << " /= " << nf << ";\n";

@@ -11,7 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
 #include<iterator>
 
 #include<ostream>

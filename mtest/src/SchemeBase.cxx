@@ -5,7 +5,6 @@
  * \date   02 oct. 2015
  */
 
-#include<iostream>
 #include<sstream>
 #include<algorithm>
 
@@ -388,84 +387,89 @@ namespace mtest{
   SchemeBase::completeInitialisation(void)
   {
     if(this->initialisationFinished){
-      throw(std::runtime_error("MTest::completeInitialisation : "
+      throw(std::runtime_error("SchemeBase::completeInitialisation : "
 			       "object already initialised"));
-    }
-    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->setDefaultModellingHypothesis();
-    }
-    // numerical parameters
-    if(this->options.mSubSteps==-1){
-      this->options.mSubSteps=10;
-    }
-    if(this->options.iterMax==-1){
-      this->options.iterMax=100;
-    }
-    if(this->options.aa.get()!=nullptr){
-      this->options.aa->initialize(this->getNumberOfUnknowns());
-    }
-    // prediction policy
-    if(this->options.ppolicy==PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY){
-      this->options.ppolicy=PredictionPolicy::NOPREDICTION;
-    }
-    // stiffness matrix type
-    if(this->options.ktype==StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
-      this->options.ktype = this->getDefaultStiffnessMatrixType();
-    }
-    // options selected
-    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-      auto& log = mfront::getLogStream();
-      if(this->options.aa.get()!=nullptr){
-	log << "** " << this->options.aa->getName()
-	    << " acceleration algorithm selected\n";
-      }
-      if(this->options.ppolicy==PredictionPolicy::LINEARPREDICTION){
-	log << "** using linear prediction\n";
-      } else if(this->options.ppolicy==PredictionPolicy::ELASTICPREDICTION){
-	log << "** prediction using elastic stiffness\n";
-      } else if(this->options.ppolicy==PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES){
-	log << "** prediction using elastic stiffness computed from material properties\n";
-      } else if(this->options.ppolicy==PredictionPolicy::TANGENTOPERATORPREDICTION){
-	log << "** prediction using tangent operator\n";
-      } else {
-	if(this->options.ppolicy!=PredictionPolicy::NOPREDICTION){
-	  throw(std::runtime_error("MTest::completeInitialisation : "
-				   "internal error, unsupported "
-				   "prediction policy"));
-	}	    
-	log << "** no prediction\n";
-      }
-    }
-    // output file
-    if(!this->output.empty()){
-      this->out.open(this->output.c_str());
-      if(!this->out){
-	throw(std::runtime_error("SchemeBase::completeInitialisation : "
-			    "can't open file '"+this->output+"'"));
-      }
-      this->out.exceptions(std::ofstream::failbit|std::ofstream::badbit);
-      if(this->oprec!=-1){
-	this->out.precision(static_cast<std::streamsize>(this->oprec));
-      }
-    }
-    // residual file
-    if(!this->residualFileName.empty()){
-      this->residual.open(this->residualFileName.c_str());
-      if(!this->residual){
-	throw(std::runtime_error("MTest::completeInitialisation : "
-				 "unable to open file '"+this->residualFileName+"'"));
-      }
-      this->residual.exceptions(std::ofstream::failbit|std::ofstream::badbit);
-      if(this->rprec!=-1){
-	this->residual.precision(static_cast<std::streamsize>(this->rprec));
-      } else {
-	if(this->oprec!=-1){
-	  this->residual.precision(static_cast<std::streamsize>(this->oprec));
-	}
-      }
     }
     // initialisation is complete
     this->initialisationFinished = true;
+    try{
+      if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	this->setDefaultModellingHypothesis();
+      }
+      // numerical parameters
+      if(this->options.mSubSteps==-1){
+	this->options.mSubSteps=10;
+      }
+      if(this->options.iterMax==-1){
+	this->options.iterMax=100;
+      }
+      if(this->options.aa.get()!=nullptr){
+	this->options.aa->initialize(this->getNumberOfUnknowns());
+      }
+      // prediction policy
+      if(this->options.ppolicy==PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY){
+	this->options.ppolicy=PredictionPolicy::NOPREDICTION;
+      }
+      // stiffness matrix type
+      if(this->options.ktype==StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
+	this->options.ktype = this->getDefaultStiffnessMatrixType();
+      }
+      // options selected
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	auto& log = mfront::getLogStream();
+	if(this->options.aa.get()!=nullptr){
+	  log << "** " << this->options.aa->getName()
+	      << " acceleration algorithm selected\n";
+	}
+	if(this->options.ppolicy==PredictionPolicy::LINEARPREDICTION){
+	  log << "** using linear prediction\n";
+	} else if(this->options.ppolicy==PredictionPolicy::ELASTICPREDICTION){
+	  log << "** prediction using elastic stiffness\n";
+	} else if(this->options.ppolicy==PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES){
+	  log << "** prediction using elastic stiffness computed from material properties\n";
+	} else if(this->options.ppolicy==PredictionPolicy::TANGENTOPERATORPREDICTION){
+	  log << "** prediction using tangent operator\n";
+	} else {
+	  if(this->options.ppolicy!=PredictionPolicy::NOPREDICTION){
+	    throw(std::runtime_error("MTest::completeInitialisation : "
+				     "internal error, unsupported "
+				     "prediction policy"));
+	  }	    
+	  log << "** no prediction\n";
+	}
+      }
+      // output file
+      if(!this->output.empty()){
+	this->out.open(this->output.c_str());
+	if(!this->out){
+	  throw(std::runtime_error("SchemeBase::completeInitialisation : "
+				   "can't open file '"+this->output+"'"));
+	}
+	this->out.exceptions(std::ofstream::failbit|std::ofstream::badbit);
+	if(this->oprec!=-1){
+	  this->out.precision(static_cast<std::streamsize>(this->oprec));
+	}
+      }
+      // residual file
+      if(!this->residualFileName.empty()){
+	this->residual.open(this->residualFileName.c_str());
+	if(!this->residual){
+	  throw(std::runtime_error("MTest::completeInitialisation : "
+				   "unable to open file '"+this->residualFileName+"'"));
+	}
+	this->residual.exceptions(std::ofstream::failbit|std::ofstream::badbit);
+	if(this->rprec!=-1){
+	  this->residual.precision(static_cast<std::streamsize>(this->rprec));
+	} else {
+	  if(this->oprec!=-1){
+	    this->residual.precision(static_cast<std::streamsize>(this->oprec));
+	  }
+	}
+      }
+    } catch(...){
+      this->initialisationFinished = false;
+      throw;
+    }    
   } // end of SchemeBase::completeInitialisation
   
   void

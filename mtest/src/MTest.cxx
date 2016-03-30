@@ -296,6 +296,51 @@ namespace mtest
   {
     using namespace std;
     using namespace tfel::material;
+    // additional constraints
+    // must be set *before* `SingleStructureScheme::completeInitialisation`
+    if(this->hypothesis==ModellingHypothesis::PLANESTRAIN){
+      shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
+      shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
+      this->constraints.push_back(ec);
+    }
+    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
+      // shall be in the behaviour
+      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+	shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
+	shared_ptr<Constraint> ec(new ImposedDrivingVariable(1,eev));
+	shared_ptr<Evolution>  sev;
+	auto pev = this->evm->find("AxialStress");
+	if(pev!=this->evm->end()){
+	  sev = pev->second;
+	} else {
+	  sev = shared_ptr<Evolution>(new ConstantEvolution(0.));
+	}
+	shared_ptr<Constraint> sc(new ImposedThermodynamicForce(1,sev));
+	this->constraints.push_back(ec);
+	this->constraints.push_back(sc);
+      } else {
+	throw(std::runtime_error("MTest::completeInitialisation : "
+				 "generalised plane stress is only "
+				 "handled for small and finite strain behaviours"));
+      }
+    }
+    if(this->hypothesis==ModellingHypothesis::PLANESTRESS){
+      // shall be in the behaviour
+      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+	shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
+	shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
+	shared_ptr<Evolution>  sev(new ConstantEvolution(0.));
+	shared_ptr<Constraint> sc(new ImposedThermodynamicForce(2,sev));
+	this->constraints.push_back(ec);
+	this->constraints.push_back(sc);
+      } else {
+	throw(std::runtime_error("MTest::completeInitialisation : "
+				 "plane stress is only handled for small and "
+				 "finite strain behaviours"));
+      }
+    }
     SingleStructureScheme::completeInitialisation();
     // post-processing
     unsigned short cnbr = 2;
@@ -352,50 +397,6 @@ namespace mtest
     if(this->pv<0){
       this->pv = 10*this->options.eeps;
     }
-    // additional constraints
-    if(this->hypothesis==ModellingHypothesis::PLANESTRAIN){
-      shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
-      shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
-      this->constraints.push_back(ec);
-    }
-    if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
-      // shall be in the behaviour
-      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-	shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
-	shared_ptr<Constraint> ec(new ImposedDrivingVariable(1,eev));
-	shared_ptr<Evolution>  sev;
-	auto pev = this->evm->find("AxialStress");
-	if(pev!=this->evm->end()){
-	  sev = pev->second;
-	} else {
-	  sev = shared_ptr<Evolution>(new ConstantEvolution(0.));
-	}
-	shared_ptr<Constraint> sc(new ImposedThermodynamicForce(1,sev));
-	this->constraints.push_back(ec);
-	this->constraints.push_back(sc);
-      } else {
-	throw(std::runtime_error("MTest::completeInitialisation : "
-				 "generalised plane stress is only "
-				 "handled for small and finite strain behaviours"));
-      }
-    }
-    if(this->hypothesis==ModellingHypothesis::PLANESTRESS){
-      // shall be in the behaviour
-      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-	shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
-	shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
-	shared_ptr<Evolution>  sev(new ConstantEvolution(0.));
-	shared_ptr<Constraint> sc(new ImposedThermodynamicForce(2,sev));
-	this->constraints.push_back(ec);
-	this->constraints.push_back(sc);
-      } else {
-	throw(std::runtime_error("MTest::completeInitialisation : "
-				 "plane stress is only handled for small and "
-				 "finite strain behaviours"));
-      }
-    }
     if(!this->isRmDefined){
       for(unsigned short i=0;i!=3;++i){
 	rm(i,i) = real(1);
@@ -423,14 +424,12 @@ namespace mtest
   void
   MTest::initializeCurrentState(StudyCurrentState& s) const
   {
-    if(this->b.get()==nullptr){
-      throw(std::runtime_error("MTest::initializeCurrentState: "
-			       "mechanical behaviour not set"));
-    }
-    if(this->hypothesis==tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      throw(std::runtime_error("MTest::initializeCurrentState: "
-			       "modelling hypothesis not set"));
-    }
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("MTest::initializeCurrentState: "+m));}
+    };
+    throw_if(this->b.get()==nullptr,"mechanical behaviour not set");
+    throw_if(this->hypothesis==tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	     "modelling hypothesis is not set");
     // unknowns
     const auto psz = this->getNumberOfUnknowns();
     s.initialize(psz);
@@ -450,13 +449,12 @@ namespace mtest
     // setting the intial  values of stresses
     copy(this->s_t0.begin(),this->s_t0.end(),cs.s0.begin());
     // getting the initial values of internal state variables
-    if((this->iv_t0.size()>cs.iv_1.size())||
-       (this->iv_t0.size()>cs.iv0.size())||
-       (this->iv_t0.size()>cs.iv1.size())){
-      throw(std::runtime_error("MTest::initializeCurrentState: the number of initial values declared "
-			       "by the user for the internal state variables exceeds the "
-			       "number of internal state variables declared by the behaviour"));
-    }
+    throw_if((this->iv_t0.size()>cs.iv_1.size())||
+	     (this->iv_t0.size()>cs.iv0.size())||
+	     (this->iv_t0.size()>cs.iv1.size()),
+	     "the number of initial values declared "
+	     "by the user for the internal state variables exceeds the "
+	     "number of internal state variables declared by the behaviour");
     std::copy(this->iv_t0.begin(),this->iv_t0.end(),cs.iv_1.begin());
     std::copy(this->iv_t0.begin(),this->iv_t0.end(),cs.iv0.begin());
     // revert the current state
@@ -467,11 +465,8 @@ namespace mtest
     const auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evm->end()){
       const auto& ev = *(pev->second);
-      if(!ev.isConstant()){
-	throw(std::runtime_error("MTest::initializeCurrentState : "
-				 "'ThermalExpansionReferenceTemperature' "
-				 "must be a constant evolution"));
-      }
+      throw_if(!ev.isConstant(),"'ThermalExpansionReferenceTemperature' "
+	       "must be a constant evolution");
       cs.Tref = ev(0);
     }
   } // end of MTest::initializeCurrentState
@@ -479,6 +474,10 @@ namespace mtest
   void
   MTest::initializeWorkSpace(SolverWorkSpace& wk) const
   {
+    if(!this->initialisationFinished){
+      throw(std::runtime_error("MTest::initializeWorkSpace: "
+			       "object not initialised"));
+    }
     const auto psz = this->getNumberOfUnknowns();
     // clear
     wk.K.clear();
@@ -498,6 +497,10 @@ namespace mtest
   MTest::getNumberOfUnknowns() const
   {
     using tfel::math::vector;
+    if(!this->initialisationFinished){
+      throw(std::runtime_error("MTest::getNumberOfUnknowns: "
+			       "object not initialised"));
+    }
     // number of components of the driving variables
     const auto N = this->b->getDrivingVariablesSize(this->hypothesis);
     // getting the total number of unknowns

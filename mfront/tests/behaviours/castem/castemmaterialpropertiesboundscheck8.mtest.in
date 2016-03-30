@@ -2,7 +2,7 @@
 @Date   2/09/2015;
 @Description{
   This test checks that the out of bounds policy
-  can be set to \'Strict\' through the
+  can be set to "Strict" through the
   CASTEM_OUT_OF_BOUND_POLICY environment variable.
   This does not lead to throwing an exception
   when a material property is out its bounds.

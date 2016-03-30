@@ -118,7 +118,6 @@ namespace tfel{
       typename StensorType<T>::type
     >::type
     deviator(const T&);
-
     /*!
      * \brief return the size of a symmetric tensor for the given
      * dimension

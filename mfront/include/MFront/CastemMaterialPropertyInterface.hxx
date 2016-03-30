@@ -15,7 +15,6 @@
 #define LIB_MFRONTCASTEMLAWINTERFACE_H_ 
 
 #include<string>
-#include<fstream>
 
 #include"MFront/MFrontConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"

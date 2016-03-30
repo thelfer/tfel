@@ -16,7 +16,6 @@
 #define LIB_TFEL_CXXTOKENIZER_HXX_ 
 
 #include<map>
-#include<list>
 #include<string>
 #include<vector>
 #include<iosfwd>
@@ -36,7 +35,7 @@ namespace tfel{
     {
     
       //! a simple alias
-      typedef std::list<Token> TokensContainer;
+      typedef std::vector<Token> TokensContainer;
       //! a simple alias
       typedef TokensContainer::const_iterator const_iterator;
       //! a simple alias
@@ -70,14 +69,12 @@ namespace tfel{
       template<typename InputIterator>
       void import(const InputIterator,
 		  const InputIterator);
-    
       /*!
        * \brief analyse the string given
        * all previous tokens are erased
        * \param[in] s : string to be parsed
        */ 
       void parseString(const std::string&);
-
       /*!
        * \brief import the specified file
        * \param[in] f : file name
@@ -130,7 +127,6 @@ namespace tfel{
       checkNotEndOfLine(const std::string&,
 			const_iterator&, 
 			const const_iterator);
-
       /*!
        * \brief an helper method throwing an exception if the given
        * iterator is egal to the fourth argument (which shall point
@@ -148,7 +144,6 @@ namespace tfel{
 			const std::string&,
 			const_iterator&, 
 			const const_iterator);
-
       /*!
        * \brief an helper method throwing an exception if the given
        * iterator is egal to the fourth argument (which shall point
@@ -167,7 +162,6 @@ namespace tfel{
 			 const std::string&,
 			 const_iterator&, 
 			 const const_iterator);
-
       /*!
        * \brief an helper method to extract an unsigned int from the
        * given token
@@ -181,7 +175,6 @@ namespace tfel{
       static unsigned int
       readUnsignedInt(const_iterator&, 
 		      const const_iterator);
-
       /*!
        * \brief an helper method to extract a string from the
        * given token
@@ -264,97 +257,90 @@ namespace tfel{
       size_type size() const;
       //! destructor
       virtual ~CxxTokenizer();
-
-    private:
-
-      static std::string TFEL_VISIBILITY_LOCAL
-      readNumber(std::string::const_iterator&,
-		 const std::string::const_iterator);
-
-      static void TFEL_VISIBILITY_LOCAL
-      extractNumbers(std::vector<std::string>&,
-		     const std::string&);
-
-      static void TFEL_VISIBILITY_LOCAL
-      joinIncludes(std::vector<std::string>&);
-
-      static void TFEL_VISIBILITY_LOCAL
-      join(std::vector<std::string>&,const std::string&,const std::string&);
-
-      TFEL_VISIBILITY_LOCAL void
-      splitAtCxxTokenSperator(std::vector<std::string>&);
-    
-      static void TFEL_VISIBILITY_LOCAL
-      splitString(std::vector<std::string>&,std::string,const std::string);
-
-      static void TFEL_VISIBILITY_LOCAL
-      splitString2(std::vector<std::string>&,std::string);
-
-      static void TFEL_VISIBILITY_LOCAL
-      splitString3(std::vector<std::string>&,std::string);
-
-      TFEL_VISIBILITY_LOCAL 
-      static TokensContainer::iterator TFEL_VISIBILITY_LOCAL
-      joinPreviousCurrentNext(TokensContainer&,TokensContainer&,
-			      TokensContainer::iterator);
-
+      
     protected:
 
       static bool
       isValidFunctionIdentifier(const std::string&,const bool=true);
-
-      void
-      splitLine(std::string,const unsigned int);
-
-      void
-      treatPreprocessorDirectives(void);
-
-      void
-      splitTokens(void);
-
       /*!
-       * \param[in/out] l: line treated
-       * \param[in]     n: line number
-       * \param[p]      p: position of the C comment
-       */
-      void treatString(std::string&,
-		       const Token::size_type,
-		       const std::string::size_type);
-      /*!
-       * \param[in/out] l: line treated
-       * \param[in]     n: line number
-       * \param[p]      p: position of the C comment
-       */
-      void treatCxxComment(std::string&,
-			   const Token::size_type,
-			   const std::string::size_type);
-      /*!
-       * \param[in/out] l: line treated
-       * \param[in]     n: line number
-       * \param[p]      p: position of the C comment
-       */
-      void treatCComment(std::string&,
-			 const Token::size_type,
-			 const std::string::size_type);
-      /*!
-       * \param[in/out] l: line treated
-       * \param[in]     n: line number
-       * \param[p]      p: position of the C comment
-       */
-      void treatCChar(std::string&,
-		      const Token::size_type,
-		      const std::string::size_type);
-      
+       * \param[in] in:   input stream
+       * \param[in] n:    line number
+       * \param[in] from: origin of the stream
+       */ 
+      virtual void
+      parseStream(std::istream&,
+		  Token::size_type&,
+		  const std::string&);
+
+      virtual void
+      splitLine(const std::string&,
+		const Token::size_type);
+
+      virtual void
+      treatChar(Token::size_type&,
+		std::string::const_iterator&,
+		const std::string::const_iterator,
+		const Token::size_type);
+      virtual void
+      treatString(Token::size_type&,
+		  std::string::const_iterator&,
+		  const std::string::const_iterator,
+		  const Token::size_type,
+		  const char);
+      virtual void
+      treatCComment(Token::size_type&,
+		    std::string::const_iterator&,
+		    const std::string::const_iterator,
+		    const Token::size_type);
+      virtual void
+      treatCxxComment(Token::size_type&,
+		      std::string::const_iterator&,
+		      const std::string::const_iterator,
+		      const Token::size_type);
+      virtual void
+      try_join(Token::size_type&,
+	       std::string::const_iterator&,
+	       const std::string::const_iterator,
+	       const Token::size_type,
+	       const char);
+      virtual void
+      try_join(Token::size_type&,
+	       std::string::const_iterator&,
+	       const std::string::const_iterator,
+	       const Token::size_type,
+	       const char,
+	       const char);
+      virtual void
+      readNumber(Token::size_type&,
+		 std::string::const_iterator&,
+		 const std::string::const_iterator,
+		 const Token::size_type);
+      virtual void
+      treatPreprocessorDirective(Token::size_type&,
+				 std::string::const_iterator&,
+				 const std::string::const_iterator,
+				 const std::string::const_iterator,
+				 const Token::size_type);
+      virtual void
+      treatStandardLine(Token::size_type&,
+			std::string::const_iterator&,
+			const std::string::const_iterator,
+			const std::string::const_iterator,
+			const Token::size_type);
+      //! list of tokens read
       TokensContainer tokens;
-
       //! store all the comments of a line
       std::map<Token::size_type,std::string> comments;
-
-      bool cStyleCommentOpened = false;
-
-      bool bExtractNumbers = true;
-
+      /*!
+       * if true, one consider that single quote can be used to define
+       * a string
+       */
       bool charAsString = false;
+      /*!
+       * if true, a cStyle comment what opened when the last line
+       * treatment was finised
+       */
+      bool cStyleCommentOpened= false;
 
     }; // end of struct CxxTokenizer
 

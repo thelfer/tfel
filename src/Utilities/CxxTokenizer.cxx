@@ -39,329 +39,238 @@ namespace tfel{
 
   namespace utilities{
 
-    static std::vector<std::string>
-    splitStringAtSpaces(const std::string& str)
+    CxxTokenizer::CxxTokenizer() = default;
+  
+    CxxTokenizer::CxxTokenizer(const std::string& f)
+      : CxxTokenizer()
     {
-      std::istringstream s(str);
-      return std::vector<std::string>(std::istream_iterator<std::string>(s),
-				      std::istream_iterator<std::string>());
-    } // end of CxxTokenizer::splitStringAtSpaces
-
-    static std::string::size_type
-    findStringBeginning(const std::string& s,
-			const char b)
-    {
-      std::string::size_type p;
-      if(s.empty()){
-	return std::string::npos;
-      }
-      if(s[0]==b){
-	return 0u;
-      }
-      p = s.find(b);
-      while(p!=std::string::npos){
-	if(s[p-1]!='\\'){
-	  return p;
-	}
-	p = s.find(b,p+1);
-      }
-      return std::string::npos;
-    } // end of findStringBeginning
-
-    static std::string
-    stripSpaceAndStarAtBeginningOfCommentLine(const std::string& l)
-    {
-      if(!l.empty()){
-	std::string::size_type pc = 0;
-	auto found = false;
-	while((pc!=l.size())&&!(found)){
-	  if(!(isspace(l[pc]))){
-	    found = true;
-	  } else {
-	    ++pc;
-	  }
-	}
-	if(found){
-	  if(l[pc]=='*'){
-	    ++pc;
-	    found = false;
-	    while((pc!=l.size())&&!(found)){
-	      if(!(isspace(l[pc]))){
-		found = true;
-	      } else {
-		++pc;
-	      }
-	    }
-	    if(found){
-	      return l.substr(pc);
-	    } else {
-	      return "";
-	    }
-	  }
-	  return l.substr(pc);
-	}
-      }
-      return "";
+      this->openFile(f);
     }
 
     void
-    CxxTokenizer::treatString(std::string& l,
-			      const Token::size_type n,
-			      const std::string::size_type p)
+    CxxTokenizer::treatCharAsString(const bool b){
+      this->charAsString = b;
+    } // end of CxxTokenizer::treatCharAsString
+
+    void
+    CxxTokenizer::extractNumbers(const bool){
+    } // end of CxxTokenizer::extractNumbers
+
+    void
+    CxxTokenizer::openFile(const std::string& f)
     {
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("treatString: "+m));}
+	if(b){throw(std::runtime_error("CxxTokenizer::openFile: "+m));}
       };
-      if(p!=0){
-	for(const auto& t : splitStringAtSpaces(l.substr(0,p))){
-	  this->tokens.emplace_back(t,n);
+      std::ifstream file{f};
+      throw_if(!file,"unable to open file '"+f+"'");
+      Token::size_type n{0};
+      this->parseStream(file,n," of file '"+f+"'");
+    }
+
+    void
+    CxxTokenizer::parseString(const std::string& s)
+    {
+      std::istringstream iss(s);
+      Token::size_type n{0};
+      this->parseStream(iss,n," of string '"+s+"'");
+    } // end of CxxTokenizer::parseOneString
+    
+    void
+    CxxTokenizer::parseStream(std::istream& in,
+			      Token::size_type& n,
+			      const std::string& from)
+    {
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error("CxxTokenizer::parseStream: "+m));}
+      };
+      auto get_line = [&throw_if](std::istream& file,
+				  Token::size_type& ln){
+	auto line = std::string{};
+	auto c = true;
+	while(c){
+	  throw_if(file.eof(),"unexpected end of stream");
+	  throw_if(!file.good(),"error while parsing stream");
+	  auto nl = std::string{};
+	  std::getline(file,nl);
+	  ++ln;
+	  if(nl.empty()){
+	    c=false;
+	  } else {
+	    line += nl;
+	    if(line.back()=='\\'){
+	      line.pop_back();
+	    } else {
+	      c=false;
+	    }
+	  }
+	}
+	return line;
+      };
+      this->clear();
+      try{
+	while(!in.eof()){
+	  throw_if(!in.good(),"error while parsing stream");
+	  auto line = get_line(in,n);
+	  try{
+	    this->splitLine(line,n);
+	  } catch(std::runtime_error& e){
+	    throw(std::runtime_error(std::string(e.what())+".\n"+
+				     "Error at line: "+
+				     std::to_string(n)+from));
+	  }
+	}
+      } catch(...){
+	this->clear();
+	throw;
+      }
+    }
+
+    static bool is_cxx_separator(const std::string::value_type& c){
+      using ctype = std::string::value_type;
+      constexpr const std::array<ctype,26> s = {'?',';','/','!','&','*',
+						'|','{','}','[',']','(',
+						')','%','=','^',',',':',
+						'<','>','\'','\"',
+						'+','-','\\','.'};
+      return std::find(std::begin(s),std::end(s),c)!=std::end(s);
+    }
+    
+    static bool is_cxx_separator_or_space(const std::string::value_type& c){
+      return ((std::isspace(c)) or (is_cxx_separator(c)));
+    }
+    
+    static void advance(Token::size_type& o,
+			std::string::const_iterator& p,
+			Token::size_type n){
+      o += n;
+      std::advance(p,n);
+    }
+    
+    static void advance(Token::size_type& o,
+		       std::string::const_iterator& p,
+		       const std::string::const_iterator np){
+      o += Token::size_type(np-p);
+      p  = np;
+    }
+
+    static void ignore_space(Token::size_type& o,
+			     std::string::const_iterator& p,
+			     const std::string::const_iterator pe){
+      auto np =  std::find_if_not(p,pe,[](const std::string::value_type c){
+	  return std::isspace(c);});
+      advance(o,p,np);
+    }
+    
+    void
+    CxxTokenizer::treatChar(Token::size_type& o,
+			    std::string::const_iterator& p,
+			    const std::string::const_iterator pe,
+			    const Token::size_type n)
+    {
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error("CxxTokenizer::treatCChar: "+m));}
+      };
+      if(this->charAsString){
+	this->treatString(o,p,pe,n,'\'');
+      } else {
+	const auto pn  = std::next(p,1);
+	const auto pn2 = std::next(p,2);
+	const auto pn3 = std::next(p,3);
+	throw_if(pn==pe,"unterminated char");
+	if(*pn=='\\'){
+	  const auto pn4 = std::next(p,4);
+	  throw_if((pn2==pe)||(pn3==pe),"unterminated char");
+	  throw_if(*pn3!='\'',"unexpected token '"+std::string(1u,*pn3)+"'");
+	  this->tokens.emplace_back(std::string(p,pn4),n,o,Token::Char);
+	  advance(o,p,pn4);
+	} else {
+	  throw_if(*pn2!='\'',"unexpected token '"+std::string(1u,*pn2)+"'");
+	  this->tokens.emplace_back(std::string(p,pn3),n,o,Token::Char);
+	  advance(o,p,pn3);
 	}
       }
-      l.erase(0,p);
-      auto ps = l.begin();
-      ++ps;
+    }
+
+    void
+    CxxTokenizer::treatString(Token::size_type& o,
+			      std::string::const_iterator& p,
+			      const std::string::const_iterator pe,
+			      const Token::size_type n,
+			      const char e)
+    {
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error("CxxTokenizer::treatString: "+m));}
+      };
+      auto ps = std::next(p,1);
       auto found=false;
-      for(;(ps!=l.end())&&(!found);++ps){
-	if(*ps=='\"'){
+      for(;(ps!=pe)&&(!found);++ps){
+	if(*ps==e){
 	  std::string::const_reverse_iterator ps2(ps);
-	  const std::string::const_reverse_iterator pse = l.rend();
+	  const std::string::const_reverse_iterator pse(p);
 	  found=true;
-	  while((ps2!=pse)&&(*ps2=='\\')){
+	  while((ps2!=pse)&&(*ps2=='\'')){
 	    found = !found;
 	    ++ps2;
 	  }
 	}
       }
-      throw_if(!found,"found no matching \" to close string\n"
-	       "Error at l : "+std::to_string(n));
-      if(!this->tokens.empty()){
-	if(this->tokens.back().flag==Token::String){
-	  const auto old_value =
-	    this->tokens.back().value.substr(0,this->tokens.back().value.size()-1);
-	  const auto new_value = std::string(l.begin()+1,ps);
-	  this->tokens.back().value = old_value+new_value;
-	} else {
-	  this->tokens.emplace_back(std::string(l.begin(),ps),n,Token::String);
-	}
+      throw_if(!found,"found no matching '"+std::string(1u,e)+
+	       "' to close string\n");
+      if(((!this->tokens.empty()) and
+	  (this->tokens.back().flag==Token::String)) and (*p=='\"')){
+	auto& value = this->tokens.back().value;
+	this->tokens.back().value = value.substr(0,value.size()-1)+
+	  std::string(p+1,ps);
       } else {
-	this->tokens.emplace_back(std::string(l.begin(),ps),n,Token::String);
+	this->tokens.emplace_back(std::string(p,ps),n,o,Token::String);
       }
-      l.erase(l.begin(),ps);
+      advance(o,p,ps);
     }
 
     void
-    CxxTokenizer::treatCxxComment(std::string& l,
-				  const Token::size_type n,
-				  const std::string::size_type p)
+    CxxTokenizer::try_join(Token::size_type& o,
+			   std::string::const_iterator& p,
+			   const std::string::const_iterator pe,
+			   const Token::size_type n,
+			   const char c)
     {
-      if(p!=0){
-	for(const auto&t : splitStringAtSpaces(l.substr(0,p))){
-	  this->tokens.emplace_back(t,n);
-	}
-      }
-      l.erase(0,p);
-      if((l.size()>=3u)&&((l[1]=='/')&&(l[2]=='!'))){
-	// doxygen comment
-	if((l.size()>=4u)&&(l[3]=='<')){
-	  // doxygen backward comment
-	  if(this->tokens.empty()){
-	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(l.substr(4)),
-					  n,Token::Comment);
-	  } else {
-	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(l.substr(4)),
-					  n,Token::DoxygenBackwardComment);
-	  }
-	} else {
-	  // standard doxygen command
-	  if(this->tokens.back().flag==Token::DoxygenComment){
-	    if(!this->tokens.back().value.empty()){
-	      this->tokens.back().value += '\n';
-	    }
-	    this->tokens.back().value += stripSpaceAndStarAtBeginningOfCommentLine(l.substr(3));
-	  } else {
-	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(l.substr(3)),
-					  n,Token::DoxygenComment);
-	  }
-	}
+      const auto pn=std::next(p,1);
+      if((pn!=pe)&&(*pn==c)){
+	this->tokens.emplace_back(std::string{*p,*pn},n,o,Token::Standard);
+	advance(o,p,2u);
       } else {
-	// standard C++ comment
-	this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(l.substr(2)),
-				      n,Token::Comment);
-      }
-      l.clear();
-    }
-
-    void
-    CxxTokenizer::treatCComment(std::string& l,
-				const Token::size_type n,
-				const std::string::size_type p)
-    {
-      if(p!=0){
-	for(const auto& t : splitStringAtSpaces(l.substr(0,p))){
-	  this->tokens.emplace_back(t,n);
-	}
-      }
-      l.erase(0,p);
-      const auto p2 = l.find("*/");
-      auto comment = std::string{};
-      if(p2==std::string::npos){
-	comment = l.substr(2);
-	l.clear();
-	this->cStyleCommentOpened=true;  
-      } else {
-	comment = l.substr(2,p2-2);
-	l.erase(0,p2+2);
-      }
-      if((comment.size()>=1)&&(comment[0]=='!')){
-	// doxygen comment
-	if((comment.size()>=2)&&(comment[1]=='<')){
-	  // backward doxygen comment
-	  if(this->tokens.empty()){
-	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
-				      n,Token::Comment);
-	  } else {
-	    this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(2)),
-				      n,Token::DoxygenBackwardComment);
-	  }
-	} else {
-	  this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment.substr(1)),
-				    n,Token::DoxygenComment);
-	}
-      } else {
-	// standard C++ comment
-	this->tokens.emplace_back(stripSpaceAndStarAtBeginningOfCommentLine(comment),
-				  n,Token::Comment);
+	this->tokens.emplace_back(std::string(1u,*p),n,o,Token::Standard);
+	advance(o,p,1u);
       }
     }
 
     void
-    CxxTokenizer::treatCChar(std::string& l,
-			     const Token::size_type n,
-			     const std::string::size_type p)
+    CxxTokenizer::try_join(Token::size_type& o,
+			   std::string::const_iterator& p,
+			   const std::string::const_iterator pe,
+			   const Token::size_type n,
+			   const char c1,
+			   const char c2)
     {
-      auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::splitLine : "+m));}
-      };
-      if(this->charAsString){
-	if(p!=0){
-	  for(const auto& t : splitStringAtSpaces(l.substr(0,p))){
-	    this->tokens.emplace_back(t,n);
-	  }
-	}
-	l.erase(0,p);
-	auto ps = l.begin();
-	++ps;
-	bool found=false;
-	for(;(ps!=l.end())&&(!found);++ps){
-	  if((*ps=='\'')&&(*(ps-1)!='\\')){
-	    found=true;
-	  }
-	}
-	throw_if(!found,"found no matching \' to close string.\n"
-		 "Error at l : "+std::to_string(n));
-	this->tokens.emplace_back(std::string(l.begin(),ps),n,Token::String);
-	l.erase(l.begin(),ps);
+      const auto pn=std::next(p,1);
+      if((pn!=pe)&&((*pn==c1)||(*pn==c2))){
+	this->tokens.emplace_back(std::string{*p,*pn},n,o,Token::Standard);
+	advance(o,p,2u);
       } else {
-	if(p!=0){
-	  for(const auto& t : splitStringAtSpaces(l.substr(0,p))){
-	    this->tokens.emplace_back(t,n);
-	  }
-	}
-	l.erase(0,p);
-	throw_if(l.length()<3,"error while reading char (1)."
-		 "Error at l : "+std::to_string(n));
-	if(l[1]=='\\'){
-	  throw_if(l.length()<4,"error while reading char (2).\n"
-		   "Error at l : "+std::to_string(n));
-	  throw_if(l[3]!='\'',"error while reading char (3).\n"
-		   "Error at l : "+std::to_string(n));
-	  this->tokens.emplace_back(l.substr(0,4),n,Token::Char);
-	  l.erase(0,4);
-	} else {
-	  throw_if(l[2]!='\'',
-		   std::string("error while reading char "
-			  "(expected to read ', read '")+
-		   l[2]+"').\n"
-		   "Error at l : "+std::to_string(n));
-	  this->tokens.emplace_back(l.substr(0,3),n,Token::Char);
-	  l.erase(0,3);
-	}
+	this->tokens.emplace_back(std::string(1u,*p),n,o,Token::Standard);
+	advance(o,p,1u);
       }
     }
-    
+
     void
-    CxxTokenizer::splitLine(std::string line, const unsigned int lineNumber)
-    {
-      using namespace std;
-      auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::splitLine : "+m));}
-      };
-      if(this->cStyleCommentOpened){
-	const auto pos3 = line.find("*/");
-	throw_if((this->tokens.empty())||
-		 ((this->tokens.back().flag!=Token::Comment)&&
-		  (this->tokens.back().flag!=Token::DoxygenComment)&&
-		  (this->tokens.back().flag!=Token::DoxygenBackwardComment)),
-		 "internal error (previous token is not a comment)");
-	if(!this->tokens.back().value.empty()){
-	  this->tokens.back().value += '\n';
-	}
-	if(pos3==string::npos){
-	  this->tokens.back().value += 
-	    stripSpaceAndStarAtBeginningOfCommentLine(line);
-	  return;
-	}
-	this->tokens.back().value +=
-	  stripSpaceAndStarAtBeginningOfCommentLine(line.substr(0,pos3));
-	line.erase(0,pos3+2);
-	this->cStyleCommentOpened=false;
-      }
-      while(!line.empty()){
-	auto bString=false;
-	auto bCxxComment=false;
-	auto bCComment=false;
-	auto bChar=false;
-	string::size_type pos[4];
-	const string::size_type * min_pos;
-
-	pos[0] = findStringBeginning(line,'"');
-	pos[1] = line.find("//");
-	pos[2] = line.find("/*");
-	pos[3] = findStringBeginning(line,'\'');
-      
-	min_pos=min_element(pos,pos+4);
-
-	if(*min_pos!=string::npos){
-	  const auto diff = min_pos-pos;
-	  bString=(diff==0);
-	  bCxxComment=(diff==1);
-	  bCComment=(diff==2);
-	  bChar = (diff==3);
-	}
-
-	if(bString){
-	  this->treatString(line,lineNumber,pos[0]);
-	} else if (bCxxComment){
-	  this->treatCxxComment(line,lineNumber,pos[1]);
-	} else if(bCComment){
-	  this->treatCComment(line,lineNumber,pos[2]);
-	} else if(bChar){
-	  this->treatCChar(line,lineNumber,pos[3]);
-	} else {
-	  for(const auto&t : splitStringAtSpaces(line)){
-	    this->tokens.emplace_back(t,lineNumber);
-	  }
-	  line.clear();
-	}
-      }
-    }
-    
-    std::string
-    CxxTokenizer::readNumber(std::string::const_iterator& p,
-			     const std::string::const_iterator pe)
+    CxxTokenizer::readNumber(Token::size_type& o,
+			     std::string::const_iterator& p,
+			     const std::string::const_iterator pe,
+			     const Token::size_type n)
     {
       auto throw_if = [](const bool b,const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::readNumber : "+m));}
+	if(b){throw(std::runtime_error("CxxTokenizer::readNumber: "+m));}
       };
       auto is_binary = [](const char c){
 	return (c=='0')||(c=='1');
@@ -372,7 +281,7 @@ namespace tfel{
 		((c>='A')&&(c<='F')));
       };
       const auto b=p;
-      // if true, reading a float, otherwise
+      // if true, reading a float point value, otherwise
       // could be a float or an integer
       auto is_float  = false;
       auto is_signed = false;
@@ -496,14 +405,18 @@ namespace tfel{
 	      // long long suffix
 	      ++p;
 	      if((p!=pe)&&((*p=='u')||(*p=='U'))){
-		throw_if(is_float,"invalid number (floating points can't be unsigned)");
-		throw_if(is_signed,"invalid number (unsigned can't be signed)");
+		throw_if(is_float,"invalid number (floating points "
+			 "can't be unsigned)");
+		throw_if(is_signed,"invalid number (unsigned "
+			 "can't be signed)");
 		++p;
 	      }
 	    } else if((p!=pe)&&((*p=='u')||(*p=='U'))){
 	      // long unsigned 
-	      throw_if(is_float,"invalid number (floating points can't be unsigned)");
-	      throw_if(is_signed,"invalid number (unsigned can't be signed)");
+	      throw_if(is_float,"invalid number (floating points "
+		       "can't be unsigned)");
+	      throw_if(is_signed,"invalid number (unsigned "
+		       "can't be signed)");
 	      ++p;
 	    }
 	  } else if((*p=='u')||(*p=='U')){
@@ -535,304 +448,274 @@ namespace tfel{
 	}
       }
       throw_if((p!=pe)&&(*p=='.'),"invalid number");
-      return std::string{b,p};
+      this->tokens.emplace_back(std::string{b,p},n,o,Token::Standard);
+      const auto d = p-b;
+      p=b;
+      advance(o,p,d);
     } // end of CxxTokenizer::readNumber
-  
+
     void
-    CxxTokenizer::extractNumbers(std::vector<std::string>& res,
-				 const std::string& s)
+    CxxTokenizer::treatCComment(Token::size_type& o,
+				std::string::const_iterator& p,
+				const std::string::const_iterator pe,
+				const Token::size_type n)
     {
-      auto p = s.begin();
-      const auto pe = s.end();
-      char buf[3];
-      buf[1] = '\0';
-      buf[2] = '\0';
+      auto throw_if = [](const bool b,const std::string& m){
+	if(b){throw(std::runtime_error("CxxTokenizer::treatCComment: "+m));}
+      };
+      auto get_end = [&pe](std::string::const_iterator e){
+	while(e!=pe){
+	  if(*e=='*'){
+	    const auto en = std::next(e);
+	    if(en==pe){
+	      return pe;
+	    } else if(*en=='/'){
+	      return e;
+	    }
+	  }
+	  ++e;
+	}
+	return pe;
+      };
+      throw_if((p==pe)||(*p!='/'),"invalid call");
+      advance(o,p,1u);
+      throw_if((p==pe)||(*p!='*'),"invalid call");
+      advance(o,p,1u);
+      auto flag = Token::Comment;
+      if((p!=pe)&&(*p=='!')){
+	advance(o,p,1u);
+	if((p!=pe)&&(*p=='<')){
+	  flag = this->tokens.empty() ? Token::Comment :
+	    Token::DoxygenBackwardComment;
+	  advance(o,p,1u);
+	} else {
+	  flag = this->tokens.empty() ? Token::Comment :
+	    Token::DoxygenComment;
+	}
+      }
+      ignore_space(o,p,pe);
+      auto e = get_end(p);
+      this->tokens.emplace_back(std::string{p,e},n,o,flag);
+      advance(o,p,e-p);
+      if(e==pe){
+	this->cStyleCommentOpened=true;  
+      } else {
+	advance(o,p,2u);
+      }
+    }
+
+    void
+    CxxTokenizer::treatCxxComment(Token::size_type& o,
+				  std::string::const_iterator& p,
+				  const std::string::const_iterator pe,
+				  const Token::size_type n)
+    {
+      auto throw_if = [](const bool b,const std::string& m){
+	if(b){throw(std::runtime_error("CxxTokenizer::treatCxxComment: "+m));}
+      };
+      throw_if((p==pe)||(*p!='/'),"invalid call");
+      advance(o,p,1u);
+      throw_if((p==pe)||(*p!='/'),"invalid call");
+      advance(o,p,1u);
+      auto flag = Token::Comment;
+      if((p!=pe)&&(*p=='!')){
+	advance(o,p,1u);
+	if((p!=pe)&&(*p=='<')){
+	  flag = this->tokens.empty() ? Token::Comment :
+	    Token::DoxygenBackwardComment;
+	  advance(o,p,1u);
+	} else {
+	  flag = this->tokens.empty() ? Token::Comment :
+	    Token::DoxygenComment;
+	}
+      }
+      ignore_space(o,p,pe);
+      this->tokens.emplace_back(std::string{p,pe},n,o,flag);
+      advance(o,p,pe-p);
+    }
+
+    void
+    CxxTokenizer::treatPreprocessorDirective(Token::size_type& o,
+					     std::string::const_iterator& p,
+					     const std::string::const_iterator b,
+					     const std::string::const_iterator pe,
+					     const Token::size_type n)
+    {
+      auto is_preprocessor_keyword = [](const std::string& k){
+	const std::array<const char*,11> keys = {"#define","#undef" ,"#include",
+						 "#line"  ,"#error" ,"#if",
+						 "#ifdef" ,"#ifndef","elif",
+						 "#else","#endif"};
+	return std::find(keys.begin(),keys.end(),k)!=keys.end();
+      };
+      auto throw_if = [](const bool c, const std::string& m){
+	if(c){throw(std::runtime_error("CxxTokenizer::treatPreprocessorDirective: "+m));}
+      };
+      // preprocessor
+      throw_if((p==pe)||(*p!='#'),"invalid call");
+      this->tokens.emplace_back(std::string(1u,'#'),n,o,Token::Preprocessor);
+      advance(o,p,1);
+      ignore_space(o,p,pe);
+      throw_if(p==pe,"lonely ‘#’");
+      auto pn = std::find_if(p,pe,is_cxx_separator_or_space);
+      throw_if(p==pn,"unexpected token '"+std::string(1u,*p)+"'");
+      const auto key = std::string{p,pn};
+      throw_if(!is_preprocessor_keyword('#'+key),
+	       "invalid preprocessor keyword '"+key+"'");
+      this->tokens.emplace_back(std::string{p,pn},n,o,Token::Preprocessor);
+      advance(o,p,pn);
+      // this->treatStandardLine(o,p,b,pe,n);
+      if(p!=pe){
+	this->tokens.emplace_back(std::string{p,pe},n,o,Token::Standard);
+	advance(o,p,pe);
+      }
+    } // end of CxxTokenizer::treatPreprocessorDirective
+    
+    void
+    CxxTokenizer::treatStandardLine(Token::size_type& o,
+				    std::string::const_iterator& p,
+				    const std::string::const_iterator b,
+				    const std::string::const_iterator pe,
+				    const Token::size_type n)
+    {
+      auto throw_if = [](const bool c, const std::string& m){
+	if(c){throw(std::runtime_error("CxxTokenizer::treatStandardLine: "+m));}
+      };
+      ignore_space(o,p,pe);
       while(p!=pe){
-	if(*p=='.'){
-	  if(p==s.begin()){
-	    if(s.size()!=1){
-	      ++p;
-	      if(isdigit(*p)){
-		--p;
-		res.push_back(CxxTokenizer::readNumber(p,pe));
-	      } else {
-		--p;
-		buf[0] = *p;
-		res.push_back(buf);
-		++p;
-	      }
-	    } else {
-	      buf[0] = *p;
-	      res.push_back(buf);
-	      ++p;
-	    }
-	  }else{
-	    buf[0] = *p;
-	    res.push_back(buf);
-	    ++p;
+	if(*p=='#'){
+	  throw_if(true,"stray ‘#’");
+	} else if(*p=='\\'){
+	  throw_if(true,"stray ‘\’");
+	} else if(std::isdigit(*p)){
+	  this->readNumber(o,p,pe,n);
+	} else if(*p=='\"'){
+	  // c-strings
+	  this->treatString(o,p,pe,n,'\"');
+	} else if(*p=='\''){
+	  // c-char
+	  this->treatChar(o,p,pe,n);
+	} else if(*p=='<'){
+	  this->try_join(o,p,pe,n,'<','=');
+	} else if(*p=='>'){
+	  this->try_join(o,p,pe,n,'>','=');
+	} else if(*p=='.'){
+	  auto pn = std::next(p);
+	  if((pn!=pe)&&(std::isdigit(*pn))){
+	    this->readNumber(o,p,pe,n);
+	  } else {
+	    this->try_join(o,p,pe,n,'.','*');
 	  }
+	} else if(*p==':'){
+	  this->try_join(o,p,pe,n,':');
 	} else if((*p=='+')||(*p=='-')){
-	  if(p==s.begin()){
-	    if(s.size()!=1){
-	      ++p;
-	      if(isdigit(*p)){
-		--p;
-		res.push_back(CxxTokenizer::readNumber(p,pe));
-		
-	      } else if (*p=='='){
-		--p;
-		buf[0] = *p;
-		buf[1] = '=';
-		res.push_back(buf);
-		buf[1] = '\0';
-		++(++p);
-	      }else {
-		--p;
-		buf[0] = *p;
-		res.push_back(buf);
-		++p;
-	      }
+	  auto pn = std::next(p);
+	  if((pn!=pe)&&(*pn==*p)){
+	    this->tokens.emplace_back(std::string{p,std::next(pn)},n,o,
+				      Token::Standard);
+	    advance(o,p,2u);
+	  } else if((*p=='-')&&((pn!=pe)&&(*pn=='>'))){
+	    auto pn2 = std::next(p);
+	    if((pn2!=pe)&&(*pn=='*')){
+	      this->tokens.emplace_back("->*",n,o,Token::Standard);
+	      advance(o,p,3u);
 	    } else {
-	      buf[0] = *p;
-	      res.push_back(buf);
-	      ++p;
+	      this->tokens.emplace_back("->",n,o,Token::Standard);
+	      advance(o,p,2u);
 	    }
-	  }else{
-	    buf[0] = *p;
-	    res.push_back(buf);
-	    ++p;
-	  }
-	} else if(isdigit(*p)){
-	  res.push_back(CxxTokenizer::readNumber(p,pe));
-	} else {
-	  auto pp = find(p,pe,'+');
-	  auto pm = find(p,pe,'-');
-	  auto pd = find(p,pe,'.');
-	  auto word = std::string{};
-	  if((pp==pe)&&(pm==pe)&&(pd==pe)){
-	    // this is the end
-	    copy(p,pe,back_inserter(word));
-	    res.push_back(word);
-	    p=pe;	      
+	  } else if(((p==b)||(is_cxx_separator_or_space(*(std::prev(p)))))&&
+		    ((pn!=pe)&&((*pn=='.')||(std::isdigit(*pn))))){
+	    this->readNumber(o,p,pe,n);
 	  } else {
-	    if((pp-p<pm-p)&&(pp-p<pd-p)){
-	      // next one is '+'
-	      copy(p,pp,back_inserter(word));
-	      p=pp;
-	    } else if((pm-p<pp-p)&&(pm-p<pd-p)){
-	      // next one is '-'
-	      copy(p,pm,back_inserter(word));
-	      p=pm;
-	    } else {
-	      // next one is '.'
-	      copy(p,pd,back_inserter(word));
-	      p=pd;
-	    }
-	    res.push_back(word);
-	    buf[0] = *p;
-	    res.push_back(buf);
-	    ++p;
+	    this->try_join(o,p,pe,n,'=');
 	  }
-	}
-      }
-    } // end of CxxTokenizer::extractNumbers
-
-    void
-    CxxTokenizer::splitString(std::vector<std::string>& res,
-			      std::string s, const std::string delim)
-    {
-      auto posb = std::string::size_type{0};
-      while((!s.empty())&&(posb!=std::string::npos)){
-	posb = s.find(delim);
-	if(posb!=0){
-	  res.push_back(std::string(s,0,posb));
-	}
-	if(posb!=std::string::npos){
-	  res.push_back(delim);
-	  s.erase(0,posb+delim.length());
-	} else {
-	  s.erase(0,posb);
-	}
-      }
-    }
-
-    void
-    CxxTokenizer::splitString2(std::vector<std::string>& res,std::string s)
-    {
-      auto posb = std::string::size_type{0};
-      while((!s.empty())&&(posb!=std::string::npos)){
-	posb = s.find(">");
-	if(posb!=0){
-	  res.push_back(std::string(s,0,posb));
-	}
-	if(posb!=std::string::npos){
-	  if((posb+1<s.length())&&(s[posb+1]=='>')){
-	    res.push_back(">>");
-	    s.erase(0,posb+2);
-	    ++posb;
+	} else if (*p=='/'){
+	  auto pn = std::next(p);
+	  if((pn!=pe)&&(*pn=='/')){
+	    this->treatCxxComment(o,p,pe,n);
+	  } else if((pn!=pe)&&(*pn=='*')){
+	    this->treatCComment(o,p,pe,n);
 	  } else {
-	    res.push_back(">");
-	    s.erase(0,posb+1);
+	    this->try_join(o,p,pe,n,'=');
 	  }
-	} else {
-	  s.erase(0,posb);
-	}
-      }
-    }
-
-    void
-    CxxTokenizer::splitString3(std::vector<std::string>& res,std::string s)
-    {
-      auto posb = std::string::size_type{0};
-      while((!s.empty())&&(posb!=std::string::npos)){
-	posb = s.find("<");
-	if(posb!=0){
-	  res.push_back(std::string(s,0,posb));
-	}
-	if(posb!=std::string::npos){
-	  if((posb+1<s.length())&&(s[posb+1]=='<')){
-	    res.push_back("<<");
-	    s.erase(0,posb+2);
-	    ++posb;
+	} else if((*p=='*')||(*p=='%')||
+		  (*p=='!')||(*p=='=')){
+	  this->try_join(o,p,pe,n,'=');
+	} else if(*p=='&'){
+	  this->try_join(o,p,pe,n,'&');
+	} else if(*p=='.'){
+	  auto pn = std::next(p);
+	  if((pn!=pe)&&(std::isdigit(*pn))){
+	    this->readNumber(o,p,pe,n);
 	  } else {
-	    res.push_back("<");
-	    s.erase(0,posb+1);
+	    this->try_join(o,p,pe,n,'*');
 	  }
-	} else {
-	  s.erase(0,posb);
+	} else if(*p=='|'){
+	  this->try_join(o,p,pe,n,'|','=');
+	} else if(std::isdigit(*p)){
+	  this->readNumber(o,p,pe,n);
+	} else{
+	  auto pw = std::find_if(p,pe,is_cxx_separator_or_space);
+	  if(p==pw){
+	    this->tokens.emplace_back(std::string(1u,*p),n,Token::Standard);	      
+	    advance(o,p,1u);
+	  } else {
+	    this->tokens.emplace_back(std::string{p,pw},n,Token::Standard);
+	    advance(o,p,pw);
+	  }
 	}
+	ignore_space(o,p,pe);
       }
     }
-
-    void 
-    CxxTokenizer::join(std::vector<std::string>& src,
-		       const std::string& s1,
-		       const std::string& s2)
-    {
-      if(src.empty()){
-	return;
-      }
-      auto res = std::vector<std::string>{};
-      auto p=src.begin();
-      res.push_back(*p);
-      ++p;
-      for(;p!=src.end();++p){
-	if((res.back()==s1)&&(*p==s2)){
-	  res.back().append(s2);
-	} else {
-	  res.push_back(*p);
-	}
-      }
-      src.swap(res);
-    } // end of CxxTokenizer::join
-
+    
     void
-    CxxTokenizer::splitAtCxxTokenSperator(std::vector<std::string>& t)
+    CxxTokenizer::splitLine(const std::string& line,
+			    const Token::size_type n)
     {
-      using namespace std;
-      // '.' deserves a special treatement.
-      // '<' and '>' deserve special treatements.
-      constexpr char Separator[20] = {'?',';','/','!','&','*',
-				      '|','{','}','[',']','(',
-				      ')','%','=','^',',',':',
-				      '<','>'};
-      vector<string> res(t);
-      vector<string> init;
-      vector<string>::const_iterator p;
-      unsigned int i;
-      char buf[2] = {'\0','\0'};
-      for(i=0;i<sizeof(Separator)/sizeof(char);++i){
-	switch(Separator[i]){
-	case '<' :
-	  // Special care is taken for '<' as "< <" and "<<" are both 
-	  // valid keywords 
-	  init.swap(res);
-	  res.clear();    
-	  for(p=init.begin();p!=init.end();++p){
-	    if(p->find("<")!=string::npos){
-	      vector<string> v;
-	      splitString3(v,*p);
-	      res.insert(res.end(),v.begin(),v.end());
-	    } else {
-	      res.push_back(*p);
-	    }
-	  }
-	  break;
-	case '>' :
-	  init.swap(res);
-	  res.clear();    
-	  for(p=init.begin();p!=init.end();++p){
-	    if(p->find(">")!=string::npos){
-	      vector<string> v;
-	      splitString2(v,*p);
-	      res.insert(res.end(),v.begin(),v.end());
-	    } else {
-	      res.push_back(*p);
-	    }
-	  }
-	  break;
-	default:
-	  init.swap(res);
-	  res.clear();
-	  for(p=init.begin();p!=init.end();++p){
-	    if(p->find(Separator[i])!=string::npos){
-	      vector<string> v;
-	      buf[0] = Separator[i];
-	      splitString(v,*p,buf);
-	      res.insert(res.end(),v.begin(),v.end());
-	    } else {
-	      res.push_back(*p);
-	    }
-	  }
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error("CxxTokenizer::splitLine: "+m));}
+      };
+      auto b        = line.begin();
+      auto p        = line.begin();
+      const auto pe = line.end();
+      // offset in line
+      auto o = Token::size_type{};
+      if(this->cStyleCommentOpened){
+	const auto pos3 = line.find("*/");
+	throw_if((this->tokens.empty())||
+		 ((this->tokens.back().flag!=Token::Comment)&&
+		  (this->tokens.back().flag!=Token::DoxygenComment)&&
+		  (this->tokens.back().flag!=Token::DoxygenBackwardComment)),
+		 "internal error (previous token is not a comment)");
+	if(!this->tokens.back().value.empty()){
+	  this->tokens.back().value += '\n';
 	}
-
-      }
-
-      if(this->bExtractNumbers){
-	init.swap(res);
-	res.clear();
-	for(const auto& ti : init){
-	  auto v = std::vector<std::string>{};
-	  CxxTokenizer::extractNumbers(v,ti);
-	  res.insert(res.end(),v.begin(),v.end());
+	if(pos3==std::string::npos){
+	  this->tokens.back().value += line;
+	    //	    stripSpaceAndStarAtBeginningOfCommentLine(line);
+	  return;
 	}
+	advance(o,p,pos3+2);
+	this->cStyleCommentOpened=false;
       }
-      join(res,"/","/"); 
-      join(res,"/","*");    
-      join(res,"*","/");
-      join(res,":",":");
-      join(res,"-",">");
-      join(res,"<","<");
-      join(res,"<","=");
-      join(res,">","=");
-      join(res,"+","+");
-      join(res,"-","-");
-      join(res,"+","=");
-      join(res,"-","=");
-      join(res,"*","=");
-      join(res,"/","=");
-      join(res,"%","=");
-      join(res,"|","=");
-      join(res,"!","=");
-      join(res,"&","&");
-      join(res,"=","=");
-      join(res,".","*");
-      join(res,"->","*");    
-      join(res,"|","|");
-      t.swap(res);
-    }
+      ignore_space(o,p,pe);
+      if((p!=pe)&&(*p=='#')){
+	this->treatPreprocessorDirective(o,p,b,pe,n);
+      } else {
+	this->treatStandardLine(o,p,b,pe,n);
+      }
+    } // end of CxxTokenizer::splitLine
 
     void
     CxxTokenizer::stripComments(void){
-      for(auto p=this->tokens.begin();p!=this->tokens.end();++p){
+      for(auto p=this->tokens.begin();p!=this->tokens.end();){
 	if(p->flag==Token::Comment){
 	  if(this->comments.find(p->line)!=this->comments.end()){
 	    this->comments[p->line] += ' ';
 	  }
 	  this->comments[p->line] = p->value;
-	  p = --(this->tokens.erase(p));
-	}
-	if(p->flag==Token::DoxygenComment){
+	  p = this->tokens.erase(p);
+	} else if(p->flag==Token::DoxygenComment){
 	  auto p2 = p;
 	  ++p2;
 	  if(p2!=this->tokens.end()){
@@ -846,9 +729,8 @@ namespace tfel{
 	      p2->value = p->value+"\n"+p2->value;
 	    }
 	  }
-	  p = --(this->tokens.erase(p));
-	}
-	if(p->flag==Token::DoxygenBackwardComment){
+	  p = this->tokens.erase(p);
+	} else if(p->flag==Token::DoxygenBackwardComment){
 	  auto p2 = p;
 	  --p2;
 	  if(p2!=this->tokens.begin()){
@@ -856,131 +738,13 @@ namespace tfel{
 	      p2->comment += p->value;
 	    }
 	  }
-	  p = --(this->tokens.erase(p));
+	  p = this->tokens.erase(p);
+	} else {
+	  ++p;
 	}
       }
     } // end of CxxTokenizer::stripComments
-
-    void 
-    CxxTokenizer::splitTokens(void)
-    {
-      for(auto p=this->tokens.begin();p!=this->tokens.end();++p){
-	if(p->flag==Token::Standard){
-	  std::vector<std::string> splittedTokens;
-	  splittedTokens.push_back(p->value);
-	  splitAtCxxTokenSperator(splittedTokens);
-	  auto line = p->line;
-	  auto p2 = splittedTokens.begin();
-	  auto current=p;
-	  for(;p2!=splittedTokens.end();++p2){
-	    p = this->tokens.insert(current,Token(*p2,line));
-	  }
-	  this->tokens.erase(current);
-	}
-      }
-    } // end of CxxTokenizer::splitStandardTokens
-  
-    void
-    CxxTokenizer::openFile(const std::string& f)
-    {
-      this->clear();
-      try{
-	std::ifstream file{f};
-	if(!file){
-	  throw(std::runtime_error("CxxTokenizer::openFile: "
-				   "unable to open file '"+f+"'"));
-	}
-	unsigned int lineNumber{0};
-	while(!file.eof()){
-	  if(!file.good()){
-	    throw(std::runtime_error("CxxTokenizer::openFile: "
-				     "error while reading file '"+f+"'"));
-	  }
-	  auto line = std::string{};
-	  getline(file,line);
-	  ++lineNumber;
-	  if(!line.empty()){
-	    this->splitLine(line,lineNumber);
-	  }
-	}
-	this->treatPreprocessorDirectives();
-	this->splitTokens();
-	file.close();
-      } catch(...){
-	this->clear();
-	throw;
-      }
-    }
-
-    void
-    CxxTokenizer::parseString(const std::string& s)
-    {
-      this->clear();
-      try{
-	this->splitLine(s,0u);
-	this->treatPreprocessorDirectives();
-	this->splitTokens();
-      } catch(...){
-	this->clear();
-	throw;
-      }
-    } // end of CxxTokenizer::parseOneString
-
-    CxxTokenizer::CxxTokenizer() = default;
-  
-    CxxTokenizer::CxxTokenizer(const std::string& f)
-      : CxxTokenizer()
-    {
-      this->openFile(f);
-    }
-
-    void
-    CxxTokenizer::treatCharAsString(const bool b){
-      this->charAsString = b;
-    } // end of CxxTokenizer::treatCharAsString
-
-    void
-    CxxTokenizer::extractNumbers(const bool b){
-      this->bExtractNumbers = b;
-    } // end of CxxTokenizer::extractNumbers
-
-    void
-    CxxTokenizer::treatPreprocessorDirectives(void)
-    {
-      for(const auto& k : {"#define","#undef","#include",
-	    "#line","#error","#if","#ifdef",
-	    "#ifndef","elif","#else","#endif"}){
-	for(auto p = this->tokens.begin();p!=this->tokens.end();++p){
-	  if(p->flag==Token::Standard){
-	    const auto pos=p->value.find(k);
-	    if(pos!=std::string::npos){
-	      auto b=p;
-	      b->flag=Token::Preprocessor;
-	      ++p;
-	      if(p==this->tokens.end()){
-		--p;
-	      } else if(p->line!=b->line){
-		--p;
-	      } else {
-		while((p->line==b->line)&&(p!=this->tokens.end())){
-		  const auto current = p;
-		  ++p;
-		  if((current->flag!=Token::Comment)&&
-		     (current->flag!=Token::DoxygenComment)&&
-		     (current->flag!=Token::DoxygenBackwardComment)){
-		    b->value.append(" ");
-		    b->value.append(current->value);
-		    this->tokens.erase(current);
-		  }
-		}
-		--p;
-	      }
-	    }
-	  }
-	}
-      }
-    } // end of CxxTokenizer::treatPreprocessorDirectives
-
+    
     void 
     CxxTokenizer::printFileTokens(std::ostream& out) const
     {
@@ -1064,62 +828,15 @@ namespace tfel{
       return true;
     } // end of CxxTokenizer::isValidFunctionIdentifier
 
-    CxxTokenizer::TokensContainer::iterator
-    CxxTokenizer::joinPreviousCurrentNext(CxxTokenizer::TokensContainer& res,
-					  CxxTokenizer::TokensContainer& src,
-					  CxxTokenizer::TokensContainer::iterator p)
-    {
-      bool previous=false;
-      bool next=false;
-      if(p==src.end()){
-	return p;
-      }
-      auto b=p;
-      ++b;
-      if(p!=src.begin()){
-	auto a=std::prev(p);
-	if(a->line==p->line){
-	  previous=true;
-	}
-      }
-      if(b!=src.end()){
-	if(b->line==p->line){
-	  next=true;
-	}
-      }
-      if(res.empty()){
-	throw(std::runtime_error("CxxTokenizer::joinPreviousCurrentNext: "
-				 "internal error \"::\"\n"
-				 "Error at line: "+std::to_string(p->line)));
-      }
-      if(previous&&next){
-	res.back().value.append(p->value+b->value);
-	return b;
-      }
-      if(previous){
-	res.back().value.append(p->value);
-	return p;
-      }
-      if(next){
-	res.push_back(*p);
-	res.back().value.append(b->value);
-	return b;
-      }
-      res.push_back(*p);
-      return p;    
-    } // end of CxxTokenizer::joinPreviousCurrentNext
-
     const Token&
     CxxTokenizer::operator[](const size_type i) const
     {
       if(i>=this->size()){
 	throw(std::out_of_range("CxxTokenizer::operator[]"));
       }
-      auto p = this->begin();
-      std::advance(p,i);
+      const auto p = std::next(this->begin(),i); 
       return *p;
     } // end of CxxTokenizer::begin
-
     
     CxxTokenizer::const_iterator
     CxxTokenizer::begin(void) const
@@ -1162,14 +879,13 @@ namespace tfel{
 				    CxxTokenizer::const_iterator& p, 
 				    const CxxTokenizer::const_iterator pe)
     {
-      using namespace std;
       if(p==pe){
-	string msg(method);
-	msg += " : unexpected end of line";
+	std::string msg(method);
+	msg += ": unexpected end of line";
 	if(!error.empty()){
 	  msg += " ("+error+")";
 	}
-	throw(runtime_error(msg));
+	throw(std::runtime_error(msg));
       }
     } // end of CxxTokenizer::checkNotEndOfLine
     
@@ -1179,13 +895,10 @@ namespace tfel{
 				     CxxTokenizer::const_iterator& p, 
 				     const CxxTokenizer::const_iterator pe)
     {
-      using namespace std;
       CxxTokenizer::checkNotEndOfLine(method,"expected '"+value+"'",p,pe);
       if(p->value!=value){
-	string msg(method);
-	msg += " : unexpected token '"+p->value+"'";
-	msg += " (expected '"+value+"')";
-	throw(runtime_error(msg));
+	throw(std::runtime_error(method+": unexpected token '"+p->value+"'"+
+				 " (expected '"+value+"')"));
       }
       ++p;
     } // end of CxxTokenizer::readSpecifiedToken
@@ -1242,14 +955,13 @@ namespace tfel{
 			     const CxxTokenizer::const_iterator pe)
       
     {
-      using namespace std;
       int res;
       CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readInt","expected number",p,pe);
-      istringstream is(p->value);
+      std::istringstream is(p->value);
       is >> res;
       if(!is&&(!is.eof())){
-	throw(runtime_error("CxxTokenizer::readInt : "
-			    "could not read value from token '"+p->value+"'."));
+	throw(std::runtime_error("CxxTokenizer::readInt : "
+				 "could not read value from token '"+p->value+"'."));
       }
       ++p;
       return res;
@@ -1259,16 +971,15 @@ namespace tfel{
     CxxTokenizer::readUnsignedInt(CxxTokenizer::const_iterator& p, 
 				  const CxxTokenizer::const_iterator pe)
     {
-      using namespace std;
       unsigned int res;
       CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readUnsignedInt","expected number",p,pe);
-      istringstream is(p->value);
+      std::istringstream is(p->value);
       is >> res;
       if(!is&&(!is.eof())){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "CxxTokenizer::readUnsignedInt : ";
 	msg << "could not read value from token '"+p->value+"'.\n";
-	throw(runtime_error(msg.str()));
+	throw(std::runtime_error(msg.str()));
       }
       ++p;
       return res;

@@ -167,9 +167,9 @@ namespace mfront{
       o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       return;
     }
-    auto tokens = std::vector<Token>{};
-    this->readList(tokens,"BehaviourDSLCommon::readCodeBlockOptions","<",">",true);
-    for(const auto& t : tokens){
+    auto options = std::vector<Token>{};
+    this->readList(options,"BehaviourDSLCommon::readCodeBlockOptions","<",">",true);
+    for(const auto& t : options){
       if(t.value=="Append"){
 	if(cmode){
 	  this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions",
@@ -800,28 +800,26 @@ namespace mfront{
     auto& f = AbstractBehaviourBrickFactory::getFactory();
     AbstractBehaviourBrick::Parameters parameters;
     if(this->current->value=="<"){
-      vector<Token> tokens;
-      this->readList(tokens,"BehaviourDSLCommon::treatBehaviourBrick",
+      vector<Token> options;
+      this->readList(options,"BehaviourDSLCommon::treatBehaviourBrick",
 		     "<",">",true);
-      for(vector<Token>::const_iterator p=tokens.begin();p!=tokens.end();++p){
-	const auto& t = p->value;
-	const auto pos = t.find('=');
+      for(const auto& o: options){
+	const auto pos = o.value.find('=');
 	if(pos!=string::npos){
 	  if(pos==0){
 	    this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
 				    "no parameter name given");
 	  }
 	  // extracting the name
-	  const auto& n = t.substr(0,pos);
-	  if(pos==t.size()){
+	  const auto& n = o.value.substr(0,pos);
+	  if(pos==o.value.size()){
 	    this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
 				    "no option given to the parameter '"+n+"'");
 	  }
 	  // extracting the option
-	  const auto& o = t.substr(pos+1);
-	  parameters.insert({n,o});
+	  parameters.insert({n,o.value.substr(pos+1)});
 	} else {
-	  parameters.insert({t,""});
+	  parameters.insert({o.value,""});
 	}
       }
     }
@@ -1006,9 +1004,9 @@ namespace mfront{
     auto mps    = std::vector<BehaviourDescription::MaterialProperty>{};
     this->checkNotEndOfFile(m);
     if(this->current->value=="{"){
-      auto tokens = std::vector<tfel::utilities::Token>{};
-      this->readList(tokens,m,"{","}",false);
-      for(const auto& t: tokens){
+      auto mpv = std::vector<tfel::utilities::Token>{};
+      this->readList(mpv,m,"{","}",false);
+      for(const auto& t: mpv){
 	mps.push_back(this->extractMaterialProperty(m,t));
       }
     } else {
@@ -1074,19 +1072,18 @@ namespace mfront{
   void
   BehaviourDSLCommon::treatModellingHypotheses(void)
   {
-    using namespace std;
     using namespace tfel::utilities;
-    set<Hypothesis> hypotheses;
-    vector<Token> tokens;
+    auto hypotheses = std::set<Hypothesis>{};
+    auto values = std::vector<Token>{};
     this->checkNotEndOfFile("BehaviourDSLCommon::treatModellingHypotheses");
-    this->readList(tokens,"BehaviourDSLCommon::treatModellingHypotheses","{","}",false);
+    this->readList(values,"BehaviourDSLCommon::treatModellingHypotheses","{","}",false);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatModellingHypotheses");
     this->readSpecifiedToken("BehaviourDSLCommon::treatModellingHypotheses",";");
-    for(vector<Token>::const_iterator p=tokens.begin();p!=tokens.end();++p){
-      if(p->flag==Token::String){
-	this->appendToHypothesesList(hypotheses,p->value.substr(1,p->value.size()-2));
+    for(const auto& v : values){
+      if(v.flag==Token::String){
+	this->appendToHypothesesList(hypotheses,v.value.substr(1,v.value.size()-2));
       } else {
-	this->appendToHypothesesList(hypotheses,p->value);
+	this->appendToHypothesesList(hypotheses,v.value);
       }
     }
     if(hypotheses.empty()){
@@ -1477,13 +1474,13 @@ namespace mfront{
       h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       return;
     }
-    auto tokens = std::vector<tfel::utilities::Token>{};
-    this->readList(tokens,"BehaviourDSLCommon::readHypothesesList","<",">",true);
-    for(const auto& t : tokens){
-      if(t.flag==tfel::utilities::Token::String){
-	this->appendToHypothesesList(h,t.value.substr(1,t.value.size()-2));
+    auto values = std::vector<tfel::utilities::Token>{};
+    this->readList(values,"BehaviourDSLCommon::readHypothesesList","<",">",true);
+    for(const auto& v : values){
+      if(v.flag==tfel::utilities::Token::String){
+	this->appendToHypothesesList(h,v.value.substr(1,v.value.size()-2));
       } else {
-	this->appendToHypothesesList(h,t.value);
+	this->appendToHypothesesList(h,v.value);
       }
     }
     if(h.empty()){

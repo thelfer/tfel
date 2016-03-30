@@ -198,6 +198,8 @@ d'orthotropie.
 
 \subsubsection{L'interface {\tt Abaqus}}
 
+\subsubsection{L'interface {\tt AbaqusExplicit}}
+
 \subsection{Utilitaires}
 
 \subsubsection{L'utilitaire {\tt mfront-doc}}
@@ -286,12 +288,35 @@ L'équation~\eqref{eq:tfel-3.0:fs} peut être dérivée si \(f\) est
 dérivable.
 
 La classe {\tt stensor} comporte désormais les méthodes {\tt
-  computeIsotropicFunction}, {\tt computeIsotropicFunctionDerivative}
-et {\tt computeIsotropicFunctionAndDerivative} qui permettent
+  compute\-Isotropic\-Function}, {\tt
+  compute\-Isotropic\-Function\-Derivative} et {\tt
+  compute\-Isotropic\-Function\-And\-Derivative} qui permettent
 respectivement de calculer la valeur d'une fonction isotrope, la
 valeur de sa dérivée ou les deux en même temps.
 
 Trois fonctions du même nom sont également disponibles.
+
+\subsubsection{Convertion du second tenseur de Piola-Kirchoff en
+  contraintes de Cauchy exprimées dans le repère corotationnel}
+
+Le code {\tt Abaqus-Explicit} fournit le tenseur de dilatation
+\(\tenseur{U}\) et demande à ce que soit renvoyé le tenseur des
+contraintes de \nom{Cauchy} \(\tenseur{\tilde{\sigma}}\) dans le
+repère corotationnel. Ce dernier est relié au second tenseur de
+Piola-Kirchoff \(\tenseur{S}\) par la formule~:
+\[
+\tenseur{\tilde{\sigma}}=\Frac{1}{\det\paren{U}}\,\tenseur{U}\,.\,\tenseur{S}\,.\,\tenseur{U}
+\]
+
+Cette opération est effectuée de manière optimisée par la fonction~:
+\begin{center}
+  {\tt convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress}
+\end{center}
+
+L'opération inverse est réalisée par la fonction~:
+\begin{center}
+  {\tt convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress}
+\end{center}
 
 \subsection{Nouvelles options de compilation}
 

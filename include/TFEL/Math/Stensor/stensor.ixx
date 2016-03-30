@@ -1697,6 +1697,118 @@ namespace tfel{
     {
       return s.computeIsotropicFunctionDerivative(f,df,eps,b);
     }
+
+    template<typename T,typename T2>
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&  s,
+								 const T2& U){
+      const auto J = det(U);
+      return {J*s[0]/(U[0]*U[0]),J*s[1]/(U[1]*U[1]),J*s[2]/(U[2]*U[2])};
+    }
+    
+    template<typename T,typename T2>
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&  s,
+								 const T2& U){
+      const auto J  = det(U);
+      const auto iU = invert(U);
+      return {J*(s[1]*iU[3]*iU[3]+2*s[3]*iU[0]*iU[3]+2*s[0]*iU[0]*iU[0])/2,
+	  J*(s[0]*iU[3]*iU[3]+2*s[3]*iU[1]*iU[3]+2*s[1]*iU[1]*iU[1])/2,
+	  J*s[2]*iU[2]*iU[2],
+	  J*(s[3]*iU[3]*iU[3]+(2*s[1]*iU[1]+2*s[0]*iU[0])*iU[3]+2*s[3]*iU[0]*iU[1])/2};
+    }
+    
+    template<typename T,typename T2>
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&  s,
+								 const T2& U){
+      typedef typename tfel::typetraits::BaseType<typename StensorTraits<T>::NumType>::type real;
+      constexpr real cste = constexpr_fct::sqrt(real(2));
+      const auto J  = det(U);
+      const auto iU = invert(U);
+      return {J*(s[2]*iU[4]*iU[4]+(cste*s[5]*iU[3]+2*s[4]*iU[0])*iU[4]+s[1]*iU[3]*iU[3]+2*s[3]*iU[0]*iU[3]+2*s[0]*iU[0]*iU[0])/2,
+	  J*(s[2]*iU[5]*iU[5]+(cste*s[4]*iU[3]+2*s[5]*iU[1])*iU[5]+s[0]*iU[3]*iU[3]+2*s[3]*iU[1]*iU[3]+2*s[1]*iU[1]*iU[1])/2,
+	  J*(s[1]*iU[5]*iU[5]+(cste*s[3]*iU[4]+2*s[5]*iU[2])*iU[5]+s[0]*iU[4]*iU[4]+2*s[4]*iU[2]*iU[4]+2*s[2]*iU[2]*iU[2])/2,
+	  J*((cste*s[2]*iU[4]+s[5]*iU[3]+cste*s[4]*iU[0])*iU[5]+(s[4]*iU[3]+cste*s[5]*iU[1])*iU[4]+s[3]*iU[3]*iU[3]+(2*s[1]*iU[1]+2*s[0]*iU[0])*iU[3]+2*s[3]*iU[0]*iU[1])/2,
+	  J*((s[5]*iU[4]+cste*s[1]*iU[3]+cste*s[3]*iU[0])*iU[5]+s[4]*iU[4]*iU[4]+(s[3]*iU[3]+2*s[2]*iU[2]+2*s[0]*iU[0])*iU[4]+cste*s[5]*iU[2]*iU[3]+2*s[4]*iU[0]*iU[2])/2,
+	  J*(s[5]*iU[5]*iU[5]+(s[4]*iU[4]+s[3]*iU[3]+2*s[2]*iU[2]+2*s[1]*iU[1])*iU[5]+(cste*s[0]*iU[3]+cste*s[3]*iU[1])*iU[4]+cste*s[4]*iU[2]*iU[3]+2*s[5]*iU[1]*iU[2])/2};
+    }
+    
+    template<typename T,typename T2>
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&  S,
+								 const T2& U){
+      const auto iJ = 1/det(U);
+      return {iJ*U[0]*S[0]*U[0],iJ*U[1]*S[1]*U[1],iJ*U[2]*S[2]*U[2]};
+    }
+
+    template<typename T,typename T2>
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&  S,
+								 const T2& U){
+      const auto iJ = 1/det(U);
+      return {iJ*(S[1]*U[3]*U[3]+2*S[3]*U[0]*U[3]+2*S[0]*U[0]*U[0])/2,
+	  iJ*(S[0]*U[3]*U[3]+2*S[3]*U[1]*U[3]+2*S[1]*U[1]*U[1])/2,
+	  iJ*S[2]*U[2]*U[2],
+	  iJ*(S[3]*U[3]*U[3]+(2*S[1]*U[1]+2*S[0]*U[0])*U[3]+2*S[3]*U[0]*U[1])/2};
+    }
+    
+    template<typename T,typename T2>
+    typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&  S,
+								 const T2& U){
+      typedef typename tfel::typetraits::BaseType<typename StensorTraits<T>::NumType>::type real;
+      constexpr real cste = constexpr_fct::sqrt(real(2));
+      const auto iJ  = 1/det(U);
+      return {iJ*(S[2]*U[4]*U[4]+(cste*S[5]*U[3]+2*S[4]*U[0])*U[4]+S[1]*U[3]*U[3]+2*S[3]*U[0]*U[3]+2*S[0]*U[0]*U[0])/2,
+	  iJ*(S[2]*U[5]*U[5]+(cste*S[4]*U[3]+2*S[5]*U[1])*U[5]+S[0]*U[3]*U[3]+2*S[3]*U[1]*U[3]+2*S[1]*U[1]*U[1])/2,
+	  iJ*(S[1]*U[5]*U[5]+(cste*S[3]*U[4]+2*S[5]*U[2])*U[5]+S[0]*U[4]*U[4]+2*S[4]*U[2]*U[4]+2*S[2]*U[2]*U[2])/2,
+	  iJ*((cste*S[2]*U[4]+S[5]*U[3]+cste*S[4]*U[0])*U[5]+(S[4]*U[3]+cste*S[5]*U[1])*U[4]+S[3]*U[3]*U[3]+(2*S[1]*U[1]+2*S[0]*U[0])*U[3]+2*S[3]*U[0]*U[1])/2,
+	  iJ*((S[5]*U[4]+cste*S[1]*U[3]+cste*S[3]*U[0])*U[5]+S[4]*U[4]*U[4]+(S[3]*U[3]+2*S[2]*U[2]+2*S[0]*U[0])*U[4]+cste*S[5]*U[2]*U[3]+2*S[4]*U[0]*U[2])/2,
+	  iJ*(S[5]*U[5]*U[5]+(S[4]*U[4]+S[3]*U[3]+2*S[2]*U[2]+2*S[1]*U[1])*U[5]+(cste*S[0]*U[3]+cste*S[3]*U[1])*U[4]+cste*S[4]*U[2]*U[3]+2*S[5]*U[1]*U[2])/2};
+    }
     
 #endif /* LIB_TFEL_STENSOR_IXX_ */
 
@@ -1705,13 +1817,3 @@ namespace tfel{
 } // end of namespace tfel
 
 #endif /* LIB_TFEL_STENSOR_IXX_ */
-
-
-
-
-
-
-
-
-
-

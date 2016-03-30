@@ -50,7 +50,6 @@ namespace mfront{
   
   static void
   writeVUMATArguments(std::ostream& out,
-		      const BehaviourDescription::BehaviourType& t,
 		      const std::string& type,
 		      const bool f)
   {
@@ -170,7 +169,7 @@ namespace mfront{
   std::string
   AbaqusExplicitInterface::getName(void)
   {
-    return "vumat";
+    return "abaqus-vumat";
   }
 
   void
@@ -340,7 +339,8 @@ namespace mfront{
 	<< "*/\n\n";
 
     out << "#include<cmath>\n"
-	<< "#include<limits>\n";
+    	<< "#include<limits>\n"
+	<< "#include<cstdlib>\n";
     this->getExtraSrcIncludes(out,mb);
 
     out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
@@ -370,73 +370,172 @@ namespace mfront{
     this->writeSetParametersFunctionsImplementations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    out << "MFRONT_SHAREDOBJ void\n" << getFunctionName(name) << "_f";
-    writeVUMATArguments(out,mb.getBehaviourType(),"float",false);
-    this->writeVUMATFunction(out,mb,"float");
-        out << "\n"
-	<< "MFRONT_SHAREDOBJ void\n" << getFunctionName(name);
-    writeVUMATArguments(out,mb.getBehaviourType(),"double",false);
-    this->writeVUMATFunction(out,mb,"double");
-    out << "\n} // end of extern \"C\"\n";
+    for(const std::string t : {"float","double"}){
+      out << "MFRONT_SHAREDOBJ void\n" << getFunctionName(name);
+      if(t=="float"){
+	out << "_f";
+      }
+      writeVUMATArguments(out,t,false);
+      out << "{\n"
+	  << "using MH = tfel::material::ModellingHypothesis;\n"
+	  << "using abaqus::AbaqusTraits;\n"
+	  << "using tfel::material::" << mb.getClassName() << ";\n"
+	  << "using AbaqusExplicitData = abaqus::AbaqusExplicitData<" << t << ">;\n";
+      if(mb.getAttribute(BehaviourData::profiling,false)){
+	out << "using mfront::BehaviourProfiler;\n"
+	    << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
+	    << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	    << "BehaviourProfiler::TOTALTIME);\n";
+      }
+      out << "const auto ntens = *ndir+*nshr;\n"
+	  << "const AbaqusExplicitData d = {*nblock,*ndir,*nshr,*nstatev,\n"
+	  << "                              *nfieldv,*nprops,*dt,props,density,\n"
+	  << "                              strainInc,relSpinInc,tempOld,\n"
+	  << "                              stretchOld,defgradOld,fieldOld,\n"
+	  << "                              stressOld,stateOld,enerInternOld,\n"
+	  << "                              enerInelasOld,tempNew,stretchNew,\n"
+	  << "                              defgradNew,fieldNew,stressNew,\n"
+	  << "                              stateNew,enerInternNew,enerInelasNew};\n";
+      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	if(this->fss==FINITEROTATIONSMALLSTRAIN){
+	  this->writeFiniteRotationSmallStrainBehaviourCall(out,mb,t);
+	} else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	  this->writeLogarithmicStrainBehaviourCall(out,mb,t);
+	} else {
+	  throw(std::runtime_error("AbaqusExplicitInterface::writeVUMATFunction: "
+				   "unsupported finite strain strategy (internal error)"));
+	}
+      } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	this->writeFiniteStrainBehaviourCall(out,mb,t);
+      } else {
+	throw(std::runtime_error("AbaqusExplicitInterface::writeVUMATFunction: "
+				 "the abaqus explicit interface only supports small "
+				 "and finite strain behaviours"));
+      }
+      out << "}\n\n";
+    }
+    out << "} // end of extern \"C\"\n";
     out.close();
   }
+
+  void
+  AbaqusExplicitInterface::writeChecks(std::ostream& out,
+				       const BehaviourDescription& mb,
+				       const std::string& t,
+				       const Hypothesis h) const
+  {
+    using MH = tfel::material::ModellingHypothesis;
+    out << "using BV = " << mb.getClassName()
+	<< "<MH::"<< MH::toUpperCaseString(h) << "," << t << ",false>;\n"
+	<< "using Traits = tfel::material::MechanicalBehaviourTraits<BV>;\n"
+	<< "constexpr const unsigned short offset  = (AbaqusTraits<BV>::elasticPropertiesOffset+\n"
+	<< "                                          AbaqusTraits<BV>::thermalExpansionPropertiesOffset);\n"
+	<< "constexpr const unsigned short nprops_  = AbaqusTraits<BV>::material_properties_nb;\n"
+	<< "constexpr const unsigned short NPROPS_  = offset+nprops_ == 0 ? 1u : offset+nprops_;\n"
+	<< "constexpr const unsigned short nstatev_ = Traits::internal_variables_nb;\n"
+	<< "constexpr const unsigned short NSTATEV_ = nstatev_ == 0 ? 1u : nstatev_;\n"
+	<< "constexpr const unsigned short nfieldv_ = Traits::external_variables_nb;\n"
+	<< "constexpr const unsigned short NFIELDV_ = nfieldv_ == 0 ? 1u : nfieldv_;\n"
+	<< "if(*nprops!=NPROPS_){\n"
+	<< "std::cerr << \"" << mb.getClassName() << ":"
+	<< " unmatched number of material properties "
+	<< "(\" << *nprops << \" given, \" << NPROPS_ << \" expected)\";\n"
+	<< "::exit(-1);\n"
+	<< "}\n"
+	<< "if(*nstatev!=NSTATEV_){\n"
+	<< "std::cerr << \"" << mb.getClassName() << ":"
+	<< " unmatched number of internal state variables "
+	<< "(\" << *nstatev << \" given, \" << NSTATEV_ << \" expected)\";\n"
+	<< "::exit(-1);\n"
+	<< "}\n"
+	<< "if(*nfieldv!=NFIELDV_){\n"
+	<< "std::cerr << \"" << mb.getClassName() << ":"
+	<< " unmatched number of external state variables "
+	<< "(\" << *nfieldv << \" given, \" << NFIELDV_ << \" expected)\";\n"
+	<< "::exit(-1);\n"
+	<< "}\n";
+  } // end of AbaqusExplicitInterface::writeChecks
   
   void
-  AbaqusExplicitInterface::writeVUMATFunction(std::ostream& out,
-					      const BehaviourDescription& mb,
-					      const std::string& t) const
+  AbaqusExplicitInterface::writeComputeElasticPrediction(std::ostream& out,
+							 const BehaviourDescription& mb,
+							 const std::string& t,
+							 const Hypothesis h) const
   {
-    const auto name =  mb.getLibrary()+mb.getClassName();
-    std::string dv0;
-    std::string dv1;
-    std::string sfeh;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      sfeh = "abaqus::AbaqusStandardSmallStrainStressFreeExpansionHandler";
-    } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      sfeh = "nullptr";
+    using MH = tfel::material::ModellingHypothesis;
+    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    if(mh.find(h)!=mh.end()){
+      this->writeChecks(out,mb,t,h);
+      out << "bool s = true;\n"
+	  << "for(int i=0;i!=*nblock;++i){\n"
+	  << "s = s && (abaqus::AbaqusExplicitInterface<MH::" << MH::toUpperCaseString(h) << ","
+	  << t<< "," << mb.getClassName()
+	  << ">::computeElasticPrediction(i,d)==0);\n"
+	  << "}\n"
+	  << "if(!s){\n"
+	  << "std::cerr << \"" << mb.getClassName() << ": elastic loading failed\";\n"
+	  << "::exit(-1);\n"
+	  << "}\n";
     } else {
-      throw(std::runtime_error("AbaqusExplicitInterface::writeVUMATFunction: the abaqus explicit interface "
-			       "only supports small and finite strain behaviours"));
+      out << "std::cerr << \"" << mb.getClassName() << ": unsupported hypothesis\";\n"
+	  << "::exit(-1);\n";
     }
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      dv0 = "nullptr";
-      dv1 = "strainInc";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      dv0 = "defgradOld";
-      dv1 = "defgradNew";
-    } else {
-      throw(std::runtime_error("AbaqusExplicitInterface::writeVUMATFunction: "
-				"the abaqus explicit interface only supports small "
-				"and finite strain behaviours"));
-    }
-    out << "{\n";
-    if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "using mfront::BehaviourProfiler;\n"
-	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
-	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
-	  << "BehaviourProfiler::TOTALTIME);\n";
-    }
+  } // end of AbaqusExplicitInterface::writeComputeElasticPrediction
+
+  
+  void
+  AbaqusExplicitInterface::writeFiniteRotationSmallStrainBehaviourCall(std::ostream& out,
+								       const BehaviourDescription& mb,
+								       const std::string& t) const
+  {
+    using MH = tfel::material::ModellingHypothesis;
     // datacheck phase
     out << "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
 	<< "   (std::abs(*totalTime)<std::numeric_limits<" << t << ">::min())){\n"
-	// << "if(abaqus::AbaqusExplicitInterface<tfel::material::" << mb.getClassName() 
-	// << ">::computeElasticPrediction(*NTENS,dt," << dv0 << "," << dv1 << ","
-	// << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
-	// << sfeh << ")!=0){\n"
-	// << "std::cerr << \"" << mb.getClassName() << "\": integration failed\";\n"
-	// << "::exit(-1);\n"
-	// << "}\n"
-	<< "} else {\n"
-	// << "if(abaqus::AbaqusExplicitInterface<tfel::material::" << mb.getClassName() 
-	// << ">::exe(NTENS,DTIME,DROT,DDSDDE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
-	// << "PREDEF,DPRED,STATEV,NSTATV,STRESS,PNEWDT,"
-	// << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
-	// << sfeh << ")!=0){\n"
-	// << "std::cerr << \"" << mb.getClassName() << "\": integration failed\";\n"
-	// << "::exit(-1);\n"
-        // << "}\n"
+	<< "if(ntens==3u){\n"
+	<< "// plane stress\n";
+    this->writeComputeElasticPrediction(out,mb,t,MH::PLANESTRESS);
+    out << "} else if(ntens==4u){\n"
+	<< "// axisymmetric/plane strain case\n";
+    this->writeComputeElasticPrediction(out,mb,t,MH::GENERALISEDPLANESTRAIN);      
+    out << "} else if(ntens==6u){\n"
+	<< "// tridimensional case\n";
+    this->writeComputeElasticPrediction(out,mb,t,MH::TRIDIMENSIONAL);
+    out << "} else {\n"
+	<< "std::cerr << \"" << mb.getClassName() << " unupported modelling hypothesis\";\n"
+	<< "std::exit(-1);\n"
       	<< "}\n"
-    	<< "}\n";
+      	<< "} else {\n"
+	<< "// behaviour integration\n"
+	<< "if(ntens==3u){\n"
+	<< "// plane stress\n"
+	<< "} else if(ntens==4u){\n"
+	<< "// axisymmetric case\n"
+      	<< "} else if(ntens==6u){\n"
+      	<< "// tridimensional case\n"
+	<< "} else {\n"
+	<< "std::cerr << \"" << mb.getClassName() << " unupported modelling hypothesis\";\n"
+	<< "std::exit(-1);\n"
+      	<< "}\n"
+	<< "}\n";      
+  }
+
+  void
+  AbaqusExplicitInterface::writeLogarithmicStrainBehaviourCall(std::ostream&,
+							       const BehaviourDescription&,
+							       const std::string&) const
+  {
+    throw(std::runtime_error("AbaqusExplicitInterface::writeLogarithmicStrainBehaviourCall: "
+			     "unsupported feature"));
+  }
+  
+  void
+  AbaqusExplicitInterface::writeFiniteStrainBehaviourCall(std::ostream&,
+							  const BehaviourDescription&,
+							  const std::string&) const
+  {
+    throw(std::runtime_error("AbaqusExplicitInterface::writeFiniteStrainBehaviourCall: "
+			     "unsupported feature"));
   } // end of AbaqusExplicitInterface::endTreatment
 
   std::string

@@ -25,13 +25,11 @@ namespace mfront{
 
   template<typename Child>
   void BehaviourDSLBase<Child>::registerNewCallBack(const std::string& keyword,
-							     const MemberFuncPtr f)
+						    const MemberFuncPtr f)
   {
-    using namespace std;
     this->callBacks.insert(make_pair(keyword,f));
     this->registredKeyWords.insert(keyword);
-  } // end of registerCallBacks
-
+  } // end of registerNewCallBack
 
   template<typename Child>
   void

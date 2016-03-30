@@ -25,8 +25,6 @@ namespace tfel{
     {
       this->clear();
       this->tokens.insert(this->tokens.begin(),p,pe);
-      this->treatPreprocessorDirectives();
-      this->splitTokens();
     } // end of CxxTokenizer::import
 
   } // end of namespace utilities

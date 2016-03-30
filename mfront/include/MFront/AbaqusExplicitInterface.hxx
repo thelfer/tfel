@@ -95,15 +95,57 @@ namespace mfront{
     virtual std::string
     getInterfaceName(void) const override;
     /*!
+     * \param[out] out: ouput stream
+     * \param[in]  md:  behaviour description
+     * \param[in]  t:   floatting point type
+     * \param[in]  h:   modelling hypothesis
+     */
+    virtual void
+    writeChecks(std::ostream&,
+		const BehaviourDescription&,
+		const std::string&,
+		const Hypothesis) const;
+    /*!
      * \brief write the body of the VUMAT function
      * \param[out] out: ouput stream
      * \param[in]  md:  behaviour description
      * \param[in]  t:   floatting point type
      */
     virtual void
-    writeVUMATFunction(std::ostream&,
-		       const BehaviourDescription&,
-		       const std::string&) const;
+    writeFiniteRotationSmallStrainBehaviourCall(std::ostream&,
+						const BehaviourDescription&,
+						const std::string&) const;
+    /*!
+     * \brief write the body of the VUMAT function
+     * \param[out] out: ouput stream
+     * \param[in]  md:  behaviour description
+     * \param[in]  t:   floatting point type
+     */
+    virtual void
+    writeLogarithmicStrainBehaviourCall(std::ostream&,
+					const BehaviourDescription&,
+					const std::string&) const;
+    /*!
+     * \brief write the body of the VUMAT function
+     * \param[out] out: ouput stream
+     * \param[in]  md:  behaviour description
+     * \param[in]  t:   floatting point type
+     */
+    virtual void
+    writeFiniteStrainBehaviourCall(std::ostream&,
+				   const BehaviourDescription&,
+				   const std::string&) const;
+    /*!
+     * \param[out] out: ouput stream
+     * \param[in]  md:  behaviour description
+     * \param[in]  t:   floatting point type
+     * \param[in]  h:   modelling hypothesis
+     */
+    virtual void
+    writeComputeElasticPrediction(std::ostream&,
+				  const BehaviourDescription&,
+				  const std::string&,
+				  const Hypothesis) const;
     //! selected finite strain strategy
     FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
   };

@@ -38,15 +38,6 @@ namespace tfel{
        * \brief constructor
        * \param[in] v: token value
        * \param[in] l: line number
-       * \param[in] f: token flag
-       */
-      Token(const std::string&,
-	    const size_type,
-	    const TokenFlag = Standard);
-      /*!
-       * \brief constructor
-       * \param[in] v: token value
-       * \param[in] l: line number
        * \param[in] o: offset
        * \param[in] f: token flag
        */

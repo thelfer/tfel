@@ -846,7 +846,127 @@ namespace tfel{
 				       const StensorType&,
 				       const typename StensorTraits<StensorType>::NumType,
 				       const bool = false);
-    
+    /*!
+     * \brief convert the corotationnal cauchy stress to the second Piola-Kirchhoff stress
+     * \[
+     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \]
+     * \param[in] s: corotationnal cauchy stress
+     * \param[in] U: stretch tensor
+     * \return the second Piola-Kirchhoff stress
+     */
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&,
+								 const T2&);
+    /*!
+     * \brief convert the corotationnal cauchy stress to the second Piola-Kirchhoff stress
+     * \[
+     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \]
+     * \param[in] s: corotationnal cauchy stress
+     * \param[in] U: stretch tensor
+     * \return the second Piola-Kirchhoff stress
+     */
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&,
+								 const T2&);
+    /*!
+     * \brief convert the corotationnal cauchy stress to the second Piola-Kirchhoff stress
+     * \[
+     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \]
+     * \param[in] s: corotationnal cauchy stress
+     * \param[in] U: stretch tensor
+     * \return the second Piola-Kirchhoff stress
+     */
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&,
+								 const T2&);
+    /*!
+     * \brief convert the second Piola-Kirchhoff stress to the corotationnal cauchy stress
+     * \[
+     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \]
+     * \param[in] S: the second Piola-Kirchhoff stress
+     * \param[in] U: stretch tensor
+     * \return the corotationnal cauchy stress
+     */
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==1u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==1u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<1u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&,
+								 const T2&);
+    /*!
+     * \brief convert the second Piola-Kirchhoff stress to the corotationnal cauchy stress
+     * \[
+     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \]
+     * \param[in] S: the second Piola-Kirchhoff stress
+     * \param[in] U: stretch tensor
+     * \return the corotationnal cauchy stress
+     */
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==2u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==2u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<2u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&,
+								 const T2&);
+    /*!
+     * \brief convert the second Piola-Kirchhoff stress to the corotationnal cauchy stress
+     * \[
+     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \]
+     * \param[in] S: the second Piola-Kirchhoff stress
+     * \param[in] U: stretch tensor
+     * \return the corotationnal cauchy stress
+     */
+    template<typename T,typename T2>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
+       (StensorTraits<T>::dime==3u)&&
+       (tfel::meta::Implements<T2,StensorConcept>::cond) &&
+       (StensorTraits<T2>::dime==3u)&&
+       (tfel::typetraits::IsFundamentalNumericType<typename StensorTraits<T2>::NumType>::cond)),
+      stensor<3u,typename StensorTraits<T>::NumType>
+      >::type
+    convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&,
+								 const T2&);
+
   } // end of namespace math
 
   namespace typetraits{
