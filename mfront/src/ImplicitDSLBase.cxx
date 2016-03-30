@@ -1156,20 +1156,19 @@ namespace mfront{
   void
   ImplicitDSLBase::writeGetPartialJacobianInvert(const Hypothesis h)
   {
+    using size_type = VariableDescriptionContainer::size_type;
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
     SupportedTypes::TypeSize n;
-    VariableDescriptionContainer::size_type i;
     for(const auto& v : d.getIntegrationVariables()){
       n += this->getTypeSize(v.type,v.arraySize);
     }
-    auto p=d.getIntegrationVariables().begin();
-    ++p;
-    for(i=0;i!=d.getIntegrationVariables().size();++p,++i){
+    for(size_type i=0;i!=d.getIntegrationVariables().size();++i){
       this->behaviourFile << "void\ngetPartialJacobianInvert(";
-      for(auto p2=d.getIntegrationVariables().begin();p2!=p;){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
-	if(p2->arraySize==1u){
+      for(size_type i2=0;i2<=i;){
+	const auto& v = d.getIntegrationVariables()[i2];
+	const auto flag = this->getTypeFlag(v.type);
+	if(v.arraySize==1u){
 	  switch(flag){
 	  case SupportedTypes::Scalar : 
 	    this->behaviourFile << "Stensor& ";
@@ -1186,10 +1185,10 @@ namespace mfront{
 	} else {
 	  switch(flag){
 	  case SupportedTypes::Scalar : 
-	    this->behaviourFile << "tfel::math::tvector<" << p2->arraySize << "u,Stensor>& ";
+	    this->behaviourFile << "tfel::math::tvector<" << v.arraySize << "u,Stensor>& ";
 	    break;
 	  case SupportedTypes::Stensor :
-	    this->behaviourFile << "tfel::math::tvector<" << p2->arraySize << "u,Stensor4>& ";
+	    this->behaviourFile << "tfel::math::tvector<" << v.arraySize << "u,Stensor4>& ";
 	    break;
 	  case SupportedTypes::TVector:
 	  case SupportedTypes::Tensor:
@@ -1198,8 +1197,8 @@ namespace mfront{
 				    "internal error, tag unsupported");
 	  }
 	}
-	this->behaviourFile << "partial_jacobian_" << p2->name;
-	if(++p2!=p){
+	this->behaviourFile << "partial_jacobian_" << v.name;
+	if(++i2<=i){
 	  this->behaviourFile << ",\n";
 	}	  
       }
@@ -1213,55 +1212,56 @@ namespace mfront{
       this->behaviourFile << "vect_e(idx) = real(1);\n";
       this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);\n";
       SupportedTypes::TypeSize n2;
-      for(auto p2=d.getIntegrationVariables().begin();p2!=p;++p2){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p2->type);
+      for(size_type i2=0;i2<=i;++i2){
+	const auto& v = d.getIntegrationVariables()[i2];
+	const auto flag = this->getTypeFlag(v.type);
 	if(flag==SupportedTypes::Scalar){
-	  if(p2->arraySize==1u){
-	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx)=vect_e(" << n2 << ");\n";
+	  if(v.arraySize==1u){
+	    this->behaviourFile << "partial_jacobian_" << v.name << "(idx)=vect_e(" << n2 << ");\n";
 	  } else {
 	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< p2->arraySize << ";++idx2){\n";
-	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2)(idx)=vect_e(" << n2 << "+idx2);\n";
+				<< v.arraySize << ";++idx2){\n";
+	    this->behaviourFile << "partial_jacobian_" << v.name << "(idx2)(idx)=vect_e(" << n2 << "+idx2);\n";
 	    this->behaviourFile << "}\n";
 	  }
-	  n2 += this->getTypeSize(p2->type,p2->arraySize);
+	  n2 += this->getTypeSize(v.type,v.arraySize);
 	} else if(flag==SupportedTypes::TVector){
-	  if(p2->arraySize==1u){
+	  if(v.arraySize==1u){
 	    this->behaviourFile << "for(unsigned short idx2=" << n2;
 	    this->behaviourFile << ";idx2!=";
-	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	    n2 += this->getTypeSize(v.type,v.arraySize);
 	    this->behaviourFile << n2 << ";++idx2){\n";
-	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2,idx)=vect_e(idx2);\n";
+	    this->behaviourFile << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
 	    this->behaviourFile << "}\n";
 	  } else {
 	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< p2->arraySize << ";++idx2){\n";
+				<< v.arraySize << ";++idx2){\n";
 	    this->behaviourFile << "for(unsigned short idx3=" << n2;
 	    this->behaviourFile << ";idx3!=TVectorSize;++idx3){\n";
-	    this->behaviourFile << "partial_jacobian_" << p2->name 
+	    this->behaviourFile << "partial_jacobian_" << v.name 
 				<< "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*TVectorSize);\n";
 	    this->behaviourFile << "}\n";
 	    this->behaviourFile << "}\n";
-	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	    n2 += this->getTypeSize(v.type,v.arraySize);
 	  }
 	} else if(flag==SupportedTypes::Stensor){
-	  if(p2->arraySize==1u){
+	  if(v.arraySize==1u){
 	    this->behaviourFile << "for(unsigned short idx2=" << n2;
 	    this->behaviourFile << ";idx2!=";
-	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	    n2 += this->getTypeSize(v.type,v.arraySize);
 	    this->behaviourFile << n2 << ";++idx2){\n";
-	    this->behaviourFile << "partial_jacobian_" << p2->name << "(idx2,idx)=vect_e(idx2);\n";
+	    this->behaviourFile << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
 	    this->behaviourFile << "}\n";
 	  } else {
 	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< p2->arraySize << ";++idx2){\n";
+				<< v.arraySize << ";++idx2){\n";
 	    this->behaviourFile << "for(unsigned short idx3=" << n2;
 	    this->behaviourFile << ";idx3!=StensorSize;++idx3){\n";
-	    this->behaviourFile << "partial_jacobian_" << p2->name 
+	    this->behaviourFile << "partial_jacobian_" << v.name 
 				<< "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*StensorSize);\n";
 	    this->behaviourFile << "}\n";
 	    this->behaviourFile << "}\n";
-	    n2 += this->getTypeSize(p2->type,p2->arraySize);
+	    n2 += this->getTypeSize(v.type,v.arraySize);
 	  }
 	} else {
 	  this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
@@ -1269,10 +1269,11 @@ namespace mfront{
 	}
       }
       this->behaviourFile << "}\n";
-      for(auto p2=d.getIntegrationVariables().begin();p2!=p;++p2){
-	if(this->mb.hasAttribute(h,p2->name+"_normalisation_factor")){
-	  const auto& nf = this->mb.getAttribute<std::string>(h,p2->name+"_normalisation_factor");
-	  this->behaviourFile << "partial_jacobian_" << p2->name << " /= " << nf << ";\n";
+      for(size_type i2=0;i2<=i;++i2){
+	const auto& v = d.getIntegrationVariables()[i2];
+	if(this->mb.hasAttribute(h,v.name+"_normalisation_factor")){
+	  const auto& nf = this->mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
+	  this->behaviourFile << "partial_jacobian_" << v.name << " /= " << nf << ";\n";
 	}
       }
       this->behaviourFile << "}\n\n";

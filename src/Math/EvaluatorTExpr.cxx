@@ -231,8 +231,7 @@ namespace tfel
 	if((*p)->isOperator()){
 	  auto o = make_shared<TOperator>(static_cast<const TOperator &>(*(p->get())));
 	  if(o->getOperatorType()==op){
-	    previous = p-1;
-	    next     = p+1;
+	    next     = std::next(p);
 	    if(p==this->subExpr.begin()){
 	      if(op!="-"){
 		string msg("TGroup::reduce group began with an operator "+op);
@@ -251,6 +250,7 @@ namespace tfel
 		p  = this->subExpr.begin();
 	      }
 	    } else {
+	      previous = std::prev(p);
 	      if(next==this->subExpr.end()){
 		string msg("TGroup::reduce group ends by operator "+op);
 		throw(runtime_error(msg));

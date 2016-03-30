@@ -93,11 +93,15 @@ namespace mtest
     epx::EuroplexusReal ndt(1.);
     epx::EuroplexusInt  status(0);
     char msg[256];
-    (this->fct)(&status,&(s1(0)),&(s.iv1(0)),&Kt(0,0),&ndt,msg,
+    (this->fct)(&status,&(s1(0)),
+		nstatv ==0 ? nullptr : &(s.iv1(0)),
+		&Kt(0,0),&ndt,msg,
 		&nstatv,&hv,&dt,&uu0(0),&uu1(0),
-    		&s.mprops1(0),&nprops,
-		&(s.esv0(0))  ,&(s.desv(0)),
-    		&(s.esv0(0))+1,&(s.desv(0))+1,&npredef);
+    		nprops ==0 ? nullptr : &(s.mprops1(0)),
+		&nprops,&(s.esv0(0)),&(s.desv(0)),
+		npredef==0 ? nullptr : &(s.esv0(1)),
+		npredef==0 ? nullptr : &(s.desv(1)),
+    		&npredef);
     if(status!=0){
       return {false,ndt};
     }

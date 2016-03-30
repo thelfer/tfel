@@ -40,7 +40,7 @@ endif(enable-fast-math)
 
 option(enable-sanitize-options "enable various gcc sanitize options (undefined, address,...)" OFF)
 
-SET(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING
+SET(CMAKE_CXX_FLAGS_DEBUG "-g -D_GLIBCXX_DEBUG" CACHE STRING
     "Flags used by the C++ compiler during debug builds."
     FORCE)
 SET(CMAKE_C_FLAGS_DEBUG "-g" CACHE STRING
