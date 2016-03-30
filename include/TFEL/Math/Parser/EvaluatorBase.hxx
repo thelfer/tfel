@@ -46,7 +46,8 @@ namespace tfel
 	splitAtTokenSeperator(std::vector<std::string>&);
 	static TFEL_VISIBILITY_LOCAL
 	std::string
-	readNumber(std::string::iterator&,const std::string::iterator);
+	readNumber(std::string::const_iterator&,
+		   const std::string::const_iterator);
       }; // end of struct EvaluatorBase
 
     } // end of namespace parser

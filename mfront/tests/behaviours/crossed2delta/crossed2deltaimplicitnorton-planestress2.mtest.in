@@ -18,6 +18,7 @@
 
 @MaximumNumberOfSubSteps   1;
 @AccelerationAlgorithm 'Crossed2Delta';
+@StrainEpsilon 1.e-11;
 @StressEpsilon 1.;
 
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
@@ -52,10 +53,10 @@
 @Test<function> 'AxialStrain' 'EELZZ0-0.5*A*SXX**E*t' 1.e-10;
 @Test<function> 'EXY' '0.'                            1.e-10;
 // tests on internal state variables
-@Test<function> 'ElasticStrainXX' 'EELXX0'                  1.e-12;
-@Test<function> 'ElasticStrainYY' 'EELZZ0'                  1.e-12;
-@Test<function> 'ElasticStrainZZ' 'EELZZ0'                  1.e-12;
-@Test<function> 'ElasticStrainXY' '0.'                      1.e-12;
+@Test<function> 'ElasticStrainXX' 'EELXX0'                  1.e-11;
+@Test<function> 'ElasticStrainYY' 'EELZZ0'                  1.e-11;
+@Test<function> 'ElasticStrainZZ' 'EELZZ0'                  1.e-11;
+@Test<function> 'ElasticStrainXY' '0.'                      1.e-11;
 @Test<function> 'EquivalentViscoplasticStrain[0]' 'A*SXX**E*t/2' 1.e-10;
 @Test<function> 'EquivalentViscoplasticStrain[1]' 'A*SXX**E*t/2' 1.e-10;
 // check that the mechanical equilibrium is satisfied

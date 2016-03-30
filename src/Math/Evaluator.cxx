@@ -387,7 +387,7 @@ namespace tfel
     Evaluator::FunctionGeneratorManager::checkName(const std::string& name) const
     {
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error(" Evaluator::FunctionGeneratorManager::checkName(: "+m));}
+	if(b){throw(std::runtime_error("Evaluator::FunctionGeneratorManager::checkName: "+m));}
       };
       throw_if(this->fctGenerators.find(name)!=this->fctGenerators.end(),
 	       "a function named '"+name+"' has already been declared");

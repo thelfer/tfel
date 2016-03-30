@@ -128,11 +128,11 @@ namespace tfel{
 
     static bool is_cxx_separator(const std::string::value_type& c){
       using ctype = std::string::value_type;
-      constexpr const std::array<ctype,26> s = {'?',';','/','!','&','*',
-						'|','{','}','[',']','(',
-						')','%','=','^',',',':',
-						'<','>','\'','\"',
-						'+','-','\\','.'};
+      constexpr const std::array<ctype,26> s = {{'?',';','/','!','&','*',
+						 '|','{','}','[',']','(',
+						 ')','%','=','^',',',':',
+						 '<','>','\'','\"',
+						 '+','-','\\','.'}};
       return std::find(std::begin(s),std::end(s),c)!=std::end(s);
     }
     
@@ -463,7 +463,8 @@ namespace tfel{
       auto throw_if = [](const bool b,const std::string& m){
 	if(b){throw(std::runtime_error("CxxTokenizer::treatCComment: "+m));}
       };
-      auto get_end = [&pe](std::string::const_iterator e){
+      auto get_end = [&pe](std::string::const_iterator e)
+	-> std::string::const_iterator{
 	while(e!=pe){
 	  if(*e=='*'){
 	    const auto en = std::next(e);
@@ -537,15 +538,15 @@ namespace tfel{
     void
     CxxTokenizer::treatPreprocessorDirective(Token::size_type& o,
 					     std::string::const_iterator& p,
-					     const std::string::const_iterator b,
+					     const std::string::const_iterator,
 					     const std::string::const_iterator pe,
 					     const Token::size_type n)
     {
       auto is_preprocessor_keyword = [](const std::string& k){
-	const std::array<const char*,11> keys = {"#define","#undef" ,"#include",
-						 "#line"  ,"#error" ,"#if",
-						 "#ifdef" ,"#ifndef","elif",
-						 "#else","#endif"};
+	const std::array<const char*,11> keys = {{"#define","#undef" ,"#include",
+						  "#line"  ,"#error" ,"#if",
+						  "#ifdef" ,"#ifndef","elif",
+						  "#else","#endif"}};
 	return std::find(keys.begin(),keys.end(),k)!=keys.end();
       };
       auto throw_if = [](const bool c, const std::string& m){
@@ -586,7 +587,7 @@ namespace tfel{
 	if(*p=='#'){
 	  throw_if(true,"stray ‘#’");
 	} else if(*p=='\\'){
-	  throw_if(true,"stray ‘\’");
+	  throw_if(true,"stray ‘\\’");
 	} else if(std::isdigit(*p)){
 	  this->readNumber(o,p,pe,n);
 	} else if(*p=='\"'){

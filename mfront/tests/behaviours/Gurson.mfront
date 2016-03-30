@@ -57,7 +57,6 @@ q3.setEntryName("ThirdGursonParameter");
 
 @InitLocalVariables{
   delta = ((ffb-fc)/(fmax-fc));
-  const temperature T_ = T+theta*dT;
   const real feq = (f<fc ? f : fc+delta*(f-fc));
   if(q3>q1){
     string msg("gurson : q3 is greater than q1 !");

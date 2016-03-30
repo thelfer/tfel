@@ -28,12 +28,11 @@ namespace tfel
     {
 
       std::string
-      EvaluatorBase::readNumber(std::string::iterator& p,
-				std::string::iterator  pe)
+      EvaluatorBase::readNumber(std::string::const_iterator& p,
+				const std::string::const_iterator pe)
       {
-	using namespace std;
-	string word;
-	string::iterator b=p;
+	std::string word;
+	std::string::const_iterator b=p;
 	//reading decimal part
 	while((isdigit(*p))&&(p!=pe)){
 	  ++p;
@@ -73,24 +72,22 @@ namespace tfel
 	    }
 	  }
 	}
-	copy(b,p,back_inserter(word));
+	std::copy(b,p,std::back_inserter(word));
 	return word;
       } // end of EvaluatorBase::readNumber
 
-      inline
-      void
+      inline void
       tokenize(std::vector<std::string>& res,
-	       std::string::iterator& b,
-	       std::string::iterator& p2,
+	       std::string::const_iterator& b,
+	       std::string::const_iterator& p2,
 	       const char c)
       {
-	using namespace std;
 	char w[2];
 	w[0] = c;
 	w[1] = '\0';
-	string word;
+	std::string word;
 	if(p2!=b){
-	  copy(b,p2,back_inserter(word));
+	  std::copy(b,p2,std::back_inserter(word));
 	  res.push_back(word);
 	}
 	res.push_back(w);
@@ -101,23 +98,17 @@ namespace tfel
       void
       EvaluatorBase::splitAtTokenSeperator(std::vector<std::string>& t)
       {
-	using namespace std;
-    
-	vector<string> res;
-	vector<string>::iterator p;
-	string::iterator p2;
-	string::iterator p2e;
-	string::iterator b;
-
-	for(p=t.begin();p!=t.end();++p){
-	  b   = p->begin();
-	  p2  = p->begin();
-	  p2e = p->end();
+	auto throw_if = [](const bool b, const std::string& m){
+	  if(b){throw(std::runtime_error("EvaluatorBase::splitAtTokenSeperator: "+m));}
+	};
+	auto res = std::vector<std::string>{};
+	for(const auto& w : t){
+	  auto b   = w.begin();
+	  auto p2  = w.begin();
+	  const auto p2e = w.end();
 	  while(p2!=p2e){
-	    string word;
 	    if(isdigit(*p2)&&(p2==b)){
-	      word = readNumber(p2,p2e);
-	      res.push_back(word);
+	      res.push_back(readNumber(p2,p2e));
 	      b=p2;
 	    } else if(*p2=='+'){
 	      tokenize(res,b,p2,'+');
@@ -127,8 +118,7 @@ namespace tfel
 	      tokenize(res,b,p2,'-');
 	    } else if(*p2=='*'){
 	      if(p2!=b){
-		copy(b,p2,back_inserter(word));
-		res.push_back(word);
+		res.emplace_back(b,p2);
 	      }
 	      ++p2;
 	      if(p2!=p2e){
@@ -144,50 +134,29 @@ namespace tfel
 	      b=p2;
 	    } else if(*p2=='|'){
 	      if(p2!=b){
-		copy(b,p2,back_inserter(word));
-		res.push_back(word);
+		res.emplace_back(b,p2);
 	      }
 	      ++p2;
-	      if(p2==p2e){
-		string msg("EvaluatorBase::splitAtTokenSeperator : ");
-		msg += "unexpected end of string";
-		throw(runtime_error(msg));
-	      }
-	      if(*p2!='|'){
-		string msg("EvaluatorBase::splitAtTokenSeperator : ");
-		msg += "expected character '|' (read '";
-		msg += *p2;
-		msg += "')";
-		throw(runtime_error(msg));
-	      } 
+	      throw_if(p2==p2e,"unexpected end of string");
+	      throw_if(*p2!='|',"expected character '|' "
+		       "(read '"+std::string(1u,*p2)+"')");
 	      res.push_back("||");
 	      ++p2;
 	      b=p2;
 	    } else if(*p2=='&'){
 	      if(p2!=b){
-		copy(b,p2,back_inserter(word));
-		res.push_back(word);
+		res.emplace_back(b,p2);
 	      }
 	      ++p2;
-	      if(p2==p2e){
-		string msg("EvaluatorBase::splitAtTokenSeperator : ");
-		msg += "unexpected end of string";
-		throw(runtime_error(msg));
-	      }
-	      if(*p2!='&'){
-		string msg("EvaluatorBase::splitAtTokenSeperator : ");
-		msg += "expected character '&&' (read '";
-		msg += *p2;
-		msg += "')";
-		throw(runtime_error(msg));
-	      } 
+	      throw_if(p2==p2e,"unexpected end of string");
+	      throw_if(*p2!='&',"expected character "
+		       "'&&' (read '"+std::string(1u,*p2)+"')");
 	      res.push_back("&&");
 	      ++p2;
 	      b=p2;
 	    } else if(*p2=='>'){
 	      if(p2!=b){
-		copy(b,p2,back_inserter(word));
-		res.push_back(word);
+		res.emplace_back(b,p2);
 	      }
 	      ++p2;
 	      if(p2!=p2e){
@@ -203,8 +172,7 @@ namespace tfel
 	      b=p2;
 	    } else if(*p2=='<'){
 	      if(p2!=b){
-		copy(b,p2,back_inserter(word));
-		res.push_back(word);
+		res.emplace_back(b,p2);
 	      }
 	      ++p2;
 	      if(p2!=p2e){
@@ -220,8 +188,7 @@ namespace tfel
 	      b=p2;
 	    } else if(*p2=='='){
 	      if(p2!=b){
-		copy(b,p2,back_inserter(word));
-		res.push_back(word);
+		res.emplace_back(b,p2);
 	      }
 	      ++p2;
 	      if(p2!=p2e){
@@ -252,9 +219,7 @@ namespace tfel
 	    }
 	  }
 	  if(b!=p2e){
-	    string word;
-	    copy(b,p2,back_inserter(word));
-	    res.push_back(word);
+	    res.emplace_back(b,p2);
 	  }
 	}
 
@@ -264,10 +229,10 @@ namespace tfel
       void
       EvaluatorBase::analyse(const std::string& expr)
       {
-	using namespace std;
-	istringstream tokenizer(expr);
-	copy(istream_iterator<string>(tokenizer),
-	     istream_iterator<string>(),back_inserter(this->tokens));
+	std::istringstream tokenizer(expr);
+	std::copy(std::istream_iterator<std::string>(tokenizer),
+		  std::istream_iterator<std::string>(),
+		  std::back_inserter(this->tokens));
 	EvaluatorBase::splitAtTokenSeperator(this->tokens);
       } // end of EvaluatorBase::analyse
 
